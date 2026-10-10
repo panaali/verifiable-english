@@ -122,8 +122,9 @@ def checks(spec, record):
     return out
 
 
-def alone(commit=COMMIT, folder=None):
-    """Each companion checked as a standalone document: its premises status and every witness's Lean status."""
+def alone(commit=COMMIT, folder=None, only=None):
+    """Each companion checked as a standalone document: its premises status and every witness's Lean status (the
+    companions `only` names, `<unit>.<candidate>`, when given)."""
     from ve.document import check_document, load_document
     from ve.norm_defaults_route import run_cases, source_case
     folder = Path(folder or tempfile.mkdtemp(prefix="rd5-companions-"))
@@ -133,6 +134,8 @@ def alone(commit=COMMIT, folder=None):
         if not name.endswith(".ve.md"):
             continue
         key = ".".join(name.split(".")[:2])
+        if only is not None and key not in only:
+            continue
         path = folder / name
         path.write_bytes(git_show(commit, f"{RUN}/readings/{name}"))
         premises = check_document(path)["premises"]["status"]
@@ -150,15 +153,16 @@ def alone(commit=COMMIT, folder=None):
     return out
 
 
-def in_components(environment, document, components, commit=COMMIT, folder=None):
+def in_components(environment, document, components, commit=COMMIT, folder=None, only=None):
     """Each witness of a migrated set's companion, replayed in its component under the choice of its reading.
-    `components` maps a set id to Lean's case for it (`readings-elaborate`'s component row: its environment)."""
+    `components` maps a set id to Lean's case for it (`readings-elaborate`'s component row: its environment); `only`
+    restricts the sets replayed."""
     from ve.readings_route import run_lean
     folder = Path(folder or tempfile.mkdtemp(prefix="rd5-specs-"))
     spec, record = specs(folder, commit), recorded(commit)
     out = {}
     for item in document["reading_sets"]:
-        if item["id"] not in components:
+        if item["id"] not in components or (only is not None and item["id"] not in only):
             continue
         vocabulary = components[item["id"]]["environment"]["vocabulary"]
         for index, reading in enumerate(item["readings"]):
