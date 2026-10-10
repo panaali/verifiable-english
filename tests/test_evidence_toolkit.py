@@ -250,6 +250,12 @@ def test_a_changed_replay_answer_with_the_same_status_fails():
     base = _report([{"id": "env-b", "status": "changed", "now": _now(ENTRY_B["answers"])}])
     head = _report([{"id": "env-b", "status": "changed", "now": _now(changed)}])
     assert [row["id"] for row in fuzz_ab.compare(base, head, BASELINE, [])["unexplained"]] == ["env-b"]
+    # a replay rule names a status change, so it cannot explain an answer changed under one status
+    same_status = [{"kind": "replay", "id": "env-b", "base": "changed", "head": "changed"}]
+    assert [row["id"] for row in fuzz_ab.compare(base, head, BASELINE, same_status)["unexplained"]] == ["env-b"]
+    fixed = [{"kind": "replay", "id": "env-b", "base": "changed", "head": "fixed"}]
+    head = _report([{"id": "env-b", "status": "fixed", "now": _now(changed)}])
+    assert fuzz_ab.compare(base, head, BASELINE, fixed)["unexplained"] == []
 
 
 KNOWN = [{"kind": "known_rejection", "base_lean_prefix": "fields do not match: expected [sort, description], got ["}]
@@ -521,6 +527,8 @@ def test_tally_claims_check_a_ledger_against_its_table(batch):
     (TOML + '[latency]\nfile = "l.json"\nworkloads = []\n', "not a non-empty list"),
     (TOML + '[latency]\nfile = "l.json"\nworkload = ["a"]\nworkloads = ["a"]\n', "unknown key 'workload'"),
     (TOML.replace('batch = "test"', 'batch = ""'), "batch is not a name"),
+    (TOML.replace('file = "mutants.json"', 'file = "mutants.json"\nmin = 0'), "min is not a whole number of at least 3"),
+    (TOML + '[latency]\nfile = "l.json"\nworkloads = ["a"]\nallowance = 0.5\n', "allowance is not between 0 and 0.2"),
     (TOML.replace('batch = "test"', 'batch = "test"\nevidence = "../../../.."'), "outside the repository"),
 ], ids=ids)
 def test_a_toml_that_would_check_nothing_is_refused(batch, text, message):

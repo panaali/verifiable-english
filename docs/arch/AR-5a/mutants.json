@@ -34,6 +34,9 @@
  {"id": "M11", "file": "tools/evidence/latency.py", "claim": "the 20% rule: a head above 1.2 times its base fails",
   "find": "    return row[\"head_cpu_ms\"] <= (1 + allowance) * row[\"base_cpu_ms\"]", "replace": "    return row[\"head_cpu_ms\"] <= (1 + 2 * allowance) * row[\"base_cpu_ms\"]",
   "tests": ["tests/test_evidence_toolkit.py::test_readings_batch_latency_applies_the_shared_rule", "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails"]},
+ {"id": "M13", "file": "tools/evidence/config.py", "claim": "a batch's evidence.toml cannot lower the mutant minimum below three",
+  "find": "    if type(minimum) is not int or minimum < 3:", "replace": "    if type(minimum) is not int:",
+  "tests": ["tests/test_evidence_toolkit.py::test_a_toml_that_would_check_nothing_is_refused"]},
  {"id": "M12", "file": "tools/batch_evidence.py", "claim": "--check fails a gate record that shows a failure or whose counts do not add up",
   "find": " or counts[\"failed\"] != 0:", "replace": ":",
   "tests": ["tests/test_evidence_toolkit.py::test_stale_or_incomplete_batch_evidence_fails_the_check"]}

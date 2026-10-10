@@ -5,9 +5,9 @@
 
     [scope]    file = "scope.json"       # python -m tools.evidence scope: main..HEAD --no-merges, saved
     [gate]     file = "gate.json"        # the tools/gate.py result of the final code commit (scope.head)
-    [mutants]  file = "mutants.json"     # the seeded mutants and the tests they failed;  min = 3
+    [mutants]  file = "mutants.json"     # the seeded mutants and the tests they failed;  min = 3 (or more)
     [ab]       file = "ab.json"          # python -m tools.evidence ab;  corpora = [...] (default: the seven)
-    [latency]  file = "latency.json"     # python -m tools.evidence latency;  workloads = [...];  allowance = 0.2
+    [latency]  file = "latency.json"     # python -m tools.evidence latency;  workloads = [...];  allowance <= 0.2
     [fuzz_ab]  file = "fuzz-ab.json"     # python -m tools.evidence fuzz_ab;  seeds = [...];  [[fuzz_ab.explained]]
     [report]   file = "REPORT.md"        # a block rendered from the evidence;  marker = "...";  lines = [...]
     [[claims]] kind = "tally" ...        # tools/batch_evidence.py, CLAIMS
@@ -65,6 +65,13 @@ def read(directory: Path) -> dict:
         if value is not None and (not isinstance(value, list) or not value
                                   or not all(isinstance(item, (str, int)) and str(item).strip() for item in value)):
             errors.append(f"[{kind}] {key} is not a non-empty list of names")
+    # A batch may make its checks stricter, never weaker: at least three mutants, at most the 20% rule.
+    minimum = config.get("mutants", {}).get("min", 3) if isinstance(config.get("mutants"), dict) else 3
+    if type(minimum) is not int or minimum < 3:
+        errors.append("[mutants] min is not a whole number of at least 3")
+    allowance = config.get("latency", {}).get("allowance", 0.2) if isinstance(config.get("latency"), dict) else 0.2
+    if type(allowance) not in (int, float) or not 0 <= allowance <= 0.2:
+        errors.append("[latency] allowance is not between 0 and 0.2")
     if not isinstance(config.get("claims", []), list):
         errors.append("claims is not an array of tables")
     if errors:
