@@ -74,11 +74,24 @@ def answeredFields (route q : String) (c : VE.Question.Candidate) (φ : VE.Engli
    ("unused", toJson v.unused),
    ("unchecked_names", Json.arr ((v.names.filter (!·.checked)).map nameJson).toArray)]
 
+/-- RD-3's refusal past 64 compatible choices (`replayVerdictsND`). -/
+def overChoices : String := "readings-verdicts: more than 64 compatible readings"
+
+/-- X5 (spec 4.2 step 4): past 64 compatible choices RD-3 checks no row, so the answer is VE's limit, in X5's words
+    (`ResourceLimit`, never a lead); RD-3's other refusals are relayed as they are. -/
+def replayError (e : String) : String :=
+  if e == overChoices then s!"ResourceLimit: {reasonText .tooMany}" else e
+
+#guard replayError overChoices ==
+  "ResourceLimit: There are more than 64 ways to read this document's open sentences. VE did not check them all."
+#guard replayError "InvalidInput: the case does not ask this question" ==
+  "InvalidInput: the case does not ask this question"
+
 /-- The answer of a question read with one meaning, on the document's route. -/
 def answered (route : String) (j : Json) (q : String) (c : VE.Question.Candidate) (φ : VE.EnglishGrammar.EFormula) :
     Except String (List (String × Json)) := do
   if route == "readings" then
-    let s ← replayAsk j
+    let s ← (replayAsk j).mapError replayError
     let (ctx, a) ← answerFor s
     pure (answeredFields route q c φ ctx a.view)
   else if route == "plain" then
