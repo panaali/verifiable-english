@@ -165,3 +165,15 @@ def test_the_read_recorder_keeps_checkout_paths_only(monkeypatch):
     assert read_recorder.relative(ROOT / "lean/.lake/build/bin/ve_service", None,
                                   read_recorder.PROGRAMS_SKIPPED) == "lean/.lake/build/bin/ve_service"
     assert read_recorder.relative(ROOT / ".venv/bin/python", None, read_recorder.PROGRAMS_SKIPPED) is None
+
+
+def test_entries_live_in_the_git_common_directory(monkeypatch):
+    """Shared by the checkout's worktrees; `VE_RUN_CACHE` moves the cache or turns it off."""
+    monkeypatch.delenv("VE_RUN_CACHE", raising=False)
+    common = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], cwd=ROOT,
+                            capture_output=True, text=True, check=True, timeout=HANG_TIMEOUT).stdout.strip()
+    assert run_cache.cache_directory(ROOT) == Path(common) / "ve-run-cache"
+    monkeypatch.setenv("VE_RUN_CACHE", "/somewhere")
+    assert run_cache.cache_directory(ROOT) == Path("/somewhere")
+    monkeypatch.setenv("VE_RUN_CACHE", "off")
+    assert run_cache.cache_directory(ROOT) is None
