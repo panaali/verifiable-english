@@ -592,11 +592,18 @@
             "properties": {
               "answer": {"$ref": "#/$defs/elaborate"},
               "checked": {
-                "$comment": "the document the case's answer reads: the case's document, or the main case's checked part (Readings.Run.fixedPart) when it has no content-bearing set"
+                "$comment": "the document the case's answer reads: the case's document, or the main case's checked part (Readings.Run.fixedPart) when it has no content-bearing set; an object (Readings.Run.asObject)",
+                "type": "object"
               },
               "component": {"type": "string"},
-              "document": {"$comment": "the case's document (Readings.Wire.splitCase)"},
-              "environment": {"$comment": "the case's environment (Readings.Wire.splitCase)"}
+              "document": {
+                "$comment": "the case's document (Readings.Wire.splitCase), an object (Readings.Run.asObject)",
+                "type": "object"
+              },
+              "environment": {
+                "$comment": "the case's environment (Readings.Wire.splitCase), an object (Readings.Run.asObject)",
+                "type": "object"
+              }
             },
             "required": ["component", "environment", "document", "checked", "answer"],
             "type": "object"

@@ -18,7 +18,8 @@ from __future__ import annotations
 import json
 
 from .errors import CheckerUnavailable, VEError
-from .readings_verdicts import BUDGET, Enumerated, _check_answer, _check_english, _dead_certificates, _Frame, _need, _shown_of
+from .readings_verdicts import (BUDGET, Enumerated, _check_answer, _check_english, _dead_certificates, _Frame, _need,
+                                _shown_of, relayed)
 
 PRODUCT = "components"
 _NOT_SUPERPOSABLE = "ReadingsNotSuperposable: "
@@ -56,9 +57,11 @@ def load(environment, units, reading_sets, *, couplings=(), narrowings=(), execu
              {"id": "readings-verdicts", "kind": "readings-verdicts", **base, "question": "conflict", "evidence": []}]
     elaborate, validate, product = run_lean(cases, executable=executable)
     for row in (elaborate, validate, product):
-        if row.get("status") == "error":
+        if type(row) is dict and row.get("status") == "error":
             raise VEError(row["error"])
-    try:
+    # Everything below reads Lean's answers: any failure is `CheckerUnavailable` (one guard, `relayed`), so a
+    # retyped, missing or duplicated field never escapes as a crash nor reads as a verdict.
+    with relayed():
         from .backends.service_schema import check_row
         for case, row in zip(cases, (elaborate, validate)):
             check_row("readings-route", row, {"id": row.get("id"), "kind": case["kind"]}, 0)
@@ -66,51 +69,118 @@ def load(environment, units, reading_sets, *, couplings=(), narrowings=(), execu
         names = [c["component"] for c in elaborate["components"]]
         _need(names == ["main", *_companion_sets(document)])
         _need([c["component"] for c in validate["components"]] == names)
-    except (CheckerUnavailable, VEError):
-        raise
-    except Exception as exc:  # noqa: BLE001 - any failure of the check is an invalid answer, never a verdict
-        raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
-    parts = []
-    # Bind the split's names and copied rows to the input. Lean decides where each row belongs; the relay only
-    # refuses an invented, omitted or duplicated source row. A cited unit may be carried without its content.
-    source_units = {u["id"]: u for u in document["units"]}
-    source_sets = list(document.get("reading_sets") or [])
-    source_narrowings = list(document.get("narrowings") or [])
-    source_couplings = list(document.get("couplings") or [])
-    copied_sets, copied_narrowings, copied_couplings = [], [], []
-    for row, checked_row in zip(elaborate["components"], validate["components"]):
-        part_doc = row["document"]
-        for unit in part_doc["units"]:
-            _need(unit["id"] in source_units)
-            _need(same_json(unit, source_units[unit["id"]]) or same_json(unit, {"id": unit["id"]}) or
-                  same_json(unit, {k: v for k, v in source_units[unit["id"]].items() if k != "content"}))
-        _need(len({u["id"] for u in part_doc["units"]}) == len(part_doc["units"]))
-        copied_sets.extend(part_doc.get("reading_sets") or [])
-        copied_narrowings.extend(part_doc.get("narrowings") or [])
-        copied_couplings.extend(part_doc.get("couplings") or [])
-        _need(all(u["id"] in source_units for u in row["checked"]["units"]))
-        if row["component"] == "main":
-            _need(same_json(row["environment"], environment))
-        case = {"environment": row["environment"], "document": row["document"]}
-        _check(checked_row["answer"], {"id": "readings-s1", "kind": "readings-validate", **case})
-        checked = {"id": "readings-s2", "kind": "readings-elaborate", "environment": row["environment"],
-                   "document": row["checked"]}
-        # In a split the main case without a content-bearing set is read under the completion as its checked part
-        # (its fixed units): Lean's row then carries its filled document (`Readings.Run.admitChecked`).
-        main_fixed = row["component"] == "main" and not any(content_bearing(R) for R in Document(None, row["checked"]).sets)
-        answer = _completion_elaborate(row["answer"], checked, checked_part=main_fixed)
-        parts.append({"name": row["component"], "environment": row["environment"], "document": row["document"],
-                      "checked": row["checked"], "elaborate": answer, "validate": checked_row["answer"]})
-    def rows_equal(left, right):
-        return sorted(json.dumps(x, sort_keys=True) for x in left) == sorted(json.dumps(x, sort_keys=True) for x in right)
-    _need(rows_equal(copied_sets, source_sets))
-    _need(rows_equal(copied_narrowings, source_narrowings))
-    _need(rows_equal(copied_couplings, source_couplings))
-    loaded = {"environment": environment, "document": document, "parts": parts}
-    route = Components(None, loaded)
-    route.check_product(product, cases[2])
-    loaded["route"] = route.routes_of(product)
+        parts = []
+        # Bind the split's names and copied rows to the input. Lean decides where each row belongs; the relay only
+        # refuses an invented, omitted or duplicated source row. A cited unit may be carried without its content.
+        source_units = {u["id"]: u for u in document["units"]}
+        source_sets = list(document.get("reading_sets") or [])
+        source_narrowings = list(document.get("narrowings") or [])
+        source_couplings = list(document.get("couplings") or [])
+        copied_sets, copied_narrowings, copied_couplings = [], [], []
+        for row, checked_row in zip(elaborate["components"], validate["components"]):
+            part_doc = row["document"]
+            for unit in part_doc["units"]:
+                _need(unit["id"] in source_units)
+                _need(same_json(unit, source_units[unit["id"]]) or same_json(unit, {"id": unit["id"]}) or
+                      same_json(unit, {k: v for k, v in source_units[unit["id"]].items() if k != "content"}))
+            _need(len({u["id"] for u in part_doc["units"]}) == len(part_doc["units"]))
+            copied_sets.extend(part_doc.get("reading_sets") or [])
+            copied_narrowings.extend(part_doc.get("narrowings") or [])
+            copied_couplings.extend(part_doc.get("couplings") or [])
+            _bind_part(row, document, environment, names[1:])
+            case = {"environment": row["environment"], "document": row["document"]}
+            _check(checked_row["answer"], {"id": "readings-s1", "kind": "readings-validate", **case})
+            checked = {"id": "readings-s2", "kind": "readings-elaborate", "environment": row["environment"],
+                       "document": row["checked"]}
+            # In a split the main case without a content-bearing set is read under the completion as its checked
+            # part (its fixed units): Lean's row then carries its filled document (`Readings.Run.admitChecked`).
+            main_fixed = (row["component"] == "main" and
+                          not any(content_bearing(R) for R in Document(None, row["checked"]).sets))
+            answer = _completion_elaborate(row["answer"], checked, checked_part=main_fixed)
+            parts.append({"name": row["component"], "environment": row["environment"], "document": row["document"],
+                          "checked": row["checked"], "elaborate": answer, "validate": checked_row["answer"]})
+
+        def rows_equal(left, right):
+            return sorted(json.dumps(x, sort_keys=True) for x in left) == sorted(json.dumps(x, sort_keys=True)
+                                                                                 for x in right)
+        _need(rows_equal(copied_sets, source_sets))
+        _need(rows_equal(copied_narrowings, source_narrowings))
+        _need(rows_equal(copied_couplings, source_couplings))
+        loaded = {"environment": environment, "document": document, "parts": parts}
+        route = Components(None, loaded)
+        route.check_product(product, cases[2])
+        loaded["route"] = route.routes_of(product)
     return loaded
+
+
+def _bind_part(row, document, environment, companions):
+    """One case of Lean's split (`Readings.Wire.splitCase`), bound to the request by its name, never re-split: the
+    main case keeps every unit of the document in order (a companion set's without its content, checked by the
+    caller), the request's environment and every other member of the document, and no companion set or narrowing on
+    one; a companion case holds only its own set, the narrowings on it and the units they name, and its environment
+    and open terms are its readings' companions' united (each declaration and term of every companion, nothing
+    else; `mergeCompanions_extends`, `mergeOpenTerms_identical`). The document its answer reads is its document, or
+    for the main case its fixed part (`Readings.Run.fixedPart`). Any other value is an invalid answer."""
+    from .backends.service_schema import same_json
+    name, part_doc, checked = row["component"], row["document"], row["checked"]
+    # Lean writes each of these members, as a list (`mainDoc`, `componentDoc`).
+    lists = ("units", "reading_sets", "narrowings", "couplings" if name == "main" else "open_terms")
+    _need(all(type(part_doc.get(k)) is list for k in lists))
+    sets, narrowings = part_doc["reading_sets"], part_doc["narrowings"]
+    if name == "main":
+        _need(set(part_doc) == set(document) | {"units", "reading_sets", "narrowings", "couplings"})
+        _need(all(same_json(part_doc[k], document[k]) for k in part_doc
+                  if k not in ("units", "reading_sets", "narrowings", "couplings")))
+        _need([u["id"] for u in part_doc["units"]] == [u["id"] for u in document["units"]])
+        _need(not any(x["id"] in companions for x in sets) and not any(n["set"] in companions for n in narrowings))
+        _need(same_json(row["environment"], environment))
+        fixed = {**part_doc, "couplings": [], "narrowings": [], "reading_sets": []}
+        _need(same_json(checked, part_doc) or same_json(checked, fixed))
+        return
+    _need(name in companions and set(part_doc) == {"units", "reading_sets", "narrowings", "open_terms"})
+    _need(sets and all(x["id"] == name for x in sets) and all(n["set"] == name for n in narrowings))
+    _need({x["unit"] for x in sets} <= {u["id"] for u in part_doc["units"]})
+    _need(same_json(checked, part_doc))
+    from .readings_s1 import wire
+    own = [wire(r["companion"]) for x in document["reading_sets"] if x["id"] == name for r in x["readings"]]
+    _bind_merged(row["environment"], [c["environment"] for c in own])
+    terms = part_doc["open_terms"]
+    sent = [t for c in own for t in c.get("open_terms") or []]
+    _need(all(any(same_json(t, x) for x in terms) for t in sent) and all(any(same_json(x, t) for t in sent)
+                                                                         for x in terms))
+    _need(len({json.dumps(x["name"], sort_keys=True) for x in terms}) == len(terms))
+
+
+def _bind_merged(merged, sources):
+    """A companion case's environment, bound to its readings' environments `sources`: the first's members, its
+    profiles with `readings@1`, and per category (`sorts`, `constants`, `predicates`) exactly the declarations the
+    sources make, each byte for byte (`Readings.Wire.mergeCompanions`)."""
+    from .backends.service_schema import same_json
+    first = sources[0]
+    _need(set(merged) == set(first) | {"profiles", "vocabulary"})
+    for key in merged:
+        if key == "profiles":
+            profiles = merged["profiles"]
+            _need(len(set(profiles)) == len(profiles) and set(profiles) == {*first["profiles"], READINGS_PROFILE})
+        elif key != "vocabulary":
+            _need(same_json(merged[key], first[key]))
+    vocabulary, base = merged["vocabulary"], first["vocabulary"]
+    _need(set(vocabulary) == set(base) | set(CATEGORIES))
+    for key in vocabulary:
+        if key not in CATEGORIES:
+            _need(same_json(vocabulary[key], base[key]))
+            continue
+        declared = vocabulary[key]
+        names = set()
+        for source in sources:
+            for n, declaration in (source["vocabulary"].get(key) or {}).items():
+                _need(n in declared and same_json(declared[n], declaration))
+                names.add(n)
+        _need(set(declared) == names)
+
+
+READINGS_PROFILE = "readings@1"
+CATEGORIES = ("sorts", "constants", "predicates")
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -359,8 +429,8 @@ class Components:
         query's case is one of them and the readings `--under` names are its; each status a result restates is its
         case's own; every choice, unit and line names only what its case has. What the product concludes (its
         verdict, the decided units, which lines are said) is Lean's, by theorem (`readings_wire_product_*`)."""
-        try:
-            from .backends.service_schema import Invalid, check_row
+        with relayed():
+            from .backends.service_schema import check_row
             check_row("readings-route", row, {"id": row.get("id"), "kind": "readings-verdicts"}, 0)
             question = case["question"]
             _need(row["id"] == case["id"] and row["question"] == question and row["route"] == PRODUCT)
@@ -419,10 +489,6 @@ class Components:
                 rows = {json.dumps(e["choice"]): e for e in sub["per_choice"]}
                 _check_english({**sub, "english": [entry["line"]]}, frame, rows)
                 self._check_line_fields(entry["line"])
-        except CheckerUnavailable:
-            raise
-        except (Invalid, AttributeError, KeyError, TypeError, ValueError, IndexError, StopIteration) as exc:
-            raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
 
     @staticmethod
     def _check_line_fields(line):

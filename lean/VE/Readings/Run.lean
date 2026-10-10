@@ -487,12 +487,19 @@ def admitComponents (kind : String) (parts : List (String × Json × Json)) :
     let (d, a) ← if p.1 == "main" then admitChecked kind p.2.1 p.2.2 else pure (p.2.2, ← admitComponent kind p.2.1 p.2.2)
     pure (p.1, p.2.1, p.2.2, d, a))
 
+/-- A JSON object as itself, anything else as the empty object: a case's environment and documents are objects once
+    admitted, and the row says so in its type (`elaborate_components`), so the client never reads another value. -/
+def asObject (j : Json) : Json :=
+  match j with
+  | .obj kvs => .obj kvs
+  | _ => Json.mkObj []
+
 /-- A case's row: its name and answer; for `readings-elaborate` also the case's environment, its document and the
     document its answer reads (readings-defaults RD-4b: a generator reads each case's own frame from Lean). -/
 def componentRowOf (kind name : String) (environment document checked answer : Json) : Json :=
   if kind == "readings-elaborate" then
-    Json.mkObj [("component", .str name), ("environment", environment), ("document", document), ("checked", checked),
-      ("answer", answer)]
+    Json.mkObj [("component", .str name), ("environment", asObject environment), ("document", asObject document),
+      ("checked", asObject checked), ("answer", answer)]
   else componentRow name answer
 
 def runAdmittedComponents (j : Json) (id kind : String)

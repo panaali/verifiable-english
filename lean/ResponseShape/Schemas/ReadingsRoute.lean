@@ -546,9 +546,9 @@ def components (answer runner : String) (frame : Bool := false) : Shape :=
           obj,
           .required (["component"] ++ (if frame then ["environment", "document", "checked"] else []) ++ ["answer"]),
           closed ([("component", str)] ++
-            (if frame then [("environment", c "the case's environment (Readings.Wire.splitCase)" []),
-              ("document", c "the case's document (Readings.Wire.splitCase)" []),
-              ("checked", c "the document the case's answer reads: the case's document, or the main case's checked part (Readings.Run.fixedPart) when it has no content-bearing set" [])]
+            (if frame then [("environment", c "the case's environment (Readings.Wire.splitCase), an object (Readings.Run.asObject)" [obj]),
+              ("document", c "the case's document (Readings.Wire.splitCase), an object (Readings.Run.asObject)" [obj]),
+              ("checked", c "the document the case's answer reads: the case's document, or the main case's checked part (Readings.Run.fixedPart) when it has no content-bearing set; an object (Readings.Run.asObject)" [obj])]
              else []) ++
             [("answer", ref answer)])])])]]
 
