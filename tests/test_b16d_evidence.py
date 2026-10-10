@@ -57,8 +57,15 @@ def test_scope_mutants_and_gate_are_saved():
         return  # The code-commit gate precedes its captured scope.
     scope = saved("scope.json")
     assert len(scope["base"]) == len(scope["head"]) == 40 and scope["base"] != scope["head"]
+    assert scope["command"] == "git log main..HEAD --no-merges"
     assert scope["commits"] and scope["commits"][0]["hash"] == scope["head"]
+    assert len({c["hash"] for c in scope["commits"]}) == len(scope["commits"])
+    assert all(set(c) == {"hash", "subject"} and len(c["hash"]) == 40 and c["subject"]
+               for c in scope["commits"])
     assert scope["changes"]
+    assert all(set(c) == {"added", "deleted", "path"} and c["path"] and
+               (all(n.isdecimal() for n in (c["added"], c["deleted"])) or
+                (c["added"], c["deleted"]) == ("-", "-")) for c in scope["changes"])
     if not (EVIDENCE / "gate.json").exists():
         return  # The code-commit gate precedes its own captured result.
     gate = saved("gate.json")
