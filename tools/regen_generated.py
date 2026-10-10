@@ -104,10 +104,7 @@ GENERATED = (
               ((PY, "tools/response_schemas.py", "--write"),), ((PY, "tools/response_schemas.py", "--check"),)),
     Generated("english-codes", ("ve/english_grammar/codes.json",),
               ((PY, "tools/english_codes.py", "--write"),), ((PY, "tools/english_codes.py", "--check"),)),
-    Generated("assurance-manifest", ("ve/assurance-manifest.json",), None,
-              ((PY, "-m", "pytest", "-q", "-p", "no:randomly", "-p", "no:cacheprovider",
-                "tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole",
-                "tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned"),),
+    Generated("assurance-manifest", ("ve/assurance-manifest.json",), None, ("check_assurance_pins",),
               merge="json", note="decoder pins are reviewed by hand; a merge keeps each side's pins"),
     Generated("assurance-doc", ("docs/spec/assurance-manifest.md",),
               ((PY, "tools/assurance_manifest.py", "--write"),), ((PY, "tools/assurance_manifest.py", "--check"),)),
@@ -149,6 +146,7 @@ NOT_REGENERATED = {
     "conformance/english_lean_e2_ab.py": "batch report",
     "conformance/english_lean_e2_readability_report.py": "batch report",
     "docs/lean-first/*/*.py": "batch evidence pinned at a commit",
+    "docs/merge-tooling/*.py": "this tooling's evidence, recorded once (git merge-tree --write-tree is no writer)",
     "conformance/soft_norms.py": "--write-rust-fixtures: the Rust tests' fixture, rewritten with the soft-norms unit",
     "usecases/*/*.py": "use-case results, rerun by their harness",
 }
@@ -247,6 +245,18 @@ def check_pins() -> int:
     for problem in problems:
         print(f"checker-pins: {problem}", file=sys.stderr)
     return 1 if problems else 0
+
+
+# The assurance manifest's decoder pins, checked by their tests.
+ASSURANCE_PIN_TESTS = ("tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole",
+                       "tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned")
+
+
+def check_assurance_pins() -> int:
+    sys.path.insert(0, str(ROOT / "tools"))
+    import nested_pytest
+    return subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", *ASSURANCE_PIN_TESTS]),
+                          cwd=ROOT, env=nested_pytest.environment(os.environ)).returncode
 
 
 # Merging
