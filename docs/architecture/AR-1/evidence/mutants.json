@@ -1,0 +1,28 @@
+{
+  "mutants": [
+    {
+      "id": "AR1-M1",
+      "file": "lean/audit.py",
+      "find": "if entry.kind == \"theorem\" and entry.start is not None:",
+      "replace": "if False and entry.kind == \"theorem\" and entry.start is not None:",
+      "tests": ["tests/test_lean_audit_record.py::test_manifest_generation_uses_compiled_ranges_and_declaring_modules"],
+      "claim": "Every ranged compiled theorem enters its audit manifest"
+    },
+    {
+      "id": "AR1-M2",
+      "file": "lean/audit.py",
+      "find": "assert actual == modules[module], f\"{module}: declarations.txt source hash mismatch\"",
+      "replace": "assert True or actual == modules[module], f\"{module}: declarations.txt source hash mismatch\"",
+      "tests": ["tests/test_lean_audit_record.py::test_audit_rejects_stale_module_hash"],
+      "claim": "A changed source invalidates the compiled declaration record"
+    },
+    {
+      "id": "AR1-M3",
+      "file": "lean/audit.py",
+      "find": "        if tactic:\n",
+      "replace": "        if False and tactic:\n",
+      "tests": ["tests/test_lean_audit_record.py::test_audit_refuses_bare_admit"],
+      "claim": "The forbidden source token scan remains active"
+    }
+  ]
+}
