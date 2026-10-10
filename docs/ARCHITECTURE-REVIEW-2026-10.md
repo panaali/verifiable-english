@@ -1,8 +1,31 @@
 # Architecture and tech-debt review, October 2026: a ranked, buildable plan
 
-**Status:** Draft 1, 2026-10-10, branch `design/arch-review` from `main` at `c24aeab2` (lean-first 16c merged).
+**Status:** Draft 2, 2026-10-10, branch `design/arch-review` from `main` at `c24aeab2` (lean-first 16c merged).
 Planning only: no code, proof or test changes. Lead request of 2026-10-09: look at VE the way a senior staff
 engineer at a frontier lab would, and optimise the architecture before the project grows further.
+
+**Changes from draft 1** (98fd1ec5):
+
+- **Converged review edits** (debate `manage-agents/debates/design-arch-review/`, converged in round 2):
+  - AR-1: `--check` compares module hashes with `declarations.txt`.
+  - AR-2 and D2: `predicates.txt` sits beside `statements.txt`, and the gate report lists the D and G files that
+    changed.
+  - AR-3: every removed test ID needs a reviewed `Test-removed:` trailer.
+  - AR-10 and D8: the registry carries modes and the null policy only; deadlines stay in Python.
+  - AR-11 and D1: four leaf classes, a `derived (guarantee)` mark and an out-of-domain mutation, with the limits of
+    the census stated.
+  - AR-13 and D6: `Except Diag` reaches `Protocol`; `Diag` gains `generator` and loses `path`; one proved adapter
+    serves unmigrated producers.
+  - AR-15 and D7: only identities that Lean computes, never an echo.
+- **DRI decisions:** D1–D8 are recorded as decided (section 5, `manage-agents/arch-dri-decisions.md`). D3's starting
+  value is corrected to the value measured at AR-4's base.
+- **Architecture pass of 2026-10-10** (`manage-agents/reviews/architecture-pass-20261010.md`):
+  - `ve/question/LOCK.json` joins AR-2's scope.
+  - `Question/Properties.lean` (1,711 lines) is a new split, AR-16d.
+  - The question route's `question_problem` checker joins AR-12's scope.
+  - Report-test growth: no architecture batch adds a report test (D4).
+  - The trust base grew to 36,765 V and 9,791 S.
+  - AR-1 and AR-5a launch notes; AR-2 and AR-4 wait for the merges that edit their files.
 
 **Method.** Every figure below comes from `git` history, line counts or text search on `c24aeab2`, or from a cited
 report, review file or commit. The review environment did not allow running Python, Lean or the test suite, so no
@@ -53,14 +76,15 @@ layer map that matches lean-first, checked by a real import tool; T6 one evidenc
 suite, bulky evidence out of the checkout; T7 module splits after the deletions; T8 identities owned by Lean.
 
 **Batch plan** (section 4): nine batches can start now, touch only tools, tests and docs, and collide with no
-running batch (*estimate* 26–35 builder hours). Eighteen wait for lean-first batch 18 (and, for readings, for
-RD-7) (*estimate* 61–91 h). The Lean consolidation batches wait for lf-14a–d and lf-18 and follow the converged
+running batch (*estimate* 26–35 builder hours). Nineteen wait for lean-first batch 18 (and, for readings, for
+RD-7; for the question module split, for qa-q2) (*estimate* 64–96 h). The Lean consolidation batches wait for
+lf-14a–d and lf-18 and follow the converged
 consolidation plan. Nothing here changes the VE language, the one-reading rule or any text people read or write;
 user-facing diagnostics stay English sentences from Lean.
 
-**Decisions for the DRI** (section 5): the binding contract (D1), what stays hash-frozen (D2), the trust ratchet
-(D3), where report tests and bulky evidence live (D4), the Python layer map (D5), typed codes (D6), identity owners
-(D7), and whether lf-18 absorbs AR-10's handshake half (D8).
+**DRI decisions** (section 5, all adopted on 2026-10-10): the binding contract (D1), what stays hash-frozen (D2),
+the trust ratchet (D3), where report tests and bulky evidence live (D4), the Python layer map (D5), typed codes
+(D6), identity owners (D7), and AR-10 following lf-18 (D8).
 
 ## 1. Current architecture
 
@@ -195,6 +219,10 @@ then 17,113; one refresh entry moved it to 26,181 by reclassifying modules that 
 mostly merges, raised it to 35,892. Signed allowances: K 19, S 327 (one of the S entries is recorded twice), V 1,515
 (164 + 952 + 399). `trust_map.py --check` fails on `main` (FOLLOW-UPS, rd-6a round 2).
 
+*Update, architecture pass of 2026-10-10:* after 3 more merges into `main` (question answering Q1, eff-tests,
+RD-4b), `V` is 36,765 (+2.4%) and `S` 9,791. `K` is unchanged. Every increase is signed. The figures in the table
+above stay those of `c24aeab2`.
+
 ### 1.6 Where the documents are stale
 
 | Document | It says | Today |
@@ -224,11 +252,12 @@ Python-side, with the batch that removes it today, if any:
 | P3 | Identity preimages built in Python (`digest("ve-<domain>…")`) | at least 36 sites in 18 modules (9 of them Python's own records in `argument.py`, `adapters/records.py`, `propose.py`), for example `document.py:181, 431`, `norm_defaults_route.py:58`, `readings_verdicts.py:1354-1357`, `backends/speech_source.py:296-301` | lean-first rows 12–13 ("small") | most → AR-6, AR-15 |
 | P4 | Readings S2: route, choices, vocabulary, units, names, slot regenerated and compared with Lean | `readings_route.py:48-146`, `readings_sup.py` | RD-7 deletes the superposed fold and wording selection | the regeneration compare → AR-17 |
 | P5 | Speech scope regenerated from authored units | `backends/speech_source.py:59` | none | → AR-12c |
-| P6 | Python copies of Lean tables | modes `service_schema.py:22-26`, deadlines `lean_service.py:117-128`, code classes `relay.py:57-63`, senses statuses and budgets `senses.py:24-26` ("checked against compiled Lean in tests"), `MAX_CHOICES = 64` `readings_sup.py:17` | lf-18 (classes, I/O caps) | modes, deadlines, statuses → AR-10 |
+| P6 | Python copies of Lean tables | modes `service_schema.py:22-26`, code classes `relay.py:57-63`, senses statuses and budgets `senses.py:24-26` ("checked against compiled Lean in tests"), `MAX_CHOICES = 64` `readings_sup.py:17` | lf-18 (classes, I/O caps) | modes, statuses → AR-10 |
 | P7 | Limits | `ve/limits.py`; `10000`, `10_000`, `maxNodes` or `MAX_NODES` occur 114 times in 53 files under `lean/VE` (not all the node limit) | lf-18 (`VE/Limits.lean`) | — |
 | P8 | English: Python comparator parser, Lark grammar, vocabulary lint, statement-layer English | `ve/english.py`, `ve/*_english.py`, `ve/surface/` | English track E3 | — |
 | P9 | Test oracles that copy logic on purpose | `conformance/english_lean_{engine,lexer,lexicon}.py` (1,441 lines), frozen norm-defaults and soft oracles | deleted after lf-18 plus 14 clean days (lean-first 6.2–6.3) | — |
 | — | Rule-3 accelerators: `eval.rs`, the order evaluator, the provers' Python replay | | kept by decision A (2026-10-08): untrusted, never reported, differential-tested | not debt |
+| — | Service deadlines `lean_service.py:117-128` | | kept in Python on purpose (F4, `lean_service.py:46`): Lean has no deadline table, and a timeout change must not relink the 170 MiB service | not debt; AR-10 tests its keys against the handshake's modes |
 
 Lean-internal (one owner applies inside Lean too):
 
@@ -256,6 +285,7 @@ Files over about 1,500 lines, and the next tier where it matters:
 | `lean/VE/Readings/VerdictsWire.lean`, `Readings/Separate.lean` | 1,565, 1,499 | readings track |
 | `lean/VE/Service/Standalone.lean` | 1,293: S 250, D 462, G 527 trusted-class lines in one file; 42 commits in 14 days | AR-16c after lf-18 |
 | `lean/VE/EnglishGrammar/LexiconFixtures.lean`, `Grammar/TableInvariant.lean` | 1,714, 1,658 | fixtures and proof; leave |
+| `lean/VE/Question/Properties.lean` | 1,711 (on `main` after Q1; architecture pass of 2026-10-10) | AR-16d after qa-q2 |
 | `tests/test_discourse_lean.py`, `test_speech_acts_conformance.py`, `test_assist.py`, `test_readings_s2_document.py` | 2,173, 2,096, 1,862, 1,647 | split with their modules |
 | `tools/difffuzz.py` | 2,059 | leave |
 
@@ -283,7 +313,7 @@ modules that mix transport, binding, generation and display (`document.py`, `rea
 | Concern | Variants on `main` | Evidence |
 |---|---|---|
 | Transport | service pool through the relay; one-shot processes: `graph.compose` and `bundle.check` (`ve_conformance`), metered `evaluate` and `countermodel.search` (`ve_metered`), senses (`ve_senses_route`), speech source (`ve_speech_acts_route`); Rust JSON-lines pool | `argument.py:531`, `bundle.py:95`, `backends/lean_runner.py:78,84`, `backends/senses.py:328`, `backends/speech_source.py:271`; lean-first batch 1 had moved every route into the service, and later batches added one-shots again |
-| Checking a Lean answer | (1) generated schema (`service_schema.py`); (2) type strings `"array<string>"` (`backends/lean.py:138-166`, `speech_source.py:23-30`); (3) predicate combinators `_obj`, `_arr`, `_either` (`readings_route.py:228-304`); (4) predicate functions (`senses.py:29-60`); (5) `_need` binders (`readings_verdicts.py`, 45 sites; `readings_route.py`, 38); (6) `require` with recomputation (`document.py:458-540`) | six styles, one rule |
+| Checking a Lean answer | (1) generated schema (`service_schema.py`); (2) type strings `"array<string>"` (`backends/lean.py:138-166`, `speech_source.py:23-30`); (3) predicate combinators `_obj`, `_arr`, `_either` (`readings_route.py:228-304`); (4) predicate functions (`senses.py:29-60`); (5) `_need` binders (`readings_verdicts.py`, 45 sites; `readings_route.py`, 38); (6) `require` with recomputation (`document.py:458-540`) | six styles, one rule. After `c24aeab2` the question route (Q1) added its own `question_problem` checker; its codes come from Lean. AR-11 and AR-12 bring it under the one pattern too. |
 | JSON null | omit (`rights_route.py:6-12`, `backends/soft_relay.py:27-33`, `readings_s1.py:33-36`); omit and send the null paths for Lean to restore (`reports_route.py:17-38`); Lean's front-matter rules (lf-16c review B2: 107 accepted-to-rejected flips) | four policies |
 | Answer post-processing | `{k: v for k, v in row.items() if k not in ("id", "status")}` | 5 copies: `norm_defaults_route.py:112`, `readings_route.py:146,169`, `soft_route.py:65`, `rights_route.py:58` |
 | Error code | parsed from the message prefix (`Protocol.lean:191`); the soft route's own prefix table (`SoftNorms/Run.lean:411-447`) | a reworded message can change its code |
@@ -302,6 +332,7 @@ Commits since 2026-09-26 that edited each file (2,376 non-merge commits in that 
 | `ve/assurance-manifest.json` (3,963) | decoder files by SHA-256, line count and ranges; authorities | 176 | a third hash ledger over the same files |
 | `lean/checkers.lock` (138) | built binary hashes | 159 | changes with every Lean change |
 | `lean/axioms.txt` (4,999) | audit output | 84 | generated, committed |
+| `ve/question/LOCK.json` | SHA-256 of 12 Question modules (added after `c24aeab2`; architecture pass of 2026-10-10) | — | a third copy of hashes that are already in `frozen-sources.sha256` and `declarations.txt`, against D2; AR-2 |
 | `lean/Main.lean` | `MAIN_BASE` hash (`frozen.py:15`) | — | intended and narrow; keep |
 | `ve/wire_contract/contracts.lock`, `ve/english_grammar/LOCK.json` | generated tables | — | intended; keep |
 
@@ -330,7 +361,10 @@ inventory files; the merge train needs to regenerate them."
 - **Report tests.** 27 test files (about 2,800 lines) check one batch's saved evidence, for example
   `test_b15b_evidence.py`, `test_lean_first_b12_report.py`, `test_readings_defaults_rd3_report.py`. They stay in the
   default suite for good. Two branches each failed a report test after syncing with `main`, from stale evidence
-  or a live `git diff` (`manage-agents/CURRENT-STATE.md`, 2026-10-07 17:20Z: lf-6 and lf-10b).
+  or a live `git diff` (`manage-agents/CURRENT-STATE.md`, 2026-10-07 17:20Z: lf-6 and lf-10b). By the
+  architecture pass of 2026-10-10 there were 37 on `main`, with more on the way (eff-tests, AR-3, AR-8, AR-9,
+  ts-B1, ts-B5, eff-merge), and a per-batch `readings_defaults_rd4b_mutants.py`. The cause is that the AR-3 to
+  AR-9 task prompts and the infra-item builder rule still ask for report tests, against D4 (4.1 item 7).
 - **Process-named tests.** 13 files are named after a review round or an amendment (`test_w6a_looprecheck1.py`,
   `test_p1_amendment7.py` to `test_p1_amendment15.py`, `test_soft_review_regressions.py`); their names say when a bug
   was found, not what behaviour they hold.
@@ -409,21 +443,35 @@ safe now, then batches that switch one route or one profile at a time and delete
 
 ### T1. One route contract: binding by construction, one registry, one Python relay
 
-**What.** (a) A short, closed definition of binding (D1): a response field is bound when it echoes, equals, counts,
-measures, indexes or references something in the request, or is bounded by a request value; a derived value (a sum,
-an identity hash, an unfolding) is Lean's and is covered by a Lean theorem or a `ResponseDecode` invariant, never
-recomputed in Python. (b) Every string and integer leaf of every response shape is either bound, in a closed domain,
-or explicitly marked as display text; a Lean `#guard` holds the census at zero (AR-11). (c) One Lean registry of
-routes from which the mode names, deadlines and handshake come; Python reads them from the handshake (AR-10).
-(d) One Python relay call per route, typed rows generated from the shapes, one null policy declared per mode, every
-production Lean call through the service (AR-12).
+**What.**
 
-**Benefit.** Turns the largest open finding class (23 B findings) into a build failure; removes the six checking
-styles, four null policies and the Python mirrors; stops binding creep (P2, P3, P5). Adding a route touches the
-runner, its shape and one registry line, instead of about 12 files.
+- **(a) Binding (D1).** Binding has a short, closed definition. A response field is bound when it echoes, equals,
+  counts, measures, indexes or references something in the request, or is bounded by a request value. A field that
+  names a request item is bound only by `references` or `equals` to the relevant request set; a format check is not
+  a binding. A derived value (a sum, an identity hash, an unfolding, an elaborated formula, a coverage) is Lean's
+  and is never recomputed in Python. Its leaf is marked `derived (guarantee)`, naming the Lean theorem or invariant
+  behind it. A theorem on the encoder is preferred wherever feasible. A `ResponseDecode` invariant is checked only
+  at test time, and the plan says so wherever it relies on one.
+- **(b) Every leaf classified (AR-11).** Every string and integer leaf of every response shape is in one of four
+  classes: bound to the request, closed domain, `derived (guarantee)`, or `text` (display). A Lean `#guard` holds
+  the unclassified census at zero.
+- **(c) One route registry (AR-10).** One Lean registry of routes supplies the mode names, the null policy and the
+  handshake, and Python reads them from the handshake. Service deadlines stay a Python operational policy (F4); a
+  test checks that their keys equal the handshake's modes.
+- **(d) One relay pattern (AR-12).** One Python relay call per route, typed rows generated from the shapes, one
+  null policy declared per mode, and every production Lean call through the service.
 
-**Cost.** *Estimate* 26–33 builder hours over six batches (AR-10 to AR-12c), including two dialect keywords
-implemented in both interpreters.
+**Benefit.**
+
+- An unbound or unclassified leaf, the largest open finding class (23 B findings), becomes a build failure.
+- The census proves that every leaf is *classified*, not that it is *correctly* classified. Each mark stays a
+  review item.
+- The six checking styles, four null policies and the Python mirrors go.
+- Binding creep stops (P2, P3, P5).
+- Adding a route touches the runner, its shape and one registry line, instead of about 12 files.
+
+**Cost.** *Estimate* 26–33 builder hours over six batches (AR-10 to AR-12c), including three dialect keywords
+(`x-text`, `x-derived`, `x-at-most`) implemented in both interpreters.
 
 **Risk.** Medium: a wrong shape rejects Lean's own answers (lf-16c review B1). Mitigation: every shape change runs
 the genuine-answer corpus (`tests/data/route-cases.jsonl`) and the drop, empty and retype mutation suite before it
@@ -434,12 +482,26 @@ lf-16d–16g and 18 edit `Service/Document.lean`, `Protocol.lean` and the relay.
 
 ### T2. Typed diagnostics in Lean
 
-**What.** One `inductive Code` and a `Diag` structure (code, English text, optional path) in Lean; producers write
-`fail .invalidInput "…"` instead of a string that begins with the code's name; the service's code list is
-`Code.all.map Code.name`; route-specific code tables attach codes at the throw site.
+**What.**
 
-**Benefit.** No code is parsed out of a message; a reworded message cannot change a code; tests and A/B can compare
-code and path and treat wording as wording. Builds on lf-18's one Python class per code.
+- One `inductive Code` and a `Diag` structure in Lean: code, English text, and an optional `generator`. The
+  generator is what `generatorOf` (`Route/Run.lean:123`) reads today for `InvalidModel(generator)` and for the row's
+  `generator` field.
+- Producers write `fail .invalidInput "…"` instead of a string that begins with the code's name.
+- Runners return `Except Diag` through to `Protocol`, which writes the row's `code` from `d.code`. This is internal,
+  and the wire bytes stay the same, so it needs no `DELTA`.
+- The service's code list is `Code.all.map Code.name`. Route-specific code tables attach codes at the throw site.
+- During the migration, producers not yet migrated go through one adapter, `Diag.ofMessage`. It holds today's
+  parse, and a theorem proves that it inverts `Diag.message`. AR-13b to AR-13e remove its callers, and the last of
+  them deletes it.
+
+**Benefit.**
+
+- When AR-13e has deleted the adapter, no code is parsed out of a message, and a reworded message cannot change a
+  code. Until then, the parse is explicit, in one proved adapter.
+- Tests and A/B compare the code and treat wording as wording. The JSON path reaches the wire only through a later
+  change to the response shape with a signed `DELTA`, which this plan does not schedule.
+- It builds on lf-18's one Python class per code.
 
 **Cost.** *Estimate* 4–6 h for the core, 2–4 h per profile. **Risk.** Low: wire texts stay byte-identical (the
 format function reproduces today's text), and the A/B shows it. **When.** After lf-18.
@@ -493,13 +555,16 @@ for batches started after it; migration after lf-18.
 ### T7. Module splits after the deletions
 
 `ve/document.py` after lf-16g; `ve/readings_verdicts.py` after RD-7; `lean/VE/Service/Standalone.lean` after lf-18;
-`ve/assist/{recovery,session}.py` now. Splits move code without changing it; they follow deletions so that nothing
+`ve/assist/{recovery,session}.py` now; `lean/VE/Question/Properties.lean` after qa-q2. Splits move code without
+changing it; they follow deletions so that nothing
 is moved twice.
 
 ### T8. Identities owned by Lean
 
-**What.** One table of identity domains with an owner each. Python reads Lean-owned identities from Lean's answers
-and compares stored identities with Lean's, never recomputing them; Python-only record identities (assist journal,
+**What.** One table of identity domains with an owner each. Lean computes each Lean-owned identity from the
+admitted content. Its row field is `derived` and names its Lean definition. Python reads it from Lean's answer and
+binds a stored identity by equality with Lean's value. It never recomputes an identity, and it never relies on Lean
+echoing Python's stored value back, which would prove nothing. Python-only record identities (assist journal,
 adapters, proposals) are declared as such.
 
 **Benefit.** Closes P3 and lean-first rule 5 ("Python reads identities from Lean's answers"). **Cost.** 2–3 h
@@ -509,9 +574,12 @@ inventory and lint now, 4–6 h switch later. **When.** Inventory now; switch af
 
 - **Splitting `ve_service` into several binaries.** One persistent service is what made calls cheap (lean-first F1).
   Selection precision is better fixed through the registry (AR-10) than by more executables.
+- **Moving the service deadlines into Lean.** A timeout change would then mean relinking and relocking the 170 MiB
+  service (F4).
 - **Generating Python validators from a contract language** (the earlier reviews' proposal and wire-contract S10).
   Lean owns acceptance; Python checks binding only. The shapes are already generated from Lean.
-- **New dialect keywords beyond `x-text` and `x-at-most`.** Each keyword is implemented twice (Python and Lean).
+- **New dialect keywords beyond `x-text`, `x-derived` and `x-at-most`.** Each keyword is implemented twice (Python
+  and Lean).
 - **Rewriting Rust.** It is 4,854 lines, split into crates, and untrusted.
 
 ## 4. Batch plan
@@ -524,9 +592,10 @@ inventory and lint now, 4–6 h switch later. **When.** Inventory now; switch af
    the nine corpora of the current lean-first gate (the lf-16d task; `tools/batch_evidence.py:21` names seven of
    them) with 0 unlisted differences; any difference is listed in the batch's `DELTA.md` and signed by the DRI.
    The differential fuzzer's baseline must not grow.
-3. **Lean.** `lake build`; `lean/audit.py`; `tools/lean_statements.py --check` shows every kept statement
-   byte-identical and lists additions; `tools/trust_map.py --since <merge-base>` shows no growth of K, S or untied
-   V unless signed; Phase C batches must show a reduction.
+3. **Lean.** `lake build`; `lean/audit.py`; `tools/lean_statements.py --check` shows every kept statement in
+   `statements.txt` and every kept predicate in `predicates.txt` byte-identical and lists additions;
+   `tools/trust_map.py --since <merge-base>` shows no growth of K, S or untied V unless signed, and lists the D[V]
+   and G[V] files changed in `base..head` by trust-map class; Phase C batches must show a reduction.
 4. **Measured outcome.** The batch report states its outcome (lines, files, findings class, commits avoided) from
    numbers its tools generate, not from prose.
 5. **English.** A batch that touches English modules (none in Phases A and B) runs the English corpus gate of
@@ -534,6 +603,10 @@ inventory and lint now, 4–6 h switch later. **When.** Inventory now; switch af
 6. **Lean source gotcha.** `lean/audit.py` forbids the words `sorry`, `axiom`, `unsafe`, `native_decide`,
    `implemented_by`, `partial`, `opaque` and `extern` anywhere in project Lean files, comments included; recursion
    over `Shape` must therefore be structural.
+7. **No report tests (D4).** No architecture batch adds a permanent test of its own evidence (`tests/test_bNN_*`,
+   `*_report.py`, per-batch mutant scripts such as `readings_defaults_rd4b_mutants.py`). Its evidence is checked by
+   `tools/batch_evidence.py --check` at its gate and in the merge train. The AR task template and the infra-item
+   builder rule state this (architecture pass of 2026-10-10, action 3).
 
 ### 4.2 Coordination with running work
 
@@ -544,11 +617,19 @@ lf-18; readings-defaults RD-4b, RD-5, RD-6b, RD-7, RD-9; question answering; Eng
 `lean/VE/{Definitions,Norms,Core,Closure,Order,Readings}/*`, `VE/Service/{Document,Protocol}.lean`,
 `ResponseShape/Schemas/Document.lean`, `ve/english*.py`.
 
+*Update, architecture pass of 2026-10-10:* question answering Q1, eff-tests and RD-4b have merged.
+
+- **Phase A progress.** Seven of its nine batches have launched, and none has merged. AR-3, 6, 7, 8 and 9 are in
+  flight. AR-1 (`arch-20261010-1`) and AR-5a (`arch-20261010-2`) launched on 2026-10-10.
+- **AR-2** waits for `ve-green-eff-merge`, which edits `frozen.py`.
+- **AR-4** waits for rd-6b and qa-q2, which edit `trust-baseline.json`.
+
 - **Phase A** batches touch none of these files except shared inventories (`Audit.lean`, the frozen list,
   `gate-collection.json`, `trust-baseline.json`, the `RELAYED` list of `tools/relay_lint.py`). For those, each batch ships a one-line resolution rule that the
   merge-train sync prompt adopts before the batch merges ("conflict in X: take `main`'s file and run Y").
 - **Phase B** starts when lf-18 has merged; its readings parts start when RD-7 has merged; its English parts are
-  offered to the English track's owner instead of built here.
+  offered to the English track's owner instead of built here; AR-16d (the question module split) starts when
+  qa-q2 has merged.
 - **Phase C** starts when lf-14a–d and lf-18 have merged.
 - At its start, each batch lists the files it will touch and checks them against
   `git diff --name-only main...<branch>` for every branch in flight; an overlap moves it back in the queue
@@ -567,13 +648,21 @@ lf-18; readings-defaults RD-4b, RD-5, RD-6b, RD-7, RD-9; question answering; Eng
   prefix (`VE.` against `ResponseShape.`), sorted by name, with the `import` lines for exactly the modules that
   declare them, each file headed "generated by `lean/audit.py --write`; do not edit". The order is unchanged:
   `declarations.txt` comes from the compiled environment, the manifests from it, `statements.txt` from the
-  manifests. `--check` regenerates in memory and fails on any difference, then runs `lake env lean` on both as today
-  and compares the output with `axioms.txt`. The regex scan of theorem names is deleted; the forbidden-word scan
-  stays.
+  manifests.
+  - **Independent check.** Today the regex scan finds theorems independently of every dump. If `declarations.txt`
+    were stale, a new theorem would be missing from both sides of the comparison and go unaudited. So `--check`
+    also fails when any module's SHA-256 differs from the one recorded for it in `declarations.txt`. That file
+    already stores these hashes, so the check is cheap.
+  - **The rest of `--check`.** It regenerates in memory and fails on any difference, then runs `lake env lean` on
+    both manifests as today and compares the output with `axioms.txt`.
+  - **`--write`** still writes `axioms.txt`, so eff-merge's regeneration keeps working (architecture pass of
+    2026-10-10).
+  - **Scans.** The regex scan of theorem names is deleted; the forbidden-word scan stays.
 - **Lean.** No new declaration. The `#print axioms` command and the allowed set (`propext`, `Classical.choice`,
   `Quot.sound`) are unchanged.
 - **Fixtures.** A scratch module with a new theorem and no manifest line: `--write` adds it, `--check` passes after
-  the write and fails before it. A theorem whose proof uses `sorry`: the audit fails. The Prop-class instances Lean
+  the write and fails before it. A module edited after `declarations.txt` was written: `--check` fails on the
+  hash mismatch. A theorem whose proof uses `sorry`: the audit fails. The Prop-class instances Lean
   compiles as theorems (three today, consolidate-b1 fix 4) are listed and audited; the batch lists them.
 - **Deleted.** Hand edits of both manifests; the theorem regex in `audit.py`.
 - **Gate.** 4.1 items 1 and 3; `tests/test_lean_audit_record.py`; the precommit tests; the new manifests list a
@@ -582,23 +671,34 @@ lf-18; readings-defaults RD-4b, RD-5, RD-6b, RD-7, RD-9; question answering; Eng
   manifest resolves by regeneration. **Collision rule:** "conflict in an `Audit.lean`: take either side, run
   `python3 lean/audit.py --write`".
 
-#### AR-2. A narrow freeze (3–4 h; needs D2)
+#### AR-2. A narrow freeze (3–4 h; per D2)
 
 - **Why.** `frozen-sources.sha256` lists all 391 modules, and 346 of 629 Lean-source commits re-hashed it. The same
-  per-module hashes are in `lean/declarations.txt`, and decoder hashes again in the assurance manifest.
-- **Change.** The frozen list keeps only the files D2 names. The recommendation: files holding K declarations
-  (kernel definitions, trust map class K; 25 files in the current trust inventory) and the frozen-contract
-  decoders (`ve.core@0.1` identities). `frozen.py` gains `--write`. The precommit hook's frozen-file rule applies
-  to the short list only. Statement changes everywhere stay visible through `statements.txt` and the trust report
-  (4.1 item 3).
+  per-module hashes are in `lean/declarations.txt`, and decoder hashes again in the assurance manifest. Since
+  `c24aeab2`, `ve/question/LOCK.json` hashes 12 Question modules that are also in both of those files: three
+  copies, against D2 (architecture pass of 2026-10-10).
+- **Change.**
+  - **The frozen list.** It keeps only the files D2 names: files holding K declarations (kernel definitions, trust
+    map class K; 25 files in the current trust inventory) and the frozen-contract decoders (`ve.core@0.1`
+    identities). `frozen.py` gains `--write`. The precommit hook's frozen-file rule applies to the short list only.
+  - **`ve/question/LOCK.json`.** Its module hashes are removed. Whatever of them the question route still needs
+    pinned is read from `declarations.txt`, or from the frozen list for a module that holds K declarations.
+  - **What replaces the broad freeze.** `statements.txt` cannot see a change to the body of a decoder or a glue
+    file whose theorem statements stay the same. So statement and meaning-predicate changes stay visible through
+    `statements.txt` and `predicates.txt`, and the gate's trust report lists the D[V] and G[V] files changed in
+    `base..head`, by trust-map class (4.1 item 3).
 - **Lean.** None.
 - **Fixtures.** An edit to a K file without a re-hash fails the hook and `frozen.py`; an edit to a non-frozen
-  module passes both; a new module is not required in the list; `Main.lean`'s rule is unchanged.
-- **Deleted.** About 370 of 391 lines; the per-module re-hash step in every Lean batch.
+  module passes both; a new module is not required in the list; `Main.lean`'s rule is unchanged. A body-only edit
+  to a D[V] file appears in the gate's changed-files report. An edit to a Question module needs no `LOCK.json`
+  update.
+- **Deleted.** About 370 of 391 lines; the per-module re-hash step in every Lean batch; the module hashes in
+  `ve/question/LOCK.json`.
 - **Gate.** 4.1 item 1; `tests/test_precommit_hook.py`, `test_wire_contract_lint.py`, `test_wire_contract_s4_lean.py`.
 - **Outcome.** Share of Lean-source commits that edit the frozen list: 55% today; *estimate* under 10%, measured
   over the two weeks after the merge. **Collision rule:** "conflict in `frozen-sources.sha256`: take `main`'s file,
-  run `python3 VE/Route/frozen.py --write`".
+  run `python3 VE/Route/frozen.py --write`". **Order:** AR-2 starts after `ve-green-eff-merge` merges, because that
+  branch edits `frozen.py`.
 
 #### AR-3. Test collection checked against the merge base (3–4 h)
 
@@ -606,20 +706,29 @@ lf-18; readings-defaults RD-4b, RD-5, RD-6b, RD-7, RD-9; question answering; Eng
   tests that silently drop out of collection (`FINDING-CLASSES` class 2).
 - **Change.** The gate record (the git note `tools/batch_evidence.py` reads) starts storing the collected IDs.
   `tools/gate.py` takes the expected collection from the merge base's record, or collects the merge base in a
-  scratch worktree when there is none. A base ID may be missing at the head only if
-  `git diff --no-renames base..head` deletes its file or its test function (read with `ast`), or changes that
-  function's parametrisation. Collection errors still fail (`gate_collection.py:49-51`).
-  `tools/gate-optional.json` stays.
+  scratch worktree when there is none.
+  - **Removal records.** A base ID may be missing at the head only if a `Test-removed:` commit trailer in
+    `base..head` names it, with the reason. One trailer may cover all the IDs of a deleted function or file.
+    Reviewers read these records with the batch, so deleting a test or changing its parametrisation never
+    authorises a lost ID by itself.
+  - **No shared list.** The record is never a shared committed list, which would bring back
+    `gate-collection.json`'s churn (274 regeneration commits in 14 days) and its merge conflicts.
+  - **The `ast` rule only labels.** The `ast` rule (`git diff --no-renames base..head` deletes the ID's file or
+    function, or changes that function's parametrisation) only labels each removal in the gate report.
+  - **Unchanged.** Collection errors still fail (`gate_collection.py:49-51`). `tools/gate-optional.json` stays.
 - **Lean.** None.
-- **Fixtures.** A module that fails to import; a conftest change that skips a module at collection; a parametrise
-  list that shrinks in an unchanged function: each fails. A deleted test function and a deleted test file: pass.
+- **Fixtures.**
+  - Each of these fails: a module that fails to import; a conftest change that skips a module at collection; a
+    parametrise list that shrinks in an unchanged function.
+  - A deleted test function and a deleted test file fail without a `Test-removed:` trailer, and pass with one.
+  - A trailer that names an ID still collected at the head fails as stale.
 - **Deleted.** `tools/gate-collection.json`, the `--write` path of `gate_collection.py`.
 - **Gate.** `tests/test_gate_collection.py`, `test_gate.py`, `test_gate_integrity.py`; one full gate.
 - **Outcome.** −13,747 committed lines and no regeneration commits; the extra cost is at most one collection of the
   base, which the batch measures. **Collision rule:** "modify/delete conflict on `gate-collection.json`: take the
   deletion".
 
-#### AR-4. The trust budget as a ratchet (3–4 h; needs D3)
+#### AR-4. The trust budget as a ratchet (3–4 h; per D3)
 
 - **Why.** 1.5: the budget follows the code; `trust_map.py --check` fails on `main`; the per-file tables
   (12,826-line file) conflict and one is stale.
@@ -633,10 +742,13 @@ lf-18; readings-defaults RD-4b, RD-5, RD-6b, RD-7, RD-9; question answering; Eng
   the budget at the merge; two branches that each add an allowance merge without a conflict on totals.
 - **Deleted.** About 12,600 lines of committed per-file classification.
 - **Gate.** `tests/test_consolidation_tools.py` (1,478 lines; the trust-map parts updated); the check passes on
-  `main` after the DRI signs today's budget or a lower one.
+  `main` after the DRI signs the starting budget (D3).
+  - **The starting budget** is the value measured at AR-4's base. It is no longer "at most 35,892 V": by the
+    architecture pass of 2026-10-10, signed increases had raised `V` to 36,765.
+  - **Order.** AR-4 starts after rd-6b and qa-q2 merge, because both edit `trust-baseline.json`.
 - **Outcome.** A budget that cannot rise without a signature; file 12,826 → *estimate* under 300 lines.
 
-#### AR-5a. The evidence toolkit (5–6 h; needs D4)
+#### AR-5a. The evidence toolkit (5–6 h; per D4)
 
 - **Why.** 2.7: 70 copied scripts, 14 false-pass findings on gates and evidence, 27 permanent report-test files,
   two branch gates broken by them after a sync.
@@ -645,7 +757,8 @@ lf-18; readings-defaults RD-4b, RD-5, RD-6b, RD-7, RD-9; question answering; Eng
   `mutants` (apply, run the named test, restore, record), `report` (numbers rendered from the evidence JSON);
   `docs/<track>/<batch>/evidence.toml` names the corpora, workloads and claims. `tools/batch_evidence.py --check
   <dir>` reads the toml and the evidence. Batches started after this merge use it and add no `tests/test_bNN_*.py`;
-  the merge train runs the check for the batch it merges.
+  the merge train runs the check for the batch it merges. `mutants` reuses eff-merge's `tools/mutants.py` once
+  that branch merges, and never copies it (architecture pass of 2026-10-10). AR-5a adds no report tests itself.
 - **Lean.** None.
 - **Fixtures.** The four historical false passes as known-answer tests: two documents with the same file name in
   different directories (b1 latency), a replay verdict swapped after hashing stops (b10a trace fuzzer), empty A/B
@@ -675,7 +788,8 @@ lf-18; readings-defaults RD-4b, RD-5, RD-6b, RD-7, RD-9; question answering; Eng
 
 - **Change.** `docs/ARCHITECTURE.md`: section 1 of this review, kept current with the commands of section 7; the
   corrections of table 1.6 applied (each stale passage replaced or marked superseded with a link);
-  `docs/adr/0001-response-binding.md` with the binding definition of T1(a) for the DRI to sign (D1);
+  `docs/adr/0001-response-binding.md` with the binding definition of T1(a) as adopted by the DRI (D1), with the
+  four leaf classes;
   `docs/ARCHITECTURE-LAYERS.md` points to the new map for anything but the checker commands.
 - **Lean.** None. **Fixtures.** `tests/test_testing_profile_doc.py` and the other doc tests pass.
 - **Outcome.** One current map; 11 stale statements corrected (table 1.6).
@@ -704,56 +818,66 @@ lf-18; readings-defaults RD-4b, RD-5, RD-6b, RD-7, RD-9; question answering; Eng
 - **Outcome.** No assist file over 700 lines (*estimate*); function-level imports in `assist/` counted before and
   after.
 
-### 4.4 Phase B: after lf-18 merges (readings parts after RD-7)
+### 4.4 Phase B: after lf-18 merges (readings parts after RD-7, AR-16d after qa-q2)
 
-#### AR-10. Route registry in Lean; Python reads modes and deadlines from the handshake (4–6 h)
+#### AR-10. Route registry in Lean; Python reads modes from the handshake (4–6 h)
 
 - **Lean.** New `lean/VE/Service/Registry.lean`:
 
 ```lean
 namespace VE.Service
 
-/-- One public mode of the service and its deadline: CPU milliseconds per case and per MiB of
-cases. The values are today's `ve/backends/lean_service.py` `DEADLINES`. -/
+/-- One public mode of the service. AR-12b adds its null policy (`nulls`). Deadlines are not
+here: they stay a Python operational policy (F4). -/
 structure RouteSpec where
   mode : Mode
-  baseMs : Nat
-  perMiBMs : Nat
   deriving Repr
 
-def registry : List RouteSpec := [
-  ⟨.evaluate, 5000, 30000⟩, ⟨.checkCertificate, 5000, 30000⟩, -- … one entry per `Mode`, in `modes` order
-  ⟨.rights, 120000, 1000000⟩, ⟨.document, 120000, 120000⟩ ]
+def registry : List RouteSpec := modes.map fun m => ⟨m⟩
 
 theorem modes_complete (m : Mode) : m ∈ modes := by cases m <;> decide
 theorem registry_modes : registry.map (·.mode) = modes := by decide
 theorem registry_names_nodup : (registry.map (·.mode.name)).Nodup := by decide
 ```
 
-  The handshake gains `"deadlines": {mode: [baseMs, perMiBMs]}` from `registry`, with its shape in
+  The handshake carries the modes from `registry`, and later the null policy, with its shape in
   `ResponseShape/Schemas/Envelope.lean`. If `decide` is slow in the kernel, `#guard` on the Boolean forms is the
   fallback the project already uses.
-- **Python.** `service_schema.MODES`, `lean_service.DEADLINES` and the mode lists in `tests/lean_routes.py` and
-  `tests/test_lean_service.py` come from the handshake (lf-18 already moves the I/O caps there).
-- **Fixtures.** A handshake golden; a new `Mode` constructor without a registry entry fails to compile.
-- **Deleted.** P6's modes and deadlines; mode-name lists in tests.
+- **Python.** `service_schema.MODES` and the mode lists in `tests/lean_routes.py` and `tests/test_lean_service.py`
+  come from the handshake (lf-18 already moves the I/O caps there). `lean_service.DEADLINES` stays in Python (F4,
+  `lean_service.py:46`). Moving it would turn a timeout change into a relink and relock of the 170 MiB service. A
+  test checks that its keys equal the handshake's modes.
+- **Fixtures.** A handshake golden; a new `Mode` constructor without a registry entry fails to compile; a mode
+  without a `DEADLINES` entry, and a `DEADLINES` key that is no mode, each fail the keys test.
+- **Deleted.** P6's modes; mode-name lists in tests.
 - **Outcome.** Adding a mode edits Lean only (runner, shape, one registry line); the number of files spelling a mode
   name, measured with `"risk-eval"` (12 today).
 
-#### AR-11a and AR-11b. Binding by construction in the response shapes (5–6 h each; needs D1)
+#### AR-11a and AR-11b. Binding by construction in the response shapes (5–6 h each; per D1)
 
-- **Lean.** In `lean/ResponseShape.lean`, two new `Shape` constructors and a census:
+- **Lean.** In `lean/ResponseShape.lean`, three new `Shape` constructors and a census:
 
 ```lean
   /-- Display text: the client never compares it with the request (rendered `x-text: why`). -/
   | text (why : String) (s : Shape)
+  /-- A value Lean derives and Python uses without recomputing it (an identity, an elaborated
+  formula, a coverage). `guarantee` names the Lean theorem or invariant behind it (rendered
+  `x-derived: guarantee`). -/
+  | derived (guarantee : String) (s : Shape)
   /-- An integer at most the request's integer at `pointer` (rendered `x-at-most`). -/
   | atMost (pointer : String)
 
-/-- The paths, under `path`, of leaves typed only `string` or `integer` that no binding
-keyword (`echo`, `equals`, `references`, `count`, `length`, `index`, `digest`, `atMost`),
-closed domain (`const`, `enum`, `pattern`, `lean`, `tagged`) or mark (`text`, `copied`)
-covers. A `node` is covered when any of its keywords is. Structural recursion over `Shape`. -/
+/-- The paths, under `path`, of leaves typed only `string` or `integer` that fall in none of
+the four classes:
+* bound to the request: `echo`, `equals`, `references`, `count`, `length`, `index`, `digest`,
+  `atMost`; a leaf that names a request item counts only through `references` or `equals`;
+* closed domain: `const`, `enum`; `lean` and `copied` only when their inner shape is itself
+  bound or closed (Python checks only that inner shape, `ResponseShape.lean:167-172`);
+* `derived`;
+* `text`.
+`pattern` checks a format, not a binding, and covers nothing. A `tagged` leaf is covered when
+each of its branches is. A `node` is covered when any of its keywords is. Structural
+recursion over `Shape`. -/
 def Shape.unbound (path : String) : Shape → List String
 
 /-- Every schema of a file: its top-level schemas and its `$defs`, groups included. -/
@@ -771,20 +895,39 @@ def Schemas.unboundCensus : List String :=
 
   AR-11a: the constructors, both interpreters (`ResponseShape.check` and `ve/backends/service_schema.py`), the
   census with `pendingUnbound` set to today's list, and the core and envelope modes classified. AR-11b: the
-  statement-layer modes and `document`; `pendingUnbound = []`. The skeleton of `text why s` is that of `s` and the
-  skeleton of `atMost p` is an integer, so the encoder proofs (`runMode_fits`) need no new reasoning; the batch
-  re-checks them.
-- **Python.** `x-text` checks nothing; `x-at-most` compares integers (type-strict, so `true` is not 1).
-  `tests/test_lean_service_schema.py` requires the two interpreters to agree on every mutation, as today.
-- **Fixtures.** The genuine-answer corpus (`tests/data/route-cases.jsonl`) and the existing drop, empty and retype
-  mutations, plus one new mutation: every string leaf replaced by a value absent from the request must fail unless
-  the leaf is `text`. The open findings as regression cases: assumption names not in the graph (lf-13b B1),
-  `steps` over `max_steps` (lf-13b B2), a changed span (lf-16b), an invented coverage unit (lf-5), a forged unit
-  status (lf-11b).
-- **Deleted.** Binding code the shapes now cover: the ID and span checks of `document.py:458-507`, the `_need` binders
-  in `readings_route.py` that the shape covers, `speech_source.py`'s field table. `document.py:508-540` (coverage
-  recomputation) moves to `ResponseDecode.invariants` (bytes by kind sum to the source bytes; the residual total
-  is the sum of the residual lines), tested on the document corpus; the Python copy is deleted.
+  statement-layer modes, `document` and the question route (whose `question_problem` checker the shape replaces);
+  `pendingUnbound = []`.
+  - **Encoder proofs.** The skeletons of `text why s` and `derived g s` are that of `s`, and the skeleton of
+    `atMost p` is an integer. So the encoder proofs (`runMode_fits`) need no new reasoning; the batch re-checks
+    them.
+  - **The `derived` guarantee.** Each `derived` guarantee names a theorem on the encoder wherever that is
+    feasible. Otherwise it names a `ResponseDecode` invariant. `ResponseDecode` runs only at test time, so a value
+    covered only that way is not checked at run time, and the batch report lists those values.
+  - **What the census proves.** It proves that every leaf is classified, not that each leaf is correctly
+    classified. Each mark is a review item in the batch's statement review.
+- **Python.** `x-text` and `x-derived` check nothing; `x-at-most` compares integers (type-strict, so `true` is not
+  1). `tests/test_lean_service_schema.py` requires the two interpreters to agree on every mutation, as today.
+- **Fixtures.**
+  - **Corpus and existing mutations.** The genuine-answer corpus (`tests/data/route-cases.jsonl`) and the existing
+    drop, empty and retype mutations.
+  - **One new mutation.** Every string leaf is replaced by a value that is outside the leaf's domain and also
+    absent from the request. The answer must then fail unless the leaf is `text` or `derived`. A valid enum value
+    or a valid derived string is therefore never the mutant.
+  - **Regression cases from the open findings:**
+    - assumption names not in the graph, which still match a `pattern` (lf-13b B1);
+    - `steps` over `max_steps` (lf-13b B2);
+    - a changed span (lf-16b);
+    - an invented coverage unit (lf-5);
+    - a forged unit status (lf-11b);
+    - a `copied (…) (type string)` leaf with an unbound inner shape, which counts as unbound.
+- **Deleted.** Binding code the shapes now cover:
+  - the ID and span checks of `document.py:458-507`;
+  - the `_need` binders in `readings_route.py` that the shape covers;
+  - `speech_source.py`'s field table.
+
+  `document.py:508-540` (the coverage recomputation) becomes a `derived` coverage. Its guarantee is an encoder
+  theorem where feasible, otherwise `ResponseDecode.invariants`: the bytes by kind sum to the source bytes, and the
+  residual total is the sum of the residual lines, tested on the document corpus. The Python copy is deleted.
 - **Outcome.** Unbound leaves: today's census → 0; class "Lean answer unbound" findings in later reviews, counted
   as in 2.10.
 
@@ -799,8 +942,8 @@ def Schemas.unboundCensus : List String :=
 
 #### AR-12b. One null policy and one admission call (3–4 h)
 
-- **Lean.** `RouteSpec` gains `nulls : NullPolicy` with `inductive NullPolicy | omit | omitWithPaths`, set per mode
-  to today's behaviour (`reports` is `omitWithPaths`); the handshake carries it.
+- **Lean.** AR-10's `RouteSpec` gains `nulls : NullPolicy` with `inductive NullPolicy | omit | omitWithPaths`, set
+  per mode to today's behaviour (`reports` is `omitWithPaths`); the handshake carries it.
 - **Python.** The relay applies the declared policy. `rights_route._wire`, `reports_route._without_null` and
   `_split_nulls`, `soft_relay.wire` and `readings_s1.wire` are deleted; the five copies of the `id`/`status` strip
   become `relay.admission(mode, environment, document)`.
@@ -819,7 +962,7 @@ def Schemas.unboundCensus : List String :=
 - **Outcome.** Transports 3 → 2 (service and Rust); one-shot executables in production 4 → 0; latency per call
   measured (lean-first 3.2: about 0.1 s CPU per one-shot process before any work).
 
-#### AR-13a to AR-13e. Typed diagnostic codes (13a: 4–6 h; 13b–13e: 2–4 h each; needs D6)
+#### AR-13a to AR-13e. Typed diagnostic codes (13a: 4–6 h; 13b–13e: 2–4 h each; per D6)
 
 - **Lean (13a).** New `lean/VE/Diag.lean`:
 
@@ -846,33 +989,68 @@ def Code.all : List Code := [.invalidInput, .syntaxError, .unknownSymbol, .dupli
 
 def Code.ofName? (s : String) : Option Code := Code.all.find? (·.name == s)
 
-/-- A rejection: its public code, its English text, and the JSON path when Lean can name it. -/
+/-- A rejection: its public code, its English text, and the generator an `InvalidModel`
+rejection names (today read back by `Route.Run.generatorOf`, `Route/Run.lean:123`, for both the
+code and the row's `generator` field). No JSON path: a path reaches the wire only through a
+later change to the response shape with a signed `DELTA`. -/
 structure Diag where
   code : Code
   text : String
-  path : Option String := none
+  generator : Option String := none
 
-/-- The wire text of a rejection, byte-identical to today's `"<Code>: <text>"` messages. -/
-def Diag.message (d : Diag) : String := d.code.name ++ ": " ++ d.text
+/-- The wire text of a rejection, byte-identical to today's messages: `"<Code>: <text>"`, or
+`"<Code>(<generator>): <text>"` as in `"InvalidModel(norm-defaults): …"`. -/
+def Diag.message (d : Diag) : String :=
+  match d.generator with
+  | some g => d.code.name ++ "(" ++ g ++ "): " ++ d.text
+  | none => d.code.name ++ ": " ++ d.text
 
-def fail {α : Type} (c : Code) (text : String) : Except String α := .error (Diag.message ⟨c, text, none⟩)
+def fail {α : Type} (c : Code) (text : String) (generator : Option String := none) : Except Diag α :=
+  .error ⟨c, text, generator⟩
+
+/-- The one transitional adapter: today's parse (`rejectionCode`, `generatorOf`) for producers
+not yet migrated. AR-13b–13e remove its callers; AR-13e deletes it. -/
+def Diag.ofMessage (m : String) : Diag
 
 theorem Code.ofName?_name (c : Code) : Code.ofName? c.name = some c := by cases c <;> decide
 theorem Code.all_complete (c : Code) : c ∈ Code.all := by cases c <;> simp [Code.all]
 theorem Code.names_nodup : (Code.all.map Code.name).Nodup := by decide
+
+/-- The adapter inverts the formatter, for every generator name without `)`
+(the generator names in use are listed by the batch). -/
+theorem Diag.ofMessage_message (d : Diag) (hg : ∀ g, d.generator = some g → ¬ ')' ∈ g.toList) :
+    Diag.ofMessage (Diag.message d) = d
 ```
 
-  `VE.Service.rejectionCodes` is redefined as `Code.all.map Code.name` (one owner; the handshake's list is
-  unchanged, so `theorem rejectionCodes_eq : VE.Service.rejectionCodes = Code.all.map Code.name := rfl`).
+  - **One owner of the code list.** `VE.Service.rejectionCodes` is redefined as `Code.all.map Code.name`. The
+    handshake's list is unchanged, so `theorem rejectionCodes_eq : VE.Service.rejectionCodes = Code.all.map
+    Code.name := rfl`.
+  - **`Except Diag` up to `Protocol`.** Runners return `Except Diag` up to `Protocol`. `runCaseReported`, and
+    `codeMembers` (`Protocol.lean:196-200`), write `error` from `Diag.message d`, `code` from `d.code.name` and
+    `generator` from `d.generator`.
+  - **Unmigrated producers.** Every producer not yet migrated still throws a string, which crosses into `Diag`
+    through `Diag.ofMessage`, the only place a code is parsed. The wire bytes stay the same, so this needs no
+    `DELTA`.
 - **Lean (13b–13e).** One profile group per batch (core routes; norms and norm defaults; soft norms and rights;
-  the rest): each `throw s!"InvalidInput: …"` becomes `fail .invalidInput s!"…"`; the soft route's prefix table
-  (`SoftNorms/Run.lean:411-447`) is replaced by codes attached where `Phases.fail` already names them.
-- **Fixtures.** The A/B over all corpora: messages and codes byte-identical. A grep count of code-prefixed literals
-  (about 1,300 today) is the progress metric, not a gate.
-- **Deleted.** Prefix parsing for migrated producers; the soft prefix table; nothing user-visible changes.
-- **Outcome.** Code-prefixed literals → 0 in migrated modules; codes no longer derived from texts.
+  the rest):
+  - Each `throw s!"InvalidInput: …"` becomes `fail .invalidInput s!"…"`, and each `InvalidModel(g): …` becomes
+    `fail .invalidModel "…" (some "g")`.
+  - The soft route's prefix table (`SoftNorms/Run.lean:411-447`) is replaced by codes attached where `Phases.fail`
+    already names them.
+  - Each batch removes its group's calls of `Diag.ofMessage`. AR-13e removes the last ones and deletes the adapter,
+    `rejectionCode` and `generatorOf`.
+- **Fixtures.**
+  - The A/B over all corpora: messages, codes and generators byte-identical.
+  - The adapter theorem, checked on every rejection message in the corpora.
+  - A grep count of code-prefixed literals (about 1,300 today) and the number of `Diag.ofMessage` callers are the
+    progress metrics, not gates.
+- **Deleted.** Prefix parsing for migrated producers, and all of it with the adapter in AR-13e; the soft prefix
+  table. Nothing user-visible changes.
+- **Outcome.** Code-prefixed literals → 0 in migrated modules. Until AR-13e, the plan's claim is exactly this:
+  codes of unmigrated producers are parsed in one adapter that is proved to invert the formatter. After AR-13e, no
+  code is derived from a text, and T2 is complete.
 
-#### AR-14. Python layer map after lean-first, checked by `import-linter` (3–5 h; needs D5)
+#### AR-14. Python layer map after lean-first, checked by `import-linter` (3–5 h; per D5)
 
 - **Change.** `tools/layer_policy.py`'s Python table becomes T5's five layers; `import-linter` contracts replace
   `check_python_layers.py` and the custom resolver (`layer_policy.py:43-87`); the 30 adapter exceptions are
@@ -882,14 +1060,23 @@ theorem Code.names_nodup : (Code.all.map Code.name).Nodup := by decide
 - **Fixtures.** A seeded outward import fails; `tools/test_layer_policy.py` updated.
 - **Outcome.** Python layer exceptions 42 → *estimate* at most 6; indented relative imports 646 → measured.
 
-#### AR-15. Identities read from Lean (4–6 h; needs D7; after lf-16g, lf-18, RD-7)
+#### AR-15. Identities read from Lean (4–6 h; per D7; after lf-16g, lf-18, RD-7)
 
-- **Change.** Each allowlisted Lean-owned site of AR-6 is replaced: Python reads `environment_id`, `meaning_id`,
-  `source_id`, `document_id`, `report_id` and the document hashes from Lean's answers, and binds a stored identity
-  by equality with Lean's value. Where a route does not yet return an identity Python needs, the batch adds it to
-  the row and its shape as a bound field (`echo` of the stored value, or a digest of request text).
-- **Lean.** Only the added row fields and their shapes; `runMode_fits` re-proved for the touched modes.
-- **Fixtures.** Corpus A/B identities identical; a forged identity in a row fails binding.
+- **Change.**
+  - **Identities Lean computes.** Each allowlisted Lean-owned site of AR-6 is replaced only where Lean computes
+    that identity independently, from the admitted content. Python reads `environment_id`, `meaning_id`,
+    `source_id`, `document_id`, `report_id` and the document hashes from Lean's answers. Each such field is
+    `derived` in its shape and names its Lean definition. Python binds a stored identity by equality with Lean's
+    value.
+  - **No echo.** An `echo` of Python's stored value proves nothing about Lean's computation, so it is never used
+    for an identity.
+  - **Identities Lean does not yet return.** Where a route does not yet return an identity Python needs, the batch
+    adds a Lean computation of it from the admitted object to the row. Until then the site stays on the AR-6
+    allowlist.
+- **Lean.** Only the added identity computations, row fields and shapes; `runMode_fits` re-proved for the touched
+  modes.
+- **Fixtures.** Corpus A/B identities identical. A row whose identity differs from the stored one fails the
+  equality bind. A Lean identity computed from changed content differs.
 - **Outcome.** Python identity sites 36 → the Python-owned records only (9 today, unless D7 moves some).
 
 #### AR-16a, AR-16b, AR-16c. Module splits (3–5 h each)
@@ -901,7 +1088,13 @@ theorem Code.names_nodup : (Code.all.map Code.name).Nodup := by decide
 - **16c** (after lf-18): `lean/VE/Service/Standalone.lean` into legacy envelopes, model and environment decoders and
   typing; one owner for environment diagnostic texts (L4); `Legacy.family` and the error-path recomputation removed
   (L5). Lean statements: every moved declaration keeps its name; `statements.txt` byte-identical for kept theorems.
-- **Outcome.** No Python module over 1,000 lines in these areas (*estimate*); trusted lines unchanged or lower.
+- **16d** (after qa-q2; added by the architecture pass of 2026-10-10): `lean/VE/Question/Properties.lean` (1,711
+  lines) along its property groups.
+  - **Lean statements.** As in 16c: every moved declaration keeps its name; `statements.txt` and `predicates.txt`
+    are byte-identical for kept names. The new modules replace the old one wherever the question route's
+    hashes are recorded (see AR-2 for `ve/question/LOCK.json`).
+- **Outcome.** No Python module over 1,000 lines in these areas (*estimate*); no Lean module of 16c or 16d over
+  1,500 lines; trusted lines unchanged or lower.
 
 #### AR-17. Readings S2 regeneration removed (4–6 h; after RD-7 and lf-14d, if RD-7 has not done it)
 
@@ -912,13 +1105,14 @@ theorem Code.names_nodup : (Code.all.map Code.name).Nodup := by decide
   disagreement that today yields `ReadingsConformance` is listed as an `availability` change for signature.
 - **Outcome.** P4 closed; lines deleted measured.
 
-#### AR-5b. Evidence migration (3–4 h; needs D4)
+#### AR-5b. Evidence migration (3–4 h; per D4)
 
-- **Change.** The 27 report-test files move to `docs/<track>/<batch>/evidence.toml` checks; evidence files over 1 MB
+- **Change.** The report-test files (27 at `c24aeab2`, 37 on `main` at the architecture pass of 2026-10-10;
+  re-counted at the batch's start) move to `docs/<track>/<batch>/evidence.toml` checks; evidence files over 1 MB
   move to the evidence branch with a manifest; the copied scripts are deleted where the toolkit reproduces their
   result.
 - **Fixtures.** Each migrated batch's check gives the same verdict as its report test did.
-- **Outcome.** −27 test files (about 2,800 lines); checkout −*estimate* 120 MB.
+- **Outcome.** −27 or more test files (about 2,800 lines at `c24aeab2`); checkout −*estimate* 120 MB.
 
 ### 4.5 Phase C: Lean consolidation (after lf-14a–d and lf-18)
 
@@ -990,38 +1184,61 @@ whose order of checks the table cannot reproduce (the norms route admits only on
 now:            AR-7 first (the map and the binding ADR), then AR-1 to AR-6, AR-8, AR-9 in any order
 after lf-18:    AR-10 ─ AR-11a ─ AR-11b ─ AR-12a ─ AR-12b ─ AR-12c       AR-13a ─ AR-13b..e
                 AR-14   AR-16c   AR-5b
-after lf-16g:   AR-16a          after RD-7: AR-15, AR-16b, AR-17
+after lf-16g:   AR-16a          after RD-7: AR-15, AR-16b, AR-17          after qa-q2: AR-16d
 after lf-14:    AR-20 ─ AR-21 ─ AR-22 ─ AR-23    AR-24 (needs AR-10) ─ AR-25…
 ```
 
 | Phase | Batches | Builder hours (*estimate*) | Measured outcome to report |
 |---|---:|---:|---|
 | A (now) | 9 | 26–35 | −13,747 (test IDs), −~12,600 (trust tables), −~370 (frozen list) committed inventory lines; edits per Lean commit of the frozen list and audit manifests; 0 new evidence scripts and report tests; −~500 lines of Rust tokenizer |
-| B (after lf-18) | 18 | 61–91 | unbound leaves → 0; checking styles 6 → 1; one-shot executables in production 4 → 0; null policies 4 → 1; code-prefixed literals → 0 in migrated modules; Python identity sites 36 → 9; layer exceptions 42 → at most 6; −27 report-test files; −~120 MB per checkout |
+| B (after lf-18) | 19 | 64–96 | unbound leaves → 0; checking styles 6 → 1 (the question route's included); one-shot executables in production 4 → 0; null policies 4 → 1; code-prefixed literals → 0 in migrated modules, `Diag.ofMessage` deleted; Python identity sites 36 → 9; layer exceptions 42 → at most 6; −27 or more report-test files; −~120 MB per checkout |
 | C (after lf-14, lf-18) | 6, then the consolidation plan | 28–34 for the first six | trusted lines (K, S, untied V) lower at every batch; −1,548 untrusted lines (3b); one definition of the logic fewer (3c) |
 
 The expected fall in review findings is an estimate: classes "unbound answer" and "gate passes when it should not"
 were at least 37 of the B findings in 2.10; after Phase B the same classification, run on the next 20 review files,
 measures the effect.
 
-## 5. Decisions for the DRI
+## 5. DRI decisions (decided 2026-10-10)
 
-1. **D1. Binding contract.** Adopt T1(a): binding is a closed list of relations to the request; derived values are
-   Lean's, proved or checked by `ResponseDecode` invariants, never recomputed in Python. Recommended: yes. It
-   settles the disagreement between `docs/spec/lean-service.md:41-60` and the build checklists, and review prompts
-   can cite it.
-2. **D2. What stays hash-frozen.** Recommended: files with K declarations and the frozen-contract decoders; statement
-   changes guarded by `statements.txt` and the trust report.
-3. **D3. Trust ratchet.** The budget falls automatically and rises only by a signed allowance in the same merge; the
-   DRI signs today's 35,892 V (or a lower measured value) as the starting point.
-4. **D4. Report tests and evidence.** Batch evidence is checked at the batch's gate and by the merge train, not by
-   permanent tests; evidence files over 1 MB live on an evidence branch with an in-tree manifest.
-5. **D5. Python layer map.** T5's five layers, with `import-linter` as the checker.
-6. **D6. Typed codes.** The `Code` enumeration and `Diag` of AR-13, with wire texts unchanged.
-7. **D7. Identity owners.** Lean owns the meaning, environment, source, document, report and document-hash domains;
-   Python owns only its app records (assist, adapters, proposals, argument packages, checker build).
-8. **D8. lf-18's scope.** lf-18 moves I/O caps into the handshake; AR-10 adds modes and deadlines. Either lf-18
-   takes AR-10's Python half, or AR-10 follows it. Recommended: AR-10 follows, so lf-18 keeps its size.
+The DRI adopted all eight recommendations as written (`manage-agents/arch-dri-decisions.md`). The text below records
+them together with the edits the converged review made to the batches they govern, and with one correction from
+the architecture pass of 2026-10-10 (D3).
+
+1. **D1. Binding contract: decided, T1(a).**
+   - Binding is a closed list of relations to the request. A field that names a request item is bound only by
+     `references` or `equals`.
+   - Derived values are Lean's, proved or checked by `ResponseDecode` invariants, and never recomputed in Python.
+     Their leaves carry the `derived (guarantee)` mark. An encoder theorem is preferred, because a `ResponseDecode`
+     invariant is checked only at test time.
+   - The census proves that every leaf is classified, not that it is correctly classified.
+   - This settles the disagreement between `docs/spec/lean-service.md:41-60` and the build checklists, and review
+     prompts cite it. It matches the rd-3 ruling and DRI-RULINGS R8.
+2. **D2. What stays hash-frozen: decided.**
+   - Only files with K declarations and the frozen-contract decoders stay hash-frozen.
+   - Statement changes are guarded by `statements.txt`, `predicates.txt` and the trust report. The trust report
+     lists the D[V] and G[V] files changed in `base..head`.
+   - No other hash copy is kept. `ve/question/LOCK.json`'s module hashes are removed in AR-2.
+3. **D3. Trust ratchet: decided.**
+   - The budget falls automatically and rises only by a signed allowance in the same merge.
+   - The starting point is the value measured at the batch's base, signed by the DRI. The decision text's bound
+     "at most 35,892 V" is out of date: by the architecture pass of 2026-10-10, signed increases had raised `V` to
+     36,765. So the DRI re-signs the value measured at AR-4's base.
+4. **D4. Report tests and evidence: decided.**
+   - Batch evidence is checked at the batch's gate and by the merge train, not by permanent tests. This applies to
+     the architecture batches themselves (4.1 item 7).
+   - Evidence files over 1 MB live on an evidence branch with an in-tree manifest.
+5. **D5. Python layer map: decided.** T5's five layers, checked by `import-linter`.
+6. **D6. Typed codes: decided.**
+   - The `Code` enumeration and `Diag` of AR-13, with wire texts unchanged.
+   - `Diag` carries `generator` and no path. Runners return `Except Diag` up to `Protocol`.
+   - Unmigrated producers go through the one proved adapter `Diag.ofMessage`, which AR-13e deletes.
+7. **D7. Identity owners: decided, as written.**
+   - Lean owns the meaning, environment, source, document, report and document-hash domains.
+   - Python owns only its app records (assist, adapters, proposals, argument packages, checker build).
+   - Lean computes each identity it owns from content. Python binds its stored value by equality and never by echo
+     (AR-15).
+8. **D8. lf-18's scope: decided.** AR-10 follows lf-18, so lf-18 keeps its size. AR-10 carries modes and, with
+   AR-12b, the null policy. Deadlines stay in Python (F4).
 
 ## 6. What this plan does not change
 
