@@ -225,6 +225,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateOne_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateOne_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runOne_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.asObject_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.componentRows
 #print axioms ResponseShape.Encoders.ReadingsRoute.runComponents_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.or_beq

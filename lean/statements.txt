@@ -16827,6 +16827,12 @@ theorem VE.Readings.conflictFree_empty
   ∀ {Dd : VE.Norms.Doc}, VE.Norms.Valid Dd → ∀ (B : VE.Structure), ¬Nonempty B.Carrier → VE.Norms.ConflictFree Dd B
   -- uses VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 371989434
+theorem VE.Readings.conflictRowItems_label
+  ∀ (ke : Nat × Lean.Json) (x : VE.Readings.PlanItem),
+    x ∈ VE.Readings.conflictRowItems ke →
+      ∀ (l : String), x.label? = Option.some l → x = VE.Readings.PlanItem.text "status" Option.none [] (Option.some l)
+  -- uses VE.Readings.PlanItem.label?@VE.Readings.VerdictsWire VE.Readings.PlanItem.text@VE.Readings.VerdictsWire VE.Readings.PlanItem@VE.Readings.VerdictsWire VE.Readings.conflictRowItems@VE.Readings.VerdictsWire
+  -- expr 8660970
 theorem VE.Readings.conflict_canon_valid
   ∀ {Z : VE.SoftNorms.SoftDoc},
     VE.Norms.Valid (VE.SoftNorms.soften Z) →
@@ -18646,6 +18652,12 @@ theorem VE.Readings.gateContent_norm
     VE.Readings.gateContent D m i (VE.Compose.Content.norm N) = VE.Compose.Content.norm (VE.Readings.gateNorm D m i N)
   -- uses VE.Compose.Content.norm@VE.Compose.Content VE.Compose.Content@VE.Compose.Content VE.Readings.Doc@VE.Readings.Doc VE.Readings.gateContent@VE.Readings.Choice VE.Readings.gateNorm@VE.Readings.ChoiceFacts VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 1113153803
+theorem VE.Readings.gateItems_label
+  ∀ (D : VE.Readings.Doc) (a : Lean.Json) (s : String) (c : VE.Readings.Choice) (x : VE.Readings.PlanItem),
+    x ∈ VE.Readings.gateItems D a s c →
+      ∀ (l : String), x.label? = Option.some l → x = VE.Readings.PlanItem.text "status" Option.none [] (Option.some l)
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.PlanItem.label?@VE.Readings.VerdictsWire VE.Readings.PlanItem.text@VE.Readings.VerdictsWire VE.Readings.PlanItem@VE.Readings.VerdictsWire VE.Readings.gateItems@VE.Readings.VerdictsWire
+  -- expr 2613087536
 theorem VE.Readings.genDecls_head
   ∀ (Z : VE.Rights.RightsDoc) {d : String × List String}, d ∈ VE.Rights.genDecls Z → d.fst.data.head? = Option.some 'r'
   -- uses VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.genDecls@VE.Rights.Tree
@@ -22716,6 +22728,12 @@ theorem VE.Readings.uniformPrecedence_spec
                                       ∀ (m : String), m ∈ Na.over ↔ m ∈ Nb.over
   -- uses VE.Compose.Content.norm@VE.Compose.Content VE.Compose.Content@VE.Compose.Content VE.Norms.Node.over@VE.Norms.Tree VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Item.fixed@VE.Readings.Doc VE.Readings.Item@VE.Readings.Doc VE.Readings.ReadingSet.candidates@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.interfaceOf@VE.Readings.Doc VE.Readings.ruleNamed@VE.Readings.Choice VE.Readings.uniformPrecedence@VE.Readings.Choice VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 298377788
+theorem VE.Readings.unknownItems_label
+  ∀ (D : VE.Readings.Doc) (a : Lean.Json) (x : VE.Readings.PlanItem),
+    x ∈ VE.Readings.unknownItems D a →
+      ∀ (l : String), x.label? = Option.some l → x = VE.Readings.PlanItem.text "status" Option.none [] (Option.some l)
+  -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.PlanItem.label?@VE.Readings.VerdictsWire VE.Readings.PlanItem.text@VE.Readings.VerdictsWire VE.Readings.PlanItem@VE.Readings.VerdictsWire VE.Readings.unknownItems@VE.Readings.VerdictsWire
+  -- expr 800283648
 theorem VE.Readings.unsaidName_head
   ∀ (p : String), (VE.NormDefaults.unsaidName p).data.head? = Option.some 'u'
   -- uses VE.NormDefaults.unsaidName@VE.NormDefaults.Tree
@@ -22993,6 +23011,12 @@ theorem VE.Readings.withTables_rel
       { Carrier := B.Carrier, domain := B.domain, constant := B.constant, relation := VE.Readings.tablesRel X B G }
   -- uses VE.Readings.Tables@VE.Readings.Separate VE.Readings.tablesRel@VE.Readings.Force VE.Readings.withTables@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
   -- expr 920371802
+theorem VE.Readings.witnessItems_label
+  ∀ (k : Nat) (e : Lean.Json) (x : VE.Readings.PlanItem),
+    x ∈ VE.Readings.witnessItems k e →
+      ∀ (l : String), x.label? = Option.some l → x = VE.Readings.PlanItem.text "status" Option.none [] (Option.some l)
+  -- uses VE.Readings.PlanItem.label?@VE.Readings.VerdictsWire VE.Readings.PlanItem.text@VE.Readings.VerdictsWire VE.Readings.PlanItem@VE.Readings.VerdictsWire VE.Readings.witnessItems@VE.Readings.VerdictsWire
+  -- expr 4103130612
 theorem VE.Readings.yields_alone
   ∀ (X : VE.SoftNorms.SoftDoc) (N : VE.SoftNorms.SoftNode) (S : VE.Structure) (ρ : VE.Valuation S),
     X.T.nodes = [N] →

@@ -64,10 +64,10 @@
     "ve/softnorms.py:decode_rule": "After Lean accepts the quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
-    "ve/readings_components.py:load": "A malformed Lean split row or Python display container is converted to CheckerUnavailable; a Lean rejection remains VEError and no verdict is returned."
+    "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 28188,
+    "total_lines": 28277,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1237,12 +1237,12 @@
       },
       {
         "file": "lean/VE/Readings/VerdictsWire.lean",
-        "lines": 1566,
-        "sha256": "afa8751fd3bd774ab9df68b83e8860090175a9e69936a37f2617fa2c87033920",
+        "lines": 1634,
+        "sha256": "a927a22f6ebf874c0efff5f1a35301859ad3c000fea27fbc8d17055baa266eec",
         "ranges": [
           [
             1,
-            1566
+            1634
           ]
         ],
         "declarations": [
@@ -1268,18 +1268,22 @@
           "queryFormulas",
           "replayND",
           "replayVerdictsND",
-          "runVerdicts"
+          "runVerdicts",
+          "witnessItems",
+          "conflictRowItems",
+          "gateItems",
+          "unknownItems"
         ],
         "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Readings/ComponentsWire.lean",
-        "lines": 615,
-        "sha256": "af38ae04e0ee313c6c094314738832050ab34c6acbbf2390ef6c784001763845",
+        "lines": 636,
+        "sha256": "b633797b5624eb406f47bbbc6406156e7217b1aff9a0c5e06b515432ce36fb99",
         "ranges": [
           [
             1,
-            615
+            636
           ]
         ],
         "declarations": [
@@ -1289,7 +1293,9 @@
           "queryPart",
           "underCheck",
           "runProduct",
-          "productAnswer"
+          "productAnswer",
+          "gateLines",
+          "documentOrder"
         ],
         "reason": "readings-defaults RD-4b: the document product decoder, per-component evidence replay on each regenerated case, conclusion typing, --under binding, product verdict, decided units and English plan; the full file is pinned conservatively"
       }
@@ -1374,7 +1380,8 @@
       "lean/VE/Service/ParseDiagnostic.lean": "diagnostic only after a rejected checked parse: builds the first source fault and span; cannot accept",
       "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
       "lean/VE/Readings/CompanionsExamples.lean": "readings-defaults RD-4a: #guard fixtures that build JSON documents and environments for the merge and the split; no decoder",
-      "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean."
+      "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean.",
+      "lean/VE/Readings/ComponentsExamples.lean": "readings-defaults RD-4b: #guard fixtures of 1.10's rule and of the document order of decided units, building a JSON document of unit ids; no decoder"
     }
   },
   "plan_operations": {
