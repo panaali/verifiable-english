@@ -73,11 +73,38 @@ growth in `docs/trust-baseline.json`'s history with that reason, which says the 
 signature; no `signed` entry is written (HUMAN, owner: DRI).
 
 The looprecheck1 fix adds `VE.Core.Layers.folEntry` (at most two arguments), now the one filter of every
-regenerated Background (`folPredicates`, the norms view, the n-ary definition checks) and of the response
-Background counts (`ResponseShape.backgroundCount`, `ResponseDecode`'s invariant counts; the client's
-`service_schema._fol_entry` mirrors it, `test_background_count_is_over_the_fol_projection` compares them).
-`tools/trust_map.py` reports **trusted +7** (`VE/Core/Layers.lean` +5, `ResponseShape.lean` +2), recorded the
-same way and awaiting the DRI's signature (HUMAN, owner: DRI). No theorem statement changed.
+regenerated Background (`folPredicates`, the norms view, the n-ary definition checks). No theorem statement
+changed.
+
+**Certificate counts are Lean's (fix3, architecture decision D1, DRI-RULINGS R8/R11).** The schema's and the
+response shapes' prediction of a certificate's `background` count (`x-background-count`,
+`ResponseShape.backgroundCount`, `service_schema._fol_entry`) is deleted: each fix of the prediction broke
+another case (looprecheck2: a plain norms certificate over a 3-argument norm pair, which Lean counts, was refused
+as CheckerUnavailable). The client now binds the count only by a closed relation to the request,
+`x-background-bound` (`ResponseShape.backgroundBound`): an integer at most four per predicate declaration, one
+per pair of constants and one per `soft_premises` element (`test_background_bound_is_a_relation_to_the_request`
+enumerates request shapes against Lean's decoder). `ResponseDecode`'s invariants no longer predict counts from
+the request either (`folCount`, `flagsCount`, `definitionsCount`, `literalsCount`, `regulatedCount`,
+`pairsCount`, `runs` are deleted): a certificate's `background` must equal the length of the Background the
+same mode's runner regenerates for its environment (plus a plain norms certificate's soft premises), a norms
+certificate's `background` and `layers` the regenerated `norms-elaborate` Background and layer premises, and a
+`background` or `norms-elaborate` row's Background list the regenerated one
+(`test_certificate_background_is_lean_checked_not_client_predicted`,
+`test_genuine_soft_premise_certificate_count_is_lean_checked`, and the mig1c `*-background-*` content cases).
+The plain norms certificate path (`usesNormsPath`), unchecked before, is now held to the same invariant.
+Regressions: `test_norm_pair_certificate_check_is_valid[1-4]` and
+`test_genuine_norm_pair_certificates_are_valid_at_every_arity` (the service corpus gains norm pairs of 1-4
+arguments, `norm_pair_cases`, a soft-premise certificate and a norms certificate with a literal pair); the
+3-argument `defined` case of looprecheck1 stays Valid (`test_genuine_certificates_over_nary_families_are_accepted`).
+Trust: `tools/trust_map.py --write` lowers the [V] budget from 34980 to 34965, below the 34966 before the two
+count-binding allowances (+7, +7) that awaited the DRI's signature, so neither is needed any more.
+
+**Follow-ups (not fixed here):**
+* Lean's profile premise for a norm pair with three or more arguments is a vacuous `∀∀∀(⊥→⊥)`
+  (`VE.Norms.Basic.atom` returns `⊥` outside the FOL projection, `Norms.Plain.pairPremises` keeps the pair). It is
+  counted and harmless, but it states nothing; already the case before this batch.
+* A proof that needs a 3-argument definition is NotFound on both sides (Python's prover and Lean's FOL
+  projection drop it): a completeness gap, not a wrong answer.
 
 ## Behaviour notes for reviewers
 
