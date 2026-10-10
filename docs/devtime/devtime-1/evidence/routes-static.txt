@@ -3,32 +3,32 @@ mode | Lean module(s) | response schema | Python relays | tests
 evaluate | lean/VE/Order/ProfileGate.lean | ve/backends/lean_service_schema/evaluate.json | unknown | unknown
 check-certificate | lean/VE/CertificateWire.lean | ve/backends/lean_service_schema/check-certificate.json | unknown | unknown
 order | lean/VE/Order/Surface.lean | ve/backends/lean_service_schema/order.json | unknown | unknown
-route | lean/VE/Route/Run.lean | ve/backends/lean_service_schema/route.json | ve/admission.py, ve/background.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-norms | lean/VE/Norms/Run.lean | ve/backends/lean_service_schema/norms.json | ve/norm_admission.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+route | lean/VE/Route/Run.lean | ve/backends/lean_service_schema/route.json | ve/admission.py, ve/background.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+norms | lean/VE/Norms/Run.lean | ve/backends/lean_service_schema/norms.json | ve/norm_admission.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
 english | lean/VE/Service/EnglishRun.lean | ve/backends/lean_service_schema/english.json | unknown | unknown
-english.read | lean/VE/EnglishGrammar/Run.lean | ve/backends/lean_service_schema/english.read.json | ve/backends/english_lean.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+english.read | lean/VE/EnglishGrammar/Run.lean | ve/backends/lean_service_schema/english.read.json | ve/backends/english_lean.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
 english.grammar | lean/VE/EnglishGrammar/Run.lean | ve/backends/lean_service_schema/english.grammar.json | unknown | unknown
-english.check | lean/VE/EnglishGrammar/Run.lean | ve/backends/lean_service_schema/english.check.json | ve/backends/english_lean.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-environment | lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/environment.json | ve/backends/validation.py, ve/environment.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-model | lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/model.json | ve/backends/validation.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-check | lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/check.json | ve/ast.py, ve/units.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+english.check | lean/VE/EnglishGrammar/Run.lean | ve/backends/lean_service_schema/english.check.json | ve/backends/english_lean.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+environment | lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/environment.json | ve/backends/validation.py, ve/environment.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+model | lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/model.json | ve/backends/validation.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+check | lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/check.json | ve/ast.py, ve/units.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
 identity | lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/identity.json | unknown | unknown
-parse | lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/parse.json | ve/parser.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-graph | lean/VE/Service/Family.lean, lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/graph.json | ve/argument.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-readings | lean/VE/Service/Family.lean, lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/readings.json | ve/readings.py | 114 files, tests/test_alternatives_profile.py, tests/test_assist.py
+parse | lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/parse.json | ve/parser.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+graph | lean/VE/Service/Family.lean, lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/graph.json | ve/argument.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+readings | lean/VE/Service/Family.lean, lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/readings.json | ve/readings.py | 119 files, tests/test_alternatives_profile.py, tests/test_assist.py
 bundle | lean/VE/Service/FamilyBundle.lean, lean/VE/Service/Standalone.lean | ve/backends/lean_service_schema/bundle.json | unknown | unknown
 family-norms | lean/VE/Service/FamilyNorms.lean | ve/backends/lean_service_schema/family-norms.json | unknown | unknown
-soft-norms | lean/VE/SoftNorms/Run.lean | ve/backends/lean_service_schema/soft-norms.json | ve/backends/soft_relay.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-rights | lean/VE/Rights/Run.lean | ve/backends/lean_service_schema/rights.json | ve/rights_route.py | 117 files, tests/test_alternatives_profile.py, tests/test_assist.py
-speech-acts | lean/VE/SpeechActs/Run.lean | ve/backends/lean_service_schema/speech-acts.json | ve/backends/speech_source.py, ve/speech_document.py | 18 files, tests/test_assist.py, tests/test_assurance_manifest.py
-reports | lean/VE/Attribution/Run.lean | ve/backends/lean_service_schema/reports.json | ve/reports_route.py | 117 files, tests/test_alternatives_profile.py, tests/test_assist.py
-alternatives | lean/VE/Alternatives/Run.lean | ve/backends/lean_service_schema/alternatives.json | ve/alternatives.py | 15 files, tests/test_alternatives_profile.py, tests/test_alternatives_three_way.py
+soft-norms | lean/VE/SoftNorms/Run.lean | ve/backends/lean_service_schema/soft-norms.json | ve/backends/soft_relay.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+rights | lean/VE/Rights/Run.lean | ve/backends/lean_service_schema/rights.json | ve/rights_route.py | 122 files, tests/test_alternatives_profile.py, tests/test_assist.py
+speech-acts | lean/VE/SpeechActs/Run.lean | ve/backends/lean_service_schema/speech-acts.json | ve/backends/speech_source.py, ve/speech_document.py | 19 files, tests/test_assist.py, tests/test_assurance_manifest.py
+reports | lean/VE/Attribution/Run.lean | ve/backends/lean_service_schema/reports.json | ve/reports_route.py | 122 files, tests/test_alternatives_profile.py, tests/test_assist.py
+alternatives | lean/VE/Alternatives/Run.lean | ve/backends/lean_service_schema/alternatives.json | ve/alternatives.py | 17 files, tests/test_alternatives_profile.py, tests/test_alternatives_three_way.py
 risk | lean/VE/Risk/Run.lean | ve/backends/lean_service_schema/risk.json | ve/risk.py | 7 files, tests/test_hang_guards.py, tests/test_lean_service_schema.py
 risk-eval | lean/VE/Risk/Eval.lean | ve/backends/lean_service_schema/risk-eval.json | unknown | unknown
-quantity | lean/VE/Time/Document.lean, lean/VE/Time/Wire.lean | ve/backends/lean_service_schema/quantity.json | ve/admission.py, ve/units.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-norm-defaults | lean/VE/NormDefaults/Run.lean | ve/backends/lean_service_schema/norm-defaults.json | ve/norm_defaults_route.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-discourse | lean/VE/Discourse/Run.lean | ve/backends/lean_service_schema/discourse.json | ve/discourse.py | 114 files, tests/test_alternatives_profile.py, tests/test_assist.py
-readings-route | lean/VE/Readings/Run.lean | ve/backends/lean_service_schema/readings-route.json | ve/readings_route.py, ve/readings_verdicts.py | 114 files, tests/test_alternatives_profile.py, tests/test_assist.py
-diagnose | lean/VE/Service/Diagnose.lean | ve/backends/lean_service_schema/diagnose.json | ve/backends/soft_relay.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
-document | unknown | ve/backends/lean_service_schema/document.json | ve/document.py | 114 files, tests/test_alternatives_profile.py, tests/test_assist.py
-english.question | lean/VE/Question/Run.lean | ve/backends/lean_service_schema/english.question.json | ve/backends/english_lean.py | 287 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+quantity | lean/VE/Time/Document.lean, lean/VE/Time/Wire.lean | ve/backends/lean_service_schema/quantity.json | ve/admission.py, ve/units.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+norm-defaults | lean/VE/NormDefaults/Run.lean | ve/backends/lean_service_schema/norm-defaults.json | ve/norm_defaults_route.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+discourse | lean/VE/Discourse/Run.lean | ve/backends/lean_service_schema/discourse.json | ve/discourse.py | 119 files, tests/test_alternatives_profile.py, tests/test_assist.py
+readings-route | lean/VE/Readings/Run.lean | ve/backends/lean_service_schema/readings-route.json | ve/readings_components.py, ve/readings_route.py, ve/readings_verdicts.py | 119 files, tests/test_alternatives_profile.py, tests/test_assist.py
+diagnose | lean/VE/Service/Diagnose.lean | ve/backends/lean_service_schema/diagnose.json | ve/backends/soft_relay.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py
+document | unknown | ve/backends/lean_service_schema/document.json | ve/document.py | 119 files, tests/test_alternatives_profile.py, tests/test_assist.py
+english.question | lean/VE/Question/Run.lean | ve/backends/lean_service_schema/english.question.json | ve/backends/english_lean.py | 294 files, tests/test_agent_policy.py, tests/test_agent_policy_unspecified.py

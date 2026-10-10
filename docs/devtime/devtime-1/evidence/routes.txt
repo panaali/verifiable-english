@@ -28,7 +28,7 @@ risk-eval | lean/VE/Risk/Eval.lean | ve/backends/lean_service_schema/risk-eval.j
 quantity | lean/VE/Time/Document.lean, lean/VE/Time/Wire.lean | ve/backends/lean_service_schema/quantity.json | ve/admission.py, ve/units.py | 16 files, tests/test_document_lean_switch.py, tests/test_hang_guards.py
 norm-defaults | lean/VE/NormDefaults/Run.lean | ve/backends/lean_service_schema/norm-defaults.json | ve/norm_defaults_route.py | 18 files, tests/test_agent_policy_unspecified.py, tests/test_difffuzz.py
 discourse | lean/VE/Discourse/Run.lean | ve/backends/lean_service_schema/discourse.json | ve/discourse.py | 6 files, tests/test_discourse.py, tests/test_discourse_answer.py
-readings-route | lean/VE/Readings/Run.lean | ve/backends/lean_service_schema/readings-route.json | ve/readings_route.py, ve/readings_verdicts.py | 19 files, tests/test_hang_guards.py, tests/test_readings_budget_zero.py
+readings-route | lean/VE/Readings/Run.lean | ve/backends/lean_service_schema/readings-route.json | ve/readings_components.py, ve/readings_route.py, ve/readings_verdicts.py | 19 files, tests/test_hang_guards.py, tests/test_readings_budget_zero.py
 diagnose | lean/VE/Service/Diagnose.lean | ve/backends/lean_service_schema/diagnose.json | ve/backends/soft_relay.py | 52 files, tests/test_compose_integration.py, tests/test_difffuzz.py
 document | unknown | ve/backends/lean_service_schema/document.json | ve/document.py | 39 files, tests/test_alternatives_profile.py, tests/test_bluedot_grant.py
 english.question | lean/VE/Question/Run.lean | ve/backends/lean_service_schema/english.question.json | ve/backends/english_lean.py | 0 files
