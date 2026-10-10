@@ -1557,7 +1557,8 @@ class DocumentSurface(Surface):
     """Every `ve-document@1` seed of `conformance/document_wrapper.py` (the repository's documents and the
     generated ones), as `{"front", "body"}`: Python's `load_document` and `check_document` wrapper against the
     Lean service's `document` mode. What is sent is the document text, always a string on the wire: a front
-    matter the restricted JSON reader does not read (`null`, a float) is the mode's own `CheckerUnavailable`.
+    matter Python's JSON reader reads as other values (a `null` the mode does not read as absent, a float or
+    negative number) is the mode's own `CheckerUnavailable`.
     The mode's texts are Python's, so every text is compared; Lean's `CheckerUnavailable` or `ResourceLimit`
     (and Python's) agrees with any answer, and so does a rejection of an environment Python's `Environment`
     rejects by itself (`document_wrapper.verdict`). Rust has no document reader."""
@@ -1580,7 +1581,7 @@ class DocumentSurface(Surface):
     def seeds(self):
         from conformance import document_wrapper as dw
         return [Seed("document", "document@1" if dw.owned(doc) else "document@1:unowned", name, doc,
-                     ("python", "lean")) for name, doc in dw.seeds() if dw.fuzzed(doc)]
+                     ("python", "lean")) for name, doc in dw.seeds() if dw.fuzzed(doc, name)]
 
     def limits(self, seed):
         return list(self.LIMITS)

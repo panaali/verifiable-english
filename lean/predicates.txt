@@ -21,6 +21,7 @@ module ResponseShape.Encoders.Family
 module ResponseShape.Encoders.NormDefaults
 module ResponseShape.Encoders.Norms
 module ResponseShape.Encoders.Quantity
+module ResponseShape.Encoders.Question
 module ResponseShape.Encoders.ReadingsRoute
 module ResponseShape.Encoders.Reports
 module ResponseShape.Encoders.Rights
@@ -55,6 +56,7 @@ module ResponseShape.Schemas.Norms
 module ResponseShape.Schemas.Order
 module ResponseShape.Schemas.Parse
 module ResponseShape.Schemas.Quantity
+module ResponseShape.Schemas.Question
 module ResponseShape.Schemas.Readings
 module ResponseShape.Schemas.ReadingsRoute
 module ResponseShape.Schemas.Reports
@@ -278,6 +280,18 @@ module VE.Order.Typing
 module VE.Order.Wire
 module VE.Order.WireGate
 module VE.ParserContracts
+module VE.Question.Basic
+module VE.Question.Examples
+module VE.Question.Fixtures
+module VE.Question.Frames
+module VE.Question.Help
+module VE.Question.Moved
+module VE.Question.Properties
+module VE.Question.Read
+module VE.Question.Run
+module VE.Question.Spans
+module VE.Question.Strings
+module VE.Question.Texts
 module VE.Readings.Asserted
 module VE.Readings.Assertions
 module VE.Readings.BaseDown
@@ -725,6 +739,11 @@ VE.Order.Tableau.Defined@VE.Order.Tableau
 VE.Order.Tableau.Signed.Holds@VE.Order.Tableau
 VE.Order.TupleTyped@VE.Order.Semantics
 VE.Order.Valuation.Typed@VE.Order.Semantics
+VE.Question.AtMostOneDerivation@VE.Question.Properties
+VE.Question.GrammarChecks@VE.Question.Properties
+VE.Question.HasReading@VE.Question.Properties
+VE.Question.NoDerivation@VE.Question.Properties
+VE.Question.QuestionOneReading@VE.Question.Properties
 VE.Readings.Achieves@VE.Readings.Separate
 VE.Readings.AchievesQuiet@VE.Readings.Separate
 VE.Readings.AchievesU@VE.Readings.Unspecified

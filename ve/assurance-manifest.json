@@ -66,7 +66,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 27981,
+    "total_lines": 28461,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -214,16 +214,16 @@
       },
       {
         "file": "lean/VE/CertificateWire.lean",
-        "lines": 294,
-        "sha256": "8541e1523844a57d3c08e561f8eb85b576524a6ec7108860b7c82206e69e53eb",
+        "lines": 312,
+        "sha256": "bf814b58737fdab33616a65a899a130e1b3a08b0564d7921fd295a4ac7b1c3c0",
         "ranges": [
           [
             46,
-            203
+            221
           ],
           [
-            218,
-            227
+            236,
+            245
           ]
         ],
         "declarations": [
@@ -346,6 +346,26 @@
           "grammarCase"
         ],
         "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Question/Run.lean",
+        "lines": 219,
+        "sha256": "431e6147b032834040c2b4d78e7ce5b335c9ea87d3475b6542b2e927c0e22f29",
+        "ranges": [
+          [
+            1,
+            219
+          ]
+        ],
+        "declarations": [
+          "questionCase",
+          "codesCase",
+          "lexicalFields",
+          "outcomeFields",
+          "oneFields",
+          "askedFields"
+        ],
+        "reason": "question answering Q1.2 (docs/spec/question-answering.md 4.1, 8): english.question decodes the case (E2's decodeCase for the environment, overlay and lexicon; the question, which must be the source, authoring mode at cap 2) and writes 4.1's fields of what `ask` shows (a moved-out reading refused; the A0 line gated) and the identities; the export case answers the question contract; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Json.lean",
@@ -1030,26 +1050,31 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 679,
-        "sha256": "af7eb753ee6619e2567051fbcfc19491f2e4167b10866865bd7abe9cb12d250e",
+        "lines": 922,
+        "sha256": "deb607d0faad89d8c0b4711013634981f2c511861de25d59c2e348dcd8de46b9",
         "ranges": [
           [
             1,
-            679
+            922
           ]
         ],
         "declarations": [
+          "foreignLexeme",
+          "strayNull",
+          "frontJson",
+          "noLoneSurrogate",
           "split",
           "environmentOf",
           "contentOf",
           "sourceUnit",
           "unitsOf",
+          "rowOf",
           "blockCoverage",
           "admitGraph",
           "check",
           "documentCase"
         ],
-        "reason": "W2 document service wrapper: front matter and its gates, unit partition and contents, reading sets and their status fold, narrowings, graph admission, statuses and coverage; full file pinned conservatively"
+        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates, unit partition and contents, reading sets and their status fold, narrowings, graph admission, statuses and coverage; full file pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Family.lean",
@@ -1315,8 +1340,8 @@
       "lean/VE/Route/MeteredTrace.lean": "lean:runner-glue: explanation JSON display after the proved metered value; reads no untrusted input",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
-      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun; readings-verdicts dispatched to VerdictsWire (runVerdicts) before the completion's kinds, on the case or companion component the request names",
-      "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData); the kind list names readings-verdicts, which Run.lean dispatches",
+      "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",
+      "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData)",
       "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
       "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
@@ -1379,7 +1404,8 @@
       "lean/VE/Service/ParseDiagnostic.lean": "diagnostic only after a rejected checked parse: builds the first source fault and span; cannot accept",
       "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
       "lean/VE/Readings/CompanionsExamples.lean": "readings-defaults RD-4a: #guard fixtures that build JSON documents and environments for the merge and the split; no decoder",
-      "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean."
+      "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean.",
+      "lean/VE/Question/Fixtures.lean": "fixtures only: generated #guard checks of the Q1 fixture table (tools/question_fixtures.py) parse each frame's case JSON and compare english.question's result; no runner path"
     }
   },
   "plan_operations": {
@@ -3686,6 +3712,115 @@
         "The relay in ve.backends.senses:_read (behind read and read_fences) only transports packs and validates the answer's shape and identities; no Python function decides a reading.",
         "Rust has no senses implementation: the conformance of this operation is spec fixtures against Lean, not three-way.",
         "The budget class is the reading's status `budget`, with the code PreambleBudget (a preamble line) or Budget (a body sentence)."
+      ]
+    },
+    {
+      "id": "question.read",
+      "summary": "A yes-or-no question read as one of the document's sentences (docs/spec/question-answering.md, Q1): Lean decides its forms, candidates, one reading, refusals and rephrasings",
+      "class": "surface",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "Lean decides every outcome (VE.Question.readQuestion over E2's unchanged read; all fifteen statements of spec 5.1 proved); the case decoder is E2's and the response encoder is trusted; a reading whose fronted word was put back inside a clause is refused (VE.Question.ask), and the A0 line passes the answer frames' all-derivations gate before it is shown; no answer to the question is given (Q2)"
+      },
+      "python": [],
+      "outcomes": {
+        "verdict": [
+          "one"
+        ],
+        "unknown": [],
+        "rejection": [
+          "NotOneQuestion",
+          "QuestionForm",
+          "AmbiguousQuestion",
+          "Ambiguous",
+          "IndefiniteQuestion",
+          "QuestionWordMoved",
+          "NoDerivation",
+          "QuestionWithMarker",
+          "IllTyped",
+          "SyntaxError"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "english.question",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/VE/Service/Protocol.lean",
+              "lean/VE/Question/Run.lean",
+              "lean/VE/Question/Moved.lean",
+              "lean/VE/Question/Frames.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [
+          "VE.Question.got_none",
+          "VE.Question.question_reading_unique",
+          "VE.Question.asked_reads_back",
+          "VE.Question.readQuestion_ambiguous",
+          "VE.Question.readQuestion_meanings",
+          "VE.Question.readQuestion_indefinite",
+          "VE.Question.readQuestion_none",
+          "VE.Question.Run.statusCodes_classed",
+          "VE.Service.runMode_englishQuestion",
+          "VE.Question.readQuestion_one",
+          "VE.Question.readQuestion_complete",
+          "VE.Question.caseThat_reads",
+          "VE.Question.caseThat_candidates",
+          "VE.Question.fronted_text",
+          "VE.Question.mapSpan_valid",
+          "VE.Question.mapSpan_codepoints_valid",
+          "VE.Question.rephrasings_read",
+          "VE.Question.ask_one",
+          "VE.Question.ask_moved",
+          "VE.Question.ask_rephrasings",
+          "VE.Question.askable_iff",
+          "VE.Question.frames_leads",
+          "VE.Question.askedGate_sound",
+          "VE.Question.Run.oneFields_gated"
+        ],
+        "planned_theorems": [],
+        "decoders": []
+      },
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": [
+        "tests/test_question_lean_relay.py::test_question_request_reuses_the_selected_english_case",
+        "tests/test_question_lean_relay.py::test_question_response_must_bind_the_request",
+        "tests/test_question_lean_relay.py::test_question_refusal_text_is_preserved",
+        "tests/test_question_reading.py::test_a_gated_environment_never_returns_a_reading",
+        "tests/test_question_reading.py::test_the_cli_does_not_answer_without_reading",
+        "tests/test_question_differential.py::test_lean_and_the_reference_reader_agree",
+        "tests/test_question_differential.py::test_the_comparison_can_fail",
+        "tests/test_question_differential.py::test_python_lean_and_rust_evaluate_each_reading_alike",
+        "tests/test_question_differential.py::test_the_models_tell_readings_apart"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:runner-glue",
+        "python:wire",
+        "python:backend-adapter"
+      ],
+      "notes": [
+        "The relay ve.backends.english_lean:read_question asks the service through ve.backends.relay (not ve.backends.lean.run, so it has no lean_call_sites entry); it validates the answer's fields per status against Lean's exported contract (ve/question/codes.json, tools/question_codes.py) and the request identities, and raises the class Lean names with Lean's text.",
+        "Two readers and three evaluators (tests/test_question_differential.py): Lean's reader against an independent Python reader written from the spec over Python's own English reader (tests/question_reference.py; test code, not a product path) on every fixture and its seeded 1- and 2-fault mutants; every formula Lean reads is checked by Rust's kernel and evaluated alike by Python's evaluator, Lean's metered evaluator and Rust on seeded models. Rust has no question reader.",
+        "The budget class is the status `budget`, with the code QuestionTooLong (a size limit) or Budget (a candidate's work limit)."
       ]
     },
     {
