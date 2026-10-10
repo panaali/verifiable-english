@@ -1,0 +1,154 @@
+{
+  "u049.entitlement_nationality": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_the_right_to_leave_and_return_nationality",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u049-entitlement-nationality"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u049.entitlement_residence": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_the_right_to_leave_and_return_residence",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u049-entitlement-residence"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u073.peaceful_assembly_and_association": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "right_to_peaceful_assembly_and_any_association",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u073-peaceful-assembly-and-association"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u073.peaceful_both": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "right_to_peaceful_assembly_and_peaceful_association",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u073-peaceful-both"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u105b.freely_attaches": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_the_right_freely_to_enjoy_the_arts",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u105b-freely-attaches"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u105b.freely_participate_only": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_the_right_to_enjoy_the_arts_unqualified",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u105b-freely-participate-only"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u105c.freely_attaches": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_right_freely_share_scientific_advancement",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u105c-freely-attaches"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u105c.freely_participate_only": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_right_share_scientific_advancement_unqualified",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u105c-freely-participate-only"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ]
+}
