@@ -115,3 +115,24 @@ clean `0d93e591` checkout; its Rust binary has a digest pinned by main's `checke
 | 20 | This report’s numbers are tested against saved gate and scope evidence. |
 | 21 | AGENT, HUMAN and EXTERNAL owners and deferrals are recorded above. |
 | 22 | All files are committed and the final clean-HEAD gate is run after the report commit. |
+
+## Review fix round (`rd-4b-review.final.md`)
+
+Each B finding was fixed as a class, with a regression test. The evidence above belongs to the code head before review and is kept unchanged.
+
+| Finding | Class removed | Fix | Regression tests |
+|---|---|---|---|
+| B1: a companion sentence before a main one failed with CheckerUnavailable | Python and Lean disagree on the order of a list of the document's units | Lean lists `decided_units` in the document's own order (`documentOrder`) | `test_every_order_of_sentences_and_sets_gets_the_same_answer` (every order of F-C1's units and sets, through check, readings and render), `test_fc17_with_its_companions_first_gets_the_same_answer`, `#guard`s in `ComponentsExamples.lean` |
+| B2: untyped `environment`, `document` and `checked`; load checks outside the guard, so raw TypeError and ValueError escaped | malformed untrusted answer crashes, or is accepted unbound | the schema types the three fields as objects (`asObject`, proved to fit); every check of a Lean answer runs inside one guard (`relayed`); each case is bound to the request by its name (`_bind_part`, `_bind_merged`) | `tests/test_readings_components_load.py`: a fuzz retypes, drops, empties and duplicates every field of F-C1's and F-C17's load-time answers, and only listed Lean-owned values survive; plus the finding's own probes and swapped or invented case rows |
+| B3: the document's UNKNOWN had no English | an UNKNOWN worded nowhere (one case or the product) | `gateItems` names the choice by E12: R4 with the checked witness under a CONFLICT, the new R8 for an uncertified status, the new R9 for a missing result. It is used by RD-3's `planItems` and by `productPlan`, which names the other sentence's choice | F-C17 through `ve document readings` (R4) and with main's evidence withheld (R8); RD-3's missing-evidence test (R8, R9); F-ND2's gated query; M8's gated query |
+| B4: no SR4 fixture, no checks of 8.4's computed rows | spec rows without a fixture | `ComponentsExamples.lean` `#guard`s every row of 8.4's 1.10 list in each direction | `test_sr4_conflict_under_one_choice_and_unknown_under_the_other_is_not_decided`: F-C17's main case is decided with all its evidence (CONFLICT, CONFLICT-FREE) and not with one choice withheld (CONFLICT, UNKNOWN) |
+
+What did not change: the RD-3 and RD-4b theorem statements (the statement checker passes, and `Line` keeps its approved text). The plan lemmas `witnessItems_label`, `conflictRowItems_label`, `gateItems_label` and `unknownItems_label` keep `plan_conditions_only` proved. `asObject_fits` keeps the response encoders proved.
+
+Seeded failures (AGENT): when the guard in `load` is removed, `test_a_case_s_frame_of_another_type_is_refused` fails with a raw `Invalid`. When `_bind_part` is skipped, `test_each_case_is_bound_by_its_name` fails.
+
+Verification (AGENT): `lake build` passes. `python3 lean/audit.py` passes with 465 source files and 5,050 audited theorems, standard axioms only. `tools/lean_statements.py` adds only the four lemmas. `VE/Route/frozen.py` passes. The full suite at `-n 16` on this code (`ae014c0d`) gave 13,648 passed, 8 skipped, 83 xfailed and 2 failed:
+- The first failure is `test_review_b2_conflicting_reading_certifies_no_entailment`, which expected no English for a gate UNKNOWN. It now expects the witness line, and it passes.
+- The second is `test_difffuzz.py::test_ci_run`, which took 336 CPU seconds against a 300-second budget under suite load. It passes alone.
+
+**HUMAN / EXTERNAL:** the R8 and R9 sentences are new W7 wordings and need DRI sign-off (spec 2.1). The trust map still reports growth against its older signed baseline, now including this round's lines. Not run: a new A/B recording and the saved gate evidence for this round.
