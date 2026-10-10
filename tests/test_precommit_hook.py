@@ -376,6 +376,18 @@ def test_outward_rust_dependency_is_rejected(staging):
     rejects(staging, "rust: outward crate dependency: ve-core -> ve")
 
 
+def test_staged_rust_workspace_is_read_by_cargo(staging):
+    # A source edit runs the check on the staged workspace (manifests, sources, toolchain pin)...
+    staging.stage("rust/ve-kernel/src/lib.rs", staging.head("rust/ve-kernel/src/lib.rs") + b"\n// A comment.\n")
+    passes(staging)
+    # ...where a new module in the facade fails, and so does a staged edit cargo cannot read.
+    staging.stage("rust/ve-core/src/extra.rs", "pub fn f() {}\n")
+    rejects(staging, "rust: module in the ve-core facade: extra.rs; ")
+    staging.stage("rust/ve-core/src/extra.rs", None)
+    staging.stage("rust/ve-core/src/lib.rs", None)
+    rejects(staging, "rust: cannot read the Rust workspace: cargo metadata failed: ")
+
+
 @pytest.mark.parametrize("line, token", [
     ("theorem planted : 1 = 1 := by sorry", "sorry"),
     ("theorem planted : 1 = 1 := by admit", "admit"),

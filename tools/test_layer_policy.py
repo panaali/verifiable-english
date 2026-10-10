@@ -53,251 +53,31 @@ def select(paths, **kwargs):
     """The selector on the static graph alone, so these checks do not depend on a cached map."""
     return select_tests.select(paths, coverage=None, **kwargs)
 
-# Each case is a compilable crate shaped like ve-core before the crate split (`cargo check`
-# accepts it): extra lib.rs items, then the ast.rs (kernel), eval.rs (profile) and surface.rs
-# bodies, and the outward edges the module check must report under FIXTURE_GROUPS.
-FIXTURE_GROUPS = {
-    **dict.fromkeys(("lib", "ast", "environment", "model", "wire", "semantics", "graph"), 1),
-    **dict.fromkeys(("eval", "route", "search", "order", "units", "risk", "readings", "discourse"), 2),
-    "surface": 3,
-}
-SURFACE_RS = "pub fn parse<T: Default>() -> T { T::default() }\npub struct Node;\n"
-WRITE_RS = (SURFACE_RS + "pub fn write<S: serde::Serializer>(v: &u8, s: S) -> Result<S::Ok, S::Error> {\n"
-            "    s.serialize_u8(*v)\n}\n")
+# The inward crate graph of rust/Cargo.toml: each crate and the workspace crates it uses.
+RUST_CRATES = {"ve-kernel": [], "ve-profile": ["ve-kernel"], "ve-core": ["ve-kernel", "ve-profile"],
+               "ve": ["ve-core"]}
 
 
-def serde_field(argument: str) -> str:
-    """A struct whose field serde serializes through `argument` (a string literal as written)."""
-    return (f"#[derive(serde::Serialize)]\npub struct S {{\n    #[serde(serialize_with = {argument})]\n"
-            "    f: u8,\n}\n")
+def rust_workspace(root: Path, crates: dict[str, list[str]] = RUST_CRATES) -> Path:
+    """A workspace of empty crates (`ve` a binary) with path dependencies and the pinned toolchain."""
+    root.mkdir(parents=True, exist_ok=True)
+    shutil.copy(layer_policy.ROOT / "rust-toolchain.toml", root / "rust-toolchain.toml")
+    (root / "Cargo.toml").write_text(f'[workspace]\nresolver = "3"\nmembers = {json.dumps(list(crates))}\n')
+    for crate, uses in crates.items():
+        (root / crate / "src").mkdir(parents=True)
+        (root / crate / "src" / ("main.rs" if crate == "ve" else "lib.rs")).write_text("")
+        (root / crate / "Cargo.toml").write_text(
+            f'[package]\nname = "{crate}"\nversion = "0.0.0"\nedition = "2024"\n[dependencies]\n'
+            + "".join(f'{use} = {{ path = "../{use}" }}\n' for use in uses))
+    return root
 
 
-RUST_MODULE_CASES = {
-    "turbofish": ("", "pub fn f() -> u8 { crate::surface::parse::<u8>() }\n", "", SURFACE_RS,
-                  {"ast -> surface"}),
-    "turbofish in a use-free call chain": (
-        "", "pub fn f() -> Vec<u8> { crate::surface::parse::<Vec<u8>>() }\n", "", SURFACE_RS,
-        {"ast -> surface"}),
-    # lib.rs's top-level `use` items are the facade: one hop from a name to the module it names.
-    "crate-prefixed root re-export": ("pub use crate::surface::parse;\n",
-                                      "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS,
-                                      {"ast -> surface"}),
-    "self-prefixed aliased root re-export": ("pub use self::surface::parse as read;\n",
-                                             "use crate::read;\npub fn f() -> u8 { read() }\n", "",
-                                             SURFACE_RS, {"ast -> surface"}),
-    "private root import": ("use surface::parse;\n", "pub fn f() -> u8 { crate::parse() }\n", "",
-                            SURFACE_RS, {"ast -> surface"}),
-    "module alias": ("pub(crate) use surface as syntax;\n", "pub fn f() -> u8 { crate::syntax::parse() }\n",
-                     "", SURFACE_RS, {"ast -> surface"}),
-    "re-export named from the top of a module": ("pub use surface::parse;\n",
-                                                 "pub fn f() -> u8 { super::parse() }\n", "", SURFACE_RS,
-                                                 {"ast -> surface"}),
-    "raw identifier": ("", "pub fn f() -> u8 { crate::r#surface::parse() }\n", "", SURFACE_RS,
-                       {"ast -> surface"}),
-    "super from a nested module": (
-        "", "mod inner {\n    pub fn f() -> u8 { super::super::surface::parse() }\n}\n", "", SURFACE_RS,
-        {"ast -> surface"}),
-    "nested super stays in the file": (
-        "pub use surface::parse;\n",
-        "pub fn g() -> u8 { 1 }\n#[cfg(test)]\nmod tests {\n    use super::*;\n"
-        "    #[test]\n    fn t() { assert_eq!(g(), 1); }\n}\n",
-        "pub fn h() -> u8 { 2 }\nmod tests {\n    use super::*;\n    pub fn k() -> u8 { h() }\n}\n",
-        SURFACE_RS, set()),
-    # Identifiers are Unicode, compared after NFC.
-    "Unicode re-export": ("pub use surface::parse as 読む;\n", "pub fn f() -> u8 { crate::読む() }\n", "",
-                          SURFACE_RS, {"ast -> surface"}),
-    "NFD identifier names the NFC re-export": (
-        "pub use surface::parse as café;\n", "pub fn f() -> u8 { crate::café() }\n", "", SURFACE_RS,
-        {"ast -> surface"}),
-    "nested block comment ends where rustc ends it": (
-        "", '/* /* */ " */\npub fn f() -> u8 { crate::surface::parse() } // "\n', "", SURFACE_RS,
-        {"ast -> surface"}),
-    "range to a surface item": (
-        "", "pub fn f() -> core::ops::RangeTo<u8> { ..crate::surface::parse() }\n", "", SURFACE_RS,
-        {"ast -> surface"}),
-    # A builtin attribute's text names nothing; another attribute's string is read as code.
-    "builtin attribute text": ("", '#[deprecated(note = "crate::surface::parse")]\npub fn g() {}\n', "",
-                               SURFACE_RS, set()),
-    "imported serde function": ("", "use crate::surface::write;\n" + serde_field('"write"'), "", WRITE_RS,
-                                {"ast -> surface"}),
-    "root serde function named through the facade": ("use surface::write;\n" + serde_field('"\\x77rite"'),
-                                                      "", "", WRITE_RS, {"lib -> surface"}),
-    # The root's own items are kernel, and every path in lib.rs is read from the root.
-    "root item calls the surface": ("pub fn helper() -> u8 { surface::parse() }\n",
-                                    "pub fn f() -> u8 { crate::helper() }\n", "", SURFACE_RS, {"lib -> surface"}),
-    "root glob in a root inline module": (
-        "mod tests {\n    use super::*;\n    pub fn t() -> u8 { surface::parse() }\n}\n", "", "", SURFACE_RS,
-        {"lib -> surface"}),
-    # A macro that keeps each substitution apart from path tokens builds no path; its call writes them.
-    "path passed whole to a macro": (
-        "", "macro_rules! twice {\n    ($e:expr) => { $e + $e };\n}\n"
-        "pub fn f() -> u8 { twice!(crate::surface::parse::<u8>()) }\n", "", SURFACE_RS, {"ast -> surface"}),
-    "self path after a root glob in a root inline module": (
-        "mod tests {\n    use super::*;\n    pub fn t() -> u8 { self::surface::parse() }\n}\n", "", "",
-        SURFACE_RS, {"lib -> surface"}),
-}
-# Forms that could hide a cross-module dependency: each case names the module, the construct and
-# the RULES key of the message it must be rejected with.
-RUST_REJECTED_CASES = {
-    # An inline module may not reuse an imported name or a crate module's name (loop final B1).
-    "inline root module shadows a re-export": (
-        "pub use surface::parse;\npub mod parse {}\n", "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS,
-        "lib", "mod parse", "shadowing module"),
-    "nested inline root module shadows a re-export": (
-        "pub use surface::parse;\npub mod api {\n    pub mod parse {}\n}\n",
-        "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS, "lib", "mod parse", "shadowing module"),
-    "inline module shadows a local import": (
-        "", "use crate::surface::parse;\nmod parse {}\npub fn f() -> u8 { parse() }\n", "", SURFACE_RS,
-        "ast", "mod parse", "shadowing module"),
-    "inline module named like a crate module": ("", "", "mod surface {}\n", SURFACE_RS, "eval", "mod surface",
-                                                "shadowing module"),
-    # Aliases of the crate root, however they are reached or repeated (loop final B2).
-    "repeated root alias": ("pub use crate as root;\n",
-                            "pub fn f() -> u8 { crate::root::root::surface::parse() }\n", "", SURFACE_RS,
-                            "lib", "use crate as root", "crate alias"),
-    "crate alias": ("", "use crate as root;\npub fn f() -> u8 { root::surface::parse() }\n", "", SURFACE_RS,
-                    "ast", "use crate as root", "crate alias"),
-    "super self alias": ("", "use super::{self as root};\npub fn f() -> u8 { root::surface::parse() }\n", "",
-                         SURFACE_RS, "ast", "use super::self as root", "crate alias"),
-    "crate self alias": ("", "use crate::{self as root};\npub fn f() -> u8 { root::surface::parse() }\n", "",
-                         SURFACE_RS, "ast", "use crate::self as root", "crate alias"),
-    "root alias from an inline module": (
-        "", "mod inner {\n    use super::super::{self as root};\n"
-        "    pub fn f() -> u8 { root::surface::parse() }\n}\n", "", SURFACE_RS,
-        "ast", "use super::super::self as root", "crate alias"),
-    "root alias in a root inline module": (
-        "mod inner {\n    use crate::{self as root};\n    pub fn f() -> u8 { root::surface::parse() }\n}\n",
-        "", "", SURFACE_RS, "lib", "use crate::self as root", "crate alias"),
-    "chained local aliases": (
-        "", "use crate as root;\nuse root::surface as syntax;\npub fn f() -> u8 { syntax::parse() }\n", "",
-        SURFACE_RS, "ast", "use crate as root", "crate alias"),
-    # Globs of the crate root outside lib.rs.
-    "root glob import": ("", "use crate::*;\npub fn f() -> u8 { surface::parse() }\n", "", SURFACE_RS,
-                         "ast", "use crate::*", "crate glob"),
-    "super glob at a module's top level": ("", "use super::*;\npub fn f() -> u8 { surface::parse() }\n", "",
-                                           SURFACE_RS, "ast", "use super::*", "crate glob"),
-    # Re-exports only at lib.rs's top level, one hop, no module globs.
-    "chained module re-export": ("", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n",
-                                 "pub use crate::surface::parse;\n", SURFACE_RS,
-                                 "eval", "use crate::surface::parse", "re-export"),
-    "crate-visible module re-export": ("", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n",
-                                       "pub(crate) use crate::surface::parse;\n", SURFACE_RS,
-                                       "eval", "use crate::surface::parse", "re-export"),
-    "module glob re-export": ("", "use crate::eval::parse;\npub fn f() -> u8 { parse() }\n",
-                              "pub use crate::surface::*;\n", SURFACE_RS, "eval", "use crate::surface::*",
-                              "re-export"),
-    "re-export through a private alias": (
-        "", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n", "use crate as root;\npub use root::surface::parse;\n",
-        SURFACE_RS, "eval", "use crate as root", "crate alias"),
-    "re-export inside an inline root module": (
-        "pub mod api { pub use crate::surface::parse; }\n", "pub fn f() -> u8 { crate::api::parse() }\n",
-        "", SURFACE_RS, "lib", "use crate::surface::parse", "re-export"),
-    "nested inline root re-export": (
-        "pub mod api { pub mod nested { pub use super::super::surface::parse; } }\n",
-        "pub fn f() -> u8 { crate::api::nested::parse() }\n", "", SURFACE_RS,
-        "lib", "use super::super::surface::parse", "re-export"),
-    "root glob inside an inline root module": (
-        "pub mod api { pub use crate::*; }\n", "pub fn f() -> u8 { crate::api::surface::parse() }\n", "",
-        SURFACE_RS, "lib", "use crate::*", "re-export"),
-    "nested inline re-export in a profile module": (
-        "", "pub fn f() -> u8 { crate::eval::api::nested::parse::<u8>() }\n",
-        "pub mod api { pub mod nested { pub use super::super::super::surface::parse; } }\n", SURFACE_RS,
-        "eval", "use super::super::super::surface::parse", "re-export"),
-    "root glob re-exported by a profile module": (
-        "", "pub fn f() -> u8 { crate::eval::surface::parse::<u8>() }\n", "pub use crate::*;\n", SURFACE_RS,
-        "eval", "use crate::*", "re-export"),
-    "facade module glob": ("pub use surface::*;\n", "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS,
-                           "lib", "use surface::*", "facade glob"),
-    "facade chain": ("use surface as syntax;\npub use syntax::parse;\n", "pub fn f() -> u8 { crate::parse() }\n",
-                     "", SURFACE_RS, "lib", "use syntax::parse", "facade chain"),
-    # Crate paths in attribute and macro strings, after decoding escapes (loop final B3).
-    "escaped attribute string": ("", serde_field('"crate::\\x73urface::write"'), "", WRITE_RS,
-                                 "ast", "crate::surface::write", "string path"),
-    "escaped crate keyword in an attribute string": ("", serde_field('"\\x63rate::surface::write"'), "",
-                                                     WRITE_RS, "ast", "crate::surface::write", "string path"),
-    "Unicode escape in an attribute string": ("", serde_field('"crate::\\u{73}urface::write"'), "", WRITE_RS,
-                                              "ast", "crate::surface::write", "string path"),
-    "line continuation in an attribute string": ("", serde_field('"crate::\\\n        surface::write"'), "",
-                                                 WRITE_RS, "ast", "crate::surface::write", "string path"),
-    "raw attribute string": ("", serde_field('r#"crate::surface::write"#'), "", WRITE_RS,
-                             "ast", "crate::surface::write", "string path"),
-    "super in an attribute string": ("", serde_field('"super::surface::write"'), "", WRITE_RS,
-                                     "ast", "super::surface::write", "string path"),
-    "module head in a root attribute string": (serde_field('"surface::write"'), "", "", WRITE_RS,
-                                               "lib", "surface::write", "string path"),
-    "serde path argument": ("", serde_field('"crate::surface::write"'), "", WRITE_RS,
-                            "ast", "crate::surface::write", "string path"),
-    "crate path in a macro string": ("", 'pub fn g() -> &\'static str { concat!("crate::surface::parse") }\n', "",
-                                     SURFACE_RS, "ast", "crate::surface::parse", "string path"),
-    # Crate paths in macro definitions resolve where the macro is called.
-    "root macro names the surface": (
-        "macro_rules! parsed { () => { $crate::surface::parse::<u8>() }; }\npub fn g() -> u8 { parsed!() }\n",
-        "", "", SURFACE_RS, "lib", "macro_rules! parsed", "macro path"),
-    "root macro names the root through super": (
-        "macro_rules! parsed { () => { super::parse::<u8>() }; }\npub use surface::parse;\n", "", "", SURFACE_RS,
-        "lib", "macro_rules! parsed", "macro path"),
-    # Constructs that move code or names.
-    "path attribute": ('#[path = "surface.rs"]\nmod other;\n', "", "", SURFACE_RS, "lib", "#[path", "moving"),
-    "path under cfg_attr": ('#[cfg_attr(all(), path = "surface.rs")]\nmod other;\n', "", "", SURFACE_RS,
-                            "lib", "#[path", "moving"),
-    "macro_export": ("", "", "", SURFACE_RS + "#[macro_export]\nmacro_rules! parsed { () => { 0u8 }; }\n",
-                     "surface", "#[macro_export", "moving"),
-    "macro_use": ("#[macro_use]\nmod macros {}\n", "", "", SURFACE_RS, "lib", "#[macro_use", "moving"),
-    "include": ('include!("surface.rs");\n', "", "", "", "lib", "include!", "moving"),
-    "renamed include": ('use std::include as source;\nsource!("surface.rs");\n', "", "", "", "lib", "include!",
-                        "moving"),
-    "extern crate self": ("extern crate self as fixture;\n", "", "", SURFACE_RS, "lib", "extern crate self",
-                          "moving"),
-    "metavariable after ::": (
-        "macro_rules! call { ($m:ident) => { $crate::$m::parse::<u8>() }; }\npub fn g() -> u8 { call!(surface) }\n",
-        "", "", SURFACE_RS, "lib", "::$", "moving"),
-    # Paths, imports and names a macro builds from substituted tokens (looprecheck1 B).
-    "substituted path head": (
-        "", "macro_rules! call {\n    ($root:ident) => { $root::surface::parse::<u8>() };\n}\n"
-        "pub fn f() -> u8 { call!(crate) }\n", "", SURFACE_RS, "ast", "macro_rules! call", "macro construction"),
-    "substituted root alias": (
-        "", "macro_rules! call {\n    ($root:ident) => { use $root as root; };\n}\ncall!(crate);\n"
-        "pub fn f() -> u8 { root::surface::parse() }\n", "", SURFACE_RS, "ast", "macro_rules! call",
-        "macro construction"),
-    "substituted import": (
-        "", "macro_rules! call {\n    ($root:ident) => { use $root::surface::parse; };\n}\ncall!(crate);\n"
-        "pub fn f() -> u8 { parse() }\n", "", SURFACE_RS, "ast", "macro_rules! call", "macro construction"),
-    "path pasted from token trees": (
-        "", "macro_rules! call {\n    ($($t:tt),*) => { $($t)* };\n}\n"
-        "pub fn f() -> u8 { call!(crate, ::, surface, ::, parse)() }\n", "", SURFACE_RS, "ast",
-        "macro_rules! call", "macro construction"),
-    "literal crate before a substitution": (
-        "", "macro_rules! call {\n    ($($t:tt)*) => { crate $($t)* };\n}\n"
-        "pub fn f() -> u8 { call!(::surface::parse)() }\n", "", SURFACE_RS, "ast", "macro_rules! call",
-        "macro construction"),
-    "repetition separated by ::": (
-        "", "macro_rules! call {\n    ($($s:ident)*) => { $($s)::*() };\n}\n"
-        "pub fn f() -> u8 { call!(crate surface parse) }\n", "", SURFACE_RS, "ast", "macro_rules! call",
-        "macro construction"),
-    "substituted module name": (
-        "pub use surface::parse;\nmacro_rules! module {\n    ($name:ident) => { pub mod $name { pub fn f() {} } };\n}\n"
-        "module!(parse);\n", "", "", SURFACE_RS, "lib", "macro_rules! module", "macro construction"),
-    "substituted macro name": (
-        'macro_rules! call {\n    ($m:ident) => { $m!("surface.rs"); };\n}\ncall!(include);\n', "", "", "",
-        "lib", "macro_rules! call", "macro construction"),
-    "substituted attribute": (
-        'macro_rules! attributed {\n    ($($a:tt)*) => { #[$($a)*] mod other; };\n}\n'
-        'attributed!(path = "surface.rs");\n', "", "", SURFACE_RS, "lib", "macro_rules! attributed",
-        "macro construction"),
-}
-
-
-def rust_module_fixture(root: Path, lib: str, ast: str, eval_: str, surface: str, name: str = "fixture") -> Path:
-    source = root / "src"
-    source.mkdir(parents=True)
-    serde = '[dependencies]\nserde = { version = "1", features = ["derive"] }\n' if "serde" in lib + ast + surface else ""
-    (root / "Cargo.toml").write_text(f'[package]\nname = "{name}"\nversion = "0.0.0"\nedition = "2024"\n'
-                                     '[lib]\npath = "src/lib.rs"\n' + serde)
-    (source / "lib.rs").write_text("#![allow(dead_code, unused_imports)]\nmod ast;\nmod eval;\n"
-                                   "mod surface;\n" + lib)
-    for module, text in (("ast", ast), ("eval", eval_), ("surface", surface)):
-        (source / f"{module}.rs").write_text(text)
-    return source
+def rust_check(root: Path) -> tuple[int, str]:
+    """check_rust_deps.main on the workspace at `root`: its exit code and standard error."""
+    error = io.StringIO()
+    with patch.object(check_rust_deps, "WORKSPACE", root), redirect_stdout(io.StringIO()), redirect_stderr(error):
+        code = check_rust_deps.main()
+    return code, error.getvalue()
 
 
 class LayerSelectionTests(unittest.TestCase):
@@ -642,53 +422,11 @@ class LayerSelectionTests(unittest.TestCase):
                 graph.build()
                 self.assertIn("experiments/p1.py", graph.closure("tests/test_p1.py")[0])
 
-    def test_renamed_rust_dependency_in_target_and_workspace_sections(self):
-        with TemporaryDirectory() as directory:
-            root = Path(directory)
-            for crate in ("ve", "ve-core"):
-                (root / crate).mkdir()
-                (root / crate / "Cargo.toml").write_text(f'[package]\nname = "{crate}"\n')
-            (root / "Cargo.toml").write_text(
-                '[workspace]\nmembers = ["ve-core", "ve"]\n'
-                '[workspace.dependencies]\ncli = { package = "ve", path = "ve" }\n')
-            core = root / "ve-core" / "Cargo.toml"
-            for declaration in (
-                '[target."cfg(unix)".build-dependencies]\n'
-                'cli = { package = "ve", path = "../ve" }\n',
-                '[dev-dependencies]\ncli.workspace = true\n',
-            ):
-                core.write_text('[package]\nname = "ve-core"\n' + declaration)
-                error = io.StringIO()
-                with patch.object(check_rust_deps, "WORKSPACE", root), redirect_stderr(error):
-                    self.assertEqual(check_rust_deps.main(["--crates-only"]), 1)
-                self.assertIn("outward crate dependency: ve-core -> ve", error.getvalue())
-
-    def test_rust_module_ledger_matches_the_tree(self):
-        self.assertEqual(json.loads(check_rust_deps.MODULE_LEDGER.read_text()), {})
-        for crate, groups in check_rust_deps.MODULE_GROUPS.items():
-            source = check_rust_deps.WORKSPACE / crate / "src"
-            edges, errors = check_rust_deps.module_edges(crate, source, groups)
-            self.assertEqual((edges, errors), (set(), []), crate)
-            self.assertEqual({path.stem for path in source.glob("*.rs")}, set(groups), crate)
+    def test_rust_crate_graph_kept(self):
         output = io.StringIO()
         with redirect_stdout(output):
             self.assertEqual(check_rust_deps.main(), 0)
-        self.assertIn("module graph kept (0 reviewed legacy edges)", output.getvalue())
-
-    def test_rust_module_groups_match_the_layer_table(self):
-        # Each existing library module belongs to its crate layer. A removed Rust
-        # module must also leave the ledger so the inventory stays exact.
-        # Each library crate holds one group, at its crate layer; the facade holds only lib.rs.
-        groups = check_rust_deps.MODULE_GROUPS
-        self.assertEqual({crate: set(modules) for crate, modules in groups.items()}, {
-            "ve-kernel": {"lib", "ast", "environment", "graph", "internal", "model", "semantics", "wire"},
-            "ve-profile": {"lib", "eval", "order", "search"},
-            "ve-core": {"lib"},
-        })
-        for crate, modules in groups.items():
-            self.assertEqual(set(modules.values()), {check_rust_deps.CRATE_LAYERS[crate]}, crate)
-
-    def test_rust_crate_split_layers(self):
+        self.assertIn("Rust crate graph kept (4 crates; ve-core re-exports only)", output.getvalue())
         self.assertEqual(check_rust_deps.CRATE_LAYERS,
                          {"ve-kernel": 1, "ve-profile": 2, "ve-core": 3, "ve": 4})
         for path, layer in (("rust/ve-kernel/src/semantics.rs", 1), ("rust/ve-core/src/lib.rs", 1),
@@ -696,132 +434,66 @@ class LayerSelectionTests(unittest.TestCase):
                             ("rust/ve/src/main.rs", 4),
                             ("rust/ve-profile/Cargo.toml", 1)):
             self.assertEqual(layer_policy.source_layer(path), layer, path)
+
+    def test_inward_fixture_workspace_passes(self):
         with TemporaryDirectory() as directory:
-            root = Path(directory)
-            crates = {"ve-kernel": [], "ve-profile": ["ve-kernel"],
-                      "ve-core": ["ve-kernel", "ve-profile"], "ve": ["ve-core"]}
-            (root / "Cargo.toml").write_text(f"[workspace]\nmembers = {json.dumps(list(crates))}\n")
-            for crate, uses in crates.items():
-                (root / crate).mkdir()
-                dependencies = "".join(f'{use} = {{ path = "../{use}" }}\n' for use in uses)
-                (root / crate / "Cargo.toml").write_text(f'[package]\nname = "{crate}"\n[dependencies]\n'
-                                                         + dependencies)
-            with patch.object(check_rust_deps, "WORKSPACE", root), redirect_stdout(io.StringIO()):
-                self.assertEqual(check_rust_deps.main(["--crates-only"]), 0)
-            for crate, use in (("ve-kernel", "ve-profile"), ("ve-profile", "ve-core"), ("ve-core", "ve")):
+            root = rust_workspace(Path(directory))
+            self.assertEqual(rust_check(root), (0, ""))
+
+    def test_outward_crate_dependencies_are_rejected(self):
+        for crate, use in (("ve-kernel", "ve-profile"), ("ve-kernel", "ve-core"), ("ve-profile", "ve-core"),
+                           ("ve-core", "ve")):
+            with self.subTest(f"{crate} -> {use}"), TemporaryDirectory() as directory:
+                root = rust_workspace(Path(directory))
                 manifest = root / crate / "Cargo.toml"
-                original = manifest.read_text()
-                manifest.write_text(original + f'{use} = {{ path = "../{use}" }}\n')
-                error = io.StringIO()
-                with patch.object(check_rust_deps, "WORKSPACE", root), redirect_stderr(error):
-                    self.assertEqual(check_rust_deps.main(["--crates-only"]), 1)
-                self.assertIn(f"outward crate dependency: {crate} -> {use}", error.getvalue())
-                manifest.write_text(original)
+                manifest.write_text(manifest.read_text() + f'{use} = {{ path = "../{use}" }}\n')
+                self.assertEqual(rust_check(root), (1, f"outward crate dependency: {crate} -> {use}\n"))
 
-    def test_outward_rust_module_imports_are_rejected(self):
+    def test_renamed_and_inherited_rust_dependencies_are_read_as_cargo_resolves_them(self):
+        # A target-specific build dependency under another name, and a dev dependency inherited
+        # from the workspace under another name: cargo resolves both to the `ve` crate.
+        for declaration, workspace in (
+            ('[target."cfg(unix)".build-dependencies]\ncli = { package = "ve", path = "../ve" }\n', ""),
+            ('[dev-dependencies]\ncli.workspace = true\n',
+             '[workspace.dependencies]\ncli = { package = "ve", path = "ve" }\n'),
+        ):
+            with self.subTest(declaration), TemporaryDirectory() as directory:
+                root = rust_workspace(Path(directory))
+                (root / "Cargo.toml").write_text((root / "Cargo.toml").read_text() + workspace)
+                manifest = root / "ve-core" / "Cargo.toml"
+                manifest.write_text(manifest.read_text() + declaration)
+                self.assertEqual(rust_check(root), (1, "outward crate dependency: ve-core -> ve\n"))
+
+    def test_modules_in_the_facade_are_rejected(self):
+        for module in ("extra.rs", "nested/inner.rs"):
+            with self.subTest(module), TemporaryDirectory() as directory:
+                root = rust_workspace(Path(directory))
+                (root / "ve-core/src" / module).parent.mkdir(parents=True, exist_ok=True)
+                (root / "ve-core/src" / module).write_text("")
+                code, error = rust_check(root)
+                self.assertEqual(code, 1)
+                self.assertTrue(error.startswith(f"module in the ve-core facade: {module}; "), error)
+
+    def test_unmapped_crates_and_outside_path_dependencies_are_rejected(self):
         with TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "Cargo.toml").write_text('[workspace]\nmembers = ["ve-core", "ve"]\n')
-            for crate in ("ve", "ve-core"):
-                (root / crate / "src/nested").mkdir(parents=True)
-                (root / crate / "Cargo.toml").write_text(f'[package]\nname = "{crate}"\n')
-            source = root / "ve-core/src"
-            (source / "lib.rs").write_text("mod ast;\nmod eval;\nmod surface;\nmod wire;\nmod model;\n"
-                                           "pub use eval::{evaluate as run, Evaluation};\n"
-                                           "pub use surface::parse;\n")
-            (source / "eval.rs").write_text("use crate::{Error, ast::Formula};\n")
-            (source / "surface.rs").write_text("use crate::eval::Evaluation;\n")
-            (source / "ast.rs").write_text('// crate::surface::parse\nconst S: &str = "crate::surface";\n'
-                                           "use crate::{Error, MAX_DEPTH};\n")
-            (source / "wire.rs").write_text("use crate::{\n    Error,\n    run as evaluate,\n};\n"
-                                            "fn f() { crate::surface::formula_record(1); }\n")
-            (source / "model.rs").write_text("use super::parse;\nmod tests {\n    use super::*;\n}\n")
-            (source / "extra.rs").write_text("")
-            (source / "nested/inner.rs").write_text("")
-            ledger = root / "exceptions.json"
-            ledger.write_text(json.dumps({"ve-core: ast -> surface": "planted stale key"}))
-            error = io.StringIO()
-            with (patch.object(check_rust_deps, "WORKSPACE", root),
-                  patch.object(check_rust_deps, "CRATE_LAYERS", {"ve-core": 1, "ve": 4}),
-                  patch.object(check_rust_deps, "MODULE_GROUPS", {"ve-core": FIXTURE_GROUPS}),
-                  patch.object(check_rust_deps, "MODULE_LEDGER", ledger), redirect_stderr(error)):
-                self.assertEqual(check_rust_deps.main(), 1)
-            self.assertEqual(sorted(error.getvalue().splitlines()), [
-                "new outward Rust module import: ve-core: model -> surface",
-                "new outward Rust module import: ve-core: wire -> eval",
-                "new outward Rust module import: ve-core: wire -> surface",
-                "stale Rust module exception: ve-core: ast -> surface",
-                "unmapped Rust module: ve-core: extra",
-                "unmapped Rust module: ve-core: nested/inner.rs",
-            ])
-            error = io.StringIO()
-            with (patch.object(check_rust_deps, "WORKSPACE", root),
-                  patch.object(check_rust_deps, "CRATE_LAYERS", {"ve-core": 1, "ve": 4}),
-                  patch.object(check_rust_deps, "MODULE_GROUPS", {"ve-core": FIXTURE_GROUPS}),
-                  patch.object(check_rust_deps, "MODULE_LEDGER", ledger), redirect_stderr(error)):
-                self.assertEqual(check_rust_deps.main(["--crates-only"]), 0, error.getvalue())
-
-    def test_rust_module_paths_resolve_generics_and_reexports(self):
-        groups = FIXTURE_GROUPS
-        for name, (lib, ast, eval_, surface, expected) in RUST_MODULE_CASES.items():
-            with self.subTest(name), TemporaryDirectory() as directory:
-                source = rust_module_fixture(Path(directory), lib, ast, eval_, surface)
-                edges, errors = check_rust_deps.module_edges("ve-core", source, groups)
-                self.assertEqual(errors, [])
-                self.assertEqual(edges, {f"ve-core: {edge}" for edge in expected})
-
-    def test_rust_module_forms_outside_the_strict_subset_are_rejected(self):
-        """R0 is fail-closed: every form that could hide a dependency is rejected naming the plain form."""
-        groups = FIXTURE_GROUPS
-        for name, (lib, ast, eval_, surface, module, construct, rule) in RUST_REJECTED_CASES.items():
-            with self.subTest(name), TemporaryDirectory() as directory:
-                source = rust_module_fixture(Path(directory), lib, ast, eval_, surface)
-                _, errors = check_rust_deps.module_edges("ve-core", source, groups)
-                self.assertIn(f"unsupported Rust construct: ve-core: {module}: {construct!r}: "
-                              f"{check_rust_deps.RULES[rule]}", errors)
-                self.assertTrue(all(error.startswith("unsupported Rust construct: ve-core: ") for error in errors),
-                                errors)
-        invalid = check_rust_deps.RULES["invalid"]
-        with TemporaryDirectory() as directory:  # rustc rejects a no-break space between tokens
-            source = rust_module_fixture(Path(directory), "pub fn g()\u00a0{}\n", "", "", SURFACE_RS)
-            _, errors = check_rust_deps.module_edges("ve-core", source, groups)
-            self.assertEqual(errors, [f"unsupported Rust construct: ve-core: lib: '\\xa0': {invalid}"])
-        with TemporaryDirectory() as directory:  # and an escape no cooked string holds
-            literal = r'"crate::\q"'
-            source = rust_module_fixture(Path(directory), f"const S: &str = {literal};\n", "", "", SURFACE_RS)
-            _, errors = check_rust_deps.module_edges("ve-core", source, groups)
-            self.assertEqual(errors, [f"unsupported Rust construct: ve-core: lib: {literal!r}: {invalid}"])
-
-    def test_rust_tokens_follow_rustc(self):
-        text = ('/* a /* b */ crate::x */ r##"crate::y"#"## b\'"\' \'\\u{22}\' \'a r#crate1::café '
-                "cafe\u0301 c\"z\" x.0 1u8")
-        self.assertEqual([(token.kind, token.text) for token in check_rust_deps.tokens(text)],
-                         [("string", 'crate::y"#'), ("ident", "crate1"), ("::", "::"), ("ident", "café"),
-                          ("ident", "café"), ("string", "z"), ("ident", "x"), ("punct", ".")])
-        self.assertTrue(check_rust_deps.tokens("r#crate1")[0].raw)
-        # Cooked strings are decoded as rustc decodes them (line continuations skip whitespace);
-        # raw strings are not, and an escape rustc rejects makes the literal invalid.
-        cooked = '"\\x63rate:\\u{3_a}\\\n   \\tx\\\\\\"\\0\\\'" r"\\x63"'
-        self.assertEqual([(token.kind, token.text) for token in check_rust_deps.tokens(cooked)],
-                         [("string", "crate::\tx\\\"\0'"), ("string", r"\x63")])
-        for literal in (r'"\q"', r'"\u{110000}"', r'"\u{d800}"', r'"\x6"', r'"\u{1234567}"', r'"\u{_1}"'):
-            self.assertEqual(check_rust_deps.tokens(literal)[0].kind, "invalid", literal)
-
-    @unittest.skipUnless(shutil.which("cargo"), "cargo is not installed")
-    def test_rust_module_fixtures_compile(self):
-        """Every module-check fixture is real Rust: `cargo check` accepts all of them."""
-        fixtures = [(lib, ast, eval_, surface) for lib, ast, eval_, surface, _ in RUST_MODULE_CASES.values()]
-        fixtures += [case[:4] for case in RUST_REJECTED_CASES.values()]
+            root = rust_workspace(Path(directory), {**RUST_CRATES, "ve-extra": []})
+            self.assertEqual(rust_check(root), (1, "unmapped crates: ['ve-extra']\n"))
         with TemporaryDirectory() as directory:
-            root = Path(directory)
-            members = [f"f{index}" for index in range(len(fixtures))]
-            (root / "Cargo.toml").write_text(f"[workspace]\nresolver = \"3\"\nmembers = {json.dumps(members)}\n")
-            for member, (lib, ast, eval_, surface) in zip(members, fixtures):
-                rust_module_fixture(root / member, lib, ast, eval_, surface, name=f"fixture-{member}")
-            result = subprocess.run(["cargo", "check", "--offline", "--quiet", "--workspace"], cwd=root,
-                                    capture_output=True, text=True, env={**os.environ, "CARGO_TARGET_DIR":
-                                                                         str(root / "target")})
-            self.assertEqual(result.returncode, 0, result.stderr)
+            root = rust_workspace(Path(directory))
+            rust_workspace(root / "outside", {"ve-kernel": []})  # a crate of another workspace
+            manifest = root / "ve-profile" / "Cargo.toml"
+            manifest.write_text(manifest.read_text() + 'other = { package = "ve-kernel", '
+                                                       'path = "../outside/ve-kernel" }\n')
+            self.assertEqual(rust_check(root),
+                             (1, "path dependency outside the workspace: ve-profile -> ve-kernel\n"))
+
+    def test_unreadable_rust_workspace_fails(self):
+        with TemporaryDirectory() as directory:
+            root = rust_workspace(Path(directory))
+            (root / "ve-kernel" / "Cargo.toml").write_text("[package\n")
+            code, error = rust_check(root)
+            self.assertEqual(code, 1)
+            self.assertTrue(error.startswith("cannot read the Rust workspace: cargo metadata failed: "), error)
 
 
 class RustOutputDiffTests(unittest.TestCase):
