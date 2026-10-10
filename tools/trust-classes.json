@@ -871,6 +871,7 @@
       "G[V]": [
         "ResponseShape.Skeletons._aux_ResponseShape_Skeletons___elabRules_ResponseShape_Skeletons_skelTerm_1",
         "ResponseShape.Skeletons.alternatives",
+        "ResponseShape.Skeletons.ask",
         "ResponseShape.Skeletons.bundle",
         "ResponseShape.Skeletons.check",
         "ResponseShape.Skeletons.checkCertificate",
@@ -10636,6 +10637,399 @@
     "VE/WireContract/Tables/SoftNorms.lean": {
       "G[V]": [
         "VE.WireContract.Tables.SoftNorms.table"
+      ]
+    },
+    "ResponseShape/Schemas/Ask.lean": {
+      "G[V]": [
+        "ResponseShape.Schemas.Ask.answered",
+        "ResponseShape.Schemas.Ask.choice",
+        "ResponseShape.Schemas.Ask.englishFormula",
+        "ResponseShape.Schemas.Ask.file",
+        "ResponseShape.Schemas.Ask.gap",
+        "ResponseShape.Schemas.Ask.identities",
+        "ResponseShape.Schemas.Ask.leads",
+        "ResponseShape.Schemas.Ask.line",
+        "ResponseShape.Schemas.Ask.name",
+        "ResponseShape.Schemas.Ask.pairNat",
+        "ResponseShape.Schemas.Ask.reasons",
+        "ResponseShape.Schemas.Ask.refused",
+        "ResponseShape.Schemas.Ask.row",
+        "ResponseShape.Schemas.Ask.row'",
+        "ResponseShape.Schemas.Ask.source"
+      ]
+    },
+    "VE/Ask/Basic.lean": {
+      "C": [
+        "VE.Ask.Row.lead",
+        "VE.Ask.Row.reason"
+      ],
+      "G[V]": [
+        "VE.Ask.Row",
+        "VE.Ask.conflictRows",
+        "VE.Ask.queryRows"
+      ],
+      "S": [
+        "VE.Ask.Lead",
+        "VE.Ask.LeadHolds",
+        "VE.Ask.Reason",
+        "VE.Ask.ReasonHolds",
+        "VE.Ask.RowOk",
+        "VE.Ask.SplitU"
+      ]
+    },
+    "VE/Ask/Binding.lean": {
+      "C": [
+        "VE.Ask.checkCase",
+        "VE.Ask.checkUnit",
+        "VE.Ask.checkUnits",
+        "VE.Ask.fenceOk"
+      ],
+      "G[V]": [
+        "VE.Ask.boundKeys",
+        "VE.Ask.instDecidableSame",
+        "VE.Ask.strOf?"
+      ],
+      "S": [
+        "VE.Ask.CaseBinding",
+        "VE.Ask.Same",
+        "VE.Ask.UnitBound"
+      ]
+    },
+    "VE/Ask/Examples.lean": {
+      "T": [
+        "VE.Ask.Examples.allRows",
+        "VE.Ask.Examples.bothFail",
+        "VE.Ask.Examples.bothHold",
+        "VE.Ask.Examples.countLead",
+        "VE.Ask.Examples.countReason",
+        "VE.Ask.Examples.leadKey",
+        "VE.Ask.Examples.lists",
+        "VE.Ask.Examples.results",
+        "VE.Ask.Examples.samples",
+        "VE.Ask.Examples.twoSets",
+        "VE.Ask.Examples.u3Shape"
+      ]
+    },
+    "VE/Ask/Groups.lean": {
+      "C": [
+        "VE.Ask.Group.tag",
+        "VE.Ask.addRow",
+        "VE.Ask.assignment",
+        "VE.Ask.groups",
+        "VE.Ask.relevantSets",
+        "VE.Ask.separates"
+      ],
+      "G[V]": [
+        "VE.Ask.Group"
+      ],
+      "P": [
+        "VE.Ask.Inv"
+      ]
+    },
+    "VE/Ask/Lines.lean": {
+      "C": [
+        "VE.Ask.View.groups",
+        "VE.Ask.View.key",
+        "VE.Ask.askedLine",
+        "VE.Ask.bytesOf",
+        "VE.Ask.citeLine",
+        "VE.Ask.contextOf",
+        "VE.Ask.documentUnused",
+        "VE.Ask.groupReasons",
+        "VE.Ask.leadOfLine",
+        "VE.Ask.lineTextV",
+        "VE.Ask.mk",
+        "VE.Ask.named",
+        "VE.Ask.pointLines",
+        "VE.Ask.reasonLines",
+        "VE.Ask.renderGroupV",
+        "VE.Ask.renderV",
+        "VE.Ask.situationLine",
+        "VE.Ask.uncheckedIn",
+        "VE.Ask.unusedLines",
+        "VE.Ask.unusedUnit"
+      ],
+      "G[R]": [
+        "VE.Ask.citationText",
+        "VE.Ask.citeText",
+        "VE.Ask.gateName",
+        "VE.Ask.leadFrame",
+        "VE.Ask.leadKey",
+        "VE.Ask.leadPhrase",
+        "VE.Ask.leadText",
+        "VE.Ask.leads",
+        "VE.Ask.paramText",
+        "VE.Ask.readingClause",
+        "VE.Ask.readingSuffix",
+        "VE.Ask.reasonFrame",
+        "VE.Ask.reasonText",
+        "VE.Ask.situationText"
+      ],
+      "G[V]": [
+        "VE.Ask.Context",
+        "VE.Ask.Line",
+        "VE.Ask.View"
+      ],
+      "P": [
+        "VE.Ask.BlockLine",
+        "VE.Ask.witnessFrames"
+      ],
+      "S": [
+        "VE.Ask.checkedWitnessRow"
+      ]
+    },
+    "VE/Ask/Plain.lean": {
+      "C": [
+        "VE.Ask.PlainRow.lead"
+      ],
+      "G[V]": [
+        "VE.Ask.PlainRow"
+      ],
+      "S": [
+        "VE.Ask.Consistent",
+        "VE.Ask.LeadHoldsPlain",
+        "VE.Ask.PlainRowOk"
+      ]
+    },
+    "VE/Ask/PlainAnswer.lean": {
+      "C": [
+        "VE.Ask.PlainParts.sourced",
+        "VE.Ask.PlainRow.toRow",
+        "VE.Ask.answerForPlain",
+        "VE.Ask.plainCertPiece",
+        "VE.Ask.plainCertReplays",
+        "VE.Ask.plainCites",
+        "VE.Ask.plainUsed"
+      ],
+      "G[V]": [
+        "VE.Ask.plainView"
+      ]
+    },
+    "VE/Ask/PlainWire.lean": {
+      "C": [
+        "VE.Ask.checkPlainCase",
+        "VE.Ask.plainCert",
+        "VE.Ask.plainConsistent",
+        "VE.Ask.plainModel",
+        "VE.Ask.plainParts",
+        "VE.Ask.plainProved",
+        "VE.Ask.plainProvesNegation",
+        "VE.Ask.plainProvesQuery",
+        "VE.Ask.plainProvesUnsat",
+        "VE.Ask.plainRefutes",
+        "VE.Ask.plainRow",
+        "VE.Ask.plainUnit",
+        "VE.Ask.replayPlain",
+        "VE.Ask.replayPlainAsk",
+        "VE.Ask.replayPlainAskCore",
+        "VE.Ask.replayPlainParts"
+      ],
+      "G[V]": [
+        "VE.Ask.PlainAsked",
+        "VE.Ask.PlainParts",
+        "VE.Ask.PlainParts.V",
+        "VE.Ask.PlainParts.background",
+        "VE.Ask.PlainParts.piece",
+        "VE.Ask.PlainParts.premisesJson",
+        "VE.Ask.PlainParts.sources",
+        "VE.Ask.PlainParts.\u0393",
+        "VE.Ask.PlainVerdict"
+      ],
+      "S": [
+        "VE.Ask.PlainCaseBinding"
+      ]
+    },
+    "VE/Ask/Render.lean": {
+      "C": [
+        "VE.Ask.Answer.groups",
+        "VE.Ask.Answer.key",
+        "VE.Ask.Answer.view",
+        "VE.Ask.answerFor",
+        "VE.Ask.certPiece",
+        "VE.Ask.certReplays",
+        "VE.Ask.checkedCites",
+        "VE.Ask.firstUngated",
+        "VE.Ask.lineText",
+        "VE.Ask.linesGated",
+        "VE.Ask.render",
+        "VE.Ask.renderGroup",
+        "VE.Ask.rowPremises",
+        "VE.Ask.rowSourced",
+        "VE.Ask.rowUsed",
+        "VE.Ask.sourcedAssertions",
+        "VE.Ask.unworded"
+      ],
+      "G[V]": [
+        "VE.Ask.Answer",
+        "VE.Ask.counterOf",
+        "VE.Ask.differs",
+        "VE.Ask.entryOf",
+        "VE.Ask.gapTuple",
+        "VE.Ask.gapsOfCounter",
+        "VE.Ask.pointsOf",
+        "VE.Ask.rowAt",
+        "VE.Ask.ruleUnits",
+        "VE.Ask.setUnit",
+        "VE.Ask.situationOf",
+        "VE.Ask.splitOf",
+        "VE.Ask.witnessOf",
+        "VE.Ask.wordsOf"
+      ],
+      "S": [
+        "VE.Ask.RenderInputBound",
+        "VE.Ask.checkedWitness"
+      ]
+    },
+    "VE/Ask/Run.lean": {
+      "D[V]": [
+        "VE.Ask.Run.answeredFields",
+        "VE.Ask.Run.askCase",
+        "VE.Ask.Run.lineJson",
+        "VE.Ask.Run.nameJson",
+        "VE.Ask.Run.readingsJson",
+        "VE.Ask.Run.rowJson",
+        "VE.Ask.Run.sourceJson"
+      ],
+      "G[I]": [
+        "VE.Ask.Run.identitiesOf"
+      ],
+      "G[R]": [
+        "VE.Ask.Run.fieldText",
+        "VE.Ask.Run.reasonName",
+        "VE.Ask.Run.refusedFields"
+      ],
+      "G[V]": [
+        "VE.Ask.Run.answerLead",
+        "VE.Ask.Run.answered",
+        "VE.Ask.Run.caseReported",
+        "VE.Ask.Run.routeOfDocument"
+      ]
+    },
+    "VE/Ask/Sources.lean": {
+      "C": [
+        "VE.Ask.cited",
+        "VE.Ask.fillPremise",
+        "VE.Ask.positions",
+        "VE.Ask.replayOk",
+        "VE.Ask.sourced",
+        "VE.Ask.sourcesU",
+        "VE.Ask.usedPositions"
+      ],
+      "S": [
+        "VE.Ask.Source"
+      ]
+    },
+    "VE/Ask/Wire.lean": {
+      "C": [
+        "VE.Ask.decodeNames",
+        "VE.Ask.englishOf",
+        "VE.Ask.evidenceBound",
+        "VE.Ask.nameReadsBack",
+        "VE.Ask.negRow",
+        "VE.Ask.oneReading",
+        "VE.Ask.replayAsk",
+        "VE.Ask.replayAskCore",
+        "VE.Ask.rowOf",
+        "VE.Ask.rowsOf",
+        "VE.Ask.splitRow",
+        "VE.Ask.strField"
+      ],
+      "G[R]": [
+        "VE.Ask.displayNumbers",
+        "VE.Ask.setNumber"
+      ],
+      "G[V]": [
+        "VE.Ask.Asked",
+        "VE.Ask.Name",
+        "VE.Ask.allCandidates",
+        "VE.Ask.assertedCandidate",
+        "VE.Ask.candidateContent",
+        "VE.Ask.negCert",
+        "VE.Ask.splitModels"
+      ],
+      "S": [
+        "VE.Ask.NameReadsBack",
+        "VE.Ask.NameReadsBackSame"
+      ]
+    },
+    "VE/Ask/ZeroAnswer.lean": {
+      "C": [
+        "VE.Ask.ZeroParts.assertions",
+        "VE.Ask.ZeroParts.premises",
+        "VE.Ask.ZeroParts.sourced",
+        "VE.Ask.answerForZero",
+        "VE.Ask.zeroCertPiece",
+        "VE.Ask.zeroCertReplays",
+        "VE.Ask.zeroCites",
+        "VE.Ask.zeroUsed"
+      ],
+      "G[V]": [
+        "VE.Ask.zeroPoints",
+        "VE.Ask.zeroRuleUnits",
+        "VE.Ask.zeroView"
+      ]
+    },
+    "VE/Ask/ZeroWire.lean": {
+      "C": [
+        "VE.Ask.replayZero",
+        "VE.Ask.replayZeroAsk",
+        "VE.Ask.replayZeroAskCore",
+        "VE.Ask.replayZeroParts",
+        "VE.Ask.zeroBase",
+        "VE.Ask.zeroCert",
+        "VE.Ask.zeroCerts",
+        "VE.Ask.zeroConflict",
+        "VE.Ask.zeroConsistent",
+        "VE.Ask.zeroFilled",
+        "VE.Ask.zeroFree",
+        "VE.Ask.zeroModel",
+        "VE.Ask.zeroModelOk",
+        "VE.Ask.zeroNegationProved",
+        "VE.Ask.zeroParts",
+        "VE.Ask.zeroProved",
+        "VE.Ask.zeroQueryProved",
+        "VE.Ask.zeroRefuted",
+        "VE.Ask.zeroRow",
+        "VE.Ask.zeroSplit",
+        "VE.Ask.zeroSplitModels",
+        "VE.Ask.zeroUnit",
+        "VE.Ask.zeroUnsat",
+        "VE.Ask.zeroWitness"
+      ],
+      "G[V]": [
+        "VE.Ask.ZeroAsked",
+        "VE.Ask.ZeroParts",
+        "VE.Ask.ZeroParts.E",
+        "VE.Ask.ZeroParts.U",
+        "VE.Ask.ZeroParts.piece",
+        "VE.Ask.ZeroParts.\u0393",
+        "VE.Ask.ZeroVerdict"
+      ],
+      "S": [
+        "VE.Ask.HoldsU",
+        "VE.Ask.LeadHoldsU",
+        "VE.Ask.ReasonHoldsU",
+        "VE.Ask.RowOkU"
+      ]
+    },
+    "VE/Words/Situation.lean": {
+      "G[R]": [
+        "VE.Words.actOf",
+        "VE.Words.article",
+        "VE.Words.authorPredicates",
+        "VE.Words.elementLine",
+        "VE.Words.elementName",
+        "VE.Words.factLine",
+        "VE.Words.fill",
+        "VE.Words.fillChars",
+        "VE.Words.fillingSentence",
+        "VE.Words.genericClause",
+        "VE.Words.pairSentence",
+        "VE.Words.pointClause",
+        "VE.Words.pointClauseIds",
+        "VE.Words.rowLe",
+        "VE.Words.situation",
+        "VE.Words.sortedStrings"
       ]
     }
   }

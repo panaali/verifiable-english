@@ -297,7 +297,7 @@ def replayAskCore (j : Json) : Except String { a : Asked // a.request = j } := d
             let sp ← VE.Service.Document.split text
             let ⟨names, hnames⟩ ← decodeNames x.r.N.D sp.front case E L (j.getObjValD "names")
             pure ⟨⟨j, text, q, case, E, L, c, φ, x, rowsOf x case, names, hbind, ⟨hd, hq, rfl⟩, hr, hread,
-              ⟨eq_of_strOf? hqs, hsame, by rw [hdc, hf]⟩, hx, rowsOf_choices x case, rowsOf_ok x case hx.1, hnames⟩, rfl⟩
+              ⟨eq_of_strOf hqs, hsame, by rw [hdc, hf]⟩, hx, rowsOf_choices x case, rowsOf_ok x case hx.1, hnames⟩, rfl⟩
           else throw "InvalidInput: the case does not ask this question (premises or assumed readings)"
         else throw "InvalidInput: the case does not ask this question"
   else throw "InvalidInput: the case does not ask this question"

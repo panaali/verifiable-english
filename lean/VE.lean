@@ -132,3 +132,6 @@ import VE.Ask.PlainWire
 import VE.Ask.PlainAnswer
 import VE.Ask.Run
 import VE.Words.Situation
+import VE.Ask.ZeroWire
+import VE.Ask.ZeroAnswer
+import VE.Ask.Examples

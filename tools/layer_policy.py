@@ -126,6 +126,10 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
+    if module.startswith("VE.Ask."):
+        return 4  # question answering Q2: binds a request to Service.Document's split and reads EnglishGrammar.Run
+    if module.startswith("VE.Words."):
+        return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
