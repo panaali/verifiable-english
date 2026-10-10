@@ -1,0 +1,322 @@
+{
+  "range": "main..HEAD --no-merges",
+  "base": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
+  "head": "5f186a23ac43cf79be78f77fe4a58265c148cc5a",
+  "commits": [
+    "b3b9a98ad729ed1d4cc2b9d6736268acd37fe67b",
+    "e0184421a1e8f0d6400bd41fff0c2dc25015d8ba",
+    "f5c1ee5c82e18c846c9b6aca8c112a214dc283a1",
+    "95312f23d9cfe2437e71c4745f0c53b4befa8df5",
+    "be0c447b18746ea1d0b4d499c6a9599f902a6ebe",
+    "db6a0ce3a2ee1b412bbf21659f60e3ab35756c36",
+    "5f186a23ac43cf79be78f77fe4a58265c148cc5a"
+  ],
+  "numstat": [
+    {
+      "commit": "b3b9a98ad729ed1d4cc2b9d6736268acd37fe67b",
+      "files": [
+        {
+          "path": "lean/VE/Readings/Components.lean",
+          "added": 344,
+          "deleted": 0
+        }
+      ]
+    },
+    {
+      "commit": "e0184421a1e8f0d6400bd41fff0c2dc25015d8ba",
+      "files": [
+        {
+          "path": "lean/ResponseShape/Encoders/ReadingsRoute.lean",
+          "added": 162,
+          "deleted": 18
+        },
+        {
+          "path": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+          "added": 112,
+          "deleted": 7
+        },
+        {
+          "path": "lean/VE/Readings/ComponentsWire.lean",
+          "added": 615,
+          "deleted": 0
+        },
+        {
+          "path": "lean/VE/Readings/Run.lean",
+          "added": 32,
+          "deleted": 7
+        },
+        {
+          "path": "lean/VE/Readings/VerdictsWire.lean",
+          "added": 3,
+          "deleted": 2
+        },
+        {
+          "path": "lean/checkers.lock",
+          "added": 4,
+          "deleted": 1
+        },
+        {
+          "path": "ve/backends/lean_service_schema/readings-route.json",
+          "added": 220,
+          "deleted": 3
+        }
+      ]
+    },
+    {
+      "commit": "f5c1ee5c82e18c846c9b6aca8c112a214dc283a1",
+      "files": [
+        {
+          "path": "lean/ResponseShape/Encoders/ReadingsRoute.lean",
+          "added": 16,
+          "deleted": 14
+        },
+        {
+          "path": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+          "added": 3,
+          "deleted": 2
+        },
+        {
+          "path": "lean/VE/Readings/Run.lean",
+          "added": 15,
+          "deleted": 13
+        },
+        {
+          "path": "lean/checkers.lock",
+          "added": 2,
+          "deleted": 1
+        },
+        {
+          "path": "ve/backends/lean_service_schema/readings-route.json",
+          "added": 5,
+          "deleted": 4
+        }
+      ]
+    },
+    {
+      "commit": "95312f23d9cfe2437e71c4745f0c53b4befa8df5",
+      "files": [
+        {
+          "path": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+          "added": 15,
+          "deleted": 3
+        },
+        {
+          "path": "tests/test_readings_companions_lean.py",
+          "added": 8,
+          "deleted": 1
+        },
+        {
+          "path": "tests/test_readings_components_document.py",
+          "added": 353,
+          "deleted": 0
+        },
+        {
+          "path": "tests/test_readings_components_lean.py",
+          "added": 272,
+          "deleted": 0
+        },
+        {
+          "path": "ve/backends/lean_service_schema/readings-route.json",
+          "added": 79,
+          "deleted": 6
+        },
+        {
+          "path": "ve/document.py",
+          "added": 48,
+          "deleted": 9
+        },
+        {
+          "path": "ve/readings.py",
+          "added": 9,
+          "deleted": 3
+        },
+        {
+          "path": "ve/readings_components.py",
+          "added": 617,
+          "deleted": 0
+        },
+        {
+          "path": "ve/readings_route.py",
+          "added": 31,
+          "deleted": 12
+        },
+        {
+          "path": "ve/readings_s2_wording.py",
+          "added": 13,
+          "deleted": 3
+        },
+        {
+          "path": "ve/readings_verdicts.py",
+          "added": 5,
+          "deleted": 1
+        }
+      ]
+    },
+    {
+      "commit": "be0c447b18746ea1d0b4d499c6a9599f902a6ebe",
+      "files": [
+        {
+          "path": "docs/readings-defaults/rd4b/evidence/mutants.json",
+          "added": 59,
+          "deleted": 0
+        },
+        {
+          "path": "docs/spec/assurance-manifest.md",
+          "added": 3,
+          "deleted": 2
+        },
+        {
+          "path": "lean/ResponseShape/Audit.lean",
+          "added": 18,
+          "deleted": 0
+        },
+        {
+          "path": "lean/VE/Audit.lean",
+          "added": 47,
+          "deleted": 0
+        },
+        {
+          "path": "lean/VE/Route/frozen-sources.sha256",
+          "added": 5,
+          "deleted": 3
+        },
+        {
+          "path": "lean/axioms.txt",
+          "added": 71,
+          "deleted": 0
+        },
+        {
+          "path": "lean/declarations.txt",
+          "added": 306,
+          "deleted": 145
+        },
+        {
+          "path": "lean/predicates.txt",
+          "added": 9,
+          "deleted": 0
+        },
+        {
+          "path": "lean/statements.txt",
+          "added": 479,
+          "deleted": 0
+        },
+        {
+          "path": "tests/test_readings_defaults_rd4b_report.py",
+          "added": 78,
+          "deleted": 0
+        },
+        {
+          "path": "tests/test_readings_defaults_statements.py",
+          "added": 37,
+          "deleted": 0
+        },
+        {
+          "path": "tools/check_readings_defaults_statements.py",
+          "added": 21,
+          "deleted": 3
+        },
+        {
+          "path": "tools/gate-collection.json",
+          "added": 43,
+          "deleted": 0
+        },
+        {
+          "path": "tools/gate-optional.json",
+          "added": 5,
+          "deleted": 1
+        },
+        {
+          "path": "tools/readings_defaults_rd4b_mutants.py",
+          "added": 68,
+          "deleted": 0
+        },
+        {
+          "path": "tools/trust-classes.json",
+          "added": 111,
+          "deleted": 22
+        },
+        {
+          "path": "ve/assurance-manifest.json",
+          "added": 27,
+          "deleted": 5
+        }
+      ]
+    },
+    {
+      "commit": "db6a0ce3a2ee1b412bbf21659f60e3ab35756c36",
+      "files": [
+        {
+          "path": "docs/CONSOLIDATION-PLAN.md",
+          "added": 1,
+          "deleted": 1
+        },
+        {
+          "path": "docs/readings-defaults/rd4b/evidence/mutants.json",
+          "added": 5,
+          "deleted": 5
+        },
+        {
+          "path": "tests/test_lean_first_b12_report.py",
+          "added": 1,
+          "deleted": 6
+        },
+        {
+          "path": "tests/test_readings_lean_sharing.py",
+          "added": 2,
+          "deleted": 1
+        },
+        {
+          "path": "tests/test_readings_verdicts_lean.py",
+          "added": 5,
+          "deleted": 3
+        },
+        {
+          "path": "tools/readings_defaults_rd4b_mutants.py",
+          "added": 6,
+          "deleted": 3
+        }
+      ]
+    },
+    {
+      "commit": "5f186a23ac43cf79be78f77fe4a58265c148cc5a",
+      "files": [
+        {
+          "path": "docs/readings-defaults/rd4b/evidence/mutants.json",
+          "added": 21,
+          "deleted": 10
+        },
+        {
+          "path": "tests/test_readings_components_lean.py",
+          "added": 5,
+          "deleted": 0
+        },
+        {
+          "path": "tests/test_readings_defaults_rd4b_report.py",
+          "added": 25,
+          "deleted": 0
+        },
+        {
+          "path": "tools/gate-collection.json",
+          "added": 1,
+          "deleted": 0
+        },
+        {
+          "path": "tools/gate-optional.json",
+          "added": 2,
+          "deleted": 1
+        },
+        {
+          "path": "tools/readings_defaults_rd4b_mutants.py",
+          "added": 4,
+          "deleted": 0
+        },
+        {
+          "path": "ve/readings_components.py",
+          "added": 11,
+          "deleted": 0
+        }
+      ]
+    }
+  ],
+  "merge_base": "0d93e591d3963b65d1ad909a508b9d928322a014"
+}

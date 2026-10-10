@@ -19,7 +19,7 @@ from tests.test_readings_nd_document import ASKS as ASKS_SENTENCE, EVERY as EVER
 from tests.test_readings_nd_lean import case, doc1, env1, run
 from ve.document import load_document
 from ve.errors import CheckerUnavailable, VEError
-from ve.readings_s2_wording import query_english, report_english
+from ve.readings_s2_wording import S2Wording, query_english, report_english
 from ve.readings_verdicts import context
 
 LEAN = "ve_readings_route"
@@ -119,7 +119,7 @@ def test_fnd1_implication_is_all_conditional_on_the_pair_premise(tmp_path):
 
 
 def test_missing_evidence_for_one_of_two_choices_names_that_choice(tmp_path):
-    _, route = loaded(tmp_path)
+    doc, route = loaded(tmp_path)
     pieces = genuine(route)
     only = {route._key(route.choices[0]): pieces[route._key(route.choices[0])]}
     conflict = ask(route, "conflict", evidence_of(route, only))
@@ -129,11 +129,19 @@ def test_missing_evidence_for_one_of_two_choices_names_that_choice(tmp_path):
     query = ask(route, "query", evidence_of(route, only), premises=[], conclusion=QUERY)
     assert {k: query["result"][k] for k in ("verdict", "status", "conflict_status", "choice")} == {
         "verdict": "UNKNOWN", "status": "UNKNOWN (conflict status: UNKNOWN)", "conflict_status": "UNKNOWN", "choice": C1}
-    # a query row without a result: UNKNOWN naming the first choice without one
+    # 2.4 item 3 (review B3 of rd-4b, the class on one document): the gate's UNKNOWN names its choice by E12
+    assert [(line["frame"], line["result"], line["readings"]) for line in query["english"]] == [("E12", "R8", C1)]
+    wording = S2Wording(doc, route)
+    assert wording.plan(query) == [f"Read sentence 1 as {ASKS_SENTENCE}: VE could not check whether two rules on the "
+                                   "same act contradict each other."]
+    # a query row without a result: UNKNOWN naming the first choice without one, by E12 with R9
     cert = route._choice(route.choices[0]).certificate_case(QUERY)
     pieces[route._key(route.choices[0])]["certificate"] = cert
     query = ask(route, "query", evidence_of(route, pieces), premises=[], conclusion=QUERY)
     assert (query["result"]["verdict"], query["result"]["choice"]) == ("UNKNOWN", C1)
+    assert [(line["frame"], line["result"], line["readings"]) for line in query["english"]] == [("E12", "R9", C1)]
+    assert wording.plan(query) == [f"Read sentence 1 as {ASKS_SENTENCE}: VE could not check whether the conclusion "
+                                   "follows."]
 
 
 def test_a_certificate_of_choice_0_supplied_as_choice_1s_is_never_all(tmp_path):
@@ -809,7 +817,7 @@ def test_dri_wording_rows_keep_the_base(tmp_path, capsys):
 
 def test_readings_verdicts_runs_on_the_component_it_names():
     """On a named companion component the answer is Lean's answer on that component written as a document of its
-    own; without `component` it is the answer on `main`."""
+    own; without `component` it contains the product and its main case."""
     from tests.test_readings_companions_lean import MAIN_UNIT, alone, env_main, fc1, merged, set_a, set_b
 
     def verdicts(raw, document, **fields):
@@ -824,5 +832,7 @@ def test_readings_verdicts_runs_on_the_component_it_names():
     row = verdicts(env_main(), document, component="rs_a", question="conflict")
     assert row["status"] == "ok" and row["route"] == "enumerated", row
     assert {e["choice"][0][0] for e in row["per_choice"]} == {"rs_a"}
-    main = {"units": [MAIN_UNIT, {"id": "u_a"}, {"id": "u_b"}], "reading_sets": []}
-    assert verdicts(env_main(), document, question="conflict") == verdicts(env_main(), main, question="conflict")
+    product = verdicts(env_main(), document, question="conflict")
+    assert product["status"] == "ok" and product["route"] == "components"
+    assert [entry["component"] for entry in product["components"]] == ["main", "rs_a", "rs_b"]
+    assert product["components"][0]["answer"]["question"] == "conflict"

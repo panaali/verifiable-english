@@ -24,8 +24,8 @@ import pytest
 from conformance import soft_norms
 from conformance.soft_norms import (RUST_FIXTURES, combined_invalid_soft_blocks, generated_invalid_soft_blocks,
                                     generated_invalid_soft_rules, rejected_sources, soft3_reproducers)
-from conformance.wire_contract_gate import (EXAMPLES, PILOT, RECORDED_TESTS, TEST_INPUTS, gate_cases,
-                                            record_all_test_inputs, source_key, unit_of)
+from conformance.wire_contract_gate import (EXAMPLES, PILOT, RECORDED_TESTS, TEST_INPUTS,
+                                            cached_record_all_test_inputs, gate_cases, source_key, unit_of)
 from subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_conformance import fixtures
 from tools import nested_pytest
@@ -50,16 +50,23 @@ def corpus():
     return frozenset(source_key(case[2], case[3]) for case in gate_cases(load("soft-norms@0")))
 
 
+def _complete(result):
+    """A skipped or failed test may have submitted fewer inputs than it does when it runs."""
+    return result.returncode == 0 and " skipped" not in result.stdout
+
+
 @pytest.fixture(scope="module")
 def recorded_inputs(tmp_path_factory):
     """Every unit's recorded test inputs, from one run of the union of their recorded test files
-    (each unit records only its own files' inputs, as `record_test_inputs` does for one unit)."""
+    (each unit records only its own files' inputs, as `record_test_inputs` does for one unit). The run is
+    cached under a key of everything it reads (`tools/run_cache.py`): the outer suite runs these files too,
+    and an unchanged record is not run again."""
     output = tmp_path_factory.mktemp("recorded") / "inputs.json"
     # This fixture runs inside the full gate's xdist suite. Bound its nested
     # worker count so it cannot multiply the outer pool on a busy host.
-    result = record_all_test_inputs(output, (PILOT, *UNITS), workers=4)
-    # A skipped or failed test may have submitted fewer inputs than it does when it runs.
-    assert result.returncode == 0 and " skipped" not in result.stdout, result.stdout[-4000:] + result.stderr[-4000:]
+    result, cache = cached_record_all_test_inputs(output, (PILOT, *UNITS), _complete, workers=4)
+    print(f"recorded test inputs: cache {cache}")
+    assert _complete(result), result.stdout[-4000:] + result.stderr[-4000:]
     return json.loads(output.read_text())
 
 
