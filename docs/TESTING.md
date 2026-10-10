@@ -28,7 +28,7 @@ The fast path is precise for changes to tests, helpers, tools, data and use case
 uv run --frozen python tools/select_tests.py --impacted --paths path/to/source --json
 ```
 
-Without `--impacted`, `tools/select_tests.py` selects by function from a recorded coverage map, with the static graph for whatever the map cannot answer (next section). The two modes are separate rules today: `--impacted` needs no map and runs one plain pytest process; the default is finer for product modules and records coverage as it runs. Both read every `conftest.py` above a test as part of what it imports.
+Without `--impacted`, `tools/select_tests.py` selects by function from a recorded coverage map. A missing map selects the complete suite; the static graph covers only units missing from a usable map (next section). The two modes are separate rules today: `--impacted` needs no map and runs one plain pytest process; the default is finer for product modules and records coverage as it runs. Both read every `conftest.py` above a test as part of what it imports.
 
 ## The complete suite
 
@@ -122,8 +122,13 @@ The selector works at the level of functions, not layers:
   deleted module keeps its importers, a deleted fixture the tests that named
   it, and an import the change removed still counts.
 * **Lean.** The executables whose root imports the module (from the Lean
-  import graph), then the tests that ran those executables; plus `lake build`,
+  import graph), including when a module is added or removed, then the tests
+  that ran those executables; plus `lake build`,
   `lean/audit.py` and the Lean import check.
+* **Assurance manifest.** The recorder records each operation read through
+  `ve.assurance`, and a whole-manifest read separately. Editing one operation
+  selects those readers and `test_assurance_manifest`; editing shared metadata
+  selects the complete suite. A missing map also selects the complete suite.
 * **Rust.** The tests that ran a Rust binary, `cargo test`, and the release
   and debug builds.
 * **Any file.** Whatever its kind (Python, Lean, Rust, data), the tests that
@@ -157,7 +162,9 @@ children started with an explicit `env=` inherit it). It records, per test
 file, the functions under the repository that ran (`sys.monitoring`), the
 files read and directories listed by test code (an audit hook; the import
 system's, pytest's, tracebacks' and warnings' source reads are excluded), and
-the programs started. Who a read or listing is for is decided by the
+the programs started, and the assurance manifest operations read. A schema
+for `ve_service` is compiled only when its mode is first checked. Who a read
+or listing is for is decided by the
 innermost frame that is either code under the repository (the test and the
 project: recorded) or infrastructure (import system, site, pytest: not
 recorded); the standard library and third-party packages in between act for

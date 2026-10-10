@@ -34,7 +34,7 @@ import nested_pytest
 #    dropped any made with a pytest frame anywhere on the stack), so earlier maps
 #    lack edges and are not used.
 # 4: listings of directories that hold no tracked file (or do not exist yet) are kept.
-VERSION = 4
+VERSION = 5
 UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",
@@ -127,7 +127,7 @@ def read_unit(directory: Path, files: set[str]) -> dict:
     under the root, including ones that hold no tracked file or do not exist
     yet: adding the first file there changes what the test listed.
     """
-    seen = {"f": set(), "r": set(), "d": set(), "x": set()}
+    seen = {"f": set(), "r": set(), "d": set(), "x": set(), "m": set()}
     children, opaque, written = [], [], set()
     for path in directory.glob("*.jsonl"):
         written.add(int(path.stem))
@@ -146,6 +146,8 @@ def read_unit(directory: Path, files: set[str]) -> dict:
                 seen["d"].add(record[1])
             elif kind == "x":
                 seen["x"].add(record[1])
+            elif kind == "m":
+                seen["m"].add(record[1])
             elif kind == "c" and record[2]:
                 children.append(record[1])
             elif kind == "o":
@@ -186,6 +188,7 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
     reads: dict[str, set[int]] = {}
     dirs: dict[str, set[int]] = {}
     programs: dict[str, set[int]] = {}
+    operations: dict[str, set[int]] = {}
     for test, result in results.items():
         i = index[test]
         for file, qualname in result["f"]:
@@ -193,6 +196,8 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
         for table, key in ((reads, "r"), (dirs, "d"), (programs, "x")):
             for item in result[key]:
                 table.setdefault(item, set()).add(i)
+        for op_id in result.get("m", ()):
+            operations.setdefault(op_id, set()).add(i)
     return {
         "version": VERSION, "commit": commit,
         "created": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
@@ -203,13 +208,14 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
         "reads": {k: sorted(v) for k, v in sorted(reads.items())},
         "dirs": {k: sorted(v) for k, v in sorted(dirs.items())},
         "programs": {k: sorted(v) for k, v in sorted(programs.items())},
+        "operations": {k: sorted(v) for k, v in sorted(operations.items())},
     }
 
 
 def unit_edges(data: dict) -> dict[str, dict]:
     """Invert a map back to per-test sets (the form `merge` and tests use)."""
     tests = data["tests"]
-    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set()} for test in tests}
+    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set(), "m": set()} for test in tests}
     for file, qualnames in data["functions"].items():
         for qualname, indices in qualnames.items():
             for i in indices:
@@ -218,6 +224,9 @@ def unit_edges(data: dict) -> dict[str, dict]:
         for item, indices in data[table].items():
             for i in indices:
                 edges[tests[i]][key].add(item)
+    for item, indices in data["operations"].items():
+        for i in indices:
+            edges[tests[i]]["m"].add(item)
     return edges
 
 
@@ -226,7 +235,7 @@ def merge(results: dict[str, dict], previous: dict) -> None:
     old = unit_edges(previous)
     for test, result in results.items():
         if test in old and result["exit"] in (0, 5) and previous["status"][test]["exit"] in (0, 5):
-            for key in ("f", "r", "d", "x"):
+            for key in ("f", "r", "d", "x", "m"):
                 result[key] |= old[test][key]
 
 
@@ -318,7 +327,7 @@ def validate(data, where: str = "map") -> None:
             fail(f"functions of {file} is not an object")
         for qualname, value in qualnames.items():
             indices(value, f"{file}:{qualname}")
-    for table in ("reads", "dirs", "programs"):
+    for table in ("reads", "dirs", "programs", "operations"):
         if not isinstance(data.get(table), dict):
             fail(f"{table} is not an object")
         for key, value in data[table].items():
