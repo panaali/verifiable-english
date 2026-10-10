@@ -4,7 +4,8 @@ rows 16 to 18, 8.4; plan RD-4b).
 A document whose sets carry `companion` is split by Lean into its main case and one case per companion set; each is
 checked by itself and the document's meaning is their product. These tests drive the spec's fixtures F-C1 and F-C11
 to F-C17 through `ve document check` and `ve document readings --conclusion … --sentence …`, and the cases that need
-evidence withheld (F-C16, F-C17) through Lean's product answer on the request Python built. Every expected value is
+evidence withheld (F-C16, F-C17, SR4) through Lean's product answer on the request Python built. Every order of the
+sentences and sets gets the same answer (review B1 of rd-4b), and the document's UNKNOWN is worded (2.4 item 3). Every expected value is
 the spec's or Lean's own answer on the case written as a document of its own (`test_each_case_is_answered_as_a_
 document_of_its_own`); Python decides nothing here.
 """
@@ -22,6 +23,7 @@ from tests.test_readings_nd_lean import doc2, env2
 from ve.document import _environment, check_document, load_document, main, render_document
 from ve.errors import CheckerUnavailable, VEError
 from ve.readings import s1_content_meaning_id
+from ve.readings_components import Components
 
 TEXTS = {"u0": "Every agent must greet.\n", "u_a": "Every agent must help each user.\n",
          "u_b": "Every agent must warn each user.\n", "u2": "Every act must be done if it may be tried.\n",
@@ -312,11 +314,97 @@ def test_fc16_a_choice_without_evidence_leaves_its_component_undecided(tmp_path)
 
 
 def test_fc17_main_conflict_evidence_missing(tmp_path):
-    row = _withheld(fc17(tmp_path), "query", lambda e: e["component"] == "main",
+    from ve.readings_components import context, english
+    path = fc17(tmp_path)
+    row = _withheld(path, "query", lambda e: e["component"] == "main",
                     conclusion=HELP_PERMITTED, sentence="u_a", premises=[])
     result = row["result"]
     assert (result["verdict"], result["status"], result["choice_text"]) == (
         "UNKNOWN", "UNKNOWN (conflict status: UNKNOWN)", "rs_2@1:0")
+    # 2.4 item 3: the uncertified conflict status under the other sentence's choice, by E12 with R8
+    assert [(e["component"], e["line"]["frame"], e["line"]["result"], e["line"]["readings"]) for e in row["english"]] \
+        == [(None, "E32", None, []), ("main", "E12", "R8", [["rs_2", 0]])]
+    doc = load_document(path)
+    assert shown(english(doc, context(doc), row)) == [
+        "Each open sentence below was checked by itself, under each of its readings.",
+        "Read sentence 2 as *Every act must be done, if that act may be tried*: VE could not check whether two rules "
+        "on the same act contradict each other."]
+
+
+def test_sr4_conflict_under_one_choice_and_unknown_under_the_other_is_not_decided(tmp_path):
+    """1.10, SR4 (8.4; review B4 of rd-4b): the main case of F-C17 is CONFLICT under rs_2's reading 0 and
+    CONFLICT-FREE under reading 1, so rs_2's unit is Lean-decided; with reading 1's evidence withheld its rows are
+    CONFLICT and UNKNOWN, which a folded status (CONFLICT) would hide, and the unit is not decided. The computed
+    rows of 8.4 are `#guard`s in lean/VE/Readings/ComponentsExamples.lean."""
+    path = fc17(tmp_path)
+    row = _withheld(path, "premises", lambda e: False)
+    main_ = Components.sub(row, "main")
+    assert [e["conflict"] for e in main_["per_choice"]] == ["CONFLICT", "CONFLICT-FREE"]
+    assert "u2" in row["decided_units"]
+    row = _withheld(path, "premises", lambda e: e["component"] == "main" and e["choice"] == [["rs_2", 1]])
+    main_ = Components.sub(row, "main")
+    assert [e["conflict"] for e in main_["per_choice"]] == ["CONFLICT", "UNKNOWN"]
+    assert "u2" not in row["decided_units"]
+    assert row["decided_units"] == [u for u in ["x0", "u2", "u_a", "u_b"] if u in row["decided_units"]]
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Sentence order (review B1 of rd-4b): Lean lists every unit of the document in the document's order, whichever
+# component holds it, and the components in the order of their sets; every entry point answers any order alike
+
+def _ordered(tmp_path, name, units, sets, raw=None):
+    return write(tmp_path, raw or env_main(), {"units": units, "reading_sets": sets}, name=name)
+
+
+def _verdicts(report):
+    rd = report["readings"]
+    return (rd["status"], rd["conflict"]["status"], report["premises"]["status"],
+            sorted((c["component"], c["status"]) for c in rd["conflict"]["components"]),
+            sorted((c["component"], c["route"], tuple(c["units"])) for c in rd["components"]))
+
+
+def test_every_order_of_sentences_and_sets_gets_the_same_answer(tmp_path, capsys):
+    from itertools import permutations
+    a, _, _ = set_a()
+    b, _, _ = set_b()
+    base = check_document(_ordered(tmp_path, "base", [MAIN_UNIT, {"id": "u_a"}, {"id": "u_b"}], [a, b]))
+    for k, units in enumerate(permutations([MAIN_UNIT, {"id": "u_a"}, {"id": "u_b"}])):
+        for sets in ([a, b], [b, a]):
+            path = _ordered(tmp_path, f"order{k}{sets[0]['id']}", list(units), sets)
+            report = check_document(path)
+            rd = report["readings"]
+            assert _verdicts(report) == _verdicts(base)
+            ids = [u["id"] for u in units]
+            # the decided units in the document's order, the components main first, then in their sets' order
+            assert rd["decided_units"] == [u for u in ids if u in base["readings"]["decided_units"]]
+            assert [c["component"] for c in rd["components"]] == ["main", *(x["id"] for x in sets)]
+            shown(rd["english"])
+    # the order of the finding: a companion sentence before the main one, through readings and render too
+    path = _ordered(tmp_path, "finding", [{"id": "u_a"}, MAIN_UNIT, {"id": "u_b"}], [a, b])
+    assert check_document(path)["readings"]["decided_units"] == ["u_a", "u0", "u_b"]
+    data = query(capsys, path, HELP_PERMITTED)
+    assert (data["verdict"], data["component"]) == ("ALL", "rs_a")
+    assert data["decided_units"] == ["u_a", "u0", "u_b"]
+    assert shown(data["english"])[2].startswith("Under every reading of sentence 1, the conclusion follows")
+    assert sum(line.startswith("These two readings differ here: ") for line in
+               shown(render_document(path).splitlines())) == 2
+
+
+def test_fc17_with_its_companions_first_gets_the_same_answer(tmp_path, capsys):
+    a, _, _ = set_a()
+    b, _, _ = set_b()
+    nd2, _ = doc2(env2())
+    nd2["units"][0]["id"] = "x0"
+    units = [{"id": "u_a"}, nd2["units"][0], {"id": "u_b"}, nd2["units"][1]]
+    path = write(tmp_path, env2(), {"units": units, "reading_sets": [b, *nd2["reading_sets"], a]}, name="fc17r")
+    rd = check_document(path)["readings"]
+    assert rd["conflict"]["status"] == "CONFLICT"
+    assert [c["component"] for c in rd["components"]] == ["main", "rs_b", "rs_a"]
+    assert rd["decided_units"] == [u["id"] for u in units if u["id"] in rd["decided_units"]]
+    data = query(capsys, path, HELP_PERMITTED, "--sentence", "u_a")
+    assert (data["verdict"], data["choice_component"], data["choice"]) == ("UNKNOWN", "main", [["rs_2", 0]])
+    assert shown(data["english"])[1].startswith("Read sentence 4 as *Every act must be done, if that act may be "
+                                                "tried*: two rules contradict each other here: ")
 
 
 def test_without_companions_nothing_changes(tmp_path):
