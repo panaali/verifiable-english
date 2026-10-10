@@ -50,6 +50,9 @@ def test_a_changed_statement_or_definition_fails(tmp_path, monkeypatch, capsys):
         ("Basic.lean", "else if r.split then .notSettled", "else if r.split then .notNecessarily"),  # a body changed
         ("Render.lean", "theorem render_asked :", "theorem render_asked' :"),
         ("Binding.lean", "∀ k ∈ boundKeys,", "∀ k ∈ boundKeys.tail,"),          # an approved predicate changed
+        # The same statement up to a bound name: Lean accepts it; the text check does not.
+        ("Render.lean", "theorem render_asked : ∀ (ctx : Context) (a : Answer), (render ctx a).head?",
+         "theorem render_asked : ∀ (c : Context) (a : Answer), (render c a).head?"),
     ]
     for i, (file, old, new) in enumerate(mutants):
         sources = _copy_with(tmp_path / str(i), file, old, new)
