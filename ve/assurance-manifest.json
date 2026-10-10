@@ -3797,6 +3797,122 @@
       ]
     },
     {
+      "id": "question.answer",
+      "summary": "The answer to a yes-or-no question about a document, with its reasons (docs/spec/question-answering.md, Q2): Lean reads the question, binds the case to the document, checks every piece of evidence, decides each reading's lead and renders every line",
+      "class": "surface",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "Lean decides every lead from its own checks of the evidence (VE.Ask: lead_sound, reason_sound, ask_wire_sound, plain_ask_wire_sound, zero_ask_wire_sound), cites exactly the sources of the certificate's used positions (checkedCites_spec, answerFor_cites) and renders every line, each through W7's all-derivations gate (answerFor_gated); the evidence comes from untrusted generators; the zero-set route's statements and NameReadsBackSame await DRI review"
+      },
+      "python": [],
+      "outcomes": {
+        "verdict": [
+          "yes",
+          "no",
+          "notSettled",
+          "notNecessarily",
+          "by_reading"
+        ],
+        "unknown": [
+          "unknown"
+        ],
+        "rejection": [
+          "NotOneQuestion",
+          "QuestionForm",
+          "AmbiguousQuestion",
+          "Ambiguous",
+          "IndefiniteQuestion",
+          "QuestionWordMoved",
+          "NoDerivation",
+          "QuestionWithMarker",
+          "IllTyped",
+          "SyntaxError"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "ask",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/VE/Service/Protocol.lean",
+              "lean/VE/Ask/Run.lean",
+              "lean/VE/Ask/Wire.lean",
+              "lean/VE/Ask/PlainWire.lean",
+              "lean/VE/Ask/ZeroWire.lean",
+              "lean/VE/Ask/Render.lean",
+              "lean/VE/Ask/Lines.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [
+          "VE.Service.runMode_ask",
+          "VE.Ask.lead_sound",
+          "VE.Ask.reason_sound",
+          "VE.Ask.reason_exact",
+          "VE.Ask.split_counter",
+          "VE.Ask.splitOk_sound",
+          "VE.Ask.lead_agrees",
+          "VE.Ask.all_yes_iff_fold",
+          "VE.Ask.sourcesU_length",
+          "VE.Ask.sourcesU_zip_premisesU",
+          "VE.Ask.usedPositions_sufficient",
+          "VE.Ask.mem_cited",
+          "VE.Ask.relevantSets_sound",
+          "VE.Ask.groups_cover",
+          "VE.Ask.group_rows",
+          "VE.Ask.group_claim",
+          "VE.Ask.ask_wire_sound",
+          "VE.Ask.plain_ask_wire_sound",
+          "VE.Ask.plain_lead_sound",
+          "VE.Ask.plain_never_split",
+          "VE.Ask.zero_ask_wire_sound",
+          "VE.Ask.render_quotes_bytes",
+          "VE.Ask.render_text_matches_metadata",
+          "VE.Ask.render_asked",
+          "VE.Ask.render_cites_exact",
+          "VE.Ask.render_lead",
+          "VE.Ask.render_covers_rows",
+          "VE.Ask.render_marks_unchecked",
+          "VE.Ask.render_model_names_choice",
+          "VE.Ask.render_unused_once",
+          "VE.Ask.answerFor_bound",
+          "VE.Ask.answerFor_gated",
+          "VE.Ask.answerFor_cites",
+          "VE.Ask.checkedCites_spec"
+        ],
+        "planned_theorems": [],
+        "decoders": []
+      },
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": [],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:runner-glue",
+        "python:wire",
+        "python:backend-adapter"
+      ],
+      "notes": [
+        "The relay ve.ask:answer asks the service through ve.backends.relay; it checks the answer against the generated schema and binds every row, line, citation, reading, quote and unused unit to the request (answer_problem), and prints Lean's lines. The evidence generators (the prover, the countermodel search, RD-3's choice generators, the flip of a countermodel's gaps) are untrusted; Lean checks every piece."
+      ]
+    },
+    {
       "id": "premise-status",
       "summary": "three-valued premise report INCONSISTENT/model/UNKNOWN",
       "class": "combination",

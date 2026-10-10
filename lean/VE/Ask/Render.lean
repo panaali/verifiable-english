@@ -226,7 +226,8 @@ def ruleUnits (D : Doc) (c : Choice) (p : String) : List String :=
 def Answer.view (a : Answer) : View :=
   { asked := a.asked, ids := a.ids, rows := a.rows, cites := a.cites, names := a.names, unused := a.unused,
     words := wordsOf a, setUnit := setUnit a, situation := situationOf a, points := pointsOf a,
-    ruleUnits := ruleUnits a.x.r.N.D }
+    ruleUnits := ruleUnits a.x.r.N.D,
+    gaps := fun c => ((counterOf a c).map (gapsOfCounter a c)).getD [] }
 
 theorem Answer.groups_view (a : Answer) : a.groups = a.view.groups := rfl
 
@@ -318,6 +319,15 @@ def certReplays (a : Answer) (r : Row) : Bool :=
     | none => false
   else true
 
+/-- The first reading a line names whose wording is empty (a reading the relay could not word), by its set. -/
+def unworded (a : Answer) (ls : List Line) : Option String :=
+  (ls.flatMap (·.readings)).findSome? fun (s, i) =>
+    if (a.names.find? fun n => n.set == s && n.index == i).any (!·.text.isEmpty) then none else some s
+
+/-- The frame of the first line that does not pass the gate (named in the refusal; its text is never shown). -/
+def firstUngated (ls : List Line) : String :=
+  ((ls.find? fun l => !(VE.Question.gated (gateName l.frame) l.text).isSome).map (gateName ·.frame)).getD ""
+
 /-- Every line passes W7's all-derivations gate as its frame (`VE.Question.gated`). -/
 def linesGated (ls : List Line) : Bool := ls.all fun l => (VE.Question.gated (gateName l.frame) l.text).isSome
 
@@ -332,8 +342,12 @@ def answerFor (s : Asked) : Except String (Context × Answer) :=
       checkedCites s.request s.x, s.names, documentUnused s.text⟩
     if (a.unused.mapM ctx.displayOf).isSome then
       if a.rows.all (certReplays a) then
-        if linesGated (render ctx a) then .ok (ctx, a)
-        else .error "CheckerUnavailable: a line of the answer does not pass the all-derivations gate"
+        match unworded a (render ctx a) with
+        | some set => .error s!"CheckerUnavailable: VE could not check the wording of a reading of sentence {
+            match (setUnit a set).bind ctx.displayOf with | some n => toString n | none => set}"
+        | none =>
+          if linesGated (render ctx a) then .ok (ctx, a)
+          else .error s!"CheckerUnavailable: the answer's {firstUngated (render ctx a)} line does not pass the all-derivations gate"
       else .error "CheckerUnavailable: a decided reading's certificate does not replay"
     else .error "CheckerUnavailable: an unused sentence has no display number"
 
@@ -358,10 +372,12 @@ theorem answerFor_ok {s : Asked} {ctx : Context} {a : Answer} (h : answerFor s =
       split at h
       · rename_i hr
         split at h
-        · rename_i hg
-          cases h
-          exact ⟨hc, rfl, hu, hr, hg⟩
         · cases h
+        · split at h
+          · rename_i hg
+            cases h
+            exact ⟨hc, rfl, hu, hr, hg⟩
+          · cases h
       · cases h
     · cases h
 

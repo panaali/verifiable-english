@@ -1,5 +1,6 @@
 import VE.Ask.Render
 import VE.Ask.PlainAnswer
+import VE.Ask.ZeroAnswer
 import VE.Question.Run
 
 /-! The `ask` service mode (docs/spec/question-answering.md 4.2, 8; plan 4.8, Q2.2, Q2.3).
@@ -38,7 +39,8 @@ def lineJson (l : Line) : Json :=
 def rowJson (v : View) (r : Row) : Json :=
   Json.mkObj [("choice", choiceJson r.choice), ("lead", .str (leadKey r.lead)),
     ("reason", (r.reason.map fun x => Json.str (reasonName x)).getD .null),
-    ("cited", Json.arr ((v.key r).2.map sourceJson).toArray)]
+    ("cited", Json.arr ((v.key r).2.map sourceJson).toArray),
+    ("gaps", VE.Readings.Wire.gapsJson (if r.query == .refuted then v.gaps r.choice else []))]
 
 def nameJson (n : Name) : Json := Json.mkObj [("set", .str n.set), ("index", toJson n.index), ("text", .str n.text)]
 
@@ -83,7 +85,10 @@ def answered (route : String) (j : Json) (q : String) (c : VE.Question.Candidate
     let s ← replayPlainAsk j
     let (ctx, _, v) ← answerForPlain s
     pure (answeredFields route q c φ ctx v)
-  else throw "UnsupportedProfile: the norm-defaults route of ask is not built"
+  else
+    let s ← replayZeroAsk j
+    let (ctx, _, v) ← answerForZero s
+    pure (answeredFields route q c φ ctx v)
 
 /-- The identities of the answer: E2's (`source_sha256` over the question), the question contract's version, and
     the document's identity. -/

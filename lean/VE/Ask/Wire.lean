@@ -222,7 +222,8 @@ def assertedCandidate (case : Json) (s : String) (i : Nat) : Bool :=
   | none => false
 
 /-- The request's names: one `{set, index, text}` per candidate of every open set, in source order (none missing,
-    none extra); an asserted candidate's name is read back, and one that fails refuses the answer (R8). -/
+    none extra); an asserted candidate's name is read back, and one that fails refuses the answer (R8). An empty
+    text is a reading the relay could not word; an answer that shows it is refused (`answerFor`). -/
 def decodeNames (D : Doc) (front case : Json) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon)
     (j : Json) : Except String { ns : List Name // ∀ n ∈ ns, n.checked = true → NameReadsBackSame case E L n } := do
   let items ← match j with
@@ -233,11 +234,12 @@ def decodeNames (D : Doc) (front case : Json) (E : VE.EnglishGrammar.Env) (L : V
     let s ← VE.Bridge.stringField it "set"
     let i ← (it.getObjValD "index").getNat?
     let t ← VE.Bridge.stringField it "text"
-    if t.isEmpty then throw "InvalidInput: a reading's name is empty"
     pure (s, i, t)
   unless raw.map (fun (s, i, _) => (s, i)) == allCandidates D do
     throw "InvalidInput: the names are not one per candidate of every open set, in source order"
-  let names := raw.map fun (s, i, t) => { set := s, index := i, text := t, checked := assertedCandidate case s i : Name }
+  -- An empty text is a reading the relay could not word: unchecked, and refused where an answer shows it.
+  let names := raw.map fun (s, i, t) =>
+    { set := s, index := i, text := t, checked := assertedCandidate case s i && !t.isEmpty : Name }
   match names.find? (fun n => n.checked && !nameReadsBack case E L n) with
   | some n => throw s!"CheckerUnavailable: VE could not check the wording of a reading of sentence {setNumber D front n.set}"
   | none =>

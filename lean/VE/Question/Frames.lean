@@ -17,9 +17,13 @@ open VE.EnglishGrammar
 inductive Piece
   | lit (s : String)
   | slot
+  /-- A number slot: one or more decimal digits (a sentence's display number, a count), a closed class (spec 3.3),
+      so a line that names two sentences has one derivation. -/
+  | num
   deriving DecidableEq, Repr
 
-/-- The frames of spec 3.3 in its order, each `<...>` slot (with any optional part after it) one `slot`. -/
+/-- The frames of spec 3.3 in its order, each `<...>` slot (with any optional part after it) one `slot`, a sentence
+    number or a count a `num`. -/
 def answerFrames : List (String × List Piece) :=
   [("A0", [.lit "You asked whether ", .slot, .lit "."]),
    ("A1", [.lit "Yes."]),
@@ -27,7 +31,7 @@ def answerFrames : List (String × List Piece) :=
    ("A3", [.lit "The text does not settle this."]),
    ("A4", [.lit "Not necessarily."]),
    ("A5", [.lit "VE could not decide this."]),
-   ("C1", [.lit "Sentence ", .slot, .lit " says: \"", .slot, .lit "\""]),
+   ("C1", [.lit "Sentence ", .num, .lit " says: \"", .slot, .lit "\""]),
    ("C2", [.lit "Sentences ", .slot, .lit " say when ", .slot, .lit "."]),
    ("C3", [.lit "VE also used what the document's word list declares."]),
    ("C4", [.lit "VE also used its rule that whatever must be done may be done: ", .slot]),
@@ -35,9 +39,9 @@ def answerFrames : List (String × List Piece) :=
    ("S2", [.lit "Here is a situation where the answer depends on what the text leaves unsaid: ", .slot, .lit "."]),
    ("S2p", [.lit "The text does not say whether ", .slot, .lit "."]),
    ("S3", [.lit "Here the text does not say whether ", .slot, .lit "; this situation answers 'no'."]),
-   ("R1", [.lit "If sentence ", .slot, .lit " means \"", .slot, .lit ", ", .slot, .lit "."]),
+   ("R1", [.lit "If sentence ", .num, .lit " means \"", .slot, .lit ", ", .slot, .lit "."]),
    ("R2", [.lit "Every way of reading the document gives this answer."]),
-   ("U1", [.lit "VE did not use ", .slot, .lit " sentences of this document that it could not read formally: ",
+   ("U1", [.lit "VE did not use ", .num, .lit " sentences of this document that it could not read formally: ",
      .slot, .lit "."]),
    ("X1", [.lit "The document's rules or defaults conflict in this situation, so VE cannot answer: ", .slot,
      .lit "."]),
@@ -55,6 +59,11 @@ def pieceReadings : List Piece → List Char → List (List String)
   | .slot :: ps, cs =>
     (List.range cs.length).flatMap fun k =>
       (pieceReadings ps (cs.drop (k + 1))).map fun rest => String.mk (cs.take (k + 1)) :: rest
+  | .num :: ps, cs =>
+    (List.range cs.length).flatMap fun k =>
+      if (cs.take (k + 1)).all Char.isDigit then
+        (pieceReadings ps (cs.drop (k + 1))).map fun rest => String.mk (cs.take (k + 1)) :: rest
+      else []
 
 /-- Every derivation of a line from every registered frame. -/
 def frameReadings (line : String) : List (String × List String) :=
