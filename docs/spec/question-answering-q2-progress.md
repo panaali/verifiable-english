@@ -5,24 +5,46 @@ resumed; the final report is `docs/spec/question-answering-q2-report.md`.
 
 ## Decisions
 
-1. **Three routes for `ask`, chosen by Lean from the document's profiles.**
-   - *readings* (`readings@1` with `norm-defaults@0` on the norms chain, a content-bearing set): RD-3's
-     `replayVerdictsND` on the request's `case`, the approved `Asked` / `ask_wire_sound` of spec 5.2. UDHR part 7.
-   - *plain* (`relational-fol@0` without norms; R13): the approved `PlainAsked` / `plain_ask_wire_sound`. G document.
+1. **Three routes for `ask`, chosen by Lean from the document's profiles** (`VE.Ask.Run.routeOfDocument`).
+   - *readings* (`readings@1`): RD-3's `replayVerdictsND` on the request's `case`, the approved `Asked` /
+     `ask_wire_sound` of spec 5.2. UDHR part 7.
+   - *plain* (no norms, no readings; R13): the approved `PlainAsked` / `plain_ask_wire_sound`. G document.
    - *norm-defaults, no reading set* (the agent-policy documents: `norms@0` + `norm-defaults@0`, no `readings@1`).
      Plan 4.7 says Q2.2 "extends [RD-3's] admission to zero sets". Measured on `a-unspecified.ve.md`: RD-3's admission
      with `readings@1` inserted passes `admitS2` but takes **73 s** of Lean per replay (three runs: 68, 74, 73 s),
      and the document is refused as not enumerated. The norm-defaults route elaborates the same policy in 0.2 s. So
-     the zero-set case is a third adapter on the norm-defaults route's own checkers (`acceptanceU`, `modelCheckU`,
-     `conflictFreeCheckU`), one row with choice `[]`, whose claims are RD-3's per-choice claims on the document's
-     own `UDoc`. Its statements are new and need DRI review (they are not in spec 5.2).
+     the zero-set case is a third adapter (`VE.Ask.ZeroWire`, `ZeroAnswer`) on the norm-defaults route's own checkers
+     (`acceptanceU`, `modelCheckU`, `conflictFreeCheckU`, `witnessFromU`), one row with choice `[]`, whose claims are
+     RD-3's per-choice claims on the document's own `UDoc` (`LeadHolds N ψ r = LeadHoldsU (choiceU N c) …` by `rfl`,
+     `leadHolds_eq`). Its statements are new (not in spec 5.2): DRI review needed.
 2. **Segment order of sources** (task: "sourcesU_length alone is too weak"): `sourcesU_zip_premisesU` zips the
    sources with `premisesU` into `sourced`, built segment by segment from the very lists `premisesU` reads.
-3. **Citation exactness**: `mem_cited` (a source is cited iff a used position has it) and `cited_nodup`, plus the
-   approved `render_cites_exact` (Q2.3).
+3. **Citation exactness**: `mem_cited`, `cited_nodup`, `checkedCites_spec`, `answerFor_cites` (readings),
+   `plainCites_spec` (plain), `zeroCites_spec` (zero-set), and the approved `render_cites_exact`.
+4. **`NameReadsBack` uses `=` on `Json`**, which has no decidable equality (`Json.beq` is `partial`; an object's tree
+   shape is not observable). The checked relation is `NameReadsBackSame` (canonical JSON text, the relation
+   `UnitBound` already uses). `Asked.hnames` uses it. DRI signature needed.
+5. **The answer frames' slots** (Q1's `VE.Question.Frames`): a `slot` takes any text, so an R1 line naming two
+   sentences had two derivations and was refused. Spec 3.3 says slots are closed classes; a digits-only `num` piece
+   now reads C1's, R1's and U1's numbers. A0 is unchanged. LOCK relocked, `question_version` unchanged.
+6. **Lines from a route-independent `View`** (`VE.Ask.Lines`); the approved `render`, `renderGroup`, `lineText` are
+   the readings answer's view (`Answer.view`), and the approved statements follow from the view-level lemmas.
+7. **Unnamed readings**: Python sends `""` for a reading its slot cannot word; Lean refuses an answer that shows it
+   (`unworded`, `CheckerUnavailable: VE could not check the wording of a reading of sentence n`).
+8. **Splits**: one flip generator (`ve.ask._split_piece`) flips a countermodel at the gaps Lean's row names
+   (`gaps`, RD-3's `gapsOf`); a second request asks for the split.
+9. **Agent-policy evidence**: the generic prover cannot prove the policy's `permitted` conflict package (ResourceLimit
+   at 10,000 and 100,000 steps, 162 s); the use case's focused prover proves it in 5.8 s. `ve ask --evidence FILE`
+   takes recorded pieces; the agent fixtures' evidence is recorded by a fixture builder (untrusted).
 
 ## State
 
-- Q2.1 Lean core: done (`bbbe98a4`): `VE/Ask/{Basic,Sound,Sources,Groups,Plain}.lean`, every 5.2 core statement
-  proved as written.
-- Q2.2 wire: in progress.
+- Q2.1 Lean core: done (`bbbe98a4`).
+- Q2.2 wire: readings (`d2dcdac3`), plain (`67ce1427`), zero-set (`37873d82`).
+- Q2.3 render: done (`d1206f99`, `83181710`), all approved render statements proved.
+- Q2.5 `ve ask`: CLI works on G1, G3, G4, G10, U2, U3, U5, U6, U7 (`37873d82`).
+- To do: typed response schema + fits proof; tests (fixtures, fuzz retype/rebind, binding negatives, Lean
+  `#guard`s); agent evidence builder; registration (Audit.lean, axioms, statements, trust, gate collection, layer
+  policy, relay lint); seeded bugs; DELTA.md; report; gate.
+- Measured fixture outcomes differing from the spec's *derived* ones: U7 (four of six readings X4: the search found
+  no countermodel within its limits).
