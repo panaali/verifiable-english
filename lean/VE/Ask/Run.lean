@@ -1,4 +1,5 @@
 import VE.Ask.Render
+import VE.Ask.PlainAnswer
 import VE.Question.Run
 
 /-! The `ask` service mode (docs/spec/question-answering.md 4.2, 8; plan 4.8, Q2.2, Q2.3).
@@ -34,31 +35,55 @@ def lineJson (l : Line) : Json :=
     ("witness", (l.witness.map choiceJson).getD .null),
     ("unchecked", .bool l.unchecked)]
 
-def rowJson (a : Answer) (r : Row) : Json :=
+def rowJson (v : View) (r : Row) : Json :=
   Json.mkObj [("choice", choiceJson r.choice), ("lead", .str (leadKey r.lead)),
     ("reason", (r.reason.map fun x => Json.str (reasonName x)).getD .null),
-    ("cited", Json.arr ((a.key r).2.map sourceJson).toArray)]
+    ("cited", Json.arr ((v.key r).2.map sourceJson).toArray)]
 
 def nameJson (n : Name) : Json := Json.mkObj [("set", .str n.set), ("index", toJson n.index), ("text", .str n.text)]
 
 /-- The uniform lead, or `by_reading` when the answer has two or more blocks. -/
-def answerLead (a : Answer) : String :=
-  match a.groups with
+def answerLead (v : View) : String :=
+  match v.groups with
   | [g] => leadKey g.lead
   | _ => "by_reading"
 
+/-- The route a document is answered on, by its profiles: `readings@1` the readings route (RD-3), `norms@0` or
+    `norm-defaults@0` the norm-defaults route, otherwise the plain adapter. -/
+def routeOfDocument (text : String) : String :=
+  match VE.Service.Document.split text with
+  | .ok sp =>
+    let ps := VE.Service.Document.listedProfiles (sp.front.getObjValD "environment")
+    if ps.contains "readings@1" then "readings"
+    else if ps.contains "norms@0" || ps.contains "norm-defaults@0" then "norm-defaults"
+    else "plain"
+  | .error _ => "plain"
+
 /-- The answered result's fields, rendered from Lean's answer. -/
-def answeredFields (q : String) (c : VE.Question.Candidate) (φ : VE.EnglishGrammar.EFormula) (ctx : Context)
-    (a : Answer) : List (String × Json) :=
-  let lines := render ctx a
-  [("status", .str "answered"), ("form", .str (formName c.form)), ("sentence", .str c.sentence), ("ast", φ.encode),
-   ("spans", Json.arr #[VE.EnglishGrammar.Run.spanJson (0, q.length)]),
-   ("lead", .str (answerLead a)),
+def answeredFields (route q : String) (c : VE.Question.Candidate) (φ : VE.EnglishGrammar.EFormula) (ctx : Context)
+    (v : View) : List (String × Json) :=
+  let lines := renderV ctx v
+  [("status", .str "answered"), ("route", .str route), ("form", .str (formName c.form)), ("sentence", .str c.sentence),
+   ("ast", φ.encode), ("spans", Json.arr #[VE.EnglishGrammar.Run.spanJson (0, q.length)]),
+   ("lead", .str (answerLead v)),
    ("text", toJson (lines.map (·.text))),
    ("lines", Json.arr (lines.map lineJson).toArray),
-   ("rows", Json.arr (a.rows.map (rowJson a)).toArray),
-   ("unused", toJson a.unused),
-   ("unchecked_names", Json.arr ((a.names.filter (!·.checked)).map nameJson).toArray)]
+   ("rows", Json.arr (v.rows.map (rowJson v)).toArray),
+   ("unused", toJson v.unused),
+   ("unchecked_names", Json.arr ((v.names.filter (!·.checked)).map nameJson).toArray)]
+
+/-- The answer of a question read with one meaning, on the document's route. -/
+def answered (route : String) (j : Json) (q : String) (c : VE.Question.Candidate) (φ : VE.EnglishGrammar.EFormula) :
+    Except String (List (String × Json)) := do
+  if route == "readings" then
+    let s ← replayAsk j
+    let (ctx, a) ← answerFor s
+    pure (answeredFields route q c φ ctx a.view)
+  else if route == "plain" then
+    let s ← replayPlainAsk j
+    let (ctx, _, v) ← answerForPlain s
+    pure (answeredFields route q c φ ctx v)
+  else throw "UnsupportedProfile: the norm-defaults route of ask is not built"
 
 /-- The identities of the answer: E2's (`source_sha256` over the question), the question contract's version, and
     the document's identity. -/
@@ -83,9 +108,8 @@ def askCase (j : Json) : Except String Json := do
   let identities ← identitiesOf text q lexicon E
   match VE.Question.ask VE.Question.auxiliaries E {} L VE.EnglishGrammar.workBudget q with
   | .read (.one c φ) =>
-    let s ← replayAsk j
-    let (ctx, a) ← answerFor s
-    pure (VE.Route.Wire.ok id [("result", Json.mkObj (answeredFields q c φ ctx a ++ [("identities", identities)]))])
+    let fields ← answered (routeOfDocument text) j q c φ
+    pure (VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))])
   | other =>
     let fields ← askedFields E.profiles q E L other
     pure (VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))])
