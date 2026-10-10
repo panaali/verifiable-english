@@ -1,0 +1,20 @@
+{
+ "base": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
+ "plan_base": "c24aeab2",
+ "head": "e052efc1d5c3dec0d14a71a5ce354447aa009dd6",
+ "commits": [
+  {
+   "hash": "e052efc1d5c3dec0d14a71a5ce354447aa009dd6",
+   "subject": "test: identity lint fixtures, ratchet and prune (AR-6)"
+  },
+  {
+   "hash": "8d8070d913d46b21f6cafdcc146d9b88fce3d14c",
+   "subject": "feat: identity lint (AR-6): Lean-owned identity preimages and ve- domain literals held by an allowlist"
+  }
+ ],
+ "files": [
+  "tests/test_identity_lint.py",
+  "tools/identity-sites.json",
+  "tools/identity_lint.py"
+ ]
+}
