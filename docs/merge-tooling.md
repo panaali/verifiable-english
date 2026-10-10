@@ -106,13 +106,16 @@ A route is one way `ve` reads a Lean answer: each of the 31 service modes (read 
 the transport of `relay`) and each one-shot runner call site (the manifest bindings whose operations have call
 sites, and every call of the one-shot route reader outside `ve/backends/lean.py`: 7 today). For every route the
 gate takes genuine answers (the built executables' answers to the committed requests in
-`tests/data/relay-gate-cases.jsonl`), mutates every field (drop, empty, duplicate an element or a key, retype
+`tests/data/relay-gate-cases.jsonl`), mutates the answer itself (a one-shot answer's row array loses and gains
+rows) and every field of it (drop, empty, duplicate an element or a key, retype
 to each other JSON type and, near the top, to a 10,000-deep array; rebind a request name, position, digest, nonce or count to one the request does not
 hold), and sends each mutant through the route's own reader with the line or runner output replaced. Each must
 raise `CheckerUnavailable`. It fails on an accepted mutant, a crash, another `VEError` (a malformed answer read
 as Lean's rejection), an untyped field (every retype accepted) or a manifest type `json`, unless
-`tools/relay-gate-allow.json` lists it; on an allow-list path that matches nothing; and on a route without an
-`ok` fixture. Run it in about 7 minutes:
+`tools/relay-gate-allow.json` lists it; on an allow-list path that matches nothing; on an allow-list entry that
+names no single route or lists a path of wildcards only; and on a route without an `ok` fixture. The most
+specific entry takes a finding (a literal path first), so a broad follow-up never takes a narrower entry's
+count. Run it in about 8 minutes:
 
     uv run python tools/relay_mutation_gate.py [--json OUT] [--route NAME ...]
     uv run python tools/relay_mutation_gate.py --record    # re-record the fixtures from a test run
@@ -124,9 +127,10 @@ Suggested wiring (not done here; manage-agents scripts are outside this reposito
 before review and fixloop before recheck, on the routes of the diff (`--route`).
 
 The allow-list has two kinds of entries. *By design* (B0 to B6): content Lean computes (an emptied or repeated
-list or text the runners decide, which the threat model leaves to the service), readings-route's opaque `inner`
+list or map the runners decide, which the threat model leaves to the service; listed path by path for each
+route, never an id, digest, name or request-bound list), readings-route's opaque `inner`
 row, echoed vocabulary content the caller compares with Python's regeneration, documented unions, rendered
-text, optional diagnostic extras, and bundle lemma ids the caller compares. *Follow-ups* (F1 to F9) are open
+text, optional diagnostic extras, and bundle lemma ids the caller compares. *Follow-ups* (F1 to F11) are open
 relays, listed below. The one open relay fixed in this batch was small: the speech-source reader crashed with
 `TypeError` on a unit whose `class` or `status` was a list or an object (a set membership test); it now
 refuses it.
@@ -137,11 +141,11 @@ refuses it.
 | service modes | 31 |
 | one-shot routes | 7 |
 | fixtures | 465 |
-| mutants | 103041 |
-| refused | 94791 |
+| mutants | 106761 |
+| refused | 98511 |
 | accepted and listed | 8250 |
-| accepted by design | 3820 |
-| accepted follow-ups | 4430 |
+| accepted by design | 2949 |
+| accepted follow-ups | 5301 |
 | untyped fields | 250 |
 | unlisted findings | 0 |
 
@@ -149,14 +153,16 @@ Follow-ups (accepted mutants per item in the saved report):
 
 | Id | Accepted | Open relay |
 |---|---|---|
-| F1 | 1563 | English service modes (`english.read`, `english.grammar`, `english.check`): the schema types `id` and `result` as `true` |
-| F2 | 730 | readings-route `filled`: `environment` untyped, `units` an array of anything |
+| F1 | 1835 | English service modes (`english.read`, `english.grammar`, `english.check`): the schema types `id` and `result` as `true` |
+| F2 | 815 | readings-route `filled`: `environment` untyped, `units` an array of anything |
 | F3 | 660 | retype accepted (a union, no type, or untyped array items that take a 10,000-deep array) in check, english, parse, readings-route and reports fields |
 | F4 | 1236 | request names (predicates, sorts, targets, units, sets, labels, choosers, profiles) not checked against the request |
 | F5 | 139 | optional fields whose encoder condition the schema does not state |
 | F6 | 35 | maps keyed by request names: a dropped entry is accepted |
-| F8 | 58 | `ve_metered` `evaluation` typed `object` in the assurance manifest |
+| F8 | 62 | `ve_metered` `evaluation` typed `object` in the assurance manifest |
 | F9 | 9 | senses.read: the projected environment's vocabulary is not bound to the request's |
+| F10 | 264 | request-bound lists the schema does not bind (choices and readings per open set, tuples and argument and sort lists of a predicate's arity, echoed profiles and units): an emptied or repeated element is accepted |
+| F11 | 246 | strings the schema lets be empty (ids, digests, names, labels, generators, rendered text) |
 
 F7 (34 untyped fields in check, parse, readings-route and reports) overlaps F3. Each follow-up is a schema
 change in `lean/ResponseShape/Schemas` (or the manifest's response types) plus `response_schemas.py --write`;
@@ -184,8 +190,8 @@ numbers), with the results in
 
 | Number | Value |
 |---|---|
-| seeded mutants | 18 |
-| killed | 18 |
+| seeded mutants | 21 |
+| killed | 21 |
 
 ## Acceptance
 
@@ -196,10 +202,10 @@ numbers), with the results in
 | Wiring `--resolve` into `merge-train.sh` | EXTERNAL (orchestrator, manage-agents) | deferred: the commands are above |
 | Installing the driver in the shared repository config | HUMAN (orchestrator) | deferred: `--install-driver` |
 | `tools/relay_mutation_gate.py` over every relayed route, failing on a route without fixtures | AGENT | done |
-| Fixing the open relays found | AGENT (small) / follow-up | the speech-source crash fixed; F1 to F9 listed |
+| Fixing the open relays found | AGENT (small) / follow-up | the speech-source crash fixed; F1 to F11 listed |
 | Review of the allow-list's by-design entries | HUMAN (DRI) | deferred |
 | Running the gate from `infra-item.sh` and fixloop | EXTERNAL (orchestrator, manage-agents) | deferred |
-| `tools/mutants.py` and this batch's seeded mutants | AGENT | done: 18 of 18 killed |
+| `tools/mutants.py` and this batch's seeded mutants | AGENT | done: 21 of 21 killed |
 
 ## Not run, and outside this repository
 

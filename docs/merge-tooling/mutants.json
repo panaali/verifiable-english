@@ -174,12 +174,43 @@
   {
    "id": "M18",
    "file": "docs/merge-tooling.md",
-   "find": "| mutants | 103041 |",
-   "replace": "| mutants | 103040 |",
+   "find": "| mutants | 106761 |",
+   "replace": "| mutants | 106760 |",
    "tests": [
     "tests/test_merge_tooling_evidence.py::test_gate_numbers_come_from_the_saved_report"
    ],
    "claim": "the document's numbers are the saved evidence's"
+  },
+  {
+   "id": "M19",
+   "file": "tools/relay_mutation_gate.py",
+   "find": "        if path and isinstance(path[-1], str):",
+   "replace": "        if not path:\n            continue\n        if isinstance(path[-1], str):",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_answer_itself_is_emptied_duplicated_and_retyped",
+    "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate"
+   ],
+   "claim": "the answer itself is mutated, so a reader without its one-row-per-case check fails the gate (review B2)"
+  },
+  {
+   "id": "M20",
+   "file": "tools/relay_mutation_gate.py",
+   "find": "            problems.append(f\"{where} lists the wildcard path {path!r}: list the fields\")",
+   "replace": "            pass",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_wildcard_route_or_path_is_refused"
+   ],
+   "claim": "an allow-list path of wildcards only is refused (review B1)"
+  },
+  {
+   "id": "M21",
+   "file": "tools/relay_mutation_gate.py",
+   "find": "    entry, listed = max(matches, key=lambda match: _specificity(*match, pattern))",
+   "replace": "    entry, listed = matches[0]",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_most_specific_entry_takes_a_finding"
+   ],
+   "claim": "the most specific allow-list entry takes a finding (review B1)"
   }
  ]
 }
