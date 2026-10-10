@@ -552,7 +552,6 @@ DECLARATION = re.compile(r"^(?:private |protected )?(?:def|abbrev|structure|indu
 
 
 def test_trusted_decoder_line_ranges_are_pinned():
-    total = 0
     for entry in MANIFEST["lean_decoders"]["files"]:
         lines = (ROOT / entry["file"]).read_text().split("\n")
         if lines[-1] == "":
@@ -564,13 +563,14 @@ def test_trusted_decoder_line_ranges_are_pinned():
             after = lines[end] if end < len(lines) else ""
             assert (after == "" or DECLARATION.match(after) or after.startswith(("theorem ", "end ", "/-"))), \
                 (entry["file"], end, after)
-            total += end - start + 1
             previous = end
         for name in entry["declarations"]:
             starts = [i + 1 for i, line in enumerate(lines)
                       if re.match(rf"^(?:private |protected )?(?:def|abbrev|structure) {re.escape(name)}\b", line)]
             assert any(a <= s <= b for s in starts for a, b in entry["ranges"]), (entry["file"], name)
-    assert total == MANIFEST["lean_decoders"]["total_lines"]
+    # The one formula of the total (tools/assurance_manifest.py), which merges of the manifest recompute.
+    from tools.assurance_manifest import decoder_total_lines
+    assert decoder_total_lines(MANIFEST) == MANIFEST["lean_decoders"]["total_lines"]
 
 
 def _pin_problems(root, entries):
