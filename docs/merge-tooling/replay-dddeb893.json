@@ -1,0 +1,59 @@
+{
+ "merge": "dddeb893cd3bbbe39754bffe9a8723b2303fee04",
+ "subject": "Merge ve-integration into readings-defaults/rd2b",
+ "parents": [
+  "78515fa8c35550a6d3eb22872f116c60723ed04c",
+  "8350e55f8e8ead02063ee17d05bf729c7e9e81b9"
+ ],
+ "method": "each parent plus this batch's tooling commits (cherry-picked); git merge --no-commit with the ve-generated driver (git -c), then tools/regen_generated.py --resolve --skip wire-contract (that tree's tools/wire_contract.py predates --write --generated-only; no wire contract source changed in the merge)",
+ "git_conflicts_without_driver": [
+  "docs/spec/assurance-manifest.md",
+  "lean/checkers.lock",
+  "lean/declarations.txt",
+  "ve/assurance-manifest.json"
+ ],
+ "unmerged_with_driver": [],
+ "driver_result_vs_agent_merge": {
+  "ve/assurance-manifest.json": "same content, other order",
+  "tools/trust-classes.json": "same content, other order",
+  "lean/checkers.lock": {
+   "rust_jsonl": {
+    "only_agent": [],
+    "only_replay": []
+   },
+   "ve_service": {
+    "only_agent": [
+     "11215086d691d04578c783a597e21086831ee027658580e3fee71a6b301b23a2",
+     "3b424ee90ba2a350688c4e66cd1899304d029a12fba4ff2cc9b49213782ed1ce"
+    ],
+    "only_replay": []
+   }
+  },
+  "lean/VE/Audit.lean": "identical",
+  "lean/ResponseShape/Audit.lean": "identical"
+ },
+ "resolve": {
+  "exit": 1,
+  "minutes": 47.5,
+  "writers": "all ran",
+  "checks_failed": [
+   "trust-tables"
+  ],
+  "trust_tables": "BUDGET: V grew from 34157 to 34178 (signed allowance 0): VE/Readings/UnspecifiedWire.lean +12, ResponseShape/Schemas/ReadingsRoute.lean +9 (the agent rebaselined docs/trust-baseline.json with a reason)",
+  "other_checks": "passed (lake build, audit, statements, pins, schemas, codes, assurance, layers, uv lock, gate collection)"
+ },
+ "driver_result_vs_agent_merge_note": "compared before --resolve: the merged ve_service pin is added by the checker-pins writer",
+ "after_resolve_lock_vs_agent": {
+  "ve_service": {
+   "only_agent": [
+    "3b424ee90ba2a350688c4e66cd1899304d029a12fba4ff2cc9b49213782ed1ce"
+   ],
+   "only_replay": []
+  },
+  "rust_jsonl": {
+   "only_agent": [],
+   "only_replay": []
+  },
+  "note": "after --resolve the replay's lock held the merged build 11215086..., as the agent's did; the agent also pinned 3b424ee9..., a build of its own"
+ }
+}
