@@ -1,0 +1,644 @@
+{
+ "document": "usecases/claude-constitution-pilot/run-20261009T1800Z/readings/nd-force.ve.md",
+ "group": "force",
+ "search_seconds": 36.0,
+ "sets": [
+  {
+   "set": "force-u0036-s05",
+   "unit": "u0036.s05",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "force-u0125-s04-p2",
+   "unit": "u0125.s04.p2",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "force-u0156-s03",
+   "unit": "u0156.s03",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "force-u0263-s04-p2",
+   "unit": "u0263.s04.p2",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  }
+ ],
+ "pairs_without_situation": [],
+ "search_limits": [],
+ "load_seconds": 3.1,
+ "admitted": true,
+ "check_seconds": 31.8,
+ "premises": {
+  "candidates": [
+   {
+    "index": 0,
+    "set": "force-u0036-s05",
+    "status": "model"
+   },
+   {
+    "index": 1,
+    "set": "force-u0036-s05",
+    "status": "model"
+   },
+   {
+    "index": 0,
+    "set": "force-u0125-s04-p2",
+    "status": "model"
+   },
+   {
+    "index": 1,
+    "set": "force-u0125-s04-p2",
+    "status": "model"
+   },
+   {
+    "index": 0,
+    "set": "force-u0156-s03",
+    "status": "model"
+   },
+   {
+    "index": 1,
+    "set": "force-u0156-s03",
+    "status": "model"
+   },
+   {
+    "index": 0,
+    "set": "force-u0263-s04-p2",
+    "status": "model"
+   },
+   {
+    "index": 1,
+    "set": "force-u0263-s04-p2",
+    "status": "model"
+   }
+  ],
+  "choice": [
+   [
+    "force-u0036-s05",
+    0
+   ],
+   [
+    "force-u0125-s04-p2",
+    0
+   ],
+   [
+    "force-u0156-s03",
+    0
+   ],
+   [
+    "force-u0263-s04-p2",
+    0
+   ]
+  ],
+  "choices": [
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "
+{
+ "checked_by": {
+  "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+  "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+  "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+ },
+ "separations": {
+  "outcome": 2,
+  "selects": 2,
+  "holds": 0
+ },
+ "findings": {
+  "SeparatedByDecisionOnly": 0,
+  "SeparatedByActOnly": 0
+ },
+ "pending_candidates": 0,
+ "couplings": 0,
+ "route": "enumerated",
+ "choice_count": 16,
+ "choices_checked": 16,
+ "narrowings_stale": [],
+ "reading_premises": [],
+ "not_superposable": {
+  "cause": "the unspecified completion",
+  "text": "ReadingsNotSuperposable: force-u0036-s05, force-u0125-s04-p2, force-u0156-s03, force-u0263-s04-p2"
+ },
+ "status": "CONFLICT-FREE among rules on the same act under every reading (16 readings checked one at a time)",
+ "conflict": {
+  "choices": [
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0125-s04-p2",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05

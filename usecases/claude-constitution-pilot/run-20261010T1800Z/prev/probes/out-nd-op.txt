@@ -1,0 +1,355 @@
+{
+ "document": "usecases/claude-constitution-pilot/run-20261009T1800Z/readings/nd-op.ve.md",
+ "group": "op",
+ "search_seconds": 70.3,
+ "sets": [
+  {
+   "set": "modal-u0062-s01",
+   "unit": "u0062.s01",
+   "candidates": [
+    {
+     "id": "permission-narrow-limits",
+     "content": "norm"
+    },
+    {
+     "id": "permission-wide-limits",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "modal-u0123-s01-p1",
+   "unit": "u0123.s01.p1",
+   "candidates": [
+    {
+     "id": "permission-narrow-limits",
+     "content": "norm"
+    },
+    {
+     "id": "permission-wide-limits",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "modal-u0123-s02-p1",
+   "unit": "u0123.s02.p1",
+   "candidates": [
+    {
+     "id": "permission-narrow-limits",
+     "content": "norm"
+    },
+    {
+     "id": "permission-wide-limits",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "scope-modal-u0123-s03",
+   "unit": "u0123.s03",
+   "candidates": [
+    {
+     "id": "narrow-prohibition",
+     "content": "norm"
+    },
+    {
+     "id": "wide-prohibition",
+     "content": "norm"
+    }
+   ]
+  }
+ ],
+ "pairs_without_situation": [],
+ "search_limits": [],
+ "load_seconds": 3.2,
+ "admitted": true,
+ "check_seconds": 12.1,
+ "premises": {
+  "candidates": [
+   {
+    "index": 0,
+    "set": "modal-u0062-s01",
+    "status": "model"
+   },
+   {
+    "index": 1,
+    "set": "modal-u0062-s01",
+    "status": "model"
+   },
+   {
+    "index": 0,
+    "set": "modal-u0123-s01-p1",
+    "status": "model"
+   },
+   {
+    "index": 1,
+    "set": "modal-u0123-s01-p1",
+    "status": "model"
+   },
+   {
+    "index": 0,
+    "set": "modal-u0123-s02-p1",
+    "status": "model"
+   },
+   {
+    "index": 1,
+    "set": "modal-u0123-s02-p1",
+    "status": "model"
+   },
+   {
+    "index": 0,
+    "set": "scope-modal-u0123-s03",
+    "status": "model"
+   },
+   {
+    "index": 1,
+    "set": "scope-modal-u0123-s03",
+    "status": "model"
+   }
+  ],
+  "choice": [
+   [
+    "modal-u0062-s01",
+    0
+   ],
+   [
+    "modal-u0123-s01-p1",
+    0
+   ],
+   [
+    "modal-u0123-s02-p1",
+    0
+   ],
+   [
+    "scope-modal-u0123-s03",
+    0
+   ]
+  ],
+  "choices": [
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s01-p1",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s01-p1",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "model"
+   }
+  ],
+  "evidence": "per choice",
+  "model": {
+   "complete": true,
+   "constants": {
+    "claude": "e0"
+   },
+   "domains": {
+    "claude_instance": [],
+    "entity": [
+     "e0"
+    ],
+    "hard_constraint": [],
+    "operator": [],
+    "operator_input": [],
+    "situation": [],
+    "user": []
+   },
+   "relations": {
+    "attempt_to_kill_or_disempower_most_of_humanity": [],
+    "child_sexual_abuse_material": [],
+    "clarification_required": [],
+    "clear_and_substantial_undermining_of_oversight": [],
+    "compliance_against_guidelines": [],
+    "compliance_unethical": [],
+    "compliance_unsafe": [],
+    "critical_infrastructure_uplift": [],
+    "csam_generation_permitted_for_claude": [],
+    "cyberweapon_creation_permitted": [],
+    "damaging_cyberweapon_or_malicious_code": [],
+    "denial_of_being_claude_permitted": [],
+    "explicit_instruction_against_exploits": [],
+    "exploit_instruction_compliance_required": [],
+    "firmness_required": [],
+    "general_exception_to_complying": [],
+    "genuine_ambiguity": [],
+    "human": [],
+    "humanity_attack_participation_permitted": [],
+    "illegitimate_absolute_control": [],
+    "illegitimate_control_involvement_permitted": [],
+    "infrastructure_uplift_permitted": [],
+    "input_is_information": [],
+    "input_is_persona": [],
+    "input_is_specific_instructions": [],
+    "instruction_abandon_identity_in_persona": [],
+    "instruction_act_against_guidelines": [],
+    "instruction_claim_human_when_asked": [],
+    "instruction_deceptive_tactics_harming_users": [],
+    "instruction_decline_or_withhold": [],
+    "instruction_dishonest_looking_within_honesty": [],
+    "instruction_endanger_health_or_safety": [],
+    "instruction_false_information_deceiving_user": [],
+    "instruction_focus_on_tasks": [],
+    "instruction_is_for_behaviour_while_role_playing_persona": [],
+    "instruction_promote_own_products": [],
+    "instruction_respond_differently": [],
+    "instruction_role_play_custom_persona": [],
+    "judgment_use_required": [],
+    "mass_casualty_weapon_uplift": [],
+    "operator_input_permitted": [],
+    "operator_prompt_addresses_case": [],
+    "oversight_undermining_permitted": [],
+    "seemingly_compelling_argument_to_cross_line": [],
+    "system_prompt_compliance_required": [],
+    "system_prompt_deception_permitted": [],
+    "unsaid__clarification_required": [],
+    "unsaid__csam_generation_permitted_for_claude": [],
+    "unsaid__cyberweapon_creation_permitted": [],
+    "unsaid__denial_of_being_claude_permitted": [],
+    "unsaid__exploit_instruction_compliance_required": [],
+    "unsaid__firmness_required": [],
+    "unsaid__humanity_attack_participation_permitted": [],
+    "unsaid__illegitimate_control_involvement_permitted": [],
+    "unsaid__infrastructure_uplift_permitted": [],
+    "unsaid__judgment_use_required": [],
+    "unsaid__operator_input_permitted": [],
+    "unsaid__oversight_undermining_permitted": [],
+    "unsaid__system_prompt_compliance_required": [],
+    "unsaid__system_prompt_deception_permitted": [],
+    "unsaid__weapons_uplift_permitted": [],
+    "weapons_uplift_permitted": []
+   }
+  },
+  "route": "enumerated",
+  "status": "model"
+ },
+ "bytes_by_status": {
+  "LABELLED": 615,
+  "UNFORMALISED": 181942,
+  "OPEN": 2314,
+  "CHECKED": 22
+ }
+}
+{
+ "checked_by": {
+  "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+  "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+  "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+ },
+ "separations": {
+  "outcome": 3,
+  "selects": 1,
+  "holds": 0
+ },
+ "findings": {
+  "SeparatedByDecisionOnly": 0,
+  "SeparatedByActOnly": 0
+ },
+ "pending_candidates": 0,
+ "couplings": 1,
+ "route": "enumerated",
+ "choice_count": 2,
+ "choices_checked": 2,
+ "narrowings_stale": [],
+ "reading_premises": [],
+ "not_superposable": {
+  "cause": "the unspecified completion",
+  "text": "ReadingsNotSuperposable: modal-u0062-s01, modal-u0123-s01-p1, modal-u0123-s02-p1, scope-modal-u0123-s03"
+ },
+ "status": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)",
+ "conflict": {
+  "choices": [
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      0
+     ],
+     [
+      "modal-u0123-s01-p1",
+      0
+     ],
+     [
+      "modal-u0123-s02-p1",
+      0
+     ],
+     [
+      "scope-modal-u0123-s03",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "modal-u0062-s01",
+      1
+     ],
+     [
+      "modal-u0123-s01-p1",
+      1
+     ],
+     [
+      "modal-u0123-s02-p1",
+      1
+     ],
+     [
+      "scope-modal-u0123-s03",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   }
+  ],
+  "conditional_on": [
+   "coupling:limits-scope-u0123-s03"
+  ],
+  "reading_premises_used": [
+   "coupling:limits-scope-u0123-s03"
+  ],
+  "restrictions": [
+   "coupling:limits-scope-u0123-s03"
+  ],
+  "route": "enumerated",
+  "status": "CONFLICT-FREE"
+ },
+ "dead_readings": [],
+ "english": [
+  "The readings of sentences 227, 458, 460 and 462 were checked one way at a time, not together.",
+  "Under every reading of the 4 open sentences, no two rules on the same act contradict each other.",
+  "This holds provided that:",
+  "Sentences 227, 458, 460 and 462 are read with the same label limits-scope, because of sentence 462.",
+  "Read sentence 227 as *Every operator may give Claude each operator input, if at least one of the following holds:\n  (a) either that operator input is classified as \"input_is_specific_instructions\" or that operator input is classified as \"input_is_persona\", or both;\n  (b) that operator input is information. Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that operator input is classified as \"instruction_deceptive_tactics_harming_users\". Except when that operator input is classified as \"instruction_false_information_deceiving_user\". Except when 

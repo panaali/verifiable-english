@@ -1,0 +1,195 @@
+{
+  "assumed": [
+    [
+      "force-u0125-s04-p2",
+      0
+    ]
+  ],
+  "conditional_on": [],
+  "evidence": "certificates",
+  "proofs": [
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0125-s04-p2",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "outcome": "proof"
+    }
+  ],
+  "reading_premises_used": [],
+  "restrictions": [],
+  "route": "enumerated",
+  "verdict": "ALL",
+  "english": [
+    "Read sentence 471 as *Every instance of Claude must not directly deny being Claude*: the conclusion follows: *For every instance of Claude, it is not the case that that instance of Claude may directly deny being Claude.*"
+  ]
+}
