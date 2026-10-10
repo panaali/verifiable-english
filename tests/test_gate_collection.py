@@ -3,6 +3,7 @@
 is now."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -295,6 +296,37 @@ def test_the_base_collection_refuses_another_toolchain(history, tmp_path):
         gate_collection.collect_commit(base, tmp_path / "scratch", build_env=dict(os.environ), env=dict(os.environ),
                                        python=[sys.executable], root=history)
     assert len(git(history, "worktree", "list").splitlines()) == 1
+
+
+def rust_trees(tmp_path, pinned: bool):
+    root, tree = tmp_path / "root", tmp_path / "tree"
+    (root / gate_collection.RUST_BINARY).parent.mkdir(parents=True)
+    (root / gate_collection.RUST_BINARY).write_bytes(b"head build")
+    (tree / "lean").mkdir(parents=True)
+    pin = hashlib.sha256(b"head build" if pinned else b"base build").hexdigest()
+    (tree / "lean/checkers.lock").write_text(json.dumps({"rust_jsonl": [pin]}))
+    return root, tree
+
+
+def test_the_base_takes_the_heads_rust_binary_when_its_lock_pins_it(tmp_path, monkeypatch):
+    root, tree = rust_trees(tmp_path, pinned=True)
+    monkeypatch.setattr(gate_collection, "build", lambda *a, **kw: pytest.fail("built"))
+    gate_collection.build_rust(tree, root, {})
+    assert (tree / gate_collection.RUST_BINARY).read_bytes() == b"head build"
+
+
+def test_the_base_builds_its_own_rust_binary_otherwise(tmp_path, monkeypatch):
+    root, tree = rust_trees(tmp_path, pinned=False)
+    builds = []
+    monkeypatch.setattr(gate_collection, "build", lambda args, **kw: builds.append((args, kw)))
+    gate_collection.build_rust(tree, root, {"CARGO_HOME": str(tmp_path / "cargo-home")})
+    [(args, kw)] = builds
+    assert args[:2] == ["cargo", "build"] and "--locked" in args and "--release" in args
+    assert args[args.index("--manifest-path") + 1] == str(tree / "rust/Cargo.toml")
+    assert args[args.index("--target-dir") + 1] == str(tree / "rust/target")
+    # Offline, from the gate's registry, with the tree's paths remapped as every pinned build's are.
+    assert kw["env"]["CARGO_NET_OFFLINE"] == "true" and kw["env"]["CARGO_HOME"] == str(tmp_path / "cargo-home")
+    assert f"--remap-path-prefix={tree.resolve()}=/ve" in kw["env"]["CARGO_ENCODED_RUSTFLAGS"].split("\x1f")
 
 
 # --- the gate ------------------------------------------------------------------------------------------------
