@@ -9,8 +9,8 @@ map says, per test unit, which functions under the root it executed, which
 files it read and which directories it listed, which programs it started,
 and which assurance manifest entries it read or checked for presence.
 It unions the edges of the newest earlier map, so a function that a randomized
-test reaches only on some runs stays mapped. Run it nightly; selection falls
-back to the static import graph without a usable map.
+test reaches only on some runs stays mapped. Run it nightly; automatic
+selection runs the full suite without a usable map.
 """
 from __future__ import annotations
 

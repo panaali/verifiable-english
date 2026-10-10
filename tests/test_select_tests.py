@@ -424,6 +424,20 @@ def test_map_round_trips_through_its_edges():
                     for test, e in edges.items()}
 
 
+def test_operation_map_rejects_missing_and_bool_indices():
+    data = make_map({"t1": {"m": ["parse"], "p": ["typing"]}})
+    test_map.validate(data)
+    for field in ("operations", "presence"):
+        missing = json.loads(json.dumps(data))
+        del missing[field]
+        with pytest.raises(ValueError):
+            test_map.validate(missing)
+        retyped = json.loads(json.dumps(data))
+        retyped[field][next(iter(retyped[field]))] = [True]
+        with pytest.raises(ValueError):
+            test_map.validate(retyped)
+
+
 @pytest.mark.parametrize("op_id", ["parse", "typing", "environment", "model", "evaluate"])
 def test_five_manifest_edits_select_their_readers(op_id, tmp_path):
     manifest = json.loads((ROOT / select_tests.MANIFEST).read_text())
