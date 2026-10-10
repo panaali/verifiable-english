@@ -152,4 +152,8 @@ The open design point for the fuzzer's owner: its CPU budget is fixed while its 
 
 ### Gate on the final head
 
-Pending: recorded in the next commit.
+`python3 tools/gate.py --workers 12` on clean HEAD `d214d559` (the code of this commit; only this section differs):
+**passed**. Lean build, Lean audit (standard axioms only), Rust build, 36 Rust tests and the Python collection pass;
+the suite collected 14,020 tests, selected 14,019, and recorded 13,927 passed, 92 skipped (9 skipped, 83 strict
+xfails), 0 failed, `test_difffuzz.py::test_ci_run` included (`gate-result.json`, status `passed`). Free disk after
+the run: 67 GB.
