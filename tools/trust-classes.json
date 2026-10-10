@@ -10825,6 +10825,8 @@
         "VE.Ask.replayPlainParts"
       ],
       "G[R]": [
+        "VE.Ask.noNames",
+        "VE.Ask.oneChoiceCase",
         "VE.Ask.sameEnvironment"
       ],
       "G[V]": [
@@ -10941,6 +10943,7 @@
       ],
       "G[R]": [
         "VE.Ask.displayNumbers",
+        "VE.Ask.readingsCase",
         "VE.Ask.setNumber"
       ],
       "G[V]": [

@@ -37,14 +37,25 @@ OPERATION = "question.read"
 ANSWER_OPERATION = "question.answer"
 MODE = "ask"
 EXIT_READ, EXIT_UNKNOWN, EXIT_NOT_READ, EXIT_LIMIT, EXIT_UNAVAILABLE = 0, 3, 2, 4, 5
-LEADS = ("yes", "no", "notSettled", "notNecessarily", "unknown")
-ROUTES = ("readings", "plain", "norm-defaults")
-SOURCE_FIELDS = {"unit": {"unit"}, "rules": {"predicate"}, "definition": {"name"}, "background": set(),
-                 "pair": {"required", "permission"}, "fill": {"required", "permission"}}
-ANSWERED_FIELDS = {"status", "route", "form", "sentence", "ast", "spans", "lead", "text", "lines", "rows", "unused",
-                   "unchecked_names", "identities"}
-LINE_FIELDS = {"frame", "text", "source", "quote", "readings", "witness", "unchecked"}
-ROW_FIELDS = {"choice", "lead", "reason", "cited", "gaps"}
+
+
+def _shape() -> dict:
+    """The answer's shapes, read from the schema generated from Lean's (`lean_service_schema/ask.json`), never
+    copied here (build checklist 1)."""
+    from .backends.service_schema import DIRECTORY
+    return json.loads((DIRECTORY / "ask.json").read_text(encoding="utf-8"))["$defs"]
+
+
+_DEFS = _shape()
+LEADS = tuple(_DEFS["row"]["properties"]["lead"]["enum"])
+REASONS = tuple(next(alt["enum"] for alt in _DEFS["row"]["properties"]["reason"]["anyOf"] if "enum" in alt))
+ANSWER_LEADS = tuple(_DEFS["answered"]["properties"]["lead"]["enum"])
+SOURCE_FIELDS = {alt["properties"]["kind"]["const"]: set(alt["properties"]) - {"kind"}
+                 for alt in _DEFS["source"]["anyOf"]}
+ANSWERED_FIELDS = set(_DEFS["answered"]["properties"])
+LINE_FIELDS = set(_DEFS["line"]["properties"])
+ROW_FIELDS = set(_DEFS["row"]["properties"])
+NAME_FIELDS = set(_DEFS["name"]["properties"])
 
 
 def environment(raw: bytes):
@@ -387,7 +398,7 @@ def _check_answer(result, request, expected):
     _need(result["form"] == reading["form"] and result["sentence"] == reading["sentence"] and
           same_json(result["ast"], reading["ast"]) and same_json(result["spans"], reading["spans"]),
           "the asked sentence is not the question's reading")
-    _need(result["lead"] in LEADS + ("by_reading",), "the lead is not a lead")
+    _need(result["lead"] in ANSWER_LEADS, "the lead is not a lead")
     units = request["_units"]
     names = {(n["set"], n["index"]): n for n in request["names"]}
     rows = result["rows"]
@@ -398,7 +409,7 @@ def _check_answer(result, request, expected):
         _check_choice(row["choice"], request)
         choices.append(json.dumps(row["choice"]))
         _need(row["lead"] in LEADS, "a row's lead is not a lead")
-        _need(row["reason"] is None or row["reason"] in ("X1", "X2", "X3", "X4", "X5", "X6"),
+        _need(row["reason"] is None or row["reason"] in REASONS,
               "a row's reason is not a reason")
         _need((row["reason"] is None) == (row["lead"] != "unknown"), "a row's reason does not go with its lead")
         _need(type(row["cited"]) is list, "a row's citations are not a list")
@@ -433,7 +444,7 @@ def _check_answer(result, request, expected):
           len(set(result["unused"])) == len(result["unused"]), "the unused sentences are not the document's")
     _need(type(result["unchecked_names"]) is list, "the unchecked names are not a list")
     for n in result["unchecked_names"]:
-        _need(type(n) is dict and n.keys() == {"set", "index", "text"} and
+        _need(type(n) is dict and n.keys() == NAME_FIELDS and
               names.get((n.get("set"), n.get("index"))) == n, "an unchecked name is not the request's")
 
 

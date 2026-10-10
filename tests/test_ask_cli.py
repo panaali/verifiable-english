@@ -71,3 +71,25 @@ def test_the_json_is_leans_result_with_the_honesty_fields():
     assert record["result"] == entry["result"]
     reading = json.loads(cli(ROOT / entry["path"], entry["question"], "--reading", "--json").stdout)
     assert reading["operation"] == "question.read" and reading["answer"] == "not_asked"
+
+
+VARIANTS = {"nbsp": "Is every member eligible?", "double space": "Is every  member eligible?",
+            "tab": "Is every\tmember eligible?", "carriage return": "Is every member eligible?\r",
+            "curly quote": "Is “every” member eligible?", "kelvin": "Is every member eligibleK?",
+            "dotted I": "İs every member eligible?", "control": "Is every member\u0007 eligible?"}
+
+
+@pytest.mark.parametrize("name", sorted(VARIANTS))
+def test_ask_reads_the_question_as_the_reader_does(name):
+    """Build checklist 3 and 10: a question with odd spacing or characters reaches the answer only through Lean's
+    reader. `ve ask` refuses what `ve ask --reading` refuses, with the same words and exit code, and answers only a
+    question the reader reads, opening with the reader's A0 line."""
+    path = ROOT / AF.load("G1")["path"]
+    question = VARIANTS[name]
+    read = cli(path, question, "--reading")
+    answered = cli(path, question)
+    if read.returncode != 0:
+        assert (answered.returncode, answered.stdout) == (read.returncode, read.stdout), name
+    else:
+        assert answered.returncode in (0, 3)
+        assert answered.stdout.splitlines()[0] == read.stdout.splitlines()[0], name

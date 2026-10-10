@@ -231,6 +231,61 @@ def test_a_broken_split_is_not_a_split():
     assert all(row["lead"] != "notSettled" for row in rows)
 
 
+def _deep(depth):
+    value = []
+    for _ in range(depth):
+        value = [value]
+    return value
+
+
+def _request(ident):
+    result, request, expected = bound(ident)
+    return {k: v for k, v in request.items() if not k.startswith("_")}
+
+
+def test_a_malformed_request_is_refused_never_answered():
+    """Build checklist 5: each field of the request, and each field of its case, replaced by 7, true, null, [], {}
+    or a 10,000-deep list: Lean refuses (a VE error, `CheckerUnavailable` or `ResourceLimit`), never an answer and
+    never a crash of the relay."""
+    from ve.backends import relay
+    from ve.errors import CheckerUnavailable, ResourceLimit, VEError
+    tried = 0
+    for ident in ("G1", "U3", "A5"):
+        request = _request(ident)
+        slots = [(k,) for k in request] + [("case", k) for k in request["case"]]
+        for path in slots:
+            for new in (7, True, None, [], {}, _deep(10_000)):
+                mutant = setting(request, path, new)
+                if mutant == request:
+                    continue
+                empty = new in ([], {}) and type(new) is type(request["case"]["evidence"])
+                if path == ("case", "evidence") and empty:
+                    # No evidence, of the evidence's own type: Lean checks nothing, so it answers unknown: X2 where a
+                    # conflict check is due (its packages are evidence too), else X4.
+                    result = relay.decide_once("ask", mutant)["result"]
+                    assert result["lead"] == "unknown" and {r["reason"] for r in result["rows"]} <= {"X2", "X4"}
+                    continue
+                with pytest.raises((VEError, CheckerUnavailable, ResourceLimit)):
+                    row = relay.decide_once("ask", mutant)
+                    assert row["result"]["status"] != "answered", (ident, path, new)
+                    raise VEError(f"refused: {row['result']['status']}")
+                tried += 1
+    assert tried > 150
+
+
+def test_the_deadline_bounds_the_whole_answer(monkeypatch):
+    """Build checklist 7: the mode's CPU deadline covers the whole request (reading, binding, replay, rendering):
+    injected near zero, U3's question is `CheckerUnavailable` naming the mode, never a lead or `ResourceLimit`."""
+    from ve.backends import lean_service, relay
+    from ve.errors import CheckerUnavailable, ResourceLimit
+    monkeypatch.setitem(lean_service.DEADLINES, "ask", (1e-6, 1e-6))
+    request = _request("U3")
+    request["id"] = "ask-deadline"   # not a request the relay's memo holds
+    with pytest.raises(CheckerUnavailable, match="mode ask used more than its deadline") as caught:
+        relay.decide_once("ask", request)
+    assert not isinstance(caught.value, ResourceLimit)
+
+
 def test_the_schema_is_generated_and_types_every_field():
     """`ask.json` has no untyped result: every property of the answered and refused results names a type, a const,
     an enum or a reference (the generated file, `tools/response_schemas.py`)."""
