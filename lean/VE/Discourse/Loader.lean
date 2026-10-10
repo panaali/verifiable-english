@@ -491,7 +491,7 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
       | .obj kvs => pure (kvs.toList.map Prod.fst)
       | _ => throw "invalid reading set"
     let required := ["id", "unit", "version", "status", "readings"]
-    unless required.all keys.contains && keys.all (required ++ ["signature", "rejected_history", "models"]).contains do
+    unless required.all keys.contains && keys.all (required ++ ["signature", "rejected_history", "models"] ++ (if profiles.contains "readings@1" then ["source_word", "situations"] else [])).contains do
       throw "invalid reading set"
     let versionText := "invalid or duplicate reading set version"
     let id ← field python versionText (stringField item "id")
