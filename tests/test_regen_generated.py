@@ -21,6 +21,7 @@ from pathlib import Path
 import subprocess
 import sys
 
+from hypothesis import given, settings, strategies as st
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -107,6 +108,17 @@ def test_the_listing_names_every_entry_and_command():
     assert "write: python tools/lean_statements.py\n" in listing
 
 
+def test_owner_agrees_with_git_on_every_tracked_file():
+    """git itself is the oracle of the attribute patterns: a tracked file has the driver exactly when an
+    entry owns it."""
+    done = subprocess.run(["git", "check-attr", "--stdin", "merge"], cwd=ROOT, input="\n".join(TRACKED) + "\n",
+                          capture_output=True, text=True, check=True)
+    by_git = {line.rsplit(": merge: ", 1)[0]: line.rsplit(": merge: ", 1)[1] for line in done.stdout.splitlines()}
+    assert by_git.keys() == set(TRACKED)
+    disagree = [name for name in TRACKED if (by_git[name] == R.DRIVER) != (R.owner(name) is not None)]
+    assert not disagree, disagree[:10]
+
+
 def test_entries_run_in_dependency_order():
     order = [entry.name for entry in R.GENERATED]
     for before, after in (("wire-contract", "frozen-inventory"), ("english-grammar", "frozen-inventory"),
@@ -157,6 +169,30 @@ def test_json_merge_keeps_a_sorted_map_sorted_and_the_file_format():
     # A file no dump reproduces (a duplicate key) keeps its indent and its escaping.
     assert R._json_format('{\n "a": 1,\n "a": "\\u00ab"\n}\n') == (1, True)
     assert R._json_format(json.dumps({"a": "\u00ab"}, indent=2, ensure_ascii=False) + "\n") == (2, False)
+
+
+JSON = st.recursive(st.none() | st.booleans() | st.integers(-3, 3) | st.sampled_from(["a", "b", "c"]),
+                    lambda inner: st.lists(inner, max_size=3) | st.dictionaries(st.sampled_from("xyz"), inner,
+                                                                                    max_size=3), max_leaves=8)
+
+
+@settings(max_examples=300, deadline=None)
+@given(base=JSON, change=JSON)
+def test_json_merge_takes_a_one_sided_change_and_agrees_with_itself(base, change):
+    """A change on one side only is the merge, whichever side made it; identical sides merge to themselves."""
+    assert R._text(R.merge_json(base, change, base)) == R._text(change)
+    assert R._text(R.merge_json(base, base, change)) == R._text(change)
+    assert R._text(R.merge_json(base, change, change)) == R._text(change)
+
+
+@settings(max_examples=300, deadline=None)
+@given(base=st.dictionaries(st.sampled_from("abcdef"), st.integers(0, 3), max_size=4),
+       ours=st.dictionaries(st.sampled_from("ghij"), st.integers(0, 3), max_size=3),
+       theirs=st.dictionaries(st.sampled_from("klmn"), st.integers(0, 3), max_size=3))
+def test_json_merge_of_disjoint_additions_keeps_both_in_either_order(base, ours, theirs):
+    left = R.merge_json(base, {**base, **ours}, {**base, **theirs})
+    right = R.merge_json(base, {**base, **theirs}, {**base, **ours})
+    assert left == right == {**base, **ours, **theirs}
 
 
 def test_assurance_manifest_merge_recomputes_the_decoder_total():

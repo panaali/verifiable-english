@@ -22,7 +22,7 @@ through their first and last element) is mutated:
 * `empty`: a non-empty string, array or object made empty;
 * `duplicate`: an element of an array repeated, and a key of an object written twice in the line;
 * `retype`: the value replaced by one of each other JSON type (null, true, 7, 7.5 for an integer, "7",
-  [], {});
+  [], {}), and the fields of a result's first two levels by a 10,000-deep array;
 * `rebind`: a value the request names (a string that occurs in the case, the result's position, its
   case digest, the nonce, the envelope's counts) replaced by one the request does not hold.
 
@@ -133,6 +133,17 @@ def _type(value) -> str:
 
 
 RETYPES = {"null": None, "boolean": True, "integer": 7, "string": "7", "array": [], "object": {}}
+# A value nested deeper than any decoder reads (build checklist line 5), written as text: `dumps` writes it
+# without recursion. It replaces each field of the answer's first two levels below a result.
+DEEP_LEVELS = 10_000
+
+
+class _Deep:
+    def __repr__(self):
+        return "<10000-deep array>"
+
+
+DEEP = _Deep()
 
 
 def _strings(value) -> set[str]:
@@ -160,10 +171,12 @@ class Mutant:
         return "/".join("*" if type(step) is int else str(step) for step in self.path[len(prefix):]) or "."
 
 
-def mutants(answer, named: set[str], rebind_ints: dict[tuple, int]) -> list[tuple[Mutant, object]]:
+def mutants(answer, named: set[str], rebind_ints: dict[tuple, int],
+            deep_depth: int = 0) -> list[tuple[Mutant, object]]:
     """[(mutant, mutated answer)] for every field of `answer`: drop, empty, duplicate, retype, rebind.
     `named` are the strings the request holds; `rebind_ints` maps the paths of integers bound to the request
-    (positions, counts) to a value the request does not give them."""
+    (positions, counts) to a value the request does not give them; fields at most `deep_depth` levels down are
+    also replaced by a DEEP_LEVELS-deep array."""
     out = []
     for path, value in _nodes(answer):
         if not path:
@@ -183,6 +196,8 @@ def mutants(answer, named: set[str], rebind_ints: dict[tuple, int]) -> list[tupl
                 out.append((Mutant("retype", path, kind), _replace(answer, path, new)))
         if type(value) is int:
             out.append((Mutant("retype", path, "number"), _replace(answer, path, 7.5)))
+        if len(path) <= deep_depth:
+            out.append((Mutant("retype", path, "deep"), _replace(answer, path, DEEP)))
         if type(value) is str and value in named:
             out.append((Mutant("rebind", path), _replace(answer, path, FRESH)))
         if path in rebind_ints:
@@ -192,6 +207,8 @@ def mutants(answer, named: set[str], rebind_ints: dict[tuple, int]) -> list[tupl
 
 def dumps(value, duplicate_at=None, key=None, path=()) -> str:
     """Compact JSON text of `value`; the object at `duplicate_at` writes its field `key` twice."""
+    if value is DEEP:
+        return "[" * DEEP_LEVELS + "]" * DEEP_LEVELS
     if isinstance(value, dict):
         items = [json.dumps(k, ensure_ascii=False) + ":" + dumps(v, duplicate_at, key, path + (k,))
                  for k, v in value.items()]
@@ -678,7 +695,7 @@ def _gate_service(route, cases, entries, report):
         if "code" not in bound and bound["result"].get("status") != "error":  # not a rejection
             stats["ok_fixtures"] += 1
         named = _strings(case) | {mode}
-        found = mutants(answer, named, _service_rebind_ints(answer)) + _digest_rebind(answer)
+        found = mutants(answer, named, _service_rebind_ints(answer), deep_depth=5) + _digest_rebind(answer)
         found.append((Mutant("rebind", ("id",)), {**answer, "id": FRESH}))
         for mutant, mutated in found:
             replay.answer, replay.mutant = mutated, mutant
@@ -712,7 +729,7 @@ def _gate_one_shot(route, cases, entries, report):
             if rows[0].get("status") == "ok":
                 stats["ok_fixtures"] += 1
             named = _strings(case)
-            for mutant, mutated in mutants(rows, named, {}):
+            for mutant, mutated in mutants(rows, named, {}, deep_depth=3):
                 stand_in.set(_text(mutant, mutated).encode(), status)
                 outcome, detail = _call_outcome(call, case, stand_in.path)
                 pattern = mutant.pattern()

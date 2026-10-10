@@ -311,11 +311,12 @@
    "route": "service:check",
    "mutation": "retype",
    "path": [
+    "results/*/result/core",
     "results/*/result/core/*"
    ],
    "kind": "follow-up",
    "id": "F3",
-   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+   "reason": "Retype accepted: the field is a union, has no type, or is an array whose items have no type (a 10,000-deep array is accepted) in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
   },
   {
    "route": "service:english",
@@ -326,17 +327,19 @@
    ],
    "kind": "follow-up",
    "id": "F3",
-   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+   "reason": "Retype accepted: the field is a union, has no type, or is an array whose items have no type (a 10,000-deep array is accepted) in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
   },
   {
    "route": "service:parse",
    "mutation": "retype",
    "path": [
+    "results/*/result/ast",
+    "results/*/result/ast/*",
     "results/*/result/ast/*/*"
    ],
    "kind": "follow-up",
    "id": "F3",
-   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+   "reason": "Retype accepted: the field is a union, has no type, or is an array whose items have no type (a 10,000-deep array is accepted) in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
   },
   {
    "route": "service:readings-route",
@@ -350,6 +353,7 @@
     "results/*/result/english/*/model",
     "results/*/result/english/*/result",
     "results/*/result/generated_predicates/*/key",
+    "results/*/result/names",
     "results/*/result/names/*",
     "results/*/result/names/*/candidates",
     "results/*/result/names/*/candidates/*",
@@ -362,6 +366,7 @@
     "results/*/result/pair/other_value",
     "results/*/result/pair/witness_value",
     "results/*/result/per_choice/*/status_text",
+    "results/*/result/units",
     "results/*/result/units/*",
     "results/*/result/units/*/content",
     "results/*/result/units/*/content/norm",
@@ -384,7 +389,7 @@
    ],
    "kind": "follow-up",
    "id": "F3",
-   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+   "reason": "Retype accepted: the field is a union, has no type, or is an array whose items have no type (a 10,000-deep array is accepted) in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
   },
   {
    "route": "service:reports",
@@ -397,7 +402,7 @@
    ],
    "kind": "follow-up",
    "id": "F3",
-   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+   "reason": "Retype accepted: the field is a union, has no type, or is an array whose items have no type (a 10,000-deep array is accepted) in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
   },
   {
    "route": "call:ve.backends.speech_source:decide_source",
