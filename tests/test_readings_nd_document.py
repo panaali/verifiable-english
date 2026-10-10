@@ -124,13 +124,23 @@ def test_fnd1_check_every_choice_conflict_free_with_a_model(tmp_path):
     report = check_document(fnd1(tmp_path))
     readings = report["readings"]
     assert readings["conflict"]["status"] == "CONFLICT-FREE"
+    # RD-3's per-choice statuses are kept on the superposed route (review B3 of rd-6b): one certificate under no
+    # assumed reading makes every compatible choice CONFLICT-FREE (`readings_wire_nd_conflict_sound`).
+    assert [c["status"] for c in readings["conflict"]["choices"]] == ["CONFLICT-FREE", "CONFLICT-FREE"]
     assert readings["conflict"]["reading_premises_used"] == ["unsaid:pair:help_required,help_permitted"]
-    assert readings["status"].startswith("CONFLICT-FREE among rules on the same act")
+    assert readings["status"] == ("CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises and "
+                                  "1 reading premises")
     assert report["premises"]["status"] == "model"
     assert report["premises"]["route"] == "superposed"
+    assert [c["status"] for c in report["premises"]["choices"]] == ["model", "model"]
     assert [c["status"] for c in report["premises"]["candidates"]] == ["model", "model"]
-    assert shown(readings["english"])[0] == \
-        "Under every reading of the open sentence, no two rules on the same act contradict each other."
+    # RD-3's lines but the enumerated route's "checked one way at a time", which the superposed route makes false
+    # (pending the DRI's sign-off, docs/readings-defaults/rd6b/DELTA.md).
+    assert shown(readings["english"]) == [
+        "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+        "This holds provided that:", "Whenever an agent must help an user, it may help that user.",
+        "This does not depend on how sentence 1 is read.",
+        f"Read sentence 1 as {EVERY}: the sentences of this document can all be true together, as here: nothing exists."]
     [pair] = readings["sets"][0]["pairs"]
     assert pair["wording"] == "E19"
 
@@ -172,8 +182,15 @@ def test_fnd1_readings_conclusion_some(tmp_path, capsys):
     assert fails.startswith(f"Read sentence 1 as {ASKS}: the conclusion does not follow. It fails here: ")
     # every gap of the situation is shown with its answer, and the duty is filled 'no' there
     assert GAP.search(fails) and fails.endswith("must help e0; this situation answers 'no'.")
+    assert fails.endswith("It fails here: e0 is an agent; e0 is a user. Here the text does not say whether e0 must "
+                          "help e0; this situation answers 'no'.")
+    assert len(GAP.findall(fails)) == 1  # Lean's gaps: only the one the conclusion's value reads (review B3 of rd-6b)
     assert query(tmp_path, capsys, path, "rs_1:0")["verdict"] == "ALL"
-    assert query(tmp_path, capsys, path, "rs_1:1")["verdict"] == "NOT ALL"
+    # Under the only choice taking rs_1:1 the conclusion fails: NONE, as RD-3 answered (review B3 of rd-6b).
+    under = query(tmp_path, capsys, path, "rs_1:1")
+    assert (under["verdict"], under["assumed"]) == ("NONE", [["rs_1", 1]])
+    assert [c["choice"] for c in under["countermodels"]] == [[["rs_1", 1]]]
+    assert shown(under["english"]) == [fails]
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -184,14 +201,19 @@ def test_fnd2_check_conflict_under_one_reading_only(tmp_path):
     conflict = report["readings"]["conflict"]
     assert conflict["status"] == "CONFLICT"
     assert conflict["choice"] == [["rs_2", 0]]
-    assert "under rs_2@1:0" in report["readings"]["status"]
+    assert [(c["choice"], c["status"]) for c in conflict["choices"]] == [
+        ([["rs_2", 0]], "CONFLICT"), ([["rs_2", 1]], "CONFLICT-FREE")]
+    assert report["readings"]["status"] == "CONFLICT: pair conflict on x_required->x_permitted at e0 under rs_2@1:0"
     english = shown(report["readings"]["english"])
     [line] = [line for line in english if "contradict each other here" in line]
     assert line.startswith(f"Read sentence 2 as {MUST_X}: two rules contradict each other here: ")
     # Lean's plan shows the filled gaps the conflict's value reads with nothing filled (readings-defaults 2.2, RD-3):
-    # the permission to try, filled 'yes', which triggers the duty, and the duty's own gap; not the third table
-    assert "Here the text does not say whether e0 may be tried; this situation answers 'yes'." in line
-    assert len(GAP.findall(line)) == 3
+    # the permission to try, filled 'yes', which triggers the duty, and the duty's own gap; not the third table.
+    # On the superposed route they are Lean's too (`gapsOf` of the witness's target, review B3 of rd-6b).
+    assert line.endswith("Here the text does not say whether e0 may be tried; this situation answers 'yes'. "
+                         "Here the text does not say whether e0 must be done; this situation answers 'no'.")
+    assert len(GAP.findall(line)) == 2
+    assert english[english.index(line) + 1] == "CONFLICT: pair conflict on x_required->x_permitted at act e0"
 
 
 def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
@@ -201,7 +223,8 @@ def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
     conclusion.write_text(json.dumps(["forall", "act", ["unary", "x_required", ["var", 0]]]))
     assert main(["readings", str(path), "--conclusion", str(conclusion)]) == 0
     data = json.loads(capsys.readouterr().out)
-    assert (data["verdict"], data["status"]) == ("UNKNOWN", "UNKNOWN (conflict status: CONFLICT)")
+    assert (data["verdict"], data["status"], data["choice"]) == (
+        "UNKNOWN", "UNKNOWN (conflict status: CONFLICT)", [["rs_2", 0]])
 
 
 def test_fnd2_render(tmp_path):
@@ -478,3 +501,63 @@ def _refused(kind, mutate, monkeypatch):
     check = _check if kind == "readings-validate" else _completion_elaborate
     with pytest.raises(CheckerUnavailable, match="invalid answer"):
         check(bad, case)
+
+
+def test_filled_environment_is_typed_by_the_schema_and_bound_to_the_request():
+    """Review B4 of rd-6b: `filled.environment` was any value. The generated schema alone now rejects every field of
+    a genuine filled environment retyped, an extra field at every object of it, and a sort, constant, language or
+    revision other than the request's; the client binds the profiles."""
+    from ve.backends.service_schema import Invalid, check_row
+    from ve.readings_route import _completion_elaborate
+    for kind in ("readings-validate", "readings-elaborate"):
+        case, row = genuine(kind)
+        check_row("readings-route", row, case, 0)
+        environment = row["filled"]["environment"]
+        assert {"unsaid__help_required", "help_required"} <= set(environment["vocabulary"]["predicates"])
+
+        paths, objects = [], []
+        def visit(value, path):
+            if type(value) is dict:
+                objects.append(path)
+                for key, child in value.items():
+                    paths.append(path + (key,))
+                    visit(child, path + (key,))
+            elif type(value) is list:
+                for k, child in enumerate(value):
+                    paths.append(path + (k,))
+                    visit(child, path + (k,))
+        visit(environment, ())
+        assert len(paths) > 30
+
+        def refused(mutate):
+            bad = copy.deepcopy(row)
+            mutate(bad["filled"]["environment"])
+            with pytest.raises(Invalid):
+                check_row("readings-route", bad, case, 0)
+
+        def at(env, path):
+            for segment in path:
+                env = env[segment]
+            return env
+
+        for path in paths:
+            original = at(environment, path)
+            def retype(env, path=path, original=original):
+                at(env, path[:-1])[path[-1]] = 7 if type(original) is not int else "7"
+            refused(retype)
+        for path in objects:
+            refused(lambda env, path=path: at(env, path).update(invented=[]))
+        refused(lambda env: env["vocabulary"]["sorts"].update(extra={"description": "extra"}))
+        refused(lambda env: env["vocabulary"]["constants"].update(c9={"sort": "agent", "description": "c"}))
+        refused(lambda env: env.update(language="ve.core@0"))
+        refused(lambda env: env.update(spec_revision="another"))
+        refused(lambda env: env["vocabulary"]["predicates"]["help_required"]["regulated"].update(default="unspecified"))
+        refused(lambda env: env["vocabulary"]["predicates"]["help_required"]["regulated"].update(role="duty"))
+
+    case, row = genuine("readings-elaborate")
+    for profiles in (["norm-defaults@0", "norms@0", "relational-fol@0"], ["relational-fol@0", "norms@0"],
+                     ["norms@0", "relational-fol@0", "soft-norms@0"]):
+        bad = copy.deepcopy(row)
+        bad["filled"]["environment"]["profiles"] = profiles
+        with pytest.raises(CheckerUnavailable, match="invalid answer"):
+            _completion_elaborate(bad, case)
