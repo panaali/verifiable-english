@@ -19,6 +19,7 @@ its merge strategy:
 | wire-contract | `lean/VE/WireContract/{Limits,Names}.lean`, `Tables/*.lean`, both `contracts.lock`, `docs/spec/*-wire-table.md` | regenerate |
 | english-grammar | `lean/VE/EnglishGrammar/Fixed/*.lean`, `ve/english_grammar/LOCK.json` | regenerate |
 | english-lexicon-fixtures | `lean/VE/EnglishGrammar/LexiconFixtures.lean` | regenerate |
+| question-fixtures | `lean/VE/Question/Fixtures.lean` | regenerate |
 | english-run-copy | `lean/VE/Service/EnglishRun.lean` | regenerate |
 | route-cases | `lean/VE/Route/examples/route-cases.json` | regenerate |
 | lean-audit-manifests | `lean/VE/Audit.lean`, `lean/ResponseShape/Audit.lean` | union |
@@ -31,6 +32,8 @@ its merge strategy:
 | checker-pins | `lean/checkers.lock` (pins the built `ve_service` and the Rust release binary) | json |
 | response-schemas | `ve/backends/lean_service_schema/*.json` | regenerate |
 | english-codes | `ve/english_grammar/codes.json` | regenerate |
+| question-codes | `ve/question/codes.json` | regenerate |
+| question-lock | `ve/question/LOCK.json` | regenerate |
 | assurance-manifest | `ve/assurance-manifest.json` (decoder total recomputed) | json (check only) |
 | assurance-doc | `docs/spec/assurance-manifest.md` (`assurance_manifest.py --check`, new) | regenerate |
 | layer-ledgers | `tools/layer-exceptions.json`, `lean-layer-exceptions.json`, `rust-module-exceptions.json` | json (check only) |
