@@ -509,19 +509,34 @@ def productResult (question : String) (runs : List PartRun) (k : Nat) : Json :=
           ("reason", .str "another sentence's readings are not all consistent")]
       else Json.mkObj [("verdict", .str "UNKNOWN"), route, name]
 
-/-- The product's English plan (2.4 item 1): E32, then each case's lines in `Components.all`'s order; for a query,
-    the query case's lines when the document's verdict is that case's own, else none (the case's own verdict stays
-    in its `components` entry). -/
+/-- The lines of case `r` naming its choice `c` where the document's UNKNOWN rests on it (2.4 item 3; SR2): E31 for a
+    companion case, then the choice by E12 as `gateItems` words a conflict status `s`; none for a case without an open
+    sentence, which has no reading to name. -/
+def gateLines (r : PartRun) (s : ChoiceResult) (c : Choice) : List Line :=
+  let D := r.part.f.r.N.D
+  partLines (r.part.name != "main") D ((gateItems D r.answer (word s) c).map (PlanItem.line D))
+
+/-- The product's English plan (2.4 items 1 and 3): E32, then each case's lines in `Components.all`'s order. For a
+    query: when another case is not CONFLICT-FREE, the lines of the choice the document's UNKNOWN names there
+    (`othersReason`, the other sentence's, SR2); otherwise the query case's lines when the document's verdict is that
+    case's own (an UNKNOWN of its own included, which its lines name), else none (the case's own verdict stays in its
+    `components` entry). A plan with no line after E32 is empty. -/
 def productPlan (question : String) (runs : List PartRun) (k : Nat) : List (Option String × Line) :=
   let rows := runs.map (·.rows)
   let partEntries := fun (r : PartRun) =>
     (partLines (r.part.name != "main") r.part.f.r.N.D r.lines).map (fun l => (some r.part.name, l))
+  let headed := fun (ls : List (Option String × Line)) => if ls.isEmpty then [] else (none, e32Line) :: ls
   if question == "query" then
     match runs[k]? with
     | some r =>
-      let own := foldEntailment r.x.conflictRows r.x.queryRows
-      if own != .unknown && productQuery rows k r.x.conflictRows r.x.queryRows == own then
-        (none, e32Line) :: partEntries r
+      if !othersFree rows k then
+        match othersReason rows k with
+        | some (s, j, c) => match runs[j]? with
+          | some rj => headed ((gateLines rj s c).map (fun l => (some rj.part.name, l)))
+          | none => []
+        | none => []
+      else if productQuery rows k r.x.conflictRows r.x.queryRows == foldEntailment r.x.conflictRows r.x.queryRows then
+        headed (partEntries r)
       else []
     | none => []
   else (none, e32Line) :: runs.flatMap partEntries
