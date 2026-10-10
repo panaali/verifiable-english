@@ -23,16 +23,27 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import nested_pytest  # noqa: E402
 import quarantine  # noqa: E402
+import run_order  # noqa: E402
 import select_tests  # noqa: E402
 import test_map  # noqa: E402
-import test_order  # noqa: E402
 
 
 # --- the order ---
 
+def test_the_tools_modules_are_not_shadowed_by_test_modules():
+    """tools/ and tests/ are both on the suite's import path: a tools module named like a test module
+    (this one was first `test_order`, which is tests/test_order.py) resolves to the test in the full suite."""
+    import test_order  # noqa: F401  (tests/test_order.py, imported first as in the full suite)
+    for module in (run_order, quarantine):
+        assert Path(module.__file__) == ROOT / "tools" / f"{module.__name__}.py"
+        assert getattr(select_tests, module.__name__) is module
+        assert not (ROOT / "tests" / f"{module.__name__}.py").exists()
+
+
+
 def test_the_last_failed_then_the_changed_then_the_rest():
     units = ["tests/test_d.py", "tests/test_a.py", "tests/test_c.py", "tests/test_b.py", "tools/test_x.py"]
-    assert test_order.order(units, changed=["tests/test_c.py", "docs/x.md", "tests/test_b.py"],
+    assert run_order.order(units, changed=["tests/test_c.py", "docs/x.md", "tests/test_b.py"],
                             failed=["tests/test_d.py", "tests/test_b.py", "tests/test_gone.py"]) == [
         "tests/test_b.py", "tests/test_d.py",       # failed last time (one also changed)
         "tests/test_c.py",                          # changed
@@ -47,7 +58,7 @@ def test_the_order_is_a_permutation_of_the_selection():
         units = generator.sample(names, generator.randrange(0, 30))
         changed = generator.sample(names, generator.randrange(0, 10))
         failed = generator.sample(names, generator.randrange(0, 10))
-        ordered = test_order.order(units, changed=changed, failed=failed)
+        ordered = run_order.order(units, changed=changed, failed=failed)
         assert sorted(ordered) == sorted(set(units)) and len(ordered) == len(set(units))
         ranks = [0 if unit in failed else 1 if unit in changed else 2 for unit in ordered]
         assert ranks == sorted(ranks)
@@ -58,26 +69,26 @@ def test_the_order_is_a_permutation_of_the_selection():
 def test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end():
     previous = {"tests/test_a.py": ["tests/test_a.py::t"], "tests/test_b.py": ["tests/test_b.py::t"],
                 "tests/test_c.py": ["tests/test_c.py::t"]}
-    state = test_order.updated(previous, completed=["tests/test_a.py", "tests/test_b.py"],
+    state = run_order.updated(previous, completed=["tests/test_a.py", "tests/test_b.py"],
                                failed={"tests/test_b.py": ["tests/test_b.py::u"], "tests/test_a.py": []})
     # a passed; b failed again (its new failures replace the old); c did not finish and keeps its own.
     assert state == {"tests/test_b.py": ["tests/test_b.py::u"], "tests/test_c.py": ["tests/test_c.py::t"]}
 
 
 def test_the_last_failures_are_the_runs_and_a_newer_gates(tmp_path):
-    state, record = tmp_path / "state.json", tmp_path / test_order.GATE_RECORD
-    test_order.write_state(state, {"tests/test_a.py": ["tests/test_a.py::t"]})
-    assert test_order.last_failed(tmp_path, state) == {"tests/test_a.py": ["tests/test_a.py::t"]}
+    state, record = tmp_path / "state.json", tmp_path / run_order.GATE_RECORD
+    run_order.write_state(state, {"tests/test_a.py": ["tests/test_a.py::t"]})
+    assert run_order.last_failed(tmp_path, state) == {"tests/test_a.py": ["tests/test_a.py::t"]}
     record.write_text(json.dumps({"failures": [
         {"stage": "pytest", "nodeid": "tests/test_g.py::t[1]", "reason": "x"},
         {"stage": "coverage", "reason": "baseline"}, "not a failure",
         {"stage": "pytest", "nodeid": "../outside.py::t", "reason": "x"}]}))
     os.utime(record, ns=(state.stat().st_mtime_ns + 10**9,) * 2)
-    assert test_order.last_failed(tmp_path, state) == {"tests/test_a.py": ["tests/test_a.py::t"],
+    assert run_order.last_failed(tmp_path, state) == {"tests/test_a.py": ["tests/test_a.py::t"],
                                                        "tests/test_g.py": ["tests/test_g.py::t[1]"]}
     # A selected run after the gate has seen which of its failures still fail.
     os.utime(state, ns=(record.stat().st_mtime_ns + 10**9,) * 2)
-    assert test_order.last_failed(tmp_path, state) == {"tests/test_a.py": ["tests/test_a.py::t"]}
+    assert run_order.last_failed(tmp_path, state) == {"tests/test_a.py": ["tests/test_a.py::t"]}
 
 
 @pytest.mark.parametrize("text", ["", "{", "[]", '{"format": "other", "failed": {}}',
@@ -85,11 +96,11 @@ def test_the_last_failures_are_the_runs_and_a_newer_gates(tmp_path):
 def test_a_malformed_state_is_no_last_failures(tmp_path, text):
     """The state only orders the run: a bad one orders nothing first and never fails the run."""
     (tmp_path / "state.json").write_text(text)
-    assert test_order.last_failed(tmp_path, tmp_path / "state.json") == {}
+    assert run_order.last_failed(tmp_path, tmp_path / "state.json") == {}
 
 
 def test_the_state_is_in_this_worktrees_own_git_directory():
-    assert test_order.state_path().parent == Path(subprocess.run(
+    assert run_order.state_path().parent == Path(subprocess.run(
         ["git", "rev-parse", "--absolute-git-dir"], cwd=ROOT, text=True, capture_output=True,
         check=True).stdout.strip())
 
@@ -149,8 +160,8 @@ def test_junit_failures_are_pytests_own_node_ids(tmp_path):
     root = project(tmp_path)
     report, events = tmp_path / "junit.xml", tmp_path / "events.json"
     pytest_run(root, "-p", "tools.gate_pytest", "--continue-on-collection-errors",
-               *test_order.junit_options(report), "tests", VE_GATE_PYTEST_RESULT=str(events))
-    files, failed = test_order.read_junit(report)
+               *run_order.junit_options(report), "tests", VE_GATE_PYTEST_RESULT=str(events))
+    files, failed = run_order.read_junit(report)
     outcomes = json.loads(events.read_text())["tests"]
     expected = sorted(nodeid for nodeid, row in outcomes.items() if row["outcome"] == "failed")
     assert failed == sorted([*expected, "tests/test_broken_import.py"])
@@ -160,9 +171,9 @@ def test_junit_failures_are_pytests_own_node_ids(tmp_path):
 
 
 def test_a_unit_without_a_junit_report_is_one_failure_named_by_the_unit(tmp_path):
-    assert test_order.read_junit(tmp_path / "missing.xml") is None
+    assert run_order.read_junit(tmp_path / "missing.xml") is None
     (tmp_path / "bad.xml").write_text("<testsuite><testcase")
-    assert test_order.read_junit(tmp_path / "bad.xml") is None
+    assert run_order.read_junit(tmp_path / "bad.xml") is None
     failed = {"exit": 1}
     assert select_tests.unit_failures("tests/test_a.py", failed, tmp_path / "missing.xml") == ["tests/test_a.py"]
     assert select_tests.unit_failures("tools/test_layer_policy.py", failed, tmp_path / "x.xml") == [
@@ -193,8 +204,8 @@ class Plain:
         pytest_prefix = nested_pytest.command([], python=[sys.executable])
         monkeypatch.setattr(select_tests, "ROOT", self.root)
         monkeypatch.setattr(select_tests, "PYTEST", pytest_prefix)
-        monkeypatch.setattr(test_order, "state_path", lambda root=None: self.state)
-        monkeypatch.setattr(test_order, "ROOT", self.root)
+        monkeypatch.setattr(run_order, "state_path", lambda root=None: self.state)
+        monkeypatch.setattr(run_order, "ROOT", self.root)
         monkeypatch.setattr(quarantine, "load", lambda: [
             {"test": test, "added": "2026-10-10", "expires": "2026-10-17"} for test in self.held])
         monkeypatch.setattr(quarantine, "today", lambda: datetime.date(2026, 10, 12))
@@ -218,7 +229,7 @@ ALL = ["tests/test_a.py", "tests/test_b.py", "tests/test_c.py"]
 def test_a_plain_run_takes_the_last_failed_then_the_changed_first(plain):
     code, ran = plain.run(ALL, changed=["tests/test_c.py"])
     assert code == 1 and ran == ["c", "a", "b"]
-    assert test_order.read_state(plain.state) == {"tests/test_b.py": ["tests/test_b.py::test_b"],
+    assert run_order.read_state(plain.state) == {"tests/test_b.py": ["tests/test_b.py::test_b"],
                                                   "tests/test_c.py": ["tests/test_c.py::test_c"]}
     # Both failed last time; a changed nothing and passed.
     code, ran = plain.run(ALL)
@@ -226,10 +237,10 @@ def test_a_plain_run_takes_the_last_failed_then_the_changed_first(plain):
 
 
 def test_a_plain_run_stops_after_maxfail_and_keeps_what_it_did_not_run(plain):
-    test_order.write_state(plain.state, {"tests/test_c.py": ["tests/test_c.py::test_c"]})
+    run_order.write_state(plain.state, {"tests/test_c.py": ["tests/test_c.py::test_c"]})
     code, ran = plain.run(ALL, maxfail=1)
     assert code == 1 and ran == ["c"]  # the first failure stops the run: a and b never ran
-    assert test_order.read_state(plain.state) == {"tests/test_c.py": ["tests/test_c.py::test_c"]}
+    assert run_order.read_state(plain.state) == {"tests/test_c.py": ["tests/test_c.py::test_c"]}
     code, ran = plain.run(ALL, maxfail=0)
     assert code == 1 and ran == ["c", "a", "b"]
 

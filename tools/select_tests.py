@@ -64,7 +64,7 @@ import nested_pytest
 import quarantine
 import source_graph
 import test_map
-import test_order
+import run_order
 
 TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 EXTRA_UNITS = test_map.EXTRA_UNITS
@@ -985,14 +985,14 @@ def unit_failures(unit: str, result: dict, report: Path) -> list[str]:
     """The failed tests of a finished unit: from its JUnit report, or the unit itself without one."""
     if result["exit"] in (0, 5):
         return []
-    found = test_order.read_junit(report, unit) if unit.startswith("tests/") else None
+    found = run_order.read_junit(report, unit) if unit.startswith("tests/") else None
     return (found[1] if found else None) or [unit]
 
 
 def run_recorded(plan: dict, jobs: int, maxfail: int = 0) -> int:
     """Run the selected units one process each under the recorder, then save a map for this tree.
 
-    The units that failed last time start first, then the changed test files (tools/test_order.py). With
+    The units that failed last time start first, then the changed test files (tools/run_order.py). With
     `maxfail` N > 0 the run stops after N failed tests outside the quarantine; the units it did not finish
     are left to the static graph, like the ones below.
 
@@ -1004,22 +1004,22 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0) -> int:
     tree = test_map.working_tree_id()
     test_map.build_natives()
     work = Path(tempfile.mkdtemp(prefix="ve-select-run-"))
-    state = test_order.state_path()
-    previous, held = test_order.last_failed(state=state), quarantined()
+    state = run_order.state_path()
+    previous, held = run_order.last_failed(state=state), quarantined()
     reports = {unit: work / (unit.replace("/", "__") + ".xml") for unit in selected}
-    ordered = test_order.order(selected, changed=plan["changed"], failed=previous)
+    ordered = run_order.order(selected, changed=plan["changed"], failed=previous)
     print(f"order: failed last time {[unit for unit in ordered if unit in previous]}; changed "
           f"{[unit for unit in ordered if unit in plan['changed'] and unit not in previous]}; then the rest; "
           f"--maxfail {maxfail or 'off'}", flush=True)
     results = test_map.record_units(
         ordered, work, jobs, test_map.UNIT_TIMEOUT,
-        options=lambda unit: [*([f"--maxfail={maxfail}"] if maxfail else []), *test_order.junit_options(reports[unit])],
+        options=lambda unit: [*([f"--maxfail={maxfail}"] if maxfail else []), *run_order.junit_options(reports[unit])],
         stop_after=maxfail,
         failures=lambda unit, result: len(set(unit_failures(unit, result, reports[unit])) - held))
     not_run = [unit for unit in selected if unit not in results]
     selected = [unit for unit in selected if unit in results]
     failures = {unit: unit_failures(unit, results[unit], reports[unit]) for unit in selected}
-    test_order.write_state(state, test_order.updated(previous, completed=selected, failed=failures))
+    run_order.write_state(state, run_order.updated(previous, completed=selected, failed=failures))
     failed = [unit for unit in selected if set(failures[unit]) - held]
     for unit in [unit for unit in selected if failures[unit]]:
         log = work / (unit.replace("/", "__") + ".log")
@@ -1055,28 +1055,28 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0) -> int:
 
 
 def run_plain(command: list[str], plan: dict, maxfail: int, env: dict[str, str]) -> int:
-    """The plan's one pytest process, its files in the agent's order (tools/test_order.py), stopping after
+    """The plan's one pytest process, its files in the agent's order (tools/run_order.py), stopping after
     `maxfail` failures when N > 0. A run whose only failures are quarantined tests passes, with a warning."""
     arguments = command[len(PYTEST):]
     files = [argument for argument in arguments if argument.startswith("tests/")]
     options = [argument for argument in arguments if not argument.startswith("tests/")]
-    state = test_order.state_path()
-    previous, held = test_order.last_failed(state=state), quarantined()
+    state = run_order.state_path()
+    previous, held = run_order.last_failed(state=state), quarantined()
     with tempfile.TemporaryDirectory(prefix="ve-select-junit-") as directory:
         report = Path(directory) / "junit.xml"
         command = [*PYTEST, *options, *([f"--maxfail={maxfail}"] if maxfail else []),
-                   *test_order.junit_options(report),
-                   *test_order.order(files, changed=plan["changed"], failed=previous)]
+                   *run_order.junit_options(report),
+                   *run_order.order(files, changed=plan["changed"], failed=previous)]
         print("+", " ".join(command), flush=True)
         code = subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
-        found = test_order.read_junit(report)
+        found = run_order.read_junit(report)
     if found is None:
         return code
     seen, failed = found
     failures: dict[str, list[str]] = {}
     for nodeid in failed:
-        failures.setdefault(test_order.unit_of(nodeid), []).append(nodeid)
-    test_order.write_state(state, test_order.updated(previous, completed=seen, failed=failures))
+        failures.setdefault(run_order.unit_of(nodeid), []).append(nodeid)
+    run_order.write_state(state, run_order.updated(previous, completed=seen, failed=failures))
     if code == 1 and failed and not set(failed) - held:
         print(f"QUARANTINED (fail under load; not counted): {', '.join(failed)}", flush=True)
         return 0

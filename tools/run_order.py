@@ -74,13 +74,13 @@ def read_junit(report: Path, unit: str | None = None) -> tuple[set[str], list[st
     return files, sorted(failed)
 
 
-def git_dir(root: Path = ROOT) -> Path:
-    found = subprocess.run(["git", "rev-parse", "--absolute-git-dir"], cwd=root, text=True,
+def git_dir(root: Path | None = None) -> Path:
+    found = subprocess.run(["git", "rev-parse", "--absolute-git-dir"], cwd=root or ROOT, text=True,
                            capture_output=True, check=True).stdout.strip()
     return Path(found)
 
 
-def state_path(root: Path = ROOT) -> Path:
+def state_path(root: Path | None = None) -> Path:
     """This worktree's own git directory: the last failures are the worktree's, never another's."""
     return git_dir(root) / STATE
 
@@ -115,9 +115,10 @@ def gate_failures(path: Path) -> dict[str, list[str]]:
     return {unit: sorted(ids) for unit, ids in found.items()}
 
 
-def last_failed(root: Path = ROOT, state: Path | None = None) -> dict[str, list[str]]:
+def last_failed(root: Path | None = None, state: Path | None = None) -> dict[str, list[str]]:
     """The failed tests by unit of this worktree's last selected run and of its gate record, when the gate
     ran after that run (a selected run since then has seen which of them still fail)."""
+    root = root or ROOT
     state = state or state_path(root)
     sources = [read_state(state)]
     if newer(root / GATE_RECORD, state):
