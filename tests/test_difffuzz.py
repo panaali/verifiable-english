@@ -21,6 +21,7 @@ import sys
 import pytest
 
 from tools import difffuzz as df
+from tools import lake_outputs
 from tools import difffuzz_corpus as corpus
 from subprocesses import HANG_TIMEOUT
 
@@ -44,7 +45,10 @@ def _summary(report):
 
 def test_ci_run(built, tmp_path):
     """`difffuzz.py --ci`: every seed and the seeded sample of every surface, compared three ways, within 5
-    minutes of CPU. Run the meter in its own process so other pytest worker work cannot enter its CPU total."""
+    minutes of CPU. Run the meter in its own process so other pytest worker work cannot enter its CPU total.
+    The executables are the ones their Lake traces record (rd-6b review B2: a copied trace kept an older
+    `ve_conformance`, whose answers then entered the baseline)."""
+    assert lake_outputs.stale() == [], "rebuild: python3 tools/lake_outputs.py --drop && lake build"
     output = tmp_path / "difffuzz-ci.json"
     completed = subprocess.run([sys.executable, "-m", "tools.difffuzz", "--ci", "--report", str(output)],
                                cwd=ROOT, capture_output=True, text=True, timeout=HANG_TIMEOUT)

@@ -19,7 +19,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import nested_pytest, rust_build  # noqa: E402
+from tools import lake_outputs, nested_pytest, rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
@@ -448,7 +448,12 @@ def main() -> int:
                     stage="Wire contract check")
             result["stages"].append("toolchains")
 
+            # Lake trusts an executable's trace; a trace that does not record the binary beside it (copied from
+            # another checkout) would keep a stale binary. Drop such traces, and fail if the build leaves one.
+            lake_outputs.drop_stale()
             command(["lake", "build"], cwd=ROOT / "lean", env=env, stage="Lean build")
+            if stale := lake_outputs.stale():
+                raise RuntimeError(f"Lean build left executables its traces do not record: {stale}")
             for name in LEAN_BINARIES:
                 binary = ROOT / "lean/.lake/build/bin" / name
                 if not binary.is_file() or not os.access(binary, os.X_OK):
