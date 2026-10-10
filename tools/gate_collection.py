@@ -42,6 +42,8 @@ from tools import nested_pytest  # noqa: E402
 # The record of a commit's collection: the gate's collected IDs, bound to the commit and its tree.
 NOTES_REF = "refs/notes/ve-gate-collection"
 FORMAT = "ve-gate-collection@1"
+# The Rust release binary the tests load (ve/backends/rust_jsonl.py), relative to a checkout.
+RUST_BINARY = "rust/target/release/ve"
 # The branch whose merge base the gate compares with, unless it is given one.
 MAIN = "main"
 # Variables the collection inherits; pytest options and plugins never do.
@@ -162,10 +164,36 @@ def write_record(commit: str, ids: list[str], *, cwd: Path = ROOT, env: dict[str
     git(["notes", f"--ref={NOTES_REF}", "add", "-f", "-F", "-", commit], cwd=cwd, env=env, stdin=text.encode())
 
 
+def build(args: list[str], *, cwd: Path, env: dict[str, str], what: str) -> None:
+    done = subprocess.run(args, cwd=cwd, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if done.returncode:
+        raise CollectionError(f"{what}: exit {done.returncode}:\n{done.stdout[-4000:]}")
+
+
+def build_rust(tree: Path, root: Path, build_env: dict[str, str]) -> None:
+    """The release binary `tree`'s tests load: `root`'s when `tree`'s lock pins it, else built in `tree` from a
+    copy of `root`'s target directory, offline, with the gate's path remapping (tools/rust_build.py)."""
+    from tools import rust_build
+    binary, lock = root / RUST_BINARY, tree / "lean/checkers.lock"
+    (tree / RUST_BINARY).parent.mkdir(parents=True, exist_ok=True)
+    if binary.is_file() and lock.is_file() and rust_build.digest(binary) in rust_build.pinned_digests(lock):
+        shutil.copy2(binary, tree / RUST_BINARY)
+        return
+    if (root / "rust/target").is_dir():
+        shutil.copytree(root / "rust/target", tree / "rust/target", symlinks=True, dirs_exist_ok=True)
+    cargo_home = Path(build_env.get("CARGO_HOME") or root / ".cargo-home")
+    env = {**build_env, "CARGO_HOME": str(cargo_home), "CARGO_NET_OFFLINE": "true",
+           "CARGO_ENCODED_RUSTFLAGS": rust_build.encoded_rustflags(root=tree, cargo_home=cargo_home,
+                                                                   target_dir=tree / "rust/target")}
+    build(["cargo", "build", "--target-dir", str(tree / "rust/target"), "--locked", "--release",
+           "--manifest-path", str(tree / "rust/Cargo.toml")], cwd=tree, env=env, what="cargo build of the base")
+
+
 def collect_commit(commit: str, scratch: Path, *, build_env: dict[str, str], env: dict[str, str],
                    python: list[str], root: Path = ROOT) -> list[str]:
     """The collection of `commit`, in a scratch worktree of it under `scratch`: its Lean build is `root`'s
-    copied and rebuilt there (`lake` from `build_env`), and its tests collected by `python` in `env`."""
+    copied and rebuilt there (`lake` from `build_env`), its Rust binary `build_rust`'s, and its tests collected
+    by `python` in `env`."""
     tree = scratch / "base-worktree"
     git(["worktree", "add", "--detach", str(tree), commit], cwd=root, env=build_env)
     try:
@@ -178,11 +206,9 @@ def collect_commit(commit: str, scratch: Path, *, build_env: dict[str, str], env
             # Lake rebuilds only what differs from the head's build: its traces are of content.
             if (root / "lean/.lake").is_dir():
                 shutil.copytree(root / "lean/.lake", tree / "lean/.lake", symlinks=True)
-            build = subprocess.run(["lake", "build"], cwd=tree / "lean", env=build_env, text=True,
-                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            if build.returncode:
-                raise CollectionError(f"lake build of the base {commit}: exit {build.returncode}:\n"
-                                      f"{build.stdout[-4000:]}")
+            build(["lake", "build"], cwd=tree / "lean", env=build_env, what=f"lake build of the base {commit}")
+        if (tree / "rust/Cargo.toml").is_file():
+            build_rust(tree, root, build_env)
         return collect(tree, python=python, env=env)
     finally:
         git(["worktree", "remove", "--force", str(tree)], cwd=root, env=build_env, check=False)
