@@ -450,9 +450,9 @@ def main() -> int:
 
             # Lake trusts an executable's trace; a trace that does not record the binary beside it (copied from
             # another checkout) would keep a stale binary. Drop such traces, and fail if the build leaves one.
-            lake_outputs.drop_stale()
+            lake_outputs.drop_stale(env=env)
             command(["lake", "build"], cwd=ROOT / "lean", env=env, stage="Lean build")
-            if stale := lake_outputs.stale():
+            if stale := lake_outputs.stale(env=env):
                 raise RuntimeError(f"Lean build left executables its traces do not record: {stale}")
             for name in LEAN_BINARIES:
                 binary = ROOT / "lean/.lake/build/bin" / name

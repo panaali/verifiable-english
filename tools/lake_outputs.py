@@ -30,21 +30,25 @@ LEAN = ROOT / "lean"
 HASHER = ROOT / "tools/lake_output_hash.lean"
 
 
-def lean_executable() -> str:
-    """The `lean` of the pinned toolchain (elan's shim, `lean/lean-toolchain`); missing is an error."""
-    found = shutil.which("lean") or shutil.which("lean", path=str(Path.home() / ".elan/bin"))
+def lean_executable(env: dict | None = None) -> str:
+    """The `lean` of the pinned toolchain (elan's shim, `lean/lean-toolchain`) on the PATH of `env` (default: this
+    process's); missing is an error."""
+    path = (env if env is not None else os.environ).get("PATH")
+    found = shutil.which("lean", path=path) or shutil.which("lean", path=str(Path.home() / ".elan/bin"))
     if found is None:
         raise RuntimeError("lean is required to check Lake's executables against their traces")
     return found
 
 
-def output_hashes(files: list[Path]) -> dict[Path, str]:
-    """Lake's output hash of each file, computed by the toolchain `lean/lean-toolchain` pins."""
+def output_hashes(files: list[Path], env: dict | None = None) -> dict[Path, str]:
+    """Lake's output hash of each file, computed by the toolchain `lean/lean-toolchain` pins, run in `env` (the
+    caller's environment: the gate passes its own allowlisted one)."""
     if not files:
         return {}
-    result = subprocess.run([lean_executable(), "--run", str(HASHER), *map(str, files)], cwd=LEAN,
+    settings = env if env is not None else os.environ
+    result = subprocess.run([lean_executable(env), "--run", str(HASHER), *map(str, files)], cwd=LEAN, env=env,
                             capture_output=True, text=True, check=False,
-                            timeout=float(os.environ.get("VE_LEAN_TIMEOUT", "600")))
+                            timeout=float(settings.get("VE_LEAN_TIMEOUT", "600")))
     if result.returncode:
         raise RuntimeError(f"{HASHER.name} failed: {result.stderr.strip()[-2000:]}")
     hashes = {}
@@ -65,19 +69,19 @@ def recorded(trace: Path) -> str | None:
     return str(value) if isinstance(value, (str, int)) and not isinstance(value, bool) else None
 
 
-def stale(lean: Path = LEAN) -> list[Path]:
+def stale(lean: Path = LEAN, env: dict | None = None) -> list[Path]:
     """The executables whose trace does not record the file on disk, in name order."""
     directory = lean / ".lake/build/bin"
     traced = sorted(trace.with_suffix("") for trace in directory.glob("*.trace")) if directory.is_dir() else []
     present = [binary for binary in traced if binary.is_file()]
-    hashes = output_hashes(present)
+    hashes = output_hashes(present, env)
     return [binary for binary in present
             if recorded(binary.with_name(binary.name + ".trace")) != hashes[binary]]
 
 
-def drop_stale(lean: Path = LEAN) -> list[Path]:
+def drop_stale(lean: Path = LEAN, env: dict | None = None) -> list[Path]:
     """Remove the trace and the `.hash` of each stale executable; the executables dropped."""
-    found = stale(lean)
+    found = stale(lean, env)
     for binary in found:
         for suffix in (".trace", ".hash"):
             binary.with_name(binary.name + suffix).unlink(missing_ok=True)
