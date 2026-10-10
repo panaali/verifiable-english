@@ -547,6 +547,7 @@ class LayerSelectionTests(unittest.TestCase):
             "pub use ve_kernel::Document;\n#![forbid(unsafe_code)]\n": 2,
             '#[cfg_attr(all(), path = "x.rs")]\npub use ve_kernel::Document;\n': 1,
             '#[doc = include_str!("x")]\npub use ve_kernel::Document;\n': 1,
+            "pub use ve_kernel::{\n    Document,": 2, "#[doc(hidden)]": 1,  # the file ends inside an item
         }
         for source in kept + list(rejected):
             with self.subTest(source), TemporaryDirectory() as directory:
