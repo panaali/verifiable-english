@@ -1,0 +1,144 @@
+{
+ "batch": "AR-8",
+ "base": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
+ "head": "8920ccd642322502a65d9ab5b581de9d2ef55ec1",
+ "commits": [
+  {
+   "sha": "fd3225e8f03b7860c935c94cd6b803d16ae5b807",
+   "subject": "AR-8: check the Rust crate boundary with cargo metadata"
+  },
+  {
+   "sha": "43082299b616c87e0c3c56a7c21565c63656978f",
+   "subject": "AR-8: a facade without a library fails the Rust check"
+  },
+  {
+   "sha": "9700764b45de59f031a4f38fb1830d533a87a4b7",
+   "subject": "AR-8: keep the outside-path fixture outside the workspace directory"
+  },
+  {
+   "sha": "8c2d424834660f5efafce3c7b36f0615543e2b79",
+   "subject": "AR-8: drop the deleted module check from a Rust comment (same lines, same binary)"
+  },
+  {
+   "sha": "8920ccd642322502a65d9ab5b581de9d2ef55ec1",
+   "subject": "AR-8: name the manifest key of a path dependency outside the workspace"
+  }
+ ],
+ "numstat": {
+  "rust/ve-kernel/src/internal.rs": [
+   2,
+   2
+  ],
+  "tests/test_precommit_hook.py": [
+   16,
+   0
+  ],
+  "tools/check_rust_deps.py": [
+   59,
+   618
+  ],
+  "tools/hooks/README.md": [
+   1,
+   1
+  ],
+  "tools/hooks/precommit.py": [
+   11,
+   13
+  ],
+  "tools/rust-module-exceptions.json": [
+   0,
+   1
+  ],
+  "tools/select_tests.py": [
+   1,
+   2
+  ],
+  "tools/test_layer_policy.py": [
+   87,
+   411
+  ]
+ },
+ "totals": {
+  "added": 177,
+  "deleted": 1048
+ },
+ "lines": {
+  "tools/check_rust_deps.py": {
+   "base": 648,
+   "head": 89
+  },
+  "tools/rust-module-exceptions.json": {
+   "base": 1,
+   "head": 0
+  },
+  "tools/test_layer_policy.py": {
+   "base": 883,
+   "head": 559
+  }
+ },
+ "mutants": [
+  {
+   "mutant": "M1 outward edges never reported",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_outward_crate_dependencies_are_rejected"
+   ],
+   "exit": 1,
+   "summary": "4 failed, 1 passed in 0.73s"
+  },
+  {
+   "mutant": "M2 dev and build dependencies skipped",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_renamed_and_inherited_rust_dependencies_are_read_as_cargo_resolves_them"
+   ],
+   "exit": 1,
+   "summary": "2 failed, 1 passed in 0.46s"
+  },
+  {
+   "mutant": "M3 facade modules ignored",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_modules_in_the_facade_are_rejected"
+   ],
+   "exit": 1,
+   "summary": "2 failed, 1 passed in 0.57s"
+  },
+  {
+   "mutant": "M4 outside path dependency accepted",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_unmapped_crates_and_outside_path_dependencies_are_rejected"
+   ],
+   "exit": 1,
+   "summary": "1 failed in 0.41s"
+  },
+  {
+   "mutant": "M5 hook snapshot without Rust sources",
+   "file": "tools/hooks/precommit.py",
+   "tests": [
+    "tests/test_precommit_hook.py::test_staged_rust_workspace_is_read_by_cargo"
+   ],
+   "exit": 1,
+   "summary": "1 failed in 0.81s"
+  },
+  {
+   "mutant": "M6 facade without a library accepted",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_modules_in_the_facade_are_rejected"
+   ],
+   "exit": 1,
+   "summary": "1 failed, 2 subtests passed in 0.62s"
+  },
+  {
+   "mutant": "M7 unmapped crates accepted",
+   "file": "tools/check_rust_deps.py",
+   "tests": [
+    "tools/test_layer_policy.py::LayerSelectionTests::test_unmapped_crates_and_outside_path_dependencies_are_rejected"
+   ],
+   "exit": 1,
+   "summary": "1 failed in 0.44s"
+  }
+ ]
+}
