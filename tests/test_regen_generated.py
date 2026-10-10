@@ -294,15 +294,37 @@ def test_resolve_needs_a_merge_in_progress(tmp_path):
 # Checking by rewriting
 
 
-def test_check_by_rewriting_restores_the_committed_files(tmp_path, monkeypatch):
-    target = ROOT / "lean/VE/Route/examples/route-cases.json"
-    committed = target.read_bytes()
-    script = tmp_path / "writer.py"
-    script.write_text(f"from pathlib import Path\nPath({str(target)!r}).write_text('changed')\n")
-    entry = R.Generated("probe", ("lean/VE/Route/examples/route-cases.json",), ((sys.executable, str(script)),),
-                        None)
-    assert R._check_by_rewriting(entry) == 1
-    assert target.read_bytes() == committed
+def test_check_by_rewriting_restores_the_committed_files(tmp_path):
+    (tmp_path / "out").mkdir()
+    target = tmp_path / "out/table.json"
+    target.write_text("committed\n")
+    changes = tmp_path / "changes.py"
+    changes.write_text("from pathlib import Path\nPath('out/table.json').write_text('changed')\n"
+                       "Path('out/extra.json').write_text('new')\n")
+    entry = R.Generated("probe", ("out/*.json",), ((sys.executable, str(changes)),), None)
+    assert R._check_by_rewriting(entry, tmp_path) == 1
+    assert target.read_text() == "committed\n" and not (tmp_path / "out/extra.json").exists()
     same = tmp_path / "same.py"
     same.write_text("pass\n")
-    assert R._check_by_rewriting(R.Generated("probe", entry.paths, ((sys.executable, str(same)),), None)) == 0
+    assert R._check_by_rewriting(R.Generated("probe", entry.paths, ((sys.executable, str(same)),), None),
+                                 tmp_path) == 0
+
+
+# The writers this batch added to their owners
+
+
+def test_the_frozen_inventory_writer_reproduces_the_committed_inventory():
+    sys.path.insert(0, str(ROOT / "lean/VE/Route"))
+    import frozen
+    assert frozen.inventory_text() == (ROOT / "lean/VE/Route/frozen-sources.sha256").read_text()
+
+
+def test_assurance_doc_check_fails_on_a_stale_table(tmp_path, monkeypatch):
+    import assurance_manifest
+    assert assurance_manifest.main(["--check"]) == 0
+    stale = tmp_path / "assurance-manifest.md"
+    stale.write_text(assurance_manifest.DOC.read_text().replace("<!-- END GENERATED -->", "stale\n<!-- END GENERATED -->", 1))
+    monkeypatch.setattr(assurance_manifest, "DOC", stale)
+    assert assurance_manifest.main(["--check"]) == 1
+    assert "stale" in stale.read_text()  # --check writes nothing
+

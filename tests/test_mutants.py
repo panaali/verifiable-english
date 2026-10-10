@@ -87,6 +87,15 @@ def test_the_file_is_restored_when_the_run_raises(tree):
     assert (tree / "mod.py").read_bytes() == before
 
 
+def test_a_mutated_file_never_keeps_its_mtime_and_gets_it_back(tree):
+    """Python reuses a .pyc whose source has the same size and whole-second mtime; the mutant moves it."""
+    path = tree / "mod.py"
+    before = path.stat()
+    with M.applied(path, "x * 2", "x * 3"):
+        assert int(path.stat().st_mtime) != int(before.st_mtime)
+    assert path.stat().st_mtime_ns == before.st_mtime_ns
+
+
 def test_main_fails_on_a_survivor_and_writes_evidence(tree, tmp_path, monkeypatch):
     monkeypatch.setattr(M, "ROOT", tree)
     monkeypatch.setattr(M.run, "__defaults__", (True, tree))

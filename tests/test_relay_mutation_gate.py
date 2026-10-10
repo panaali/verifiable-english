@@ -156,3 +156,31 @@ def test_the_speech_source_reader_refuses_an_unhashable_unit_class(built, tmp_pa
             stand_in.set(json.dumps([G._replace(row, ("units", 0, field), value)]).encode(), status)
             outcome, detail = G._call_outcome(G._speech_source, case, stand_in.path)
             assert outcome == "refused", (field, value, detail)
+
+
+def test_the_recorder_writes_every_relayed_case(built, tmp_path):
+    """`tests/route_case_recorder.py` with VE_RELAY_CASES records service and one-shot cases as sent."""
+    import os
+    import subprocess
+    sys.path.insert(0, str(ROOT / "tools"))
+    import nested_pytest
+    service = next(row[2] for row in G.load_cases() if row[:2] == ["service", "identity"])
+    one_shot = next(row[3] for row in G.load_cases() if row[0] == "one-shot" and row[1] == "ve_metered"
+                    and row[3].get("kind") == "non-vacuity")
+    probe = tmp_path / "test_probe.py"
+    probe.write_text("import json\n"
+                     "from ve.backends import relay, lean_runner\n"
+                     f"def test_probe():\n"
+                     f"    relay.rows('identity', [json.loads({json.dumps(json.dumps(service))})])\n"
+                     f"    lean_runner.metered_nonvacuity(json.loads({json.dumps(json.dumps(one_shot))}))\n")
+    out = tmp_path / "recorded"
+    done = subprocess.run(nested_pytest.command(["-q", "-p", "tests.route_case_recorder", "-p", "no:cacheprovider",
+                                                 "--rootdir", str(ROOT), str(probe)]),
+                          cwd=ROOT, env=nested_pytest.environment(os.environ, VE_RELAY_CASES=str(out)),
+                          capture_output=True, text=True)
+    assert done.returncode == 0, done.stdout[-2000:]
+    rows = [json.loads(line) for path in out.glob("relay-*.jsonl") for line in path.read_text().splitlines()]
+    assert ["service", "identity", json.dumps(service, separators=(",", ":"))] in [
+        [row[0], row[1], json.dumps(json.loads(row[2]), separators=(",", ":"))] for row in rows if row[0] == "service"]
+    assert any(row[:3] == ["one-shot", "ve_metered", ""] and json.loads(row[3]) == one_shot for row in rows)
+

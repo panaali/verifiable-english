@@ -39,7 +39,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.check:
         if DOC.read_text() != document():
-            print(f"{DOC.relative_to(ROOT)} is stale; run python tools/assurance_manifest.py --write", file=sys.stderr)
+            print(f"{DOC} is stale; run python tools/assurance_manifest.py --write", file=sys.stderr)
             return 1
         return 0
     if not args.write:
