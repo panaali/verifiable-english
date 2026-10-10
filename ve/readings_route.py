@@ -496,6 +496,9 @@ def _bind_completion(row, case):
             _need(label.startswith(FILL_LABEL) and tuple(label[len(FILL_LABEL):].split(",")) in pairs)
     filled = Environment(row["filled"]["environment"])
     _need(set(filled.sorts) == set(request.sorts) and set(filled.constants) == set(request.constants))
+    # The profiles are the request's, in its order, without the completion's own (review B4 of rd-6b).
+    profiles = row["filled"]["environment"]["profiles"]
+    _need(NORM_DEFAULTS not in profiles and profiles == [p for p in case["environment"]["profiles"] if p in profiles])
     added = set(filled.predicates) - set(request.predicates)
     from .norm_defaults import unsaid_name
     expected_added = {unsaid_name(p) for p, decl in request.predicates.items()
