@@ -1,8 +1,16 @@
 {
  "base": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
  "plan_base": "c24aeab2",
- "head": "81ab4d437f06205a82c6bf1060c6a799ab571a48",
+ "head": "a4e873a4c7ec8cc026119b7014a160a0ee2b6f2b",
  "commits": [
+  {
+   "hash": "a4e873a4c7ec8cc026119b7014a160a0ee2b6f2b",
+   "subject": "fix: AR-6 seeded faults build their pytest command with tools/nested_pytest"
+  },
+  {
+   "hash": "8a4eea4fda376d64af488f97a2ea545ef70a988b",
+   "subject": "docs: AR-6 saved evidence and generated report numbers"
+  },
   {
    "hash": "81ab4d437f06205a82c6bf1060c6a799ab571a48",
    "subject": "chore: pin the AR-6 tests in the gate collection"
