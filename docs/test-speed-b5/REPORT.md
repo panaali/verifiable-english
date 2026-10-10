@@ -52,6 +52,13 @@ Plan: `manage-agents/reviews/test-speed-research-2026-10.md`, section B5. Base: 
 | expired_entry_applies | `tools/quarantine.py` | an expired entry stops applying | `test_an_entry_applies_from_its_added_day_to_its_expiry` |
 | eight_day_entry | `tools/quarantine.py` | at most 7 days | `test_a_malformed_entry_is_refused` |
 
+## Gate runs
+
+1. **0e055d45: failed** ([gate-1-failed.json](evidence/gate-1-failed.json)). 14,081 tests passed, 92 were skipped and 15 failed, all 15 in this batch's `tests/test_test_order.py`, all with `AttributeError`. `tests/` and `tools/` are both on the suite's import path, so in xdist workers that had already loaded `tests/test_order.py` (the order-domain tests), `import test_order` got that file instead of `tools/test_order.py`. `select_tests` would have hit the same clash in such a process. Fix (aceab472): the module is now `tools/run_order.py` and its tests are `tests/test_run_order.py`. `test_the_tools_modules_are_not_shadowed_by_test_modules` imports `tests/test_order.py` first and checks that `run_order` and `quarantine` still resolve to `tools/`. The fix also found that `last_failed` bound its root when it was defined, so a scratch root could read the worktree's own gate record; it now reads `ROOT` when called. The seeded bugs were rerun on the renamed files, and all 10 were caught.
+2. The final gate on the fixed HEAD: see `evidence/gate.json`.
+
+The demo logs were recorded before the rename, so they name `tests/test_test_order.py`.
+
 ## Deltas and rulings
 
 See [DELTA.md](DELTA.md). No VE verdict, diagnostic, wire field, theorem or accepted input changes; the deltas are in the developer tools.
