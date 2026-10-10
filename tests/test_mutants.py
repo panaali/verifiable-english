@@ -11,14 +11,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-import sys
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "tools"))
 
-import mutants as M  # noqa: E402
+# By its package path: a bare `mutants` may already name another module in this process (an evidence script).
+import tools.mutants as M  # noqa: E402
 
 MODULE = "def double(x):\n    return x * 2\n\n\ndef unused(x):\n    return x\n"
 TESTS = "from mod import double\n\n\ndef test_double():\n    assert double(3) == 6\n\n\ndef test_other():\n    pass\n"
