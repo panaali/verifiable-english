@@ -71,7 +71,7 @@ PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not 
 # tree and toolchains they are the same, and the failed gate passed them before its suite ran.
 REUSED_STAGES = ("lean_audit", "cargo_test")
 # The failures of a gate whose failed tests can be rerun alone: tests that failed or have no result.
-RERUNNABLE = ("pytest", "pytest command")
+RERUNNABLE = frozenset({"pytest", "pytest command"})
 
 
 def pytest_args(files: list[str] | None = None) -> tuple[str, ...]:
