@@ -180,7 +180,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Service/Document.lean` | 679 | 679 | 1–679 | `af7eb753ee66…` |
 | `lean/VE/Service/Family.lean` | 812 | 812 | 1–812 | `0220b75b70c8…` |
 | `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |
-| `lean/VE/Service/FamilyNorms.lean` | 250 | 250 | 1–250 | `b7d6f9f6767a…` |
+| `lean/VE/Service/FamilyNorms.lean` | 250 | 250 | 1–250 | `a948acda657d…` |
 | `lean/VE/Service/Graph.lean` | 255 | 255 | 1–255 | `cd0523e5ad4d…` |
 | `lean/VE/Service/Readings.lean` | 215 | 215 | 1–215 | `357a25dda81b…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `5f867e8a26a7…` |
