@@ -10457,6 +10457,7 @@
   "tests/test_readings_verdicts_lean.py::test_untaken_readings_are_refused_before_any_condition",
   "tests/test_regen_generated.py::test_assurance_doc_check_fails_on_a_stale_table",
   "tests/test_regen_generated.py::test_assurance_manifest_merge_recomputes_the_decoder_total",
+  "tests/test_regen_generated.py::test_audit_manifests_are_generated_from_the_declaration_list",
   "tests/test_regen_generated.py::test_check_by_rewriting_restores_the_committed_files",
   "tests/test_regen_generated.py::test_driver_leaves_a_ledger_value_both_sides_changed_in_conflict",
   "tests/test_regen_generated.py::test_driver_merges_generated_files_without_a_conflict",
