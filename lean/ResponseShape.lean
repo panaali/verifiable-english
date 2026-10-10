@@ -1,6 +1,5 @@
 import Lean.Data.Json
 import VE.CertificateWire
-import VE.Core.Layers
 
 /-! # Response shapes: the one source of the client's response schemas
 
@@ -159,8 +158,8 @@ inductive Shape where
   | claimNodes (sources : List String)
   /-- The replay count respects CertificateWire.limit, including its default and cap. -/
   | maxSteps
-  /-- The regenerated Background count of a certificate route. -/
-  | backgroundCount (norms : Bool)
+  /-- A certificate's Background count is at most what the request could generate (`backgroundBound`). -/
+  | backgroundBound
   | index
   | digest
   | zip (pointer : String) (s : Shape)
@@ -284,7 +283,7 @@ def render (file : String) : Nat → Shape → Except String Json
     | .claimNodes ps => pure (Json.mkObj [("x-claim-nodes", toJson ps)])
     | .maxSteps => pure (Json.mkObj [("x-max-steps", Json.mkObj [
         ("default", toJson VE.CertificateWire.maxSteps), ("cap", toJson VE.CertificateWire.caseCap)])])
-    | .backgroundCount norms => pure (Json.mkObj [("x-background-count", .str (if norms then "norms" else "route"))])
+    | .backgroundBound => pure (Json.mkObj [("x-background-bound", .bool true)])
     | .index => pure (Json.mkObj [("x-index", .bool true)])
     | .digest => pure (Json.mkObj [("x-digest", .bool true)])
     | .zip p x => pure (Json.mkObj [("x-zip", Json.mkObj [("of", .str p), ("items", ← go x)])])
@@ -387,32 +386,20 @@ def sameJson (a b : Json) : Bool := same depth a b
 def claimFields (j : Json) : List (Option Json) :=
   ["name", "ast", "label"].map fun k => (j.getObjVal? k).toOption
 
-/-- Counts from the request declarations, matching the Background generator families over
-the FOL projection (`VE.Core.Layers.folEntry`): a declaration with three or more arguments
-contributes no flag, definition or norm pair premise. -/
-def backgroundCount (case : Json) (norms : Bool) : Option Nat := do
-  let env ← (case.getObjVal? "environment").toOption
-  let vocab ← (env.getObjVal? "vocabulary").toOption
+/-- The most Background premises a certificate case could generate, a relation to the request
+only (arch decision D1: the count itself is Lean's, never predicted): per predicate declaration
+at most two flags, one definition and one norm pair; one premise per pair of constants; one
+per supplied soft premise. -/
+def backgroundBound (case : Json) : Option Nat := do
+  let vocab ← ((case.getObjValD "environment").getObjVal? "vocabulary").toOption
   let predicates ← (vocab.getObjVal? "predicates").toOption
   let constants ← (vocab.getObjVal? "constants").toOption
   if kind predicates != "object" || kind constants != "object" then none else pure ()
-  let entries := (members predicates).filter fun (_, p) => VE.Core.Layers.folEntry p
-  let flags := entries.foldl (fun n (_, p) => n + (if p.getObjValD "functional" == .bool true then 1 else 0) +
-    (if p.getObjValD "total" == .bool true then 1 else 0)) 0
-  let definitions := entries.filter fun (_, p) => (p.getObjVal? "defined").toBool
-  let pairs := entries.filter fun (_, p) =>
-    let r := p.getObjValD "regulated"
-    r.getObjValD "role" == .str "obligation" && kind (r.getObjValD "permission") == "string"
-  let literals := (members constants).filter fun (_, c) => c.getObjValD "sort" == .str "$string"
-  let isOrder := (env.getObjValD "profiles").getArr?.toOption.any fun ps =>
-    ps.contains (.str "order@0")
-  let extra ← if norms && case.getObjValD "kind" == .str "certificate" then
-    match case.getObjVal? "soft_premises" with
-    | .error _ => some 0
-    | .ok ps => ps.getArr?.toOption.map (·.size)
-    else some 0
-  pure ((if isOrder then 0 else flags + definitions.size) +
-    literals.size * (literals.size - 1) / 2 + (if norms then pairs.size else 0) + extra)
+  let c := (members constants).size
+  let soft := match case.getObjValD "soft_premises" with
+    | .arr ps => ps.size
+    | _ => 0
+  pure (4 * (members predicates).size + c * (c - 1) / 2 + soft)
 
 def tokens (pointer : String) : List String :=
   if pointer.isEmpty then [] else
@@ -629,11 +616,11 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
         if kind value == "integer" && numLe n ⟨(limit : Int), 0⟩ then pure ()
         else fail "steps exceed the request's max_steps"
       | _, _ => fail "steps exceed the request's max_steps"
-    | .backgroundCount norms => match value, backgroundCount ctx.value norms with
+    | .backgroundBound => match value, backgroundBound ctx.value with
       | .num n, some limit =>
-        if kind value == "integer" && numEq n ⟨(limit : Int), 0⟩ then pure ()
-        else fail "background differs from the request vocabulary"
-      | _, _ => fail "background differs from the request vocabulary"
+        if kind value == "integer" && numLe n ⟨(limit : Int), 0⟩ then pure ()
+        else fail "background exceeds what the request vocabulary generates"
+      | _, _ => fail "background exceeds what the request vocabulary generates"
     | .index => match value, ctx.index with
       | .num x, some i => if kind value == "integer" && numEq x ⟨(i : Int), 0⟩ then pure () else fail "is not the result's position"
       | _, _ => fail "is not the result's position"

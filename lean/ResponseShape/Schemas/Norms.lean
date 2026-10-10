@@ -1,7 +1,6 @@
 import VE.Service.Protocol
 import ResponseShape
 import ResponseShape.CaseDeciders
-import ResponseShape.Schemas.Route
 
 /-! The source of `ve/backends/lean_service_schema/norms.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Norms
@@ -102,7 +101,7 @@ def «norms-certificate» : Shape :=
       ("id", n [str, .equals "/id"]),
       ("status", constS "ok"),
       ("valid", .type ["boolean"]),
-      ("background", n [ref "common.json#/$defs/nat", .backgroundCount true]),
+      ("background", n [ref "common.json#/$defs/nat", .backgroundBound]),
       ("layers", ref "common.json#/$defs/nat"),
       ("steps", n [ref "common.json#/$defs/nat", .maxSteps])]]
 
@@ -139,7 +138,7 @@ def «row» : Shape :=
         (ref "#/$defs/kind/background", ref "route.json#/$defs/background"),
         (ref "route.json#/$defs/kind/evaluate", ref "route.json#/$defs/evaluate"),
         (ref "route.json#/$defs/kind/countermodel", ref "route.json#/$defs/countermodel"),
-        (ref "route.json#/$defs/kind/certificate", Route.certificateFor true),
+        (ref "route.json#/$defs/kind/certificate", ref "route.json#/$defs/certificate"),
         (ref "#/$defs/kind/norms-elaborate", ref "#/$defs/norms-elaborate"),
         (ref "#/$defs/kind/norms-certificate", ref "#/$defs/norms-certificate"),
         (.allOf [ref "#/$defs/kind/norms-conflict", .required ["witness"]], ref "#/$defs/norms-witness"),

@@ -22,19 +22,7 @@
                   "when": {"$ref": "route.json#/$defs/kind/countermodel"}
                 },
                 {
-                  "then": {
-                    "$comment": "background: the number of regenerated Background premises (fullBackground).",
-                    "additionalProperties": false,
-                    "properties": {
-                      "background": {"$ref": "common.json#/$defs/nat", "x-background-count": "norms"},
-                      "id": {"type": "string", "x-equals": "/id"},
-                      "status": {"const": "ok"},
-                      "steps": {"$ref": "common.json#/$defs/nat", "x-max-steps": {"cap": 1000000, "default": 10000}},
-                      "valid": {"type": "boolean"}
-                    },
-                    "required": ["id", "status", "valid", "background", "steps"],
-                    "type": "object"
-                  },
+                  "then": {"$ref": "route.json#/$defs/certificate"},
                   "when": {"$ref": "route.json#/$defs/kind/certificate"}
                 },
                 {"then": {"$ref": "#/$defs/norms-elaborate"}, "when": {"$ref": "#/$defs/kind/norms-elaborate"}},
@@ -67,7 +55,7 @@
     "norms-certificate": {
       "additionalProperties": false,
       "properties": {
-        "background": {"$ref": "common.json#/$defs/nat", "x-background-count": "norms"},
+        "background": {"$ref": "common.json#/$defs/nat", "x-background-bound": true},
         "id": {"type": "string", "x-equals": "/id"},
         "layers": {"$ref": "common.json#/$defs/nat"},
         "status": {"const": "ok"},
