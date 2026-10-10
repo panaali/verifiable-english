@@ -158,7 +158,7 @@ def test_the_migration_reproduces_the_committed_document(tmp_path):
     assert json.loads((tmp_path / "unmigrated.json").read_text()) == UNMIGRATED
 
 
-def test_one_sets_witnesses_replay_equal_in_its_component_and_alone():
+def test_one_sets_witnesses_replay_equal_in_its_component_and_alone(tmp_path):
     """`rs_u025`'s companions (witnesses SETTLED yes, SETTLED no and UNDECIDED): each witness Lean replays, in the
     component and alone, is the recorded one."""
     lean()
@@ -168,8 +168,12 @@ def test_one_sets_witnesses_replay_equal_in_its_component_and_alone():
     env, doc = wire(META["environment"]), wire(document_wire(META["units"], META["reading_sets"]))
     [row] = run_lean([{"id": "split", "kind": "readings-elaborate", "environment": env, "document": doc}])
     parts = {c["component"]: c for c in row["components"]}
-    got = witnesses.in_components(env, doc, {"rs_u025": parts["rs_u025"]}, only={"rs_u025"})
+    (tmp_path / "specs").mkdir()
+    (tmp_path / "companions").mkdir()
+    got = witnesses.in_components(env, doc, {"rs_u025": parts["rs_u025"]}, folder=tmp_path / "specs",
+                                  only={"rs_u025"})
     assert got == {k: v for k, v in METRICS["witnesses"]["in_components"].items() if k.startswith("u025.")}
     assert {w["recorded"] for v in got.values() for w in v["witnesses"]} == {"SETTLED yes", "SETTLED no", "UNDECIDED"}
     keys = {"u025.practice_prohibited", "u025.state_prohibits"}
-    assert witnesses.alone(only=keys) == {k: METRICS["witnesses"]["alone"][k] for k in keys}
+    assert witnesses.alone(folder=tmp_path / "companions", only=keys) == \
+        {k: METRICS["witnesses"]["alone"][k] for k in keys}
