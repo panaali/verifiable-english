@@ -1,5 +1,6 @@
 import VE.Ask.Groups
 import VE.Ask.Sound
+import VE.Question.Frames
 
 /-! The figures of docs/spec/question-answering.md 7.6, computed: every row's lead and reason, the agreement with
 RD-3's fold, and the groups of the two-set example and of U3's shape. -/
@@ -81,5 +82,19 @@ def u3Shape : List Row :=
 #guard separates u3Shape leadKey ["rs_u096"] && !separates u3Shape leadKey ["rs_u087"]
 #guard (groups ["rs_u087", "rs_u096"] u3Shape leadKey).map (fun g => (g.lead, g.on, g.rows.length)) =
   [(.notSettled, [("rs_u096", some 0)], 3), (.yes, [("rs_u096", some 1)], 3)]
+
+/-! The answer frames' `num` piece (`VE.Question.Frames`): a sentence number or a count is digits only, so C1, R1
+and U1 lines have one derivation each, and a line whose number is not digits has none. -/
+
+#guard VE.Question.gated "C1" "Sentence 12 says: \"Elementary education shall be compulsory.\"" =
+  some ["12", "Elementary education shall be compulsory."]
+#guard VE.Question.gated "C1" "Sentence twelve says: \"Elementary education shall be compulsory.\"" = none
+#guard (VE.Question.frameReadings ("If sentence 10 means \"Every person must be spared exclusion from education\" " ++
+  "(VE has not checked this wording), yes.")).length = 1
+#guard VE.Question.gated "U1"
+  "VE did not use 9 sentences of this document that it could not read formally: sentences 3, 5 and 8." =
+  some ["9", "sentences 3, 5 and 8"]
+#guard VE.Question.gated "U1"
+  "VE did not use nine sentences of this document that it could not read formally: sentences 3, 5 and 8." = none
 
 end VE.Ask.Examples
