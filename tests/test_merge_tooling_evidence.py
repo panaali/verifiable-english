@@ -77,7 +77,7 @@ def test_gate_numbers_come_from_the_saved_report():
     assert n["unlisted findings"] == len(report["findings"])
     assert all(stats["ok_fixtures"] >= 1 for stats in routes.values())
     # The follow-up table: one row per follow-up with accepted mutants, with the saved count.
-    table = dict(re.findall(r"^\| (F\d) \| (\d+) \|", DOC, re.M))
+    table = dict(re.findall(r"^\| (F\d+) \| (\d+) \|", DOC, re.M))
     assert {key: int(value) for key, value in table.items()} == {k: v for k, v in allowed.items() if k.startswith("F")}
 
 

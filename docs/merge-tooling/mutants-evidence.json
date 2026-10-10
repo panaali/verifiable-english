@@ -159,7 +159,7 @@
    "id": "M10",
    "file": "tools/relay_mutation_gate.py",
    "claim": "an accepted mutant the allow-list does not list fails the gate",
-   "source_sha256": "8474afbb83372339922e2d252743fcb39eec8f96c1cede74ea4b9391934d1d1a",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
    "tests": [
     "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry"
    ],
@@ -169,14 +169,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 17.6,
-   "output_tail": "ntry ____\n\nbuilt = None\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-11273/test_the_gate_fails_on_an_unli0')\n\n    def test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry(built, tmp_path):\n        allow = json.loads(G.ALLOW.read_text())\n        kept = [entry for entry in allow[\"entries\"] if entry[\"route\"] != \"service:check\"]\n        stale = {\"route\": \"service:identity\", \"mutation\": \"drop\", \"path\": [\"results/*/result/no_such_field\"],\n                 \"kind\": \"follow-up\", \"id\": \"X\", \"reason\": \"test\"}\n        path = tmp_path / \"allow.json\"\n        path.write_text(json.dumps({\"entries\": kept + [stale]}))\n        report = G.run_gate({\"service:check\", \"service:identity\"}, allow_path=path)\n        failures = \"\\n\".join(report[\"failures\"])\n>       assert \"accepted service:check retype results/*/result/core/*\" in failures\nE       AssertionError: assert 'accepted service:check retype results/*/result/core/*' in 'allow-list path matches nothing: X service:identity drop results/*/result/no_such_field\\nuntyped service:check untyped results/*/result/core/*: every retype is accepted'\n\ntests/test_relay_mutation_gate.py:143: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry\n1 failed in 7.10s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-pv_xixn8)\n"
+   "seconds": 12.0,
+   "output_tail": "ntry ____\n\nbuilt = None\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-11679/test_the_gate_fails_on_an_unli0')\n\n    def test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry(built, tmp_path):\n        allow = json.loads(G.ALLOW.read_text())\n        kept = [entry for entry in allow[\"entries\"] if entry[\"route\"] != \"service:check\"]\n        stale = {\"route\": \"service:identity\", \"mutation\": \"drop\", \"path\": [\"results/*/result/no_such_field\"],\n                 \"kind\": \"follow-up\", \"id\": \"X\", \"reason\": \"test\"}\n        path = tmp_path / \"allow.json\"\n        path.write_text(json.dumps({\"entries\": kept + [stale]}))\n        report = G.run_gate({\"service:check\", \"service:identity\"}, allow_path=path)\n        failures = \"\\n\".join(report[\"failures\"])\n>       assert \"accepted service:check retype results/*/result/core/*\" in failures\nE       AssertionError: assert 'accepted service:check retype results/*/result/core/*' in 'allow-list path matches nothing: X service:identity drop results/*/result/no_such_field\\nuntyped service:check untyped results/*/result/core/*: every retype is accepted'\n\ntests/test_relay_mutation_gate.py:213: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry\n1 failed in 4.94s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-sg4r5cn4)\n"
   },
   {
    "id": "M11",
    "file": "tools/relay_mutation_gate.py",
    "claim": "a route without an ok fixture fails the gate",
-   "source_sha256": "8474afbb83372339922e2d252743fcb39eec8f96c1cede74ea4b9391934d1d1a",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
    "tests": [
     "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate"
    ],
@@ -186,14 +186,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 18.2,
-   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_a_route_without_fixtures_fails_the_gate _________________\n\nbuilt = None\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-11284/test_a_route_without_fixtures_0')\n\n    def test_a_route_without_fixtures_fails_the_gate(built, tmp_path):\n        path = tmp_path / \"cases.jsonl\"\n        path.write_text(\"\".join(json.dumps(row) + \"\\n\" for row in G.load_cases()\n                                if row[:2] != [\"service\", \"identity\"]))\n        report = G.run_gate({\"service:identity\"}, cases_path=path)\n>       assert \"route service:identity has no fixture with an ok answer\" in report[\"failures\"]\nE       AssertionError: assert 'route service:identity has no fixture with an ok answer' in []\n\ntests/test_relay_mutation_gate.py:153: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate\n1 failed in 10.36s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-7tr0in0l)\n"
+   "seconds": 6.9,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_a_route_without_fixtures_fails_the_gate _________________\n\nbuilt = None\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-11682/test_a_route_without_fixtures_0')\n\n    def test_a_route_without_fixtures_fails_the_gate(built, tmp_path):\n        path = tmp_path / \"cases.jsonl\"\n        path.write_text(\"\".join(json.dumps(row) + \"\\n\" for row in G.load_cases()\n                                if row[:2] != [\"service\", \"identity\"]))\n        report = G.run_gate({\"service:identity\"}, cases_path=path)\n>       assert \"route service:identity has no fixture with an ok answer\" in report[\"failures\"]\nE       AssertionError: assert 'route service:identity has no fixture with an ok answer' in []\n\ntests/test_relay_mutation_gate.py:223: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate\n1 failed in 2.34s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ba54t5gd)\n"
   },
   {
    "id": "M12",
    "file": "tools/relay_mutation_gate.py",
    "claim": "request-named strings are rebound",
-   "source_sha256": "8474afbb83372339922e2d252743fcb39eec8f96c1cede74ea4b9391934d1d1a",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
    "tests": [
     "tests/test_relay_mutation_gate.py::test_every_field_gets_every_mutation_class"
    ],
@@ -203,14 +203,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 3.3,
-   "output_tail": " \"inner\": {\"k\": \"v\"}}\n        found = G.mutants(answer, named={\"case-1\", \"p\"}, rebind_ints={(\"count\",): 3})\n        kinds = _kinds(found)\n        for field in (\"id\", \"status\", \"names\", \"count\", \"flag\", \"inner\"):\n            assert (\"drop\", field, None) in kinds\n            retypes = {value for kind, pattern, value in kinds if kind == \"retype\" and pattern == field}\n            assert len(retypes) >= len(G.RETYPES) - 1, (field, retypes)\n        assert (\"retype\", \"count\", \"number\") in kinds          # 7.5 for an integer\n        assert (\"empty\", \"status\", None) in kinds and (\"empty\", \"names\", None) in kinds\n        assert (\"duplicate\", \"names\", None) in kinds and (\"duplicate\", \"inner\", None) in kinds\n        # Rebinding: a name the request gives (emptying one is a rebind too), and a bound integer.\n>       assert (\"rebind\", \"id\", None) in kinds and (\"rebind\", \"id\", \"\") in kinds and (\"rebind\", \"names/*\", None) in kinds\nE       AssertionError: assert (('rebind', 'id', None) in {('drop', 'count', None), ('drop', 'flag', None), ('drop', 'id', None), ('drop', 'inner', None), ('drop', 'inner/k', None), ('drop', 'names', None), ...})\n\ntests/test_relay_mutation_gate.py:52: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_every_field_gets_every_mutation_class\n1 failed in 0.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-yfwu6lmm)\n"
+   "seconds": 2.6,
+   "output_tail": " \"inner\": {\"k\": \"v\"}}\n        found = G.mutants(answer, named={\"case-1\", \"p\"}, rebind_ints={(\"count\",): 3})\n        kinds = _kinds(found)\n        for field in (\"id\", \"status\", \"names\", \"count\", \"flag\", \"inner\"):\n            assert (\"drop\", field, None) in kinds\n            retypes = {value for kind, pattern, value in kinds if kind == \"retype\" and pattern == field}\n            assert len(retypes) >= len(G.RETYPES) - 1, (field, retypes)\n        assert (\"retype\", \"count\", \"number\") in kinds          # 7.5 for an integer\n        assert (\"empty\", \"status\", None) in kinds and (\"empty\", \"names\", None) in kinds\n        assert (\"duplicate\", \"names\", None) in kinds and (\"duplicate\", \"inner\", None) in kinds\n        # Rebinding: a name the request gives (emptying one is a rebind too), and a bound integer.\n>       assert (\"rebind\", \"id\", None) in kinds and (\"rebind\", \"id\", \"\") in kinds and (\"rebind\", \"names/*\", None) in kinds\nE       AssertionError: assert (('rebind', 'id', None) in {('drop', 'count', None), ('drop', 'flag', None), ('drop', 'id', None), ('drop', 'inner', None), ('drop', 'inner/k', None), ('drop', 'names', None), ...})\n\ntests/test_relay_mutation_gate.py:59: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_every_field_gets_every_mutation_class\n1 failed in 0.16s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-snetwm26)\n"
   },
   {
    "id": "M13",
    "file": "tools/relay_mutation_gate.py",
    "claim": "an allow-list path that matches nothing fails the gate",
-   "source_sha256": "8474afbb83372339922e2d252743fcb39eec8f96c1cede74ea4b9391934d1d1a",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
    "tests": [
     "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry"
    ],
@@ -220,8 +220,8 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 55.6,
-   "output_tail": "ntries\"] if entry[\"route\"] != \"service:check\"]\n        stale = {\"route\": \"service:identity\", \"mutation\": \"drop\", \"path\": [\"results/*/result/no_such_field\"],\n                 \"kind\": \"follow-up\", \"id\": \"X\", \"reason\": \"test\"}\n        path = tmp_path / \"allow.json\"\n        path.write_text(json.dumps({\"entries\": kept + [stale]}))\n        report = G.run_gate({\"service:check\", \"service:identity\"}, allow_path=path)\n        failures = \"\\n\".join(report[\"failures\"])\n        assert \"accepted service:check retype results/*/result/core/*\" in failures\n        assert \"untyped service:check untyped results/*/result/core/*\" in failures\n>       assert \"allow-list path matches nothing: X service:identity drop results/*/result/no_such_field\" in failures\nE       AssertionError: assert 'allow-list path matches nothing: X service:identity drop results/*/result/no_such_field' in 'accepted service:check retype results/*/result/core: retype deep\\naccepted service:check rebind results/*/result/core... results/*/result/core/*: retype null\\nuntyped service:check untyped results/*/result/core/*: every retype is accepted'\n\ntests/test_relay_mutation_gate.py:145: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry\n1 failed in 41.70s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-m9tr6hlp)\n"
+   "seconds": 14.8,
+   "output_tail": "entries\"] if entry[\"route\"] != \"service:check\"]\n        stale = {\"route\": \"service:identity\", \"mutation\": \"drop\", \"path\": [\"results/*/result/no_such_field\"],\n                 \"kind\": \"follow-up\", \"id\": \"X\", \"reason\": \"test\"}\n        path = tmp_path / \"allow.json\"\n        path.write_text(json.dumps({\"entries\": kept + [stale]}))\n        report = G.run_gate({\"service:check\", \"service:identity\"}, allow_path=path)\n        failures = \"\\n\".join(report[\"failures\"])\n        assert \"accepted service:check retype results/*/result/core/*\" in failures\n        assert \"untyped service:check untyped results/*/result/core/*\" in failures\n>       assert \"allow-list path matches nothing: X service:identity drop results/*/result/no_such_field\" in failures\nE       AssertionError: assert 'allow-list path matches nothing: X service:identity drop results/*/result/no_such_field' in 'accepted service:check empty results/*/result/core: empty\\naccepted service:check duplicate results/*/result/core: du... results/*/result/core/*: retype null\\nuntyped service:check untyped results/*/result/core/*: every retype is accepted'\n\ntests/test_relay_mutation_gate.py:215: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry\n1 failed in 6.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fzux0a_x)\n"
   },
   {
    "id": "M14",
@@ -295,7 +295,7 @@
    "id": "M18",
    "file": "docs/merge-tooling.md",
    "claim": "the document's numbers are the saved evidence's",
-   "source_sha256": "014d1268172367a2fa43c5f846bcd75bbd08115ca3e4918c5e3c32ec76845cbe",
+   "source_sha256": "8759ee75ad61204264ae5aab1dd8c9a60aa605925248123ecfbfda66ebe686d1",
    "tests": [
     "tests/test_merge_tooling_evidence.py::test_gate_numbers_come_from_the_saved_report"
    ],
@@ -305,8 +305,61 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 2.3,
-   "output_tail": "_____\n\n    def test_gate_numbers_come_from_the_saved_report():\n        report = load(\"relay-gate-report.json\")\n        totals, routes = report[\"totals\"], report[\"routes\"]\n        assert report[\"failures\"] == [] and report[\"findings\"] == []\n        allowed = Counter({key.split(\":\", 1)[1]: value for key, value in totals.items() if key.startswith(\"allowed:\")})\n        assert sum(allowed.values()) == totals[\"allowed\"] == totals[\"accepted\"]\n        assert totals[\"mutants\"] == totals[\"refused\"] + totals[\"accepted\"]\n        n = numbers()\n        assert n[\"routes\"] == len(routes)\n        assert n[\"service modes\"] == sum(route.startswith(\"service:\") for route in routes)\n        assert n[\"one-shot routes\"] == n[\"routes\"] - n[\"service modes\"]\n>       assert (n[\"fixtures\"], n[\"mutants\"], n[\"refused\"], n[\"accepted and listed\"], n[\"untyped fields\"]) == \\\n            (totals[\"fixtures\"], totals[\"mutants\"], totals[\"refused\"], totals[\"accepted\"], totals[\"untyped\"])\nE       assert (465, 103040,...91, 8250, 250) == (465, 103041,...91, 8250, 250)\nE         \nE         At index 1 diff: 103040 != 103041\nE         Use -v to get more diff\n\ntests/test_merge_tooling_evidence.py:73: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_merge_tooling_evidence.py::test_gate_numbers_come_from_the_saved_report\n1 failed in 0.14s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-nmff5_4m)\n"
+   "seconds": 3.6,
+   "output_tail": "_____\n\n    def test_gate_numbers_come_from_the_saved_report():\n        report = load(\"relay-gate-report.json\")\n        totals, routes = report[\"totals\"], report[\"routes\"]\n        assert report[\"failures\"] == [] and report[\"findings\"] == []\n        allowed = Counter({key.split(\":\", 1)[1]: value for key, value in totals.items() if key.startswith(\"allowed:\")})\n        assert sum(allowed.values()) == totals[\"allowed\"] == totals[\"accepted\"]\n        assert totals[\"mutants\"] == totals[\"refused\"] + totals[\"accepted\"]\n        n = numbers()\n        assert n[\"routes\"] == len(routes)\n        assert n[\"service modes\"] == sum(route.startswith(\"service:\") for route in routes)\n        assert n[\"one-shot routes\"] == n[\"routes\"] - n[\"service modes\"]\n>       assert (n[\"fixtures\"], n[\"mutants\"], n[\"refused\"], n[\"accepted and listed\"], n[\"untyped fields\"]) == \\\n            (totals[\"fixtures\"], totals[\"mutants\"], totals[\"refused\"], totals[\"accepted\"], totals[\"untyped\"])\nE       assert (465, 106760,...11, 8250, 250) == (465, 106761,...11, 8250, 250)\nE         \nE         At index 1 diff: 106760 != 106761\nE         Use -v to get more diff\n\ntests/test_merge_tooling_evidence.py:73: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_merge_tooling_evidence.py::test_gate_numbers_come_from_the_saved_report\n1 failed in 0.21s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-oq3ib02w)\n"
+  },
+  {
+   "id": "M19",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "the answer itself is mutated, so a reader without its one-row-per-case check fails the gate (review B2)",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_answer_itself_is_emptied_duplicated_and_retyped",
+    "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_the_answer_itself_is_emptied_duplicated_and_retyped"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 30.2,
+   "output_tail": "(\"empty\", \".\", None)] == []\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       KeyError: ('empty', '.', None)\n\ntests/test_relay_mutation_gate.py:86: KeyError\n___________ test_a_reader_without_its_row_count_check_fails_the_gate ___________\n\nbuilt = None, without_row_count_check = None\n\n    def test_a_reader_without_its_row_count_check_fails_the_gate(built, without_row_count_check):\n        \"\"\"Review B2: the one-shot routes never saw an empty or extra row, so this mutant passed.\"\"\"\n        lean_build(\"ve_conformance\")\n        report = G.run_gate(set(FAST_ONE_SHOT))\n        for route in FAST_ONE_SHOT:\n>           assert any(f[\"route\"] == route and f[\"path\"] == \".\" and f[\"mutation\"] in (\"empty\", \"duplicate\")\n                       for f in report[\"findings\"]), (route, report[\"failures\"])\nE           AssertionError: ('ve_metered::evaluate', [])\nE           assert False\nE            +  where False = any(<generator object test_a_reader_without_its_row_count_check_fails_the_gate.<locals>.<genexpr> at 0x7bc264bc2ea0>)\n\ntests/test_relay_mutation_gate.py:309: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_answer_itself_is_emptied_duplicated_and_retyped\nFAILED tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate\n2 failed in 14.34s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-y2anavck)\n"
+  },
+  {
+   "id": "M20",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "an allow-list path of wildcards only is refused (review B1)",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_wildcard_route_or_path_is_refused"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_a_wildcard_route_or_path_is_refused"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.7,
+   "output_tail": "                              [100%]\n=================================== FAILURES ===================================\n___________________ test_a_wildcard_route_or_path_is_refused ___________________\n\n    def test_a_wildcard_route_or_path_is_refused():\n        \"\"\"Review B1: B0 (route `*`, path `*`) allowed every emptied or repeated field of every route.\"\"\"\n        entry = {\"route\": \"*\", \"mutation\": \"empty\", \"path\": \"*\", \"kind\": \"by-design\", \"id\": \"B0\", \"reason\": \"r\"}\n        problems = G.allow_problems([entry])\n        assert any(\"names no single route\" in problem for problem in problems)\n        assert any(\"no list of paths\" in problem for problem in problems)\n        for path in (\"*\", \"*/*\", \"*/*/?\"):\n            problems = G.allow_problems([{**entry, \"route\": \"service:check\", \"path\": [path]}])\n>           assert problems == [f\"allow-list entry 0 (B0) lists the wildcard path {path!r}: list the fields\"]\nE           assert [] == ['allow-list ...t the fields']\nE             \nE             Right contains one more item: \"allow-list entry 0 (B0) lists the wildcard path '*': list the fields\"\nE             Use -v to get more diff\n\ntests/test_relay_mutation_gate.py:111: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_a_wildcard_route_or_path_is_refused\n1 failed in 0.41s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-4vhsg6ou)\n"
+  },
+  {
+   "id": "M21",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "the most specific allow-list entry takes a finding (review B1)",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_most_specific_entry_takes_a_finding"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_the_most_specific_entry_takes_a_finding"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.4,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_the_most_specific_entry_takes_a_finding _________________\n\n    def test_the_most_specific_entry_takes_a_finding():\n        \"\"\"Review B1: the first entry in file order took a finding a narrower entry listed (B0 took F1's counts).\"\"\"\n        def entry(id_, mutation, path):\n            return {\"route\": \"service:m\", \"mutation\": mutation, \"path\": [path], \"kind\": \"follow-up\", \"id\": id_,\n                    \"reason\": \"r\"}\n        broad, narrow = entry(\"F\", \"*\", \"results/*/result/*\"), entry(\"N\", \"*\", \"results/*/result/x*\")\n        for order in ([broad, narrow], [narrow, broad]):\n>           assert G._allowed(order, \"service:m\", \"empty\", \"results/*/result/xy\")[\"id\"] == \"N\"\nE           AssertionError: assert 'F' == 'N'\nE             \nE             - N\nE             + F\n\ntests/test_relay_mutation_gate.py:123: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_most_specific_entry_takes_a_finding\n1 failed in 0.31s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-6mfkbobs)\n"
   }
  ]
 }
