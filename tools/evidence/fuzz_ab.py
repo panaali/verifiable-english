@@ -10,7 +10,7 @@ difference of a pair of reports, and each one is unexplained unless a rule of th
 (`[[fuzz_ab.explained]]`) explains it:
 
 - `{kind = "count", field = "findings" | "answers", surface, key, base, head}`: one count, both values named;
-- `{kind = "replay", id, base, head}`: one baseline entry's replay status on each side, both named;
+- `{kind = "replay", id, base, head}`: one baseline entry's replay status on each side, both named and different;
 - `{kind = "known_rejection", base_lean_prefix}`: a replayed entry whose base Lean answer was an error starting
   with the prefix, whose head Lean answer now equals the head Python answer, and whose Python and Rust answers
   did not change.
@@ -131,8 +131,9 @@ def compare(base: dict, head: dict, baseline: list[dict], rules: list[dict]) -> 
         head_answers = (new or {}).get("now", {}).get("answers") or entry.get("answers") or {}
         row = {"kind": "replay", "id": entry["id"], "base": old_status, "head": new_status,
                "base_lean": base_answers.get("lean"), "head_lean": head_answers.get("lean")}
-        ok = any(rule["kind"] == "replay" and (rule["id"], rule["base"], rule["head"]) ==
-                 (entry["id"], old_status, new_status) for rule in rules) or any(
+        # A replay rule names a status change; an answer that changed under one status needs another rule.
+        ok = old_status != new_status and any(rule["kind"] == "replay" and (rule["id"], rule["base"], rule["head"]) ==
+                                              (entry["id"], old_status, new_status) for rule in rules) or any(
             rule["kind"] == "known_rejection" and _known_rejection(rule, base_answers, head_answers)
             for rule in rules)
         classify(row, ok)
