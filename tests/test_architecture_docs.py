@@ -3,10 +3,12 @@
 The map's tables are rendered from the saved measurement `docs/architecture/numbers.json` (never from a live
 measurement of a moving head), every saved number must be shown, the measuring tool is checked on a small tree
 built here, each stale statement of the map's section 6 is either gone from its file or marked superseded with a
-link to the map (or still waits for its stated reason), and ADR 0001's binding relations name only keywords of the
-response-shape dialect, which in turn has no binding keyword the ADR leaves out.
+link to the map (or still waits for its stated reason), and ADR 0001 records D1 as the DRI signed it: its clauses,
+each relation's keywords and each leaf class's shapes are held here, its Decision section is pinned, and Lean's
+`Shape` constructors, the dialect's keywords and the ADR's tables name one set.
 """
 import copy
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -224,13 +226,112 @@ def test_links_resolve(path):
         assert (path.parent / target).exists(), target
 
 
-def test_adr_binding_relations_match_the_dialect():
+def adr_decision():
+    adr = ADR.read_text()
+    return adr[adr.index("\n## Decision\n"):adr.index("\n## Consequences\n")]
+
+
+def dialect_keywords():
+    return set(re.findall(r"^\| `(x-[a-z-]+)", DIALECT.read_text(), re.M))
+
+
+def backticked(cell):
+    return set(re.findall(r"`([^`]+)`", cell))
+
+
+# D1 as the DRI signed it (review section 5) and the clauses of T1(a) and T1(b) it adopts. An ADR that drops one
+# of them, or loosens it, no longer records the signed decision.
+D1_CLAUSES = [
+    "Binding is a closed list of relations to the request. A field that names a request item is bound only by "
+    "`references` or `equals`.",
+    "Derived values are Lean's, proved or checked by `ResponseDecode` invariants, and never recomputed in Python. "
+    "Their leaves carry the `derived (guarantee)` mark. An encoder theorem is preferred, because a `ResponseDecode` "
+    "invariant is checked only at test time.",
+    "The census proves that every leaf is classified, not that it is correctly classified.",
+    "**A field that names a request item is bound only by `references` or `equals`** (relation 6 or 2) to the "
+    "relevant request set. A format check is not a binding:",
+    "An `x-echo` does not bind a named item either, because it accepts `null` when the item is absent.",
+    "Python binds a stored value it owns by equality and never by echo (D7).",
+    "**Python never recomputes it to check it**.",
+    "Its leaf carries the `derived (guarantee)` mark, naming that theorem or invariant",
+    "An encoder theorem is preferred wherever it is feasible, because a `ResponseDecode` invariant is checked only "
+    "at test time: a value covered only by an invariant is not checked at run time,",
+    "a named request item by relation 2 or 6 only, and no row is empty or extra. Nothing else.",
+    "`pattern` checks a format and puts a leaf in no class.",
+    "**The census proves that every leaf is classified, not that it is correctly classified**",
+]
+# Each relation's dialect keywords; relation 7 has none until AR-11a adds `x-at-most`.
+RELATIONS = {
+    "echoes": {"x-echo", "x-digest"},
+    "equals": {"x-equals"},
+    "counts": {"x-count", "x-count-where", "x-count-presence"},
+    "measures": {"x-length"},
+    "indexes": {"x-index", "x-zip", "x-zip-or-empty", "x-rows"},
+    "references": {"x-references"},
+    "is bounded by": set(),
+}
+# The four leaf classes and the shapes that place a leaf in each; `pattern` places it in none.
+CLASSES = {
+    "bound": set(),
+    "closed domain": {"const", "enum", "lean", "copied", "x-tagged"},
+    "derived (guarantee)": {"x-derived"},
+    "text": {"x-text"},
+}
+# Every constructor of Lean's `Shape` (lean/ResponseShape.lean) with the dialect keyword it renders, JSON Schema's
+# own keywords (None) or a wrapper rendered as its inner shape ("inner"). A new constructor fails here until it is
+# classified, and a new binding keyword fails the relation table until the ADR places it.
+SHAPES = {
+    **dict.fromkeys(["bool", "type", "const", "enum", "pattern", "minLength", "maxLength", "minimum", "required",
+                     "object", "prefixItems", "items", "minItems", "maxItems", "contains", "anyOf", "allOf", "not",
+                     "ite", "ref"]),
+    **dict.fromkeys(["node", "lean", "copied", "encodedEnvironment"], "inner"),
+    "tagged": "x-tagged", "fuel": "x-fuel", "echo": "x-echo", "equals": "x-equals", "length": "x-length",
+    "count": "x-count", "references": "x-references", "index": "x-index", "digest": "x-digest", "zip": "x-zip",
+    "zipOrEmpty": "x-zip-or-empty", "onCase": "x-case", "select": "x-select", "countWhere": "x-count-where",
+    "presenceCount": "x-count-presence", "rows": "x-rows", "row": "x-row",
+}
+# sha256 of the Decision section, whitespace-normalised. It changes only with a new signature of the DRI (D1); a
+# batch that changes the section records the signature and updates this pin in the same merge.
+ADR_DECISION_SHA256 = "f4f90c1c34a07fe2036377e3199b8afe55342731f1bb17422751dbef4b5ccbc9"
+
+
+def test_adr_records_d1_as_signed():
     adr = ADR.read_text()
     assert "**Status:** Accepted. Signed by the DRI on 2026-10-10 as decision D1" in adr
+    decision = flat(adr_decision())
+    missing = [clause for clause in D1_CLAUSES if flat(clause) not in decision]
+    assert not missing, missing
+
+
+def test_adr_decision_is_pinned():
+    assert hashlib.sha256(flat(adr_decision()).encode()).hexdigest() == ADR_DECISION_SHA256
+
+
+def test_adr_relation_keywords():
+    adr = adr_decision()
     rows = table(adr, next(line for line in adr.splitlines() if line.startswith("| # | Relation |")))
-    assert [row[1] for row in rows] == ["echoes", "equals", "counts", "measures", "indexes", "references",
-                                        "is bounded by"]
-    named = {kw for row in rows for kw in re.findall(r"`(x-[a-z-]+)`", row[3]) if not row[3].startswith("none yet")}
-    dialect = {kw for kw in re.findall(r"^\| `(x-[a-z-]+)", DIALECT.read_text(), re.M)}
-    assert named <= dialect, named - dialect
-    assert dialect - STRUCTURAL == named, dialect - STRUCTURAL ^ named
+    assert [row[0] for row in rows] == [str(n) for n in range(1, 8)]
+    assert {row[1]: backticked(row[3]) - {"atMost", "x-at-most"} for row in rows} == RELATIONS
+    assert rows[6][3].startswith("none yet")
+    named = set().union(*RELATIONS.values())
+    assert dialect_keywords() - STRUCTURAL == named, (dialect_keywords() - STRUCTURAL) ^ named
+
+
+def test_adr_leaf_classes():
+    adr = adr_decision()
+    rows = table(adr, "| Class | The leaf … | Shapes |")
+    assert {row[0]: backticked(row[2]) for row in rows} == CLASSES
+    for row in rows:
+        assert "pattern" not in row[2] and "minLength" not in row[2], row
+
+
+def test_lean_shapes_are_classified():
+    """The constructors of Lean's `Shape`, the dialect's extension keywords and the ADR's tables name one set."""
+    source = (ROOT / "lean/ResponseShape.lean").read_text()
+    body = source[source.index("inductive Shape where"):source.index("deriving Inhabited")]
+    assert set(re.findall(r"^  \| (\w+)", body, re.M)) == set(SHAPES)
+    keywords = {kw for kw in SHAPES.values() if kw and kw.startswith("x-")}
+    assert keywords == dialect_keywords(), keywords ^ dialect_keywords()
+    assert keywords == STRUCTURAL | set().union(*RELATIONS.values())
+    closed = {name for name, kw in SHAPES.items() if kw is None or kw == "inner"} | {"x-tagged"}
+    assert CLASSES["closed domain"] <= closed
