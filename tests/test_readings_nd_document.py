@@ -549,18 +549,25 @@ def test_filled_environment_is_typed_by_the_schema_and_bound_to_the_request():
             refused(retype)
         for path in objects:
             refused(lambda env, path=path: at(env, path).update(invented=[]))
-        refused(lambda env: env["vocabulary"]["sorts"].update(extra={"description": "extra"}))
-        refused(lambda env: env["vocabulary"]["constants"].update(c9={"sort": "agent", "description": "c"}))
+        refused(lambda env: env["vocabulary"]["sorts"].update(extra={"description": "extra", "plural": "x"}))
+        refused(lambda env: env["vocabulary"]["constants"].update(c9={"description": "c"}))
         refused(lambda env: env.update(language="ve.core@0"))
         refused(lambda env: env.update(spec_revision="another"))
         refused(lambda env: env["vocabulary"]["predicates"]["help_required"]["regulated"].update(default="unspecified"))
         refused(lambda env: env["vocabulary"]["predicates"]["help_required"]["regulated"].update(role="duty"))
 
+    # The binding of the relayed answer to its case: the profiles, and the sort and constant names (the schema types
+    # them; a companion component's frame is not the outer request's, so the schema does not compare them).
     case, row = genuine("readings-elaborate")
-    for profiles in (["norm-defaults@0", "norms@0", "relational-fol@0"], ["relational-fol@0", "norms@0"],
-                     ["norms@0", "relational-fol@0", "soft-norms@0"]):
+    bindings = [lambda env, p=p: env.update(profiles=p) for p in (
+        ["norm-defaults@0", "norms@0", "relational-fol@0"], ["relational-fol@0", "norms@0"],
+        ["norms@0", "relational-fol@0", "soft-norms@0"])]
+    bindings += [lambda env: env["vocabulary"]["sorts"].update(extra={"description": "extra"}),
+                 lambda env: env["vocabulary"]["sorts"].pop("user"),
+                 lambda env: env["vocabulary"]["constants"].update(c9={"sort": "agent", "description": "c"})]
+    for mutate in bindings:
         bad = copy.deepcopy(row)
-        bad["filled"]["environment"]["profiles"] = profiles
+        mutate(bad["filled"]["environment"])
         with pytest.raises(CheckerUnavailable, match="invalid answer"):
             _completion_elaborate(bad, case)
 
