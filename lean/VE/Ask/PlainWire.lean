@@ -208,6 +208,13 @@ def replayPlain (case : Json) : Except String PlainVerdict := (replayPlainParts 
 
 /-! ## The binding of a plain case -/
 
+/-- The binding's first check, before anything of the case is decoded (spec 4.2: the binding, then the replay): the
+    case's environment is the front matter's. -/
+def sameEnvironment (text : String) (case : Json) : Except String Unit := do
+  let sp ← VE.Service.Document.split text
+  unless decide (Same (case.getObjValD "environment") (sp.front.getObjValD "environment")) do
+    throw "CheckerUnavailable: the case is not this document's (another environment)"
+
 /-- `PlainCaseBinding`, decided, with `E` decoded from the front matter. -/
 def checkPlainCase (text : String) (case : Json) (L : VE.EnglishGrammar.Lexicon) (V : VE.Environment) :
     Except String { E : VE.EnglishGrammar.Env // PlainCaseBinding text case E L V } :=
@@ -254,6 +261,7 @@ def replayPlainAskCore (j : Json) : Except String { a : PlainAsked // a.request 
   let ⟨q, hq⟩ ← strField j "question"
   let case := j.getObjValD "case"
   let (_, L) ← englishOf text (j.getObjValD "lexicon")
+  sameEnvironment text case
   match hr : replayPlainParts case with
   | .error e => throw e
   | .ok ⟨(p, x), hconc, hV, hψx⟩ =>
