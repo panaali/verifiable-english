@@ -73,7 +73,8 @@
           {"contains": {"const": "discourse"}},
           {"contains": {"const": "readings-route"}},
           {"contains": {"const": "diagnose"}},
-          {"contains": {"const": "document"}}
+          {"contains": {"const": "document"}},
+          {"contains": {"const": "english.question"}}
         ]
       },
       "protocol": {"const": 2},
