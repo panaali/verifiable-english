@@ -72,6 +72,13 @@ soft-norms branch now filters the current profile list. No theorem statement cha
 growth in `docs/trust-baseline.json`'s history with that reason, which says the allowance awaits the DRI's
 signature; no `signed` entry is written (HUMAN, owner: DRI).
 
+The looprecheck1 fix adds `VE.Core.Layers.folEntry` (at most two arguments), now the one filter of every
+regenerated Background (`folPredicates`, the norms view, the n-ary definition checks) and of the response
+Background counts (`ResponseShape.backgroundCount`, `ResponseDecode`'s invariant counts; the client's
+`service_schema._fol_entry` mirrors it, `test_background_count_is_over_the_fol_projection` compares them).
+`tools/trust_map.py` reports **trusted +7** (`VE/Core/Layers.lean` +5, `ResponseShape.lean` +2), recorded the
+same way and awaiting the DRI's signature (HUMAN, owner: DRI). No theorem statement changed.
+
 ## Behaviour notes for reviewers
 
 * `dispatch.owned` runs a Lean-owned operation under every selection and pins its constituents to Lean, so
