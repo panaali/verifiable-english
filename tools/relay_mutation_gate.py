@@ -84,6 +84,7 @@ RECORD_TESTS = (
     "tests/test_speech_acts_lean.py", "tests/test_readings_nd_lean.py", "tests/test_metered_lean.py",
     "tests/test_evaluate_search.py", "tests/test_closure_certificates.py", "tests/test_p0_three_way.py",
     "tests/test_stage2_dispatch.py", "tests/test_stage2_faults.py", "tests/test_stage2_readings.py",
+    "tests/test_question_reading.py", "tests/test_question_differential.py",
 )
 # Calls that read a one-shot runner's rows; a `ve` call site of one is a route of its own.
 ONE_SHOT_READERS = ("run_route_cases", "run_english_cases", "read_rows")

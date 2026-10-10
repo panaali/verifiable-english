@@ -1010,7 +1010,7 @@
    ],
    "kind": "follow-up",
    "id": "F1",
-   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check)."
+   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check, english.question)."
   },
   {
    "route": "service:english.grammar",
@@ -1020,7 +1020,17 @@
    ],
    "kind": "follow-up",
    "id": "F1",
-   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check)."
+   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check, english.question)."
+  },
+  {
+   "route": "service:english.question",
+   "mutation": "*",
+   "path": [
+    "results/*/result/*"
+   ],
+   "kind": "follow-up",
+   "id": "F1",
+   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check, english.question)."
   },
   {
    "route": "service:english.read",
@@ -1030,7 +1040,7 @@
    ],
    "kind": "follow-up",
    "id": "F1",
-   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check)."
+   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check, english.question)."
   },
   {
    "route": "service:readings-route",
