@@ -1,0 +1,2677 @@
+{
+ "base": "cc534bfc571de0f140fecc7acefee65fcdfb8ad9",
+ "manifests": {
+  "lean/VE/Audit.lean": {
+   "lines_before": 5001,
+   "lines_after": 5586,
+   "theorems_before": 4755,
+   "theorems_after": 5270,
+   "imports_before": 198,
+   "imports_after": 313,
+   "hand_lines_before": [
+    "-- Route (P0-Lean)",
+    "-- Core stage 1: new statements and helper proofs.",
+    "-- Exact approved statement: no admissibility premise may be reintroduced.",
+    "example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)",
+    "    (M N : VE.SoftNorms.SoftNode) (hc : (M, N) \u2208 VE.SoftNorms.collidingPairs D)",
+    "    (hcmp : VE.SoftNorms.Comparable D M N = true) (B : VE.Structure.{0}) :",
+    "    (VE.SoftNorms.cohPremise D M N).denote B [] :=",
+    "  VE.SoftNorms.coh_rank_valid D h M N hc hcmp B",
+    "-- alternatives@0 (lean/ALTERNATIVES.md)",
+    "-- readings-defaults RD-2a (docs/spec/readings-defaults.md 6.3): the wire under the unspecified completion.",
+    "-- readings-defaults RD-4a (docs/spec/readings-defaults.md 6.6, wire part): companions, merge and split.",
+    "-- readings-defaults RD-6a (docs/spec/readings-defaults.md 6.7): S2a with a carried base-premise family.",
+    "-- RD-6a fixture X3 (DRI ruling 2026-10-07): the approved `superpose_all_extra` refuted at X1.",
+    "-- english-lean (docs/spec/english-lean.md 5.9): the grammar engine and the English instance.",
+    "-- English S3: every added named lemma and statement.",
+    "-- readings-defaults RD-4b: the component product and its proved response."
+   ]
+  },
+  "lean/ResponseShape/Audit.lean": {
+   "lines_before": 450,
+   "lines_after": 471,
+   "theorems_before": 441,
+   "theorems_after": 441,
+   "imports_before": 2,
+   "imports_after": 27,
+   "hand_lines_before": [
+    "/-! The dependency audit of the response-shape theorems (`ResponseShape.Encoders` and the lemmas they",
+    "use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every theorem of",
+    "`ResponseShape` to be listed here and to depend on the standard axioms only. -/",
+    "-- readings-defaults RD-4b: the component product and its proved response."
+   ]
+  }
+ },
+ "removed": [],
+ "added_count": 515,
+ "added_by_category": {
+  "Prop field of a structure": {
+   "count": 512,
+   "roots": [
+    "Iceberg",
+    "VE"
+   ]
+  },
+  "Prop-class instance": {
+   "count": 3,
+   "roots": [
+    "VE"
+   ]
+  }
+ },
+ "prop_class_instances": [
+  {
+   "name": "VE.Discourse.instLawfulBEqFormula",
+   "module": "VE.Discourse.Manifest"
+  },
+  {
+   "name": "VE.Discourse.instLawfulBEqTerm",
+   "module": "VE.Discourse.Manifest"
+  },
+  {
+   "name": "VE.Order.instLawfulBEqValue",
+   "module": "VE.Order.Finite"
+  }
+ ],
+ "theorem_regex_scan_deleted": {
+  "lines": 18,
+  "text": [
+   "    actual = set()",
+   "        scopes = []",
+   "        for line in code.splitlines():",
+   "            namespace = re.match(r\"\\s*namespace\\s+(\\S+)\", line)",
+   "            if namespace:",
+   "                scopes.append(namespace[1])",
+   "            elif re.match(r\"\\s*section\\b\", line):",
+   "                scopes.append(\"\")",
+   "            elif re.match(r\"\\s*mutual(?:\\s|$)\", line):",
+   "                scopes.append(\"\")",
+   "            elif re.match(r\"\\s*end(?:\\s|$)\", line):",
+   "                if scopes:",
+   "                    scopes.pop()",
+   "            declaration = re.match(r\"\\s*(?:@\\[[^\\]]*\\]\\s*)*(?:(?:private|protected)\\s+)*theorem\\s+([\\w'.]+)\", line)",
+   "            if declaration:",
+   "                name = \".\".join([s for s in scopes if s] + [declaration[1]])",
+   "                actual.add(name.removeprefix(\"_root_.\"))",
+   "    return actual, sources"
+  ],
+  "left_in_head": 0
+ },
+ "added": [
+  {
+   "name": "Iceberg.Process.final_contents",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Process.final_geometry",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Process.height_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Process.inclusion_volume_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Process.melt_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Process.melting",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Stage.escaped_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Stage.force_balance",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Stage.immersed_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Stage.liquid_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Stage.mass_conservation",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Stage.remaining_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Stage.support_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Tub.area_pos",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Tub.base_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Tub.displaced_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Tub.g_pos",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Tub.ice_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Tub.inclusion_nonneg",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Tub.initial_float",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Tub.initially_brimful",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "Iceberg.Tub.rho_pos",
+   "module": "Iceberg",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.Admission.Admitted.sound",
+   "module": "VE.Alternatives.Admission",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltChain.A_in",
+   "module": "VE.Alternatives.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltChain.A_out",
+   "module": "VE.Alternatives.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltChain.E_in",
+   "module": "VE.Alternatives.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltChain.E_out",
+   "module": "VE.Alternatives.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltChain.premises",
+   "module": "VE.Alternatives.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltChain.restrict",
+   "module": "VE.Alternatives.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.actionSort",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.action_ne_harm",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.chooserSort",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.chooser_ne_action",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.chooser_ne_harm",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.fulfil",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.harmSort",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.performed",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.premises",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.reserved",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.roles",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.AltValid.wf",
+   "module": "VE.Alternatives.Inline",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.Replay.Scenario.valid",
+   "module": "VE.Alternatives.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.Wire.AltSource.env",
+   "module": "VE.Alternatives.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Alternatives.Wire.AltSource.wf",
+   "module": "VE.Alternatives.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Bridge.CountermodelQuery.conclusion_typed",
+   "module": "VE.Bridge",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Bridge.CountermodelQuery.premises_typed",
+   "module": "VE.Bridge",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Compose.SlotChain.A_in",
+   "module": "VE.Compose.Slot",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Compose.SlotChain.A_out",
+   "module": "VE.Compose.Slot",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Compose.SlotChain.E_in",
+   "module": "VE.Compose.Slot",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Compose.SlotChain.E_out",
+   "module": "VE.Compose.Slot",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Compose.SlotChain.premises",
+   "module": "VE.Compose.Slot",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Compose.SlotChain.restrict",
+   "module": "VE.Compose.Slot",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.ChainLayer.Admissible_in",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.ChainLayer.Admissible_out",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.ChainLayer.E_in",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.ChainLayer.E_out",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.ChainLayer.premises",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.ChainLayer.restrict",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.Step.args",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.Step.arity",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.Step.body",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.Step.constants",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.Step.declared",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.Step.fresh",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.Step.others",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Definitions.Step.sorts",
+   "module": "VE.Definitions.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.choices",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.claims",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.core",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.documentId",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.facts",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.gate",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.joint",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.premises",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.prepared",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.presuppositions",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.profiles",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.references",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.reportId",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.selfTruth",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.validity",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.Admit2Facts.validityPost",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.CoreFacts.base",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.CoreFacts.bindings",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.CoreFacts.bound",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.CoreFacts.boundPending",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.CoreFacts.definitions",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.CoreFacts.pending",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.CoreFacts.post",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.CoreFacts.wf",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PostFacts.acyclic",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PostFacts.depth",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PostFacts.documentsNodup",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PostFacts.groupedLabels",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PostFacts.groupedNodup",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PostFacts.groups",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PostFacts.importsNodup",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PostFacts.mentionsNodup",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PostFacts.selfTruth",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PrepareFacts.env",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PrepareFacts.envId",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PrepareFacts.manifest",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PrepareFacts.sourceId",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.PrepareFacts.wrapper",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.ValidOk.budget",
+   "module": "VE.Discourse.Resolve",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.ValidOk.spec",
+   "module": "VE.Discourse.Resolve",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.ValidityFacts.nodup",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.ValidityFacts.notGrouped",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.ValidityFacts.notPremise",
+   "module": "VE.Discourse.Theorems",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Discourse.instLawfulBEqFormula",
+   "module": "VE.Discourse.Manifest",
+   "category": "Prop-class instance"
+  },
+  {
+   "name": "VE.Discourse.instLawfulBEqTerm",
+   "module": "VE.Discourse.Manifest",
+   "category": "Prop-class instance"
+  },
+  {
+   "name": "VE.Document.nonempty",
+   "module": "VE.Syntax",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Document.wellFormed",
+   "module": "VE.Syntax",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Admitted.atom_delimited",
+   "module": "VE.English.Lexicon",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Admitted.atom_opens",
+   "module": "VE.English.Lexicon",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Admitted.atom_unique",
+   "module": "VE.English.Lexicon",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Admitted.noun_opens",
+   "module": "VE.English.Lexicon",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Admitted.noun_prefix_free",
+   "module": "VE.English.Lexicon",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Covers.constants",
+   "module": "VE.English.Lexicon",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Covers.predicates",
+   "module": "VE.English.Lexicon",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Covers.sorts",
+   "module": "VE.English.Lexicon",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Facts.const_opens",
+   "module": "VE.English.Check",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Facts.const_prefix_free",
+   "module": "VE.English.Check",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Facts.const_words",
+   "module": "VE.English.Check",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Facts.disjoint",
+   "module": "VE.English.Check",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Facts.letter_inj",
+   "module": "VE.English.Check",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Facts.noun_opens",
+   "module": "VE.English.Check",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Facts.noun_prefix_free",
+   "module": "VE.English.Check",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Facts.noun_words",
+   "module": "VE.English.Check",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.English.Facts.templates",
+   "module": "VE.English.Check",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.BOk.complete",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.BOk.keys",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.BOk.length",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.BOk.nodup",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.BOk.sorted",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.BOk.sound",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.Embeds.derives",
+   "module": "VE.Grammar.Extension",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.Embeds.injective",
+   "module": "VE.Grammar.Extension",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.Embeds.meaning",
+   "module": "VE.Grammar.Extension",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.OutInv.done",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.OutInv.inner",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.OutInv.size",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.OutInv.val",
+   "module": "VE.Grammar.TableInvariant",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.RuleMap.Ok.injective",
+   "module": "VE.Grammar.Extension",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.RuleMap.Ok.rules",
+   "module": "VE.Grammar.Extension",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Grammar.RuleMap.Ok.start",
+   "module": "VE.Grammar.Extension",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.ast",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.count",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.declared",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.fillNodup",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.freshPred",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.freshRule",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.heightU",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.nodup",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.ok",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.ruleNames",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.valid",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.UValid.wf",
+   "module": "VE.NormDefaults.Fill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.AdmittedModel.flags",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.AdmittedModel.valid",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.FilledX.extra_ok",
+   "module": "VE.NormDefaults.Layered",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.FilledX.fill_ok",
+   "module": "VE.NormDefaults.Layered",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.LayeredU.sitValid",
+   "module": "VE.NormDefaults.Layered",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.LayeredU.wfU",
+   "module": "VE.NormDefaults.Layered",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.LineU.ground_eq",
+   "module": "VE.NormDefaults.Report",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.LineU.sound_never",
+   "module": "VE.NormDefaults.Report",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.LineU.sound_reached",
+   "module": "VE.NormDefaults.Report",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.ReachedData.background",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.ReachedData.filled",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.ReachedData.flags",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.ReachedData.mem",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.ReachedData.typed",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.ReachedData.valid",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.ReportSource.wfU",
+   "module": "VE.NormDefaults.Report",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.ReportU.decoded",
+   "module": "VE.NormDefaults.Report",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.ReportU.profiled",
+   "module": "VE.NormDefaults.Report",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.SituationG.background",
+   "module": "VE.NormDefaults.Report",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.SituationG.valid",
+   "module": "VE.NormDefaults.Report",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.SourceU.doc",
+   "module": "VE.NormDefaults.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.SourceU.plain",
+   "module": "VE.NormDefaults.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.SourceU.wfFill",
+   "module": "VE.NormDefaults.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.SourceU.wfU",
+   "module": "VE.NormDefaults.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusData.background",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusData.decoded",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusData.flags",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusData.mem",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusData.profiled",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusData.sound\u2081",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusData.sound\u2082",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusData.typed",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusData.valid",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusX.sound\u2081",
+   "module": "VE.NormDefaults.Layered",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusX.sound\u2082",
+   "module": "VE.NormDefaults.Layered",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.StatusX.typed",
+   "module": "VE.NormDefaults.Layered",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.WitnessDataU.background",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.WitnessDataU.filled",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.WitnessDataU.flags",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.WitnessDataU.mem",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.WitnessDataU.typed",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.NormDefaults.Wire.WitnessDataU.valid",
+   "module": "VE.NormDefaults.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.CedarShape.forbidsOnlyOverPermits",
+   "module": "VE.Norms.Cedar",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.CedarShape.forbidsOverPermits",
+   "module": "VE.Norms.Cedar",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.CedarShape.names",
+   "module": "VE.Norms.Cedar",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.CedarShape.noCarve",
+   "module": "VE.Norms.Cedar",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.CedarShape.permitsFlat",
+   "module": "VE.Norms.Cedar",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Chain.A_in",
+   "module": "VE.Norms.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Chain.A_out",
+   "module": "VE.Norms.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Chain.E_in",
+   "module": "VE.Norms.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Chain.E_out",
+   "module": "VE.Norms.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Chain.premises",
+   "module": "VE.Norms.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Chain.restrict",
+   "module": "VE.Norms.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Flagged.Witness.flags",
+   "module": "VE.Norms.Flagged",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Replay.WitnessData.background",
+   "module": "VE.Norms.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Replay.WitnessData.mem",
+   "module": "VE.Norms.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Replay.WitnessData.typed",
+   "module": "VE.Norms.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Replay.WitnessData.valid",
+   "module": "VE.Norms.Replay",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Valid.decl",
+   "module": "VE.Norms.Valid",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Valid.nodup",
+   "module": "VE.Norms.Valid",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Valid.pairs",
+   "module": "VE.Norms.Valid",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Valid.precedence",
+   "module": "VE.Norms.Valid",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Valid.regulated",
+   "module": "VE.Norms.Valid",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Valid.stratum",
+   "module": "VE.Norms.Valid",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Valid.typed",
+   "module": "VE.Norms.Valid",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Wire.Source.env",
+   "module": "VE.Norms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Wire.Source.lits",
+   "module": "VE.Norms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Norms.Wire.Source.wf",
+   "module": "VE.Norms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Order.Document.nonempty",
+   "module": "VE.Order.Syntax",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Order.Document.wellFormed",
+   "module": "VE.Order.Syntax",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Order.instLawfulBEqValue",
+   "module": "VE.Order.Finite",
+   "category": "Prop-class instance"
+  },
+  {
+   "name": "VE.Readings.Grows.E",
+   "module": "VE.Readings.Shape",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Grows.definitions",
+   "module": "VE.Readings.Shape",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Grows.junk",
+   "module": "VE.Readings.Shape",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Grows.lits",
+   "module": "VE.Readings.Shape",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Grows.nodes",
+   "module": "VE.Readings.Shape",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Grows.regulated",
+   "module": "VE.Readings.Shape",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Grows.soft",
+   "module": "VE.Readings.Shape",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Hyps.chain",
+   "module": "VE.Readings.ChoiceFacts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Hyps.sp",
+   "module": "VE.Readings.ChoiceFacts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Hyps.wf",
+   "module": "VE.Readings.ChoiceFacts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.KeepsFrame.E",
+   "module": "VE.Readings.Separate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.KeepsFrame.definitions",
+   "module": "VE.Readings.Separate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.KeepsFrame.nodes",
+   "module": "VE.Readings.Separate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.KeepsFrame.regulated",
+   "module": "VE.Readings.Separate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.NamesFree.names",
+   "module": "VE.Readings.Unspecified",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.NamesFree.sets",
+   "module": "VE.Readings.Unspecified",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.NamesFree.unit",
+   "module": "VE.Readings.Unspecified",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.RightsNames.conds",
+   "module": "VE.Readings.Lines",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.RightsNames.fan",
+   "module": "VE.Readings.Lines",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.RightsNames.limits",
+   "module": "VE.Readings.Lines",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.RightsNames.rules",
+   "module": "VE.Readings.Lines",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Run.LowerVerdicts.hrows",
+   "module": "VE.Readings.VerdictsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Run.NormsChoiceModel.valid",
+   "module": "VE.Readings.SupRun",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Run.PartRun.hq",
+   "module": "VE.Readings.ComponentsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Run.ProductReplay.hA",
+   "module": "VE.Readings.ComponentsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Run.ProductReplay.hne",
+   "module": "VE.Readings.ComponentsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Run.ProductReplay.rowsNe",
+   "module": "VE.Readings.ComponentsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Run.RightsChoiceModel.valid",
+   "module": "VE.Readings.SupRun",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Run.SoftChoiceModel.valid",
+   "module": "VE.Readings.SupRun",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Shaped.bar",
+   "module": "VE.Readings.Unspecified",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Shaped.fixed",
+   "module": "VE.Readings.Unspecified",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Shaped.frame",
+   "module": "VE.Readings.Unspecified",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Shaped.nodes",
+   "module": "VE.Readings.Unspecified",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Shaped.set",
+   "module": "VE.Readings.Unspecified",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.childBack",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.childFwd",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.dead",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.fuelLe",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.inj",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.live",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.mem",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.mode",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.outweighs",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.pred",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.rank",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.ranked",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.regs",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.sibling",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.sign",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Sim.soft",
+   "module": "VE.Readings.Simulate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Twin.alone",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Twin.pred",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Twin.strict",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Twin.valid",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.assertions",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.declared",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.defs",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.genDecls",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.keyName",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.keys",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.lim",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.lines",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.nodes",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.owns",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.soft",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.TwinDocs.strict",
+   "module": "VE.Readings.Force",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.Admitted.ones_eq",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.Admitted.wf",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.Admitted2.frame",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.Admitted2.wf",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.AdmittedND.hN",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.AdmittedND.wfF",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.AdmittedND.wfU",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.AdmittedNDFull.side",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.CertificateReplay.hA",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.CertificateReplay.h\u0393",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.CertificateReplay.h\u03c6",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.CertificateReplay.taken",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.ChoiceReplayU.hc",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.ChoiceReplayU.wfc",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.FilledAdmitted.chain",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.FilledAdmitted.frame",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.FilledAdmitted.items",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.FilledModel.valid",
+   "module": "VE.Readings.VerdictsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.ModelReplay.h\u0393",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.ModelReplay.h\u03c6",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.ModelReplay.valid",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.NDEvidence.wfc",
+   "module": "VE.Readings.VerdictsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.NDVerdicts.hevs",
+   "module": "VE.Readings.VerdictsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.NDVerdicts.hle",
+   "module": "VE.Readings.VerdictsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.NDVerdicts.ready",
+   "module": "VE.Readings.VerdictsWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplay.hXi",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplay.hXj",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplay.ho",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplay.hw",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplay.shape",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplay.valid",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplay.wf",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplayU.ho",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplayU.hw",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SeparateReplayU.valid",
+   "module": "VE.Readings.UnspecifiedWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SituationJ.base",
+   "module": "VE.Readings.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SupReplay.checked",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SupReplay.sat",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SupReplay.soft",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SupReplay.sp",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SupReplay.wf",
+   "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.Source.A_typed",
+   "module": "VE.Attribution.Semantics",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.Source.J_typed",
+   "module": "VE.Attribution.Semantics",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.allIds",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.asIds",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.assess",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.bridgeIds",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.bridges",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.collision",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.ctxIds",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.depth",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.fresh",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.gate",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.ids",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.lits",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.nodes",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.nodup",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.predicateCount",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.scoped",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.scopedIds",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.stmt",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.unitMeta",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.WF.w2quoted",
+   "module": "VE.Attribution.Facts",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.Wire.Checked.wf",
+   "module": "VE.Attribution.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.Wire.Decoded.hE",
+   "module": "VE.Attribution.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Reports.Wire.Decoded.hlits",
+   "module": "VE.Attribution.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsChain.A_in",
+   "module": "VE.Rights.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsChain.A_out",
+   "module": "VE.Rights.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsChain.E_in",
+   "module": "VE.Rights.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsChain.E_out",
+   "module": "VE.Rights.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsChain.premises",
+   "module": "VE.Rights.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsChain.restrict",
+   "module": "VE.Rights.Route",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsValid.aimedTyped",
+   "module": "VE.Rights.Correlate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsValid.barOver",
+   "module": "VE.Rights.Correlate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsValid.condTyped",
+   "module": "VE.Rights.Correlate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsValid.limTyped",
+   "module": "VE.Rights.Correlate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsValid.ownTyped",
+   "module": "VE.Rights.Correlate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsValid.packTyped",
+   "module": "VE.Rights.Correlate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsValid.permNoDual",
+   "module": "VE.Rights.Correlate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsValid.selTyped",
+   "module": "VE.Rights.Correlate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.RightsValid.wfSoft",
+   "module": "VE.Rights.Correlate",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.Wire.RightsSource.defs",
+   "module": "VE.Rights.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.Wire.RightsSource.env",
+   "module": "VE.Rights.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.Wire.RightsSource.lits",
+   "module": "VE.Rights.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.Wire.RightsSource.wf",
+   "module": "VE.Rights.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.Wire.RightsWitnessData.background",
+   "module": "VE.Rights.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.Wire.RightsWitnessData.mem",
+   "module": "VE.Rights.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.Wire.RightsWitnessData.typed",
+   "module": "VE.Rights.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Rights.Wire.RightsWitnessData.valid",
+   "module": "VE.Rights.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.Admission.Admitted.sound",
+   "module": "VE.Risk.Admission",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.BoxAgree.atoms",
+   "module": "VE.Risk.Piecewise",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.BoxAgree.mem",
+   "module": "VE.Risk.Piecewise",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.BoxAgree.point",
+   "module": "VE.Risk.Piecewise",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.BoxStep.mem",
+   "module": "VE.Risk.Piecewise",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.BoxStep.other",
+   "module": "VE.Risk.Piecewise",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.BoxStep.point",
+   "module": "VE.Risk.Piecewise",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.BoxStep.wf",
+   "module": "VE.Risk.Piecewise",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.alt",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.bound",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.classesFresh",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.closureClasses",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.definitions",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.fresh",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.harmClasses",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.harmsNodup",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.irrefl",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.lits",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.nodup",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.nonempty",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.regulated",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.reserved",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.roles",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.sevName",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.signed",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.sorts",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.RiskValid.trans",
+   "module": "VE.Risk.Decl",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Risk.Wire.RiskSource.wf",
+   "module": "VE.Risk.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Checker.sound",
+   "module": "VE.Route.Checker",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Layer.admissible_out",
+   "module": "VE.Route.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Layer.expands",
+   "module": "VE.Route.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Layer.extends_env",
+   "module": "VE.Route.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Layer.faithful",
+   "module": "VE.Route.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Layer.premises_wellFormed",
+   "module": "VE.Route.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Layer.restrict_admissible",
+   "module": "VE.Route.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Layer.restrict_holds",
+   "module": "VE.Route.Layer",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Wire.RouteOrderVocabulary.nodup",
+   "module": "VE.Route.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Wire.RouteVocabulary.chain",
+   "module": "VE.Route.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Wire.RouteVocabulary.nodup",
+   "module": "VE.Route.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.Wire.RouteVocabulary.validNames",
+   "module": "VE.Route.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.WireSound.Family.Sound.layer_env",
+   "module": "VE.Route.WireSound",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.WireSound.Family.Sound.layer_intended",
+   "module": "VE.Route.WireSound",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.WireSound.Runner.Sound.background_sound",
+   "module": "VE.Route.WireSound",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.WireSound.Runner.Sound.family",
+   "module": "VE.Route.WireSound",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.WireSound.Runner.Sound.run_accepted",
+   "module": "VE.Route.WireSound",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Route.WireSound.Runner.Sound.stmt_formula",
+   "module": "VE.Route.WireSound",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Service.Family.Checked.accepted",
+   "module": "VE.Service.Family",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Service.Graph.Checked.accepted",
+   "module": "VE.Service.Graph",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.RanksValid.closure",
+   "module": "VE.SoftNorms.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.RanksValid.declared",
+   "module": "VE.SoftNorms.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.RanksValid.order",
+   "module": "VE.SoftNorms.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftChain.A_in",
+   "module": "VE.SoftNorms.Coherence",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftChain.A_out",
+   "module": "VE.SoftNorms.Coherence",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftChain.E_in",
+   "module": "VE.SoftNorms.Coherence",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftChain.E_out",
+   "module": "VE.SoftNorms.Coherence",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftChain.premises",
+   "module": "VE.SoftNorms.Coherence",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftChain.restrict",
+   "module": "VE.SoftNorms.Coherence",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.cpSorts",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.decFresh",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.decNodup",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.decTyped",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.names",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.pairPerm",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.pairReq",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.permNotReq",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.predReg",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.premTyped",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.ranks",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.regDecl",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.regNames",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.selTyped",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.softOverHard",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.typed",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.SoftValid.wf",
+   "module": "VE.SoftNorms.Soften",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.Wire.SoftSource.defs",
+   "module": "VE.SoftNorms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.Wire.SoftSource.env",
+   "module": "VE.SoftNorms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.Wire.SoftSource.lits",
+   "module": "VE.SoftNorms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.Wire.SoftSource.wf",
+   "module": "VE.SoftNorms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.Wire.SoftWitnessData.background",
+   "module": "VE.SoftNorms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.Wire.SoftWitnessData.mem",
+   "module": "VE.SoftNorms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.Wire.SoftWitnessData.typed",
+   "module": "VE.SoftNorms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SoftNorms.Wire.SoftWitnessData.valid",
+   "module": "VE.SoftNorms.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Run.AnswerCase.mem",
+   "module": "VE.SpeechActs.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Run.CheckedModel.background",
+   "module": "VE.SpeechActs.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Run.CheckedModel.sat",
+   "module": "VE.SpeechActs.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Run.CheckedModel.valid",
+   "module": "VE.SpeechActs.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Run.ConsequenceCase.mem",
+   "module": "VE.SpeechActs.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.admitted",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.bound",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.checked",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.choices",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.citations",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.classed",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.decodedP0",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.decodedSrc",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.distinct",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.graphOf",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.graph_nodes",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.srcPayload",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.wires_eq",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Admission.SpeechAdmitted.withheld",
+   "module": "VE.SpeechActs.Source.Admission.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.AnswerRecord.accepted",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.AnswerRecord.mem",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Coverage.byClass",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Coverage.byStatus",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.Coverage.reconciled",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.ExternalRecord.asserted",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.ExternalRecord.fact",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.ExternalRecord.mem",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.GapRecord.mem",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.GapRecord.refutes",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.QueryRecord.accepted",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.QueryRecord.mem",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.SpeechSource.metadata_eq",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Source.SpeechSource.source_eq",
+   "module": "VE.SpeechActs.Source.Run",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.ValidSpeech.asserted",
+   "module": "VE.SpeechActs.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.ValidSpeech.commands",
+   "module": "VE.SpeechActs.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.ValidSpeech.noOver",
+   "module": "VE.SpeechActs.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.ValidSpeech.policy",
+   "module": "VE.SpeechActs.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.ValidSpeech.queries",
+   "module": "VE.SpeechActs.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.ValidSpeech.questions",
+   "module": "VE.SpeechActs.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.ValidSpeech.scope",
+   "module": "VE.SpeechActs.Tree",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Wire.Decoded.asserted_eq",
+   "module": "VE.SpeechActs.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Wire.Decoded.commands_eq",
+   "module": "VE.SpeechActs.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Wire.Decoded.env",
+   "module": "VE.SpeechActs.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Wire.Decoded.lits",
+   "module": "VE.SpeechActs.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Wire.Decoded.norms_eq",
+   "module": "VE.SpeechActs.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.SpeechActs.Wire.Decoded.wf",
+   "module": "VE.SpeechActs.Wire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Time.Document.QLemma.checked",
+   "module": "VE.Time.Document",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Time.Document.QLemma.transitive",
+   "module": "VE.Time.Document",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Time.Wire.Admission.admitted",
+   "module": "VE.Time.Wire",
+   "category": "Prop field of a structure"
+  }
+ ]
+}

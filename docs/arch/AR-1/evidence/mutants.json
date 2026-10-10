@@ -1,0 +1,94 @@
+[
+ {
+  "id": "P1",
+  "language": "Python",
+  "file": "tools/lean_statements.py",
+  "behaviour": "the dump records each manifest's generated hash",
+  "mutation": {
+   "from": "hashes[module_name(manifest)] = hashlib.sha256(text.encode()).hexdigest()",
+   "to": "pass"
+  },
+  "test": "tests/test_lean_audit_record.py::test_scratch_theorem_needs_write_and_check_passes_after",
+  "killed": true,
+  "pytest_summary": "1 failed in 25.74s"
+ },
+ {
+  "id": "P2",
+  "language": "Python",
+  "file": "tools/lean_statements.py",
+  "behaviour": "statement names come from the generated manifest of this dump, not the manifest file",
+  "mutation": {
+   "from": "names = sorted(manifests[audit.MANIFESTS[0]])",
+   "to": "names = audited_names(root)"
+  },
+  "test": "tests/test_lean_audit_record.py::test_scratch_theorem_needs_write_and_check_passes_after",
+  "killed": true,
+  "pytest_summary": "1 failed in 21.20s"
+ },
+ {
+  "id": "P3",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "every theorem of declarations.txt is in a manifest (Prop-class instances included)",
+  "mutation": {
+   "from": "if constant.kind != \"theorem\" or constant.start is None:",
+   "to": "if constant.kind != \"theorem\" or constant.start is None or \".inst\" in constant.name:"
+  },
+  "test": "tests/test_lean_audit_record.py::test_committed_manifests_are_the_generated_ones",
+  "killed": true,
+  "pytest_summary": "1 failed in 5.01s"
+ },
+ {
+  "id": "P4",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "a module whose SHA-256 differs from declarations.txt fails --check and --write",
+  "mutation": {
+   "from": "or tools.source_hash(current[m]) != hashes[m])",
+   "to": ")"
+  },
+  "test": "tests/test_lean_audit_record.py::test_scratch_stale_declarations_fail_check_and_write",
+  "killed": true,
+  "pytest_summary": "1 failed in 24.54s"
+ },
+ {
+  "id": "P5",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "--check fails on a manifest that differs from the generated one",
+  "mutation": {
+   "from": "elif not path.is_file() or path.read_text(encoding=\"utf-8\") != text:",
+   "to": "elif not path.is_file():"
+  },
+  "test": "tests/test_lean_audit_record.py::test_scratch_theorem_needs_write_and_check_passes_after",
+  "killed": true,
+  "pytest_summary": "1 failed in 16.23s"
+ },
+ {
+  "id": "L1",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Status.lean",
+  "behaviour": "the approved statement of coh_rank_valid (the example moved from VE/Audit.lean) still binds the theorem",
+  "mutation": {
+   "from": "theorem coh_rank_valid (D : SoftDoc) (h : WellFormedSoft D = true) (M N : SoftNode)",
+   "to": "theorem coh_rank_valid (D : SoftDoc) (h : WellFormedSoft D = true) (_hadm : True) (M N : SoftNode)"
+  },
+  "test": "lake build (gate stage lean_build): `lake env lean VE/SoftNorms/Status.lean`",
+  "killed": true,
+  "lean_output": "VE/SoftNorms/Status.lean:41:34: error: Application type mismatch: The argument",
+  "note": "the example at Status.lean:37-41 no longer elaborates; restored source elaborates (rc 0). Through pytest, tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist also fails (stale declarations.txt)."
+ },
+ {
+  "id": "L2",
+  "language": "Lean",
+  "file": "lean/VE/Audit.lean",
+  "behaviour": "the committed manifest is exactly the generated one",
+  "mutation": {
+   "from": "#print axioms VE.Discourse.instLawfulBEqFormula",
+   "to": ""
+  },
+  "test": "tests/test_lean_audit_record.py::test_committed_manifests_are_the_generated_ones",
+  "killed": true,
+  "pytest_summary": "1 failed in 4.02s"
+ }
+]
