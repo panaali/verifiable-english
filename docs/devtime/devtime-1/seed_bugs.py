@@ -9,11 +9,14 @@ and the pytest node that must fail. The file is restored from its original bytes
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
+from tools import nested_pytest  # noqa: E402
 MUTANTS = Path(__file__).with_name("mutants.json")
 
 
@@ -24,8 +27,8 @@ def run(entry: dict) -> dict:
     assert text.count(entry["old"]) == 1, f"{entry['id']}: `old` must occur exactly once in {entry['file']}"
     try:
         path.write_text(text.replace(entry["old"], entry["new"]), encoding="utf-8")
-        done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", entry["test"]],
-                              cwd=ROOT, capture_output=True, text=True)
+        done = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", entry["test"]]), cwd=ROOT,
+                              env=nested_pytest.environment(os.environ), capture_output=True, text=True)
     finally:
         path.write_bytes(original)
     tail = [line for line in done.stdout.splitlines() if line.strip()][-1:]
