@@ -173,3 +173,19 @@ C5 and C6; mid-sentence capitalised names, E2's).
 **passed**. Lean build, Lean audit (standard axioms only), Rust build, 36 Rust tests and the Python collection pass;
 the suite collected 14,045 tests, selected 14,044, and recorded 13,952 passed, 92 skipped, 0 failed
 (`gate-result.json`, status `passed`). Free disk before the run: 69 GB.
+
+## Looprecheck 2 fixes (2026-10-10): the moved word inside a joined verb phrase
+
+| Finding | Class | Fix | Regression tests | Commit |
+|---|---|---|---|---|
+| B: a word put back inside one side of an `and` between verb phrases is read as one (`Is some member is registered and eligible?`, `Is some member is verified and eligible?`, `Is some member registered and is eligible?`; the same gap in `natural-tail.both` and `alternatives@0`'s `either`/`both` verb phrases) | A part counted only as a `formula` or `atom`; a verb phrase joined with others was missed | `VE.Question.Moved`: a part is also each verb phrase (type `relative`, `ty E L`) of a rule that reads `and` or `or` and has two or more verb phrases (`joinWords`, `joinsPhrases`, `isPhrase`), decided from the rule table and the type table, so a new joining rule needs no list. `some-tail.copula` joins a verb phrase and an adjective, so its shared `is` stays the main sentence's word. A moved question also offers the word fronted from every phrase of its join at once when each begins with it and the question means the same (`Is some member registered and eligible?`, as the reviewer asked); every offer is still `askable` (`ask_moved`). The refusal text names the joined phrases. The reference reader counts joins the same way, its verb-phrase kinds read from the specs' 2.4 type tables | `test_every_joined_verb_phrase_is_a_part` (every joining rule of `ve/english_grammar/*.json` written in a vocabulary that reads it: G, FD and a new `Alt` frame for `alternatives@0`; every `is` fronted; Lean and the reference compared); the seeded fault "no joined verb phrases" in `test_the_comparison_can_fail`; fixtures G35 (control G35c), G36 and G37 (spec rows, table, generated Lean guards, service, `ve ask`); Lean guards for the joining rule tags of both profile lists, the part spans and the offers | `b23ef5e0` |
+
+`ask_one`, `ask_moved`, `ask_rephrasings` and `askable_iff` are unchanged and still proved; no theorem statement
+changed. The frozen inventory changed only for four `VE/Question` files; trust V +16, all in `Moved.lean`. The deep
+differential (`VE_QUESTION_DIFF_DEEP=1`) agrees. Not done here: the follow-ups (reach's own `is` fronted past
+`starting from ann,`, which G's vocabulary cannot write; `Moved.lean`'s ambiguous-question point; Fable C2, C5, C6).
+
+`python3 tools/gate.py --workers 12` on clean HEAD `b23ef5e0` (the code of this fix; only this section differs):
+**passed**. Lean build, Lean audit (standard axioms only), Rust build, 36 Rust tests and the Python collection pass;
+the suite collected 14,060 tests, selected 14,059, and recorded 13,967 passed, 92 skipped, 0 failed
+(`gate-result.json`, status `passed`). Free disk before the run: 58 GB.
