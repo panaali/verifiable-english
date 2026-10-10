@@ -139,6 +139,18 @@ def test_json_merge_refuses_a_value_both_sides_changed():
     assert R.merge_json({"x": 1, "y": 1}, {"x": 2}, {"x": 2, "y": 1}) == {"x": 2}
 
 
+def test_json_merge_keeps_a_sorted_map_sorted_and_the_file_format():
+    base = {"files": [{"file": "b"}, {"file": "d"}]}
+    ours = {"files": [{"file": "a"}, {"file": "b"}, {"file": "d"}]}
+    theirs = {"files": [{"file": "b"}, {"file": "c"}, {"file": "d"}]}
+    assert [r["file"] for r in R.merge_json(base, ours, theirs)["files"]] == ["a", "b", "c", "d"]
+    unsorted = {"files": [{"file": "z"}, {"file": "b"}]}
+    assert [r["file"] for r in R.merge_json(base, unsorted, theirs)["files"]] == ["z", "b", "c"]
+    # A file no dump reproduces (a duplicate key) keeps its indent and its escaping.
+    assert R._json_format('{\n "a": 1,\n "a": "\\u00ab"\n}\n') == (1, True)
+    assert R._json_format(json.dumps({"a": "\u00ab"}, indent=2, ensure_ascii=False) + "\n") == (2, False)
+
+
 def test_assurance_manifest_merge_recomputes_the_decoder_total():
     manifest = json.loads((ROOT / "ve/assurance-manifest.json").read_text())
     ours, theirs = json.loads(json.dumps(manifest)), json.loads(json.dumps(manifest))

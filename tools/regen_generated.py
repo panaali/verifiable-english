@@ -67,11 +67,13 @@ GENERATED = (
               ("lean/VE/WireContract/Limits.lean", "lean/VE/WireContract/Names.lean",
                "lean/VE/WireContract/Tables/*.lean", "ve/wire_contract/contracts.lock",
                "conformance/wire-contract/contracts/contracts.lock", "docs/spec/*-wire-table.md"),
-              ((PY, "-m", "tools.wire_contract", "--write"),
-               (PY, "-m", "tools.wire_contract", "--write", "--directory", "conformance/wire-contract/contracts")),
-              ((PY, "-m", "tools.wire_contract", "--check", "--generated-only"),
-               (PY, "-m", "tools.wire_contract", "--check", "--generated-only", "--directory",
+              # Written without live validation: the examples go through the service, which is built and
+              # pinned only later; the check (after every write) validates them live.
+              ((PY, "-m", "tools.wire_contract", "--write", "--generated-only"),
+               (PY, "-m", "tools.wire_contract", "--write", "--generated-only", "--directory",
                 "conformance/wire-contract/contracts")),
+              ((PY, "-m", "tools.wire_contract", "--check"),
+               (PY, "-m", "tools.wire_contract", "--check", "--directory", "conformance/wire-contract/contracts")),
               note="a changed contract needs a higher `revision` in its source (WC10)"),
     Generated("english-grammar", ("lean/VE/EnglishGrammar/Fixed/*.lean", "ve/english_grammar/LOCK.json"),
               ((PY, "tools/english_grammar_gen.py", "--write"),), ((PY, "tools/english_grammar_gen.py", "--check"),),
@@ -295,6 +297,8 @@ def merge_json(base, ours, theirs, path="$"):
                                f"{path}.{key}")
             if value is not _MISSING:
                 merged[key] = value
+        if list(ours) == sorted(ours) and list(theirs) == sorted(theirs):  # a sorted map stays sorted
+            merged = dict(sorted(merged.items()))
         return merged
     if isinstance(ours, list) and isinstance(theirs, list) and isinstance(base, (list, type(_MISSING))):
         base = base if isinstance(base, list) else []
@@ -302,7 +306,7 @@ def merge_json(base, ours, theirs, path="$"):
         if field is not None:
             merged = merge_json({b[field]: b for b in base}, {o[field]: o for o in ours},
                                 {t[field]: t for t in theirs}, path)
-            return list(merged.values())
+            return list(merged.values())  # in key order when both sides were (the map merge keeps it)
         before = {_text(item) for item in base}
         removed = (before - {_text(item) for item in ours}) | (before - {_text(item) for item in theirs})
         merged, keys = [], set()
@@ -318,13 +322,16 @@ def merge_json(base, ours, theirs, path="$"):
 
 
 def _json_format(text: str) -> tuple:
-    """(indent, ensure_ascii) that reproduce `text` from its value, else the repository's usual (2, False)."""
+    """(indent, ensure_ascii) that reproduce `text` from its value, else the indent of its second line and
+    whether it escapes non-ASCII text."""
     value = json.loads(text)
     for indent in (2, 1, None, 4):
         for ascii_ in (False, True):
             if json.dumps(value, indent=indent, ensure_ascii=ascii_) + "\n" == text:
                 return indent, ascii_
-    return 2, False
+    lines = text.splitlines()
+    second = lines[1] if len(lines) > 1 else ""
+    return (len(second) - len(second.lstrip(" ")) or None), "\\u" in text
 
 
 # Values derived from the rest of a JSON ledger: both sides of a merge change them, so the merge ignores them
