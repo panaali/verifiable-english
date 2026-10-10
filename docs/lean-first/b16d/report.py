@@ -34,7 +34,7 @@ def metrics() -> str:
                      f"{count['retained']} saved invalid-input residues.")
     lines.append(f"- Nine-corpus A/B: {sum(ab['records'].values())} records per side; "
                  f"{ab['unlisted']} unlisted differences.")
-    lines.append(f"- Seeded faults caught: {len(mutants)}/{len(mutants)}. "
+    lines.append(f"- Seeded faults caught: {sum(m['caught'] for m in mutants)}/{len(mutants)}. "
                  f"Clean gate: {gate['status']}, {gate['counts']['passed']} passed, "
                  f"{gate['counts']['skipped']} skipped, {gate['counts']['failed']} failed.")
     return "\n".join(lines)

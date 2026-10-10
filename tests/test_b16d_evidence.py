@@ -52,7 +52,14 @@ def test_every_residue_and_count_comes_from_saved_ledger():
 def test_scope_mutants_and_gate_are_saved():
     mutants = saved("mutants.json")
     assert len(mutants) >= 3 and len({m["bug"] for m in mutants}) == len(mutants)
-    assert all(m["exit_code"] != 0 and "1 failed" in m["failure_excerpt"] for m in mutants)
+    # Every planted fault has a saved result, and the saved result says it was caught.
+    spec = importlib.util.spec_from_file_location("b16d_seed_faults", HERE / "seed_faults.py")
+    assert spec and spec.loader
+    planted = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(planted)
+    assert [(m["bug"], m["test"]) for m in mutants] == [(c[0], c[4]) for c in planted.CASES]
+    assert all(m["caught"] is True and m["exit_code"] != 0 and "1 failed" in m["failure_excerpt"]
+               for m in mutants)
     if not (EVIDENCE / "scope.json").exists():
         return  # The code-commit gate precedes its captured scope.
     scope = saved("scope.json")
