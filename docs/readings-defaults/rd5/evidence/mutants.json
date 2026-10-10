@@ -1,0 +1,109 @@
+{
+ "mutants": [
+  {
+   "name": "no-e24-for-plain-probe",
+   "file": "ve/readings_route.py",
+   "language": "Python",
+   "behaviour": "a pair separated on a plain regulated predicate gets E24, not a CheckerUnavailable report",
+   "old": "if role not in (\"obligation\", \"permission\"):",
+   "new": "if role not in (\"obligation\", \"permission\", \"plain\"):",
+   "test": "tests/test_readings_rd5_plain_probe.py::test_a_pair_probed_on_a_plain_predicate_gets_e24",
+   "failed": true,
+   "exit": 1,
+   "output_tail": [
+    "E           ve.errors.CheckerUnavailable: ReadingsConstruction: Python could not build the English of the document Lean admitted: VEError",
+    "ve/readings_route.py:216: CheckerUnavailable",
+    "=========================== short test summary info ============================",
+    "FAILED tests/test_readings_rd5_plain_probe.py::test_a_pair_probed_on_a_plain_predicate_gets_e24",
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed in 1.29s"
+   ],
+   "sha256_before": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62",
+   "sha256_restored": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62"
+  },
+  {
+   "name": "e24-for-every-probe",
+   "file": "ve/readings_route.py",
+   "language": "Python",
+   "behaviour": "a pair separated on a duty keeps E19",
+   "old": "if role not in (\"obligation\", \"permission\"):",
+   "new": "if role not in (\"permission\",):",
+   "test": "tests/test_readings_rd5_plain_probe.py::test_a_pair_probed_on_a_duty_keeps_e19",
+   "failed": true,
+   "exit": 1,
+   "output_tail": [
+    "E         Use -v to get more diff",
+    "tests/test_readings_rd5_plain_probe.py:67: AssertionError",
+    "=========================== short test summary info ============================",
+    "FAILED tests/test_readings_rd5_plain_probe.py::test_a_pair_probed_on_a_duty_keeps_e19",
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed in 2.42s"
+   ],
+   "sha256_before": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62",
+   "sha256_restored": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62"
+  },
+  {
+   "name": "main-frame-without-norm-defaults",
+   "file": "usecases/udhr-pilot/run-20261010T1400Z/migrate.py",
+   "language": "Python",
+   "behaviour": "the main frame takes norm-defaults@0 beside readings@1, so Lean checks the document as a product",
+   "old": "ADDED_PROFILES = (\"norm-defaults@0\", \"readings@1\")",
+   "new": "ADDED_PROFILES = (\"readings@1\",)",
+   "test": "tests/test_readings_rd5_udhr.py::test_the_migration_reproduces_the_committed_document",
+   "failed": true,
+   "exit": 1,
+   "output_tail": [
+    "E         Use -v to get more diff",
+    "tests/test_readings_rd5_udhr.py:153: AssertionError",
+    "=========================== short test summary info ============================",
+    "FAILED tests/test_readings_rd5_udhr.py::test_the_migration_reproduces_the_committed_document",
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed in 6.12s"
+   ],
+   "sha256_before": "c84939fdd4facdd96b4da3056b4bc8e8a26e0e95729ce59305584e9c7c1e45d0",
+   "sha256_restored": "c84939fdd4facdd96b4da3056b4bc8e8a26e0e95729ce59305584e9c7c1e45d0"
+  },
+  {
+   "name": "unknown-status-taken-as-an-answer",
+   "file": "usecases/udhr-pilot/run-20261010T1400Z/witnesses.py",
+   "language": "Python",
+   "behaviour": "a witness's status is Lean's first answer that is not UNKNOWN",
+   "old": "        if row[\"point_status\"] != \"UNKNOWN\":",
+   "new": "        if True:",
+   "test": "tests/test_readings_rd5_udhr.py::test_one_sets_witnesses_replay_equal_in_its_component_and_alone",
+   "failed": true,
+   "exit": 1,
+   "output_tail": [
+    "E         ...Full output truncated (2 lines hidden), use '-vv' to show",
+    "tests/test_readings_rd5_udhr.py:168: AssertionError",
+    "=========================== short test summary info ============================",
+    "FAILED tests/test_readings_rd5_udhr.py::test_one_sets_witnesses_replay_equal_in_its_component_and_alone",
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed in 10.18s"
+   ],
+   "sha256_before": "c451cb76f2eab5c522a441474c293a0c384519f83b5e0c3f5f4daa9099ff677b",
+   "sha256_restored": "c451cb76f2eab5c522a441474c293a0c384519f83b5e0c3f5f4daa9099ff677b"
+  },
+  {
+   "name": "summary-share-before-for-after",
+   "file": "usecases/udhr-pilot/run-20261010T1400Z/summary.py",
+   "language": "Python",
+   "behaviour": "SUMMARY.md states the saved after share",
+   "old": "%) before, {after['share']['decided_bytes']} of {source} bytes",
+   "new": "%) before, {before['share']['decided_bytes']} of {source} bytes",
+   "test": "tests/test_readings_rd5_udhr.py::test_the_summary_is_rendered_from_the_saved_metrics",
+   "failed": true,
+   "exit": 1,
+   "output_tail": [
+    "E         ...Full output truncated (123 lines hidden), use '-vv' to show",
+    "tests/test_readings_rd5_udhr.py:42: AssertionError",
+    "=========================== short test summary info ============================",
+    "FAILED tests/test_readings_rd5_udhr.py::test_the_summary_is_rendered_from_the_saved_metrics",
+    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
+    "1 failed in 0.82s"
+   ],
+   "sha256_before": "4c3092b6c7c3161b2a1c796c4eaa5cf36eb74099edaf977b5064bc576d4bc321",
+   "sha256_restored": "4c3092b6c7c3161b2a1c796c4eaa5cf36eb74099edaf977b5064bc576d4bc321"
+  }
+ ]
+}
