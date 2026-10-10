@@ -14,6 +14,7 @@ back to the static import graph without a usable map.
 from __future__ import annotations
 
 import argparse
+from collections.abc import Callable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 import datetime
 import gzip
@@ -21,9 +22,11 @@ import json
 import os
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 
 from layer_policy import ROOT, lean_default_targets, lean_executables
@@ -55,8 +58,8 @@ def units(root: Path = ROOT) -> list[str]:
                   for p in (root / "tests").glob("test_*.py")) + sorted(EXTRA_UNITS)
 
 
-def unit_command(unit: str) -> list[str]:
-    return EXTRA_UNITS.get(unit) or nested_pytest.command(["-q", "-p", "no:cacheprovider", unit],
+def unit_command(unit: str, options: Sequence[str] = ()) -> list[str]:
+    return EXTRA_UNITS.get(unit) or nested_pytest.command(["-q", "-p", "no:cacheprovider", *options, unit],
                                                           python=["uv", "run", "--frozen", "--group", "dev", "python"])
 
 
@@ -154,8 +157,49 @@ def read_unit(directory: Path, files: set[str]) -> dict:
     return {**seen, "opaque": sorted(set(opaque))}
 
 
-def run_unit(unit: str, work: Path, timeout: float, tracked: set[str]) -> dict:
-    """Record one unit, or reuse its finished result from an interrupted run."""
+class Stop:
+    """Ends a recorded run early: after `stop()` no unit starts, and each running unit's process group is
+    killed. Each unit runs in its own session, so its group holds every process it started."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._running: set[subprocess.Popen] = set()
+        self._killed: set[subprocess.Popen] = set()
+        self.stopped = False
+
+    def start(self, command: list[str], **options) -> subprocess.Popen | None:
+        with self._lock:
+            if self.stopped:
+                return None
+            process = subprocess.Popen(command, start_new_session=True, **options)
+            self._running.add(process)
+            return process
+
+    def finished(self, process: subprocess.Popen) -> bool:
+        """Forget `process`; whether `stop()` killed it."""
+        with self._lock:
+            self._running.discard(process)
+            return process in self._killed
+
+    def stop(self) -> None:
+        with self._lock:
+            self.stopped = True
+            for process in self._running:
+                kill_group(process)
+                self._killed.add(process)
+
+
+def kill_group(process: subprocess.Popen) -> None:
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+
+
+def run_unit(unit: str, work: Path, timeout: float, tracked: set[str], *, options: Sequence[str] = (),
+             stop: Stop | None = None) -> dict | None:
+    """Record one unit, or reuse its finished result from an interrupted run. With `stop`: None when the run
+    stopped before the unit started, and exit "stopped" (nothing saved) when it stopped while it ran."""
     name = unit.replace("/", "__")
     out, done, log = work / name, work / f"{name}.result.json", work / f"{name}.log"
     if done.exists():
@@ -165,12 +209,22 @@ def run_unit(unit: str, work: Path, timeout: float, tracked: set[str]) -> dict:
     shutil.rmtree(out, ignore_errors=True)
     out.mkdir(parents=True)
     start = time.monotonic()
+    stop = stop or Stop()
     with log.open("w") as handle:
+        process = stop.start(unit_command(unit, options), cwd=ROOT, env=environment(out), stdout=handle,
+                             stderr=subprocess.STDOUT)
+        if process is None:
+            shutil.rmtree(out)
+            return None
         try:
-            code = subprocess.run(unit_command(unit), cwd=ROOT, env=environment(out), stdout=handle,
-                                  stderr=subprocess.STDOUT, timeout=timeout, check=False).returncode
+            code = process.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
+            kill_group(process)
+            process.wait()
             code = "timeout"
+        if stop.finished(process):
+            shutil.rmtree(out)
+            return {"exit": "stopped", "seconds": round(time.monotonic() - start, 1)}
     result = read_unit(out, tracked)
     result.update(exit=code, seconds=round(time.monotonic() - start, 1))
     done.write_text(json.dumps({key: sorted(value) if isinstance(value, set) else value
@@ -331,25 +385,45 @@ def validate(data, where: str = "map") -> None:
         fail(f"{len(silent)} passing units ran no recorded code, e.g. {silent[0]}")
 
 
-def record_units(selected: list[str], work: Path, jobs: int, timeout: float) -> dict[str, dict]:
-    """Run each unit in its own recorded process; a rerun resumes from `work`."""
+def failed_unit(unit: str, result: dict) -> int:
+    """The failures a finished unit counts towards `stop_after`: one when it did not pass."""
+    return int(result["exit"] not in (0, 5))
+
+
+def record_units(selected: list[str], work: Path, jobs: int, timeout: float, *,
+                 options: Callable[[str], Sequence[str]] = lambda unit: (), stop_after: int = 0,
+                 failures: Callable[[str, dict], int] = failed_unit) -> dict[str, dict]:
+    """Run each unit in its own recorded process, starting them in the order of `selected`; a rerun resumes
+    from `work`. With `stop_after` N > 0 the run stops once its finished units count N `failures`: no other
+    unit starts and the running ones are killed. Only the units that ran to the end have a result."""
     work.mkdir(parents=True, exist_ok=True)
     tracked = tracked_paths()
     print(f"recording {len(selected)} units with {jobs} jobs in {work}", flush=True)
+    stop, lock, failed = Stop(), threading.Lock(), 0
 
     def one(unit):
-        result = run_unit(unit, work, timeout, tracked)
+        nonlocal failed
+        result = run_unit(unit, work, timeout, tracked, options=options(unit), stop=stop)
+        if result is None or result["exit"] == "stopped":
+            return unit, None
         print(f"  {unit}: exit {result['exit']} in {result['seconds']} s, "
               f"{len(result['f'])} functions{', OPAQUE' if result['opaque'] else ''}", flush=True)
+        # Counted before this worker takes its next unit, so that unit sees the stop.
+        with lock:
+            failed += failures(unit, result)
+            if stop_after and failed >= stop_after and not stop.stopped:
+                print(f"stopping after {failed} failed tests (--maxfail {stop_after})", flush=True)
+                stop.stop()
         return unit, result
 
     site = site_packages()
     install_hook(site)
     try:
         with ThreadPoolExecutor(jobs) as pool:
-            return dict(pool.map(one, selected))
+            results = dict(pool.map(one, selected))
     finally:
         remove_hook(site)
+    return {unit: result for unit, result in results.items() if result is not None}
 
 
 def write_map(data: dict, output: Path) -> None:
