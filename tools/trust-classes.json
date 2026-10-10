@@ -638,6 +638,12 @@
         "ResponseShape.Schemas.Quantity.error"
       ]
     },
+    "ResponseShape/Schemas/Question.lean": {
+      "G[V]": [
+        "ResponseShape.Schemas.Question.row",
+        "ResponseShape.Schemas.Question.file"
+      ]
+    },
     "ResponseShape/Schemas/Readings.lean": {
       "G[V]": [
         "ResponseShape.Schemas.Readings.file",
@@ -883,6 +889,7 @@
         "ResponseShape.Skeletons.english",
         "ResponseShape.Skeletons.englishCheck",
         "ResponseShape.Skeletons.englishGrammar",
+        "ResponseShape.Skeletons.englishQuestion",
         "ResponseShape.Skeletons.englishRead",
         "ResponseShape.Skeletons.environment",
         "ResponseShape.Skeletons.evaluate",
@@ -5395,6 +5402,206 @@
     "VE/Order/WireGate.lean": {
       "P": [
         "VE.Order.OrderProfilesAccepted"
+      ]
+    },
+    "VE/Question/Basic.lean": {
+      "G[V]": [
+        "VE.Question.auxiliaries",
+        "VE.Question.caseFrame",
+        "VE.Question.whWords",
+        "VE.Question.maxQuestionBytes",
+        "VE.Question.maxTokens",
+        "VE.Question.maxCandidates",
+        "VE.Question.Form",
+        "VE.Question.Candidate",
+        "VE.Question.Shape",
+        "VE.Question.questionMarks",
+        "VE.Question.shape",
+        "VE.Question.Shape.body",
+        "VE.Question.isPunct",
+        "VE.Question.bodySentence",
+        "VE.Question.gaps",
+        "VE.Question.insertAt",
+        "VE.Question.candidates",
+        "VE.Question.Got",
+        "VE.Question.got",
+        "VE.Question.Got.isNotOne",
+        "VE.Question.Got.isBudget",
+        "VE.Question.Got.isMany",
+        "VE.Question.Got.isRefused",
+        "VE.Question.Got.meaning?",
+        "VE.Question.addMeaning",
+        "VE.Question.firstMeanings",
+        "VE.Question.caseThatQuestion"
+      ],
+      "G[R]": [
+        "VE.Question.Shape.offset"
+      ]
+    },
+    "VE/Question/Examples.lean": {
+      "T": [
+        "VE.Question.groupEnv",
+        "VE.Question.groupLex",
+        "VE.Question.isOne",
+        "VE.Question.isNone",
+        "VE.Question.isIndefinite",
+        "VE.Question.joiningTags"
+      ]
+    },
+    "VE/Question/Fixtures.lean": {
+      "T": [
+        "VE.Question.Fixtures.answer",
+        "VE.Question.Fixtures.expect",
+        "VE.Question.Fixtures.frameG",
+        "VE.Question.Fixtures.frameFd",
+        "VE.Question.Fixtures.frameFLfv3",
+        "VE.Question.Fixtures.frameA",
+        "VE.Question.Fixtures.frameAd",
+        "VE.Question.Fixtures.frameAc",
+        "VE.Question.Fixtures.frameAr",
+        "VE.Question.Fixtures.frameU"
+      ]
+    },
+    "VE/Question/Frames.lean": {
+      "G[R]": [
+        "VE.Question.Piece",
+        "VE.Question.answerFrames",
+        "VE.Question.pieceReadings",
+        "VE.Question.frameReadings",
+        "VE.Question.gated",
+        "VE.Question.askedGate"
+      ],
+      "P": [
+        "VE.Question.lead"
+      ]
+    },
+    "VE/Question/Help.lean": {
+      "G[R]": [
+        "VE.Question.diagnosisOf",
+        "VE.Question.closestStep",
+        "VE.Question.closest",
+        "VE.Question.mapPoint",
+        "VE.Question.mappedPiece",
+        "VE.Question.mapSpan",
+        "VE.Question.shiftReject"
+      ]
+    },
+    "VE/Question/Moved.lean": {
+      "G[V]": [
+        "VE.Question.clauseWords",
+        "VE.Question.isClauseWord",
+        "VE.Question.width",
+        "VE.Question.widths",
+        "VE.Question.ntFormula",
+        "VE.Question.readsWord",
+        "VE.Question.isSentencePart",
+        "VE.Question.joinWords",
+        "VE.Question.joinsPhrases",
+        "VE.Question.isPhrase",
+        "VE.Question.clauses",
+        "VE.Question.kidClauses",
+        "VE.Question.tokenAt",
+        "VE.Question.inClause",
+        "VE.Question.oneTree",
+        "VE.Question.movedOut",
+        "VE.Question.askable",
+        "VE.Question.Asked",
+        "VE.Question.ask"
+      ],
+      "G[R]": [
+        "VE.Question.phraseStarts",
+        "VE.Question.joins",
+        "VE.Question.kidJoins",
+        "VE.Question.dropTokens",
+        "VE.Question.frontedFrom",
+        "VE.Question.movedRephrasings"
+      ]
+    },
+    "VE/Question/Properties.lean": {
+      "S": [
+        "VE.Question.NoDerivation",
+        "VE.Question.AtMostOneDerivation",
+        "VE.Question.HasReading",
+        "VE.Question.QuestionOneReading",
+        "VE.Question.GrammarChecks"
+      ]
+    },
+    "VE/Question/Read.lean": {
+      "G[V]": [
+        "VE.Question.Outcome",
+        "VE.Question.withinLimits",
+        "VE.Question.classify",
+        "VE.Question.swap",
+        "VE.Question.indefiniteSwaps",
+        "VE.Question.offered",
+        "VE.Question.readQuestion"
+      ]
+    },
+    "VE/Question/Run.lean": {
+      "D[V]": [
+        "VE.Question.Run.questionCase"
+      ],
+      "G[I]": [
+        "VE.Question.Run.questionVersion",
+        "VE.Question.Run.codesCase"
+      ],
+      "G[R]": [
+        "VE.Question.Run.codeClasses",
+        "VE.Question.Run.statusCodes",
+        "VE.Question.Run.statusFields",
+        "VE.Question.Run.coded",
+        "VE.Question.Run.ofQuestion",
+        "VE.Question.Run.pointSpan",
+        "VE.Question.Run.whole",
+        "VE.Question.Run.lexicalFields",
+        "VE.Question.Run.refusedFields",
+        "VE.Question.Run.ambiguousFields",
+        "VE.Question.Run.noneAdvice",
+        "VE.Question.Run.noneFields",
+        "VE.Question.Run.texts"
+      ],
+      "G[V]": [
+        "VE.Question.Run.formName",
+        "VE.Question.Run.outcomeFields",
+        "VE.Question.Run.caseReported",
+        "VE.Question.Run.oneFields",
+        "VE.Question.Run.askedFields"
+      ]
+    },
+    "VE/Question/Spans.lean": {
+      "P": [
+        "VE.Question.cpStep"
+      ]
+    },
+    "VE/Question/Strings.lean": {
+      "P": [
+        "VE.Question.Str.termSz"
+      ]
+    },
+    "VE/Question/Texts.lean": {
+      "G[I]": [
+        "VE.Question.question_version"
+      ],
+      "G[R]": [
+        "VE.Question.newCodeClasses",
+        "VE.Question.notOneQuestionText",
+        "VE.Question.whQuestionText",
+        "VE.Question.auxiliariesText",
+        "VE.Question.formText",
+        "VE.Question.questionTooLongText",
+        "VE.Question.workBudgetText",
+        "VE.Question.ambiguousQuestionText",
+        "VE.Question.indefiniteText",
+        "VE.Question.noDerivationText",
+        "VE.Question.closestText",
+        "VE.Question.badQuestionSpacingText",
+        "VE.Question.markerText",
+        "VE.Question.illTypedQuestionText",
+        "VE.Question.movedText",
+        "VE.Question.unansweredText"
+      ],
+      "G[V]": [
+        "VE.Question.askedText"
       ]
     },
     "VE/Readings/Asserted.lean": {
