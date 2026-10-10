@@ -1,0 +1,16 @@
+{
+ "base": "cbbab2df54dacf06323769d13ee7bd10d481eec2",
+ "how": "git diff --name-only main...HEAD and git log main..HEAD --no-merges, saved when the report was written",
+ "product_python": [
+  "tools/gate.py",
+  "tools/gate_pytest.py",
+  "tools/quarantine.py",
+  "tools/select_tests.py",
+  "tools/test_map.py",
+  "tools/test_order.py"
+ ],
+ "product_lean": [],
+ "product_rust": [],
+ "data": ["tools/test-quarantine.json", "tools/gate-collection.json"],
+ "tests": ["tests/test_gate_quarantine.py", "tests/test_test_order.py", "tests/test_test_speed_b5_evidence.py"]
+}
