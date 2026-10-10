@@ -6,12 +6,16 @@ checked part and route), its validation and the product's conflict answer withou
 generated from Lean's encoders (`elaborate_components`, `validate_components`, `verdicts_components`; a case's
 environment, document and checked part are objects, `Readings.Run.asObject`) and every check of them runs inside one
 guard (`readings_verdicts.relayed`), so a malformed answer is `CheckerUnavailable`, never a crash nor a verdict. Each
-case is bound to the request by its name (`_bind_part`): the main case keeps every unit and the request's
-environment, a companion case only its own set, its environment and open terms its companions' united, and the
-document its answer reads is its document or the main case's fixed part.
+case is bound to the request by its name (`_bind_part`): its document is the request's projection on it
+(`_projection`, Lean's `mainDoc` and `componentDoc`) row for row, the main case's environment is the request's, a
+companion case's environment and open terms its companions' united, and the document its answer reads is its
+document or the main case's fixed part.
 
 The fuzz takes the genuine answers of F-C1 and F-C17 and retypes, drops, empties and duplicates every field; each
-mutant must be refused, except the values listed in `LEAN_OWNED` with the Lean definition that owns them.
+mutant must be refused, except the values listed in `LEAN_OWNED` with the Lean definition that owns them. The graft
+fuzz (review B2 of rd-4b looprecheck 1) puts the request's own rows where the split does not: every unit, set,
+narrowing and coupling of the request, in every form a unit takes in a split, inserted into each case, and each
+case's lists reordered.
 """
 from __future__ import annotations
 
@@ -57,11 +61,15 @@ def _capture(path):
     return captured
 
 
+NARROWING = {"id": "n1", "set": "rs_a", "version": 1, "keeps": ["every"], "by": "w", "reason_spans": ["u0"]}
+
+
 @pytest.fixture(scope="module")
 def genuine(tmp_path_factory):
     from tests.test_readings_components_document import fc1, fc17
     tmp = tmp_path_factory.mktemp("rd4b-load")
-    return {"F-C1": _capture(fc1(tmp)), "F-C17": _capture(fc17(tmp))}
+    return {"F-C1": _capture(fc1(tmp)), "F-C17": _capture(fc17(tmp)),
+            "F-C11": _capture(fc1(tmp_path_factory.mktemp("rd4b-load-fc11"), narrowings=[NARROWING]))}
 
 
 def _load(captured, rows):
@@ -136,6 +144,102 @@ def test_each_case_is_bound_by_its_name(genuine):
     assert _refused(captured, rows)
 
 
+def test_a_companion_case_holding_an_uncited_unit_is_refused(genuine):
+    """Review B2 of rd-4b looprecheck 1: the main unit `u0` added to `rs_a`'s document and checked part (both, so the
+    two still agree) by id alone, the form a cited unit takes, was accepted and stored as `['u0', 'u_a']`; Lean's
+    `componentDoc` gives `rs_a` only `u_a`. Each form of `u0` is refused."""
+    captured = genuine["F-C1"]
+    u0 = _request(captured)["units"][0]
+    assert u0["id"] == "u0"
+    for form in _forms(u0):
+        rows = copy.deepcopy(captured["rows"])
+        for field in ("document", "checked"):
+            rows[0]["components"][1][field]["units"].insert(0, copy.deepcopy(form))
+        assert _refused(captured, rows), form
+
+
+def _forms(unit):
+    """A unit as the split may carry it: as written, without its content, by id alone."""
+    return [unit, {k: v for k, v in unit.items() if k != "content"}, {"id": unit["id"]}]
+
+
+def _request(captured):
+    """The document `load` sends Lean, as its request carries it."""
+    from ve import readings_route
+    real, seen = readings_route.run_lean, {}
+
+    def run(cases, **kw):
+        seen["document"] = cases[0]["document"]
+        return copy.deepcopy(captured["rows"])
+    readings_route.run_lean = run
+    try:
+        args, kw = captured["args"]
+        from ve import readings_components
+        readings_components.load(*args, **kw)
+    finally:
+        readings_route.run_lean = real
+    return copy.deepcopy(seen["document"])
+
+
+def _grafts(captured):
+    """Every well-typed misplacement of the request's rows in a case's document (and checked part with it, so the two
+    still agree): each row of the request's `units` (in each of its `_forms`), `reading_sets`, `narrowings` and
+    `couplings` inserted first and last into that list of every case, each unit of a case put in another of its
+    forms, and each such list of two or more rows reversed. The retype, drop, empty and duplicate fuzz below cannot
+    make these: every value is one the request holds."""
+    document = _request(captured)
+    for i, part in enumerate(captured["rows"][0]["components"]):
+        for key in ("units", "reading_sets", "narrowings", "couplings"):
+            rows = part["document"].get(key)
+            if type(rows) is not list:
+                continue
+            sources = document.get(key) or []
+            for row in [form for u in sources for form in _forms(u)] if key == "units" else sources:
+                for at in (0, len(rows)):
+                    yield f"{part['component']}: {key} gains {sorted(row.items())[:2]} at {at}", i, key, \
+                        rows[:at] + [copy.deepcopy(row)] + rows[at:]
+            if len(rows) > 1:
+                yield f"{part['component']}: {key} reversed", i, key, rows[::-1]
+        units = part["document"]["units"]
+        for j, unit in enumerate(units):
+            for form in _forms(next(u for u in document["units"] if u["id"] == unit["id"])):
+                yield f"{part['component']}: unit {unit['id']} as {sorted(form)}", i, "units", \
+                    units[:j] + [copy.deepcopy(form)] + units[j + 1:]
+
+
+@pytest.mark.parametrize("name", ["F-C1", "F-C11", "F-C17"])
+def test_every_graft_of_a_request_row_into_a_case_is_refused(genuine, name):
+    """The class of B2 (rd-4b looprecheck 1): a case's document is the request's projection on it (`_projection`,
+    Lean's `mainDoc` and `componentDoc`), row for row, so a request row added to, moved within or reshaped in any case
+    is refused. F-C11 carries a narrowing on `rs_a` citing `u0`, which `rs_a` holds by id alone."""
+    captured = genuine[name]
+    survived = []
+    for label, i, key, value in _grafts(captured):
+        rows = copy.deepcopy(captured["rows"])
+        part = rows[0]["components"][i]
+        genuine_rows = part["document"][key]
+        if value == genuine_rows:
+            continue
+        # the checked part with it when it carries the same rows (a companion case's, or the main case's whole)
+        if part["checked"].get(key) == genuine_rows:
+            part["checked"] = {**part["checked"], key: copy.deepcopy(value)}
+        part["document"] = {**part["document"], key: value}
+        if not _refused(captured, rows):
+            survived.append(label)
+    assert survived == [], survived
+
+
+def test_a_cited_unit_is_carried_by_id_alone(genuine):
+    """F-C11 genuine: `rs_a`'s narrowing cites `u0`, which its case holds without kind or content; the main case
+    keeps `u_a` without its content (the cited unit's and the set unit's forms `_projection` binds)."""
+    captured = genuine["F-C11"]
+    loaded = _load(captured, captured["rows"])
+    by = {p["name"]: p["document"] for p in loaded["parts"]}
+    assert by["rs_a"]["units"][0] == {"id": "u0"} and [u["id"] for u in by["rs_a"]["units"]] == ["u0", "u_a"]
+    assert [n["id"] for n in by["rs_a"]["narrowings"]] == ["n1"] and by["main"]["narrowings"] == []
+    assert "content" not in next(u for u in by["main"]["units"] if u["id"] == "u_a")
+
+
 # What Lean alone computes inside these answers (a mutant there is Lean's answer, not a binding): the generated
 # declarations and Fill premises of RD-2b, the filled contents (`_bind_completion`: "What is left is Lean's alone"),
 # and the product answer's plan lines (as in test_readings_components_lean.py's LEAN_OWNED).
@@ -172,7 +276,8 @@ def _mutants(row, prefix):
 
 
 CASES = [("F-C1", k, (("components", i) if k < 2 else ())) for k in range(2) for i in range(3)] + [
-    ("F-C1", 2, ()), ("F-C17", 0, ("components", 0)), ("F-C17", 1, ("components", 0))]
+    ("F-C1", 2, ()), ("F-C17", 0, ("components", 0)), ("F-C17", 1, ("components", 0)),
+    ("F-C11", 0, ("components", 1))]
 
 
 @pytest.mark.parametrize("name,k,prefix", CASES, ids=[f"{n}-{ROWS[k]}-{'-'.join(map(str, p))}" for n, k, p in CASES])
