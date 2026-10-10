@@ -618,20 +618,8 @@ class Superposed(_Route):
                 result = {"status": "UNKNOWN", "route": "superposed", "budget": dict(BUDGET),
                           **({"reason": f"conflict status: {conflict['status']}"}
                              if conflict["status"] != "CONFLICT-FREE" else {})}
-        if self.completion and self.choices is not None:
-            result["choices"] = [{"choice": self.choice_json(c), "status": self._choice_premises(c)}
-                                 for c in self.choices]
         result["candidates"] = self.candidate_premises()
         return result
-
-    def _choice_premises(self, choice):
-        """Under the completion, one compatible choice's premise status, as RD-3's enumerated answer lists it
-        (review B3 of rd-6b): `model` with a checked model under its atoms, `INCONSISTENT` with a certificate of ⊥
-        there (only when CONFLICT-FREE there), else `UNKNOWN`."""
-        A = [(R.id, choice[R.id]) for R in self.sets]
-        if self.model(A) is not None:
-            return "model"
-        return "INCONSISTENT" if self.certificate(A, (), None) is not None else "UNKNOWN"
 
     def candidate_premises(self):
         """Per candidate (4.5): `model`, `dead` (finding), `narrowed` (a narrowing in force drops it, E7),

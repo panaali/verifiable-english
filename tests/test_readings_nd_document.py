@@ -132,7 +132,9 @@ def test_fnd1_check_every_choice_conflict_free_with_a_model(tmp_path):
                                   "1 reading premises")
     assert report["premises"]["status"] == "model"
     assert report["premises"]["route"] == "superposed"
-    assert [c["status"] for c in report["premises"]["choices"]] == ["model", "model"]
+    # The superposed route states each reading's premise status (S2a 4.5; RD-7's superposed fold); a status per
+    # choice would need one Lean check per choice (docs/readings-defaults/rd6b/DELTA.md).
+    assert "choices" not in report["premises"]
     assert [c["status"] for c in report["premises"]["candidates"]] == ["model", "model"]
     # RD-3's lines but the enumerated route's "checked one way at a time", which the superposed route makes false
     # (pending the DRI's sign-off, docs/readings-defaults/rd6b/DELTA.md).
@@ -561,3 +563,33 @@ def test_filled_environment_is_typed_by_the_schema_and_bound_to_the_request():
         bad["filled"]["environment"]["profiles"] = profiles
         with pytest.raises(CheckerUnavailable, match="invalid answer"):
             _completion_elaborate(bad, case)
+
+
+def test_superposed_gaps_are_leans_and_bound_to_the_request(tmp_path, monkeypatch):
+    """Review B3 of rd-6b: the gaps a superposed countermodel shows are Lean's (`ndModelGaps`), relayed only when
+    each names an unspecified predicate of the request and elements of the model, as many as its arguments; any
+    other answer is unavailable, never worded."""
+    from ve.readings_verdicts import Superposed, context
+    route = context(load_document(fnd1(tmp_path)))
+    assert isinstance(route, Superposed)
+    found = route.model([("rs_1", 1)], (), QUERY)
+    assert found["gaps"] == [["help_required", ["e0", "e0"], False]]
+    genuine_lean = Superposed.lean
+
+    def answering(gaps):
+        def lean(self, kind, **fields):
+            row = genuine_lean(self, kind, **fields)
+            if kind == "readings-model":
+                row = {**row, "gaps": gaps} if gaps is not None else {k: v for k, v in row.items() if k != "gaps"}
+            return row
+        return lean
+
+    for k, gaps in enumerate((None, [["asks", ["e0", "e0"], False]], [["help_required", ["e0", "zz"], False]],
+                              [["help_required", ["e0"], False]], [["help_required", ["e0", "e0"], "no"]],
+                              [["help_required", ["e0", "e0"]]], "help_required",
+                              [["unsaid__help_required", ["e0", "e0"], False]])):
+        monkeypatch.setattr(Superposed, "lean", answering(gaps))
+        (tmp_path / str(k)).mkdir()
+        fresh = context(load_document(fnd1(tmp_path / str(k))))
+        with pytest.raises(CheckerUnavailable, match="gaps"):
+            fresh.model([("rs_1", 1)], (), QUERY)
