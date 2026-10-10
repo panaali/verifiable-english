@@ -1,6 +1,6 @@
 {
   "$id": "ask.json",
-  "$comment": "Lean question answer (temporary).",
+  "$comment": "Lean question answer: the lines Lean renders from its checked answer, every field typed.",
   "row": {
     "anyOf": [
       {"$ref": "common.json#/$defs/case_error"},
@@ -12,10 +12,200 @@
       },
       {
         "additionalProperties": false,
-        "properties": {"id": true, "result": true, "status": {"const": "ok"}},
+        "properties": {
+          "id": true,
+          "result": {"anyOf": [{"$ref": "#/$defs/answered"}, {"$ref": "#/$defs/refused"}]},
+          "status": {"const": "ok"}
+        },
         "required": ["id", "status", "result"],
         "type": "object"
       }
     ]
+  },
+  "$defs": {
+    "answered": {
+      "additionalProperties": false,
+      "properties": {
+        "ast": {"$ref": "#/$defs/english_formula"},
+        "form": {"enum": ["caseThat", "fronted"]},
+        "identities": {"$ref": "#/$defs/identities"},
+        "lead": {"enum": ["yes", "no", "notSettled", "notNecessarily", "unknown", "by_reading"]},
+        "lines": {"items": {"$ref": "#/$defs/line"}, "minItems": 1, "type": "array"},
+        "route": {"enum": ["readings", "plain", "norm-defaults"]},
+        "rows": {"items": {"$ref": "#/$defs/row"}, "minItems": 1, "type": "array"},
+        "sentence": {"minLength": 1, "type": "string"},
+        "spans": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [{"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "status": {"const": "answered"},
+        "text": {"items": {"type": "string"}, "type": "array"},
+        "unchecked_names": {"items": {"$ref": "#/$defs/name"}, "type": "array"},
+        "unused": {"items": {"$ref": "common.json#/$defs/token"}, "type": "array"}
+      },
+      "required": [
+        "status",
+        "route",
+        "form",
+        "sentence",
+        "ast",
+        "spans",
+        "lead",
+        "text",
+        "lines",
+        "rows",
+        "unused",
+        "unchecked_names",
+        "identities"
+      ],
+      "type": "object"
+    },
+    "choice": {
+      "$comment": "Readings.choiceJson: [set, index] per open set.",
+      "items": {"$ref": "#/$defs/pair_nat"},
+      "type": "array"
+    },
+    "english_formula": {
+      "$comment": "EnglishGrammar.EFormula.encode of the question's formula: EFormula.decode's grammar.",
+      "minItems": 1,
+      "type": "array"
+    },
+    "gap": {
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/strings"}, {"type": "boolean"}],
+      "type": "array"
+    },
+    "identities": {
+      "additionalProperties": false,
+      "properties": {
+        "actions_version": {"type": "string"},
+        "document_id": {"$ref": "common.json#/$defs/hex64"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "grammar_id": {"$ref": "common.json#/$defs/hex64"},
+        "lexicon_id": {"$ref": "common.json#/$defs/hex64"},
+        "question_version": {"type": "string"},
+        "source_sha256": {"$ref": "common.json#/$defs/hex64"}
+      },
+      "required": [
+        "source_sha256",
+        "environment_id",
+        "lexicon_id",
+        "grammar_id",
+        "actions_version",
+        "question_version",
+        "document_id"
+      ],
+      "type": "object"
+    },
+    "line": {
+      "$comment": "VE.Ask.Run.lineJson: a line of the answer, its text Lean's lineText of its metadata.",
+      "additionalProperties": false,
+      "properties": {
+        "frame": {"minLength": 1, "type": "string"},
+        "quote": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [{"$ref": "common.json#/$defs/token"}, {"type": "string"}],
+              "type": "array"
+            }
+          ]
+        },
+        "readings": {"items": {"$ref": "#/$defs/pair_nat"}, "type": "array"},
+        "source": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/source"}]},
+        "text": {"minLength": 1, "type": "string"},
+        "unchecked": {"type": "boolean"},
+        "witness": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/choice"}]}
+      },
+      "required": ["frame", "text", "source", "quote", "readings", "witness", "unchecked"],
+      "type": "object"
+    },
+    "name": {
+      "additionalProperties": false,
+      "properties": {"index": {"$ref": "common.json#/$defs/nat"}, "set": {"type": "string"}, "text": {"type": "string"}},
+      "required": ["set", "index", "text"],
+      "type": "object"
+    },
+    "pair_nat": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}],
+      "type": "array"
+    },
+    "refused": {
+      "$comment": "A question VE does not read with one meaning: english.question's status, code, class and text.",
+      "additionalProperties": false,
+      "properties": {
+        "class": {"type": "string"},
+        "code": {"type": "string"},
+        "identities": {"$ref": "#/$defs/identities"},
+        "status": {"type": "string"},
+        "text": {"type": "string"}
+      },
+      "required": ["status", "code", "class", "text", "identities"],
+      "type": "object"
+    },
+    "row": {
+      "$comment": "VE.Ask.Run.rowJson: one compatible choice, its lead, its reason, its citations and its countermodel's gaps.",
+      "additionalProperties": false,
+      "properties": {
+        "choice": {"$ref": "#/$defs/choice"},
+        "cited": {"items": {"$ref": "#/$defs/source"}, "type": "array"},
+        "gaps": {"items": {"$ref": "#/$defs/gap"}, "type": "array"},
+        "lead": {"enum": ["yes", "no", "notSettled", "notNecessarily", "unknown"]},
+        "reason": {"anyOf": [{"type": "null"}, {"enum": ["X1", "X2", "X3", "X4", "X5", "X6"]}]}
+      },
+      "required": ["choice", "lead", "reason", "cited", "gaps"],
+      "type": "object"
+    },
+    "source": {
+      "$comment": "VE.Ask.Run.sourceJson: where a cited premise comes from.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {"kind": {"const": "unit"}, "unit": {"$ref": "common.json#/$defs/token"}},
+          "required": ["kind", "unit"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"kind": {"const": "rules"}, "predicate": {"type": "string"}},
+          "required": ["kind", "predicate"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"kind": {"const": "definition"}, "name": {"type": "string"}},
+          "required": ["kind", "name"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"kind": {"const": "background"}},
+          "required": ["kind"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"kind": {"const": "pair"}, "permission": {"type": "string"}, "required": {"type": "string"}},
+          "required": ["kind", "required", "permission"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"kind": {"const": "fill"}, "permission": {"type": "string"}, "required": {"type": "string"}},
+          "required": ["kind", "required", "permission"],
+          "type": "object"
+        }
+      ]
+    }
   }
 }

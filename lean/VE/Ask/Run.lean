@@ -103,6 +103,18 @@ def identitiesOf (text q : String) (lexicon : Json) (E : VE.EnglishGrammar.Env) 
     ("question_version", .str questionVersion),
     ("document_id", .str (← VE.Service.Document.documentId sp))])
 
+/-- A string field of a field list, `""` otherwise. -/
+def fieldText (fs : List (String × Json)) (k : String) : String :=
+  match fs.lookup k with
+  | some (.str t) => t
+  | _ => ""
+
+/-- A question VE does not read with one meaning: `english.question`'s status, code, class and text for it (its
+    span, advice, rephrasings and witnesses are `english.question`'s, which the relay asks first). -/
+def refusedFields (fs : List (String × Json)) : List (String × Json) :=
+  [("status", .str (fieldText fs "status")), ("code", .str (fieldText fs "code")),
+   ("class", .str (fieldText fs "class")), ("text", .str (fieldText fs "text"))]
+
 def askCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ["id", "document", "question", "lexicon", "case", "names"]
   let id ← VE.Bridge.stringField j "id"
@@ -117,7 +129,7 @@ def askCase (j : Json) : Except String Json := do
     pure (VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))])
   | other =>
     let fields ← askedFields E.profiles q E L other
-    pure (VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))])
+    pure (VE.Route.Wire.ok id [("result", Json.mkObj (refusedFields fields ++ [("identities", identities)]))])
 
 def caseReported (j : Json) : Json :=
   match askCase j with
