@@ -3,27 +3,27 @@
  "totals": {
   "K": 997,
   "S": 9633,
-  "D": 13363,
-  "G": 24758,
+  "D": 13368,
+  "G": 24760,
   "C": 8138,
   "P": 66737,
-  "T": 13318,
-  "o": 11470,
-  "D[V]": 12002,
+  "T": 13324,
+  "o": 11471,
+  "D[V]": 12007,
   "D[R]": 862,
   "D[I]": 499,
-  "G[V]": 23123,
+  "G[V]": 23125,
   "G[R]": 1406,
   "G[I]": 229,
   "tied": 171,
   "unclassified": 0,
-  "trusted": 45603,
-  "lines": 148414
+  "trusted": 45610,
+  "lines": 148428
  },
  "budget": {
   "K": 997,
   "S": 9633,
-  "V": 34973
+  "V": 34980
  },
  "signed": [],
  "history": [
@@ -360,6 +360,19 @@
     "K": 997,
     "S": 9633,
     "V": 34973
+   }
+  },
+  {
+   "change": "Background count over the FOL projection: one shared VE.Core.Layers.folEntry filter for every regenerated Background and ResponseShape.backgroundCount (VE/Core/Layers.lean +5, ResponseShape.lean +2 trusted lines); the allowance awaits the DRI's signature",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9633,
+    "V": 34973
+   },
+   "to": {
+    "K": 997,
+    "S": 9633,
+    "V": 34980
    }
   }
  ],
@@ -3636,7 +3649,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 342,
+   "T": 348,
    "o": 51,
    "D[V]": 0,
    "D[R]": 0,
@@ -3647,7 +3660,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 393
+   "lines": 399
   },
   "ResponseShape/Audit.lean": {
    "K": 0,
@@ -4853,21 +4866,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 683,
+   "G": 685,
    "C": 0,
    "P": 0,
    "T": 13,
-   "o": 44,
+   "o": 45,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 677,
+   "G[V]": 679,
    "G[R]": 6,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 677,
-   "lines": 740
+   "trusted": 679,
+   "lines": 743
   },
   "SensesMain.lean": {
    "K": 0,
@@ -6052,13 +6065,13 @@
   "VE/Core/Layers.lean": {
    "K": 0,
    "S": 0,
-   "D": 62,
+   "D": 67,
    "G": 53,
    "C": 0,
    "P": 0,
    "T": 0,
    "o": 29,
-   "D[V]": 62,
+   "D[V]": 67,
    "D[R]": 0,
    "D[I]": 0,
    "G[V]": 53,
@@ -6066,8 +6079,8 @@
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 115,
-   "lines": 144
+   "trusted": 120,
+   "lines": 149
   },
   "VE/Core/PathRules.lean": {
    "K": 0,
