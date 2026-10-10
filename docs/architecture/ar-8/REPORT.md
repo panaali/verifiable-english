@@ -8,8 +8,11 @@ Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` (branch `design/arch-review`), secti
   Rust. Rules: a crate depends only on workspace crates of a lower layer (`ve-kernel` 1, `ve-profile` 2,
   `ve-core` 3, `ve` 4), so `ve-kernel` uses no workspace crate, `ve-profile` only `ve-kernel`, `ve-core` both and
   `ve` all; every dependency kind and target counts, as cargo resolves it (workspace inheritance, renames,
-  `package =`); a path dependency must reach a workspace member; every member has a layer; the `ve-core`
-  facade has a library whose directory holds only `lib.rs`.
+  `package =`); a path dependency must reach a workspace member, and the one its declared name names (`--no-deps`
+  reports both unresolved); every member has a layer; the `ve-core` facade has a library whose directory holds
+  only `lib.rs`, and that `lib.rs` is in the plain layout of a re-export facade, line by line and fail-closed
+  (comments, lint attributes, then `pub use` items of the facade's dependencies under `cfg(feature)` and
+  `doc(hidden)`).
 - Deleted: the module-group tokenizer and its rules, the `--crates-only` flag, `tools/rust-module-exceptions.json`
   and the tokenizer's fixture tables and tests in `tools/test_layer_policy.py`.
 - The pre-commit hook's snapshot now holds the staged Rust workspace (manifests, sources, `rust-toolchain.toml`),
@@ -17,7 +20,8 @@ Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` (branch `design/arch-review`), secti
 - `tools/select_tests.py`: the deleted ledger is no longer a Rust-check input.
 - `rust/ve-kernel/src/internal.rs`: a doc comment that cited the deleted module check, reworded on the same two
   lines; the release binary's hash is unchanged and pinned.
-- Behaviour deltas of the tools: [DELTA.md](DELTA.md) (T1 and T5, and part of T2, need a DRI signature).
+- Behaviour deltas of the tools: [DELTA.md](DELTA.md). T1 (the deleted module check) and T5 (the hook's scope)
+  need a DRI signature: HUMAN items, owner the DRI, deferred (no standing ruling covers them).
 
 ## Fixtures (plan row)
 
@@ -25,14 +29,20 @@ Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` (branch `design/arch-review`), secti
 |---|---|
 | `ve-kernel/Cargo.toml` gains a dependency on `ve-profile`: fail | `tools/test_layer_policy.py::LayerSelectionTests::test_outward_crate_dependencies_are_rejected` (also kernel → core, profile → core, core → `ve`) |
 | A new module in `ve-core/src`: fail | `test_modules_in_the_facade_are_rejected` (`extra.rs`, `nested/inner.rs`, and a facade with no library); through the hook: `tests/test_precommit_hook.py::test_staged_rust_workspace_is_read_by_cargo` |
+| An inline module or any other item in the facade's `lib.rs`: fail (review F3) | `test_the_facade_holds_only_re_exports` (31 forms: inline and `#[path]` modules, items, macros, `include!`, private or glob or renamed or foreign-rooted `use`, code hidden behind comments, CR, BOM or look-alike letters); through the hook: `tests/test_precommit_hook.py::test_staged_facade_code_and_mismatched_path_dependency_are_rejected` |
+| A path dependency whose declared name is not the crate at its path: fail (review F2) | `test_path_dependencies_must_name_the_crate_their_path_holds` (plain, `package =` and member-named keys; the declared name's edge is judged too); through the hook: the same hook test |
 | The real workspace passes | `test_rust_crate_graph_kept`; a clean fixture workspace: `test_inward_fixture_workspace_passes` |
 | Kept from the old crate check | renamed target build dependency and inherited renamed dev dependency (`test_renamed_and_inherited_rust_dependencies_are_read_as_cargo_resolves_them`); unmapped crate and outside path dependency; a manifest cargo cannot read (`test_unreadable_rust_workspace_fails`) |
 
 ## Measured outcome
 
 Numbers rendered by `docs/architecture/ar-8/measure.py` from [evidence.json](evidence.json), which it measured
-from fixed commits; `tests/test_ar8_evidence.py` re-renders this table from the saved evidence. The plan's
-estimate was "500 of 648 lines" deleted from the checker.
+on a clean tree at the batch's last code commit (`main..HEAD --no-merges`), planting and removing each seeded bug
+itself. The next commit, "AR-8: saved evidence and report", changes only this folder.
+`tests/test_ar8_evidence.py` re-renders this table from the saved evidence, and checks from fixed commits that
+the saved commits are every commit before that report commit and every `AR-8:` commit in the history (review F5:
+the first evidence ended three commits before HEAD). The plan's estimate was "500 of 648 lines" deleted from the
+checker.
 
 <!-- measured: begin -->
 | Measure | Base | Head |
@@ -54,7 +64,7 @@ Diff `c24aeab2..8920ccd6` over 5 commits and 8 files: +177 −1048 lines (net -8
 | M7 unmapped crates accepted | `tools/check_rust_deps.py` | `LayerSelectionTests::test_unmapped_crates_and_outside_path_dependencies_are_rejected` | 1 | 1 failed in 0.44s |
 <!-- measured: end -->
 
-The seeded bugs ran on the code at the evidence's head, each against the named test, and were removed
+The seeded bugs ran on the code at the evidence's head, each alone against the named tests, and were removed
 (the tree is clean). An earlier candidate, "a renamed dependency read by its alias", survived: it is
 equivalent, because path dependencies are matched by path, so it was replaced by "dev and build dependencies
 skipped".
@@ -72,7 +82,7 @@ Files checked at the start against `git diff --name-only main...<branch>` for ev
   `check_rust_deps.py`; no change needed.
 - `docs/TESTING.md` (`infra/eff-tests`): historical tables only; no change needed.
 
-Shared inventory touched: `tools/gate-collection.json` (one test added to `tests/test_precommit_hook.py`, the
+Shared inventory touched: `tools/gate-collection.json` (two tests added to `tests/test_precommit_hook.py`, the
 new `tests/test_ar8_evidence.py`). **Collision rule:** "conflict in `tools/gate-collection.json`: take `main`'s
 file and run `uv run python tools/gate_collection.py --write`" (after AR-3 merges: "modify/delete conflict on
 `gate-collection.json`: take the deletion").
@@ -83,16 +93,18 @@ file and run `uv run python tools/gate_collection.py --write`" (after AR-3 merge
   stage) and `tools/test_layer_policy.py`.
 - 4.1: item 2 (corpus A/B) and item 3 (Lean statements and trust) do not apply: no `ve/` or `lean/` file
   changes.
-- Selected tests (`tools/select_tests.py --base c24aeab2 --run`, at `562e42cd`): 135 units, 0 failed, including
-  `python3 tools/check_rust_deps.py`, `tools/rust_build.py test --workspace` and `tools/test_layer_policy.py`.
-- Full gate at `562e42cd` (the last code commit; the later report commit changes only
-  `docs/architecture/ar-8/`, so the gate covers all code):
+- Full gate on the final HEAD: **not run by the review-fix round** (EXTERNAL item, owner: the merge train).
+  Under the devtime plan (2026-10-10) a fix round runs only the selected tests, `lake build` and `lean/audit.py`;
+  the merge train's branch verify runs `tools/gate.py` on the final HEAD and the nightly full suite follows. No
+  gate record (git note) exists for this batch yet, so it is not mergeable until branch verify passes (review F1).
+- Review fixes (`AR-8:` commits after `8ddd202c`): selected tests (`tools/select_tests.py --base c24aeab2 --run`)
+  at `39df608e`: 135 units, all passed except `tests/test_ar8_evidence.py`, which needs
+  the report commit and passes after it (load 57–75 on 32 CPUs); `lake build` and `python3 lean/audit.py` passed; and the regression tests named above.
+- Historical, first build round at `562e42cd` (before the review fixes, so it covers none of them):
   `tools/gate.py` passed every stage before the Python suite (toolchains, frozen lock, wire contract, `lake
   build`, `lean/audit.py`, Rust release build, `cargo test --workspace --locked --release`, collection against
   `tools/gate-collection.json`). Its Python suite did not finish: at load 40–57 on 32 CPUs it exceeded the
   one-hour foreground limit and then the two-hour background limit, which stopped it. The suite was then run
-  as plan 4.1 item 1 allows, in 16 file chunks with `VE_NATIVE_PREBUILT=1` on the same commit
-  ([suite.json](suite.json)): <!-- suite -->13748 tests, 0 failures, 0 errors, 91 skipped or xfailed<!-- /suite -->
-  (8 skips, 83 xfails), which is the gate's whole collection less the one `live` test.
-- Not run: no corpus comparison or latency measurement (no `ve/` or `lean/` change), no model calls; no
-  `tools/gate.py` record (git note) exists for this batch, because its suite stage was stopped.
+  in 16 file chunks with `VE_NATIVE_PREBUILT=1` on that commit ([suite.json](suite.json)):
+  <!-- suite -->13748 tests, 0 failures, 0 errors, 91 skipped or xfailed<!-- /suite --> (8 skips, 83 xfails).
+- Not run: no corpus comparison or latency measurement (no `ve/` or `lean/` change), no model calls.
