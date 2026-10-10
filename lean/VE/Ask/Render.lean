@@ -374,50 +374,60 @@ def citeText (ctx : Context) (a : Answer) (l : Line) : String :=
     | none => ""
   | _, _, _ => ""
 
-/-- The text of a line, from its metadata and the answer: the one owner of every line's words. -/
-def lineText (ctx : Context) (a : Answer) (l : Line) : String :=
-  match (l.frame.splitOn ":") with
-  | ["A0"] => "You asked whether " ++ a.asked.sentence.dropRight 1 ++ "."
-  | ["A1"] => leadText .yes
-  | ["A2"] => leadText .no
-  | ["A3"] => leadText .notSettled
-  | ["A4"] => leadText .notNecessarily
-  | ["A5"] => leadText .unknown
-  | ["R1", k] => match leads.find? (leadKey · == k), l.readings.mapM (readingClause ctx a) with
+/-- The text of a parameterised frame: `R1:<lead>` names its readings and its lead phrase; `S2p:<i>` and `S3:<i>`
+    are the `i`-th point line of the witness row's split or countermodel. -/
+def paramText (ctx : Context) (a : Answer) (l : Line) : String :=
+  match l.frame.toList with
+  | 'R' :: '1' :: ':' :: k => match leads.find? (leadKey · == String.mk k), l.readings.mapM (readingClause ctx a) with
     | some d, some cs => "If " ++ " and ".intercalate cs ++ ", " ++ leadPhrase d ++ "."
     | _, _ => ""
-  | ["R2"] => "Every way of reading the document gives this answer."
-  | ["S1"] => match l.witness, wordsOf a with
+  | 'S' :: '2' :: 'p' :: ':' :: i => match l.witness, (String.mk i).toNat? with
+    | some c, some n => (pointText a c "S2p" n).getD ""
+    | _, _ => ""
+  | 'S' :: '3' :: ':' :: i => match l.witness, (String.mk i).toNat? with
+    | some c, some n => (pointText a c "S3" n).getD ""
+    | _, _ => ""
+  | _ => ""
+
+/-- The text of a line, from its metadata and the answer: the one owner of every line's words. -/
+def lineText (ctx : Context) (a : Answer) (l : Line) : String :=
+  match l.frame with
+  | "A0" => "You asked whether " ++ a.asked.sentence.dropRight 1 ++ "."
+  | "A1" => leadText .yes
+  | "A2" => leadText .no
+  | "A3" => leadText .notSettled
+  | "A4" => leadText .notNecessarily
+  | "A5" => leadText .unknown
+  | "R2" => "Every way of reading the document gives this answer."
+  | "S1" => match l.witness, wordsOf a with
     | some c, some (E, L) => match counterOf a c, readingSuffix ctx a l.readings with
       | some m, some sfx => "Here is a situation the document allows where it fails: " ++
           VE.Words.situation E L m.M ++ sfx ++ "."
       | _, _ => ""
     | _, _ => ""
-  | ["S2"] => match l.witness, wordsOf a with
+  | "S2" => match l.witness, wordsOf a with
     | some c, some (E, L) => match splitOf a c, readingSuffix ctx a l.readings with
       | some (m, _), some sfx => "Here is a situation where the answer depends on what the text leaves unsaid: " ++
           VE.Words.situation E L m.M ++ sfx ++ "."
       | _, _ => ""
     | _, _ => ""
-  | [kind, i] => match l.witness, i.toNat? with
-    | some c, some n => if kind == "S2p" || kind == "S3" then (pointText a c kind n).getD "" else ""
-    | _, _ => ""
-  | ["X1"] => match l.witness, wordsOf a with
+  | "X1" => match l.witness, wordsOf a with
     | some c, some (E, L) => match witnessOf a c, readingSuffix ctx a l.readings with
       | some M, some sfx => "The document's rules or defaults conflict in this situation, so VE cannot answer: " ++
           VE.Words.situation E L M ++ sfx ++ "."
       | _, _ => ""
     | _, _ => ""
-  | ["X2"] => reasonText .conflictUnchecked
-  | ["X3"] => reasonText .inconsistent
-  | ["X4"] => reasonText .noResult
-  | ["X5"] => reasonText .tooMany
-  | ["X6"] => reasonText .unchecked
-  | ["U1"] => match a.unused.mapM ctx.displayOf with
+  | "X2" => reasonText .conflictUnchecked
+  | "X3" => reasonText .inconsistent
+  | "X4" => reasonText .noResult
+  | "X5" => reasonText .tooMany
+  | "X6" => reasonText .unchecked
+  | "U1" => match a.unused.mapM ctx.displayOf with
     | some ds => s!"VE did not use {a.unused.length} sentences of this document that it could not read formally: " ++
         citationText ds ++ "."
     | none => ""
-  | _ => citeText ctx a l
+  | "C1" | "C2" | "C3" | "C4" => citeText ctx a l
+  | _ => paramText ctx a l
 
 /-- A line made from its metadata: its text is `lineText` of it. -/
 def mk (ctx : Context) (a : Answer) (l : Line) : Line := { l with text := lineText ctx a l }
@@ -456,11 +466,11 @@ def pointLines (ctx : Context) (a : Answer) (kind : String) (r : Row) (count : N
     row's witness. -/
 def reasonLines (ctx : Context) (a : Answer) (g : Group) : List Line :=
   let reasons := (g.rows.filterMap (·.reason)).eraseDups
-  reasons.flatMap fun x => match x with
-    | .conflict => match g.rows.find? (·.conflict == .conflict) with
+  reasons.flatMap fun x =>
+    if x == .conflict then match g.rows.find? (·.conflict == .conflict) with
       | some r => [situationLine ctx a "X1" r]
       | none => []
-    | x => [mk ctx a { frame := reasonFrame x, text := "" }]
+    else [mk ctx a { frame := reasonFrame x, text := "" }]
 
 /-- The lines after a group's lead: its citations, its situation, or its reasons. -/
 def groupReasons (ctx : Context) (a : Answer) (g : Group) : List Line :=
@@ -545,6 +555,304 @@ theorem citeLine_quote (ctx : Context) (a : Answer) (c : Choice) (s : Source) :
   | pair _ _ => simp at h
   | fill _ _ => simp at h
 
+/-! ### What each kind of line is -/
+
+/-- The frames that show a checked row's situation. -/
+def witnessFrames : List String := ["S1", "S2", "X1"]
+
+/-- What a line of a block is: a citation line of a decided group, or a line made from metadata with no source and no
+    quote, whose frame is not U1, whose situation (S1, S2, X1) is a checked row's of the group naming every open set's
+    reading of it, and whose unchecked mark covers its readings. -/
+def BlockLine (ctx : Context) (a : Answer) (g : Group) (l : Line) : Prop :=
+  ((g.lead = .yes ∨ g.lead = .no) ∧ ∃ s ∈ g.cited, l = citeLine ctx a ((g.rows.head?.map (·.choice)).getD []) s) ∨
+  (∃ l0 : Line, l = mk ctx a l0 ∧ l0.source = none ∧ l0.quote = none ∧ l0.frame ≠ "U1" ∧
+    (l0.frame ∈ witnessFrames → ∃ r ∈ g.rows, checkedWitness a.request a.x r l0.frame ∧
+      l0.witness = some r.choice ∧ l0.readings = named (assignment a.ids r)) ∧
+    (l0.readings = [] ∨ l0.unchecked = uncheckedIn a l0.readings))
+
+theorem citeLine_source (ctx : Context) (a : Answer) (c : Choice) (s : Source) :
+    (citeLine ctx a c s).source = some s := by
+  unfold citeLine mk
+  cases s with
+  | rules p =>
+    dsimp only
+    split <;> rfl
+  | _ => rfl
+
+theorem citeLine_fields (ctx : Context) (a : Answer) (c : Choice) (s : Source) :
+    (citeLine ctx a c s).readings = [] ∧ (citeLine ctx a c s).frame ∈ ["C1", "C2", "C3", "C4"] := by
+  unfold citeLine mk
+  cases s with
+  | rules p =>
+    dsimp only
+    split <;> simp
+  | _ => simp
+
+theorem frame_param_length (kind : String) (i : Nat) (hk : 2 ≤ kind.length) :
+    (kind ++ ":" ++ toString i).length ≥ 3 := by
+  simp only [String.length_append]
+  have : ":".length = 1 := rfl
+  omega
+
+theorem param_not_short {f : String} (h : f.length ≥ 3) : f ∉ witnessFrames ∧ f ≠ "U1" := by
+  refine ⟨fun hm => ?_, fun he => ?_⟩
+  · simp only [witnessFrames, List.mem_cons, List.not_mem_nil, or_false] at hm
+    rcases hm with rfl | rfl | rfl <;> exact absurd h (by decide)
+  · subst he
+    exact absurd h (by decide)
+
+theorem situationLine_block (ctx : Context) (a : Answer) (g : Group) (frame : String) (r : Row)
+    (hr : r ∈ g.rows) (hw : checkedWitness a.request a.x r frame) (hf : frame ≠ "U1") :
+    BlockLine ctx a g (situationLine ctx a frame r) := by
+  right
+  refine ⟨_, rfl, rfl, rfl, hf, fun _ => ⟨r, hr, hw, rfl, rfl⟩, Or.inr rfl⟩
+
+theorem pointLines_block (ctx : Context) (a : Answer) (g : Group) (kind : String) (r : Row) (n : Nat)
+    (hk : 2 ≤ kind.length) : ∀ l ∈ pointLines ctx a kind r n, BlockLine ctx a g l := by
+  intro l hl
+  simp only [pointLines, List.mem_map, List.mem_range] at hl
+  obtain ⟨i, _, rfl⟩ := hl
+  have hp := param_not_short (frame_param_length kind i hk)
+  right
+  exact ⟨_, rfl, rfl, rfl, hp.2, fun hm => absurd hm hp.1, Or.inl rfl⟩
+
+theorem plain_block (ctx : Context) (a : Answer) (g : Group) (f : String) (hw : f ∉ witnessFrames) (hu : f ≠ "U1") :
+    BlockLine ctx a g (mk ctx a { frame := f, text := "" }) := by
+  right
+  exact ⟨_, rfl, rfl, rfl, hu, fun hm => absurd hm hw, Or.inl rfl⟩
+
+theorem find_mem {p : Row → Bool} {rows : List Row} {r : Row} (h : rows.find? p = some r) : r ∈ rows ∧ p r = true :=
+  ⟨List.mem_of_find?_eq_some h, List.find?_some h⟩
+
+theorem reasonLines_block (ctx : Context) (a : Answer) (g : Group) :
+    ∀ l ∈ reasonLines ctx a g, BlockLine ctx a g l := by
+  intro l hl
+  simp only [reasonLines, List.mem_flatMap] at hl
+  obtain ⟨x, _, hl⟩ := hl
+  split at hl
+  · rename_i hx
+    split at hl
+    · rename_i r hr
+      simp only [List.mem_singleton] at hl
+      subst hl
+      obtain ⟨hm, hp⟩ := find_mem hr
+      exact situationLine_block ctx a g "X1" r hm (Or.inr (Or.inr ⟨rfl, by simpa using hp⟩)) (by decide)
+    · cases hl
+  · rename_i hx
+    simp only [List.mem_singleton] at hl
+    subst hl
+    apply plain_block
+    · cases x <;> simp_all [reasonFrame, witnessFrames]
+    · cases x <;> simp [reasonFrame]
+
+theorem groupReasons_block (ctx : Context) (a : Answer) (g : Group) :
+    ∀ l ∈ groupReasons ctx a g, BlockLine ctx a g l := by
+  intro l hl
+  unfold groupReasons at hl
+  split at hl
+  · rename_i hlead
+    simp only [List.mem_map] at hl
+    obtain ⟨s, hs, rfl⟩ := hl
+    exact Or.inl ⟨Or.inl hlead, s, hs, rfl⟩
+  · rename_i hlead
+    simp only [List.mem_map] at hl
+    obtain ⟨s, hs, rfl⟩ := hl
+    exact Or.inl ⟨Or.inr hlead, s, hs, rfl⟩
+  · split at hl
+    · rename_i r hr
+      obtain ⟨hm, hp⟩ := find_mem hr
+      simp only [List.mem_cons] at hl
+      rcases hl with rfl | hl
+      · exact situationLine_block ctx a g "S1" r hm (Or.inl ⟨rfl, by simpa using hp⟩) (by decide)
+      · exact pointLines_block ctx a g "S3" r _ (by decide) l hl
+    · cases hl
+  · split at hl
+    · rename_i r hr
+      obtain ⟨hm, hp⟩ := find_mem hr
+      simp only [List.mem_cons] at hl
+      rcases hl with rfl | hl
+      · exact situationLine_block ctx a g "S2" r hm (Or.inr (Or.inl ⟨rfl, by simpa using hp⟩)) (by decide)
+      · exact pointLines_block ctx a g "S2p" r _ (by decide) l hl
+    · cases hl
+  · exact reasonLines_block ctx a g l hl
+
+theorem leadFrame_ok (d : Lead) : leadFrame d ∉ witnessFrames ∧ leadFrame d ≠ "U1" := by
+  cases d <;> decide
+
+theorem r1Frame_ok (d : Lead) : ("R1:" ++ leadKey d) ∉ witnessFrames ∧ ("R1:" ++ leadKey d) ≠ "U1" := by
+  cases d <;> decide
+
+theorem renderGroup_block (ctx : Context) (a : Answer) (g : Group) :
+    ∀ l ∈ renderGroup ctx a g, BlockLine ctx a g l := by
+  intro l hl
+  unfold renderGroup at hl
+  split at hl
+  · simp only [List.mem_cons, List.mem_append] at hl
+    rcases hl with (rfl | hl) | hl
+    · exact plain_block ctx a g _ (leadFrame_ok g.lead).1 (leadFrame_ok g.lead).2
+    · exact groupReasons_block ctx a g l hl
+    · split at hl
+      · simp only [List.mem_singleton] at hl
+        subst hl
+        exact plain_block ctx a g "R2" (by decide) (by decide)
+      · cases hl
+  · simp only [List.mem_cons] at hl
+    rcases hl with rfl | hl
+    · right
+      exact ⟨_, rfl, rfl, rfl, (r1Frame_ok g.lead).2, fun hm => absurd hm (r1Frame_ok g.lead).1, Or.inr rfl⟩
+    · exact groupReasons_block ctx a g l hl
+
+theorem unusedLines_eq (ctx : Context) (a : Answer) :
+    ∀ l ∈ unusedLines ctx a, l = mk ctx a { frame := "U1", text := "" } := by
+  intro l hl
+  unfold unusedLines at hl
+  split at hl
+  · cases hl
+  · split at hl
+    · simpa using hl
+    · cases hl
+
+theorem render_mem {ctx : Context} {a : Answer} {l : Line} (h : l ∈ render ctx a) :
+    l = askedLine a.asked.sentence ∨ (∃ g ∈ a.groups, BlockLine ctx a g l) ∨
+      l = mk ctx a { frame := "U1", text := "" } := by
+  simp only [render, List.mem_cons, List.mem_append, List.mem_flatMap] at h
+  rcases h with h | ⟨g, hg, hl⟩ | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl ⟨g, hg, renderGroup_block ctx a g l hl⟩)
+  · exact Or.inr (Or.inr (unusedLines_eq ctx a l h))
+
+/-! ### The render theorems (spec 5.2) -/
+
+theorem render_quotes_bytes : ∀ (ctx : Context) (a : Answer), RenderInputBound ctx a →
+    ∀ l ∈ render ctx a, ∀ u t, l.quote = some (u, t) → ctx.textOf u = some t := by
+  intro ctx a _ l hl u t hq
+  rcases render_mem hl with rfl | ⟨g, _, hb⟩ | rfl
+  · cases hq
+  · rcases hb with ⟨_, s, _, rfl⟩ | ⟨l0, rfl, _, h0, _⟩
+    · exact citeLine_quote ctx a _ s u t hq
+    · simp [mk, h0] at hq
+  · cases hq
+
+theorem render_text_matches_metadata : ∀ (ctx : Context) (a : Answer), RenderInputBound ctx a →
+    ∀ l ∈ render ctx a, l.text = lineText ctx a l := by
+  intro ctx a _ l hl
+  rcases render_mem hl with rfl | ⟨g, _, hb⟩ | rfl
+  · rfl
+  · rcases hb with ⟨_, s, _, rfl⟩ | ⟨l0, rfl, _⟩
+    · unfold citeLine
+      exact mk_text _ _ _
+    · exact mk_text _ _ _
+  · exact mk_text _ _ _
+
+theorem render_asked : ∀ (ctx : Context) (a : Answer), (render ctx a).head? = some (askedLine a.asked.sentence) := by
+  intro ctx a
+  rfl
+
+theorem render_cites_exact : ∀ (ctx : Context) (a : Answer) (g : Group), RenderInputBound ctx a → g ∈ a.groups →
+    (g.lead = .yes ∨ g.lead = .no) → (renderGroup ctx a g).filterMap (·.source) = g.cited := by
+  intro ctx a g _ _ hlead
+  have hc : (groupReasons ctx a g).filterMap (·.source) = g.cited := by
+    unfold groupReasons
+    rcases hlead with h | h <;> simp [h, List.filterMap_map, Function.comp_def, citeLine_source]
+  unfold renderGroup
+  split
+  · rw [List.filterMap_append, List.filterMap_cons]
+    show (groupReasons ctx a g).filterMap (·.source) ++ _ = _
+    rw [hc]
+    split <;> simp [mk]
+  · rw [List.filterMap_cons]
+    exact hc
+
+theorem render_lead : ∀ (ctx : Context) (a : Answer) (g : Group), g ∈ a.groups →
+    leadOfLine (renderGroup ctx a g).head? = some g.lead := by
+  intro ctx a g _
+  unfold renderGroup
+  split
+  · cases g.lead <;> rfl
+  · cases g.lead <;> rfl
+
+/-- R7, with `groups_cover`: each row's one block names exactly its readings of the relevant sets. -/
+theorem render_covers_rows : ∀ (ctx : Context) (a : Answer) (g : Group), g ∈ a.groups → 2 ≤ a.groups.length →
+    ((renderGroup ctx a g).head?.map (·.readings)) = some (named g.on) := by
+  intro ctx a g _ h2
+  unfold renderGroup
+  rw [if_neg (by omega)]
+  rfl
+
+/-- R8: an unchecked wording is marked in the line that shows it. -/
+theorem render_marks_unchecked : ∀ (ctx : Context) (a : Answer), ∀ l ∈ render ctx a,
+    (∃ n ∈ a.names, n.checked = false ∧ (n.set, n.index) ∈ l.readings) → l.unchecked = true := by
+  intro ctx a l hl ⟨n, hn, hc, hr⟩
+  have hu : uncheckedIn a l.readings = true := by
+    simp only [uncheckedIn, List.any_eq_true, Bool.and_eq_true, Bool.not_eq_true', beq_iff_eq]
+    exact ⟨_, hr, n, hn, hc, rfl⟩
+  rcases render_mem hl with rfl | ⟨g, _, hb⟩ | rfl
+  · simp [askedLine] at hr
+  · rcases hb with ⟨_, s, _, rfl⟩ | ⟨l0, rfl, _, _, _, _, h0⟩
+    · rw [(citeLine_fields ctx a ((g.rows.head?.map (·.choice)).getD []) s).1] at hr
+      cases hr
+    · rcases h0 with h0 | h0
+      · simp [mk, h0] at hr
+      · simp only [mk] at hu ⊢
+        rw [h0]
+        exact hu
+  · simp [mk] at hr
+
+theorem render_model_names_choice : ∀ (ctx : Context) (a : Answer), RenderInputBound ctx a →
+    ∀ l ∈ render ctx a, l.frame ∈ ["S1", "S2", "X1"] →
+      ∃ r ∈ a.rows, l.witness = some r.choice ∧ checkedWitness a.request a.x r l.frame ∧
+        l.readings = named (assignment a.ids r) := by
+  intro ctx a _ l hl hf
+  rcases render_mem hl with rfl | ⟨g, hg, hb⟩ | rfl
+  · simp [askedLine] at hf
+  · rcases hb with ⟨_, s, _, rfl⟩ | ⟨l0, rfl, _, _, _, hw, _⟩
+    · have := (citeLine_fields ctx a ((g.rows.head?.map (·.choice)).getD []) s).2
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at this hf
+      rcases this with h | h | h | h <;> rw [h] at hf <;> simp at hf
+    · obtain ⟨r, hr, hc, hw', hrd⟩ := hw hf
+      have hmem := (group_rows a.ids a.rows a.key g hg r hr).1
+      exact ⟨r, hmem, hw', hc, hrd⟩
+  · simp [mk] at hf
+
+/-- D14, R8: one U1 after all answer blocks, with the document-derived count and citation; none for an empty list. -/
+theorem render_unused_once : ∀ (ctx : Context) (a : Answer), RenderInputBound ctx a →
+    (a.unused = [] → ∀ l ∈ render ctx a, l.frame ≠ "U1") ∧
+    (a.unused ≠ [] → ∃ pre u displays, render ctx a = pre ++ [u] ∧
+      (∀ l ∈ pre, l.frame ≠ "U1") ∧ u.frame = "U1" ∧
+      u.text = lineText ctx a u ∧ u.quote = none ∧ u.source = none ∧
+      u.readings = [] ∧ u.witness = none ∧
+      a.unused.mapM ctx.displayOf = some displays ∧
+      u.text = s!"VE did not use {a.unused.length} sentences of this document that it could not read formally: " ++
+        citationText displays ++ ".") := by
+  intro ctx a hb
+  obtain ⟨_, _, _, _, _, _, displays, hd⟩ := hb
+  have hpre : ∀ l ∈ askedLine a.asked.sentence :: a.groups.flatMap (renderGroup ctx a), l.frame ≠ "U1" := by
+    intro l hl
+    simp only [List.mem_cons, List.mem_flatMap] at hl
+    rcases hl with rfl | ⟨g, _, hl⟩
+    · simp [askedLine]
+    · rcases renderGroup_block ctx a g l hl with ⟨_, s, _, rfl⟩ | ⟨l0, rfl, _, _, hu, _⟩
+      · have := (citeLine_fields ctx a ((g.rows.head?.map (·.choice)).getD []) s).2
+        simp only [List.mem_cons, List.not_mem_nil, or_false] at this
+        rcases this with h | h | h | h <;> rw [h] <;> decide
+      · exact hu
+  constructor
+  · intro he l hl
+    have hr : render ctx a = askedLine a.asked.sentence :: a.groups.flatMap (renderGroup ctx a) := by
+      simp [render, unusedLines, he]
+    rw [hr] at hl
+    exact hpre l hl
+  · intro hne
+    have hu : unusedLines ctx a = [mk ctx a { frame := "U1", text := "" }] := by
+      have : a.unused.isEmpty = false := by simpa using hne
+      simp only [unusedLines, this, hd, Bool.false_eq_true, ↓reduceIte]
+    refine ⟨askedLine a.asked.sentence :: a.groups.flatMap (renderGroup ctx a), mk ctx a { frame := "U1", text := "" },
+      displays, ?_, hpre, rfl, rfl, rfl, rfl, rfl, rfl, hd, ?_⟩
+    · simp [render, hu]
+    · show lineText ctx a { frame := "U1", text := "" } = _
+      simp only [lineText, hd]
+      rfl
+
 /-! ## The answer of a replayed request -/
 
 /-- A decided row's certificate replays on the row's premises (`replayOk`). -/
@@ -562,7 +870,7 @@ def linesGated (ls : List Line) : Bool := ls.all fun l => (VE.Question.gated (ga
     certificates; refused when an unused unit has no display number, a decided row's certificate does not replay,
     or a line does not pass the gate. -/
 def answerFor (s : Asked) : Except String (Context × Answer) :=
-  match hc : contextOf s.text with
+  match contextOf s.text with
   | .error e => .error e
   | .ok ctx =>
     let a : Answer := ⟨s.request, s.text, s.case, s.x, s.c, s.x.r.N.D.sets.map (·.id), s.rows,
@@ -573,5 +881,105 @@ def answerFor (s : Asked) : Except String (Context × Answer) :=
         else .error "CheckerUnavailable: a line of the answer does not pass the all-derivations gate"
       else .error "CheckerUnavailable: a decided reading's certificate does not replay"
     else .error "CheckerUnavailable: an unused sentence has no display number"
+
+end VE.Ask
+
+namespace VE.Ask
+open Lean VE.Readings VE.Readings.Wire VE.NormDefaults
+
+theorem answerFor_ok {s : Asked} {ctx : Context} {a : Answer} (h : answerFor s = .ok (ctx, a)) :
+    contextOf s.text = .ok ctx ∧
+    a = ⟨s.request, s.text, s.case, s.x, s.c, s.x.r.N.D.sets.map (·.id), s.rows, checkedCites s.request s.x, s.names,
+      documentUnused s.text⟩ ∧
+    (a.unused.mapM ctx.displayOf).isSome = true ∧ a.rows.all (certReplays a) = true ∧
+    linesGated (render ctx a) = true := by
+  unfold answerFor at h
+  split at h
+  · cases h
+  · rename_i ctx' hc
+    dsimp only at h
+    split at h
+    · rename_i hu
+      split at h
+      · rename_i hr
+        split at h
+        · rename_i hg
+          cases h
+          exact ⟨hc, rfl, hu, hr, hg⟩
+        · cases h
+      · cases h
+    · cases h
+
+theorem answerFor_bound : ∀ (asked : Asked) (ctx : Context) (a : Answer),
+    answerFor asked = .ok (ctx, a) → RenderInputBound ctx a ∧
+      a.request = asked.request ∧ a.text = asked.text ∧ a.case = asked.case ∧ a.x = asked.x ∧
+      a.asked = asked.c ∧ a.rows = asked.rows ∧ a.names = asked.names := by
+  intro s ctx a h
+  obtain ⟨hc, rfl, hu, _, _⟩ := answerFor_ok h
+  exact ⟨⟨hc, s.hrequest.2.2, s.hreplay, s.hrows, fun _ _ => rfl, rfl, Option.isSome_iff_exists.mp hu⟩,
+    rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+theorem gated_some {f line : String} (h : (VE.Question.gated f line).isSome = true) :
+    ∃ slots, VE.Question.frameReadings line = [(f, slots)] := by
+  unfold VE.Question.gated at h
+  split at h
+  · rename_i g slots hr
+    split at h
+    · rename_i he
+      have : g = f := by simpa using he
+      subst this
+      exact ⟨slots, hr⟩
+    · cases h
+  · cases h
+
+/-- Every line of an answer `answerFor` returns passes W7's all-derivations gate: over every registered frame
+    (`VE.Question.answerFrames`), its text has exactly one derivation, and it is its own frame's. -/
+theorem answerFor_gated : ∀ (asked : Asked) (ctx : Context) (a : Answer), answerFor asked = .ok (ctx, a) →
+    ∀ l ∈ render ctx a, ∃ slots, VE.Question.frameReadings l.text = [(gateName l.frame, slots)] := by
+  intro s ctx a h l hl
+  obtain ⟨_, _, _, _, hg⟩ := answerFor_ok h
+  simp only [linesGated, List.all_eq_true] at hg
+  exact gated_some (hg l hl)
+
+theorem certPiece_formula {x : NDVerdicts} {case : Json} {r : Row} {ψ : VE.Formula} {k : VE.Tableau.Certificate}
+    (h : certPiece x case r = some (ψ, k)) : (r.lead = .yes ∧ ψ = x.φ) ∨ (r.lead = .no ∧ ψ = .not x.φ) := by
+  unfold certPiece at h
+  split at h
+  · rename_i hl
+    obtain ⟨p, _, hp⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨k', _, hk⟩ := Option.map_eq_some_iff.mp hp
+    cases hk
+    exact Or.inl ⟨hl, rfl⟩
+  · rename_i hl
+    obtain ⟨k', _, hk⟩ := Option.map_eq_some_iff.mp h
+    cases hk
+    exact Or.inr ⟨hl, rfl⟩
+  · cases h
+
+/-- The reasons of a yes or no row of an accepted answer are its certificate's premises: the row has an accepted
+    certificate for the asked formula (yes) or its negation (no) that replays on the row's premises; its citations
+    are exactly the sources of the positions the certificate uses (`checkedCites_spec`), and those premises alone
+    entail what the lead says. -/
+theorem answerFor_cites : ∀ (asked : Asked) (ctx : Context) (a : Answer), answerFor asked = .ok (ctx, a) →
+    ∀ r ∈ a.rows, r.lead = .yes ∨ r.lead = .no → ∃ ψ k,
+      certPiece a.x a.case r = some (ψ, k) ∧
+      ((r.lead = .yes ∧ ψ = a.x.φ) ∨ (r.lead = .no ∧ ψ = .not a.x.φ)) ∧
+      (∀ s, s ∈ a.cites r ↔ ∃ i ∈ rowUsed a.x r ψ k, ((rowSourced a.x r)[i]?).map (·.1) = some s) ∧
+      VE.Entails.{0} (fullEnv a.x.r.N r.choice) ((rowUsed a.x r ψ k).filterMap ((rowPremises a.x r)[·]?)) ψ := by
+  intro s ctx a h r hr hl
+  obtain ⟨_, ha, _, hc, _⟩ := answerFor_ok h
+  have hrep := List.all_eq_true.mp hc r hr
+  have hcase : a.request.getObjValD "case" = a.case := by rw [ha]; exact s.hrequest.2.2
+  unfold certReplays at hrep
+  have hyn : (r.lead == .yes || r.lead == .no) = true := by rcases hl with h | h <;> simp [h]
+  rw [if_pos hyn] at hrep
+  split at hrep
+  · rename_i ψ k hk
+    have hk' : certPiece a.x (a.request.getObjValD "case") r = some (ψ, k) := by rw [hcase]; exact hk
+    obtain ⟨hs, _, hent⟩ := checkedCites_spec a.request a.x r ψ k hk'
+    refine ⟨ψ, k, hk, certPiece_formula hk, fun t => ?_, hent hrep⟩
+    rw [ha] at hs ⊢
+    exact hs t
+  · cases hrep
 
 end VE.Ask
