@@ -1081,7 +1081,14 @@ def test_review_b2_conflicting_reading_certifies_no_entailment(tmp_path):
                         conclusion=phi)
     assert [c["status"] for c in route.premises()["choices"]] != ["INCONSISTENT", "INCONSISTENT"]
     _, _, wording = _wording(path)
-    assert wording.query(every("avoid_required"), route.entailment(every("avoid_required"))) == []
+    # No verdict is worded; what the UNKNOWN rests on is (readings-defaults 2.4 item 3, review B3 of rd-4b): the
+    # choice the gate names, by E12 with its checked witness, then the lower route's status text of that witness.
+    lines = wording.query(every("avoid_required"), route.entailment(every("avoid_required")))
+    assert lines == [
+        'Read sentence 2 as *Every agent need not avoid deceiving each user, if that agent has the recorded relation '
+        '"asks" to that user*: two rules contradict each other here: e0 is an agent; e0 is a user.',
+        "CONFLICT: strict collision on avoid_required at e0, e0"]
+    assert not any("the conclusion follows" in line or "does not follow" in line for line in lines)
 
 
 def test_review_b2_lean_accepts_a_reading_certificate_only_conflict_free(tmp_path):

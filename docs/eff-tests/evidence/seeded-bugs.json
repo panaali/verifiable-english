@@ -1,0 +1,85 @@
+{
+ "method": "each bug planted alone (an exact one-occurrence replacement), the named tests run, the file restored with git checkout; every listed test failed and the rest of its file passed",
+ "bugs": [
+  {
+   "id": "M1",
+   "claim": "cache key: a changed Rust binary runs again",
+   "file": "tools/run_cache.py",
+   "change": "the Rust binary left out of the static key",
+   "failed": [
+    "tests/test_run_cache.py::test_changing_any_keyed_input_runs_again[Rust binary]",
+    "tests/test_run_cache.py::test_the_observed_reads_are_keyed"
+   ]
+  },
+  {
+   "id": "M2",
+   "claim": "cache key: every observed read is checked",
+   "file": "tools/run_cache.py",
+   "change": "current() never reports a changed dynamic input",
+   "failed": [
+    "tests/test_run_cache.py::test_changing_any_keyed_input_runs_again[module imported by a computed name]",
+    "tests/test_run_cache.py::test_changing_any_keyed_input_runs_again[directory listed]",
+    "tests/test_run_cache.py::test_changing_any_keyed_input_runs_again[data file opened]",
+    "tests/test_run_cache.py::test_changing_any_keyed_input_runs_again[program started]"
+   ]
+  },
+  {
+   "id": "M3",
+   "claim": "the shards run the same probes",
+   "file": "tests/test_enum_domains.py",
+   "change": "shard_sources drops the first probe of the first group",
+   "failed": [
+    "tests/test_enum_domains.py::test_the_shards_prove_every_probe_once"
+   ]
+  },
+  {
+   "id": "M4",
+   "claim": "a runaway fails the difffuzz work bound",
+   "file": "tools/difffuzz.py",
+   "change": "batched() sends every batch twice",
+   "failed": [
+    "tests/test_difffuzz.py::test_ci_run"
+   ],
+   "message": "runner_cases: 37658 > 23500 (runner_requests 124 > 78, service limits too: 4 problems)"
+  },
+  {
+   "id": "M5",
+   "claim": "a rerun is never a full gate",
+   "file": "tools/gate.py",
+   "change": "a rerun that passes gets status passed",
+   "failed": [
+    "tests/test_gate_rerun.py::test_a_rerun_runs_only_the_failed_tests_files_and_is_not_a_full_gate",
+    "tests/test_gate_rerun.py::test_a_rerun_reads_the_record_it_is_given",
+    "tests/test_gate_rerun.py::test_a_rerun_that_fails_again_fails_and_can_itself_be_rerun"
+   ]
+  },
+  {
+   "id": "M6",
+   "claim": "a rerun needs the same tree",
+   "file": "tools/gate.py",
+   "change": "the tree check is skipped",
+   "failed": [
+    "tests/test_gate_rerun.py::test_anything_but_test_failures_on_this_tree_runs_the_full_gate[another tree]"
+   ]
+  },
+  {
+   "id": "M7",
+   "claim": "the time guard sees a CPU cost read by its key",
+   "file": "tests/test_hang_guards.py",
+   "change": "key-based measures are never flagged",
+   "failed": [
+    "tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[CPU seconds by key]",
+    "tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[elapsed by get]"
+   ]
+  },
+  {
+   "id": "M8",
+   "claim": "the old CPU assertion cannot come back",
+   "file": "tests/test_difffuzz.py",
+   "change": "assert sum(report['cpu_seconds'].values()) <= 300 added back to test_ci_run",
+   "failed": [
+    "tests/test_hang_guards.py::test_no_short_wait_outside_the_reviewed_allowlist"
+   ]
+  }
+ ]
+}

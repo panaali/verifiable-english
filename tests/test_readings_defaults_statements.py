@@ -435,3 +435,40 @@ def test_rd4a_checker_fails_on_a_dropped_hypothesis_and_a_missing_declaration(tm
     _rd4a_with(checker, tmp_path, lambda t: t.replace("def companionMeaningId ", "private def companionMeaningId ", 1))
     assert checker.main_rd4a() == 1
     assert "companionMeaningId: expected one Lean def, found 0" in capsys.readouterr().out
+
+
+# RD-4b: the approved product declarations of 6.6, including SR2's gates.
+
+def test_rd4b_statements_match_the_approved_text(capsys):
+    checker = _checker()
+    assert checker.main_rd4b() == 0
+    out = capsys.readouterr().out
+    assert "checked 16 approved RD-4b declarations (6 theorems)" in out
+    assert checker.PENDING_RD4B == {} and "0 pending" in out
+
+
+@pytest.mark.parametrize("kind, name", sorted(_checker().approved_rd4b()), ids=lambda v: str(v))
+def test_rd4b_checker_fails_on_every_changed_declaration(tmp_path, capsys, kind, name):
+    checker = _checker()
+    path = tmp_path / "Components.lean"
+    path.write_text(_mutate(checker.SOURCE_RD4B.read_text(), kind, name, checker))
+    checker.SOURCE_RD4B = path
+    assert checker.main_rd4b() == 1
+    assert f"{name}: {kind} differs" in capsys.readouterr().out
+
+
+def test_rd4b_checker_fails_on_a_dropped_gate_and_a_missing_declaration(tmp_path, capsys):
+    checker = _checker()
+    path = tmp_path / "Components.lean"
+    original = checker.SOURCE_RD4B.read_text()
+    before, after = original.split("theorem foldK_all (", 1)
+    path.write_text(before + "theorem foldK_all (" + after.replace(
+        "(ho : ∀ (j : Nat) (r' : ComponentRows), j ≠ k →", "(ho : ∀ (j : Nat) (r' : ComponentRows),", 1))
+    checker.SOURCE_RD4B = path
+    assert checker.main_rd4b() == 1
+    assert "foldK_all: theorem differs" in capsys.readouterr().out
+    checker = _checker()
+    path.write_text(checker.SOURCE_RD4B.read_text().replace("def setDecided ", "private def setDecided ", 1))
+    checker.SOURCE_RD4B = path
+    assert checker.main_rd4b() == 1
+    assert "setDecided: expected one Lean def, found 0" in capsys.readouterr().out

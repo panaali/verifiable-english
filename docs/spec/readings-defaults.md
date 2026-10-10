@@ -194,6 +194,8 @@ None is an IDE question, so none goes through W8.
 | E31 | `Sentence <n> was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.` | Sentence `n` is a component: its terms are its readings' declarations merged, and no verdict combines it with another sentence | "Sentence `n`'s check did not look at the other sentences." | the split (1.9) |
 | E32 | `Each open sentence below was checked by itself, under each of its readings.` | The lines after it are per-component answers; together they claim the product of 1.9 and nothing more | "The answers below are sentence by sentence." | the product fold (6.6) |
 | R7 | `the text does not say whether <clause>: no rule decides this situation.` | Under the readings named (E12's frame), the point is UNDECIDED: two admissible fillings, both checked, give it different values | "The text leaves this open here." | `norm-defaults-status` on the choice's document; norm-defaults 4.2's sentence after E12's colon |
+| R8 | `VE could not check whether two rules on the same act contradict each other.` | Under the readings named (E12's frame), the conflict status is not certified: no checked evidence settles it either way | "VE does not know whether the rules clash under this reading." | 2.4 item 3: the gate's `UNKNOWN (conflict status: UNKNOWN)`, the choice `reasonOf` names (added in RD-4b's review fix round; W7 wording, DRI sign-off pending) |
+| R9 | `VE could not check whether the conclusion follows.` | Under the readings named (E12's frame), the query has no checked result | "VE does not know whether the conclusion holds under this reading." | 2.4 item 3: an UNKNOWN from a missing result, the choice `reasonOf` names (added with R8) |
 
 ### 2.2 Reused sentences (their existing gates apply)
 
@@ -222,7 +224,10 @@ Composition-s2 2.3, items 1 to 7, unchanged, on the enumerated route, with these
 2. A shown model is followed by its filled-gap sentences (2.2).
 3. An UNKNOWN from the gate is worded as composition-s2 4.6 words `UNKNOWN (conflict status: <status>)`, naming the
    choice by E12; an UNKNOWN from a missing result names that choice the same way. For the document's ALL, SOME or
-   NONE (4.5), the choice named is the other sentence's (SR2).
+   NONE (4.5), the choice named is the other sentence's (SR2). As built (RD-4b review, B3; `gateItems`): under a
+   CONFLICT, E12 with R4 shows the choice's checked witness, as a CONFLICT is worded; under an uncertified status,
+   E12 with R8; for a missing result, E12 with R9. The document's lines are E32, then E31 when the other sentence is a
+   companion, then that line; a case without an open sentence has no reading to name and gets none.
 4. The product answer lists, under each component, that component's `restrictions` and `conditional_on` (A3); an E3
    line never cites a label of another component.
 
