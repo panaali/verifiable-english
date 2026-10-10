@@ -1,6 +1,7 @@
 import VE.Readings.SupExtra
 import VE.Readings.SupWireSound
 import VE.Readings.UnspecifiedWire
+import VE.Readings.VerdictsWire
 
 /-! The superposed kinds under the unspecified completion (docs/spec/readings-defaults-PLAN.md RD-6b; spec 6.7).
 
@@ -223,6 +224,13 @@ def firstFailingND {α : Type} [DecidableEq α] (N : NDoc) (A : Choice) (M : VE.
 
 def ndSlotLabels (N : NDoc) : List String := (ndSlotLabelled N).map (·.1)
 
+/-- The filled gaps a superposed model's result depends on (readings-defaults 2.2), read by `gapsOf` as the enumerated
+    route reads a choice's: the unsaid atoms the Kleene value of the conclusion reads with nothing filled, or of the
+    assertions and premises when the case has no conclusion (a premise model). -/
+def ndModelGaps (N : NDoc) (M : VE.FiniteModel VE.Bridge.Entity) (Γ : List VE.Formula) (φ : Option VE.Formula) :
+    List (String × List String × Bool) :=
+  gapsOf (supU N) M [] (VE.SoftNorms.circ (correlate (sup (fillDoc N)).1) (φ.getD (conj ((sup (fillDoc N)).2 ++ Γ))))
+
 /-- `readings-conflict` under the completion: `runConflict` on the filled document with `Fill_T` in the slot. -/
 def runConflictND (id : String) (f : AdmittedNDFull) (j : Json) : Except String Json := do
   let r ← supReplayND f
@@ -244,7 +252,8 @@ def runConflictND (id : String) (f : AdmittedNDFull) (j : Json) : Except String 
       throw "InvalidInput: witness tuple has the wrong length or sort"
     let conflict := t.2.2.eval M (VE.Norms.tupleVal tuple)
     return okWith id [("verdict", .str (if conflict then "CONFLICT" else "UNKNOWN")), ("target", .str t.1),
-      ("assumed", choiceJson A), ("choice", choiceJson (encodedChoice D M))]
+      ("assumed", choiceJson A), ("choice", choiceJson (encodedChoice D M)),
+      ("gaps", gapsJson (gapsOf (supU N) M (VE.Norms.tupleVal tuple) t.2.2))]
   let certs := decodeConflictCerts D (j.getObjValD "conflict_certificates")
   let free := VE.Compose.slotConflictFreeCheck X (slotUnder D A ++ ndQ N) certs
   pure (okWith id [("verdict", .str (if free then "CONFLICT-FREE" else "UNKNOWN")), ("assumed", choiceJson A),
@@ -272,9 +281,11 @@ def runModelND (id : String) (f : AdmittedNDFull) (j : Json) : Except String Jso
   let X := correlate (sup D).1
   let valid := supModelCheckExtra D r.assumed (ndQ N) r.Γ r.M
   let value := (VE.SoftNorms.circ X r.φ).eval r.M []
+  let conclusion := if j.getObjValD "conclusion" == .null then none else some r.φ
   pure (okWith id [("valid", .bool valid), ("conclusion_value", .bool value),
     ("first_failing", match firstFailingND N r.assumed r.M with | some l => .str l | none => .null),
-    ("assumed", choiceJson r.assumed), ("choice", choiceJson (encodedChoice D r.M))])
+    ("assumed", choiceJson r.assumed), ("choice", choiceJson (encodedChoice D r.M)),
+    ("gaps", gapsJson (ndModelGaps N r.M r.Γ conclusion))])
 
 /-- The S2a kinds of a document under the completion, admitted once (`admitNDFull`): elaborate, choice and dead as
     RD-2a answers them, the superposed kinds on the filled document (RD-6b), refused with the route's cause when the
