@@ -1,8 +1,28 @@
 {
  "base": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
  "plan_base": "c24aeab2",
- "head": "a4e873a4c7ec8cc026119b7014a160a0ee2b6f2b",
+ "head": "36cc24cbab7685cff534130f6943665b893869ba",
  "commits": [
+  {
+   "hash": "36cc24cbab7685cff534130f6943665b893869ba",
+   "subject": "docs: AR-6 report states the owner rules, the review fixes and the commit count's commit (review B1, B2, C4)"
+  },
+  {
+   "hash": "342975cfc4bb66f1fa521d24bcd64257a8da41d2",
+   "subject": "test: AR-6 seeded faults for the owner rules and the full ratchet (review B1, C1, C2)"
+  },
+  {
+   "hash": "59e7335e2bf239308a0d50a4bbc23474ad0062c8",
+   "subject": "fix: AR-6 identity lint: one owner per domain, ratchet every site and owner (review B1)"
+  },
+  {
+   "hash": "f717a20d18e62da3a4b56356cc5bf8a096b3a95e",
+   "subject": "docs: AR-6 report states how the suite ran"
+  },
+  {
+   "hash": "61847de53202a525759bf9aec46f59b91c9bbea9",
+   "subject": "docs: AR-6 evidence re-collected at the final code commit"
+  },
   {
    "hash": "a4e873a4c7ec8cc026119b7014a160a0ee2b6f2b",
    "subject": "fix: AR-6 seeded faults build their pytest command with tools/nested_pytest"

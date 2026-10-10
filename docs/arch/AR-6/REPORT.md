@@ -32,7 +32,7 @@ DRI decisions D1 and D7 (`manage-agents/arch-dri-decisions.md`, standing ruling 
 ## Measured outcome
 
 <!-- BEGIN GENERATED AR-6 METRICS -->
-Census at `a4e873a4` (`tools/identity_lint.py --json`): **46 identity sites in 20 modules**, every one allowlisted; **33 Lean-owned** in 18 modules, 13 Python-owned records; 3 in relayed modules.
+Census at `36cc24cb` (`tools/identity_lint.py --json`): **46 identity sites in 20 modules**, every one allowlisted; **33 Lean-owned** in 18 modules, 13 Python-owned records; 3 in relayed modules.
 
 | Owner | Removed by or record | Sites |
 |---|---|---:|
@@ -79,8 +79,8 @@ Census at `a4e873a4` (`tools/identity_lint.py --json`): **46 identity sites in 2
 
 Lean-owned domains that no Lean file holds yet: `ve-bundle-v0\n`, `ve-definitions-v0.2\n`.
 
-Commits (`main..HEAD --no-merges`, base `c24aeab2`): 6; files changed: 12, none under `ve/` or `lean/`: yes.
-Seeded faults: 6, each failing its named test: yes.
+Commits (`c24aeab2..36cc24cb --no-merges`, counted at `36cc24cb`; later evidence-only commits are not counted): 11; files changed: 12, none under `ve/` or `lean/`: yes.
+Seeded faults: 14, each failing its named test: yes.
 <!-- END GENERATED AR-6 METRICS -->
 
 The plan counted "at least 36 sites in 18 modules (9 of them Python's own records)" with a text search for `"ve-`
