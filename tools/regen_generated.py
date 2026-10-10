@@ -122,6 +122,38 @@ GENERATED = (
 )
 
 
+# Scripts with a writing mode whose output this script does not regenerate, each with the reason. Every script
+# of the repository with such a mode is either a writer above or listed here (tests/test_regen_generated.py).
+NOT_REGENERATED = {
+    "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
+    "tools/gate.py": "--write-collection is tools/gate_collection.py --write (gate-collection above)",
+    "tools/stage2_parity.py": "report: docs/spec/stage2-parity.md, a migration record",
+    "tools/lean_service_soak.py": "measurement report of the machine it runs on",
+    "tools/lean_decided_share.py": "measurement report",
+    "tools/lean_output_diff.py": "comparison report of two builds",
+    "tools/select_tests_evidence.py": "recorded evidence of the test selector (replay and mutants)",
+    "tools/coverage_dashboard.py": "report: the ROADMAP.md coverage table",
+    "tools/lean_first_oracle.py": "batch 0 oracle, recorded once",
+    "tools/semantic_inventory.py": "reads ~/code/ve-webapp and ~/code/ve-bench: not derived from this tree",
+    "tools/relay_mutation_gate.py": "--record re-records gate fixtures from a test run; the gate reads answers live",
+    "tests/probe_matrix.py": "frozen Stage 0 baseline with a pinned runtime hash",
+    "conformance/wire_contract_golden.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",
+    "conformance/wire_contract_faults.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",
+    "conformance/wire_contract_delta.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",
+    "conformance/wire_contract_gate.py": "unit conformance artifact and recorded test inputs; needs the Lean gate run",
+    "conformance/soft_norms_wire_report.py": "unit conformance report",
+    "conformance/english_lean_e2_report.py": "batch report",
+    "conformance/english_lean_e2_6_report.py": "batch report",
+    "conformance/english_lean_e2_ab.py": "batch report",
+    "conformance/english_lean_e2_readability_report.py": "batch report",
+    "docs/lean-first/*/*.py": "batch evidence pinned at a commit",
+    "conformance/soft_norms.py": "--write-rust-fixtures: the Rust tests' fixture, rewritten with the soft-norms unit",
+    "usecases/*/*.py": "use-case results, rerun by their harness",
+}
+# The flags that make a script write a committed file.
+WRITE_FLAGS = ("--write", "--update-baseline", "--lean-fixtures", "--record")
+
+
 def owner(path: str) -> Generated | None:
     """The entry that owns `path` (repository-relative), or None."""
     for entry in GENERATED:
@@ -131,8 +163,8 @@ def owner(path: str) -> Generated | None:
     return None
 
 
-def owned_files(entry: Generated) -> list[Path]:
-    return sorted({path for pattern in entry.paths for path in ROOT.glob(pattern) if path.is_file()})
+def owned_files(entry: Generated, root: Path = ROOT) -> list[Path]:
+    return sorted({path for pattern in entry.paths for path in root.glob(pattern) if path.is_file()})
 
 
 # .gitattributes
@@ -295,14 +327,28 @@ def _json_format(text: str) -> tuple:
     return 2, False
 
 
-def _assurance_totals(manifest: dict) -> dict:
-    """The decoder line total of a merged assurance manifest, from its ranges (`lean_decoders.total_lines`)."""
+# Values derived from the rest of a JSON ledger: both sides of a merge change them, so the merge ignores them
+# and recomputes them from the merged ledger. {path: (keys to the value, its function)}.
+def _decoder_total(manifest: dict) -> int:
     sys.path.insert(0, str(ROOT / "tools"))
     from assurance_manifest import decoder_total_lines
-    decoders = manifest.get("lean_decoders")
-    if isinstance(decoders, dict) and "total_lines" in decoders:
-        decoders["total_lines"] = decoder_total_lines(manifest)
-    return manifest
+    return decoder_total_lines(manifest)
+
+
+DERIVED = {"ve/assurance-manifest.json": (("lean_decoders", "total_lines"), _decoder_total)}
+
+
+def _derived(path: str, value, new=None):
+    """Set the derived value of `value` (a ledger) to `new`, or, with `new` None, to its recomputation."""
+    if path not in DERIVED or not isinstance(value, dict):
+        return value
+    keys, compute = DERIVED[path]
+    node = value
+    for key in keys[:-1]:
+        node = node.get(key) if isinstance(node, dict) else None
+    if isinstance(node, dict) and keys[-1] in node:
+        node[keys[-1]] = compute(value) if new is None else new
+    return value
 
 
 def merge_text(path: str, base: str, ours: str, theirs: str) -> tuple[str, bool]:
@@ -319,13 +365,12 @@ def merge_text(path: str, base: str, ours: str, theirs: str) -> tuple[str, bool]
                 files.append(str(file))
             done = subprocess.run(["git", "merge-file", "--union", "-p", *files], capture_output=True, text=True)
             return done.stdout, done.returncode == 0
+    sides = [_derived(path, json.loads(text), 0) if text.strip() else _MISSING for text in (base, ours, theirs)]
     try:
-        merged = merge_json(json.loads(base) if base.strip() else _MISSING, json.loads(ours), json.loads(theirs))
+        merged = _derived(path, merge_json(*sides))
     except Conflict as exc:
         print(f"{path}: {exc}", file=sys.stderr)
         return ours, False
-    if path == "ve/assurance-manifest.json":
-        merged = _assurance_totals(merged)
     indent, ascii_ = _json_format(ours)
     return json.dumps(merged, indent=indent, ensure_ascii=ascii_) + "\n", True
 
@@ -418,40 +463,48 @@ def check(entries) -> list[str]:
 # Finishing a merge
 
 
-def _git(*args, check=True) -> str:
-    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=check).stdout
+def _git(root: Path, *args) -> str:
+    return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, check=True).stdout
 
 
-def _stage(path: str, number: int) -> str:
-    done = subprocess.run(["git", "show", f":{number}:{path}"], cwd=ROOT, capture_output=True, text=True)
+def _stage(root: Path, path: str, number: int) -> str:
+    done = subprocess.run(["git", "show", f":{number}:{path}"], cwd=root, capture_output=True, text=True)
     return done.stdout if done.returncode == 0 else ""
 
 
-def resolve(entries) -> int:
-    if subprocess.run(["git", "rev-parse", "-q", "--verify", "MERGE_HEAD"], cwd=ROOT,
+def resolve(entries, root: Path = ROOT) -> int:
+    """Finish the merge in progress in `root` (see the module docstring); `entries` are the writers and checks
+    to run after the conflicted generated files are merged."""
+    if subprocess.run(["git", "rev-parse", "-q", "--verify", "MERGE_HEAD"], cwd=root,
                       capture_output=True).returncode:
         print("regen_generated --resolve: no merge in progress (run git merge --no-commit first)", file=sys.stderr)
         return 2
-    unmerged = sorted(set(_git("diff", "--name-only", "--diff-filter=U").split()))
+    unmerged = sorted(set(_git(root, "diff", "--name-only", "--diff-filter=U").split()))
     others = [path for path in unmerged if owner(path) is None]
     if others:
         print("regen_generated --resolve: conflicts outside the generated files (agent sync needed):",
               *others, sep="\n  ", file=sys.stderr)
         return 2
+    merged = {}
     for path in unmerged:
-        text, clean = merge_text(path, _stage(path, 1), _stage(path, 2), _stage(path, 3))
+        text, clean = merge_text(path, _stage(root, path, 1), _stage(root, path, 2), _stage(root, path, 3))
         if not clean:
             print(f"regen_generated --resolve: {path} needs a person or the sync agent", file=sys.stderr)
             return 2
-        (ROOT / path).write_text(text)
+        merged[path] = text
+    for path, text in merged.items():  # nothing is written unless every conflicted file merged
+        (root / path).write_text(text)
         print(f"resolved {path} ({owner(path).merge})")
     failed = write(entries) or check(entries)
     if failed:
         print(f"regen_generated --resolve: failed: {', '.join(failed)}", file=sys.stderr)
         return 1
-    patterns = [f":(glob){pattern}" for entry in GENERATED for pattern in entry.paths]
-    _git("add", "-A", "--", *unmerged, *patterns)
-    remaining = _git("diff", "--name-only", "--diff-filter=U").split()
+    tracked = set(_git(root, "ls-files").split())
+    # Only patterns that name a file (git refuses a pathspec that matches nothing).
+    patterns = [f":(glob){pattern}" for entry in GENERATED for pattern in entry.paths
+                if any(root.glob(pattern)) or any(fnmatch.fnmatchcase(name, pattern) for name in tracked)]
+    _git(root, "add", "-A", "--", *unmerged, *patterns)
+    remaining = _git(root, "diff", "--name-only", "--diff-filter=U").split()
     if remaining:
         print("regen_generated --resolve: still unmerged:", *remaining, file=sys.stderr)
         return 1
