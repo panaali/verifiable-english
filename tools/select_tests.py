@@ -175,6 +175,7 @@ class Coverage:
         self.reads = data["reads"]
         self.dirs = data["dirs"]
         self.programs = data["programs"]
+        self.operations = data["operations"]
         self.status = data["status"]
         self.recorded = {test for test, status in data["status"].items()
                          if status["exit"] in (0, 5) and not status["opaque"]}
@@ -197,6 +198,9 @@ class Coverage:
 
     def readers(self, path: str) -> set[str]:
         return self._names(self.reads.get(path, ()))
+
+    def operation_readers(self, op_id: str) -> set[str]:
+        return self._names(set(self.operations.get(op_id, ())) | set(self.operations.get("*", ())))
 
     def listers(self, path: str) -> set[str]:
         """Tests that listed any directory above `path`, the root "." included.
@@ -415,7 +419,7 @@ def taint(coverage: Coverage, graph: source_graph.Graph, all_units: set[str], ad
 
 def lean_programs(graph: source_graph.Graph, path: str, presence_changed: bool) -> set[str]:
     """Executables a Lean input can change: those whose root imports the module."""
-    if path.endswith(".lean") and not presence_changed:
+    if path.endswith(".lean"):
         return graph.executables_using(".".join(Path(path).with_suffix("").parts[1:]))
     return set(lean_executables())  # a project file, or a module that appeared or vanished
 
@@ -460,6 +464,46 @@ def data_change(sel: Selection, change: Change, rust_sources: dict[str, str]) ->
         sel.rust = True  # Rust tests embed fixtures with include_bytes!
 
 
+MANIFEST = "ve/assurance-manifest.json"
+MANIFEST_TEST = "tests/test_assurance_manifest.py"
+
+
+def changed_manifest_operations(old: str | None, new: str | None) -> set[str] | None:
+    """Changed operation ids, or None when a shared field or shape changed."""
+    try:
+        before, after = json.loads(old), json.loads(new)
+        if not isinstance(before, dict) or not isinstance(after, dict):
+            return None
+        old_rows, new_rows = before.pop("operations"), after.pop("operations")
+        if before != after or not isinstance(old_rows, list) or not isinstance(new_rows, list):
+            return None
+        def indexed(rows):
+            result = {row["id"]: row for row in rows}
+            if len(result) != len(rows) or not all(type(key) is str for key in result):
+                raise ValueError("duplicate or malformed operation id")
+            return result
+        old_by_id, new_by_id = indexed(old_rows), indexed(new_rows)
+        return {op_id for op_id in old_by_id.keys() | new_by_id.keys()
+                if old_by_id.get(op_id) != new_by_id.get(op_id)}
+    except (TypeError, ValueError, KeyError, AttributeError):
+        return None
+
+
+def manifest_change(sel: Selection, change: Change) -> None:
+    sel.code = True
+    changed = changed_manifest_operations(change.old, change.new)
+    if changed is None or sel.coverage is None or change.presence_changed:
+        sel.full.append(f"{MANIFEST}: no safe operation map")
+        return
+    sel.add([MANIFEST_TEST], "manifest contract")
+    sel.add(sel.coverage.readers(MANIFEST), "reads the whole manifest")
+    for op_id in changed:
+        sel.add(sel.coverage.operation_readers(op_id), f"reads manifest operation {op_id}")
+    # A unit not covered by the map might read any entry. Include it and all
+    # tests it may affect; mapped direct file reads are included above.
+    sel.add(sel.unmapped, "unmapped manifest reader")
+
+
 def rust_texts() -> dict[str, str]:
     return {path: (ROOT / path).read_text(encoding="utf-8", errors="replace")
             for path in git_lines("ls-files", "rust/*.rs")}
@@ -489,9 +533,10 @@ def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: se
         pass
     status = dict(line.split("\t", 1)[::-1] for line in git_lines(
         "diff", "--no-renames", "--name-status", coverage.commit, base_commit))
-    python = [p for p in status if p.endswith(".py")]
-    contents = blobs([f"{rev}:{p}" for p in python for rev in (coverage.commit, base_commit)])
-    versions = {p: (contents[f"{coverage.commit}:{p}"], contents[f"{base_commit}:{p}"]) for p in python}
+    versioned = [p for p in status if p.endswith(".py") or p == MANIFEST]
+    contents = blobs([f"{rev}:{p}" for p in versioned for rev in (coverage.commit, base_commit)])
+    versions = {p: (contents[f"{coverage.commit}:{p}"], contents[f"{base_commit}:{p}"])
+                for p in versioned}
     found = uncertain_units(coverage, graph, all_units, status, versions)
     cache.parent.mkdir(parents=True, exist_ok=True)
     cache.write_text(json.dumps({"uncertain": sorted(found), "drift": len(status)}))
@@ -519,6 +564,8 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
 
     parsed = {}
     for path, (before, after) in versions.items():
+        if not path.endswith(".py"):
+            continue
         module, package = source_graph.module_name(path)
         try:
             parsed[path] = (source_graph.summary_of(before, module, package) if before is not None else None,
@@ -532,6 +579,17 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
                 called[(path, qualname)] = references
     for path, letter in status.items():
         add([path])  # a changed test's own record is stale
+        if path == MANIFEST:
+            before, after = versions.get(path, (None, None))
+            changed = changed_manifest_operations(before, after)
+            if changed is None:
+                add(all_units)
+            else:
+                add(coverage.readers(MANIFEST))
+                add([MANIFEST_TEST])
+                for op_id in changed:
+                    add(coverage.operation_readers(op_id))
+            continue
         python = None
         if path in parsed:
             pair = parsed[path]
@@ -589,6 +647,7 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     graph = source_graph.load(ROOT).overlay({change.path: change.old for change in changes})
     all_units = units()
     cov = resolve_map(base, coverage)
+    missing_map = coverage == "auto" and cov is None
     unmapped = set(all_units)
     uncertain: set[str] = set()
     drift_files = 0
@@ -601,6 +660,8 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     if cov is not None:
         unmapped = (set(all_units) - cov.recorded) | uncertain
     sel = Selection(graph, cov, unmapped, all_units)
+    if missing_map:
+        sel.full.append("missing coverage map")
     if full or not changes:
         sel.full.append("requested" if full else "no changed paths")
     parsed = {change.path: parse(change) for change in changes if change.path.endswith(".py")}
@@ -624,6 +685,9 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
             sel.checks.add(CHECK_RUST)
         if path == "lean/audit.py":
             sel.audit = True
+        if path == MANIFEST:
+            manifest_change(sel, change)
+            continue
         if kind == PYTHON:
             python_change(sel, change, *parsed[path], called)
         elif kind == LEAN:
@@ -956,15 +1020,15 @@ def impacted(paths: list[str], *, full: bool = False) -> dict:
 
 
 def working_changes(commit: str) -> tuple[dict[str, str], dict[str, tuple[str | None, str | None]]]:
-    """Git status letters and Python texts for the working tree against `commit`."""
+    """Git status letters and versioned texts for the working tree against `commit`."""
     status = dict(line.split("\t", 1)[::-1] for line in git_lines(
         "diff", "--no-renames", "--name-status", commit))
     status.update({path: "A" for path in git_lines("ls-files", "--others", "--exclude-standard")})
-    python = [p for p in status if p.endswith(".py")]
-    old = blobs([f"{commit}:{p}" for p in python])
+    versioned = [p for p in status if p.endswith(".py") or p == MANIFEST]
+    old = blobs([f"{commit}:{p}" for p in versioned])
     versions = {p: (old[f"{commit}:{p}"],
                     (ROOT / p).read_text(encoding="utf-8", errors="replace") if (ROOT / p).is_file() else None)
-                for p in python}
+                for p in versioned}
     return status, versions
 
 
@@ -992,7 +1056,8 @@ def run_recorded(plan: dict, jobs: int) -> int:
         status, versions = working_changes(base.commit)
         stale = uncertain_units(base, source_graph.load(ROOT), every, status, versions) - set(selected)
         edges = test_map.unit_edges({"tests": base.tests, "functions": base.functions, "reads": base.reads,
-                                     "dirs": base.dirs, "programs": base.programs})
+                                     "dirs": base.dirs, "programs": base.programs,
+                                     "operations": base.operations})
         for unit in sorted(every - set(selected)):
             if unit in edges and unit in base.status:
                 results[unit] = {**edges[unit], **base.status[unit]}

@@ -312,7 +312,8 @@ def make_graph(root: Path, files: dict[str, str], lean: dict[str, str] | None = 
 def make_map(edges: dict[str, dict], commit: str = "0" * 40, failed: tuple[str, ...] = ()) -> dict:
     """A map as the recorder would write it; each unit ran at least its own module."""
     results = {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
-                      "d": set(e.get("d", ())), "x": set(e.get("x", ())), "opaque": [],
+                      "d": set(e.get("d", ())), "x": set(e.get("x", ())), "m": set(e.get("m", ())),
+                      "opaque": [],
                       "exit": 1 if test in failed else 0, "seconds": 1.0}
                for test, e in edges.items()}
     return test_map.build_map(results, commit)
@@ -411,13 +412,64 @@ def test_lookups_match_nested_code_but_not_name_prefixes():
 
 
 def test_map_round_trips_through_its_edges():
-    edges = {"t1": {"f": [("a.py", "f")], "r": ["d.json"], "d": ["data"], "x": ["lake"]},
+    edges = {"t1": {"f": [("a.py", "f")], "r": ["d.json"], "d": ["data"], "x": ["lake"],
+                    "m": ["parse"]},
              "t2": {"f": [("a.py", "g"), ("b.py", "<module>")]}}
     data = make_map(edges)
     back = test_map.unit_edges(json.loads(json.dumps(data)))
     assert back == {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
-                           "d": set(e.get("d", ())), "x": set(e.get("x", ()))}
+                           "d": set(e.get("d", ())), "x": set(e.get("x", ())),
+                           "m": set(e.get("m", ()))}
                     for test, e in edges.items()}
+
+
+@pytest.mark.parametrize("op_id", ["parse", "typing", "environment", "model", "evaluate"])
+def test_five_manifest_edits_select_their_readers(op_id, tmp_path):
+    manifest = json.loads((ROOT / select_tests.MANIFEST).read_text())
+    changed = json.loads(json.dumps(manifest))
+    row = next(row for row in changed["operations"] if row["id"] == op_id)
+    row["assurance_now"] = "seeded manifest edit"
+    old, new = json.dumps(manifest), json.dumps(changed)
+    assert select_tests.changed_manifest_operations(old, new) == {op_id}
+    reader, other = "tests/test_reader.py", "tests/test_other.py"
+    edges = {reader: {"m": [op_id]}, other: {"m": ["unrelated"]},
+             select_tests.MANIFEST_TEST: {"m": ["*"]}}
+    coverage = select_tests.Coverage(make_map(edges))
+    graph = make_graph(tmp_path, {"tests/test_reader.py": "", "tests/test_other.py": ""})
+    selection = select_tests.Selection(graph, coverage, set(), list(edges))
+    select_tests.manifest_change(selection, select_tests.Change(select_tests.MANIFEST, old, new))
+    assert reader in selection.reasons
+    assert select_tests.MANIFEST_TEST in selection.reasons
+    assert other not in selection.reasons
+    assert not selection.full
+
+
+def test_manifest_shared_field_or_missing_map_selects_full(tmp_path):
+    old = (ROOT / select_tests.MANIFEST).read_text()
+    changed = json.loads(old)
+    changed["version"] = "seeded"
+    graph = make_graph(tmp_path, {})
+    selection = select_tests.Selection(graph, None, set(), [])
+    select_tests.manifest_change(selection, select_tests.Change(select_tests.MANIFEST, old, json.dumps(changed)))
+    assert selection.full
+
+
+def test_automatic_selection_without_a_map_runs_full_suite(monkeypatch):
+    monkeypatch.setattr(select_tests, "resolve_map", lambda base, coverage: None)
+    plan = select_tests.select(changes=[select_tests.Change("docs/example.md", "before", "after")],
+                               coverage="auto")
+    assert plan["full"] and plan["full_reasons"] == ["missing coverage map"]
+    assert set(plan["selected"]) == set(select_tests.units())
+
+
+def test_added_and_removed_lean_modules_select_only_importing_executables(tmp_path):
+    graph = make_graph(tmp_path, {}, lean={"lean/Shared.lean": "import Lean\n",
+                                            "lean/Used.lean": "import Shared\n"})
+    graph.lean_imports["Main"] = ["Used"]
+    graph.lean_imports["OtherMain"] = []
+    from unittest.mock import patch
+    with patch.object(source_graph, "lean_executables", return_value={"first": "Main", "second": "OtherMain"}):
+        assert select_tests.lean_programs(graph, "lean/Shared.lean", True) == {"first"}
 
 
 def test_tests_that_ran_no_drifted_code_keep_their_map_entry(tmp_path):
@@ -607,6 +659,29 @@ def test_recorder_sees_functions_reads_and_children(tmp_path):
     assert "lib.py" not in result["r"]  # imports, tracebacks and warnings read source, not data
     assert result["d"] == {"fixtures"}  # the import system's listing of "." is not the test's
     assert result["opaque"] == []
+
+
+def test_recorder_tracks_manifest_operations_without_import_read(tmp_path):
+    assurance = textwrap.dedent('''
+        import json, pathlib, sys
+        def _load():
+            return json.loads(pathlib.Path(__file__).with_name("assurance-manifest.json").read_text())
+        DATA = _load()
+        def operation(name):
+            sys.audit("ve.manifest.operation", name)
+            return DATA[name]
+    ''')
+    result = recorder_run(tmp_path, "from ve import assurance\nassurance.operation('parse')\n",
+                          files={"ve/__init__.py": "", "ve/assurance.py": assurance,
+                                 "ve/assurance-manifest.json": '{"parse": 1}'})
+    assert result["m"] == {"parse"}
+    assert "ve/assurance-manifest.json" not in result["r"]
+
+
+def test_direct_manifest_read_remains_a_whole_file_edge(tmp_path):
+    result = recorder_run(tmp_path, "from pathlib import Path\nPath('ve/assurance-manifest.json').read_text()\n",
+                          files={"ve/assurance-manifest.json": "{}"})
+    assert "ve/assurance-manifest.json" in result["r"]
 
 
 def test_a_python_child_that_leaves_no_record_makes_the_unit_opaque(tmp_path):
@@ -1014,7 +1089,7 @@ def test_the_plan_and_the_drift_check_treat_presence_alike(kind, path, letter, c
         expected = every
     else:
         expected = {PRESENCE_UNITS["reader"], *listers}
-        expected |= {"python": {PRESENCE_UNITS["importer"]}, "lean": {PRESENCE_UNITS["runner"]},
+        expected |= {"python": {PRESENCE_UNITS["importer"]}, "lean": set(),
                      "rust": {PRESENCE_UNITS["runner"]}, "data": set()}[kind]
         mapped = {test for test, reasons in plan["reasons"].items()
                   if any(r != "smoke" and not r.endswith("(static)") for r in reasons)}

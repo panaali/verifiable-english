@@ -23,6 +23,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 import functools
 import json
+import sys
 from pathlib import Path
 
 from .errors import AuthorityViolation
@@ -50,10 +51,12 @@ ENTRIES: dict[str, list[tuple[str, str]]] = {}
 
 def manifest() -> dict:
     """The parsed manifest (shared; do not mutate)."""
+    sys.audit("ve.manifest.all")
     return _MANIFEST
 
 
 def operation(op_id: str) -> dict:
+    sys.audit("ve.manifest.operation", op_id)
     try:
         return OPERATIONS[op_id]
     except KeyError:
@@ -62,11 +65,13 @@ def operation(op_id: str) -> dict:
 
 def enforced_operations() -> frozenset[str]:
     """Operations whose verdict may only come from Lean on this run."""
+    sys.audit("ve.manifest.all")
     return _migrated | _simulated
 
 
 def require_authority(op_id: str, engine: str) -> None:
     """Refuse a verdict for `op_id` from a non-authoritative `engine`."""
+    sys.audit("ve.manifest.operation", op_id)
     if engine != "lean" and op_id in _migrated | _simulated:
         raise AuthorityViolation(
             f"{op_id} is Lean-authoritative; a {engine} implementation cannot produce its verdict",
@@ -140,6 +145,7 @@ def simulate_migration(*op_ids: str):
 
 def render_decoders_markdown() -> str:
     """The generated pinned-decoder table in docs/spec/assurance-manifest.md section 4."""
+    sys.audit("ve.manifest.all")
     decoders = _MANIFEST["lean_decoders"]
     rows = ["| File | File lines | Decoder lines | Ranges | File SHA-256 |", "|---|---:|---:|---|---|"]
     for entry in decoders["files"]:
@@ -152,6 +158,7 @@ def render_decoders_markdown() -> str:
 
 def render_markdown() -> str:
     """The generated per-operation table in docs/spec/assurance-manifest.md."""
+    sys.audit("ve.manifest.all")
     def cell(values):
         return "<br>".join(f"`{v}`" for v in values) if values else "none"
 

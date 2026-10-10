@@ -13,6 +13,7 @@ to 64 levels. Arbitrary JSON (echoed ids, `const`) is compared without recursion
 from __future__ import annotations
 
 from decimal import Decimal
+from collections.abc import Mapping
 import json
 from pathlib import Path
 import re
@@ -569,7 +570,29 @@ class _Grammar:
 
 
 _compiler = Compiler()
-ROWS = {mode: _compiler.ref(f"{mode}.json", "#/row") for mode in MODES}
+
+
+class _Rows(Mapping):
+    """Compile a mode only when a response in that mode is checked."""
+
+    def __init__(self):
+        self._rows = {}
+
+    def __getitem__(self, mode):
+        if mode not in MODES:
+            raise KeyError(mode)
+        if mode not in self._rows:
+            self._rows[mode] = _compiler.ref(f"{mode}.json", "#/row")
+        return self._rows[mode]
+
+    def __iter__(self):
+        return iter(MODES)
+
+    def __len__(self):
+        return len(MODES)
+
+
+ROWS = _Rows()
 RESPONSE = _compiler.ref("envelope.json", "#/response")
 HANDSHAKE = _compiler.ref("envelope.json", "#/handshake")
 
