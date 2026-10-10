@@ -16,9 +16,13 @@ so `(f"ve-source-{v}\\n" + text).encode()` reads `ve-source-{}\\n{}`. A docstrin
 
 Today's sites are listed in `ALLOWLIST`, keyed by module, enclosing scope and domain, one entry per site. A
 Lean-owned entry names the batch that removes it (`REMOVERS`); a Python-owned entry names its record (D7). A site
-without an entry fails, and so does an entry without its site (stale). With `--base REV` the Lean-owned entries
-may not grow against the allowlist at REV: the list only shrinks. A revision without the allowlist has no ratchet yet. `--prune` deletes
-stale entries and adds none.
+without an entry fails, and so does an entry without its site (stale). With `--base REV` the Lean-owned sites of a
+module may not grow against the allowlist at REV (per domain; a site moved to another function of its module is not
+growth): the list only shrinks. A revision without the allowlist has no ratchet yet. `--prune` deletes stale
+entries and adds none.
+
+Collision rule (merge train): "conflict in `tools/identity-sites.json`: take `main`'s file, run
+`python3 tools/identity_lint.py --prune`; a site that moved to another function updates its entry's `scope`".
 
 Usage: ``python tools/identity_lint.py [--base REV] [--prune] [--json] [PATH ...]`` (default: every `ve/` module;
 given paths, each is read as a relayed module with an empty allowlist). Exit 1 on a finding.
@@ -260,7 +264,7 @@ def write(entries: list[dict]) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
     parser.add_argument("paths", nargs="*")
-    parser.add_argument("--base", help="fail when a Lean-owned entry was added since this revision")
+    parser.add_argument("--base", help="fail when a Lean-owned site was added since this revision")
     parser.add_argument("--prune", action="store_true", help="delete stale entries from the allowlist")
     parser.add_argument("--json", action="store_true", help="print the census as JSON")
     args = parser.parse_args(argv)
