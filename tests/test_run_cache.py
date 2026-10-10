@@ -53,7 +53,10 @@ class Repository:
         monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "xdg"))  # tools/source_graph.py's own cache
         self.output = tmp_path / "output.json"
         self.settings = {"units": ["tiny"]}
-        self.environment = nested_pytest.environment(os.environ, PYTHONPATH=os.pathsep.join([str(ROOT), str(root)]))
+        # The Rust binary the run uses is the one VE_RUST_BINARY names, as under the gate (which names the
+        # checkout's): here, the scratch repository's.
+        self.environment = nested_pytest.environment(os.environ, PYTHONPATH=os.pathsep.join([str(ROOT), str(root)]),
+                                                     VE_RUST_BINARY=str(root / "rust/target/release/ve"))
         self.runs = 0
 
     def run(self, env):
