@@ -10824,6 +10824,9 @@
         "VE.Ask.replayPlainAskCore",
         "VE.Ask.replayPlainParts"
       ],
+      "G[R]": [
+        "VE.Ask.sameEnvironment"
+      ],
       "G[V]": [
         "VE.Ask.PlainAsked",
         "VE.Ask.PlainParts",
