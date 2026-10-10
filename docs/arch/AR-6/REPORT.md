@@ -29,6 +29,55 @@ DRI decisions D1 and D7 (`manage-agents/arch-dri-decisions.md`, standing ruling 
 ## Measured outcome
 
 <!-- BEGIN GENERATED AR-6 METRICS -->
+Census at `81ab4d43` (`tools/identity_lint.py --json`): **46 identity sites in 20 modules**, every one allowlisted; **33 Lean-owned** in 18 modules, 13 Python-owned records; 3 in relayed modules.
+
+| Owner | Removed by or record | Sites |
+|---|---|---:|
+| Lean | AR-15 | 32 |
+| Lean | lf-16g | 1 |
+| Python | adapters | 2 |
+| Python | argument package | 4 |
+| Python | checker build | 1 |
+| Python | proposals | 6 |
+
+| Domain | Sites | Owner | Lean files whose source holds the domain text |
+|---|---:|---|---|
+| `ve-adapter-input-v1\n` | 1 | python | none |
+| `ve-adapter-table-v1\n` | 1 | python | none |
+| `ve-argument-diagnostic-record-v1\n` | 1 | python | none |
+| `ve-argument-package-v1\n` | 1 | python | none |
+| `ve-bundle-v0\n` | 1 | lean | none |
+| `ve-claim-v1\n` | 1 | lean | `lean/VE/Service/Graph.lean`, `lean/VE/Service/Standalone.lean` |
+| `ve-composition-v1\n` | 1 | python | none |
+| `ve-deduction-v1\n` | 1 | lean | `lean/VE/Service/Family.lean`, `lean/VE/Service/Graph.lean` and 1 more |
+| `ve-definitions-v0.2\n` | 1 | lean | none |
+| `ve-document@2\n` | 1 | lean | `lean/VE/SpeechActs/Source/Run.lean` |
+| `ve-english-grammar-v1\n` | 1 | lean | `lean/VE/EnglishGrammar/Run.lean` |
+| `ve-english-lexicon-v1\n` | 1 | lean | `lean/VE/EnglishGrammar/Run.lean` |
+| `ve-english-vocabulary-v1\n` | 2 | lean | `lean/VE/EnglishGrammar/Run.lean` |
+| `ve-environment-{}\n` | 2 | lean | `lean/VE/CertificateWire.lean`, `lean/VE/Order/Wire.lean` and 3 more |
+| `ve-evidence-assessment-v1\n` | 1 | python | none |
+| `ve-meaning-{}\n` | 8 | lean | `lean/VE/CertificateWire.lean`, `lean/VE/Order/Wire.lean` and 2 more |
+| `ve-model-{}\n` | 1 | lean | `lean/VE/Alternatives/Run.lean`, `lean/VE/Discourse/Loader.lean` and 1 more |
+| `ve-norms-{}\n` | 2 | lean | `lean/VE/Norms/Replay.lean` |
+| `ve-proposal-environment-v1\n` | 1 | python | none |
+| `ve-proposal-overlay-v1\n` | 1 | python | none |
+| `ve-proposal-source-v1\n` | 1 | python | none |
+| `ve-proposal-{}-v1\n` | 1 | python | none |
+| `ve-python-checker-build-v1\n` | 1 | python | none |
+| `ve-report-{}\n` | 4 | lean | `lean/VE/Attribution/Run.lean`, `lean/VE/Discourse/Admission.lean` and 3 more |
+| `ve-rights-{}\n` | 1 | lean | `lean/VE/Rights/Wire.lean` |
+| `ve-senses-dictionary-v1\n` | 1 | lean | `lean/VE/Senses/Decode.lean` |
+| `ve-senses-request-v1\n` | 1 | lean | `lean/VE/Senses/Run.lean` |
+| `ve-situation-{}\n` | 1 | lean | `lean/VE/Readings/Wire.lean` |
+| `ve-soft-norms-{}\n` | 1 | lean | `lean/VE/SoftNorms/Wire.lean` |
+| `ve-source-{}\n` | 2 | lean | `lean/VE/Discourse/Loader.lean`, `lean/VE/Service/Family.lean` and 2 more |
+| `ve-vocabulary-proposal-v1\n` | 2 | python | none |
+
+Lean-owned domains that no Lean file holds yet: `ve-bundle-v0\n`, `ve-definitions-v0.2\n`.
+
+Commits (`main..HEAD --no-merges`, base `c24aeab2`): 4; files changed: 12, none under `ve/` or `lean/`: yes.
+Seeded faults: 6, each failing its named test: yes.
 <!-- END GENERATED AR-6 METRICS -->
 
 The plan counted "at least 36 sites in 18 modules (9 of them Python's own records)" with a text search for `"ve-`
