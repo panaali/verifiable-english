@@ -12,9 +12,10 @@ Nothing here is computed for W2's, the pending or the abstaining route (1.1).
 from __future__ import annotations
 
 import json
+from contextlib import contextmanager
 from itertools import product
 
-from .errors import CheckerUnavailable, VEError
+from .errors import CheckerUnavailable, ResourceLimit, VEError
 
 BUDGET = {"max_steps": 10_000, "max_domain_size": 2, "max_models": 10_000, "max_evaluations": 100_000}
 PENDING = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
@@ -1042,6 +1043,23 @@ def _need(condition):
         raise ValueError
 
 
+INVALID_ANSWER = "the Lean readings route returned an invalid answer"
+
+
+@contextmanager
+def relayed():
+    """Checking an answer Lean sent (build checklist 4 and 5): every failure inside is `CheckerUnavailable`, never a
+    crash and never a verdict, whatever the answer holds (a type its schema did not fix, a missing or duplicated
+    row, a decoder's refusal of a value Lean sent). A resource limit stays a resource limit (checklist 6). The one
+    guard of every check of a `readings-verdicts` answer and of the split's answers at load."""
+    try:
+        yield
+    except (CheckerUnavailable, ResourceLimit):
+        raise
+    except Exception as exc:  # noqa: BLE001 - any failure of the check is an invalid answer
+        raise CheckerUnavailable(INVALID_ANSWER) from exc
+
+
 def _labels(value):
     _need(type(value) is list and all(type(x) is str for x in value))
     return value
@@ -1221,8 +1239,8 @@ def _check_answer(row, case, frame):
     `CheckerUnavailable`. A conflict package that does not certify CONFLICT-FREE is not refused: the witness search
     follows (4.3)."""
     sent = {json.dumps(e["choice"]): e for e in case.get("evidence", [])}
-    try:
-        from .backends.service_schema import Invalid, check_row
+    with relayed():
+        from .backends.service_schema import check_row
         # The producer's generated, proved response shape owns every field,
         # status spelling and JSON type.
         check_row("readings-route", row, {"id": row.get("id"), "kind": "readings-verdicts"}, 0)
@@ -1234,8 +1252,6 @@ def _check_answer(row, case, frame):
         _check_result(row, case, frame, rows)
         _check_dead(row, case, frame)
         _check_english(row, frame, rows)
-    except (Invalid, AttributeError, KeyError, TypeError, ValueError, IndexError, StopIteration) as exc:
-        raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
     for entry in row["per_choice"]:
         pieces = {k for k in sent.get(json.dumps(entry["choice"]), {}) if k != "choice"}
         for piece, error in entry["errors"].items():

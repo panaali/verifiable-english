@@ -424,6 +424,13 @@ theorem runOne_fits (j : Json) (id kind : String) (environment document : Json) 
     | (intro v hv; fits_from separateND_fits _ _ _ v hv)
     | (simp only [VE.Route.Wire.ok]; fits using pair_fits)
 
+/-- A case's environment or document in its component row (`asObject`) is an object. -/
+theorem asObject_fits (j : Json) : Fits req Skel.anyObject (asObject j) := by
+  unfold asObject Skel.anyObject
+  split
+  · exact Fits.obj (fun _ _ _ => Fits.any _) (fun _ h => by cases h) (fun _ h => by cases h)
+  · exact Fits.mkObj (by decide) (fun _ h => by cases h)
+
 theorem componentRows (j : Json) (id kind : String) (parts : List (String × Json × Json)) :
     OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (e d d' a : Json), r = componentRowOf kind name e d d' a ∧
       (kind = "readings-validate" → Fits j (skel% "readings-route.json#/$defs/validate") a) ∧
@@ -469,7 +476,9 @@ theorem runComponents_fits (j : Json) (id kind : String) (parts : List (String �
       unfold componentRowOf
       simp only [beq_self_eq_true, if_true]
       fits
-      exact h2 (by decide)
+      all_goals first
+        | exact h2 (by decide)
+        | exact asObject_fits _
   · subst hd
     simp at hv
 
@@ -564,7 +573,9 @@ theorem runAdmittedComponents_fits (j : Json) (id kind : String)
       unfold componentRowOf
       simp only [beq_self_eq_true, if_true]
       fits
-      exact h2 (by decide)
+      all_goals first
+        | exact h2 (by decide)
+        | exact asObject_fits _
   · subst hd
     simp at hv
 
