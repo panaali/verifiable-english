@@ -128,6 +128,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | Q2.3 `VE.Words` `#guard`s recorded against Python's producers on the readings and norm-defaults corpora | AGENT | **deferred** with Q2.4, whose A/B is that comparison |
 | Q2.6 reading and writing evaluation (Sonnet as reader and writer) | EXTERNAL | **deferred**: needs model calls, which this task forbids; owner: the orchestrator |
 | Q2.6 latency and agreement with W2 | AGENT | **deferred** with Q2.6 |
+| Q2.5 one flip generator (the point search as its instance, the copy deleted) | AGENT | **deferred** with Q2.4 |
 | DRI signatures on DELTA D1 to D12 | HUMAN (DRI) | pending |
 
 ## Not done, and not run
@@ -137,6 +138,10 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   seeded bugs and this report; Q2.4 touches the merged readings and norm-defaults routes and needs its own A/B.
   Release needs it (plan: "Release requires Q2.4 and Q2.6").
 - **Q2.6's evaluation, latency and W2 agreement**: not run (model calls forbidden here).
+- **Q2.5's one flip generator**: `ve.ask._split_piece` flips a countermodel's filling at the gaps Lean's row names;
+  the norm-defaults point search (`ve/norm_defaults.py`, `_point_statuses`) still builds its own all-yes and all-no
+  fillings for Lean's `undecided` method. The plan asks for one generator with the point search as its instance and
+  the point-only copy deleted; that is left with Q2.4, which moves the same producers.
 - **Q2.2's "A/B shows no change outside the new mode"**: no corpus comparison was run; the full gate is the evidence
   that existing behaviour is unchanged, and DELTA D9 names the one generator change that can change a readings
   answer.
@@ -145,10 +150,71 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   agent documents about 3 s; the G document 0.1 to 0.2 s).
 - **Flaky test seen once**: `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`
   (Q1's, unchanged) did not raise once in a combined run and passed on two reruns; it races a near-zero deadline.
+- **Not synced with `main`**: `main` moved 70 commits past this batch's base while it was built (RD-4b, eff-tests,
+  eff-merge with `tools/relay_mutation_gate.py`, AR-6's identity lint). The branch is gated on its own base; the sync,
+  and those new checks on `ask`, come with the merge.
 - **The selected-tests run** with `--jobs 8` stopped at the one-hour limit while re-recording its coverage map, after
   336 of 345 files had run; the 9 files it had not reached were run directly and passed, and the 4 files it reported
   failing were fixed (the trust baseline's totals, the `ask` seed of the response fuzz, the nested-pytest builder in
   `mutants.py`, the nullable enum of the schema) and rerun.
 
 <!-- BEGIN GENERATED: report.py -->
+
+Scope: `main..HEAD --no-merges` at `e3a54834` (base `f0547468`): 23 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
+
+| Language | Files | Lines added | Lines deleted |
+|---|---:|---:|---:|
+| Lean | 26 | 5135 | 696 |
+| Python (product) | 8 | 1058 | 80 |
+| Python (tests) | 7 | 815 | 14 |
+| Rust | 0 | 0 | 0 |
+
+Recorded answers (`tests/fixtures/ask`, replayed by `tests/test_ask_fixtures.py`):
+
+| Fixture | Route | Lead | Rows | Row leads | Reasons | Replay s |
+|---|---|---|---:|---|---|---:|
+| A1 | norm-defaults | notSettled | 1 | notSettled | — | 2.9 |
+| A1d | — | refused: UnsupportedProfile | 0 | — | — | — |
+| A2 | norm-defaults | unknown | 1 | unknown | X4 | 2.4 |
+| A3 | norm-defaults | notNecessarily | 1 | notNecessarily | — | 2.4 |
+| A4 | norm-defaults | unknown | 1 | unknown | X4 | 2.9 |
+| A5 | norm-defaults | unknown | 1 | unknown | X1 | 2.9 |
+| A7 | norm-defaults | notSettled | 1 | notSettled | — | 3.7 |
+| A8 | norm-defaults | notSettled | 1 | notSettled | — | 3.1 |
+| G1 | plain | yes | 1 | yes | — | 0.2 |
+| G10 | plain | yes | 1 | yes | — | 0.1 |
+| G2 | plain | yes | 1 | yes | — | 0.1 |
+| G3 | plain | notNecessarily | 1 | notNecessarily | — | 0.1 |
+| G4 | plain | no | 1 | no | — | 0.1 |
+| U2 | readings | yes | 6 | yes | — | 10.9 |
+| U3 | readings | by_reading | 6 | notSettled, yes | — | 8.6 |
+| U5 | readings | by_reading | 6 | notSettled, yes | — | 7.4 |
+| U6 | readings | yes | 6 | yes | — | 10.9 |
+| U7 | readings | by_reading | 6 | notSettled, unknown | X4 | 4.7 |
+
+Statement check (`tools/question_statements.py --q2`, exit 0):
+
+    Q2 statements: 27 of 27 implemented; 0 missing; 0 differ in text
+    Q2 definitions: 46 approved, 32 with bodies, 32 equal to the approved text, 0 changed (0 listed with their reasons); 0 absent
+    Q2 structures and inductives: 13 approved, 12 equal to the approved text, 1 changed
+      changed Asked: `hnames` uses `NameReadsBackSame` (canonical JSON text, the relation `UnitBound` uses) for the approved `NameReadsBack` (kept as approved): Lean's `Json` has no decidable equality, so `=` on the read-back formula cannot be decided
+    Q2 Lean check: 41 approved statements and signatures elaborated against the implementation; PASS
+
+Seeded bugs (`mutants.py`, `evidence/mutants.json`): 8 of 8 caught.
+
+| Seeded bug | File | Behaviour | Caught by |
+|---|---|---|---|
+| lean-lead-yes-without-model | `lean/VE/Ask/Basic.lean` | answer soundness: yes needs a model of the premises (lead_sound) | `lake build VE.Ask.Sound` |
+| lean-cited-reversed | `lean/VE/Ask/Run.lean` | citation exactness, in segment order: a row cites its sources in the certificate's order | `tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[G1]` |
+| lean-gaps-dropped | `lean/VE/Ask/Run.lean` | not settled: a refuted row names the gaps its countermodel turns on, for the split | `tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[U3]` |
+| lean-evidence-unbound | `lean/VE/Ask/Wire.lean` | request binding: every evidence entry names a compatible choice, once | `tests/test_ask_relay.py::test_lean_refuses_a_request_not_bound_to_its_document` |
+| lean-environment-unbound | `lean/VE/Ask/PlainWire.lean` | request binding: the plain case's environment is the document's | `tests/test_ask_fixtures.py::test_a_case_of_another_document_is_not_this_documents` |
+| python-choice-unbound | `ve/ask.py` | relay binding: a row's choice names the request's open sets, each once, in order | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
+| python-text-unbound | `ve/ask.py` | relay binding: the answer's text is its lines' text | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
+| python-statement-text-ignored | `tools/question_statements.py` | statement check: a Q2 statement whose text differs from the approved text fails | `tests/test_question_statements.py::test_a_changed_statement_or_definition_fails` |
+
+Trust budget (`docs/trust-baseline.json`): K 997 → 997 (+0), S 9704 → 9887 (+183), V 36289 → 36887 (+598).
+
+Full gate: not yet saved (`evidence/gate-result.json` is written after the gate).
+
 <!-- END GENERATED: report.py -->
