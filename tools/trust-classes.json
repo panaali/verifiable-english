@@ -587,10 +587,10 @@
         "ResponseShape.Schemas.Norms.kind",
         "ResponseShape.Schemas.Norms.norms_path",
         "ResponseShape.Schemas.Norms.row",
-        "ResponseShape.Schemas.Norms.\u00abnorms-certificate\u00bb",
-        "ResponseShape.Schemas.Norms.\u00abnorms-conflict\u00bb",
-        "ResponseShape.Schemas.Norms.\u00abnorms-elaborate\u00bb",
-        "ResponseShape.Schemas.Norms.\u00abnorms-witness\u00bb"
+        "ResponseShape.Schemas.Norms.«norms-certificate»",
+        "ResponseShape.Schemas.Norms.«norms-conflict»",
+        "ResponseShape.Schemas.Norms.«norms-elaborate»",
+        "ResponseShape.Schemas.Norms.«norms-witness»"
       ]
     },
     "ResponseShape/Schemas/Order.lean": {
@@ -683,6 +683,13 @@
         "ResponseShape.Schemas.ReadingsRoute.overBudget",
         "ResponseShape.Schemas.ReadingsRoute.pair",
         "ResponseShape.Schemas.ReadingsRoute.premisesCandidate",
+        "ResponseShape.Schemas.ReadingsRoute.productFor",
+        "ResponseShape.Schemas.ReadingsRoute.productForm",
+        "ResponseShape.Schemas.ReadingsRoute.product_component",
+        "ResponseShape.Schemas.ReadingsRoute.product_conflict",
+        "ResponseShape.Schemas.ReadingsRoute.product_line",
+        "ResponseShape.Schemas.ReadingsRoute.product_premises",
+        "ResponseShape.Schemas.ReadingsRoute.product_query",
         "ResponseShape.Schemas.ReadingsRoute.queryForms",
         "ResponseShape.Schemas.ReadingsRoute.resultForm",
         "ResponseShape.Schemas.ReadingsRoute.row",
@@ -695,6 +702,8 @@
         "ResponseShape.Schemas.ReadingsRoute.validate",
         "ResponseShape.Schemas.ReadingsRoute.verdicts",
         "ResponseShape.Schemas.ReadingsRoute.verdictsFor",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_component_status",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_components",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_conflict",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_counter",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_dead",
@@ -794,7 +803,7 @@
         "ResponseShape.Schemas.Route.label",
         "ResponseShape.Schemas.Route.ok",
         "ResponseShape.Schemas.Route.row",
-        "ResponseShape.Schemas.Route.\u00abdependency-order\u00bb"
+        "ResponseShape.Schemas.Route.«dependency-order»"
       ],
       "G[R]": [
         "ResponseShape.Schemas.Route.error"
@@ -2676,7 +2685,7 @@
       "D[V]": [
         "VE.Discourse.Loader.Front",
         "VE.Discourse.Loader.Split",
-        "VE.Discourse.Loader.Unit\u2080",
+        "VE.Discourse.Loader.Unit₀",
         "VE.Discourse.Loader.activeOf",
         "VE.Discourse.Loader.admissionObject",
         "VE.Discourse.Loader.allowedMetadata",
@@ -4399,13 +4408,13 @@
           ]
         },
         "VE.NormDefaults.Wire.pairPartners",
-        "VE.NormDefaults.Wire.selectionBase",
         {
           "name": "VE.NormDefaults.Wire.selectedRules",
           "tied": [
             "VE.NormDefaults.Wire.selectedRules_sound"
           ]
         },
+        "VE.NormDefaults.Wire.selectionBase",
         {
           "name": "VE.NormDefaults.Wire.settledConflict",
           "tied": [
@@ -5951,7 +5960,7 @@
         "VE.Readings.Examples.docK",
         "VE.Readings.Examples.exc",
         "VE.Readings.Examples.exceptX",
-        "VE.Readings.Examples.ex\u2082",
+        "VE.Readings.Examples.ex₂",
         "VE.Readings.Examples.fanCited",
         "VE.Readings.Examples.fanDefault",
         "VE.Readings.Examples.formulaSet",
@@ -5981,7 +5990,7 @@
         "VE.Readings.Examples.ow",
         "VE.Readings.Examples.phiEx",
         "VE.Readings.Examples.q0",
-        "VE.Readings.Examples.quiet\u2082",
+        "VE.Readings.Examples.quiet₂",
         "VE.Readings.Examples.regsK",
         "VE.Readings.Examples.rs1",
         "VE.Readings.Examples.rs15",
@@ -5997,8 +6006,8 @@
         "VE.Readings.Examples.unlabelled",
         "VE.Readings.Examples.users13",
         "VE.Readings.Examples.waiveX",
-        "VE.Readings.Examples.\u03c319",
-        "VE.Readings.Examples.\u03c321c"
+        "VE.Readings.Examples.σ19",
+        "VE.Readings.Examples.σ21c"
       ]
     },
     "VE/Readings/Force.lean": {
@@ -6095,6 +6104,7 @@
     },
     "VE/Readings/Run.lean": {
       "D[V]": [
+        "VE.Readings.Run.asObject",
         "VE.Readings.Run.candidateJson",
         "VE.Readings.Run.componentOfCase",
         "VE.Readings.Run.componentRow",
@@ -6112,10 +6122,12 @@
       "G[V]": [
         "VE.Readings.Run.ComponentAdmission",
         "VE.Readings.Run.PairFacts",
+        "VE.Readings.Run.admitChecked",
         "VE.Readings.Run.admitComponent",
         "VE.Readings.Run.admitComponents",
         "VE.Readings.Run.candidateJsonSpec",
         "VE.Readings.Run.chainFindings",
+        "VE.Readings.Run.componentRowOf",
         "VE.Readings.Run.decisionOnlyText",
         "VE.Readings.Run.elaborateOne",
         "VE.Readings.Run.ndPairFacts",
@@ -6158,15 +6170,15 @@
         "VE.Readings.RunExamples.tickValue",
         "VE.Readings.RunExamples.users12",
         "VE.Readings.RunExamples.users4",
-        "VE.Readings.RunExamples.\u03c3Help",
-        "VE.Readings.RunExamples.\u03c3Help12",
-        "VE.Readings.RunExamples.\u03c3K1",
-        "VE.Readings.RunExamples.\u03c3Wrong",
-        "VE.Readings.RunExamples.\u03c3Wrong12"
+        "VE.Readings.RunExamples.σHelp",
+        "VE.Readings.RunExamples.σHelp12",
+        "VE.Readings.RunExamples.σK1",
+        "VE.Readings.RunExamples.σWrong",
+        "VE.Readings.RunExamples.σWrong12"
       ],
       "G[I]": [
         "VE.Readings.RunExamples.tickValid",
-        "VE.Readings.RunExamples.\u03c3Avoid"
+        "VE.Readings.RunExamples.σAvoid"
       ]
     },
     "VE/Readings/Scan.lean": {
@@ -6471,9 +6483,12 @@
       "T": [
         "VE.Readings.UnspecifiedExamples.ND0",
         "VE.Readings.UnspecifiedExamples.ND1",
+        "VE.Readings.UnspecifiedExamples.ND10",
         "VE.Readings.UnspecifiedExamples.ND1n",
+        "VE.Readings.UnspecifiedExamples.ND4",
         "VE.Readings.UnspecifiedExamples.ND5",
         "VE.Readings.UnspecifiedExamples.NK",
+        "VE.Readings.UnspecifiedExamples.authorText",
         "VE.Readings.UnspecifiedExamples.base1",
         "VE.Readings.UnspecifiedExamples.beHelpful",
         "VE.Readings.UnspecifiedExamples.cand",
@@ -6483,20 +6498,17 @@
         "VE.Readings.UnspecifiedExamples.mustHelp",
         "VE.Readings.UnspecifiedExamples.mustHelpAsks",
         "VE.Readings.UnspecifiedExamples.names1",
+        "VE.Readings.UnspecifiedExamples.oneRuleSet",
         "VE.Readings.UnspecifiedExamples.probe1",
         "VE.Readings.UnspecifiedExamples.regs1",
+        "VE.Readings.UnspecifiedExamples.regs4",
         "VE.Readings.UnspecifiedExamples.rs1",
         "VE.Readings.UnspecifiedExamples.rs5",
         "VE.Readings.UnspecifiedExamples.ruleOver",
+        "VE.Readings.UnspecifiedExamples.rulesOnP",
         "VE.Readings.UnspecifiedExamples.sameOn",
         "VE.Readings.UnspecifiedExamples.sit1",
         "VE.Readings.UnspecifiedExamples.unspec1",
-        "VE.Readings.UnspecifiedExamples.ND10",
-        "VE.Readings.UnspecifiedExamples.ND4",
-        "VE.Readings.UnspecifiedExamples.authorText",
-        "VE.Readings.UnspecifiedExamples.oneRuleSet",
-        "VE.Readings.UnspecifiedExamples.regs4",
-        "VE.Readings.UnspecifiedExamples.rulesOnP",
         "VE.Readings.UnspecifiedExamples.unspec4"
       ]
     },
@@ -6576,8 +6588,8 @@
         "VE.Readings.CounterU",
         "VE.Readings.Covers",
         "VE.Readings.Holds",
-        "VE.Readings.Reason",
         "VE.Readings.ReadingVerdict",
+        "VE.Readings.Reason",
         "VE.Readings.RowsHold",
         "VE.Readings.excludedBy"
       ],
@@ -6720,14 +6732,18 @@
         "VE.Readings.assumedReadings",
         "VE.Readings.conditionItems",
         "VE.Readings.conditionLines",
+        "VE.Readings.conflictRowItems",
         "VE.Readings.englishPlan",
         "VE.Readings.firstShown",
         "VE.Readings.fullReadings",
+        "VE.Readings.gateItems",
         "VE.Readings.independentItems",
         "VE.Readings.mentioned",
         "VE.Readings.perChoice",
         "VE.Readings.planItems",
-        "VE.Readings.providedItems"
+        "VE.Readings.providedItems",
+        "VE.Readings.unknownItems",
+        "VE.Readings.witnessItems"
       ]
     },
     "VE/Readings/Wire.lean": {
@@ -10693,6 +10709,93 @@
     "VE/WireContract/Tables/SoftNorms.lean": {
       "G[V]": [
         "VE.WireContract.Tables.SoftNorms.table"
+      ]
+    },
+    "VE/Readings/Components.lean": {
+      "S": [
+        "VE.Readings.CompatibleK",
+        "VE.Readings.ComponentRows",
+        "VE.Readings.Components",
+        "VE.Readings.Components.all",
+        "VE.Readings.ConflictFreeK",
+        "VE.Readings.ConsistentK",
+        "VE.Readings.OthersSettled",
+        "VE.Readings.Premise",
+        "VE.Readings.RowsSound",
+        "VE.Readings.RowsSoundBut",
+        "VE.Readings.TakesAt",
+        "VE.Readings.fixedDecided",
+        "VE.Readings.setDecided"
+      ]
+    },
+    "VE/Readings/ComponentsWire.lean": {
+      "S": [
+        "VE.Readings.othersEvery",
+        "VE.Readings.othersFree",
+        "VE.Readings.othersReason",
+        "VE.Readings.othersSome",
+        "VE.Readings.productConflict",
+        "VE.Readings.productPremises",
+        "VE.Readings.productQuery"
+      ],
+      "P": [
+        "VE.Readings.Run.ProductReplay",
+        "VE.Readings.Run.ProductReplay.K",
+        "VE.Readings.Run.ProductReplay.rows"
+      ],
+      "D[R]": [
+        "VE.Readings.Run.fitText",
+        "VE.Readings.Run.noFitText",
+        "VE.Readings.Run.productPendingText",
+        "VE.Readings.Run.productProfileText"
+      ],
+      "G[V]": [
+        "VE.Readings.Run.PartRun",
+        "VE.Readings.Run.PartRun.answer",
+        "VE.Readings.Run.PartRun.infos",
+        "VE.Readings.Run.PartRun.lines",
+        "VE.Readings.Run.PartRun.rows",
+        "VE.Readings.Run.ProductPart",
+        "VE.Readings.Run.admitPart",
+        "VE.Readings.Run.componentJson",
+        "VE.Readings.Run.dedupNats",
+        "VE.Readings.Run.documentOrder",
+        "VE.Readings.Run.e31Line",
+        "VE.Readings.Run.e32Line",
+        "VE.Readings.Run.entryJson",
+        "VE.Readings.Run.entryJsonP",
+        "VE.Readings.Run.fitsQuery",
+        "VE.Readings.Run.fixedPart",
+        "VE.Readings.Run.gateLines",
+        "VE.Readings.Run.namedOf",
+        "VE.Readings.Run.partDecided",
+        "VE.Readings.Run.partLines",
+        "VE.Readings.Run.partRequest",
+        "VE.Readings.Run.partUnits",
+        "VE.Readings.Run.productAnswer",
+        "VE.Readings.Run.productDecided",
+        "VE.Readings.Run.productPlan",
+        "VE.Readings.Run.productReplay",
+        "VE.Readings.Run.productResult",
+        "VE.Readings.Run.queryPart",
+        "VE.Readings.Run.readingPremise",
+        "VE.Readings.Run.requireCompletion",
+        "VE.Readings.Run.runPart",
+        "VE.Readings.Run.runParts",
+        "VE.Readings.Run.runProduct",
+        "VE.Readings.Run.sentenceOf",
+        "VE.Readings.Run.statusRows",
+        "VE.Readings.Run.toE30",
+        "VE.Readings.Run.underCheck",
+        "VE.Readings.Run.unitNumber"
+      ]
+    },
+    "VE/Readings/ComponentsExamples.lean": {
+      "T": [
+        "VE.Readings.ComponentsExamples.c0",
+        "VE.Readings.ComponentsExamples.c1",
+        "VE.Readings.ComponentsExamples.docJ",
+        "VE.Readings.ComponentsExamples.rows2"
       ]
     }
   }

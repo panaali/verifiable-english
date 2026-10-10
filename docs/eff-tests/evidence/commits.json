@@ -1,0 +1,42 @@
+{
+ "range": "main..HEAD --no-merges",
+ "base": "c24aeab2",
+ "commits": [
+  {
+   "sha": "d0dbd667e50a633480bdc5c177e1456ebfefc279",
+   "subject": "gate: hold the rerunnable failure stages as a set of names"
+  },
+  {
+   "sha": "23ba09306c7354ccd6512d207952a37d2f4e105b",
+   "subject": "docs: the suite-timing summarizer for the eff-tests report"
+  },
+  {
+   "sha": "28c3ae73b13327e0de1f8dd96e5c6928b694890f",
+   "subject": "tests: the run cache's default directory"
+  },
+  {
+   "sha": "a12942f26463bc4c200053efe8d469246607ad9e",
+   "subject": "gate: pin the new and split test IDs"
+  },
+  {
+   "sha": "6d5cab1baac76c892b5343589abefd744f23d8a0",
+   "subject": "docs: the wire gate corpus run cache"
+  },
+  {
+   "sha": "7728bf264efae890d2b1a3af8ec817fd89d54b01",
+   "subject": "tests: cache wire_gate_corpus's nested recording run under a key of its inputs"
+  },
+  {
+   "sha": "828e9f7752e13dcb4bff4b931d4dc9b8cc60ea9c",
+   "subject": "gate: --rerun-failed reruns only a failed gate's test files on the same tree"
+  },
+  {
+   "sha": "cecbe0bc069b108fee98b93f56e5ce49b6940fe8",
+   "subject": "tests: split the enum-domain proofs into 8 shards xdist runs at once"
+  },
+  {
+   "sha": "fc91a289561d966ba046ddb351d79e410f2ea503",
+   "subject": "tests: bound the difffuzz CI run by counted work, not CPU seconds"
+  }
+ ]
+}

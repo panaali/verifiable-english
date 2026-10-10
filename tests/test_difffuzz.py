@@ -43,17 +43,15 @@ def _summary(report):
                        "baseline": report["baseline"]}, indent=1, ensure_ascii=False)[:6000]
 
 
-def test_ci_run(built, tmp_path):
-    """`difffuzz.py --ci`: every seed and the seeded sample of every surface, compared three ways, within 5
-    minutes of CPU. Run the meter in its own process so other pytest worker work cannot enter its CPU total.
-    The executables are the ones their Lake traces record (rd-6b review B2: a copied trace kept an older
-    `ve_conformance`, whose answers then entered the baseline)."""
+def test_ci_run(built, tmp_path, record_property):
+    """Run the bounded CI sample against executables whose Lake traces match their contents."""
     assert lake_outputs.stale() == [], "rebuild: python3 tools/lake_outputs.py --drop && lake build"
     output = tmp_path / "difffuzz-ci.json"
     completed = subprocess.run([sys.executable, "-m", "tools.difffuzz", "--ci", "--report", str(output)],
                                cwd=ROOT, capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert output.is_file(), completed.stderr[-2000:]
     report = json.loads(output.read_text())
+    record_property("cpu_seconds", report["cpu_seconds"])
     assert completed.returncode == 0, _summary(report)
     assert report["new"] == [], _summary(report)
     assert report["baseline"]["not_reproduced"] == [], _summary(report)
@@ -69,7 +67,55 @@ def test_ci_run(built, tmp_path):
         for engine in engines:
             for outcome in ("ok", "error"):
                 assert report["answers"][name].get(f"{engine}:{outcome}", 0) > 0, (name, engine, outcome)
-    assert sum(report["cpu_seconds"].values()) <= 300, report["cpu_seconds"]
+    assert work_problems(report) == [], report["work"]
+
+
+def work_problems(report):
+    """How the run's work (`df.WORK`) differs from the sample's: each input evaluated once (every mutant and
+    every baseline entry; nothing is minimised when nothing is new), and no count over `df.WORK_LIMIT`."""
+    work = report["work"]
+    problems = [f"{kind} not counted" for kind in sorted(set(df.WORK_LIMIT) - set(work))]
+    problems += [f"{kind} has no limit" for kind in sorted(set(work) - set(df.WORK_LIMIT))]
+    problems += [f"{kind}: {work[kind]} > {df.WORK_LIMIT[kind]}" for kind in sorted(set(work) & set(df.WORK_LIMIT))
+                 if work[kind] > df.WORK_LIMIT[kind]]
+    inputs = sum(sum(counts.values()) for counts in report["mutants"].values()) + report["baseline"]["entries"]
+    if not report["new"] and work.get("inputs") != inputs:
+        problems.append(f"{work.get('inputs')} inputs evaluated, not the sample's {inputs}")
+    return problems
+
+
+def _work_report(**work):
+    sample = {"inputs": 13, "python_calls": 13, "runner_requests": 2, "runner_cases": 13, "service_requests": 1,
+              "service_cases": 5}
+    return {"work": {**sample, **work}, "new": [], "baseline": {"entries": 3},
+            "mutants": {"requests": {"zero-fault": 2, "one-fault": 5, "two-fault": 3}}}
+
+
+@pytest.mark.parametrize("work, problem", [
+    ({}, None),
+    ({"runner_requests": df.WORK_LIMIT["runner_requests"] + 1}, "runner_requests: "),
+    ({"service_cases": df.WORK_LIMIT["service_cases"] + 1}, "service_cases: "),
+    ({"inputs": 26}, "26 inputs evaluated, not the sample's 13"),
+    ({"steps": 1}, "steps has no limit"),
+], ids=["sample", "runner split again and again", "cases resent", "inputs evaluated twice", "uncounted kind"])
+def test_the_work_bound_sees_a_runaway(work, problem):
+    found = work_problems(_work_report(**work))
+    assert found == [] if problem is None else (len(found) == 1 and found[0].startswith(problem)), found
+    report = _work_report()
+    del report["work"]["python_calls"]
+    assert work_problems(report) == ["python_calls not counted"]
+
+
+def test_the_work_of_a_split_batch_and_a_python_call_is_counted(monkeypatch):
+    """A batch that does not answer is split until each case is alone: 8 cases cost 1 + 2 + 4 + 8 requests
+    and 32 cases sent. Each Python call counts once."""
+    _fake_runner(monkeypatch, lambda cases: (0, "[]") if len(cases) > 1 else
+                 (0, json.dumps([{"id": cases[0]["id"], "status": "ok"}])))
+    df.WORK.clear()
+    rows = df.run_rows(["runner"], [{"id": str(i)} for i in range(8)])
+    assert len(rows) == 8 and all(type(row) is dict for row in rows)
+    df.call_python(lambda: df.ok(), frozenset())
+    assert df.WORK == {"runner_requests": 15, "runner_cases": 32, "python_calls": 1}
 
 
 # ---------------------------------------------------------------- the comparison can fail

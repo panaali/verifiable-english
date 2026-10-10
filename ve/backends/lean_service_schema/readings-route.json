@@ -90,7 +90,8 @@
           "anyOf": [
             {"$ref": "common.json#/$defs/case_error"},
             {"$ref": "common.json#/$defs/route_path_error"},
-            {"$ref": "#/$defs/verdicts"}
+            {"$ref": "#/$defs/verdicts"},
+            {"$ref": "#/$defs/verdicts_components"}
           ]
         },
         "when": {"$ref": "#/$defs/kind/readings-verdicts"}
@@ -881,8 +882,23 @@
         "components": {
           "items": {
             "additionalProperties": false,
-            "properties": {"answer": {"$ref": "#/$defs/elaborate"}, "component": {"type": "string"}},
-            "required": ["component", "answer"],
+            "properties": {
+              "answer": {"$ref": "#/$defs/elaborate"},
+              "checked": {
+                "$comment": "the document the case's answer reads: the case's document, or the main case's checked part (Readings.Run.fixedPart) when it has no content-bearing set; an object (Readings.Run.asObject)",
+                "type": "object"
+              },
+              "component": {"type": "string"},
+              "document": {
+                "$comment": "the case's document (Readings.Wire.splitCase), an object (Readings.Run.asObject)",
+                "type": "object"
+              },
+              "environment": {
+                "$comment": "the case's environment (Readings.Wire.splitCase), an object (Readings.Run.asObject)",
+                "type": "object"
+              }
+            },
+            "required": ["component", "environment", "document", "checked", "answer"],
             "type": "object"
           },
           "type": "array"
@@ -1214,6 +1230,116 @@
       },
       "required": ["situation", "witness", "separated", "witness_admissible", "witness_value", "other_admissible"],
       "type": "object"
+    },
+    "product_component": {
+      "$comment": "Readings.Run.componentJson: one component, its checked units, the sets it leaves on W2 and its own answer (RD-3's on it).",
+      "additionalProperties": false,
+      "properties": {
+        "answer": {"$ref": "#/$defs/verdicts"},
+        "component": {"type": "string"},
+        "route": {"enum": ["w2", "pending", "abstention", "superposed", "enumerated"]},
+        "unchecked": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"set": {"type": "string"}, "status": {"const": "UNKNOWN"}, "unit": {"type": "string"}},
+            "required": ["set", "unit", "status"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "units": {"$ref": "common.json#/$defs/strings"}
+      },
+      "required": ["component", "route", "units", "unchecked", "answer"],
+      "type": "object"
+    },
+    "product_conflict": {
+      "$comment": "Readings.Run.productResult conflict: CONFLICT-FREE when every component is, CONFLICT when one has a checked witness",
+      "additionalProperties": false,
+      "properties": {
+        "components": {"$ref": "#/$defs/verdicts_component_status"},
+        "route": {"const": "components"},
+        "status": {"enum": ["CONFLICT-FREE", "CONFLICT", "UNKNOWN"]}
+      },
+      "required": ["route", "status", "components"],
+      "type": "object"
+    },
+    "product_line": {
+      "$comment": "Readings.Run.entryJson: a line of the product's plan and the component it is read in (null: the document).",
+      "additionalProperties": false,
+      "properties": {"component": {"type": ["string", "null"]}, "line": {"$ref": "#/$defs/verdicts_line"}},
+      "required": ["component", "line"],
+      "type": "object"
+    },
+    "product_premises": {
+      "$comment": "Readings.Run.productResult premises: model when every component has one",
+      "additionalProperties": false,
+      "properties": {
+        "components": {"$ref": "#/$defs/verdicts_component_status"},
+        "route": {"const": "components"},
+        "status": {"enum": ["model", "UNKNOWN"]}
+      },
+      "required": ["route", "status", "components"],
+      "type": "object"
+    },
+    "product_query": {
+      "$comment": "Readings.Run.productResult query: the query's component's own fold, gated on every other component (4.5).",
+      "anyOf": [
+        {
+          "$comment": "ALL, SOME or NONE for the document",
+          "additionalProperties": false,
+          "properties": {
+            "component": {"type": "string"},
+            "route": {"const": "components"},
+            "verdict": {"enum": ["ALL", "SOME", "NONE"]}
+          },
+          "required": ["route", "verdict", "component"],
+          "type": "object"
+        },
+        {
+          "$comment": "UNKNOWN: another component is not CONFLICT-FREE",
+          "additionalProperties": false,
+          "properties": {
+            "choice": {"$ref": "#/$defs/choice"},
+            "choice_component": {"type": "string"},
+            "choice_text": {"type": "string"},
+            "component": {"type": "string"},
+            "conflict_status": {"enum": ["CONFLICT", "UNKNOWN"]},
+            "route": {"const": "components"},
+            "status": {"pattern": "UNKNOWN \\(conflict status: .*", "type": "string"},
+            "verdict": {"const": "UNKNOWN"}
+          },
+          "required": [
+            "route",
+            "verdict",
+            "component",
+            "status",
+            "conflict_status",
+            "choice",
+            "choice_component",
+            "choice_text"
+          ],
+          "type": "object"
+        },
+        {
+          "$comment": "UNKNOWN: another component has no model",
+          "additionalProperties": false,
+          "properties": {
+            "component": {"type": "string"},
+            "reason": {"const": "another sentence's readings are not all consistent"},
+            "route": {"const": "components"},
+            "verdict": {"const": "UNKNOWN"}
+          },
+          "required": ["route", "verdict", "component", "reason"],
+          "type": "object"
+        },
+        {
+          "$comment": "UNKNOWN: the component's own verdict",
+          "additionalProperties": false,
+          "properties": {"component": {"type": "string"}, "route": {"const": "components"}, "verdict": {"const": "UNKNOWN"}},
+          "required": ["route", "verdict", "component"],
+          "type": "object"
+        }
+      ]
     },
     "separate": {
       "$comment": "Readings.Run.runCase readings-separate: the requested set and situation's pair facts.",
@@ -1670,6 +1796,105 @@
         }
       ]
     },
+    "verdicts_component_status": {
+      "$comment": "Readings.Run.statusRows: each component's own fold.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {"component": {"type": "string"}, "status": {"$ref": "#/$defs/verdicts_word"}},
+        "required": ["component", "status"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "verdicts_components": {
+      "$comment": "Readings.Run.runProduct (readings-defaults RD-4b): readings-verdicts on a document with companion sets, no component named: each component replayed by itself (RD-3's answer on it), the product's result for the question, the Lean-decided units (1.10) and the English plan, each line with the component it is read in.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "component": {"type": "null"},
+            "components": {"items": {"$ref": "#/$defs/product_component"}, "type": "array"},
+            "decided_units": {"$ref": "common.json#/$defs/strings"},
+            "english": {"items": {"$ref": "#/$defs/product_line"}, "type": "array"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "question": {"const": "conflict"},
+            "result": {"$ref": "#/$defs/product_conflict"},
+            "route": {"const": "components"},
+            "sentence": {"type": ["string", "null"]},
+            "status": {"const": "ok"}
+          },
+          "required": [
+            "id",
+            "status",
+            "route",
+            "question",
+            "component",
+            "sentence",
+            "components",
+            "result",
+            "decided_units",
+            "english"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "component": {"type": "null"},
+            "components": {"items": {"$ref": "#/$defs/product_component"}, "type": "array"},
+            "decided_units": {"$ref": "common.json#/$defs/strings"},
+            "english": {"items": {"$ref": "#/$defs/product_line"}, "type": "array"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "question": {"const": "premises"},
+            "result": {"$ref": "#/$defs/product_premises"},
+            "route": {"const": "components"},
+            "sentence": {"type": ["string", "null"]},
+            "status": {"const": "ok"}
+          },
+          "required": [
+            "id",
+            "status",
+            "route",
+            "question",
+            "component",
+            "sentence",
+            "components",
+            "result",
+            "decided_units",
+            "english"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "component": {"type": "string"},
+            "components": {"items": {"$ref": "#/$defs/product_component"}, "type": "array"},
+            "decided_units": {"$ref": "common.json#/$defs/strings"},
+            "english": {"items": {"$ref": "#/$defs/product_line"}, "type": "array"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "question": {"const": "query"},
+            "result": {"$ref": "#/$defs/product_query"},
+            "route": {"const": "components"},
+            "sentence": {"type": ["string", "null"]},
+            "status": {"const": "ok"}
+          },
+          "required": [
+            "id",
+            "status",
+            "route",
+            "question",
+            "component",
+            "sentence",
+            "components",
+            "result",
+            "decided_units",
+            "english"
+          ],
+          "type": "object"
+        }
+      ]
+    },
     "verdicts_conflict": {
       "$comment": "Readings.Run.conflictResult (or W2's budget shape): the conflict answer.",
       "anyOf": [
@@ -1710,7 +1935,19 @@
                 "properties": {
                   "choice": {"$ref": "#/$defs/choice"},
                   "model": {
-                    "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)"
+                    "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)",
+                    "additionalProperties": false,
+                    "properties": {
+                      "complete": {"type": "boolean"},
+                      "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+                      "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+                      "relations": {
+                        "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+                        "type": "object"
+                      }
+                    },
+                    "required": ["complete", "domains", "constants", "relations"],
+                    "type": "object"
                   },
                   "status_text": {"type": ["string", "null"]}
                 },
@@ -1748,7 +1985,21 @@
       "additionalProperties": false,
       "properties": {
         "choice": {"$ref": "#/$defs/choice"},
-        "model": {"$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)"},
+        "model": {
+          "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)",
+          "additionalProperties": false,
+          "properties": {
+            "complete": {"type": "boolean"},
+            "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+            "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+            "relations": {
+              "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+              "type": "object"
+            }
+          },
+          "required": ["complete", "domains", "constants", "relations"],
+          "type": "object"
+        },
         "outcome": {"const": "countermodel"}
       },
       "required": ["choice", "outcome", "model"],
@@ -1825,7 +2076,19 @@
             "choices": {"$ref": "#/$defs/verdicts_statuses"},
             "evidence": {"const": "per choice"},
             "model": {
-              "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)"
+              "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)",
+              "additionalProperties": false,
+              "properties": {
+                "complete": {"type": "boolean"},
+                "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+                "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+                "relations": {
+                  "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+                  "type": "object"
+                }
+              },
+              "required": ["complete", "domains", "constants", "relations"],
+              "type": "object"
             },
             "route": {"const": "enumerated"},
             "status": {"const": "model"}
@@ -2156,7 +2419,21 @@
         "premises": {"$ref": "#/$defs/verdicts_word"},
         "query": {"$ref": "#/$defs/verdicts_word"},
         "shown": {
-          "additionalProperties": {"$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)"},
+          "additionalProperties": {
+            "$comment": "a shown model, the generator's complete model (Lean checks it extends the checked one)",
+            "additionalProperties": false,
+            "properties": {
+              "complete": {"type": "boolean"},
+              "constants": {"additionalProperties": {"type": "string"}, "type": "object"},
+              "domains": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+              "relations": {
+                "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+                "type": "object"
+              }
+            },
+            "required": ["complete", "domains", "constants", "relations"],
+            "type": "object"
+          },
           "type": "object"
         },
         "status_text": {"type": ["string", "null"]}

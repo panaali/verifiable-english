@@ -233,6 +233,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateOne_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateOne_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runOne_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.asObject_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.componentRows
 #print axioms ResponseShape.Encoders.ReadingsRoute.runComponents_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.or_beq
@@ -439,3 +440,20 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.conflictND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.modelND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runNDKind_fits
+-- readings-defaults RD-4b: the component product and its proved response.
+#print axioms ResponseShape.Encoders.ReadingsRoute.anyWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.componentJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.entryJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.othersReasonWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.othersReason_status
+#print axioms ResponseShape.Encoders.ReadingsRoute.partRun_answer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productConflictWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productConflict_range
+#print axioms ResponseShape.Encoders.ReadingsRoute.productPremisesWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productResult_conflict_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productResult_premises_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productResult_query_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.routeText_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runProduct_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.statusRows_fits
