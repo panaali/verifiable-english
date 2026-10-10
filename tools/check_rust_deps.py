@@ -59,7 +59,10 @@ def errors(data: dict) -> list[str]:
     for package in members:
         if package["name"] != FACADE:
             continue
-        for library in (target for target in package["targets"] if "lib" in target["kind"]):
+        libraries = [target for target in package["targets"] if "lib" in target["kind"]]
+        if not libraries:
+            found.append(f"the {FACADE} facade has no library target")
+        for library in libraries:
             entry = Path(library["src_path"])
             found += [f"module in the {FACADE} facade: {path.relative_to(entry.parent).as_posix()}; "
                       f"add it to ve-kernel or ve-profile and re-export it from {FACADE}"

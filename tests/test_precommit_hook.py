@@ -380,11 +380,15 @@ def test_staged_rust_workspace_is_read_by_cargo(staging):
     # A source edit runs the check on the staged workspace (manifests, sources, toolchain pin)...
     staging.stage("rust/ve-kernel/src/lib.rs", staging.head("rust/ve-kernel/src/lib.rs") + b"\n// A comment.\n")
     passes(staging)
-    # ...where a new module in the facade fails, and so does a staged edit cargo cannot read.
+    # ...where a new module in the facade fails, so does a deleted facade, and so does a staged
+    # manifest cargo cannot read.
     staging.stage("rust/ve-core/src/extra.rs", "pub fn f() {}\n")
     rejects(staging, "rust: module in the ve-core facade: extra.rs; ")
     staging.stage("rust/ve-core/src/extra.rs", None)
     staging.stage("rust/ve-core/src/lib.rs", None)
+    rejects(staging, "rust: the ve-core facade has no library target")
+    staging.stage("rust/ve-core/src/lib.rs", staging.head("rust/ve-core/src/lib.rs"))
+    staging.stage("rust/ve-kernel/Cargo.toml", "[package\n")
     rejects(staging, "rust: cannot read the Rust workspace: cargo metadata failed: ")
 
 
