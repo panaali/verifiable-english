@@ -11200,6 +11200,7 @@
   "tests/test_run_cache.py::test_changing_any_keyed_input_runs_again[program started]",
   "tests/test_run_cache.py::test_changing_any_keyed_input_runs_again[recorded test file]",
   "tests/test_run_cache.py::test_changing_any_keyed_input_runs_again[settings]",
+  "tests/test_run_cache.py::test_entries_live_in_the_git_common_directory",
   "tests/test_run_cache.py::test_the_cache_can_be_turned_off",
   "tests/test_run_cache.py::test_the_checkout_path_and_the_runs_outputs_are_not_keyed",
   "tests/test_run_cache.py::test_the_observed_reads_are_keyed",
