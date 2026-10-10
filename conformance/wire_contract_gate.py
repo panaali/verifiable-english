@@ -340,27 +340,44 @@ def record_test_inputs(output, unit=PILOT, workers="auto"):
                           cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
 
 
-def recorder_command(*files, workers="auto"):
-    """pytest under the input recorder on `workers` xdist processes, over `files`."""
-    return nested_pytest.command(["-q", "-p", "tests.contract_input_recorder", "-p", "no:cacheprovider",
+def recorder_command(*files, workers="auto", plugins=()):
+    """pytest under the input recorder (and `plugins`) on `workers` xdist processes, over `files`."""
+    loaded = [option for plugin in plugins for option in ("-p", plugin)]
+    return nested_pytest.command(["-q", "-p", "tests.contract_input_recorder", *loaded, "-p", "no:cacheprovider",
                                   "-o", "addopts=", "-m", "not live", *files], workers=workers)
 
 
-def record_all_test_inputs(output, units, workers="auto"):
-    """`record_test_inputs` for several units in one run: the union of their recorded test files
-    runs once, and each unit records only the inputs of its own files, as its own run would.
-    `output` gets a JSON object from each unit to its `[test id, environment, norms]` rows.
-    Returns the pytest process."""
+def _all_units_run(units):
+    """({unit: its recorded test files}, the run's environment but its output, the union of the files)."""
     files = {unit_of(unit).contract: sorted({path.relative_to(ROOT).as_posix()
                                             for pattern in unit_of(unit).recorded_tests
                                             for path in ROOT.glob(pattern)}) for unit in units}
-    environment = nested_pytest.environment(os.environ, VE_CONTRACT_INPUTS=str(output),
-                                            VE_CONTRACT_UNITS=json.dumps(files), VE_NATIVE_PREBUILT="1",
+    environment = nested_pytest.environment(os.environ, VE_CONTRACT_UNITS=json.dumps(files), VE_NATIVE_PREBUILT="1",
                                             PYTHONPATH=str(ROOT))
     environment.pop("VE_CONTRACT_UNIT", None)
-    return subprocess.run(recorder_command(*sorted({path for paths in files.values() for path in paths}),
-                                           workers=workers),
-                          cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
+    environment.pop("VE_CONTRACT_INPUTS", None)
+    return files, environment, sorted({path for paths in files.values() for path in paths})
+
+
+def cached_record_all_test_inputs(output, units, ok, workers="auto"):
+    """`record_test_inputs` for several units in one run: the union of their recorded test files
+    runs once, and each unit records only the inputs of its own files, as its own run would.
+    `output` gets a JSON object from each unit to its `[test id, environment, norms]` rows.
+    The run goes through `tools/run_cache.py`: the stored record of an earlier run whose every input (the
+    recorded files, what they import and read, the binaries, the settings) is unchanged, else a run, stored
+    when `ok` accepts it. Returns (the pytest process, "hit", "miss" or "off")."""
+    from tools import run_cache
+    files, environment, paths = _all_units_run(units)
+
+    def run(env):
+        return subprocess.run(recorder_command(*paths, workers=workers, plugins=(run_cache.PLUGIN,)), cwd=ROOT,
+                              env={**env, "VE_CONTRACT_INPUTS": str(output)}, capture_output=True, text=True,
+                              timeout=3600)
+    # The modules that run the record and the cache, with the recorded files: their imports are keyed too.
+    starts = [*paths, "tests/contract_input_recorder.py", "tests/read_recorder.py", "conformance/wire_contract_gate.py",
+              "tools/nested_pytest.py", "tools/run_cache.py"]
+    return run_cache.cached_run(Path(output), starts=starts, settings={"units": files, "workers": str(workers)},
+                                environment=environment, run=run, ok=ok)
 
 
 def write_test_inputs(unit=PILOT):

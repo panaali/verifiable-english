@@ -1,0 +1,125 @@
+{
+ "label": "before",
+ "commit": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
+ "command": "nice -n 19 uv run --frozen python -m pytest -n 16 -p no:cacheprovider -q --junitxml=/tmp/ve-eff-tests/suite-before/junit.xml",
+ "wall_seconds": 3122,
+ "load": {
+  "min": 21.8,
+  "median": 57.85,
+  "max": 97.43,
+  "samples": 53
+ },
+ "tests": 13734,
+ "outcomes": {
+  "passed": 13642,
+  "failed": 1,
+  "skipped": 91,
+  "error": 0
+ },
+ "failed": [
+  "tests/test_difffuzz.py::test_ci_run"
+ ],
+ "sum_test_seconds": 29637,
+ "slowest": [
+  [
+   2122.6,
+   "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit"
+  ],
+  [
+   1079.6,
+   "tests/test_difffuzz.py::test_ci_run"
+  ],
+  [
+   959.4,
+   "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist"
+  ],
+  [
+   754.4,
+   "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module"
+  ],
+  [
+   633.8,
+   "tests/test_p1_amendment15.py::test_runner_preserves_finished_trajectories_initials_and_resumes_without_repurchase"
+  ],
+  [
+   498.6,
+   "tests/test_enum_domains.py::test_every_field_keeps_its_domain"
+  ],
+  [
+   444.3,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-1]"
+  ],
+  [
+   426.8,
+   "tests/test_wire_contract_soft_lean.py::test_tier_a_pairs_and_triples"
+  ],
+  [
+   397.1,
+   "tests/test_wire_contract_s5_lean.py::test_l8_syntax_walk_is_budget_formula_on_the_corpus"
+  ],
+  [
+   368.6,
+   "tests/test_risk_margins.py::test_margins_agree_with_brute_force[6]"
+  ],
+  [
+   365.5,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-0]"
+  ],
+  [
+   358.1,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-0]"
+  ],
+  [
+   347.5,
+   "tests/test_lean_service_schema.py::test_fuzz_detects_a_weakened_schema[valid-false]"
+  ],
+  [
+   326.1,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-2]"
+  ],
+  [
+   323.1,
+   "tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed"
+  ]
+ ],
+ "watched": {
+  "tests/test_difffuzz.py::test_a_changed_python_diagnostic_is_caught[code]": 21.9,
+  "tests/test_difffuzz.py::test_a_changed_python_diagnostic_is_caught[text]": 20.4,
+  "tests/test_difffuzz.py::test_a_printed_framing_member_is_a_malformed_row_not_a_refusal": 8.0,
+  "tests/test_difffuzz.py::test_a_python_code_outside_the_p0_contract_is_compared": 11.3,
+  "tests/test_difffuzz.py::test_a_runner_that_does_not_answer_is_found_by_bisection": 5.6,
+  "tests/test_difffuzz.py::test_a_runner_that_fails_in_transport_is_isolated_and_does_not_answer[timeout]": 5.2,
+  "tests/test_difffuzz.py::test_a_weakened_comparison_fails_the_ci_verdict[Lean always accepts]": 7.8,
+  "tests/test_difffuzz.py::test_a_weakened_comparison_fails_the_ci_verdict[Lean always rejects]": 6.7,
+  "tests/test_difffuzz.py::test_a_weakened_comparison_fails_the_ci_verdict[accept/reject only]": 10.9,
+  "tests/test_difffuzz.py::test_a_weakened_comparison_fails_the_ci_verdict[an engine rejecting a seed is removed]": 9.6,
+  "tests/test_difffuzz.py::test_a_weakened_comparison_fails_the_ci_verdict[codes reduced to the P0 contract]": 11.8,
+  "tests/test_difffuzz.py::test_a_weakened_comparison_fails_the_ci_verdict[ignore codes]": 10.6,
+  "tests/test_difffuzz.py::test_a_weakened_comparison_fails_the_ci_verdict[ignore texts]": 11.3,
+  "tests/test_difffuzz.py::test_a_weakened_comparison_fails_the_ci_verdict[off-wire inputs reach Python only]": 8.7,
+  "tests/test_difffuzz.py::test_a_wrong_document_mode_is_a_finding[always accepts]": 27.4,
+  "tests/test_difffuzz.py::test_a_wrong_document_mode_is_a_finding[always rejects]": 13.4,
+  "tests/test_difffuzz.py::test_a_wrong_document_mode_is_a_finding[bridge leaves uncounted]": 12.0,
+  "tests/test_difffuzz.py::test_ci_run": 1079.6,
+  "tests/test_difffuzz.py::test_environments_and_requests_come_from_every_fixture_that_holds_them": 25.8,
+  "tests/test_difffuzz.py::test_every_engine_with_a_path_answers_every_environment_seed": 11.0,
+  "tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason": 14.9,
+  "tests/test_difffuzz.py::test_every_own_code_route_has_a_python_counterpart_that_agrees_on_its_seeds": 8.5,
+  "tests/test_difffuzz.py::test_genuine_rows_pass_their_checks_and_mutated_rows_are_not_answers": 19.5,
+  "tests/test_difffuzz.py::test_python_accepting_an_off_wire_input_is_a_finding": 17.8,
+  "tests/test_difffuzz.py::test_runner_output_that_is_not_unicode_text_does_not_answer[key]": 9.0,
+  "tests/test_difffuzz.py::test_runner_output_that_is_not_unicode_text_does_not_answer[lean error]": 5.1,
+  "tests/test_difffuzz.py::test_runner_output_that_is_not_unicode_text_does_not_answer[rust error.message]": 9.2,
+  "tests/test_difffuzz.py::test_the_baseline_alone_passes": 9.2,
+  "tests/test_enum_domains.py::test_every_field_keeps_its_domain": 498.6,
+  "tests/test_enum_domains.py::test_witness_conflict_verdict[UNKNOWN-True]": 5.2,
+  "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module": 754.4,
+  "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit": 2122.6,
+  "tests/test_wire_gate_corpus.py::test_one_run_records_each_unit_as_its_own_run_does": 90.2,
+  "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norm-defaults@0]": 235.5,
+  "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norms@0]": 50.7,
+  "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norm-defaults@0]": 313.7,
+  "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norms@0]": 40.8
+ },
+ "properties": {}
+}
