@@ -171,6 +171,16 @@ F7 (34 untyped fields in check, parse, readings-route and reports) overlaps F3. 
 change in `lean/ResponseShape/Schemas` (or the manifest's response types) plus `response_schemas.py --write`;
 none is small.
 
+Not yet covered: readings-defaults RD-4b's answer shapes (merged from ve-integration `cc534bfc`). The committed
+fixtures predate them, so the gate passes without exercising them. Adding RD-4b's tests to `RECORD_TESTS`
+(`test_readings_verdicts_lean.py` and `test_readings_components_{lean,load,document}.py`) and re-recording gave
+131 accepted mutants: 126 under readings-route's `components` rows (`checked`, `document`, `answer/filled`,
+`answer/fill_premises`, `answer/sets`, the `component` name) and 5 in `english/*/component`, `english/*/result`,
+`per_choice/*/query` and `sentence`. It also left 27 allow-list paths matching nothing, because the
+smallest-per-shape picks moved. `ve/readings_components.py` binds these rows to the request after the transport.
+The gate reads only the transport, so each path still needs a B or F entry, and that classification goes to the
+DRI. Until then the fixtures stay as they were reviewed.
+
 ## 3. Seeded mutants: `tools/mutants.py`
 
 A builder commits `mutants.json` (`{"mutants": [{"id", "file", "find", "replace", "tests" | "command",
@@ -207,6 +217,7 @@ numbers), with the results in
 | `tools/relay_mutation_gate.py` over every relayed route, failing on a route without fixtures | AGENT | done |
 | Fixing the open relays found | AGENT (small) / follow-up | the speech-source crash fixed; F1 to F11 listed |
 | Review of the allow-list's by-design entries | HUMAN (DRI) | deferred |
+| Gate fixtures and allow entries for RD-4b's readings-route shapes (section 2) | AGENT after DRI | deferred: 131 accepted mutants to classify |
 | Running the gate from `infra-item.sh` and fixloop | EXTERNAL (orchestrator, manage-agents) | deferred |
 | `tools/mutants.py` and this batch's seeded mutants | AGENT | done: 21 of 21 killed |
 
