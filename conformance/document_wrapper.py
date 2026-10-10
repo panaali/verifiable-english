@@ -178,10 +178,23 @@ def owned(document) -> bool:
     return not set(environment) - allowed
 
 
-def fuzzed(document) -> bool:
+# Seeds the fuzzer compares as they are but does not mutate, by path prefix, with the reason. Each is a seed Lean's
+# document mode refuses whole (`FAIL_CLOSED` of tests/test_lean_document_wrapper.py, which checks this table against
+# it), so every mutant would meet a constant refusal that agrees with any answer.
+UNMUTATED = {
+    "usecases/question-answering/": "the question reader's vocabulary fixtures (docs/spec/question-answering.md 7): Lean "
+                                    "refuses each whole (norm-defaults@0, the norms route, the surface parser); their "
+                                    "mutants added 50 to 70 s of CPU to the fuzzer's 300 s budget and compared nothing "
+                                    "(question-answering-integrate-fix-report.md, base against head)",
+}
+
+
+def fuzzed(document, name: str = "") -> bool:
     """Whether the fuzzer mutates a seed: not a quantity (`unit_schema`) document, whose Python check runs the
-    quantity route for every mutant while the Lean mode refuses its environment block before anything else
-    (each such seed is still compared as it is, `tests/test_lean_document_wrapper.py`)."""
+    quantity route for every mutant while the Lean mode refuses its environment block before anything else, and
+    not a seed of `UNMUTATED` (each such seed is still compared as it is, `tests/test_lean_document_wrapper.py`)."""
+    if any(name.startswith(prefix) for prefix in UNMUTATED):
+        return False
     environment = document["front"].get("environment")
     return not (type(environment) is dict and "unit_schema" in environment)
 

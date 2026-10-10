@@ -45,6 +45,9 @@ WALL_CLOCK = "English Earley time budget exhausted"
 NO_PREMISE = "A conclusion needs an earlier premise."
 
 TRANSPORT: Callable[[dict], dict] | None = None
+QUESTION_MODE = "english.question"
+# A test seam only. The normal path uses the service's generated response schema.
+QUESTION_TRANSPORT: Callable[[dict], dict] | None = None
 
 
 def _frame(env, case: dict) -> dict:
@@ -216,14 +219,9 @@ def response_problem(response, expected: dict, env, source: str) -> str | None:
     formulas, conclusions = body["ast"], body["conclusions"]
     if type(formulas) is not list or not formulas:
         return "ast is not a non-empty list of formulas"
-    try:
-        ast.core_gate(env)
-    except VEError:
-        # The core checker refuses every formula under this environment, so its decoding cannot judge Lean's
-        # answer; the reading's own decoding raises the gate's refusal, as Python's reader does (E2.5).
-        gated = True
-    else:
-        gated = False
+    # The core checker refuses every formula under a gated environment, so its decoding cannot judge Lean's
+    # answer; the reading's own decoding raises the gate's refusal, as Python's reader does (E2.5).
+    gated = _gate(env) is not None
     for formula in [] if gated else formulas:
         try:
             ast.formula_from_data(env, formula)
@@ -256,6 +254,17 @@ def response_problem(response, expected: dict, env, source: str) -> str | None:
     return None
 
 
+def _gate(env) -> VEError | None:
+    """The core checker's refusal of `env` as a whole (`ast.core_gate`), or None. Every relay path that hands a
+    Lean reading back (english.read's `LeanReading.document`, `read_question`) raises it in place of the reading;
+    `response_problem` and `question_problem` only skip decoding the formulas it refuses."""
+    try:
+        ast.core_gate(env)
+    except VEError as exc:
+        return exc
+    return None
+
+
 def _transport(case: dict) -> dict:
     if TRANSPORT is not None:
         return TRANSPORT(case)
@@ -276,11 +285,7 @@ class LeanReading:
     def gate(self) -> VEError | None:
         """The core checker's refusal of the environment (`ast.core_gate`), which decoding a reading's formulas
         raises whatever they are; None when there is none."""
-        try:
-            ast.core_gate(self.env)
-        except VEError as exc:
-            return exc
-        return None
+        return _gate(self.env)
 
     def classes(self) -> tuple[str, ...]:
         """The Python classes the comparator accepts for this outcome: Lean's class, with the tolerance the
@@ -355,6 +360,147 @@ def read(env, source: str, words, options: dict) -> LeanReading:
     if problem:
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader's answer is malformed: {problem}")
     return LeanReading(response, env, source)
+
+
+def _question_contract() -> tuple[str, dict[str, str], dict[str, tuple[str, ...]], dict[str, tuple[set, set]],
+                                  dict[str, str]]:
+    """Lean's question contract (`VE.Question.Run`'s export, written to `ve/question/codes.json` by
+    `tools/question_codes.py`): the version, the class of every code, the codes of every status, the fields
+    of every status and the texts its clients show as they are. The relay holds no table of its own."""
+    import json
+    data = json.loads((ROOT / "ve/question/codes.json").read_text())
+    if data.get("format") != "ve.question-codes@1":
+        raise ValueError("ve/question/codes.json: format is not ve.question-codes@1")
+    return (data["question_version"], {code: cls for code, cls in data["codes"]},
+            {status: tuple(found) for status, found in data["statuses"]},
+            {status: (set(required), set(optional)) for status, (required, optional) in data["fields"]},
+            {name: text for name, text in data["texts"]})
+
+
+QUESTION_VERSION, QUESTION_CLASSES, QUESTION_STATUS_CODES, QUESTION_FIELDS, QUESTION_TEXTS = _question_contract()
+QUESTION_FORMS = ("caseThat", "fronted")
+
+
+def question_problem(response, expected: dict, env, question: str) -> str | None:
+    """Why `response` is not a well-formed `english.question` answer to the request over `env` whose E2
+    identities are `expected`, or None: the identities and `question_version`, the fields of its status, a code
+    of the status with Lean's class, spans inside the question in code points, the advice, the rephrasings, the
+    witnesses and, for `one`, a formula that decodes under `env`."""
+    if type(response) is not dict:
+        return "the response is not an object"
+    if _has_null(response):
+        return "the response has a null"
+    found = response.get("identities")
+    want = {**expected, "question_version": QUESTION_VERSION}
+    if type(found) is not dict or found.keys() != want.keys() or \
+            not all(type(value) is str for value in found.values()):
+        return f"identities {sorted(found) if type(found) is dict else found!r}, expected {sorted(want)}"
+    for name, value in want.items():
+        if found[name] != value:
+            return f"{name} {found[name]!r} is not the request's {value!r}"
+    body = {k: v for k, v in response.items() if k != "identities"}
+    status = body.get("status")
+    if type(status) is not str or status not in QUESTION_FIELDS:
+        return f"unknown status {status!r}"
+    required, optional = QUESTION_FIELDS[status]
+    required = required | {"status"}
+    missing, extra = required - body.keys(), body.keys() - required - optional
+    if missing or extra:
+        return f"a {status} answer with fields missing {sorted(missing)}, unknown {sorted(extra)}"
+    if status == "one":
+        if body["form"] not in QUESTION_FORMS:
+            return f"unknown form {body['form']!r}"
+        if not _text(body["sentence"]) or not body["sentence"].endswith("."):
+            return "the asked sentence is not a sentence"
+        if not _text(body["text"]):
+            return "the asked line is not a non-empty string"
+        if body["spans"] != [[0, len(question)]]:
+            return "the asked sentence's span is not the question's"
+        if _gate(env) is not None:
+            return None  # every formula is refused here: `read_question` raises the gate's refusal (`_gate`)
+        try:
+            ast.formula_from_data(env, body["ast"])
+        except (VEError, TypeError, ValueError, KeyError, RecursionError) as exc:
+            return f"the formula does not decode under the environment: {exc}"
+        return None
+    if not all(_text(body[key]) for key in ("code", "class", "text")):
+        return "code, text and class are not non-empty strings"
+    code = body["code"]
+    if code not in QUESTION_STATUS_CODES[status]:
+        return f"a {status} answer with the code {code!r}"
+    if body["class"] != QUESTION_CLASSES.get(code) or body["class"] not in ERROR_CLASSES:
+        return f"the class {body['class']!r} is not Lean's class of {code}"
+    if "span" in body and not _span(body["span"], question):
+        return "invalid question span"
+    if "advice" in body:
+        advice = body["advice"]
+        if type(advice) is not dict or advice.keys() != {"id", "text"} or not all(_text(x) for x in advice.values()):
+            return "malformed advice"
+    if status == "many" and ("witnesses" in body) != (code == "Ambiguous"):
+        return "witnesses are carried exactly by an Ambiguous answer"
+    if "witnesses" in body and not _trees(body["witnesses"], 2):
+        return "an Ambiguous answer does not carry two witness trees"
+    if status in ("many", "indefinite") and ("rephrasings" in body) != (code != "Ambiguous"):
+        return "rephrasings are carried exactly by AmbiguousQuestion and IndefiniteQuestion"
+    if "rephrasings" in body:
+        offered = body["rephrasings"]
+        if type(offered) is not list or not offered or len(set(map(str, offered))) != len(offered) or not all(
+                _text(r) and r.endswith("?") for r in offered):
+            return "the rephrasings are not distinct questions"
+    if status == "invalidGrammar":
+        failure = body.get("failure")
+        if failure is not None and not (type(failure) is list and len(failure) == 3 and all(_text(x) for x in failure)):
+            return "invalidGrammar failure is not a (condition, kind, name)"
+        if (code == "InvalidOverlay") == ("fault" in body) or "fault" in body and body["fault"] not in FAULTS:
+            return f"invalidGrammar fault {body.get('fault')!r}"
+    return None
+
+
+def read_question(env, question: str, words, options: dict) -> dict:
+    """Relay one yes-or-no question to Lean's `english.question` (docs/spec/question-answering.md 4.1, 8).
+
+    The request is the `english.read` request for the question as its source (the same environment, overlay,
+    lexicon producer and cap), with `question` added. The answer is checked by `question_problem`, whatever the
+    transport; `one` is returned, and any other status is raised as the class Lean names, with Lean's text (and
+    advice) and the answer as `lean_question`.
+    """
+    if type(question) is not str:
+        raise TypeError("question must be str")
+    case = request(env, question, words, options)
+    case["id"] = QUESTION_MODE
+    case["question"] = question
+    if QUESTION_TRANSPORT is None:
+        row = relay.decide_once(QUESTION_MODE, case)
+        if row.get("status") != "ok" or row.keys() != {"id", "status", "result"}:
+            raise CheckerUnavailable(f"CheckerUnavailable: the Lean question reader did not read the case: "
+                                     f"{row.get('error', row)!r}")
+        response = row["result"]
+    else:
+        response = QUESTION_TRANSPORT(case)
+    try:
+        problem = question_problem(response, identities(env, question, words, case["lexicon"]), env, question)
+    except RecursionError:
+        problem = "the response is nested too deeply"
+    if problem:
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean question reader's answer is malformed: {problem}")
+    if response["status"] == "one":
+        refusal = _gate(env)
+        if refusal is not None:
+            # The core checker refuses every formula under this environment (ve-units@1): the reading is not
+            # returned or shown, as `LeanReading.document` raises the same refusal on the english.read path.
+            raise refusal
+        return response
+    cls = ERROR_CLASSES[response["class"]]
+    text = response["text"] if "advice" not in response else f'{response["text"]} {response["advice"]["text"]}'
+    if issubclass(cls, CheckerUnavailable):
+        error = cls(text, operation="question.read", backend="lean")
+    else:
+        span = response.get("span")
+        where = None if span is None else Span(span[0], span[1], question.count("\n", 0, span[0]) + 1,
+                                               span[0] - question.rfind("\n", 0, span[0]))
+        error = cls(text, span=where)
+    error.lean_question = response
+    raise error
 
 
 def check(env, words, options: dict, formulas: list, marks: list[bool], candidates: list[str]) -> int | None:
