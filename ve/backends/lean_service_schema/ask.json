@@ -110,7 +110,7 @@
         "frame": {"minLength": 1, "type": "string"},
         "quote": {
           "anyOf": [
-            {"type": "null"},
+            {"const": null},
             {
               "maxItems": 2,
               "minItems": 2,
@@ -120,10 +120,10 @@
           ]
         },
         "readings": {"items": {"$ref": "#/$defs/pair_nat"}, "type": "array"},
-        "source": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/source"}]},
+        "source": {"$ref": "#/$defs/source_or_null"},
         "text": {"minLength": 1, "type": "string"},
         "unchecked": {"type": "boolean"},
-        "witness": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/choice"}]}
+        "witness": {"anyOf": [{"const": null}, {"$ref": "#/$defs/choice"}]}
       },
       "required": ["frame", "text", "source", "quote", "readings", "witness", "unchecked"],
       "type": "object"
@@ -140,6 +140,7 @@
       "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}],
       "type": "array"
     },
+    "reason": {"anyOf": [{"const": null}, {"enum": ["X1", "X2", "X3", "X4", "X5", "X6"]}]},
     "refused": {
       "$comment": "A question VE does not read with one meaning: english.question's status, code, class and text.",
       "additionalProperties": false,
@@ -161,7 +162,7 @@
         "cited": {"items": {"$ref": "#/$defs/source"}, "type": "array"},
         "gaps": {"items": {"$ref": "#/$defs/gap"}, "type": "array"},
         "lead": {"enum": ["yes", "no", "notSettled", "notNecessarily", "unknown"]},
-        "reason": {"anyOf": [{"type": "null"}, {"enum": ["X1", "X2", "X3", "X4", "X5", "X6"]}]}
+        "reason": {"$ref": "#/$defs/reason"}
       },
       "required": ["choice", "lead", "reason", "cited", "gaps"],
       "type": "object"
@@ -206,6 +207,7 @@
           "type": "object"
         }
       ]
-    }
+    },
+    "source_or_null": {"anyOf": [{"const": null}, {"$ref": "#/$defs/source"}]}
   }
 }

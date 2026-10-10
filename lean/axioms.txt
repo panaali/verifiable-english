@@ -4971,6 +4971,8 @@
 'ResponseShape.Encoders.Question.questionCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Question.caseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Ask.source_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Ask.line_source_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Ask.reason_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Ask.choice_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Ask.line_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Ask.row_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
