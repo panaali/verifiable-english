@@ -6,7 +6,7 @@ binding contract is [ADR 0001](adr/0001-response-binding.md). Written from secti
 architecture review (`docs/ARCHITECTURE-REVIEW-2026-10.md` on branch `design/arch-review`), batch AR-7.
 
 <!-- numbers:measured -->
-Measured on commit `c24aeab20ee513e3e1bef310c5e3263fab3998cc` by `tools/architecture_numbers.py`; saved in `docs/architecture/numbers.json`.
+Measured on commit `c157310a42a962c01b6e10b433194ae5b2313f7c` by `tools/architecture_numbers.py`; saved in `docs/architecture/numbers.json`.
 <!-- /numbers:measured -->
 Every table between `numbers` markers is rendered from that file; to bring them up to date, run
 `python3 tools/architecture_numbers.py --write` on a committed head and commit the result (section 7).
@@ -47,8 +47,8 @@ decision A of 2026-10-08).
 | Response shapes | `lean/ResponseShape*`, `lean/ResponseDecode.lean` | 62 files | schemas, encoders and their fit proofs |
 | Generated Lean inventories (committed) | `lean/{statements,declarations,axioms,predicates}.txt` | 34,448 + 16,677 + 4,999 + 1,042 lines | written by `tools/lean_statements.py` and `lean/audit.py` |
 | Rust | `rust/*/src/**/*.rs` | 4,854 lines | 488 (`ve`) + 21 (`ve-core`) + 2,320 (`ve-kernel`) + 2,025 (`ve-profile`) |
-| Tools | `tools/**/*.py` | 18,013 lines | gate, selection, A/B, fuzz, trust map, layer checkers |
-| Tests | `tests/**/*.py` | 100,231 lines | 337 test modules, 22 other modules; 13,745 collected test IDs (`tools/gate-collection.json`); 19,136 lines of Python in `conformance/` |
+| Tools | `tools/**/*.py` | 18,293 lines | gate, selection, A/B, fuzz, trust map, layer checkers |
+| Tests | `tests/**/*.py` | 100,467 lines | 338 test modules, 22 other modules; 13,773 collected test IDs (`tools/gate-collection.json`); 19,136 lines of Python in `conformance/` |
 | Committed files | the whole tree | 360 MiB | `docs/` 133 MiB, of which `docs/lean-first/` 125 MiB |
 <!-- /numbers:sizes -->
 
