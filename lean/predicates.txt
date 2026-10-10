@@ -291,6 +291,7 @@ module VE.Readings.ChoiceWF
 module VE.Readings.Companions
 module VE.Readings.CompanionsExamples
 module VE.Readings.Components
+module VE.Readings.ComponentsExamples
 module VE.Readings.ComponentsWire
 module VE.Readings.Doc
 module VE.Readings.Examples

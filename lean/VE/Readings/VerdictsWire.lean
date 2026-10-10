@@ -442,7 +442,7 @@ open Lean
 
 structure Line where
   frame : String                  -- E3, E5, E7, E10, E12, E13, E17, E26, E27, E28, E29, E30, E31, E32
-  result : Option String          -- R1 to R9
+  result : Option String          -- R1 to R7
   readings : List (String × Nat)  -- the candidates named, in source order (the `<reading>` slot, 2.3)
   model : Option String           -- the id of the checked model shown
   gaps : List (String × List String × Bool)  -- filled gaps the result depends on: predicate, tuple, value

@@ -4371,6 +4371,10 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.firstShown_label
 #print axioms VE.Readings.independentItems_label
 #print axioms VE.Readings.providedItems_only
+#print axioms VE.Readings.witnessItems_label
+#print axioms VE.Readings.conflictRowItems_label
+#print axioms VE.Readings.gateItems_label
+#print axioms VE.Readings.unknownItems_label
 #print axioms VE.Readings.plan_conditions_only
 #print axioms VE.Readings.Run.ndInfos_rows
 #print axioms VE.Readings.Run.readings_wire_verdicts_all
