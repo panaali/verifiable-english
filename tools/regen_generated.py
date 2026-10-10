@@ -411,31 +411,31 @@ def install_driver() -> int:
 # Running writers and checks
 
 
-def _run(entry: Generated, steps) -> int:
+def _run(entry: Generated, steps, root: Path = ROOT) -> int:
     for step in steps:
         if isinstance(step, str):  # a function of this module
             code = globals()[step]()
         else:
-            code = subprocess.run(list(step), cwd=ROOT / entry.cwd).returncode
+            code = subprocess.run(list(step), cwd=root / entry.cwd).returncode
         if code:
             return code
     return 0
 
 
-def _check_by_rewriting(entry: Generated) -> int:
+def _check_by_rewriting(entry: Generated, root: Path = ROOT) -> int:
     """Rewrite the entry's files, compare them with the committed ones, and put the committed ones back."""
-    before = {path: path.read_bytes() for path in owned_files(entry)}
+    before = {path: path.read_bytes() for path in owned_files(entry, root)}
     try:
-        code = _run(entry, entry.write)
-        after = {path: path.read_bytes() for path in owned_files(entry)}
+        code = _run(entry, entry.write, root)
+        after = {path: path.read_bytes() for path in owned_files(entry, root)}
     finally:
-        for path in set(owned_files(entry)) - set(before):
+        for path in set(owned_files(entry, root)) - set(before):
             path.unlink()
         for path, data in before.items():
             path.write_bytes(data)
     if code:
         return code
-    stale = sorted(str(path.relative_to(ROOT)) for path in before.keys() | after.keys()
+    stale = sorted(str(path.relative_to(root)) for path in before.keys() | after.keys()
                    if before.get(path) != after.get(path))
     for path in stale:
         print(f"{entry.name}: {path} is stale", file=sys.stderr)
