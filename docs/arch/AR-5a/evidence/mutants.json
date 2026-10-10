@@ -1,0 +1,229 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "tools/evidence/latency.py",
+   "claim": "b1: latency rows are keyed by the input's full path, so two documents with one file name are two rows",
+   "source_sha256": "b707dc2c7d6ad76afe2dc4a6fc652bf2fdbdb65b2c0289c920e5ab64754c90a2",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_b1_two_documents_with_one_file_name_are_two_rows_and_the_slow_one_fails"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_b1_two_documents_with_one_file_name_are_two_rows_and_the_slow_one_fails"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.2,
+   "output_tail": "e_fails _\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-12936/test_b1_two_documents_with_one0')\n\n    def test_b1_two_documents_with_one_file_name_are_two_rows_and_the_slow_one_fails(tmp_path):\n        \"\"\"docs/lean-first/b1/latency.py:57 keyed rows by file name: `a/s1.ve.md` 50% slower was replaced by\n        `b/s1.ve.md`'s row and the gate passed.\"\"\"\n        base, head = tmp_path / \"base\", tmp_path / \"head\"\n        base.mkdir(), head.mkdir()\n        slow, fast = _same_name_documents(tmp_path)\n        cpu = _fake_run(lambda root, item: 15.0 if root == head and item == str(slow.resolve()) else 10.0)\n        for order in ([slow, fast], [fast, slow]):\n            samples, errors = latency.measure(base, head, [\"ve\", \"{input}\"], [str(p) for p in order], 2, run=cpu)\n>           assert list(samples) == [str(p.resolve()) for p in order]\nE           AssertionError: assert [] == ['/tmp/pytest...0/b/s1.ve.md']\nE             \nE             Right contains 2 more items, first extra item: '/tmp/pytest-of-seyran/pytest-12936/test_b1_two_documents_with_one0/a/s1.ve.md'\nE             Use -v to get more diff\n\ntests/test_evidence_toolkit.py:58: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_b1_two_documents_with_one_file_name_are_two_rows_and_the_slow_one_fails\n1 failed in 0.28s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-lm5kfof8)\n"
+  },
+  {
+   "id": "M2",
+   "file": "tools/evidence/fuzz_ab.py",
+   "claim": "b10a: replay is compared entry by entry, so a verdict swap with equal counts fails",
+   "source_sha256": "d65810d448068cc799b0f84720cebfdb14b225540e843ac333518782af410b7b",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_b10a_a_replay_verdict_swap_fails"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_b10a_a_replay_verdict_swap_fails"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.3,
+   "output_tail": "           [100%]\n=================================== FAILURES ===================================\n____________________ test_b10a_a_replay_verdict_swap_fails _____________________\n\n    def test_b10a_a_replay_verdict_swap_fails():\n        \"\"\"docs/lean-first/b10a/trace_fuzzer.py stopped hashing before the baseline replay: Lean replay verdicts\n        [true, false] becoming [false, true] left the counts and the hashed part equal, and the gate passed.\"\"\"\n        base = _report([{\"id\": \"env-b\", \"status\": \"fixed\", \"now\": _now({})}])\n        head = _report([{\"id\": \"env-a\", \"status\": \"fixed\", \"now\": _now({})}])\n        assert len(base[\"baseline\"][\"not_reproduced\"]) == len(head[\"baseline\"][\"not_reproduced\"])\n        result = fuzz_ab.compare(base, head, BASELINE, [])\n>       assert sorted((row[\"id\"], row[\"base\"], row[\"head\"]) for row in result[\"unexplained\"]) == [\n            (\"env-a\", \"reproduces\", \"fixed\"), (\"env-b\", \"fixed\", \"reproduces\")]\nE       AssertionError: assert [] == [('env-a', 'r...'reproduces')]\nE         \nE         Right contains 2 more items, first extra item: ('env-a', 'reproduces', 'fixed')\nE         Use -v to get more diff\n\ntests/test_evidence_toolkit.py:242: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_b10a_a_replay_verdict_swap_fails\n1 failed in 0.23s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-4wshlp1w)\n"
+  },
+  {
+   "id": "M3",
+   "file": "tools/evidence/fuzz_ab.py",
+   "claim": "b10b: a new Lean answer after a known rejection is explained only when it equals Python's",
+   "source_sha256": "d65810d448068cc799b0f84720cebfdb14b225540e843ac333518782af410b7b",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_b10b_an_unexplained_new_lean_answer_after_a_known_rejection_fails"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_b10b_an_unexplained_new_lean_answer_after_a_known_rejection_fails"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.5,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n____ test_b10b_an_unexplained_new_lean_answer_after_a_known_rejection_fails ____\n\n    def test_b10b_an_unexplained_new_lean_answer_after_a_known_rejection_fails():\n        \"\"\"docs/lean-first/b10b/fuzzer_gate.py:85 accepted any new Lean answer after the DF-19 rejection: an\n        arbitrary ResourceLimit error passed as explained.\"\"\"\n        arbitrary = {**ENTRY_A[\"answers\"], \"lean\": {\"outcome\": \"error\", \"code\": \"ResourceLimit\", \"text\": \"budget\"}}\n        head = _report([{\"id\": \"env-a\", \"status\": \"changed\", \"now\": _now(arbitrary)}])\n        result = fuzz_ab.compare(_report(), head, BASELINE, KNOWN)\n>       assert [row[\"id\"] for row in result[\"unexplained\"]] == [\"env-a\"] and result[\"explained\"] == []\nE       AssertionError: assert ([] == ['env-a']\nE         \nE         Right contains one more item: 'env-a'\nE         Use -v to get more diff)\n\ntests/test_evidence_toolkit.py:270: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_b10b_an_unexplained_new_lean_answer_after_a_known_rejection_fails\n1 failed in 0.39s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-f6meu1ze)\n"
+  },
+  {
+   "id": "M4",
+   "file": "tools/evidence/ab.py",
+   "claim": "lf-0: an empty A/B recording is refused before any comparison",
+   "source_sha256": "f37ce75559b0274be9bd228aa6f79c0fe8836c3fc4e0dac491dff579b1d3ecc8",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_lf0_empty_ab_files_fail"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_lf0_empty_ab_files_fail"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.6,
+   "output_tail": "\"\"The shared A/B tool accepted empty evidence (lf-0).\"\"\"\n        base, head = tmp_path / \"base.jsonl\", tmp_path / \"head.jsonl\"\n        for text in (\"\", \"\\n\\n  \\n\"):\n            base.write_text(text), head.write_text(text)\n            comparison, errors = ab.compare(base, head, HEAD)\n>           assert comparison is None and errors == [f\"{base}: the recording is empty\", f\"{head}: the recording is empty\"]\nE           AssertionError: assert (None is None and ['lean_first_... other cases'] == ['/tmp/pytest...ing is empty']\nE             \nE             At index 0 diff: 'lean_first_diff compare could not compare (exit 2): lean_first_diff: unusable evidence: /tmp/pytest-of-seyran/pytest-12938/test_lf0_empty_ab_files_fail0/base.jsonl does not hold the conformance/lean corpus: 2946 of its 2946 cases missing (first closure/closure_cycle), 0 other cases' != '/tmp/pytest-of-seyran/pytest-12938/test_lf0_empty_ab_files_fail0/base.jsonl: the recording is empty'\nE             Right contains one more item: '/tmp/pytest-of-seyran/pytest-12938/test_lf0_empty_ab_files_fail0/head.jsonl: the recording is empty'\nE             Use -v to get more diff)\n\ntests/test_evidence_toolkit.py:172: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_lf0_empty_ab_files_fail - Asserti...\n1 failed in 8.70s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-40tifpyi)\n"
+  },
+  {
+   "id": "M5",
+   "file": "tools/evidence/__init__.py",
+   "claim": "a duplicated key in an evidence object is refused when read",
+   "source_sha256": "4d3b24ffad249deea665356515c923f36bce7263173fc5fa4aa12c96acee15cd",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_a_duplicated_latency_key_is_refused_when_read"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_a_duplicated_latency_key_is_refused_when_read"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.2,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______________ test_a_duplicated_latency_key_is_refused_when_read ______________\n\n    def test_a_duplicated_latency_key_is_refused_when_read():\n        \"\"\"`json.loads` keeps the last of two rows with one key, so a slow row can vanish before any check.\"\"\"\n        text = '{\"head_commit\": \"%s\", \"pass\": true, \"samples\": {\"s1.ve.md\": {\"base_cpu_ms\": 10, \"head_cpu_ms\": 15},' \\\n               ' \"s1.ve.md\": {\"base_cpu_ms\": 10, \"head_cpu_ms\": 10}}}' % HEAD\n        assert latency.problems(json.loads(text), HEAD) == []  # what the copies saw\n>       with pytest.raises(EvidenceError, match=\"occurs twice\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE EvidenceError\n\ntests/test_evidence_toolkit.py:135: Failed\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_a_duplicated_latency_key_is_refused_when_read\n1 failed in 0.23s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cqiodecm)\n"
+  },
+  {
+   "id": "M6",
+   "file": "tools/evidence/latency.py",
+   "claim": "a latency workload the batch names but the record lacks fails",
+   "source_sha256": "b707dc2c7d6ad76afe2dc4a6fc652bf2fdbdb65b2c0289c920e5ab64754c90a2",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_missing_empty_unavailable_or_slow_latency_rows_fail"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_missing_empty_unavailable_or_slow_latency_rows_fail"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.6,
+   "output_tail": "on both sides\"),\n        (lambda s: s.update({\"x\": {\"base_cpu_ms\": 0, \"head_cpu_ms\": 0}}), [], \"not measured on both sides\"),\n        (lambda s: s.update({\"x\": {\"base_cpu_ms\": True, \"head_cpu_ms\": 1}}), [], \"not measured on both sides\"),\n        (lambda s: s.update({\"x\": {\"base_cpu_ms\": float(\"nan\"), \"head_cpu_ms\": 1}}), [], \"not measured on both sides\"),\n        (lambda s: s.update({\"x\": {\"base_cpu_ms\": 10, \"head_cpu_ms\": 12.01}}), [], \"above 1.2 x base\"),\n        (lambda s: s.update({\"x\": {\"base_cpu_ms\": 1, \"head_cpu_ms\": 1, \"same_output\": False}}), [], \"same output\"),\n    ], ids=ids)\n    def test_missing_empty_unavailable_or_slow_latency_rows_fail(change, expected, message):\n        record = deepcopy(LATENCY)\n        change(record[\"samples\"])\n        errors = latency.problems(record, HEAD, expected)\n>       assert any(message in error for error in errors), errors\nE       AssertionError: []\nE       assert False\nE        +  where False = any(<generator object test_missing_empty_unavailable_or_slow_latency_rows_fail.<locals>.<genexpr> at 0x7ece32b79460>)\n\ntests/test_evidence_toolkit.py:126: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_missing_empty_unavailable_or_slow_latency_rows_fail[<lambda>-expected0-no-sample-for-docs-b-s1-ve-md]\n1 failed, 9 passed in 0.30s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-2j_7yji1)\n"
+  },
+  {
+   "id": "M7",
+   "file": "tools/evidence/ab.py",
+   "claim": "a corpus record unavailable on both sides fails the A/B",
+   "source_sha256": "f37ce75559b0274be9bd228aa6f79c0fe8836c3fc4e0dac491dff579b1d3ecc8",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_saved_ab_known_answers",
+    "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails",
+    "tests/test_evidence_toolkit.py::test_saved_ab_known_answers"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.2,
+   "output_tail": "{\"readings\": {\"base_cpu_ms\": 1, \"head_cpu_ms\": 1.21}}}),\n    ])\n    def test_stale_or_incomplete_evidence_fails(which, change):\n        values = {\"gate\": deepcopy(GATE), \"comparison\": deepcopy(AB), \"latency\": deepcopy(LATENCY)}\n        values[which].update(change)\n>       assert problems(HEAD, values[\"gate\"], values[\"comparison\"], values[\"latency\"])\nE       AssertionError: assert []\nE        +  where [] = problems('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', {'commit_sha': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'dirty': False, 'status': 'passed', 'stages': ['toolchains', 'lean_build', 'lean_audit', 'rust_build', 'cargo_test', 'pytest'], ...}, {'head_commit': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'unlisted': 0, 'unavailable_both': {'readings/default': 1}, 'records': {'probe/default': 1, 'conformance/default': 1, 'readings/default': 1, 'pilots/default': 1, ...}}, {'head_commit': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'pass': True, 'samples': {'readings': {'base_cpu_ms': 1, 'head_cpu_ms': 1}}})\n\ntests/test_batch_evidence.py:57: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_saved_ab_known_answers[change3-unlisted-or-unavailable]\nFAILED tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails[comparison-change5]\n2 failed, 14 passed in 1.01s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-vox1o6nd)\n"
+  },
+  {
+   "id": "M8",
+   "file": "tools/batch_evidence.py",
+   "claim": "--check fails a report block that is not the rendering of the evidence",
+   "source_sha256": "d08cf7c28f403752ad76377c11d722be4ed18a0a2d2230fb93fd2e3d9a3161d2",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_a_report_number_typed_by_hand_fails_the_check"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_a_report_number_typed_by_hand_fails_the_check"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.1,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______________ test_a_report_number_typed_by_hand_fails_the_check ______________\n\nbatch = PosixPath('/tmp/pytest-of-seyran/pytest-12941/test_a_report_number_typed_by_0/docs/t/b')\n\n    def test_a_report_number_typed_by_hand_fails_the_check(batch):\n        (batch / \"REPORT.md\").write_text(\"<!-- BEGIN GENERATED T -->\\ngate aaaaaaaa: 6 passed\\n<!-- END GENERATED T -->\\n\")\n>       assert batch_evidence.check(batch)[1] == [\"the T block of REPORT.md is not the rendering of the evidence \"\n                                                  \"(python -m tools.evidence report --write)\"]\nE       AssertionError: assert [] == ['the T block...ort --write)']\nE         \nE         Right contains one more item: 'the T block of REPORT.md is not the rendering of the evidence (python -m tools.evidence report --write)'\nE         Use -v to get more diff\n\ntests/test_evidence_toolkit.py:481: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_a_report_number_typed_by_hand_fails_the_check\n1 failed in 0.35s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-p2a24l73)\n"
+  },
+  {
+   "id": "M9",
+   "file": "tools/batch_evidence.py",
+   "claim": "--check fails a tally whose ledger disagrees with its saved table",
+   "source_sha256": "d08cf7c28f403752ad76377c11d722be4ed18a0a2d2230fb93fd2e3d9a3161d2",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_tally_claims_check_a_ledger_against_its_table"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_tally_claims_check_a_ledger_against_its_table"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.4,
+   "output_tail": "ts_table ______________\n\nbatch = PosixPath('/tmp/pytest-of-seyran/pytest-12945/test_tally_claims_check_a_ledg0/docs/t/b')\n\n    def test_tally_claims_check_a_ledger_against_its_table(batch):\n        _write(batch, \"rows\", [{\"g\": \"x\", \"c\": \"p\"}, {\"g\": \"x\", \"c\": \"q\"}, {\"g\": \"y\", \"c\": \"p\"}])\n        _write(batch, \"table\", {\"x\": {\"other\": {\"p\": 1, \"q\": 1}, \"lean\": 3, \"all\": 5},\n                                \"y\": {\"other\": {\"p\": 1}, \"lean\": 0, \"all\": 1}})\n        claim = '[[claims]]\\nkind = \"tally\"\\nrows = \"rows\"\\ngroup = \"g\"\\nfield = \"c\"\\ntable = \"table\"\\ncounts = \"other\"\\n'\n        (batch / \"evidence.toml\").write_text(TOML + claim + 'total = \"all\"\\nrest = \"lean\"\\n')\n        assert batch_evidence.check(batch)[1] == []\n        _write(batch, \"table\", {\"x\": {\"other\": {\"p\": 2}, \"lean\": 3, \"all\": 5}, \"y\": {\"other\": {\"p\": 1}, \"lean\": 0, \"all\": 1}})\n>       assert batch_evidence.check(batch)[1] == [\"tally rows: x counts differ from table\"]\nE       AssertionError: assert [] == ['tally rows:...r from table']\nE         \nE         Right contains one more item: 'tally rows: x counts differ from table'\nE         Use -v to get more diff\n\ntests/test_evidence_toolkit.py:520: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_tally_claims_check_a_ledger_against_its_table\n1 failed in 0.37s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-43ejzktq)\n"
+  },
+  {
+   "id": "M10",
+   "file": "tools/readings_batch_latency.py",
+   "claim": "the readings latency tool refuses two cases with one name instead of keeping the last row",
+   "source_sha256": "4d0ac55cd2d9edae2f6b7330de6fd19937b57057a844ee8fc8b35b494c519aa4",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_readings_batch_latency_refuses_two_cases_with_one_name"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_readings_batch_latency_refuses_two_cases_with_one_name"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.9,
+   "output_tail": "ncy_refuses_two_cases_with_one_name(monkeypatch, tmp_path):\n        main, out = _readings_batch(monkeypatch, tmp_path, [\"c0\", \"c1\", \"c0\"], 10.0)\n>       with pytest.raises(RuntimeError, match=\"two readings cases are named c0\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE RuntimeError\n\ntests/test_evidence_toolkit.py:609: Failed\n----------------------------- Captured stdout call -----------------------------\n{\n  \"head_commit\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n  \"method\": \"paired warm readings-route service calls; /proc service CPU time\",\n  \"allowance\": 0.2,\n  \"samples\": {\n    \"c0\": {\n      \"pairs\": 2,\n      \"base_cpu_ms\": 10.0,\n      \"head_cpu_ms\": 10.0,\n      \"case_sha256\": \"4c69847c08fac82d2c41667889545a64c9887a5c8fd002a39905e93b5f08170b\",\n      \"calls_per_side\": 200\n    },\n    \"c1\": {\n      \"pairs\": 2,\n      \"base_cpu_ms\": 10.0,\n      \"head_cpu_ms\": 10.0,\n      \"case_sha256\": \"4c69847c08fac82d2c41667889545a64c9887a5c8fd002a39905e93b5f08170b\",\n      \"calls_per_side\": 200\n    }\n  },\n  \"pass\": true,\n  \"corpus_sha256\": \"0b2f3eddf39bf0b20d7c14712ac58d600c50f68b1454b1703e6fb7561f2e8ec9\"\n}\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_readings_batch_latency_refuses_two_cases_with_one_name\n1 failed in 0.35s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-9y22023o)\n"
+  },
+  {
+   "id": "M11",
+   "file": "tools/evidence/latency.py",
+   "claim": "the 20% rule: a head above 1.2 times its base fails",
+   "source_sha256": "b707dc2c7d6ad76afe2dc4a6fc652bf2fdbdb65b2c0289c920e5ab64754c90a2",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_readings_batch_latency_applies_the_shared_rule",
+    "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails",
+    "tests/test_evidence_toolkit.py::test_readings_batch_latency_applies_the_shared_rule"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.6,
+   "output_tail": "\"latency\", {\"samples\": {\"readings\": {\"base_cpu_ms\": 1, \"head_cpu_ms\": 1.21}}}),\n    ])\n    def test_stale_or_incomplete_evidence_fails(which, change):\n        values = {\"gate\": deepcopy(GATE), \"comparison\": deepcopy(AB), \"latency\": deepcopy(LATENCY)}\n        values[which].update(change)\n>       assert problems(HEAD, values[\"gate\"], values[\"comparison\"], values[\"latency\"])\nE       AssertionError: assert []\nE        +  where [] = problems('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', {'commit_sha': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'dirty': False, 'status': 'passed', 'stages': ['toolchains', 'lean_build', 'lean_audit', 'rust_build', 'cargo_test', 'pytest'], ...}, {'head_commit': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'unlisted': 0, 'unavailable_both': {}, 'records': {'probe/default': 1, 'conformance/default': 1, 'readings/default': 1, 'pilots/default': 1, ...}}, {'head_commit': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'pass': True, 'samples': {'readings': {'base_cpu_ms': 1, 'head_cpu_ms': 1.21}}})\n\ntests/test_batch_evidence.py:57: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_readings_batch_latency_applies_the_shared_rule[12.5-1]\nFAILED tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails[latency-change8]\n2 failed, 9 passed in 0.38s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-rkzx57p3)\n"
+  },
+  {
+   "id": "M13",
+   "file": "tools/evidence/config.py",
+   "claim": "a batch's evidence.toml cannot lower the mutant minimum below three",
+   "source_sha256": "e93c5f93ce545f061732c8e0dd352149d6c46a7de454e583827fd26dc670f184",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_a_toml_that_would_check_nothing_is_refused"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_a_toml_that_would_check_nothing_is_refused"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.4,
+   "output_tail": "loads'\"),\n        (TOML + '[latency]\\nfile = \"l.json\"\\nworkloads = []\\n', \"not a non-empty list\"),\n        (TOML + '[latency]\\nfile = \"l.json\"\\nworkload = [\"a\"]\\nworkloads = [\"a\"]\\n', \"unknown key 'workload'\"),\n        (TOML.replace('batch = \"test\"', 'batch = \"\"'), \"batch is not a name\"),\n        (TOML.replace('file = \"mutants.json\"', 'file = \"mutants.json\"\\nmin = 0'), \"min is not a whole number of at least 3\"),\n        (TOML + '[latency]\\nfile = \"l.json\"\\nworkloads = [\"a\"]\\nallowance = 0.5\\n', \"allowance is not between 0 and 0.2\"),\n        (TOML.replace('batch = \"test\"', 'batch = \"test\"\\nevidence = \"../../../..\"'), \"outside the repository\"),\n    ], ids=ids)\n    def test_a_toml_that_would_check_nothing_is_refused(batch, text, message):\n        (batch / \"evidence.toml\").write_text(text)\n>       with pytest.raises(EvidenceError, match=message.replace(\"[\", r\"\\[\").replace(\"]\", r\"\\]\")):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE EvidenceError\n\ntests/test_evidence_toolkit.py:536: Failed\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_a_toml_that_would_check_nothing_is_refused[batch-test-scope-file-scope-json-gate-file-gate-json-mutants-min-is-not-a-whole-number-of-at-least-3]\n1 failed, 8 passed in 0.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-6ep7lfxw)\n"
+  },
+  {
+   "id": "M12",
+   "file": "tools/batch_evidence.py",
+   "claim": "--check fails a gate record that shows a failure or whose counts do not add up",
+   "source_sha256": "d08cf7c28f403752ad76377c11d722be4ed18a0a2d2230fb93fd2e3d9a3161d2",
+   "tests": [
+    "tests/test_evidence_toolkit.py::test_stale_or_incomplete_batch_evidence_fails_the_check"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_evidence_toolkit.py::test_stale_or_incomplete_batch_evidence_fails_the_check"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.7,
+   "output_tail": "   (\"gate\", {\"counts\": {**GATE[\"counts\"], \"passed\": 4, \"failed\": 1}}, \"show a failure\"),\n        (\"gate\", {\"stages\": list(batch_evidence.REQUIRED_STAGES)[:-1]}, \"incomplete or failed\"),\n        (\"scope\", {\"commits\": []}, \"lists no commits\"),\n        (\"scope\", {\"commits\": [{\"hash\": BASE}]}, \"not its head\"),\n        (\"scope\", {\"changes\": []}, \"no changed paths\"),\n        (\"mutants\", {\"mutants\": MUTANTS[\"mutants\"][:2]}, \"fewer than 3\"),\n    ], ids=ids)\n    def test_stale_or_incomplete_batch_evidence_fails_the_check(batch, name, change, message):\n        value = {\"scope\": SCOPE, \"gate\": GATE, \"mutants\": MUTANTS}[name]\n        _write(batch, name, {**deepcopy(value), **change})\n        head, errors = batch_evidence.check(batch)\n>       assert any(message in error for error in errors), errors\nE       AssertionError: ['the T block of REPORT.md is not the rendering of the evidence (python -m tools.evidence report --write)']\nE       assert False\nE        +  where False = any(<generator object test_stale_or_incomplete_batch_evidence_fails_the_check.<locals>.<genexpr> at 0x72ba05331a80>)\n\ntests/test_evidence_toolkit.py:476: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_evidence_toolkit.py::test_stale_or_incomplete_batch_evidence_fails_the_check[gate-change3-show-a-failure]\n1 failed, 8 passed in 0.36s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-dnkr26f5)\n"
+  }
+ ]
+}

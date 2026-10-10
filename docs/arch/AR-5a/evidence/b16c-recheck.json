@@ -1,0 +1,7 @@
+{
+ "errors": [
+  "the batch changes lean/ResponseShape/Schemas/Document.lean (and 9 more ve/ or lean/ paths) but its evidence.toml names no [ab]"
+ ],
+ "head": "f0c44d4342f0dcf1faf38195e767922c42fb6ec7",
+ "saved_report": "docs/lean-first/b16c/REPORT.md: 'The nine-corpus A/B and the profile composition required for Python wrapper deletion remain open.'"
+}
