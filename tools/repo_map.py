@@ -412,7 +412,7 @@ def check(root: Path) -> list[str]:
     return problems
 
 
-def main(argv: list[str] | None = None) -> int:
+def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true", help="exit 1 when MODES and the schema files disagree")
     parser.add_argument("--root", type=Path, default=ROOT, help="the tree to read (default: this checkout); MODES always come from this checkout")
@@ -423,6 +423,11 @@ def main(argv: list[str] | None = None) -> int:
     one.add_argument("mode")
     named = commands.add_parser("file", help="the modes, layer, tests and generator of a file")
     named.add_argument("path")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = make_parser()
     args = parser.parse_args(argv)
     root = args.root.resolve()
     if args.check:
