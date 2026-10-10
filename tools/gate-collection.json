@@ -335,6 +335,7 @@
   "tests/test_ask_relay.py::test_lean_refuses_a_request_not_bound_to_its_document[an evidence entry for no compatible choice-<lambda>-names no compatible]",
   "tests/test_ask_relay.py::test_lean_refuses_a_request_not_bound_to_its_document[an evidence entry twice-<lambda>-names no compatible]",
   "tests/test_ask_relay.py::test_lean_refuses_a_request_not_bound_to_its_document[names out of order-<lambda>-one per candidate]",
+  "tests/test_ask_relay.py::test_leans_refusal_is_raised_with_its_class_and_text",
   "tests/test_ask_relay.py::test_the_deadline_bounds_the_whole_answer",
   "tests/test_ask_relay.py::test_the_relay_refuses_a_malformed_answer_from_the_service",
   "tests/test_ask_relay.py::test_the_schema_is_generated_and_types_every_field",

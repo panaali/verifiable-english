@@ -10651,11 +10651,13 @@
         "ResponseShape.Schemas.Ask.line",
         "ResponseShape.Schemas.Ask.name",
         "ResponseShape.Schemas.Ask.pairNat",
+        "ResponseShape.Schemas.Ask.reason",
         "ResponseShape.Schemas.Ask.reasons",
         "ResponseShape.Schemas.Ask.refused",
         "ResponseShape.Schemas.Ask.row",
         "ResponseShape.Schemas.Ask.row'",
-        "ResponseShape.Schemas.Ask.source"
+        "ResponseShape.Schemas.Ask.source",
+        "ResponseShape.Schemas.Ask.sourceOrNull"
       ]
     },
     "VE/Ask/Basic.lean": {

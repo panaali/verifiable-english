@@ -288,6 +288,50 @@ def test_the_deadline_bounds_the_whole_answer(monkeypatch):
     assert not isinstance(caught.value, ResourceLimit)
 
 
+def _refused(question):
+    """G1's request with another question, Lean's genuine result for it, and the identities it is bound to."""
+    from ve.backends import relay
+    from ve.backends.english_lean import export, identities
+    from ve.english import EnglishVocabulary
+    result, request, expected = bound("G1")
+    plain = {k: v for k, v in request.items() if not k.startswith("_")}
+    plain["question"] = question
+    raw = plain["document"].encode("utf-8")
+    words = EnglishVocabulary(ask.environment(raw), _defer_overlay_refusals=True)
+    want = {**identities(ask.environment(raw), question, words, export(words)),
+            "document_id": expected["document_id"]}
+    context = {k: v for k, v in request.items() if k.startswith("_")}
+    return plain, context, want, relay.decide_once("ask", plain)["result"]
+
+
+def test_leans_refusal_is_raised_with_its_class_and_text(monkeypatch):
+    """A question Lean does not read with one meaning: `ask`'s refusal, bound to Lean's question contract
+    (`refusal_problem`), is raised as Lean's class with Lean's text; a refusal whose status, code, class, fields or
+    identities are not Lean's is CheckerUnavailable."""
+    from ve.backends import relay
+    from ve.errors import CheckerUnavailable, SyntaxError as VESyntaxError
+    plain, context, want, result = _refused("Is a member eligible?")
+    assert result["status"] == "indefinite" and result["code"] == "IndefiniteQuestion"
+    assert ask.refusal_problem(result, want) is None
+    with pytest.raises(VESyntaxError) as raised:
+        ask._ask(plain, context, want)
+    assert str(raised.value) == result["text"]
+    mutants = {"status one": setting(result, ("status",), "one"),
+               "another status": setting(result, ("status",), "none"),
+               "another code": setting(result, ("code",), "QuestionForm"),
+               "another class": setting(result, ("class",), "CheckerUnavailable"),
+               "no text": setting(result, ("text",), ""),
+               "another identity": setting(result, ("identities", "document_id"), "0" * 64),
+               "a field more": {**result, "span": [0, 1]},
+               "a field less": {k: v for k, v in result.items() if k != "code"}}
+    for name, mutant in mutants.items():
+        assert ask.refusal_problem(mutant, want), name
+        monkeypatch.setattr(relay, "decide_once", lambda mode, case, m=mutant: {"id": "ask", "status": "ok",
+                                                                                "result": m})
+        with pytest.raises(CheckerUnavailable, match="malformed"):
+            ask._ask(plain, context, want)
+
+
 def test_the_schema_is_generated_and_types_every_field():
     """`ask.json` has no untyped result: every property of the answered and refused results names a type, a const,
     an enum or a reference (the generated file, `tools/response_schemas.py`)."""

@@ -48,7 +48,7 @@ def _shape() -> dict:
 
 _DEFS = _shape()
 LEADS = tuple(_DEFS["row"]["properties"]["lead"]["enum"])
-REASONS = tuple(next(alt["enum"] for alt in _DEFS["row"]["properties"]["reason"]["anyOf"] if "enum" in alt))
+REASONS = tuple(next(alt["enum"] for alt in _DEFS["reason"]["anyOf"] if "enum" in alt))
 ANSWER_LEADS = tuple(_DEFS["answered"]["properties"]["lead"]["enum"])
 SOURCE_FIELDS = {alt["properties"]["kind"]["const"]: set(alt["properties"]) - {"kind"}
                  for alt in _DEFS["source"]["anyOf"]}
@@ -475,10 +475,38 @@ def _ask(request: dict, bound: dict, expected: dict) -> dict:
     row = relay.decide_once(MODE, request)
     if type(row) is not dict or row.keys() != {"id", "status", "result"} or row["status"] != "ok":
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean answer is not an answer: {row!r}")
-    problem = answer_problem(row["result"], {**request, **bound}, expected)
+    result = row["result"]
+    if type(result) is dict and result.get("status") != "answered":
+        problem = refusal_problem(result, expected)
+        if problem:
+            raise CheckerUnavailable(f"CheckerUnavailable: the Lean answer is malformed: {problem}")
+        from .backends.english_lean import ERROR_CLASSES
+        cls = ERROR_CLASSES[result["class"]]
+        raise cls(result["text"], operation=ANSWER_OPERATION, backend="lean") \
+            if issubclass(cls, CheckerUnavailable) else cls(result["text"])
+    problem = answer_problem(result, {**request, **bound}, expected)
     if problem:
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean answer is malformed: {problem}")
-    return row["result"]
+    return result
+
+
+def refusal_problem(result, expected: dict) -> str | None:
+    """Why `result` is not Lean's refusal of the request's question, or None: its fields are the refusal's, its
+    identities the request's, and its status, code and class a status of Lean's question contract other than `one`,
+    a code of that status and Lean's class of the code (`ve/question/codes.json`, the contract Lean exports)."""
+    from .backends.english_lean import (ERROR_CLASSES, QUESTION_CLASSES, QUESTION_STATUS_CODES, QUESTION_VERSION)
+    if type(result) is not dict or result.keys() != set(_DEFS["refused"]["properties"]):
+        return "the refusal's fields are not a refusal's"
+    if result["identities"] != {**expected, "question_version": QUESTION_VERSION}:
+        return "the identities are not the request's"
+    status, code, cls = result["status"], result["code"], result["class"]
+    if status == "one" or status not in QUESTION_STATUS_CODES or code not in QUESTION_STATUS_CODES[status]:
+        return f"a {status!r} refusal with the code {code!r}"
+    if cls != QUESTION_CLASSES.get(code) or cls not in ERROR_CLASSES:
+        return f"the class {cls!r} is not Lean's class of {code!r}"
+    if type(result["text"]) is not str or not result["text"]:
+        return "the refusal has no text"
+    return None
 
 
 class Prepared:

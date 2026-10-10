@@ -127,6 +127,8 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Question.questionCase_fits
 #print axioms ResponseShape.Encoders.Question.caseReported_fits
 #print axioms ResponseShape.Encoders.Ask.source_fits
+#print axioms ResponseShape.Encoders.Ask.line_source_fits
+#print axioms ResponseShape.Encoders.Ask.reason_fits
 #print axioms ResponseShape.Encoders.Ask.choice_fits
 #print axioms ResponseShape.Encoders.Ask.line_fits
 #print axioms ResponseShape.Encoders.Ask.row_fits

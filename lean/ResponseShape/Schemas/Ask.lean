@@ -31,27 +31,33 @@ def source : Shape :=
 def gap : Shape :=
   n [arr, .prefixItems [str, ref "common.json#/$defs/strings", .type ["boolean"]], .minItems 3, .maxItems 3]
 
+/-- A line's cited source, or null (null is `const null`, which the skeleton keeps; `type null` is any value). -/
+def sourceOrNull : Shape := .anyOf [.const .null, ref "#/$defs/source"]
+
 def line : Shape :=
   c "VE.Ask.Run.lineJson: a line of the answer, its text Lean's lineText of its metadata." [
     obj, .required ["frame", "text", "source", "quote", "readings", "witness", "unchecked"],
     closed [
       ("frame", n [str, .minLength 1]), ("text", n [str, .minLength 1]),
-      ("source", .anyOf [.type ["null"], ref "#/$defs/source"]),
-      ("quote", .anyOf [.type ["null"], n [arr, .prefixItems [ref "common.json#/$defs/token", str],
+      ("source", ref "#/$defs/source_or_null"),
+      ("quote", .anyOf [.const .null, n [arr, .prefixItems [ref "common.json#/$defs/token", str],
         .minItems 2, .maxItems 2]]),
       ("readings", n [arr, .items (ref "#/$defs/pair_nat")]),
-      ("witness", .anyOf [.type ["null"], ref "#/$defs/choice"]),
+      ("witness", .anyOf [.const .null, ref "#/$defs/choice"]),
       ("unchecked", .type ["boolean"])]]
 
 def leads : List String := ["yes", "no", "notSettled", "notNecessarily", "unknown"]
 def reasons : List String := ["X1", "X2", "X3", "X4", "X5", "X6"]
+
+/-- A row's reason (`Row.reason`): null unless the lead is unknown. -/
+def reason : Shape := .anyOf [.const .null, enumS reasons]
 
 def row : Shape :=
   c "VE.Ask.Run.rowJson: one compatible choice, its lead, its reason, its citations and its countermodel's gaps." [
     obj, .required ["choice", "lead", "reason", "cited", "gaps"],
     closed [
       ("choice", ref "#/$defs/choice"), ("lead", enumS leads),
-      ("reason", .anyOf [.type ["null"], enumS reasons]),
+      ("reason", ref "#/$defs/reason"),
       ("cited", n [arr, .items (ref "#/$defs/source")]),
       ("gaps", n [arr, .items (ref "#/$defs/gap")])]]
 
@@ -107,7 +113,8 @@ def file : File where
   name := "ask.json"
   comment := some "Lean question answer: the lines Lean renders from its checked answer, every field typed."
   top := [("row", «row'»)]
-  defs := [("pair_nat", .schema pairNat), ("choice", .schema choice), ("source", .schema source), ("gap", .schema gap),
+  defs := [("pair_nat", .schema pairNat), ("choice", .schema choice), ("source", .schema source),
+    ("source_or_null", .schema sourceOrNull), ("gap", .schema gap), ("reason", .schema reason),
     ("line", .schema line), ("row", .schema row), ("name", .schema name), ("identities", .schema identities),
     ("english_formula", .schema englishFormula), ("answered", .schema answered), ("refused", .schema refused)]
 

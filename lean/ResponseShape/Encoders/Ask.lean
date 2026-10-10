@@ -15,17 +15,25 @@ theorem choice_fits (c : VE.Readings.Choice) : Fits req (skel% "ask.json#/$defs/
   unfold VE.Readings.choiceJson
   fits
 
+/-- A line's source: null or a source (`ask.json` writes null as `const null`, so the skeleton keeps it). -/
+theorem line_source_fits (s : Source) :
+    Fits req (skel% "ask.json#/$defs/source_or_null") (sourceJson s) := by
+  cases s <;> simp only [sourceJson] <;> fits
+
+theorem reason_fits (x : Reason) : Fits req (skel% "ask.json#/$defs/reason") (Json.str (reasonName x)) := by
+  cases x <;> simp only [reasonName, reasonFrame] <;> fits
+
 theorem line_fits (l : Line) : Fits req (skel% "ask.json#/$defs/line") (lineJson l) := by
   unfold lineJson
   cases hs : l.source <;> cases hq : l.quote <;> cases hw : l.witness <;>
     simp only [Option.map_none, Option.map_some, Option.getD_none, Option.getD_some] <;>
-    fits using source_fits, choice_fits
+    fits using line_source_fits, choice_fits
 
 theorem row_fits (v : View) (r : Row) : Fits req (skel% "ask.json#/$defs/row") (rowJson v r) := by
   unfold rowJson
   cases hl : r.lead <;> cases hr : r.reason <;>
     simp only [leadKey, Option.map_none, Option.map_some, Option.getD_none, Option.getD_some] <;>
-    fits using source_fits, choice_fits
+    fits using source_fits, choice_fits, reason_fits
 
 theorem name_fits (nm : VE.Ask.Name) : Fits req (skel% "ask.json#/$defs/name") (nameJson nm) := by
   unfold nameJson

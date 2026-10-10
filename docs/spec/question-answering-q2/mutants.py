@@ -10,11 +10,14 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "tools"))
+import nested_pytest  # noqa: E402
 HERE = Path(__file__).resolve().parent
 LOCK = ROOT / "lean/checkers.lock"
 SERVICE = ROOT / "lean/.lake/build/bin/ve_service"
@@ -67,10 +70,6 @@ MUTANTS = [
 ]
 
 
-def run(command, **kw):
-    return subprocess.run(command, cwd=ROOT, capture_output=True, text=True, **kw)
-
-
 def build_service():
     done = subprocess.run(["lake", "build", "ve_service"], cwd=ROOT / "lean", capture_output=True, text=True)
     if done.returncode != 0:
@@ -103,7 +102,8 @@ def main() -> int:
                 if m["test"][0] == "lake":
                     done = subprocess.run(m["test"], cwd=ROOT / "lean", capture_output=True, text=True)
                 else:
-                    done = run(["uv", "run", "python", "-m", "pytest", "-q", "-x", *m["test"]])
+                    done = subprocess.run(nested_pytest.command(["-q", "-x", *m["test"]]), cwd=ROOT,
+                                          env=nested_pytest.environment(os.environ), capture_output=True, text=True)
                 caught = done.returncode != 0
                 tail = (done.stdout + done.stderr).strip().splitlines()
                 failing = [line for line in tail if line.startswith(("FAILED", "error:")) or "error:" in line][:3]
