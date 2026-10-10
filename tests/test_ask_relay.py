@@ -233,6 +233,35 @@ def test_a_broken_split_is_not_a_split():
     assert all(row["lead"] != "notSettled" for row in rows)
 
 
+def test_a_split_whose_fillings_differ_in_a_base_atom_is_not_a_split():
+    """Plan Q2.2: a split is one base situation with two fillings of its gaps; a "false" filling that also changes a
+    base atom (here `has_the_right_to_education` of the model's person) is not checked, so no row is not settled."""
+    def edit(entry):
+        for ev in entry["case"]["evidence"]:
+            if "split" in ev:
+                model = ev["split"]["model"]
+                [person] = model["domains"]["person"]
+                held = model["relations"]["has_the_right_to_education"]
+                ev["split"]["false"]["has_the_right_to_education"] = [] if held else [[person]]
+    entry = _u3(edit)
+    rows = AF.replay(entry)["rows"]
+    assert rows and all(row["lead"] != "notSettled" for row in rows)
+    assert {row["lead"] for row in AF.replay(AF.load("U3"))["rows"]} >= {"notSettled"}
+
+
+def test_a_fence_that_reads_as_two_formulas_is_not_the_cases_unit():
+    """Plan Q2.2 (5.2 `UnitBound`): an English fence compiles to exactly one formula. The G document sent with its
+    `g3` fence holding two sentences no longer binds the recorded case, whose `g3` is one formula."""
+    from ve.backends import relay
+    from ve.errors import CheckerUnavailable
+    request = _request("G1")
+    fence = "```ve g3\nAnn is verified.\n```"
+    assert request["document"].count(fence) == 1
+    request["document"] = request["document"].replace(fence, "```ve g3\nAnn is verified. Bo is verified.\n```")
+    with pytest.raises(CheckerUnavailable, match="the case is not this document's"):
+        relay.decide_once("ask", request)
+
+
 def _deep(depth):
     value = []
     for _ in range(depth):
