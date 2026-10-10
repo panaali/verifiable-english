@@ -51,14 +51,14 @@ The generated guards were also checked once by hand: changing G1's expected text
 | Line | Status |
 |---|---|
 | 1 One contract | **Done.** Codes, classes, status codes, fields per status and `question_version` come from Lean's export (`ve/question/codes.json`, `tools/question_codes.py --check` in `test_the_contract_files_are_the_services`); the lock reads the version from it, not from Lean source. |
-| 2 Py/Lean/Rust differential fuzz | **Not applicable.** No Python or Rust question reader exists (lean-only). The three-way comparison is spec, Lean guards, live service; the relay's answer checks and the mode's case decoding are fuzzed (lines 4, 5). |
+| 2 Py/Lean/Rust differential fuzz | **Done (review fixes).** An independent Python reader of spec 2 (`tests/question_reference.py`) against Lean on every fixture and its seeded 1- and 2-fault mutants; each reading's formula checked by Rust and evaluated alike by Python, Lean's metered evaluator and Rust (`tests/test_question_differential.py`). Rust has no question reader. |
 | 3 One normalisation | **Done.** The question's text is normalised only by E2's lexer; NBSP, double space, tab, `\r`, curly quotes, U+212A, dotted I, a control character, a leading space, lower case and a fullwidth `?` get well-formed, identical answers through the relay and `ve.ask.read` (`test_text_variants_get_well_formed_answers`). |
 | 4 Untrusted output | **Done.** Genuine answers of nine fixtures: each field dropped (unless optional) or replaced by `null`, 7, true, "", [], {}, "x", -1, 1.5; each identity changed or dropped; fields and identities added; booleans and floats inside a span. Every one is `CheckerUnavailable` (`test_every_mutation_of_a_genuine_answer_is_refused`, `test_answer_mutations_inside_their_kinds`). |
 | 5 Malformed input | **Done.** Every node of a genuine case replaced by 7, true, null, [], {} or a 10,000-deep array: error rows, or `VEError` (`ResourceLimit`, restricted JSON) only (`test_malformed_cases_are_error_rows_only`). No ids are referenced by a question case. |
 | 6 Three-valued verdicts | **Done.** `Outcome` separates reading, refusal, limit and budget; work budget 0 is G21's guard; a near-zero injected deadline is `CheckerUnavailable`, never a verdict. |
 | 7 Whole-operation deadlines | **Partly done.** The mode's CPU deadline bounds the whole service operation (decoding, lexicon checks, every candidate, the answer): `test_the_whole_question_is_bounded_by_the_modes_deadline`. The Python side before the request (front matter decode, lexicon production) is not under it. |
 | 8 Exhaustive folds | **Not applicable** (no kind or owner fold). `outcomeFields` matches every `Outcome` constructor, checked by Lean. |
-| 9 English read-back | **Partly done.** The asked sentence reads back with exactly φ (`asked_reads_back`); every rephrasing reads with one meaning and no two mean the same (`rephrasings_read`). The A0 frame itself (`You asked whether …`) is not parsed: the W7 gate of answer frames is Q2.3. |
+| 9 English read-back | **Done for Q1 (review fixes).** The A0 line passes the all-derivations gate over every frame of spec 3.3 and its slot reads back with exactly φ before it is shown (`askedGate_sound`, `oneFields_gated`); every rephrasing reads with one meaning and no two mean the same (`rephrasings_read`); every F2 rephrasing offered is one the mode shows as one reading (`ask_rephrasings`, `ask_moved`, `askable_iff`). |
 | 10 One admit | **Done for Q1.** `ve ask --reading` and `ve.ask.read` both go through `read_question`; same verdict on every document fixture (`test_one_entry_point_gives_the_same_verdict`, CLI tests). Speech acts' polar questions still use Python's parser until Q1.4. |
 | 11 No regex of a real language | **Done.** The question lock's regex over Lean source was replaced by the service's version. `tools/question_statements.py` compares theorem text with the approved text (the diff line 17 asks for); the spec check reads markdown rows. |
 | 12 Ledger state machines | **Not applicable.** |
@@ -90,8 +90,8 @@ the suite collected 13,810 tests, selected 13,809, and recorded **13,716 passed,
 (`gate-result.json`, status `failed`). Free disk after the run: 96 GB.
 
 The one failure is `tests/test_difffuzz.py::test_ci_run`'s CPU budget: `{'python': 320.5, 'children': 100.0}`,
-420.5 s against 300 s, with the machine at load average 35 to 39 from other sessions. It is load-dependent, not
-caused by this branch:
+420.5 s against 300 s, with the machine at load average 35 to 39 from other sessions. *Corrected by the review fixes
+below: the growth is this branch's six document seeds, not load.* As first written:
 - Run alone at HEAD (load average about 20), `difffuzz.fuzz()` used 264.5 s (`python` 227.2, `children` 37.3)
   with no new finding, and the pytest test passed alone (293 s wall) after the schema fix.
 - The three gate runs gave 331.5 s, 348.2 s and 420.5 s; the children's share (96 to 102 s in the gate against
@@ -106,3 +106,50 @@ Earlier gate runs on this branch found and fixed: the open `english.question` re
 
 `ve-integration` moved on after this branch was cut (RD-3 merged, `0d93e591`); this branch is not re-synced,
 and Q2's work can now start from there.
+
+## Review fixes (2026-10-09): Astra and Fable, with the DRI ruling
+
+Reviews: `manage-agents/question-answering-review-astra.final.md`, `manage-agents/reviews/question-answering-review-fable.md`.
+DRI ruling: this merge is Q1; Astra's A (answering absent) is deferred to the qa-q2 batch; every B of both reviews
+is fixed. Each finding was treated as a class; each failing example is a regression test.
+
+| Finding | Class | Fix | Regression tests | Commit |
+|---|---|---|---|---|
+| Fable B2: gate red; branch not re-synced with RD-3 | stale base | Merged `main` (`c24aeab2`, RD-3 and lf-16c); every generated inventory regenerated over the merged tree; the trust growth over `main` checked to be Question code only (S +30, V +266; Fable C4) | the full gate below | `d44cc268` |
+| Fable B2: `test_difffuzz.py::test_ci_run` over its 300 s CPU budget | a new fixture silently feeds a fixed budget elsewhere | Measured base against head, interleaved under the same load (table below): the six question documents had become document-surface seeds; Lean refuses each whole, so their mutants compared nothing. `document_wrapper.UNMUTATED` keeps them compared as they are but unmutated, with the reason, held to Lean's `FAIL_CLOSED` by a test | `test_only_seeds_lean_refuses_whole_are_left_unmutated`; `tests/test_difffuzz.py` (88 passed) | `87d6d69d` |
+| Fable B1: `ve ask --reading` returned an unchecked formula under a ve-units@1 environment | a sibling path skips the core gate | One helper `_gate` for every relay path that hands back a Lean reading; `read_question` raises the gate's refusal in place of the reading | `test_a_gated_environment_never_returns_a_reading` (fails with the gate disabled) | `8e408bb7` |
+| Astra B: the unnatural G11 question read as one | F2 accepts a word moved out of a clause, and offers such questions as rephrasings (G27) | `VE.Question.Moved`: `ask` refuses a reading whose put-back word is inside a who/that/which clause of its one derivation (`moved`, `QuestionWordMoved`) and offers the questions VE does show; indefinite rephrasings filtered alike. `ask_one` ties every shown reading to `readQuestion`'s, so 5.1's fifteen statements still hold unchanged; `ask_moved`, `ask_rephrasings`, `askable_iff` | fixtures G11 (moved), G11c (its control, one), G27, G28, G29; Lean guards in `Examples.lean` (clause spans, readQuestion's old G27 offer) | `3c6849c3` |
+| Astra B (and Fable C3): the A0 line was not checked, only the embedded sentence | displayed English not passed through the parser | `VE.Question.Frames`: every frame of spec 3.3 registered; A0 is shown only with exactly one derivation over all of them, A0's, whose slot reads back with exactly the formula (`askedGate_sound`, `oneFields_gated`, `frames_leads`); a failing line is an error row | Lean guards: wrong formula, unread sentence, missing period, another frame | `3c6849c3` |
+| DRI ruling: `ve ask` without `--reading` exited 5 with Python's words | English written outside Lean | Lean exports `texts` (`unanswered`) with the contract; `ve ask` reads the question, prints Lean's A0 line and Lean's text, exits 5 | `test_the_cli_does_not_answer_without_reading` (file text equals the live export) | `ee9f92ef` |
+| Astra C (a B item of the ruling): "three-way" ran one reader three times | vacuous differential | `tests/question_reference.py`, an independent Python reader of spec 2 over Python's own English reader; `tests/test_question_differential.py` compares it with Lean on 1,212 fixture and 1-/2-fault mutant inputs (deep mode about 2,100); each reading's formula checked by Rust and evaluated by Python, Lean's metered evaluator and Rust on seeded models | `test_lean_and_the_reference_reader_agree`, `test_the_comparison_can_fail` (five seeded reference faults), `test_python_lean_and_rust_evaluate_each_reading_alike`, `test_the_models_tell_readings_apart` | `34386cdf` |
+| Fable C1: predicates not compared with the approved text | hand-checked spec text | `tools/question_statements.py` compares the five 5.1 predicates whole | `test_a_changed_predicate_body_is_noticed` | `00a4e7cb` |
+| Fable C7: spec header said nothing is built | stale status | status note added; 5.1 untouched | — | `3c6849c3` |
+
+The differential's first runs found three gaps in the reference reader's model of E2's lexing (the first fault by
+position, an empty final sentence), fixed in the reference; it found nothing in Lean. Spec 7.8's
+refused-beside-reading order (Fable C2) has no input in any vocabulary the lexicon policy admits: 195,759 random G
+questions gave none, and neither Python's nor Lean's lexicon policy admits a purpose-built wording for one; the proof
+of `readQuestion_complete` still catches that bug (seeded bug 3 above). Not done here: Fable C5 (deadline coverage)
+and C6 (E2.6 wording, the E2.6 owner's).
+
+### Fuzzer CPU, base against head (`difffuzz.fuzz()`, CI scale, seconds of CPU, interleaved runs)
+
+| Run | Tree | Document seeds | Python | Children | Total | Load |
+|---|---|---|---|---|---|---|
+| 1 | `main` `c24aeab2` | 16 | 179.8 | 51.6 | 231.4 | 49.6 |
+| 2 | head `0e15727d` | 22 | 247.6 | 45.2 | 292.8 | 44.0 |
+| 3 | `main` | 16 | 161.7 | 44.6 | 206.3 | 41.4 |
+| 4 | head | 22 | 187.2 | 37.3 | 224.5 | 17.1 |
+| 5 | head without the six question documents | 16 | 157.3 | 39.1 | 196.4 | 11.6 |
+| 6 | head | 22 | 211.7 | 36.7 | 248.4 | 7.9 |
+| 7 | head without the six | 16 | 109.4 | 28.3 | 137.7 | 7.1 |
+| 8 | head | 22 | 173.0 | 32.4 | 205.4 | 16.1 |
+
+Every run passed with no new finding. The gate on `0e15727d` (before this fix) recorded 13,925 passed, 92 skipped
+(9 skipped and 83 strict xfails) and the one failure, at 395.3 s (273.4 + 121.9) with the load average at 35 to 48.
+The open design point for the fuzzer's owner: its CPU budget is fixed while its seed glob takes every new
+`usecases/**/*.ve.md`.
+
+### Gate on the final head
+
+Pending: recorded in the next commit.
