@@ -15,11 +15,13 @@ A string expression is a literal, an f-string, a `+` of them or their `.encode()
 so `(f"ve-source-{v}\\n" + text).encode()` reads `ve-source-{}\\n{}`. A docstring is not one.
 
 Today's sites are listed in `ALLOWLIST`, keyed by module, enclosing scope and domain, one entry per site. A
-Lean-owned entry names the batch that removes it (`REMOVERS`); a Python-owned entry names its record (D7). A site
-without an entry fails, and so does an entry without its site (stale). With `--base REV` the Lean-owned sites of a
-module may not grow against the allowlist at REV (per domain; a site moved to another function of its module is not
-growth): the list only shrinks. A revision without the allowlist has no ratchet yet. `--prune` deletes stale
-entries and adds none.
+Lean-owned entry names the batch that removes it (`REMOVERS`); a Python-owned entry names its record (D7). Each
+domain has one owner (T8), and a domain with a Lean-owned prefix or whose text a Lean file holds (Lean computes it)
+is Lean's. A site without an entry fails, and so does an entry without its site (stale). With `--base REV` no
+module's sites may grow against the allowlist at REV, whatever their owner (per domain and owner; a site moved to
+another function of its module is not growth), and no domain may change owner: the list only shrinks, and a new site
+or owner needs a DRI signature. A revision without the allowlist has no ratchet yet. `--prune` deletes stale entries
+and adds none.
 
 Collision rule (merge train): "conflict in `tools/identity-sites.json`: take `main`'s file, run
 `python3 tools/identity_lint.py --prune`; a site that moved to another function updates its entry's `scope`".
@@ -31,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import functools
 import json
 import re
 import subprocess
@@ -165,9 +168,34 @@ ENTRY_KEYS = {"lean": {"path", "scope", "domain", "owner", "removed_by"},
               "python": {"path", "scope", "domain", "owner", "record"}}
 
 
+def stem(domain: str) -> str:
+    """The domain as Lean source writes it, up to its first computed part."""
+    return domain.split(HOLE[0], 1)[0].replace("\n", "\\n")
+
+
+@functools.cache
+def _lean_sources() -> tuple[tuple[str, str], ...]:
+    return tuple((path.relative_to(ROOT).as_posix(), path.read_text(errors="replace"))
+                 for path in sorted((ROOT / "lean").rglob("*.lean")) if ".lake" not in path.parts)
+
+
+def lean_holders(domain: str) -> list[str]:
+    """The Lean files whose source holds the domain's text: Lean computes the domain, so Lean owns it."""
+    return [path for path, source in _lean_sources() if stem(domain) in source]
+
+
+def owners(entries: list) -> dict[str, str]:
+    """Each domain's owners, `/`-joined (one owner per domain, so a `/` is a finding)."""
+    found: dict[str, set[str]] = {}
+    for entry in entries:
+        if type(entry) is dict and type(entry.get("domain")) is str:
+            found.setdefault(entry["domain"], set()).add(str(entry.get("owner")))
+    return {domain: "/".join(sorted(names)) for domain, names in found.items()}
+
+
 def entry_problems(entries: object) -> list[str]:
     """The allowlist's shape: a list of entries, each Lean-owned with its remover or Python-owned with its D7
-    record."""
+    record; each domain has one owner, and a domain Lean computes or a Lean-owned prefix is Lean's."""
     if type(entries) is not list:
         return [f"{ALLOWLIST_NAME}: not a list"]
     out = []
@@ -183,7 +211,13 @@ def entry_problems(entries: object) -> list[str]:
             out.append(f"{ALLOWLIST_NAME}[{n}]: record {entry['record']!r} is not a Python record of D7")
         elif owner == "python" and entry["domain"].startswith(LEAN_PREFIXES):
             out.append(f"{ALLOWLIST_NAME}[{n}]: {entry['domain']!r} is a Lean-owned domain")
-    return out
+        elif owner == "python" and lean_holders(entry["domain"]):
+            out.append(f"{ALLOWLIST_NAME}[{n}]: {entry['domain']!r} is a Lean-owned domain: Lean computes it in "
+                       f"{', '.join(lean_holders(entry['domain']))}")
+    if out:
+        return out
+    return [f"{ALLOWLIST_NAME}: {domain!r} has two owners ({names}); a domain has one owner"
+            for domain, names in sorted(owners(entries).items()) if "/" in names]
 
 
 def _key(entry: dict) -> tuple[str, str, str]:
@@ -213,12 +247,19 @@ def problems(found: list[Site], entries: list[dict]) -> list[str]:
 
 
 def growth(base: list[dict], head: list[dict]) -> list[str]:
-    """The Lean-owned sites of `head` beyond those of `base`, per module and domain (a site moved to another
-    function of its module is not growth): the allowlist only shrinks."""
-    def lean(entries):
-        return Counter((e["path"], e["domain"]) for e in entries if type(e) is dict and e.get("owner") == "lean")
-    return [f"{ALLOWLIST_NAME}: Lean-owned site {path} {domain!r} added since the base"
-            for (path, domain), n in sorted((lean(head) - lean(base)).items()) for _ in range(n)]
+    """The sites of `head` beyond those of `base`, Lean-owned or Python-owned, per module, domain and owner (a site
+    moved to another function of its module is not growth), and each domain whose owner changed: the allowlist only
+    shrinks, and a new site or a new owner needs a DRI signature."""
+    def counted(entries):
+        return Counter((e.get("path"), e.get("domain"), str(e.get("owner"))) for e in entries if type(e) is dict)
+    out = [f"{ALLOWLIST_NAME}: {owner.capitalize()}-owned site {path} {domain!r} added since the base "
+           f"(a new site needs a DRI signature)"
+           for (path, domain, owner), n in sorted((counted(head) - counted(base)).items()) for _ in range(n)]
+    old, new = owners(base), owners(head)
+    out += [f"{ALLOWLIST_NAME}: the owner of {domain!r} changed since the base: {old[domain]} to {new[domain]} "
+            f"(a new owner needs a DRI signature)"
+            for domain in sorted(old.keys() & new.keys()) if old[domain] != new[domain]]
+    return out
 
 
 def base_entries(rev: str) -> list[dict] | None:
@@ -264,7 +305,7 @@ def write(entries: list[dict]) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
     parser.add_argument("paths", nargs="*")
-    parser.add_argument("--base", help="fail when a Lean-owned site was added since this revision")
+    parser.add_argument("--base", help="fail when a site was added or a domain changed owner since this revision")
     parser.add_argument("--prune", action="store_true", help="delete stale entries from the allowlist")
     parser.add_argument("--json", action="store_true", help="print the census as JSON")
     args = parser.parse_args(argv)

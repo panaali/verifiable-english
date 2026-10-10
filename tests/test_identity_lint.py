@@ -38,9 +38,12 @@ def test_the_allowlist_is_written_in_its_canonical_form():
     assert identity_lint.ALLOWLIST.read_text() == expected
 
 
-def test_the_relayed_modules_come_from_the_relay_lint():
+def test_the_relayed_modules_come_from_the_relay_lint(monkeypatch):
+    # Review C2: the relay lint's helpers are relayed too; today it names none, so one is injected.
+    helper = ROOT / "ve/wire.py"
+    monkeypatch.setattr(relay_lint, "helpers", lambda modules: [helper])
     scopes = identity_lint.relayed_scopes()
-    assert {path for path in relay_lint.RELAYED} <= {p for p, s in scopes.items() if s is True}
+    assert set(relay_lint.RELAYED) | {"ve/wire.py"} == {p for p, s in scopes.items() if s is True}
     for name, functions in relay_lint.RELAYED_FUNCTIONS.items():
         assert scopes[name] == tuple(functions)
 
@@ -86,6 +89,7 @@ def test_text_that_builds_no_preimage_passes(tmp_path, body):
 @pytest.mark.parametrize("body, found", [
     ('return digest("ve-my-record-v1\\n", p)', True),
     ('return digest(f"ve-meaning-{v}\\n", p)', True),
+    ('return digest("ve-meaning-".encode() + v + b"\\n", p)', True),
     ('DOMAIN = "ve-meaning-"', False),
     ('return digest("ve-document@2", p)', False),
 ])
@@ -98,9 +102,11 @@ def test_rule_two_reads_domain_literals_in_every_module(tmp_path, body, found):
 def test_only_the_relayed_functions_of_a_module_are_relayed(tmp_path):
     path = tmp_path / "mixed.py"
     path.write_text('def relayed(v):\n    return "ve-meaning-"\n\n\ndef own(v):\n    return "ve-meaning-"\n\n\n'
-                    'def both(v):\n    return f"ve-meaning-{v}\\n"\n')
-    found = identity_lint.sites(path, ("relayed", "both"))
-    assert [(site.scope, site.relayed) for site in found] == [("relayed", True), ("both", True)]
+                    'def both(v):\n    return f"ve-meaning-{v}\\n"\n\n\n'
+                    'def outer(v):\n    def inner():\n        return "ve-source-"\n    return inner\n')
+    found = identity_lint.sites(path, ("relayed", "both", "outer"))
+    assert [(site.scope, site.relayed) for site in found] == [("relayed", True), ("both", True),
+                                                               ("outer.inner", True)]
 
 
 def test_an_allowlisted_site_passes_and_a_new_one_fails(tmp_path):
@@ -149,6 +155,7 @@ def test_a_malformed_lean_entry_fails(change):
     ("checker build", "ve-python-checker-build-v1\n", True),
     ("bundles", "ve-bundle-v0\n", False),
     ("proposals", "ve-meaning-{}\n", False),
+    ("proposals", "ve-meaning-unheld-v9\n", False),
     ("assist", "ve-document@2\n", False),
 ])
 def test_a_python_entry_names_a_record_of_d7_and_no_lean_domain(record, domain, ok):
@@ -161,18 +168,79 @@ def test_the_allowlist_must_be_a_list():
     assert identity_lint.entry_problems(["ve/x.py"])
 
 
-def test_the_lean_owned_sites_only_shrink():
+def test_the_sites_only_shrink_whatever_their_owner():
     lean = {"path": "ve/x.py", "scope": "f", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"}
     python = {"path": "ve/x.py", "scope": "f", "domain": "ve-proposal-a-v1\n", "owner": "python",
               "record": "proposals"}
-    assert identity_lint.growth([lean], [lean]) == []
-    assert identity_lint.growth([lean, lean], [lean]) == []
-    assert identity_lint.growth([lean], [dict(lean, scope="g")]) == []
-    assert identity_lint.growth([lean], [lean, python]) == []
+    for entry in (lean, python):
+        assert identity_lint.growth([entry], [entry]) == []
+        assert identity_lint.growth([entry, entry], [entry]) == []
+        assert identity_lint.growth([entry], [dict(entry, scope="g")]) == []
+        assert len(identity_lint.growth([entry], [entry, dict(entry, path="ve/y.py")])) == 1
     [problem] = identity_lint.growth([lean], [lean, lean])
-    assert "ve/x.py 've-meaning-{}\\n' added since the base" in problem
-    assert len(identity_lint.growth([lean], [lean, dict(lean, path="ve/y.py")])) == 1
+    assert "Lean-owned site ve/x.py 've-meaning-{}\\n' added since the base" in problem
+    [problem] = identity_lint.growth([lean], [lean, python])
+    assert "Python-owned site ve/x.py 've-proposal-a-v1\\n' added since the base" in problem
     assert len(identity_lint.growth([], [lean, dict(lean, domain="ve-source-{}\n")])) == 2
+
+
+def _flipped(entry: dict) -> dict:
+    """`entry` under the other owner."""
+    keys = {"path": entry["path"], "scope": entry["scope"], "domain": entry["domain"]}
+    return {**keys, "owner": "lean", "removed_by": "AR-15"} if entry["owner"] == "python" else \
+        {**keys, "owner": "python", "record": "proposals"}
+
+
+ALLOWED = json.loads(identity_lint.ALLOWLIST.read_text())
+
+
+@pytest.mark.parametrize("domain", sorted(identity_lint.owners(ALLOWED)))
+def test_no_domain_changes_owner_or_gains_a_second_one(domain):
+    """Review B1: one owner per domain, and no owner changes against the base, for every allowlisted domain."""
+    flipped = [_flipped(e) if e["domain"] == domain else e for e in ALLOWED]
+    [owner] = {e["owner"] for e in flipped if e["domain"] == domain}
+    changed = [p for p in identity_lint.growth(ALLOWED, flipped) if "the owner of" in p]
+    assert changed == [f"{identity_lint.ALLOWLIST_NAME}: the owner of {domain!r} changed since the base: "
+                       f"{identity_lint.owners(ALLOWED)[domain]} to {owner} (a new owner needs a DRI signature)"]
+    if owner == "python":
+        assert identity_lint.growth(ALLOWED, flipped)[0].startswith(f"{identity_lint.ALLOWLIST_NAME}: Python-owned")
+    one = next(e for e in ALLOWED if e["domain"] == domain)
+    second = dict(_flipped(one), path="ve/elsewhere.py")
+    problems = identity_lint.entry_problems([*ALLOWED, second])
+    assert problems and (f"{domain!r} has two owners (lean/python)" in problems[-1] or "Lean-owned domain" in
+                         problems[-1])
+    assert any("added since the base" in p for p in identity_lint.growth(ALLOWED, [*ALLOWED, second]))
+
+
+@pytest.mark.parametrize("domain", sorted(d for d, owner in identity_lint.owners(ALLOWED).items() if owner == "lean"
+                                          and identity_lint.lean_holders(d)))
+def test_a_domain_lean_computes_cannot_be_python_owned(domain):
+    """Review B1: a Lean-owned domain outside `LEAN_PREFIXES` is still Lean's when a Lean file holds its text."""
+    entry = {"path": "ve/x.py", "scope": "f", "domain": domain, "owner": "python", "record": "proposals"}
+    [problem] = identity_lint.entry_problems([entry])
+    assert f"{domain!r} is a Lean-owned domain" in problem
+
+
+def test_review_b1_a_python_entry_for_a_lean_domain_in_a_relayed_module_fails():
+    """The review's reproduction: a `ve-english-vocabulary-v1` digest appended to the relayed module
+    `ve/backends/speech_source.py` with a Python entry passed the lint and `--base main`."""
+    entry = {"path": "ve/backends/speech_source.py", "scope": "decide_source", "domain": "ve-english-vocabulary-v1\n",
+             "owner": "python", "record": "proposals"}
+    assert identity_lint.entry_problems([*ALLOWED, entry])
+    assert identity_lint.problems([], [*ALLOWED, entry])
+    assert identity_lint.growth(ALLOWED, [*ALLOWED, entry])
+
+
+@pytest.mark.parametrize("change", ["drop lean", "drop python", "flip"])
+def test_main_with_base_fails_on_a_grown_allowlist(monkeypatch, change):
+    """Review C1: `main` reads `--base` and fails on the growth it finds."""
+    lean = next(n for n, e in enumerate(ALLOWED) if e["owner"] == "lean")
+    python = next(n for n, e in enumerate(ALLOWED) if e["owner"] == "python")
+    base = {"drop lean": ALLOWED[:lean] + ALLOWED[lean + 1:], "drop python": ALLOWED[:python] + ALLOWED[python + 1:],
+            "flip": [_flipped(e) if e["domain"] == ALLOWED[python]["domain"] else e for e in ALLOWED]}[change]
+    monkeypatch.setattr(identity_lint, "base_entries", lambda rev: base if rev == "grown" else ALLOWED)
+    assert identity_lint.main(["--base", "same"]) == 0
+    assert identity_lint.main(["--base", "grown"]) == 1
 
 
 def test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist():
