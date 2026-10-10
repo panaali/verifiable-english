@@ -198,12 +198,12 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Ask/PlainWire.lean` | 300 | 300 | 1–300 | `6de863196e99…` |
 | `lean/VE/Ask/ZeroWire.lean` | 459 | 459 | 1–459 | `642c8e1e1ec4…` |
 | `lean/VE/Ask/Binding.lean` | 205 | 205 | 1–205 | `d681c27217de…` |
-| `lean/VE/Ask/Run.lean` | 139 | 139 | 1–139 | `b8d550ddae6d…` |
+| `lean/VE/Ask/Run.lean` | 152 | 152 | 1–152 | `fcc0c0d47f68…` |
 | `lean/VE/Ask/Lines.lean` | 651 | 651 | 1–651 | `eb76321532c4…` |
 | `lean/VE/Ask/Render.lean` | 456 | 456 | 1–456 | `dd26af40f362…` |
 | `lean/VE/Ask/PlainAnswer.lean` | 118 | 118 | 1–118 | `2c2a2a253778…` |
 | `lean/VE/Ask/ZeroAnswer.lean` | 143 | 143 | 1–143 | `1a032116a1eb…` |
-| **total** | | **30,858** | | |
+| **total** | | **30,871** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

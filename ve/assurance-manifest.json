@@ -66,7 +66,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 30858,
+    "total_lines": 30871,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1391,12 +1391,12 @@
       },
       {
         "file": "lean/VE/Ask/Run.lean",
-        "lines": 139,
-        "sha256": "b8d550ddae6d08a2f0303cfe55f475a5a18f40cdeaa2a933e1374120c7acd043",
+        "lines": 152,
+        "sha256": "fcc0c0d47f687e02d40501847815c56bc77cac9997bdafa2395d92b1383c1759",
         "ranges": [
           [
             1,
-            139
+            152
           ]
         ],
         "declarations": [
