@@ -113,6 +113,7 @@ def route_cases():
               for c in by_kind["certificate"]]
     cases.append(shared_admission())
     cases.append(deep_definition_background(route))
+    cases += fol_projection_cases()
     return cases + ADVERSARIAL
 
 
@@ -132,6 +133,66 @@ def deep_definition_background(route, depth=64):
         "defined": {"arguments": ["person", "person"],
                     "body": negations(depth, ["binary", "supervises", ["var", 1], ["var", 0]])}}
     return case
+
+
+FOL_FAMILIES = ("defined", "functional", "total")
+
+
+def fol_projection_environment(family, arity, norms=False):
+    """A `nary@0` environment whose predicate `p` has `arity` arguments and carries the
+    Background family `family`; with `norms`, also a regulated obligation/permission pair."""
+    from ve.profiles import SPEC_REVISION
+    point = {"description": "point"}
+
+    def declared(n, description):
+        return {"arguments": ["point"] * n, "description": description}
+    predicates = {"upper": declared(1, "upper"), "base1": declared(1, "base"),
+                  "base2": declared(2, "base"), "base3": declared(3, "base")}
+    bodies = {1: ["unary", "base1", ["var", 0]], 2: ["binary", "base2", ["var", 1], ["var", 0]],
+              3: ["atom", "base3", [["var", 2], ["var", 1], ["var", 0]]]}
+    extra = {"defined": {"arguments": ["point"] * arity, "body": bodies[arity]}} if family == "defined" else {
+        family: True}
+    predicates["p"] = {**declared(arity, "p"), **extra}
+    profiles = ["closure@0", "data@0", "definitions@0", "nary@0", "relational-fol@0"]
+    if norms:
+        profiles.append("norms@0")
+        predicates["permitted"] = {**declared(1, "permission"), "regulated": {
+            "role": "permission", "default": "deny", "act": "{0} be done"}}
+        predicates["required"] = {**declared(1, "obligation"), "regulated": {
+            "role": "obligation", "default": "deny", "act": "{0} be done", "permission": "permitted"}}
+    return {"language": "ve.core@0.2", "profiles": sorted(profiles), "spec_revision": SPEC_REVISION,
+            "vocabulary": {"sorts": {"point": point}, "predicates": predicates, "constants": {}}}
+
+
+def fol_projection_cases(norms=False):
+    """Certificates and Background cases over each Background family (`FOL_FAMILIES`) on a predicate of every
+    arity 1-3 the environment admits. Every regenerated Background is built from the FOL
+    projection (`VE.Core.Layers.folEntry`: at most two arguments), so a three-argument
+    declaration adds no premise and the response's `background` count must not count it
+    (lf-13b looprecheck1: a valid certificate was refused over a three-argument definition).
+    With `norms`, the environments also declare a norm pair (the norms route refuses its
+    `norms-certificate` over `nary@0`, so these are plain certificates)."""
+    from ve import ast
+    from ve.ast import formula_to_data
+    from ve.entailment import prove_entailment
+    from ve.environment import Environment
+    from ve.errors import VEError
+    cases = []
+    for family in FOL_FAMILIES:
+        for arity in (1, 2, 3):
+            raw = fol_projection_environment(family, arity, norms)
+            try:
+                env = Environment(raw)
+            except VEError:  # data flags on a unary predicate
+                continue
+            goal = ast.Forall("point", ast.Unary("upper", ast.Var(0)))
+            proof = prove_entailment(env, [goal], goal)
+            data = formula_to_data(env, goal)
+            name = f"fol-{'norms-' if norms else ''}{family}-{arity}"
+            cases.append({"id": name, "kind": "certificate", "environment": raw, "premises": [data],
+                          "conclusion": data, "certificate": proof.certificate})
+            cases.append({"id": name + "-bg", "kind": "background", "environment": raw})
+    return cases
 
 
 def deep_norms_elaboration():
@@ -215,6 +276,7 @@ def norms_cases():
     cases.append({"id": "quoted", "kind": "admission", "environment": raw.to_dict(), "document": quoted})
     cases.append({"id": "unsupported", "kind": "evaluate", "norms": []})
     cases.append(deep_norms_elaboration())
+    cases += fol_projection_cases(norms=True)
     return cases + route_cases()
 
 

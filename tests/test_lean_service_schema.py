@@ -843,6 +843,71 @@ def test_norms_plain_certificate_counts_profile_pairs_and_soft_premises(executab
         "accept", *[schema_verdict("norms", request, item) for item in responses[1:]]]
 
 
+FAMILY_FIELDS = {"defined": {"defined": {}}, "functional": {"functional": True}, "total": {"total": True},
+                 "regulated": {"regulated": {"role": "obligation", "permission": "permitted"}}}
+ARGUMENTS = [None, "s", [], ["s"], ["s", "s"], ["s"] * 3, ["s"] * 4]
+
+
+def test_background_count_is_over_the_fol_projection(executables):
+    """Each Background family on a declaration with every `arguments` shape (absent, not an
+    array, 0-4 sorts): a declaration with three or more arguments is outside the FOL
+    projection (`VE.Core.Layers.folEntry`) and adds no premise. The schema accepts exactly the
+    projected count, and ve_response_decode agrees on it and on each count beside it."""
+    items, expected_verdicts = [], []
+    for mode in ("route", "norms"):
+        for family, fields in FAMILY_FIELDS.items():
+            for arguments in ARGUMENTS:
+                declaration = {**({} if arguments is None else {"arguments": arguments}), **fields}
+                case = {"id": "c", "kind": "certificate", "environment": {
+                    "profiles": ["relational-fol@0"],
+                    "vocabulary": {"predicates": {"p": declaration}, "constants": {}}}}
+                fol = not isinstance(arguments, list) or len(arguments) <= 2
+                count = int(fol and (family != "regulated" or mode == "norms"))
+                digest = case_digest(_text(case))
+                request = {"id": "fol", "mode": mode, "cases": [case], "digests": [digest],
+                           "bytes": len(_text([case]).encode())}
+                responses = [{"id": "fol", "status": "ok", "mode": mode,
+                              "counts": {"cases": 1, "bytes": request["bytes"], "errors": 0},
+                              "results": [{"index": 0, "digest": digest, "result": {
+                                  "id": "c", "status": "ok", "valid": True, "background": n, "steps": 0}}]}
+                             for n in range(4)]
+                items.append((mode, request, responses))
+                expected_verdicts += [n == count for n in range(4)]
+    verdicts = assert_agreement(executables[1], items)
+    assert [v == "accept" for v in verdicts] == expected_verdicts
+
+
+def test_genuine_certificates_over_nary_families_are_accepted(genuine, executables):
+    """lf-13b looprecheck1: Lean's genuine certificate and Background answers over a
+    three-argument definition, functional or total flag (`fol_projection_cases`) are `ok`
+    (certificates valid), have no premise for that declaration, and both decoders accept
+    them; `test_genuine_responses_satisfy_the_lean_invariants` checks their invariants."""
+    seen = set()
+    for mode, request, response in genuine:
+        if mode not in ("route", "norms"):
+            continue
+        for i, case in enumerate(request["cases"]):
+            if not (isinstance(case, dict) and str(case.get("id", "")).startswith("fol-")):
+                continue
+            row = result(response, i)
+            arity = int(case["id"].removesuffix("-bg").rsplit("-", 1)[1])
+            pair = case["id"].startswith("fol-norms-")
+            if case["kind"] == "background":
+                assert row.get("status") == "ok", (mode, case["id"], row)
+                assert len(row["premises"]) == int(arity <= 2) + pair, (mode, case["id"], row)
+                continue
+            assert row.get("status") == "ok" and row["valid"] is True, (mode, case["id"], row)
+            assert row["background"] == int(arity <= 2) + pair, (mode, case["id"], row)
+            assert schema_verdict(mode, request, response) == "accept"
+            seen.add((mode, case["id"]))
+    assert {(mode, f"fol-{p}{family}-3") for mode, p in [("route", ""), ("norms", ""), ("norms", "norms-")]
+            for family in ("defined", "functional", "total")} <= seen
+    assert_agreement(executables[1], [(m, rq, [rs]) for m, rq, rs in genuine
+                                      if m in ("route", "norms") and any(
+                                          isinstance(c, dict) and str(c.get("id", "")).startswith("fol-")
+                                          for c in rq["cases"])])
+
+
 @pytest.mark.parametrize("mode", ["route", "norms"])
 @pytest.mark.parametrize("kind", [["hedged", "not-a-modality", "asserted"],
                                   ["attributed", "bob", "shouts", "asserted"],
