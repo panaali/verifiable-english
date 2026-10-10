@@ -81,6 +81,18 @@ file and run `uv run python tools/gate_collection.py --write`" (after AR-3 merge
 
 - Plan gate: `cargo test --workspace --locked` (run by the selected tests and the full gate's `cargo_test`
   stage) and `tools/test_layer_policy.py`.
-- 4.1: the full suite through `tools/gate.py` on the final HEAD (result below); item 2 (corpus A/B) and item 3
-  (Lean statements and trust) do not apply: no `ve/` or `lean/` file changes.
-- Not run: no corpus comparison or latency measurement (no `ve/` or `lean/` change), no model calls.
+- 4.1: item 2 (corpus A/B) and item 3 (Lean statements and trust) do not apply: no `ve/` or `lean/` file
+  changes.
+- Selected tests (`tools/select_tests.py --base c24aeab2 --run`, at `562e42cd`): 135 units, 0 failed, including
+  `python3 tools/check_rust_deps.py`, `tools/rust_build.py test --workspace` and `tools/test_layer_policy.py`.
+- Full gate at `562e42cd` (the last code commit; the later report commit changes only
+  `docs/architecture/ar-8/`, so the gate covers all code):
+  `tools/gate.py` passed every stage before the Python suite (toolchains, frozen lock, wire contract, `lake
+  build`, `lean/audit.py`, Rust release build, `cargo test --workspace --locked --release`, collection against
+  `tools/gate-collection.json`). Its Python suite did not finish: at load 40–57 on 32 CPUs it exceeded the
+  one-hour foreground limit and then the two-hour background limit, which stopped it. The suite was then run
+  as plan 4.1 item 1 allows, in 16 file chunks with `VE_NATIVE_PREBUILT=1` on the same commit
+  ([suite.json](suite.json)): <!-- suite -->13748 tests, 0 failures, 0 errors, 91 skipped or xfailed<!-- /suite -->
+  (8 skips, 83 xfails), which is the gate's whole collection less the one `live` test.
+- Not run: no corpus comparison or latency measurement (no `ve/` or `lean/` change), no model calls; no
+  `tools/gate.py` record (git note) exists for this batch, because its suite stage was stopped.
