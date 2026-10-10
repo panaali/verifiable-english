@@ -535,7 +535,7 @@ def test_check_cli_reports_errors_and_refuses_mixed_forms(batch, capsys):
 def test_evidence_cli_runs_as_a_module_and_as_a_directory():
     for command in ([sys.executable, "-m", "tools.evidence"], [sys.executable, str(ROOT / "tools/evidence")]):
         done = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
-        assert done.returncode == 2 and "scope,latency,ab,fuzz_ab,report" in done.stderr
+        assert done.returncode == 2 and "scope,latency,ab,fuzz_ab,mutants,report" in done.stderr
 
 
 def test_load_refuses_empty_and_missing_files(tmp_path):
@@ -543,3 +543,54 @@ def test_load_refuses_empty_and_missing_files(tmp_path):
     for path in (tmp_path / "e.json", tmp_path / "missing.json"):
         with pytest.raises(EvidenceError):
             load(path)
+
+
+def test_the_mutants_command_is_the_one_harness():
+    from tools import mutants
+    from tools.evidence.__main__ import COMMANDS
+    assert COMMANDS["mutants"] is mutants.main
+
+
+# ---------------------------------------------------------------- the latency tools on the shared module
+
+class _Service:
+    def __init__(self, executable):
+        self.executable = executable
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+def _readings_batch(monkeypatch, tmp_path, names, head_ms):
+    from tools import readings_batch_latency as tool
+    corpus = tmp_path / "corpus.json"
+    corpus.write_text(json.dumps([{"case": name, "environment": {}, "document": {"units": [], "reading_sets": []}}
+                                  for name in names]))
+    out = tmp_path / "latency.json"
+    monkeypatch.setattr(tool, "LeanService", _Service)
+    monkeypatch.setattr(tool, "answer", lambda service, case: ("returned", []))
+    monkeypatch.setattr(tool, "measure",
+                        lambda service, case, calls: head_ms if "head" in str(service.executable) else 10.0)
+    monkeypatch.setattr(sys, "argv", ["readings_batch_latency.py", str(tmp_path / "base"), str(tmp_path / "head"),
+                                      str(corpus), HEAD, str(out), "--pairs", "2"])
+    return tool.main, out
+
+
+@pytest.mark.parametrize("head_ms, status", [(12.0, 0), (12.5, 1)])
+def test_readings_batch_latency_applies_the_shared_rule(monkeypatch, tmp_path, head_ms, status):
+    main, out = _readings_batch(monkeypatch, tmp_path, ["c0", "c1", "c2"], head_ms)
+    assert main() == status
+    saved = load(out)
+    assert sorted(saved["samples"]) == ["c0", "c1", "c2"] and saved["pass"] is (status == 0)
+    assert all(row["pairs"] == 2 and row["calls_per_side"] == 200 for row in saved["samples"].values())
+    assert (latency.problems(saved, HEAD, ["c0", "c1", "c2"]) == []) is (status == 0)
+
+
+def test_readings_batch_latency_refuses_two_cases_with_one_name(monkeypatch, tmp_path):
+    main, out = _readings_batch(monkeypatch, tmp_path, ["c0", "c1", "c0"], 10.0)
+    with pytest.raises(RuntimeError, match="two readings cases are named c0"):
+        main()
+    assert not out.exists()

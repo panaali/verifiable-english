@@ -5,6 +5,7 @@ measurement, so a batch writes `docs/<track>/<batch>/evidence.toml` and runs the
     python -m tools.evidence latency ...      (tools/evidence/latency.py: paired CPU samples, the 20% rule)
     python -m tools.evidence ab      ...      (tools/evidence/ab.py: tools/lean_first_diff.py compare)
     python -m tools.evidence fuzz_ab ...      (tools/evidence/fuzz_ab.py: tools/difffuzz.py on both checkouts)
+    python -m tools.evidence mutants ...      (tools/mutants.py, the seeded-mutant harness, called as it is)
     python -m tools.evidence report  DIR      (tools/evidence/report.py: numbers rendered from the evidence)
 
 `tools/batch_evidence.py --check DIR` reads the toml and the evidence; a batch's evidence is checked there, at
