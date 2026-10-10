@@ -123,7 +123,7 @@ class Reader:
     """Python's English reader over one environment, with the candidates' results remembered."""
 
     def __init__(self, env, words):
-        self.env, self.words, self.memo = env, words, {}
+        self.env, self.words, self.memo, self.kinds = env, words, {}, None
 
     def got(self, sentence: str):
         """2.3: `("none",)`, `("many",)`, `("one", wire formula)` or `("refused", why)`."""
@@ -236,11 +236,25 @@ class Reader:
 
     # ------------------------------------------------------------------ the moved-word rule (3.1, 4.1 row 11a)
 
+    def sentence_kinds(self) -> set[str]:
+        """The node names of a sentence in a Lark derivation: each alternative of the grammar's inlined `?formula`
+        rule, under its own name or the alias of each of its rules, read from Lark's parsed rules."""
+        if self.kinds is None:
+            from ve.english import english_lark_grammar
+            from ve.surface.unambiguity import _parser
+            rules = _parser(english_lark_grammar(self.env)).rules
+            alternatives = {r.expansion[0].name for r in rules if r.origin.name == "formula"}
+            self.kinds = {str(r.alias or r.origin.name) for r in rules if r.origin.name in alternatives}
+        return self.kinds
+
     def clauses(self, sentence: str) -> list[tuple[int, int]]:
         """The character spans of the clauses of the sentence's one Lark derivation: a constituent right after a
-        `who`, `that` or `which` inside its parent, to the parent's end when that constituent is a word."""
+        `who`, `that` or `which` inside its parent, to the parent's end when that constituent is a word; and a part,
+        a sentence whose parent is a sentence (the `?formula` rule is inlined, so a rule that only passes a sentence
+        through leaves no node)."""
         from lark import Token, Tree
         tree = self.tree(sentence)
+        kinds = self.sentence_kinds()
         found = []
 
         def word_before(pos):
@@ -259,6 +273,8 @@ class Reader:
                 if word in CLAUSE_WORDS and at >= node.meta.start_pos:
                     end = node.meta.end_pos if isinstance(child, Token) else child.meta.end_pos
                     found.append((start, end))
+                elif isinstance(child, Tree) and str(node.data) in kinds and str(child.data) in kinds:
+                    found.append((start, child.meta.end_pos))
                 walk(child)
         walk(tree)
         return found

@@ -93,7 +93,7 @@ def frameU : String :=
   "{\"ast\": [\"unary\", \"eligible\", [\"const\", \"ann\"]], \"form\": \"fronted\", \"sentence\": \"Ann is eligible.\", \"spans\": [[0, 16]], \"status\": \"one\", \"text\": \"You asked whether Ann is eligible.\"}"
 -- G11
 #guard expect frameG "Is every member who registered is eligible?"
-  "{\"class\": \"SyntaxError\", \"code\": \"QuestionWordMoved\", \"rephrasings\": [\"Is every member who is registered eligible?\"], \"span\": [0, 43], \"status\": \"moved\", \"text\": \"VE could read this question only by putting \\\"is\\\" back inside a part of the sentence that begins with \\\"who\\\", \\\"that\\\" or \\\"which\\\". English does not move a word out of such a part. Ask this instead:\"}"
+  "{\"class\": \"SyntaxError\", \"code\": \"QuestionWordMoved\", \"rephrasings\": [\"Is every member who is registered eligible?\"], \"span\": [0, 43], \"status\": \"moved\", \"text\": \"VE could read this question only by putting \\\"is\\\" back inside a smaller part of the sentence, such as a part that begins with \\\"who\\\", \\\"that\\\", \\\"which\\\", \\\"if\\\", \\\"both\\\" or \\\"either\\\". English moves a word to the front only from the main sentence. Ask this instead:\"}"
 -- G11c
 #guard expect frameG "Is every member who is registered eligible?"
   "{\"ast\": [\"forall\", \"member\", [\"implies\", [\"unary\", \"registered\", [\"var\", 0]], [\"unary\", \"eligible\", [\"var\", 0]]]], \"form\": \"fronted\", \"sentence\": \"every member who is registered is eligible.\", \"spans\": [[0, 43]], \"status\": \"one\", \"text\": \"You asked whether every member who is registered is eligible.\"}"
@@ -144,10 +144,28 @@ def frameU : String :=
   "{\"advice\": {\"id\": \"question-indefinite\", \"text\": \"Write \\\"every\\\" or \\\"some\\\" in place of \\\"a\\\".\"}, \"class\": \"SyntaxError\", \"code\": \"NoDerivation\", \"span\": [3, 4], \"status\": \"none\", \"text\": \"The question has no reading with the current vocabulary. Closest sentence tried: \\\"a is member who registered is eligible.\\\". Unknown English phrase 'a'. Nearest declared wordings: 'bo'; 'ann'; 'member'.\"}"
 -- G28
 #guard expect frameG "Is every member that registered is eligible?"
-  "{\"class\": \"SyntaxError\", \"code\": \"QuestionWordMoved\", \"rephrasings\": [\"Is every member that is registered eligible?\"], \"span\": [0, 44], \"status\": \"moved\", \"text\": \"VE could read this question only by putting \\\"is\\\" back inside a part of the sentence that begins with \\\"who\\\", \\\"that\\\" or \\\"which\\\". English does not move a word out of such a part. Ask this instead:\"}"
+  "{\"class\": \"SyntaxError\", \"code\": \"QuestionWordMoved\", \"rephrasings\": [\"Is every member that is registered eligible?\"], \"span\": [0, 44], \"status\": \"moved\", \"text\": \"VE could read this question only by putting \\\"is\\\" back inside a smaller part of the sentence, such as a part that begins with \\\"who\\\", \\\"that\\\", \\\"which\\\", \\\"if\\\", \\\"both\\\" or \\\"either\\\". English moves a word to the front only from the main sentence. Ask this instead:\"}"
 -- G29
 #guard expect frameG "Is there a member who is eligible?"
   "{\"ast\": [\"exists\", \"member\", [\"unary\", \"eligible\", [\"var\", 0]]], \"form\": \"fronted\", \"sentence\": \"there is a member who is eligible.\", \"spans\": [[0, 34]], \"status\": \"one\", \"text\": \"You asked whether there is a member who is eligible.\"}"
+-- G30
+#guard expect frameG "Is if ann verified, then bo is eligible?"
+  "{\"class\": \"SyntaxError\", \"code\": \"QuestionWordMoved\", \"rephrasings\": [\"Is it the case that if ann is verified, then bo is eligible?\"], \"span\": [0, 40], \"status\": \"moved\", \"text\": \"VE could read this question only by putting \\\"is\\\" back inside a smaller part of the sentence, such as a part that begins with \\\"who\\\", \\\"that\\\", \\\"which\\\", \\\"if\\\", \\\"both\\\" or \\\"either\\\". English moves a word to the front only from the main sentence. Ask this instead:\"}"
+-- G30c
+#guard expect frameG "Is it the case that if ann is verified, then bo is eligible?"
+  "{\"ast\": [\"implies\", [\"unary\", \"verified\", [\"const\", \"ann\"]], [\"unary\", \"eligible\", [\"const\", \"bo\"]]], \"form\": \"caseThat\", \"sentence\": \"if ann is verified, then bo is eligible.\", \"spans\": [[0, 60]], \"status\": \"one\", \"text\": \"You asked whether if ann is verified, then bo is eligible.\"}"
+-- G31
+#guard expect frameG "Is if every member verified, then every member is eligible?"
+  "{\"class\": \"SyntaxError\", \"code\": \"QuestionWordMoved\", \"rephrasings\": [\"Is it the case that if every member is verified, then every member is eligible?\"], \"span\": [0, 59], \"status\": \"moved\", \"text\": \"VE could read this question only by putting \\\"is\\\" back inside a smaller part of the sentence, such as a part that begins with \\\"who\\\", \\\"that\\\", \\\"which\\\", \\\"if\\\", \\\"both\\\" or \\\"either\\\". English moves a word to the front only from the main sentence. Ask this instead:\"}"
+-- G32
+#guard expect frameG "Is both ann eligible and bo is verified?"
+  "{\"class\": \"SyntaxError\", \"code\": \"QuestionWordMoved\", \"rephrasings\": [\"Is it the case that both ann is eligible and bo is verified?\"], \"span\": [0, 40], \"status\": \"moved\", \"text\": \"VE could read this question only by putting \\\"is\\\" back inside a smaller part of the sentence, such as a part that begins with \\\"who\\\", \\\"that\\\", \\\"which\\\", \\\"if\\\", \\\"both\\\" or \\\"either\\\". English moves a word to the front only from the main sentence. Ask this instead:\"}"
+-- G33
+#guard expect frameG "Is either ann eligible or bo is verified, or both?"
+  "{\"class\": \"SyntaxError\", \"code\": \"QuestionWordMoved\", \"rephrasings\": [\"Is it the case that either ann is eligible or bo is verified, or both?\"], \"span\": [0, 50], \"status\": \"moved\", \"text\": \"VE could read this question only by putting \\\"is\\\" back inside a smaller part of the sentence, such as a part that begins with \\\"who\\\", \\\"that\\\", \\\"which\\\", \\\"if\\\", \\\"both\\\" or \\\"either\\\". English moves a word to the front only from the main sentence. Ask this instead:\"}"
+-- G34
+#guard expect frameG "Is for every member, ann eligible?"
+  "{\"class\": \"SyntaxError\", \"code\": \"QuestionWordMoved\", \"rephrasings\": [\"Is it the case that for every member, ann is eligible?\"], \"span\": [0, 34], \"status\": \"moved\", \"text\": \"VE could read this question only by putting \\\"is\\\" back inside a smaller part of the sentence, such as a part that begins with \\\"who\\\", \\\"that\\\", \\\"which\\\", \\\"if\\\", \\\"both\\\" or \\\"either\\\". English moves a word to the front only from the main sentence. Ask this instead:\"}"
 -- A1
 #guard expect frameA "May \"a27\" be performed?"
   "{\"ast\": [\"unary\", \"permitted\", [\"const\", \"a27\"]], \"form\": \"fronted\", \"sentence\": \"\\\"a27\\\" may be performed.\", \"spans\": [[0, 23]], \"status\": \"one\", \"text\": \"You asked whether \\\"a27\\\" may be performed.\"}"
