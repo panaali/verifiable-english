@@ -509,7 +509,7 @@ def environmentOf (environment : Json) : Except String Env := do
 Python names it (`formulaFault`: its AST decoder, then its type checker). -/
 def formulaCheck (E : Env) (ast : Json) : Except String Unit :=
   match Standalone.decodeTyped E.checked ast true with
-  | .ok () => .ok ()
+  | .ok () => (VE.Reports.Preflight.decoderFault ast).elim (.ok ()) .error
   | .error message => .error ((formulaFault E.checked.envelope.profiles E.checked.envelope.vocabulary ast).getD message)
 
 /-- A checked formula and its `meaning_id`. -/
@@ -959,13 +959,9 @@ def readingsSets (E : Env) (front : Json) (units : List SourceUnit) :
     | .arr xs => pure xs.toList
     | _ => throw "reading_sets must be a list"
   let w2Sets := rawSets.filter fun set =>
-    match set.getObjValD "readings" with
-    | .arr rs => rs.all fun r => r.getObjValD "content" == .null ||
-        (r.getObjValD "content").getObjValD "norm" == .null &&
-        (r.getObjValD "content").getObjValD "right" == .null &&
-        (r.getObjValD "content").getObjValD "right_lines" == .null &&
-        (r.getObjValD "content").getObjValD "limitation" == .null
-    | _ => false
+    (set.getObjValD "readings").getArr?.toOption.any fun rs => rs.all fun r =>
+      let content := r.getObjValD "content"
+      content == .null || ["norm", "right", "right_lines", "limitation"].all (fun k => content.getObjValD k == .null)
   let w2 ← Loader.compileSets E.rv E.profiles E.envId (units.map (·.id))
     (Json.arr w2Sets.toArray) (python := true) (formula := formulaCheck E)
     (modelRefused := some (unavailable "a distinguishing model the Lean model decoder refuses"))
@@ -973,8 +969,12 @@ def readingsSets (E : Env) (front : Json) (units : List SourceUnit) :
     u.content.toList.map fun c => ("content", c.json))
   let document := Json.mkObj [("units", Json.arr unitJson.toArray),
     ("reading_sets", Loader.optionalList front "reading_sets")]
-  let _ ← VE.Readings.Run.runCase (Json.mkObj [("id", .str "readings"),
-    ("kind", .str "readings-validate"), ("environment", E.json), ("document", document)])
+  let _ ← (VE.Readings.Run.runCase (Json.mkObj [("id", .str "readings"),
+    ("kind", .str "readings-validate"), ("environment", E.json), ("document", document)])).mapError fun message =>
+      if message != "Natural number expected" then message else (rawSets.findSome? fun set =>
+          ((set.getObjValD "readings").getArr?.toOption.getD #[]).toList.findSome? fun reading =>
+            let content := reading.getObjValD "content"
+            if content.getArr?.isOk then VE.Reports.Preflight.decoderFault content else none).getD message
   let re ← VE.Readings.Wire.decodeEnvironment E.json
   let D := VE.Readings.Wire.docOf re (← VE.Readings.Wire.decodeDocument re document)
   let attached := (VE.Readings.fixedNames D).filter fun u => !(VE.Readings.attached D u).isEmpty
