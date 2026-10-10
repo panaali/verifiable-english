@@ -746,6 +746,10 @@ class Wording:
             predicate = probe["outcome"]["predicate"]
             row = probe["outcome"]["tuple"]
             role = self.admission.senv.regulated[predicate].regulated.role
+            if role not in ("obligation", "permission"):
+                # E19 words a duty or a permission; a probe on a plain regulated predicate (the UDHR's entitlement
+                # readings, readings-defaults RD-5) has no E19 sentence yet, so the pair gets E24.
+                return "E24", _s1_gated("E24", E.E24)
             if (twins is not None and source_word is not None and facts["witness_admissible"]
                     and facts["other_admissible"] and facts.get("other_value") is not None
                     and facts["witness_value"] is not None and facts["other_value"] != facts["witness_value"]
