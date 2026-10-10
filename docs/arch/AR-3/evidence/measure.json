@@ -1,13 +1,13 @@
 {
- "base": "cbbab2df54dacf06323769d13ee7bd10d481eec2",
- "since": "2026-09-26T11:55:21+00:00",
+ "base": "7478b23dd5b1219e9e29f86acbbece87df76ce33",
+ "since": "2026-09-26T15:53:35+00:00",
  "days": 14,
  "baseline": {
-  "lines": 14129,
-  "bytes": 1858052,
-  "ids": 14127,
-  "commits": 285,
-  "first_parent_commits": 66
+  "lines": 14250,
+  "bytes": 1870144,
+  "ids": 14248,
+  "commits": 292,
+  "first_parent_commits": 68
  },
  "replay": {
   "commits": [
@@ -482,6 +482,20 @@
     "removed": 1,
     "explained": 1,
     "refused": []
+   },
+   {
+    "commit": "cc534bfc571de0f140fecc7acefee65fcdfb8ad9",
+    "subject": "Merge readings-defaults/rd4b (rd-4b): approved by review; synced and verified",
+    "removed": 0,
+    "explained": 0,
+    "refused": []
+   },
+   {
+    "commit": "7478b23dd5b1219e9e29f86acbbece87df76ce33",
+    "subject": "Merge infra/eff-merge (eff-merge): approved by review; synced and verified",
+    "removed": 0,
+    "explained": 0,
+    "refused": []
    }
   ],
   "removed": 1369,
@@ -489,8 +503,8 @@
   "refused": 9
  },
  "base_collection": {
-  "seconds": 86.2,
-  "ids": 14127,
+  "seconds": 108.0,
+  "ids": 14248,
   "only_collected": [],
   "only_pinned": []
  }
