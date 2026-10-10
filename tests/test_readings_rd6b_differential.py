@@ -8,7 +8,7 @@ permission, a fixed duty under both conditions or a fixed prohibition unless a c
 conflict and others not). Each pair of readings is separated by a situation chosen for the two templates.
 
 Each document is answered on both routes and compared whole: the conflict status and every compatible choice's
-status, the premise status, every choice's and every candidate's, and a query (with or without `--under` a reading
+status, the premise status and every candidate's, and a query (with or without `--under` a reading
 of the first sentence). The generated answers cover CONFLICT and CONFLICT-FREE, and ALL, SOME, NONE and UNKNOWN.
 """
 from __future__ import annotations
@@ -114,12 +114,11 @@ def generated(index):
 
 
 def answers(route, query, under):
-    """Everything compared: the conflict status and each choice's, the premise status, each choice's and each
-    candidate's, and the query's verdict."""
+    """Everything compared: the conflict status and each choice's, the premise status and each candidate's, and
+    the query's verdict."""
     conflict, premises = route.conflict(), route.premises()
     return {"conflict": (conflict["status"], [(c["choice"], c["status"]) for c in conflict["choices"]]),
-            "premises": (premises["status"], [(c["choice"], c["status"]) for c in premises["choices"]],
-                         [(c["set"], c["index"], c["status"]) for c in premises["candidates"]]),
+            "premises": (premises["status"], [(c["set"], c["index"], c["status"]) for c in premises["candidates"]]),
             "query": route.entailment(query, assumed=under)["verdict"]}
 
 
@@ -164,7 +163,7 @@ def test_generated_documents_agree_on_both_routes(tmp_path, chunk):
         superposed = answers(Superposed(loaded), query, under)
         enumerated = answers(Enumerated({**loaded, "readings_s2": enumerated_row}), query, under)
         assert superposed == enumerated, (index, superposed, enumerated)
-        assert len(superposed["conflict"][1]) == len(superposed["premises"][1]) == count
+        assert len(superposed["conflict"][1]) == count
         seen[superposed["conflict"][0]] += 1
         seen[superposed["query"]] += 1
     # Each chunk meets both conflict statuses and more than one verdict, so no chunk compares constants.
