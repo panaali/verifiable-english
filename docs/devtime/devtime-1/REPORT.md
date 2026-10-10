@@ -1,12 +1,12 @@
 # devtime-1: a repository map for builder agents
 
-Item 2 of `manage-agents/reviews/devtime-plan-2026-10.md`. Branch `infra/devtime-1`.
+Item 2 of `manage-agents/reviews/devtime-plan-2026-10.md`. Branch `infra/devtime-1`. main (`7478b23d`) was merged in at `4fca1d0d`; it brought the work-bound difffuzz budget and `tools/regen_generated.py`.
 
 ## What was built
 
 | File | What | Size |
 |---|---|---|
-| `AGENTS.md` (new) | stable entry file: what VE is, who owns what, where things are, how to find a route, the relayed-route recipe (worked example: `discourse`), generated files, standard commands, recurring testing rules | 119 lines, 7,918 bytes (limit 150 lines) |
+| `AGENTS.md` (new) | stable entry file: what VE is, who owns what, where things are, how to find a route, the relayed-route recipe (worked example: `discourse`), generated files, standard commands, recurring testing rules | 114 lines, 7,668 bytes (limit 150 lines) |
 | `CLAUDE.md` (new) | symlink to `AGENTS.md` | — |
 | `tools/repo_map.py` (new) | `routes`, `route <mode>`, `file <path>`, `--check` (stdlib, plus the repository's own `tools/source_graph.py`, `tools/test_map.py`, `tools/layer_policy.py`) | 460 lines, 22,779 bytes |
 | `tests/test_repo_map.py` (new) | 14 tests | 257 lines; 17.3 s warm on this VM |
@@ -24,9 +24,11 @@ Item 2 of `manage-agents/reviews/devtime-plan-2026-10.md`. Branch `infra/devtime
   - Relay entries are the module-level functions whose first parameter is `mode`, in the service client, the files it imports, and the files that import it. Today these are `relay.rows`, `relay.decide`, `relay.decide_once`, `relay.answer`, `service_schema.check_row`, `service_schema.check_response` and `lean_service.deadline`.
   - A relay is a `ve/` or `ve_experiments/` file that calls one of those entries, imported from its defining file, with the mode as a literal or a module-level string constant.
 - **Tests:** taken from the coverage map (`tools/test_map.find_map`, or `$VE_TESTMAP`): the test files that ran the function holding a relay call. With no map, or with `--static`, it is the test files whose static imports reach a relay file.
-- **`file`:** the layer comes from `layer_policy.source_layer`. The generator comes from `tools/regen_generated.py --owner` when that tool exists and offers the option. It is not on main (it is in flight on `infra/eff-merge`, without `--owner`), so `file` prints "unknown (tools/regen_generated.py does not exist)".
+- **`file`:** the layer comes from `layer_policy.source_layer`. The generator comes from `tools/regen_generated.py --owner` when that tool exists and offers the option. It reached main with `infra/eff-merge`, so `file ve/backends/lean_service_schema/discourse.json` now prints `generator: response-schemas` with no change to `repo_map.py`. AGENTS.md's generated-files section now points to `tools/regen_generated.py` (`--list`, `--owner`, `--check`, `--write`, `--resolve`) instead of listing generators by hand.
 
 ## The routes table at the final HEAD
+
+Regenerated after the main merge. The only change in the relay column: `readings-route` gains `ve/readings_components.py`, which came with main. Test counts grew with main's new tests.
 
 32 rows, one per mode (`evidence/routes.txt` with the coverage map, `evidence/routes-static.txt` with `--static`). Of the 128 derived cells (4 per row), **19 print "unknown"**. The counts are the same with and without the map:
 
@@ -68,7 +70,7 @@ No other gap exists on main.
 
 ## Seeded bugs
 
-Python is the only language with product code changed, in `tools/repo_map.py`. `docs/devtime/devtime-1/mutants.json` records each bug with `file`, `old`, `new`, `test` and the observed outcome. `seed_bugs.py` plants each one, runs its test through `tools/nested_pytest.py`, and restores the file. All 6 make their test fail:
+Python is the only language with product code changed, in `tools/repo_map.py`. `docs/devtime/devtime-1/mutants.json` records each bug with `file`, `old`, `new`, `test` and the observed outcome. `seed_bugs.py` plants each one, runs its test through `tools/nested_pytest.py`, restores the file and prints the outcome. It no longer has a `--write` mode: main's `tests/test_regen_generated.py` counts any tracked script with a write flag as a generator, and `tools/regen_generated.py` (outside this batch's files) has no exclusion for `docs/devtime/`. All 6 make their test fail, both before and after the main merge:
 
 | id | file | test that fails |
 |---|---|---|
@@ -107,5 +109,5 @@ There are no user-visible product deltas: no change to `ve/`, `lean/` or `rust/`
 
 - `docs/TESTING.md` is untouched. It is prose, not a list of tests, and two in-flight branches change it (`infra/eff-tests` and `infra/ts-B1`).
 - Linking `docs/ARCHITECTURE.md`, `docs/adr/` and `docs/ARCHITECTURE-LAYERS.md` from AGENTS.md belongs to AR-7, as the task says.
-- Once `tools/regen_generated.py` lands with `--owner`, `file` will print the owning generator with no change to `repo_map.py`. AGENTS.md lists main's generators by hand until then.
+- `tools/regen_generated.py` `NOT_REGENERATED` could exclude `docs/devtime/*/*.py` the way it excludes `docs/lean-first/*/*.py`, if later devtime batches want a writing evidence script.
 - A Lean batch should add `VE.Service.runMode_document`; the Lean cell for `document` then fills in.
