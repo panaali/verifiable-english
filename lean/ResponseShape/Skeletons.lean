@@ -57,6 +57,7 @@ abbrev discourse : Skel := skel% "discourse.json#/row"
 abbrev readingsRoute : Skel := skel% "readings-route.json#/row"
 abbrev diagnose : Skel := skel% "diagnose.json#/row"
 abbrev document : Skel := skel% "document.json#/row"
+abbrev englishQuestion : Skel := skel% "english.question.json#/row"
 
 def row : VE.Service.Mode → Skel
   | .evaluate => evaluate
@@ -90,6 +91,7 @@ def row : VE.Service.Mode → Skel
   | .readingsRoute => readingsRoute
   | .diagnose => diagnose
   | .document => document
+  | .englishQuestion => englishQuestion
 
 #guard VE.Service.modes.all fun m =>
   (skeleton Schemas.files s!"{m.name}.json#/row").toOption == some (row m, [])

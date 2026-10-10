@@ -103,6 +103,12 @@ DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/caus
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "JSON reader: null in reading_sets",
+               "usecases/question-answering/group.ve.md": "surface parser",
+               "usecases/question-answering/udhr-part07.ve.md": "norm-defaults@0",
+               "usecases/question-answering/agent-policy/a-unspecified.ve.md": "norm-defaults@0",
+               "usecases/question-answering/agent-policy/a-rules.ve.md": "norm-defaults@0",
+               "usecases/question-answering/agent-policy/a-conflict.ve.md": "norm-defaults@0",
+               "usecases/question-answering/agent-policy/a-deny.ve.md": "Lean norms route",
                "fence": "surface parser"}
 
 
@@ -514,3 +520,18 @@ def test_python_document_diagnostics_carry_the_code_their_text_names():
                     and isinstance(first.values[0], ast.Constant) else "")
             code = str(text).partition(":")[0]
             assert code == "InvalidInput" or code not in CLASSES, (path, node.lineno, text)
+
+
+def test_only_seeds_lean_refuses_whole_are_left_unmutated():
+    """`document_wrapper.UNMUTATED` keeps a seed out of the fuzzer's mutants only while Lean refuses it whole: every
+    seed it names is in `FAIL_CLOSED` (checked above against the running mode), every prefix names a seed, and the
+    fuzzer still mutates every other seed that is not a quantity document."""
+    from conformance import document_wrapper as dw
+    names = [name for name, _ in dw.seeds()]
+    unmutated = [name for name in names if any(name.startswith(p) for p in dw.UNMUTATED)]
+    assert unmutated and set(unmutated) <= set(FAIL_CLOSED), set(unmutated) - set(FAIL_CLOSED)
+    for prefix in dw.UNMUTATED:
+        assert any(name.startswith(prefix) for name in names), prefix
+    for name, doc in dw.seeds():
+        quantity = "unit_schema" in (doc["front"].get("environment") or {})
+        assert dw.fuzzed(doc, name) == (name not in unmutated and not quantity), name

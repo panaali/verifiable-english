@@ -178,6 +178,9 @@ def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
     data = json.loads(capsys.readouterr().out)
     assert (data["verdict"], data["status"], data["choice"]) == (
         "UNKNOWN", "UNKNOWN (conflict status: CONFLICT)", [["rs_2", 0]])
+    # 2.4 item 3 (review B3 of rd-4b): the UNKNOWN names its choice by E12, with the checked witness of its CONFLICT
+    [line] = shown(data["english"])
+    assert line.startswith(f"Read sentence 2 as {MUST_X}: two rules contradict each other here: ")
 
 
 def test_fnd2_render(tmp_path):
