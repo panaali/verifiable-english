@@ -194,7 +194,16 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SpeechActs/Wire.lean` | 1007 | 1007 | 1–1007 | `c5d1a01b214c…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `43eff830ca8c…` |
-| **total** | | **28,052** | | |
+| `lean/VE/Ask/Wire.lean` | 335 | 335 | 1–335 | `f28dc58268b1…` |
+| `lean/VE/Ask/PlainWire.lean` | 300 | 300 | 1–300 | `6de863196e99…` |
+| `lean/VE/Ask/ZeroWire.lean` | 459 | 459 | 1–459 | `642c8e1e1ec4…` |
+| `lean/VE/Ask/Binding.lean` | 205 | 205 | 1–205 | `d681c27217de…` |
+| `lean/VE/Ask/Run.lean` | 139 | 139 | 1–139 | `b8d550ddae6d…` |
+| `lean/VE/Ask/Lines.lean` | 651 | 651 | 1–651 | `eb76321532c4…` |
+| `lean/VE/Ask/Render.lean` | 456 | 456 | 1–456 | `dd26af40f362…` |
+| `lean/VE/Ask/PlainAnswer.lean` | 118 | 118 | 1–118 | `2c2a2a253778…` |
+| `lean/VE/Ask/ZeroAnswer.lean` | 143 | 143 | 1–143 | `1a032116a1eb…` |
+| **total** | | **30,858** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
