@@ -1,0 +1,89 @@
+{
+ "commit": "36cc24cbab7685cff534130f6943665b893869ba",
+ "domains": {
+  "ve-adapter-input-v1\n": [],
+  "ve-adapter-table-v1\n": [],
+  "ve-argument-diagnostic-record-v1\n": [],
+  "ve-argument-package-v1\n": [],
+  "ve-bundle-v0\n": [],
+  "ve-claim-v1\n": [
+   "lean/VE/Service/Graph.lean",
+   "lean/VE/Service/Standalone.lean"
+  ],
+  "ve-composition-v1\n": [],
+  "ve-deduction-v1\n": [
+   "lean/VE/Service/Family.lean",
+   "lean/VE/Service/Graph.lean",
+   "lean/VE/Service/Standalone.lean"
+  ],
+  "ve-definitions-v0.2\n": [],
+  "ve-document@2\n": [
+   "lean/VE/SpeechActs/Source/Run.lean"
+  ],
+  "ve-english-grammar-v1\n": [
+   "lean/VE/EnglishGrammar/Run.lean"
+  ],
+  "ve-english-lexicon-v1\n": [
+   "lean/VE/EnglishGrammar/Run.lean"
+  ],
+  "ve-english-vocabulary-v1\n": [
+   "lean/VE/EnglishGrammar/Run.lean"
+  ],
+  "ve-environment-{}\n": [
+   "lean/VE/CertificateWire.lean",
+   "lean/VE/Order/Wire.lean",
+   "lean/VE/Route/Wire.lean",
+   "lean/VE/Service/Graph.lean",
+   "lean/VE/Service/Standalone.lean"
+  ],
+  "ve-evidence-assessment-v1\n": [],
+  "ve-meaning-{}\n": [
+   "lean/VE/CertificateWire.lean",
+   "lean/VE/Order/Wire.lean",
+   "lean/VE/Route/Wire.lean",
+   "lean/VE/Service/Standalone.lean"
+  ],
+  "ve-model-{}\n": [
+   "lean/VE/Alternatives/Run.lean",
+   "lean/VE/Discourse/Loader.lean",
+   "lean/VE/Service/Standalone.lean"
+  ],
+  "ve-norms-{}\n": [
+   "lean/VE/Norms/Replay.lean"
+  ],
+  "ve-proposal-environment-v1\n": [],
+  "ve-proposal-overlay-v1\n": [],
+  "ve-proposal-source-v1\n": [],
+  "ve-proposal-{}-v1\n": [],
+  "ve-python-checker-build-v1\n": [],
+  "ve-report-{}\n": [
+   "lean/VE/Attribution/Run.lean",
+   "lean/VE/Discourse/Admission.lean",
+   "lean/VE/Norms/Run.lean",
+   "lean/VE/Route/Run.lean",
+   "lean/VE/Time/Document.lean"
+  ],
+  "ve-rights-{}\n": [
+   "lean/VE/Rights/Wire.lean"
+  ],
+  "ve-senses-dictionary-v1\n": [
+   "lean/VE/Senses/Decode.lean"
+  ],
+  "ve-senses-request-v1\n": [
+   "lean/VE/Senses/Run.lean"
+  ],
+  "ve-situation-{}\n": [
+   "lean/VE/Readings/Wire.lean"
+  ],
+  "ve-soft-norms-{}\n": [
+   "lean/VE/SoftNorms/Wire.lean"
+  ],
+  "ve-source-{}\n": [
+   "lean/VE/Discourse/Loader.lean",
+   "lean/VE/Service/Family.lean",
+   "lean/VE/Service/Graph.lean",
+   "lean/VE/Service/Standalone.lean"
+  ],
+  "ve-vocabulary-proposal-v1\n": []
+ }
+}
