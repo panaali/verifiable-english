@@ -392,6 +392,19 @@ def test_staged_rust_workspace_is_read_by_cargo(staging):
     rejects(staging, "rust: cannot read the Rust workspace: cargo metadata failed: ")
 
 
+def test_staged_facade_code_and_mismatched_path_dependency_are_rejected(staging):
+    # AR-8 review F3 and F2 through the hook: an inline module in the facade's staged lib.rs, and a
+    # path dependency whose declared name is not the crate its path holds.
+    facade = staging.head("rust/ve-core/src/lib.rs")
+    staging.stage("rust/ve-core/src/lib.rs", facade + b"pub mod extra {\n    pub fn f() {}\n}\n")
+    line = facade.count(b"\n") + 1
+    rejects(staging, f"rust: line {line} of the ve-core facade is not part of a re-export: 'pub mod extra {{'")
+    staging.stage("rust/ve-core/src/lib.rs", facade)
+    staging.stage("rust/ve-profile/Cargo.toml",
+                  staging.head("rust/ve-profile/Cargo.toml") + b'wrong = { path = "../ve-kernel" }\n')
+    rejects(staging, "rust: mismatched path dependency: ve-profile -> wrong")
+
+
 @pytest.mark.parametrize("line, token", [
     ("theorem planted : 1 = 1 := by sorry", "sorry"),
     ("theorem planted : 1 = 1 := by admit", "admit"),

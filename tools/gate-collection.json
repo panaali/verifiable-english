@@ -8873,6 +8873,7 @@
   "tests/test_precommit_hook.py::test_secret_scan_reads_raw_staged_blobs[NUL bytes]",
   "tests/test_precommit_hook.py::test_secret_scan_reads_raw_staged_blobs[configured binary]",
   "tests/test_precommit_hook.py::test_secret_scan_reads_raw_staged_blobs[staged -diff]",
+  "tests/test_precommit_hook.py::test_staged_facade_code_and_mismatched_path_dependency_are_rejected",
   "tests/test_precommit_hook.py::test_staged_lean_entry_modules_are_tool_layer",
   "tests/test_precommit_hook.py::test_staged_policy_code_is_the_policy",
   "tests/test_precommit_hook.py::test_staged_rust_workspace_is_read_by_cargo",
