@@ -655,6 +655,10 @@ def parse_baseline(data: object, legacy: bool = False) -> tuple[dict, list[str]]
     else:
         problems += [f"{BASELINE.name}: allowance {i}: {p}" for i, entry in enumerate(data["allowances"])
                      for p in allowance_problems(entry)]
+        if not problems:  # a copy of an allowance grants its lines again: each signed growth is recorded once
+            seen = Counter(allowance_key(entry) for entry in data["allowances"])
+            problems += [f"{BASELINE.name}: the allowance {key!r} is recorded {n} times"
+                         for key, n in seen.items() if n > 1]
     return data, problems
 
 
@@ -688,8 +692,8 @@ def check(files: dict[str, dict[str, int]], cap: dict[str, int], allowances: lis
         if now[key] > cap[key] + allowed[key]:
             where = ""
             if base is not None:
-                grown = sorted(((budget(c)[key] - budget(base.get(m, empty_counts()))[key], m) for m, c in files.items()),
-                               reverse=True)
+                grown = sorted(((budget(c)[key] - budget(base.get(m, empty_counts()))[key], m)
+                                for m, c in files.items()), reverse=True)
                 where = ": " + ", ".join(f"{m} +{d}" for d, m in grown[:8] if d > 0)
             failures.append(f"{key} grew from {cap[key]} to {now[key]} (signed allowance {allowed[key]}){where}")
     return failures
