@@ -48,8 +48,8 @@ def illTypedQuestionText : String :=
 /-- The moved-out refusal (`VE.Question.Moved`): the word, and whether questions are offered in its place. -/
 def movedText (aux : String) (offers : Nat) : String :=
   "VE could read this question only by putting \"" ++ aux ++ "\" back inside a smaller part of the sentence, such " ++
-  "as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\". English moves a word " ++
-  "to the front only from the main sentence." ++
+  "as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the " ++
+  "phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence." ++
   (if offers == 0 then "" else if offers == 1 then " Ask this instead:" else " Ask one of these instead:")
 /-- What `ve ask` says while VE answers no question (plan Q2, not built). -/
 def unansweredText : String :=

@@ -4,26 +4,26 @@
   "K": 997,
   "S": 9704,
   "D": 13759,
-  "G": 26121,
+  "G": 26167,
   "C": 8329,
   "P": 70299,
-  "T": 14050,
-  "o": 11902,
+  "T": 14096,
+  "o": 11914,
   "D[V]": 12236,
   "D[R]": 996,
   "D[I]": 527,
-  "G[V]": 24196,
-  "G[R]": 1684,
+  "G[V]": 24212,
+  "G[R]": 1714,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 46974,
-  "lines": 155161
+  "trusted": 46990,
+  "lines": 155265
  },
  "budget": {
   "K": 997,
   "S": 9704,
-  "V": 36273
+  "V": 36289
  },
  "signed": [],
  "history": [
@@ -451,6 +451,19 @@
     "K": 997,
     "S": 9704,
     "V": 36273
+   }
+  },
+  {
+   "change": "question answering Q1, looprecheck 2 of the DRI ruling (B): VE.Question.Moved counts each verb phrase of a rule that joins verb phrases with and/or (some-tail.two, natural-tail.both, the guards, alternatives@0's either/both) as a part, decided from the rule table and the type table (joinWords, joinsPhrases, isPhrase; V +16, all in VE/Question/Moved.lean); the across-the-board rephrasing helpers are G[R]",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9704,
+    "V": 36273
+   },
+   "to": {
+    "K": 997,
+    "S": 9704,
+    "V": 36289
    }
   }
  ],
@@ -9227,7 +9240,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 153,
+   "T": 187,
    "o": 9,
    "D[V]": 0,
    "D[R]": 0,
@@ -9238,7 +9251,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 162
+   "lines": 196
   },
   "VE/Question/Fixtures.lean": {
    "K": 0,
@@ -9247,7 +9260,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 224,
+   "T": 236,
    "o": 12,
    "D[V]": 0,
    "D[R]": 0,
@@ -9258,7 +9271,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 236
+   "lines": 248
   },
   "VE/Question/Frames.lean": {
    "K": 0,
@@ -9304,21 +9317,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 113,
+   "G": 159,
    "C": 0,
    "P": 131,
    "T": 0,
-   "o": 36,
+   "o": 48,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 95,
-   "G[R]": 18,
+   "G[V]": 111,
+   "G[R]": 48,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 95,
-   "lines": 280
+   "trusted": 111,
+   "lines": 338
   },
   "VE/Question/Properties.lean": {
    "K": 0,

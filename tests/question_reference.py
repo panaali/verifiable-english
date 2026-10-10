@@ -4,7 +4,8 @@ test `tests/test_question_differential.py`.
 Lean is the only question reader VE runs (`english.question`, lean-only). This module is a second implementation of
 the same definitions, written from the spec and sharing no code with `VE.Question`: the question's shape (2.1), its
 gaps and candidates (2.2), what each candidate gives (2.3), the order of the outcomes (2.4), the indefinite
-rephrasings (3.2) and the moved-word rule of the DRI ruling of 2026-10-09 (3.1, 4.1 row 11a). Each candidate is read
+rephrasings (3.2) and the moved-word rule of the DRI ruling of 2026-10-09 (3.1, 4.1 row 11a), whose verb phrases are
+the nonterminals of type `relative` in the type tables of the English reader's specs (`phrase_kinds`). Each candidate is read
 by Python's own English reader, which the English comparator holds to Lean's for single sentences: the Lark
 all-derivations parse (`require_unique_derivation`) counts the derivations and gives the tree whose clauses the
 moved-word rule reads, and the hand parser (`_python_reading`) gives the formula. It is test code: no product path
@@ -18,6 +19,8 @@ a candidate's work budget (Python's reader has none) and a lexical refusal other
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cache
+from pathlib import Path
 import re
 
 AUXILIARIES = ("is", "must", "may")
@@ -25,6 +28,10 @@ CASE_FRAME = "Is it the case that "
 WH_WORDS = ("Who", "What", "Which", "Whom", "Whose", "Where", "When", "Why", "How")
 MAX_QUESTION_BYTES, MAX_TOKENS, MAX_CANDIDATES = 4096, 300, 64
 CLAUSE_WORDS = ("who", "that", "which")
+JOIN_WORDS = ("and", "or")
+# The type tables of the nonterminals (spec english-lean-s2 2.4, english-lean-s3 2.4).
+TYPE_TABLES = tuple(Path(__file__).resolve().parents[1] / "docs/spec" / name
+                    for name in ("english-lean-s2.md", "english-lean-s3.md"))
 # E2's punctuation characters (spec english-lean 2.2): any other visible character outside a quoted name is refused.
 PUNCTUATION = ",;:()[]+-*"
 # The lexical refusals this reader decides; any other is excluded.
@@ -53,6 +60,16 @@ def lexical_fault(outside: str) -> str | None:
         elif ch != " ":
             content = True
     return None
+
+
+@cache
+def phrase_kinds() -> frozenset[str]:
+    """The verb phrases: the nonterminals whose type is `relative` in the specs' 2.4 tables."""
+    kinds = set()
+    for path in TYPE_TABLES:
+        section = path.read_text().split("### 2.4 ", 1)[1].split("\n### ", 1)[0]
+        kinds |= {m.group(1) for m in re.finditer(r"^\| \d+ \| `(\w+)` \| `relative` \|", section, re.M)}
+    return frozenset(kinds)
 
 
 class Excluded(Exception):
@@ -247,11 +264,42 @@ class Reader:
             self.kinds = {str(r.alias or r.origin.name) for r in rules if r.origin.name in alternatives}
         return self.kinds
 
+    def joined(self, sentence: str, node) -> list:
+        """The verb phrases a node joins: its children of a verb phrase kind when there are two or more of them and
+        the node's own text (outside its subtrees) has `and` or `or`; else none."""
+        from lark import Tree
+        kids = [k for k in node.children if isinstance(k, Tree) and not getattr(k.meta, "empty", True)]
+        phrases = [k for k in kids if str(k.data) in phrase_kinds()]
+        if len(phrases) < 2:
+            return []
+        own, at = [], node.meta.start_pos
+        for k in kids:
+            own.append(sentence[at:k.meta.start_pos])
+            at = k.meta.end_pos
+        own.append(sentence[at:node.meta.end_pos])
+        return phrases if any(w in JOIN_WORDS for w in re.findall(r"\w+", " ".join(own).lower())) else []
+
+    def joins(self, sentence: str) -> list[list[int]]:
+        """For each node of the sentence's one Lark derivation that joins verb phrases, the start of each phrase."""
+        from lark import Tree
+        out = []
+
+        def walk(node):
+            if not isinstance(node, Tree) or getattr(node.meta, "empty", True):
+                return
+            phrases = self.joined(sentence, node)
+            if phrases:
+                out.append([k.meta.start_pos for k in phrases])
+            for child in node.children:
+                walk(child)
+        walk(self.tree(sentence))
+        return out
+
     def clauses(self, sentence: str) -> list[tuple[int, int]]:
         """The character spans of the clauses of the sentence's one Lark derivation: a constituent right after a
-        `who`, `that` or `which` inside its parent, to the parent's end when that constituent is a word; and a part,
-        a sentence whose parent is a sentence (the `?formula` rule is inlined, so a rule that only passes a sentence
-        through leaves no node)."""
+        `who`, `that` or `which` inside its parent, to the parent's end when that constituent is a word; a part, a
+        sentence whose parent is a sentence (the `?formula` rule is inlined, so a rule that only passes a sentence
+        through leaves no node); and each verb phrase a node joins."""
         from lark import Token, Tree
         tree = self.tree(sentence)
         kinds = self.sentence_kinds()
@@ -264,6 +312,7 @@ class Reader:
         def walk(node):
             if not isinstance(node, Tree) or getattr(node.meta, "empty", True):
                 return
+            joined = self.joined(sentence, node)
             for child in node.children:
                 start = child.start_pos if isinstance(child, Token) else (
                     None if getattr(child.meta, "empty", True) else child.meta.start_pos)
@@ -274,6 +323,8 @@ class Reader:
                     end = node.meta.end_pos if isinstance(child, Token) else child.meta.end_pos
                     found.append((start, end))
                 elif isinstance(child, Tree) and str(node.data) in kinds and str(child.data) in kinds:
+                    found.append((start, child.meta.end_pos))
+                elif any(child is k for k in joined):
                     found.append((start, child.meta.end_pos))
                 walk(child)
         walk(tree)
@@ -292,13 +343,31 @@ class Reader:
             return False
         return o[0] == "one" and not self.moved_out(o[1])
 
-    def moved_rephrasings(self, c: Candidate) -> list[str]:
+    def means(self, question: str, formula) -> bool:
+        try:
+            o = self.classify(question)
+        except Excluded:
+            return False
+        return o[0] == "one" and o[2] == formula
+
+    def moved_rephrasings(self, c: Candidate, formula) -> list[str]:
+        """The word fronted from each other place outside every clause; fronted from every verb phrase of a join at
+        once, when each begins with it, one is the put-back word and the question means the same; F1's question."""
         spans = self.clauses(c.sentence)
         gap = len(c.sentence.encode()[:c.gap].decode())
-        fronted = [f"{capitalise(c.aux)} {c.sentence[:x]}{c.sentence[y + 1:-1]}?"
-                   for j, (t, x, y) in enumerate(tokens(c.sentence))
+        words = {x: (t, y) for t, x, y in tokens(c.sentence)}
+
+        def without(starts):
+            text, at = "", 0
+            for x in sorted(starts):
+                text, at = text + c.sentence[at:x], words[x][1] + 1
+            return f"{capitalise(c.aux)} {text}{c.sentence[at:-1]}?"
+        fronted = [without([x]) for j, (t, x, y) in enumerate(tokens(c.sentence))
                    if j != 0 and t == c.aux and x != gap and not any(a <= x < b for a, b in spans)]
-        return self.offered([q for q in [*fronted, f"{CASE_FRAME}{c.sentence[:-1]}?"] if self.askable(q)])
+        across = [without(starts) for starts in self.joins(c.sentence)
+                  if gap in starts and all(words.get(x, ("",))[0] == c.aux for x in starts)]
+        across = [q for q in across if self.means(q, formula)]
+        return self.offered([q for q in [*fronted, *across, f"{CASE_FRAME}{c.sentence[:-1]}?"] if self.askable(q)])
 
     def ask(self, question: str) -> dict:
         """What the mode shows, as the differential compares it."""
@@ -310,7 +379,7 @@ class Reader:
         if kind == "one":
             c, formula = o[1], o[2]
             if self.moved_out(c):
-                rs = self.moved_rephrasings(c)
+                rs = self.moved_rephrasings(c, formula)
                 return {"status": "moved", "code": "QuestionWordMoved", **({"rephrasings": rs} if rs else {})}
             return {"status": "one", "form": c.form, "sentence": c.sentence, "ast": formula}
         if kind == "indefinite":
