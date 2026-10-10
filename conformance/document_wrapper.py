@@ -6,8 +6,9 @@ and the body. `python_answer` and `lean_answers` give each implementation's answ
 `{"outcome": "ok", "value": <projection>}` or `{"outcome": "error", "code", "text"}` (Python may also crash).
 `verdict` compares two answers under the mode's contract:
 
-* `agree`: the same projection (identities, every unit's span, status and parent, the whole coverage), or the
-  same `(code, text)`;
+* `agree`: the same projection (identities, every unit's span, status and parent, the coverage owned by the
+  wrapper), or the same `(code, text)`. Norm-defaults gap and content-bearing readings findings are added by
+  Python after the Lean document answer, so the raw Lean mode is compared before that enrichment;
 * `fail-closed`: Lean answers `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or Python
   does (its own checker could not decide);
 * `environment`, `formula`, `admission`: both reject, and Python's rejection is another decoder's (`owner_of`):
@@ -60,6 +61,25 @@ def projection_of(units, coverage, document_id, source_id):
             "coverage": coverage}
 
 
+def wrapper_coverage(coverage, doc):
+    """The coverage fields the Lean document mode owns. Python adds norm-defaults gap evidence and
+    content-bearing readings findings after that answer; the public result retains both."""
+    defaults = doc.get("norm_defaults") is not None
+    readings = (doc.get("readings_s1") or {}).get("content_bearing") is True
+    if not defaults and not readings:
+        return coverage
+    base = deepcopy(coverage)
+    if defaults:
+        base.pop("norm_defaults", None)
+        base["residual"].pop("gaps", None)
+        base["residual"].pop("ungrounded_defaults", None)
+    if readings:
+        for key in ("separations", "readings_findings", "pending_candidates", "couplings"):
+            base["residual"].pop(key, None)
+    base["residual_total"] = sum(base["residual"].values())
+    return base
+
+
 def python_answer(text: str) -> dict:
     """Python's answer: its own path (`_load_document`, which `load_document` keeps for the documents the Lean mode
     cannot decide yet, batch 16b), then `check_document`'s wrapper: `_report`, which admits the claim graph and
@@ -85,7 +105,7 @@ def python_answer(text: str) -> dict:
             return {"outcome": "crash", "code": "RecursionError", "text": str(exc)[:200]}
         except Exception as exc:  # noqa: BLE001 - only VEError may escape; the rest is the finding
             return {"outcome": "crash", "code": type(exc).__name__, "text": str(exc)[:200]}
-    return {"outcome": "ok", "value": projection_of(doc["units"], result["coverage"], result["document_id"],
+    return {"outcome": "ok", "value": projection_of(doc["units"], wrapper_coverage(result["coverage"], doc), result["document_id"],
                                                      result["source_id"])}
 
 
@@ -178,10 +198,20 @@ def owned(document) -> bool:
     return not set(environment) - allowed
 
 
-def fuzzed(document) -> bool:
+# Seeds the fuzzer compares as they are but does not mutate, by path prefix, with the reason. The question
+# fixture documents are large vocabulary corpora. Their seed answers are checked by the document-wrapper test;
+# mutating them exceeded the bounded fuzzer's useful CPU budget on the question branch.
+UNMUTATED = {
+    "usecases/question-answering/": "large question vocabulary fixtures; seed answers are compared separately",
+}
+
+
+def fuzzed(document, name: str = "") -> bool:
     """Whether the fuzzer mutates a seed: not a quantity (`unit_schema`) document, whose Python check runs the
-    quantity route for every mutant while the Lean mode refuses its environment block before anything else
-    (each such seed is still compared as it is, `tests/test_lean_document_wrapper.py`)."""
+    quantity route for every mutant while the Lean mode refuses its environment block before anything else, and
+    not a seed of `UNMUTATED` (each such seed is still compared as it is, `tests/test_lean_document_wrapper.py`)."""
+    if any(name.startswith(prefix) for prefix in UNMUTATED):
+        return False
     environment = document["front"].get("environment")
     return not (type(environment) is dict and "unit_schema" in environment)
 
