@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -20,6 +21,11 @@ from tools.evidence import EvidenceError, ab, config, fuzz_ab, killed, latency, 
 
 ROOT = Path(__file__).resolve().parents[1]
 HEAD, BASE = "a" * 40, "b" * 40
+
+
+def ids(value):
+    """A test id without spaces: tools/mutants.py reads a failed node id up to the first space."""
+    return re.sub(r"\W+", "-", value).strip("-")[:60] if isinstance(value, str) else None
 
 
 # ---------------------------------------------------------------- latency
@@ -82,7 +88,7 @@ def test_latency_measure_compares_every_run_of_both_sides(tmp_path):
     (lambda base, head, doc: (base, head, ["ve", "check"], [doc], 1), "naming {input}"),
     (lambda base, head, doc: (base, head, ["ve", "{input}"], [doc + ".missing"], 1), "no input"),
     (lambda base, head, doc: (base, head, ["ve", "{input}"], [doc, doc], 1), "occurs twice"),
-])
+], ids=ids)
 def test_latency_measure_refuses_inputs_that_compare_nothing(tmp_path, arguments, message):
     base, head = tmp_path / "base", tmp_path / "head"
     base.mkdir(), head.mkdir()
@@ -112,7 +118,7 @@ def test_complete_latency_record_passes():
     (lambda s: s.update({"x": {"base_cpu_ms": float("nan"), "head_cpu_ms": 1}}), [], "not measured on both sides"),
     (lambda s: s.update({"x": {"base_cpu_ms": 10, "head_cpu_ms": 12.01}}), [], "above 1.2 x base"),
     (lambda s: s.update({"x": {"base_cpu_ms": 1, "head_cpu_ms": 1, "same_output": False}}), [], "same output"),
-])
+], ids=ids)
 def test_missing_empty_unavailable_or_slow_latency_rows_fail(change, expected, message):
     record = deepcopy(LATENCY)
     change(record["samples"])
@@ -188,7 +194,7 @@ AB = {"head_commit": HEAD, "unlisted": 0, "unavailable_both": {},
     ({"unlisted": 1}, "unlisted or unavailable"),
     ({"unlisted": None}, "unlisted or unavailable"),
     ({"head_commit": BASE}, "did not run on HEAD"),
-])
+], ids=ids)
 def test_saved_ab_known_answers(change, message):
     errors = ab.problems({**deepcopy(AB), **change}, HEAD)
     if message is None:
@@ -288,7 +294,7 @@ def test_head_only_signatures_and_count_changes_need_a_rule():
     lambda r: r["mutants"]["environment"].update({"one-fault": 5}),
     lambda r: r["baseline"].update(unreviewed=["env-a"]),
     lambda r: r["baseline"].update(entries=3),
-])
+], ids=ids)
 def test_another_sample_or_baseline_fails(change):
     head = _report()
     change(head)
@@ -313,7 +319,7 @@ def test_a_fuzz_run_that_compared_nothing_fails():
     {"kind": "replay", "id": "env-a", "base": "reproduces"},
     {"kind": "count", "field": "corpus", "surface": "s", "key": "k", "base": 1, "head": 2},
     {"kind": "anything"},
-])
+], ids=ids)
 def test_malformed_fuzz_rules_are_refused(rule):
     assert fuzz_ab.rule_problems([rule])
     with pytest.raises(EvidenceError):
@@ -359,7 +365,7 @@ def test_report_renders_numbers_from_the_evidence(tmp_path):
     ({"bug": "b", "file": "ve/x.py", "test": "t", "exit_code": 0, "failure_excerpt": "1 failed"}, False),
     ({"bug": "b", "file": "ve/x.py", "test": "t", "exit_code": 1, "failure_excerpt": ""}, False),
     ({"bug": "b", "file": "ve/x.py", "exit_code": 1, "failure_excerpt": "x"}, False),
-])
+], ids=ids)
 def test_a_mutant_counts_only_when_its_named_test_failed(record, expected):
     assert killed(record) is expected
 
@@ -456,7 +462,7 @@ def test_a_complete_batch_passes_the_check(batch, capsys):
     ("scope", {"commits": [{"hash": BASE}]}, "not its head"),
     ("scope", {"changes": []}, "no changed paths"),
     ("mutants", {"mutants": MUTANTS["mutants"][:2]}, "fewer than 3"),
-])
+], ids=ids)
 def test_stale_or_incomplete_batch_evidence_fails_the_check(batch, name, change, message):
     value = {"scope": SCOPE, "gate": GATE, "mutants": MUTANTS}[name]
     _write(batch, name, {**deepcopy(value), **change})
@@ -516,7 +522,7 @@ def test_tally_claims_check_a_ledger_against_its_table(batch):
     (TOML + '[latency]\nfile = "l.json"\nworkload = ["a"]\nworkloads = ["a"]\n', "unknown key 'workload'"),
     (TOML.replace('batch = "test"', 'batch = ""'), "batch is not a name"),
     (TOML.replace('batch = "test"', 'batch = "test"\nevidence = "../../../.."'), "outside the repository"),
-])
+], ids=ids)
 def test_a_toml_that_would_check_nothing_is_refused(batch, text, message):
     (batch / "evidence.toml").write_text(text)
     with pytest.raises(EvidenceError, match=message.replace("[", r"\[").replace("]", r"\]")):
