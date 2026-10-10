@@ -1,0 +1,81 @@
+{
+ "range": "main..HEAD --no-merges",
+ "base": "cbbab2df54dacf06323769d13ee7bd10d481eec2",
+ "head": "da8f28dda6a18d39654c5c07c8d5588b8a6188e4",
+ "commits": [
+  {
+   "sha": "da8f28dda6a18d39654c5c07c8d5588b8a6188e4",
+   "subject": "AR-3: measurement, seeded faults and scope scripts with their saved evidence"
+  },
+  {
+   "sha": "3621ea4e354b97c55091696d2863d3a441bb011a",
+   "subject": "AR-3: the base Rust build test checks rust_build's flags"
+  },
+  {
+   "sha": "170211c1d0ad542eaed777d5852efb651d0c9d75",
+   "subject": "AR-3: the base worktree gets a Rust binary its own lock pins"
+  },
+  {
+   "sha": "d98373a55e795e9b7e870042bf9c20716f56c47e",
+   "subject": "AR-3: the gate checks its collection against the merge base's, not a committed baseline"
+  }
+ ],
+ "files": {
+  "README.md": {
+   "added": 8,
+   "deleted": 8
+  },
+  "docs/arch/AR-3/evidence/measure.json": {
+   "added": 497,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/evidence/mutants.json": {
+   "added": 58,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/measure.py": {
+   "added": 79,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/report.py": {
+   "added": 37,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/seed_faults.py": {
+   "added": 81,
+   "deleted": 0
+  },
+  "tests/test_eff_tests_report.py": {
+   "added": 4,
+   "deleted": 1
+  },
+  "tests/test_gate.py": {
+   "added": 5,
+   "deleted": 9
+  },
+  "tests/test_gate_collection.py": {
+   "added": 402,
+   "deleted": 64
+  },
+  "tests/test_gate_integrity.py": {
+   "added": 20,
+   "deleted": 13
+  },
+  "tests/test_gate_rerun.py": {
+   "added": 15,
+   "deleted": 4
+  },
+  "tools/gate-collection.json": {
+   "added": 0,
+   "deleted": 14129
+  },
+  "tools/gate.py": {
+   "added": 65,
+   "deleted": 39
+  },
+  "tools/gate_collection.py": {
+   "added": 345,
+   "deleted": 41
+  }
+ }
+}
