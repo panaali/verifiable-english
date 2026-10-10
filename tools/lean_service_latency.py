@@ -34,6 +34,7 @@ import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from tools.evidence.latency import schedstat  # noqa: E402
 from tools.lean_service_common import (DEFAULT_BENCH, MODES, machine, one_shot, one_shot_results,  # noqa: E402
                                        summary, workloads)
 from ve.backends.lean_service import (DEFAULT_EXECUTABLE, LeanService, LeanServicePool,  # noqa: E402
@@ -44,15 +45,6 @@ BATCHES = {"W3/definitions": 2048, "W3/bundle": 256, "W1/conflict-check": 256,
            "certificate/tableau-large": 8}
 GATES = {"W3/definitions": 1.0, "W3/bundle": 0.25, "W1/conflict-check": 0.5,
          "certificate/tableau-large": 0.3}
-
-
-def schedstat(path: str) -> tuple[int, int] | None:
-    """(on-CPU ns, runqueue wait ns) of a task, or None where schedstat is unavailable."""
-    try:
-        run, wait, _ = Path(path).read_text().split()
-        return int(run), int(wait)
-    except (OSError, ValueError):
-        return None
 
 
 def tasks(service) -> tuple:
