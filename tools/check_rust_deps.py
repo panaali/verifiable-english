@@ -52,7 +52,8 @@ def errors(data: dict) -> list[str]:
             if dependency.get("path") is not None:
                 target = folders.get(Path(dependency["path"]).resolve())
                 if target is None:
-                    found.append(f"path dependency outside the workspace: {name} -> {dependency['name']}")
+                    alias = dependency.get("rename") or dependency["name"]  # the manifest's key
+                    found.append(f"path dependency outside the workspace: {name} -> {alias}")
                     continue
             if target in names and CRATE_LAYERS.get(name, 0) <= CRATE_LAYERS.get(target, len(CRATE_LAYERS) + 1):
                 found.append(f"outward crate dependency: {name} -> {target}")
