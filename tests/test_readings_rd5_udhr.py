@@ -86,9 +86,13 @@ def test_the_migration_record_holds_together():
 
 
 def test_the_saved_measurements_meet_the_limits():
+    """Plan 3.8's limits, read from their owners where Python holds them (the document bytes, the choices checked one
+    at a time); the per-frame limits are the frozen decoders', and Lean admitted the document under them."""
+    from ve.document import MAX_DOCUMENT_BYTES
+    from ve.readings_sup import MAX_CHOICES
     comp, after = METRICS["components"], METRICS["after"]
-    assert after["load"]["wall_seconds"] <= 120 and after["document_bytes"] <= 4_000_000
-    assert comp["max_regulated_predicates"] <= 64 and comp["max_readings"] <= 64 and comp["max_choices"] <= 64
+    assert after["document_bytes"] <= MAX_DOCUMENT_BYTES and comp["max_choices"] <= MAX_CHOICES
+    assert after["load"]["wall_seconds"] <= 120  # the lean-first section 4 budget for the pilot's load
     assert comp["count"] == comp["companion_cases"] + 1 == len(UNMIGRATED["migrated"]) + 1
     per = comp["per_component"]
     assert comp["max_rules_in_one_choice_document"] == max(c["rules"] for s in per.values() for c in s["per_choice"])
@@ -155,7 +159,8 @@ def test_the_migration_reproduces_the_committed_document(tmp_path):
 
 
 def test_one_sets_witnesses_replay_equal_in_its_component_and_alone():
-    """`rs_u029`'s companions: each witness Lean replays, in the component and alone, is the recorded one."""
+    """`rs_u025`'s companions (witnesses SETTLED yes, SETTLED no and UNDECIDED): each witness Lean replays, in the
+    component and alone, is the recorded one."""
     lean()
     import witnesses
     from ve.readings_route import document_wire, run_lean
@@ -163,7 +168,8 @@ def test_one_sets_witnesses_replay_equal_in_its_component_and_alone():
     env, doc = wire(META["environment"]), wire(document_wire(META["units"], META["reading_sets"]))
     [row] = run_lean([{"id": "split", "kind": "readings-elaborate", "environment": env, "document": doc}])
     parts = {c["component"]: c for c in row["components"]}
-    got = witnesses.in_components(env, doc, {"rs_u029": parts["rs_u029"]}, only={"rs_u029"})
-    assert got == {k: v for k, v in METRICS["witnesses"]["in_components"].items() if k.startswith("u029.")}
-    keys = {"u029.entitlement", "u029.state_claim"}
+    got = witnesses.in_components(env, doc, {"rs_u025": parts["rs_u025"]}, only={"rs_u025"})
+    assert got == {k: v for k, v in METRICS["witnesses"]["in_components"].items() if k.startswith("u025.")}
+    assert {w["recorded"] for v in got.values() for w in v["witnesses"]} == {"SETTLED yes", "SETTLED no", "UNDECIDED"}
+    keys = {"u025.practice_prohibited", "u025.state_prohibits"}
     assert witnesses.alone(only=keys) == {k: METRICS["witnesses"]["alone"][k] for k in keys}
