@@ -17,17 +17,17 @@ sys.path.insert(0, str(ROOT / "tools"))
 import nested_pytest  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
-ORDER, GATE = "tests/test_test_order.py", "tests/test_gate_quarantine.py"
+ORDER, GATE = "tests/test_run_order.py", "tests/test_gate_quarantine.py"
 
 # (id, behaviour, file, original, mutant, test)
 MUTANTS = [
-    ("changed_before_failed", "the tests that failed last time start first", "tools/test_order.py",
+    ("changed_before_failed", "the tests that failed last time start first", "tools/run_order.py",
      "    return ([unit for unit in units if unit in failed]\n"
      "            + [unit for unit in units if unit in changed and unit not in failed]",
      "    return ([unit for unit in units if unit in changed and unit not in failed]\n"
      "            + [unit for unit in units if unit in failed]",
      f"{ORDER}::test_the_last_failed_then_the_changed_then_the_rest"),
-    ("passed_units_stay_failed", "a unit that runs to the end leaves the last failures", "tools/test_order.py",
+    ("passed_units_stay_failed", "a unit that runs to the end leaves the last failures", "tools/run_order.py",
      "    state = {unit: list(ids) for unit, ids in previous.items() if unit not in set(completed)}",
      "    state = {unit: list(ids) for unit, ids in previous.items()}",
      f"{ORDER}::test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end"),

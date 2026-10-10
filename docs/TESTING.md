@@ -62,7 +62,7 @@ How the native builds are reused is set by `VE_NATIVE_PREBUILT`:
 
 ## Order, early stop and the quarantine
 
-`tools/select_tests.py --run` starts the test files that failed last time first, then the test files the change edits, then the rest in name order (`tools/test_order.py`; the run prints its order). The order never changes which files run. The last failures are this worktree's: the failed tests of its last selected run, kept in the worktree's git directory (`ve-last-failed.json`), and those of `gate-result.json` when the gate ran after that run. A file leaves the list when it runs to the end without a failure.
+`tools/select_tests.py --run` starts the test files that failed last time first, then the test files the change edits, then the rest in name order (`tools/run_order.py`; the run prints its order). The order never changes which files run. The last failures are this worktree's: the failed tests of its last selected run, kept in the worktree's git directory (`ve-last-failed.json`), and those of `gate-result.json` when the gate ran after that run. A file leaves the list when it runs to the end without a failure.
 
 `--run` stops after `--maxfail` failed tests (default 5; `--maxfail 0` runs everything). A recorded run then starts no more files and kills the running ones; it says `STOPPED EARLY`, lists the files that did not run, exits 1, and leaves those files to the static graph in the map it saves. Each file's pytest also gets `--maxfail`.
 
@@ -74,7 +74,7 @@ The gate never stops early: `tools/gate_pytest.py` refuses `--maxfail`, `-x` and
 - In `select_tests.py --run`, its failure is reported as `QUARANTINED` and counts towards neither `--maxfail` nor the exit status.
 - The nightly uses `tools/gate.py --no-quarantine`, which retries nothing, so every failure blocks it.
 
-An expired entry no longer applies, so the test blocks again. A malformed file fails the gate. `tests/test_gate_quarantine.py` checks the file and the gate's handling; `tests/test_test_order.py` checks the order and the early stop.
+An expired entry no longer applies, so the test blocks again. A malformed file fails the gate. `tests/test_gate_quarantine.py` checks the file and the gate's handling; `tests/test_run_order.py` checks the order and the early stop.
 
 ## Speed is not a correctness criterion
 
@@ -305,7 +305,7 @@ Totals over 50 commits ending at `f4142cb9d4`: before 9358, after (nightly map) 
 | `f43864c0` | `ve/environment.py:Environment._decode` | swap And | 174/209 | `tests/test_assist_recovery_replay.py` | yes | - |
 | `19061bfa` | `ve/environment.py:Environment._decode` | negate if | 174/209 | `tests/test_assist_recovery_replay.py` | yes | - |
 | `448b0e80` | `ve/definitions.py:_mentions` | return None | 31/209 | `tests/test_bluedot_grant.py::test_would_keeps_its_conditional_force` | yes | - |
-| `a4235ab3` | `ve/environment.py:Environment._decode` | negate if | 174/209 | `tests/test_order.py` | yes | - |
+| `a4235ab3` | `ve/environment.py:Environment._decode` | negate if | 174/209 | `tests/run_order.py` | yes | - |
 | `cd085076` | `ve/rights.py:_duplicate` | negate if | 16/209 | `tests/test_compose_integration.py::test_gamma_document_admission_and_end_to_end` | yes | - |
 | `73e3c453` | `ve/environment.py:Environment._decode` | swap In | 174/209 | `tests/test_assist_recovery_replay.py` | yes | - |
 | `6d9f7012` | `ve/backends/validation.py:environment_in_scope` | negate if | 12/209 | `tests/test_stage2_validation.py::test_statement_layers_and_rust_keep_the_python_decoder` | yes | - |

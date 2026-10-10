@@ -7,10 +7,10 @@
   "tools/quarantine.py",
   "tools/select_tests.py",
   "tools/test_map.py",
-  "tools/test_order.py"
+  "tools/run_order.py"
  ],
  "product_lean": [],
  "product_rust": [],
  "data": ["tools/test-quarantine.json", "tools/gate-collection.json"],
- "tests": ["tests/test_gate_quarantine.py", "tests/test_test_order.py", "tests/test_test_speed_b5_evidence.py"]
+ "tests": ["tests/test_gate_quarantine.py", "tests/test_run_order.py", "tests/test_test_speed_b5_evidence.py"]
 }
