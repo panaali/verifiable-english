@@ -136,3 +136,13 @@ Verification (AGENT): `lake build` passes. `python3 lean/audit.py` passes with 4
 - The second is `test_difffuzz.py::test_ci_run`, which took 336 CPU seconds against a 300-second budget under suite load. It passes alone.
 
 **HUMAN / EXTERNAL:** the R8 and R9 sentences are new W7 wordings and need DRI sign-off (spec 2.1). The trust map still reports growth against its older signed baseline, now including this round's lines. Not run: a new A/B recording and the saved gate evidence for this round.
+
+## Recheck fix round (`rd-4b-looprecheck1.final.md`)
+
+| Finding | Class removed | Fix | Regression tests |
+|---|---|---|---|
+| B2: a companion case could carry a unit its set does not cite (`u0` in `rs_a`, stored as `['u0', 'u_a']`) | the relay binds the split's rows to the request only in part: it checks that they exist and come from the request, not where they belong or in which form | `_projection` gives each case's document as Lean's split makes it (`mainDoc`, `componentDoc`). `_bind_part` requires the answer to match it member for member and row for row. The multiset copy checks are gone, because the projection covers them | `test_a_companion_case_holding_an_uncited_unit_is_refused` (the finding's probe, with `u0` in each form a split gives a unit); `test_every_graft_of_a_request_row_into_a_case_is_refused` over F-C1, F-C11 and F-C17: every unit, set, narrowing and coupling of the request is inserted into every case, each case's units are swapped to other forms, and its lists are reversed; `test_a_cited_unit_is_carried_by_id_alone` |
+
+The graft fuzz found a second hole of the same class on the old code: the main case could carry a unit by id alone, without its `kind`. The old binding let 4 of the 5 new tests pass mutants through. With `_projection`'s check replaced by `_need(True)`, the same 4 tests fail. Lean's split was already right: `CompanionsExamples.lean` guards `rs_a`'s units as `["u0", "u_a"]`, with `u0` by id. No Lean or theorem statement changed.
+
+Also fixed: `ve.readings_components` had no layer in `tools/layer_policy.py`, so `tools/check_python_layers.py` refused the graph. It is now in layer 4 (`.importlinter` regenerated, `docs/ARCHITECTURE-LAYERS.md`).
