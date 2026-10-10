@@ -49,7 +49,10 @@ def specs(folder, commit=COMMIT):
     for name in SPEC_MODULES:
         (folder / f"{name}.py").write_bytes(git_show(commit, f"{RUN}/{name}.py"))
     sys.path.insert(0, str(folder))
-    nd, u, rs, r2, r3, r4 = (importlib.import_module(n) for n in SPEC_MODULES[1:])
+    try:
+        nd, u, rs, r2, r3, r4 = [importlib.import_module(n) for n in SPEC_MODULES[1:]]
+    finally:
+        sys.path.remove(str(folder))
     out = {}
     for uid, per in nd.SPECS.items():
         for cid, spec in per.items():
