@@ -126,8 +126,10 @@ The selector works at the level of functions, not layers:
   that ran those executables; plus `lake build`,
   `lean/audit.py` and the Lean import check.
 * **Assurance manifest.** The recorder records each operation read through
-  `ve.assurance`, and a whole-manifest read separately. Editing one operation
-  selects those readers and `test_assurance_manifest`; editing shared metadata
+  `ve.assurance`, its import-time presence checks, and a whole-manifest read
+  separately. Editing an existing operation selects its entry readers and
+  `test_assurance_manifest`; adding or removing one also selects its presence
+  readers. Editing shared metadata
   selects the complete suite. A missing map also selects the complete suite.
 * **Rust.** The tests that ran a Rust binary, `cargo test`, and the release
   and debug builds.
