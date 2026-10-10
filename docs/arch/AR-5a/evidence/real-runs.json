@@ -1,0 +1,45 @@
+{
+ "ab": {
+  "command": "lean_first_diff.py record --root . --corpus conformance (one recording, copied as head); python -m tools.evidence ab base.jsonl head.jsonl --corpus conformance",
+  "head_commit": "7d4dfd1f2a1f5fd2a9a37a1fceec462cccba78e6",
+  "recordings": {
+   "base": "d3e380b59dbdc1cddbd20637803fa7b320bd9562f91f7e55f658ebac45eccafc",
+   "head": "d3e380b59dbdc1cddbd20637803fa7b320bd9562f91f7e55f658ebac45eccafc"
+  },
+  "records": {
+   "conformance/lean": 19806,
+   "conformance/python": 19806
+  },
+  "totals": {
+   "same": 39612
+  },
+  "unavailable_both": {},
+  "unlisted": 0
+ },
+ "fuzz_ab": {
+  "baseline_entries": 254,
+  "command": "tools/difffuzz.py --ci --report R; fuzz_ab.compare(R, R) and with two replay verdicts swapped",
+  "identical": {
+   "compared": 26422,
+   "explained": 0,
+   "unexplained": 0
+  },
+  "report_sha256": "7b6bdae72a5fd70063b27d62a12b7ab9f1377bfb94a1cc3d00de5e005e9fbbeb",
+  "seed": 20261004,
+  "swapped": {
+   "compared": 26422,
+   "unexplained": [
+    [
+     "environment-097a9092a8b9731d",
+     "fixed",
+     "reproduces"
+    ],
+    [
+     "environment-0a124c02f6507157",
+     "reproduces",
+     "fixed"
+    ]
+   ]
+  }
+ }
+}

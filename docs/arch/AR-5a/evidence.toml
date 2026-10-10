@@ -1,0 +1,29 @@
+# AR-5a, the evidence toolkit, described by its own toolkit (the first user).
+# Checked with: uv run python tools/batch_evidence.py --check docs/arch/AR-5a --report-commit HEAD
+# No [ab], [latency] or [fuzz_ab]: the batch changes no file under ve/ or lean/ (the check enforces that from
+# the saved scope) and no product path, so there is no corpus, latency or fuzzer difference to measure.
+batch = "AR-5a"
+
+[scope]
+file = "scope.json"
+
+[gate]
+file = "gate.json"
+
+[mutants]
+file = "mutants.json"
+min = 3
+
+[report]
+file = "REPORT.md"
+marker = "AR-5A NUMBERS"
+lines = [
+  "- Scope: `{scope.base|short}..{scope.head|short} --no-merges`, {scope.commits|len} commits: {scope.commits|map:hash|short|code|join:, }.",
+  "- Shared modules: {measure.shared_module_lines_total} lines (`tools/evidence/`: `__init__` {measure.shared_module_lines.evidence___init__}, `__main__` {measure.shared_module_lines.evidence___main__}, `latency` {measure.shared_module_lines.evidence_latency}, `ab` {measure.shared_module_lines.evidence_ab}, `fuzz_ab` {measure.shared_module_lines.evidence_fuzz_ab}, `report` {measure.shared_module_lines.evidence_report}, `config` {measure.shared_module_lines.evidence_config}; `tools/batch_evidence.py` {measure.shared_module_lines.batch_evidence}).",
+  "- Per-batch evidence scripts and report tests on `main` (`{measure.main|short}`) of the kinds a new batch no longer writes: {measure.per_batch_scripts_on_main_total} ({measure.per_batch_scripts_on_main_count.tools_mutants} `tools/*_mutants.py`, {measure.per_batch_scripts_on_main_count.docs_latency} `docs/<track>/<batch>/*latency*.py`, {measure.per_batch_scripts_on_main_count.evidence_tests} `tests/test_*_evidence.py`, {measure.per_batch_scripts_on_main_count.report_tests} `tests/test_*_report.py`); copies under `docs/` by name: {measure.copied_docs_scripts_on_main_total} (latency {measure.copied_docs_scripts_on_main.latency}, report {measure.copied_docs_scripts_on_main.report}, difffuzz_ab {measure.copied_docs_scripts_on_main.difffuzz_ab}, mutants {measure.copied_docs_scripts_on_main.mutants}, fuzzer_gate {measure.copied_docs_scripts_on_main.fuzzer_gate}).",
+  "- Fixtures: {fixtures.fail} known-answer fixtures FAIL as required, {fixtures.controls_pass} complete controls PASS: {fixtures.summary|join:; }.",
+  "- Real-format runs: `ab` over {real-runs.ab.totals.same} conformance records ({real-runs.ab.unlisted} unlisted); `fuzz_ab` over a real `difffuzz --ci` report: {real-runs.fuzz_ab.identical.compared} inputs, {real-runs.fuzz_ab.identical.unexplained} differences when equal, {real-runs.fuzz_ab.swapped.unexplained|len} unexplained after swapping two replay verdicts.",
+  "- b16c re-check: {b16c-recheck.errors|len} error(s), each the open item its saved report names: {b16c-recheck.errors|join:; }.",
+  "- Seeded mutants (tools/mutants.py): {mutants|killed}/{mutants.mutants|len} killed.",
+  "- Clean gate at `{gate.commit_sha|short}`: {gate.status}; {gate.counts.passed} passed, {gate.counts.skipped} skipped, {gate.counts.failed} failed; {gate.counts.rust_passed} Rust tests passed.",
+]
