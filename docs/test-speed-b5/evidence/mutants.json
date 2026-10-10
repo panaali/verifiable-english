@@ -3,16 +3,16 @@
   {
    "id": "changed_before_failed",
    "behaviour": "the tests that failed last time start first",
-   "file": "tools/test_order.py",
-   "test": "tests/test_test_order.py::test_the_last_failed_then_the_changed_then_the_rest",
+   "file": "tools/run_order.py",
+   "test": "tests/test_run_order.py::test_the_last_failed_then_the_changed_then_the_rest",
    "exit": 1,
    "caught": true
   },
   {
    "id": "passed_units_stay_failed",
    "behaviour": "a unit that runs to the end leaves the last failures",
-   "file": "tools/test_order.py",
-   "test": "tests/test_test_order.py::test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end",
+   "file": "tools/run_order.py",
+   "test": "tests/test_run_order.py::test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end",
    "exit": 1,
    "caught": true
   },
@@ -20,7 +20,7 @@
    "id": "recorded_run_never_stops",
    "behaviour": "a recorded run stops after --maxfail failed tests",
    "file": "tools/test_map.py",
-   "test": "tests/test_test_order.py::test_a_recorded_run_stops_after_maxfail_failures",
+   "test": "tests/test_run_order.py::test_a_recorded_run_stops_after_maxfail_failures",
    "exit": 1,
    "caught": true
   },
@@ -28,7 +28,7 @@
    "id": "plain_run_ignores_maxfail",
    "behaviour": "a one-process run stops after --maxfail failed tests",
    "file": "tools/select_tests.py",
-   "test": "tests/test_test_order.py::test_a_plain_run_stops_after_maxfail_and_keeps_what_it_did_not_run",
+   "test": "tests/test_run_order.py::test_a_plain_run_stops_after_maxfail_and_keeps_what_it_did_not_run",
    "exit": 1,
    "caught": true
   },
@@ -36,7 +36,7 @@
    "id": "plain_run_counts_quarantined",
    "behaviour": "a quarantined failure does not fail an agent's run",
    "file": "tools/select_tests.py",
-   "test": "tests/test_test_order.py::test_a_plain_run_whose_only_failures_are_quarantined_passes",
+   "test": "tests/test_run_order.py::test_a_plain_run_whose_only_failures_are_quarantined_passes",
    "exit": 1,
    "caught": true
   },
@@ -87,11 +87,11 @@
   "tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry": 0,
   "tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early": 0,
   "tests/test_gate_quarantine.py::test_the_nightly_retries_nothing": 0,
-  "tests/test_test_order.py::test_a_plain_run_stops_after_maxfail_and_keeps_what_it_did_not_run": 0,
-  "tests/test_test_order.py::test_a_plain_run_whose_only_failures_are_quarantined_passes": 0,
-  "tests/test_test_order.py::test_a_recorded_run_stops_after_maxfail_failures": 0,
-  "tests/test_test_order.py::test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end": 0,
-  "tests/test_test_order.py::test_the_last_failed_then_the_changed_then_the_rest": 0
+  "tests/test_run_order.py::test_a_plain_run_stops_after_maxfail_and_keeps_what_it_did_not_run": 0,
+  "tests/test_run_order.py::test_a_plain_run_whose_only_failures_are_quarantined_passes": 0,
+  "tests/test_run_order.py::test_a_recorded_run_stops_after_maxfail_failures": 0,
+  "tests/test_run_order.py::test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end": 0,
+  "tests/test_run_order.py::test_the_last_failed_then_the_changed_then_the_rest": 0
  },
  "language": "Python"
 }
