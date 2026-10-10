@@ -97,7 +97,7 @@ generator inventory that answers `--owner`.
 - `python3 lean/audit.py` audits every Lean source and theorem against the allowed axioms.
 - `uv run python tools/select_tests.py --base $(git merge-base HEAD main) --run` runs the tests a branch
   can affect. Use it while iterating.
-- `python3 tools/gate.py` is the full release gate. It writes `gate-result.json`.
+- `python3 tools/gate.py` is the full release gate. It writes its result to gate-result.json in the checkout.
 - `python3 tools/rust_build.py` builds the reproducible Rust release binary.
 
 ## Testing rules that recur in reviews

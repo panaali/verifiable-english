@@ -1,0 +1,84 @@
+{
+  "item": "devtime-1",
+  "runner": "docs/devtime/devtime-1/seed_bugs.py",
+  "mutants": [
+    {
+      "id": "a-skip-last-mode",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "routes lists every MODES entry exactly once",
+      "old": "    routes = []\n    for mode in MODES:\n",
+      "new": "    routes = []\n    for mode in MODES[:-1]:\n",
+      "test": "tests/test_repo_map.py::test_routes_lists_every_mode_exactly_once",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 6.81s"
+      }
+    },
+    {
+      "id": "b-agents-names-a-missing-path",
+      "language": "markdown",
+      "file": "AGENTS.md",
+      "behaviour": "every path AGENTS.md names exists",
+      "old": "5. **Python relay.** `ve/discourse.py` sends",
+      "new": "5. **Python relay.** `ve/discourse_relay.py` sends",
+      "test": "tests/test_repo_map.py::test_every_path_named_in_agents_md_exists",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 0.44s"
+      }
+    },
+    {
+      "id": "c-check-ignores-a-missing-schema",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "--check fails when a mode has no schema file",
+      "old": "for mode in MODES if f\"{mode}.json\" not in present]",
+      "new": "for mode in MODES if False]",
+      "test": "tests/test_repo_map.py::test_check_fails_on_a_scratch_copy_with_a_schema_file_removed_or_added",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 1.04s"
+      }
+    },
+    {
+      "id": "d-lean-keeps-the-dispatch-module",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "the Lean column names the implementing module, not the dispatch's own module",
+      "old": "                        if module != home]",
+      "new": "                        if module != home or True]",
+      "test": "tests/test_repo_map.py::test_known_routes_print_their_lean_module_and_relay",
+      "observed": {
+        "exit": 1,
+        "summary": "3 failed in 7.31s"
+      }
+    },
+    {
+      "id": "e-relay-ignores-module-constants",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "a relay that names its mode through a module constant is found",
+      "old": "constants.get(v.id) if isinstance(v, ast.Name)",
+      "new": "None if isinstance(v, ast.Name)",
+      "test": "tests/test_repo_map.py::test_known_routes_print_their_lean_module_and_relay",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed, 2 passed in 5.70s"
+      }
+    },
+    {
+      "id": "f-map-tests-by-file-not-function",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "with a coverage map, the tests are those that ran a function holding a relay call",
+      "old": "            indices.update(data[\"functions\"].get(path, {}).get(qualname, ()))",
+      "new": "            indices.update(i for found in data[\"functions\"].get(path, {}).values() for i in found)",
+      "test": "tests/test_repo_map.py::test_tests_come_from_the_coverage_map_when_one_is_given",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 5.96s"
+      }
+    }
+  ]
+}
