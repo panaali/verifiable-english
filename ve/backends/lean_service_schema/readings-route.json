@@ -183,6 +183,7 @@
           "properties": {
             "assumed": {"$ref": "#/$defs/choice"},
             "choice": {"$ref": "#/$defs/choice"},
+            "gaps": {"$ref": "#/$defs/gaps"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "status": {"const": "ok"},
             "target": {"type": "string", "x-equals": "/witness/target"},
@@ -918,7 +919,7 @@
       "$comment": "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last.",
       "additionalProperties": false,
       "properties": {
-        "environment": {"$comment": "the filled environment"},
+        "environment": {"$ref": "#/$defs/filled_environment"},
         "units": {
           "items": {
             "additionalProperties": false,
@@ -1006,6 +1007,68 @@
       "required": ["environment", "units"],
       "type": "object"
     },
+    "filled_environment": {
+      "$comment": "NormDefaults.Wire.withUnsaid of NormDefaults.Wire.placeholderJson of the request's lower environment.",
+      "additionalProperties": false,
+      "properties": {
+        "language": {"type": "string", "x-equals": "/environment/language"},
+        "profiles": {"$ref": "common.json#/$defs/strings"},
+        "spec_revision": {"type": "string", "x-equals": "/environment/spec_revision"},
+        "vocabulary": {
+          "additionalProperties": false,
+          "properties": {
+            "constants": {"type": "object", "x-equals": "/environment/vocabulary/constants"},
+            "predicates": {"additionalProperties": {"$ref": "#/$defs/filled_predicate"}, "type": "object"},
+            "sorts": {"type": "object", "x-equals": "/environment/vocabulary/sorts"}
+          },
+          "required": ["sorts", "predicates", "constants"],
+          "type": "object"
+        }
+      },
+      "required": ["language", "profiles", "spec_revision", "vocabulary"],
+      "type": "object"
+    },
+    "filled_predicate": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {"$ref": "common.json#/$defs/strings"},
+        "defined": {
+          "additionalProperties": false,
+          "properties": {
+            "arguments": {"$ref": "common.json#/$defs/strings"},
+            "body": {"$ref": "common.json#/$defs/fol_formula"}
+          },
+          "required": ["arguments", "body"],
+          "type": "object"
+        },
+        "description": {"type": "string"},
+        "negative_verbalisation": {"type": "string"},
+        "regulated": {
+          "additionalProperties": false,
+          "properties": {
+            "act": {"type": "string"},
+            "default": {"enum": ["allow", "deny"]},
+            "permission": {"type": ["string", "null"]},
+            "role": {"enum": ["permission", "obligation", "plain"]}
+          },
+          "required": ["role", "default"],
+          "type": "object"
+        },
+        "verbalisation": {"type": "string"}
+      },
+      "required": ["arguments", "description"],
+      "type": "object"
+    },
+    "gaps": {
+      "$comment": "Readings.Wire.gapsJson: the filled gaps a shown result depends on (readings-defaults 2.2), each the regulated predicate, the tuple's ids and the filling's answer.",
+      "items": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/strings"}, {"type": "boolean"}],
+        "type": "array"
+      },
+      "type": "array"
+    },
     "key": {
       "$comment": "Readings.Wire key JSON: one generated key.",
       "anyOf": [
@@ -1068,13 +1131,14 @@
       "readings-verdicts": {"properties": {"kind": {"const": "readings-verdicts"}}, "required": ["kind"], "type": "object"}
     },
     "model": {
-      "$comment": "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes.",
+      "$comment": "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes; under the unspecified completion (Readings.Run.runModelND) also the filled gaps the conclusion's value (with none, the assertions' and premises') reads.",
       "additionalProperties": false,
       "properties": {
         "assumed": {"$ref": "#/$defs/choice"},
         "choice": {"$ref": "#/$defs/choice"},
         "conclusion_value": {"type": "boolean"},
         "first_failing": {"type": ["string", "null"]},
+        "gaps": {"$ref": "#/$defs/gaps"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "status": {"const": "ok"},
         "valid": {"type": "boolean"}
@@ -1674,7 +1738,7 @@
       "additionalProperties": false,
       "properties": {
         "frame": {"type": "string"},
-        "gaps": {"type": "array"},
+        "gaps": {"$ref": "#/$defs/gaps"},
         "label": {"type": ["string", "null"]},
         "model": {"type": ["string", "null"]},
         "readings": {"$ref": "#/$defs/choice"},
@@ -2060,7 +2124,7 @@
         "conflict": {"$ref": "#/$defs/verdicts_word"},
         "errors": {"additionalProperties": {"type": "string"}, "type": "object"},
         "evidence": {"additionalProperties": {"type": "boolean"}, "type": "object"},
-        "gaps": {"additionalProperties": {"type": "array"}, "type": "object"},
+        "gaps": {"additionalProperties": {"$ref": "#/$defs/gaps"}, "type": "object"},
         "premises": {"$ref": "#/$defs/verdicts_word"},
         "query": {"$ref": "#/$defs/verdicts_word"},
         "shown": {

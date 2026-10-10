@@ -160,12 +160,49 @@ def names : Shape := n [arr, .items (n [obj, .required ["set", "version", "candi
         ("names", n [arr, .items (ref "common.json#/$defs/string_pair")])]])])]])]
 
 
+/-- A predicate entry of the filled environment: the request's entry as the norms environment decoder admits it
+    (`Route.Wire.decodeVocabulary`, `Norms.Wire.decodeRegulated`), its default `deny` where the request said
+    `unspecified`, or an `unsaid__p` entry `NormDefaults.Wire.withUnsaid` adds (arguments and description). -/
+def filledPredicate : Shape :=
+  n [obj, .required ["arguments", "description"],
+    closed [
+      ("arguments", ref "common.json#/$defs/strings"),
+      ("description", str),
+      ("verbalisation", str),
+      ("negative_verbalisation", str),
+      ("defined", n [obj, .required ["arguments", "body"],
+        closed [("arguments", ref "common.json#/$defs/strings"), ("body", ref "common.json#/$defs/fol_formula")]]),
+      ("regulated", n [obj, .required ["role", "default"],
+        closed [("role", enumS ["permission", "obligation", "plain"]), ("default", enumS ["allow", "deny"]),
+          ("act", str), ("permission", .type ["string", "null"])]])]]
+
+/-- The filled environment (review B4 of rd-6b): the request's lower environment with each `unspecified` read as
+    `deny`, `norm-defaults@0` removed and every `unsaid__p` added. Its envelope is `Route.Gate.decodeEnvelope`'s four
+    fields, its sorts and constants the request's own, every predicate entry typed; the client binds the profiles
+    and the predicate names and sorts to the request (ve/readings_route.py `_bind_completion`). -/
+def filledEnvironment : Shape :=
+  copied "UnspecifiedWire.filledJson: placeholderJson and withUnsaid of the request's environment" <| c
+    "NormDefaults.Wire.withUnsaid of NormDefaults.Wire.placeholderJson of the request's lower environment." [
+      obj,
+      .required ["language", "profiles", "spec_revision", "vocabulary"],
+      closed [
+        ("language", n [str, .equals "/environment/language"]),
+        ("profiles", ref "common.json#/$defs/strings"),
+        ("spec_revision", n [str, .equals "/environment/spec_revision"]),
+        ("vocabulary", n [
+          obj,
+          .required ["sorts", "predicates", "constants"],
+          closed [
+            ("sorts", n [obj, .equals "/environment/vocabulary/sorts"]),
+            ("constants", n [obj, .equals "/environment/vocabulary/constants"]),
+            ("predicates", n [obj, .object [] (some (ref "#/$defs/filled_predicate"))])]])]]
+
 def filled : Shape :=
   c "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last." [
     obj,
     .required ["environment", "units"],
     closed [
-      ("environment", c "the filled environment" []),
+      ("environment", ref "#/$defs/filled_environment"),
       ("units", units)]]
 
 def separate : Shape :=
@@ -281,6 +318,12 @@ def elaborate : Shape :=
         elaborateRoute ["superposed"] (("generated_predicates", generatedPredicates) ::
           (elaborateChoices ++ elaborateSuperposed ++ fillField ++ filledFields))]]
 
+def gaps : Shape :=
+  c "Readings.Wire.gapsJson: the filled gaps a shown result depends on (readings-defaults 2.2), each the regulated predicate, the tuple's ids and the filling's answer." [
+    arr,
+    .items (n [arr, .minItems 3, .maxItems 3,
+      .prefixItems [str, ref "common.json#/$defs/strings", .type ["boolean"]]])]
+
 def conflict : Shape :=
   c
     "Readings.Run.runConflict: a witness's verdict on its target with the choice its model encodes, or the conflict status the certificates show under the assumed choice."
@@ -295,7 +338,8 @@ def conflict : Shape :=
             ("verdict", enumS ["CONFLICT", "UNKNOWN"]),
             ("target", n [str, .equals "/witness/target"]),
             ("assumed", ref "#/$defs/choice"),
-            ("choice", ref "#/$defs/choice")]],
+            ("choice", ref "#/$defs/choice"),
+            ("gaps", ref "#/$defs/gaps")]],
         n [
           obj,
           .required ["id", "status", "verdict", "assumed", "targets", "reading_premises"],
@@ -321,7 +365,7 @@ def certificate : Shape :=
       ("reading_premises", ref "common.json#/$defs/strings")]]
 
 def model : Shape :=
-  c "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes." [
+  c "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes; under the unspecified completion (Readings.Run.runModelND) also the filled gaps the conclusion's value (with none, the assertions' and premises') reads." [
     obj,
     .required ["id", "status", "valid", "conclusion_value", "first_failing", "assumed", "choice"],
     closed [
@@ -331,7 +375,8 @@ def model : Shape :=
       ("conclusion_value", .type ["boolean"]),
       ("first_failing", .type ["string", "null"]),
       ("assumed", ref "#/$defs/choice"),
-      ("choice", ref "#/$defs/choice")]]
+      ("choice", ref "#/$defs/choice"),
+      ("gaps", ref "#/$defs/gaps")]]
 
 def dead : Shape :=
   c "Readings.Run.runDead: whether the certificate shows the reading dead (or the readings unsatisfiable), and the finding." [
@@ -505,7 +550,7 @@ def verdicts_row : Shape :=
       ("evidence", n [obj, .object [] (some (.type ["boolean"]))]),
       ("errors", n [obj, .object [] (some str)]),
       ("shown", n [obj, .object [] (some shownModel)]),
-      ("gaps", n [obj, .object [] (some arr)]),
+      ("gaps", n [obj, .object [] (some (ref "#/$defs/gaps"))]),
       ("status_text", .type ["string", "null"])]]
 
 def verdicts_line : Shape :=
@@ -517,7 +562,7 @@ def verdicts_line : Shape :=
       ("result", .type ["string", "null"]),
       ("readings", ref "#/$defs/choice"),
       ("model", .type ["string", "null"]),
-      ("gaps", arr),
+      ("gaps", ref "#/$defs/gaps"),
       ("label", .type ["string", "null"])]]
 
 def verdicts_dead : Shape :=
@@ -640,12 +685,15 @@ def file : File where
     ("unit", .schema unit),
     ("units", .schema units),
     ("names", .schema names),
+    ("filled_predicate", .schema filledPredicate),
+    ("filled_environment", .schema filledEnvironment),
     ("filled", .schema filled),
     ("separate", .schema separate),
     ("choice", .schema choice),
     ("elaborate", .schema elaborate),
     ("validate_components", .schema (components "#/$defs/validate" "Readings.Run.validateOne")),
     ("elaborate_components", .schema (components "#/$defs/elaborate" "Readings.Run.elaborateOne")),
+    ("gaps", .schema gaps),
     ("conflict", .schema conflict),
     ("certificate", .schema certificate),
     ("model", .schema model),
