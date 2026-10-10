@@ -687,9 +687,10 @@ theorem productResult_query_fits (runs : List PartRun) (k : Nat) :
   (repeat' split) <;> fits
   all_goals (try (apply othersReasonWord_fits; assumption))
 
-theorem productAnswer_fits (id question : String) (runs : List PartRun) (k : Nat) (sentence : Option String)
-    (hq : verdictsQuestions.contains question) :
-    Fits req (skel% "readings-route.json#/$defs/verdicts_components") (productAnswer id question runs k sentence) := by
+theorem productAnswer_fits (id question : String) (document : Json) (runs : List PartRun) (k : Nat)
+    (sentence : Option String) (hq : verdictsQuestions.contains question) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_components")
+      (productAnswer id question document runs k sentence) := by
   simp only [verdictsQuestions, List.contains_cons, List.contains_nil, Bool.or_false, Bool.or_eq_true, beq_iff_eq] at hq
   rcases hq with rfl | rfl | rfl
   all_goals

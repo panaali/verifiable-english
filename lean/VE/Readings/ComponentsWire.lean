@@ -526,6 +526,11 @@ def productPlan (question : String) (runs : List PartRun) (k : Nat) : List (Opti
     | none => []
   else (none, e32Line) :: runs.flatMap partEntries
 
+/-- The units of `us` in the document's order (its `units`, by id): the order every list of the document's units
+    takes on the wire. -/
+def documentOrder (document : Json) (us : List String) : List String :=
+  ((VE.Readings.Wire.arr document "units").map (fun x => VE.Readings.Wire.strOf (x.getObjValD "id"))).filter us.contains
+
 /-- The decided units of every case asked over all of its compatible choices. -/
 def productDecided (runs : List PartRun) : List String :=
   runs.flatMap (fun r =>
@@ -534,13 +539,14 @@ def productDecided (runs : List PartRun) : List String :=
       partDecided r.part.f.r.N.D r.infos (dead.getD [])
     else [])
 
-def productAnswer (id question : String) (runs : List PartRun) (k : Nat) (sentence : Option String) : Json :=
+def productAnswer (id question : String) (document : Json) (runs : List PartRun) (k : Nat) (sentence : Option String) :
+    Json :=
   okWith id [("route", .str "components"), ("question", .str question),
     ("component", if question == "query" then .str (((runs[k]?).map (·.part.name)).getD "") else .null),
     ("sentence", match sentence with | some u => .str u | none => .null),
     ("components", Json.arr (runs.map componentJson).toArray),
     ("result", productResult question runs k),
-    ("decided_units", toJson (productDecided runs)),
+    ("decided_units", toJson (documentOrder document (productDecided runs))),
     ("english", Json.arr ((productPlan question runs k).map entryJsonP).toArray)]
 
 /-! ## The run -/
@@ -610,6 +616,6 @@ def runProduct (j : Json) (id : String) (cases : List (String × Json × Json)) 
     | none => throw noFitText
   let runs ← runParts id question j parts k A
   let _ ← productReplay runs (if question == "query" then some k else none)
-  pure (productAnswer id question runs k (if question == "query" then sentenceOf j else none))
+  pure (productAnswer id question document runs k (if question == "query" then sentenceOf j else none))
 
 end VE.Readings.Run
