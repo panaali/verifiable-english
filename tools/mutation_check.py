@@ -17,6 +17,7 @@ import subprocess
 import sys
 import time
 
+from mutants import applied
 import nested_pytest
 from select_tests import ROOT, TESTS, select
 
@@ -123,8 +124,7 @@ def main() -> int:
                           - set(plan["selected"]))
         print(f"layer {layer} {relative}: {len(plan['selected'])}/{plan['full_count']} files",
               flush=True)
-        try:
-            path.write_text(original.replace(anchor, replacement, 1))
+        with applied(path, anchor, replacement):
             witness_log = logs / f"layer{layer}-witness.log"
             witness_code, witness_fail, witness_seconds = pytest_run([witness], witness_log)
             excluded_chunks = []
@@ -139,8 +139,6 @@ def main() -> int:
                       f"{len(group)} files, exit {code}", flush=True)
                 if code:
                     break
-        finally:
-            path.write_text(original)
         excluded_code = max((item["exit"] for item in excluded_chunks), default=0)
         excluded_fail = {failure for item in excluded_chunks for failure in item["failures"]}
         excluded_seconds = round(sum(item["seconds"] for item in excluded_chunks), 1)

@@ -1,6 +1,9 @@
 """Hash test for the reviewed trusted Lean source inventory.
 
 Usage (from lean/): python3 VE/Route/frozen.py        exits 0 iff unchanged.
+                    python3 VE/Route/frozen.py --write rehashes every `VE/**/*.lean` module into
+                    the inventory (after a reviewed edit or a merge of reviewed branches;
+                    tools/regen_generated.py runs it); `Main.lean` is still only checked.
 `frozen-sources.sha256` lists every reviewed `VE/*.lean` module,
 including the audit manifest, service protocol and generated English runner
 copy. New modules must be added to the manifest before this check passes.
@@ -17,7 +20,17 @@ ROUTE_LINES = ("import VE.Route.Run\n",
                '  if let "route" :: rest := args then return ← VE.Route.Run.main rest\n')
 
 
-def main():
+def inventory_text():
+    """The inventory of the tree as it is: one `<sha256>  <path>` line per `VE/**/*.lean`, by path."""
+    names = sorted(str(path.relative_to(ROOT)) for path in (ROOT / "VE").rglob("*.lean"))
+    return "".join(f"{hashlib.sha256((ROOT / name).read_bytes()).hexdigest()}  {name}\n" for name in names)
+
+
+def main(argv=()):
+    if list(argv) == ["--write"]:
+        (HERE / "frozen-sources.sha256").write_text(inventory_text())
+    elif list(argv):
+        raise SystemExit("usage: python3 VE/Route/frozen.py [--write]")
     bad = []
     recorded = set()
     for line in (HERE / "frozen-sources.sha256").read_text().splitlines():
@@ -46,4 +59,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))

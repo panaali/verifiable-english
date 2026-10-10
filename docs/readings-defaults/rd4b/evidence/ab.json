@@ -1,0 +1,115 @@
+{
+  "range": "main..HEAD --no-merges",
+  "base_commit": "0d93e591d3963b65d1ad909a508b9d928322a014",
+  "head_commit": "5f186a23ac43cf79be78f77fe4a58265c148cc5a",
+  "recordings": {
+    "rows": 60073,
+    "corpora": {
+      "conformance/lean": 19806,
+      "conformance/python": 19806,
+      "pilots/default": 454,
+      "probe/lean": 9435,
+      "probe/python": 9435,
+      "readings/default": 1137
+    },
+    "sha256": {
+      "base": "104337d905af8f686b94b884db749b1c4e60ffdceea37df367495a66486c6aaa",
+      "head": "5dc5e0cfb6f925f11153e5ce7c200ea5128cb2213c22c6adab320255abdc8035",
+      "base_normalized": "4809a12c30abe078f983a987f84ca1f2b69b3d2d85595f99497b793e378ecedc",
+      "head_normalized": "4809a12c30abe078f983a987f84ca1f2b69b3d2d85595f99497b793e378ecedc"
+    }
+  },
+  "raw": {
+    "totals": {
+      "same": 60066,
+      "wording": 7
+    },
+    "unlisted": 7,
+    "differences": [
+      {
+        "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/a_front_matter_default.ve.md",
+        "class": "wording",
+        "base_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-base-pilots-final.pilots/pack.json'"
+        ],
+        "head_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-head-final.pilots/pack.json'"
+        ]
+      },
+      {
+        "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/b_no_choice_made.ve.md",
+        "class": "wording",
+        "base_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-base-pilots-final.pilots/pack.json'"
+        ],
+        "head_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-head-final.pilots/pack.json'"
+        ]
+      },
+      {
+        "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/c_written_definition_line.ve.md",
+        "class": "wording",
+        "base_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-base-pilots-final.pilots/pack.json'"
+        ],
+        "head_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-head-final.pilots/pack.json'"
+        ]
+      },
+      {
+        "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/d_parenthetical_switch.ve.md",
+        "class": "wording",
+        "base_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-base-pilots-final.pilots/pack.json'"
+        ],
+        "head_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-head-final.pilots/pack.json'"
+        ]
+      },
+      {
+        "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/e_the_rejected_sense_negated.ve.md",
+        "class": "wording",
+        "base_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-base-pilots-final.pilots/pack.json'"
+        ],
+        "head_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-head-final.pilots/pack.json'"
+        ]
+      },
+      {
+        "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/f_two_words_one_default.ve.md",
+        "class": "wording",
+        "base_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-base-pilots-final.pilots/pack.json'"
+        ],
+        "head_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-head-final.pilots/pack.json'"
+        ]
+      },
+      {
+        "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/g_bad_default.ve.md",
+        "class": "wording",
+        "base_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-base-pilots-final.pilots/pack.json'"
+        ],
+        "head_stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd4b-ab-head-final.pilots/pack.json'"
+        ]
+      }
+    ]
+  },
+  "normalization": {
+    "scope": "the one absolute scratch directory in the stderr of seven missing-sense-pack pilot probes",
+    "base_from": "/tmp/rd4b-ab-base-pilots-final.pilots/pack.json",
+    "head_from": "/tmp/rd4b-ab-head-final.pilots/pack.json",
+    "to": "/tmp/<recording-scratch>/pack.json",
+    "replacements_per_side": 7,
+    "canonical_order": "corpus, authority, case, op"
+  },
+  "normalized": {
+    "totals": {
+      "same": 60073
+    },
+    "unlisted": 0
+  }
+}
