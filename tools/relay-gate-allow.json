@@ -1,0 +1,1074 @@
+{
+ "version": 1,
+ "$comment": "Accepted mutants of tools/relay_mutation_gate.py that are by design or recorded follow-ups. `route`, `mutation` and each `path` are fnmatch patterns (`*` spans path separators); an entry that matches no finding fails the gate. Follow-ups are listed in docs/merge-tooling.md.",
+ "entries": [
+  {
+   "route": "*",
+   "mutation": "empty",
+   "path": "*",
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes (a list, text or map whose length and text the runners decide: orders, premises, reports, rendered lines, optional ids written empty): the client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model); an emptied or repeated element is a well-formed answer. Request-bound lists (x-rows, x-length, x-zip, x-count) and request names are refused and are not covered here."
+  },
+  {
+   "route": "*",
+   "mutation": "duplicate",
+   "path": "*",
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes (a list, text or map whose length and text the runners decide: orders, premises, reports, rendered lines, optional ids written empty): the client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model); an emptied or repeated element is a well-formed answer. Request-bound lists (x-rows, x-length, x-zip, x-count) and request names are refused and are not covered here."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "*",
+   "path": [
+    "results/*/result/inner*"
+   ],
+   "kind": "by-design",
+   "id": "B1",
+   "reason": "readings-route `inner` is the lower route's own row for the inner case; no row shape of this mode selects it and the caller reads it as that route's answer (readings-route.json choice_answer; tests/test_route_row_schemas.py OPAQUE)."
+  },
+  {
+   "route": "service:norm-defaults",
+   "mutation": "*",
+   "path": [
+    "results/*/result/base_environment/vocabulary/predicates/*"
+   ],
+   "kind": "by-design",
+   "id": "B2",
+   "reason": "Vocabulary entries of an echoed environment, and their fields beside `arguments` (description, verbalisation, regulated, sort): common.json `environment` checks the envelope and leaves the content to the caller, which compares it with Python's regeneration (the schema's $comment)."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "*",
+   "path": [
+    "results/*/result/environment_prime/vocabulary/predicates/*"
+   ],
+   "kind": "by-design",
+   "id": "B2",
+   "reason": "Vocabulary entries of an echoed environment, and their fields beside `arguments` (description, verbalisation, regulated, sort): common.json `environment` checks the envelope and leaves the content to the caller, which compares it with Python's regeneration (the schema's $comment)."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "*",
+   "path": [
+    "results/*/result/environment_reports/vocabulary/constants/*",
+    "results/*/result/environment_reports/vocabulary/predicates/*",
+    "results/*/result/environment_reports/vocabulary/sorts/*"
+   ],
+   "kind": "by-design",
+   "id": "B2",
+   "reason": "Vocabulary entries of an echoed environment, and their fields beside `arguments` (description, verbalisation, regulated, sort): common.json `environment` checks the envelope and leaves the content to the caller, which compares it with Python's regeneration (the schema's $comment)."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "*",
+   "path": [
+    "results/*/result/environment_prime/vocabulary/predicates/*"
+   ],
+   "kind": "by-design",
+   "id": "B2",
+   "reason": "Vocabulary entries of an echoed environment, and their fields beside `arguments` (description, verbalisation, regulated, sort): common.json `environment` checks the envelope and leaves the content to the caller, which compares it with Python's regeneration (the schema's $comment)."
+  },
+  {
+   "route": "service:soft-norms",
+   "mutation": "*",
+   "path": [
+    "results/*/result/environment_prime/vocabulary/predicates/*"
+   ],
+   "kind": "by-design",
+   "id": "B2",
+   "reason": "Vocabulary entries of an echoed environment, and their fields beside `arguments` (description, verbalisation, regulated, sort): common.json `environment` checks the envelope and leaves the content to the caller, which compares it with Python's regeneration (the schema's $comment)."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/joint"
+   ],
+   "kind": "by-design",
+   "id": "B3",
+   "reason": "A field whose domain is a union across JSON types (tests/test_route_row_schemas.py UNIONS: joint, admitted, finding, first_failing, dead_readings): the retype to the other member is a valid answer."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/dead_readings",
+    "results/*/result/finding",
+    "results/*/result/first_failing"
+   ],
+   "kind": "by-design",
+   "id": "B3",
+   "reason": "A field whose domain is a union across JSON types (tests/test_route_row_schemas.py UNIONS: joint, admitted, finding, first_failing, dead_readings): the retype to the other member is a valid answer."
+  },
+  {
+   "route": "service:evaluate",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/canonical"
+   ],
+   "kind": "by-design",
+   "id": "B4",
+   "reason": "Rendered text (`canonical`) that equals a request string by content, not a name the answer binds."
+  },
+  {
+   "route": "service:parse",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/canonical"
+   ],
+   "kind": "by-design",
+   "id": "B4",
+   "reason": "Rendered text (`canonical`) that equals a request string by content, not a name the answer binds."
+  },
+  {
+   "route": "service:alternatives",
+   "mutation": "drop",
+   "path": [
+    "results/*/generator",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/root/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/root/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:environment",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/path"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:family-norms",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/detail"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:model",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/path"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:norm-defaults",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/report/assumptions/*/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:norms",
+   "mutation": "drop",
+   "path": [
+    "results/*/generator",
+    "results/*/result/detail",
+    "results/*/result/generator",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/root/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:quantity",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/report/assumptions/*/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/root/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "drop",
+   "path": [
+    "results/*/generator",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/root/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/root/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:route",
+   "mutation": "drop",
+   "path": [
+    "results/*/generator",
+    "results/*/result/generator",
+    "results/*/result/report/assumptions/*/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:soft-norms",
+   "mutation": "drop",
+   "path": [
+    "results/*/generator",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/root/label"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "service:speech-acts",
+   "mutation": "drop",
+   "path": [
+    "results/*/generator"
+   ],
+   "kind": "by-design",
+   "id": "B5",
+   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
+  },
+  {
+   "route": "ve_conformance:route:bundle.check",
+   "mutation": "*",
+   "path": [
+    "*/lemmas*"
+   ],
+   "kind": "by-design",
+   "id": "B6",
+   "reason": "bundle.check `lemmas`: the caller compares Lean's meaning ids with Python's (ve/bundle.py check_bundle) before any use."
+  },
+  {
+   "route": "service:english.*",
+   "mutation": "*",
+   "path": [
+    "results/*/result/*"
+   ],
+   "kind": "follow-up",
+   "id": "F1",
+   "reason": "English service modes: the schema types the row's `id` and `result` as `true` (any JSON), so every malformed English answer reaches the caller. Write the English result shapes in lean/ResponseShape/Schemas (english.read, english.grammar, english.check)."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "*",
+   "path": [
+    "results/*/result/filled*"
+   ],
+   "kind": "follow-up",
+   "id": "F2",
+   "reason": "readings-route `filled`: `environment` is untyped and `units` is an array of anything (readings-route.json $defs/filled). Type both from UnspecifiedWire.filledJson."
+  },
+  {
+   "route": "service:check",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/core/*"
+   ],
+   "kind": "follow-up",
+   "id": "F3",
+   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:english",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/results/*/parsed",
+    "results/*/result/results/*/rendered"
+   ],
+   "kind": "follow-up",
+   "id": "F3",
+   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:parse",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/ast/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F3",
+   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/choice_count",
+    "results/*/result/choices",
+    "results/*/result/choices_checked",
+    "results/*/result/derived/*/ast",
+    "results/*/result/english/*/label",
+    "results/*/result/english/*/model",
+    "results/*/result/english/*/result",
+    "results/*/result/generated_predicates/*/key",
+    "results/*/result/names/*",
+    "results/*/result/names/*/candidates",
+    "results/*/result/names/*/candidates/*",
+    "results/*/result/names/*/candidates/*/id",
+    "results/*/result/names/*/candidates/*/index",
+    "results/*/result/names/*/candidates/*/names",
+    "results/*/result/names/*/candidates/*/position",
+    "results/*/result/names/*/set",
+    "results/*/result/names/*/version",
+    "results/*/result/pair/other_value",
+    "results/*/result/pair/witness_value",
+    "results/*/result/per_choice/*/status_text",
+    "results/*/result/units/*",
+    "results/*/result/units/*/content",
+    "results/*/result/units/*/content/norm",
+    "results/*/result/units/*/content/norm/alterable",
+    "results/*/result/units/*/content/norm/exception",
+    "results/*/result/units/*/content/norm/guard",
+    "results/*/result/units/*/content/norm/hard",
+    "results/*/result/units/*/content/norm/mode",
+    "results/*/result/units/*/content/norm/name",
+    "results/*/result/units/*/content/norm/over",
+    "results/*/result/units/*/content/norm/predicate",
+    "results/*/result/units/*/content/norm/rank",
+    "results/*/result/units/*/content/norm/sign",
+    "results/*/result/units/*/content/norm/unless",
+    "results/*/result/units/*/index",
+    "results/*/result/units/*/position",
+    "results/*/result/units/*/set",
+    "results/*/result/units/*/unit",
+    "results/*/result/units/*/version"
+   ],
+   "kind": "follow-up",
+   "id": "F3",
+   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/environment_reports/vocabulary/reports",
+    "results/*/result/environment_reports/vocabulary/reports/evidence",
+    "results/*/result/environment_reports/vocabulary/reports/holders",
+    "results/*/result/environment_reports/vocabulary/reports/holders/*"
+   ],
+   "kind": "follow-up",
+   "id": "F3",
+   "reason": "Retype accepted: the field is a union or has no type in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "call:ve.backends.speech_source:decide_source",
+   "mutation": "rebind",
+   "path": [
+    "*/policy/conflict_targets/*/sorts/*",
+    "*/policy/conflict_targets/*/target",
+    "*/policy/order/*",
+    "*/premises/*/*/*",
+    "*/questions/*/body/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:alternatives",
+   "mutation": "rebind",
+   "path": [
+    "results/*/generator",
+    "results/*/result/choosers/*/allows/*/*",
+    "results/*/result/choosers/*/alternatives/*",
+    "results/*/result/choosers/*/avoidable/*",
+    "results/*/result/choosers/*/chooser",
+    "results/*/result/choosers/*/clear/*",
+    "results/*/result/choosers/*/inaction/*",
+    "results/*/result/choosers/*/permitted/*",
+    "results/*/result/choosers/*/prevents/*/*",
+    "results/*/result/conflict_targets/*/sorts/*",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/coverage/alternatives/alternatives_declared/*/action",
+    "results/*/result/coverage/alternatives/alternatives_declared/*/chooser",
+    "results/*/result/coverage/alternatives/alternatives_declared/*/support",
+    "results/*/result/coverage/alternatives/assumed_harm_free/*/action",
+    "results/*/result/coverage/alternatives/assumed_harm_free/*/decider",
+    "results/*/result/coverage/alternatives/assumed_harm_free/*/harm",
+    "results/*/result/coverage/alternatives/counterfactual_leaves/*/action",
+    "results/*/result/coverage/alternatives/counterfactual_leaves/*/decider",
+    "results/*/result/coverage/alternatives/counterfactual_leaves/*/harm",
+    "results/*/result/coverage/alternatives/counterfactual_leaves/*/support",
+    "results/*/result/coverage/alternatives/proximate_judgments/*/action",
+    "results/*/result/coverage/alternatives/proximate_judgments/*/decider",
+    "results/*/result/coverage/alternatives/proximate_judgments/*/harm",
+    "results/*/result/coverage/alternatives/proximate_judgments/*/support",
+    "results/*/result/coverage/alternatives/table_complete/decider",
+    "results/*/result/order/*",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/report/root/label",
+    "results/*/result/target",
+    "results/*/result/targets/*",
+    "results/*/result/tuple/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:check",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/core/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/report/root/ast/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:english",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/results/*/rendered/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:family-norms",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts/*",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/order/*",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:graph",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/assumptions/*",
+    "results/*/result/report/assumptions/*",
+    "results/*/result/report/root",
+    "results/*/result/supporting_edges/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:norm-defaults",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/base_environment/profiles/*",
+    "results/*/result/conflict_targets/*/sorts/*",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/order/*",
+    "results/*/result/reached/*/predicate",
+    "results/*/result/reached/*/sorts/*",
+    "results/*/result/report/*/predicate",
+    "results/*/result/report/*/witness/*/*",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/residual/gaps/*",
+    "results/*/result/rules/*",
+    "results/*/result/targets/*",
+    "results/*/result/tuple/*",
+    "results/*/result/under/*/predicate",
+    "results/*/result/under/*/tuple/*",
+    "results/*/result/unsaid/*/sorts/*",
+    "results/*/result/unspecified/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:norms",
+   "mutation": "rebind",
+   "path": [
+    "results/*/generator",
+    "results/*/result/background/*/*/*/*",
+    "results/*/result/conflict_targets/*/sorts/*",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/error",
+    "results/*/result/generator",
+    "results/*/result/order/*",
+    "results/*/result/premises/*/*/*/*",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/report/root/label",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:order",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/ast/*/*/*",
+    "results/*/result/ast/*/*/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:quantity",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/choice/*/*",
+    "results/*/result/choices/*/*/*",
+    "results/*/result/conflict_targets/*/sorts/*",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/decisions/*/arguments/*",
+    "results/*/result/derived/*/rule",
+    "results/*/result/english/*/readings/*/*",
+    "results/*/result/environment_prime/profiles/*",
+    "results/*/result/fill_premises/*/set",
+    "results/*/result/finding_sets/*",
+    "results/*/result/generated_predicates/*/key/excepted",
+    "results/*/result/names/*/candidates/*/id",
+    "results/*/result/names/*/set",
+    "results/*/result/order/*",
+    "results/*/result/pair/witness",
+    "results/*/result/per_choice/*/choice/*/*",
+    "results/*/result/result/candidates/*/set",
+    "results/*/result/rule_acts/*",
+    "results/*/result/sets/*/candidates/*/id",
+    "results/*/result/sets/*/pairs/*/other",
+    "results/*/result/sets/*/pairs/*/reading",
+    "results/*/result/sets/*/set",
+    "results/*/result/targets/*",
+    "results/*/result/units/*/content/norm/mode",
+    "results/*/result/units/*/content/norm/predicate",
+    "results/*/result/units/*/set",
+    "results/*/result/units/*/unit"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/envelope/document_id",
+    "results/*/result/envelope/environment_id",
+    "results/*/result/environment_reports/language",
+    "results/*/result/environment_reports/profiles/*",
+    "results/*/result/environment_reports/spec_revision",
+    "results/*/result/environment_reports/vocabulary/reports/evidence",
+    "results/*/result/environment_reports/vocabulary/reports/holders/*",
+    "results/*/result/environment_reports_id",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/report/root/ast/*/*",
+    "results/*/result/report/root/label",
+    "results/*/result/scoped/*/environment_id",
+    "results/*/result/scoped/*/id",
+    "results/*/result/source_model/*/holds_of/*",
+    "results/*/result/source_model/*/key/context",
+    "results/*/result/source_model/*/key/holder_sort",
+    "results/*/result/source_model/*/name",
+    "results/*/result/units/*/nested/*/act"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/bars/*/predicate",
+    "results/*/result/conflict_targets/*/sorts/*",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/derived/*/rule",
+    "results/*/result/distinction/*/predicate",
+    "results/*/result/duties_of/*/right",
+    "results/*/result/duties_of/*/rule",
+    "results/*/result/duties_of/*/tuple/*",
+    "results/*/result/environment_prime/profiles/*",
+    "results/*/result/lines/*/node/name",
+    "results/*/result/lines/*/node/predicate",
+    "results/*/result/lines/*/predicate",
+    "results/*/result/lines/*/right",
+    "results/*/result/lines/*/rule",
+    "results/*/result/narrowings/*/right",
+    "results/*/result/narrowings/*/rule",
+    "results/*/result/order/*",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/report/root/label",
+    "results/*/result/rights_of/*/right",
+    "results/*/result/rights_of/*/rule",
+    "results/*/result/rights_of/*/tuple/*",
+    "results/*/result/rule_acts/*",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/alternative",
+    "results/*/result/clear/*",
+    "results/*/result/conditional_on/*",
+    "results/*/result/conflict_targets/*/sorts/*",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/coverage/alternatives/alternatives_declared/*/action",
+    "results/*/result/coverage/alternatives/alternatives_declared/*/chooser",
+    "results/*/result/coverage/alternatives/alternatives_declared/*/support",
+    "results/*/result/coverage/alternatives/counterfactual_leaves/*/action",
+    "results/*/result/coverage/alternatives/counterfactual_leaves/*/decider",
+    "results/*/result/coverage/alternatives/counterfactual_leaves/*/harm",
+    "results/*/result/coverage/alternatives/counterfactual_leaves/*/support",
+    "results/*/result/e_risk/classes/*",
+    "results/*/result/e_risk/predicates/*/*",
+    "results/*/result/e_risk/sort",
+    "results/*/result/e_risk/words/risk__less_worst/*",
+    "results/*/result/e_risk/words/risk__or_worse/*",
+    "results/*/result/lines/assumed_ruled_out/decider",
+    "results/*/result/lines/default_decided/*",
+    "results/*/result/margins/*/alternative",
+    "results/*/result/margins/*/estimate",
+    "results/*/result/order/*",
+    "results/*/result/record_invalid/*/estimate",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/report/root/label",
+    "results/*/result/risk_premises/*/ast/*/*",
+    "results/*/result/statuses/*/alternative",
+    "results/*/result/tables/might/*/alternative",
+    "results/*/result/tables/might/*/harm",
+    "results/*/result/targets/*",
+    "results/*/result/worst_cases/*/*/class",
+    "results/*/result/worst_cases/*/*/harm"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:route",
+   "mutation": "rebind",
+   "path": [
+    "results/*/generator",
+    "results/*/result/error",
+    "results/*/result/generator",
+    "results/*/result/order/*",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/report/root/ast/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:soft-norms",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts/*",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/environment_prime/profiles/*",
+    "results/*/result/order/*",
+    "results/*/result/pairs/*/pair/*",
+    "results/*/result/report/assumptions/*/label",
+    "results/*/result/report/assumptions/*/name",
+    "results/*/result/report/root/label",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:speech-acts",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/conflict_targets/*/sorts/*",
+    "results/*/result/conflict_targets/*/target",
+    "results/*/result/order/*",
+    "results/*/result/policy/conflict_targets/*/sorts/*",
+    "results/*/result/policy/conflict_targets/*/target",
+    "results/*/result/policy/order/*",
+    "results/*/result/scope/addressee/constant",
+    "results/*/result/scope/addressee/sort",
+    "results/*/result/scope/task",
+    "results/*/result/targets/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:diagnose",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/diagnostic/args/name"
+   ],
+   "kind": "follow-up",
+   "id": "F5",
+   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/mentions/*/accessible/*/name",
+    "results/*/result/mentions/*/recorded/name"
+   ],
+   "kind": "follow-up",
+   "id": "F5",
+   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:document",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/coverage/residual/assumptions",
+    "results/*/result/coverage/residual/bridge_leaves",
+    "results/*/result/coverage/residual/open_terms",
+    "results/*/result/coverage/residual/unresolved_reading_sets",
+    "results/*/result/units/*/content",
+    "results/*/result/units/*/meaning_id"
+   ],
+   "kind": "follow-up",
+   "id": "F5",
+   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:parse",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/canonical"
+   ],
+   "kind": "follow-up",
+   "id": "F5",
+   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/accepted",
+    "results/*/result/conflict_free",
+    "results/*/result/fill_premises",
+    "results/*/result/names/*/candidates",
+    "results/*/result/names/*/candidates/*/id",
+    "results/*/result/names/*/candidates/*/index",
+    "results/*/result/names/*/candidates/*/names",
+    "results/*/result/names/*/candidates/*/position",
+    "results/*/result/names/*/set",
+    "results/*/result/names/*/version",
+    "results/*/result/pair/other_value",
+    "results/*/result/per_choice/*/evidence/conflict",
+    "results/*/result/per_choice/*/premises",
+    "results/*/result/units/*/content",
+    "results/*/result/units/*/content/norm",
+    "results/*/result/units/*/content/norm/alterable",
+    "results/*/result/units/*/content/norm/exception",
+    "results/*/result/units/*/content/norm/guard",
+    "results/*/result/units/*/content/norm/hard",
+    "results/*/result/units/*/content/norm/mode",
+    "results/*/result/units/*/content/norm/name",
+    "results/*/result/units/*/content/norm/over",
+    "results/*/result/units/*/content/norm/predicate",
+    "results/*/result/units/*/content/norm/rank",
+    "results/*/result/units/*/content/norm/sign",
+    "results/*/result/units/*/content/norm/unless",
+    "results/*/result/units/*/index",
+    "results/*/result/units/*/position",
+    "results/*/result/units/*/set",
+    "results/*/result/units/*/unit",
+    "results/*/result/units/*/version"
+   ],
+   "kind": "follow-up",
+   "id": "F5",
+   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/environment_reports/vocabulary/reports",
+    "results/*/result/environment_reports/vocabulary/reports/evidence",
+    "results/*/result/environment_reports/vocabulary/reports/holders"
+   ],
+   "kind": "follow-up",
+   "id": "F5",
+   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/tables/might/*/witness"
+   ],
+   "kind": "follow-up",
+   "id": "F5",
+   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:speech-acts",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/scope/addressee"
+   ],
+   "kind": "follow-up",
+   "id": "F5",
+   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/mentions/*",
+    "results/*/result/statuses/*",
+    "results/*/result/units/*"
+   ],
+   "kind": "follow-up",
+   "id": "F6",
+   "reason": "Map keyed by request names: dropping an entry is accepted (no check that every request name has its entry)."
+  },
+  {
+   "route": "service:document",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/coverage/bytes_by_kind/*",
+    "results/*/result/coverage/bytes_by_status/*"
+   ],
+   "kind": "follow-up",
+   "id": "F6",
+   "reason": "Map keyed by request names: dropping an entry is accepted (no check that every request name has its entry)."
+  },
+  {
+   "route": "service:norm-defaults",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/report/*/witness/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F6",
+   "reason": "Map keyed by request names: dropping an entry is accepted (no check that every request name has its entry)."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/default_exceptions_by_decider/*",
+    "results/*/result/rule_acts/*",
+    "results/*/result/vocabulary/constants/*"
+   ],
+   "kind": "follow-up",
+   "id": "F6",
+   "reason": "Map keyed by request names: dropping an entry is accepted (no check that every request name has its entry)."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/residual_lines/unreviewed_acts/*"
+   ],
+   "kind": "follow-up",
+   "id": "F6",
+   "reason": "Map keyed by request names: dropping an entry is accepted (no check that every request name has its entry)."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/rule_acts/*"
+   ],
+   "kind": "follow-up",
+   "id": "F6",
+   "reason": "Map keyed by request names: dropping an entry is accepted (no check that every request name has its entry)."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/e_risk/predicates/*",
+    "results/*/result/worst_cases/*"
+   ],
+   "kind": "follow-up",
+   "id": "F6",
+   "reason": "Map keyed by request names: dropping an entry is accepted (no check that every request name has its entry)."
+  },
+  {
+   "route": "service:risk-eval",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/results/*/witness/*"
+   ],
+   "kind": "follow-up",
+   "id": "F6",
+   "reason": "Map keyed by request names: dropping an entry is accepted (no check that every request name has its entry)."
+  },
+  {
+   "route": "service:check",
+   "mutation": "untyped",
+   "path": [
+    "results/*/result/core/*"
+   ],
+   "kind": "follow-up",
+   "id": "F7",
+   "reason": "Untyped: every retype of the field is accepted (no type in its schema). Type it in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:parse",
+   "mutation": "untyped",
+   "path": [
+    "results/*/result/ast/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F7",
+   "reason": "Untyped: every retype of the field is accepted (no type in its schema). Type it in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "untyped",
+   "path": [
+    "results/*/result/names/*",
+    "results/*/result/names/*/candidates",
+    "results/*/result/names/*/candidates/*",
+    "results/*/result/names/*/candidates/*/id",
+    "results/*/result/names/*/candidates/*/index",
+    "results/*/result/names/*/candidates/*/names",
+    "results/*/result/names/*/candidates/*/position",
+    "results/*/result/names/*/set",
+    "results/*/result/names/*/version",
+    "results/*/result/units/*",
+    "results/*/result/units/*/content",
+    "results/*/result/units/*/content/norm",
+    "results/*/result/units/*/content/norm/alterable",
+    "results/*/result/units/*/content/norm/exception",
+    "results/*/result/units/*/content/norm/guard",
+    "results/*/result/units/*/content/norm/hard",
+    "results/*/result/units/*/content/norm/mode",
+    "results/*/result/units/*/content/norm/name",
+    "results/*/result/units/*/content/norm/over",
+    "results/*/result/units/*/content/norm/predicate",
+    "results/*/result/units/*/content/norm/rank",
+    "results/*/result/units/*/content/norm/sign",
+    "results/*/result/units/*/content/norm/unless",
+    "results/*/result/units/*/index",
+    "results/*/result/units/*/position",
+    "results/*/result/units/*/set",
+    "results/*/result/units/*/unit",
+    "results/*/result/units/*/version"
+   ],
+   "kind": "follow-up",
+   "id": "F7",
+   "reason": "Untyped: every retype of the field is accepted (no type in its schema). Type it in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:reports",
+   "mutation": "untyped",
+   "path": [
+    "results/*/result/environment_reports/vocabulary/reports",
+    "results/*/result/environment_reports/vocabulary/reports/evidence",
+    "results/*/result/environment_reports/vocabulary/reports/holders",
+    "results/*/result/environment_reports/vocabulary/reports/holders/*"
+   ],
+   "kind": "follow-up",
+   "id": "F7",
+   "reason": "Untyped: every retype of the field is accepted (no type in its schema). Type it in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "ve_metered::evaluate",
+   "mutation": "*",
+   "path": [
+    "*/evaluation*"
+   ],
+   "kind": "follow-up",
+   "id": "F8",
+   "reason": "ve_metered `evaluation` is typed `object` in the assurance manifest (no field types), so a malformed evaluation reaches lean_runner's callers. Give the metered evaluation a typed response shape."
+  },
+  {
+   "route": "ve_senses_route::senses.read",
+   "mutation": "*",
+   "path": [
+    "*/result/reading/environment/vocabulary/*"
+   ],
+   "kind": "follow-up",
+   "id": "F9",
+   "reason": "senses.read: the projected environment's vocabulary is only checked to be a valid Environment, not bound to the request's (ve/backends/senses.py _response_problem)."
+  }
+ ]
+}
