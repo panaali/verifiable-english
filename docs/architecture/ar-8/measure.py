@@ -1,6 +1,6 @@
 """AR-8 evidence: measure `main..HEAD --no-merges` at the code head into evidence.json and render REPORT.md's table.
 
-    python3 docs/architecture/ar-8/measure.py
+    uv run python docs/architecture/ar-8/measure.py
 
 runs on a clean tree at the batch's last code commit. It reads `git diff --numstat BASE HEAD` (BASE is the
 merge base with `main`), the line counts of the changed tools at both commits, `git log --no-merges BASE..HEAD`,
@@ -13,12 +13,15 @@ evidence fails until the evidence is measured again.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
+sys.path.insert(0, str(ROOT / "tools"))
+import nested_pytest  # noqa: E402
 EVIDENCE = HERE / "evidence.json"
 REPORT = HERE / "REPORT.md"
 REPORT_SUBJECT = "AR-8: saved evidence and report"
@@ -77,8 +80,8 @@ def run_mutants() -> list[dict]:
             raise SystemExit(f"{mutant}: the planted text is not found exactly once in {path}")
         try:
             file.write_text(original.replace(text, replacement))
-            run = subprocess.run(["uv", "run", "python", "-m", "pytest", "-q", "-p", "no:cacheprovider", *tests],
-                                 cwd=ROOT, capture_output=True, text=True)
+            run = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", *tests]), cwd=ROOT,
+                                 env=nested_pytest.environment(os.environ), capture_output=True, text=True)
         finally:
             file.write_text(original)
         summary = run.stdout.strip().splitlines()[-1].strip("= ") if run.stdout.strip() else run.stderr.strip()
