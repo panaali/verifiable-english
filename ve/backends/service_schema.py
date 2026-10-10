@@ -75,6 +75,14 @@ def _kind(value: object) -> str:
 _MISSING = object()
 
 
+def _fol_entry(declaration: dict) -> bool:
+    """`VE.Core.Layers.folEntry`: a predicate declaration in the FOL projection (at most two
+    arguments; a non-array `arguments` counts as none), the projection every regenerated
+    Background is built from."""
+    arguments = declaration.get("arguments")
+    return len(arguments) <= 2 if isinstance(arguments, list) else True
+
+
 def _resolve(root: object, pointer: str) -> object:
     """The value at a JSON pointer; `*` maps the rest over an array. `_MISSING` if absent."""
     tokens = [t.replace("~1", "/").replace("~0", "~") for t in pointer.split("/")[1:]] if pointer else []
@@ -432,12 +440,11 @@ class Compiler:
             constants = _resolve(ctx.value, "/environment/vocabulary/constants")
             if not isinstance(predicates, dict) or not isinstance(constants, dict) or not isinstance(env, dict):
                 _fail("background differs from the request vocabulary")
-            flags = sum(isinstance(p, dict) and p.get("functional") is True for p in predicates.values()) + sum(
-                isinstance(p, dict) and p.get("total") is True for p in predicates.values())
-            definitions = sum(isinstance(p, dict) and "defined" in p for p in predicates.values())
-            pairs = sum(isinstance(p, dict) and isinstance(p.get("regulated"), dict) and
-                        p["regulated"].get("role") == "obligation" and
-                        isinstance(p["regulated"].get("permission"), str) for p in predicates.values())
+            fol = [p for p in predicates.values() if isinstance(p, dict) and _fol_entry(p)]
+            flags = sum(p.get("functional") is True for p in fol) + sum(p.get("total") is True for p in fol)
+            definitions = sum("defined" in p for p in fol)
+            pairs = sum(isinstance(p.get("regulated"), dict) and p["regulated"].get("role") == "obligation" and
+                        isinstance(p["regulated"].get("permission"), str) for p in fol)
             literals = sum(isinstance(c, dict) and c.get("sort") == "$string" for c in constants.values())
             profiles = env.get("profiles")
             order = isinstance(profiles, list) and "order@0" in profiles

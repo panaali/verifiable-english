@@ -171,7 +171,7 @@ def pythonReserved : List String := ["no"]
 
 private def naryDefined (environment : Json) : List String :=
   (VE.Core.Layers.predicatesOf environment).filterMap fun (p, entry) =>
-    if VE.Core.Layers.arity entry > 2 && (entry.getObjVal? "defined").isOk then some p else none
+    if !VE.Core.Layers.folEntry entry && (entry.getObjVal? "defined").isOk then some p else none
 
 private def usedPredicates : VE.Core.Formula → List String
   | .top | .bottom | .eq _ _ => []
@@ -198,7 +198,7 @@ private def checkNaryDefinitions (environment : Json) : Except String Unit := do
   let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
   let mut deps : List (String × List String) := []
   for (p, entry) in predicates do
-    if VE.Core.Layers.arity entry > 2 then
+    if !VE.Core.Layers.folEntry entry then
       if let .ok payload := entry.getObjVal? "defined" then
         VE.Bridge.exactFields payload ["arguments", "body"]
         let args ← VE.Bridge.strings (← payload.getObjVal? "arguments")
