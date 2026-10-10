@@ -5,6 +5,7 @@ The order is a permutation of the selection: B5 never changes which tests run, o
 """
 from __future__ import annotations
 
+import datetime
 import json
 import os
 from pathlib import Path
@@ -196,7 +197,7 @@ class Plain:
         monkeypatch.setattr(test_order, "ROOT", self.root)
         monkeypatch.setattr(quarantine, "load", lambda: [
             {"test": test, "added": "2026-10-10", "expires": "2026-10-17"} for test in self.held])
-        monkeypatch.setattr(quarantine, "today", lambda: __import__("datetime").date(2026, 10, 12))
+        monkeypatch.setattr(quarantine, "today", lambda: datetime.date(2026, 10, 12))
         self.prefix = pytest_prefix
         self.env = nested_pytest.environment(os.environ, ORDER_LOG=str(self.log))
 
