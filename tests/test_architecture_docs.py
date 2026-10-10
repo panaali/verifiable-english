@@ -199,11 +199,24 @@ def test_stale_statement(row):
     path = stale_file(document)
     text = path.read_text()
     fragments = quotes(says)
+    # Every checked row quotes the stale text, one quote per passage it covers; a row without quotes checks nothing.
+    assert fragments, number
+    if path.suffix == ".json":
+        # A JSON inventory: the quotes are keys of the section the row names; AR-4 drops the section.
+        section = sorted(backticked(document) - {str(path.relative_to(ROOT))})
+        data = json.loads(text)
+        assert len(section) == 1, row
+        if status.startswith("waits"):
+            missing = [f for f in fragments if f not in data.get(section[0], {})]
+            assert not missing, (number, missing)
+        else:
+            assert section[0] not in data, number
+        return
     if status.startswith("waits"):
         # Still stale in its file: once the file is fixed the row must say so.
-        assert all(any(f in p for p in paragraphs(text)) for f in fragments), (number, path)
+        missing = [f for f in fragments if not any(f in p for p in paragraphs(text))]
+        assert not missing, (number, path, missing)
         return
-    assert fragments, number
     link = re.compile(r"\]\((\.\./)?ARCHITECTURE\.md[)#]")
     assert link.search(text), path
     for fragment in fragments:
