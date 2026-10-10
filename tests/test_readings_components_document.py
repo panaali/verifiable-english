@@ -277,7 +277,13 @@ def test_fc17_all_is_gated_on_every_other_component(tmp_path, capsys):
     assert (data["choice_component"], data["choice"], data["choice_text"]) == ("main", [["rs_2", 0]], "rs_2@1:0")
     [own] = [c for c in data["components"] if c["component"] == "rs_a"]
     assert own["result"]["verdict"] == "ALL"
-    assert data["english"] == []
+    # 2.4 item 3 (review B3 of rd-4b): the document's UNKNOWN is worded, naming the other sentence's choice by E12;
+    # under its CONFLICT that choice's checked witness (R4), as a CONFLICT is worded.
+    assert shown(data["english"]) == [
+        "Each open sentence below was checked by itself, under each of its readings.",
+        "Read sentence 2 as *Every act must be done, if that act may be tried*: two rules contradict each other here: "
+        "e0 is an act. Here the text does not say whether e0 may be tried; this situation answers 'yes'. Here the "
+        "text does not say whether e0 must be done; this situation answers 'no'."]
     assert query(capsys, fc1(tmp_path), HELP_PERMITTED, "--sentence", "u_a")["verdict"] == "ALL"
 
 

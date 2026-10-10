@@ -492,15 +492,15 @@ class Components:
 
     @staticmethod
     def _check_line_fields(line):
-        """Type a plan line's optional fields by its frame (the producer's `PlanItem.line` forms)."""
+        """Type a plan line's optional fields by its frame (the producer's `PlanItem.line` forms), from the one table
+        of the frames and results the renderer words (`readings_s2_wording.PLAN_FRAMES`, `PLAN_RESULTS`)."""
+        from .readings_s2_wording import LABELLED_FRAMES, MODEL_RESULTS, PLAN_FRAMES, PLAN_RESULTS, RESULT_FRAMES
         frame = line["frame"]
         result = line["result"]
-        _need(frame in {"E3", "E5", "E7", "E10", "E12", "E13", "E17", "E26", "E27", "E28", "E29",
-                        "E30", "E31", "E32", "P1", "status", "unworded"})
-        has_result = frame in {"E10", "E12", "E26", "E30"}
-        _need(result in {"R1", "R2", "R3", "R4", "R5", "R6", "R7"} if has_result else result is None)
-        _need((line["model"] is not None) == (result in {"R3", "R4", "R5"}))
-        _need((line["label"] is not None) == (frame in {"E5", "E7", "P1", "status", "unworded"}))
+        _need(frame in PLAN_FRAMES)
+        _need(result in PLAN_RESULTS if frame in RESULT_FRAMES else result is None)
+        _need((line["model"] is not None) == (result in MODEL_RESULTS))
+        _need((line["label"] is not None) == (frame in LABELLED_FRAMES))
 
     @classmethod
     def _check_sub_fields(cls, row, case):
