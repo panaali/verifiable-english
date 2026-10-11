@@ -408,10 +408,10 @@ def test_fc17_with_its_companions_first_gets_the_same_answer(tmp_path, capsys):
 
 
 def test_without_companions_nothing_changes(tmp_path):
-    """Conservativity (4.6): `readings_components` is absent and F-ND1 keeps RD-3's route."""
+    """Conservativity (4.6): no component product; RD-6b still chooses the filled superposed route."""
     from tests.test_readings_nd_document import fnd1
     doc = load_document(fnd1(tmp_path))
-    assert doc["readings_components"] is None and doc["readings_s2"]["route"] == "enumerated"
+    assert doc["readings_components"] is None and doc["readings_s2"]["route"] == "superposed"
 
 
 def test_a_component_outside_the_completion_is_refused(tmp_path):
