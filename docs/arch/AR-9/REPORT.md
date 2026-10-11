@@ -55,8 +55,8 @@ Two constraints decided the split beyond the plan's three themes per module:
 
 Files touched: `ve/assist/recovery.py`, `ve/assist/session.py`, six new `ve/assist/*_*.py`,
 `tests/test_assist_split.py`, `tests/test_ar9_evidence.py`, `tools/gate-collection.json`,
-`docs/arch/AR-9/`. At the start, and again on 2026-10-11 after syncing with `main` (`96887019`),
-`git diff --name-only main...<branch>` for every branch matching `lean-first/*`,
+`docs/arch/AR-9/`. At the start, and again on 2026-10-11 after each sync with `main` (`96887019`,
+then `5479466f`, which merged AR-8), `git diff --name-only main...<branch>` for every branch matching `lean-first/*`,
 `readings-defaults/*`, `question-answering/*` and `infra/*` named no file AR-9 touches except the
 generated `tools/gate-collection.json`, which is not an overlap (R12). One branch,
 `lean-first/b13b`, changes `tests/test_assist_invariants.py`; AR-9 leaves that file unchanged, as
@@ -83,6 +83,10 @@ the plan's fixture requires.
   `test_assist_invariants.py`, `test_assist_recovery.py`, `test_assist_recovery_replay.py`,
   `test_b17_owner.py`, `test_assurance_manifest.py` (384 passed, 1 skipped: P5 materials are
   absent here, as on `main`); the 117 test units `tools/select_tests.py` selected, 0 failed.
+  After the sync with `5479466f` the selection picked all 361 units, the whole suite, which the
+  full gate runs; these assist files with the split, evidence, manifest, owner, inventory and
+  merged AR-8 tests (14 files) gave 642 passed, 2 skipped (P5 materials; the gate check, which
+  waits for the gate).
 
 ## Seeded faults (`seed_faults.py`, `evidence/mutants.json`)
 
@@ -99,8 +103,11 @@ Each fault was removed by the script; every named test passes again afterwards.
 ## Gate and what was not run
 
 - 4.1 item 1: the full gate (`tools/gate.py`) runs once on the final code commit; its result is
-  `evidence/gate.json` and the scope `evidence/scope.json` (`main..HEAD --no-merges`), saved in a
-  later commit that changes only `docs/arch/AR-9/`.
+  `evidence/gate.json` and the scope `evidence/scope.json` (`measure.py --scope`, from the
+  merge-base with `main`, `--no-merges`), saved in a later commit that changes only
+  `docs/arch/AR-9/`. `split.json` is measured from the same merge-base; `main` changed no file
+  under `ve/assist/` and no `tests/test_assist*.py` between the plan's base `c24aeab2` and it, so
+  the comparison is the plan's.
 - 4.1 item 2 does not apply: the plan's AR-9 row says assist has no corpus in the A/B and its
   tests are the gate. `tools/lean_first_diff.py` was not run.
 - 4.1 item 3 does not apply: no Lean file changed, so no `lake build` difference, no statement
