@@ -1167,6 +1167,11 @@ def gate(args: argparse.Namespace, root: Path, files: dict[str, dict[str, int]],
             return fail("\n".join(f"{base}: {p}" for p in bad))
         cap, label = budget(totals(measured_base)), base[:12]
         new = introduced(allowances, base_baseline["allowances"])
+        gone = introduced(base_baseline["allowances"], allowances)  # the history only grows
+        if gone:
+            report(files)
+            return fail("\n".join(f"FAIL: the allowance {allowance_key(entry)!r} of {base[:12]} was removed; "
+                                  "the allowances are the history and are never removed" for entry in gone))
         report(files, measured_base, label)
         recorded = base_baseline.get("budget")
         if recorded is not None and {c: recorded[c] for c in BUDGET} != cap:
