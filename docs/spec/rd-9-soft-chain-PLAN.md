@@ -1,6 +1,6 @@
 # Soft chain under the completion (`readings@1` × `soft-norms@0` × `norm-defaults@0`): design, statement spec draft and buildable plan (RD-9)
 
-> Status: draft 2 (2026-10-11), branch `design/rd-9` from `main` at `8b9927f2` (RD-6b merged). This is RD-9 of
+> Status: draft 3 (2026-10-11), branch `design/rd-9` from `main` at `8b9927f2` (RD-6b merged). This is RD-9 of
 > [readings-defaults-PLAN.md](readings-defaults-PLAN.md): a design batch for the constitution's strict and default
 > readings. It holds the design (sections 1 to 3), a statement spec draft (section 4), fixtures from real
 > constitution units (section 5) and the build batches SC-0, SC-A and SC-1 to SC-11 (section 6).
@@ -20,6 +20,17 @@
 > `normDefaults_wire_admissionX` (3.14, 4.9); **decided-unit move** `readingPremise`, `partDecided` and `documentOrder`
 > into `VerdictsWire.lean` (4.10); **order** SC-0 → SC-A → SC-1 → SC-2 → SC-6 → SC-4 → SC-5 → SC-8 → SC-9.
 > The two sides' last rounds crossed on three details; draft 2 settles each in 6 ("Settled after the debate").
+>
+> Draft 3 applies the statement review of the spec (`manage-agents/debates/rd-9-spec/`, Astra and Fable, converged
+> in round 3 on FIX with no redesign); spec 12.19 to 12.23 list its edits. In this file the review changed:
+> - the force-twin claim, which is now "only where", with `excepted_lifts`' hypotheses, and UNDECIDED only with two
+>   opposite fillings (0, 3.5, 4.6, C1.4; A2);
+> - the soft runner's `conflict_free` (3.6; F4);
+> - F-SD1.verdicts, F-SD2 and F-SD9 (5.1; F5);
+> - the comprehension questions (C10, SC-9; A4);
+> - SC-2's and SC-6's fixtures (F2, A1, A3);
+> - SC-A's added theorems (F3);
+> - SC-0's remaining step, the bounded re-check.
 >
 > The statement spec of this plan is [rd-9-soft-chain.md](rd-9-soft-chain.md) (item 1): definitions, English,
 > exact Lean statements, diagnostics and acceptance fixtures. Its statements were elaborated against a build of this
@@ -67,8 +78,10 @@ set, checked by Lean:
 2. **Separation on filled sides.** S1's own pair check (`pairEval`) runs on each reading's filled document. The
    shared filling and the witness's `Fill_T` are readings-defaults' D4 rule, and decisions stay the readings' own
    keys (S1). For the
-   strict and default readings of one rule, the readings differ exactly where the exception applies, and there the
-   default reading leaves the act unsaid: the strict reading settles it, the default reading does not.
+   strict and default readings of one rule, the readings differ only where the exception applies: with the exception
+   table empty they agree (`decision_only_soundS`; the converse is not claimed). Where the exception applies, the
+   default reading leaves an unspecified act unsaid when the default rule is the only rule on it (`excepted_lifts`):
+   the strict reading settles it, the default reading does not.
 3. **Verdicts with `X`.** The fold of RD-3 is stated once over a per-choice semantics, and the norms chain's and the
    soft chain's theorems are its instances. Each choice is checked by the layered branch's own checkers with `X`.
 4. **Documents through `ve document`.** The layered branch of norm-defaults gains the two kinds the soft chain needs
@@ -83,7 +96,8 @@ set, checked by Lean:
 **What the four sets gain, and what they do not (E2).** The four sets' default candidates have no exception
 conditions, so `X = []` on all 16 choices (C5). Each default rule then means what today's workaround means, a strict
 rule plus `unless` over an unconstrained term: with the regulated predicate `unspecified`, the excepted case is
-UNDECIDED under `norm-defaults@0` either way. What the four sets gain is four fewer invented open terms and S1's
+UNDECIDED under `norm-defaults@0` either way (two admissible fillings answer it opposite ways, as F-SD1.status
+checks). What the four sets gain is four fewer invented open terms and S1's
 force-twin finding on each set. They do not gain "defeasible duties with contextual exceptions", and the removal of the
 "not required" that the deny completion invented (audit 20261003T0600Z) was the completion's work (`norm-defaults@0`),
 not D5's. The `X` machinery is tested on the constitution by the conditioned u0073.s05 probe (`X ≠ []`), which SC-9
@@ -170,7 +184,7 @@ So on the soft chain `fill` belongs to each document of the route, after `soften
 | D2 | Each document carries extra base premises `X`: soft's `Exc_T`, then `Coh_T` regenerated on its filled tree, by the layered branch's one definition (`softLabelledU`). `Fill_T` comes after `X`, as `LayeredU.background` orders them. On a strict document `X = []` (`softX_strict`), so every soft-chain statement here is the norms chain's at `X = []` | norm-defaults 3.3: `Coh_T`'s selections read unsaid atoms where guards mention unspecified predicates; soft's own `Coh_T` reads the placeholder `deny` (`test_coherence_is_regenerated_on_the_filled_tree`) | soft's own `Coh_T`, which would decide gaps by the invented `deny` |
 | D3 | The enumerated route only, at most 64 compatible choices per document, with `ReadingsNotSuperposable: <sets>` and cause `the unspecified completion` (E29). Superposition under the soft completion is SC-10 and SC-11, off the constitution's path | the constitution has 16 choices (*recorded*). RD-6a's `Transfers` carries a premise family through S2a's theorems about `soften (sup)`. Under the soft completion the conflict targets are those of `fill (soften (sup))`, which differ from `soften (sup)`'s wherever a guard reads a lower gap. So S2a's theorems must be restated over `fill ∘ soften` (a `fill_sim` lemma), not only given `X ++ Fill_T` as a family | superposition first; RD-6a's `Transfers` alone (the readings-defaults plan's RD-9 sketch) |
 | D4 | Separation runs S1's pair check (`pairEval`) on **filled sides**: S1's `Side` with the reading's filled tree `fill (asU N X)` and its layers in place of `soften (correlate X)`. The base is over the filled author vocabulary, and its `unsaid__` tables are the shared filling (readings-defaults D4). Decision tables stay the readings' own keys (S1 1.5). The witness's `Fill_T` is checked on its own completion | one pair check for every chain; readings-defaults D4 and S1's key ownership unchanged | a second pair check for the soft chain |
-| D5 | Force twins keep S1's finding (`decisionOnly`, unchanged). Under the completion the twins differ exactly where the exception applies (`decision_only_soundS`), and there the default reading leaves the act unsaid (`excepted_lifts`, already proved): the strict reading settles the point, the default reading answers UNDECIDED. The finding's wording follows S1's rule (E25 while S1 shows E25; E15 only when the DRI signs S1's flip and `decision_only_soundS` is proved) | this is how the constitution's "should" sets read under the completion. On the four sets (`X = []`) it means what today's workaround means; their gain is four fewer invented open terms and the force-twin finding (0, E2). The deny completion's invented "not required" (audit 20261003T0600Z) was removed by `norm-defaults@0`, not by this decision | a "should"-specific sentence |
+| D5 | Force twins keep S1's finding (`decisionOnly`, unchanged). Under the completion the twins differ only where the exception applies (`decision_only_soundS`: with the exception table empty they agree; the converse is not claimed). Where it applies, the default reading leaves the act unsaid (`excepted_lifts`, already proved, when the act is unspecified, the default twin is its only rule and the exception holds): the strict reading settles the point, and the default reading answers UNDECIDED where two admissible fillings give opposite values (F-SD1.status). The finding's wording follows S1's rule (E25 while S1 shows E25; E15 only when the DRI signs S1's flip and `decision_only_soundS` is proved) | this is how the constitution's "should" sets read under the completion. On the four sets (`X = []`) it means what today's workaround means; their gain is four fewer invented open terms and the force-twin finding (0, E2). The deny completion's invented "not required" (audit 20261003T0600Z) was removed by `norm-defaults@0`, not by this decision | a "should"-specific sentence |
 | D6 | One fold over a per-choice semantics (`ChoiceSem`). RD-3's seven fold theorems become one-line instances (`ndSem`, statements unchanged), and the soft chain's are instances too (`sdSem`) | one owner of fold soundness | seven copied fold theorems for the soft chain |
 | D7 | One per-choice evidence structure with `X` (`XEvidence`), in `VerdictsWire.lean` beside `NDEvidence` (D13). RD-3's `NDEvidence N c` becomes `XEvidence (choiceU N c) []`, and its row functions become this structure's at `X = []`. One choice-source builder (`choiceLayeredG`, in `UnspecifiedWire.lean`) serves both chains | one owner; `X = []` adds no premise byte, so the norms chain stays byte-identical (A/B) | a soft copy of RD-2a's and RD-3's per-choice code |
 | D8 | The layered branch gains its two missing kinds that the soft chain uses: `norm-defaults-certificate` (`EntailsX`, `acceptanceX`, bound by `bindCertX`, D14) and `admission` (claim graphs with soft and fill leaves). One extended dispatch in the new `LayeredAdmission.lean` answers both (`admission` by `admitDocumentX`, the certificate by `bindCertX`); `NormDefaults/Run.lean`'s `runCase` calls it first when `layeredRoute environment = some "soft-norms@0"`, before its `runAdmission` branch. `layeredCase` is unchanged: `Layered.lean` cannot call back into a file that imports it, and `runCase` sends every profiled `admission` to `runAdmission` before `layeredCase` is reached (`Run.lean:204–207`). Soft documents under `norm-defaults@0` are then admitted, as b10b's follow-up asks. `ve document`'s refusal stays for the rights route only | the constitution's main document has a claim graph (root `¬human(claude)`, unit u0248, *recorded*), and Python must not build `fill` | Python soft-fill code; keeping the refusal; adding the kinds to `layeredCase` (an import cycle, and unreachable for `admission`) |
@@ -265,10 +279,14 @@ completion:
 - **They differ only where the exception applies** (`decision_only_soundS`, SC-3): with the default twin's exception
   table empty, the two readings reach the same probe values on every base and filling. It is `decision_only_sound`
   for filled sides. Its proof adds one step to S1's: `fill` reads only the author rules' decisions
-  (`fill_soft_value`), and those agree off the exception (`Twin.decides`).
+  (`fill_soft_value`), and those agree off the exception (`Twin.decides`). This is one direction only, not "exactly
+  where": where the exception applies the readings may still agree (F-SD1 with the filling yes is not separated).
 - **Where it applies, the default reading leaves the act unsaid**: `excepted_lifts` (merged) applied to
-  `oneU N s j`, which is `(soften (correlate (one N.D s j).1), N.unspec)`, so it needs no new statement. The
-  per-choice status replay shows it: strict SETTLED, default UNDECIDED (fixture C1.4).
+  `oneU N s j`, which is `(soften (correlate (one N.D s j).1), N.unspec)`, so it needs no new statement. It needs
+  three hypotheses: the regulated predicate is unspecified, the default twin is the only rule on it (which
+  `decisionOnly` checks), and the excepted formula holds. Its conclusion is `Value3 = .unsaid`, not the checked
+  status UNDECIDED. The per-choice status replay checks UNDECIDED with two admissible fillings that give opposite
+  values: strict SETTLED, default UNDECIDED (F-SD1.status; C1.4 on the constitution).
 
 The English is E14 with S1's `<decision>` slot. A separation line under the completion adds the one filled-gap
 sentence the witness's value depends on (D9). On F-SD1, *derived*: "This sentence says *should*. (1) *Every agent
@@ -293,8 +311,9 @@ case's environment id, the choice's document hash (`choiceHash`) and `E‴_base`
 
 RD-2a's `ndCertificate` and `ndChoiceModel` become these checks. With `L.X = []` on the norms chain, their premise
 lists and model checks are the same bytes and values as today. A certificate's acceptance (`accepted`) also needs the
-choice's conflict packages CONFLICT-FREE, read with `X` (`conflictFreeCheckX`, which is `conflictFreeCheckU` at
-`X = []`).
+choice's conflict packages CONFLICT-FREE, read with `X`. On the norms chain that is `conflictFreeCheckX`, which is
+`conflictFreeCheckU` at `X = []`. On the soft chain it is `conflictFreeX x.L (conflictPackages inner)`, the
+hypothesis of the two `sd_choice` theorems (spec 6.8).
 
 ### 3.7 Verdicts across readings
 
@@ -330,7 +349,8 @@ No new wording (D12). What changes:
 - **The `<reading>` slot.** On the constitution's sets the candidates differ only in the verb, so readings-defaults
   A4 keeps the italic verb: *must not* against *should not* (*derived*).
 - **Separation lines (D9, both chains under the completion).** After the shown situation comes exactly one filled-gap
-  sentence per gap in the cone of the witness's shown value, and none for a gap outside it. Lean computes the list
+  sentence per gap in the cone of the witness's shown value, and none for a gap outside it. In E14 that is after the
+  supposition and before "Under (1)", as in 3.5's example (spec 2.2). Lean computes the list
   per pair (`gaps`: predicate, tuple, value) with `gapsOf` on the witness's filled document. Python renders it. On
   the constitution this replaces 15 sentences by one (*derived*, fixture F-SD10). This is a selection change on the
   norms chain's English as well, so it is a signed `wording` change in DELTA.
@@ -805,7 +825,10 @@ twin is alone on its act, so it is in no colliding pair, and its exception has n
 table empty its necessary conditions hold vacuously. `Fill_T` agrees because `gap_p` reads the author decisions.
 
 No statement is added for "where the exception applies, the default reading leaves the act unsaid": it is
-`excepted_lifts` at `oneU N s j` (`rulesOn (correlate (one N.D s j).1) p = [Nd]`, which `decisionOnly` checks).
+`excepted_lifts` at `oneU N s j`, under its three hypotheses: `p ∈ N.unspec`, `rulesOn (correlate (one N.D s j).1) p =
+[Nd]` (which `decisionOnly` checks), and the excepted formula holding at the tuple. It concludes `Value3 = .unsaid`;
+UNDECIDED is claimed only where the status replay finds two admissible fillings with opposite values (F-SD1.status).
+`decision_only_soundS` is the one direction "only where"; nothing claims "exactly where".
 
 ### 4.7 SC-4: admission, route, separation and each choice (`VE.Readings.Wire`)
 
@@ -1078,7 +1101,9 @@ end VE.NormDefaults.Admission
 ```
 
 `otherAssumptionsX` is `otherAssumptions` with soft leaves excluded too. `admitDocumentX_spec` is
-`admitDocument_spec`'s shape with `SoftLeaf` among the admitted leaf kinds (the spec writes it out, 6.10).
+`admitDocument_spec`'s shape with `SoftLeaf` among the admitted leaf kinds (the spec writes it out, 6.10). It keeps
+`SourceDecoded`'s source correspondence conjunct by conjunct (`SourceDecodedX`; `AdmittedX` also carries
+`graphJson` and `nodes`, spec 12.19).
 
 **The dispatch (D8).** `layeredCase` does not change: `Layered.lean` cannot call into `LayeredAdmission.lean`, which
 imports it, and `NormDefaults/Run.lean`'s `runCase` sends every profiled `admission` to `runAdmission` before
@@ -1154,20 +1179,21 @@ Environment K with `norm-defaults@0` added and `avoid_required` `unspecified` un
 |---|---|---|---|
 | F-SD1 | `rs1` | admitted; choices `[(rs1,0)]`, `[(rs1,1)]`; `oneX` = `choiceX` = `[]` (no condition, no colliding pair); `separatesS … 1 0 σ = true` for σ = (`m0`, filling empty, decisions `excepted no-deception` = {(a, u)}, outcome `avoid_required (a, u)`, false); with the filling {(a, u)}: `false`; with witness 0, value true, no decision: `false` (the default reading reaches true with the empty table); `decisionOnly = some (excepted no-deception)` | SC-2, SC-4 |
 | F-SD1.status | `norm-defaults-status` on choice `(rs1,1)`, base with `excepted` {(a, u)}, fillings yes {(a, u)} and no {} | UNDECIDED; on `(rs1,0)`: SETTLED yes by `table3` (as `u2-unspecified-*` in `test_norm_defaults_layered.py`) | SC-4 |
-| F-SD1.verdicts | conflict; query `∀ agent ∀ user. avoid_required`; the same `--under rs1:0` and `--under rs1:1` | CONFLICT-FREE under both; SOME (choice 0 `proved`, choice 1 `refuted` by `excepted` {(a, u)} and the filling no); ALL; NONE. English: E12 R2 for *must*, E12 R3 for *should* with "suppose the decider decides the exception applies to a and u" and one filled-gap sentence | SC-5, SC-8 |
-| F-SD2 | K18 (K1 with `norm-defaults@0`, `avoid_required` deny) | before: the abstention text; after: admitted with K1's answers (`unspec = []`, `fill` the identity): an `availability` change in DELTA | SC-4 |
+| F-SD1.verdicts | conflict; query `∀ agent ∀ user. avoid_required`; the same `--under rs1:0` and `--under rs1:1` | CONFLICT-FREE under both; SOME (choice 0 `proved`, choice 1 `refuted` by `excepted` {(a, u)} and the filling no); ALL; NONE. `decided_units`: `["u1"]` without `--under` when every row is decided, `[]` under `--under rs1:0` and `--under rs1:1`. English: E12 R2 for *must*, E12 R3 for *should* with "suppose the decider decides the exception applies to a and u" and one filled-gap sentence | SC-5, SC-8 |
+| F-SD2 | K18 (K1 with `norm-defaults@0`, `avoid_required` deny, so `unspec = []` and `fill` the identity) | Before: the abstention text. After: the enumerated row, not K1's superposed one (an `availability` change in DELTA). Per request kind, as spec 8.3 lists them:<br>• `readings-validate` and `readings-separate`: K1's rows (*computed* on sides and pairs, spec 8.1), plus `fill_premises`, `soft_premises` and `gaps`, each empty.<br>• `readings-elaborate`: `ReadingsNotSuperposable: rs1`, cause `the unspecified completion`.<br>• `readings-choice`: the layered inner kinds.<br>• `readings-verdicts`: RD-3's enumerated answer with `decided_units` | SC-4, SC-5 |
 | F-SD3 | K5 under the completion: a fixed default rule `be-kind` on `+help_required` (unspecified); σ with fixed `excepted be-kind` = {(a, u)} | `excepted be-kind` shared and owned by neither reading; `separatesS = true`; `cellsOn … 0 = 0`, `cellsOn … 1 = 1` | SC-2 |
 | F-SD4 | the `coherent` fixture of `test_norm_defaults_layered.py` (`must-x` with a sufficient exception condition and `need-not-x`, a guard on `y_permitted` unspecified) placed in a set beside its strict twin | `soft_premises` of the default reading lists `soft:exception:must-x:sufficient:0` and `soft:coherence:must-x,need-not-x`; the coherence AST mentions `unsaid__y_permitted` (soft's own would not); a CONFLICT-FREE answer under the default reading is `conditional_on: ["soft:coherence:must-x,need-not-x"]` with soft-norms 2.3's sentence as its E3 line | SC-4, SC-5 |
 | F-SD5 | `fillDoc` of F-SD1 (D1's reason, `#guard`) | `chainText .soft (one (fillDoc N) "rs1" 1)` is `SoftOverHard: rule no-deception over unsaid--avoid-required` | SC-2 |
 | F-SD6 | K19 (rights chain) with `norm-defaults@0` | the abstention text, unchanged | SC-4 |
 | F-SD7 | 252 declared predicates of which 4 `unspecified`, one set {strict, default} on one of them | the strict reading's document passes `checkAuthorN` (252 + 0 + 4 = 256); the default reading's fails, `ResourceLimit: vocabulary size under rs_1@1:1` (252 + 1 + 4 = 257) | SC-4 |
 | F-SD8 | tampering: a package bound to choice `(rs1,0)` replayed for `(rs1,1)`; an `unsaid__` table in a layered model's `relations`; a `soft__excepted__` table as a separation base relation (K2b) | refused or UNKNOWN, never CONFLICT-FREE, `proved` or `model`: `InvalidModel(norm-defaults): … is a filling`; `InvalidInput: invalid situation <id>` | SC-4, SC-5 |
-| F-SD9 | 7 sets each as `rs1` | enumerated, `choice_count: "over 64"`; a query: UNKNOWN (budget), E28 | SC-4, SC-5 |
+| F-SD9 | 7 sets each as `rs1` | enumerated, `choice_count: "over 64"`; a query: UNKNOWN (budget), E28; `decided_units: []` | SC-4, SC-5 |
 | F-SD10 | the cone (D9): F-SD1 with three more unspecified predicates in the frame, no rule on them | the separation line has one filled-gap sentence (for `avoid_required (a, u)`), not four; Lean's `gaps` lists one entry (*computed*: `[("avoid_required", ["a","u"], false)]` against 4 unsaid atoms) | SC-4, SC-8 |
 | F-SD11 | tampered assertions (D14): a certificate for choice `(rs1,1)` of F-SD1 extended by one fixed assertion unit, whose binding lists the regenerated premises without that assertion, and one whose binding adds an assertion the choice does not take | `readings-choice`: the inner answer is the error `certificate is stale or bound to different inputs` (`bindingOk`), `accepted: false`; `readings-verdicts`: the piece is refused, the row `unknown`, never `proved` | SC-4, SC-5 |
 
-Values marked *computed* in draft 2 (F-SD1, F-SD3, F-SD4, F-SD5, F-SD7, F-SD10) were evaluated in the SC-0 stub; the
-spec's 8 lists each with the expression evaluated.
+Values marked *computed* in draft 2 (F-SD1, F-SD3, F-SD4, F-SD5, F-SD7, F-SD10) were evaluated in the SC-0 stub;
+draft 3 adds F-SD2's route, fields and K1 comparison and the `fillHoldsS` set `NSDq`. The spec's 8 lists each with the
+expression evaluated.
 
 ### 5.2 Constitution units (real)
 
@@ -1183,7 +1209,7 @@ spans are unchanged. SC-8's test builds `CE4` from the pinned translation; nothi
 | # | Unit and source words | Expected (*derived*) |
 |---|---|---|
 | C1 | u0125.s04.p2, "Claude should never directly deny that it is Claude" (`force-u0125-s04-p2`) | admitted; σ: witness `default`, decisions `excepted no-denying-being-claude` = {c}, filling `unsaid__denial_of_being_claude_permitted` = {c}, outcome `denial_of_being_claude_permitted (c)`, true. The strict reading reaches only false (its rule forbids everywhere), so separated. Finding `SeparatedByDecisionOnly: force-u0125-s04-p2: 0, 1` with S1's wording rule (D5); E14 with source word *should* |
-| C1.4 | the status of `denial_of_being_claude_permitted (c)` with `excepted` {c} | under `default`: UNDECIDED, R7 "the text does not say whether c may directly deny being Claude: no rule decides this situation."; under `strict`: SETTLED no |
+| C1.4 | the status of `denial_of_being_claude_permitted (c)` with `excepted` {c}, fillings yes {c} and no {} | under `default`: UNDECIDED (the two admissible fillings give opposite values, as in F-SD1.status), R7 "the text does not say whether c may directly deny being Claude: no rule decides this situation."; under `strict`: SETTLED no |
 | C2 | u0036.s05, "Claude should ask for clarification in cases of genuine ambiguity" | σ: witness `default`, base `genuine_ambiguity` = {s}, decisions `excepted clarify-ambiguity` = {(c, s)}, filling empty, outcome `clarification_required (c, s)`, false. The strict reading's guard holds, so it reaches only true. Separated. One filled-gap sentence: "Here the text does not say whether c must seek clarification in s; this situation answers 'no'." (today: 15 sentences, 1.1) |
 | C3 | u0156.s03, "Claude shouldn't actively deceive the user about the existence of a system prompt or its content" | as C1 with the tuple (c, u) on `system_prompt_deception_permitted`; E14 with source word *shouldn't* |
 | C4 | u0263.s04.p2, "in situations where Claude has explicitly been instructed not to engage in unintended exploits, it should comply" | as C2 with base `explicit_instruction_against_exploits` = {(c, s)} on `exploit_instruction_compliance_required` |
@@ -1192,7 +1218,7 @@ spans are unchanged. SC-8's test builds `CE4` from the pinned translation; nothi
 | C7 | `CE4`, query "∀ c ∀ s. genuine_ambiguity(s) → clarification_required(c, s)" | SOME; `--under force-u0036-s05:0`: ALL |
 | C8 | `CE4` with `decided_units` (SC-5; the norms-chain translation's in SC-A) | the four sets' units, when C5's rows are all decided and every reading's premise status is `model`; any unit whose evidence is missing is absent (readings-defaults SR4) |
 | C9 | u0073.s05, "should generally comply … if doing so is not unsafe, unethical, or against Anthropic's guidelines", as one default rule with three sufficient exception conditions (soft-norms 2.4's rule 4 form), replacing the `general_exception_to_complying` open term (required, E2) | `X ≠ []`: three `soft:exception:<rule>:sufficient:<i>` premises; where a condition holds, a completion with the exception table empty is inadmissible; there the default reading leaves compliance unsaid and the strict reading settles it; no force-twin finding (a sufficient condition). *Computed* on a miniature with this shape (spec 8, C9′); measured on the translation in SC-9 |
-| C10 | comprehension (E5): Sonnet 5.5 as the zero-training reader of C1 to C4's rendered lines, asked "Does the text say that <agent> need not <act>?" | the answer "no" on each of C1 to C4; any "yes" is a failure of the line "Under (2) a is not required to", which combines existing wording in a new way, close to the line audit 20261003T0600Z rejected |
+| C10 | comprehension (E5): Sonnet 5.5 as the zero-training reader of C1 to C4's rendered lines, asked one question per line as spec 2.6 words it: for a permission (C1, C3) "Does the text say that <subject> may <act>?", for an obligation (C2, C4) "Does the text say that <subject> need not <act>?" | the answer "no" on each of C1 to C4; any "yes" is a failure of the line "Under (2) a is not required to", which combines existing wording in a new way, close to the line audit 20261003T0600Z rejected |
 
 These are semantic expectations. Whether Python's generators find each situation, certificate and countermodel
 within budget is measured (SC-8 on `CE4`, SC-9 on the translation), never assumed.
@@ -1263,15 +1289,21 @@ both called either choice sound. Draft 2 settles each:
   `def T : Prop := C`; a few short ones proved there to check them), and the fixture values of 5.1 and 5.2 that a
   stub can compute evaluated with `#eval` and marked *computed*. Spec 12 lists every difference from section 4. The
   stub (`lean/SpecStubs_rd-9.lean`) was not committed.
-- Remaining: statement review by Astra and Opus, until converged. PASS requires both reviewers to accept each
-  statement as true under its hypotheses; that the stub elaborates is not enough. The checklist is the spec's 11,
-  which includes section 9 below. The DRI signs `normDefaults_wire_admission`'s added hypothesis (3.14).
-- Done when the review has converged on PASS and this file and the spec are committed with its edits.
+- Done since: the statement review (`manage-agents/debates/rd-9-spec/`, Astra and Fable) converged in round 3 on
+  FIX, with no redesign. Spec draft 2 and this draft 3 apply its edits (spec 12.19 to 12.23). The strengthened
+  statements were elaborated again in the stub, `probeFormulaOn_eval` was proved there, and the new fixture values a
+  stub can compute were computed there (F2's `NSDq`; F-SD2's route, fields and K1 comparison).
+- Remaining: the bounded re-check (spec 11, item 11). It covers only the changed statements (A1, F1, F3) and the new
+  fixture values (F2, F5, and A3's and A1's SC-6 cases). If it passes, the verdict is PASS, with no full re-review.
+  PASS requires both reviewers to accept each changed statement as true under its hypotheses; that the stub
+  elaborates is not enough. The DRI signs `normDefaults_wire_admission`'s added hypothesis (3.14).
+- Done when the re-check has passed and this file and the spec are committed with any edits it asks for.
 
 ### SC-A. The norms chain's gains (Lean and Python, 4–6 h)
 
 Files: `NormDefaults/Evidence.lean` (`coneEval_sound`, `coneEval_definite`), `Readings/VerdictsWire.lean` (the move of
-`readingPremise`, `partDecided`, `documentOrder`; `probeFormulaOn`, `pairGapsOn`; the answer's `decided_units`),
+`readingPremise`, `partDecided`, `documentOrder`; `probeFormulaOn`, `pairGapsOn`, and `probeFormulaOn_eval` with its
+lemmas `anyF_eval` and `conj_eval`; the answer's `decided_units`),
 `Readings/Run.lean` (per-pair `gaps` under the completion), `ve/readings_s2_wording.py` (renders `gaps`;
 `filled_gaps` deleted), `tools/lean_decided_share.py` (reads `decided_units` from the enumerated route as from the
 product route).
@@ -1282,8 +1314,9 @@ sentences each, now one each (C2's sentence); `partDecided` both ways on F-ND1 a
 
 Deleted, not duplicated: `filled_gaps`. `partDecided` is RD-4b's, moved unchanged.
 
-Done when: the move is pure (no statement changes; `lean_statements.py` shows only `coneEval_sound` and
-`coneEval_definite` added, or neither with the "Not claimed" entry made), the A/B lists the signed `wording` change
+Done when: the move is pure (no statement changes; `lean_statements.py` shows only additions:
+`probeFormulaOn_eval`, `anyF_eval` and `conj_eval`, which are required, and `coneEval_sound` and `coneEval_definite`,
+or neither of those two with the "Not claimed" entry made), the A/B lists the signed `wording` change
 (gap selection) and the signed `field added` change (`decided_units`), and the gate passes.
 
 ### SC-1. Semantics with `X` and one fold (Lean, 5–6 h)
@@ -1308,7 +1341,8 @@ passes. No answer can change, since nothing new is called.
 
 Files: `Readings/SoftSeparate.lean`, `Readings/SoftSeparateExamples.lean` (new).
 
-Fixtures (`#guard`): F-SD1's four separation cases, F-SD3's cells, F-SD5, and `softPremisesIn_fill` on F-SD4.
+Fixtures (`#guard`): F-SD1's four separation cases, F-SD3's cells, F-SD5, `softPremisesIn_fill` on F-SD4, and the
+`fillHoldsS` set `NSDq` (spec 8.1: `pairEval` true on both bases, `separatesS` true only with the permission filled).
 
 Deleted, not duplicated: no second pair check. `separatesS` is `pairEval` on filled sides, the function the route
 runs. The proof reuses S1's table lemmas and replaces only the side's admissibility and observation lemmas.
@@ -1352,8 +1386,9 @@ and its rows as `X = []` instances (D13); `Readings/SoftVerdicts.lean` (new: `sd
 `replayVerdictsSD`, the wire theorems). The `readings-verdicts` runner dispatches to `replayVerdictsSD` under the soft
 completion, and its answer adds `decided_units` as SC-A's does (D10).
 
-Fixtures: F-SD1.verdicts, F-SD4's `conditional_on`, F-SD8 (a certificate for one choice given as another's: that
-choice `unknown`, never ALL), F-SD9, F-SD11's verdict certificate, F-SD1's decided units, and C5 to C8 on `CE4`. All of
+Fixtures: F-SD1.verdicts, F-SD2's verdicts, F-SD4's `conditional_on`, F-SD8 (a certificate for one choice given as
+another's: that choice `unknown`, never ALL), F-SD9, F-SD11's verdict certificate, F-SD1's decided units (`[]` under
+`--under`), and C5 to C8 on `CE4`. All of
 RD-3's enumerated fixtures must stay byte-identical.
 
 Deleted, not duplicated: `ndFree`, `ndCertOk`, `ndModelOk`, `ndConflictRow`, `ndQueryRow`, `ndPremiseRow` as separate
@@ -1371,11 +1406,21 @@ extended dispatch), `NormDefaults/Run.lean` (`runCase` calls the dispatch first 
 unchanged). `layeredCase` is unchanged; its docstring's "the one dispatch" is corrected, a comment-only change that
 SC-6 re-pins in the assurance manifest and the frozen inventory (DRI D2, 3.14).
 
-Fixtures: on the layered tests' u2 and u8 sources, a certificate of "where the rule's exception does not apply, the
-act is not permitted" is accepted, and the same certificate replayed against the conclusion without that condition is
-not (`valid: false`); the same certificate with its binding missing one regenerated premise is refused (`certificate
-is stale or bound to different inputs`). A claim graph with a `soft:coherence` leaf is admitted on `coherent`, and a
-leaf with a label no regenerated premise has is refused with W1's admission text. On a rights source the certificate
+Fixtures (spec 8.3's SC-6 row):
+
+- **Certificates, on the layered tests' u2 and u8 sources.**
+  - A certificate of "where the rule's exception does not apply, the act is not permitted" is accepted.
+  - The same certificate replayed against the conclusion without that condition is refused with `certificate is
+    stale or bound to different inputs`: `bindingOk` compares the conclusion's meaning id before any check.
+  - A certificate whose ids bind that changed conclusion but whose proof does not close answers `valid: false`.
+  - The first certificate with its binding missing one regenerated premise is refused with the same stale text.
+- **Claim graphs.**
+  - A claim graph with a `soft:coherence` leaf is admitted on `coherent`.
+  - A leaf with a label no regenerated premise has is refused with W1's admission text.
+  - Three substitutions in the admitted `coherent` document, each tied to `SourceDecodedX`:
+    - a substituted root: the report is rooted at the named node, with a different `report_id`;
+    - a substituted node AST: the stale-certificate text;
+    - a substituted unit: W2's `node <n> is not admitted under label <l>`. On a rights source the certificate
 kind gives `runLayered`'s refusal and `admission` today's `runAdmission` answer. A profiled norms-route admission
 answers byte-identically (`normDefaults_wire_admission`'s case).
 
@@ -1444,8 +1489,9 @@ foreground, with host load recorded:
    translation. It is the one fixture where `X ≠ []` on the constitution: its `soft_premises`, its statuses where a
    condition holds and where none does, and its separation from a strict reading are recorded, as found or not found.
 6. **Required: the comprehension check (C10, E5).** Sonnet 5.5 as the zero-training reader reads C1 to C4's rendered
-   separation lines and answers "Does the text say that <agent> need not <act>?" for each. The expected answer is
-   "no" on all four; each answer is recorded verbatim, and a "yes" is reported as a failure of the line "Under (2) a
+   separation lines and answers one question per line, as spec 2.6 words it. For a permission (C1, C3): "Does the
+   text say that <subject> may <act>?". For an obligation (C2, C4): "Does the text say that <subject> need not
+   <act>?". The expected answer is "no" on all four; each answer is recorded verbatim, and a "yes" is reported as a failure of the line "Under (2) a
    is not required to", not worked around.
 
 Done when: the table is filled with measured values, `DELTA.md` and the pilot's `SUMMARY.md` report before and after,
@@ -1520,13 +1566,16 @@ predicted here.
 7. `decision_only_soundS`: the twin alone on its act, no sufficient condition; `softX` and `Fill_T` agree with the
    table empty.
 8. `admitSD`: the order of 3.3, the decision count in `checkAuthorN`, and no step 4 (Q1).
-9. `choiceLayeredG`: `L.U = choiceU N c`, `L.X = choiceX N c`, the norms chain's case byte-identical to RD-2a's.
+9. `choiceLayeredG`: `L.U = choiceU N c`, `L.X = choiceX N c`, `X` well formed over the filled base vocabulary
+   (`ChoiceReplayS.hXw`, `XEvidence.hX`), the norms chain's case byte-identical to RD-2a's.
 10. `XEvidence` and `NDEvidence = XEvidence (choiceU N c) []`: RD-3's statements stay true and its A/B stays
     byte-identical.
-11. The layered kinds (SC-6): `layered_wire_acceptance` and `wire_report_consequenceX` true; the dispatch reached
+11. The layered kinds (SC-6): `layered_wire_acceptance` and `wire_report_consequenceX` true; `admitDocumentX_spec`
+    and `AdmissionAnswerX` keep the source correspondence (`SourceDecodedX`); the dispatch reached
     first for `layeredRoute … = some "soft-norms@0"` and `layeredCase` unchanged; `normDefaults_wire_admission` with
     its added hypothesis still true, and `normDefaults_wire_admissionX` true; the rights branch's answers unchanged.
-12. English: no new wording (D12); the gap selection by the cone (D9) and `coneEval_sound`; E14's `<decision>` slot;
+12. English: no new wording (D12); the gap selection by the cone (D9), `probeFormulaOn_eval` and `coneEval_sound`;
+    E14's `<decision>` slot and the gap sentence's place in it;
     the non-wordings of 3.9.
 13. Conservativity (3.14): K18's `availability` change, the one signed statement change, the pure decided-unit move,
     and every other fixture of 5.3.
