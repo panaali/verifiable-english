@@ -22,8 +22,11 @@ missing test IDs, a dirty or changing worktree, or failed stages. The expected t
 IDs, deselected live tests included, are the merge base's (`--base REV` names another commit): the
 collection a gate attached to that commit as the git note `refs/notes/ve-gate-collection`, or, without
 one, the base collected in a scratch worktree (and then attached). New tests are fine; a base ID the head
-does not collect fails the gate unless `git diff --no-renames base..HEAD` deletes its file or its test
-function or changes its parametrisation in its test module (`tools/gate_collection.py`). Every full
+does not collect fails the gate unless a commit since the base records its removal with a trailer
+`Test-removed: <test ID, or its deleted function, class or file> — <reason>`, which reviewers read with the
+batch. A trailer naming a test the head still collects fails as stale. `git diff --no-renames base..HEAD`
+only labels each removal: its file or test function deleted, or its parametrisation changed
+(`tools/gate_collection.py`). Every full
 gate attaches its own collection to its commit. `uv run python tools/gate_collection.py --check` (after
 `(cd lean && lake build)`) runs the same comparison on the worktree. Optional backend
 and fixture skips are listed in `tools/gate-optional.json`. The JSON result is local and ignored by Git;

@@ -240,11 +240,10 @@ def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
 
 
 def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str],
-                     families: tuple[str, ...] | None = None, *, explain=lambda nodeid: None,
-                     base: str = "") -> None:
+                     families: tuple[str, ...] | None = None, *, diff=None, base: str = "") -> None:
     """Record the suite's counts, skips and failures; `families` (default REQUIRED_FAMILIES) must be collected.
-    Every `expected` ID (the merge base's collection) must be collected unless `explain` gives the change that
-    removed it (tools/gate_collection.py, `Changes.reason`)."""
+    Every `expected` ID (the merge base's collection) must be collected unless a `Test-removed:` trailer of
+    `diff` (tools/gate_collection.py, `Changes`) records its removal; no trailer may be stale or malformed."""
     from tools import gate_collection
     tests = events["tests"]
     collected = events["collected"]
@@ -258,14 +257,12 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
                             deselected=len(deselected))
     if len(collected) != len(set(collected)) or len(selected) != len(set(selected)):
         result["failures"].append({"stage": "coverage", "reason": "duplicate test ID in collection"})
-    removed = {nodeid: reason for nodeid in sorted(set(expected) - set(collected))
-               if (reason := explain(nodeid)) is not None}
-    refused = sorted(set(expected) - set(collected) - set(removed))
+    verdict = gate_collection.missing(expected, collected, diff)
     result.setdefault("collection", {}).update(head_ids=len(collected), added=len(set(collected) - set(expected)),
-                                               removed=removed, refused=refused)
-    if refused:
+                                               **verdict.record())
+    if verdict.failed():
         result["failures"].append({"stage": "coverage",
-                                   "reason": gate_collection.difference_text(base, refused)})
+                                   "reason": gate_collection.difference_text(base, verdict)})
     if set(selected) | set(deselected) != set(collected) or set(selected) & set(deselected):
         result["failures"].append({"stage": "coverage",
                                    "reason": "tests removed from final collection without a deselection report"})
@@ -465,7 +462,7 @@ def isolated_cargo(env: dict[str, str], target_dir: Path | None = None):
 
 def base_collection(result: dict, base: str | None, env: dict[str, str], pytest_env: dict[str, str],
                     scratch: Path):
-    """(the merge base's collection, the explanation of an ID the head lacks): the base's record, or the base
+    """(the merge base's collection, base..HEAD's changes and removal records): the base's record, or the base
     collected in a scratch worktree with this gate's Lean build, toolchains and Python environment and
     recorded for the next gate on that base (tools/gate_collection.py)."""
     from tools import gate_collection
@@ -483,7 +480,7 @@ def base_collection(result: dict, base: str | None, env: dict[str, str], pytest_
         collection.update(base_source="collected", base_seconds=round(time.monotonic() - started, 1))
         collection["base_record"] = record_collection(base, ids, env)
     collection["base_ids"] = len(ids)
-    return ids, gate_collection.changes(base, "HEAD", env=env).reason
+    return ids, gate_collection.changes(base, "HEAD", env=env)
 
 
 def record_collection(commit: str, ids: list[str], env: dict[str, str]) -> str:
@@ -614,7 +611,7 @@ def main() -> int:
             if rerun is None and not collection["collection_reports"] and \
                     len(collection["collected"]) == len(set(collection["collected"])):
                 head_ids = collection["collected"]
-            expected, explain = base_collection(result, args.base, env, pytest_env, scratch)
+            expected, diff = base_collection(result, args.base, env, pytest_env, scratch)
             try:
                 command(suite_command(python, args.workers, rerun),
                         env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
@@ -625,12 +622,12 @@ def main() -> int:
             events = merge_pytest_events(collection, json.loads(events_file.read_text()))
             base = result["collection"]["base"]
             if rerun is None:
-                interpret_pytest(result, events, policy, expected, explain=explain, base=base)
+                interpret_pytest(result, events, policy, expected, diff=diff, base=base)
             else:
                 # The base's tests of the rerun files, each of the failed tests among them.
                 interpret_pytest(result, events, policy,
                                  [nodeid for nodeid in expected if nodeid.split("::", 1)[0] in rerun], families=(),
-                                 explain=explain, base=base)
+                                 diff=diff, base=base)
                 outcomes = {nodeid: events["tests"].get(nodeid, {}).get("outcome", "no result")
                             for nodeid in result["rerun_failed"]["tests"]}
                 result["rerun_failed"]["outcomes"] = outcomes

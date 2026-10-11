@@ -1,6 +1,6 @@
-"""The gate's collection is the merge base's, less exactly the tests the diff deletes or re-parametrises
-(tools/gate_collection.py), and the collection itself applies the gate's discovery rules to the tree as it
-is now."""
+"""The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with
+the diff only labelling each removal (tools/gate_collection.py), and the collection itself applies the gate's
+discovery rules to the tree as it is now."""
 from __future__ import annotations
 
 import hashlib
@@ -94,7 +94,7 @@ def history(tmp_path):
 
 
 def compare(repository, base, head):
-    """(explained, refused) for the head's collection against the base's, each collected at its commit."""
+    """The verdict on the head's collection against the base's, each collected at its commit."""
     sides = []
     for sha in (base, head):
         git(repository, "checkout", "-q", "--detach", sha)
@@ -102,48 +102,68 @@ def compare(repository, base, head):
     return gate_collection.missing(sides[0], sides[1], gate_collection.changes(base, head, root=repository))
 
 
-# Each drops tests; the diff explains exactly those whose file or function it deletes or whose
-# parametrisation in the test module it changes.
+def record_removals(repository, targets, reason="no longer needed"):
+    """An empty commit whose message records the removal of each target."""
+    trailers = "\n".join(f"{gate_collection.TRAILER}: {target}{gate_collection.SEPARATOR}{reason}"
+                         for target in targets)
+    return commit(repository, {}, f"remove tests\n\nWhy they go.\n\n{trailers}")
+
+
+# Each drops tests; the diff labels the removal. Without a trailer each lost ID is refused; one trailer
+# naming the suggested target (the deleted file, class or function, else the ID) removes them all.
 DROPS = {
-    "deleted test file": ({"tests/test_other.py": None}, {"tests/test_other.py::test_other": "its file is deleted"}),
+    "deleted test file": ({"tests/test_other.py": None}, {"tests/test_other.py::test_other": "its file is deleted"},
+                          ["tests/test_other.py"]),
     "deleted test function": ({"tests/test_mod.py": MODULE.replace("def test_plain():\n    pass\n", "")},
-                              {"tests/test_mod.py::test_plain": "its test function test_plain is deleted"}),
+                              {"tests/test_mod.py::test_plain": "its test function test_plain is deleted"},
+                              ["tests/test_mod.py::test_plain"]),
     "deleted class": ({"tests/test_mod.py": MODULE.split("class TestGroup")[0]},
-                      {"tests/test_mod.py::TestGroup::test_member": "its class TestGroup is deleted"}),
+                      {"tests/test_mod.py::TestGroup::test_member": "its class TestGroup is deleted"},
+                      ["tests/test_mod.py::TestGroup"]),
+    "deleted parametrised function": (
+        {"tests/test_mod.py": MODULE.replace(f"@pytest.mark.parametrize('case', {CASES})\ndef test_literal(case):\n"
+                                             "    pass\n", "")},
+        {f"tests/test_mod.py::test_literal[{case}]": "its test function test_literal is deleted" for case in "abc"},
+        ["tests/test_mod.py::test_literal"]),
     "renamed test file": ({"tests/test_other.py": None, "tests/test_renamed.py": BASE["tests/test_other.py"]},
-                          {"tests/test_other.py::test_other": "its file is deleted"}),
+                          {"tests/test_other.py::test_other": "its file is deleted"}, ["tests/test_other.py"]),
     "shrunk literal list": ({"tests/test_mod.py": MODULE.replace(f"'case', {CASES}", "'case', ['a', 'b']")},
-                            {"tests/test_mod.py::test_literal[c]": "the parametrisation of test_literal changed"}),
+                            {"tests/test_mod.py::test_literal[c]": "the parametrisation of test_literal changed"},
+                            ["tests/test_mod.py::test_literal[c]"]),
     "shrunk module list": ({"tests/test_mod.py": MODULE.replace(f"CASES = {CASES}", "CASES = ['a', 'b']")},
-                           {"tests/test_mod.py::test_named[c]": "the parametrisation of test_named changed"}),
-}
-
-
-@pytest.mark.parametrize("files, expected", DROPS.values(), ids=DROPS)
-def test_the_diff_explains_a_deleted_or_reparametrised_test(history, files, expected):
-    base = git(history, "rev-parse", "HEAD")
-    head = commit(history, files)
-    explained, refused = compare(history, base, head)
-    assert (explained, refused) == (expected, [])
-
-
-# Each drops tests the diff does not delete or re-parametrise in their module: the gate fails on them. (A
-# conftest hook that removes collected items is the selection check's: tests/test_gate_integrity.py.)
-REFUSED = {
-    "parameters from a data file": ({"tests/cases.json": '["a", "b"]'}, ["tests/test_mod.py::test_data[c]"]),
+                           {"tests/test_mod.py::test_named[c]": "the parametrisation of test_named changed"},
+                           ["tests/test_mod.py::test_named[c]"]),
+    # The plan's three failures: a parameter list that shrinks in an unchanged function, and a conftest that
+    # drops a module at collection. (A conftest hook that removes collected items is the selection check's:
+    # tests/test_gate_integrity.py; a module that fails to import, below.)
+    "parameters from a data file": ({"tests/cases.json": '["a", "b"]'},
+                                    {"tests/test_mod.py::test_data[c]": gate_collection.UNLABELLED},
+                                    ["tests/test_mod.py::test_data[c]"]),
     "parameters from an imported module": ({"tests/cases.py": "IMPORTED = ['a', 'b']\n"},
+                                           {"tests/test_mod.py::test_imported[c]": gate_collection.UNLABELLED},
                                            ["tests/test_mod.py::test_imported[c]"]),
     "conftest ignores a module": ({"tests/conftest.py": "collect_ignore = ['test_other.py']\n"},
+                                  {"tests/test_other.py::test_other": gate_collection.UNLABELLED},
                                   ["tests/test_other.py::test_other"]),
 }
 
 
-@pytest.mark.parametrize("files, expected", REFUSED.values(), ids=REFUSED)
-def test_a_test_dropped_without_its_change_is_refused(history, files, expected):
+@pytest.mark.parametrize("files, labels, targets", DROPS.values(), ids=DROPS)
+def test_a_dropped_test_fails_without_a_trailer_and_passes_with_one(history, files, labels, targets):
     base = git(history, "rev-parse", "HEAD")
     head = commit(history, files)
-    explained, refused = compare(history, base, head)
-    assert (explained, refused) == ({}, expected)
+    verdict = compare(history, base, head)
+    assert (verdict.removed, verdict.refused, verdict.suggested) == ({}, labels, targets)
+    assert verdict.failed() and verdict.stale == verdict.malformed == []
+    # The failure lists each ID with its label and the trailer that would record it.
+    text = gate_collection.difference_text(base, verdict)
+    assert all(f"  {nodeid}  ({label})" in text for nodeid, label in labels.items())
+    assert all(f"  Test-removed: {target} — <why>" in text for target in targets)
+    recorded = record_removals(history, targets)
+    verdict = compare(history, base, recorded)
+    assert verdict.removed == {nodeid: {"label": label, "reason": "no longer needed", "commit": recorded}
+                               for nodeid, label in labels.items()}
+    assert not verdict.failed() and verdict.refused == {}
 
 
 @pytest.mark.parametrize("body", [
@@ -151,8 +171,7 @@ def test_a_test_dropped_without_its_change_is_refused(history, files, expected):
     "import ve_gate_absent_test_backend\n",
 ], ids=["module skip", "import error"])
 def test_a_module_dropped_at_collection_fails_twice(history, body):
-    # A collection report fails the collection; its IDs are refused as well, since its
-    # test function and parametrisation are unchanged.
+    # A collection report fails the collection; its IDs are refused as well, since no trailer names them.
     base = git(history, "rev-parse", "HEAD")
     head = commit(history, {"tests/test_other.py": body + BASE["tests/test_other.py"]})
     with pytest.raises(gate_collection.CollectionError, match="tests/test_other.py"):
@@ -161,24 +180,123 @@ def test_a_module_dropped_at_collection_fails_twice(history, body):
     expected = gate_collection.collect(history)
     diff = gate_collection.changes(base, head, root=history)
     collected = [nodeid for nodeid in expected if not nodeid.startswith("tests/test_other.py")]
-    assert gate_collection.missing(expected, collected, diff) == ({}, ["tests/test_other.py::test_other"])
+    verdict = gate_collection.missing(expected, collected, diff)
+    assert (verdict.removed, verdict.refused) == ({}, {"tests/test_other.py::test_other": gate_collection.UNLABELLED})
 
 
-def test_an_added_test_passes_and_an_unchanged_file_explains_nothing(history):
+def test_an_added_test_passes_and_an_unchanged_file_is_unlabelled(history):
     base = git(history, "rev-parse", "HEAD")
     head = commit(history, {"tests/test_new.py": "def test_new(): pass\n"})
-    explained, refused = compare(history, base, head)
-    assert (explained, refused) == ({}, [])
+    verdict = compare(history, base, head)
+    assert gate_collection.Verdict({}, {}, [], [], []) == verdict and not verdict.failed()
     diff = gate_collection.changes(base, head, root=history)
-    assert diff.reason("tests/test_other.py::test_other") is None
-    assert diff.statuses == {"tests/test_new.py": "A"}
+    assert diff.label("tests/test_other.py::test_other") == gate_collection.UNLABELLED
+    assert diff.statuses == {"tests/test_new.py": "A"} and diff.removals == diff.malformed == []
 
 
-def test_the_worktree_side_reads_the_files_not_the_commit(history):
+def test_the_worktree_side_reads_the_files_and_the_trailers_up_to_head(history):
     base = git(history, "rev-parse", "HEAD")
+    recorded = record_removals(history, ["tests/test_other.py::test_other"])
     (history / "tests/test_other.py").write_text("def test_else(): pass\n")
     diff = gate_collection.changes(base, None, root=history)
-    assert diff.reason("tests/test_other.py::test_other") == "its test function test_other is deleted"
+    assert diff.label("tests/test_other.py::test_other") == "its test function test_other is deleted"
+    assert diff.removals == [gate_collection.Removal("tests/test_other.py::test_other", "no longer needed", recorded)]
+
+
+# Each trailer names a test the head still collects: stale, so the gate fails, even when it also covers a
+# lost ID.
+STALE = {
+    "the ID itself": ({}, "tests/test_other.py::test_other", "tests/test_other.py::test_other"),
+    "its file": ({}, "tests/test_other.py", "tests/test_other.py::test_other"),
+    "a function with a lost parameter": (
+        {"tests/test_mod.py": MODULE.replace(f"'case', {CASES}", "'case', ['a', 'b']")},
+        "tests/test_mod.py::test_literal", "tests/test_mod.py::test_literal[a]"),
+    "a class": ({}, "tests/test_mod.py::TestGroup", "tests/test_mod.py::TestGroup::test_member"),
+}
+
+
+@pytest.mark.parametrize("files, target, still", STALE.values(), ids=STALE)
+def test_a_trailer_naming_a_collected_test_is_stale(history, files, target, still):
+    base = git(history, "rev-parse", "HEAD")
+    commit(history, files)
+    recorded = record_removals(history, [target])
+    verdict = compare(history, base, recorded)
+    assert verdict.stale == [{"target": target, "commit": recorded, "collected": still}] and verdict.failed()
+    assert f"  {target} (commit {recorded[:12]}) covers {still}" in gate_collection.difference_text(base, verdict)
+
+
+# What a trailer target covers: the ID, and the IDs of the function, class or file it names; never a longer
+# name that only starts with it.
+COVERS = {
+    "tests/a.py::test_f": (["tests/a.py::test_f", "tests/a.py::test_f[1]", "tests/a.py::test_f[x-y]"],
+                           ["tests/a.py::test_fg", "tests/a.py::test_f_[1]", "tests/a.py::test", "tests/b.py::test_f",
+                            "tests/a.py::C::test_f"]),
+    "tests/a.py": (["tests/a.py", "tests/a.py::test_f", "tests/a.py::C::test_f[1]"],
+                   ["tests/a.pyc::test_f", "tests/a.py.bak::test_f", "tests/b.py::test_f"]),
+    "tests/a.py::C": (["tests/a.py::C::test_f", "tests/a.py::C::D::test_g[1]"], ["tests/a.py::CD::test_f"]),
+    "tests/a.py::test_f[1]": (["tests/a.py::test_f[1]"], ["tests/a.py::test_f[10]", "tests/a.py::test_f"]),
+}
+
+
+@pytest.mark.parametrize("target, covered, other", [(target, *sides) for target, sides in COVERS.items()],
+                         ids=COVERS)
+def test_what_a_trailer_covers(target, covered, other):
+    removal = gate_collection.Removal(target, "why", "c" * 40)
+    assert [nodeid for nodeid in covered + other if removal.covers(nodeid)] == covered
+
+
+# Each trailer value: the removal it records, or None when it is malformed.
+TRAILERS = {
+    "an ID": ("tests/a.py::test_f[x y] — gone", ("tests/a.py::test_f[x y]", "gone")),
+    "a reason with the separator": ("tests/a.py — merged — into b", ("tests/a.py", "merged — into b")),
+    "no separator": ("tests/a.py::test_f gone", None),
+    "an ASCII dash": ("tests/a.py::test_f - gone", None),
+    "no reason": ("tests/a.py::test_f — ", None),
+    "no target": (" — gone", None),
+    "padded target": (" tests/a.py — gone", None),
+    "empty": ("", None),
+}
+
+
+@pytest.mark.parametrize("value, expected", TRAILERS.values(), ids=TRAILERS)
+def test_a_trailer_is_a_target_and_a_reason(value, expected):
+    removal = gate_collection.parse_trailer(value, "c" * 40)
+    assert (removal if removal is None else (removal.target, removal.reason)) == expected
+
+
+def test_git_reads_the_trailers_of_base_to_head_only(history):
+    early = record_removals(history, ["tests/early.py"])  # before the base: not counted
+    base = commit(history, {"tests/test_other.py": None})
+    first = commit(history, {}, "keep\n\nBody that says Test-removed: tests/body.py — not a trailer.\n\n"
+                                "Test-removed: tests/test_other.py — superseded\n"
+                                "test-removed: tests/test_mod.py::test_plain — merged into test_literal\n"
+                                "Co-Authored-By: Someone <someone@example.invalid>")
+    commit(history, {}, "a commit without trailers")
+    second = commit(history, {}, "more\n\nTest-removed: tests/test_mod.py::TestGroup no separator\nTest-removed:")
+    removals, malformed = gate_collection.removal_records(base, second, root=history)
+    assert removals == [gate_collection.Removal("tests/test_other.py", "superseded", first),
+                        gate_collection.Removal("tests/test_mod.py::test_plain", "merged into test_literal", first)]
+    assert malformed == [{"commit": second, "trailer": "tests/test_mod.py::TestGroup no separator"},
+                         {"commit": second, "trailer": ""}]
+    assert early != base and gate_collection.removal_records(second, second, root=history) == ([], [])
+
+
+def test_a_malformed_trailer_fails_the_gate(history):
+    base = git(history, "rev-parse", "HEAD")
+    head = commit(history, {}, "change\n\nTest-removed: tests/test_other.py::test_gone")
+    verdict = compare(history, base, head)
+    assert verdict.malformed == [{"commit": head, "trailer": "tests/test_other.py::test_gone"}] and verdict.failed()
+    assert f"  commit {head[:12]}: tests/test_other.py::test_gone" in gate_collection.difference_text(base, verdict)
+
+
+def test_one_trailer_covers_a_deleted_file_but_not_a_kept_test(history):
+    # A file-level trailer for a file the head still holds a test of is suggested per ID instead.
+    base = git(history, "rev-parse", "HEAD")
+    head = commit(history, {"tests/test_mod.py": MODULE.replace("def test_plain():\n    pass\n", "").replace(
+        "class TestGroup:\n    def test_member(self):\n        pass\n", "")})
+    verdict = compare(history, base, head)
+    assert verdict.suggested == ["tests/test_mod.py::TestGroup", "tests/test_mod.py::test_plain"]
+    assert compare(history, base, record_removals(history, verdict.suggested)).failed() is False
 
 
 PARAMETRISATION = {
@@ -337,27 +455,59 @@ def gate_events(collected):
             "tests": {nodeid: {"outcome": "passed"} for nodeid in collected}}
 
 
-def test_the_gate_fails_on_every_unexplained_missing_id_and_lists_the_explained():
+def labelled_changes(labels, removals=(), malformed=()):
+    """Changes whose diff labels each ID by `labels` (every ID in a deleted file when labelled so)."""
+    diff = gate_collection.Changes("b" * 40, "h" * 40, {}, removals=list(removals), malformed=list(malformed))
+    diff.label = lambda nodeid: labels.get(nodeid, gate_collection.UNLABELLED)
+    diff.deleted = lambda nodeid: None
+    return diff
+
+
+def test_the_gate_fails_on_every_missing_id_no_trailer_names_and_lists_the_recorded():
     base = ["tests/a.py::test_a", "tests/b.py::test_old", "tests/c.py::test_gone"]
     collected = ["tests/a.py::test_a", "tests/d.py::test_new"]
-    reasons = {"tests/c.py::test_gone": "its file is deleted"}
+    # The diff labels both removals; only the trailer authorises one.
+    labels = {"tests/c.py::test_gone": "its file is deleted", "tests/b.py::test_old": "its file is deleted"}
+    diff = labelled_changes(labels, [gate_collection.Removal("tests/c.py", "merged into a", "r" * 40)])
     result = {"counts": {}, "failures": [], "skips": []}
     gate.interpret_pytest(result, gate_events(collected), {"optional_tests": [], "deselected_tests": []}, base,
-                          families=(), explain=reasons.get, base="b" * 40)
-    assert result["failures"] == [{"stage": "coverage",
-                                   "reason": gate_collection.difference_text("b" * 40, ["tests/b.py::test_old"])}]
-    assert result["collection"] == {"head_ids": 2, "added": 1, "removed": reasons,
-                                    "refused": ["tests/b.py::test_old"]}
+                          families=(), diff=diff, base="b" * 40)
+    verdict = gate_collection.missing(base, collected, diff)
+    assert result["failures"] == [{"stage": "coverage", "reason": gate_collection.difference_text("b" * 40, verdict)}]
+    assert result["collection"] == {
+        "head_ids": 2, "added": 1,
+        "removed": {"tests/c.py::test_gone": {"label": "its file is deleted", "reason": "merged into a",
+                                              "commit": "r" * 40}},
+        "refused": {"tests/b.py::test_old": "its file is deleted"}, "stale": [], "malformed": []}
     text = result["failures"][0]["reason"]
-    assert text.splitlines()[1:-1] == ["  tests/b.py::test_old"] and "b" * 40 in text
+    assert "  tests/b.py::test_old  (its file is deleted)" in text and "b" * 40 in text
+    assert "test_gone" not in text and "test_a" not in text
 
 
-def test_without_an_explanation_every_missing_id_fails():
+# Each fails the gate though every ID the head lacks is recorded: a stale or a malformed trailer.
+TRAILER_FAULTS = {
+    "stale": ([gate_collection.Removal("tests/a.py", "gone", "r" * 40)], [],
+              {"stale": [{"target": "tests/a.py", "commit": "r" * 40, "collected": "tests/a.py::test_a"}]}),
+    "malformed": ([], [{"commit": "r" * 40, "trailer": "tests/a.py"}],
+                  {"malformed": [{"commit": "r" * 40, "trailer": "tests/a.py"}]}),
+}
+
+
+@pytest.mark.parametrize("removals, malformed, fields", TRAILER_FAULTS.values(), ids=TRAILER_FAULTS)
+def test_a_stale_or_malformed_trailer_fails_the_gate(removals, malformed, fields):
+    result = {"counts": {}, "failures": [], "skips": []}
+    gate.interpret_pytest(result, gate_events(["tests/a.py::test_a"]), {"optional_tests": [], "deselected_tests": []},
+                          ["tests/a.py::test_a"], families=(), diff=labelled_changes({}, removals, malformed))
+    assert [failure["stage"] for failure in result["failures"]] == ["coverage"]
+    assert {key: result["collection"][key] for key in fields} == fields and result["collection"]["refused"] == {}
+
+
+def test_without_changes_every_missing_id_fails():
     result = {"counts": {}, "failures": [], "skips": []}
     gate.interpret_pytest(result, gate_events(["tests/x.py::test_x"]), {"optional_tests": [], "deselected_tests": []},
                           ["tests/a.py::test_a", "tests/x.py::test_x"], families=())
     assert [failure["stage"] for failure in result["failures"]] == ["coverage"]
-    assert result["collection"]["refused"] == ["tests/a.py::test_a"]
+    assert result["collection"]["refused"] == {"tests/a.py::test_a": gate_collection.UNLABELLED}
 
 
 class FakeRepository:
@@ -383,10 +533,10 @@ class FakeRepository:
 def test_the_gate_takes_the_base_record_and_collects_only_without_one(monkeypatch, tmp_path):
     repository = FakeRepository(monkeypatch, {"base": ["tests/r.py::test_r"]})
     result = {}
-    ids, explain = gate.base_collection(result, None, {}, {}, tmp_path)
+    ids, diff = gate.base_collection(result, None, {}, {}, tmp_path)
     assert (ids, repository.collected, repository.written) == (["tests/r.py::test_r"], [], [])
     assert result["collection"] == {"base": "base", "base_source": "record of base", "base_ids": 1}
-    assert explain("tests/r.py::test_r") is None
+    assert (diff.base, diff.head) == ("base", "HEAD")
     ids, _ = gate.base_collection(result, "other", {}, {}, tmp_path)
     assert ids == ["tests/a.py::test_a"]
     assert repository.collected == [("other", [str(gate.ROOT / ".venv/bin/python")])]

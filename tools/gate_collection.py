@@ -4,20 +4,28 @@
 `tools/gate.py` collects the head's tests and compares them with the collection of the merge base: the
 record a gate attached to the base as the git note NOTES_REF, or, when the base has none, a collection of
 the base in a scratch worktree (whose record is then attached, so the next gate on that base reads it).
-A test the head collects and the base did not is fine. A base ID the head no longer collects must be
-explained by `git diff --no-renames base..head` (`Changes.reason`):
+A test the head collects and the base did not is fine. A base ID the head no longer collects fails unless a
+commit in base..head carries a removal record for it, the trailer
+
+    Test-removed: <the test ID, or its function, class or file> — <why it goes>
+
+so a reviewer reads every lost ID with the batch. A trailer that names a function, class or file covers
+all of its IDs, and fails as stale if the head still collects any of them, as does a trailer naming an ID
+the head still collects. A trailer without a target and a reason fails too.
+
+`git diff --no-renames base..head` only labels each removal (`Changes.label`), it never authorises one:
 
 * the diff deletes its file;
 * the diff deletes its test function, or a class the ID names, read from both sides with `ast`;
 * the diff changes the function's parametrisation (`parametrisation`): the decorators of the function and
   of each class the ID names, the classes' bases, the module's `pytestmark` and `pytest_generate_tests`,
   the decorators of the module's fixtures the function takes, and every module-level statement those
-  name, transitively.
+  name, transitively;
+* none of these: a `conftest.py` that deselects or ignores it, or a parameter list that shrinks while its
+  source in the test module is unchanged (a data file, a glob, an imported list).
 
-Anything else that drops a test fails: a module that no longer imports or is skipped at collection (a
-collection report, which fails on its own as well), a `conftest.py` that deselects or ignores it, or a
-parameter list that shrinks while its source in the test module is unchanged (a data file, a glob, an
-imported list). Every head collection is attached as the record of its commit.
+A module that no longer imports or is skipped at collection is a collection report, which fails on its own
+as well. Every head collection is attached as the record of its commit.
 
 Run from the checkout after `(cd lean && lake build)`, to see what the gate will say:
     uv run python tools/gate_collection.py --check [--base REV] [--prebuilt]
@@ -52,6 +60,12 @@ INHERITED = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR")
 # has no git identity).
 GIT = ("git", "--no-optional-locks", "-c", "core.quotePath=false", "-c", "user.name=ve gate",
        "-c", "user.email=ve-gate@localhost")
+# The removal record: a commit trailer `TRAILER: <target>SEPARATOR<reason>`. pytest escapes non-ASCII in IDs,
+# so an ID never holds the separator and the first one ends the target.
+TRAILER = "Test-removed"
+SEPARATOR = " — "
+# The label of a removal the diff neither deletes nor re-parametrises.
+UNLABELLED = "the diff neither deletes its file, function or class nor changes its parametrisation"
 
 
 class CollectionError(RuntimeError):
@@ -285,14 +299,58 @@ def parametrisation(module: ast.Module, path: list[ast.AST]) -> list[str]:
             + [ast.dump(statement) for statement in sorted(included.values(), key=lambda s: order[id(s)])])
 
 
+@dataclass(frozen=True)
+class Removal:
+    """A `Test-removed:` trailer: the ID, or the function, class or file whose IDs it covers, and why."""
+    target: str
+    reason: str
+    commit: str
+
+    def covers(self, nodeid: str) -> bool:
+        return nodeid == self.target or nodeid.startswith((self.target + "::", self.target + "["))
+
+
+def parse_trailer(value: str, commit: str) -> Removal | None:
+    """The removal a trailer's value records, or None unless it is `<target> — <reason>`, both non-empty."""
+    target, separator, reason = value.partition(SEPARATOR)
+    if not separator or not target.strip() or target != target.strip() or not reason.strip():
+        return None
+    return Removal(target, reason.strip(), commit)
+
+
+def removal_records(base: str, head: str, *, root: Path = ROOT,
+                    env: dict[str, str] | None = None) -> tuple[list[Removal], list[dict]]:
+    """(the removals the `Test-removed:` trailers of base..head record, oldest first; each trailer that is not
+    one, with its commit). Git parses the trailers."""
+    # Each trailer as `<key>: <value>`, so a commit without one is the only empty item.
+    out = git(["log", "--reverse", f"--format=%H%x1f%(trailers:key={TRAILER},unfold,separator=%x1f)%x1e",
+               f"{base}..{head}", "--"], cwd=root, env=env).stdout.decode()
+    removals, malformed = [], []
+    for entry in out.split("\x1e"):
+        commit, *trailers = entry.strip("\n").split("\x1f")
+        for trailer in trailers if commit else []:
+            if not trailer:
+                continue
+            value = trailer.partition(":")[2].strip()
+            removal = parse_trailer(value, commit)
+            if removal is None:
+                malformed.append({"commit": commit, "trailer": value})
+            else:
+                removals.append(removal)
+    return removals, malformed
+
+
 @dataclass
 class Changes:
-    """What `git diff --no-renames base..head` does to the test files (`head` None: the worktree at `root`)."""
+    """What base..head does to the tests: the files `git diff --no-renames` changes (`head` None: the worktree
+    at `root`), and the removal records of its commits (up to HEAD for the worktree)."""
     base: str
     head: str | None
     statuses: dict[str, str]
     root: Path = ROOT
     env: dict[str, str] | None = None
+    removals: list[Removal] = field(default_factory=list)
+    malformed: list[dict] = field(default_factory=list)
     _modules: dict = field(default_factory=dict)
 
     def module(self, side: str, path: str) -> ast.Module | None:
@@ -309,62 +367,121 @@ class Changes:
                 self._modules[key] = None
         return self._modules[key]
 
-    def reason(self, nodeid: str) -> str | None:
-        """Why the head may lack the base's `nodeid`, or None if nothing in the diff explains it."""
+    def _definitions(self, nodeid: str):
+        """(path, names, base module, head module, the definitions the ID names on each side) for an ID in a
+        changed, not deleted, test module that parses on both sides; else None."""
         path, _, rest = nodeid.partition("::")
-        status = self.statuses.get(path)
-        if status is None:
-            return None
-        if status == "D":
-            return "its file is deleted"
-        if not (path.endswith(".py") and rest):
+        if self.statuses.get(path) in (None, "D") or not (path.endswith(".py") and rest):
             return None
         names = rest.split("[", 1)[0].split("::")
         base, head = self.module("base", path), self.module("head", path)
         if base is None or head is None:
             return None
-        before, after = _locate(base, names), _locate(head, names)
+        return path, names, base, head, _locate(base, names), _locate(head, names)
+
+    def deleted(self, nodeid: str) -> str | None:
+        """The ID's file, or its function or a class it names (as an ID prefix), when the diff deletes it."""
+        path = nodeid.partition("::")[0]
+        if self.statuses.get(path) == "D":
+            return path
+        found = self._definitions(nodeid)
+        if found is None or len(found[5]) >= len(found[4]):
+            return None
+        return "::".join([path, *found[1][:len(found[5]) + 1]])
+
+    def label(self, nodeid: str) -> str:
+        """What the diff did to the base's `nodeid`, for the gate's report; it never authorises a removal."""
+        if self.statuses.get(nodeid.partition("::")[0]) == "D":
+            return "its file is deleted"
+        found = self._definitions(nodeid)
+        if found is None:
+            return UNLABELLED
+        _, names, base, head, before, after = found
         if len(after) < len(before):
             kind = "test function" if len(after) == len(names) - 1 else "class"
             return f"its {kind} {names[len(after)]} is deleted"
         if len(before) < len(names):
-            return None  # not defined in its module at the base (inherited or generated): nothing to compare
+            return UNLABELLED  # not defined in its module at the base (inherited or generated): nothing to compare
         if parametrisation(base, before) != parametrisation(head, after):
             return f"the parametrisation of {names[-1]} changed"
-        return None
+        return UNLABELLED
 
 
 def changes(base: str, head: str | None = "HEAD", *, root: Path = ROOT,
             env: dict[str, str] | None = None) -> Changes:
-    """The changes `git diff --no-renames base..head` makes (a rename is a deletion and an addition)."""
+    """The changes `git diff --no-renames base..head` makes (a rename is a deletion and an addition), with the
+    removal records of base..head (base..HEAD for the worktree, whose edits carry none)."""
     sides = [base] if head is None else [base, head]
     out = git(["diff", "--no-renames", "--name-status", "-z", *sides, "--"], cwd=root, env=env).stdout.decode()
     fields = out.split("\0")
     statuses = {fields[index + 1]: fields[index][0] for index in range(0, len(fields) - 1, 2)}
-    return Changes(base, None if head is None else rev(f"{head}^{{commit}}", cwd=root, env=env), statuses,
-                   root, env)
+    tip = rev(f"{head or 'HEAD'}^{{commit}}", cwd=root, env=env)
+    removals, malformed = removal_records(base, tip, root=root, env=env)
+    return Changes(base, None if head is None else tip, statuses, root, env, removals, malformed)
 
 
-def missing(expected: list[str], collected: list[str], diff: Changes) -> tuple[dict[str, str], list[str]]:
-    """(each base ID the head lacks that the diff explains, with its reason; those it does not explain)."""
-    explained, refused = {}, []
-    for nodeid in sorted(set(expected) - set(collected)):
-        reason = diff.reason(nodeid)
-        if reason is None:
-            refused.append(nodeid)
+@dataclass
+class Verdict:
+    """The head's collection against the base's."""
+    removed: dict[str, dict]  # each base ID the head lacks that a trailer covers: its label, reason and commit
+    refused: dict[str, str]  # each base ID the head lacks that no trailer covers: its label
+    stale: list[dict]  # each trailer covering an ID the head still collects
+    malformed: list[dict]  # each trailer that is not `<target> — <reason>`
+    suggested: list[str]  # a trailer target for each refused ID: its deleted file, class or function, or itself
+
+    def failed(self) -> bool:
+        return bool(self.refused or self.stale or self.malformed)
+
+    def record(self) -> dict:
+        return {"removed": self.removed, "refused": self.refused, "stale": self.stale, "malformed": self.malformed}
+
+
+def missing(expected: list[str], collected: list[str], diff: Changes | None) -> Verdict:
+    """Each base ID the head lacks, removed by a trailer or refused, and each trailer that is stale or malformed.
+    Without `diff`, every lost ID is refused unlabelled."""
+    removals = diff.removals if diff else []
+    head = set(collected)
+    removed, refused, suggested = {}, {}, []
+    for nodeid in sorted(set(expected) - head):
+        label = diff.label(nodeid) if diff else UNLABELLED
+        removal = next((removal for removal in removals if removal.covers(nodeid)), None)
+        if removal is None:
+            refused[nodeid] = label
+            deleted = diff.deleted(nodeid) if diff else None
+            # A deleted file's or function's trailer, unless the head still collects an ID it would cover.
+            if deleted in suggested or deleted and not any(Removal(deleted, "", "").covers(other) for other in head):
+                nodeid = deleted
+            if nodeid not in suggested:
+                suggested.append(nodeid)
         else:
-            explained[nodeid] = reason
-    return explained, refused
+            removed[nodeid] = {"label": label, "reason": removal.reason, "commit": removal.commit}
+    stale = []
+    for removal in removals:
+        still = next((nodeid for nodeid in collected if removal.covers(nodeid)), None)
+        if still is not None:
+            stale.append({"target": removal.target, "commit": removal.commit, "collected": still})
+    return Verdict(removed, refused, stale, list(diff.malformed) if diff else [], suggested)
 
 
-def difference_text(base: str, refused: list[str]) -> str:
-    """The gate's failure: every base ID the head lacks without a deletion or parametrisation change."""
+def difference_text(base: str, verdict: Verdict) -> str:
+    """The gate's failure: every base ID the head lacks without a removal record, with the diff's label, and
+    every stale or malformed trailer."""
     at = f"the merge base {base}" if base else "the merge base"
-    lines = [f"{len(refused)} tests collected at {at} are not collected here, and `git diff --no-renames` deletes "
-             "neither their file nor their function nor changes their parametrisation:"]
-    lines.extend(f"  {nodeid}" for nodeid in refused)
-    lines.append("Restore them, or delete or change the tests in the test files themselves "
-                 "(tools/gate_collection.py says what counts).")
+    lines = []
+    if verdict.refused:
+        lines.append(f"{len(verdict.refused)} tests collected at {at} are not collected here, and no "
+                     f"`{TRAILER}:` trailer since it names them:")
+        lines.extend(f"  {nodeid}  ({label})" for nodeid, label in verdict.refused.items())
+        lines.append(f"Restore them, or record each removal in a commit message trailer (one per deleted file, "
+                     f"class or function covers its IDs), saying why it goes:")
+        lines.extend(f"  {TRAILER}: {target}{SEPARATOR}<why>" for target in verdict.suggested)
+    if verdict.stale:
+        lines.append(f"{len(verdict.stale)} `{TRAILER}:` trailers name tests still collected here:")
+        lines.extend(f"  {row['target']} (commit {row['commit'][:12]}) covers {row['collected']}"
+                     for row in verdict.stale)
+    if verdict.malformed:
+        lines.append(f"{len(verdict.malformed)} `{TRAILER}:` trailers are not `<test ID>{SEPARATOR}<reason>`:")
+        lines.extend(f"  commit {row['commit'][:12]}: {row['trailer']}" for row in verdict.malformed)
     return "\n".join(lines)
 
 
@@ -387,17 +504,18 @@ def main() -> int:
                                           env={**env, "VE_NATIVE_PREBUILT": "1"})
         else:
             expected = found[1]
-        explained, refused = missing(expected, collected, changes(base, None))
+        verdict = missing(expected, collected, changes(base, None))
     except (CollectionError, RuntimeError) as exc:
         print(f"gate collection: {exc}", file=sys.stderr)
         return 2
-    for nodeid, reason in sorted(explained.items()):
-        print(f"removed: {nodeid}: {reason}")
-    print(f"{len(collected)} collected, {len(expected)} at {base}; "
-          f"{len(set(collected) - set(expected))} added, {len(explained)} removed by the diff, {len(refused)} refused")
-    if refused:
-        print(difference_text(base, refused), file=sys.stderr)
-    return 1 if refused else 0
+    for nodeid, row in verdict.removed.items():
+        print(f"removed: {nodeid}: {row['reason']} (commit {row['commit'][:12]}; {row['label']})")
+    print(f"{len(collected)} collected, {len(expected)} at {base}; {len(set(collected) - set(expected))} added, "
+          f"{len(verdict.removed)} removed by a trailer, {len(verdict.refused)} refused, "
+          f"{len(verdict.stale)} stale and {len(verdict.malformed)} malformed trailers")
+    if verdict.failed():
+        print(difference_text(base, verdict), file=sys.stderr)
+    return 1 if verdict.failed() else 0
 
 
 if __name__ == "__main__":
