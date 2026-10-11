@@ -209,11 +209,11 @@ def test_poisoned_toolchain_variables_do_not_reach_real_tools(tmp_path, monkeypa
 
 
 def pin_base_collection(monkeypatch, ids, records=None):
-    """The merge base's collection is `ids` (none of them removed by the diff); the records the gate attaches
-    are appended to `records`."""
+    """The merge base's collection is `ids` (no removal recorded since); the records the gate attaches are
+    appended to `records`."""
     def base_collection(result, base, env, pytest_env, scratch):
         result["collection"] = {"base": "base-commit", "base_source": "record of base-commit", "base_ids": len(ids)}
-        return list(ids), lambda nodeid: None
+        return list(ids), None
 
     def record_collection(commit, collected, env):
         (records if records is not None else []).append((commit, list(collected)))
