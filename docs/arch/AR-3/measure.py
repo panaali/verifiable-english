@@ -39,16 +39,22 @@ def main() -> int:
     since = (ended - timedelta(days=DAYS)).isoformat()
     window = ["--since", since, base, "--", BASELINE]
     pinned = baseline(base)
-    # The rule replayed: each first-parent commit of main that changed the baseline, its parent as the base.
+    # The rule replayed: each first-parent commit of main that changed the baseline, its parent as the base. No
+    # commit then carried a removal record, so every removed ID is refused; the replay counts what the diff
+    # labels and the trailers the gate's failure suggests (one per deleted file, class or function).
     replay = []
     for commit in reversed(text("log", "--first-parent", "--format=%H", *window).split()):
         parent = gate_collection.rev(f"{commit}^1")
         before, after = baseline(parent), baseline(commit)
         if before is None or after is None:
             continue
-        explained, refused = gate_collection.missing(before, after, gate_collection.changes(parent, commit))
+        verdict = gate_collection.missing(before, after, gate_collection.changes(parent, commit))
         replay.append({"commit": commit, "subject": text("log", "-1", "--format=%s", commit).strip(),
-                       "removed": len(explained) + len(refused), "explained": len(explained), "refused": refused})
+                       "removed": len(verdict.removed) + len(verdict.refused), "recorded": len(verdict.removed),
+                       "labelled": sum(label != gate_collection.UNLABELLED for label in verdict.refused.values()),
+                       "unlabelled": sorted(nodeid for nodeid, label in verdict.refused.items()
+                                            if label == gate_collection.UNLABELLED),
+                       "trailers": len(verdict.suggested)})
     # One collection of the base as the gate takes it without a record.
     with tempfile.TemporaryDirectory(prefix="ve-ar3-measure-") as scratch:
         env = {name: os.environ[name] for name in gate_collection.INHERITED if name in os.environ}
@@ -65,8 +71,11 @@ def main() -> int:
                      "commits": len(text("log", "--no-merges", "--format=%H", *window).split()),
                      "first_parent_commits": len(replay)},
         "replay": {"commits": replay, "removed": sum(row["removed"] for row in replay),
-                   "explained": sum(row["explained"] for row in replay),
-                   "refused": sum(len(row["refused"]) for row in replay)},
+                   "recorded": sum(row["recorded"] for row in replay),
+                   "labelled": sum(row["labelled"] for row in replay),
+                   "unlabelled": sum(len(row["unlabelled"]) for row in replay),
+                   "trailers": sum(row["trailers"] for row in replay),
+                   "commits_with_removals": sum(row["removed"] > 0 for row in replay)},
         "base_collection": {"seconds": seconds, "ids": len(collected),
                             "only_collected": sorted(set(collected) - set(pinned)),
                             "only_pinned": sorted(set(pinned) - set(collected))},
