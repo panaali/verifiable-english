@@ -153,16 +153,17 @@ class Compiler:
             cell = self._compiled.get(key)
             if cell is not None:
                 return cell
-            compiled, counters = dict(self._compiled), dict(self.counters)
+            compiled, counters, done = dict(self._compiled), dict(self.counters), False
             try:
                 target = _resolve(self.document(name), pointer)
                 if target is _MISSING:
                     raise SchemaError(f"unresolved $ref {reference} in {base}")
                 cell = self._compiled[key] = [None]
                 cell[0] = self.compile(target, name)
-            except BaseException:
-                self._compiled, self.counters = compiled, counters
-                raise
+                done = True
+            finally:
+                if not done:
+                    self._compiled, self.counters = compiled, counters
             return cell
 
     def compile(self, schema: object, base: str):
