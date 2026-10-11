@@ -138,6 +138,8 @@ NOT_REGENERATED = {
     "tools/lean_output_diff.py": "comparison report of two builds",
     "tools/select_tests_evidence.py": "recorded evidence of the test selector (replay and mutants)",
     "tools/coverage_dashboard.py": "report: the ROADMAP.md coverage table",
+    "tools/architecture_numbers.py": "the map's numbers, measured on a committed head whose hash they record: "
+                                     "rerun after the merge commit",
     "tools/lean_first_oracle.py": "batch 0 oracle, recorded once",
     "tools/semantic_inventory.py": "reads ~/code/ve-webapp and ~/code/ve-bench: not derived from this tree",
     "tools/relay_mutation_gate.py": "--record re-records gate fixtures from a test run; the gate reads answers live",
