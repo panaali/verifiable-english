@@ -10,7 +10,7 @@ import secrets
 import sqlite3
 from pathlib import Path
 
-from ve import Environment, VEError, meaning_id
+from ve import Environment, VEError, meaning_id, natural_document, render
 from ve.assist.recovery import RecoveryService
 from ve.assist.ambiguity_patterns import PATTERNS
 from ve.english import parse_english_with_metadata, render_english
@@ -97,6 +97,8 @@ class DraftStore:
                     accepted_prefix='', expected=reason or 'A declared English sentence',
                     registered=registered)
                 unit['templates'] = self._templates(service.env)
+            unit['reading_view'] = (self._reading_view(service.env, unit['source'])
+                                    if unit['state'] in {'ready', 'approved'} else None)
             unit['cards'] = []
             for result in unit['catalogue_results'].values():
                 for card in result.get('cards', []):
@@ -120,6 +122,17 @@ class DraftStore:
                 'versions': service.versions, 'limits': service.limits,
                 'history': [{'revision': e['revision'], 'action': e['action']}
                             for e in service.events[-20:]]}
+
+    @staticmethod
+    def _reading_view(env, source):
+        """VE's own renderings of the one reading the checker found."""
+        try:
+            document = parse_english_with_metadata(env, source.strip() + '\n').document
+            views = {v: render(document, env, view=v) for v in ('ve_strict', 've_fluent', 'fol_symbols')}
+            return {'sentences': len(document.formulas), 'views': views,
+                    'natural': natural_document(env, document).to_dict()}
+        except (VEError, SyntaxError, ValueError):
+            return None
 
     @staticmethod
     def _templates(env):

@@ -1,5 +1,8 @@
 """Small, explicitly scoped teaching examples; no inferred real-world facts."""
+from copy import deepcopy
+
 from ve.environment import LANGUAGE, PROFILE, SPEC_REVISION
+from .rules import HANDBOOK_ENV
 
 
 READINGS = {
@@ -73,4 +76,19 @@ EXAMPLES = [
                   "relations": {"checks_pair": [["alice", "atlas"], ["bob", "beacon"]]}},
     },
 ]
+# The guided tour's own vocabulary: the handbook policy words of the Rules page,
+# plus one fictional employee so the writing desk can check a consequence.
+_HANDBOOK = deepcopy(HANDBOOK_ENV)
+_HANDBOOK['vocabulary']['constants'] = {'dana': {'sort': 'employee', 'description': 'Dana, a fictional employee.'}}
+EXAMPLES.append({
+    "id": "handbook", "title": "Handbook policy", "category": "06 / GUIDED TOUR",
+    "english": "Every employee may read the handbook. Dana is new. Therefore Dana may read the handbook.",
+    "note": "The guided tour uses this example. Its declared words are employee, read the handbook, sign the handbook, new and suspended. The policy is fictional.",
+    "environment": _HANDBOOK,
+    "premises": "for every employee x, (x is may_read).\n@dana is new.",
+    "claim": "@dana is may_read.",
+    "world": {"complete": True, "domains": {"employee": ["dana"]}, "constants": {"dana": "dana"},
+              "relations": {"may_read": [["dana"]], "may_sign": [["dana"]], "must_sign": [],
+                            "new": [["dana"]], "suspended": []}},
+})
 BY_ID = {e["id"]: e for e in EXAMPLES}

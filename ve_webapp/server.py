@@ -20,7 +20,7 @@ from .examples import EXAMPLES, BY_ID
 from .drafts import DraftStore, StaleDraft
 from .asimov import BY_ID as ASIMOV, OUTPUT as ASIMOV_PAGE
 from .models import ASSIST_MODELS, DEFAULT_ASSIST_MODEL
-from .rules import check_rules, RULES_TEXT
+from .rules import check_rules, ask_rules, VOCABULARIES as RULE_VOCABULARIES
 
 STATIC = Path(__file__).parent / "static"
 MAX_BODY = 32768
@@ -94,12 +94,12 @@ async def worker(action, data, settings):
         env=env, start_new_session=True)
     try:
         raw, _ = await asyncio.wait_for(process.communicate(json.dumps(payload).encode()),
-                                       timeout={"propose": 50, "asimov": 40}.get(action, 8))
+                                       timeout={"propose": 60, "asimov": 60}.get(action, 30))
         if process.returncode or len(raw) > 2_000_000:
             raise HTTPException(503, "The operation is not complete.")
         return json.loads(raw)
     except asyncio.TimeoutError:
-        raise HTTPException(504, "Time budget exhausted. Simplify the statement and try again.")
+        raise HTTPException(504, "The checker is busy right now; try again in a minute.")
     finally:
         # Also terminate descendants if a CLI exits leaving a subprocess behind.
         try:
@@ -194,7 +194,7 @@ def create_app(settings, runner=worker):
 
     @app.get("/assets/{name}")
     async def asset(name: str):
-        if name not in ("app.js", "style.css"):
+        if name not in ("app.js", "tour.js", "style.css"):
             raise HTTPException(404)
         return FileResponse(STATIC / name)
 
@@ -342,18 +342,41 @@ def create_app(settings, runner=worker):
             raise HTTPException(400, str(exc)) from exc
 
     @app.get('/api/rules')
-    async def rules_example(request: Request):
+    async def rules_example(request: Request, vocabulary: str = 'acts'):
         session(request)
-        return {'text': RULES_TEXT, 'result': check_rules(RULES_TEXT)}
+        if vocabulary not in RULE_VOCABULARIES:
+            raise HTTPException(400, 'Choose a listed rule vocabulary.')
+        text = RULE_VOCABULARIES[vocabulary][1]
+        return {'text': text, 'vocabulary': vocabulary,
+                'result': await asyncio.to_thread(check_rules, text, vocabulary)}
+
+    def rule_body(body, fields):
+        vocabulary = body.get('vocabulary', 'acts')
+        if (not set(body) >= {'text'} or set(body) - fields or type(body['text']) is not str
+                or len(body['text']) > 6000 or vocabulary not in RULE_VOCABULARIES):
+            raise HTTPException(400, 'Enter rules in English, up to 6000 characters.')
+        return vocabulary
 
     @app.post('/api/rules')
     async def rules_check(request: Request):
         csrf(request, session(request)['csrf'])
         body = await data(request)
-        if set(body) != {'text'} or type(body['text']) is not str or len(body['text']) > 6000:
-            raise HTTPException(400, 'Enter rules in English, up to 6000 characters.')
+        vocabulary = rule_body(body, {'text', 'vocabulary'})
         try:
-            return check_rules(body['text'])
+            return await asyncio.to_thread(check_rules, body['text'], vocabulary)
+        except (ValueError, VEError, SyntaxError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.post('/api/rules/ask')
+    async def rules_ask(request: Request):
+        csrf(request, session(request)['csrf'])
+        body = await data(request)
+        vocabulary = rule_body(body, {'text', 'vocabulary', 'question'})
+        question = body.get('question')
+        if type(question) is not str or len(question) > 1000:
+            raise HTTPException(400, 'Write the question as one statement of at most 1000 characters.')
+        try:
+            return await asyncio.to_thread(ask_rules, body['text'], question, vocabulary)
         except (ValueError, VEError, SyntaxError) as exc:
             raise HTTPException(422, str(exc)) from exc
 

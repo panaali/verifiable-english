@@ -13,7 +13,7 @@ import re
 
 from ve.environment import Environment
 from ve.english import parse_english
-from webapp.vocabulary.inventory import ROOT, HTML, JS, ASIMOV, SOURCES, inventory
+from webapp.vocabulary.inventory import ROOT, HTML, JS, TOUR, ASIMOV, SOURCES, inventory
 from ve_webapp.examples import EXAMPLES
 
 
@@ -54,6 +54,8 @@ def visible_sources(raw: dict[str, set[str]]) -> dict[str, set[str]]:
                   and s not in internal_js}
     result[JS] |= {s for s in raw[JS] if s.startswith('{} ·') or s.startswith('“{}”')}
     result[JS] |= {'blank draft', 'saving', 'explicit form', 'unknown', 'true', 'false'} & raw[JS]
+    # The guided tour's popover copy; identifiers and storage keys are internal.
+    result[TOUR] = {s for s in raw[TOUR] if s and (s[0].isupper() or s[0] in '“') and s not in internal_js}
     server = 've_webapp/server.py'
     result[server] = raised_messages(ROOT / server)
     result[server] |= {'Request exceeds 32 KiB.', 'Request timed out.'} & raw[server]
@@ -70,7 +72,8 @@ def visible_sources(raw: dict[str, set[str]]) -> dict[str, set[str]]:
                       and not s.startswith(('Disposable,', 'A plain-language'))}
     rules = 've_webapp/rules.py'
     result[rules] = {s for s in raw[rules] if s.startswith(('For an urgent act,',
-        'The checked rules', 'The check ran', 'Rule 1.'))}
+        'The checked rules', 'The check ran', 'Rule 1.', 'Yes.', 'No.', 'The rules do not',
+        'Write the question', 'Ask about', 'Choose a listed', ', the rules disagree'))}
     # The Asimov section shows the built data, catalogued as served. Its module
     # adds the explanation sentences, notes and scenario text under other facts that a
     # live re-run can show, unless the built data already shows each of its sentences.

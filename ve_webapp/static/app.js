@@ -35,9 +35,10 @@ async function signedIn(data) {
   if(selected.id!==examples[0].id)await choose(selected);
   $('exampleSelect').value=selected.id;
   renderDraft(activeDraft,true);
-  const rules=await api('rules');$('rulesText').value=rules.text;$('rulesResult').replaceChildren(el('p',rules.result.explanation));
+  await loadRules($('rulesVocabulary').value);
   try { renderAsimov(await api('asimov')); } catch(e) { notify(e.message); }
   tab('ide');
+  if(typeof tourAfterSignIn==='function')tourAfterSignIn();
 }
 function tab(name) {
   for(const id of ['learn','ide','rules','asimov']){
@@ -228,9 +229,6 @@ $('importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&!$('ide').hidden&&!$('workspace').hidden){e.preventDefault();if(!$('check').disabled)task($('check'),check);}});
 let theme;try{theme=localStorage.getItem('ve-theme');}catch{}document.documentElement.dataset.theme=theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 $('theme').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('ve-theme',t);}catch{}};
-const steps=[['One reading, several views','Pick an example in Learn. Natural English gives the checked reading. Strict VE, fluent, and logic views are available in separate tabs.'],['Keep assumptions visible','Open the writing desk. The conclusion is separate from the assumptions. Remove the policy rule and check again: the checker can show a world where the conclusion fails.'],['Assistant readings','Write one English sentence and request readings. This spends one model call when enabled. Compare the paraphrase and alternatives before accepting or editing.'],['Read the verdict precisely','Certified means a Python-replayed proof from your assumptions. Countermodel means a checked exception to that inference. Unknown means the budget did not decide. None certifies real-world evidence. Export to keep your draft.']];let tourIndex=0;
-function showTour(){ $('tourCount').textContent=`QUICK TOUR / ${tourIndex+1} OF ${steps.length}`;$('tourTitle').textContent=steps[tourIndex][0];$('tourText').textContent=steps[tourIndex][1];$('tourNext').textContent=tourIndex===steps.length-1?'Start exploring ✓':'Next →'; }
-$('tourButton').onclick=()=>{tourIndex=0;showTour();$('tour').showModal();};$('tourClose').onclick=()=>$('tour').close();$('tourNext').onclick=()=>{if(++tourIndex===steps.length)$('tour').close();else showTour();};
 api('session').then(signedIn).catch(()=>signedOut());
 
 const documentStates={
@@ -274,6 +272,11 @@ function renderDraft(doc, overwrite=false) {
     }
   }
   if(unit.pending.length)for(const pending of unit.pending)$('recovery').append(el('p',pending.reason || 'The reading is unresolved.','note'));
+  if(unit.reading_view){
+    const box=el('article',undefined,'candidate one-reading');
+    box.append(el('h3',unit.reading_view.sentences===1?'One reading':'Readings'),readingTabs(unit.reading_view));
+    $('recovery').append(box);
+  }
   if(unit.state==='ready')$('recovery').append(el('p','The reading is ready. The reading needs approval.','note'));
   if(unit.state==='approved')$('recovery').append(el('p',`Meaning approved at this revision. ${unit.paraphrase || ''}`,'note'));
   if(unit.state==='unresolved')$('recovery').append(el('p','The statement is unresolved. The statement is visible.','note'));
@@ -343,7 +346,7 @@ $('prose').addEventListener('input',()=>{
   draftTimer=setTimeout(()=>saveDraft().catch(e=>notify(e.message)),700);
   $('documentStatus').textContent='The document is pending.';
 });
-$('analyse').onclick=()=>task($('analyse'),async()=>{clearTimeout(draftTimer);await saveDraft();await changeDraft('analyze',{});});
+$('analyse').onclick=()=>task($('analyse'),async()=>{clearTimeout(draftTimer);$('recovery').replaceChildren(el('p','Checking…','note checking'));await saveDraft();await changeDraft('analyze',{});});
 $('approveReading').onclick=()=>task($('approveReading'),async()=>{
   await saveDraft();const unit=activeDraft.units[0];await changeDraft('approve',{wording:unit.source.trim()});
 });
@@ -382,7 +385,38 @@ $('confirmGlossary').onclick=()=>task($('confirmGlossary'),async()=>{
   if(!confirm('The synonym needs approval.\n'+sentence))return;
   await changeDraft('glossary',{sentence});$('glossaryStatus').textContent='The synonym is approved. The sentence needs approval.';
 });
-$('checkRules').onclick=()=>task($('checkRules'),async()=>{
-  const result=await api('rules',{text:$('rulesText').value});
-  $('rulesResult').replaceChildren(el('h2',result.status==='clear'?'The conflict is absent.':result.status==='conflict'?'The conflict is present.':'The result is unresolved.'),el('p',result.explanation));
-});
+function rulesResult(result) {
+  const box=el('div',undefined,'verdict '+(result.status==='clear'?'certified':'countermodel'));
+  box.append(el('h3',result.status==='clear'?'No conflict':result.status==='conflict'?'Conflict found':'Not decided'),el('p',result.explanation));
+  const list=el('ol',undefined,'rule-readings');
+  for(const text of result.readings || []){const item=el('li');item.append(el('span',text),el('span','One reading','badge'));list.append(item);}
+  const parts=[box];
+  if(list.children.length)parts.push(el('h3','How VE reads each rule'),list);
+  if(result.defaults?.length){parts.push(el('h3','When no rule applies'));for(const text of result.defaults)parts.push(el('p',text,'note'));}
+  $('rulesResult').replaceChildren(...parts);
+}
+async function loadRules(vocabulary) {
+  const rules=await api('rules?vocabulary='+encodeURIComponent(vocabulary));
+  $('rulesText').value=rules.text;rulesResult(rules.result);$('askResult').replaceChildren();
+}
+async function checkRules() {
+  $('rulesResult').replaceChildren(el('p','Checking…','note checking'));
+  try{rulesResult(await api('rules',{text:$('rulesText').value,vocabulary:$('rulesVocabulary').value}));}
+  catch(e){$('rulesResult').replaceChildren(el('p',e.message,'error'));}
+}
+async function askRules() {
+  $('askResult').replaceChildren(el('p','Checking…','note checking'));
+  try{
+    const r=await api('rules/ask',{text:$('rulesText').value,vocabulary:$('rulesVocabulary').value,question:$('rulesQuestion').value});
+    const names={yes:'Yes','no':'No','not settled':'The rules do not say'};
+    const box=el('div',undefined,'verdict '+(r.answer==='not settled'?'unknown':'certified'));
+    box.append(el('h3',names[r.answer]),el('p',r.explanation),el('p','VE read the statement as: '+r.reading+'.','note'));
+    const parts=[box];
+    if(r.cases.length){const list=el('ul',undefined,'ask-cases');for(const c of r.cases){const item=el('li');item.append(el('strong',c.answer==='yes'?'Yes':'No'),el('span',' · '+c.when+'.'));list.append(item);}parts.push(el('h3','It depends on the case'),list);}
+    $('askResult').replaceChildren(...parts);
+  }catch(e){$('askResult').replaceChildren(el('p',e.message,'error'));}
+}
+$('checkRules').onclick=()=>task($('checkRules'),checkRules);
+$('askRules').onclick=()=>task($('askRules'),askRules);
+$('rulesQuestion').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(!$('askRules').disabled)task($('askRules'),askRules);}});
+$('rulesVocabulary').onchange=()=>task($('rulesVocabulary'),()=>loadRules($('rulesVocabulary').value));

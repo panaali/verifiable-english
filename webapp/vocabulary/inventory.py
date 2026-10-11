@@ -10,11 +10,12 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[2]
 HTML = 've_webapp/static/index.html'
 JS = 've_webapp/static/app.js'
+TOUR = 've_webapp/static/tour.js'
 PYTHON = ('ve_webapp/server.py', 've_webapp/worker.py', 've_webapp/drafts.py',
           've_webapp/rules.py', 've_webapp/examples.py', 've_webapp/asimov.py')
 # Built by VE (python -m ve_webapp.asimov --write) and served as the Asimov section.
 ASIMOV = 've_webapp/asimov.json'
-SOURCES = (HTML, JS, *PYTHON, ASIMOV)
+SOURCES = (HTML, JS, TOUR, *PYTHON, ASIMOV)
 # Keys of the Asimov data that hold identifiers, verdict codes or checker evidence.
 ASIMOV_INTERNAL_KEYS = frozenset({'format', 'id', 'focus', 'robot', 'law', 'group', 'verdict',
                                   'status', 'value', 'number', 'targets', 'checked_by'})
@@ -81,5 +82,6 @@ def asimov_strings(path: Path = ROOT / ASIMOV) -> set[str]:
 def inventory(html_source: str | None = None) -> dict[str, set[str]]:
     return {HTML: html_text(html_source if html_source is not None else (ROOT / HTML).read_text()),
             JS: js_literals(),
+            TOUR: js_literals(ROOT / TOUR),
             **{name: python_literals(ROOT / name) for name in PYTHON},
             ASIMOV: asimov_strings()}

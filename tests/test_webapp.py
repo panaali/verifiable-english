@@ -559,3 +559,49 @@ def test_translation_preserves_alternatives_without_cited_narrowing(setup):
     assert imported.status_code == 200, imported.text
     assert len(imported.json()['units'][0]['readings']) == 2
     assert imported.json()['units'][0]['approval'] is None
+
+
+def test_tour_examples_behave_as_the_tour_says(setup):
+    """Every claim the guided tour (static/tour.js) makes about its own example."""
+    client, _, _ = setup
+    headers = login(client)
+    assert client.get('/assets/tour.js').status_code == 200
+    tour = client.get('/assets/tour.js').text
+    def desk(example, text):
+        doc = client.post('/api/drafts', json={'example': example}, headers=headers).json()
+        doc = _command(client, headers, doc, 'save', {'source': text}).json()
+        return _command(client, headers, doc, 'analyze').json()
+    sentence = 'Every employee may read the handbook.'
+    assert sentence in tour
+    doc = desk('handbook', sentence)
+    unit = doc['units'][0]
+    assert unit['state'] == 'ready'
+    assert unit['reading_view']['sentences'] == 1
+    assert unit['reading_view']['natural']['sentences'][0]['text'].rstrip('.') + '.' == sentence
+    doc = _command(client, headers, doc, 'approve', {'wording': sentence}).json()
+    assert doc['document_units'][0]['status'] == 'approved'
+    unit = desk('handbook', 'Every employee may print the handbook.')['units'][0]
+    assert unit['state'] == 'needs_word' and unit['reading_view'] is None
+    assert "'may read the handbook'" in unit['word_prompt']['expected_construction']
+    unit = desk('scope', 'Every engineer checks a server.')['units'][0]
+    assert len(unit['cards']) == 1 and len(unit['cards'][0]['paraphrases']) == 2
+    rules = client.get('/api/rules?vocabulary=handbook').json()
+    assert rules['text'].replace('\n', "\\n' +\n  '") in tour
+    first = client.post('/api/rules', json={'text': rules['text'], 'vocabulary': 'handbook'}, headers=headers).json()
+    assert first['status'] == 'conflict' and len(first['readings']) == 4
+    assert 'suspended' in first['explanation'] and 'rule 1 permits it but rule 4 forbids it' in first['explanation']
+    fixed = rules['text'].replace('Rule 4. ', 'Rule 4 (exception to rule 1). ')
+    assert client.post('/api/rules', json={'text': fixed, 'vocabulary': 'handbook'}, headers=headers).json()['status'] == 'clear'
+    def ask(question):
+        response = client.post('/api/rules/ask', json={'text': fixed, 'vocabulary': 'handbook', 'question': question}, headers=headers)
+        assert response.status_code == 200, response.text
+        return response.json()
+    answer = ask('Every employee who is new may read the handbook.')
+    assert answer['answer'] == 'not settled'
+    assert {(c['answer'], c['when']) for c in answer['cases']} == {
+        ('no', 'An employee who is suspended'), ('yes', 'An employee who is not suspended')}
+    assert ask('Every employee who is suspended may read the handbook.')['answer'] == 'no'
+    assert ask('Every employee who is new must sign the handbook.')['answer'] == 'no'
+    bad = client.post('/api/rules/ask', json={'text': fixed, 'vocabulary': 'handbook', 'question': 'May I?'}, headers=headers)
+    assert bad.status_code == 422
+    assert client.post('/api/rules', json={'text': fixed, 'vocabulary': 'other'}, headers=headers).status_code == 400
