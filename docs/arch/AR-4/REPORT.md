@@ -38,13 +38,35 @@ R11).
 ## Measured outcome
 
 <!-- BEGIN GENERATED AR-4 METRICS -->
+Measured with `tools/trust_map.py` at `f13e0bfc` against the merge base `96887019`:
+
+| Class | Recorded at the base | Measured at the base | Measured at the head | Starting budget |
+|---|---:|---:|---:|---:|
+| K | 997 | 997 | 997 | 997 |
+| S | 9,791 | 9,791 | 9,791 | 9,791 |
+| V | 36,765 | 36,765 | 36,765 | 36,765 |
+
+`docs/trust-baseline.json`: 13,230 lines at the base, 367 at the head (keys before: comment, totals, budget, signed, history, section11, files; 479 per-file rows and 286 `section11` rows left the tree).
+History: 35 entries, 34 distinct, became 51 allowances (one per class that grew); 6 carry a DRI signature, 45 were rebaselines with a reason before AR-4.
+`trust_map.py --check` at the head: exit 0; allowances introduced: 0, removed: 0.
+Commits (`96887019..f13e0bfc --no-merges`): 6; files changed: 11, none under `ve/`, `lean/` or `rust/`: yes.
+Seeded bugs: 10, each killed by its named test: yes.
 <!-- END GENERATED AR-4 METRICS -->
 
-The plan estimated "under 300 lines" for the file and "about 12,600 lines" deleted. Both numbers above come from
-`report.py --collect`, and `report.py --check` holds the claims to the saved evidence: the check passes, the head
-measures the same as the base, the starting budget is the measured base, the file is under 300 lines, no file
-under `ve/`, `lean/` or `rust/` changed, and every seeded bug was killed on this `trust_map.py`. Under D4 this is
-checked by `report.py --check` at the batch gate and by the merge train. No permanent report test was added.
+The plan estimated "about 12,600 lines" deleted, and 12,863 were. It also estimated the file at "under 300 lines";
+it is 367. That is 10 lines for the comment and the budget, plus 7 lines for each of the 51 allowances the history
+became. The file keeps `json.dumps` indent 1, because the `ve-generated` merge driver reproduces only a standard
+indent; a denser layout would be rewritten at every merge. The file grows by 7 lines per signed allowance.
+
+Every number above comes from `report.py --collect`. `report.py --check` holds these claims to the saved evidence:
+- the check passes;
+- the head measures the same as the base;
+- the starting budget is the measured base;
+- the file holds the comment, the budget and the allowances, and nothing else;
+- no file under `ve/`, `lean/` or `rust/` changed;
+- every seeded bug was killed on this `trust_map.py`.
+
+Under D4, `report.py --check` runs at the batch gate and in the merge train. No permanent report test was added.
 
 ## Reading of the plan
 
