@@ -1,8 +1,24 @@
 {
  "range": "main..HEAD --no-merges",
  "base": "7478b23dd5b1219e9e29f86acbbece87df76ce33",
- "head": "a3a52b6761980efd5f3b68def74d7d0447a117a4",
+ "head": "b694bafc15ffd5fa340770daceb292d04b554874",
  "commits": [
+  {
+   "sha": "b694bafc15ffd5fa340770daceb292d04b554874",
+   "subject": "AR-3: measurement and seeded faults for the removal records"
+  },
+  {
+   "sha": "73a9e30d9ddff5d70bf41f26619f3f67a12b3e2e",
+   "subject": "AR-3: removal records for the base tests this batch replaced"
+  },
+  {
+   "sha": "723764dccde2f194ecfcef5bd721a363cc3d7878",
+   "subject": "AR-3: a lost test ID needs a Test-removed trailer; the diff only labels it"
+  },
+  {
+   "sha": "3e958d25844d36620961c8a48b6158df5914233f",
+   "subject": "AR-3: report and DELTA at the new merge base; the retired-file resolution (G7)"
+  },
   {
    "sha": "a3a52b6761980efd5f3b68def74d7d0447a117a4",
    "subject": "AR-3: measurement and seeded faults again at the new merge base, with the retired-file fault"
@@ -34,31 +50,31 @@
    "deleted": 1
   },
   "README.md": {
-   "added": 8,
+   "added": 11,
    "deleted": 8
   },
   "docs/arch/AR-3/DELTA.md": {
-   "added": 15,
+   "added": 16,
    "deleted": 0
   },
   "docs/arch/AR-3/REPORT.md": {
-   "added": 113,
+   "added": 133,
    "deleted": 0
   },
   "docs/arch/AR-3/evidence/measure.json": {
-   "added": 511,
+   "added": 650,
    "deleted": 0
   },
   "docs/arch/AR-3/evidence/mutants.json": {
-   "added": 65,
+   "added": 93,
    "deleted": 0
   },
   "docs/arch/AR-3/evidence/scope.json": {
-   "added": 81,
+   "added": 121,
    "deleted": 0
   },
   "docs/arch/AR-3/measure.py": {
-   "added": 79,
+   "added": 88,
    "deleted": 0
   },
   "docs/arch/AR-3/report.py": {
@@ -66,7 +82,7 @@
    "deleted": 0
   },
   "docs/arch/AR-3/seed_faults.py": {
-   "added": 85,
+   "added": 102,
    "deleted": 0
   },
   "docs/merge-tooling.md": {
@@ -86,7 +102,7 @@
    "deleted": 9
   },
   "tests/test_gate_collection.py": {
-   "added": 402,
+   "added": 552,
    "deleted": 64
   },
   "tests/test_gate_integrity.py": {
@@ -106,11 +122,11 @@
    "deleted": 14250
   },
   "tools/gate.py": {
-   "added": 65,
+   "added": 62,
    "deleted": 39
   },
   "tools/gate_collection.py": {
-   "added": 345,
+   "added": 463,
    "deleted": 41
   },
   "tools/regen_generated.py": {
