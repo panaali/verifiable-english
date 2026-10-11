@@ -1,4 +1,4 @@
-# Service modes (tests: static import graph (coverage map /home/seyran/.cache/ve-testmap/c24aeab20ee513e3e1bef310c5e3263fab3998cc.json.gz vouches for no test: 175 files changed since c24aeab20e))
+# Service modes (tests: static import graph (coverage map /home/seyran/.cache/ve-testmap/c24aeab20ee513e3e1bef310c5e3263fab3998cc.json.gz vouches for no test: 176 files changed since c24aeab20e))
 mode | Lean module(s) | response schema | Python relays | tests
 evaluate | lean/VE/Order/ProfileGate.lean | ve/backends/lean_service_schema/evaluate.json | unknown | unknown
 check-certificate | lean/VE/CertificateWire.lean | ve/backends/lean_service_schema/check-certificate.json | unknown | unknown

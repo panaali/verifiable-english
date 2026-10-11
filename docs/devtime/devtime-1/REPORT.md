@@ -30,7 +30,7 @@ Item 2 of `manage-agents/reviews/devtime-plan-2026-10.md`. Branch `infra/devtime
 
 Regenerated after the main merge. The only change in the relay column: `readings-route` gains `ve/readings_components.py`, which came with main. Test counts grew with main's new tests.
 
-32 rows, one per mode (`evidence/routes.txt` with the coverage map, `evidence/routes-static.txt` with `--static`). Of the 128 derived cells (4 per row), **19 print "unknown"**. The two files have the same rows. That is because the account's newest map (c24aeab2) vouches for no test file: 175 files changed after it was recorded, so every answer comes from the static graph, and the header of `routes.txt` says so. Before the F1 fix the two files did not agree: the stale map printed "0 files" for `english.question` (its relay function `read_question` was added after c24aeab2), and it left the `ve/readings_components.py` sites out of `readings-route`'s count:
+32 rows, one per mode (`evidence/routes.txt` with the coverage map, `evidence/routes-static.txt` with `--static`). Of the 128 derived cells (4 per row), **19 print "unknown"**. The two files have the same rows. That is because the account's newest map (c24aeab2) vouches for no test file: 176 files changed after it was recorded, so every answer comes from the static graph, and the header of `routes.txt` says so. Before the F1 fix the two files did not agree: the stale map printed "0 files" for `english.question` (its relay function `read_question` was added after c24aeab2), and it left the `ve/readings_components.py` sites out of `readings-route`'s count:
 
 | Column | unknown | Why |
 |---|---|---|
