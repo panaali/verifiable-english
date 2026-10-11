@@ -20,6 +20,11 @@ Numbers below are tool output, saved in `evidence/` (D4: no report test); measur
   (`propext`, `Classical.choice`, `Quot.sound`) are unchanged.
 - The Prop-class instances Lean compiles as theorems are now audited: `VE.Discourse.instLawfulBEqFormula`,
   `VE.Discourse.instLawfulBEqTerm`, `VE.Order.instLawfulBEqValue`.
+- `lean/audit.py` elaborates the two manifests at once (two `lake env lean` runs on a thread pool, read in
+  manifest order). The 528 extra theorems made the sequential run 1,820 s wall on this loaded machine, over the
+  1,800 s timeout of `test_lean_transitive_axiom_allowlist`. Run in parallel, the test took 1,234 s; main's
+  manifests took 1,467 s sequentially (`evidence/checks.json`, `audit_wall_time_seconds`). The checks, the
+  output order and `axioms.txt` are unchanged.
 - `tools/lean_statements.py` takes statement names from the manifest generated from its own dump and
   records each manifest's generated hash, so `--check` stays byte-identical after `audit.py --write`.
 - `tools/regen_generated.py` (eff-merge has merged, `ve-green-eff-merge`): the "lean-audit-manifests" entry

@@ -15,6 +15,7 @@ The audit output of every manifest, in order, is the committed record `axioms.tx
 manifest or the record differs from the regenerated one, so a new theorem cannot leave either stale.
 `python3 lean/audit.py --write` regenerates both manifests and the record; `--check` (the default) compares.
 """
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import re
 import subprocess
@@ -209,10 +210,13 @@ def main(argv=()):
     imports = sorted({module for names in theorems.values() for module in names.values()})
     if imports:
         subprocess.run(["lake", "build", *imports], cwd=ROOT, text=True, capture_output=True, check=True)
+    # The manifests are independent: elaborate them at once, read the results in manifest order.
+    with ThreadPoolExecutor(len(MANIFESTS)) as pool:
+        results = list(pool.map(lambda manifest: subprocess.run(["lake", "env", "lean", manifest], cwd=ROOT,
+                                                                text=True, capture_output=True, check=True),
+                                MANIFESTS))
     seen, output = set(), ""
-    for manifest in MANIFESTS:
-        result = subprocess.run(["lake", "env", "lean", manifest], cwd=ROOT,
-                                text=True, capture_output=True, check=True)
+    for result in results:
         for line in unwrapped(result.stdout):
             match = re.fullmatch(r"'([^']+)' (does not depend on any axioms|depends on axioms: \[(.*)\])", line)
             if not match:

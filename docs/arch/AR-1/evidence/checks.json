@@ -35,5 +35,23 @@
   "PASS: K, S and untied [V] within the baseline and its signed allowances"
  ],
  "regen_generated_check": "regen_generated: checked 24 entries (after the merge of main 8b9927f2)",
- "merge_resolution": "conflicts in both Audit.lean, axioms.txt, declarations.txt, statements.txt, frozen-sources.sha256 only: took main's side, lake build, lean_statements.py, audit.py --write, frozen.py --write"
+ "merge_resolution": "conflicts in both Audit.lean, axioms.txt, declarations.txt, statements.txt, frozen-sources.sha256 only: took main's side, lake build, lean_statements.py, audit.py --write, frozen.py --write",
+ "audit_wall_time_seconds": {
+  "machine": "32 cores, load average 45-90 (other workers), 2026-10-11",
+  "base_5479466f_manifests_sequential": {
+   "lean/VE/Audit.lean": 1235,
+   "lean/ResponseShape/Audit.lean": 232,
+   "sum": 1467
+  },
+  "head_manifests_sequential": {
+   "lake build imports": 2,
+   "lean/VE/Audit.lean": 1365,
+   "lean/ResponseShape/Audit.lean": 221,
+   "audit.py total": 1820
+  },
+  "head_manifests_in_parallel": {
+   "test_lean_transitive_axiom_allowlist (audit.py)": 1234
+  },
+  "note": "the sequential head run exceeded the test's 1800 s timeout under load; audit.py now elaborates the two independent manifests at once (wall = the larger, not the sum); output order, checks and axioms.txt unchanged"
+ }
 }
