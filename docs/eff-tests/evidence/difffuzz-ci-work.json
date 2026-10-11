@@ -1,0 +1,39 @@
+{
+ "command": "uv run --frozen python tools/difffuzz.py --ci (load about 38, 2026-10-10)",
+ "work": {
+  "inputs": 26676,
+  "python_calls": 26680,
+  "runner_cases": 18829,
+  "runner_requests": 62,
+  "service_cases": 15255,
+  "service_requests": 33
+ },
+ "cpu_seconds": {
+  "python": 171.1,
+  "children": 54.0
+ },
+ "mutants": {
+  "requests": {
+   "zero-fault": 2458,
+   "one-fault": 6000,
+   "two-fault": 1500
+  },
+  "environment": {
+   "zero-fault": 260,
+   "one-fault": 6000,
+   "two-fault": 1500
+  },
+  "wire": {
+   "zero-fault": 588,
+   "one-fault": 6000,
+   "two-fault": 1500
+  },
+  "document": {
+   "zero-fault": 16,
+   "one-fault": 500,
+   "two-fault": 100
+  }
+ },
+ "baseline_entries": 254,
+ "passed": true
+}
