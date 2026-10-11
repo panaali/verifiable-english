@@ -6,7 +6,7 @@ binding contract is [ADR 0001](adr/0001-response-binding.md). Written from secti
 architecture review (`docs/ARCHITECTURE-REVIEW-2026-10.md` on branch `design/arch-review`), batch AR-7.
 
 <!-- numbers:measured -->
-Measured on commit `c157310a42a962c01b6e10b433194ae5b2313f7c` by `tools/architecture_numbers.py`; saved in `docs/architecture/numbers.json`.
+Measured on commit `e41d104f0caff76854bfa3fb20599f7c7df15865` by `tools/architecture_numbers.py`; saved in `docs/architecture/numbers.json`.
 <!-- /numbers:measured -->
 Every table between `numbers` markers is rendered from that file; to bring them up to date, run
 `python3 tools/architecture_numbers.py --write` on a committed head and commit the result (section 7).
@@ -41,27 +41,27 @@ decision A of 2026-10-08).
 <!-- numbers:sizes -->
 | Part | Where | Size | Notes |
 |---|---|---:|---|
-| Python `ve/` | `ve/**/*.py` | 38,587 lines | largest: `english.py` 2,147, `document.py` 1,719, `readings_verdicts.py` 1,637 |
-| Python relay and transport | `ve/backends/` | 4,129 lines | plus 7,067 lines of generated JSON schemas; `relay.py` 167, `lean_service.py` 952, `service_schema.py` 590 |
-| Lean | `lean/**/*.lean` | 151,450 lines | 391 modules under `lean/VE/`; service modules: Protocol 854, Standalone 1,293, Document 922, Family 812 |
-| Response shapes | `lean/ResponseShape*`, `lean/ResponseDecode.lean` | 62 files | schemas, encoders and their fit proofs |
-| Generated Lean inventories (committed) | `lean/{statements,declarations,axioms,predicates}.txt` | 34,448 + 16,677 + 4,999 + 1,042 lines | written by `tools/lean_statements.py` and `lean/audit.py` |
+| Python `ve/` | `ve/**/*.py` | 39,866 lines | largest: `english.py` 2,147, `document.py` 1,758, `readings_verdicts.py` 1,722 |
+| Python relay and transport | `ve/backends/` | 4,276 lines | plus 8,068 lines of generated JSON schemas; `relay.py` 167, `lean_service.py` 952, `service_schema.py` 590 |
+| Lean | `lean/**/*.lean` | 158,021 lines | 408 modules under `lean/VE/`; service modules: Protocol 859, Standalone 1,293, Document 922, Family 812 |
+| Response shapes | `lean/ResponseShape*`, `lean/ResponseDecode.lean` | 64 files | schemas, encoders and their fit proofs |
+| Generated Lean inventories (committed) | `lean/{statements,declarations,axioms,predicates}.txt` | 36,431 + 17,296 + 5,276 + 1,076 lines | written by `tools/lean_statements.py` and `lean/audit.py` |
 | Rust | `rust/*/src/**/*.rs` | 4,854 lines | 488 (`ve`) + 21 (`ve-core`) + 2,320 (`ve-kernel`) + 2,025 (`ve-profile`) |
-| Tools | `tools/**/*.py` | 18,293 lines | gate, selection, A/B, fuzz, trust map, layer checkers |
-| Tests | `tests/**/*.py` | 100,467 lines | 338 test modules, 22 other modules; 13,773 collected test IDs (`tools/gate-collection.json`); 19,136 lines of Python in `conformance/` |
-| Committed files | the whole tree | 360 MiB | `docs/` 133 MiB, of which `docs/lean-first/` 125 MiB |
+| Tools | `tools/**/*.py` | 21,074 lines | gate, selection, A/B, fuzz, trust map, layer checkers |
+| Tests | `tests/**/*.py` | 106,406 lines | 358 test modules, 25 other modules; 14,431 collected test IDs (`tools/gate-collection.json`); 19,170 lines of Python in `conformance/` |
+| Committed files | the whole tree | 374 MiB | `docs/` 143 MiB, of which `docs/lean-first/` 125 MiB |
 <!-- /numbers:sizes -->
 
 <!-- numbers:counts -->
 | Count | Source | Value |
 |---|---|---:|
-| Lean service modes | `MODES` in `ve/backends/service_schema.py` | 31 |
+| Lean service modes | `MODES` in `ve/backends/service_schema.py` | 32 |
 | Lean executables | `[[lean_exe]]` in `lean/lakefile.toml` | 9 |
 | Python runtime dependencies | `[project] dependencies` in `pyproject.toml` | 5 |
 | Python layer exceptions | `tools/layer-exceptions.json` | 42 |
 | Lean layer exceptions | `tools/lean-layer-exceptions.json` | 22 |
 | Rust module exceptions | `tools/rust-module-exceptions.json` | 0 |
-| Pinned Lean decoder lines | `lean_decoders.total_lines` in `ve/assurance-manifest.json` | 27,833 |
+| Pinned Lean decoder lines | `lean_decoders.total_lines` in `ve/assurance-manifest.json` | 29,166 |
 <!-- /numbers:counts -->
 
 ## 2. Module boundaries and the layer checkers
@@ -144,11 +144,11 @@ From `docs/trust-baseline.json` (written by `tools/trust_map.py --write`):
 | Class | Meaning (consolidation plan 1.1) | Lines |
 |---|---|---:|
 | K | kernel definitions read once | 997 |
-| S | reviewed statements and meaning predicates | 9,674 |
-| D | decoders (D[V] verdict-bearing 12,214, D[R] reject-only 996, D[I] identity 527) | 13,737 |
-| G | glue (G[V] 23,837, G[R] 1,406, G[I] 229) | 25,472 |
-| C, P, T, o | checkers, proofs, tests, other: not trusted | 8,329 / 68,097 / 13,528 / 11,616 |
-| **trusted** | K + S + untied [V] (budget 997 + 9,674 + 35,892) | **46,563 of 151,450** |
+| S | reviewed statements and meaning predicates | 9,791 |
+| D | decoders (D[V] verdict-bearing 12,256, D[R] reject-only 1,002, D[I] identity 527) | 13,785 |
+| G | glue (G[V] 24,805, G[R] 1,751, G[I] 241) | 26,797 |
+| C, P, T, o | checkers, proofs, tests, other: not trusted | 8,486 / 71,772 / 14,245 / 12,148 |
+| **trusted** | K + S + untied [V] (budget 997 + 9,791 + 36,902) | **47,690 of 158,021** |
 <!-- /numbers:trust -->
 
 The rest of the trusted path: the Lean toolchain, compiler and runtime; the restricted JSON reader and the request

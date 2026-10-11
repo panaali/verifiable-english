@@ -1,34 +1,34 @@
 {
-  "commit": "c157310a42a962c01b6e10b433194ae5b2313f7c",
+  "commit": "e41d104f0caff76854bfa3fb20599f7c7df15865",
   "numbers": {
     "counts": {
-      "collected_test_ids": 13773,
+      "collected_test_ids": 14431,
       "lean_executables": 9,
       "lean_layer_exceptions": 22,
-      "pinned_decoder_lines": 27833,
+      "pinned_decoder_lines": 29166,
       "python_layer_exceptions": 42,
       "runtime_dependencies": 5,
       "rust_module_exceptions": 0,
-      "service_modes": 31
+      "service_modes": 32
     },
     "file_lines": {
       "lean/VE/Service/Document.lean": 922,
       "lean/VE/Service/Family.lean": 812,
-      "lean/VE/Service/Protocol.lean": 854,
+      "lean/VE/Service/Protocol.lean": 859,
       "lean/VE/Service/Standalone.lean": 1293,
-      "lean/axioms.txt": 4999,
-      "lean/declarations.txt": 16677,
-      "lean/predicates.txt": 1042,
-      "lean/statements.txt": 34448,
+      "lean/axioms.txt": 5276,
+      "lean/declarations.txt": 17296,
+      "lean/predicates.txt": 1076,
+      "lean/statements.txt": 36431,
       "ve/backends/lean_service.py": 952,
       "ve/backends/relay.py": 167,
       "ve/backends/service_schema.py": 590
     },
     "files": {
-      "lean_ve_modules": 391,
-      "response_shape_lean": 62,
-      "tests_other_modules": 22,
-      "tests_test_modules": 338
+      "lean_ve_modules": 408,
+      "response_shape_lean": 64,
+      "tests_other_modules": 25,
+      "tests_test_modules": 358
     },
     "largest_ve_python": [
       {
@@ -36,27 +36,27 @@
         "path": "ve/english.py"
       },
       {
-        "lines": 1719,
+        "lines": 1758,
         "path": "ve/document.py"
       },
       {
-        "lines": 1637,
+        "lines": 1722,
         "path": "ve/readings_verdicts.py"
       }
     ],
     "lines": {
-      "conformance_python": 19136,
-      "lean": 151450,
-      "tests_python": 100467,
-      "tools_python": 18293,
-      "ve_backends_python": 4129,
-      "ve_backends_schema_json": 7067,
-      "ve_python": 38587
+      "conformance_python": 19170,
+      "lean": 158021,
+      "tests_python": 106406,
+      "tools_python": 21074,
+      "ve_backends_python": 4276,
+      "ve_backends_schema_json": 8068,
+      "ve_python": 39866
     },
     "mib": {
-      "docs": 133,
+      "docs": 143,
       "docs_lean_first": 125,
-      "tracked": 360
+      "tracked": 374
     },
     "rust_lines": {
       "ve": 488,
@@ -67,26 +67,26 @@
     "trust": {
       "budget": {
         "K": 997,
-        "S": 9674,
-        "V": 35892
+        "S": 9791,
+        "V": 36902
       },
       "totals": {
-        "C": 8329,
-        "D": 13737,
+        "C": 8486,
+        "D": 13785,
         "D[I]": 527,
-        "D[R]": 996,
-        "D[V]": 12214,
-        "G": 25472,
-        "G[I]": 229,
-        "G[R]": 1406,
-        "G[V]": 23837,
+        "D[R]": 1002,
+        "D[V]": 12256,
+        "G": 26797,
+        "G[I]": 241,
+        "G[R]": 1751,
+        "G[V]": 24805,
         "K": 997,
-        "P": 68097,
-        "S": 9674,
-        "T": 13528,
-        "lines": 151450,
-        "o": 11616,
-        "trusted": 46563
+        "P": 71772,
+        "S": 9791,
+        "T": 14245,
+        "lines": 158021,
+        "o": 12148,
+        "trusted": 47690
       }
     }
   }
