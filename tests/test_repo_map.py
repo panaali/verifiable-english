@@ -8,9 +8,13 @@ own parser. CLAUDE.md is a symlink to it.
 
 repo_map.py: `routes` prints every mode of `MODES` exactly once, each with its existing schema file;
 `--check` passes on the tree and fails on a scratch copy of the schema directory with a file removed or
-added; two known routes print the right Lean module and relay (see `KNOWN`); the coverage-map path reads
-the map it is given. The import graph's cache is written under tmp_path (as in tests/test_select_tests.py);
-it starts from the account's summaries when they exist, which only saves time: entries are keyed by content.
+added; two known routes print the right Lean module and relay (see `KNOWN`). Tests: a coverage map answers
+only for the test files it recorded and can still vouch for; every other test file, and every one when the
+map's commit is not in the repository, gets the static answer, never an empty one (review F1). `file` names
+a path the same way however it is spelled (F2). The `routes` and `file` commands run as programs (F3).
+The import graph's cache and the account's map cache are under tmp_path (as in tests/test_select_tests.py);
+the graph starts from the account's summaries when they exist, which only saves time: entries are keyed by
+content.
 """
 from __future__ import annotations
 
@@ -61,15 +65,16 @@ def cache_env(tmp_path_factory):
         shutil.copy(summaries, cache / "ve-testselect/summaries.pickle")
     with pytest.MonkeyPatch.context() as patch:
         patch.setenv("XDG_CACHE_HOME", str(cache))
+        patch.setenv("VE_TESTMAP_CACHE", str(cache / "ve-testmap"))  # no map unless a test writes one
         patch.delenv("VE_TESTMAP", raising=False)
         yield {**os.environ}
 
 
 @pytest.fixture(scope="module")
 def built(cache_env):
-    routes, source, data = repo_map.build(ROOT, static=True)
-    assert data is None
-    return routes, source
+    routes, tests = repo_map.build(ROOT, static=True)
+    assert tests.coverage is None
+    return routes, tests.source
 
 
 @pytest.fixture(scope="module")
@@ -218,22 +223,121 @@ def test_route_prints_one_mode_in_full(cache_env):
     assert tool("route", "no-such-mode", env=cache_env).returncode == 2
 
 
-def test_tests_come_from_the_coverage_map_when_one_is_given(built, tmp_path, monkeypatch):
+def write_map(path: Path, ran: dict[str, list[tuple[str, str]]], commit: str) -> Path:
+    """A coverage map, as `tools/test_map.py` writes one, in which each test file ran the given functions."""
+    unit = {"exit": 0, "seconds": 0.0, "opaque": [], "r": [], "d": [], "x": []}
+    with gzip.open(path, "wt", encoding="utf-8") as handle:
+        json.dump(test_map.build_map({test: {**unit, "f": functions} for test, functions in ran.items()},
+                                     commit), handle)
+    return path
+
+
+def head() -> str:
+    return subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True,
+                          check=True).stdout.strip()
+
+
+@pytest.fixture
+def rights_map(built, cache_env, tmp_path, monkeypatch):
+    """A map at HEAD in which one test file ran the rights relay's function and one only imported its file;
+    both are test files the static graph reaches the relay from, and neither is changed in the working tree."""
     routes, _ = built
     route = next(r for r in routes if r.mode == "rights")
-    [(relay, qualnames)] = [(p, q) for p, q in route.relays.items() if p == KNOWN["rights"][1]]
-    unit = {"exit": 0, "seconds": 0.0, "opaque": [], "r": [], "d": [], "x": []}
-    data = test_map.build_map({"tests/test_ran_it.py": {**unit, "f": [(relay, sorted(qualnames)[0])]},
-                               "tests/test_did_not.py": {**unit, "f": [(relay, "<module>")]}}, "0" * 40)
-    path = tmp_path / "map.json.gz"
-    with gzip.open(path, "wt", encoding="utf-8") as handle:
-        json.dump(data, handle)
+    relay = KNOWN["rights"][1]
+    sites = [(relay, q) for q in sorted(route.relays[relay])]
+    changed = set(subprocess.run(["git", "status", "--porcelain", "--no-renames"], cwd=ROOT, capture_output=True,
+                                 text=True, check=True).stdout.split())
+    ran_it, did_not = [t for t in route.tests if t.startswith("tests/") and t not in changed][:2]
+    path = write_map(tmp_path / "map.json.gz", {ran_it: sites[:1], did_not: [(relay, "<module>")]}, head())
     monkeypatch.setenv("VE_TESTMAP", str(path))
-    loaded, source = repo_map.coverage(ROOT, static=False)
-    assert source == f"coverage map {path}"
-    sites = [(p, q) for p, qs in route.relays.items() for q in qs]
-    assert repo_map.tests_of(sites, loaded, None) == ["tests/test_ran_it.py"]
-    assert repo_map.tests_of([], loaded, None) is None
+    return sites, ran_it, did_not, route.tests
+
+
+def test_a_map_answers_only_for_the_test_files_it_recorded(rights_map):
+    sites, ran_it, did_not, static = rights_map
+    _, tests = repo_map.build(ROOT)
+    assert tests.coverage is not None and tests.source.startswith("coverage map "), tests.source
+    found = tests.of_sites(sites)
+    assert ran_it in found and did_not not in found  # the map answers for the two it recorded
+    assert set(found) == set(static) - {did_not}       # the static graph for every other test file
+    assert tests.of_sites([]) is None
+
+
+def test_a_test_file_whose_run_may_have_changed_gets_the_static_answer(rights_map, monkeypatch):
+    """Drift (`select_tests.uncertain_since`) takes a recorded test file out of the map's hands."""
+    sites, ran_it, did_not, _ = rights_map
+    real = repo_map.select_tests.uncertain_since
+    monkeypatch.setattr(repo_map.select_tests, "uncertain_since",
+                        lambda *args: (real(*args)[0] | {did_not}, 1))
+    _, tests = repo_map.build(ROOT)
+    assert did_not in tests.unmapped and ran_it not in tests.unmapped
+    assert did_not in tests.of_sites(sites)
+
+
+def test_a_map_from_a_commit_not_in_the_repository_gives_the_static_answer(built, tmp_path, monkeypatch):
+    """PROBE F1 (review devtime-1): the map lists one test that imported ve/discourse.py; `english.question`'s
+    relay function is not in it. Its tests were printed as "0 files"; they are now the static graph's."""
+    path = write_map(tmp_path / "m.json.gz", {"tests/test_x.py": [("ve/discourse.py", "<module>")]}, "0" * 40)
+    monkeypatch.setenv("VE_TESTMAP", str(path))
+    routes, tests = repo_map.build()
+    route = {r.mode: r for r in routes}["english.question"]
+    assert route.tests is None or route.tests, route.tests
+    assert tests.coverage is None and "not in this repository" in tests.source, tests.source
+    assert route.tests == next(r for r in built[0] if r.mode == "english.question").tests
+
+
+def test_file_answers_for_a_file_the_map_never_saw(rights_map):
+    """`file` on a file no recorded test ran (review F1: `ve/readings_components.py` printed "none found")."""
+    _, ran_it, did_not, _ = rights_map
+    _, tests = repo_map.build(ROOT)
+    found = tests.of_file("ve/readings_components.py")
+    static = repo_map.tests_from(ROOT, tests.graph, True).of_file("ve/readings_components.py")
+    assert found and set(found) == set(static) - {ran_it, did_not}
+
+
+SPELLINGS = ["ve/discourse.py", "./ve/discourse.py", "ve//discourse.py", "ve/./discourse.py",
+             "ve/../ve/discourse.py", str(ROOT / "ve/discourse.py"), str(ROOT) + "/./ve/../ve/discourse.py"]
+
+
+@pytest.mark.parametrize("spelling", SPELLINGS)
+def test_file_names_a_path_the_same_however_it_is_spelled(spelling):
+    assert repo_map.repo_path(ROOT, spelling) == "ve/discourse.py"
+
+
+def test_file_prints_the_same_for_every_spelling(built, cache_env):
+    """F2: `./ve/discourse.py` printed "modes: none" and "tests: none found"."""
+    routes, _ = built
+    tests = repo_map.tests_from(ROOT, repo_map.source_graph.load(ROOT), True)
+    printed = {}
+    for spelling in SPELLINGS:
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            repo_map.print_file(ROOT, spelling, routes, tests)
+        printed[spelling] = out.getvalue()
+    assert len(set(printed.values())) == 1, printed
+    assert "modes: discourse\n" in printed[SPELLINGS[0]]
+
+
+def test_file_command_prints_modes_layer_tests_and_generator(cache_env):
+    """F3: `file` run as a program, on the spelling F2 found."""
+    done = tool("--static", "file", "./ve/discourse.py", env=cache_env)
+    assert done.returncode == 0, done.stderr
+    lines = done.stdout.splitlines()
+    layer = repo_map.layer_policy.source_layer("ve/discourse.py")
+    assert lines[:3] == ["file: ve/discourse.py", "modes: discourse",
+                         f"layer: {layer} ({repo_map.layer_policy.NAMES[layer]})"]
+    assert lines[3] == "tests (static import graph (--static)):" and lines[4].startswith("  tests/")
+    assert lines[-1] == "generator: -"
+    schema = tool("--static", "file", f"{repo_map.SCHEMA_DIRECTORY}/discourse.json", env=cache_env)
+    assert "modes: discourse" in schema.stdout.splitlines()
+    assert schema.stdout.splitlines()[-1] == "generator: response-schemas"
+
+
+def test_routes_command_prints_the_table(printed, cache_env):
+    """F3: `routes` run as a program prints what `print_routes` prints in the process."""
+    done = tool("--static", "routes", env=cache_env)
+    assert done.returncode == 0, done.stderr
+    assert done.stdout.splitlines() == printed
 
 
 def test_check_passes_on_the_tree():

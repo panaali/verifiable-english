@@ -12,7 +12,7 @@
       "test": "tests/test_repo_map.py::test_routes_lists_every_mode_exactly_once",
       "observed": {
         "exit": 1,
-        "summary": "1 failed in 9.88s"
+        "summary": "1 failed in 5.73s"
       }
     },
     {
@@ -25,7 +25,7 @@
       "test": "tests/test_repo_map.py::test_every_path_named_in_agents_md_exists",
       "observed": {
         "exit": 1,
-        "summary": "1 failed in 0.28s"
+        "summary": "1 failed in 0.16s"
       }
     },
     {
@@ -38,7 +38,7 @@
       "test": "tests/test_repo_map.py::test_check_fails_on_a_scratch_copy_with_a_schema_file_removed_or_added",
       "observed": {
         "exit": 1,
-        "summary": "1 failed in 1.39s"
+        "summary": "1 failed in 0.82s"
       }
     },
     {
@@ -51,7 +51,7 @@
       "test": "tests/test_repo_map.py::test_known_routes_print_their_lean_module_and_relay",
       "observed": {
         "exit": 1,
-        "summary": "3 failed in 9.90s"
+        "summary": "3 failed in 5.51s"
       }
     },
     {
@@ -64,20 +64,98 @@
       "test": "tests/test_repo_map.py::test_known_routes_print_their_lean_module_and_relay",
       "observed": {
         "exit": 1,
-        "summary": "1 failed, 2 passed in 10.58s"
+        "summary": "1 failed, 2 passed in 5.75s"
       }
     },
     {
       "id": "f-map-tests-by-file-not-function",
       "language": "python",
       "file": "tools/repo_map.py",
-      "behaviour": "with a coverage map, the tests are those that ran a function holding a relay call",
-      "old": "            indices.update(data[\"functions\"].get(path, {}).get(qualname, ()))",
-      "new": "            indices.update(i for found in data[\"functions\"].get(path, {}).values() for i in found)",
-      "test": "tests/test_repo_map.py::test_tests_come_from_the_coverage_map_when_one_is_given",
+      "behaviour": "with a coverage map, a recorded test file counts when it ran a function holding a relay call",
+      "old": "sel.add(self.coverage.tests_of(path, qualname), ",
+      "new": "sel.add(self.coverage.file_wide(path, set(self.coverage.functions.get(path, {}))), ",
+      "test": "tests/test_repo_map.py::test_a_map_answers_only_for_the_test_files_it_recorded",
       "observed": {
         "exit": 1,
-        "summary": "1 failed in 8.75s"
+        "summary": "1 failed in 10.38s"
+      }
+    },
+    {
+      "id": "g-unrecorded-tests-get-no-static-answer",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1: test files the map did not record, or whose run may have changed, get the static answer",
+      "old": "    unmapped = (set(units) - coverage.recorded) | uncertain\n",
+      "new": "    unmapped = set()\n",
+      "test": "tests/test_repo_map.py::test_a_map_answers_only_for_the_test_files_it_recorded",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 12.74s"
+      }
+    },
+    {
+      "id": "h-drift-ignored",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1: a recorded test file whose run may have changed since the map gets the static answer",
+      "old": "    unmapped = (set(units) - coverage.recorded) | uncertain\n",
+      "new": "    unmapped = set(units) - coverage.recorded\n",
+      "test": "tests/test_repo_map.py::test_a_test_file_whose_run_may_have_changed_gets_the_static_answer",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 16.60s"
+      }
+    },
+    {
+      "id": "i-map-from-an-unknown-commit-trusted",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1 (the probe): a map whose commit is not in the repository answers for nothing",
+      "old": "    except subprocess.CalledProcessError:\n        return without(",
+      "new": "    except subprocess.CalledProcessError:\n        uncertain, drift, status, versions = set(), 0, {}, {}\n    if False:\n        return without(",
+      "test": "tests/test_repo_map.py::test_a_map_from_a_commit_not_in_the_repository_gives_the_static_answer",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 15.15s"
+      }
+    },
+    {
+      "id": "j-file-path-not-normalised",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F2: `file` names a path the same however it is spelled",
+      "old": "    return posixpath.normpath(Path(path).as_posix())\n",
+      "new": "    return path\n",
+      "test": "tests/test_repo_map.py::test_file_prints_the_same_for_every_spelling",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 11.18s"
+      }
+    },
+    {
+      "id": "k-routes-command-drops-a-row",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F3: the `routes` command prints the whole table",
+      "old": "        print_routes(routes, tests.source)\n",
+      "new": "        print_routes(routes[1:], tests.source)\n",
+      "test": "tests/test_repo_map.py::test_routes_command_prints_the_table",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 12.04s"
+      }
+    },
+    {
+      "id": "l-file-command-asks-the-wrong-owner",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F3: the `file` command prints the generator that owns the file",
+      "old": "    print(f\"generator: {owner(root, path)}\")\n",
+      "new": "    print(f\"generator: {owner(root, path + '.orig')}\")\n",
+      "test": "tests/test_repo_map.py::test_file_command_prints_modes_layer_tests_and_generator",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 17.89s"
       }
     }
   ]
