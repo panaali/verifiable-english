@@ -200,6 +200,8 @@ import VE.Readings.SupConflict
 import VE.Readings.SupEnv
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
+import VE.Readings.SupFill
+import VE.Readings.SupFillWire
 import VE.Readings.SupFree
 import VE.Readings.SupRun
 import VE.Readings.SupSlot
@@ -2505,6 +2507,8 @@ import VE.WireContract.Engine
 #print axioms VE.Question.utf8ByteSize_dot
 #print axioms VE.Question.utf8ByteSize_q
 #print axioms VE.Question.utf8ByteSize_space
+#print axioms VE.Readings.AuthorLite.acyclic
+#print axioms VE.Readings.AuthorLite.freshRule
 #print axioms VE.Readings.Examples.k2b_achieves_neither
 #print axioms VE.Readings.Examples.k2b_not_admissible
 #print axioms VE.Readings.Examples.kb_choice
@@ -2711,6 +2715,10 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.CertificateReplay.hΓ
 #print axioms VE.Readings.Wire.CertificateReplay.hφ
 #print axioms VE.Readings.Wire.CertificateReplay.taken
+#print axioms VE.Readings.Wire.CertificateReplayND.hA
+#print axioms VE.Readings.Wire.CertificateReplayND.hΓ
+#print axioms VE.Readings.Wire.CertificateReplayND.hφ
+#print axioms VE.Readings.Wire.CertificateReplayND.taken
 #print axioms VE.Readings.Wire.ChoiceReplayU.hc
 #print axioms VE.Readings.Wire.ChoiceReplayU.wfc
 #print axioms VE.Readings.Wire.FilledAdmitted.chain
@@ -2720,6 +2728,9 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.ModelReplay.hΓ
 #print axioms VE.Readings.Wire.ModelReplay.hφ
 #print axioms VE.Readings.Wire.ModelReplay.valid
+#print axioms VE.Readings.Wire.ModelReplayND.hΓ
+#print axioms VE.Readings.Wire.ModelReplayND.hφ
+#print axioms VE.Readings.Wire.ModelReplayND.valid
 #print axioms VE.Readings.Wire.NDEvidence.wfc
 #print axioms VE.Readings.Wire.NDVerdicts.covers
 #print axioms VE.Readings.Wire.NDVerdicts.hevs
@@ -2741,6 +2752,11 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.SupReplay.soft
 #print axioms VE.Readings.Wire.SupReplay.sp
 #print axioms VE.Readings.Wire.SupReplay.wf
+#print axioms VE.Readings.Wire.SupReplayND.checked
+#print axioms VE.Readings.Wire.SupReplayND.hyps
+#print axioms VE.Readings.Wire.SupReplayND.sat
+#print axioms VE.Readings.Wire.SupReplayND.sp
+#print axioms VE.Readings.Wire.SupReplayND.wfu
 #print axioms VE.Readings.Wire.addDecl_mono
 #print axioms VE.Readings.Wire.addDecl_spec
 #print axioms VE.Readings.Wire.addDecls_mono
@@ -2755,12 +2771,15 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.attached_links
 #print axioms VE.Readings.Wire.authorEnv_filled
 #print axioms VE.Readings.Wire.author_valid
+#print axioms VE.Readings.Wire.backgroundValidP_append
 #print axioms VE.Readings.Wire.bind_ok
 #print axioms VE.Readings.Wire.candidateStage_eq
 #print axioms VE.Readings.Wire.candidateStage_ok
 #print axioms VE.Readings.Wire.candidate_filled
+#print axioms VE.Readings.Wire.candidate_of_fill
 #print axioms VE.Readings.Wire.chainText_eq
 #print axioms VE.Readings.Wire.choiceU_E
+#print axioms VE.Readings.Wire.choicesSoftChecked_of_nd
 #print axioms VE.Readings.Wire.companionIds_sublist
 #print axioms VE.Readings.Wire.companionSets_nodup
 #print axioms VE.Readings.Wire.componentDoc_arr
@@ -2772,6 +2791,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.expansion_of_modelCheck
 #print axioms VE.Readings.Wire.fillHoldsOf_eq
 #print axioms VE.Readings.Wire.fillNamesFree_of_reservedUnsaid
+#print axioms VE.Readings.Wire.filled_frame_E
 #print axioms VE.Readings.Wire.firstKeys_nodup
 #print axioms VE.Readings.Wire.firstKeys_sub
 #print axioms VE.Readings.Wire.firstSome_activeOf
@@ -2808,6 +2828,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.mkObj_absent
 #print axioms VE.Readings.Wire.mkObj_get
 #print axioms VE.Readings.Wire.ndCertOk_sound
+#print axioms VE.Readings.Wire.ndChecked_spec
 #print axioms VE.Readings.Wire.ndConflictRow_holds
 #print axioms VE.Readings.Wire.ndFree_sound
 #print axioms VE.Readings.Wire.ndModelOk_sound
@@ -2831,9 +2852,14 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.readings_wire_assumed_taken
 #print axioms VE.Readings.Wire.readings_wire_choice_wellFormed
 #print axioms VE.Readings.Wire.readings_wire_model_sound
+#print axioms VE.Readings.Wire.readings_wire_nd_all_sound
 #print axioms VE.Readings.Wire.readings_wire_nd_choice_conflict
 #print axioms VE.Readings.Wire.readings_wire_nd_choice_entails
+#print axioms VE.Readings.Wire.readings_wire_nd_choices
+#print axioms VE.Readings.Wire.readings_wire_nd_conflict_sound
+#print axioms VE.Readings.Wire.readings_wire_nd_model_sound
 #print axioms VE.Readings.Wire.readings_wire_nd_separate_sound
+#print axioms VE.Readings.Wire.readings_wire_nd_witness_sound
 #print axioms VE.Readings.Wire.readings_wire_satisfiable
 #print axioms VE.Readings.Wire.readings_wire_separate_sound
 #print axioms VE.Readings.Wire.replayPair_D
@@ -2856,6 +2882,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.act_choice_eq
 #print axioms VE.Readings.act_of_incompatible
 #print axioms VE.Readings.act_sorts
+#print axioms VE.Readings.acyclic_author
 #print axioms VE.Readings.all_at
 #print axioms VE.Readings.all_congr_mem
 #print axioms VE.Readings.allows_of_taking
@@ -2893,10 +2920,13 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.attached_of_fill
 #print axioms VE.Readings.attached_path_iff
 #print axioms VE.Readings.attached_set
+#print axioms VE.Readings.authorLite_choiceU
+#print axioms VE.Readings.authorLite_of_uvalid
 #print axioms VE.Readings.author_choice
 #print axioms VE.Readings.author_frame
 #print axioms VE.Readings.author_shared
 #print axioms VE.Readings.backgroundValidR_of_admissible
+#print axioms VE.Readings.baseAdmissibleP_choiceU
 #print axioms VE.Readings.baseAdmissibleR_nil
 #print axioms VE.Readings.base_down
 #print axioms VE.Readings.base_up
@@ -2945,6 +2975,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.cellsOn_sideOf
 #print axioms VE.Readings.cells_nil
 #print axioms VE.Readings.chain_norms_value
+#print axioms VE.Readings.chain_of_shaped
 #print axioms VE.Readings.chain_soft
 #print axioms VE.Readings.checkCertificate_typed
 #print axioms VE.Readings.checkRights_steps
@@ -2956,6 +2987,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.checkSourceLine_fan
 #print axioms VE.Readings.child_back
 #print axioms VE.Readings.child_fwd
+#print axioms VE.Readings.children_fill_lite
 #print axioms VE.Readings.children_mem
 #print axioms VE.Readings.choiceAtom_bottom
 #print axioms VE.Readings.choiceAtom_eq
@@ -2974,6 +3006,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.choiceJunk_le
 #print axioms VE.Readings.choiceLabelled_no_sets
 #print axioms VE.Readings.choicePremises_assertions
+#print axioms VE.Readings.choiceU_nodes
 #print axioms VE.Readings.choice_E
 #print axioms VE.Readings.choice_core_sat
 #print axioms VE.Readings.choice_correlate
@@ -3064,8 +3097,13 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.dagAcyclic_of_map
 #print axioms VE.Readings.dead_extra
 #print axioms VE.Readings.dead_sound
+#print axioms VE.Readings.decidesBy_pull_canon
+#print axioms VE.Readings.decidesBy_soften
 #print axioms VE.Readings.decides_alone
+#print axioms VE.Readings.decides_author_fill
+#print axioms VE.Readings.decides_author_pull
 #print axioms VE.Readings.decides_canon
+#print axioms VE.Readings.decides_fill_pull
 #print axioms VE.Readings.decides_iff
 #print axioms VE.Readings.decides_pull_canon
 #print axioms VE.Readings.decisionOnly_spec
@@ -3093,6 +3131,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.disj_wf
 #print axioms VE.Readings.distinctAcrossSets_spec
 #print axioms VE.Readings.distinct_lines
+#print axioms VE.Readings.documentExpansion_canon
 #print axioms VE.Readings.drop_append_ascii
 #print axioms VE.Readings.dualOblig_act
 #print axioms VE.Readings.dualOblig_sorts
@@ -3147,6 +3186,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.extract_go₂_all
 #print axioms VE.Readings.faithful_sim
 #print axioms VE.Readings.fillContent_nil
+#print axioms VE.Readings.fillDoc_chain
 #print axioms VE.Readings.fillDoc_choice
 #print axioms VE.Readings.fillDoc_conservative
 #print axioms VE.Readings.fillDoc_free
@@ -3156,10 +3196,15 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.fillHolds_sat
 #print axioms VE.Readings.fillItem_set
 #print axioms VE.Readings.fillName_unsaid
+#print axioms VE.Readings.fillPremises_pull
+#print axioms VE.Readings.fillPremises_wf_v
 #print axioms VE.Readings.fillSoftNode_alterable
 #print axioms VE.Readings.fillSoftNode_mode
 #print axioms VE.Readings.fillSoftNode_name
 #print axioms VE.Readings.fillSoftNode_toNode
+#print axioms VE.Readings.fill_choiceU
+#print axioms VE.Readings.fill_supU
+#print axioms VE.Readings.fill_transfers
 #print axioms VE.Readings.filterMap_congr_mem
 #print axioms VE.Readings.filter_length_le_imp
 #print axioms VE.Readings.filter_length_lt
@@ -3197,6 +3242,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.fmap_free
 #print axioms VE.Readings.fmap_guard_preds
 #print axioms VE.Readings.fmap_inj
+#print axioms VE.Readings.fmap_keeps_author
 #print axioms VE.Readings.fmap_mem
 #print axioms VE.Readings.fmap_name
 #print axioms VE.Readings.fmap_name_cases
@@ -3257,6 +3303,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.free_soft_valid
 #print axioms VE.Readings.free_wfSoft
 #print axioms VE.Readings.fuel_relax
+#print axioms VE.Readings.gapF_fill_v
 #print axioms VE.Readings.gateContent_contrib
 #print axioms VE.Readings.gateContent_fill
 #print axioms VE.Readings.gateContent_fillDoc
@@ -3285,6 +3332,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.home_chainWF
 #print axioms VE.Readings.home_exists
 #print axioms VE.Readings.hyps_constants
+#print axioms VE.Readings.hyps_fill
 #print axioms VE.Readings.ids_inj
 #print axioms VE.Readings.idxOf_getElem_nodup
 #print axioms VE.Readings.inForce_fillDoc
@@ -3397,6 +3445,8 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.names_nodup_of_order
 #print axioms VE.Readings.narrowingExcludes_iff
 #print axioms VE.Readings.narrowing_head
+#print axioms VE.Readings.nd_superpose_all
+#print axioms VE.Readings.nd_superpose_conflict_free
 #print axioms VE.Readings.ne_of_head
 #print axioms VE.Readings.nextn_ascii
 #print axioms VE.Readings.noRights_fill
@@ -3419,6 +3469,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.nodup_map_on
 #print axioms VE.Readings.nodup_of_count
 #print axioms VE.Readings.nodup_of_map
+#print axioms VE.Readings.notFill_of_startsWith
 #print axioms VE.Readings.not_attached_assertion
 #print axioms VE.Readings.not_attached_of_formula_only
 #print axioms VE.Readings.not_layer_name
@@ -3455,6 +3506,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.othersFree_spec
 #print axioms VE.Readings.othersSettled_every
 #print axioms VE.Readings.othersSettled_some
+#print axioms VE.Readings.outcomeBase_fill_v
 #print axioms VE.Readings.outcomeBase_iff
 #print axioms VE.Readings.outcome_canon_valid
 #print axioms VE.Readings.outweighsName_soft
@@ -3539,6 +3591,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.qName_chosenAt
 #print axioms VE.Readings.qualify_inj
 #print axioms VE.Readings.qualify_ne
+#print axioms VE.Readings.qualify_notFill
 #print axioms VE.Readings.quietFormula_wf
 #print axioms VE.Readings.quiet_iff
 #print axioms VE.Readings.rd_startsWith
@@ -3567,6 +3620,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.ruleKey_data
 #print axioms VE.Readings.ruleKey_inj
 #print axioms VE.Readings.ruleName_no_underscore
+#print axioms VE.Readings.rulesTyped_author
 #print axioms VE.Readings.rules_eq
 #print axioms VE.Readings.rv_one
 #print axioms VE.Readings.rv_own
@@ -3579,6 +3633,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.search_spec
 #print axioms VE.Readings.selectable_mem
 #print axioms VE.Readings.selects_canon
+#print axioms VE.Readings.selects_fill_fuel_lite
 #print axioms VE.Readings.selects_iff
 #print axioms VE.Readings.separates_noKeys
 #print axioms VE.Readings.separates_other
@@ -3618,6 +3673,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.sim_blocked
 #print axioms VE.Readings.sim_comparable
 #print axioms VE.Readings.sim_decides
+#print axioms VE.Readings.sim_decidesBy
 #print axioms VE.Readings.sim_domWith
 #print axioms VE.Readings.sim_dualOblig
 #print axioms VE.Readings.sim_dualPerm
@@ -3674,6 +3730,8 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.strictYields_mono_le
 #print axioms VE.Readings.strictYields_stable
 #print axioms VE.Readings.strictYields_stable_le
+#print axioms VE.Readings.strict_choiceDoc
+#print axioms VE.Readings.strict_choice_fillDoc
 #print axioms VE.Readings.strict_one_fillDoc
 #print axioms VE.Readings.string_rv
 #print axioms VE.Readings.substWith_canon
@@ -3809,10 +3867,12 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.utf8SetAux_append
 #print axioms VE.Readings.validSoftName_data
 #print axioms VE.Readings.validSoftName_noSep
+#print axioms VE.Readings.valid_fill_choiceU
 #print axioms VE.Readings.valid_tablesModel
 #print axioms VE.Readings.value_canon
 #print axioms VE.Readings.value_sim
 #print axioms VE.Readings.wellFormedDoc_parts
+#print axioms VE.Readings.wellFormedND_parts
 #print axioms VE.Readings.wellFormedSoft_check
 #print axioms VE.Readings.wf_congr
 #print axioms VE.Readings.wf_sub
@@ -3822,6 +3882,8 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.withTables_rel
 #print axioms VE.Readings.witnessItems_label
 #print axioms VE.Readings.yields_alone
+#print axioms VE.Readings.yields_fill_fuel_lite
+#print axioms VE.Readings.yields_fill_lite
 #print axioms VE.Readings.yields_mono
 #print axioms VE.Readings.yields_mono_le
 #print axioms VE.Readings.yields_stable
