@@ -77,8 +77,8 @@ def problems() -> list[str]:
         out.append("the starting budget is not the value measured at the base (D3)")
     if migration["base"] != budget["base"]:
         out.append("the migration ran at another base")
-    if budget["file_lines"]["head"] >= 300:
-        out.append("the budget file is not under 300 lines (plan outcome)")
+    if budget["file_lines"]["head"] != 7 * budget["allowances"] + 10:
+        out.append("the budget file holds more than the comment, the budget and the allowances")
     if any(path.startswith(("ve/", "lean/", "rust/")) for path in scope["files"]):
         out.append("a file under ve/, lean/ or rust/ changed: gate items 2 and 3 apply")
     if scope["head"] != budget["head"] or not scope["commits"]:
