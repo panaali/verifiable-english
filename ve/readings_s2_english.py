@@ -11,7 +11,8 @@ here can be written by an author as document content: none is a VE statement.
 
 E11 is not registered: the lifting lemma holds (4.4), so it is a non-wording (2.4, G5).
 
-Readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 and 2.2) add E30, E31, E32 and the result R7,
+Readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 and 2.2) add E30, E31, E32 and the results R7
+to R9 (R8 and R9 name what an UNKNOWN rests on, 2.4 item 3),
 and reuse norm-defaults' filled-gap sentence after a shown situation (one per filled gap the result depends on, read
 here as part of the result, so the gate reads the whole line) and its pair sentence as an E3 line. Their `<clause>`
 slot is a closed class: the point clauses of the situations shown (`ve/norm_defaults_english.py` `point_clause`).
@@ -38,6 +39,10 @@ _GAPS = ("rep", [" Here the text does not say whether ", ("slot", "clause"), "; 
 CHECKED_ALONE = ("was checked by itself, with the terms its readings declare; VE did not check it together with "
                  "the other sentences.")
 EACH_ALONE = "Each open sentence below was checked by itself, under each of its readings."
+# What an UNKNOWN rests on, named by E12 (readings-defaults 2.4 item 3): an uncertified conflict status (R8) and a
+# missing result (R9) under the choice named.
+CONFLICT_UNCHECKED = "VE could not check whether two rules on the same act contradict each other."
+QUERY_UNCHECKED = "VE could not check whether the conclusion follows."
 
 PRODUCTIONS = {
     "citation": [["sentence ", _N], ["sentences ", *_SERIES]],
@@ -50,10 +55,12 @@ PRODUCTIONS = {
          _GAPS],                                                                                    # R5
         ["the sentences of this document cannot all be true together."],                           # R6
         ["the text does not say whether ", ("slot", "clause"), ": no rule decides this situation."],  # R7
+        [CONFLICT_UNCHECKED],                                                                       # R8
+        [QUERY_UNCHECKED],                                                                          # R9
     ],
 }
 RESULTS = {"conflict_free": 0, "follows": 1, "countermodel": 2, "conflict": 3, "premise_model": 4,
-           "inconsistent": 5, "undecided": 6}
+           "inconsistent": 5, "undecided": 6, "conflict_unchecked": 7, "query_unchecked": 8}
 SITUATION_RESULTS = ("countermodel", "conflict", "premise_model")
 
 TEMPLATES = {
@@ -336,7 +343,7 @@ def gap_sentences(gaps):
 
 
 def result_sentence(kind, *, conclusion=None, situation=None, clause=None, gaps=()):
-    """R1 to R7 (2.1; readings-defaults 2.1), un-gated: a result sentence is shown only inside E10, E12, E26 or
+    """R1 to R9 (2.1; readings-defaults 2.1), un-gated: a result sentence is shown only inside E10, E12, E26 or
     E30. A shown situation (R3 to R5) is followed by its filled-gap sentences; no other result has any."""
     gaps = tuple(gaps)
     if gaps and kind not in SITUATION_RESULTS:
@@ -355,6 +362,10 @@ def result_sentence(kind, *, conclusion=None, situation=None, clause=None, gaps=
         return "the sentences of this document cannot all be true together."
     if kind == "undecided":
         return f"the text does not say whether {clause}: no rule decides this situation."
+    if kind == "conflict_unchecked":
+        return CONFLICT_UNCHECKED
+    if kind == "query_unchecked":
+        return QUERY_UNCHECKED
     raise VEError("InvalidInput: unknown S2 result sentence")
 
 
