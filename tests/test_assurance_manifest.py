@@ -22,6 +22,7 @@ import pytest
 from subprocesses import HANG_TIMEOUT, expired_waits
 from ve import assurance
 from ve.backends import lean as lean_backend
+from ve.backends import process_limits  # the one-shot runners wait through its subprocess
 from ve.errors import AuthorityViolation, CheckerUnavailable, ResourceLimit, VEError
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -777,7 +778,7 @@ FAULTS = {
 @pytest.mark.parametrize("fault", FAULTS)
 def test_backend_faults_are_checker_unavailable(tmp_path, monkeypatch, fault):
     fake = _fake_lean(tmp_path, FAULTS[fault])
-    waits = expired_waits(monkeypatch, lean_backend, expire=lambda argv: fault == "hang")
+    waits = expired_waits(monkeypatch, process_limits, expire=lambda argv: fault == "hang")
     with pytest.raises(CheckerUnavailable) as caught:
         lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route",
                          timeout=HANG_TIMEOUT)
@@ -904,7 +905,7 @@ def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
     assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with monkeypatch.context() as setting:
         setting.setenv("VE_LEAN_TIMEOUT", str(configured_wait))
-        waits = expired_waits(setting, lean_backend)
+        waits = expired_waits(setting, process_limits)
         with pytest.raises(CheckerUnavailable, match=rf"no answer within {configured_wait} s"):
             check_bundle(_bundle(), lean_executable=hang)
     assert waits == [configured_wait]
@@ -1058,7 +1059,7 @@ def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeyp
     assert check_argument(graph).lean_outcome == "not_requested"
     configured_wait = HANG_TIMEOUT + 123.5
     monkeypatch.setenv("VE_LEAN_TIMEOUT", str(configured_wait))
-    waits = expired_waits(monkeypatch, lean_backend, expire=lambda argv: Path(argv[0]).name == "hang")
+    waits = expired_waits(monkeypatch, process_limits, expire=lambda argv: Path(argv[0]).name == "hang")
     outcomes = {}
     for name, body in (("absent", None), ("crash", FAULTS["crash"]), ("hang", FAULTS["hang"]),
                        ("rejecting", "print(json.dumps([{'id': c['id'], 'status': 'ok', 'valid': False} "

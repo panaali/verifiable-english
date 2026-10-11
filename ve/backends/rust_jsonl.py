@@ -7,7 +7,11 @@ CPU per call in the agent-policy harness, plus a SHA-256 of the binary per call)
 independent, so a process is reused across calls; one that times out, ends its output or
 writes anything but one record is killed and never reused, and the call is
 `CheckerUnavailable`, as a failed one-shot process was. A process is reused only while its
-executable keeps the file identity it was started from.
+executable keeps the file identity it was started from and its memory budget is the configured one.
+
+Each process gets the memory budget `memory_limit()` (`VE_RUST_MEMORY_LIMIT`, passed to the
+child), and runs under an address-space limit `ADDRESS_SPACE_HEADROOM` above it. A case that
+exhausts the budget is answered with ResourceLimit and ends its process (`process_limits`).
 """
 from __future__ import annotations
 
@@ -22,9 +26,11 @@ import threading
 import time
 
 from ..errors import ResourceLimit
+from ..limits import MAX_RUST_MEMORY_BYTES
 from .diagnostics import require_ok
 from ..environment_wire import EncodedEnvironment, encoded_environment, wire_checked
 from .lean_service import CheckerUnavailable, _decode_json, configured_seconds, executable_sha256
+from .process_limits import configured_bytes, limit_address_space
 from .service_schema import Compiler, Context, Invalid
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -33,6 +39,9 @@ DEFAULT_EXECUTABLE = ROOT / "rust/target/release/ve"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
 MAX_LINE_BYTES = 16 * 1024 * 1024
 DEFAULT_TIMEOUT = 5.0
+# Room above the budget for the binary itself and allocator slack. The budget's clean
+# ResourceLimit comes first; the address-space limit is only the backstop.
+ADDRESS_SPACE_HEADROOM = 1 << 30
 
 
 def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
@@ -41,6 +50,12 @@ def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
     machine load cannot fail a test), else `default`. A guard against a hung
     checker only; Rust's work limits are its evaluation budgets."""
     return configured_seconds("VE_RUST_TIMEOUT", default)
+
+
+def memory_limit() -> int:
+    """The memory budget in bytes of a Rust process: `VE_RUST_MEMORY_LIMIT` when set, else
+    `MAX_RUST_MEMORY_BYTES`. A value that is not a positive number of bytes is CheckerUnavailable."""
+    return configured_bytes("VE_RUST_MEMORY_LIMIT", MAX_RUST_MEMORY_BYTES)
 
 
 def _identity(path: str):
@@ -61,9 +76,16 @@ class _Checker:
     def __init__(self, argv):
         self.argv = list(argv)
         self.identity = _identity(self.argv[0])
+        self.memory = memory_limit()
         self.stderr = tempfile.TemporaryFile()
         self.process = subprocess.Popen(self.argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                        stderr=self.stderr, bufsize=0, close_fds=True)
+                                        stderr=self.stderr, bufsize=0, close_fds=True,
+                                        env={**os.environ, "VE_RUST_MEMORY_LIMIT": str(self.memory)})
+        try:
+            limit_address_space(self.process.pid, self.memory + ADDRESS_SPACE_HEADROOM)
+        except OSError:
+            self.close()
+            raise
         os.set_blocking(self.process.stdin.fileno(), False)
         os.set_blocking(self.process.stdout.fileno(), False)
         self.buffer = bytearray()
@@ -73,7 +95,8 @@ class _Checker:
         has written nothing since its last record (output that answers no case is never read as the
         next case's answer)."""
         try:
-            if self.process.poll() is not None or _identity(self.argv[0]) != self.identity:
+            if (self.process.poll() is not None or _identity(self.argv[0]) != self.identity
+                    or self.memory != memory_limit()):
                 return False
             os.read(self.process.stdout.fileno(), 1)
         except BlockingIOError:
@@ -302,6 +325,7 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
     data = encoded.encode() + b"\n"
     if len(data) > MAX_LINE_BYTES:
         raise ResourceLimit(f"Rust case exceeds {MAX_LINE_BYTES} bytes")
+    memory_limit()  # an invalid budget setting is refused before any process starts
     try:
         completed = _run_checker([str(binary), "jsonl", "-"], input=data, timeout=timeout)
     except (OSError, subprocess.TimeoutExpired) as exc:
