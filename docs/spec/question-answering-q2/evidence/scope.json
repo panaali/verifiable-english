@@ -1,7 +1,7 @@
 {
  "range": "main..HEAD --no-merges",
  "base": "968870193193b9e8138183ed77c41e376a6e376c",
- "captured_head": "67c50c9c0596e9b262d027a71f35ccc58550f986",
+ "captured_head": "8ce4952ce18b69ca54ea833bc587554f0c50bc8d",
  "commits": [
   "bbbe98a444a2b6d173e6a40739e1a1c9abe4d88e",
   "d2dcdac37e85db935d83b2bfe97f8ebca4926a41",
@@ -30,7 +30,9 @@
   "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
   "f8f0b430b833f8543ef18c723311a296e21ac6c9",
   "d9424e3a4a44e6cf08195901c394c1e95331fa6f",
-  "67c50c9c0596e9b262d027a71f35ccc58550f986"
+  "67c50c9c0596e9b262d027a71f35ccc58550f986",
+  "0cbe1dddc48b95d0c0cd40132411e5e2a632264e",
+  "8ce4952ce18b69ca54ea833bc587554f0c50bc8d"
  ],
  "numstat": [
   {
@@ -1124,6 +1126,66 @@
    "path": "docs/spec/question-answering-q2/report.py",
    "added": 8,
    "deleted": 0
+  },
+  {
+   "commit": "0cbe1dddc48b95d0c0cd40132411e5e2a632264e",
+   "path": "docs/spec/question-answering-q2/DELTA.md",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "0cbe1dddc48b95d0c0cd40132411e5e2a632264e",
+   "path": "docs/spec/question-answering-q2/REPORT.md",
+   "added": 31,
+   "deleted": 19
+  },
+  {
+   "commit": "0cbe1dddc48b95d0c0cd40132411e5e2a632264e",
+   "path": "docs/spec/question-answering-q2/evidence/scope.json",
+   "added": 146,
+   "deleted": 3
+  },
+  {
+   "commit": "0cbe1dddc48b95d0c0cd40132411e5e2a632264e",
+   "path": "docs/spec/question-answering-q2/evidence/trust.json",
+   "added": 4,
+   "deleted": 4
+  },
+  {
+   "commit": "0cbe1dddc48b95d0c0cd40132411e5e2a632264e",
+   "path": "tests/test_question_answering_q2_report.py",
+   "added": 5,
+   "deleted": 2
+  },
+  {
+   "commit": "8ce4952ce18b69ca54ea833bc587554f0c50bc8d",
+   "path": "docs/spec/question-answering-q2/evidence/mutants.json",
+   "added": 13,
+   "deleted": 0
+  },
+  {
+   "commit": "8ce4952ce18b69ca54ea833bc587554f0c50bc8d",
+   "path": "docs/spec/question-answering-q2/mutants.py",
+   "added": 5,
+   "deleted": 0
+  },
+  {
+   "commit": "8ce4952ce18b69ca54ea833bc587554f0c50bc8d",
+   "path": "tests/test_ask_relay.py",
+   "added": 6,
+   "deleted": 2
+  },
+  {
+   "commit": "8ce4952ce18b69ca54ea833bc587554f0c50bc8d",
+   "path": "tools/gate-collection.json",
+   "added": 1,
+   "deleted": 0
+  },
+  {
+   "commit": "8ce4952ce18b69ca54ea833bc587554f0c50bc8d",
+   "path": "ve/ask.py",
+   "added": 22,
+   "deleted": 4
   }
  ],
  "new_theorems": [
