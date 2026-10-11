@@ -11,6 +11,11 @@ each call through a service seam (`self._evaluate(...)`) back to the module name
 (`evaluate(...)`). It also checks that every name the
 base modules defined is still an attribute of the same module, and counts lines and
 function-level imports per file of `ve/assist/`.
+
+    uv run python docs/arch/AR-9/measure.py --scope BASE > docs/arch/AR-9/evidence/scope.json
+
+writes the scope the gate covers instead: `BASE..HEAD --no-merges`, newest first, and the
+files `BASE..HEAD` changes.
 """
 from __future__ import annotations
 
@@ -113,7 +118,18 @@ def compare(base_path: str, base_text: str, head_sources: dict[str, str]) -> tup
     return rows, missing
 
 
+def scope(base: str, head: str) -> dict:
+    commits = [dict(zip(("hash", "subject"), line.split(" ", 1)))
+               for line in git("log", "--no-merges", "--format=%H %s", f"{base}..{head}").splitlines()]
+    return {"base": base, "head": head, "commits": commits,
+            "files": sorted(git("diff", "--name-only", f"{base}..{head}").split())}
+
+
 def main() -> int:
+    if sys.argv[1] == "--scope":
+        base, head = (git("rev-parse", ref).strip() for ref in (sys.argv[2], "HEAD"))
+        print(json.dumps(scope(base, head), indent=1))
+        return 0
     base = git("rev-parse", sys.argv[1]).strip()
     head = git("rev-parse", "HEAD").strip()
     dirty = bool(git("status", "--porcelain", "--", "ve").strip())
