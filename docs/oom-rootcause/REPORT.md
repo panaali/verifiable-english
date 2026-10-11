@@ -199,5 +199,21 @@ Recorded in `docs/oom-rootcause/DELTA.md`. One is covered by a standing ruling (
 
 ## 9. Gate
 
-The commits are listed in `evidence/commits.txt` (`git log main..HEAD --no-merges`, taken before the report's last edit). The full gate result for the final HEAD is saved as `docs/oom-rootcause/evidence/gate-result.json` (see
-the final commit).
+The commits are listed in `evidence/commits.txt` (`git log main..HEAD --no-merges`, taken before the last
+two commits).
+
+1. The first full gate on `ab00e274` was started in the background. The tool's two-hour limit stopped it
+   during the Python suite at load ~110, and it left no result. It was restarted as a detached process
+   under `iso.sh` (64G) with `--workers 8`.
+2. The full gate on `ab00e274` (`evidence/gate-result-ab00e274-full.json`): 14,336 passed, 92 skipped,
+   38 Rust tests passed, **3 failed**, all of them `tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[*]`.
+   `--rerun-failed` on the same commit failed them again (`evidence/gate-result-ab00e274-rerun.json`),
+   so R13 does not apply. The cause predates this branch. The test replaces `check_toolchains`, which
+   puts the pinned Lean on the gate's PATH. `lake_outputs.drop_stale` (from rd-6b, `1fc602bd`) runs `lean`
+   itself, so it found `lean` only through the real HOME's `~/.elan/bin`. That works in plain pytest, but
+   under the gate's isolated HOME every parameter fails. It reproduces with code identical to main's when
+   HOME and PATH are set the same way. Fix: the test also fakes `drop_stale` (commit "test_gate_integrity:
+   fake Lake's trace check"). The file then passed 37/37 both ways, and the 79 files its change selects
+   passed: 2,825 passed, 1 skipped, 83 xfailed.
+3. The full gate on the final code: `evidence/gate-result.json` (added by the commit after it, which
+   changes only docs).
