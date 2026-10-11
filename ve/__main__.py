@@ -75,6 +75,9 @@ def _main(argv=None):
         except (VEError, UnicodeError, OSError) as exc:
             _emit({"status": "InvalidInput", "error": str(exc)})
             return 2
+    if argv[:1] == ["ask"]:
+        from .ask import main as ask_main
+        return ask_main(argv[1:])
     if argv[:2] == ["adapter", "run"]:
         from .adapters.cli import main as adapter_main
         return adapter_main(argv[2:])

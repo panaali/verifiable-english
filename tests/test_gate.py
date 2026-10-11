@@ -16,6 +16,10 @@ def test_exact_parameterized_skip_and_live_deselection_are_accounted_for():
     live = "tests/test_llm.py::test_live_smoke"
     assert permitted(admission, "Skipped: admission is outside Rust scope",
                      policy["optional_tests"])
+    for family in ("dependency-order", "labels"):
+        node = f"tests/test_p0_three_way.py::test_rust_matches_expected[{family}]"
+        assert permitted(node, f"Skipped: {family} is outside Rust scope", policy["optional_tests"])
+        assert not permitted(node, "Skipped: admission is outside Rust scope", policy["optional_tests"])
     assert not permitted(admission.replace("admission", "labels"),
                          "Skipped: admission is outside Rust scope", policy["optional_tests"])
     selected = [f"tests/{name}::test_covered" for name in REQUIRED_FAMILIES] + [admission]

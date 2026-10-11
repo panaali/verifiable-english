@@ -117,7 +117,7 @@ UNHANDLED_MODES = frozenset({"english", "risk-eval"})
 _CORE = (5.0, 30.0)
 DEADLINES: dict[str, tuple[float, float]] = {
     **{mode: _CORE for mode in ("evaluate", "check-certificate", "order", "route", "norms", "english",
-                                "english.read", "english.grammar", "english.check",
+                                "english.read", "english.grammar", "english.check", "english.question",
                                 "environment", "model", "check", "identity", "parse", "graph", "readings",
                                 "bundle", "family-norms")},
     "soft-norms": (120.0, 120.0), "rights": (120.0, 1000.0), "speech-acts": (120.0, 120.0),

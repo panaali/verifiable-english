@@ -29,7 +29,7 @@ from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
 from .readings import (active_reading_sets, check_readings, plan_choices, s1_content_kind,
                        validate_couplings, validate_narrowings, validate_reading_sets)
-from .wire import digest
+from .wire import LONE_SURROGATE, digest
 from .vacuity import premise_status
 
 MAX_DOCUMENT_BYTES = 4_000_000
@@ -479,16 +479,19 @@ def _bind_document_answer(body, meta, declared, row):
     kinds, statuses, reasons = {}, {}, {}
     for unit, (authored, parent) in zip(units, declared, strict=True):
         require(type(unit) is dict and type(authored) is dict)
+        has_content = authored.get("content") is not None
         require(set(unit) == {"id", "span", "kind", "meaning", "support", "status"} |
-                ({"content", "meaning_id"} if "content" in authored else set()) |
+                ({"content", "meaning_id"} if has_content else set()) |
                 ({"parent_id"} if parent is not None else set()))
         for field in ("id", "span", "kind", "meaning", "support"):
             require(field in unit and field in authored and same(unit[field], authored[field]))
         require(("parent_id" in unit) == (parent is not None))
         if parent is not None:
             require(unit["parent_id"] == parent)
-        require(("content" in unit) == ("content" in authored))
+        require(("content" in unit) == has_content)
         require(("content" in unit) == ("meaning_id" in unit))
+        if has_content and type(authored["content"]) is dict and "ast" in authored["content"]:
+            require(same(unit["content"], authored["content"]["ast"]))
         span = unit["span"]
         require(type(span) is list and len(span) == 2 and
                 all(type(n) is int for n in span) and 0 <= span[0] < span[1] <= len(source))
@@ -537,10 +540,21 @@ def _bind_document_answer(body, meta, declared, row):
     require(same(coverage, expected))
 
 
+def _no_lone_surrogate(meta) -> None:
+    """A lone surrogate escape reads as a string no UTF-8 text holds (the document identity encodes the metadata):
+    the JSON boundary's diagnostic, which the Lean `document` mode gives at the same point (`split`). A
+    `ve-document@2` document's front matter is the discourse route's, which refuses it as invalid JSON."""
+    try:
+        json.dumps(meta, ensure_ascii=False).encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise VEError(LONE_SURROGATE) from exc
+
+
 def _load_document(raw: bytes, path: str | Path, lean):
     """Python's own path: a `ve-document@2` document after Lean's discourse admission (`lean`), and a
     `ve-document@1` document Lean's `document` mode cannot decide yet (`_lean_answer`)."""
     meta, source, fences = _split(raw)
+    _no_lone_surrogate(meta)
     if not source:
         raise VEError("document source is empty")
     if type(meta.get("environment")) is not dict:
@@ -715,17 +729,28 @@ def _load_document(raw: bytes, path: str | Path, lean):
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
-    s1_content = "readings@1" in env.profiles and type(reading_sets) is list and any(
+    from .readings_components import has_companions
+    # readings-defaults RD-4b: a reading with its own vocabulary is content-bearing (Lean splits the document).
+    companions = "readings@1" in env.profiles and has_companions(reading_sets)
+    s1_content = "readings@1" in env.profiles and type(reading_sets) is list and (companions or any(
         type(s) is dict and type(s.get("readings")) is list and any(
             type(r) is dict and s1_content_kind(r.get("content")) in
             {"norm", "right", "right_lines", "limitation"} for r in s["readings"])
-        for s in reading_sets)
+        for s in reading_sets))
     validate_reading_sets(env if rights_enabled or s1_content else formula_env,
                           reading_sets, unit_ids, source=source,
                           unit_spans={u["id"]: u["span"] for u in compiled},
                           lean_replay=s1_content)
     readings_s1 = None
-    if s1_content:
+    readings_components = None
+    if companions:
+        # readings-defaults 1.9 and 4.5 (RD-4b): Lean splits the document and checks each case by itself; its
+        # elaboration, validation and the product's conflict answer are relayed, bound to the request.
+        from .readings_components import load as load_components
+        readings_components = load_components(env.to_dict(), compiled, reading_sets,
+                                              couplings=meta.get("couplings", []),
+                                              narrowings=meta.get("narrowings", []))
+    elif s1_content:
         from .readings_route import validate as validate_s1
         readings_s1 = validate_s1(env.to_dict(), compiled, reading_sets)
     active = active_reading_sets(reading_sets)
@@ -791,7 +816,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
     narrowings = meta.get("narrowings", [])
     validate_narrowings(narrowings, reading_sets, unit_ids)
     readings_s2 = None
-    if s1_content:
+    if s1_content and not companions:
         from .readings_route import elaborate as elaborate_s2
         readings_s2 = elaborate_s2(env.to_dict(), compiled, reading_sets,
                                     couplings=couplings, narrowings=narrowings)
@@ -807,6 +832,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
            "reports": reports, "rights_document": rights_document,
            "readings_s1": readings_s1,
            "readings_s2": readings_s2,
+           "readings_components": readings_components,
            "reading_plan": plan_choices(active if couplings else
                                         [r for r in active if r["status"] == "open"],
                                         couplings=couplings)}
@@ -887,7 +913,10 @@ def _rights_source_units(doc):
 
 
 def _content_bearing(doc):
-    """Whether the document has a content-bearing reading set (composition-s1.md 1.2)."""
+    """Whether the document has a content-bearing reading set (composition-s1.md 1.2); a document whose readings
+    carry their own vocabulary has one (readings-defaults 1.9)."""
+    if doc.get("readings_components") is not None:
+        return True
     row = doc.get("readings_s1")
     return row is not None and row.get("content_bearing") is True
 
@@ -1485,7 +1514,7 @@ def render_document(path):
                     f"to {kind_description(kind[3])} with the relation {kind[1]}")
         return f"a passage without a formal reading yet, for this reason: {kind[1].replace('_', ' ')}"
 
-    def kind_wording(kind, content, rights=None):
+    def kind_wording(kind, content, rights=None, vocabulary=None):
         """`rights`: the correlated document `content` was checked in, when it is
         not the base one (a right-reading candidate is checked on its own)."""
         if content is None:
@@ -1536,7 +1565,7 @@ def render_document(path):
             from .norms import NormDocument
             from .norm_english import render_rule_sentence
             rule = NormDocument._decode(content)
-            claim = render_rule_sentence(rule, doc["environment"])
+            claim = render_rule_sentence(rule, doc["environment"] if vocabulary is None else vocabulary)
             if rule.over:
                 claim += " Exception to " + ", ".join(rule.over) + "."
             return claim if kind == "norm" else f"{claim} The source presents this as {kind_description(kind)}."
@@ -1569,7 +1598,15 @@ def render_document(path):
         from .rights import RightsDocument
         RightsDocument.warm_rules(doc["environment"], [units for units in shown if units is not None])
     s1_wording = None
-    if _content_bearing(doc):
+    component_environments = {}
+    if doc.get("readings_components") is not None:
+        from .readings_components import PartsWording
+        s1_wording = PartsWording(doc)
+        for part in doc["readings_components"]["parts"]:
+            from .environment import Environment
+            for reading_set in part["document"].get("reading_sets") or []:
+                component_environments[reading_set["id"]] = Environment(part["environment"])
+    elif _content_bearing(doc):
         from .readings_route import Wording
         s1_wording = Wording(doc)
     for u in doc["units"]:
@@ -1597,7 +1634,8 @@ def render_document(path):
                 if labels:
                     lead += " (" + ", ".join(f"{axis} {value}" for axis, value in sorted(labels.items())) + ")"
                 lines.append(f"{lead}: " + kind_wording(candidate["kind"], candidate["content"],
-                                                        candidate_rights(candidate["content"])))
+                                                        candidate_rights(candidate["content"]),
+                                                        component_environments.get(reading_set["id"])))
             if s1_wording is not None and reading_set["status"] == "open":
                 # composition-s1.md 2.3: each checked pair's wording, then E16 under the set.
                 lines.extend(s1_wording.set_lines(u["id"]))
@@ -1624,6 +1662,9 @@ def main(argv=None):
     sub.choices["readings"].add_argument("--narrowing", help="apply a recorded narrowing by id")
     sub.choices["readings"].add_argument("--under", action="append", metavar="SET:INDEX",
                                          help="a named reading of a content-bearing set (composition-s2.md 4.5)")
+    sub.choices["readings"].add_argument("--sentence", metavar="UNIT",
+                                         help="the sentence checked by itself the conclusion is about "
+                                              "(readings-defaults 4.5)")
     args = parser.parse_args(argv)
     if args.command == "render":
         print(render_document(args.path), end="")
@@ -1636,6 +1677,8 @@ def main(argv=None):
             data = coverage(doc)
         elif args.under and not args.conclusion:
             raise VEError("--under requires --conclusion")
+        elif args.sentence and not args.conclusion:
+            raise VEError("--sentence requires --conclusion")
         elif args.conclusion:
             conclusion = json.loads(Path(args.conclusion).read_text())
             if _content_bearing(doc):
@@ -1654,12 +1697,22 @@ def main(argv=None):
                         if not set_id or not index.isdigit():
                             raise VEError("--under takes SET:INDEX")
                         assumed.append((set_id, decimal_value(index)))
+                if doc.get("readings_components") is not None:
+                    # readings-defaults 4.5 (RD-4b): the query is typed in one sentence checked by itself, Lean's.
+                    from .readings_components import query as components_query
+                    data = components_query(doc, conclusion, assumed=assumed, sentence=args.sentence)
+                    print(json.dumps(data, ensure_ascii=False, indent=2))
+                    return 0
+                if args.sentence:
+                    raise VEError("--sentence names a sentence checked by itself; this document has none")
                 data = context(doc).entailment(conclusion, assumed=assumed)
                 data["english"] = query_english(doc, conclusion, data)
                 print(json.dumps(data, ensure_ascii=False, indent=2))
                 return 0
             if args.under:
                 raise VEError("--under names readings of a content-bearing set (composition-s2.md 4.5)")
+            if args.sentence:
+                raise VEError("--sentence names a sentence checked by itself; this document has none")
             active = active_reading_sets(doc["meta"].get("reading_sets", []))
             sets = [{**r, "readings": [{**c, "original_index": i}
                                       for i, c in enumerate(r["readings"])]} for r in active]

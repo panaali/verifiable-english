@@ -137,9 +137,11 @@ def test_fnd1_readings_conclusion_some(tmp_path, capsys):
     data = query(tmp_path, capsys, path)
     assert data["verdict"] == "SOME"
     assert (data["proof"]["choice"], data["countermodel"]["choice"]) == ([["rs_1", 0]], [["rs_1", 1]])
-    follows, fails = shown(data["english"])
+    # rd-3 round 3: the proof rests on the pair condition (its conflict packages use it), stated after the result.
+    follows, provided, pair, fails = shown(data["english"])
     assert follows == (f"Read sentence 1 as {EVERY}: the conclusion follows: *For every agent, for every user, that "
                        "agent must help that user.*")
+    assert (provided, pair) == ("This holds provided that:", "Whenever an agent must help an user, it may help that user.")
     assert fails.startswith(f"Read sentence 1 as {ASKS}: the conclusion does not follow. It fails here: ")
     # every gap of the situation is shown with its answer, and the duty is filled 'no' there
     assert GAP.search(fails) and fails.endswith("must help e0; this situation answers 'no'.")
@@ -160,8 +162,11 @@ def test_fnd2_check_conflict_under_one_reading_only(tmp_path):
     english = shown(report["readings"]["english"])
     [line] = [line for line in english if "contradict each other here" in line]
     assert line.startswith(f"Read sentence 2 as {MUST_X}: two rules contradict each other here: ")
-    # the witness's filling is shown: the permission to try is filled 'yes', which triggers the duty
-    assert line.endswith("may be tried; this situation answers 'yes'.") and len(GAP.findall(line)) == 3
+    # Lean's plan shows the filled gaps the conflict's value reads with nothing filled (readings-defaults 2.2, RD-3):
+    # the permission to try, filled 'yes', which triggers the duty, and the duty's own gap; not the third table
+    assert line.endswith("Here the text does not say whether e0 may be tried; this situation answers 'yes'. "
+                         "Here the text does not say whether e0 must be done; this situation answers 'no'.")
+    assert len(GAP.findall(line)) == 2
 
 
 def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
@@ -173,6 +178,9 @@ def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
     data = json.loads(capsys.readouterr().out)
     assert (data["verdict"], data["status"], data["choice"]) == (
         "UNKNOWN", "UNKNOWN (conflict status: CONFLICT)", [["rs_2", 0]])
+    # 2.4 item 3 (review B3 of rd-4b): the UNKNOWN names its choice by E12, with the checked witness of its CONFLICT
+    [line] = shown(data["english"])
+    assert line.startswith(f"Read sentence 2 as {MUST_X}: two rules contradict each other here: ")
 
 
 def test_fnd2_render(tmp_path):

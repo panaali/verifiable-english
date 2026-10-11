@@ -42,7 +42,9 @@ MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "s
         "units", "mentions", "default_exceptions_by_decider", "rule_acts"}
 # Top-level fields whose domain is a union across JSON types (field: the types beside the genuine one).
 UNIONS = {"joint": {"string", "integer"}, "admitted": {"boolean", "string"}, "finding": {"object", "null"},
-          "first_failing": {"string", "null"}}
+          "first_failing": {"string", "null"},
+          # readings-verdicts: the dead readings are a list, or null when one has no certificate (RD-3)
+          "dead_readings": {"array", "null"}}
 # Top-level fields whose value the schema leaves to another mode: `readings-choice`'s `inner` is the lower
 # route's own row for the inner case, whose kind is not the request's, so no row shape selects it
 # (readings-route.json `choice_answer`); the caller reads it as that route's answer. It is still required.
@@ -357,8 +359,13 @@ def test_a_soft_rejection_with_another_checks_code_breaks_a_lean_invariant(genui
 
 # Objects deliberately open, with why: a predicate declaration of E' echoes the request's (and the
 # generated ones add theirs); its domain is the environment decoder's and the caller compares E' whole.
+# A case of a document's split (readings-defaults RD-4b) carries its environment, document and checked part:
+# objects (`Readings.Run.asObject`) that echo the request's, each bound member by member to the request by
+# the relay (`readings_components._bind_part`; tests/test_readings_components_load.py fuzzes every member).
+_SPLIT_CASE = "readings-route.json#/$defs/elaborate_components/properties/components/items/properties/"
 OPEN_ALLOWED = {"common.json#/$defs/environment_predicate",
-                "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/predicates/additionalProperties"}
+                "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/predicates/additionalProperties",
+                *(_SPLIT_CASE + name for name in ("environment", "document", "checked"))}
 
 
 def open_objects(directory=DIRECTORY):

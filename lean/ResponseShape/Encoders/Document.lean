@@ -3,10 +3,15 @@ import ResponseShape.Encoders.Common
 namespace ResponseShape.Encoders.Document
 open Lean ResponseShape ResponseShape.Skeletons
 
-theorem unit_fits (j : Json) (u : VE.Service.Document.SourceUnit) :
+theorem meaning_fits (j : Json) (m : VE.Service.Document.Meaning) :
+    Fits j (skel% "document.json#/$defs/meaning") m.json := by
+  cases m <;> simp only [VE.Service.Document.Meaning.json] <;> fits
+
+theorem unit_fits (j : Json) (u : VE.Service.Document.RowUnit) :
     Fits j (skel% "document.json#/$defs/unit") (VE.Service.Document.unitJson u) := by
   cases h : u.parent <;> cases hc : u.content <;> cases hm : u.meaningId <;>
-    simp [VE.Service.Document.unitJson, h, hc, hm] <;> fits
+    simp [VE.Service.Document.unitJson, h, hc, hm] <;> fits using meaning_fits
+  all_goals exact Common.renderKind_fits u.kind
 
 /-- The alternatives route's coverage line fits the document schema's `block_coverage` (its cells as relayed,
 with the document's own narrowings). -/

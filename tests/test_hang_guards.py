@@ -499,12 +499,22 @@ def elapsed_assertions(path: Path) -> list[str]:
     CPU limit (tests/subprocesses.py: run_cpu_bounded) whose overrun fails it."""
     found = []
     for function, node in _assertions(ast.parse(path.read_text(), str(path))):
+        # A measure read by its key (`report["cpu_seconds"]`, `row.get("elapsed")`) counts where it is bounded
+        # (`<`, `<=`, `>`, `>=`); a saved figure a report test compares with its text is not a bound.
+        bounded = {id(inner) for compare in ast.walk(node.test) if isinstance(compare, ast.Compare)
+                   and any(isinstance(op, (ast.Lt, ast.LtE, ast.Gt, ast.GtE)) for op in compare.ops)
+                   for operand in (compare.left, *compare.comparators) for inner in ast.walk(operand)}
         for inner in ast.walk(node.test):
             clock = (isinstance(inner, ast.Call) and isinstance(inner.func, ast.Attribute)
                      and inner.func.attr.removesuffix("_ns") in CLOCKS and isinstance(inner.func.value, ast.Name)
                      and inner.func.value.id == "time")
+            key = (inner.slice if isinstance(inner, ast.Subscript) else
+                   inner.args[0] if isinstance(inner, ast.Call) and isinstance(inner.func, ast.Attribute)
+                   and inner.func.attr == "get" and inner.args else None)
             measure = ((isinstance(inner, ast.Name) and _measure(inner.id))
-                       or (isinstance(inner, ast.Attribute) and (inner.attr == "seconds" or _measure(inner.attr))))
+                       or (isinstance(inner, ast.Attribute) and (inner.attr == "seconds" or _measure(inner.attr)))
+                       or (id(inner) in bounded and isinstance(key, ast.Constant) and type(key.value) is str
+                           and _measure(key.value)))
             if clock or measure:
                 found.append(f"{path.relative_to(ROOT).as_posix()}::{function}: {node.lineno}: asserts on time")
                 break
@@ -525,8 +535,15 @@ def elapsed_assertions(path: Path) -> list[str]:
     ("assert waits == [HANG_TIMEOUT]\n", False),
     ("assert usage.ru_utime < 3\n", True),
     ("assert worker_count(cpus=32, load=0) == 32\n", False),
+    # The difffuzz CI run's old limit, read by its key: it failed seven loaded gates (361 s against 300 s).
+    ("assert sum(report['cpu_seconds'].values()) <= 300\n", True),
+    ("assert row.get('elapsed_ms', 0) < 50\n", True),
+    ("assert report['work']['inputs'] <= 33000\n", False),
+    ("assert row.get('status') == 'ok'\n", False),
+    ("assert f\"{row['head_cpu_ms']:.3f}\" in report\n", False),
 ], ids=["monotonic", "elapsed", "perf_counter", "process_time", "nanoseconds", "CPU seconds", "CPU name",
-        "duration", "other name", "recorded wait", "rusage", "CPU count"])
+        "duration", "other name", "recorded wait", "rusage", "CPU count", "CPU seconds by key",
+        "elapsed by get", "work count by key", "other key", "saved figure in a report"])
 def test_the_elapsed_guard_sees_each_form(tmp_path, monkeypatch, source, flagged):
     monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
     path = tmp_path / "example.py"
