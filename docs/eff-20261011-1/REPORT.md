@@ -55,3 +55,5 @@ The exact failures are saved in [mutants.json](../../evidence/eff-20261011-1/mut
 - **EXTERNAL:** None.
 
 The final full gate writes `gate-result.json` at the repository root on the committed code. The [selection plan](../../evidence/eff-20261011-1/selection-plan.json) records the exact selected units; the selector chose all 363 test units for this change. No relay-answer schema, Lean theorem, Rust product code, document verdict, or checker limit changed, so checklist items for those surfaces do not apply. The generated-file registry and layer checks remain in the release gate.
+
+Self-review used the pinned main commit `8cec935a` and `git diff main...HEAD`: the product diff is confined to JSON merge and derived-value handling, the trust checker command is unchanged, and `git diff --check` is clean. The 15-attempt history gap is disclosed above rather than counted as a verified replay.
