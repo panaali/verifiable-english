@@ -168,6 +168,33 @@ def test_deleting_trusted_lines_lowers_the_budget_at_the_merge(repo, capsys):
     assert len(baseline(repo)["allowances"]) == 1  # the history stays
 
 
+def test_an_uncommitted_merge_on_main_is_checked_against_head(repo, capsys):
+    """The merge train checks before committing the merge (`regen_generated.py --resolve`): the base
+    is HEAD, the merge's first parent, not HEAD's own parent. Here main grew 10 signed lines, then
+    deleted 6; a branch that adds them back without an allowance must fail, although the commit
+    before the deletion had them."""
+    git(repo, "checkout", "-qb", "grow")
+    write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 10, "D[V]")]})
+    commit(repo, "grow")
+    assert run(repo, "--allow", *SIGNED) == 0
+    commit(repo, "grow's allowance")
+    git(repo, "checkout", "-q", "main")
+    git(repo, "merge", "-q", "--no-ff", "grow", "-m", "merge grow")
+    write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 4, "D[V]")]})
+    shrunk = commit(repo, "shrink on main")
+    git(repo, "checkout", "-qb", "regrow")
+    write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 10, "D[V]")]})
+    commit(repo, "regrow")
+    git(repo, "checkout", "-q", "main")
+    git(repo, "merge", "-q", "--no-ff", "--no-commit", "regrow")
+    capsys.readouterr()
+    assert run(repo, "--check") == 1
+    assert f"BUDGET against {shrunk[:12]}: V grew from 4 to 10" in capsys.readouterr().err
+    assert run(repo, "--since", "HEAD^1") == 0  # the commit before the deletion would have let it through
+    git(repo, "merge", "--abort")
+    assert run(repo, "--check") == 0  # committed, main's tip is checked against its first parent
+
+
 def test_two_branches_each_adding_an_allowance_merge_without_a_conflict(repo):
     """Each branch adds a module and an allowance. The budget file merges by the repository's
     `ve-generated` driver (tools/regen_generated.py, json strategy): both allowances, one budget,

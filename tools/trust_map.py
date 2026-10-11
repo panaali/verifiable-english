@@ -59,7 +59,8 @@ never removed, and one introduced on a branch is merged with the others by the `
 driver (tools/regen_generated.py), so two branches that each add one merge without a conflict.
 
 `--check` measures the tree against a base commit: `--since REV`, else `git merge-base HEAD main`, or
-the first parent when HEAD is main's tip (the merge train after a merge). The cap of each class is
+the first parent when HEAD is main's tip (the merge train after a merge; HEAD itself while the merge
+is uncommitted, as in `tools/regen_generated.py --resolve`). The cap of each class is
 the base's lines, measured now from the base's committed `lean/` and side table (`measure_rev`),
 plus the allowances the tree's file adds to the base's (`introduced`). So the budget falls with
 every merge that deletes trusted lines, whether or not the recorded number has caught up, and rises
@@ -705,8 +706,10 @@ def run_git(root: Path, *args: str) -> subprocess.CompletedProcess:
 
 def resolve_base(root: Path, since: str | None) -> tuple[str | None, str | None]:
     """The base commit of the check and a problem. `since` names it; otherwise it is the merge base
-    of HEAD and `main`, or HEAD's first parent when HEAD is main's tip. Outside a git work tree whose
-    top is `root` there is none (None, None); a work tree without `main` or a merge base is a problem."""
+    of HEAD and `main`, or HEAD's first parent when HEAD is main's tip, unless a merge is in progress
+    (`MERGE_HEAD`: the merge train before its commit, `regen_generated.py --resolve`), whose first
+    parent will be HEAD itself. Outside a git work tree whose top is `root` there is none (None,
+    None); a work tree without `main` or a merge base is a problem."""
     if since is not None:
         named = run_git(root, "rev-parse", "--verify", "-q", f"{since}^{{commit}}")
         return (named.stdout.strip(), None) if named.returncode == 0 else (None, f"{since} names no commit")
@@ -718,7 +721,7 @@ def resolve_base(root: Path, since: str | None) -> tuple[str | None, str | None]
     if merged.returncode:
         return None, "no merge base of HEAD and `main`; name the base with --since REV"
     base = merged.stdout.strip()
-    if base == head:
+    if base == head and run_git(root, "rev-parse", "-q", "--verify", "MERGE_HEAD").returncode:
         parent = run_git(root, "rev-parse", "--verify", "-q", "HEAD^1")
         if parent.returncode:
             return None, "HEAD is main's tip and has no parent; name the base with --since REV"
