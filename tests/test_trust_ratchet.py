@@ -133,6 +133,30 @@ def test_an_allowance_the_base_has_is_not_this_changes(repo, capsys):
     assert "is recorded 2 times" in capsys.readouterr().err
 
 
+def test_an_allowance_is_never_removed(repo, capsys):
+    """The allowances are the history: a change that drops one of its base's fails, even when the
+    tree no longer needs it."""
+    git(repo, "checkout", "-qb", "grow")
+    write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 10, "D[V]")]})
+    commit(repo, "grow")
+    assert run(repo, "--allow", *SIGNED) == 0
+    commit(repo, "grow's allowance")
+    git(repo, "checkout", "-q", "main")
+    git(repo, "merge", "-q", "--no-ff", "grow", "-m", "merge grow")
+    git(repo, "checkout", "-qb", "drop")
+    write(repo, {"VE/Demo.lean": [("base", 3, "C")]})
+    commit(repo, "drop the decoder")
+    assert run(repo, "--check") == 0
+    data = baseline(repo)
+    (repo / "docs/trust-baseline.json").write_text(json.dumps({**data, "allowances": []}))
+    capsys.readouterr()
+    assert run(repo, "--check") == 1
+    assert "the allowance ('V', 10, 'demo growth', 'DRI 2026-10-10') of " in capsys.readouterr().err
+    edited = {**data, "allowances": [{**data["allowances"][0], "reason": "edited"}]}
+    (repo / "docs/trust-baseline.json").write_text(json.dumps(edited))
+    assert run(repo, "--check") == 1  # an edited allowance is a removal and a new one
+
+
 def test_deleting_trusted_lines_lowers_the_budget_at_the_merge(repo, capsys):
     git(repo, "checkout", "-qb", "grow")
     write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 10, "D[V]")]})
