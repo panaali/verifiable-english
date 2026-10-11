@@ -126,7 +126,7 @@ def fixture_tree():
         "conformance/c.py": "1\n",
         "pyproject.toml": '[project]\ndependencies = ["a", "b"]\n',
         "tools/layer-exceptions.json": '{"a -> b": 1}', "tools/lean-layer-exceptions.json": "{}",
-        "tools/rust-module-exceptions.json": "{}", "tools/gate-collection.json": '["t1", "t2", "t3", "t4"]',
+        "tools/gate-collection.json": '["t1", "t2", "t3", "t4"]',
         "ve/assurance-manifest.json": '{"lean_decoders": {"total_lines": 77}}',
         "docs/trust-baseline.json": json.dumps({
             "totals": {key: index for index, key in enumerate(numbers.TRUST_TOTALS)} | {"tied": 9},
@@ -153,7 +153,7 @@ def test_measure_on_a_small_tree():
                             "tests_other_modules": 2}
     assert got["mib"] == {"docs": 4, "docs_lean_first": 3, "tracked": 4}
     assert got["counts"] == {"service_modes": 3, "lean_executables": 2, "runtime_dependencies": 2,
-                             "python_layer_exceptions": 1, "lean_layer_exceptions": 0, "rust_module_exceptions": 0,
+                             "python_layer_exceptions": 1, "lean_layer_exceptions": 0,
                              "collected_test_ids": 4, "pinned_decoder_lines": 77}
     assert "tied" not in got["trust"]["totals"] and got["trust"]["totals"]["lines"] == len(numbers.TRUST_TOTALS) - 1
 
