@@ -370,7 +370,8 @@ def _check_choice(choice, request):
 def answer_problem(result, request: dict, expected: dict) -> str | None:
     """Why `result` is not Lean's answer to `request` (fully typed and bound to it), or None. Bound: the identities
     are the request's; the route is the request's; the asked sentence and formula are `english.question`'s; every
-    row names a choice of the request's open sets (`[]` without one), once; every line's frame is a registered
+    row names a choice of the request's open sets (`[]` without one), once; every gap a declared predicate and
+    elements of the models the request's evidence holds; every line's frame is a registered
     frame, its readings are named in the request, its witness is a row's choice, its cited source a unit or a
     predicate of the request, its quote a unit of the document; the text is the lines' text; the unused units are
     the document's, once each; the unchecked names are the request's. Semantics (which lead, which citations) are
@@ -421,6 +422,8 @@ def _check_answer(result, request, expected):
         for gap in row["gaps"]:
             _need(type(gap) is list and len(gap) == 3 and type(gap[0]) is str and _str_list(gap[1]) and
                   type(gap[2]) is bool and gap[0] in request["_predicates"], "a gap is not a predicate's tuple")
+            _need(all(e in request["_elements"] for e in gap[1]),
+                  "a gap names an element no model of the request's evidence has")
     _need(len(set(choices)) == len(choices), "two rows name one choice")
     lines = result["lines"]
     _need(type(lines) is list and lines, "an answer has no line")
@@ -456,7 +459,8 @@ def _check_answer(result, request, expected):
 
 def _context(request: dict, doc, raw: bytes, reading: dict, route: str) -> dict:
     """What the relay binds the answer to, beside the request: the document's units with their source text, its open
-    sets with their sizes, its declared predicates, the route and the reading."""
+    sets with their sizes, its declared predicates, the elements of the models its evidence holds, the route and
+    the reading."""
     from .document import front_matter
     meta, body = front_matter(raw)
     case = request["case"]
@@ -470,8 +474,22 @@ def _context(request: dict, doc, raw: bytes, reading: dict, route: str) -> dict:
             if R is not None and R["status"] == "open":
                 sets[R["id"]] = len(R["readings"])
     units = {u["id"]: body[u["span"][0]:u["span"][1]].decode("utf-8") for u in meta["units"]}
-    return {"_units": units, "_sets": sets, "_predicates": set(doc["environment"].predicates), "_route": route,
-            "_reading": reading}
+    return {"_units": units, "_sets": sets, "_predicates": set(doc["environment"].predicates),
+            "_elements": _elements(case.get("evidence"), set()), "_route": route, "_reading": reading}
+
+
+def _elements(evidence, out: set) -> set:
+    """The elements of every model in `evidence` (each `domains` map's lists): the ids a row's gaps may name."""
+    if type(evidence) is dict:
+        if type(evidence.get("domains")) is dict:
+            out.update(e for elements in evidence["domains"].values() if type(elements) is list
+                       for e in elements if type(e) is str)
+        for value in evidence.values():
+            _elements(value, out)
+    elif type(evidence) is list:
+        for value in evidence:
+            _elements(value, out)
+    return out
 
 
 def _ask(request: dict, bound: dict, expected: dict) -> dict:
