@@ -407,11 +407,6 @@ def filledJson (r : AdmittedND) : Except String Json := do
 
 /-! ## Each choice (4.3) -/
 
-/-- The superposed kinds' refusal under the completion (until RD-6), as `supReplayOf` words a document that is not
-    superposable. -/
-def completionRefusal (D : Doc) : String :=
-  s!"{notSuperposableText (completionFinding D).1} ({(completionFinding D).2}); use readings-choice"
-
 /-- A choice's replay under the completion: a compatible choice of the admitted document and its decoded
     evidence. -/
 structure ChoiceReplayU where
@@ -498,6 +493,120 @@ theorem readings_wire_nd_choice_entails (j : Lean.Json) (x : ChoiceReplayU) (h :
     EntailsU.{u} (choiceU x.r.N x.c) ((choiceDoc x.r.N.D x.c).2 ++ Γ) φ :=
   ⟨(readings_wire_nd_choice_conflict j x h hcf).2, VE.NormDefaults.acceptanceU _ x.wfc _ φ cert hv⟩
 
+/-! ## The superposed route under the completion (plan RD-6b) -/
+
+/-- `Fill_T` of the superposed filled document: the base premises the superposed kinds append to the slot of
+    `sup (fillDoc N)` (`fill_transfers`). -/
+def ndQ (N : NDoc) : List VE.Formula := VE.NormDefaults.fillPremises (supU N)
+
+/-- The slot under the completion: `sup (fillDoc N)`'s labelled slot, then `Fill_T` labelled
+    `unsaid:pair:<r>,<m>`. -/
+def ndSlotLabelled (N : NDoc) : List (String × VE.Formula) :=
+  slotLabelled (fillDoc N) ++ VE.NormDefaults.Admission.fillLabelled (supU N)
+
+/-- RD-6b's condition for the superposed row: the filled document superposable and `WellFormedU (supU N)`. -/
+def ndSuperposable (N : NDoc) : Bool := superposable (fillDoc N) && VE.NormDefaults.WellFormedU (supU N)
+
+/-- The route under the completion (plan RD-6b): `routeOf`'s row, its enumerated row superposed when
+    `ndSuperposable N`. -/
+def routeND (N : NDoc) : Route :=
+  match routeOf true N.D with
+  | .enumerated => if ndSuperposable N then .superposed else .enumerated
+  | r => r
+
+/-- `ReadingsNotSuperposable`'s cause under the completion: S2a's on the filled document, else norm-defaults' text
+    on `supU N`, else the completion. -/
+def ndNotSuperposable (re : ReadingsEnvironment) (N : NDoc) : String :=
+  match notSuperposable (fillDoc N) with
+  | some (_, cause) => cause
+  | none => match ndDocText re (supU N) with
+    | some e => e
+    | none => (completionFinding N.D).2
+
+/-- DRI ruling 5 for one choice under the completion: the soft check of its filled document (S2a's text), then
+    norm-defaults' author checks and `WellFormedU` on `choiceU N c` (`ndChoiceText`). -/
+def ndChoiceCheckText (re : ReadingsEnvironment) (N : NDoc) (c : Choice) : Option String :=
+  (if VE.SoftNorms.WellFormedSoft (choiceDoc (fillDoc N) c).1.soft then none
+   else some ((choiceChainText (fillDoc N) c).getD
+     ("InvalidInput: soft norm document is not well-formed under " ++ choiceText (fillDoc N) c))).or
+    (ndChoiceText re N c)
+
+/-- DRI ruling 5 on the superposed route under the completion: every compatible choice, at most
+    `maxChoiceChecks`; the first that fails, with its text. -/
+def ndSuperposedCheckText (re : ReadingsEnvironment) (N : NDoc) : Option String :=
+  if (checkedChoices (fillDoc N)).length ≤ maxChoiceChecks then
+    (checkedChoices (fillDoc N)).findSome? (ndChoiceCheckText re N)
+  else none
+
+def ndChecked (re : ReadingsEnvironment) (N : NDoc) : Bool :=
+  decide ((checkedChoices (fillDoc N)).length ≤ maxChoiceChecks) &&
+    (checkedChoices (fillDoc N)).all (fun c => (ndChoiceCheckText re N c).isNone)
+
+theorem ndChecked_spec {re : ReadingsEnvironment} {N : NDoc} (hr : supReady (fillDoc N) = true)
+    (hw : ndChecked re N = true) (c : Choice) (hc : Compatible (fillDoc N) c) :
+    VE.SoftNorms.WellFormedSoft (choiceDoc (fillDoc N) c).1.soft = true ∧
+      VE.NormDefaults.WellFormedU (choiceU N c) = true := by
+  simp only [ndChecked, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true] at hw
+  have hlt : (search (fillDoc N) (fillDoc N).sets [] (maxChoiceChecks + 1)).length < maxChoiceChecks + 1 := by
+    have := hw.1; simp only [checkedChoices] at this; omega
+  have h := hw.2 c ((search_spec (fillDoc N) hr _ hlt c).mpr hc)
+  simp only [ndChoiceCheckText, Option.isNone_iff_eq_none] at h
+  obtain ⟨h1, h2⟩ := option_or_none h
+  refine ⟨?_, wellFormedU_of_ndDocText (Option.map_eq_none_iff.mp h2)⟩
+  cases hs : VE.SoftNorms.WellFormedSoft (choiceDoc (fillDoc N) c).1.soft with
+  | true => rfl
+  | false => rw [hs] at h1; simp at h1
+
+theorem choicesSoftChecked_of_nd {re : ReadingsEnvironment} {N : NDoc} (hw : ndChecked re N = true) :
+    choicesSoftChecked (fillDoc N) = true := by
+  simp only [ndChecked, choicesSoftChecked, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true] at hw ⊢
+  refine ⟨hw.1, fun c hc => ?_⟩
+  have h := hw.2 c hc
+  simp only [ndChoiceCheckText, Option.isNone_iff_eq_none] at h
+  have h1 := (option_or_none h).1
+  cases hs : VE.SoftNorms.WellFormedSoft (choiceDoc (fillDoc N) c).1.soft with
+  | true => rfl
+  | false => rw [hs] at h1; simp at h1
+
+/-- `Fill_T` of the superposed filled document with its labels: the superposed kinds append it to the slot after the
+    assumed atoms (`slotUnder D A ++ Fill_T`), so the row carries it apart from the slot. -/
+def ndFillJson (N : NDoc) : Json :=
+  Json.arr ((VE.NormDefaults.Admission.fillLabelled (supU N)).map (fun x =>
+    Json.mkObj [("label", .str x.1), ("ast", encF x.2)])).toArray
+
+/-- The `readings-elaborate` fields under the completion (3; plan RD-6b): on the superposed row those of `sup
+    (fillDoc N)`, `Fill_T` apart (`fill`) and the sizes over the filled base vocabulary; on the enumerated
+    row the finding names every open set with `ndNotSuperposable`'s cause; on the pending row the route alone, as
+    `elaborateFields` answers it. -/
+def elaborateFieldsND (re : ReadingsEnvironment) (basePredicates : Nat) (N : NDoc) : List (String × Json) :=
+  let D := N.D
+  match routeND N with
+  | .superposed =>
+    [("route", .str Route.superposed.text), ("generated_predicates", generatedPredicatesJson .superposed (fillDoc N)),
+      ("finding", .null), ("narrowings_stale", toJson (staleNarrowings D)), ("vocabulary", vocabularyJson (fillDoc N)),
+      ("units", Json.arr (supUnits (fillDoc N)).toArray), ("slot", slotJson (fillDoc N)),
+      ("names", nameMapJson (fillDoc N))] ++
+      choicesJson D ++ [("choices_checked", checkedJson .superposed (fillDoc N)),
+      ("sizes", sizesJson (fillDoc N) (basePredicates + N.unspec.length)), ("fill", ndFillJson N)]
+  | .enumerated =>
+    [("route", .str Route.enumerated.text), ("generated_predicates", generatedPredicatesJson .enumerated D),
+      ("finding", Json.mkObj [("text", .str (notSuperposableText (completionFinding D).1)),
+        ("cause", .str (ndNotSuperposable re N))]),
+      ("narrowings_stale", toJson (staleNarrowings D))] ++ choicesJson D ++
+      [("choices_checked", checkedJson .enumerated D)]
+  | .w2 => [("route", .str Route.w2.text), ("generated_predicates", generatedPredicatesJson .w2 D)]
+  | .pending => [("route", .str Route.pending.text), ("generated_predicates", generatedPredicatesJson .pending D)]
+  | .abstention =>
+    [("route", .str Route.abstention.text), ("generated_predicates", generatedPredicatesJson .abstention D)]
+
+/-- 4.1 steps 3 and 5 before any verdict under the completion: no compatible choice, and on the superposed row DRI
+    ruling 5's check of every compatible choice (step 5 on at most 64 ran in admission). -/
+def routeRefusalND (re : ReadingsEnvironment) (N : NDoc) : Option String :=
+  match routeND N with
+  | .superposed => if (choices N.D).isEmpty then some (unsatText N.D) else ndSuperposedCheckText re N
+  | .enumerated => if (choices N.D).isEmpty then some (unsatText N.D) else none
+  | _ => none
+
 end VE.Readings.Wire
 
 /-! ## The runners under the completion -/
@@ -509,15 +618,13 @@ open VE.Readings.Wire
 open VE.Norms (envAt size targets)
 open VE.NormDefaults (fill)
 
-/-- `readings-elaborate` under the completion: no verdict over no reading (4.1 step 3), then the enumerated row with
-    the completion's finding (`elaborateFields`), then `extra`. Step 5 ran in admission. -/
+/-- `readings-elaborate` under the completion: no verdict over no reading (4.1 step 3) and, on the superposed row,
+    DRI ruling 5's check (`routeRefusalND`), then the route's fields (`elaborateFieldsND`), then `extra`. Step 5 on
+    at most 64 choices ran in admission. -/
 def runElaborateNDWith (id : String) (r : AdmittedND) (extra : Except String (List (String × Json))) :
     Except String Json := do
-  if routeOf true r.N.D == .enumerated && (choices r.N.D).isEmpty then throw (unsatText r.N.D)
-  pure (okWith id (elaborateFields true r.b.a.re.se.ne.rv.vocabulary.predicates.length r.N.D ++ (← extra)))
-
-/-- `readings-elaborate` under the completion with nothing after the route's fields. -/
-def runElaborateND (id : String) (r : AdmittedND) : Except String Json := runElaborateNDWith id r (pure [])
+  if let some e := routeRefusalND r.b.a.re r.N then throw e
+  pure (okWith id (elaborateFieldsND r.b.a.re r.b.a.re.se.ne.rv.vocabulary.predicates.length r.N ++ (← extra)))
 
 /-- `readings-elaborate` as the route answers it under the completion (readings-defaults RD-2b): the route's fields,
     then `fill_premises` per reading and `filled` once, as `readings-validate` answers them (3). Elaborate admits a
