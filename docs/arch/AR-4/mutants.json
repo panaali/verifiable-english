@@ -1,0 +1,86 @@
+{
+ "comment": "AR-4 seeded bugs, run by `uv run python tools/mutants.py docs/arch/AR-4/mutants.json --evidence docs/arch/AR-4/evidence/mutants.json`: each must make a named test fail on the unmutated-passing tree.",
+ "mutants": [
+  {
+   "id": "AR4-M1",
+   "claim": "growth over the base needs a signed allowance (ten untied V lines fail without one)",
+   "file": "tools/trust_map.py",
+   "find": "        if now[key] > cap[key] + allowed[key]:\n",
+   "replace": "        if now[key] > cap[key] + allowed[key] + 10:\n",
+   "tests": ["tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"]
+  },
+  {
+   "id": "AR4-M2",
+   "claim": "an allowance the base already has is inherited, not this change's",
+   "file": "tools/trust_map.py",
+   "find": "        if inherited[allowance_key(entry)]:\n",
+   "replace": "        if False:\n",
+   "tests": ["tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"]
+  },
+  {
+   "id": "AR4-M3",
+   "claim": "the cap is the base measured now, so deleted trusted lines lower the budget before the merge train writes it",
+   "file": "tools/trust_map.py",
+   "find": "        cap, label = budget(totals(measured_base)), base[:12]\n",
+   "replace": "        cap, label = base_baseline.get(\"budget\") or budget(totals(measured_base)), base[:12]\n",
+   "tests": ["tests/test_trust_ratchet.py::test_deleting_trusted_lines_lowers_the_budget_at_the_merge"]
+  },
+  {
+   "id": "AR4-M4",
+   "claim": "an uncommitted merge on main is checked against HEAD, the merge's first parent",
+   "file": "tools/trust_map.py",
+   "find": "    if base == head and run_git(root, \"rev-parse\", \"-q\", \"--verify\", \"MERGE_HEAD\").returncode:\n",
+   "replace": "    if base == head:\n",
+   "tests": ["tests/test_trust_ratchet.py::test_an_uncommitted_merge_on_main_is_checked_against_head"]
+  },
+  {
+   "id": "AR4-M5",
+   "claim": "an allowance of the base is never removed (the allowances are the history)",
+   "file": "tools/trust_map.py",
+   "find": "        gone = introduced(base_baseline[\"allowances\"], allowances)  # the history only grows\n",
+   "replace": "        gone = []\n",
+   "tests": ["tests/test_trust_ratchet.py::test_an_allowance_is_never_removed"]
+  },
+  {
+   "id": "AR4-M6",
+   "claim": "only the merge train on main writes the budget; a branch records growth with --allow",
+   "file": "tools/trust_map.py",
+   "find": "        if base is not None and branch.stdout.strip() != \"main\":\n",
+   "replace": "        if False:\n",
+   "tests": ["tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"]
+  },
+  {
+   "id": "AR4-M7",
+   "claim": "an allowance carries a signature that is not blank",
+   "file": "tools/trust_map.py",
+   "find": "    for field in (\"reason\", \"signature\"):\n",
+   "replace": "    for field in (\"reason\",):\n",
+   "tests": ["tests/test_trust_ratchet.py::test_every_allowance_field_is_typed[-signature]",
+             "tests/test_consolidation_tools.py::test_budget_check_needs_a_signed_allowance"]
+  },
+  {
+   "id": "AR4-M8",
+   "claim": "a copy of an allowance is refused (each signed growth is recorded once)",
+   "file": "tools/trust_map.py",
+   "find": "for key, n in seen.items() if n > 1]",
+   "replace": "for key, n in seen.items() if n > 2]",
+   "tests": ["tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"]
+  },
+  {
+   "id": "AR4-M9",
+   "claim": "the file holds only the budget and the allowances (no per-file tables, section11 or history)",
+   "file": "tools/trust_map.py",
+   "find": "<= set(data) <= {\"comment\", \"budget\", \"allowances\"}:",
+   "replace": "<= set(data):",
+   "tests": ["tests/test_trust_ratchet.py::test_the_file_holds_only_the_budget_and_allowances[data3]"]
+  },
+  {
+   "id": "AR4-M10",
+   "claim": "the history's duplicated entry becomes one allowance",
+   "file": "tools/trust_map.py",
+   "find": "            if item[\"lines\"] > 0 and item not in out:\n",
+   "replace": "            if item[\"lines\"] > 0:\n",
+   "tests": ["tests/test_trust_ratchet.py::test_history_becomes_allowances"]
+  }
+ ]
+}

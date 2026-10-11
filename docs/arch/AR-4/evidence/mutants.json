@@ -1,0 +1,176 @@
+{
+ "mutants": [
+  {
+   "id": "AR4-M1",
+   "file": "tools/trust_map.py",
+   "claim": "growth over the base needs a signed allowance (ten untied V lines fail without one)",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.8,
+   "output_tail": "\"-qb\", \"feature\")\n        write(repo, {\"VE/Demo.lean\": [(\"base\", 3, \"C\"), (\"decoder\", 10, \"D[V]\")]})\n        commit(repo, \"decoder\")\n        capsys.readouterr()\n>       assert run(repo, \"--check\") == 1\nE       AssertionError: assert 0 == 1\nE        +  where 0 = run(PosixPath('/tmp/pytest-of-seyran/pytest-98/test_ten_untied_lines_need_a_s0'), '--check')\n\ntests/test_trust_ratchet.py:88: AssertionError\n---------------------------- Captured stdout setup -----------------------------\nclass lines: K 0, S 0, D 0, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 0, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 0 (K + S + untied [V] + unclassified), 5 lines in 1 files\nwrote docs/trust-baseline.json\n----------------------------- Captured stdout call -----------------------------\nclass lines: K 0, S 0, D 10, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 10, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 10 (K + S + untied [V] + unclassified), 15 lines in 1 files\nagainst 6bf2f4a245a3: K +0, S +0, D +10, G +0, tied +0, unclassified +0, trusted +10\n  VE/Demo.lean: trusted +10\nPASS: K, S and untied [V] within 6bf2f4a245a3 and the allowances introduced since\n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance\n1 failed in 1.01s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-1c4oe_3i)\n"
+  },
+  {
+   "id": "AR4-M2",
+   "file": "tools/trust_map.py",
+   "claim": "an allowance the base already has is inherited, not this change's",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.8,
+   "output_tail": "he history and are never removed\\n\"\nE        +  where \"FAIL: the allowance ('V', 10, 'demo growth', 'DRI 2026-10-10') of 1bd4e24c1f6e was removed; the allowances are the history and are never removed\\n\" = CaptureResult(out='class lines: K 0, S 0, D 20, G 0, C 3, P 0, T 0, o 2\\nD/G groups: D[V] 20, D[R] 0, D[I] 0, G[V] 0, ... 'demo growth', 'DRI 2026-10-10') of 1bd4e24c1f6e was removed; the allowances are the history and are never removed\\n\").err\nE        +    where CaptureResult(out='class lines: K 0, S 0, D 20, G 0, C 3, P 0, T 0, o 2\\nD/G groups: D[V] 20, D[R] 0, D[I] 0, G[V] 0, ... 'demo growth', 'DRI 2026-10-10') of 1bd4e24c1f6e was removed; the allowances are the history and are never removed\\n\") = readouterr()\nE        +      where readouterr = <_pytest.capture.CaptureFixture object at 0x75cea520d940>.readouterr\n\ntests/test_trust_ratchet.py:129: AssertionError\n---------------------------- Captured stdout setup -----------------------------\nclass lines: K 0, S 0, D 0, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 0, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 0 (K + S + untied [V] + unclassified), 5 lines in 1 files\nwrote docs/trust-baseline.json\n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes\n1 failed in 0.84s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-a16ui6mt)\n"
+  },
+  {
+   "id": "AR4-M3",
+   "file": "tools/trust_map.py",
+   "claim": "the cap is the base measured now, so deleted trusted lines lower the budget before the merge train writes it",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_deleting_trusted_lines_lowers_the_budget_at_the_merge"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_ratchet.py::test_deleting_trusted_lines_lowers_the_budget_at_the_merge"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.8,
+   "output_tail": " K 0, S 0, D 10, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 10, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 10 (K + S + untied [V] + unclassified), 15 lines in 1 files\nagainst 84c45312924f: K +0, S +0, D +10, G +0, tied +0, unclassified +0, trusted +10\n  VE/Demo.lean: trusted +10\nallowed V +10 over 84c45312924f\nclass lines: K 0, S 0, D 10, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 10, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 10 (K + S + untied [V] + unclassified), 15 lines in 1 files\nagainst 84c45312924f: K +0, S +0, D +10, G +0, tied +0, unclassified +0, trusted +10\n  VE/Demo.lean: trusted +10\nwrote docs/trust-baseline.json: budget {'K': 0, 'S': 0, 'V': 10}\nclass lines: K 0, S 0, D 4, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 4, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 4 (K + S + untied [V] + unclassified), 9 lines in 1 files\nagainst 70a09a5132bb: K +0, S +0, D -6, G +0, tied +0, unclassified +0, trusted -6\n  VE/Demo.lean: trusted -6\n----------------------------- Captured stderr call -----------------------------\nBUDGET against 70a09a5132bb: V grew from 0 to 4 (signed allowance 0): \n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_deleting_trusted_lines_lowers_the_budget_at_the_merge\n1 failed in 1.15s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-yr3saoga)\n"
+  },
+  {
+   "id": "AR4-M4",
+   "file": "tools/trust_map.py",
+   "claim": "an uncommitted merge on main is checked against HEAD, the merge's first parent",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_uncommitted_merge_on_main_is_checked_against_head"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_ratchet.py::test_an_uncommitted_merge_on_main_is_checked_against_head"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.1,
+   "output_tail": "      capsys.readouterr()\n>       assert run(repo, \"--check\") == 1\nE       AssertionError: assert 0 == 1\nE        +  where 0 = run(PosixPath('/tmp/pytest-of-seyran/pytest-109/test_an_uncommitted_merge_on_m0'), '--check')\n\ntests/test_trust_ratchet.py:215: AssertionError\n---------------------------- Captured stdout setup -----------------------------\nclass lines: K 0, S 0, D 0, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 0, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 0 (K + S + untied [V] + unclassified), 5 lines in 1 files\nwrote docs/trust-baseline.json\n----------------------------- Captured stdout call -----------------------------\nclass lines: K 0, S 0, D 10, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 10, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 10 (K + S + untied [V] + unclassified), 15 lines in 1 files\nagainst 179b3b2e80e5: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0\nnote: 179b3b2e80e5 records the budget {'K': 0, 'S': 0, 'V': 0}; measured there {'K': 0, 'S': 0, 'V': 10} (the merge train's --write has not run since)\nPASS: K, S and untied [V] within 179b3b2e80e5 and the allowances introduced since\n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_an_uncommitted_merge_on_main_is_checked_against_head\n1 failed in 0.77s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-y5trq3yi)\n"
+  },
+  {
+   "id": "AR4-M5",
+   "file": "tools/trust_map.py",
+   "claim": "an allowance of the base is never removed (the allowances are the history)",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_allowance_is_never_removed"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_ratchet.py::test_an_allowance_is_never_removed"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.3,
+   "output_tail": "readouterr()\n>       assert run(repo, \"--check\") == 1\nE       AssertionError: assert 0 == 1\nE        +  where 0 = run(PosixPath('/tmp/pytest-of-seyran/pytest-113/test_an_allowance_is_never_rem0'), '--check')\n\ntests/test_trust_ratchet.py:153: AssertionError\n---------------------------- Captured stdout setup -----------------------------\nclass lines: K 0, S 0, D 0, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 0, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 0 (K + S + untied [V] + unclassified), 5 lines in 1 files\nwrote docs/trust-baseline.json\n----------------------------- Captured stdout call -----------------------------\nclass lines: K 0, S 0, D 0, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 0, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 0 (K + S + untied [V] + unclassified), 5 lines in 1 files\nagainst 15e6bda871d9: K +0, S +0, D -10, G +0, tied +0, unclassified +0, trusted -10\n  VE/Demo.lean: trusted -10\nnote: 15e6bda871d9 records the budget {'K': 0, 'S': 0, 'V': 0}; measured there {'K': 0, 'S': 0, 'V': 10} (the merge train's --write has not run since)\nPASS: K, S and untied [V] within 15e6bda871d9 and the allowances introduced since\n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_an_allowance_is_never_removed - Asse...\n1 failed in 0.78s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cd7k6cv6)\n"
+  },
+  {
+   "id": "AR4-M6",
+   "file": "tools/trust_map.py",
+   "claim": "only the merge train on main writes the budget; a branch records growth with --allow",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.0,
+   "output_tail": "e budget is the merge train's\n        assert run(repo, \"--check\") == 0\n        capsys.readouterr()\n>       assert run(repo, \"--write\") == 1  # a branch never writes the budget\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError: assert 0 == 1\nE        +  where 0 = run(PosixPath('/tmp/pytest-of-seyran/pytest-115/test_ten_untied_lines_need_a_s0'), '--write')\n\ntests/test_trust_ratchet.py:100: AssertionError\n---------------------------- Captured stdout setup -----------------------------\nclass lines: K 0, S 0, D 0, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 0, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 0 (K + S + untied [V] + unclassified), 5 lines in 1 files\nwrote docs/trust-baseline.json\n----------------------------- Captured stdout call -----------------------------\nclass lines: K 0, S 0, D 10, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 10, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 10 (K + S + untied [V] + unclassified), 15 lines in 1 files\nagainst a0e6ad90e608: K +0, S +0, D +10, G +0, tied +0, unclassified +0, trusted +10\n  VE/Demo.lean: trusted +10\nwrote docs/trust-baseline.json: budget {'K': 0, 'S': 0, 'V': 10}\n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance\n1 failed in 0.76s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-vz5i3mgr)\n"
+  },
+  {
+   "id": "AR4-M7",
+   "file": "tools/trust_map.py",
+   "claim": "an allowance carries a signature that is not blank",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_every_allowance_field_is_typed[-signature]",
+    "tests/test_consolidation_tools.py::test_budget_check_needs_a_signed_allowance"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_consolidation_tools.py::test_budget_check_needs_a_signed_allowance",
+    "tests/test_trust_ratchet.py::test_every_allowance_field_is_typed[-signature]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.4,
+   "output_tail": "rust_map.check(files, cap, []) == []\n        write_tree(tmp_path, {\"D[V]\": [\"VE.Demo.decodeThing\"], \"S\": [\"VE.Demo.Meaning\", \"VE.Demo.helper\"],\n                              \"C\": [INSTANCE]})\n        grown, _ = trust_map.measure(tmp_path, *tables)\n        failures = trust_map.check(grown, cap, [], files)\n        assert failures == [\"V grew from 0 to 4 (signed allowance 0): VE/Demo.lean +4\"]\n        assert trust_map.check(grown, cap, [allowance(4)]) == []\n        assert trust_map.check(grown, cap, [allowance(3)]) and trust_map.check(grown, cap, [allowance(4, cls=\"S\")])\n        for bad in ({**allowance(4), \"signature\": \" \"}, {**allowance(4), \"lines\": True}, {**allowance(4), \"commit\": \"HEAD\"},\n                    {**allowance(4), \"class\": \"D[V]\"}, {k: v for k, v in allowance(4).items() if k != \"commit\"}):\n            _, problems = trust_map.parse_baseline({\"budget\": cap, \"allowances\": [bad]})\n>           assert problems, bad\nE           AssertionError: {'class': 'V', 'lines': 4, 'reason': 'demo', 'signature': ' ', ...}\nE           assert []\n\ntests/test_consolidation_tools.py:1193: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_every_allowance_field_is_typed[-signature]\nFAILED tests/test_consolidation_tools.py::test_budget_check_needs_a_signed_allowance\n2 failed in 0.89s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-aem5oyjm)\n"
+  },
+  {
+   "id": "AR4-M8",
+   "file": "tools/trust_map.py",
+   "claim": "a copy of an allowance is refused (each signed growth is recorded once)",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.6,
+   "output_tail": "))\n>       assert run(repo, \"--check\") == 1\nE       AssertionError: assert 0 == 1\nE        +  where 0 = run(PosixPath('/tmp/pytest-of-seyran/pytest-121/test_an_allowance_the_base_has0'), '--check')\n\ntests/test_trust_ratchet.py:132: AssertionError\n---------------------------- Captured stdout setup -----------------------------\nclass lines: K 0, S 0, D 0, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 0, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 0 (K + S + untied [V] + unclassified), 5 lines in 1 files\nwrote docs/trust-baseline.json\n----------------------------- Captured stdout call -----------------------------\nclass lines: K 0, S 0, D 20, G 0, C 3, P 0, T 0, o 2\nD/G groups: D[V] 20, D[R] 0, D[I] 0, G[V] 0, G[R] 0, G[I] 0\ntied 0, unclassified 0, trusted 20 (K + S + untied [V] + unclassified), 25 lines in 1 files\nagainst 3db3928341e1: K +0, S +0, D +10, G +0, tied +0, unclassified +0, trusted +10\n  VE/Demo.lean: trusted +10\nnote: 3db3928341e1 records the budget {'K': 0, 'S': 0, 'V': 0}; measured there {'K': 0, 'S': 0, 'V': 10} (the merge train's --write has not run since)\nPASS: K, S and untied [V] within 3db3928341e1 and the allowances introduced since\n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes\n1 failed in 0.69s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ustskqy_)\n"
+  },
+  {
+   "id": "AR4-M9",
+   "file": "tools/trust_map.py",
+   "claim": "the file holds only the budget and the allowances (no per-file tables, section11 or history)",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_the_file_holds_only_the_budget_and_allowances[data3]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_ratchet.py::test_the_file_holds_only_the_budget_and_allowances[data3]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.9,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________ test_the_file_holds_only_the_budget_and_allowances[data3] ___________\n\ndata = {'budget': {'K': 0, 'S': 0, 'V': 0}, 'allowances': [], 'files': {}}\n\n    @pytest.mark.parametrize(\"data\", [{\"budget\": {\"K\": 0, \"S\": 0, \"V\": 0}}, {\"allowances\": []}, [],\n                                      {\"budget\": {\"K\": 0, \"S\": 0, \"V\": 0}, \"allowances\": [], \"files\": {}},\n                                      {\"budget\": {\"K\": 0, \"S\": 0, \"V\": 0}, \"allowances\": {}}])\n    def test_the_file_holds_only_the_budget_and_allowances(data):\n>       assert trust_map.parse_baseline(data)[1]\nE       assert []\n\ntests/test_trust_ratchet.py:301: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_the_file_holds_only_the_budget_and_allowances[data3]\n1 failed in 0.27s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-peyc8o8r)\n"
+  },
+  {
+   "id": "AR4-M10",
+   "file": "tools/trust_map.py",
+   "claim": "the history's duplicated entry becomes one allowance",
+   "source_sha256": "2c01601c7d0b05487795eb003ae96db90eeb02ff97a2d69371791c83537b1f9e",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_history_becomes_allowances"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_ratchet.py::test_history_becomes_allowances"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.9,
+   "output_tail": "ned\", \"signed\": \"DRI\", \"allow\": {\"S\": 5}, \"rebaselined_from\": {\"K\": 0, \"S\": 0, \"V\": 0}}\n        old = {\"totals\": {**trust_map.empty_counts(), \"S\": 5, \"trusted\": 5}, \"history\": [\n            signed, {**signed, \"rebaselined_from\": {\"K\": 1, \"S\": 1, \"V\": 1}},\n            {\"change\": \"moved\", \"rebaselined_from\": {\"K\": 2, \"S\": 5, \"V\": 9}, \"to\": {\"K\": 3, \"S\": 5, \"V\": 1}}]}\n>       assert trust_map.from_history(old) == [\n            {\"class\": \"S\", \"lines\": 5, \"reason\": \"signed\", \"signature\": \"DRI\"},\n            {\"class\": \"K\", \"lines\": 1, \"reason\": \"moved\", \"signature\": trust_map.UNSIGNED}]\nE       AssertionError: assert [{'class': 'S...before AR-4'}] == [{'class': 'S...before AR-4'}]\nE         \nE         At index 1 diff: {'class': 'S', 'lines': 5, 'reason': 'signed', 'signature': 'DRI'} != {'class': 'K', 'lines': 1, 'reason': 'moved', 'signature': 'unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4'}\nE         Left contains one more item: {'class': 'K', 'lines': 1, 'reason': 'moved', 'signature': 'unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4'}\nE         Use -v to get more diff\n\ntests/test_trust_ratchet.py:311: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_ratchet.py::test_history_becomes_allowances - Asserti...\n1 failed in 0.27s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cnkh4cy8)\n"
+  }
+ ]
+}
