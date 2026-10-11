@@ -14,7 +14,7 @@
   "tools/lean_service_latency.py",
   "tools/readings_batch_latency.py"
  ],
- "main": "968870193193b9e8138183ed77c41e376a6e376c",
+ "main": "5479466f9faada4cb500bb52bca2436f03662e54",
  "per_batch_scripts_on_main": {
   "docs_latency": {
    "files": [
@@ -34,6 +34,7 @@
   },
   "evidence_tests": {
    "files": [
+    "tests/test_ar8_evidence.py",
     "tests/test_b15a_evidence.py",
     "tests/test_b15b_evidence.py",
     "tests/test_b16a_evidence.py",
@@ -69,6 +70,7 @@
     "tests/test_readings_defaults_rd4a_report.py",
     "tests/test_readings_defaults_rd4b_report.py",
     "tests/test_readings_defaults_rd6a_report.py",
+    "tests/test_readings_defaults_rd6b_report.py",
     "tests/test_readings_defaults_rd8_report.py"
    ],
    "pattern": "tests/test_*_report.py"
@@ -82,11 +84,11 @@
  },
  "per_batch_scripts_on_main_count": {
   "docs_latency": 11,
-  "evidence_tests": 11,
-  "report_tests": 20,
+  "evidence_tests": 12,
+  "report_tests": 21,
   "tools_mutants": 1
  },
- "per_batch_scripts_on_main_total": 43,
+ "per_batch_scripts_on_main_total": 45,
  "shared_module_lines": {
   "batch_evidence": 237,
   "evidence___init__": 98,
