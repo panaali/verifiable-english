@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import ast
+import builtins
 import fnmatch
 import json
 from pathlib import Path
@@ -196,7 +197,7 @@ def test_json_merge_of_disjoint_additions_keeps_both_in_either_order(base, ours,
     assert left == right == {**base, **ours, **theirs}
 
 
-def test_assurance_manifest_merge_recomputes_the_decoder_total():
+def test_assurance_manifest_merge_recomputes_the_decoder_total(monkeypatch):
     manifest = json.loads((ROOT / "ve/assurance-manifest.json").read_text())
     ours, theirs = json.loads(json.dumps(manifest)), json.loads(json.dumps(manifest))
     first, second = ours["lean_decoders"]["files"][0], theirs["lean_decoders"]["files"][1]
@@ -204,6 +205,14 @@ def test_assurance_manifest_merge_recomputes_the_decoder_total():
     ours["lean_decoders"]["total_lines"] += 5
     second["ranges"][-1][1] += 7
     theirs["lean_decoders"]["total_lines"] += 7
+    original_import = builtins.__import__
+
+    def reject_manifest_import(name, *args, **kwargs):
+        if name == "assurance_manifest":
+            raise AssertionError("the merged manifest is not on disk yet")
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", reject_manifest_import)
     text, clean = R.merge_text("ve/assurance-manifest.json", json.dumps(manifest), json.dumps(ours),
                                json.dumps(theirs))
     assert clean
