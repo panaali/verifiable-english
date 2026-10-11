@@ -75,9 +75,12 @@ def test_the_fixtures_are_answers_or_leans_refusals():
 def test_the_trust_growth_is_the_saved_budget():
     trust = report.load("trust.json")
     assert trust["base"]["K"] == trust["head"]["K"]
-    assert trust["head"]["S"] - trust["base"]["S"] == 183 and trust["head"]["V"] - trust["base"]["V"] == 598
+    grew = {k: trust["head"][k] - trust["base"][k] for k in ("S", "V")}
+    assert all(n > 0 for n in grew.values())
     delta = (HERE / "DELTA.md").read_text()
-    assert "S 9,704 → 9,887 (+183), V 36,289 → 36,887 (+598)" in delta
+    assert f"S +{grew['S']}, V +{grew['V']} over `main`'s budget" in delta
+    assert (f"S {trust['base']['S']:,} → {trust['head']['S']:,}, V {trust['base']['V']:,} → {trust['head']['V']:,})"
+            in delta)
 
 
 def test_every_delta_row_has_its_status():

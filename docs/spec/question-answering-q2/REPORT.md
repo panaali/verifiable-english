@@ -1,6 +1,6 @@
 # Question answering Q2: build report
 
-Branch `question-answering/q2`, base `main` at `f0547468` (Q1 merged). The spec is
+Branch `question-answering/q2`, first based on `main` at `f0547468` (Q1 merged), synced with `main` at `96887019`. The spec is
 `docs/spec/question-answering.md` (5.2 for the statements, 7 for the fixtures, 8 for the wire); the plan is
 `docs/spec/question-answering-PLAN.md` (Q2.1 to Q2.6). Builder's working notes: `../question-answering-q2-progress.md`.
 User-visible deltas, each needing the DRI's signature: `DELTA.md`. Every number below the generated block's marker is
@@ -75,16 +75,19 @@ The task's three proof obligations:
   is not the case's unit; each request and case field replaced by 7, true, null, [], {} or a 10,000-deep list is
   refused, never answered; the mode's CPU deadline bounds the whole answer; Lean's refusal raised with its class and
   text, a forged refusal unavailable; the schema types every field.
+- `tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it`: the relay gate reads `ask`'s mutants
+  through `ve.ask.read_answer` (request binding included), not by the transport alone.
 - `tests/test_ask_cli.py`: `ve ask` end to end on G1, G3, G4 and U6, the leads, the refusal of G5, the JSON honesty
   fields, and eight odd spellings of a question reaching the answer only through Lean's reader (checklist 3, 10).
 - `tests/test_question_statements.py`: the statement check above.
-- `tests/test_question_answering_q2_report.py`: this report against its saved evidence.
+- `tests/test_question_answering_q2_report.py`: this report against its saved evidence (files under `evidence/`
+  only, never live git, so it holds after syncs and the merge; architecture decision D4).
 - `lean/VE/Ask/Examples.lean`: spec 7.6's figures (4,802 rows and their leads and reasons, the fold agreement, the
   groups) and the frames' `num` piece, as `#guard`s; `lean/VE/Ask/Run.lean`: X5's `#guard`s.
 
 ## Seeded bugs
 
-8 seeded bugs, 5 in Lean and 3 in Python, one per behaviour claimed, each in a file this batch changed, each caught,
+11 seeded bugs, 6 in Lean and 5 in Python, one per behaviour claimed, each in a file this batch changed, each caught,
 then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generated block). No Rust code changed.
 
 ## Build checklist
@@ -94,7 +97,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | 1 | One contract | The answer's shapes are Lean's (`ResponseShape/Schemas/Ask.lean`), rendered to `ask.json`; `ve/ask.py` reads its field sets, leads and reasons from that file, and a refusal's statuses, codes and classes from Lean's exported question contract (`ve/question/codes.json`). Every text is Lean's. |
 | 2 | Differential fuzz | Not applicable: the answer has one owner (Lean); there is no Python or Rust answer to compare. The relay is fuzzed instead (4, 5). |
 | 3 | Normalisation | The question reaches `ask` only through Q1's reader; `test_ask_reads_the_question_as_the_reader_does` covers NBSP, double space, tab, `\r`, curly quotes, U+212A, dotted I and a control character. |
-| 4 | Untrusted output | Schema from the producer, binding to the request, bool-for-int refused, fuzz by dropping, emptying, duplicating, retyping and rebinding each field (`tests/test_ask_relay.py`). |
+| 4 | Untrusted output | Schema from the producer, binding to the request, bool-for-int refused, fuzz by dropping, emptying, duplicating, retyping and rebinding each field (`tests/test_ask_relay.py`). `tools/relay_mutation_gate.py` reads `ask`'s mutants as `ve ask` reads them (`ve.ask.read_answer`), with fixtures of the three routes; every accepted mutant is a listed by-design class (generated block). |
 | 5 | Malformed input | `test_a_malformed_request_is_refused_never_answered` (three routes); Lean now refuses evidence of another type, foreign case fields and names on a one-choice route (DELTA D11). |
 | 6 | Three-valued | No evidence answers unknown (X2 or X4), never yes or no (tested); past 64 choices is `ResourceLimit` (X5's text). `ask` has no budget option, so budget 0 has no entry point; the generators' budgets are internal. |
 | 7 | Deadlines | The mode's CPU deadline wraps the whole request (`test_the_deadline_bounds_the_whole_answer`). A delay was not injected into each Lean callee. |
@@ -103,7 +106,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | 10 | Entry points | `ve ask` (text, `--json`, `--reading`, `--evidence`) all go through one relay call (`ve.ask._ask`); metamorphic test as in 3. |
 | 11 | No regex of a real language | The statement check uses Lean as the oracle; the text comparison is the existing whitespace-collapsed one. |
 | 12 | State machines | Not applicable. |
-| 13 | Tests can fail | 8 seeded bugs; `test_a_replay_can_fail`; the statement check's mutants. |
+| 13 | Tests can fail | 11 seeded bugs; `test_a_replay_can_fail`; the statement check's mutants. |
 | 14 | Hermetic | CLI tests use the env allowlist and `HANG_TIMEOUT`; writes go to `tmp_path`. |
 | 15 | Identity | Every identity field of the answer rebound and refused. |
 | 16 | Lists | Fixture list, gate collection, frozen inventory, decoder pins, binding probe, trust classes, layer policy, import-linter layers: generated or tested. |
@@ -124,7 +127,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | Typed schema, binding, fuzz tests | AGENT | done |
 | Seeded bugs | AGENT | done |
 | Full gate on the final HEAD | AGENT | generated block |
-| Q2.4 one owner of situation wording (Python producers deleted, corpus A/B byte-identical) | AGENT | **deferred** to a later batch; owner: the orchestrator (DRI) |
+| Q2.4 one owner of situation wording (Python producers deleted, corpus A/B byte-identical) | AGENT | **deferred** to a later batch; no standing ruling moves it, so the deferral needs the DRI's decision; owner: the orchestrator (DRI) |
 | Q2.3 `VE.Words` `#guard`s recorded against Python's producers on the readings and norm-defaults corpora | AGENT | **deferred** with Q2.4, whose A/B is that comparison |
 | Q2.6 reading and writing evaluation (Sonnet as reader and writer) | EXTERNAL | **deferred**: needs model calls, which this task forbids; owner: the orchestrator |
 | Q2.6 latency and agreement with W2 | AGENT | **deferred** with Q2.6 |
@@ -150,23 +153,27 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   agent documents about 3 s; the G document 0.1 to 0.2 s).
 - **Flaky test seen once**: `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`
   (Q1's, unchanged) did not raise once in a combined run and passed on two reruns; it races a near-zero deadline.
-- **Not synced with `main`**: `main` moved 70 commits past this batch's base while it was built (RD-4b, eff-tests,
-  eff-merge with `tools/relay_mutation_gate.py`, AR-6's identity lint). The branch is gated on its own base; the sync,
-  and those new checks on `ask`, come with the merge.
-- **The selected-tests run** with `--jobs 8` stopped at the one-hour limit while re-recording its coverage map, after
-  336 of 345 files had run; the 9 files it had not reached were run directly and passed, and the 4 files it reported
-  failing were fixed (the trust baseline's totals, the `ask` seed of the response fuzz, the nested-pytest builder in
-  `mutants.py`, the nullable enum of the schema) and rerun.
+- **Sync with `main`**: the branch merged `main` at `96887019` (`fc106062`), with RD-4b, eff-tests, eff-merge's
+  `tools/relay_mutation_gate.py` and AR-6's identity lint, which now run on `ask`. `main` has moved 49 commits since; a
+  trial merge (`git merge-tree`) conflicts only in generated inventories (assurance manifest, trust baseline, frozen
+  hashes, declarations, gate collection), which the merge train regenerates (R12); the one hand-written file both
+  sides change, `ve/readings_verdicts.py`, merges cleanly.
+- **Selected tests**: `tools/select_tests.py --base 96887019` selects all 360 units (the lock and `Audit.lean`
+  changed), which is the full gate's suite, so while iterating a curated set ran instead: this batch's tests, the
+  relay gate's, the schema, service and statement tests. The full gate ran once on the final HEAD (generated block).
+- **Seeded bugs under load**: at load 50 to 80, one run of all 11 mutants passed the one-hour limit (the Lean
+  mutants rebuild `ve_service`); `mutants.py` now saves each result as it runs, and the 11 ran in four groups on the
+  same code, each caught.
 
 <!-- BEGIN GENERATED: report.py -->
 
-Scope: `main..HEAD --no-merges` at `e3a54834` (base `f0547468`): 23 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
+Scope: `main..HEAD --no-merges` at `67c50c9c` (base `96887019`): 28 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
 
 | Language | Files | Lines added | Lines deleted |
 |---|---:|---:|---:|
-| Lean | 26 | 5135 | 696 |
-| Python (product) | 8 | 1058 | 80 |
-| Python (tests) | 7 | 815 | 14 |
+| Lean | 26 | 5137 | 698 |
+| Python (product) | 10 | 1139 | 109 |
+| Python (tests) | 8 | 879 | 27 |
 | Rust | 0 | 0 | 0 |
 
 Recorded answers (`tests/fixtures/ask`, replayed by `tests/test_ask_fixtures.py`):
@@ -200,7 +207,7 @@ Statement check (`tools/question_statements.py --q2`, exit 0):
       changed Asked: `hnames` uses `NameReadsBackSame` (canonical JSON text, the relation `UnitBound` uses) for the approved `NameReadsBack` (kept as approved): Lean's `Json` has no decidable equality, so `=` on the read-back formula cannot be decided
     Q2 Lean check: 41 approved statements and signatures elaborated against the implementation; PASS
 
-Seeded bugs (`mutants.py`, `evidence/mutants.json`): 8 of 8 caught.
+Seeded bugs (`mutants.py`, `evidence/mutants.json`): 11 of 11 caught.
 
 | Seeded bug | File | Behaviour | Caught by |
 |---|---|---|---|
@@ -211,9 +218,14 @@ Seeded bugs (`mutants.py`, `evidence/mutants.json`): 8 of 8 caught.
 | lean-environment-unbound | `lean/VE/Ask/PlainWire.lean` | request binding: the plain case's environment is the document's | `tests/test_ask_fixtures.py::test_a_case_of_another_document_is_not_this_documents` |
 | python-choice-unbound | `ve/ask.py` | relay binding: a row's choice names the request's open sets, each once, in order | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
 | python-text-unbound | `ve/ask.py` | relay binding: the answer's text is its lines' text | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
+| python-quote-unbound | `ve/ask.py` | relay binding: a line's quote is text of the unit it names | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
+| python-gate-transport-only | `tools/relay_mutation_gate.py` | relay gate: ask's mutants are read as ve ask reads them, not by the transport alone | `tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it` |
+| lean-row-id-untyped | `lean/ResponseShape/Schemas/Ask.lean` | response schema: an answer row's id is the case's id | `tests/test_ask_relay.py::test_the_rows_id_is_typed_and_bound_to_the_case` |
 | python-statement-text-ignored | `tools/question_statements.py` | statement check: a Q2 statement whose text differs from the approved text fails | `tests/test_question_statements.py::test_a_changed_statement_or_definition_fails` |
 
-Trust budget (`docs/trust-baseline.json`): K 997 → 997 (+0), S 9704 → 9887 (+183), V 36289 → 36887 (+598).
+Relay mutation gate (`tools/relay_mutation_gate.py --json`, `evidence/relay-gate.json`): 0 failures and 0 findings over all routes; `ask`: 4735 mutants of 10 fixtures, 4709 refused, 26 accepted, each by a listed by-design class (B0 12, B3 14), 0 untyped.
+
+Trust budget (`docs/trust-baseline.json`): K 997 → 997 (+0), S 9791 → 9974 (+183), V 36765 → 37363 (+598).
 
 Full gate: not yet saved (`evidence/gate-result.json` is written after the gate).
 
