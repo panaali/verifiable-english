@@ -60,8 +60,9 @@ still outside the `ve` command path, as described in
 change touches, using a recorded coverage map with the static import graph as
 the fallback; layers no longer decide selection. [`TESTING.md`](TESTING.md)
 describes the rules, the map and the evidence. Before any green tag, and
-nightly, run the full suite (`python3 tools/select_tests.py --full --run`, or
-`python3 tools/gate.py`); a selected run is not a green-tag gate.
+nightly, run the full suite (`python3 tools/select_tests.py --full --run`, which never
+stops early and applies no quarantine, or `python3 tools/gate.py`); a selected
+run is not a green-tag gate.
 
 Nightly, after the full suite, also run the deep differential fuzz:
 `uv run python tools/difffuzz.py --deep 20 --report difffuzz-nightly.json`
