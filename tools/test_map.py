@@ -35,6 +35,8 @@ import nested_pytest
 #    dropped any made with a pytest frame anywhere on the stack), so earlier maps
 #    lack edges and are not used.
 # 4: listings of directories that hold no tracked file (or do not exist yet) are kept.
+# 5: the assurance-manifest operations each test reads are recorded (`operations`).
+# 6: an operation only checked for presence (`presence`) is recorded apart from an entry read.
 VERSION = 6
 UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.

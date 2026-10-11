@@ -7,8 +7,9 @@ coverage map recorded at the same commit (so no drift widens the plan), and the 
 suite runs with the edit applied. Every test file that fails must be in the plan.
 
 The suite runs once with every seed applied (they touch disjoint operations and one
-executable), then every file that failed runs again under each seed alone and, for failures
-no single seed explains, without any seed. A seed's failures are those of its own rerun.
+executable), then every test that failed (the whole file when it failed to collect) runs
+again under each seed alone and without any seed. A seed's failures are those of its own
+rerun.
 Failures that also fail without any seed are left out. That equals running the complete
 suite under the seed alone unless another seed hides one of its failures; each seed only
 adds a refusal, so none can, and a failure no rerun reproduces fails the tool.
@@ -166,7 +167,8 @@ def _build() -> None:
 
 
 def failures(units: list[str], work: Path, label: str, workers: int) -> list[str]:
-    """Failing test ids (a file id when the file failed to collect) of `units` in the current tree."""
+    """Failing test ids (a file id when the file failed to collect) of `units` (files or test ids)
+    in the current tree."""
     pytest_units = [u for u in units if u not in test_map.EXTRA_UNITS]
     result = work / f"{label}.json"
     failed: set[str] = set()
@@ -230,15 +232,15 @@ def run(args: argparse.Namespace) -> int:
             state["combined"] = failures(every, work, "combined", args.workers)
         state["combined_seconds"] = round(time.monotonic() - started)
         save()
-    files = sorted({_file(nodeid) for nodeid in state["combined"]})
+    failed = sorted(set(state["combined"]))
     alone = state.setdefault("alone", {})
     for row in rows:
         if row["name"] not in alone:
             with Applied([row]):
-                alone[row["name"]] = failures(files, work, f"alone-{len(alone)}", args.workers) if files else []
+                alone[row["name"]] = failures(failed, work, f"alone-{len(alone)}", args.workers) if failed else []
             save()
     if "unseeded" not in state:
-        state["unseeded"] = failures(files, work, "unseeded", args.workers) if files else []
+        state["unseeded"] = failures(failed, work, "unseeded", args.workers) if failed else []
         save()
     baseline = set(state["unseeded"])  # fails without any seed: not evidence about a seed
     explained = {nodeid for found in alone.values() for nodeid in found} | baseline
@@ -247,7 +249,8 @@ def run(args: argparse.Namespace) -> int:
         "schema": 2, "head": head, "map_commit": coverage["commit"], "map_version": coverage["version"],
         "map_tests": len(coverage["tests"]), "full_count": len(every),
         "map_failed_units": sorted(t for t, s in coverage["status"].items() if s["exit"] not in (0, 5)),
-        "method": "complete suite once with every seed applied, then each failing file under each seed alone",
+        "method": "complete suite once with every seed applied, then each failing test under each seed alone "
+                  "and without seeds",
         "combined_failure_nodeids": state["combined"], "combined_seconds": state["combined_seconds"],
         "failures_no_seed_explains": unexplained, "failures_without_seeds": state["unseeded"],
         "seeds": []}
