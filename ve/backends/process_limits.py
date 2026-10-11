@@ -45,7 +45,7 @@ def run_limited(argv, *, input: bytes, timeout: float, address_space: int) -> su
         try:
             limit_address_space(process.pid, address_space)
             stdout, stderr = process.communicate(input, timeout=timeout)
-        except BaseException:
+        except (subprocess.TimeoutExpired, OSError):
             process.kill()
             raise
     return subprocess.CompletedProcess(argv, process.returncode, stdout, stderr)
