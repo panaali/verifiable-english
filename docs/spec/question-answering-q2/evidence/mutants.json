@@ -53,7 +53,8 @@
       ],
       "caught": true,
       "evidence": [
-        "FAILED tests/test_ask_relay.py::test_lean_refuses_a_request_not_bound_to_its_document[an evidence entry twice-<lambda>-names no compatible]"
+        "INTERNALERROR>     raise TimeoutError(f\"build timed out: {command}\") from exc",
+        "INTERNALERROR> TimeoutError: build timed out: ['/home/seyran/.elan/bin/lake', 'build']"
       ]
     },
     {
@@ -93,6 +94,45 @@
       "caught": true,
       "evidence": [
         "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[G1] - Assert..."
+      ]
+    },
+    {
+      "id": "python-quote-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a line's quote is text of the unit it names",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[G1] - Assert..."
+      ]
+    },
+    {
+      "id": "python-gate-transport-only",
+      "language": "Python",
+      "file": "tools/relay_mutation_gate.py",
+      "behaviour": "relay gate: ask's mutants are read as ve ask reads them, not by the transport alone",
+      "test": [
+        "tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it"
+      ]
+    },
+    {
+      "id": "lean-row-id-untyped",
+      "language": "Lean",
+      "file": "lean/ResponseShape/Schemas/Ask.lean",
+      "behaviour": "response schema: an answer row's id is the case's id",
+      "test": [
+        "tests/test_ask_relay.py::test_the_rows_id_is_typed_and_bound_to_the_case"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_the_rows_id_is_typed_and_bound_to_the_case"
       ]
     },
     {
