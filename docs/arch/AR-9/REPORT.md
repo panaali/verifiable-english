@@ -55,13 +55,16 @@ Two constraints decided the split beyond the plan's three themes per module:
 
 Files touched: `ve/assist/recovery.py`, `ve/assist/session.py`, six new `ve/assist/*_*.py`,
 `tests/test_assist_split.py`, `tests/test_ar9_evidence.py`, `tools/gate-collection.json`,
-`docs/arch/AR-9/`. At the start, `git diff --name-only main...<branch>` for every branch matching
-`lean-first/*`, `readings-defaults/*`, `question-answering/*` and `infra/*` named no `ve/assist/`
-file. One branch, `lean-first/b13b`, changes `tests/test_assist_invariants.py`; AR-9 leaves that
-file unchanged, as the plan's fixture requires.
+`docs/arch/AR-9/`. At the start, and again on 2026-10-11 after syncing with `main` (`96887019`),
+`git diff --name-only main...<branch>` for every branch matching `lean-first/*`,
+`readings-defaults/*`, `question-answering/*` and `infra/*` named no file AR-9 touches except the
+generated `tools/gate-collection.json`, which is not an overlap (R12). One branch,
+`lean-first/b13b`, changes `tests/test_assist_invariants.py`; AR-9 leaves that file unchanged, as
+the plan's fixture requires.
 
-**Merge resolution rule** for the one shared inventory: conflict in `tools/gate-collection.json`:
-take `main`'s file and run `uv run python tools/gate_collection.py --write`.
+**Merge resolution rule** for the one shared inventory (R12): conflict in
+`tools/gate-collection.json`: run `uv run python tools/regen_generated.py --resolve` after
+`git merge --no-commit`, then `git commit --no-edit`. The sync with `main` used this rule.
 
 ## Tests
 
@@ -72,8 +75,10 @@ take `main`'s file and run `uv run python tools/gate_collection.py --write`.
   methods are where the manifest names them.
 - `tests/test_ar9_evidence.py`: this report's block equals `report.py`'s rendering of the saved
   evidence, and the saved evidence is consistent (clean, complete, every fault caught, gate on
-  the saved scope). It reads only `evidence/`, never live git. AR-5b will move it to the
-  evidence toolkit.
+  the saved scope). It reads only `evidence/`, never live git. The batch prompt asks for a
+  saved-evidence report test; under D4 (plan 4.1 item 7) it moves to the evidence check of AR-5b,
+  as AR-6's did. `tools/batch_evidence.py` does not apply yet: it requires the corpus comparison
+  and latency evidence that 4.1 item 2 does not ask of AR-9.
 - Unchanged and passing: `tests/test_assist.py`, `test_assist_deadline.py`,
   `test_assist_invariants.py`, `test_assist_recovery.py`, `test_assist_recovery_replay.py`,
   `test_b17_owner.py`, `test_assurance_manifest.py` (384 passed, 1 skipped: P5 materials are
