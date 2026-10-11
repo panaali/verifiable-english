@@ -28,6 +28,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import regen_generated as R  # noqa: E402
+import trust_map  # noqa: E402
 
 TRACKED = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.split()
 
@@ -209,6 +210,74 @@ def test_assurance_manifest_merge_recomputes_the_decoder_total():
     assert json.loads(text)["lean_decoders"]["total_lines"] == manifest["lean_decoders"]["total_lines"] + 12
 
 
+TRUST_MERGES = json.loads((ROOT / "tests/data/regen_trust_merges.json").read_text())
+
+
+@pytest.mark.parametrize("merge", TRUST_MERGES)
+def test_trust_merge_adds_file_deltas_and_recomputes_both_derived_values(merge):
+    """Small file rows cut from the base, parents and committed resolutions of three real syncs."""
+    case = TRUST_MERGES[merge]
+    text, clean = R.merge_text("docs/trust-baseline.json", *(json.dumps(case[side]) for side in
+                                                         ("base", "ours", "theirs")))
+    assert clean
+    merged = json.loads(text)
+    assert merged == case["merged"]
+    assert merged["totals"] == trust_map.totals(merged["files"])
+    assert merged["budget"] == trust_map.budget(merged["totals"])
+    assert merged["budget"] != case["ours"]["budget"]
+
+
+def test_trust_merge_adds_equal_concurrent_values_and_missing_base_rows():
+    row = trust_map.empty_counts()
+    ours = {"files": {"New.lean": {**row, "K": 2, "trusted": 2}}}
+    theirs = {"files": {"New.lean": {**row, "K": 2, "trusted": 2}}}
+    for side in (ours, theirs):
+        side["totals"] = trust_map.totals(side["files"])
+        side["budget"] = trust_map.budget(side["totals"])
+    base = {"files": {}, "totals": trust_map.totals({}), "budget": trust_map.budget(trust_map.totals({}))}
+    text, clean = R.merge_text("docs/trust-baseline.json", *(json.dumps(side) for side in (base, ours, theirs)))
+    assert clean
+    assert json.loads(text)["files"]["New.lean"]["K"] == 4
+    assert json.loads(text)["budget"]["K"] == 4
+
+
+def test_trust_merge_refuses_delete_versus_change(capsys):
+    case = TRUST_MERGES["17573bbb"]
+    base = case["base"]
+    ours = json.loads(json.dumps(base))
+    theirs = json.loads(json.dumps(base))
+    module = "ResponseShape.lean"
+    del ours["files"][module]
+    theirs["files"][module]["trusted"] += 1
+    text, clean = R.merge_text("docs/trust-baseline.json", *(json.dumps(side) for side in
+                                                         (base, ours, theirs)))
+    assert not clean
+    assert text == json.dumps(ours)
+    assert module in capsys.readouterr().err
+
+
+def test_trust_non_file_fields_keep_structural_json_merge(capsys):
+    case = TRUST_MERGES["17573bbb"]
+    base = {**case["base"], "signed": [], "history": [], "section11": {"n": 1}, "comment": "base"}
+    ours = {**case["ours"], "signed": [{"change": "ours", "signed": "DRI"}],
+            "history": ["ours"], "section11": {"n": 2}, "comment": "ours"}
+    theirs = {**case["theirs"], "signed": [{"change": "theirs", "signed": "DRI"}],
+              "history": ["theirs"], "section11": {"n": 3}, "comment": "base"}
+    _, clean = R.merge_text("docs/trust-baseline.json", *(json.dumps(side) for side in
+                                                     (base, ours, theirs)))
+    assert not clean
+    assert "$.section11.n" in capsys.readouterr().err
+    theirs["section11"]["n"] = 1
+    text, clean = R.merge_text("docs/trust-baseline.json", *(json.dumps(side) for side in
+                                                        (base, ours, theirs)))
+    assert clean
+    merged = json.loads(text)
+    assert merged["signed"] == [ours["signed"][0], theirs["signed"][0]]
+    assert merged["history"] == ["ours", "theirs"]
+    assert merged["section11"] == {"n": 2}
+    assert merged["comment"] == "ours"
+
+
 # End to end
 
 
@@ -328,6 +397,37 @@ def test_resolve_refuses_a_ledger_value_both_sides_changed(tmp_path, capsys):
     assert R.resolve((), root) == 2
     assert "ve.a -> ve.b" in capsys.readouterr().err
     assert (_git(root, "status", "--porcelain").stdout, (root / "lean/VE/Audit.lean").read_text()) == before
+
+
+def test_resolve_fails_when_measured_tree_exceeds_merged_trust_budget(tmp_path, monkeypatch):
+    case = TRUST_MERGES["6aafef85"]
+    root = tmp_path / "repo"
+    root.mkdir()
+    _git(root, "init", "-q", "-b", "base")
+    _git(root, "config", "user.email", "t@example.com")
+    _git(root, "config", "user.name", "t")
+    path = "docs/trust-baseline.json"
+    _commit(root, {path: json.dumps(case["base"], indent=2) + "\n"}, "base")
+    _git(root, "checkout", "-q", "-b", "theirs")
+    _commit(root, {path: json.dumps(case["theirs"], indent=2) + "\n"}, "theirs")
+    _git(root, "checkout", "-q", "-b", "ours", "base")
+    _commit(root, {path: json.dumps(case["ours"], indent=2) + "\n"}, "ours")
+    assert _git(root, "merge", "--no-commit", "theirs", check=False).returncode != 0
+    assert _git(root, "diff", "--name-only", "--diff-filter=U").stdout.split() == [path]
+
+    measured = json.loads(json.dumps(case["merged"]["files"]))
+    measured["ResponseShape/Schemas/Document.lean"]["trusted"] += 1
+
+    def trust_check(entry, steps, root=R.ROOT):
+        assert entry.name == "trust-tables"
+        assert steps == entry.check
+        baseline = json.loads((tmp_path / "repo" / path).read_text())
+        assert baseline["files"] == case["merged"]["files"]
+        return int(bool(trust_map.check(measured, baseline)))
+
+    monkeypatch.setattr(R, "_run", trust_check)
+    assert R.resolve(R.selected(["trust-tables"], []), root) == 1
+    assert _git(root, "diff", "--name-only", "--diff-filter=U").stdout.split() == [path]
 
 
 def test_resolve_needs_a_merge_in_progress(tmp_path):

@@ -287,17 +287,24 @@ def _key_field(*lists) -> str | None:
 
 
 def _text(value) -> str:
+    if value is _MISSING:
+        return "<missing>"
     return json.dumps(value, sort_keys=True, ensure_ascii=False)
 
 
-def merge_json(base, ours, theirs, path="$"):
+def merge_json(base, ours, theirs, path="$", trust_files=False):
     """Three-way merge of JSON values: a side's change wins over the base; objects merge per key; lists of
     records merge per record key; other lists keep both sides' additions and drop either side's removals;
     a value both sides changed differently raises Conflict."""
+    # Trust-file counts are independent changes to a measured ledger. Apply both deltas even when
+    # they happen to have the same value; a deletion versus a change still reaches Conflict below.
+    if (trust_files and type(ours) is int and type(theirs) is int
+            and (base is _MISSING or type(base) is int)):
+        return ours + theirs - (0 if base is _MISSING else base)
     if ours is _MISSING or theirs is _MISSING:
         if ours is theirs:
             return ours
-    elif _text(ours) == _text(theirs):
+    elif _text(ours) == _text(theirs) and not (trust_files and isinstance(ours, dict)):
         return ours
     if base is not _MISSING and ours is not _MISSING and _text(base) == _text(ours):
         return theirs
@@ -312,7 +319,7 @@ def merge_json(base, ours, theirs, path="$"):
         merged = {}
         for key in [*ours, *(k for k in theirs if k not in ours), *(k for k in base if k not in ours and k not in theirs)]:
             value = merge_json(base.get(key, _MISSING), ours.get(key, _MISSING), theirs.get(key, _MISSING),
-                               f"{path}.{key}")
+                               f"{path}.{key}", trust_files and (path != "$" or key == "files"))
             if value is not _MISSING:
                 merged[key] = value
         if list(ours) == sorted(ours) and list(theirs) == sorted(theirs):  # a sorted map stays sorted
@@ -323,7 +330,7 @@ def merge_json(base, ours, theirs, path="$"):
         field = _key_field(base, ours, theirs)
         if field is not None:
             merged = merge_json({b[field]: b for b in base}, {o[field]: o for o in ours},
-                                {t[field]: t for t in theirs}, path)
+                                {t[field]: t for t in theirs}, path, trust_files)
             return list(merged.values())  # in key order when both sides were (the map merge keeps it)
         before = {_text(item) for item in base}
         removed = (before - {_text(item) for item in ours}) | (before - {_text(item) for item in theirs})
@@ -353,26 +360,42 @@ def _json_format(text: str) -> tuple:
 
 
 # Values derived from the rest of a JSON ledger: both sides of a merge change them, so the merge ignores them
-# and recomputes them from the merged ledger. {path: (keys to the value, its function)}.
+# and recomputes them from the merged ledger. {path: ((keys to the value, its function), ...)}.
 def _decoder_total(manifest: dict) -> int:
+    # Importing assurance_manifest loads ve.assurance, which reads the still-conflicted manifest
+    # during --resolve. Keep this arithmetic pure until every merged file has been written.
+    return sum(end - start + 1 for entry in manifest["lean_decoders"]["files"]
+               for start, end in entry["ranges"])
+
+
+def _trust_totals(baseline: dict) -> dict:
     sys.path.insert(0, str(ROOT / "tools"))
-    from assurance_manifest import decoder_total_lines
-    return decoder_total_lines(manifest)
+    from trust_map import totals
+    return totals(baseline["files"])
 
 
-DERIVED = {"ve/assurance-manifest.json": (("lean_decoders", "total_lines"), _decoder_total)}
+def _trust_budget(baseline: dict) -> dict:
+    sys.path.insert(0, str(ROOT / "tools"))
+    from trust_map import budget
+    return budget(_trust_totals(baseline))
+
+
+DERIVED = {
+    "ve/assurance-manifest.json": ((("lean_decoders", "total_lines"), _decoder_total),),
+    "docs/trust-baseline.json": ((("totals",), _trust_totals), (("budget",), _trust_budget)),
+}
 
 
 def _derived(path: str, value, new=None):
     """Set the derived value of `value` (a ledger) to `new`, or, with `new` None, to its recomputation."""
     if path not in DERIVED or not isinstance(value, dict):
         return value
-    keys, compute = DERIVED[path]
-    node = value
-    for key in keys[:-1]:
-        node = node.get(key) if isinstance(node, dict) else None
-    if isinstance(node, dict) and keys[-1] in node:
-        node[keys[-1]] = compute(value) if new is None else new
+    for keys, compute in DERIVED[path]:
+        node = value
+        for key in keys[:-1]:
+            node = node.get(key) if isinstance(node, dict) else None
+        if isinstance(node, dict) and keys[-1] in node:
+            node[keys[-1]] = compute(value) if new is None else new
     return value
 
 
@@ -392,7 +415,7 @@ def merge_text(path: str, base: str, ours: str, theirs: str) -> tuple[str, bool]
             return done.stdout, done.returncode == 0
     sides = [_derived(path, json.loads(text), 0) if text.strip() else _MISSING for text in (base, ours, theirs)]
     try:
-        merged = _derived(path, merge_json(*sides))
+        merged = _derived(path, merge_json(*sides, trust_files=path == "docs/trust-baseline.json"))
     except Conflict as exc:
         print(f"{path}: {exc}", file=sys.stderr)
         return ours, False
