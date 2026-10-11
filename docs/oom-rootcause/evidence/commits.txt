@@ -1,0 +1,10 @@
+5a33c776 process_limits: bound byte settings to 19 digits; list run_limited in the runner and int inventories
+30507fc0 Senses route tests tamper with and guard the one-shot transport where it runs (run_limited)
+cbbacf5c process_limits: narrow run_limited's handler; list it among the process starters
+ace3c50c OOM batch: report and DELTA
+746369f6 Memory-budget tests: inject the one-shot deadline instead of a short wait
+5f5959ff Regenerate the gate collection for the memory-budget tests
+85f8a30b OOM batch: seeded-fault evidence (9 faults, each caught)
+62c5f674 OOM batch: incident regression case, A/B evidence and seeded-fault script
+17e868d7 Memory budgets: Rust counting allocator, RLIMIT_AS on checker children
+b0ac5ba1 rust: enumerate search domain sizes lazily

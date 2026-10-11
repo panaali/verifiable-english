@@ -134,6 +134,22 @@ stdout, stderr and exit code. Result: **0 differences, 0 timeouts**
 (`evidence/rust-output-diff.txt`). The full suite's three-way and differential tests (difffuzz, conformance,
 search) run on this binary in the gate.
 
+**Selected tests** (`tools/select_tests.py --base main` selects all 360 units for this change). The
+non-pytest steps passed: the layer checks, the crate graph, `cargo test` and the layer policy. The pytest
+files ran in 16 chunks at `-n 3` at load 50–100: 14,323 passed, 83 xfailed, 8 skipped, 7 failed. Six of
+the seven were reviewed inventories and test plumbing that predate the new transport. Each was fixed and
+its file rerun green:
+- `test_assurance_manifest.py`: the process-starter list (process_limits added) and the broad-handler review
+  (`run_limited` now catches only TimeoutExpired/OSError).
+- `test_senses_route.py`: two tests patched global `subprocess.run` to tamper with or guard the one-shot
+  runner, and now patch `run_limited`.
+- `test_numeral_conversion.py`: `int(text)` in `configured_bytes` is now bounded to 19 digits and listed.
+- `test_relay.py`: the runner-transport inventory reads `run_limited` as starting a runner.
+
+The seventh, `test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-1]`, ran over a Lean
+service CPU deadline at load 98 and passed alone (144 s). It is load-only. The 19-digit bound landed after
+chunks 0–11 had run. It changes nothing when the setting is unset, and the final gate covers it.
+
 ## 6. Seeded bugs (each planted, its test shown to fail, then removed)
 
 `docs/oom-rootcause/seed_faults.py` plants each one, runs its test (a Rust fault is built into the release
@@ -175,10 +191,13 @@ Recorded in `docs/oom-rootcause/DELTA.md`. One is covered by a standing ruling (
   both sides). main's runaway build 3ec83dee… stays allowed until someone prunes the pins.
 - Processes that start the binary directly (tools/difffuzz, conformance/fuzz, tests) get the binary's own
   8 GiB budget but no RLIMIT_AS backstop. Only `rust_jsonl`, the production path, sets one.
+- Not done (checklist 2): no limit−1/limit/limit+1 fuzz at byte granularity on the memory budget.
+  Allocation sizes are not deterministic across builds. The tests bound the outcome instead: ResourceLimit
+  at 32 MiB, an answer at 256 MiB and at the default.
 - The machine-level containment (`manage-agents/iso.sh`, one systemd scope per job) predates this branch
   and is not part of it.
 
 ## 9. Gate
 
-The full gate result for the final HEAD is saved as `docs/oom-rootcause/evidence/gate-result.json` (see
+The commits are listed in `evidence/commits.txt` (`git log main..HEAD --no-merges`, taken before the report's last edit). The full gate result for the final HEAD is saved as `docs/oom-rootcause/evidence/gate-result.json` (see
 the final commit).
