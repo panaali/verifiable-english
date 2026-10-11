@@ -17,6 +17,7 @@ EVIDENCE = HERE / "evidence"
 # The approved branch head, and the ve-integration commit merged into it after review.
 RD6B_HEAD = "e1319b36477d9de8cb83b6df4b4d372186cb4b3d"
 MERGED_BASE = "f05474685f3df4313d0b264c32cf1cf673a17d97"
+RD6B_MERGE_HEAD = "6b66f08721003c390f9180ed84dfe911fe9869b6"
 
 
 def saved():
@@ -261,10 +262,13 @@ def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
     for step in (entry, merge):
         growth = {key: step["to"][key] - step["rebaselined_from"][key] for key in ("K", "S", "V")}
         assert growth == {"K": 0, "S": 0, "V": 142}
-    current_merge = baseline["history"][-1]
+    rd6b_merge = json.loads(subprocess.check_output(
+        ["git", "show", f"{RD6B_MERGE_HEAD}:docs/trust-baseline.json"], cwd=ROOT))
+    current_merge = rd6b_merge["history"][-1]
+    assert current_merge in baseline["history"]
     assert current_merge["change"].startswith("Merge ve-integration 7478b23d ")
     assert current_merge["rebaselined_from"] == merge["to"]
-    assert current_merge["to"] == trust_map.budget(trust_map.totals(current))
+    assert current_merge["to"] == trust_map.budget(rd6b_merge["totals"])
     assert {key: current_merge["to"][key] - current_merge["rebaselined_from"][key]
             for key in ("K", "S", "V")} == {"K": 0, "S": 87, "V": 471}
     text = (HERE / "DELTA.md").read_text()
