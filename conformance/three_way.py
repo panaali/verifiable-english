@@ -55,12 +55,19 @@ def error_verdict(code, message, generator=None):
 # ---------------------------------------------------------------- Python
 
 # The dispatched operation behind each request kind that has one owner (`dispatch.SINGLE_OWNER`).
-KIND_OPERATIONS = {"search": "countermodel_search"}
+# Since lean-first batch 13b the core operations are Lean's under every authority, so the "Python"
+# answer of their kinds is Lean's own.
+KIND_OPERATIONS = {"search": "countermodel_search", "admission": "admission", "background": "background",
+                   "certificate": "certificate_replay", "dependency-order": "dependency_order",
+                   "label": "label"}
 # Kinds whose Python answer reaches a single-owner operation inside a composition Python owns, so the
 # answer is Python's: the reason (tests/test_single_owner.py requires every kind reaching one to be listed
 # here or in KIND_OPERATIONS).
 KIND_COMPOSED = {"vacuity": "premise_status: a replayed contradiction first, a checked model next, else "
-                            "UNKNOWN; the search only proposes the model"}
+                            "UNKNOWN; the search only proposes the model",
+                 "evaluate": "evaluation is Python's until batch 15; Lean's typing only rejects ill-typed input",
+                 "countermodel": "the model check is Python's until batch 15; Lean's typing only rejects "
+                                 "ill-typed input"}
 
 
 def python_owner(kind):

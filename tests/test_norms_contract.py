@@ -384,9 +384,11 @@ def test_gate_rows_of_a_new_unit_judge_its_report(monkeypatch):
     assert not any("4.3 has no first-fault witness" in failure for failure in failures)  # gap G3
     # Z8: every tier-0 case that does not reach the statement raises its snapshot's error (the stored one).
     assert value["call_snapshot_cases"] == 3
-    # The shared legacy profile decoder now agrees on environment-language.
+    # The shared legacy profile decoder now agrees on environment-language. Since lean-first batch 13b the call
+    # is Lean's route admission: a norm unit without the profile is its decoder's rejection (listed in
+    # docs/lean-first/b13b/DELTA.md, awaiting the DRI's signature).
     assert {item["case"] for item in value["call_snapshot_differences"]} == {
-        "0:environment-defined"}
+        "0:environment-defined", "0:profile-missing"}
     assert any("Z8" in failure for failure in failures)
     value["public_class_differences"] = 2
     value["legacy_verdict_differences"] = [{"case": "x", "python": None, "lean": ["InvalidInput", "t"]}]
@@ -425,7 +427,8 @@ def test_g12_compares_the_call_with_its_snapshot_before_the_switch(monkeypatch):
     with_record.code, with_record.diagnostic = snapshot[1], {"check": "2.1"}
     for name, admit in (("unrelated", raising(lambda: ResourceLimit("ResourceLimit: other"))),
                         ("message", raising(lambda: type(error)(snapshot[2] + "!"))),
-                        ("class", raising(lambda: VEError(snapshot[2]))),
+                        ("class", raising(lambda: (ResourceLimit if snapshot[0] == "VEError" else VEError)(
+                            snapshot[2]))),
                         ("record", raising(lambda: with_record)),
                         ("accepted", lambda environment, document: None)):
         monkeypatch.setattr("ve.admission.admit_document", admit)
