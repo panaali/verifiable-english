@@ -1,7 +1,23 @@
 {
  "base": "968870193193b9e8138183ed77c41e376a6e376c",
- "head": "21d20d83ab954d74902b31b81983fbbb58c15221",
+ "head": "c41af50636cbb446a14bce03edbda93474f31a95",
  "commits": [
+  {
+   "hash": "c41af50636cbb446a14bce03edbda93474f31a95",
+   "subject": "AR-4: gate collection regenerated; report.py renders with --render (not a registered writer)"
+  },
+  {
+   "hash": "b9bee67f464fd51624b62a64cc3e21dabc20bb35",
+   "subject": "AR-4 seeded bugs rerun on the final tools/trust_map.py: 10/10 killed"
+  },
+  {
+   "hash": "2a2f4ab5fac1266c8c6cc1142e1179db3938de88",
+   "subject": "trust_map: a malformed base file written before AR-4 is a problem, never a crash"
+  },
+  {
+   "hash": "78003e53f8e5ebc53f7814b8e7e81958c2b704ea",
+   "subject": "AR-4 saved evidence and report (report.py --collect at 21d20d83)"
+  },
   {
    "hash": "21d20d83ab954d74902b31b81983fbbb58c15221",
    "subject": "AR-4 report: the file's layout check, and the plan's line estimate missed (367, 7 per allowance)"
@@ -34,14 +50,17 @@
  "files": [
   "docs/arch/AR-4/DELTA.md",
   "docs/arch/AR-4/REPORT.md",
+  "docs/arch/AR-4/evidence/budget.json",
   "docs/arch/AR-4/evidence/migration.json",
   "docs/arch/AR-4/evidence/mutants.json",
+  "docs/arch/AR-4/evidence/scope.json",
   "docs/arch/AR-4/migrate_baseline.py",
   "docs/arch/AR-4/mutants.json",
   "docs/arch/AR-4/report.py",
   "docs/trust-baseline.json",
   "tests/test_consolidation_tools.py",
   "tests/test_trust_ratchet.py",
+  "tools/gate-collection.json",
   "tools/trust_map.py"
  ]
 }

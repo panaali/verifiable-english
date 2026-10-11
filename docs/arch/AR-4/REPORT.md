@@ -38,7 +38,7 @@ R11).
 ## Measured outcome
 
 <!-- BEGIN GENERATED AR-4 METRICS -->
-Measured with `tools/trust_map.py` at `21d20d83` against the merge base `96887019`:
+Measured with `tools/trust_map.py` at `c41af506` against the merge base `96887019`:
 
 | Class | Recorded at the base | Measured at the base | Measured at the head | Starting budget |
 |---|---:|---:|---:|---:|
@@ -49,7 +49,7 @@ Measured with `tools/trust_map.py` at `21d20d83` against the merge base `9688701
 `docs/trust-baseline.json`: 13,230 lines at the base, 367 at the head (keys before: comment, totals, budget, signed, history, section11, files; 479 per-file rows and 286 `section11` rows left the tree).
 History: 35 entries, 34 distinct, became 51 allowances (one per class that grew); 6 carry a DRI signature, 45 were rebaselines with a reason before AR-4.
 `trust_map.py --check` at the head: exit 0; allowances introduced: 0, removed: 0.
-Commits (`96887019..21d20d83 --no-merges`): 7; files changed: 11, none under `ve/`, `lean/` or `rust/`: yes.
+Commits (`96887019..c41af506 --no-merges`): 11; files changed: 14, none under `ve/`, `lean/` or `rust/`: yes.
 Seeded bugs: 10, each killed by its named test: yes.
 <!-- END GENERATED AR-4 METRICS -->
 
