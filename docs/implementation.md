@@ -1,10 +1,13 @@
-# Experimental Python VE v0 core
+# Python package `ve` (first written for the experimental v0 core)
 
-The implementation supports exactly `ve.core@0`, `relational-fol@0`, and
-`ve-v0-draft-2026-09-20`. It implements the draft semantics; it does not establish
-the pending theorems in [the verification contract](spec/verification-contract.md).
-`uv.lock` pins the test/build dependencies. There are no third-party runtime
-dependencies. Use Python 3.12 or later and `uv sync`; run `uv run python -m pytest`.
+**Superseded in part (2026-10-10):** this page began as the notes of an experimental, pure-Python v0 core for
+`ve.core@0` and `relational-fol@0`. Lean now decides meaning and acceptance, and Python is the command line, the
+relay to Lean and the display; the profiles go well beyond those two, and `pyproject.toml` lists the runtime
+dependencies. For the current system see [the architecture map](ARCHITECTURE.md). The Python API below still
+works; where a section says Python decides, read it as history.
+
+`uv.lock` pins the dependencies. Use Python 3.12 or later and `uv sync`; run the tests as
+[TESTING.md](TESTING.md) describes.
 
 ## Python API
 
