@@ -643,7 +643,10 @@ def parse_baseline(data: object, legacy: bool = False) -> tuple[dict, list[str]]
     """The budget file's `budget` and `allowances`, and the problems found. `legacy` reads a base
     commit's file written before AR-4 too (its recorded budget and `from_history`)."""
     if legacy and isinstance(data, dict) and ("history" in data or "totals" in data):
-        return {"budget": budget(data["totals"]), "allowances": from_history(data)}, []
+        try:
+            return {"budget": budget(data["totals"]), "allowances": from_history(data)}, []
+        except (KeyError, TypeError) as error:
+            return {}, [f"{BASELINE.name} (before AR-4) is malformed: {error!r}"]
     if not isinstance(data, dict) or not {"budget", "allowances"} <= set(data) <= {"comment", "budget", "allowances"}:
         return {}, [f"{BASELINE.name} holds exactly `budget` and `allowances` (and a `comment`)"]
     problems = []
