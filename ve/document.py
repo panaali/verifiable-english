@@ -285,6 +285,20 @@ def _soft_contents(units, exclude=frozenset()):
             and type(u.get("content")) is dict and "norm" in u["content"]]
 
 
+def _readings_routes(env, reading_sets):
+    """(companions, s1_content) of a document's reading sets under `readings@1`: whether some reading carries its
+    own vocabulary, so Lean splits the document (readings-defaults RD-4b, 1.9), and whether some set is
+    content-bearing (composition-s1.md 1.2), which a split document always is."""
+    from .readings_components import has_companions
+    companions = "readings@1" in env.profiles and has_companions(reading_sets)
+    s1_content = "readings@1" in env.profiles and type(reading_sets) is list and (companions or any(
+        type(s) is dict and type(s.get("readings")) is list and any(
+            type(r) is dict and s1_content_kind(r.get("content")) in
+            {"norm", "right", "right_lines", "limitation"} for r in s["readings"])
+        for s in reading_sets))
+    return companions, s1_content
+
+
 def _s1_attached(environment_data, meta):
     """Under `readings@1`, the fixed units attached to an open content-bearing set (composition-s1.md 1.3): they
     belong to that set's candidates' documents, and the lower route checks `free D` without them (4.1). A
@@ -458,12 +472,14 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             norms = (NormDocument(env, []) if any(d.regulated is not None for d in env.predicates.values())
                      else None)
         reading_sets = meta.get("reading_sets", [])
-        s1_content = "readings@1" in env.profiles and any(
-            type(s) is dict and any(type(r) is dict and s1_content_kind(r.get("content")) in
-                                    {"norm", "right", "right_lines", "limitation"}
-                                    for r in s.get("readings", [])) for s in reading_sets)
-        readings_s1 = readings_s2 = None
-        if s1_content:
+        companions, s1_content = _readings_routes(env, reading_sets)
+        readings_s1 = readings_s2 = readings_components = None
+        if companions:
+            from .readings_components import load as load_components
+            readings_components = load_components(env.to_dict(), compiled, reading_sets,
+                                                  couplings=meta.get("couplings", []),
+                                                  narrowings=meta.get("narrowings", []))
+        elif s1_content:
             from .readings_route import validate as validate_s1, elaborate as elaborate_s2
             readings_s1 = validate_s1(env.to_dict(), compiled, reading_sets)
             readings_s2 = elaborate_s2(env.to_dict(), compiled, reading_sets,
@@ -478,7 +494,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             "document_id": row["document_id"], "directory": path.parent, "units": compiled, "norms": norms,
             "soft_document": None, "norm_defaults": norm_defaults, "senses": None, "reports": None,
             "rights_document": None, "readings_s1": readings_s1, "readings_s2": readings_s2,
-            "reading_plan": reading_plan,
+            "readings_components": readings_components, "reading_plan": reading_plan,
             "lean": {"coverage": row["coverage"], "admitted": admitted}}
 
 
@@ -763,14 +779,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
-    from .readings_components import has_companions
-    # readings-defaults RD-4b: a reading with its own vocabulary is content-bearing (Lean splits the document).
-    companions = "readings@1" in env.profiles and has_companions(reading_sets)
-    s1_content = "readings@1" in env.profiles and type(reading_sets) is list and (companions or any(
-        type(s) is dict and type(s.get("readings")) is list and any(
-            type(r) is dict and s1_content_kind(r.get("content")) in
-            {"norm", "right", "right_lines", "limitation"} for r in s["readings"])
-        for s in reading_sets))
+    companions, s1_content = _readings_routes(env, reading_sets)
     validate_reading_sets(env if rights_enabled or s1_content else formula_env,
                           reading_sets, unit_ids, source=source,
                           unit_spans={u["id"]: u["span"] for u in compiled},
