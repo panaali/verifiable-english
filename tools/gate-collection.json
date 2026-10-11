@@ -6640,6 +6640,7 @@
   "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/agent-policy/a-unspecified.ve.md]",
   "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/group.ve.md]",
   "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/udhr-part07.ve.md]",
+  "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md]",
   "tests/test_lean_document_wrapper.py::test_null_the_mode_reads_as_absent_is_decided",
   "tests/test_lean_document_wrapper.py::test_only_seeds_lean_refuses_whole_are_left_unmutated",
   "tests/test_lean_document_wrapper.py::test_open_terms_are_checked_before_the_unit_list",
