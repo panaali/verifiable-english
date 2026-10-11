@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 from collections.abc import Callable, Sequence
 from concurrent.futures import ThreadPoolExecutor
+import contextlib
 import datetime
 import gzip
 import json
@@ -157,9 +158,13 @@ def read_unit(directory: Path, files: set[str]) -> dict:
     return {**seen, "opaque": sorted(set(opaque))}
 
 
+STOP_SIGNALS = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+
+
 class Stop:
     """Ends a recorded run early: after `stop()` no unit starts, and each running unit's process group is
-    killed. Each unit runs in its own session, so its group holds every process it started."""
+    killed. Each unit runs in its own session, so its group holds every process it started; for the same
+    reason a run must stop its units itself when it ends abnormally (`on_exit`)."""
 
     def __init__(self):
         self._lock = threading.Lock()
@@ -188,6 +193,36 @@ class Stop:
                 kill_group(process)
                 self._killed.add(process)
 
+    @contextlib.contextmanager
+    def on_exit(self):
+        """Stop when the block raises or the process is interrupted, terminated or hung up. A signal to the
+        run's own process group (a harness timeout, Ctrl-C, a closed terminal) does not reach the units'
+        sessions, so the run kills them itself, before it waits for its workers. Signal handlers go in only
+        on the main thread, where Python runs them; an ignored signal stays ignored."""
+        previous = {}
+
+        def handler(number, frame):
+            self.stop()
+            earlier = previous[number]
+            if callable(earlier):
+                return earlier(number, frame)  # Ctrl-C's KeyboardInterrupt, or the caller's own handler
+            raise SystemExit(128 + number)
+
+        if threading.current_thread() is threading.main_thread():
+            for number in STOP_SIGNALS:
+                earlier = signal.getsignal(number)
+                if earlier is not None and earlier != signal.SIG_IGN:
+                    previous[number] = earlier
+                    signal.signal(number, handler)
+        try:
+            yield self
+        except BaseException:
+            self.stop()
+            raise
+        finally:
+            for number, earlier in previous.items():
+                signal.signal(number, earlier)
+
 
 def kill_group(process: subprocess.Popen) -> None:
     try:
@@ -210,7 +245,7 @@ def run_unit(unit: str, work: Path, timeout: float, tracked: set[str], *, option
     out.mkdir(parents=True)
     start = time.monotonic()
     stop = stop or Stop()
-    with log.open("w") as handle:
+    with log.open("w") as handle, stop.on_exit():
         process = stop.start(unit_command(unit, options), cwd=ROOT, env=environment(out), stdout=handle,
                              stderr=subprocess.STDOUT)
         if process is None:
@@ -395,7 +430,8 @@ def record_units(selected: list[str], work: Path, jobs: int, timeout: float, *,
                  failures: Callable[[str, dict], int] = failed_unit) -> dict[str, dict]:
     """Run each unit in its own recorded process, starting them in the order of `selected`; a rerun resumes
     from `work`. With `stop_after` N > 0 the run stops once its finished units count N `failures`: no other
-    unit starts and the running ones are killed. Only the units that ran to the end have a result."""
+    unit starts and the running ones are killed, as they are when the run is interrupted, terminated or
+    hung up (`Stop.on_exit`). Only the units that ran to the end have a result."""
     work.mkdir(parents=True, exist_ok=True)
     tracked = tracked_paths()
     print(f"recording {len(selected)} units with {jobs} jobs in {work}", flush=True)
@@ -418,10 +454,12 @@ def record_units(selected: list[str], work: Path, jobs: int, timeout: float, *,
 
     site = site_packages()
     install_hook(site)
+    pool = ThreadPoolExecutor(jobs)
     try:
-        with ThreadPoolExecutor(jobs) as pool:
+        with stop.on_exit():
             results = dict(pool.map(one, selected))
     finally:
+        pool.shutdown(cancel_futures=True)
         remove_hook(site)
     return {unit: result for unit, result in results.items() if result is not None}
 
