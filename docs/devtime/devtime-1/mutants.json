@@ -157,6 +157,19 @@
         "exit": 1,
         "summary": "1 failed in 17.89s"
       }
+    },
+    {
+      "id": "m-commit-drift-ignored",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1 on the real tree: a map recorded before a relay file changed answers for no test file whose run that change may alter",
+      "old": "        uncertain, drift = select_tests.uncertain_since(coverage, graph, set(units), \"HEAD\")\n",
+      "new": "        uncertain, drift = set(), 0\n",
+      "test": "tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 36.06s"
+      }
     }
   ]
 }
