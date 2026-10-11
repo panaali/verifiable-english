@@ -1,21 +1,25 @@
 {
  "base": "cc534bfc571de0f140fecc7acefee65fcdfb8ad9",
- "code_head": "b6cf9fbb5c96a1287cdfc6c45f5d2e4a533c7d5e",
- "range": "main..b6cf9fbb --no-merges (main at cc534bfc)",
+ "code_head": "6a80b9a340294ba2acc5b8ae27d952eec5a890e5",
+ "range": "main..6a80b9a3 --no-merges (main at cc534bfc)",
  "commits": [
   "c3e40b7ae929d51eb69f1fe3a3157585bd740274",
   "ae7fa22911fc98c21b49c968bcddea0b16b4f05a",
   "a497cf56b8998255f24f8eb1f12f3c3824c54710",
   "98d8dbf087d576b3a64be2a867cafda272fc7bba",
   "8fed59c91774583a248ccdef0c55b68af6243744",
-  "b6cf9fbb5c96a1287cdfc6c45f5d2e4a533c7d5e"
+  "b6cf9fbb5c96a1287cdfc6c45f5d2e4a533c7d5e",
+  "b90219bb0e92bfbe72835d1d51e7128685192456",
+  "b52c22a472dc592319e645a82431c3e331d5807f",
+  "5e5ac815e22aa9e564a052323d024ff7d343cbf5",
+  "6a80b9a340294ba2acc5b8ae27d952eec5a890e5"
  ],
- "files_changed": 29,
- "insertions": 23400,
- "deletions": 0,
+ "files_changed": 36,
+ "insertions": 23709,
+ "deletions": 1,
  "product_and_test_files": {
-  "ve/readings_route.py": [
-   4,
+  "tests/test_lean_document_wrapper.py": [
+   2,
    0
   ],
   "tests/test_readings_rd5_plain_probe.py": [
@@ -26,8 +30,16 @@
    179,
    0
   ],
+  "tools/difffuzz_corpus.py": [
+   4,
+   0
+  ],
   "tools/gate-collection.json": [
    11,
+   0
+  ],
+  "ve/readings_route.py": [
+   4,
    0
   ]
  },
