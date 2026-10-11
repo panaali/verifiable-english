@@ -346,9 +346,10 @@ def choices(sets, couplings=(), narrowings=(), *, limit=MAX_CHOICES):
 class SlotLabel(NamedTuple):
     """A slot label read by its kind (1.6): `one` (`readings:<set>@<v>:one`), `own` (`readings:<set>@<v>:<i>:quiet`),
     `shared` (`readings:quiet:outweighs:<a>:<L>:<H>`, `key` the part after `readings:quiet:`), `coupling` and
-    `narrowing` (`<kind>:<id>`). Every slot label is built by `render` and read back by `slot_label`, which tells the
-    kinds apart by their leading words as `slot_wellLabelled` does, never by how the label ends: an id is a token, so
-    it may itself be `one` or `quiet`."""
+    `narrowing` (`<kind>:<id>`), and under the unspecified completion `fill` (`unsaid:pair:<r>,<m>`, `key` the part
+    after `unsaid:pair:`; Lean's `fillLabels`, appended to the slot on the superposed route, plan RD-6b). Every slot
+    label is built by `render` and read back by `slot_label`, which tells the kinds apart by their leading words as
+    `slot_wellLabelled` does, never by how the label ends: an id is a token, so it may itself be `one` or `quiet`."""
     kind: str
     set: str | None = None
     version: int | None = None
@@ -364,15 +365,23 @@ class SlotLabel(NamedTuple):
             return f"readings:quiet:{self.key}"
         if self.kind in ("coupling", "narrowing"):
             return f"{self.kind}:{self.key}"
+        if self.kind == FILL:
+            return f"{FILL_PREFIX}{self.key}"
         raise VEError(f"InvalidInput: unknown slot label kind {self.kind}")
 
 
-SLOT_LABEL_KINDS = ("one", "own", "shared", "coupling", "narrowing")
+# `Fill_T`'s labels under the unspecified completion (norm-defaults 2.4, Lean's `fillLabels`).
+FILL = "fill"
+FILL_PREFIX = "unsaid:pair:"
+SLOT_LABEL_KINDS = ("one", "own", "shared", "coupling", "narrowing", FILL)
 
 
 def slot_label(label) -> SlotLabel:
     """The one reader of a slot label (inverse of `SlotLabel.render`); anything else is an `InvalidInput`."""
     def parsed():
+        if label.startswith(FILL_PREFIX):
+            pair = label[len(FILL_PREFIX):].split(",")
+            return SlotLabel(FILL, key=label[len(FILL_PREFIX):]) if len(pair) == 2 and all(pair) else None
         kind, _, rest = label.partition(":")
         if kind in ("coupling", "narrowing"):
             return SlotLabel(kind, key=rest)
