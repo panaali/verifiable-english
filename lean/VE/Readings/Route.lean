@@ -193,14 +193,19 @@ def contentJson : Content → Json
 
 /-- The units of `sup D` in source order: a fixed unit with its copied content, each candidate gated, with its
     canonical position. -/
-def supUnits (D : Doc) : List Json :=
-  (D.items.foldl (fun (acc : List Json × Nat) it => match it with
-    | .fixed u c _ => (acc.1 ++ [Json.mkObj [("unit", .str u), ("content", contentJson (copyContent D c))]], acc.2)
-    | .bar u _ => (acc.1 ++ [Json.mkObj [("unit", .str u), ("content", Json.mkObj [("kind", .str "bar")])]], acc.2)
-    | .set R => (acc.1 ++ (List.range R.candidates.length).filterMap (fun i =>
+def supUnitsFrom (D : Doc) (m : Nat) : List Item → List Json
+  | [] => []
+  | .fixed u c _ :: rest =>
+      Json.mkObj [("unit", .str u), ("content", contentJson (copyContent D c))] :: supUnitsFrom D m rest
+  | .bar u _ :: rest =>
+      Json.mkObj [("unit", .str u), ("content", Json.mkObj [("kind", .str "bar")])] :: supUnitsFrom D m rest
+  | .set R :: rest =>
+      (List.range R.candidates.length).filterMap (fun i =>
         (R.candidates[i]?.bind (·.content)).map (fun c => Json.mkObj [("unit", .str R.unit), ("set", .str R.id),
-          ("version", toJson R.version), ("index", toJson i), ("position", toJson (position D acc.2 i)),
-          ("content", contentJson (gateContent D acc.2 i c))])), acc.2 + 1)) ([], 0)).1
+          ("version", toJson R.version), ("index", toJson i), ("position", toJson (position D m i)),
+          ("content", contentJson (gateContent D m i c))])) ++ supUnitsFrom D (m + 1) rest
+
+def supUnits (D : Doc) : List Json := supUnitsFrom D 0 D.items
 
 def vocabularyJson (D : Doc) : Json :=
   if D.sets.isEmpty then Json.mkObj [("sorts", Json.arr #[]), ("constants", Json.mkObj []), ("predicates", Json.arr #[])]

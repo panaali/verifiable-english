@@ -126,13 +126,89 @@ def fill_premises : Shape :=
             .required ["label", "ast"],
             closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])])]])]
 
+def softException : Shape := n [obj, .required ["decided_by", "sufficient", "necessary", "factors"],
+  closed [("decided_by", .type ["string", "null"]),
+    ("sufficient", ref "common.json#/$defs/generated_formulas"),
+    ("necessary", ref "common.json#/$defs/generated_formulas"),
+    ("factors", ref "common.json#/$defs/strings")]]
+
+def softNode : Shape := n [obj,
+  .required ["name", "predicate", "sign", "mode", "guard", "unless", "over", "rank", "alterable", "exception", "hard"],
+  closed [("name", str), ("predicate", str), ("sign", .type ["boolean"]),
+    ("mode", enumS ["strict", "default"]), ("guard", ref "common.json#/$defs/generated_formula"),
+    ("unless", ref "common.json#/$defs/generated_formulas"), ("over", ref "common.json#/$defs/strings"),
+    ("rank", .type ["string", "null"]), ("alterable", ref "common.json#/$defs/strings"),
+    ("exception", .anyOf [.type ["null"], softException]), ("hard", .type ["boolean"])]]
+
+def content : Shape := .anyOf [
+  n [obj, .required ["assertion"], closed [("assertion", ref "common.json#/$defs/generated_formula")]],
+  n [obj, .required ["norm"], closed [("norm", softNode)]],
+  n [obj, .required ["kind"], closed [("kind", enumS ["right", "right_lines", "limitation", "bar"])]]]
+
+def unit : Shape := n [obj, .required ["unit", "content"],
+  closed [("unit", str), ("set", str), ("version", ref "common.json#/$defs/nat"),
+    ("index", ref "common.json#/$defs/nat"), ("position", ref "common.json#/$defs/nat"),
+    ("content", content)]]
+
+def units : Shape := n [arr, .items unit]
+
+def names : Shape := n [arr, .items (n [obj, .required ["set", "version", "candidates"],
+  closed [("set", str), ("version", ref "common.json#/$defs/nat"),
+    ("candidates", n [arr, .items (n [obj, .required ["index", "id", "position", "names"],
+      closed [("index", ref "common.json#/$defs/nat"), ("id", str),
+        ("position", ref "common.json#/$defs/nat"),
+        ("names", n [arr, .items (ref "common.json#/$defs/string_pair")])]])])]])]
+
+
+/-- A predicate entry of the filled environment: the request's entry as the norms environment decoder admits it
+    (`Route.Wire.decodeVocabulary`, `Norms.Wire.decodeRegulated`), its default `deny` where the request said
+    `unspecified`, or an `unsaid__p` entry `NormDefaults.Wire.withUnsaid` adds (arguments and description). -/
+def filledPredicate : Shape :=
+  n [obj, .required ["arguments", "description"],
+    closed [
+      ("arguments", ref "common.json#/$defs/strings"),
+      ("description", str),
+      ("verbalisation", str),
+      ("negative_verbalisation", str),
+      ("defined", n [obj, .required ["arguments", "body"],
+        closed [("arguments", ref "common.json#/$defs/strings"), ("body", ref "common.json#/$defs/fol_formula")]]),
+      ("regulated", n [obj, .required ["role", "default"],
+        closed [("role", enumS ["permission", "obligation", "plain"]), ("default", enumS ["allow", "deny"]),
+          ("act", str), ("permission", .type ["string", "null"])]])]]
+
+/-- The filled environment (review B4 of rd-6b): the case's lower environment with each `unspecified` read as
+    `deny`, `norm-defaults@0` removed and every `unsaid__p` added. Its envelope is `Route.Gate.decodeEnvelope`'s four
+    fields and every sort, constant and predicate entry is typed as `Route.Wire.decodeVocabulary` admits it. A
+    companion component's frame merges its readings' sorts (readings-defaults 3), so the entries are not compared
+    with the outer request here; the client binds the names and sorts of the answer it relays to its case
+    (ve/readings_route.py `_bind_completion`). -/
+def filledEnvironment : Shape :=
+  copied "UnspecifiedWire.filledJson: placeholderJson and withUnsaid of the request's environment" <| c
+    "NormDefaults.Wire.withUnsaid of NormDefaults.Wire.placeholderJson of the request's lower environment." [
+      obj,
+      .required ["language", "profiles", "spec_revision", "vocabulary"],
+      closed [
+        ("language", n [str, .equals "/environment/language"]),
+        ("profiles", ref "common.json#/$defs/strings"),
+        ("spec_revision", n [str, .equals "/environment/spec_revision"]),
+        ("vocabulary", n [
+          obj,
+          .required ["sorts", "predicates", "constants"],
+          closed [
+            ("sorts", n [obj, .object [] (some (n [obj, .required ["description"],
+              closed [("description", str), ("verbalisation", n [obj, .required ["singular", "plural"],
+                closed [("singular", str), ("plural", str)]])]]))]),
+            ("constants", n [obj, .object [] (some (n [obj, .required ["sort"],
+              closed [("sort", str), ("description", str), ("verbalisation", str)]]))]),
+            ("predicates", n [obj, .object [] (some (ref "#/$defs/filled_predicate"))])]])]]
+
 def filled : Shape :=
   c "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last." [
     obj,
     .required ["environment", "units"],
     closed [
-      ("environment", c "the filled environment" []),
-      ("units", arr)]]
+      ("environment", ref "#/$defs/filled_environment"),
+      ("units", units)]]
 
 def separate : Shape :=
   c "Readings.Run.runCase readings-separate: the requested set and situation's pair facts." [
@@ -174,6 +250,15 @@ def generatedPredicates : Shape :=
         ("layer", enumS ["readings", "soft", "rights"]),
         ("key", .anyOf [.type ["null"], ref "#/$defs/key"])]])]
 
+/-- Labelled premises: the slot, and under the completion `Fill_T` (`fill`). -/
+def labelledFormulas : Shape :=
+  n [
+    arr,
+    .items (n [
+        obj,
+        .required ["label", "ast"],
+        closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])]
+
 def elaborateSuperposed : List (String × Shape) := [
   ("vocabulary", n [
     obj,
@@ -187,14 +272,9 @@ def elaborateSuperposed : List (String × Shape) := [
             obj,
             .required ["name", "arguments"],
             closed [("name", str), ("arguments", ref "common.json#/$defs/strings")]])])]]),
-  ("units", arr),
-  ("slot", n [
-    arr,
-    .items (n [
-        obj,
-        .required ["label", "ast"],
-        closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])]),
-  ("names", arr),
+  ("units", units),
+  ("slot", labelledFormulas),
+  ("names", names),
   ("sizes", n [
     obj,
     .required ["sorts", "predicates", "nodes", "limits"],
@@ -209,6 +289,10 @@ def elaborateSuperposed : List (String × Shape) := [
           ("sorts", ref "common.json#/$defs/nat"),
           ("predicates", ref "common.json#/$defs/nat"),
           ("nodes", ref "common.json#/$defs/nat")]])]])]
+
+/-- On the superposed route under the completion (plan RD-6b): `Fill_T` of the superposed filled document, which
+    the superposed kinds append to the slot after the assumed atoms (`Wire.elaborateFieldsND`). -/
+def fillField : List (String × Shape) := [("fill", labelledFormulas)]
 
 /-- `fill_premises` and `filled` (Readings.Run.runElaborateNDFilled), as validate answers them. -/
 def filledFields : List (String × Shape) :=
@@ -226,7 +310,7 @@ def elaborateRoute (routes : List String) (fields : List (String × Shape)) : Sh
 
 def elaborate : Shape :=
   c
-    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled."
+    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled, and on the superposed route fill, the Fill_T the superposed kinds append to the slot (Wire.elaborateFieldsND)."
     [
       .anyOf [
         elaborateRoute ["w2", "pending", "abstention"] [("generated_predicates", generatedPredicates)],
@@ -237,7 +321,13 @@ def elaborate : Shape :=
         elaborateRoute ["w2", "pending", "abstention"] (("generated_predicates", generatedPredicates) :: filledFields),
         elaborateRoute ["enumerated"] (("generated_predicates", generatedPredicates) :: (elaborateChoices ++ filledFields)),
         elaborateRoute ["superposed"] (("generated_predicates", generatedPredicates) ::
-          (elaborateChoices ++ elaborateSuperposed ++ filledFields))]]
+          (elaborateChoices ++ elaborateSuperposed ++ fillField ++ filledFields))]]
+
+def gaps : Shape :=
+  c "Readings.Wire.gapsJson: the filled gaps a shown result depends on (readings-defaults 2.2), each the regulated predicate, the tuple's ids and the filling's answer." [
+    arr,
+    .items (n [arr, .minItems 3, .maxItems 3,
+      .prefixItems [str, ref "common.json#/$defs/strings", .type ["boolean"]]])]
 
 def conflict : Shape :=
   c
@@ -253,7 +343,8 @@ def conflict : Shape :=
             ("verdict", enumS ["CONFLICT", "UNKNOWN"]),
             ("target", n [str, .equals "/witness/target"]),
             ("assumed", ref "#/$defs/choice"),
-            ("choice", ref "#/$defs/choice")]],
+            ("choice", ref "#/$defs/choice"),
+            ("gaps", ref "#/$defs/gaps")]],
         n [
           obj,
           .required ["id", "status", "verdict", "assumed", "targets", "reading_premises"],
@@ -279,7 +370,7 @@ def certificate : Shape :=
       ("reading_premises", ref "common.json#/$defs/strings")]]
 
 def model : Shape :=
-  c "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes." [
+  c "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes; under the unspecified completion (Readings.Run.runModelND) also the filled gaps the conclusion's value (with none, the assertions' and premises') reads." [
     obj,
     .required ["id", "status", "valid", "conclusion_value", "first_failing", "assumed", "choice"],
     closed [
@@ -289,7 +380,8 @@ def model : Shape :=
       ("conclusion_value", .type ["boolean"]),
       ("first_failing", .type ["string", "null"]),
       ("assumed", ref "#/$defs/choice"),
-      ("choice", ref "#/$defs/choice")]]
+      ("choice", ref "#/$defs/choice"),
+      ("gaps", ref "#/$defs/gaps")]]
 
 def dead : Shape :=
   c "Readings.Run.runDead: whether the certificate shows the reading dead (or the readings unsatisfiable), and the finding." [
@@ -346,11 +438,6 @@ def shownModel : Shape := copied "the shown model is echoed from checked evidenc
       ("domains", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
       ("constants", n [obj, .object [] (some str)]),
       ("relations", n [obj, .object [] (some (n [arr, .items (ref "common.json#/$defs/strings")]))])]]
-
-def verdictsGap : Shape :=
-  c "a filled unsaid atom: predicate, tuple and value" [
-    arr, .minItems 3, .maxItems 3,
-    .prefixItems [str, ref "common.json#/$defs/strings", .type ["boolean"]]]
 
 def verdicts_statuses : Shape :=
   c "Readings.Run.statusesJson: each compatible choice and its row." [
@@ -475,7 +562,7 @@ def verdicts_row : Shape :=
       ("evidence", n [obj, .object [] (some (.type ["boolean"]))]),
       ("errors", n [obj, .object [] (some str)]),
       ("shown", n [obj, .object [] (some shownModel)]),
-      ("gaps", n [obj, .object [] (some (n [arr, .items verdictsGap]))]),
+      ("gaps", n [obj, .object [] (some (ref "#/$defs/gaps"))]),
       ("status_text", .type ["string", "null"])]]
 
 def verdicts_line : Shape :=
@@ -487,7 +574,7 @@ def verdicts_line : Shape :=
       ("result", .type ["string", "null"]),
       ("readings", ref "#/$defs/choice"),
       ("model", .type ["string", "null"]),
-      ("gaps", n [arr, .items verdictsGap]),
+      ("gaps", ref "#/$defs/gaps"),
       ("label", .type ["string", "null"])]]
 
 def verdicts_dead : Shape :=
@@ -703,12 +790,21 @@ def file : File where
     ("candidate", .schema candidate),
     ("validate", .schema validate),
     ("fill_premises", .schema fill_premises),
+    ("soft_exception", .schema softException),
+    ("soft_node", .schema softNode),
+    ("content", .schema content),
+    ("unit", .schema unit),
+    ("units", .schema units),
+    ("names", .schema names),
+    ("filled_predicate", .schema filledPredicate),
+    ("filled_environment", .schema filledEnvironment),
     ("filled", .schema filled),
     ("separate", .schema separate),
     ("choice", .schema choice),
     ("elaborate", .schema elaborate),
     ("validate_components", .schema (components "#/$defs/validate" "Readings.Run.validateOne")),
     ("elaborate_components", .schema (components "#/$defs/elaborate" "Readings.Run.elaborateOne" true)),
+    ("gaps", .schema gaps),
     ("conflict", .schema conflict),
     ("certificate", .schema certificate),
     ("model", .schema model),
