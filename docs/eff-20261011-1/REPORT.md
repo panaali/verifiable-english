@@ -36,7 +36,7 @@ For `17573bbb`, the merged budget is **K 997, S 9791, V 36969**. The other merge
 
 ## Tests and seeded bugs
 
-The fixture test uses file rows cut from the base, parents, and committed results of the three named merges. It checks the additive row, both derived objects, and the committed result. Other tests check equal concurrent additions with a missing base row, deleted module and count conflicts, unchanged structural treatment of `signed`/`history`/`section11`/`comment`, and rejection when the measured tree exceeds the merged budget. The existing merge-tooling test file passed with pytest's native setup omitted during iteration; the required selected-test command and full gate are recorded separately in the final result.
+The fixture test uses file rows cut from the base, parents, and committed results of the three named merges. It checks the additive row, both derived objects, and the committed result. Other tests check equal concurrent additions with a missing base row, deleted module and count conflicts, unchanged structural treatment of `signed`/`history`/`section11`/`comment`, and rejection when the measured tree exceeds the merged budget. The merge-tooling test file passed **31 tests** with pytest's native setup omitted during iteration; the required selected-test command and full gate are recorded separately in the final result.
 
 Three temporary seeded bugs in the changed Python product file were each caught by `tests/test_regen_generated.py::test_trust_merge_adds_file_deltas_and_recomputes_both_derived_values` and then removed:
 
