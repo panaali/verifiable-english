@@ -25,7 +25,8 @@ run was stopped while `test_wire_gate_corpus.py` remained active. Other units
 reported as passed, including `test_relay_mutation_gate.py`,
 `test_route_row_schemas.py`, and `test_document_lean_switch.py`. This is **not**
 a passing selected run. No full release gate, nine-corpus A/B, seeded bugs,
-pre-review gate, or final-code diff review was performed.
+or pre-review gate was performed. The two-file diff against `main` was
+reviewed; it contains only this measurement script and report.
 
 Acceptance: the measurement guard is AGENT work completed; the route, evidence,
 tests, and release gate are AGENT work pending. There are no HUMAN or EXTERNAL

@@ -25,6 +25,8 @@ LEDGER = ROOT / "docs/lean-first/b16c/evidence/residues.json.gz"
 def prior(raw: bytes, path: Path) -> dict:
     try:
         D._report(D._load_document(raw, path, None))
+    except (CheckerUnavailable, ResourceLimit) as exc:
+        return {"unavailable": str(exc)}
     except VEError as exc:
         return {"code": type(exc).__name__, "text": str(exc)}
     return {"valid": True}
@@ -53,8 +55,8 @@ def decision(case: str, raw: bytes, source_hash: str) -> dict:
             path = Path(directory) / "document.ve.md"
             path.write_bytes(raw)
             old = prior(raw, path)
-        if old.get("valid"):
-            raise RuntimeError(f"valid rights residue retained: {case}: {cause}")
+        if old.get("valid") or old.get("unavailable"):
+            raise RuntimeError(f"valid or unavailable rights residue retained: {case}: {cause}")
         row.update({"cause": cause, "prior_error": old})
     return row
 
