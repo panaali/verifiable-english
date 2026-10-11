@@ -170,6 +170,19 @@
         "exit": 1,
         "summary": "1 failed in 36.06s"
       }
+    },
+    {
+      "id": "n-file-asks-no-rule",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1: `file` on a Python file no recorded test ran answers with select_tests' rule, not \"none found\"",
+      "old": "            select_tests.python_change(sel, change, None, None, {})\n",
+      "new": "            pass\n",
+      "test": "tests/test_repo_map.py::test_file_answers_for_a_file_the_map_never_saw",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 42.06s"
+      }
     }
   ]
 }
