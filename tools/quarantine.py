@@ -10,8 +10,10 @@ A quarantined test still runs everywhere. What the quarantine changes:
   passes there it no longer fails the gate, and the record keeps both outcomes (`quarantine`); if it
   fails again it fails the gate as before;
 * an agent's selected run (`tools/select_tests.py --run`): its failure is reported as quarantined and
-  does not count towards `--maxfail` or the exit status;
-* the nightly runs with the quarantine off (`tools/gate.py --no-quarantine`): every failure blocks.
+  does not count towards `--maxfail` (tools/maxfail_pytest.py) or the exit status; a `--full` run applies
+  no quarantine;
+* `tools/gate.py --no-quarantine` turns the quarantine off, so every failure blocks. The nightly is meant
+  to run it; today it runs verify.sh, whose serial retry still passes a test that fails under load.
 
 `python3 tools/quarantine.py` checks the file and lists the active and expired entries.
 """
