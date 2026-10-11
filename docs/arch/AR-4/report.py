@@ -1,7 +1,7 @@
 """AR-4 evidence and report numbers.
 
     uv run python docs/arch/AR-4/report.py --collect   # at a clean HEAD: evidence/budget.json, evidence/scope.json
-    uv run python docs/arch/AR-4/report.py --write     # REPORT.md's generated block, from the saved evidence only
+    uv run python docs/arch/AR-4/report.py --render    # REPORT.md's generated block, from the saved evidence only
     uv run python docs/arch/AR-4/report.py --check     # exit 1 if the block or the evidence disagree (gate, merge train)
 
 `--collect` measures the head and the merge base with `tools/trust_map.py` (its `measure` and `measure_rev`, the one
@@ -133,11 +133,11 @@ def main(argv: list[str]) -> int:
         collect()
         return 0
     text = REPORT.read_text()
-    if argv == ["--write"]:
+    if argv == ["--render"]:
         REPORT.write_text(rendered(text))
         return 0
     if argv == ["--check"]:
-        found = problems() + (["REPORT.md's generated block is stale; run --write"] if rendered(text) != text else [])
+        found = problems() + (["REPORT.md's generated block is stale; run --render"] if rendered(text) != text else [])
         for problem in found:
             print(f"FAIL: {problem}", file=sys.stderr)
         return 1 if found else 0
