@@ -30,6 +30,7 @@ import select_tests  # noqa: E402
 import source_graph  # noqa: E402
 import test_map  # noqa: E402
 import test_map_recorder  # noqa: E402
+import select_tests_seeds  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
@@ -438,14 +439,42 @@ def test_operation_map_rejects_missing_and_bool_indices():
             test_map.validate(retyped)
 
 
-@pytest.mark.parametrize("op_id", ["parse", "typing", "environment", "model", "evaluate"])
-def test_five_manifest_edits_select_their_readers(op_id, tmp_path):
-    manifest = json.loads((ROOT / select_tests.MANIFEST).read_text())
-    changed = json.loads(json.dumps(manifest))
-    row = next(row for row in changed["operations"] if row["id"] == op_id)
-    row["assurance_now"] = "seeded manifest edit"
-    old, new = json.dumps(manifest), json.dumps(changed)
-    assert select_tests.changed_manifest_operations(old, new) == {op_id}
+def _read_fields(op: dict) -> tuple:
+    """What `ve` reads of an operation at run time: its authority (the guard), each Lean binding's
+    executable, mode, kinds, response and counts (`require_lean_binding`, `row_problem`) and its
+    Lean call sites (`require_lean_call_site`)."""
+    bindings = sorted(json.dumps({key: binding.get(key) for key in ("executable", "mode", "kinds", "response",
+                                                                     "counts")}, sort_keys=True)
+                      for binding in (op.get("lean") or {}).get("bindings", ()))
+    return op["authority"], bindings, sorted(op.get("lean_call_sites", ()))
+
+
+MANIFEST_SEEDS = [row for row in select_tests_seeds.seeds() if row["kind"] == "manifest"]
+
+
+@pytest.mark.parametrize("seed", MANIFEST_SEEDS, ids=[row["operation"] for row in MANIFEST_SEEDS])
+def test_seeded_manifest_edits_change_a_field_ve_reads(seed):
+    """The gate's seeds (tools/select_tests_seeds.py) must be edits a test can observe, not a field nobody reads."""
+    old = (ROOT / select_tests.MANIFEST).read_text()
+    new = seed["files"][select_tests.MANIFEST]
+    assert select_tests_seeds.manifest_text(json.loads(old)) == old  # the seed keeps the file's layout
+    assert select_tests.changed_manifest_operations(old, new) == {seed["operation"]}
+    before = next(op for op in json.loads(old)["operations"] if op["id"] == seed["operation"])
+    after = next(op for op in json.loads(new)["operations"] if op["id"] == seed["operation"])
+    assert _read_fields(before) != _read_fields(after)
+
+
+def test_the_lean_seed_adds_a_module_to_one_executable():
+    (seed,) = [row for row in select_tests_seeds.seeds() if row["kind"] == "lean"]
+    assert not (ROOT / select_tests_seeds.SEED_MODULE).exists()
+    assert set(seed["files"]) == {select_tests_seeds.SEED_MODULE, select_tests_seeds.SEED_ROOT}
+    assert "import VE.SeedProbe" in seed["files"][select_tests_seeds.SEED_ROOT]
+
+
+@pytest.mark.parametrize("seed", MANIFEST_SEEDS, ids=[row["operation"] for row in MANIFEST_SEEDS])
+def test_seeded_manifest_edits_select_their_readers(seed, tmp_path):
+    op_id = seed["operation"]
+    old, new = (ROOT / select_tests.MANIFEST).read_text(), seed["files"][select_tests.MANIFEST]
     reader, other = "tests/test_reader.py", "tests/test_other.py"
     edges = {reader: {"m": [op_id]}, other: {"p": [op_id]},
              select_tests.MANIFEST_TEST: {"m": ["*"]}}
