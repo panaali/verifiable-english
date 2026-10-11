@@ -155,6 +155,20 @@ def test_many_sorts_search_needs_no_memory():
     assert record["model"]["domains"]["s0"] == ["e0"] and code == 0
 
 
+def test_the_incidents_search_is_answered_within_a_small_budget(monkeypatch):
+    """The first countermodel search `check_document` sent Rust for the whole UDHR on 2026-10-11
+    (23 sorts with the reading sort, bound 2), as recorded on the way to the binary. Before the fix
+    it reached 2 GB in 11 s (and 99 GB in the incident). Now it is answered within 64 MiB, through
+    the client that sent it."""
+    case = json.loads((ROOT / "tests/data/oom/udhr-whole-search.jsonl").read_text())
+    assert len(case["environment"]["vocabulary"]["sorts"]) == 23 and case["max_domain_size"] == 2
+    monkeypatch.setenv("VE_RUST_MEMORY_LIMIT", str(64 << 20))
+    rust_jsonl._close_all()
+    record = rust_jsonl.run(case)
+    assert record["status"] == "Found" and record["models_checked"] <= case["max_models"]
+    rust_jsonl._close_all()
+
+
 def _limits(pid: int) -> dict[str, str]:
     rows = Path(f"/proc/{pid}/limits").read_text().splitlines()[1:]
     return {row[:26].strip(): row[26:47].strip() for row in rows}
@@ -215,6 +229,19 @@ def test_one_shot_runners_run_under_an_address_space_limit():
     done = process_limits.run_limited([sys.executable, "-c", grow], input=b"", timeout=HANG_TIMEOUT,
                                       address_space=256 << 20)
     assert done.returncode != 0 and b"MemoryError" in done.stderr
+
+
+def test_lean_one_shot_routes_run_under_their_address_space_limit(monkeypatch, tmp_path):
+    seen = []
+
+    def spy(argv, **options):
+        seen.append(options["address_space"])
+        return subprocess.CompletedProcess(argv, 0, b"[]", b"")
+
+    monkeypatch.setattr(lean_backend, "run_limited", spy)
+    with pytest.raises(CheckerUnavailable):  # no row for the one case: no answer
+        lean_backend.run_route_cases(tmp_path / "ve_route", "norms", [{"id": "a"}], timeout=HANG_TIMEOUT)
+    assert seen == [lean_backend.ADDRESS_SPACE]
 
 
 def test_one_shot_runner_timeout_kills_the_child():
