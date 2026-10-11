@@ -6525,6 +6525,7 @@
         "VE.Readings.Wire.admitNDOf",
         "VE.Readings.Wire.choiceLayered",
         "VE.Readings.Wire.fillHoldsOf",
+        "VE.Readings.Wire.fillRest",
         "VE.Readings.Wire.filledEnvironment",
         "VE.Readings.Wire.filledRV",
         "VE.Readings.Wire.ndChecked",
@@ -6584,14 +6585,22 @@
     "VE/Readings/Verdicts.lean": {
       "S": [
         "VE.Readings.ChoiceResult",
+        "VE.Readings.ChoiceSem",
         "VE.Readings.ConsistentU",
+        "VE.Readings.ConsistentX",
         "VE.Readings.CounterU",
+        "VE.Readings.CounterX",
         "VE.Readings.Covers",
+        "VE.Readings.CoversG",
         "VE.Readings.Holds",
+        "VE.Readings.HoldsG",
         "VE.Readings.ReadingVerdict",
         "VE.Readings.Reason",
         "VE.Readings.RowsHold",
-        "VE.Readings.excludedBy"
+        "VE.Readings.RowsHoldG",
+        "VE.Readings.excludedBy",
+        "VE.Readings.ndSem",
+        "VE.Readings.xSem"
       ],
       "C": [
         "VE.Readings.allows",
@@ -10796,6 +10805,38 @@
         "VE.Readings.ComponentsExamples.c1",
         "VE.Readings.ComponentsExamples.docJ",
         "VE.Readings.ComponentsExamples.rows2"
+      ]
+    },
+    "VE/NormDefaults/LayeredEntail.lean": {
+      "D[V]": [
+        "VE.NormDefaults.Wire.premisesX"
+      ],
+      "S": [
+        "VE.NormDefaults.EntailsX"
+      ],
+      "C": [
+        "VE.NormDefaults.Wire.conflictFreeCheckX",
+        "VE.NormDefaults.modelCheckX"
+      ],
+      "G[V]": [
+        "VE.NormDefaults.Wire.bindCertX"
+      ]
+    },
+    "VE/Readings/SoftDefaults.lean": {
+      "C": [
+        "VE.Readings.WellFormedSD",
+        "VE.Readings.contentSoft",
+        "VE.Readings.softShaped"
+      ],
+      "D[V]": [
+        "VE.Readings.softXL"
+      ],
+      "G[V]": [
+        "VE.Readings.choiceX",
+        "VE.Readings.filledAuthorEnv",
+        "VE.Readings.freeX",
+        "VE.Readings.oneX",
+        "VE.Readings.softX"
       ]
     }
   }
