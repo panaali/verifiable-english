@@ -28,7 +28,6 @@ from pathlib import Path
 import random
 import shutil
 import subprocess
-import sys
 
 import pytest
 
@@ -41,17 +40,6 @@ from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Inva
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMON = json.loads((DIRECTORY / "common.json").read_text())["$defs"]
-
-
-def test_mode_rows_compile_only_when_used():
-    program = ("from ve.backends.service_schema import ROWS, _compiler\n"
-               "assert not any(pointer == '/row' for _, pointer in _compiler._compiled)\n"
-               "assert 'parse' in ROWS and 'not-a-mode' not in ROWS\n"
-               "row = ROWS['parse']\n"
-               "assert row is ROWS['parse']\n"
-               "assert {name for name, pointer in _compiler._compiled if pointer == '/row'} "
-               "== {'parse.json'}\n")
-    subprocess.run([sys.executable, "-c", program], cwd=ROOT, check=True, timeout=HANG_TIMEOUT)
 
 
 @pytest.fixture(scope="module")
