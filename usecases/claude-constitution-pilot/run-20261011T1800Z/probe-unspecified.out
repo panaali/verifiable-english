@@ -1,0 +1,68 @@
+SETTLED no                                                   u0165.s01: the case holds
+UNDECIDED                                                    u0165.s01: the case does not hold
+SETTLED no                                                   u0165.s02: the case holds
+UNDECIDED                                                    u0165.s02: the case does not hold
+SETTLED no                                                   u0165.s03: the case holds
+UNDECIDED                                                    u0165.s03: the case does not hold
+SETTLED no                                                   u0165.s04: the case holds
+UNDECIDED                                                    u0165.s04: the case does not hold
+SETTLED no                                                   u0165.s05: the case holds
+UNDECIDED                                                    u0165.s05: the case does not hold
+SETTLED no                                                   u0165.s06: the case holds
+UNDECIDED                                                    u0165.s06: the case does not hold
+SETTLED no                                                   u0165.s07: the case holds
+UNDECIDED                                                    u0165.s07: the case does not hold
+SETTLED no                                                   u0156.s03: any situation
+SETTLED no                                                   u0125.s04.p2: any situation
+SETTLED yes                                                  u0052.s01: any situation (added in run 20261008T0600Z: the unit is now one strict reading)
+SETTLED yes                                                  u0123.s01: a dishonest-looking instruction within the honesty principles
+SETTLED yes                                                  u0062.s01: input is a persona
+UNDECIDED                                                    u0062.s01: input is none of the three
+SETTLED yes                                                  u0062.s01: input is specific instructions
+SETTLED no                                                   u0062.s01 and u0123.s03: a persona that also is an instruction to claim to be human
+SETTLED no                                                   u0062.s01 and u0123.s03: specific instructions that also endanger health or safety
+SETTLED no                                                   u0123.s01 and u0123.s03: a dishonest-looking instruction that also acts against the guidelines
+SETTLED yes                                                  u0123.s02: persona role-play instruction
+SETTLED no                                                   u0123.s03: instruction to claim to be human
+SETTLED no                                                   u0123.s02 and u0123.s03: a role-play instruction that also claims to be human
+SETTLED yes                                                  u0036.s05: genuine ambiguity
+UNDECIDED                                                    u0036.s05: no genuine ambiguity
+SETTLED yes                                                  u0073.s05: the case holds
+UNDECIDED                                                    u0073.s05: the case does not hold
+UNDECIDED                                                    u0073.s05: the case holds but complying is unsafe
+UNDECIDED                                                    u0073.s05: the case holds and the “generally” exception applies
+SETTLED yes                                                  u0168.s01: the case holds
+UNDECIDED                                                    u0168.s01: the case does not hold
+{
+ "a role-play instruction that also claims to be human": {
+  "status": "UNKNOWN",
+  "target": null,
+  "kind": "",
+  "tuple": []
+ },
+ "a persona that also is an instruction to claim to be human": {
+  "status": "UNKNOWN",
+  "target": null,
+  "kind": "",
+  "tuple": []
+ },
+ "no atom true": {
+  "status": "UNKNOWN",
+  "target": null,
+  "kind": "",
+  "tuple": []
+ },
+ "whole document, proof attempt": {
+  "status": "CONFLICT-FREE",
+  "detail": "",
+  "oracle_status": "CONFLICT-FREE",
+  "lean_row_keys": [
+   "id",
+   "status",
+   "targets",
+   "verdict"
+  ]
+ }
+}
+{'clarification_required': 'reachable', 'csam_generation_permitted_for_claude': 'reachable', 'cyberweapon_creation_permitted': 'reachable', 'denial_of_being_claude_permitted': 'none', 'exploit_instruction_compliance_required': 'reachable', 'firmness_required': 'reachable', 'humanity_attack_participation_permitted': 'reachable', 'illegitimate_control_involvement_permitted': 'reachable', 'infrastructure_uplift_permitted': 'reachable', 'judgment_use_required': 'none', 'operator_input_permitted': 'unknown', 'oversight_undermining_permitted': 'reachable', 'system_prompt_compliance_required': 'reachable', 'system_prompt_deception_permitted': 'none', 'weapons_uplift_permitted': 'reachable'}
+unspecified 18.42s

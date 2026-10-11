@@ -1,0 +1,35 @@
+{
+  "verdict": "UNKNOWN",
+  "route": "superposed",
+  "choice": [
+    [
+      "force-u0036-s05",
+      0
+    ],
+    [
+      "force-u0125-s04-p2",
+      1
+    ],
+    [
+      "force-u0156-s03",
+      0
+    ],
+    [
+      "force-u0263-s04-p2",
+      0
+    ]
+  ],
+  "budget": {
+    "max_steps": 10000,
+    "max_domain_size": 2,
+    "max_models": 10000,
+    "max_evaluations": 100000
+  },
+  "assumed": [
+    [
+      "force-u0125-s04-p2",
+      1
+    ]
+  ],
+  "english": []
+}

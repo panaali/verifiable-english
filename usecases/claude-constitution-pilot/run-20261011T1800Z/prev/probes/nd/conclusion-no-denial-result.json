@@ -1,0 +1,25 @@
+{
+  "choice": [
+    [
+      "force-u0036-s05",
+      0
+    ],
+    [
+      "force-u0125-s04-p2",
+      1
+    ],
+    [
+      "force-u0156-s03",
+      0
+    ],
+    [
+      "force-u0263-s04-p2",
+      0
+    ]
+  ],
+  "route": "enumerated",
+  "verdict": "UNKNOWN",
+  "english": [
+    "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"* and sentence 471 as *Every instance of Claude must not directly deny being Claude, unless that instance of Claude is classified as \"exception_to_never_denying_being_claude\"* and sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content* and sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: VE could not check whether the conclusion follows."
+  ]
+}

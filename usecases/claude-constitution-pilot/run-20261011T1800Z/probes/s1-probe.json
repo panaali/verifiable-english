@@ -1,0 +1,48 @@
+{
+  "a_main_with_readings@1": {
+    "profiles": [
+      "documents@1",
+      "norm-defaults@0",
+      "norms@0",
+      "readings@1",
+      "relational-fol@0"
+    ],
+    "note": "expected by composition S1 1.1: every candidate norm has content null, so no set is content-bearing and the document validates as today (the stored placeholder models are re-identified by the new environment, so the document is rewritten here). Observed: refused when the norm-defaults@0 block is built (ve/norm_defaults.py FilledBaseEnvironment drops norms@0 and keeps readings@1), with a message that is false of the document (norms@0 is listed)",
+    "accepted": true,
+    "premises": {
+      "status": "UNKNOWN",
+      "reason": "non-assertion reading elaboration pending"
+    },
+    "readings": {}
+  },
+  "b_main_with_one_strict_norm_candidate": {
+    "accepted": true,
+    "premises": {
+      "status": "UNKNOWN",
+      "reason": "non-assertion reading elaboration pending"
+    },
+    "readings": {
+      "separations": {
+        "outcome": 0,
+        "selects": 0,
+        "holds": 0
+      },
+      "findings": {
+        "SeparatedByDecisionOnly": 0,
+        "SeparatedByActOnly": 0
+      }
+    }
+  },
+  "c_s1_document_with_norm_defaults@0": {
+    "accepted": false,
+    "error_class": "UnsupportedProfile",
+    "rejection": "UnsupportedProfile: norm-defaults@0 documents on the soft and rights routes await the Lean route"
+  },
+  "s1_document_profiles": [
+    "documents@1",
+    "norms@0",
+    "readings@1",
+    "relational-fol@0",
+    "soft-norms@0"
+  ]
+}

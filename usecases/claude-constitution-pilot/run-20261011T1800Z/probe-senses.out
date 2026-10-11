@@ -1,0 +1,193 @@
+{
+ "bare": {
+  "source": "Claude is corrigible.",
+  "reading": {
+   "status": "open",
+   "code": "Unresolved",
+   "units": [
+    {
+     "sentence": 0,
+     "candidates": [
+      {
+       "choice": [
+        [
+         "corrigible",
+         1
+        ]
+       ],
+       "formula": [
+        "unary",
+        "sense__corrigible_1",
+        [
+         "const",
+         "claude"
+        ]
+       ],
+       "lines": "In this document, corrigible means oversight respecting.",
+       "mark": false
+      },
+      {
+       "choice": [
+        [
+         "corrigible",
+         2
+        ]
+       ],
+       "formula": [
+        "unary",
+        "sense__corrigible_2",
+        [
+         "const",
+         "claude"
+        ]
+       ],
+       "lines": "In this document, corrigible means blindly obedient.",
+       "mark": false
+      }
+     ],
+     "unresolved": [
+      "corrigible"
+     ]
+    }
+   ]
+  }
+ },
+ "default_line": {
+  "source": "In this document, corrigible means oversight respecting.\nClaude is corrigible.",
+  "reading": {
+   "status": "one",
+   "units": [
+    {
+     "sentence": 1,
+     "formula": [
+      "unary",
+      "sense__corrigible_1",
+      [
+       "const",
+       "claude"
+      ]
+     ],
+     "candidates": [],
+     "unresolved": []
+    }
+   ]
+  }
+ },
+ "switch_parenthetical": {
+  "source": "Claude is corrigible (meaning oversight respecting).",
+  "reading": {
+   "status": "one",
+   "units": [
+    {
+     "sentence": 0,
+     "formula": [
+      "unary",
+      "sense__corrigible_1",
+      [
+       "const",
+       "claude"
+      ]
+     ],
+     "candidates": [],
+     "unresolved": []
+    }
+   ]
+  }
+ },
+ "switch_rejected_sense": {
+  "source": "Claude is not corrigible (meaning blindly obedient).",
+  "reading": {
+   "status": "one",
+   "units": [
+    {
+     "sentence": 0,
+     "formula": [
+      "not",
+      [
+       "unary",
+       "sense__corrigible_2",
+       [
+        "const",
+        "claude"
+       ]
+      ]
+     ],
+     "candidates": [],
+     "unresolved": []
+    }
+   ]
+  }
+ },
+ "two_words_no_default": {
+  "source": "Claude is corrigible and Claude is safe.",
+  "reading": {
+   "status": "none",
+   "code": "NoDerivation",
+   "sentence": 0,
+   "text": "Sentence 1 has no reading with the current vocabulary. Expected 'the same as ' here. Use the English paraphrase as a writing example."
+  }
+ },
+ "unknown_gloss": {
+  "source": "Claude is corrigible (meaning obedient).",
+  "reading": {
+   "status": "none",
+   "code": "NoDerivation",
+   "sentence": 0,
+   "text": "Sentence 1 has no reading with the current vocabulary. Expected 'the same as ' here. Use the English paraphrase as a writing example."
+  }
+ },
+ "constitution_sentence_kept_open": {
+  "source": "Claude is safe.",
+  "reading": {
+   "status": "open",
+   "code": "Unresolved",
+   "units": [
+    {
+     "sentence": 0,
+     "candidates": [
+      {
+       "choice": [
+        [
+         "safe",
+         1
+        ]
+       ],
+       "formula": [
+        "unary",
+        "sense__safe_1",
+        [
+         "const",
+         "claude"
+        ]
+       ],
+       "lines": "In this document, safe means broadly safe.",
+       "mark": false
+      },
+      {
+       "choice": [
+        [
+         "safe",
+         2
+        ]
+       ],
+       "formula": [
+        "unary",
+        "sense__safe_2",
+        [
+         "const",
+         "claude"
+        ]
+       ],
+       "lines": "In this document, safe means harmless.",
+       "mark": false
+      }
+     ],
+     "unresolved": [
+      "safe"
+     ]
+    }
+   ]
+  }
+ }
+}
+senses 1.41s

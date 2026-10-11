@@ -1,0 +1,127 @@
+{
+ "a_front_matter_default": {
+  "texts": [
+   "Claude is corrigible."
+  ],
+  "senses": {
+   "packs": [
+    "pack.json"
+   ],
+   "defaults": {
+    "corrigible": 1
+   }
+  },
+  "loaded": true,
+  "units": {
+   "u1": {
+    "kind": "asserted",
+    "status": "CHECKED"
+   }
+  },
+  "lines": []
+ },
+ "b_no_choice_made": {
+  "texts": [
+   "Claude is corrigible."
+  ],
+  "senses": {
+   "packs": [
+    "pack.json"
+   ]
+  },
+  "loaded": false,
+  "refusal": "Sentence 1 uses corrigible, which has two senses here: oversight respecting; blindly obedient. Add the line \"In this document, corrigible means oversight respecting.\" or write corrigible (meaning blindly obedient)."
+ },
+ "c_written_definition_line": {
+  "texts": [
+   "In this document, corrigible means oversight respecting.",
+   "Claude is corrigible."
+  ],
+  "senses": {
+   "packs": [
+    "pack.json"
+   ]
+  },
+  "loaded": true,
+  "units": {
+   "u1": {
+    "kind": "definition",
+    "status": "LABELLED"
+   },
+   "u2": {
+    "kind": "asserted",
+    "status": "CHECKED"
+   }
+  },
+  "lines": [
+   "u1"
+  ]
+ },
+ "d_parenthetical_switch": {
+  "texts": [
+   "Claude is corrigible (meaning oversight respecting)."
+  ],
+  "senses": {
+   "packs": [
+    "pack.json"
+   ]
+  },
+  "loaded": true,
+  "units": {
+   "u1": {
+    "kind": "asserted",
+    "status": "CHECKED"
+   }
+  },
+  "lines": []
+ },
+ "e_the_rejected_sense_negated": {
+  "texts": [
+   "Claude is not corrigible (meaning blindly obedient)."
+  ],
+  "senses": {
+   "packs": [
+    "pack.json"
+   ]
+  },
+  "loaded": true,
+  "units": {
+   "u1": {
+    "kind": "asserted",
+    "status": "CHECKED"
+   }
+  },
+  "lines": []
+ },
+ "f_two_words_one_default": {
+  "texts": [
+   "Claude is corrigible and Claude is safe."
+  ],
+  "senses": {
+   "packs": [
+    "pack.json"
+   ],
+   "defaults": {
+    "corrigible": 1
+   }
+  },
+  "loaded": false,
+  "refusal": "Sentence 2 has no reading with the current vocabulary."
+ },
+ "g_bad_default": {
+  "texts": [
+   "Claude is corrigible."
+  ],
+  "senses": {
+   "packs": [
+    "pack.json"
+   ],
+   "defaults": {
+    "corrigible": 3
+   }
+  },
+  "loaded": false,
+  "refusal": "InvalidInput: the front matter gives corrigible the default 3, which is not one of its senses"
+ }
+}
+senses_doc 1.48s
