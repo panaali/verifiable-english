@@ -64,7 +64,7 @@ def main() -> int:
                 if text.count(before) != 1:
                     raise RuntimeError(f"expected one mutation site for {bug} in {path}")
                 (ROOT / path).write_text(text.replace(before, after, 1))
-            records.append({"bug": bug, "claim": claim, "files": sorted(originals),
+            records.append({"bug": bug, "claim": claim, "file": edits[0][0], "files": sorted(originals),
                             "runs": [run(test) for test in tests]})
         finally:
             for path, text in originals.items():
