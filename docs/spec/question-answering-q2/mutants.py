@@ -114,6 +114,16 @@ def main() -> int:
     only = set(sys.argv[1:])
     saved = HERE / "evidence/mutants.json"
     results = [r for r in json.loads(saved.read_text())["mutants"] if r["id"] not in only] if only else []
+    order = [m["id"] for m in MUTANTS]
+
+    def save():
+        """Write the results so far (each mutant's result is kept even if a later one is stopped)."""
+        results.sort(key=lambda r: order.index(r["id"]))
+        out = {"mutants": results, "all_caught": len(results) == len(MUTANTS) and all(r["caught"] for r in results)}
+        saved.parent.mkdir(exist_ok=True)
+        saved.write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
+        return out
+
     lock_text = LOCK.read_text()
     try:
         for m in MUTANTS:
@@ -142,17 +152,14 @@ def main() -> int:
                     render_schemas()
             results.append({k: m[k] for k in ("id", "language", "file", "behaviour", "test")} |
                            {"caught": caught, "evidence": failing or tail[-2:]})
+            save()
             print(f"{m['id']}: {'caught' if caught else 'NOT CAUGHT'}", flush=True)
     finally:
         LOCK.write_text(lock_text)
         restored = build_service()
         if restored not in json.loads(lock_text)["ve_service"]:
             print(f"the restored build {restored} is not in the lock; rebuild and admit it", file=sys.stderr)
-    results.sort(key=lambda r: [m["id"] for m in MUTANTS].index(r["id"]))
-    out = {"mutants": results, "all_caught": all(r["caught"] for r in results)}
-    (HERE / "evidence").mkdir(exist_ok=True)
-    (HERE / "evidence/mutants.json").write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
-    return 0 if out["all_caught"] else 1
+    return 0 if save()["all_caught"] else 1
 
 
 if __name__ == "__main__":
