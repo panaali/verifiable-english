@@ -376,6 +376,35 @@ def test_outward_rust_dependency_is_rejected(staging):
     rejects(staging, "rust: outward crate dependency: ve-core -> ve")
 
 
+def test_staged_rust_workspace_is_read_by_cargo(staging):
+    # A source edit runs the check on the staged workspace (manifests, sources, toolchain pin)...
+    staging.stage("rust/ve-kernel/src/lib.rs", staging.head("rust/ve-kernel/src/lib.rs") + b"\n// A comment.\n")
+    passes(staging)
+    # ...where a new module in the facade fails, so does a deleted facade, and so does a staged
+    # manifest cargo cannot read.
+    staging.stage("rust/ve-core/src/extra.rs", "pub fn f() {}\n")
+    rejects(staging, "rust: module in the ve-core facade: extra.rs; ")
+    staging.stage("rust/ve-core/src/extra.rs", None)
+    staging.stage("rust/ve-core/src/lib.rs", None)
+    rejects(staging, "rust: the ve-core facade has no library target")
+    staging.stage("rust/ve-core/src/lib.rs", staging.head("rust/ve-core/src/lib.rs"))
+    staging.stage("rust/ve-kernel/Cargo.toml", "[package\n")
+    rejects(staging, "rust: cannot read the Rust workspace: cargo metadata failed: ")
+
+
+def test_staged_facade_code_and_mismatched_path_dependency_are_rejected(staging):
+    # AR-8 review F3 and F2 through the hook: an inline module in the facade's staged lib.rs, and a
+    # path dependency whose declared name is not the crate its path holds.
+    facade = staging.head("rust/ve-core/src/lib.rs")
+    staging.stage("rust/ve-core/src/lib.rs", facade + b"pub mod extra {\n    pub fn f() {}\n}\n")
+    line = facade.count(b"\n") + 1
+    rejects(staging, f"rust: line {line} of the ve-core facade is not part of a re-export: 'pub mod extra {{'")
+    staging.stage("rust/ve-core/src/lib.rs", facade)
+    staging.stage("rust/ve-profile/Cargo.toml",
+                  staging.head("rust/ve-profile/Cargo.toml") + b'wrong = { path = "../ve-kernel" }\n')
+    rejects(staging, "rust: mismatched path dependency: ve-profile -> wrong")
+
+
 @pytest.mark.parametrize("line, token", [
     ("theorem planted : 1 = 1 := by sorry", "sorry"),
     ("theorem planted : 1 = 1 := by admit", "admit"),
