@@ -110,10 +110,22 @@ were equivalent on the UDHR's data and were replaced:
 
 ## Scope
 
-Saved `main..HEAD --no-merges` at the code head `b6cf9fbb` ([`scope.json`](evidence/scope.json)): **6 commits**,
-29 files, **23,400 lines added**, **0 deleted**. Of these, 4 lines are product code (`ve/readings_route.py`), 247
-are tests and 11 are gate-collection pins. The rest is the pilot's scripts, data and evidence. Commits: `c3e40b7a`,
-`ae7fa229`, `a497cf56`, `98d8dbf0`, `8fed59c9`, `b6cf9fbb`.
+Saved `main..HEAD --no-merges` at the code head `6a80b9a3` ([`scope.json`](evidence/scope.json)): **10 commits**,
+36 files, **23,709 lines added**, **1 deleted**. Of these, 4 lines are product code (`ve/readings_route.py`), 249
+are tests, 4 are difffuzz corpus exclusions and 11 are gate-collection pins. The rest is the pilot's scripts, data,
+evidence and this DELTA. Commits: `c3e40b7a`, `ae7fa229`, `a497cf56`, `98d8dbf0`, `8fed59c9`, `b6cf9fbb`,
+`b90219bb`, `b52c22a4`, `5e5ac815`, `6a80b9a3`.
+
+- `b52c22a4` is `main`'s `6b66f087`, cherry-picked (the one deleted line): the layer map's row 4 lists `ve.ask`,
+  which `tools/test_layer_policy.py` needs and the merge base lacks.
+- `6a80b9a3` registers the run in two corpora that read every file under `usecases/` (the cost of deviation 7):
+  `tools/difffuzz_corpus.py` excludes the run's answers, reports, metrics and `unmigrated.json` as artifacts (none
+  holds an environment, a request or a model; `test_every_fixture_is_read_or_excluded_with_a_reason` checks that
+  for `no-input` and that every pattern matches), and `tests/test_lean_document_wrapper.py` lists the migrated
+  document among the fail-closed seeds. Lean's document mode refuses it with "JSON reader: null in reading_sets"
+  (the 27 sets left on W2 keep `content: null`), as it refuses `constitution-nd-readings`; Python answers ok.
+- `5e5ac815` makes `mutants.py` build its pytest command with `tools/nested_pytest.py`
+  (`test_every_pytest_command_is_built_by_the_builder`); the seeded bugs were rerun with it.
 
 ## Statements, manifests and limits
 
@@ -124,8 +136,9 @@ are tests and 11 are gate-collection pins. The rest is the pilot's scripts, data
   check is not weakened; sibling finding B1).
 - No limit is copied into product code. The pilot's test reads `MAX_DOCUMENT_BYTES` and `MAX_CHOICES` from their
   owners, and the per-frame limits are the frozen decoders', under which Lean admitted the document.
-- The gate's Lean binaries (`ve_conformance`, `ve_service`, `ve_senses_route`) were deleted with their traces and
-  relinked by `lake build` before the gate (sibling finding B2). `ve_service`'s hash is pinned in `checkers.lock`.
+- The gate's Lean binaries come from a build from source in this worktree: its `lean/.lake` was empty on
+  2026-10-11, and `lake build` built all 881 jobs (57 min) before the selected tests and the gate (sibling finding
+  B2). The new `ve_service`'s SHA-256 (`e4e92788…`) is the one pinned in `lean/checkers.lock`.
 
 ## Sibling findings (rd-6b review), checked
 
