@@ -1,5 +1,5 @@
 {
-  "commit": "8482c8c4f7e8ef1be9447423a08443634f465631",
+  "commit": "dcd78b88152a8bd682dc7fc845b41d02403f90cb",
   "numbers": {
     "counts": {
       "collected_test_ids": 14437,
@@ -47,7 +47,7 @@
       "conformance_python": 19170,
       "lean": 158021,
       "tests_python": 106500,
-      "tools_python": 20301,
+      "tools_python": 20303,
       "ve_backends_python": 4276,
       "ve_backends_schema_json": 8068,
       "ve_python": 39866
