@@ -634,3 +634,24 @@ certificate proves the conclusion `Q` itself, since the certificate reads `Q` on
 `avoid_required` is the expansion's. On a base with one agent and one user, both readings require
 `avoid_required`, so the conclusion is false on their expansions. The other two `_extra` statements and
 `Transfers` are as approved.
+
+# Superposition under the unspecified completion (readings-defaults, batch RD-6b)
+
+Specification: [readings-defaults.md](../docs/spec/readings-defaults.md) section 6.7 and
+[readings-defaults-PLAN.md](../docs/spec/readings-defaults-PLAN.md) RD-6b. The exact three theorem statements are
+checked by `tools/check_readings_defaults_statements.py`; the theorem inventory and axiom audit include their
+proofs. The norms chain now uses the superposed row when the filled document is superposable and its `UDoc` is well
+formed; otherwise Lean names the enumerated route's cause.
+
+* `fill_transfers`: each `Fill_T` premise over the superposed filled document reads the same as its per-choice
+  premise after a slot-admissible base is pulled to the reading's document. This instantiates RD-6a's `Transfers`.
+* `nd_superpose_conflict_free`: conflict freedom of the filled superposition with `Fill_T` in its slot is equivalent
+  to conflict freedom under the completion for every compatible reading extending the assumed choice.
+* `nd_superpose_all`: a checked certificate on that filled superposition proves the conclusion under the
+  completion in every compatible reading extending the assumed choice.
+
+`SupExtra.lean` carries the transfer and these theorems, with `SupFill.lean` supplying the canonical fill lemmas.
+`SupFillWire.lean` routes, elaborates, and checks conflict,
+certificate and model evidence on the filled superposition. `UnspecifiedWire.lean` supplies the filled environment,
+`Fill_T`, and the service row. The response shape and its encoder proof are in `ResponseShape`; Python validates the
+row against that generated shape and binds its request references before using it.

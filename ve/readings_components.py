@@ -63,7 +63,7 @@ def load(environment, units, reading_sets, *, couplings=(), narrowings=(), execu
     with relayed():
         from .backends.service_schema import check_row
         for case, row in zip(cases, (elaborate, validate)):
-            check_row("readings-route", row, {"id": row.get("id"), "kind": case["kind"]}, 0)
+            check_row("readings-route", row, case, 0)
             _need(row["id"] == case["id"] and set(row) == {"id", "status", "components"})
         names = [c["component"] for c in elaborate["components"]]
         _need(names == ["main", *_companion_sets(document)])
@@ -223,8 +223,13 @@ class _Part(Enumerated):
         finding = (self.row.get("finding") or {}).get("text")
         if finding is not None and not finding.startswith(_NOT_SUPERPOSABLE):
             raise CheckerUnavailable("ReadingsConformance: a component's finding names no sets")
+        # RD-6b can elaborate a filled component on the superposed route, with no
+        # non-superposable finding. Its RD-3 verdict replay remains enumerated and
+        # names every open set as the completion's finding.
+        finding_sets = ([R.id for R in self.sets] if self.completion else
+                        [] if finding is None else finding.removeprefix(_NOT_SUPERPOSABLE).split(", "))
         return _Frame(case, None if self.choices is None else [self.choice_json(c) for c in self.choices],
-                      self.completion, [] if finding is None else finding.removeprefix(_NOT_SUPERPOSABLE).split(", "))
+                      self.completion, finding_sets)
 
     def _verdicts(self, question, query=None, **fields):  # noqa: D401 - the product asks every case at once
         raise CheckerUnavailable("ReadingsConformance: a component's verdicts are the product's")
