@@ -480,6 +480,78 @@ def test_semantic_registration_reads_only_presence(monkeypatch):
     assert events == [("ve.manifest.presence", "parse")]
 
 
+MANIFEST_EVENTS = {"ve.manifest.all", "ve.manifest.operation", "ve.manifest.presence"}
+
+
+def _mapping_reads() -> list[str]:
+    """Every way to read a Mapping: its public methods and the dunders `in`, `[]`, `len`, `==`, iteration."""
+    from collections.abc import Mapping
+    return sorted({name for name in dir(Mapping) if not name.startswith("_")}
+                  | {"__contains__", "__eq__", "__getitem__", "__iter__", "__len__", "__ne__"})
+
+
+@pytest.mark.parametrize("method", _mapping_reads())
+def test_every_read_of_the_operation_table_is_an_audit_event(method, monkeypatch):
+    """However code reads `ve.assurance.OPERATIONS`, the recorder sees an operation, presence or whole-table event."""
+    from ve import assurance
+    events = []
+    monkeypatch.setattr(assurance.sys, "audit", lambda *args: events.append(args))
+    table = assurance.OPERATIONS
+    call = {"get": lambda: table.get("parse"), "__getitem__": lambda: table["parse"],
+            "__contains__": lambda: "parse" in table, "__eq__": lambda: table == {},
+            "__ne__": lambda: table != {}, "__iter__": lambda: list(table), "__len__": lambda: len(table),
+            "keys": lambda: list(table.keys()), "values": lambda: list(table.values()),
+            "items": lambda: list(table.items())}[method]
+    call()
+    assert events and {event[0] for event in events} <= MANIFEST_EVENTS
+    if method in ("get", "__getitem__"):
+        assert events == [("ve.manifest.operation", "parse")]
+    elif method == "__contains__":
+        assert events == [("ve.manifest.presence", "parse")]
+    else:
+        assert ("ve.manifest.all",) in events
+
+
+def test_difffuzz_binding_lookup_is_a_recorded_manifest_read():
+    """The review's bypass: `tools/difffuzz.py` scanned every binding without an audit event."""
+    import difffuzz
+    from ve import assurance
+    events = []
+    original = assurance.sys.audit
+
+    def hook(*args):
+        if args[0] in MANIFEST_EVENTS:
+            events.append(args)
+        return original(*args)
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(assurance.sys, "audit", hook)
+        difffuzz.manifest_bindings("ve_conformance", "check-certificate", [])
+    assert ("ve.manifest.all",) in events
+
+
+def test_no_module_reads_assurance_state_around_the_audited_api():
+    """`ve.assurance`'s private state (the raw manifest, the id table, the migrated set) is read only
+    inside the module, so every read elsewhere goes through an audited accessor. Checked on the
+    parsed source of every tracked Python file."""
+    offenders = []
+    for path in subprocess.run(["git", "ls-files", "*.py"], cwd=ROOT, capture_output=True, text=True,
+                               check=True).stdout.split():
+        if path == "ve/assurance.py":
+            continue
+        source = (ROOT / path).read_text(encoding="utf-8", errors="replace")
+        if "assurance" not in source:
+            continue
+        for node in ast.walk(ast.parse(source, path)):
+            if isinstance(node, ast.ImportFrom) and (node.module or "").split(".")[-1] == "assurance":
+                offenders += [f"{path}:{node.lineno} imports {alias.name}" for alias in node.names
+                              if alias.name.startswith("_")]
+            elif isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name) \
+                    and node.value.id == "assurance" and node.attr.startswith("_") \
+                    and not node.attr.startswith("__"):
+                offenders.append(f"{path}:{node.lineno} reads assurance.{node.attr}")
+    assert offenders == []
+
+
 def test_manifest_shared_field_or_missing_map_selects_full(tmp_path):
     old = (ROOT / select_tests.MANIFEST).read_text()
     changed = json.loads(old)
