@@ -45,15 +45,15 @@ def countermodel : Shape :=
     closed [("id", n [str, .equals "/id"]), ("status", constS "ok"), ("refutes", .type ["boolean"])]]
 
 def certificate : Shape :=
-  c "background: the number of regenerated Background premises (fullBackground)." [
+  c "background: the number of regenerated Background premises (fullBackground); its value is the service's." [
     obj,
     .required ["id", "status", "valid", "background", "steps"],
     closed [
       ("id", n [str, .equals "/id"]),
       ("status", constS "ok"),
       ("valid", .type ["boolean"]),
-      ("background", ref "common.json#/$defs/nat"),
-      ("steps", ref "common.json#/$defs/nat")]]
+      ("background", n [ref "common.json#/$defs/nat", .backgroundBound]),
+      ("steps", n [ref "common.json#/$defs/nat", .maxSteps])]]
 
 def «dependency-order» : Shape :=
   c

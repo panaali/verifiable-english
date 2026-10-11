@@ -184,16 +184,28 @@ def _append(record: dict) -> None:
 # Rust keeps search; Python has none). There is nothing to shadow, and differential harnesses must not
 # compare a "Python" answer of these operations with that engine's own (`conformance.three_way`,
 # `tools/difffuzz.py`): they compare it with recorded answers or with another engine's check instead.
-SINGLE_OWNER = {"countermodel_search": "rust", "distinguishing_model": "rust"}
+# The core operations Lean decides under every authority (lean-first batch 13b): their Python bodies are
+# deleted, so `python`, `shadow` and `rust-experimental` select Lean too. Inputs outside an operation's
+# Lean scope (the stage-2c fallbacks of docs/lean-first/b13b/DELTA.md) stay with the retained Python.
+LEAN_OWNED = frozenset({
+    "typing", "parse", "label", "dependency_order", "definitions_elaboration", "background", "bundle",
+    "norms_elaborate", "norms_certificate", "norms_conflict", "norms_admission", "admission", "graph",
+    "readings", "premise_status", "compare", "certificate_replay"})
+SINGLE_OWNER = {"countermodel_search": "rust", "distinguishing_model": "rust",
+                **dict.fromkeys(sorted(LEAN_OWNED), "lean")}
 
 
 def owned(op: str, run: Callable[[], T]) -> T:
-    """Run a single-owner operation (SINGLE_OWNER) under whatever authority is selected; observers
-    still see the selection, which the operation's constituents (its witness checks) follow.
-    Shadow has no authoritative backend, so its single implementation uses Python checks."""
+    """Run a single-owner operation (SINGLE_OWNER). A Rust-owned search runs under whatever authority is
+    selected; observers see the selection, which its constituents (its witness checks) follow, and shadow,
+    which has no authoritative backend, uses Python checks. A Lean-owned operation is Lean's under every
+    selection: observers see `lean`, and its constituents (the replays and model checks a composing
+    operation's rule reads) run on Lean, as a selected Lean authority runs them."""
     if op not in SINGLE_OWNER:
         raise ValueError(f"{op} is not a single-owner operation")
-    authority = authority_for(op)
+    authority = authority_for(op)  # an invalid selection is refused for every operation
+    if SINGLE_OWNER[op] == "lean":
+        authority = "lean"
     for observe in observers:
         observe(op, authority)
     with pinned("python" if authority == "shadow" else authority):

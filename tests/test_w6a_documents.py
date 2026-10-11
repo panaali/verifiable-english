@@ -84,6 +84,22 @@ def test_document_admission_agrees_relay_and_lean():
     assert got["report"]["root"]["meaning_id"] == quantity_meaning_id(env, ORDER)
 
 
+def test_quantity_report_rejects_undeclared_assumption_name():
+    """Quantity admission has the same graph name binding as the FOL admission routes."""
+    from ve.backends.service_schema import Compiler, Context, Invalid
+
+    raw = doc_env()
+    document = base_document(Environment(raw))
+    case = {"id": "d", "kind": "document", "environment": raw, "document": document}
+    [row] = lean([case])
+    check = Compiler().ref("quantity.json", "#/row")[0]
+    check(row, Context(case), {})
+    bad = copy.deepcopy(row)
+    bad["report"]["assumptions"][0]["name"] = "fabricated_assumption"
+    with pytest.raises(Invalid):
+        check(bad, Context(case), {})
+
+
 def mutate(document, path, value):
     result = copy.deepcopy(document)
     target = result
