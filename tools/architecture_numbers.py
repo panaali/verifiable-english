@@ -124,7 +124,6 @@ def measure(read, sizes: dict[str, int]) -> dict:
             "runtime_dependencies": len(tomllib.loads(read("pyproject.toml").decode())["project"]["dependencies"]),
             "python_layer_exceptions": len(load("tools/layer-exceptions.json")),
             "lean_layer_exceptions": len(load("tools/lean-layer-exceptions.json")),
-            "rust_module_exceptions": len(load("tools/rust-module-exceptions.json")),
             "collected_test_ids": len(load("tools/gate-collection.json")),
             "pinned_decoder_lines": load("ve/assurance-manifest.json")["lean_decoders"]["total_lines"],
         },
@@ -197,7 +196,6 @@ def render(saved: dict) -> dict[str, str]:
          counts["runtime_dependencies"]),
         ("Python layer exceptions", "`tools/layer-exceptions.json`", counts["python_layer_exceptions"]),
         ("Lean layer exceptions", "`tools/lean-layer-exceptions.json`", counts["lean_layer_exceptions"]),
-        ("Rust module exceptions", "`tools/rust-module-exceptions.json`", counts["rust_module_exceptions"]),
         ("Pinned Lean decoder lines", "`lean_decoders.total_lines` in `ve/assurance-manifest.json`",
          counts["pinned_decoder_lines"]),
     ]
