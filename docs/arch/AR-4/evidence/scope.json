@@ -1,0 +1,47 @@
+{
+ "base": "968870193193b9e8138183ed77c41e376a6e376c",
+ "head": "21d20d83ab954d74902b31b81983fbbb58c15221",
+ "commits": [
+  {
+   "hash": "21d20d83ab954d74902b31b81983fbbb58c15221",
+   "subject": "AR-4 report: the file's layout check, and the plan's line estimate missed (367, 7 per allowance)"
+  },
+  {
+   "hash": "f13e0bfc991a985d3b0128095e1c2dcfb3e64a74",
+   "subject": "AR-4 report, DELTA and evidence tool (report.py --collect/--write/--check, D4)"
+  },
+  {
+   "hash": "b7ecaee831ea952e9212def84daea5949c51fb79",
+   "subject": "AR-4 seeded bugs: ten mutants of tools/trust_map.py, each killed by its named test (tools/mutants.py)"
+  },
+  {
+   "hash": "15907fc273cb25a3bb1b17da88783c3f2c0a3b20",
+   "subject": "trust_map: --check fails when a change drops one of its base's allowances (the history only grows)"
+  },
+  {
+   "hash": "cf0aa59c59b6fa15e2aa03bca04e3a86564caee5",
+   "subject": "trust_map: an uncommitted merge on main is checked against HEAD, its first parent"
+  },
+  {
+   "hash": "cd30ea12e1928c064771f9a068d7745b686a41e2",
+   "subject": "AR-4 fixtures: ten untied V lines, inherited allowances, the merge-train write, two branches' allowances merging"
+  },
+  {
+   "hash": "341d5e50779113c4f46656c88f5310f1065f8d16",
+   "subject": "trust_map: the budget as a ratchet (AR-4, D3)"
+  }
+ ],
+ "files": [
+  "docs/arch/AR-4/DELTA.md",
+  "docs/arch/AR-4/REPORT.md",
+  "docs/arch/AR-4/evidence/migration.json",
+  "docs/arch/AR-4/evidence/mutants.json",
+  "docs/arch/AR-4/migrate_baseline.py",
+  "docs/arch/AR-4/mutants.json",
+  "docs/arch/AR-4/report.py",
+  "docs/trust-baseline.json",
+  "tests/test_consolidation_tools.py",
+  "tests/test_trust_ratchet.py",
+  "tools/trust_map.py"
+ ]
+}
