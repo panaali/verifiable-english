@@ -15,6 +15,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
+from tools import nested_pytest  # noqa: E402
+
 RUN = "usecases/udhr-pilot/run-20261010T1400Z"
 
 MUTANTS = [
@@ -55,8 +58,9 @@ def run(mutant):
         raise SystemExit(f"mutants: {mutant['name']}: the text to replace is not in {mutant['file']} once")
     try:
         path.write_text(text.replace(mutant["old"], mutant["new"]))
-        done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-x", mutant["test"]],
-                              cwd=ROOT, capture_output=True, text=True, env={**os.environ, "VE_NATIVE_PREBUILT": "1"})
+        done = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-x", mutant["test"]]),
+                              cwd=ROOT, capture_output=True, text=True,
+                              env=nested_pytest.environment(os.environ, VE_NATIVE_PREBUILT="1"))
     finally:
         path.write_bytes(original)
     lines = [line for line in done.stdout.splitlines() if line.strip()]
