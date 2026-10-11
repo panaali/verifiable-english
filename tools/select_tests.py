@@ -348,7 +348,7 @@ def file_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[st
         if d is None or not d.empty or presence_changed:
             python_impact(coverage, graph, all_units, add, path, old, new, d, called or {})
     elif kind == LEAN:
-        add(coverage.runners(runs_lean(lean_programs(graph, path, presence_changed))), f"runs Lean via {path}")
+        add(coverage.runners(runs_lean(lean_programs(graph, path))), f"runs Lean via {path}")
     elif kind == RUST:
         add(coverage.runners(runs_rust), f"runs Rust via {path}")
 
@@ -421,11 +421,12 @@ def taint(coverage: Coverage, graph: source_graph.Graph, all_units: set[str], ad
             taint(coverage, graph, all_units, add, importer, None, summary, reached, seen)
 
 
-def lean_programs(graph: source_graph.Graph, path: str, presence_changed: bool) -> set[str]:
-    """Executables a Lean input can change: those whose root imports the module."""
+def lean_programs(graph: source_graph.Graph, path: str) -> set[str]:
+    """Executables a Lean input can change: for a module (edited, added or removed) those whose
+    import closure holds it; for a project file, all of them."""
     if path.endswith(".lean"):
         return graph.executables_using(".".join(Path(path).with_suffix("").parts[1:]))
-    return set(lean_executables())  # a project file, or a module that appeared or vanished
+    return set(lean_executables())
 
 
 def runs_lean(executables: set[str]):
@@ -442,7 +443,7 @@ def lean_change(sel: Selection, change: Change) -> None:
     sel.code = sel.lean = sel.audit = True
     if path.endswith(".lean"):
         sel.checks.add(CHECK_LEAN)
-    executables = lean_programs(sel.graph, path, change.presence_changed)
+    executables = lean_programs(sel.graph, path)
     mapped(sel, change)
     tokens = {f"lean-exe:{name}" for name in executables} | {"lean-tool"}
     sel.static(lambda _, mentions: bool(tokens & mentions), f"runs Lean via {path}")

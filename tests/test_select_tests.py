@@ -606,7 +606,7 @@ def test_added_and_removed_lean_modules_select_only_importing_executables(tmp_pa
     graph.lean_imports["OtherMain"] = []
     from unittest.mock import patch
     with patch.object(source_graph, "lean_executables", return_value={"first": "Main", "second": "OtherMain"}):
-        assert select_tests.lean_programs(graph, "lean/Shared.lean", True) == {"first"}
+        assert select_tests.lean_programs(graph, "lean/Shared.lean") == {"first"}
 
 
 def test_tests_that_ran_no_drifted_code_keep_their_map_entry(tmp_path):
