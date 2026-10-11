@@ -15,6 +15,8 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
+from tools import nested_pytest  # noqa: E402  (the one builder of a nested pytest command)
 SPLIT = "tests/test_assist_split.py::"
 CASES = [
     ("recovery stops re-exporting nearest_wordings", "names",
@@ -46,9 +48,9 @@ CASES = [
 
 
 def run(test: str) -> dict:
-    env = {**os.environ, "VE_NATIVE_PREBUILT": "1"}
-    done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", "-p", "no:cacheprovider", test],
-                          cwd=ROOT, env=env, capture_output=True, text=True)
+    done = subprocess.run(nested_pytest.command(["-q", "-x", "-p", "no:cacheprovider", test]), cwd=ROOT,
+                          env=nested_pytest.environment(os.environ, VE_NATIVE_PREBUILT="1"),
+                          capture_output=True, text=True)
     return {"test": test, "exit_code": done.returncode, "failure_excerpt": done.stdout[-1500:]}
 
 
