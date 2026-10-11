@@ -42,3 +42,5 @@ resumed; the final report is `docs/spec/question-answering-q2/REPORT.md`, the de
 - Q2.1, Q2.2 (three routes), Q2.3 and Q2.5: done; all approved statements proved (`tools/question_statements.py --q2`).
 - Tests, schema, relay binding, seeded bugs, report and DELTA: done (`docs/spec/question-answering-q2/`).
 - Not done: Q2.4 (one owner of situation wording), Q2.6's evaluation, latency and W2 agreement (REPORT.md, "Not done").
+- 2026-10-11: mutants rerun on the synced code (12, each caught); a gap's elements bound to the request's evidence
+  models; relay gate rerun and saved; evidence recaptured. Next: the full gate once on the final HEAD.

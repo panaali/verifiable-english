@@ -23,8 +23,8 @@ existing untrusted generators, sends it to Lean's new `ask` mode, and prints Lea
   where a reading's name could not be read back, and the unused-sentence line once at the end.
 
 Python only runs the CLI, the generators and the display; it checks that Lean's answer is fully typed (the schema
-generated from Lean's shapes) and bound to the request (every row, line, reading, witness, source, quote, unused unit,
-unchecked name and identity the answer names exists in the request), and decides nothing (`tools/relay_lint.py`).
+generated from Lean's shapes) and bound to the request (every row, line, reading, witness, source, quote, gap
+element, unused unit, unchecked name and identity the answer names exists in the request), and decides nothing (`tools/relay_lint.py`).
 
 ## What was built, by plan item
 
@@ -70,7 +70,7 @@ The task's three proof obligations:
   edited unit, a foreign environment and an undecodable environment are refused.
 - `tests/test_ask_relay.py`: the relay's typing and binding (R8, checklist 4, 5, 7, 15): genuine answers of all three
   routes accepted; every node retyped and every field dropped refused; every id, choice, reading, witness, source,
-  quote, unused unit, unchecked name and identity rebound refused; Lean's own binding (names, evidence entries,
+  quote, gap element, unused unit, unchecked name and identity rebound refused (G1, G3, U3, U5, A1); Lean's own binding (names, evidence entries,
   asserted names); a broken split and a split differing in a base atom are not splits; a fence read as two formulas
   is not the case's unit; each request and case field replaced by 7, true, null, [], {} or a 10,000-deep list is
   refused, never answered; the mode's CPU deadline bounds the whole answer; Lean's refusal raised with its class and
@@ -87,7 +87,7 @@ The task's three proof obligations:
 
 ## Seeded bugs
 
-11 seeded bugs, 6 in Lean and 5 in Python, one per behaviour claimed, each in a file this batch changed, each caught,
+12 seeded bugs, 6 in Lean and 6 in Python, one per behaviour claimed, each in a file this batch changed, each caught,
 then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generated block). No Rust code changed.
 
 ## Build checklist
@@ -106,7 +106,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | 10 | Entry points | `ve ask` (text, `--json`, `--reading`, `--evidence`) all go through one relay call (`ve.ask._ask`); metamorphic test as in 3. |
 | 11 | No regex of a real language | The statement check uses Lean as the oracle; the text comparison is the existing whitespace-collapsed one. |
 | 12 | State machines | Not applicable. |
-| 13 | Tests can fail | 11 seeded bugs; `test_a_replay_can_fail`; the statement check's mutants. |
+| 13 | Tests can fail | 12 seeded bugs; `test_a_replay_can_fail`; the statement check's mutants. |
 | 14 | Hermetic | CLI tests use the env allowlist and `HANG_TIMEOUT`; writes go to `tmp_path`. |
 | 15 | Identity | Every identity field of the answer rebound and refused. |
 | 16 | Lists | Fixture list, gate collection, frozen inventory, decoder pins, binding probe, trust classes, layer policy, import-linter layers: generated or tested. |
@@ -163,17 +163,17 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   relay gate's, the schema, service and statement tests. The full gate ran once on the final HEAD (generated block).
 - **Seeded bugs under load**: at load 50 to 80, one run of all 11 mutants passed the one-hour limit (the Lean
   mutants rebuild `ve_service`); `mutants.py` now saves each result as it runs, and the 11 ran in four groups on the
-  same code, each caught.
+  same code, each caught. The 12th (`python-gap-unbound`) was added with the gap binding and ran on its commit.
 
 <!-- BEGIN GENERATED: report.py -->
 
-Scope: `main..HEAD --no-merges` at `67c50c9c` (base `96887019`): 28 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
+Scope: `main..HEAD --no-merges` at `8ce4952c` (base `96887019`): 30 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
 
 | Language | Files | Lines added | Lines deleted |
 |---|---:|---:|---:|
 | Lean | 26 | 5137 | 698 |
-| Python (product) | 10 | 1139 | 109 |
-| Python (tests) | 8 | 879 | 27 |
+| Python (product) | 10 | 1161 | 113 |
+| Python (tests) | 8 | 890 | 31 |
 | Rust | 0 | 0 | 0 |
 
 Recorded answers (`tests/fixtures/ask`, replayed by `tests/test_ask_fixtures.py`):
@@ -207,7 +207,7 @@ Statement check (`tools/question_statements.py --q2`, exit 0):
       changed Asked: `hnames` uses `NameReadsBackSame` (canonical JSON text, the relation `UnitBound` uses) for the approved `NameReadsBack` (kept as approved): Lean's `Json` has no decidable equality, so `=` on the read-back formula cannot be decided
     Q2 Lean check: 41 approved statements and signatures elaborated against the implementation; PASS
 
-Seeded bugs (`mutants.py`, `evidence/mutants.json`): 11 of 11 caught.
+Seeded bugs (`mutants.py`, `evidence/mutants.json`): 12 of 12 caught.
 
 | Seeded bug | File | Behaviour | Caught by |
 |---|---|---|---|
@@ -219,6 +219,7 @@ Seeded bugs (`mutants.py`, `evidence/mutants.json`): 11 of 11 caught.
 | python-choice-unbound | `ve/ask.py` | relay binding: a row's choice names the request's open sets, each once, in order | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
 | python-text-unbound | `ve/ask.py` | relay binding: the answer's text is its lines' text | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
 | python-quote-unbound | `ve/ask.py` | relay binding: a line's quote is text of the unit it names | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
+| python-gap-unbound | `ve/ask.py` | relay binding: a gap names elements of the models the request's evidence holds | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
 | python-gate-transport-only | `tools/relay_mutation_gate.py` | relay gate: ask's mutants are read as ve ask reads them, not by the transport alone | `tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it` |
 | lean-row-id-untyped | `lean/ResponseShape/Schemas/Ask.lean` | response schema: an answer row's id is the case's id | `tests/test_ask_relay.py::test_the_rows_id_is_typed_and_bound_to_the_case` |
 | python-statement-text-ignored | `tools/question_statements.py` | statement check: a Q2 statement whose text differs from the approved text fails | `tests/test_question_statements.py::test_a_changed_statement_or_definition_fails` |
