@@ -24,9 +24,12 @@ cannot go stale. A column those sources cannot fill prints "unknown".
   (`ve/backends/lean_service.py`), the files it imports and the files that import it; a relay of a
   mode is a file under `ve/` or `ve_experiments/` that calls such an entry, imported from its file,
   with the mode as a string literal (first argument or `mode=`), read with Python's own parser.
-* Tests: the coverage map of `tools/test_map.py` (the newest cached ancestor map, or `$VE_TESTMAP`):
-  the test files that ran a function holding a relay call. Without a map (or with `--static`), the
-  test files whose static imports reach a relay file.
+* Tests: `tools/select_tests.py`'s rule, from its own functions. The coverage map of `tools/test_map.py`
+  (the newest cached ancestor map, or `$VE_TESTMAP`) answers for each test file it recorded whose run
+  cannot have changed since (its drift check, `uncertain_since`, plus the working tree); the static
+  import graph answers for every other test file, and for all of them without a usable map (or with
+  `--static`). A route's tests ran a function holding a relay call (map) or import a relay file
+  (static); a file's tests are those `select_tests` picks for an edit to it, its smoke tests left out.
 * `file`: the layer from `tools/layer_policy.py` (`source_layer`); the generator that owns a generated
   file from `tools/regen_generated.py --owner` when that tool exists and offers the option.
 """
@@ -38,6 +41,7 @@ from dataclasses import dataclass, field
 import json
 import os
 from pathlib import Path
+import posixpath
 import re
 import subprocess
 import sys
@@ -49,6 +53,7 @@ for _path in (str(ROOT), str(ROOT / "tools")):
 
 from ve.backends.service_schema import MODES  # noqa: E402
 import layer_policy  # noqa: E402
+import select_tests  # noqa: E402
 import source_graph  # noqa: E402
 import test_map  # noqa: E402
 
@@ -268,48 +273,105 @@ def relay_sites(root: Path, graph) -> dict[str, list[tuple[str, str, str]]]:
 
 
 # -- Tests --------------------------------------------------------------------------------------------
-def coverage(root: Path, static: bool) -> tuple[dict | None, str]:
-    """The coverage map and where it came from, or (None, why not)."""
+@dataclass
+class Tests:
+    """Which test files run a function or use a file, by `tools/select_tests.py`'s rule.
+
+    The map answers for the units it recorded whose run cannot have changed since (`uncertain_since`
+    up to HEAD, `uncertain_units` for the working tree); the static graph answers for every other unit
+    (`Selection.static`), and for every unit without a usable map. A map recorded 94 commits back thus
+    answers for nothing it cannot vouch for, instead of reporting a function added since as run by none.
+    """
+    root: Path
+    graph: source_graph.Graph
+    coverage: select_tests.Coverage | None
+    unmapped: set[str]                # the units the static graph answers for
+    units: list[str]
+    source: str
+    closures: dict = field(default_factory=dict)  # each unit's static closure, shared by every query
+
+    def selection(self) -> select_tests.Selection:
+        sel = select_tests.Selection(self.graph, self.coverage, self.unmapped, self.units)
+        sel._closures = self.closures
+        return sel
+
+    def of_sites(self, sites: list[tuple[str, str]]) -> list[str] | None:
+        """Tests that ran a function holding a site (map) or reach a site's file (static); None: no site."""
+        if not sites:
+            return None
+        sel = self.selection()
+        for path, qualname in sites:
+            if self.coverage is not None:
+                sel.add(self.coverage.tests_of(path, qualname), f"ran {path}:{qualname}")
+            sel.static(lambda files, _, path=path: path in files, f"imports {path}")
+        return sorted(sel.reasons)
+
+    def of_file(self, path: str) -> list[str]:
+        """The tests an edit of unknown extent to `path` can affect, as `select_tests` selects them
+        (its smoke tests left out): every unit for a file that changes everything."""
+        kind = select_tests.kind_of(path)
+        if kind == select_tests.EVERYTHING_KIND:
+            return list(self.units)
+        file = self.root / path
+        text = file.read_text(encoding="utf-8", errors="replace") if file.is_file() else None
+        change = select_tests.Change(path, text, text, known=False)
+        sel = self.selection()
+        if kind == select_tests.PYTHON:
+            select_tests.python_change(sel, change, None, None, {})
+        elif kind == select_tests.LEAN:
+            select_tests.lean_change(sel, change)
+        elif kind == select_tests.RUST:
+            select_tests.rust_change(sel, change)
+        else:
+            select_tests.data_change(sel, change, {})
+        return sorted(sel.reasons)
+
+
+def test_units(graph) -> list[str]:
+    return sorted(path for path in graph.files if path.startswith("tests/test_") and path.endswith(".py"))
+
+
+def tests_from(root: Path, graph, static: bool) -> Tests:
+    """The test answers for this tree: the newest ancestor coverage map, checked for drift, or none."""
+    def without(why: str) -> Tests:
+        units = select_tests.units() if root == ROOT else test_units(graph)
+        return Tests(root, graph, None, set(units), units, f"static import graph ({why})")
+
     if static:
-        return None, "static import graph (--static)"
+        return without("--static")
+    if root != ROOT:
+        return without("the coverage map is checked for drift in this checkout only")
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True)
     try:
         path = test_map.find_map(head.stdout.strip() or "HEAD", root=root)
         if path is None:
-            return None, "static import graph (no coverage map)"
-        return test_map.load(path), f"coverage map {path}"
+            return without("no coverage map")
+        coverage = select_tests.Coverage(test_map.load(path), path)
     except (OSError, ValueError, EOFError) as error:
-        return None, f"static import graph (coverage map unreadable: {error})"
-
-
-def test_units(graph) -> set[str]:
-    return {path for path in graph.files if path.startswith("tests/test_") and path.endswith(".py")}
-
-
-def tests_of(sites: list[tuple[str, str]], data: dict | None, graph) -> list[str] | None:
-    """Test files that ran a function holding a site (map), else whose imports reach a site's file."""
-    if not sites:
-        return None
-    if data is not None:
-        indices = set()
-        for path, qualname in sites:
-            indices.update(data["functions"].get(path, {}).get(qualname, ()))
-        return sorted(data["tests"][i] for i in indices)
-    units = test_units(graph)
-    reached = set()
-    for path in {path for path, _ in sites}:
-        reached |= graph.importers(path) & units
-    return sorted(reached)
+        return without(f"coverage map unreadable: {error}")
+    units = select_tests.units()
+    try:
+        uncertain, drift = select_tests.uncertain_since(coverage, graph, set(units), "HEAD")
+        status, versions = select_tests.working_changes("HEAD")
+    except subprocess.CalledProcessError:
+        return without(f"coverage map {path} names commit {coverage.commit[:10]}, not in this repository")
+    uncertain |= select_tests.uncertain_units(coverage, graph, set(units), status, versions)
+    unmapped = (set(units) - coverage.recorded) | uncertain
+    if unmapped >= set(units):
+        return without(f"coverage map {path} vouches for no test: {drift} files changed since {coverage.commit[:10]}")
+    return Tests(root, graph, coverage, unmapped, units,
+                 f"coverage map {path} for {len(set(units) - unmapped)} test files; static import graph for"
+                 f" {len(unmapped)} unrecorded or changed since {coverage.commit[:10]}")
 
 
 # -- The map ------------------------------------------------------------------------------------------
-def build(root: Path = ROOT, static: bool = False) -> tuple[list[Route], str, dict | None]:
-    """Every mode's row, where its tests came from, and the coverage map (None without one)."""
+def build(root: Path = ROOT, static: bool = False) -> tuple[list[Route], Tests]:
+    """Every mode's row, and the test answers (they say where they come from)."""
     graph = source_graph.load(root)
     dispatch = lean_dispatch(root, graph)
     bindings = manifest_bindings(root)
     sites = relay_sites(root, graph)
-    data, tests_source = coverage(root, static)
+    tests = tests_from(root, graph, static)
     routes = []
     for mode in MODES:
         route = Route(mode)
@@ -321,9 +383,9 @@ def build(root: Path = ROOT, static: bool = False) -> tuple[list[Route], str, di
         for path, qualname, entry in sites.get(mode, []):
             route.relays.setdefault(path, set()).add(qualname)
             route.entries.add(entry)
-        route.tests = tests_of([(p, q) for p, qs in route.relays.items() for q in qs], data, graph)
+        route.tests = tests.of_sites([(p, q) for p, qs in route.relays.items() for q in qs])
         routes.append(route)
-    return routes, tests_source, data
+    return routes, tests
 
 
 def lean_files(route: Route) -> list[str]:
@@ -375,27 +437,25 @@ def owner(root: Path, path: str) -> str:
     return done.stdout.strip() or f"none ({REGEN} --owner exit {done.returncode})"
 
 
-def print_file(root: Path, path: str, routes: list[Route], data: dict | None, tests_source: str) -> None:
-    path = Path(os.path.relpath(Path(path).resolve(), root)).as_posix() if Path(path).is_absolute() else path
+def repo_path(root: Path, path: str) -> str:
+    """`path` as the repository names it: relative to the root (an absolute path made so), `/`-separated,
+    with `.`, `..` and repeated separators resolved; symbolic links are not followed."""
+    if os.path.isabs(path):
+        path = os.path.relpath(os.path.abspath(path), root)
+    return posixpath.normpath(Path(path).as_posix())
+
+
+def print_file(root: Path, path: str, routes: list[Route], tests: Tests) -> None:
+    path = repo_path(root, path)
     modes = [r.mode for r in routes
              if path == r.schema or path in lean_files(r) or path in r.relays or path in (r.tests or ())]
     layer = layer_policy.source_layer(path)
     print(f"file: {path}{'' if (root / path).exists() else ' (does not exist)'}")
     print(f"modes: {', '.join(modes) or 'none'}")
     print(f"layer: {UNKNOWN if layer is None else f'{layer} ({layer_policy.NAMES[layer]})'}")
-    if path.startswith("tests/"):
-        tests = [path]
-    elif data is not None and path in data["functions"]:
-        tests = sorted({data["tests"][i] for indices in data["functions"][path].values() for i in indices})
-    elif data is None and path.endswith(".py"):
-        graph = source_graph.load(root)
-        tests = sorted(graph.importers(path) & test_units(graph))
-    elif modes and not path.endswith(".py"):  # a mode's Lean module or schema: its route's tests
-        tests = sorted({t for r in routes if r.mode in modes for t in r.tests or ()})
-    else:
-        tests = [data["tests"][i] for i in data["reads"].get(path, ())] if data else []
-    print(f"tests ({tests_source}):" + ("" if tests else " none found"))
-    for test in tests:
+    found = tests.of_file(path)
+    print(f"tests ({tests.source}):" + ("" if found else " none found"))
+    for test in found:
         print(f"  {test}")
     print(f"generator: {owner(root, path)}")
 
@@ -446,13 +506,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "route" and args.mode not in MODES:
         print(f"unknown mode {args.mode!r}; modes: {', '.join(MODES)}", file=sys.stderr)
         return 2
-    routes, tests_source, data = build(root, args.static)
+    routes, tests = build(root, args.static)
     if args.command == "routes":
-        print_routes(routes, tests_source)
+        print_routes(routes, tests.source)
     elif args.command == "route":
-        print_route(next(r for r in routes if r.mode == args.mode), tests_source)
+        print_route(next(r for r in routes if r.mode == args.mode), tests.source)
     else:
-        print_file(root, args.path, routes, data, tests_source)
+        print_file(root, args.path, routes, tests)
     return 0
 
 
