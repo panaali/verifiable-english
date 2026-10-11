@@ -7152,155 +7152,6 @@
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-1d5c5a8f802648fd",
-   "surface": "requests",
-   "profile": "admission:admission",
-   "seed": "conformance/admission.json/18",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {
-    "kind": "admission",
-    "family": "core",
-    "lean": "route",
-    "rust": null
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "document",
-      "graph",
-      "nodes",
-      0,
-      "ast",
-      2,
-      2,
-      2,
-      2,
-      1,
-      1
-     ],
-     "number"
-    ]
-   ],
-   "input": {
-    "id": "conformance/admission.json/18",
-    "kind": "admission",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "data@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "P"
-       }
-      },
-      "predicates": {
-       "dept": {
-        "arguments": [
-         "person",
-         "$string"
-        ],
-        "description": "D"
-       }
-      },
-      "constants": {}
-     }
-    },
-    "document": {
-     "units": [],
-     "graph": {
-      "root": "f",
-      "nodes": [
-       {
-        "name": "f",
-        "ast": [
-         "forall",
-         "person",
-         [
-          "forall",
-          "$string",
-          [
-           "forall",
-           "$string",
-           [
-            "implies",
-            [
-             "and",
-             [
-              "binary",
-              "dept",
-              [
-               "var",
-               2
-              ],
-              [
-               "var",
-               1
-              ]
-             ],
-             [
-              "binary",
-              "dept",
-              [
-               "var",
-               2
-              ],
-              [
-               "var",
-               0
-              ]
-             ]
-            ],
-            [
-             "eq",
-             [
-              "var",
-              7
-             ],
-             [
-              "var",
-              0
-             ]
-            ]
-           ]
-          ]
-         ]
-        ],
-        "label": "background:flags"
-       }
-      ]
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnboundVariable",
-     "text": "UnboundVariable: Variable index 7 is outside its scope"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: ill-typed or unbound conclusion"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "1d5c5a8f802648fd",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "requests-1f92b9b5cb64aa08",
    "surface": "requests",
    "profile": "labels:label",
@@ -17285,85 +17136,6 @@
    "signature": "5b8f7a6b03709385",
    "follow_up": "DF-6",
    "minimised": false
-  },
-  {
-   "id": "requests-5c2238369f2673ba",
-   "surface": "requests",
-   "profile": "admission:admission",
-   "seed": "conformance/admission.json/0",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {
-    "kind": "admission",
-    "family": "core",
-    "lean": "route",
-    "rust": null
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "document",
-      "graph",
-      "nodes",
-      0,
-      "ast",
-      1,
-      1
-     ],
-     "object"
-    ]
-   ],
-   "input": {
-    "id": "conformance/admission.json/0",
-    "kind": "admission",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {},
-      "constants": {}
-     }
-    },
-    "document": {
-     "units": [],
-     "graph": {
-      "root": "r",
-      "nodes": [
-       {
-        "name": "c",
-        "ast": []
-       }
-      ]
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid indexed formula"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "5c2238369f2673ba",
-   "follow_up": "DF-9"
   },
   {
    "id": "requests-5c2472049161d912",
@@ -31095,188 +30867,6 @@
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-ac0058b01199427f",
-   "surface": "requests",
-   "profile": "admission:admission",
-   "seed": "conformance/admission.json/4",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {
-    "kind": "admission",
-    "family": "core",
-    "lean": "route",
-    "rust": null
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "document",
-      "graph",
-      "nodes",
-      3,
-      "certificate",
-      "trace",
-      "children",
-      0,
-      "children",
-      0
-     ],
-     "string"
-    ]
-   ],
-   "input": {
-    "id": "conformance/admission.json/4",
-    "kind": "admission",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "a person"
-       }
-      },
-      "predicates": {
-       "in_finance": {
-        "arguments": [
-         "person"
-        ],
-        "description": "works in finance"
-       },
-       "in_legal": {
-        "arguments": [
-         "person"
-        ],
-        "description": "works in legal"
-       },
-       "senior": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is senior"
-       }
-      },
-      "constants": {
-       "alice": {
-        "sort": "person",
-        "description": "Alice"
-       },
-       "bob": {
-        "sort": "person",
-        "description": "Bob"
-       },
-       "finance": {
-        "sort": "$string",
-        "description": "the string finance"
-       },
-       "legal": {
-        "sort": "$string"
-       }
-      }
-     }
-    },
-    "document": {
-     "units": [],
-     "graph": {
-      "root": "r",
-      "nodes": [
-       {
-        "name": "claim-u2",
-        "ast": [
-         "or",
-         [
-          "eq",
-          [
-           "const",
-           "finance"
-          ],
-          [
-           "const",
-           "legal"
-          ]
-         ],
-         [
-          "unary",
-          "in_finance",
-          [
-           "const",
-           "alice"
-          ]
-         ]
-        ]
-       },
-       {
-        "name": "distinct",
-        "ast": [
-         "not",
-         [
-          "eq",
-          [
-           "const",
-           "finance"
-          ],
-          [
-           "const",
-           "legal"
-          ]
-         ]
-        ]
-       },
-       {
-        "name": "r",
-        "ast": [
-         "unary",
-         "in_finance",
-         [
-          "const",
-          "alice"
-         ]
-        ],
-        "premises": [
-         "claim-u2",
-         "distinct"
-        ],
-        "certificate": {
-         "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
-         "premise_meaning_ids": [
-          "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
-          "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
-         ],
-         "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e"
-        }
-       }
-      ]
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "AdmissionError",
-     "text": "AdmissionError: node claim-u2 is not admitted under label asserted"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: fields do not match: expected [checker_version, environment_id, premise_meaning_ids, conclusion_meaning_id, trace], got [conclusion_meaning_id, environment_id, premise_meaning_ids]"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "ac0058b01199427f",
-   "follow_up": "DF-11"
-  },
-  {
    "id": "requests-ae219c50f8468e1d",
    "surface": "requests",
    "profile": "elaborated-document:evaluate",
@@ -33073,7 +32663,7 @@
    "id": "requests-b3e5f5fa0d27de1b",
    "surface": "requests",
    "profile": "admission:admission",
-   "seed": "conformance/admission.json/14",
+   "seed": "conformance/admission.json/9",
    "engines": [
     "python",
     "lean"
@@ -33086,52 +32676,28 @@
    },
    "mutation": [
     [
-     "unicode",
-     [
-      "document",
-      "reading_sets",
-      0,
-      "readings",
-      0,
-      1
-     ],
-     "nbsp"
+     "re-found",
+     [],
+     "lean-first batch 13b: the admission.json/14 input is fixed (Python's column is Lean's answer); the CI sample's admission.json/9 mutant keeps the reviewed signature"
     ]
    ],
    "input": {
-    "id": "conformance/admission.json/14",
+    "id": "conformance/admission.json/9",
     "kind": "admission",
     "environment": {
      "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
      "vocabulary": {
       "sorts": {},
-      "predicates": {},
+      "predicates": {
+       "in_legal": {
+        "arguments": [
+         "p"
+        ],
+        "description": "w"
+       }
+      },
       "constants": {}
      }
-    },
-    "document": {
-     "units": [],
-     "graph": {},
-     "reading_sets": [
-      {
-       "id": "s",
-       "version": 1,
-       "readings": [
-        [
-         "unary",
-         "i",
-         [
-          "const",
-          "a"
-         ]
-        ]
-       ]
-      }
-     ]
     }
    },
    "classes": [
@@ -33141,12 +32707,12 @@
     "python": {
      "outcome": "error",
      "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Unknown predicate 'i'"
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'p'"
     },
     "lean": {
      "outcome": "error",
      "code": "InvalidInput",
-     "text": "rejected: ill-typed or unbound conclusion"
+     "text": "rejected: fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, vocabulary]"
     },
     "rust": {
      "outcome": "n/a"
@@ -33230,103 +32796,6 @@
    },
    "signature": "b58a668305ab808b",
    "follow_up": "DF-7"
-  },
-  {
-   "id": "requests-b83b563b457d5155",
-   "surface": "requests",
-   "profile": "admission:admission",
-   "seed": "conformance/admission.json/14",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {
-    "kind": "admission",
-    "family": "core",
-    "lean": "route",
-    "rust": null
-   },
-   "mutation": [
-    [
-     "duplicate",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "in_legal",
-      "arguments"
-     ],
-     null
-    ]
-   ],
-   "input": {
-    "id": "conformance/admission.json/14",
-    "kind": "admission",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "a"
-       }
-      },
-      "predicates": {
-       "in_legal": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "w"
-       }
-      },
-      "constants": {}
-     }
-    },
-    "document": {
-     "units": [],
-     "graph": {},
-     "reading_sets": [
-      {
-       "id": "s",
-       "version": 1,
-       "readings": [
-        [
-         "unary",
-         "in_legal",
-         [
-          "const",
-          "a"
-         ]
-        ]
-       ]
-      }
-     ]
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "TypeMismatch",
-     "text": "TypeMismatch: Predicate 'in_legal' has arity 2, not 1"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: ill-typed or unbound conclusion"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "b83b563b457d5155",
-   "follow_up": "DF-9"
   },
   {
    "id": "requests-ba40eb4de965682b",

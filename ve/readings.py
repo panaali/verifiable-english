@@ -494,11 +494,13 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     Every positive proof is replayed by the certificate checker, and every
     negative claim has an independently checked finite model. Failure of
     bounded search means UNKNOWN. We never infer NONE from proof failure.
-    Under a backend authority the replays and model checks run on the backend
-    and Lean's `readings` mode must confirm an ALL, NONE or SOME verdict from
-    its evidence (`lean/VE/Service/Readings.lean`).
+    Lean owns the operation under every authority (lean-first batch 13b): the
+    replays and model checks run on Lean and its `readings` mode must confirm
+    an ALL, NONE or SOME verdict from its evidence
+    (`lean/VE/Service/Readings.lean`). Environments outside that mode's scope
+    keep the retained Python, a recorded scope gap.
     """
-    from .backends.dispatch import authority_for, composed, execute
+    from .backends.dispatch import owned
     options = {"max_steps": max_steps, "max_domain_size": max_domain_size, "max_models": max_models,
                "max_evaluations": max_evaluations, "fixed": fixed, "joint_choices": joint_choices,
                "couplings": couplings}
@@ -506,22 +508,15 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     def python():
         return _check_readings_python(env, sets, conclusion_ast, **options)
 
-    if authority_for("readings") in ("python", "rust-experimental") or not _lean_readings_scope(env):
+    if not _lean_readings_scope(env):
         return python()
-    if couplings:
-        # Coupled choices (docs/spec/rights-PLAN.md) have no Lean interface yet:
-        # every per-choice certificate and model is checked on the backend, and
-        # the coupled enumeration and its verdict stay Python's (trusted,
-        # narrowed; a recorded gap).
-        return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
-    if joint_choices is not None:
-        # Discourse joint choices (docs/spec/discourse.md) have no Lean
-        # interface yet either: each choice's certificate and model is checked
-        # on the backend, and the joint enumeration and its verdict stay
-        # Python's (a recorded gap, as for couplings).
-        return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
-    return execute("readings", {"kind": "readings"}, python,
-                   lean=lambda: _check_readings_lean(env, sets, conclusion_ast, options))
+    if couplings or joint_choices is not None:
+        # Coupled choices (docs/spec/rights-PLAN.md) and discourse joint choices
+        # (docs/spec/discourse.md) have no Lean interface yet: every per-choice
+        # certificate and model is checked on Lean, and the enumeration and its
+        # verdict stay Python's (the stage-2c fallback retained until batch 14d).
+        return owned("readings", python)
+    return owned("readings", lambda: _check_readings_lean(env, sets, conclusion_ast, options))
 
 
 def _check_readings_lean(env, sets, conclusion_ast, options):
