@@ -10,7 +10,8 @@ repo_map.py: `routes` prints every mode of `MODES` exactly once, each with its e
 `--check` passes on the tree and fails on a scratch copy of the schema directory with a file removed or
 added; two known routes print the right Lean module and relay (see `KNOWN`). Tests: a coverage map answers
 only for the test files it recorded and can still vouch for; every other test file, and every one when the
-map's commit is not in the repository, gets the static answer, never an empty one (review F1). `file` names
+map's commit is not in the repository or a map from a real ancestor vouches for none (a relay file changed
+since), gets the static answer, never an empty one (review F1). `file` names
 a path the same way however it is spelled (F2). The `routes` and `file` commands run as programs (F3).
 The import graph's cache and the account's map cache are under tmp_path (as in tests/test_select_tests.py);
 the graph starts from the account's summaries when they exist, which only saves time: entries are keyed by
@@ -284,6 +285,27 @@ def test_a_map_from_a_commit_not_in_the_repository_gives_the_static_answer(built
     assert route.tests is None or route.tests, route.tests
     assert tests.coverage is None and "not in this repository" in tests.source, tests.source
     assert route.tests == next(r for r in built[0] if r.mode == "english.question").tests
+
+
+def test_a_map_from_before_the_relay_changed_gives_the_static_answer(built, cache_env, tmp_path, monkeypatch):
+    """Review F1 on the real tree: the map was recorded at an ancestor commit, and `english.question`'s relay
+    file changed after it (`read_question` was added after c24aeab2). The one test file the map recorded only
+    imported that file, so the map named no test for the relay function; its run may have changed, so the
+    static graph answers for it and for every other test file, not the map's empty list."""
+    static = next(r for r in built[0] if r.mode == "english.question")
+    relay = "ve/backends/english_lean.py"
+    assert static.relays.get(relay) and static.tests, (static.relays, static.tests)
+    last = subprocess.run(["git", "log", "-1", "--format=%H", "--", relay], cwd=ROOT, capture_output=True,
+                          text=True, check=True).stdout.strip()
+    before = subprocess.run(["git", "rev-parse", f"{last}^"], cwd=ROOT, capture_output=True, text=True,
+                            check=True).stdout.strip()
+    recorded = static.tests[0]
+    path = write_map(tmp_path / "m.json.gz", {recorded: [(relay, "<module>")]}, before)
+    monkeypatch.setenv("VE_TESTMAP", str(path))
+    routes, tests = repo_map.build(ROOT)
+    route = {r.mode: r for r in routes}["english.question"]
+    assert recorded in tests.unmapped, tests.source
+    assert route.tests == static.tests, tests.source
 
 
 def test_file_answers_for_a_file_the_map_never_saw(rights_map):
