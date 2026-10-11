@@ -1,18 +1,42 @@
 # The soft chain under the unspecified completion (`readings@1` × `soft-norms@0` × `norm-defaults@0`): statement spec (RD-9)
 
-> Status: item-1 statement spec, draft 1 (2026-10-11), branch `design/rd-9`, written from
-> [rd-9-soft-chain-PLAN.md](rd-9-soft-chain-PLAN.md) draft 2, which applies the converged plan review
+> Status: item-1 statement spec, draft 2 (2026-10-11), branch `design/rd-9`, written from
+> [rd-9-soft-chain-PLAN.md](rd-9-soft-chain-PLAN.md) draft 3, which applies the converged plan review
 > (`manage-agents/debates/design-rd-9/`). This is what SC-0 reviews: definitions (1), the English (2), the wire (3),
 > the semantics in order (4), the diagnostics (5), the exact Lean statements (6) and the acceptance fixtures (8).
+>
+> Draft 2 applies the statement review (`manage-agents/debates/rd-9-spec/`, Astra and Fable, converged in round 3 on
+> FIX with no redesign). The edits are A1 to A4 and F1 to F6, and 12.19 to 12.23 list them:
+> **A1** admission keeps its source correspondence: `AdmittedX` gains `graphJson` and `nodes`, and `SourceDecodedX`
+> restates today's `SourceDecoded` conjunct by conjunct (6.10), with three substitution fixtures (8.3).
+> **A2** the force-twin claim is "only where", the unsaid claim states `excepted_lifts`' three hypotheses, and
+> UNDECIDED is claimed only with two opposite admissible fillings (1.6, 8.2).
+> **A3** a certificate replayed against a changed conclusion gets diagnostic 11; `valid: false` gets its own case
+> (8.3). **A4** the comprehension questions match 2.6 in the plan.
+> **F1** `choiceLayeredG` and `ChoiceReplayS` carry `X`'s well-formedness (6.8, 4.4).
+> **F2** a fixture isolates `fillHoldsS` (8.1, 8.2). **F3** `probeFormulaOn_eval` ties the gaps to the shown value
+> (6.2). **F4** the soft runner's `conflict_free` is stated (3, 4.3, 6.8).
+> **F5** `decided_units: []` is pinned, and F-SD2 lists its answers per request kind (8.3). **F6** the gap
+> sentence's place in E14 is stated (2.2).
+> What remains is the bounded re-check the debate set: only the changed statements (A1, F1, F3) and the new fixture
+> values (F2, F5, and A3's four SC-6 cases).
 >
 > **Elaborated.** Every Lean declaration of section 6 was elaborated against a build of this branch's base
 > (`main` at `8b9927f2`; the branch changes only docs) in a scratch stub, `lean/SpecStubs_rd-9.lean`, which is not
 > committed (it stays untracked in the worktree). Definitions were elaborated with their bodies. Each theorem a batch must prove was elaborated as
 > `def T : Prop := C`. The functions whose bodies are build work (`admitSD`, the replays, `choiceLayeredG`,
-> `admitDocumentX`, the soft dispatch) were elaborated as `opaque` declarations of the exact type. Thirty-one short
+> `admitDocumentX`, the soft dispatch) were elaborated as `opaque` declarations of the exact type. Thirty-four short
 > statements were also proved in the stub, to check that they hold; 6 marks each *proved in the stub*, and each is
-> re-proved in its batch. Six `example`s checked that the norms chain's existing definitions are instances (6.5, 6.9,
-> 6.10). No `sorry` was written. `D1` to `D14` and `E1` to `E5` are the plan's decisions and the debate's edits.
+> re-proved in its batch. Draft 2 added three of them: `probeFormulaOn_eval` and its two evaluation lemmas.
+> Six `example`s checked that the norms chain's existing definitions are instances (6.5, 6.9, 6.10). Draft 2 added
+> five more:
+> - `choiceLayered` is still `choiceLayeredG` with conjuncts dropped (6.8);
+> - `XEvidence.hX` comes from the source's new conjunct (6.8);
+> - `readings_wire_sd_choice_entails` follows from the replay's fields, `acceptanceX` and the conflict theorem (6.8);
+> - today's two document decoders are W2's `decodeDoc` (6.10, two examples).
+>
+> The draft 2 stub was elaborated again in full, with no error. No `sorry` was written. `D1` to `D14` and `E1` to
+> `E5` are the plan's decisions and the debate's edits.
 >
 > **Computed.** Every value marked *computed* in section 8 was evaluated in that stub with `#eval`, and the expression
 > is given beside it. Values marked *derived* need the service, Python's generators or the constitution's files, and
@@ -104,8 +128,18 @@ tables are the shared filling.
 
 `AchievesQuietS` is `AchievesS` with the table of the exception key `k₀` empty. The strict and default readings of one
 rule differ only where the exception applies (`decision_only_soundS`, SC-3, off the path): with the default twin's
-table empty, the two achieve the same values. Where the exception applies, the default reading leaves the act unsaid:
-that is `excepted_lifts` (merged) at `oneU N s j`, no new statement.
+table empty, the two achieve the same values. That is the one direction proved. The converse is not claimed: where the
+exception applies the two readings may still agree (F-SD1 with the filling yes, 8.2).
+
+Where the exception applies, the default reading leaves the act unsaid: that is `excepted_lifts` (merged) at
+`oneU N s j`, no new statement. It needs three hypotheses:
+
+- the regulated predicate `r` is unspecified (`r.name ∈ N.unspec`);
+- the default twin is the only rule on `r` (`rulesOn … r.name = [N]`, which `decisionOnly` checks);
+- the excepted formula holds at the tuple.
+
+Its conclusion is `Value3 = .unsaid` (no rule decides the act). That is not the checked status UNDECIDED, which needs
+two admissible fillings that give opposite values (F-SD1.status, 8.3).
 
 ### 1.7 Entailment and models with `X`
 
@@ -160,9 +194,11 @@ checked in the stub).
 - `pairGapsOn U P M T q := gapsOf U (tablesModelOn P M T) (tupleVal vs) ψ` with `(ψ, vs) := probeFormulaOn P q`: the
   unsaid atoms the Kleene value of the witness's shown value reads with nothing filled, each with its regulated
   predicate, the tuple's ids and the filling's answer; none where the value is definite.
-- A pair's **gaps** is `pairGapsOn (oneU N s w)` on the witness's side and completion. `coneEval_sound`: two fillings
-  that agree on the listed atoms give the formula the same value. `coneEval_definite`: a definite value is the value
-  under every filling. No minimality is claimed: an atom may be listed that a cleverer selection would drop.
+- A pair's **gaps** is `pairGapsOn (oneU N s w)` on the witness's side and completion. `probeFormulaOn_eval`: where
+  `observeOn` shows a value, `probeFormulaOn`'s formula has that value at its tuple, so the gaps are read off the
+  formula of the value the line shows (*proved in the stub*). `coneEval_sound`: two fillings that agree on the listed
+  atoms give the formula the same value. `coneEval_definite`: a definite value is the value under every filling. No
+  minimality is claimed: an atom may be listed that a cleverer selection would drop.
 
 ### 1.12 Lean-decided units (D10)
 
@@ -209,10 +245,12 @@ Every sentence an answer here gets already exists and has passed W7's all-deriva
 
 ### 2.2 Which sentences an answer gets
 
-1. **A separation line under the completion (both chains).** S1's line for the pair (E14 for force twins), the shown
-   situation, then exactly one filled-gap sentence per entry of the pair's `gaps`, and none for a gap outside it
-   (D9). Today Python lists every point of every filled table (`filled_gaps`); the constitution's lines show 15
-   sentences, 14 about other acts (*recorded*). After SC-A each shows the one its value reads (C2).
+1. **A separation line under the completion (both chains).** S1's line for the pair (E14 for force twins), with
+   exactly one filled-gap sentence per entry of the pair's `gaps`, and none for a gap outside it (D9). The gap
+   sentences come right after the shown situation. In E14 that is after the supposition ("suppose <decider> decides
+   the exception applies to <subject>.") and before "Under (1)", as in 2.5's F-SD1 example, which SC-9 reads. Today
+   Python lists every point of every filled table (`filled_gaps`); the constitution's lines show 15 sentences, 14 about
+   other acts (*recorded*). After SC-A each shows the one its value reads (C2).
 2. **Verdict lines.** Readings-defaults 2.4, unchanged, plus an E3 line for each used soft label. A countermodel under
    a default reading shows its decision with S1's `<decision>` slot and its filled gaps by the cone.
 3. **The finding** `SeparatedByDecisionOnly` follows the line, worded by S1's rule (E25 or E15).
@@ -264,7 +302,10 @@ Each answer is recorded verbatim; a "yes" is reported as a failure of the line, 
 - **`readings-elaborate`**: the enumerated row, with the finding `ReadingsNotSuperposable: <every open set>` and cause
   `the unspecified completion`.
 - **`readings-choice`**: the inner kinds of 4.3. For `norm-defaults-certificate` the answer adds `conflict_free`
-  (`conflictFreeCheckX` on the replayed packages) and `accepted` (`conflict_free` and `valid`), as today.
+  and `accepted` (`conflict_free` and `valid`), as today. On the norms chain `conflict_free` is
+  `conflictFreeCheckX L.U L.X` on the replayed packages (today's value). On the soft chain it is
+  `conflictFreeX x.L (conflictPackages inner)`, the hypothesis of `readings_wire_sd_choice_conflict` and
+  `readings_wire_sd_choice_entails` (6.8).
 - **`readings-verdicts`**: RD-3's request and answer, plus `decided_units` (1.12) on both chains under the completion.
 - **The `norm-defaults` route, soft branch.** `admission`: request `environment`, `document`; answer
   `encodeAdmittedX`. `norm-defaults-certificate`: request `environment`, `norms`, `premises`, `conclusion`,
@@ -308,8 +349,10 @@ choice`; `sdChoiceText` on this choice (any replayed choice, beyond 64 too), ref
 `choiceLayeredG`, the choice's layered source: route `soft-norms@0`, `D := correlate (choiceDoc N.D c).1`,
 `U := choiceU N c`, `labelled := softXL N (choiceDoc N.D c).1`, the situation vocabulary soft's prime vocabulary of
 `D` (base and decision predicates), and packages bound to the case's environment id, the choice's document hash
-(`choiceHash`) and `E‴_base` with the decisions (`withUnsaid U (basePrimeJson D env')`). On the norms chain
-`choiceLayeredG` is RD-2a's `choiceLayered` (route `norms@0`, `labelled = []` since `choiceX = []`).
+(`choiceHash`) and `E‴_base` with the decisions (`withUnsaid U (basePrimeJson D env')`). Beside `L.U = choiceU N c`
+and `L.X = choiceX N c`, the source carries `X`'s well-formedness over the filled base vocabulary, which `acceptanceX`
+needs. The replay keeps it as `ChoiceReplayS.hXw` (6.8). On the norms chain `choiceLayeredG` is RD-2a's
+`choiceLayered` (route `norms@0`, `labelled = []` since `choiceX = []`, so the new conjunct holds vacuously).
 
 The inner kind, by `choiceInnerX`, on both chains:
 
@@ -320,6 +363,10 @@ The inner kind, by `choiceInnerX`, on both chains:
 | `choice-model` (a base model with decisions and a separate `filling`) | `modelCheckX L.U L.X` | `modelCheckX_sound` |
 | any other | `UnsupportedProfile: case kind <k> is not available on the norm-defaults route` | — |
 
+For a certificate, `accepted` also needs `conflict_free`. The soft runner computes it as
+`conflictFreeX x.L (conflictPackages inner)`, the hypothesis of the two `sd_choice` theorems; the norms chain keeps
+`conflictFreeCheckX L.U L.X x.certs` (3, 6.8).
+
 ### 4.4 Verdicts (`readings-verdicts`)
 
 `replayVerdictsSD`: `admitSD`; `supReady`; at most 64 compatible choices (else W2's budget answer and E28, as RD-3);
@@ -327,7 +374,8 @@ the choices taking `assumed` (else `ReadingsUnsatisfiable: no compatible reading
 on each (else its text); each choice's evidence decoded on its own `choiceLayeredG` source as `XEvidence (choiceU N c)
 (choiceX N c)`: packages by `decodePackageX L` (bound to `L.background = Background_base ++ X ++ Fill_T`), the
 witness by `witnessConflictX L` (kept as the layered witness), certificates by `bindCertX`, models by `situationX L`
-and `decodeFilling`. Rows: `xConflictRow`, `xQueryRow`, `xPremiseRow`. Then RD-3's unchanged `foldConflict`,
+and `decodeFilling`. `XEvidence.hX` comes from the source's well-formedness conjunct (`choiceLayeredG`'s third),
+rewritten by its first two; `ChoiceReplayS.hXw` carries the same fact for a single choice. Rows: `xConflictRow`, `xQueryRow`, `xPremiseRow`. Then RD-3's unchanged `foldConflict`,
 `foldEntailment` (with its gate) and `foldPremises`; conditions (`restrictionsFor`; `usedLabels` over slot, `Fill_T`
 and soft labels in label order); the English plan; and `decided_units` (1.12).
 
@@ -335,12 +383,19 @@ and soft labels in label order); the English plan; and `decided_units` (1.12).
 
 `runCase` on a case with the profile and `layeredRoute environment = some "soft-norms@0"` calls `softCase` first:
 
-- `admission`: `admitDocumentX environment document`: W2's document split (`splitDocument`); `decodeSoftU environment
-  norms` (the soft decoder over the placeholder completions, `checkAuthorN` with the decision count, `WellFormedU`);
-  each quoted norm checked as the soft route checks it; the units decoded over `(fill L.U).E`; graph nodes decoded over
-  `(fill L.U).E`; certificates bound to `filledJsonX environment L` under `filledProfilesX environment`; every node
-  admitted by `NodeAdmittedX`; the graph checked (`checkGraph`), citations closed and choices compatible, with W2's and
-  W1's admission texts in today's order.
+- `admission`: `admitDocumentX environment document`, with W2's and W1's admission texts in today's order:
+  1. W2's document split (`splitDocument`).
+  2. `decodeSoftU environment norms`: the soft decoder over the placeholder completions, `checkAuthorN` with the
+     decision count, `WellFormedU`. Its soft source `src` is `decodeSoftSource` over `placeholderJson environment`.
+  3. Each quoted norm checked as the soft route checks it (`SoftNorms.Admission.checkQuoted src`).
+  4. The units decoded by W2's `decodeDoc` over `(fill L.U).E`, with `src`'s literals and flags (today's
+     `decodeFilledDoc` is this decoder over its own `fill s.U`).
+  5. The graph's `root` and `nodes` read from the submitted `graph`, and its nodes decoded over `(fill L.U).E`.
+  6. Certificates bound to `filledJsonX environment L` under `filledProfilesX environment`.
+  7. Every node admitted by `NodeAdmittedX`.
+  8. The graph checked (`checkGraph`), citations closed and choices compatible.
+
+  `SourceDecodedX` (6.10) states steps 1 to 5 conjunct by conjunct, as today's `SourceDecoded` does.
 - `norm-defaults-certificate`: `replayLayeredEntailment`: `decodeSoftU environment norms`; `premises` and `conclusion`
   decoded over `envAt (fill L.U) (size (fill L.U))`; the certificate bound by `bindCertX environment L.U L.X [] premises
   conclusion`; `valid` is `checkCertificate` over `premisesX L.U L.X premises`.
@@ -350,7 +405,8 @@ and soft labels in label order); the English plan; and `decided_units` (1.12).
 ### 4.6 Conservativity
 
 Plan 3.14, as amended: only documents under the soft completion reach the soft runners (an `availability` change:
-K18 is admitted with K1's answers, F-SD2); the norms chain's answers are byte-identical except the signed `gaps` and
+K18 is admitted on the enumerated row, with K1's validate and separate rows and the answers F-SD2 lists per request
+kind); the norms chain's answers are byte-identical except the signed `gaps` and
 `decided_units` additions (SC-A); `layeredCase` is unchanged and `Layered.lean` changes in one comment;
 `normDefaults_wire_admission` gains one signed hypothesis, its only statement change.
 
@@ -368,7 +424,7 @@ K18 is admitted with K1's answers, F-SD2); the norms chain's answers are byte-id
 | 8 | `UnsupportedProfile: norm-defaults@0 documents on the rights route await the Lean route` | `ve document` on the rights route (text narrowed from "soft and rights routes"; SC-8) |
 | 9 | S1's situation texts (`InvalidInput: invalid situation <id>`, `distinguishing model violates a generated premise`) | a separation's base names a decision predicate, or the witness's `Fill_T` fails (`fillHoldsS`) |
 | 10 | `InvalidModel(norm-defaults): <n> is a filling; supply it as a filling, not a table` | an `unsaid__` table in a layered situation's `relations` (`situationX`, unchanged) |
-| 11 | `certificate is stale or bound to different inputs` | a certificate whose binding is not `bindCertX`'s (F-SD11; `bindingOk`'s text, unchanged) |
+| 11 | `certificate is stale or bound to different inputs` | a certificate whose binding is not `bindCertX`'s (F-SD11), including one replayed against a changed conclusion; a claim-graph certificate whose node was substituted (SC-6). `bindingOk`'s text, unchanged |
 | 12 | `InvalidInput: a reading's certificate needs the choice's conflict packages` | a choice certificate without `conflict` (unchanged) |
 | 13 | `ReadingsUnsatisfiable: no compatible reading takes <choice>` | RD-3, unchanged |
 | 14 | `UnsupportedProfile: case kind <k> is not available on the norm-defaults route` | an inner kind `choiceInnerX` does not answer (unchanged) |
@@ -385,7 +441,7 @@ only soft-specific code.
 | Batch | File | Declarations |
 |---|---|---|
 | SC-A | `NormDefaults/Evidence.lean` | `coneEval_sound`, `coneEval_definite` (6.2) |
-| SC-A | `Readings/VerdictsWire.lean` | `probeFormulaOn`, `pairGapsOn`; `readingPremise`, `partDecided`, `documentOrder` moved after `droppedBy`; adds `import VE.Readings.Components` (6.2) |
+| SC-A | `Readings/VerdictsWire.lean` | `probeFormulaOn`, `pairGapsOn`, `probeFormulaOn_eval` (with `anyF_eval`, `conj_eval`); `readingPremise`, `partDecided`, `documentOrder` moved after `droppedBy`; adds `import VE.Readings.Components` (6.2) |
 | SC-1 | `NormDefaults/LayeredEntail.lean` (new; imports `NormDefaults.Layered`) | 6.3 |
 | SC-1 | `Readings/SoftDefaults.lean` (new; imports `Readings.Unspecified`, `NormDefaults.LayeredEntail`) | 6.4 |
 | SC-1 | `Readings/Verdicts.lean` after `covers_mem` | 6.5 |
@@ -432,11 +488,30 @@ def pairGapsOn (U : VE.NormDefaults.UDoc) (P : Side) (M : VE.FiniteModel VE.Brid
     (T : List (GenKey × List (List VE.Bridge.Entity))) (q : Probe VE.Bridge.Entity) :
     List (String × List String × Bool) :=
   Wire.gapsOf U (tablesModelOn P M T) (VE.Norms.tupleVal (probeFormulaOn P q).2) (probeFormulaOn P q).1
+
+/-- The selection case's formula evaluates as `observeOn`'s `any`. -/
+theorem anyF_eval {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (ρ : List α) (l : List VE.Formula) :
+    (VE.Norms.anyF l).eval M ρ = l.any (·.eval M ρ)                                     -- proved in the stub
+/-- The assertion case's formula evaluates as `observeOn`'s `all`. -/
+theorem conj_eval {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (ρ : List α) :
+    ∀ l : List VE.Formula, (conj l).eval M ρ = l.all (·.eval M ρ)                        -- proved in the stub
+/-- The gaps describe the value the line shows (D9): where `observeOn` gives a value, `probeFormulaOn`'s formula has
+    that value at its tuple. -/
+theorem probeFormulaOn_eval {α : Type} [DecidableEq α] (P : Side) (M : VE.FiniteModel α) (q : Probe α) (v : Bool)
+    (h : observeOn P M q = some v) :
+    (probeFormulaOn P q).1.eval M (VE.Norms.tupleVal (probeFormulaOn P q).2) = v       -- proved in the stub
 end VE.Readings
 ```
 
-The placement is the stub's; in the build `probeFormulaOn` and `pairGapsOn` sit in `VerdictsWire.lean` beside
-`gapsOf`. The moved functions keep their types (checked in the stub):
+The placement is the stub's; in the build `probeFormulaOn`, `pairGapsOn` and the three theorems sit in
+`VerdictsWire.lean` beside `gapsOf`. `probeFormulaOn_eval` is a case split on the probe:
+- outcome probes: when the regulated predicate is missing or in conflict, `observeOn` returns `none`, so the hypothesis
+  excludes them;
+- the selection case uses `anyF_eval`;
+- the assertion case uses `conj_eval`.
+
+With `M := tablesModelOn P M T` it reads `sideValueOn P M T q = some v`, the value the line shows, and
+`pairGapsOn` evaluates the same formula at the same tuple on the same model. The moved functions keep their types (checked in the stub):
 `readingPremise : Doc → List RowInfo → List (String × Nat) → ReadingSet → Nat → Premise`,
 `partDecided : Doc → List RowInfo → List (String × Nat) → List String`,
 `documentOrder : Json → List String → List String`. The answer's member, in `runVerdicts` under the completion:
@@ -813,7 +888,8 @@ theorem wellFormedSD_eq (N : NDoc) :
 /-- The choice's document as the layered branch's source, on either chain (4.3). -/
 def choiceLayeredG (b : Admitted2) (N : NDoc) (c : Choice)
     (wfc : VE.NormDefaults.WellFormedU (choiceU N c) = true) :
-    Except String {L : VE.NormDefaults.Wire.LayeredU // L.U = choiceU N c ∧ L.X = choiceX N c}
+    Except String {L : VE.NormDefaults.Wire.LayeredU // L.U = choiceU N c ∧ L.X = choiceX N c ∧
+      ∀ a ∈ L.X, a.WellFormed (envAt (VE.NormDefaults.fill L.U) 0) []}
 
 -- SoftWire.lean
 def underSoftCompletion (re : ReadingsEnvironment) (D : Doc) : Bool :=
@@ -858,6 +934,7 @@ structure ChoiceReplayS where
   L : VE.NormDefaults.Wire.LayeredU
   hU : L.U = choiceU r.N c
   hX : L.X = choiceX r.N c
+  hXw : ∀ a ∈ L.X, a.WellFormed (envAt (VE.NormDefaults.fill L.U) 0) []
 /-- 4.3: `sdChoiceText` on its own choice, refusing with its text, then `choiceLayeredG`. -/
 def replayChoiceS (j : Json) : Except String ChoiceReplayS
 
@@ -923,11 +1000,22 @@ The definition changes of plan 4.7, each changing no statement: `abstention` (`r
 `re.chain == .rights`); `routeOf` (`if D.chain == .norms then .enumerated else .abstention` becomes
 `if D.chain != .rights then .enumerated else .abstention`; `routeND` unchanged); `ndDocText re U := ndDocTextG re 0 U`;
 `ndTextWith`'s body as above (`decisionCount`, 0 on the norms chain); `ndRest N := normsShaped N.D && fillRest N`;
-`choiceLayered r c wfc := (choiceLayeredG r.b r.N c wfc).map (fun L => ⟨L.1, L.2.1⟩)`;
-`ndCertificate x inner := choiceCertificateX x.r.b.a.re L (choiceDoc x.r.N.D x.c).2 inner` and `ndChoiceModel` by
-`choiceModelX`, `ndInner x L := choiceInnerX x.r.b.a.re L (choiceDoc x.r.N.D x.c).2` (certificate first);
-`runChoiceND`'s `conflict_free` by `conflictFreeCheckX L.U L.X x.certs` (today's value at `X = []`,
+`choiceLayered r c wfc := (choiceLayeredG r.b r.N c wfc).map (fun L => ⟨L.1, L.2.1⟩)` (it drops the new conjunct;
+checked in the stub); `ndCertificate x inner := choiceCertificateX x.r.b.a.re L (choiceDoc x.r.N.D x.c).2 inner` and
+`ndChoiceModel` by `choiceModelX`, `ndInner x L := choiceInnerX x.r.b.a.re L (choiceDoc x.r.N.D x.c).2` (certificate
+first); `runChoiceND`'s `conflict_free` by `conflictFreeCheckX L.U L.X x.certs` (today's value at `X = []`,
 `conflictFreeCheckX_nil`); the three readings kinds dispatch to the soft runners under `underSoftCompletion`.
+
+The soft chain's `readings-choice` runner answers as `runChoiceND` does. For a `norm-defaults-certificate` inner case
+it adds `conflict_free := conflictFreeX x.L (conflictPackages inner)` (`Layered.lean`'s `conflictFreeX` on the case's
+conflict packages, read by `UnspecifiedWire.lean`'s `conflictPackages`) and `accepted := conflict_free && valid`.
+That `conflict_free` is exactly the hypothesis `hv`, or `hcf`, of `readings_wire_sd_choice_conflict` and
+`readings_wire_sd_choice_entails`.
+
+`replayChoiceS` fills `hXw` from `choiceLayeredG`'s third conjunct. `readings_wire_sd_choice_entails` then follows
+from the replay's fields alone, without unfolding `choiceLayeredG`: `acceptanceX` gets its `hX` from `hXw`
+rewritten by `hU` and `hX`, and the conflict half comes from `readings_wire_sd_choice_conflict`. The stub checks this
+derivation as an `example` over the two statements.
 
 ### 6.9 SC-5: verdicts under the soft completion
 
@@ -1061,8 +1149,9 @@ Consolidation (D7): `NDEvidence N c := XEvidence (choiceU N c) []`; `ndFree`, `n
 `ndQueryRow_holds`, `ndPremiseRow_holds`, `nd_rowsHold` and `nd_premiseRowsHold` keep their statements and are
 re-proved through `x*Row_holds`, `xSem_nil` and `holds_iff_holdsG` (an `NDVerdicts x` is the `XVerdicts`
 `⟨x.r.N, fun _ => [], x.A, x.Γ, x.φ, x.ready, x.hle, x.evs, x.hevs, x.notes⟩`). `ndEvidenceOf` keeps the layered
-witness itself (no `notFreeU_of_notFreeX`) and supplies `hX` vacuously. The answer's `decided_units` is SC-A's
-computation on `SDVerdicts`' rows.
+witness itself (no `notFreeU_of_notFreeX`) and supplies `hX` vacuously. On the soft chain each choice's `hX` is its
+`choiceLayeredG` source's third conjunct, rewritten by `L.U = choiceU N c` and `L.X = choiceX N c` (checked in the
+stub as an `example`). The answer's `decided_units` is SC-A's computation on `SDVerdicts`' rows.
 
 ### 6.10 SC-6: the layered branch's soft kinds
 
@@ -1126,6 +1215,8 @@ structure AdmittedX where
   L : Wire.LayeredU
   doc : VE.Route.Admission.Doc
   filled : Json
+  graphJson : Json
+  nodes : Array Json
   decoded : List (WireNode × Json)
   wires : List WireNode
   graph : VE.Graph.ClaimGraph VE.Tableau.Certificate
@@ -1147,10 +1238,27 @@ def ReportAdmittedX (res : AdmittedX) : Prop :=
 def filledJsonX (environment : Json) (L : Wire.LayeredU) : Except String Json := do
   Wire.withUnsaid L.U (← VE.SoftNorms.Wire.primeJson L.D (← Wire.placeholderJson environment))
 def filledProfilesX (environment : Json) : List String := (Wire.profilesOf environment).filter (· != Wire.profile)
+/-- Today's `SourceDecoded` (`Admission.lean:168–185`) over `res.L`, conjunct by conjunct. The soft source `src` is
+    the one `decodeSoftU` builds `L` from, over the placeholder completions. -/
 def SourceDecodedX (environment document : Json) (res : AdmittedX) : Prop :=
-  (∃ clean norms quoted, VE.Norms.Admission.splitDocument document = .ok (clean, norms, quoted) ∧
-    Wire.decodeSoftU environment norms = .ok res.L) ∧
-  Wire.layeredRoute environment = some "soft-norms@0" ∧
+  (∃ clean norms quoted env' src, VE.Norms.Admission.splitDocument document = .ok (clean, norms, quoted) ∧
+    Wire.decodeSoftU environment norms = .ok res.L ∧
+    Wire.placeholderJson environment = .ok env' ∧ VE.SoftNorms.Wire.decodeSoftSource env' norms = .ok src ∧
+    res.L.D = src.D ∧
+    (∀ q ∈ quoted, VE.SoftNorms.Admission.checkQuoted src q = .ok ()) ∧
+    (∃ D₀, VE.Route.Admission.decodeDoc src.se.ne.rv (src.se.profiles.contains "data@0") clean (fill res.L.U).E =
+        .ok D₀ ∧ res.doc = { D₀ with literals := src.se.ne.rv.literals }) ∧
+    (fill res.L.U).lits = src.se.ne.rv.literals ∧
+    (∀ x ∈ res.decoded, ∃ j ∈ res.nodes.toList,
+      VE.Route.Admission.decodeNode (fill res.L.U).E (src.se.profiles.contains "data@0") j = .ok x ∧
+      j.getObjVal? "ast" = .ok x.2 ∧
+      VE.Route.Wire.decodeClosed (fill res.L.U).E x.2
+        ((src.se.profiles.contains "data@0") && !x.1.claim.label.startsWith "background:") =
+          .ok x.1.claim.formula)) ∧
+  Wire.layeredRoute environment = some "soft-norms@0" ∧ WellFormed (fill res.L.U) = true ∧
+  document.getObjVal? "graph" = .ok res.graphJson ∧
+  res.graphJson.getObjVal? "nodes" = .ok (Json.arr res.nodes) ∧
+  VE.Bridge.stringField res.graphJson "root" = .ok res.graph.root ∧
   res.wires = res.decoded.map Prod.fst ∧ res.graph.nodes = res.wires.map WireNode.toNode
 def CertificatesBoundX (environment : Json) (res : AdmittedX) : Prop :=
   filledJsonX environment res.L = .ok res.filled ∧
@@ -1230,6 +1338,23 @@ theorem normDefaults_wire_admissionX (j answer : Json) (h : runCase j = .ok answ
 end VE.NormDefaults.Run
 ```
 
+`SourceDecodedX` against today's `SourceDecoded`, conjunct by conjunct (debate A1):
+
+| Today (`res : Admitted`, `res.s : SourceU`) | Soft branch (`res : AdmittedX`) |
+|---|---|
+| `splitDocument … = .ok (clean, norms, quoted)`, `decodeSourceU environment norms = .ok res.s` | the same split; `decodeSoftU environment norms = .ok res.L`, and `src` decoded over `placeholderJson environment` with `res.L.D = src.D` |
+| `∀ q ∈ quoted, checkQuoted res.s q = .ok ()` | `∀ q ∈ quoted, SoftNorms.Admission.checkQuoted src q = .ok ()` (the soft route's check) |
+| `decodeFilledDoc res.s clean = .ok D₀`, `res.doc = { D₀ with literals := … }` | `decodeDoc src.se.ne.rv data clean (fill res.L.U).E = .ok D₀`, the same `res.doc` equation; `decodeFilledDoc` is this decoder over `fill s.U` (`rfl`, checked in the stub) |
+| `res.s.profiled = true` | `layeredRoute environment = some "soft-norms@0"` |
+| `WellFormed (fill res.s.U) = true`, `(fill res.s.U).lits = res.s.src.ne.rv.literals` | `WellFormed (fill res.L.U) = true`, `(fill res.L.U).lits = src.se.ne.rv.literals` |
+| the graph JSON, its `nodes` array and its `root` | the same three equations, over the new fields `res.graphJson` and `res.nodes` |
+| `res.wires`, `res.graph.nodes` | the same |
+| each decoded node: its source JSON in `res.nodes`, `decodeNode` and `decodeClosed` over `fill res.s.U` | the same over `fill res.L.U`, with `src`'s `data@0` flag |
+
+`admitDocumentX_spec` and `AdmissionAnswerX` keep `SourceDecodedX` as written above. So `CertificatesBoundX`
+binds certificates to nodes that are the submitted graph's nodes, decoded from the submitted ASTs, under the submitted
+root and beside the submitted units. The three substitution fixtures of 8.3's SC-6 row test this.
+
 `layeredCase`'s docstring, the one change to `Layered.lean`, becomes: "The `norm-defaults-*` kinds of a layered document
 that this branch answers itself, `none` for any other kind; the dispatch of a choice's inner case under the readings
 completion (`Readings.Run.choiceInnerX`) uses it too, so both answer each kind alike. The soft branch's `admission` and
@@ -1290,6 +1415,10 @@ probe `avoid_required (a, u)` with value `v`; `σNone fl v` has no table.
 | F-ND1 gaps | the norms chain's F-ND1 (`separates (fillDoc ND1) "rs_1" 1 0 …` with filling `unsaid__help_permitted = {(a,u)}`, value false): `separates`, gaps of witness 1, gaps of witness 0's side, unsaid atoms | `true, [("help_required", ["a","u"], false)], [], 2` |
 | K2 sides | `NSD2 := ⟨K2, ["avoid_required"]⟩` (a necessary condition `⊥`): `sideValidOn` of the default side with no table and with `excepted = {(a,u)}`; `(oneX NSD2 "rs1" 1).length` | `true, false, 1` |
 | `fillHoldsS` | `NSDp`: F-ND1's frame (`help_required` with its dual `help_permitted`, both unspecified) on the soft chain, set `{strict must-help, default must-help}`: `WellFormedSD`; the number of `Fill_T` premises; `fillHoldsS … 0` with `unsaid__help_permitted = {(a,u)}` and with it empty; `separatesS … 0 1` (value true) on each base | `true, 1, true, false, false, false` |
+| `fillHoldsS` isolated (F2) | `NSDq`: F-ND1's frame plus one regulated act `greet_required(agent, user)`, not unspecified, on the soft chain. Its set is `{strict must-help, default must-greet}`, so the other reading regulates a different act. Witness 0, outcome `help_required (a, u)`, value true. Evaluated: `WellFormedSD`; the number of the witness's `Fill_T` premises; `pairEval`'s first component (`separatesS`'s pair check) with `unsaid__help_permitted = {(a,u)}` and with it empty; `fillHoldsS … 0` on each base; `separatesS … 0 1` on each base | `true, 1, true, true, true, false, true, false` |
+| F-SD2 route | `routeOf false K1` (K1 without the profile); `routeOf true K1` (with the profile, today); `K1.chain != .rights` (so the new `routeOf` body gives `.enumerated`); `completionFinding K1` | `superposed, abstention, true, ("rs1", "the unspecified completion")` |
+| F-SD2 fields | `N18 := ⟨K1, []⟩` (K18: nothing unspecified). Evaluated: `WellFormedSD`; `oneX` length of readings 0 and 1; the number of `Fill_T` premises of each reading's document; the default reading's unsaid atoms; `pairGapsOn` on the default witness's side with `excepted = {(a,u)}` | `true, 0, 0, 0, 0, 0, []` |
+| F-SD2 = K1 | First: for each reading and each table in `{[], excepted = {(a,u)}}`, `sideValidOn` on `sideOfS N18`, and `sideValueOn` for every probe of `probesOf K1 m0`, equal S1's on `sideOf K1`. Second: for both orders, both tables, every probe and both values, `separatesS N18` equals S1's `separates K1`. Third: S1's `separates K1 "rs1" 1 0` with the default's table, outcome `avoid_required (a,u)`, value false | `true, true, true` |
 | C1′ | u0125.s04.p2's shape (permission `denial_permitted(claude_instance)` unspecified; strict and default `no-denying-being-claude`, sign −): `WellFormedSD`, `oneX` length, `decisionOnly`, `separatesS … 1 0` with `excepted = {c}` and filling `{c}` (value true), the same with filling `[]`, the strict side's value | `true, 0, some (excepted "no-denying-being-claude" none), true, false, some false` |
 | C2′ | u0036.s05's shape (`clarification_required(claude_instance, situation)` unspecified, guard `genuine_ambiguity`): `WellFormedSD`, `oneX` length, `separatesS … 1 0` with ambiguity `{s}` and `excepted = {(c,s)}` (value false), the same without ambiguity, the strict side's value | `true, 0, true, false, some true` |
 | C9′ | u0073.s05's shape (`compliance_required(claude_instance, instruction)`, default `comply` with sufficient conditions `unsafe`, `unethical`, `against_guidelines`): `WellFormedSD`; the default reading's `softXL` labels; `decisionOnly`; `sideValidOn` with `unsafe = {i}` and no table / full table; the default and strict values there; `separatesS` there (value false); `sideValidOn` and `separatesS` with nothing unsafe and no table | `true`; `["soft:exception:comply:sufficient:0", "…:1", "…:2"]`; `none`; `false, true`; `some false, some true`; `true`; `true, false` |
@@ -1301,16 +1430,16 @@ probe `avoid_required (a, u)` with value `v`; `σNone fl v` has no table.
 
 | Claim | One direction | The other |
 |---|---|---|
-| Under the soft completion exactly when `norm-defaults@0`, the soft chain and a content-bearing set (1.1) | F-SD2: K18 (K1 with the profile) is admitted with K1's answers (*derived*) | F-SD6 (rights chain): the abstention; F-SD0 (K1 without the profile): S2a's route; a soft document under the profile without content: the layered branch's W2 route (*derived*) |
-| The readings differ exactly where the exception applies (`decision_only_soundS`, D5) | with the exception table nonempty they separate: F-SD1 separation `true` (*computed*) | with it empty no probe separates them: F-SD1 quiet `true` (*computed*) |
+| Under the soft completion exactly when `norm-defaults@0`, the soft chain and a content-bearing set (1.1) | F-SD2: K18 (K1 with the profile) is admitted on the enumerated row, with K1's validate and separate rows (F-SD2 = K1, *computed*) and the per-kind answers of 8.3 (*derived*) | F-SD6 (rights chain): the abstention; F-SD0 (K1 without the profile): S2a's route, `superposed` (F-SD2 route, *computed*); a soft document under the profile without content: the layered branch's W2 route (*derived*) |
+| The readings differ only where the exception applies (`decision_only_soundS`, D5). This is not "exactly where": only one direction is proved | the theorem's direction: with the default twin's table empty, no probe separates them, F-SD1 quiet `true` (*computed*) | non-vacuity examples, not a converse. With the table nonempty and the filling no, they separate (F-SD1 separation, first value `true`). With the table nonempty and the filling yes, they do not (the matching filling, F-SD1 separation, second value `false`). Both *computed* |
 | `softPremisesIn_fill` (an equality) | the filled side's coherence premise reads the unsaid atom (F-SD4 coherence `true`, *computed*) | soft's own premise does not (`false`, *computed*); the equality is *proved in the stub* |
 | `sideValidOn_sideOfS_iff` | valid: K2's default side with no table, `true` (*computed*) | invalid: with `excepted = {(a,u)}` against the necessary condition `⊥`, `false` (*computed*); *proved in the stub* |
 | `observeOn_sideOfS_sound` | value `some false`: F-SD1's default side with filling `[]` (*computed*) | value `some true` with filling `{(a,u)}` (*computed*) |
 | `separatesS_sound` (a `true` check proves `AchievesS` of the witness and not of the other) | F-SD1 `true`, C1′ `true`, C2′ `true`, C9′ `true` (*computed*) | the checks that do not hold: F-SD1 with the filling, the strict witness; C1′ without the filling; C2′ without the ambiguity (*computed*) |
-| `fillHoldsS` (the witness's `Fill_T`) | holds: F-SD1's witness, and `NSDp`'s strict witness with the permission filled, `true` (*computed*) | fails: `NSDp`'s strict witness without the permission, `false`, and `separatesS` is then `false` (*computed*) |
+| `fillHoldsS` (the witness's `Fill_T`) | holds: F-SD1's witness, and `NSDp`'s and `NSDq`'s strict witness with the permission filled, `true`; on `NSDq`, `separatesS` is then `true` (*computed*) | fails: the strict witness without the permission, `false`. On `NSDq`, `pairEval` is `true` on both bases, so `separatesS` turns from `true` to `false` by `fillHoldsS` alone (*computed*). On `NSDp` both `separatesS` values were already `false`, since the default twin with its table empty matches the strict witness |
 | X is empty on strict documents (`softX_strict`; not an iff) | strict readings: F-SD4's strict reading `[]` (*computed*) | the converse fails: F-SD1's default reading also has `X = []` (*computed*); F-SD4's and C9′'s default readings have `X ≠ []` |
 | `conflictFreeCheckX_nil`, `modelCheckX_nil`, `premisesX_nil` (equalities) and the `_nil` iffs, `holds_iff_holdsG`, `xSem_nil` | *proved in the stub* (both directions at once) | the norms chain's A/B byte-identical (F-SD0′) |
-| One gap sentence per gap in the cone, none outside it (D9) | in: F-SD10's one entry for `avoid_required (a,u)` (*computed*) | out: the three other unspecified predicates' atoms at `(a,u)` are not listed (4 atoms, 1 gap, *computed*); a definite value lists none (F-SD10 strict, *computed*) |
+| One gap sentence per gap in the cone, none outside it (D9); the cone is read off the shown value's formula (`probeFormulaOn_eval`, *proved in the stub*) | in: F-SD10's one entry for `avoid_required (a,u)` (*computed*) | out: the three other unspecified predicates' atoms at `(a,u)` are not listed (4 atoms, 1 gap, *computed*); a definite value lists none (F-SD10 strict, *computed*) |
 | `coneEval_sound` (agreeing on the listed atoms gives the same value) | fillings that differ only off the cone give the same value (`false, false`, *computed*) | a filling that differs on the listed atom changes it (`true`, *computed*): the listed atom is read |
 | A unit is decided exactly when its rows are (1.12) | `["u1"]` with every row decided, both chains (*computed*) | `[]` with one conflict row or one premise row `unknown` (*computed*) |
 | `normDefaults_wire_admission` (route ≠ soft) and `normDefaults_wire_admissionX` (route = soft) | a profiled norms-route admission answers byte-identically through `runAdmission` (F-SD0″, *derived*) | a soft admission is answered by `softCase` (SC-6's `coherent` claim graph, *derived*) |
@@ -1322,15 +1451,15 @@ probe `avoid_required (a, u)` with value `v`; `σNone fl v` has no table.
 | # | Case | Expected | Batch |
 |---|---|---|---|
 | F-SD1 | K1 with `norm-defaults@0`, `avoid_required` unspecified: validate, separate, elaborate, choice | admitted; choices `[(rs1,0)]`, `[(rs1,1)]`; `soft_premises` empty on both readings; the pair separated with 8.1's σ, `gaps` one entry; elaborate: enumerated, `ReadingsNotSuperposable: rs1`, cause `the unspecified completion` | SC-4 |
-| F-SD1.status | `norm-defaults-status` on `(rs1,1)`, base with `excepted = {(a,u)}`, fillings yes `{(a,u)}` and no `{}` | UNDECIDED; on `(rs1,0)`: SETTLED yes by `table3` | SC-4 |
-| F-SD1.verdicts | conflict; query `∀ agent ∀ user. avoid_required`; `--under rs1:0`, `--under rs1:1` | CONFLICT-FREE under both; SOME (choice 0 `proved`, choice 1 `refuted` by `excepted = {(a,u)}` and the filling no); ALL; NONE; `decided_units` the set's unit when every row is decided | SC-5 |
-| F-SD2 | K18 | before: the abstention text; after: admitted with K1's answers (`unspec = []`, `fill` the identity) | SC-4 |
+| F-SD1.status | `norm-defaults-status` on `(rs1,1)`, base with `excepted = {(a,u)}`, fillings yes `{(a,u)}` and no `{}` | UNDECIDED, because the two admissible fillings give opposite values. This is the one place the spec claims UNDECIDED for a force twin (1.6); `excepted_lifts`' `.unsaid` alone does not give it. On `(rs1,0)`: SETTLED yes by `table3` | SC-4 |
+| F-SD1.verdicts | conflict; query `∀ agent ∀ user. avoid_required`; `--under rs1:0`, `--under rs1:1` | CONFLICT-FREE under both; SOME (choice 0 `proved`, choice 1 `refuted` by `excepted = {(a,u)}` and the filling no); ALL; NONE. `decided_units`: `["u1"]` (the set's unit) without `--under` when every row is decided (8.1's decided units); `[]` under `--under rs1:0` and under `--under rs1:1` (1.12: with `assumed` the rows cover only some choices) | SC-5 |
+| F-SD2 | K18 (K1 with `norm-defaults@0`, `avoid_required` deny, so `unspec = []` and `fill` is the identity), per request kind | Before: the abstention text for every kind. After, K18 takes the enumerated row (F-SD2 route), not K1's superposed one. Per kind:<br>• `readings-validate`, `readings-separate`: K1's rows and pair answers (F-SD2 = K1, *computed*), plus the completion's fields, each empty: `fill_premises: []` and `soft_premises: []` per reading, `gaps: []` per pair (F-SD2 fields, *computed*). `filled` names K1's lower environment without `norm-defaults@0`, with no `unsaid__` predicate, and K1's units.<br>• `readings-elaborate`: the enumerated row with `ReadingsNotSuperposable: rs1` and cause `the unspecified completion`, as F-SD1's; not K1's superposed row.<br>• `readings-choice`: the inner kinds of 4.3 on `choiceLayeredG` (route `soft-norms@0`, `labelled = []`); not K1's S2a inner kinds.<br>• `readings-verdicts`: RD-3's request and answer on the two choices: CONFLICT-FREE; the query `∀ agent ∀ user. avoid_required` SOME (choice 0 `proved`, choice 1 `refuted` by `excepted = {(a,u)}`, the act not required by the deny default); ALL under `rs1:0`; NONE under `rs1:1`; `decided_units` as F-SD1.verdicts. These are not K1's superposed answer | SC-4, SC-5 |
 | F-SD4 | `coherent` beside its strict twin | `soft_premises` as 8.1; a CONFLICT-FREE answer under the default reading has `conditional_on: ["soft:coherence:must-x,need-not-x"]` with soft-norms 2.3's sentence as its E3 line | SC-4, SC-5 |
 | F-SD6 | K19 (rights chain) with `norm-defaults@0` | the abstention text, unchanged | SC-4 |
 | F-SD8 | a package bound to `(rs1,0)` replayed for `(rs1,1)`; an `unsaid__` table in a layered model's `relations`; a `soft__excepted__` table as a separation base relation (K2b) | refused or UNKNOWN, never CONFLICT-FREE, `proved` or `model`: diagnostics 10 and 9 | SC-4, SC-5 |
-| F-SD9 | 7 sets each as `rs1` | enumerated, `choice_count: "over 64"`; a query UNKNOWN (budget), E28 | SC-4, SC-5 |
+| F-SD9 | 7 sets each as `rs1` | enumerated, `choice_count: "over 64"`; a query UNKNOWN (budget), E28; `decided_units: []` (1.12: beyond 64 choices) | SC-4, SC-5 |
 | F-SD11 | F-SD1 with a fixed assertion unit; a certificate for `(rs1,1)` whose binding lists the regenerated premises without that assertion, and one whose binding adds an assertion the choice does not take | `readings-choice`: the inner answer is diagnostic 11, `accepted: false`; `readings-verdicts`: the piece refused, the row `unknown` | SC-4, SC-5 |
-| SC-6 kinds | the layered tests' u2 and u8 sources, `coherent`, a rights source | a certificate of "where the exception does not apply, the act is not permitted" is `valid`; against the conclusion without that condition `valid: false`; with its binding missing one regenerated premise, diagnostic 11; a claim graph with a `soft:coherence` leaf admitted on `coherent`, with `conditional_on` naming it when it is open; a leaf with no regenerated premise refused with W1's text; on the rights source the certificate kind gives `runLayered`'s refusal and `admission` today's answer | SC-6 |
+| SC-6 kinds | the layered tests' u2 and u8 sources, `coherent`, a rights source | Certificates:<br>• A certificate of "where the exception does not apply, the act is not permitted" is `valid`.<br>• The same certificate replayed against the conclusion without that condition is refused with diagnostic 11 (A3): its `conclusion_meaning_id` no longer matches, and `bindingOk` runs before the check.<br>• A certificate whose ids bind that changed conclusion (the regenerated premises, the case's premises and the new conclusion's meaning id) but whose proof does not close answers `valid: false` (A3).<br>• With its binding missing one regenerated premise: diagnostic 11.<br>Claim graphs:<br>• A claim graph with a `soft:coherence` leaf is admitted on `coherent`, with `conditional_on` naming the leaf when it is open.<br>• A leaf with no regenerated premise is refused with W1's text.<br>Substitutions in the admitted `coherent` document (A1, each against `SourceDecodedX`):<br>• A substituted root (the graph's `root` names another of its nodes): the answer's `report` is rooted at that node, not the original root, and its `report_id` differs.<br>• A substituted node (one node's `ast` replaced, its certificate kept): `certificate is stale or bound to different inputs` (diagnostic 11, `checkBindings` on the submitted ASTs).<br>• A substituted unit (a unit's content replaced, the leaf citing it kept): W2's `AdmissionError: node <n> is not admitted under label <l>`.<br>Rights source: the certificate kind gives `runLayered`'s refusal, and `admission` gives today's answer | SC-6 |
 
 ### 8.4 The constitution (`CE4`, plan 5.2; *derived*, measured in SC-8 and SC-9)
 
@@ -1370,7 +1499,7 @@ measures checks routed into Lean, not new assurance. No figure is predicted.
 
 The plan's 9, items 1 to 18, and:
 
-1. The stub elaborates as recorded; the thirty-one statements *proved in the stub* are true as stated (re-proved in
+1. The stub elaborates as recorded; the thirty-four statements *proved in the stub* are true as stated (re-proved in
    their batches).
 2. Each `theorem` of 6 is true under its hypotheses (not only well typed). In particular: `acceptanceX` needs `hX`;
    `layered_wire_acceptance` reads `hX` from `LayeredEntailment`; `separatesS_sound` needs `WellFormedSD` and the
@@ -1390,6 +1519,21 @@ The plan's 9, items 1 to 18, and:
 9. The English: no new sentence; the filled-gap sentence's new use on separation lines; the comprehension check's
    questions (2.6).
 10. The differences of 12 are each accepted or sent back.
+11. **The bounded re-check of draft 2** (debate `rd-9-spec`, round 3). It covers only the following; nothing else is
+    reopened.
+    - The changed statements:
+      - A1: `AdmittedX`'s two new fields and `SourceDecodedX` (6.10), kept in `admitDocumentX_spec` and
+        `AdmissionAnswerX`;
+      - F1: `choiceLayeredG`'s third conjunct and `ChoiceReplayS.hXw` (6.8);
+      - F3: `probeFormulaOn_eval` with `anyF_eval` and `conj_eval` (6.2).
+    - The new fixture values:
+      - F2: `fillHoldsS` isolated (8.1, 8.2);
+      - F5: F-SD2's route, fields and K1 comparison (8.1), F-SD2's per-kind answers, and `decided_units: []` in
+        F-SD1.verdicts and F-SD9 (8.3);
+      - A3 and A1: the SC-6 row's new `valid: false` case, the diagnostic 11 replay, and the three substitution
+        cases (8.3).
+
+    If it passes, the verdict is PASS and the build may start.
 
 ## 12. Differences from the plan's Lean blocks (found by elaboration or applied from the debate)
 
@@ -1442,3 +1586,39 @@ The plan's 9, items 1 to 18, and:
 18. **Universes**: as the plan's, checked: `separatesS_separated` concludes `SeparatedS.{0}`; `ndSem`, `xSem` and
     `sdSem` take `.{u}` for `free` and `entails` and `.{0}` for `notFree`, `counter` and `consistent`, as RD-3's
     `Holds` does.
+
+Draft 2 (the statement review, `manage-agents/debates/rd-9-spec/`):
+
+19. **Admission keeps its source correspondence** (A1, extends 13). `AdmittedX` gains `graphJson` and `nodes`, as
+    today's `Admitted` has them. `SourceDecodedX` restates today's `SourceDecoded` over `res.L`, conjunct by conjunct:
+    - the quoted checks, by the soft route's `checkQuoted` on the soft source over the placeholder completions;
+    - `res.doc` from W2's `decodeDoc` of `clean` over `(fill res.L.U).E` with that source's literals and flags;
+    - `WellFormed (fill res.L.U)` and the lits equality;
+    - the graph JSON, the node array and the root;
+    - the node, AST and `decodeClosed` correspondence.
+
+    Draft 1's `SourceDecodedX` tied only `res.L` to the source, so `CertificatesBoundX` bound certificates to a
+    `res.decoded` that nothing tied to the submitted graph. The table in 6.10 compares the two conjunct by conjunct.
+    The stub checks, by `rfl`, that today's `decodeFilledDoc` and the soft route's `decodeSoftDoc` are `decodeDoc`
+    over their own environments. The soft source is named by an existential, not a new field, so `AdmittedX` gains
+    only the two fields the debate named.
+20. **`X`'s well-formedness travels with the choice's source** (F1, extends 9). `choiceLayeredG`'s subtype gains
+    `∀ a ∈ L.X, a.WellFormed (envAt (fill L.U) 0) []`, and `ChoiceReplayS` gains the field `hXw`, as difference 12
+    gave `LayeredEntailment` its `hX`. Without it, `readings_wire_sd_choice_entails` could be proved only by unfolding
+    `choiceLayeredG`'s body, and `XEvidence.hX` had no stated source (4.4, 6.9). On the norms chain the conjunct is
+    vacuous (`X = []`), and `choiceLayered` drops it (6.8). The stub checks three things: `choiceLayered`'s
+    derivation, `XEvidence.hX`'s source, and the derivation of `readings_wire_sd_choice_entails` from the fields.
+21. **`probeFormulaOn_eval`** (F3, extends 15), with `anyF_eval` and `conj_eval`, all proved in the stub. Without it,
+    D9's claim that the gaps are those of the shown value rested on a docstring.
+22. **The soft runner's `conflict_free`** (F4) is `conflictFreeX x.L (conflictPackages inner)`, the hypothesis of
+    the two `sd_choice` theorems (3, 4.3, 6.8). Draft 1 stated only `runChoiceND`'s.
+23. **Prose and fixtures, no Lean** (A2 to A4, F2, F5, F6):
+    - A2: "only where", with `excepted_lifts`' three hypotheses and UNDECIDED only through F-SD1.status (1.6, 8.2,
+      8.3; plan 0, 3.5, 4.6, C1.4);
+    - A3: diagnostic 11 for the changed-conclusion replay, with a separate `valid: false` case (8.3; plan SC-6);
+    - A4: the plan's comprehension questions follow 2.6 (plan C10, SC-9);
+    - F2: `NSDq` isolates `fillHoldsS` (8.1, 8.2);
+    - F5: `decided_units: []` pinned, and F-SD2 per request kind (8.1, 8.3; plan 5.1);
+    - F6: the gap sentence's place in E14 (2.2).
+
+    The debate's wording nit on section 0 ("one binder binds every certificate") needed no edit: 1.8 is precise.
