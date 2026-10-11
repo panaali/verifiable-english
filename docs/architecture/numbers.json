@@ -1,14 +1,13 @@
 {
-  "commit": "e41d104f0caff76854bfa3fb20599f7c7df15865",
+  "commit": "8482c8c4f7e8ef1be9447423a08443634f465631",
   "numbers": {
     "counts": {
-      "collected_test_ids": 14431,
+      "collected_test_ids": 14437,
       "lean_executables": 9,
       "lean_layer_exceptions": 22,
       "pinned_decoder_lines": 29166,
       "python_layer_exceptions": 42,
       "runtime_dependencies": 5,
-      "rust_module_exceptions": 0,
       "service_modes": 32
     },
     "file_lines": {
@@ -28,7 +27,7 @@
       "lean_ve_modules": 408,
       "response_shape_lean": 64,
       "tests_other_modules": 25,
-      "tests_test_modules": 358
+      "tests_test_modules": 359
     },
     "largest_ve_python": [
       {
@@ -47,8 +46,8 @@
     "lines": {
       "conformance_python": 19170,
       "lean": 158021,
-      "tests_python": 106406,
-      "tools_python": 21074,
+      "tests_python": 106500,
+      "tools_python": 20301,
       "ve_backends_python": 4276,
       "ve_backends_schema_json": 8068,
       "ve_python": 39866
