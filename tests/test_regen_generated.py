@@ -250,13 +250,17 @@ def test_trust_merge_adds_equal_concurrent_values_and_missing_base_rows():
     assert json.loads(text)["budget"]["K"] == 4
 
 
-def test_trust_merge_refuses_delete_versus_change(capsys):
+@pytest.mark.parametrize("delete_count", [False, True])
+def test_trust_merge_refuses_delete_versus_change(capsys, delete_count):
     case = TRUST_MERGES["17573bbb"]
     base = case["base"]
     ours = json.loads(json.dumps(base))
     theirs = json.loads(json.dumps(base))
     module = "ResponseShape.lean"
-    del ours["files"][module]
+    if delete_count:
+        del ours["files"][module]["trusted"]
+    else:
+        del ours["files"][module]
     theirs["files"][module]["trusted"] += 1
     text, clean = R.merge_text("docs/trust-baseline.json", *(json.dumps(side) for side in
                                                          (base, ours, theirs)))
