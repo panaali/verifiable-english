@@ -1,13 +1,13 @@
 {
- "base": "968870193193b9e8138183ed77c41e376a6e376c",
+ "base": "8b9927f2b6fd71cb38fa29fd116d99102a049e08",
  "manifests": {
   "lean/VE/Audit.lean": {
-   "lines_before": 5001,
-   "lines_after": 5586,
-   "theorems_before": 4755,
-   "theorems_after": 5270,
-   "imports_before": 198,
-   "imports_after": 313,
+   "lines_before": 5049,
+   "lines_after": 5648,
+   "theorems_before": 4802,
+   "theorems_after": 5330,
+   "imports_before": 199,
+   "imports_after": 315,
    "hand_lines_before": [
     "-- Route (P0-Lean)",
     "-- Core stage 1: new statements and helper proofs.",
@@ -28,10 +28,10 @@
    ]
   },
   "lean/ResponseShape/Audit.lean": {
-   "lines_before": 450,
-   "lines_after": 471,
-   "theorems_before": 441,
-   "theorems_after": 441,
+   "lines_before": 459,
+   "lines_after": 480,
+   "theorems_before": 450,
+   "theorems_after": 450,
    "imports_before": 2,
    "imports_after": 27,
    "hand_lines_before": [
@@ -43,10 +43,10 @@
   }
  },
  "removed": [],
- "added_count": 515,
+ "added_count": 528,
  "added_by_category": {
   "Prop field of a structure": {
-   "count": 512,
+   "count": 525,
    "roots": [
     "Iceberg",
     "VE"
@@ -1244,6 +1244,16 @@
    "category": "Prop-class instance"
   },
   {
+   "name": "VE.Readings.AuthorLite.acyclic",
+   "module": "VE.Readings.SupFill",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.AuthorLite.freshRule",
+   "module": "VE.Readings.SupFill",
+   "category": "Prop field of a structure"
+  },
+  {
    "name": "VE.Readings.Grows.E",
    "module": "VE.Readings.Shape",
    "category": "Prop field of a structure"
@@ -1634,6 +1644,26 @@
    "category": "Prop field of a structure"
   },
   {
+   "name": "VE.Readings.Wire.CertificateReplayND.hA",
+   "module": "VE.Readings.SupFillWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.CertificateReplayND.h\u0393",
+   "module": "VE.Readings.SupFillWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.CertificateReplayND.h\u03c6",
+   "module": "VE.Readings.SupFillWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.CertificateReplayND.taken",
+   "module": "VE.Readings.SupFillWire",
+   "category": "Prop field of a structure"
+  },
+  {
    "name": "VE.Readings.Wire.ChoiceReplayU.hc",
    "module": "VE.Readings.UnspecifiedWire",
    "category": "Prop field of a structure"
@@ -1676,6 +1706,21 @@
   {
    "name": "VE.Readings.Wire.ModelReplay.valid",
    "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.ModelReplayND.h\u0393",
+   "module": "VE.Readings.SupFillWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.ModelReplayND.h\u03c6",
+   "module": "VE.Readings.SupFillWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.ModelReplayND.valid",
+   "module": "VE.Readings.SupFillWire",
    "category": "Prop field of a structure"
   },
   {
@@ -1776,6 +1821,26 @@
   {
    "name": "VE.Readings.Wire.SupReplay.wf",
    "module": "VE.Readings.SupWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SupReplayND.checked",
+   "module": "VE.Readings.SupFillWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SupReplayND.sat",
+   "module": "VE.Readings.SupFillWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SupReplayND.sp",
+   "module": "VE.Readings.SupFillWire",
+   "category": "Prop field of a structure"
+  },
+  {
+   "name": "VE.Readings.Wire.SupReplayND.wfu",
+   "module": "VE.Readings.SupFillWire",
    "category": "Prop field of a structure"
   },
   {
