@@ -1,6 +1,7 @@
 """The RD-9 use of E14's existing sentence with Lean-selected gaps."""
 
 from ve.readings_english import force_twin_sentence
+from ve.readings_s2_english import s1_gated
 
 
 def _line(gaps=""):
@@ -24,3 +25,4 @@ def test_e14_keeps_both_readings_and_the_source_word_with_a_gap():
     text = _line(" Here the text does not say whether a must act; this situation answers 'no'.")
     assert "says *must*. (1) *a must act* (2) *a should act*" in text
     assert text.count("Under (1)") == text.count("Under (2)") == 1
+    assert s1_gated("E14", text) == text
