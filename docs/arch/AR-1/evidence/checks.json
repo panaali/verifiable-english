@@ -16,7 +16,7 @@
   ]
  },
  "audit_check": [
-  "PASS: 479 source files; 5711 theorems of the compiled environment audited (5270 in VE/Audit.lean, 441 in ResponseShape/Audit.lean); only the declared standard axiom allowlist."
+  "PASS: 479 source files; 5711 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist."
  ],
  "trust_map_since_base": [
   "class lines: K 997, S 9791, D 13777, G 26636, C 8329, P 70985, T 14661, o 12170",
@@ -27,5 +27,5 @@
  "frozen": "PASS: frozen Lean sources and Main.lean subcommands unchanged",
  "check_lean_imports": "Lean layer graph kept (479 modules, 22 reviewed legacy edges)",
  "manifest_import_build_noop_seconds": 2.4,
- "audit_check_note": "run on the tree of bf316e30, before the PASS wording was restored to the base's ('named theorem declarations audited'); same counts. The final gate's audit stage is in gate-result.json."
+ "audit_check_note": "rerun on the tree of 21089655..b7e848a9 after merging main 96887019 (5270 in VE/Audit.lean, 441 in ResponseShape/Audit.lean); the final gate's audit stage is in gate-result.json."
 }
