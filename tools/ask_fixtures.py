@@ -280,21 +280,16 @@ def load(ident: str) -> dict:
 
 def replay(entry: dict) -> dict:
     """Lean's answer to the recorded request, checked against it by the relay (`ve.ask._ask`), no generator run."""
-    from ve.ask import Prepared, _context, environment, read
-    from ve.backends.english_lean import export, identities
+    from ve.ask import Prepared, _context, _identities, read
     from ve.document import load_document
-    from ve.english import EnglishVocabulary
     raw = (ROOT / entry["path"]).read_bytes()
     if hashlib.sha256(raw).hexdigest() != entry["sha256"]:
         raise SystemExit(f"{entry['id']}: the fixture document changed")
     reading = read(raw, entry["question"])
     doc = load_document(ROOT / entry["path"])
-    env = environment(raw)
-    words = EnglishVocabulary(env, _defer_overlay_refusals=True)
-    lexicon = export(words)
+    lexicon, expected = _identities(raw, entry["question"], doc)
     request = {"id": "ask", "document": raw.decode("utf-8"), "question": entry["question"], "lexicon": lexicon,
                "case": entry["case"], "names": entry["names"]}
-    expected = {**identities(env, entry["question"], words, lexicon), "document_id": doc["document_id"]}
     route = entry["result"]["route"]
 
     class _NoSplits:

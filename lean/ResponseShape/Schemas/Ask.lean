@@ -104,9 +104,9 @@ def «row'» : Shape :=
   .anyOf [
     ref "common.json#/$defs/case_error",
     n [obj, .required ["id", "status", "error"],
-      closed [("id", .bool true), ("status", constS "error"), ("error", str)]],
+      closed [("id", .echo "/id"), ("status", constS "error"), ("error", ref "common.json#/$defs/text")]],
     n [obj, .required ["id", "status", "result"],
-      closed [("id", .bool true), ("status", constS "ok"),
+      closed [("id", n [str, .equals "/id"]), ("status", constS "ok"),
         ("result", .anyOf [ref "#/$defs/answered", ref "#/$defs/refused"])]]]
 
 def file : File where

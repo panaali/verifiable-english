@@ -30,21 +30,16 @@ NULLABLE = {"reason", "witness", "source", "quote"}
 
 
 def bound(ident):
-    """A recorded answer with the request and the binding context the relay checks it against."""
-    from ve.backends.english_lean import export, identities
+    """A recorded answer with the request and the binding context the relay checks it against (`ask.binding`)."""
     from ve.document import load_document
-    from ve.english import EnglishVocabulary
     entry = AF.load(ident)
-    raw = (ROOT / entry["path"]).read_bytes()
-    doc = load_document(ROOT / entry["path"])
-    env = ask.environment(raw)
-    words = EnglishVocabulary(env, _defer_overlay_refusals=True)
-    lexicon = export(words)
+    path = ROOT / entry["path"]
+    raw = path.read_bytes()
+    lexicon, _ = ask._identities(raw, entry["question"], load_document(path))
     request = {"id": "ask", "document": raw.decode("utf-8"), "question": entry["question"], "lexicon": lexicon,
                "case": entry["case"], "names": entry["names"]}
-    reading = ask.read(raw, entry["question"])
-    context = ask._context(request, doc, raw, reading, entry["result"]["route"])
-    expected = {**identities(env, entry["question"], words, lexicon), "document_id": doc["document_id"]}
+    context, expected = ask.binding(path, raw, request)
+    assert context["_route"] == entry["result"]["route"]
     return entry["result"], {**request, **context}, expected
 
 
@@ -162,13 +157,21 @@ def rebinds(result):
         out[f"row {i}: a cited act not declared"] = setting(
             r, ("rows", i, "cited"), row["cited"] + [{"kind": "rules", "predicate": "zz_act"}])
         out[f"row {i}: a gap of an undeclared act"] = setting(r, ("rows", i, "gaps"), [["zz_act", ["e0"], False]])
+        if row["cited"]:
+            out[f"row {i}: a source cited twice"] = setting(r, ("rows", i, "cited"), row["cited"] + row["cited"][:1])
     for i, line in enumerate(r["lines"]):
+        if line["quote"] is not None:
+            unit = line["quote"][0]
+            out[f"line {i}: a quote not from its unit"] = setting(r, ("lines", i, "quote"), [unit, "zz not quoted"])
+            out[f"line {i}: an empty quote"] = setting(r, ("lines", i, "quote"), [unit, ""])
         out[f"line {i}: a reading the request does not name"] = setting(r, ("lines", i, "readings"), [["rs_zz", 0]])
         out[f"line {i}: a witness no row has"] = setting(r, ("lines", i, "witness"), [["rs_zz", 0]])
         out[f"line {i}: a quote of a unit not the document's"] = setting(r, ("lines", i, "quote"), ["zz9", "x"])
         out[f"line {i}: a source not the document's"] = setting(r, ("lines", i, "source"), {"kind": "unit", "unit": "zz9"})
         out[f"line {i}: no text"] = setting(setting(r, ("lines", i, "text"), ""), ("text", i), "")
     out["an unchecked name the request lacks"] = setting(r, ("unchecked_names",), [{"set": "rs_zz", "index": 0, "text": "x"}])
+    if r["unchecked_names"]:
+        out["an unchecked name twice"] = setting(r, ("unchecked_names",), r["unchecked_names"] + r["unchecked_names"][:1])
     return {k: v for k, v in out.items() if v is not None}
 
 
@@ -374,3 +377,32 @@ def test_the_schema_is_generated_and_types_every_field():
         assert schema["$defs"][name]["additionalProperties"] is False, name
     ok = schema["row"]["anyOf"][-1]["properties"]["result"]
     assert ok is not True and typed(ok)
+
+
+def test_the_rows_id_is_typed_and_bound_to_the_case():
+    """The row's `id` (Lean's `caseReported`): an answer's is the case's string `id` (`x-equals`), an error row
+    echoes the case's `id` value (`x-echo`) and has a non-empty error text; any other `id` is refused by the schema
+    before the binding runs."""
+    result, _, _ = bound("G1")
+
+    def ok(row, case):
+        try:
+            service_schema.check_row("ask", row, case, 0)
+        except service_schema.Invalid:
+            return False
+        return True
+    assert ok({"id": "ask", "status": "ok", "result": result}, {"id": "ask"})
+    for other in ("other", 7, None, ["ask"]):
+        assert not ok({"id": other, "status": "ok", "result": result}, {"id": "ask"}), other
+    assert ok({"id": 7, "status": "error", "error": "InvalidInput: id"}, {"id": 7})
+    assert ok({"id": None, "status": "error", "error": "InvalidInput: id"}, {})
+    assert not ok({"id": "ask", "status": "error", "error": "InvalidInput: id"}, {"id": "other"})
+    assert not ok({"id": "ask", "status": "error", "error": ""}, {"id": "ask"})
+
+
+def test_each_binding_has_its_rebound_mutant(answers):
+    """The conditional mutants of `rebinds` occur on the fixtures: a source cited twice, a quote not from its unit
+    or empty, an unchecked name twice."""
+    names = set().union(*(rebinds(answers[ident][0]) for ident in ("G1", "U3")))
+    for wanted in ("a source cited twice", "a quote not from its unit", "an empty quote", "an unchecked name twice"):
+        assert any(wanted in name for name in names), wanted
