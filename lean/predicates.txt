@@ -21,6 +21,7 @@ module ResponseShape.Encoders.Family
 module ResponseShape.Encoders.NormDefaults
 module ResponseShape.Encoders.Norms
 module ResponseShape.Encoders.Quantity
+module ResponseShape.Encoders.Question
 module ResponseShape.Encoders.ReadingsRoute
 module ResponseShape.Encoders.Reports
 module ResponseShape.Encoders.Rights
@@ -55,6 +56,7 @@ module ResponseShape.Schemas.Norms
 module ResponseShape.Schemas.Order
 module ResponseShape.Schemas.Parse
 module ResponseShape.Schemas.Quantity
+module ResponseShape.Schemas.Question
 module ResponseShape.Schemas.Readings
 module ResponseShape.Schemas.ReadingsRoute
 module ResponseShape.Schemas.Reports
@@ -278,6 +280,18 @@ module VE.Order.Typing
 module VE.Order.Wire
 module VE.Order.WireGate
 module VE.ParserContracts
+module VE.Question.Basic
+module VE.Question.Examples
+module VE.Question.Fixtures
+module VE.Question.Frames
+module VE.Question.Help
+module VE.Question.Moved
+module VE.Question.Properties
+module VE.Question.Read
+module VE.Question.Run
+module VE.Question.Spans
+module VE.Question.Strings
+module VE.Question.Texts
 module VE.Readings.Asserted
 module VE.Readings.Assertions
 module VE.Readings.BaseDown
@@ -290,6 +304,9 @@ module VE.Readings.ChoiceValid
 module VE.Readings.ChoiceWF
 module VE.Readings.Companions
 module VE.Readings.CompanionsExamples
+module VE.Readings.Components
+module VE.Readings.ComponentsExamples
+module VE.Readings.ComponentsWire
 module VE.Readings.Doc
 module VE.Readings.Examples
 module VE.Readings.Faithful
@@ -325,6 +342,9 @@ module VE.Readings.UnspecifiedExamples
 module VE.Readings.UnspecifiedWire
 module VE.Readings.UpPremises
 module VE.Readings.UpSlot
+module VE.Readings.Verdicts
+module VE.Readings.VerdictsExamples
+module VE.Readings.VerdictsWire
 module VE.Readings.Wire
 module VE.Rights.Admission
 module VE.Rights.Bar
@@ -720,6 +740,11 @@ VE.Order.Tableau.Defined@VE.Order.Tableau
 VE.Order.Tableau.Signed.Holds@VE.Order.Tableau
 VE.Order.TupleTyped@VE.Order.Semantics
 VE.Order.Valuation.Typed@VE.Order.Semantics
+VE.Question.AtMostOneDerivation@VE.Question.Properties
+VE.Question.GrammarChecks@VE.Question.Properties
+VE.Question.HasReading@VE.Question.Properties
+VE.Question.NoDerivation@VE.Question.Properties
+VE.Question.QuestionOneReading@VE.Question.Properties
 VE.Readings.Achieves@VE.Readings.Separate
 VE.Readings.AchievesQuiet@VE.Readings.Separate
 VE.Readings.AchievesU@VE.Readings.Unspecified
@@ -730,10 +755,17 @@ VE.Readings.ChoiceExtension@VE.Readings.Choice
 VE.Readings.ChosenAt@VE.Readings.UpSlot
 VE.Readings.ChosenNorm@VE.Readings.ChoiceFacts
 VE.Readings.Compatible@VE.Readings.Choice
+VE.Readings.CompatibleK@VE.Readings.Components
+VE.Readings.ConflictFreeK@VE.Readings.Components
+VE.Readings.ConsistentK@VE.Readings.Components
+VE.Readings.ConsistentU@VE.Readings.Verdicts
+VE.Readings.CounterU@VE.Readings.Verdicts
+VE.Readings.Covers@VE.Readings.Verdicts
 VE.Readings.Encodes@VE.Readings.Choice
 VE.Readings.Fits@VE.Readings.Choice
 VE.Readings.FixedNorm@VE.Readings.ChoiceFacts
 VE.Readings.Grows@VE.Readings.Shape
+VE.Readings.Holds@VE.Readings.Verdicts
 VE.Readings.Hyps@VE.Readings.ChoiceFacts
 VE.Readings.IsBit@VE.Readings.BaseUp
 VE.Readings.KeepsFrame@VE.Readings.Separate
@@ -741,8 +773,12 @@ VE.Readings.NamesFree@VE.Readings.Unspecified
 VE.Readings.NoSep@VE.Readings.Labels
 VE.Readings.Observes@VE.Readings.Separate
 VE.Readings.OnBit@VE.Readings.BaseUp
+VE.Readings.OthersSettled@VE.Readings.Components
 VE.Readings.PathTo@VE.Readings.Doc
 VE.Readings.RightsNames@VE.Readings.Lines
+VE.Readings.RowsHold@VE.Readings.Verdicts
+VE.Readings.RowsSound@VE.Readings.Components
+VE.Readings.RowsSoundBut@VE.Readings.Components
 VE.Readings.Separated@VE.Readings.Separate
 VE.Readings.SeparatedU@VE.Readings.Unspecified
 VE.Readings.Shaped@VE.Readings.Unspecified
@@ -751,6 +787,7 @@ VE.Readings.StrictDoc@VE.Readings.Unspecified
 VE.Readings.StrictNodes@VE.Readings.Unspecified
 VE.Readings.SupExtraExamples.SuperposeAllExtraApproved@VE.Readings.SupExtraExamples
 VE.Readings.SupExtraExamples.X1Checks@VE.Readings.SupExtraExamples
+VE.Readings.TakesAt@VE.Readings.Components
 VE.Readings.Transfers@VE.Readings.SupExtra
 VE.Readings.Twin@VE.Readings.Force
 VE.Readings.TwinDocs@VE.Readings.Force

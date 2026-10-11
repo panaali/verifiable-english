@@ -121,8 +121,11 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Document.cells_fits
 #print axioms ResponseShape.Encoders.Document.coverage_fits
 #print axioms ResponseShape.Encoders.Document.document_fits
+#print axioms ResponseShape.Encoders.Document.meaning_fits
 #print axioms ResponseShape.Encoders.Document.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Document.unit_fits
+#print axioms ResponseShape.Encoders.Question.questionCase_fits
+#print axioms ResponseShape.Encoders.Question.caseReported_fits
 #print axioms ResponseShape.Encoders.Family.answer_fits
 #print axioms ResponseShape.Encoders.Family.bundle_fits
 #print axioms ResponseShape.Encoders.Family.bundle_reported
@@ -199,6 +202,22 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateFields_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateNDFilled_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.result_conflict_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.result_premises_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.result_query_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.conflictWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.premisesWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.candidateWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.modelWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.reasonWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.foldConflict_range
+#print axioms ResponseShape.Encoders.ReadingsRoute.foldPremises_range
+#print axioms ResponseShape.Encoders.ReadingsRoute.reasonOf_status
+#print axioms ResponseShape.Encoders.ReadingsRoute.line_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.perChoiceJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.deadNote_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.verdictsAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.verdicts_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.fillPremises_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.filled_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runS2ND_fits
@@ -209,6 +228,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateOne_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateOne_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runOne_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.asObject_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.componentRows
 #print axioms ResponseShape.Encoders.ReadingsRoute.runComponents_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.or_beq
@@ -410,3 +430,21 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.not_not_true
 #print axioms ResponseShape.setObjVal_mkObj
 #print axioms ResponseShape.toOption_ok
+
+-- readings-defaults RD-4b: the component product and its proved response.
+#print axioms ResponseShape.Encoders.ReadingsRoute.anyWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.componentJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.entryJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.othersReasonWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.othersReason_status
+#print axioms ResponseShape.Encoders.ReadingsRoute.partRun_answer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productConflictWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productConflict_range
+#print axioms ResponseShape.Encoders.ReadingsRoute.productPremisesWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productResult_conflict_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productResult_premises_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.productResult_query_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.routeText_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runProduct_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.statusRows_fits

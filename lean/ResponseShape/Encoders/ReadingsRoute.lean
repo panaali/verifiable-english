@@ -240,6 +240,137 @@ theorem runS2_fits (lower : List String → Json → Json) (id kind : String) (b
     | (intro v hv; fits_from dead_fits _ _ _ v hv)
     | (intro v hv; fits_from choice_fits _ _ _ _ v hv)
 
+/-! The status words a fold yields (the result's closed enumerations). -/
+
+theorem foldConflict_range (rs : List (Choice × ChoiceResult)) :
+    foldConflict rs = .free ∨ foldConflict rs = .conflict ∨ foldConflict rs = .unknown := by
+  unfold foldConflict
+  split
+  · exact Or.inr (Or.inl rfl)
+  · split
+    · exact Or.inl rfl
+    · exact Or.inr (Or.inr rfl)
+
+theorem foldPremises_range (rs : List (Choice × ChoiceResult)) :
+    foldPremises rs = .model ∨ foldPremises rs = .inconsistent ∨ foldPremises rs = .unknown := by
+  unfold foldPremises
+  split
+  · exact Or.inl rfl
+  · split
+    · exact Or.inr (Or.inl rfl)
+    · exact Or.inr (Or.inr rfl)
+
+theorem conflictWord_fits (rs : List (Choice × ChoiceResult)) (h : foldConflict rs = .free → False) :
+    Fits req (.strIn ["CONFLICT", "UNKNOWN"]) (.str (word (foldConflict rs))) := by
+  apply Fits.strIn_lit
+  rcases foldConflict_range rs with h' | h' | h' <;> simp only [h'] at h ⊢
+  · exact (h trivial).elim
+  all_goals decide
+
+theorem premisesWord_fits (rs : List (Choice × ChoiceResult)) :
+    Fits req (.strIn ["model", "INCONSISTENT", "UNKNOWN"]) (.str (word (foldPremises rs))) := by
+  apply Fits.strIn_lit
+  rcases foldPremises_range rs with h' | h' | h' <;> simp only [h'] <;> decide
+
+theorem candidateWord_fits (rs : List (Choice × ChoiceResult)) :
+    Fits req (.strIn ["dead", "model", "INCONSISTENT", "UNKNOWN"]) (.str (word (foldPremises rs))) := by
+  apply Fits.strIn_lit
+  rcases foldPremises_range rs with h' | h' | h' <;> simp only [h'] <;> decide
+
+theorem modelWord_fits (x : ChoiceResult) (h : (x == .model) = true) :
+    Fits req (.strIn ["model"]) (.str (word x)) := by
+  apply Fits.strIn_lit
+  cases x <;> first | decide | (exact absurd h (by decide))
+
+theorem reasonOf_status {cs rs : List (Choice × ChoiceResult)} {s : ChoiceResult} {c : Choice}
+    (h : reasonOf cs rs = some (.conflictStatus s c)) : s = .conflict ∨ s = .unknown := by
+  unfold reasonOf at h
+  split at h
+  · split at h
+    · simp only [Option.map_eq_some_iff] at h
+      obtain ⟨_, _, h⟩ := h
+      cases h
+    · cases h
+  · rename_i hs
+    simp only [Option.map_eq_some_iff, Reason.conflictStatus.injEq] at h
+    obtain ⟨_, _, rfl, _⟩ := h
+    rcases foldConflict_range cs with h' | h' | h'
+    · exact absurd h' hs
+    · exact Or.inl h'
+    · exact Or.inr h'
+
+theorem reasonWord_fits {cs rs : List (Choice × ChoiceResult)} {s : ChoiceResult} {c : Choice}
+    (h : reasonOf cs rs = some (.conflictStatus s c)) :
+    Fits req (.strIn ["CONFLICT", "UNKNOWN"]) (.str (word s)) := by
+  apply Fits.strIn_lit
+  rcases reasonOf_status h with rfl | rfl <;> decide
+
+theorem result_conflict_fits (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_conflict") (resultOf "conflict" D A assumed infos over dead) := by
+  unfold resultOf conflictResult overBudgetFields overBudgetRest
+  (repeat' split) <;> (try (exfalso; simp_all (config := {decide := true}); done)) <;>
+    (try simp only [List.cons_append, List.nil_append]) <;> fits using conflictWord_fits
+
+theorem result_premises_fits (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_premises") (resultOf "premises" D A assumed infos over dead) := by
+  unfold resultOf premisesResult overBudgetFields overBudgetRest
+  (repeat' split) <;> (try (exfalso; simp_all (config := {decide := true}); done)) <;>
+    (try simp only [List.cons_append, List.nil_append]) <;>
+    fits using premisesWord_fits, candidateWord_fits, modelWord_fits
+
+theorem result_query_fits (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_query") (resultOf "query" D A assumed infos over dead) := by
+  unfold resultOf entailmentResult overBudgetFields overBudgetRest
+  cases assumed <;> simp only [assumedFields] <;> (repeat' split) <;>
+    (try (exfalso; simp_all (config := {decide := true}); done)) <;>
+    (try simp only [List.cons_append, List.nil_append, List.append_nil]) <;> fits using reasonWord_fits
+
+
+theorem line_fits (l : Line) : Fits req (skel% "readings-route.json#/$defs/verdicts_line") l.json := by
+  unfold Line.json
+  fits
+
+theorem perChoiceJson_fits (question : String) (i : RowInfo) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_row") (perChoiceJson question i) := by
+  unfold perChoiceJson
+  (repeat' split) <;> simp only [List.cons_append, List.nil_append, List.append_nil] <;> fits
+
+theorem deadNote_fits (D : Doc) (infos : List RowInfo) (dead : List Json) :
+    ∀ x ∈ (deadOf D infos dead).2, Fits req (skel% "readings-route.json#/$defs/verdicts_dead") x := by
+  intro x hx
+  simp only [deadOf, List.mem_map] at hx
+  obtain ⟨d, _, rfl⟩ := hx
+  split <;> fits
+
+theorem verdictsAnswer_fits (id question : String) (nd : Bool) (D : Doc) (A : Choice)
+    (assumed : Option Choice) (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json)
+    (hq : verdictsQuestions.contains question) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts") (verdictsAnswer id question nd D A assumed infos over dead) := by
+  simp only [verdictsQuestions, List.contains_cons, List.contains_nil, Bool.or_false, Bool.or_eq_true, beq_iff_eq] at hq
+  rcases hq with rfl | rfl | rfl
+  all_goals
+    unfold verdictsAnswer answerFields deadReadingsJson untakenJson
+    simp only [okWith, VE.Route.Wire.ok]
+    fits
+  all_goals first
+    | apply result_conflict_fits
+    | apply result_premises_fits
+    | apply result_query_fits
+    | apply perChoiceJson_fits
+    | apply line_fits
+    | (apply deadNote_fits; assumption)
+
+theorem verdicts_fits (lower : List String → Json → Json) (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/verdicts") (runVerdicts lower id b j) := by
+  unfold runVerdicts
+  okfits
+  all_goals first
+    | (apply verdictsAnswer_fits; assumption)
+    | skip
+
 theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) (b : Wire.Admitted2) (j : Json)
     (hK : KindRead "evaluate" req kind) : OkFits req Skeletons.readingsRoute (runS2ND lower id kind b j) := by
   have hK0 := hK
@@ -250,6 +381,7 @@ theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) 
   all_goals first
     | exact runS2_fits _ _ _ _ _ hK0
     | skip
+  all_goals (try (intro v hv; fits_from verdicts_fits _ _ _ _ v hv))
   all_goals (try kind_norm)
   all_goals first
     | (intro v hv; fits_from elaborateNDFilled_fits _ _ v hv)
@@ -292,13 +424,20 @@ theorem runOne_fits (j : Json) (id kind : String) (environment document : Json) 
     | (intro v hv; fits_from separateND_fits _ _ _ v hv)
     | (simp only [VE.Route.Wire.ok]; fits using pair_fits)
 
+/-- A case's environment or document in its component row (`asObject`) is an object. -/
+theorem asObject_fits (j : Json) : Fits req Skel.anyObject (asObject j) := by
+  unfold asObject Skel.anyObject
+  split
+  · exact Fits.obj (fun _ _ _ => Fits.any _) (fun _ h => by cases h) (fun _ h => by cases h)
+  · exact Fits.mkObj (by decide) (fun _ h => by cases h)
+
 theorem componentRows (j : Json) (id kind : String) (parts : List (String × Json × Json)) :
-    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (a : Json), r = componentRow name a ∧
+    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (e d d' a : Json), r = componentRowOf kind name e d d' a ∧
       (kind = "readings-validate" → Fits j (skel% "readings-route.json#/$defs/validate") a) ∧
       (kind ≠ "readings-validate" → Fits j (skel% "readings-route.json#/$defs/elaborate") a))
       (parts.mapM (fun p => do
         let a ← if kind == "readings-validate" then validateOne id p.2.1 p.2.2 else elaborateOne j id p.2.1 p.2.2
-        pure (componentRow p.1 a))) := by
+        pure (componentRowOf kind p.1 p.2.1 p.2.2 p.2.2 a))) := by
   apply OkP.mapM
   intro p _
   by_cases hk : kind = "readings-validate"
@@ -306,12 +445,12 @@ theorem componentRows (j : Json) (id kind : String) (parts : List (String × Jso
     simp only [beq_self_eq_true, reduceIte]
     apply OkP.bind
     intro a ha
-    exact OkP.pure ⟨_, _, rfl, fun _ => validateOne_fits _ _ _ a ha, fun h => absurd rfl h⟩
+    exact OkP.pure ⟨_, _, _, _, _, rfl, fun _ => validateOne_fits _ _ _ a ha, fun h => absurd rfl h⟩
   · have : (kind == "readings-validate") = false := by simpa using hk
     simp only [this, Bool.false_eq_true, reduceIte]
     apply OkP.bind
     intro a ha
-    exact OkP.pure ⟨_, _, rfl, fun h => absurd h hk, fun _ => elaborateOne_fits _ _ _ _ a ha⟩
+    exact OkP.pure ⟨_, _, _, _, _, rfl, fun h => absurd h hk, fun _ => elaborateOne_fits _ _ _ _ a ha⟩
 
 /-- Per case of the split (`runComponents`), for `readings-validate` and `readings-elaborate`. -/
 theorem runComponents_fits (j : Json) (id kind : String) (parts : List (String × Json × Json))
@@ -326,16 +465,20 @@ theorem runComponents_fits (j : Json) (id kind : String) (parts : List (String �
   · rcases hv with rfl | rfl
     · simp only [VE.Route.Wire.ok]
       fits
-      obtain ⟨name, a, rfl, h1, _⟩ := hr _ ‹_›
-      unfold componentRow
+      obtain ⟨name, e, d, d', a, rfl, h1, _⟩ := hr _ ‹_›
+      unfold componentRowOf componentRow
+      simp only [String.reduceBEq, Bool.false_eq_true, if_false]
       fits
       exact h1 rfl
     · simp only [VE.Route.Wire.ok]
       fits
-      obtain ⟨name, a, rfl, _, h2⟩ := hr _ ‹_›
-      unfold componentRow
+      obtain ⟨name, e, d, d', a, rfl, _, h2⟩ := hr _ ‹_›
+      unfold componentRowOf
+      simp only [beq_self_eq_true, if_true]
       fits
-      exact h2 (by decide)
+      all_goals first
+        | exact h2 (by decide)
+        | exact asObject_fits _
   · subst hd
     simp at hv
 
@@ -352,6 +495,7 @@ theorem runAdmitted_fits (j : Json) (id kind : String) (ready : ComponentAdmissi
   all_goals (try kind_norm)
   all_goals first
     | exact runS2_fits _ _ _ _ _ hK0
+    | (intro v hv; fits_from verdicts_fits _ _ _ _ v hv)
     | fits_from validate_fits _ _ _ ‹_›
     | (intro v hv; fits_from validateND_fits _ _ v hv)
     | (intro v hv; fits_from separateND_fits _ _ _ v hv)
@@ -383,28 +527,30 @@ theorem runAdmitted_elaborate_fits (j : Json) (id : String) (ready : ComponentAd
   | s2 b => simpa [runAdmitted, runS2] using elaborate_fits (req := j) id b
   | nd f => simpa [runAdmitted] using elaborateNDFilled_fits (req := j) id f
 
-theorem admittedComponentRows (j : Json) (id kind : String) (parts : List (String × ComponentAdmission))
+theorem admittedComponentRows (j : Json) (id kind : String)
+    (parts : List (String × Json × Json × Json × ComponentAdmission))
     (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
-    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (a : Json), r = componentRow name a ∧
+    OkP (fun rows => ∀ r ∈ rows, ∃ (name : String) (e d d' a : Json), r = componentRowOf kind name e d d' a ∧
       (kind = "readings-validate" → Fits j (skel% "readings-route.json#/$defs/validate") a) ∧
       (kind ≠ "readings-validate" → Fits j (skel% "readings-route.json#/$defs/elaborate") a))
-      (parts.mapM (fun p => do pure (componentRow p.1 (← runAdmitted j id kind p.2)))) := by
+      (parts.mapM (fun p =>
+        do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 p.2.2.2.1 (← runAdmitted j id kind p.2.2.2.2)))) := by
   apply OkP.mapM
   intro p _
   by_cases hk : kind = "readings-validate"
   · subst hk
     apply OkP.bind
     intro a ha
-    exact OkP.pure ⟨_, _, rfl, fun _ => runAdmitted_validate_fits _ _ _ a ha, fun h => absurd rfl h⟩
+    exact OkP.pure ⟨_, _, _, _, _, rfl, fun _ => runAdmitted_validate_fits _ _ _ a ha, fun h => absurd rfl h⟩
   · apply OkP.bind
     intro a ha
-    exact OkP.pure ⟨_, _, rfl, fun h => absurd h hk, fun _ =>
+    exact OkP.pure ⟨_, _, _, _, _, rfl, fun h => absurd h hk, fun _ =>
       by have he : kind = "readings-elaborate" := hv.resolve_left hk
          subst he
          exact runAdmitted_elaborate_fits _ _ _ a ha⟩
 
 theorem runAdmittedComponents_fits (j : Json) (id kind : String)
-    (parts : List (String × ComponentAdmission)) (hK : KindRead "evaluate" j kind)
+    (parts : List (String × Json × Json × Json × ComponentAdmission)) (hK : KindRead "evaluate" j kind)
     (hv : kind = "readings-validate" ∨ kind = "readings-elaborate") :
     OkFits j Skeletons.readingsRoute (runAdmittedComponents j id kind parts) := by
   unfold runAdmittedComponents
@@ -416,24 +562,169 @@ theorem runAdmittedComponents_fits (j : Json) (id kind : String)
   · rcases hv with rfl | rfl
     · simp only [VE.Route.Wire.ok]
       fits
-      obtain ⟨name, a, rfl, h1, _⟩ := hr _ ‹_›
-      unfold componentRow
+      obtain ⟨name, e, d, d', a, rfl, h1, _⟩ := hr _ ‹_›
+      unfold componentRowOf componentRow
+      simp only [String.reduceBEq, Bool.false_eq_true, if_false]
       fits
       exact h1 rfl
     · simp only [VE.Route.Wire.ok]
       fits
-      obtain ⟨name, a, rfl, _, h2⟩ := hr _ ‹_›
-      unfold componentRow
+      obtain ⟨name, e, d, d', a, rfl, _, h2⟩ := hr _ ‹_›
+      unfold componentRowOf
+      simp only [beq_self_eq_true, if_true]
       fits
-      exact h2 (by decide)
+      all_goals first
+        | exact h2 (by decide)
+        | exact asObject_fits _
   · subst hd
     simp at hv
+
+/-! ### The product over a document's components (`runProduct`, plan RD-4b) -/
+
+theorem anyWord_fits (x : ChoiceResult) :
+    Fits req (.strIn ["CONFLICT-FREE", "CONFLICT", "UNKNOWN", "proved", "refuted", "model", "INCONSISTENT"])
+      (.str (word x)) := by
+  apply Fits.strIn_lit
+  cases x <;> decide
+
+theorem routeText_fits (r : Route) :
+    Fits req (.strIn ["w2", "pending", "abstention", "superposed", "enumerated"]) (.str r.text) := by
+  apply Fits.strIn_lit
+  cases r <;> decide
+
+theorem productConflict_range (rows : List ComponentRows) :
+    productConflict rows = .free ∨ productConflict rows = .conflict ∨ productConflict rows = .unknown := by
+  unfold productConflict
+  split
+  · exact Or.inl rfl
+  · split
+    · exact Or.inr (Or.inl rfl)
+    · exact Or.inr (Or.inr rfl)
+
+theorem productConflictWord_fits (rows : List ComponentRows) :
+    Fits req (.strIn ["CONFLICT-FREE", "CONFLICT", "UNKNOWN"]) (.str (word (productConflict rows))) := by
+  apply Fits.strIn_lit
+  rcases productConflict_range rows with h | h | h <;> simp only [h] <;> decide
+
+theorem productPremisesWord_fits (rows : List ComponentRows) :
+    Fits req (.strIn ["model", "UNKNOWN"]) (.str (word (productPremises rows))) := by
+  apply Fits.strIn_lit
+  unfold productPremises
+  split <;> decide
+
+theorem othersReason_status {rows : List ComponentRows} {k : Nat} {s : ChoiceResult} {j : Nat} {c : Choice}
+    (h : othersReason rows k = some (s, j, c)) : s = .conflict ∨ s = .unknown := by
+  unfold othersReason at h
+  simp only at h
+  split at h
+  · rename_i x hx
+    cases h
+    obtain ⟨y, _, hy⟩ := List.exists_of_findSome?_eq_some hx
+    split at hy
+    · simp only [Option.map_eq_some_iff] at hy
+      obtain ⟨_, _, hy⟩ := hy
+      cases hy
+      exact Or.inl rfl
+    · cases hy
+  · obtain ⟨y, _, hy⟩ := List.exists_of_findSome?_eq_some h
+    split at hy
+    · simp only [Option.map_eq_some_iff] at hy
+      obtain ⟨_, _, hy⟩ := hy
+      cases hy
+      exact Or.inr rfl
+    · cases hy
+
+theorem othersReasonWord_fits {rows : List ComponentRows} {k : Nat} {s : ChoiceResult} {j : Nat} {c : Choice}
+    (h : othersReason rows k = some (s, j, c)) : Fits req (.strIn ["CONFLICT", "UNKNOWN"]) (.str (word s)) := by
+  apply Fits.strIn_lit
+  rcases othersReason_status h with rfl | rfl <;> decide
+
+theorem partRun_answer_fits (r : PartRun) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts") r.answer :=
+  verdictsAnswer_fits _ _ _ _ _ _ _ _ _ r.hq
+
+theorem componentJson_fits (r : PartRun) :
+    Fits req (skel% "readings-route.json#/$defs/product_component") (componentJson r) := by
+  unfold componentJson
+  fits
+  all_goals first
+    | exact routeText_fits _
+    | exact verdictsAnswer_fits _ _ _ _ _ _ _ _ _ r.hq
+
+theorem entryJson_fits (x : Option String × Line) :
+    Fits req (skel% "readings-route.json#/$defs/product_line") (entryJsonP x) := by
+  unfold entryJsonP entryJson
+  cases x.1 <;> fits
+
+theorem statusRows_fits (runs : List PartRun) (f : ComponentRows → ChoiceResult) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_component_status") (statusRows runs f) := by
+  unfold statusRows
+  fits
+  all_goals (try exact anyWord_fits _)
+
+theorem productResult_conflict_fits (runs : List PartRun) (k : Nat) :
+    Fits req (skel% "readings-route.json#/$defs/product_conflict") (productResult "conflict" runs k) := by
+  unfold productResult
+  simp only [beq_self_eq_true, if_true]
+  fits
+  all_goals first
+    | exact productConflictWord_fits _
+    | exact statusRows_fits _ _
+
+theorem productResult_premises_fits (runs : List PartRun) (k : Nat) :
+    Fits req (skel% "readings-route.json#/$defs/product_premises") (productResult "premises" runs k) := by
+  unfold productResult
+  simp only [String.reduceBEq, Bool.false_eq_true, if_false, beq_self_eq_true, if_true]
+  fits
+  all_goals first
+    | exact productPremisesWord_fits _
+    | exact statusRows_fits _ _
+
+theorem productResult_query_fits (runs : List PartRun) (k : Nat) :
+    Fits req (skel% "readings-route.json#/$defs/product_query") (productResult "query" runs k) := by
+  unfold productResult
+  simp only [String.reduceBEq, Bool.false_eq_true, if_false]
+  (repeat' split) <;> fits
+  all_goals (try (apply othersReasonWord_fits; assumption))
+
+theorem productAnswer_fits (id question : String) (document : Json) (runs : List PartRun) (k : Nat)
+    (sentence : Option String) (hq : verdictsQuestions.contains question) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_components")
+      (productAnswer id question document runs k sentence) := by
+  simp only [verdictsQuestions, List.contains_cons, List.contains_nil, Bool.or_false, Bool.or_eq_true, beq_iff_eq] at hq
+  rcases hq with rfl | rfl | rfl
+  all_goals
+    unfold productAnswer
+    simp only [okWith, VE.Route.Wire.ok]
+    cases sentence <;> fits
+  all_goals first
+    | exact componentJson_fits _
+    | exact productResult_conflict_fits _ _
+    | exact productResult_premises_fits _ _
+    | exact productResult_query_fits _ _
+    | exact entryJson_fits _
+    | exact routeText_fits _
+    | exact partRun_answer_fits _
+    | exact productConflictWord_fits _
+    | exact productPremisesWord_fits _
+    | exact anyWord_fits _
+    | exact line_fits _
+    | (apply othersReasonWord_fits; assumption)
+
+theorem runProduct_fits (j : Json) (id : String) (cases : List (String × Json × Json)) :
+    OkFits req (skel% "readings-route.json#/$defs/verdicts_components") (runProduct j id cases) := by
+  unfold runProduct
+  okfits
+  all_goals first
+    | (apply productAnswer_fits; assumption)
+    | skip
 
 theorem runCase_fits (j : Json) : OkFits j Skeletons.readingsRoute (runCase j) := by
   unfold runCase
   okfits
   all_goals read_kind
   all_goals first
+    | (intro v hv; fits_from runProduct_fits _ _ _ v hv)
     | exact runAdmitted_fits _ _ _ _ (KindRead.of_str ‹_›)
     | exact runAdmitted_fits _ _ _ _ (Or.inr ⟨‹_›, rfl⟩)
     | exact runAdmittedComponents_fits _ _ _ _ (KindRead.of_str ‹_›) (or_beq ‹_›)
@@ -704,7 +995,7 @@ theorem lower {m e : Std.TreeMap.Raw String Json compare} {env' : Json} (wf : m.
 theorem of_lower_row {v : Json} {s : Skel} (hs : s ∈ [Skeletons.rights, Skeletons.softNorms, Skeletons.normDefaults,
       Skeletons.norms])
     (hn : ∀ k ∈ ["readings-validate", "readings-separate", "readings-elaborate", "readings-conflict",
-      "readings-certificate", "readings-model", "readings-dead", "readings-choice"], (CaseCond.kind k).holds req = false)
+      "readings-certificate", "readings-model", "readings-dead", "readings-choice", "readings-verdicts"], (CaseCond.kind k).holds req = false)
     (h : Fits req s v) : Fits req Skeletons.readingsRoute v := by
   skel_norm
   repeat (refine Fits.onCaseE (hn _ (by simp)) ?_)
@@ -715,7 +1006,7 @@ theorem of_lower_row {v : Json} {s : Skel} (hs : s ∈ [Skeletons.rights, Skelet
 /-- The lower route's row, for a case of none of the readings kinds. -/
 theorem runLower_fits (j : Json) (hj : CaseWF j)
     (hn : ∀ k ∈ ["readings-validate", "readings-separate", "readings-elaborate", "readings-conflict",
-      "readings-certificate", "readings-model", "readings-dead", "readings-choice"], (CaseCond.kind k).holds j = false) :
+      "readings-certificate", "readings-model", "readings-dead", "readings-choice", "readings-verdicts"], (CaseCond.kind k).holds j = false) :
     Fits j Skeletons.readingsRoute (runLower j) := by
   unfold runLower
   split
@@ -786,7 +1077,7 @@ theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.readi
         simp only [s2Kinds, Bool.or_eq_true, beq_iff_eq, List.contains_cons, List.contains_nil,
           Bool.or_false] at hr
         simp only [or_assoc] at hr
-        rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> fits
+        rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> fits
     · rename_i hr
       refine runLower_fits j hj fun x hx => ?_
       cases hb : (CaseCond.kind x).holds j
@@ -795,7 +1086,7 @@ theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.readi
         rw [hk] at this
         cases this
         simp [s2Kinds] at hr hx
-        rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp_all
+        rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp_all
   · rename_i hk
     refine runLower_fits j hj fun x hx => ?_
     cases hb : (CaseCond.kind x).holds j

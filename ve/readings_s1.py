@@ -327,6 +327,11 @@ class ReadingSet:
         self.situations = raw.get("situations") or {}
 
 
+def active_sets(sets):
+    """The reading sets of a wire document at their unit's active version (the highest), in document order."""
+    return [r for r in sets if all(o["unit"] != r["unit"] or o["version"] <= r["version"] for o in sets)]
+
+
 class Document:
     """The items of 1.2 in source order: ("fixed", unit, Content), ("bar", unit, raw json), ("set", ReadingSet).
     The document is read as Lean receives it (`wire`): an explicit null is an absent field at every depth, so a
@@ -345,7 +350,7 @@ class Document:
         units = document["units"]
         sets = document.get("reading_sets") or []
         self.unit_ids = [u["id"] for u in units]
-        active = [r for r in sets if all(o["unit"] != r["unit"] or o["version"] <= r["version"] for o in sets)]
+        active = active_sets(sets)
         self.items = []
         for unit in units:
             uid, kind = unit["id"], unit.get("kind")

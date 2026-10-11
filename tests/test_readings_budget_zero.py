@@ -24,9 +24,11 @@ from ve.readings_verdicts import Enumerated, Superposed, _ChoiceDocument, _Fille
 SWEPT = {
     Superposed: {"conflict", "model", "certificate", "premises", "candidate_premises", "dead_readings", "entailment",
                  "report_fields"},
-    Enumerated: {"conflict", "premises", "dead_readings", "entailment", "report_fields"},
-    _ChoiceDocument: {"conflict", "certified", "model", "premises", "entailment"},
-    _FilledChoiceDocument: {"conflict", "certified", "model", "premises", "entailment"},
+    Enumerated: {"conflict", "premises", "dead_readings", "entailment", "report_fields", "conflict_answer",
+                 "premises_answer", "query_answer"},
+    # RD-3: a choice's document only generates evidence; Lean checks and folds it (`readings-verdicts`).
+    _ChoiceDocument: {"conflict_case", "witness_case", "certificate_case", "model_case"},
+    _FilledChoiceDocument: {"conflict_case", "witness_case", "certificate_case", "model_case"},
 }
 NOT_BUDGETED = {
     "lean": "the relay to Lean's service, no search",
@@ -35,6 +37,8 @@ NOT_BUDGETED = {
     "restrictions": "the couplings and narrowings in force, read from the document",
     "taken": "whether a compatible choice takes the candidates: the enumeration itself",
     "over_budget": "the constant answer past 64 choices", "base": "the base environment",
+    "check_answer": "Lean's answer checked against its request, no search",
+    "frame": "the request's document decoded for that check, no search",
 }
 X_REQUIRED = ["forall", "act", ["unary", "x_required", ["var", 0]]]  # F-ND2's query (the gated one)
 FIXTURES = {"F-ND1": (fnd1, QUERY), "F-ND2": (fnd2, X_REQUIRED), "M9": (_m9, None), "M8": (_m8, None),
@@ -70,13 +74,11 @@ def test_every_public_op_is_swept_or_named_unbudgeted(cls):
 
 
 def sweep_choice(document, conclusion):
-    """A choice's own document: its conflict status, a certificate, a model, its premise status, an entailment."""
-    unknown(document.conflict(), "verdict")
-    assert document.certified(conclusion) is None and document.certified(None) is None
-    assert document.model(conclusion) is None and document.model(None) is None
-    unknown(document.premises(), "status")
-    assert document.entailment(conclusion)["outcome"] in ("conflict", "unknown")
-    assert document.entailment(conclusion).get("conflict_status", "UNKNOWN") == "UNKNOWN"
+    """A choice's own document generates nothing at budget 0: no conflict package, witness, certificate or model."""
+    assert document.conflict_case()["packages"] == {}
+    assert document.witness_case() is None
+    assert document.certificate_case(conclusion) is None and document.certificate_case(None) is None
+    assert document.model_case(conclusion) is None and document.model_case(None) is None
 
 
 def sweep_enumerated(route, conclusion):
@@ -134,7 +136,7 @@ def test_budget_zero_after_the_conflict_status_is_certified(name, tmp_path, monk
     route = context(load_document(make(tmp_path)))
     if isinstance(route, Enumerated):
         documents = [route._choice(c) for c in route.choices]
-        free = [d.conflict()["verdict"] == "CONFLICT-FREE" for d in documents]
+        free = [e["conflict"] == "CONFLICT-FREE" for e in route.conflict_answer()["per_choice"]]
     else:
         free = [route.conflict(A)["status"] == "CONFLICT-FREE" for A in [()] + [[c] for c in route.candidates()]]
     assert any(free), name
@@ -146,9 +148,12 @@ def test_budget_zero_after_the_conflict_status_is_certified(name, tmp_path, monk
     unknown(route.premises(), "status")
     if isinstance(route, Enumerated):
         for document in documents:
-            assert document.entailment(conclusion)["outcome"] in ("conflict", "unknown")
-            assert document.certified(conclusion) is None and document.model(conclusion) is None
-            unknown(document.premises(), "status")
+            assert document.certificate_case(conclusion) is None and document.model_case(conclusion) is None
+            assert document.certificate_case(None) is None and document.model_case(None) is None
+        # Lean's rows past the gate: a CONFLICT-FREE reading's query and premise rows have no result.
+        rows = route.query_answer(conclusion)["per_choice"]
+        assert rows and {e["query"] for e in rows} == {"UNKNOWN"}
+        assert {e["premises"] for e in route.premises_answer()["per_choice"]} == {"UNKNOWN"}
     else:
         for A in [()] + [[c] for c in route.candidates()]:
             assert route.certificate(A, conclusion=conclusion) is None and route.model(A, conclusion=conclusion) is None

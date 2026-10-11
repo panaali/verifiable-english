@@ -201,9 +201,15 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
         labels_enabled = rights_enabled or "readings@1" in env.profiles
         for reading in readings:
             required_reading = {"id", "kind", "meaning_id", "content", "admission"}
+            # readings-defaults 1.9 (RD-4b): under readings@1 a reading may carry its own vocabulary. W2 passes
+            # `companion` through unread; Lean splits the document, merges the companions and computes and compares
+            # the reading's meaning id over its own environment (`companionMeaningId`), so none is computed here.
+            optional_reading = (({"labels"} if labels_enabled else set()) |
+                                ({"companion"} if "readings@1" in env.profiles else set()))
             if (type(reading) is not dict or not required_reading <= set(reading) or
-                    set(reading) - required_reading - ({"labels"} if labels_enabled else set())):
+                    set(reading) - required_reading - optional_reading):
                 raise VEError("invalid reading")
+            companion = "companion" in reading
             if "labels" in reading:
                 labels = reading["labels"]
                 if (type(labels) is not dict or any(not token(axis) or not token(value)
@@ -212,7 +218,7 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
             if not token(reading["id"]) or reading["id"] in ids:
                 raise VEError("duplicate or invalid reading id")
             ids.add(reading["id"])
-            if "readings@1" in env.profiles and s1_content_kind(reading["content"]) == "bar":
+            if "readings@1" in env.profiles and s1_content_kind(reading["content"]) == "bar" and not companion:
                 s1_content_meaning_id(env, item["id"], reading,
                                       rule_result=rule_results.get(id(reading)))
             if not (s1_bearing and s1_content_kind(reading["content"]) in S1_CONTENT_KINDS
@@ -221,7 +227,7 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
                 _check_kind(reading["kind"])
             if not token(reading["meaning_id"]):
                 raise VEError("invalid reading meaning id")
-            if reading["content"] is not None:
+            if reading["content"] is not None and not companion:
                 content = reading["content"]
                 if s1_bearing and s1_content_kind(content) in S1_CONTENT_KINDS:
                     content_id = s1_content_meaning_id(env, item["id"], reading,

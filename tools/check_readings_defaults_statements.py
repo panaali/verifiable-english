@@ -1,5 +1,5 @@
-"""Compare the RD-1, RD-2a, RD-4a and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2,
-6.3, 6.6 (its wire part) and 6.7.
+"""Compare the RD-1, RD-2a, RD-4a, RD-4b and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2,
+6.3, 6.6 and 6.7.
 
 Every declaration of the spec's 6.2 block is compared, not only the theorems (review B2): the structure, every
 definition with its body (`AchievesU`, `fillDoc`, `fillNamesFree`, `normsShaped`, `WellFormedND`, ...), and every
@@ -47,11 +47,21 @@ SOURCES_RD2A = [ROOT / "lean/VE/NormDefaults/Wire.lean", ROOT / "lean/VE/NormDef
                 ROOT / "lean/VE/Readings/UnspecifiedWire.lean"]
 EXPECTED_RD2A = {"theorem": 5, "def": 8, "structure": 3}
 PENDING_RD2A: dict[str, str] = {}
+# RD-3: spec 6.4 (the fold) and 6.5 (conditions and the English plan), placed by 6.1 in `Verdicts.lean`; the English
+# plan and the wire are in `VerdictsWire.lean`, beside the kind that computes them.
+SECTIONS_RD3 = (("### 6.4 RD-3", "### 6.5"), ("### 6.5 RD-3", "### 6.6"))
+SOURCES_RD3 = [ROOT / "lean/VE/Readings/Verdicts.lean", ROOT / "lean/VE/Readings/VerdictsWire.lean"]
+EXPECTED_RD3 = {"theorem": 11, "def": 18, "structure": 1}
+PENDING_RD3: dict[str, str] = {}
 # RD-4a: spec 6.6's `section Companions`, placed by 6.1 in `Companions.lean`.
 SECTION_RD4A = ("### 6.6 RD-4a and RD-4b", "### 6.7")
 SOURCE_RD4A = ROOT / "lean/VE/Readings/Companions.lean"
 EXPECTED_RD4A = {"theorem": 4, "def": 6, "structure": 0}
 PENDING_RD4A: dict[str, str] = {}
+# RD-4b: the product statements after `end Companions` in the same approved block.
+SOURCE_RD4B = ROOT / "lean/VE/Readings/Components.lean"
+EXPECTED_RD4B = {"theorem": 6, "def": 8, "structure": 2}
+PENDING_RD4B: dict[str, str] = {}
 SOURCE_6A = ROOT / "lean/VE/Readings/SupExtra.lean"
 # 6.7's declarations by kind, RD-6b's included.
 EXPECTED_6A = {"theorem": 7, "def": 3, "structure": 0}
@@ -130,11 +140,26 @@ def approved_rd4a() -> dict[tuple[str, str], list[str]]:
     return declarations(code.split("section Companions", 1)[1].split("end Companions", 1)[0], statements_only=True)
 
 
+def approved_rd4b() -> dict[tuple[str, str], list[str]]:
+    section = SPEC.read_text().split(SECTION_RD4A[0], 1)[1].split(SECTION_RD4A[1], 1)[0]
+    code = section.split("```lean", 1)[1].split("```", 1)[0]
+    return declarations(code.split("end Companions", 1)[1], statements_only=True)
+
+
 def lean_of(sources) -> dict[tuple[str, str], list[str]]:
     """The Lean declarations of one source file or of several, merged (a name found twice is reported)."""
     out: dict[tuple[str, str], list[str]] = {}
     for source in [sources] if isinstance(sources, Path) else sources:
         for key, texts in declarations(Path(source).read_text(), statements_only=True).items():
+            out.setdefault(key, []).extend(texts)
+    return out
+
+
+def approved_rd3() -> dict[tuple[str, str], list[str]]:
+    """6.4 and 6.5 together: one batch, one comparison (a name stated in both would be reported twice)."""
+    out: dict[tuple[str, str], list[str]] = {}
+    for section in SECTIONS_RD3:
+        for key, texts in block(*section).items():
             out.setdefault(key, []).extend(texts)
     return out
 
@@ -270,6 +295,14 @@ def main_rd2a() -> int:
     return 0
 
 
+def main_rd3() -> int:
+    errors, _ = compare("RD-3", approved_rd3(), SOURCES_RD3, EXPECTED_RD3, PENDING_RD3, set())
+    if errors:
+        print("\n".join(errors))
+        return 1
+    return 0
+
+
 def main_rd4a() -> int:
     errors, _ = compare("RD-4a", approved_rd4a(), SOURCE_RD4A, EXPECTED_RD4A, PENDING_RD4A, set())
     if errors:
@@ -278,5 +311,13 @@ def main_rd4a() -> int:
     return 0
 
 
+def main_rd4b() -> int:
+    errors, _ = compare("RD-4b", approved_rd4b(), SOURCE_RD4B, EXPECTED_RD4B, PENDING_RD4B, set())
+    if errors:
+        print("\n".join(errors))
+        return 1
+    return 0
+
+
 if __name__ == "__main__":
-    sys.exit(max(main(), main_rd2a(), main_rd4a()))
+    sys.exit(max(main(), main_rd2a(), main_rd3(), main_rd4a(), main_rd4b()))
