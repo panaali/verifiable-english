@@ -18,7 +18,7 @@ import sys
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from subprocesses import HANG_TIMEOUT, expired_waits
 from ve.backends import lean as lean_backend
 from ve.backends import process_limits, rust_jsonl
 from ve.errors import CheckerUnavailable, ResourceLimit
@@ -244,10 +244,14 @@ def test_lean_one_shot_routes_run_under_their_address_space_limit(monkeypatch, t
     assert seen == [lean_backend.ADDRESS_SPACE]
 
 
-def test_one_shot_runner_timeout_kills_the_child():
+def test_one_shot_runner_timeout_kills_the_child(monkeypatch):
+    # The deadline is injected as already expired; the child never answers. `run_limited` returns
+    # only after it waits for the child, so a child left running would hang this test.
+    waits = expired_waits(monkeypatch, process_limits)
     with pytest.raises(subprocess.TimeoutExpired):
-        process_limits.run_limited([sys.executable, "-c", "import time; time.sleep(600)"], input=b"",
-                                   timeout=0.5, address_space=1 << 30)
+        process_limits.run_limited([sys.executable, "-c", "import select; select.select([], [], [])"],
+                                   input=b"", timeout=HANG_TIMEOUT, address_space=1 << 30)
+    assert waits == [HANG_TIMEOUT]
 
 
 def test_the_lean_service_runs_under_its_address_space_limit():
