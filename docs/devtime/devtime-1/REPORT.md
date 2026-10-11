@@ -91,16 +91,20 @@ Python is the only language with product code changed, in `tools/repo_map.py`. `
 
 ## Tests and the gate
 
-- **The new test file:** 14 passed in 17.3 s.
+- **The new test file:** 28 passed in 131 s at load 58–83 (the first 14 passed in 17.3 s at low load). The slowest are the two that run the tool as a program (30–40 s each) and the two real-tree map tests (22–24 s each). Each loads the import graph cold.
   - It writes the import graph's cache under `tmp_path`, as `tests/test_select_tests.py` does. When the account's summaries pickle exists it is copied in as a starting point. That only saves time: the entries are keyed by content hash.
   - With no warm summaries (for example the gate's fresh home), the first graph load parses every Python file. On this VM at load 40 that took about 30 s, so the file can take longer than 30 s there.
 - **Selected tests** (`tools/select_tests.py --base $(git merge-base HEAD main) --run`, 79 units):
   - First run: 2 failures.
     - `tests/test_nested_pytest.py`: my `seed_bugs.py` built a pytest command by hand. Fixed: it now uses `tools/nested_pytest.py`, and the test then passed (31).
     - `tools/test_layer_policy.py::test_documented_python_layers_match_policy` (layer 4, `['ask']`): this is a gap on main. `tools/layer_policy.py` lists `ask` in layer 4 but row 4 of `docs/ARCHITECTURE-LAYERS.md` doesn't. It came in with the question-answering merge (`ve/ask.py`). This branch changes neither file, and AR-7 owns the doc, so it is left for AR-7.
+- **Selected tests, F1 recheck round** (same command, on `0bcdc1d6`): 354 of 354 units. The account's newest coverage map (c24aeab2) is 176 files behind, so it vouches for no unit, and every unit falls to the static rule: each one "names" an evidence file this branch added under `docs/`. That makes the selection the whole suite. All 354 units passed, 0 failed:
+  - The `--run` recording pass ran `tools/test_layer_policy.py` and 189 test files, all exit 0, before my 58-minute call limit stopped it (`timeout 3500`).
+  - The other 164 files ran as 12 chunks at `-n 3` with `VE_NATIVE_PREBUILT=1`: 5,718 passed, 1 skipped, 0 failed, at load 46–107. One chunk passed the 3000 s limit at load about 90 with no failure shown; it was rerun as three parts and passed (`test_wire_gate_corpus.py` 8 passed in 24.5 min).
+  - `lake build` (881 jobs), `python3 lean/audit.py` (PASS, 479 files) and `tools/regen_generated.py --check` passed.
 - **Full gate:** **PASSED on `a7560ecc`** (`evidence/full-gate.json`, clean tree): 14,169 passed, 92 skipped, 0 failed, 36 Rust passed.
   - The earlier run on `716663c0` failed 3 tests, all on CPU budgets at load 50–78. They passed when rerun alone on the same commit (`evidence/gate-failed-rerun.txt`). That run is kept as `evidence/full-gate-716663c0.json`.
-  - The review fixes after `a7560ecc` touch only `tools/repo_map.py`, `tests/test_repo_map.py`, `tools/gate-collection.json` and `docs/devtime/`. No product module imports `tools/repo_map.py`. The fix round ran the selected tests, the new tests, `lake build` and `lean/audit.py`, and not the full gate: the merge train's branch verify and the nightly full suite run it on the final HEAD.
+  - The review fixes after `a7560ecc` touch only `tools/repo_map.py`, `tests/test_repo_map.py`, `tools/gate-collection.json` and `docs/devtime/`. No product module imports `tools/repo_map.py`. The fix round ran the selected tests (above), the new tests, `lake build` and `lean/audit.py`, and not `tools/gate.py`: the merge train's branch verify and the nightly full suite run it on the final HEAD.
 
 ## Review fixes (devtime-1-review.final.md)
 
