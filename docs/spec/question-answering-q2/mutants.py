@@ -1,7 +1,8 @@
 """Seeded bugs of question answering Q2 (build checklist 13): each plants one bug in a file the batch changed, shows
 that the named test (or the Lean build, where a proof catches it) fails, and restores the file. Lean mutants rebuild
 `ve_service` and admit its build in `lean/checkers.lock` for the run; the lock and the binary are restored at the
-end. Writes `evidence/mutants.json`.
+end. A mutant of a response shape (`schemas`) re-renders the client's schemas from it, and again after the restore.
+Writes `evidence/mutants.json`.
 
 Run from the repository root, with `lake` on PATH: `uv run python docs/spec/question-answering-q2/mutants.py
 [ID ...]` (with ids, only those mutants are rerun and the others' saved results kept).
@@ -62,6 +63,23 @@ MUTANTS = [
      "old": '    _need(result["text"] == [line["text"] for line in lines], "the text is not the lines\' text")\n',
      "new": "",
      "test": ["tests/test_ask_relay.py::test_every_id_rebound_is_refused"], "build": False},
+    {"id": "python-quote-unbound", "language": "Python", "file": "ve/ask.py",
+     "behaviour": "relay binding: a line's quote is text of the unit it names",
+     "old": '            _need(line["quote"][1] and line["quote"][1] in units[line["quote"][0]],\n'
+            '                  "a line\'s quote is not from its unit\'s text")\n',
+     "new": "",
+     "test": ["tests/test_ask_relay.py::test_every_id_rebound_is_refused"], "build": False},
+    {"id": "python-gate-transport-only", "language": "Python", "file": "tools/relay_mutation_gate.py",
+     "behaviour": "relay gate: ask's mutants are read as ve ask reads them, not by the transport alone",
+     "old": 'SERVICE_READERS = {"ask": _ask_reader}',
+     "new": "SERVICE_READERS = {}",
+     "test": ["tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it"], "build": False},
+    {"id": "lean-row-id-untyped", "language": "Lean", "file": "lean/ResponseShape/Schemas/Ask.lean",
+     "behaviour": "response schema: an answer row's id is the case's id",
+     "old": '("id", n [str, .equals "/id"])',
+     "new": '("id", .bool true)',
+     "test": ["tests/test_ask_relay.py::test_the_rows_id_is_typed_and_bound_to_the_case"], "build": False,
+     "schemas": True},
     {"id": "python-statement-text-ignored", "language": "Python", "file": "tools/question_statements.py",
      "behaviour": "statement check: a Q2 statement whose text differs from the approved text fails",
      "old": "failed = bool(missing or absent or unlisted or differ)",
@@ -75,6 +93,15 @@ def build_service():
     if done.returncode != 0:
         raise SystemExit(done.stdout[-3000:] + done.stderr[-3000:])
     return hashlib.sha256(SERVICE.read_bytes()).hexdigest()
+
+
+def render_schemas():
+    """Rebuild the decoder that renders the response schemas and rewrite them from the (planted) Lean shapes."""
+    for argv, cwd in ((["lake", "build", "ve_response_decode"], ROOT / "lean"),
+                      ([sys.executable, "tools/response_schemas.py", "--write"], ROOT)):
+        done = subprocess.run(argv, cwd=cwd, capture_output=True, text=True)
+        if done.returncode != 0:
+            raise SystemExit(done.stdout[-3000:] + done.stderr[-3000:])
 
 
 def admit(build, lock_text):
@@ -99,6 +126,8 @@ def main() -> int:
             try:
                 if m["build"]:
                     admit(build_service(), lock_text)
+                if m.get("schemas"):
+                    render_schemas()
                 if m["test"][0] == "lake":
                     done = subprocess.run(m["test"], cwd=ROOT / "lean", capture_output=True, text=True)
                 else:
@@ -109,6 +138,8 @@ def main() -> int:
                 failing = [line for line in tail if line.startswith(("FAILED", "error:")) or "error:" in line][:3]
             finally:
                 path.write_text(original)
+                if m.get("schemas"):
+                    render_schemas()
             results.append({k: m[k] for k in ("id", "language", "file", "behaviour", "test")} |
                            {"caught": caught, "evidence": failing or tail[-2:]})
             print(f"{m['id']}: {'caught' if caught else 'NOT CAUGHT'}", flush=True)
