@@ -18,6 +18,7 @@ import json
 from pathlib import Path
 import re
 import reprlib
+import threading
 
 DIRECTORY = Path(__file__).resolve().parent / "lean_service_schema"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
@@ -115,30 +116,60 @@ def _fail(message: str):
     raise Invalid(message)
 
 
+_FILE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*\.json")
+
+
 class Compiler:
-    """Loads every schema file and compiles schemas on demand, sharing `$ref` targets."""
+    """Compiles schemas on demand, sharing `$ref` targets. A schema file is read when a
+    `$ref` first names it, so checking one mode reads only the files that mode reaches.
+
+    Compiling publishes a target's cell before filling it (a grammar may refer to itself),
+    so `ref` and `compile` hold one re-entrant lock: another thread never sees an unfilled
+    cell, and a compile that fails leaves no cell or counter behind."""
 
     def __init__(self, directory: Path = DIRECTORY):
-        self.documents = {path.name: json.loads(path.read_text()) for path in sorted(directory.glob("*.json"))}
+        self.directory = directory
         self.counters: dict[str, int] = {}
+        self._documents: dict[str, object] = {}
         self._compiled: dict[tuple[str, str], list] = {}
+        self._lock = threading.RLock()
+
+    def document(self, name: str) -> object:
+        """The parsed schema file `name`; `SchemaError` if there is none."""
+        with self._lock:
+            document = self._documents.get(name, _MISSING)
+            if document is _MISSING:
+                path = self.directory / name
+                if _FILE_NAME.fullmatch(name) is None or not path.is_file():
+                    raise SchemaError(f"unknown schema file {name}")
+                document = self._documents[name] = json.loads(path.read_text())
+            return document
 
     def ref(self, base: str, reference: str):
         name, _, pointer = reference.partition("#")
         name = name or base
-        if name not in self.documents:
-            raise SchemaError(f"unknown schema file {name}")
         key = (name, pointer)
-        cell = self._compiled.get(key)
-        if cell is None:
-            cell = self._compiled[key] = [None]
-            target = _resolve(self.documents[name], pointer)
-            if target is _MISSING:
-                raise SchemaError(f"unresolved $ref {reference} in {base}")
-            cell[0] = self.compile(target, name)
-        return cell
+        with self._lock:
+            cell = self._compiled.get(key)
+            if cell is not None:
+                return cell
+            compiled, counters = dict(self._compiled), dict(self.counters)
+            try:
+                target = _resolve(self.document(name), pointer)
+                if target is _MISSING:
+                    raise SchemaError(f"unresolved $ref {reference} in {base}")
+                cell = self._compiled[key] = [None]
+                cell[0] = self.compile(target, name)
+            except BaseException:
+                self._compiled, self.counters = compiled, counters
+                raise
+            return cell
 
     def compile(self, schema: object, base: str):
+        with self._lock:
+            return self._compile(schema, base)
+
+    def _compile(self, schema: object, base: str):
         if schema is True:
             return lambda value, ctx, fuel: None
         if schema is False:
@@ -542,7 +573,11 @@ class _Grammar:
     def _slot(compiler: Compiler, sub: object, base: str):
         if isinstance(sub, dict) and set(sub) - {"$comment"} == {"$ref"}:
             name, _, pointer = sub["$ref"].partition("#")
-            if _is_grammar(_resolve(compiler.documents.get(name or base, {}), pointer)):
+            try:
+                document = compiler.document(name or base)
+            except SchemaError:
+                document = {}  # compiling the `$ref` below reports the unknown file
+            if _is_grammar(_resolve(document, pointer)):
                 return compiler.ref(base, sub["$ref"])  # a cell: its grammar is pushed
         return compiler.compile(sub, base)
 
@@ -573,17 +608,12 @@ _compiler = Compiler()
 
 
 class _Rows(Mapping):
-    """Compile a mode only when a response in that mode is checked."""
-
-    def __init__(self):
-        self._rows = {}
+    """Each mode's row validator, compiled when a response in that mode is first checked."""
 
     def __getitem__(self, mode):
         if mode not in MODES:
             raise KeyError(mode)
-        if mode not in self._rows:
-            self._rows[mode] = _compiler.ref(f"{mode}.json", "#/row")
-        return self._rows[mode]
+        return _compiler.ref(f"{mode}.json", "#/row")
 
     def __iter__(self):
         return iter(MODES)
@@ -593,13 +623,11 @@ class _Rows(Mapping):
 
 
 ROWS = _Rows()
-RESPONSE = _compiler.ref("envelope.json", "#/response")
-HANDSHAKE = _compiler.ref("envelope.json", "#/handshake")
 
 
 def check_handshake(handshake: object) -> None:
     """Raise `Invalid` unless `handshake` is a first line this client can use."""
-    HANDSHAKE[0](handshake, Context(None), {})
+    _compiler.ref("envelope.json", "#/handshake")[0](handshake, Context(None), {})
 
 
 def check_row(mode: str, row: object, case: object, index: int) -> None:
@@ -610,4 +638,4 @@ def check_row(mode: str, row: object, case: object, index: int) -> None:
 def check_response(mode: str, response: object, request: dict) -> None:
     """Raise `Invalid` unless `response` is a possible response line for `request`
     (`{"id", "mode", "cases", "digests", "bytes"}`)."""
-    RESPONSE[0](response, Context(request, rows=ROWS[mode][0]), {})
+    _compiler.ref("envelope.json", "#/response")[0](response, Context(request, rows=ROWS[mode][0]), {})
