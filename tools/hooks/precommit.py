@@ -43,7 +43,9 @@ POLICY = {"layer_policy": "tools/layer_policy.py", "check_lean_imports": "tools/
           "check_rust_deps": "tools/check_rust_deps.py", "audit": "lean/audit.py",
           "english_grammar_gen": "tools/english_grammar_gen.py"}
 LAKEFILE = "lean/lakefile.toml"  # its executable roots are tool-layer entry modules
-RUST_MANIFEST = re.compile(r"rust/(?:.+/)?Cargo\.toml")
+# What `cargo metadata` reads: the manifests, the sources it finds targets in, and the pinned toolchain.
+RUST_WORKSPACE = re.compile(r"rust/(?:.+/)?(?:Cargo\.toml|[^/]+\.rs)")
+RUST_TOOLCHAIN = "rust-toolchain.toml"
 BLOB_MODES = {"100644", "100755", "120000"}
 ALLOW_SECRET = b"pragma: allowlist secret"
 
@@ -175,15 +177,15 @@ class Index:
     def policy(self) -> SimpleNamespace:
         """Load the staged policy modules from a snapshot of the index.
 
-        The snapshot holds the policy code, `ve/__init__.py`, the Lake and Rust
-        manifests, every staged directory and an empty stand-in for every other staged `.py`
+        The snapshot holds the policy code, `ve/__init__.py`, the Lake manifest, the Rust
+        workspace's manifests, sources and toolchain pin, every staged directory and an empty stand-in for every other staged `.py`
         path, so module resolution (`layer_policy.python_imports` tests file and
         directory existence) sees the staged tree, never the working tree.
         """
         if self._policy is None:
             listing = self.listing()
-            real = [*POLICY.values(), LAKEFILE, "ve/__init__.py",
-                    *(p for p in listing if RUST_MANIFEST.fullmatch(p))]
+            real = [*POLICY.values(), LAKEFILE, "ve/__init__.py", RUST_TOOLCHAIN,
+                    *(p for p in listing if RUST_WORKSPACE.fullmatch(p))]
             blobs = self.read(real)
             for path, blob in blobs.items():
                 if blob is None and path in {*POLICY.values(), LAKEFILE}:
@@ -286,7 +288,7 @@ def check_layers(index: Index) -> list[str]:
     python = index.staged(lambda p: p.startswith("ve/") and p.endswith(".py"))
     lean = index.staged(lambda p: p.startswith("lean/") and p.endswith(".lean")
                         and ".lake" not in PurePosixPath(p).parts)
-    rust = [p for p in index.changed if RUST_MANIFEST.fullmatch(p)]
+    rust = [p for p in index.changed if RUST_WORKSPACE.fullmatch(p)]
     if not (python or lean or rust):
         return []
     policy = index.policy()
@@ -363,14 +365,10 @@ def check_layers(index: Index) -> list[str]:
                 if layer is not None and importer < layer and edge not in ledger:
                     errors.append(f"{path}: new outward Lean import {edge} (layer {importer} -> {layer})")
     if rust:
-        # The snapshot already holds every staged manifest under its rust/ workspace,
-        # but no Rust sources: the intra-crate module check runs in the gate only.
+        # The snapshot holds the staged rust/ workspace that `cargo metadata` reads.
         stderr = io.StringIO()
-        try:
-            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
-                failed = policy.check_rust_deps.main(["--crates-only"])
-        except (OSError, KeyError, ValueError) as error:
-            failed, stderr = 1, io.StringIO(f"cannot read the staged Rust workspace: {error}\n")
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
+            failed = policy.check_rust_deps.main([])
         if failed:
             errors.extend(f"rust: {line}" for line in stderr.getvalue().splitlines())
     return errors
