@@ -314,6 +314,8 @@ def test_history_becomes_allowances():
     parsed, problems = trust_map.parse_baseline(old, legacy=True)
     assert problems == [] and parsed["budget"] == {"K": 0, "S": 5, "V": 0}
     assert trust_map.parse_baseline(old)[1]  # only a base's file may be in the old format
+    for broken in ({"history": old["history"]}, {**old, "history": [{"allow": {"S": 5}}]}, {**old, "totals": []}):
+        assert trust_map.parse_baseline(broken, legacy=True)[1], broken  # fails closed, never raises
     head = [{**a, "commit": "b" * 40} for a in trust_map.from_history(old)]
     assert trust_map.introduced(head, parsed["allowances"]) == []
 
