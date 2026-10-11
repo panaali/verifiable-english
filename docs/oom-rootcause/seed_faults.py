@@ -56,8 +56,8 @@ CASES = [
      "            pass\n",
      "python", TESTS + "test_one_shot_runners_run_under_an_address_space_limit"),
     ("a byte setting in non-ASCII digits is read as a number", LIMITS,
-     "if not (text.isascii() and text.isdigit() and int(text) > 0):",
-     "if not (text.isdigit() and int(text) > 0):",
+     "if not (text.isascii() and text.isdigit() and len(text) <= 19 and int(text) > 0):",
+     "if not (text.isdigit() and len(text) <= 19 and int(text) > 0):",
      "python", TESTS + "test_configured_bytes"),
 ]
 

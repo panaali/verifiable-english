@@ -268,7 +268,9 @@ def test_configured_bytes(monkeypatch):
     assert process_limits.configured_bytes("VE_TEST_BYTES", 7) == 7
     monkeypatch.setenv("VE_TEST_BYTES", "4096")
     assert process_limits.configured_bytes("VE_TEST_BYTES", 7) == 4096
-    for text in ("", "0", "4k", "+4", " 4", "٤"):
+    monkeypatch.setenv("VE_TEST_BYTES", "9" * 19)
+    assert process_limits.configured_bytes("VE_TEST_BYTES", 7) == 10**19 - 1
+    for text in ("", "0", "4k", "+4", " 4", "٤", "1" + "0" * 19):
         monkeypatch.setenv("VE_TEST_BYTES", text)
         with pytest.raises(CheckerUnavailable):
             process_limits.configured_bytes("VE_TEST_BYTES", 7)

@@ -18,11 +18,12 @@ from ..errors import CheckerUnavailable
 
 def configured_bytes(variable: str, default: int) -> int:
     """The number of bytes the environment variable `variable` sets, else `default`. A value that
-    is not a positive decimal integer is refused, never replaced by the default."""
+    is not a positive decimal integer of at most 19 digits (below 2^63, so every checker reads the
+    same number) is refused, never replaced by the default."""
     text = os.environ.get(variable)
     if text is None:
         return default
-    if not (text.isascii() and text.isdigit() and int(text) > 0):
+    if not (text.isascii() and text.isdigit() and len(text) <= 19 and int(text) > 0):
         raise CheckerUnavailable(f"CheckerUnavailable: {variable} must be a positive number of bytes, "
                                  f"not {text!r}")
     return int(text)
