@@ -57,6 +57,15 @@ report tests still run in the suite until AR-5b. The strict `:(glob)` keeps `*` 
 directories, so a re-check fixture such as `docs/arch/AR-5a/recheck-b16c/` is not taken as a batch. Installing
 the line in `manage-agents/merge-train.sh` is the DRI's (orchestration, outside the repository).
 
+## Overlap with branches in flight
+
+Checked with `git diff --name-only main...<branch>` for every `lean-first/*`, `readings-defaults/*`,
+`question-answering/*`, `infra/*` and `english*/*` branch. Two files overlap, both shared registries:
+`tools/gate-collection.json` (the generated test inventory: a conflict means taking `main`'s file and
+regenerating it, DELTA row 6) and `tools/regen_generated.py`, where this batch adds one `NOT_REGENERATED` line;
+`infra/arch-AR-1`, `infra/arch-AR-3` and `infra/arch-20261010-1` edit other hunks of that file. This batch does
+not edit `tools/gate.py`, `ve/` or `lean/`.
+
 ## Seeded bugs
 
 The 13 mutants are in `mutants.json`. `python -m tools.evidence mutants docs/arch/AR-5a/mutants.json --evidence
@@ -77,8 +86,8 @@ lowering the mutant minimum).
 - FOLLOW-UP (pre-existing on `main`, not this batch): `tools/test_layer_policy.py` fails
   `test_documented_python_layers_match_policy` for layer 4 (`ask`). A clean `main` worktree fails the same way,
   and the gate does not run that script.
-- AR-5b, not in scope: migrating the 27 report-test files to `evidence.toml`, deleting copied scripts, and the
-  over-1 MB evidence branch.
+- AR-5b, not in scope: migrating the report and evidence tests that `evidence/measure.json` lists to
+  `evidence.toml`, deleting copied scripts, and the over-1 MB evidence branch.
 - Not run: `fuzz_ab` and `latency measure` across two different checkouts. This batch changes no product
   code, so there is no base/head difference to measure. Their logic is covered by the known-answer tests. The
   `fuzz_ab` comparison and `ab` were also run on real tool output (`evidence/real-runs.json`).
