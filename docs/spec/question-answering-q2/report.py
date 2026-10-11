@@ -113,6 +113,14 @@ def block() -> str:
               f"{len(mutants)} caught.", "", "| Seeded bug | File | Behaviour | Caught by |", "|---|---|---|---|"]
     for x in mutants:
         lines.append(f"| {x['id']} | `{x['file']}` | {x['behaviour']} | `{' '.join(x['test'])}` |")
+    relay = load("relay-gate.json")
+    ask = relay["routes"]["service:ask"]
+    lines += ["", f"Relay mutation gate (`tools/relay_mutation_gate.py --json`, `evidence/relay-gate.json`): "
+                  f"{len(relay['failures'])} failures and {len(relay['findings'])} findings over all routes; `ask`: "
+                  f"{ask['mutants']} mutants of {ask['fixtures']} fixtures, {ask['refused']} refused, "
+                  f"{ask.get('accepted', 0)} accepted, each by a listed by-design class ("
+                  + ", ".join(f"{k.split(':', 1)[1]} {v}" for k, v in sorted(ask.items()) if k.startswith("allowed:"))
+              + f"), {ask.get('untyped', 0)} untyped."]
     trust = load("trust.json")
     lines += ["", "Trust budget (`docs/trust-baseline.json`): " + ", ".join(
         f"{k} {trust['base'][k]} → {trust['head'][k]} ({trust['head'][k] - trust['base'][k]:+d})" for k in
