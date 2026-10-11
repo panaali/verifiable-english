@@ -1,0 +1,92 @@
+{
+  "commit": "dcd78b88152a8bd682dc7fc845b41d02403f90cb",
+  "numbers": {
+    "counts": {
+      "collected_test_ids": 14437,
+      "lean_executables": 9,
+      "lean_layer_exceptions": 22,
+      "pinned_decoder_lines": 29166,
+      "python_layer_exceptions": 42,
+      "runtime_dependencies": 5,
+      "service_modes": 32
+    },
+    "file_lines": {
+      "lean/VE/Service/Document.lean": 922,
+      "lean/VE/Service/Family.lean": 812,
+      "lean/VE/Service/Protocol.lean": 859,
+      "lean/VE/Service/Standalone.lean": 1293,
+      "lean/axioms.txt": 5276,
+      "lean/declarations.txt": 17296,
+      "lean/predicates.txt": 1076,
+      "lean/statements.txt": 36431,
+      "ve/backends/lean_service.py": 952,
+      "ve/backends/relay.py": 167,
+      "ve/backends/service_schema.py": 590
+    },
+    "files": {
+      "lean_ve_modules": 408,
+      "response_shape_lean": 64,
+      "tests_other_modules": 25,
+      "tests_test_modules": 359
+    },
+    "largest_ve_python": [
+      {
+        "lines": 2147,
+        "path": "ve/english.py"
+      },
+      {
+        "lines": 1758,
+        "path": "ve/document.py"
+      },
+      {
+        "lines": 1722,
+        "path": "ve/readings_verdicts.py"
+      }
+    ],
+    "lines": {
+      "conformance_python": 19170,
+      "lean": 158021,
+      "tests_python": 106500,
+      "tools_python": 20303,
+      "ve_backends_python": 4276,
+      "ve_backends_schema_json": 8068,
+      "ve_python": 39866
+    },
+    "mib": {
+      "docs": 143,
+      "docs_lean_first": 125,
+      "tracked": 374
+    },
+    "rust_lines": {
+      "ve": 488,
+      "ve-core": 21,
+      "ve-kernel": 2320,
+      "ve-profile": 2025
+    },
+    "trust": {
+      "budget": {
+        "K": 997,
+        "S": 9791,
+        "V": 36902
+      },
+      "totals": {
+        "C": 8486,
+        "D": 13785,
+        "D[I]": 527,
+        "D[R]": 1002,
+        "D[V]": 12256,
+        "G": 26797,
+        "G[I]": 241,
+        "G[R]": 1751,
+        "G[V]": 24805,
+        "K": 997,
+        "P": 71772,
+        "S": 9791,
+        "T": 14245,
+        "lines": 158021,
+        "o": 12148,
+        "trusted": 47690
+      }
+    }
+  }
+}

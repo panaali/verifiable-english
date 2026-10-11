@@ -1,0 +1,26 @@
+[
+  {
+    "mutant": "M1 checked choice count ignored",
+    "file": "ve/readings_route.py",
+    "test": "tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference",
+    "exit_code": 1,
+    "failed": true,
+    "tail": ">       with pytest.raises(CheckerUnavailable, match=\"invalid answer\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE CheckerUnavailable\n\ntests/test_readings_nd_document.py:399: Failed\n=========================== short test summary info ============================\nFAILED tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference\n1 failed in 0.55s"
+  },
+  {
+    "mutant": "M2 Fill_T omitted from superposed evidence",
+    "file": "ve/readings_verdicts.py",
+    "test": "tests/test_readings_nd_document.py::test_fnd1_check_every_choice_conflict_free_with_a_model",
+    "exit_code": 1,
+    "failed": true,
+    "tail": ">           raise CheckerUnavailable(f\"ReadingsConformance: Lean refused the {kind} case Python built: \"\n                                     f\"{row.get('error')}\")\nE           ve.errors.CheckerUnavailable: ReadingsConformance: Lean refused the readings-conflict case Python built: InvalidModel(readings background): the model violates a background premise\n\nve/readings_verdicts.py:147: CheckerUnavailable\n=========================== short test summary info ============================\nFAILED tests/test_readings_nd_document.py::test_fnd1_check_every_choice_conflict_free_with_a_model\n1 failed in 0.67s"
+  },
+  {
+    "mutant": "M3 generated constant passed to English gap renderer",
+    "file": "ve/readings_s2_wording.py",
+    "test": "tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only",
+    "exit_code": 1,
+    "failed": true,
+    "tail": ">           raise CheckerUnavailable(\"ReadingsConstruction: Python could not build the English of the document \"\n                                     f\"Lean admitted: {type(exc).__name__}\") from exc\nE           ve.errors.CheckerUnavailable: ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError\n\nve/readings_route.py:300: CheckerUnavailable\n=========================== short test summary info ============================\nFAILED tests/test_readings_nd_document.py::test_fnd2_check_conflict_under_one_reading_only\n1 failed in 0.72s"
+  }
+]
