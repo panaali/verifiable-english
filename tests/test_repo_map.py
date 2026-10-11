@@ -295,13 +295,18 @@ def test_file_answers_for_a_file_the_map_never_saw(rights_map):
     assert found and set(found) == set(static) - {ran_it, did_not}
 
 
+# "{root}" stands for the checkout's absolute path (filled in by `spelled`, so test IDs do not depend on it).
 SPELLINGS = ["ve/discourse.py", "./ve/discourse.py", "ve//discourse.py", "ve/./discourse.py",
-             "ve/../ve/discourse.py", str(ROOT / "ve/discourse.py"), str(ROOT) + "/./ve/../ve/discourse.py"]
+             "ve/../ve/discourse.py", "{root}/ve/discourse.py", "{root}/./ve/../ve/discourse.py"]
+
+
+def spelled(spelling: str) -> str:
+    return spelling.replace("{root}", str(ROOT))
 
 
 @pytest.mark.parametrize("spelling", SPELLINGS)
 def test_file_names_a_path_the_same_however_it_is_spelled(spelling):
-    assert repo_map.repo_path(ROOT, spelling) == "ve/discourse.py"
+    assert repo_map.repo_path(ROOT, spelled(spelling)) == "ve/discourse.py"
 
 
 def test_file_prints_the_same_for_every_spelling(built, cache_env):
@@ -312,7 +317,7 @@ def test_file_prints_the_same_for_every_spelling(built, cache_env):
     for spelling in SPELLINGS:
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
-            repo_map.print_file(ROOT, spelling, routes, tests)
+            repo_map.print_file(ROOT, spelled(spelling), routes, tests)
         printed[spelling] = out.getvalue()
     assert len(set(printed.values())) == 1, printed
     assert "modes: discourse\n" in printed[SPELLINGS[0]]
