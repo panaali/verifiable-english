@@ -70,6 +70,12 @@ Under D4, `report.py --check` runs at the batch gate and in the merge train. No 
 
 ## Reading of the plan
 
+- **The starting budget needs the DRI's signature (DELTA row 1).** D3 in `arch-dri-decisions.md` still says "at
+  most 35,892 V", and the base measures V 36,765. The plan corrects this in two places. Section 5 says "the DRI
+  re-signs the value measured at AR-4's base". The gate line of row AR-4 says the check passes "after the DRI signs
+  the starting budget". So this batch does not count the value as signed by R11. The file and the check need no
+  change either way: the check caps the head at the measured base whether or not the value is signed.
+
 - **"Reads the merge base's budget"**: the tool does not trust the recorded number. It measures the base's tree,
   which gives the same value whenever the merge train's `--write` has run. When the recorded number is stale, the
   measured one is the true starting point, and D3 says the budget falls automatically. The tool prints a `note:`
@@ -84,25 +90,28 @@ Under D4, `report.py --check` runs at the batch gate and in the merge train. No 
 Files touched: `tools/trust_map.py`, `docs/trust-baseline.json`, `tests/test_trust_ratchet.py`,
 `tests/test_consolidation_tools.py`, `docs/arch/AR-4/*` and the shared inventory `tools/gate-collection.json`
 (89 test IDs added; `tests/test_consolidation_tools.py::test_rebaseline_needs_a_reason_for_growth` removed, replaced
-by `test_rewrite_never_absorbs_growth`, since `--write --reason` no longer exists). On 2026-10-11 these were checked against
+by `test_rewrite_never_absorbs_growth`, since `--write --reason` no longer exists). These were checked against
 `git diff --name-only main...<branch>` for every `lean-first/*`, `readings-defaults/*`, `question-answering/*` and
-`infra/*` branch:
+`infra/*` branch, first at the start of the batch and again on 2026-10-11 at 17:40 UTC, against `main` at
+`5479466f`. Since the first check, `readings-defaults/rd6b` and `infra/arch-AR-8` have merged into `main`. The
+second check found:
 
-- **`docs/trust-baseline.json`** is also edited by `readings-defaults/rd6b`, `question-answering/q2`,
-  `lean-first/b13b` and `lean-first/b16d`, in the format used before AR-4. It is a generated inventory, so under
-  R12 it is not an overlap, and it needs the collision rule below. Trial merges (`git merge-tree`, 2026-10-11)
-  conflict in no other file of AR-4's. b13b, b16d and q2 already conflict in this file with `main` today. rd6b
-  conflicts in it only because of AR-4.
+- **`docs/trust-baseline.json`** is also edited by `question-answering/q2`, `lean-first/b13b` and
+  `lean-first/b16d`, in the format used before AR-4. It is a generated inventory, so under R12 it is not an
+  overlap, and it needs the collision rule below. `main` itself changed it after AR-4's base, through rd6b (three
+  history entries, V 36,765 → 36,902). AR-4's own sync with `main` is covered below.
 - **`tests/test_consolidation_tools.py`** is also edited by `infra/arch-20261010-1` (AR-1). A trial merge is clean,
   because the hunks are apart.
 - **Avoided.** These files are stale after AR-4, but other branches edit them, so this batch left them alone (see
   Follow-ups):
-  - `tools/regen_generated.py`, edited by AR-1, AR-3, AR-5a and AR-8;
-  - `docs/merge-tooling.md`, edited by AR-1, AR-3 and AR-8;
-  - `tools/gate.py`, edited by AR-3, `infra/ts-B5` and rd6b.
+  - `tools/regen_generated.py`, edited by AR-1 (`infra/arch-AR-1`, `infra/arch-20261010-1`), AR-3 and AR-5a
+    (`infra/arch-20261010-2`);
+  - `docs/merge-tooling.md`, edited by AR-1 and AR-3;
+  - `tools/gate.py`, edited by AR-3 and `infra/ts-B5`.
 
 **Collision rule.** "Conflict in `docs/trust-baseline.json`: run `python3 tools/regen_generated.py --resolve`. Its
-json strategy keeps both sides' allowances. If the file still conflicts, the branch's file predates AR-4 (it has
+json strategy keeps both sides' allowances. If the file still conflicts, or `--resolve` exits with an error (Follow-up
+3), the branch's file predates AR-4 (it has
 `totals`, `history` or `files`). In that case, take `main`'s file, then run `python3 tools/trust_map.py --allow
 --reason '<the branch's history entry>' --signed '<R6 (DRI-RULINGS.md) when its conditions hold, else the DRI's
 signature>'` without `--since`. The base is then the merge base, or HEAD during the merge train's uncommitted
@@ -110,6 +119,23 @@ merge. Finally run `python3 tools/regen_generated.py --check --only trust-tables
 
 "Conflict in `tools/gate-collection.json`: take `main`'s file and run `uv run python tools/regen_generated.py
 --write --only gate-collection`. If AR-1 has deleted the file, take the deletion."
+
+**Syncing AR-4 itself with `main`.** `main` still has the file in the format used before AR-4, and rd6b added
+three history entries to it after AR-4's base. `git merge main` therefore conflicts in `docs/trust-baseline.json`.
+`tools/regen_generated.py --resolve` cannot resolve it: it crashes on it (Follow-up 3), so the train's
+generated-only path stops there. Resolve it this way:
+1. `git checkout --ours docs/trust-baseline.json`.
+2. Run `uv run python docs/arch/AR-4/migrate_baseline.py MAIN`, where MAIN is the commit being merged. It rewrites
+   the file from MAIN's file: the budget is MAIN's measured tree, and every history entry becomes an allowance.
+   It also saves `evidence/migration.json` for MAIN.
+3. Run `python3 tools/trust_map.py --check`.
+4. Commit the merge. Then run `report.py --collect` and `--render`, and commit the evidence.
+5. In DELTA rows 1 and 2, update the starting budget and the allowance counts to the numbers in the new evidence.
+   Row 1 is the value the DRI signs (DELTA row 1): sign the value at the synced base, not the one at `96887019`.
+
+Trial run on 2026-10-11, merging `main` at `5479466f` into a scratch copy of this branch: `docs/trust-baseline.json`
+was the only conflict. After steps 1–3, the budget was K 997, S 9,791, V 36,902, with 55 allowances (49 of them
+unsigned rebaselines from before AR-4). `--check` passed, with exit code 0.
 
 **Merge-train step.** After each merge into `main`, run `python3 tools/trust_map.py --write`. It sets the recorded
 budget to the measurement and refuses if the check fails. Commit the file if it changed.
@@ -122,6 +148,11 @@ budget to the measurement and refuses if the check fails. Commit the file if it 
    silently. The `trust-tables` entry could also run `trust_map.py --write` as the merge train's writer.
 2. `tools/gate.py` should write `trust_map.py --files` into the gate record (the git note that
    `tools/batch_evidence.py` reads). The producer exists; only the call is missing.
+3. `tools/regen_generated.py`'s `merge_json` (line 337 on `main` at `5479466f`) crashes with `TypeError: Object of
+   type object is not JSON serializable` when one side deletes a key and the other side changes it. Building the
+   `Conflict` message calls `_text` on the `_MISSING` sentinel. It should raise `Conflict`. This is a bug on `main`,
+   not one AR-4 introduces. AR-4 only makes it show: AR-4 deletes `history` and `totals`, which other branches still
+   change.
 
 ## Seeded bugs
 
