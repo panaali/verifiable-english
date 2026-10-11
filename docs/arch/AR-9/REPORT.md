@@ -90,13 +90,15 @@ the plan's fixture requires.
 
 ## Seeded faults (`seed_faults.py`, `evidence/mutants.json`)
 
-| Fault | Claim | Failing tests |
-|---|---|---|
-| `recovery` stops re-exporting `nearest_wordings` | names | `test_every_name_..._importable_from_it[ve.assist.recovery-nearest_wordings]`; `test_assist_recovery.py` (import error) |
-| `session` stops re-exporting `config_digest` | names | `..._importable_from_it[ve.assist.session-config_digest]`; `test_assist.py::test_astra6_deleted_propose_event_detected_after_metadata_edit` |
-| replay imports and calls its own `evaluate` | seams | `test_moved_code_does_not_bind_the_names_the_facade_owns[ve.assist.recovery_replay]`; `test_assist_deadline.py::test_situation_evaluation_is_inside_approval_deadline[evaluate]` |
-| the deadline seam binds `OPERATION_SECONDS` at import | seams | `test_each_recovery_seam_reads_the_facade_name_when_called[OPERATION_SECONDS-_operation_seconds]` |
-| `RecoveryService` shadows `_Journal._expect` with a no-op | one owner | `test_every_member_has_one_owner[RecoveryService]`; `test_assist_recovery.py::test_ledger_json_restore_and_revision_guard` |
+All five are Python, the only language whose product code AR-9 changes.
+
+| Fault | File | Claim | Failing tests |
+|---|---|---|---|
+| `recovery` stops re-exporting `nearest_wordings` | `ve/assist/recovery.py` | names | `test_every_name_..._importable_from_it[ve.assist.recovery-nearest_wordings]`; `test_assist_recovery.py` (import error) |
+| `session` stops re-exporting `config_digest` | `ve/assist/session.py` | names | `..._importable_from_it[ve.assist.session-config_digest]`; `test_assist.py::test_astra6_deleted_propose_event_detected_after_metadata_edit` |
+| replay imports and calls its own `evaluate` | `ve/assist/recovery_replay.py` | seams | `test_moved_code_does_not_bind_the_names_the_facade_owns[ve.assist.recovery_replay]`; `test_assist_deadline.py::test_situation_evaluation_is_inside_approval_deadline[evaluate]` |
+| the deadline seam binds `OPERATION_SECONDS` at import | `ve/assist/recovery.py` | seams | `test_each_recovery_seam_reads_the_facade_name_when_called[OPERATION_SECONDS-_operation_seconds]` |
+| `RecoveryService` shadows `_Journal._expect` with a no-op | `ve/assist/recovery.py` | one owner | `test_every_member_has_one_owner[RecoveryService]`; `test_assist_recovery.py::test_ledger_json_restore_and_revision_guard` |
 
 Each fault was removed by the script; every named test passes again afterwards.
 
