@@ -10,9 +10,12 @@ import json
 import os
 from pathlib import Path
 import random
+import select
+import signal
 import subprocess
 import sys
 import textwrap
+import threading
 
 import pytest
 
@@ -255,6 +258,94 @@ def test_a_plain_run_whose_only_failures_are_quarantined_passes(plain):
     assert plain.run([*files, "tests/test_b.py"])[0] == 1
 
 
+def test_a_quarantined_failure_never_stops_a_plain_run(plain):
+    """ts-B5 review F1: pytest's own --maxfail counted the quarantined failure and stopped, while the exit
+    status ignored it, so test_a never ran and the run passed. The stop counts what the exit counts."""
+    plain.held = ["tests/test_q.py::test_flaky"]
+    code, ran = plain.run(["tests/test_a.py", "tests/test_q.py"], changed=["tests/test_q.py"], maxfail=1)
+    assert code == 0 and ran == ["q", "a"]
+    # A real failure still stops the run after it, the quarantined one never counting towards the limit.
+    code, ran = plain.run(ALL + ["tests/test_q.py"], changed=["tests/test_q.py"], maxfail=1)
+    assert code == 1 and ran == ["q", "a", "b"]
+
+
+def test_a_full_run_counts_quarantined_failures_and_never_stops(plain, monkeypatch):
+    """ts-B5 review F5: `--full --run` is the whole suite before a green tag: no --maxfail, no quarantine."""
+    plain.held = ["tests/test_q.py::test_flaky"]
+    monkeypatch.setenv("ORDER_LOG", str(plain.log))
+    plan = {"changed": [], "lean_build": False, "selected": [],
+            "commands": [[*plain.prefix, "-q", "tests/test_q.py", "tests/test_a.py"]]}
+    assert select_tests.run(plan, record=False, full=True) == 1
+    assert sorted(plain.log.read_text().split()) == ["a", "q"]
+    assert select_tests.run(plan, record=False) == 0  # an agent's run: the quarantine applies
+    with pytest.raises(ValueError, match="never stops early"):
+        select_tests.run(plan, record=False, full=True, maxfail=1)
+
+
+@pytest.mark.parametrize("arguments, message", [
+    (["--full", "--maxfail", "2"], "--full runs every test"), (["--maxfail", "-1"], "0 or a positive count")])
+def test_the_maxfail_options(capsys, monkeypatch, arguments, message):
+    monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "x", *arguments])
+    with pytest.raises(SystemExit):
+        select_tests.main()
+    assert message in capsys.readouterr().err
+
+
+# --- the one stop rule: failed tests outside the quarantine (tools/maxfail_pytest.py) ---
+
+STOPS = {
+    "tests/test_q.py": "import os\n\n"
+                       "def test_flaky():\n    open(os.environ['ORDER_LOG'], 'a').write('q\\n')\n    assert False\n\n"
+                       "def test_after():\n    open(os.environ['ORDER_LOG'], 'a').write('q2\\n')\n",
+    "tests/test_r.py": "import os\n\n"
+                       "def test_real():\n    open(os.environ['ORDER_LOG'], 'a').write('r\\n')\n    assert False\n\n"
+                       "def test_after():\n    open(os.environ['ORDER_LOG'], 'a').write('r2\\n')\n",
+    "tests/test_z.py": "import os\n\ndef test_z():\n    open(os.environ['ORDER_LOG'], 'a').write('z\\n')\n",
+}
+HELD = {"tests/test_q.py::test_flaky"}
+
+
+def test_no_run_path_passes_pytests_own_stop_options():
+    """pytest's --maxfail and -x count every failure; each path takes its options from `stop_options`."""
+    for maxfail in (0, 1, 5):
+        options = select_tests.stop_options(maxfail, HELD)
+        assert not [option for option in options if option.startswith(("--maxfail", "-x", "--exitfirst"))]
+    assert select_tests.stop_options(0, HELD) == []
+    assert "--ve-quarantined=tests/test_q.py::test_flaky" in select_tests.stop_options(1, HELD)
+
+
+def test_the_stop_plugin_refuses_pytests_own_maxfail(tmp_path):
+    root = project(tmp_path, {"tests/test_z.py": "def test_z():\n    pass\n"})
+    for early in ("--maxfail=1", "-x"):
+        result = pytest_run(root, *select_tests.stop_options(1, set()), early, "tests")
+        assert result.returncode == 4 and "replaces --maxfail/-x" in result.stderr
+
+
+@pytest.mark.parametrize("maxfail", [1, 2])
+def test_a_recorded_unit_runs_past_its_quarantined_failure(tmp_path, monkeypatch, maxfail):
+    """ts-B5 review F1, the recorded run: each unit got pytest's --maxfail, so a quarantined failure first in
+    a file (test_ci_run in test_difffuzz.py) skipped the rest of the file and the unit still passed."""
+    root = project(tmp_path / "root", STOPS)
+    log = tmp_path / "order.log"
+    monkeypatch.setenv("ORDER_LOG", str(log))
+    monkeypatch.setenv("PYTHONPATH", str(ROOT))
+    monkeypatch.setattr(test_map, "ROOT", root)
+    monkeypatch.setattr(test_map, "site_packages", lambda: tmp_path)
+    monkeypatch.setattr(test_map, "install_hook", lambda site: None)
+    monkeypatch.setattr(test_map, "remove_hook", lambda site: None)
+    monkeypatch.setattr(test_map, "tracked_paths", lambda: set())
+    monkeypatch.setattr(test_map, "unit_command", lambda unit, options=(): nested_pytest.command(
+        ["-q", "-p", "no:cacheprovider", *options, unit], python=[sys.executable]))
+    units = ["tests/test_q.py", "tests/test_r.py", "tests/test_z.py"]
+    results, failures = select_tests.record_ordered(units, tmp_path / "work", 1, maxfail, HELD)
+    ran = log.read_text().split()
+    assert failures["tests/test_q.py"] == ["tests/test_q.py::test_flaky"]
+    if maxfail == 1:  # the real failure stops its file and the run; the quarantined one stopped neither
+        assert ran == ["q", "q2", "r"] and list(results) == units[:2]
+    else:
+        assert ran == ["q", "q2", "r", "r2", "z"] and list(results) == units
+
+
 # --- a recorded run: the units start in order and the run stops after maxfail failures ---
 
 class Units:
@@ -314,8 +405,78 @@ def test_without_maxfail_every_unit_runs(tmp_path, monkeypatch):
     assert list(units.run(["u1", "u2", "u3"])) == ["u1", "u2", "u3"]
 
 
-def test_maxfail_is_a_count(capsys, monkeypatch):
-    monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "x", "--maxfail", "-1"])
-    with pytest.raises(SystemExit):
-        select_tests.main()
-    assert "--maxfail is 0 or a positive count" in capsys.readouterr().err
+
+# --- killing a recorded run kills its units, though each runs in its own session ---
+
+RECORDER = """
+import pathlib, sys
+sys.path.insert(0, {tools!r})
+import test_map
+test_map.site_packages = lambda: pathlib.Path({work!r})
+test_map.install_hook = test_map.remove_hook = lambda site: None
+test_map.tracked_paths = set
+unit = ("import os, select\\n"
+        "os.write(os.open({fifo!r}, os.O_WRONLY), str(os.getpid()).encode())\\n"
+        "read, write = os.pipe()\\n"
+        "select.select([read], [], [], {timeout})")
+test_map.unit_command = lambda name, options=(): [sys.executable, "-c", unit]
+test_map.record_units(["u"], pathlib.Path({work!r}) / "w", 1, {timeout})
+"""
+
+
+def alive(pid: int) -> bool:
+    try:
+        return Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[0] != "Z"
+    except (FileNotFoundError, IndexError):
+        return False
+
+
+@pytest.mark.parametrize("number", [signal.SIGTERM, signal.SIGINT, signal.SIGHUP],
+                         ids=lambda number: number.name)
+def test_killing_a_recorded_run_kills_its_units(tmp_path, number):
+    """ts-B5 review F2: each unit runs in its own session, so a signal to the run's process group (a harness
+    timeout, Ctrl-C, a closed terminal) left the running units going for up to UNIT_TIMEOUT."""
+    fifo = tmp_path / "pid"
+    os.mkfifo(fifo)
+    reader = os.open(fifo, os.O_RDONLY | os.O_NONBLOCK)
+    script = RECORDER.format(tools=str(ROOT / "tools"), work=str(tmp_path), fifo=str(fifo), timeout=HANG_TIMEOUT)
+    recorder = subprocess.Popen([sys.executable, "-c", script], cwd=ROOT, start_new_session=True,
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    unit = survived = None
+    try:
+        assert select.select([reader], [], [], HANG_TIMEOUT)[0], "the unit never started"
+        unit = int(os.read(reader, 64))
+        os.killpg(recorder.pid, number)
+        recorder.wait(timeout=HANG_TIMEOUT)
+        survived = alive(unit)
+    finally:
+        os.close(reader)
+        for group in (recorder.pid, unit):
+            if group is not None and alive(group):
+                os.killpg(group, signal.SIGKILL)  # the unit leads its own session
+    assert not survived, "the unit survived its run being killed"
+    assert recorder.returncode != 0
+
+
+def test_a_failing_recorded_run_kills_its_other_units(tmp_path, monkeypatch):
+    """Any abnormal end of the run stops it: one unit's crash kills the unit still running beside it."""
+    units = Units(tmp_path, monkeypatch, {"slow": "block", "bad": "pass"})
+    command, start = test_map.unit_command, test_map.Stop.start
+    started, running = [], threading.Event()
+
+    def crash(unit, options=()):
+        if unit == "bad":
+            assert running.wait(HANG_TIMEOUT), "the slow unit never started"
+            raise OSError("cannot start")
+        return command(unit, options)
+
+    def record_start(self, *arguments, **options):
+        started.append(start(self, *arguments, **options))
+        running.set()
+        return started[-1]
+
+    monkeypatch.setattr(test_map, "unit_command", crash)
+    monkeypatch.setattr(test_map.Stop, "start", record_start)
+    with pytest.raises(OSError, match="cannot start"):
+        units.run(["slow", "bad"], jobs=2)
+    assert len(started) == 1 and started[0].wait(timeout=HANG_TIMEOUT) == -signal.SIGKILL
