@@ -83,6 +83,8 @@ INJECTED = {
     "tests/test_cpu_bounds.py::test_time_a_child_spends_waiting_is_not_charged": "tests run_cpu_bounded",
     "tests/test_cpu_bounds.py::test_a_child_that_spins_past_its_limit_is_stopped": "tests run_cpu_bounded",
     "tests/test_cpu_bounds.py::test_child_cpu_counts_only_children_that_end_inside_the_block": "tests ChildCPU",
+    "tests/test_readings_defaults_rd6b_report.py::test_saved_latency_and_seeded_bugs":
+        "compares recorded benchmark numbers; starts no process or wait",
     # The guards' own examples: sources the static guard parses, and lowered settings the
     # runtime guard refuses before any real checker starts (or that only a fake sees).
     "tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form": "guard example sources",
