@@ -330,6 +330,7 @@
   "tests/test_ask_relay.py::test_every_field_dropped_is_refused[U3]",
   "tests/test_ask_relay.py::test_every_field_retyped_is_refused[G1]",
   "tests/test_ask_relay.py::test_every_field_retyped_is_refused[U3]",
+  "tests/test_ask_relay.py::test_every_id_rebound_is_refused[A1]",
   "tests/test_ask_relay.py::test_every_id_rebound_is_refused[G1]",
   "tests/test_ask_relay.py::test_every_id_rebound_is_refused[G3]",
   "tests/test_ask_relay.py::test_every_id_rebound_is_refused[U3]",

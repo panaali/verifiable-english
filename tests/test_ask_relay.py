@@ -45,7 +45,7 @@ def bound(ident):
 
 @pytest.fixture(scope="module")
 def answers():
-    return {ident: bound(ident) for ident in ("G1", "G3", "U3", "U5")}
+    return {ident: bound(ident) for ident in ("G1", "G3", "U3", "U5", "A1")}
 
 
 def refused(result, request, expected) -> bool:
@@ -157,6 +157,10 @@ def rebinds(result):
         out[f"row {i}: a cited act not declared"] = setting(
             r, ("rows", i, "cited"), row["cited"] + [{"kind": "rules", "predicate": "zz_act"}])
         out[f"row {i}: a gap of an undeclared act"] = setting(r, ("rows", i, "gaps"), [["zz_act", ["e0"], False]])
+        if row["gaps"]:
+            act, ids, value = row["gaps"][0]
+            out[f"row {i}: a gap naming an element no model has"] = setting(
+                r, ("rows", i, "gaps", 0), [act, ids[:-1] + ["zz_el"], value])
         if row["cited"]:
             out[f"row {i}: a source cited twice"] = setting(r, ("rows", i, "cited"), row["cited"] + row["cited"][:1])
     for i, line in enumerate(r["lines"]):
@@ -175,7 +179,7 @@ def rebinds(result):
     return {k: v for k, v in out.items() if v is not None}
 
 
-@pytest.mark.parametrize("ident", ["G1", "G3", "U3", "U5"])
+@pytest.mark.parametrize("ident", ["G1", "G3", "U3", "U5", "A1"])
 def test_every_id_rebound_is_refused(answers, ident):
     result, request, expected = answers[ident]
     mutants = rebinds(result)

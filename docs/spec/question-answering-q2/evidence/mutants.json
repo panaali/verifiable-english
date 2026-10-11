@@ -110,6 +110,19 @@
       ]
     },
     {
+      "id": "python-gap-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a gap names elements of the models the request's evidence holds",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[U3] - Assert..."
+      ]
+    },
+    {
       "id": "python-gate-transport-only",
       "language": "Python",
       "file": "tools/relay_mutation_gate.py",
