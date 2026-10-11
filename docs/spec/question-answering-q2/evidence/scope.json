@@ -1,7 +1,7 @@
 {
  "range": "main..HEAD --no-merges",
- "base": "f05474685f3df4313d0b264c32cf1cf673a17d97",
- "captured_head": "e3a548348a1f5a962d1199b91e47d8345d4f6290",
+ "base": "968870193193b9e8138183ed77c41e376a6e376c",
+ "captured_head": "67c50c9c0596e9b262d027a71f35ccc58550f986",
  "commits": [
   "bbbe98a444a2b6d173e6a40739e1a1c9abe4d88e",
   "d2dcdac37e85db935d83b2bfe97f8ebca4926a41",
@@ -25,7 +25,12 @@
   "24c15a0f33333288c8fde43f06e1859cc1146766",
   "92ac1866cdfb45d05e958e08b9729d3fdcadac88",
   "b3b81776f1c7f1e633ac113b139402338c080bad",
-  "e3a548348a1f5a962d1199b91e47d8345d4f6290"
+  "e3a548348a1f5a962d1199b91e47d8345d4f6290",
+  "19e57de87cf268ae13c4fbfe6c9d0cc0339d7e36",
+  "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+  "f8f0b430b833f8543ef18c723311a296e21ac6c9",
+  "d9424e3a4a44e6cf08195901c394c1e95331fa6f",
+  "67c50c9c0596e9b262d027a71f35ccc58550f986"
  ],
  "numstat": [
   {
@@ -979,6 +984,144 @@
   {
    "commit": "e3a548348a1f5a962d1199b91e47d8345d4f6290",
    "path": "tools/gate-collection.json",
+   "added": 8,
+   "deleted": 0
+  },
+  {
+   "commit": "19e57de87cf268ae13c4fbfe6c9d0cc0339d7e36",
+   "path": "docs/spec/question-answering-q2/REPORT.md",
+   "added": 66,
+   "deleted": 0
+  },
+  {
+   "commit": "19e57de87cf268ae13c4fbfe6c9d0cc0339d7e36",
+   "path": "docs/spec/question-answering-q2/evidence/fixtures.json",
+   "added": 242,
+   "deleted": 0
+  },
+  {
+   "commit": "19e57de87cf268ae13c4fbfe6c9d0cc0339d7e36",
+   "path": "docs/spec/question-answering-q2/evidence/scope.json",
+   "added": 1131,
+   "deleted": 0
+  },
+  {
+   "commit": "19e57de87cf268ae13c4fbfe6c9d0cc0339d7e36",
+   "path": "docs/spec/question-answering-q2/evidence/statements.json",
+   "added": 11,
+   "deleted": 0
+  },
+  {
+   "commit": "19e57de87cf268ae13c4fbfe6c9d0cc0339d7e36",
+   "path": "docs/spec/question-answering-q2/evidence/trust.json",
+   "added": 12,
+   "deleted": 0
+  },
+  {
+   "commit": "19e57de87cf268ae13c4fbfe6c9d0cc0339d7e36",
+   "path": "docs/spec/question-answering-q2/report.py",
+   "added": 4,
+   "deleted": 3
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "docs/spec/question-answering-q2/evidence/relay-gate.json",
+   "added": 542,
+   "deleted": 0
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "lean/ResponseShape/Schemas/Ask.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "lean/declarations.txt",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "tests/data/relay-gate-cases.jsonl",
+   "added": 10,
+   "deleted": 0
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "tests/test_ask_relay.py",
+   "added": 43,
+   "deleted": 11
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "tests/test_relay_mutation_gate.py",
+   "added": 21,
+   "deleted": 2
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "tools/ask_fixtures.py",
+   "added": 2,
+   "deleted": 7
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "tools/gate-collection.json",
+   "added": 3,
+   "deleted": 0
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "tools/relay-gate-allow.json",
+   "added": 35,
+   "deleted": 0
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "tools/relay_mutation_gate.py",
+   "added": 33,
+   "deleted": 8
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "ve/ask.py",
+   "added": 40,
+   "deleted": 13
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "ve/backends/lean_service_schema/ask.json",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "commit": "4ba71ab45fe7d14e9dff5c9020d0151fc848fd32",
+   "path": "ve/backends/relay.py",
+   "added": 6,
+   "deleted": 1
+  },
+  {
+   "commit": "f8f0b430b833f8543ef18c723311a296e21ac6c9",
+   "path": "docs/spec/question-answering-q2/mutants.py",
+   "added": 32,
+   "deleted": 1
+  },
+  {
+   "commit": "d9424e3a4a44e6cf08195901c394c1e95331fa6f",
+   "path": "docs/spec/question-answering-q2/evidence/mutants.json",
+   "added": 41,
+   "deleted": 1
+  },
+  {
+   "commit": "d9424e3a4a44e6cf08195901c394c1e95331fa6f",
+   "path": "docs/spec/question-answering-q2/mutants.py",
+   "added": 12,
+   "deleted": 5
+  },
+  {
+   "commit": "67c50c9c0596e9b262d027a71f35ccc58550f986",
+   "path": "docs/spec/question-answering-q2/report.py",
    "added": 8,
    "deleted": 0
   }
