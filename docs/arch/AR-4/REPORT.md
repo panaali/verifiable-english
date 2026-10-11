@@ -82,7 +82,9 @@ Under D4, `report.py --check` runs at the batch gate and in the merge train. No 
 ## Coordination (plan 4.2)
 
 Files touched: `tools/trust_map.py`, `docs/trust-baseline.json`, `tests/test_trust_ratchet.py`,
-`tests/test_consolidation_tools.py` and `docs/arch/AR-4/*`. On 2026-10-11 these were checked against
+`tests/test_consolidation_tools.py`, `docs/arch/AR-4/*` and the shared inventory `tools/gate-collection.json`
+(89 test IDs added; `tests/test_consolidation_tools.py::test_rebaseline_needs_a_reason_for_growth` removed, replaced
+by `test_rewrite_never_absorbs_growth`, since `--write --reason` no longer exists). On 2026-10-11 these were checked against
 `git diff --name-only main...<branch>` for every `lean-first/*`, `readings-defaults/*`, `question-answering/*` and
 `infra/*` branch:
 
@@ -105,6 +107,9 @@ json strategy keeps both sides' allowances. If the file still conflicts, the bra
 --reason '<the branch's history entry>' --signed '<R6 (DRI-RULINGS.md) when its conditions hold, else the DRI's
 signature>'` without `--since`. The base is then the merge base, or HEAD during the merge train's uncommitted
 merge. Finally run `python3 tools/regen_generated.py --check --only trust-tables`."
+
+"Conflict in `tools/gate-collection.json`: take `main`'s file and run `uv run python tools/regen_generated.py
+--write --only gate-collection`. If AR-1 has deleted the file, take the deletion."
 
 **Merge-train step.** After each merge into `main`, run `python3 tools/trust_map.py --write`. It sets the recorded
 budget to the measurement and refuses if the check fails. Commit the file if it changed.
