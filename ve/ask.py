@@ -415,6 +415,8 @@ def _check_answer(result, request, expected):
         _need(type(row["cited"]) is list, "a row's citations are not a list")
         for source in row["cited"]:
             _check_source(source, request, units)
+        _need(len({json.dumps(s, sort_keys=True) for s in row["cited"]}) == len(row["cited"]),
+              "a row cites a source twice")
         _need(type(row["gaps"]) is list, "a row's gaps are not a list")
         for gap in row["gaps"]:
             _need(type(gap) is list and len(gap) == 3 and type(gap[0]) is str and _str_list(gap[1]) and
@@ -439,6 +441,8 @@ def _check_answer(result, request, expected):
         if line["quote"] is not None:
             _need(type(line["quote"]) is list and len(line["quote"]) == 2 and _str_list(line["quote"]) and
                   line["quote"][0] in units, "a line quotes a unit that is not the document's")
+            _need(line["quote"][1] and line["quote"][1] in units[line["quote"][0]],
+                  "a line's quote is not from its unit's text")
     _need(result["text"] == [line["text"] for line in lines], "the text is not the lines' text")
     _need(_str_list(result["unused"]) and all(u in units for u in result["unused"]) and
           len(set(result["unused"])) == len(result["unused"]), "the unused sentences are not the document's")
@@ -446,14 +450,15 @@ def _check_answer(result, request, expected):
     for n in result["unchecked_names"]:
         _need(type(n) is dict and n.keys() == NAME_FIELDS and
               names.get((n.get("set"), n.get("index"))) == n, "an unchecked name is not the request's")
+    _need(len({(n["set"], n["index"]) for n in result["unchecked_names"]}) == len(result["unchecked_names"]),
+          "an unchecked name is named twice")
 
 
 def _context(request: dict, doc, raw: bytes, reading: dict, route: str) -> dict:
-    """What the relay binds the answer to, beside the request: the document's units, its open sets with their
-    sizes, its declared predicates, the route and the reading."""
+    """What the relay binds the answer to, beside the request: the document's units with their source text, its open
+    sets with their sizes, its declared predicates, the route and the reading."""
     from .document import front_matter
-    meta = front_matter(raw)
-    meta = meta[0] if isinstance(meta, tuple) else meta
+    meta, body = front_matter(raw)
     case = request["case"]
     reading_sets = (case.get("document") or {}).get("reading_sets") or []
     from .readings_s1 import active_sets
@@ -464,15 +469,22 @@ def _context(request: dict, doc, raw: bytes, reading: dict, route: str) -> dict:
             R = active.get(unit["id"])
             if R is not None and R["status"] == "open":
                 sets[R["id"]] = len(R["readings"])
-    return {"_units": {u["id"] for u in meta["units"]}, "_sets": sets,
-            "_predicates": set(doc["environment"].predicates), "_route": route, "_reading": reading}
+    units = {u["id"]: body[u["span"][0]:u["span"][1]].decode("utf-8") for u in meta["units"]}
+    return {"_units": units, "_sets": sets, "_predicates": set(doc["environment"].predicates), "_route": route,
+            "_reading": reading}
 
 
 def _ask(request: dict, bound: dict, expected: dict) -> dict:
     """Lean's `ask` answer, checked against the request (`answer_problem`); Lean's refusal is raised by the relay as
     the class its code names, with Lean's text."""
     from .backends import relay
-    row = relay.decide_once(MODE, request)
+    return read_answer(relay.decide_once(MODE, request), request, bound, expected)
+
+
+def read_answer(row, request: dict, bound: dict, expected: dict) -> dict:
+    """The answer of the service's `ask` row for `request`, checked against the request and what it is bound to
+    (`binding`); Lean's refusal raised as the class its code names, with Lean's text; anything else is
+    `CheckerUnavailable`."""
     if type(row) is not dict or row.keys() != {"id", "status", "result"} or row["status"] != "ok":
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean answer is not an answer: {row!r}")
     result = row["result"]
@@ -527,20 +539,35 @@ def prepare(path, raw: bytes, question: str, evidence=None, generate: bool = Tru
     """The request for `question` over the document at `path` (its bytes `raw`): the question is read first
     (`read`), so a question VE does not read is refused there with Lean's text; then the route's case and evidence
     are generated."""
-    from .backends.english_lean import export, identities
     from .document import load_document
-    from .english import EnglishVocabulary
     reading = read(raw, question)
     doc = load_document(path)
     builder = _builder(doc)
     case = builder.case(reading["ast"], evidence) if generate else builder.case(reading["ast"], evidence, False)
+    lexicon, expected = _identities(raw, question, doc)
+    request = {"id": MODE, "document": raw.decode("utf-8"), "question": question, "lexicon": lexicon,
+               "case": case, "names": builder.names()}
+    return Prepared(request, _context(request, doc, raw, reading, builder.route), expected, builder)
+
+
+def _identities(raw: bytes, question: str, doc) -> tuple[dict, dict]:
+    """The document's exported lexicon, and the identities an answer to `question` over it carries."""
+    from .backends.english_lean import export, identities
+    from .english import EnglishVocabulary
     env = environment(raw)
     words = EnglishVocabulary(env, _defer_overlay_refusals=True)
     lexicon = export(words)
-    request = {"id": MODE, "document": raw.decode("utf-8"), "question": question, "lexicon": lexicon,
-               "case": case, "names": builder.names()}
-    expected = {**identities(env, question, words, lexicon), "document_id": doc["document_id"]}
-    return Prepared(request, _context(request, doc, raw, reading, builder.route), expected, builder)
+    return lexicon, {**identities(env, question, words, lexicon), "document_id": doc["document_id"]}
+
+
+def binding(path, raw: bytes, request: dict) -> tuple[dict, dict]:
+    """What Lean's answer to `request` is bound to, as `prepare` binds it: the relay's context and the identities;
+    `path` holds the request's document, `raw` its bytes. The relay mutation gate reads a mutated answer with it."""
+    from .document import load_document
+    doc = load_document(path)
+    reading = read(raw, request["question"])
+    return (_context(request, doc, raw, reading, _builder(doc).route),
+            _identities(raw, request["question"], doc)[1])
 
 
 def answer(path, raw: bytes, question: str, evidence=None) -> dict:
