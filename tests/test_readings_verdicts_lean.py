@@ -38,6 +38,14 @@ def lean():
 
 def loaded(tmp_path, make=fnd1):
     doc = load_document(make(tmp_path))
+    # RD-6b's public route for F-ND1/2 is superposed. Keep the RD-3 enumerated
+    # runner as the oracle on these same admitted documents: its Lean service
+    # kind remains available, and the choice list was supplied by Lean.
+    row = doc["readings_s2"]
+    row["route"] = "enumerated"
+    row["finding"] = {"text": "ReadingsNotSuperposable: " + ", ".join(
+        reading_set["id"] for reading_set in doc["meta"]["reading_sets"]),
+        "cause": "the unspecified completion"}
     return doc, context(doc)
 
 
@@ -742,6 +750,7 @@ def test_answers_are_json_round_trip_stable(tmp_path):
 # specificity (the lf-12 ruling, items 2(a)-(c)); a row that loses one is fixed in Lean, never signed.
 
 WORDING = ROOT / "docs/readings-defaults/rd3/evidence/wording-round3.json"
+WORDING_RD6B = ROOT / "docs/readings-defaults/rd6b/evidence/wording.json"
 GAP = "Here the text does not say whether "
 CONDITION_LEADS = ("This holds provided that:", "Whenever ", "Sentence ", "Sentences ", "This does not depend on ")
 
@@ -808,7 +817,26 @@ def test_dri_wording_rows_keep_the_base(tmp_path, capsys):
     live = [readings("--conclusion", str(query)), readings("--conclusion", str(query), "--under", "rs_1:0"),
             readings("--conclusion", str(query), "--under", "rs_1:1"), readings("--conclusion", str(implies)),
             check_document(path1)["readings"]["english"], check_document(path2)["readings"]["english"]]
-    assert [row["head"] for row in saved["rows"]] == live
+    # RD-6b moves these documents to the superposed route. Its English is compared whole, with no line filtered
+    # (review B3 of rd-6b): the live lines are the saved RD-6b rows, whose base is RD-3's signed head, and every line
+    # either keeps that base or is one the RD-6b delta lists, each in docs/readings-defaults/rd6b/DELTA.md.
+    rd6b = json.loads(WORDING_RD6B.read_text())
+    delta = (ROOT / "docs/readings-defaults/rd6b/DELTA.md").read_text()
+    assert len(rd6b["rows"]) == len(saved["rows"])
+    for row, signed, lines in zip(rd6b["rows"], saved["rows"], live, strict=True):
+        assert (row["case"], row["base"], row["head"]) == (signed["case"], signed["head"], lines)
+        assert _keeps_the_base(row["base"], row["head"]) == row["problems"], row["case"]
+        assert row["added"] == [line for line in row["head"] if line not in row["base"]]
+        assert row["removed"] == [line for line in row["base"] if line not in row["head"]]
+        for line in row["added"] + row["removed"]:
+            assert line in delta, line
+    # Only the route's own wording moved: the result lines, their gaps and conditions are RD-3's.
+    assert {line for row in rd6b["rows"] for line in row["removed"]} == {
+        "The readings of sentence 1 were checked one way at a time, not together.",
+        "The readings of sentence 2 were checked one way at a time, not together."}
+    assert {line for row in rd6b["rows"] for line in row["added"]} == {
+        "This does not depend on how sentence 1 is read.",
+        "CONFLICT: pair conflict on x_required->x_permitted at act e0"}
 
 
 # ---------------------------------------------------------------------------------------------------------------
