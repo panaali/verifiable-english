@@ -10,7 +10,7 @@ The decoder-total calculation is pure during a merge. Importing `assurance_manif
 
 ## Historical replay
 
-The three requested two-parent merges were replayed in scratch clones with the current trust merge. Each merged budget equals the agent's committed budget, and `trust_map.check` accepts the committed historical file ledger against it. `--resolve --only trust-tables` and its trust check passed for all three. For `17573bbb` and `fc106062`, other generated conflicts were first filled with the respective committed merge's generated output, so this run isolates the trust ledger and check. `6aafef85` passed directly. The full regeneration of every historical generated file was not run. The [initial targeted attempts](../../evidence/eff-20261011-1/replay-initial-targeted.json) failed on stale generated declarations or on the conflicted assurance-manifest import; those conditions were removed in the successful isolated replays. [Budget evidence](../../evidence/eff-20261011-1/replay-budgets.json), [scratch outcomes](../../evidence/eff-20261011-1/replay-trust-check.json), [direct 6aafef85 outcome](../../evidence/eff-20261011-1/replay-targeted-after-fix.json).
+The three requested two-parent merges were replayed in scratch clones with the current trust merge. Each merged budget equals the agent's committed budget, and `trust_map.check` accepts the committed historical file ledger against it. `--resolve --only trust-tables` and its trust check passed for all three. For `17573bbb` and `fc106062`, other generated conflicts were first filled with the respective committed merge's generated output, so this run isolates the trust ledger and check. `6aafef85` passed directly. The full regeneration of every historical generated file was not run. The [initial targeted attempts](evidence/replay-initial-targeted.json) failed on stale generated declarations or on the conflicted assurance-manifest import; those conditions were removed in the successful isolated replays. [Budget evidence](evidence/replay-budgets.json), [scratch outcomes](evidence/replay-trust-check.json), [direct 6aafef85 outcome](evidence/replay-targeted-after-fix.json).
 
 | Merge | Before | After | Remaining stop |
 |---|---|---|---|
@@ -30,7 +30,7 @@ The three requested two-parent merges were replayed in scratch clones with the c
 | Daily-count retry A | Reported generated-only | Not independently replayed | No distinct two-parent commit or parent IDs in the available record |
 | Daily-count retry B | Reported source conflict | Not independently replayed | No distinct two-parent commit or conflicting path list in the available record |
 
-The daily review counts 15 conflicted sync attempts (8 previously resolvable, 3 trust-only, 4 source). The available two-parent merge history reconstructs 13 distinct conflicted pairs (7, 3, 3). The two extra rows reconcile the daily aggregate but are **not** claimed as replays. The 13 reproducible classifications, parent IDs, paths, and error text are saved in [replay-classification.json](../../evidence/eff-20261011-1/replay-classification.json).
+The daily review counts 15 conflicted sync attempts (8 previously resolvable, 3 trust-only, 4 source). The available two-parent merge history reconstructs 13 distinct conflicted pairs (7, 3, 3). The two extra rows reconcile the daily aggregate but are **not** claimed as replays. The 13 reproducible classifications, parent IDs, paths, and error text are saved in [replay-classification.json](evidence/replay-classification.json).
 
 For `17573bbb`, the merged budget is **K 997, S 9791, V 36969**. The other merged budgets are **K 997, S 9788, V 37087** (`6aafef85`) and **K 997, S 9974, V 37363** (`fc106062`). These are recomputed from the saved file ledgers, not copied into a permanent report test.
 
@@ -46,7 +46,7 @@ Three temporary seeded bugs in the changed Python product file were each caught 
 | Skip totals recomputation | All three historical fixture cases failed |
 | Take their count instead of adding both deltas | `fc106062` failed |
 
-The exact failures are saved in [mutants.json](../../evidence/eff-20261011-1/mutants.json). Only Python product code changed, so no Lean or Rust seeded bug applies.
+The exact failures are saved in [mutants.json](evidence/mutants.json). Only Python product code changed, so no Lean or Rust seeded bug applies.
 
 ## Acceptance and scope
 
@@ -54,6 +54,6 @@ The exact failures are saved in [mutants.json](../../evidence/eff-20261011-1/mut
 - **HUMAN:** Independent review after the pre-review gate. Owner: DRI/reviewer.
 - **EXTERNAL:** None.
 
-The final full gate writes `gate-result.json` at the repository root on the committed code. The [selection plan](../../evidence/eff-20261011-1/selection-plan.json) records the exact selected units; the selector chose all 363 test units for this change. No relay-answer schema, Lean theorem, Rust product code, document verdict, or checker limit changed, so checklist items for those surfaces do not apply. The generated-file registry and layer checks remain in the release gate.
+The final full gate writes `gate-result.json` at the repository root on the committed code. The [selection plan](evidence/selection-plan.json) records the exact selected units; the selector chose all 363 test units for this change. No relay-answer schema, Lean theorem, Rust product code, document verdict, or checker limit changed, so checklist items for those surfaces do not apply. The generated-file registry and layer checks remain in the release gate.
 
 Self-review used the pinned main commit `8cec935a` and `git diff main...HEAD`: the product diff is confined to JSON merge and derived-value handling, the trust checker command is unchanged, and `git diff --check` is clean. The 15-attempt history gap is disclosed above rather than counted as a verified replay.
