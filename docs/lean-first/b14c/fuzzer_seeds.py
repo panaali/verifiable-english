@@ -22,8 +22,9 @@ def one(seed: int, scratch: Path) -> dict:
     log = scratch / f"{seed}.log"
     if report.is_file():
         data = json.loads(report.read_text())
-        if data.get("seed") == seed and data.get("passed") is True:
-            return {"seed": seed, "exit_code": 0, "passed": True,
+        if data.get("seed") == seed and type(data.get("passed")) is bool:
+            return {"seed": seed, "exit_code": 0 if data["passed"] else 1,
+                    "passed": data["passed"],
                     "new": len(data["new"]), "baseline_entries": data["baseline"]["entries"],
                     "sampled": data["mutants"]}
     with log.open("w") as output:
