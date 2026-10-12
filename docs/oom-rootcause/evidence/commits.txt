@@ -1,3 +1,9 @@
+c88e4012 Readings relay: reject malformed labels, targets, and repeated over names
+baf95df4 OOM batch: relay mutation gate evidence (identical 92 findings on main)
+be948d2b OOM batch: final gate passed on ef36aece
+ef36aece OOM batch: gate evidence for ab00e274 and the gate-integrity fix
+13d66531 test_gate_integrity: fake Lake's trace check in the interrupted-gate test
+ab00e274 OOM batch: selected-test results, final seeded-fault evidence, commit list
 5a33c776 process_limits: bound byte settings to 19 digits; list run_limited in the runner and int inventories
 30507fc0 Senses route tests tamper with and guard the one-shot transport where it runs (run_limited)
 cbbacf5c process_limits: narrow run_limited's handler; list it among the process starters
