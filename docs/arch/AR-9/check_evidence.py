@@ -61,11 +61,22 @@ def check_mutants():
     assert all(row["exit_code"] == 0 for row in saved["restored"])
 
 
+def check_selected():
+    selected = _saved("selected.json")
+    units = selected["units"]
+    assert len(selected["head"]) == len(selected["tree"]) == 40
+    assert selected["unit_count"] == len(units) == 360
+    assert len({row["unit"] for row in units}) == len(units)
+    assert all(row["exit"] == 0 for row in units)
+
+
 def check_gate():
     scope, gate, split = _saved("scope.json"), _saved("gate.json"), _saved("split.json")
+    selected = _saved("selected.json")
     assert scope["base"] == split["base"]
     assert scope["commits"] and scope["commits"][0]["hash"] == scope["head"]
     assert split["head"] in {row["hash"] for row in scope["commits"]}
+    assert selected["head"] in {row["hash"] for row in scope["commits"]}
     assert gate["commit_sha"] == scope["head"] and gate["dirty"] is False
     assert gate["status"] == "passed" and gate["failures"] == []
     counts = gate["counts"]
@@ -78,6 +89,7 @@ def main():
     check_report()
     check_split()
     check_mutants()
+    check_selected()
     if (EVIDENCE / "gate.json").exists():
         check_gate()
         print("AR-9 saved evidence PASS (including final gate)")
