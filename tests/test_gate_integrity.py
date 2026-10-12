@@ -526,6 +526,10 @@ def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption
     monkeypatch.setattr(gate, "POLICY", policy)
     monkeypatch.setattr(gate, "COLLECTION", collection)
     monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
+    # Other gate tests may rebuild or prune the shared Lean artifacts while this
+    # test runs. Reach the injected interruption without depending on those files.
+    monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda *args, **kwargs: None)
+    monkeypatch.setattr(gate.lake_outputs, "stale", lambda *args, **kwargs: [])
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
 
     def fake_command(args, *, env, stage, cwd=None):
