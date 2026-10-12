@@ -169,48 +169,6 @@ def environmentIdOf (profiles : List String) (environment : Json) : Except Strin
 which every family decoder checks) lacks: `no`, a definitions keyword. -/
 def pythonReserved : List String := ["no"]
 
-private def naryDefined (environment : Json) : List String :=
-  (VE.Core.Layers.predicatesOf environment).filterMap fun (p, entry) =>
-    if !VE.Core.Layers.folEntry entry && (entry.getObjVal? "defined").isOk then some p else none
-
-private def usedPredicates : VE.Core.Formula → List String
-  | .top | .bottom | .eq _ _ => []
-  | .unary p _ | .binary p _ _ | .atom p _ | .reachNamed _ p _ _ => [p]
-  | .not a | .all _ a | .ex _ a => usedPredicates a
-  | .and a b | .or a b | .implies a b => usedPredicates a ++ usedPredicates b
-  | .reachBody _ _ a _ _ => usedPredicates a
-
-private def visitDefinition (deps : List (String × List String)) (name : String)
-    (stack : List String) (fuel : Nat) : Except String Unit := do
-  if stack.contains name then throw s!"DependencyCycle: {name}"
-  match fuel with
-  | 0 => throw s!"DependencyCycle: {name}"
-  | n + 1 =>
-    for p in (VE.Bridge.lookup deps name).getD [] do
-      if (VE.Bridge.lookup deps p).isSome then
-        visitDefinition deps p (name :: stack) n
-
-/-- Check n-ary definition bodies in the core family before Python constructs
-their retained batch-14 tables. Unary and binary bodies use `decodeLayers`. -/
-private def checkNaryDefinitions (environment : Json) : Except String Unit := do
-  let core ← VE.Core.Layers.coreEnvironment environment
-  let v ← VE.Core.Bridge.decodeEnvironment core
-  let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
-  let mut deps : List (String × List String) := []
-  for (p, entry) in predicates do
-    if !VE.Core.Layers.folEntry entry then
-      if let .ok payload := entry.getObjVal? "defined" then
-        VE.Bridge.exactFields payload ["arguments", "body"]
-        let args ← VE.Bridge.strings (← payload.getObjVal? "arguments")
-        unless args == (← VE.Bridge.strings (← entry.getObjVal? "arguments")) do
-          throw "definition argument sorts differ"
-        let body ← VE.Core.Bridge.decodeFormula 64 (← payload.getObjVal? "body")
-        unless body.check v.environment args.reverse do
-          throw "the body is not a typed formula over the symbols below it"
-        deps := (p, usedPredicates body) :: deps
-  for (p, _) in deps do
-    visitDefinition deps p [] (deps.length + 1)
-
 private def checkDataFlagFields (profiles : List String)
     (predicates : List (String × Json)) : Except String Unit := do
   for (_, entry) in predicates do
@@ -248,12 +206,9 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
     v := { envelope, decodable }
   else if e.family == .closureNary && VE.Core.Layers.usesLayers v.decodable then
     -- The core decoder has neither layer: they are validated over the FOL
-    -- projection by the FOL route's decoders, as the core route does. An n-ary
-    -- defined predicate is outside the projection, so nothing here would check
-    -- its body or compute its table.
-    if !(naryDefined v.decodable).isEmpty then
-      checkNaryDefinitions v.decodable
-    let _ ← VE.Core.Layers.decodeLayers e.profiles v.decodable
+    -- projection by the FOL route's decoders, and the n-ary definitions over the
+    -- core environment, as the core route does.
+    let _ ← VE.Core.Layers.decodeLayered e.profiles v.decodable
     let layered := v.decodable
     v ← stripPredicates v.envelope v.decodable VE.Core.Layers.layerFields
     v := { v with layers := some layered }
@@ -566,22 +521,10 @@ def modelCase (j : Json) : Except String Json := do
       let _ ← (VE.Core.Wire.decodeModel v model).mapError modelError
       pure ()
     | some layered =>
-      -- The core model with the defined tables computed over the FOL
-      -- projection (`Core.Layers.completeModel`).
-      let rv ← VE.Core.Layers.decodeLayers e.profiles layered
-      let names := (← VE.Core.Layers.folPredicates layered).map Prod.fst
-      let M ← VE.Route.Wire.decodeDataModel rv (← VE.Core.Layers.folModel names model)
-      let tables := (VE.Definitions.names rv.definitions).map fun p =>
-        (p, VE.Core.Layers.tableJson (M.relations p))
-      let relations ← VE.Bridge.fields (← model.getObjVal? "relations")
-      let derived := naryDefined layered
-      if relations.any (fun (p, _) => derived.contains p) then
-        throw "InvalidModel: supplied table for a defined predicate"
-      let core ← VE.Core.Layers.withPredicates checked.decodable
-        ((VE.Core.Layers.predicatesOf checked.decodable).filter (fun (p, _) => !derived.contains p))
-      let modelVocabulary ← if derived.isEmpty then pure v else VE.Core.Bridge.decodeEnvironment core
-      let _ ← (VE.Core.Wire.decodeModel modelVocabulary
-        (model.setObjVal! "relations" (Json.mkObj (relations ++ tables)))).mapError modelError
+      -- The core model with the defined tables computed (`Core.Layers.completeModel`).
+      let complete ← VE.Core.Layers.completeModel
+        (← VE.Core.Layers.decodeLayered e.profiles layered) layered model
+      let _ ← (VE.Core.Wire.decodeModel v complete).mapError modelError
       pure ()
   | .order =>
     let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
@@ -739,29 +682,6 @@ def encodeClosure : VE.Closure.Formula → Json
   | .reachBody k s a t u => Json.arr #[.str "reach", encodeKind k,
       Json.arr #[.str "body", .str s, encodeClosure a], VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
 
-def encodeCoreKind : VE.Core.Kind → Json
-  | .plus => .str "plus"
-  | .star => .str "star"
-
-/-- A core-family (closure + n-ary) formula on the wire (Python `_to_data`). -/
-def encodeCore : VE.Core.Formula → Json
-  | .top => Json.arr #[.str "top"]
-  | .bottom => Json.arr #[.str "bottom"]
-  | .unary p t => Json.arr #[.str "unary", .str p, VE.Route.Wire.encodeTerm t]
-  | .binary p t u => Json.arr #[.str "binary", .str p, VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
-  | .atom p ts => Json.arr #[.str "atom", .str p, Json.arr (ts.map VE.Route.Wire.encodeTerm).toArray]
-  | .eq t u => Json.arr #[.str "eq", VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
-  | .not a => Json.arr #[.str "not", encodeCore a]
-  | .and a b => Json.arr #[.str "and", encodeCore a, encodeCore b]
-  | .or a b => Json.arr #[.str "or", encodeCore a, encodeCore b]
-  | .implies a b => Json.arr #[.str "implies", encodeCore a, encodeCore b]
-  | .all s a => Json.arr #[.str "forall", .str s, encodeCore a]
-  | .ex s a => Json.arr #[.str "exists", .str s, encodeCore a]
-  | .reachNamed k p t u => Json.arr #[.str "reach", encodeCoreKind k, Json.arr #[.str "named", .str p],
-      VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
-  | .reachBody k s a t u => Json.arr #[.str "reach", encodeCoreKind k,
-      Json.arr #[.str "body", .str s, encodeCore a], VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
-
 /-- Python's source cap (`MAX_SOURCE_BYTES`). -/
 def maxSourceBytes : Nat := 65536
 
@@ -818,7 +738,7 @@ def parseCase (j : Json) : Except String Json := do
     | .closureNary => do
       let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
       let some fs := VE.Core.Surface.parse v.environment source | throw rejected
-      pure (fs.map encodeCore, some (VE.Core.Surface.print fs))
+      pure (fs.map VE.Core.Wire.encodeFormula, some (VE.Core.Surface.print fs))
     | .order => do
       let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
       let some fs := VE.Order.Surface.parse v.vocabulary.environment source | throw rejected
@@ -1256,7 +1176,7 @@ def rawParseAst (environment : Json) (source : String) : Option (List Json) := I
       (VE.Closure.Surface.parseStatements rv.environment fuel chars).map (·.map encodeClosure)
     | .closureNary => do
       let v ← (VE.Core.Bridge.decodeEnvironment checked.decodable).toOption
-      (VE.Core.Surface.parseStatements v.environment fuel chars).map (·.map encodeCore)
+      (VE.Core.Surface.parseStatements v.environment fuel chars).map (·.map VE.Core.Wire.encodeFormula)
     | .order => do
       let v ← (VE.Route.Wire.decodeOrderVocabulary e.vocabulary).toOption
       (VE.Order.Surface.parseStatements v.vocabulary.environment fuel chars).map
