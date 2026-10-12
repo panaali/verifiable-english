@@ -1,0 +1,22 @@
+{
+ "routes": {
+  "service:readings-choices": {
+   "fixtures": 3,
+   "ok_fixtures": 3,
+   "mutants": 515,
+   "refused": 515,
+   "seconds": 2.4
+  }
+ },
+ "findings": [],
+ "failures": [],
+ "totals": {
+  "fixtures": 3,
+  "ok_fixtures": 3,
+  "mutants": 515,
+  "refused": 515
+ },
+ "inputs": {
+  "tools/relay-gate-allow.json": "75f28d5928c41af07f41dfce3c86aeabc9025b97a4f9825031d464188b3b7ac3"
+ }
+}

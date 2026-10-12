@@ -7052,6 +7052,7 @@
   "tests/test_lean_first_diff.py::test_identical_runs_have_no_difference",
   "tests/test_lean_first_diff.py::test_norm_defaults_profile_corpus_is_complete_and_schema_bound",
   "tests/test_lean_first_diff.py::test_only_signed_wording_pairs_and_records_are_accepted",
+  "tests/test_lean_first_diff.py::test_pilot_comparison_normalizes_only_its_own_scratch_directory",
   "tests/test_lean_first_diff.py::test_pilot_recording_keeps_the_english_shadow_in_its_writable_scratch",
   "tests/test_lean_first_diff.py::test_probe_record_excludes_nested_instrumentation",
   "tests/test_lean_first_diff.py::test_public_records_are_mig3s",
