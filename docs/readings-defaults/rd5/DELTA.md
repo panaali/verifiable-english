@@ -5,8 +5,8 @@ statement spec [readings-defaults.md](../../spec/readings-defaults.md) 8.6, 9 an
 (`manage-agents/readings-defaults-dri-note.md`). No model was called. The pilot's scripts, data and report are in
 [`usecases/udhr-pilot/run-20261010T1400Z/`](../../../usecases/udhr-pilot/run-20261010T1400Z/) and its
 [`SUMMARY.md`](../../../usecases/udhr-pilot/run-20261010T1400Z/SUMMARY.md); this batch's evidence is in
-[`evidence/`](evidence/). `check_delta.py` checks every number below against the saved evidence (DRI-RULINGS R11, D4:
-batch evidence is checked at the gate and the merge, not by a permanent test).
+[`evidence/`](evidence/). `check_delta.py` checks the saved evidence and every number below at the batch gate and
+merge stage (DRI-RULINGS R11, D4); the suite keeps the migration and witness behavior tests.
 
 ## What was done
 
@@ -99,7 +99,7 @@ after). The record is in [`evidence/mutants.json`](evidence/mutants.json).
 | `e24-for-every-probe` | `ve/readings_route.py` | `tests/test_readings_rd5_plain_probe.py::test_a_pair_probed_on_a_duty_keeps_e19` |
 | `main-frame-without-norm-defaults` | `usecases/udhr-pilot/run-20261010T1400Z/migrate.py` | `tests/test_readings_rd5_udhr.py::test_the_migration_reproduces_the_committed_document` |
 | `unknown-status-taken-as-an-answer` | `usecases/udhr-pilot/run-20261010T1400Z/witnesses.py` | `tests/test_readings_rd5_udhr.py::test_one_sets_witnesses_replay_equal_in_its_component_and_alone` |
-| `summary-share-before-for-after` | `usecases/udhr-pilot/run-20261010T1400Z/summary.py` | `tests/test_readings_rd5_udhr.py::test_the_summary_is_rendered_from_the_saved_metrics` |
+| `summary-share-before-for-after` | `usecases/udhr-pilot/run-20261010T1400Z/summary.py` | `docs/readings-defaults/rd5/check_delta.py` |
 
 Python is the only language whose product code changed (no Lean or Rust file changed). Two earlier candidate bugs
 were equivalent on the UDHR's data and were replaced:
@@ -131,10 +131,10 @@ evidence and this DELTA. Commits: `c3e40b7a`, `ae7fa229`, `a497cf56`, `98d8dbf0`
 
 - RD-5 lists no Lean statement, and no Lean file changed: no proof, `sorry`, audit, statement, frozen-source,
   assurance or response-schema change, and no rehash.
-- `tools/gate-collection.json` pins the 11 new test IDs (`tools/gate_collection.py --write`).
+- `tools/gate-collection.json` pins the 5 new behavior test IDs (`tools/gate_collection.py --write`).
 - `tools/trust_map.py --check` passes: K, S, D, G, tied and trusted lines are all +0 against the baseline (the trust
   check is not weakened; sibling finding B1).
-- No limit is copied into product code. The pilot's test reads `MAX_DOCUMENT_BYTES` and `MAX_CHOICES` from their
+- No limit is copied into product code. The batch evidence checker reads `MAX_DOCUMENT_BYTES` and `MAX_CHOICES` from their
   owners, and the per-frame limits are the frozen decoders', under which Lean admitted the document.
 - The gate's Lean binaries come from a build from source in this worktree: its `lean/.lake` was empty on
   2026-10-11, and `lake build` built all 881 jobs (57 min) before the selected tests and the gate (sibling finding
@@ -152,8 +152,8 @@ evidence and this DELTA. Commits: `c3e40b7a`, `ae7fa229`, `a497cf56`, `98d8dbf0`
 
 ## Acceptance items
 
-- AGENT: everything above, with the tests named (`tests/test_readings_rd5_udhr.py`, 9 tests;
-  `tests/test_readings_rd5_plain_probe.py`, 2 tests).
+- AGENT: everything above, with the tests named (`tests/test_readings_rd5_udhr.py`, 3 behavior tests;
+  `tests/test_readings_rd5_plain_probe.py`, 2 behavior tests; six saved-evidence checks in `check_delta.py`).
 - HUMAN, DRI: the signature for U1. Owner: the DRI.
 - EXTERNAL, deferred: the next UDHR audit decides on the migrated units; the audit-verified share is unchanged until
   then. Owner: the UDHR pilot.
@@ -162,4 +162,6 @@ evidence and this DELTA. Commits: `c3e40b7a`, `ae7fa229`, `a497cf56`, `98d8dbf0`
 
 ## Full gate
 
-Run once on the committed final HEAD; the result is in [`evidence/gate.json`](evidence/gate.json) (see below).
+Run once on the committed final HEAD. Its machine-readable result is left as `gate-result.json` in the worktree;
+`check_delta.py` validates the saved batch evidence before that gate. The gate result and any serial rerun are reported
+in the final handoff.

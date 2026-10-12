@@ -41,7 +41,7 @@ MUTANTS = [
      "behaviour": "SUMMARY.md states the saved after share",
      "old": "%) before, {after['share']['decided_bytes']} of {source} bytes",
      "new": "%) before, {before['share']['decided_bytes']} of {source} bytes",
-     "test": "tests/test_readings_rd5_udhr.py::test_the_summary_is_rendered_from_the_saved_metrics"},
+     "test": "docs/readings-defaults/rd5/check_delta.py"},
 ]
 
 
@@ -58,8 +58,9 @@ def run(mutant):
         raise SystemExit(f"mutants: {mutant['name']}: the text to replace is not in {mutant['file']} once")
     try:
         path.write_text(text.replace(mutant["old"], mutant["new"]))
-        done = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-x", mutant["test"]]),
-                              cwd=ROOT, capture_output=True, text=True,
+        command = ([sys.executable, mutant["test"]] if mutant["test"].endswith(".py") else
+                   nested_pytest.command(["-q", "-p", "no:cacheprovider", "-x", mutant["test"]]))
+        done = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
                               env=nested_pytest.environment(os.environ, VE_NATIVE_PREBUILT="1"))
     finally:
         path.write_bytes(original)

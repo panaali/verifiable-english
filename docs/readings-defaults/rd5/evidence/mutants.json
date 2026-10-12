@@ -16,7 +16,7 @@
     "=========================== short test summary info ============================",
     "FAILED tests/test_readings_rd5_plain_probe.py::test_a_pair_probed_on_a_plain_predicate_gets_e24",
     "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    "1 failed in 1.64s"
+    "1 failed in 2.24s"
    ],
    "sha256_before": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62",
    "sha256_restored": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62"
@@ -37,7 +37,7 @@
     "=========================== short test summary info ============================",
     "FAILED tests/test_readings_rd5_plain_probe.py::test_a_pair_probed_on_a_duty_keeps_e19",
     "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    "1 failed in 0.89s"
+    "1 failed in 0.68s"
    ],
    "sha256_before": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62",
    "sha256_restored": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62"
@@ -54,11 +54,11 @@
    "exit": 1,
    "output_tail": [
     "E         Use -v to get more diff",
-    "tests/test_readings_rd5_udhr.py:157: AssertionError",
+    "tests/test_readings_rd5_udhr.py:57: AssertionError",
     "=========================== short test summary info ============================",
     "FAILED tests/test_readings_rd5_udhr.py::test_the_migration_reproduces_the_committed_document",
     "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    "1 failed in 6.74s"
+    "1 failed in 8.15s"
    ],
    "sha256_before": "c84939fdd4facdd96b4da3056b4bc8e8a26e0e95729ce59305584e9c7c1e45d0",
    "sha256_restored": "c84939fdd4facdd96b4da3056b4bc8e8a26e0e95729ce59305584e9c7c1e45d0"
@@ -75,11 +75,11 @@
    "exit": 1,
    "output_tail": [
     "E         ...Full output truncated (2 lines hidden), use '-vv' to show",
-    "tests/test_readings_rd5_udhr.py:175: AssertionError",
+    "tests/test_readings_rd5_udhr.py:75: AssertionError",
     "=========================== short test summary info ============================",
     "FAILED tests/test_readings_rd5_udhr.py::test_one_sets_witnesses_replay_equal_in_its_component_and_alone",
     "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    "1 failed in 9.45s"
+    "1 failed in 10.49s"
    ],
    "sha256_before": "6e7f295424fd05272fdbfac1b068dee2bcdaced73111147c75be362faaf415c5",
    "sha256_restored": "6e7f295424fd05272fdbfac1b068dee2bcdaced73111147c75be362faaf415c5"
@@ -91,17 +91,10 @@
    "behaviour": "SUMMARY.md states the saved after share",
    "old": "%) before, {after['share']['decided_bytes']} of {source} bytes",
    "new": "%) before, {before['share']['decided_bytes']} of {source} bytes",
-   "test": "tests/test_readings_rd5_udhr.py::test_the_summary_is_rendered_from_the_saved_metrics",
+   "test": "docs/readings-defaults/rd5/check_delta.py",
    "failed": true,
    "exit": 1,
-   "output_tail": [
-    "E         ...Full output truncated (123 lines hidden), use '-vv' to show",
-    "tests/test_readings_rd5_udhr.py:42: AssertionError",
-    "=========================== short test summary info ============================",
-    "FAILED tests/test_readings_rd5_udhr.py::test_the_summary_is_rendered_from_the_saved_metrics",
-    "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    "1 failed in 0.25s"
-   ],
+   "output_tail": [],
    "sha256_before": "4c3092b6c7c3161b2a1c796c4eaa5cf36eb74099edaf977b5064bc576d4bc321",
    "sha256_restored": "4c3092b6c7c3161b2a1c796c4eaa5cf36eb74099edaf977b5064bc576d4bc321"
   }
