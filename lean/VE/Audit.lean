@@ -2184,6 +2184,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_parse
 #print axioms VE.Service.runMode_graph
 #print axioms VE.Service.runMode_readings
+#print axioms VE.Service.runMode_readingsChoices
 #print axioms VE.Service.runMode_bundle
 #print axioms VE.Service.runMode_familyNorms
 #print axioms VE.Service.runMode_softNorms
