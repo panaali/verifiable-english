@@ -11,12 +11,12 @@ train.
 | Command | Owner | What it does |
 |---|---|---|
 | `python -m tools.evidence scope --base main --out DIR/evidence/scope.json` | `tools/evidence/__init__.py` | Saves `main..HEAD --no-merges`: the commits and the sum of lines each non-merge commit adds and deletes per path. Reports read this, never a live diff. |
-| `python -m tools.evidence latency measure ...` / `latency check ...` | `tools/evidence/latency.py` | Paired base and head CPU samples, keyed by full path, with every run's output compared, and the 20% rule. Fails on empty, missing, duplicated or empty keys and on unavailable values. `tools/readings_batch_latency.py` and `tools/lean_service_latency.py` keep their CLIs and call this module. |
-| `python -m tools.evidence ab BASE HEAD --head-commit SHA --out F` | `tools/evidence/ab.py` | Runs `tools/lean_first_diff.py compare`. Refuses empty recordings, unlisted differences, records unavailable on both sides, and a missing required corpus. |
-| `python -m tools.evidence fuzz_ab --base-root B --batch DIR --out F` | `tools/evidence/fuzz_ab.py` | Runs `tools/difffuzz.py` in both checkouts and compares the reports: the sample, counts, new signatures, and each replayed baseline entry's status and answers. A difference passes only if a toml rule explains it. |
+| `python -m tools.evidence latency measure ...` / `latency check ...` | `tools/evidence/latency.py` | Paired base and head CPU samples, keyed by full path, with every run's output compared, and the 20% rule. Both commits are read from the two checkouts, which must be clean and at different commits. Fails on empty, missing, duplicated or empty keys and on unavailable values. `tools/readings_batch_latency.py` and `tools/lean_service_latency.py` keep their CLIs and call this module. |
+| `python -m tools.evidence ab BASE HEAD --base-commit SHA --head-commit SHA --out F` | `tools/evidence/ab.py` | Runs `tools/lean_first_diff.py compare`. Refuses one commit on both sides. Refuses empty recordings, unlisted differences, records unavailable on both sides, and a missing required corpus. |
+| `python -m tools.evidence fuzz_ab --base-root B --batch DIR --out F` | `tools/evidence/fuzz_ab.py` | Runs `tools/difffuzz.py` in both checkouts (clean, at two different commits, both saved) and compares the reports: the sample, counts, new signatures, and each replayed baseline entry's status and answers. A difference passes only if a toml rule explains it. |
 | `python -m tools.evidence mutants MUTANTS.json --evidence F` | `tools/mutants.py` (unchanged, the one harness) | Seeded mutants: the baseline passes, the named test fails, the exact bytes are restored. |
 | `python -m tools.evidence report DIR` | `tools/evidence/report.py` | Renders the `[report]` lines from the evidence JSON. `--check` fails when the block in the document differs. |
-| `python tools/batch_evidence.py --check DIR [--report-commit SHA]` | `tools/batch_evidence.py` | Checks the toml schema (an unknown key is an error) and every check the positional form had: `REQUIRED_STAGES`, `REQUIRED_CORPORA`, and the report commit's ancestry and changed paths. It also checks the scope, the gate's counts and failures, and the mutants, which must be at least three, each failing a named test. Where named, it checks the A/B (required when the scope touches `ve/` or `lean/`), latency, fuzz A/B, the report block, and tally claims. |
+| `python tools/batch_evidence.py --check DIR [--main REF] [--report-commit SHA]` | `tools/batch_evidence.py` | Checks the toml schema (an unknown key is an error) and every check the positional form had: `REQUIRED_STAGES`, `REQUIRED_CORPORA`, and the report commit's ancestry and changed paths. It also checks the scope, the gate's counts and failures, and the mutants, which must be at least three, each failing a named test. Where named, it checks the A/B (required when the scope touches `ve/` or `lean/`), latency, fuzz A/B, the report block, and tally claims. The evidence is tied to the batch: the scope holds the commits from the batch's merge base with `--main` (default `main`), each A/B compared that base with the scope's head, each mutant ran on its file at the head, and every file read is inside the repository and, with `--report-commit`, committed there. |
 
 This batch is the toolkit's first user: `evidence.toml` here describes AR-5a and is checked with
 `tools/batch_evidence.py --check docs/arch/AR-5a`.
@@ -77,7 +77,7 @@ For a batch it merges, the train runs this one line in the batch's worktree at t
 syncing with `main`, because a sync merge changes paths outside the batch directory after the gate:
 
 ```
-git diff --diff-filter=AM --name-only main...$BRANCH -- ':(glob)docs/*/*/evidence.toml' | xargs -rn1 dirname | xargs -rI{} uv run python tools/batch_evidence.py --check {} --report-commit $BRANCH
+git diff --diff-filter=AM --name-only main...$BRANCH -- ':(glob)docs/*/*/evidence.toml' | xargs -rn1 dirname | xargs -rI{} uv run python tools/batch_evidence.py --check {} --main main --report-commit $BRANCH
 ```
 
 It exits non-zero if any batch evidence fails. It does nothing for batches made before the toolkit, whose
@@ -117,6 +117,36 @@ rejection), `tools/evidence/ab.py` (M4 lf-0 empty files, M7 unavailable on both)
 `tools/evidence/__init__.py` (M5 duplicated key), `tools/batch_evidence.py` (M8 report block, M9 tally, M12
 gate failures, M14 saved scope against Git), `tools/readings_batch_latency.py` (M10 two cases with one name), `tools/evidence/config.py` (M13 a toml
 lowering the mutant minimum).
+
+## Fix round: arch-20261010-2 review F1 to F3
+
+The review found that `--check` passed evidence not tied to the batch. Each finding was fixed as a class:
+
+- F1: the saved scope must hold the commits and changes of the batch's merge-base range with `--main`
+  (`tools.evidence.merge_base`). After the batch merges, that base is computed from `main`'s commit before the
+  merge, so a later merge does not move it. A base inside the batch (a fix round's `--base <reviewed commit>`)
+  fails before and after the merge. b16c's saved base is a later `main` commit whose range holds the same five
+  commits and changes, so its re-check keeps its one open-A/B error.
+- F2: every A/B record (`ab`, `latency`, `fuzz_ab`, `tools/readings_batch_latency.py`) saves `base_commit`.
+  The measuring tools read both commits from the two checkouts (`tools.evidence.checkouts`: one directory,
+  one commit or a modified tracked file is refused). `--check` requires the base to be the scope's base and to
+  differ from the head (`tools.evidence.base_problems`, one rule for all three). Each `tools/mutants.py` record's
+  `source_sha256` must be its file at the scope's head. Records saved before the toolkit hash nothing and stay
+  unbound until AR-5b migrates them.
+- F3: every file the check opens goes through `tools.evidence.read_bytes`, and the check lists them
+  (`recording`). Each must be inside the repository, and with `--report-commit` committed there byte for byte.
+  An ignored file such as `gate-result.json` or an uncommitted edit fails. Each section's `file` is also
+  resolved with `config.inside`.
+
+Regression tests: `tests/test_evidence_toolkit.py::test_f1_*`, `test_f2_*`, `test_f3_*` and
+`test_f1_f2_f3_a_committed_batch_passes_and_each_untied_piece_fails`. Seeded mutants M15 to M22 in
+`mutants.json` each fail their named test. M8's anchor was moved to the new `read_bytes` line. All 22 were
+killed (`tools/mutants.py`, run in this worktree).
+
+The saved evidence (`evidence/scope.json`, `gate.json`, `mutants.json` and the generated block above) still
+describes the gated head `3537f55d`. This round changes `tools/`, so `--check docs/arch/AR-5a --report-commit
+HEAD` fails ("a commit after the gate changes tools/...") until the gate runs on the new head. After that, save
+the scope, gate and mutants again and re-render the block. The release gate was not run in this round.
 
 ## Follow-ups and what was not run
 
