@@ -192,6 +192,18 @@ def test_coupled_plan_refuses_duplicate_set_version():
         relay.decide("readings-choices", [case])
 
 
+@pytest.mark.parametrize("field,bad", [
+    *(('limit', value) for value in (True, None, [], {})),
+    *((field, value) for field in ('set_meta', 'couplings')
+      for value in (7, True, None, [], {})),
+])
+def test_coupled_plan_malformed_request_is_a_ve_error(field, bad):
+    case = _coupled_plan_case()
+    case[field] = bad
+    with pytest.raises(VEError):
+        relay.decide("readings-choices", [case])
+
+
 def test_coupled_zero_choice_budget_is_unknown():
     row = relay.decide("readings-choices", [_coupled_plan_case(limit=0)])[0]
     assert row == {"id": "plan", "status": "ok", "route": "UNKNOWN",
