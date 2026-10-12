@@ -38,13 +38,13 @@
   "find": "    if type(minimum) is not int or minimum < 3:", "replace": "    if type(minimum) is not int:",
   "tests": ["tests/test_evidence_toolkit.py::test_a_toml_that_would_check_nothing_is_refused"]},
  {"id": "M14", "file": "tools/batch_evidence.py", "claim": "--check replays saved commit and changed-path numbers from the fixed Git objects",
-  "find": "        actual = scope_range(saved[\"base\"], saved[\"head\"], cwd)", "replace": "        actual = saved",
+  "find": "        actual = scope_range(base, saved[\"head\"], cwd)", "replace": "        actual = saved",
   "tests": ["tests/test_evidence_toolkit.py::test_scope_is_the_batch_commits_without_merges"]},
  {"id": "M12", "file": "tools/batch_evidence.py", "claim": "--check fails a gate record that shows a failure or whose counts do not add up",
   "find": " or counts[\"failed\"] != 0:", "replace": ":",
   "tests": ["tests/test_evidence_toolkit.py::test_stale_or_incomplete_batch_evidence_fails_the_check"]},
  {"id": "M15", "file": "tools/batch_evidence.py", "claim": "F1: the saved scope holds the commits and changes of the batch's merge-base range",
-  "find": "        if saved[field] != batch[field]:", "replace": "        if False:",
+  "find": "        if saved[field] != actual[field]:", "replace": "        if False:",
   "tests": ["tests/test_evidence_toolkit.py::test_f1_a_scope_from_inside_the_batch_fails_before_and_after_the_merge"]},
  {"id": "M16", "file": "tools/evidence/__init__.py", "claim": "F1: after the merge the merge base is found from main's commit before the merge, so it does not move",
   "find": "    return git(\"merge-base\", line[low + 1], head, cwd=cwd).strip()", "replace": "    return git(\"merge-base\", line[0], head, cwd=cwd).strip()",
@@ -66,5 +66,8 @@
   "tests": ["tests/test_evidence_toolkit.py::test_f3_no_section_reads_a_file_outside_the_repository"]},
  {"id": "M22", "file": "tools/batch_evidence.py", "claim": "F3: with --report-commit every file read is committed there byte for byte",
   "find": "            if done.returncode != 0 or done.stdout != path.read_bytes():", "replace": "            if done.returncode != 0:",
-  "tests": ["tests/test_evidence_toolkit.py::test_f1_f2_f3_a_committed_batch_passes_and_each_untied_piece_fails"]}
+  "tests": ["tests/test_evidence_toolkit.py::test_f1_f2_f3_a_committed_batch_passes_and_each_untied_piece_fails"]},
+ {"id": "M23", "file": "tools/batch_evidence.py", "claim": "recheck F1: the saved scope's base is the batch's merge base, even when another base's range holds the same commits and changes",
+  "find": "    if saved[\"base\"] != base:", "replace": "    if False:",
+  "tests": ["tests/test_evidence_toolkit.py::test_f1_recheck_only_the_merge_base_names_the_scope"]}
 ]}

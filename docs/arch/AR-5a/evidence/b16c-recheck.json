@@ -1,5 +1,6 @@
 {
  "errors": [
+  "scope base abc30811 is not the batch's merge base 67ae1e5a with main",
   "the batch changes lean/ResponseShape/Schemas/Document.lean (and 9 more ve/ or lean/ paths) but its evidence.toml names no [ab]"
  ],
  "head": "f0c44d4342f0dcf1faf38195e767922c42fb6ec7",

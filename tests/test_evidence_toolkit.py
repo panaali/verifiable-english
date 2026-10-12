@@ -418,10 +418,10 @@ def test_scope_is_the_batch_commits_without_merges(tmp_path):
     assert batch_evidence.scope_history_problems(saved, cwd=repo) == []
     changed = deepcopy(saved)
     changed["commits"][0]["subject"] = "invented"
-    assert "scope commits differs" in batch_evidence.scope_history_problems(changed, cwd=repo)[0]
+    assert "scope commits differ" in batch_evidence.scope_history_problems(changed, cwd=repo)[0]
     changed = deepcopy(saved)
     changed["changes"] = [{"path": "tools/not-in-the-commit.py", "added": 1, "deleted": 0}]
-    assert "scope changes differs" in batch_evidence.scope_history_problems(changed, cwd=repo)[0]
+    assert "scope changes differ" in batch_evidence.scope_history_problems(changed, cwd=repo)[0]
     with pytest.raises(EvidenceError):
         scope("HEAD", "HEAD", repo)
 
@@ -659,17 +659,42 @@ def test_f1_a_scope_from_inside_the_batch_fails_before_and_after_the_merge(histo
     assert full["base"] == m0 and [c["hash"] for c in full["commits"]] == [tool, product]
     assert batch_evidence.scope_history_problems(full, cwd=repo) == []
     assert batch_evidence.scope_history_problems(short, cwd=repo) == [
+        f"scope base {product[:8]} is not the batch's merge base {m0[:8]} with main",
         f"scope commits differ from the batch's {m0[:8]}..{tool[:8]} --no-merges (its merge base with main)",
         f"scope changes differ from the batch's {m0[:8]}..{tool[:8]} --no-merges (its merge base with main)"]
-    # A later main commit whose range holds the very same commits and changes names the same scope (b16c's).
-    assert batch_evidence.scope_history_problems(evidence_scope_range(m1, tool, repo), cwd=repo) == []
     # The merge base does not move when the batch merges and main goes on.
     _git(repo, "checkout", "-q", "main")
     _git(repo, "merge", "-q", "--no-ff", "--no-edit", "batch")
     _commit(repo, "d.txt", "1\n", "m2")
     assert evidence_merge_base(tool, "main", repo) == m0
+    assert scope("main", tool, repo) == full  # the writer names the same base as the check
     assert batch_evidence.scope_history_problems(full, cwd=repo) == []
-    assert len(batch_evidence.scope_history_problems(short, cwd=repo)) == 2
+    assert len(batch_evidence.scope_history_problems(short, cwd=repo)) == 3
+
+
+def _adopting_main(repo):
+    """A later `main` commit that adopted the batch's `ve/x.py` change on its own."""
+    _git(repo, "checkout", "-q", "main")
+    adopted = _commit(repo, "ve/x.py", "x = 1\n", "main adopts x = 1")
+    _git(repo, "checkout", "-q", "batch")
+    return adopted
+
+
+@pytest.mark.parametrize("which", ["later-main", "main-that-adopted-the-change", "inside-the-batch"])
+def test_f1_recheck_only_the_merge_base_names_the_scope(history, which):
+    """Recheck F1: a later `main` commit whose range holds the very same commits and changes passed as the
+    scope's base; an A/B against it (one that adopted the batch's change) would show no difference. Every
+    base other than the merge base fails, whatever its range holds."""
+    repo, m0, product, tool, m1 = history
+    base = {"later-main": lambda: m1, "main-that-adopted-the-change": lambda: _adopting_main(repo),
+            "inside-the-batch": lambda: product}[which]()
+    saved = evidence_scope_range(base, tool, repo)
+    if which != "inside-the-batch":
+        same = evidence_scope_range(m0, tool, repo)
+        assert (saved["commits"], saved["changes"]) == (same["commits"], same["changes"])  # the very same range
+    errors = batch_evidence.scope_history_problems(saved, cwd=repo)
+    assert errors[0] == f"scope base {base[:8]} is not the batch's merge base {m0[:8]} with main", errors
+    assert batch_evidence.scope_history_problems(scope("main", tool, repo), cwd=repo) == []
 
 
 def test_f1_a_head_that_reached_main_without_a_merge_needs_main_before_it(history):
@@ -792,6 +817,13 @@ def test_f1_f2_f3_a_committed_batch_passes_and_each_untied_piece_fails(history, 
 
     (evidence / "scope.json").write_text(json.dumps(evidence_scope_range(product, tool, repo)))
     assert any("differ from the batch's" in error for error in batch_evidence.check(directory)[1])
+    # Recheck F1: scope and A/B both from a later main that adopted the change: same range, A/B shows nothing.
+    _git(repo, "checkout", "-q", "--", "docs")
+    adopted = _adopting_main(repo)
+    (evidence / "scope.json").write_text(json.dumps(evidence_scope_range(adopted, tool, repo)))
+    (evidence / "ab.json").write_text(json.dumps({**AB, "base_commit": adopted, "head_commit": tool}))
+    assert batch_evidence.check(directory)[1] == [
+        f"scope base {adopted[:8]} is not the batch's merge base {m0[:8]} with main"]
     _git(repo, "checkout", "-q", "--", "docs")
 
     (directory / "evidence.toml").write_text(TOML.split("[report]")[0] + '[ab]\nfile = "ab.json"\n'
