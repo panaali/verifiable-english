@@ -62,6 +62,23 @@ def check_mutants():
     assert all(row["exit_code"] == 0 for row in saved["restored"])
 
 
+def check_relay():
+    relay = _saved("relay-gate.json")
+    assert relay["failures"] == [] and relay["findings"] == [] and len(relay["routes"]) > 0
+    assert relay["totals"]["mutants"] > 0
+    saved = _saved("relay-mutants.json")
+    mutants = saved["mutants"]
+    assert {m["language"] for m in mutants} == {"lean", "python"}
+    assert {m["claim"] for m in mutants} == {"empty label", "repeated over"}
+    for mutant in mutants:
+        assert mutant["file"] in mutant["files"] and mutant["test"] == mutant["runs"][0]["test"]
+        for run in mutant["runs"]:
+            assert run["exit_code"] != 0 and "1 failed" in run["failure_excerpt"], run["test"]
+    tests = [run["test"] for mutant in mutants for run in mutant["runs"]]
+    assert [row["test"] for row in saved["restored"]] == tests
+    assert all(row["exit_code"] == 0 for row in saved["restored"])
+
+
 def check_selected():
     selected = _saved("selected.json")
     units = selected["units"]
@@ -90,6 +107,7 @@ def main():
     check_report()
     check_split()
     check_mutants()
+    check_relay()
     check_selected()
     if (EVIDENCE / "gate.json").exists():
         check_gate()
