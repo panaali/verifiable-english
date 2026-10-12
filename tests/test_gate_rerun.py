@@ -15,8 +15,6 @@ import sys
 
 import pytest
 
-import test_gate_integrity
-
 from test_gate_integrity import pin_rust_binary
 from tools import gate
 
@@ -59,7 +57,8 @@ class FakeGate:
     def command(self, args, *, env, stage, cwd=None):
         self.seen.append((stage, [str(arg) for arg in args]))
         if self.trust is not False:  # False: trust_map.py wrote nothing
-            test_gate_integrity.fake_trust(args, stage, self.trust)
+            from test_gate_integrity import fake_trust
+            fake_trust(args, stage, self.trust)
         if stage == "commit":
             return "commit-1"
         if stage == "tree":
@@ -186,4 +185,3 @@ def test_a_full_gate_records_its_tree_and_mode(fake):
     code, record = fake.run()
     assert (code, record["status"], record["mode"], record["tree_sha"]) == (0, "passed", "full", "tree-1")
     assert "rerun_failed" not in record
-
