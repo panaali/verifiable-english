@@ -397,4 +397,3 @@ def test_assurance_doc_check_fails_on_a_stale_table(tmp_path, monkeypatch):
     monkeypatch.setattr(assurance_manifest, "DOC", stale)
     assert assurance_manifest.main(["--check"]) == 1
     assert "stale" in stale.read_text()  # --check writes nothing
-

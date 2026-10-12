@@ -36,7 +36,7 @@ its merge strategy:
 | question-lock | `ve/question/LOCK.json` | regenerate |
 | assurance-manifest | `ve/assurance-manifest.json` (decoder total recomputed) | json (check only) |
 | assurance-doc | `docs/spec/assurance-manifest.md` (`assurance_manifest.py --check`, new) | regenerate |
-| layer-ledgers | `tools/layer-exceptions.json`, `lean-layer-exceptions.json`, `rust-module-exceptions.json` | json (check only) |
+| layer-ledgers | `tools/layer-exceptions.json`, `lean-layer-exceptions.json` | json (check only) |
 | import-contract | `.importlinter` | regenerate |
 | uv-lock | `uv.lock` | regenerate |
 

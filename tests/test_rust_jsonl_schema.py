@@ -14,7 +14,7 @@ import pytest
 
 from tests.probe_matrix import model_wire, raw_environment
 from ve import Environment, FiniteModel
-from ve.ast import Bottom, Const, Exists, Not, Top, Unary, Var, formula_to_data
+from ve.ast import Bottom, Const, Not, Top, Unary, formula_to_data
 from ve.backends import rust_jsonl
 from ve.backends.service_schema import same_json
 from ve.errors import CheckerUnavailable, UnknownSymbol, VEError
@@ -37,18 +37,16 @@ def _superposed_case():
 
 def _calls():
     """Every public adapter that runs Rust, on inputs giving each record shape it can answer with."""
-    from ve.ast import check_document, check_formula, Document
-    from ve.evaluate import evaluate
+    from ve.ast import _to_data
     from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
     other = FiniteModel.from_dict(ENV, {**model_wire(ENV), "relations": {"base": []}})
     return {
-        "typing": lambda: check_formula(ENV, ATOM),
-        "typing-document": lambda: check_document(ENV, Document((ATOM, Top()))),
-        "evaluate-satisfied": lambda: evaluate(ENV, ATOM, MODEL, trace=False),
-        "evaluate-violated": lambda: evaluate(ENV, ATOM, other, trace=False),
-        "evaluate-trace": lambda: evaluate(ENV, Exists("item", Unary("base", Var(0))), MODEL, trace=True),
-        "evaluate-budget": lambda: evaluate(ENV, Exists("item", Unary("base", Var(0))), MODEL, trace=True,
-                                            max_evaluations=1),
+        # Typing is Lean's since lean-first batch 13b; Rust's `check` records are still produced by its checker.
+        "typing": lambda: rust_jsonl.run({"id": "typing", "kind": "check", "environment": ENV.to_dict(),
+                                          "ast": _to_data(ATOM)}),
+        "typing-document": lambda: rust_jsonl.run({"id": "typing", "kind": "check", "environment": ENV.to_dict(),
+                                                   "ast": [_to_data(ATOM), _to_data(Top())]}),
+        # `evaluate` sends Rust nothing since batch 15b (its record here was the Rust typing call before it).
         "countermodel-valid": lambda: check_countermodel(ENV, (ATOM,), Bottom(), MODEL),
         "countermodel-premise-false": lambda: check_countermodel(ENV, (ATOM, Top()), Bottom(), other),
         "countermodel-conclusion-true": lambda: check_countermodel(ENV, (Top(),), ATOM, MODEL),

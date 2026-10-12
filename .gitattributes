@@ -34,6 +34,5 @@ ve/assurance-manifest.json merge=ve-generated
 docs/spec/assurance-manifest.md merge=ve-generated
 tools/layer-exceptions.json merge=ve-generated
 tools/lean-layer-exceptions.json merge=ve-generated
-tools/rust-module-exceptions.json merge=ve-generated
 .importlinter merge=ve-generated
 uv.lock merge=ve-generated

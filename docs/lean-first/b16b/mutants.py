@@ -28,15 +28,15 @@ MUTANTS = [
      "    if error is not None:\n        return None\n    return row",
      "test_lean_rejections_are_raised_verbatim"),
     ("service_failure_falls_back", "a service failure is never answered by Python", "ve/document.py",
-     '    row, error = answer("document", {"id": "document", "document": text, "admit": admit})',
-     '    try:\n        row, error = answer("document", {"id": "document", "document": text, "admit": admit})\n'
+     '    row, error = answer("document", case)',
+     '    try:\n        row, error = answer("document", case)\n'
      '    except CheckerUnavailable:\n        return None',
      "test_a_service_failure_is_never_answered_by_python"),
     ("unbound_answer", "the answer is bound to the request", "ve/document.py",
      "    require(same(coverage, expected))\n", "",
      "test_answers_not_bound_to_the_request_are_unavailable"),
     ("python_coverage", "coverage is Lean's", "ve/document.py",
-     '    if "lean" in doc:\n        return deepcopy(doc["lean"]["coverage"])\n', "",
+     '    if "lean" in doc:\n', '    if False and "lean" in doc:\n',
      "test_coverage_and_statuses_are_leans"),
     ("python_document_id", "identities are Lean's", "ve/document.py",
      '"document_id": row["document_id"], "directory"', '"document_id": _document_id(meta, source, {}), "directory"',
@@ -53,9 +53,9 @@ MUTANTS = [
      "test_undecided_answers_take_the_retained_path"),
     ("lean_admission_bypasses_route", "the graph is admitted through the route's own case (Lean)",
      "lean/VE/Service/Document.lean",
-     '    | .none => VE.Route.Run.dispatch "admission" E.json E.checked.envelope\n'
+     '      else VE.Route.Run.dispatch "admission" E.json E.checked.envelope\n'
      '        (Json.mkObj [("kind", .str "admission"), ("document", document)])',
-     '    | .none => VE.Route.Run.runAdmit E.profiles E.json E.rv "admission" (Json.mkObj [("document", document)])',
+     '      else VE.Route.Run.runAdmit E.profiles E.json E.rv "admission" (Json.mkObj [("document", document)])',
      "test_definitions_graph_is_deferred_as_the_admission_route_defers_it"),
 ]
 

@@ -199,9 +199,10 @@ def claim : Shape :=
 
 def admission : Shape :=
   c
-    "Route.Run.runAdmit and Norms.Run.encodeAdmitted: the root is the request's root and kinds are the request's unit kinds (decodeKind_render). That the assumptions are the root's unfolding is the service's (tests/test_lean_service_schema.py, Lean invariants)."
+    "Route.Run.runAdmit and Norms.Run.encodeAdmitted: every claim belongs to the request graph, the root is the request's root and kinds are the request's unit kinds (decodeKind_render). The exact unfolding remains the service's invariant."
     [
       obj,
+      .claimNodes ["/report/root", "/report/assumptions"],
       .required ["id", "status", "admitted", "report", "report_id", "kinds"],
       closed [
         ("id", n [str, .equals "/id"]),
@@ -281,8 +282,9 @@ def report : Shape :=
     closed [("root", ref "#/$defs/claim"), ("assumptions", n [arr, .items (ref "#/$defs/claim")])]]
 
 def bound_report : Shape :=
-  c "A report whose root is the request's graph root." [
+  c "A report whose root and assumptions are claims of the request graph." [
     ref "#/$defs/report",
+    .claimNodes ["/root", "/assumptions"],
     props [("root", props [("name", .equals "/document/graph/root")])]]
 
 def labelled : Shape :=
@@ -410,7 +412,7 @@ def request_block : Def :=
 
 def file : File where
   name := "common.json"
-  comment := some "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...). Every file of this directory is rendered from lean/ResponseShape/Schemas (tools/response_schemas.py; never edit it by hand): the response validator in ve/backends/lean_service.py is compiled from these files, and ve_response_decode (lean/ResponseDecode.lean) decides responses with the same Lean shapes, the named decoders deciding beside them. Only well-formedness and request binding are described here: relations the runners guarantee between values (counts regenerated from the environment, graph unfoldings, dependency orders, verdict details) are the service's responsibility and are tested on its outputs (docs/spec/lean-service.md, threat model). Dialect: README.md in this directory."
+  comment := some "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...). Every file of this directory is rendered from lean/ResponseShape/Schemas (tools/response_schemas.py; never edit it by hand): the response validator in ve/backends/lean_service.py is compiled from these files, and ve_response_decode (lean/ResponseDecode.lean) decides responses with the same Lean shapes, the named decoders deciding beside them. Well-formedness, request binding and certificate step and background counts are described here; graph unfoldings, dependency orders and verdict details remain the service's responsibility and are tested on its outputs (docs/spec/lean-service.md, threat model). Dialect: README.md in this directory."
   top := []
   defs := [
     ("text", .schema text),

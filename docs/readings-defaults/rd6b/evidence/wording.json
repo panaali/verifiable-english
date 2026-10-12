@@ -1,0 +1,119 @@
+{
+ "comment": "RD-6b's English on the six rows the DRI signed for RD-3 (docs/readings-defaults/rd3/evidence/wording-round3.json): base is RD-3's signed head, head is this branch's. Every line added or removed is listed in docs/readings-defaults/rd6b/DELTA.md; tests/test_readings_verdicts_lean.py recomputes head.",
+ "base": "rd3 wording-round3.json heads",
+ "rows": [
+  {
+   "case": "F-ND1 query SOME",
+   "base": [
+    "Read sentence 1 as *Every agent must help each user*: the conclusion follows: *For every agent, for every user, that agent must help that user.*",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user.",
+    "Read sentence 1 as *Every agent must help each user, if that user has the recorded relation \"asks\" to that agent*: the conclusion does not follow. It fails here: e0 is an agent; e0 is a user. Here the text does not say whether e0 must help e0; this situation answers 'no'."
+   ],
+   "head": [
+    "Read sentence 1 as *Every agent must help each user*: the conclusion follows: *For every agent, for every user, that agent must help that user.*",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user.",
+    "Read sentence 1 as *Every agent must help each user, if that user has the recorded relation \"asks\" to that agent*: the conclusion does not follow. It fails here: e0 is an agent; e0 is a user. Here the text does not say whether e0 must help e0; this situation answers 'no'."
+   ],
+   "problems": [],
+   "added": [],
+   "removed": []
+  },
+  {
+   "case": "F-ND1 query under rs_1:0 (ALL)",
+   "base": [
+    "Read sentence 1 as *Every agent must help each user*: the conclusion follows: *For every agent, for every user, that agent must help that user.*",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user."
+   ],
+   "head": [
+    "Read sentence 1 as *Every agent must help each user*: the conclusion follows: *For every agent, for every user, that agent must help that user.*",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user."
+   ],
+   "problems": [],
+   "added": [],
+   "removed": []
+  },
+  {
+   "case": "F-ND1 query under rs_1:1 (NONE)",
+   "base": [
+    "Read sentence 1 as *Every agent must help each user, if that user has the recorded relation \"asks\" to that agent*: the conclusion does not follow. It fails here: e0 is an agent; e0 is a user. Here the text does not say whether e0 must help e0; this situation answers 'no'."
+   ],
+   "head": [
+    "Read sentence 1 as *Every agent must help each user, if that user has the recorded relation \"asks\" to that agent*: the conclusion does not follow. It fails here: e0 is an agent; e0 is a user. Here the text does not say whether e0 must help e0; this situation answers 'no'."
+   ],
+   "problems": [],
+   "added": [],
+   "removed": []
+  },
+  {
+   "case": "F-ND1 implication (ALL)",
+   "base": [
+    "Under every reading of the open sentence, the conclusion follows: *For every agent, for every user that that agent must help, that agent may help that user.*",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user."
+   ],
+   "head": [
+    "Under every reading of the open sentence, the conclusion follows: *For every agent, for every user that that agent must help, that agent may help that user.*",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user.",
+    "This does not depend on how sentence 1 is read."
+   ],
+   "problems": [],
+   "added": [
+    "This does not depend on how sentence 1 is read."
+   ],
+   "removed": []
+  },
+  {
+   "case": "F-ND1 report",
+   "base": [
+    "The readings of sentence 1 were checked one way at a time, not together.",
+    "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user.",
+    "This does not depend on how sentence 1 is read.",
+    "Read sentence 1 as *Every agent must help each user*: the sentences of this document can all be true together, as here: nothing exists."
+   ],
+   "head": [
+    "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+    "This holds provided that:",
+    "Whenever an agent must help an user, it may help that user.",
+    "This does not depend on how sentence 1 is read.",
+    "Read sentence 1 as *Every agent must help each user*: the sentences of this document can all be true together, as here: nothing exists."
+   ],
+   "problems": [
+    "result lost: The readings of sentence 1 were checked one way at a time, not together."
+   ],
+   "added": [],
+   "removed": [
+    "The readings of sentence 1 were checked one way at a time, not together."
+   ]
+  },
+  {
+   "case": "F-ND2 report",
+   "base": [
+    "The readings of sentence 2 were checked one way at a time, not together.",
+    "Read sentence 2 as *Every act must be done, if that act may be tried*: two rules contradict each other here: e0 is an act. Here the text does not say whether e0 may be tried; this situation answers 'yes'. Here the text does not say whether e0 must be done; this situation answers 'no'.",
+    "Read sentence 2 as *Every act must be done, if that act may be tried*: the sentences of this document can all be true together, as here: nothing exists."
+   ],
+   "head": [
+    "Read sentence 2 as *Every act must be done, if that act may be tried*: two rules contradict each other here: e0 is an act. Here the text does not say whether e0 may be tried; this situation answers 'yes'. Here the text does not say whether e0 must be done; this situation answers 'no'.",
+    "CONFLICT: pair conflict on x_required->x_permitted at act e0",
+    "Read sentence 2 as *Every act must be done, if that act may be tried*: the sentences of this document can all be true together, as here: nothing exists."
+   ],
+   "problems": [
+    "result lost: The readings of sentence 2 were checked one way at a time, not together.",
+    "result added: CONFLICT: pair conflict on x_required->x_permitted at act e0"
+   ],
+   "added": [
+    "CONFLICT: pair conflict on x_required->x_permitted at act e0"
+   ],
+   "removed": [
+    "The readings of sentence 2 were checked one way at a time, not together."
+   ]
+  }
+ ]
+}
