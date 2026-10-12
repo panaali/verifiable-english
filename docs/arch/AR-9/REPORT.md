@@ -142,6 +142,25 @@ Each fault was removed by the script; every named test passes again afterwards.
   `lean/` tree and confirmed with `lake build`.
 - 4.1 item 5 does not apply: no English module changed.
 
+## Pre-review status
+
+`review-ready.py` on `4d49ae2b` passed its clean-tree, commit, saved-gate,
+Python-mutant and DELTA checks. Its relay mutation gate failed on
+`service:readings-route`: seven `F7` untyped allow-list paths matched nothing,
+and five mutated answers were accepted without an allowance (empty or duplicate
+`fill`, empty `fill/*/label`, duplicate `units/*/content/norm/over`, and empty
+`targets/*`). It therefore reported **NOT READY**. The pre-review command
+completed; no check was left running.
+
+This is outside AR-9's assist split. `tools/relay_mutation_gate.py`,
+`tools/relay-gate-allow.json` and `tests/data/relay-gate-cases.jsonl` have
+identical Git object IDs on `main` and this branch. The allow-list file overlaps
+`infra/oom-rootcause`, `lean-first/b14c`, and `question-answering/q2`; the corpus
+overlaps `lean-first/b14c`, `lean-first/b14d`, and `question-answering/q2`; the
+gate tool overlaps `question-answering/q2`. The plan's coordination rule says to
+avoid those files. The relay owner must resolve that gate failure before review;
+the passing full release gate for AR-9 is saved separately above.
+
 ## Build checklist
 
 Lines 1 to 6, 8 to 10, 15 and 17 to 19 cover wires, relayed answers, parsers, verdicts, Lean and
