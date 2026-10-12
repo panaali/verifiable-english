@@ -23,6 +23,7 @@ EVIDENCE = HERE / "evidence"
 REPORT = HERE / "REPORT.md"
 BEGIN, END = "<!-- BEGIN GENERATED AR-4 METRICS -->", "<!-- END GENERATED AR-4 METRICS -->"
 sys.path.insert(0, str(ROOT / "tools"))
+import batch_evidence  # noqa: E402
 import trust_map  # noqa: E402
 
 
@@ -53,13 +54,10 @@ def collect() -> None:
               "file_lines": {"base": len(_git("show", f"{base}:{trust_map.BASELINE.relative_to(ROOT)}").splitlines()),
                              "head": len(trust_map.BASELINE.read_text().splitlines())},
               "check_exit": trust_map.main(["--check"])}
-    commits = [dict(zip(("hash", "subject"), line.split(" ", 1)))
-               for line in _git("log", "--no-merges", "--format=%H %s", f"{base}..HEAD").splitlines()]
-    changed = sorted(_git("diff", "--name-only", f"{base}..HEAD").split())
+    scope = batch_evidence.git_scope(base, head, ROOT)  # the one writer and checker of a batch's scope
     EVIDENCE.mkdir(exist_ok=True)
     (EVIDENCE / "budget.json").write_text(json.dumps(budget, indent=1) + "\n")
-    (EVIDENCE / "scope.json").write_text(json.dumps({"base": base, "head": head, "commits": commits,
-                                                     "files": changed}, indent=1) + "\n")
+    (EVIDENCE / "scope.json").write_text(json.dumps(scope, indent=1) + "\n")
 
 
 def problems() -> list[str]:
@@ -83,8 +81,16 @@ def problems() -> list[str]:
         out.append("the budget file holds more than the comment, the budget and the allowances")
     if any(path.startswith(("ve/", "lean/", "rust/")) for path in scope["files"]):
         out.append("a file under ve/, lean/ or rust/ changed: gate items 2 and 3 apply")
-    if scope["head"] != budget["head"] or not scope["commits"]:
+    if scope.get("head") != budget["head"] or scope.get("base") != budget["base"] or not scope.get("commits"):
         out.append("the scope and the budget evidence are of different commits")
+    out += batch_evidence.scope_problems(scope, ROOT)  # recomputed from git: the commits, files and base
+    # The gate and the measurements cover HEAD: from the gated commit and from the evidence head (either
+    # may come first) to HEAD, only this directory changes.
+    for start in dict.fromkeys((full.get("commit_sha"), rerun.get("commit_sha"), budget["head"])):
+        try:
+            out += batch_evidence.outside_report(batch_evidence.changed_since(start, "HEAD", ROOT), "docs/arch/AR-4")
+        except (ValueError, subprocess.CalledProcessError) as exc:
+            out.append(f"the evidence is not bound to HEAD: {exc}")
     killed = [m for m in mutants if m.get("killed") is True]
     if not killed or len(killed) != len(mutants) or {m.get("file") for m in mutants} != {"tools/trust_map.py"}:
         out.append("a seeded bug survived, or none names tools/trust_map.py")
@@ -106,7 +112,12 @@ def problems() -> list[str]:
             rerun["rerun_failed"]["outcomes"] != {test: "passed" for test in failed} or
             rerun["counts"]["selected"] != rerun["counts"]["passed"]):
         out.append("the serial rerun did not pass every failed test on the full gate's clean commit")
-    return out
+    for name, record in (("full gate", full), ("serial rerun", rerun)):  # AR-4: the tables live in the record
+        trust = record.get("trust")
+        if trust_map.files_problems(trust) or trust["budget"] != budget["measured_head"]:
+            out.append(f"the {name} record has no per-file trust counts of the evidence head "
+                       f"({'; '.join(trust_map.files_problems(trust)) or 'another budget'}): rerun the gate")
+    return list(dict.fromkeys(out))
 
 
 def block() -> str:
