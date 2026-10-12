@@ -23,6 +23,14 @@
       "observed": "assert [None, [False]] == [[True], [False]]",
       "caught": true,
       "restored": true
+    },
+    {
+      "bug": "Python skips the generated Background array length relation",
+      "file": "ve/backends/service_schema.py",
+      "test": "tests/test_b14c.py::test_nary_background_relay_refuses_missing_or_extra_generated_rows",
+      "observed": "Failed: DID NOT RAISE Invalid for a missing generated row",
+      "caught": true,
+      "restored": true
     }
   ]
 }
