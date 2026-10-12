@@ -33,8 +33,11 @@ def limit_address_space(pid: int, limit: int) -> None:
     """Cap the address space of the running child `pid` at `limit` bytes. This is set right after
     the start: a runaway grows over seconds, and preexec_fn is unsafe in a threaded client."""
     try:
-        _, inherited_hard = resource.prlimit(pid, resource.RLIMIT_AS)
-        cap = min(limit, inherited_hard) if inherited_hard != resource.RLIM_INFINITY else limit
+        inherited_soft, inherited_hard = resource.prlimit(pid, resource.RLIMIT_AS)
+        # Both inherited bounds constrain the child. Raising a lower soft bound to the
+        # requested cap would remove a limit imposed by its launcher.
+        cap = min(bound for bound in (limit, inherited_soft, inherited_hard)
+                  if bound != resource.RLIM_INFINITY)
         resource.prlimit(pid, resource.RLIMIT_AS, (cap, cap))
     except ProcessLookupError:
         pass  # it has already ended: nothing left to cap

@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import re
+import resource
 import subprocess
 import sys
 
@@ -263,6 +264,30 @@ def test_one_shot_runner_respects_an_inherited_hard_limit():
                           timeout=HANG_TIMEOUT)
     assert done.returncode == 0, done.stderr
     assert done.stdout.splitlines() == [b"0", str(1 << 30).encode()]
+
+
+@pytest.mark.parametrize("soft,hard,requested,expected", [
+    (256 << 20, 1 << 30, 8 << 30, 256 << 20),
+    (1 << 30, 1 << 30, 8 << 30, 1 << 30),
+    (1 << 30, 2 << 30, 512 << 20, 512 << 20),
+    (512 << 20, resource.RLIM_INFINITY, 8 << 30, 512 << 20),
+    (resource.RLIM_INFINITY, resource.RLIM_INFINITY, 768 << 20, 768 << 20),
+])
+def test_one_shot_runner_never_raises_an_inherited_address_space_limit(
+        soft, hard, requested, expected):
+    # The launcher must keep its own limits, so set them in a separate process.
+    # The child reads stdin before reporting, after run_limited applies its cap.
+    launcher = ("import resource,sys; "
+                "from ve.backends.process_limits import run_limited; "
+                f"resource.setrlimit(resource.RLIMIT_AS,({soft},{hard})); "
+                "done=run_limited([sys.executable,'-c',"
+                "'import resource,sys; sys.stdin.read(); print(resource.getrlimit(resource.RLIMIT_AS))'],"
+                f"input=b'go',timeout={HANG_TIMEOUT},address_space={requested}); "
+                "print(done.returncode); print(done.stdout.decode().strip())")
+    done = subprocess.run([sys.executable, "-c", launcher], capture_output=True,
+                          timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, done.stderr
+    assert done.stdout.splitlines() == [b"0", f"({expected}, {expected})".encode()]
 
 
 def test_lean_one_shot_routes_run_under_their_address_space_limit(monkeypatch, tmp_path):
