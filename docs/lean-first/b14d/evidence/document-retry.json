@@ -1,5 +1,5 @@
 {
-  "reason": "Three concurrent head document checks hit the normal Rust 5-second deadline; paired base/head retries with VE_RUST_TIMEOUT=60 and VE_LEANFIRST_TIMEOUT=60 returned identical public outcomes.",
+  "reason": "Three paired document checks hit the normal Rust 5-second deadline on both raw sides; paired base/head retries with VE_RUST_TIMEOUT=60 and VE_LEANFIRST_TIMEOUT=60 returned identical public outcomes.",
   "base_commit": "f1b719c7acc0246a2f6b67f039164916ca21aaf1",
   "raw_retry_files": [
     "document-retry-base.jsonl",
@@ -15,6 +15,10 @@
       "raw_head_failure": {
         "code": "CheckerUnavailable",
         "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-14d/rust/target/release/ve', 'jsonl', '-']' timed out after 4.973259992082603 seconds"
+      },
+      "raw_base_failure": {
+        "code": "CheckerUnavailable",
+        "message": "CheckerUnavailable: Rust checker failed: Command '['/tmp/lf14d-base/rust/target/release/ve', 'jsonl', '-']' timed out after 4.9751175119308755 seconds"
       }
     },
     {
@@ -33,6 +37,10 @@
       "raw_head_failure": {
         "code": "CheckerUnavailable",
         "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-14d/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999944520066492 seconds"
+      },
+      "raw_base_failure": {
+        "code": "CheckerUnavailable",
+        "message": "CheckerUnavailable: Rust checker failed: Command '['/tmp/lf14d-base/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999938020016998 seconds"
       }
     },
     {
@@ -51,6 +59,10 @@
       "raw_head_failure": {
         "code": "CheckerUnavailable",
         "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-14d/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999948668992147 seconds"
+      },
+      "raw_base_failure": {
+        "code": "CheckerUnavailable",
+        "message": "CheckerUnavailable: Rust checker failed: Command '['/tmp/lf14d-base/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999943080008961 seconds"
       }
     },
     {
