@@ -107,8 +107,10 @@ Each fault was removed by the script; every named test passes again afterwards.
   continuation committed `e0cbab24`; its saved `gate-result.json` correctly failed source
   identity and does not cover this work. The subsequent gate on `e0cbab24` reached the Python
   suite, but its temporary scratch directory disappeared during the run. That incomplete run
-  was interrupted; it produced no usable gate result. The final gate below runs on the next
-  committed HEAD with an explicit worker count and a separate result path.
+  was interrupted; it produced no usable gate result. The next gate
+  attempt at `9d82676d` stopped at clean-tree preflight because its new output filename was
+  untracked; no build or test stage ran. The final gate below runs on a new committed HEAD
+  with an explicit worker count and the ignored `gate-result.json` path.
 - 4.1 item 1: the full gate (`tools/gate.py`) runs once on the final code commit; its result is
   `evidence/gate.json` and the scope `evidence/scope.json` (`measure.py --scope`, from the
   merge-base with `main`, `--no-merges`), saved in a later commit that changes only
