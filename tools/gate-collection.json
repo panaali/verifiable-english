@@ -13445,6 +13445,7 @@
   "tests/test_stage2_readings.py::test_coupled_over_budget_response_is_typed_and_bound[<lambda>1]",
   "tests/test_stage2_readings.py::test_coupled_over_budget_response_is_typed_and_bound[<lambda>2]",
   "tests/test_stage2_readings.py::test_coupled_over_budget_response_is_typed_and_bound[<lambda>3]",
+  "tests/test_stage2_readings.py::test_coupled_plan_binds_fallback_unit_when_request_unit_is_not_text",
   "tests/test_stage2_readings.py::test_coupled_plan_every_field_is_typed_and_bound[choices-True]",
   "tests/test_stage2_readings.py::test_coupled_plan_every_field_is_typed_and_bound[conditional_on-bad4]",
   "tests/test_stage2_readings.py::test_coupled_plan_every_field_is_typed_and_bound[id-other]",
