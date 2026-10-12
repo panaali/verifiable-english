@@ -14,6 +14,10 @@ from ve.identity import meaning_id
 from ve.profiles import SPEC_REVISION
 
 
+# Lean decides bundles since lean-first batch 13b: its one reading-binding text replaces Python's three
+# (superseded set, unregistered set, unresolved citation); docs/lean-first/b13b/DELTA.md lists the change.
+LEAN_BINDING = "^Reading label is not bound to its registered reading formula or citation is unresolved$"
+
 def bundle():
     env = Environment({"language": "ve.core@0.2", "profiles": ["definitions@0", "relational-fol@0"],
                        "spec_revision": SPEC_REVISION,
@@ -182,7 +186,7 @@ def test_superseded_reading_set_rejects_cited_dependants():
     data["document"]["reading_sets"].append(
         {"id": "u", "version": 1,
          "readings": [formula_to_data(env, p), formula_to_data(env, Not(p))]})
-    with pytest.raises(VEError, match="superseded"):
+    with pytest.raises(VEError, match=LEAN_BINDING):
         check_bundle(data)
     if LEAN.exists():
         verdict = lean_bundle_verdict(LEAN, data["environment"], data["lemmas"], data["document"])
@@ -280,7 +284,7 @@ def test_all_label_names_the_registered_disjunction_and_requires_document():
         "readings": [formula_to_data(env, Top()), formula_to_data(env, Not(Top()))]}]}
     assert check_bundle(data, lean_executable=LEAN if LEAN.exists() else None)["status"] == "Checked"
     del data["document"]
-    with pytest.raises(VEError, match="registered reading set"):
+    with pytest.raises(VEError, match=LEAN_BINDING):
         check_bundle(data)
     if LEAN.exists():
         verdict = lean_bundle_verdict(LEAN, data["environment"], data["lemmas"])
@@ -323,7 +327,7 @@ def test_unresolved_citation_labels_cannot_hide_opposite_leaves():
         "meaning_id": meaning_id(env, false), "reading_choices": {},
         "transitive_leaves": deepcopy(third_leaves),
         "certificate": prove_entailment(env, (p, opposite), false).certificate})
-    with pytest.raises(VEError, match="Unresolved citation"):
+    with pytest.raises(VEError, match=LEAN_BINDING):
         check_bundle(data)
     if LEAN.exists():
         verdict = lean_bundle_verdict(LEAN, data["environment"], data["lemmas"])

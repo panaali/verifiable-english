@@ -29,6 +29,17 @@ def test_execute_refuses_a_comparison_of_one_implementation_with_itself():
         dispatch.owned("evaluate", run)
 
 
+RUST_OWNED = sorted(op for op, engine in dispatch.SINGLE_OWNER.items() if engine == "rust")
+SELECTIONS = ["python", "lean", "rust-experimental", "shadow"]
+
+
+def test_the_lean_owned_operations_are_the_single_owner_table_s_lean_rows():
+    """Lean-first batch 13b: the core operations are Lean's, and the table names no other engine."""
+    assert {op for op, engine in dispatch.SINGLE_OWNER.items() if engine == "lean"} == dispatch.LEAN_OWNED
+    assert set(dispatch.SINGLE_OWNER.values()) == {"lean", "rust"}
+    assert RUST_OWNED == ["countermodel_search", "distinguishing_model"]
+
+
 @pytest.mark.parametrize("op", sorted(dispatch.SINGLE_OWNER))
 def test_single_owner_operations_write_no_shadow_record(op, monkeypatch, tmp_path):
     log = tmp_path / "shadow.jsonl"
@@ -37,11 +48,32 @@ def test_single_owner_operations_write_no_shadow_record(op, monkeypatch, tmp_pat
     seen = []
     monkeypatch.setattr(dispatch, "observers", [lambda name, authority: seen.append((name, authority))])
     assert dispatch.owned(op, lambda: "answer") == "answer"
-    assert seen == [(op, "shadow")] and not log.exists()
+    expected = "lean" if op in dispatch.LEAN_OWNED else "shadow"
+    assert seen == [(op, expected)] and not log.exists()
 
 
-@pytest.mark.parametrize("op", sorted(dispatch.SINGLE_OWNER))
-@pytest.mark.parametrize("selected", ["python", "lean", "rust-experimental", "shadow"])
+@pytest.mark.parametrize("op", sorted(dispatch.LEAN_OWNED))
+@pytest.mark.parametrize("selected", SELECTIONS)
+def test_a_lean_owned_operation_is_lean_s_under_every_selection(op, selected, monkeypatch):
+    monkeypatch.setenv("VE_AUTHORITY", selected)
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"{op}={selected},countermodel_check=python")
+    seen = []
+    monkeypatch.setattr(dispatch, "observers", [lambda name, authority: seen.append((name, authority))])
+
+    def run():
+        # Its constituents run on Lean: a composing rule reads Lean-checked parts only.
+        assert dispatch.authority_for("countermodel_check") == "lean"
+        return 7
+
+    assert dispatch.owned(op, run) == 7
+    assert seen == [(op, "lean")]
+    assert dispatch.authority_for("countermodel_check") == "python"
+    with pytest.raises(ValueError, match="one implementation"):
+        dispatch.execute(op, {}, lambda: 1, lean=lambda: 2)
+
+
+@pytest.mark.parametrize("op", RUST_OWNED)
+@pytest.mark.parametrize("selected", SELECTIONS)
 def test_single_owner_pins_constituents_and_restores_selection(op, selected, monkeypatch):
     monkeypatch.setenv("VE_AUTHORITY", "python")
     monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"{op}={selected},countermodel_check=rust-experimental")

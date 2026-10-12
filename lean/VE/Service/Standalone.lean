@@ -124,10 +124,14 @@ def riskReduced (environment : Json) : Except String Json := do
 /-- The environment typing decodes: statement-layer profiles that add no typing
 constraint removed (`reports@0`, `soft-norms@0`, `rights@0`, `speech-acts@0`
 with its `speech_acts` scope block, `alternatives@0` with its profile words
-declared). -/
+declared, `risk@0` with its generated words declared (`riskReduced`),
+`readings@1`, and `norm-defaults@0` with each `unspecified` completion read as
+the placeholder `deny`, as `modelEnvironment` reads them). -/
 def typingReduced (environment : Json) : Except String Json := do
   let profiles := (VE.Route.Gate.profilesOf environment).toOption.getD []
   let mut env := environment
+  -- `riskReduced` erases `risk@0` and keeps the alternatives block for `alternativesReduced`.
+  if profiles.contains "risk@0" then env ← riskReduced env
   if profiles.contains "reports@0" then env ← reportsReduced env
   if profiles.contains "alternatives@0" then env ← alternativesReduced env
   if profiles.contains "speech-acts@0" || profiles.contains "rights@0" then
@@ -145,10 +149,14 @@ def typingReduced (environment : Json) : Except String Json := do
     let predicates ← (← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")).mapM fun (p, entry) => do
       pure (p, Json.mkObj ((← VE.Bridge.fields entry).filter (·.1 != "instruction_of")))
     let fields := (← VE.Bridge.fields vocabulary).filter (·.1 != "soft")
-    env := (env.setObjVal! "profiles" (toJson (profiles.filter (fun p =>
+    env := (env.setObjVal! "profiles" (toJson ((← VE.Route.Gate.profilesOf env).filter (fun p =>
       p != "soft-norms@0" && p != "reports@0" && p != "alternatives@0" && p != "rights@0" &&
       p != "speech-acts@0")))).setObjVal! "vocabulary"
       ((Json.mkObj fields).setObjVal! "predicates" (Json.mkObj predicates))
+  -- Reading sets live in documents and a completion's default in the norms layer: neither
+  -- profile constrains a formula's typing (lean-first batch 13b).
+  if profiles.contains "readings@1" then env ← VE.Readings.Wire.stripReadings env
+  if profiles.contains "norm-defaults@0" then env ← VE.NormDefaults.Wire.placeholderJson env
   pure env
 
 /-- The environment identity, over the environment as Python stores it
@@ -163,7 +171,7 @@ def pythonReserved : List String := ["no"]
 
 private def naryDefined (environment : Json) : List String :=
   (VE.Core.Layers.predicatesOf environment).filterMap fun (p, entry) =>
-    if VE.Core.Layers.arity entry > 2 && (entry.getObjVal? "defined").isOk then some p else none
+    if !VE.Core.Layers.folEntry entry && (entry.getObjVal? "defined").isOk then some p else none
 
 private def usedPredicates : VE.Core.Formula → List String
   | .top | .bottom | .eq _ _ => []
@@ -190,7 +198,7 @@ private def checkNaryDefinitions (environment : Json) : Except String Unit := do
   let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
   let mut deps : List (String × List String) := []
   for (p, entry) in predicates do
-    if VE.Core.Layers.arity entry > 2 then
+    if !VE.Core.Layers.folEntry entry then
       if let .ok payload := entry.getObjVal? "defined" then
         VE.Bridge.exactFields payload ["arguments", "body"]
         let args ← VE.Bridge.strings (← payload.getObjVal? "arguments")
