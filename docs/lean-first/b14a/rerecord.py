@@ -1,14 +1,20 @@
 """Re-record, on both sides, the records an A/B comparison found unavailable through a host-load timeout.
 
-    uv run python docs/lean-first/b14a/rerecord.py AB.json BASE_ROOT BASE_REC HEAD_ROOT HEAD_REC OUT_PREFIX
+    prlimit --as=8589934592 -- uv run python docs/lean-first/b14a/rerecord.py AB.json BASE_ROOT BASE_REC HEAD_ROOT HEAD_REC OUT_PREFIX
 
 Under load, Rust's flat 5 s per-call limit (plan section 4, F4) and the recorder's 600 s per-pilot limit stop
 some documents on one side only. This reruns every `pilots` or `document` difference of class `availability`
 or `unavailable` whose either side timed out, on both sides, with `VE_RUST_TIMEOUT` raised to the test suite's
 hang guard (`RERUN_RUST_TIMEOUT`) and the per-document limit to `RERUN_PILOT_TIMEOUT`, through the recorder's own
-`pilot_check` (pilots) or its in-process document operations (document corpus, one child per record). It
+`pilot_check` (pilots) or its in-process document operations (document corpus, one child per record). It also
+reruns a pilot whose check could not read the sense pack (`pack.json`) beside it: the recorder copies only
+`.ve.md` files, so the pack is copied from the pilot branch first. It
 writes `OUT_PREFIX.base.json` and `OUT_PREFIX.head.json`: each recording with those rows replaced, every other
 row unchanged, so `tools/lean_first_diff.py compare` reads them as complete recordings.
+
+Neither checkout has the Rust memory budget (infra/oom-rootcause), so the rows run one at a time and the
+command runs under an 8 GB address-space limit, which every child inherits: a row that reaches it is recorded
+with that failure, not retried.
 """
 from __future__ import annotations
 
@@ -16,7 +22,6 @@ import json
 import os
 import subprocess
 import sys
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -31,6 +36,10 @@ FIELDS = ("corpus", "authority", "case", "op")
 def timed_out(outcome) -> bool:
     text = json.dumps(outcome)
     return "timed out after" in text or '"timeout"' in text
+
+
+def missing_pack(outcome) -> bool:
+    return "Cannot read sense pack" in json.dumps(outcome)
 
 
 def key(row):
@@ -55,6 +64,11 @@ def rerun(root: Path, scratch: Path, row: dict) -> dict:
     env = {**os.environ, "PYTHONPATH": str(root), "VE_RUST_TIMEOUT": RERUN_RUST_TIMEOUT}
     env.pop("VE_AUTHORITY", None)
     if row["corpus"] == "pilots":
+        if missing_pack(row["outcome"]):
+            branch, path = row["case"].split(":", 1)
+            pack = subprocess.run(["git", "show", f"{branch}:{Path(path).parent / 'pack.json'}"], cwd=ROOT,
+                                  check=True, capture_output=True).stdout
+            (scratch / "pack.json").write_bytes(pack)
         env["VE_SHADOW_LOG"] = str(scratch / "english-shadow.jsonl")
         diff.PILOT_TIMEOUT = RERUN_PILOT_TIMEOUT
         return {**row, "outcome": diff.pilot_check(root, scratch / f"{row['source_sha256']}.ve.md", env)}
@@ -68,7 +82,8 @@ def main() -> None:
     ab, base_root, base_rec, head_root, head_rec, prefix = sys.argv[1:7]
     wanted = {(d["corpus"], d["authority"], d["case"], d["op"]) for d in json.load(open(ab))["differences"]
               if d["corpus"] in ("pilots", "document") and d["class"] in ("availability", "unavailable")
-              and (timed_out(d["base"]) or timed_out(d["head"]))}
+              and (timed_out(d["base"]) or timed_out(d["head"]))
+              or d["corpus"] == "pilots" and missing_pack(d["base"]) and missing_pack(d["head"])}
     for side, root, rec in (("base", base_root, base_rec), ("head", head_root, head_rec)):
         rec, root = Path(rec), Path(root).resolve()
         recorded = rows(rec)
@@ -78,8 +93,7 @@ def main() -> None:
         def scratch(row):
             return rec.with_suffix(".pilots" if row["corpus"] == "pilots" else ".document")
 
-        with ThreadPoolExecutor(max_workers=4) as pool:
-            fresh = {key(new): new for new in pool.map(lambda row: rerun(root, scratch(row), row), todo)}
+        fresh = {key(row): rerun(root, scratch(row), row) for row in todo}
         out = Path(f"{prefix}.{side}.json")
         with out.open("w") as handle:
             for row in recorded:
