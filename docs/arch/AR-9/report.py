@@ -60,6 +60,22 @@ def metrics() -> str:
         lines.append(f"- Full gate at `{gate['commit_sha'][:8]}`: {gate['status']}; {counts['passed']:,} passed, "
                      f"{counts['skipped']} skipped, {counts['failed']} failed; "
                      f"{counts['rust_passed']} Rust tests passed.")
+    overlap = load("overlap.json")
+    if overlap is not None:
+        in_flight = [row for row in overlap["branches"] if row["in_flight"]]
+        shared = sorted({path for row in in_flight for path in row["overlap"]})
+        lines.append(f"- Overlap sweep at `{overlap['head'][:8]}`: {len(overlap['files'])} hand-written files changed; "
+                     f"{len(in_flight)} in-flight branches (a commit in the last {overlap['in_flight_days']} days) "
+                     f"of {len(overlap['branches'])} unmerged share {len(shared)} of them; "
+                     f"files outside `docs/arch/AR-9/` changed since the gate's `{overlap['gate'][:8]}`: "
+                     f"{len(overlap['changed_since_gate'])}.")
+    relay = load("relay-gate.json")
+    if relay is not None:
+        routes = sorted({row["route"] for row in relay["findings"]})
+        lines.append(f"- Relay mutation gate on that commit's build: {len(relay['routes'])} routes, "
+                     f"{relay['totals']['mutants']:,} mutants, {len(relay['failures'])} failures, all on "
+                     + ", ".join(f"`{r}`" for r in routes) + f" ({len(relay['findings'])} accepted mutants, "
+                     f"{len(relay['failures']) - len(relay['findings'])} stale allow-list paths).")
     return "\n".join(lines)
 
 
