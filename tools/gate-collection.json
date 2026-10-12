@@ -836,6 +836,7 @@
   "tests/test_batch_evidence.py::test_a_report_commit_may_change_only_the_report_directory",
   "tests/test_batch_evidence.py::test_complete_head_evidence_passes",
   "tests/test_batch_evidence.py::test_latency_request_uses_the_public_readings_normalizer",
+  "tests/test_batch_evidence.py::test_only_identical_listed_unavailable_is_signed",
   "tests/test_batch_evidence.py::test_report_commit_check_reads_git",
   "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails[comparison-change3]",
   "tests/test_batch_evidence.py::test_stale_or_incomplete_evidence_fails[comparison-change4]",
