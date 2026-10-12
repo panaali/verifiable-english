@@ -363,6 +363,4 @@ def interrupted_gate_reaches_its_injected_build(request, monkeypatch):
     would stop before the test's injected interruption at the Lean build.
     """
     if request.node.originalname == "test_interrupted_gate_cannot_record_pass":
-        from tools import gate
-
-        monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda *args, **kwargs: None)
+        monkeypatch.setattr(request.module.gate.lake_outputs, "drop_stale", lambda *args, **kwargs: None)
