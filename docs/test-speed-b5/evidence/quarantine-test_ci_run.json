@@ -1,0 +1,26 @@
+{
+  "test": "tests/test_difffuzz.py::test_ci_run",
+  "summary": "Fails in suites run under machine load and passes when run alone on the same tree. Until main cbbab2df (eff-tests) it failed on a 300 s CPU limit; that limit is now recorded, not checked, so this entry covers the remaining load-sensitive paths (service waits, worker starvation) for 7 days.",
+  "observations": [
+    {
+      "source": "manage-agents/nightly-verify.final.md and nightly-verify.log, 2026-10-10 04:36 UTC, the nightly full suite of ve-integration under xdist",
+      "suite": "1 failed, 13642 passed, 8 skipped, 83 xfailed in 2198.98s; FAILED tests/test_difffuzz.py::test_ci_run (worker gw3, its CPU assertion)",
+      "alone": "nightly-verify.log.retry: the same test rerun serially on the same tree: 1 passed in 183.88s"
+    },
+    {
+      "source": "manage-agents/verifyfix-lf-16d.final.md, 2026-10-10 09:36 UTC",
+      "suite": "the 300 CPU-second assertion failed under parallel verify load (reported as FAILS ON MAIN)",
+      "alone": "its serial pytest run passed"
+    },
+    {
+      "source": "manage-agents/reviews/test-and-redundancy-profile-2026-10.md, line 22",
+      "suite": "18 builder release gates in 7 h; 9 failed; 7 of those failed on this test's CPU limit (361 s against 300 s, because of load)",
+      "alone": "not recorded per gate"
+    },
+    {
+      "source": "manage-agents/eff-tests-build.final.md, suite wall-time table",
+      "suite": "the before run (c24aeab2, -n 16, load median 57.9, range 21.8 to 97.4) failed this test on its CPU limit; the after runs used 305 s and 327 s of CPU",
+      "alone": "not recorded"
+    }
+  ]
+}

@@ -17,16 +17,20 @@ inductive NormContent where
   | active (content : Json)
   | quoted (content : Json)
 
+/-- The one table of norm content roles by unit kind, read by every route that
+splits a document's norms (this admission and the document mode). -/
+def normRole (kind : Kind) (content : Json) : Except String NormContent :=
+  if kind == .norm then pure (.active content)
+  else if kind.quoted then pure (.quoted content)
+  else throw "norm content requires a norm or quoted kind"
+
 /-- Remove norm content only from the copy passed to the FOL unit decoder.
 The original source document remains intact for report identity. -/
 def splitUnit (j : Json) : Except String (Json × Option NormContent) := do
   match j.getObjVal? "content" with
   | .ok content =>
     if (content.getObjVal? "norm").toBool then
-      let kind ← decodeKind 16 (← j.getObjVal? "kind")
-      let norm ← if kind == .norm then pure (NormContent.active content)
-        else if kind.quoted then pure (NormContent.quoted content)
-        else throw "norm content requires a norm or quoted kind"
+      let norm ← normRole (← decodeKind 16 (← j.getObjVal? "kind")) content
       let obj ← VE.Bridge.fields j
       return (Json.mkObj (obj.filter (·.1 != "content")), some norm)
     else return (j, none)

@@ -101,9 +101,9 @@ def «norms-certificate» : Shape :=
       ("id", n [str, .equals "/id"]),
       ("status", constS "ok"),
       ("valid", .type ["boolean"]),
-      ("background", ref "common.json#/$defs/nat"),
+      ("background", n [ref "common.json#/$defs/nat", .backgroundBound]),
       ("layers", ref "common.json#/$defs/nat"),
-      ("steps", ref "common.json#/$defs/nat")]]
+      ("steps", n [ref "common.json#/$defs/nat", .maxSteps])]]
 
 def «norms-witness» : Shape :=
   c "Norms.Flagged.witnessFrom (norms_flagged_witness_sound): the requested target; the regenerated targets are the service's." [

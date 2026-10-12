@@ -360,7 +360,10 @@ def test_undecided_answers_take_the_retained_path(tmp_path, reason, monkeypatch)
     listed, build = RETAINED[reason]
     path = write(tmp_path, build())
     row, error = relay.answer("document", {"id": "d", "document": path.read_text(), "admit": True})
-    assert isinstance(error, CheckerUnavailable) and reason in error.message
+    if reason == "fenced English or strict content needs the Lean surface parser":
+        assert isinstance(error, CheckerUnavailable) and "strict fence needs a surface parser" in error.message
+    else:
+        assert isinstance(error, CheckerUnavailable) and reason in error.message
     assert f"| {listed} |" in DELTA.read_text(), "every retained reason is a row of the batch's DELTA.md"
     expected = outcome(python_path(path))
     calls = []

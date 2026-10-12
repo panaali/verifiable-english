@@ -673,24 +673,27 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
                                  certificate: Any, *, max_steps: int = 10_000,
                                  _background: bool = True,
                                  _generated_premises: Sequence[bool] | None = None) -> EntailmentCertificateCheck:
-    """Replay a certificate under the selected authority.
+    """Replay a certificate: Lean owns binding, replay and charging under every
+    authority (lean-first batch 13b).
 
     The prover's self-replay of a generated trace (`_background=False`) and
     replays with labelled generated premises belong to the retained proof
-    generator and stay Python's.
+    generator (rule 3: generator-internal, never reported) and stay Python's.
     """
-    from .backends.dispatch import authority_for, execute
-    args = (env, premises, conclusion, certificate)
-    options = {"max_steps": max_steps, "_background": _background,
-               "_generated_premises": _generated_premises}
-    if (authority_for("certificate_replay") == "python" or not _background
-            or _generated_premises is not None):
-        return _check_certificate_python(*args, **options)
-    payload = {"environment_id": getattr(env, "environment_id", None),
-               "certificate": certificate if type(certificate) is dict else None}
-    return execute("certificate_replay", payload,
-                   lambda: _check_certificate_python(*args, **options),
-                   lean=lambda: _check_certificate_lean(env, premises, conclusion, certificate, max_steps))
+    from .backends.dispatch import owned
+    if not _background or _generated_premises is not None or not lean_check_scope(env):
+        return _check_certificate_python(env, premises, conclusion, certificate, max_steps=max_steps,
+                                         _background=_background, _generated_premises=_generated_premises)
+    return owned("certificate_replay",
+                 lambda: _check_certificate_lean(env, premises, conclusion, certificate, max_steps))
+
+
+def lean_check_scope(env) -> bool:
+    """Whether Lean's certificate replay and countermodel check answer over `env` bound to the whole
+    environment. No mode decodes a `norm-defaults@0` or `readings@1` environment's projection while binding
+    the submitted one, so those keep the retained Python replay, and premise status and compare there keep
+    their retained composition (a recorded scope gap, docs/lean-first/b13b/DELTA.md)."""
+    return not {"norm-defaults@0", "readings@1"} & set(getattr(env, "profiles", ()) or ())
 
 
 def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -> EntailmentCertificateCheck:
@@ -715,14 +718,21 @@ def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -
             "certificate": certificate, "max_steps": max_steps}
     if env.language == "ve.core@0.2":
         # The norms route's Plain glue also answers environments with statement
-        # layers; soft and rights premises are validated Background slots.
+        # layers; soft, rights and norm-defaults fill premises are validated
+        # Background slots.
         from .profiles import STATEMENT_LAYERS
-        layered = STATEMENT_LAYERS & set(env.profiles)
-        mode = "norms" if layered else route_mode(env)
-        # Background order: the environment's generators, then soft, then rights.
-        soft = (*getattr(env, "soft_premises", ()), *getattr(env, "rights_premises", ()))
-        case = {**case, "kind": "certificate",
-                **({"soft_premises": [_to_data(f) for _, f in soft]} if soft else {})}
+        # Background order (`background.background`): the environment's
+        # generators, then soft, then rights, then fill. These trusted slots
+        # are read only by the norms route's Plain glue, which answers layered
+        # environments; over any other environment they lead the case's
+        # premises instead, which binds and replays the same ordered list.
+        slots = [_to_data(f) for _, f in (*getattr(env, "soft_premises", ()),
+                                          *getattr(env, "rights_premises", ()),
+                                          *getattr(env, "fill_premises", ()))]
+        if STATEMENT_LAYERS & set(env.profiles):
+            mode, case = "norms", {**case, "kind": "certificate", **({"soft_premises": slots} if slots else {})}
+        else:
+            mode, case = route_mode(env), {**case, "kind": "certificate", "premises": slots + case["premises"]}
     elif env.order:
         mode, case = "order", {**case, "kind": "certificate"}
     else:
