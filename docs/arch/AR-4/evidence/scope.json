@@ -1,7 +1,67 @@
 {
  "base": "968870193193b9e8138183ed77c41e376a6e376c",
- "head": "c41af50636cbb446a14bce03edbda93474f31a95",
+ "head": "81760f3a7f796ce5f8ece9e817be4028f15655d6",
  "commits": [
+  {
+   "hash": "81760f3a7f796ce5f8ece9e817be4028f15655d6",
+   "subject": "AR-4 seeded bugs rerun on the final tools: 17/17 killed (M11-M17 guard the F2-F4 fixes)"
+  },
+  {
+   "hash": "6395f6bb75b7e509a21dc508a12b0e734ed3b605",
+   "subject": "AR-4: trust-count test ids without spaces (the mutant harness reads them); M7 targets the blank-signature rule as now written"
+  },
+  {
+   "hash": "b8ae9cc5664a4b70444650449568156468886d43",
+   "subject": "AR-4: seeded bugs for the F2-F4 checks (M11-M17); report.py requires a mutant in every changed tools/ product file; gate collection regenerated"
+  },
+  {
+   "hash": "5d83983c1d509b9c2696ed8fe9c9b42ebcb54f94",
+   "subject": "AR-4 F1: the starting budget is a HUMAN item the evidence check holds open until the DRI signs its value"
+  },
+  {
+   "hash": "2d1a41ffd7a5091d1cf786397c2fb70e793df072",
+   "subject": "AR-4: test_gate_rerun's fake writes the trust counts without a new top-level import"
+  },
+  {
+   "hash": "f3a05416a111488ec9898614f46c19a70d586837",
+   "subject": "AR-4: the scope and trust-count tests in their own files (no overlap with AR-3 and AR-5a)"
+  },
+  {
+   "hash": "9bf3efd5aa9925b587191e13c999a459f807017e",
+   "subject": "AR-4 fix F3: a batch's scope is recomputed from git; the gate and the evidence are bound to HEAD"
+  },
+  {
+   "hash": "05b53737a936708d20f5c4abbcf31334c55d8cea",
+   "subject": "AR-4 fix F2: every gate records the per-file trust counts, checked by their writer's schema"
+  },
+  {
+   "hash": "f199e45d523929e1cf2c86ec24b063db18b19b30",
+   "subject": "AR-4 fix F4: a new allowance needs the DRI's signature; the UNSIGNED marker and placeholder text grant nothing"
+  },
+  {
+   "hash": "14c6a56cfb1de32105ee90f143ba9901e83f8fe2",
+   "subject": "AR-4 derive gate report figures from saved records"
+  },
+  {
+   "hash": "9ce93e54b98b131de37f3eb660009a77abde745c",
+   "subject": "AR-4 save full gate and passing same-commit rerun evidence"
+  },
+  {
+   "hash": "5ac95cc3859840fae9bd5d7d101e7a5cd22e40f8",
+   "subject": "AR-4 report interrupted one-hour gate attempt"
+  },
+  {
+   "hash": "75b25445e7a8fb5ce6c2a1cd0497d3db87c3e58a",
+   "subject": "AR-4 suite evidence at e25a7773: gate stages up to the suite passed, suite in 16 chunks 14,355 passed / 0 failed (gate stopped by the 2 h tool limit)"
+  },
+  {
+   "hash": "e25a7773b8b7769cfeae3c06be03350a1201ccca",
+   "subject": "AR-4 report: sync recipe for AR-4 itself (tried on main 5479466f), overlaps rechecked, regen_generated merge_json crash as follow-up; the starting budget needs the DRI's signature (D3's bound is 35,892 V)"
+  },
+  {
+   "hash": "699a18a5931a19feb8d384155ca46b384110a08a",
+   "subject": "AR-4 saved evidence re-collected at c41af506"
+  },
   {
    "hash": "c41af50636cbb446a14bce03edbda93474f31a95",
    "subject": "AR-4: gate collection regenerated; report.py renders with --render (not a registered writer)"
@@ -51,16 +111,28 @@
   "docs/arch/AR-4/DELTA.md",
   "docs/arch/AR-4/REPORT.md",
   "docs/arch/AR-4/evidence/budget.json",
+  "docs/arch/AR-4/evidence/gate-full-failed.json",
+  "docs/arch/AR-4/evidence/gate-result.json",
+  "docs/arch/AR-4/evidence/gate-stages.log",
   "docs/arch/AR-4/evidence/migration.json",
   "docs/arch/AR-4/evidence/mutants.json",
   "docs/arch/AR-4/evidence/scope.json",
+  "docs/arch/AR-4/evidence/suite-chunks.json",
   "docs/arch/AR-4/migrate_baseline.py",
   "docs/arch/AR-4/mutants.json",
   "docs/arch/AR-4/report.py",
+  "docs/merge-tooling.md",
   "docs/trust-baseline.json",
+  "tests/test_batch_scope.py",
   "tests/test_consolidation_tools.py",
+  "tests/test_gate_integrity.py",
+  "tests/test_gate_rerun.py",
+  "tests/test_gate_trust.py",
   "tests/test_trust_ratchet.py",
+  "tools/batch_scope.py",
   "tools/gate-collection.json",
+  "tools/gate.py",
+  "tools/regen_generated.py",
   "tools/trust_map.py"
  ]
 }
