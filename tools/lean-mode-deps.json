@@ -1,0 +1,108 @@
+{
+  "modes": {
+    "alternatives": [
+      "VE.Alternatives.Run"
+    ],
+    "bundle": [
+      "VE.Service.Standalone",
+      "VE.Service.FamilyBundle"
+    ],
+    "check": [
+      "VE.Service.Standalone"
+    ],
+    "check-certificate": [
+      "VE.CertificateWire"
+    ],
+    "diagnose": [
+      "VE.Service.Diagnose"
+    ],
+    "discourse": [
+      "VE.Discourse.Run"
+    ],
+    "document": [
+      "VE.Service.Document"
+    ],
+    "english": [
+      "VE.Service.EnglishRun"
+    ],
+    "english.check": [
+      "VE.EnglishGrammar.Run"
+    ],
+    "english.grammar": [
+      "VE.EnglishGrammar.Run"
+    ],
+    "english.question": [
+      "VE.Question.Run"
+    ],
+    "english.read": [
+      "VE.EnglishGrammar.Run"
+    ],
+    "environment": [
+      "VE.Service.Standalone"
+    ],
+    "evaluate": [
+      "VE.Order.ProfileGate"
+    ],
+    "family-norms": [
+      "VE.Service.FamilyNorms"
+    ],
+    "graph": [
+      "VE.Service.Standalone",
+      "VE.Service.Family"
+    ],
+    "identity": [
+      "VE.Service.Standalone"
+    ],
+    "model": [
+      "VE.Service.Standalone"
+    ],
+    "norm-defaults": [
+      "VE.NormDefaults.Run"
+    ],
+    "norms": [
+      "VE.Norms.Run"
+    ],
+    "order": [
+      "VE.Order.Surface"
+    ],
+    "parse": [
+      "VE.Service.Standalone"
+    ],
+    "quantity": [
+      "VE.Time.Wire",
+      "VE.Time.Document"
+    ],
+    "readings": [
+      "VE.Service.Standalone",
+      "VE.Service.Family"
+    ],
+    "readings-route": [
+      "VE.Readings.Run"
+    ],
+    "reports": [
+      "VE.Attribution.Run"
+    ],
+    "rights": [
+      "VE.Rights.Run"
+    ],
+    "risk": [
+      "VE.Risk.Run"
+    ],
+    "risk-eval": [
+      "VE.Risk.Eval"
+    ],
+    "route": [
+      "VE.Route.Run"
+    ],
+    "soft-norms": [
+      "VE.SoftNorms.Run"
+    ],
+    "speech-acts": [
+      "VE.SpeechActs.Run"
+    ]
+  },
+  "sources": {
+    "lean/ModeDeps.lean": "c3cd0d429592b42e5d95608fa87db1480c4d8ce8914b42b1004ee357bb2d80d3",
+    "lean/VE/Service/Protocol.lean": "3173f57d94c501f2788b9253cc3f36fcb1d2ddd1ab249a9ed41324c09ea65ece"
+  }
+}

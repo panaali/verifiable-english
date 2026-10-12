@@ -19,6 +19,7 @@ lean/ResponseShape/Audit.lean merge=ve-generated
 lean/VE.lean merge=ve-generated
 lean/ResponseShape.lean merge=ve-generated
 lean/VE/Route/frozen-sources.sha256 merge=ve-generated
+tools/lean-mode-deps.json merge=ve-generated
 lean/axioms.txt merge=ve-generated
 lean/statements.txt merge=ve-generated
 lean/predicates.txt merge=ve-generated
