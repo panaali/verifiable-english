@@ -218,3 +218,15 @@ two commits).
 3. The full gate on the final code, `ef36aece` (`evidence/gate-result.json`): **passed**. 14,339
    passed, 92 skipped, 0 failed, 38 Rust tests passed, every stage run (toolchains, Lean build, Lean
    audit, Rust build, cargo test, pytest). The commit that adds it changes only docs.
+
+## 10. Relay mutation gate (pre-existing failure, not this branch's)
+
+`review-ready.py` runs `tools/relay_mutation_gate.py` because `ve/backends/lean.py` changed. It fails with 92
+findings, all on `service:readings-route`: allow-list entries that match nothing (`F7 … units/*/…`), and
+accepted `empty`/`duplicate` mutants of `fill`, `fill/*/label`, `units/*/content/norm/over` and `targets/*`.
+**The same tool on main 5479466f, in a scratch worktree with the same Lean build, gives the identical 92
+findings** (`evidence/relay-mutation-gate-main-5479466f.txt`, `evidence/relay-mutation-gate-branch.txt`).
+Its inputs for that route are the committed fixtures, the Lean build and the service reader. None of them
+changes on this branch, and the one-shot routes that `run_limited` now carries add no finding. The fix
+belongs to the readings-route owner (rd-6b's binding, or a DRI decision on the allow-list). It is not
+widened here.
