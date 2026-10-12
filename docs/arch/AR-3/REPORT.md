@@ -7,15 +7,15 @@ Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` on `design/arch-review` (draft 2), s
 
 - `tools/gate.py` no longer reads a committed list of test IDs. It takes the expected collection from the merge
   base with `main` (on `main` itself, the first parent; `--base REV` names another commit). The source is, in
-  order: the record a gate attached to that commit as the git note `refs/notes/ve-gate-collection`; or a
+  order: the record a gate attached to that commit as the git note `refs/notes/ve-gate-result`; or a
   parent's record when the parent has the same tree (a merge commit and the branch head it merged); or, with
   neither, a collection of the base in a scratch worktree. That worktree gets the head's Lean build copied in
   and rebuilt, and the head's Rust binary when the base's `lean/checkers.lock` pins it (otherwise a
   reproducible Cargo build of the base). The collection is then attached as the base's record, so the next gate
   on the same base reads it.
 - **Removal records.** A base ID the head does not collect fails the gate unless a commit in `base..HEAD` carries
-  the trailer `Test-removed: <target> — <reason>`. The target is the ID, or the function, class or file whose IDs
-  it covers. Git parses the trailers. A trailer whose target covers an ID the head still collects fails as stale,
+  the trailer `Test-removed: <target> — <reason>`. The target is the exact ID, or a deleted function, class or file
+  whose IDs it covers. Git parses the trailers. A trailer whose target covers an ID the head still collects fails as stale,
   and a trailer without a target and a reason fails as malformed. New IDs pass. Collection reports still fail the
   gate, and `tools/gate-optional.json` stays.
 - **The `ast` rule only labels.** `git diff --no-renames base..HEAD` labels each removal in the gate's report:
@@ -26,7 +26,8 @@ Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` on `design/arch-review` (draft 2), s
   statement those name, transitively. The failure lists each refused ID with its label and suggests one trailer
   per deleted file, class or function (one per ID otherwise).
 - `gate-result.json`'s `collection` object holds the base, the record's source, the counts, `removed` (each ID
-  with its label, the trailer's reason and commit), `refused` (each with its label), `stale` and `malformed`.
+  with its label, the trailer's reason and commit), `refused` (each with its label), `stale`, `malformed`, and the
+  complete collected IDs in compact `collected_zlib` form. The same gate result is stored in its git note.
 - Every full gate attaches its own clean collection to its commit (`head_record`). A rerun of failed tests
   records nothing.
 - One owner: the rule, the trailers, the record and the base collection are in `tools/gate_collection.py`.
@@ -43,8 +44,8 @@ Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` on `design/arch-review` (draft 2), s
   renamed expected reason). `73a9e30d` records them, each with its reason; the removing commits came before the
   rule. `723764dc` records the tests it replaced itself.
 
-The deltas to the gate are listed in [DELTA.md](DELTA.md); one (G6, where the IDs are stored) needs a DRI
-signature.
+The deltas to the gate are listed in [DELTA.md](DELTA.md). G6 now uses the planned gate record and keeps
+the evidence copy under D4's size limit.
 
 ## Measured outcome
 

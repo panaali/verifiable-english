@@ -483,12 +483,12 @@ def base_collection(result: dict, base: str | None, env: dict[str, str], pytest_
     return ids, gate_collection.changes(base, "HEAD", env=env)
 
 
-def record_collection(commit: str, ids: list[str], env: dict[str, str]) -> str:
-    """Attach `ids` as `commit`'s collection record; a record is a later gate's shortcut, so a failure to
+def record_collection(commit: str, ids: list[str], env: dict[str, str], result: dict | None = None) -> str:
+    """Attach the gate result and its IDs to `commit`; a record is a later gate's shortcut, so a failure to
     write it is reported, not a gate failure."""
     from tools import gate_collection
     try:
-        gate_collection.write_record(commit, ids, env=env)
+        gate_collection.write_record(commit, ids, result=result, env=env)
     except RuntimeError as exc:
         return f"not written: {exc}"
     return "written"
@@ -645,17 +645,23 @@ def main() -> int:
                                                    "reason": "HEAD or worktree changed during gate"})
                 except (OSError, RuntimeError) as exc:
                     result["failures"].append({"stage": "source identity", "reason": str(exc)})
-            # The head's full, clean collection is its commit's record, once the tree is known to be unchanged.
-            if head_ids is not None and not any(failure["stage"] == "source identity"
-                                                for failure in result["failures"]):
-                result.setdefault("collection", {})["head_record"] = record_collection(
-                    result["commit_sha"], head_ids, env)
+            # Store the complete clean collection in the gate result, including
+            # the result's git note, without making every evidence copy 1.8 MB.
+            record_head = head_ids is not None and not any(failure["stage"] == "source identity"
+                                                         for failure in result["failures"])
+            if record_head:
+                from tools import gate_collection
+                result.setdefault("collection", {})["collected_zlib"] = gate_collection.encode_ids(head_ids)
             if completed and result["stages"] == list(REQUIRED_STAGES) and not result["failures"]:
                 result["status"] = "passed"
             # A rerun of failed tests is never a full gate: its own status, which no evidence check accepts.
             elif completed and rerun is not None and not result["failures"] and result["stages"] == [
                     stage for stage in REQUIRED_STAGES if stage not in REUSED_STAGES]:
                 result["status"] = "rerun-passed"
+            if record_head:
+                result["collection"]["head_record"] = "written"
+                result["collection"]["head_record"] = record_collection(
+                    result["commit_sha"], head_ids, env, result=result)
             write_result(output, result)
             print(f"[gate] {result['status']}: {output}; "
                   f"{result['counts'].get('passed', 0)} passed, "

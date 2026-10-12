@@ -17,6 +17,8 @@ import json
 import subprocess
 from pathlib import Path
 
+from tools import gate_collection
+
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build", "cargo_test", "pytest")
 REQUIRED_CORPORA = {"probe", "conformance", "readings", "pilots", "discourse", "rights", "quantity"}
 
@@ -84,6 +86,11 @@ def main() -> int:
     try:
         values = [json.loads(p.read_text()) for p in (args.gate, args.comparison, args.latency)]
         errors = problems(args.head, *values)
+        # A local gate note is the authoritative record when present. A copy
+        # travels with batch evidence because git notes do not travel with a merge.
+        note = gate_collection.read_gate_result(args.head, cwd=Path.cwd())
+        if note is not None and note != values[0]:
+            errors.append("gate evidence differs from its git note")
         if args.report_commit is not None:
             errors += outside_report(changed_since(args.head, args.report_commit), args.report_dir)
     except (OSError, ValueError, TypeError, subprocess.CalledProcessError) as exc:
