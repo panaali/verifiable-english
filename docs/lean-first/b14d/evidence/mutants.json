@@ -44,8 +44,17 @@
       "exit": 1,
       "observed": "the changed head timeout was accepted instead of rejected",
       "caught": true
+    },
+    {
+      "mutant": "use_untyped_request_unit_as_binding",
+      "behaviour": "a non-text request unit falls back to its string set ID when binding Lean’s UNKNOWN unit list",
+      "file": "ve/backends/service_schema.py",
+      "test": "tests/test_stage2_readings.py::test_coupled_plan_binds_fallback_unit_when_request_unit_is_not_text",
+      "exit": 1,
+      "observed": "TypeError on an unhashable request unit instead of accepting Lean's bound fallback ID",
+      "caught": true
     }
   ],
-  "restored_test": "14 passed in tests/test_batch_evidence.py; focused choice and plan tests passed",
+  "restored_test": "14 passed in tests/test_batch_evidence.py; focused choice and plan tests passed; malformed-unit fallback regression passed after restoration",
   "restored_service_sha256": "3eee1ce49cd51039c243ad36cea0ff2851122b5392cbec88cb11fb3c3f69da1c"
 }
