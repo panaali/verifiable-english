@@ -23,8 +23,9 @@ Every number in the outcome block is rendered by `report.py` from `evidence/` an
 - Relay mutation gate (picked readings-route fix): 39 routes, 109,195 mutants, 0 failures.
 - Relay-fix seeded faults (lean, python): 3/3 caught by every named test; after restoring, 4/4 runs pass.
 - Selected test units at `f1ab8177`: 360/360 passed.
-- Saved scope: `5479466f..eb433e5b --no-merges`, 14 commit(s): `eb433e5b`, `f1ab8177`, `6ddfe8b2`, `7b44a234`, `9d82676d`, `e0cbab24`, `727f7fa4`, `7759894a`, `8101a733`, `16383a2f`, `7f137b63`, `cb10ebb9`, `27339266`, `9ab9127d`.
-- Full gate at `eb433e5b`: passed; 14,363 passed, 92 skipped, 0 failed; 36 Rust tests passed.
+- Saved scope: `5479466f..5d45c029 --no-merges`, 19 commit(s): `5d45c029`, `fc30653f`, `d6655ba1`, `4d49ae2b`, `ff6a8cb2`, `eb433e5b`, `f1ab8177`, `6ddfe8b2`, `7b44a234`, `9d82676d`, `e0cbab24`, `727f7fa4`, `7759894a`, `8101a733`, `16383a2f`, `7f137b63`, `cb10ebb9`, `27339266`, `9ab9127d`.
+- Full gate at `5d45c029`: failed; 14,365 passed, 92 skipped, 1 failed; 36 Rust tests passed.
+- Same-commit rerun of its failed tests at `5d45c029` (R13): rerun-passed; `tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist` passed; 87 tests of their files passed, 0 failed.
 <!-- END GENERATED AR-9 METRICS -->
 
 The function-level import count is unchanged on purpose: those imports are read when the
@@ -149,6 +150,13 @@ rebuild `ve_service` and `ve_response_decode`; the script runs `lake build` afte
   `docs/arch/AR-9/`. `split.json` is measured from the same merge-base; `main` changed no file
   under `ve/assist/` and no `tests/test_assist*.py` between the plan's base `c24aeab2` and it, so
   the comparison is the plan's.
+- After the relay pick, the full gate ran once more, on `5d45c029` (8 workers, load about 45). It
+  had one failure: `tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist`, whose
+  `lean/audit.py` subprocess hit its 1,800 s timeout. That is a timeout under load; no check failed.
+  `tools/gate.py --rerun-failed` on the same commit and tree passed it
+  (`evidence/gate-rerun.json`), so under R13 the gate counts as passed. The earlier passing gate
+  at `eb433e5b` was replaced by this one. If this test is retried again this week, it goes to
+  FOLLOW-UPS as load-sensitive (R13).
 - 4.1 item 2 does not apply: the plan's AR-9 row says assist has no corpus in the A/B and its
   tests are the gate. `tools/lean_first_diff.py` was not run.
 - 4.1 item 3: the split changes no Lean file. The only Lean change is the picked `c88e4012`
