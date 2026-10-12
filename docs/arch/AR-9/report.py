@@ -73,6 +73,12 @@ def metrics() -> str:
         lines.append(f"- Full gate at `{gate['commit_sha'][:8]}`: {gate['status']}; {counts['passed']:,} passed, "
                      f"{counts['skipped']} skipped, {counts['failed']} failed; "
                      f"{counts['rust_passed']} Rust tests passed.")
+        rerun = load("gate-rerun.json")
+        if gate["status"] != "passed" and rerun is not None:
+            tests = rerun["rerun_failed"]["tests"]
+            lines.append(f"- Same-commit rerun of its failed tests at `{rerun['commit_sha'][:8]}` (R13): "
+                         f"{rerun['status']}; " + ", ".join(f"`{t}`" for t in tests) + " passed; "
+                         f"{rerun['counts']['passed']} tests of their files passed, {rerun['counts']['failed']} failed.")
     return "\n".join(lines)
 
 

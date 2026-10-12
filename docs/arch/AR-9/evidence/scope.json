@@ -1,7 +1,27 @@
 {
  "base": "5479466f9faada4cb500bb52bca2436f03662e54",
- "head": "eb433e5b4d6f5350a59424fb6e49b96e1cae8ce6",
+ "head": "5d45c029fe9b161882b35e446d6aac3f473737a6",
  "commits": [
+  {
+   "hash": "5d45c029fe9b161882b35e446d6aac3f473737a6",
+   "subject": "docs: seed and record the picked readings-route relay fix for AR-9"
+  },
+  {
+   "hash": "fc30653fd8d5f8c8ac9f4816d78a450d99495918",
+   "subject": "Readings relay: reject malformed labels, targets, and repeated over names"
+  },
+  {
+   "hash": "d6655ba1016e17089a9246cc8191fd6352aa9d5a",
+   "subject": "docs: record AR-9 pre-review relay blocker"
+  },
+  {
+   "hash": "4d49ae2bef236bfe7e3fbbe7030393804827ed7c",
+   "subject": "docs: make AR-9 mutant evidence reviewable"
+  },
+  {
+   "hash": "ff6a8cb274146115f3fe02762c7ff93df3b04973",
+   "subject": "docs: save passing AR-9 gate and scoped report"
+  },
   {
    "hash": "eb433e5b4d6f5350a59424fb6e49b96e1cae8ce6",
    "subject": "docs: record AR-9 selected tests and gate failure analysis"
@@ -63,15 +83,28 @@
   "docs/arch/AR-9/DELTA.md",
   "docs/arch/AR-9/REPORT.md",
   "docs/arch/AR-9/check_evidence.py",
+  "docs/arch/AR-9/evidence/gate.json",
   "docs/arch/AR-9/evidence/mutants.json",
+  "docs/arch/AR-9/evidence/relay-gate.json",
+  "docs/arch/AR-9/evidence/relay-mutants.json",
+  "docs/arch/AR-9/evidence/scope.json",
   "docs/arch/AR-9/evidence/selected.json",
   "docs/arch/AR-9/evidence/split.json",
   "docs/arch/AR-9/measure.py",
   "docs/arch/AR-9/report.py",
   "docs/arch/AR-9/seed_faults.py",
+  "docs/arch/AR-9/seed_relay_faults.py",
+  "lean/ResponseShape.lean",
+  "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+  "lean/ResponseShape/Skeleton.lean",
+  "lean/declarations.txt",
   "tests/conftest.py",
   "tests/test_assist_split.py",
+  "tests/test_enum_domains.py",
+  "tests/test_lean_service_schema.py",
+  "tests/test_relay_mutation_gate.py",
   "tools/gate-collection.json",
+  "tools/relay-gate-allow.json",
   "ve/assist/recovery.py",
   "ve/assist/recovery_commands.py",
   "ve/assist/recovery_journal.py",
@@ -79,6 +112,9 @@
   "ve/assist/session.py",
   "ve/assist/session_proposals.py",
   "ve/assist/session_state.py",
-  "ve/assist/session_views.py"
+  "ve/assist/session_views.py",
+  "ve/backends/lean_service_schema/README.md",
+  "ve/backends/lean_service_schema/readings-route.json",
+  "ve/backends/service_schema.py"
  ]
 }
