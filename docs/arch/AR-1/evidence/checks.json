@@ -50,8 +50,23 @@
    "audit.py total": 1820
   },
   "head_manifests_in_parallel": {
-   "test_lean_transitive_axiom_allowlist (audit.py)": 1234
+   "test_lean_transitive_axiom_allowlist (audit.py)": 1234,
+   "note": "two lean runs (one per manifest), load average about 70"
   },
-  "note": "the sequential head run exceeded the test's 1800 s timeout under load; audit.py now elaborates the two independent manifests at once (wall = the larger, not the sum); output order, checks and axioms.txt unchanged"
+  "note": "audit.py splits each manifest's #print axioms lines into runs of at most PART = 400 theorems (each importing its theorems' declaring modules) and runs them at once; output order, checks and axioms.txt unchanged",
+  "gate_db470d0c": "the full gate's own lean_audit stage passed; test_lean_transitive_axiom_allowlist (two runs) timed out at 1800 s at load average 140-160, and again on the serial --rerun-failed at load 165 (R13 does not apply)",
+  "head_parts_of_750": {
+   "test_lean_transitive_axiom_allowlist (audit.py)": 1213,
+   "load_average": "155-177"
+  },
+  "head_parts_of_400": {
+   "test_lean_transitive_axiom_allowlist (audit.py)": 606,
+   "load_average": "138-160",
+   "runs": "14 (VE) + 2 (ResponseShape)"
+  },
+  "one_run_imports_only": {
+   "cpu_seconds": 1.56,
+   "max_rss_kb": 1472360
+  }
  }
 }

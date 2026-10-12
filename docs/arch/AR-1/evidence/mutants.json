@@ -135,5 +135,31 @@
   "run": "HOME=/tmp/ar1-home PATH=/usr/bin:/bin .venv/bin/python -m pytest tests/test_lake_outputs.py tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass",
   "killed": true,
   "pytest_summary": "13 failed, 1 passed in 2.30s (unmutated: 14 passed)"
+ },
+ {
+  "id": "A1",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "the audit's parts, read in order, are the manifests: every theorem audited, the record unchanged",
+  "mutation": {
+   "from": "    for result in results:",
+   "to": "    for result in results[::-1]:"
+  },
+  "test": "tests/test_lean_audit_record.py::test_audit_parts_in_order_are_the_manifests",
+  "killed": true,
+  "pytest_summary": "1 failed, 17 deselected in 65.60s"
+ },
+ {
+  "id": "A2",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "the audit's parts, read in order, are the manifests: every theorem audited, the record unchanged",
+  "mutation": {
+   "from": "for start in range(0, len(names), PART)]",
+   "to": "for start in range(0, len(names), PART)][:-1]"
+  },
+  "test": "tests/test_lean_audit_record.py::test_audit_parts_in_order_are_the_manifests",
+  "killed": true,
+  "pytest_summary": "1 failed, 17 deselected in 39.95s"
  }
 ]

@@ -6491,6 +6491,7 @@
   "tests/test_lake_outputs.py::test_traced_binaries_are_fresh_and_a_replaced_binary_is_stale",
   "tests/test_lean_audit_record.py::test_audit_allows_the_admission_function_as_a_name_and_application",
   "tests/test_lean_audit_record.py::test_audit_check_is_the_default",
+  "tests/test_lean_audit_record.py::test_audit_parts_in_order_are_the_manifests",
   "tests/test_lean_audit_record.py::test_audit_refuses_a_stale_record_and_write_regenerates_it",
   "tests/test_lean_audit_record.py::test_audit_refuses_admit_tactic_in_executable_definitions[by admit]",
   "tests/test_lean_audit_record.py::test_audit_refuses_admit_tactic_in_executable_definitions[by\\n  \\xb7 admit]",

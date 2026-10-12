@@ -20,11 +20,14 @@ Numbers below are tool output, saved in `evidence/` (D4: no report test); measur
   (`propext`, `Classical.choice`, `Quot.sound`) are unchanged.
 - The Prop-class instances Lean compiles as theorems are now audited: `VE.Discourse.instLawfulBEqFormula`,
   `VE.Discourse.instLawfulBEqTerm`, `VE.Order.instLawfulBEqValue`.
-- `lean/audit.py` elaborates the two manifests at once (two `lake env lean` runs on a thread pool, read in
-  manifest order). The 528 extra theorems made the sequential run 1,820 s wall on this loaded machine, over the
-  1,800 s timeout of `test_lean_transitive_axiom_allowlist`. Run in parallel, the test took 1,234 s; main's
-  manifests took 1,467 s sequentially (`evidence/checks.json`, `audit_wall_time_seconds`). The checks, the
-  output order and `axioms.txt` are unchanged.
+- `lean/audit.py` splits each manifest's `#print axioms` lines into runs of at most 400 theorems. Each run
+  imports only the modules that declare its theorems, and all runs go at once (16 here: 14 VE, 2 ResponseShape).
+  `#print axioms` prints each theorem alone, so the runs' outputs in order are the manifests'. The committed
+  manifests are still compared byte for byte with the generated text, and `axioms.txt` and every check are
+  unchanged. Why: one `lean` over the 5,330 VE theorems takes 600 s CPU, which was 1,365 s wall on this loaded
+  host. `test_lean_transitive_axiom_allowlist` (timeout 1,800 s) timed out with one run per manifest at load
+  average 140 to 165. With runs of 400 it took 606 s at load 138 to 160 (`evidence/checks.json`,
+  `audit_wall_time_seconds`).
 - `tools/lean_statements.py` takes statement names from the manifest generated from its own dump and
   records each manifest's generated hash, so `--check` stays byte-identical after `audit.py --write`.
 - `tools/regen_generated.py` (eff-merge has merged, `ve-green-eff-merge`): the "lean-audit-manifests" entry
@@ -77,9 +80,8 @@ Numbers below are tool output, saved in `evidence/` (D4: no report test); measur
 | R2 | Python | tools/regen_generated.py (audit before statements) | test_regen_generated.py::test_entries_run_in_dependency_order |
 | S1 | Python | tools/lake_outputs.py (fall back to `Path.home()` again) | test_lake_outputs.py::test_lean_is_found_in_the_accounts_elan_when_home_is_replaced, and the three test_gate_integrity.py::test_interrupted_gate_cannot_record_pass cases (run with HOME replaced, as in the gate) |
 
-The parallel manifest runs in `lean/audit.py` are a speed change, not a claimed behaviour: their order and
-output are checked by the record comparison in `test_lean_transitive_axiom_allowlist` (real Lean, about 20 min
-here), so I did not plant a bug in it.
+| A1 | Python | lean/audit.py (read the runs in reverse order) | test_lean_audit_record.py::test_audit_parts_in_order_are_the_manifests |
+| A2 | Python | lean/audit.py (drop the last run) | same |
 
 No Rust product code changed.
 
@@ -103,8 +105,16 @@ harness command may run. The 4 failures:
   (it overlaps infra/arch-AR-3, infra/arch-AR-4 and infra/oom-rootcause) and `tools/gate.py` (it overlaps
   infra/arch-AR-3, infra/arch-AR-4 and infra/ts-B5).
 
-The failed record is kept as `evidence/gate-result-e61f9d01-failed.json`. The final gate is
-`evidence/gate-result.json`.
+The failed record is kept as `evidence/gate-result-e61f9d01-failed.json`.
+
+## Second full gate (db470d0c, failed) and the fix
+
+The second full gate on db470d0c failed on 1 of 14,414 tests (14,320 passed): `test_lean_transitive_axiom_allowlist`
+timed out at 1,800 s at load average 140 to 160. The gate's own `lean_audit` stage passed. Under R13 I reran it
+serially on the same commit (`tools/gate.py --rerun-failed`). It timed out again at load 165, so R13 does not apply.
+The same test also failed in infra/arch-AR-3's gate (aff7a4c2), without this batch's 528 extra theorems. Fix:
+the audit runs in parts of 400 theorems (above). Both records are kept, as `evidence/gate-result-db470d0c-failed.json`
+and `evidence/gate-result-db470d0c-rerun-failed.json`. The final gate is `evidence/gate-result.json`.
 
 ## Deltas
 
@@ -125,6 +135,10 @@ The generated inventories overlap many branches (R12: not an overlap). These are
   favour of this one.
 
 ## Not done / follow-ups
+
+- FOLLOW-UP (load-sensitive, R13): `test_lean_transitive_axiom_allowlist` failed twice this week on a timeout:
+  here and in infra/arch-AR-3. Runs of 400 bring it to about a third of its timeout at load 160. A Lean
+  metaprogram that collects every theorem's axioms with one shared cache would cut the 600 s CPU itself.
 
 - The merge driver (`regen_generated.py --install-driver`) is not installed in this worktree. `--resolve`
   stopped at "english-lexicon-fixtures" because the `ve_service` on disk was the pre-merge build. That step

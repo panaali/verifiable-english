@@ -9,6 +9,7 @@ declaration list older than the sources fails it.
 """
 import importlib.util
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -51,9 +52,17 @@ def test_committed_manifests_are_the_generated_ones():
 def fake_lean(monkeypatch, tmp_path):
     """The audit with the committed record as Lean's output and a temporary record file."""
     output = audit.RECORD.read_text()
-    # The whole record is the first manifest's output; the others (and the build) print nothing.
+    printed, name = {}, None  # each theorem's lines of the record, as Lean printed them
+    for line in output.splitlines(keepends=True):
+        if not line.startswith(' '):
+            name = re.match(r"'([^']+)'", line)[1]
+            printed[name] = ''
+        printed[name] += line
+    # Lean prints the record's lines of each theorem a part file names; the build prints nothing.
     monkeypatch.setattr(subprocess, 'run', lambda command, **k: SimpleNamespace(
-        stdout=output if command[-1] == audit.MANIFESTS[0] else '', returncode=0))
+        stdout=''.join(printed[name] for name in re.findall(r'^#print axioms (\S+)', Path(command[-1]).read_text(),
+                                                             re.M)) if command[:3] == ['lake', 'env', 'lean'] else '',
+        returncode=0))
     record = tmp_path / 'axioms.txt'
     monkeypatch.setattr(audit, 'RECORD', record)
     return output, record
@@ -73,6 +82,23 @@ def test_audit_refuses_a_stale_record_and_write_regenerates_it(fake_lean, capsys
 def test_audit_check_is_the_default(fake_lean, capsys):
     output, record = fake_lean
     record.write_text(output)
+    audit.main(['--check'])
+    assert 'PASS:' in capsys.readouterr().out
+
+
+def test_audit_parts_in_order_are_the_manifests(fake_lean, monkeypatch, capsys):
+    """However the theorems are split into `lean` runs, the runs' outputs in order are the record: a run each of
+    7 theorems here, every one importing only the modules that declare its theorems."""
+    output, record = fake_lean
+    record.write_text(output)
+    monkeypatch.setattr(audit, 'PART', 7)
+    theorems = audit.declared_theorems(audit.ROOT, audit.scan_sources(audit.ROOT))
+    texts = [text for manifest in audit.MANIFESTS for text in audit.parts(manifest, theorems[manifest])]
+    assert len(texts) == sum(-(-len(theorems[manifest]) // 7) for manifest in audit.MANIFESTS)
+    for text in texts:
+        names = re.findall(r'^#print axioms (\S+)', text, re.M)
+        declaring = {module for names_ in theorems.values() for name, module in names_.items() if name in names}
+        assert 0 < len(names) <= 7 and set(re.findall(r'^import (\S+)', text, re.M)) == declaring
     audit.main(['--check'])
     assert 'PASS:' in capsys.readouterr().out
 
