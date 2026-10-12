@@ -104,29 +104,28 @@ def scope_problems(scope: dict) -> list[str]:
 
 
 def scope_history_problems(saved: dict, main: str = "main", cwd: Path | None = None) -> list[str]:
-    """Compare saved numbers and commit subjects with the two fixed Git objects named in the record, and with
-    the range from the batch's merge base with `main`: a base inside the batch would drop its earlier commits
-    (and with them the `ve/` and `lean/` paths that require a corpus A/B).
+    """Compare the saved scope with the batch's range from its merge base with `main`, replayed from Git: a
+    base inside the batch would drop its earlier commits (and with them the `ve/` and `lean/` paths that
+    require a corpus A/B).
 
     The merge base does not move when `main` does (`tools.evidence.merge_base`), so a later merge to main
-    cannot change a batch's report. A saved base that is another commit passes only when its range holds the
-    very same commits and changes.
+    cannot change a batch's report. The saved base must be that very commit, even when another base's range
+    holds the same commits and changes (arch-20261010-2 recheck F1): every A/B record is bound to the saved
+    base, and an A/B against a later `main` that adopted the batch's change would show no difference.
     """
     if scope_problems(saved):
         return []  # the shape errors already explain why history cannot be compared
     cwd = cwd or ROOT
     try:
-        actual = scope_range(saved["base"], saved["head"], cwd)
         base = merge_base(saved["head"], main, cwd)
-        batch = actual if base == saved["base"] else scope_range(base, saved["head"], cwd)
+        actual = scope_range(base, saved["head"], cwd)
     except (EvidenceError, subprocess.CalledProcessError) as exc:
         return [f"scope cannot be reproduced from its Git objects: {exc}"]
     errors = []
-    for field in ("base", "head", "commits", "changes"):
-        if saved[field] != actual[field]:
-            errors.append(f"scope {field} differs from {saved['base'][:8]}..{saved['head'][:8]} --no-merges")
+    if saved["base"] != base:
+        errors.append(f"scope base {saved['base'][:8]} is not the batch's merge base {base[:8]} with {main}")
     for field in ("commits", "changes"):
-        if saved[field] != batch[field]:
+        if saved[field] != actual[field]:
             errors.append(f"scope {field} differ from the batch's {base[:8]}..{saved['head'][:8]} --no-merges "
                           f"(its merge base with {main})")
     return errors
@@ -245,7 +244,7 @@ def _check(directory: Path, main: str) -> tuple[str, list[str]]:
     errors = scope_problems(saved)
     errors += scope_history_problems(saved, main)
     head = saved.get("head") if isinstance(saved, dict) else None
-    base = saved.get("base") if isinstance(saved, dict) else None
+    base = saved.get("base") if isinstance(saved, dict) else None  # the merge base, or the check above fails
     errors += gate_record_problems(head, read("gate"))
     mutants = read("mutants")
     errors += mutant_problems(mutants, config["mutants"].get("min", 3))

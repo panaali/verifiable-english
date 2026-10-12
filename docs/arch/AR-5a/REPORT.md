@@ -51,7 +51,7 @@ All numbers below are rendered from `evidence/` by `python -m tools.evidence rep
 - Per-batch evidence scripts and report tests on `main` (`c9b8cba6`) of the kinds a new batch no longer writes: 47 (1 `tools/*_mutants.py`, 12 `docs/<track>/<batch>/*latency*.py`, 13 `tests/test_*_evidence.py`, 21 `tests/test_*_report.py`); copies under `docs/` by name: 40 (latency 11, report 12, difffuzz_ab 6, mutants 4, fuzzer_gate 2, seed_faults 3, seed_mutants 1, trace_fuzzer 1).
 - Fixtures: 9 known-answer fixtures FAIL as required, 3 complete controls PASS: ab: a record unavailable on both sides: FAIL; b1 latency: two documents named s1.ve.md in a/ and b/, a/ 50% slower on head: FAIL; b10a trace fuzzer: replay verdicts swapped, counts equal: FAIL; b10b fuzzer gate: new Lean ResourceLimit answer after the known DF-19 rejection: FAIL; control: complete A/B record: PASS; control: complete latency record: PASS; control: identical fuzz reports: PASS; latency: duplicated key: FAIL; latency: empty key: FAIL; latency: missing key: FAIL; latency: unavailable on both sides: FAIL; lf-0: empty A/B recordings: FAIL.
 - Real-format runs: `ab` over 39612 conformance records (0 unlisted); `fuzz_ab` over a real `difffuzz --ci` report: 26422 inputs, 0 differences when equal, 2 unexplained after swapping two replay verdicts.
-- b16c re-check: 1 error(s), each the open item its saved report names: the batch changes lean/ResponseShape/Schemas/Document.lean (and 9 more ve/ or lean/ paths) but its evidence.toml names no [ab].
+- b16c re-check: 2 error(s): scope base abc30811 is not the batch's merge base 67ae1e5a with main; the batch changes lean/ResponseShape/Schemas/Document.lean (and 9 more ve/ or lean/ paths) but its evidence.toml names no [ab].
 - Seeded mutants (tools/mutants.py): 14/14 killed.
 - Clean gate at `3537f55d`: passed; 14403 passed, 92 skipped, 0 failed; 36 Rust tests passed.
 <!-- END GENERATED AR-5A NUMBERS -->
@@ -65,10 +65,13 @@ this batch, a new batch writes none of these; AR-5b migrates the existing ones a
 toolkit renders b16c's `B16C METRICS` block byte for byte from the saved evidence. It confirms that the
 residue ledger agrees with `share.json` (the tally claim), that the gate at `f0c44d43` passed with consistent
 counts, and that 10/10 seeded faults failed their tests. These are the checks of the four tests in
-`tests/test_b16c_evidence.py`, and all pass (two row checks differ, see below). It then fails b16c on one point: the batch changes `ve/` and `lean/`
-but has no corpus A/B. b16c's own report gives the same verdict: "No claim of batch 16c acceptance is made …
-The nine-corpus A/B … remain[s] open" (`docs/lean-first/b16c/REPORT.md`, `DELTA.md`). The output is saved in
-`evidence/b16c-recheck.json`. Two of `test_b16c_evidence.py`'s stricter row checks are not toolkit concepts:
+`tests/test_b16c_evidence.py`, and all pass (two row checks differ, see below). It then fails b16c on two
+points. First, the batch changes `ve/` and `lean/` but has no corpus A/B. b16c's own report gives the same
+verdict: "No claim of batch 16c acceptance is made … The nine-corpus A/B … remain[s] open"
+(`docs/lean-first/b16c/REPORT.md`, `DELTA.md`). Second, b16c's saved scope base `abc30811` is a later `main`
+commit, not an ancestor of its head, rather than its merge base `67ae1e5a` (recheck F1 below). Its range
+holds the same commits and changes, but an A/B bound to it could miss the batch's change. b16c's scope was
+saved before the toolkit; AR-5b saves it again. The output is saved in `evidence/b16c-recheck.json`. Two of `test_b16c_evidence.py`'s stricter row checks are not toolkit concepts:
 SHA-256 length and `cause != "lean"`. The toolkit checks the row keys, uniqueness and the tallies instead.
 
 ## Merge train
@@ -90,7 +93,7 @@ the line in `manage-agents/merge-train.sh` is the DRI's (orchestration, outside 
 | Item | Owner | Evidence |
 |---|---|---|
 | Toolkit checks the saved scope, gate, mutants and named measurements; known-answer fixtures fail | AGENT | `tests/test_evidence_toolkit.py`, `evidence/fixtures.json`, `evidence/mutants.json` |
-| b16c gets the same open A/B verdict as its saved report | AGENT | `evidence/b16c-recheck.json` and `tools/batch_evidence.py --check docs/arch/AR-5a/recheck-b16c` |
+| b16c fails on the open A/B its saved report names, and on its pre-toolkit scope base | AGENT | `evidence/b16c-recheck.json` and `tools/batch_evidence.py --check docs/arch/AR-5a/recheck-b16c` |
 | Install the one-line check in the merge train | EXTERNAL, deferred to DRI | Command above; `manage-agents/merge-train.sh` is outside this worktree |
 
 ## Overlap with branches in flight
@@ -125,8 +128,8 @@ The review found that `--check` passed evidence not tied to the batch. Each find
 - F1: the saved scope must hold the commits and changes of the batch's merge-base range with `--main`
   (`tools.evidence.merge_base`). After the batch merges, that base is computed from `main`'s commit before the
   merge, so a later merge does not move it. A base inside the batch (a fix round's `--base <reviewed commit>`)
-  fails before and after the merge. b16c's saved base is a later `main` commit whose range holds the same five
-  commits and changes, so its re-check keeps its one open-A/B error.
+  fails before and after the merge. (This round accepted a later `main` commit whose range holds the same
+  commits and changes, such as b16c's; the recheck below refuses it.)
 - F2: every A/B record (`ab`, `latency`, `fuzz_ab`, `tools/readings_batch_latency.py`) saves `base_commit`.
   The measuring tools read both commits from the two checkouts (`tools.evidence.checkouts`: one directory,
   one commit or a modified tracked file is refused). `--check` requires the base to be the scope's base and to
@@ -154,6 +157,23 @@ The saved evidence (`evidence/scope.json`, `gate.json`, `mutants.json` and the g
 describes the gated head `3537f55d`. This round changes `tools/`, so `--check docs/arch/AR-5a --report-commit
 HEAD` fails ("a commit after the gate changes tools/...") until the gate runs on the new head. After that, save
 the scope, gate and mutants again and re-render the block. The release gate was not run in this round.
+
+## Recheck F1: only the merge base names the scope
+
+The recheck found that a later `main` commit passed as the scope's base when its range held the same commits
+and changes. Every A/B record is bound to the saved base, so an A/B against a later `main` that had adopted the
+batch's change would show no difference. `scope_history_problems` now requires the saved base to be the
+batch's merge base (`tools.evidence.merge_base`), and compares the saved commits and changes with that range
+alone. `tools.evidence.scope`, which writes the scope, takes its base from the same `merge_base`, so the
+writer and the checker share one definition of the batch's base. A passing `--check` therefore binds every
+A/B, latency and fuzz A/B record to the merge base. b16c's re-check gains the matching error (above).
+
+Regression tests: `tests/test_evidence_toolkit.py::test_f1_recheck_only_the_merge_base_names_the_scope`
+(a later `main`, a `main` that adopted the batch's change, and a commit inside the batch; each range is
+asserted equal to the batch's where it should be) and the adopted-`main` step of
+`test_f1_f2_f3_a_committed_batch_passes_and_each_untied_piece_fails`, which saves both the scope and the A/B
+against that commit. The probe exits 1 on `5ea29179` and 0 now. Seeded mutant M23 removes the base rule; M14
+and M15 are re-anchored on the new lines.
 
 ## Follow-ups and what was not run
 

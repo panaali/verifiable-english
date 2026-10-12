@@ -199,7 +199,7 @@ def merge_base(head: str, main: str = "main", cwd: Path = ROOT) -> str:
 
 
 def scope(base: str, head: str = "HEAD", cwd: Path = ROOT) -> dict:
-    """The batch's scope from its merge base with `base`; save the fixed object IDs in the result."""
+    """The batch's scope from its merge base with `base` (`merge_base`, the one base `batch_evidence --check`
+    accepts); save the fixed object IDs in the result."""
     head_sha = git("rev-parse", head, cwd=cwd).strip()
-    base_sha = git("merge-base", base, head_sha, cwd=cwd).strip()
-    return scope_range(base_sha, head_sha, cwd)
+    return scope_range(merge_base(head_sha, base, cwd), head_sha, cwd)
