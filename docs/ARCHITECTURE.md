@@ -48,9 +48,12 @@ decision A of 2026-10-08).
 | Generated Lean inventories (committed) | `lean/{statements,declarations,axioms,predicates}.txt` | 36,431 + 17,296 + 5,276 + 1,076 lines | written by `tools/lean_statements.py` and `lean/audit.py` |
 | Rust | `rust/*/src/**/*.rs` | 4,854 lines | 488 (`ve`) + 21 (`ve-core`) + 2,320 (`ve-kernel`) + 2,025 (`ve-profile`) |
 | Tools | `tools/**/*.py` | 20,303 lines | gate, selection, A/B, fuzz, trust map, layer checkers |
-| Tests | `tests/**/*.py` | 106,500 lines | 359 test modules, 25 other modules; 14,437 collected test IDs at the report's measured commit; 19,170 lines of Python in `conformance/` |
+| Tests | `tests/**/*.py` | 106,500 lines | 359 test modules, 25 other modules; 14,437 collected test IDs (`tools/gate-collection.json`); 19,170 lines of Python in `conformance/` |
 | Committed files | the whole tree | 374 MiB | `docs/` 143 MiB, of which `docs/lean-first/` 125 MiB |
 <!-- /numbers:sizes -->
+
+The Tests row records the measured commit. AR-3 subsequently removed `tools/gate-collection.json`;
+the gate now stores collected IDs with the checked commit and compares them with the merge base.
 
 <!-- numbers:counts -->
 | Count | Source | Value |
