@@ -692,14 +692,14 @@ AB_RECORDS = {"ab": (lambda record, base: ab.problems(record, HEAD, base=base), 
 
 @pytest.mark.parametrize("name", sorted(AB_RECORDS))
 @pytest.mark.parametrize("base, change, message", [
-    (BASE, {}, None),
-    (BASE, {"base_commit": HEAD}, "with itself"),
-    (BASE, {"base_commit": "c" * 40}, "not on the batch's merge base"),
-    (BASE, {"base_commit": None}, "names no base commit"),
-    (BASE, {"base_commit": BASE[:8]}, "names no base commit"),
-    (None, {"base_commit": None}, None),
-    (None, {"base_commit": HEAD}, "with itself"),
-], ids=ids)
+    pytest.param(BASE, {}, None, id="the-batch-base"),
+    pytest.param(BASE, {"base_commit": HEAD}, "with itself", id="head-against-head"),
+    pytest.param(BASE, {"base_commit": "c" * 40}, "not on the batch's merge base", id="another-base"),
+    pytest.param(BASE, {"base_commit": None}, "names no base commit", id="no-base"),
+    pytest.param(BASE, {"base_commit": BASE[:8]}, "names no base commit", id="short-base"),
+    pytest.param(None, {"base_commit": None}, None, id="positional-form-record-before-the-toolkit"),
+    pytest.param(None, {"base_commit": HEAD}, "with itself", id="positional-form-head-against-head"),
+])
 def test_f2_every_ab_record_compared_the_batch_base_with_its_head(name, base, change, message):
     """Review F2: a fuzz A/B of the head against itself passed, and no A/B record's base met the scope's."""
     problems, record = AB_RECORDS[name]

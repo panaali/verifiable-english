@@ -141,7 +141,14 @@ The review found that `--check` passed evidence not tied to the batch. Each find
 Regression tests: `tests/test_evidence_toolkit.py::test_f1_*`, `test_f2_*`, `test_f3_*` and
 `test_f1_f2_f3_a_committed_batch_passes_and_each_untied_piece_fails`. Seeded mutants M15 to M22 in
 `mutants.json` each fail their named test. M8's anchor was moved to the new `read_bytes` line. All 22 were
-killed (`tools/mutants.py`, run in this worktree).
+killed (`tools/mutants.py`, run in this worktree). `tools/gate-collection.json` gains the 34 new test IDs.
+
+Tests run in this round: the three probes (each exits 1 on `e9e1ccde` and 0 now), `lake build`,
+`lean/audit.py` (PASS), `tools/test_layer_policy.py`, and the 367 tests of every file that imports a changed
+module (`test_batch_evidence`, `test_evidence_toolkit`, `test_evidence_tools`, `test_lean_service`,
+`test_readings_defaults_rd6a_report`) together with `test_gate_collection`. All passed. The merge-base
+selection (`tools/select_tests.py --base`) picks all 360 units, the whole suite: the coverage map is stale.
+That selection was stopped at its 50-minute limit and left to the branch verify.
 
 The saved evidence (`evidence/scope.json`, `gate.json`, `mutants.json` and the generated block above) still
 describes the gated head `3537f55d`. This round changes `tools/`, so `--check docs/arch/AR-5a --report-commit
