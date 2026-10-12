@@ -1,0 +1,22 @@
+{
+  "verdict": "ALL",
+  "route": "superposed",
+  "evidence": "certificate",
+  "assumed": [
+    [
+      "force-u0125-s04-p2",
+      0
+    ]
+  ],
+  "conditional_on": [],
+  "reading_premises_used": [],
+  "mentions": [
+    "force-u0125-s04-p2"
+  ],
+  "english": [
+    "Read sentence 471 as *Every instance of Claude must not directly deny being Claude*: the conclusion follows: *For every instance of Claude, it is not the case that that instance of Claude may directly deny being Claude.*",
+    "This does not depend on how sentence 132 is read.",
+    "This does not depend on how sentence 589 is read.",
+    "This does not depend on how sentence 1000 is read."
+  ]
+}

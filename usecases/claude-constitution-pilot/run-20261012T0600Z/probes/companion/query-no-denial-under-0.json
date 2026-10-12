@@ -1,0 +1,577 @@
+{
+  "component": "force-u0125-s04-p2",
+  "route": "components",
+  "verdict": "ALL",
+  "sentence": "u0125.s04.p2",
+  "components": [
+    {
+      "component": "main",
+      "route": "w2",
+      "question": "premises",
+      "result": {
+        "candidates": [],
+        "choice": [],
+        "choices": [
+          {
+            "choice": [],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {
+            "claude": "e0"
+          },
+          "domains": {
+            "claude_instance": [],
+            "entity": [
+              "e0"
+            ],
+            "hard_constraint": [],
+            "operator": [],
+            "operator_input": [],
+            "situation": [],
+            "user": []
+          },
+          "relations": {
+            "attempt_to_kill_or_disempower_most_of_humanity": [],
+            "child_sexual_abuse_material": [],
+            "clarification_required": [],
+            "clear_and_substantial_undermining_of_oversight": [],
+            "compliance_against_guidelines": [],
+            "compliance_unethical": [],
+            "compliance_unsafe": [],
+            "critical_infrastructure_uplift": [],
+            "csam_generation_permitted_for_claude": [],
+            "cyberweapon_creation_permitted": [],
+            "damaging_cyberweapon_or_malicious_code": [],
+            "denial_of_being_claude_permitted": [],
+            "exception_to_asking_for_clarification": [],
+            "exception_to_complying_with_exploit_instruction": [],
+            "exception_to_never_denying_being_claude": [],
+            "exception_to_not_deceiving_about_system_prompt": [],
+            "explicit_instruction_against_exploits": [],
+            "exploit_instruction_compliance_required": [],
+            "firmness_required": [],
+            "general_exception_to_complying": [],
+            "genuine_ambiguity": [],
+            "human": [],
+            "humanity_attack_participation_permitted": [],
+            "illegitimate_absolute_control": [],
+            "illegitimate_control_involvement_permitted": [],
+            "infrastructure_uplift_permitted": [],
+            "input_is_information": [],
+            "input_is_persona": [],
+            "input_is_specific_instructions": [],
+            "instruction_abandon_identity_in_persona": [],
+            "instruction_act_against_guidelines": [],
+            "instruction_claim_human_when_asked": [],
+            "instruction_deceptive_tactics_harming_users": [],
+            "instruction_decline_or_withhold": [],
+            "instruction_dishonest_looking_within_honesty": [],
+            "instruction_endanger_health_or_safety": [],
+            "instruction_false_information_deceiving_user": [],
+            "instruction_focus_on_tasks": [],
+            "instruction_promote_own_products": [],
+            "instruction_respond_differently": [],
+            "instruction_role_play_custom_persona": [],
+            "judgment_use_required": [],
+            "mass_casualty_weapon_uplift": [],
+            "operator_input_permitted": [],
+            "operator_prompt_addresses_case": [],
+            "oversight_undermining_permitted": [],
+            "seemingly_compelling_argument_to_cross_line": [],
+            "system_prompt_compliance_required": [],
+            "system_prompt_deception_permitted": [],
+            "unsaid__clarification_required": [],
+            "unsaid__csam_generation_permitted_for_claude": [],
+            "unsaid__cyberweapon_creation_permitted": [],
+            "unsaid__denial_of_being_claude_permitted": [],
+            "unsaid__exploit_instruction_compliance_required": [],
+            "unsaid__firmness_required": [],
+            "unsaid__humanity_attack_participation_permitted": [],
+            "unsaid__illegitimate_control_involvement_permitted": [],
+            "unsaid__infrastructure_uplift_permitted": [],
+            "unsaid__judgment_use_required": [],
+            "unsaid__operator_input_permitted": [],
+            "unsaid__oversight_undermining_permitted": [],
+            "unsaid__system_prompt_compliance_required": [],
+            "unsaid__system_prompt_deception_permitted": [],
+            "unsaid__weapons_uplift_permitted": [],
+            "weapons_uplift_permitted": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "force-u0036-s05",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "force-u0036-s05",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "force-u0036-s05",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "force-u0036-s05",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "force-u0036-s05",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {
+            "claude": "e0"
+          },
+          "domains": {
+            "claude_instance": [],
+            "entity": [
+              "e0"
+            ],
+            "hard_constraint": [],
+            "operator": [],
+            "operator_input": [],
+            "situation": [],
+            "user": []
+          },
+          "relations": {
+            "attempt_to_kill_or_disempower_most_of_humanity": [],
+            "child_sexual_abuse_material": [],
+            "clarification_required": [],
+            "clear_and_substantial_undermining_of_oversight": [],
+            "compliance_against_guidelines": [],
+            "compliance_unethical": [],
+            "compliance_unsafe": [],
+            "critical_infrastructure_uplift": [],
+            "csam_generation_permitted_for_claude": [],
+            "cyberweapon_creation_permitted": [],
+            "damaging_cyberweapon_or_malicious_code": [],
+            "denial_of_being_claude_permitted": [],
+            "exception_to_asking_for_clarification": [],
+            "exception_to_complying_with_exploit_instruction": [],
+            "exception_to_never_denying_being_claude": [],
+            "exception_to_not_deceiving_about_system_prompt": [],
+            "explicit_instruction_against_exploits": [],
+            "exploit_instruction_compliance_required": [],
+            "firmness_required": [],
+            "general_exception_to_complying": [],
+            "genuine_ambiguity": [],
+            "human": [],
+            "humanity_attack_participation_permitted": [],
+            "illegitimate_absolute_control": [],
+            "illegitimate_control_involvement_permitted": [],
+            "infrastructure_uplift_permitted": [],
+            "input_is_information": [],
+            "input_is_persona": [],
+            "input_is_specific_instructions": [],
+            "instruction_abandon_identity_in_persona": [],
+            "instruction_act_against_guidelines": [],
+            "instruction_claim_human_when_asked": [],
+            "instruction_deceptive_tactics_harming_users": [],
+            "instruction_decline_or_withhold": [],
+            "instruction_dishonest_looking_within_honesty": [],
+            "instruction_endanger_health_or_safety": [],
+            "instruction_false_information_deceiving_user": [],
+            "instruction_focus_on_tasks": [],
+            "instruction_promote_own_products": [],
+            "instruction_respond_differently": [],
+            "instruction_role_play_custom_persona": [],
+            "judgment_use_required": [],
+            "mass_casualty_weapon_uplift": [],
+            "operator_input_permitted": [],
+            "operator_prompt_addresses_case": [],
+            "oversight_undermining_permitted": [],
+            "seemingly_compelling_argument_to_cross_line": [],
+            "system_prompt_compliance_required": [],
+            "system_prompt_deception_permitted": [],
+            "unsaid__clarification_required": [],
+            "unsaid__csam_generation_permitted_for_claude": [],
+            "unsaid__cyberweapon_creation_permitted": [],
+            "unsaid__denial_of_being_claude_permitted": [],
+            "unsaid__exploit_instruction_compliance_required": [],
+            "unsaid__firmness_required": [],
+            "unsaid__humanity_attack_participation_permitted": [],
+            "unsaid__illegitimate_control_involvement_permitted": [],
+            "unsaid__infrastructure_uplift_permitted": [],
+            "unsaid__judgment_use_required": [],
+            "unsaid__operator_input_permitted": [],
+            "unsaid__oversight_undermining_permitted": [],
+            "unsaid__system_prompt_compliance_required": [],
+            "unsaid__system_prompt_deception_permitted": [],
+            "unsaid__weapons_uplift_permitted": [],
+            "weapons_uplift_permitted": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "force-u0125-s04-p2",
+      "route": "enumerated",
+      "question": "query",
+      "result": {
+        "assumed": [
+          [
+            "force-u0125-s04-p2",
+            0
+          ]
+        ],
+        "conditional_on": [],
+        "evidence": "certificates",
+        "proofs": [
+          {
+            "choice": [
+              [
+                "force-u0125-s04-p2",
+                0
+              ]
+            ],
+            "conditional_on": [],
+            "outcome": "proof"
+          }
+        ],
+        "reading_premises_used": [],
+        "restrictions": [],
+        "route": "enumerated",
+        "verdict": "ALL"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "force-u0156-s03",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "force-u0156-s03",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "force-u0156-s03",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "force-u0156-s03",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "force-u0156-s03",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "force-u0156-s03",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {
+            "claude": "e0"
+          },
+          "domains": {
+            "claude_instance": [],
+            "entity": [
+              "e0"
+            ],
+            "hard_constraint": [],
+            "operator": [],
+            "operator_input": [],
+            "situation": [],
+            "user": []
+          },
+          "relations": {
+            "attempt_to_kill_or_disempower_most_of_humanity": [],
+            "child_sexual_abuse_material": [],
+            "clarification_required": [],
+            "clear_and_substantial_undermining_of_oversight": [],
+            "compliance_against_guidelines": [],
+            "compliance_unethical": [],
+            "compliance_unsafe": [],
+            "critical_infrastructure_uplift": [],
+            "csam_generation_permitted_for_claude": [],
+            "cyberweapon_creation_permitted": [],
+            "damaging_cyberweapon_or_malicious_code": [],
+            "denial_of_being_claude_permitted": [],
+            "exception_to_asking_for_clarification": [],
+            "exception_to_complying_with_exploit_instruction": [],
+            "exception_to_never_denying_being_claude": [],
+            "exception_to_not_deceiving_about_system_prompt": [],
+            "explicit_instruction_against_exploits": [],
+            "exploit_instruction_compliance_required": [],
+            "firmness_required": [],
+            "general_exception_to_complying": [],
+            "genuine_ambiguity": [],
+            "human": [],
+            "humanity_attack_participation_permitted": [],
+            "illegitimate_absolute_control": [],
+            "illegitimate_control_involvement_permitted": [],
+            "infrastructure_uplift_permitted": [],
+            "input_is_information": [],
+            "input_is_persona": [],
+            "input_is_specific_instructions": [],
+            "instruction_abandon_identity_in_persona": [],
+            "instruction_act_against_guidelines": [],
+            "instruction_claim_human_when_asked": [],
+            "instruction_deceptive_tactics_harming_users": [],
+            "instruction_decline_or_withhold": [],
+            "instruction_dishonest_looking_within_honesty": [],
+            "instruction_endanger_health_or_safety": [],
+            "instruction_false_information_deceiving_user": [],
+            "instruction_focus_on_tasks": [],
+            "instruction_promote_own_products": [],
+            "instruction_respond_differently": [],
+            "instruction_role_play_custom_persona": [],
+            "judgment_use_required": [],
+            "mass_casualty_weapon_uplift": [],
+            "operator_input_permitted": [],
+            "operator_prompt_addresses_case": [],
+            "oversight_undermining_permitted": [],
+            "seemingly_compelling_argument_to_cross_line": [],
+            "system_prompt_compliance_required": [],
+            "system_prompt_deception_permitted": [],
+            "unsaid__clarification_required": [],
+            "unsaid__csam_generation_permitted_for_claude": [],
+            "unsaid__cyberweapon_creation_permitted": [],
+            "unsaid__denial_of_being_claude_permitted": [],
+            "unsaid__exploit_instruction_compliance_required": [],
+            "unsaid__firmness_required": [],
+            "unsaid__humanity_attack_participation_permitted": [],
+            "unsaid__illegitimate_control_involvement_permitted": [],
+            "unsaid__infrastructure_uplift_permitted": [],
+            "unsaid__judgment_use_required": [],
+            "unsaid__operator_input_permitted": [],
+            "unsaid__oversight_undermining_permitted": [],
+            "unsaid__system_prompt_compliance_required": [],
+            "unsaid__system_prompt_deception_permitted": [],
+            "unsaid__weapons_uplift_permitted": [],
+            "weapons_uplift_permitted": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "force-u0263-s04-p2",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "force-u0263-s04-p2",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "force-u0263-s04-p2",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "force-u0263-s04-p2",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "force-u0263-s04-p2",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {
+            "claude": "e0"
+          },
+          "domains": {
+            "claude_instance": [],
+            "entity": [
+              "e0"
+            ],
+            "hard_constraint": [],
+            "operator": [],
+            "operator_input": [],
+            "situation": [],
+            "user": []
+          },
+          "relations": {
+            "attempt_to_kill_or_disempower_most_of_humanity": [],
+            "child_sexual_abuse_material": [],
+            "clarification_required": [],
+            "clear_and_substantial_undermining_of_oversight": [],
+            "compliance_against_guidelines": [],
+            "compliance_unethical": [],
+            "compliance_unsafe": [],
+            "critical_infrastructure_uplift": [],
+            "csam_generation_permitted_for_claude": [],
+            "cyberweapon_creation_permitted": [],
+            "damaging_cyberweapon_or_malicious_code": [],
+            "denial_of_being_claude_permitted": [],
+            "exception_to_asking_for_clarification": [],
+            "exception_to_complying_with_exploit_instruction": [],
+            "exception_to_never_denying_being_claude": [],
+            "exception_to_not_deceiving_about_system_prompt": [],
+            "explicit_instruction_against_exploits": [],
+            "exploit_instruction_compliance_required": [],
+            "firmness_required": [],
+            "general_exception_to_complying": [],
+            "genuine_ambiguity": [],
+            "human": [],
+            "humanity_attack_participation_permitted": [],
+            "illegitimate_absolute_control": [],
+            "illegitimate_control_involvement_permitted": [],
+            "infrastructure_uplift_permitted": [],
+            "input_is_information": [],
+            "input_is_persona": [],
+            "input_is_specific_instructions": [],
+            "instruction_abandon_identity_in_persona": [],
+            "instruction_act_against_guidelines": [],
+            "instruction_claim_human_when_asked": [],
+            "instruction_deceptive_tactics_harming_users": [],
+            "instruction_decline_or_withhold": [],
+            "instruction_dishonest_looking_within_honesty": [],
+            "instruction_endanger_health_or_safety": [],
+            "instruction_false_information_deceiving_user": [],
+            "instruction_focus_on_tasks": [],
+            "instruction_promote_own_products": [],
+            "instruction_respond_differently": [],
+            "instruction_role_play_custom_persona": [],
+            "judgment_use_required": [],
+            "mass_casualty_weapon_uplift": [],
+            "operator_input_permitted": [],
+            "operator_prompt_addresses_case": [],
+            "oversight_undermining_permitted": [],
+            "seemingly_compelling_argument_to_cross_line": [],
+            "system_prompt_compliance_required": [],
+            "system_prompt_deception_permitted": [],
+            "unsaid__clarification_required": [],
+            "unsaid__csam_generation_permitted_for_claude": [],
+            "unsaid__cyberweapon_creation_permitted": [],
+            "unsaid__denial_of_being_claude_permitted": [],
+            "unsaid__exploit_instruction_compliance_required": [],
+            "unsaid__firmness_required": [],
+            "unsaid__humanity_attack_participation_permitted": [],
+            "unsaid__illegitimate_control_involvement_permitted": [],
+            "unsaid__infrastructure_uplift_permitted": [],
+            "unsaid__judgment_use_required": [],
+            "unsaid__operator_input_permitted": [],
+            "unsaid__oversight_undermining_permitted": [],
+            "unsaid__system_prompt_compliance_required": [],
+            "unsaid__system_prompt_deception_permitted": [],
+            "unsaid__weapons_uplift_permitted": [],
+            "weapons_uplift_permitted": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    }
+  ],
+  "decided_units": [
+    "u0036.s05",
+    "u0052.s01",
+    "u0062.s01",
+    "u0073.s05",
+    "u0123.s01.p1",
+    "u0123.s02.p1",
+    "u0123.s03",
+    "u0156.s03",
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07",
+    "u0168.s01",
+    "u0248",
+    "u0263.s04.p2"
+  ],
+  "english": [
+    "Each open sentence below was checked by itself, under each of its readings.",
+    "Sentence 471 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+    "Read sentence 471 as *Every instance of Claude must not directly deny being Claude*: the conclusion follows: *For every instance of Claude, it is not the case that that instance of Claude may directly deny being Claude.*"
+  ]
+}
