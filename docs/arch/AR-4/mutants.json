@@ -63,12 +63,12 @@
   },
   {
    "id": "AR4-M7",
-   "claim": "an allowance carries a signature that is not blank",
+   "claim": "a blank or non-string signature is refused",
    "file": "tools/trust_map.py",
-   "find": "    for field in (\"reason\", \"signature\"):\n",
-   "replace": "    for field in (\"reason\",):\n",
+   "find": "    if not isinstance(signature, str) or not signature.strip():\n        return [f\"signature {signature!r} is blank\"]\n",
+   "replace": "    if not isinstance(signature, str) or not signature.strip():\n        return []\n",
    "tests": [
-    "tests/test_trust_ratchet.py::test_every_allowance_field_is_typed[-signature]",
+    "tests/test_trust_ratchet.py::test_every_allowance_field_is_typed",
     "tests/test_consolidation_tools.py::test_budget_check_needs_a_signed_allowance"
    ]
   },
