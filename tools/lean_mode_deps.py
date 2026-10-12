@@ -15,7 +15,7 @@ import subprocess
 from layer_policy import ROOT
 
 OUTPUT = ROOT / "tools/lean-mode-deps.json"
-SOURCES = ("lean/ModeDeps.lean", "lean/VE/Service/Protocol.lean")
+SOURCES = ("tools/lean_mode_deps.lean", "lean/VE/Service/Protocol.lean")
 
 
 def digests() -> dict[str, str]:
@@ -45,7 +45,7 @@ def load() -> dict[str, list[str]] | None:
 def generate() -> dict:
     env = dict(os.environ)
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
-    result = subprocess.run(("lake", "env", "lean", "ModeDeps.lean"), cwd=ROOT / "lean",
+    result = subprocess.run(("lake", "env", "lean", "../tools/lean_mode_deps.lean"), cwd=ROOT / "lean",
                             env=env, text=True, capture_output=True, check=True)
     modes = json.loads(result.stdout)
     data = {"sources": digests(), "modes": modes}

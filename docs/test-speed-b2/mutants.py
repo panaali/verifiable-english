@@ -15,7 +15,7 @@ PY = str(ROOT / ".venv/bin/python")
 PREAMBLE = 'import sys; sys.path[:0]=["tests","tools"]; import test_select_tests as t; '
 
 CASES = [
-    ("lean/ModeDeps.lean", "let rhs ← if mode == .document",
+    ("tools/lean_mode_deps.lean", "let rhs ← if mode == .document",
      "let rhs ← if mode == .rights then pure (mkConst ``VE.Norms.Run.runCaseReported) else if mode == .document",
      "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
      PREAMBLE + "t.test_compiled_mode_roots_regenerate_from_lean()"),

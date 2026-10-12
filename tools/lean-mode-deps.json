@@ -102,7 +102,7 @@
     ]
   },
   "sources": {
-    "lean/ModeDeps.lean": "c3cd0d429592b42e5d95608fa87db1480c4d8ce8914b42b1004ee357bb2d80d3",
-    "lean/VE/Service/Protocol.lean": "3173f57d94c501f2788b9253cc3f36fcb1d2ddd1ab249a9ed41324c09ea65ece"
+    "lean/VE/Service/Protocol.lean": "3173f57d94c501f2788b9253cc3f36fcb1d2ddd1ab249a9ed41324c09ea65ece",
+    "tools/lean_mode_deps.lean": "c3cd0d429592b42e5d95608fa87db1480c4d8ce8914b42b1004ee357bb2d80d3"
   }
 }
