@@ -173,7 +173,14 @@ Regression tests: `tests/test_evidence_toolkit.py::test_f1_recheck_only_the_merg
 asserted equal to the batch's where it should be) and the adopted-`main` step of
 `test_f1_f2_f3_a_committed_batch_passes_and_each_untied_piece_fails`, which saves both the scope and the A/B
 against that commit. The probe exits 1 on `5ea29179` and 0 now. Seeded mutant M23 removes the base rule; M14
-and M15 are re-anchored on the new lines.
+and M15 are re-anchored on the new lines; `tools/mutants.py --id M14 --id M15 --id M23` killed all three.
+
+Tests run in this round: the probe, `lake build`, `lean/audit.py` (PASS), `tools/test_layer_policy.py`, and the
+91 test files the selector ties to this round's change by an import of a changed module or a read of this
+report (3,780 passed, 83 expected failures, 1 skipped, 0 failed). The selector's full answer is again all 360
+units: 268 are tied only to a read of `evidence/b16c-recheck.json` in the stale coverage map. Those were left
+to the branch verify, as was the release gate. The saved gate, scope and mutant evidence still describe
+`3537f55d` and must be saved again after the gate runs on the new head.
 
 ## Follow-ups and what was not run
 
