@@ -143,11 +143,33 @@ The generated inventories overlap many branches (R12: not an overlap). These are
 ## Pre-review gate (`review-ready.py`, effc6295)
 
 Clean, commits, gate (018f8107), mutants (Lean, Python) and delta pass. The relay row fails on findings in the
-`readings-route` relay: 7 allow-list paths that match nothing, and 5 empty or duplicate mutations it accepts
+`readings-route` relay: 86 allow-list paths that match nothing (the gate output shows only the last 7), and 5 empty or duplicate mutations it accepts
 (units, fill, targets). This branch causes none of them. The row runs because `lean/ResponseShape/Audit.lean`
 changed, and that file is the generated manifest, which no module or executable imports. Every other file under
 `ve/`, `lean/ResponseShape/` and `lean/VE/Service/` is identical to the base 5479466f. FOLLOW-UP for the
 readings-route owner (RD-6b), or a DRI allow line for AR-1 in `review-ready-allow.txt`.
+
+Second round (sent back on d8fa98cf, relay row FAIL). Not fixed in this branch, by decision; the evidence is below.
+
+- Reproduced: `tools/relay_mutation_gate.py --route service:readings-route` on this branch's build gives
+  46 fixtures, 15,768 mutants, 13,502 refused, 2,257 allowed, 91 failures (86 allow-list paths that match nothing, 5
+  accepted mutants). Saved: `evidence/relay-gate-readings-route-branch.json`.
+- Same on the base. I put back the base's `lean/VE/SoftNorms/Status.lean`, which is the only Lean source this branch
+  changes outside the generated `Audit.lean`, `declarations.txt` and `axioms.txt` files. With that file restored,
+  `ve/`, the gate, its allow-list and its cases matched 5479466f. I rebuilt (`lake build`, 883 jobs) and reran the
+  gate: the 91 failures and every total were the same as on this branch. Saved:
+  `evidence/relay-gate-readings-route-base-5479466f.json`. I then restored the branch's file and rebuilt.
+- The fix is already in flight: c88e4012 on infra/oom-rootcause ("Readings relay: reject malformed labels,
+  targets, and repeated over names", the pending oom-rootcause F7 item). It changes `tools/relay-gate-allow.json`,
+  `lean/ResponseShape/Schemas/ReadingsRoute.lean`, `lean/ResponseShape.lean`, `Skeleton.lean`, the readings-route
+  schema and `service_schema.py`. I did not copy it, for three reasons:
+  - It adds and changes Lean declarations, and this batch must change none.
+  - Those files are in flight on other branches (oom-rootcause; lean-first/b14c and question-answering/q2 change the
+    allow-list), and the overlap rule says to avoid them.
+  - Adding the 5 accepted mutants to the allow-list instead would weaken the check.
+- How this row can pass: merge oom-rootcause first, then merge main into this branch and rerun `review-ready.py`.
+  Or the DRI can waive it with the line `arch-20261010-1 relay readings-route findings are main's (fix c88e4012 on
+  infra/oom-rootcause)` in `review-ready-allow.txt`.
 
 ## Not done / follow-ups
 
