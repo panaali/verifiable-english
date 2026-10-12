@@ -74,3 +74,30 @@ Statuses describe this increment. **Open** entries are requirements for full RD-
 - **AGENT:** the merged partial code, schemas, proof, focused tests and mutations above; remaining SC batches and final gate open.
 - **HUMAN / DRI:** the three unsigned deltas above and any later item-specific statement or availability ruling.
 - **EXTERNAL:** SC-9's independent source check and three-way use-case evidence, not run.
+
+## Post-review correction (2026-10-12)
+
+The report above records the earlier integration commit. This correction fixes two live Lean answer defects without
+claiming RD-9 acceptance:
+
+- `ndPairFacts` now includes dependencies of both displayed pair values and reads each candidate from admission's
+  table. F-ND1's default witness and F-ND2 each render the missing gap. The regression IDs are
+  `test_fnd1_render_shows_the_situation_with_its_filled_gaps`, `test_fnd2_render`,
+  `test_fnd1_validate_separates_on_the_filled_document` and
+  `test_the_route_builds_a_candidates_document_only_in_the_request_table`.
+- `ndVerdictsAnswer` tests whether `assumed` was supplied, including `assumed: []`. Component subanswers use that
+  same answer constructor, and the product fold uses the same presence rule. The regression IDs are
+  `test_explicit_empty_assumed_has_no_decided_units` and
+  `test_component_completion_answers_include_decided_units_and_respect_empty_assumed`.
+- The changed Lean files, checker, assurance pins, frozen-source list and test collection were refreshed through
+  their owners. RD-6b's trust report test now measures its saved historical commit instead of a moving checkout.
+- `lake build` and `python3 lean/audit.py` passed. The selected command ran all 366 mapped units. Its failures were
+  rerun by node ID after the fixes and generator updates; the final two pin/report failures passed on their own
+  rerun. The release gate was not run, as required by this fix task.
+
+RD-9 remains incomplete: `softX_wellFormed`, SC-2 through SC-6, SC-8, SC-9 and three-way fixture agreement are
+still open. The public soft completion is still disabled. No model calls or push were made. The `decided_units`
+field, the English gap selection and the current trust growth still need item-specific DRI signatures; R1 and R6 do
+not sign them. `tools/trust_map.py --check` reports K +0, S +56 and V +105 against the signed baseline (trusted +161),
+with no unclassified declarations. The explanatory `gaps` field remains SIGNED by standing ruling R3
+(DRI-RULINGS.md), with `test_pair_gaps_are_typed_and_bound_to_the_request` checking request binding.
