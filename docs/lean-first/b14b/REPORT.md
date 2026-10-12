@@ -101,6 +101,8 @@ passed, and `lake build ve_service ve_response_decode` passed after restoration
 unclassified lines and no drift beyond the R6 allowance; the regenerated
 checker-pin, frozen-inventory, response-schema and gate-collection checks passed;
 `tools/relay_lint.py` found no own content diagnostic in 13 relayed modules and
-six relayed functions. The final diff review uses the
+six relayed functions. The generated statement check passed with zero added,
+removed or changed entries across 4,802 statements, the predicate list and
+the declaration list. The final diff review uses the
 pinned base `f1b719c7` and a fixed task commit. No document wrapper or
 norm-defaults source changed. Free disk was 58 GiB at final preparation.
