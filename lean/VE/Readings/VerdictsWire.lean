@@ -339,14 +339,9 @@ def acceptedNote (name : String) (accepted : Bool) (on : List String) (shown : O
 /-- A certificate bound as the norm-defaults route binds a choice's (`ndCertificate`): the regenerated premises of
     `fill U` and the choice's assertions, then `own` as written, and the conclusion `conclusion`. -/
 def ndBoundCert (r : AdmittedND) (c : Choice) (own : List Json) (conclusion : Json) (j : Json) :
-    Except String VE.Tableau.Certificate := do
-  let re := r.b.a.re
-  let cert ← VE.CertificateWire.decodeCertificate j
-  VE.Route.Wire.bindingOk (VE.NormDefaults.Wire.profilesOf re.lowerJson)
-    (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU re.lowerJson)
-    ((VE.NormDefaults.Wire.premisesU (choiceU r.N c) (choiceDoc r.N.D c).2).map encF ++ own)
-    conclusion cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
-  pure cert
+    Except String VE.Tableau.Certificate :=
+  VE.NormDefaults.Wire.bindCertX r.b.a.re.lowerJson (choiceU r.N c) []
+    (choiceDoc r.N.D c).2 own conclusion j
 
 /-- A base model with a separate filling, on the choice's layered source (`choice-model` under the completion). -/
 def ndFilled (r : AdmittedND) (c : Choice) (L : {L : VE.NormDefaults.Wire.LayeredU // L.U = choiceU r.N c})

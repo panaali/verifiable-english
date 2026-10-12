@@ -1,6 +1,8 @@
 import VE.Readings.Unspecified
+import VE.Readings.SoftDefaults
 import VE.Readings.SupRun
 import VE.NormDefaults.Admission
+import VE.NormDefaults.LayeredEntail
 
 /-! The wire under the unspecified completion (docs/spec/readings-defaults.md 1.1, 3, 4.1 to 4.3, 5 and 6.3; plan
 RD-2a).
@@ -130,6 +132,18 @@ def ndRest (N : NDoc) : Bool :=
 
 theorem wellFormedND_eq (N : NDoc) : WellFormedND N = (WellFormedDoc N.D && ndRest N) := by
   simp only [WellFormedND, ndRest, Bool.and_assoc]
+
+/-- The shape-independent admission checks shared by the norms and soft chains. -/
+def fillRest (N : NDoc) : Bool :=
+  fillNamesFree N && VE.NormDefaults.WellFormedU (freeU N) &&
+  N.D.sets.all (fun R => (List.range R.candidates.length).all (fun i =>
+    (R.candidates[i]?.bind (·.content)).isNone || VE.NormDefaults.WellFormedU (oneU N R.id i)))
+
+theorem ndRest_eq_fillRest (N : NDoc) : ndRest N = (normsShaped N.D && fillRest N) := by
+  simp only [ndRest, fillRest, Bool.and_assoc]
+
+theorem wellFormedSD_eq (N : NDoc) : WellFormedSD N = (WellFormedDoc N.D && softShaped N.D && fillRest N) := by
+  simp only [WellFormedSD, fillRest, Bool.and_assoc]
 
 /-- A passing `ndText` has established every conjunct of `WellFormedND` after S1's but `normsShaped`: admission
     evaluates each norm-defaults check once. -/
@@ -652,15 +666,12 @@ def ndCertificate (x : ChoiceReplayU) (inner : Json) : Except String (List (Stri
   unless (inner.getObjVal? "conflict") matches .ok (.obj _) do
     throw "InvalidInput: a reading's certificate needs the choice's conflict packages"
   let (Γ, φ) ← ndFormulas x inner
-  let cert ← VE.CertificateWire.decodeCertificate (← inner.getObjVal? "certificate")
   let own ← match inner.getObjValD "premises" with
     | .null => pure []
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: premises must be an array"
-  VE.Route.Wire.bindingOk (VE.NormDefaults.Wire.profilesOf re.lowerJson)
-    (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU re.lowerJson)
-    ((VE.NormDefaults.Wire.premisesU U (choiceDoc x.r.N.D x.c).2).map encF ++ own)
-    (inner.getObjValD "conclusion") cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
+  let cert ← VE.NormDefaults.Wire.bindCertX re.lowerJson U [] (choiceDoc x.r.N.D x.c).2 own
+    (inner.getObjValD "conclusion") (← inner.getObjVal? "certificate")
   let valid := VE.Tableau.checkCertificate (envAt (fill U) (size (fill U))) (VE.NormDefaults.Wire.premisesU U Γ) φ cert
   pure [("valid", .bool valid), ("premises", toJson (VE.NormDefaults.Wire.premisesU U Γ).length)]
 

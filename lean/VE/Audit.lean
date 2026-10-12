@@ -1,3 +1,4 @@
+import VE.Readings.SoftDefaults
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
@@ -5047,3 +5048,33 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Question.frames_leads
 #print axioms VE.Question.askedGate_sound
 #print axioms VE.Question.Run.oneFields_gated
+
+#print axioms VE.NormDefaults.Wire.conflictFreeCheckX_nil
+#print axioms VE.NormDefaults.Wire.conflictFreeCheckX_sound
+#print axioms VE.NormDefaults.Wire.premisesX_nil
+#print axioms VE.NormDefaults.acceptanceX
+#print axioms VE.NormDefaults.baseAdmissibleX_nil
+#print axioms VE.NormDefaults.conflictFreeX_nil
+#print axioms VE.NormDefaults.entailsX_nil
+#print axioms VE.NormDefaults.modelCheckX_nil
+#print axioms VE.NormDefaults.modelCheckX_sound
+#print axioms VE.Readings.choiceX_normsShaped
+#print axioms VE.Readings.consistentX_nil
+#print axioms VE.Readings.counterX_nil
+#print axioms VE.Readings.coversG_mem
+#print axioms VE.Readings.coversG_row
+#print axioms VE.Readings.covers_iff_coversG
+#print axioms VE.Readings.filledAuthorEnv_eq
+#print axioms VE.Readings.foldG_all_sound
+#print axioms VE.Readings.foldG_conflict_free_sound
+#print axioms VE.Readings.foldG_conflict_sound
+#print axioms VE.Readings.foldG_none_sound
+#print axioms VE.Readings.foldG_premises_inconsistent_sound
+#print axioms VE.Readings.foldG_premises_model_sound
+#print axioms VE.Readings.foldG_some_sound
+#print axioms VE.Readings.holds_iff_holdsG
+#print axioms VE.Readings.rowsHold_to_G
+#print axioms VE.Readings.softX_strict
+#print axioms VE.Readings.xSem_nil
+#print axioms VE.Readings.Wire.ndRest_eq_fillRest
+#print axioms VE.Readings.Wire.wellFormedSD_eq
