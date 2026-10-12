@@ -2,11 +2,15 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from pathlib import Path
 import subprocess
 
+import pytest
+
 from ve import Environment, FiniteModel
 from ve.backends.validation import family_in_scope, model_in_scope
+from ve.backends.service_schema import Invalid, check_row
 from ve.definitions import compile_definitions
 from ve.profiles import SPEC_REVISION
 from tests.subprocesses import HANG_TIMEOUT
@@ -60,6 +64,23 @@ def test_nary_background_is_lean_regenerated_and_ordered():
         body = body[2]
     assert body[0] == "and"
     assert body[1][1][:2] == ["atom", "derived"]
+
+
+def test_nary_background_relay_refuses_missing_or_extra_generated_rows():
+    env, _ = case()
+    request = {"id": "bg", "kind": "background", "environment": env}
+    row, = route([request])
+    check_row("route", row, request, 0)
+    for field in ("background", "premises", "generators"):
+        for value in ([], row[field] + [row[field][0]]):
+            mutant = deepcopy(row)
+            mutant[field] = value
+            with pytest.raises(Invalid):
+                check_row("route", mutant, request, 0)
+    mutant = deepcopy(row)
+    mutant["background"][0] = ["top"]
+    with pytest.raises(Invalid):
+        check_row("route", mutant, request, 0)
 
 
 def test_nary_derived_table_is_checked_by_lean():

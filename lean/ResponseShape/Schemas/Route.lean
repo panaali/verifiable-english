@@ -89,7 +89,9 @@ def background : Shape :=
         ("status", constS "ok"),
         ("background", ref "common.json#/$defs/generated_core_formulas"),
         ("premises", ref "common.json#/$defs/generated_core_formulas"),
-        ("generators", n [arr, .items (ref "common.json#/$defs/generator")])]]
+        ("generators", n [arr, .items (ref "common.json#/$defs/generator")])],
+      .sameLength ["background", "premises", "generators"],
+      .equalFields "background" "premises"]
 
 def label : Shape :=
   c "The canonical label is the requested one (parseLabel_render)." [

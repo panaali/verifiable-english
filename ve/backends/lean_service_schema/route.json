@@ -14,7 +14,9 @@
         "status": {"const": "ok"}
       },
       "required": ["id", "status", "background", "premises", "generators"],
-      "type": "object"
+      "type": "object",
+      "x-equal-fields": ["background", "premises"],
+      "x-same-length": ["background", "premises", "generators"]
     },
     "bundle": {
       "$comment": "Definitions.Bundle.runBundle: every requested lemma is checked, in order, under its meaning id (binding to the request's lemmas).",
