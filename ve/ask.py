@@ -354,6 +354,9 @@ def _check_source(source, request, units):
         _need(source["unit"] in units, f"a cited unit {source['unit']!r} is not the document's")
     elif source["kind"] == "rules":
         _need(source["predicate"] in predicates, f"cited rules on {source['predicate']!r}, not a declared predicate")
+    elif source["kind"] == "definition":
+        _need(source["name"] in request["_definitions"],
+              f"a cited definition {source['name']!r} is not the document's")
     elif source["kind"] in ("pair", "fill"):
         _need({source["required"], source["permission"]} <= predicates, "a cited pair names undeclared predicates")
 
@@ -425,6 +428,10 @@ def _check_answer(result, request, expected):
             _need(all(e in request["_elements"] for e in gap[1]),
                   "a gap names an element no model of the request's evidence has")
     _need(len(set(choices)) == len(choices), "two rows name one choice")
+    expected_choices = ([e["choice"] for e in request["case"]["evidence"]]
+                        if request["_route"] == "readings" else [[]])
+    _need(set(choices) == {json.dumps(choice) for choice in expected_choices} and
+          len(choices) == len(expected_choices), "the rows do not cover exactly the request's choices")
     lines = result["lines"]
     _need(type(lines) is list and lines, "an answer has no line")
     for line in lines:
@@ -475,6 +482,7 @@ def _context(request: dict, doc, raw: bytes, reading: dict, route: str) -> dict:
                 sets[R["id"]] = len(R["readings"])
     units = {u["id"]: body[u["span"][0]:u["span"][1]].decode("utf-8") for u in meta["units"]}
     return {"_units": units, "_sets": sets, "_predicates": set(doc["environment"].predicates),
+            "_definitions": set(doc["environment"].definition_entries),
             "_elements": _elements(case.get("evidence"), set()), "_route": route, "_reading": reading}
 
 

@@ -133,6 +133,8 @@ def rebinds(result):
     r = result
     out["no row"] = setting(r, ("rows",), [])
     out["a repeated row"] = setting(r, ("rows",), r["rows"] + r["rows"][:1])
+    if len(r["rows"]) > 1:
+        out["a missing choice row"] = setting(r, ("rows",), r["rows"][:-1])
     out["a lead unknown to the shape"] = setting(r, ("lead",), "maybe")
     out["another route"] = setting(r, ("route",), "plain" if r["route"] != "plain" else "readings")
     out["another sentence"] = setting(r, ("sentence",), "every member is happy.")
@@ -156,6 +158,8 @@ def rebinds(result):
             r, ("rows", i, "cited"), row["cited"] + [{"kind": "unit", "unit": "zz9"}])
         out[f"row {i}: a cited act not declared"] = setting(
             r, ("rows", i, "cited"), row["cited"] + [{"kind": "rules", "predicate": "zz_act"}])
+        out[f"row {i}: a definition not declared"] = setting(
+            r, ("rows", i, "cited"), row["cited"] + [{"kind": "definition", "name": "zz_defined"}])
         out[f"row {i}: a gap of an undeclared act"] = setting(r, ("rows", i, "gaps"), [["zz_act", ["e0"], False]])
         if row["gaps"]:
             act, ids, value = row["gaps"][0]

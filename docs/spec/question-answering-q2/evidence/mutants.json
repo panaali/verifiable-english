@@ -123,6 +123,32 @@
       ]
     },
     {
+      "id": "python-definition-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a cited definition belongs to the request's document",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[G1] - Assert..."
+      ]
+    },
+    {
+      "id": "python-row-omitted",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a readings answer has one row for every compatible choice",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[U3] - Assert..."
+      ]
+    },
+    {
       "id": "python-gate-transport-only",
       "language": "Python",
       "file": "tools/relay_mutation_gate.py",
