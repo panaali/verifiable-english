@@ -1,4 +1,5 @@
 import VE.Readings.SoftDefaults
+import VE.Readings.SoftSeparate
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
@@ -5084,3 +5085,32 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.xSem_nil
 #print axioms VE.Readings.Wire.ndRest_eq_fillRest
 #print axioms VE.Readings.Wire.wellFormedSD_eq
+#print axioms VE.Readings.selects_wellFormed_of
+#print axioms VE.Readings.fillSelects_wellFormed
+#print axioms VE.Readings.softX_wellFormed
+#print axioms VE.Readings.excLabels_length
+#print axioms VE.Readings.softPremisesIn_fill
+#print axioms VE.Readings.sideValidOn_sideOfS_iff
+#print axioms VE.Readings.sideOfS_E0
+#print axioms VE.Readings.tablesModelOn_sideOfS
+#print axioms VE.Readings.conflict_canon_doc
+#print axioms VE.Readings.outcome_canon_doc
+#print axioms VE.Readings.fillSelects_typed
+#print axioms VE.Readings.observeOn_sideOfS_sound
+#print axioms VE.Readings.wellFormedSD_doc
+#print axioms VE.Readings.wellFormedSD_one
+#print axioms VE.Readings.sideWF_soft
+#print axioms VE.Readings.filledAuthorEnv_predicates
+#print axioms VE.Readings.authorEnv_predicates
+#print axioms VE.Readings.envAt_filledAuthor
+#print axioms VE.Readings.envAt_filled_constants
+#print axioms VE.Readings.valid_tablesModelS
+#print axioms VE.Readings.tablesTypedOn_of_tablesTyped
+#print axioms VE.Readings.pairEval_fst
+#print axioms VE.Readings.observesF_rel
+#print axioms VE.Readings.separatesS_witness
+#print axioms VE.Readings.otherShowsS
+#print axioms VE.Readings.otherAssignmentS
+#print axioms VE.Readings.separatesS_other
+#print axioms VE.Readings.separatesS_sound
+#print axioms VE.Readings.separatesS_separated

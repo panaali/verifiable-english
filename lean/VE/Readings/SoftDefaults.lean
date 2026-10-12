@@ -56,6 +56,73 @@ theorem choiceX_normsShaped (N : NDoc) (hn : normsShaped N.D = true) (c : Choice
     intro M hM
     exact hs.2 M hM)
 
+/-- `selects_wellFormed` for a rule typed by its own guard and carve-outs, whether or not the tree holds it. -/
+theorem selects_wellFormed_of {T : VE.Norms.Tree} {E : VE.Environment} {Γ : List String} {p : String}
+    (hT : VE.Norms.RulesTyped T E Γ p) (f : Nat) (M : VE.Norms.Node)
+    (hM : M.guard.WellFormed E Γ ∧ ∀ C ∈ M.carveOuts, C.WellFormed E Γ) (hp : M.pred = p) :
+    (VE.Norms.selects T f M).WellFormed E Γ := by
+  refine ⟨VE.Norms.applies_wellFormed hM, VE.Norms.anyF_wellFormed E Γ _ ?_⟩
+  intro a ha
+  obtain ⟨C, hC, rfl⟩ := List.mem_map.mp ha
+  obtain ⟨hC, hCp⟩ := VE.Norms.mem_children hC
+  exact VE.Norms.yields_wellFormed hT f C hC (hCp.trans hp)
+
+/-- A rule's selection regenerated on the filled tree is a base formula over its act's sorts. -/
+theorem fillSelects_wellFormed (N : NDoc) (X : RightsDoc) (hs : VE.SoftNorms.WellFormedSoft (correlate X) = true)
+    (hw : VE.NormDefaults.WellFormedU (asU N X) = true) (K : SoftNode) (hK : K ∈ (correlate X).T.nodes) :
+    (VE.Norms.subst (VE.NormDefaults.fill (asU N X)).T (VE.Norms.size (VE.NormDefaults.fill (asU N X)))
+      (VE.Norms.selects (VE.NormDefaults.fill (asU N X)).T (VE.Norms.fuel (VE.NormDefaults.fill (asU N X)).T)
+        (VE.SoftNorms.primeNode (correlate X) K))).WellFormed (envAt (VE.NormDefaults.fill (asU N X)) 0)
+      (VE.SoftNorms.sortsOf (correlate X) K.pred).reverse ∧
+    ∀ s ∈ VE.SoftNorms.sortsOf (correlate X) K.pred, s ∈ (envAt (VE.NormDefaults.fill (asU N X)) 0).sorts := by
+  have hsv := VE.SoftNorms.softValid_of_wellFormed _ hs
+  have hv : VE.Norms.Valid (VE.NormDefaults.fill (asU N X)) :=
+    VE.Norms.valid_of_wellFormed _ (VE.NormDefaults.fill_wellFormed _ hw)
+  obtain ⟨n, hn, hnK⟩ := List.mem_map.mp (hsv.predReg K hK)
+  obtain ⟨r, hr⟩ : ∃ r, (correlate X).T.regulated.find? (·.name == K.pred) = some r :=
+    Option.isSome_iff_exists.mp (List.find?_isSome.mpr ⟨n, hn, by simpa using hnK⟩)
+  have hrm : r ∈ (VE.NormDefaults.fill (asU N X)).T.regulated := List.mem_of_find?_eq_some hr
+  have hrn : r.name = K.pred := by simpa using List.find?_some hr
+  have hso : VE.SoftNorms.sortsOf (correlate X) K.pred = r.sorts := by
+    simp [VE.SoftNorms.sortsOf, VE.SoftNorms.sortsIn, hr]
+  have hk := VE.Norms.index_before hv hrm
+  have hT := VE.Norms.rulesTyped_of_valid hv hk
+  have hpn : VE.NormDefaults.fillRoot (asU N X) (VE.SoftNorms.primeNode (correlate X) K) ∈
+      (VE.NormDefaults.fill (asU N X)).T.nodes :=
+    VE.NormDefaults.mem_fill_nodes.mpr (Or.inl ⟨_, List.mem_map_of_mem hK, rfl⟩)
+  have hg := hT _ hpn (by rw [VE.NormDefaults.fillRoot_pred, hrn]; rfl)
+  rw [VE.NormDefaults.fillRoot_guard, VE.NormDefaults.fillRoot_carveOuts] at hg
+  have h1 := selects_wellFormed_of hT (VE.Norms.fuel (VE.NormDefaults.fill (asU N X)).T) _ hg
+    (by rw [hrn]; rfl)
+  have hle : VE.Norms.before (VE.NormDefaults.fill (asU N X)) r.name ≤
+      VE.Norms.size (VE.NormDefaults.fill (asU N X)) :=
+    Nat.le_of_lt (List.getElem?_eq_some_iff.mp hk).1
+  rw [hso]
+  exact ⟨VE.Norms.subst_wellFormed hv _ _ _ (VE.Norms.envAt_mono hle _ _ h1),
+    (hv.decl _ (List.mem_of_getElem? hk)).2.2⟩
+
+theorem softX_wellFormed (N : NDoc) (X : RightsDoc) (hs : VE.SoftNorms.WellFormedSoft (correlate X) = true)
+    (hw : VE.NormDefaults.WellFormedU (asU N X) = true) :
+    ∀ a ∈ softX N X, a.WellFormed (envAt (VE.NormDefaults.fill (asU N X)) 0) [] := by
+  have hsv := VE.SoftNorms.softValid_of_wellFormed _ hs
+  intro a ha
+  obtain ⟨⟨l, a⟩, hla, rfl⟩ := List.mem_map.mp ha
+  rcases List.mem_append.mp hla with he | hc
+  · -- `Exc_T`: soft's own premises, typed over `E′`, whose declarations `E‴` keeps
+    have hea : a ∈ VE.SoftNorms.excPremises (correlate X) := (List.of_mem_zip he).2
+    have := hsv.premTyped a (List.mem_append_left _ hea)
+    exact VE.Norms.wf_mono (E := envAt (asU N X).D 0) (E' := envAt (VE.NormDefaults.fill (asU N X)) 0) rfl rfl
+      (VE.NormDefaults.envAt_fill_mono (VE.NormDefaults.uvalid hw) 0) a [] this
+  · obtain ⟨⟨M, K⟩, hMK, he⟩ := List.mem_map.mp hc
+    cases he
+    obtain ⟨hM, hK, -, -, -, -⟩ := VE.SoftNorms.mem_collidingPairs.mp hMK
+    have hMs := fillSelects_wellFormed N X hs hw M hM
+    have hKs := fillSelects_wellFormed N X hs hw K hK
+    rw [← hsv.cpSorts _ hMK] at hKs
+    apply VE.Norms.bindAll_wellFormed hMs.2 [] _
+    simp only [List.append_nil]
+    exact ⟨hMs.1, hKs.1⟩
+
 def filledAuthorEnv (N : NDoc) : VE.Environment :=
   envAt { N.D.frame.soft with E := fillFrameEnv N }.base 0
 
