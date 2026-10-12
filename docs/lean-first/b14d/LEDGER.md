@@ -9,4 +9,4 @@
 
 Discourse already obtains its joint choice list from Lean's discourse route. The new readings mode checks that every proposed row corresponds to exactly one choice in that request list. Python retains its verdict fold only for environments outside the Lean readings modes' recorded scope. No Rust product code changed.
 
-The `readings-choices` response has a Lean source schema, an encoder theorem, and request binding for every plan index, count, unit and coupling label. The client rejects missing, extra, mistyped, empty and unbound rows. `x-reading-plan` awaits D1 classification in the architecture ADR; the pending keyword is tracked by `test_adr_relation_keywords` and `test_lean_shapes_are_classified`.
+The `readings-choices` response has a Lean source schema, an encoder theorem, and request binding for every plan index, count, unit and coupling label. Lean rejects duplicate set-version identities before planning. The client rejects missing, extra, mistyped, empty and unbound rows. `x-reading-plan` awaits D1 classification in the architecture ADR; the pending keyword is tracked by `test_adr_relation_keywords` and `test_lean_shapes_are_classified`.

@@ -13448,6 +13448,7 @@
   "tests/test_stage2_readings.py::test_coupled_plan_every_field_is_typed_and_bound[id-other]",
   "tests/test_stage2_readings.py::test_coupled_plan_every_field_is_typed_and_bound[route-UNKNOWN]",
   "tests/test_stage2_readings.py::test_coupled_plan_every_field_is_typed_and_bound[status-UNKNOWN]",
+  "tests/test_stage2_readings.py::test_coupled_plan_refuses_duplicate_set_version",
   "tests/test_stage2_readings.py::test_coupled_plan_refuses_unresolved_set",
   "tests/test_stage2_readings.py::test_coupled_plan_response_is_typed_and_bound[<lambda>0]",
   "tests/test_stage2_readings.py::test_coupled_plan_response_is_typed_and_bound[<lambda>1]",
