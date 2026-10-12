@@ -12,7 +12,7 @@ from itertools import product
 import re
 
 from .assurance import semantic_entry
-from .ast import (And, Binary, Bottom, Exists, Forall, Implies, Not, Or,
+from .ast import (And, Atom, Binary, Bottom, Exists, Forall, Implies, Not, Or,
                   Top, Unary, Var, _Checker, _Decoder, _to_data)
 from .background import dependency_order
 from .environment import UNSAID_PREFIX
@@ -76,6 +76,8 @@ def _instantiate(formula, terms, depth=0):
         args = (formula.term,) if isinstance(formula, Unary) else (formula.left, formula.right)
         mapped = tuple(_replace_term(x, terms, depth) for x in args)
         return Unary(formula.predicate, mapped[0]) if len(mapped) == 1 else Binary(formula.predicate, *mapped)
+    if isinstance(formula, Atom):
+        return Atom(formula.predicate, tuple(_replace_term(x, terms, depth) for x in formula.terms))
     if isinstance(formula, (Eq, Lt, Le)):
         return type(formula)(_replace_term(formula.left, terms, depth),
                              _replace_term(formula.right, terms, depth))
@@ -119,56 +121,25 @@ def _regulated_closure(formula, regulated):
     return False
 
 
-_NON_FOL_TAGS = frozenset({"reach", "atom", "le", "lt", "num", "add", "scale"})
-
-
-def _first_order(data) -> bool:
-    """Whether a formula on the wire uses first-order constructs only."""
-    stack = [data]
-    while stack:
-        node = stack.pop()
-        if type(node) is list:
-            if node and node[0] in _NON_FOL_TAGS:
-                return False
-            stack.extend(node[1:])
-    return True
-
-
-def _family_norms(document) -> bool:
-    """Whether Lean's `family-norms` mode (VE/Service/FamilyNorms.lean) takes a
-    norm document over the closure, core or order family: the norm formulas are
-    first-order, every regulated predicate is unary or binary and no declaration
-    uses `$int`, so the FOL route regenerates the document over the
-    environment's FOL view; certificates are the family's."""
-    from .backends.validation import family_in_scope
-    env = document.env
-    if not (env.closure or env.order) or not family_in_scope(env):
-        return False
-    if any(decl.regulated is not None and len(decl.arguments) > 2 for decl in env.predicates.values()):
-        return False
-    if any("$int" in decl.arguments for decl in env.predicates.values()) or any(
-            decl.sort == "$int" for decl in env.constants.values()):
-        return False
-    return all(_first_order(rule.to_dict()["norm"]["guard"]) and
-               all(_first_order(x) for x in rule.to_dict()["norm"]["unless"]) for rule in document.rules)
-
-
 def _lean_route(document) -> bool:
     """Whether a Lean norms route regenerates `document`.
 
     The norms route takes plain norm documents over FOL-family ve.core@0.2
     environments, with definitions and data flags; the family-norms mode takes
-    first-order documents on the closure, core and order families
-    (`_family_norms`). Statement-layer environments (soft norms, reports,
-    alternatives, quantities) are not on either: their operations are not
-    dispatched and keep the retained Python.
+    every document on the closure, core and order families, first-order or not
+    (VE/Service/FamilyNorms.lean, VE/Norms/Family.lean), except the n-ary core
+    definitions `family_in_scope` leaves out (lean-first batch 14c).
+    Statement-layer environments (soft norms, reports, alternatives,
+    quantities) are not on either: their operations are not dispatched and keep
+    the retained Python.
     """
     env = document.env
     from .profiles import STATEMENT_LAYERS
     if type(document) is not NormDocument or env.language != "ve.core@0.2":
         return False
     if env.closure or env.order:
-        return _family_norms(document)
+        from .backends.validation import family_in_scope
+        return family_in_scope(env)
     return (env.alternatives is None and getattr(env, "unit_schema", None) is None
             and not STATEMENT_LAYERS & set(env.profiles))
 
@@ -339,11 +310,23 @@ class NormDocument:
         return formula
 
     def _lean_regenerated(self) -> dict:
-        """Lean's `norms-elaborate` answer for this document, kept per document."""
+        """Lean's `norms-elaborate` answer for this document, kept per document.
+
+        The row is bound to the request (DRI-RULINGS R8): its order names each
+        regulated predicate once and otherwise only defined predicates, and its
+        premises are the regulated layers in that order."""
         cached = getattr(self, "_regenerated", None)
         if cached is None:
             from .backends.relay import decide
-            cached = self._regenerated = decide(_lean_mode(self), [_lean_case(self, "norms-elaborate")])[0]
+            row = decide(_lean_mode(self), [_lean_case(self, "norms-elaborate")])[0]
+            regulated = {p for p, d in self.env.predicates.items() if d.regulated is not None}
+            defined = {p for p, d in self.env.predicates.items() if d.defined is not None}
+            order = row["order"]
+            if (len(set(order)) != len(order) or not regulated <= set(order) <= regulated | defined
+                    or [p["label"] for p in row["premises"]] != [f"layer:norms:{p}" for p in order
+                                                                 if p in regulated]):
+                raise CheckerUnavailable("CheckerUnavailable: norms-elaborate row is not bound to the request")
+            cached = self._regenerated = row
         return cached
 
     @semantic_entry("norms.elaborate")
@@ -649,6 +632,14 @@ def _check_conflict_python(document, *, model, certificates, max_evaluations, pr
     return ConflictReport("UNKNOWN", detail="tableau budget or search bound")
 
 
+def _target_names(env):
+    """The names of the conflict targets an environment declares: each regulated
+    predicate and each obligation/permission pair."""
+    return ({p for p, d in env.predicates.items() if d.regulated is not None} |
+            {f"{p}->{d.regulated.permission}" for p, d in env.predicates.items()
+             if d.regulated is not None and d.regulated.permission is not None})
+
+
 def _check_conflict_lean(document, *, model, certificates, max_evaluations, prove, tableau_steps):
     """Lean's `norms-conflict` decides CONFLICT and CONFLICT-FREE.
 
@@ -691,5 +682,9 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
             return ConflictReport("CONFLICT-FREE")
         if row["verdict"] != "UNKNOWN" or type(row.get("detail")) is not str:
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean conflict result")
+        names = _target_names(document.env)
+        named = re.fullmatch(r"(?:missing|invalid) certificate for (.+)", row["detail"])
+        if named is None or named.group(1) not in names or set(row["targets"]) != names:
+            raise CheckerUnavailable("CheckerUnavailable: Lean conflict result is not bound to the request")
         return ConflictReport("UNKNOWN", detail=row["detail"])
     return ConflictReport("UNKNOWN", detail="tableau budget or search bound")
