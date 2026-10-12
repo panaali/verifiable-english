@@ -323,6 +323,7 @@ def test_files_go_to_the_gate_record_not_the_budget_file(repo, tmp_path_factory)
     assert run(repo, "--files", str(record)) == 0
     files = json.loads(record.read_text())
     assert files["files"]["VE/Demo.lean"]["C"] == 3 and files["budget"] == {"K": 0, "S": 0, "V": 0}
+    assert trust_map.files_problems(files) == []  # what the gate record keeps (tools/gate.py, read_trust)
     assert (repo / "docs/trust-baseline.json").read_text() == before
 
 
@@ -382,10 +383,12 @@ def test_history_becomes_allowances():
     assert trust_map.introduced(head, parsed["allowances"]) == []
 
 
-def test_committed_budget_passes_its_check():
+def test_committed_budget_passes_its_check(tmp_path):
     """The committed file is in the AR-4 format and the tree is within its base and the allowances
-    introduced since (the base is the merge base with `main`, or the first parent on main's tip)."""
+    introduced since (the base is the merge base with `main`, or the first parent on main's tip).
+    The tree's per-file counts are what the gate record accepts."""
     data = json.loads(trust_map.BASELINE.read_text())
     assert trust_map.parse_baseline(data)[1] == []
     assert list(data) == ["comment", "budget", "allowances"]
-    assert trust_map.main(["--check"]) == 0
+    assert trust_map.main(["--check", "--files", str(tmp_path / "trust-files.json")]) == 0
+    assert trust_map.files_problems(json.loads((tmp_path / "trust-files.json").read_text())) == []
