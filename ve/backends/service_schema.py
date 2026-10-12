@@ -378,6 +378,13 @@ class Compiler:
                 _fail(f"length differs from the request's {pointer}")
         return check
 
+    def _x_unique_strings(self, flag, schema, base):
+        def check(value, ctx, fuel):
+            if not isinstance(value, list) or any(type(item) is not str for item in value) or \
+                    len(value) != len(set(value)):
+                _fail("strings are not distinct")
+        return check
+
     def _x_count(self, pointer, schema, base):
         def check(value, ctx, fuel):
             expected = _resolve(ctx.value, pointer)
@@ -495,7 +502,7 @@ _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", 
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
           "x-count", "x-references", "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
-          "x-select", "x-count-where", "x-count-presence", "x-rows",
+          "x-select", "x-count-where", "x-count-presence", "x-unique-strings", "x-rows",
           "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
