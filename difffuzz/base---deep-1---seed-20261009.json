@@ -1,0 +1,7829 @@
+{
+ "seed": 20261009,
+ "scale": 1,
+ "corpus": {
+  "requests": {
+   "admission:admission": 21,
+   "closure:evaluate": 46,
+   "countermodels:countermodel": 669,
+   "dependency-order:dependency-order": 207,
+   "elaborated-document:background": 1,
+   "elaborated-document:certificate": 13,
+   "elaborated-document:countermodel": 5,
+   "elaborated-document:evaluate": 39,
+   "elaborated-document:search": 4,
+   "evaluation:evaluate": 701,
+   "identity:evaluate": 583,
+   "invalid-background-model:countermodel": 2,
+   "invalid-background-model:evaluate": 5,
+   "labels:label": 52,
+   "parser:evaluate": 7,
+   "search:countermodel": 2,
+   "search:search": 24,
+   "usecase:birthright-citizenship-debate:evaluate": 2,
+   "usecase:cedar-attributes:evaluate": 1,
+   "usecase:claude-constitution-excerpt:evaluate": 4,
+   "usecase:closure-induction:certificate": 4,
+   "usecase:math-mini-paper:evaluate": 19,
+   "usecase:news-article:evaluate": 2,
+   "usecase:us-constitution-14th-s1:evaluate": 2,
+   "validation:evaluate": 43
+  },
+  "environment": {
+   "alternatives": 3,
+   "envelope": 176,
+   "norm-defaults": 45,
+   "quantity": 2,
+   "reports": 1,
+   "risk": 2,
+   "soft-norms": 30,
+   "speech": 1
+  },
+  "wire": {
+   "defer@0": 4,
+   "demo@0": 37,
+   "forms@0": 32,
+   "norm-defaults@0": 309,
+   "norms@0": 136,
+   "soft-norms@0": 70
+  },
+  "document": {
+   "document@1": 16
+  }
+ },
+ "mutants": {
+  "requests": {
+   "zero-fault": 2458,
+   "one-fault": 6000,
+   "two-fault": 1500
+  },
+  "environment": {
+   "zero-fault": 260,
+   "one-fault": 6000,
+   "two-fault": 1500
+  },
+  "wire": {
+   "zero-fault": 588,
+   "one-fault": 6000,
+   "two-fault": 1500
+  },
+  "document": {
+   "zero-fault": 16,
+   "one-fault": 500,
+   "two-fault": 100
+  }
+ },
+ "answers": {
+  "requests": {
+   "lean:error": 6932,
+   "lean:n/a": 612,
+   "lean:ok": 2414,
+   "python:error": 7084,
+   "python:n/a": 191,
+   "python:ok": 2683,
+   "rust:error": 5936,
+   "rust:n/a": 1601,
+   "rust:ok": 2421
+  },
+  "environment": {
+   "lean:error": 6899,
+   "lean:ok": 861,
+   "python:error": 6899,
+   "python:ok": 861,
+   "rust:error": 1827,
+   "rust:n/a": 5557,
+   "rust:ok": 376
+  },
+  "wire": {
+   "lean:error": 7193,
+   "lean:ok": 895,
+   "python:error": 7113,
+   "python:n/a": 83,
+   "python:ok": 892,
+   "rust:n/a": 8088
+  },
+  "document": {
+   "lean:error": 578,
+   "lean:ok": 38,
+   "python:error": 571,
+   "python:ok": 45,
+   "rust:n/a": 616
+  }
+ },
+ "findings": {
+  "requests": {
+   "admission:admission:code": 14,
+   "closure:evaluate:code": 241,
+   "countermodels:countermodel:code": 145,
+   "countermodels:countermodel:outcome": 5,
+   "dependency-order:dependency-order:code": 1,
+   "dependency-order:dependency-order:outcome": 17,
+   "elaborated-document:background:code": 22,
+   "elaborated-document:certificate:code": 96,
+   "elaborated-document:certificate:diagnostic": 1,
+   "elaborated-document:countermodel:code": 151,
+   "elaborated-document:countermodel:diagnostic": 2,
+   "elaborated-document:countermodel:outcome": 1,
+   "elaborated-document:evaluate:code": 85,
+   "elaborated-document:evaluate:diagnostic": 4,
+   "elaborated-document:search:code": 33,
+   "evaluation:evaluate:code": 210,
+   "identity:evaluate:code": 218,
+   "invalid-background-model:countermodel:code": 135,
+   "invalid-background-model:countermodel:diagnostic": 2,
+   "invalid-background-model:countermodel:outcome": 2,
+   "invalid-background-model:evaluate:code": 117,
+   "invalid-background-model:evaluate:diagnostic": 7,
+   "labels:label:code": 15,
+   "parser:evaluate:code": 164,
+   "search:countermodel:code": 142,
+   "search:countermodel:outcome": 3,
+   "search:search:code": 8,
+   "usecase:birthright-citizenship-debate:evaluate:code": 232,
+   "usecase:cedar-attributes:evaluate:code": 138,
+   "usecase:cedar-attributes:evaluate:diagnostic": 4,
+   "usecase:claude-constitution-excerpt:evaluate:code": 203,
+   "usecase:closure-induction:certificate:code": 94,
+   "usecase:math-mini-paper:evaluate:code": 271,
+   "usecase:news-article:evaluate:code": 178,
+   "usecase:us-constitution-14th-s1:evaluate:code": 191,
+   "validation:evaluate:code": 165,
+   "validation:evaluate:diagnostic": 7
+  },
+  "environment": {
+   "envelope:code": 78,
+   "envelope:outcome": 2,
+   "soft-norms:code": 57,
+   "soft-norms:outcome": 150
+  },
+  "wire": {
+   "demo@0:outcome": 2,
+   "forms@0:outcome": 17,
+   "soft-norms@0:outcome": 1
+  },
+  "document": {}
+ },
+ "new": [
+  {
+   "id": "requests-a09d52ead455ddf5",
+   "surface": "requests",
+   "profile": "elaborated-document:countermodel",
+   "seed": "conformance/elaborated-document.json/22",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "countermodel",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {},
+     "operation": "countermodel"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "spec_revision"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/22",
+    "kind": "countermodel",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "data@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": 7,
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "Person."
+       },
+       "department": {
+        "description": "Department."
+       }
+      },
+      "predicates": {
+       "dept": {
+        "arguments": [
+         "person",
+         "department"
+        ],
+        "description": "Department.",
+        "functional": true,
+        "total": true
+       },
+       "backup": {
+        "arguments": [
+         "person",
+         "department"
+        ],
+        "description": "Backup department.",
+        "total": true
+       }
+      },
+      "constants": {
+       "alice": {
+        "sort": "person",
+        "description": "Alice."
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "a"
+      ],
+      "department": [
+       "d"
+      ]
+     },
+     "constants": {
+      "alice": "a"
+     },
+     "relations": {
+      "dept": [
+       [
+        "a",
+        "d"
+       ]
+      ],
+      "backup": [
+       [
+        "a",
+        "d"
+       ]
+      ]
+     }
+    },
+    "premises": [],
+    "conclusion": [
+     "bottom"
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: String expected"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision 7"
+    }
+   },
+   "signature": "a09d52ead455ddf5",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-e279aa2b01f79ffe",
+   "surface": "requests",
+   "profile": "countermodels:countermodel",
+   "seed": "conformance/countermodels.json/9",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "countermodel",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {},
+     "operation": "countermodel"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "premises"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "id": "conformance/countermodels.json/9",
+    "kind": "countermodel",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "item": {
+        "description": "An item."
+       }
+      },
+      "predicates": {
+       "marked": {
+        "arguments": [
+         "item"
+        ],
+        "description": "Marked."
+       },
+       "edge": {
+        "arguments": [
+         "item",
+         "item"
+        ],
+        "description": "An edge."
+       }
+      },
+      "constants": {}
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "item": [
+       "a",
+       "b"
+      ]
+     },
+     "constants": {},
+     "relations": {
+      "edge": [
+       [
+        "a",
+        "b"
+       ],
+       [
+        "b",
+        "a"
+       ]
+      ],
+      "marked": []
+     }
+    },
+    "premises": 7,
+    "conclusion": [
+     "not",
+     [
+      "top"
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "n/a"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: array expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "SyntaxError: premises must be an array"
+    }
+   },
+   "signature": "e279aa2b01f79ffe",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-7ff255ad6f828843",
+   "surface": "requests",
+   "profile": "validation:evaluate",
+   "seed": "conformance/validation.json/28",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "ast",
+      0,
+      2,
+      0
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "id": "conformance/validation.json/28",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A person recorded in the inventory."
+       },
+       "service": {
+        "description": "A service recorded in the inventory."
+       }
+      },
+      "predicates": {
+       "deployed": {
+        "arguments": [
+         "service"
+        ],
+        "description": "Recorded as deployed in this inventory."
+       },
+       "owns": {
+        "arguments": [
+         "person",
+         "service"
+        ],
+        "description": "The person is recorded as an owner of the service."
+       },
+       "reviewed": {
+        "arguments": [
+         "service"
+        ],
+        "description": "Recorded as reviewed in this inventory."
+       }
+      },
+      "constants": {}
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "alice",
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "service": [
+       "api"
+      ]
+     },
+     "constants": {},
+     "relations": {
+      "deployed": [
+       [
+        "api"
+       ]
+      ],
+      "owns": [
+       [
+        "alice",
+        "api"
+       ]
+      ],
+      "reviewed": [
+       [
+        "api"
+       ]
+      ]
+     }
+    },
+    "ast": [
+     [
+      "exists",
+      "service",
+      [
+       "u nary",
+       "deployed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "service",
+      [
+       "implies",
+       [
+        "unary",
+        "deployed",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "exists",
+        "person",
+        [
+         "binary",
+         "owns",
+         [
+          "var",
+          0
+         ],
+         [
+          "var",
+          1
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "service",
+      [
+       "implies",
+       [
+        "unary",
+        "deployed",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "ResourceLimit",
+     "text": "ResourceLimit: local ID exceeds 64 ASCII bytes"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: invalid local identifier"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "SyntaxError: invalid formula tag or arity"
+    }
+   },
+   "signature": "7ff255ad6f828843",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-36fef682efa06308",
+   "surface": "requests",
+   "profile": "evaluation:evaluate",
+   "seed": "conformance/evaluation.json/47",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "language"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "id": "conformance/evaluation.json/47",
+    "kind": "evaluate",
+    "environment": {
+     "language": 7,
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "item": {
+        "description": "An item."
+       },
+       "person": {
+        "description": "A person."
+       }
+      },
+      "predicates": {
+       "marked": {
+        "arguments": [
+         "item"
+        ],
+        "description": "Marked."
+       },
+       "edge": {
+        "arguments": [
+         "item",
+         "item"
+        ],
+        "description": "An edge."
+       },
+       "owns": {
+        "arguments": [
+         "person",
+         "item"
+        ],
+        "description": "Owns."
+       },
+       "active": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Active."
+       }
+      },
+      "constants": {
+       "origin": {
+        "sort": "item",
+        "description": "Origin."
+       },
+       "other": {
+        "sort": "item",
+        "description": "Another named item."
+       },
+       "alice": {
+        "sort": "person",
+        "description": "Named person."
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "item": [
+       "same",
+       "second"
+      ],
+      "person": [
+       "same",
+       "second"
+      ]
+     },
+     "constants": {
+      "alice": "second",
+      "origin": "second",
+      "other": "same"
+     },
+     "relations": {
+      "active": [
+       [
+        "same"
+       ],
+       [
+        "second"
+       ]
+      ],
+      "edge": [
+       [
+        "same",
+        "same"
+       ],
+       [
+        "second",
+        "second"
+       ]
+      ],
+      "marked": [],
+      "owns": [
+       [
+        "same",
+        "same"
+       ],
+       [
+        "same",
+        "second"
+       ],
+       [
+        "second",
+        "second"
+       ]
+      ]
+     }
+    },
+    "ast": [
+     [
+      "or",
+      [
+       "unary",
+       "marked",
+       [
+        "const",
+        "origin"
+       ]
+      ],
+      [
+       "exists",
+       "person",
+       [
+        "forall",
+        "item",
+        [
+         "not",
+         [
+          "binary",
+          "edge",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "origin"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "and",
+      [
+       "implies",
+       [
+        "eq",
+        [
+         "const",
+         "alice"
+        ],
+        [
+         "const",
+         "alice"
+        ]
+       ],
+       [
+        "exists",
+        "person",
+        [
+         "unary",
+         "active",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      [
+       "eq",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "alice"
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "marked",
+      [
+       "const",
+       "other"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "forall",
+       "person",
+       [
+        "and",
+        [
+         "top"
+        ],
+        [
+         "not",
+         [
+          "binary",
+          "edge",
+          [
+           "const",
+           "origin"
+          ],
+          [
+           "const",
+           "origin"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: String expected"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: unsupported language, profile or specification revision"
+    }
+   },
+   "signature": "36fef682efa06308",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-f5a8ef3347684829",
+   "surface": "requests",
+   "profile": "elaborated-document:evaluate",
+   "seed": "conformance/elaborated-document.json/55",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "senior_finance",
+      "arguments",
+      0
+     ],
+     "tab"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/55",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "a person"
+       }
+      },
+      "predicates": {
+       "in_finance": {
+        "arguments": [
+         "person"
+        ],
+        "description": "works in finance"
+       },
+       "senior": {
+        "arguments": [
+         "person"
+        ],
+        "description": "is senior"
+       },
+       "supervises": {
+        "arguments": [
+         "person",
+         "person"
+        ],
+        "description": "supervises"
+       },
+       "lead": {
+        "arguments": [
+         "person"
+        ],
+        "description": "is a senior finance boss",
+        "defined": {
+         "arguments": [
+          "person"
+         ],
+         "body": [
+          "and",
+          [
+           "unary",
+           "boss",
+           [
+            "var",
+            0
+           ]
+          ],
+          [
+           "unary",
+           "senior_finance",
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        }
+       },
+       "boss": {
+        "arguments": [
+         "person"
+        ],
+        "description": "supervises someone",
+        "defined": {
+         "arguments": [
+          "person"
+         ],
+         "body": [
+          "exists",
+          "person",
+          [
+           "binary",
+           "supervises",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        }
+       },
+       "senior_finance": {
+        "arguments": [
+         "p\terson"
+        ],
+        "description": "is senior and works in finance",
+        "defined": {
+         "arguments": [
+          "person"
+         ],
+         "body": [
+          "and",
+          [
+           "unary",
+           "senior",
+           [
+            "var",
+            0
+           ]
+          ],
+          [
+           "unary",
+           "in_finance",
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        }
+       },
+       "above": {
+        "arguments": [
+         "person",
+         "person"
+        ],
+        "description": "supervises directly or through one person",
+        "defined": {
+         "arguments": [
+          "person",
+          "person"
+         ],
+         "body": [
+          "or",
+          [
+           "binary",
+           "supervises",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ],
+          [
+           "exists",
+           "person",
+           [
+            "and",
+            [
+             "binary",
+             "supervises",
+             [
+              "var",
+              2
+             ],
+             [
+              "var",
+              0
+             ]
+            ],
+            [
+             "binary",
+             "supervises",
+             [
+              "var",
+              0
+             ],
+             [
+              "var",
+              1
+             ]
+            ]
+           ]
+          ]
+         ]
+        }
+       }
+      },
+      "constants": {
+       "alice": {
+        "sort": "person",
+        "description": "Alice"
+       },
+       "bob": {
+        "sort": "person",
+        "description": "Bob"
+       },
+       "finance": {
+        "sort": "$string"
+       },
+       "legal": {
+        "sort": "$string"
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "a",
+       "b",
+       "c"
+      ],
+      "$string": [
+       "f",
+       "l"
+      ]
+     },
+     "constants": {
+      "alice": "a",
+      "bob": "b",
+      "finance": "f",
+      "legal": "l"
+     },
+     "relations": {
+      "in_finance": [
+       [
+        "a"
+       ]
+      ],
+      "senior": [
+       [
+        "a"
+       ],
+       [
+        "b"
+       ]
+      ],
+      "supervises": [
+       [
+        "a",
+        "b"
+       ],
+       [
+        "b",
+        "c"
+       ]
+      ]
+     }
+    },
+    "ast": [
+     [
+      "top"
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'p\terson'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: invalid signature: senior_finance"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: expected exactly fields [\"arguments\", \"description\"]"
+    }
+   },
+   "signature": "f5a8ef3347684829",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-07b91f8b6e9db457",
+   "surface": "requests",
+   "profile": "countermodels:countermodel",
+   "seed": "conformance/countermodels.json/83",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "countermodel",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {},
+     "operation": "countermodel"
+    }
+   },
+   "mutation": [
+    [
+     "duplicate",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "marked",
+      "arguments"
+     ],
+     null
+    ]
+   ],
+   "input": {
+    "id": "conformance/countermodels.json/83",
+    "kind": "countermodel",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "item": {
+        "description": "An item."
+       },
+       "person": {
+        "description": "A person."
+       }
+      },
+      "predicates": {
+       "marked": {
+        "arguments": [
+         "item",
+         "item"
+        ],
+        "description": "Marked."
+       },
+       "edge": {
+        "arguments": [
+         "item",
+         "item"
+        ],
+        "description": "An edge."
+       },
+       "owns": {
+        "arguments": [
+         "person",
+         "item"
+        ],
+        "description": "Owns."
+       },
+       "active": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Active."
+       }
+      },
+      "constants": {
+       "origin": {
+        "sort": "item",
+        "description": "Origin."
+       },
+       "other": {
+        "sort": "item",
+        "description": "Another named item."
+       },
+       "alice": {
+        "sort": "person",
+        "description": "Named person."
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "item": [
+       "same"
+      ],
+      "person": [
+       "same"
+      ]
+     },
+     "constants": {
+      "alice": "same",
+      "origin": "same",
+      "other": "same"
+     },
+     "relations": {
+      "active": [
+       [
+        "same"
+       ]
+      ],
+      "edge": [
+       [
+        "same",
+        "same"
+       ]
+      ],
+      "marked": [],
+      "owns": [
+       [
+        "same",
+        "same"
+       ]
+      ]
+     }
+    },
+    "premises": [
+     [
+      "and",
+      [
+       "exists",
+       "person",
+       [
+        "or",
+        [
+         "and",
+         [
+          "bottom"
+         ],
+         [
+          "unary",
+          "marked",
+          [
+           "const",
+           "origin"
+          ]
+         ]
+        ],
+        [
+         "unary",
+         "marked",
+         [
+          "const",
+          "origin"
+         ]
+        ]
+       ]
+      ],
+      [
+       "forall",
+       "person",
+       [
+        "forall",
+        "person",
+        [
+         "bottom"
+        ]
+       ]
+      ]
+     ],
+     [
+      "eq",
+      [
+       "const",
+       "origin"
+      ],
+      [
+       "const",
+       "origin"
+      ]
+     ],
+     [
+      "not",
+      [
+       "implies",
+       [
+        "or",
+        [
+         "exists",
+         "item",
+         [
+          "binary",
+          "edge",
+          [
+           "var",
+           0
+          ],
+          [
+           "var",
+           0
+          ]
+         ]
+        ],
+        [
+         "implies",
+         [
+          "eq",
+          [
+           "const",
+           "alice"
+          ],
+          [
+           "const",
+           "alice"
+          ]
+         ],
+         [
+          "bottom"
+         ]
+        ]
+       ],
+       [
+        "implies",
+        [
+         "or",
+         [
+          "bottom"
+         ],
+         [
+          "binary",
+          "owns",
+          [
+           "const",
+           "alice"
+          ],
+          [
+           "const",
+           "other"
+          ]
+         ]
+        ],
+        [
+         "not",
+         [
+          "unary",
+          "active",
+          [
+           "const",
+           "alice"
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "conclusion": [
+     "eq",
+     [
+      "const",
+      "other"
+     ],
+     [
+      "const",
+      "origin"
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "TypeMismatch",
+     "text": "TypeMismatch: Predicate 'marked' has arity 2, not 1"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: ill-typed or unbound premise"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "TypeMismatch",
+     "text": "TypeMismatch: predicate arity mismatch"
+    }
+   },
+   "signature": "07b91f8b6e9db457",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-5a3e85f43cd91964",
+   "surface": "requests",
+   "profile": "usecase:math-mini-paper:evaluate",
+   "seed": "usecases/math-mini-paper/boundary/euclid-countermodel.json@environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "language"
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "id": "usecases/math-mini-paper/boundary/euclid-countermodel.json@environment.json",
+    "kind": "evaluate",
+    "environment": {
+     "language": {},
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "number": {
+        "description": "An uninterpreted element standing in for a positive integer. VE has no numeric sort; nothing here forces this domain to be the integers, to be infinite, or to be ordered.",
+        "verbalisation": {
+         "singular": "number",
+         "plural": "numbers"
+        }
+       }
+      },
+      "predicates": {
+       "prime": {
+        "arguments": [
+         "number"
+        ],
+        "description": "Uninterpreted unary symbol intended to mean 'is prime'. VE cannot state the definition, which quantifies over factorisations and needs a ternary multiplication relation.",
+        "verbalisation": "{0} is prime",
+        "negative_verbalisation": "{0} is not prime"
+       },
+       "unit": {
+        "arguments": [
+         "number"
+        ],
+        "description": "Uninterpreted unary symbol intended to mean 'equals 1'.",
+        "verbalisation": "{0} is trivial",
+        "negative_verbalisation": "{0} is not trivial"
+       },
+       "divides": {
+        "arguments": [
+         "number",
+         "number"
+        ],
+        "description": "Uninterpreted binary symbol intended to mean 'the first divides the second'.",
+        "verbalisation": "{0} divides {1}",
+        "negative_verbalisation": "{0} does not divide {1}"
+       },
+       "associate": {
+        "arguments": [
+         "number",
+         "number"
+        ],
+        "description": "Uninterpreted binary symbol intended to mean 'the two numbers are equal up to units'.",
+        "verbalisation": "{0} matches {1}",
+        "negative_verbalisation": "{0} does not match {1}"
+       },
+       "lt": {
+        "arguments": [
+         "number",
+         "number"
+        ],
+        "description": "Uninterpreted binary symbol intended to mean strict numeric order.",
+        "verbalisation": "{0} precedes {1}",
+        "negative_verbalisation": "{0} does not precede {1}"
+       }
+      },
+      "constants": {}
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "number": [
+       "e0"
+      ]
+     },
+     "constants": {},
+     "relations": {
+      "associate": [],
+      "divides": [],
+      "lt": [],
+      "prime": [
+       [
+        "e0"
+       ]
+      ],
+      "unit": []
+     }
+    },
+    "ast": [
+     [
+      "forall",
+      "number",
+      [
+       "implies",
+       [
+        "unary",
+        "prime",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "exists",
+        "number",
+        [
+         "and",
+         [
+          "unary",
+          "prime",
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "binary",
+          "lt",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: String expected"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: unsupported language, profile or specification revision"
+    }
+   },
+   "signature": "5a3e85f43cd91964",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-8d938170bd5e1b56",
+   "surface": "requests",
+   "profile": "elaborated-document:evaluate",
+   "seed": "conformance/elaborated-document.json/34",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "language"
+     ],
+     "double-space"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/34",
+    "kind": "evaluate",
+    "environment": {
+     "language": "v  e.core@0.2",
+     "profiles": [
+      "relational-fol@0",
+      "closure@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {},
+      "constants": {}
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {},
+     "constants": {},
+     "relations": {}
+    },
+    "ast": [
+     [
+      "top"
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: fields do not match: expected [language, profile, spec_revision, vocabulary], got [language, profiles, spec_revision, vocabulary]"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: expected exactly fields [\"language\", \"profile\", \"spec_revision\", \"vocabulary\"]"
+    }
+   },
+   "signature": "8d938170bd5e1b56",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-6c204bafb9551df2",
+   "surface": "requests",
+   "profile": "usecase:claude-constitution-excerpt:evaluate",
+   "seed": "usecases/claude-constitution-excerpt/model-false.json@definitions-environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "vocabulary",
+      "constants",
+      "guidelines",
+      "sort"
+     ],
+     "boolean"
+    ]
+   ],
+   "input": {
+    "id": "usecases/claude-constitution-excerpt/model-false.json@definitions-environment.json",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "closure@0",
+      "definitions@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "claude_model": {
+        "description": "A Claude model, as referred to by the constitution excerpt (e.g. 'all current Claude models', 'Claude')."
+       },
+       "mechanism": {
+        "description": "A human mechanism for overseeing the dispositions and actions of AI, as referred to by the 'broadly safe' value and the oversight discussion."
+       },
+       "guideline": {
+        "description": "One of Anthropic's specific guidelines that a Claude model might or might not be acting in accordance with."
+       },
+       "principal": {
+        "description": "An operator or user that a Claude model interacts with (the excerpt's 'operators and users' merged into one sort)."
+       },
+       "action": {
+        "description": "An action a Claude model might perform."
+       },
+       "overseer": {
+        "description": "A human or organization who might instruct, check, or be owed obedience by a Claude model, including Anthropic itself and appropriately sanctioned individuals."
+       },
+       "property": {
+        "description": "One of the four core value-properties named in the excerpt's priority ordering: broadly safe, broadly ethical, compliant with Anthropic's guidelines, genuinely helpful."
+       },
+       "situation": {
+        "description": "A case or interaction in which two or more of the four core value-properties might come into apparent conflict."
+       }
+      },
+      "predicates": {
+       "current_claude_model": {
+        "arguments": [
+         "claude_model"
+        ],
+        "description": "Recorded as one of 'all current Claude models' the excerpt's core-values paragraph addresses."
+       },
+       "ought_have_core_values": {
+        "arguments": [
+         "claude_model"
+        ],
+        "description": "OPAQUE marker predicate. Recorded as a model of which the excerpt says 'we believe [it] should be' broadly safe, broadly ethical, compliant, and genuinely helpful. This predicate names, but does not analyse, the deontic force of 'should be' and the fact that it introduces four further properties (see GAPS.md #1 and coverage.md row 1)."
+       },
+       "appropriate": {
+        "arguments": [
+         "mechanism"
+        ],
+        "description": "Recorded as an 'appropriate' human mechanism for overseeing the dispositions and actions of AI, in the sense used by the 'broadly safe' value."
+       },
+       "undermines": {
+        "arguments": [
+         "claude_model",
+         "mechanism"
+        ],
+        "description": "Recorded as the model undermining (acting so as to defeat or subvert) this oversight mechanism."
+       },
+       "honest": {
+        "arguments": [
+         "claude_model"
+        ],
+        "description": "Recorded as honest, one conjunct of the excerpt's 'broadly ethical' value ('having good personal values, being honest, and avoiding...'). 'Having good personal values' itself has no witness anywhere in this vocabulary; see GAPS.md #2."
+       },
+       "inappropriately_harmful": {
+        "arguments": [
+         "action"
+        ],
+        "description": "OPAQUE marker predicate. Recorded as an action the excerpt would call 'inappropriately dangerous or harmful'. The judgement of what counts as 'inappropriate' is hidden inside this predicate; see GAPS.md #2."
+       },
+       "performs": {
+        "arguments": [
+         "claude_model",
+         "action"
+        ],
+        "description": "Recorded as the model performing this action."
+       },
+       "relevant": {
+        "arguments": [
+         "guideline"
+        ],
+        "description": "Recorded as 'relevant' to the model's present situation, in the sense used by 'compliant with Anthropic's guidelines: ... where they're relevant'."
+       },
+       "follows": {
+        "arguments": [
+         "claude_model",
+         "guideline"
+        ],
+        "description": "Recorded as the model acting in accordance with this guideline."
+       },
+       "interacts": {
+        "arguments": [
+         "claude_model",
+         "principal"
+        ],
+        "description": "Recorded as the model interacting with this operator or user."
+       },
+       "benefits": {
+        "arguments": [
+         "claude_model",
+         "principal"
+        ],
+        "description": "Recorded as the model benefiting this operator or user, in the sense used by 'genuinely helpful'. The intensifier 'genuinely' (sincere vs. superficial benefit) has no separate witness; see GAPS.md #2."
+       },
+       "outranks": {
+        "arguments": [
+         "property",
+         "property"
+        ],
+        "description": "Recorded as the first property immediately outranking (being listed directly above) the second property in the excerpt's stated priority order: broadly safe, broadly ethical, compliant with guidelines, genuinely helpful. Base edges only; use tc[outranks]/rtc[outranks] for the full order."
+       },
+       "contends_for": {
+        "arguments": [
+         "situation",
+         "property"
+        ],
+        "description": "Recorded as this property being one of the (at most two, in every model used here) properties tagged as apparently conflicting in this situation. A reification workaround for the fact that v0 has no ternary relation to say directly which two properties are the ones apparently conflicting in a given situation; see GAPS.md #1."
+       },
+       "violates_hard_constraint": {
+        "arguments": [
+         "situation"
+        ],
+        "description": "Recorded as a situation in which the model would be violating one of Anthropic's hard constraints, in the sense of the excerpt's exception clause 'assuming Claude is not violating any hard constraints'. What a hard constraint is, and what counts as violating one, is not modelled; this is a bare flag."
+       },
+       "ought_follow": {
+        "arguments": [
+         "situation",
+         "property"
+        ],
+        "description": "OPAQUE marker predicate. Recorded as the property the excerpt says Claude 'should generally' follow in this situation. Hides both the deontic force of 'should' and the defeasibility of 'generally'; see GAPS.md #1."
+       },
+       "undermines_check": {
+        "arguments": [
+         "claude_model",
+         "overseer"
+        ],
+        "description": "Recorded as the model undermining this overseer's role as an appropriately sanctioned human check on AI systems, in the sense used by the corrigibility sentence."
+       },
+       "sanctioned_check": {
+        "arguments": [
+         "overseer"
+        ],
+        "description": "Recorded as an 'appropriately sanctioned' human acting as a check on AI systems, in the sense used by the corrigibility sentence."
+       },
+       "bound_to_obey": {
+        "arguments": [
+         "claude_model",
+         "overseer"
+        ],
+        "description": "OPAQUE marker predicate. Recorded as the model being bound to unconditional ('blind') obedience toward this overseer. Hides the deontic modality of 'must obey' and the manner qualifier 'blind'; see GAPS.md #1."
+       },
+       "safety_content": {
+        "arguments": [
+         "claude_model"
+        ],
+        "description": "The excerpt's recorded safety content condition.",
+        "defined": {
+         "arguments": [
+          "claude_model"
+         ],
+         "body": [
+          "forall",
+          "mechanism",
+          [
+           "implies",
+           [
+            "unary",
+            "appropriate",
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "not",
+            [
+             "binary",
+             "undermines",
+             [
+              "var",
+              1
+             ],
+             [
+              "var",
+              0
+             ]
+            ]
+           ]
+          ]
+         ]
+        }
+       },
+       "ethics_content": {
+        "arguments": [
+         "claude_model"
+        ],
+        "description": "The excerpt's recorded ethics content condition.",
+        "defined": {
+         "arguments": [
+          "claude_model"
+         ],
+         "body": [
+          "and",
+          [
+           "unary",
+           "honest",
+           [
+            "var",
+            0
+           ]
+          ],
+          [
+           "forall",
+           "action",
+           [
+            "implies",
+            [
+             "unary",
+             "inappropriately_harmful",
+             [
+              "var",
+              0
+             ]
+            ],
+            [
+             "not",
+             [
+              "binary",
+              "performs",
+              [
+               "var",
+               1
+              ],
+              [
+               "var",
+               0
+              ]
+             ]
+            ]
+           ]
+          ]
+         ]
+        }
+       },
+       "guidelines_content": {
+        "arguments": [
+         "claude_model"
+        ],
+        "description": "The excerpt's recorded guidelines content condition.",
+        "defined": {
+         "arguments": [
+          "claude_model"
+         ],
+         "body": [
+          "forall",
+          "guideline",
+          [
+           "implies",
+           [
+            "unary",
+            "relevant",
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "binary",
+            "follows",
+            [
+             "var",
+             1
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ]
+         ]
+        }
+       },
+       "helpfulness_content": {
+        "arguments": [
+         "claude_model"
+        ],
+        "description": "The excerpt's recorded helpfulness content condition.",
+        "defined": {
+         "arguments": [
+          "claude_model"
+         ],
+         "body": [
+          "forall",
+          "principal",
+          [
+           "implies",
+           [
+            "binary",
+            "interacts",
+            [
+             "var",
+             1
+            ],
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "binary",
+            "benefits",
+            [
+             "var",
+             1
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ]
+         ]
+        }
+       },
+       "holds_property": {
+        "arguments": [
+         "claude_model",
+         "property"
+        ],
+        "description": "Connects each named property constant to its recorded content.",
+        "defined": {
+         "arguments": [
+          "claude_model",
+          "property"
+         ],
+         "body": [
+          "or",
+          [
+           "or",
+           [
+            "or",
+            [
+             "and",
+             [
+              "eq",
+              [
+               "var",
+               0
+              ],
+              [
+               "const",
+               "safety"
+              ]
+             ],
+             [
+              "unary",
+              "safety_content",
+              [
+               "var",
+               1
+              ]
+             ]
+            ],
+            [
+             "and",
+             [
+              "eq",
+              [
+               "var",
+               0
+              ],
+              [
+               "const",
+               "ethics"
+              ]
+             ],
+             [
+              "unary",
+              "ethics_content",
+              [
+               "var",
+               1
+              ]
+             ]
+            ]
+           ],
+           [
+            "and",
+            [
+             "eq",
+             [
+              "var",
+              0
+             ],
+             [
+              "const",
+              "guidelines"
+             ]
+            ],
+            [
+             "unary",
+             "guidelines_content",
+             [
+              "var",
+              1
+             ]
+            ]
+           ]
+          ],
+          [
+           "and",
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "const",
+             "helpfulness"
+            ]
+           ],
+           [
+            "unary",
+            "helpfulness_content",
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        }
+       }
+      },
+      "constants": {
+       "claude": {
+        "sort": "claude_model",
+        "description": "The Claude model this excerpt's claims are about."
+       },
+       "safety": {
+        "sort": "property",
+        "description": "The 'broadly safe' core value."
+       },
+       "ethics": {
+        "sort": "property",
+        "description": "The 'broadly ethical' core value."
+       },
+       "guidelines": {
+        "sort": true,
+        "description": "The 'compliant with Anthropic's guidelines' core value."
+       },
+       "helpfulness": {
+        "sort": "property",
+        "description": "The 'genuinely helpful' core value."
+       },
+       "anthropic": {
+        "sort": "overseer",
+        "description": "Anthropic, named explicitly in 'not... blind obedience, including towards Anthropic'."
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "claude_model": [
+       "claude"
+      ],
+      "mechanism": [
+       "board_oversight",
+       "red_team_review"
+      ],
+      "guideline": [
+       "csam_guideline",
+       "weapons_guideline"
+      ],
+      "principal": [
+       "alice",
+       "acme_corp"
+      ],
+      "action": [
+       "helpful_answer",
+       "harmful_exploit"
+      ],
+      "overseer": [
+       "anthropic",
+       "safety_reviewer"
+      ],
+      "property": [
+       "safety",
+       "ethics",
+       "guidelines",
+       "helpfulness"
+      ],
+      "situation": [
+       "conflict_case"
+      ]
+     },
+     "constants": {
+      "claude": "claude",
+      "safety": "safety",
+      "ethics": "ethics",
+      "guidelines": "guidelines",
+      "helpfulness": "helpfulness",
+      "anthropic": "anthropic"
+     },
+     "relations": {
+      "current_claude_model": [
+       [
+        "claude"
+       ]
+      ],
+      "ought_have_core_values": [
+       [
+        "claude"
+       ]
+      ],
+      "appropriate": [
+       [
+        "board_oversight"
+       ],
+       [
+        "red_team_review"
+       ]
+      ],
+      "undermines": [],
+      "honest": [
+       [
+        "claude"
+       ]
+      ],
+      "inappropriately_harmful": [
+       [
+        "harmful_exploit"
+       ]
+      ],
+      "performs": [
+       [
+        "claude",
+        "helpful_answer"
+       ],
+       [
+        "claude",
+        "harmful_exploit"
+       ]
+      ],
+      "relevant": [
+       [
+        "csam_guideline"
+       ],
+       [
+        "weapons_guideline"
+       ]
+      ],
+      "follows": [
+       [
+        "claude",
+        "csam_guideline"
+       ],
+       [
+        "claude",
+        "weapons_guideline"
+       ]
+      ],
+      "interacts": [
+       [
+        "claude",
+        "alice"
+       ],
+       [
+        "claude",
+        "acme_corp"
+       ]
+      ],
+      "benefits": [
+       [
+        "claude",
+        "alice"
+       ],
+       [
+        "claude",
+        "acme_corp"
+       ]
+      ],
+      "outranks": [
+       [
+        "safety",
+        "ethics"
+       ],
+       [
+        "ethics",
+        "guidelines"
+       ],
+       [
+        "guidelines",
+        "helpfulness"
+       ]
+      ],
+      "contends_for": [
+       [
+        "conflict_case",
+        "ethics"
+       ],
+       [
+        "conflict_case",
+        "helpfulness"
+       ]
+      ],
+      "violates_hard_constraint": [],
+      "ought_follow": [
+       [
+        "conflict_case",
+        "ethics"
+       ]
+      ],
+      "undermines_check": [],
+      "sanctioned_check": [
+       [
+        "anthropic"
+       ],
+       [
+        "safety_reviewer"
+       ]
+      ],
+      "bound_to_obey": []
+     }
+    },
+    "ast": [
+     [
+      "forall",
+      "claude_model",
+      [
+       "implies",
+       [
+        "unary",
+        "current_claude_model",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "ought_have_core_values",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "mechanism",
+      [
+       "implies",
+       [
+        "unary",
+        "appropriate",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "not",
+        [
+         "binary",
+         "undermines",
+         [
+          "const",
+          "claude"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "and",
+      [
+       "unary",
+       "honest",
+       [
+        "const",
+        "claude"
+       ]
+      ],
+      [
+       "forall",
+       "action",
+       [
+        "implies",
+        [
+         "unary",
+         "inappropriately_harmful",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "not",
+         [
+          "binary",
+          "performs",
+          [
+           "const",
+           "claude"
+          ],
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "guideline",
+      [
+       "implies",
+       [
+        "unary",
+        "relevant",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "binary",
+        "follows",
+        [
+         "const",
+         "claude"
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "principal",
+      [
+       "implies",
+       [
+        "binary",
+        "interacts",
+        [
+         "const",
+         "claude"
+        ],
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "binary",
+        "benefits",
+        [
+         "const",
+         "claude"
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "and",
+      [
+       "binary",
+       "outranks",
+       [
+        "const",
+        "safety"
+       ],
+       [
+        "const",
+        "ethics"
+       ]
+      ],
+      [
+       "and",
+       [
+        "binary",
+        "outranks",
+        [
+         "const",
+         "ethics"
+        ],
+        [
+         "const",
+         "guidelines"
+        ]
+       ],
+       [
+        "binary",
+        "outranks",
+        [
+         "const",
+         "guidelines"
+        ],
+        [
+         "const",
+         "helpfulness"
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "situation",
+      [
+       "forall",
+       "property",
+       [
+        "forall",
+        "property",
+        [
+         "implies",
+         [
+          "and",
+          [
+           "and",
+           [
+            "binary",
+            "contends_for",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             1
+            ]
+           ],
+           [
+            "binary",
+            "contends_for",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ],
+          [
+           "and",
+           [
+            "reach",
+            "plus",
+            [
+             "named",
+             "outranks"
+            ],
+            [
+             "var",
+             1
+            ],
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "not",
+            [
+             "unary",
+             "violates_hard_constraint",
+             [
+              "var",
+              2
+             ]
+            ]
+           ]
+          ]
+         ],
+         [
+          "and",
+          [
+           "binary",
+           "ought_follow",
+           [
+            "var",
+            2
+           ],
+           [
+            "var",
+            1
+           ]
+          ],
+          [
+           "not",
+           [
+            "binary",
+            "ought_follow",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "property",
+      [
+       "implies",
+       [
+        "not",
+        [
+         "eq",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "safety"
+         ]
+        ]
+       ],
+       [
+        "reach",
+        "plus",
+        [
+         "named",
+         "outranks"
+        ],
+        [
+         "const",
+         "safety"
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "mechanism",
+      [
+       "implies",
+       [
+        "unary",
+        "appropriate",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "not",
+        [
+         "binary",
+         "undermines",
+         [
+          "const",
+          "claude"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "not",
+      [
+       "binary",
+       "bound_to_obey",
+       [
+        "const",
+        "claude"
+       ],
+       [
+        "const",
+        "anthropic"
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "overseer",
+      [
+       "implies",
+       [
+        "unary",
+        "sanctioned_check",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "not",
+        [
+         "binary",
+         "undermines_check",
+         [
+          "const",
+          "claude"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: String expected"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: expected a string"
+    }
+   },
+   "signature": "6c204bafb9551df2",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-4d05cc6b87305ec0",
+   "surface": "requests",
+   "profile": "elaborated-document:countermodel",
+   "seed": "conformance/elaborated-document.json/6",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "countermodel",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {},
+     "operation": "countermodel"
+    }
+   },
+   "mutation": [
+    [
+     "key",
+     [
+      "model"
+     ],
+     "upper"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/6",
+    "kind": "countermodel",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "a person"
+       }
+      },
+      "predicates": {
+       "in_finance": {
+        "arguments": [
+         "person"
+        ],
+        "description": "works in finance"
+       },
+       "in_legal": {
+        "arguments": [
+         "person"
+        ],
+        "description": "works in legal"
+       },
+       "senior": {
+        "arguments": [
+         "person"
+        ],
+        "description": "is senior"
+       }
+      },
+      "constants": {
+       "alice": {
+        "sort": "person",
+        "description": "Alice"
+       },
+       "bob": {
+        "sort": "person",
+        "description": "Bob"
+       },
+       "finance": {
+        "sort": "$string",
+        "description": "the string finance"
+       },
+       "legal": {
+        "sort": "$string"
+       }
+      }
+     }
+    },
+    "MODEL": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "a",
+       "b"
+      ],
+      "$string": [
+       "f",
+       "l"
+      ]
+     },
+     "constants": {
+      "alice": "a",
+      "bob": "b",
+      "finance": "f",
+      "legal": "l"
+     },
+     "relations": {
+      "in_finance": [
+       [
+        "a"
+       ]
+      ],
+      "in_legal": [],
+      "senior": [
+       [
+        "a"
+       ]
+      ]
+     }
+    },
+    "premises": [
+     [
+      "unary",
+      "in_finance",
+      [
+       "const",
+       "alice"
+      ]
+     ]
+    ],
+    "conclusion": [
+     "unary",
+     "in_legal",
+     [
+      "const",
+      "alice"
+     ]
+    ]
+   },
+   "classes": [
+    "outcome"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "n/a"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: property not found: model"
+    },
+    "rust": {
+     "outcome": "ok",
+     "value": null
+    }
+   },
+   "signature": "4d05cc6b87305ec0",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-ec720ec6fd123573",
+   "surface": "requests",
+   "profile": "usecase:cedar-attributes:evaluate",
+   "seed": "usecases/cedar-attributes/model.json@environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "reorder",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "department",
+      "arguments"
+     ],
+     null
+    ]
+   ],
+   "input": {
+    "id": "usecases/cedar-attributes/model.json@environment.json",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "data@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A person"
+       }
+      },
+      "predicates": {
+       "department": {
+        "arguments": [
+         "$string",
+         "person"
+        ],
+        "description": "Department of a person",
+        "functional": true,
+        "total": true
+       }
+      },
+      "constants": {
+       "alice": {
+        "sort": "person",
+        "description": "Alice"
+       },
+       "finance": {
+        "sort": "$string"
+       },
+       "sales": {
+        "sort": "$string"
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "a"
+      ],
+      "$string": [
+       "f",
+       "s"
+      ]
+     },
+     "constants": {
+      "alice": "a",
+      "finance": "f",
+      "sales": "s"
+     },
+     "relations": {
+      "department": [
+       [
+        "a",
+        "f"
+       ]
+      ]
+     }
+    },
+    "ast": [
+     [
+      "binary",
+      "department",
+      [
+       "const",
+       "alice"
+      ],
+      [
+       "const",
+       "finance"
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: relation tuple contains a dangling or wrong-sort entity"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: ill-typed or unbound formula"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "TypeMismatch",
+     "text": "TypeMismatch: predicate argument sort mismatch"
+    }
+   },
+   "signature": "ec720ec6fd123573",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-7f8a2cca8434750f",
+   "surface": "requests",
+   "profile": "elaborated-document:countermodel",
+   "seed": "conformance/elaborated-document.json/22",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "countermodel",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {},
+     "operation": "countermodel"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "vocabulary",
+      "constants",
+      "alice",
+      "sort"
+     ],
+     "double-space"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/22",
+    "kind": "countermodel",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "data@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "Person."
+       },
+       "department": {
+        "description": "Department."
+       }
+      },
+      "predicates": {
+       "dept": {
+        "arguments": [
+         "person",
+         "department"
+        ],
+        "description": "Department.",
+        "functional": true,
+        "total": true
+       },
+       "backup": {
+        "arguments": [
+         "person",
+         "department"
+        ],
+        "description": "Backup department.",
+        "total": true
+       }
+      },
+      "constants": {
+       "alice": {
+        "sort": "p  erson",
+        "description": "Alice."
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "a"
+      ],
+      "department": [
+       "d"
+      ]
+     },
+     "constants": {
+      "alice": "a"
+     },
+     "relations": {
+      "dept": [
+       [
+        "a",
+        "d"
+       ]
+      ],
+      "backup": [
+       [
+        "a",
+        "d"
+       ]
+      ]
+     }
+    },
+    "premises": [],
+    "conclusion": [
+     "bottom"
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: unknown constant sort: alice"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: unknown constant sort: alice"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: unknown constant sort"
+    }
+   },
+   "signature": "7f8a2cca8434750f",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-ae699b4c8f0cfec2",
+   "surface": "requests",
+   "profile": "elaborated-document:certificate",
+   "seed": "conformance/elaborated-document.json/20",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "certificate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {
+      "max_domain_size": 2
+     },
+     "operation": "search"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "premises"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/20",
+    "kind": "certificate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "closure@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "a person"
+       }
+      },
+      "predicates": {
+       "in_finance": {
+        "arguments": [
+         "person"
+        ],
+        "description": "works in finance"
+       },
+       "in_legal": {
+        "arguments": [
+         "person"
+        ],
+        "description": "works in legal"
+       },
+       "senior": {
+        "arguments": [
+         "person"
+        ],
+        "description": "is senior"
+       }
+      },
+      "constants": {
+       "alice": {
+        "sort": "person",
+        "description": "Alice"
+       },
+       "bob": {
+        "sort": "person",
+        "description": "Bob"
+       },
+       "finance": {
+        "sort": "$string",
+        "description": "the string finance"
+       },
+       "legal": {
+        "sort": "$string"
+       }
+      }
+     }
+    },
+    "premises": 7,
+    "conclusion": [
+     "unary",
+     "in_finance",
+     [
+      "const",
+      "alice"
+     ]
+    ],
+    "certificate": {
+     "checker_version": "ve-tableau-closure-checker@1",
+     "environment_id": "f3db7b94691ef2274965a22ae9da4244cdd577e3943ac438b052d35e8b4b7eaa",
+     "premise_meaning_ids": [
+      "ac5802a414c5c3d06d9111795a5722efdef9ea1666eaf8e2c34df9a46cde3172",
+      "2db1d90f083a030dc5c6fdfefaaf0d40a834e16b22eb0d92c6754b10637c2a4e"
+     ],
+     "conclusion_meaning_id": "311af78a068bea0efcccd33c4d9e85a1e5ef12d470e55ec32bf99a035f01b1d2",
+     "trace": {
+      "rule": "expand",
+      "at": 1,
+      "children": [
+       {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+         {
+          "rule": "close"
+         }
+        ]
+       },
+       {
+        "rule": "close"
+       }
+      ]
+     }
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "n/a"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: array expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "SyntaxError: premises must be an array"
+    }
+   },
+   "signature": "ae699b4c8f0cfec2",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-1729497a31d6cc15",
+   "surface": "requests",
+   "profile": "usecase:us-constitution-14th-s1:evaluate",
+   "seed": "usecases/us-constitution-14th-s1/model-true.json@environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "reorder",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "makes_law",
+      "arguments"
+     ],
+     null
+    ]
+   ],
+   "input": {
+    "id": "usecases/us-constitution-14th-s1/model-true.json@environment.json",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A natural person who may be born, naturalized, resident, or subject to jurisdiction.",
+        "verbalisation": {
+         "singular": "person",
+         "plural": "people"
+        }
+       },
+       "state": {
+        "description": "A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.",
+        "verbalisation": {
+         "singular": "state",
+         "plural": "states"
+        }
+       },
+       "law": {
+        "description": "A law that a State may make or enforce.",
+        "verbalisation": {
+         "singular": "law",
+         "plural": "laws"
+        }
+       }
+      },
+      "predicates": {
+       "born_in_us": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as born in the United States.",
+        "verbalisation": "{0} was born in the United States"
+       },
+       "naturalized_in_us": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as naturalized in the United States.",
+        "verbalisation": "{0} was naturalized in the United States"
+       },
+       "subject_to_us_jurisdiction": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as subject to the jurisdiction of the United States.",
+        "verbalisation": "{0} is subject to the jurisdiction of the United States"
+       },
+       "us_citizen": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as a citizen of the United States.",
+        "verbalisation": "{0} is a citizen of the United States"
+       },
+       "resides_in": {
+        "arguments": [
+         "person",
+         "state"
+        ],
+        "description": "Recorded as residing in the state.",
+        "verbalisation": "{0} resides in {1}"
+       },
+       "citizen_of_state": {
+        "arguments": [
+         "person",
+         "state"
+        ],
+        "description": "Recorded as a citizen of the state.",
+        "verbalisation": "{0} is a citizen of {1}"
+       },
+       "makes_law": {
+        "arguments": [
+         "law",
+         "state"
+        ],
+        "description": "Recorded as making (enacting) the law.",
+        "verbalisation": "{0} makes {1}"
+       },
+       "enforces_law": {
+        "arguments": [
+         "state",
+         "law"
+        ],
+        "description": "Recorded as enforcing the law.",
+        "verbalisation": "{0} enforces {1}"
+       },
+       "abridges_priv_or_imm": {
+        "arguments": [
+         "law",
+         "person"
+        ],
+        "description": "Recorded as a law that abridges the privileges or immunities of the person as a citizen of the United States. This predicate bundles the entire contested substantive content of 'privileges or immunities' opaquely; see GAPS.md.",
+        "verbalisation": "{0} abridges the privileges or immunities of {1}"
+       },
+       "deprives": {
+        "arguments": [
+         "state",
+         "person"
+        ],
+        "description": "Recorded as the state depriving the person of life, liberty, or property.",
+        "verbalisation": "{0} deprives {1} of life, liberty, or property"
+       },
+       "affords_due_process": {
+        "arguments": [
+         "state",
+         "person"
+        ],
+        "description": "Recorded as the state affording due process of law to the person for a deprivation. This predicate bundles the entire contested substantive content of 'due process' opaquely; see GAPS.md.",
+        "verbalisation": "{0} affords due process of law to {1}"
+       },
+       "within_jurisdiction_of": {
+        "arguments": [
+         "person",
+         "state"
+        ],
+        "description": "Recorded as the person being within the jurisdiction of the state.",
+        "verbalisation": "{0} is within the jurisdiction of {1}"
+       },
+       "denies_equal_protection": {
+        "arguments": [
+         "state",
+         "person"
+        ],
+        "description": "Recorded as the state denying the person the equal protection of the laws. This predicate bundles the entire contested substantive content of 'equal protection' opaquely; see GAPS.md.",
+        "verbalisation": "{0} denies the equal protection of the laws to {1}"
+       }
+      },
+      "constants": {}
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "alice",
+       "bob"
+      ],
+      "state": [
+       "arizona"
+      ],
+      "law": [
+       "law_a"
+      ]
+     },
+     "constants": {},
+     "relations": {
+      "born_in_us": [
+       [
+        "alice"
+       ]
+      ],
+      "naturalized_in_us": [
+       [
+        "bob"
+       ]
+      ],
+      "subject_to_us_jurisdiction": [
+       [
+        "alice"
+       ],
+       [
+        "bob"
+       ]
+      ],
+      "us_citizen": [
+       [
+        "alice"
+       ],
+       [
+        "bob"
+       ]
+      ],
+      "resides_in": [
+       [
+        "alice",
+        "arizona"
+       ],
+       [
+        "bob",
+        "arizona"
+       ]
+      ],
+      "citizen_of_state": [
+       [
+        "alice",
+        "arizona"
+       ],
+       [
+        "bob",
+        "arizona"
+       ]
+      ],
+      "makes_law": [
+       [
+        "arizona",
+        "law_a"
+       ]
+      ],
+      "enforces_law": [
+       [
+        "arizona",
+        "law_a"
+       ]
+      ],
+      "abridges_priv_or_imm": [],
+      "deprives": [
+       [
+        "arizona",
+        "bob"
+       ]
+      ],
+      "affords_due_process": [
+       [
+        "arizona",
+        "bob"
+       ]
+      ],
+      "within_jurisdiction_of": [
+       [
+        "alice",
+        "arizona"
+       ],
+       [
+        "bob",
+        "arizona"
+       ]
+      ],
+      "denies_equal_protection": []
+     }
+    },
+    "ast": [
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "and",
+        [
+         "or",
+         [
+          "unary",
+          "born_in_us",
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "unary",
+          "naturalized_in_us",
+          [
+           "var",
+           0
+          ]
+         ]
+        ],
+        [
+         "unary",
+         "subject_to_us_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "and",
+        [
+         "unary",
+         "us_citizen",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "forall",
+         "state",
+         [
+          "implies",
+          [
+           "binary",
+           "resides_in",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ],
+          [
+           "binary",
+           "citizen_of_state",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "state",
+      [
+       "forall",
+       "law",
+       [
+        "forall",
+        "person",
+        [
+         "implies",
+         [
+          "and",
+          [
+           "or",
+           [
+            "binary",
+            "makes_law",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             1
+            ]
+           ],
+           [
+            "binary",
+            "enforces_law",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ],
+          [
+           "unary",
+           "us_citizen",
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "not",
+          [
+           "binary",
+           "abridges_priv_or_imm",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "state",
+      [
+       "forall",
+       "person",
+       [
+        "implies",
+        [
+         "binary",
+         "deprives",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "affords_due_process",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "state",
+      [
+       "forall",
+       "person",
+       [
+        "implies",
+        [
+         "binary",
+         "within_jurisdiction_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "var",
+          1
+         ]
+        ],
+        [
+         "not",
+         [
+          "binary",
+          "denies_equal_protection",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: relation tuple contains a dangling or wrong-sort entity"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: dangling or wrong-sort tuple"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "TypeMismatch",
+     "text": "TypeMismatch: predicate argument sort mismatch"
+    }
+   },
+   "signature": "1729497a31d6cc15",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-660cb82afc56efb8",
+   "surface": "requests",
+   "profile": "countermodels:countermodel",
+   "seed": "conformance/countermodels.json/255",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "countermodel",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {},
+     "operation": "countermodel"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "premises",
+      3,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      1
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "id": "conformance/countermodels.json/255",
+    "kind": "countermodel",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "item": {
+        "description": "An item."
+       },
+       "person": {
+        "description": "A person."
+       }
+      },
+      "predicates": {
+       "marked": {
+        "arguments": [
+         "item"
+        ],
+        "description": "Marked."
+       },
+       "edge": {
+        "arguments": [
+         "item",
+         "item"
+        ],
+        "description": "An edge."
+       },
+       "owns": {
+        "arguments": [
+         "person",
+         "item"
+        ],
+        "description": "Owns."
+       },
+       "active": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Active."
+       }
+      },
+      "constants": {
+       "alice": {
+        "sort": "person",
+        "description": "Named person."
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "item": [],
+      "person": [
+       "same",
+       "second"
+      ]
+     },
+     "constants": {
+      "alice": "same"
+     },
+     "relations": {
+      "active": [],
+      "edge": [],
+      "marked": [],
+      "owns": []
+     }
+    },
+    "premises": [
+     [
+      "not",
+      [
+       "unary",
+       "active",
+       [
+        "const",
+        "alice"
+       ]
+      ]
+     ],
+     [
+      "not",
+      [
+       "and",
+       [
+        "unary",
+        "active",
+        [
+         "const",
+         "alice"
+        ]
+       ],
+       [
+        "not",
+        [
+         "exists",
+         "person",
+         [
+          "exists",
+          "item",
+          [
+           "eq",
+           [
+            "var",
+            1
+           ],
+           [
+            "const",
+            "alice"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "implies",
+      [
+       "or",
+       [
+        "exists",
+        "item",
+        [
+         "unary",
+         "active",
+         [
+          "const",
+          "alice"
+         ]
+        ]
+       ],
+       [
+        "or",
+        [
+         "eq",
+         [
+          "const",
+          "alice"
+         ],
+         [
+          "const",
+          "alice"
+         ]
+        ],
+        [
+         "implies",
+         [
+          "implies",
+          [
+           "or",
+           [
+            "bottom"
+           ],
+           [
+            "unary",
+            "active",
+            [
+             "const",
+             "alice"
+            ]
+           ]
+          ],
+          [
+           "not",
+           [
+            "unary",
+            "active",
+            [
+             "const",
+             "alice"
+            ]
+           ]
+          ]
+         ],
+         [
+          "exists",
+          "item",
+          [
+           "eq",
+           [
+            "const",
+            "alice"
+           ],
+           [
+            "const",
+            "alice"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       "exists",
+       "item",
+       [
+        "or",
+        [
+         "exists",
+         "item",
+         [
+          "unary",
+          "marked",
+          [
+           "var",
+           1
+          ]
+         ]
+        ],
+        [
+         "not",
+         [
+          "or",
+          [
+           "or",
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "bottom"
+           ]
+          ],
+          [
+           "exists",
+           "item",
+           [
+            "eq",
+            [
+             "var",
+             1
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "exists",
+       "item",
+       [
+        "forall",
+        "person",
+        [
+         "exists",
+         "item",
+         [
+          "forall",
+          "person",
+          [
+           "exists",
+           "item",
+           [
+            "binary",
+            "owns",
+            [
+             "var",
+             7
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "exists",
+       "item",
+       [
+        "top"
+       ]
+      ]
+     ]
+    ],
+    "conclusion": [
+     "exists",
+     "person",
+     [
+      "forall",
+      "item",
+      [
+       "bottom"
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnboundVariable",
+     "text": "UnboundVariable: Variable index 7 is outside its scope"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: ill-typed or unbound premise"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnboundVariable",
+     "text": "UnboundVariable: variable index outside scope"
+    }
+   },
+   "signature": "660cb82afc56efb8",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-d29e1dcc1aef6ef4",
+   "surface": "requests",
+   "profile": "elaborated-document:certificate",
+   "seed": "conformance/elaborated-document.json/20",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "certificate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "premises",
+      "conclusion"
+     ],
+     "constants": {
+      "max_domain_size": 2
+     },
+     "operation": "search"
+    }
+   },
+   "mutation": [
+    [
+     "absent",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "in_finance"
+     ],
+     null
+    ],
+    [
+     "unicode",
+     [
+      "conclusion",
+      2,
+      0
+     ],
+     "control"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/20",
+    "kind": "certificate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "closure@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "a person"
+       }
+      },
+      "predicates": {
+       "in_legal": {
+        "arguments": [
+         "person"
+        ],
+        "description": "works in legal"
+       },
+       "senior": {
+        "arguments": [
+         "person"
+        ],
+        "description": "is senior"
+       }
+      },
+      "constants": {
+       "alice": {
+        "sort": "person",
+        "description": "Alice"
+       },
+       "bob": {
+        "sort": "person",
+        "description": "Bob"
+       },
+       "finance": {
+        "sort": "$string",
+        "description": "the string finance"
+       },
+       "legal": {
+        "sort": "$string"
+       }
+      }
+     }
+    },
+    "premises": [
+     [
+      "or",
+      [
+       "eq",
+       [
+        "const",
+        "finance"
+       ],
+       [
+        "const",
+        "legal"
+       ]
+      ],
+      [
+       "unary",
+       "in_finance",
+       [
+        "const",
+        "alice"
+       ]
+      ]
+     ]
+    ],
+    "conclusion": [
+     "unary",
+     "in_finance",
+     [
+      "const\u001c",
+      "alice"
+     ]
+    ],
+    "certificate": {
+     "checker_version": "ve-tableau-closure-checker@1",
+     "environment_id": "f3db7b94691ef2274965a22ae9da4244cdd577e3943ac438b052d35e8b4b7eaa",
+     "premise_meaning_ids": [
+      "ac5802a414c5c3d06d9111795a5722efdef9ea1666eaf8e2c34df9a46cde3172",
+      "2db1d90f083a030dc5c6fdfefaaf0d40a834e16b22eb0d92c6754b10637c2a4e"
+     ],
+     "conclusion_meaning_id": "311af78a068bea0efcccd33c4d9e85a1e5ef12d470e55ec32bf99a035f01b1d2",
+     "trace": {
+      "rule": "expand",
+      "at": 1,
+      "children": [
+       {
+        "rule": "expand",
+        "at": 0,
+        "children": [
+         {
+          "rule": "close"
+         }
+        ]
+       },
+       {
+        "rule": "close"
+       }
+      ]
+     }
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Unknown predicate 'in_finance'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: ill-typed or unbound formula"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "SyntaxError: invalid term tag or arity"
+    }
+   },
+   "signature": "d29e1dcc1aef6ef4",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-af5aa505f1e2b334",
+   "surface": "requests",
+   "profile": "usecase:us-constitution-14th-s1:evaluate",
+   "seed": "usecases/us-constitution-14th-s1/model-true.json@environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "ast",
+      0,
+      2,
+      2,
+      2,
+      1
+     ],
+     "curly-quote"
+    ],
+    [
+     "key",
+     [
+      "model",
+      "relations",
+      "enforces_law"
+     ],
+     "tab"
+    ]
+   ],
+   "input": {
+    "id": "usecases/us-constitution-14th-s1/model-true.json@environment.json",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A natural person who may be born, naturalized, resident, or subject to jurisdiction.",
+        "verbalisation": {
+         "singular": "person",
+         "plural": "people"
+        }
+       },
+       "state": {
+        "description": "A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.",
+        "verbalisation": {
+         "singular": "state",
+         "plural": "states"
+        }
+       },
+       "law": {
+        "description": "A law that a State may make or enforce.",
+        "verbalisation": {
+         "singular": "law",
+         "plural": "laws"
+        }
+       }
+      },
+      "predicates": {
+       "born_in_us": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as born in the United States.",
+        "verbalisation": "{0} was born in the United States"
+       },
+       "naturalized_in_us": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as naturalized in the United States.",
+        "verbalisation": "{0} was naturalized in the United States"
+       },
+       "subject_to_us_jurisdiction": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as subject to the jurisdiction of the United States.",
+        "verbalisation": "{0} is subject to the jurisdiction of the United States"
+       },
+       "us_citizen": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as a citizen of the United States.",
+        "verbalisation": "{0} is a citizen of the United States"
+       },
+       "resides_in": {
+        "arguments": [
+         "person",
+         "state"
+        ],
+        "description": "Recorded as residing in the state.",
+        "verbalisation": "{0} resides in {1}"
+       },
+       "citizen_of_state": {
+        "arguments": [
+         "person",
+         "state"
+        ],
+        "description": "Recorded as a citizen of the state.",
+        "verbalisation": "{0} is a citizen of {1}"
+       },
+       "makes_law": {
+        "arguments": [
+         "state",
+         "law"
+        ],
+        "description": "Recorded as making (enacting) the law.",
+        "verbalisation": "{0} makes {1}"
+       },
+       "enforces_law": {
+        "arguments": [
+         "state",
+         "law"
+        ],
+        "description": "Recorded as enforcing the law.",
+        "verbalisation": "{0} enforces {1}"
+       },
+       "abridges_priv_or_imm": {
+        "arguments": [
+         "law",
+         "person"
+        ],
+        "description": "Recorded as a law that abridges the privileges or immunities of the person as a citizen of the United States. This predicate bundles the entire contested substantive content of 'privileges or immunities' opaquely; see GAPS.md.",
+        "verbalisation": "{0} abridges the privileges or immunities of {1}"
+       },
+       "deprives": {
+        "arguments": [
+         "state",
+         "person"
+        ],
+        "description": "Recorded as the state depriving the person of life, liberty, or property.",
+        "verbalisation": "{0} deprives {1} of life, liberty, or property"
+       },
+       "affords_due_process": {
+        "arguments": [
+         "state",
+         "person"
+        ],
+        "description": "Recorded as the state affording due process of law to the person for a deprivation. This predicate bundles the entire contested substantive content of 'due process' opaquely; see GAPS.md.",
+        "verbalisation": "{0} affords due process of law to {1}"
+       },
+       "within_jurisdiction_of": {
+        "arguments": [
+         "person",
+         "state"
+        ],
+        "description": "Recorded as the person being within the jurisdiction of the state.",
+        "verbalisation": "{0} is within the jurisdiction of {1}"
+       },
+       "denies_equal_protection": {
+        "arguments": [
+         "state",
+         "person"
+        ],
+        "description": "Recorded as the state denying the person the equal protection of the laws. This predicate bundles the entire contested substantive content of 'equal protection' opaquely; see GAPS.md.",
+        "verbalisation": "{0} denies the equal protection of the laws to {1}"
+       }
+      },
+      "constants": {}
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "alice",
+       "bob"
+      ],
+      "state": [
+       "arizona"
+      ],
+      "law": [
+       "law_a"
+      ]
+     },
+     "constants": {},
+     "relations": {
+      "born_in_us": [
+       [
+        "alice"
+       ]
+      ],
+      "naturalized_in_us": [
+       [
+        "bob"
+       ]
+      ],
+      "subject_to_us_jurisdiction": [
+       [
+        "alice"
+       ],
+       [
+        "bob"
+       ]
+      ],
+      "us_citizen": [
+       [
+        "alice"
+       ],
+       [
+        "bob"
+       ]
+      ],
+      "resides_in": [
+       [
+        "alice",
+        "arizona"
+       ],
+       [
+        "bob",
+        "arizona"
+       ]
+      ],
+      "citizen_of_state": [
+       [
+        "alice",
+        "arizona"
+       ],
+       [
+        "bob",
+        "arizona"
+       ]
+      ],
+      "makes_law": [
+       [
+        "arizona",
+        "law_a"
+       ]
+      ],
+      "e\tnforces_law": [
+       [
+        "arizona",
+        "law_a"
+       ]
+      ],
+      "abridges_priv_or_imm": [],
+      "deprives": [
+       [
+        "arizona",
+        "bob"
+       ]
+      ],
+      "affords_due_process": [
+       [
+        "arizona",
+        "bob"
+       ]
+      ],
+      "within_jurisdiction_of": [
+       [
+        "alice",
+        "arizona"
+       ],
+       [
+        "bob",
+        "arizona"
+       ]
+      ],
+      "denies_equal_protection": []
+     }
+    },
+    "ast": [
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "and",
+        [
+         "or",
+         [
+          "unary",
+          "born_in_us",
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "unary",
+          "naturalized_in_us",
+          [
+           "var",
+           0
+          ]
+         ]
+        ],
+        [
+         "unary",
+         "subject_to_us_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "and",
+        [
+         "unary",
+         "us_citizen",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "forall",
+         "state’",
+         [
+          "implies",
+          [
+           "binary",
+           "resides_in",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ],
+          [
+           "binary",
+           "citizen_of_state",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "state",
+      [
+       "forall",
+       "law",
+       [
+        "forall",
+        "person",
+        [
+         "implies",
+         [
+          "and",
+          [
+           "or",
+           [
+            "binary",
+            "makes_law",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             1
+            ]
+           ],
+           [
+            "binary",
+            "enforces_law",
+            [
+             "var",
+             2
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ],
+          [
+           "unary",
+           "us_citizen",
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "not",
+          [
+           "binary",
+           "abridges_priv_or_imm",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "state",
+      [
+       "forall",
+       "person",
+       [
+        "implies",
+        [
+         "binary",
+         "deprives",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "affords_due_process",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "state",
+      [
+       "forall",
+       "person",
+       [
+        "implies",
+        [
+         "binary",
+         "within_jurisdiction_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "var",
+          1
+         ]
+        ],
+        [
+         "not",
+         [
+          "binary",
+          "denies_equal_protection",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: fields do not match: expected ['abridges_priv_or_imm', 'affords_due_process', 'born_in_us', 'citizen_of_state', 'denies_equal_protection', 'deprives', 'enforces_law', 'makes_law', 'naturalized_in_us', 'resides_in', 'subject_to_us_jurisdiction', 'us_citizen', 'within_jurisdiction_of'], got ['abridges_priv_or_imm', 'affords_due_process', 'born_in_us', 'citizen_of_state', 'denies_equal_protection', 'deprives', 'e\tnforces_law', 'makes_law', 'naturalized_in_us', 'resides_in', 'subject_to_us_jurisdiction', 'us_citizen', 'within_jurisdiction_of']"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: fields do not match: expected [abridges_priv_or_imm, affords_due_process, born_in_us, citizen_of_state, denies_equal_protection, deprives, enforces_law, makes_law, naturalized_in_us, resides_in, subject_to_us_jurisdiction, us_citizen, within_jurisdiction_of], got [abridges_priv_or_imm, affords_due_process, born_in_us, citizen_of_state, denies_equal_protection, deprives, e\tnforces_law, makes_law, naturalized_in_us, resides_in, subject_to_us_jurisdiction, us_citizen, within_jurisdiction_of]"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: unknown binder sort"
+    }
+   },
+   "signature": "af5aa505f1e2b334",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-322acb1b0c5e7af1",
+   "surface": "requests",
+   "profile": "invalid-background-model:evaluate",
+   "seed": "conformance/invalid-background-model.json/0",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "vocabulary",
+      "constants",
+      "beta",
+      "sort"
+     ],
+     "array"
+    ],
+    [
+     "unicode",
+     [
+      "environment",
+      "spec_revision"
+     ],
+     "cr"
+    ]
+   ],
+   "input": {
+    "id": "conformance/invalid-background-model.json/0",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25\r",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {},
+      "constants": {
+       "alpha": {
+        "sort": "$string"
+       },
+       "beta": {
+        "sort": []
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "$string": [
+       "a"
+      ]
+     },
+     "constants": {
+      "alpha": "a",
+      "beta": "a"
+     },
+     "relations": {}
+    },
+    "ast": [
+     [
+      "top"
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: fields do not match: expected ['sort', 'description'], got ['sort']"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision ve-v0.2-expand2-2026-09-25\r"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision ve-v0.2-expand2-2026-09-25\r"
+    }
+   },
+   "signature": "322acb1b0c5e7af1",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-263a018cd24da3ff",
+   "surface": "requests",
+   "profile": "closure:evaluate",
+   "seed": "conformance/closure.json/30",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "ast",
+      9,
+      2,
+      2,
+      2,
+      4,
+      1
+     ],
+     "number"
+    ],
+    [
+     "type",
+     [
+      "model",
+      "relations",
+      "marked",
+      0
+     ],
+     "string"
+    ]
+   ],
+   "input": {
+    "id": "conformance/closure.json/30",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.1",
+     "profiles": [
+      "closure@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.1-closure-2026-09-21",
+     "vocabulary": {
+      "sorts": {
+       "node": {
+        "description": "A graph vertex.",
+        "verbalisation": {
+         "singular": "vertex",
+         "plural": "vertices"
+        }
+       },
+       "other": {
+        "description": "An independent possibly empty sort."
+       }
+      },
+      "predicates": {
+       "edge": {
+        "arguments": [
+         "node",
+         "node"
+        ],
+        "description": "One directed step from source to destination.",
+        "verbalisation": "{0} reaches {1}"
+       },
+       "marked": {
+        "arguments": [
+         "node"
+        ],
+        "description": "A selected vertex."
+       }
+      },
+      "constants": {
+       "start": {
+        "sort": "node",
+        "description": "start"
+       },
+       "end": {
+        "sort": "node",
+        "description": "end"
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "node": [
+       "n0",
+       "n1",
+       "n2"
+      ],
+      "other": [
+       "q"
+      ]
+     },
+     "constants": {
+      "end": "n2",
+      "start": "n0"
+     },
+     "relations": {
+      "edge": [],
+      "marked": [
+       "x"
+      ]
+     }
+    },
+    "ast": [
+     [
+      "forall",
+      "node",
+      [
+       "reach",
+       "star",
+       [
+        "named",
+        "edge"
+       ],
+       [
+        "var",
+        0
+       ],
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     [
+      "exists",
+      "node",
+      [
+       "reach",
+       "plus",
+       [
+        "named",
+        "edge"
+       ],
+       [
+        "var",
+        0
+       ],
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "node",
+      [
+       "forall",
+       "node",
+       [
+        "implies",
+        [
+         "reach",
+         "plus",
+         [
+          "named",
+          "edge"
+         ],
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "reach",
+         "star",
+         [
+          "named",
+          "edge"
+         ],
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "node",
+      [
+       "forall",
+       "node",
+       [
+        "implies",
+        [
+         "reach",
+         "plus",
+         [
+          "named",
+          "edge"
+         ],
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "reach",
+         "plus",
+         [
+          "body",
+          "node",
+          [
+           "binary",
+           "edge",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "node",
+      [
+       "forall",
+       "node",
+       [
+        "implies",
+        [
+         "reach",
+         "plus",
+         [
+          "body",
+          "node",
+          [
+           "binary",
+           "edge",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "reach",
+         "plus",
+         [
+          "named",
+          "edge"
+         ],
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "node",
+      [
+       "forall",
+       "node",
+       [
+        "implies",
+        [
+         "reach",
+         "star",
+         [
+          "body",
+          "node",
+          [
+           "binary",
+           "edge",
+           [
+            "var",
+            1
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "reach",
+         "star",
+         [
+          "named",
+          "edge"
+         ],
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "other",
+      [
+       "exists",
+       "node",
+       [
+        "reach",
+        "star",
+        [
+         "named",
+         "edge"
+        ],
+        [
+         "var",
+         0
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "node",
+      [
+       "reach",
+       "star",
+       [
+        "body",
+        "node",
+        [
+         "bottom"
+        ]
+       ],
+       [
+        "var",
+        0
+       ],
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     [
+      "exists",
+      "node",
+      [
+       "reach",
+       "plus",
+       [
+        "body",
+        "node",
+        [
+         "bottom"
+        ]
+       ],
+       [
+        "var",
+        0
+       ],
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "node",
+      [
+       "forall",
+       "node",
+       [
+        "forall",
+        "node",
+        [
+         "reach",
+         "plus",
+         [
+          "body",
+          "node",
+          [
+           "and",
+           [
+            "binary",
+            "edge",
+            [
+             "var",
+             1
+            ],
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "not",
+            [
+             "eq",
+             [
+              "var",
+              0
+             ],
+             [
+              "var",
+              4
+             ]
+            ]
+           ]
+          ]
+         ],
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          7
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "node",
+      [
+       "forall",
+       "node",
+       [
+        "reach",
+        "plus",
+        [
+         "body",
+         "node",
+         [
+          "reach",
+          "star",
+          [
+           "named",
+           "edge"
+          ],
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ]
+        ],
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "reach",
+      "plus",
+      [
+       "named",
+       "edge"
+      ],
+      [
+       "const",
+       "start"
+      ],
+      [
+       "const",
+       "end"
+      ]
+     ],
+     [
+      "reach",
+      "plus",
+      [
+       "named",
+       "edge"
+      ],
+      [
+       "const",
+       "end"
+      ],
+      [
+       "const",
+       "start"
+      ]
+     ],
+     [
+      "reach",
+      "plus",
+      [
+       "named",
+       "edge"
+      ],
+      [
+       "const",
+       "start"
+      ],
+      [
+       "const",
+       "start"
+      ]
+     ],
+     [
+      "forall",
+      "node",
+      [
+       "reach",
+       "plus",
+       [
+        "body",
+        "node",
+        [
+         "and",
+         [
+          "binary",
+          "edge",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "not",
+          [
+           "eq",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            2
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        "const",
+        "start"
+       ],
+       [
+        "const",
+        "end"
+       ]
+      ]
+     ],
+     [
+      "reach",
+      "star",
+      [
+       "named",
+       "edge"
+      ],
+      [
+       "const",
+       "start"
+      ],
+      [
+       "const",
+       "end"
+      ]
+     ],
+     [
+      "reach",
+      "star",
+      [
+       "named",
+       "edge"
+      ],
+      [
+       "const",
+       "end"
+      ],
+      [
+       "const",
+       "start"
+      ]
+     ],
+     [
+      "reach",
+      "star",
+      [
+       "named",
+       "edge"
+      ],
+      [
+       "const",
+       "start"
+      ],
+      [
+       "const",
+       "start"
+      ]
+     ],
+     [
+      "forall",
+      "node",
+      [
+       "reach",
+       "star",
+       [
+        "body",
+        "node",
+        [
+         "and",
+         [
+          "binary",
+          "edge",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "not",
+          [
+           "eq",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            2
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        "const",
+        "start"
+       ],
+       [
+        "const",
+        "end"
+       ]
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: relation tuple has wrong arity"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: array expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnboundVariable",
+     "text": "UnboundVariable: variable index outside scope"
+    }
+   },
+   "signature": "263a018cd24da3ff",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-8e687e97258d25a5",
+   "surface": "requests",
+   "profile": "usecase:cedar-attributes:evaluate",
+   "seed": "usecases/cedar-attributes/model.json@environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "key",
+     [
+      "model"
+     ],
+     "control"
+    ],
+    [
+     "unicode",
+     [
+      "ast",
+      0,
+      1
+     ],
+     "cr"
+    ]
+   ],
+   "input": {
+    "id": "usecases/cedar-attributes/model.json@environment.json",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "data@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A person"
+       }
+      },
+      "predicates": {
+       "department": {
+        "arguments": [
+         "person",
+         "$string"
+        ],
+        "description": "Department of a person",
+        "functional": true,
+        "total": true
+       }
+      },
+      "constants": {
+       "alice": {
+        "sort": "person",
+        "description": "Alice"
+       },
+       "finance": {
+        "sort": "$string"
+       },
+       "sales": {
+        "sort": "$string"
+       }
+      }
+     }
+    },
+    "model\u001c": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "a"
+      ],
+      "$string": [
+       "f",
+       "s"
+      ]
+     },
+     "constants": {
+      "alice": "a",
+      "finance": "f",
+      "sales": "s"
+     },
+     "relations": {
+      "department": [
+       [
+        "a",
+        "f"
+       ]
+      ]
+     }
+    },
+    "ast": [
+     [
+      "binary",
+      "department\r",
+      [
+       "const",
+       "alice"
+      ],
+      [
+       "const",
+       "finance"
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "n/a"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: ill-typed or unbound formula"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: unknown predicate \"department\\r\""
+    }
+   },
+   "signature": "8e687e97258d25a5",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-839dd531729e5ee3",
+   "surface": "requests",
+   "profile": "usecase:birthright-citizenship-debate:evaluate",
+   "seed": "usecases/birthright-citizenship-debate/model-true.json@environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "key",
+     [
+      "model"
+     ],
+     "curly-quote"
+    ],
+    [
+     "unicode",
+     [
+      "ast",
+      6,
+      0
+     ],
+     "double-space"
+    ]
+   ],
+   "input": {
+    "id": "usecases/birthright-citizenship-debate/model-true.json@environment.json",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A person whose U.S. citizenship status under the 14th Amendment's Citizenship Clause is at issue in the debate.",
+        "verbalisation": {
+         "singular": "person",
+         "plural": "people"
+        }
+       }
+      },
+      "predicates": {
+       "born_in_us": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as born on U.S. soil. Both sides of the debate accept this predicate and its extension without dispute."
+       },
+       "us_citizen": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as a U.S. citizen under the Citizenship Clause reading at issue. Both sides accept the predicate; they dispute its extension for specific people because they dispute the extension of subject_to_jurisdiction."
+       },
+       "subject_to_jurisdiction": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as satisfying 'subject to the jurisdiction thereof' (14th Amendment, Citizenship Clause). THIS IS THE CONTESTED PREDICATE: both sides use the same word 'jurisdiction' and accept the same syntactic role for it in the Citizenship Clause, but assign it different extensions. Krikorian/Cooper read it as complete, exclusive political allegiance (owing no allegiance to a foreign sovereign); Mayes/Newman read it as being present in U.S. territory and bound by / enforceable under U.S. law. See claim-graph.md."
+       },
+       "has_noncitizen_domiciled_parent": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as having at least one parent who is a non-citizen permanently domiciled/residing in the U.S. but legally ineligible for naturalization (the parental profile in United States v. Wong Kim Ark, 1898). Both sides accept Wong Kim Ark's outcome for this profile."
+       },
+       "has_noncitizen_undocumented_parent": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as having at least one parent who is a non-citizen present in the U.S. without legal immigration status. This is the profile the 'end birthright citizenship' side argues falls outside subject_to_jurisdiction, and the 'keep it' side argues falls inside it."
+       },
+       "has_noncitizen_temporary_parent": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as having at least one parent who is a non-citizen present in the U.S. only temporarily (tourist, student, or other non-immigrant visa) -- the 'birth tourism' profile Krikorian raises."
+       }
+      },
+      "constants": {
+       "child": {
+        "sort": "person",
+        "description": "A representative child born in the United States, used to test the debate's central syllogism concretely (the debate's own paradigm example, not a real individual)."
+       }
+      }
+     }
+    },
+    "model’": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "kim",
+       "wong"
+      ]
+     },
+     "constants": {
+      "child": "kim"
+     },
+     "relations": {
+      "born_in_us": [
+       [
+        "kim"
+       ]
+      ],
+      "us_citizen": [
+       [
+        "kim"
+       ],
+       [
+        "wong"
+       ]
+      ],
+      "subject_to_jurisdiction": [
+       [
+        "kim"
+       ],
+       [
+        "wong"
+       ]
+      ],
+      "has_noncitizen_domiciled_parent": [
+       [
+        "wong"
+       ]
+      ],
+      "has_noncitizen_undocumented_parent": [],
+      "has_noncitizen_temporary_parent": []
+     }
+    },
+    "ast": [
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "and",
+        [
+         "unary",
+         "born_in_us",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "subject_to_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "unary",
+        "us_citizen",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_domiciled_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "subject_to_jurisdiction",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "us_citizen",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "and",
+        [
+         "unary",
+         "born_in_us",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "subject_to_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "unary",
+        "us_citizen",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "born_in_us",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "unary",
+      "subject_to_jurisdiction",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "u  nary",
+      "us_citizen",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "and",
+        [
+         "unary",
+         "born_in_us",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "subject_to_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "unary",
+        "us_citizen",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "born_in_us",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "unary",
+      "subject_to_jurisdiction",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_domiciled_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "subject_to_jurisdiction",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "has_noncitizen_undocumented_parent",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "unary",
+      "subject_to_jurisdiction",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_domiciled_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "subject_to_jurisdiction",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_undocumented_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "subject_to_jurisdiction",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "has_noncitizen_undocumented_parent",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "not",
+      [
+       "unary",
+       "subject_to_jurisdiction",
+       [
+        "const",
+        "child"
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_undocumented_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "not",
+        [
+         "unary",
+         "subject_to_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "has_noncitizen_undocumented_parent",
+      [
+       "const",
+       "child"
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "n/a"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: property not found: model"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "SyntaxError: invalid formula tag or arity"
+    }
+   },
+   "signature": "839dd531729e5ee3",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-406eff6597a872a5",
+   "surface": "requests",
+   "profile": "usecase:birthright-citizenship-debate:evaluate",
+   "seed": "usecases/birthright-citizenship-debate/model-false.json@environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "ast",
+      17,
+      1
+     ],
+     "upper"
+    ],
+    [
+     "duplicate",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "us_citizen",
+      "arguments"
+     ],
+     null
+    ]
+   ],
+   "input": {
+    "id": "usecases/birthright-citizenship-debate/model-false.json@environment.json",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A person whose U.S. citizenship status under the 14th Amendment's Citizenship Clause is at issue in the debate.",
+        "verbalisation": {
+         "singular": "person",
+         "plural": "people"
+        }
+       }
+      },
+      "predicates": {
+       "born_in_us": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as born on U.S. soil. Both sides of the debate accept this predicate and its extension without dispute."
+       },
+       "us_citizen": {
+        "arguments": [
+         "person",
+         "person"
+        ],
+        "description": "Recorded as a U.S. citizen under the Citizenship Clause reading at issue. Both sides accept the predicate; they dispute its extension for specific people because they dispute the extension of subject_to_jurisdiction."
+       },
+       "subject_to_jurisdiction": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as satisfying 'subject to the jurisdiction thereof' (14th Amendment, Citizenship Clause). THIS IS THE CONTESTED PREDICATE: both sides use the same word 'jurisdiction' and accept the same syntactic role for it in the Citizenship Clause, but assign it different extensions. Krikorian/Cooper read it as complete, exclusive political allegiance (owing no allegiance to a foreign sovereign); Mayes/Newman read it as being present in U.S. territory and bound by / enforceable under U.S. law. See claim-graph.md."
+       },
+       "has_noncitizen_domiciled_parent": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as having at least one parent who is a non-citizen permanently domiciled/residing in the U.S. but legally ineligible for naturalization (the parental profile in United States v. Wong Kim Ark, 1898). Both sides accept Wong Kim Ark's outcome for this profile."
+       },
+       "has_noncitizen_undocumented_parent": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as having at least one parent who is a non-citizen present in the U.S. without legal immigration status. This is the profile the 'end birthright citizenship' side argues falls outside subject_to_jurisdiction, and the 'keep it' side argues falls inside it."
+       },
+       "has_noncitizen_temporary_parent": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Recorded as having at least one parent who is a non-citizen present in the U.S. only temporarily (tourist, student, or other non-immigrant visa) -- the 'birth tourism' profile Krikorian raises."
+       }
+      },
+      "constants": {
+       "child": {
+        "sort": "person",
+        "description": "A representative child born in the United States, used to test the debate's central syllogism concretely (the debate's own paradigm example, not a real individual)."
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "kim",
+       "wong"
+      ]
+     },
+     "constants": {
+      "child": "kim"
+     },
+     "relations": {
+      "born_in_us": [
+       [
+        "kim"
+       ]
+      ],
+      "us_citizen": [
+       [
+        "kim"
+       ]
+      ],
+      "subject_to_jurisdiction": [
+       [
+        "kim"
+       ]
+      ],
+      "has_noncitizen_domiciled_parent": [
+       [
+        "wong"
+       ]
+      ],
+      "has_noncitizen_undocumented_parent": [],
+      "has_noncitizen_temporary_parent": []
+     }
+    },
+    "ast": [
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "and",
+        [
+         "unary",
+         "born_in_us",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "subject_to_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "unary",
+        "us_citizen",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_domiciled_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "subject_to_jurisdiction",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "us_citizen",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "and",
+        [
+         "unary",
+         "born_in_us",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "subject_to_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "unary",
+        "us_citizen",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "born_in_us",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "unary",
+      "subject_to_jurisdiction",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "unary",
+      "us_citizen",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "and",
+        [
+         "unary",
+         "born_in_us",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "subject_to_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "unary",
+        "us_citizen",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "born_in_us",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "unary",
+      "subject_to_jurisdiction",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_domiciled_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "subject_to_jurisdiction",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "has_noncitizen_undocumented_parent",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "unary",
+      "subject_to_jurisdiction",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_domiciled_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "subject_to_jurisdiction",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_undocumented_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "subject_to_jurisdiction",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "has_noncitizen_undocumented_parent",
+      [
+       "const",
+       "child"
+      ]
+     ],
+     [
+      "not",
+      [
+       "unary",
+       "subject_to_jurisdiction",
+       [
+        "const",
+        "child"
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "PERSON",
+      [
+       "implies",
+       [
+        "unary",
+        "has_noncitizen_undocumented_parent",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "not",
+        [
+         "unary",
+         "subject_to_jurisdiction",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "unary",
+      "has_noncitizen_undocumented_parent",
+      [
+       "const",
+       "child"
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: relation tuple has wrong arity"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: wrong relation arity"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "TypeMismatch",
+     "text": "TypeMismatch: predicate arity mismatch"
+    }
+   },
+   "signature": "406eff6597a872a5",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-5ed5c5fcb3be6332",
+   "surface": "requests",
+   "profile": "identity:evaluate",
+   "seed": "conformance/identity.json/523",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "model",
+      "relations",
+      "active",
+      0,
+      0
+     ],
+     "double-space"
+    ],
+    [
+     "reorder",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "owns",
+      "arguments"
+     ],
+     null
+    ]
+   ],
+   "input": {
+    "id": "conformance/identity.json/523",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "item": {
+        "description": "An item."
+       },
+       "person": {
+        "description": "A person."
+       }
+      },
+      "predicates": {
+       "marked": {
+        "arguments": [
+         "item"
+        ],
+        "description": "Marked."
+       },
+       "edge": {
+        "arguments": [
+         "item",
+         "item"
+        ],
+        "description": "An edge."
+       },
+       "owns": {
+        "arguments": [
+         "item",
+         "person"
+        ],
+        "description": "Owns."
+       },
+       "active": {
+        "arguments": [
+         "person"
+        ],
+        "description": "Active."
+       }
+      },
+      "constants": {
+       "origin": {
+        "sort": "item",
+        "description": "Origin."
+       },
+       "other": {
+        "sort": "item",
+        "description": "Another named item."
+       },
+       "alice": {
+        "sort": "person",
+        "description": "Named person."
+       }
+      }
+     }
+    },
+    "model": {
+     "complete": true,
+     "domains": {
+      "item": [
+       "third",
+       "second",
+       "same"
+      ],
+      "person": [
+       "same"
+      ]
+     },
+     "constants": {
+      "alice": "same",
+      "origin": "same",
+      "other": "same"
+     },
+     "relations": {
+      "active": [
+       [
+        "s  ame"
+       ]
+      ],
+      "edge": [
+       [
+        "third",
+        "second"
+       ],
+       [
+        "second",
+        "third"
+       ],
+       [
+        "second",
+        "second"
+       ],
+       [
+        "second",
+        "same"
+       ],
+       [
+        "same",
+        "second"
+       ]
+      ],
+      "marked": [
+       [
+        "second"
+       ],
+       [
+        "same"
+       ]
+      ],
+      "owns": []
+     }
+    },
+    "ast": [
+     [
+      "exists",
+      "item",
+      [
+       "and",
+       [
+        "and",
+        [
+         "binary",
+         "edge",
+         [
+          "const",
+          "other"
+         ],
+         [
+          "const",
+          "other"
+         ]
+        ],
+        [
+         "top"
+        ]
+       ],
+       [
+        "unary",
+        "active",
+        [
+         "const",
+         "alice"
+        ]
+       ]
+      ]
+     ],
+     [
+      "not",
+      [
+       "and",
+       [
+        "or",
+        [
+         "not",
+         [
+          "or",
+          [
+           "not",
+           [
+            "unary",
+            "marked",
+            [
+             "const",
+             "origin"
+            ]
+           ]
+          ],
+          [
+           "exists",
+           "item",
+           [
+            "unary",
+            "marked",
+            [
+             "const",
+             "origin"
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         "and",
+         [
+          "eq",
+          [
+           "const",
+           "other"
+          ],
+          [
+           "const",
+           "other"
+          ]
+         ],
+         [
+          "or",
+          [
+           "implies",
+           [
+            "eq",
+            [
+             "const",
+             "other"
+            ],
+            [
+             "const",
+             "other"
+            ]
+           ],
+           [
+            "bottom"
+           ]
+          ],
+          [
+           "or",
+           [
+            "top"
+           ],
+           [
+            "unary",
+            "marked",
+            [
+             "const",
+             "origin"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        "forall",
+        "item",
+        [
+         "top"
+        ]
+       ]
+      ]
+     ],
+     [
+      "exists",
+      "item",
+      [
+       "bottom"
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "exists",
+       "item",
+       [
+        "forall",
+        "person",
+        [
+         "exists",
+         "item",
+         [
+          "forall",
+          "person",
+          [
+           "exists",
+           "item",
+           [
+            "binary",
+            "owns",
+            [
+             "var",
+             5
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "exists",
+       "item",
+       [
+        "top"
+       ]
+      ]
+     ],
+     [
+      "exists",
+      "person",
+      [
+       "forall",
+       "item",
+       [
+        "bottom"
+       ]
+      ]
+     ],
+     [
+      "eq",
+      [
+       "const",
+       "origin"
+      ],
+      [
+       "const",
+       "other"
+      ]
+     ],
+     [
+      "not",
+      [
+       "eq",
+       [
+        "const",
+        "origin"
+       ],
+       [
+        "const",
+        "other"
+       ]
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: local ID must match [a-z][a-z0-9_]*"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: invalid local identifier"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "TypeMismatch",
+     "text": "TypeMismatch: predicate argument sort mismatch"
+    }
+   },
+   "signature": "5ed5c5fcb3be6332",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "requests-1eba84d7b3e212da",
+   "surface": "requests",
+   "profile": "parser:evaluate",
+   "seed": "conformance/parser.json/703",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "v0",
+    "lean": "",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "key",
+     [
+      "model"
+     ],
+     "nbsp"
+    ],
+    [
+     "type",
+     [
+      "ast",
+      0,
+      2,
+      1
+     ],
+     "string"
+    ]
+   ],
+   "input": {
+    "id": "conformance/parser.json/703",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0",
+     "profile": "relational-fol@0",
+     "spec_revision": "ve-v0-draft-2026-09-20",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A person recorded in the inventory."
+       },
+       "service": {
+        "description": "A service recorded in the inventory."
+       }
+      },
+      "predicates": {
+       "deployed": {
+        "arguments": [
+         "service"
+        ],
+        "description": "Recorded as deployed in this inventory."
+       },
+       "owns": {
+        "arguments": [
+         "person",
+         "service"
+        ],
+        "description": "The person is recorded as an owner of the service."
+       },
+       "reviewed": {
+        "arguments": [
+         "service"
+        ],
+        "description": "Recorded as reviewed in this inventory."
+       }
+      },
+      "constants": {}
+     }
+    },
+    "m odel": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "alice"
+      ],
+      "service": [
+       "api"
+      ]
+     },
+     "constants": {},
+     "relations": {
+      "deployed": [
+       [
+        "api"
+       ]
+      ],
+      "owns": [
+       [
+        "alice",
+        "api"
+       ]
+      ],
+      "reviewed": [
+       [
+        "api"
+       ]
+      ]
+     }
+    },
+    "ast": [
+     [
+      "forall",
+      "service",
+      [
+       "exists",
+       "x",
+       [
+        "binary",
+        "owns",
+        [
+         "var",
+         0
+        ],
+        [
+         "var",
+         1
+        ]
+       ]
+      ]
+     ]
+    ]
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "n/a"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: property not found: model"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: unknown binder sort"
+    }
+   },
+   "signature": "1eba84d7b3e212da",
+   "follow_up": "TODO",
+   "minimised": false
+  },
+  {
+   "id": "environment-1619502b6842c86b",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "conformance/elaborated-document.json/10/environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "senior"
+     ],
+     "array"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "person": {
+       "description": "a person"
+      }
+     },
+     "predicates": {
+      "in_finance": {
+       "arguments": [
+        "person"
+       ],
+       "description": "works in finance"
+      },
+      "in_legal": {
+       "arguments": [
+        "person"
+       ],
+       "description": "works in legal"
+      },
+      "senior": [],
+      "dept": {
+       "arguments": [
+        "person",
+        "$string"
+       ],
+       "description": "department"
+      }
+     },
+     "constants": {
+      "alice": {
+       "sort": "person",
+       "description": "Alice"
+      },
+      "bob": {
+       "sort": "person",
+       "description": "Bob"
+      },
+      "finance": {
+       "sort": "$string",
+       "description": "the string finance"
+      },
+      "legal": {
+       "sort": "$string"
+      }
+     }
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "unknown predicate argument sort"
+    }
+   },
+   "signature": "1619502b6842c86b",
+   "follow_up": "TODO",
+   "minimised": false
+  }
+ ],
+ "baseline": {
+  "entries": 250,
+  "seen_in_sample": 195,
+  "unreviewed": [],
+  "not_reproduced": []
+ },
+ "passed": false,
+ "work": {
+  "inputs": 26697,
+  "python_calls": 26701,
+  "runner_cases": 19029,
+  "runner_requests": 113,
+  "service_cases": 15302,
+  "service_requests": 34
+ },
+ "cpu_seconds": {
+  "python": 215.6,
+  "children": 70.6
+ }
+}
