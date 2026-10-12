@@ -59,6 +59,7 @@
           {"contains": {"const": "parse"}},
           {"contains": {"const": "graph"}},
           {"contains": {"const": "readings"}},
+          {"contains": {"const": "readings-choices"}},
           {"contains": {"const": "bundle"}},
           {"contains": {"const": "family-norms"}},
           {"contains": {"const": "soft-norms"}},

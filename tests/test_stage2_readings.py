@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from ve.backends import dispatch, relay
+from ve.backends.service_schema import Invalid, check_row
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.readings import check_readings
@@ -31,6 +32,157 @@ QUERIES = {
 
 def env():
     return Environment(pm.raw_environment(()))
+
+
+def _complete_choice_case(monkeypatch, *, joint=False):
+    """Capture the genuine proposal that the Python search sends to Lean."""
+    sets = [{"id": name, "version": 1, "unit": name, "status": "open",
+             "readings": [
+                 {"id": f"{name}-strict", "kind": "asserted", "content": formula,
+                  "labels": {"force": "strict"}},
+                 {"id": f"{name}-default", "kind": "asserted", "content": ["top"],
+                  "labels": {"force": "default"}}]}
+            for name, formula in (("a", ATOM), ("b", NEGATED))]
+    coupling = {"id": "same-force", "axis": "force", "sets": [
+        {"set": name, "version": 1} for name in ("a", "b")],
+        "by": "translator", "reason_spans": ["a"]}
+    joint_choices = {"status": "complete", "choices": [
+        {"a@1": 0, "b@1": 0}, {"a@1": 1, "b@1": 1}]}
+    captured = []
+    real = relay.decide
+
+    def spy(mode, batch, **kw):
+        if mode == "readings-choices":
+            captured.extend(copy.deepcopy(case) for case in batch if "choice_evidence" in case)
+        return real(mode, batch, **kw)
+
+    monkeypatch.setattr(relay, "decide", spy)
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    result = check_readings(env(), sets, ["bottom"],
+                            **({"joint_choices": joint_choices} if joint else
+                               {"couplings": [coupling]}))
+    assert result["verdict"] == "SOME"
+    assert len(captured) == 1
+    return captured[0]
+
+
+@pytest.mark.parametrize("joint", [False, True])
+def test_complete_choice_verdict_is_lean_checked(monkeypatch, joint):
+    case = _complete_choice_case(monkeypatch, joint=joint)
+    assert relay.decide("readings-choices", [case])[0]["verdict"] == "SOME"
+    assert {"certificate", "model"} <= {key for row in case["choice_evidence"] for key in row}
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda c: c["choice_evidence"].pop(),
+    lambda c: c["choice_evidence"].append(copy.deepcopy(c["choice_evidence"][0])),
+    lambda c: c["choice_evidence"][0].update(choice=[True, 0]),
+    lambda c: c["choice_evidence"][0].update(choice=[2, 0]),
+    lambda c: c["choice_evidence"][0].update(certificate={}),
+    lambda c: c["set_meta"][1]["readings"][0]["labels"].update(force="default"),
+])
+def test_coupled_choice_mutations_cannot_claim_a_verdict(monkeypatch, mutation):
+    case = _complete_choice_case(monkeypatch)
+    mutation(case)
+    with pytest.raises(VEError):
+        relay.decide("readings-choices", [case])
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda c: c["choice_evidence"].pop(),
+    lambda c: c["joint_choices"].append([0, 0]),
+    lambda c: c["choice_evidence"][0].update(choice=[False, 0]),
+])
+def test_joint_choice_mutations_cannot_claim_a_verdict(monkeypatch, mutation):
+    case = _complete_choice_case(monkeypatch, joint=True)
+    mutation(case)
+    with pytest.raises(VEError):
+        relay.decide("readings-choices", [case])
+
+
+def _coupled_plan_case(limit=64):
+    return {"id": "plan", "kind": "plan", "limit": limit,
+            "set_meta": [{"id": name, "version": 1, "unit": name,
+                          "readings": [{"labels": {"force": value}}
+                                       for value in ("strict", "default")]}
+                         for name in ("a", "b")],
+            "couplings": [{"id": "same-force", "axis": "force", "sets": [
+                {"set": name, "version": 1} for name in ("a", "b")]}]}
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda row: row["choices"][0].__setitem__(0, True),
+    lambda row: row["choices"][0].__setitem__(0, 2),
+    lambda row: row["choices"].append(row["choices"][0].copy()),
+    lambda row: row.update(choices=[]),
+    lambda row: row["conditional_on"].append("coupling:absent"),
+    lambda row: row.pop("choices"),
+    lambda row: row.update(extra=1),
+])
+def test_coupled_plan_response_is_typed_and_bound(mutation):
+    case = _coupled_plan_case()
+    row = relay.decide("readings-choices", [case])[0]
+    assert row["choices"] == [[0, 0], [1, 1]]
+    mutation(row)
+    with pytest.raises(Invalid):
+        check_row("readings-choices", row, case, 0)
+
+
+@pytest.mark.parametrize("field,bad", [
+    ("id", "other"), ("status", "UNKNOWN"), ("route", "UNKNOWN"),
+    ("choices", True), ("conditional_on", ["coupling:absent"]),
+])
+def test_coupled_plan_every_field_is_typed_and_bound(field, bad):
+    case = _coupled_plan_case()
+    row = relay.decide("readings-choices", [case])[0]
+    row[field] = bad
+    with pytest.raises(Invalid):
+        check_row("readings-choices", row, case, 0)
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda row: row["units"].append("absent"),
+    lambda row: row.update(choice_count=True),
+    lambda row: row.update(choice_count=5),
+    lambda row: row["budget"].update(max_choices=2),
+])
+def test_coupled_over_budget_response_is_typed_and_bound(mutation):
+    case = _coupled_plan_case(limit=1)
+    row = relay.decide("readings-choices", [case])[0]
+    assert row["route"] == "UNKNOWN" and row["choice_count"] == 2
+    mutation(row)
+    with pytest.raises(Invalid):
+        check_row("readings-choices", row, case, 0)
+
+
+@pytest.mark.parametrize("field,bad", [
+    ("id", "other"), ("status", "UNKNOWN"), ("route", "enumerate"),
+    ("budget", {"max_choices": True}), ("choice_count", True), ("units", ["absent"]),
+])
+def test_coupled_unknown_every_field_is_typed_and_bound(field, bad):
+    case = _coupled_plan_case(limit=1)
+    row = relay.decide("readings-choices", [case])[0]
+    row[field] = bad
+    with pytest.raises(Invalid):
+        check_row("readings-choices", row, case, 0)
+
+
+@pytest.mark.parametrize("field,bad", [
+    ("id", "other"), ("status", True), ("verdict", "YES"),
+])
+def test_coupled_verdict_every_field_is_typed_and_bound(monkeypatch, field, bad):
+    case = _complete_choice_case(monkeypatch)
+    row = relay.decide("readings-choices", [case])[0]
+    row[field] = bad
+    with pytest.raises(Invalid):
+        check_row("readings-choices", row, case, 0)
+
+
+def test_coupled_plan_refuses_unresolved_set():
+    case = _coupled_plan_case()
+    case["couplings"][0]["sets"][1]["set"] = "absent"
+    with pytest.raises(VEError, match="invalid coupling set"):
+        relay.decide("readings-choices", [case])
 
 
 def cases(monkeypatch):

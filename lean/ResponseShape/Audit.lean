@@ -134,6 +134,9 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Family.graph_fits
 #print axioms ResponseShape.Encoders.Family.graph_reported
 #print axioms ResponseShape.Encoders.Family.readings_fits
+#print axioms ResponseShape.Encoders.Family.readingsChoices_check_fits
+#print axioms ResponseShape.Encoders.Family.readingsChoices_fits
+#print axioms ResponseShape.Encoders.Family.readingsChoices_reported
 #print axioms ResponseShape.Encoders.Family.readings_reported
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocument_kinds
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailureX_of_not_free
