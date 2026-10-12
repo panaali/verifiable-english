@@ -32,6 +32,8 @@ CORPORA = {
     "document": 3632,
     "pilots": 486,
 }
+FUZZ_RUNS = ["ci"] + [f"deep-1---seed-202609{day}" for day in range(26, 31)] + [
+    f"deep-1---seed-202610{day:02d}" for day in range(1, 10)]
 
 
 def git(*args: str) -> str:
@@ -109,6 +111,15 @@ def snapshot(raw: Path) -> dict:
             if count != per_side:
                 raise ValueError(f"{path}: {count} rows, expected {per_side}")
             archive[path.name] = {"records": count, "bytes": path.stat().st_size, "sha256": digest(path)}
+    fuzz_archive = {}
+    for side in ("base", "head"):
+        for run in FUZZ_RUNS:
+            name = f"{side}---{run}.json"
+            path = raw.parent / "difffuzz" / name
+            report = read(path)
+            if not isinstance(report.get("findings"), dict) or "baseline" not in report:
+                raise ValueError(f"{path}: incomplete differential recording")
+            fuzz_archive[name] = {"bytes": path.stat().st_size, "sha256": digest(path)}
     return {
         "base": git("rev-parse", BASE), "head": head,
         "commits_no_merges": git("log", "--no-merges", "--format=%H", f"{BASE}..HEAD").splitlines(),
@@ -121,6 +132,7 @@ def snapshot(raw: Path) -> dict:
         "latency_sha256": digest(EVIDENCE / "latency.json"),
         "mutants_sha256": digest(EVIDENCE / "mutants.json"),
         "raw": archive,
+        "difffuzz_raw": fuzz_archive,
     }
 
 
