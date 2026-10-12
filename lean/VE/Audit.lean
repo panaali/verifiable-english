@@ -5047,3 +5047,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Question.frames_leads
 #print axioms VE.Question.askedGate_sound
 #print axioms VE.Question.Run.oneFields_gated
+
+#print axioms VE.Core.Layers.background_fol
+#print axioms VE.Core.Layers.background_generators
+#print axioms VE.Core.Layers.elaborateNary_chain
+#print axioms VE.Core.Layers.firstBad_none
+#print axioms VE.Core.Layers.naryCheck_ok
+#print axioms VE.Core.Layers.stepOk_sound
+#print axioms VE.Core.Wire.encodeFormula_embed
