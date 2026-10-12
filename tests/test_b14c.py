@@ -72,6 +72,25 @@ def test_nary_derived_table_is_checked_by_lean():
     assert [row.get("values") for row in rows] == [[True], [False]]
 
 
+def test_nary_dependencies_are_ordered_before_table_computation():
+    env, model = case()
+    predicates = env["vocabulary"]["predicates"]
+    higher = {"arguments": ["s"] * 3, "description": "higher",
+              "defined": {"arguments": ["s"] * 3,
+                          "body": ["atom", "derived", [["var", 2], ["var", 1], ["var", 0]]]}}
+    env["vocabulary"]["predicates"] = {"higher": higher, **predicates}
+    background, value = route([
+        {"id": "bg", "kind": "background", "environment": env},
+        {"id": "ev", "kind": "evaluate", "environment": env, "model": model,
+         "ast": [["exists", "s", ["exists", "s", ["exists", "s",
+                  ["atom", "higher", [["var", 2], ["var", 1], ["var", 0]]]]]]]},
+    ])
+    assert background["status"] == "ok"
+    assert [entry[1][1][1] for entry in (background["premises"][0][2][2][2],
+                                        background["premises"][1][2][2][2])] == ["derived", "higher"]
+    assert value["values"] == [True]
+
+
 def test_python_routes_nary_definitions_to_lean(monkeypatch):
     env, model = case()
     built = Environment(env)
