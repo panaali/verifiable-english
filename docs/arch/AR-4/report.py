@@ -87,7 +87,11 @@ def problems() -> list[str]:
     mutants = json.loads((EVIDENCE / "mutants.json").read_text())["mutants"]
     full = json.loads((EVIDENCE / "gate-full-failed.json").read_text())
     rerun = json.loads((EVIDENCE / "gate-result.json").read_text())
-    out = []
+    # The scope is untrusted evidence. Validate it with its writer's git-backed
+    # checker before any report logic treats its paths as strings or iterates it.
+    out = batch_scope.scope_problems(scope, ROOT)
+    if out:
+        return out
     if budget["check_exit"] != 0:
         out.append("trust_map.py --check failed at the evidence commit")
     if budget["measured_head"] != budget["measured_base"] or budget["introduced"] or budget["removed"]:
@@ -103,7 +107,6 @@ def problems() -> list[str]:
         out.append("a file under ve/, lean/ or rust/ changed: gate items 2 and 3 apply")
     if scope.get("head") != budget["head"] or scope.get("base") != budget["base"] or not scope.get("commits"):
         out.append("the scope and the budget evidence are of different commits")
-    out += batch_scope.scope_problems(scope, ROOT)  # recomputed from git: the commits, files and base
     # The gate and the measurements cover HEAD: from the gated commit and from the evidence head (either
     # may come first) to HEAD, only this directory changes.
     for start in dict.fromkeys((full.get("commit_sha"), rerun.get("commit_sha"), budget["head"])):
@@ -195,7 +198,9 @@ def main(argv: list[str]) -> int:
         REPORT.write_text(rendered(text))
         return 0
     if argv == ["--check"]:
-        found = problems() + (["REPORT.md's generated block is stale; run --render"] if rendered(text) != text else [])
+        found = problems()
+        if not found and rendered(text) != text:
+            found.append("REPORT.md's generated block is stale; run --render")
         for problem in found:
             print(f"FAIL: {problem}", file=sys.stderr)
         return 1 if found else 0
