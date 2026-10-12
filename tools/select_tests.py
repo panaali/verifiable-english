@@ -89,8 +89,7 @@ PYTHON_LAYER_INPUTS = {".importlinter", "tools/layer-exceptions.json", "tools/ch
                        "tools/layer_policy.py"}
 LEAN_LAYER_INPUTS = {"tools/lean-layer-exceptions.json", "tools/check_lean_imports.py",
                      "tools/lean_header_imports.lean", "tools/layer_policy.py"}
-RUST_LAYER_INPUTS = {"tools/rust-module-exceptions.json", "tools/check_rust_deps.py",
-                     "tools/layer_policy.py"}
+RUST_LAYER_INPUTS = {"tools/check_rust_deps.py", "tools/layer_policy.py"}
 KNOWN_AREAS = {"ve", "ve_experiments", "experiments", "tests", "tools", "conformance", "lean", "rust",
                "usecases", "docs", "paper", "examples", "data", "bench", "design"}
 # Cached drift results depend on this file's rules as well as the graph's.

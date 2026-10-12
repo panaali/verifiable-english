@@ -18,7 +18,12 @@
     {"nodeid": "tests/test_t1c.py::*", "reason": "run `python -m ve_experiments.t1c.run prepare` first"},
     {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[admission]", "reason": "admission is outside Rust scope"},
     {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[dependency-order]", "reason": "dependency-order is outside Rust scope"},
-    {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[labels]", "reason": "labels is outside Rust scope"}
+    {"nodeid": "tests/test_p0_three_way.py::test_rust_matches_expected[labels]", "reason": "labels is outside Rust scope"},
+    {"nodeid": "tests/test_readings_defaults_rd4b_report.py::test_rd4b_report_commit_scope_is_the_saved_no_merge_range", "reason": "RD-4b evidence is written after the clean code-head gate"},
+    {"nodeid": "tests/test_readings_defaults_rd4b_report.py::test_rd4b_report_gate_numbers_are_saved_and_clean", "reason": "RD-4b evidence is written after the clean code-head gate"},
+    {"nodeid": "tests/test_readings_defaults_rd4b_report.py::test_rd4b_report_seeded_bugs_have_saved_failing_tests", "reason": "RD-4b evidence is written after the clean code-head gate"},
+    {"nodeid": "tests/test_readings_defaults_rd4b_report.py::test_rd4b_report_acceptance_labels_and_limits", "reason": "RD-4b evidence is written after the clean code-head gate"},
+    {"nodeid": "tests/test_readings_defaults_rd4b_report.py::test_rd4b_ab_is_checked_from_saved_recordings_and_comparisons", "reason": "RD-4b evidence is written after the clean code-head gate"}
   ],
   "deselected_tests": [
     {"nodeid": "tests/test_llm.py::test_live_*", "reason": "Calls real model CLIs; excluded by the non-live gate."}

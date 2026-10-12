@@ -51,6 +51,23 @@ def cached_route_environment(env) -> dict:
     return encoded_environment(env, "lean-route", lambda: route_environment(env))
 
 
+def background_environment(env) -> dict:
+    """The environment of a Background case, encoded once: the model environment (`profiles.model_environment`,
+    the projection the metered evaluator and Rust's search read, which keeps every Background source), with the
+    W6 annotations erased (`units.erased_data`) where no profile row removes them. Lean's route and norms modes
+    regenerate Background over it for every registered profile (lean-first batch 13b)."""
+    from ..environment_wire import encoded_environment
+    from ..profiles import model_environment
+
+    def build():
+        data = model_environment(env.to_dict(), display=False)
+        if type(data) is dict and "unit_schema" in data:
+            from ..units import erased_data
+            data = erased_data(data)
+        return data
+    return encoded_environment(env, "lean-background", build)
+
+
 def metered_environment(env) -> dict:
     """The environment of a `ve_metered` case (evaluation and non-vacuity answer
     no environment identity): the model environment Rust's search reads too

@@ -1,13 +1,13 @@
 """Service responses: the client's schemas, the Lean decoders and the Lean invariants.
 
 Threat model (docs/spec/lean-service.md): the service is the semantic authority; the
-client checks binding (nonce, mode, each result's position and case digest, the identity
-fields the runners echo from the case) and well-formedness, and nothing else.
+client checks binding (nonce, mode, each result's position and case digest, graph claims,
+certificate count bounds) and well-formedness; it never predicts a derived value (D1).
 
 * Every genuine response of the service over a corpus with every mode and result kind
   (`tests/lean_service_corpus.py`) is accepted by the schemas and by `ve_response_decode`
   (`lean/ResponseDecode.lean`), and satisfies its Lean invariants: the content the runners
-  guarantee and the client does not check (regenerated counts, distinct layers and
+  guarantee and the client does not check (distinct layers and
   conflict targets with their declared sorts, graph unfoldings, dependency orders, ...).
 * Differential fuzz: mutations of those genuine responses (dropped, altered, retyped,
   enum-swapped, truncated and extra fields, at every depth, bindings included) are
@@ -33,10 +33,10 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import lean_build
-from tests.lean_service_corpus import ERROR_REQUESTS, corpus
+from tests.lean_service_corpus import ERROR_REQUESTS, NORM_PAIR_ARITIES, corpus, norm_pair_environment
 from tests.test_lean_service import fake
 from ve.backends.lean_service import CheckerUnavailable, LeanService, case_digest, case_texts, request_context
-from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response
+from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response, check_row
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMON = json.loads((DIRECTORY / "common.json").read_text())["$defs"]
@@ -139,8 +139,9 @@ def assert_agreement(decoder, items, lean=None):
     """items: [(mode, request, [response, ...])]; the verdicts must agree on every response."""
     lean = lean_verdicts(decoder, items) if lean is None else lean
     ours = [schema_verdict(mode, request, r) for mode, request, responses in items for r in responses]
-    flat = [(mode, r) for mode, _, responses in items for r in responses]
-    disagreements = [(mode, json.dumps(r)[:600], a, b) for (mode, r), a, b in zip(flat, ours, lean)
+    flat = [(mode, request, r) for mode, request, responses in items for r in responses]
+    disagreements = [(mode, json.dumps(request["cases"][0])[:900], json.dumps(r)[:600], a, b)
+                     for (mode, request, r), a, b in zip(flat, ours, lean)
                      if a.startswith("accept") != b.startswith("accept")]
     assert not disagreements, f"{len(disagreements)} of {len(flat)} disagree; first: {disagreements[:5]}"
     return ours
@@ -758,6 +759,221 @@ def _genuine_row(genuine, mode, kind, predicate=lambda case, row: True):
 
 
 @pytest.mark.parametrize("mode", ["route", "norms"])
+@pytest.mark.parametrize("location", ["root", "assumptions"])
+def test_admission_claims_must_be_request_nodes(tmp_path, genuine, mode, location):
+    """A forged claim with a freshly computed report id cannot be a Lean admission answer."""
+    from ve.admission import bound_admission
+    from ve.environment import Environment
+    from ve.wire import digest
+
+    case, row = _genuine_row(genuine, mode, "admission",
+                             lambda c, r: bool(r["report"]["assumptions"]))
+    bad = deepcopy(row)
+    claim = bad["report"]["root"] if location == "root" else bad["report"]["assumptions"][0]
+    if location == "root":
+        claim["ast"] = ["bottom"] if claim["ast"] != ["bottom"] else ["top"]
+    else:
+        claim["name"] = "fabricated_assumption"
+    env = Environment(case["environment"])
+    bad["report_id"] = digest(f"ve-report-{env.identity_version}\n", {
+        "environment_id": env.environment_id, "document": case["document"], "report": bad["report"]})
+    with pytest.raises(CheckerUnavailable, match="not bound"):
+        bound_admission(env, case["document"], bad)
+    _scripted_rejected(tmp_path, mode, case, row, bad)
+
+
+@pytest.mark.parametrize("mode,kind", [("route", "certificate"), ("norms", "certificate"),
+                                       ("norms", "norms-certificate"), ("order", "certificate"),
+                                       ("check-certificate", None)])
+def test_certificate_steps_respect_request_limit(tmp_path, genuine, mode, kind):
+    case, row = _genuine_row(genuine, mode, kind,
+                             lambda c, r: r.get("status") == "ok")
+    bad = {**row, "steps": 999_999}
+    case["max_steps"] = max(1, row["steps"])
+    _scripted_rejected(tmp_path, mode, case, row, bad)
+
+
+def test_requested_one_step_rejects_fabricated_999999_steps(genuine, executables):
+    for request, response, index in _linked(genuine, "route", "certificate"):
+        if result(response, index).get("status") == "ok":
+            req, res = deepcopy(request), deepcopy(response)
+            req["cases"][index]["max_steps"] = 1
+            res["results"][index]["result"]["steps"] = 999_999
+            req, res = rebind(req, res)
+            assert assert_agreement(executables[1], [("route", req, [res])]) == [
+                schema_verdict("route", req, res)]
+            assert schema_verdict("route", req, res).startswith("reject")
+            return
+    raise AssertionError("no genuine route certificate")
+
+
+def _response(request, results):
+    return {"id": request["id"], "status": "ok", "mode": request["mode"],
+            "counts": {"cases": len(results), "bytes": request["bytes"], "errors": 0},
+            "results": [{"index": i, "digest": request["digests"][i], "result": r} for i, r in enumerate(results)]}
+
+
+def _request(rid, mode, case):
+    return {"id": rid, "mode": mode, "cases": [case], "digests": [case_digest(_text(case))],
+            "bytes": len(_text([case]).encode())}
+
+
+@pytest.mark.parametrize("mode,kind", [("route", "certificate"), ("norms", "certificate"),
+                                       ("norms", "norms-certificate")])
+@pytest.mark.parametrize("delta", [-1, 1])
+def test_certificate_background_is_lean_checked_not_client_predicted(genuine, executables, mode, kind, delta):
+    """D1 (lf-13b fix3): a certificate's `background` is derived, so the client binds it only
+    by `x-background-bound`, and Lean's invariants hold it to the runner's own regenerated
+    Background: a count one off the genuine one keeps every binding and fails an invariant."""
+    for request, response, i in _linked(genuine, mode, kind):
+        row = result(response, i)
+        if row["background"] + delta < 0:
+            continue
+        bad = deepcopy(response)
+        bad["results"][i]["result"]["background"] += delta
+        assert schema_verdict(mode, request, bad) == "accept"
+        verdicts = lean_verdicts(executables[1], [(mode, request, [response, bad])], "invariants")
+        assert verdicts[0] == "accept" and "background is not the regenerated" in verdicts[1], verdicts
+        return
+    pytest.skip("no genuine count with a natural neighbour")
+
+
+@pytest.mark.parametrize("mode,kind", [("route", "certificate"), ("norms", "certificate"),
+                                       ("norms", "norms-certificate")])
+def test_certificate_background_above_the_request_bound_fails_closed(tmp_path, genuine, mode, kind):
+    case, row = _genuine_row(genuine, mode, kind, lambda c, r: r.get("status") == "ok")
+    vocabulary = case["environment"]["vocabulary"]
+    constants = len(vocabulary["constants"])
+    bound = 4 * len(vocabulary["predicates"]) + constants * (constants - 1) // 2 + len(case.get("soft_premises", []))
+    assert row["background"] <= bound
+    check_row(mode, {**row, "background": bound}, case, 0)
+    _scripted_rejected(tmp_path, mode, case, row, {**row, "background": bound + 1})
+
+
+BOUND_DECLARATIONS = [{}, {"arguments": ["s"] * 3, "defined": {}},
+                      {"arguments": ["s"] * 4, "regulated": {"role": "obligation", "permission": "q"}},
+                      {"arguments": ["s", "s"], "functional": True, "total": True}]
+BOUND_SOFT = [None, [], [["top"]], [["top"], ["top"]], "not-a-list"]
+
+
+def test_background_bound_is_a_relation_to_the_request(executables):
+    """lf-13b fix3: the client's only Background rule is the request bound (four per predicate
+    declaration of any arity, one per pair of constants, one per soft premise), never a predicted
+    count, so no declaration shape (3- or 4-argument norm pairs included) can make it refuse
+    Lean's count. Every request shape x {bound-1, bound, bound+1, non-integers}: the schema accepts
+    exactly the integers up to the bound, and ve_response_decode agrees on every value."""
+    items, expected = [], []
+    for mode in ("route", "norms"):
+        for n_predicates in range(len(BOUND_DECLARATIONS) + 1):
+            for n_constants in (0, 1, 3):
+                for soft in BOUND_SOFT:
+                    case = {"id": "c", "kind": "certificate", "environment": {
+                        "profiles": ["relational-fol@0"], "vocabulary": {
+                            "predicates": {f"p{j}": BOUND_DECLARATIONS[j] for j in range(n_predicates)},
+                            "constants": {f"k{j}": {"sort": "$string"} for j in range(n_constants)}}}}
+                    if soft is not None:
+                        case["soft_premises"] = soft
+                    bound = 4 * n_predicates + n_constants * (n_constants - 1) // 2 + (
+                        len(soft) if isinstance(soft, list) else 0)
+                    values = [bound - 1, bound, bound + 1, True, 1.5, str(bound), None]
+                    request = _request("bound", mode, case)
+                    items.append((mode, request, [_response(request, [
+                        {"id": "c", "status": "ok", "valid": True, "background": v, "steps": 0}]) for v in values]))
+                    expected += [type(v) is int and 0 <= v <= bound for v in values]
+    verdicts = assert_agreement(executables[1], items)
+    assert [v == "accept" for v in verdicts] == expected
+
+
+def test_genuine_norm_pair_certificates_are_valid_at_every_arity(genuine, executables):
+    """lf-13b looprecheck2 B: a plain norms certificate over a norm pair with 1-4 arguments
+    (`norm_pair_cases`: closure, nary, norms, relational-fol; `∀x upper(x) ⊢ ∀x upper(x)`)
+    is `ok` and valid, counts the pair's profile premise at every arity, and is accepted by
+    the client and by ve_response_decode, decode and invariants."""
+    seen = set()
+    for mode, request, response in genuine:
+        for i, case in enumerate(request["cases"]):
+            if mode != "norms" or not isinstance(case, dict) or not str(case.get("id", "")).startswith("pair-"):
+                continue
+            row = result(response, i)
+            assert row.get("status") == "ok", (case["id"], row)
+            if case["kind"] == "background":
+                assert row["generators"] == ["profile"], (case["id"], row)
+                continue
+            assert row["valid"] is True and row["background"] == 1, (case["id"], row)
+            assert schema_verdict(mode, request, response) == "accept"
+            assert lean_verdicts(executables[1], [(mode, request, [response])], "invariants") == ["accept"]
+            seen.add(case["id"])
+    assert seen == {f"pair-{n}" for n in NORM_PAIR_ARITIES}
+
+
+def test_genuine_soft_premise_certificate_count_is_lean_checked(genuine, executables):
+    """The plain norms certificate with two soft premises (`soft_premise_certificate`) counts
+    them (background 2 over a vocabulary that generates nothing); the client binds it only by
+    the bound, and Lean's invariants reject each other count up to that bound."""
+    for request, response, i in _linked(genuine, "norms", "certificate"):
+        if request["cases"][i]["id"] != "soft-certificate":
+            continue
+        row = result(response, i)
+        assert (row["valid"], row["background"]) == (True, 2), row
+        mutants = []
+        for n in range(4 * 1 + 2 + 1):
+            bad = deepcopy(response)
+            bad["results"][i]["result"]["background"] = n
+            assert schema_verdict("norms", request, bad) == "accept"
+            mutants.append(bad)
+        verdicts = lean_verdicts(executables[1], [("norms", request, mutants)], "invariants")
+        assert [v == "accept" for v in verdicts] == [n == 2 for n in range(len(mutants))], verdicts
+        return
+    raise AssertionError("no genuine soft-premise certificate")
+
+
+@pytest.mark.parametrize("arity", NORM_PAIR_ARITIES)
+def test_norm_pair_certificate_check_is_valid(arity):
+    """The reviewer's case end to end (lf-13b looprecheck2 B): `check_entailment_certificate`
+    over a norm pair with `arity` arguments returns Valid (3 and 4 were CheckerUnavailable,
+    "background differs from the request vocabulary")."""
+    from ve import ast
+    from ve.entailment import check_entailment_certificate, prove_entailment
+    from ve.environment import Environment
+    env = Environment(norm_pair_environment(arity))
+    goal = ast.Forall("point", ast.Unary("upper", ast.Var(0)))
+    proof = prove_entailment(env, [goal], goal)
+    check = check_entailment_certificate(env, [goal], goal, proof.certificate)
+    assert (check.valid, check.status) == (True, "Valid"), check
+
+
+def test_genuine_certificates_over_nary_families_are_accepted(genuine, executables):
+    """lf-13b looprecheck1: Lean's genuine certificate and Background answers over a
+    three-argument definition, functional or total flag (`fol_projection_cases`) are `ok`
+    (certificates valid), have no premise for that declaration, and both decoders accept
+    them; `test_genuine_responses_satisfy_the_lean_invariants` checks their invariants."""
+    seen = set()
+    for mode, request, response in genuine:
+        if mode not in ("route", "norms"):
+            continue
+        for i, case in enumerate(request["cases"]):
+            if not (isinstance(case, dict) and str(case.get("id", "")).startswith("fol-")):
+                continue
+            row = result(response, i)
+            arity = int(case["id"].removesuffix("-bg").rsplit("-", 1)[1])
+            pair = case["id"].startswith("fol-norms-")
+            if case["kind"] == "background":
+                assert row.get("status") == "ok", (mode, case["id"], row)
+                assert len(row["premises"]) == int(arity <= 2) + pair, (mode, case["id"], row)
+                continue
+            assert row.get("status") == "ok" and row["valid"] is True, (mode, case["id"], row)
+            assert row["background"] == int(arity <= 2) + pair, (mode, case["id"], row)
+            assert schema_verdict(mode, request, response) == "accept"
+            seen.add((mode, case["id"]))
+    assert {(mode, f"fol-{p}{family}-3") for mode, p in [("route", ""), ("norms", ""), ("norms", "norms-")]
+            for family in ("defined", "functional", "total")} <= seen
+    assert_agreement(executables[1], [(m, rq, [rs]) for m, rq, rs in genuine
+                                      if m in ("route", "norms") and any(
+                                          isinstance(c, dict) and str(c.get("id", "")).startswith("fol-")
+                                          for c in rq["cases"])])
+
+
+@pytest.mark.parametrize("mode", ["route", "norms"])
 @pytest.mark.parametrize("kind", [["hedged", "not-a-modality", "asserted"],
                                   ["attributed", "bob", "shouts", "asserted"],
                                   ["causal", "since", "asserted", "asserted"],
@@ -900,10 +1116,7 @@ CONTENT = {
        for how in ("emptied", "drop-last")},
     **{f"{mode}-{kind}-{field}-{name}": (mode, kind, case_id, _row_change(change))
        for mode, kind, field, case_id in [
-           ("route", "certificate", "background", "data-definition-certificate"),
-           ("norms", "certificate", "background", "defs-certificate-uses-definitions"),
-           ("norms", "norms-certificate", "layers", "certificate"),
-           ("norms", "norms-certificate", "background", "certificate")]
+           ("norms", "norms-certificate", "layers", "certificate")]
        for name, change in [("plus-one", lambda r, f=field: {**r, f: r[f] + 1}),
                             ("minus-one", lambda r, f=field: {**r, f: max(r[f] - 1, 0) if r[f] else 1})]},
     "c2-targets-emptied": ("norms", "norms-conflict", "c2", _row_change(lambda r: {**r, "targets": []})),

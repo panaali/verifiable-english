@@ -1,0 +1,365 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "tools/regen_generated.py",
+   "claim": "a JSON ledger merge honours either side's removals",
+   "source_sha256": "e0d484d76cb87a99390b77aacb6ea16daa2cd21ae5258a97eb0585bb4de948f1",
+   "tests": [
+    "tests/test_regen_generated.py::test_json_merge_keeps_both_additions_and_both_removals"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_json_merge_keeps_both_additions_and_both_removals"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.1,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n____________ test_json_merge_keeps_both_additions_and_both_removals ____________\n\n    def test_json_merge_keeps_both_additions_and_both_removals():\n        base = {\"ve_service\": [\"a\", \"b\", \"c\"], \"rust_jsonl\": [\"r1\"]}\n        ours = {\"ve_service\": [\"b\", \"c\", \"d\"], \"rust_jsonl\": [\"r1\"]}\n        theirs = {\"ve_service\": [\"a\", \"b\", \"e\"], \"rust_jsonl\": [\"r1\", \"r2\"]}\n>       assert R.merge_json(base, ours, theirs) == {\"ve_service\": [\"b\", \"d\", \"e\"], \"rust_jsonl\": [\"r1\", \"r2\"]}\nE       AssertionError: assert {'ve_service'... ['r1', 'r2']} == {'ve_service'... ['r1', 'r2']}\nE         \nE         Omitting 1 identical items, use -vv to show\nE         Differing items:\nE         {'ve_service': ['a', 'b', 'c', 'd', 'e']} != {'ve_service': ['b', 'd', 'e']}\nE         Use -v to get more diff\n\ntests/test_regen_generated.py:140: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_json_merge_keeps_both_additions_and_both_removals\n1 failed in 0.31s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jlloscb8)\n"
+  },
+  {
+   "id": "M2",
+   "file": "tools/regen_generated.py",
+   "claim": "--resolve refuses (exit 2, nothing written) when a non-generated file conflicts",
+   "source_sha256": "e0d484d76cb87a99390b77aacb6ea16daa2cd21ae5258a97eb0585bb4de948f1",
+   "tests": [
+    "tests/test_regen_generated.py::test_resolve_changes_nothing_when_another_file_conflicts"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_resolve_changes_nothing_when_another_file_conflicts"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.4,
+   "output_tail": "ame-only\", \"--diff-filter=U\").split()))\n        others = []\n        if others:\n            print(\"regen_generated --resolve: conflicts outside the generated files (agent sync needed):\",\n                  *others, sep=\"\\n  \", file=sys.stderr)\n            return 2\n        merged = {}\n        for path in unmerged:\n            text, clean = merge_text(path, _stage(root, path, 1), _stage(root, path, 2), _stage(root, path, 3))\n            if not clean:\n                print(f\"regen_generated --resolve: {path} needs a person or the sync agent\", file=sys.stderr)\n                return 2\n            merged[path] = text\n        for path, text in merged.items():  # nothing is written unless every conflicted file merged\n            (root / path).write_text(text)\n>           print(f\"resolved {path} ({owner(path).merge})\")\n                                      ^^^^^^^^^^^^^^^^^\nE           AttributeError: 'NoneType' object has no attribute 'merge'\n\ntools/regen_generated.py:514: AttributeError\n----------------------------- Captured stdout call -----------------------------\nresolved lean/VE/Audit.lean (union)\nresolved lean/axioms.txt (regenerate)\nresolved lean/checkers.lock (json)\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_resolve_changes_nothing_when_another_file_conflicts\n1 failed in 0.83s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-g8sjxij3)\n"
+  },
+  {
+   "id": "M3",
+   "file": "tools/regen_generated.py",
+   "claim": "audit manifests merge by line union",
+   "source_sha256": "e0d484d76cb87a99390b77aacb6ea16daa2cd21ae5258a97eb0585bb4de948f1",
+   "tests": [
+    "tests/test_regen_generated.py::test_driver_merges_generated_files_without_a_conflict",
+    "tests/test_regen_generated.py::test_resolve_finishes_a_merge_whose_conflicts_are_all_generated"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_driver_merges_generated_files_without_a_conflict",
+    "tests/test_regen_generated.py::test_resolve_finishes_a_merge_whose_conflicts_are_all_generated"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.6,
+   "output_tail": " _ _ _ \n\nroot = PosixPath('/tmp/pytest-of-seyran/pytest-11258/test_resolve_finishes_a_merge_0/repo')\n\n    def _check_merged(root):\n        lock, audit, axioms = _merged(root)\n        # Removal of 1111 by ours kept, 3333 and 4444 added by each side; both audit lines; the derived file is\n        # either side's (the writers rebuild it).\n        assert lock == {\"ve_service\": [\"2222\", \"3333\", \"4444\"], \"rust_jsonl\": [\"9999\"]}\n>       assert \"#print axioms VE.ours\\n\" in audit and \"#print axioms VE.theirs\\n\" in audit\nE       AssertionError: assert ('#print axioms VE.ours\\n' in 'import VE.A\\n\\n#print axioms VE.a\\n#print axioms VE.ours\\n' and '#print axioms VE.theirs\\n' in 'import VE.A\\n\\n#print axioms VE.a\\n#print axioms VE.ours\\n')\n\ntests/test_regen_generated.py:275: AssertionError\n----------------------------- Captured stdout call -----------------------------\nresolved lean/VE/Audit.lean (union)\nresolved lean/axioms.txt (regenerate)\nresolved lean/checkers.lock (json)\nregen_generated --resolve: generated files merged, regenerated and checked; commit with git commit --no-edit\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_driver_merges_generated_files_without_a_conflict\nFAILED tests/test_regen_generated.py::test_resolve_finishes_a_merge_whose_conflicts_are_all_generated\n2 failed in 1.50s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-gc1qp6d9)\n"
+  },
+  {
+   "id": "M4",
+   "file": "tools/regen_generated.py",
+   "claim": "the assurance manifest's decoder total is recomputed after a merge",
+   "source_sha256": "e0d484d76cb87a99390b77aacb6ea16daa2cd21ae5258a97eb0585bb4de948f1",
+   "tests": [
+    "tests/test_regen_generated.py::test_assurance_manifest_merge_recomputes_the_decoder_total"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_assurance_manifest_merge_recomputes_the_decoder_total"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.9,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________ test_assurance_manifest_merge_recomputes_the_decoder_total __________\n\n    def test_assurance_manifest_merge_recomputes_the_decoder_total():\n        manifest = json.loads((ROOT / \"ve/assurance-manifest.json\").read_text())\n        ours, theirs = json.loads(json.dumps(manifest)), json.loads(json.dumps(manifest))\n        first, second = ours[\"lean_decoders\"][\"files\"][0], theirs[\"lean_decoders\"][\"files\"][1]\n        first[\"ranges\"][-1][1] += 5\n        ours[\"lean_decoders\"][\"total_lines\"] += 5\n        second[\"ranges\"][-1][1] += 7\n        theirs[\"lean_decoders\"][\"total_lines\"] += 7\n        text, clean = R.merge_text(\"ve/assurance-manifest.json\", json.dumps(manifest), json.dumps(ours),\n                                   json.dumps(theirs))\n        assert clean\n>       assert json.loads(text)[\"lean_decoders\"][\"total_lines\"] == manifest[\"lean_decoders\"][\"total_lines\"] + 12\nE       assert 0 == (27833 + 12)\n\ntests/test_regen_generated.py:209: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_assurance_manifest_merge_recomputes_the_decoder_total\n1 failed in 0.41s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-x604bc99)\n"
+  },
+  {
+   "id": "M5",
+   "file": "tools/regen_generated.py",
+   "claim": "a check by rewriting restores the committed files",
+   "source_sha256": "e0d484d76cb87a99390b77aacb6ea16daa2cd21ae5258a97eb0585bb4de948f1",
+   "tests": [
+    "tests/test_regen_generated.py::test_check_by_rewriting_restores_the_committed_files"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_check_by_rewriting_restores_the_committed_files"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.8,
+   "output_tail": "FAILURES ===================================\n_____________ test_check_by_rewriting_restores_the_committed_files _____________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-11260/test_check_by_rewriting_restor0')\n\n    def test_check_by_rewriting_restores_the_committed_files(tmp_path):\n        (tmp_path / \"out\").mkdir()\n        target = tmp_path / \"out/table.json\"\n        target.write_text(\"committed\\n\")\n        changes = tmp_path / \"changes.py\"\n        changes.write_text(\"from pathlib import Path\\nPath('out/table.json').write_text('changed')\\n\"\n                           \"Path('out/extra.json').write_text('new')\\n\")\n        entry = R.Generated(\"probe\", (\"out/*.json\",), ((sys.executable, str(changes)),), None)\n        assert R._check_by_rewriting(entry, tmp_path) == 1\n>       assert target.read_text() == \"committed\\n\" and not (tmp_path / \"out/extra.json\").exists()\nE       AssertionError: assert ('changed' == 'committed\\n'\nE         \nE         - committed\nE         + changed)\n\ntests/test_regen_generated.py:350: AssertionError\n----------------------------- Captured stderr call -----------------------------\nprobe: out/extra.json is stale\nprobe: out/table.json is stale\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_check_by_rewriting_restores_the_committed_files\n1 failed in 0.39s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0pcixgep)\n"
+  },
+  {
+   "id": "M6",
+   "file": "tools/regen_generated.py",
+   "claim": ".gitattributes covers every generated pattern",
+   "source_sha256": "e0d484d76cb87a99390b77aacb6ea16daa2cd21ae5258a97eb0585bb4de948f1",
+   "tests": [
+    "tests/test_regen_generated.py::test_gitattributes_is_generated_from_the_registry"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_gitattributes_is_generated_from_the_registry"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.5,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______________ test_gitattributes_is_generated_from_the_registry _______________\n\n    def test_gitattributes_is_generated_from_the_registry():\n>       assert R.check_attributes() == 0\nE       assert 1 == 0\nE        +  where 1 = <function check_attributes at 0x78ef479122a0>()\nE        +    where <function check_attributes at 0x78ef479122a0> = R.check_attributes\n\ntests/test_regen_generated.py:93: AssertionError\n----------------------------- Captured stderr call -----------------------------\n.gitattributes differs from the GENERATED list; run tools/regen_generated.py --write\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_gitattributes_is_generated_from_the_registry\n1 failed in 0.28s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-i3oek3zp)\n"
+  },
+  {
+   "id": "M7",
+   "file": "tools/regen_generated.py",
+   "claim": "every writing script is registered or excluded with a reason",
+   "source_sha256": "e0d484d76cb87a99390b77aacb6ea16daa2cd21ae5258a97eb0585bb4de948f1",
+   "tests": [
+    "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.1,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_ test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason _\n\n    def test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason():\n        registered = set().union(*(_referenced(entry) for entry in R.GENERATED)) | {\"tools/regen_generated.py\"}\n        unlisted = sorted(name for name in _write_mode_scripts() - registered\n                          if not any(fnmatch.fnmatchcase(name, pattern) for pattern in R.NOT_REGENERATED))\n>       assert not unlisted, f\"register these writers in GENERATED or NOT_REGENERATED: {unlisted}\"\nE       AssertionError: register these writers in GENERATED or NOT_REGENERATED: ['tools/difffuzz.py']\nE       assert not ['tools/difffuzz.py']\n\ntests/test_regen_generated.py:74: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason\n1 failed in 4.09s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-n8g0gmbr)\n"
+  },
+  {
+   "id": "M8",
+   "file": "lean/VE/Route/frozen.py",
+   "claim": "frozen.py --write writes the inventory the check reads",
+   "source_sha256": "6f29baba96c325513f2718214fb494ed55b69ca45069c115c19fbf0a39bccc15",
+   "tests": [
+    "tests/test_regen_generated.py::test_the_frozen_inventory_writer_reproduces_the_committed_inventory"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_the_frozen_inventory_writer_reproduces_the_committed_inventory"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.5,
+   "output_tail": "tted_inventory ______\n\n    def test_the_frozen_inventory_writer_reproduces_the_committed_inventory():\n        sys.path.insert(0, str(ROOT / \"lean/VE/Route\"))\n        import frozen\n>       assert frozen.inventory_text() == (ROOT / \"lean/VE/Route/frozen-sources.sha256\").read_text()\nE       AssertionError: assert '4f863cf67b04...tNorms.lean\\n' == '64cacbdf9eb6...tNorms.lean\\n'\nE         \nE         - 64cacbdf9eb6906fcf61897a6fdc0f1c3876737345c58132626ac2b3fb15d0a2  VE/Alternatives/Admission.lean\nE           4f863cf67b048d27ce71a28780b7cfb30bfadce4fc66635ffa810229d497a4b3  VE/Alternatives/Background.lean\nE           d4bdee4502cb09f3c370ff076482ba4dfa9ce353289950ba5351a939971dbe0f  VE/Alternatives/Decl.lean\nE           ea39565a7064afcffb172f2fbd3da78a0b365acc6b727a6e88e8095e10497b37  VE/Alternatives/Examples.lean\nE           f8b4a0d500f7fbcac8936e624768250d39a4566ef56eed37d3de4d0ff6f2f18e  VE/Alternatives/Followable.lean\nE           b261c71646b12a68507b0d6e38b6970c4ba64fa034ba8fb8ff7d2986e5c96714  VE/Alternatives/Inline.lean...\nE         \nE         ...Full output truncated (385 lines hidden), use '-vv' to show\n\ntests/test_regen_generated.py:363: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_the_frozen_inventory_writer_reproduces_the_committed_inventory\n1 failed in 0.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-pta4i442)\n"
+  },
+  {
+   "id": "M9",
+   "file": "tools/assurance_manifest.py",
+   "claim": "assurance_manifest.py --check fails on a stale table",
+   "source_sha256": "e1bfc333ed6c88be539f6ed9df49f1ead43e982e99f5e646496ac3c7273c0571",
+   "tests": [
+    "tests/test_regen_generated.py::test_assurance_doc_check_fails_on_a_stale_table"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_assurance_doc_check_fails_on_a_stale_table"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.6,
+   "output_tail": "                                                                       [100%]\n=================================== FAILURES ===================================\n_______________ test_assurance_doc_check_fails_on_a_stale_table ________________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-11266/test_assurance_doc_check_fails0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735f5a556c40>\n\n    def test_assurance_doc_check_fails_on_a_stale_table(tmp_path, monkeypatch):\n        import assurance_manifest\n        assert assurance_manifest.main([\"--check\"]) == 0\n        stale = tmp_path / \"assurance-manifest.md\"\n        stale.write_text(assurance_manifest.DOC.read_text().replace(\"<!-- END GENERATED -->\", \"stale\\n<!-- END GENERATED -->\", 1))\n        monkeypatch.setattr(assurance_manifest, \"DOC\", stale)\n>       assert assurance_manifest.main([\"--check\"]) == 1\nE       AssertionError: assert 0 == 1\nE        +  where 0 = <function main at 0x735f5a21aae0>(['--check'])\nE        +    where <function main at 0x735f5a21aae0> = <module 'assurance_manifest' from '/home/seyran/code/ve-eff-merge/tools/assurance_manifest.py'>.main\n\ntests/test_regen_generated.py:372: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_assurance_doc_check_fails_on_a_stale_table\n1 failed in 0.23s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-g3whvgd9)\n"
+  },
+  {
+   "id": "M10",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "an accepted mutant the allow-list does not list fails the gate",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.0,
+   "output_tail": "ntry ____\n\nbuilt = None\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-11679/test_the_gate_fails_on_an_unli0')\n\n    def test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry(built, tmp_path):\n        allow = json.loads(G.ALLOW.read_text())\n        kept = [entry for entry in allow[\"entries\"] if entry[\"route\"] != \"service:check\"]\n        stale = {\"route\": \"service:identity\", \"mutation\": \"drop\", \"path\": [\"results/*/result/no_such_field\"],\n                 \"kind\": \"follow-up\", \"id\": \"X\", \"reason\": \"test\"}\n        path = tmp_path / \"allow.json\"\n        path.write_text(json.dumps({\"entries\": kept + [stale]}))\n        report = G.run_gate({\"service:check\", \"service:identity\"}, allow_path=path)\n        failures = \"\\n\".join(report[\"failures\"])\n>       assert \"accepted service:check retype results/*/result/core/*\" in failures\nE       AssertionError: assert 'accepted service:check retype results/*/result/core/*' in 'allow-list path matches nothing: X service:identity drop results/*/result/no_such_field\\nuntyped service:check untyped results/*/result/core/*: every retype is accepted'\n\ntests/test_relay_mutation_gate.py:213: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry\n1 failed in 4.94s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-sg4r5cn4)\n"
+  },
+  {
+   "id": "M11",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "a route without an ok fixture fails the gate",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.9,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_a_route_without_fixtures_fails_the_gate _________________\n\nbuilt = None\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-11682/test_a_route_without_fixtures_0')\n\n    def test_a_route_without_fixtures_fails_the_gate(built, tmp_path):\n        path = tmp_path / \"cases.jsonl\"\n        path.write_text(\"\".join(json.dumps(row) + \"\\n\" for row in G.load_cases()\n                                if row[:2] != [\"service\", \"identity\"]))\n        report = G.run_gate({\"service:identity\"}, cases_path=path)\n>       assert \"route service:identity has no fixture with an ok answer\" in report[\"failures\"]\nE       AssertionError: assert 'route service:identity has no fixture with an ok answer' in []\n\ntests/test_relay_mutation_gate.py:223: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate\n1 failed in 2.34s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ba54t5gd)\n"
+  },
+  {
+   "id": "M12",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "request-named strings are rebound",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_every_field_gets_every_mutation_class"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_every_field_gets_every_mutation_class"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.6,
+   "output_tail": " \"inner\": {\"k\": \"v\"}}\n        found = G.mutants(answer, named={\"case-1\", \"p\"}, rebind_ints={(\"count\",): 3})\n        kinds = _kinds(found)\n        for field in (\"id\", \"status\", \"names\", \"count\", \"flag\", \"inner\"):\n            assert (\"drop\", field, None) in kinds\n            retypes = {value for kind, pattern, value in kinds if kind == \"retype\" and pattern == field}\n            assert len(retypes) >= len(G.RETYPES) - 1, (field, retypes)\n        assert (\"retype\", \"count\", \"number\") in kinds          # 7.5 for an integer\n        assert (\"empty\", \"status\", None) in kinds and (\"empty\", \"names\", None) in kinds\n        assert (\"duplicate\", \"names\", None) in kinds and (\"duplicate\", \"inner\", None) in kinds\n        # Rebinding: a name the request gives (emptying one is a rebind too), and a bound integer.\n>       assert (\"rebind\", \"id\", None) in kinds and (\"rebind\", \"id\", \"\") in kinds and (\"rebind\", \"names/*\", None) in kinds\nE       AssertionError: assert (('rebind', 'id', None) in {('drop', 'count', None), ('drop', 'flag', None), ('drop', 'id', None), ('drop', 'inner', None), ('drop', 'inner/k', None), ('drop', 'names', None), ...})\n\ntests/test_relay_mutation_gate.py:59: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_every_field_gets_every_mutation_class\n1 failed in 0.16s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-snetwm26)\n"
+  },
+  {
+   "id": "M13",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "an allow-list path that matches nothing fails the gate",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.8,
+   "output_tail": "entries\"] if entry[\"route\"] != \"service:check\"]\n        stale = {\"route\": \"service:identity\", \"mutation\": \"drop\", \"path\": [\"results/*/result/no_such_field\"],\n                 \"kind\": \"follow-up\", \"id\": \"X\", \"reason\": \"test\"}\n        path = tmp_path / \"allow.json\"\n        path.write_text(json.dumps({\"entries\": kept + [stale]}))\n        report = G.run_gate({\"service:check\", \"service:identity\"}, allow_path=path)\n        failures = \"\\n\".join(report[\"failures\"])\n        assert \"accepted service:check retype results/*/result/core/*\" in failures\n        assert \"untyped service:check untyped results/*/result/core/*\" in failures\n>       assert \"allow-list path matches nothing: X service:identity drop results/*/result/no_such_field\" in failures\nE       AssertionError: assert 'allow-list path matches nothing: X service:identity drop results/*/result/no_such_field' in 'accepted service:check empty results/*/result/core: empty\\naccepted service:check duplicate results/*/result/core: du... results/*/result/core/*: retype null\\nuntyped service:check untyped results/*/result/core/*: every retype is accepted'\n\ntests/test_relay_mutation_gate.py:215: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry\n1 failed in 6.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fzux0a_x)\n"
+  },
+  {
+   "id": "M14",
+   "file": "ve/backends/speech_source.py",
+   "claim": "the speech-source reader refuses an unhashable unit class (the fix)",
+   "source_sha256": "b5c20fe1a6cef4d049c0e19e935edfe7074f83fc4ffbf0768fefa1d67da46540",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 30.5,
+   "output_tail": "speech_source_reader_0')\n\n    def test_the_speech_source_reader_refuses_an_unhashable_unit_class(built, tmp_path):\n        case = next(row[3] for row in G.load_cases() if row[0] == \"one-shot\" and row[1] == \"ve_speech_acts_route\")\n        status, stdout = G._run_runner(\"ve_speech_acts_route\", \"-\", case)\n        stand_in = G._StandIn(tmp_path)\n        stand_in.set(stdout, status)\n        assert G._call_outcome(G._speech_source, case, stand_in.path) == (\"accepted\", \"\")\n        [row] = json.loads(stdout)\n        for field in (\"class\", \"status\"):\n            for value in ([], {}):\n                stand_in.set(json.dumps([G._replace(row, (\"units\", 0, field), value)]).encode(), status)\n                outcome, detail = G._call_outcome(G._speech_source, case, stand_in.path)\n>               assert outcome == \"refused\", (field, value, detail)\nE               AssertionError: ('class', [], \"TypeError: cannot use 'list' as a set element (unhashable type: 'list') at ve/backends/speech_source.py:336\")\nE               assert 'crash' == 'refused'\nE                 \nE                 - refused\nE                 + crash\n\ntests/test_relay_mutation_gate.py:167: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class\n1 failed in 6.16s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-9c3fqtux)\n"
+  },
+  {
+   "id": "M15",
+   "file": "tools/mutants.py",
+   "claim": "a test that fails without the mutant proves nothing (baseline)",
+   "source_sha256": "dab3b6a7f87f2dde51af7371b1d2859be6fa4554b71ac4dc27760e6ce0453457",
+   "tests": [
+    "tests/test_mutants.py::test_a_test_that_fails_without_the_mutant_proves_nothing"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_mutants.py::test_a_test_that_fails_without_the_mutant_proves_nothing"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.4,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n___________ test_a_test_that_fails_without_the_mutant_proves_nothing ___________\n\ntree = PosixPath('/tmp/pytest-of-seyran/pytest-11302/test_a_test_that_fails_without0')\n\n    def test_a_test_that_fails_without_the_mutant_proves_nothing(tree):\n        (tree / \"test_mod.py\").write_text(TESTS.replace(\"== 6\", \"== 7\"))\n        row = run(tree, find=\"x * 2\", replace=\"x * 3\", tests=[\"test_mod.py::test_double\"])\n>       assert not row[\"killed\"] and row[\"problem\"] == \"the tests fail without the mutant\"\nE       assert (not True)\n\ntests/test_mutants.py:62: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_mutants.py::test_a_test_that_fails_without_the_mutant_proves_nothing\n1 failed in 1.41s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-d2bs8ca_)\n"
+  },
+  {
+   "id": "M16",
+   "file": "tools/mutants.py",
+   "claim": "a mutated file never keeps its mtime (no stale .pyc)",
+   "source_sha256": "dab3b6a7f87f2dde51af7371b1d2859be6fa4554b71ac4dc27760e6ce0453457",
+   "tests": [
+    "tests/test_mutants.py::test_a_mutated_file_never_keeps_its_mtime_and_gets_it_back"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_mutants.py::test_a_mutated_file_never_keeps_its_mtime_and_gets_it_back"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.5,
+   "output_tail": "s it.\"\"\"\n        path = tree / \"mod.py\"\n        before = path.stat()\n        with M.applied(path, \"x * 2\", \"x * 3\"):\n>           assert int(path.stat().st_mtime) != int(before.st_mtime)\nE           AssertionError: assert 1791623210 != 1791623210\nE            +  where 1791623210 = int(1791623210.961839)\nE            +    where 1791623210.961839 = os.stat_result(st_mode=33204, st_ino=1892963, st_dev=2049, st_nlink=1, st_uid=1001, st_gid=1002, st_size=62, st_atime=1791623210, st_mtime=1791623210, st_ctime=1791623210).st_mtime\nE            +      where os.stat_result(st_mode=33204, st_ino=1892963, st_dev=2049, st_nlink=1, st_uid=1001, st_gid=1002, st_size=62, st_atime=1791623210, st_mtime=1791623210, st_ctime=1791623210) = stat()\nE            +        where stat = PosixPath('/tmp/pytest-of-seyran/pytest-11305/test_a_mutated_file_never_keep0/mod.py').stat\nE            +  and   1791623210 = int(1791623210.9610112)\nE            +    where 1791623210.9610112 = os.stat_result(st_mode=33204, st_ino=1892963, st_dev=2049, st_nlink=1, st_uid=1001, st_gid=1002, st_size=62, st_atime=1791623210, st_mtime=1791623210, st_ctime=1791623210).st_mtime\n\ntests/test_mutants.py:94: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_mutants.py::test_a_mutated_file_never_keeps_its_mtime_and_gets_it_back\n1 failed in 0.15s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-5fjpo1mh)\n"
+  },
+  {
+   "id": "M17",
+   "file": "tests/route_case_recorder.py",
+   "claim": "the recorder writes every relayed case (VE_RELAY_CASES)",
+   "source_sha256": "827aa9b782acd136322c688bdf8fd2d6a2b36c55b6269aa086744f7a6a52a4f1",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.0,
+   "output_tail": "n\"\n                         f\"def test_probe():\\n\"\n                         f\"    relay.rows('identity', [json.loads({json.dumps(json.dumps(service))})])\\n\"\n                         f\"    lean_runner.metered_nonvacuity(json.loads({json.dumps(json.dumps(one_shot))}))\\n\")\n        out = tmp_path / \"recorded\"\n        done = subprocess.run(nested_pytest.command([\"-q\", \"-p\", \"tests.route_case_recorder\", \"-p\", \"no:cacheprovider\",\n                                                     \"--rootdir\", str(ROOT), str(probe)]),\n                              cwd=ROOT, env=nested_pytest.environment(os.environ, VE_RELAY_CASES=str(out)),\n                              capture_output=True, text=True)\n        assert done.returncode == 0, done.stdout[-2000:]\n        rows = [json.loads(line) for path in out.glob(\"relay-*.jsonl\") for line in path.read_text().splitlines()]\n>       assert [\"service\", \"identity\", json.dumps(service, separators=(\",\", \":\"))] in [\n            [row[0], row[1], json.dumps(json.loads(row[2]), separators=(\",\", \":\"))] for row in rows if row[0] == \"service\"]\nE       AssertionError: assert ['service', 'identity', '[]'] in []\n\ntests/test_relay_mutation_gate.py:192: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case\n1 failed in 2.38s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ndag4av0)\n"
+  },
+  {
+   "id": "M18",
+   "file": "docs/merge-tooling.md",
+   "claim": "the document's numbers are the saved evidence's",
+   "source_sha256": "8759ee75ad61204264ae5aab1dd8c9a60aa605925248123ecfbfda66ebe686d1",
+   "tests": [
+    "tests/test_merge_tooling_evidence.py::test_gate_numbers_come_from_the_saved_report"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_merge_tooling_evidence.py::test_gate_numbers_come_from_the_saved_report"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.6,
+   "output_tail": "_____\n\n    def test_gate_numbers_come_from_the_saved_report():\n        report = load(\"relay-gate-report.json\")\n        totals, routes = report[\"totals\"], report[\"routes\"]\n        assert report[\"failures\"] == [] and report[\"findings\"] == []\n        allowed = Counter({key.split(\":\", 1)[1]: value for key, value in totals.items() if key.startswith(\"allowed:\")})\n        assert sum(allowed.values()) == totals[\"allowed\"] == totals[\"accepted\"]\n        assert totals[\"mutants\"] == totals[\"refused\"] + totals[\"accepted\"]\n        n = numbers()\n        assert n[\"routes\"] == len(routes)\n        assert n[\"service modes\"] == sum(route.startswith(\"service:\") for route in routes)\n        assert n[\"one-shot routes\"] == n[\"routes\"] - n[\"service modes\"]\n>       assert (n[\"fixtures\"], n[\"mutants\"], n[\"refused\"], n[\"accepted and listed\"], n[\"untyped fields\"]) == \\\n            (totals[\"fixtures\"], totals[\"mutants\"], totals[\"refused\"], totals[\"accepted\"], totals[\"untyped\"])\nE       assert (465, 106760,...11, 8250, 250) == (465, 106761,...11, 8250, 250)\nE         \nE         At index 1 diff: 106760 != 106761\nE         Use -v to get more diff\n\ntests/test_merge_tooling_evidence.py:73: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_merge_tooling_evidence.py::test_gate_numbers_come_from_the_saved_report\n1 failed in 0.21s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-oq3ib02w)\n"
+  },
+  {
+   "id": "M19",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "the answer itself is mutated, so a reader without its one-row-per-case check fails the gate (review B2)",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_answer_itself_is_emptied_duplicated_and_retyped",
+    "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_the_answer_itself_is_emptied_duplicated_and_retyped"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 30.2,
+   "output_tail": "(\"empty\", \".\", None)] == []\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       KeyError: ('empty', '.', None)\n\ntests/test_relay_mutation_gate.py:86: KeyError\n___________ test_a_reader_without_its_row_count_check_fails_the_gate ___________\n\nbuilt = None, without_row_count_check = None\n\n    def test_a_reader_without_its_row_count_check_fails_the_gate(built, without_row_count_check):\n        \"\"\"Review B2: the one-shot routes never saw an empty or extra row, so this mutant passed.\"\"\"\n        lean_build(\"ve_conformance\")\n        report = G.run_gate(set(FAST_ONE_SHOT))\n        for route in FAST_ONE_SHOT:\n>           assert any(f[\"route\"] == route and f[\"path\"] == \".\" and f[\"mutation\"] in (\"empty\", \"duplicate\")\n                       for f in report[\"findings\"]), (route, report[\"failures\"])\nE           AssertionError: ('ve_metered::evaluate', [])\nE           assert False\nE            +  where False = any(<generator object test_a_reader_without_its_row_count_check_fails_the_gate.<locals>.<genexpr> at 0x7bc264bc2ea0>)\n\ntests/test_relay_mutation_gate.py:309: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_answer_itself_is_emptied_duplicated_and_retyped\nFAILED tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate\n2 failed in 14.34s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-y2anavck)\n"
+  },
+  {
+   "id": "M20",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "an allow-list path of wildcards only is refused (review B1)",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_wildcard_route_or_path_is_refused"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_a_wildcard_route_or_path_is_refused"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.7,
+   "output_tail": "                              [100%]\n=================================== FAILURES ===================================\n___________________ test_a_wildcard_route_or_path_is_refused ___________________\n\n    def test_a_wildcard_route_or_path_is_refused():\n        \"\"\"Review B1: B0 (route `*`, path `*`) allowed every emptied or repeated field of every route.\"\"\"\n        entry = {\"route\": \"*\", \"mutation\": \"empty\", \"path\": \"*\", \"kind\": \"by-design\", \"id\": \"B0\", \"reason\": \"r\"}\n        problems = G.allow_problems([entry])\n        assert any(\"names no single route\" in problem for problem in problems)\n        assert any(\"no list of paths\" in problem for problem in problems)\n        for path in (\"*\", \"*/*\", \"*/*/?\"):\n            problems = G.allow_problems([{**entry, \"route\": \"service:check\", \"path\": [path]}])\n>           assert problems == [f\"allow-list entry 0 (B0) lists the wildcard path {path!r}: list the fields\"]\nE           assert [] == ['allow-list ...t the fields']\nE             \nE             Right contains one more item: \"allow-list entry 0 (B0) lists the wildcard path '*': list the fields\"\nE             Use -v to get more diff\n\ntests/test_relay_mutation_gate.py:111: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_a_wildcard_route_or_path_is_refused\n1 failed in 0.41s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-4vhsg6ou)\n"
+  },
+  {
+   "id": "M21",
+   "file": "tools/relay_mutation_gate.py",
+   "claim": "the most specific allow-list entry takes a finding (review B1)",
+   "source_sha256": "0d237415e26755cb4771b17fc87b134036fef57a55a98ebf294038aec1688d20",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_the_most_specific_entry_takes_a_finding"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_the_most_specific_entry_takes_a_finding"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.4,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_the_most_specific_entry_takes_a_finding _________________\n\n    def test_the_most_specific_entry_takes_a_finding():\n        \"\"\"Review B1: the first entry in file order took a finding a narrower entry listed (B0 took F1's counts).\"\"\"\n        def entry(id_, mutation, path):\n            return {\"route\": \"service:m\", \"mutation\": mutation, \"path\": [path], \"kind\": \"follow-up\", \"id\": id_,\n                    \"reason\": \"r\"}\n        broad, narrow = entry(\"F\", \"*\", \"results/*/result/*\"), entry(\"N\", \"*\", \"results/*/result/x*\")\n        for order in ([broad, narrow], [narrow, broad]):\n>           assert G._allowed(order, \"service:m\", \"empty\", \"results/*/result/xy\")[\"id\"] == \"N\"\nE           AssertionError: assert 'F' == 'N'\nE             \nE             - N\nE             + F\n\ntests/test_relay_mutation_gate.py:123: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_the_most_specific_entry_takes_a_finding\n1 failed in 0.31s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-6mfkbobs)\n"
+  }
+ ]
+}

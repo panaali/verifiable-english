@@ -183,14 +183,12 @@ def compare(env, a: Formula, b: Formula, budgets: Budgets | dict | None = None) 
     raise; exhausted valid searches return UNKNOWN, with a reason.
     """
     budgets = _budgets(budgets)
-    from .backends.dispatch import composed, execute
-
-    def run():
+    from .backends.dispatch import owned
+    # Lean checks every constituent under every authority (lean-first batch 13b), where it can.
+    from .entailment import lean_check_scope
+    if not lean_check_scope(env):
         return _compare(env, a, b, budgets)
-
-    payload = {"environment_id": getattr(env, "environment_id", None), **asdict(budgets)}
-    return execute("compare", payload, run, lean=composed("lean", run),
-                   rust=composed("rust-experimental", run))
+    return owned("compare", lambda: _compare(env, a, b, budgets))
 
 
 def _compare(env, a, b, budgets) -> ComparisonResult:

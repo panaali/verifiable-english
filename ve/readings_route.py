@@ -146,47 +146,145 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
-def _completion_elaborate(row, case):
+def _completion_elaborate(row, case, *, checked_part=False):
     """`readings-elaborate` under `norm-defaults@0` (readings-defaults 1.1, 3; plan RD-2b), relayed: Lean's text
     verbatim, else its row bound to the request. Lean owns the route, the choices and their count; nothing of them is
     regenerated here. On the norms chain a content-bearing document takes the pending route when a candidate has no
-    content, else the enumerated one with the completion as the cause, and the row carries the filled document."""
+    content, else the superposed one when Lean finds the filled document superposable (plan RD-6b) and the enumerated
+    one with Lean's cause otherwise, and the row carries the filled document."""
     if row["status"] == "error":
         raise VEError(row["error"])
     try:
+        from .backends.service_schema import Invalid, check_row
+        check_row("readings-route", row, case, 0)
+        _need(row["id"] == case["id"])
         sets = Document(None, case["document"]).sets
         bearing = any(content_bearing(R) for R in sets)
         pending = any(a.content is None for R in sets for a in R.candidates)
-        if not bearing:
+        if checked_part:
+            # readings-defaults RD-4b: the main case's checked part has no open set; Lean reads it under the
+            # completion (its route stays W2's) and gives its filled document.
+            _need(not sets and row["route"] == "w2")
+            _bind_completion(row, case, checked_part=True)
+        elif not bearing:
             _need(row["route"] == "w2" and not {"fill_premises", "filled"} & set(row))
         else:
-            _need(row["route"] == ("pending" if pending else "enumerated"))
+            _need(row["route"] in (("pending",) if pending else ("enumerated", "superposed")))
             _bind_completion(row, case)
-            if not pending:
+            if row["route"] == "superposed":
+                _bind_completion_superposed(row, case, sets)
+            elif not pending:
                 _bind_completion_choices(row, sets)
-    except (_Invalid, TypeError, KeyError, ValueError, AttributeError, IndexError, RecursionError) as exc:
+    except (_Invalid, Invalid, VEError, TypeError, KeyError, ValueError, AttributeError, IndexError,
+            RecursionError) as exc:
         raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
 def _bind_completion_choices(row, sets):
-    """The enumerated row's finding and choices, bound to the request: every open set named in source order, each
-    choice a reading with content of every open set, no choice twice, the count Lean's list's own."""
-    _need(row["finding"] == {"text": "ReadingsNotSuperposable: " + ", ".join(R.id for R in sets),
-                             "cause": COMPLETION_CAUSE})
-    _need(type(row["narrowings_stale"]) is list)
+    """The enumerated row's finding and choices, bound to the request: every open set named in source order with
+    Lean's cause (the completion's, or after RD-6b what keeps the filled document from superposing), each choice a
+    reading with content of every open set, no choice twice, the count Lean's list's own."""
+    finding = row["finding"]
+    _need(type(finding) is dict and set(finding) == {"text", "cause"}
+          and finding["text"] == "ReadingsNotSuperposable: " + ", ".join(R.id for R in sets)
+          and _name(finding["cause"]))
+    _need(_arr(_name)(row["narrowings_stale"]))
     if row["choices"] == "over":
-        _need(row["choice_count"] == row["choices_checked"] and type(row["choice_count"]) is str)
+        _need(row["choice_count"] == row["choices_checked"] == "over 64")
         return
-    _need(type(row["choices"]) is list and row["choice_count"] == len(row["choices"]) == row["choices_checked"])
+    _need(row["choice_count"] == row["choices_checked"])
+    _bind_choice_list(row["choices"], row["choice_count"], sets)
+
+
+def _bind_choice_list(choices, count, sets):
+    """A list of compatible choices bound to the request: each a reading with content of every open set in source
+    order, none twice, `count` the list's own length."""
+    _need(type(choices) is list and _nat(count) and count == len(choices) and count > 0)
     seen = set()
-    for choice in row["choices"]:
-        _need(type(choice) is list and [entry[0] for entry in choice] == [R.id for R in sets])
+    for choice in choices:
+        _need(type(choice) is list and all(type(e) is list and len(e) == 2 for e in choice)
+              and [entry[0] for entry in choice] == [R.id for R in sets])
         for (_, index), R in zip(choice, sets):
             _need(_nat(index) and index < len(R.candidates) and R.candidates[index].content is not None)
         key = tuple(index for _, index in choice)
         _need(key not in seen)
         seen.add(key)
+
+
+def _bind_completion_superposed(row, case, sets):
+    """The superposed row under the completion (plan RD-6b; Lean's `elaborateFieldsND`), typed by the generated schema and
+    bound to what the request fixes: the open sets in order with their versions and candidates, the unit ids, the
+    restriction ids, the declared pairs a `Fill_T` label names, and the choices. What is left is Lean's alone: the
+    formulas, the positions, the qualified names and the sizes."""
+    from .environment import Environment
+    from .readings_sup import FILL, slot_label
+    _need(row["finding"] is None)
+    document = Document(None, case["document"])
+    by_id = {R.id: R for R in sets}
+    raw = case["document"]
+    narrowing_ids = [n["id"] for n in raw.get("narrowings", [])]
+    coupling_ids = [k["id"] for k in raw.get("couplings", [])]
+    stale = row["narrowings_stale"]
+    _need(len(set(stale)) == len(stale) and set(stale) <= set(narrowing_ids))
+    bits = [p["name"] for p in row["vocabulary"]["predicates"]]
+    _need(len(set(bits)) == len(bits) and [g["name"] for g in row["generated_predicates"]] == bits)
+    expected_units = [{k: value for k, value in unit.items() if k != "content"}
+                      for unit in row["filled"]["units"]]
+    positions = {(R.id, i): sum(len(previous.candidates) for previous in sets[:m]) + i + 1
+                 for m, R in enumerate(sets) for i in range(len(R.candidates))}
+    for unit in expected_units:
+        if "set" in unit:
+            unit["position"] = positions[(unit["set"], unit["index"])]
+    _need([{k: value for k, value in unit.items() if k != "content"} for unit in row["units"]]
+          == expected_units)
+    readings = set()
+    for unit in row["units"]:
+        _typed_filled_content(unit["content"])
+        if "set" not in unit:
+            continue
+        R = by_id.get(unit["set"])
+        _need(R is not None and (unit["unit"], unit["version"]) == (R.unit, R.version)
+              and unit["index"] < len(R.candidates) and R.candidates[unit["index"]].content is not None)
+        key = (unit["set"], unit["index"])
+        _need(key not in readings)
+        readings.add(key)
+    _need(readings == set(positions))
+    request = Environment(case["environment"])
+    pairs = {(name, decl.regulated.permission) for name, decl in request.predicates.items()
+             if decl.regulated is not None and decl.regulated.role == "obligation"}
+    labels = [entry["label"] for entry in row["slot"] + row["fill"]]
+    _need(len(set(labels)) == len(labels))
+    for entry in row["fill"]:
+        decoded = slot_label(entry["label"])
+        _need(decoded.kind == FILL and tuple(decoded.key.split(",")) in pairs)
+    for entry in row["slot"]:
+        decoded = slot_label(entry["label"])
+        if decoded.kind in ("coupling", "narrowing"):
+            _need(decoded.key in (coupling_ids if decoded.kind == "coupling" else narrowing_ids))
+        elif decoded.kind in ("one", "own"):
+            R = by_id.get(decoded.set)
+            _need(R is not None and R.version == decoded.version
+                  and (decoded.kind == "one" or decoded.index < len(R.candidates)))
+        else:
+            _need(False)
+    _need([(e["set"], e["version"]) for e in row["names"]] == [(R.id, R.version) for R in sets])
+    for entry, R in zip(row["names"], sets):
+        _need([(c["index"], c["id"]) for c in entry["candidates"]] == [(i, a.id) for i, a in enumerate(R.candidates)])
+        _need([c["position"] for c in entry["candidates"]] == [positions[(R.id, i)] for i in range(len(R.candidates))])
+        for candidate, authored in zip(entry["candidates"], R.candidates):
+            authored_names = {rule["name"] for rule in authored.content.rules()} if authored.content is not None else set()
+            _need(all(pair[0] in authored_names for pair in candidate["names"]))
+    if row["choices"] == "over":
+        upper = 1
+        for reading_set in sets:
+            upper *= len(reading_set.candidates)
+        _need(upper > 64 and row["choice_count"] == "over 64"
+              and (row["choices_checked"] == "over 1024" and upper > 1024
+                   or _nat(row["choices_checked"]) and 64 < row["choices_checked"] <= upper))
+    else:
+        _need(row["choice_count"] == row["choices_checked"])
+        _bind_choice_list(row["choices"], row["choice_count"], sets)
 
 
 def run_lean(cases, *, executable=None, timeout=None):
@@ -375,7 +473,7 @@ def _bind_set(entry, R):
     _need(order == sorted(set(order)))
 
 
-def _bind_completion(row, case):
+def _bind_completion(row, case, *, checked_part=False):
     """`fill_premises` and `filled` (readings-defaults 3), bound to the request: present exactly under
     `norm-defaults@0` beside a content-bearing set; one `Fill_T` per reading with content, in admission order, each
     label naming a declared obligation and its permission; the filled environment decodes, keeps the request's sorts,
@@ -386,8 +484,10 @@ def _bind_completion(row, case):
     from .environment import Environment
     document = Document(None, case["document"])
     sets = document.sets
+    # A component's checked part (readings-defaults RD-4b: the main case without a content-bearing set, its fixed
+    # units) is under the completion with its environment alone.
     completion = (NORM_DEFAULTS in case["environment"].get("profiles", ())
-                  and any(content_bearing(R) for R in sets))
+                  and (checked_part or any(content_bearing(R) for R in sets)))
     _need(("fill_premises" in row) is completion and ("filled" in row) is completion)
     if not completion:
         return
@@ -403,7 +503,14 @@ def _bind_completion(row, case):
             _need(label.startswith(FILL_LABEL) and tuple(label[len(FILL_LABEL):].split(",")) in pairs)
     filled = Environment(row["filled"]["environment"])
     _need(set(filled.sorts) == set(request.sorts) and set(filled.constants) == set(request.constants))
+    # The profiles are the request's, in its order, without the completion's own (review B4 of rd-6b).
+    profiles = row["filled"]["environment"]["profiles"]
+    _need(NORM_DEFAULTS not in profiles and profiles == [p for p in case["environment"]["profiles"] if p in profiles])
     added = set(filled.predicates) - set(request.predicates)
+    from .norm_defaults import unsaid_name
+    expected_added = {unsaid_name(p) for p, decl in request.predicates.items()
+                      if decl.regulated is not None and decl.regulated.default == "unspecified"}
+    _need(added == expected_added)
     _need(all(filled.predicates[p].arguments == decl.arguments for p, decl in request.predicates.items())
           and all(filled.predicates[p].regulated is None for p in added))
     expected = []
@@ -417,18 +524,54 @@ def _bind_completion(row, case):
     units = row["filled"]["units"]
     _need(len(units) >= len(expected))
     for unit, (where, kind) in zip(units, expected):
-        content = decode_filled(wire(unit["content"]))
+        content = _typed_filled_content(unit["content"])
         _need({k: v for k, v in unit.items() if k != "content"} == where and getattr(content, "kind", None) == kind)
     generated = units[len(expected):]
     names = [unit["unit"] for unit in generated]
     _need(len(set(names)) == len(names) and not set(names) & set(document.unit_ids))
     for unit in generated:
-        content = decode_filled(wire(unit["content"]))
+        content = _typed_filled_content(unit["content"])
         _need(set(unit) == {"unit", "content"} and getattr(content, "kind", None) == "norm")
         rule = content.body
         guard = rule["guard"]
         _need(rule["name"] == unit["unit"] and request.predicates[rule["predicate"]].regulated is not None
               and guard[0] in ("unary", "binary") and guard[1] in added)
+
+
+def _typed_filled_content(raw):
+    """Decode the complete producer content before Python displays or uses it. The rule and formula grammars are
+    the existing decoders; a malformed decoded value remains an unavailable answer, never a verdict."""
+    from .readings_s1 import node_value
+    from .ast import _Decoder
+    _need(type(raw) is dict and len(raw) == 1)
+    if "norm" in raw:
+        norm = raw["norm"]
+        _need(type(norm) is dict and set(norm) == {"name", "predicate", "sign", "mode", "guard", "unless",
+                                                "over", "rank", "alterable", "exception", "hard"})
+        _need(_name(norm["name"]) and _name(norm["predicate"]) and _bool(norm["sign"])
+              and norm["mode"] in ("strict", "default") and (norm["rank"] is None or _name(norm["rank"]))
+              and _arr(_name)(norm["over"]) and _arr(_name)(norm["alterable"]) and _bool(norm["hard"]))
+        exception = norm["exception"]
+        if exception is not None:
+            _need(type(exception) is dict and set(exception) == {"decided_by", "sufficient", "necessary", "factors"}
+                  and (exception["decided_by"] is None or _name(exception["decided_by"]))
+                  and _arr(lambda v: type(v) is list)(exception["sufficient"])
+                  and _arr(lambda v: type(v) is list)(exception["necessary"])
+                  and _arr(_name)(exception["factors"]))
+            for formula in exception["sufficient"] + exception["necessary"]:
+                _Decoder().decode(formula)
+        _Decoder().decode(norm["guard"])
+        _need(_arr(lambda v: type(v) is list)(norm["unless"]))
+        for formula in norm["unless"]:
+            _Decoder().decode(formula)
+        node_value(norm)
+    elif "assertion" in raw:
+        _Decoder().decode(raw["assertion"])
+    else:
+        _need(False)
+    content = decode_filled(wire(raw))
+    _need(content is not None)
+    return content
 
 
 def _check(row, case):
@@ -476,6 +619,10 @@ def _probe_form(entry):
 
 def report(doc):
     """Section 6 for the content-bearing sets of a loaded document, or None."""
+    if doc.get("readings_components") is not None:
+        from .readings_components import report as components_report
+        with _built():
+            return components_report(doc)
     row = doc.get("readings_s1")
     if row is None or not row.get("content_bearing"):
         return None
@@ -483,8 +630,11 @@ def report(doc):
         return _report(doc, row)
 
 
-def _report(doc, row):
-    english = Wording(doc)
+def s1_sections(doc, row, numbers=None):
+    """The S1 part of section 6 (sets, their pairs' wordings, separations, findings, pending candidates, couplings)
+    from Lean's validation `row` of `doc`; `numbers` are the sentence numbers of the whole document when `doc` is one
+    case of its split (readings-defaults RD-4b)."""
+    english = Wording(doc, numbers=numbers)
     sets = []
     separations = {"outcome": 0, "selects": 0, "holds": 0}
     findings = {"SeparatedByDecisionOnly": 0, "SeparatedByActOnly": 0}
@@ -507,17 +657,21 @@ def _report(doc, row):
                                     for c in entry["candidates"]],
                      "pairs": pairs, "findings": entry["findings"],
                      "not_certified": [f for f in entry["findings"] if f.endswith("(not certified)")]})
-    s2 = doc.get("readings_s2") or {"route": "pending"}
-    result = {"checked_by": CHECKED_BY, "sets": sets, "separations": separations, "findings": findings,
+    return {"checked_by": CHECKED_BY, "sets": sets, "separations": separations, "findings": findings,
             "pending_candidates": pending,
-            "couplings": len({item["axis"] for item in doc["meta"].get("couplings", [])}),
-            "route": s2["route"]}
+            "couplings": len({item["axis"] for item in doc["meta"].get("couplings", [])})}
+
+
+def _report(doc, row):
+    result = s1_sections(doc, row)
+    s2 = doc.get("readings_s2") or {"route": "pending"}
+    result["route"] = s2["route"]
     from .readings_verdicts import context
     route = context(doc)
     if s2["route"] in ("superposed", "enumerated"):
         result.update(choice_count=s2["choice_count"], choices_checked=s2["choices_checked"],
                       narrowings_stale=s2["narrowings_stale"],
-                      reading_premises=[entry["label"] for entry in s2.get("slot", [])],
+                      reading_premises=[entry["label"] for entry in s2.get("slot", []) + s2.get("fill", [])],
                       not_superposable=s2["finding"])
         if "sizes" in s2:
             result["sizes"] = s2["sizes"]
@@ -533,7 +687,7 @@ def _report(doc, row):
 class Wording:
     """The wordings of 2.3 for the pairs of a checked answer, filled from checked data only."""
 
-    def __init__(self, doc):
+    def __init__(self, doc, numbers=None):
         from .english import EnglishVocabulary
         self.doc = doc
         with _built():
@@ -543,7 +697,8 @@ class Wording:
             row = doc.get("readings_s1") or {}
             self.admission = Decoded(self.environment, self.document, row.get("filled"), row.get("fill_premises"))
             self.words = EnglishVocabulary(self.admission.senv.frame)
-            self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
+            # One case of a split document is numbered as the whole document (readings-defaults RD-4b).
+            self.numbers = numbers or {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
         self._names = {}
 
     def set_raw(self, set_id):

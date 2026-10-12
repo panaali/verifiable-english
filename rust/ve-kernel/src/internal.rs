@@ -1,8 +1,8 @@
 //! Kernel items the profile and surface crates use but the public API does not offer: they were
 //! `pub(crate)` while the three groups shared one crate. The `ve-core` facade does not re-export
 //! this module. Checked values stay read-only: accessors return shared references, never public
-//! fields. These are thin forwards rather than `pub use` re-exports, which the intra-crate module
-//! check (`tools/check_rust_deps.py`) accepts only at the top level of `lib.rs`.
+//! fields. These are thin forwards rather than `pub use` re-exports, kept from before the crate
+//! split, when a module check allowed re-exports only at the top level of `lib.rs`.
 use crate::{Document, Environment, FiniteModel, Formula, Result};
 use serde_json::{Map, Value};
 use std::collections::{BTreeMap, BTreeSet};

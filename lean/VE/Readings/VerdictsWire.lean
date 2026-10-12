@@ -535,6 +535,39 @@ def firstShown (answer : Json) (key value piece result : String) : List PlanItem
       (jgaps ((e.getObjValD "gaps").getObjValD piece))]
   | none => []
 
+/-- A choice's checked conflict witness, `k`th of the rows (R4, naming the complete choice, 2.3 item 3), and the
+    lower route's status text of it. -/
+def witnessItems (k : Nat) (e : Json) : List PlanItem :=
+  [PlanItem.shown "R4" (jchoice (e.getObjValD "choice")) s!"witness@{k}"
+    (jgaps ((e.getObjValD "gaps").getObjValD "witness"))] ++
+  match e.getObjValD "status_text" with
+  | .str t => if t.isEmpty then [] else [.text "status" none [] (some t)]
+  | _ => []
+
+/-- A conflict answer's lines for one row: its witness when the row is in CONFLICT. -/
+def conflictRowItems (ke : Nat × Json) : List PlanItem :=
+  if strOf (ke.2.getObjValD "conflict") == "CONFLICT" then witnessItems ke.1 ke.2 else []
+
+/-- What an UNKNOWN rests on (2.4 item 3), naming the choice `c` by E12: under a CONFLICT the choice's checked witness
+    (R4) and its status text, as a CONFLICT is worded; under an uncertified conflict status R8; for a missing result
+    R9. A CONFLICT whose witness `answer` does not show is `unworded`, so the answer is unavailable rather than shown
+    without what it rests on. -/
+def gateItems (D : Doc) (answer : Json) (status : String) (c : Choice) : List PlanItem :=
+  if status == "CONFLICT" then
+    match (perChoice answer).find? (fun (_, e) => jchoice (e.getObjValD "choice") == c &&
+        !isNull ((e.getObjValD "shown").getObjValD "witness")) with
+    | some (k, e) => witnessItems k e
+    | none => [.text "unworded" none [] none]
+  else if status == "UNKNOWN" then [.text "E12" (some "R8") (fullReadings D c) none]
+  else [.text "E12" (some "R9") (fullReadings D c) none]
+
+/-- An UNKNOWN query answer's lines (2.4 item 3): the choice its result names (`reasonOf`: a conflict status, else a
+    missing result), none when it names none (the budget's UNKNOWN). -/
+def unknownItems (D : Doc) (answer : Json) : List PlanItem :=
+  let res := answer.getObjValD "result"
+  if isNull (res.getObjValD "choice") then []
+  else gateItems D answer (strOf (res.getObjValD "conflict_status")) (jchoice (res.getObjValD "choice"))
+
 /-- The plan of `answer`. Its condition lines (E3 and the lines under it) are planned from `labels`, the very value
     the answer's `labels` and `conditional_on` encode (`Run.labelsOf`, `Run.conditionsOf`), never re-read from the
     JSON; `plan_cites_conditions` and `plan_conditions_only` say each label gets its lines and no line cites another. -/
@@ -549,14 +582,7 @@ def planItems (D : Doc) (route : Route) (question : String) (labels : List Strin
     if status == "CONFLICT-FREE" then
       head ++ [.text every (some "R1") [] none] ++ providedItems D labels ++ independentItems D labels
     else if status == "CONFLICT" then
-      head ++ (perChoice answer).flatMap (fun (k, e) =>
-        if strOf (e.getObjValD "conflict") == "CONFLICT" then
-          [PlanItem.shown "R4" (jchoice (e.getObjValD "choice")) s!"witness@{k}"
-            (jgaps ((e.getObjValD "gaps").getObjValD "witness"))] ++
-          match e.getObjValD "status_text" with
-          | .str t => if t.isEmpty then [] else [.text "status" none [] (some t)]
-          | _ => []
-        else [])
+      head ++ (perChoice answer).flatMap conflictRowItems
     else head
   else if question == "premises" then
     (if strOf (res.getObjValD "status") == "model" then firstShown answer "premises" "model" "model" "R5" else []) ++
@@ -584,7 +610,7 @@ def planItems (D : Doc) (route : Route) (question : String) (labels : List Strin
       providedItems D labels
     else if !isNull (res.getObjValD "countermodel") && A.isEmpty then
       PlanItem.text "E28" none [] none :: firstShown answer "query" "refuted" "countermodel" "R3"
-    else []
+    else unknownItems D answer
 
 /-- The plan of the case's decoded document `D` (2.4; review E5), its conditions planned from the answer's
     `labels` (`jstrings_toJson`: exactly the list the answer encodes there). -/
@@ -703,6 +729,46 @@ theorem providedItems_only (D : Doc) (ls : List String) : ∀ x ∈ providedItem
   · rw [h] at hl; cases hl
   · rw [h] at hl; cases hl; exact hl'
 
+theorem witnessItems_label (k : Nat) (e : Lean.Json) :
+    ∀ x ∈ witnessItems k e, ∀ l, x.label? = some l → x = .text "status" none [] (some l) := by
+  intro x hx l hl
+  unfold witnessItems at hx
+  rw [List.mem_append] at hx
+  rcases hx with hx | hx
+  · rw [List.mem_singleton] at hx; subst hx; simp at hl
+  · split at hx
+    · split at hx
+      · cases hx
+      · rw [List.mem_singleton] at hx; subst hx
+        simp only [PlanItem.label_text, Option.some.injEq] at hl; subst hl; rfl
+    · cases hx
+
+theorem conflictRowItems_label (ke : Nat × Lean.Json) :
+    ∀ x ∈ conflictRowItems ke, ∀ l, x.label? = some l → x = .text "status" none [] (some l) := by
+  intro x hx l hl
+  unfold conflictRowItems at hx
+  split at hx
+  · exact witnessItems_label _ _ x hx l hl
+  · cases hx
+
+theorem gateItems_label (D : Doc) (a : Lean.Json) (s : String) (c : Choice) :
+    ∀ x ∈ gateItems D a s c, ∀ l, x.label? = some l → x = .text "status" none [] (some l) := by
+  intro x hx l hl
+  unfold gateItems at hx
+  split at hx
+  · split at hx
+    · exact witnessItems_label _ _ x hx l hl
+    · rw [List.mem_singleton] at hx; subst hx; simp at hl
+  · split at hx <;> (rw [List.mem_singleton] at hx; subst hx; simp at hl)
+
+theorem unknownItems_label (D : Doc) (a : Lean.Json) :
+    ∀ x ∈ unknownItems D a, ∀ l, x.label? = some l → x = .text "status" none [] (some l) := by
+  intro x hx l hl
+  dsimp only [unknownItems] at hx
+  split at hx
+  · cases hx
+  · exact gateItems_label _ _ _ _ x hx l hl
+
 /-- No line of a plan cites a label outside `labels`, other than a `status` line relaying a witness's own text. -/
 theorem plan_conditions_only (D : Doc) (q : String) (labels : List String) (answer : Lean.Json) :
     ∀ it ∈ planItems D .enumerated q labels answer, ∀ l, it.label? = some l →
@@ -715,7 +781,7 @@ theorem plan_conditions_only (D : Doc) (q : String) (labels : List String) (answ
   simp (config := {decide := true}) only [Bool.false_eq_true, ↓reduceIte] at hit
   repeat' split at hit
   all_goals (revert hl; revert hit; revert it)
-  all_goals simp only [List.mem_append, List.mem_cons, List.mem_singleton, List.mem_flatMap, List.mem_filterMap,
+  all_goals try simp only [List.mem_append, List.mem_cons, List.mem_singleton, List.mem_flatMap, List.mem_filterMap,
     List.not_mem_nil, or_false, false_or, or_imp, forall_and, forall_exists_index, and_imp, forall_eq,
     PlanItem.label_text, PlanItem.label_shown, reduceCtorEq, false_implies, implies_true, and_true, true_and]
   all_goals (repeat' apply And.intro)
@@ -723,9 +789,11 @@ theorem plan_conditions_only (D : Doc) (q : String) (labels : List String) (answ
     | (intro it h hl; exact Or.inl (hp _ _ h l hl))
     | (intro it h hl; rw [hi _ _ h] at hl; cases hl)
     | (intro it h hl; rw [hf _ _ _ _ _ _ h] at hl; cases hl)
+    | (intro it h hl; exact Or.inr (unknownItems_label _ _ _ h _ hl))
+    | (intro it x _ h hl; exact Or.inr (conflictRowItems_label _ _ h _ hl))
     | (intro it x _ h hl
        repeat' split at h
-       all_goals simp only [List.mem_append, List.mem_singleton, List.mem_cons, List.not_mem_nil, or_false,
+       all_goals try simp only [List.mem_append, List.mem_singleton, List.mem_cons, List.not_mem_nil, or_false,
          Option.some.injEq, reduceCtorEq] at h
        all_goals (try rcases h with h | h)
        all_goals (try subst h)
@@ -1166,10 +1234,11 @@ def perChoiceJson (question : String) (i : RowInfo) : Json :=
      ("gaps", notesJson i.notes (fun n => if n.gaps.isEmpty then none else some (gapsJson n.gaps))),
      ("status_text", match (i.note "witness").bind (·.statusText) with | some t => .str t | none => .null)])
 
-/-- The sets the route's finding names (1.8; under the completion every open set), for E29. -/
+/-- The sets the route's finding names (1.8; under the completion every open set), for E29; none for a document
+    without an open set (a component's checked fixed units, RD-4b). -/
 def findingSets (nd : Bool) (D : Doc) : List String :=
   match (if nd then some (completionFinding D) else notSuperposable D) with
-  | some (sets, _) => sets.splitOn ", "
+  | some (sets, _) => (sets.splitOn ", ").filter (· != "")
   | none => []
 
 /-- The question's result (none beyond 64 choices: W2's budget shape, and for a query the first checked

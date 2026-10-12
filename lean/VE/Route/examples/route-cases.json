@@ -23004,20 +23004,8 @@
    "status": "ok",
    "admitted": true,
    "report": {
-    "root": {
-     "name": "root",
-     "ast": [
-      "unary",
-      "in_finance",
-      [
-       "const",
-       "alice"
-      ]
-     ]
-    },
     "assumptions": [
      {
-      "name": "claim-u2",
       "ast": [
        "or",
        [
@@ -23040,10 +23028,10 @@
         ]
        ]
       ],
-      "label": "bridge:accepts(bob,u2)"
+      "label": "bridge:accepts(bob,u2)",
+      "name": "claim-u2"
      },
      {
-      "name": "distinct",
       "ast": [
        "not",
        [
@@ -23058,9 +23046,21 @@
         ]
        ]
       ],
-      "label": "background:literals"
+      "label": "background:literals",
+      "name": "distinct"
      }
-    ]
+    ],
+    "root": {
+     "ast": [
+      "unary",
+      "in_finance",
+      [
+       "const",
+       "alice"
+      ]
+     ],
+     "name": "root"
+    }
    },
    "report_id": "00ab80c87dd94bb739c7427651ec7f1cf969e45daf292f1e4dc6a3ae16206047",
    "kinds": [
@@ -26309,20 +26309,8 @@
    "status": "ok",
    "admitted": true,
    "report": {
-    "root": {
-     "name": "r",
-     "ast": [
-      "unary",
-      "in_finance",
-      [
-       "const",
-       "alice"
-      ]
-     ]
-    },
     "assumptions": [
      {
-      "name": "r0",
       "ast": [
        "unary",
        "in_finance",
@@ -26331,9 +26319,21 @@
         "alice"
        ]
       ],
-      "label": "readings:s1@1:0"
+      "label": "readings:s1@1:0",
+      "name": "r0"
      }
-    ]
+    ],
+    "root": {
+     "ast": [
+      "unary",
+      "in_finance",
+      [
+       "const",
+       "alice"
+      ]
+     ],
+     "name": "r"
+    }
    },
    "report_id": "46c166ba39111c4f9e55c290e902871f0dcdc098876568f8680c5ff699f6b99e",
    "kinds": [
@@ -26603,20 +26603,8 @@
    "status": "ok",
    "admitted": true,
    "report": {
-    "root": {
-     "name": "r",
-     "ast": [
-      "unary",
-      "in_finance",
-      [
-       "const",
-       "alice"
-      ]
-     ]
-    },
     "assumptions": [
      {
-      "name": "rall",
       "ast": [
        "or",
        [
@@ -26636,10 +26624,10 @@
         ]
        ]
       ],
-      "label": "readings:s1@1:all"
+      "label": "readings:s1@1:all",
+      "name": "rall"
      },
      {
-      "name": "r0",
       "ast": [
        "unary",
        "in_finance",
@@ -26648,9 +26636,21 @@
         "alice"
        ]
       ],
-      "label": "readings:s1@1:0"
+      "label": "readings:s1@1:0",
+      "name": "r0"
      }
-    ]
+    ],
+    "root": {
+     "ast": [
+      "unary",
+      "in_finance",
+      [
+       "const",
+       "alice"
+      ]
+     ],
+     "name": "r"
+    }
    },
    "report_id": "e01b190c995d3181b7a290f7152266e6c4129e63b32ceb07ab813c2f861d5129",
    "kinds": [
@@ -26891,20 +26891,8 @@
    "status": "ok",
    "admitted": true,
    "report": {
-    "root": {
-     "name": "r",
-     "ast": [
-      "unary",
-      "in_finance",
-      [
-       "const",
-       "alice"
-      ]
-     ]
-    },
     "assumptions": [
      {
-      "name": "o",
       "ast": [
        "unary",
        "senior",
@@ -26913,10 +26901,10 @@
         "alice"
        ]
       ],
-      "label": "open:reasonable"
+      "label": "open:reasonable",
+      "name": "o"
      },
      {
-      "name": "n",
       "ast": [
        "unary",
        "in_finance",
@@ -26925,9 +26913,21 @@
         "alice"
        ]
       ],
-      "label": "narrowing:n1"
+      "label": "narrowing:n1",
+      "name": "n"
      }
-    ]
+    ],
+    "root": {
+     "ast": [
+      "unary",
+      "in_finance",
+      [
+       "const",
+       "alice"
+      ]
+     ],
+     "name": "r"
+    }
    },
    "report_id": "c6ca07e3767ffc99a06ef0a9e516b76fb064373e29962ff25286255e8b2d82cb",
    "kinds": [
@@ -27312,66 +27312,8 @@
    "status": "ok",
    "admitted": true,
    "report": {
-    "root": {
-     "name": "f",
-     "ast": [
-      "forall",
-      "person",
-      [
-       "forall",
-       "$string",
-       [
-        "forall",
-        "$string",
-        [
-         "implies",
-         [
-          "and",
-          [
-           "binary",
-           "dept",
-           [
-            "var",
-            2
-           ],
-           [
-            "var",
-            1
-           ]
-          ],
-          [
-           "binary",
-           "dept",
-           [
-            "var",
-            2
-           ],
-           [
-            "var",
-            0
-           ]
-          ]
-         ],
-         [
-          "eq",
-          [
-           "var",
-           1
-          ],
-          [
-           "var",
-           0
-          ]
-         ]
-        ]
-       ]
-      ]
-     ],
-     "label": "background:flags"
-    },
     "assumptions": [
      {
-      "name": "f",
       "ast": [
        "forall",
        "person",
@@ -27425,9 +27367,67 @@
         ]
        ]
       ],
-      "label": "background:flags"
+      "label": "background:flags",
+      "name": "f"
      }
-    ]
+    ],
+    "root": {
+     "ast": [
+      "forall",
+      "person",
+      [
+       "forall",
+       "$string",
+       [
+        "forall",
+        "$string",
+        [
+         "implies",
+         [
+          "and",
+          [
+           "binary",
+           "dept",
+           [
+            "var",
+            2
+           ],
+           [
+            "var",
+            1
+           ]
+          ],
+          [
+           "binary",
+           "dept",
+           [
+            "var",
+            2
+           ],
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "eq",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     "label": "background:flags",
+     "name": "f"
+    }
    },
    "report_id": "29327f4f50946056046df7955d6d558bbc84964e253852cf80b7283ff1c696e8",
    "kinds": []

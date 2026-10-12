@@ -1,5 +1,5 @@
-"""Compare the RD-1, RD-2a, RD-4a and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2,
-6.3, 6.6 (its wire part) and 6.7.
+"""Compare the RD-1, RD-2a, RD-4a, RD-4b and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2,
+6.3, 6.6 and 6.7.
 
 Every declaration of the spec's 6.2 block is compared, not only the theorems (review B2): the structure, every
 definition with its body (`AchievesU`, `fillDoc`, `fillNamesFree`, `normsShaped`, `WellFormedND`, ...), and every
@@ -58,6 +58,10 @@ SECTION_RD4A = ("### 6.6 RD-4a and RD-4b", "### 6.7")
 SOURCE_RD4A = ROOT / "lean/VE/Readings/Companions.lean"
 EXPECTED_RD4A = {"theorem": 4, "def": 6, "structure": 0}
 PENDING_RD4A: dict[str, str] = {}
+# RD-4b: the product statements after `end Companions` in the same approved block.
+SOURCE_RD4B = ROOT / "lean/VE/Readings/Components.lean"
+EXPECTED_RD4B = {"theorem": 6, "def": 8, "structure": 2}
+PENDING_RD4B: dict[str, str] = {}
 SOURCE_6A = ROOT / "lean/VE/Readings/SupExtra.lean"
 # 6.7's declarations by kind, RD-6b's included.
 EXPECTED_6A = {"theorem": 7, "def": 3, "structure": 0}
@@ -89,7 +93,8 @@ REFUTATIONS_6A = ROOT / "lean/VE/Readings/SupExtraExamples.lean"
 REFUTATIONS_NAMESPACE_6A = "VE.Readings.SupExtraExamples"
 AUDIT = ROOT / "lean/VE/Audit.lean"
 # 6.7's RD-6b declarations, built by RD-6b in the same file.
-LATER_6A = {"fill_transfers", "nd_superpose_conflict_free", "nd_superpose_all"}
+LATER_6A = set()
+RD6B_NAMES = {"fill_transfers", "nd_superpose_conflict_free", "nd_superpose_all"}
 KINDS = ("theorem", "def", "structure")
 # A Lean name runs to the first space or bracket, so `x'` or `A.x` is not read as `x` or `A`.
 START = re.compile(rf"^({'|'.join(KINDS)}) ([\w'!?.]+)", re.M)
@@ -134,6 +139,12 @@ def approved_rd4a() -> dict[tuple[str, str], list[str]]:
     section = SPEC.read_text().split(SECTION_RD4A[0], 1)[1].split(SECTION_RD4A[1], 1)[0]
     code = section.split("```lean", 1)[1].split("```", 1)[0]
     return declarations(code.split("section Companions", 1)[1].split("end Companions", 1)[0], statements_only=True)
+
+
+def approved_rd4b() -> dict[tuple[str, str], list[str]]:
+    section = SPEC.read_text().split(SECTION_RD4A[0], 1)[1].split(SECTION_RD4A[1], 1)[0]
+    code = section.split("```lean", 1)[1].split("```", 1)[0]
+    return declarations(code.split("end Companions", 1)[1], statements_only=True)
 
 
 def lean_of(sources) -> dict[tuple[str, str], list[str]]:
@@ -277,6 +288,15 @@ def main() -> int:
     return 0
 
 
+def main_rd6b() -> int:
+    spec = {key: value for key, value in approved_6a().items() if key[1] in RD6B_NAMES}
+    errors, _ = compare("RD-6b", spec, SOURCE_6A, {"theorem": 3, "def": 0, "structure": 0}, {}, set())
+    if errors:
+        print("\n".join(errors))
+        return 1
+    return 0
+
+
 def main_rd2a() -> int:
     errors, _ = compare("RD-2a", approved_rd2a(), SOURCES_RD2A, EXPECTED_RD2A, PENDING_RD2A, set())
     if errors:
@@ -301,5 +321,13 @@ def main_rd4a() -> int:
     return 0
 
 
+def main_rd4b() -> int:
+    errors, _ = compare("RD-4b", approved_rd4b(), SOURCE_RD4B, EXPECTED_RD4B, PENDING_RD4B, set())
+    if errors:
+        print("\n".join(errors))
+        return 1
+    return 0
+
+
 if __name__ == "__main__":
-    sys.exit(max(main(), main_rd2a(), main_rd3(), main_rd4a()))
+    sys.exit(max(main(), main_rd2a(), main_rd3(), main_rd4a(), main_rd4b(), main_rd6b()))
