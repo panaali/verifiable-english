@@ -1310,6 +1310,11 @@ def _check_answer(row, case, frame):
         # status spelling and JSON type.
         check_row("readings-route", row, {"id": row.get("id"), "kind": "readings-verdicts"}, 0)
         _need(row["id"] == case["id"] and row["question"] == case["question"])
+        _need(("decided_units" in row) is frame.completion)
+        if frame.completion:
+            units = {unit["id"] for unit in case["document"]["units"]}
+            _need(len(row["decided_units"]) == len(set(row["decided_units"])))
+            _need(set(row["decided_units"]) <= units)
         _need(row["finding_sets"] == frame.finding_sets)
         rows = _check_rows(row, case, frame)
         for label in row["restrictions"] + row["labels"]:

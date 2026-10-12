@@ -1,4 +1,4 @@
-import VE.Readings.Verdicts
+import VE.Readings.Components
 
 /-! The kind `readings-verdicts` on the enumerated route (docs/spec/readings-defaults.md 3, 4.4, 2.3 to 2.5, 6.4
 and 6.5; plan RD-3).
@@ -331,6 +331,57 @@ def gapsOf (U : UDoc) (Mf : VE.FiniteModel Entity) (ρ : List Entity) (ψ : VE.F
 
 def gapsJson (gs : List (String × List String × Bool)) : Json :=
   Json.arr (gs.map (fun g => Json.arr #[.str g.1, toJson g.2.1, .bool g.2.2])).toArray
+
+/-- The formula whose value a separation probe shows, with its argument tuple. -/
+def probeFormulaOn {α : Type} (P : Side) : Probe α → VE.Formula × List α
+  | .outcome p vs => (VE.Norms.outcomeBaseIn P.S P.L p, vs)
+  | .selects k p vs => (VE.Norms.anyF ((selectable P.X k p).map (fun N =>
+      VE.Norms.substIn P.L P.L.syms.length (VE.SoftNorms.selectsOn P.S (VE.Rights.correlate P.X) N))), vs)
+  | .holds => (conj (P.A.map (VE.Norms.substIn P.L P.L.syms.length)), [])
+
+/-- Gaps of the witness's shown value under its own completion. -/
+def pairGapsOn (U : UDoc) (P : Side) (M : VE.FiniteModel Entity)
+    (T : List (GenKey × List (List Entity))) (q : Probe Entity) :
+    List (String × List String × Bool) :=
+  gapsOf U (tablesModelOn P M T) (VE.Norms.tupleVal (probeFormulaOn P q).2) (probeFormulaOn P q).1
+
+theorem anyF_eval {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (ρ : List α) (l : List VE.Formula) :
+    (VE.Norms.anyF l).eval M ρ = l.any (·.eval M ρ) := by
+  suffices h : ∀ acc : VE.Formula, (l.foldl .or acc).eval M ρ = (acc.eval M ρ || l.any (·.eval M ρ)) by
+    simpa [VE.Norms.anyF, VE.Formula.eval] using h .bottom
+  induction l with
+  | nil => intro acc; simp
+  | cons a l ih => intro acc; simp only [List.foldl, ih, VE.Formula.eval, List.any_cons, Bool.or_assoc]
+
+theorem conj_eval {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (ρ : List α) :
+    ∀ l : List VE.Formula, (conj l).eval M ρ = l.all (·.eval M ρ)
+  | [] => rfl
+  | [a] => by simp [conj]
+  | a :: b :: l => by
+    show (VE.Formula.and a (conj (b :: l))).eval M ρ = _
+    simp only [VE.Formula.eval, conj_eval M ρ (b :: l), List.all_cons]
+
+theorem probeFormulaOn_eval {α : Type} [DecidableEq α] (P : Side) (M : VE.FiniteModel α) (q : Probe α)
+    (v : Bool) (h : observeOn P M q = some v) :
+    (probeFormulaOn P q).1.eval M (VE.Norms.tupleVal (probeFormulaOn P q).2) = v := by
+  cases q with
+  | outcome p vs =>
+    simp only [observeOn] at h
+    split at h
+    · split at h
+      · cases h
+      · cases h; rfl
+    · cases h
+  | selects k p vs =>
+    simp only [observeOn, Option.some.injEq] at h
+    subst h
+    simp only [probeFormulaOn, anyF_eval, List.any_map]
+    rfl
+  | holds =>
+    simp only [observeOn, Option.some.injEq] at h
+    subst h
+    simp only [probeFormulaOn, conj_eval, List.all_map, VE.Norms.tupleVal, List.reverse_nil]
+    rfl
 
 def acceptedNote (name : String) (accepted : Bool) (on : List String) (shown : Option Json)
     (gaps : List (String × List String × Bool)) : PieceNote :=
@@ -1161,6 +1212,30 @@ def deadOf (D : Doc) (infos : List RowInfo) (dead : List Json) : Option (List (S
          ("accepted", .bool (ok s i && untaken.contains (s, i)))]
      | _, _ => Json.mkObj [("accepted", .bool false)]))
 
+/-- The status of one reading's premises over every compatible choice taking it. -/
+def readingPremise (D : Doc) (infos : List RowInfo) (dead : List (String × Nat)) (R : ReadingSet) (i : Nat) : Premise :=
+  if (droppedBy D R i).isSome then .narrowed
+  else if dead.contains (R.id, i) then .dead
+  else
+    let taking := infos.filter (·.choice.contains (R.id, i))
+    if taking.isEmpty then .unknown
+    else match foldPremises (taking.map (fun t => (t.choice, t.premise))) with
+      | .model => .model
+      | .inconsistent => .inconsistent
+      | _ => .unknown
+
+/-- The case's fixed units and content-bearing sets with decided rows. -/
+def partDecided (D : Doc) (infos : List RowInfo) (dead : List (String × Nat)) : List String :=
+  let cs := infos.map (fun i => (i.choice, i.conflict))
+  let ps := infos.map (fun i => (i.choice, i.premise))
+  D.items.filterMap (fun it => match it with
+    | .fixed u _ _ => if fixedDecided (foldConflict cs) (foldPremises ps) then some u else none
+    | .set R =>
+      if VE.Readings.Wire.contentBearing R &&
+          setDecided cs ((List.range R.candidates.length).map (readingPremise D infos dead R)) then some R.unit
+      else none
+    | .bar _ _ => none)
+
 def premisesResult (D : Doc) (infos : List RowInfo) (dead : Option (List (String × Nat))) : Json :=
   let overall := foldPremises (infos.map (fun i => (i.choice, i.premise)))
   let deadL := dead.getD []
@@ -1323,6 +1398,21 @@ def verdictsAnswer (id question : String) (nd : Bool) (D : Doc) (A : Choice) (as
   okWith id (answerFields question nd D A assumed infos over dead ++
     [("english", Json.arr ((verdictsPlan question nd D A assumed infos over dead).map Line.json).toArray)])
 
+/-- The submitted document's unit order, shared with component verdicts. -/
+def documentOrder (document : Json) (us : List String) : List String :=
+  let units := match document.getObjValD "units" with
+    | .arr xs => xs.toList
+    | _ => []
+  (units.map (fun x => strOf (x.getObjValD "id"))).filter us.contains
+
+/-- Add Lean's decided units on the completion route. -/
+def ndVerdictsAnswer (id question : String) (document : Json) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : Json :=
+  let decided := match infos with
+    | some rows => if A.isEmpty then documentOrder document (partDecided D rows ((deadOf D rows dead).1.getD [])) else []
+    | none => []
+  (verdictsAnswer id question true D A assumed infos over dead).setObjVal! "decided_units" (toJson decided)
+
 theorem map_row_choice (l : List Choice) (row : Choice → RowInfo) (h : ∀ c, (row c).choice = c) :
     (l.map row).map (·.choice) = l := by
   simp [List.map_map, Function.comp_def, h]
@@ -1354,7 +1444,7 @@ def runVerdicts (lower : List String → Json → Json) (id : String) (b : Admit
     if (choices D).isEmpty then throw (unsatText D)
     if (choices D).length ≤ maxChoices then
       let x ← replayND f question A j
-      return verdictsAnswer id question true D A named (some (ndInfos x)) [] dead
+      return ndVerdictsAnswer id question (j.getObjValD "document") D A named (some (ndInfos x)) [] dead
     -- Beyond 64: only a checked countermodel says anything (not ALL).
     let over := evidence.filterMap (fun e =>
       let c := jchoice (e.getObjValD "choice")
@@ -1370,7 +1460,7 @@ def runVerdicts (lower : List String → Json → Json) (id : String) (b : Admit
           | .error _ => none
         | some _ => none
       else none)
-    return verdictsAnswer id question true D A named none over dead
+    return ndVerdictsAnswer id question (j.getObjValD "document") D A named none over dead
   if let some e := routeRefusal ndProfile b.D then throw e
   let D := b.D
   let row := fun (c : Choice) => lowerInfo lower id b c (entryFor evidence c) premisesJ conclusionJ

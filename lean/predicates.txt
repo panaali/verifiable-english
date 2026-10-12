@@ -325,7 +325,9 @@ module VE.Readings.Shape
 module VE.Readings.Simulate
 module VE.Readings.Situation
 module VE.Readings.SoftDefaults
+module VE.Readings.SoftExamples
 module VE.Readings.SoftFacts
+module VE.Readings.SoftWire
 module VE.Readings.Strings
 module VE.Readings.SupAll
 module VE.Readings.SupConflict

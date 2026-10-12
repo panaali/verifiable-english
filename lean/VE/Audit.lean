@@ -4299,9 +4299,15 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.modelCheckU_sound
 #print axioms VE.Readings.Wire.fillNamesFree_of_reservedUnsaid
 #print axioms VE.Readings.Wire.wellFormedU_of_ndDocText
+#print axioms VE.Readings.Wire.ndDocText_eq_G
+#print axioms VE.Readings.Wire.wellFormedU_of_ndDocTextG
 #print axioms VE.Readings.Wire.wellFormedND_eq
 #print axioms VE.Readings.Wire.option_or_none
 #print axioms VE.Readings.Wire.ndRest_of_ndText
+#print axioms VE.Readings.Wire.fillRest_of_ndText
+#print axioms VE.Readings.Wire.anyF_eval
+#print axioms VE.Readings.Wire.conj_eval
+#print axioms VE.Readings.Wire.probeFormulaOn_eval
 #print axioms VE.Readings.Wire.lookup_map_key
 #print axioms VE.Readings.Wire.frameOf_filled
 #print axioms VE.Readings.Wire.candidate_filled

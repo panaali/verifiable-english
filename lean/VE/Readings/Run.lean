@@ -117,6 +117,7 @@ structure PairFacts where
   witnessValue : Option Bool
   otherAdmissible : Bool
   otherValue : Option Bool
+  gaps : Option (List (String × List String × Bool))
 
 /-- The facts of one pair as specified: `separates`, then each side's completions evaluated again. -/
 def pairFactsSpec (a : Admitted) (s : String) (sid other : String) : Except String PairFacts := do
@@ -128,7 +129,8 @@ def pairFactsSpec (a : Admitted) (s : String) (sid other : String) : Except Stri
   pure ⟨r, sj.witness, separates r.D r.set r.witness r.other r.σ, sideValid r.D r.set r.witness M Ti,
     sideValue r.D r.set r.witness M Ti r.σ.probe,
     (assignments r.D r.set r.other M).any (fun G => sideValid r.D r.set r.other M (Tj ++ G)),
-    if ownedKeys r.D r.set r.other = [] then sideValue r.D r.set r.other M Tj r.σ.probe else none⟩
+    if ownedKeys r.D r.set r.other = [] then sideValue r.D r.set r.other M Tj r.σ.probe else none,
+    none⟩
 
 /-! ### Each candidate's layers computed once per set (plan F5d), the other side scanned lazily (`pairEval`,
     `Scan.lean`) -/
@@ -149,7 +151,7 @@ def pairFactsIn (a : Admitted) (side : Nat → Side) (s : String) (sid other : S
   if cellsOn r.D s r.other Pj r.σ.base > maxCells then throw "ResourceLimit: decision assignments"
   let (sep, valid, value, oa, ov) :=
     pairEval (m := Id) (pure ()) (pure ()) r.D s r.witness r.other (side r.witness) Pj r.σ
-  pure ⟨r, sj.witness, sep, valid, value, oa, ov⟩
+  pure ⟨r, sj.witness, sep, valid, value, oa, ov, none⟩
 
 theorem pairFactsIn_eq (a : Admitted) (side : Nat → Side) (s : String) (sid other : String)
     (h : ∀ i, side i = sideOf a.D s i) : pairFactsIn a side s sid other = pairFactsSpec a s sid other := by
@@ -192,7 +194,7 @@ def pairJson (f : PairFacts) (sid : String) : Json :=
     ("witness_admissible", .bool f.witnessValid), ("witness_value", optBool f.witnessValue),
     ("other_admissible", .bool f.otherAdmissible)] ++
     (if ownedKeysOf f.replay.D f.replay.set f.replay.other f.replay.Xj.1 = [] then [("other_value", optBool f.otherValue)]
-     else []))
+     else []) ++ (f.gaps.map (fun gs => [("gaps", gapsJson gs)])).getD [])
 
 /-- 4.5 for every pair of a set, neither pending, in index order: each must be separated by its situation. As
     specified: each pair builds both sides' layers. -/
@@ -325,8 +327,12 @@ def validateResult (a : Admitted) : Except String (List (String × Json)) := val
     (`fillHoldsOf_eq`). `separated` is the scan's on the filled document, which is `separates (fillDoc N)`
     (`separates_filled`), the hypothesis of `readings_wire_nd_separate_sound`. -/
 def ndPairFacts (f : AdmittedNDFull) (p : PairFacts) : PairFacts :=
-  { p with witnessValid := p.witnessValid &&
-      fillHoldsOf f.r.N (f.r.b.a.side p.replay.set p.replay.witness).1 p.replay.σ.base }
+  let P := sideIn f.fa.a p.replay.set p.replay.witness
+  let T := tablesForOf P.X (p.replay.σ.fixed ++ p.replay.σ.decisions)
+  let valid := p.witnessValid &&
+    fillHoldsOf f.r.N (f.r.b.a.side p.replay.set p.replay.witness).1 p.replay.σ.base
+  let gs := pairGapsOn (oneU f.r.N p.replay.set p.replay.witness) P p.replay.σ.base T p.replay.σ.probe
+  { p with witnessValid := valid, gaps := some gs }
 
 /-- `readings-validate` under the completion: S1's rows on the filled document, then `fill_premises` per reading and
     `filled` once (3). -/

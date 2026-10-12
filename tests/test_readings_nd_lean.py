@@ -103,7 +103,7 @@ def test_fnd1_validate_separates_on_the_filled_document(lean):
     [rs1] = row["sets"]
     assert rs1["pairs"][0] == {"reading": "every", "other": "asks", "pair": {
         "situation": sid, "witness": "every", "separated": True, "witness_admissible": True, "witness_value": True,
-        "other_admissible": True, "other_value": False}}
+        "other_admissible": True, "other_value": False, "gaps": []}}
     assert [c["owned"] for c in rs1["candidates"]] == [[], []]
     # per reading its `Fill_T`, labelled by the pair
     assert [(e["set"], e["index"], [p["label"] for p in e["premises"]]) for e in row["fill_premises"]] == [
@@ -520,6 +520,6 @@ def test_without_unspecified_predicates_the_answer_is_s1s(lean):
     plain = env1(PLAIN, "deny")
     document_plain, _ = doc1(plain, sigma)
     plain_row = one(lean, "readings-validate", plain, document_plain)
-    strip = lambda r: [{**p, "pair": {k: v for k, v in p["pair"].items() if k != "situation"}}
+    strip = lambda r: [{**p, "pair": {k: v for k, v in p["pair"].items() if k not in ("situation", "gaps")}}
                        for p in r["sets"][0]["pairs"]]
     assert strip(row) == strip(plain_row)

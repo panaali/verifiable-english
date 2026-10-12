@@ -381,9 +381,11 @@ _CANDIDATE = _either(
           "owned": _arr(_KEY_ENTRY), "shared": _arr(_KEY_ENTRY), "findings": _arr(_name)}))
 # Lean answers a pair only after `unless f.witnessValid` and `unless f.separated` (setPairs), so both are true and
 # the witness's value is the recorded one, never null.
+_GAPS = _arr(lambda x: type(x) is list and len(x) == 3 and _name(x[0])
+             and _arr(_str)(x[1]) and _bool(x[2]))
 _PAIR_FACTS = _obj({"situation": _digest, "witness": _str, "separated": _lit(True),
                     "witness_admissible": _lit(True), "witness_value": _bool, "other_admissible": _bool},
-                   {"other_value": lambda v: v is None or type(v) is bool})
+                   {"other_value": lambda v: v is None or type(v) is bool, "gaps": _GAPS})
 _SET = _obj({"set": _str, "version": _nat, "candidates": _arr(_CANDIDATE, nonempty=True),
              "pairs": _arr(_obj({"reading": _str, "other": _str, "pair": _PAIR_FACTS})), "findings": _arr(_name)})
 # Under the unspecified completion (readings-defaults.md 3) Lean adds, per reading, its `Fill_T` and, once, the filled
@@ -489,10 +491,28 @@ def _bind_completion(row, case, *, checked_part=False):
     completion = (NORM_DEFAULTS in case["environment"].get("profiles", ())
                   and (checked_part or any(content_bearing(R) for R in sets)))
     _need(("fill_premises" in row) is completion and ("filled" in row) is completion)
+    for entry in row.get("sets", ()):
+        for pair in entry["pairs"]:
+            _need(("gaps" in pair["pair"]) is completion)
     if not completion:
         return
     _need(FILL_PREMISES(row["fill_premises"]) and FILLED(row["filled"]))
     request = Environment(case["environment"])
+    for entry in row.get("sets", ()):
+        R = next((R for R in sets if R.id == entry["set"]), None)
+        _need(R is not None)
+        for pair in entry["pairs"]:
+            facts = pair["pair"]
+            base = R.situations[facts["situation"]]["base"]
+            _need(len(facts["gaps"]) == len({(predicate, tuple(values))
+                                              for predicate, values, _ in facts["gaps"]}))
+            for predicate, values, _answer in facts["gaps"]:
+                decl = request.predicates.get(predicate)
+                _need(decl is not None and decl.regulated is not None
+                      and decl.regulated.default == "unspecified"
+                      and len(values) == len(decl.arguments)
+                      and all(value in base["domains"].get(sort, ())
+                              for value, sort in zip(values, decl.arguments)))
     pairs = {(name, decl.regulated.permission) for name, decl in request.predicates.items()
              if decl.regulated is not None and decl.regulated.role == "obligation"}
     readings = [(R.id, i) for R in sets for i, a in enumerate(R.candidates) if a.content is not None]
@@ -810,13 +830,15 @@ class Wording:
                 facts.append("suppose " + self.decision(set_id, witness, table["key"], row, own))
         return "; ".join(facts) if facts else "nothing exists"
 
-    def gap_text(self, base):
-        """norm-defaults 3.2's filled-gap sentences after a shown situation (readings-defaults 2.2), each led by a
-        space: under the completion, every point of every filled table over the situation's elements, with the
-        situation's answer (Lean's plan selects the ones a result depends on from RD-3 on)."""
+    def gap_text(self, gaps, base):
+        """Render the gap atoms Lean selected for the pair's shown value."""
         from .readings_s2_english import gap_sentences
-        from .readings_s2_wording import filled_gaps
-        return gap_sentences(filled_gaps(self.admission.senv.frame, self.admission.doc.filled_tables, base))
+        from .norm_defaults_english import point_clause
+        from types import SimpleNamespace
+        constants = SimpleNamespace(constants=base.get("constants") or {})
+        frame = self.admission.senv.frame
+        return gap_sentences([(point_clause(frame, constants, predicate, values), answer)
+                              for predicate, values, answer in gaps])
 
     def decision(self, set_id, witness, key_json_value, row, own):
         """`<decision>` of 2.1."""
@@ -893,7 +915,8 @@ class Wording:
                 who = ((rule.get("exception") or {}).get("decided_by")
                        or self.admission.side(set_id, default).soft.env.soft.get("exception_decider") or "unstated")
                 lines.append(E.force_twin_sentence(source_word, *paraphrases, who, tuple(row), role,
-                                                   strict_value, default_value))
+                                                   strict_value, default_value,
+                                                   gaps=self.gap_text(facts.get("gaps", ()), situation["base"])))
                 lines += self.e22_e23(set_id, strict, default)
                 if (strict, default) in _finding_pairs(entry, "SeparatedByDecisionOnly"):
                     lines.append(E.decision_only_sentence(who))
@@ -901,13 +924,13 @@ class Wording:
             text = E.outcome_pair_sentence(self.situation_text(set_id, i, situation), names[i], names[j], role,
                                            row[0], value, other_admissible=facts["other_admissible"],
                                            other_value=facts.get("other_value"),
-                                           gaps=self.gap_text(situation["base"]))
+                                           gaps=self.gap_text(facts.get("gaps", ()), situation["base"]))
             return "E19", _s1_gated("E19", text)
         if probe == "holds" and all(R.candidates[k].content.kind == "assertion" for k in (i, j)):
             true, false = (names[i], names[j]) if value else (names[j], names[i])
             return "E21", _s1_gated("E19", E.assertion_pair_sentence(self.situation_text(set_id, i, situation),
                                                                      true, false,
-                                                                     gaps=self.gap_text(situation["base"])))
+                                                                     gaps=self.gap_text(facts.get("gaps", ()), situation["base"])))
         return "E24", _s1_gated("E24", E.E24)
 
     def twins(self, set_id, i, j):

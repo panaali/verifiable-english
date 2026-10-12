@@ -6566,7 +6566,9 @@
         "VE.Readings.Run.runElaborateNDWith",
         "VE.Readings.Wire.elaborateFieldsND",
         "VE.Readings.Wire.normDefaultsProfile",
-        "VE.Readings.Wire.underCompletion"
+        "VE.Readings.Wire.underCompletion",
+        "VE.Readings.Wire.decisionCount",
+        "VE.Readings.Wire.ndDocTextG"
       ],
       "G[R]": [
         "VE.Readings.Wire.ndChoiceCheckText",
@@ -6750,7 +6752,13 @@
         "VE.Readings.planItems",
         "VE.Readings.providedItems",
         "VE.Readings.unknownItems",
-        "VE.Readings.witnessItems"
+        "VE.Readings.witnessItems",
+        "VE.Readings.Run.documentOrder",
+        "VE.Readings.Run.ndVerdictsAnswer",
+        "VE.Readings.Run.partDecided",
+        "VE.Readings.Run.readingPremise",
+        "VE.Readings.Wire.pairGapsOn",
+        "VE.Readings.Wire.probeFormulaOn"
       ]
     },
     "VE/Readings/Wire.lean": {
@@ -10775,7 +10783,6 @@
         "VE.Readings.Run.admitPart",
         "VE.Readings.Run.componentJson",
         "VE.Readings.Run.dedupNats",
-        "VE.Readings.Run.documentOrder",
         "VE.Readings.Run.e31Line",
         "VE.Readings.Run.e32Line",
         "VE.Readings.Run.entryJson",
@@ -10784,7 +10791,6 @@
         "VE.Readings.Run.fixedPart",
         "VE.Readings.Run.gateLines",
         "VE.Readings.Run.namedOf",
-        "VE.Readings.Run.partDecided",
         "VE.Readings.Run.partLines",
         "VE.Readings.Run.partRequest",
         "VE.Readings.Run.partUnits",
@@ -10794,7 +10800,6 @@
         "VE.Readings.Run.productReplay",
         "VE.Readings.Run.productResult",
         "VE.Readings.Run.queryPart",
-        "VE.Readings.Run.readingPremise",
         "VE.Readings.Run.requireCompletion",
         "VE.Readings.Run.runPart",
         "VE.Readings.Run.runParts",
@@ -10844,6 +10849,20 @@
         "VE.Readings.freeX",
         "VE.Readings.oneX",
         "VE.Readings.softX"
+      ]
+    },
+    "VE/Readings/SoftExamples.lean": {
+      "T": [
+        "VE.Readings.SoftExamples.N"
+      ]
+    },
+    "VE/Readings/SoftWire.lean": {
+      "G[V]": [
+        "VE.Readings.Wire.AdmittedSD",
+        "VE.Readings.Wire.admitSD",
+        "VE.Readings.Wire.admitSDOf",
+        "VE.Readings.Wire.sdChoiceText",
+        "VE.Readings.Wire.underSoftCompletion"
       ]
     }
   }
