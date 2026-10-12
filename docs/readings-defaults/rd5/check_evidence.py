@@ -123,4 +123,3 @@ def check_all():
     test_the_saved_measurements_meet_the_limits()
     test_every_witness_and_companion_check_is_recorded_equal()
     test_the_queries_answer_as_the_spec_derived_and_their_english_is_saved()
-

@@ -103,7 +103,7 @@ DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/caus
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "JSON reader: null in reading_sets",
-               # readings-defaults RD-5: the 27 sets left on W2 keep `content: null`
+               # RD-5: its 27 sets left on W2 keep `content: null`; the whole document is checked below.
                "usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md": "JSON reader: null in reading_sets",
                "usecases/question-answering/group.ve.md": "surface parser",
                "usecases/question-answering/udhr-part07.ve.md": "norm-defaults@0",
@@ -123,6 +123,8 @@ def seed_answers(service):
 
 def test_every_seed_document_agrees_with_python_or_fails_closed(seed_answers):
     assert set(seed_answers) == DECIDED | set(FAIL_CLOSED)
+    assert LARGE_FAIL_CLOSED <= set(FAIL_CLOSED)
+    assert all(dw.fuzzed(seed_answers[name][0], name) for name in LARGE_FAIL_CLOSED)
     for name, (_, python, answer) in seed_answers.items():
         if name in DECIDED:
             assert dw.verdict(python, answer) == "agree", (name, python, answer)
@@ -383,12 +385,17 @@ def _null_and_number_mutants(doc):
     return texts
 
 
-@pytest.mark.parametrize("name", sorted(DECIDED | set(FAIL_CLOSED)))
+LARGE_FAIL_CLOSED = {"usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"}
+
+
+@pytest.mark.parametrize("name", sorted((DECIDED | set(FAIL_CLOSED)) - LARGE_FAIL_CLOSED))
 def test_null_and_number_forms_agree_with_python_or_fail_closed(service, name):
     """16c review B2's class: Lean's JSON reader decided `null` and number forms differently from Python (107
     accepted-to-rejected flips on `null`; `2e0` read as the natural 2 where Python reads a float). Every
     one-member `null` and every number form of every seed is Python's answer or `CheckerUnavailable`, never
-    another verdict; and the seed's own members the mode reads as absent (`content`, `status`) are decided."""
+    another verdict; and the seed's own members the mode reads as absent (`content`, `status`) are decided. RD-5's
+    375 KB pilot is checked whole by `test_every_seed_document_agrees_with_python_or_fails_closed` and mutated by
+    difffuzz; this one-member helper would copy it 12,084 times (4.5 GB of input) for a constant refusal."""
     doc = dict(dw.seeds())[name]
     texts = _null_and_number_mutants(doc)
     assert texts
