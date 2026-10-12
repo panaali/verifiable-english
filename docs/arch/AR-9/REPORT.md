@@ -9,7 +9,7 @@ Every number below is rendered by `report.py` from `evidence/` and checked by
 `check_evidence.py` at the batch gate, outside the permanent test suite (D4).
 
 <!-- BEGIN GENERATED AR-9 METRICS -->
-- Measured: base `c24aeab2`, head `27339266` (clean `ve/`).
+- Measured: base `5479466f`, head `e0cbab24` (clean `ve/`).
 - `ve/assist/recovery.py` 1,359 lines -> `recovery.py` 348, `recovery_journal.py` 194, `recovery_replay.py` 245, `recovery_commands.py` 661.
 - `ve/assist/session.py` 1,338 lines -> `session.py` 436, `session_state.py` 234, `session_proposals.py` 281, `session_views.py` 441.
 - Largest assist file: `ve/assist/recovery_commands.py`, 661 lines; files over 700: 0.
@@ -103,6 +103,12 @@ Each fault was removed by the script; every named test passes again afterwards.
 
 ## Gate and what was not run
 
+- A gate left running by the expired prior session was still checking `727f7fa4` when this
+  continuation committed `e0cbab24`; its saved `gate-result.json` correctly failed source
+  identity and does not cover this work. The subsequent gate on `e0cbab24` reached the Python
+  suite, but its temporary scratch directory disappeared during the run. That incomplete run
+  was interrupted; it produced no usable gate result. The final gate below runs on the next
+  committed HEAD with an explicit worker count and a separate result path.
 - 4.1 item 1: the full gate (`tools/gate.py`) runs once on the final code commit; its result is
   `evidence/gate.json` and the scope `evidence/scope.json` (`measure.py --scope`, from the
   merge-base with `main`, `--no-merges`), saved in a later commit that changes only
