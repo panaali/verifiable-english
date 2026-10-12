@@ -30,6 +30,7 @@ so the caller only runs `git commit --no-edit`; a failed writer or check exits 1
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 from dataclasses import dataclass
 import fnmatch
 import json
@@ -380,6 +381,22 @@ def _trust_budget(baseline: dict) -> dict:
     return budget(_trust_totals(baseline))
 
 
+def _check_concurrent_trust_allowances(base: dict, ours: dict, theirs: dict) -> None:
+    """A pending allowance may be folded into file counts on at most one side.
+
+    `trust_map.py --write` removes each signed entry after measuring the tree. If both
+    branches consume the same base entry, adding their file deltas counts that growth
+    twice. No per-file merge can distinguish that shared growth from independent work.
+    """
+    if not all(isinstance(side, dict) for side in (base, ours, theirs)):
+        return
+    counts = [Counter(_text(entry) for entry in side.get("signed", []))
+              for side in (base, ours, theirs)]
+    for entry, n in counts[0].items():
+        if counts[1][entry] < n and counts[2][entry] < n:
+            raise Conflict(f"$.signed: both sides consumed base allowance {entry[:80]}")
+
+
 DERIVED = {
     "ve/assurance-manifest.json": ((("lean_decoders", "total_lines"), _decoder_total),),
     "docs/trust-baseline.json": ((("totals",), _trust_totals), (("budget",), _trust_budget)),
@@ -415,6 +432,8 @@ def merge_text(path: str, base: str, ours: str, theirs: str) -> tuple[str, bool]
             return done.stdout, done.returncode == 0
     sides = [_derived(path, json.loads(text), 0) if text.strip() else _MISSING for text in (base, ours, theirs)]
     try:
+        if path == "docs/trust-baseline.json":
+            _check_concurrent_trust_allowances(*sides)
         merged = _derived(path, merge_json(*sides, trust_files=path == "docs/trust-baseline.json"))
     except Conflict as exc:
         print(f"{path}: {exc}", file=sys.stderr)

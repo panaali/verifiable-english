@@ -250,6 +250,56 @@ def test_trust_merge_adds_equal_concurrent_values_and_missing_base_rows():
     assert json.loads(text)["budget"]["K"] == 4
 
 
+@pytest.mark.parametrize("kind", ["K", "S", "V"])
+def test_trust_merge_refuses_allowance_consumed_on_both_sides(kind, capsys):
+    """F1: two --write operations must not count inherited signed growth twice."""
+    def row(value):
+        counts = trust_map.empty_counts()
+        column = "G" if kind == "V" else kind
+        counts[column] = value
+        if kind == "V":
+            counts["G[V]"] = value
+        counts["trusted"] = value
+        counts["lines"] = value
+        return counts
+
+    def side(files, signed):
+        total = trust_map.totals(files)
+        return json.dumps({"totals": total, "budget": trust_map.budget(total),
+                           "signed": signed, "history": [], "files": files})
+
+    allowance = {"change": "x", "signed": "DRI", "allow": {kind: 5}}
+    base = side({"A.lean": row(10)}, [allowance])
+    ours = side({"A.lean": row(16)}, [])
+    theirs = side({"A.lean": row(15), "B.lean": row(2)}, [])
+    text, clean = R.merge_text("docs/trust-baseline.json", base, ours, theirs)
+    assert not clean and text == ours
+    assert "$.signed: both sides consumed base allowance" in capsys.readouterr().err
+
+    # One branch consumes the allowance; the other still carries it. The file
+    # growth is incorporated once and the allowance disappears from the merge.
+    merged_text, clean = R.merge_text("docs/trust-baseline.json", base, ours,
+                                      side({"A.lean": row(10), "B.lean": row(2)}, [allowance]))
+    assert clean
+    merged = json.loads(merged_text)
+    assert merged["budget"][kind] == 18
+    assert merged["signed"] == []
+
+
+def test_trust_merge_refuses_partial_duplicate_allowance_consumption(capsys):
+    """The same signed record may occur twice; consuming one copy on each side still overlaps."""
+    row = trust_map.empty_counts()
+    allowance = {"change": "x", "signed": "DRI", "allow": {"V": 1}}
+    def side(signed):
+        return json.dumps({"files": {"A.lean": row}, "signed": signed,
+                           "totals": trust_map.totals({"A.lean": row}), "budget": trust_map.budget(row)})
+    text, clean = R.merge_text("docs/trust-baseline.json", side([allowance, allowance]),
+                               side([allowance]), side([allowance]))
+    assert not clean
+    assert text == side([allowance])
+    assert "$.signed" in capsys.readouterr().err
+
+
 @pytest.mark.parametrize("delete_count", [False, True])
 def test_trust_merge_refuses_delete_versus_change(capsys, delete_count):
     case = TRUST_MERGES["17573bbb"]
