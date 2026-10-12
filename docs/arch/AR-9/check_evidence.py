@@ -53,6 +53,7 @@ def check_mutants():
     assert {m["claim"] for m in mutants} == {"names", "seams", "one owner"}
     for mutant in mutants:
         assert mutant["runs"] and set(mutant["files"]) <= SPLIT_MODULES
+        assert mutant["file"] in mutant["files"] and mutant["test"] == mutant["runs"][0]["test"]
         for run in mutant["runs"]:
             assert run["exit_code"] != 0 and ("1 failed" in run["failure_excerpt"]
                                               or "1 error" in run["failure_excerpt"]), run["test"]
