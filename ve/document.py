@@ -285,6 +285,20 @@ def _soft_contents(units, exclude=frozenset()):
             and type(u.get("content")) is dict and "norm" in u["content"]]
 
 
+def _readings_routes(env, reading_sets):
+    """(companions, s1_content) of a document's reading sets under `readings@1`: whether some reading carries its
+    own vocabulary, so Lean splits the document (readings-defaults RD-4b, 1.9), and whether some set is
+    content-bearing (composition-s1.md 1.2), which a split document always is."""
+    from .readings_components import has_companions
+    companions = "readings@1" in env.profiles and has_companions(reading_sets)
+    s1_content = "readings@1" in env.profiles and type(reading_sets) is list and (companions or any(
+        type(s) is dict and type(s.get("readings")) is list and any(
+            type(r) is dict and s1_content_kind(r.get("content")) in
+            {"norm", "right", "right_lines", "limitation"} for r in s["readings"])
+        for s in reading_sets))
+    return companions, s1_content
+
+
 def _s1_attached(environment_data, meta):
     """Under `readings@1`, the fixed units attached to an open content-bearing set (composition-s1.md 1.3): they
     belong to that set's candidates' documents, and the lower route checks `free D` without them (4.1). A
@@ -387,14 +401,37 @@ def _load(path: Path, *, admit: bool):
 def _lean_answer(raw: bytes, admit: bool):
     """Lean's `document` row for a `ve-document@1` text, or None when Python's own path decides it: the mode
     answered `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or the text is not UTF-8,
-    which the mode cannot be sent. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the
-    service itself is raised, never answered by Python."""
+    which the mode cannot be sent. Pending content-bearing readings under norm defaults still need the original
+    Python coverage path. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service
+    itself is raised, never answered by Python."""
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
         return None
+    try:
+        meta, _, _ = _split(raw)
+        profiles = listed_profiles(meta.get("environment"))
+        sets = meta.get("reading_sets", [])
+        if {"readings@1", "norm-defaults@0"} <= set(profiles) and type(sets) is list:
+            contents = [r.get("content") for s in sets if type(s) is dict
+                        for r in s.get("readings", []) if type(r) is dict]
+            if any(c is None for c in contents) and any(c is not None for c in contents):
+                return None
+    except (KeyError, TypeError, VEError):
+        pass  # Let Lean decide malformed front matter and preserve its diagnostic.
     from .backends.relay import answer
-    row, error = answer("document", {"id": "document", "document": text, "admit": admit})
+    case = {"id": "document", "document": text, "admit": admit}
+    if b"```ve " in raw:
+        try:
+            meta, _, fences = _split(raw)
+            if any(u.get("surface") == "english" and u.get("id") in fences
+                   for u, _ in _parts(meta["units"])):
+                from .english import EnglishVocabulary
+                from .english_grammar import export
+                case["lexicon"] = export(EnglishVocabulary(Environment(meta["environment"])))
+        except (KeyError, TypeError, VEError):
+            pass  # Lean checks the document before a fence needs the proposal.
+    row, error = answer("document", case)
     if isinstance(error, (CheckerUnavailable, ResourceLimit)):
         return None
     if error is not None:
@@ -413,7 +450,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
         return CheckerUnavailable(f"CheckerUnavailable: the Lean document answer {what}")
     try:
         meta = json.loads(raw[4:raw.find(b"\n---\n", 4)].decode("utf-8"))
-        body = raw[raw.find(b"\n---\n", 4) + 5:]
+        _, body, fences = _split(raw)
         declared = [(u, parent) for u, parent in _parts(meta["units"])]
     except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
         raise unavailable("is for a front matter Python cannot read") from exc
@@ -424,7 +461,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
         raise unavailable("is not bound to the document sent") from exc
     try:
         env = Environment(meta["environment"])
-        if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, {}):
+        if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, fences):
             raise unavailable("is not bound to the document sent")
         for unit in units:
             if "content" in unit and unit["meaning_id"] != digest(
@@ -436,17 +473,40 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
                      "content": u.get("content"), "meaning_id": u.get("meaning_id"), "status": u["status"],
                      **({"parent_id": u["parent_id"]} if "parent_id" in u else {})} for u in units]
         active = active_reading_sets(meta.get("reading_sets", []))
-        norms = (NormDocument(env, []) if any(d.regulated is not None for d in env.predicates.values())
-                 else None)
-        reading_plan = plan_choices([r for r in active if r["status"] == "open"], couplings=[])
+        if "norm-defaults@0" in env.profiles:
+            from .norm_defaults import UnspecifiedDocument
+            attached = _s1_attached(base_environment(meta), meta)
+            norm_defaults = UnspecifiedDocument(_defaults_environment(env),
+                                                _free_norms(compiled, active, attached))
+            norms = None
+        else:
+            norm_defaults = None
+            norms = (NormDocument(env, []) if any(d.regulated is not None for d in env.predicates.values())
+                     else None)
+        reading_sets = meta.get("reading_sets", [])
+        companions, s1_content = _readings_routes(env, reading_sets)
+        readings_s1 = readings_s2 = readings_components = None
+        if companions:
+            from .readings_components import load as load_components
+            readings_components = load_components(env.to_dict(), compiled, reading_sets,
+                                                  couplings=meta.get("couplings", []),
+                                                  narrowings=meta.get("narrowings", []))
+        elif s1_content:
+            from .readings_route import validate as validate_s1, elaborate as elaborate_s2
+            readings_s1 = validate_s1(env.to_dict(), compiled, reading_sets)
+            readings_s2 = elaborate_s2(env.to_dict(), compiled, reading_sets,
+                                       couplings=meta.get("couplings", []),
+                                       narrowings=meta.get("narrowings", []))
+        reading_plan = _reading_plan(active, meta.get("couplings", []))
     except CheckerUnavailable:
         raise
     except Exception as exc:  # noqa: BLE001 - a document Lean accepted that Python cannot build is a bug
         raise unavailable(f"could not be built: {type(exc).__name__}: {exc}"[:300]) from exc
     return {"meta": meta, "environment": env, "source": source, "source_id": row["source_id"],
             "document_id": row["document_id"], "directory": path.parent, "units": compiled, "norms": norms,
-            "soft_document": None, "norm_defaults": None, "senses": None, "reports": None,
-            "rights_document": None, "readings_s1": None, "readings_s2": None, "reading_plan": reading_plan,
+            "soft_document": None, "norm_defaults": norm_defaults, "senses": None, "reports": None,
+            "rights_document": None, "readings_s1": readings_s1, "readings_s2": readings_s2,
+            "readings_components": readings_components, "reading_plan": reading_plan,
             "lean": {"coverage": row["coverage"], "admitted": admitted}}
 
 
@@ -492,6 +552,8 @@ def _bind_document_answer(body, meta, declared, row):
         require(("content" in unit) == ("meaning_id" in unit))
         if has_content and type(authored["content"]) is dict and "ast" in authored["content"]:
             require(same(unit["content"], authored["content"]["ast"]))
+        if has_content and type(authored["content"]) is dict and "norm" in authored["content"]:
+            require(same(unit["content"], authored["content"]))
         span = unit["span"]
         require(type(span) is list and len(span) == 2 and
                 all(type(n) is int for n in span) and 0 <= span[0] < span[1] <= len(source))
@@ -729,14 +791,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
-    from .readings_components import has_companions
-    # readings-defaults RD-4b: a reading with its own vocabulary is content-bearing (Lean splits the document).
-    companions = "readings@1" in env.profiles and has_companions(reading_sets)
-    s1_content = "readings@1" in env.profiles and type(reading_sets) is list and (companions or any(
-        type(s) is dict and type(s.get("readings")) is list and any(
-            type(r) is dict and s1_content_kind(r.get("content")) in
-            {"norm", "right", "right_lines", "limitation"} for r in s["readings"])
-        for s in reading_sets))
+    companions, s1_content = _readings_routes(env, reading_sets)
     validate_reading_sets(env if rights_enabled or s1_content else formula_env,
                           reading_sets, unit_ids, source=source,
                           unit_spans={u["id"]: u["span"] for u in compiled},
@@ -777,9 +832,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
             if unit.pop("explicit_status") not in (None, unit["status"]):
                 raise VEError("unit status contradicts content, meaning, or active reading set")
     reading_units = {r["unit"] for r in active}
-    norm_units = [u for u in compiled if u["kind"] == "norm"
-                  and type(u["content"]) is dict and "norm" in u["content"]]
-    quoted_norms.extend(u["content"] for u in norm_units if u["id"] in reading_units)
+    quoted_norms.extend(u["content"] for u in compiled if u["kind"] == "norm" and u["id"] in reading_units
+                        and type(u["content"]) is dict and "norm" in u["content"])
     if quoted_norms:
         if not soft_enabled:
             from .norm_admission import _check_quoted
@@ -787,8 +841,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
                 _check_quoted(env, content)
         # Soft quoted norms were checked as single units by decode_rule above;
         # they are not members of the active soft document or its layer premises.
-    # Under readings@1, fixed units attached to an open set are checked in its candidates' documents (S1 1.3).
-    selected_norms = [u["content"] for u in norm_units if u["id"] not in reading_units and u["id"] not in attached]
+    selected_norms = _free_norms(compiled, active, attached)
     norms = (NormDocument(env, selected_norms)
              if not soft_enabled and (selected_norms or any(d.regulated is not None for d in env.predicates.values()))
              else None)
@@ -796,15 +849,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
     if defaults_enabled:
         # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T.
         from .norm_defaults import UnspecifiedDocument, validate_completions
-        defaults_env = env
-        if "readings@1" in env.profiles:
-            # The free norms are the lower route's document, read with `readings@1` stripped as Lean's readings
-            # route hands every other kind down (`Readings.Run.runLower`): the W2 route of a non-content-bearing
-            # set, and the norm-defaults document beside content-bearing sets (the readings route admits those).
-            lowered = env.to_dict()
-            lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
-            defaults_env = _environment(lowered)
-        norm_defaults = UnspecifiedDocument(defaults_env, selected_norms)
+        norm_defaults = UnspecifiedDocument(_defaults_environment(env), selected_norms)
         validate_completions(norm_defaults, meta.get("completions", {}), unit_ids)
         norms = None
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
@@ -833,15 +878,42 @@ def _load_document(raw: bytes, path: str | Path, lean):
            "readings_s1": readings_s1,
            "readings_s2": readings_s2,
            "readings_components": readings_components,
-           "reading_plan": plan_choices(active if couplings else
-                                        [r for r in active if r["status"] == "open"],
-                                        couplings=couplings)}
+           "reading_plan": _reading_plan(active, couplings)}
     if meta["format"] == "ve-document@2":
         doc["discourse"] = validate_discourse(doc, lean)
         for unit in compiled:
             if unit.pop("explicit_status") not in (None, unit["status"]):
                 raise VEError("unit status contradicts content, meaning, or active reading set")
     return doc
+
+
+def _free_norms(units, active, attached):
+    """`selected_norms`, for both of `load_document`'s paths: the rules of the free norm document are the units of
+    kind `norm` with norm content, under no active reading set and attached to no open set. A quoted unit, or one
+    under an active set, is checked alone (`_check_quoted`); under `readings@1` an attached unit is checked in its
+    set's candidates' documents (S1 1.3). Lean's document mode reads the same roles (`Service.Document.freeNorms`,
+    over `Norms.Admission.normRole`)."""
+    held = {r["unit"] for r in active}
+    return [u["content"] for u in units if u["kind"] == "norm" and type(u["content"]) is dict
+            and "norm" in u["content"] and u["id"] not in held and u["id"] not in attached]
+
+
+def _defaults_environment(env):
+    """The environment of the free norm-defaults document. Under `readings@1` it is the lower route's, read with
+    the profile stripped as Lean's readings route hands every other kind down (`Readings.Run.runLower`): the W2
+    route of a non-content-bearing set, and the norm-defaults document beside content-bearing sets."""
+    if "readings@1" not in env.profiles:
+        return env
+    lowered = env.to_dict()
+    lowered["profiles"] = [p for p in lowered["profiles"] if p != "readings@1"]
+    return _environment(lowered)
+
+
+def _reading_plan(active, couplings):
+    """The reading plan for both paths: with couplings over every active set (a coupling may name an authored
+    one), else over the open sets."""
+    return plan_choices(active if couplings else [r for r in active if r["status"] == "open"],
+                        couplings=couplings)
 
 
 def _fixed_and_active(doc):
@@ -1000,7 +1072,22 @@ def coverage(doc, scoped=None, rights_report=None):
     replayed rights report when the caller already has it. A document Lean's `document` mode accepted has
     Lean's coverage (batch 16b)."""
     if "lean" in doc:
-        return deepcopy(doc["lean"]["coverage"])
+        answer = deepcopy(doc["lean"]["coverage"])
+        if _content_bearing(doc):
+            from .readings_route import report as readings_report
+            readings = readings_report(doc)
+            answer["residual"].update({"separations": sum(readings["separations"].values()),
+                                       "readings_findings": sum(readings["findings"].values()),
+                                       "pending_candidates": readings["pending_candidates"],
+                                       "couplings": readings["couplings"]})
+        if doc.get("norm_defaults") is not None:
+            lines = coverage_defaults(doc)
+            gaps = lines["residual"]
+            answer["residual"]["gaps"] = len(gaps["gaps"])
+            answer["residual"]["ungrounded_defaults"] = gaps["ungrounded_defaults"]
+            answer["residual_total"] = sum(answer["residual"].values())
+            answer["norm_defaults"] = {"gaps": gaps["gaps"], "findings": lines["findings"]}
+        return answer
     units = doc["units"]
     source = doc["source"]
     kinds = {}

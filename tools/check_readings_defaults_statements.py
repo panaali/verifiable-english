@@ -93,7 +93,8 @@ REFUTATIONS_6A = ROOT / "lean/VE/Readings/SupExtraExamples.lean"
 REFUTATIONS_NAMESPACE_6A = "VE.Readings.SupExtraExamples"
 AUDIT = ROOT / "lean/VE/Audit.lean"
 # 6.7's RD-6b declarations, built by RD-6b in the same file.
-LATER_6A = {"fill_transfers", "nd_superpose_conflict_free", "nd_superpose_all"}
+LATER_6A = set()
+RD6B_NAMES = {"fill_transfers", "nd_superpose_conflict_free", "nd_superpose_all"}
 KINDS = ("theorem", "def", "structure")
 # A Lean name runs to the first space or bracket, so `x'` or `A.x` is not read as `x` or `A`.
 START = re.compile(rf"^({'|'.join(KINDS)}) ([\w'!?.]+)", re.M)
@@ -287,6 +288,15 @@ def main() -> int:
     return 0
 
 
+def main_rd6b() -> int:
+    spec = {key: value for key, value in approved_6a().items() if key[1] in RD6B_NAMES}
+    errors, _ = compare("RD-6b", spec, SOURCE_6A, {"theorem": 3, "def": 0, "structure": 0}, {}, set())
+    if errors:
+        print("\n".join(errors))
+        return 1
+    return 0
+
+
 def main_rd2a() -> int:
     errors, _ = compare("RD-2a", approved_rd2a(), SOURCES_RD2A, EXPECTED_RD2A, PENDING_RD2A, set())
     if errors:
@@ -320,4 +330,4 @@ def main_rd4b() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(max(main(), main_rd2a(), main_rd3(), main_rd4a(), main_rd4b()))
+    sys.exit(max(main(), main_rd2a(), main_rd3(), main_rd4a(), main_rd4b(), main_rd6b()))

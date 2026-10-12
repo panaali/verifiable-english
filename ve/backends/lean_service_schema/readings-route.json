@@ -184,6 +184,7 @@
           "properties": {
             "assumed": {"$ref": "#/$defs/choice"},
             "choice": {"$ref": "#/$defs/choice"},
+            "gaps": {"$ref": "#/$defs/gaps"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "status": {"const": "ok"},
             "target": {"type": "string", "x-equals": "/witness/target"},
@@ -207,6 +208,74 @@
         }
       ]
     },
+    "content": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {"assertion": {"$ref": "common.json#/$defs/generated_formula"}},
+          "required": ["assertion"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "norm": {
+              "additionalProperties": false,
+              "properties": {
+                "alterable": {"$ref": "common.json#/$defs/strings"},
+                "exception": {
+                  "anyOf": [
+                    {"type": "null"},
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "decided_by": {"type": ["string", "null"]},
+                        "factors": {"$ref": "common.json#/$defs/strings"},
+                        "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+                        "sufficient": {"$ref": "common.json#/$defs/generated_formulas"}
+                      },
+                      "required": ["decided_by", "sufficient", "necessary", "factors"],
+                      "type": "object"
+                    }
+                  ]
+                },
+                "guard": {"$ref": "common.json#/$defs/generated_formula"},
+                "hard": {"type": "boolean"},
+                "mode": {"enum": ["strict", "default"]},
+                "name": {"type": "string"},
+                "over": {"$ref": "common.json#/$defs/strings"},
+                "predicate": {"type": "string"},
+                "rank": {"type": ["string", "null"]},
+                "sign": {"type": "boolean"},
+                "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+              },
+              "required": [
+                "name",
+                "predicate",
+                "sign",
+                "mode",
+                "guard",
+                "unless",
+                "over",
+                "rank",
+                "alterable",
+                "exception",
+                "hard"
+              ],
+              "type": "object"
+            }
+          },
+          "required": ["norm"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"kind": {"enum": ["right", "right_lines", "limitation", "bar"]}},
+          "required": ["kind"],
+          "type": "object"
+        }
+      ]
+    },
     "dead": {
       "$comment": "Readings.Run.runDead: whether the certificate shows the reading dead (or the readings unsatisfiable), and the finding.",
       "additionalProperties": false,
@@ -222,7 +291,7 @@
       "type": "object"
     },
     "elaborate": {
-      "$comment": "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled.",
+      "$comment": "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled, and on the superposed route fill, the Fill_T the superposed kinds append to the slot (Wire.elaborateFieldsND).",
       "anyOf": [
         {
           "additionalProperties": false,
@@ -326,7 +395,32 @@
               "type": "array"
             },
             "id": {"$ref": "common.json#/$defs/id_ok"},
-            "names": {"type": "array"},
+            "names": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "candidates": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {"type": "string"},
+                        "index": {"$ref": "common.json#/$defs/nat"},
+                        "names": {"items": {"$ref": "common.json#/$defs/string_pair"}, "type": "array"},
+                        "position": {"$ref": "common.json#/$defs/nat"}
+                      },
+                      "required": ["index", "id", "position", "names"],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "set": {"type": "string"},
+                  "version": {"$ref": "common.json#/$defs/nat"}
+                },
+                "required": ["set", "version", "candidates"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "narrowings_stale": {"$ref": "common.json#/$defs/strings"},
             "route": {"enum": ["superposed"]},
             "sizes": {
@@ -359,7 +453,89 @@
               "type": "array"
             },
             "status": {"const": "ok"},
-            "units": {"type": "array"},
+            "units": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content": {
+                    "anyOf": [
+                      {
+                        "additionalProperties": false,
+                        "properties": {"assertion": {"$ref": "common.json#/$defs/generated_formula"}},
+                        "required": ["assertion"],
+                        "type": "object"
+                      },
+                      {
+                        "additionalProperties": false,
+                        "properties": {
+                          "norm": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "alterable": {"$ref": "common.json#/$defs/strings"},
+                              "exception": {
+                                "anyOf": [
+                                  {"type": "null"},
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "decided_by": {"type": ["string", "null"]},
+                                      "factors": {"$ref": "common.json#/$defs/strings"},
+                                      "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+                                      "sufficient": {"$ref": "common.json#/$defs/generated_formulas"}
+                                    },
+                                    "required": ["decided_by", "sufficient", "necessary", "factors"],
+                                    "type": "object"
+                                  }
+                                ]
+                              },
+                              "guard": {"$ref": "common.json#/$defs/generated_formula"},
+                              "hard": {"type": "boolean"},
+                              "mode": {"enum": ["strict", "default"]},
+                              "name": {"type": "string"},
+                              "over": {"$ref": "common.json#/$defs/strings"},
+                              "predicate": {"type": "string"},
+                              "rank": {"type": ["string", "null"]},
+                              "sign": {"type": "boolean"},
+                              "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+                            },
+                            "required": [
+                              "name",
+                              "predicate",
+                              "sign",
+                              "mode",
+                              "guard",
+                              "unless",
+                              "over",
+                              "rank",
+                              "alterable",
+                              "exception",
+                              "hard"
+                            ],
+                            "type": "object"
+                          }
+                        },
+                        "required": ["norm"],
+                        "type": "object"
+                      },
+                      {
+                        "additionalProperties": false,
+                        "properties": {"kind": {"enum": ["right", "right_lines", "limitation", "bar"]}},
+                        "required": ["kind"],
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "index": {"$ref": "common.json#/$defs/nat"},
+                  "position": {"$ref": "common.json#/$defs/nat"},
+                  "set": {"type": "string"},
+                  "unit": {"type": "string"},
+                  "version": {"$ref": "common.json#/$defs/nat"}
+                },
+                "required": ["unit", "content"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "vocabulary": {
               "additionalProperties": false,
               "properties": {
@@ -480,6 +656,15 @@
             "choice_count": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over 64", "type": "string"}]},
             "choices": {"anyOf": [{"items": {"$ref": "#/$defs/choice"}, "type": "array"}, {"const": "over"}]},
             "choices_checked": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over .*", "type": "string"}]},
+            "fill": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "required": ["label", "ast"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "fill_premises": {"$ref": "#/$defs/fill_premises"},
             "filled": {"$ref": "#/$defs/filled"},
             "finding": {
@@ -507,7 +692,32 @@
               "type": "array"
             },
             "id": {"$ref": "common.json#/$defs/id_ok"},
-            "names": {"type": "array"},
+            "names": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "candidates": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {"type": "string"},
+                        "index": {"$ref": "common.json#/$defs/nat"},
+                        "names": {"items": {"$ref": "common.json#/$defs/string_pair"}, "type": "array"},
+                        "position": {"$ref": "common.json#/$defs/nat"}
+                      },
+                      "required": ["index", "id", "position", "names"],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "set": {"type": "string"},
+                  "version": {"$ref": "common.json#/$defs/nat"}
+                },
+                "required": ["set", "version", "candidates"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "narrowings_stale": {"$ref": "common.json#/$defs/strings"},
             "route": {"enum": ["superposed"]},
             "sizes": {
@@ -540,7 +750,89 @@
               "type": "array"
             },
             "status": {"const": "ok"},
-            "units": {"type": "array"},
+            "units": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content": {
+                    "anyOf": [
+                      {
+                        "additionalProperties": false,
+                        "properties": {"assertion": {"$ref": "common.json#/$defs/generated_formula"}},
+                        "required": ["assertion"],
+                        "type": "object"
+                      },
+                      {
+                        "additionalProperties": false,
+                        "properties": {
+                          "norm": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "alterable": {"$ref": "common.json#/$defs/strings"},
+                              "exception": {
+                                "anyOf": [
+                                  {"type": "null"},
+                                  {
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "decided_by": {"type": ["string", "null"]},
+                                      "factors": {"$ref": "common.json#/$defs/strings"},
+                                      "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+                                      "sufficient": {"$ref": "common.json#/$defs/generated_formulas"}
+                                    },
+                                    "required": ["decided_by", "sufficient", "necessary", "factors"],
+                                    "type": "object"
+                                  }
+                                ]
+                              },
+                              "guard": {"$ref": "common.json#/$defs/generated_formula"},
+                              "hard": {"type": "boolean"},
+                              "mode": {"enum": ["strict", "default"]},
+                              "name": {"type": "string"},
+                              "over": {"$ref": "common.json#/$defs/strings"},
+                              "predicate": {"type": "string"},
+                              "rank": {"type": ["string", "null"]},
+                              "sign": {"type": "boolean"},
+                              "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+                            },
+                            "required": [
+                              "name",
+                              "predicate",
+                              "sign",
+                              "mode",
+                              "guard",
+                              "unless",
+                              "over",
+                              "rank",
+                              "alterable",
+                              "exception",
+                              "hard"
+                            ],
+                            "type": "object"
+                          }
+                        },
+                        "required": ["norm"],
+                        "type": "object"
+                      },
+                      {
+                        "additionalProperties": false,
+                        "properties": {"kind": {"enum": ["right", "right_lines", "limitation", "bar"]}},
+                        "required": ["kind"],
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "index": {"$ref": "common.json#/$defs/nat"},
+                  "position": {"$ref": "common.json#/$defs/nat"},
+                  "set": {"type": "string"},
+                  "unit": {"type": "string"},
+                  "version": {"$ref": "common.json#/$defs/nat"}
+                },
+                "required": ["unit", "content"],
+                "type": "object"
+              },
+              "type": "array"
+            },
             "vocabulary": {
               "additionalProperties": false,
               "properties": {
@@ -575,6 +867,7 @@
             "slot",
             "names",
             "sizes",
+            "fill",
             "fill_premises",
             "filled"
           ],
@@ -641,9 +934,184 @@
     "filled": {
       "$comment": "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last.",
       "additionalProperties": false,
-      "properties": {"environment": {"$comment": "the filled environment"}, "units": {"type": "array"}},
+      "properties": {
+        "environment": {"$ref": "#/$defs/filled_environment"},
+        "units": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "content": {
+                "anyOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {"assertion": {"$ref": "common.json#/$defs/generated_formula"}},
+                    "required": ["assertion"],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "norm": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "alterable": {"$ref": "common.json#/$defs/strings"},
+                          "exception": {
+                            "anyOf": [
+                              {"type": "null"},
+                              {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "decided_by": {"type": ["string", "null"]},
+                                  "factors": {"$ref": "common.json#/$defs/strings"},
+                                  "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+                                  "sufficient": {"$ref": "common.json#/$defs/generated_formulas"}
+                                },
+                                "required": ["decided_by", "sufficient", "necessary", "factors"],
+                                "type": "object"
+                              }
+                            ]
+                          },
+                          "guard": {"$ref": "common.json#/$defs/generated_formula"},
+                          "hard": {"type": "boolean"},
+                          "mode": {"enum": ["strict", "default"]},
+                          "name": {"type": "string"},
+                          "over": {"$ref": "common.json#/$defs/strings"},
+                          "predicate": {"type": "string"},
+                          "rank": {"type": ["string", "null"]},
+                          "sign": {"type": "boolean"},
+                          "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+                        },
+                        "required": [
+                          "name",
+                          "predicate",
+                          "sign",
+                          "mode",
+                          "guard",
+                          "unless",
+                          "over",
+                          "rank",
+                          "alterable",
+                          "exception",
+                          "hard"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "required": ["norm"],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {"kind": {"enum": ["right", "right_lines", "limitation", "bar"]}},
+                    "required": ["kind"],
+                    "type": "object"
+                  }
+                ]
+              },
+              "index": {"$ref": "common.json#/$defs/nat"},
+              "position": {"$ref": "common.json#/$defs/nat"},
+              "set": {"type": "string"},
+              "unit": {"type": "string"},
+              "version": {"$ref": "common.json#/$defs/nat"}
+            },
+            "required": ["unit", "content"],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
       "required": ["environment", "units"],
       "type": "object"
+    },
+    "filled_environment": {
+      "$comment": "NormDefaults.Wire.withUnsaid of NormDefaults.Wire.placeholderJson of the request's lower environment.",
+      "additionalProperties": false,
+      "properties": {
+        "language": {"type": "string", "x-equals": "/environment/language"},
+        "profiles": {"$ref": "common.json#/$defs/strings"},
+        "spec_revision": {"type": "string", "x-equals": "/environment/spec_revision"},
+        "vocabulary": {
+          "additionalProperties": false,
+          "properties": {
+            "constants": {
+              "additionalProperties": {
+                "additionalProperties": false,
+                "properties": {
+                  "description": {"type": "string"},
+                  "sort": {"type": "string"},
+                  "verbalisation": {"type": "string"}
+                },
+                "required": ["sort"],
+                "type": "object"
+              },
+              "type": "object"
+            },
+            "predicates": {"additionalProperties": {"$ref": "#/$defs/filled_predicate"}, "type": "object"},
+            "sorts": {
+              "additionalProperties": {
+                "additionalProperties": false,
+                "properties": {
+                  "description": {"type": "string"},
+                  "verbalisation": {
+                    "additionalProperties": false,
+                    "properties": {"plural": {"type": "string"}, "singular": {"type": "string"}},
+                    "required": ["singular", "plural"],
+                    "type": "object"
+                  }
+                },
+                "required": ["description"],
+                "type": "object"
+              },
+              "type": "object"
+            }
+          },
+          "required": ["sorts", "predicates", "constants"],
+          "type": "object"
+        }
+      },
+      "required": ["language", "profiles", "spec_revision", "vocabulary"],
+      "type": "object"
+    },
+    "filled_predicate": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {"$ref": "common.json#/$defs/strings"},
+        "defined": {
+          "additionalProperties": false,
+          "properties": {
+            "arguments": {"$ref": "common.json#/$defs/strings"},
+            "body": {"$ref": "common.json#/$defs/fol_formula"}
+          },
+          "required": ["arguments", "body"],
+          "type": "object"
+        },
+        "description": {"type": "string"},
+        "negative_verbalisation": {"type": "string"},
+        "regulated": {
+          "additionalProperties": false,
+          "properties": {
+            "act": {"type": "string"},
+            "default": {"enum": ["allow", "deny"]},
+            "permission": {"type": ["string", "null"]},
+            "role": {"enum": ["permission", "obligation", "plain"]}
+          },
+          "required": ["role", "default"],
+          "type": "object"
+        },
+        "verbalisation": {"type": "string"}
+      },
+      "required": ["arguments", "description"],
+      "type": "object"
+    },
+    "gaps": {
+      "$comment": "Readings.Wire.gapsJson: the filled gaps a shown result depends on (readings-defaults 2.2), each the regulated predicate, the tuple's ids and the filling's answer.",
+      "items": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/strings"}, {"type": "boolean"}],
+        "type": "array"
+      },
+      "type": "array"
     },
     "key": {
       "$comment": "Readings.Wire key JSON: one generated key.",
@@ -707,19 +1175,46 @@
       "readings-verdicts": {"properties": {"kind": {"const": "readings-verdicts"}}, "required": ["kind"], "type": "object"}
     },
     "model": {
-      "$comment": "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes.",
+      "$comment": "Readings.Run.runModel: the model's check, the conclusion's value, the first failing premise and the choice it encodes; under the unspecified completion (Readings.Run.runModelND) also the filled gaps the conclusion's value (with none, the assertions' and premises') reads.",
       "additionalProperties": false,
       "properties": {
         "assumed": {"$ref": "#/$defs/choice"},
         "choice": {"$ref": "#/$defs/choice"},
         "conclusion_value": {"type": "boolean"},
         "first_failing": {"type": ["string", "null"]},
+        "gaps": {"$ref": "#/$defs/gaps"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "status": {"const": "ok"},
         "valid": {"type": "boolean"}
       },
       "required": ["id", "status", "valid", "conclusion_value", "first_failing", "assumed", "choice"],
       "type": "object"
+    },
+    "names": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "candidates": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {"type": "string"},
+                "index": {"$ref": "common.json#/$defs/nat"},
+                "names": {"items": {"$ref": "common.json#/$defs/string_pair"}, "type": "array"},
+                "position": {"$ref": "common.json#/$defs/nat"}
+              },
+              "required": ["index", "id", "position", "names"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "set": {"type": "string"},
+          "version": {"$ref": "common.json#/$defs/nat"}
+        },
+        "required": ["set", "version", "candidates"],
+        "type": "object"
+      },
+      "type": "array"
     },
     "pair": {
       "$comment": "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key.",
@@ -857,6 +1352,213 @@
       },
       "required": ["id", "status", "set", "pair"],
       "type": "object"
+    },
+    "soft_exception": {
+      "additionalProperties": false,
+      "properties": {
+        "decided_by": {"type": ["string", "null"]},
+        "factors": {"$ref": "common.json#/$defs/strings"},
+        "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+        "sufficient": {"$ref": "common.json#/$defs/generated_formulas"}
+      },
+      "required": ["decided_by", "sufficient", "necessary", "factors"],
+      "type": "object"
+    },
+    "soft_node": {
+      "additionalProperties": false,
+      "properties": {
+        "alterable": {"$ref": "common.json#/$defs/strings"},
+        "exception": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "additionalProperties": false,
+              "properties": {
+                "decided_by": {"type": ["string", "null"]},
+                "factors": {"$ref": "common.json#/$defs/strings"},
+                "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+                "sufficient": {"$ref": "common.json#/$defs/generated_formulas"}
+              },
+              "required": ["decided_by", "sufficient", "necessary", "factors"],
+              "type": "object"
+            }
+          ]
+        },
+        "guard": {"$ref": "common.json#/$defs/generated_formula"},
+        "hard": {"type": "boolean"},
+        "mode": {"enum": ["strict", "default"]},
+        "name": {"type": "string"},
+        "over": {"$ref": "common.json#/$defs/strings"},
+        "predicate": {"type": "string"},
+        "rank": {"type": ["string", "null"]},
+        "sign": {"type": "boolean"},
+        "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+      },
+      "required": ["name", "predicate", "sign", "mode", "guard", "unless", "over", "rank", "alterable", "exception", "hard"],
+      "type": "object"
+    },
+    "unit": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {"assertion": {"$ref": "common.json#/$defs/generated_formula"}},
+              "required": ["assertion"],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "norm": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "alterable": {"$ref": "common.json#/$defs/strings"},
+                    "exception": {
+                      "anyOf": [
+                        {"type": "null"},
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "decided_by": {"type": ["string", "null"]},
+                            "factors": {"$ref": "common.json#/$defs/strings"},
+                            "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+                            "sufficient": {"$ref": "common.json#/$defs/generated_formulas"}
+                          },
+                          "required": ["decided_by", "sufficient", "necessary", "factors"],
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "guard": {"$ref": "common.json#/$defs/generated_formula"},
+                    "hard": {"type": "boolean"},
+                    "mode": {"enum": ["strict", "default"]},
+                    "name": {"type": "string"},
+                    "over": {"$ref": "common.json#/$defs/strings"},
+                    "predicate": {"type": "string"},
+                    "rank": {"type": ["string", "null"]},
+                    "sign": {"type": "boolean"},
+                    "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+                  },
+                  "required": [
+                    "name",
+                    "predicate",
+                    "sign",
+                    "mode",
+                    "guard",
+                    "unless",
+                    "over",
+                    "rank",
+                    "alterable",
+                    "exception",
+                    "hard"
+                  ],
+                  "type": "object"
+                }
+              },
+              "required": ["norm"],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {"kind": {"enum": ["right", "right_lines", "limitation", "bar"]}},
+              "required": ["kind"],
+              "type": "object"
+            }
+          ]
+        },
+        "index": {"$ref": "common.json#/$defs/nat"},
+        "position": {"$ref": "common.json#/$defs/nat"},
+        "set": {"type": "string"},
+        "unit": {"type": "string"},
+        "version": {"$ref": "common.json#/$defs/nat"}
+      },
+      "required": ["unit", "content"],
+      "type": "object"
+    },
+    "units": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {"assertion": {"$ref": "common.json#/$defs/generated_formula"}},
+                "required": ["assertion"],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "norm": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "alterable": {"$ref": "common.json#/$defs/strings"},
+                      "exception": {
+                        "anyOf": [
+                          {"type": "null"},
+                          {
+                            "additionalProperties": false,
+                            "properties": {
+                              "decided_by": {"type": ["string", "null"]},
+                              "factors": {"$ref": "common.json#/$defs/strings"},
+                              "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+                              "sufficient": {"$ref": "common.json#/$defs/generated_formulas"}
+                            },
+                            "required": ["decided_by", "sufficient", "necessary", "factors"],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "guard": {"$ref": "common.json#/$defs/generated_formula"},
+                      "hard": {"type": "boolean"},
+                      "mode": {"enum": ["strict", "default"]},
+                      "name": {"type": "string"},
+                      "over": {"$ref": "common.json#/$defs/strings"},
+                      "predicate": {"type": "string"},
+                      "rank": {"type": ["string", "null"]},
+                      "sign": {"type": "boolean"},
+                      "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+                    },
+                    "required": [
+                      "name",
+                      "predicate",
+                      "sign",
+                      "mode",
+                      "guard",
+                      "unless",
+                      "over",
+                      "rank",
+                      "alterable",
+                      "exception",
+                      "hard"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": ["norm"],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {"kind": {"enum": ["right", "right_lines", "limitation", "bar"]}},
+                "required": ["kind"],
+                "type": "object"
+              }
+            ]
+          },
+          "index": {"$ref": "common.json#/$defs/nat"},
+          "position": {"$ref": "common.json#/$defs/nat"},
+          "set": {"type": "string"},
+          "unit": {"type": "string"},
+          "version": {"$ref": "common.json#/$defs/nat"}
+        },
+        "required": ["unit", "content"],
+        "type": "object"
+      },
+      "type": "array"
     },
     "validate": {
       "$comment": "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set; under the unspecified completion (Readings.Run.runValidateND) also fill_premises and filled.",
@@ -1315,16 +2017,7 @@
       "additionalProperties": false,
       "properties": {
         "frame": {"type": "string"},
-        "gaps": {
-          "items": {
-            "$comment": "a filled unsaid atom: predicate, tuple and value",
-            "maxItems": 3,
-            "minItems": 3,
-            "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/strings"}, {"type": "boolean"}],
-            "type": "array"
-          },
-          "type": "array"
-        },
+        "gaps": {"$ref": "#/$defs/gaps"},
         "label": {"type": ["string", "null"]},
         "model": {"type": ["string", "null"]},
         "readings": {"$ref": "#/$defs/choice"},
@@ -1722,19 +2415,7 @@
         "conflict": {"$ref": "#/$defs/verdicts_word"},
         "errors": {"additionalProperties": {"type": "string"}, "type": "object"},
         "evidence": {"additionalProperties": {"type": "boolean"}, "type": "object"},
-        "gaps": {
-          "additionalProperties": {
-            "items": {
-              "$comment": "a filled unsaid atom: predicate, tuple and value",
-              "maxItems": 3,
-              "minItems": 3,
-              "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/strings"}, {"type": "boolean"}],
-              "type": "array"
-            },
-            "type": "array"
-          },
-          "type": "object"
-        },
+        "gaps": {"additionalProperties": {"$ref": "#/$defs/gaps"}, "type": "object"},
         "premises": {"$ref": "#/$defs/verdicts_word"},
         "query": {"$ref": "#/$defs/verdicts_word"},
         "shown": {
