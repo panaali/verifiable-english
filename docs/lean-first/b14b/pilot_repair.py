@@ -18,6 +18,7 @@ def main() -> None:
     parser.add_argument("--differences", type=Path, required=True)
     parser.add_argument("--scratch", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--resume-at", help="repeat this named pilot and all later repair cases")
     args = parser.parse_args()
     root = args.root.resolve()
     sys.path.insert(0, str(root))
@@ -29,6 +30,11 @@ def main() -> None:
     documents = [item for item in diff.pilot_documents(diff.ROOT) if item[0] in wanted]
     if {name for name, _, _ in documents} != wanted:
         raise RuntimeError("the repair set names a pilot outside the frozen inventory")
+    if args.resume_at:
+        positions = [i for i, (name, _, _) in enumerate(documents) if name == args.resume_at]
+        if len(positions) != 1:
+            raise RuntimeError("resume case is not in the repair set")
+        documents = documents[positions[0]:]
     args.scratch.mkdir(parents=True, exist_ok=True)
     env = {**os.environ, "PYTHONPATH": str(root),
            "VE_SHADOW_LOG": str(args.scratch / "english-shadow.jsonl")}
