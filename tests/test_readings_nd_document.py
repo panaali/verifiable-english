@@ -147,7 +147,7 @@ def test_fnd1_check_every_choice_conflict_free_with_a_model(tmp_path):
     assert pair["wording"] == "E19"
 
 
-def test_fnd1_render_shows_the_situation_with_selected_gaps(tmp_path):
+def test_fnd1_render_shows_the_situation_with_its_filled_gaps(tmp_path):
     text = render_document(fnd1(tmp_path))
     lines = shown(text.splitlines())
     assert lines[3:5] == ["One reading is: Every agent must help each user.",
@@ -155,7 +155,9 @@ def test_fnd1_render_shows_the_situation_with_selected_gaps(tmp_path):
                           'relation "asks" to that agent.']
     [pair] = [line for line in lines if line.startswith("These two readings differ here: ")]
     assert pair == (
-        f"These two readings differ here: a is an agent; u is a user. Under {EVERY}, a still must. "
+        "These two readings differ here: a is an agent; u is a user. "
+        "Here the text does not say whether a must help u; this situation answers 'no'. "
+        f"Under {EVERY}, a still must. "
         f"Under {ASKS}, a is not required to.")
 
 
@@ -243,7 +245,9 @@ def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
 def test_fnd2_render(tmp_path):
     lines = shown(render_document(fnd2(tmp_path)).splitlines())
     [pair] = [line for line in lines if line.startswith("These two readings differ here: ")]
-    assert pair.startswith("These two readings differ here: a is an act.") and len(GAP.findall(pair)) == 0
+    assert pair.startswith("These two readings differ here: a is an act. "
+                           "Here the text does not say whether a may be tried; "
+                           "this situation answers 'no'.") and len(GAP.findall(pair)) == 1
     assert pair.endswith("Under *Every act may be tried*, a is permitted to. Under "
                          f"{MUST_X}, a is not permitted to.")
 

@@ -331,7 +331,16 @@ def ndPairFacts (f : AdmittedNDFull) (p : PairFacts) : PairFacts :=
   let T := tablesForOf P.X (p.replay.σ.fixed ++ p.replay.σ.decisions)
   let valid := p.witnessValid &&
     fillHoldsOf f.r.N (f.r.b.a.side p.replay.set p.replay.witness).1 p.replay.σ.base
-  let gs := pairGapsOn (oneU f.r.N p.replay.set p.replay.witness) P p.replay.σ.base T p.replay.σ.probe
+  let witnessGaps := pairGapsOn (asU f.r.N P.X) P p.replay.σ.base T p.replay.σ.probe
+  -- A pair also displays the other reading's value when that side owns no decision key.
+  -- Include the atoms on which that displayed value depends, using its own completion.
+  -- Both sides come from admission's candidate table; do not rebuild one here.
+  let otherGaps := if p.otherValue.isSome then
+    let Q := sideIn f.fa.a p.replay.set p.replay.other
+    let Tj := tablesForOf Q.X p.replay.σ.fixed
+    pairGapsOn (asU f.r.N Q.X) Q p.replay.σ.base Tj p.replay.σ.probe
+    else []
+  let gs := (witnessGaps ++ otherGaps).eraseDups
   { p with witnessValid := valid, gaps := some gs }
 
 /-- `readings-validate` under the completion: S1's rows on the filled document, then `fill_premises` per reading and

@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 29434,
+    "total_lines": 29438,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -681,12 +681,12 @@
       },
       {
         "file": "lean/VE/Readings/UnspecifiedWire.lean",
-        "lines": 739,
-        "sha256": "a4fa1e24ca7d81dfcdca7726223d3cb0d34365b065b970c22ef7c23d53525c0d",
+        "lines": 741,
+        "sha256": "2f1b7bfa232f996b81cc6440cdc2227bc731c221cd95cf7591d8ecd82dabfc10",
         "ranges": [
           [
             1,
-            739
+            741
           ]
         ],
         "declarations": [
@@ -712,7 +712,7 @@
       {
         "file": "lean/VE/Readings/VerdictsWire.lean",
         "lines": 1719,
-        "sha256": "03b0db2624c945d86a350363d75a161fc7c3acacb4cb0f4eb73ad6e9925b7fb6",
+        "sha256": "3ccf1a5af55ae1fa3d3db8f91ba959b11cfb616bc773d804a2605ad5cb0fa0b5",
         "ranges": [
           [
             1,
@@ -1339,12 +1339,12 @@
       },
       {
         "file": "lean/VE/Readings/ComponentsWire.lean",
-        "lines": 605,
-        "sha256": "8cd4dc6a7891a8a36db1489102c45cad41dbd73a3549366a7f50f3d988c58eff",
+        "lines": 607,
+        "sha256": "921d1275c0acb8291c4a72345383a98bec8bebda2eb7ddf4346b48dffa09970d",
         "ranges": [
           [
             1,
-            605
+            607
           ]
         ],
         "declarations": [

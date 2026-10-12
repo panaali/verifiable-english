@@ -1409,7 +1409,7 @@ def documentOrder (document : Json) (us : List String) : List String :=
 def ndVerdictsAnswer (id question : String) (document : Json) (D : Doc) (A : Choice) (assumed : Option Choice)
     (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : Json :=
   let decided := match infos with
-    | some rows => if A.isEmpty then documentOrder document (partDecided D rows ((deadOf D rows dead).1.getD [])) else []
+    | some rows => if assumed.isNone then documentOrder document (partDecided D rows ((deadOf D rows dead).1.getD [])) else []
     | none => []
   (verdictsAnswer id question true D A assumed infos over dead).setObjVal! "decided_units" (toJson decided)
 

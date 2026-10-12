@@ -103,7 +103,8 @@ def test_fnd1_validate_separates_on_the_filled_document(lean):
     [rs1] = row["sets"]
     assert rs1["pairs"][0] == {"reading": "every", "other": "asks", "pair": {
         "situation": sid, "witness": "every", "separated": True, "witness_admissible": True, "witness_value": True,
-        "other_admissible": True, "other_value": False, "gaps": []}}
+        "other_admissible": True, "other_value": False,
+        "gaps": [["help_required", ["a", "u"], False]]}}
     assert [c["owned"] for c in rs1["candidates"]] == [[], []]
     # per reading its `Fill_T`, labelled by the pair
     assert [(e["set"], e["index"], [p["label"] for p in e["premises"]]) for e in row["fill_premises"]] == [
