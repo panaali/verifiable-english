@@ -1,7 +1,7 @@
 {
  "range": "main..HEAD --no-merges",
  "base": "968870193193b9e8138183ed77c41e376a6e376c",
- "captured_head": "9a5f3c951d3a2c296742692eb77a08c4a6c552b6",
+ "captured_head": "c8ec761fd85ac325d8d13aa36baac245192dff66",
  "commits": [
   "bbbe98a444a2b6d173e6a40739e1a1c9abe4d88e",
   "d2dcdac37e85db935d83b2bfe97f8ebca4926a41",
@@ -34,7 +34,9 @@
   "0cbe1dddc48b95d0c0cd40132411e5e2a632264e",
   "8ce4952ce18b69ca54ea833bc587554f0c50bc8d",
   "6eafe166f88845d62cab03d0aa5a0b9222967242",
-  "9a5f3c951d3a2c296742692eb77a08c4a6c552b6"
+  "9a5f3c951d3a2c296742692eb77a08c4a6c552b6",
+  "ff1a28a227dc9df8ecb006df2d0cb0ae5107ad24",
+  "c8ec761fd85ac325d8d13aa36baac245192dff66"
  ],
  "numstat": [
   {
@@ -1235,6 +1237,48 @@
    "commit": "9a5f3c951d3a2c296742692eb77a08c4a6c552b6",
    "path": "ve/ask.py",
    "added": 8,
+   "deleted": 0
+  },
+  {
+   "commit": "ff1a28a227dc9df8ecb006df2d0cb0ae5107ad24",
+   "path": "docs/spec/question-answering-q2/REPORT.md",
+   "added": 16,
+   "deleted": 11
+  },
+  {
+   "commit": "ff1a28a227dc9df8ecb006df2d0cb0ae5107ad24",
+   "path": "docs/spec/question-answering-q2/evidence/scope.json",
+   "added": 52,
+   "deleted": 2
+  },
+  {
+   "commit": "c8ec761fd85ac325d8d13aa36baac245192dff66",
+   "path": "docs/ARCHITECTURE-LAYERS.md",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "c8ec761fd85ac325d8d13aa36baac245192dff66",
+   "path": "docs/spec/question-answering-q2-progress.md",
+   "added": 4,
+   "deleted": 0
+  },
+  {
+   "commit": "c8ec761fd85ac325d8d13aa36baac245192dff66",
+   "path": "docs/spec/question-answering-q2/REPORT.md",
+   "added": 8,
+   "deleted": 3
+  },
+  {
+   "commit": "c8ec761fd85ac325d8d13aa36baac245192dff66",
+   "path": "tests/test_lean_conformance.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "c8ec761fd85ac325d8d13aa36baac245192dff66",
+   "path": "tools/regen_generated.py",
+   "added": 2,
    "deleted": 0
   }
  ],
