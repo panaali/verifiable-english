@@ -327,6 +327,8 @@ module VE.Readings.Situation
 module VE.Readings.SoftDefaults
 module VE.Readings.SoftExamples
 module VE.Readings.SoftFacts
+module VE.Readings.SoftSeparate
+module VE.Readings.SoftSeparateExamples
 module VE.Readings.SoftWire
 module VE.Readings.Strings
 module VE.Readings.SupAll
@@ -754,6 +756,7 @@ VE.Question.NoDerivation@VE.Question.Properties
 VE.Question.QuestionOneReading@VE.Question.Properties
 VE.Readings.Achieves@VE.Readings.Separate
 VE.Readings.AchievesQuiet@VE.Readings.Separate
+VE.Readings.AchievesS@VE.Readings.SoftSeparate
 VE.Readings.AchievesU@VE.Readings.Unspecified
 VE.Readings.AsciiL@VE.Readings.Strings
 VE.Readings.Attached.below@VE.Readings.Doc
@@ -792,6 +795,7 @@ VE.Readings.KeepsFrame@VE.Readings.Separate
 VE.Readings.NamesFree@VE.Readings.Unspecified
 VE.Readings.NoSep@VE.Readings.Labels
 VE.Readings.Observes@VE.Readings.Separate
+VE.Readings.ObservesF@VE.Readings.SoftSeparate
 VE.Readings.OnBit@VE.Readings.BaseUp
 VE.Readings.OthersSettled@VE.Readings.Components
 VE.Readings.PathTo@VE.Readings.Doc
@@ -801,6 +805,7 @@ VE.Readings.RowsHoldG@VE.Readings.Verdicts
 VE.Readings.RowsSound@VE.Readings.Components
 VE.Readings.RowsSoundBut@VE.Readings.Components
 VE.Readings.Separated@VE.Readings.Separate
+VE.Readings.SeparatedS@VE.Readings.SoftSeparate
 VE.Readings.SeparatedU@VE.Readings.Unspecified
 VE.Readings.Shaped@VE.Readings.Unspecified
 VE.Readings.Sim@VE.Readings.Simulate

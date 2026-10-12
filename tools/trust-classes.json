@@ -10864,6 +10864,59 @@
         "VE.Readings.Wire.sdChoiceText",
         "VE.Readings.Wire.underSoftCompletion"
       ]
+    },
+    "VE/Readings/SoftSeparate.lean": {
+      "S": [
+        "VE.Readings.ObservesF",
+        "VE.Readings.AchievesS",
+        "VE.Readings.SeparatedS"
+      ],
+      "C": [
+        "VE.Readings.sideOfS",
+        "VE.Readings.fillHoldsS",
+        "VE.Readings.separatesS"
+      ]
+    },
+    "VE/Readings/SoftSeparateExamples.lean": {
+      "T": [
+        "VE.Readings.SoftSeparateExamples.predsOf",
+        "VE.Readings.SoftSeparateExamples.NSD1",
+        "VE.Readings.SoftSeparateExamples.mFill",
+        "VE.Readings.SoftSeparateExamples.σDef",
+        "VE.Readings.SoftSeparateExamples.σNone",
+        "VE.Readings.SoftSeparateExamples.NSD3",
+        "VE.Readings.SoftSeparateExamples.regs4",
+        "VE.Readings.SoftSeparateExamples.frame4",
+        "VE.Readings.SoftSeparateExamples.mustX",
+        "VE.Readings.SoftSeparateExamples.needNotX",
+        "VE.Readings.SoftSeparateExamples.D4",
+        "VE.Readings.SoftSeparateExamples.NSD4",
+        "VE.Readings.SoftSeparateExamples.NSD2",
+        "VE.Readings.SoftSeparateExamples.NSDp",
+        "VE.Readings.SoftSeparateExamples.NSDq",
+        "VE.Readings.SoftSeparateExamples.σq",
+        "VE.Readings.SoftSeparateExamples.pairEvalQ",
+        "VE.Readings.SoftSeparateExamples.frameC",
+        "VE.Readings.SoftSeparateExamples.regsC1",
+        "VE.Readings.SoftSeparateExamples.rsC1",
+        "VE.Readings.SoftSeparateExamples.NC1",
+        "VE.Readings.SoftSeparateExamples.mC1",
+        "VE.Readings.SoftSeparateExamples.qC1",
+        "VE.Readings.SoftSeparateExamples.regsC2",
+        "VE.Readings.SoftSeparateExamples.rsC2",
+        "VE.Readings.SoftSeparateExamples.NC2",
+        "VE.Readings.SoftSeparateExamples.mC2",
+        "VE.Readings.SoftSeparateExamples.qC2",
+        "VE.Readings.SoftSeparateExamples.regsC9",
+        "VE.Readings.SoftSeparateExamples.complyD",
+        "VE.Readings.SoftSeparateExamples.rsC9",
+        "VE.Readings.SoftSeparateExamples.NC9",
+        "VE.Readings.SoftSeparateExamples.mC9",
+        "VE.Readings.SoftSeparateExamples.qC9",
+        "VE.Readings.SoftSeparateExamples.PC9",
+        "VE.Readings.SoftSeparateExamples.N18",
+        "VE.Readings.SoftSeparateExamples.tabs18"
+      ]
     }
   }
 }
