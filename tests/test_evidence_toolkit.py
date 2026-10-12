@@ -17,7 +17,7 @@ from pathlib import Path
 import pytest
 
 from tools import batch_evidence
-from tools.evidence import EvidenceError, ab, config, fuzz_ab, killed, latency, load, loads, report, scope
+from tools.evidence import EvidenceError, ab, config, fuzz_ab, killed, latency as paired_tool, load, loads, report, scope
 
 ROOT = Path(__file__).resolve().parents[1]
 HEAD, BASE = "a" * 40, "b" * 40
@@ -54,13 +54,13 @@ def test_b1_two_documents_with_one_file_name_are_two_rows_and_the_slow_one_fails
     slow, fast = _same_name_documents(tmp_path)
     cpu = _fake_run(lambda root, item: 15.0 if root == head and item == str(slow.resolve()) else 10.0)
     for order in ([slow, fast], [fast, slow]):
-        samples, errors = latency.measure(base, head, ["ve", "{input}"], [str(p) for p in order], 2, run=cpu)
+        samples, errors = paired_tool.measure(base, head, ["ve", "{input}"], [str(p) for p in order], 2, run=cpu)
         assert list(samples) == [str(p.resolve()) for p in order]
         assert errors == []
-        assert latency.row_problems(samples) == [
+        assert paired_tool.row_problems(samples) == [
             f"latency sample {str(slow.resolve())!r}: head 15.0 ms is above 1.2 x base 10.0 ms"]
-    samples, _ = latency.measure(base, head, ["ve", "{input}"], [str(fast)], 2, run=cpu)
-    assert latency.row_problems(samples) == []
+    samples, _ = paired_tool.measure(base, head, ["ve", "{input}"], [str(fast)], 2, run=cpu)
+    assert paired_tool.row_problems(samples) == []
 
 
 def test_latency_measure_compares_every_run_of_both_sides(tmp_path):
@@ -72,13 +72,13 @@ def test_latency_measure_compares_every_run_of_both_sides(tmp_path):
 
     def run(root, command, item):
         return 1.0, 0, next(outputs)
-    samples, errors = latency.measure(base, head, ["ve", "{input}"], [str(document)], 2, run=run)
+    samples, errors = paired_tool.measure(base, head, ["ve", "{input}"], [str(document)], 2, run=run)
     assert samples[str(document.resolve())]["same_output"] is False and errors
-    assert latency.row_problems(samples)
+    assert paired_tool.row_problems(samples)
     empty = _fake_run(lambda root, item: 1.0)
-    assert latency.measure(base, head, ["ve", "{input}"], [str(document)], 1,
+    assert paired_tool.measure(base, head, ["ve", "{input}"], [str(document)], 1,
                            run=lambda r, c, i: (1.0, 0, ""))[1]  # an empty output shows nothing
-    assert latency.measure(base, head, ["ve", "{input}"], [str(document)], 1, run=empty)[1] == []
+    assert paired_tool.measure(base, head, ["ve", "{input}"], [str(document)], 1, run=empty)[1] == []
 
 
 @pytest.mark.parametrize("arguments, message", [
@@ -94,17 +94,17 @@ def test_latency_measure_refuses_inputs_that_compare_nothing(tmp_path, arguments
     base.mkdir(), head.mkdir()
     document = tmp_path / "d.ve.md"
     document.write_text("x")
-    samples, errors = latency.measure(*arguments(base, head, str(document)), run=_fake_run(lambda r, i: 1.0))
+    samples, errors = paired_tool.measure(*arguments(base, head, str(document)), run=_fake_run(lambda r, i: 1.0))
     assert samples == {} and message in errors[0]
 
 
-LATENCY = {"head_commit": HEAD, "pass": True, "allowance": 0.2,
+PAIRED_RECORD = {"head_commit": HEAD, "pass": True, "allowance": 0.2,
            "samples": {"docs/a/s1.ve.md": {"base_cpu_ms": 10, "head_cpu_ms": 12},
                        "docs/b/s1.ve.md": {"base_cpu_ms": 10.0, "head_cpu_ms": 9.5}}}
 
 
 def test_complete_latency_record_passes():
-    assert latency.problems(deepcopy(LATENCY), HEAD, ["docs/a/s1.ve.md", "docs/b/s1.ve.md"]) == []
+    assert paired_tool.problems(deepcopy(PAIRED_RECORD), HEAD, ["docs/a/s1.ve.md", "docs/b/s1.ve.md"]) == []
 
 
 @pytest.mark.parametrize("change, expected, message", [
@@ -122,9 +122,9 @@ def test_complete_latency_record_passes():
      "not measured on both sides"),
 ], ids=ids)
 def test_missing_empty_unavailable_or_slow_latency_rows_fail(change, expected, message):
-    record = deepcopy(LATENCY)
+    record = deepcopy(PAIRED_RECORD)
     change(record["samples"])
-    errors = latency.problems(record, HEAD, expected)
+    errors = paired_tool.problems(record, HEAD, expected)
     assert any(message in error for error in errors), errors
     assert "latency evidence is empty, malformed or above the 20% Lean CPU budget" in errors
 
@@ -133,34 +133,34 @@ def test_a_duplicated_latency_key_is_refused_when_read():
     """`json.loads` keeps the last of two rows with one key, so a slow row can vanish before any check."""
     text = '{"head_commit": "%s", "pass": true, "samples": {"s1.ve.md": {"base_cpu_ms": 10, "head_cpu_ms": 15},' \
            ' "s1.ve.md": {"base_cpu_ms": 10, "head_cpu_ms": 10}}}' % HEAD
-    assert latency.problems(json.loads(text), HEAD) == []  # what the copies saw
+    assert paired_tool.problems(json.loads(text), HEAD) == []  # what the copies saw
     with pytest.raises(EvidenceError, match="occurs twice"):
         loads(text)
     with pytest.raises(ValueError, match="occurs twice"):
-        latency.paired(["k", "k"], lambda k: 1.0, lambda k: 1.0, 1)
+        paired_tool.paired(["k", "k"], lambda k: 1.0, lambda k: 1.0, 1)
 
 
 def test_latency_record_head_and_pass_are_its_own():
-    assert latency.problems({**LATENCY, "head_commit": BASE}, HEAD) == [
+    assert paired_tool.problems({**PAIRED_RECORD, "head_commit": BASE}, HEAD) == [
         "latency budget was not measured and passed on HEAD"]
-    assert latency.problems({**LATENCY, "pass": False}, HEAD)
-    saved = latency.record(HEAD, {"k": {"base_cpu_ms": 10, "head_cpu_ms": 13}}, "test")
-    assert saved["pass"] is False and latency.problems(saved, HEAD)
+    assert paired_tool.problems({**PAIRED_RECORD, "pass": False}, HEAD)
+    saved = paired_tool.record(HEAD, {"k": {"base_cpu_ms": 10, "head_cpu_ms": 13}}, "test")
+    assert saved["pass"] is False and paired_tool.problems(saved, HEAD)
 
 
 def test_paired_alternates_base_and_head():
     calls = []
-    samples = latency.paired(["k"], lambda k: calls.append("base") or 2.0, lambda k: calls.append("head") or 3.0, 3)
+    samples = paired_tool.paired(["k"], lambda k: calls.append("base") or 2.0, lambda k: calls.append("head") or 3.0, 3)
     assert calls == ["base", "head"] * 3
     assert samples == {"k": {"pairs": 3, "base_cpu_ms": 2.0, "head_cpu_ms": 3.0}}
 
 
 def test_schedstat_reads_or_reports_unavailable(tmp_path):
     (tmp_path / "s").write_text("123 45 6\n")
-    assert latency.schedstat(str(tmp_path / "s")) == (123, 45)
-    assert latency.schedstat(str(tmp_path / "missing")) is None
+    assert paired_tool.schedstat(str(tmp_path / "s")) == (123, 45)
+    assert paired_tool.schedstat(str(tmp_path / "missing")) is None
     with pytest.raises(OSError):
-        latency.cpu_ns(-1)
+        paired_tool.cpu_ns(-1)
 
 
 # ---------------------------------------------------------------- corpus A/B
@@ -505,11 +505,11 @@ def test_a_batch_changing_ve_or_lean_needs_its_corpus_ab(batch):
 def test_named_latency_and_fuzz_ab_are_checked(batch):
     (batch / "evidence.toml").write_text(TOML + '[latency]\nfile = "latency.json"\nworkloads = ["docs/a/s1.ve.md", '
                                          '"docs/b/s1.ve.md"]\n[fuzz_ab]\nfile = "fuzz.json"\n')
-    _write(batch, "latency", LATENCY)
+    _write(batch, "latency", PAIRED_RECORD)
     _write(batch, "fuzz", {"head_commit": HEAD, "pass": True, "rules": [],
                            "runs": [{"run": "--ci", "compared": 3, "explained": [], "unexplained": []}]})
     assert batch_evidence.check(batch)[1] == []
-    _write(batch, "latency", {**LATENCY, "samples": {"docs/a/s1.ve.md": LATENCY["samples"]["docs/a/s1.ve.md"]}})
+    _write(batch, "latency", {**PAIRED_RECORD, "samples": {"docs/a/s1.ve.md": PAIRED_RECORD["samples"]["docs/a/s1.ve.md"]}})
     assert "latency evidence has no sample for 'docs/b/s1.ve.md'" in batch_evidence.check(batch)[1]
     (batch / "evidence" / "latency.json").write_text(
         '{"head_commit": "%s", "pass": true, "samples": {"docs/a/s1.ve.md": {"base_cpu_ms": 1, "head_cpu_ms": 9}, '
@@ -611,7 +611,7 @@ def test_readings_batch_latency_applies_the_shared_rule(monkeypatch, tmp_path, h
     saved = load(out)
     assert sorted(saved["samples"]) == ["c0", "c1", "c2"] and saved["pass"] is (status == 0)
     assert all(row["pairs"] == 2 and row["calls_per_side"] == 200 for row in saved["samples"].values())
-    assert (latency.problems(saved, HEAD, ["c0", "c1", "c2"]) == []) is (status == 0)
+    assert (paired_tool.problems(saved, HEAD, ["c0", "c1", "c2"]) == []) is (status == 0)
 
 
 def test_readings_batch_latency_refuses_two_cases_with_one_name(monkeypatch, tmp_path):
