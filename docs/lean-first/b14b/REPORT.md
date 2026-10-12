@@ -47,6 +47,20 @@ Raw corpus and differential-fuzz recordings are on the local
 hashes, counts and commit list. The final release-gate result is
 `gate-result.json` at the worktree root, run on the committed final HEAD.
 
+The first clean full gate, on `e44ff402`, ran 14,654 selected Python tests
+and 36 Rust tests, then reported eight Python failures. Three were stale
+curated Lean decoder pins after the new family reader; one was the prior 8b
+ledger line count; three were an interruption test whose mock skipped the
+toolchain check but not stale Lake output cleanup; and one was the mutation
+runner's direct pytest command. The failed result is retained on the local
+evidence branch as `initial-gate-result.json`. I reviewed and updated the
+decoder ranges and hashes, regenerated the assurance document, corrected the
+ledger, completed the interruption mock, and switched the mutation runner to
+`tools.nested_pytest`. The eight detecting tests passed on rerun, as did all
+six seeded faults and their restored checks. The gate's `--rerun-failed` mode
+requires the same tree as its prior record, so it cannot apply after these
+fixes; the final full gate runs on a new committed tree.
+
 ## Review of sibling findings
 
 This batch does not change the document or norm-defaults owner. Their complete
@@ -80,11 +94,12 @@ English grammar, state machine, or source-document interpretation.
 
 Six seeded faults in the changed Lean and Python product files are specified
 in `mutants.py`. Their caught-test results are in `evidence/mutants.json`.
-The selector chose all 364 test files. Its recorded per-file run and a later
-plain pytest run were stopped under host contention; neither is reported as a
-pass. Focused new tests passed, and the full release gate provides the complete
-suite result on the final committed HEAD. The gate writes `gate-result.json`
-at the worktree root.
+The selector chose all 364 test units. Every unit's recorded run exited zero,
+including the long wire, readings and soft-review corpora. The selector process
+then exited one while writing its coverage map to the read-only home cache;
+that post-run cache failure is not counted as a passing selector command. The
+final clean release gate provides the complete suite result on the committed
+HEAD and writes `gate-result.json` at the worktree root.
 
 | Seeded fault | Changed product file | Detecting test |
 |---|---|---|
