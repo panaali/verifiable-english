@@ -100,7 +100,10 @@ goes from `forbid(unsafe_code)` to `deny` with one module-level `allow`. The thr
 
 **(b) Backstops in the Python code that starts checkers.** In `ve/backends/process_limits.py`:
 `configured_bytes`, `limit_address_space` (prlimit right after the start; `preexec_fn` is unsafe in a threaded
-client) and `run_limited` (`subprocess.run` with the limit applied).
+client) and `run_limited` (`subprocess.run` with the limit applied). The cap is the minimum of the
+requested limit and both finite inherited RLIMIT_AS bounds. This preserves a launcher's lower soft
+limit as well as its lower hard limit. `test_one_shot_runner_never_raises_an_inherited_address_space_limit`
+covers finite and unlimited inherited bounds.
 - `rust_jsonl`: each `ve jsonl` child gets `VE_RUST_MEMORY_LIMIT=<memory_limit()>` and RLIMIT_AS
   1 GiB above it. A process started under a different budget is never reused. An invalid setting is
   CheckerUnavailable before any process starts.
@@ -113,7 +116,7 @@ client) and `run_limited` (`subprocess.run` with the limit applied).
   through `ve.backends.lean.run_limited`, and the three `expired_waits` tests in
   `tests/test_assurance_manifest.py` inject the deadline into `process_limits`, the module that now waits.
 
-## 5. Tests (`tests/test_rust_memory_budget.py`, 27 test IDs; Rust `search::domain_size_tests`, 2)
+## 5. Tests (`tests/test_rust_memory_budget.py`, 39 test IDs after looprecheck 1; Rust `search::domain_size_tests`, 2)
 
 | Behaviour | Test |
 |---|---|
@@ -124,6 +127,7 @@ client) and `run_limited` (`subprocess.run` with the limit applied).
 | The incident's input (the recorded UDHR search) and its shape (22 sorts) are answered within 64 MiB | `test_the_incidents_search_is_answered_within_a_small_budget`, `test_many_sorts_search_needs_no_memory` |
 | The client passes the budget, caps the address space at budget + 1 GiB, never reuses across budgets, and reads an exhausted budget as ResourceLimit, then serves the next case | `test_the_client_passes_the_budget_and_caps_the_address_space`, `test_the_client_reads_an_exhausted_budget_as_resource_limit` |
 | One-shot runners run under RLIMIT_AS; a child past it fails its allocation; a timed-out child is killed (injected deadline) | `test_one_shot_runners_run_under_an_address_space_limit`, `test_lean_one_shot_routes_run_under_their_address_space_limit`, `test_one_shot_runner_timeout_kills_the_child` |
+| A tighter inherited soft or hard RLIMIT_AS is preserved, including when the other bound is unlimited | `test_one_shot_runner_respects_an_inherited_hard_limit`, `test_one_shot_runner_never_raises_an_inherited_address_space_limit[*]` |
 | The Lean service runs under its RLIMIT_AS | `test_the_lean_service_runs_under_its_address_space_limit` |
 | Lazy order equals the eager order; 22 sorts hold one vector | `domain_size_tests::lazy_sizes_are_the_eager_order`, `many_sorts_hold_one_vector` |
 
@@ -257,3 +261,18 @@ reports no change in K, S, verdict-bearing, or total trusted lines from its base
 The selected test run on this final worktree completed all 360 units with zero failures
 (`tools/select_tests.py --base $(git merge-base HEAD main) --run`). Four additional relay faults
 were planted and caught by their named tests, then removed (`evidence/relay-mutants.json`).
+
+## 11. Looprecheck 1: inherited soft address-space limit
+
+F6 -> preserve the minimum of the requested, inherited soft and inherited hard RLIMIT_AS bounds
+-> `test_one_shot_runner_never_raises_an_inherited_address_space_limit[*]` -> `3ee8636d`.
+
+F6's probe failed before the fix and passed after it. `limit_address_space` now takes the minimum of
+the requested limit and both finite inherited RLIMIT_AS bounds; it never raises an inherited soft
+limit. `test_one_shot_runner_never_raises_an_inherited_address_space_limit` covers five combinations
+of soft, hard and requested limits, including unlimited inherited bounds. The whole
+`tests/test_rust_memory_budget.py` file passed (39 tests), `lake build` passed, and `lean/audit.py`
+passed (481 source files, 5,252 theorem declarations). The selector reported 361/361 test units for
+both the branch base and the changed paths; that plan was not run because this recheck explicitly
+prohibits the full suite. No full gate was run. DELTA row 4 still needs a DRI signature for the
+original new limit; no standing ruling signs it. F5's boundary fuzz remains a follow-up.
