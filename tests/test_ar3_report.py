@@ -94,9 +94,9 @@ def test_every_seeded_bug_is_in_the_table_and_in_a_changed_file():
     assert len(mutants) >= 3
 
 
-def test_the_delta_rows_name_their_tests_and_the_unsigned_one():
+def test_f2_the_delta_rows_name_tests_and_no_storage_delta_needs_a_signature():
     rows = [line for line in DELTA.splitlines() if line.startswith("| G")]
     assert [row.split(" | ")[0] for row in rows] == [f"| G{index}" for index in range(1, 9)]
-    assert all("test_" in row or "DRI-NEEDED" in row for row in rows)
-    assert [row.split(" | ")[0] for row in rows if "DRI-NEEDED" in row] == ["| G6"]
-    assert "(G6, where the IDs are stored) needs a DRI signature" in flat(REPORT)
+    assert all("test_" in row for row in rows)
+    assert not any("DRI-NEEDED" in row for row in rows)
+    assert "G6 now uses the planned gate record" in flat(REPORT)
