@@ -61,6 +61,33 @@ six seeded faults and their restored checks. The gate's `--rerun-failed` mode
 requires the same tree as its prior record, so it cannot apply after these
 fixes; the final full gate runs on a new committed tree.
 
+### Relay mutation gate
+
+The pre-review gate at `366bd777` failed `tools/relay_mutation_gate.py` with
+133 failures: 128 allow-list paths that match nothing and five accepted
+readings-route mutants. All 133 are on routes this batch does not change,
+and the list matches the saved run on main `49de179e`
+(109,195 mutants in both runs). `family-norms`, the only relayed route this batch
+changed, had none. The fixtures (`tests/data/relay-gate-cases.jsonl`) have not
+changed since `111c4fd4`. The failures come from answer shapes that changed on
+main after the allow-list was written. ts-B1 and ts-B5 typed the report labels,
+and the readings-route fixtures no longer reach the `units` and `names` shapes.
+
+This batch changes only `tools/relay-gate-allow.json`, in one commit that can
+be reverted on its own. It removes the 128 stale paths, which drops five
+entries that are left with no paths: B5 norm-defaults, reports and risk;
+F4 discourse; F7 readings-route. It also files the five accepted mutants
+under the existing follow-ups whose descriptions they match. Under F10
+(request-bound lists that accept an emptied or repeated element), it adds an
+emptied and a repeated `fill`, and a repeated `units/*/content/norm/over`.
+Under F11 (strings the schema lets be empty), it adds an emptied
+`fill/*/label` and `targets/*`. This batch does not add a classification;
+whether these mutants are binding gaps to fix (R8) belongs to the readings-route
+owner. After the change, the gate passed
+with 39 routes, 109,195 mutants and 0 failures
+([report](evidence/relay-gate.json)). `tests/test_relay_mutation_gate.py`
+passed (18 tests).
+
 ## Review of sibling findings
 
 This batch does not change the document or norm-defaults owner. Their complete
