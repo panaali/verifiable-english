@@ -184,8 +184,8 @@ witnesses are checked by the family's route over the regenerated formulas:
 /-- Fresh constant names for the witness tuple. -/
 def witnessNames (taken : List String) (n : Nat) : List String :=
   let k := ((List.range (taken.length + 1)).find? fun k =>
-    (List.range n).all fun i => !taken.contains s!"witness-{k}-{i}").getD 0
-  (List.range n).map fun i => s!"witness-{k}-{i}"
+    (List.range n).all fun i => !taken.contains s!"witness{k}x{i}").getD 0
+  (List.range n).map fun i => s!"witness{k}x{i}"
 
 /-- The base environment and its model with one constant per tuple value. -/
 def withWitness (base model : Json) (sorts values : List String) : Except String (Json × Json × List String) := do

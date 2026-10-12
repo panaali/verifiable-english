@@ -324,8 +324,13 @@ class NormDocument:
             order = row["order"]
             if (len(set(order)) != len(order) or not regulated <= set(order) <= regulated | defined
                     or [p["label"] for p in row["premises"]] != [f"layer:norms:{p}" for p in order
-                                                                 if p in regulated]):
+                                                                if p in regulated]):
                 raise CheckerUnavailable("CheckerUnavailable: norms-elaborate row is not bound to the request")
+            expected = _target_sorts(self.env)
+            targets = row["conflict_targets"]
+            if (len(targets) != len(expected) or {t["target"] for t in targets} != set(expected)
+                    or any(t["sorts"] != expected[t["target"]] for t in targets)):
+                raise CheckerUnavailable("CheckerUnavailable: norms-elaborate targets are not bound to the request")
             cached = self._regenerated = row
         return cached
 
@@ -526,6 +531,8 @@ def _norm_certificate_lean(document, premises, conclusion, certificate):
         return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
     except VEError as exc:
         return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
+    if row["layers"] != sum(d.regulated is not None for d in document.env.predicates.values()):
+        raise CheckerUnavailable("CheckerUnavailable: Lean certificate layer count is not bound to the request")
     if row["valid"]:
         return EntailmentCertificateCheck(True, "Valid", row["steps"])
     return EntailmentCertificateCheck(False, "InvalidCertificate", 0, "certificate does not replay")
@@ -640,6 +647,17 @@ def _target_names(env):
              if d.regulated is not None and d.regulated.permission is not None})
 
 
+def _target_sorts(env):
+    return {name: list(env.predicates[name.split("->", 1)[0]].arguments)
+            for name in _target_names(env)}
+
+
+def _bound_targets(document, row):
+    expected = _target_names(document.env)
+    if len(row["targets"]) != len(expected) or set(row["targets"]) != expected:
+        raise CheckerUnavailable("CheckerUnavailable: Lean conflict targets are not bound to the request")
+
+
 def _check_conflict_lean(document, *, model, certificates, max_evaluations, prove, tableau_steps):
     """Lean's `norms-conflict` decides CONFLICT and CONFLICT-FREE.
 
@@ -662,6 +680,7 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
                 target, sorts, values = found
                 witness = {"target": target, "model": model.to_dict(), "tuple": list(values)}
                 row = decide(_lean_mode(document), [_lean_case(document, "norms-conflict", witness=witness)])[0]
+                _bound_targets(document, row)
                 if row["verdict"] != "CONFLICT" or row.get("target") != target:
                     raise CheckerUnavailable("CheckerUnavailable: Lean does not confirm the conflict "
                                              "witness Python's search found")
@@ -678,13 +697,14 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
         except (VEError, TypeError, ValueError):
             certificates = {}  # packages that are not JSON bind nothing
         row = decide(_lean_mode(document), [_lean_case(document, "norms-conflict", packages=certificates)])[0]
+        _bound_targets(document, row)
         if row["verdict"] == "CONFLICT-FREE":
             return ConflictReport("CONFLICT-FREE")
         if row["verdict"] != "UNKNOWN" or type(row.get("detail")) is not str:
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean conflict result")
         names = _target_names(document.env)
         named = re.fullmatch(r"(?:missing|invalid) certificate for (.+)", row["detail"])
-        if named is None or named.group(1) not in names or set(row["targets"]) != names:
+        if named is None or named.group(1) not in names:
             raise CheckerUnavailable("CheckerUnavailable: Lean conflict result is not bound to the request")
         return ConflictReport("UNKNOWN", detail=row["detail"])
     return ConflictReport("UNKNOWN", detail="tableau budget or search bound")
