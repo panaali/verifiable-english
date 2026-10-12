@@ -175,13 +175,13 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 
 <!-- BEGIN GENERATED: report.py -->
 
-Scope: `main..HEAD --no-merges` at `9a5f3c95` (base `96887019`): 32 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
+Scope: `main..HEAD --no-merges` at `c8ec761f` (base `96887019`): 34 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
 
 | Language | Files | Lines added | Lines deleted |
 |---|---:|---:|---:|
 | Lean | 26 | 5137 | 698 |
-| Python (product) | 10 | 1169 | 113 |
-| Python (tests) | 8 | 894 | 31 |
+| Python (product) | 11 | 1171 | 113 |
+| Python (tests) | 9 | 895 | 32 |
 | Rust | 0 | 0 | 0 |
 
 Recorded answers (`tests/fixtures/ask`, replayed by `tests/test_ask_fixtures.py`):
