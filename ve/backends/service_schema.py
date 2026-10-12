@@ -521,7 +521,6 @@ class Compiler:
             sizes = []
             for reading_set in sets:
                 if (not isinstance(reading_set, dict) or type(reading_set.get("id")) is not str
-                        or type(reading_set.get("unit", reading_set["id"])) is not str
                         or not isinstance(reading_set.get("readings"), list)):
                     _fail("invalid reading set in the request")
                 sizes.append(len(reading_set["readings"]))
@@ -544,7 +543,7 @@ class Compiler:
                 if (value["budget"]["max_choices"] != limit or
                         not limit < value["choice_count"] <= product):
                     _fail("choice count is not bound to the request")
-                units = {s.get("unit", s.get("id")) for s in sets}
+                units = {s["unit"] if type(s.get("unit")) is str else s["id"] for s in sets}
                 if any(unit not in units for unit in value["units"]):
                     _fail("open unit is not in the request")
         return check
