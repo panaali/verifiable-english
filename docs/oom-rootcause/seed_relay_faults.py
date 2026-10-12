@@ -6,6 +6,8 @@ import os
 from pathlib import Path
 import subprocess
 
+from tools import nested_pytest
+
 ROOT = Path(__file__).resolve().parents[2]
 PARITY = "tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over"
 UNIQUE = "tests/test_lean_service_schema.py::test_unique_string_lists_refuse_duplicate_rule_names"
@@ -50,7 +52,9 @@ def main() -> None:
                 path.write_text(original.replace(before, after, 1))
                 if lean:
                     build(env)
-                done = run(["uv", "run", "pytest", "-q", "-p", "no:cacheprovider", test], env=env)
+                command = nested_pytest.command(["-q", "-p", "no:cacheprovider", test],
+                                                python=("uv", "run", "--frozen", "--group", "dev", "python"))
+                done = run(command, env=nested_pytest.environment(env))
             finally:
                 path.write_text(original)
             output = done.stdout + done.stderr
