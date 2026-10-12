@@ -16,7 +16,9 @@ import sys
 
 from tests.subprocesses import HANG_TIMEOUT
 
-SEEDS = runpy.run_path(str(Path(__file__).with_name("fuzzer_seeds.py")))["SEEDS"]
+SETTINGS = runpy.run_path(str(Path(__file__).with_name("fuzzer_seeds.py")))
+SEEDS = SETTINGS["SEEDS"]
+BASELINE_ENTRIES = SETTINGS["BASELINE_ENTRIES"]
 
 
 REPLAY = """import json,sys
@@ -47,8 +49,8 @@ def main() -> int:
                    baseline_not_reproduced=len(report["baseline"]["not_reproduced"]),
                    sampled=sum(sum(group.values()) for group in report["mutants"].values()))
               for seed, report in zip(SEEDS, reports, strict=True)]
-    passed = (len(reports) == 14 and len(replay) == len(entries) and not changed and
-              all(report["seed"] == seed and report["baseline"]["entries"] == 250 and
+    passed = (len(reports) == len(SEEDS) and len(replay) == len(entries) and not changed and
+              all(report["seed"] == seed and report["baseline"]["entries"] == BASELINE_ENTRIES and
                   not report["baseline"]["not_reproduced"] and
                   not report["baseline"]["unreviewed"]
                   for seed, report in zip(SEEDS, reports, strict=True)))
