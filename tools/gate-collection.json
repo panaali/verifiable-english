@@ -6486,6 +6486,7 @@
   "tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{\"outputs\": true}]",
   "tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{]",
   "tests/test_lake_outputs.py::test_every_build_entry_point_drops_stale_traces_first",
+  "tests/test_lake_outputs.py::test_lean_is_found_in_the_accounts_elan_when_home_is_replaced",
   "tests/test_lake_outputs.py::test_the_oracle_is_lakes_hash",
   "tests/test_lake_outputs.py::test_traced_binaries_are_fresh_and_a_replaced_binary_is_stale",
   "tests/test_lean_audit_record.py::test_audit_allows_the_admission_function_as_a_name_and_application",
