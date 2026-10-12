@@ -30,8 +30,17 @@ predicate and declaration lists unchanged. `tools/trust_map.py --since 5479466f`
 
 An initial full-gate attempt on `811f6e3a` used `--workers auto` while host load exceeded 130; it was stopped
 during the Python suite after the Lean build, Lean audit and Rust tests passed. It produced no acceptance
-verdict. The final gate runs on the next clean commit with an explicit worker count; its completed JSON is the
-only gate evidence below.
+verdict. A full gate on `0933bfb0` passed the Lean build and audit and 36 Rust tests, then failed three cases of
+`test_interrupted_gate_cannot_record_pass`. Its serial `--rerun-failed` reproduced the failure. That test
+disabled toolchain setup but left Lake's trace check active, so the nested gate could not find Lean under its
+isolated `HOME`; the test never reached its simulated interrupt. Commit `0341684a` mocks that trace check in
+this test, leaving the interrupted-gate assertion intact. All three cases then passed directly.
+
+The selected-test run completed 360 units with exit 0, including `tests/test_gate_integrity.py`. Its command
+returned 1 only after testing because the selector attempted to write its coverage map to the read-only home
+cache. The saved per-unit results were replayed into a writable `/tmp` map: 360 recorded, zero failed. The
+final gate runs on a new clean commit with an explicit worker count; its completed JSON is the gate evidence
+below.
 
 ## Measured outcome
 
@@ -86,7 +95,10 @@ regenerating it (DELTA row 5, standing ruling R12). `infra/arch-AR-3` also edits
 `tools/batch_evidence.py` to check a gate note in the old positional command. AR-5a must extend that same
 checker, so its merge must retain both the note comparison and this batch's `--check` path.
 `tools/regen_generated.py` overlapped in an earlier draft, so this batch removed its edit and kept the report
-command read-only. This batch does not edit `tools/gate.py`, `ve/` or `lean/`.
+command read-only. `tests/test_gate_integrity.py` overlaps `infra/arch-AR-3`, `infra/arch-AR-4` and
+`infra/oom-rootcause`; the full gate exposed a broken nested test setup, and this batch contains the same
+two-line mock already in `infra/oom-rootcause`. The merge must retain one copy of that mock. This batch does
+not edit `tools/gate.py`, `ve/` or `lean/`.
 
 ## Seeded bugs
 
