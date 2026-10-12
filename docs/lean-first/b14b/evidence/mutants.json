@@ -12,16 +12,16 @@
         "tail": [
           "E     ",
           "E     Extra items in the left set:",
+          "E     'norms_elaborate'",
           "E     'norms_certificate'",
           "E     'norms_conflict'",
-          "E     'norms_elaborate'",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_norms_are_dispatched_and_match_python[family0-<lambda>]",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_norms_are_dispatched_and_match_python[family1-<lambda>]",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_norms_are_dispatched_and_match_python[family2-<lambda>]",
-          "3 failed in 34.32s",
+          "3 failed in 4.01s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-nio_adpd)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-uy9wmd3e)"
         ]
       },
       "restored_build": {
@@ -31,9 +31,9 @@
         "exit": 0,
         "tail": [
           "...                                                                      [100%]",
-          "3 passed in 11.11s",
+          "3 passed in 1.04s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-izs5_12_)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-yle6b0lx)"
         ]
       }
     },
@@ -56,9 +56,9 @@
           "E   Failed: DID NOT RAISE CheckerUnavailable",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_conflict_refuses_extra_target",
-          "1 failed in 1.76s",
+          "1 failed in 1.61s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-j5iqb3l2)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-xs8kyfpx)"
         ]
       },
       "restored_build": {
@@ -68,9 +68,9 @@
         "exit": 0,
         "tail": [
           ".                                                                        [100%]",
-          "1 passed in 3.34s",
+          "1 passed in 0.52s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-aqgja63r)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-b92a7r5i)"
         ]
       }
     },
@@ -93,9 +93,9 @@
           "E   Failed: DID NOT RAISE CheckerUnavailable",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_certificate_refuses_unbound_layer_count",
-          "1 failed in 2.07s",
+          "1 failed in 1.37s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-wxvork67)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-efc756wk)"
         ]
       },
       "restored_build": {
@@ -105,9 +105,9 @@
         "exit": 0,
         "tail": [
           ".                                                                        [100%]",
-          "1 passed in 3.65s",
+          "1 passed in 0.61s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0hp_5pu8)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0paysnti)"
         ]
       }
     },
@@ -130,9 +130,9 @@
           "E   Failed: DID NOT RAISE CheckerUnavailable",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_conflict_refused_witness_is_unavailable",
-          "1 failed in 3.76s",
+          "1 failed in 0.45s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-bpdmfh65)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-l5zjgc7y)"
         ]
       },
       "restored_build": {
@@ -142,9 +142,9 @@
         "exit": 0,
         "tail": [
           ".                                                                        [100%]",
-          "1 passed in 4.78s",
+          "1 passed in 0.38s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-_uhvycx1)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0isuxmoz)"
         ]
       }
     },
@@ -167,9 +167,9 @@
           "E     + CONFLICT",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_conflict_zero_model_budget_is_unknown",
-          "1 failed in 2.42s",
+          "1 failed in 1.88s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qcz24t0r)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-yn3nw0wk)"
         ]
       },
       "restored_build": {
@@ -179,9 +179,9 @@
         "exit": 0,
         "tail": [
           ".                                                                        [100%]",
-          "1 passed in 5.07s",
+          "1 passed in 0.41s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-7gb0mva_)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jp73qal7)"
         ]
       }
     },
@@ -202,7 +202,7 @@
           "  simp only [g\u0335r\u0335o\u0335u\u0335n\u0335d\u0335,\u0335 \u0335bind, Option.bind] at hg",
           "",
           "Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
-          "\u2714 [105/105] Built VE.Norms.Family (27s)",
+          "\u2714 [105/105] Built VE.Norms.Family (10s)",
           "Build completed successfully (105 jobs)."
         ]
       },
@@ -229,7 +229,7 @@
           "  simp only [g\u0335r\u0335o\u0335u\u0335n\u0335d\u0335,\u0335 \u0335bind, Option.bind] at hg",
           "",
           "Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
-          "\u2714 [105/105] Built VE.Norms.Family (18s)",
+          "\u2714 [105/105] Built VE.Norms.Family (14s)",
           "Build completed successfully (105 jobs)."
         ]
       },

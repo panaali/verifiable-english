@@ -526,6 +526,7 @@ def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption
     monkeypatch.setattr(gate, "POLICY", policy)
     monkeypatch.setattr(gate, "COLLECTION", collection)
     monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
+    monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda *_args, **_kwargs: [])
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
 
     def fake_command(args, *, env, stage, cwd=None):
