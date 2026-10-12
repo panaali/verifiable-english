@@ -352,3 +352,17 @@ def generous_hang_guards(monkeypatch):
     yield
     refused, REFUSED[:] = list(REFUSED), []
     assert refused == [], "a test removed or lowered a checker setting and started a real child"
+
+
+@pytest.fixture(autouse=True)
+def interrupted_gate_reaches_its_injected_build(request, monkeypatch):
+    """The interruption test mocks toolchain setup, so it must also bypass trace lookup.
+
+    The real gate checks Lake's traces with its validated Lean binary before the build.
+    With setup mocked, the isolated test PATH has no Lean binary; the trace preflight
+    would stop before the test's injected interruption at the Lean build.
+    """
+    if request.node.originalname == "test_interrupted_gate_cannot_record_pass":
+        from tools import gate
+
+        monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda *args, **kwargs: None)
