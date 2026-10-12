@@ -49,12 +49,20 @@ def main() -> int:
     head, main_tip = git("rev-parse", "HEAD"), git("rev-parse", "main")
     comparison = json.loads((EVIDENCE / "ab.json").read_text())
     latency = json.loads((EVIDENCE / "latency.json").read_text())
+    dated = json.loads((EVIDENCE / "date-seeds-summary.json").read_text())
+    replay = json.loads((EVIDENCE / "date-seeds-base-replay.json").read_text())
+    if (not dated.get("complete") or len(dated.get("seeds", [])) != 14 or
+            replay.get("pass") is not True or len(replay.get("seeds", [])) != 14 or
+            replay.get("new_signatures") != replay.get("base_reproduced") or
+            [row["seed"] for row in dated["seeds"]] != [row["seed"] for row in replay["seeds"]]):
+        raise SystemExit("batch evidence failed: fourteen dated fuzz seeds did not replay on base")
     comparison["head_commit"] = head
     latency["head_commit"] = head
     errors = problems(head, gate, comparison, latency)
     if errors:
         raise SystemExit("batch evidence failed: " + "; ".join(errors))
     gate["batch14c"] = {"comparison": comparison, "latency": latency,
+                        "dated_fuzz": {"summary": dated, "base_replay": replay},
                         "scope": scope(main_tip, head)}
     result.write_text(json.dumps(gate, indent=2, sort_keys=True) + "\n")
     saved = json.loads(result.read_text())

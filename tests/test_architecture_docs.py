@@ -25,7 +25,7 @@ ADR = ROOT / "docs/adr/0001-response-binding.md"
 DIALECT = ROOT / "ve/backends/lean_service_schema/README.md"
 SAVED = json.loads((ROOT / numbers.NUMBERS).read_text())
 # Dialect keywords that shape or select a value and bind nothing to the request.
-STRUCTURAL = {"x-tagged", "x-fuel", "x-case", "x-select", "x-row"}
+STRUCTURAL = {"x-tagged", "x-fuel", "x-case", "x-select", "x-row", "x-same-length", "x-equal-fields"}
 # Batch 13b introduced these bounded response checks before D1 classified their
 # dialect keywords. Keep the signed Decision section pinned and track the exact
 # outstanding set until its owner reviews the extension.
@@ -305,6 +305,7 @@ SHAPES = {
     "tagged": "x-tagged", "fuel": "x-fuel", "echo": "x-echo", "equals": "x-equals", "length": "x-length",
     "claimNodes": "x-claim-nodes", "maxSteps": "x-max-steps", "backgroundBound": "x-background-bound",
     "count": "x-count", "references": "x-references", "index": "x-index", "digest": "x-digest", "zip": "x-zip",
+    "sameLength": "x-same-length", "equalFields": "x-equal-fields",
     "zipOrEmpty": "x-zip-or-empty", "onCase": "x-case", "select": "x-select", "countWhere": "x-count-where",
     "presenceCount": "x-count-presence", "rows": "x-rows", "row": "x-row",
 }
