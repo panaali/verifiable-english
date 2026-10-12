@@ -105,7 +105,7 @@ def snapshot(raw: Path) -> dict:
             path = raw / f"{side}-{corpus}.jsonl.gz"
             with gzip.open(path, "rb") as stream:
                 count = sum(1 for _ in stream)
-            per_side = CORPORA[corpus] // 2 if corpus != "pilots" else 486
+            per_side = CORPORA[corpus]
             if count != per_side:
                 raise ValueError(f"{path}: {count} rows, expected {per_side}")
             archive[path.name] = {"records": count, "bytes": path.stat().st_size, "sha256": digest(path)}
