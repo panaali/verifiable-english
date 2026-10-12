@@ -5,7 +5,7 @@ Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` (branch `design/arch-review`), secti
 
 ## Outcome
 
-Every number below is rendered by `report.py` from `evidence/` and checked by
+Every number in the outcome block is rendered by `report.py` from `evidence/` and checked by
 `check_evidence.py` at the batch gate, outside the permanent test suite (D4).
 
 <!-- BEGIN GENERATED AR-9 METRICS -->
@@ -18,7 +18,8 @@ Every number below is rendered by `report.py` from `evidence/` and checked by
 - Function-level imports in `ve/assist/`: 25 before, 25 after.
 - Seeded faults: 5/5 caught by every named test (9 failing runs); after restoring, 9/9 runs pass.
 - Selected test units at `f1ab8177`: 360/360 passed.
-- Full gate: not saved yet (it runs on the final code commit; its result is saved after it).
+- Saved scope: `5479466f..eb433e5b --no-merges`, 14 commit(s): `eb433e5b`, `f1ab8177`, `6ddfe8b2`, `7b44a234`, `9d82676d`, `e0cbab24`, `727f7fa4`, `7759894a`, `8101a733`, `16383a2f`, `7f137b63`, `cb10ebb9`, `27339266`, `9ab9127d`.
+- Full gate at `eb433e5b`: passed; 14,363 passed, 92 skipped, 0 failed; 36 Rust tests passed.
 <!-- END GENERATED AR-9 METRICS -->
 
 The function-level import count is unchanged on purpose: those imports are read when the
@@ -59,7 +60,8 @@ Files touched: `ve/assist/recovery.py`, `ve/assist/session.py`, six new `ve/assi
 `docs/arch/AR-9/`. At the start, and again on 2026-10-11 after each sync with `main` (`96887019`,
 then `5479466f`, which merged AR-8), `git diff --name-only main...<branch>` for every branch matching `lean-first/*`,
 `readings-defaults/*`, `question-answering/*` and `infra/*` named no file AR-9 touches except the
-generated `tools/gate-collection.json`, which is not an overlap (R12). One branch,
+generated `tools/gate-collection.json`, which is not an overlap (R12). The later
+`tests/conftest.py` repair was checked against the same branch set and has no overlap. One branch,
 `lean-first/b13b`, changes `tests/test_assist_invariants.py`; AR-9 leaves that file unchanged, as
 the plan's fixture requires.
 
@@ -93,12 +95,8 @@ the production gate still performs it. All three pass in the gate's isolated pyt
   outcomes at the batch gate.
 - Unchanged and passing: `tests/test_assist.py`, `test_assist_deadline.py`,
   `test_assist_invariants.py`, `test_assist_recovery.py`, `test_assist_recovery_replay.py`,
-  `test_b17_owner.py`, `test_assurance_manifest.py` (384 passed, 1 skipped: P5 materials are
-  absent here, as on `main`); the 117 test units `tools/select_tests.py` selected, 0 failed.
-  After the sync with `5479466f` the selection picked all 361 units, the whole suite, which the
-  full gate runs; these assist files with the split, evidence, manifest, owner, inventory and
-  merged AR-8 tests (14 files) gave 642 passed, 2 skipped (P5 materials; the gate check, which
-  waits for the gate).
+  `test_b17_owner.py`, `test_assurance_manifest.py`. The corrected selected run and the final
+  full gate include these files; their saved counts are in the outcome block.
 
 ## Seeded faults (`seed_faults.py`, `evidence/mutants.json`)
 
@@ -122,8 +120,8 @@ Each fault was removed by the script; every named test passes again afterwards.
   suite, but its temporary scratch directory disappeared during the run. That incomplete run
   was interrupted; it produced no usable gate result. The next gate
   attempt at `9d82676d` stopped at clean-tree preflight because its new output filename was
-  untracked; no build or test stage ran. The final gate below runs on a new committed HEAD
-  with an explicit worker count and the ignored `gate-result.json` path.
+  untracked; no build or test stage ran. The final gate used eight workers on committed
+  `eb433e5b` with the ignored `gate-result.json` path and passed.
 - The full gate on `7b44a234` passed Lean build/audit and Rust build/tests, then recorded
   14,360 Python passes, 92 skips, and three failures in the same gate interruption test.
   `--rerun-failed` reproduced the three failures in the isolated environment. The fixture
@@ -131,7 +129,7 @@ Each fault was removed by the script; every named test passes again afterwards.
   fixture's static import edge masked one selector mutation; replacing it with the test
   module's existing `gate` reference restored that mutation check. The corrected selected
   run passed all 360 units; its cache save was recovered as recorded above.
-- 4.1 item 1: the full gate (`tools/gate.py`) runs once on the final code commit; its result is
+- 4.1 item 1: the full gate (`tools/gate.py`) ran on the final code commit; its result is
   `evidence/gate.json` and the scope `evidence/scope.json` (`measure.py --scope`, from the
   merge-base with `main`, `--no-merges`), saved in a later commit that changes only
   `docs/arch/AR-9/`. `split.json` is measured from the same merge-base; `main` changed no file
@@ -155,7 +153,8 @@ fault script restores every file it changes. Line 16: the list of names the modu
 pinned in the test and generated from the base syntax tree in `split.json`; the reviewed handler
 list is read from the manifest. Line 20: the outcome block is generated and tested. Line 21:
 every acceptance item is AGENT; none is HUMAN or EXTERNAL. Line 22: selected tests while
-iterating, the full gate once at the end. Line 23: no user-visible delta (`DELTA.md`).
+iterating, then the passing full gate on the repaired committed HEAD. Line 23: no user-visible
+delta (`DELTA.md`).
 
 ## Follow-ups
 
