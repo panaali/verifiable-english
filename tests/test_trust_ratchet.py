@@ -2,6 +2,7 @@
 `--check`, `--allow` and `--write` over small git histories, and the committed budget file."""
 from __future__ import annotations
 
+import argparse
 import json
 import os
 from pathlib import Path
@@ -110,6 +111,68 @@ def test_ten_untied_lines_need_a_signed_allowance(repo, capsys):
     edited["allowances"][0]["lines"] = 9
     (repo / "docs/trust-baseline.json").write_text(json.dumps(edited))
     assert run(repo, "--check") == 1
+
+
+NOT_SIGNATURES = [trust_map.UNSIGNED, "unsigned", "DRI signature pending", "awaiting the DRI", "DRI: TBD",
+                  "DRI (not yet signed)", "TODO DRI", "approved by the review", "x", "driver 2026-10-10"]
+SIGNATURES = ["DRI 2026-10-10", "DRI (orchestrator), lf-6 fix directive, 2026-10-06", "R6 (DRI-RULINGS.md)"]
+
+
+@pytest.mark.parametrize("signature", NOT_SIGNATURES)
+def test_a_new_allowance_without_the_dris_signature_grants_nothing(repo, capsys, signature):
+    """arch-AR-4 review F4: a new allowance carrying the migration's `UNSIGNED` marker (or any text
+    that is no DRI signature) granted its growth. Every way in refuses it: `--allow --signed`, and an
+    allowance written into the file by hand and checked."""
+    base = git(repo, "rev-parse", "HEAD")
+    git(repo, "checkout", "-qb", "feature")
+    write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 10, "D[V]")]})
+    commit(repo, "decoder")
+    with pytest.raises(SystemExit):
+        run(repo, "--allow", "--reason", "demo growth", "--signed", signature)
+    data = baseline(repo)
+    entry = {"class": "V", "lines": 10, "reason": "demo growth", "signature": signature, "commit": base}
+    (repo / "docs/trust-baseline.json").write_text(json.dumps({**data, "allowances": [entry]}))
+    capsys.readouterr()
+    assert run(repo, "--check") == 1
+    err = capsys.readouterr().err
+    assert "not the DRI's" in err or f"introduced since {base[:12]}" in err and "marks a rebaseline" in err, err
+
+
+@pytest.mark.parametrize("signature", SIGNATURES)
+def test_a_dri_or_standing_ruling_signature_grants_growth(repo, signature):
+    git(repo, "checkout", "-qb", "feature")
+    write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 10, "D[V]")]})
+    commit(repo, "decoder")
+    assert run(repo, "--allow", "--reason", "demo growth", "--signed", signature) == 0
+    assert run(repo, "--check") == 0
+
+
+def test_an_inherited_unsigned_allowance_stays_and_grants_nothing_new(repo, capsys):
+    """The 45 rebaselines before AR-4 keep the marker: the base has them, so they are history, not
+    growth; the probe of review F4 (the marker as a new allowance) fails, as written there."""
+    data = baseline(repo)
+    entry = {"class": "V", "lines": 10, "reason": "old growth", "signature": trust_map.UNSIGNED, "commit": "a" * 40}
+    (repo / "docs/trust-baseline.json").write_text(json.dumps({**data, "allowances": [entry]}))
+    commit(repo, "the migrated history")
+    git(repo, "checkout", "-qb", "feature")
+    write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 10, "D[V]")]})
+    commit(repo, "decoder")
+    capsys.readouterr()
+    assert run(repo, "--check") == 1
+    assert "V grew from 0 to 10 (signed allowance 0)" in capsys.readouterr().err
+
+
+def test_review_f4_probe(monkeypatch, tmp_path):
+    """PROBE F4 of arch-AR-4-review, as a test: `gate` over a measured base without allowances."""
+    zero = dict.fromkeys(trust_map.BUDGET, 0)
+    entry = dict(zip(trust_map.ALLOWANCE, ("V", 1, "growth", trust_map.UNSIGNED, "a" * 40)))
+    monkeypatch.setattr(trust_map, "resolve_base", lambda *_: ("a" * 40, None))
+    monkeypatch.setattr(trust_map, "measure_rev", lambda *_: ({}, [], {"budget": zero, "allowances": []}))
+    monkeypatch.setattr(trust_map, "report", lambda *_: None)
+    files = {"x": {**trust_map.empty_counts(), "D": 1, "D[V]": 1, "trusted": 1}}
+    path = tmp_path / "trust-baseline.json"
+    path.write_text(json.dumps({"budget": zero, "allowances": [entry]}))
+    assert trust_map.gate(argparse.Namespace(since=None, allow=False, write=False), tmp_path, files, path) == 1
 
 
 def test_an_allowance_the_base_has_is_not_this_changes(repo, capsys):
@@ -279,8 +342,7 @@ def test_every_allowance_field_is_typed(field, value):
     entry = dict(FIELDS) if field is None else {**FIELDS, field: value}
     if field is None:
         entry["extra"] = value
-    good = field is not None and (field in ("reason", "signature") and value == "x" * 3
-                                  or field == "lines" and value == 7)
+    good = field is not None and (field == "reason" and value == "x" * 3 or field == "lines" and value == 7)
     _, problems = trust_map.parse_baseline({"budget": {"K": 0, "S": 0, "V": 0}, "allowances": [entry]})
     assert bool(problems) != good, (field, value, problems)
     _, missing = trust_map.parse_baseline({"budget": {"K": 0, "S": 0, "V": 0},
