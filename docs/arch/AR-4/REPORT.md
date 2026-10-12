@@ -251,6 +251,24 @@ Probes: F2, F3 and F4 each failed before the fix. F3 and F4 pass after it. F4's 
 `report.py --check` claim. Its class is tested by `tests/test_batch_scope.py`. F2's probe reads the saved full-gate
 record, which predates the fix, so it still fails until the next full gate is saved.
 
+### Loop recheck (`arch-AR-4-looprecheck1.final.md`)
+
+- **F5 (B):** `report.py --check` validates the saved scope through `batch_scope.scope_problems` before reading
+  path entries or rendering metrics. Malformed scope nodes produce a scope problem; the review's `[1]` probe and
+  type mutations are regression cases in `tests/test_ar4_report.py`.
+- **F6 (B):** `trust_map.files_problems` checks the exact keys and non-negative integer types of both aggregate
+  records before comparing their values with computed counts. The review's `K: 1.0` probe is
+  `tests/test_trust_ratchet.py::test_review_f6_probe_rejects_float_budget`; further aggregate mutations pass
+  through the gate in `tests/test_gate_trust.py`.
+- **F1 and F2:** the HUMAN signature and full-gate records remain as described in "Open after the fixes".
+
+Both F5 and F6 executable probes failed before these fixes and pass after them. Their 27 named regression cases
+pass. The selected run completed 24 of 28 units successfully; two collection units failed because the new test
+IDs were absent from `tools/gate-collection.json`, and both passed on targeted rerun after the generated list added
+14 IDs with none removed. The layer-policy unit still reports the merge-base `ask` mismatch on targeted rerun.
+`tests/test_wire_gate_corpus.py` timed out after an hour under host load, as in the earlier AR-4 run. `lake build`
+passed (881 jobs) and `lean/audit.py` passed (479 sources, 5,196 named theorem declarations). No full gate was run.
+
 ### Tests run for the fixes
 
 - `lake build`: success, 881 jobs. `python lean/audit.py`: PASS, 479 files and 5,196 theorems.
