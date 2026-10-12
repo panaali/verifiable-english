@@ -23,6 +23,8 @@ HERE = ROOT / "docs/arch/AR-4"
 EVIDENCE = HERE / "evidence"
 REPORT = HERE / "REPORT.md"
 DELTA = HERE / "DELTA.md"
+# Changed product files under tools/ with no behaviour to seed a bug in, each with the reason.
+NO_MUTANT = {"tools/regen_generated.py"}  # the trust-tables note's text only
 BEGIN, END = "<!-- BEGIN GENERATED AR-4 METRICS -->", "<!-- END GENERATED AR-4 METRICS -->"
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT))
@@ -110,11 +112,13 @@ def problems() -> list[str]:
         except (ValueError, subprocess.CalledProcessError) as exc:
             out.append(f"the evidence is not bound to HEAD: {exc}")
     killed = [m for m in mutants if m.get("killed") is True]
-    if not killed or len(killed) != len(mutants) or {m.get("file") for m in mutants} != {"tools/trust_map.py"}:
-        out.append("a seeded bug survived, or none names tools/trust_map.py")
-    source = hashlib.sha256(_git("show", f"{budget['head']}:tools/trust_map.py").encode()).hexdigest()
-    if {m.get("source_sha256") for m in mutants} != {source}:
-        out.append("the seeded bugs ran on another tools/trust_map.py than the evidence commit's")
+    product = {path for path in scope.get("files") or () if path.startswith("tools/") and path.endswith(".py")}
+    if not killed or len(killed) != len(mutants) or {m.get("file") for m in mutants} != product - NO_MUTANT:
+        out.append(f"a seeded bug survived, or the seeded bugs do not cover {', '.join(sorted(product - NO_MUTANT))}")
+    for path in sorted({m.get("file") for m in mutants} & product):
+        source = hashlib.sha256(_git("show", f"{budget['head']}:{path}").encode()).hexdigest()
+        if {m.get("source_sha256") for m in mutants if m.get("file") == path} != {source}:
+            out.append(f"the seeded bugs ran on another {path} than the evidence commit's")
     failed = [f["nodeid"] for f in full["failures"] if f["stage"] == "pytest"]
     if (full["status"] != "failed" or full["dirty"] or
             full["stages"] != ["toolchains", "lean_build", "lean_audit", "rust_build", "cargo_test", "pytest"] or
