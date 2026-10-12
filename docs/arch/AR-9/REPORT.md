@@ -1,7 +1,10 @@
 # AR-9 report: split the assist modules
 
 Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` (branch `design/arch-review`), section 4.3, AR-9; gate
-4.1 item 1. Branch `infra/arch-AR-9`. No Lean change. No user-visible change (`DELTA.md`).
+4.1 item 1. Branch `infra/arch-AR-9`. The split changes no Lean. One more commit, `fc30653f`, is
+`c88e4012` from `infra/oom-rootcause` picked unchanged so the pre-review relay mutation gate passes
+(see "Relay gate"). That commit changes Lean's readings-route response shape. The split has no
+user-visible change; the picked fix's one delta is signed under R8 (`DELTA.md`).
 
 ## Outcome
 
@@ -17,6 +20,8 @@ Every number in the outcome block is rendered by `report.py` from `evidence/` an
 - Names the two modules defined that they no longer provide: 0.
 - Function-level imports in `ve/assist/`: 25 before, 25 after.
 - Seeded faults: 5/5 caught by every named test (9 failing runs); after restoring, 9/9 runs pass.
+- Relay mutation gate (picked readings-route fix): 39 routes, 109,195 mutants, 0 failures.
+- Relay-fix seeded faults (lean, python): 3/3 caught by every named test; after restoring, 4/4 runs pass.
 - Selected test units at `f1ab8177`: 360/360 passed.
 - Saved scope: `5479466f..eb433e5b --no-merges`, 14 commit(s): `eb433e5b`, `f1ab8177`, `6ddfe8b2`, `7b44a234`, `9d82676d`, `e0cbab24`, `727f7fa4`, `7759894a`, `8101a733`, `16383a2f`, `7f137b63`, `cb10ebb9`, `27339266`, `9ab9127d`.
 - Full gate at `eb433e5b`: passed; 14,363 passed, 92 skipped, 0 failed; 36 Rust tests passed.
@@ -57,7 +62,7 @@ Two constraints decided the split beyond the plan's three themes per module:
 
 Files touched: `ve/assist/recovery.py`, `ve/assist/session.py`, six new `ve/assist/*_*.py`,
 `tests/test_assist_split.py`, `tests/conftest.py`, `tools/gate-collection.json`,
-`docs/arch/AR-9/`. At the start, and again on 2026-10-11 after each sync with `main` (`96887019`,
+`docs/arch/AR-9/`, and the 12 files of the picked `c88e4012` (see "Relay gate"). At the start, and again on 2026-10-11 after each sync with `main` (`96887019`,
 then `5479466f`, which merged AR-8), `git diff --name-only main...<branch>` for every branch matching `lean-first/*`,
 `readings-defaults/*`, `question-answering/*` and `infra/*` named no file AR-9 touches except the
 generated `tools/gate-collection.json`, which is not an overlap (R12). The later
@@ -112,6 +117,15 @@ All five are Python, the only language whose product code AR-9 changes.
 
 Each fault was removed by the script; every named test passes again afterwards.
 
+For the picked relay fix (`seed_relay_faults.py`, `evidence/relay-mutants.json`), Lean faults
+rebuild `ve_service` and `ve_response_decode`; the script runs `lake build` after restoring:
+
+| Fault | File | Language | Failing tests |
+|---|---|---|---|
+| fill `label` loses `.minLength 1` | `lean/ResponseShape/Schemas/ReadingsRoute.lean` | Lean | `test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over` (the Lean decoder accepts an empty label that the schema refuses) |
+| `over` loses `.uniqueStrings` | `lean/ResponseShape/Schemas/ReadingsRoute.lean` | Lean | the same test (the decoder accepts repeated `over` names) |
+| `_x_unique_strings` ignores repeated names | `ve/backends/service_schema.py` | Python | `test_lean_service_schema.py::test_unique_string_lists_refuse_duplicate_rule_names`; `test_relay_mutation_gate.py::test_readings_route_refuses_empty_labels_targets_and_repeated_over_names` |
+
 ## Gate and what was not run
 
 - A gate left running by the expired prior session was still checking `727f7fa4` when this
@@ -137,38 +151,51 @@ Each fault was removed by the script; every named test passes again afterwards.
   the comparison is the plan's.
 - 4.1 item 2 does not apply: the plan's AR-9 row says assist has no corpus in the A/B and its
   tests are the gate. `tools/lean_first_diff.py` was not run.
-- 4.1 item 3 does not apply: no Lean file changed, so no `lake build` difference, no statement
-  or trust-map change. The Lean build used for the tests was copied from a worktree with the same
-  `lean/` tree and confirmed with `lake build`.
+- 4.1 item 3: the split changes no Lean file. The only Lean change is the picked `c88e4012`
+  (one new `Shape` constructor and three readings-route field shapes; `lean/declarations.txt`
+  regenerated in that commit). The rebuilt service passed `regen_generated.py --check`, so its
+  pins, statements and audit records are unchanged. The rebuild took 16.5 minutes.
 - 4.1 item 5 does not apply: no English module changed.
 
-## Pre-review status
+## Relay gate
 
-`review-ready.py` on `4d49ae2b` passed its clean-tree, commit, saved-gate,
-Python-mutant and DELTA checks. Its relay mutation gate failed on
-`service:readings-route`: seven `F7` untyped allow-list paths matched nothing,
-and five mutated answers were accepted without an allowance (empty or duplicate
-`fill`, empty `fill/*/label`, duplicate `units/*/content/norm/over`, and empty
-`targets/*`). It therefore reported **NOT READY**. The pre-review command
-completed; no check was left running.
+`review-ready.py` runs the relay mutation gate on any branch that changes `ve/`. At `4d49ae2b`
+and `d6655ba1` that gate failed on `service:readings-route` with 91 findings. 86 were allow-list
+paths that match nothing. The other 5 were mutated answers it accepted: empty `fill`, duplicate
+`fill`, empty `fill/*/label`, duplicate `units/*/content/norm/over`, and empty `targets/*`. The
+same failure is on `main`: no relay file changed between the merge base `5479466f` and `main`
+`49de179e`, and `infra/oom-rootcause` measured it at `5479466f`.
 
-This is outside AR-9's assist split. `tools/relay_mutation_gate.py`,
-`tools/relay-gate-allow.json` and `tests/data/relay-gate-cases.jsonl` have
-identical Git object IDs on `main` and this branch. The allow-list file overlaps
-`infra/oom-rootcause`, `lean-first/b14c`, and `question-answering/q2`; the corpus
-overlaps `lean-first/b14c`, `lean-first/b14d`, and `question-answering/q2`; the
-gate tool overlaps `question-answering/q2`. The plan's coordination rule says to
-avoid those files. The relay owner must resolve that gate failure before review;
-the passing full release gate for AR-9 is saved separately above.
+The fix for it already exists as `c88e4012` on `infra/oom-rootcause`, which is still in review.
+That commit adds the `uniqueStrings` shape (`x-unique-strings`; Lean decoder and Python
+compiler), requires a non-empty fill label and non-empty conflict targets, refuses repeated
+`over` names, and removes the stale allow-list entries. AR-9 picks it unchanged as `fc30653f`
+(`git cherry-pick -x`; it applied with no conflict). A second copy of the same logic would break
+the one-owner rule, so nothing in the pick was edited. Both branches now carry identical hunks,
+and a three-way merge of identical hunks is clean, so the two branches can merge in either order.
+After the pick:
+
+- `lake build` passed, and `tools/regen_generated.py --check` reported every generated record
+  current, including the checker pins.
+- The relay mutation gate on `fc30653f` found 0 failures (`evidence/relay-gate.json`; counts in
+  the outcome block).
+- The pick's tests and the schema, manifest, audit, collection and relay tests passed (855, `-n 8`).
+- Its faults are seeded in Lean and Python ("Seeded faults" below).
+
+Overlap: the pick touches `tools/relay-gate-allow.json`, which `lean-first/b14c` and
+`question-answering/q2` also change, as `infra/oom-rootcause` already does. AR-9 adds no change
+there beyond `c88e4012`'s, so it adds no conflict that the oom branch does not already have.
 
 ## Build checklist
 
 Lines 1 to 6, 8 to 10, 15 and 17 to 19 cover wires, relayed answers, parsers, verdicts, Lean and
-English, none of which AR-9 changes. Line 7: every deadline test in `test_assist_deadline.py`
+English. The split changes none of them. The picked relay fix is the reviewed `c88e4012`, unchanged:
+its relayed answer stays fully typed and bound, and the relay gate shows 0 untyped or accepted
+findings. Its seeded faults are listed above. Line 7: every deadline test in `test_assist_deadline.py`
 passes unchanged; the seams keep each injected delay inside its budget. Line 11: the new tests
 and `measure.py` read Python with `ast`, not regular expressions. Line 12: the ledger replay tests
-pass unchanged. Line 13: five seeded faults, above. Line 14: the new tests write nothing; the
-fault script restores every file it changes. Line 16: the list of names the modules defined is
+pass unchanged. Line 13: five seeded faults for the split and three for the pick, above. Line 14:
+the new tests write nothing; both fault scripts restore every file they change. Line 16: the list of names the modules defined is
 pinned in the test and generated from the base syntax tree in `split.json`; the reviewed handler
 list is read from the manifest. Line 20: the outcome block is generated and tested. Line 21:
 every acceptance item is AGENT; none is HUMAN or EXTERNAL. Line 22: selected tests while
