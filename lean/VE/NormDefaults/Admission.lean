@@ -42,26 +42,43 @@ the source environment: W1's single-rule checks apply. -/
 def checkQuoted (s : Wire.SourceU) (j : Json) : Except String Unit :=
   VE.Norms.Admission.checkQuoted s.src j
 
-def LayerLeaf (s : Wire.SourceU) (w : WireNode) : Prop :=
+/-- A regenerated layer premise of `T‴` (`layer:norms:<p>`), with no unit pointer: over the `UDoc` it reads, so the
+    layered soft branch (`LayeredAdmission.lean`) admits the same leaves of its own filled tree. -/
+def LayerLeafU (U : UDoc) (w : WireNode) : Prop :=
   (w.deduction.isNone && w.unit.isNone &&
-    ((syms (fill s.U).T).filterMap (fun | .reg r => some r | .defn _ => none)).any
+    ((syms (fill U).T).filterMap (fun | .reg r => some r | .defn _ => none)).any
       (fun r => decide (w.claim.label = "layer:norms:" ++ r.name ∧
-        w.claim.formula = elabPremise (fill s.U).T r))) = true
+        w.claim.formula = elabPremise (fill U).T r))) = true
+
+instance (U : UDoc) (w : WireNode) : Decidable (LayerLeafU U w) := by
+  unfold LayerLeafU; infer_instance
+
+def ProfileLeafU (U : UDoc) (w : WireNode) : Prop :=
+  (w.deduction.isNone && w.unit.isNone && w.claim.label == "background:profile" &&
+    (pairPremises (fill U).T).any (fun a => decide (w.claim.formula = a))) = true
+
+instance (U : UDoc) (w : WireNode) : Decidable (ProfileLeafU U w) := by
+  unfold ProfileLeafU; infer_instance
+
+/-- A regenerated `Fill_T` premise, under its exact label, with no unit pointer. -/
+def FillLeafU (U : UDoc) (w : WireNode) : Prop :=
+  (w.deduction.isNone && w.unit.isNone &&
+    (fillLabelled U).any (fun (l, a) => decide (w.claim.label = l ∧ w.claim.formula = a))) = true
+
+instance (U : UDoc) (w : WireNode) : Decidable (FillLeafU U w) := by
+  unfold FillLeafU; infer_instance
+
+def LayerLeaf (s : Wire.SourceU) (w : WireNode) : Prop := LayerLeafU s.U w
 
 instance (s : Wire.SourceU) (w : WireNode) : Decidable (LayerLeaf s w) := by
   unfold LayerLeaf; infer_instance
 
-def ProfileLeaf (s : Wire.SourceU) (w : WireNode) : Prop :=
-  (w.deduction.isNone && w.unit.isNone && w.claim.label == "background:profile" &&
-    (pairPremises (fill s.U).T).any (fun a => decide (w.claim.formula = a))) = true
+def ProfileLeaf (s : Wire.SourceU) (w : WireNode) : Prop := ProfileLeafU s.U w
 
 instance (s : Wire.SourceU) (w : WireNode) : Decidable (ProfileLeaf s w) := by
   unfold ProfileLeaf; infer_instance
 
-/-- A regenerated `Fill_T` premise, under its exact label, with no unit pointer. -/
-def FillLeaf (s : Wire.SourceU) (w : WireNode) : Prop :=
-  (w.deduction.isNone && w.unit.isNone &&
-    (fillLabelled s.U).any (fun (l, a) => decide (w.claim.label = l ∧ w.claim.formula = a))) = true
+def FillLeaf (s : Wire.SourceU) (w : WireNode) : Prop := FillLeafU s.U w
 
 instance (s : Wire.SourceU) (w : WireNode) : Decidable (FillLeaf s w) := by
   unfold FillLeaf; infer_instance
@@ -249,7 +266,7 @@ theorem admitDocument_spec (environment document : Json) (res : Admitted)
 
 theorem layerLeaf_formula (s : Wire.SourceU) (w : WireNode) (h : LayerLeaf s w) :
     w.claim.formula ∈ elaborate (fill s.U).T := by
-  simp only [LayerLeaf, Bool.and_eq_true] at h
+  simp only [LayerLeaf, LayerLeafU, Bool.and_eq_true] at h
   obtain ⟨r, hr, he⟩ := List.any_eq_true.mp h.2
   have heq : w.claim.label = "layer:norms:" ++ r.name ∧
       w.claim.formula = elabPremise (fill s.U).T r := of_decide_eq_true he
@@ -267,7 +284,7 @@ theorem layerLeaf_formula (s : Wire.SourceU) (w : WireNode) (h : LayerLeaf s w) 
 
 theorem fillLeaf_formula (s : Wire.SourceU) (w : WireNode) (h : FillLeaf s w) :
     w.claim.formula ∈ fillPremises s.U := by
-  simp only [FillLeaf, Bool.and_eq_true] at h
+  simp only [FillLeaf, FillLeafU, Bool.and_eq_true] at h
   obtain ⟨⟨l, a⟩, hm, he⟩ := List.any_eq_true.mp h.2
   have heq : w.claim.label = l ∧ w.claim.formula = a := of_decide_eq_true he
   rw [heq.2]
@@ -331,7 +348,7 @@ theorem wire_report_consequence (environment document : Json) (res : Admitted)
           exact hbm
       · cases hb
     · exact absurd ⟨w, hw, hwl, Or.inl hadm⟩ hlayer
-    · simp only [ProfileLeaf, Bool.and_eq_true] at hadm
+    · simp only [ProfileLeaf, ProfileLeafU, Bool.and_eq_true] at hadm
       obtain ⟨a, ha, hfa⟩ := List.any_eq_true.mp hadm.2
       rw [← hwl, of_decide_eq_true hfa]
       apply hregen

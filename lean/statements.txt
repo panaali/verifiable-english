@@ -8074,6 +8074,23 @@ theorem VE.GraphChecks.testCertificate_sound
   ∀ (E : VE.Environment), VE.Graph.CertificateSound E VE.GraphChecks.valid
   -- uses VE.Environment@VE.Syntax VE.Graph.CertificateSound@VE.ClaimGraph VE.GraphChecks.TestCertificate@VE.GraphChecks VE.GraphChecks.valid@VE.GraphChecks
   -- expr 3640407803
+theorem VE.NormDefaults.Admission.admitDocumentX_spec
+  ∀ (environment document : Lean.Json) (res : VE.NormDefaults.Admission.AdmittedX),
+    VE.NormDefaults.Admission.admitDocumentX environment document = Except.ok res →
+      VE.NormDefaults.Admission.SourceDecodedX environment document res ∧
+        VE.NormDefaults.Admission.CertificatesBoundX environment res ∧
+          VE.Graph.SoundReport (VE.NormDefaults.fill res.L.U).E res.graph res.report ∧
+            (∀ (w : VE.Route.Admission.WireNode),
+                w ∈ res.wires → VE.NormDefaults.Admission.NodeAdmittedX res.L res.doc w) ∧
+              (∀ (leaf : VE.Graph.Claim),
+                  leaf ∈ res.report.assumptions →
+                    ∃ w,
+                      w ∈ res.wires ∧
+                        w.claim = leaf ∧
+                          w.deduction = Option.none ∧ VE.NormDefaults.Admission.NodeAdmittedX res.L res.doc w) ∧
+                VE.Route.Admission.CitationsClosed res.doc res.report ∧ VE.Route.Admission.ChoicesCompatible res.report
+  -- uses VE.Graph.Claim@VE.ClaimGraph VE.Graph.Edge@VE.ClaimGraph VE.Graph.Report.assumptions@VE.ClaimGraph VE.Graph.SoundReport@VE.ClaimGraph VE.NormDefaults.Admission.AdmittedX.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.doc@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.graph@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.report@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.wires@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.CertificatesBoundX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.NodeAdmittedX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.SourceDecodedX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.admitDocumentX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Route.Admission.ChoicesCompatible@VE.Route.Admission VE.Route.Admission.CitationsClosed@VE.Route.Admission VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode.deduction@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.Tableau.Certificate@VE.Tableau
+  -- expr 1282145210
 theorem VE.NormDefaults.Admission.admitDocument_spec
   ∀ (environment document : Lean.Json) (res : VE.NormDefaults.Admission.Admitted),
     VE.NormDefaults.Admission.admitDocument environment document = Except.ok res →
@@ -8091,12 +8108,23 @@ theorem VE.NormDefaults.Admission.admitDocument_spec
                 VE.Route.Admission.CitationsClosed res.doc res.report ∧ VE.Route.Admission.ChoicesCompatible res.report
   -- uses VE.Graph.Claim@VE.ClaimGraph VE.Graph.Edge@VE.ClaimGraph VE.Graph.Report.assumptions@VE.ClaimGraph VE.Graph.SoundReport@VE.ClaimGraph VE.NormDefaults.Admission.Admitted.doc@VE.NormDefaults.Admission VE.NormDefaults.Admission.Admitted.graph@VE.NormDefaults.Admission VE.NormDefaults.Admission.Admitted.report@VE.NormDefaults.Admission VE.NormDefaults.Admission.Admitted.s@VE.NormDefaults.Admission VE.NormDefaults.Admission.Admitted.wires@VE.NormDefaults.Admission VE.NormDefaults.Admission.Admitted@VE.NormDefaults.Admission VE.NormDefaults.Admission.CertificatesBound@VE.NormDefaults.Admission VE.NormDefaults.Admission.NodeAdmitted@VE.NormDefaults.Admission VE.NormDefaults.Admission.SourceDecoded@VE.NormDefaults.Admission VE.NormDefaults.Admission.admitDocument@VE.NormDefaults.Admission VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Route.Admission.ChoicesCompatible@VE.Route.Admission VE.Route.Admission.CitationsClosed@VE.Route.Admission VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode.deduction@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.Tableau.Certificate@VE.Tableau
   -- expr 1122567036
+theorem VE.NormDefaults.Admission.admitNodesX_ok
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (D : VE.Route.Admission.Doc) (ws : List VE.Route.Admission.WireNode),
+    VE.NormDefaults.Admission.admitNodesX L D ws = Except.ok () →
+      ∀ (w : VE.Route.Admission.WireNode), w ∈ ws → VE.NormDefaults.Admission.NodeAdmittedX L D w
+  -- uses VE.NormDefaults.Admission.NodeAdmittedX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.admitNodesX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Route.Admission.Doc@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission
+  -- expr 4144107156
 theorem VE.NormDefaults.Admission.admitNodes_ok
   ∀ (s : VE.NormDefaults.Wire.SourceU) (D : VE.Route.Admission.Doc) (ws : List VE.Route.Admission.WireNode),
     VE.NormDefaults.Admission.admitNodes s D ws = Except.ok () →
       ∀ (w : VE.Route.Admission.WireNode), w ∈ ws → VE.NormDefaults.Admission.NodeAdmitted s D w
   -- uses VE.NormDefaults.Admission.NodeAdmitted@VE.NormDefaults.Admission VE.NormDefaults.Admission.admitNodes@VE.NormDefaults.Admission VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.Route.Admission.Doc@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission
   -- expr 3537408290
+theorem VE.NormDefaults.Admission.fillLeafU_formula
+  ∀ (U : VE.NormDefaults.UDoc) (w : VE.Route.Admission.WireNode),
+    VE.NormDefaults.Admission.FillLeafU U w → w.claim.formula ∈ VE.NormDefaults.fillPremises U
+  -- uses VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.NormDefaults.Admission.FillLeafU@VE.NormDefaults.Admission VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission
+  -- expr 2388916963
 theorem VE.NormDefaults.Admission.fillLeaf_formula
   ∀ (s : VE.NormDefaults.Wire.SourceU) (w : VE.Route.Admission.WireNode),
     VE.NormDefaults.Admission.FillLeaf s w → w.claim.formula ∈ VE.NormDefaults.fillPremises s.U
@@ -8106,11 +8134,27 @@ theorem VE.NormDefaults.Admission.fill_lits_source
   ∀ (s : VE.NormDefaults.Wire.SourceU), (VE.NormDefaults.fill s.U).lits = s.src.ne.rv.literals
   -- uses VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.lits@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.Source.ne@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire
   -- expr 4108257431
+theorem VE.NormDefaults.Admission.layerLeafU_formula
+  ∀ (U : VE.NormDefaults.UDoc) (w : VE.Route.Admission.WireNode),
+    VE.NormDefaults.Admission.LayerLeafU U w → w.claim.formula ∈ VE.Norms.elaborate (VE.NormDefaults.fill U).T
+  -- uses VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.NormDefaults.Admission.LayerLeafU@VE.NormDefaults.Admission VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.elaborate@VE.Norms.Elaborate VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission
+  -- expr 1209650264
 theorem VE.NormDefaults.Admission.layerLeaf_formula
   ∀ (s : VE.NormDefaults.Wire.SourceU) (w : VE.Route.Admission.WireNode),
     VE.NormDefaults.Admission.LayerLeaf s w → w.claim.formula ∈ VE.Norms.elaborate (VE.NormDefaults.fill s.U).T
   -- uses VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.NormDefaults.Admission.LayerLeaf@VE.NormDefaults.Admission VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.elaborate@VE.Norms.Elaborate VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission
   -- expr 2154536994
+theorem VE.NormDefaults.Admission.runAdmissionX_sound
+  ∀ (id : String) (environment document answer : Lean.Json),
+    VE.NormDefaults.Admission.runAdmissionX id environment document = Except.ok answer →
+      VE.NormDefaults.Admission.AdmissionAnswerX id environment document answer
+  -- uses VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.runAdmissionX@VE.NormDefaults.LayeredAdmission
+  -- expr 2037136431
+theorem VE.NormDefaults.Admission.softLeafX_formula
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (w : VE.Route.Admission.WireNode),
+    VE.NormDefaults.Admission.SoftLeafX L w → w.claim.formula ∈ L.X
+  -- uses VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.NormDefaults.Admission.SoftLeafX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission
+  -- expr 1977029270
 theorem VE.NormDefaults.Admission.wire_report_consequence
   ∀ (environment document : Lean.Json) (res : VE.NormDefaults.Admission.Admitted),
     VE.NormDefaults.Admission.admitDocument environment document = Except.ok res →
@@ -8124,16 +8168,42 @@ theorem VE.NormDefaults.Admission.wire_report_consequence
                 VE.Formula.denote S [] res.report.root.formula
   -- uses VE.Data.Background.generate@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.Graph.Report.root@VE.ClaimGraph VE.NormDefaults.Admission.Admitted.doc@VE.NormDefaults.Admission VE.NormDefaults.Admission.Admitted.report@VE.NormDefaults.Admission VE.NormDefaults.Admission.Admitted.s@VE.NormDefaults.Admission VE.NormDefaults.Admission.Admitted@VE.NormDefaults.Admission VE.NormDefaults.Admission.admitDocument@VE.NormDefaults.Admission VE.NormDefaults.Admission.otherAssumptions@VE.NormDefaults.Admission VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.background@VE.Norms.Prefix VE.Norms.elaborate@VE.Norms.Elaborate VE.Route.Admission.Doc.flags@VE.Route.Admission VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 4105208596
+theorem VE.NormDefaults.Admission.wire_report_consequenceX
+  ∀ (environment document : Lean.Json) (res : VE.NormDefaults.Admission.AdmittedX),
+    VE.NormDefaults.Admission.admitDocumentX environment document = Except.ok res →
+      ∀ (S : VE.Structure),
+        S.Admissible (VE.NormDefaults.fill res.L.U).E →
+          VE.Norms.Sat S (VE.Data.Background.generate res.doc.flags) →
+            VE.Norms.Sat S
+                (VE.Norms.background (VE.NormDefaults.fill res.L.U) ++ res.L.X ++ VE.NormDefaults.fillPremises res.L.U ++
+                  VE.Norms.elaborate (VE.NormDefaults.fill res.L.U).T) →
+              VE.Norms.Sat S (List.map (fun x => x.formula) (VE.NormDefaults.Admission.otherAssumptionsX res)) →
+                VE.Formula.denote S [] res.report.root.formula
+  -- uses VE.Data.Background.generate@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.Graph.Report.root@VE.ClaimGraph VE.NormDefaults.Admission.AdmittedX.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.doc@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.report@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.admitDocumentX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.otherAssumptionsX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.background@VE.Norms.Prefix VE.Norms.elaborate@VE.Norms.Elaborate VE.Route.Admission.Doc.flags@VE.Route.Admission VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1523594539
 theorem VE.NormDefaults.Run.normDefaults_wire_admission
   ∀ (j answer : Lean.Json),
     VE.NormDefaults.Run.runCase j = Except.ok answer →
       VE.Route.Run.caseKind j = Except.ok "admission" →
         VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment") = Bool.true →
-          ∃ id,
-            VE.Bridge.stringField j "id" = Except.ok id ∧
-              VE.NormDefaults.Run.AdmissionAnswerU id (j.getObjValD "environment") (j.getObjValD "document") answer
-  -- uses VE.Bridge.stringField@VE.Bridge VE.NormDefaults.Run.AdmissionAnswerU@VE.NormDefaults.Run VE.NormDefaults.Run.runCase@VE.NormDefaults.Run VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.Route.Run.caseKind@VE.Route.Run
-  -- expr 1046854310
+          VE.NormDefaults.Wire.layeredRoute (j.getObjValD "environment") ≠ Option.some "soft-norms@0" →
+            ∃ id,
+              VE.Bridge.stringField j "id" = Except.ok id ∧
+                VE.NormDefaults.Run.AdmissionAnswerU id (j.getObjValD "environment") (j.getObjValD "document") answer
+  -- uses VE.Bridge.stringField@VE.Bridge VE.NormDefaults.Run.AdmissionAnswerU@VE.NormDefaults.Run VE.NormDefaults.Run.runCase@VE.NormDefaults.Run VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.NormDefaults.Wire.layeredRoute@VE.NormDefaults.Layered VE.Route.Run.caseKind@VE.Route.Run
+  -- expr 2716364276
+theorem VE.NormDefaults.Run.normDefaults_wire_admissionX
+  ∀ (j answer : Lean.Json),
+    VE.NormDefaults.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "admission" →
+        VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment") = Bool.true →
+          VE.NormDefaults.Wire.layeredRoute (j.getObjValD "environment") = Option.some "soft-norms@0" →
+            ∃ id,
+              VE.Bridge.stringField j "id" = Except.ok id ∧
+                VE.NormDefaults.Admission.AdmissionAnswerX id (j.getObjValD "environment") (j.getObjValD "document")
+                  answer
+  -- uses VE.Bridge.stringField@VE.Bridge VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Run.runCase@VE.NormDefaults.Run VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.NormDefaults.Wire.layeredRoute@VE.NormDefaults.Layered VE.Route.Run.caseKind@VE.Route.Run
+  -- expr 4176715051
 theorem VE.NormDefaults.Run.runAdmission_sound
   ∀ (id : String) (environment document answer : Lean.Json),
     VE.NormDefaults.Run.runAdmission id environment document = Except.ok answer →
@@ -8236,6 +8306,25 @@ theorem VE.NormDefaults.Wire.conflictFreeCheckX_sound
         VE.NormDefaults.Wire.conflictFreeCheckX U X certs = Bool.true → VE.NormDefaults.Wire.ConflictFreeX U X
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeCheckX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Tableau.Certificate@VE.Tableau
   -- expr 575553048
+theorem VE.NormDefaults.Wire.decodeSoftU_X_wellFormed
+  ∀ (environment norms : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
+    VE.NormDefaults.Wire.decodeSoftU environment norms = Except.ok L →
+      ∀ (a : VE.Formula), a ∈ L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) [] a
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
+  -- expr 2295724557
+theorem VE.NormDefaults.Wire.decodeSoftU_source
+  ∀ (environment norms : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
+    VE.NormDefaults.Wire.decodeSoftU environment norms = Except.ok L →
+      ∃ env' src,
+        VE.NormDefaults.Wire.placeholderJson environment = Except.ok env' ∧
+          VE.SoftNorms.Wire.decodeSoftSource env' norms = Except.ok src ∧
+            L.D = src.D ∧
+              L.U =
+                  { D := VE.SoftNorms.soften src.D,
+                    unspec := VE.NormDefaults.Wire.unspecOf environment (VE.SoftNorms.soften src.D) } ∧
+                L.labelled = VE.NormDefaults.Wire.softLabelledU L.U src.D ∧ L.rightsCount = 0 ∧ L.route = "soft-norms@0"
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.labelled@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.rightsCount@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.route@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.placeholderJson@VE.NormDefaults.Wire VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.NormDefaults.Wire.unspecOf@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 373563461
 theorem VE.NormDefaults.Wire.decodeSourceU_plain
   ∀ {environment norms : Lean.Json} {s : VE.NormDefaults.Wire.SourceU},
     VE.NormDefaults.Wire.decodeSourceU environment norms = Except.ok s →
@@ -8300,6 +8389,12 @@ theorem VE.NormDefaults.Wire.layered_report_sound
     VE.NormDefaults.Wire.ReportSound (VE.NormDefaults.Wire.layeredSource L packages) rep
   -- uses VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.ReportG@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.layeredSource@VE.NormDefaults.Layered
   -- expr 4184792209
+theorem VE.NormDefaults.Wire.layered_wire_acceptance
+  ∀ (j : Lean.Json) (r : VE.NormDefaults.Wire.LayeredEntailment),
+    VE.NormDefaults.Wire.replayLayeredEntailment j = Except.ok r →
+      r.valid = Bool.true → VE.NormDefaults.EntailsX r.L.U r.L.X r.premises r.conclusion
+  -- uses VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.LayeredEntailment.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.conclusion@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.premises@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.valid@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.replayLayeredEntailment@VE.NormDefaults.LayeredAdmission
+  -- expr 2696466955
 theorem VE.NormDefaults.Wire.lookup_append
   ∀ {α : Type} (l₁ l₂ : List (String × α)) (k : String),
     VE.Bridge.lookup (l₁ ++ l₂) k =
@@ -8428,6 +8523,18 @@ theorem VE.NormDefaults.Wire.settled_every_filling
             ρ φ
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.settledConflict@VE.NormDefaults.Explain VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2062146703
+theorem VE.NormDefaults.Wire.softLabelledU_wellFormed
+  ∀ (D : VE.SoftNorms.SoftDoc) (unspec : List String),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      VE.NormDefaults.WellFormedU { D := VE.SoftNorms.soften D, unspec := unspec } = Bool.true →
+        ∀ (a : VE.Formula),
+          a ∈
+              List.map (fun x => x.snd)
+                (VE.NormDefaults.Wire.softLabelledU { D := VE.SoftNorms.soften D, unspec := unspec } D) →
+            VE.Formula.WellFormed
+              (VE.Norms.envAt (VE.NormDefaults.fill { D := VE.SoftNorms.soften D, unspec := unspec }) 0) [] a
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 1174668906
 theorem VE.NormDefaults.Wire.targetU_refutes
   ∀ (U : VE.NormDefaults.UDoc),
     VE.Norms.WellFormed (VE.NormDefaults.fill U) = Bool.true →
@@ -9153,6 +9260,25 @@ theorem VE.NormDefaults.fillRoot_sign
   ∀ (U : VE.NormDefaults.UDoc) (N : VE.Norms.Node), (VE.NormDefaults.fillRoot U N).sign = N.sign
   -- uses VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fillRoot@VE.NormDefaults.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree
   -- expr 3499009322
+theorem VE.NormDefaults.fillSelects_wellFormed
+  ∀ (D : VE.SoftNorms.SoftDoc) (unspec : List String),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      VE.NormDefaults.WellFormedU { D := VE.SoftNorms.soften D, unspec := unspec } = Bool.true →
+        ∀ (K : VE.SoftNorms.SoftNode),
+          K ∈ D.T.nodes →
+            VE.Formula.WellFormed
+                (VE.Norms.envAt (VE.NormDefaults.fill { D := VE.SoftNorms.soften D, unspec := unspec }) 0)
+                (VE.SoftNorms.sortsOf D K.pred).reverse
+                (VE.Norms.subst (VE.NormDefaults.fill { D := VE.SoftNorms.soften D, unspec := unspec }).T
+                  (VE.Norms.size (VE.NormDefaults.fill { D := VE.SoftNorms.soften D, unspec := unspec }))
+                  (VE.Norms.selects (VE.NormDefaults.fill { D := VE.SoftNorms.soften D, unspec := unspec }).T
+                    (VE.Norms.fuel (VE.NormDefaults.fill { D := VE.SoftNorms.soften D, unspec := unspec }).T)
+                    (VE.SoftNorms.primeNode D K))) ∧
+              ∀ (s : String),
+                s ∈ VE.SoftNorms.sortsOf D K.pred →
+                  s ∈ (VE.Norms.envAt (VE.NormDefaults.fill { D := VE.SoftNorms.soften D, unspec := unspec }) 0).sorts
+  -- uses VE.Environment.sorts@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.fuel@VE.Norms.Elaborate VE.Norms.selects@VE.Norms.Elaborate VE.Norms.size@VE.Norms.Tree VE.Norms.subst@VE.Norms.Subst VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
+  -- expr 963352899
 theorem VE.NormDefaults.fill_E
   ∀ (U : VE.NormDefaults.UDoc), (VE.NormDefaults.fill U).E = VE.NormDefaults.fillEnv U
   -- uses VE.Environment@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillEnv@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree
@@ -10129,6 +10255,14 @@ theorem VE.NormDefaults.selects_stable
             VE.NormDefaults.belowCount T N ≤ g → (VE.Norms.SelectsD T S ρ f N ↔ VE.Norms.SelectsD T S ρ g N)
   -- uses VE.NormDefaults.belowCount@VE.NormDefaults.Fill VE.Norms.Node@VE.Norms.Tree VE.Norms.SelectsD@VE.Norms.Elaborate VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.precedenceNodes@VE.Norms.Tree VE.Route.DagAcyclic@VE.Route.Route VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 3507292981
+theorem VE.NormDefaults.selects_wellFormed_of
+  ∀ {T : VE.Norms.Tree} {E : VE.Environment} {Γ : List String} {p : String},
+    VE.Norms.RulesTyped T E Γ p →
+      ∀ (f : Nat) (M : VE.Norms.Node),
+        (VE.Formula.WellFormed E Γ M.guard ∧ ∀ (C : VE.Formula), C ∈ M.carveOuts → VE.Formula.WellFormed E Γ C) →
+          M.pred = p → VE.Formula.WellFormed E Γ (VE.Norms.selects T f M)
+  -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.RulesTyped@VE.Norms.Elaborate VE.Norms.Tree@VE.Norms.Tree VE.Norms.selects@VE.Norms.Elaborate
+  -- expr 692915836
 theorem VE.NormDefaults.settled_all_expansions
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -19248,24 +19382,6 @@ theorem VE.Readings.fillSelects_typed
                     (VE.SoftNorms.primeNode (VE.Rights.correlate X) K))
   -- uses VE.Formula.WellFormed@VE.Syntax VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.envAt@VE.Norms.Tree VE.Norms.fuel@VE.Norms.Elaborate VE.Norms.selects@VE.Norms.Elaborate VE.Norms.size@VE.Norms.Tree VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.asU@VE.Readings.Unspecified VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.primeNode@VE.SoftNorms.Soften
   -- expr 2169290850
-theorem VE.Readings.fillSelects_wellFormed
-  ∀ (N : VE.Readings.NDoc) (X : VE.Rights.RightsDoc),
-    VE.SoftNorms.WellFormedSoft (VE.Rights.correlate X) = Bool.true →
-      VE.NormDefaults.WellFormedU (VE.Readings.asU N X) = Bool.true →
-        ∀ (K : VE.SoftNorms.SoftNode),
-          K ∈ (VE.Rights.correlate X).T.nodes →
-            VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.asU N X)) 0)
-                (VE.SoftNorms.sortsOf (VE.Rights.correlate X) K.pred).reverse
-                (VE.Norms.subst (VE.NormDefaults.fill (VE.Readings.asU N X)).T
-                  (VE.Norms.size (VE.NormDefaults.fill (VE.Readings.asU N X)))
-                  (VE.Norms.selects (VE.NormDefaults.fill (VE.Readings.asU N X)).T
-                    (VE.Norms.fuel (VE.NormDefaults.fill (VE.Readings.asU N X)).T)
-                    (VE.SoftNorms.primeNode (VE.Rights.correlate X) K))) ∧
-              ∀ (s : String),
-                s ∈ VE.SoftNorms.sortsOf (VE.Rights.correlate X) K.pred →
-                  s ∈ (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.asU N X)) 0).sorts
-  -- uses VE.Environment.sorts@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.fuel@VE.Norms.Elaborate VE.Norms.selects@VE.Norms.Elaborate VE.Norms.size@VE.Norms.Tree VE.Norms.subst@VE.Norms.Subst VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.asU@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
-  -- expr 3969318382
 theorem VE.Readings.fillSoftNode_alterable
   ∀ (N : VE.Readings.NDoc) (M : VE.SoftNorms.SoftNode), (VE.Readings.fillSoftNode N M).alterable = M.alterable
   -- uses VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.fillSoftNode@VE.Readings.Unspecified VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
@@ -22843,14 +22959,6 @@ theorem VE.Readings.selects_iff
                           (VE.Norms.tupleVal vs) (VE.SoftNorms.fuel (VE.Readings.choiceDoc D c).fst.soft) M
   -- uses VE.Environment.constants@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.pull@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.fuel@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3221408987
-theorem VE.Readings.selects_wellFormed_of
-  ∀ {T : VE.Norms.Tree} {E : VE.Environment} {Γ : List String} {p : String},
-    VE.Norms.RulesTyped T E Γ p →
-      ∀ (f : Nat) (M : VE.Norms.Node),
-        (VE.Formula.WellFormed E Γ M.guard ∧ ∀ (C : VE.Formula), C ∈ M.carveOuts → VE.Formula.WellFormed E Γ C) →
-          M.pred = p → VE.Formula.WellFormed E Γ (VE.Norms.selects T f M)
-  -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.RulesTyped@VE.Norms.Elaborate VE.Norms.Tree@VE.Norms.Tree VE.Norms.selects@VE.Norms.Elaborate
-  -- expr 692915836
 theorem VE.Readings.separatesS_other
   ∀ {α : Type} [inst : DecidableEq α] (N : VE.Readings.NDoc),
     VE.Readings.WellFormedSD N = Bool.true →
