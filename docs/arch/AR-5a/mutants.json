@@ -37,6 +37,9 @@
  {"id": "M13", "file": "tools/evidence/config.py", "claim": "a batch's evidence.toml cannot lower the mutant minimum below three",
   "find": "    if type(minimum) is not int or minimum < 3:", "replace": "    if type(minimum) is not int:",
   "tests": ["tests/test_evidence_toolkit.py::test_a_toml_that_would_check_nothing_is_refused"]},
+ {"id": "M14", "file": "tools/batch_evidence.py", "claim": "--check replays saved commit and changed-path numbers from the fixed Git objects",
+  "find": "        actual = scope_range(saved[\"base\"], saved[\"head\"], cwd)", "replace": "        actual = saved",
+  "tests": ["tests/test_evidence_toolkit.py::test_scope_is_the_batch_commits_without_merges"]},
  {"id": "M12", "file": "tools/batch_evidence.py", "claim": "--check fails a gate record that shows a failure or whose counts do not add up",
   "find": " or counts[\"failed\"] != 0:", "replace": ":",
   "tests": ["tests/test_evidence_toolkit.py::test_stale_or_incomplete_batch_evidence_fails_the_check"]}

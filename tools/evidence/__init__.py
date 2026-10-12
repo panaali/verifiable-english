@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import gzip
 import json
+from collections import defaultdict
 from pathlib import Path
 import subprocess
 
@@ -80,19 +81,28 @@ def git(*args: str, cwd: Path = ROOT) -> str:
                           check=True, capture_output=True, text=True).stdout
 
 
-def scope(base: str, head: str = "HEAD", cwd: Path = ROOT) -> dict:
-    """The saved scope of a batch: `base..head --no-merges` (merge base with `base`), its commits newest first
-    and the lines each changed path adds and deletes, so a report reads numbers that later syncs cannot move."""
-    head_sha = git("rev-parse", head, cwd=cwd).strip()
-    base_sha = git("merge-base", base, head_sha, cwd=cwd).strip()
+def scope_range(base_sha: str, head_sha: str, cwd: Path = ROOT) -> dict:
+    """Commits and their added/deleted lines in a fixed `base..head --no-merges` range.
+
+    Sum each non-merge commit's changes. A sync merge cannot add another batch's paths to these numbers.
+    """
     if base_sha == head_sha:
-        raise EvidenceError(f"{head} has no commit that {base} lacks")
+        raise EvidenceError(f"{head_sha} has no commit that {base_sha} lacks")
     commits = [dict(zip(("hash", "subject"), line.split("\0", 1)))
                for line in git("log", "--no-merges", "--format=%H%x00%s", f"{base_sha}..{head_sha}",
                                cwd=cwd).splitlines()]
-    changes = []
-    for line in git("diff", "--numstat", "--no-renames", base_sha, head_sha, cwd=cwd).splitlines():
-        added, deleted, path = line.split("\t", 2)
-        changes.append({"path": path, "added": int(added) if added != "-" else 0,
-                        "deleted": int(deleted) if deleted != "-" else 0})
+    totals = defaultdict(lambda: [0, 0])
+    for commit in commits:
+        for line in git("show", "--numstat", "--format=", "--no-renames", commit["hash"], cwd=cwd).splitlines():
+            added, deleted, path = line.split("\t", 2)
+            totals[path][0] += int(added) if added != "-" else 0
+            totals[path][1] += int(deleted) if deleted != "-" else 0
+    changes = [{"path": path, "added": values[0], "deleted": values[1]} for path, values in sorted(totals.items())]
     return {"base": base_sha, "head": head_sha, "commits": commits, "changes": changes}
+
+
+def scope(base: str, head: str = "HEAD", cwd: Path = ROOT) -> dict:
+    """The batch's scope from its merge base with `base`; save the fixed object IDs in the result."""
+    head_sha = git("rev-parse", head, cwd=cwd).strip()
+    base_sha = git("merge-base", base, head_sha, cwd=cwd).strip()
+    return scope_range(base_sha, head_sha, cwd)

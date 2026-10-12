@@ -29,7 +29,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools.evidence import EvidenceError, killed, load  # noqa: E402
+from tools.evidence import EvidenceError, killed, load, scope_range  # noqa: E402
 from tools.evidence import ab, config as evidence_config, fuzz_ab, latency as evidence_latency, report  # noqa: E402
 
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build", "cargo_test", "pytest")
@@ -93,6 +93,24 @@ def scope_problems(scope: dict) -> list[str]:
     if not isinstance(changes, list) or not changes or not all(
             isinstance(c, dict) and isinstance(c.get("path"), str) and c["path"] for c in changes):
         errors.append("scope lists no changed paths")
+    return errors
+
+
+def scope_history_problems(saved: dict, cwd: Path = ROOT) -> list[str]:
+    """Compare saved numbers and commit subjects with the two fixed Git objects named in the record.
+
+    No moving branch name is read here: a later merge to main cannot change a batch's report.
+    """
+    if scope_problems(saved):
+        return []  # the shape errors already explain why history cannot be compared
+    try:
+        actual = scope_range(saved["base"], saved["head"], cwd)
+    except (EvidenceError, subprocess.CalledProcessError) as exc:
+        return [f"scope cannot be reproduced from its Git objects: {exc}"]
+    errors = []
+    for field in ("base", "head", "commits", "changes"):
+        if saved[field] != actual[field]:
+            errors.append(f"scope {field} differs from {saved['base'][:8]}..{saved['head'][:8]} --no-merges")
     return errors
 
 
@@ -164,6 +182,7 @@ def check(directory: Path) -> tuple[str, list[str]]:
 
     saved = read("scope")
     errors = scope_problems(saved)
+    errors += scope_history_problems(saved)
     head = saved.get("head") if isinstance(saved, dict) else None
     errors += gate_record_problems(head, read("gate"))
     errors += mutant_problems(read("mutants"), config["mutants"].get("min", 3))
@@ -188,7 +207,7 @@ def check(directory: Path) -> tuple[str, list[str]]:
         rendered = report.render(folder, config["report"]["lines"])
         if report.block(target.read_text(), config["report"]["marker"]) != rendered:
             errors.append(f"the {config['report']['marker']} block of {config['report']['file']} is not the "
-                          "rendering of the evidence (python -m tools.evidence report --write)")
+                          "rendering of the evidence (python -m tools.evidence report)")
     for index, claim in enumerate(config.get("claims", [])):
         kind = claim.get("kind") if isinstance(claim, dict) else None
         errors += CLAIMS[kind](claim, evidence) if kind in CLAIMS else [f"claim {index} has no known kind"]
