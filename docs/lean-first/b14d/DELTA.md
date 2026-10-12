@@ -4,7 +4,7 @@ The nine-corpus comparison is in progress. This file will list every user-visibl
 
 ## Signed standing ruling
 
-- **Trusted Lean budget:** SIGNED by standing ruling R6 (DRI-RULINGS.md). The trust baseline records a +338 line allowance: Lean's coupled choice enumeration, complete evidence check and verdict fold replace the Python decision sites deleted in this batch. Evidence: `tools/trust_map.py --check`, `test_complete_choice_verdict_is_lean_checked`, and the seeded faults in `evidence/mutants.json`.
+- **Trusted Lean budget:** SIGNED by standing ruling R6 (DRI-RULINGS.md). The trust baseline records a +338 line allowance for Lean's coupled choice enumeration, complete evidence check and verdict fold, plus +3 lines for rejecting a duplicate set identity. These checks replace the Python decision sites deleted in this batch. Evidence: `tools/trust_map.py --check`, `test_complete_choice_verdict_is_lean_checked`, `test_coupled_plan_refuses_duplicate_set_version`, and the seeded faults in `evidence/mutants.json`.
 
 ## Pending DRI classification
 

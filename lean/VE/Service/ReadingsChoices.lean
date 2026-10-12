@@ -44,13 +44,16 @@ private def enumerate (limit : Nat) (couplings : List Json) :
 
 private def metadata (j : Json) : Except String (List (String × List Json)) := do
   let sets ← arr j "set_meta"
-  sets.mapM fun s => do
+  let info ← sets.mapM fun s => do
     let name ← VE.Bridge.stringField s "id"
     let version ← (← s.getObjVal? "version").getNat?
     unless version > 0 do throw "invalid reading set version"
     let readings ← arr s "readings"
     unless !readings.isEmpty do throw "every reading set holds a reading"
     pure (s!"{name}@{version}", readings)
+  unless (info.map Prod.fst).eraseDups.length == info.length do
+    throw "duplicate reading set version"
+  pure info
 
 private def validateCouplings (couplings : List Json) (setInfo : List (String × List Json))
     (documentValidation : Bool := false) :

@@ -185,6 +185,13 @@ def test_coupled_plan_refuses_unresolved_set():
         relay.decide("readings-choices", [case])
 
 
+def test_coupled_plan_refuses_duplicate_set_version():
+    case = _coupled_plan_case()
+    case["set_meta"][1]["id"] = "a"
+    with pytest.raises(VEError, match="duplicate reading set version"):
+        relay.decide("readings-choices", [case])
+
+
 def cases(monkeypatch):
     calls = []
     real = relay.decide
