@@ -23,8 +23,9 @@ existing untrusted generators, sends it to Lean's new `ask` mode, and prints Lea
   where a reading's name could not be read back, and the unused-sentence line once at the end.
 
 Python only runs the CLI, the generators and the display; it checks that Lean's answer is fully typed (the schema
-generated from Lean's shapes) and bound to the request (every row, line, reading, witness, source, quote, gap
-element, unused unit, unchecked name and identity the answer names exists in the request), and decides nothing (`tools/relay_lint.py`).
+generated from Lean's shapes) and bound to the request (every compatible choice has exactly one row, and every line,
+reading, witness, source, definition, quote, gap element, unused unit, unchecked name and identity the answer names
+exists in the request), and decides nothing (`tools/relay_lint.py`).
 
 ## What was built, by plan item
 
@@ -70,7 +71,8 @@ The task's three proof obligations:
   edited unit, a foreign environment and an undecodable environment are refused.
 - `tests/test_ask_relay.py`: the relay's typing and binding (R8, checklist 4, 5, 7, 15): genuine answers of all three
   routes accepted; every node retyped and every field dropped refused; every id, choice, reading, witness, source,
-  quote, gap element, unused unit, unchecked name and identity rebound refused (G1, G3, U3, U5, A1); Lean's own binding (names, evidence entries,
+  quote, gap element, unused unit, unchecked name and identity rebound refused, including an unknown definition and
+  an omitted choice row (G1, G3, U3, U5, A1); Lean's own binding (names, evidence entries,
   asserted names); a broken split and a split differing in a base atom are not splits; a fence read as two formulas
   is not the case's unit; each request and case field replaced by 7, true, null, [], {} or a 10,000-deep list is
   refused, never answered; the mode's CPU deadline bounds the whole answer; Lean's refusal raised with its class and
@@ -87,7 +89,7 @@ The task's three proof obligations:
 
 ## Seeded bugs
 
-12 seeded bugs, 6 in Lean and 6 in Python, one per behaviour claimed, each in a file this batch changed, each caught,
+14 seeded bugs, 6 in Lean and 8 in Python, one per behaviour claimed, each in a file this batch changed, each caught,
 then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generated block). No Rust code changed.
 
 ## Build checklist
@@ -97,7 +99,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | 1 | One contract | The answer's shapes are Lean's (`ResponseShape/Schemas/Ask.lean`), rendered to `ask.json`; `ve/ask.py` reads its field sets, leads and reasons from that file, and a refusal's statuses, codes and classes from Lean's exported question contract (`ve/question/codes.json`). Every text is Lean's. |
 | 2 | Differential fuzz | Not applicable: the answer has one owner (Lean); there is no Python or Rust answer to compare. The relay is fuzzed instead (4, 5). |
 | 3 | Normalisation | The question reaches `ask` only through Q1's reader; `test_ask_reads_the_question_as_the_reader_does` covers NBSP, double space, tab, `\r`, curly quotes, U+212A, dotted I and a control character. |
-| 4 | Untrusted output | Schema from the producer, binding to the request, bool-for-int refused, fuzz by dropping, emptying, duplicating, retyping and rebinding each field (`tests/test_ask_relay.py`). `tools/relay_mutation_gate.py` reads `ask`'s mutants as `ve ask` reads them (`ve.ask.read_answer`), with fixtures of the three routes; every accepted mutant is a listed by-design class (generated block). |
+| 4 | Untrusted output | Schema from the producer, binding to the request (including definition names and exact choice row coverage), bool-for-int refused, fuzz by dropping, emptying, duplicating, retyping and rebinding each field (`tests/test_ask_relay.py`). `tools/relay_mutation_gate.py` reads `ask`'s mutants as `ve ask` reads them (`ve.ask.read_answer`), with fixtures of the three routes; every accepted mutant is a listed by-design class (generated block). |
 | 5 | Malformed input | `test_a_malformed_request_is_refused_never_answered` (three routes); Lean now refuses evidence of another type, foreign case fields and names on a one-choice route (DELTA D11). |
 | 6 | Three-valued | No evidence answers unknown (X2 or X4), never yes or no (tested); past 64 choices is `ResourceLimit` (X5's text). `ask` has no budget option, so budget 0 has no entry point; the generators' budgets are internal. |
 | 7 | Deadlines | The mode's CPU deadline wraps the whole request (`test_the_deadline_bounds_the_whole_answer`). A delay was not injected into each Lean callee. |
@@ -106,7 +108,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | 10 | Entry points | `ve ask` (text, `--json`, `--reading`, `--evidence`) all go through one relay call (`ve.ask._ask`); metamorphic test as in 3. |
 | 11 | No regex of a real language | The statement check uses Lean as the oracle; the text comparison is the existing whitespace-collapsed one. |
 | 12 | State machines | Not applicable. |
-| 13 | Tests can fail | 12 seeded bugs; `test_a_replay_can_fail`; the statement check's mutants. |
+| 13 | Tests can fail | 14 seeded bugs; `test_a_replay_can_fail`; the statement check's mutants. |
 | 14 | Hermetic | CLI tests use the env allowlist and `HANG_TIMEOUT`; writes go to `tmp_path`. |
 | 15 | Identity | Every identity field of the answer rebound and refused. |
 | 16 | Lists | Fixture list, gate collection, frozen inventory, decoder pins, binding probe, trust classes, layer policy, import-linter layers: generated or tested. |
@@ -163,17 +165,18 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   relay gate's, the schema, service and statement tests. The full gate ran once on the final HEAD (generated block).
 - **Seeded bugs under load**: at load 50 to 80, one run of all 11 mutants passed the one-hour limit (the Lean
   mutants rebuild `ve_service`); `mutants.py` now saves each result as it runs, and the 11 ran in four groups on the
-  same code, each caught. The 12th (`python-gap-unbound`) was added with the gap binding and ran on its commit.
+  same code, each caught. The 12th (`python-gap-unbound`) was added with the gap binding; the 13th and 14th
+  (`python-definition-unbound`, `python-row-omitted`) were added with the final relay binding fix. Each was caught.
 
 <!-- BEGIN GENERATED: report.py -->
 
-Scope: `main..HEAD --no-merges` at `8ce4952c` (base `96887019`): 30 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
+Scope: `main..HEAD --no-merges` at `9a5f3c95` (base `96887019`): 32 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
 
 | Language | Files | Lines added | Lines deleted |
 |---|---:|---:|---:|
 | Lean | 26 | 5137 | 698 |
-| Python (product) | 10 | 1161 | 113 |
-| Python (tests) | 8 | 890 | 31 |
+| Python (product) | 10 | 1169 | 113 |
+| Python (tests) | 8 | 894 | 31 |
 | Rust | 0 | 0 | 0 |
 
 Recorded answers (`tests/fixtures/ask`, replayed by `tests/test_ask_fixtures.py`):
@@ -207,7 +210,7 @@ Statement check (`tools/question_statements.py --q2`, exit 0):
       changed Asked: `hnames` uses `NameReadsBackSame` (canonical JSON text, the relation `UnitBound` uses) for the approved `NameReadsBack` (kept as approved): Lean's `Json` has no decidable equality, so `=` on the read-back formula cannot be decided
     Q2 Lean check: 41 approved statements and signatures elaborated against the implementation; PASS
 
-Seeded bugs (`mutants.py`, `evidence/mutants.json`): 12 of 12 caught.
+Seeded bugs (`mutants.py`, `evidence/mutants.json`): 14 of 14 caught.
 
 | Seeded bug | File | Behaviour | Caught by |
 |---|---|---|---|
@@ -220,6 +223,8 @@ Seeded bugs (`mutants.py`, `evidence/mutants.json`): 12 of 12 caught.
 | python-text-unbound | `ve/ask.py` | relay binding: the answer's text is its lines' text | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
 | python-quote-unbound | `ve/ask.py` | relay binding: a line's quote is text of the unit it names | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
 | python-gap-unbound | `ve/ask.py` | relay binding: a gap names elements of the models the request's evidence holds | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
+| python-definition-unbound | `ve/ask.py` | relay binding: a cited definition belongs to the request's document | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
+| python-row-omitted | `ve/ask.py` | relay binding: a readings answer has one row for every compatible choice | `tests/test_ask_relay.py::test_every_id_rebound_is_refused` |
 | python-gate-transport-only | `tools/relay_mutation_gate.py` | relay gate: ask's mutants are read as ve ask reads them, not by the transport alone | `tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it` |
 | lean-row-id-untyped | `lean/ResponseShape/Schemas/Ask.lean` | response schema: an answer row's id is the case's id | `tests/test_ask_relay.py::test_the_rows_id_is_typed_and_bound_to_the_case` |
 | python-statement-text-ignored | `tools/question_statements.py` | statement check: a Q2 statement whose text differs from the approved text fails | `tests/test_question_statements.py::test_a_changed_statement_or_definition_fails` |
