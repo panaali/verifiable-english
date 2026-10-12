@@ -187,16 +187,21 @@ def read_record(commit: str, *, cwd: Path = ROOT, env: dict[str, str] | None = N
 
 
 def read_gate_result(commit: str, *, cwd: Path = ROOT, env: dict[str, str] | None = None) -> dict | None:
-    """A full gate result from its note, if one is present and its collection is valid."""
-    shown = git(["notes", f"--ref={NOTES_REF}", "show", commit], cwd=cwd, env=env, check=False)
-    if shown.returncode:
+    """A full gate result, or None only when the commit has no note.
+
+    Collection readers may recollect after an invalid note, but evidence must
+    reject a present note that cannot be used as an authoritative gate result.
+    """
+    notes = git(["notes", f"--ref={NOTES_REF}", "list"], cwd=cwd, env=env)
+    if not any(line.split()[1] == commit for line in notes.stdout.decode().splitlines()):
         return None
+    shown = git(["notes", f"--ref={NOTES_REF}", "show", commit], cwd=cwd, env=env)
     text = shown.stdout.decode(errors="replace")
     if parse_record(text, commit, rev(f"{commit}^{{tree}}", cwd=cwd, env=env)) is None:
-        return None
+        raise CollectionError(f"malformed gate note for {commit}")
     record = json.loads(text)
     if "status" not in record:  # a base-only record, before that commit's gate
-        return None
+        raise CollectionError(f"gate note for {commit} has no gate result")
     return {key: value for key, value in record.items() if key != "format"}
 
 
