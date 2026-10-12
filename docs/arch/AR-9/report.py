@@ -18,6 +18,7 @@ def load(name: str):
 
 def metrics() -> str:
     split, mutants = load("split.json"), load("mutants.json")
+    selected = load("selected.json")
     gate, scope = load("gate.json"), load("scope.json")
     base, head = split["files"]["base"], split["files"]["head"]
     lines = [f"- Measured: base `{split['base'][:8]}`, head `{split['head'][:8]}` "
@@ -46,6 +47,9 @@ def metrics() -> str:
     lines.append(f"- Seeded faults: {len(caught)}/{len(mutants['mutants'])} caught by every named test "
                  f"({runs} failing runs); after restoring, "
                  f"{sum(r['exit_code'] == 0 for r in restored)}/{len(restored)} runs pass.")
+    if selected is not None:
+        lines.append(f"- Selected test units at `{selected['head'][:8]}`: "
+                     f"{sum(row['exit'] == 0 for row in selected['units'])}/{selected['unit_count']} passed.")
     if scope is None or gate is None:
         lines.append("- Full gate: not saved yet (it runs on the final code commit; its result is saved after it).")
     else:

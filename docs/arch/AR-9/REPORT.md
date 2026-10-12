@@ -17,6 +17,7 @@ Every number below is rendered by `report.py` from `evidence/` and checked by
 - Names the two modules defined that they no longer provide: 0.
 - Function-level imports in `ve/assist/`: 25 before, 25 after.
 - Seeded faults: 5/5 caught by every named test (9 failing runs); after restoring, 9/9 runs pass.
+- Selected test units at `f1ab8177`: 360/360 passed.
 - Full gate: not saved yet (it runs on the final code commit; its result is saved after it).
 <!-- END GENERATED AR-9 METRICS -->
 
@@ -54,13 +55,20 @@ Two constraints decided the split beyond the plan's three themes per module:
 ## Coordination (plan 4.2)
 
 Files touched: `ve/assist/recovery.py`, `ve/assist/session.py`, six new `ve/assist/*_*.py`,
-`tests/test_assist_split.py`, `tools/gate-collection.json`,
+`tests/test_assist_split.py`, `tests/conftest.py`, `tools/gate-collection.json`,
 `docs/arch/AR-9/`. At the start, and again on 2026-10-11 after each sync with `main` (`96887019`,
 then `5479466f`, which merged AR-8), `git diff --name-only main...<branch>` for every branch matching `lean-first/*`,
 `readings-defaults/*`, `question-answering/*` and `infra/*` named no file AR-9 touches except the
 generated `tools/gate-collection.json`, which is not an overlap (R12). One branch,
 `lean-first/b13b`, changes `tests/test_assist_invariants.py`; AR-9 leaves that file unchanged, as
 the plan's fixture requires.
+
+The gate exposed a test fixture regression in `test_interrupted_gate_cannot_record_pass`:
+it mocks toolchain setup, so the isolated nested gate has no Lean binary for its new trace
+preflight and stops before the interruption the test injects. Its owning test file overlaps
+`infra/arch-AR-3`, `infra/arch-AR-4`, and `infra/oom-rootcause`. A narrow fixture in the
+non-overlapping `tests/conftest.py` bypasses only that trace lookup for these three test cases;
+the production gate still performs it. All three pass in the gate's isolated pytest environment.
 
 **Merge resolution rule** for the one shared inventory (R12): conflict in
 `tools/gate-collection.json`: run `uv run python tools/regen_generated.py --resolve` after
@@ -78,6 +86,11 @@ the plan's fixture requires.
   the saved scope). It reads only `evidence/`, never live git. It runs directly at the batch
   gate, outside pytest collection as D4 requires. `tools/batch_evidence.py` does not apply yet:
   it requires corpus comparison and latency evidence that 4.1 item 2 does not ask of AR-9.
+- `evidence/selected.json` records each of the 360 selected test units at `f1ab8177`; every
+  unit exited 0. The selector could not write its final map to the sandbox's read-only default
+  cache, so the already recorded unit results were checked and saved with `test_map.build_map`
+  and `test_map.write_map` under `/tmp/ar9-testmap`. `check_evidence.py` checks the saved unit
+  outcomes at the batch gate.
 - Unchanged and passing: `tests/test_assist.py`, `test_assist_deadline.py`,
   `test_assist_invariants.py`, `test_assist_recovery.py`, `test_assist_recovery_replay.py`,
   `test_b17_owner.py`, `test_assurance_manifest.py` (384 passed, 1 skipped: P5 materials are
@@ -111,6 +124,13 @@ Each fault was removed by the script; every named test passes again afterwards.
   attempt at `9d82676d` stopped at clean-tree preflight because its new output filename was
   untracked; no build or test stage ran. The final gate below runs on a new committed HEAD
   with an explicit worker count and the ignored `gate-result.json` path.
+- The full gate on `7b44a234` passed Lean build/audit and Rust build/tests, then recorded
+  14,360 Python passes, 92 skips, and three failures in the same gate interruption test.
+  `--rerun-failed` reproduced the three failures in the isolated environment. The fixture
+  repair above makes those cases pass there. An initial selected run then found that the
+  fixture's static import edge masked one selector mutation; replacing it with the test
+  module's existing `gate` reference restored that mutation check. The corrected selected
+  run passed all 360 units; its cache save was recovered as recorded above.
 - 4.1 item 1: the full gate (`tools/gate.py`) runs once on the final code commit; its result is
   `evidence/gate.json` and the scope `evidence/scope.json` (`measure.py --scope`, from the
   merge-base with `main`, `--no-merges`), saved in a later commit that changes only
