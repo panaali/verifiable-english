@@ -202,3 +202,12 @@ def test_metadata_still_comes_from_the_python_constructor():
     result = parse_with_metadata(env, "every item a that is derived, (a is base).\n")
     assert result.metadata.source_names[-1] == "a"
     assert len(result.metadata.spans) == len(result.metadata.source_names)
+
+
+def test_the_retained_sugar_reading_is_deleted():
+    """Batch 14a deleted the stage-2c fallback: the Python reader no longer marks sugar productions, and
+    `_parse_lean` has no `definitions@0` branch that keeps Python's reading."""
+    import inspect
+    assert not hasattr(parser, "_parse_python_marked")
+    assert "sugar" not in inspect.getsource(parser._Parser.__init__)
+    assert "definitions@0" not in inspect.getsource(parser._parse_lean)
