@@ -32,7 +32,7 @@ def check_scope(scope):
 
     base, code_head = scope["base"], scope["code_head"]
     assert git("merge-base", base, code_head).strip() == base
-    assert git("rev-list", "--reverse", "--no-merges", f"{base}..{code_head}").splitlines() == scope["commits"]
+    assert git("rev-list", "--reverse", "--no-merges", f"{scope['main']}..{code_head}").splitlines() == scope["commits"]
     rows = git("diff", "--numstat", base, code_head).splitlines()
     assert len(rows) == scope["files_changed"]
     added = deleted = 0
