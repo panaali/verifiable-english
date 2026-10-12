@@ -16,6 +16,7 @@ code under the root or of infrastructure (import system, site, pytest).
   ["o", reason]           something the recorder could not see into
   ["m", operation]        an assurance manifest operation entry was read
   ["p", operation]        only its presence was checked during registration
+  ["v", mode]             a Lean service request used this mode
 
 Paths are relative to $VE_TESTMAP_ROOT. tools/test_map.py installs a `.pth`
 hook in the project environment that calls `start()` whenever VE_TESTMAP_OUT
@@ -93,6 +94,8 @@ def _audit(event, args):
             _emit(["p", args[0]])
         elif event == "ve.manifest.all":
             _emit(["m", "*"])
+        elif event == "ve.service.mode":
+            _emit(["v", args[0]])
         elif event == "open":
             relative = _relative(args[0])
             # Imports, pytest's assertion rewriting, tracebacks and warnings read
