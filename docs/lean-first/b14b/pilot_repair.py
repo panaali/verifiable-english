@@ -6,6 +6,7 @@ base and head sequentially so their two recordings see comparable load.
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import json
 import os
 from pathlib import Path
@@ -19,6 +20,10 @@ def main() -> None:
     parser.add_argument("--scratch", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--resume-at", help="repeat this named pilot and all later repair cases")
+    parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--read-only-scratch", action="store_true",
+                        help="require all source files to exist before checking any case")
+    parser.add_argument("--shadow-log", type=Path)
     args = parser.parse_args()
     root = args.root.resolve()
     sys.path.insert(0, str(root))
@@ -37,18 +42,31 @@ def main() -> None:
         documents = documents[positions[0]:]
     args.scratch.mkdir(parents=True, exist_ok=True)
     env = {**os.environ, "PYTHONPATH": str(root),
-           "VE_SHADOW_LOG": str(args.scratch / "english-shadow.jsonl")}
+           "VE_SHADOW_LOG": str(args.shadow_log or args.scratch / "english-shadow.jsonl")}
     env.pop("VE_AUTHORITY", None)
-    with args.out.open("w") as out:
-        for name, blob, content in documents:
+    if args.workers < 1:
+        parser.error("workers must be positive")
+    if args.read_only_scratch:
+        for _, blob, content in documents:
             path = args.scratch / f"{blob}.ve.md"
+            if not path.is_file() or path.read_bytes() != content:
+                raise RuntimeError(f"shared pilot source missing or changed: {path}")
+
+    def check(item):
+        name, blob, content = item
+        path = args.scratch / f"{blob}.ve.md"
+        if not args.read_only_scratch:
             path.write_bytes(content)
-            row = {"corpus": "pilots", "authority": "default", "case": name,
-                   "op": "document_check", "source_sha256": blob,
-                   "outcome": diff.pilot_check(root, path, env)}
-            out.write(json.dumps(row, sort_keys=True, separators=(",", ":"),
-                                 ensure_ascii=False) + "\n")
-            out.flush()
+        return {"corpus": "pilots", "authority": "default", "case": name,
+                "op": "document_check", "source_sha256": blob,
+                "outcome": diff.pilot_check(root, path, env)}
+
+    with args.out.open("w") as out:
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            for row in pool.map(check, documents):
+                out.write(json.dumps(row, sort_keys=True, separators=(",", ":"),
+                                     ensure_ascii=False) + "\n")
+                out.flush()
     print(f"rerecorded {len(documents)} pilot documents")
 
 
