@@ -193,3 +193,7 @@ changed (Python; no Lean or Rust changed). Each made its named test fail and was
 - Not run as one gate: the gate's own pytest plugins (`-p tools.gate_pytest`, its collection diff against
   `tools/gate-collection.json`, and the optional-test policy). `tests/test_gate_collection.py` ran in the chunks
   and passed.
+- A further full-gate attempt on `75b25445` passed the Lean build and audit, Rust build and native tests, and
+  Python collection (14,446 selected, one live test deselected). The Python suite was still active when the
+  one-hour shell timeout stopped the command (exit 124); it produced no passing gate result. This attempt used
+  `--workers 24` and made no source change.
