@@ -1,20 +1,20 @@
 {
  "copied_docs_scripts_on_main": {
-  "difffuzz_ab": 5,
+  "difffuzz_ab": 6,
   "fuzzer_gate": 2,
-  "latency": 10,
-  "mutants": 3,
-  "report": 10,
-  "seed_faults": 2,
+  "latency": 11,
+  "mutants": 4,
+  "report": 12,
+  "seed_faults": 3,
   "seed_mutants": 1,
   "trace_fuzzer": 1
  },
- "copied_docs_scripts_on_main_total": 34,
+ "copied_docs_scripts_on_main_total": 40,
  "kept_shared_latency_tools": [
   "tools/lean_service_latency.py",
   "tools/readings_batch_latency.py"
  ],
- "main": "5479466f9faada4cb500bb52bca2436f03662e54",
+ "main": "c9b8cba634c4451ec5113385da20e61d33714bc2",
  "per_batch_scripts_on_main": {
   "docs_latency": {
    "files": [
@@ -23,6 +23,7 @@
     "docs/lean-first/b11b/latency.py",
     "docs/lean-first/b12/latency.py",
     "docs/lean-first/b13a/latency.py",
+    "docs/lean-first/b13b/latency.py",
     "docs/lean-first/b15b/latency.py",
     "docs/lean-first/b16b/latency.py",
     "docs/lean-first/b2/latency.py",
@@ -40,6 +41,7 @@
     "tests/test_b16a_evidence.py",
     "tests/test_b16b_evidence.py",
     "tests/test_b16c_evidence.py",
+    "tests/test_b16d_evidence.py",
     "tests/test_b17_evidence.py",
     "tests/test_batch_evidence.py",
     "tests/test_english_e26_evidence.py",
@@ -83,21 +85,21 @@
   }
  },
  "per_batch_scripts_on_main_count": {
-  "docs_latency": 11,
-  "evidence_tests": 12,
+  "docs_latency": 12,
+  "evidence_tests": 13,
   "report_tests": 21,
   "tools_mutants": 1
  },
- "per_batch_scripts_on_main_total": 45,
+ "per_batch_scripts_on_main_total": 47,
  "shared_module_lines": {
-  "batch_evidence": 237,
-  "evidence___init__": 98,
+  "batch_evidence": 256,
+  "evidence___init__": 108,
   "evidence___main__": 45,
   "evidence_ab": 92,
   "evidence_config": 91,
   "evidence_fuzz_ab": 221,
-  "evidence_latency": 191,
-  "evidence_report": 163
+  "evidence_latency": 192,
+  "evidence_report": 159
  },
- "shared_module_lines_total": 1138
+ "shared_module_lines_total": 1164
 }

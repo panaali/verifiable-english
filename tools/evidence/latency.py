@@ -9,6 +9,7 @@ head above `1 + allowance` times its base.
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
+import math
 import os
 from pathlib import Path
 import resource
@@ -60,7 +61,7 @@ def within(row: dict, allowance: float = ALLOWANCE) -> bool:
 
 
 def _measured(value) -> bool:
-    return type(value) in (int, float) and value == value and value >= 0
+    return type(value) in (int, float) and math.isfinite(value) and value >= 0
 
 
 def row_problems(samples, expected: Iterable[str] = (), allowance: float = ALLOWANCE) -> list[str]:

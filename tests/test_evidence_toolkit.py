@@ -118,6 +118,8 @@ def test_complete_latency_record_passes():
     (lambda s: s.update({"x": {"base_cpu_ms": float("nan"), "head_cpu_ms": 1}}), [], "not measured on both sides"),
     (lambda s: s.update({"x": {"base_cpu_ms": 10, "head_cpu_ms": 12.01}}), [], "above 1.2 x base"),
     (lambda s: s.update({"x": {"base_cpu_ms": 1, "head_cpu_ms": 1, "same_output": False}}), [], "same output"),
+    (lambda s: s.update({"x": {"base_cpu_ms": float("inf"), "head_cpu_ms": float("inf")}}), [],
+     "not measured on both sides"),
 ], ids=ids)
 def test_missing_empty_unavailable_or_slow_latency_rows_fail(change, expected, message):
     record = deepcopy(LATENCY)
@@ -410,6 +412,13 @@ def test_scope_is_the_batch_commits_without_merges(tmp_path):
     assert saved["head"] == _git(repo, "rev-parse", "HEAD") == saved["commits"][0]["hash"]
     assert saved["changes"] == [{"path": "a.txt", "added": 1, "deleted": 1}, {"path": "b.txt", "added": 2, "deleted": 0}]
     assert batch_evidence.scope_problems(saved) == []
+    assert batch_evidence.scope_history_problems(saved, repo) == []
+    changed = deepcopy(saved)
+    changed["commits"][0]["subject"] = "invented"
+    assert "scope commits differs" in batch_evidence.scope_history_problems(changed, repo)[0]
+    changed = deepcopy(saved)
+    changed["changes"] = [{"path": "tools/not-in-the-commit.py", "added": 1, "deleted": 0}]
+    assert "scope changes differs" in batch_evidence.scope_history_problems(changed, repo)[0]
     with pytest.raises(EvidenceError):
         scope("HEAD", "HEAD", repo)
 
@@ -438,6 +447,7 @@ lines = ["gate {gate.commit_sha|short}: {gate.counts.passed} passed"]
 def batch(tmp_path, monkeypatch):
     """A complete batch directory; the toolkit's repository root is moved to tmp_path."""
     monkeypatch.setattr(config, "ROOT", tmp_path)
+    monkeypatch.setattr(batch_evidence, "scope_history_problems", lambda saved: [])
     directory = tmp_path / "docs/t/b"
     (directory / "evidence").mkdir(parents=True)
     for name, value in (("scope", SCOPE), ("gate", GATE), ("mutants", MUTANTS)):
@@ -479,7 +489,7 @@ def test_stale_or_incomplete_batch_evidence_fails_the_check(batch, name, change,
 def test_a_report_number_typed_by_hand_fails_the_check(batch):
     (batch / "REPORT.md").write_text("<!-- BEGIN GENERATED T -->\ngate aaaaaaaa: 6 passed\n<!-- END GENERATED T -->\n")
     assert batch_evidence.check(batch)[1] == ["the T block of REPORT.md is not the rendering of the evidence "
-                                              "(python -m tools.evidence report --write)"]
+                                              "(python -m tools.evidence report)"]
 
 
 def test_a_batch_changing_ve_or_lean_needs_its_corpus_ab(batch):

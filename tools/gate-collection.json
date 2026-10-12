@@ -6129,6 +6129,7 @@
   "tests/test_evidence_toolkit.py::test_malformed_fuzz_rules_are_refused[rule4]",
   "tests/test_evidence_toolkit.py::test_missing_empty_unavailable_or_slow_latency_rows_fail[<lambda>-expected0-no-sample-for-docs-b-s1-ve-md]",
   "tests/test_evidence_toolkit.py::test_missing_empty_unavailable_or_slow_latency_rows_fail[<lambda>-expected1-empty-key]",
+  "tests/test_evidence_toolkit.py::test_missing_empty_unavailable_or_slow_latency_rows_fail[<lambda>-expected10-not-measured-on-both-sides]",
   "tests/test_evidence_toolkit.py::test_missing_empty_unavailable_or_slow_latency_rows_fail[<lambda>-expected2-empty-key]",
   "tests/test_evidence_toolkit.py::test_missing_empty_unavailable_or_slow_latency_rows_fail[<lambda>-expected3-latency-evidence-is-empty]",
   "tests/test_evidence_toolkit.py::test_missing_empty_unavailable_or_slow_latency_rows_fail[<lambda>-expected4-not-measured-on-both-sides]",

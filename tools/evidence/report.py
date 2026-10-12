@@ -1,7 +1,7 @@
 """Report numbers rendered from the evidence, never typed: the `[report]` block of a batch's `evidence.toml`.
 
     python -m tools.evidence report DIR            print the block
-    python -m tools.evidence report DIR --write    write it between the markers of [report] file
+The batch writes the rendered block between the markers of [report] file before its gate.
 
 Each line of `lines` is a template. `{name.path|filter|...}` reads the evidence file `name` (`name.json` or
 `name.json.gz` in the evidence directory), follows the dotted path (keys, or list indices), then applies the
@@ -142,20 +142,16 @@ def replace_block(text: str, marker: str, rendered: str) -> str:
 
 
 def main(argv=None) -> int:
-    from tools.evidence.config import evidence_dir, inside, read
+    from tools.evidence.config import evidence_dir, read
 
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("batch", type=Path, help="the batch directory holding evidence.toml")
-    parser.add_argument("--write", action="store_true", help="write the block into [report] file")
     args = parser.parse_args(argv)
     try:
         config = read(args.batch)
         if "report" not in config:
             raise EvidenceError(f"{args.batch}/evidence.toml has no [report]")
         rendered = render(evidence_dir(args.batch, config), config["report"]["lines"])
-        if args.write:
-            target = inside(args.batch, config["report"]["file"])
-            target.write_text(replace_block(target.read_text(), config["report"]["marker"], rendered))
     except EvidenceError as exc:
         print(exc)
         return 1
