@@ -2,11 +2,12 @@
 
 The nine-corpus comparison is in progress. This file will list every user-visible difference before the release gate. No verdict, availability, diagnostic, or field change is claimed as signed without a saved comparison and the applicable DRI ruling.
 
-The A/B recorder gives each side a distinct temporary pilot directory. Its comparator now substitutes a stable marker for that directory alone; `test_pilot_comparison_normalizes_only_its_own_scratch_directory` confirms that the rest of a diagnostic remains exact. This changes gate evidence only, not a product answer. Under the loaded host's default five-second Rust wall timeout, 20 head pilot records were unavailable. A matched base/head pilot rerun with `VE_RUST_TIMEOUT=60` is in progress; the current one-sided 600-second timeout on the large constitution translation remains unresolved and is not claimed as signed.
+The A/B recorder gives each side a distinct temporary pilot directory. Its comparator now substitutes a stable marker for that directory alone; `test_pilot_comparison_normalizes_only_its_own_scratch_directory` confirms that the rest of a diagnostic remains exact. This changes gate evidence only, not a product answer. Both sides were rerun over all 486 pilots with `VE_RUST_TIMEOUT=60`. The large constitution translation hit the head recorder's 600-second cap during that loaded run, then returned the same public result as the base on an isolated 556-second retry ([pilot-retry.json](evidence/pilot-retry.json)). The resolved comparison has 479 identical available answers and seven identical unavailable pairs, with no unlisted difference ([pilots-ab.json](evidence/pilots-ab.json)).
 
 ## Signed standing ruling
 
 - **Trusted Lean budget:** SIGNED by standing ruling R6 (DRI-RULINGS.md). The trust baseline records a +338 line allowance for Lean's coupled choice enumeration, complete evidence check and verdict fold, plus +3 lines for rejecting a duplicate set identity. These checks replace the Python decision sites deleted in this batch. Evidence: `tools/trust_map.py --check`, `test_complete_choice_verdict_is_lean_checked`, `test_coupled_plan_refuses_duplicate_set_version`, and the seeded faults in `evidence/mutants.json`.
+- **Identical pilot unavailability:** SIGNED by standing ruling R7 (DRI-RULINGS.md). Seven historical pilot checks were unavailable on both sides with identical outcomes; each case and reason is listed in [ab-delta.json](evidence/ab-delta.json). Evidence: the 486-record [pilot comparison](evidence/pilots-ab.json) and `test_identical_listed_unavailability_is_signed_by_r7`, including its caught mutant in [mutants.json](evidence/mutants.json).
 
 ## Pending DRI classification
 
