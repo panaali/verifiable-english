@@ -97,8 +97,7 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
 
     ``entries`` contains identity-bound body payloads from the vocabulary.
     Lean validates and orders them under every authority (`_compile_lean`,
-    lean-first batch 13b). Environments outside Lean's model scope keep the
-    retained Python elaborator, a recorded scope gap.
+    lean-first batch 13b).
     """
     from .backends.dispatch import owned
     from .backends.validation import model_in_scope
@@ -148,15 +147,12 @@ def _compile_lean(env: Environment, entries, version, python) -> tuple[Definitio
     """Lean's route Background decides the definitions and their order; the
     definitions are read back from its regenerated premises. Entries that
     cannot be embedded in the environment (only a direct caller passes them)
-    and n-ary definitions on the core family keep the retained Python."""
+    keep the retained Python."""
     from .backends.lean_runner import route_mode
     from .backends.relay import decide_once
-    from .backends.validation import nary_core_definitions
     raw = _wire_entries(env, entries)
     if raw is None or type(version) is not str or not version:
         return python()
-    if nary_core_definitions(env.profiles, raw["vocabulary"]["predicates"].values()):
-        return python()  # outside Lean's core layer glue (stage-2c gap, batch 14c)
     row = decide_once(route_mode(env), {"id": "definitions", "kind": "background", "environment": raw})
     if len(row["premises"]) != len(row["generators"]):
         from .errors import CheckerUnavailable
