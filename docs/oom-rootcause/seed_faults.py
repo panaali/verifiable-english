@@ -73,7 +73,9 @@ def run(how: str, test: str) -> subprocess.CompletedProcess:
         return subprocess.run([sys.executable, str(ROOT / "tools/rust_build.py"), "test", "--locked",
                                "--manifest-path", str(ROOT / "rust/Cargo.toml"), "-p", "ve-profile", "--", test],
                               cwd=ROOT, capture_output=True, text=True, check=False)
-    settings = {"VE_RUST_SHA256": build()} if how == "release" else {}
+    # Every mutant runs against the binary built from the current Rust source. In
+    # particular, Python mutants must not inherit a prior Rust mutant's binary.
+    settings = {"VE_RUST_SHA256": build()}
     return subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", test]), cwd=ROOT,
                           env=nested_pytest.environment(os.environ, VE_NATIVE_PREBUILT="1", **settings),
                           capture_output=True, text=True, check=False)
