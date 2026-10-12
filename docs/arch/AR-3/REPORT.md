@@ -82,6 +82,11 @@ From `evidence/measure.json` (`measure.py`, run on the batch head with the base 
     those two and AR-8 change `.gitattributes` and `docs/merge-tooling.md`.
   - `git merge-tree` merges each of these branches, and current `main` (AR-6 merged), with no conflict in those
     files.
+  - Rechecked on 2026-10-12 against `main` at `5479466f`: `main` still merges with no conflict but the one below.
+    Two newer branches overlap. `infra/oom-rootcause` changes `tests/test_gate_integrity.py` and merges without
+    conflict. `infra/eff-20261011-1` changes `tools/regen_generated.py` (no conflict) and
+    `tests/test_regen_generated.py`, where both branches append tests at the end of the file: keep both.
+    `infra/arch-AR-8` no longer overlaps.
   - `docs/TESTING.md` is changed by `infra/ts-B1`, so it was left alone (its mentions of the deleted file are
     historical table rows).
   - Every branch that changed `tools/gate-collection.json` gets a modify/delete conflict there; DRI-RULINGS R12
@@ -152,7 +157,19 @@ names the test function in `tests/test_gate_collection.py` unless it names its f
   gate runs that suite. The changed files were run directly on the final code, and passed:
   `tests/test_gate_collection.py`, `test_gate.py`, `test_gate_integrity.py`, `test_gate_rerun.py`,
   `test_regen_generated.py`, `test_eff_tests_report.py` and `test_ar3_report.py`.
-- The full gate runs once on the final commit; its record is `gate-result.json` in the worktree.
+- The full gate on the final code, `aff7a4c2` (`evidence/gate-full.json`, `--workers 8`, load 70 to 110 on 32
+  CPUs): Lean build and audit, Rust build and its 36 native tests, then 14,233 passed, 92 skipped (all allowed)
+  and 1 failed. Its collection matches `evidence/check.txt`: the base's record, 14,327 collected, 91 added, 12
+  removed by a trailer, none refused, stale or malformed; it wrote the head's record. The failure was
+  `tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist`: `lean/audit.py` hit its 1,800 s
+  limit (the gate's own Lean audit stage passed). AR-3 changes no Lean.
+- `tools/gate.py --rerun-failed` on the same commit (`evidence/gate-rerun.json`): `rerun-passed`, the 87 tests
+  of that file passed, the failed one among them. Under R13 the gate counts as passed. This is the test's
+  third retry this week (lf-13b-loopfix2 and ts-B5 on 2026-10-10); the ts-B5 review already put it on the
+  load-sensitive list, so no new follow-up.
+- Earlier attempts on `aff7a4c2` were stopped before they finished: by the shell's one-hour and two-hour
+  limits, and one stale run that was killed. None of them wrote a result. The commit that saves the two records
+  and this text changes no code, and is not in the commit list below, which is the saved scope.
 
 ## Checklist
 
