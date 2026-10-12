@@ -425,6 +425,25 @@ def test_map_round_trips_through_its_edges():
                     for test, e in edges.items()}
 
 
+def test_resumed_unit_merges_every_edge_kind(tmp_path):
+    """A checkpoint has JSON lists, but a live recording and merge use sets."""
+    unit = "tests/test_example.py"
+    name = unit.replace("/", "__")
+    recorded = {"f": [["a.py", "new"]], "r": ["new.json"], "d": ["new-dir"],
+                "x": ["new-program"], "m": ["new.operation"], "p": ["new.presence"],
+                "exit": 0, "opaque": [], "seconds": 1.0}
+    (tmp_path / f"{name}.result.json").write_text(json.dumps(recorded))
+    resumed = test_map.run_unit(unit, tmp_path, 1, set())
+    assert all(isinstance(resumed[key], set) for key in test_map.EDGE_KEYS)
+    earlier = {"f": {("a.py", "old")}, "r": {"old.json"}, "d": {"old-dir"},
+               "x": {"old-program"}, "m": {"old.operation"}, "p": {"old.presence"},
+               "exit": 0, "opaque": [], "seconds": 1.0}
+    test_map.merge({unit: resumed}, test_map.build_map({unit: earlier}, "0" * 40))
+    for key in test_map.EDGE_KEYS:
+        assert resumed[key] == ({tuple(v) if key == "f" else v for v in recorded[key]}
+                                | earlier[key]), key
+
+
 def test_operation_map_rejects_missing_and_bool_indices():
     data = make_map({"t1": {"m": ["parse"], "p": ["typing"]}})
     test_map.validate(data)

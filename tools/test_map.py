@@ -38,6 +38,7 @@ import nested_pytest
 # 5: the assurance-manifest operations each test reads are recorded (`operations`).
 # 6: an operation only checked for presence (`presence`) is recorded apart from an entry read.
 VERSION = 6
+EDGE_KEYS = ("f", "r", "d", "x", "m", "p")
 UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",
@@ -130,7 +131,7 @@ def read_unit(directory: Path, files: set[str]) -> dict:
     under the root, including ones that hold no tracked file or do not exist
     yet: adding the first file there changes what the test listed.
     """
-    seen = {"f": set(), "r": set(), "d": set(), "x": set(), "m": set(), "p": set()}
+    seen = {key: set() for key in EDGE_KEYS}
     children, opaque, written = [], [], set()
     for path in directory.glob("*.jsonl"):
         written.add(int(path.stem))
@@ -167,8 +168,9 @@ def run_unit(unit: str, work: Path, timeout: float, tracked: set[str]) -> dict:
     out, done, log = work / name, work / f"{name}.result.json", work / f"{name}.log"
     if done.exists():
         result = json.loads(done.read_text())
-        result["f"] = {tuple(item) for item in result["f"]}
-        return {key: set(value) if key in ("r", "d", "x") else value for key, value in result.items()}
+        for key in EDGE_KEYS:
+            result[key] = {tuple(item) for item in result[key]} if key == "f" else set(result[key])
+        return result
     shutil.rmtree(out, ignore_errors=True)
     out.mkdir(parents=True)
     start = time.monotonic()
@@ -248,7 +250,7 @@ def merge(results: dict[str, dict], previous: dict) -> None:
     old = unit_edges(previous)
     for test, result in results.items():
         if test in old and result["exit"] in (0, 5) and previous["status"][test]["exit"] in (0, 5):
-            for key in ("f", "r", "d", "x", "m", "p"):
+            for key in EDGE_KEYS:
                 result[key] |= old[test][key]
 
 
