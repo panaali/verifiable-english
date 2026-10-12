@@ -21,6 +21,18 @@ train.
 This batch is the toolkit's first user: `evidence.toml` here describes AR-5a and is checked with
 `tools/batch_evidence.py --check docs/arch/AR-5a`.
 
+## Verification before the release gate
+
+The focused toolkit, legacy batch-evidence and generated-artifact tests passed (127 tests); the toolkit plus
+the hang guard passed (92 tests); the gate-collection and latency tests passed (30 tests); and the layer-policy
+tool passed (39 tests). `tools/lean_statements.py --check` reported 4,802 unchanged statements, with its
+predicate and declaration lists unchanged. `tools/trust_map.py --since 5479466f` reported no trust growth.
+
+An initial full-gate attempt on `811f6e3a` used `--workers auto` while host load exceeded 130; it was stopped
+during the Python suite after the Lean build, Lean audit and Rust tests passed. It produced no acceptance
+verdict. The final gate runs on the next clean commit with an explicit worker count; its completed JSON is the
+only gate evidence below.
+
 ## Measured outcome
 
 All numbers below are rendered from `evidence/` by `python -m tools.evidence report docs/arch/AR-5a`.
