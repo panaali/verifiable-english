@@ -203,7 +203,7 @@ Recorded in `docs/oom-rootcause/DELTA.md`. One is covered by a standing ruling (
 
 ## 9. Gate
 
-The commit list through the relay code commit is saved in `evidence/commits.txt`
+The commit list through the seeded-fault runner fix is saved in `evidence/commits.txt`
 (`git log main..HEAD --no-merges`, taken before this evidence commit).
 
 1. The first full gate on `ab00e274` was started in the background. The tool's two-hour limit stopped it
@@ -223,6 +223,13 @@ The commit list through the relay code commit is saved in `evidence/commits.txt`
    passed, 92 skipped, 0 failed, 38 Rust tests passed, every stage run (toolchains, Lean build, Lean
    audit, Rust build, cargo test, pytest). The commit that adds it changes only docs. A new gate result
    for the relay fix will be left at the same evidence path after the final commit.
+4. The full gate on `4a0aa41d` (`evidence/gate-result-4a0aa41d-failed.json`) ran every stage and
+   recorded 14,341 Python passes, 92 skips, 38 Rust passes, and one failed test:
+   `test_every_pytest_command_is_built_by_the_builder`. The new seeded-fault script started pytest
+   directly. It now uses `nested_pytest.command` with `nested_pytest.environment` (`73f238d4`). The
+   failed test passed alone, the four relay faults were caught again, and the selected 360 units passed
+   with zero failures. The gate's `--rerun-failed` requires an unchanged clean tree, so this changed-tree
+   fix used the failed test directly; the next full gate runs on the new committed HEAD.
 
 ## 10. Relay mutation gate (pre-review fix)
 
