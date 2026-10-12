@@ -28,7 +28,7 @@ def one(seed: int, scratch: Path) -> dict:
                     "sampled": data["mutants"]}
     with log.open("w") as output:
         done = subprocess.run([sys.executable, "tools/difffuzz.py", "--ci", "--seed", str(seed),
-                               "--report", str(report)], cwd=ROOT, stdout=output,
+                               "--report", str(report), "--minimise-limit", "0"], cwd=ROOT, stdout=output,
                               stderr=subprocess.STDOUT, check=False)
     if not report.is_file():
         return {"seed": seed, "exit_code": done.returncode, "passed": False,
