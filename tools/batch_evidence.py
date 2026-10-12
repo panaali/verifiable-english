@@ -13,12 +13,40 @@ still covers every line of code the report commit holds.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import subprocess
 from pathlib import Path
 
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build", "cargo_test", "pytest")
 REQUIRED_CORPORA = {"probe", "conformance", "readings", "pilots", "discourse", "rights", "quantity"}
+
+
+def signed_unavailable(comparison: dict) -> bool:
+    """R7 covers only listed records with exactly the same unavailable outcome."""
+    counts = comparison.get("unavailable_both", {})
+    if not isinstance(counts, dict):
+        return False
+    if not counts:
+        return True
+    rows = comparison.get("differences")
+    if not isinstance(rows, list):
+        return False
+    seen = set()
+    actual = Counter()
+    for row in rows:
+        if row.get("class") != "unavailable":
+            continue
+        key = (row.get("corpus"), row.get("authority"), row.get("case"), row.get("op"))
+        if key in seen or row.get("listed") is not True or row.get("base") != row.get("head"):
+            return False
+        seen.add(key)
+        outcome = row.get("base")
+        if not isinstance(outcome, dict) or ("timeout" not in outcome and
+                '"CheckerUnavailable' not in json.dumps(outcome)):
+            return False
+        actual[f"{key[0]}/{key[1]}"] += 1
+    return dict(actual) == counts
 
 
 def problems(head: str, gate: dict, comparison: dict, latency: dict) -> list[str]:
@@ -33,8 +61,8 @@ def problems(head: str, gate: dict, comparison: dict, latency: dict) -> list[str
         errors.append("full gate has no passing Python and Rust tests")
     if comparison.get("head_commit") != head:
         errors.append("corpus comparison did not run on HEAD")
-    if comparison.get("unlisted") != 0 or comparison.get("unavailable_both") != {}:
-        errors.append("corpus comparison has an unlisted or unavailable result")
+    if comparison.get("unlisted") != 0 or not signed_unavailable(comparison):
+        errors.append("corpus comparison has an unlisted or unsigned unavailable result")
     records = comparison.get("records")
     if not isinstance(records, dict) or not REQUIRED_CORPORA <= {k.split("/", 1)[0] for k, v in records.items()
                                                                  if type(v) is int and v > 0}:
