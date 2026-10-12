@@ -8,6 +8,7 @@ rejects everything fails these tests too.
 from __future__ import annotations
 
 from copy import deepcopy
+import hashlib
 import json
 import re
 import subprocess
@@ -18,6 +19,8 @@ import pytest
 
 from tools import batch_evidence
 from tools.evidence import EvidenceError, ab, config, fuzz_ab, killed, latency as paired_tool, load, loads, report, scope
+from tools.evidence import checkouts as evidence_checkouts, merge_base as evidence_merge_base
+from tools.evidence import recording as evidence_recording, scope_range as evidence_scope_range
 
 ROOT = Path(__file__).resolve().parents[1]
 HEAD, BASE = "a" * 40, "b" * 40
@@ -98,7 +101,7 @@ def test_latency_measure_refuses_inputs_that_compare_nothing(tmp_path, arguments
     assert samples == {} and message in errors[0]
 
 
-PAIRED_RECORD = {"head_commit": HEAD, "pass": True, "allowance": 0.2,
+PAIRED_RECORD = {"base_commit": BASE, "head_commit": HEAD, "pass": True, "allowance": 0.2,
            "samples": {"docs/a/s1.ve.md": {"base_cpu_ms": 10, "head_cpu_ms": 12},
                        "docs/b/s1.ve.md": {"base_cpu_ms": 10.0, "head_cpu_ms": 9.5}}}
 
@@ -141,10 +144,10 @@ def test_a_duplicated_latency_key_is_refused_when_read():
 
 
 def test_latency_record_head_and_pass_are_its_own():
-    assert paired_tool.problems({**PAIRED_RECORD, "head_commit": BASE}, HEAD) == [
+    assert paired_tool.problems({**PAIRED_RECORD, "head_commit": "c" * 40}, HEAD) == [
         "latency budget was not measured and passed on HEAD"]
     assert paired_tool.problems({**PAIRED_RECORD, "pass": False}, HEAD)
-    saved = paired_tool.record(HEAD, {"k": {"base_cpu_ms": 10, "head_cpu_ms": 13}}, "test")
+    saved = paired_tool.record(BASE, HEAD, {"k": {"base_cpu_ms": 10, "head_cpu_ms": 13}}, "test")
     assert saved["pass"] is False and paired_tool.problems(saved, HEAD)
 
 
@@ -170,21 +173,21 @@ def test_lf0_empty_ab_files_fail(tmp_path):
     base, head = tmp_path / "base.jsonl", tmp_path / "head.jsonl"
     for text in ("", "\n\n  \n"):
         base.write_text(text), head.write_text(text)
-        comparison, errors = ab.compare(base, head, HEAD)
+        comparison, errors = ab.compare(base, head, BASE, HEAD)
         assert comparison is None and errors == [f"{base}: the recording is empty", f"{head}: the recording is empty"]
-    comparison, errors = ab.compare(tmp_path / "none.jsonl", head, HEAD)
+    comparison, errors = ab.compare(tmp_path / "none.jsonl", head, BASE, HEAD)
     assert comparison is None and errors[0].endswith("no recording")
 
 
 def test_ab_runs_lean_first_diff_and_reports_what_it_refuses(tmp_path):
     base, head = tmp_path / "base.jsonl", tmp_path / "head.jsonl"
     base.write_text('{"x": 1}\n'), head.write_text('{"x": 1}\n')
-    comparison, errors = ab.compare(base, head, HEAD, corpora=["conformance"])
+    comparison, errors = ab.compare(base, head, BASE, HEAD, corpora=["conformance"])
     assert comparison is None
     assert errors[0].startswith("lean_first_diff compare could not compare (exit 2)") and "no record" in errors[0]
 
 
-AB = {"head_commit": HEAD, "unlisted": 0, "unavailable_both": {},
+AB = {"base_commit": BASE, "head_commit": HEAD, "unlisted": 0, "unavailable_both": {},
       "records": {f"{name}/python": 3 for name in sorted(ab.REQUIRED_CORPORA)}}
 
 
@@ -412,13 +415,13 @@ def test_scope_is_the_batch_commits_without_merges(tmp_path):
     assert saved["head"] == _git(repo, "rev-parse", "HEAD") == saved["commits"][0]["hash"]
     assert saved["changes"] == [{"path": "a.txt", "added": 1, "deleted": 1}, {"path": "b.txt", "added": 2, "deleted": 0}]
     assert batch_evidence.scope_problems(saved) == []
-    assert batch_evidence.scope_history_problems(saved, repo) == []
+    assert batch_evidence.scope_history_problems(saved, cwd=repo) == []
     changed = deepcopy(saved)
     changed["commits"][0]["subject"] = "invented"
-    assert "scope commits differs" in batch_evidence.scope_history_problems(changed, repo)[0]
+    assert "scope commits differs" in batch_evidence.scope_history_problems(changed, cwd=repo)[0]
     changed = deepcopy(saved)
     changed["changes"] = [{"path": "tools/not-in-the-commit.py", "added": 1, "deleted": 0}]
-    assert "scope changes differs" in batch_evidence.scope_history_problems(changed, repo)[0]
+    assert "scope changes differs" in batch_evidence.scope_history_problems(changed, cwd=repo)[0]
     with pytest.raises(EvidenceError):
         scope("HEAD", "HEAD", repo)
 
@@ -447,7 +450,8 @@ lines = ["gate {gate.commit_sha|short}: {gate.counts.passed} passed"]
 def batch(tmp_path, monkeypatch):
     """A complete batch directory; the toolkit's repository root is moved to tmp_path."""
     monkeypatch.setattr(config, "ROOT", tmp_path)
-    monkeypatch.setattr(batch_evidence, "scope_history_problems", lambda saved: [])
+    monkeypatch.setattr(batch_evidence, "scope_history_problems", lambda saved, main: [])
+    monkeypatch.setattr(batch_evidence, "mutant_source_problems", lambda mutants, head: [])
     directory = tmp_path / "docs/t/b"
     (directory / "evidence").mkdir(parents=True)
     for name, value in (("scope", SCOPE), ("gate", GATE), ("mutants", MUTANTS)):
@@ -506,7 +510,7 @@ def test_named_latency_and_fuzz_ab_are_checked(batch):
     (batch / "evidence.toml").write_text(TOML + '[latency]\nfile = "latency.json"\nworkloads = ["docs/a/s1.ve.md", '
                                          '"docs/b/s1.ve.md"]\n[fuzz_ab]\nfile = "fuzz.json"\n')
     _write(batch, "latency", PAIRED_RECORD)
-    _write(batch, "fuzz", {"head_commit": HEAD, "pass": True, "rules": [],
+    _write(batch, "fuzz", {"base_commit": BASE, "head_commit": HEAD, "pass": True, "rules": [],
                            "runs": [{"run": "--ci", "compared": 3, "explained": [], "unexplained": []}]})
     assert batch_evidence.check(batch)[1] == []
     _write(batch, "latency", {**PAIRED_RECORD, "samples": {"docs/a/s1.ve.md": PAIRED_RECORD["samples"]["docs/a/s1.ve.md"]}})
@@ -596,6 +600,7 @@ def _readings_batch(monkeypatch, tmp_path, names, head_ms):
                                   for name in names]))
     out = tmp_path / "latency.json"
     monkeypatch.setattr(tool, "LeanService", _Service)
+    monkeypatch.setattr(tool, "checkouts", lambda base_root, head_root: (BASE, HEAD))
     monkeypatch.setattr(tool, "answer", lambda service, case: ("returned", []))
     monkeypatch.setattr(tool, "measure",
                         lambda service, case, calls: head_ms if "head" in str(service.executable) else 10.0)
@@ -619,3 +624,186 @@ def test_readings_batch_latency_refuses_two_cases_with_one_name(monkeypatch, tmp
     with pytest.raises(RuntimeError, match="two readings cases are named c0"):
         main()
     assert not out.exists()
+
+
+# ---------------------------------------------------------------- evidence tied to the batch (arch-20261010-2)
+
+def _commit(repo, name, text, message):
+    (repo / name).parent.mkdir(parents=True, exist_ok=True)
+    (repo / name).write_text(text)
+    _git(repo, "add", "-A"), _git(repo, "commit", "-qm", message)
+    return _git(repo, "rev-parse", "HEAD")
+
+
+@pytest.fixture
+def history(tmp_path):
+    """`main` at m0; the batch from m0 changes ve/x.py, then tools/t.py; then `main` moves to m1."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q", "-b", "main")
+    m0 = _commit(repo, "a.txt", "1\n", "m0")
+    _git(repo, "checkout", "-qb", "batch")
+    product = _commit(repo, "ve/x.py", "x = 1\n", "product")
+    tool = _commit(repo, "tools/t.py", "t = 1\n", "tool")
+    _git(repo, "checkout", "-q", "main")
+    m1 = _commit(repo, "c.txt", "1\n", "m1")
+    _git(repo, "checkout", "-q", "batch")
+    return repo, m0, product, tool, m1
+
+
+def test_f1_a_scope_from_inside_the_batch_fails_before_and_after_the_merge(history):
+    """Review F1: a fix round saved its scope with `--base <reviewed commit>`, dropping the batch's earlier `ve/`
+    commit (so no [ab] was required), and the check replayed only `base..head`."""
+    repo, m0, product, tool, m1 = history
+    full, short = scope("main", tool, repo), evidence_scope_range(product, tool, repo)
+    assert full["base"] == m0 and [c["hash"] for c in full["commits"]] == [tool, product]
+    assert batch_evidence.scope_history_problems(full, cwd=repo) == []
+    assert batch_evidence.scope_history_problems(short, cwd=repo) == [
+        f"scope commits differ from the batch's {m0[:8]}..{tool[:8]} --no-merges (its merge base with main)",
+        f"scope changes differ from the batch's {m0[:8]}..{tool[:8]} --no-merges (its merge base with main)"]
+    # A later main commit whose range holds the very same commits and changes names the same scope (b16c's).
+    assert batch_evidence.scope_history_problems(evidence_scope_range(m1, tool, repo), cwd=repo) == []
+    # The merge base does not move when the batch merges and main goes on.
+    _git(repo, "checkout", "-q", "main")
+    _git(repo, "merge", "-q", "--no-ff", "--no-edit", "batch")
+    _commit(repo, "d.txt", "1\n", "m2")
+    assert evidence_merge_base(tool, "main", repo) == m0
+    assert batch_evidence.scope_history_problems(full, cwd=repo) == []
+    assert len(batch_evidence.scope_history_problems(short, cwd=repo)) == 2
+
+
+def test_f1_a_head_that_reached_main_without_a_merge_needs_main_before_it(history):
+    repo, m0, product, tool, m1 = history
+    _git(repo, "checkout", "-q", "main")
+    _git(repo, "reset", "-q", "--hard", tool)  # main fast-forwarded onto the batch
+    with pytest.raises(EvidenceError, match="without a merge commit"):
+        evidence_merge_base(tool, "main", repo)
+    saved = evidence_scope_range(m0, tool, repo)
+    assert "cannot be reproduced" in batch_evidence.scope_history_problems(saved, cwd=repo)[0]
+    assert batch_evidence.scope_history_problems(saved, m0, cwd=repo) == []  # --main names main before it
+
+
+FUZZ = {"base_commit": BASE, "head_commit": HEAD, "pass": True, "rules": [],
+        "runs": [{"run": "--ci", "compared": 3, "explained": [], "unexplained": []}]}
+AB_RECORDS = {"ab": (lambda record, base: ab.problems(record, HEAD, base=base), AB),
+              "latency": (lambda record, base: paired_tool.problems(record, HEAD, base=base), PAIRED_RECORD),
+              "fuzz_ab": (lambda record, base: fuzz_ab.problems(record, HEAD, base), FUZZ)}
+
+
+@pytest.mark.parametrize("name", sorted(AB_RECORDS))
+@pytest.mark.parametrize("base, change, message", [
+    (BASE, {}, None),
+    (BASE, {"base_commit": HEAD}, "with itself"),
+    (BASE, {"base_commit": "c" * 40}, "not on the batch's merge base"),
+    (BASE, {"base_commit": None}, "names no base commit"),
+    (BASE, {"base_commit": BASE[:8]}, "names no base commit"),
+    (None, {"base_commit": None}, None),
+    (None, {"base_commit": HEAD}, "with itself"),
+], ids=ids)
+def test_f2_every_ab_record_compared_the_batch_base_with_its_head(name, base, change, message):
+    """Review F2: a fuzz A/B of the head against itself passed, and no A/B record's base met the scope's."""
+    problems, record = AB_RECORDS[name]
+    record = {**deepcopy(record), **change}
+    if change.get("base_commit", "") is None:
+        del record["base_commit"]
+    errors = problems(record, base)
+    assert errors == [] if message is None else any(message in error for error in errors), errors
+
+
+def test_f2_ab_measurements_take_both_commits_from_two_clean_checkouts(history, tmp_path):
+    repo, m0, product, tool, m1 = history
+    same, other = tmp_path / "same", tmp_path / "other"
+    _git(repo, "worktree", "add", "-q", "--detach", str(same), tool)
+    _git(repo, "worktree", "add", "-q", "--detach", str(other), m0)
+    assert evidence_checkouts(other, repo) == (m0, tool)
+    for base_root, message in ((repo, "same directory"), (same, "both at")):
+        with pytest.raises(EvidenceError, match=message):
+            evidence_checkouts(base_root, repo)
+    (other / "a.txt").write_text("changed\n")
+    with pytest.raises(EvidenceError, match="uncommitted changes"):
+        evidence_checkouts(other, repo)
+    document = tmp_path / "d.ve.md"
+    document.write_text("x")
+    assert paired_tool.main(["measure", "--base-root", str(same), "--head-root", str(repo), "--command",
+                             "cat {input}", "--input", str(document), "--out", str(tmp_path / "l.json")]) == 1
+    assert not (tmp_path / "l.json").exists()
+    recording = tmp_path / "r.jsonl"
+    recording.write_text('{"x": 1}\n')
+    assert ab.compare(recording, recording, tool, tool) == (None, [f"corpus comparison compared the head {tool} "
+                                                                   "with itself"])
+
+
+def test_f2_a_mutant_counts_only_for_its_file_at_the_head(history):
+    repo, m0, product, tool, m1 = history
+    rows = [{"id": "M1", "file": "tools/t.py", "killed": True, "killed_by": ["t"],
+             "source_sha256": hashlib.sha256(b"t = 1\n").hexdigest()},
+            {"id": "L1", "file": "ve/x.py", "test": "t", "exit_code": 1, "failure_excerpt": "x"}]
+    assert batch_evidence.mutant_source_problems(rows, tool, repo) == []
+    assert batch_evidence.mutant_source_problems([{**rows[0], "source_sha256": "0" * 64}], tool, repo) == [
+        f"seeded mutant M1 ran on another tools/t.py than the one at {tool}"]
+    assert batch_evidence.mutant_source_problems([{**rows[0], "file": "tools/gone.py"}], tool, repo) == [
+        f"seeded mutant M1: tools/gone.py is not a file at {tool}"]
+    assert batch_evidence.mutant_source_problems([{k: v for k, v in rows[0].items() if k != "source_sha256"}],
+                                                 tool, repo)
+
+
+@pytest.mark.parametrize("section", sorted(config.SECTIONS), ids=ids)
+def test_f3_no_section_reads_a_file_outside_the_repository(batch, section):
+    """Review F3: `[gate] file = "/tmp/.../gate.json"` passed; every section's file is resolved inside."""
+    outside = batch.parents[2].parent / f"outside-{section}.json"
+    outside.write_text(json.dumps({"scope": SCOPE, "gate": GATE, "mutants": MUTANTS}.get(section, {})))
+    tables = {"scope": {"file": "scope.json"}, "gate": {"file": "gate.json"}, "mutants": {"file": "mutants.json"}}
+    tables[section] = {**{"latency": {"workloads": ["w"]}, "report": {"marker": "T", "lines": ["x"]}}.get(section, {}),
+                       "file": str(outside)}
+    (batch / "evidence.toml").write_text('batch = "test"\n' + "".join(
+        f"[{name}]\n" + "".join(f"{key} = {json.dumps(value)}\n" for key, value in table.items())
+        for name, table in tables.items()))
+    with pytest.raises(EvidenceError, match="outside the repository"):
+        batch_evidence.check(batch)
+
+
+def test_f3_the_check_lists_every_file_it_reads(batch):
+    with evidence_recording() as opened:
+        batch_evidence.check(batch)
+    assert sorted({path.relative_to(batch).as_posix() for path in opened}) == [
+        "REPORT.md", "evidence.toml", "evidence/gate.json", "evidence/mutants.json", "evidence/scope.json"]
+
+
+def test_f1_f2_f3_a_committed_batch_passes_and_each_untied_piece_fails(history, monkeypatch):
+    """End to end in a repository: the evidence of a batch passes at its report commit; a scope from inside
+    the batch (F1), a fuzz A/B of the head against itself (F2) and evidence that is ignored or not committed
+    (F3) each fail."""
+    repo, m0, product, tool, m1 = history
+    monkeypatch.setattr(config, "ROOT", repo)
+    monkeypatch.setattr(batch_evidence, "ROOT", repo)
+    monkeypatch.chdir(repo)  # main's report-commit check reads Git where it runs
+    directory = repo / "docs/t/b"
+    evidence = directory / "evidence"
+    evidence.mkdir(parents=True)
+    rows = [{"id": f"M{i}", "file": "tools/t.py", "killed": True, "killed_by": ["t"],
+             "source_sha256": hashlib.sha256(b"t = 1\n").hexdigest()} for i in range(3)]
+    for name, value in (("scope", scope("main", tool, repo)), ("gate", {**GATE, "commit_sha": tool}),
+                        ("mutants", {"mutants": rows}), ("ab", {**AB, "base_commit": m0, "head_commit": tool})):
+        (evidence / f"{name}.json").write_text(json.dumps(value))
+    (directory / "evidence.toml").write_text(TOML.split("[report]")[0] + '[ab]\nfile = "ab.json"\n')
+    report_commit = _commit(repo, "docs/t/b/README", "b\n", "report")
+    assert batch_evidence.check(directory, "main", report_commit) == (tool, [])
+    assert batch_evidence.main(["--check", str(directory), "--report-commit", report_commit]) == 0
+
+    (evidence / "scope.json").write_text(json.dumps(evidence_scope_range(product, tool, repo)))
+    assert any("differ from the batch's" in error for error in batch_evidence.check(directory)[1])
+    _git(repo, "checkout", "-q", "--", "docs")
+
+    (directory / "evidence.toml").write_text(TOML.split("[report]")[0] + '[ab]\nfile = "ab.json"\n'
+                                             '[fuzz_ab]\nfile = "fuzz.json"\n')
+    (evidence / "fuzz.json").write_text(json.dumps({**FUZZ, "base_commit": tool, "head_commit": tool}))
+    errors = batch_evidence.check(directory, "main", report_commit)[1]
+    assert f"fuzz A/B compared the head {tool} with itself" in errors
+    assert "docs/t/b/evidence/fuzz.json is not committed as read at " + report_commit in errors
+    assert "docs/t/b/evidence.toml is not committed as read at " + report_commit in errors
+
+    (repo / ".gitignore").write_text("fuzz.json\n")
+    (evidence / "fuzz.json").write_text(json.dumps({**FUZZ, "base_commit": m0, "head_commit": tool}))
+    later = _commit(repo, "docs/t/b/README", "c\n", "report again")
+    assert batch_evidence.check(directory, "main", later)[1] == [
+        f"docs/t/b/evidence/fuzz.json is not committed as read at {later}"]

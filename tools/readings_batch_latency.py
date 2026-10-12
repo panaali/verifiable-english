@@ -1,7 +1,8 @@
 """Measure identical readings-route requests on the base and batch Lean builds.
 
 Usage: python tools/readings_batch_latency.py BASE_ROOT HEAD_ROOT CORPUS HEAD_COMMIT OUT
-The caller supplies the same generated corpus used by lean_first_diff.py. Five
+The caller supplies the same generated corpus used by lean_first_diff.py. Both commits are read from the two
+checkouts (HEAD_COMMIT must be the head checkout's). Five
 paired runs reduce host load noise; the gate compares mean Lean CPU per call
 (the pairing, the CPU reading and the 20% rule are tools/evidence/latency.py's).
 """
@@ -12,7 +13,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from tools.evidence import latency
+from tools.evidence import checkouts, latency
 from ve.backends.lean_service import LeanService
 from ve.errors import VEError
 from ve.readings_route import document_wire
@@ -54,6 +55,9 @@ def main() -> int:
     args = parser.parse_args()
     if args.calls <= 0 or args.pairs <= 0:
         parser.error("calls and pairs must be positive")
+    base_commit, head_commit = checkouts(args.base_root, args.head_root)
+    if head_commit != args.head_commit:
+        parser.error(f"the head checkout is at {head_commit}, not {args.head_commit}")
     corpus = json.loads(Path(args.corpus).read_text())
     if len(corpus) < 3:
         parser.error("readings corpus has fewer than three cases")
@@ -74,7 +78,7 @@ def main() -> int:
         for key, row in samples.items():
             row.update(case_sha256=hashlib.sha256(json.dumps(cases[key], sort_keys=True).encode()).hexdigest(),
                        calls_per_side=args.calls * args.pairs)
-    result = latency.record(args.head_commit, samples,
+    result = latency.record(base_commit, head_commit, samples,
                             "paired warm readings-route service calls; /proc service CPU time",
                             corpus_sha256=hashlib.sha256(Path(args.corpus).read_bytes()).hexdigest())
     Path(args.out).write_text(json.dumps(result, indent=2) + "\n")
