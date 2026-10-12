@@ -9,6 +9,7 @@ from ve import Environment, FiniteModel
 from ve.backends.validation import family_in_scope, model_in_scope
 from ve.definitions import compile_definitions
 from ve.profiles import SPEC_REVISION
+from tests.subprocesses import HANG_TIMEOUT
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,7 +44,7 @@ def case():
 
 def route(cases):
     result = subprocess.run([str(ROUTE), "route", "-"], input=json.dumps(cases), text=True,
-                            capture_output=True, check=False, timeout=30)
+                            capture_output=True, check=False, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     return json.loads(result.stdout)
 

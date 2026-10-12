@@ -15,6 +15,7 @@ import sys
 import time
 
 from tests.test_b14c import case
+from tests.subprocesses import HANG_TIMEOUT
 
 
 def measure(binary: Path, request: dict, rounds: int = 5) -> dict:
@@ -24,7 +25,7 @@ def measure(binary: Path, request: dict, rounds: int = 5) -> dict:
         before = resource.getrusage(resource.RUSAGE_CHILDREN)
         started = time.perf_counter()
         result = subprocess.run([str(binary), "route", "-"], input=data, text=True,
-                                capture_output=True, timeout=30, check=False)
+                                capture_output=True, timeout=HANG_TIMEOUT, check=False)
         wall.append(1000 * (time.perf_counter() - started))
         after = resource.getrusage(resource.RUSAGE_CHILDREN)
         cpu.append(1000 * ((after.ru_utime + after.ru_stime) -

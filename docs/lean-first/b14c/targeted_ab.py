@@ -12,6 +12,7 @@ import subprocess
 import sys
 
 from tests.test_b14c import case
+from tests.subprocesses import HANG_TIMEOUT
 
 
 CHECK = """import json,sys
@@ -34,7 +35,7 @@ def run(root: Path, pair: tuple) -> dict:
     env = {**os.environ, "PYTHONPATH": str(root)}
     result = subprocess.run([sys.executable, "-c", CHECK], cwd=root,
                             input=json.dumps(pair), text=True, capture_output=True,
-                            env=env, timeout=30, check=True)
+                            env=env, timeout=HANG_TIMEOUT, check=True)
     return json.loads(result.stdout)
 
 
