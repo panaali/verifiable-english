@@ -110,11 +110,12 @@ were equivalent on the UDHR's data and were replaced:
 
 ## Scope
 
-Saved `main..HEAD --no-merges` at the code head `6a80b9a3` ([`scope.json`](evidence/scope.json)): **10 commits**,
-36 files, **23,709 lines added**, **1 deleted**. Of these, 4 lines are product code (`ve/readings_route.py`), 249
-are tests, 4 are difffuzz corpus exclusions and 11 are gate-collection pins. The rest is the pilot's scripts, data,
-evidence and this DELTA. Commits: `c3e40b7a`, `ae7fa229`, `a497cf56`, `98d8dbf0`, `8fed59c9`, `b6cf9fbb`,
-`b90219bb`, `b52c22a4`, `5e5ac815`, `6a80b9a3`.
+Saved `main..HEAD --no-merges` at code head `b81af095` with main pinned at `c9b8cba6`
+([`scope.json`](evidence/scope.json)): **13 commits**, 37 files, **23,775 lines added**, **1 deleted**.
+Of these, 4 lines are product code (`ve/readings_route.py`), 149 are behavior tests, 4 are difffuzz corpus
+exclusions and 6 are gate-collection pins. The rest is the pilot's scripts, data, evidence and this DELTA.
+Commits: `c3e40b7a`, `ae7fa229`, `a497cf56`, `98d8dbf0`, `8fed59c9`, `b6cf9fbb`, `b90219bb`, `b52c22a4`,
+`5e5ac815`, `6a80b9a3`, `bd99f295`, `9c605216`, `b81af095`.
 
 - `b52c22a4` is `main`'s `6b66f087`, cherry-picked (the one deleted line): the layer map's row 4 lists `ve.ask`,
   which `tools/test_layer_policy.py` needs and the merge base lacks.
