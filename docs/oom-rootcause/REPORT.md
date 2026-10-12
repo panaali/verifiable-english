@@ -168,7 +168,11 @@ as `evidence/mutants.json` (file and test keys).
 | 8 | Python | `ve/backends/process_limits.py` | a one-shot runner starts without the cap | `test_one_shot_runners_run_under_an_address_space_limit` |
 | 9 | Python | `ve/backends/process_limits.py` | a byte setting in non-ASCII digits is read as a number | `test_configured_bytes` |
 
-No Lean product code changed, so there is no Lean seeded bug.
+The relay pre-review fix also changes Lean product code. Four additional planted faults in
+`evidence/relay-mutants.json` cover empty `fill` labels, empty conflict targets, repeated norm `over` names
+(all in `lean/ResponseShape/Schemas/ReadingsRoute.lean`), and Python's distinct-string validator
+(`ve/backends/service_schema.py`). Each failed its named test; `seed_relay_faults.py` restored the source
+and rebuilt the clean Lean decoder.
 
 ## 7. User-visible deltas
 
@@ -199,8 +203,8 @@ Recorded in `docs/oom-rootcause/DELTA.md`. One is covered by a standing ruling (
 
 ## 9. Gate
 
-The commits are listed in `evidence/commits.txt` (`git log main..HEAD --no-merges`, taken before the last
-two commits).
+The commit list through the relay code commit is saved in `evidence/commits.txt`
+(`git log main..HEAD --no-merges`, taken before this evidence commit).
 
 1. The first full gate on `ab00e274` was started in the background. The tool's two-hour limit stopped it
    during the Python suite at load ~110, and it left no result. It was restarted as a detached process
@@ -215,18 +219,34 @@ two commits).
    HOME and PATH are set the same way. Fix: the test also fakes `drop_stale` (commit "test_gate_integrity:
    fake Lake's trace check"). The file then passed 37/37 both ways, and the 79 files its change selects
    passed: 2,825 passed, 1 skipped, 83 xfailed.
-3. The full gate on the final code, `ef36aece` (`evidence/gate-result.json`): **passed**. 14,339
+3. The full gate on the OOM fix, `ef36aece` (`evidence/gate-result.json`): **passed**. 14,339
    passed, 92 skipped, 0 failed, 38 Rust tests passed, every stage run (toolchains, Lean build, Lean
-   audit, Rust build, cargo test, pytest). The commit that adds it changes only docs.
+   audit, Rust build, cargo test, pytest). The commit that adds it changes only docs. A new gate result
+   for the relay fix will be left at the same evidence path after the final commit.
 
-## 10. Relay mutation gate (pre-existing failure, not this branch's)
+## 10. Relay mutation gate (pre-review fix)
 
-`review-ready.py` runs `tools/relay_mutation_gate.py` because `ve/backends/lean.py` changed. It fails with 92
-findings, all on `service:readings-route`: allow-list entries that match nothing (`F7 … units/*/…`), and
-accepted `empty`/`duplicate` mutants of `fill`, `fill/*/label`, `units/*/content/norm/over` and `targets/*`.
-**The same tool on main 5479466f, in a scratch worktree with the same Lean build, gives the identical 92
-findings** (`evidence/relay-mutation-gate-main-5479466f.txt`, `evidence/relay-mutation-gate-branch.txt`).
-Its inputs for that route are the committed fixtures, the Lean build and the service reader. None of them
-changes on this branch, and the one-shot routes that `run_limited` now carries add no finding. The fix
-belongs to the readings-route owner (rd-6b's binding, or a DRI decision on the allow-list). It is not
-widened here.
+The relay gate on `baf95df4` had 91 findings on `service:readings-route`: 86 allow-list paths matched no
+mutant, and five mutations of genuine responses were accepted. The same 91 findings were present on main
+(`evidence/relay-mutation-gate-main-5479466f.txt`, `evidence/relay-mutation-gate-branch.txt`), but this
+batch changes the Lean process wrapper, so its pre-review gate requires the relay gate to pass.
+
+The allow-list now drops those 86 stale paths and one more made obsolete when the shared labelled-formula
+schema began refusing empty slot labels. The Lean `ReadingsRoute` schema rejects an empty `fill` label, an
+empty conflict target, and a repeated name in a norm's `over` list. A new `uniqueStrings` shape rule is
+decoded by Lean and rendered as `x-unique-strings` for the Python validator. The generated schema and
+Lean declaration snapshot were refreshed from those sources. A parity test applies actual mutated relay
+fixtures to both decoders and requires both to refuse the three cases. The two accepted mutations of the
+computed `fill` list (empty or repeated) are recorded as B0 under standing ruling R8: their length
+and formulas are Lean's computed content, not an id, span, count, choice, or request row. The targeted regression test
+`test_readings_route_refuses_empty_labels_targets_and_repeated_over_names` exercises the three refusals
+through the real service reader. The `x-unique-strings` validator also has its own positive and negative
+test. The targeted `tools/relay_mutation_gate.py --route service:readings-route` run reports 46 fixtures,
+15,768 mutants, 13,514 refused, 2,254 allowed by the reviewed list, and **zero findings**. The final
+full-route run covers 39 routes and 109,195 mutants: 101,713 refused, 7,482 allowed by the reviewed
+list, and **zero findings** (`evidence/relay-mutation-gate-final.json`). `tools/trust_map.py --check`
+reports no change in K, S, verdict-bearing, or total trusted lines from its baseline.
+
+The selected test run on this final worktree completed all 360 units with zero failures
+(`tools/select_tests.py --base $(git merge-base HEAD main) --run`). Four additional relay faults
+were planted and caught by their named tests, then removed (`evidence/relay-mutants.json`).
