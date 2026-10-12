@@ -72,8 +72,40 @@
     },
     "english_formula": {
       "$comment": "EnglishGrammar.EFormula.encode of the question's formula: EFormula.decode's grammar.",
-      "minItems": 1,
-      "type": "array"
+      "x-tagged": {
+        "and": [{"$ref": "#/$defs/english_formula"}, {"$ref": "#/$defs/english_formula"}],
+        "atom": [{"type": "string"}, {"items": {"$ref": "#/$defs/english_term"}, "type": "array"}],
+        "binary": [{"type": "string"}, {"$ref": "#/$defs/english_term"}, {"$ref": "#/$defs/english_term"}],
+        "bottom": [],
+        "eq": [{"$ref": "#/$defs/english_term"}, {"$ref": "#/$defs/english_term"}],
+        "exists": [{"type": "string"}, {"$ref": "#/$defs/english_formula"}],
+        "forall": [{"type": "string"}, {"$ref": "#/$defs/english_formula"}],
+        "implies": [{"$ref": "#/$defs/english_formula"}, {"$ref": "#/$defs/english_formula"}],
+        "le": [{"$ref": "#/$defs/english_term"}, {"$ref": "#/$defs/english_term"}],
+        "lt": [{"$ref": "#/$defs/english_term"}, {"$ref": "#/$defs/english_term"}],
+        "not": [{"$ref": "#/$defs/english_formula"}],
+        "or": [{"$ref": "#/$defs/english_formula"}, {"$ref": "#/$defs/english_formula"}],
+        "reach": [
+          {"enum": ["star", "plus"]},
+          {
+            "x-tagged": {"body": [{"type": "string"}, {"$ref": "#/$defs/english_formula"}], "named": [{"type": "string"}]}
+          },
+          {"$ref": "#/$defs/english_term"},
+          {"$ref": "#/$defs/english_term"}
+        ],
+        "top": [],
+        "unary": [{"type": "string"}, {"$ref": "#/$defs/english_term"}]
+      }
+    },
+    "english_term": {
+      "$comment": "EnglishGrammar.ETerm.encode",
+      "x-tagged": {
+        "add": [{"$ref": "#/$defs/english_term"}, {"$ref": "#/$defs/english_term"}],
+        "const": [{"type": "string"}],
+        "num": [{"$ref": "common.json#/$defs/integer_text"}],
+        "scale": [{"$ref": "common.json#/$defs/integer_text"}, {"$ref": "#/$defs/english_term"}],
+        "var": [{"$ref": "common.json#/$defs/nat"}]
+      }
     },
     "gap": {
       "maxItems": 3,

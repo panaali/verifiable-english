@@ -93,6 +93,21 @@ def test_a_genuine_answer_is_accepted(answers, ident):
     assert not refused(result, request, expected)
 
 
+@pytest.mark.parametrize("ident", ["G1", "U3", "A1"])
+@pytest.mark.parametrize("ast", [
+    ["bad", {"untyped": True}],
+    ["not", ["bad", {"untyped": True}]],
+    ["unary", "eligible", ["const", {"untyped": True}]],
+    ["reach", "star", ["body", "member", ["bad", 7]], ["var", 0], ["var", 1]],
+])
+def test_the_ask_formula_schema_types_every_descendant(ident, ast):
+    """F1: no ill-typed formula child crosses the service response boundary on any route."""
+    result = AF.load(ident)["result"]
+    changed = setting(result, ("ast",), ast)
+    with pytest.raises(service_schema.Invalid):
+        service_schema.check_row("ask", {"id": "ask", "status": "ok", "result": changed}, {"id": "ask"}, 0)
+
+
 @pytest.mark.parametrize("ident", ["G1", "U3"])
 def test_every_field_retyped_is_refused(answers, ident):
     """Each node of the answer replaced by each value of another type (a bool for an int, null for a value, a list

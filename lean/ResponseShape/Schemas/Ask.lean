@@ -72,10 +72,36 @@ def identities : Shape :=
       ("lexicon_id", ref "common.json#/$defs/hex64"), ("grammar_id", ref "common.json#/$defs/hex64"),
       ("actions_version", str), ("question_version", str), ("document_id", ref "common.json#/$defs/hex64")]]
 
-/-- `EnglishGrammar.EFormula.encode`: the question's formula, decided by its decoder. -/
+/-- `EnglishGrammar.ETerm.encode`: every constructor of the encoded question term. -/
+def englishTerm : Shape :=
+  c "EnglishGrammar.ETerm.encode" [.tagged [
+    ("var", [ref "common.json#/$defs/nat"]),
+    ("const", [str]),
+    ("num", [ref "common.json#/$defs/integer_text"]),
+    ("add", [ref "#/$defs/english_term", ref "#/$defs/english_term"]),
+    ("scale", [ref "common.json#/$defs/integer_text", ref "#/$defs/english_term"])]]
+
+/-- `EnglishGrammar.EFormula.encode`: every constructor, with recursively typed children. -/
 def englishFormula : Shape :=
   decidedBy "EnglishGrammar.EFormula.decode" (fun j => (VE.EnglishGrammar.EFormula.decode j).isSome) <|
-    c "EnglishGrammar.EFormula.encode of the question's formula: EFormula.decode's grammar." [arr, .minItems 1]
+    c "EnglishGrammar.EFormula.encode of the question's formula: EFormula.decode's grammar." [
+      .tagged [
+        ("top", []), ("bottom", []),
+        ("unary", [str, ref "#/$defs/english_term"]),
+        ("binary", [str, ref "#/$defs/english_term", ref "#/$defs/english_term"]),
+        ("atom", [str, n [arr, .items (ref "#/$defs/english_term")]]),
+        ("eq", [ref "#/$defs/english_term", ref "#/$defs/english_term"]),
+        ("lt", [ref "#/$defs/english_term", ref "#/$defs/english_term"]),
+        ("le", [ref "#/$defs/english_term", ref "#/$defs/english_term"]),
+        ("not", [ref "#/$defs/english_formula"]),
+        ("and", [ref "#/$defs/english_formula", ref "#/$defs/english_formula"]),
+        ("or", [ref "#/$defs/english_formula", ref "#/$defs/english_formula"]),
+        ("implies", [ref "#/$defs/english_formula", ref "#/$defs/english_formula"]),
+        ("forall", [str, ref "#/$defs/english_formula"]),
+        ("exists", [str, ref "#/$defs/english_formula"]),
+        ("reach", [enumS ["star", "plus"],
+          .tagged [("named", [str]), ("body", [str, ref "#/$defs/english_formula"])],
+          ref "#/$defs/english_term", ref "#/$defs/english_term"])]]
 
 def answered : Shape :=
   n [obj, .required ["status", "route", "form", "sentence", "ast", "spans", "lead", "text", "lines", "rows",
@@ -116,6 +142,7 @@ def file : File where
   defs := [("pair_nat", .schema pairNat), ("choice", .schema choice), ("source", .schema source),
     ("source_or_null", .schema sourceOrNull), ("gap", .schema gap), ("reason", .schema reason),
     ("line", .schema line), ("row", .schema row), ("name", .schema name), ("identities", .schema identities),
-    ("english_formula", .schema englishFormula), ("answered", .schema answered), ("refused", .schema refused)]
+    ("english_term", .schema englishTerm), ("english_formula", .schema englishFormula),
+    ("answered", .schema answered), ("refused", .schema refused)]
 
 end ResponseShape.Schemas.Ask
