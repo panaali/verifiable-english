@@ -68,6 +68,7 @@
       "T": [
         "ResponseDecode.Check",
         "ResponseDecode.Invariants.admission",
+        "ResponseDecode.Invariants.certificateBackground",
         "ResponseDecode.Invariants.coding",
         "ResponseDecode.Invariants.declarations",
         "ResponseDecode.Invariants.distinct",
@@ -84,29 +85,22 @@
         "ResponseDecode.Invariants.targetSorts",
         "ResponseDecode.array",
         "ResponseDecode.contentCheck",
-        "ResponseDecode.countWhere",
-        "ResponseDecode.definitionsCount",
         "ResponseDecode.field",
-        "ResponseDecode.flagsCount",
         "ResponseDecode.graphShape",
         "ResponseDecode.has",
         "ResponseDecode.invariants",
         "ResponseDecode.isField",
-        "ResponseDecode.isTrue",
         "ResponseDecode.length",
         "ResponseDecode.line",
-        "ResponseDecode.literalsCount",
-        "ResponseDecode.members",
         "ResponseDecode.need",
         "ResponseDecode.noContent",
-        "ResponseDecode.pairsCount",
         "ResponseDecode.path",
         "ResponseDecode.predicates",
         "ResponseDecode.project",
-        "ResponseDecode.regulatedCount",
+        "ResponseDecode.regenerate",
         "ResponseDecode.requestNode",
         "ResponseDecode.response",
-        "ResponseDecode.runs",
+        "ResponseDecode.sameFields",
         "ResponseDecode.unfold",
         "ResponseDecode.unfolds",
         "ResponseDecode.verdict",
@@ -137,10 +131,12 @@
         "ResponseShape.Result",
         "ResponseShape.Shape",
         "ResponseShape.arr",
+        "ResponseShape.backgroundBound",
         "ResponseShape.brokenOn",
         "ResponseShape.bump",
         "ResponseShape.c",
         "ResponseShape.check",
+        "ResponseShape.claimFields",
         "ResponseShape.closed",
         "ResponseShape.constS",
         "ResponseShape.copied",
@@ -2042,6 +2038,7 @@
         "VE.Core.Layers.coreEnvironment",
         "VE.Core.Layers.decodeLayered",
         "VE.Core.Layers.decodeLayers",
+        "VE.Core.Layers.folEntry",
         "VE.Core.Layers.folPredicates",
         "VE.Core.Layers.layerFields",
         "VE.Core.Layers.predicatesOf",
@@ -4727,7 +4724,8 @@
       ],
       "D[V]": [
         "VE.Norms.Admission.checkQuoted",
-        "VE.Norms.Admission.instDecidableLayerLeaf"
+        "VE.Norms.Admission.instDecidableLayerLeaf",
+        "VE.Norms.Admission.normRole"
       ],
       "G[V]": [
         "VE.Norms.Admission.envelopeGate"
@@ -8803,6 +8801,8 @@
         "VE.Service.Document.Support.all",
         "VE.Service.Document.Support.name",
         "VE.Service.Document.Support.ofName?",
+        "VE.Service.Document.UnitContent",
+        "VE.Service.Document.UnitContent.json",
         "VE.Service.Document.UnitStatus",
         "VE.Service.Document.UnitStatus.all",
         "VE.Service.Document.UnitStatus.name",
@@ -8814,13 +8814,20 @@
         "VE.Service.Document.documentCase",
         "VE.Service.Document.encode",
         "VE.Service.Document.kindName",
+        "VE.Service.Document.lowerReadings",
+        "VE.Service.Document.readingSetHasStrayNull",
+        "VE.Service.Document.readingsSets",
         "VE.Service.Document.reasons",
         "VE.Service.Document.rowOf",
         "VE.Service.Document.runCaseReported",
-        "VE.Service.Document.unitJson"
+        "VE.Service.Document.unitJson",
+        "VE.Service.Document.freeNorms"
       ],
       "D[I]": [
         "VE.Service.Document.documentId"
+      ],
+      "G[R]": [
+        "VE.Service.Document.checkNormDefaults"
       ]
     },
     "VE/Service/EnglishRun.lean": {

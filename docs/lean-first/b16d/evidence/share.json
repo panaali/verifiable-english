@@ -1,0 +1,17 @@
+{
+  "norm_defaults": {
+    "documents": 1010,
+    "ok": 1000,
+    "error": 10
+  },
+  "document": {
+    "documents": 904,
+    "ok": 66,
+    "error": 720,
+    "retained": 118
+  },
+  "pilots": {
+    "documents": 339,
+    "ok": 339
+  }
+}
