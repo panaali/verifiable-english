@@ -46,15 +46,22 @@ def worker(root: Path, iterations: int) -> dict:
         case = _lean_case(doc, "norms-elaborate")
         before = resource.getrusage(resource.RUSAGE_CHILDREN)
         start = time.perf_counter()
+        longest_call = 0.0
         with LeanService(root / "lean/.lake/build/bin/ve_service") as service:
-            first = service.run("family-norms", [case])[0]
-            for _ in range(iterations - 1):
-                service.run("family-norms", [case])
+            first = None
+            for _ in range(iterations):
+                call_start = time.perf_counter()
+                answer = service.run("family-norms", [case])[0]
+                longest_call = max(longest_call, time.perf_counter() - call_start)
+                if first is None:
+                    first = answer
         wall = time.perf_counter() - start
         after = resource.getrusage(resource.RUSAGE_CHILDREN)
         cpu = after.ru_utime + after.ru_stime - before.ru_utime - before.ru_stime
         rows[name] = {"wall_ms_per_case": wall * 1000 / iterations,
                       "lean_cpu_ms_per_case": cpu * 1000 / iterations,
+                      "longest_call_wall_ms": longest_call * 1000,
+                      "total_lean_cpu_ms": cpu * 1000,
                       "answer_sha256": hashlib.sha256(json.dumps(first, sort_keys=True).encode()).hexdigest(),
                       "status": first.get("status")}
     return rows
@@ -89,11 +96,16 @@ def main() -> int:
     head_cpu = median("head", "fol", "lean_cpu_ms_per_case")
     reach_cpu = median("head", "reach", "lean_cpu_ms_per_case")
     reach_wall = median("head", "reach", "wall_ms_per_case")
+    reach_max_wall = max(row["reach"]["longest_call_wall_ms"] for row in samples["head"])
+    reach_max_cpu_upper_bound = max(row["reach"]["total_lean_cpu_ms"] for row in samples["head"])
     result = {"samples": samples, "median": {"fol": {"base_cpu_ms": base_cpu, "head_cpu_ms": head_cpu},
                                                "reach": {"head_cpu_ms": reach_cpu,
-                                                         "head_wall_ms": reach_wall}},
+                                                         "head_wall_ms": reach_wall,
+                                                         "max_call_wall_ms": reach_max_wall,
+                                                         "per_call_cpu_upper_bound_ms": reach_max_cpu_upper_bound}},
               "same_fol_answer": same_fol,
-              "pass": same_fol and head_cpu <= 1.2 * base_cpu and reach_cpu <= 1000 and reach_wall <= 2000}
+              "pass": (same_fol and head_cpu <= 1.2 * base_cpu
+                       and reach_max_cpu_upper_bound <= 1000 and reach_max_wall <= 2000)}
     args.out.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result["median"] | {"same_fol_answer": same_fol, "pass": result["pass"]}))
     return 0 if result["pass"] else 1
