@@ -7,6 +7,7 @@ batch evidence, checked at the batch gate and merge; it is not a permanent test.
 from __future__ import annotations
 
 import json
+import gzip
 from pathlib import Path
 import sys
 
@@ -30,9 +31,14 @@ def compare(base: dict, head: dict) -> dict:
             "differences": differences, "identical": not differences}
 
 
+def read(path: str) -> dict:
+    p = Path(path)
+    return json.loads(gzip.decompress(p.read_bytes()) if p.suffix == ".gz" else p.read_text())
+
+
 if __name__ == "__main__":
     _, base_path, head_path, out_path = sys.argv
-    result = compare(json.loads(Path(base_path).read_text()), json.loads(Path(head_path).read_text()))
+    result = compare(read(base_path), read(head_path))
     Path(out_path).write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     print(f"{result['records']} records; {len(result['differences'])} differences")
     raise SystemExit(0 if result["identical"] else 1)

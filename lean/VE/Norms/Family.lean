@@ -365,26 +365,6 @@ def height {F : Type} (D : Doc F) : Nat → Rule F → Nat
   | 0, _ => 1
   | f + 1, N => 1 + ((children D N).map (height D f)).foldl max 0
 
-/-- A rule's fields, as `Wire.decodeNorm` reads them. -/
-def ruleFields (j : Json) : Except String (String × String × Bool × Json × List Json × List String) := do
-  VE.Bridge.exactFields j ["norm"]
-  let raw ← j.getObjVal? "norm"
-  VE.Bridge.exactFields raw ["name", "predicate", "sign", "guard", "unless", "over"]
-  let name ← match raw.getObjValD "name" with
-    | .str s => pure s
-    | _ => throw "InvalidInput: invalid rule name"
-  let predicate ← VE.Bridge.stringField raw "predicate"
-  let sign ← match raw.getObjValD "sign" with
-    | .bool b => pure b
-    | _ => throw "InvalidInput: invalid sign or too many carve-outs"
-  let carveOuts ← match raw.getObjValD "unless" with
-    | .arr xs => pure xs.toList
-    | _ => throw "InvalidInput: unless and over must be arrays"
-  let over ← match raw.getObjValD "over" with
-    | .arr _ => VE.Bridge.strings (raw.getObjValD "over")
-    | _ => throw "InvalidInput: unless and over must be arrays"
-  pure (name, predicate, sign, raw.getObjValD "guard", carveOuts, over)
-
 /-- The rules, checked in `Tree.check`'s order and with its diagnostics: names,
 regulated predicates, carve-out counts, each formula's decoding, typing in the
 rule's context and the shared node budget, closure edges, precedence edges, the
@@ -395,7 +375,7 @@ def decodeDoc {F : Type} (R : Reader F) (profiles : List String) (regulated : Li
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: norms must be an array"
   if units.length > 256 then throw "ResourceLimit: rules"
-  let raws ← units.mapM ruleFields
+  let raws ← units.mapM VE.Norms.Wire.normFields
   let regNames := regulated.map (·.name)
   let mut names : List String := []
   let mut nodes := 0

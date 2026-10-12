@@ -300,6 +300,30 @@ def test_non_first_order_conflict_witness_is_checked_by_lean(monkeypatch):
     assert ("norms_conflict", "lean") in ops
 
 
+def test_non_first_order_wire_faults_raise_content_errors():
+    env = flagged(family=("closure@0",), relation=True)
+    doc = NormDocument(env, [rule("may", "permitted", True,
+                                  Reach("star", Named("before"), Var(0), Var(0)))])
+    case = {"id": "fault", "kind": "norms-elaborate", "environment": env.to_dict(),
+            "norms": [r.to_dict() for r in doc.rules]}
+    from ve.backends.relay import decide
+
+    deep = ["top"]
+    for _ in range(10_000):
+        deep = ["not", deep]
+    for bad in (7, True, None, [], {}, deep):
+        mutant = deepcopy(case)
+        mutant["norms"][0]["norm"]["guard"] = bad
+        with pytest.raises(VEError) as caught:
+            decide("family-norms", [mutant])
+        assert not isinstance(caught.value, CheckerUnavailable)
+    two_faults = deepcopy(case)
+    two_faults["norms"][0]["norm"].update({"guard": 7, "over": None})
+    with pytest.raises(VEError) as caught:
+        decide("family-norms", [two_faults])
+    assert not isinstance(caught.value, CheckerUnavailable)
+
+
 def test_unknown_regulated_predicate_is_python_wording(monkeypatch):
     doc = document(flagged())
     for authority in ("python", "lean"):
