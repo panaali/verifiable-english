@@ -50,8 +50,11 @@ def test_committed_manifests_are_the_generated_ones():
 
 @pytest.fixture
 def fake_lean(monkeypatch, tmp_path):
-    """The audit with the committed record as Lean's output and a temporary record file."""
+    """The audit with the committed record as Lean's output, entirely in a scratch tree."""
     output = audit.RECORD.read_text()
+    lean = tmp_path / 'lean'
+    shutil.copytree(ROOT / 'lean', lean, ignore=shutil.ignore_patterns('.lake', '__pycache__'))
+    monkeypatch.setattr(audit, 'ROOT', lean)
     printed, name = {}, None  # each theorem's lines of the record, as Lean printed them
     for line in output.splitlines(keepends=True):
         if not line.startswith(' '):
@@ -63,18 +66,23 @@ def fake_lean(monkeypatch, tmp_path):
         stdout=''.join(printed[name] for name in re.findall(r'^#print axioms (\S+)', Path(command[-1]).read_text(),
                                                              re.M)) if command[:3] == ['lake', 'env', 'lean'] else '',
         returncode=0))
-    record = tmp_path / 'axioms.txt'
+    record = lean / 'axioms.txt'
     monkeypatch.setattr(audit, 'RECORD', record)
     return output, record
 
 
 def test_audit_refuses_a_stale_record_and_write_regenerates_it(fake_lean, capsys):
     output, record = fake_lean
+    committed_manifests = [ROOT / 'lean' / manifest for manifest in audit.MANIFESTS]
+    before = [path.stat().st_mtime_ns for path in committed_manifests]
     record.write_text(''.join(output.splitlines(keepends=True)[:-1]))
     with pytest.raises(AssertionError, match='stale'):
         audit.main([])
     audit.main(['--write'])
     assert record.read_text() == output
+    for manifest in audit.MANIFESTS:
+        assert (audit.ROOT / manifest).read_text() == (ROOT / 'lean' / manifest).read_text()
+    assert [path.stat().st_mtime_ns for path in committed_manifests] == before
     audit.main([])
     capsys.readouterr()
 
