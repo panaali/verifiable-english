@@ -2,16 +2,17 @@
 
 Each public entry point dispatches its own adapter on FOL-family norm documents,
 with `data@0` flags and definitions (`lean/VE/Norms/Flagged.lean`), and on
-first-order norm documents over the closure, core and order families
+norm documents over the closure, core and order families
 (`lean/VE/Service/FamilyNorms.lean`).
 """
 from __future__ import annotations
 
 from pathlib import Path
+from copy import deepcopy
 
 import pytest
 
-from ve.ast import Binary, Const, Top, Unary, Var, _to_data
+from ve.ast import Atom, Binary, Const, Exists, Le, Named, Num, Reach, Top, Unary, Var, _to_data
 from ve.backends import dispatch, relay
 from ve.backends.lean_service import CheckerUnavailable
 from ve.background import background
@@ -207,15 +208,96 @@ def test_family_conflict_witness_is_lean_checked(monkeypatch):
     assert ("norms_conflict", "lean") in ops
 
 
-def test_norms_with_non_first_order_guards_are_not_dispatched(monkeypatch):
-    from ve.ast import Named, Reach
-    env = flagged(family=("closure@0",), relation=True)
-    guard = Reach("star", Named("before"), Var(0), Var(0))
-    doc = NormDocument(env, [rule("may", "permitted", True, guard)])
+@pytest.mark.parametrize("family,guard", [
+    (("closure@0",), lambda: Reach("star", Named("before"), Var(0), Var(0))),
+    (("closure@0", "nary@0"), lambda: Exists("party", Atom("tri", (Var(1), Var(1), Var(0))))),
+    (("order@0",), lambda: Le(Num(1), Num(2))),
+])
+def test_non_first_order_norms_are_dispatched_and_match_python(monkeypatch, family, guard):
+    env = flagged(family=family, relation="order@0" not in family,
+                  data="order@0" not in family)
+    if "nary@0" in family:
+        raw = env.to_dict()
+        raw["vocabulary"]["predicates"]["tri"] = {
+            "arguments": ["act", "act", "party"], "description": "tri"}
+        env = Environment(raw)
+    doc = NormDocument(env, [rule("may", "permitted", True, guard())])
+    expected_layers = [(label, _to_data(f)) for label, f in doc._premises_python()]
     ops = routed(monkeypatch, "lean")
-    doc.elaborate("permitted")
-    check_conflict(doc)
-    assert not {"norms_elaborate", "norms_conflict"} & {op for op, _ in ops}
+    actual = outcomes(doc)
+    assert actual["elaborate"] == expected_layers
+    assert actual["certificate"].valid
+    assert {"norms_elaborate", "norms_certificate", "norms_conflict"} <= {op for op, _ in ops}
+
+
+@pytest.mark.parametrize("field", ["order", "label", "target", "sorts"])
+def test_non_first_order_elaboration_refuses_unbound_rows(monkeypatch, field):
+    env = flagged(family=("closure@0",), relation=True)
+    doc = NormDocument(env, [rule("may", "permitted", True,
+                                  Reach("star", Named("before"), Var(0), Var(0)))])
+    real = relay.decide
+
+    def corrupt(mode, cases, **kwargs):
+        row = deepcopy(real(mode, cases, **kwargs)[0])
+        if cases[0]["kind"] == "norms-elaborate":
+            if field == "order":
+                row["order"] = []
+            elif field == "label":
+                row["premises"][0]["label"] = "layer:norms:absent"
+            elif field == "target":
+                row["conflict_targets"][0]["target"] = "absent"
+            else:
+                row["conflict_targets"][0]["sorts"] = ["party"]
+        return [row]
+
+    monkeypatch.setattr(relay, "decide", corrupt)
+    with pytest.raises(CheckerUnavailable, match="bound to the request"):
+        doc.premises()
+
+
+def test_non_first_order_conflict_refuses_extra_target(monkeypatch):
+    env = flagged(family=("closure@0",), relation=True)
+    doc = NormDocument(env, [rule("may", "permitted", True,
+                                  Reach("star", Named("before"), Var(0), Var(0)))])
+    real = relay.decide
+
+    def corrupt(mode, cases, **kwargs):
+        row = deepcopy(real(mode, cases, **kwargs)[0])
+        row["targets"].append("absent")
+        return [row]
+
+    monkeypatch.setattr(relay, "decide", corrupt)
+    with pytest.raises(CheckerUnavailable, match="bound to the request"):
+        check_conflict(doc, certificates={})
+
+
+def test_non_first_order_certificate_refuses_unbound_layer_count(monkeypatch):
+    env = flagged(family=("closure@0",), relation=True)
+    doc = NormDocument(env, [rule("may", "permitted", True,
+                                  Reach("star", Named("before"), Var(0), Var(0)))])
+    proof = prove_norm_entailment(doc, (), Top(), max_steps=200)
+    real = relay.decide
+
+    def corrupt(mode, cases, **kwargs):
+        row = deepcopy(real(mode, cases, **kwargs)[0])
+        row["layers"] += 1
+        return [row]
+
+    monkeypatch.setattr(relay, "decide", corrupt)
+    with pytest.raises(CheckerUnavailable, match="bound to the request"):
+        check_norm_entailment_certificate(doc, (), Top(), proof.certificate)
+
+
+def test_non_first_order_conflict_witness_is_checked_by_lean(monkeypatch):
+    env = flagged(family=("closure@0",), relation=True)
+    doc = NormDocument(env, [rule("must", "required", True,
+                                  Reach("star", Named("before"), Var(0), Var(0)))])
+    model = {"complete": True, "domains": {"act": ["a"], "party": ["p"]},
+             "constants": {}, "relations": {"owner": [["a", "p"]], "urgent": [], "before": []}}
+    ops = routed(monkeypatch, "lean")
+    report = check_conflict(doc, model=model)
+    assert report.status == "CONFLICT" and report.target == "required->permitted"
+    assert ("norms_conflict", "lean") in ops
 
 
 def test_unknown_regulated_predicate_is_python_wording(monkeypatch):
