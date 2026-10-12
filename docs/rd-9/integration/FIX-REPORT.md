@@ -101,3 +101,20 @@ field, the English gap selection and the current trust growth still need item-sp
 not sign them. `tools/trust_map.py --check` reports K +0, S +56 and V +105 against the signed baseline (trusted +161),
 with no unclassified declarations. The explanatory `gaps` field remains SIGNED by standing ruling R3
 (DRI-RULINGS.md), with `test_pair_gaps_are_typed_and_bound_to_the_request` checking request binding.
+
+## Committed-HEAD selected test run (2026-10-12)
+
+On commit `2c5e77741f`, `uv run python tools/select_tests.py --base $(git merge-base HEAD main) --run`
+selected and completed all 366 mapped units in the foreground. Its build and Lean audit stages passed. Three
+existing test nodes failed in that run and passed when only those nodes were rerun:
+
+| Node | Initial result | Focused rerun |
+| --- | --- | --- |
+| `tests/test_gate_integrity.py::test_fsmonitor_hook_cannot_hide_edited_source` | Failed to detect a same-size, immediate rewrite in a temporary Git repo | Passed |
+| `tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/udhr-part07.ve.md]` | One mutated document differed | Passed |
+| `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline` | One microsecond deadline did not fire | Passed |
+
+The selection recorded 363 passing units and three failed units; the focused `pytest` invocation recorded
+`3 passed`. This is evidence for the changed behavior and the requested rerun policy, not a passing release gate.
+The full gate was not run under this task's explicit test instruction. No `PROBE Fk:` executable probes occur in
+either review.
