@@ -503,6 +503,11 @@ def test_compiled_mode_roots_cover_every_service_mode(monkeypatch):
     assert lean_mode_deps.load() is None
 
 
+def test_compiled_mode_roots_regenerate_from_lean():
+    generated = lean_mode_deps.generate()
+    assert generated["modes"] == json.loads(lean_mode_deps.OUTPUT.read_text())["modes"]
+
+
 def test_recorder_tracks_each_service_request_mode(tmp_path):
     result = recorder_run(tmp_path, "import sys\nsys.audit('ve.service.mode', 'rights')\n"
                                     "sys.audit('ve.service.mode', 'norms')\n")
