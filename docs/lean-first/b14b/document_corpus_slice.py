@@ -20,8 +20,10 @@ def main() -> None:
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--corpus", choices=("rights", "norm_defaults", "document"), required=True)
-    parser.add_argument("--start", type=int, required=True)
-    parser.add_argument("--stop", type=int, required=True)
+    parser.add_argument("--start", type=int)
+    parser.add_argument("--stop", type=int)
+    parser.add_argument("--indices", type=int, nargs="+",
+                        help="specific entries to repair after an operational timeout")
     parser.add_argument("--workers", type=int, default=8)
     args = parser.parse_args()
     root = args.root.resolve()
@@ -33,12 +35,19 @@ def main() -> None:
     os.chdir(root)
     os.environ.pop("VE_AUTHORITY", None)
     all_entries = json.loads(args.source.read_text())
-    if not 0 <= args.start < args.stop <= len(all_entries):
-        parser.error(f"slice must be inside the {len(all_entries)} corpus entries")
+    if args.indices:
+        if args.start is not None or args.stop is not None or any(
+                not 0 <= index < len(all_entries) for index in args.indices):
+            parser.error("indices must be inside the corpus and exclude start/stop")
+        selected = [all_entries[index] for index in args.indices]
+    else:
+        if args.start is None or args.stop is None or not 0 <= args.start < args.stop <= len(all_entries):
+            parser.error(f"slice must be inside the {len(all_entries)} corpus entries")
+        selected = all_entries[args.start:args.stop]
     source_hash = diff.digest(args.source)
     scratch = args.out.with_suffix(".scratch")
     scratch.mkdir(exist_ok=True)
-    entries = [(str(scratch), source_hash, row) for row in all_entries[args.start:args.stop]]
+    entries = [(str(scratch), source_hash, row) for row in selected]
     count = 0
     with args.out.open("w") as out, multiprocessing.get_context("fork").Pool(args.workers) as pool:
         for results in pool.imap(diff._rights_case, entries, chunksize=8):
@@ -47,7 +56,7 @@ def main() -> None:
                                      separators=(",", ":"), ensure_ascii=False) + "\n")
                 out.flush()
                 count += 1
-    print(f"{args.corpus} [{args.start}, {args.stop}): {count} records")
+    print(f"{args.corpus} selected {len(selected)} entries: {count} records")
 
 
 if __name__ == "__main__":
