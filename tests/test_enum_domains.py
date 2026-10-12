@@ -43,7 +43,7 @@ KEYWORDS = {"$ref", "$comment", "type", "enum", "const", "pattern", "minLength",
             "required", "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
             "contains", "anyOf", "allOf", "not", "if", "then", "else", "x-tagged", "x-fuel", "x-echo",
             "x-equals", "x-length", "x-count", "x-references", "x-index", "x-digest", "x-zip",
-            "x-zip-or-empty", "x-case", "x-select", "x-count-where", "x-count-presence", "x-unique-strings", "x-rows", "x-row"}
+            "x-zip-or-empty", "x-case", "x-select", "x-count-where", "x-count-presence", "x-rows", "x-row"}
 
 
 @pytest.fixture(scope="module")

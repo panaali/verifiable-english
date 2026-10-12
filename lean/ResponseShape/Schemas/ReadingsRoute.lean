@@ -136,7 +136,7 @@ def softNode : Shape := n [obj,
   .required ["name", "predicate", "sign", "mode", "guard", "unless", "over", "rank", "alterable", "exception", "hard"],
   closed [("name", str), ("predicate", str), ("sign", .type ["boolean"]),
     ("mode", enumS ["strict", "default"]), ("guard", ref "common.json#/$defs/generated_formula"),
-    ("unless", ref "common.json#/$defs/generated_formulas"), ("over", n [ref "common.json#/$defs/strings", .uniqueStrings]),
+    ("unless", ref "common.json#/$defs/generated_formulas"), ("over", ref "common.json#/$defs/strings"),
     ("rank", .type ["string", "null"]), ("alterable", ref "common.json#/$defs/strings"),
     ("exception", .anyOf [.type ["null"], softException]), ("hard", .type ["boolean"])]]
 
@@ -257,7 +257,7 @@ def labelledFormulas : Shape :=
     .items (n [
         obj,
         .required ["label", "ast"],
-        closed [("label", n [str, .minLength 1]), ("ast", ref "common.json#/$defs/generated_formula")]])]
+        closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])]
 
 def elaborateSuperposed : List (String × Shape) := [
   ("vocabulary", n [
@@ -353,7 +353,7 @@ def conflict : Shape :=
             ("status", constS "ok"),
             ("verdict", enumS ["CONFLICT-FREE", "UNKNOWN"]),
             ("assumed", ref "#/$defs/choice"),
-            ("targets", n [arr, .items (n [str, .minLength 1])]),
+            ("targets", ref "common.json#/$defs/strings"),
             ("reading_premises", ref "common.json#/$defs/strings")]]]]
 
 def certificate : Shape :=

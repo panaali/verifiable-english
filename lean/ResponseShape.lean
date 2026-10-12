@@ -129,7 +129,6 @@ inductive Shape where
   | pattern (r : Re)
   | minLength (n : Nat)
   | maxLength (n : Nat)
-  | uniqueStrings
   | minimum (n : Int)
   | required (keys : List String)
   /-- `properties`, and `additionalProperties` when `extra` is given. -/
@@ -239,7 +238,6 @@ def render (file : String) : Nat → Shape → Except String Json
     | .pattern r => pure (Json.mkObj [("pattern", .str (r.render 0))])
     | .minLength k => pure (Json.mkObj [("minLength", toJson k)])
     | .maxLength k => pure (Json.mkObj [("maxLength", toJson k)])
-    | .uniqueStrings => pure (Json.mkObj [("x-unique-strings", .bool true)])
     | .minimum k => pure (Json.mkObj [("minimum", toJson k)])
     | .required ks => pure (Json.mkObj [("required", toJson ks)])
     | .object ps extra => do
@@ -459,7 +457,8 @@ def passed (r : Result) : Except Fault Bool :=
   | .error (.invalid _) => pure false
   | .error (.broken m) => throw (.broken m)
 
-def within (k : String) (r : Result) : Result := match r with
+def within (k : String) (r : Result) : Result :=
+  match r with
   | .error (.invalid m) => throw (.invalid s!"{k}: {m}")
   | other => other
 
@@ -483,11 +482,12 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
     | .pattern r => match value with
       | .str x => if r.matches x then pure () else fail s!"{short value} does not match {r.render 0}"
       | _ => pure ()
-    | .minLength k => match value with | .str x => if x.length < k then fail s!"string shorter than {k}" else pure () | _ => pure ()
+    | .minLength k => match value with
+      | .str x => if x.length < k then fail s!"string shorter than {k}" else pure ()
+      | _ => pure ()
     | .maxLength k => match value with
       | .str x => if x.length > k then fail s!"string longer than {k}" else pure ()
       | _ => pure ()
-    | .uniqueStrings => match value with | .arr xs => do let names ← xs.toList.mapM (fun x => match x with | .str s => pure s | _ => throw (.invalid "expected an array of strings")); if names.Nodup then pure () else fail "strings are not distinct" | _ => fail "expected an array of strings"
     | .minimum k => match value with
       | .num x => if numLe ⟨k, 0⟩ x then pure () else fail s!"{short value} is below {k}"
       | _ => pure ()
