@@ -9,8 +9,11 @@ in the DELTA as written. Exit 1 lists each figure that does not.
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
+
+from check_evidence import check_all
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -20,6 +23,25 @@ EVIDENCE = HERE / "evidence"
 
 def load(path):
     return json.loads(Path(path).read_text())
+
+
+def check_scope(scope):
+    """Recompute the saved code-head snapshot from fixed commits, never a moving HEAD."""
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True).stdout
+
+    base, code_head = scope["base"], scope["code_head"]
+    assert git("merge-base", base, code_head).strip() == base
+    assert git("rev-list", "--reverse", "--no-merges", f"{base}..{code_head}").splitlines() == scope["commits"]
+    rows = git("diff", "--numstat", base, code_head).splitlines()
+    assert len(rows) == scope["files_changed"]
+    added = deleted = 0
+    for row in rows:
+        a, d, _path = row.split("\t", 2)
+        if a != "-":
+            added += int(a)
+            deleted += int(d)
+    assert (added, deleted) == (scope["insertions"], scope["deletions"])
 
 
 def expected():
@@ -78,6 +100,8 @@ def expected():
 
 
 def main():
+    check_all()
+    check_scope(load(EVIDENCE / "scope.json"))
     text = (HERE / "DELTA.md").read_text()
     text = " ".join(text.split())
     missing = [e for e in expected() if " ".join(e.split()) not in text]
