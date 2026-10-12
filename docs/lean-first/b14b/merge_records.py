@@ -34,11 +34,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--replace-cases", action="store_true")
+    parser.add_argument("--corpus", help="keep only rows from this corpus")
+    parser.add_argument("--authority", help="keep only rows from this authority")
     parser.add_argument("inputs", type=Path, nargs="+")
     args = parser.parse_args()
     if args.replace_cases and len(args.inputs) < 2:
         parser.error("case replacement requires an original and a replacement input")
-    groups = [read(path) for path in args.inputs]
+    groups = [[row for row in read(path)
+               if (args.corpus is None or row.get("corpus") == args.corpus)
+               and (args.authority is None or row.get("authority") == args.authority)]
+              for path in args.inputs]
     replacing = {key(row)[:3] for row in groups[-1]} if args.replace_cases else set()
     merged: dict[tuple[str, str, str, str], dict] = {}
     for index, group in enumerate(groups):
