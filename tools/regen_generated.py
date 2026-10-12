@@ -131,6 +131,8 @@ GENERATED = (
 # Scripts with a writing mode whose output this script does not regenerate, each with the reason. Every script
 # of the repository with such a mode is either a writer above or listed here (tests/test_regen_generated.py).
 NOT_REGENERATED = {
+    "tools/ask_fixtures.py": "Q2 use-case fixtures: replayed and reviewed with their source documents",
+    "docs/spec/question-answering-q2/mutants.py": "Q2 seeded-bug evidence: each mutant is run and restored, then its result is saved",
     "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
     "tools/gate.py": "--write-collection is tools/gate_collection.py --write (gate-collection above)",
     "tools/stage2_parity.py": "report: docs/spec/stage2-parity.md, a migration record",
