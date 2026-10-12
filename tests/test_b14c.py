@@ -18,6 +18,7 @@ from tests.subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 ROUTE = ROOT / "lean/.lake/build/bin/ve_conformance"
+METERED = ROOT / "lean/.lake/build/bin/ve_metered"
 
 
 def case():
@@ -92,6 +93,19 @@ def test_nary_derived_table_is_checked_by_lean():
              for i, rows in enumerate(([["a", "a", "b"]], []))]
     rows = route(cases)
     assert [row.get("values") for row in rows] == [[True], [False]]
+
+
+def test_nary_metered_zero_budget_is_unknown():
+    env, model = case()
+    cases = [{"id": str(limit), "kind": "evaluate-budgeted", "environment": env,
+              "model": model, "ast": [["top"]], "max_evaluations": limit}
+             for limit in (0, 100000)]
+    result = subprocess.run([str(METERED), "-"], input=json.dumps(cases), text=True,
+                            capture_output=True, check=False, timeout=HANG_TIMEOUT)
+    assert result.returncode == 0, result.stderr
+    rows = json.loads(result.stdout)
+    assert [(row["evaluation"]["status"], row["evaluation"]["value"])
+            for row in rows] == [("ResourceLimit", None), ("Satisfied", True)]
 
 
 def test_nary_dependencies_are_ordered_before_table_computation():
