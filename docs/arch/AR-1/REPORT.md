@@ -140,6 +140,15 @@ The generated inventories overlap many branches (R12: not an overlap). These are
 - infra/arch-AR-1 is an older branch for this same batch and overlaps everything. It should be retired in
   favour of this one.
 
+## Pre-review gate (`review-ready.py`, effc6295)
+
+Clean, commits, gate (018f8107), mutants (Lean, Python) and delta pass. The relay row fails on findings in the
+`readings-route` relay: 7 allow-list paths that match nothing, and 5 empty or duplicate mutations it accepts
+(units, fill, targets). This branch causes none of them. The row runs because `lean/ResponseShape/Audit.lean`
+changed, and that file is the generated manifest, which no module or executable imports. Every other file under
+`ve/`, `lean/ResponseShape/` and `lean/VE/Service/` is identical to the base 5479466f. FOLLOW-UP for the
+readings-route owner (RD-6b), or a DRI allow line for AR-1 in `review-ready-allow.txt`.
+
 ## Not done / follow-ups
 
 - FOLLOW-UP (load-sensitive, R13): `test_lean_transitive_axiom_allowlist` failed twice this week on a timeout:
