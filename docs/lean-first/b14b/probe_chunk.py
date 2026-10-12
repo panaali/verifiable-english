@@ -21,6 +21,7 @@ def main() -> None:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--aux", action="store_true")
     group.add_argument("--chunk", type=int)
+    group.add_argument("--operations", nargs="+", help="specific probe operation names")
     parser.add_argument("--chunks", type=int, default=6)
     args = parser.parse_args()
     root = args.root.resolve()
@@ -33,7 +34,10 @@ def main() -> None:
 
     if not Path(probe.__file__).resolve().is_relative_to(root):
         raise RuntimeError("probe generator was imported from the wrong checkout")
-    operations = () if args.aux else probe.OPERATIONS[args.chunk::args.chunks]
+    if args.operations and any(op not in probe.OPERATIONS for op in args.operations):
+        parser.error("unknown probe operation")
+    operations = (() if args.aux else tuple(args.operations) if args.operations
+                  else probe.OPERATIONS[args.chunk::args.chunks])
     probe.OPERATIONS = operations
     probe.outcome = stage2_parity._outcome
     if stage2_parity._observe not in dispatch.observers:
