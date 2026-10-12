@@ -51,6 +51,8 @@ History: 35 entries, 34 distinct, became 51 allowances (one per class that grew)
 `trust_map.py --check` at the head: exit 0; allowances introduced: 0, removed: 0.
 Commits (`96887019..c41af506 --no-merges`): 11; files changed: 14, none under `ve/`, `lean/` or `rust/`: yes.
 Seeded bugs: 10, each killed by its named test: yes.
+Full gate at `5ac95cc3`: 14,353 Python passed, 92 skipped or xfailed, 1 failed; 36 native Rust passed.
+R13 serial rerun at `5ac95cc3`: 288 passed, 0 failed; tests/test_question_reading.py::test_the_cli_prints_leans_words_with_its_exit_code[A6c] passed on rerun.
 <!-- END GENERATED AR-4 METRICS -->
 
 The plan estimated "about 12,600 lines" deleted, and 12,863 were. It also estimated the file at "under 300 lines";

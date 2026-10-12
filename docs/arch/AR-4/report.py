@@ -68,6 +68,8 @@ def problems() -> list[str]:
     scope = json.loads((EVIDENCE / "scope.json").read_text())
     migration = json.loads((EVIDENCE / "migration.json").read_text())
     mutants = json.loads((EVIDENCE / "mutants.json").read_text())["mutants"]
+    full = json.loads((EVIDENCE / "gate-full-failed.json").read_text())
+    rerun = json.loads((EVIDENCE / "gate-result.json").read_text())
     out = []
     if budget["check_exit"] != 0:
         out.append("trust_map.py --check failed at the evidence commit")
@@ -89,6 +91,21 @@ def problems() -> list[str]:
     source = hashlib.sha256(_git("show", f"{budget['head']}:tools/trust_map.py").encode()).hexdigest()
     if {m.get("source_sha256") for m in mutants} != {source}:
         out.append("the seeded bugs ran on another tools/trust_map.py than the evidence commit's")
+    failed = [f["nodeid"] for f in full["failures"] if f["stage"] == "pytest"]
+    if (full["status"] != "failed" or full["dirty"] or
+            full["stages"] != ["toolchains", "lean_build", "lean_audit", "rust_build", "cargo_test", "pytest"] or
+            {f["stage"] for f in full["failures"]} != {"pytest command", "pytest"} or
+            full["counts"]["failed"] != len(failed) or
+            full["counts"]["selected"] != sum(full["counts"][k] for k in ("passed", "skipped", "failed"))):
+        out.append("the full gate record is not a complete gate with only pytest failures")
+    previous = rerun.get("rerun_failed", {}).get("previous", {})
+    if (rerun["status"] != "rerun-passed" or rerun["dirty"] or rerun["failures"] or
+            rerun["commit_sha"] != full["commit_sha"] or rerun["tree_sha"] != full["tree_sha"] or
+            previous.get("commit_sha") != full["commit_sha"] or previous.get("tree_sha") != full["tree_sha"] or
+            rerun["rerun_failed"]["tests"] != failed or
+            rerun["rerun_failed"]["outcomes"] != {test: "passed" for test in failed} or
+            rerun["counts"]["selected"] != rerun["counts"]["passed"]):
+        out.append("the serial rerun did not pass every failed test on the full gate's clean commit")
     return out
 
 
@@ -97,6 +114,8 @@ def block() -> str:
     scope = json.loads((EVIDENCE / "scope.json").read_text())
     migration = json.loads((EVIDENCE / "migration.json").read_text())
     mutants = json.loads((EVIDENCE / "mutants.json").read_text())["mutants"]
+    full = json.loads((EVIDENCE / "gate-full-failed.json").read_text())
+    rerun = json.loads((EVIDENCE / "gate-result.json").read_text())
     head, base = budget["measured_head"], budget["measured_base"]
     lines = [
         f"Measured with `tools/trust_map.py` at `{budget['head'][:8]}` against the merge base `{budget['base'][:8]}`:",
@@ -119,6 +138,12 @@ def block() -> str:
         f"{'yes' if not any(p.startswith(('ve/', 'lean/', 'rust/')) for p in scope['files']) else 'no'}.",
         f"Seeded bugs: {len(mutants)}, each killed by its named test: "
         f"{'yes' if all(m.get('killed') is True for m in mutants) else 'no'}.",
+        f"Full gate at `{full['commit_sha'][:8]}`: {full['counts']['passed']:,} Python passed, "
+        f"{full['counts']['skipped']:,} skipped or xfailed, {full['counts']['failed']:,} failed; "
+        f"{full['counts']['rust_passed']:,} native Rust passed.",
+        f"R13 serial rerun at `{rerun['commit_sha'][:8]}`: {rerun['counts']['passed']:,} passed, "
+        f"{rerun['counts']['failed']:,} failed; "
+        f"{', '.join(rerun['rerun_failed']['tests'])} passed on rerun.",
     ]
     return "\n".join(lines)
 
