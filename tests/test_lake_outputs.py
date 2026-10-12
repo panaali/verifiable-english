@@ -3,7 +3,10 @@ B2: an older `ve_conformance` under a trace copied from another checkout, report
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
+import pwd
+from types import SimpleNamespace
 
 import pytest
 
@@ -53,6 +56,19 @@ def test_the_oracle_is_lakes_hash():
     """Known answer: Lake's own `.hash` of an executable it built is the oracle's hash of that file."""
     binary = ROOT / "lean/.lake/build/bin/ve_conformance"
     assert lake_outputs.output_hashes([binary])[binary] == binary.with_name("ve_conformance.hash").read_text().strip()
+
+
+def test_lean_is_found_in_the_accounts_elan_when_home_is_replaced(tmp_path, monkeypatch):
+    """The gate replaces HOME with its scratch home; a stage whose PATH lacks the toolchain (the gate's own tests
+    fake its toolchain check) still finds the account's elan `lean`, and only a missing one is an error."""
+    account = Path(pwd.getpwuid(os.getuid()).pw_dir)
+    if not (account / ".elan/bin/lean").is_file():
+        pytest.skip("no elan in this account")
+    monkeypatch.setenv("HOME", str(tmp_path))
+    assert lake_outputs.lean_executable({"PATH": "/usr/bin:/bin"}) == str(account / ".elan/bin/lean")
+    monkeypatch.setattr(lake_outputs.pwd, "getpwuid", lambda uid: SimpleNamespace(pw_dir=str(tmp_path)))
+    with pytest.raises(RuntimeError, match="lean is required"):
+        lake_outputs.lean_executable({"PATH": "/usr/bin:/bin"})
 
 
 def test_every_build_entry_point_drops_stale_traces_first():

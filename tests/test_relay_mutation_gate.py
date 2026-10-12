@@ -274,8 +274,7 @@ def without_length_check(monkeypatch):
     from ve.backends import service_schema as S
     monkeypatch.setattr(S.Compiler, "_x_length", lambda self, pointer, schema, base: None)
     compiler = S.Compiler()
-    monkeypatch.setattr(S, "ROWS", {mode: compiler.ref(f"{mode}.json", "#/row") for mode in MODES})
-    monkeypatch.setattr(S, "RESPONSE", compiler.ref("envelope.json", "#/response"))
+    monkeypatch.setattr(S, "_compiler", compiler)
 
 
 def test_a_client_without_its_length_check_fails_the_gate(built, without_length_check):
