@@ -409,7 +409,9 @@ def test_without_maxfail_every_unit_runs(tmp_path, monkeypatch):
 # --- killing a recorded run kills its units, though each runs in its own session ---
 
 RECORDER = """
-import pathlib, sys
+import pathlib, signal, sys
+for number in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+    signal.signal(number, signal.SIG_DFL)
 sys.path.insert(0, {tools!r})
 import test_map
 test_map.site_packages = lambda: pathlib.Path({work!r})
