@@ -26,6 +26,7 @@ its merge strategy:
 | lean-roots | `lean/VE.lean`, `lean/ResponseShape.lean` | union |
 | frozen-inventory | `lean/VE/Route/frozen-sources.sha256` (`frozen.py --write`, new) | regenerate |
 | lake-build | (the build every later entry reads) | - |
+| lean-mode-deps | `tools/lean-mode-deps.json` | regenerate |
 | lean-axioms | `lean/axioms.txt` | regenerate |
 | lean-statements | `lean/statements.txt`, `predicates.txt`, `declarations.txt` | regenerate |
 | trust-tables | `tools/trust-classes.json`, `docs/trust-baseline.json` | json (check only) |

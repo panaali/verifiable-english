@@ -2,7 +2,7 @@
   "schema": 1,
   "mutants": [
     {
-      "file": "lean/ModeDeps.lean",
+      "file": "tools/lean_mode_deps.lean",
       "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
       "seeded_bug": "let rhs \u2190 if mode == .rights then pure (mkConst ``VE.Norms.Run.runCaseReported) else if mode == .document",
       "mutant_exit": 1,
