@@ -1,0 +1,14 @@
+# Audit repair, run 20261012T1800Z
+
+Input: `AUDIT-20261012T0600Z-received.md` (15/20 sampled faithful, 5 unfaithful, 0/0 changed). A unit the audit rejected keeps no covered status it had without the repair, and none counts as audit-verified.
+
+| Unit | Audit finding | Repair | Status |
+|---|---|---|---|
+| u0125.s04.p2 | The defeasible candidate invents an exception to "should never directly deny that it is Claude": "basically never" lie (u0109.s06) is about honesty in general, and u0170.s01 says the hard-constraint list is not a list of everything Claude should never do. | The reading set, its defeasible candidate and its open term (the exception it needed) are removed. One reading: the strict prohibition, written as content on the unit (a permission predicate with a negative rule, scoped to instances of Claude, completion unspecified). | READINGS → CHECKED |
+| u0165.s02, s03, s05, s07 (rejected); u0165.s01, s04, s06 (same class) | The absolute prohibitions depend on the action category alone and omit u0173.s01–s04: the constraints are "centrally meant to apply" to knowing and intentional cases or ones Claude thinks "quite likely"; "unclear or uncertain" cases go to holistic judgment; "unknowing" contribution is not a violation. | The guard of each rule is the case atom AND one new open term `restricted_action_knowing_or_quite_likely` (the words of u0173.s01; factors: what counts as knowingly and intentionally engaging, how likely is "quite likely"). Where the guard fails the rule says nothing (completion unspecified): VE answers SETTLED no only when both hold, UNDECIDED otherwise (probes/unspecified-probe.json). u0173.s01–s04 stay UNFORMALISED (modality/belief; quantities). | OPEN (unchanged status; content repaired) |
+
+Consequences removed with the reading (every trace): the open term `exception_to_never_denying_being_claude`, the reading set `force-u0125-s04-p2` and its stored situations, the ledger fields `reading_set`, `checked_content`, `strict_reading_predicate`, `defeasible_reading_predicate` of u0125.s04.p2, the "32 compatible choices … four operator sets" and `nd-force.ve.md` sentences in the notes of u0036.s05, u0156.s03 and u0263.s04.p2 (now "8 compatible choices", `readings/nd-all-*.json`), the denial conclusion queries with `--under` choices, the denial companion query (now one reading), the readings-from-the-words record, and the counts in SUMMARY and metrics (4 sets → 3, 16 choices → 8).
+
+The other three "should" sets (u0036.s05, u0156.s03, u0263.s04.p2) were accepted as faithful by this audit; their readings and content are unchanged, only a ledger sentence was brought up to date.
+
+Audit-verified bytes: 1,394 substantive (0.75%) + 349 label bytes; 1,677 substantive if the note-only edits of the three reading-set units are ignored. Claimed 2,951 (1.60%); claimed but not audit-verified 1,208 (the eight repaired units and the three note-edited units).

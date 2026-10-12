@@ -1,0 +1,5797 @@
+{
+  "sets": [
+    "force-u0036-s05",
+    "force-u0156-s03",
+    "force-u0263-s04-p2"
+  ],
+  "attempts": {
+    "with_source_word": {
+      "document": "usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "check": {
+        "returncode": 5,
+        "stdout_error": {
+          "code": "CheckerUnavailable",
+          "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+        },
+        "stderr": ""
+      },
+      "coverage": {
+        "returncode": 5,
+        "stdout_error": {
+          "code": "CheckerUnavailable",
+          "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+        },
+        "stderr": ""
+      }
+    },
+    "without_source_word": {
+      "document": "usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-without_source_word.ve.md",
+      "check": {
+        "returncode": 0,
+        "json": {
+          "format": "ve-document@1",
+          "source_id": "f940c1bf3e406fc946167af8b8ba7c7364ebdfb0dc6ec15abd3cf25e7d6ad804",
+          "document_id": "f71d44bb084e3478670251aebfe0eba57c593d77e5345196f0e5a2e2678c0068",
+          "coverage": {
+            "accounted_bytes": 184893,
+            "bytes_by_kind": {
+              "asserted": 22,
+              "attributed": 634,
+              "meta": 349,
+              "norm": 2580,
+              "unformalised": 181308
+            },
+            "bytes_by_status": {
+              "CHECKED": 73,
+              "LABELLED": 349,
+              "OPEN": 2529,
+              "UNFORMALISED": 181942
+            },
+            "coverage_percent": 100,
+            "residual": {
+              "assumptions": 19,
+              "bridge_leaves": 0,
+              "open_terms": 33,
+              "unresolved_reading_sets": 3,
+              "separations": 3,
+              "readings_findings": 0,
+              "pending_candidates": 0,
+              "couplings": 0,
+              "gaps": 12,
+              "ungrounded_defaults": 0
+            },
+            "residual_total": 70,
+            "source_bytes": 184893,
+            "unformalised_reasons": {
+              "attribution": 12,
+              "causation": 76,
+              "counting": 31,
+              "defaults": 50,
+              "modality_belief": 25,
+              "norms": 669,
+              "other.discourse": 81,
+              "other.graded-force": 1,
+              "other.open-list": 1,
+              "quantities": 119,
+              "time": 9
+            },
+            "norm_defaults": {
+              "gaps": [
+                "clarification_required",
+                "csam_generation_permitted_for_claude",
+                "cyberweapon_creation_permitted",
+                "exploit_instruction_compliance_required",
+                "firmness_required",
+                "humanity_attack_participation_permitted",
+                "illegitimate_control_involvement_permitted",
+                "infrastructure_uplift_permitted",
+                "oversight_undermining_permitted",
+                "system_prompt_compliance_required",
+                "system_prompt_deception_permitted",
+                "weapons_uplift_permitted"
+              ],
+              "findings": []
+            }
+          },
+          "reading_plan": {
+            "route": "enumerate",
+            "choices": [
+              {
+                "force-u0036-s05": 0,
+                "force-u0156-s03": 0,
+                "force-u0263-s04-p2": 0
+              },
+              {
+                "force-u0036-s05": 0,
+                "force-u0156-s03": 0,
+                "force-u0263-s04-p2": 1
+              },
+              {
+                "force-u0036-s05": 0,
+                "force-u0156-s03": 1,
+                "force-u0263-s04-p2": 0
+              },
+              {
+                "force-u0036-s05": 0,
+                "force-u0156-s03": 1,
+                "force-u0263-s04-p2": 1
+              },
+              {
+                "force-u0036-s05": 1,
+                "force-u0156-s03": 0,
+                "force-u0263-s04-p2": 0
+              },
+              {
+                "force-u0036-s05": 1,
+                "force-u0156-s03": 0,
+                "force-u0263-s04-p2": 1
+              },
+              {
+                "force-u0036-s05": 1,
+                "force-u0156-s03": 1,
+                "force-u0263-s04-p2": 0
+              },
+              {
+                "force-u0036-s05": 1,
+                "force-u0156-s03": 1,
+                "force-u0263-s04-p2": 1
+              }
+            ]
+          },
+          "norm_defaults": {
+            "environment_id": "8ef9f7a32bfb871811a8ec35eac00f51c78fafee6d881c51303fbb3c059422af",
+            "filled_environment_id": "12f52816e98bb3b969ed2f5174af0e8484a622c51c105130c73c3372d2a70f94",
+            "fill_hash": "2725265c7fff2d4c653ad732f85579761d957664150e5f998c40a3a738e5bcd7",
+            "unsaid_predicates": [
+              "unsaid__clarification_required",
+              "unsaid__csam_generation_permitted_for_claude",
+              "unsaid__cyberweapon_creation_permitted",
+              "unsaid__denial_of_being_claude_permitted",
+              "unsaid__exploit_instruction_compliance_required",
+              "unsaid__firmness_required",
+              "unsaid__humanity_attack_participation_permitted",
+              "unsaid__illegitimate_control_involvement_permitted",
+              "unsaid__infrastructure_uplift_permitted",
+              "unsaid__judgment_use_required",
+              "unsaid__operator_input_permitted",
+              "unsaid__oversight_undermining_permitted",
+              "unsaid__system_prompt_compliance_required",
+              "unsaid__system_prompt_deception_permitted",
+              "unsaid__weapons_uplift_permitted"
+            ],
+            "background_labels": [],
+            "report": {
+              "clarification_required": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "csam_generation_permitted_for_claude": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "cyberweapon_creation_permitted": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "denial_of_being_claude_permitted": [
+                "completion: unspecified",
+                "gaps: none"
+              ],
+              "exploit_instruction_compliance_required": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "firmness_required": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "humanity_attack_participation_permitted": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "illegitimate_control_involvement_permitted": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "infrastructure_uplift_permitted": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "judgment_use_required": [
+                "completion: unspecified",
+                "gaps: none"
+              ],
+              "operator_input_permitted": [
+                "completion: unspecified",
+                "gaps: unknown"
+              ],
+              "oversight_undermining_permitted": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "system_prompt_compliance_required": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "system_prompt_deception_permitted": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ],
+              "weapons_uplift_permitted": [
+                "completion: unspecified",
+                "gaps: reachable"
+              ]
+            }
+          },
+          "admission": {
+            "admitted": true,
+            "kinds": [
+              "meta",
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "attributed",
+                "anthropic",
+                "believes",
+                [
+                  "unformalised",
+                  "norms"
+                ]
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "attributed",
+                "anthropic",
+                "believes",
+                [
+                  "unformalised",
+                  "quantities"
+                ]
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "time"
+              ],
+              [
+                "unformalised",
+                "time"
+              ],
+              [
+                "unformalised",
+                "time"
+              ],
+              [
+                "unformalised",
+                "time"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.graded-force"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "causation"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "other.open-list"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "causation"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "norm",
+              "norm",
+              "norm",
+              "norm",
+              "norm",
+              "norm",
+              "norm",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "attributed",
+                "anthropic",
+                "believes",
+                [
+                  "unformalised",
+                  "attribution"
+                ]
+              ],
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "counting"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "time"
+              ],
+              [
+                "unformalised",
+                "time"
+              ],
+              [
+                "unformalised",
+                "time"
+              ],
+              [
+                "unformalised",
+                "time"
+              ],
+              [
+                "unformalised",
+                "time"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              "asserted",
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              "norm",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "attribution"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "defaults"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "attributed",
+                "anthropic",
+                "believes",
+                [
+                  "unformalised",
+                  "causation"
+                ]
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "causation"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "modality_belief"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "other.discourse"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              [
+                "unformalised",
+                "quantities"
+              ],
+              "meta",
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ],
+              [
+                "unformalised",
+                "norms"
+              ]
+            ],
+            "report": {
+              "assumptions": [
+                {
+                  "ast": [
+                    "not",
+                    [
+                      "unary",
+                      "human",
+                      [
+                        "const",
+                        "claude"
+                      ]
+                    ]
+                  ],
+                  "name": "claim"
+                }
+              ],
+              "root": {
+                "ast": [
+                  "not",
+                  [
+                    "unary",
+                    "human",
+                    [
+                      "const",
+                      "claude"
+                    ]
+                  ]
+                ],
+                "name": "claim"
+              }
+            },
+            "report_id": "c2bd57711ffadce61fa7f8f51e0e9af1207be47ca97ebfd1ba141648d8f5d796",
+            "core_report_id": "2e6901d2998aff0a5d2b6a087295359ba826eb5d30aabd1f9e1c6a4199dbd574",
+            "vacuous": false
+          },
+          "stale_reading_labels": [],
+          "premises": {
+            "components": [
+              {
+                "component": "main",
+                "status": "model"
+              },
+              {
+                "component": "force-u0036-s05",
+                "status": "model"
+              },
+              {
+                "component": "force-u0156-s03",
+                "status": "model"
+              },
+              {
+                "component": "force-u0263-s04-p2",
+                "status": "model"
+              }
+            ],
+            "route": "components",
+            "status": "model"
+          },
+          "readings": {
+            "checked_by": {
+              "lean": "readings-defaults RD-4b: Readings.Wire.splitCase splits the document; each case's readings@1 admission, separations and findings (readings-validate), its route and choices (readings-elaborate), every verdict, the product fold, the Lean-decided units and the English plan (readings-verdicts)",
+              "python": "W2 structure of the reading sets (companion passed through unread); evidence proposed by Python's generators, every piece checked by Lean"
+            },
+            "route": "components",
+            "components": [
+              {
+                "component": "main",
+                "route": "w2",
+                "units": [
+                  "u0052.s01",
+                  "u0062.s01",
+                  "u0073.s05",
+                  "u0123.s01.p1",
+                  "u0123.s02.p1",
+                  "u0123.s03",
+                  "u0125.s04.p2",
+                  "u0165.s01",
+                  "u0165.s02",
+                  "u0165.s03",
+                  "u0165.s04",
+                  "u0165.s05",
+                  "u0165.s06",
+                  "u0165.s07",
+                  "u0168.s01",
+                  "u0248"
+                ],
+                "unchecked": [],
+                "sets": [],
+                "conflict": {
+                  "choices": [
+                    {
+                      "choice": [],
+                      "status": "CONFLICT-FREE"
+                    }
+                  ],
+                  "conditional_on": [],
+                  "reading_premises_used": [],
+                  "restrictions": [],
+                  "route": "enumerated",
+                  "status": "CONFLICT-FREE",
+                  "status_text": "CONFLICT-FREE among rules on the same act under every reading (1 readings checked one at a time)"
+                },
+                "premises": {
+                  "candidates": [],
+                  "choice": [],
+                  "choices": [
+                    {
+                      "choice": [],
+                      "status": "model"
+                    }
+                  ],
+                  "evidence": "per choice",
+                  "model": {
+                    "complete": true,
+                    "constants": {
+                      "claude": "e0"
+                    },
+                    "domains": {
+                      "claude_instance": [],
+                      "entity": [
+                        "e0"
+                      ],
+                      "hard_constraint": [],
+                      "operator": [],
+                      "operator_input": [],
+                      "situation": [],
+                      "user": []
+                    },
+                    "relations": {
+                      "attempt_to_kill_or_disempower_most_of_humanity": [],
+                      "child_sexual_abuse_material": [],
+                      "clarification_required": [],
+                      "clear_and_substantial_undermining_of_oversight": [],
+                      "compliance_against_guidelines": [],
+                      "compliance_unethical": [],
+                      "compliance_unsafe": [],
+                      "critical_infrastructure_uplift": [],
+                      "csam_generation_permitted_for_claude": [],
+                      "cyberweapon_creation_permitted": [],
+                      "damaging_cyberweapon_or_malicious_code": [],
+                      "denial_of_being_claude_permitted": [],
+                      "exception_to_asking_for_clarification": [],
+                      "exception_to_complying_with_exploit_instruction": [],
+                      "exception_to_not_deceiving_about_system_prompt": [],
+                      "explicit_instruction_against_exploits": [],
+                      "exploit_instruction_compliance_required": [],
+                      "firmness_required": [],
+                      "general_exception_to_complying": [],
+                      "genuine_ambiguity": [],
+                      "human": [],
+                      "humanity_attack_participation_permitted": [],
+                      "illegitimate_absolute_control": [],
+                      "illegitimate_control_involvement_permitted": [],
+                      "infrastructure_uplift_permitted": [],
+                      "input_is_information": [],
+                      "input_is_persona": [],
+                      "input_is_specific_instructions": [],
+                      "instruction_abandon_identity_in_persona": [],
+                      "instruction_act_against_guidelines": [],
+                      "instruction_claim_human_when_asked": [],
+                      "instruction_deceptive_tactics_harming_users": [],
+                      "instruction_decline_or_withhold": [],
+                      "instruction_dishonest_looking_within_honesty": [],
+                      "instruction_endanger_health_or_safety": [],
+                      "instruction_false_information_deceiving_user": [],
+                      "instruction_focus_on_tasks": [],
+                      "instruction_promote_own_products": [],
+                      "instruction_respond_differently": [],
+                      "instruction_role_play_custom_persona": [],
+                      "judgment_use_required": [],
+                      "mass_casualty_weapon_uplift": [],
+                      "operator_input_permitted": [],
+                      "operator_prompt_addresses_case": [],
+                      "oversight_undermining_permitted": [],
+                      "restricted_action_knowing_or_quite_likely": [],
+                      "seemingly_compelling_argument_to_cross_line": [],
+                      "system_prompt_compliance_required": [],
+                      "system_prompt_deception_permitted": [],
+                      "unsaid__clarification_required": [],
+                      "unsaid__csam_generation_permitted_for_claude": [],
+                      "unsaid__cyberweapon_creation_permitted": [],
+                      "unsaid__denial_of_being_claude_permitted": [],
+                      "unsaid__exploit_instruction_compliance_required": [],
+                      "unsaid__firmness_required": [],
+                      "unsaid__humanity_attack_participation_permitted": [],
+                      "unsaid__illegitimate_control_involvement_permitted": [],
+                      "unsaid__infrastructure_uplift_permitted": [],
+                      "unsaid__judgment_use_required": [],
+                      "unsaid__operator_input_permitted": [],
+                      "unsaid__oversight_undermining_permitted": [],
+                      "unsaid__system_prompt_compliance_required": [],
+                      "unsaid__system_prompt_deception_permitted": [],
+                      "unsaid__weapons_uplift_permitted": [],
+                      "weapons_uplift_permitted": []
+                    }
+                  },
+                  "route": "enumerated",
+                  "status": "model"
+                },
+                "dead_readings": []
+              },
+              {
+                "component": "force-u0036-s05",
+                "route": "enumerated",
+                "units": [
+                  "u0036.s05"
+                ],
+                "unchecked": [],
+                "sets": [
+                  {
+                    "set": "force-u0036-s05",
+                    "version": 1,
+                    "unit": "u0036.s05",
+                    "candidates": [
+                      {
+                        "id": "strict",
+                        "index": 0,
+                        "pending": false,
+                        "chain_findings": []
+                      },
+                      {
+                        "id": "default",
+                        "index": 1,
+                        "pending": false,
+                        "chain_findings": []
+                      }
+                    ],
+                    "pairs": [
+                      {
+                        "readings": [
+                          "strict",
+                          "default"
+                        ],
+                        "situation": "2f31fdb5ee4c614dff7f35da1c11a70e96ca0d793ce7af929a994248a1067a69",
+                        "probe": "outcome",
+                        "wording": "E19",
+                        "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
+                      }
+                    ],
+                    "findings": [],
+                    "not_certified": []
+                  }
+                ],
+                "conflict": {
+                  "choices": [
+                    {
+                      "choice": [
+                        [
+                          "force-u0036-s05",
+                          0
+                        ]
+                      ],
+                      "status": "CONFLICT-FREE"
+                    },
+                    {
+                      "choice": [
+                        [
+                          "force-u0036-s05",
+                          1
+                        ]
+                      ],
+                      "status": "CONFLICT-FREE"
+                    }
+                  ],
+                  "conditional_on": [],
+                  "reading_premises_used": [],
+                  "restrictions": [],
+                  "route": "enumerated",
+                  "status": "CONFLICT-FREE",
+                  "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+                },
+                "premises": {
+                  "candidates": [
+                    {
+                      "index": 0,
+                      "set": "force-u0036-s05",
+                      "status": "model"
+                    },
+                    {
+                      "index": 1,
+                      "set": "force-u0036-s05",
+                      "status": "model"
+                    }
+                  ],
+                  "choice": [
+                    [
+                      "force-u0036-s05",
+                      0
+                    ]
+                  ],
+                  "choices": [
+                    {
+                      "choice": [
+                        [
+                          "force-u0036-s05",
+                          0
+                        ]
+                      ],
+                      "status": "model"
+                    },
+                    {
+                      "choice": [
+                        [
+                          "force-u0036-s05",
+                          1
+                        ]
+                      ],
+                      "status": "model"
+                    }
+                  ],
+                  "evidence": "per choice",
+                  "model": {
+                    "complete": true,
+                    "constants": {
+                      "claude": "e0"
+                    },
+                    "domains": {
+                      "claude_instance": [],
+                      "entity": [
+                        "e0"
+                      ],
+                      "hard_constraint": [],
+                      "operator": [],
+                      "operator_input": [],
+                      "situation": [],
+                      "user": []
+                    },
+                    "relations": {
+                      "attempt_to_kill_or_disempower_most_of_humanity": [],
+                      "child_sexual_abuse_material": [],
+                      "clarification_required": [],
+                      "clear_and_substantial_undermining_of_oversight": [],
+                      "compliance_against_guidelines": [],
+                      "compliance_unethical": [],
+                      "compliance_unsafe": [],
+                      "critical_infrastructure_uplift": [],
+                      "csam_generation_permitted_for_claude": [],
+                      "cyberweapon_creation_permitted": [],
+                      "damaging_cyberweapon_or_malicious_code": [],
+                      "denial_of_being_claude_permitted": [],
+                      "exception_to_asking_for_clarification": [],
+                      "exception_to_complying_with_exploit_instruction": [],
+                      "exception_to_not_deceiving_about_system_prompt": [],
+                      "explicit_instruction_against_exploits": [],
+                      "exploit_instruction_compliance_required": [],
+                      "firmness_required": [],
+                      "general_exception_to_complying": [],
+                      "genuine_ambiguity": [],
+                      "human": [],
+                      "humanity_attack_participation_permitted": [],
+                      "illegitimate_absolute_control": [],
+                      "illegitimate_control_involvement_permitted": [],
+                      "infrastructure_uplift_permitted": [],
+                      "input_is_information": [],
+                      "input_is_persona": [],
+                      "input_is_specific_instructions": [],
+                      "instruction_abandon_identity_in_persona": [],
+                      "instruction_act_against_guidelines": [],
+                      "instruction_claim_human_when_asked": [],
+                      "instruction_deceptive_tactics_harming_users": [],
+                      "instruction_decline_or_withhold": [],
+                      "instruction_dishonest_looking_within_honesty": [],
+                      "instruction_endanger_health_or_safety": [],
+                      "instruction_false_information_deceiving_user": [],
+                      "instruction_focus_on_tasks": [],
+                      "instruction_promote_own_products": [],
+                      "instruction_respond_differently": [],
+                      "instruction_role_play_custom_persona": [],
+                      "judgment_use_required": [],
+                      "mass_casualty_weapon_uplift": [],
+                      "operator_input_permitted": [],
+                      "operator_prompt_addresses_case": [],
+                      "oversight_undermining_permitted": [],
+                      "restricted_action_knowing_or_quite_likely": [],
+                      "seemingly_compelling_argument_to_cross_line": [],
+                      "system_prompt_compliance_required": [],
+                      "system_prompt_deception_permitted": [],
+                      "unsaid__clarification_required": [],
+                      "unsaid__csam_generation_permitted_for_claude": [],
+                      "unsaid__cyberweapon_creation_permitted": [],
+                      "unsaid__denial_of_being_claude_permitted": [],
+                      "unsaid__exploit_instruction_compliance_required": [],
+                      "unsaid__firmness_required": [],
+                      "unsaid__humanity_attack_participation_permitted": [],
+                      "unsaid__illegitimate_control_involvement_permitted": [],
+                      "unsaid__infrastructure_uplift_permitted": [],
+                      "unsaid__judgment_use_required": [],
+                      "unsaid__operator_input_permitted": [],
+                      "unsaid__oversight_undermining_permitted": [],
+                      "unsaid__system_prompt_compliance_required": [],
+                      "unsaid__system_prompt_deception_permitted": [],
+                      "unsaid__weapons_uplift_permitted": [],
+                      "weapons_uplift_permitted": []
+                    }
+                  },
+                  "route": "enumerated",
+                  "status": "model"
+                },
+                "dead_readings": []
+              },
+              {
+                "component": "force-u0156-s03",
+                "route": "enumerated",
+                "units": [
+                  "u0156.s03"
+                ],
+                "unchecked": [],
+                "sets": [
+                  {
+                    "set": "force-u0156-s03",
+                    "version": 1,
+                    "unit": "u0156.s03",
+                    "candidates": [
+                      {
+                        "id": "strict",
+                        "index": 0,
+                        "pending": false,
+                        "chain_findings": []
+                      },
+                      {
+                        "id": "default",
+                        "index": 1,
+                        "pending": false,
+                        "chain_findings": []
+                      }
+                    ],
+                    "pairs": [
+                      {
+                        "readings": [
+                          "strict",
+                          "default"
+                        ],
+                        "situation": "93877d3c4a440ed748d5a151db8aecae11a35cd0ad7946a8cf68c9dc47fc5bad",
+                        "probe": "selects",
+                        "wording": "E24",
+                        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+                      }
+                    ],
+                    "findings": [],
+                    "not_certified": []
+                  }
+                ],
+                "conflict": {
+                  "choices": [
+                    {
+                      "choice": [
+                        [
+                          "force-u0156-s03",
+                          0
+                        ]
+                      ],
+                      "status": "CONFLICT-FREE"
+                    },
+                    {
+                      "choice": [
+                        [
+                          "force-u0156-s03",
+                          1
+                        ]
+                      ],
+                      "status": "CONFLICT-FREE"
+                    }
+                  ],
+                  "conditional_on": [],
+                  "reading_premises_used": [],
+                  "restrictions": [],
+                  "route": "enumerated",
+                  "status": "CONFLICT-FREE",
+                  "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+                },
+                "premises": {
+                  "candidates": [
+                    {
+                      "index": 0,
+                      "set": "force-u0156-s03",
+                      "status": "model"
+                    },
+                    {
+                      "index": 1,
+                      "set": "force-u0156-s03",
+                      "status": "model"
+                    }
+                  ],
+                  "choice": [
+                    [
+                      "force-u0156-s03",
+                      0
+                    ]
+                  ],
+                  "choices": [
+                    {
+                      "choice": [
+                        [
+                          "force-u0156-s03",
+                          0
+                        ]
+                      ],
+                      "status": "model"
+                    },
+                    {
+                      "choice": [
+                        [
+                          "force-u0156-s03",
+                          1
+                        ]
+                      ],
+                      "status": "model"
+                    }
+                  ],
+                  "evidence": "per choice",
+                  "model": {
+                    "complete": true,
+                    "constants": {
+                      "claude": "e0"
+                    },
+                    "domains": {
+                      "claude_instance": [],
+                      "entity": [
+                        "e0"
+                      ],
+                      "hard_constraint": [],
+                      "operator": [],
+                      "operator_input": [],
+                      "situation": [],
+                      "user": []
+                    },
+                    "relations": {
+                      "attempt_to_kill_or_disempower_most_of_humanity": [],
+                      "child_sexual_abuse_material": [],
+                      "clarification_required": [],
+                      "clear_and_substantial_undermining_of_oversight": [],
+                      "compliance_against_guidelines": [],
+                      "compliance_unethical": [],
+                      "compliance_unsafe": [],
+                      "critical_infrastructure_uplift": [],
+                      "csam_generation_permitted_for_claude": [],
+                      "cyberweapon_creation_permitted": [],
+                      "damaging_cyberweapon_or_malicious_code": [],
+                      "denial_of_being_claude_permitted": [],
+                      "exception_to_asking_for_clarification": [],
+                      "exception_to_complying_with_exploit_instruction": [],
+                      "exception_to_not_deceiving_about_system_prompt": [],
+                      "explicit_instruction_against_exploits": [],
+                      "exploit_instruction_compliance_required": [],
+                      "firmness_required": [],
+                      "general_exception_to_complying": [],
+                      "genuine_ambiguity": [],
+                      "human": [],
+                      "humanity_attack_participation_permitted": [],
+                      "illegitimate_absolute_control": [],
+                      "illegitimate_control_involvement_permitted": [],
+                      "infrastructure_uplift_permitted": [],
+                      "input_is_information": [],
+                      "input_is_persona": [],
+                      "input_is_specific_instructions": [],
+                      "instruction_abandon_identity_in_persona": [],
+                      "instruction_act_against_guidelines": [],
+                      "instruction_claim_human_when_asked": [],
+                      "instruction_deceptive_tactics_harming_users": [],
+                      "instruction_decline_or_withhold": [],
+                      "instruction_dishonest_looking_within_honesty": [],
+                      "instruction_endanger_health_or_safety": [],
+                      "instruction_false_information_deceiving_user": [],
+                      "instruction_focus_on_tasks": [],
+                      "instruction_promote_own_products": [],
+                      "instruction_respond_differently": [],
+                      "instruction_role_play_custom_persona": [],
+                      "judgment_use_required": [],
+                      "mass_casualty_weapon_uplift": [],
+                      "operator_input_permitted": [],
+                      "operator_prompt_addresses_case": [],
+                      "oversight_undermining_permitted": [],
+                      "restricted_action_knowing_or_quite_likely": [],
+                      "seemingly_compelling_argument_to_cross_line": [],
+                      "system_prompt_compliance_required": [],
+                      "system_prompt_deception_permitted": [],
+                      "unsaid__clarification_required": [],
+                      "unsaid__csam_generation_permitted_for_claude": [],
+                      "unsaid__cyberweapon_creation_permitted": [],
+                      "unsaid__denial_of_being_claude_permitted": [],
+                      "unsaid__exploit_instruction_compliance_required": [],
+                      "unsaid__firmness_required": [],
+                      "unsaid__humanity_attack_participation_permitted": [],
+                      "unsaid__illegitimate_control_involvement_permitted": [],
+                      "unsaid__infrastructure_uplift_permitted": [],
+                      "unsaid__judgment_use_required": [],
+                      "unsaid__operator_input_permitted": [],
+                      "unsaid__oversight_undermining_permitted": [],
+                      "unsaid__system_prompt_compliance_required": [],
+                      "unsaid__system_prompt_deception_permitted": [],
+                      "unsaid__weapons_uplift_permitted": [],
+                      "weapons_uplift_permitted": []
+                    }
+                  },
+                  "route": "enumerated",
+                  "status": "model"
+                },
+                "dead_readings": []
+              },
+              {
+                "component": "force-u0263-s04-p2",
+                "route": "enumerated",
+                "units": [
+                  "u0263.s04.p2"
+                ],
+                "unchecked": [],
+                "sets": [
+                  {
+                    "set": "force-u0263-s04-p2",
+                    "version": 1,
+                    "unit": "u0263.s04.p2",
+                    "candidates": [
+                      {
+                        "id": "strict",
+                        "index": 0,
+                        "pending": false,
+                        "chain_findings": []
+                      },
+                      {
+                        "id": "default",
+                        "index": 1,
+                        "pending": false,
+                        "chain_findings": []
+                      }
+                    ],
+                    "pairs": [
+                      {
+                        "readings": [
+                          "strict",
+                          "default"
+                        ],
+                        "situation": "8e0fc68e2a5bdb060ca45a0bf793bb129d163c92332c6e1e2a4c9e9e9ef18a74",
+                        "probe": "outcome",
+                        "wording": "E19",
+                        "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
+                      }
+                    ],
+                    "findings": [],
+                    "not_certified": []
+                  }
+                ],
+                "conflict": {
+                  "choices": [
+                    {
+                      "choice": [
+                        [
+                          "force-u0263-s04-p2",
+                          0
+                        ]
+                      ],
+                      "status": "CONFLICT-FREE"
+                    },
+                    {
+                      "choice": [
+                        [
+                          "force-u0263-s04-p2",
+                          1
+                        ]
+                      ],
+                      "status": "CONFLICT-FREE"
+                    }
+                  ],
+                  "conditional_on": [],
+                  "reading_premises_used": [],
+                  "restrictions": [],
+                  "route": "enumerated",
+                  "status": "CONFLICT-FREE",
+                  "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+                },
+                "premises": {
+                  "candidates": [
+                    {
+                      "index": 0,
+                      "set": "force-u0263-s04-p2",
+                      "status": "model"
+                    },
+                    {
+                      "index": 1,
+                      "set": "force-u0263-s04-p2",
+                      "status": "model"
+                    }
+                  ],
+                  "choice": [
+                    [
+                      "force-u0263-s04-p2",
+                      0
+                    ]
+                  ],
+                  "choices": [
+                    {
+                      "choice": [
+                        [
+                          "force-u0263-s04-p2",
+                          0
+                        ]
+                      ],
+                      "status": "model"
+                    },
+                    {
+                      "choice": [
+                        [
+                          "force-u0263-s04-p2",
+                          1
+                        ]
+                      ],
+                      "status": "model"
+                    }
+                  ],
+                  "evidence": "per choice",
+                  "model": {
+                    "complete": true,
+                    "constants": {
+                      "claude": "e0"
+                    },
+                    "domains": {
+                      "claude_instance": [],
+                      "entity": [
+                        "e0"
+                      ],
+                      "hard_constraint": [],
+                      "operator": [],
+                      "operator_input": [],
+                      "situation": [],
+                      "user": []
+                    },
+                    "relations": {
+                      "attempt_to_kill_or_disempower_most_of_humanity": [],
+                      "child_sexual_abuse_material": [],
+                      "clarification_required": [],
+                      "clear_and_substantial_undermining_of_oversight": [],
+                      "compliance_against_guidelines": [],
+                      "compliance_unethical": [],
+                      "compliance_unsafe": [],
+                      "critical_infrastructure_uplift": [],
+                      "csam_generation_permitted_for_claude": [],
+                      "cyberweapon_creation_permitted": [],
+                      "damaging_cyberweapon_or_malicious_code": [],
+                      "denial_of_being_claude_permitted": [],
+                      "exception_to_asking_for_clarification": [],
+                      "exception_to_complying_with_exploit_instruction": [],
+                      "exception_to_not_deceiving_about_system_prompt": [],
+                      "explicit_instruction_against_exploits": [],
+                      "exploit_instruction_compliance_required": [],
+                      "firmness_required": [],
+                      "general_exception_to_complying": [],
+                      "genuine_ambiguity": [],
+                      "human": [],
+                      "humanity_attack_participation_permitted": [],
+                      "illegitimate_absolute_control": [],
+                      "illegitimate_control_involvement_permitted": [],
+                      "infrastructure_uplift_permitted": [],
+                      "input_is_information": [],
+                      "input_is_persona": [],
+                      "input_is_specific_instructions": [],
+                      "instruction_abandon_identity_in_persona": [],
+                      "instruction_act_against_guidelines": [],
+                      "instruction_claim_human_when_asked": [],
+                      "instruction_deceptive_tactics_harming_users": [],
+                      "instruction_decline_or_withhold": [],
+                      "instruction_dishonest_looking_within_honesty": [],
+                      "instruction_endanger_health_or_safety": [],
+                      "instruction_false_information_deceiving_user": [],
+                      "instruction_focus_on_tasks": [],
+                      "instruction_promote_own_products": [],
+                      "instruction_respond_differently": [],
+                      "instruction_role_play_custom_persona": [],
+                      "judgment_use_required": [],
+                      "mass_casualty_weapon_uplift": [],
+                      "operator_input_permitted": [],
+                      "operator_prompt_addresses_case": [],
+                      "oversight_undermining_permitted": [],
+                      "restricted_action_knowing_or_quite_likely": [],
+                      "seemingly_compelling_argument_to_cross_line": [],
+                      "system_prompt_compliance_required": [],
+                      "system_prompt_deception_permitted": [],
+                      "unsaid__clarification_required": [],
+                      "unsaid__csam_generation_permitted_for_claude": [],
+                      "unsaid__cyberweapon_creation_permitted": [],
+                      "unsaid__denial_of_being_claude_permitted": [],
+                      "unsaid__exploit_instruction_compliance_required": [],
+                      "unsaid__firmness_required": [],
+                      "unsaid__humanity_attack_participation_permitted": [],
+                      "unsaid__illegitimate_control_involvement_permitted": [],
+                      "unsaid__infrastructure_uplift_permitted": [],
+                      "unsaid__judgment_use_required": [],
+                      "unsaid__operator_input_permitted": [],
+                      "unsaid__oversight_undermining_permitted": [],
+                      "unsaid__system_prompt_compliance_required": [],
+                      "unsaid__system_prompt_deception_permitted": [],
+                      "unsaid__weapons_uplift_permitted": [],
+                      "weapons_uplift_permitted": []
+                    }
+                  },
+                  "route": "enumerated",
+                  "status": "model"
+                },
+                "dead_readings": []
+              }
+            ],
+            "sets": [
+              {
+                "set": "force-u0036-s05",
+                "version": 1,
+                "unit": "u0036.s05",
+                "candidates": [
+                  {
+                    "id": "strict",
+                    "index": 0,
+                    "pending": false,
+                    "chain_findings": []
+                  },
+                  {
+                    "id": "default",
+                    "index": 1,
+                    "pending": false,
+                    "chain_findings": []
+                  }
+                ],
+                "pairs": [
+                  {
+                    "readings": [
+                      "strict",
+                      "default"
+                    ],
+                    "situation": "2f31fdb5ee4c614dff7f35da1c11a70e96ca0d793ce7af929a994248a1067a69",
+                    "probe": "outcome",
+                    "wording": "E19",
+                    "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
+                  }
+                ],
+                "findings": [],
+                "not_certified": []
+              },
+              {
+                "set": "force-u0156-s03",
+                "version": 1,
+                "unit": "u0156.s03",
+                "candidates": [
+                  {
+                    "id": "strict",
+                    "index": 0,
+                    "pending": false,
+                    "chain_findings": []
+                  },
+                  {
+                    "id": "default",
+                    "index": 1,
+                    "pending": false,
+                    "chain_findings": []
+                  }
+                ],
+                "pairs": [
+                  {
+                    "readings": [
+                      "strict",
+                      "default"
+                    ],
+                    "situation": "93877d3c4a440ed748d5a151db8aecae11a35cd0ad7946a8cf68c9dc47fc5bad",
+                    "probe": "selects",
+                    "wording": "E24",
+                    "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+                  }
+                ],
+                "findings": [],
+                "not_certified": []
+              },
+              {
+                "set": "force-u0263-s04-p2",
+                "version": 1,
+                "unit": "u0263.s04.p2",
+                "candidates": [
+                  {
+                    "id": "strict",
+                    "index": 0,
+                    "pending": false,
+                    "chain_findings": []
+                  },
+                  {
+                    "id": "default",
+                    "index": 1,
+                    "pending": false,
+                    "chain_findings": []
+                  }
+                ],
+                "pairs": [
+                  {
+                    "readings": [
+                      "strict",
+                      "default"
+                    ],
+                    "situation": "8e0fc68e2a5bdb060ca45a0bf793bb129d163c92332c6e1e2a4c9e9e9ef18a74",
+                    "probe": "outcome",
+                    "wording": "E19",
+                    "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
+                  }
+                ],
+                "findings": [],
+                "not_certified": []
+              }
+            ],
+            "separations": {
+              "outcome": 2,
+              "selects": 1,
+              "holds": 0
+            },
+            "findings": {
+              "SeparatedByDecisionOnly": 0,
+              "SeparatedByActOnly": 0
+            },
+            "pending_candidates": 0,
+            "couplings": 0,
+            "status": "CONFLICT-FREE",
+            "conflict": {
+              "components": [
+                {
+                  "component": "main",
+                  "status": "CONFLICT-FREE"
+                },
+                {
+                  "component": "force-u0036-s05",
+                  "status": "CONFLICT-FREE"
+                },
+                {
+                  "component": "force-u0156-s03",
+                  "status": "CONFLICT-FREE"
+                },
+                {
+                  "component": "force-u0263-s04-p2",
+                  "status": "CONFLICT-FREE"
+                }
+              ],
+              "route": "components",
+              "status": "CONFLICT-FREE"
+            },
+            "decided_units": [
+              "u0036.s05",
+              "u0052.s01",
+              "u0062.s01",
+              "u0073.s05",
+              "u0123.s01.p1",
+              "u0123.s02.p1",
+              "u0123.s03",
+              "u0125.s04.p2",
+              "u0156.s03",
+              "u0165.s01",
+              "u0165.s02",
+              "u0165.s03",
+              "u0165.s04",
+              "u0165.s05",
+              "u0165.s06",
+              "u0165.s07",
+              "u0168.s01",
+              "u0248",
+              "u0263.s04.p2"
+            ],
+            "english": [
+              "Each open sentence below was checked by itself, under each of its readings.",
+              "Sentence 132 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "The readings of sentence 132 were checked one way at a time, not together.",
+              "Under every reading of sentence 132, no two rules on the same act contradict each other.",
+              "This does not depend on how sentence 132 is read.",
+              "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "The readings of sentence 589 were checked one way at a time, not together.",
+              "Under every reading of sentence 589, no two rules on the same act contradict each other.",
+              "This does not depend on how sentence 589 is read.",
+              "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "The readings of sentence 1000 were checked one way at a time, not together.",
+              "Under every reading of sentence 1000, no two rules on the same act contradict each other.",
+              "This does not depend on how sentence 1000 is read.",
+              "Each open sentence below was checked by itself, under each of its readings.",
+              "Sentence 132 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\".",
+              "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "Read sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\".",
+              "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "Read sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\"."
+            ]
+          }
+        }
+      },
+      "coverage": {
+        "returncode": 0,
+        "json": {
+          "accounted_bytes": 184893,
+          "bytes_by_kind": {
+            "asserted": 22,
+            "attributed": 634,
+            "meta": 349,
+            "norm": 2580,
+            "unformalised": 181308
+          },
+          "bytes_by_status": {
+            "CHECKED": 73,
+            "LABELLED": 349,
+            "OPEN": 2529,
+            "UNFORMALISED": 181942
+          },
+          "coverage_percent": 100,
+          "residual": {
+            "assumptions": 19,
+            "bridge_leaves": 0,
+            "open_terms": 33,
+            "unresolved_reading_sets": 3,
+            "separations": 3,
+            "readings_findings": 0,
+            "pending_candidates": 0,
+            "couplings": 0,
+            "gaps": 12,
+            "ungrounded_defaults": 0
+          },
+          "residual_total": 70,
+          "source_bytes": 184893,
+          "unformalised_reasons": {
+            "attribution": 12,
+            "causation": 76,
+            "counting": 31,
+            "defaults": 50,
+            "modality_belief": 25,
+            "norms": 669,
+            "other.discourse": 81,
+            "other.graded-force": 1,
+            "other.open-list": 1,
+            "quantities": 119,
+            "time": 9
+          },
+          "norm_defaults": {
+            "gaps": [
+              "clarification_required",
+              "csam_generation_permitted_for_claude",
+              "cyberweapon_creation_permitted",
+              "exploit_instruction_compliance_required",
+              "firmness_required",
+              "humanity_attack_participation_permitted",
+              "illegitimate_control_involvement_permitted",
+              "infrastructure_uplift_permitted",
+              "oversight_undermining_permitted",
+              "system_prompt_compliance_required",
+              "system_prompt_deception_permitted",
+              "weapons_uplift_permitted"
+            ],
+            "findings": []
+          }
+        }
+      },
+      "summary": {
+        "route": "components",
+        "components": [
+          [
+            "main",
+            "w2",
+            [
+              "u0052.s01",
+              "u0062.s01",
+              "u0073.s05",
+              "u0123.s01.p1",
+              "u0123.s02.p1",
+              "u0123.s03",
+              "u0125.s04.p2",
+              "u0165.s01",
+              "u0165.s02",
+              "u0165.s03",
+              "u0165.s04",
+              "u0165.s05",
+              "u0165.s06",
+              "u0165.s07",
+              "u0168.s01",
+              "u0248"
+            ]
+          ],
+          [
+            "force-u0036-s05",
+            "enumerated",
+            [
+              "u0036.s05"
+            ]
+          ],
+          [
+            "force-u0156-s03",
+            "enumerated",
+            [
+              "u0156.s03"
+            ]
+          ],
+          [
+            "force-u0263-s04-p2",
+            "enumerated",
+            [
+              "u0263.s04.p2"
+            ]
+          ]
+        ],
+        "conflict": "CONFLICT-FREE",
+        "premises": "model",
+        "premises_components": [
+          [
+            "main",
+            "model"
+          ],
+          [
+            "force-u0036-s05",
+            "model"
+          ],
+          [
+            "force-u0156-s03",
+            "model"
+          ],
+          [
+            "force-u0263-s04-p2",
+            "model"
+          ]
+        ],
+        "separations": {
+          "outcome": 2,
+          "selects": 1,
+          "holds": 0
+        },
+        "decided_units": [
+          "u0036.s05",
+          "u0052.s01",
+          "u0062.s01",
+          "u0073.s05",
+          "u0123.s01.p1",
+          "u0123.s02.p1",
+          "u0123.s03",
+          "u0125.s04.p2",
+          "u0156.s03",
+          "u0165.s01",
+          "u0165.s02",
+          "u0165.s03",
+          "u0165.s04",
+          "u0165.s05",
+          "u0165.s06",
+          "u0165.s07",
+          "u0168.s01",
+          "u0248",
+          "u0263.s04.p2"
+        ],
+        "english": [
+          "Each open sentence below was checked by itself, under each of its readings.",
+          "Sentence 132 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "The readings of sentence 132 were checked one way at a time, not together.",
+          "Under every reading of sentence 132, no two rules on the same act contradict each other.",
+          "This does not depend on how sentence 132 is read.",
+          "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "The readings of sentence 589 were checked one way at a time, not together.",
+          "Under every reading of sentence 589, no two rules on the same act contradict each other.",
+          "This does not depend on how sentence 589 is read.",
+          "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "The readings of sentence 1000 were checked one way at a time, not together.",
+          "Under every reading of sentence 1000, no two rules on the same act contradict each other.",
+          "This does not depend on how sentence 1000 is read.",
+          "Each open sentence below was checked by itself, under each of its readings.",
+          "Sentence 132 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\".",
+          "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "Read sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\".",
+          "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "Read sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\"."
+        ]
+      },
+      "lean_decided_share": {
+        "basis": "readings-verdicts decided_units",
+        "decided_bytes": 2602,
+        "decided_bytes_checked_outside": 0,
+        "decided_share_percent": "1.41",
+        "decided_units": [
+          "u0036.s05",
+          "u0052.s01",
+          "u0062.s01",
+          "u0073.s05",
+          "u0123.s01.p1",
+          "u0123.s02.p1",
+          "u0123.s03",
+          "u0125.s04.p2",
+          "u0156.s03",
+          "u0165.s01",
+          "u0165.s02",
+          "u0165.s03",
+          "u0165.s04",
+          "u0165.s05",
+          "u0165.s06",
+          "u0165.s07",
+          "u0168.s01",
+          "u0248",
+          "u0263.s04.p2"
+        ],
+        "max_choice_rules": null,
+        "one_rule": "A rule checked by itself is CONFLICT-FREE by construction: a single rule cannot contradict another. This says nothing of a reading checked with the document's other rules; Lean's answer decides that.",
+        "source_bytes": 184893
+      }
+    }
+  }
+}
