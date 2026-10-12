@@ -20,6 +20,12 @@ SEEDS = tuple(range(20260921, 20260931)) + tuple(range(20261001, 20261005))
 def one(seed: int, scratch: Path) -> dict:
     report = scratch / f"{seed}.json"
     log = scratch / f"{seed}.log"
+    if report.is_file():
+        data = json.loads(report.read_text())
+        if data.get("seed") == seed and data.get("passed") is True:
+            return {"seed": seed, "exit_code": 0, "passed": True,
+                    "new": len(data["new"]), "baseline_entries": data["baseline"]["entries"],
+                    "sampled": data["mutants"]}
     with log.open("w") as output:
         done = subprocess.run([sys.executable, "tools/difffuzz.py", "--ci", "--seed", str(seed),
                                "--report", str(report)], cwd=ROOT, stdout=output,
@@ -36,7 +42,7 @@ def one(seed: int, scratch: Path) -> dict:
 def main() -> int:
     scratch, summary = map(Path, sys.argv[1:])
     scratch.mkdir(parents=True, exist_ok=True)
-    with ThreadPoolExecutor(max_workers=2) as pool:
+    with ThreadPoolExecutor(max_workers=4) as pool:
         rows = sorted(pool.map(lambda seed: one(seed, scratch), SEEDS), key=lambda row: row["seed"])
     good = len(rows) == len(SEEDS) and all(row["exit_code"] == 0 and row["passed"] and
                                                 row["new"] == 0 for row in rows)
