@@ -21,6 +21,15 @@ ENV = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t", "GIT_COM
 SIGNED = ["--reason", "demo growth", "--signed", "DRI 2026-10-10"]
 
 
+def test_review_f6_probe_rejects_float_budget():
+    files = {"x.lean": {**trust_map.empty_counts(), "K": 1, "trusted": 1, "lines": 1}}
+    now = trust_map.totals(files)
+    record = {"files": files, "totals": now, "budget": trust_map.budget(now)}
+    assert trust_map.files_problems(record) == []
+    record["budget"]["K"] = 1.0
+    assert trust_map.files_problems(record)
+
+
 def git(root: Path, *args: str, check: bool = True) -> str:
     done = subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, env=ENV)
     assert done.returncode == 0 or not check, done.stderr
