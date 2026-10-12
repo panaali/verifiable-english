@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -34,6 +35,20 @@ def main() -> None:
     assert all(row["mutant_exit"] and row["restored_exit"] == 0 for row in mutants)
     assert any(row["file"].endswith(".lean") for row in mutants)
     assert any(row["file"] == "ve/backends/lean_service.py" for row in mutants)
+    summary = json.loads((EVIDENCE / "summary.json").read_text())
+    assert summary["schema"] == 1 and summary["mapped_units"] == len(coverage["tests"])
+    assert summary["mode_mutants"] == len(mode_rows["mutants"])
+    assert summary["behavior_mutants"] == len(mutants)
+    shadow = json.loads((EVIDENCE / "shadow.json").read_text())
+    assert summary["shadow_selected_counts"] == {row["item"]: row["selected_count"]
+                                                 for row in shadow["merges"]}
+    assert summary["shadow_full_count"] == len(coverage["tests"])
+    # Compare only the saved base and saved code/evidence head. A later report
+    # commit or a moving main branch cannot change this batch measurement.
+    fixed = subprocess.check_output(("git", "log", "--reverse", "--format=%H",
+                                     f'{summary["base"]}..{summary["code_evidence_head"]}',
+                                     "--no-merges"), cwd=ROOT, text=True).splitlines()
+    assert fixed == summary["commits_no_merges"]
     print(f"B2 evidence: {len(coverage['tests'])} mapped units, {len(mode_rows['mutants'])} mode mutants, "
           f"{len(mutants)} behavior mutants, 10 fixed-merge shadow comparisons")
 
