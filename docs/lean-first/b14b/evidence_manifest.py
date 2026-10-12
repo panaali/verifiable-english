@@ -83,7 +83,8 @@ def snapshot(raw: Path) -> dict:
     ):
         raise ValueError("CI plus 14 date-seed differential baseline grew")
     own = read(EVIDENCE / "corpus-ab.json")
-    if len(own.get("differences", [])) != 16:
+    if (own.get("documents") != 150 or own.get("records") != 1350
+            or len(own.get("differences", [])) != 16):
         raise ValueError("own corpus's listed changes changed")
     pilots = read(EVIDENCE / "pilots-delta.json")
     if len(pilots.get("unavailable", [])) != 6:
