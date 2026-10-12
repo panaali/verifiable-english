@@ -7,7 +7,9 @@
    "file": "tools/trust_map.py",
    "find": "        if now[key] > cap[key] + allowed[key]:\n",
    "replace": "        if now[key] > cap[key] + allowed[key] + 10:\n",
-   "tests": ["tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"
+   ]
   },
   {
    "id": "AR4-M2",
@@ -15,7 +17,9 @@
    "file": "tools/trust_map.py",
    "find": "        if inherited[allowance_key(entry)]:\n",
    "replace": "        if False:\n",
-   "tests": ["tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"
+   ]
   },
   {
    "id": "AR4-M3",
@@ -23,7 +27,9 @@
    "file": "tools/trust_map.py",
    "find": "        cap, label = budget(totals(measured_base)), base[:12]\n",
    "replace": "        cap, label = base_baseline.get(\"budget\") or budget(totals(measured_base)), base[:12]\n",
-   "tests": ["tests/test_trust_ratchet.py::test_deleting_trusted_lines_lowers_the_budget_at_the_merge"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_deleting_trusted_lines_lowers_the_budget_at_the_merge"
+   ]
   },
   {
    "id": "AR4-M4",
@@ -31,7 +37,9 @@
    "file": "tools/trust_map.py",
    "find": "    if base == head and run_git(root, \"rev-parse\", \"-q\", \"--verify\", \"MERGE_HEAD\").returncode:\n",
    "replace": "    if base == head:\n",
-   "tests": ["tests/test_trust_ratchet.py::test_an_uncommitted_merge_on_main_is_checked_against_head"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_uncommitted_merge_on_main_is_checked_against_head"
+   ]
   },
   {
    "id": "AR4-M5",
@@ -39,7 +47,9 @@
    "file": "tools/trust_map.py",
    "find": "        gone = introduced(base_baseline[\"allowances\"], allowances)  # the history only grows\n",
    "replace": "        gone = []\n",
-   "tests": ["tests/test_trust_ratchet.py::test_an_allowance_is_never_removed"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_allowance_is_never_removed"
+   ]
   },
   {
    "id": "AR4-M6",
@@ -47,7 +57,9 @@
    "file": "tools/trust_map.py",
    "find": "        if base is not None and branch.stdout.strip() != \"main\":\n",
    "replace": "        if False:\n",
-   "tests": ["tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"
+   ]
   },
   {
    "id": "AR4-M7",
@@ -55,8 +67,10 @@
    "file": "tools/trust_map.py",
    "find": "    for field in (\"reason\", \"signature\"):\n",
    "replace": "    for field in (\"reason\",):\n",
-   "tests": ["tests/test_trust_ratchet.py::test_every_allowance_field_is_typed[-signature]",
-             "tests/test_consolidation_tools.py::test_budget_check_needs_a_signed_allowance"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_every_allowance_field_is_typed[-signature]",
+    "tests/test_consolidation_tools.py::test_budget_check_needs_a_signed_allowance"
+   ]
   },
   {
    "id": "AR4-M8",
@@ -64,7 +78,9 @@
    "file": "tools/trust_map.py",
    "find": "for key, n in seen.items() if n > 1]",
    "replace": "for key, n in seen.items() if n > 2]",
-   "tests": ["tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"
+   ]
   },
   {
    "id": "AR4-M9",
@@ -72,7 +88,9 @@
    "file": "tools/trust_map.py",
    "find": "<= set(data) <= {\"comment\", \"budget\", \"allowances\"}:",
    "replace": "<= set(data):",
-   "tests": ["tests/test_trust_ratchet.py::test_the_file_holds_only_the_budget_and_allowances[data3]"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_the_file_holds_only_the_budget_and_allowances[data3]"
+   ]
   },
   {
    "id": "AR4-M10",
@@ -80,7 +98,79 @@
    "file": "tools/trust_map.py",
    "find": "            if item[\"lines\"] > 0 and item not in out:\n",
    "replace": "            if item[\"lines\"] > 0:\n",
-   "tests": ["tests/test_trust_ratchet.py::test_history_becomes_allowances"]
+   "tests": [
+    "tests/test_trust_ratchet.py::test_history_becomes_allowances"
+   ]
+  },
+  {
+   "id": "AR4-M11",
+   "claim": "an allowance a change introduces needs the DRI's signature, not the migration's UNSIGNED marker (review F4)",
+   "file": "tools/trust_map.py",
+   "find": "                    for entry in new for problem in signature_problems(entry[\"signature\"])]\n",
+   "replace": "                    for entry in new for problem in signature_problems(entry[\"signature\"], inherited=True)]\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_review_f4_probe"
+   ]
+  },
+  {
+   "id": "AR4-M12",
+   "claim": "a signature names the DRI and is not marked unsigned or pending (review F4)",
+   "file": "tools/trust_map.py",
+   "find": "    if not SIGNER.search(signature) or PLACEHOLDER.search(signature):\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_a_new_allowance_without_the_dris_signature_grants_nothing"
+   ]
+  },
+  {
+   "id": "AR4-M13",
+   "claim": "the gate record's per-file trust counts add up to their totals and budget (review F2)",
+   "file": "tools/trust_map.py",
+   "find": "    if data[\"totals\"] != totals(files) or data[\"budget\"] != budget(totals(files)):\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_a_gate_without_valid_trust_counts_fails"
+   ]
+  },
+  {
+   "id": "AR4-M14",
+   "claim": "every gate records the per-file trust counts (review F2)",
+   "file": "tools/gate.py",
+   "find": "            result[\"trust\"] = read_trust(trust_file)\n",
+   "replace": "            read_trust(trust_file)\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_every_gate_records_the_per_file_trust_counts"
+   ]
+  },
+  {
+   "id": "AR4-M15",
+   "claim": "a gate whose trust_map.py --files wrote nothing fails (review F2)",
+   "file": "tools/gate.py",
+   "find": "    if not path.is_file():\n        raise RuntimeError(f\"{TRUST_STAGE}: tools/trust_map.py --files wrote no {path.name}\")\n",
+   "replace": "    if not path.is_file():\n        return {}\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_a_gate_without_valid_trust_counts_fails"
+   ]
+  },
+  {
+   "id": "AR4-M16",
+   "claim": "a saved scope's commits are git's base..head, every one (review F3)",
+   "file": "tools/batch_scope.py",
+   "find": "            for field in (\"commits\", \"files\") if scope[field] != actual[field]]\n",
+   "replace": "            for field in (\"files\",) if scope[field] != actual[field]]\n",
+   "tests": [
+    "tests/test_batch_scope.py::test_every_change_to_a_scope_is_a_problem_never_a_crash"
+   ]
+  },
+  {
+   "id": "AR4-M17",
+   "claim": "a saved scope's base is the merge base of its head and main (review F3)",
+   "file": "tools/batch_scope.py",
+   "find": "        if merged.returncode or merged.stdout.strip() != base:\n",
+   "replace": "        if merged.returncode:\n",
+   "tests": [
+    "tests/test_batch_scope.py::test_a_scope_collected_against_another_base_is_a_problem"
+   ]
   }
  ]
 }

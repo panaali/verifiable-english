@@ -92,3 +92,12 @@ def test_a_merged_batch_needs_only_an_ancestor_base(batch):
     assert scope_problems(scope, repo) == []
     assert scope_problems({**scope, "commits": scope["commits"][:-1]}, repo)
     assert scope_problems({**scope, "base": main["first"]}, repo)  # its commits are then not git's
+
+
+def test_a_scope_collected_against_another_base_is_a_problem(batch):
+    """Commits and files that match git for a wrong base (an older commit of main, or a commit of the batch)
+    still fail: the base must be the merge base of the head and main."""
+    repo, scope, main = batch
+    for base in (main["first"], scope["commits"][-1]["hash"]):
+        wrong = git_scope(base, scope["head"], repo)
+        assert wrong != scope and scope_problems(wrong, repo), base
