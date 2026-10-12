@@ -467,6 +467,15 @@ def test_completion_decided_units_come_from_leans_folds(tmp_path):
     assert route.premises_answer()["decided_units"] == ["u1"]
 
 
+def test_explicit_empty_assumed_has_no_decided_units(tmp_path):
+    _, route = loaded(tmp_path)
+    route.premises()
+    assert route.premises_answer()["decided_units"] == ["u1"]
+    answer = route._verdicts("premises", assumed=[])
+    assert answer["status"] == "ok"
+    assert answer["decided_units"] == []
+
+
 def test_every_question_binds_its_rows_exactly(tmp_path):
     """Review B2's class: a query (with or without readings named) is bound as exactly as the other questions; a
     conflict answer under a reading lists only the choices taking it."""

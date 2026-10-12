@@ -141,9 +141,9 @@ def test_the_route_builds_a_candidates_document_only_in_the_request_table(walks)
     assert {caller for caller in callers(edges, TABLE[1]) if not named_under(caller, TABLE[1])} == \
         {"VE.Readings.Wire.Admitted.side"}
     # `free D` once more under the unspecified completion: norm-defaults' author checks read it as a UDoc
-    # (`freeU`, readings-defaults.md 4.1 step 3), one document per request, a gap recorded in
+    # (`ndTextWith`, readings-defaults.md 4.1 step 3), one document per request, a gap recorded in
     # docs/readings-defaults/rd2a/DELTA.md beside `sharedEnv`'s.
-    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED, "VE.Readings.freeU"}
+    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED, "VE.Readings.Wire.ndTextWith"}
 
 
 ADMIT = ("VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitS2")

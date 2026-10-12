@@ -194,9 +194,11 @@ checked in the stub).
 - `pairGapsOn U P M T q := gapsOf U (tablesModelOn P M T) (tupleVal vs) ψ` with `(ψ, vs) := probeFormulaOn P q`: the
   unsaid atoms the Kleene value of the witness's shown value reads with nothing filled, each with its regulated
   predicate, the tuple's ids and the filling's answer; none where the value is definite.
-- A pair's **gaps** is `pairGapsOn (oneU N s w)` on the witness's side and completion. `probeFormulaOn_eval`: where
-  `observeOn` shows a value, `probeFormulaOn`'s formula has that value at its tuple, so the gaps are read off the
-  formula of the value the line shows (*proved in the stub*). `coneEval_sound`: two fillings that agree on the listed
+- A pair's **gaps** lists `pairGapsOn (oneU N s w)` on the witness's side and completion, followed by the other side's
+  `pairGapsOn` when `other_value` is shown, with duplicate atoms removed. The other side uses its fixed tables, as
+  `other_value` does. `probeFormulaOn_eval`: where `observeOn` shows a value, `probeFormulaOn`'s formula has that value
+  at its tuple, so the gaps are read off the formulas of both values the line shows (*proved in the stub*).
+  `coneEval_sound`: two fillings that agree on the listed
   atoms give the formula the same value. `coneEval_definite`: a definite value is the value under every filling. No
   minimality is claimed: an atom may be listed that a cleverer selection would drop.
 
@@ -207,8 +209,10 @@ CONFLICT and its premise status `model` or INCONSISTENT (`fixedDecided`); an ope
 compatible choice's conflict row is CONFLICT-FREE or CONFLICT and every reading's premise status is `model`,
 INCONSISTENT, `dead` or `narrowed` (`setDecided`). On the enumerated route without components, under the completion
 (either chain), `decided_units` is `partDecided` on the main case's rows, in the document's order (`documentOrder`),
-when the request names no `assumed` readings. With `assumed`, the rows cover only the choices taking it, so the field
-is `[]`; beyond 64 choices it is `[]`.
+when the request has no `assumed` field (or has `assumed: null`). An explicit `assumed: []` still supplies that field,
+so `decided_units` is `[]`, as it is for every supplied list of readings; beyond 64 choices it is `[]`.
+The same presence rule applies to each completion subanswer in a component product; the product fold only takes
+decided units from a case whose own `assumed` is absent.
 
 ### 1.13 The layered branch's soft kinds (D8)
 
@@ -339,8 +343,8 @@ No filled readings document is admitted (RD-2a's step 4 does not exist here; Q1)
 `replaySeparateS`: `admitSD`; the pair and its situation replayed as S1 replays them, the situation decoded over
 `filledEnvironment b.a.re N` (RD-2a's: the frame's author vocabulary with every `unsaid__p`), its base valid over
 `filledAuthorEnv N`. The pair is separated when `separatesS` holds (`readings_wire_sd_separate_sound`). The answer's
-`gaps` is `pairGapsOn (oneU N s w) (sideOfS N (one N.D s w)) σ.base (tablesForOf (one N.D s w).1 (σ.fixed ++
-σ.decisions)) σ.probe`.
+`gaps` contains the witness side's `pairGapsOn` and, when `other_value` is shown, the other side's, with duplicate
+atoms removed. Both sides use their admitted candidate documents and the tables their displayed values read.
 
 ### 4.3 Each choice (`readings-choice`)
 
@@ -515,10 +519,11 @@ With `M := tablesModelOn P M T` it reads `sideValueOn P M T q = some v`, the val
 `readingPremise : Doc → List RowInfo → List (String × Nat) → ReadingSet → Nat → Premise`,
 `partDecided : Doc → List RowInfo → List (String × Nat) → List String`,
 `documentOrder : Json → List String → List String`. The answer's member, in `runVerdicts` under the completion:
-`("decided_units", toJson (documentOrder (j.getObjValD "document") (if A.isEmpty then partDecided D infos dead else
+`("decided_units", toJson (documentOrder (j.getObjValD "document") (if assumed.isNone then partDecided D infos dead else
 [])))` with `infos := ndInfos x` and `dead := ((deadOf D infos deadJ).1).getD []`; `[]` on the over-64 branch.
-Per pair, `readings-validate` and `readings-separate` under the completion add `gaps := gapsJson (pairGapsOn (oneU N
-s w) Pw σ.base (tablesForOf Pw.X (σ.fixed ++ σ.decisions)) σ.probe)`, `Pw` the witness's side as the route builds it.
+Per pair, `readings-validate` and `readings-separate` under the completion add the witness's `pairGapsOn`, followed
+by the other side's when `other_value` is shown, with duplicate atoms removed. Each side uses the tables its displayed
+value reads.
 
 If SC-A does not prove `coneEval_sound` and `coneEval_definite`, it adds neither, and the selection is listed under 7.
 
@@ -1476,7 +1481,7 @@ C1 to C8 as plan 5.2, with C1′ and C2′ above as their *computed* miniatures,
 | # | Case | Expected |
 |---|---|---|
 | F-SD0 | S1's K1 to K22 without `norm-defaults@0`; S2a's M1 to M20 | byte-identical verdicts, identities and English |
-| F-SD0′ | readings-defaults' F-ND0 to F-ND10, RD-3's, RD-4b's and RD-6b's fixtures | byte-identical verdicts and identities; the English identical except the gap selection (SC-A, signed); F-ND1's line keeps its one gap (8.1) |
+| F-SD0′ | readings-defaults' F-ND0 to F-ND10, RD-3's, RD-4b's and RD-6b's fixtures | byte-identical verdicts and identities; the English identical except the gap selection (SC-A, pending item-specific DRI signature); F-ND1's line keeps its one gap (8.1) |
 | F-SD0″ | `tests/test_norm_defaults_layered.py`; a profiled norms-route admission | unchanged answers; the two new kinds answer on the soft fixtures (u2, u3, u8, `coherent`) |
 
 ## 9. Limits

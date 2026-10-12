@@ -406,7 +406,9 @@ structure PartRun where
 def PartRun.infos (r : PartRun) : List RowInfo := ndInfos r.x
 def PartRun.rows (r : PartRun) : ComponentRows := ⟨r.x.conflictRows, r.x.premiseRows⟩
 def PartRun.answer (r : PartRun) : Json :=
-  verdictsAnswer r.id r.question true r.part.f.r.N.D r.x.A r.named (some r.infos) [] r.dead
+  let units := r.part.f.r.b.a.doc.units.map (fun u => Json.mkObj [("id", .str u)])
+  let document := Json.mkObj [("units", Json.arr units.toArray)]
+  ndVerdictsAnswer r.id r.question document r.part.f.r.N.D r.x.A r.named (some r.infos) [] r.dead
 def PartRun.lines (r : PartRun) : List Line :=
   verdictsPlan r.question true r.part.f.r.N.D r.x.A r.named (some r.infos) [] r.dead
 
@@ -518,7 +520,7 @@ def productPlan (question : String) (runs : List PartRun) (k : Nat) : List (Opti
 /-- The decided units of every case asked over all of its compatible choices. -/
 def productDecided (runs : List PartRun) : List String :=
   runs.flatMap (fun r =>
-    if r.x.A.isEmpty then
+    if r.named.isNone then
       let dead := (deadOf r.part.f.r.N.D r.infos r.dead).1
       partDecided r.part.f.r.N.D r.infos (dead.getD [])
     else [])

@@ -786,7 +786,7 @@ theorem othersReasonWord_fits {rows : List ComponentRows} {k : Nat} {s : ChoiceR
 
 theorem partRun_answer_fits (r : PartRun) :
     Fits req (skel% "readings-route.json#/$defs/verdicts") r.answer :=
-  verdictsAnswer_fits _ _ _ _ _ _ _ _ _ r.hq
+  ndVerdictsAnswer_fits _ _ _ _ _ _ _ _ _ r.hq
 
 theorem componentJson_fits (r : PartRun) :
     Fits req (skel% "readings-route.json#/$defs/product_component") (componentJson r) := by
@@ -794,7 +794,7 @@ theorem componentJson_fits (r : PartRun) :
   fits
   all_goals first
     | exact routeText_fits _
-    | exact verdictsAnswer_fits _ _ _ _ _ _ _ _ _ r.hq
+    | exact ndVerdictsAnswer_fits _ _ _ _ _ _ _ _ _ r.hq
 
 theorem entryJson_fits (x : Option String × Line) :
     Fits req (skel% "readings-route.json#/$defs/product_line") (entryJsonP x) := by

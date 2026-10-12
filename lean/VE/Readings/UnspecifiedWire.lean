@@ -107,8 +107,9 @@ theorem wellFormedU_of_ndDocText {re : ReadingsEnvironment} {U : VE.NormDefaults
     ` under <set>@<v>:<i>`. -/
 def ndTextWith (re : ReadingsEnvironment) (N : NDoc) (side : String → Nat → RightsDoc × List VE.Formula) :
     Option String :=
+  let freeDoc := free N.D
   ((reservedUnsaid N).map (s!"InvalidInput: reserved name {·}")).or <|
-  (ndDocTextG re (decisionCount (free N.D).1) (freeU N)).or <|
+  (ndDocTextG re (decisionCount freeDoc.1) (asU N freeDoc.1)).or <|
   firstSome (activeOf N.D) (fun c =>
     (ndDocTextG re (decisionCount (side c.1.id c.2).1) (asU N (side c.1.id c.2).1)).map
       (· ++ s!" under {c.1.id}@{c.1.version}:{c.2}"))
@@ -171,6 +172,7 @@ theorem fillRest_of_ndText {re : ReadingsEnvironment} {N : NDoc} (h : ndText re 
   obtain ⟨h2, h3⟩ := option_or_none h23
   have hfree := fillNamesFree_of_reservedUnsaid N (Option.map_eq_none_iff.mp h1)
   have hU := wellFormedU_of_ndDocTextG h2
+  change VE.NormDefaults.WellFormedU (freeU N) = true at hU
   have hone := firstSome_eq_none h3
   simp only [fillRest, hfree, hU, Bool.true_and, List.all_eq_true, Bool.or_eq_true]
   intro R hR i hi
