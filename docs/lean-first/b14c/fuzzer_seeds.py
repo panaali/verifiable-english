@@ -2,7 +2,8 @@
 
 Usage: uv run python docs/lean-first/b14c/fuzzer_seeds.py OUT_DIRECTORY SUMMARY_JSON
 Each child completes before the summary is written. The same reviewed baseline
-is checked on every seed; a new finding or a command failure fails the run.
+is checked on every seed; new signatures are passed to date_seed_replay.py for
+the base/head comparison. A missing report or baseline change fails collection.
 """
 from __future__ import annotations
 
@@ -45,10 +46,11 @@ def main() -> int:
     scratch.mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(max_workers=4) as pool:
         rows = sorted(pool.map(lambda seed: one(seed, scratch), SEEDS), key=lambda row: row["seed"])
-    good = len(rows) == len(SEEDS) and all(row["exit_code"] == 0 and row["passed"] and
-                                                row["new"] == 0 for row in rows)
-    summary.write_text(json.dumps({"pass": good, "seeds": rows}, indent=2, sort_keys=True) + "\n")
-    print(f"{sum(row['passed'] for row in rows)}/{len(SEEDS)} date seeds passed")
+    good = len(rows) == len(SEEDS) and all(row["exit_code"] in (0, 1) and
+                                             row.get("baseline_entries") == 250 for row in rows)
+    summary.write_text(json.dumps({"complete": good, "seeds": rows}, indent=2, sort_keys=True) + "\n")
+    print(f"{len(rows)}/{len(SEEDS)} date seeds recorded; "
+          f"{sum(row.get('new', 0) for row in rows)} signatures require base replay")
     return 0 if good else 1
 
 
