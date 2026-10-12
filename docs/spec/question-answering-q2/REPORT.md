@@ -160,9 +160,14 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   trial merge (`git merge-tree`) conflicts only in generated inventories (assurance manifest, trust baseline, frozen
   hashes, declarations, gate collection), which the merge train regenerates (R12); the one hand-written file both
   sides change, `ve/readings_verdicts.py`, merges cleanly.
-- **Selected tests**: `tools/select_tests.py --base 96887019` selects all 360 units (the lock and `Audit.lean`
-  changed), which is the full gate's suite, so while iterating a curated set ran instead: this batch's tests, the
-  relay gate's, the schema, service and statement tests. The full gate ran once on the final HEAD (generated block).
+- **Selected tests**: `tools/select_tests.py --base 96887019 --run` selected all 360 test files because the lock and
+  `Audit.lean` changed. It did not return a passing aggregate: `test_regen_generated.py` found two unregistered Q2
+  writers and `tools/test_layer_policy.py` found `ve.ask` absent from the documented layer; both were fixed and their
+  combined rerun passed. `test_lean_conformance.py::test_lean_transitive_axiom_allowlist` hit its 30-minute limit
+  even serially; the audit is now allowed `2 * HANG_TIMEOUT` and the exact test passed in 38 minutes. The selector
+  cut off `test_english_evidence.py` and `test_wire_gate_corpus.py` at one hour per file. The former's saved log then
+  finished with 67 passing tests; the latter passed all 8 tests in a serial run after 1 hour 24 minutes. After these
+  test and inventory fixes, the full gate on the committed final code is the aggregate result (generated block).
 - **Seeded bugs under load**: at load 50 to 80, one run of all 11 mutants passed the one-hour limit (the Lean
   mutants rebuild `ve_service`); `mutants.py` now saves each result as it runs, and the 11 ran in four groups on the
   same code, each caught. The 12th (`python-gap-unbound`) was added with the gap binding; the 13th and 14th

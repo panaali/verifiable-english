@@ -44,3 +44,7 @@ resumed; the final report is `docs/spec/question-answering-q2/REPORT.md`, the de
 - Not done: Q2.4 (one owner of situation wording), Q2.6's evaluation, latency and W2 agreement (REPORT.md, "Not done").
 - 2026-10-11: mutants rerun on the synced code (12, each caught); a gap's elements bound to the request's evidence
   models; relay gate rerun and saved; evidence recaptured. Next: the full gate once on the final HEAD.
+- 2026-10-12: definition citations and exact choice-row coverage bound in the relay; two more seeded bugs caught.
+  The selected run exposed two inventory omissions and an audit-test timeout; both inventories were fixed, and the
+  audit test passed with a doubled `HANG_TIMEOUT`. The wire corpus passed when rerun serially beyond the selector's
+  one-hour per-file cutoff. Next: the full gate on the committed HEAD, then save its result in the report.
