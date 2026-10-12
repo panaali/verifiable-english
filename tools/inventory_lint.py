@@ -37,14 +37,12 @@ BODIES: dict[str, set[str]] = {
     "ve.search": {"_check_countermodel_values"},
     "ve.entailment": {"_Replayer", "_check_certificate_python"},
     "ve.order": {"decode_trace", "_Replayer", "replay_trace"},
-    "ve.background": {"_background_python", "_dependency_order_python", "_validate_background_python",
+    "ve.background": {"_validate_background_python",
                       "_valid_flags", "_valid_definitions", "_valid_literals", "_valid_profile",
                       "_valid_soft", "_valid_rights", "_valid_fill"},
     "ve.definitions": {"_compile_python"},
     "ve.norms": {"NormDocument._elaborate_python", "NormDocument._premises_python", "check_witness",
                  "_check_conflict_python", "_norm_certificate_python"},
-    "ve.norm_admission": {"_admit_norm_document_python"},
-    "ve.admission": {"_admit_document_python", "_check_graph", "_validate_label_python"},
     "ve.norm_defaults_route": {"admit_norm_defaults_document"},
     "ve.bundle": {"_check_bundle_python"},
     "ve.parser": {"_parse_python", "_parse_python_marked"},
@@ -76,6 +74,9 @@ EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
         SURFACE + " (English E3 remains the parser owner; the speech-source route checks its structured result)",
     ("ve.norms_contract", "typing_failure", "ve.ast", "_Checker"): DIAGNOSTIC,
     ("ve.norm_defaults_contract", "filled_ast_fits", "ve.ast", "_Checker"): DIAGNOSTIC,
+    ("ve.admission", "_admit_lean", "ve.norm_defaults_route", "admit_norm_defaults_document"):
+        "envelope routing to the Lean norm-defaults route (lean-first batch 10b), which decides; no Python "
+        "verdict (lean-first batch 13b deleted the Python admission that called it before)",
 }
 
 

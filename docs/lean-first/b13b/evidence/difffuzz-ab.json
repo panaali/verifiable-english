@@ -1,0 +1,2152 @@
+{
+ "base": "/home/seyran/code/ve-lf-13b-base",
+ "head": "/home/seyran/code/ve-lf-13b",
+ "runs": [
+  {
+   "run": "--ci",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 102,
+      "closure:evaluate:code": 242,
+      "countermodels:countermodel:code": 159,
+      "countermodels:countermodel:outcome": 2,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 26,
+      "elaborated-document:background:code": 21,
+      "elaborated-document:certificate:code": 84,
+      "elaborated-document:certificate:diagnostic": 2,
+      "elaborated-document:countermodel:code": 155,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:evaluate:code": 92,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 37,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 206,
+      "identity:evaluate:code": 213,
+      "invalid-background-model:countermodel:code": 125,
+      "invalid-background-model:countermodel:diagnostic": 6,
+      "invalid-background-model:countermodel:outcome": 4,
+      "invalid-background-model:evaluate:code": 109,
+      "invalid-background-model:evaluate:diagnostic": 9,
+      "labels:label:code": 18,
+      "parser:evaluate:code": 161,
+      "search:countermodel:code": 136,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 11,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 217,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 207,
+      "usecase:closure-induction:certificate:code": 91,
+      "usecase:math-mini-paper:evaluate:code": 246,
+      "usecase:news-article:evaluate:code": 147,
+      "usecase:us-constitution-14th-s1:evaluate:code": 173,
+      "validation:evaluate:code": 162,
+      "validation:evaluate:diagnostic": 9
+     },
+     "environment": {
+      "envelope:code": 63,
+      "envelope:outcome": 3,
+      "soft-norms:code": 71,
+      "soft-norms:outcome": 141
+     },
+     "wire": {
+      "demo@0:outcome": 1,
+      "forms@0:outcome": 23,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 16,
+      "closure:evaluate:code": 242,
+      "countermodels:countermodel:code": 159,
+      "countermodels:countermodel:outcome": 2,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 26,
+      "elaborated-document:background:code": 21,
+      "elaborated-document:certificate:code": 84,
+      "elaborated-document:certificate:diagnostic": 2,
+      "elaborated-document:countermodel:code": 155,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:evaluate:code": 92,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 37,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 206,
+      "identity:evaluate:code": 213,
+      "invalid-background-model:countermodel:code": 125,
+      "invalid-background-model:countermodel:diagnostic": 6,
+      "invalid-background-model:countermodel:outcome": 4,
+      "invalid-background-model:evaluate:code": 109,
+      "invalid-background-model:evaluate:diagnostic": 9,
+      "labels:label:code": 18,
+      "parser:evaluate:code": 161,
+      "search:countermodel:code": 136,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 11,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 217,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 207,
+      "usecase:closure-induction:certificate:code": 91,
+      "usecase:math-mini-paper:evaluate:code": 246,
+      "usecase:news-article:evaluate:code": 147,
+      "usecase:us-constitution-14th-s1:evaluate:code": 173,
+      "validation:evaluate:code": 162,
+      "validation:evaluate:diagnostic": 9
+     },
+     "environment": {
+      "envelope:code": 63,
+      "envelope:outcome": 3,
+      "soft-norms:code": 71,
+      "soft-norms:outcome": 141
+     },
+     "wire": {
+      "demo@0:outcome": 1,
+      "forms@0:outcome": 23,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    0,
+    0
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 226,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 222,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 147.0,
+     "children": 42.8
+    },
+    {
+     "python": 169.8,
+     "children": 53.2
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20260926",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 92,
+      "closure:evaluate:code": 258,
+      "countermodels:countermodel:code": 164,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 17,
+      "elaborated-document:background:code": 17,
+      "elaborated-document:certificate:code": 87,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 132,
+      "elaborated-document:countermodel:diagnostic": 2,
+      "elaborated-document:countermodel:outcome": 2,
+      "elaborated-document:evaluate:code": 98,
+      "elaborated-document:evaluate:diagnostic": 9,
+      "elaborated-document:search:code": 28,
+      "evaluation:evaluate:code": 212,
+      "identity:evaluate:code": 211,
+      "invalid-background-model:countermodel:code": 120,
+      "invalid-background-model:countermodel:diagnostic": 2,
+      "invalid-background-model:evaluate:code": 114,
+      "invalid-background-model:evaluate:diagnostic": 9,
+      "labels:label:code": 21,
+      "parser:evaluate:code": 158,
+      "search:countermodel:code": 147,
+      "search:countermodel:outcome": 5,
+      "search:search:code": 6,
+      "usecase:birthright-citizenship-debate:evaluate:code": 234,
+      "usecase:cedar-attributes:evaluate:code": 144,
+      "usecase:cedar-attributes:evaluate:diagnostic": 2,
+      "usecase:claude-constitution-excerpt:evaluate:code": 215,
+      "usecase:closure-induction:certificate:code": 90,
+      "usecase:math-mini-paper:evaluate:code": 238,
+      "usecase:news-article:evaluate:code": 159,
+      "usecase:us-constitution-14th-s1:evaluate:code": 175,
+      "validation:evaluate:code": 169,
+      "validation:evaluate:diagnostic": 10
+     },
+     "environment": {
+      "envelope:code": 80,
+      "envelope:outcome": 1,
+      "soft-norms:code": 67,
+      "soft-norms:outcome": 156
+     },
+     "wire": {
+      "forms@0:outcome": 20,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 19,
+      "closure:evaluate:code": 258,
+      "countermodels:countermodel:code": 164,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 17,
+      "elaborated-document:background:code": 17,
+      "elaborated-document:certificate:code": 87,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 132,
+      "elaborated-document:countermodel:diagnostic": 2,
+      "elaborated-document:countermodel:outcome": 2,
+      "elaborated-document:evaluate:code": 98,
+      "elaborated-document:evaluate:diagnostic": 9,
+      "elaborated-document:search:code": 28,
+      "evaluation:evaluate:code": 212,
+      "identity:evaluate:code": 211,
+      "invalid-background-model:countermodel:code": 120,
+      "invalid-background-model:countermodel:diagnostic": 2,
+      "invalid-background-model:evaluate:code": 114,
+      "invalid-background-model:evaluate:diagnostic": 9,
+      "labels:label:code": 21,
+      "parser:evaluate:code": 158,
+      "search:countermodel:code": 147,
+      "search:countermodel:outcome": 5,
+      "search:search:code": 6,
+      "usecase:birthright-citizenship-debate:evaluate:code": 234,
+      "usecase:cedar-attributes:evaluate:code": 144,
+      "usecase:cedar-attributes:evaluate:diagnostic": 2,
+      "usecase:claude-constitution-excerpt:evaluate:code": 215,
+      "usecase:closure-induction:certificate:code": 90,
+      "usecase:math-mini-paper:evaluate:code": 238,
+      "usecase:news-article:evaluate:code": 159,
+      "usecase:us-constitution-14th-s1:evaluate:code": 175,
+      "validation:evaluate:code": 169,
+      "validation:evaluate:diagnostic": 10
+     },
+     "environment": {
+      "envelope:code": 80,
+      "envelope:outcome": 1,
+      "soft-norms:code": 67,
+      "soft-norms:outcome": 156
+     },
+     "wire": {
+      "forms@0:outcome": 20,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    22,
+    22
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 199,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 197,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 145.0,
+     "children": 43.7
+    },
+    {
+     "python": 173.4,
+     "children": 53.5
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20260927",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 93,
+      "closure:evaluate:code": 243,
+      "countermodels:countermodel:code": 163,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 29,
+      "elaborated-document:background:code": 18,
+      "elaborated-document:certificate:code": 89,
+      "elaborated-document:certificate:diagnostic": 3,
+      "elaborated-document:countermodel:code": 136,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 96,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 32,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 221,
+      "identity:evaluate:code": 208,
+      "invalid-background-model:countermodel:code": 125,
+      "invalid-background-model:countermodel:diagnostic": 5,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 109,
+      "invalid-background-model:evaluate:diagnostic": 12,
+      "labels:label:code": 14,
+      "parser:evaluate:code": 162,
+      "search:countermodel:code": 135,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 12,
+      "usecase:birthright-citizenship-debate:evaluate:code": 226,
+      "usecase:cedar-attributes:evaluate:code": 140,
+      "usecase:cedar-attributes:evaluate:diagnostic": 4,
+      "usecase:claude-constitution-excerpt:evaluate:code": 200,
+      "usecase:closure-induction:certificate:code": 90,
+      "usecase:math-mini-paper:evaluate:code": 236,
+      "usecase:news-article:evaluate:code": 177,
+      "usecase:us-constitution-14th-s1:evaluate:code": 190,
+      "validation:evaluate:code": 167,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 75,
+      "envelope:outcome": 1,
+      "soft-norms:code": 62,
+      "soft-norms:outcome": 142
+     },
+     "wire": {
+      "demo@0:outcome": 4,
+      "forms@0:outcome": 19,
+      "soft-norms@0:outcome": 3
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 15,
+      "closure:evaluate:code": 243,
+      "countermodels:countermodel:code": 163,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 29,
+      "elaborated-document:background:code": 18,
+      "elaborated-document:certificate:code": 89,
+      "elaborated-document:certificate:diagnostic": 3,
+      "elaborated-document:countermodel:code": 136,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 96,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 32,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 221,
+      "identity:evaluate:code": 208,
+      "invalid-background-model:countermodel:code": 125,
+      "invalid-background-model:countermodel:diagnostic": 5,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 109,
+      "invalid-background-model:evaluate:diagnostic": 12,
+      "labels:label:code": 14,
+      "parser:evaluate:code": 162,
+      "search:countermodel:code": 135,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 12,
+      "usecase:birthright-citizenship-debate:evaluate:code": 226,
+      "usecase:cedar-attributes:evaluate:code": 140,
+      "usecase:cedar-attributes:evaluate:diagnostic": 4,
+      "usecase:claude-constitution-excerpt:evaluate:code": 200,
+      "usecase:closure-induction:certificate:code": 90,
+      "usecase:math-mini-paper:evaluate:code": 236,
+      "usecase:news-article:evaluate:code": 177,
+      "usecase:us-constitution-14th-s1:evaluate:code": 190,
+      "validation:evaluate:code": 167,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 75,
+      "envelope:outcome": 1,
+      "soft-norms:code": 62,
+      "soft-norms:outcome": 142
+     },
+     "wire": {
+      "demo@0:outcome": 4,
+      "forms@0:outcome": 19,
+      "soft-norms@0:outcome": 3
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    26,
+    26
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 206,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 203,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 184.1,
+     "children": 52.0
+    },
+    {
+     "python": 173.9,
+     "children": 55.6
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20260928",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 89,
+      "closure:evaluate:code": 246,
+      "countermodels:countermodel:code": 161,
+      "countermodels:countermodel:outcome": 1,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 15,
+      "elaborated-document:background:code": 26,
+      "elaborated-document:certificate:code": 86,
+      "elaborated-document:certificate:diagnostic": 2,
+      "elaborated-document:countermodel:code": 162,
+      "elaborated-document:countermodel:diagnostic": 2,
+      "elaborated-document:evaluate:code": 91,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 23,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 219,
+      "identity:evaluate:code": 209,
+      "invalid-background-model:countermodel:code": 128,
+      "invalid-background-model:countermodel:diagnostic": 4,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 123,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 23,
+      "parser:evaluate:code": 150,
+      "search:countermodel:code": 150,
+      "search:countermodel:outcome": 6,
+      "search:search:code": 6,
+      "usecase:birthright-citizenship-debate:evaluate:code": 229,
+      "usecase:cedar-attributes:evaluate:code": 142,
+      "usecase:cedar-attributes:evaluate:diagnostic": 1,
+      "usecase:claude-constitution-excerpt:evaluate:code": 205,
+      "usecase:closure-induction:certificate:code": 80,
+      "usecase:math-mini-paper:evaluate:code": 250,
+      "usecase:news-article:evaluate:code": 167,
+      "usecase:us-constitution-14th-s1:evaluate:code": 177,
+      "validation:evaluate:code": 168,
+      "validation:evaluate:diagnostic": 5
+     },
+     "environment": {
+      "envelope:code": 72,
+      "envelope:outcome": 1,
+      "soft-norms:code": 49,
+      "soft-norms:outcome": 154
+     },
+     "wire": {
+      "demo@0:outcome": 5,
+      "forms@0:outcome": 24,
+      "soft-norms@0:outcome": 4
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 12,
+      "closure:evaluate:code": 246,
+      "countermodels:countermodel:code": 161,
+      "countermodels:countermodel:outcome": 1,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 15,
+      "elaborated-document:background:code": 26,
+      "elaborated-document:certificate:code": 86,
+      "elaborated-document:certificate:diagnostic": 2,
+      "elaborated-document:countermodel:code": 162,
+      "elaborated-document:countermodel:diagnostic": 2,
+      "elaborated-document:evaluate:code": 91,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 23,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 219,
+      "identity:evaluate:code": 209,
+      "invalid-background-model:countermodel:code": 128,
+      "invalid-background-model:countermodel:diagnostic": 4,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 123,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 23,
+      "parser:evaluate:code": 150,
+      "search:countermodel:code": 150,
+      "search:countermodel:outcome": 6,
+      "search:search:code": 6,
+      "usecase:birthright-citizenship-debate:evaluate:code": 229,
+      "usecase:cedar-attributes:evaluate:code": 142,
+      "usecase:cedar-attributes:evaluate:diagnostic": 1,
+      "usecase:claude-constitution-excerpt:evaluate:code": 205,
+      "usecase:closure-induction:certificate:code": 80,
+      "usecase:math-mini-paper:evaluate:code": 250,
+      "usecase:news-article:evaluate:code": 167,
+      "usecase:us-constitution-14th-s1:evaluate:code": 177,
+      "validation:evaluate:code": 168,
+      "validation:evaluate:diagnostic": 5
+     },
+     "environment": {
+      "envelope:code": 72,
+      "envelope:outcome": 1,
+      "soft-norms:code": 49,
+      "soft-norms:outcome": 154
+     },
+     "wire": {
+      "demo@0:outcome": 5,
+      "forms@0:outcome": 24,
+      "soft-norms@0:outcome": 4
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    18,
+    18
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 196,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 192,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 188.9,
+     "children": 53.5
+    },
+    {
+     "python": 174.5,
+     "children": 56.4
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20260929",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 88,
+      "closure:evaluate:code": 247,
+      "countermodels:countermodel:code": 167,
+      "dependency-order:dependency-order:code": 2,
+      "dependency-order:dependency-order:outcome": 20,
+      "elaborated-document:background:code": 22,
+      "elaborated-document:certificate:code": 91,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 141,
+      "elaborated-document:countermodel:diagnostic": 6,
+      "elaborated-document:countermodel:outcome": 2,
+      "elaborated-document:evaluate:code": 102,
+      "elaborated-document:evaluate:diagnostic": 5,
+      "elaborated-document:search:code": 27,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 192,
+      "identity:evaluate:code": 196,
+      "invalid-background-model:countermodel:code": 124,
+      "invalid-background-model:countermodel:diagnostic": 6,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 114,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 20,
+      "parser:evaluate:code": 153,
+      "search:countermodel:code": 138,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 7,
+      "usecase:birthright-citizenship-debate:evaluate:code": 241,
+      "usecase:cedar-attributes:evaluate:code": 143,
+      "usecase:cedar-attributes:evaluate:diagnostic": 5,
+      "usecase:claude-constitution-excerpt:evaluate:code": 196,
+      "usecase:closure-induction:certificate:code": 94,
+      "usecase:math-mini-paper:evaluate:code": 239,
+      "usecase:news-article:evaluate:code": 170,
+      "usecase:us-constitution-14th-s1:evaluate:code": 192,
+      "validation:evaluate:code": 177,
+      "validation:evaluate:diagnostic": 7
+     },
+     "environment": {
+      "envelope:code": 80,
+      "envelope:outcome": 1,
+      "soft-norms:code": 79,
+      "soft-norms:outcome": 130
+     },
+     "wire": {
+      "demo@0:outcome": 1,
+      "forms@0:outcome": 21,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 16,
+      "closure:evaluate:code": 247,
+      "countermodels:countermodel:code": 167,
+      "dependency-order:dependency-order:code": 2,
+      "dependency-order:dependency-order:outcome": 20,
+      "elaborated-document:background:code": 22,
+      "elaborated-document:certificate:code": 91,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 141,
+      "elaborated-document:countermodel:diagnostic": 6,
+      "elaborated-document:countermodel:outcome": 2,
+      "elaborated-document:evaluate:code": 102,
+      "elaborated-document:evaluate:diagnostic": 5,
+      "elaborated-document:search:code": 27,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 192,
+      "identity:evaluate:code": 196,
+      "invalid-background-model:countermodel:code": 124,
+      "invalid-background-model:countermodel:diagnostic": 6,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 114,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 20,
+      "parser:evaluate:code": 153,
+      "search:countermodel:code": 138,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 7,
+      "usecase:birthright-citizenship-debate:evaluate:code": 241,
+      "usecase:cedar-attributes:evaluate:code": 143,
+      "usecase:cedar-attributes:evaluate:diagnostic": 5,
+      "usecase:claude-constitution-excerpt:evaluate:code": 196,
+      "usecase:closure-induction:certificate:code": 94,
+      "usecase:math-mini-paper:evaluate:code": 239,
+      "usecase:news-article:evaluate:code": 170,
+      "usecase:us-constitution-14th-s1:evaluate:code": 192,
+      "validation:evaluate:code": 177,
+      "validation:evaluate:diagnostic": 7
+     },
+     "environment": {
+      "envelope:code": 80,
+      "envelope:outcome": 1,
+      "soft-norms:code": 79,
+      "soft-norms:outcome": 130
+     },
+     "wire": {
+      "demo@0:outcome": 1,
+      "forms@0:outcome": 21,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    30,
+    30
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 199,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 196,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 166.8,
+     "children": 43.6
+    },
+    {
+     "python": 189.1,
+     "children": 58.6
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20260930",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 94,
+      "closure:evaluate:code": 251,
+      "countermodels:countermodel:code": 174,
+      "countermodels:countermodel:outcome": 3,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 17,
+      "elaborated-document:background:code": 11,
+      "elaborated-document:certificate:code": 87,
+      "elaborated-document:countermodel:code": 156,
+      "elaborated-document:countermodel:diagnostic": 4,
+      "elaborated-document:evaluate:code": 92,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 31,
+      "evaluation:evaluate:code": 225,
+      "identity:evaluate:code": 212,
+      "invalid-background-model:countermodel:code": 118,
+      "invalid-background-model:countermodel:diagnostic": 4,
+      "invalid-background-model:countermodel:outcome": 1,
+      "invalid-background-model:evaluate:code": 93,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 19,
+      "parser:evaluate:code": 156,
+      "search:countermodel:code": 151,
+      "search:countermodel:outcome": 5,
+      "search:search:code": 9,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 231,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 5,
+      "usecase:claude-constitution-excerpt:evaluate:code": 201,
+      "usecase:closure-induction:certificate:code": 92,
+      "usecase:math-mini-paper:evaluate:code": 239,
+      "usecase:news-article:evaluate:code": 161,
+      "usecase:us-constitution-14th-s1:evaluate:code": 190,
+      "validation:evaluate:code": 174,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 67,
+      "envelope:outcome": 1,
+      "soft-norms:code": 64,
+      "soft-norms:outcome": 148
+     },
+     "wire": {
+      "demo@0:outcome": 3,
+      "forms@0:outcome": 14,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 9,
+      "closure:evaluate:code": 251,
+      "countermodels:countermodel:code": 174,
+      "countermodels:countermodel:outcome": 3,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 17,
+      "elaborated-document:background:code": 11,
+      "elaborated-document:certificate:code": 87,
+      "elaborated-document:countermodel:code": 156,
+      "elaborated-document:countermodel:diagnostic": 4,
+      "elaborated-document:evaluate:code": 92,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 31,
+      "evaluation:evaluate:code": 225,
+      "identity:evaluate:code": 212,
+      "invalid-background-model:countermodel:code": 118,
+      "invalid-background-model:countermodel:diagnostic": 4,
+      "invalid-background-model:countermodel:outcome": 1,
+      "invalid-background-model:evaluate:code": 93,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 19,
+      "parser:evaluate:code": 156,
+      "search:countermodel:code": 151,
+      "search:countermodel:outcome": 5,
+      "search:search:code": 9,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 231,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 5,
+      "usecase:claude-constitution-excerpt:evaluate:code": 201,
+      "usecase:closure-induction:certificate:code": 92,
+      "usecase:math-mini-paper:evaluate:code": 239,
+      "usecase:news-article:evaluate:code": 161,
+      "usecase:us-constitution-14th-s1:evaluate:code": 190,
+      "validation:evaluate:code": 174,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 67,
+      "envelope:outcome": 1,
+      "soft-norms:code": 64,
+      "soft-norms:outcome": 148
+     },
+     "wire": {
+      "demo@0:outcome": 3,
+      "forms@0:outcome": 14,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    23,
+    23
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 205,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 202,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 161.1,
+     "children": 43.0
+    },
+    {
+     "python": 189.7,
+     "children": 58.1
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20261001",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 94,
+      "closure:evaluate:code": 244,
+      "countermodels:countermodel:code": 174,
+      "countermodels:countermodel:outcome": 3,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 22,
+      "elaborated-document:background:code": 30,
+      "elaborated-document:certificate:code": 78,
+      "elaborated-document:countermodel:code": 157,
+      "elaborated-document:countermodel:diagnostic": 4,
+      "elaborated-document:countermodel:outcome": 4,
+      "elaborated-document:evaluate:code": 109,
+      "elaborated-document:evaluate:diagnostic": 5,
+      "elaborated-document:search:code": 32,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 204,
+      "identity:evaluate:code": 218,
+      "invalid-background-model:countermodel:code": 113,
+      "invalid-background-model:countermodel:diagnostic": 6,
+      "invalid-background-model:evaluate:code": 111,
+      "invalid-background-model:evaluate:diagnostic": 8,
+      "labels:label:code": 8,
+      "parser:evaluate:code": 159,
+      "search:countermodel:code": 126,
+      "search:countermodel:outcome": 8,
+      "search:search:code": 11,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 231,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 203,
+      "usecase:claude-constitution-excerpt:evaluate:diagnostic": 1,
+      "usecase:closure-induction:certificate:code": 89,
+      "usecase:math-mini-paper:evaluate:code": 254,
+      "usecase:news-article:evaluate:code": 177,
+      "usecase:us-constitution-14th-s1:evaluate:code": 167,
+      "validation:evaluate:code": 173,
+      "validation:evaluate:diagnostic": 6
+     },
+     "environment": {
+      "envelope:code": 81,
+      "envelope:outcome": 1,
+      "soft-norms:code": 50,
+      "soft-norms:outcome": 125
+     },
+     "wire": {
+      "demo@0:outcome": 2,
+      "forms@0:outcome": 17,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 15,
+      "closure:evaluate:code": 244,
+      "countermodels:countermodel:code": 174,
+      "countermodels:countermodel:outcome": 3,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 22,
+      "elaborated-document:background:code": 30,
+      "elaborated-document:certificate:code": 78,
+      "elaborated-document:countermodel:code": 157,
+      "elaborated-document:countermodel:diagnostic": 4,
+      "elaborated-document:countermodel:outcome": 4,
+      "elaborated-document:evaluate:code": 109,
+      "elaborated-document:evaluate:diagnostic": 5,
+      "elaborated-document:search:code": 32,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 204,
+      "identity:evaluate:code": 218,
+      "invalid-background-model:countermodel:code": 113,
+      "invalid-background-model:countermodel:diagnostic": 6,
+      "invalid-background-model:evaluate:code": 111,
+      "invalid-background-model:evaluate:diagnostic": 8,
+      "labels:label:code": 8,
+      "parser:evaluate:code": 159,
+      "search:countermodel:code": 126,
+      "search:countermodel:outcome": 8,
+      "search:search:code": 11,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 231,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 203,
+      "usecase:claude-constitution-excerpt:evaluate:diagnostic": 1,
+      "usecase:closure-induction:certificate:code": 89,
+      "usecase:math-mini-paper:evaluate:code": 254,
+      "usecase:news-article:evaluate:code": 177,
+      "usecase:us-constitution-14th-s1:evaluate:code": 167,
+      "validation:evaluate:code": 173,
+      "validation:evaluate:diagnostic": 6
+     },
+     "environment": {
+      "envelope:code": 81,
+      "envelope:outcome": 1,
+      "soft-norms:code": 50,
+      "soft-norms:outcome": 125
+     },
+     "wire": {
+      "demo@0:outcome": 2,
+      "forms@0:outcome": 17,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    21,
+    21
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 199,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 197,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 166.9,
+     "children": 43.0
+    },
+    {
+     "python": 191.9,
+     "children": 59.9
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20261002",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 97,
+      "closure:evaluate:code": 253,
+      "countermodels:countermodel:code": 161,
+      "countermodels:countermodel:outcome": 1,
+      "dependency-order:dependency-order:code": 5,
+      "dependency-order:dependency-order:outcome": 17,
+      "elaborated-document:background:code": 23,
+      "elaborated-document:certificate:code": 84,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 150,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 104,
+      "elaborated-document:evaluate:diagnostic": 10,
+      "elaborated-document:search:code": 23,
+      "elaborated-document:search:outcome": 2,
+      "evaluation:evaluate:code": 199,
+      "identity:evaluate:code": 207,
+      "invalid-background-model:countermodel:code": 126,
+      "invalid-background-model:countermodel:diagnostic": 4,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 112,
+      "invalid-background-model:evaluate:diagnostic": 6,
+      "labels:label:code": 11,
+      "parser:evaluate:code": 155,
+      "search:countermodel:code": 141,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 6,
+      "search:search:outcome": 2,
+      "usecase:birthright-citizenship-debate:evaluate:code": 235,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 4,
+      "usecase:claude-constitution-excerpt:evaluate:code": 199,
+      "usecase:closure-induction:certificate:code": 83,
+      "usecase:math-mini-paper:evaluate:code": 274,
+      "usecase:news-article:evaluate:code": 163,
+      "usecase:us-constitution-14th-s1:evaluate:code": 170,
+      "validation:evaluate:code": 180,
+      "validation:evaluate:diagnostic": 7
+     },
+     "environment": {
+      "envelope:code": 70,
+      "envelope:outcome": 1,
+      "soft-norms:code": 53,
+      "soft-norms:outcome": 136
+     },
+     "wire": {
+      "demo@0:outcome": 7,
+      "forms@0:outcome": 15,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 15,
+      "closure:evaluate:code": 253,
+      "countermodels:countermodel:code": 161,
+      "countermodels:countermodel:outcome": 1,
+      "dependency-order:dependency-order:code": 5,
+      "dependency-order:dependency-order:outcome": 17,
+      "elaborated-document:background:code": 23,
+      "elaborated-document:certificate:code": 84,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 150,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 104,
+      "elaborated-document:evaluate:diagnostic": 10,
+      "elaborated-document:search:code": 23,
+      "elaborated-document:search:outcome": 2,
+      "evaluation:evaluate:code": 199,
+      "identity:evaluate:code": 207,
+      "invalid-background-model:countermodel:code": 126,
+      "invalid-background-model:countermodel:diagnostic": 4,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 112,
+      "invalid-background-model:evaluate:diagnostic": 6,
+      "labels:label:code": 11,
+      "parser:evaluate:code": 155,
+      "search:countermodel:code": 141,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 6,
+      "search:search:outcome": 2,
+      "usecase:birthright-citizenship-debate:evaluate:code": 235,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 4,
+      "usecase:claude-constitution-excerpt:evaluate:code": 199,
+      "usecase:closure-induction:certificate:code": 83,
+      "usecase:math-mini-paper:evaluate:code": 274,
+      "usecase:news-article:evaluate:code": 163,
+      "usecase:us-constitution-14th-s1:evaluate:code": 170,
+      "validation:evaluate:code": 180,
+      "validation:evaluate:diagnostic": 7
+     },
+     "environment": {
+      "envelope:code": 70,
+      "envelope:outcome": 1,
+      "soft-norms:code": 53,
+      "soft-norms:outcome": 136
+     },
+     "wire": {
+      "demo@0:outcome": 7,
+      "forms@0:outcome": 15,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    20,
+    20
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 206,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 203,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 150.3,
+     "children": 60.3
+    },
+    {
+     "python": 191.0,
+     "children": 58.2
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20261003",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 93,
+      "closure:evaluate:code": 249,
+      "countermodels:countermodel:code": 153,
+      "countermodels:countermodel:outcome": 3,
+      "dependency-order:dependency-order:code": 5,
+      "dependency-order:dependency-order:outcome": 19,
+      "elaborated-document:background:code": 21,
+      "elaborated-document:certificate:code": 81,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 149,
+      "elaborated-document:countermodel:diagnostic": 3,
+      "elaborated-document:evaluate:code": 94,
+      "elaborated-document:evaluate:diagnostic": 11,
+      "elaborated-document:search:code": 33,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 221,
+      "identity:evaluate:code": 223,
+      "invalid-background-model:countermodel:code": 121,
+      "invalid-background-model:countermodel:diagnostic": 3,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 105,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 15,
+      "parser:evaluate:code": 157,
+      "search:countermodel:code": 153,
+      "search:countermodel:outcome": 3,
+      "search:search:code": 5,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 236,
+      "usecase:cedar-attributes:evaluate:code": 138,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 201,
+      "usecase:closure-induction:certificate:code": 88,
+      "usecase:math-mini-paper:evaluate:code": 240,
+      "usecase:news-article:evaluate:code": 178,
+      "usecase:us-constitution-14th-s1:evaluate:code": 178,
+      "validation:evaluate:code": 154,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 73,
+      "envelope:outcome": 2,
+      "soft-norms:code": 55,
+      "soft-norms:outcome": 165
+     },
+     "wire": {
+      "demo@0:outcome": 2,
+      "forms@0:outcome": 16,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 10,
+      "closure:evaluate:code": 249,
+      "countermodels:countermodel:code": 153,
+      "countermodels:countermodel:outcome": 3,
+      "dependency-order:dependency-order:code": 5,
+      "dependency-order:dependency-order:outcome": 19,
+      "elaborated-document:background:code": 21,
+      "elaborated-document:certificate:code": 81,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 149,
+      "elaborated-document:countermodel:diagnostic": 3,
+      "elaborated-document:evaluate:code": 94,
+      "elaborated-document:evaluate:diagnostic": 11,
+      "elaborated-document:search:code": 33,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 221,
+      "identity:evaluate:code": 223,
+      "invalid-background-model:countermodel:code": 121,
+      "invalid-background-model:countermodel:diagnostic": 3,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 105,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 15,
+      "parser:evaluate:code": 157,
+      "search:countermodel:code": 153,
+      "search:countermodel:outcome": 3,
+      "search:search:code": 5,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 236,
+      "usecase:cedar-attributes:evaluate:code": 138,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 201,
+      "usecase:closure-induction:certificate:code": 88,
+      "usecase:math-mini-paper:evaluate:code": 240,
+      "usecase:news-article:evaluate:code": 178,
+      "usecase:us-constitution-14th-s1:evaluate:code": 178,
+      "validation:evaluate:code": 154,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 73,
+      "envelope:outcome": 2,
+      "soft-norms:code": 55,
+      "soft-norms:outcome": 165
+     },
+     "wire": {
+      "demo@0:outcome": 2,
+      "forms@0:outcome": 16,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    24,
+    24
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 201,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 198,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 129.8,
+     "children": 39.1
+    },
+    {
+     "python": 173.5,
+     "children": 59.5
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20261004",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 102,
+      "closure:evaluate:code": 242,
+      "countermodels:countermodel:code": 159,
+      "countermodels:countermodel:outcome": 2,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 26,
+      "elaborated-document:background:code": 21,
+      "elaborated-document:certificate:code": 84,
+      "elaborated-document:certificate:diagnostic": 2,
+      "elaborated-document:countermodel:code": 155,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:evaluate:code": 92,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 37,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 206,
+      "identity:evaluate:code": 213,
+      "invalid-background-model:countermodel:code": 125,
+      "invalid-background-model:countermodel:diagnostic": 6,
+      "invalid-background-model:countermodel:outcome": 4,
+      "invalid-background-model:evaluate:code": 109,
+      "invalid-background-model:evaluate:diagnostic": 9,
+      "labels:label:code": 18,
+      "parser:evaluate:code": 161,
+      "search:countermodel:code": 136,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 11,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 217,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 207,
+      "usecase:closure-induction:certificate:code": 91,
+      "usecase:math-mini-paper:evaluate:code": 246,
+      "usecase:news-article:evaluate:code": 147,
+      "usecase:us-constitution-14th-s1:evaluate:code": 173,
+      "validation:evaluate:code": 162,
+      "validation:evaluate:diagnostic": 9
+     },
+     "environment": {
+      "envelope:code": 63,
+      "envelope:outcome": 3,
+      "soft-norms:code": 71,
+      "soft-norms:outcome": 141
+     },
+     "wire": {
+      "demo@0:outcome": 1,
+      "forms@0:outcome": 23,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 16,
+      "closure:evaluate:code": 242,
+      "countermodels:countermodel:code": 159,
+      "countermodels:countermodel:outcome": 2,
+      "dependency-order:dependency-order:code": 3,
+      "dependency-order:dependency-order:outcome": 26,
+      "elaborated-document:background:code": 21,
+      "elaborated-document:certificate:code": 84,
+      "elaborated-document:certificate:diagnostic": 2,
+      "elaborated-document:countermodel:code": 155,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:evaluate:code": 92,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 37,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 206,
+      "identity:evaluate:code": 213,
+      "invalid-background-model:countermodel:code": 125,
+      "invalid-background-model:countermodel:diagnostic": 6,
+      "invalid-background-model:countermodel:outcome": 4,
+      "invalid-background-model:evaluate:code": 109,
+      "invalid-background-model:evaluate:diagnostic": 9,
+      "labels:label:code": 18,
+      "parser:evaluate:code": 161,
+      "search:countermodel:code": 136,
+      "search:countermodel:outcome": 4,
+      "search:search:code": 11,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 217,
+      "usecase:cedar-attributes:evaluate:code": 139,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 207,
+      "usecase:closure-induction:certificate:code": 91,
+      "usecase:math-mini-paper:evaluate:code": 246,
+      "usecase:news-article:evaluate:code": 147,
+      "usecase:us-constitution-14th-s1:evaluate:code": 173,
+      "validation:evaluate:code": 162,
+      "validation:evaluate:diagnostic": 9
+     },
+     "environment": {
+      "envelope:code": 63,
+      "envelope:outcome": 3,
+      "soft-norms:code": 71,
+      "soft-norms:outcome": 141
+     },
+     "wire": {
+      "demo@0:outcome": 1,
+      "forms@0:outcome": 23,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    0,
+    0
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 226,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 222,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 131.4,
+     "children": 36.6
+    },
+    {
+     "python": 168.0,
+     "children": 54.9
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20261005",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 86,
+      "closure:evaluate:code": 251,
+      "countermodels:countermodel:code": 167,
+      "dependency-order:dependency-order:code": 2,
+      "dependency-order:dependency-order:outcome": 26,
+      "elaborated-document:background:code": 23,
+      "elaborated-document:certificate:code": 79,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 134,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:countermodel:outcome": 3,
+      "elaborated-document:evaluate:code": 93,
+      "elaborated-document:evaluate:diagnostic": 5,
+      "elaborated-document:search:code": 31,
+      "evaluation:evaluate:code": 211,
+      "identity:evaluate:code": 220,
+      "invalid-background-model:countermodel:code": 132,
+      "invalid-background-model:countermodel:diagnostic": 3,
+      "invalid-background-model:evaluate:code": 104,
+      "invalid-background-model:evaluate:diagnostic": 9,
+      "labels:label:code": 23,
+      "parser:evaluate:code": 154,
+      "search:countermodel:code": 139,
+      "search:countermodel:outcome": 5,
+      "search:search:code": 4,
+      "usecase:birthright-citizenship-debate:evaluate:code": 232,
+      "usecase:cedar-attributes:evaluate:code": 128,
+      "usecase:cedar-attributes:evaluate:diagnostic": 4,
+      "usecase:claude-constitution-excerpt:evaluate:code": 214,
+      "usecase:closure-induction:certificate:code": 78,
+      "usecase:math-mini-paper:evaluate:code": 243,
+      "usecase:news-article:evaluate:code": 188,
+      "usecase:us-constitution-14th-s1:evaluate:code": 181,
+      "validation:evaluate:code": 163,
+      "validation:evaluate:diagnostic": 6
+     },
+     "environment": {
+      "envelope:code": 75,
+      "envelope:outcome": 3,
+      "soft-norms:code": 68,
+      "soft-norms:outcome": 145
+     },
+     "wire": {
+      "demo@0:outcome": 3,
+      "forms@0:outcome": 18,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 17,
+      "closure:evaluate:code": 251,
+      "countermodels:countermodel:code": 167,
+      "dependency-order:dependency-order:code": 2,
+      "dependency-order:dependency-order:outcome": 26,
+      "elaborated-document:background:code": 23,
+      "elaborated-document:certificate:code": 79,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 134,
+      "elaborated-document:countermodel:diagnostic": 1,
+      "elaborated-document:countermodel:outcome": 3,
+      "elaborated-document:evaluate:code": 93,
+      "elaborated-document:evaluate:diagnostic": 5,
+      "elaborated-document:search:code": 31,
+      "evaluation:evaluate:code": 211,
+      "identity:evaluate:code": 220,
+      "invalid-background-model:countermodel:code": 132,
+      "invalid-background-model:countermodel:diagnostic": 3,
+      "invalid-background-model:evaluate:code": 104,
+      "invalid-background-model:evaluate:diagnostic": 9,
+      "labels:label:code": 23,
+      "parser:evaluate:code": 154,
+      "search:countermodel:code": 139,
+      "search:countermodel:outcome": 5,
+      "search:search:code": 4,
+      "usecase:birthright-citizenship-debate:evaluate:code": 232,
+      "usecase:cedar-attributes:evaluate:code": 128,
+      "usecase:cedar-attributes:evaluate:diagnostic": 4,
+      "usecase:claude-constitution-excerpt:evaluate:code": 214,
+      "usecase:closure-induction:certificate:code": 78,
+      "usecase:math-mini-paper:evaluate:code": 243,
+      "usecase:news-article:evaluate:code": 188,
+      "usecase:us-constitution-14th-s1:evaluate:code": 181,
+      "validation:evaluate:code": 163,
+      "validation:evaluate:diagnostic": 6
+     },
+     "environment": {
+      "envelope:code": 75,
+      "envelope:outcome": 3,
+      "soft-norms:code": 68,
+      "soft-norms:outcome": 145
+     },
+     "wire": {
+      "demo@0:outcome": 3,
+      "forms@0:outcome": 18,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    21,
+    21
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 196,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 192,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 146.9,
+     "children": 44.6
+    },
+    {
+     "python": 176.1,
+     "children": 55.0
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20261006",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 100,
+      "closure:evaluate:code": 256,
+      "countermodels:countermodel:code": 162,
+      "countermodels:countermodel:outcome": 2,
+      "dependency-order:dependency-order:code": 4,
+      "dependency-order:dependency-order:outcome": 27,
+      "elaborated-document:background:code": 18,
+      "elaborated-document:certificate:code": 91,
+      "elaborated-document:certificate:diagnostic": 2,
+      "elaborated-document:countermodel:code": 147,
+      "elaborated-document:countermodel:diagnostic": 3,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 94,
+      "elaborated-document:evaluate:diagnostic": 5,
+      "elaborated-document:search:code": 34,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 208,
+      "identity:evaluate:code": 212,
+      "invalid-background-model:countermodel:code": 113,
+      "invalid-background-model:countermodel:diagnostic": 3,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 106,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 11,
+      "parser:evaluate:code": 156,
+      "search:countermodel:code": 148,
+      "search:countermodel:outcome": 3,
+      "search:search:code": 8,
+      "usecase:birthright-citizenship-debate:evaluate:code": 219,
+      "usecase:cedar-attributes:evaluate:code": 129,
+      "usecase:cedar-attributes:evaluate:diagnostic": 1,
+      "usecase:claude-constitution-excerpt:evaluate:code": 209,
+      "usecase:closure-induction:certificate:code": 91,
+      "usecase:math-mini-paper:evaluate:code": 242,
+      "usecase:news-article:evaluate:code": 175,
+      "usecase:us-constitution-14th-s1:evaluate:code": 200,
+      "validation:evaluate:code": 180,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 68,
+      "envelope:outcome": 3,
+      "soft-norms:code": 68,
+      "soft-norms:outcome": 139
+     },
+     "wire": {
+      "demo@0:outcome": 2,
+      "forms@0:outcome": 11,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 14,
+      "closure:evaluate:code": 256,
+      "countermodels:countermodel:code": 162,
+      "countermodels:countermodel:outcome": 2,
+      "dependency-order:dependency-order:code": 4,
+      "dependency-order:dependency-order:outcome": 27,
+      "elaborated-document:background:code": 18,
+      "elaborated-document:certificate:code": 91,
+      "elaborated-document:certificate:diagnostic": 2,
+      "elaborated-document:countermodel:code": 147,
+      "elaborated-document:countermodel:diagnostic": 3,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 94,
+      "elaborated-document:evaluate:diagnostic": 5,
+      "elaborated-document:search:code": 34,
+      "elaborated-document:search:outcome": 1,
+      "evaluation:evaluate:code": 208,
+      "identity:evaluate:code": 212,
+      "invalid-background-model:countermodel:code": 113,
+      "invalid-background-model:countermodel:diagnostic": 3,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 106,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 11,
+      "parser:evaluate:code": 156,
+      "search:countermodel:code": 148,
+      "search:countermodel:outcome": 3,
+      "search:search:code": 8,
+      "usecase:birthright-citizenship-debate:evaluate:code": 219,
+      "usecase:cedar-attributes:evaluate:code": 129,
+      "usecase:cedar-attributes:evaluate:diagnostic": 1,
+      "usecase:claude-constitution-excerpt:evaluate:code": 209,
+      "usecase:closure-induction:certificate:code": 91,
+      "usecase:math-mini-paper:evaluate:code": 242,
+      "usecase:news-article:evaluate:code": 175,
+      "usecase:us-constitution-14th-s1:evaluate:code": 200,
+      "validation:evaluate:code": 180,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 68,
+      "envelope:outcome": 3,
+      "soft-norms:code": 68,
+      "soft-norms:outcome": 139
+     },
+     "wire": {
+      "demo@0:outcome": 2,
+      "forms@0:outcome": 11,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    20,
+    20
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 199,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 197,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 144.5,
+     "children": 43.3
+    },
+    {
+     "python": 169.8,
+     "children": 54.9
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20261007",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 100,
+      "closure:evaluate:code": 242,
+      "countermodels:countermodel:code": 159,
+      "dependency-order:dependency-order:outcome": 15,
+      "elaborated-document:background:code": 17,
+      "elaborated-document:certificate:code": 71,
+      "elaborated-document:countermodel:code": 154,
+      "elaborated-document:countermodel:diagnostic": 5,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 83,
+      "elaborated-document:evaluate:diagnostic": 7,
+      "elaborated-document:search:code": 36,
+      "evaluation:evaluate:code": 204,
+      "identity:evaluate:code": 214,
+      "invalid-background-model:countermodel:code": 120,
+      "invalid-background-model:countermodel:diagnostic": 3,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 105,
+      "invalid-background-model:evaluate:diagnostic": 10,
+      "labels:label:code": 21,
+      "parser:evaluate:code": 159,
+      "search:countermodel:code": 138,
+      "search:countermodel:outcome": 5,
+      "search:search:code": 8,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 244,
+      "usecase:cedar-attributes:evaluate:code": 137,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 207,
+      "usecase:closure-induction:certificate:code": 95,
+      "usecase:math-mini-paper:evaluate:code": 243,
+      "usecase:news-article:evaluate:code": 161,
+      "usecase:us-constitution-14th-s1:evaluate:code": 181,
+      "validation:evaluate:code": 179,
+      "validation:evaluate:diagnostic": 7
+     },
+     "environment": {
+      "envelope:code": 67,
+      "envelope:outcome": 1,
+      "soft-norms:code": 60,
+      "soft-norms:outcome": 149
+     },
+     "wire": {
+      "demo@0:outcome": 1,
+      "forms@0:outcome": 17,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 24,
+      "closure:evaluate:code": 242,
+      "countermodels:countermodel:code": 159,
+      "dependency-order:dependency-order:outcome": 15,
+      "elaborated-document:background:code": 17,
+      "elaborated-document:certificate:code": 71,
+      "elaborated-document:countermodel:code": 154,
+      "elaborated-document:countermodel:diagnostic": 5,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 83,
+      "elaborated-document:evaluate:diagnostic": 7,
+      "elaborated-document:search:code": 36,
+      "evaluation:evaluate:code": 204,
+      "identity:evaluate:code": 214,
+      "invalid-background-model:countermodel:code": 120,
+      "invalid-background-model:countermodel:diagnostic": 3,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 105,
+      "invalid-background-model:evaluate:diagnostic": 10,
+      "labels:label:code": 21,
+      "parser:evaluate:code": 159,
+      "search:countermodel:code": 138,
+      "search:countermodel:outcome": 5,
+      "search:search:code": 8,
+      "search:search:outcome": 1,
+      "usecase:birthright-citizenship-debate:evaluate:code": 244,
+      "usecase:cedar-attributes:evaluate:code": 137,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 207,
+      "usecase:closure-induction:certificate:code": 95,
+      "usecase:math-mini-paper:evaluate:code": 243,
+      "usecase:news-article:evaluate:code": 161,
+      "usecase:us-constitution-14th-s1:evaluate:code": 181,
+      "validation:evaluate:code": 179,
+      "validation:evaluate:diagnostic": 7
+     },
+     "environment": {
+      "envelope:code": 67,
+      "envelope:outcome": 1,
+      "soft-norms:code": 60,
+      "soft-norms:outcome": 149
+     },
+     "wire": {
+      "demo@0:outcome": 1,
+      "forms@0:outcome": 17,
+      "soft-norms@0:outcome": 2
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    22,
+    22
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 197,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 195,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 181.9,
+     "children": 47.7
+    },
+    {
+     "python": 131.6,
+     "children": 45.8
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20261008",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 82,
+      "closure:evaluate:code": 250,
+      "countermodels:countermodel:code": 169,
+      "countermodels:countermodel:outcome": 1,
+      "dependency-order:dependency-order:code": 1,
+      "dependency-order:dependency-order:outcome": 26,
+      "elaborated-document:background:code": 17,
+      "elaborated-document:certificate:code": 94,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 151,
+      "elaborated-document:countermodel:diagnostic": 2,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 91,
+      "elaborated-document:evaluate:diagnostic": 3,
+      "elaborated-document:search:code": 34,
+      "evaluation:evaluate:code": 217,
+      "identity:evaluate:code": 219,
+      "invalid-background-model:countermodel:code": 122,
+      "invalid-background-model:countermodel:diagnostic": 2,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 105,
+      "invalid-background-model:evaluate:diagnostic": 10,
+      "labels:label:code": 17,
+      "parser:evaluate:code": 160,
+      "search:countermodel:code": 150,
+      "search:countermodel:outcome": 6,
+      "search:search:code": 8,
+      "usecase:birthright-citizenship-debate:evaluate:code": 239,
+      "usecase:cedar-attributes:evaluate:code": 135,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 196,
+      "usecase:claude-constitution-excerpt:evaluate:diagnostic": 1,
+      "usecase:closure-induction:certificate:code": 86,
+      "usecase:math-mini-paper:evaluate:code": 256,
+      "usecase:news-article:evaluate:code": 161,
+      "usecase:us-constitution-14th-s1:evaluate:code": 168,
+      "validation:evaluate:code": 163,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 73,
+      "envelope:outcome": 2,
+      "soft-norms:code": 60,
+      "soft-norms:outcome": 162
+     },
+     "wire": {
+      "demo@0:outcome": 3,
+      "forms@0:outcome": 14,
+      "soft-norms@0:outcome": 5
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 17,
+      "closure:evaluate:code": 250,
+      "countermodels:countermodel:code": 169,
+      "countermodels:countermodel:outcome": 1,
+      "dependency-order:dependency-order:code": 1,
+      "dependency-order:dependency-order:outcome": 26,
+      "elaborated-document:background:code": 17,
+      "elaborated-document:certificate:code": 94,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 151,
+      "elaborated-document:countermodel:diagnostic": 2,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 91,
+      "elaborated-document:evaluate:diagnostic": 3,
+      "elaborated-document:search:code": 34,
+      "evaluation:evaluate:code": 217,
+      "identity:evaluate:code": 219,
+      "invalid-background-model:countermodel:code": 122,
+      "invalid-background-model:countermodel:diagnostic": 2,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 105,
+      "invalid-background-model:evaluate:diagnostic": 10,
+      "labels:label:code": 17,
+      "parser:evaluate:code": 160,
+      "search:countermodel:code": 150,
+      "search:countermodel:outcome": 6,
+      "search:search:code": 8,
+      "usecase:birthright-citizenship-debate:evaluate:code": 239,
+      "usecase:cedar-attributes:evaluate:code": 135,
+      "usecase:cedar-attributes:evaluate:diagnostic": 3,
+      "usecase:claude-constitution-excerpt:evaluate:code": 196,
+      "usecase:claude-constitution-excerpt:evaluate:diagnostic": 1,
+      "usecase:closure-induction:certificate:code": 86,
+      "usecase:math-mini-paper:evaluate:code": 256,
+      "usecase:news-article:evaluate:code": 161,
+      "usecase:us-constitution-14th-s1:evaluate:code": 168,
+      "validation:evaluate:code": 163,
+      "validation:evaluate:diagnostic": 8
+     },
+     "environment": {
+      "envelope:code": 73,
+      "envelope:outcome": 2,
+      "soft-norms:code": 60,
+      "soft-norms:outcome": 162
+     },
+     "wire": {
+      "demo@0:outcome": 3,
+      "forms@0:outcome": 14,
+      "soft-norms@0:outcome": 5
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    38,
+    38
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 201,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 197,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 194.8,
+     "children": 59.4
+    },
+    {
+     "python": 132.5,
+     "children": 49.6
+    }
+   ],
+   "ok": true
+  },
+  {
+   "run": "--deep 1 --seed 20261009",
+   "findings": [
+    {
+     "requests": {
+      "admission:admission:code": 81,
+      "closure:evaluate:code": 241,
+      "countermodels:countermodel:code": 145,
+      "countermodels:countermodel:outcome": 5,
+      "dependency-order:dependency-order:code": 1,
+      "dependency-order:dependency-order:outcome": 17,
+      "elaborated-document:background:code": 22,
+      "elaborated-document:certificate:code": 96,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 151,
+      "elaborated-document:countermodel:diagnostic": 2,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 85,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 33,
+      "evaluation:evaluate:code": 210,
+      "identity:evaluate:code": 218,
+      "invalid-background-model:countermodel:code": 135,
+      "invalid-background-model:countermodel:diagnostic": 2,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 117,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 15,
+      "parser:evaluate:code": 164,
+      "search:countermodel:code": 142,
+      "search:countermodel:outcome": 3,
+      "search:search:code": 8,
+      "usecase:birthright-citizenship-debate:evaluate:code": 232,
+      "usecase:cedar-attributes:evaluate:code": 138,
+      "usecase:cedar-attributes:evaluate:diagnostic": 4,
+      "usecase:claude-constitution-excerpt:evaluate:code": 203,
+      "usecase:closure-induction:certificate:code": 94,
+      "usecase:math-mini-paper:evaluate:code": 271,
+      "usecase:news-article:evaluate:code": 178,
+      "usecase:us-constitution-14th-s1:evaluate:code": 191,
+      "validation:evaluate:code": 165,
+      "validation:evaluate:diagnostic": 7
+     },
+     "environment": {
+      "envelope:code": 78,
+      "envelope:outcome": 2,
+      "soft-norms:code": 57,
+      "soft-norms:outcome": 150
+     },
+     "wire": {
+      "demo@0:outcome": 2,
+      "forms@0:outcome": 17,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    },
+    {
+     "requests": {
+      "admission:admission:code": 14,
+      "closure:evaluate:code": 241,
+      "countermodels:countermodel:code": 145,
+      "countermodels:countermodel:outcome": 5,
+      "dependency-order:dependency-order:code": 1,
+      "dependency-order:dependency-order:outcome": 17,
+      "elaborated-document:background:code": 22,
+      "elaborated-document:certificate:code": 96,
+      "elaborated-document:certificate:diagnostic": 1,
+      "elaborated-document:countermodel:code": 151,
+      "elaborated-document:countermodel:diagnostic": 2,
+      "elaborated-document:countermodel:outcome": 1,
+      "elaborated-document:evaluate:code": 85,
+      "elaborated-document:evaluate:diagnostic": 4,
+      "elaborated-document:search:code": 33,
+      "evaluation:evaluate:code": 210,
+      "identity:evaluate:code": 218,
+      "invalid-background-model:countermodel:code": 135,
+      "invalid-background-model:countermodel:diagnostic": 2,
+      "invalid-background-model:countermodel:outcome": 2,
+      "invalid-background-model:evaluate:code": 117,
+      "invalid-background-model:evaluate:diagnostic": 7,
+      "labels:label:code": 15,
+      "parser:evaluate:code": 164,
+      "search:countermodel:code": 142,
+      "search:countermodel:outcome": 3,
+      "search:search:code": 8,
+      "usecase:birthright-citizenship-debate:evaluate:code": 232,
+      "usecase:cedar-attributes:evaluate:code": 138,
+      "usecase:cedar-attributes:evaluate:diagnostic": 4,
+      "usecase:claude-constitution-excerpt:evaluate:code": 203,
+      "usecase:closure-induction:certificate:code": 94,
+      "usecase:math-mini-paper:evaluate:code": 271,
+      "usecase:news-article:evaluate:code": 178,
+      "usecase:us-constitution-14th-s1:evaluate:code": 191,
+      "validation:evaluate:code": 165,
+      "validation:evaluate:diagnostic": 7
+     },
+     "environment": {
+      "envelope:code": 78,
+      "envelope:outcome": 2,
+      "soft-norms:code": 57,
+      "soft-norms:outcome": 150
+     },
+     "wire": {
+      "demo@0:outcome": 2,
+      "forms@0:outcome": 17,
+      "soft-norms@0:outcome": 1
+     },
+     "document": {}
+    }
+   ],
+   "new": [
+    25,
+    25
+   ],
+   "base_only_new": [],
+   "head_only_new": [],
+   "baseline": [
+    {
+     "entries": 254,
+     "seen_in_sample": 197,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    },
+    {
+     "entries": 250,
+     "seen_in_sample": 195,
+     "unreviewed": 0,
+     "not_reproduced": 0
+    }
+   ],
+   "head_not_reproduced": [],
+   "cpu_seconds": [
+    {
+     "python": 175.3,
+     "children": 47.5
+    },
+    {
+     "python": 133.3,
+     "children": 46.3
+    }
+   ],
+   "ok": true
+  }
+ ],
+ "ok": true
+}

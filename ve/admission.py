@@ -1,12 +1,10 @@
-"""Claim labels and executable document admission on ve.core@0.2 (PLAN-EXPAND2 3.6).
+"""Claim labels, unit kinds and executable document admission on ve.core@0.2 (PLAN-EXPAND2 3.6).
 
-This mirrors `lean/VE/Route/Admission.lean` rule for rule and diagnostic for
-diagnostic, so Python and the Lean `route` subcommand admit the same documents
-    and report the same labels. A quoted unit must be named through its bridge;
-    an independent formula-equal leaf keeps its own declared provenance.
-    Admission graph edges bind exactly their premise
-nodes; Background enters only as explicit `background:<generator>` leaves whose
-formulas are regenerated from the environment.
+Lean decides admission under every authority (`lean/VE/Route/Admission.lean`
+and the statement-layer routes, lean-first batch 13b); this module chooses the
+route from the envelope and relays Lean's report or diagnostic. A quoted unit
+must be named through its bridge; Background enters only as explicit
+`background:<generator>` leaves whose formulas Lean regenerates.
 """
 from __future__ import annotations
 
@@ -14,13 +12,12 @@ import re
 from typing import NamedTuple
 
 from .assurance import semantic_entry
-from .ast import Or, decimal_text, decimal_value, formula_from_data, formula_to_data
-from .background import HOOKS, _DEPENDENCY_ENVIRONMENT, background
+from .ast import Or, decimal_text, decimal_value, formula_from_data
+from .background import HOOKS, _DEPENDENCY_ENVIRONMENT
 from .environment import Environment, listed_profiles
-from .errors import ResourceLimit, UnsupportedProfile, VEError
-from .identity import meaning_id
+from .errors import ResourceLimit, VEError
 from .profiles import LANGUAGE
-from .wire import digest, require_fields
+from .wire import require_fields
 
 _TOKEN = re.compile(r"[A-Za-z0-9_.\-]+\Z", re.ASCII)
 _NAT = re.compile(r"(0|[1-9][0-9]*)\Z", re.ASCII)
@@ -30,8 +27,6 @@ ATOMIC_KINDS = ("asserted", "norm", "definition", "question", "instruction", "ex
 ACTS = ("says", "promised", "believes", "intends", "expects", "denies")
 MODALITIES = ("could", "likely", "generally", "typically", "effectively")
 RELATIONS = ("because", "in order to", "prevents")
-GRAPH_REJECTED = ("graph rejected: cycle, duplicate name, dangling premise, ill-typed claim or "
-                  "invalid certificate")
 
 
 class AdmissionError(VEError):
@@ -98,23 +93,15 @@ def parse_label(s) -> Label | None:
     return label if label is not None and label.render() == s else None
 
 
-def _validate_label_python(s) -> str:
-    if parse_label(s) is None:
-        raise AdmissionError(f"AdmissionError: invalid label {s}")
-    return s
-
-
 @semantic_entry("label")
 def validate_label(s) -> str:
-    """Check the public label grammar through the selected authority."""
-    from .backends.dispatch import authority_for, execute
+    """Check the public label grammar: Lean's `label` route decides under every authority."""
+    from .backends.dispatch import owned
     from .backends.relay import decide
     from .backends.lean_service import CheckerUnavailable
 
     if type(s) is not str:
         raise AdmissionError(f"AdmissionError: invalid label {s}")
-    if authority_for("label") == "python":
-        return _validate_label_python(s)
     case = {"id": "label", "kind": "label", "environment": _DEPENDENCY_ENVIRONMENT,
             "label": s}
 
@@ -124,7 +111,7 @@ def validate_label(s) -> str:
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean label result")
         return label
 
-    return execute("label", case, lambda: _validate_label_python(s), lean=lean)
+    return owned("label", lean)
 
 
 # Kinds are kept in their wire form (a string or a tagged list); decoding only validates.
@@ -162,10 +149,6 @@ def _quoted(kind) -> bool:
     return type(kind) is list and kind[0] in ("attributed", "hedged")
 
 
-def _agent_matches(kind, agent) -> bool:
-    return not (type(kind) is list and kind[0] == "attributed") or kind[1] == agent
-
-
 def _fields(data, required, optional=(), path=""):
     require_fields(data, set(required) | {k for k in optional if type(data) is dict and k in data},
                    path=path)
@@ -181,80 +164,6 @@ def _array(value) -> list:
     if type(value) is not list:
         raise VEError("expected an array")
     return value
-
-
-def _tokens(value) -> list[str]:
-    items = _array(value)
-    if not all(type(x) is str for x in items):
-        raise VEError("expected strings")
-    if not all(map(token, items)):
-        raise VEError("invalid name")
-    return items
-
-
-class _Unit(NamedTuple):
-    id: str
-    start: int
-    stop: int
-    kind: object
-    content: object
-
-
-class _Node(NamedTuple):
-    name: str
-    ast: object
-    formula: object
-    label: str
-    unit: str | None
-    premises: tuple | None
-    certificate: object
-
-
-def _decode_unit(env, data) -> _Unit:
-    _fields(data, ("id", "span", "kind"), ("content",))
-    uid = data["id"]
-    if type(uid) is not str:
-        raise VEError("expected a string")
-    if not token(uid):
-        raise VEError(f"invalid unit id {uid}")
-    span = _array(data["span"])
-    if len(span) != 2:
-        raise VEError("invalid span")
-    start, stop = _nat(span[0]), _nat(span[1])
-    if start > stop:
-        raise VEError("invalid span")
-    kind = _check_kind(data["kind"])
-    content = formula_from_data(env, data["content"]) if "content" in data else None
-    return _Unit(uid, start, stop, kind, content)
-
-
-def _decode_leaf(env, data):
-    _fields(data, ("ast", "label"))
-    label = data["label"]
-    if type(label) is not str:
-        raise VEError("expected a string")
-    parsed = parse_label(label)
-    if parsed is None:
-        raise AdmissionError(f"AdmissionError: invalid label {label}")
-    if parsed.kind == "cite":
-        raise AdmissionError("AdmissionError: lemma leaves must be transitive (no cite labels)")
-    formula = formula_from_data(env, data["ast"], _generated=parsed.kind == "background")
-    return formula, label
-
-
-def _decode_lemma(env, data):
-    _fields(data, ("name", "conclusion", "leaves"))
-    name = data["name"]
-    if type(name) is not str:
-        raise VEError("expected a string")
-    parsed = parse_label("cite:" + name)
-    if parsed is None or parsed.kind != "cite":
-        raise VEError(f"invalid lemma name {name}")
-    conclusion = formula_from_data(env, data["conclusion"])
-    leaves = [_decode_leaf(env, leaf) for leaf in _array(data["leaves"])]
-    if len(leaves) > 1000:
-        raise ResourceLimit("ResourceLimit: lemma leaves")
-    return name, conclusion, leaves
 
 
 def _decode_reading_set(env, data):
@@ -278,169 +187,14 @@ def _disjunction(readings):
     return result
 
 
-class _Doc(NamedTuple):
-    units: list
-    lemmas: list
-    open_terms: list
-    reading_sets: list
-    narrowings: list
-    background: tuple
-
-
-def _decode_doc(env, data) -> _Doc:
-    units = [_decode_unit(env, u) for u in _array(data["units"])]
-    if len(units) > 10000:
-        raise ResourceLimit("ResourceLimit: unit count")
-    if len({u.id for u in units}) != len(units):
-        raise VEError("duplicate unit id")
-    if any(a.stop > b.start for a, b in zip(units, units[1:])):
-        raise VEError("unit spans must be sorted and non-overlapping")
-    optional = {key: _array(data[key]) if key in data else []
-                for key in ("lemmas", "open_terms", "reading_sets", "narrowings")}
-    lemmas = [_decode_lemma(env, m) for m in optional["lemmas"]]
-    if len({m[0] for m in lemmas}) != len(lemmas):
-        raise VEError("duplicate lemma")
-    open_terms = _tokens(optional["open_terms"])
-    reading_sets = [_decode_reading_set(env, r) for r in optional["reading_sets"]]
-    if len({(r[0], r[1]) for r in reading_sets}) != len(reading_sets):
-        raise VEError("duplicate reading set version")
-    narrowings = _tokens(optional["narrowings"])
-    return _Doc(units, lemmas, open_terms, reading_sets, narrowings,
-                tuple((p.formula, p.generator) for p in background(env)))
-
-
-def _decode_node(env, data) -> _Node:
-    _fields(data, ("name", "ast"), ("label", "unit", "premises", "certificate"))
-    name = data["name"]
-    if type(name) is not str:
-        raise VEError("expected a string")
-    label = "asserted"
-    if "label" in data:
-        if type(data["label"]) is not str:
-            raise VEError("expected a string")
-        if data["label"] == "asserted":
-            raise VEError("non-canonical label: the default label asserted is omitted")
-        label = data["label"]
-    formula = formula_from_data(env, data["ast"], _generated=label.startswith("background:"))
-    unit = data.get("unit")
-    if "unit" in data and type(unit) is not str:
-        raise VEError("expected a string")
-    if ("premises" in data) != ("certificate" in data):
-        raise VEError("premises and certificate come together")
-    premises = None
-    if "premises" in data:
-        premises = tuple(_array(data["premises"]))
-        if not all(type(p) is str for p in premises):
-            raise VEError("expected strings")
-    return _Node(name, data["ast"], formula, label, unit, premises, data.get("certificate"))
-
-
-def _unit(doc, uid):
-    return next((u for u in doc.units if u.id == uid), None)
-
-
-def _asserted_unit(doc, uid, formula) -> bool:
-    return any(u.id == uid and u.kind == "asserted" and u.content == formula for u in doc.units)
-
-
-def _leaf_admitted(doc, node) -> bool:
-    label = parse_label(node.label)
-    if label is None:
-        return False
-    kind, a = label
-    if kind == "asserted":
-        return node.unit is not None and _asserted_unit(doc, node.unit, node.formula)
-    if kind == "bridge":
-        return (node.unit in (None, a[1]) and
-                any(u.id == a[1] and _quoted(u.kind) and u.content == node.formula
-                    and _agent_matches(u.kind, a[0]) for u in doc.units))
-    if node.unit is not None:
-        return False
-    if kind == "background":
-        return (node.formula, a[0]) in doc.background
-    if kind == "cite":
-        return any(m[0] == f"{a[0]}/{a[1]}" and m[1] == node.formula for m in doc.lemmas)
-    if kind == "open":
-        return a[0] in doc.open_terms
-    if kind == "readings":
-        for rid, version, readings in doc.reading_sets:
-            if rid == a[0] and version == a[1]:
-                if a[2] is None and _disjunction(readings) == node.formula:
-                    return True
-                if a[2] is not None and a[2] < len(readings) and readings[a[2]] == node.formula:
-                    return True
-        return False
-    return a[0] in doc.narrowings  # narrowing
-
-
-def _node_admitted(doc, node) -> bool:
-    if node.premises is not None:
-        return node.label == "asserted" and (node.unit is None or _asserted_unit(doc, node.unit, node.formula))
-    return _leaf_admitted(doc, node)
-
-
-def _diagnostic(doc, node) -> str:
-    label = parse_label(node.label)
-    bridge_naming = label.args[1] if label is not None and label.kind == "bridge" and node.premises is None else None
-    unit = _unit(doc, node.unit) if node.unit is not None else None
-    if unit is not None:
-        if _quoted(unit.kind) and bridge_naming != unit.id:
-            return f"AdmissionError: quoted content of unit {unit.id} is used without a bridge leaf"
-        return f"AdmissionError: node {node.name} is not admitted under label {node.label}"
-    if label is None:
-        return f"AdmissionError: invalid label {node.label}"
-    return f"AdmissionError: node {node.name} is not admitted under label {node.label}"
-
-
-def _check_graph(env, nodes, root):
-    """The unchanged claim-graph check (`VE.Graph.checkTableau`): unique names,
-    submitted topological order, typed claims, replayed certificates."""
-    from .entailment import check_entailment_certificate
-    names = [n.name for n in nodes]
-    rank = {name: names.index(name) for name in names}
-    if len(set(names)) != len(names) or any(
-            n.premises is not None and any(rank.get(p, len(names)) >= rank[n.name] for p in n.premises)
-            for n in nodes):
-        raise VEError(GRAPH_REJECTED)
-    reports = {}
-    for n in nodes:
-        claim = (n.name, n.formula, n.label)
-        if n.premises is None:
-            reports[n.name] = (claim, [claim])
-            continue
-        children = [reports[p] for p in n.premises]
-        checked = check_entailment_certificate(env, [c[0][1] for c in children], n.formula,
-                                               n.certificate, _background=False,
-                                               _generated_premises=[c[0][2].startswith("background:")
-                                                                    for c in children])
-        if not checked.valid:
-            raise VEError(GRAPH_REJECTED)
-        reports[n.name] = (claim, [a for c in children for a in c[1]])
-    if root not in reports:
-        raise VEError(GRAPH_REJECTED)
-    return reports[root]
-
-
-def _compatible(x, y) -> bool:
-    a, b = parse_label(x), parse_label(y)
-    if a is None or b is None or a.kind != "readings" or b.kind != "readings" or a.args[0] != b.args[0]:
-        return True
-    return a.args[1] == b.args[1] and (a.args[2] is None or b.args[2] is None or a.args[2] == b.args[2])
-
-
-def _claim_json(env, claim):
-    name, formula, label = claim
-    return {"name": name, "ast": formula_to_data(env, formula,
-            _generated=label.startswith("background:")),
-            **({} if label == "asserted" else {"label": label})}
-
-
 @semantic_entry("admission")
 def admit_document(environment, document) -> dict:
-    """Admit a document under the selected checker authority."""
-    from .backends.dispatch import authority_for, execute
-    from .backends.relay import decide
-    from .backends.lean_service import CheckerUnavailable
+    """Admit a document: Lean's admission routes decide under every authority (lean-first batch 13b).
+
+    Returns the admitted report, its `ve-report-<identity>` id and the units'
+    kinds rendered back (byte-identical to the input kinds), or raises Lean's
+    diagnostic."""
+    from .backends.dispatch import owned
 
     if (getattr(environment, "unit_schema", None) is not None or (
             type(environment) is dict and "unit_schema" in environment)) and "risk@0" not in (
@@ -450,36 +204,76 @@ def admit_document(environment, document) -> dict:
         # environment's W6 extension is the Lean risk route's, which admits it below.
         env = environment if type(environment) is Environment else Environment(environment)
         return _lean_quantity_admission(env, document)
+    return owned("admission", lambda: _admit_lean(environment, document))
 
-    if authority_for("admission") == "python":
-        return _admit_document_python(environment, document)
+
+def _uses_norms(env, document) -> bool:
+    """The norms route takes every input with a norm construct (11.4): a regulated
+    declaration or norm content, as Lean `usesNormsPath` does."""
+    return "norms@0" in env.profiles and (
+        any(d.regulated is not None for d in env.predicates.values()) or
+        (type(document) is dict and type(document.get("units")) is list and
+         any(type(u) is dict and type(u.get("content")) is dict and "norm" in u["content"]
+             for u in document["units"])))
+
+
+def _admit_lean(environment, document) -> dict:
+    """The Lean route that admits `document`, chosen by the envelope (routing, not a verdict)."""
+    from .backends.relay import decide
     from .softnorms import SoftEnvironment
     if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
             "soft-norms@0" in listed_profiles(environment)):
-        # The soft route is Lean's (soft_route.admit_soft_document runs it).
-        return _admit_document_python(environment, document)
+        from .soft_route import admit_soft_document
+        return admit_soft_document(environment, document)
     env = environment if type(environment) is Environment else Environment(environment)
-    case = {"id": "admission", "kind": "admission", "environment": env.to_dict(),
-            "document": document}
+    if env.alternatives is not None:
+        return _lean_block_admission(env, document)
+    if "norm-defaults@0" in env.profiles:
+        from .norm_defaults_route import admit_norm_defaults_document
+        return admit_norm_defaults_document(env, document)
+    if env.language != LANGUAGE:
+        raise VEError("admission requires a ve.core@0.2 environment")
+    case = {"id": "admission", "kind": "admission", "environment": env.to_dict(), "document": document}
+    return bound_admission(env, document, decide("norms" if _uses_norms(env, document) else "route", [case])[0])
 
-    def lean():
-        # Envelope routing, not a verdict: the Lean route admits ve.core@0.2 only.
-        if env.language != LANGUAGE:
-            raise VEError("admission requires a ve.core@0.2 environment")
-        if env.alternatives is not None:
-            return _lean_block_admission(env, document)
-        row = decide("norms" if "norms@0" in env.profiles and (
-            any(d.regulated is not None for d in env.predicates.values()) or
-            (type(document) is dict and type(document.get("units")) is list and
-             any(type(u) is dict and type(u.get("content")) is dict and
-                 "norm" in u["content"] for u in document["units"]))
-        ) else "route", [case])[0]
-        expected = {"id", "status", "admitted", "report", "report_id", "kinds"}
-        if set(row) != expected or row["admitted"] is not True:
-            raise CheckerUnavailable("CheckerUnavailable: malformed Lean admission result")
-        return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
-    return execute("admission", case, lambda: _admit_document_python(env, document), lean=lean)
+def bound_admission(env, document, row) -> dict:
+    """Lean's admission row, bound to the request: the units' kinds rendered back are the request's,
+    each reported claim is a graph node with the same name, AST and label, the report's root is
+    the graph's root, and `report_id` is the identity of exactly this report over the environment
+    and document sent (the wire digest, rule 5), so no field of the report can change unseen.
+    Anything else is CheckerUnavailable: Lean's answer is relayed, never repaired."""
+    from .backends.lean_service import CheckerUnavailable
+    from .backends.service_schema import same_json
+    from .wire import digest
+    if set(row) != {"id", "status", "admitted", "report", "report_id", "kinds"} or row["admitted"] is not True:
+        raise CheckerUnavailable("CheckerUnavailable: malformed Lean admission result")
+    units = document.get("units") if type(document) is dict else None
+    graph = document.get("graph") if type(document) is dict else None
+    report = row["report"]
+    nodes = graph.get("nodes") if type(graph) is dict else None
+    def request_claim(claim):
+        if type(claim) is not dict or type(nodes) is not list:
+            return False
+        fields = ("name", "ast", "label")
+        return any(type(node) is dict and all(
+            (key in claim) == (key in node) and
+            (key not in claim or same_json(claim[key], node[key])) for key in fields)
+            for node in nodes)
+    try:
+        expected = digest(f"ve-report-{env.identity_version}\n",
+                          {"environment_id": env.environment_id, "document": document, "report": report})
+    except (VEError, TypeError, ValueError):
+        expected = None
+    if (type(units) is not list or row["kinds"] != [u.get("kind") if type(u) is dict else None for u in units]
+            or type(graph) is not dict or type(report) is not dict or type(report.get("root")) is not dict
+            or report["root"].get("name") != graph.get("root")
+            or not request_claim(report["root"])
+            or type(report.get("assumptions")) is not list
+            or not all(request_claim(claim) for claim in report["assumptions"])
+            or row["report_id"] != expected):
+        raise CheckerUnavailable("CheckerUnavailable: the Lean admission answer is not bound to the request")
+    return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
 
 def _lean_block_admission(env, document) -> dict:
@@ -498,82 +292,3 @@ def _lean_quantity_admission(env, document) -> dict:
     [row] = decide("quantity", [{"id": "admission", "kind": "document",
                                  "environment": env.to_dict(), "document": document}])
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
-
-
-def _admit_document_python(environment, document) -> dict:
-    """Admit a ve.core@0.2 document (FOL family) or raise with Lean's diagnostic.
-
-    Returns the admitted report, its `ve-report-<identity>` id and the units'
-    kinds rendered back (byte-identical to the input kinds)."""
-    from .softnorms import SoftEnvironment
-    if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
-            "soft-norms@0" in listed_profiles(environment)):
-        from .soft_route import admit_soft_document
-        return admit_soft_document(environment, document)
-    env = environment if type(environment) is Environment else Environment(environment)
-    if env.alternatives is not None:
-        return _lean_block_admission(env, document)
-    if "norm-defaults@0" in env.profiles:
-        from .norm_defaults_route import admit_norm_defaults_document
-        return admit_norm_defaults_document(env, document)
-    # The norms route takes every input with a norm construct (11.4): a
-    # regulated declaration or norm content, as Lean `usesNormsPath` does.
-    if ("norms@0" in env.profiles and
-            (any(d.regulated is not None for d in env.predicates.values()) or
-             (type(document) is dict and type(document.get("units")) is list and
-              any(type(u) is dict and type(u.get("content")) is dict
-                  and "norm" in u["content"] for u in document["units"])))):
-        from .norm_admission import admit_norm_document
-        return admit_norm_document(env, document)
-    if env.language != LANGUAGE:
-        raise VEError("admission requires a ve.core@0.2 environment")
-    if env.closure or env.order:
-        raise UnsupportedProfile(f"admission on the {'order' if env.order else 'closure'} family is deferred")
-    if env.definition_entries:
-        raise UnsupportedProfile("admission of documents with definitions is deferred")
-    _fields(document, ("units", "graph"), ("lemmas", "open_terms", "reading_sets", "narrowings"))
-    doc = _decode_doc(env, document)
-    graph = document["graph"]
-    _fields(graph, ("root", "nodes"))
-    if type(graph["root"]) is not str:
-        raise VEError("expected a string")
-    raw_nodes = _array(graph["nodes"])
-    if len(raw_nodes) > 1000:
-        raise ResourceLimit("ResourceLimit: graph node count")
-    nodes = [_decode_node(env, n) for n in raw_nodes]
-    by_name = {}
-    for n in nodes:
-        by_name.setdefault(n.name, n)
-    for n in nodes:  # certificate bindings, checked before admission (Lean `checkBindings`)
-        if n.premises is None:
-            continue
-        for p in n.premises:
-            if p not in by_name:
-                raise VEError(f"dangling premise {p}")
-        cert = n.certificate
-        expected = ([meaning_id(env, by_name[p].formula,
-                                _generated=by_name[p].label.startswith("background:"))
-                     for p in n.premises], meaning_id(env, n.formula))
-        if (type(cert) is not dict or cert.get("environment_id") != env.environment_id
-                or (cert.get("premise_meaning_ids"), cert.get("conclusion_meaning_id")) != expected):
-            raise VEError("certificate is stale or bound to different inputs")
-    for n in nodes:
-        if not _node_admitted(doc, n):
-            raise AdmissionError(_diagnostic(doc, n))
-    root, assumptions = _check_graph(env, nodes, graph["root"])
-    for leaf in assumptions:
-        label = parse_label(leaf[2])
-        if label is not None and label.kind == "cite":
-            lemma = next(m for m in doc.lemmas if m[0] == f"{label.args[0]}/{label.args[1]}")
-            if not all(any(y[1] == f and y[2] == lab for y in assumptions) for f, lab in lemma[2]):
-                raise AdmissionError("AdmissionError: a cited lemma's leaves are missing from the report")
-    if not all(_compatible(a[2], b[2]) for a in assumptions for b in assumptions):
-        raise AdmissionError("AdmissionError: incompatible reading choices")
-    if any((label := parse_label(n.label)) is not None and label.kind == "cite" for n in nodes):
-        raise UnsupportedProfile("document citations require a checked bundle binding")
-    report = {"root": _claim_json(env, root), "assumptions": [_claim_json(env, a) for a in assumptions]}
-    identity_payload = {"environment_id": env.environment_id, "document": document,
-                        "report": report}
-    return {"admitted": True, "report": report,
-            "report_id": digest(f"ve-report-{env.identity_version}\n", identity_payload),
-            "kinds": [u.kind for u in doc.units]}
