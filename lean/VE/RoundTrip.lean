@@ -204,11 +204,11 @@ theorem parseRaw_print (E : Environment) (hv : NamesValid E) (a : Formula)
   | top =>
     cases fuel with
     | zero => omega
-    | succ fuel => simp [printAux, parseRaw, hd]
+    | succ fuel => simp [printAux, parseRaw, parseRawWith, hd]
   | bottom =>
     cases fuel with
     | zero => omega
-    | succ fuel => simp [printAux, parseRaw, hd]
+    | succ fuel => simp [printAux, parseRaw, parseRawWith, hd]
   | unary p t =>
     obtain ⟨s, hp, ht⟩ := hw
     have hid := declaration_identifier p (hv.2.1 p [s] hp)
@@ -260,7 +260,7 @@ theorem parseRaw_print (E : Environment) (hv : NamesValid E) (a : Formula)
     | succ fuel =>
       have ha : formulaDepth a < fuel := by simp only [formulaDepth] at hf; omega
       have h := ih Γ names n hs hl hw fuel (')' :: tail) (by rfl) ha
-      simp [printAux, List.append_assoc, parseRaw, h, consume]
+      simp [printAux, List.append_assoc, parseRaw, parseRawWith, h, consume]
   | and a b ia ib =>
     cases fuel with
     | zero => omega
@@ -272,7 +272,7 @@ theorem parseRaw_print (E : Environment) (hv : NamesValid E) (a : Formula)
       have hib := ib Γ names (printAux names n a).2 (scope_mono hs (printAux_counter a names n))
         hl hw.2 fuel (')' :: tail) (by rfl) hb
       simp only [String.toList, List.cons_append, List.nil_append] at hia
-      simp [printAux, List.append_assoc, parseRaw, hia, hib, consume]
+      simp [printAux, List.append_assoc, parseRaw, parseRawWith, hia, hib, consume]
   | or a b ia ib =>
     cases fuel with
     | zero => omega
@@ -284,7 +284,7 @@ theorem parseRaw_print (E : Environment) (hv : NamesValid E) (a : Formula)
       have hib := ib Γ names (printAux names n a).2 (scope_mono hs (printAux_counter a names n))
         hl hw.2 fuel (')' :: tail) (by rfl) hb
       simp only [String.toList, List.cons_append, List.nil_append] at hia
-      simp [printAux, List.append_assoc, parseRaw, hia, hib, consume]
+      simp [printAux, List.append_assoc, parseRaw, parseRawWith, hia, hib, consume]
   | implies a b ia ib =>
     cases fuel with
     | zero => omega
@@ -296,7 +296,7 @@ theorem parseRaw_print (E : Environment) (hv : NamesValid E) (a : Formula)
       have hib := ib Γ names (printAux names n a).2 (scope_mono hs (printAux_counter a names n))
         hl hw.2 fuel (')' :: tail) (by rfl) hb
       simp only [String.toList, List.cons_append, List.nil_append] at hia
-      simp [printAux, List.append_assoc, parseRaw, hia, hib, consume]
+      simp [printAux, List.append_assoc, parseRaw, parseRawWith, hia, hib, consume]
   | all s a ih =>
     cases fuel with
     | zero => omega
@@ -313,7 +313,7 @@ theorem parseRaw_print (E : Environment) (hv : NamesValid E) (a : Formula)
         (canonicalName_identifier n) (by rfl)
       have hb := canonical_binderAllowed E hv names n hs
       simp only [canonicalName, String.toList, String.data_append, List.append_assoc, List.cons_append, List.nil_append] at hia his hin hb
-      simp [printAux, List.append_assoc, parseRaw, his, hin, hb, hia, consume]
+      simp [printAux, List.append_assoc, parseRaw, parseRawWith, his, hin, hb, hia, consume]
   | ex s a ih =>
     cases fuel with
     | zero => omega
@@ -330,7 +330,7 @@ theorem parseRaw_print (E : Environment) (hv : NamesValid E) (a : Formula)
         (canonicalName_identifier n) (by rfl)
       have hb := canonical_binderAllowed E hv names n hs
       simp only [canonicalName, String.toList, String.data_append, List.append_assoc, List.cons_append, List.nil_append] at hia his hin hb
-      simp [printAux, List.append_assoc, parseRaw, his, hin, hb, hia, consume]
+      simp [printAux, List.append_assoc, parseRaw, parseRawWith, his, hin, hb, hia, consume]
 
 theorem document_length (fs : List Formula) :
     fs.length ≤ (fs.flatMap statementChars).length := by
@@ -373,7 +373,7 @@ theorem parseStatements_print (E : Environment) (hv : NamesValid E) (fs : List F
 stated declaration-name restrictions. No formula-size or binder-count cap. -/
 theorem parse_print (E : Environment) (hv : NamesValid E) (d : Document E) :
     parse E (print d.formulas) = some d.formulas := by
-  unfold parse print
+  unfold parse parseWith print
   change (do
     let fs ← parseStatements E ((d.formulas.flatMap statementChars).length + 1)
       (d.formulas.flatMap statementChars)
@@ -394,7 +394,7 @@ theorem parse_print (E : Environment) (hv : NamesValid E) (d : Document E) :
 assuming declaration-name validity. This is typing soundness, not ParseSpec. -/
 theorem parse_wellFormed (E : Environment) (text : String) (fs : List Formula)
     (h : parse E text = some fs) : fs ≠ [] ∧ ∀ a ∈ fs, a.WellFormed E [] := by
-  unfold parse at h
+  unfold parse parseWith at h
   cases hp : parseStatements E (text.toList.length + 1) text.toList with
   | none => simp only [hp, bind, Option.bind, reduceCtorEq] at h
   | some as =>
