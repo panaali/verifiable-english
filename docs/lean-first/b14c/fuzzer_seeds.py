@@ -16,6 +16,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[3]
 SEEDS = tuple(range(20260921, 20260931)) + tuple(range(20261001, 20261005))
+BASELINE_ENTRIES = len(json.loads((ROOT / "conformance/difffuzz-baseline.json").read_text())["entries"])
 
 
 def one(seed: int, scratch: Path) -> dict:
@@ -47,7 +48,7 @@ def main() -> int:
     with ThreadPoolExecutor(max_workers=4) as pool:
         rows = sorted(pool.map(lambda seed: one(seed, scratch), SEEDS), key=lambda row: row["seed"])
     good = len(rows) == len(SEEDS) and all(row["exit_code"] in (0, 1) and
-                                             row.get("baseline_entries") == 250 for row in rows)
+                                             row.get("baseline_entries") == BASELINE_ENTRIES for row in rows)
     summary.write_text(json.dumps({"complete": good, "seeds": rows}, indent=2, sort_keys=True) + "\n")
     print(f"{len(rows)}/{len(SEEDS)} date seeds recorded; "
           f"{sum(row.get('new', 0) for row in rows)} signatures require base replay")
