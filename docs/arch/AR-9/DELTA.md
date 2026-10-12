@@ -13,15 +13,6 @@ service seam are read as the module names they forward to (`self._evaluate(...)`
 `evaluate(...)`; see below). Every assist test file (`tests/test_assist*.py`, 5 files) is
 unchanged and passes.
 
-## The picked readings-route relay fix
-
-`fc30653f` is `c88e4012` from `infra/oom-rootcause`, picked unchanged (REPORT.md, "Relay gate").
-It has one delta, and R8 covers it:
-
-| # | Delta | Before | After | Test | Signature |
-|---|---|---|---|---|---|
-| 1 | A readings-route answer from Lean with an empty fill `label`, an empty conflict target, or a repeated `over` name is refused as CheckerUnavailable. No genuine answer has these: the relay gate's genuine fixtures all pass | relayed as given | CheckerUnavailable | `test_readings_route_refuses_empty_labels_targets_and_repeated_over_names`, `test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over`, `test_unique_string_lists_refuse_duplicate_rule_names`; relay gate 0 failures | SIGNED (R8: Python checks schema typing and binding, and refuses an empty row) |
-
 ## Changes that are not user-visible
 
 1. **Seams.** Tests replace five names of the `ve.assist.recovery` module

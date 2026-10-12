@@ -16,6 +16,8 @@ assert SPEC is not None and SPEC.loader is not None
 REPORT = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(REPORT)
 SPLIT_MODULES = {f"ve/assist/{name}.py" for parts in REPORT.SPLITS.values() for name in parts}
+# The hand-written files AR-9 may change besides the split modules and docs/arch/AR-9/ (REPORT.md, Coordination).
+OWN_TESTS = {"tests/test_assist_split.py", "tests/conftest.py"}
 
 
 def _saved(name: str):
@@ -62,23 +64,6 @@ def check_mutants():
     assert all(row["exit_code"] == 0 for row in saved["restored"])
 
 
-def check_relay():
-    relay = _saved("relay-gate.json")
-    assert relay["failures"] == [] and relay["findings"] == [] and len(relay["routes"]) > 0
-    assert relay["totals"]["mutants"] > 0
-    saved = _saved("relay-mutants.json")
-    mutants = saved["mutants"]
-    assert {m["language"] for m in mutants} == {"lean", "python"}
-    assert {m["claim"] for m in mutants} == {"empty label", "repeated over"}
-    for mutant in mutants:
-        assert mutant["file"] in mutant["files"] and mutant["test"] == mutant["runs"][0]["test"]
-        for run in mutant["runs"]:
-            assert run["exit_code"] != 0 and "1 failed" in run["failure_excerpt"], run["test"]
-    tests = [run["test"] for mutant in mutants for run in mutant["runs"]]
-    assert [row["test"] for row in saved["restored"]] == tests
-    assert all(row["exit_code"] == 0 for row in saved["restored"])
-
-
 def check_selected():
     selected = _saved("selected.json")
     units = selected["units"]
@@ -96,33 +81,35 @@ def check_gate():
     assert split["head"] in {row["hash"] for row in scope["commits"]}
     assert selected["head"] in {row["hash"] for row in scope["commits"]}
     assert gate["commit_sha"] == scope["head"] and gate["dirty"] is False
+    assert gate["status"] == "passed" and gate["failures"] == []
     counts = gate["counts"]
-    if gate["status"] != "passed":
-        # R13: the full gate counts as passed when every failed test passes on a rerun of the same commit.
-        rerun = _saved("gate-rerun.json")
-        failed = {row["nodeid"] for row in gate["failures"] if "nodeid" in row}
-        assert gate["status"] == "failed" and failed and counts["failed"] == len(failed)
-        assert all(row["stage"] in {"pytest", "pytest command"} for row in gate["failures"])
-        assert rerun["status"] == "rerun-passed" and rerun["dirty"] is False and rerun["failures"] == []
-        assert rerun["commit_sha"] == gate["commit_sha"] and rerun["tree_sha"] == gate["tree_sha"]
-        assert rerun["rerun_failed"]["previous"]["commit_sha"] == gate["commit_sha"]
-        assert set(rerun["rerun_failed"]["tests"]) == failed
-        assert all(rerun["rerun_failed"]["outcomes"][test] == "passed" for test in failed)
-    else:
-        assert gate["failures"] == [] and counts["failed"] == 0
-    assert counts["passed"] > 0 and counts["rust_passed"] > 0
+    assert counts["passed"] > 0 and counts["failed"] == 0 and counts["rust_passed"] > 0
     assert counts["passed"] + counts["skipped"] + counts["failed"] == counts["selected"]
     assert {"lean_build", "lean_audit", "cargo_test", "pytest"} <= set(gate["stages"])
+
+
+def check_overlap():
+    """AR-9 changes no hand-written file an in-flight branch changes, and no code since its gate."""
+    overlap, scope, gate = _saved("overlap.json"), _saved("scope.json"), _saved("gate.json")
+    assert overlap["main"] != overlap["head"] and overlap["gate"] == gate["commit_sha"]
+    assert overlap["changed_since_gate"] == []
+    code = {path for path in scope["files"] if not path.startswith("docs/arch/AR-9/")}
+    assert code == {path for path in overlap["files"] + overlap["generated"] if not path.startswith("docs/arch/AR-9/")}
+    outside = [path for path in overlap["files"]
+               if path not in SPLIT_MODULES | OWN_TESTS and not path.startswith("docs/arch/AR-9/")]
+    assert outside == [], outside
+    in_flight = [row for row in overlap["branches"] if row["in_flight"]]
+    assert in_flight and all(row["overlap"] == [] for row in in_flight), [r for r in in_flight if r["overlap"]]
 
 
 def main():
     check_report()
     check_split()
     check_mutants()
-    check_relay()
     check_selected()
     if (EVIDENCE / "gate.json").exists():
         check_gate()
+        check_overlap()
         print("AR-9 saved evidence PASS (including final gate)")
     else:
         print("AR-9 saved evidence PASS (pre-gate checks)")
