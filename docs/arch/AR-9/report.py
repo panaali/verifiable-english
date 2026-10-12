@@ -47,19 +47,6 @@ def metrics() -> str:
     lines.append(f"- Seeded faults: {len(caught)}/{len(mutants['mutants'])} caught by every named test "
                  f"({runs} failing runs); after restoring, "
                  f"{sum(r['exit_code'] == 0 for r in restored)}/{len(restored)} runs pass.")
-    relay, relay_mutants = load("relay-gate.json"), load("relay-mutants.json")
-    if relay is not None:
-        totals = relay["totals"]
-        lines.append(f"- Relay mutation gate (picked readings-route fix): {len(relay['routes'])} routes, "
-                     f"{totals['mutants']:,} mutants, {len(relay['failures'])} failures.")
-    if relay_mutants is not None:
-        rows = relay_mutants["mutants"]
-        caught = [m for m in rows if m["runs"] and all(r["exit_code"] != 0 for r in m["runs"])]
-        languages = sorted({m["language"] for m in rows})
-        restored = relay_mutants["restored"]
-        lines.append(f"- Relay-fix seeded faults ({', '.join(languages)}): {len(caught)}/{len(rows)} caught by "
-                     f"every named test; after restoring, "
-                     f"{sum(r['exit_code'] == 0 for r in restored)}/{len(restored)} runs pass.")
     if selected is not None:
         lines.append(f"- Selected test units at `{selected['head'][:8]}`: "
                      f"{sum(row['exit'] == 0 for row in selected['units'])}/{selected['unit_count']} passed.")
@@ -73,12 +60,6 @@ def metrics() -> str:
         lines.append(f"- Full gate at `{gate['commit_sha'][:8]}`: {gate['status']}; {counts['passed']:,} passed, "
                      f"{counts['skipped']} skipped, {counts['failed']} failed; "
                      f"{counts['rust_passed']} Rust tests passed.")
-        rerun = load("gate-rerun.json")
-        if gate["status"] != "passed" and rerun is not None:
-            tests = rerun["rerun_failed"]["tests"]
-            lines.append(f"- Same-commit rerun of its failed tests at `{rerun['commit_sha'][:8]}` (R13): "
-                         f"{rerun['status']}; " + ", ".join(f"`{t}`" for t in tests) + " passed; "
-                         f"{rerun['counts']['passed']} tests of their files passed, {rerun['counts']['failed']} failed.")
     return "\n".join(lines)
 
 

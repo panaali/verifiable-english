@@ -16,6 +16,15 @@ function-level imports per file of `ve/assist/`.
 
 writes the scope the gate covers instead: `BASE..HEAD --no-merges`, newest first, and the
 files `BASE..HEAD` changes.
+
+    uv run python docs/arch/AR-9/measure.py --overlap MAIN GATE > docs/arch/AR-9/evidence/overlap.json
+
+writes the overlap sweep: the hand-written files `MAIN...HEAD` changes (generated inventories,
+which never overlap (R12), are the files `tools/regen_generated.py` owns) and, for every local
+branch not merged into MAIN, the hand-written files both change. A branch is in flight when it has
+a commit in the `IN_FLIGHT_DAYS` days before HEAD's; older unmerged branches are recorded too.
+It also records the files outside `docs/arch/AR-9/` that `GATE..HEAD` changes, where GATE is the
+commit of the saved full gate.
 """
 from __future__ import annotations
 
@@ -125,10 +134,43 @@ def scope(base: str, head: str) -> dict:
             "files": sorted(git("diff", "--name-only", f"{base}..{head}").split())}
 
 
+IN_FLIGHT_DAYS = 7
+
+
+def changed(spec: str) -> list[str]:
+    return sorted(git("diff", "--name-only", spec).split())
+
+
+def overlap(main: str, head: str, gate: str) -> dict:
+    sys.path.insert(0, str(ROOT))
+    from tools.regen_generated import owner
+    files = changed(f"{main}...{head}")
+    own = [path for path in files if owner(path) is None]
+    head_time = int(git("log", "-1", "--format=%ct", head))
+    current = git("symbolic-ref", "--short", "HEAD").strip()
+    branches = []
+    for line in git("for-each-ref", "--no-merged", main, "--format=%(refname:short) %(objectname) %(committerdate:unix)",
+                    "refs/heads/").splitlines():
+        name, tip, when = line.split(" ")
+        if name == current:
+            continue
+        shared = sorted(set(own) & set(changed(f"{main}...{tip}")))
+        branches.append({"branch": name, "tip": tip, "in_flight": head_time - int(when) <= IN_FLIGHT_DAYS * 86400,
+                         "overlap": shared})
+    return {"main": main, "head": head, "in_flight_days": IN_FLIGHT_DAYS, "files": own,
+            "generated": [path for path in files if path not in own], "branches": branches,
+            "gate": gate, "changed_since_gate": [path for path in changed(f"{gate}..{head}")
+                                                 if not path.startswith("docs/arch/AR-9/")]}
+
+
 def main() -> int:
     if sys.argv[1] == "--scope":
         base, head = (git("rev-parse", ref).strip() for ref in (sys.argv[2], "HEAD"))
         print(json.dumps(scope(base, head), indent=1))
+        return 0
+    if sys.argv[1] == "--overlap":
+        base, head, gate = (git("rev-parse", ref).strip() for ref in (sys.argv[2], "HEAD", sys.argv[3]))
+        print(json.dumps(overlap(base, head, gate), indent=1))
         return 0
     base = git("rev-parse", sys.argv[1]).strip()
     head = git("rev-parse", "HEAD").strip()
