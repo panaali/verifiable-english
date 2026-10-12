@@ -215,5 +215,6 @@ two commits).
    HOME and PATH are set the same way. Fix: the test also fakes `drop_stale` (commit "test_gate_integrity:
    fake Lake's trace check"). The file then passed 37/37 both ways, and the 79 files its change selects
    passed: 2,825 passed, 1 skipped, 83 xfailed.
-3. The full gate on the final code: `evidence/gate-result.json` (added by the commit after it, which
-   changes only docs).
+3. The full gate on the final code, `ef36aece` (`evidence/gate-result.json`): **passed**. 14,339
+   passed, 92 skipped, 0 failed, 38 Rust tests passed, every stage run (toolchains, Lean build, Lean
+   audit, Rust build, cargo test, pytest). The commit that adds it changes only docs.
