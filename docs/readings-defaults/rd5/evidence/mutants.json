@@ -16,7 +16,7 @@
     "=========================== short test summary info ============================",
     "FAILED tests/test_readings_rd5_plain_probe.py::test_a_pair_probed_on_a_plain_predicate_gets_e24",
     "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    "1 failed in 2.24s"
+    "1 failed in 4.93s"
    ],
    "sha256_before": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62",
    "sha256_restored": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62"
@@ -37,7 +37,7 @@
     "=========================== short test summary info ============================",
     "FAILED tests/test_readings_rd5_plain_probe.py::test_a_pair_probed_on_a_duty_keeps_e19",
     "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    "1 failed in 0.68s"
+    "1 failed in 5.83s"
    ],
    "sha256_before": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62",
    "sha256_restored": "a0bd0bf01778ca4b38871afb5880c3806c31e1d1eb03c34e4642a8a4228bbb62"
@@ -58,7 +58,7 @@
     "=========================== short test summary info ============================",
     "FAILED tests/test_readings_rd5_udhr.py::test_the_migration_reproduces_the_committed_document",
     "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    "1 failed in 8.15s"
+    "1 failed in 26.27s"
    ],
    "sha256_before": "c84939fdd4facdd96b4da3056b4bc8e8a26e0e95729ce59305584e9c7c1e45d0",
    "sha256_restored": "c84939fdd4facdd96b4da3056b4bc8e8a26e0e95729ce59305584e9c7c1e45d0"
@@ -79,7 +79,7 @@
     "=========================== short test summary info ============================",
     "FAILED tests/test_readings_rd5_udhr.py::test_one_sets_witnesses_replay_equal_in_its_component_and_alone",
     "!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!",
-    "1 failed in 10.49s"
+    "1 failed in 29.51s"
    ],
    "sha256_before": "6e7f295424fd05272fdbfac1b068dee2bcdaced73111147c75be362faaf415c5",
    "sha256_restored": "6e7f295424fd05272fdbfac1b068dee2bcdaced73111147c75be362faaf415c5"

@@ -125,6 +125,10 @@ Commits: `c3e40b7a`, `ae7fa229`, `a497cf56`, `98d8dbf0`, `8fed59c9`, `b6cf9fbb`,
   for `no-input` and that every pattern matches), and `tests/test_lean_document_wrapper.py` lists the migrated
   document among the fail-closed seeds. Lean's document mode refuses it with "JSON reader: null in reading_sets"
   (the 27 sets left on W2 keep `content: null`), as it refuses `constitution-nd-readings`; Python answers ok.
+- The wrapper's one-member null/number test omits that one large fail-closed seed: its 8,328 front-matter members
+  and 626 integers would generate 12,084 copies (about 4.5 GB of input) for the same whole-document refusal.
+  `test_every_seed_document_agrees_with_python_or_fails_closed` still checks its complete Python and Lean answers,
+  and asserts it remains a difffuzz seed. Existing seeds and their mutations are unchanged.
 - `5e5ac815` makes `mutants.py` build its pytest command with `tools/nested_pytest.py`
   (`test_every_pytest_command_is_built_by_the_builder`); the seeded bugs were rerun with it.
 
