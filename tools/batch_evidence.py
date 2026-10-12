@@ -93,7 +93,7 @@ def main() -> int:
             errors.append("gate evidence differs from its git note")
         if args.report_commit is not None:
             errors += outside_report(changed_since(args.head, args.report_commit), args.report_dir)
-    except (OSError, ValueError, TypeError, subprocess.CalledProcessError) as exc:
+    except (OSError, ValueError, TypeError, subprocess.CalledProcessError, gate_collection.CollectionError) as exc:
         errors = [str(exc)]
     if errors:
         print("\n".join(errors))

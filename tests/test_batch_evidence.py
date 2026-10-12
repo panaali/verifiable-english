@@ -128,3 +128,31 @@ def test_f2_batch_evidence_checks_the_gate_note_when_present(tmp_path):
     assert _main(repo, tmp_path, gated, gated, gate_data).returncode == 0
     result = _main(repo, tmp_path, gated, gated)
     assert result.returncode == 1 and "gate evidence differs from its git note" in result.stdout
+
+
+@pytest.mark.parametrize("note_kind", ["unparseable", "wrong commit", "wrong tree",
+                                      "invalid collection", "base only"])
+def test_f3_present_invalid_gate_note_fails_closed(tmp_path, note_kind):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    gated = _commit(repo, {"code.py": "1"})
+    tree = _git(repo, "rev-parse", f"{gated}^{{tree}}")
+    record = json.loads(gate_collection.record_text(gated, tree, ["tests/a.py::test_a"],
+                                                    {"status": "passed"}))
+    if note_kind == "unparseable":
+        note = "malformed gate note"  # The review's executable F3 probe.
+    else:
+        if note_kind == "wrong commit":
+            record["commit_sha"] = "b" * 40
+        elif note_kind == "wrong tree":
+            record["tree_sha"] = "b" * 40
+        elif note_kind == "invalid collection":
+            record["collection"]["collected_zlib"] = "***"
+        elif note_kind == "base only":
+            del record["status"]
+        note = json.dumps(record)
+    _git(repo, "notes", f"--ref={gate_collection.NOTES_REF}", "add", "-m", note, gated)
+    result = _main(repo, tmp_path, gated, gated)
+    assert result.returncode == 1, result.stdout
+    assert "gate note" in result.stdout
