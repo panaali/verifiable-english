@@ -6,6 +6,9 @@ None. AR-9 moves code between files (plan 4.3: "Code moves, nothing else; public
 re-exported"). No verdict, diagnostic text, wire field, ledger format or CLI output changes, so no
 standing ruling (R1 to R11) is invoked and no DRI signature is needed.
 
+The readings-route row an earlier round signed under R8 is withdrawn: its change, the picked
+`c88e4012`, is reverted (`06382384`; REPORT.md, "Relay gate").
+
 The evidence for "nothing else": `evidence/split.json` compares the syntax tree of every
 definition in the base `ve/assist/recovery.py` and `ve/assist/session.py` (163 of them) with its
 definition at head. 156 are identical. The other 7 are identical once their calls through a

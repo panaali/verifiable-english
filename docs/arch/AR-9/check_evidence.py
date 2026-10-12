@@ -102,6 +102,15 @@ def check_overlap():
     assert in_flight and all(row["overlap"] == [] for row in in_flight), [r for r in in_flight if r["overlap"]]
 
 
+def check_relay():
+    """The relay gate's only failure is main's readings-route one; AR-9 changes no relay input."""
+    relay, overlap = _saved("relay-gate.json"), _saved("overlap.json")
+    assert len(relay["routes"]) > 0 and relay["totals"]["mutants"] > 0
+    assert relay["failures"] and all(" service:readings-route " in row for row in relay["failures"])
+    assert {row["route"] for row in relay["findings"]} == {"service:readings-route"}
+    assert not set(relay["inputs"]) & set(overlap["files"] + overlap["generated"])
+
+
 def main():
     check_report()
     check_split()
@@ -110,6 +119,7 @@ def main():
     if (EVIDENCE / "gate.json").exists():
         check_gate()
         check_overlap()
+        check_relay()
         print("AR-9 saved evidence PASS (including final gate)")
     else:
         print("AR-9 saved evidence PASS (pre-gate checks)")
