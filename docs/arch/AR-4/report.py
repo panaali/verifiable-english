@@ -23,7 +23,8 @@ EVIDENCE = HERE / "evidence"
 REPORT = HERE / "REPORT.md"
 BEGIN, END = "<!-- BEGIN GENERATED AR-4 METRICS -->", "<!-- END GENERATED AR-4 METRICS -->"
 sys.path.insert(0, str(ROOT / "tools"))
-import batch_evidence  # noqa: E402
+sys.path.insert(0, str(ROOT))
+from tools import batch_evidence, batch_scope  # noqa: E402
 import trust_map  # noqa: E402
 
 
@@ -54,7 +55,7 @@ def collect() -> None:
               "file_lines": {"base": len(_git("show", f"{base}:{trust_map.BASELINE.relative_to(ROOT)}").splitlines()),
                              "head": len(trust_map.BASELINE.read_text().splitlines())},
               "check_exit": trust_map.main(["--check"])}
-    scope = batch_evidence.git_scope(base, head, ROOT)  # the one writer and checker of a batch's scope
+    scope = batch_scope.git_scope(base, head, ROOT)  # the one writer and checker of a batch's scope
     EVIDENCE.mkdir(exist_ok=True)
     (EVIDENCE / "budget.json").write_text(json.dumps(budget, indent=1) + "\n")
     (EVIDENCE / "scope.json").write_text(json.dumps(scope, indent=1) + "\n")
@@ -83,7 +84,7 @@ def problems() -> list[str]:
         out.append("a file under ve/, lean/ or rust/ changed: gate items 2 and 3 apply")
     if scope.get("head") != budget["head"] or scope.get("base") != budget["base"] or not scope.get("commits"):
         out.append("the scope and the budget evidence are of different commits")
-    out += batch_evidence.scope_problems(scope, ROOT)  # recomputed from git: the commits, files and base
+    out += batch_scope.scope_problems(scope, ROOT)  # recomputed from git: the commits, files and base
     # The gate and the measurements cover HEAD: from the gated commit and from the evidence head (either
     # may come first) to HEAD, only this directory changes.
     for start in dict.fromkeys((full.get("commit_sha"), rerun.get("commit_sha"), budget["head"])):

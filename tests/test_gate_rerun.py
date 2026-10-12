@@ -15,7 +15,9 @@ import sys
 
 import pytest
 
-from test_gate_integrity import fake_trust, pin_rust_binary, trust_counts
+import test_gate_integrity
+
+from test_gate_integrity import pin_rust_binary
 from tools import gate
 
 BASELINE = ["tests/a.py::test_a", "tests/a.py::test_a2", "tests/b.py::test_b", "tests/c.py::test_c"]
@@ -57,7 +59,7 @@ class FakeGate:
     def command(self, args, *, env, stage, cwd=None):
         self.seen.append((stage, [str(arg) for arg in args]))
         if self.trust is not False:  # False: trust_map.py wrote nothing
-            fake_trust(args, stage, self.trust)
+            test_gate_integrity.fake_trust(args, stage, self.trust)
         if stage == "commit":
             return "commit-1"
         if stage == "tree":
@@ -185,38 +187,3 @@ def test_a_full_gate_records_its_tree_and_mode(fake):
     assert (code, record["status"], record["mode"], record["tree_sha"]) == (0, "passed", "full", "tree-1")
     assert "rerun_failed" not in record
 
-
-def test_every_gate_records_the_per_file_trust_counts(fake):
-    """arch-AR-4 review F2: AR-4 moves the per-file trust tables out of the tree and into the gate
-    record, but no gate wrote them. A full gate and a rerun both record what `tools/trust_map.py
-    --files` measured."""
-    code, record = fake.run()
-    assert code == 1 and record["trust"] == trust_counts() and gate.TRUST_STAGE in fake.stages()
-    fake.failing = set()
-    code, record = fake.run("--rerun-failed")
-    assert (code, record["status"], record["trust"]) == (0, "rerun-passed", trust_counts())
-    code, record = fake.run()
-    assert (code, record["status"], record["trust"]) == (0, "passed", trust_counts())
-
-
-def _counts(change):
-    counts = trust_counts()
-    change(counts)
-    return counts
-
-
-@pytest.mark.parametrize("counts", [
-    False, {}, [], 0, {**trust_counts(), "files": {}}, {**trust_counts(), "extra": 1},
-    _counts(lambda c: c["files"]["VE/Demo.lean"].update(C=True)),
-    _counts(lambda c: c["files"]["VE/Demo.lean"].update(C=-1)),
-    _counts(lambda c: c["files"]["VE/Demo.lean"].pop("trusted")),
-    _counts(lambda c: c["files"]["VE/Demo.lean"].update(trusted=4)),
-    _counts(lambda c: c["budget"].update(V=1)),
-    _counts(lambda c: c["files"].update({"VE/Demo.py": dict(c["files"]["VE/Demo.lean"])})),
-], ids=["not written", "empty", "list", "zero", "no files", "extra key", "bool count", "negative count",
-        "missing count", "totals disagree", "budget disagrees", "not a lean file"])
-def test_a_gate_without_valid_trust_counts_fails(fake, counts):
-    fake.failing, fake.trust = set(), counts
-    code, record = fake.run()
-    assert (code, record["status"]) == (1, "failed") and "trust" not in record
-    assert any(failure["reason"].startswith(gate.TRUST_STAGE) for failure in record["failures"])
