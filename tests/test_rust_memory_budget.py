@@ -195,13 +195,32 @@ def test_the_client_passes_the_budget_and_caps_the_address_space(monkeypatch):
     rust_jsonl._close_all()
 
 
-def test_the_client_reads_an_exhausted_budget_as_resource_limit(monkeypatch):
-    monkeypatch.setenv("VE_RUST_MEMORY_LIMIT", str(32 << 20))
+@pytest.mark.parametrize("limit", [1 << 20, 32 << 20])
+def test_the_client_reads_an_exhausted_budget_as_resource_limit(monkeypatch, limit):
+    monkeypatch.setenv("VE_RUST_MEMORY_LIMIT", str(limit))
     rust_jsonl._close_all()
     with pytest.raises(ResourceLimit, match=MESSAGE.pattern):
         rust_jsonl.run(runaway_case())
     # The exhausted process ended; the next case gets a new one.
     assert rust_jsonl.run(small_case())["status"] == "ok"
+    rust_jsonl._close_all()
+
+
+@pytest.mark.parametrize("kind", ["check", "evaluate-budgeted", "distinguishing-model",
+                                   "readings-superposed-evaluate", None])
+def test_oom_before_case_id_is_bound_for_every_jsonl_case_kind(monkeypatch, kind):
+    monkeypatch.setenv("VE_RUST_MEMORY_LIMIT", str(1 << 20))
+    case = small_case()
+    if kind is None:
+        case.pop("kind")
+        case.pop("ast")
+        case.update(premises=[], conclusion=["top"])
+    else:
+        case["kind"] = kind
+    # Rust runs out while reading or decoding, before it can discover the id.
+    case["padding"] = "x" * (2 << 20)
+    with pytest.raises(ResourceLimit, match=MESSAGE.pattern):
+        rust_jsonl.run(case)
     rust_jsonl._close_all()
 
 
@@ -229,6 +248,21 @@ def test_one_shot_runners_run_under_an_address_space_limit():
     done = process_limits.run_limited([sys.executable, "-c", grow], input=b"", timeout=HANG_TIMEOUT,
                                       address_space=256 << 20)
     assert done.returncode != 0 and b"MemoryError" in done.stderr
+
+
+def test_one_shot_runner_respects_an_inherited_hard_limit():
+    # The launcher sets a tighter hard limit than the requested VE cap. Its child must run.
+    launcher = ("import resource,sys; "
+                "from ve.backends.process_limits import run_limited; "
+                "resource.setrlimit(resource.RLIMIT_AS,(1<<30,1<<30)); "
+                "done=run_limited([sys.executable,'-c',"
+                "'import resource; print(resource.getrlimit(resource.RLIMIT_AS)[0])'],"
+                f"input=b'',timeout={HANG_TIMEOUT},address_space=8<<30); "
+                "print(done.returncode); print(done.stdout.decode().strip())")
+    done = subprocess.run([sys.executable, "-c", launcher], capture_output=True,
+                          timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, done.stderr
+    assert done.stdout.splitlines() == [b"0", str(1 << 30).encode()]
 
 
 def test_lean_one_shot_routes_run_under_their_address_space_limit(monkeypatch, tmp_path):

@@ -132,7 +132,10 @@ class _Checker:
                 except BlockingIOError:
                     continue
                 except OSError:
-                    raise self._failure("the Rust checker stopped reading") from None
+                    # The allocator can refuse a line while Rust is still reading or
+                    # parsing it. It then writes a terminal ResourceLimit record before
+                    # closing stdin. Read that record even when the write got EPIPE.
+                    break
         with selectors.DefaultSelector() as selector:
             selector.register(self.process.stdout.fileno(), selectors.EVENT_READ)
             while (end := self.buffer.find(b"\n")) < 0:
@@ -343,13 +346,38 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
             record = _decode_json(lines[0])
         except (ValueError, RecursionError):
             raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
+        early_oom = _bind_early_memory_error(case, record, completed, timeout)
         problem = record_problem(case, record)
         if problem:
             raise CheckerUnavailable(f"CheckerUnavailable: malformed Rust response ({problem})")
-        valid = True
+        valid = not early_oom  # the early memory error terminates its process
     finally:
         _release(completed, valid=valid)
     return require_ok(record)
+
+
+def _bind_early_memory_error(case: dict, record, completed, timeout: float) -> bool:
+    """Bind Rust's terminal, idless OOM record to the sole outstanding case.
+
+    Rust cannot know the id until the JSON line has been parsed. This special record
+    is admitted only with the exact configured budget, exit 1 and Rust's pre-id
+    signal on stderr; all other idless records still fail the normal response schema.
+    """
+    checker = getattr(completed, "_checker", None)
+    if checker is None or record != {"status": "error", "error": {
+            "code": "ResourceLimit", "message":
+            f"memory budget exhausted: {checker.memory} bytes (VE_RUST_MEMORY_LIMIT)"}}:
+        return False
+    try:
+        if checker.process.wait(timeout=timeout) != 1:
+            return False
+    except subprocess.TimeoutExpired:
+        return False
+    checker.stderr.seek(0)
+    if checker.stderr.read() != b"VE_JSONL_OOM_BEFORE_CASE_ID\n":
+        return False
+    record["id"] = case.get("id", "")
+    return True
 
 
 def record_problem(case: dict, record) -> str | None:
