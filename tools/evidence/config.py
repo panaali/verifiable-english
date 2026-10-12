@@ -21,7 +21,7 @@ from __future__ import annotations
 from pathlib import Path
 import tomllib
 
-from tools.evidence import ROOT, EvidenceError
+from tools.evidence import ROOT, EvidenceError, read_bytes
 
 SECTIONS = {
     "scope": ({"file"}, {"file"}),
@@ -42,7 +42,7 @@ def read(directory: Path) -> dict:
     if not path.is_file():
         raise EvidenceError(f"{path}: no evidence.toml")
     try:
-        config = tomllib.loads(path.read_text())
+        config = tomllib.loads(read_bytes(path).decode())
     except tomllib.TOMLDecodeError as exc:
         raise EvidenceError(f"{path}: {exc}") from None
     errors = [f"unknown key {key!r}" for key in sorted(config.keys() - TOP)]
@@ -79,10 +79,15 @@ def read(directory: Path) -> dict:
     return config
 
 
+def in_repository(path: Path) -> bool:
+    path = Path(path).resolve()
+    return path == ROOT or ROOT in path.parents
+
+
 def inside(directory: Path, relative: str) -> Path:
-    """`relative` (from the toml) resolved against the batch directory, refused outside the repository."""
+    """`relative` (from the toml) resolved against `directory`, refused outside the repository."""
     path = (Path(directory) / relative).resolve()
-    if path != ROOT and ROOT not in path.parents:
+    if not in_repository(path):
         raise EvidenceError(f"{relative} is outside the repository")
     return path
 

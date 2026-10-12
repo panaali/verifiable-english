@@ -8,6 +8,12 @@ saved scope, the gate of the scope's head, the seeded mutants, and where named t
 A/B, the rendered report block and the claims. It runs at the batch's gate and in the merge train instead of
 a permanent report test (DRI decision D4). The positional form checks the three files alone, as before.
 
+Every piece of evidence is tied to the batch (arch-20261010-2 review F1 to F3): the scope starts at the batch's
+merge base with `--main` (default `main`; `tools.evidence.merge_base`, which a later merge does not move), each
+A/B record compared that base with the scope's head, each seeded mutant ran on its file as committed at the
+head, and every file the check opens is inside the repository and, with `--report-commit`, committed there
+byte for byte (an ignored or uncommitted file is no evidence the merge train can carry).
+
 The gate result lives in a git note so recording it does not move the commit it
 checked. Call this tool with the final commit and the three evidence files before
 attaching the note. No missing or partial measurement counts as a pass.
@@ -22,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import hashlib
 import re
 import subprocess
 import sys
@@ -29,7 +36,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools.evidence import EvidenceError, killed, load, scope_range  # noqa: E402
+from tools.evidence import EvidenceError, killed, load, merge_base, read_bytes, recording, scope_range  # noqa: E402
 from tools.evidence import ab, config as evidence_config, fuzz_ab, latency as evidence_latency, report  # noqa: E402
 
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build", "cargo_test", "pytest")
@@ -96,21 +103,32 @@ def scope_problems(scope: dict) -> list[str]:
     return errors
 
 
-def scope_history_problems(saved: dict, cwd: Path = ROOT) -> list[str]:
-    """Compare saved numbers and commit subjects with the two fixed Git objects named in the record.
+def scope_history_problems(saved: dict, main: str = "main", cwd: Path | None = None) -> list[str]:
+    """Compare saved numbers and commit subjects with the two fixed Git objects named in the record, and with
+    the range from the batch's merge base with `main`: a base inside the batch would drop its earlier commits
+    (and with them the `ve/` and `lean/` paths that require a corpus A/B).
 
-    No moving branch name is read here: a later merge to main cannot change a batch's report.
+    The merge base does not move when `main` does (`tools.evidence.merge_base`), so a later merge to main
+    cannot change a batch's report. A saved base that is another commit passes only when its range holds the
+    very same commits and changes.
     """
     if scope_problems(saved):
         return []  # the shape errors already explain why history cannot be compared
+    cwd = cwd or ROOT
     try:
         actual = scope_range(saved["base"], saved["head"], cwd)
+        base = merge_base(saved["head"], main, cwd)
+        batch = actual if base == saved["base"] else scope_range(base, saved["head"], cwd)
     except (EvidenceError, subprocess.CalledProcessError) as exc:
         return [f"scope cannot be reproduced from its Git objects: {exc}"]
     errors = []
     for field in ("base", "head", "commits", "changes"):
         if saved[field] != actual[field]:
             errors.append(f"scope {field} differs from {saved['base'][:8]}..{saved['head'][:8]} --no-merges")
+    for field in ("commits", "changes"):
+        if saved[field] != batch[field]:
+            errors.append(f"scope {field} differ from the batch's {base[:8]}..{saved['head'][:8]} --no-merges "
+                          f"(its merge base with {main})")
     return errors
 
 
@@ -125,6 +143,41 @@ def gate_record_problems(head: str, gate: dict) -> list[str]:
         errors.append("full gate counts do not add up or show a failure")
     if not isinstance(gate, dict) or gate.get("failures") != []:
         errors.append("full gate lists failures")
+    return errors
+
+
+def mutant_source_problems(mutants, head: str, cwd: Path | None = None) -> list[str]:
+    """Each `tools/mutants.py` record ran on its file as committed at `head`: its `source_sha256` is that
+    blob's. (The records batches kept before the toolkit hash nothing, `tools.evidence.killed`.)"""
+    rows = mutants.get("mutants") if isinstance(mutants, dict) else mutants
+    cwd, errors = cwd or ROOT, []
+    for row in rows if isinstance(rows, list) else ():
+        if not isinstance(row, dict) or "killed" not in row or not isinstance(row.get("file"), str):
+            continue
+        name = row.get("id", row["file"])
+        try:
+            blob = subprocess.run(["git", "cat-file", "blob", f"{head}:{row['file']}"], cwd=cwd, check=True,
+                                  capture_output=True).stdout
+        except subprocess.CalledProcessError:
+            errors.append(f"seeded mutant {name}: {row['file']} is not a file at {head}")
+            continue
+        if row.get("source_sha256") != hashlib.sha256(blob).hexdigest():
+            errors.append(f"seeded mutant {name} ran on another {row['file']} than the one at {head}")
+    return errors
+
+
+def committed_problems(paths: list[Path], commit: str | None, cwd: Path | None = None) -> list[str]:
+    """Every file the check opened is inside the repository and, given a `commit`, committed there with the
+    same bytes."""
+    cwd, errors = cwd or ROOT, []
+    for path in dict.fromkeys(paths):
+        if not evidence_config.in_repository(path):
+            errors.append(f"{path} is outside the repository")
+        elif commit is not None:
+            relative = path.relative_to(cwd.resolve()).as_posix()
+            done = subprocess.run(["git", "cat-file", "blob", f"{commit}:{relative}"], cwd=cwd, capture_output=True)
+            if done.returncode != 0 or done.stdout != path.read_bytes():
+                errors.append(f"{relative} is not committed as read at {commit}")
     return errors
 
 
@@ -172,40 +225,51 @@ def tally_problems(claim: dict, evidence: report.Evidence) -> list[str]:
 CLAIMS = {"tally": tally_problems}
 
 
-def check(directory: Path) -> tuple[str, list[str]]:
-    """(the gated head, the errors) of the batch at `directory`, from its evidence.toml and evidence."""
+def check(directory: Path, main: str = "main", report_commit: str | None = None) -> tuple[str, list[str]]:
+    """(the gated head, the errors) of the batch at `directory`, from its evidence.toml and evidence; the
+    scope is the batch's from its merge base with `main`, and with `report_commit` every file read must be
+    committed there."""
+    with recording() as opened:
+        head, errors = _check(directory, main)
+    return head, errors + committed_problems(opened, report_commit)
+
+
+def _check(directory: Path, main: str) -> tuple[str, list[str]]:
     config = evidence_config.read(directory)
     folder = evidence_config.evidence_dir(directory, config)
 
     def read(section):
-        return load(folder / config[section]["file"])
+        return load(evidence_config.inside(folder, config[section]["file"]))
 
     saved = read("scope")
     errors = scope_problems(saved)
-    errors += scope_history_problems(saved)
+    errors += scope_history_problems(saved, main)
     head = saved.get("head") if isinstance(saved, dict) else None
+    base = saved.get("base") if isinstance(saved, dict) else None
     errors += gate_record_problems(head, read("gate"))
-    errors += mutant_problems(read("mutants"), config["mutants"].get("min", 3))
+    mutants = read("mutants")
+    errors += mutant_problems(mutants, config["mutants"].get("min", 3))
+    errors += mutant_source_problems(mutants, head) if isinstance(head, str) and SHA.fullmatch(head) else []
     product = sorted(c["path"] for c in saved.get("changes") or () if isinstance(c, dict)
                      and str(c.get("path")).startswith(("ve/", "lean/")))
     if "ab" in config:
-        errors += ab.problems(read("ab"), head, set(config["ab"].get("corpora", ())) | REQUIRED_CORPORA)
+        errors += ab.problems(read("ab"), head, set(config["ab"].get("corpora", ())) | REQUIRED_CORPORA, base)
     elif product:
         errors.append(f"the batch changes {product[0]} (and {len(product) - 1} more ve/ or lean/ paths) "
                       "but its evidence.toml names no [ab]")
     if "latency" in config:
         errors += evidence_latency.problems(read("latency"), head, config["latency"]["workloads"],
-                                            config["latency"].get("allowance", evidence_latency.ALLOWANCE))
+                                            config["latency"].get("allowance", evidence_latency.ALLOWANCE), base)
     if "fuzz_ab" in config:
         evidence = read("fuzz_ab")
-        errors += fuzz_ab.problems(evidence, head)
+        errors += fuzz_ab.problems(evidence, head, base)
         if isinstance(evidence, dict) and evidence.get("rules") != config["fuzz_ab"].get("explained", []):
             errors.append("fuzz A/B ran with other rules than evidence.toml names")
     evidence = report.Evidence(folder)
     if "report" in config:
         target = evidence_config.inside(directory, config["report"]["file"])
         rendered = report.render(folder, config["report"]["lines"])
-        if report.block(target.read_text(), config["report"]["marker"]) != rendered:
+        if report.block(read_bytes(target).decode(), config["report"]["marker"]) != rendered:
             errors.append(f"the {config['report']['marker']} block of {config['report']['file']} is not the "
                           "rendering of the evidence (python -m tools.evidence report)")
     for index, claim in enumerate(config.get("claims", [])):
@@ -221,7 +285,10 @@ def main(argv=None) -> int:
     parser.add_argument("gate", nargs="?", type=Path)
     parser.add_argument("comparison", nargs="?", type=Path)
     parser.add_argument("latency", nargs="?", type=Path)
-    parser.add_argument("--report-commit", help="a later commit that may change only --report-dir")
+    parser.add_argument("--report-commit", help="a later commit that may change only --report-dir (with --check: "
+                        "every evidence file read is committed there)")
+    parser.add_argument("--main", default="main", help="with --check: the branch the batch merges into, whose "
+                        "merge base with the scope's head the scope must start from (default main)")
     parser.add_argument("--report-dir", help="the batch's report directory, relative to the repository root "
                         "(with --check: the batch directory)")
     args = parser.parse_args(argv)
@@ -236,7 +303,7 @@ def main(argv=None) -> int:
         parser.error("--report-commit and --report-dir go together")
     try:
         if args.check is not None:
-            args.head, errors = check(args.check)
+            args.head, errors = check(args.check, args.main, args.report_commit)
         else:
             values = [load(p) for p in (args.gate, args.comparison, args.latency)]
             errors = problems(args.head, *values)

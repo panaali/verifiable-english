@@ -4,7 +4,8 @@
         --out docs/<track>/<batch>/evidence/fuzz-ab.json [--head-root .] [--seed S ...] [--jobs N]
 
 Each checkout runs its own `tools/difffuzz.py --ci` and `--deep 1 --seed S` per seed (its own `ve`, Lean and
-Rust builds). Both must hold the same baseline file, so both replay the same entries (the baseline must not
+Rust builds). The two checkouts are two clean commits, saved as `base_commit` and `head_commit`; the batch check
+requires them to be the scope's merge base and head. Both must hold the same baseline file, so both replay the same entries (the baseline must not
 grow, and an entry the head fixes stays listed until a later batch drops it). `compare` then names every
 difference of a pair of reports, and each one is unexplained unless a rule of the batch's `evidence.toml`
 (`[[fuzz_ab.explained]]`) explains it:
@@ -31,7 +32,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 
-from tools.evidence import ROOT, EvidenceError, dump, git, load
+from tools.evidence import ROOT, EvidenceError, base_problems, checkouts, dump, load
 
 BASELINE = "conformance/difffuzz-baseline.json"
 RULES = {"count": {"field", "surface", "key", "base", "head"}, "replay": {"id", "base", "head"},
@@ -152,11 +153,11 @@ def fuzz(root: Path, args: list[str], report: Path) -> dict:
     return load(report)
 
 
-def problems(evidence: dict, head: str) -> list[str]:
-    """The errors of a saved fuzz A/B for the batch head `head`."""
+def problems(evidence: dict, head: str, base: str | None = None) -> list[str]:
+    """The errors of a saved fuzz A/B for the batch head `head` (and, given, its merge base `base`)."""
     if not isinstance(evidence, dict):
         return ["fuzz A/B evidence is not a record"]
-    errors = []
+    errors = base_problems(evidence, "fuzz A/B", base)
     if evidence.get("head_commit") != head:
         errors.append("fuzz A/B did not run on HEAD")
     runs = evidence.get("runs")
@@ -194,6 +195,11 @@ def main(argv=None) -> int:
         print("\n".join(errors))
         return 1
     base_root, head_root = args.base_root.resolve(), args.head_root.resolve()
+    try:
+        base_commit, head_commit = checkouts(base_root, head_root)
+    except EvidenceError as exc:
+        print(exc)
+        return 1
     baseline_path = base_root / BASELINE
     if baseline_path.read_bytes() != (head_root / BASELINE).read_bytes():
         print(f"the head's {BASELINE} differs from the base's: the fuzzer baseline must not change")
@@ -209,8 +215,7 @@ def main(argv=None) -> int:
     for index, run in enumerate(runs):
         result = compare(reports[2 * index], reports[2 * index + 1], baseline, rules)
         rows.append({"run": " ".join(run), **result})
-    evidence = {"base_commit": git("rev-parse", "HEAD", cwd=base_root).strip(),
-                "head_commit": git("rev-parse", "HEAD", cwd=head_root).strip(),
+    evidence = {"base_commit": base_commit, "head_commit": head_commit,
                 "baseline_sha256": hashlib.sha256(baseline_path.read_bytes()).hexdigest(), "rules": rules,
                 "runs": rows}
     evidence["pass"] = not problems({**evidence, "pass": True}, evidence["head_commit"])
