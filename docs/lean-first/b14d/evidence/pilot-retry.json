@@ -13,5 +13,11 @@
   "same_public_result": true,
   "base_record": "/tmp/lf14d-base-pilots-stable.jsonl",
   "head_record": "/tmp/lf14d-head-pilots-stable.jsonl",
-  "retry_record": "/tmp/lf14d-giant-head-retry.json"
+  "retry_record": "/tmp/lf14d-giant-head-retry.json",
+  "base_retry_timeout_s": 1200,
+  "base_retry_wall_s": 893.3559363699751,
+  "head_retry_wall_s": 555.8740269469563,
+  "head_to_base_wall_ratio": 0.6222,
+  "same_retry_result": true,
+  "base_retry_record": "/tmp/lf14d-giant-base-retry.json"
 }
