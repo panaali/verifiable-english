@@ -168,8 +168,27 @@ def test_rd2a_checker_fails_on_a_dropped_hypothesis_and_a_missing_declaration(tm
 RD6B = ["fill_transfers", "nd_superpose_all", "nd_superpose_conflict_free"]
 
 
+def test_rd6b_three_approved_theorems_are_exact(capsys):
+    checker = _checker()
+    assert checker.main_rd6b() == 0
+    assert "RD-6b PASS: 3 exact" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("name", RD6B)
+def test_rd6b_checker_rejects_each_changed_statement(tmp_path, capsys, name):
+    checker = _checker()
+    source = checker.SOURCE_6A.read_text()
+    changed = _mutate(source, "theorem", name, checker)
+    assert changed != source
+    path = tmp_path / "SupExtra.lean"
+    path.write_text(changed)
+    checker.SOURCE_6A = path
+    assert checker.main_rd6b() == 1
+    assert f"{name}: theorem differs" in capsys.readouterr().out
+
+
 def _approved_6a_names():
-    return sorted(key for key in _checker().approved_6a() if key[1] not in RD6B)
+    return sorted(_checker().approved_6a())
 
 
 def _run_6a(tmp_path, source, checker=None):
@@ -184,16 +203,16 @@ def test_rd6a_statements_match_the_approved_text(capsys):
     checker = _checker()
     assert checker.main() == 0
     out = capsys.readouterr().out
-    assert "checked 7 approved RD-6a declarations (4 theorems)" in out
-    assert f"not built yet (a later batch): {', '.join(RD6B)}" in out
-    assert ("RD-6a PASS: 7 exact after whitespace normalization (1 amended by a DRI ruling, its original refuted in "
+    assert "checked 10 approved RD-6a declarations (7 theorems)" in out
+    assert "not built yet" not in out
+    assert ("RD-6a PASS: 10 exact after whitespace normalization (1 amended by a DRI ruling, its original refuted in "
             "Lean); 0 pending the statement re-review") in out
     assert ("superpose_all_extra: amended by DRI ruling 2026-10-07, refuted original mechanised "
             "(superpose_all_extra_refuted)") in out
     # Finding B1 of rd-6a-looprecheck1: the DRI ruling replaced the re-review, so nothing is pending.
     assert checker.PENDING_6A == checker.EDITS_6A == {}
     assert set(checker.AMENDED_6A) == {"superpose_all_extra"}
-    assert checker.LATER_6A == set(RD6B)
+    assert checker.LATER_6A == set()
 
 
 @pytest.mark.parametrize("kind, name", _approved_6a_names(), ids=lambda v: str(v))
@@ -312,18 +331,9 @@ def test_rd6a_checker_fails_on_a_missing_declaration(tmp_path, capsys):
 
 
 def test_rd6a_checker_compares_an_rd6b_declaration_once_built(tmp_path, capsys):
-    """A later (RD-6b) declaration in the file is compared: the approved text passes, a changed one fails."""
+    """Every RD-6b declaration is required and checked against the approved statement."""
     checker = _checker()
-    spec_text = checker.SPEC.read_text().split("### 6.7 RD-6a", 1)[1].split("```lean", 1)[1].split("```", 1)[0]
-    start = spec_text.index("theorem fill_transfers")
-    stop = spec_text.index("theorem nd_superpose_conflict_free")
-    statement = spec_text[start:stop].rstrip() + " := by\n  sorry\n"
-    source = checker.SOURCE_6A.read_text().replace("end Extra", statement + "\nend Extra", 1)
-    checker, code = _run_6a(tmp_path, source, checker)
-    assert code == 0
-    out = capsys.readouterr().out
-    assert "checked 8 approved RD-6a declarations (5 theorems)" in out
-    assert "not built yet (a later batch): nd_superpose_all, nd_superpose_conflict_free" in out
+    source = checker.SOURCE_6A.read_text()
     changed = source.replace("(hs : superposable (fillDoc N) = true) (hsu", "(hsu", 1)
     checker, code = _run_6a(tmp_path, changed)
     assert code == 1
@@ -435,3 +445,40 @@ def test_rd4a_checker_fails_on_a_dropped_hypothesis_and_a_missing_declaration(tm
     _rd4a_with(checker, tmp_path, lambda t: t.replace("def companionMeaningId ", "private def companionMeaningId ", 1))
     assert checker.main_rd4a() == 1
     assert "companionMeaningId: expected one Lean def, found 0" in capsys.readouterr().out
+
+
+# RD-4b: the approved product declarations of 6.6, including SR2's gates.
+
+def test_rd4b_statements_match_the_approved_text(capsys):
+    checker = _checker()
+    assert checker.main_rd4b() == 0
+    out = capsys.readouterr().out
+    assert "checked 16 approved RD-4b declarations (6 theorems)" in out
+    assert checker.PENDING_RD4B == {} and "0 pending" in out
+
+
+@pytest.mark.parametrize("kind, name", sorted(_checker().approved_rd4b()), ids=lambda v: str(v))
+def test_rd4b_checker_fails_on_every_changed_declaration(tmp_path, capsys, kind, name):
+    checker = _checker()
+    path = tmp_path / "Components.lean"
+    path.write_text(_mutate(checker.SOURCE_RD4B.read_text(), kind, name, checker))
+    checker.SOURCE_RD4B = path
+    assert checker.main_rd4b() == 1
+    assert f"{name}: {kind} differs" in capsys.readouterr().out
+
+
+def test_rd4b_checker_fails_on_a_dropped_gate_and_a_missing_declaration(tmp_path, capsys):
+    checker = _checker()
+    path = tmp_path / "Components.lean"
+    original = checker.SOURCE_RD4B.read_text()
+    before, after = original.split("theorem foldK_all (", 1)
+    path.write_text(before + "theorem foldK_all (" + after.replace(
+        "(ho : ∀ (j : Nat) (r' : ComponentRows), j ≠ k →", "(ho : ∀ (j : Nat) (r' : ComponentRows),", 1))
+    checker.SOURCE_RD4B = path
+    assert checker.main_rd4b() == 1
+    assert "foldK_all: theorem differs" in capsys.readouterr().out
+    checker = _checker()
+    path.write_text(checker.SOURCE_RD4B.read_text().replace("def setDecided ", "private def setDecided ", 1))
+    checker.SOURCE_RD4B = path
+    assert checker.main_rd4b() == 1
+    assert "setDecided: expected one Lean def, found 0" in capsys.readouterr().out
