@@ -16,14 +16,14 @@
   "G[R]": 1765,
   "G[I]": 241,
   "tied": 178,
-  "unclassified": 328,
-  "trusted": 48277,
-  "lines": 158657
+  "unclassified": 331,
+  "trusted": 48280,
+  "lines": 158660
  },
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37492
+  "V": 37495
  },
  "signed": [],
  "history": [
@@ -685,6 +685,19 @@
     "K": 997,
     "S": 9788,
     "V": 37492
+   }
+  },
+  {
+   "change": "lean-first batch 14d: +3 trusted lines in ReadingsChoices reject duplicate set-version identity before Lean choice planning (R6: replaces coupled Python choice identity decision)",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37492
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37495
    }
   }
  ],
@@ -12370,9 +12383,9 @@
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
-   "unclassified": 243,
-   "trusted": 243,
-   "lines": 254
+   "unclassified": 246,
+   "trusted": 246,
+   "lines": 257
   },
   "VE/Service/Standalone.lean": {
    "K": 0,
