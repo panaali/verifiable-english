@@ -192,6 +192,25 @@ def test_coupled_plan_refuses_duplicate_set_version():
         relay.decide("readings-choices", [case])
 
 
+def test_coupled_zero_choice_budget_is_unknown():
+    row = relay.decide("readings-choices", [_coupled_plan_case(limit=0)])[0]
+    assert row == {"id": "plan", "status": "ok", "route": "UNKNOWN",
+                   "budget": {"max_choices": 0}, "choice_count": 1, "units": []}
+
+
+def test_coupled_zero_search_budget_is_unknown(monkeypatch):
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    sets = [{"id": name, "version": 1, "readings": [
+        {"kind": "asserted", "content": formula, "labels": {"force": "x"}}]}
+        for name, formula in (("a", ATOM), ("b", NEGATED))]
+    coupling = {"id": "same", "axis": "force", "sets": [
+        {"set": name, "version": 1} for name in ("a", "b")]}
+    bounded = check_readings(env(), sets, ["bottom"], couplings=[coupling],
+                            max_steps=0, max_models=0)
+    assert bounded["verdict"] == "UNKNOWN"
+    assert check_readings(env(), sets, ["bottom"], couplings=[coupling])["verdict"] == "ALL"
+
+
 def cases(monkeypatch):
     calls = []
     real = relay.decide
