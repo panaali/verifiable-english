@@ -171,6 +171,34 @@ Second round (sent back on d8fa98cf, relay row FAIL). Not fixed in this branch, 
   Or the DRI can waive it with the line `arch-20261010-1 relay readings-route findings are main's (fix c88e4012 on
   infra/oom-rootcause)` in `review-ready-allow.txt`.
 
+Third round (sent back on 6a07a6ac, relay row FAIL, the same 12 lines). Still not fixed here; the row cannot
+pass on any branch that touches `lean/ResponseShape/` until main's relay findings are fixed.
+
+- I merged main 49de179e (ts-B1, ts-B5, devtime-1) to see whether main had fixed the row. The merge was clean
+  apart from two generated files (`docs/trust-baseline.json`, `lean/declarations.txt`: took main's side). Both
+  `Audit.lean` files merged without conflict. Then `lake build` (883 jobs), `regen_generated.py --write --only
+  checker-pins`, `--write`, `trust_map.py --write`, and `regen_generated.py --check` passed all 24 entries.
+- On that merged tree, every file under `ve/`, `lean/ResponseShape/` and `lean/VE/Service/`, plus
+  `tools/relay_mutation_gate.py` and `tools/relay-gate-allow.json`, was identical to main 49de179e. The one
+  exception was the generated `lean/ResponseShape/Audit.lean`, which nothing imports. The relay gate got worse
+  on main: 39 routes, 109,195 mutants, **133 failures** (91 on 5479466f). The 133 are 128 allow-list paths that
+  match nothing (readings-route 86, reports 6, alternatives 5, norms 5, rights 5, risk 5, soft-norms 5,
+  route 4, discourse 3, norm-defaults 3, quantity 1) and the same 5 accepted readings-route mutants. Saved:
+  `evidence/relay-gate-merged-main-49de179e.json`.
+- Not fixed here, for the reasons in round 2. The 5 accepted mutants need c88e4012's Lean change: a new
+  `ResponseShape.Shape` constructor, `uniqueStrings`, plus schema edits. This batch may not change any Lean
+  declaration, and those files are in flight on infra/oom-rootcause. Pruning the 128 stale allow-list lines
+  would be safe, because it tightens the check. But it would not make the row pass, and
+  `tools/relay-gate-allow.json` overlaps oom-rootcause, lean-first/b14c and question-answering/q2.
+- I reset the branch to 6a07a6ac. The merge alone fixes nothing, and it would have voided the passing final gate
+  (018f8107) and forced another full gate of more than 2 h on this host. The merge train syncs main anyway, and
+  the collision rule covers the generated files. The merge commit is kept as tag
+  `wip/ar1-merge-main-49de179e` (f043bfbd).
+- NEEDS DRI: (a) merge infra/oom-rootcause (c88e4012) and prune main's 128 stale allow-list paths on main.
+  Then this branch passes the row without any change of its own. Or (b) waive the row for this branch with
+  `arch-20261010-1 relay findings are main's (133 on 49de179e; fix c88e4012 on infra/oom-rootcause + stale
+  allow-list prune)`. Every other row passes.
+
 ## Not done / follow-ups
 
 - FOLLOW-UP (load-sensitive, R13): `test_lean_transitive_axiom_allowlist` failed twice this week on a timeout:
