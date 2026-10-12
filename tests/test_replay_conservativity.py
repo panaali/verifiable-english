@@ -1,7 +1,6 @@
 """Replay every pre-closure v0 certificate against its frozen original verdict."""
 from dataclasses import asdict
 import json
-import os
 from pathlib import Path
 
 from ve import Environment
@@ -24,9 +23,9 @@ def test_whole_v0_certificate_corpus_has_identical_replay_verdicts():
         fs = document_from_data(env, case["premises"] + [case["conclusion"]]).formulas
         after = asdict(check_entailment_certificate(env, fs[:-1], fs[-1], case["certificate"]))
         before = row["before"]
-        if (os.environ.get("VE_AUTHORITY", "python") != "python"
-                and before["status"] == after["status"] == "InvalidCertificate"):
-            # Documented wording: Lean names its own decode or replay failure
+        if before["status"] == after["status"] == "InvalidCertificate":
+            # Documented wording: Lean, which replays under every authority since
+            # lean-first batch 13b, names its own decode or replay failure
             # ("certificate does not replay"), not the node Python rejected first.
             before = {**before, "detail": after["detail"]}
         assert after == before, case["id"]

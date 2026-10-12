@@ -19,12 +19,12 @@ from tests.test_norms_contract import FIXTURES as NORM_FIXTURES
 from tests.test_wire_contract_s5_lean import document, s1, s16
 from ve import norm_defaults_contract, norms_contract
 from ve.errors import VEError
-from ve.norm_admission import _admit_norm_document_python
+from ve.norm_admission import admit_norm_document
 from ve.norm_defaults_route import admit_norm_defaults_document
 from conformance.wire_contract_engine import load
 
 ROOT = Path(__file__).resolve().parents[1]
-UNITS = {"norms@0": (norms_contract, _admit_norm_document_python, s1),
+UNITS = {"norms@0": (norms_contract, admit_norm_document, s1),
          "norm-defaults@0": (norm_defaults_contract, admit_norm_defaults_document, s16)}
 DIAGNOSTIC_MODULES = ("ve.norms_contract", "ve.norm_defaults_contract", "conformance.softnorms_contract", "ve.wire_contract")
 
@@ -51,14 +51,16 @@ def test_shadow_admission_retains_legacy_error(unit, fixture):
     with pytest.raises(VEError) as caught:
         call(environment, document(norms))
     assert caught.value.diagnostic is None
+    case = {"id": "admission", "kind": "admission", "environment": environment, "document": document(norms)}
     if unit == "norm-defaults@0":
         from ve.norm_defaults_route import run_cases
-        (lean,) = run_cases([{"id": "admission", "kind": "admission", "environment": environment,
-                             "document": document(norms)}])
-        assert str(caught.value) == lean["error"]
+        (lean,) = run_cases([case])
     else:
-        assert (type(caught.value), caught.value.code, str(caught.value)) == \
-            (type(legacy.value), legacy.value.code, str(legacy.value))
+        # Lean-first batch 13b: the norms route decides norms admission; its text is the call's.
+        from ve.backends.relay import rows
+        (lean,) = rows("norms", [case])
+    assert lean["status"] == "error" and str(caught.value) == lean["error"]
+    assert caught.value.code == legacy.value.code
 
 
 PROBE = """

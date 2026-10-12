@@ -15,7 +15,10 @@ def unit : Shape :=
       ("kind", ref "common.json#/$defs/kind"), ("meaning", ref "#/$defs/meaning"),
       ("support", c "Discourse.Loader.supports." [enumS VE.Discourse.Loader.supports]),
       ("status", c "Discourse.Loader.statuses: the unit's W2 status." [enumS VE.Discourse.Loader.statuses]),
-      ("parent_id", ref "common.json#/$defs/token"), ("content", ref "common.json#/$defs/generated_formula"), ("meaning_id", ref "common.json#/$defs/hex64")]]
+      ("parent_id", ref "common.json#/$defs/token"), ("content", .anyOf [
+        ref "common.json#/$defs/generated_formula",
+        n [obj, .required ["norm"], closed [("norm", ref "common.json#/$defs/norm_node")]]]),
+      ("meaning_id", ref "common.json#/$defs/hex64")]]
 
 /-- `Service.Document.Meaning.json`: a meaning `Loader.meaningStatus` accepts. -/
 def meaning : Shape :=
