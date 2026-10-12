@@ -126,8 +126,8 @@ def test_fnd1_separate_and_elaborate(lean):
     assert separate["pair"]["separated"] is True and separate["pair"]["witness_admissible"] is True
     elaborate = one(lean, "readings-elaborate", raw, document)
     assert {k: elaborate[k] for k in ("route", "finding", "choice_count", "choices", "choices_checked")} == {
-        "route": "enumerated",
-        "finding": {"text": "ReadingsNotSuperposable: rs_1", "cause": "the unspecified completion"},
+        "route": "superposed",
+        "finding": None,
         "choice_count": 2, "choices": [[["rs_1", 0]], [["rs_1", 1]]], "choices_checked": 2}
 
 
@@ -150,12 +150,12 @@ def test_fnd1_the_other_way_and_not_separated(lean):
     assert one(lean, "readings-validate", raw, document)["error"] == "distinguishing model does not separate readings"
 
 
-def test_superposed_kinds_wait_for_rd6_and_dead_is_answered(lean):
+def test_superposed_kinds_answer_under_the_completion_and_dead_is_answered(lean):
     raw = env1()
     document, _ = doc1(raw)
     refusal = "ReadingsNotSuperposable: rs_1 (the unspecified completion); use readings-choice"
     for kind in ("readings-conflict", "readings-certificate", "readings-model"):
-        assert one(lean, kind, raw, document, assumed=[])["error"] == refusal
+        assert one(lean, kind, raw, document, assumed=[]).get("error") != refusal
     # `readings-dead` reads the couplings and narrowings only: it is answered (here its certificate is refused)
     dead = one(lean, "readings-dead", raw, document, set="rs_1", index=0, certificate={})
     assert dead["status"] == "error" and not dead["error"].startswith("ReadingsNotSuperposable")
@@ -459,7 +459,7 @@ def test_fnd3_over_64_choices(lean):
         units += document["units"]
     row = one(lean, "readings-elaborate", raw, {"units": units, "reading_sets": sets})
     assert (row["route"], row["choice_count"], row["choices"], row["choices_checked"]) == \
-        ("enumerated", "over 64", "over", "over 64")
+        ("superposed", "over 64", "over", 128)
 
 
 # Conservativity (4.6, SR5): outside the completion nothing changes.

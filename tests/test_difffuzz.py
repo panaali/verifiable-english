@@ -15,12 +15,15 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 import pytest
 
 from tools import difffuzz as df
+from tools import lake_outputs
 from tools import difffuzz_corpus as corpus
+from subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 # The one-shot routes and `ve_diagnose` are service modes since lean-first batch 1 (`df.SERVICE_MODES`).
@@ -40,12 +43,16 @@ def _summary(report):
                        "baseline": report["baseline"]}, indent=1, ensure_ascii=False)[:6000]
 
 
-def test_ci_run(built, record_property):
-    """`difffuzz.py --ci`: every seed and the seeded sample of every surface, compared three ways, within a
-    fixed amount of work (`df.WORK_LIMIT`). Its CPU seconds grow with the machine's load (361 s against the
-    old 300 s limit in a loaded gate), so they are recorded, not checked."""
-    report = df.fuzz()
+def test_ci_run(built, tmp_path, record_property):
+    """Run the bounded CI sample against executables whose Lake traces match their contents."""
+    assert lake_outputs.stale() == [], "rebuild: python3 tools/lake_outputs.py --drop && lake build"
+    output = tmp_path / "difffuzz-ci.json"
+    completed = subprocess.run([sys.executable, "-m", "tools.difffuzz", "--ci", "--report", str(output)],
+                               cwd=ROOT, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert output.is_file(), completed.stderr[-2000:]
+    report = json.loads(output.read_text())
     record_property("cpu_seconds", report["cpu_seconds"])
+    assert completed.returncode == 0, _summary(report)
     assert report["new"] == [], _summary(report)
     assert report["baseline"]["not_reproduced"] == [], _summary(report)
     assert report["baseline"]["unreviewed"] == [], _summary(report)
@@ -286,7 +293,8 @@ def _label_text(monkeypatch):
         if admission.parse_label(s) is None:
             raise admission.AdmissionError(f"AdmissionError: label {s} is invalid")
         return s
-    monkeypatch.setattr(admission, "_validate_label_python", changed)
+    # Lean decides labels since lean-first batch 13b: the change is planted in the Python path's relay.
+    monkeypatch.setattr(admission, "validate_label", changed)
 
 
 def _label_code(monkeypatch):
@@ -298,7 +306,7 @@ def _label_code(monkeypatch):
         if admission.parse_label(s) is None:
             raise UnsupportedProfile(f"UnsupportedProfile: invalid label {s}")
         return s
-    monkeypatch.setattr(admission, "_validate_label_python", changed)
+    monkeypatch.setattr(admission, "validate_label", changed)
 
 
 def _labels_only(monkeypatch):

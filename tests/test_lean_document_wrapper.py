@@ -99,19 +99,18 @@ def test_gap_and_wrong_status_are_rejected(service):
 # The seeds Lean must decide (no fail-closed answer): its owned profiles, every branch of the wrapper.
 DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/causal.ve.md", "plain", "mixed",
            "open-terms", "reading-sets", "graph-bridge", "graph-readings", "definitions", "p0-envelope",
-           "alternatives-cells", "alternatives-narrowed", "alternatives-graph", "risk"}
+           "alternatives-cells", "alternatives-narrowed", "alternatives-graph", "risk",
+           "usecases/question-answering/udhr-part07.ve.md",
+           "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+           "usecases/question-answering/agent-policy/a-rules.ve.md",
+           "usecases/question-answering/agent-policy/a-conflict.ve.md"}
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
-               "tests/data/readings_s2/constitution-nd-readings.ve.md": "JSON reader: null in reading_sets",
-               # RD-5: its 27 sets left on W2 keep `content: null`; the whole document is checked below.
-               "usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md": "JSON reader: null in reading_sets",
+               "tests/data/readings_s2/constitution-nd-readings.ve.md": "fenced English or strict content",
                "usecases/question-answering/group.ve.md": "surface parser",
-               "usecases/question-answering/udhr-part07.ve.md": "norm-defaults@0",
-               "usecases/question-answering/agent-policy/a-unspecified.ve.md": "norm-defaults@0",
-               "usecases/question-answering/agent-policy/a-rules.ve.md": "norm-defaults@0",
-               "usecases/question-answering/agent-policy/a-conflict.ve.md": "norm-defaults@0",
                "usecases/question-answering/agent-policy/a-deny.ve.md": "Lean norms route",
                "fence": "surface parser"}
+PYTHON_FALLBACK = {"usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"}
 
 
 @pytest.fixture(scope="module")
@@ -122,10 +121,16 @@ def seed_answers(service):
 
 
 def test_every_seed_document_agrees_with_python_or_fails_closed(seed_answers):
-    assert set(seed_answers) == DECIDED | set(FAIL_CLOSED)
-    assert LARGE_FAIL_CLOSED <= set(FAIL_CLOSED)
-    assert all(dw.fuzzed(seed_answers[name][0], name) for name in LARGE_FAIL_CLOSED)
-    for name, (_, python, answer) in seed_answers.items():
+    assert set(seed_answers) == DECIDED | set(FAIL_CLOSED) | PYTHON_FALLBACK
+    assert LARGE_FALLBACK <= PYTHON_FALLBACK
+    assert all(dw.fuzzed(seed_answers[name][0], name) for name in LARGE_FALLBACK)
+    for name, (doc, python, answer) in seed_answers.items():
+        if name in PYTHON_FALLBACK:
+            from ve.document import _lean_answer
+            assert python["outcome"] == answer["outcome"] == "ok"
+            assert answer["value"]["coverage"]["residual_total"] != python["value"]["coverage"]["residual_total"]
+            assert _lean_answer(dw.text_of(doc).encode(), True) is None
+            continue
         if name in DECIDED:
             assert dw.verdict(python, answer) == "agree", (name, python, answer)
             assert python["outcome"] == "ok", (name, python)
@@ -385,17 +390,18 @@ def _null_and_number_mutants(doc):
     return texts
 
 
-LARGE_FAIL_CLOSED = {"usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"}
+LARGE_FALLBACK = PYTHON_FALLBACK
 
 
-@pytest.mark.parametrize("name", sorted((DECIDED | set(FAIL_CLOSED)) - LARGE_FAIL_CLOSED))
+@pytest.mark.parametrize("name", sorted((DECIDED | set(FAIL_CLOSED)) - LARGE_FALLBACK))
 def test_null_and_number_forms_agree_with_python_or_fail_closed(service, name):
     """16c review B2's class: Lean's JSON reader decided `null` and number forms differently from Python (107
     accepted-to-rejected flips on `null`; `2e0` read as the natural 2 where Python reads a float). Every
     one-member `null` and every number form of every seed is Python's answer or `CheckerUnavailable`, never
     another verdict; and the seed's own members the mode reads as absent (`content`, `status`) are decided. RD-5's
     375 KB pilot is checked whole by `test_every_seed_document_agrees_with_python_or_fails_closed` and mutated by
-    difffuzz; this one-member helper would copy it 12,084 times (4.5 GB of input) for a constant refusal."""
+    difffuzz; this one-member helper would copy it 12,084 times (4.5 GB of input) while the wrapper uses the
+    original Python path for that documented coverage gap."""
     doc = dict(dw.seeds())[name]
     texts = _null_and_number_mutants(doc)
     assert texts
@@ -531,14 +537,13 @@ def test_python_document_diagnostics_carry_the_code_their_text_names():
             assert code == "InvalidInput" or code not in CLASSES, (path, node.lineno, text)
 
 
-def test_only_seeds_lean_refuses_whole_are_left_unmutated():
-    """`document_wrapper.UNMUTATED` keeps a seed out of the fuzzer's mutants only while Lean refuses it whole: every
-    seed it names is in `FAIL_CLOSED` (checked above against the running mode), every prefix names a seed, and the
-    fuzzer still mutates every other seed that is not a quantity document."""
+def test_large_question_fixtures_are_compared_as_seeds_without_mutants():
+    """The bounded fuzzer skips mutants of the large question fixtures, while the seed test above checks each
+    Lean answer. Every other non-quantity document remains in the mutant corpus."""
     from conformance import document_wrapper as dw
     names = [name for name, _ in dw.seeds()]
     unmutated = [name for name in names if any(name.startswith(p) for p in dw.UNMUTATED)]
-    assert unmutated and set(unmutated) <= set(FAIL_CLOSED), set(unmutated) - set(FAIL_CLOSED)
+    assert unmutated and set(unmutated) <= DECIDED | set(FAIL_CLOSED) | PYTHON_FALLBACK
     for prefix in dw.UNMUTATED:
         assert any(name.startswith(prefix) for name in names), prefix
     for name, doc in dw.seeds():
