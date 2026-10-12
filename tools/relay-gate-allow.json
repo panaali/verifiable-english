@@ -963,8 +963,7 @@
    "mutation": "drop",
    "path": [
     "results/*/generator",
-    "results/*/result/generator",
-    "results/*/result/report/assumptions/*/label"
+    "results/*/result/generator"
    ],
    "kind": "by-design",
    "id": "B5",
@@ -1480,10 +1479,7 @@
     "results/*/generator",
     "results/*/result/error",
     "results/*/result/generator",
-    "results/*/result/order/*",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
-    "results/*/result/report/root/ast/*/*"
+    "results/*/result/order/*"
    ],
    "kind": "follow-up",
    "id": "F4",
