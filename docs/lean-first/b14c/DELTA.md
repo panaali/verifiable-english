@@ -20,10 +20,12 @@ The Lean route reuses the FOL definition decoder and budget for unary and binary
 
 ## DRI rulings
 
-- **SIGNED by standing ruling R6 (DRI-RULINGS.md):** the added Lean validation, table computation and response checks replace the deleted Python n-ary fallback decision path. `tools/trust_map.py --since f1b719c7` measures the branch relative to the merge base; the recorded trust budget is a ratchet. The changed source and deleted fallback are covered by `tests/test_b14c.py` and the Lean audit.
+- **SIGNED by standing ruling R6 (DRI-RULINGS.md):** the added Lean validation, table computation and response checks replace the deleted Python n-ary fallback decision path. `tools/trust_map.py --since f1b719c7` measured trusted +175 lines relative to the merge base, with no K or S growth; the existing ratchet budget already covers this branch (`--write --reason` made no baseline change). The reason is this owner switch. The changed source and deleted fallback are covered by `tests/test_b14c.py` and the Lean audit.
 - **SIGNED by standing ruling R8/R11 (DRI-RULINGS.md):** Python checks the Lean response's typed schema and its binding to the request. The generated Background remains a Lean decision. The relay mutation gate retypes, empties, drops and duplicates fields of genuine responses.
 - **SIGNED by standing ruling R12 (DRI-RULINGS.md):** Lean audits, statements, checker pins, response schemas and gate collection were regenerated through `tools/regen_generated.py`.
 - **D4:** batch scope, corpus, latency and gate evidence are saved and checked at the batch gate and merge. No permanent test reads this batch's report numbers.
+
+The statement inventory gained 43 declarations and changed or removed none. The Lean audit checked all 5,260 named theorem declarations with only the standard axiom allowlist. No approved theorem statement was altered.
 
 ## Seeded bugs
 
@@ -39,4 +41,6 @@ This batch changes the authority for identity-bound n-ary core definitions to Le
 
 ## Evidence
 
-The final report records the exact branch line counts, corpus A/B, differential fuzzer, pilots, latency, and full release gate from saved evidence on the final HEAD.
+The five-run same-host route measurement (`latency.py`, `evidence/latency.json`) found a 94.567 ms base versus 92.356 ms head median CPU on the unchanged core Background case. The n-ary evaluate case took 98.971 ms CPU and 445.008 ms wall at the median, within the plan's absolute document budget. The final report records the corpus A/B, differential fuzzer, pilots and full release gate from saved evidence on the final HEAD.
+
+`tools/difffuzz.py --ci` passed with no new findings. Its reviewed baseline remains 250 entries (222 seen in the CI sample); the report is saved as `evidence/difffuzz.json`.

@@ -1,0 +1,15 @@
+{
+  "nary": {
+    "cpu_ms": 98.971,
+    "wall_ms": 445.008
+  },
+  "pass": true,
+  "samples": {
+    "core-background": {
+      "base_cpu_ms": 94.567,
+      "base_wall_ms": 426.973,
+      "head_cpu_ms": 92.356,
+      "head_wall_ms": 452.612
+    }
+  }
+}
