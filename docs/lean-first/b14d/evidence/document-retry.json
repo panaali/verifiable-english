@@ -1,0 +1,64 @@
+{
+  "reason": "Three concurrent head document checks hit the normal Rust 5-second deadline; paired base/head retries with VE_RUST_TIMEOUT=60 and VE_LEANFIRST_TIMEOUT=60 returned identical public outcomes.",
+  "base_commit": "f1b719c7acc0246a2f6b67f039164916ca21aaf1",
+  "raw_retry_files": [
+    "document-retry-base.jsonl",
+    "document-retry-head.jsonl"
+  ],
+  "rows": [
+    {
+      "case": "mutant/198",
+      "op": "document_check",
+      "source_sha256": "6582e0cc1756b845a840b7b204b5d846ada51e00f5a64d2ce4c16e6448f33393",
+      "base_head_identical": true,
+      "outcome_sha256": "ae504b0a2709a748b9e55cf8aab4e7878559301e7c3aa6dd12cad7b605d00215",
+      "raw_head_failure": {
+        "code": "CheckerUnavailable",
+        "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-14d/rust/target/release/ve', 'jsonl', '-']' timed out after 4.973259992082603 seconds"
+      }
+    },
+    {
+      "case": "mutant/198",
+      "op": "document_render",
+      "source_sha256": "6582e0cc1756b845a840b7b204b5d846ada51e00f5a64d2ce4c16e6448f33393",
+      "base_head_identical": true,
+      "outcome_sha256": "d9212c273a9b7c8417c3bced877ecd0ddaeb1b9e9b3a7a5cd1db7d0571cc3aa9"
+    },
+    {
+      "case": "mutant/422",
+      "op": "document_check",
+      "source_sha256": "6582e0cc1756b845a840b7b204b5d846ada51e00f5a64d2ce4c16e6448f33393",
+      "base_head_identical": true,
+      "outcome_sha256": "06b327560b5566e5c0f623a9915d82c535299f37d804efb87c9eb78b3794d419",
+      "raw_head_failure": {
+        "code": "CheckerUnavailable",
+        "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-14d/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999944520066492 seconds"
+      }
+    },
+    {
+      "case": "mutant/422",
+      "op": "document_render",
+      "source_sha256": "6582e0cc1756b845a840b7b204b5d846ada51e00f5a64d2ce4c16e6448f33393",
+      "base_head_identical": true,
+      "outcome_sha256": "73543618ab87c1fbcdb8faadd5de87d129f73fdeff87b4170c61b153979a4845"
+    },
+    {
+      "case": "seed/usecases/bluedot-grant/document.ve.md",
+      "op": "document_check",
+      "source_sha256": "6582e0cc1756b845a840b7b204b5d846ada51e00f5a64d2ce4c16e6448f33393",
+      "base_head_identical": true,
+      "outcome_sha256": "d8b4d7c8b8d0e257a82364d15bd38b604f8ed3e1bcdd1fd1845580fbaaf0a53c",
+      "raw_head_failure": {
+        "code": "CheckerUnavailable",
+        "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-14d/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999948668992147 seconds"
+      }
+    },
+    {
+      "case": "seed/usecases/bluedot-grant/document.ve.md",
+      "op": "document_render",
+      "source_sha256": "6582e0cc1756b845a840b7b204b5d846ada51e00f5a64d2ce4c16e6448f33393",
+      "base_head_identical": true,
+      "outcome_sha256": "73543618ab87c1fbcdb8faadd5de87d129f73fdeff87b4170c61b153979a4845"
+    }
+  ]
+}
