@@ -1,6 +1,6 @@
 # Batch 14d A/B delta
 
-The nine-corpus comparison is in progress. This file will list every user-visible difference before the release gate. No verdict, availability, diagnostic, or field change is claimed as signed without a saved comparison and the applicable DRI ruling.
+The complete nine-corpus comparison covers 100,333 records on each side. It found 100,326 identical available outcomes, seven identical unavailable pilot outcomes, and zero unlisted differences ([full-ab.json](evidence/full-ab.json)). There is no changed verdict, diagnostic, field, fault order, or availability to sign. The seven unavailable pairs are signed under R7 below.
 
 The A/B recorder gives each side a distinct temporary pilot directory. Its comparator now substitutes a stable marker for that directory alone; `test_pilot_comparison_normalizes_only_its_own_scratch_directory` confirms that the rest of a diagnostic remains exact. This changes gate evidence only, not a product answer. Both sides were rerun over all 486 pilots with `VE_RUST_TIMEOUT=60`. The large constitution translation hit the head recorder's 600-second cap during that loaded run, then returned the same public result as the base on an isolated 556-second retry ([pilot-retry.json](evidence/pilot-retry.json)). The resolved comparison has 479 identical available answers and seven identical unavailable pairs, with no unlisted difference ([pilots-ab.json](evidence/pilots-ab.json)).
 
