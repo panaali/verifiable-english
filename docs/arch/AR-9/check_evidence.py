@@ -1,14 +1,15 @@
-"""The AR-9 report is a view of saved evidence (`docs/arch/AR-9/evidence/`), independent of live git."""
+"""Check the saved AR-9 evidence and rendered report at the batch gate.
+
+This is deliberately outside pytest collection: D4 keeps batch report checks out
+of the permanent suite. It reads only saved evidence, never live git.
+"""
 from __future__ import annotations
 
 import importlib.util
 import json
 from pathlib import Path
 
-import pytest
-
-ROOT = Path(__file__).resolve().parents[1]
-HERE = ROOT / "docs/arch/AR-9"
+HERE = Path(__file__).resolve().parent
 EVIDENCE = HERE / "evidence"
 SPEC = importlib.util.spec_from_file_location("ar9_report", HERE / "report.py")
 assert SPEC is not None and SPEC.loader is not None
@@ -21,14 +22,14 @@ def _saved(name: str):
     return json.loads((EVIDENCE / name).read_text())
 
 
-def test_report_is_generated_from_saved_evidence():
+def check_report():
     text = (HERE / "REPORT.md").read_text()
     generated = text.split("<!-- BEGIN GENERATED AR-9 METRICS -->\n", 1)[1].split(
         "\n<!-- END GENERATED AR-9 METRICS -->", 1)[0]
     assert generated == REPORT.metrics()
 
 
-def test_split_evidence_shows_a_move_of_every_definition():
+def check_split():
     split = _saved("split.json")
     assert split["dirty"] is False and len(split["base"]) == len(split["head"]) == 40
     assert split["base"] != split["head"]
@@ -45,7 +46,7 @@ def test_split_evidence_shows_a_move_of_every_definition():
     assert sum(r["function_imports"] for r in base.values()) == sum(r["function_imports"] for r in head.values())
 
 
-def test_every_seeded_fault_failed_its_tests_and_passed_once_restored():
+def check_mutants():
     saved = _saved("mutants.json")
     mutants = saved["mutants"]
     assert len(mutants) >= 3 and len({m["bug"] for m in mutants}) == len(mutants)
@@ -60,9 +61,7 @@ def test_every_seeded_fault_failed_its_tests_and_passed_once_restored():
     assert all(row["exit_code"] == 0 for row in saved["restored"])
 
 
-def test_saved_gate_covers_the_saved_scope():
-    if not (EVIDENCE / "gate.json").exists():
-        pytest.skip("the full gate runs on the final code commit; its result is saved after it")
+def check_gate():
     scope, gate, split = _saved("scope.json"), _saved("gate.json"), _saved("split.json")
     assert scope["base"] == split["base"]
     assert scope["commits"] and scope["commits"][0]["hash"] == scope["head"]
@@ -73,3 +72,18 @@ def test_saved_gate_covers_the_saved_scope():
     assert counts["passed"] > 0 and counts["failed"] == 0 and counts["rust_passed"] > 0
     assert counts["passed"] + counts["skipped"] + counts["failed"] == counts["selected"]
     assert {"lean_build", "lean_audit", "cargo_test", "pytest"} <= set(gate["stages"])
+
+
+def main():
+    check_report()
+    check_split()
+    check_mutants()
+    if (EVIDENCE / "gate.json").exists():
+        check_gate()
+        print("AR-9 saved evidence PASS (including final gate)")
+    else:
+        print("AR-9 saved evidence PASS (pre-gate checks)")
+
+
+if __name__ == "__main__":
+    main()

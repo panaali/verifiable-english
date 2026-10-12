@@ -6,7 +6,7 @@ Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` (branch `design/arch-review`), secti
 ## Outcome
 
 Every number below is rendered by `report.py` from `evidence/` and checked by
-`tests/test_ar9_evidence.py`.
+`check_evidence.py` at the batch gate, outside the permanent test suite (D4).
 
 <!-- BEGIN GENERATED AR-9 METRICS -->
 - Measured: base `c24aeab2`, head `27339266` (clean `ve/`).
@@ -54,7 +54,7 @@ Two constraints decided the split beyond the plan's three themes per module:
 ## Coordination (plan 4.2)
 
 Files touched: `ve/assist/recovery.py`, `ve/assist/session.py`, six new `ve/assist/*_*.py`,
-`tests/test_assist_split.py`, `tests/test_ar9_evidence.py`, `tools/gate-collection.json`,
+`tests/test_assist_split.py`, `tools/gate-collection.json`,
 `docs/arch/AR-9/`. At the start, and again on 2026-10-11 after each sync with `main` (`96887019`,
 then `5479466f`, which merged AR-8), `git diff --name-only main...<branch>` for every branch matching `lean-first/*`,
 `readings-defaults/*`, `question-answering/*` and `infra/*` named no file AR-9 touches except the
@@ -73,12 +73,11 @@ the plan's fixture requires.
   facade owns; each recovery seam reads the facade's name when called; the session decisions
   stay on `AssistSession` in `session.py`; every member has one owner; the six manifest-reviewed
   methods are where the manifest names them.
-- `tests/test_ar9_evidence.py`: this report's block equals `report.py`'s rendering of the saved
-  evidence, and the saved evidence is consistent (clean, complete, every fault caught, gate on
-  the saved scope). It reads only `evidence/`, never live git. The batch prompt asks for a
-  saved-evidence report test; under D4 (plan 4.1 item 7) it moves to the evidence check of AR-5b,
-  as AR-6's did. `tools/batch_evidence.py` does not apply yet: it requires the corpus comparison
-  and latency evidence that 4.1 item 2 does not ask of AR-9.
+- `docs/arch/AR-9/check_evidence.py`: this report's block equals `report.py`'s rendering of
+  saved evidence, and the evidence is consistent (clean, complete, every fault caught, gate on
+  the saved scope). It reads only `evidence/`, never live git. It runs directly at the batch
+  gate, outside pytest collection as D4 requires. `tools/batch_evidence.py` does not apply yet:
+  it requires corpus comparison and latency evidence that 4.1 item 2 does not ask of AR-9.
 - Unchanged and passing: `tests/test_assist.py`, `test_assist_deadline.py`,
   `test_assist_invariants.py`, `test_assist_recovery.py`, `test_assist_recovery_replay.py`,
   `test_b17_owner.py`, `test_assurance_manifest.py` (384 passed, 1 skipped: P5 materials are
