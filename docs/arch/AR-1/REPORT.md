@@ -116,6 +116,12 @@ The same test also failed in infra/arch-AR-3's gate (aff7a4c2), without this bat
 the audit runs in parts of 400 theorems (above). Both records are kept, as `evidence/gate-result-db470d0c-failed.json`
 and `evidence/gate-result-db470d0c-rerun-failed.json`. The final gate is `evidence/gate-result.json`.
 
+## Final full gate (018f8107, passed)
+
+`tools/gate.py --workers 6` on 018f8107, clean tree: **passed**. 14,322 passed, 92 skipped, 0 failed of
+14,414 selected (14,415 collected, 1 deselected), 36 Rust tests passed. All stages ran: toolchains, lean_build,
+lean_audit (5,780 theorems), rust_build, cargo_test, pytest. Only this report and the gate record changed after it.
+
 ## Deltas
 
 See DELTA.md. There is no user-visible checker delta. The only ruling cited is R12, for the rehashed frozen
