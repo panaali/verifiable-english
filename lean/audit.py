@@ -138,9 +138,24 @@ def recorded_names(text):
 
 
 def main(argv=()):
+    if list(argv) == ["--sync-manifests"]:
+        actual, _ = scan_sources(ROOT)
+        recorded = [recorded_in(manifest) for manifest in MANIFESTS]
+        missing = actual - set.union(*recorded)
+        extra = set.union(*recorded) - actual
+        if extra:
+            raise AssertionError({"extra": extra})
+        for manifest in MANIFESTS:
+            prefix = "ResponseShape." if manifest.startswith("ResponseShape/") else "VE."
+            additions = sorted(name for name in missing if name.startswith(prefix))
+            if additions:
+                path = ROOT / manifest
+                with path.open("a") as output:
+                    output.write("\n" + "".join(f"#print axioms {name}\n" for name in additions))
+        return
     write = list(argv) == ["--write"]
     if list(argv) and not write:
-        raise SystemExit("usage: python3 lean/audit.py [--write]")
+        raise SystemExit("usage: python3 lean/audit.py [--write|--sync-manifests]")
     actual, sources = scan_sources(ROOT)
     recorded = [recorded_in(manifest) for manifest in MANIFESTS]
     assert not set.intersection(*recorded), {"listed twice": set.intersection(*recorded)}
