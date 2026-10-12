@@ -30,14 +30,28 @@ def cli(*args):
                           text=True, capture_output=True, timeout=HANG_TIMEOUT)
 
 
-@pytest.mark.parametrize("ident", ["G1", "G3", "G4", "U6"])
-def test_ve_ask_prints_leans_lines(ident):
+@pytest.mark.parametrize("ident", ["G1", "G2", "G3", "G4", "G10", "U2", "U3", "U5", "U6", "U7",
+                                   "A1", "A2", "A3", "A4", "A5", "A7", "A8"])
+def test_ve_ask_prints_leans_lines(ident, tmp_path):
     """The printed lines are Lean's text for the recorded request: the generators are deterministic, so the CLI's
     own request gets the recorded answer."""
     entry = AF.load(ident)
-    done = cli(ROOT / entry["path"], entry["question"])
-    assert done.returncode == 0, (done.stdout, done.stderr)
+    options = []
+    if ident.startswith("A"):
+        evidence = tmp_path / "recorded-evidence.json"
+        evidence.write_text(json.dumps(entry["case"]["evidence"]))
+        options = ["--evidence", evidence]
+    done = cli(ROOT / entry["path"], entry["question"], *options)
+    assert done.returncode == (3 if entry["result"]["lead"] == "unknown" else 0), (done.stdout, done.stderr)
     assert done.stdout.splitlines() == entry["result"]["text"]
+
+
+def test_ve_ask_refuses_the_recorded_unsupported_profile():
+    """F3: A1d remains a refusal from the same CLI entry point."""
+    entry = AF.load("A1d")
+    done = cli(ROOT / entry["path"], entry["question"])
+    assert done.returncode != 0
+    assert entry["error"]["class"] in done.stderr
 
 
 def test_the_leads_are_the_specs():
