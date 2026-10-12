@@ -32,13 +32,29 @@ theorem bundle_fits (j : Json) : OkFits req Skeletons.bundle (FamilyBundle.bundl
   all_goals (try simp only [VE.Route.Wire.ok])
   all_goals fits
 
-theorem familyNorms_fits (j : Json) : OkFits j Skeletons.familyNorms (FamilyNorms.runCase j) := by
-  unfold FamilyNorms.runCase
+theorem familyNorms_fol_fits (j : Json) : OkFits j Skeletons.familyNorms (FamilyNorms.folCase j) := by
+  unfold FamilyNorms.folCase
   okfits
   all_goals read_kind
   all_goals (try simp only [VE.Route.Wire.ok, VE.Norms.Flagged.regenerated, VE.Norms.Wire.regenerated,
     List.map_cons, List.map_nil, String.reduceBEq, FamilyNorms.conflictCase])
   all_goals fits
+
+theorem familyNorms_generic_fits {F : Type} (R : VE.Norms.Family.Reader F) (j : Json) :
+    OkFits j Skeletons.familyNorms (FamilyNorms.genericCase R j) := by
+  unfold FamilyNorms.genericCase
+  okfits
+  all_goals read_kind
+  all_goals (try simp only [VE.Route.Wire.ok])
+  all_goals fits
+
+theorem familyNorms_fits (j : Json) : OkFits j Skeletons.familyNorms (FamilyNorms.runCase j) := by
+  unfold FamilyNorms.runCase
+  split
+  · exact familyNorms_fol_fits j
+  · unfold FamilyNorms.genericRun
+    split
+    all_goals first | exact familyNorms_generic_fits _ j | exact OkP.error
 
 theorem graph_reported (j : Json) : Fits j Skeletons.graph (Standalone.reported Family.graphMode j) := by
   unfold Standalone.reported; split
