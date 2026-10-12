@@ -96,19 +96,19 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
     """Check declared bodies and order them below their dependents.
 
     ``entries`` contains identity-bound body payloads from the vocabulary.
-    Under a backend authority Lean validates and orders them (`_compile_lean`).
+    Lean validates and orders them under every authority (`_compile_lean`,
+    lean-first batch 13b). Environments outside Lean's model scope keep the
+    retained Python elaborator, a recorded scope gap.
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import owned
     from .backends.validation import model_in_scope
 
     def python():
         return _compile_python(env, entries, version=version)
 
-    if authority_for("definitions_elaboration") in ("python", "rust-experimental") \
-            or not model_in_scope(env):
+    if not model_in_scope(env):
         return python()
-    return execute("definitions_elaboration", {"environment_id": env.environment_id, "version": version},
-                   python, lean=lambda: _compile_lean(env, entries, version, python))
+    return owned("definitions_elaboration", lambda: _compile_lean(env, entries, version, python))
 
 
 def _wire_entries(env: Environment, entries) -> dict | None:
@@ -145,37 +145,24 @@ def _lean_definition(env: Environment, premise_wire) -> Definition:
 
 
 def _compile_lean(env: Environment, entries, version, python) -> tuple[Definition, ...]:
-    """Lean's route Background decides the definitions and their order.
-
-    Python's elaborator runs as the structural decoder and names a rejection
-    both make (`backends.validation.decided`).
-    """
+    """Lean's route Background decides the definitions and their order; the
+    definitions are read back from its regenerated premises. Entries that
+    cannot be embedded in the environment (only a direct caller passes them)
+    and n-ary definitions on the core family keep the retained Python."""
     from .backends.lean_runner import route_mode
-    from .backends.relay import decide
-    from .backends.validation import decided, key, nary_core_definitions
+    from .backends.relay import decide_once
+    from .backends.validation import nary_core_definitions
     raw = _wire_entries(env, entries)
     if raw is None or type(version) is not str or not version:
         return python()
     if nary_core_definitions(env.profiles, raw["vocabulary"]["predicates"].values()):
-        return python()  # outside Lean's core layer glue (a recorded gap)
-    definitions = []
-
-    def ask():
-        row = decide(route_mode(env), [{"id": "definitions", "kind": "background", "environment": raw}])[0]
-        definitions[:] = [_lean_definition(env, premise) for premise, generator
-                          in zip(row["premises"], row["generators"], strict=True)
-                          if generator == "definitions"]
-        return row
-
-    def same(built, row):
-        return [(d.name, d.arguments, ast._to_data(d.body)) for d in built] == \
-               [(d.name, d.arguments, ast._to_data(d.body)) for d in definitions]
-
-    try:
-        cache = key("definitions", raw, version)
-    except (VEError, TypeError, ValueError, RecursionError):
-        cache = None
-    return decided(python, cache, ask, same, "definitions")
+        return python()  # outside Lean's core layer glue (stage-2c gap, batch 14c)
+    row = decide_once(route_mode(env), {"id": "definitions", "kind": "background", "environment": raw})
+    if len(row["premises"]) != len(row["generators"]):
+        from .errors import CheckerUnavailable
+        raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")
+    return tuple(_lean_definition(env, premise) for premise, generator
+                 in zip(row["premises"], row["generators"], strict=True) if generator == "definitions")
 
 
 def _compile_python(env: Environment, entries: dict[str, dict], *,

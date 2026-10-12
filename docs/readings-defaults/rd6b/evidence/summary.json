@@ -1,0 +1,86 @@
+{
+  "ab_records": {
+    "pilots/default": 454,
+    "readings/default": 1137
+  },
+  "ab_totals": {
+    "same": 1555,
+    "verdict": 29,
+    "wording": 7
+  },
+  "ab_unlisted": 0,
+  "base_merge_commit": "0d93e591d3963b65d1ad909a508b9d928322a014",
+  "code_head": "4db9b7a150e17b07b3f4c8ca0782456411e66867",
+  "commits_before_report": [
+    {
+      "sha": "092fd857ffe882d24a0a41a82ced290bb3adc4eb",
+      "subject": "readings-defaults RD-6b: fill_transfers, nd_superpose_conflict_free and nd_superpose_all proved"
+    },
+    {
+      "sha": "8c13fffa47c032a52dc9f3d59082ab7a216878d1",
+      "subject": "readings-defaults RD-6b: the superposed route under the completion (route, elaborate, conflict, certificate, model)"
+    },
+    {
+      "sha": "8d45588a78eef8995dac773c02c79994adb4ccfa",
+      "subject": "readings-defaults RD-6b: route filled superposition and bind answers"
+    },
+    {
+      "sha": "647bc451da1c3625d1a8a36c9af5f8790961eaf8",
+      "subject": "readings-defaults RD-6b: refresh audit and response manifests"
+    },
+    {
+      "sha": "e0dc4731d798acf589b558bb1afd4a0fe8c2772d",
+      "subject": "readings-defaults RD-6b: record seeded failures"
+    },
+    {
+      "sha": "5df25d290cb11700f2f716c5c38fb5eb7bd26690",
+      "subject": "readings-defaults RD-6b: update route tests and reviewed fuzz baseline"
+    },
+    {
+      "sha": "0acbab9fc1dedd1046b9e4ba2ce35ed259a72984",
+      "subject": "readings-defaults RD-6b: preserve fuzz baseline order"
+    },
+    {
+      "sha": "324d72e2ee3f72ecd8b742d64e20c3cb4cb44320",
+      "subject": "readings-defaults RD-6b: type superposed units and prove encoder shape"
+    },
+    {
+      "sha": "0ee10a85b49862d1e3faf74bcb010fd9b08118d5",
+      "subject": "readings-defaults RD-6b: bind superposed counts and names to requests"
+    },
+    {
+      "sha": "4db9b7a150e17b07b3f4c8ca0782456411e66867",
+      "subject": "readings-defaults RD-6b: classify reviewed fuzz diagnostic under DF-9"
+    }
+  ],
+  "gate_counts": {
+    "collected": 13704,
+    "deselected": 1,
+    "failed": 0,
+    "passed": 13611,
+    "rust_ignored": 0,
+    "rust_passed": 36,
+    "selected": 13703,
+    "skipped": 92
+  },
+  "latency_pass": true,
+  "lean": {
+    "audit_sources": 464,
+    "audit_theorems": 5040,
+    "build_jobs": 859,
+    "rd6b_declarations": 3,
+    "statements": 4610
+  },
+  "main_at_code_head": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
+  "seeded_bugs": 3,
+  "sha256": {
+    "ab-base.jsonl.gz": "afc86da08f5fdb131511b8155664f530973e9fd3e4e26e824c787e945ced6909",
+    "ab-compare.json": "70b937d0bcbe1daab3e434b63a9edf0db23d78b91b5ab13cde0696bed19d1729",
+    "ab-delta.json": "dbcc0b9b91631fc797bd2defcca85d0aba4ceeb00b6c65d0ac6b0c2b2efb5d05",
+    "ab-head.jsonl.gz": "a42460b1410f6c7dffc5ecfaf67351a7ab5bf22529d17cce447e5e8ec0639015",
+    "ab-retries.json.gz": "621aef15b198c3f357ad06693a4f4e7b61c2cbd238d15b4c714347e534477c47",
+    "gate-code.json": "1aa5dfef9d9e528d56ebdedb2510732ed3f8ad4dea6aef2ca3ec079cd04bd90f",
+    "latency.json": "b9026e8872e2f155440741b9e032e06b31af2b28d6ce7543427333eecd2351e5",
+    "seeded-bugs.json": "5532d796ad1ff009ada6770cd9ee93c5732550e77c408c7fb8431c0c1fb71b0d"
+  }
+}

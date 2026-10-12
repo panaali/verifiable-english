@@ -1,0 +1,108 @@
+{
+ "commit": "562e42cd9b1deb344ae98f823783202e20fc809d",
+ "how": "16 interleaved file chunks of tests/test_*.py (awk NR%16==k), pytest -n 3 -m 'not live', VE_NATIVE_PREBUILT=1, after tools/gate.py passed every stage before the Python suite on the same commit",
+ "chunks": {
+  "0": {
+   "tests": 540,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 1
+  },
+  "1": {
+   "tests": 854,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 83
+  },
+  "2": {
+   "tests": 869,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "3": {
+   "tests": 504,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 1
+  },
+  "4": {
+   "tests": 656,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "5": {
+   "tests": 484,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "6": {
+   "tests": 767,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "7": {
+   "tests": 565,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 3
+  },
+  "8": {
+   "tests": 1315,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "9": {
+   "tests": 513,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "10": {
+   "tests": 529,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 2
+  },
+  "11": {
+   "tests": 845,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "12": {
+   "tests": 3207,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 1
+  },
+  "13": {
+   "tests": 935,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "14": {
+   "tests": 670,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "15": {
+   "tests": 495,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  }
+ },
+ "totals": {
+  "tests": 13748,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 91
+ }
+}

@@ -1,0 +1,26 @@
+{
+  "head_commit": "4db9b7a150e17b07b3f4c8ca0782456411e66867",
+  "corpus_sha256": "ae6fec8935de56045da432b20fda3120022c3d7a718b0781c4df0694a2a3274a",
+  "method": "paired warm readings-route service calls; /proc service CPU time",
+  "samples": {
+    "differential/c0": {
+      "case_sha256": "2eb32776fce454e936243dfb9f5c90808c7d651cf36b7bc473bde1979f6aa2c5",
+      "calls_per_side": 500,
+      "base_cpu_ms": 2.254041,
+      "head_cpu_ms": 2.322566
+    },
+    "differential/c568": {
+      "case_sha256": "7ce846a74a48e0090349368fa8d88220653dbba8d025bfa545be248043b43b3f",
+      "calls_per_side": 500,
+      "base_cpu_ms": 2.1324,
+      "head_cpu_ms": 2.317957
+    },
+    "nulls/rights/vocabulary.predicates.arrest_permitted.instruction_of": {
+      "case_sha256": "c9efb3a9454eab711ac70600dc0d8f74e3b0b44cbde4857ea32d375a9136fa59",
+      "calls_per_side": 500,
+      "base_cpu_ms": 2.689749,
+      "head_cpu_ms": 2.732493
+    }
+  },
+  "pass": true
+}
