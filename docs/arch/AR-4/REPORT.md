@@ -179,4 +179,17 @@ changed (Python; no Lean or Rust changed). Each made its named test fail and was
   round's additions, then the selected tests).
 - Gate items 2, 3 and 5 of plan 4.1 have nothing to compare, because no file under `ve/`, `lean/` or `rust/`
   changed.
-- The full gate result for the final code commit is in `evidence/gate-result.json`.
+- **The full gate did not finish, so there is no passing `gate-result.json`.** `tools/gate.py` ran on `e25a7773`
+  (clean tree), the last commit before this evidence, which changed only `docs/arch/AR-4/`. The machine's load was
+  60–90 on 32 CPUs. The tool's background limit of 2 hours stopped the gate during its Python suite. AR-8 hit the
+  same limit on 2026-10-10. Every stage before the suite passed: wire contract, `lake build`, `lean/audit.py`, the
+  Rust build pinned in `checkers.lock`, 15 native Rust test binaries with 0 failed, and the Python collection
+  (14,446 of 14,447; the 1 deselected test is `live`). The stage log is in `evidence/gate-stages.log`.
+- The suite then ran on the same commit, in the foreground, with the gate's prebuilt Lean and Rust binaries:
+  16 file chunks at `-n 3` under `timeout 3000`, with `-m "not live"`, as AR-8 did. Chunks 9 and 10 exceeded the
+  timeout with no failure, so each was rerun in two halves. Result: 14,355 passed, 0 failed, 0 errors, and 91
+  skipped or xfailed. The JUnit files hold 14,446 distinct cases, every test the gate collected. The per-chunk
+  record is in `evidence/suite-chunks.json`.
+- Not run as one gate: the gate's own pytest plugins (`-p tools.gate_pytest`, its collection diff against
+  `tools/gate-collection.json`, and the optional-test policy). `tests/test_gate_collection.py` ran in the chunks
+  and passed.
