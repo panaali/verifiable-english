@@ -1,0 +1,28 @@
+{
+ "records": 760,
+ "totals": {
+  "same": 410,
+  "wording": 350
+ },
+ "wording_pairs": {
+  "expected ' is '": "SyntaxError: expected ' is '",
+  "expected '.\\n'": "SyntaxError: expected '.\\n'",
+  "invalid binder name 'x'": "SyntaxError: invalid binder name 'x'",
+  "invalid binder name 'a'": "SyntaxError: invalid binder name 'a'",
+  "invalid binder name 'base'": "SyntaxError: invalid binder name 'base'",
+  "invalid binder name 'no'": "SyntaxError: invalid binder name 'no'",
+  "expected ' that is '": "SyntaxError: expected ' that is '",
+  "expected ', ('": "SyntaxError: expected ', ('",
+  "expected ')'": "SyntaxError: expected ')'",
+  "definition body differs from identity-bound declaration": "SyntaxError: definition body differs from identity-bound declaration",
+  "repeated definition argument 'base'": "SyntaxError: repeated definition argument 'base'",
+  "repeated definition argument 'x'": "SyntaxError: repeated definition argument 'x'",
+  "expected ') as ('": "SyntaxError: expected ') as ('",
+  "expected defined predicate": "SyntaxError: expected defined predicate",
+  "expected sort identifier": "SyntaxError: expected sort identifier",
+  "repeated definition argument 'a'": "SyntaxError: repeated definition argument 'a'",
+  "expected ', '": "SyntaxError: expected ', '",
+  "expected ') and (' or ') or ('": "SyntaxError: expected ') and (' or ') or ('"
+ },
+ "unlisted": []
+}

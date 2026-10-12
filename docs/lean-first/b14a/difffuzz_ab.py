@@ -46,11 +46,14 @@ def main() -> None:
                         help="reuse the base reports of a previous run with the same checkout and seeds")
     parser.add_argument("--reuse-head", type=Path,
                         help="reuse the head reports of a previous run with the same checkout and seeds")
+    parser.add_argument("--scratch", type=Path,
+                        help="keep the reports here, and resume: a report already there is read, not rerun")
     args = parser.parse_args()
     base_known = {entry["signature"] for entry in json.loads(
         (args.base / "conformance/difffuzz-baseline.json").read_text())["entries"]}
     runs = [["--ci"]] + [["--deep", "1", "--seed", seed] for seed in SEEDS]
-    scratch = Path(tempfile.mkdtemp(prefix="difffuzz-ab-b14a-"))
+    scratch = args.scratch or Path(tempfile.mkdtemp(prefix="difffuzz-ab-b14a-"))
+    scratch.mkdir(parents=True, exist_ok=True)
     jobs = [(side, root, run) for run in runs for side, root in (("base", args.base.resolve()), ("head", HEAD))]
     def run_job(job):
         side, root, run = job
@@ -59,6 +62,8 @@ def main() -> None:
             return json.loads((args.reuse_base / name).read_text())
         if side == "head" and args.reuse_head is not None:
             return json.loads((args.reuse_head / name).read_text())
+        if (scratch / name).exists():
+            return json.loads((scratch / name).read_text())
         return _run(root, run, scratch / name)
     with ThreadPoolExecutor(args.jobs) as pool:
         reports = list(pool.map(run_job, jobs))
