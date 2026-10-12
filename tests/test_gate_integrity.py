@@ -215,7 +215,7 @@ def pin_base_collection(monkeypatch, ids, records=None):
         result["collection"] = {"base": "base-commit", "base_source": "record of base-commit", "base_ids": len(ids)}
         return list(ids), None
 
-    def record_collection(commit, collected, env):
+    def record_collection(commit, collected, env, result=None):
         (records if records is not None else []).append((commit, list(collected)))
         return "written"
 

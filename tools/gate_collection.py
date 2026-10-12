@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import base64
 from dataclasses import dataclass, field
 import json
 import os
@@ -42,14 +43,16 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools import nested_pytest  # noqa: E402
 
-# The record of a commit's collection: the gate's collected IDs, bound to the commit and its tree.
-NOTES_REF = "refs/notes/ve-gate-collection"
-FORMAT = "ve-gate-collection@1"
+# The gate record includes its collection, bound to the commit and its tree.
+NOTES_REF = "refs/notes/ve-gate-result"
+FORMAT = "ve-gate-result@1"
+MAX_IDS_BYTES = 16 * 1024 * 1024
 # The Rust release binary the tests load (ve/backends/rust_jsonl.py), relative to a checkout.
 RUST_BINARY = "rust/target/release/ve"
 # The branch whose merge base the gate compares with, unless it is given one.
@@ -129,26 +132,50 @@ def merge_base(head: str = "HEAD", *, main: str = MAIN, cwd: Path = ROOT,
 
 # --- the record -------------------------------------------------------------------------------------------
 
-def record_text(commit: str, tree: str, ids: list[str]) -> str:
-    return json.dumps({"format": FORMAT, "commit_sha": commit, "tree_sha": tree, "collected": sorted(ids)},
-                      indent=1) + "\n"
+def encode_ids(ids: list[str]) -> str:
+    """Compact, deterministic representation of the collected IDs in the gate record."""
+    raw = json.dumps(sorted(ids), ensure_ascii=True, separators=(",", ":")).encode()
+    return base64.b64encode(zlib.compress(raw, 9)).decode("ascii")
+
+
+def decode_ids(encoded: str) -> list[str] | None:
+    if type(encoded) is not str:
+        return None
+    try:
+        compressed = base64.b64decode(encoded, validate=True)
+        decoder = zlib.decompressobj()
+        raw = decoder.decompress(compressed, MAX_IDS_BYTES + 1)
+        if len(raw) > MAX_IDS_BYTES or not decoder.eof or decoder.unused_data or decoder.unconsumed_tail:
+            return None
+        ids = json.loads(raw)
+    except (ValueError, zlib.error, UnicodeDecodeError):
+        return None
+    if not isinstance(ids, list) or not ids or not all(type(nodeid) is str for nodeid in ids) \
+            or ids != sorted(set(ids)):
+        return None
+    return ids
+
+
+def record_text(commit: str, tree: str, ids: list[str], result: dict | None = None) -> str:
+    record = dict(result or {})
+    record.update(format=FORMAT, commit_sha=commit, tree_sha=tree)
+    record["collection"] = {**record.get("collection", {}), "collected_zlib": encode_ids(ids)}
+    return json.dumps(record, indent=1) + "\n"
 
 
 def parse_record(text: str, commit: str, tree: str) -> list[str] | None:
-    """The IDs of a record of `commit` with `tree`, or None unless the record is exactly that: the format,
-    the commit and the tree it names, and a non-empty sorted list of distinct string IDs."""
+    """The IDs of a gate record bound to `commit` and `tree`, or None if malformed."""
     try:
         record = json.loads(text)
     except ValueError:
         return None
-    if not isinstance(record, dict) or set(record) != {"format", "commit_sha", "tree_sha", "collected"}:
+    if not isinstance(record, dict) or record.get("format") != FORMAT \
+            or record.get("commit_sha") != commit or record.get("tree_sha") != tree:
         return None
-    ids = record["collected"]
-    if (record["format"], record["commit_sha"], record["tree_sha"]) != (FORMAT, commit, tree) \
-            or not isinstance(ids, list) or not ids or not all(type(nodeid) is str for nodeid in ids) \
-            or ids != sorted(set(ids)):
+    collection = record.get("collection")
+    if not isinstance(collection, dict) or "collected_zlib" not in collection:
         return None
-    return ids
+    return decode_ids(collection["collected_zlib"])
 
 
 def read_record(commit: str, *, cwd: Path = ROOT, env: dict[str, str] | None = None) -> list[str] | None:
@@ -157,6 +184,20 @@ def read_record(commit: str, *, cwd: Path = ROOT, env: dict[str, str] | None = N
     if shown.returncode:
         return None
     return parse_record(shown.stdout.decode(errors="replace"), commit, rev(f"{commit}^{{tree}}", cwd=cwd, env=env))
+
+
+def read_gate_result(commit: str, *, cwd: Path = ROOT, env: dict[str, str] | None = None) -> dict | None:
+    """A full gate result from its note, if one is present and its collection is valid."""
+    shown = git(["notes", f"--ref={NOTES_REF}", "show", commit], cwd=cwd, env=env, check=False)
+    if shown.returncode:
+        return None
+    text = shown.stdout.decode(errors="replace")
+    if parse_record(text, commit, rev(f"{commit}^{{tree}}", cwd=cwd, env=env)) is None:
+        return None
+    record = json.loads(text)
+    if "status" not in record:  # a base-only record, before that commit's gate
+        return None
+    return {key: value for key, value in record.items() if key != "format"}
 
 
 def recorded(commit: str, *, cwd: Path = ROOT, env: dict[str, str] | None = None) -> tuple[str, list[str]] | None:
@@ -172,9 +213,10 @@ def recorded(commit: str, *, cwd: Path = ROOT, env: dict[str, str] | None = None
     return None
 
 
-def write_record(commit: str, ids: list[str], *, cwd: Path = ROOT, env: dict[str, str] | None = None) -> None:
-    """Attach `ids` as the record of `commit`, replacing any earlier one."""
-    text = record_text(commit, rev(f"{commit}^{{tree}}", cwd=cwd, env=env), ids)
+def write_record(commit: str, ids: list[str], *, result: dict | None = None, cwd: Path = ROOT,
+                 env: dict[str, str] | None = None) -> None:
+    """Attach the gate result with its IDs as the record of `commit`."""
+    text = record_text(commit, rev(f"{commit}^{{tree}}", cwd=cwd, env=env), ids, result)
     git(["notes", f"--ref={NOTES_REF}", "add", "-f", "-F", "-", commit], cwd=cwd, env=env, stdin=text.encode())
 
 

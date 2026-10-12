@@ -384,29 +384,50 @@ def test_a_record_round_trips_and_binds_its_commit_and_tree(history):
     assert gate_collection.read_record(second, cwd=history) is None
 
 
+GOOD_IDS = ["tests/a.py::test_a", "tests/b.py::test_b"]
 GOOD = {"format": gate_collection.FORMAT, "commit_sha": "c" * 40, "tree_sha": "t" * 40,
-        "collected": ["tests/a.py::test_a", "tests/b.py::test_b"]}
+        "collection": {"collected_zlib": gate_collection.encode_ids(GOOD_IDS)}}
 # Each field retyped or rebound: the record is ignored and the base collected again.
 BAD = {
-    "format retyped": {"format": 1}, "format other": {"format": "ve-gate-collection@2"},
+    "format retyped": {"format": 1}, "format other": {"format": "ve-gate-result@2"},
     "commit other": {"commit_sha": "d" * 40}, "commit retyped": {"commit_sha": None},
     "tree other": {"tree_sha": "u" * 40}, "tree retyped": {"tree_sha": ["t" * 40]},
-    "collected empty": {"collected": []}, "collected retyped": {"collected": "tests/a.py::test_a"},
-    "collected unsorted": {"collected": ["tests/b.py::test_b", "tests/a.py::test_a"]},
-    "collected duplicated": {"collected": ["tests/a.py::test_a", "tests/a.py::test_a"]},
-    "id retyped": {"collected": [True, "tests/a.py::test_a"]}, "id number": {"collected": [7]},
-    "id null": {"collected": [None]}, "id object": {"collected": [{}]},
-    "extra field": {"extra": 1}, "missing field": {"collected": None},
+    "collection missing": {"collection": None},
+    "collection retyped": {"collection": "tests/a.py::test_a"},
+    "collected retyped": {"collection": {"collected_zlib": 7}},
+    "collected invalid base64": {"collection": {"collected_zlib": "***"}},
+    "collected empty": {"collection": {"collected_zlib": gate_collection.encode_ids([])}},
 }
 
 
 @pytest.mark.parametrize("change", BAD.values(), ids=BAD)
 def test_a_record_retyped_or_rebound_is_ignored(change):
     record = {**GOOD, **change}
-    if change == {"collected": None}:
-        del record["collected"]
-    assert gate_collection.parse_record(json.dumps(GOOD), "c" * 40, "t" * 40) == GOOD["collected"]
+    assert gate_collection.parse_record(json.dumps(GOOD), "c" * 40, "t" * 40) == GOOD_IDS
     assert gate_collection.parse_record(json.dumps(record), "c" * 40, "t" * 40) is None
+
+
+@pytest.mark.parametrize("ids", [[], ["tests/b.py::test_b", "tests/a.py::test_a"],
+                                 ["tests/a.py::test_a"] * 2, [7], [None], [True], [{}]])
+def test_f2_gate_record_rejects_malformed_collections(ids):
+    import base64
+    import zlib
+    raw = json.dumps(ids).encode()
+    record = {**GOOD, "collection": {"collected_zlib": base64.b64encode(zlib.compress(raw)).decode()}}
+    assert gate_collection.parse_record(json.dumps(record), "c" * 40, "t" * 40) is None
+
+
+def test_f2_gate_result_and_note_share_the_compact_collection(history):
+    ids = [f"tests/test_mod.py::test_case[{index}]" for index in range(15000)]
+    encoded = gate_collection.encode_ids(ids)
+    assert len(encoded) < 1_000_000
+    first = git(history, "rev-parse", "HEAD")
+    result = {"status": "passed", "collection": {"base": "base", "collected_zlib": encoded}}
+    gate_collection.write_record(first, ids, result=result, cwd=history)
+    assert gate_collection.read_record(first, cwd=history) == sorted(ids)
+    note = json.loads(git(history, "notes", f"--ref={gate_collection.NOTES_REF}", "show", first))
+    assert note["status"] == "passed" and note["collection"]["base"] == "base"
+    assert note["collection"]["collected_zlib"] == result["collection"]["collected_zlib"]
 
 
 @pytest.mark.parametrize("text", ["", "{", "[]", "null", "7", '"x"'])

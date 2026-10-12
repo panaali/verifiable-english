@@ -16,7 +16,7 @@ import sys
 import pytest
 
 from test_gate_integrity import pin_base_collection, pin_rust_binary
-from tools import gate
+from tools import gate, gate_collection
 
 BASELINE = ["tests/a.py::test_a", "tests/a.py::test_a2", "tests/b.py::test_b", "tests/c.py::test_c"]
 FAILED = "tests/a.py::test_a"
@@ -182,6 +182,7 @@ def test_a_full_gate_records_its_tree_and_mode(fake):
     assert "rerun_failed" not in record
     # Its whole collection is its commit's record; the base's came from the base's record.
     assert fake.records == [("commit-1", BASELINE)] and record["collection"]["head_record"] == "written"
+    assert gate_collection.decode_ids(record["collection"]["collected_zlib"]) == sorted(BASELINE)
     assert record["collection"]["base_source"] == "record of base-commit"
 
 
