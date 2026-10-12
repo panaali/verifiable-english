@@ -1,0 +1,180 @@
+{
+  "base": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
+  "head": "2bdbd8b54017574c1e692805b66196b80aa5ab40",
+  "command": "git log main..HEAD --no-merges",
+  "commits": [
+    {
+      "hash": "2bdbd8b54017574c1e692805b66196b80aa5ab40",
+      "subject": "fix: refresh trusted inventories and document diagnostics"
+    },
+    {
+      "hash": "106e91e744f6360993c1ea52e6226342c0358f05",
+      "subject": "feat: complete norm-defaults document routing and save corpus evidence"
+    },
+    {
+      "hash": "2c03afc19e32c6390de47dab98ea920774ce765f",
+      "subject": "test: bind norm answers and prove seeded faults fail"
+    },
+    {
+      "hash": "6d01a3f4a4b7f0fe618608f6d71c47e89b221be1",
+      "subject": "feat: route norm-defaults documents through Lean services"
+    }
+  ],
+  "changes": [
+    {
+      "added": "1",
+      "deleted": "1",
+      "path": "conformance/document_wrapper.py"
+    },
+    {
+      "added": "5",
+      "deleted": "5",
+      "path": "docs/lean-first/b16b/mutants.py"
+    },
+    {
+      "added": "6816",
+      "deleted": "0",
+      "path": "docs/lean-first/b16d/delta.json"
+    },
+    {
+      "added": "7766",
+      "deleted": "0",
+      "path": "docs/lean-first/b16d/evidence/ab.json"
+    },
+    {
+      "added": "-",
+      "deleted": "-",
+      "path": "docs/lean-first/b16d/evidence/cases.json.gz"
+    },
+    {
+      "added": "38",
+      "deleted": "0",
+      "path": "docs/lean-first/b16d/evidence/mutants.json"
+    },
+    {
+      "added": "17",
+      "deleted": "0",
+      "path": "docs/lean-first/b16d/evidence/share.json"
+    },
+    {
+      "added": "56",
+      "deleted": "0",
+      "path": "docs/lean-first/b16d/make_ab.py"
+    },
+    {
+      "added": "92",
+      "deleted": "0",
+      "path": "docs/lean-first/b16d/measure.py"
+    },
+    {
+      "added": "44",
+      "deleted": "0",
+      "path": "docs/lean-first/b16d/report.py"
+    },
+    {
+      "added": "87",
+      "deleted": "0",
+      "path": "docs/lean-first/b16d/seed_faults.py"
+    },
+    {
+      "added": "44",
+      "deleted": "0",
+      "path": "docs/lean-first/b16d/splice_recording.py"
+    },
+    {
+      "added": "2",
+      "deleted": "2",
+      "path": "docs/spec/assurance-manifest.md"
+    },
+    {
+      "added": "38",
+      "deleted": "25",
+      "path": "docs/trust-baseline.json"
+    },
+    {
+      "added": "4",
+      "deleted": "1",
+      "path": "lean/ResponseShape/Schemas/Document.lean"
+    },
+    {
+      "added": "19",
+      "deleted": "8",
+      "path": "lean/VE/Discourse/Loader.lean"
+    },
+    {
+      "added": "2",
+      "deleted": "2",
+      "path": "lean/VE/Route/frozen-sources.sha256"
+    },
+    {
+      "added": "173",
+      "deleted": "25",
+      "path": "lean/VE/Service/Document.lean"
+    },
+    {
+      "added": "2",
+      "deleted": "0",
+      "path": "lean/checkers.lock"
+    },
+    {
+      "added": "161",
+      "deleted": "156",
+      "path": "lean/declarations.txt"
+    },
+    {
+      "added": "137",
+      "deleted": "0",
+      "path": "tests/test_b16d_document.py"
+    },
+    {
+      "added": "92",
+      "deleted": "0",
+      "path": "tests/test_b16d_evidence.py"
+    },
+    {
+      "added": "2",
+      "deleted": "1",
+      "path": "tests/test_document.py"
+    },
+    {
+      "added": "4",
+      "deleted": "1",
+      "path": "tests/test_document_lean_switch.py"
+    },
+    {
+      "added": "1",
+      "deleted": "1",
+      "path": "tests/test_lean_document_wrapper.py"
+    },
+    {
+      "added": "1",
+      "deleted": "0",
+      "path": "tests/test_nested_pytest.py"
+    },
+    {
+      "added": "10",
+      "deleted": "0",
+      "path": "tools/gate-collection.json"
+    },
+    {
+      "added": "21",
+      "deleted": "16",
+      "path": "tools/trust-classes.json"
+    },
+    {
+      "added": "4",
+      "deleted": "4",
+      "path": "ve/assurance-manifest.json"
+    },
+    {
+      "added": "11",
+      "deleted": "1",
+      "path": "ve/backends/lean_service_schema/document.json"
+    },
+    {
+      "added": "63",
+      "deleted": "9",
+      "path": "ve/document.py"
+    }
+  ]
+}

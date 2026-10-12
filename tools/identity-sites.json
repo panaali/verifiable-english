@@ -1,7 +1,7 @@
 [
 {"path": "ve/adapters/records.py", "scope": "run", "domain": "ve-adapter-input-v1\n", "owner": "python", "record": "adapters"},
 {"path": "ve/adapters/records.py", "scope": "run", "domain": "ve-adapter-table-v1\n", "owner": "python", "record": "adapters"},
-{"path": "ve/admission.py", "scope": "_admit_document_python", "domain": "ve-report-{}\n", "owner": "lean", "removed_by": "AR-15"},
+{"path": "ve/admission.py", "scope": "bound_admission", "domain": "ve-report-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/argument.py", "scope": "_checker_build", "domain": "ve-python-checker-build-v1\n", "owner": "python", "record": "checker build"},
 {"path": "ve/argument.py", "scope": "Claim.claim_id", "domain": "ve-claim-v1\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/argument.py", "scope": "Evidence.expected_binding", "domain": "ve-evidence-assessment-v1\n", "owner": "python", "record": "argument package"},
@@ -27,7 +27,6 @@
 {"path": "ve/identity.py", "scope": "source_id", "domain": "ve-source-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/identity.py", "scope": "meaning_id", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/model.py", "scope": "FiniteModel.from_dict", "domain": "ve-model-{}\n", "owner": "lean", "removed_by": "AR-15"},
-{"path": "ve/norm_admission.py", "scope": "_admit_norm_document_python", "domain": "ve-report-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/norm_defaults_route.py", "scope": "_source_binding.meaning", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/norms.py", "scope": "norm_meaning_id", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/norms.py", "scope": "NormDocument.__init__", "domain": "ve-norms-{}\n", "owner": "lean", "removed_by": "AR-15"},
