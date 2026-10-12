@@ -1,0 +1,5 @@
+load {'seconds': 815.3, 'error': "CheckerUnavailable: CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-udhr-20261012T1800Z/rust/target/release/ve', 'jsonl', '-']' timed out after 4.995047769974917 seconds"}
+
+real	13m35.949s
+user	13m48.644s
+sys	0m4.778s

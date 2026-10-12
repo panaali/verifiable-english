@@ -1,0 +1,44 @@
+{
+ "load_seconds": 0.2,
+ "coverage": {
+  "source_bytes": 10916,
+  "accounted_bytes": 10916,
+  "coverage_percent": 100,
+  "bytes_by_kind": {
+   "meta": 535,
+   "unformalised": 4843,
+   "attributed": 801,
+   "norm": 4619,
+   "asserted": 118
+  },
+  "bytes_by_status": {
+   "LABELLED": 535,
+   "UNFORMALISED": 6124,
+   "OPEN": 4200,
+   "CHECKED": 57
+  },
+  "unformalised_reasons": {
+   "causation": 4,
+   "attribution": 4,
+   "modality_belief": 2,
+   "other_evaluative_open_claim": 2,
+   "norms": 7,
+   "time": 5,
+   "other_metaphorical_endowment": 1,
+   "defaults": 1,
+   "other_act_phrase_grammar": 11,
+   "other_right_lines_across_open_sets": 4,
+   "other_grounding_of_authority": 1,
+   "other_comparison": 2,
+   "quantities": 1,
+   "other_priority_of_rights": 1
+  },
+  "residual": {
+   "open_terms": 52,
+   "assumptions": 0,
+   "bridge_leaves": 0,
+   "unresolved_reading_sets": 49
+  },
+  "residual_total": 101
+ }
+}
