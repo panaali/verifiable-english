@@ -1,3 +1,5 @@
+73f238d4 Seeded fault runner: use shared nested pytest builder
+4a0aa41d OOM batch: relay mutation evidence and final report
 c88e4012 Readings relay: reject malformed labels, targets, and repeated over names
 baf95df4 OOM batch: relay mutation gate evidence (identical 92 findings on main)
 be948d2b OOM batch: final gate passed on ef36aece
