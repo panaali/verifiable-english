@@ -508,6 +508,16 @@ def test_compiled_mode_roots_regenerate_from_lean():
     assert generated["modes"] == json.loads(lean_mode_deps.OUTPUT.read_text())["modes"]
 
 
+def test_checker_pin_reader_still_selects_on_lock_change(tmp_path):
+    graph = make_graph(tmp_path, {})
+    coverage = select_tests.Coverage(make_map({
+        "pin-test": {"r": ["lean/checkers.lock"]}, "other": {}}))
+    selected = set()
+    select_tests.file_impact(coverage, graph, set(coverage.tests),
+                             lambda names, _: selected.update(names), "lean/checkers.lock", False)
+    assert "pin-test" in selected
+
+
 def test_recorder_tracks_each_service_request_mode(tmp_path):
     result = recorder_run(tmp_path, "import sys\nsys.audit('ve.service.mode', 'rights')\n"
                                     "sys.audit('ve.service.mode', 'norms')\n")
