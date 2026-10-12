@@ -5,11 +5,12 @@ from pathlib import Path
 
 import pytest
 
+from ve import parser
 from ve.backends import dispatch, relay, validation
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.parser import canonicalize, parse
-from ve.printer import print_formula
+from ve.printer import print_document, print_formula
 from tests import probe_matrix as pm
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,18 +77,26 @@ def test_definitions_sources_without_sugar_are_leans(monkeypatch):
 
 
 @pytest.mark.parametrize("source", SUGAR)
-def test_definitions_sugar_stays_with_python(monkeypatch, source):
-    """A source read through the definitions sugar keeps Python's reading (the
-    sugar is in no Lean surface parser: a recorded scope gap); Lean is not asked."""
+def test_definitions_sugar_is_leans(monkeypatch, source):
+    """A source read through the definitions sugar is Lean's to accept (batch
+    14a deleted the retained Python reading): Lean is asked, and its answer
+    equals the retained reader's."""
     env = Environment(pm.raw_environment(("definitions@0",)))
     monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = (outcome(lambda: parse(env, source)), outcome(lambda: canonicalize(env, source)))
+    monkeypatch.setattr(validation, "_ACCEPTED", {})
+    expected = (outcome(lambda: parser._parse_python(env, source).document),
+                outcome(lambda: print_document(env, parser._parse_python(env, source).document)))
     assert expected[0][0] == "accepted", source
     real = relay.decide
-    fake(monkeypatch, lambda case: pytest.fail("Lean was asked about a sugared source"))
+    asked = []
+
+    def spy(mode, cases, **kw):
+        asked.extend(case["source"] for case in cases if mode == "parse")
+        return real(mode, cases, **kw)
+
+    monkeypatch.setattr(relay, "decide", spy)
     assert (outcome(lambda: parse(env, source)), outcome(lambda: canonicalize(env, source))) == expected
-    with pytest.raises(VEError):
-        real("parse", [{"id": "parse", "environment": env.to_dict(), "source": source}])
+    assert asked and set(asked) == {source}
 
 
 def fake(monkeypatch, row):
