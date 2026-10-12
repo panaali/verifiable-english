@@ -288,6 +288,19 @@ def test_non_first_order_certificate_refuses_unbound_layer_count(monkeypatch):
         check_norm_entailment_certificate(doc, (), Top(), proof.certificate)
 
 
+def test_non_first_order_certificate_propagates_checker_unavailable(monkeypatch):
+    env = flagged(family=("closure@0",), relation=True)
+    doc = NormDocument(env, [rule("may", "permitted", True,
+                                  Reach("star", Named("before"), Var(0), Var(0)))])
+
+    def unavailable(*_args, **_kwargs):
+        raise CheckerUnavailable("CheckerUnavailable: service stopped")
+
+    monkeypatch.setattr(relay, "decide", unavailable)
+    with pytest.raises(CheckerUnavailable, match="service stopped"):
+        check_norm_entailment_certificate(doc, (), Top(), {})
+
+
 def test_non_first_order_conflict_witness_is_checked_by_lean(monkeypatch):
     env = flagged(family=("closure@0",), relation=True)
     doc = NormDocument(env, [rule("must", "required", True,
