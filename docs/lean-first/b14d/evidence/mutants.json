@@ -26,6 +26,15 @@
       "exit": 1,
       "observed": "zero Lean choice-evidence requests instead of one",
       "caught": true
+    },
+    {
+      "mutant": "expose_pilot_scratch_directory",
+      "behaviour": "pilot A/B compares diagnostics after stabilizing only the recorder scratch prefix",
+      "file": "tools/lean_first_diff.py",
+      "test": "tests/test_lean_first_diff.py::test_pilot_comparison_normalizes_only_its_own_scratch_directory",
+      "exit": 1,
+      "observed": "two same records and one wording difference instead of three same records",
+      "caught": true
     }
   ],
   "restored_test": "9 passed: complete choice verdict and coupled plan tests",
