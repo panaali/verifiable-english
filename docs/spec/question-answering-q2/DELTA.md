@@ -5,6 +5,8 @@ Batch `question-answering/q2` against `main` at `f0547468`. Each row is a user-v
 ruling covers any row below, so every row needs the DRI's signature. Nothing here is presented as checked when it is
 not; each row names its test or evidence.
 
+Pending DRI signature: D1–D12.
+
 | # | Delta | Why | Status | Test or evidence |
 |---|---|---|---|---|
 | D1 | `ve ask DOC QUESTION` (no `--reading`) prints Lean's answer: the lead, the reasons, the reading blocks and the unused-sentence line; exit 0 for a lead, 3 for unknown. Before: the A0 line, then Q1's `unanswered` text, exit 5. | Plan Q2.5, the batch's purpose. The `unanswered` text is still exported by `english.question` (Q1's contract) and no longer printed by `ve ask`. | DRI signature needed (planned, Q2.5) | `tests/test_ask_cli.py`, `tests/test_question_reading.py::test_the_cli_answers_without_reading` |
