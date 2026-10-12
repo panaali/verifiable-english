@@ -122,12 +122,24 @@ def test_owner_agrees_with_git_on_every_tracked_file():
 def test_entries_run_in_dependency_order():
     order = [entry.name for entry in R.GENERATED]
     for before, after in (("wire-contract", "frozen-inventory"), ("english-grammar", "frozen-inventory"),
-                          ("english-run-copy", "frozen-inventory"), ("frozen-inventory", "lake-build"),
-                          ("lake-build", "lean-axioms"), ("lake-build", "lean-statements"),
+                          ("english-run-copy", "frozen-inventory"), ("lean-roots", "lake-build"),
+                          ("lake-build", "lean-statements"), ("lean-statements", "lean-audit-manifests"),
+                          ("lean-audit-manifests", "frozen-inventory"),
                           ("lake-build", "checker-pins"), ("checker-pins", "english-codes"),
                           ("lake-build", "response-schemas"), ("assurance-manifest", "assurance-doc")):
         assert order.index(before) < order.index(after), (before, after)
     assert order[-1] == "gate-collection"
+
+
+
+def test_audit_manifests_are_generated_from_the_declaration_list():
+    """AR-1: `lean/audit.py --write` writes both manifests and the record from lean/declarations.txt, so a merge
+    takes either side and the writer rebuilds them (collision rule: take either side, run the writer)."""
+    entry = R.owner("lean/VE/Audit.lean")
+    assert entry is R.owner("lean/ResponseShape/Audit.lean") is R.owner("lean/axioms.txt")
+    assert entry.name == "lean-audit-manifests" and entry.merge == "regenerate"
+    assert entry.write == ((R.PY, "lean/audit.py", "--write"),) and entry.check == ((R.PY, "lean/audit.py", "--check"),)
+    assert R.merge_text("lean/VE/Audit.lean", "base\n", "ours\n", "theirs\n") == ("ours\n", True)
 
 
 # merge_json
@@ -269,11 +281,10 @@ def _merged(root):
 
 def _check_merged(root):
     lock, audit, axioms = _merged(root)
-    # Removal of 1111 by ours kept, 3333 and 4444 added by each side; both audit lines; the derived file is
-    # either side's (the writers rebuild it).
+    # Removal of 1111 by ours kept, 3333 and 4444 added by each side; the derived files, the audit manifest
+    # included (AR-1), are either side's (`lean/audit.py --write` rebuilds it).
     assert lock == {"ve_service": ["2222", "3333", "4444"], "rust_jsonl": ["9999"]}
-    assert "#print axioms VE.ours\n" in audit and "#print axioms VE.theirs\n" in audit
-    assert audit.count("#print axioms VE.a\n") == 1 and "<<<<<<<" not in audit
+    assert audit == AUDIT + "#print axioms VE.ours\n"
     assert axioms == "ours\n"
 
 
