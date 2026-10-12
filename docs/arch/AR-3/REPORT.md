@@ -183,7 +183,9 @@ Lines of `prompts/build-checklist.txt` that apply:
 - 14: temporary paths only, and no waits. The base collection's environment is the recorded pytest stage's,
   with the base worktree first on `PYTHONPATH`.
 - 16: the expected collection is generated, never kept by hand.
-- 20: every number above is checked by `tests/test_ar3_report.py` against the saved evidence.
+- 20: the numbers of "Measured outcome", the `--check` line, the commit list, the seeded bugs and DELTA are
+  checked by `tests/test_ar3_report.py` against the saved evidence. The gate's numbers are its saved records
+  (`evidence/gate-full.json`, `evidence/gate-rerun.json`), checked by the pre-review and batch gates (D4).
 - 22 and 23: above and DELTA.md.
 
 The rest concern VE's languages, wire and proofs, which AR-3 does not touch.
