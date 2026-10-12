@@ -38,9 +38,6 @@ class _Parser:
         self.spans: list[Span] = []
         self.names: list[str | None] = []
         self.nodes = 0
-        # Whether a definitions@0 sugar production was read (`no`, `every ...
-        # that is`, `iff`, `define`); no Lean surface parser has them.
-        self.sugar = False
 
     def span(self, start: int, end: int | None = None) -> Span:
         end = self.i if end is None else end
@@ -195,7 +192,6 @@ class _Parser:
             right = self.formula(depth + 1); self.literal(")")
             return self.node(start, ast.Implies(left, right))
         if definitions and self.s.startswith("no ", self.i):
-            self.sugar = True
             self.i += 3
             sort, pos = self.identifier("sort identifier")
             if sort not in self.env.sorts:
@@ -208,7 +204,6 @@ class _Parser:
             return self.node(start, ast.Forall(sort, ast.Not(ast.Unary(predicate, ast.Var(0)))))
         if definitions and self.s.startswith("every ", self.i):
             from .environment import RESERVED
-            self.sugar = True
             self.i += 6
             sort, pos = self.identifier("sort identifier")
             if sort not in self.env.sorts:
@@ -267,7 +262,6 @@ class _Parser:
             elif self.s.startswith(") or (", self.i):
                 self.i += 6; constructor = ast.Or
             elif definitions and self.s.startswith(") iff (", self.i):
-                self.sugar = True
                 self.i += 7; constructor = None
             else:
                 self.error("expected ') and (' or ') or ('")
@@ -323,7 +317,6 @@ class _Parser:
             if "definitions@0" in self.env.profiles and self.s.startswith("define ", self.i):
                 from .environment import RESERVED
                 from .definitions import Definition, premise
-                self.sugar = True
                 self.i += 7
                 predicate, pos = self.identifier("defined predicate")
                 if predicate not in self.env.definition_entries:
@@ -370,11 +363,12 @@ def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
     """Parse and type a source.
 
     Lean's surface parser for the envelope's family decides acceptance under
-    every authority (lean-first batch 13b); the Python parser constructs the
-    document and its source metadata only after Lean accepts, and its document
-    must be Lean's (the same AST and, where Lean prints, the same canonical
-    text). Environments outside Lean's `parse` scope (statement layers and W6
-    units) keep the retained Python reader, a recorded scope gap.
+    every authority (lean-first batch 13b), the `definitions@0` sugar included
+    (batch 14a); the Python parser constructs the document and its source
+    metadata only after Lean accepts, and its document must be Lean's (the same
+    AST and, where Lean prints, the same canonical text). Environments outside
+    Lean's `parse` scope (statement layers and W6 units) keep the retained
+    Python reader, a recorded scope gap.
     """
     from .backends.dispatch import owned
 
@@ -388,20 +382,6 @@ def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
 
 def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
     from .backends.relay import decide
-    if "definitions@0" in env.profiles:
-        # The definitions@0 surface sugar (`no`, `every ... that is`, `iff`,
-        # `define`) is in no Lean surface parser: a source the Python reader
-        # accepts through it, or rejects inside one of its productions, keeps
-        # Python's reading (the stage-2c gap retained until batch 14a).
-        # Every other source over the environment is Lean's to accept.
-        try:
-            result, sugar = _parse_python_marked(env, source)
-        except VEError as exc:
-            if getattr(exc, "definitions_sugar", False):
-                raise  # the retained reader rejected inside a sugar production: its diagnostic stands
-            sugar = False
-        if sugar:
-            return result
     try:
         text = source if isinstance(source, str) else source.decode("ascii")
     except (UnicodeError, TypeError, AttributeError):
@@ -425,11 +405,6 @@ def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
 
 
 def _parse_python(env: Any, source: str | bytes) -> ParseResult:
-    return _parse_python_marked(env, source)[0]
-
-
-def _parse_python_marked(env: Any, source: str | bytes) -> tuple[ParseResult, bool]:
-    """The Python reading, and whether it read a definitions@0 sugar production."""
     if isinstance(source, bytes):
         if len(source) > MAX_SOURCE_BYTES:
             raise ResourceLimit(f"source exceeds {MAX_SOURCE_BYTES} bytes")
@@ -451,21 +426,15 @@ def _parse_python_marked(env: Any, source: str | bytes) -> tuple[ParseResult, bo
         if len(encoded) > MAX_SOURCE_BYTES:
             raise ResourceLimit(f"source exceeds {MAX_SOURCE_BYTES} bytes")
     parser = _Parser(env, source)
-    try:
-        document = parser.document()
-    except VEError as exc:
-        exc.definitions_sugar = parser.sugar  # a rejection inside a sugar production
-        raise
+    document = parser.document()
     # Checking is intentionally after name resolution: malformed raw AST never escapes.
     try:
         ast.check_document(env, document)
     except VEError as exc:
         if exc.span is None:
             exc.span = Span(0, len(source), 1, 1)
-        exc.definitions_sugar = parser.sugar
         raise
-    return (ParseResult(document, SourceMetadata(source, tuple(parser.spans), tuple(parser.names))),
-            parser.sugar)
+    return ParseResult(document, SourceMetadata(source, tuple(parser.spans), tuple(parser.names)))
 
 
 @semantic_entry("parse")
