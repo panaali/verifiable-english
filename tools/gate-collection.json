@@ -13466,6 +13466,8 @@
   "tests/test_stage2_readings.py::test_coupled_verdict_every_field_is_typed_and_bound[id-other]",
   "tests/test_stage2_readings.py::test_coupled_verdict_every_field_is_typed_and_bound[status-True]",
   "tests/test_stage2_readings.py::test_coupled_verdict_every_field_is_typed_and_bound[verdict-YES]",
+  "tests/test_stage2_readings.py::test_coupled_zero_choice_budget_is_unknown",
+  "tests/test_stage2_readings.py::test_coupled_zero_search_budget_is_unknown",
   "tests/test_stage2_readings.py::test_joint_choice_mutations_cannot_claim_a_verdict[<lambda>0]",
   "tests/test_stage2_readings.py::test_joint_choice_mutations_cannot_claim_a_verdict[<lambda>1]",
   "tests/test_stage2_readings.py::test_joint_choice_mutations_cannot_claim_a_verdict[<lambda>2]",
