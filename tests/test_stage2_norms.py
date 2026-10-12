@@ -313,6 +313,25 @@ def test_non_first_order_conflict_witness_is_checked_by_lean(monkeypatch):
     assert ("norms_conflict", "lean") in ops
 
 
+def test_non_first_order_conflict_refused_witness_is_unavailable(monkeypatch):
+    env = flagged(family=("closure@0",), relation=True)
+    doc = NormDocument(env, [rule("must", "required", True,
+                                  Reach("star", Named("before"), Var(0), Var(0)))])
+    model = {"complete": True, "domains": {"act": ["a"], "party": ["p"]},
+             "constants": {}, "relations": {"owner": [["a", "p"]], "urgent": [], "before": []}}
+    real = relay.decide
+
+    def refuse(mode, cases, **kwargs):
+        row = deepcopy(real(mode, cases, **kwargs)[0])
+        if cases[0].get("kind") == "norms-conflict":
+            row["verdict"] = "UNKNOWN"
+        return [row]
+
+    monkeypatch.setattr(relay, "decide", refuse)
+    with pytest.raises(CheckerUnavailable, match="does not confirm"):
+        check_conflict(doc, model=model)
+
+
 def test_non_first_order_wire_faults_raise_content_errors():
     env = flagged(family=("closure@0",), relation=True)
     doc = NormDocument(env, [rule("may", "permitted", True,
