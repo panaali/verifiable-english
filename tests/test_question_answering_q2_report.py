@@ -6,18 +6,20 @@ and after the merge."""
 from __future__ import annotations
 
 import json
+import importlib.util
 import re
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "docs/spec/question-answering-q2"
-sys.path.insert(0, str(HERE))
-
-import report  # noqa: E402
+SPEC = importlib.util.spec_from_file_location("question_answering_q2_report", HERE / "report.py")
+assert SPEC is not None and SPEC.loader is not None
+report = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(report)
 
 
 def test_generated_block_is_the_saved_evidence():
+    assert Path(report.__file__).resolve() == HERE / "report.py"
     text = (HERE / "REPORT.md").read_text()
     assert text[text.index(report.BEGIN):text.index(report.END) + len(report.END)] == report.block()
 
