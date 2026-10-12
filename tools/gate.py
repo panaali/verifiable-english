@@ -20,7 +20,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import lake_outputs, nested_pytest, rust_build  # noqa: E402
+from tools import lake_outputs, nested_pytest, quarantine, rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
@@ -108,6 +108,15 @@ def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None 
     return json.loads(result_file.read_text())
 
 
+def retry_command(python: list[str], tests: list[str]) -> list[str]:
+    """PYTEST_ARGS over the node IDs `tests`, serially: a quarantined failure's run alone."""
+    return nested_pytest.command((*PYTEST_ARGS[:-1], *tests), python=python)
+
+
+def exit_reason(stage: str, code: int) -> str:
+    return f"{stage}: exit {code}"
+
+
 def command(args: list[str], *, cwd: Path = ROOT, env: dict[str, str], stage: str) -> str:
     print(f"[gate] {stage}: {' '.join(args)}", flush=True)
     try:
@@ -117,7 +126,7 @@ def command(args: list[str], *, cwd: Path = ROOT, env: dict[str, str], stage: st
         raise RuntimeError(f"{stage}: {exc}") from exc
     print(done.stdout, end="" if done.stdout.endswith("\n") else "\n", flush=True)
     if done.returncode:
-        raise RuntimeError(f"{stage}: exit {done.returncode}")
+        raise RuntimeError(exit_reason(stage, done.returncode))
     return done.stdout.strip()
 
 
@@ -297,6 +306,49 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
         if not allowed:
             result["failures"].append({"stage": "deselection policy", "nodeid": node,
                                        "reason": "unlisted deselected test"})
+
+
+def retry_quarantined(result: dict, events: dict, env: dict[str, str], python: list[str], scratch: Path, *,
+                      enabled: bool, day=None) -> None:
+    """Run each failed test of the active quarantine (tools/quarantine.py) once more, alone and serially. One
+    that passes there no longer fails the gate, and `result["quarantine"]` keeps both outcomes; one that fails
+    again, or has no result, still fails it. With `enabled` false (`--no-quarantine`, the nightly) nothing is
+    retried and every failure blocks. A malformed quarantine file fails the gate (ValueError)."""
+    record = result["quarantine"] = {"enabled": enabled, "active": [], "expired": [], "retried": {}}
+    if not enabled:
+        return
+    entries = quarantine.load()
+    day = day or quarantine.today()
+    active = quarantine.active(entries, day)
+    record.update(day=day.isoformat(), active=sorted(active), expired=quarantine.expired(entries, day))
+    failed = sorted(nodeid for nodeid, row in events["tests"].items()
+                    if row.get("outcome") == "failed" and nodeid in active)
+    if not failed:
+        return
+    retry_file = scratch / "pytest-quarantine.json"
+    try:
+        command(retry_command(python, failed), env={**env, "VE_GATE_PYTEST_RESULT": str(retry_file)},
+                stage="Quarantine retry")
+    except RuntimeError:
+        pass  # a retry that fails exits 1: its events say which test failed again
+    try:
+        retried = json.loads(retry_file.read_text())["tests"]
+    except (OSError, ValueError, KeyError, TypeError):
+        retried = {}
+    for nodeid in failed:
+        row = retried.get(nodeid) if isinstance(retried, dict) else None
+        outcome = row.get("outcome", "no result") if isinstance(row, dict) else "no result"
+        entry = active[nodeid]
+        record["retried"][nodeid] = {"suite": "failed", "alone": outcome, "owner": entry["owner"],
+                                     "expires": entry["expires"], "evidence": entry["evidence"]}
+        if outcome == "passed":
+            result["failures"] = [failure for failure in result["failures"]
+                                  if not (failure["stage"] == "pytest" and failure.get("nodeid") == nodeid)]
+            result["counts"].update(failed=result["counts"]["failed"] - 1, passed=result["counts"]["passed"] + 1)
+    # The suite exited 1 for its failed tests; when each of them passed alone, that exit is theirs alone.
+    if not any(failure["stage"] == "pytest" for failure in result["failures"]):
+        result["failures"] = [failure for failure in result["failures"] if failure != {
+            "stage": "pytest command", "reason": exit_reason("Python suite", 1)}]
 
 
 def write_result(path: Path, result: dict) -> None:
@@ -506,6 +558,9 @@ def main() -> int:
                         help="when the gate RECORD (default: --output) failed only on tests, on this tree and these "
                              "toolchains, rerun only the files of its failed tests (status rerun-passed or failed); "
                              "otherwise run the full gate. A rerun is never a full gate's evidence (status passed)")
+    parser.add_argument("--no-quarantine", action="store_true",
+                        help="the nightly: no quarantined test (tools/test-quarantine.json) is retried alone, so "
+                             "every failure blocks")
     args = parser.parse_args()
     if not (args.workers == "auto" or args.workers.isdecimal() and int(args.workers) > 0):
         parser.error("--workers is a positive count or auto")
@@ -636,6 +691,7 @@ def main() -> int:
                 outcomes = {nodeid: events["tests"].get(nodeid, {}).get("outcome", "no result")
                             for nodeid in result["rerun_failed"]["tests"]}
                 result["rerun_failed"]["outcomes"] = outcomes
+            retry_quarantined(result, events, pytest_env, python, scratch, enabled=not args.no_quarantine)
             result["stages"].append("pytest")
             completed = True
         except (OSError, ValueError, KeyError, RuntimeError) as exc:
@@ -675,6 +731,9 @@ def main() -> int:
             for skip in result["skips"]:
                 print(f"[gate] skip {'allowed' if skip['allowed'] else 'FAILED'}: "
                       f"{skip['nodeid']}: {skip['reason']}", flush=True)
+            for nodeid, retry in result.get("quarantine", {}).get("retried", {}).items():
+                print(f"[gate] quarantined: {nodeid} failed in the suite and {retry['alone']} alone "
+                      f"(owner {retry['owner']}, expires {retry['expires']})", flush=True)
             for failure in result["failures"]:
                 print(f"[gate] FAILURE: {failure['stage']}: "
                       f"{failure.get('nodeid', '')} {failure['reason']}", file=sys.stderr, flush=True)
