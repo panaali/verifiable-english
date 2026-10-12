@@ -24,7 +24,12 @@ fn out_of_memory(limit: usize) -> ! {
     if JSONL.load(std::sync::atomic::Ordering::Relaxed) {
         let record = match ANSWERING.try_lock().ok().and_then(|mut id| id.take()) {
             Some(id) => json!({"id":id,"status":"error","error":error}),
-            None => json!({"status":"error","error":error}),
+            None => {
+                // Before JSON decoding there is no case id. The client has exactly one
+                // outstanding line, but must distinguish this from a lost parsed id.
+                eprintln!("VE_JSONL_OOM_BEFORE_CASE_ID");
+                json!({"status":"error","error":error})
+            },
         };
         let mut stdout = io::stdout();
         let _ = writeln!(stdout, "{record}");
