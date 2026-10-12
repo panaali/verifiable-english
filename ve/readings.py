@@ -201,9 +201,15 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
         labels_enabled = rights_enabled or "readings@1" in env.profiles
         for reading in readings:
             required_reading = {"id", "kind", "meaning_id", "content", "admission"}
+            # readings-defaults 1.9 (RD-4b): under readings@1 a reading may carry its own vocabulary. W2 passes
+            # `companion` through unread; Lean splits the document, merges the companions and computes and compares
+            # the reading's meaning id over its own environment (`companionMeaningId`), so none is computed here.
+            optional_reading = (({"labels"} if labels_enabled else set()) |
+                                ({"companion"} if "readings@1" in env.profiles else set()))
             if (type(reading) is not dict or not required_reading <= set(reading) or
-                    set(reading) - required_reading - ({"labels"} if labels_enabled else set())):
+                    set(reading) - required_reading - optional_reading):
                 raise VEError("invalid reading")
+            companion = "companion" in reading
             if "labels" in reading:
                 labels = reading["labels"]
                 if (type(labels) is not dict or any(not token(axis) or not token(value)
@@ -212,7 +218,7 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
             if not token(reading["id"]) or reading["id"] in ids:
                 raise VEError("duplicate or invalid reading id")
             ids.add(reading["id"])
-            if "readings@1" in env.profiles and s1_content_kind(reading["content"]) == "bar":
+            if "readings@1" in env.profiles and s1_content_kind(reading["content"]) == "bar" and not companion:
                 s1_content_meaning_id(env, item["id"], reading,
                                       rule_result=rule_results.get(id(reading)))
             if not (s1_bearing and s1_content_kind(reading["content"]) in S1_CONTENT_KINDS
@@ -221,7 +227,7 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
                 _check_kind(reading["kind"])
             if not token(reading["meaning_id"]):
                 raise VEError("invalid reading meaning id")
-            if reading["content"] is not None:
+            if reading["content"] is not None and not companion:
                 content = reading["content"]
                 if s1_bearing and s1_content_kind(content) in S1_CONTENT_KINDS:
                     content_id = s1_content_meaning_id(env, item["id"], reading,
@@ -488,11 +494,13 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     Every positive proof is replayed by the certificate checker, and every
     negative claim has an independently checked finite model. Failure of
     bounded search means UNKNOWN. We never infer NONE from proof failure.
-    Under a backend authority the replays and model checks run on the backend
-    and Lean's `readings` mode must confirm an ALL, NONE or SOME verdict from
-    its evidence (`lean/VE/Service/Readings.lean`).
+    Lean owns the operation under every authority (lean-first batch 13b): the
+    replays and model checks run on Lean and its `readings` mode must confirm
+    an ALL, NONE or SOME verdict from its evidence
+    (`lean/VE/Service/Readings.lean`). Environments outside that mode's scope
+    keep the retained Python, a recorded scope gap.
     """
-    from .backends.dispatch import authority_for, composed, execute
+    from .backends.dispatch import owned
     options = {"max_steps": max_steps, "max_domain_size": max_domain_size, "max_models": max_models,
                "max_evaluations": max_evaluations, "fixed": fixed, "joint_choices": joint_choices,
                "couplings": couplings}
@@ -500,22 +508,15 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     def python():
         return _check_readings_python(env, sets, conclusion_ast, **options)
 
-    if authority_for("readings") in ("python", "rust-experimental") or not _lean_readings_scope(env):
+    if not _lean_readings_scope(env):
         return python()
-    if couplings:
-        # Coupled choices (docs/spec/rights-PLAN.md) have no Lean interface yet:
-        # every per-choice certificate and model is checked on the backend, and
-        # the coupled enumeration and its verdict stay Python's (trusted,
-        # narrowed; a recorded gap).
-        return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
-    if joint_choices is not None:
-        # Discourse joint choices (docs/spec/discourse.md) have no Lean
-        # interface yet either: each choice's certificate and model is checked
-        # on the backend, and the joint enumeration and its verdict stay
-        # Python's (a recorded gap, as for couplings).
-        return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
-    return execute("readings", {"kind": "readings"}, python,
-                   lean=lambda: _check_readings_lean(env, sets, conclusion_ast, options))
+    if couplings or joint_choices is not None:
+        # Coupled choices (docs/spec/rights-PLAN.md) and discourse joint choices
+        # (docs/spec/discourse.md) have no Lean interface yet: every per-choice
+        # certificate and model is checked on Lean, and the enumeration and its
+        # verdict stay Python's (the stage-2c fallback retained until batch 14d).
+        return owned("readings", python)
+    return owned("readings", lambda: _check_readings_lean(env, sets, conclusion_ast, options))
 
 
 def _check_readings_lean(env, sets, conclusion_ast, options):

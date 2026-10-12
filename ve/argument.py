@@ -560,15 +560,17 @@ def _lean_graph_scope(graph) -> bool:
 @semantic_entry("graph.compose")
 def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_size=1,
                    max_models=1_000, max_evaluations=100_000, lean_executable=None):
-    """Check an argument under the selected authority.
+    """Check an argument; Lean owns it under every authority (lean-first batch 13b).
 
-    Under a backend authority the per-edge replays and model checks run on the
-    backend (`dispatch.composed`), the package-wide diagnostic statuses stay
-    Python's (trusted, narrowed: SEMANTICS-MIGRATION-PLAN.md section 1.2), and a
-    composition additionally needs Lean's `graph` report for the root, whose
-    projection must be the record's composition exactly.
+    The per-edge replays and model checks run on Lean, the package-wide
+    diagnostic statuses stay Python's (trusted, narrowed:
+    SEMANTICS-MIGRATION-PLAN.md section 1.2), and a composition additionally
+    needs Lean's `graph` report for the root, whose projection must be the
+    record's composition exactly. Packages outside Lean's `graph` scope
+    (statement layers, W6 units, n-ary core definitions) keep the retained
+    Python, a recorded scope gap.
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import owned
     options = {"search": search, "max_proof_steps": max_proof_steps, "max_domain_size": max_domain_size,
                "max_models": max_models, "max_evaluations": max_evaluations,
                "lean_executable": lean_executable}
@@ -576,9 +578,9 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
     def python():
         return _check_argument_python(graph, **options)
 
-    if authority_for("graph") in ("python", "rust-experimental") or not _lean_graph_scope(graph):
+    if not _lean_graph_scope(graph):
         return python()
-    return execute("graph", {"kind": "graph"}, python, lean=lambda: _check_argument_lean(graph, options))
+    return owned("graph", lambda: _check_argument_lean(graph, options))
 
 
 def _check_argument_lean(graph, options):

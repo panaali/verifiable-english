@@ -113,6 +113,22 @@ def test_genuine_route_answers_are_accepted_by_schema_and_lean(genuine, executab
     assert set(invariants) == {"accept"}, [v for v in invariants if v != "accept"][:5]
 
 
+@pytest.mark.parametrize("mode", ["alternatives", "risk", "soft-norms", "rights", "reports"])
+def test_admission_reports_reject_undeclared_claim_names(genuine, executables, mode):
+    """Every report sharing the graph report schema binds its assumptions to declared nodes."""
+    for actual, request, response, case, row in answers(genuine):
+        if actual != mode or case.get("kind") != "admission" or not row.get("report", {}).get("assumptions"):
+            continue
+        bad = deepcopy(row)
+        bad["report"]["assumptions"][0]["name"] = "fabricated_assumption"
+        altered = _bound(response, bad)
+        with pytest.raises(Invalid):
+            check_response(mode, altered, request)
+        assert lean_verdicts(executables[1], [(mode, request, [altered])])[0].startswith("reject")
+        return
+    raise AssertionError(f"no {mode} admission with assumptions in the route corpus")
+
+
 def _bound(response, row):
     return {**response, "results": [{**response["results"][0], "result": row}]}
 
@@ -343,8 +359,13 @@ def test_a_soft_rejection_with_another_checks_code_breaks_a_lean_invariant(genui
 
 # Objects deliberately open, with why: a predicate declaration of E' echoes the request's (and the
 # generated ones add theirs); its domain is the environment decoder's and the caller compares E' whole.
+# A case of a document's split (readings-defaults RD-4b) carries its environment, document and checked part:
+# objects (`Readings.Run.asObject`) that echo the request's, each bound member by member to the request by
+# the relay (`readings_components._bind_part`; tests/test_readings_components_load.py fuzzes every member).
+_SPLIT_CASE = "readings-route.json#/$defs/elaborate_components/properties/components/items/properties/"
 OPEN_ALLOWED = {"common.json#/$defs/environment_predicate",
-                "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/predicates/additionalProperties"}
+                "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/predicates/additionalProperties",
+                *(_SPLIT_CASE + name for name in ("environment", "document", "checked"))}
 
 
 def open_objects(directory=DIRECTORY):

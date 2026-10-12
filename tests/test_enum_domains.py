@@ -15,6 +15,7 @@ their enums while `service_schema.check_row` rejected them. `ResponseShape.EnumS
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 
@@ -22,6 +23,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import LEAN, ROOT, lean_build
+from ve.backends.service_schema import _KEYWORDS as KEYWORDS
 
 SCHEMAS = ROOT / "ve/backends/lean_service_schema"
 
@@ -37,13 +39,6 @@ COPIED = {
     ("discourse.json", "/$defs/reference/properties/form/enum"),
     ("soft-norms.json", "/$defs/elaborated/colliding_pairs/items/properties/outweighs/anyOf/0/const"),
 }
-
-KEYWORDS = {"$ref", "$comment", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum",
-            "required", "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
-            "contains", "anyOf", "allOf", "not", "if", "then", "else", "x-tagged", "x-fuel", "x-echo",
-            "x-equals", "x-length", "x-count", "x-references", "x-index", "x-digest", "x-zip",
-            "x-zip-or-empty", "x-case", "x-select", "x-count-where", "x-count-presence", "x-rows", "x-row"}
-
 
 @pytest.fixture(scope="module")
 def lake():
@@ -183,15 +178,16 @@ def _name(probe) -> str:
     return (named[-1] if named else probe["pointer"]) + probe["name"]
 
 
-def _probe_examples(probes) -> tuple[str, int, int]:
-    """The Lean examples of every probe: each value fits; BOGUS and the siblings' strings do not when
-    every string of the field is declared (`strings`), the opposite Boolean when every value is (`exact`)."""
+def _probe_examples(probes) -> tuple[list[str], int, int]:
+    """The Lean examples of every probe, one block per probe: each value fits; BOGUS and the siblings'
+    strings do not when every string of the field is declared (`strings`), the opposite Boolean when every
+    value is (`exact`)."""
     by_name: dict[str, set] = {}
     for p in probes:
         by_name.setdefault(_name(p), set()).update(json.dumps(v) for v in p["values"] if isinstance(v, str))
-    lines, positive, negative = [], 0, 0
+    blocks, positive, negative = [], 0, 0
     for i, p in enumerate(probes):
-        lines.append(f"abbrev probe{i} : Skel := fieldSkel% {i}")
+        lines = [f"abbrev probe{i} : Skel := fieldSkel% {i}"]
         own = {json.dumps(v) for v in p["values"]}
         for v in p["values"]:
             term = _lean_value(v)
@@ -208,21 +204,61 @@ def _probe_examples(probes) -> tuple[str, int, int]:
             lines.append(f"example (req : Json) : ¬ Fits req probe{i} ({term}) := "
                          "Fits.not_of_admits (n := 64) (by decide)")
             negative += 1
-    return "\n".join(lines) + "\n", positive, negative
+        blocks.append("\n".join(lines) + "\n")
+    return blocks, positive, negative
 
 
-def test_every_field_keeps_its_domain(lake, tmp_path, listed):
+# Probes per Lean source: one huge source exhausts the interpreter stack after many otherwise independent
+# proofs, so each elaboration is bounded.
+GROUP = 20
+# The probes' sources are split among this many tests, which xdist runs at once: the proofs were one test of
+# 1,672 s that set the end of the suite. Group k goes to shard k mod SHARDS.
+SHARDS = 8
+
+
+def shard_sources(blocks: list[str], shard: int) -> list[str]:
+    """The Lean sources shard `shard` elaborates: the groups of GROUP consecutive probes' blocks, dealt to
+    the shards in turn."""
+    starts = range(0, len(blocks), GROUP)[shard::SHARDS]
+    return ["\n".join(blocks[start:start + GROUP]) for start in starts]
+
+
+# The first line of each probe's block, as `_probe_examples` writes it.
+PROBE = re.compile(r"^abbrev probe(\d+) : Skel := fieldSkel% \1$", re.MULTILINE)
+
+
+def test_the_shards_prove_every_probe_once(listed):
+    """The shards together elaborate what the one test they replace did: every probe of `listed`, each once,
+    in sources of GROUP consecutive probes, and so every one of its examples."""
+    _, probes = listed
+    blocks, positive, negative = _probe_examples(probes)
+    assert positive > 500 and negative > 500, (positive, negative)
+    assert len(blocks) == len(probes)
+    sources = [source for shard in range(SHARDS) for source in shard_sources(blocks, shard)]
+    assert all(shard_sources(blocks, shard) for shard in range(SHARDS))
+    run = [[int(i) for i in PROBE.findall(source)] for source in sources]
+    # Every probe once, by index and by its (file, pointer, name).
+    assert sorted(i for indices in run for i in indices) == list(range(len(probes)))
+    assert sorted((probes[i]["file"], probes[i]["pointer"], probes[i]["name"]) for indices in run for i in indices) \
+        == sorted((p["file"], p["pointer"], p["name"]) for p in probes)
+    # The single test's sources: GROUP consecutive probes each, nothing else in them.
+    assert sorted(run) == [list(range(start, min(start + GROUP, len(probes))))
+                           for start in range(0, len(probes), GROUP)]
+    assert sorted(sources) == sorted("\n".join(blocks[start:start + GROUP])
+                                     for start in range(0, len(blocks), GROUP))
+    text = "".join(sources)
+    assert (text.count(") := by fits\n"), text.count(" := Fits.not_of_admits")) == (positive, negative)
+
+
+@pytest.mark.parametrize("shard", range(SHARDS))
+def test_every_field_keeps_its_domain(lake, tmp_path, listed, shard):
     """Each declared value is proved to fit its field; BOGUS and the siblings' values are proved not to."""
     _, probes = listed
-    body, positive, negative = _probe_examples(probes)
-    assert positive > 500 and negative > 500, (positive, negative)
-    # Keep each Lean elaboration bounded: one huge source exhausts the
-    # interpreter stack after many otherwise independent proofs.
-    groups = ["abbrev probe" + group for group in body.split("abbrev probe")[1:]]
-    for start in range(0, len(groups), 20):
-        done = _lean(lake, tmp_path, "\n".join(groups[start:start + 20]))
+    blocks, _, _ = _probe_examples(probes)
+    for source in shard_sources(blocks, shard):
+        done = _lean(lake, tmp_path, source)
         assert done.returncode == 0 and "error" not in done.stdout, \
-            (start, (done.stdout + done.stderr)[-4000:])
+            (source.split("\n", 1)[0], (done.stdout + done.stderr)[-4000:])
 
 
 def test_a_bogus_value_is_not_proved(lake, tmp_path, listed):

@@ -1,0 +1,115 @@
+{
+ "label": "after-warm",
+ "commit": "d0dbd667e50a633480bdc5c177e1456ebfefc279",
+ "command": "nice -n 19 uv run --frozen python -m pytest -n 16 -p no:cacheprovider -q --junitxml=/tmp/ve-eff-tests/suite-after-warm/junit.xml",
+ "wall_seconds": 2660,
+ "load": {
+  "min": 29.77,
+  "median": 46.27,
+  "max": 103.54,
+  "samples": 45
+ },
+ "tests": 13789,
+ "outcomes": {
+  "passed": 13698,
+  "failed": 0,
+  "skipped": 91,
+  "error": 0
+ },
+ "failed": [],
+ "sum_test_seconds": 26091,
+ "slowest": [
+  [
+   819.1,
+   "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist"
+  ],
+  [
+   477.6,
+   "tests/test_difffuzz.py::test_ci_run"
+  ],
+  [
+   466.3,
+   "tests/test_consolidation_tools.py::test_statement_dump_is_current"
+  ],
+  [
+   457.1,
+   "tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip"
+  ],
+  [
+   420.8,
+   "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results"
+  ],
+  [
+   409.2,
+   "tests/test_asimov_extended.py::test_rerun_records_equal_the_committed_results"
+  ],
+  [
+   395.2,
+   "tests/test_enum_domains.py::test_every_field_keeps_its_domain[0]"
+  ],
+  [
+   377.7,
+   "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit"
+  ],
+  [
+   366.9,
+   "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget"
+  ],
+  [
+   270.1,
+   "tests/test_consolidation_tools.py::test_mutated_committed_ties_are_reported_or_rejected"
+  ],
+  [
+   263.6,
+   "tests/test_english_evidence.py::test_english_differential_merge_smoke"
+  ],
+  [
+   260.0,
+   "tests/test_safety_framework.py::test_rerun_equals_committed_results"
+  ],
+  [
+   250.3,
+   "tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed"
+  ],
+  [
+   244.1,
+   "tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env0]"
+  ],
+  [
+   230.2,
+   "tests/test_p1_amendment15.py::test_runner_preserves_finished_trajectories_initials_and_resumes_without_repurchase"
+  ]
+ ],
+ "watched": {
+  "tests/test_difffuzz.py::test_a_changed_python_diagnostic_is_caught[code]": 5.6,
+  "tests/test_difffuzz.py::test_a_changed_python_diagnostic_is_caught[text]": 12.1,
+  "tests/test_difffuzz.py::test_a_weakened_comparison_fails_the_ci_verdict[codes reduced to the P0 contract]": 5.1,
+  "tests/test_difffuzz.py::test_ci_run": 477.6,
+  "tests/test_difffuzz.py::test_genuine_rows_pass_their_checks_and_mutated_rows_are_not_answers": 5.3,
+  "tests/test_enum_domains.py::test_every_declaration_is_listed": 48.7,
+  "tests/test_enum_domains.py::test_every_field_keeps_its_domain[0]": 395.2,
+  "tests/test_enum_domains.py::test_every_field_keeps_its_domain[1]": 103.1,
+  "tests/test_enum_domains.py::test_every_field_keeps_its_domain[2]": 77.7,
+  "tests/test_enum_domains.py::test_every_field_keeps_its_domain[3]": 64.9,
+  "tests/test_enum_domains.py::test_every_field_keeps_its_domain[4]": 40.3,
+  "tests/test_enum_domains.py::test_every_field_keeps_its_domain[5]": 123.3,
+  "tests/test_enum_domains.py::test_every_field_keeps_its_domain[6]": 104.9,
+  "tests/test_enum_domains.py::test_every_field_keeps_its_domain[7]": 57.4,
+  "tests/test_enum_domains.py::test_point_status[BOGUS-False]": 6.3,
+  "tests/test_enum_domains.py::test_point_status[UNKNOWN-True]": 7.9,
+  "tests/test_enum_domains.py::test_point_status[no statusFields-False]": 6.2,
+  "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_soft_conformance_fixture": 85.0,
+  "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module": 226.2,
+  "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit": 377.7,
+  "tests/test_wire_gate_corpus.py::test_one_run_records_each_unit_as_its_own_run_does": 18.5,
+  "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norm-defaults@0]": 69.2,
+  "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norms@0]": 7.9,
+  "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norm-defaults@0]": 84.8,
+  "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norms@0]": 8.7
+ },
+ "properties": {
+  "tests/test_difffuzz.py::test_ci_run": {
+   "cpu_seconds": "{'python': 202.1, 'children': 124.6}"
+  }
+ }
+}

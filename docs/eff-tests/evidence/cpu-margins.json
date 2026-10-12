@@ -1,0 +1,40 @@
+{
+ "method": "a measuring plugin divided the CPU limit of every completed_within (Lean service request deadline) and run_cpu_bounded (kernel RLIMIT_CPU) call by FACTOR in tests/test_lean_layers_once.py, test_readings_lazy_pairs.py, test_readings_lean_sharing.py, test_w6a_route_limits.py, test_w6a_limit_generator.py, test_norm_defaults_relay_english.py (67 tests)",
+ "runs": [
+  {
+   "factor": 5,
+   "load": "16-22",
+   "scope": "completed_within only",
+   "passed": 67,
+   "failed": 0
+  },
+  {
+   "factor": 1000,
+   "load": "16-22",
+   "scope": "completed_within and the relay renderer's outer limit",
+   "passed": 57,
+   "failed": 10,
+   "note": "the plugin applies: every bounded request and render fails"
+  },
+  {
+   "factor": 5,
+   "load": "20-26",
+   "scope": "both, and RENDER_CPU",
+   "passed": 62,
+   "failed": 5,
+   "failed_tests": [
+    "tests/test_readings_lean_sharing.py::test_no_pending_candidates_document_is_built[more-sets]",
+    "4 x test_norm_defaults_relay_english.py::test_latent_fixture_renders_in_under_two_seconds"
+   ],
+   "note": "the render failures are the plugin's own: RENDER_CPU / 5 made the child's RLIMIT_CPU a float"
+  },
+  {
+   "factor": 4,
+   "load": "about 20",
+   "scope": "the tightest: test_no_pending_candidates_document_is_built (3) and test_a_rights_request_over_a_wide_environment_is_cheap",
+   "passed": 4,
+   "failed": 0
+  }
+ ],
+ "conclusion": "every remaining CPU deadline holds at a quarter of its limit at load about 20; the logs of 2026-10-05..10 show no load failure of these tests (the failures found were regressions or a broken merge-train run), so they stay as runaway guards (docs/TESTING.md, Work bounds)"
+}

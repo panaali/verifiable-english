@@ -42,7 +42,7 @@ def certificate : Shape :=
     obj,
     .required ["id", "status", "valid", "steps"],
     closed [("id", n [str, .equals "/id"]), ("status", constS "ok"),
-      ("valid", .type ["boolean"]), ("steps", ref "common.json#/$defs/nat")]]
+      ("valid", .type ["boolean"]), ("steps", n [ref "common.json#/$defs/nat", .maxSteps])]]
 
 def «row» : Shape :=
   .anyOf [
