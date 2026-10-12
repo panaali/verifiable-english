@@ -179,21 +179,20 @@ changed (Python; no Lean or Rust changed). Each made its named test fail and was
   round's additions, then the selected tests).
 - Gate items 2, 3 and 5 of plan 4.1 have nothing to compare, because no file under `ve/`, `lean/` or `rust/`
   changed.
-- **The full gate did not finish, so there is no passing `gate-result.json`.** `tools/gate.py` ran on `e25a7773`
-  (clean tree), the last commit before this evidence, which changed only `docs/arch/AR-4/`. The machine's load was
-  60–90 on 32 CPUs. The tool's background limit of 2 hours stopped the gate during its Python suite. AR-8 hit the
-  same limit on 2026-10-10. Every stage before the suite passed: wire contract, `lake build`, `lean/audit.py`, the
-  Rust build pinned in `checkers.lock`, 15 native Rust test binaries with 0 failed, and the Python collection
-  (14,446 of 14,447; the 1 deselected test is `live`). The stage log is in `evidence/gate-stages.log`.
-- The suite then ran on the same commit, in the foreground, with the gate's prebuilt Lean and Rust binaries:
-  16 file chunks at `-n 3` under `timeout 3000`, with `-m "not live"`, as AR-8 did. Chunks 9 and 10 exceeded the
-  timeout with no failure, so each was rerun in two halves. Result: 14,355 passed, 0 failed, 0 errors, and 91
-  skipped or xfailed. The JUnit files hold 14,446 distinct cases, every test the gate collected. The per-chunk
-  record is in `evidence/suite-chunks.json`.
-- Not run as one gate: the gate's own pytest plugins (`-p tools.gate_pytest`, its collection diff against
-  `tools/gate-collection.json`, and the optional-test policy). `tests/test_gate_collection.py` ran in the chunks
-  and passed.
-- A further full-gate attempt on `75b25445` passed the Lean build and audit, Rust build and native tests, and
-  Python collection (14,446 selected, one live test deselected). The Python suite was still active when the
-  one-hour shell timeout stopped the command (exit 124); it produced no passing gate result. This attempt used
-  `--workers 24` and made no source change.
+- Earlier verification on `e25a7773` passed the build, audit, native tests and Python collection, but the full
+  gate was interrupted during its suite by a two-hour tool limit (`evidence/gate-stages.log`). Its suite was then
+  run in 16 foreground chunks: 14,355 passed, 0 failed, and 91 skipped or xfailed across all 14,446 selected
+  cases (`evidence/suite-chunks.json`). A full-gate attempt on `75b25445` also passed the pre-suite stages but
+  reached a one-hour shell timeout during pytest (exit 124).
+- **Final gate under standing ruling R13:** `tools/gate.py --workers 24` ran on clean commit `5ac95cc3`. The
+  full gate completed all six required stages: Lean build and audit, Rust build and 36 native tests, and the
+  Python suite with its gate plugin, pinned collection and optional-test policy. It collected 14,447 tests,
+  selected 14,446 (one live test deselected), and recorded 14,353 passed, 92 skipped or xfailed, and one failed
+  (`evidence/gate-full-failed.json`). The sole failure was
+  `tests/test_question_reading.py::test_the_cli_prints_leans_words_with_its_exit_code[A6c]`: under host load,
+  `english.question` exceeded its 5.09278 s CPU deadline and returned `CheckerUnavailable`.
+- `tools/gate.py --workers 1 --rerun-failed` then reran `tests/test_question_reading.py` on the same clean commit.
+  All 288 tests passed, including A6c; the result is `rerun-passed` with no failures
+  (`evidence/gate-result.json`). R13 counts the full gate plus its same-commit serial rerun as passed. The
+  recorded rerun reused the full gate's successful Lean audit and native Rust test stages. This A6c test has one
+  known rerun in this batch; no second rerun of it was found in the week's reports.
