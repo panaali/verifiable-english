@@ -211,3 +211,40 @@ def test_the_retained_sugar_reading_is_deleted():
     assert not hasattr(parser, "_parse_python_marked")
     assert "sugar" not in inspect.getsource(parser._Parser.__init__)
     assert "definitions@0" not in inspect.getsource(parser._parse_lean)
+
+
+PERTURBATIONS = {
+    "nbsp": lambda s: s.replace(" ", " ", 1),
+    "double space": lambda s: s.replace(" ", "  ", 1),
+    "tab": lambda s: s.replace(" ", "\t", 1),
+    "carriage return": lambda s: s.replace("\n", "\r\n", 1),
+    "curly quote": lambda s: "’" + s,
+    "kelvin sign": lambda s: s.replace("item", "Kitem", 1),
+    "dotted capital i": lambda s: s.replace("is", "İs", 1),
+    "control character": lambda s: s.replace(" ", " \x01", 1),
+}
+
+
+@pytest.mark.parametrize("name", sorted(PERTURBATIONS))
+def test_perturbed_sugar_gets_the_same_answer(name):
+    """Checklist line 3: every accepted sugar fixture with one perturbation gets the retained reader's code,
+    message and span from Lean (none is silently accepted)."""
+    env = Environment(pm.raw_environment(("definitions@0",)))
+    for source in ACCEPTED:
+        changed = PERTURBATIONS[name](source)
+        if changed == source:
+            continue
+        expected = python_reading(env, changed)
+        assert expected[0] == "rejected", (name, changed)
+        assert lean_reading(env, changed) == expected, (name, changed)
+
+
+def test_two_faults_report_the_first_in_source_order():
+    """Checklist line 2: two faulty sugar statements in one source; Lean reports the first, as the retained
+    reader does (code, message and span)."""
+    env = Environment(pm.raw_environment(("definitions@0",)))
+    lines = [source for source in REJECTED if source.endswith(".\n") and source.count("\n") == 1]
+    for index, first in enumerate(lines):
+        second = lines[(index * 7 + 3) % len(lines)]
+        for source in (first + second, ACCEPTED[index % len(ACCEPTED)] + first + second):
+            assert lean_reading(env, source) == python_reading(env, source), source
