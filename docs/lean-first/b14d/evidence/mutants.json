@@ -55,6 +55,6 @@
       "caught": true
     }
   ],
-  "restored_test": "14 passed in tests/test_batch_evidence.py; focused choice and plan tests passed; malformed-unit fallback regression passed after restoration",
+  "restored_test": "14 passed in tests/test_batch_evidence.py; focused choice and plan tests passed; malformed-unit fallback regression passed after restoration; genuine-response schema fuzz agreement passed",
   "restored_service_sha256": "3eee1ce49cd51039c243ad36cea0ff2851122b5392cbec88cb11fb3c3f69da1c"
 }
