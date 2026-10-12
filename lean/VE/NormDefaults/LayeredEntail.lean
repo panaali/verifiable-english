@@ -113,6 +113,73 @@ theorem modelCheckX_sound (U : UDoc) (h : WellFormedU U = true) (X : List VE.For
   have hX : Wire.extraValid U X M F = true := hm.2
   obtain ⟨hB, hΓ, hφ⟩ := modelCheckU_sound U h M valid F Γ φ hm'
   exact ⟨⟨hB, fun a ha => (eval_withFill U M F a []).mp (List.all_eq_true.mp hX a ha)⟩, hΓ, hφ⟩
+/-! ## `X` is a list of closed base formulas of `E‴` -/
+
+/-- `selects_wellFormed` for a rule typed by its own guard and carve-outs, whether or not the tree holds it. -/
+theorem selects_wellFormed_of {T : Tree} {E : VE.Environment} {Γ : List String} {p : String}
+    (hT : RulesTyped T E Γ p) (f : Nat) (M : Node)
+    (hM : M.guard.WellFormed E Γ ∧ ∀ C ∈ M.carveOuts, C.WellFormed E Γ) (hp : M.pred = p) :
+    (selects T f M).WellFormed E Γ := by
+  refine ⟨applies_wellFormed hM, anyF_wellFormed E Γ _ ?_⟩
+  intro a ha
+  obtain ⟨C, hC, rfl⟩ := List.mem_map.mp ha
+  obtain ⟨hC, hCp⟩ := mem_children hC
+  exact yields_wellFormed hT f C hC (hCp.trans hp)
+
+/-- A soft rule's selection regenerated on the filled tree is a base formula over its act's sorts. -/
+theorem fillSelects_wellFormed (D : VE.SoftNorms.SoftDoc) (unspec : List String)
+    (hs : VE.SoftNorms.WellFormedSoft D = true) (hw : WellFormedU ⟨VE.SoftNorms.soften D, unspec⟩ = true)
+    (K : VE.SoftNorms.SoftNode) (hK : K ∈ D.T.nodes) :
+    (subst (fill ⟨VE.SoftNorms.soften D, unspec⟩).T (size (fill ⟨VE.SoftNorms.soften D, unspec⟩))
+      (selects (fill ⟨VE.SoftNorms.soften D, unspec⟩).T (fuel (fill ⟨VE.SoftNorms.soften D, unspec⟩).T)
+        (VE.SoftNorms.primeNode D K))).WellFormed (envAt (fill ⟨VE.SoftNorms.soften D, unspec⟩) 0)
+      (VE.SoftNorms.sortsOf D K.pred).reverse ∧
+    ∀ s ∈ VE.SoftNorms.sortsOf D K.pred, s ∈ (envAt (fill ⟨VE.SoftNorms.soften D, unspec⟩) 0).sorts := by
+  have hsv := VE.SoftNorms.softValid_of_wellFormed _ hs
+  have hv : Valid (fill ⟨VE.SoftNorms.soften D, unspec⟩) := valid_of_wellFormed _ (fill_wellFormed _ hw)
+  obtain ⟨n, hn, hnK⟩ := List.mem_map.mp (hsv.predReg K hK)
+  obtain ⟨r, hr⟩ : ∃ r, D.T.regulated.find? (·.name == K.pred) = some r :=
+    Option.isSome_iff_exists.mp (List.find?_isSome.mpr ⟨n, hn, by simpa using hnK⟩)
+  have hrm : r ∈ (fill ⟨VE.SoftNorms.soften D, unspec⟩).T.regulated := List.mem_of_find?_eq_some hr
+  have hrn : r.name = K.pred := by simpa using List.find?_some hr
+  have hso : VE.SoftNorms.sortsOf D K.pred = r.sorts := by
+    simp [VE.SoftNorms.sortsOf, VE.SoftNorms.sortsIn, hr]
+  have hk := index_before hv hrm
+  have hT := rulesTyped_of_valid hv hk
+  have hpn : fillRoot ⟨VE.SoftNorms.soften D, unspec⟩ (VE.SoftNorms.primeNode D K) ∈
+      (fill ⟨VE.SoftNorms.soften D, unspec⟩).T.nodes :=
+    mem_fill_nodes.mpr (Or.inl ⟨_, List.mem_map_of_mem hK, rfl⟩)
+  have hg := hT _ hpn (by rw [fillRoot_pred, hrn]; rfl)
+  rw [fillRoot_guard, fillRoot_carveOuts] at hg
+  have h1 := selects_wellFormed_of hT (fuel (fill ⟨VE.SoftNorms.soften D, unspec⟩).T) _ hg (by rw [hrn]; rfl)
+  have hle : before (fill ⟨VE.SoftNorms.soften D, unspec⟩) r.name ≤ size (fill ⟨VE.SoftNorms.soften D, unspec⟩) :=
+    Nat.le_of_lt (List.getElem?_eq_some_iff.mp hk).1
+  rw [hso]
+  exact ⟨subst_wellFormed hv _ _ _ (envAt_mono hle _ _ h1), (hv.decl _ (List.mem_of_getElem? hk)).2.2⟩
+
+/-- Soft's premises regenerated on the filled tree (`Exc_T`, then `Coh_T` read on `fill U`) are closed base formulas
+    of `E‴`: `Exc_T` is typed over `E′` (`WellFormedSoft`), whose declarations `E‴` keeps, and each coherence
+    premise's selections are typed by the filled tree's rules. -/
+theorem Wire.softLabelledU_wellFormed (D : VE.SoftNorms.SoftDoc) (unspec : List String)
+    (hs : VE.SoftNorms.WellFormedSoft D = true) (hw : WellFormedU ⟨VE.SoftNorms.soften D, unspec⟩ = true) :
+    ∀ a ∈ (Wire.softLabelledU ⟨VE.SoftNorms.soften D, unspec⟩ D).map (·.2),
+      a.WellFormed (envAt (fill ⟨VE.SoftNorms.soften D, unspec⟩) 0) [] := by
+  have hsv := VE.SoftNorms.softValid_of_wellFormed _ hs
+  intro a ha
+  obtain ⟨⟨l, a⟩, hla, rfl⟩ := List.mem_map.mp ha
+  rcases List.mem_append.mp hla with he | hc
+  · have hea : a ∈ VE.SoftNorms.excPremises D := (List.of_mem_zip he).2
+    exact wf_mono (E := envAt (VE.SoftNorms.soften D) 0) (E' := envAt (fill ⟨VE.SoftNorms.soften D, unspec⟩) 0)
+      rfl rfl (envAt_fill_mono (uvalid hw) 0) a [] (hsv.premTyped a (List.mem_append_left _ hea))
+  · obtain ⟨⟨M, K⟩, hMK, he⟩ := List.mem_map.mp hc
+    cases he
+    obtain ⟨hM, hK, -, -, -, -⟩ := VE.SoftNorms.mem_collidingPairs.mp hMK
+    have hMs := fillSelects_wellFormed D unspec hs hw M hM
+    have hKs := fillSelects_wellFormed D unspec hs hw K hK
+    rw [← hsv.cpSorts _ hMK] at hKs
+    apply bindAll_wellFormed hMs.2 [] _
+    simp only [List.append_nil]
+    exact ⟨hMs.1, hKs.1⟩
 end VE.NormDefaults
 
 namespace VE.NormDefaults.Wire

@@ -1,4 +1,5 @@
 import VE.NormDefaults.Layered
+import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Explain
 import VE.Norms.Run
@@ -198,10 +199,15 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
     throw s!"UnsupportedProfile: case kind {kind} is not available on the norm-defaults route"
   VE.Norms.Run.runCase j
 
+/-- The soft branch's `admission` and `norm-defaults-certificate` (`Admission.softCase`) first, for a soft source
+under the profile; then a profiled admission on the norms branch; then every other case. -/
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
-  if kind == "admission" && Wire.hasProfile (j.getObjValD "environment") then
+  let env := j.getObjValD "environment"
+  if Wire.hasProfile env && Wire.layeredRoute env == some "soft-norms@0" then
+    if let some a ← Admission.softCase id kind j then return a
+  if kind == "admission" && Wire.hasProfile env then
     let environment ← j.getObjVal? "environment"
     let document ← j.getObjVal? "document"
     return ← runAdmission id environment document
@@ -209,10 +215,12 @@ def runCase (j : Json) : Except String Json := do
 
 /-- The public admission branch: from raw JSON under the profile, a successful answer
 satisfies the full admission obligation on `fill U` for the case's own id, environment
-and document; no profiled admission falls through to the norms route. -/
+and document; no profiled admission falls through to the norms route. The soft branch
+(`layeredRoute = some "soft-norms@0"`) is `normDefaults_wire_admissionX`'s. -/
 theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "admission")
-    (hp : Wire.hasProfile (j.getObjValD "environment") = true) :
+    (hp : Wire.hasProfile (j.getObjValD "environment") = true)
+    (hs : Wire.layeredRoute (j.getObjValD "environment") ≠ some "soft-norms@0") :
     ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
       AdmissionAnswerU id (j.getObjValD "environment") (j.getObjValD "document") answer := by
   unfold runCase at h
@@ -220,7 +228,10 @@ theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answe
   obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
   have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
   subst kind
-  simp only [beq_self_eq_true, Bool.true_and, hp, ↓reduceIte] at h
+  have hs' : (Wire.layeredRoute (j.getObjValD "environment") == some "soft-norms@0") = false := by
+    simpa using hs
+  simp only [beq_self_eq_true, Bool.true_and, hp, hs', Bool.and_false, Bool.false_eq_true, ↓reduceIte,
+    pure_bind] at h
   obtain ⟨environment, he, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨document, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
   have he' : j.getObjValD "environment" = environment := by
@@ -229,6 +240,36 @@ theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answe
     simp only [Json.getObjValD, hd]; rfl
   rw [he', hd']
   exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
+
+/-- The soft branch's admission: from raw JSON under the profile with a soft source, a successful answer satisfies
+the full admission obligation on the filled soft tree (`Admission.AdmissionAnswerX`) for the case's own id,
+environment and document. With `normDefaults_wire_admission` it covers every profiled admission. -/
+theorem normDefaults_wire_admissionX (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission")
+    (hp : Wire.hasProfile (j.getObjValD "environment") = true)
+    (hs : Wire.layeredRoute (j.getObjValD "environment") = some "soft-norms@0") :
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      Admission.AdmissionAnswerX id (j.getObjValD "environment") (j.getObjValD "document") answer := by
+  unfold runCase at h
+  obtain ⟨id, hid, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
+  subst kind
+  simp only [hp, hs, beq_self_eq_true, Bool.and_self, ↓reduceIte] at h
+  obtain ⟨o, ho, h⟩ := VE.Order.ProfileGate.bind_ok h
+  unfold Admission.softCase at ho
+  simp only [beq_self_eq_true, ↓reduceIte] at ho
+  obtain ⟨environment, he, ho⟩ := VE.Order.ProfileGate.bind_ok ho
+  obtain ⟨document, hd, ho⟩ := VE.Order.ProfileGate.bind_ok ho
+  obtain ⟨a, ha, ho⟩ := VE.Order.ProfileGate.bind_ok ho
+  cases ho
+  cases h
+  have he' : j.getObjValD "environment" = environment := by
+    simp only [Json.getObjValD, he]; rfl
+  have hd' : j.getObjValD "document" = document := by
+    simp only [Json.getObjValD, hd]; rfl
+  rw [he', hd']
+  exact ⟨id, hid, Admission.runAdmissionX_sound id environment document answer ha⟩
 
 def runCaseReported (j : Json) : Json :=
   if usesNormDefaultsPath j then

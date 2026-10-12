@@ -235,13 +235,26 @@ def certificate : Shape :=
       ("valid", .type ["boolean"]),
       ("premises", ref "common.json#/$defs/nat")]]
 
+def soft_admission : Shape :=
+  c "NormDefaults.Admission.encodeAdmittedX (the soft branch's admission, Run.runCase's soft dispatch): W2's admission answer on the filled soft tree and the open coherence premises the report assumes, as the soft route's admission answer lists them." [
+    obj,
+    .required ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("admitted", .const (.bool true)),
+      ("report", ref "common.json#/$defs/bound_report"),
+      ("report_id", ref "common.json#/$defs/hex64"),
+      ("kinds", n [arr, .items (ref "common.json#/$defs/kind"), .equals "/document/units/*/kind"]),
+      ("conditional_on", ref "soft-norms.json#/$defs/coherence_labels")]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/norm_defaults_path", .anyOf [
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
       .select [
-        (ref "#/$defs/kind/admission", ref "common.json#/$defs/admission"),
+        (ref "#/$defs/kind/admission", .anyOf [ref "common.json#/$defs/admission", ref "#/$defs/soft_admission"]),
         (ref "#/$defs/kind/norm-defaults-elaborate", .anyOf [ref "#/$defs/elaborate", ref "#/$defs/layered_elaborate"]),
         (.allOf [ref "#/$defs/kind/norm-defaults-conflict", .required ["witness"]], ref "#/$defs/witness_conflict"),
         (ref "#/$defs/kind/norm-defaults-conflict", ref "common.json#/$defs/packages_conflict"),
@@ -268,6 +281,7 @@ def file : File where
     ("gaps_model", .schema gaps_model),
     ("gaps", .schema gaps),
     ("certificate", .schema certificate),
+    ("soft_admission", .schema soft_admission),
     ("report_line", .schema report_line),
     ("report_row", .schema report_row)]
 

@@ -1,5 +1,6 @@
 import VE.Readings.SoftDefaults
 import VE.Readings.SoftSeparate
+import VE.NormDefaults.LayeredAdmission
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
@@ -5085,8 +5086,9 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.xSem_nil
 #print axioms VE.Readings.Wire.ndRest_eq_fillRest
 #print axioms VE.Readings.Wire.wellFormedSD_eq
-#print axioms VE.Readings.selects_wellFormed_of
-#print axioms VE.Readings.fillSelects_wellFormed
+#print axioms VE.NormDefaults.selects_wellFormed_of
+#print axioms VE.NormDefaults.fillSelects_wellFormed
+#print axioms VE.NormDefaults.Wire.softLabelledU_wellFormed
 #print axioms VE.Readings.softX_wellFormed
 #print axioms VE.Readings.excLabels_length
 #print axioms VE.Readings.softPremisesIn_fill
@@ -5114,3 +5116,14 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.separatesS_other
 #print axioms VE.Readings.separatesS_sound
 #print axioms VE.Readings.separatesS_separated
+#print axioms VE.NormDefaults.Wire.decodeSoftU_source
+#print axioms VE.NormDefaults.Wire.decodeSoftU_X_wellFormed
+#print axioms VE.NormDefaults.Wire.layered_wire_acceptance
+#print axioms VE.NormDefaults.Admission.admitNodesX_ok
+#print axioms VE.NormDefaults.Admission.admitDocumentX_spec
+#print axioms VE.NormDefaults.Admission.layerLeafU_formula
+#print axioms VE.NormDefaults.Admission.fillLeafU_formula
+#print axioms VE.NormDefaults.Admission.softLeafX_formula
+#print axioms VE.NormDefaults.Admission.wire_report_consequenceX
+#print axioms VE.NormDefaults.Admission.runAdmissionX_sound
+#print axioms VE.NormDefaults.Run.normDefaults_wire_admissionX

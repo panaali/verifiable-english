@@ -232,6 +232,7 @@ module VE.NormDefaults.Explain
 module VE.NormDefaults.Fill
 module VE.NormDefaults.FillCheck
 module VE.NormDefaults.Layered
+module VE.NormDefaults.LayeredAdmission
 module VE.NormDefaults.LayeredEntail
 module VE.NormDefaults.Premises
 module VE.NormDefaults.Replay
@@ -658,13 +659,22 @@ VE.Graph.Unfolds.below@VE.ClaimGraph
 VE.Graph.Unfolds@VE.ClaimGraph
 VE.Graph.tableauValid@VE.ClaimGraph
 VE.GraphChecks.valid@VE.GraphChecks
+VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.CertificatesBound@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.CertificatesBoundX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.FillLeaf@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.FillLeafU@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.LayerLeaf@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.LayerLeafU@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.NodeAdmitted@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.NodeAdmittedX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.ProfileLeaf@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.ProfileLeafU@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.ReportAdmitted@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.ReportAdmittedX@VE.NormDefaults.LayeredAdmission
+VE.NormDefaults.Admission.SoftLeafX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.SourceDecoded@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.SourceDecodedX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.BaseAdmissibleAltU@VE.NormDefaults.Routes
 VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises
 VE.NormDefaults.CheckOK@VE.NormDefaults.Check

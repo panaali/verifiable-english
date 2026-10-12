@@ -146,7 +146,7 @@ theorem fillSelects_typed {N : NDoc} {X : RightsDoc} (hv : VE.Norms.Valid (VE.No
   rw [VE.NormDefaults.fillRoot_guard, VE.NormDefaults.fillRoot_carveOuts] at hg
   have hle : VE.Norms.before (VE.NormDefaults.fill (asU N X)) r.name ≤ size (VE.NormDefaults.fill (asU N X)) :=
     Nat.le_of_lt (List.getElem?_eq_some_iff.mp hk).1
-  exact VE.Norms.envAt_mono hle _ _ (selects_wellFormed_of hT _ _ hg hp)
+  exact VE.Norms.envAt_mono hle _ _ (VE.NormDefaults.selects_wellFormed_of hT _ _ hg hp)
 
 /-- The finite evaluation on a filled side is the W1 semantics of the filled tree, on an admissible base and a
     typed probe. -/

@@ -27,13 +27,18 @@ SECTIONS = (
      {"theorem": 14, "def": 7, "structure": 1}, set()),
     ("SC-2 separation", "### 6.6", "### 6.7", [LEAN / "Readings/SoftSeparate.lean"],
      {"theorem": 6, "def": 6, "structure": 0}, set()),
+    ("SC-6 layered kinds", "### 6.10", "### 6.11",
+     [LEAN / "NormDefaults/LayeredAdmission.lean", LEAN / "NormDefaults/Admission.lean", LEAN / "NormDefaults/Run.lean"],
+     {"theorem": 6, "def": 18, "structure": 2}, set()),
 )
 
 
 def approved_block(start: str, stop: str) -> dict:
     section = SPEC.read_text().split(start, 1)[1].split(stop, 1)[0]
     code = section.split("```lean", 1)[1].split("```", 1)[0]
-    return declarations(re.sub(r"--[^\n]*", "", code), statements_only=True)
+    # Line comments (`-- proved in the stub`) are dropped; a docstring's `/--` is kept, so it still ends the
+    # declaration before it.
+    return declarations(re.sub(r"(?<![/-])--[^\n]*", "", code), statements_only=True)
 
 
 def main(sections=SECTIONS) -> int:

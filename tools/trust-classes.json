@@ -571,7 +571,8 @@
         "ResponseShape.Schemas.NormDefaults.report_row",
         "ResponseShape.Schemas.NormDefaults.row",
         "ResponseShape.Schemas.NormDefaults.status",
-        "ResponseShape.Schemas.NormDefaults.witness_conflict"
+        "ResponseShape.Schemas.NormDefaults.witness_conflict",
+        "ResponseShape.Schemas.NormDefaults.soft_admission"
       ],
       "G[R]": [
         "ResponseShape.Schemas.NormDefaults.norm_defaults_path"
@@ -4259,7 +4260,13 @@
         "VE.NormDefaults.Admission.instDecidableLayerLeaf",
         "VE.NormDefaults.Admission.instDecidableNodeAdmitted",
         "VE.NormDefaults.Admission.instDecidableProfileLeaf",
-        "VE.NormDefaults.Admission.otherAssumptions"
+        "VE.NormDefaults.Admission.otherAssumptions",
+        "VE.NormDefaults.Admission.LayerLeafU",
+        "VE.NormDefaults.Admission.ProfileLeafU",
+        "VE.NormDefaults.Admission.FillLeafU",
+        "VE.NormDefaults.Admission.instDecidableLayerLeafU",
+        "VE.NormDefaults.Admission.instDecidableProfileLeafU",
+        "VE.NormDefaults.Admission.instDecidableFillLeafU"
       ],
       "C": [
         "VE.NormDefaults.Admission.Admitted",
@@ -10916,6 +10923,34 @@
         "VE.Readings.SoftSeparateExamples.PC9",
         "VE.Readings.SoftSeparateExamples.N18",
         "VE.Readings.SoftSeparateExamples.tabs18"
+      ]
+    },
+    "VE/NormDefaults/LayeredAdmission.lean": {
+      "S": [
+        "VE.NormDefaults.Admission.SoftLeafX",
+        "VE.NormDefaults.Admission.NodeAdmittedX",
+        "VE.NormDefaults.Admission.otherAssumptionsX",
+        "VE.NormDefaults.Admission.ReportAdmittedX",
+        "VE.NormDefaults.Admission.SourceDecodedX",
+        "VE.NormDefaults.Admission.CertificatesBoundX",
+        "VE.NormDefaults.Admission.filledProfilesX",
+        "VE.NormDefaults.Admission.AdmissionAnswerX",
+        "VE.NormDefaults.Admission.encodeAdmittedX",
+        "VE.NormDefaults.Admission.conditionalOnX",
+        "VE.NormDefaults.Admission.instDecidableSoftLeafX",
+        "VE.NormDefaults.Admission.instDecidableNodeAdmittedX"
+      ],
+      "C": [
+        "VE.NormDefaults.Admission.AdmittedX",
+        "VE.NormDefaults.Admission.admitDocumentX",
+        "VE.NormDefaults.Admission.admitNodesX",
+        "VE.NormDefaults.Admission.filledJsonX",
+        "VE.NormDefaults.Wire.LayeredEntailment",
+        "VE.NormDefaults.Wire.replayLayeredEntailment"
+      ],
+      "G[V]": [
+        "VE.NormDefaults.Admission.runAdmissionX",
+        "VE.NormDefaults.Admission.softCase"
       ]
     }
   }
