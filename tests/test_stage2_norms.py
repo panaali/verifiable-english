@@ -313,6 +313,16 @@ def test_non_first_order_conflict_witness_is_checked_by_lean(monkeypatch):
     assert ("norms_conflict", "lean") in ops
 
 
+def test_non_first_order_conflict_zero_model_budget_is_unknown():
+    env = flagged(family=("closure@0",), relation=True)
+    doc = NormDocument(env, [rule("must", "required", True,
+                                  Reach("star", Named("before"), Var(0), Var(0)))])
+    model = {"complete": True, "domains": {"act": ["a"], "party": ["p"]},
+             "constants": {}, "relations": {"owner": [["a", "p"]], "urgent": [], "before": []}}
+    assert check_conflict(doc, model=model, max_evaluations=0).status == "UNKNOWN"
+    assert check_conflict(doc, model=model, max_evaluations=50).status == "CONFLICT"
+
+
 def test_non_first_order_conflict_refused_witness_is_unavailable(monkeypatch):
     env = flagged(family=("closure@0",), relation=True)
     doc = NormDocument(env, [rule("must", "required", True,
