@@ -10661,6 +10661,7 @@
         "ResponseShape.Schemas.Ask.answered",
         "ResponseShape.Schemas.Ask.choice",
         "ResponseShape.Schemas.Ask.englishFormula",
+        "ResponseShape.Schemas.Ask.englishTerm",
         "ResponseShape.Schemas.Ask.file",
         "ResponseShape.Schemas.Ask.gap",
         "ResponseShape.Schemas.Ask.identities",

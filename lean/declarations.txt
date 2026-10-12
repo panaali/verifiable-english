@@ -731,7 +731,7 @@ module ResponseShape.Schemas.Alternatives 6d00d2788be2c1812b9ec72307aa7330c32dbc
 318:0-325:38 def ResponseShape.Schemas.Alternatives.environment@ResponseShape.Schemas.Alternatives
 327:0-342:42 def ResponseShape.Schemas.Alternatives.row@ResponseShape.Schemas.Alternatives
 344:0-362:41 def ResponseShape.Schemas.Alternatives.file@ResponseShape.Schemas.Alternatives
-module ResponseShape.Schemas.Ask 7d7d0737ab6803f16d920b86fb930fd427fe2c49171d252c86e5d4a6c7818665
+module ResponseShape.Schemas.Ask 0b4b0be452f0accc4be5fe7df445731ff3dc220c3c82e64adfc556acc81e6c6f
 12:0-12:106 def ResponseShape.Schemas.Ask.pairNat@ResponseShape.Schemas.Ask
 14:0-15:112 def ResponseShape.Schemas.Ask.choice@ResponseShape.Schemas.Ask
 17:0-28:83 def ResponseShape.Schemas.Ask.source@ResponseShape.Schemas.Ask
@@ -744,11 +744,12 @@ module ResponseShape.Schemas.Ask 7d7d0737ab6803f16d920b86fb930fd427fe2c49171d252
 55:0-62:53 def ResponseShape.Schemas.Ask.row@ResponseShape.Schemas.Ask
 64:0-66:82 def ResponseShape.Schemas.Ask.name@ResponseShape.Schemas.Ask
 68:0-73:108 def ResponseShape.Schemas.Ask.identities@ResponseShape.Schemas.Ask
-75:0-78:111 def ResponseShape.Schemas.Ask.englishFormula@ResponseShape.Schemas.Ask
-80:0-95:48 def ResponseShape.Schemas.Ask.answered@ResponseShape.Schemas.Ask
-97:0-101:48 def ResponseShape.Schemas.Ask.refused@ResponseShape.Schemas.Ask
-103:0-110:77 def ResponseShape.Schemas.Ask.row'@ResponseShape.Schemas.Ask
-112:0-119:110 def ResponseShape.Schemas.Ask.file@ResponseShape.Schemas.Ask
+75:0-82:84 def ResponseShape.Schemas.Ask.englishTerm@ResponseShape.Schemas.Ask
+84:0-104:68 def ResponseShape.Schemas.Ask.englishFormula@ResponseShape.Schemas.Ask
+106:0-121:48 def ResponseShape.Schemas.Ask.answered@ResponseShape.Schemas.Ask
+123:0-127:48 def ResponseShape.Schemas.Ask.refused@ResponseShape.Schemas.Ask
+129:0-136:77 def ResponseShape.Schemas.Ask.row'@ResponseShape.Schemas.Ask
+138:0-146:65 def ResponseShape.Schemas.Ask.file@ResponseShape.Schemas.Ask
 module ResponseShape.Schemas.Bundle 168cf256e56bc37b68583cb0f1baef85333d5ff578fa0dc4148dcf995beafa00
 7:0-18:103 def ResponseShape.Schemas.Bundle.row@ResponseShape.Schemas.Bundle
 20:0-24:12 def ResponseShape.Schemas.Bundle.file@ResponseShape.Schemas.Bundle
