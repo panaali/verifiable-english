@@ -1,5 +1,8 @@
 """Check that a batch's saved gate, corpus comparison and latency evidence cover HEAD.
 
+Identical unavailable pairs count only when the corpus delta lists each with a
+reason (standing ruling R7); a changed unavailable result is not covered.
+
 The gate result lives in a git note so recording it does not move the commit it
 checked. Call this tool with the final commit and the three evidence files before
 attaching the note. No missing or partial measurement counts as a pass.
@@ -13,6 +16,7 @@ still covers every line of code the report commit holds.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import subprocess
 from pathlib import Path
@@ -33,8 +37,30 @@ def problems(head: str, gate: dict, comparison: dict, latency: dict) -> list[str
         errors.append("full gate has no passing Python and Rust tests")
     if comparison.get("head_commit") != head:
         errors.append("corpus comparison did not run on HEAD")
-    if comparison.get("unlisted") != 0 or comparison.get("unavailable_both") != {}:
-        errors.append("corpus comparison has an unlisted or unavailable result")
+    if comparison.get("unlisted") != 0:
+        errors.append("corpus comparison has an unlisted result")
+    unavailable = comparison.get("unavailable_both")
+    if not isinstance(unavailable, dict) or any(type(n) is not int or n < 1 for n in unavailable.values()):
+        errors.append("corpus comparison has malformed unavailable counts")
+    elif unavailable:
+        # R7 signs identical unavailability only. The comparator must have
+        # listed every such row with its reason; a count alone cannot do that.
+        counted = Counter()
+        rows = comparison.get("differences")
+        if not isinstance(rows, list):
+            errors.append("corpus comparison omitted signed unavailable rows")
+        else:
+            for row in rows:
+                if not isinstance(row, dict) or row.get("class") != "unavailable":
+                    continue
+                key = f"{row.get('corpus')}/{row.get('authority')}"
+                counted[key] += 1
+                if (row.get("listed") is not True or
+                        json.dumps(row.get("base"), sort_keys=True) !=
+                        json.dumps(row.get("head"), sort_keys=True)):
+                    errors.append("unavailable result lacks an identical, listed R7 pair")
+            if dict(counted) != unavailable:
+                errors.append("signed unavailable rows do not match corpus counts")
     records = comparison.get("records")
     if not isinstance(records, dict) or not REQUIRED_CORPORA <= {k.split("/", 1)[0] for k, v in records.items()
                                                                  if type(v) is int and v > 0}:

@@ -35,8 +35,17 @@
       "exit": 1,
       "observed": "two same records and one wording difference instead of three same records",
       "caught": true
+    },
+    {
+      "mutant": "accept_different_unavailable_outputs",
+      "behaviour": "R7 signs only identical unavailable A/B results",
+      "file": "tools/batch_evidence.py",
+      "test": "tests/test_batch_evidence.py::test_identical_listed_unavailability_is_signed_by_r7",
+      "exit": 1,
+      "observed": "the changed head timeout was accepted instead of rejected",
+      "caught": true
     }
   ],
-  "restored_test": "9 passed: complete choice verdict and coupled plan tests",
+  "restored_test": "14 passed in tests/test_batch_evidence.py; focused choice and plan tests passed",
   "restored_service_sha256": "3eee1ce49cd51039c243ad36cea0ff2851122b5392cbec88cb11fb3c3f69da1c"
 }
