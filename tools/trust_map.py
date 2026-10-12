@@ -66,7 +66,8 @@ plus the allowances the tree's file adds to the base's (`introduced`). So the bu
 every merge that deletes trusted lines, whether or not the recorded number has caught up, and rises
 only by an allowance in the same change. Outside a git work tree the cap is the recorded budget.
 `--allow` appends one allowance per class for the growth over that cap; `--signed` is the DRI's
-signature, required. `--write` sets `budget` to the measured lines after the same check; it is the
+signature, required (`signature_problems`). An allowance a change introduces must carry one too:
+the migration's `UNSIGNED` marker, or any text marked unsigned or pending, fails the check. `--write` sets `budget` to the measured lines after the same check; it is the
 merge train's step on main (a branch only adds allowances), so it refuses on any other branch.
 
 `--seed TRUST-MAP.md` updates the side table: current entries and ties stay, except that a
@@ -597,13 +598,35 @@ COMMENT = ("The trust budget (tools/trust_map.py, architecture plan AR-4, DRI de
            "raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record "
            "(`--files`), not here.")
 # Entries of the baseline before AR-4 that a person rebaselined with `--write --reason` carry no signature.
+# Only an allowance inherited from the base may carry this marker; it grants no new growth.
 UNSIGNED = "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4"
+# A signature names the DRI: the DRI's own (`DRI, <directive>, <date>`) or a standing ruling's
+# (`R6 (DRI-RULINGS.md)`). A word saying it is not, or not yet, signed makes it no signature.
+SIGNER = re.compile(r"\bDRI\b")
+PLACEHOLDER = re.compile(r"(?i)\b(?:unsigned|not\s+(?:yet\s+)?signed|pending|awaiting|tbd|todo|placeholder)\b")
 
 
-def allowance_problems(entry: object) -> list[str]:
+def signature_problems(signature: object, inherited: bool = False) -> list[str]:
+    """Why `signature` signs no growth. The one rule for `--allow --signed`, the budget file and the
+    allowances a change introduces: not blank, names the DRI (`SIGNER`), says nothing like
+    "unsigned" or "pending" (`PLACEHOLDER`). `inherited` (an allowance of the base's file, or one
+    read before the base is known) also takes the migration's `UNSIGNED` marker."""
+    if not isinstance(signature, str) or not signature.strip():
+        return [f"signature {signature!r} is blank"]
+    if signature == UNSIGNED:
+        return [] if inherited else [f"signature {UNSIGNED!r} marks a rebaseline before AR-4; a new allowance "
+                                     "needs the DRI's signature"]
+    if not SIGNER.search(signature) or PLACEHOLDER.search(signature):
+        return [f"signature {signature!r} is not the DRI's (it names the DRI, or a standing ruling of "
+                "DRI-RULINGS.md, and is not marked unsigned or pending)"]
+    return []
+
+
+def allowance_problems(entry: object, inherited: bool = True) -> list[str]:
     """Why `entry` is not an allowance: exactly the fields of `ALLOWANCE`, a budget class, a positive
-    number of lines (an integer, not a boolean), a reason and a signature that are not blank, and the
-    commit (hexadecimal) the lines were counted over."""
+    number of lines (an integer, not a boolean), a reason that is not blank, a signature
+    (`signature_problems`; `inherited` takes the `UNSIGNED` marker), and the commit (hexadecimal)
+    the lines were counted over."""
     if not isinstance(entry, dict) or set(entry) != set(ALLOWANCE):
         return [f"an allowance has exactly the fields {', '.join(ALLOWANCE)}: {entry!r}"]
     problems = []
@@ -611,9 +634,9 @@ def allowance_problems(entry: object) -> list[str]:
         problems.append(f"class {entry['class']!r} is not one of {', '.join(BUDGET)}")
     if type(entry["lines"]) is not int or entry["lines"] <= 0:
         problems.append(f"lines {entry['lines']!r} is not a positive integer")
-    for field in ("reason", "signature"):
-        if not isinstance(entry[field], str) or not entry[field].strip():
-            problems.append(f"{field} {entry[field]!r} is blank")
+    if not isinstance(entry["reason"], str) or not entry["reason"].strip():
+        problems.append(f"reason {entry['reason']!r} is blank")
+    problems += signature_problems(entry["signature"], inherited)
     if not isinstance(entry["commit"], str) or not COMMIT.fullmatch(entry["commit"]):
         problems.append(f"commit {entry['commit']!r} is not a commit id")
     return problems
@@ -1095,6 +1118,8 @@ def main(argv: list[str]) -> int:
         parser.error("--reason and --signed go with --allow")
     if args.allow and not ((args.reason or "").strip() and (args.signed or "").strip()):
         parser.error("--allow needs a --reason and the DRI's --signed signature")
+    if args.allow and signature_problems(args.signed.strip()):
+        parser.error("--signed: " + "; ".join(signature_problems(args.signed.strip())))
     if args.allow and args.write:
         parser.error("--allow is a branch's step and --write the merge train's; run one")
     root = args.root.resolve()
@@ -1175,6 +1200,11 @@ def gate(args: argparse.Namespace, root: Path, files: dict[str, dict[str, int]],
             report(files)
             return fail("\n".join(f"FAIL: the allowance {allowance_key(entry)!r} of {base[:12]} was removed; "
                                   "the allowances are the history and are never removed" for entry in gone))
+        unsigned = [f"FAIL: the allowance {allowance_key(entry)!r} introduced since {base[:12]}: {problem}"
+                    for entry in new for problem in signature_problems(entry["signature"])]
+        if unsigned:  # growth is granted only by the DRI's signature, never by the migration's marker
+            report(files)
+            return fail("\n".join(unsigned))
         report(files, measured_base, label)
         recorded = base_baseline.get("budget")
         if recorded is not None and {c: recorded[c] for c in BUDGET} != cap:
