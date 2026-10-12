@@ -591,6 +591,14 @@ def budget(counts: dict[str, int]) -> dict[str, int]:
 # The budget file ---------------------------------------------------------------------------------
 
 BUDGET = ("K", "S", "V")
+
+
+def nonnegative_int_record(value: object, keys: set[str]) -> bool:
+    """The JSON shape shared by the budget and every aggregate trust count."""
+    return (isinstance(value, dict) and set(value) == keys
+            and all(type(item) is int and item >= 0 for item in value.values()))
+
+
 ALLOWANCE = ("class", "lines", "reason", "signature", "commit")
 COMMIT = re.compile(r"[0-9a-f]{7,40}")
 COMMENT = ("The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] "
@@ -674,8 +682,7 @@ def parse_baseline(data: object, legacy: bool = False) -> tuple[dict, list[str]]
         return {}, [f"{BASELINE.name} holds exactly `budget` and `allowances` (and a `comment`)"]
     problems = []
     recorded = data["budget"]
-    if not isinstance(recorded, dict) or set(recorded) != set(BUDGET) \
-            or any(type(v) is not int or v < 0 for v in recorded.values()):
+    if not nonnegative_int_record(recorded, set(BUDGET)):
         problems.append(f"{BASELINE.name}: `budget` gives K, S and V as non-negative integers: {recorded!r}")
     if not isinstance(data["allowances"], list):
         problems.append(f"{BASELINE.name}: `allowances` is a list")
@@ -810,9 +817,12 @@ def files_problems(data: object) -> list[str]:
     keys = set(empty_counts())
     bad = [module for module, counts in files.items()
            if not isinstance(module, str) or not module.endswith(".lean") or not isinstance(counts, dict)
-           or set(counts) != keys or any(type(v) is not int or v < 0 for v in counts.values())]
+           or not nonnegative_int_record(counts, keys)]
     if bad:
         return [f"the per-file trust counts of {', '.join(map(repr, bad[:5]))} are not the counts of a file"]
+    if not nonnegative_int_record(data["totals"], keys) \
+            or not nonnegative_int_record(data["budget"], set(BUDGET)):
+        return ["the trust totals and budget have exactly their integer count fields"]
     if data["totals"] != totals(files) or data["budget"] != budget(totals(files)):
         return ["the trust totals or budget are not the sum of the per-file counts"]
     return []
