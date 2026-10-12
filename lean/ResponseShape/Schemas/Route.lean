@@ -80,15 +80,15 @@ def bundle : Shape :=
 
 def background : Shape :=
   c
-    "Route.Wire.runBackground: the regenerated Background twice, with one generator per premise; its contents are the service's."
+    "Route.Wire.runBackground and Core.Layers.runBackground: the regenerated Background twice, with one generator per premise; its contents are the service's (core formulas on the core family)."
     [
       obj,
       .required ["id", "status", "background", "premises", "generators"],
       closed [
         ("id", n [str, .equals "/id"]),
         ("status", constS "ok"),
-        ("background", ref "common.json#/$defs/generated_formulas"),
-        ("premises", ref "common.json#/$defs/generated_formulas"),
+        ("background", ref "common.json#/$defs/generated_core_formulas"),
+        ("premises", ref "common.json#/$defs/generated_core_formulas"),
         ("generators", n [arr, .items (ref "common.json#/$defs/generator")])]]
 
 def label : Shape :=

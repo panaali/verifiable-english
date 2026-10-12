@@ -58,6 +58,9 @@ def RouteVocabulary.baseModelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocab
     predicates := rv.modelVocabulary.predicates.filter
       (fun p => !(VE.Definitions.names rv.definitions).contains p.1) }
 
+def reachBodyUnsupported : String :=
+  "UnsupportedProfile: definition bodies with reachability require a closure definition layer"
+
 /-- A definition body: a v0 formula within the AST limits of one decoded
 formula (Python decodes each body with its own decoder). Reachability bodies
 are not yet admitted by the Lean definitions layer. -/
@@ -66,16 +69,21 @@ def decodeBody (j : Json) : Except String VE.Formula := do
   match VE.Bridge.decodeFormula 64 j with
   | .ok a => .ok a
   | .error e => match VE.Closure.Bridge.decodeFormula 64 j with
-    | .ok _ => .error "UnsupportedProfile: definition bodies with reachability require a closure definition layer"
+    | .ok _ => .error reachBodyUnsupported
     | .error _ => .error e
+
+/-- The `defined` payload of predicate `p` with signature `ss`: exactly its
+arguments, equal to the declaration's, and its body. -/
+def definedPayload (p : String) (ss : List String) (payload : Json) : Except String Json := do
+  exactFields payload ["arguments", "body"]
+  unless (← strings (← payload.getObjVal? "arguments")) == ss do
+    throw s!"Definition {p} arguments differ from its declaration"
+  payload.getObjVal? "body"
 
 /-- The identity-bound `defined` payload of predicate `p` with signature `ss`. -/
 def decodeDefined (p : String) (ss : List String) (payload : Json) :
     Except String (String × List String × VE.Formula) := do
-  exactFields payload ["arguments", "body"]
-  unless (← strings (← payload.getObjVal? "arguments")) == ss do
-    throw s!"Definition {p} arguments differ from its declaration"
-  pure (p, ss, ← decodeBody (← payload.getObjVal? "body"))
+  pure (p, ss, ← decodeBody (← definedPayload p ss payload))
 
 /-- A declared `$string` literal: the sort is required and the description is
 optional (and nonempty when present). -/
@@ -279,14 +287,18 @@ exhausts the budget depends on this order; the model's entities do not change. -
 def sortModelData (d : VE.Bridge.ModelData) : VE.Bridge.ModelData :=
   { d with domains := d.domains.map fun p => (p.1, VE.Route.sortStrings p.2) }
 
-/-- A supplied table for a defined predicate is an invalid model. -/
-def noDefinedTables (rv : RouteVocabulary) (j : Json) : Except String Unit :=
+/-- A supplied table for any of the defined predicates `names` is an invalid model. -/
+def noSuppliedTables (names : List String) (j : Json) : Except String Unit :=
   match j.getObjVal? "relations" with
   | .ok rs =>
-    if (VE.Definitions.names rv.definitions).any (fun p => (rs.getObjVal? p).isOk) then
+    if names.any (fun p => (rs.getObjVal? p).isOk) then
       .error "InvalidModel(definitions): supplied table for defined predicate"
     else .ok ()
   | .error _ => .ok ()
+
+/-- A supplied table for a defined predicate is an invalid model. -/
+def noDefinedTables (rv : RouteVocabulary) (j : Json) : Except String Unit :=
+  noSuppliedTables (VE.Definitions.names rv.definitions) j
 
 /-- A hash index of a decoded model's tables, for every declared predicate. -/
 def modelIndex (rv : RouteVocabulary) (M : VE.FiniteModel VE.Bridge.Entity) :
