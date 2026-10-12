@@ -39,14 +39,21 @@ this test, leaving the interrupted-gate assertion intact. All three cases then p
 The selected-test run completed 360 units with exit 0, including `tests/test_gate_integrity.py`. Its command
 returned 1 only after testing because the selector attempted to write its coverage map to the read-only home
 cache. The saved per-unit results were replayed into a writable `/tmp` map: 360 recorded, zero failed. The
-final gate runs on a new clean commit with an explicit worker count; its completed JSON is the gate evidence
-below.
+full gate on clean `3537f55d` passed with eight workers; its completed JSON is the gate evidence below.
 
 ## Measured outcome
 
 All numbers below are rendered from `evidence/` by `python -m tools.evidence report docs/arch/AR-5a`.
 
 <!-- BEGIN GENERATED AR-5A NUMBERS -->
+- Scope: `5479466f..3537f55d --no-merges`, 16 commits: `3537f55d`, `0341684a`, `0933bfb0`, `811f6e3a`, `bcbd87c3`, `ba0fb4d7`, `6c652a4b`, `7bc6b296`, `447bc6fc`, `68dba51e`, `b64be534`, `43ca4189`, `a07aa5ce`, `c8932f2e`, `7d4dfd1f`, `10842ddc`.
+- Shared modules: 1164 lines (`tools/evidence/`: `__init__` 108, `__main__` 45, `latency` 192, `ab` 92, `fuzz_ab` 221, `report` 159, `config` 91; `tools/batch_evidence.py` 256).
+- Per-batch evidence scripts and report tests on `main` (`c9b8cba6`) of the kinds a new batch no longer writes: 47 (1 `tools/*_mutants.py`, 12 `docs/<track>/<batch>/*latency*.py`, 13 `tests/test_*_evidence.py`, 21 `tests/test_*_report.py`); copies under `docs/` by name: 40 (latency 11, report 12, difffuzz_ab 6, mutants 4, fuzzer_gate 2, seed_faults 3, seed_mutants 1, trace_fuzzer 1).
+- Fixtures: 9 known-answer fixtures FAIL as required, 3 complete controls PASS: ab: a record unavailable on both sides: FAIL; b1 latency: two documents named s1.ve.md in a/ and b/, a/ 50% slower on head: FAIL; b10a trace fuzzer: replay verdicts swapped, counts equal: FAIL; b10b fuzzer gate: new Lean ResourceLimit answer after the known DF-19 rejection: FAIL; control: complete A/B record: PASS; control: complete latency record: PASS; control: identical fuzz reports: PASS; latency: duplicated key: FAIL; latency: empty key: FAIL; latency: missing key: FAIL; latency: unavailable on both sides: FAIL; lf-0: empty A/B recordings: FAIL.
+- Real-format runs: `ab` over 39612 conformance records (0 unlisted); `fuzz_ab` over a real `difffuzz --ci` report: 26422 inputs, 0 differences when equal, 2 unexplained after swapping two replay verdicts.
+- b16c re-check: 1 error(s), each the open item its saved report names: the batch changes lean/ResponseShape/Schemas/Document.lean (and 9 more ve/ or lean/ paths) but its evidence.toml names no [ab].
+- Seeded mutants (tools/mutants.py): 14/14 killed.
+- Clean gate at `3537f55d`: passed; 14403 passed, 92 skipped, 0 failed; 36 Rust tests passed.
 <!-- END GENERATED AR-5A NUMBERS -->
 
 `evidence/measure.json` lists every counted file. The pattern counts are taken on `main` as of the batch. With
