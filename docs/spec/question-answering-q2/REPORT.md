@@ -36,7 +36,7 @@ exists in the request), and decides nothing (`tools/relay_lint.py`).
 | Q2.3 words and text | done (see "Not done") | `lean/VE/Words/Situation.lean`, `lean/VE/Ask/{Lines,Render,PlainAnswer,ZeroAnswer}.lean`; the frames' `num` piece (DELTA D3) |
 | Q2.4 one owner of situation wording | **not done** | see "Not done" |
 | Q2.5 `ve ask` | done | `ve/ask.py`, `tools/ask_fixtures.py`, `tests/fixtures/ask/` |
-| Q2.6 evidence and measurement | **partly**: fixtures and this report | see "Not done" |
+| Q2.6 evidence and measurement | **partly**: fixtures, non-model timing and the fixture verdict comparison | `../question-answering-report.md`; see "Not done" |
 
 The three routes, chosen by Lean from the document's profiles (`routeOfDocument`): *readings* (`readings@1`, RD-3's
 replay; the UDHR pilot, part 7), *plain* (`relational-fol@0`; the G document) and *zero-set norm-defaults*
@@ -142,7 +142,9 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   the corpus A/B): not started. The task named Q2's answers, proofs, `ve ask`, the schema and binding, fixtures,
   seeded bugs and this report; Q2.4 touches the merged readings and norm-defaults routes and needs its own A/B.
   Release needs it (plan: "Release requires Q2.4 and Q2.6").
-- **Q2.6's evaluation, latency and W2 agreement**: not run (model calls forbidden here).
+- **Q2.6's evaluation and conformance-corpus W2 agreement**: not complete (model calls forbidden here). The
+  [non-model measurement report](../question-answering-report.md) records each fixture comparison, explicit timeouts
+  on the agent-policy route, and U3 `ask` Lean CPU of 2.83 s against the plan's 2 s limit; this budget is unmet.
 - **Q2.5's one flip generator**: `ve.ask._split_piece` flips a countermodel's filling at the gaps Lean's row names;
   the norm-defaults point search (`ve/norm_defaults.py`, `_point_statuses`) still builds its own all-yes and all-no
   fillings for Lean's `undecided` method. The plan asks for one generator with the point search as its instance and
@@ -173,6 +175,8 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   another module named `report` (`evidence/gate-initial-failed.json`). The report test now loads this batch's
   `report.py` by path (`7b75c7af`); its eight tests passed directly, and the fix selector's 78 units passed with
   zero failures. The new full gate on that clean commit passed (saved `evidence/gate-result.json`, generated block).
+  That saved gate applies to `7b75c7af`, not to the later review fixes; this worker was explicitly instructed not to
+  run the full gate. The merge train will run branch verification.
 - **Seeded bugs under load**: at load 50 to 80, one run of all 11 mutants passed the one-hour limit (the Lean
   mutants rebuild `ve_service`); `mutants.py` now saves each result as it runs, and the 11 ran in four groups on the
   same code, each caught. The 12th (`python-gap-unbound`) was added with the gap binding; the 13th and 14th

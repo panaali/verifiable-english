@@ -1,0 +1,33 @@
+{
+  "method": "warm persistent ve_service; child CPU delta for second request; cold ve ask wall",
+  "fixtures": {
+    "U3": {
+      "english.question": {
+        "cpu_s": 0.05,
+        "wall_s": 0.058
+      },
+      "ask": {
+        "cpu_s": 2.83,
+        "wall_s": 2.922
+      },
+      "ve ask": {
+        "wall_s": 7.813,
+        "exit": 0
+      }
+    },
+    "A1": {
+      "english.question": {
+        "cpu_s": 0.06,
+        "wall_s": 0.065
+      },
+      "ask": {
+        "cpu_s": 0.6,
+        "wall_s": 0.682
+      },
+      "ve ask": {
+        "wall_s": 126.855,
+        "exit": 0
+      }
+    }
+  }
+}
