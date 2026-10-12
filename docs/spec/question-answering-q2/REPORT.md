@@ -168,6 +168,11 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   cut off `test_english_evidence.py` and `test_wire_gate_corpus.py` at one hour per file. The former's saved log then
   finished with 67 passing tests; the latter passed all 8 tests in a serial run after 1 hour 24 minutes. After these
   test and inventory fixes, the full gate on the committed final code is the aggregate result (generated block).
+- **Gate attempts**: the first full gate on `4be32836` completed Lean audit, the Rust build and tests, and all
+  14,433 selected Python tests, but six Q2 report tests failed because full-suite collection had already imported
+  another module named `report` (`evidence/gate-initial-failed.json`). The report test now loads this batch's
+  `report.py` by path (`7b75c7af`); its eight tests passed directly, and the fix selector's 78 units passed with
+  zero failures. The new full gate on that clean commit passed (saved `evidence/gate-result.json`, generated block).
 - **Seeded bugs under load**: at load 50 to 80, one run of all 11 mutants passed the one-hour limit (the Lean
   mutants rebuild `ve_service`); `mutants.py` now saves each result as it runs, and the 11 ran in four groups on the
   same code, each caught. The 12th (`python-gap-unbound`) was added with the gap binding; the 13th and 14th
@@ -175,13 +180,13 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 
 <!-- BEGIN GENERATED: report.py -->
 
-Scope: `main..HEAD --no-merges` at `c8ec761f` (base `96887019`): 34 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
+Scope: `main..HEAD --no-merges` at `7b75c7af` (base `96887019`): 36 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
 
 | Language | Files | Lines added | Lines deleted |
 |---|---:|---:|---:|
 | Lean | 26 | 5137 | 698 |
 | Python (product) | 11 | 1171 | 113 |
-| Python (tests) | 9 | 895 | 32 |
+| Python (tests) | 9 | 901 | 36 |
 | Rust | 0 | 0 | 0 |
 
 Recorded answers (`tests/fixtures/ask`, replayed by `tests/test_ask_fixtures.py`):
@@ -238,6 +243,6 @@ Relay mutation gate (`tools/relay_mutation_gate.py --json`, `evidence/relay-gate
 
 Trust budget (`docs/trust-baseline.json`): K 997 → 997 (+0), S 9791 → 9974 (+183), V 36765 → 37363 (+598).
 
-Full gate: not yet saved (`evidence/gate-result.json` is written after the gate).
+Full gate (`tools/gate.py`, `evidence/gate-result.json`): passed on `7b75c7af` (dirty: false); stages toolchains, lean_build, lean_audit, rust_build, cargo_test, pytest; collected 14434, deselected 1, failed 0, passed 14341, rust_ignored 0, rust_passed 36, selected 14433, skipped 92.
 
 <!-- END GENERATED: report.py -->
