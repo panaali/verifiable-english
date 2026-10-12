@@ -1,0 +1,324 @@
+{
+  "differences": [
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or open branch: required->permitted",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 13,
+      "op": "conflict-prove",
+      "record": 120
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "act b: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "b"
+          ]
+        }
+      },
+      "index": 13,
+      "op": "conflict-model-0",
+      "record": 123
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "act b: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "b"
+          ]
+        }
+      },
+      "index": 13,
+      "op": "conflict-model-1",
+      "record": 124
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "act b: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "b"
+          ]
+        }
+      },
+      "index": 13,
+      "op": "conflict-model-2",
+      "record": 125
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'party', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or open branch: required->permitted",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 28,
+      "op": "conflict-prove",
+      "record": 255
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'party', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "index": 28,
+      "op": "conflict-model-0",
+      "record": 258
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'party', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "index": 28,
+      "op": "conflict-model-1",
+      "record": 259
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'party', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "index": 28,
+      "op": "conflict-model-2",
+      "record": 260
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "",
+          "status": "CONFLICT-FREE",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 64,
+      "op": "conflict-prove",
+      "record": 579
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 64,
+      "op": "conflict-model-0",
+      "record": 582
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 64,
+      "op": "conflict-model-1",
+      "record": 583
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 64,
+      "op": "conflict-model-2",
+      "record": 584
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "",
+          "status": "CONFLICT-FREE",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 94,
+      "op": "conflict-prove",
+      "record": 849
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 94,
+      "op": "conflict-model-0",
+      "record": 852
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 94,
+      "op": "conflict-model-1",
+      "record": 853
+    },
+    {
+      "base": {
+        "error": "TypeMismatch",
+        "text": "TypeMismatch: Predicate 'tri' expects ('act', 'act', 'party'), received ('party', 'act', 'party')"
+      },
+      "family": "core",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "index": 94,
+      "op": "conflict-model-2",
+      "record": 854
+    }
+  ],
+  "documents": 150,
+  "identical": false,
+  "records": 1350,
+  "seed": 14
+}
