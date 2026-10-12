@@ -35,8 +35,8 @@ def _counts(change):
     _counts(lambda c: c["files"]["VE/Demo.lean"].update(trusted=4)),
     _counts(lambda c: c["budget"].update(V=1)),
     _counts(lambda c: c["files"].update({"VE/Demo.py": dict(c["files"]["VE/Demo.lean"])})),
-], ids=["not written", "empty", "list", "zero", "no files", "extra key", "bool count", "negative count",
-        "missing count", "totals disagree", "budget disagrees", "not a lean file"])
+], ids=["not-written", "empty", "list", "zero", "no-files", "extra-key", "bool-count", "negative-count",
+        "missing-count", "totals-disagree", "budget-disagrees", "not-a-lean-file"])
 def test_a_gate_without_valid_trust_counts_fails(fake, counts):
     fake.failing, fake.trust = set(), counts
     code, record = fake.run()
