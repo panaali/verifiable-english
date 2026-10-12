@@ -155,6 +155,15 @@ def test_coupled_over_budget_response_is_typed_and_bound(mutation):
         check_row("readings-choices", row, case, 0)
 
 
+def test_coupled_plan_binds_fallback_unit_when_request_unit_is_not_text():
+    case = _coupled_plan_case(limit=1)
+    case["set_meta"][1]["unit"] = {"extra": 1}
+    case["set_meta"][1]["readings"][1]["labels"]["force"] = "strict"
+    row = relay.decide("readings-choices", [case])[0]
+    assert row["route"] == "UNKNOWN" and row["units"] == ["b"]
+    check_row("readings-choices", row, case, 0)
+
+
 @pytest.mark.parametrize("field,bad", [
     ("id", "other"), ("status", "UNKNOWN"), ("route", "enumerate"),
     ("budget", {"max_choices": True}), ("choice_count", True), ("units", ["absent"]),
