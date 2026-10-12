@@ -18,7 +18,7 @@ def kind : Def :=
 
 def pair : Shape :=
   c
-    "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key."
+    "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key; gaps on the unspecified completion."
     [
       obj,
       .required ["situation", "witness", "separated", "witness_admissible", "witness_value", "other_admissible"],
@@ -29,7 +29,8 @@ def pair : Shape :=
         ("witness_admissible", .type ["boolean"]),
         ("witness_value", .type ["boolean", "null"]),
         ("other_admissible", .type ["boolean"]),
-        ("other_value", .type ["boolean", "null"])]]
+        ("other_value", .type ["boolean", "null"]),
+        ("gaps", ref "#/$defs/gaps")]]
 
 def key : Shape :=
   c "Readings.Wire key JSON: one generated key." [
@@ -608,6 +609,7 @@ def verdictsFor (question result : String) : Shape :=
               ("finding", n [str, .pattern (Re.prefixes ["DeadReading: "])])]])]]),
         ("untaken", ref "#/$defs/choice"),
         ("dead", n [arr, .items (ref "#/$defs/verdicts_dead")]),
+        ("decided_units", ref "common.json#/$defs/strings"),
         ("english", n [arr, .items (ref "#/$defs/verdicts_line")])]]
 
 def verdicts : Shape :=

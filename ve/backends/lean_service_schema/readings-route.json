@@ -1217,9 +1217,10 @@
       "type": "array"
     },
     "pair": {
-      "$comment": "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key.",
+      "$comment": "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key; gaps on the unspecified completion.",
       "additionalProperties": false,
       "properties": {
+        "gaps": {"$ref": "#/$defs/gaps"},
         "other_admissible": {"type": "boolean"},
         "other_value": {"type": ["boolean", "null"]},
         "separated": {"type": "boolean"},
@@ -1663,6 +1664,7 @@
                 }
               ]
             },
+            "decided_units": {"$ref": "common.json#/$defs/strings"},
             "english": {"items": {"$ref": "#/$defs/verdicts_line"}, "type": "array"},
             "finding_sets": {"$ref": "common.json#/$defs/strings"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
@@ -1714,6 +1716,7 @@
                 }
               ]
             },
+            "decided_units": {"$ref": "common.json#/$defs/strings"},
             "english": {"items": {"$ref": "#/$defs/verdicts_line"}, "type": "array"},
             "finding_sets": {"$ref": "common.json#/$defs/strings"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
@@ -1765,6 +1768,7 @@
                 }
               ]
             },
+            "decided_units": {"$ref": "common.json#/$defs/strings"},
             "english": {"items": {"$ref": "#/$defs/verdicts_line"}, "type": "array"},
             "finding_sets": {"$ref": "common.json#/$defs/strings"},
             "id": {"$ref": "common.json#/$defs/id_ok"},

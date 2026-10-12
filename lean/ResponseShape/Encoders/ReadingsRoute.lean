@@ -26,7 +26,8 @@ theorem candidate_fits (a : Wire.Admitted) (R : ReadingSet) (i : Nat) :
 theorem pair_fits (f : PairFacts) (sid : String) :
     Fits req (skel% "readings-route.json#/$defs/pair") (pairJson f sid) := by
   unfold pairJson optBool
-  fits
+  cases f.gaps <;> simp only [Option.map_none, Option.map_some, Option.getD_none, Option.getD_some]
+  all_goals fits
 
 theorem exceptionJson_fits (e : VE.SoftNorms.Exception) :
     Fits req (skel% "readings-route.json#/$defs/soft_exception") (exceptionJson e) := by
@@ -474,11 +475,34 @@ theorem verdictsAnswer_fits (id question : String) (nd : Bool) (D : Doc) (A : Ch
     | apply line_fits
     | (apply deadNote_fits; assumption)
 
+set_option maxHeartbeats 1000000 in
+theorem ndVerdictsAnswer_fits (id question : String) (document : Json) (D : Doc) (A : Choice)
+    (assumed : Option Choice) (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json)
+    (hq : verdictsQuestions.contains question) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts")
+      (ndVerdictsAnswer id question document D A assumed infos over dead) := by
+  simp only [verdictsQuestions, List.contains_cons, List.contains_nil, Bool.or_false, Bool.or_eq_true, beq_iff_eq] at hq
+  rcases hq with rfl | rfl | rfl
+  all_goals
+    unfold ndVerdictsAnswer verdictsAnswer answerFields deadReadingsJson untakenJson
+    simp only [okWith, VE.Route.Wire.ok]
+    rw [setObjVal_mkObj]
+    fits
+  all_goals first
+    | apply result_conflict_fits
+    | apply result_premises_fits
+    | apply result_query_fits
+    | apply perChoiceJson_fits
+    | apply line_fits
+    | (apply deadNote_fits; assumption)
+
+set_option maxHeartbeats 1000000 in
 theorem verdicts_fits (lower : List String → Json → Json) (id : String) (b : Wire.Admitted2) (j : Json) :
     OkFits req (skel% "readings-route.json#/$defs/verdicts") (runVerdicts lower id b j) := by
   unfold runVerdicts
   okfits
   all_goals first
+    | (apply ndVerdictsAnswer_fits; assumption)
     | (apply verdictsAnswer_fits; assumption)
     | skip
 

@@ -1,4 +1,6 @@
 import VE.Readings.SoftDefaults
+import VE.Readings.SoftWire
+import VE.Readings.SoftExamples
 import VE.Audit
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning

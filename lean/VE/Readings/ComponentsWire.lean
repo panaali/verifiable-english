@@ -423,32 +423,6 @@ def runPart (id : String) (p : ProductPart) (question : String) (A : Choice) (na
 
 /-! ## The answer -/
 
-/-- A reading's premise status (1.10): narrowed, dead, or the fold of the premise rows of the choices taking it. -/
-def readingPremise (D : Doc) (infos : List RowInfo) (dead : List (String × Nat)) (R : ReadingSet) (i : Nat) : Premise :=
-  if (droppedBy D R i).isSome then .narrowed
-  else if dead.contains (R.id, i) then .dead
-  else
-    let taking := infos.filter (·.choice.contains (R.id, i))
-    if taking.isEmpty then .unknown
-    else match foldPremises (taking.map (fun t => (t.choice, t.premise))) with
-      | .model => .model
-      | .inconsistent => .inconsistent
-      | _ => .unknown
-
-/-- The case's Lean-decided units (1.10): each fixed unit with content by `fixedDecided` on the case's folds, each
-    content-bearing set's unit by `setDecided` on its conflict rows per compatible choice and its readings' premise
-    statuses. -/
-def partDecided (D : Doc) (infos : List RowInfo) (dead : List (String × Nat)) : List String :=
-  let cs := infos.map (fun i => (i.choice, i.conflict))
-  let ps := infos.map (fun i => (i.choice, i.premise))
-  D.items.filterMap (fun it => match it with
-    | .fixed u _ _ => if fixedDecided (foldConflict cs) (foldPremises ps) then some u else none
-    | .set R =>
-      if VE.Readings.Wire.contentBearing R &&
-          setDecided cs ((List.range R.candidates.length).map (readingPremise D infos dead R)) then some R.unit
-      else none
-    | .bar _ _ => none)
-
 /-- A line of the product's plan with the case it is read in (`null`: the document). -/
 def entryJson (component : Option String) (l : Line) : Json :=
   Json.mkObj [("component", match component with | some c => .str c | none => .null), ("line", l.json)]
@@ -540,11 +514,6 @@ def productPlan (question : String) (runs : List PartRun) (k : Nat) : List (Opti
       else []
     | none => []
   else (none, e32Line) :: runs.flatMap partEntries
-
-/-- The units of `us` in the document's order (its `units`, by id): the order every list of the document's units
-    takes on the wire. -/
-def documentOrder (document : Json) (us : List String) : List String :=
-  ((VE.Readings.Wire.arr document "units").map (fun x => VE.Readings.Wire.strOf (x.getObjValD "id"))).filter us.contains
 
 /-- The decided units of every case asked over all of its compatible choices. -/
 def productDecided (runs : List PartRun) : List String :=
