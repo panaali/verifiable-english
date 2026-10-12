@@ -6,10 +6,11 @@ loaded into each Python process of the project environment (through a `.pth`
 hook that exists only while recording), then writes one map for the clean HEAD commit
 to the shared cache (`$VE_TESTMAP_CACHE`, default ~/.cache/ve-testmap). The
 map says, per test unit, which functions under the root it executed, which
-files it read and which directories it listed, and which programs it started.
+files it read and which directories it listed, which programs it started,
+and which assurance manifest entries it read or checked for presence.
 It unions the edges of the newest earlier map, so a function that a randomized
-test reaches only on some runs stays mapped. Run it nightly; selection falls
-back to the static import graph without a usable map.
+test reaches only on some runs stays mapped. Run it nightly; automatic
+selection runs the full suite without a usable map.
 """
 from __future__ import annotations
 
@@ -39,7 +40,10 @@ import nested_pytest
 #    dropped any made with a pytest frame anywhere on the stack), so earlier maps
 #    lack edges and are not used.
 # 4: listings of directories that hold no tracked file (or do not exist yet) are kept.
-VERSION = 4
+# 5: the assurance-manifest operations each test reads are recorded (`operations`).
+# 6: an operation only checked for presence (`presence`) is recorded apart from an entry read.
+VERSION = 6
+EDGE_KEYS = ("f", "r", "d", "x", "m", "p")
 UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",
@@ -133,7 +137,7 @@ def read_unit(directory: Path, files: set[str]) -> dict:
     under the root, including ones that hold no tracked file or do not exist
     yet: adding the first file there changes what the test listed.
     """
-    seen = {"f": set(), "r": set(), "d": set(), "x": set()}
+    seen = {key: set() for key in EDGE_KEYS}
     children, opaque, written = [], [], set()
     for path in directory.glob("*.jsonl"):
         written.add(int(path.stem))
@@ -152,6 +156,10 @@ def read_unit(directory: Path, files: set[str]) -> dict:
                 seen["d"].add(record[1])
             elif kind == "x":
                 seen["x"].add(record[1])
+            elif kind == "m":
+                seen["m"].add(record[1])
+            elif kind == "p":
+                seen["p"].add(record[1])
             elif kind == "c" and record[2]:
                 children.append(record[1])
             elif kind == "o":
@@ -241,8 +249,9 @@ def run_unit(unit: str, work: Path, timeout: float, tracked: set[str], *, option
     out, done, log = work / name, work / f"{name}.result.json", work / f"{name}.log"
     if done.exists():
         result = json.loads(done.read_text())
-        result["f"] = {tuple(item) for item in result["f"]}
-        return {key: set(value) if key in ("r", "d", "x") else value for key, value in result.items()}
+        for key in EDGE_KEYS:
+            result[key] = {tuple(item) for item in result[key]} if key == "f" else set(result[key])
+        return result
     shutil.rmtree(out, ignore_errors=True)
     out.mkdir(parents=True)
     start = time.monotonic()
@@ -277,6 +286,8 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
     reads: dict[str, set[int]] = {}
     dirs: dict[str, set[int]] = {}
     programs: dict[str, set[int]] = {}
+    operations: dict[str, set[int]] = {}
+    presence: dict[str, set[int]] = {}
     for test, result in results.items():
         i = index[test]
         for file, qualname in result["f"]:
@@ -284,6 +295,10 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
         for table, key in ((reads, "r"), (dirs, "d"), (programs, "x")):
             for item in result[key]:
                 table.setdefault(item, set()).add(i)
+        for op_id in result.get("m", ()):
+            operations.setdefault(op_id, set()).add(i)
+        for op_id in result.get("p", ()):
+            presence.setdefault(op_id, set()).add(i)
     return {
         "version": VERSION, "commit": commit,
         "created": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
@@ -294,13 +309,16 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
         "reads": {k: sorted(v) for k, v in sorted(reads.items())},
         "dirs": {k: sorted(v) for k, v in sorted(dirs.items())},
         "programs": {k: sorted(v) for k, v in sorted(programs.items())},
+        "operations": {k: sorted(v) for k, v in sorted(operations.items())},
+        "presence": {k: sorted(v) for k, v in sorted(presence.items())},
     }
 
 
 def unit_edges(data: dict) -> dict[str, dict]:
     """Invert a map back to per-test sets (the form `merge` and tests use)."""
     tests = data["tests"]
-    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set()} for test in tests}
+    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set(), "m": set(), "p": set()}
+             for test in tests}
     for file, qualnames in data["functions"].items():
         for qualname, indices in qualnames.items():
             for i in indices:
@@ -309,6 +327,12 @@ def unit_edges(data: dict) -> dict[str, dict]:
         for item, indices in data[table].items():
             for i in indices:
                 edges[tests[i]][key].add(item)
+    for item, indices in data["operations"].items():
+        for i in indices:
+            edges[tests[i]]["m"].add(item)
+    for item, indices in data["presence"].items():
+        for i in indices:
+            edges[tests[i]]["p"].add(item)
     return edges
 
 
@@ -317,7 +341,7 @@ def merge(results: dict[str, dict], previous: dict) -> None:
     old = unit_edges(previous)
     for test, result in results.items():
         if test in old and result["exit"] in (0, 5) and previous["status"][test]["exit"] in (0, 5):
-            for key in ("f", "r", "d", "x"):
+            for key in EDGE_KEYS:
                 result[key] |= old[test][key]
 
 
@@ -409,7 +433,7 @@ def validate(data, where: str = "map") -> None:
             fail(f"functions of {file} is not an object")
         for qualname, value in qualnames.items():
             indices(value, f"{file}:{qualname}")
-    for table in ("reads", "dirs", "programs"):
+    for table in ("reads", "dirs", "programs", "operations", "presence"):
         if not isinstance(data.get(table), dict):
             fail(f"{table} is not an object")
         for key, value in data[table].items():
