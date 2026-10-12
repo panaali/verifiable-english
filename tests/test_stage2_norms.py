@@ -263,7 +263,8 @@ def test_non_first_order_conflict_refuses_extra_target(monkeypatch):
 
     def corrupt(mode, cases, **kwargs):
         row = deepcopy(real(mode, cases, **kwargs)[0])
-        row["targets"].append("absent")
+        if mode == "family-norms" and cases[0].get("kind") == "norms-conflict":
+            row["targets"].append("absent")
         return [row]
 
     monkeypatch.setattr(relay, "decide", corrupt)
@@ -280,7 +281,8 @@ def test_non_first_order_certificate_refuses_unbound_layer_count(monkeypatch):
 
     def corrupt(mode, cases, **kwargs):
         row = deepcopy(real(mode, cases, **kwargs)[0])
-        row["layers"] += 1
+        if mode == "family-norms" and cases[0].get("kind") == "norms-certificate":
+            row["layers"] += 1
         return [row]
 
     monkeypatch.setattr(relay, "decide", corrupt)
