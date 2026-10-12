@@ -1,0 +1,33 @@
+{
+  "mutants": [
+    {
+      "mutant": "ignore_coupling_labels",
+      "behaviour": "only label-compatible complete choices are enumerated",
+      "file": "lean/VE/Service/ReadingsChoices.lean",
+      "test": "tests/test_stage2_readings.py::test_coupled_plan_response_is_typed_and_bound[<lambda>0]",
+      "exit": 1,
+      "observed": "four choices instead of the two compatible choices",
+      "caught": true
+    },
+    {
+      "mutant": "mixed_evidence_is_all",
+      "behaviour": "a positive and a negative choice yield SOME",
+      "file": "lean/VE/Service/ReadingsChoices.lean",
+      "test": "tests/test_stage2_readings.py::test_complete_choice_verdict_is_lean_checked[False]",
+      "exit": 1,
+      "observed": "ALL instead of SOME",
+      "caught": true
+    },
+    {
+      "mutant": "couplings_bypass_lean",
+      "behaviour": "the coupled caller sends its choice evidence to Lean",
+      "file": "ve/readings.py",
+      "test": "tests/test_stage2_readings.py::test_complete_choice_verdict_is_lean_checked[False]",
+      "exit": 1,
+      "observed": "zero Lean choice-evidence requests instead of one",
+      "caught": true
+    }
+  ],
+  "restored_test": "9 passed: complete choice verdict and coupled plan tests",
+  "restored_service_sha256": "8f76220e2fd60556d6539ad3e74922300d002ba6b8339781f6ef9baae1b2f079"
+}
