@@ -75,8 +75,36 @@ Numbers below are tool output, saved in `evidence/` (D4: no report test); measur
 | L2 | Lean | lean/VE/Audit.lean | test_lean_audit_record.py::test_committed_manifests_are_the_generated_ones |
 | R1 | Python | tools/regen_generated.py (union again) | test_regen_generated.py::test_audit_manifests_are_generated_from_the_declaration_list |
 | R2 | Python | tools/regen_generated.py (audit before statements) | test_regen_generated.py::test_entries_run_in_dependency_order |
+| S1 | Python | tools/lake_outputs.py (fall back to `Path.home()` again) | test_lake_outputs.py::test_lean_is_found_in_the_accounts_elan_when_home_is_replaced, and the three test_gate_integrity.py::test_interrupted_gate_cannot_record_pass cases (run with HOME replaced, as in the gate) |
+
+The parallel manifest runs in `lean/audit.py` are a speed change, not a claimed behaviour: their order and
+output are checked by the record comparison in `test_lean_transitive_axiom_allowlist` (real Lean, about 20 min
+here), so I did not plant a bug in it.
 
 No Rust product code changed.
+
+## First full gate (e61f9d01, failed) and the fixes
+
+The first full gate on e61f9d01 failed on 4 of 14,413 tests (14,316 passed). It ran detached with
+`--workers 6`: under a load average of 45 to 95 on 32 cores, the suite alone took 2 h 8 min, longer than one
+harness command may run. The 4 failures:
+
+- `test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature` compares
+  `docs/trust-baseline.json` per file with the tree. The generated manifests and the moved `example` changed
+  the T, P, o and line counts of three files. K, S, D, G, tied and trusted did not change. Fix:
+  `trust_map.py --write` (no `--reason`, no history entry).
+- `test_gate_integrity.py::test_interrupted_gate_cannot_record_pass` (3 cases) fails in every full gate since
+  rd-6b B2 (main 8b9927f2), not only here. None of the other worktrees' gates I found (devtime-1, arch-AR-3,
+  arch-AR-4, ts-B1, rd-5) includes 1fc602bd. Inside the gate, HOME is the gate's scratch home, the test fakes
+  the toolchain check, and `lake_outputs.lean_executable` fell back to `Path.home()/.elan`: "lean is required
+  to check Lake's executables against their traces". Fix in `tools/lake_outputs.py` (no branch in flight
+  touches it): fall back to the account's home from the password database, as `tools/gate.py` does, with
+  a regression test in `tests/test_lake_outputs.py` (seeded bug S1). I avoided `tests/test_gate_integrity.py`
+  (it overlaps infra/arch-AR-3, infra/arch-AR-4 and infra/oom-rootcause) and `tools/gate.py` (it overlaps
+  infra/arch-AR-3, infra/arch-AR-4 and infra/ts-B5).
+
+The failed record is kept as `evidence/gate-result-e61f9d01-failed.json`. The final gate is
+`evidence/gate-result.json`.
 
 ## Deltas
 

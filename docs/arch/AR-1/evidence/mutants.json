@@ -116,5 +116,24 @@
   "test": "tests/test_regen_generated.py::test_entries_run_in_dependency_order",
   "killed": true,
   "pytest_summary": "1 failed in 0.66s"
+ },
+ {
+  "id": "S1",
+  "language": "Python",
+  "file": "tools/lake_outputs.py",
+  "behaviour": "lean_executable falls back to the account's elan (password database), not the ambient HOME the gate replaces",
+  "mutation": {
+   "from": "path=str(account / \".elan/bin\"))",
+   "to": "path=str(Path.home() / \".elan/bin\"))"
+  },
+  "test": "tests/test_lake_outputs.py::test_lean_is_found_in_the_accounts_elan_when_home_is_replaced",
+  "also_failed": [
+   "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt]",
+   "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[TypeError]",
+   "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[AttributeError]"
+  ],
+  "run": "HOME=/tmp/ar1-home PATH=/usr/bin:/bin .venv/bin/python -m pytest tests/test_lake_outputs.py tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass",
+  "killed": true,
+  "pytest_summary": "13 failed, 1 passed in 2.30s (unmutated: 14 passed)"
  }
 ]
