@@ -9,7 +9,7 @@ commit in base..head carries a removal record for it, the trailer
 
     Test-removed: <the test ID, or its function, class or file> — <why it goes>
 
-so a reviewer reads every lost ID with the batch. A trailer that names a function, class or file covers
+so a reviewer reads every lost ID with the batch. A trailer that names a deleted function, class or file covers
 all of its IDs, and fails as stale if the head still collects any of them, as does a trailer naming an ID
 the head still collects. A trailer without a target and a reason fails too.
 
@@ -444,10 +444,13 @@ def missing(expected: list[str], collected: list[str], diff: Changes | None) -> 
     removed, refused, suggested = {}, {}, []
     for nodeid in sorted(set(expected) - head):
         label = diff.label(nodeid) if diff else UNLABELLED
-        removal = next((removal for removal in removals if removal.covers(nodeid)), None)
+        deleted = diff.deleted(nodeid) if diff else None
+        # A prefix records its definition's deletion, not a changed parameter
+        # list or collection rule on a definition that still exists.
+        removal = next((removal for removal in removals if removal.covers(nodeid) and
+                        (removal.target == nodeid or removal.target == deleted)), None)
         if removal is None:
             refused[nodeid] = label
-            deleted = diff.deleted(nodeid) if diff else None
             # A deleted file's or function's trailer, unless the head still collects an ID it would cover.
             if deleted in suggested or deleted and not any(Removal(deleted, "", "").covers(other) for other in head):
                 nodeid = deleted
