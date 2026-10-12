@@ -68,11 +68,13 @@ the line in `manage-agents/merge-train.sh` is the DRI's (orchestration, outside 
 ## Overlap with branches in flight
 
 Checked with `git diff --name-only main...<branch>` for every `lean-first/*`, `readings-defaults/*`,
-`question-answering/*`, `infra/*` and `english*/*` branch. The only final overlap is
-`tools/gate-collection.json`, the generated test inventory: a conflict means taking `main`'s file and
-regenerating it (DELTA row 5, standing ruling R12). `tools/regen_generated.py` also overlapped in an earlier
-draft, so this batch removed its edit and kept the report command read-only. This batch does not edit
-`tools/gate.py`, `ve/` or `lean/`.
+`question-answering/*`, `infra/*` and `english*/*` branch. The generated test inventory,
+`tools/gate-collection.json`, overlaps several branches: a conflict means taking `main`'s file and
+regenerating it (DELTA row 5, standing ruling R12). `infra/arch-AR-3` also edits
+`tools/batch_evidence.py` to check a gate note in the old positional command. AR-5a must extend that same
+checker, so its merge must retain both the note comparison and this batch's `--check` path.
+`tools/regen_generated.py` overlapped in an earlier draft, so this batch removed its edit and kept the report
+command read-only. This batch does not edit `tools/gate.py`, `ve/` or `lean/`.
 
 ## Seeded bugs
 
