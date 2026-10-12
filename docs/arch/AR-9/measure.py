@@ -154,7 +154,10 @@ def overlap(main: str, head: str, gate: str) -> dict:
         name, tip, when = line.split(" ")
         if name == current:
             continue
-        shared = sorted(set(own) & set(changed(f"{main}...{tip}")))
+        related = subprocess.run(["git", "-C", str(ROOT), "merge-base", main, tip], capture_output=True).returncode == 0
+        # A branch with no history in common with MAIN (an evidence-only branch) changes every file it holds.
+        theirs = changed(f"{main}...{tip}") if related else git("ls-tree", "-r", "--name-only", tip).split()
+        shared = sorted(set(own) & set(theirs))
         branches.append({"branch": name, "tip": tip, "in_flight": head_time - int(when) <= IN_FLIGHT_DAYS * 86400,
                          "overlap": shared})
     return {"main": main, "head": head, "in_flight_days": IN_FLIGHT_DAYS, "files": own,
