@@ -253,30 +253,14 @@ def _profiled(raw, switched=()):
     return Environment(data)
 
 
-def _point_statuses(document, model):
-    from .norm_defaults_route import run_case, source_case
-    states = {}
-    yes = {item["name"]: [list(values) for values in product(*(model["domains"][s] for s in item["sorts"]))]
-           for item in document.elaboration["unsaid"]}
-    no = {item["name"]: [] for item in document.elaboration["unsaid"]}
-    for item in document.elaboration["reached"]:
-        for values in product(*(model["domains"][sort] for sort in item["sorts"])):
-            case = source_case(document, "norm-defaults-status", model=model,
-                               predicate=item["predicate"], tuple=list(values), method="enumerate")
-            state = run_case(case)["point_status"]
-            if state == "UNKNOWN" and yes:
-                state = run_case({**case, "method": "undecided", "yes": yes, "no": no})["point_status"]
-            states[(item["predicate"], values)] = state
-    return states
-
-
 def audit_completions(env, units, *, model=None, prove=True, **options):
     """Compose Lean's reports and statuses for each completion switch."""
     raw = env.to_dict()
     document = UnspecifiedDocument(_profiled(raw), units)
     base_report = report(document, model=model, prove=prove, search_domain_size=2, **options)
     lines = {item["predicate"]: item for item in base_report["report"]}
-    before = _point_statuses(document, model) if model is not None else None
+    from .filling_search import point_statuses
+    before = point_statuses(document, model) if model is not None else None
     entries = []
     for predicate in document.elaboration["order"]:
         line = lines[predicate]
@@ -298,7 +282,7 @@ def audit_completions(env, units, *, model=None, prove=True, **options):
                 _, packages = _propose_report_evidence(switched, (predicate,), prove=True)
                 entry["certificate"] = packages[f"reached:{predicate}"]
         if before is not None:
-            after = _point_statuses(switched, model)
+            after = point_statuses(switched, model)
             entry["changes_if_switched"] = [
                 {"predicate": p, "tuple": list(values), "before": old, "after": after[(p, values)]}
                 for (p, values), old in before.items() if old != after[(p, values)]]

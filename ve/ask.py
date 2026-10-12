@@ -32,6 +32,7 @@ import sys
 
 from .errors import CheckerUnavailable, ResourceLimit, VEError
 from .document import MAX_DOCUMENT_BYTES
+from .filling_search import flip as _flipped
 
 OPERATION = "question.read"
 ANSWER_OPERATION = "question.answer"
@@ -94,18 +95,6 @@ def _strip(name):
     if type(name) is not str:
         return ""
     return name[1:-1] if len(name) >= 2 and name.startswith("*") and name.endswith("*") else name
-
-
-def _flipped(filling: dict, gaps) -> dict:
-    """The filling with each filled gap Lean names (`[predicate, ids, value]`) given the other answer."""
-    out = {name: [list(row) for row in rows] for name, rows in filling.items()}
-    for predicate, ids, value in gaps:
-        rows = out.setdefault("unsaid__" + predicate, [])
-        if value:
-            rows[:] = [row for row in rows if row != list(ids)]
-        elif list(ids) not in rows:
-            rows.append(list(ids))
-    return out
 
 
 def _split_piece(countermodel: dict, gaps) -> dict | None:
