@@ -331,8 +331,9 @@ def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
     if any(type(unit) is not dict or not {"id", "bytes", "status", "class"} <= set(unit)
            or set(unit) - {"id", "bytes", "status", "class", "parent"}
            or type(unit["id"]) is not str or type(unit["bytes"]) is not int or unit["bytes"] < 0
-           or unit["status"] not in {"CHECKED", "OPEN", "LABELLED", "UNFORMALISED"}
-           or unit["class"] not in {"C", "L", "O", "R", "U"}
+           # Tuples, not sets: a status or class of an unhashable type must be refused, not raise TypeError.
+           or unit["status"] not in ("CHECKED", "OPEN", "LABELLED", "UNFORMALISED")
+           or unit["class"] not in ("C", "L", "O", "R", "U")
            or "parent" in unit and type(unit["parent"]) is not str for unit in units):
         raise CheckerUnavailable("CheckerUnavailable: speech-source route returned invalid units")
     if sum(unit["bytes"] for unit in units) != len(source.encode()):

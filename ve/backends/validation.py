@@ -11,7 +11,6 @@ from typing import Callable
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json
 from ..profiles import STATEMENT_LAYERS
-from .diagnostics import backend_rejection
 
 _ACCEPTED: dict[tuple, bool] = {}
 _LIMIT = 1 << 14
@@ -71,32 +70,6 @@ def _remember(key: tuple, row=True) -> None:
     if len(_ACCEPTED) >= _LIMIT:
         _ACCEPTED.clear()
     _ACCEPTED[key] = row
-
-
-def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[], dict],
-             identity: Callable[[object, dict], bool], what: str):
-    """Legacy adapter for bundle and definitions, pending their owner migration."""
-    try:
-        built, error = decode(), None
-    except VEError as exc:
-        built, error = None, exc
-    if cache is None:
-        if error is not None:
-            raise error
-        raise CheckerUnavailable(f"CheckerUnavailable: {what} cannot be sent to the checker")
-    if error is None and cache in _ACCEPTED:
-        return built
-    try:
-        row = ask()
-    except VEError as rejected:
-        raise (backend_rejection(error) if error is not None else rejected) from None
-    if error is not None:
-        raise CheckerUnavailable(f"CheckerUnavailable: Lean accepts {what} that the Python decoder "
-                                 f"rejects ({error.code}: {error.message.removeprefix(error.code + ': ')})")
-    if not identity(built, row):
-        raise CheckerUnavailable(f"CheckerUnavailable: Lean and Python {what} identities differ")
-    _remember(cache)
-    return built
 
 
 def construct_after_lean(decode: Callable[[], object], cache: tuple | None,

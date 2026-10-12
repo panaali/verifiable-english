@@ -27,6 +27,7 @@ import sys
 import tempfile
 import time
 
+import lake_outputs
 from layer_policy import ROOT, lean_default_targets, lean_executables
 import nested_pytest
 
@@ -107,6 +108,7 @@ def remove_hook(site: Path) -> None:
 def build_natives() -> None:
     """Build every binary once, so the per-file processes only read them."""
     env = environment()
+    lake_outputs.drop_stale()  # a trace that does not record its binary would keep the stale one
     named = sorted(set(lean_executables()) - lean_default_targets())
     for command, cwd in ((["lake", "build"], ROOT / "lean"),
                          (["lake", "build", *named] if named else None, ROOT / "lean"),

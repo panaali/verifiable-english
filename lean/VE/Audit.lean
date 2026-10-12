@@ -173,6 +173,7 @@ import VE.Readings.ChoiceWF
 import VE.Readings.Force
 import VE.Readings.Unspecified
 import VE.Readings.UnspecifiedWire
+import VE.Readings.SupFillWire
 import VE.Readings.VerdictsWire
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
@@ -4375,6 +4376,10 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.firstShown_label
 #print axioms VE.Readings.independentItems_label
 #print axioms VE.Readings.providedItems_only
+#print axioms VE.Readings.witnessItems_label
+#print axioms VE.Readings.conflictRowItems_label
+#print axioms VE.Readings.gateItems_label
+#print axioms VE.Readings.unknownItems_label
 #print axioms VE.Readings.plan_conditions_only
 #print axioms VE.Readings.Run.ndInfos_rows
 #print axioms VE.Readings.Run.readings_wire_verdicts_all
@@ -4807,6 +4812,100 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Senses.document_line_sound
 #print axioms VE.Senses.documentRequest_policy
 #print axioms VE.Senses.documentRequest_source
+
+#print axioms VE.Readings.Wire.SupReplayND.hyps
+#print axioms VE.Readings.Wire.backgroundValidP_append
+#print axioms VE.Readings.Wire.candidate_of_fill
+#print axioms VE.Readings.Wire.choicesSoftChecked_of_nd
+#print axioms VE.Readings.Wire.filled_frame_E
+#print axioms VE.Readings.Wire.ndChecked_spec
+#print axioms VE.Readings.Wire.readings_wire_nd_all_sound
+#print axioms VE.Readings.Wire.readings_wire_nd_choices
+#print axioms VE.Readings.Wire.readings_wire_nd_conflict_sound
+#print axioms VE.Readings.Wire.readings_wire_nd_model_sound
+#print axioms VE.Readings.Wire.readings_wire_nd_witness_sound
+#print axioms VE.Readings.acyclic_author
+#print axioms VE.Readings.authorLite_choiceU
+#print axioms VE.Readings.authorLite_of_uvalid
+#print axioms VE.Readings.baseAdmissibleP_choiceU
+#print axioms VE.Readings.chain_of_shaped
+#print axioms VE.Readings.children_fill_lite
+#print axioms VE.Readings.choiceU_nodes
+#print axioms VE.Readings.decidesBy_pull_canon
+#print axioms VE.Readings.decidesBy_soften
+#print axioms VE.Readings.decides_author_fill
+#print axioms VE.Readings.decides_author_pull
+#print axioms VE.Readings.decides_fill_pull
+#print axioms VE.Readings.documentExpansion_canon
+#print axioms VE.Readings.fillDoc_chain
+#print axioms VE.Readings.fillPremises_pull
+#print axioms VE.Readings.fillPremises_wf_v
+#print axioms VE.Readings.fill_choiceU
+#print axioms VE.Readings.fill_supU
+#print axioms VE.Readings.fill_transfers
+#print axioms VE.Readings.fmap_keeps_author
+#print axioms VE.Readings.gapF_fill_v
+#print axioms VE.Readings.hyps_fill
+#print axioms VE.Readings.nd_superpose_all
+#print axioms VE.Readings.nd_superpose_conflict_free
+#print axioms VE.Readings.notFill_of_startsWith
+#print axioms VE.Readings.outcomeBase_fill_v
+#print axioms VE.Readings.qualify_notFill
+#print axioms VE.Readings.rulesTyped_author
+#print axioms VE.Readings.selects_fill_fuel_lite
+#print axioms VE.Readings.sim_decidesBy
+#print axioms VE.Readings.strict_choiceDoc
+#print axioms VE.Readings.strict_choice_fillDoc
+#print axioms VE.Readings.valid_fill_choiceU
+#print axioms VE.Readings.wellFormedND_parts
+#print axioms VE.Readings.yields_fill_fuel_lite
+#print axioms VE.Readings.yields_fill_lite
+-- readings-defaults RD-4b: the component product and its proved response.
+#print axioms VE.Readings.Run.ProductReplay.K_all
+#print axioms VE.Readings.Run.ProductReplay.at
+#print axioms VE.Readings.Run.ProductReplay.k_at
+#print axioms VE.Readings.Run.ProductReplay.rows_at
+#print axioms VE.Readings.Run.ProductReplay.rows_length
+#print axioms VE.Readings.Run.ProductReplay.sound
+#print axioms VE.Readings.Run.ProductReplay.soundBut
+#print axioms VE.Readings.Run.part_sound
+#print axioms VE.Readings.Run.productReplay_rows
+#print axioms VE.Readings.Run.readings_wire_product_all
+#print axioms VE.Readings.Run.readings_wire_product_conflict
+#print axioms VE.Readings.Run.readings_wire_product_conflict_free
+#print axioms VE.Readings.Run.readings_wire_product_model
+#print axioms VE.Readings.Run.readings_wire_product_none
+#print axioms VE.Readings.Run.readings_wire_product_some
+#print axioms VE.Readings.all_at
+#print axioms VE.Readings.conflictFreeK_of
+#print axioms VE.Readings.exists_pointwise
+#print axioms VE.Readings.exists_product
+#print axioms VE.Readings.fixedDecided_iff
+#print axioms VE.Readings.foldK_all
+#print axioms VE.Readings.foldK_all_under
+#print axioms VE.Readings.foldK_conflict
+#print axioms VE.Readings.foldK_conflict_free
+#print axioms VE.Readings.foldK_consistent
+#print axioms VE.Readings.foldK_none
+#print axioms VE.Readings.foldK_none_under
+#print axioms VE.Readings.foldK_some
+#print axioms VE.Readings.foldK_some_under
+#print axioms VE.Readings.free_of_rows
+#print axioms VE.Readings.model_of_every
+#print axioms VE.Readings.model_of_some
+#print axioms VE.Readings.othersFree_spec
+#print axioms VE.Readings.othersSettled_every
+#print axioms VE.Readings.othersSettled_some
+#print axioms VE.Readings.productConflict_conflict
+#print axioms VE.Readings.productConflict_free
+#print axioms VE.Readings.productPremises_model
+#print axioms VE.Readings.productQuery_all
+#print axioms VE.Readings.productQuery_none
+#print axioms VE.Readings.productQuery_some
+#print axioms VE.Readings.rowsSoundBut_of
+#print axioms VE.Readings.rows_at
+#print axioms VE.Readings.setDecided_iff
+#print axioms VE.Readings.takesAt_nil
 #print axioms VE.Question.got_none
 #print axioms VE.Question.first_pred_unique
 #print axioms VE.Question.question_reading_unique

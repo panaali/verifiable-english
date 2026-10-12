@@ -76,6 +76,9 @@ decided in `docs/spec/SEMANTICS-MIGRATION-PLAN.md`, not here.
 
 ### 1.3 Invariants and evidence
 
+**Superseded in part (2026-10-10):** the pinned decoder total has grown since this was
+written; the current total is in the counts table of [the architecture map](ARCHITECTURE.md),
+section 1. The text below is the invariant as recorded at the time.
 The invariants are those of `ARCHITECTURE-LAYERS-PLAN2.md` section 0: identities (SHA-256 over a
 domain string and canonical JSON), the assurance manifest (decoder files pinned by hash and line
 range; pinned decoder total 16,985 lines, which may shrink but not grow),
@@ -683,7 +686,7 @@ the current source classification alongside the previously measured steps.
 | 4 | 720 | 0 | 0 | 420 | 300 | 14 | 2 | 10.7 |
 | 5 | 0 | 498 | 0 | 0 | 498 | 14 | 1 | 35.6 |
 | 6 | 35 | 0 | 1766 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 665 | 0 | 0 | 60 | 605 | 6 | 2 | 50.4 |
+| 7 | 666 | 0 | 0 | 60 | 606 | 6 | 2 | 50.5 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3631 | 0 | 0 | 3631 | 30 | 3 | 40.3 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |

@@ -146,7 +146,14 @@ def test_fc1_three_components_each_answered_as_a_document_of_its_own(lean):
         assert answers["rs_a"] == one(lean, kind, merged(ca), alone(a, [{"id": "u_a"}]))
         assert answers["rs_b"] == one(lean, kind, merged(cb), alone(b, [{"id": "u_b"}]))
         main = {"units": [MAIN_UNIT, {"id": "u_a"}, {"id": "u_b"}], "reading_sets": []}
-        assert answers["main"] == one(lean, kind, env_main(), main)
+        standalone = one(lean, kind, env_main(), main)
+        if kind == "readings-elaborate":
+            # RD-4b reads the split main case's fixed part under the completion too.
+            assert {k: v for k, v in answers["main"].items() if k not in {"fill_premises", "filled"}} == standalone
+            assert answers["main"]["fill_premises"] == []
+            assert answers["main"]["filled"]["units"][0]["unit"] == "u0"
+        else:
+            assert answers["main"] == standalone
     answers, _ = components(one(lean, "readings-validate", env_main(), document))
     # F-ND1's answers on the first component: separated on the filled document, its `Fill_T` per reading
     assert answers["rs_a"]["sets"][0]["pairs"][0]["pair"]["separated"] is True
@@ -155,7 +162,7 @@ def test_fc1_three_components_each_answered_as_a_document_of_its_own(lean):
     # F-C5 on the wire: the two readings' identical `agent` and `user` sorts are one sort each in the merged frame
     assert sorted(answers["rs_a"]["filled"]["environment"]["vocabulary"]["sorts"]) == ["agent", "user"]
     elaborate, _ = components(one(lean, "readings-elaborate", env_main(), document))
-    assert elaborate["rs_a"]["finding"] == {"text": "ReadingsNotSuperposable: rs_a", "cause": "the unspecified completion"}
+    assert elaborate["rs_a"]["route"] == "superposed" and elaborate["rs_a"]["finding"] is None
     assert elaborate["rs_b"]["choices"] == [[["rs_b", 0]], [["rs_b", 1]]]
     for name in ("rs_a", "rs_b"):
         assert "fill_premises" in elaborate[name]
