@@ -17,7 +17,8 @@
 
 - `lake build`: PASS, 886 jobs. `python lean/audit.py`: PASS, 481 files and 5,252 declarations, standard axiom allowlist only.
 - Focused `tests/test_rd9_gap_relay.py` and the existing F-ND1 render test: 4 passed after restoration. `tools/relay_lint.py`: PASS. `git diff --check`: PASS.
-- Selected test command was run. Its build and every reported test unit passed, but the last silent unit was interrupted after a long wait; exit 130, so the selected run is **incomplete**, not a pass.
+- The first selected run was interrupted after a long silent unit. A second run completed all 202 selected units with exit 0 for each, including the RD-9 tests and gate-integrity file. The selector then exited 1 while recording its test map under the read-only account cache; this is a cache-write failure, not a test failure.
+- The full gate on `3a64383d` failed only three parametrizations of `test_interrupted_gate_cannot_record_pass`. They passed after the test harness also stubbed the unrelated Lake-output hash step, which needs a Lean binary absent from the gate's isolated home. The failed-test rerun reproduced the three failures before this fix; all three passed in an exact reproduction of the gate pytest environment afterward. A full gate on the fix commit remains due.
 - Three temporary E14 mutants each failed a focused test and were removed: (1) omit the inserted gap; (2) use the default reading's value for outcome (1); (3) drop the quoted source word. The final focused tests passed after removal.
 - The full release gate has not yet run on a final RD-9 Python implementation.
 
@@ -48,7 +49,7 @@ The statuses below describe this committed preparatory slice. “Open” means i
 | 19 | Not applicable | No use-case translation changed. |
 | 20 | Done for this slice | This report states tested facts and unrun work; it makes no coverage claim. |
 | 21 | Open | SC-8/SC-9 acceptance items need AGENT/HUMAN/EXTERNAL tagging in their final evidence. |
-| 22 | Open | Selected run incomplete; final gate remains due on the committed final implementation. Disk has 73 GB free. |
+| 22 | Open | All 202 selected test units passed, but selector cache recording failed in the read-only account home. A full gate on the fix commit remains due. Disk had 73 GB free before the first full gate. |
 | 23 | Done for this slice | No active user-visible delta, so no standing ruling is claimed. Future deltas and signatures listed above. |
 
 ## Acceptance status
