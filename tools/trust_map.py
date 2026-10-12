@@ -786,11 +786,36 @@ def write_baseline(path: Path, recorded: dict[str, int], allowances: list[dict])
     path.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
 
 
+FILES_RECORD = ("budget", "totals", "files")
+
+
 def write_files(path: Path, files: dict[str, dict[str, int]]) -> None:
     """The per-file counts (`--files`): for the gate record, never committed beside the budget."""
     now = totals(files)
     path.write_text(json.dumps({"budget": budget(now), "totals": now, "files": files}, indent=1,
                                ensure_ascii=False) + "\n")
+
+
+def files_problems(data: object) -> list[str]:
+    """Why `data` is not what `write_files` writes: exactly `FILES_RECORD`; at least one file (a
+    path under lean/), each with every count of `empty_counts` as a non-negative integer; `totals`
+    their sum and `budget` its budget. The gate (tools/gate.py) and every reader of its record
+    check the per-file counts here, so a record without them, or with counts that do not add up,
+    is never evidence."""
+    if not isinstance(data, dict) or set(data) != set(FILES_RECORD):
+        return [f"the per-file trust counts hold exactly {', '.join(FILES_RECORD)}"]
+    files = data["files"]
+    if not isinstance(files, dict) or not files:
+        return ["the per-file trust counts name no file"]
+    keys = set(empty_counts())
+    bad = [module for module, counts in files.items()
+           if not isinstance(module, str) or not module.endswith(".lean") or not isinstance(counts, dict)
+           or set(counts) != keys or any(type(v) is not int or v < 0 for v in counts.values())]
+    if bad:
+        return [f"the per-file trust counts of {', '.join(map(repr, bad[:5]))} are not the counts of a file"]
+    if data["totals"] != totals(files) or data["budget"] != budget(totals(files)):
+        return ["the trust totals or budget are not the sum of the per-file counts"]
+    return []
 
 
 # Seeding the side table from the trust map ------------------------------------------------------

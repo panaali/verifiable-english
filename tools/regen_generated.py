@@ -99,7 +99,8 @@ GENERATED = (
               ((PY, "tools/lean_statements.py"),), ((PY, "tools/lean_statements.py", "--check"),)),
     Generated("trust-tables", ("tools/trust-classes.json", "docs/trust-baseline.json"), None,
               ((PY, "tools/trust_map.py", "--check"),), merge="json",
-              note="ledgers: growth beyond the signed budget needs `trust_map.py --write --reason` (a person)"),
+              note="ledgers: growth over the base needs `trust_map.py --allow --reason ... --signed ...` "
+                   "(the DRI's signature); `--write` is the merge train's, on main"),
     Generated("checker-pins", ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",), merge="json",
               note="both sides' pins, plus the merged ve_service build and Rust release binary"),
     Generated("response-schemas", ("ve/backends/lean_service_schema/*.json",),
