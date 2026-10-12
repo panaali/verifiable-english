@@ -14,6 +14,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -21,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[3]
 HERE = ROOT / "docs/arch/AR-4"
 EVIDENCE = HERE / "evidence"
 REPORT = HERE / "REPORT.md"
+DELTA = HERE / "DELTA.md"
 BEGIN, END = "<!-- BEGIN GENERATED AR-4 METRICS -->", "<!-- END GENERATED AR-4 METRICS -->"
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT))
@@ -61,6 +63,20 @@ def collect() -> None:
     (EVIDENCE / "scope.json").write_text(json.dumps(scope, indent=1) + "\n")
 
 
+def starting_budget_problems(budget: dict) -> list[str]:
+    """D3: the DRI signs the starting budget, the value measured at the base. DELTA row 1 states the value, and its
+    Ruling cell is the signature: the DRI's by the rule of an allowance's (`trust_map.signature_problems`), quoting
+    that value, so a sync that changes the value needs a new one. A HUMAN item: until then this is a problem."""
+    value = ", ".join(f"{c} {budget['recorded_head'][c]:,}" for c in trust_map.BUDGET)
+    rows = [line for line in DELTA.read_text().splitlines() if line.startswith("| 1 |")]
+    cells = [cell.strip() for cell in rows[0].strip().strip("|").split("|")] if len(rows) == 1 else []
+    if len(cells) != 4 or f"The starting budget is {value}:" not in cells[1]:
+        return [f"DELTA.md row 1 does not state the starting budget {value} of the evidence"]
+    if trust_map.signature_problems(cells[2]) or not re.search(re.escape(value) + r"(?![\d,])", cells[2]):
+        return [f"the starting budget {value} awaits the DRI's signature quoting it (DELTA.md row 1, D3; HUMAN)"]
+    return []
+
+
 def problems() -> list[str]:
     """What the saved evidence contradicts: the plan's claims for AR-4, each from a number the tools generated."""
     budget = json.loads((EVIDENCE / "budget.json").read_text())
@@ -76,6 +92,7 @@ def problems() -> list[str]:
         out.append("AR-4 changes no Lean line and no allowance: head and base must measure the same")
     if not budget["measured_base"] == migration["measured_budget"] == budget["recorded_head"]:
         out.append("the starting budget is not the value measured at the base (D3)")
+    out += starting_budget_problems(budget)
     if migration["base"] != budget["base"]:
         out.append("the migration ran at another base")
     if budget["file_lines"]["head"] != 7 * budget["allowances"] + 10:
