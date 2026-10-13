@@ -1,6 +1,40 @@
 # Events, time, durations and causation (`events@0`, and `alternatives@0` on documents): buildable plan
 
-> Status: plan draft 3 (2026-10-13). Draft 3 applies to the plan's contracts the converged statement review of ET-2's
+> Status: plan draft 4 (2026-10-13), branch `research/events-time-causation-p1`. Draft 4 applies the results of phase 1
+> (ET-0, ET-1, ET-E2, ET-E3: [events-time-causation-phase1.md](../research/events-time-causation-phase1.md), cited
+> **PH n** for its section n and **PH6.k** for its consequence k; reviewed ACCEPT,
+> `manage-agents/events-time-causation-ph1-review.final.md`, cited **RV n** for its note n). It keeps every cross-plan
+> edit X1 to X10 and the shared parts of `SYNTHESIS.md` (owners, shared items, build order) as they were; where a
+> phase-1 result bears on a shared part, the plan records it under **Cross-plan issues for the DRI** (11) and leaves the
+> shared text unchanged. No bar is changed; no Lean statement is changed.
+>
+> **Changes in this draft** (draft 4):
+>
+> 1. **Phase-1 record** (new 0.1): each pilot and experiment with its bar, its measurement, its verdict and what it
+>    gates; the bytes-unlocked estimates updated from the measured numbers (0.2); every DEFERRED item with its trigger
+>    (0.3).
+> 2. **ET-0: NOT MET on `main` (checker unavailable)**; its part check is rerun unchanged after `infra/oom-rootcause`
+>    merges, and the audit follows (PH2, PH6.1, RV 1). `infra/oom-rootcause` is a new dependency of ET-0's rerun and
+>    of ET-6 (5, 6); section 8's check-time risk is restated per sort.
+> 3. **ET-1: mechanical part PASS on `main`**, audit DEFERRED. P3 counts **seven** hard constraints, not ten; the ledger
+>    cites the route's answers; the certified u0171.s03 is the sentence without its "even if" clause (PH3, PH6.4, RV 4).
+>    ET-7 gains a Python producer for `alt-certificate`.
+> 4. **Wordings** (D2, D10, 2.7, 2.9, T9, P8, ET-5): the author lint refuses "{0} is committed on {1}", "{0} is before
+>    {1}" and both link forms (PH2, PH6.2). The profile's fixed wordings (`before`, the derived wordings, the two link
+>    forms) become profile wordings the author lint does not judge, as `alternatives@0`'s and `rights@0`'s are; role
+>    wordings stay the author's and must pass the lint (active verbs today: "happens on", "occurs on", "begins on",
+>    "ends on"); copular and passive role wordings are DEFERRED with a trigger. ET-5 grows to 5-6 h.
+> 5. **P2**: both readings of "the one that was applicable" are listed for the audit or a reading set (PH6.3).
+> 6. **ET-E2 PASS fires ET-T1**, on use-case evidence only (2 of 4 answer-key use cases; 2 pilot units, bar 5); ET-T1 is
+>    a design batch whose scope the data fixes (months and years, deadline fulfilment, a recurrence) and promises no
+>    pilot bytes (PH4, PH6.5).
+> 7. **ET-E3 FAIL**: actual causation is cancelled as a build; causal links stay open relations (D10, D15, ET-9), and the
+>    one structured case (u0222.s01–s04) is a note for ET-D1 (PH5, PH6.6).
+> 8. **Cross-plan issues for the DRI** (new 11): the sort-count limit of the premise check for every plan that adds
+>    sorts to a pilot part; X9's "rows only" against the lint exemption; ET-T1's months and years against W6 and ME-6's
+>    `elapsed_day`; ET-0's place in phase 1 of the build order.
+>
+> Draft 3 (2026-10-13). Draft 3 applies to the plan's contracts the converged statement review of ET-2's
 > spec (`manage-agents/debates/events-time-causation-spec/{astra,fable}.md`, CONVERGED in round 3: **FIX**), cited
 > **SR-A1** to **SR-A4** (ET-7) and **SR-B1** to **SR-B5** (events) as in the spec's draft 2, whose section 12 lists
 > them; no other design change. Draft 2 applies the converged Astra + Fable review of draft 1
@@ -48,7 +82,9 @@ This plan does four things, in this order:
    alternatives route: refusal is the inaction, "it should always be possible to comply with them all" is a
    FOLLOWABLE certificate, and "even if doing so would prevent ... a much more dangerous bioweapons attack" is a
    checked consequence. ET-0 and ET-1 are audited pilots with no promised byte gains; the *estimates* (UDHR 200 to
-   318 B, constitution 755 to 1,126 B) are what their bars would move, not a claim.
+   318 B, constitution 755 to 1,126 B) are what their bars would move, not a claim. **Phase 1 ran both** (0.1): ET-1's
+   mechanical bar is met on `main` and waits for its audit; ET-0's u042 checks on its own, but its part's check is
+   out of reach of today's premise search, so ET-0 is rerun after `infra/oom-rootcause` merges.
 2. **A timeline profile, `events@0`** (ET-2 to ET-6): a day sort counted in whole days; `before` with three generated
    premises; event sorts whose elements happen on at most one day; state sorts that begin and end; named dates from
    1970 on whose order Lean computes from the proved W6a calendar; an optional "date of this document"; causal links
@@ -68,22 +104,63 @@ This plan does four things, in this order:
    necessary for <event>", each with a decider and support, never decided by the checker; two universal premises,
    stated as explicit conventions (D): a cause does not start after the day of an effect that is an event, nor after
    the end of an effect that is a state (only when it ends); a necessary condition contributes. *Estimate*: UDHR
-   127 B; constitution 600 to 1,500 B of a 6,059 B upper bound, measured by ET-9's bar.
+   127 B; constitution 600 to 1,500 B of a 6,059 B upper bound, measured by ET-9's bar. ET-E3 found no sampled
+   causal unit that states a structural model (0 of 20), so links stay open relations and nothing decides causation.
 
 Integer durations over variables, deadline obligations, multi-step choices, actual causation, dates before 1970 and
 `events@0` beside `data@0` are **experiments and triggers** (ET-E1 to ET-E3, ET-T1 to ET-T4), each with a
-pre-registered bar or trigger. The act-performance predicate other plans need is a design batch here (ET-D2), not a
-build.
+pre-registered bar or trigger. ET-E2 met its bar on use-case evidence, so **ET-T1 has fired** and is a design batch
+with its own review that promises no pilot bytes; ET-E3 did not, so actual causation is not built. The
+act-performance predicate other plans need is a design batch here (ET-D2), not a build.
 
-**The first batch that moves a pilot number** is ET-0 (UDHR u042, 2 to 3 h, no product code); ET-1 (constitution,
-3 h, no product code) is independent and may run beside it.
+**The first batch that moves a pilot number** is now ET-1 (constitution, no product code), whose mechanical bar is met
+on `main` and whose bytes wait only for its targeted audit. ET-0 (UDHR u042) moves its number only after
+`infra/oom-rootcause` merges, its part is rechecked, and its audit accepts.
+
+### 0.1 Phase 1: what was measured and what it gates
+
+Pre-registered in `0fe75e3a` before any measurement; results in [events-time-causation-phase1.md](../research/events-time-causation-phase1.md)
+(`5e3500b9`), reviewed ACCEPT (every rerun identical to the committed evidence; no product code changed). All runs were
+on `main` at `49de179e`; no model was called.
+
+| Item | Bar (draft 3, unchanged) | Measured | Verdict | What it gates |
+|---|---|---|---|---|
+| ET-0 | u042 loads and checks; its part stays conflict-free under every reading; audit FAITHFUL | u042 loads CHECKED (200 B). The part's `ve document check` is `CheckerUnavailable`: the Rust premise search times out at 5 s, and with `VE_RUST_TIMEOUT=600` aborts at the 6 GiB limit. Three new sorts make 17, and `domain_sizes` (`rust/ve-profile/src/search.rs:153`) builds 3^17 ≈ 1.29 × 10^8 vectors up front (3^14 before); the vocabulary alone does it. u042 alone checks (CHECKED 200 B, premises satisfiable); u043 alone loads OPEN (118 B) | **NOT MET on `main` (checker unavailable)**; not a refutation: the check did not finish. Audit DEFERRED | u042's 200 B and u043's 118 B; the reification evidence ET-6 relies on ("Risk: audits reject event reification", 8); its rerun gates nothing else |
+| ET-1 | FOLLOWABLE replayed with `conditional_on` the two premises; the entailment certified; audit FAITHFUL on u0171.s03, u0172.s01, u0172.s02 | Step 1 takes the main path (`ve document check` accepts the four-profile list; premise status UNKNOWN, "requires the alternatives route"). CONFLICT-FREE; FOLLOWABLE replayed, `conditional_on` exactly the two u0172.s02 premises, UNKNOWN without either; u0171.s03's certificate accepted by Lean (bound to the component by re-binding a search without the alternatives block: no Python producer exists); scenario "d has a clear action: refuse, answer" | **mechanical part PASS**; audit DEFERRED; nothing claimed | the constitution's 755 B (1,126 B with P5); ET-8's starting point (the component on `main`) |
+| ET-E2 | 5 or more pilot units, or 2 or more answer-key use cases, need an offset over an event or a deadline | 270 candidates, all labelled. Pilots: 2 units (u0057.s02 "over the age of 18", O; u0204.s03 "raise concerns before undertaking a task", D-event, hedged). Use cases: 2 of 4 (eligibility: 47 O, 4 D-event; safety framework: 2 D-event, 3 D-duration); agent-policy and asimov-extended none | **PASS** (use-case arm, exactly at its threshold; pilot arm 2 of 5, not met) | **ET-T1 starts** (a design batch, 5 "Experiments and triggers"); durations and deadlines stay out of the pilot estimates and `events@0` stays day order only (D15) |
+| ET-E3 | at least 4 of 20 sampled causal units gain a consequence beyond an open link (blind audit) | Pool 80 (UDHR 4, constitution 76); sample drawn and committed (`0fa53b0d`) before modelling. 0 of 20 state a structural model: 8 have no cause-effect relation of their own, 5 are generic or evidential, 3 hedged counterfactuals, 2 aims, 1 a possible harm, 1 reason-giving | **FAIL** (0 candidates, bar 4); the audit is moot | cancels actual causation as a build (structural models, HP reading sets); confirms D10 and ET-9's choice of kinds (a), (d), (e) |
+
+### 0.2 Bytes unlocked: estimates after phase 1
+
+Every figure is an estimate of what a bar would move, never a claim; no byte is claimed before its audit (8).
+
+| Batch | Draft 3 estimate | Measured in phase 1 | Draft 4 estimate |
+|---|---|---|---|
+| ET-0 | UDHR 200 B (u042); 318 B with u043 | u042 200 B CHECKED and u043 118 B OPEN, each standalone; the part check unavailable on `main` | UDHR 200 B CHECKED plus 118 B OPEN (318 B), after the rerun on `main` with `infra/oom-rootcause` and the audit; 0 B now |
+| ET-1 | constitution 755 B; 1,126 B with P5 | the mechanical bar met for u0171.s03 (276 B), u0172.s01 (119 B), u0172.s02 (213 B); the certified u0171.s03 lacks its "even if" clause (RV 4) | unchanged, 755 B and 1,126 B, after the targeted audit, which also decides whether u0171.s03's 276 B count with the clause carried by the universal and the scenario; 0 B now |
+| ET-6 | UDHR 201 to 548 B | none (not run); every new sort multiplies the part's premise check by 3 on `main` (PH6.1, inferred for ET-6) | unchanged, 201 to 548 B, only after `infra/oom-rootcause`; on `main` today the 1.25× bar is expected to fail for any part that gains the block's sorts |
+| ET-9 | UDHR 127 B; constitution 600 to 1,500 B of a 6,059 B upper bound | ET-E3's sample: 9 of 20 causal-tagged units are of kinds (a), (d), (e), and all 9 carry a hedge or a modal ("seems", "expect", "can", "often", "could", "might", "would") | unchanged; the constitution's bytes come only with the hedges' owners (attitudes, quantities), as research 5.1 assumed |
+| ET-T1 | not estimated (a trigger) | pilot need 2 units; use-case need eligibility (51 sentences) and the safety framework (5) | 0 pilot bytes; use-case regressions only, after its design passes review |
+| Actual causation (ET-E3) | 0 B unless the bar passed | 0 of 20 | 0 B; cancelled |
+
+### 0.3 Deferred items and their triggers
+
+| Item | Why deferred | Trigger |
+|---|---|---|
+| ET-0 part check rerun (u042; u042 with u043) | `CheckerUnavailable` on `main` (the eager `domain_sizes`) | `infra/oom-rootcause` (lazy `DomainSizes` with a memory budget) merged to `main`. The documents in `docs/research/evidence/events-time-causation/et0/` are rechecked unchanged, with a committed runner for the `prlimit` runs and both baseline runs saved as evidence (RV 3) |
+| ET-0 audit of u042 (and u043) | a model call | the rerun's part check completes with u042 CHECKED and the part CONFLICT-FREE; then the next scheduled pilot audit sampling u042, or a targeted audit the DRI approves |
+| ET-1 targeted audit of u0171.s03, u0172.s01, u0172.s02, and P5's status | a model call | DRI approval of the targeted audit; the audit is told that the certified u0171.s03 is the sentence without "even if there is a harm such that that response prevents that harm" (RV 4) |
+| Ledger rows in the pinned pilot runs | the pinned runs are read only in phase 1; the proposals are evidence files (`et0/ledger-proposal.json`) | the audit accepting the unit; written to the run directory the next pilot copies, between pilot windows (6) |
+| ET-E3 blind audit | moot: no candidates | none (never runs) |
+| Copular and passive role wordings ("{0} is committed on {1}", "{0} is dissolved on {1}") | refused by today's author lint (`BINARY_AUXILIARY`); this plan does not change the lexicon (2.7) | an audit or ET-E1 finding that an active role wording misreads a unit; then a lexicon change requested from english-lean, in its queue |
+| ET-6 | the same premise-check limit as ET-0 (inferred) | `infra/oom-rootcause` on `main`, besides ET-5 |
 
 ## 1. Decisions
 
 | # | Decision | Why | Rejected |
 |---|---|---|---|
 | D1 | Time on the chain is a **day sort** of whole civil days with a declared `before`, not integers | the chain is first-order with two-place atoms and no arithmetic (research 1.4); W6a already counts civil days and excludes clock time (W6 6.2); days are what the pilot sentences need | integer days on the chain (candidate B, research 4.2): a norms × order checker for a need measured at about zero; dense time, clock time |
-| D2 | **Events and states are things** with two-place roles: an event sort's `on` predicate, a state sort's `begins` and `ends`. Names are the author's; argument orders are fixed by the block (as alt 1.1); each role's verbalisation is the author's, of the form "{0} <verb phrase> on {1}" ("{0} happens on {1}", "{0} is committed on {1}", "{0} begins on {1}", "{0} is dissolved on {1}"), which Lean checks; the role's meaning comes from its place in the block, never from its words (R3) | Davidson and Parsons (research 3.1); fits the two-place chain; it is what the UDHR translators already do without days (research 1.4) | a time argument on every predicate (three places: `nary@0`, which the chain lacks) |
+| D2 | **Events and states are things** with two-place roles: an event sort's `on` predicate, a state sort's `begins` and `ends`. Names are the author's; argument orders are fixed by the block (as alt 1.1); each role's verbalisation is the author's, of the form "{0} <verb phrase> on {1}", which Lean checks (shape), and which the author lint judges as it judges every declared binary wording: today that admits active verbs ("{0} happens on {1}", "{0} occurs on {1}", "{0} begins on {1}", "{0} ends on {1}") and refuses copular and passive ones ("{0} is committed on {1}", "{0} is dissolved on {1}", `BINARY_AUXILIARY`; PH2). The role's meaning comes from its place in the block, never from its words (R3), so an active verb loses nothing; passive role wordings are DEFERRED (0.3) | Davidson and Parsons (research 3.1); fits the two-place chain; it is what the UDHR translators already do without days (research 1.4) | a time argument on every predicate (three places: `nary@0`, which the chain lacks) |
 | D3 | The profile is a **premise pack**: its block regenerates closed base premises `Ev_V`, which are PK-1's `events` pack, the last pack of the layered route's extra premises `X` (order `soft, rights, weighing, attitudes, scales, events`; `VE.NormDefaults.Wire.premisesX`, `EntailsX`, `acceptanceX`, `modelCheckX_sound`). The pack's `decls` are the named-date constants, its `labelled` list is `Ev_V` with labels `events:<name>`, its `origins` map each label and date to its request path in the block, and `date__` is in PK-1's `reservedPrefixes`. No new checker, no new route, no new service mode, no events-local X assembly (X1) | RD-9 proves the checkers sound for any typed `X`; PK-1 is the one assembler of `X` for every pack | a new route `ve_events_route` (a copy of the layered dispatch); inlining defined words into guards (unneeded: every wording elaborates to base formulas over the roles) |
 | D4 | The premises are **universal and function-free**: `before` is irreflexive, transitive and linear; each event on at most one day; a state never ends before it begins; consecutive named dates ordered, and no day between two named dates one day apart; the two link conventions (D10); necessary implies contributed. Membership of norms.md 7.1 is reported per document after expansion (`fragment: yes \| no (<first reason>)`); the day-quantified wordings ("happens before", "is in progress on") put a document outside it, and there an answer comes from a certificate or is UNKNOWN. No completeness is claimed beyond norms 7.1's own (B) | finite models exist for every premise set (`eventsPremises_satisfiable`); the existing fragment conditions stay the only completeness claim | "every day has a next day" (forces infinite models); existence of an event's day as a premise (validated on situations instead, as alt 4.2 E1-E3) |
 | D5 | **Named dates** are constants of the day sort generated from the block's ISO list (`date__YYYY_MM_DD`, reserved prefix), read and rendered by W6's date-literal class ("12 October 2026", "2026-10-12"); Lean orders them with `VE.Time.Calendar` (`Civil.num`, `before_iff`). Dates run from 1970-01-01 to 9999-12-31 (`Civil.Valid`); a date before 1970 is `DateRange`, a stated limit until ET-T3 fires, so UDHR's own date cannot be named (G, X8). At most 64 per document | one calendar, one date grammar (W6), no Python computation of dates; 64 keeps the generated premises under `MAX_NODES` | a second calendar; Python date order; all-pairs order facts (quadratic; transitivity derives them) |
@@ -91,12 +168,12 @@ build.
 | D7 | Certificates are sound for every structure satisfying the premises, hence for every **calendar reading**, whose days are all the civil days (`events_certificate_calendar`) | the intended reading is the calendar; it satisfies the premises (`calendar_sat`) | — |
 | D8 | **Reader-facing English has no temporal operators**: no "until", "always", "eventually", "while", "by" (deadline), "within" (window), "since" in VE text. Quantification over days is written out ("on each day", "there is a day such that", "no later than that day"). In a **source**, each of those words becomes a reading set with a distinguishing situation; in **authored** text it is rejected with the explicit rewrites | one reading per sentence; readers misread LTL (research 3.3); "until" alone has at least two readings (silent after the end, or ending), and "by 10 December" two (before, or no later than). "Before" is strict day precedence, never "no later than": a source such as "confirmed before the action" that needs order within a day keeps the `time-of-day` gap, and same-day facts alone never make a point UNDECIDED (E) | fixed FRET-style meanings for "until" and "within" |
 | D9 | "until" reads as a reading set **per modality** (R2). For a rule of modality m ("may", "must", "must not", "need not") "m X until E": {U1: m X on each day before the day E happens (the text is silent from that day); U2: U1, and the opposite of m on each day from the day E happens}, where the opposite of "may" is "must not", of "must" is "need not" (the obligation stops; nothing is forbidden), of "must not" is "may", of "need not" is "must". For "until <date>" the inclusive candidates are added (U1 and U2 with "on each day no later than <date>" and the opposite "from the day after"), four in all. Under `norm-defaults@0` with the predicate unspecified, U1's silence is UNDECIDED, so the distinguishing situation is "E happens on 5 January 2027; 4, 5 and 7 January 2027": the day before E, E's own day and a later day (U1 UNDECIDED on 5 and 7 January, U2 SETTLED to the opposite there, both SETTLED to m on 4 January). Under a deny or allow completion U1 and U2 may coincide; then the set has no distinguishing situation and the translator must choose (nd's "grounded" line) | the completion already gives "the text does not say"; no new machinery; whole days cannot say whether E's own day is covered, so E's day is in every distinguishing situation, and "valid until Friday" is often inclusive | a single cessation reading; one cessation rule for every modality (wrong for obligations: "must X until E" never means "must not X" afterwards) |
-| D10 | **Causal links** are base predicates between event or state sorts, declared in the block with a form (`contributed`: "{0} contributed to {1}"; `necessary`: "{0} was necessary for {1}") and a decider; they are open: the checker never decides a link, lists every stated link in the residual with its support and decider, and adds only two premises, each an explicit convention shown in the legend (D): `link_forward` (the cause does not start after the day of an effect that is an event; the cause does not start after the end of an effect that is a state, which binds only when that state ends, so a later event may contribute to a state already in progress) and `link_weaker` | VISION converged rule 8 (no unsupported causal assumptions certified); Lewis: dependence suffices for causation; no backward causation for ordinary events, while a cause may join a state that is already in progress | deciding causation (structural models are research, ET-E3); reusing `leads to` outside a declared decision model |
+| D10 | **Causal links** are base predicates between event or state sorts, declared in the block with a form (`contributed`: "{0} contributed to {1}"; `necessary`: "{0} was necessary for {1}") and a decider; they are open: the checker never decides a link, lists every stated link in the residual with its support and decider, and adds only two premises, each an explicit convention shown in the legend (D): `link_forward` (the cause does not start after the day of an effect that is an event; the cause does not start after the end of an effect that is a state, which binds only when that state ends, so a later event may contribute to a state already in progress) and `link_weaker`. The two link forms are fixed profile wordings, which the author lint does not judge (2.7; today's lint refuses both, PH2) | VISION converged rule 8 (no unsupported causal assumptions certified); Lewis: dependence suffices for causation; no backward causation for ordinary events, while a cause may join a state that is already in progress; ET-E3 (FAIL, 0 of 20): no sampled causal unit states a structural model, so deciding causation has nothing to decide from | deciding causation (structural models: cancelled by ET-E3); reusing `leads to` outside a declared decision model |
 | D11 | The link wordings are disjoint from `alternatives@0`'s and `risk@0`'s fixed wordings (`leads to`, `allows ... to happen`, `prevents`, `causes`, `might lead to`, `cannot lead to`); "resulted in", "led to", "caused", "brought about" in a source become a reading set over the two link forms (and `leads to` where a decision model is declared) | one owner per wording; alternatives already rejects "results in" and "brings about" with a rewrite to `leads to` (alt 2.2), which stays | a third causal vocabulary |
 | D12 | `events@0` is **one row of AR-10's profile-gate table** (`requires`, `refuses` with its texts, `slot`), with the composition proof for the combinations it admits; no gate theorem is re-proved in `Dispatch.lean` (X3). It requires `relational-fol@0`, `norms@0` and `norm-defaults@0` (the layered route that carries `X`; a predicate may still take the `deny` or `allow` default), with or without `soft-norms@0`, `rights@0` and `readings@1`; it is refused with `order@0`, `time@0`, `closure@0`, `nary@0`, `alternatives@0`, `risk@0`, `reports@0`, `speech-acts@0` and **`data@0`** (`UnsupportedProfile: events@0 with <p>`). `data@0` is refused, not admitted, so agent-policy's R3 becomes the trigger ET-T4 (R1). Documents without norms are out of the first build, so eligibility's own environment (`order@0`, `time@0`, no norms) is not a route for R1, which is restated on the norms chain (4.3) | the hook is RD-9's layered `X`; each refused pair is a later design batch with its own trigger; refusing `data@0` costs no pilot unit and needs no new composition proof | a frozen-route Background slot now; admitting `data@0` now (a composition proof for a use case that also needs order within a day) |
 | D13 | **Alternatives with the completion** (ET-7) wires the branch `fill (inlineTree A)` that `followableU_sound` already proves, in a new file beside the alternatives wire; the refusal `alternatives@0 with norm-defaults@0 is not implemented` is deleted, not kept as a fallback. Its **evidence contract** (C): FOLLOWABLE from a certificate; DILEMMA from a witness and a filling; per alternative, clear or not clear only when settled under every admissible filling (a definite Kleene value, or enumeration of the cone), **UNDECIDED only from two validated fillings with opposite answers**, and UNKNOWN otherwise; a Kleene "unknown" is shown as UNKNOWN; the excluded-middle case (nd fixture u12's guard) is a fixture | nd 282-301 specified it; `lean/NORMDEFAULTS.md` lists it as still open; the Asimov case waits for it; nd 2.5 requires two validated fillings for UNDECIDED, and `kleene_sound` justifies definite values only | a Python-side classification of silent permissions; Kleene "unknown" as UNDECIDED |
 | D14 | ET-0 and ET-1 change **no product code**: they rewrite pilot units with merged features and measure | the smallest batches that move a pilot number (as weighing's WG-0) | waiting for `events@0` before any pilot movement |
-| D15 | Durations over variables ("within 30 days after each request"), deadline obligations, finite traces, multi-step choices and actual causation are **experiments or triggers** with bars (ET-E1 to ET-E3, ET-T1, ET-T2) | measured need about zero in the pilots (research 2.3: four duration phrases in 184,893 B; UDHR none); each is a large core change | building candidate B or C now |
+| D15 | Durations over variables ("within 30 days after each request"), deadline obligations, finite traces, multi-step choices and actual causation are **experiments or triggers** with bars (ET-E1 to ET-E3, ET-T1, ET-T2). Phase 1: ET-E2 fired ET-T1 on use-case evidence (a design batch, no pilot bytes); ET-E3 cancelled actual causation | measured need about zero in the pilots (research 2.3: four duration phrases in 184,893 B; UDHR none), confirmed by ET-E2 (2 pilot units with an offset or a deadline, bar 5); each is a large core change | building candidate B or C now; durations in the pilot estimates |
 | D16 | Lean owns the block, the premises, the date order, the calendar check, the link residual and every diagnostic; Python checks shape only where it already does, relays and displays; Rust evaluates untrusted as today | CLAUDE.md "Who owns what" | any Python premise or date computation |
 
 ## 2. Design
@@ -127,7 +204,8 @@ bind `Ev_V` by meaning id like every other regenerated premise.
 ```
 
 The values are an example (the anchor is the date the document gives for itself); each role predicate's verbalisation
-in the vocabulary has the form "{0} <verb phrase> on {1}" ("{0} is committed on {1}"), checked by Lean (D2). Unknown
+in the vocabulary has the form "{0} <verb phrase> on {1}" ("{0} happens on {1}" for `committed_on`), checked by Lean
+(D2) and judged by the author lint like any declared wording. Unknown
 fields are rejected. `dates` are ISO strings parsed by `VE.Time.parseIso` and admitted only when `Civil.Valid`
 (1970-01-01 to 9999-12-31, W6 6.1; earlier dates are `DateRange`, as in W6, a stated limit until ET-T3 fires: there is
 no second calendar and no events-local date code, G and X8). `anchor`, when present, is a valid ISO
@@ -222,7 +300,7 @@ batch runs, 6):
 
 | Wording | The one reading (the IDE's paraphrase) | Formal effect |
 |---|---|---|
-| `<event> <vp> on <day>` (the role's own wording, "happens on", "is committed on") | the day the event happens | `on_E(x, t)` |
+| `<event> <vp> on <day>` (the role's own wording, "happens on", "occurs on") | the day the event happens | `on_E(x, t)` |
 | `<state> <vp> on <day>` (its `begins` and `ends` wordings, "begins on", "ends on") | its first day / its last day (the state is still in progress on it) | `begins_S`, `ends_S` |
 | `<day> is before <day>` | strictly earlier: an earlier day, never the same day (E) | `before(t, u)` |
 | `<day> is after <day>` | strictly later | `before(u, t)` |
@@ -235,6 +313,19 @@ batch runs, 6):
 | `<cause> contributed to <effect>` | an open causal link, decided by its decider | `L(x, y)` (form `contributed`) |
 | `<cause> was necessary for <effect>` | an open but-for link: without the cause the effect would not have happened, decided by its decider | `N(x, y)` (form `necessary`) |
 | named dates: `12 October 2026`, `2026-10-12`, `the date of this document` | the named day | `c_D` |
+
+**Who judges which wording** (phase 1, PH2, PH6.2). Today's author lint refuses "{0} is before {1}"
+(`BINARY_AUXILIARY`), "{0} contributed to {1}" (`BINARY_CONVERSE`, `BINARY_VERB`) and "{0} was necessary for {1}"
+(`BINARY_AUXILIARY`, `BINARY_CONVERSE`, `LOGICAL_WORD`), and the derived wordings above are copular too. These are
+**profile wordings**: the profile fixes them exactly and Lean checks them (2.9 items 3 and 5), so the author lint does
+not judge them, as it does not judge `alternatives@0`'s fixed forms and `rights@0`'s generated wordings today
+(`ve/english.py`, the two exemptions after the vocabulary lint). ET-5 registers them the same way, in the owner of
+wordings when it runs. **Role wordings** are the author's free verb phrases, so the author lint keeps judging them;
+today it accepts "happens on", "occurs on", "begins on" and "ends on", and refuses "is committed on", "was
+committed on" and "is dissolved on". Exempting free verb phrases would drop the lint's checks (logical words, converse
+forms) for text the profile does not fix, and changing the lexicon is english-lean's, so this plan writes roles with
+active verbs and defers passive role wordings (0.3). Whether the exemption is a catalogue row or a code hunk is a
+cross-plan question (11).
 
 Persistence is never assumed (F): a state with no stated end day is in progress on a later day only in situations
 that give it no end; a certificate that it is in progress there needs a stated premise that it has not ended ("there
@@ -288,7 +379,9 @@ id. A replay against a changed block, a changed date list or a changed link deci
 4. Each event sort is declared, is not the day sort, appears once among event and state sorts
    (`DuplicateDeclaration: event sort <s>`); its role predicate has sorts `(s, day)` and a verbalisation of the form
    "{0} <verb phrase> on {1}", with a nonempty verb phrase and no other slot (`EventsVerbalisation: <p>`, R3).
-   Likewise for state sorts with `begins` and `ends`. All role predicates are pairwise distinct.
+   Likewise for state sorts with `begins` and `ends`. All role predicates are pairwise distinct. This is Lean's shape
+   check only; the author lint still judges the verb phrase (2.7), so "{0} is committed on {1}" passes this item and
+   is refused by the lint today.
 5. Each link names a base predicate over two event or state sorts with its form's verbalisation; its decider is at
    most 64 bytes or `unstated`; the link is declared as an open term with the same decider (`LinkNotOpen: <p>`); no
    link predicate is a role predicate.
@@ -648,7 +741,7 @@ Definitions first, expectations after, so a reviewer derives each expectation be
 | T6 | link `contributed_to` (event → event), a situation in which the effect happens before the cause; link `contributed_to_state` (event → state), a cause after the state's last day, and a cause after the state began but before it ended (D) | `InvalidModel("events", "premise events:link_forward:contributed_to fails")`; the second fails `events:link_forward:contributed_to_state`; the third is accepted (a later event may contribute to a state in progress) |
 | T7 | a document with no day vocabulary in any rule or premise, with and without the block | same statuses and verdicts; certificates differ only in their bound premise list (`events_conservative`) |
 | T8 | identity: every existing fixture without the block | `environment_id` and every hash unchanged; with the block, `environment_id` changes |
-| T9 | each wording of 2.7, a role wording "{0} is committed on {1}" and one without " on {1}" | one derivation each; the second role wording `EventsVerbalisation`; the twelve source words of 2.7 rejected in authored text with the advice of 2.7 |
+| T9 | each wording of 2.7, a role wording "{0} is committed on {1}", one "{0} happens on {1}", and one without " on {1}" | one derivation each; the first two role wordings pass Lean's shape check and the third is `EventsVerbalisation`; the author lint accepts "{0} happens on {1}" and refuses "{0} is committed on {1}" (`BINARY_AUXILIARY`, measured in phase 1); the profile wordings "{0} is before {1}" and the two link forms are not judged by the author lint (2.7); the twelve source words of 2.7 rejected in authored text with the advice of 2.7 |
 | T10 | 65 named dates; a date 1969-12-31; a declared constant `date__x` | `ResourceLimit: events dates`; `DateRange: 1969-12-31`; `EventsReserved: date__x` |
 | T11 | `until`, D9, permission: rule U1 "Every person may be presumed innocent on each day, if it is not the case that there is a conviction such that that conviction is of that person and that conviction happens no later than that day." with `presumed_innocent_permitted` unspecified; U2 adds "must not" for the days on which a conviction of that person happens no later than that day; situation: a conviction on 5 January 2027, days 4, 5 and 7 January 2027 (E's own day included, R2) | 4 January: both SETTLED yes; 5 and 7 January: U1 UNDECIDED (the text does not say), U2 SETTLED no; the situation is the reading set's distinguishing situation |
 | T11b | `until`, obligation: "must file a report on each day ... until a closure", U2 adds "need not" from the closure's day; `x_permitted` unspecified with no rule | 7 January: U2 SETTLED not required, and filing is never SETTLED forbidden (the obligation stops; nothing is forbidden) |
@@ -667,16 +760,16 @@ Definitions first, expectations after, so a reviewer derives each expectation be
 
 | # | Unit | VE text (sketch; the batch writes the final text) | Expected |
 |---|---|---|---|
-| P1 (ET-0) | U u042, 200 B | sorts `finding of guilt` (one finding that one person is guilty of a penal offence), `act` (one act or omission), `day`; regulated `finding_of_guilt_permitted(finding)` with act "{0} take place", `default: unspecified`; rule: "No finding of guilt may take place, if there is an act such that that finding of guilt is on account of that act and there is a day such that that act is committed on that day and it is not the case that that act constitutes a penal offence under national or international law on that day." The bearer stays as in u098 (unassigned) | loads and checks on today's chain; conflict-free with its part; the audit samples it FAITHFUL (bar) |
-| P2 (ET-0) | U u043, 118 B | as P1 with an `imposition` sort and "a heavier penalty than the penalty that was applicable ... on that day": `heavier_than(penalty, penalty)` a named open comparison; "applicable to that offence on that day" needs a third place, so it is reified as an `applicability` state or the unit stays UNFORMALISED | recorded either way; claimed only if the audit accepts the reification |
-| P3 (ET-1) | C u0172.s01 (119 B), u0172.s02 (213 B) | component on the alternatives route: chooser `decision` (one decision of one instance of Claude about one request), action `response`, harm `harm`; `inaction` declared; the ten hard constraints as prohibitions on responses with the pilot's open terms and the shared "knowingly or quite likely" condition; premises Γ: "For every decision there is a response such that that response is available to that decision and that response is inaction." and "No response that is inaction provides serious uplift to ... [each category]" (support: testimony, cites u0172.s02); legend: "This document holds only the hard constraints; 'may be given' means no hard constraint forbids it." | FOLLOWABLE, `conditional_on` both premises; without the first premise UNKNOWN (the existence fact is validated, not assumed: alt fixture u) |
-| P4 (ET-1) | C u0171.s03, 276 B | in the same component: "Every response that clearly and substantially undermines Anthropic's ability to oversee and correct advanced AI models, if Claude knows or thinks it quite likely that it does, may not be given, even if there is a harm such that that response prevents that harm." as an entailed assertion; scenario: responses `undermine`, `refuse` (inaction), `answer`; harm `attack`; rows `refuse` and `answer` lead to `attack`, `undermine` does not | entailment certified; scenario: `undermine` prevents `attack` and is forbidden; "decision D has a clear action: refuse, answer" |
-| P5 (ET-1) | C u0171.s01 (147 B), u0171.s02 (159 B), u0172.s03 (212 B) | the component's report: no obligation, so nothing requires prevention ("unmapped obligations: none"); u0172.s03's "refusal is not necessarily compatible with the other priorities" points outside the component | OPEN or LABELLED as the audit decides; claimed only then |
+| P1 (ET-0) | U u042, 200 B | sorts `finding of guilt` (one finding that one person is guilty of a penal offence), `act` (one act or omission), `day`; regulated `finding_of_guilt_permitted(finding)` with act "{0} take place", `default: unspecified`; rule: "No finding of guilt may take place, if there is an act such that that finding of guilt is on account of that act and there is a day such that that act is committed on that day and it is not the case that that act constitutes a penal offence under national or international law on that day." The bearer stays as in u098 (unassigned) | loads and checks on today's chain; conflict-free with its part; the audit samples it FAITHFUL (bar). **Phase 1** (the text above, as run): loads CHECKED (200 B); the part check `CheckerUnavailable` on `main`; alone CHECKED. Its rendering shows the two lint-refused wordings as recorded relations ("that act has the recorded relation "committed_on" to that day"); the rerun keeps the documents unchanged (pre-registered), and the audit judges what the rendering shows |
+| P2 (ET-0) | U u043, 118 B | as P1 with an `imposition` sort and "a heavier penalty than the penalty that was applicable ... on that day": `heavier_than(penalty, penalty)` a named open comparison; "applicable to that offence on that day" needs a third place, so it is reified as an `applicability` state or the unit stays UNFORMALISED. "The one that was applicable" has two readings, both listed for the audit or as a reading set (PH6.3): **universal** (heavier than every penalty applicable then, given that one is: the phase-1 text) and **existential** (heavier than some penalty applicable then); they differ only when several penalties apply on that day, where the existential reading forbids more | recorded either way; claimed only if the audit accepts the reification and picks a reading, or a reading set carries both. **Phase 1**: the universal reading, reified with `applicability`, loads OPEN (118 B); with u042 the part (20 sorts) is `CheckerUnavailable`; alone OPEN |
+| P3 (ET-1) | C u0172.s01 (119 B), u0172.s02 (213 B) | component on the alternatives route: chooser `decision` (one decision of one instance of Claude about one request), action `response`, harm `harm`; `inaction` declared; the seven hard constraints (u0165.s01–s07; draft 3 said "ten", PH6.4) as prohibitions on responses with the pilot's open terms and the shared "knowingly or quite likely" condition; premises Γ: "For every decision there is a response such that that response is available to that decision and that response is inaction." and "No response that is inaction provides serious uplift to ... [each category]" (support: testimony, cites u0172.s02); legend: "This document holds only the hard constraints; 'may be given' means no hard constraint forbids it." | FOLLOWABLE, `conditional_on` both premises; without the first premise UNKNOWN (the existence fact is validated, not assumed: alt fixture u). **Phase 1: met on `main`**, and UNKNOWN without the second premise as well. The ledger cites the route's answers (`alt-conflict`, `alt-followable`): the part's own `ve document check` reports premise status UNKNOWN ("requires the alternatives route") and shows no FOLLOWABLE |
+| P4 (ET-1) | C u0171.s03, 276 B | in the same component: "Every response that clearly and substantially undermines Anthropic's ability to oversee and correct advanced AI models, if Claude knows or thinks it quite likely that it does, may not be given, even if there is a harm such that that response prevents that harm." as an entailed assertion; scenario: responses `undermine`, `refuse` (inaction), `answer`; harm `attack`; rows `refuse` and `answer` lead to `attack`, `undermine` does not | entailment certified; scenario: `undermine` prevents `attack` and is forbidden; "decision D has a clear action: refuse, answer". **Phase 1: met on `main`**, for the sentence without its "even if there is a harm such that that response prevents that harm" clause: the universal forbids every such response, preventing or not, and the scenario shows the prevention (RV 4). The targeted audit and the ledger row state that the certified sentence is the shortened one. The certificate was bound to the component by re-binding a search made without the alternatives block, because `prove_entailment` refuses `alternatives@0`; ET-7 adds the producer |
+| P5 (ET-1) | C u0171.s01 (147 B), u0171.s02 (159 B), u0172.s03 (212 B) | the component's report: no obligation, so nothing requires prevention ("unmapped obligations: none"); u0172.s03's "refusal is not necessarily compatible with the other priorities" points outside the component | OPEN or LABELLED as the audit decides; claimed only then. **Phase 1**: "unmapped obligations: none" as expected; the status waits for the audit (DEFERRED, 0.3) |
 | P6 (ET-6) | U u041, 201 B | reading set {U1, U2} of T11 (D9, the permission case) over `presumed_innocent_permitted(person, day)`; the trial as an event with open conditions ("according to law", "public", "all the guarantees necessary for his defence") | READINGS with the T11 distinguishing situation |
 | P7 (ET-6) | U u058, 91 B | state sort `marriage` with `begins`, `ends`; "on each day on which that marriage is in progress" and "on the day that marriage ends"; "equal rights" kept as in the rights translation | partly: the phases expressed; "equal rights" stays with `rights`/`quantities`; claimed only if the audit accepts the whole unit |
-| P8 (ET-6) | U u042, u043 restated | P1 and P2 with `committed_on` as the `act` sort's `on` role (one day per act), its wording "{0} is committed on {1}" (R3) | same verdicts; fidelity: "the time when it was committed" is now one day |
+| P8 (ET-6) | U u042, u043 restated | P1 and P2 with `committed_on` as the `act` sort's `on` role (one day per act), its wording "{0} happens on {1}", an active verb the author lint accepts (R3, 2.7; draft 3's "{0} is committed on {1}" is refused today, PH2); P2 in the reading the ET-0 audit picks, or as the reading set of both | same verdicts; fidelity: "the time when it was committed" is now one day |
 | P9 (ET-9) | U u004, 127 B | events `disregard of human rights` (a state), `barbarous act` (event kind as a sort), `outrage of the conscience of mankind`; links "contributed to", decided by "the drafters"; "barbarous" open. Rechecked under D: the disregard (a state) does not begin after the day of an act it contributed to; an act does not start after the last day of the outrage when the outrage is a state that ends; no day is stated, so the conventions constrain nothing the unit asserts | OPEN; `causal_links` lists both links with support testimony |
-| P10 (ET-6, probe) | C u0204.s03, 316 B | "Claude should ideally raise concerns before undertaking a task": events `raising of concerns`, `undertaking`; "happens before"; the "should ideally" force and the harm comparison stay with soft norms and `quantities` | probe only; claimed only with those features |
+| P10 (ET-6, probe) | C u0204.s03, 316 B | "Claude should ideally raise concerns before undertaking a task": events `raising of concerns`, `undertaking`; "happens before"; the "should ideally" force and the harm comparison stay with soft norms and `quantities` | probe only; claimed only with those features. ET-E2 labelled it a D-event deadline (one of the 2 pilot units), which day order states without durations |
 | P11 (ET-6, probe) | C u0022.s01, 67 B | anchor date; "there is a day such that that day is after the date of this document and this document changes on that day", hedged "likely" | the time part admitted; the unit is claimed only with `attitudes`' hedge |
 
 ### 4.3 Use-case regressions
@@ -702,6 +795,16 @@ its part stays conflict-free under every reading, and the next scheduled audit s
 audit of the changed unit does). **Stop**: if the audit rejects the reification, record why and claim nothing.
 *Estimate*: 200 B (1.83% of UDHR); 318 B with u043. Shared files: none in the repository.
 
+**Phase 1 (ran, `5042eaa2`): NOT MET on `main` (checker unavailable).** u042 loads CHECKED and checks alone, but the
+part's premise check does not finish: three new sorts make the Rust search's eager `domain_sizes` build 3^17 vectors
+(0.1). That is the search's budget, not a refutation (exhaustion is UNKNOWN, CLAUDE.md), and not this plan's to fix.
+**Rerun (DEFERRED, trigger: `infra/oom-rootcause` on `main`)**, 1-2 h, no product code: recheck the committed
+documents of `et0/` unchanged, under the same bar; commit a runner for the `prlimit` runs and save both baseline runs
+as evidence (RV 3); move the phase-1 scripts from `research/events-time-causation/` to `experiments/`, which has a
+layer (RV 2). If the rerun meets the mechanical part, the audit follows (0.3). If the part check is still unavailable
+with the lazy enumeration, record it and stop: ET-0 then claims nothing, and ET-6 takes the measurement as its own
+check-time evidence. *Estimate after phase 1*: 200 B CHECKED plus 118 B OPEN (0.2); 0 B now.
+
 ### ET-1. The constitution's hard-constraint argument as an alternatives component (pilot, 3 h, no product code)
 
 Step 1: check that `ve document check` accepts a document on `alternatives@0`, `documents@1`, `norms@0`,
@@ -713,6 +816,13 @@ entailment certified; the targeted audit FAITHFUL on u0171.s03, u0172.s01, u0172
 constitution); 1,126 B with P5, not a promised gain (an audited pilot). Runs now. The component is a separate part
 document: it does not edit u0165.s01–s07, so it is outside the hard-constraint queue (X10). Shared files: none in
 the repository.
+
+**Phase 1 (ran, `06debddb`): mechanical part PASS on `main`; audit DEFERRED.** Step 1 took the main path; P3 to P5
+hold as expected (0.1, 4.2). Corrections: the component carries the seven hard constraints u0165.s01–s07, not ten; the
+ledger row cites the route's answers, since the part's own check reports premise status UNKNOWN; the certified
+u0171.s03 is the sentence without its "even if" clause, and the audit and the ledger row say so (RV 4). What remains is
+the targeted audit (DEFERRED, 0.3), then the ledger rows. *Estimate after phase 1*: unchanged, 755 B and 1,126 B with
+P5, after the audit; 0 B now.
 
 ### ET-2. Statement spec and stub elaboration (planner, 4-5 h)
 
@@ -730,7 +840,9 @@ reading the expectations. The review of draft 1 converged on FIX (SR-A1 to SR-B5
 PASS needs both reviewers to re-read and accept the corrected statements and fixtures, and the corrected stub's
 elaboration recorded (command, log, reviewed commit); elaborating is necessary, not sufficient. ET-7 may start once
 the review accepts the spec's ET-7 section with SR-A1 to SR-A4 and T12c to T12f, and its part of the stub elaborates,
-before the timeline sections pass. Shared files: none. *Estimate*: 0 pilot bytes (specification).
+before the timeline sections pass. Shared files: none. *Estimate*: 0 pilot bytes (specification). The spec's draft 3
+applies phase 1 to English text and fixtures only (who judges which wording, T9's lint expectations, ET-T1's status);
+no Lean statement or stub changes, and the reviewers' re-read covers those sections as well.
 
 ### ET-3. Lean: block, premises, calendar, conservativity, completion (Lean, 5-6 h)
 
@@ -767,27 +879,37 @@ QT-B2 (X1, X10). Generated: the service schemas (`ve/backends/lean_service_schem
 `tools/response_schemas.py --write` through `regen_generated.py`), `lean/checkers.lock`. *Estimate*: 0 pilot bytes
 (infrastructure).
 
-### ET-5. Python and English: wordings, advice, relay, fuzz (Python, 4-5 h; after ET-E1)
+### ET-5. Python and English: wordings, advice, relay, fuzz (Python, 5-6 h; after ET-E1)
 
 The wordings of 2.7, as ET-E1 left them, and the source-word reading sets and authored-text refusals with rewrites, as
-rows in english-lean's catalogue (rows only, X9); if that catalogue lives in `lean/VE/EnglishGrammar/*` when ET-5
+rows in english-lean's catalogue (rows only, X9). Phase 1 adds one piece (PH6.2): the profile wordings (`before`, the
+derived wordings, the two link forms) are registered so that the author lint does not judge them, as `alternatives@0`'s
+and `rights@0`'s are today; role wordings stay under the lint, and the lexicon is not changed (2.7). Where that
+registration is a catalogue row it is rows only; where it is a hunk in the owner of wordings, as both precedents are
+in `ve/english.py` today, the batch is not rows only, and 11 asks the DRI which (the estimate grows by 1 h either
+way); if that catalogue lives in `lean/VE/EnglishGrammar/*` when ET-5
 runs, ET-5 joins the serialised English queue (`AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7`) in landing order. W6's
 date-literal class reused; block shape in `ve/environment.py` only if Python still checks environment shape there; no
 `ve/profiles.py` row and no gate mirror: Python reads AR-10's generated data (X3); `ve/events.py` relays the report
 fields and binds them to the request (every named date, label and link the answer names exists in the request; no
 extra row); T9, T11d's reading set (SR-B4) and the binding fixtures; fuzz tests in `tests/test_events_answer.py`
 mutating genuine answers one and two faults at a time (each member dropped, emptied, retyped, duplicated, reordered;
-an index out of range): every mutant `CheckerUnavailable` or changing nothing shown. Seeded bug: accept a link
-wording equal to alternatives' `leads to` (the disjointness test fails). Shared files: `ve/document.py` (profile
+an index out of range): every mutant `CheckerUnavailable` or changing nothing shown. Seeded bugs: accept a link
+wording equal to alternatives' `leads to` (the disjointness test fails); exempt a role wording from the author lint
+(T9's "{0} is committed on {1}" is accepted, and its test fails). Shared files: `ve/document.py` (profile
 acceptance; it joins the document-mode queue after `lf-16g`, in landing order AT-3b, SC-1b, QT-A4, ET-5, WG-4,
 ME-10, X10), `ve/backends/service_schema.py` (only if `MODES` changes, which D3 avoids), `tools/layer_policy.py`
 (layers of the new files). Generated: `tools/gate-collection.json`, `tests/data/route-cases.jsonl` (via
 `tests/route_case_recorder.py`). *Estimate*: 0 pilot bytes (infrastructure); the use-case regression R1 (narrowed)
 becomes runnable; R3 stays the trigger ET-T4.
 
-### ET-6. Pilot: dated events and states (pilot, 3-4 h; after ET-5)
+### ET-6. Pilot: dated events and states (pilot, 3-4 h; after ET-5 and `infra/oom-rootcause`)
 
-UDHR P6, P7, P8 and the constitution probes P10, P11. Measure `ve document check` time per UDHR part before and after
+UDHR P6, P7, P8 and the constitution probes P10, P11. Phase 1 adds the dependency: every sort the block adds to a
+part multiplies the part's premise check by 3 on `main` (PH6.1), and the block adds a day sort and one sort per event
+and state kind, so on `main` the 1.25× bar would be lost to the search, not to the premises (inferred, not measured).
+ET-6 waits for `infra/oom-rootcause`, and reports the sort count of each part beside its check time. It also waits
+for ET-0's audit, which is the evidence on event reification that phase 1 could not yet give (8). Measure `ve document check` time per UDHR part before and after
 the block. **Bar**: P6 READINGS with the T11 situation shown; u041 FAITHFUL in a targeted audit; ET-E1 rerun on the
 wordings that changed since it last ran; check time per part at most 1.25 times the time without the block (lf-6's
 target); otherwise record and stop adding the block to that part, and report it (the fallback stands; pruning is not
@@ -801,19 +923,25 @@ alternatives runner dispatches lists with `norm-defaults@0` to it; the scenario'
 (clear and not clear when settled, UNDECIDED from two validated fillings, UNKNOWN otherwise); `UNSETTLED` in the
 untrusted diagnosis for alternatives with UNDECIDED evidence only. Delete the two refusals (2.11), the one in
 `Dispatch.lean` serialised with AR-10's table (X3). Python: relay and display the values; the test asserting the
-refusals rewritten. T12, T12b, T12c to T12f (SR-A1 to SR-A4) and nd fixture u11's alternatives part. Seeded bugs:
+refusals rewritten; and a producer for `alt-certificate` (PH6.4): `ve.entailment.prove_entailment` refuses an
+`alternatives@0` environment today, so ET-1 searched without the alternatives block and re-bound the certificate by
+hand. The producer searches over the premise list Lean binds (the generated background, the slot premises, the layer
+premises) and stays untrusted: Lean binds and replays it, as every certificate. Its fixture is ET-1's u0171.s03
+certificate, produced instead of re-bound. T12, T12b, T12c to T12f (SR-A1 to SR-A4) and nd fixture u11's alternatives part. Seeded bugs:
 report FOLLOWABLE from a certificate over `backgroundBaseAlt` without `fillPremises` (T12 fails); render an
 UNDECIDED alternative as clear (scenario test fails); report a Kleene-unknown alternative as UNDECIDED without two
 validated fillings (T12b fails).
 Shared files: `lean/VE/Alternatives/Run.lean` (dispatch line), `lean/VE/Compose/Dispatch.lean` or AR-10's table row
 (delete one refusal, with its proof, whichever has landed), `ve/profiles.py` (delete the mirror row only if it still
-exists), `ve/alternatives.py` (relay), `lean/VE/Audit.lean`, the alternatives response shape and its encoder theorem.
+exists), `ve/alternatives.py` (relay), `ve/entailment.py` (the producer), `lean/VE/Audit.lean`, the alternatives
+response shape and its encoder theorem. Seeded bug (producer): bind the layer premises before the slot premises (Lean
+refuses the certificate as stale, and the producer's test fails).
 Generated: `ve/backends/lean_service_schema/alternatives.json`, `tools/gate-collection.json`, `lean/checkers.lock`.
-*Estimate*: 0 pilot bytes; it removes the Asimov case's modeling choice (ET-8).
+*Estimate*: 0 pilot bytes; it removes the Asimov case's modeling choice (ET-8). 6 h with the producer.
 
 ### ET-8. Pilot: Asimov and the ET-1 component on the completion (pilot, 2-3 h; after ET-7)
 
-R2; the ET-1 component switched from allow to `unspecified` for `may be given`, with the legend sentence removed (the
+R2; the ET-1 component (seven hard constraints, as run in phase 1) switched from allow to `unspecified` for `may be given`, with the legend sentence removed (the
 completion says "the text does not say" instead). **Bar**: Asimov's 13 rules still CHECKED and conflict-free, and the
 count of models with a clear action reported. For the constitution component no outcome is pre-judged: refusal is
 permitted by no rule, so the result is either FOLLOWABLE resting on a stated permission or DILEMMA
@@ -826,13 +954,19 @@ P9; a sample of 20 constitution units of kinds (a), (d) and (e) (research 2.3) d
 `random.Random("ET-9").sample`, each written with links and the pilot's open terms where its hedges allow.
 **Bar**: at least 5 of 20 become OPEN with the targeted audit FAITHFUL; otherwise links stay as designed but no
 constitution bytes are claimed and the residual is recorded. *Estimate*: UDHR 127 B; constitution 600 to 1,500 B
-extrapolated from the sample, of a 6,059 B upper bound.
+extrapolated from the sample, of a 6,059 B upper bound. ET-E3 supports the sampling rule: 8 of its 20 causal-tagged
+units had no cause-effect relation of their own, so ET-9 samples by kind from the sentences, never by tag. All 9 of
+its units of kinds (a), (d), (e) carried a hedge or a modal, so ET-9's constitution bytes come with the hedges'
+owners (attitudes, quantities) or not at all; the estimate and the bar are unchanged.
 
 ### ET-D1. Design batch: alternatives beside `readings@1` (planner, 4 h; after ET-7)
 
 The constitution's main document carries reading sets; C u0080.s03 (alt fixture f) needs a mapped obligation inside
 it. Write the statements for `readings@1` × `alternatives@0` (per-choice inlining and slot premises as `X`), or record
-why a component document is enough. No build without its own review. *Estimate*: 0 bytes now; C u0080.s03 (190 B)
+why a component document is enough. No build without its own review. Note from ET-E3 (PH6.6): the constitution's
+one structured causal case, u0222.s01–s04 (good or bad values against safe or unsafe models, each cell hedged), is a
+decision under uncertainty, `alternatives@0` with `risk@0`'s "might lead to", not actual causation; ET-D1 records
+whether a component carries it, and risk's own plan owns the `risk@0` side. *Estimate*: 0 bytes now; C u0080.s03 (190 B)
 if a build follows.
 
 ### ET-D2. Act-performance bridge (planner, design only, 4 h estimate; after ET-D1)
@@ -855,10 +989,34 @@ act-phrases nor events landing changes that (X4). *Estimate*: 0 bytes.
 - **ET-E2. Need for durations and deadlines** (planner, 3 h, model-free). Count, in both pilots and the use cases with
   answer keys, the sentences needing an offset over an event ("within 30 days after each request") or fulfilment by a
   deadline. **Bar**: 5 or more pilot units, or 2 or more answer-key use cases, start ET-T1; else record and stop.
+  **Done (`43718e85`): PASS.** Pilot units 2 (bar 5, not met); answer-key use cases 2 of 4, eligibility and the safety
+  framework (bar 2, met, exactly at the threshold; the safety framework qualifies through two independent kinds).
+  It gates ET-T1, which has fired.
 - **ET-E3. Actual causation** (planner, 5-6 h, model-free). For 20 sampled causal units, write a structural model
   from what the source states only, and evaluate but-for and the three HP definitions by hand. **Bar**: at least 4 of 20
   gain a consequence beyond an open link that a blind audit judges faithful; else causal links stay open relations.
+  **Done (`0fa53b0d` sample, `f7302e2f` analysis): FAIL**, 0 candidates of 20 (bar 4), so the audit is moot. Causal
+  links stay open relations (D10); no structural model, HP definition or HP reading set is built by this plan. A new
+  causation experiment needs a new trigger: a committed source that states a structural model (its equations and its
+  actual context) for a causal claim a reader relies on.
 - **ET-T1. Integer days on the chain** (trigger: ET-E2's bar). A design batch for norms × integer days, after numbers2.
+  **Fired by ET-E2 (2026-10-13), on use-case evidence only** (PH6.5). ET-T1 is a design batch (planner, 4-6 h), with
+  its own statement review, that promises no pilot bytes; no build follows without a later batch. Its scope comes
+  from what fired it, not from "norms × integer days" alone:
+  - **offsets over per-case events in days, weeks, months and years**: eligibility's ages ("aged 60 to 80", "66 years
+    and n months" from each birth), its stays ("at least 12 weeks ending immediately before the qualifying week",
+    "more than 52 weeks") and "the day after the day on which he enters a hospital" (47 sentences). Days and weeks are
+    whole days; **months and years are excluded by W6 today**, and the month-end convention (eligibility candidates
+    126 to 128, the ambiguity Catala's work names) is a reading set at best, so ET-T1 needs W6's decision on months
+    and years before it can state them (11);
+  - **deadline fulfilment**: claims "on or before the 31st March following the qualifying week" (eligibility, 4,
+    D-event) and "a critical capability assessment prior to the first external deployment" (safety framework, D-event).
+    A D-event deadline is day order plus named dates, which `events@0` states once same-day order is not needed;
+    what ET-T1 adds is the norm's fulfilment semantics (when an obligation to act by a deadline is met or violated);
+  - **a recurrence with a stated frequency**: "reviewed at least once a year" (safety framework, D-duration),
+    fulfilment within each period, which needs year offsets and so waits for the same W6 decision.
+  The two pilot units (u0057.s02 "over the age of 18", u0204.s03) do not move a pilot estimate. ET-T1 runs after ET-2's
+  statement review (it builds on `events@0`'s day sort) and after numbers2.
 - **ET-T2. Multi-step choices** (trigger: a committed document that needs alternatives stage 2; asimov-extended's "which
   order came first" is the candidate). A design batch on causation-PLAN 1.6.
 - **ET-T3. Dates before 1970.** Trigger: a pinned unit that needs a named date before 1970-01-01, such as UDHR's 1948
@@ -874,15 +1032,17 @@ act-phrases nor events landing changes that (X4). *Estimate*: 0 bytes.
 
 The joint position of the review (round 3) and X10, in this order:
 
-1. ET-0 and ET-1 now, as audited pilots with no promised byte gains.
+1. ET-0 and ET-1 now, as audited pilots with no promised byte gains. **Done in phase 1** (0.1): ET-1's audit is
+   DEFERRED; ET-0's rerun waits for `infra/oom-rootcause` on `main`, then its audit (0.3).
 2. ET-2 (this plan's draft 2 as the statement spec), under the statement review; its ET-7 section (C) may pass first.
    Then ET-7, then ET-8; ET-D1 after ET-7; ET-D2 after ET-D1.
 3. ET-E1 after ET-2 and before ET-5, in parallel with ET-3 and ET-4; it does not block them.
 4. ET-3 (Lean core, in parallel with the other plans' cores), then ET-4 (after PK-1, AR-10's table and RD-9 SC-6 and
    SC-8 merge; on `Layered.lean` after WG-3, before QT-B2), then ET-5 (in the English and document-mode queues of
-   X9 and X10), then ET-6.
+   X9 and X10), then ET-6 (also after `infra/oom-rootcause`).
 5. The causal-link conventions (D) are settled and reviewed in ET-2; ET-9 comes after ET-5.
-6. ET-E2 and ET-E3 at any time.
+6. ET-E2 and ET-E3 at any time. **Done in phase 1**: ET-E2 PASS, ET-E3 FAIL. ET-T1 (fired) after ET-2's review and
+   numbers2, once 11's W6 question is answered.
 
 Landing preference: ET lands after WG and before scope's SC-3…SC-7 (X10).
 
@@ -891,6 +1051,7 @@ Landing preference: ET lands after WG and before scope's SC-3…SC-7 (X10).
 | In flight (branch) | What this plan needs from it | How a batch avoids conflicts |
 |---|---|---|
 | RD-9 (`rd-9/lean`, `rd-9/integrate`, `rd-9/py`) | the generic `X` on the layered route, its admission and certificate kinds (SC-6), `ve document` on layered documents (SC-8) | ET-4 waits for SC-6 and SC-8 on `main`; it registers PK-1's provider line and makes no other edit to RD-9's files |
+| `infra/oom-rootcause` (lazy `DomainSizes` in `rust/ve-profile/src/search.rs`, with a memory budget that answers `ResourceLimit`) | a premise check whose cost does not grow as 3^(sorts) before the search starts (PH2, PH6.1) | ET-0's rerun and ET-6 wait for it on `main`; this plan edits no Rust (a `CheckerUnavailable` at an exhausted budget is the search owner's concern) |
 | PK-1 (premise packs, owned by the RD-9 composition owner of `Layered.lean`; after `rd-9-int`) | the one assembler of `X` from packs, `reservedPrefixes`, label uniqueness, `transfers_append` | ET-4 waits for PK-1; on `Layered.lean` the providers land AT-2/AT-3a → WG-3 → ET-4 → QT-B2 (X1) |
 | AR-10 (the profile-gate table, scope including `Dispatch.lean:417–474`) | one table row per profile, its generic lemma, generated data for Python | ET-4 adds the `events@0` row with its composition proof; ET-7's refusal deletion is serialised with the table, whichever lands second rebases (X3) |
 | `weighing` (`design/weighing`, WG-3) | PK-1's assembler | WG-3 lands on `Layered.lean` before ET-4 (X1) |
@@ -920,13 +1081,24 @@ date, research 1.3).
   named dates more than one apart is UNKNOWN); completeness of the checks on documents outside norms 7.1 (B: the
   `fragment` line says when); a refutation outside the calendar completion fragment (UNKNOWN, A); persistence of a
   state without a stated end (F); order within a day (E); any conservativity beyond `events_conservative`'s `oldEnv`
-  (X2); dates before 1970 (ET-T3); any byte before its audit.
-- **Risk: check time.** `linear` is a disjunction and `transitive` a three-variable premise; both enlarge tableau search
-  and finite-model search. The UDHR whole document already fails to load in 815 s (pilot SUMMARY), so ET-6 measures
-  per part and stops at its bar. Pruning the order premises is an optional optimisation with its own preservation
-  theorem, not a promised fallback (J).
+  (X2); dates before 1970 (ET-T3); actual causation (ET-E3 FAIL); offsets in months and years (ET-T1, W6); any byte
+  before its audit.
+- **Risk: check time, per sort** (measured in phase 1, PH6.1). Every new sort multiplies the part's premise check by 3
+  until the lazy enumeration of `infra/oom-rootcause` lands: the Rust search builds every domain-size vector up front
+  (3^17 ≈ 1.29 × 10^8 for UDHR part01 with three new sorts, against 3^14 before), and the check is
+  `CheckerUnavailable` before any rule is read. `events@0` adds a day sort and one sort per event and state kind to
+  every part that takes the block, so ET-6's 1.25× bar is at the same risk on `main` (inferred, not measured); ET-6
+  waits for that branch. Beyond the sort count, `linear` is a disjunction and `transitive` a three-variable premise;
+  both enlarge tableau search and finite-model search. The UDHR whole document already fails to load in 815 s (pilot
+  SUMMARY), so ET-6 measures per part and stops at its bar. Pruning the order premises is an optional optimisation
+  with its own preservation theorem, not a promised fallback (J).
 - **Risk: RD-9 slips.** ET-0, ET-1, ET-7, ET-8 and the experiments do not depend on it.
-- **Risk: audits reject event reification.** ET-0 tests it on one unit before anything is built.
+- **Risk: audits reject event reification.** ET-0 tests it on one unit before anything is built. Phase 1 has not
+  tested it yet: u042 checks alone (so the reification itself is well formed and its premises satisfiable), and the
+  audit waits for the rerun (0.3). Until then the reification is unaudited, and ET-6 does not start before it.
+- **Risk: role wordings.** Active role verbs ("happens on") may read less faithfully than the source's passive ("is
+  committed"); ET-E1 and the audits see the active wording, and a finding against it is the trigger for the deferred
+  lexicon item (0.3).
 - **Open: ET-8's refusal question.** The constitution says refusal is "always compatible" with the hard constraints,
   not that it is permitted. With the completion, FOLLOWABLE needs a permission the component does not state; the plan
   records the outcome instead of choosing (D14).
@@ -934,7 +1106,10 @@ date, research 1.3).
   ("immediately after", "confirmed before the action") is UNFORMALISED with reason `time-of-day`; same-day facts alone
   never make a point UNDECIDED (E).
 - **Open: tagging.** Research 2.2 found inconsistent `missing_feature` tags ("promote" in three features); ET-9's
-  sample uses the sentences, not the tags.
+  sample uses the sentences, not the tags. ET-E3 measured it for `causation`: 8 of 20 sampled units so tagged have no
+  cause-effect relation of their own.
+- **Open: u043's definite description** (PH6.3). "The one that was applicable" is universal or existential when several
+  penalties apply; P2 lists both, and the audit or a reading set decides.
 
 ## 9. Review checklist (ET-2)
 
@@ -954,6 +1129,9 @@ date, research 1.3).
 9. Do 3.4's statements match nd 282-301 and nd 2.5's evidence rule (C), and is deleting the refusal (D13) safe for
    every existing fixture?
 10. Are ET-0's and ET-1's bars honest about what the audit must accept?
+11. (Draft 4) Is the wording split of 2.7 right: profile wordings not judged by the author lint, role wordings judged
+    by it and written with active verbs, passive role wordings deferred? Does 0.1 record each phase-1 verdict as the
+    evidence supports, with ET-0 as "not met on `main` (checker unavailable)" rather than a refutation?
 
 ## 10. Shared pieces
 
@@ -995,3 +1173,41 @@ of them.
   (SR-B2); SETTLED needs the situation's background, a validated filling and the whole `X` (SR-B3); "within n days of
   D" has three bounded candidates (SR-B4); T3's "denotes no day" is `#guard` only (SR-B5). New fixtures T11d, T12c to
   T12f and T14; the ET-2 gate states PASS's three conditions.
+- Draft 4 (2026-10-13): the phase-1 results (ET-0 not met on `main`, checker unavailable; ET-1 mechanical PASS; ET-E2
+  PASS; ET-E3 FAIL), with their record (0.1), the updated estimates (0.2) and the deferred items with triggers (0.3);
+  `infra/oom-rootcause` before ET-0's rerun and ET-6; the wording split (profile wordings outside the author lint,
+  role wordings with active verbs); P2's two readings; P3's seven hard constraints; ET-7's `alt-certificate`
+  producer; ET-T1 fired with its scope; actual causation cancelled; the cross-plan issues of 11. The listed changes
+  are at the top of this file. No bar, no shared part and no Lean statement changed. The spec's matching draft is
+  [events-time-causation.md](events-time-causation.md) draft 3.
+
+## 11. Cross-plan issues for the DRI
+
+Phase-1 results that bear on a shared part of `SYNTHESIS.md` or of the edits X1 to X10. The plan does not change the
+shared text; each item says what the data shows, what this plan does meanwhile, and the question.
+
+1. **Sort count and the premise check, for every plan that adds sorts to a pilot part** (SYNTHESIS 4.3, "Existing
+   merge prerequisites"). Phase 1 measured that three new sorts in UDHR part01 make its premise check
+   `CheckerUnavailable` on `main` (3^17 domain-size vectors built up front), before any rule is read. The cost is per
+   sort, not per plan: any plan whose pilot batches add sorts to a part meets the same limit, and AP-6's route (a)
+   does so by design (it reifies acts as event sorts, X5). `infra/oom-rootcause` (lazy `DomainSizes`) is not in 4.3's list. **Meanwhile**: this plan makes
+   ET-0's rerun and ET-6 wait for it (5, 6). **Question**: should 4.3 list `infra/oom-rootcause` before every pilot
+   batch that adds sorts to an existing part, and should the other plans' pilot estimates carry the same risk?
+2. **X9 "rows only" and the lint exemption for profile wordings** (X9; SYNTHESIS O15 and 4.2's
+   `lean/VE/EnglishGrammar/*` row). Phase 1 measured that today's author lint refuses `before`'s fixed wording "{0} is
+   before {1}" and both link forms. `alternatives@0` and `rights@0` already exempt their fixed wordings from the lint,
+   in code (`ve/english.py`), not as catalogue rows. **Meanwhile**: 2.7 registers the events profile wordings the same
+   way and keeps role wordings under the lint; ET-5 is estimated at 5-6 h. **Question**: does english-lean's catalogue
+   gain a row kind "profile-fixed wording, not judged by the author lint" (then ET-5 stays rows only, and the
+   precedents could move to it), or may ET-5 add one exemption hunk in the owner of wordings (then ET-5 joins the
+   English queue wherever the catalogue lives)? Any other plan whose profile fixes copular or auxiliary wordings
+   meets the same lint (not measured here).
+3. **ET-T1's months and years against W6 and ME-6** (SYNTHESIS O16, 2.5 "`day` is W6a's calendar-date tag … Durations
+   use `elapsed_day`"). ET-E2 fired ET-T1 on use-case evidence whose main need is ages and stays in years, months and
+   weeks; W6 excludes months and years as durations, and ME-6's `ve-units@2` gives days only (`elapsed_day`).
+   **Meanwhile**: ET-T1 is a design batch only and states nothing in months or years until this is answered.
+   **Question**: who owns month and year offsets: W6 under its own review (a trigger like ET-T3), ME-6's `ve-units@2`,
+   or quantities? ET-T1 then takes them from that owner, or is limited to day and week offsets.
+4. **ET-0's place in phase 1** (SYNTHESIS 4.1 phase 1, X10 "ET-0 and ET-1 run now"). ET-0 ran now, as the order
+   says, and cannot meet its bar on `main`; its rerun waits for `infra/oom-rootcause`. **Question**: should 4.1 mark
+   ET-0's rerun as waiting for that branch, so that it is not read as a phase-1 item still open?

@@ -1,6 +1,31 @@
 # Events, time and causation (`events@0`, and `alternatives@0` with the completion): statement spec (ET-2)
 
-> Status: item-1 statement spec, draft 2 (2026-10-13), branch `design/events-time-causation`. Draft 2 applies the
+> Status: item-1 statement spec, draft 3 (2026-10-13), branch `research/events-time-causation-p1`. Draft 3 applies the
+> phase-1 results ([events-time-causation-phase1.md](../research/events-time-causation-phase1.md), reviewed ACCEPT;
+> cited **PH n**, its consequences **PH6.k**) as the plan's draft 4 does
+> ([events-time-causation-PLAN.md](events-time-causation-PLAN.md) 0.1 to 0.3 and 11). It changes English text, fixture
+> expectations and status lines only: **no Lean statement of 6 changes**, so the stub (untracked, 11) is unchanged and
+> its elaboration is still owed as 11 says.
+>
+> **Changes in this draft** (draft 3):
+>
+> 1. **Who judges which wording** (1.2, 2, 2.1, 2.2, 4 item 4, T9). Phase 1 measured that today's author lint refuses
+>    "{0} is before {1}", "{0} contributed to {1}", "{0} was necessary for {1}" and the role wordings "{0} is committed
+>    on {1}" and "{0} is dissolved on {1}", and accepts "{0} happens on {1}", "{0} occurs on {1}", "{0} begins on {1}"
+>    and "{0} ends on {1}" (PH2). The profile's fixed wordings (`beforeWording`, the derived wordings of 2.2,
+>    `linkWording`) are profile wordings the author lint does not judge, as `alternatives@0`'s and `rights@0`'s are.
+>    Role wordings stay the author's: Lean checks their shape (`roleWordingOk`, unchanged) and the author lint judges
+>    their verb phrase, so the examples use active verbs, and the English of 1.7's example, T3d and T11d reads "that
+>    act happens on …" (their formulas are unchanged). Copular and passive role wordings are deferred (plan 0.3).
+> 2. **T9** gains the lint's measured answers, and its role-wording list gains the expectation that "{0} is committed
+>    on {1}" passes `roleWordingOk` and is refused by the lint (8.1, 8.2). Its *guarded* values do not change.
+> 3. **ET-T1 has fired** (ET-E2 PASS on use-case evidence): 0, 2.4 and 7 say so; "within n days of <event>" stays
+>    UNFORMALISED here until ET-T1's design passes its own review.
+> 4. **Actual causation is cancelled** (ET-E3 FAIL, 0 of 20): 1.10 and 7 say so; the link conventions are unchanged.
+> 5. **Pilot fixtures**: P2 (two readings), P3 (seven hard constraints), P4 (the shortened certified sentence) and P8
+>    (an active role wording) changed in the plan's 4.2; 8.1 points to them.
+>
+> Draft 2 (2026-10-13), branch `design/events-time-causation`. Draft 2 applies the
 > converged statement review of draft 1 (`manage-agents/debates/events-time-causation-spec/{astra,fable}.md`,
 > CONVERGED in round 3: **FIX**; build authorization pending). Its items are cited **SR-A1** to **SR-A4** (ET-7) and
 > **SR-B1** to **SR-B5** (events), because 2.4 already names reading candidates A1, B1 and so on; SR-B3 includes
@@ -60,11 +85,14 @@ completion theorem** (1.7) carries it to a situation with every civil day; other
 `NotCalendar` (A, X2). Source words such as "until" become reading sets per modality (R2); authored text uses explicit
 wordings, checked with readers before they are written (R4). `alternatives@0` gains the completion with an evidence
 contract (C). Out of scope: durations over events, deadlines, branching time, order within a day, dates before 1970,
-`data@0` (triggers ET-T1 to ET-T4), and pruning the order premises (an option with its own theorem, 6.5).
+`data@0` (triggers ET-T1 to ET-T4), actual causation (cancelled by ET-E3), and pruning the order premises (an option
+with its own theorem, 6.5). ET-T1 fired in phase 1 (ET-E2 PASS); it is a design batch with its own review, and
+nothing of it is in this spec.
 
 In this spec: definitions (1), the English (2), wire and identity (3), diagnostics (4), the ET-7 evidence contract
 (5), the Lean statements (6), what is not claimed (7), the acceptance fixtures (8), the review checklist (9), the
-differences from the plan's blocks (10), the elaboration record (11), and draft 2's changes (12).
+differences from the plan's blocks (10), the elaboration record (11), and draft 2's changes (12). Draft 3's changes are
+listed at the top.
 
 ## 1. Definitions
 
@@ -142,7 +170,8 @@ author's environment `E`; `regenEnv E V` adds one constant `dateName D` of the d
 is what every later statement assumes of the regenerated environment, and `regen_typed` says the first gives the
 second. The verbalisation checks, which need the vocabulary's JSON, are the decoder's (4, items 3 to 5):
 `before` reads exactly "{0} is before {1}", each role reads "{0} <verb phrase> on {1}" (`roleWordingOk`, R3), and
-each link reads its form's fixed wording.
+each link reads its form's fixed wording. The fixed wordings are profile wordings, which the author lint does not judge;
+a role's verb phrase is the author's, and the author lint judges it as any declared wording (2.1).
 
 ### 1.3 Named dates and the anchor
 
@@ -265,7 +294,7 @@ them to added days.
 |---|---|---|---|
 | "there is a day such that that day is after 12 October 2026 and that day is before 14 October 2026" | with only 12 and 14 October | false | UNKNOWN, `NotCalendar` |
 | "there is a day such that that day is after 12 October 2026" | whose last day is 12 October | false | UNKNOWN, `NotCalendar` |
-| "there is an act and a day such that that act is committed on that day and that day is after 12 October 2026" | with no act | true | the countermodel, completed |
+| "there is an act and a day such that that act happens on that day and that day is after 12 October 2026" | with no act | true | the countermodel, completed |
 | "that stay is in progress on each day from 21 September 2026 through 27 September 2026" | where the stay ends on 26 September | true | the countermodel, completed |
 
 ### 1.8 Which answers need which polarity, and where R1 falls
@@ -328,7 +357,8 @@ checker adds two premises, each an explicit convention printed in the legend: `l
 start after the day of an effect that is an event, and does not start after the last day of an effect that is a
 state, which binds only when that state ends) and `link_weaker` (a necessary condition contributed). A later event
 may contribute to a state already in progress (T6). The report's `causal_links` lists each link predicate with its
-form, sorts and decider, and each unit that states or denies a link with its support.
+form, sorts and decider, and each unit that states or denies a link with its support. Nothing decides a link: ET-E3
+found no sampled causal unit (0 of 20) that states a structural model, so no but-for or HP evaluation is specified.
 
 ### 1.11 The pack (PK-1, X1, X2)
 
@@ -359,12 +389,24 @@ Every wording below is registered with `profiles=("events@0",)` in english-lean'
 `events@0` is off. ET-E1 checks them with readers before ET-5 writes them (R4); a wording below its bar is reworded
 here first. Model results are early evidence, not proof about human readers.
 
+**Who judges which wording** (phase 1, PH2, PH6.2). The wordings the profile fixes (`before`'s "{0} is before {1}", the
+derived wordings of 2.2, the link forms of `linkWording`) are **profile wordings**: Lean checks them exactly (4, items
+3 and 5) and the author lint does not judge them, as it does not judge `alternatives@0`'s fixed forms or `rights@0`'s
+generated wordings today. Today's lint would refuse them: "{0} is before {1}" (`BINARY_AUXILIARY`), "{0} contributed to
+{1}" (`BINARY_CONVERSE`, `BINARY_VERB`), "{0} was necessary for {1}" (`BINARY_AUXILIARY`, `BINARY_CONVERSE`,
+`LOGICAL_WORD`), measured in phase 1. **Role wordings** are the author's (2.1), so both checks apply: Lean's shape
+check and the author lint.
+
 ### 2.1 Role wordings (R3)
 
-Each role predicate's verbalisation is the author's, of the form "{0} <verb phrase> on {1}" (`roleWordingOk`): "{0}
-happens on {1}", "{0} is committed on {1}", "{0} begins on {1}", "{0} is dissolved on {1}". The role's meaning comes
-from its place in the block (`on`, `begins`, `ends`), never from its words. Derived wordings reuse the verb phrase:
-with "{0} is committed on {1}", "that act is committed before 12 October 2026".
+Each role predicate's verbalisation is the author's, of the form "{0} <verb phrase> on {1}" (`roleWordingOk`, Lean's
+shape check), and its verb phrase is judged by the author lint like any declared binary wording. Today the lint accepts
+active verbs, "{0} happens on {1}", "{0} occurs on {1}", "{0} begins on {1}", "{0} ends on {1}", and refuses copular and
+passive ones, "{0} is committed on {1}", "{0} was committed on {1}", "{0} is dissolved on {1}" (`BINARY_AUXILIARY`,
+PH2); those pass `roleWordingOk` and are not usable until a lexicon change, deferred with a trigger (plan 0.3). The
+role's meaning comes from its place in the block (`on`, `begins`, `ends`), never from its words, so an active verb
+loses nothing. Derived wordings reuse the verb phrase: with "{0} happens on {1}" for the `act` sort, "that act happens
+before 12 October 2026".
 
 ### 2.2 Derived wordings, one reading each
 
@@ -406,7 +448,7 @@ situation is shown with it. ET-5 writes these rows, rows only, into english-lean
 | "m X until E" (E an event), for each modality m | U1: m X on each day before the day E happens (silent from that day); U2: U1, and the opposite of m on each day from the day E happens. The opposite of "may" is "must not", of "must" is "need not", of "must not" is "may", of "need not" is "must" (R2) | E's day, the day before it and a later day (T11, T11b); with the predicate unspecified, U1 is UNDECIDED from E's day and U2 settled to the opposite |
 | "m X until D" (D a date) | the four candidates exclusive (each day before D) or inclusive (each day no later than D), each silent after or with the opposite from the next day (R2) | D itself and the day after D (T11c) |
 | "by D" (a deadline) | B1: before D; B2: no later than D | the act on D itself |
-| "within n days of D" | W1: on or after D and no later than the date n days after D; W2: on or after D and before the date n days after D; W3: on or after the date n days before D and no later than the date n days after D. The translator names both end dates as named dates (SR-B4) | an act on the date n days after D (W1 and W3 against W2) and an act before D, within n days of it (W3 against W1 and W2) (T11d). "within n days of <event>" has no candidate: UNFORMALISED, reason `duration` (ET-T1) |
+| "within n days of D" | W1: on or after D and no later than the date n days after D; W2: on or after D and before the date n days after D; W3: on or after the date n days before D and no later than the date n days after D. The translator names both end dates as named dates (SR-B4) | an act on the date n days after D (W1 and W3 against W2) and an act before D, within n days of it (W3 against W1 and W2) (T11d). "within n days of <event>" has no candidate: UNFORMALISED, reason `duration` (ET-T1, fired in phase 1; a design batch of its own) |
 | "during S", "while S" (temporal) | on each day on which S is in progress | none (one candidate; the legend's inclusive end decides the last day) |
 | "while" (contrast) | the two clauses joined by "and" | a reading set with the temporal candidate; a day on which S is not in progress |
 | "since E" | S1: on each day after the day E happens; S2: on each day on or after that day | E's own day |
@@ -463,7 +505,9 @@ Decoding stops at the first failure.
 4. Event and state sorts: `EventsSort: <s>` (undeclared, or the day sort); `DuplicateDeclaration: event sort <s>` or
    `DuplicateDeclaration: state sort <s>` (a sort used twice among event and state sorts); `EventsSort: <p>` (a role's
    signature is not `(s, day)`); `EventsVerbalisation: <p>` (`roleWordingOk` fails); `DuplicateDeclaration: role <p>`
-   (role predicates not pairwise distinct, or one equal to `before`).
+   (role predicates not pairwise distinct, or one equal to `before`). The author lint's codes on a role's verb phrase
+   (`BINARY_AUXILIARY` and the rest) are the English owner's diagnostics, unchanged; this list neither adds nor orders
+   them.
 5. Links: `EventsSort: <p>` (signature not two event or state sorts); `EventsVerbalisation: <p>` (not its form's
    wording); `DuplicateDeclaration: link <p>`; `LinkNotOpen: <p>` (not declared as an open term with the same decider).
 6. Dates: `parseIso`'s own texts, unchanged (`InvalidDate(<s>)`, `DateRange(<s>)`); `DuplicateDeclaration: date
@@ -1223,8 +1267,11 @@ give. Until then, if ET-6's bar fails, the fallback stands: the block is not add
 - Persistence of a state without a stated end (F).
 - A status on a situation with no validated filling (none passes `fillValid` and `extraValid` over the whole
   assembled `X`): UNKNOWN, never SETTLED (SR-B3).
-- "within n days of <event>" (ET-T1); "within n days of D" only as the reading set W1 to W3 of 2.4, with both end
-  dates named (SR-B4).
+- "within n days of <event>" (ET-T1: fired by ET-E2 in phase 1, a design batch with its own review, which needs W6's
+  decision on months and years; plan 5 and 11); "within n days of D" only as the reading set W1 to W3 of 2.4, with
+  both end dates named (SR-B4).
+- Actual causation: whether a link holds is never decided (ET-E3 FAIL: 0 of 20 sampled causal units state a structural
+  model).
 - A consequence that needs counting the days between two named dates more than one day apart: UNKNOWN unless a
   certificate gives it (only the one-day gap has a premise).
 - Dates before 1970 (ET-T3); `events@0` with `data@0` (ET-T4).
@@ -1247,19 +1294,19 @@ are in `before` order and whose named dates denote the given days.
 | T3 | `base [2026-10-12, 2026-10-14]`; `chain` with 3, 2, 1 and 0 unnamed days between the two named days; with the named dates swapped; with only 12 October named (this last case a Lean `#guard` on `calendarCheck` only, not through the service: SR-B5) |
 | T3b | T3's block, the situation with no day between the named days, the claim of T2 with 14 for 13 October; then the situation with one day between |
 | T3c | `base [2026-10-12]`, a situation whose only day is 12 October, the claim "there is a day such that that day is after 12 October 2026" |
-| T3d | an event sort `act` (`committed_on`) beside T3c's block; the claim "there is an act and a day such that that act is committed on that day and that day is after 12 October 2026", in a situation with no act |
+| T3d | an event sort `act` (`committed_on`) beside T3c's block; the claim "there is an act and a day such that that act happens on that day and that day is after 12 October 2026" (role wording "{0} happens on {1}", 2.1), in a situation with no act |
 | T3e | the edges: `base [1970-01-01]` with one day below the named day, then with one day above it; `base [9999-12-31]` with one day above |
 | T4 | event sort `act`, role `committed_on`; a situation with one act on two days, then on one day |
 | T5 | state sort `marriage`; a situation in which a marriage ends before it begins, then on the day it begins |
 | T6 | links `contributed_to` (act → act), `contributed_to_state` (act → marriage), `necessary_for` (act → act): the effect act before the cause act; a cause act after the marriage's last day; a cause act after the marriage began and before it ended; a cause act with a marriage that has no last day |
 | T7 | a document with no day vocabulary in any rule or premise, with and without the block |
 | T8 | every existing fixture without the block; one with it |
-| T9 | each wording of 2.2; the role wordings "{0} is committed on {1}", "{0} happens on {1}", "{0} committed {1}", "{0} on {1}", "{0} happens on {1} to {0}", "{0} is {1} on {1}"; each pattern of 2.5 in authored text |
+| T9 | each wording of 2.2; the role wordings "{0} is committed on {1}", "{0} happens on {1}", "{0} committed {1}", "{0} on {1}", "{0} happens on {1} to {0}", "{0} is {1} on {1}"; the first two, and "{0} occurs on {1}", "{0} begins on {1}", "{0} ends on {1}", "{0} is dissolved on {1}", through the author lint as declared role wordings; `beforeWording` and both `linkWording`s in a document with the block; each pattern of 2.5 in authored text |
 | T10 | 64 and 65 named dates; the date 1969-12-31; a declared constant `date__x`; a date given twice |
 | T11 | the permission "until": U1 "Every person may be presumed innocent on each day, if it is not the case that there is a conviction such that that conviction is of that person and that conviction happens no later than that day." with `presumed_innocent_permitted(person, day)` unspecified; U2 adds "Every person must not be presumed innocent on each day, if there is a conviction such that that conviction is of that person and that conviction happens no later than that day."; dates 4, 5 and 7 January 2027; a conviction of P on 5 January 2027; the status of P on each of the three days under U1 and under U2 |
 | T11b | the obligation "until": U1 "Every agent must file a report on each day, if it is not the case that there is a closure such that that closure is of that agent and that closure happens no later than that day." on `x_required(agent, day)`, `x_permitted` its pair, both unspecified; U2 adds "Every agent need not file a report on each day, if there is a closure such that …"; a closure of A on 5 January 2027; A on 7 January 2027 |
 | T11c | "valid until 31 December 2026" on a permission; the four candidates of 2.4; days 31 December 2026 and 1 January 2027 |
-| T11d | "within" (SR-B4): the source clause "the act is committed within 10 days of 5 January 2027" on event sort `act` (`committed_on`); named dates 26 December 2026 and 1, 5 and 15 January 2027; candidates W1 "that act is committed on or after 5 January 2027, and that act is committed no later than 15 January 2027", W2 the same with "before 15 January 2027", W3 the same as W1 with "26 December 2026" for "5 January 2027"; situations: one act committed on 15 January 2027, one on 1 January 2027, one on 5 January 2027; then the clause "within 10 days of the conviction" |
+| T11d | "within" (SR-B4): the source clause "the act is committed within 10 days of 5 January 2027" on event sort `act` (`committed_on`, role wording "{0} happens on {1}", 2.1); named dates 26 December 2026 and 1, 5 and 15 January 2027; candidates W1 "that act happens on or after 5 January 2027, and that act happens no later than 15 January 2027", W2 the same with "before 15 January 2027", W3 the same as W1 with "26 December 2026" for "5 January 2027"; situations: one act committed on 15 January 2027, one on 1 January 2027, one on 5 January 2027; then the clause "within 10 days of the conviction" |
 | T12 | ET-7: nd fixture u10 (chooser R; pull forbidden by a rule, push with no rule; `permitted` unspecified); then with "Every action may be performed, if that action is push." |
 | T12b | ET-7: push's permission given by the rule "Every action may be performed, if that agent may Y, or it is not the case that that agent may Y." (nd u12's guard), `y_permitted` unspecified; then with `MAX_UNSAID_ATOMS = 0` |
 | T12c | ET-7, SR-A1 (Astra's regression): one chooser R, actions a1 and a2 both available to R, the permission member `allow`, the obligation member unspecified with its fulfilment declared, no rules, and Γ = [`allFollowableU A unspec`] as a Lean term; the unfilled model, and its filling that requires both actions |
@@ -1273,8 +1320,10 @@ are in `before` order and whose named dates denote the given days.
 | R2 | asimov-laws with `permitted` switched to `unspecified` (ET-8) |
 
 Pilot fixtures P1 to P11 are the plan's 4.2, unchanged except P6 (the reading set {U1, U2} of T11), P8 (the role
-wording "{0} is committed on {1}") and P9 (rechecked under the link conventions); their expectations depend on the
-audits and are stated there.
+wording "{0} happens on {1}", an active verb; draft 2's "{0} is committed on {1}" is refused by the author lint today)
+and P9 (rechecked under the link conventions); draft 3 adds P2 (both readings of "the one that was applicable"), P3
+(seven hard constraints, not ten) and P4 (the certified sentence is u0171.s03 without its "even if" clause), and
+records phase 1's answers for P1 to P5. Their expectations depend on the audits and are stated there.
 
 ### 8.2 Expectations
 
@@ -1293,7 +1342,7 @@ audits and are stated there.
 | T6 | effect before cause: detail `events:link_forward:contributed_to`; cause after the last day: detail `events:link_forward:contributed_to_state`; cause during the marriage: accepted; marriage with no last day: accepted (the bound binds only when the state ends). Labels: `events:one_day:act`, `events:one_begin:marriage`, `events:one_end:marriage`, `events:not_before_begin:marriage`, `events:link_forward:contributed_to`, `events:link_forward:contributed_to_state`, `events:link_forward:necessary_for`, `events:link_weaker:necessary_for:contributed_to` | labels *guarded*; answers *derived* |
 | T7 | the same statuses and verdicts with and without the block; certificates differ only in their bound premise list (`events_conservative`, both directions) | *derived* |
 | T8 | without the block: `environment_id` and every hash unchanged; with it: `environment_id` changes; `decodeEvents` gives `none` exactly when the block is absent | *derived* |
-| T9 | one derivation each; role wordings: the first two accepted, the other four `EventsVerbalisation`; each pattern rejected with its advice | role wordings *guarded*; the rest *derived* (ET-5) |
+| T9 | one derivation each; role wordings: the first two accepted by `roleWordingOk`, the other four `EventsVerbalisation`. The author lint accepts "{0} happens on {1}", "{0} occurs on {1}", "{0} begins on {1}" and "{0} ends on {1}", and refuses "{0} is committed on {1}" and "{0} is dissolved on {1}" with `BINARY_AUXILIARY` (so the first is accepted by Lean and refused by the lint). The profile wordings draw no lint code with the block present; without the exemption the lint gives "{0} is before {1}" `BINARY_AUXILIARY`, "{0} contributed to {1}" `BINARY_CONVERSE` and `BINARY_VERB`, "{0} was necessary for {1}" `BINARY_AUXILIARY`, `BINARY_CONVERSE` and `LOGICAL_WORD`. Each pattern rejected with its advice | `roleWordingOk` values *guarded*; the lint's codes *measured* on `main` at `49de179e` (phase 1, `et0/wording-probe.json`); the exemption and the rest *derived* (ET-5) |
 | T10 | 64 dates well formed, 65 `ResourceLimit: events dates`; `DateRange(1969-12-31)`; `EventsReserved: date__x`; `DuplicateDeclaration: date 2026-10-12` | 64/65, `DateRange` and the duplicate *guarded*; texts *derived* |
 | T11 | 6 calendar premises (3 order, 2 date, 1 adjacency: 4 and 5 January). 4 January: SETTLED yes under U1 and U2 (with a validated filling of the whole assembled `X`, SR-B3). 5 and 7 January: U1 UNDECIDED (the text does not say), U2 SETTLED no. The three days form the distinguishing situation; E's own day is in it | count *guarded*; statuses *derived* (ET-4) |
 | T11b | U2: `x_required` SETTLED no on 7 January; `x_permitted` UNDECIDED there, never SETTLED no (the obligation stops; nothing is forbidden). U1: `x_required` UNDECIDED on 7 January. The UNDECIDED answers and their fillings are reported through the canonical extension (SR-B1): the body of each fill premise is `up`, its day quantifier is not | *derived* |
@@ -1340,6 +1389,8 @@ T14); W2 against W1 and W3 exactly on the end date, W3 against W1 and W2 exactly
    scenario row's validity and filling?
 9. Is the profile row (1.1) right, in particular refusing `data@0` and `alternatives@0`?
 10. Is the pack's kind (1.11) and its condition what X2 requires?
+11. (Draft 3) Is the split of 2 right: the profile's fixed wordings outside the author lint, role wordings under it,
+    with no Lean statement changed? Are T9's measured lint codes the right expectations for ET-5?
 
 ## 10. Differences from the plan's blocks
 
@@ -1392,6 +1443,9 @@ T14); W2 against W1 and W3 exactly on the end date, W3 against W1 and W2 exactly
   PK-1's `Pack` is stated as the synthesis defines it. When either lands under other names, 6.3 is renamed to match.
 - If the run reports an error, the statement is corrected here and in the stub before the review starts; a wrong
   `#guard` value is corrected in 8.2 from the `#eval` of the same expression.
+- Draft 3 changes no definition, statement or *guarded* value of 6 and 8, so the stub is unchanged; it is still
+  untracked (`lean/SpecStubs_events-time-causation.lean` exists only in the `ve-design-events-time-causation`
+  worktree, not in this branch), and its elaboration is still owed, as above.
 
 ## 12. Changes in draft 2 (the statement review's FIX)
 
