@@ -1,0 +1,704 @@
+{
+ "run": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z",
+ "rule": "exploratory, docs/research/act-phrases-phase1.md 3 (added after review)",
+ "m3_lines": 28,
+ "lines_naming_a_workaround_predicate": 28,
+ "lines_naming_none": 0,
+ "lines_naming_a_pointer_or_folded_unit_predicate": 19,
+ "lines_naming_only_shortened_unit_predicates": 9,
+ "units_reached": [
+  "u0036.s05",
+  "u0062.s01",
+  "u0073.s05",
+  "u0123.s01.p1",
+  "u0123.s02.p1",
+  "u0123.s03",
+  "u0156.s03",
+  "u0165.s01",
+  "u0165.s02",
+  "u0165.s03",
+  "u0165.s04",
+  "u0165.s05",
+  "u0165.s06",
+  "u0165.s07",
+  "u0168.s01",
+  "u0263.s04.p2"
+ ],
+ "predicates_by_unit": {
+  "u0036.s05": [
+   "clarification_required",
+   "exception_to_asking_for_clarification",
+   "genuine_ambiguity"
+  ],
+  "u0062.s01": [
+   "input_is_information",
+   "input_is_persona",
+   "input_is_specific_instructions",
+   "instruction_abandon_identity_in_persona",
+   "instruction_act_against_guidelines",
+   "instruction_claim_human_when_asked",
+   "instruction_deceptive_tactics_harming_users",
+   "instruction_endanger_health_or_safety",
+   "instruction_false_information_deceiving_user",
+   "operator_input_permitted"
+  ],
+  "u0073.s05": [
+   "compliance_against_guidelines",
+   "compliance_unethical",
+   "compliance_unsafe",
+   "general_exception_to_complying",
+   "operator_prompt_addresses_case",
+   "system_prompt_compliance_required"
+  ],
+  "u0123.s01.p1": [
+   "instruction_abandon_identity_in_persona",
+   "instruction_act_against_guidelines",
+   "instruction_claim_human_when_asked",
+   "instruction_deceptive_tactics_harming_users",
+   "instruction_dishonest_looking_within_honesty",
+   "instruction_endanger_health_or_safety",
+   "instruction_false_information_deceiving_user",
+   "operator_input_permitted"
+  ],
+  "u0123.s02.p1": [
+   "instruction_abandon_identity_in_persona",
+   "instruction_act_against_guidelines",
+   "instruction_claim_human_when_asked",
+   "instruction_deceptive_tactics_harming_users",
+   "instruction_decline_or_withhold",
+   "instruction_endanger_health_or_safety",
+   "instruction_false_information_deceiving_user",
+   "instruction_focus_on_tasks",
+   "instruction_promote_own_products",
+   "instruction_respond_differently",
+   "instruction_role_play_custom_persona",
+   "operator_input_permitted"
+  ],
+  "u0123.s03": [
+   "instruction_abandon_identity_in_persona",
+   "instruction_act_against_guidelines",
+   "instruction_claim_human_when_asked",
+   "instruction_deceptive_tactics_harming_users",
+   "instruction_endanger_health_or_safety",
+   "instruction_false_information_deceiving_user",
+   "operator_input_permitted"
+  ],
+  "u0125.s04.p2": [
+   "denial_of_being_claude_permitted"
+  ],
+  "u0156.s03": [
+   "exception_to_not_deceiving_about_system_prompt",
+   "system_prompt_deception_permitted"
+  ],
+  "u0165.s01": [
+   "mass_casualty_weapon_uplift",
+   "restricted_action_knowing_or_quite_likely",
+   "weapons_uplift_permitted"
+  ],
+  "u0165.s02": [
+   "critical_infrastructure_uplift",
+   "infrastructure_uplift_permitted",
+   "restricted_action_knowing_or_quite_likely"
+  ],
+  "u0165.s03": [
+   "cyberweapon_creation_permitted",
+   "damaging_cyberweapon_or_malicious_code",
+   "restricted_action_knowing_or_quite_likely"
+  ],
+  "u0165.s04": [
+   "clear_and_substantial_undermining_of_oversight",
+   "oversight_undermining_permitted",
+   "restricted_action_knowing_or_quite_likely"
+  ],
+  "u0165.s05": [
+   "attempt_to_kill_or_disempower_most_of_humanity",
+   "humanity_attack_participation_permitted",
+   "restricted_action_knowing_or_quite_likely"
+  ],
+  "u0165.s06": [
+   "illegitimate_absolute_control",
+   "illegitimate_control_involvement_permitted",
+   "restricted_action_knowing_or_quite_likely"
+  ],
+  "u0165.s07": [
+   "child_sexual_abuse_material",
+   "csam_generation_permitted_for_claude",
+   "restricted_action_knowing_or_quite_likely"
+  ],
+  "u0168.s01": [
+   "firmness_required",
+   "seemingly_compelling_argument_to_cross_line"
+  ],
+  "u0263.s04.p2": [
+   "exception_to_complying_with_exploit_instruction",
+   "explicit_instruction_against_exploits",
+   "exploit_instruction_compliance_required"
+  ]
+ },
+ "lines": [
+  {
+   "line": "One reading is: Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\".",
+   "named": [
+    "genuine_ambiguity"
+   ],
+   "workaround_predicates": [
+    "genuine_ambiguity"
+   ],
+   "units": [
+    "u0036.s05"
+   ],
+   "tags": [
+    "shortened"
+   ]
+  },
+  {
+   "line": "Another reading is: Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\".",
+   "named": [
+    "exception_to_asking_for_clarification",
+    "genuine_ambiguity"
+   ],
+   "workaround_predicates": [
+    "exception_to_asking_for_clarification",
+    "genuine_ambiguity"
+   ],
+   "units": [
+    "u0036.s05"
+   ],
+   "tags": [
+    "shortened"
+   ]
+  },
+  {
+   "line": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; s is classified as \"exception_",
+   "named": [
+    "exception_to_asking_for_clarification",
+    "genuine_ambiguity"
+   ],
+   "workaround_predicates": [
+    "exception_to_asking_for_clarification",
+    "genuine_ambiguity"
+   ],
+   "units": [
+    "u0036.s05"
+   ],
+   "tags": [
+    "shortened"
+   ]
+  },
+  {
+   "line": "(a) either that operator input is classified as \"input_is_specific_instructions\" or that operator input is classified as \"input_is_persona\", or both;",
+   "named": [
+    "input_is_persona",
+    "input_is_specific_instructions"
+   ],
+   "workaround_predicates": [
+    "input_is_persona",
+    "input_is_specific_instructions"
+   ],
+   "units": [
+    "u0062.s01"
+   ],
+   "tags": [
+    "folded"
+   ]
+  },
+  {
+   "line": "(b) that operator input is information. Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_human_when_asked\". Except when that oper",
+   "named": [
+    "instruction_abandon_identity_in_persona",
+    "instruction_act_against_guidelines",
+    "instruction_claim_human_when_asked",
+    "instruction_deceptive_tactics_harming_users",
+    "instruction_endanger_health_or_safety",
+    "instruction_false_information_deceiving_user"
+   ],
+   "workaround_predicates": [
+    "instruction_abandon_identity_in_persona",
+    "instruction_act_against_guidelines",
+    "instruction_claim_human_when_asked",
+    "instruction_deceptive_tactics_harming_users",
+    "instruction_endanger_health_or_safety",
+    "instruction_false_information_deceiving_user"
+   ],
+   "units": [
+    "u0062.s01",
+    "u0123.s01.p1",
+    "u0123.s02.p1",
+    "u0123.s03"
+   ],
+   "tags": [
+    "folded",
+    "shortened"
+   ]
+  },
+  {
+   "line": "Open reading: Every instance of Claude must comply with the system prompt instructions in each situation, if that situation is classified as \"operator_prompt_addresses_case\". Except when that situation is classified as \"compliance_unsafe\". ",
+   "named": [
+    "compliance_against_guidelines",
+    "compliance_unethical",
+    "compliance_unsafe",
+    "general_exception_to_complying",
+    "operator_prompt_addresses_case"
+   ],
+   "workaround_predicates": [
+    "compliance_against_guidelines",
+    "compliance_unethical",
+    "compliance_unsafe",
+    "general_exception_to_complying",
+    "operator_prompt_addresses_case"
+   ],
+   "units": [
+    "u0073.s05"
+   ],
+   "tags": [
+    "shortened"
+   ]
+  },
+  {
+   "line": "Open reading: Every operator may give Claude each operator input, if that operator input is classified as \"instruction_dishonest_looking_within_honesty\". Except when that operator input is classified as \"instruction_abandon_identity_in_pers",
+   "named": [
+    "instruction_abandon_identity_in_persona",
+    "instruction_act_against_guidelines",
+    "instruction_claim_human_when_asked",
+    "instruction_deceptive_tactics_harming_users",
+    "instruction_dishonest_looking_within_honesty",
+    "instruction_endanger_health_or_safety",
+    "instruction_false_information_deceiving_user"
+   ],
+   "workaround_predicates": [
+    "instruction_abandon_identity_in_persona",
+    "instruction_act_against_guidelines",
+    "instruction_claim_human_when_asked",
+    "instruction_deceptive_tactics_harming_users",
+    "instruction_dishonest_looking_within_honesty",
+    "instruction_endanger_health_or_safety",
+    "instruction_false_information_deceiving_user"
+   ],
+   "units": [
+    "u0062.s01",
+    "u0123.s01.p1",
+    "u0123.s02.p1",
+    "u0123.s03"
+   ],
+   "tags": [
+    "folded",
+    "shortened"
+   ]
+  },
+  {
+   "line": "(a) either that operator input is classified as \"instruction_role_play_custom_persona\" or that operator input is classified as \"instruction_decline_or_withhold\", or both;",
+   "named": [
+    "instruction_decline_or_withhold",
+    "instruction_role_play_custom_persona"
+   ],
+   "workaround_predicates": [
+    "instruction_decline_or_withhold",
+    "instruction_role_play_custom_persona"
+   ],
+   "units": [
+    "u0123.s02.p1"
+   ],
+   "tags": [
+    "folded"
+   ]
+  },
+  {
+   "line": "(b) that operator input is classified as \"instruction_promote_own_products\";",
+   "named": [
+    "instruction_promote_own_products"
+   ],
+   "workaround_predicates": [
+    "instruction_promote_own_products"
+   ],
+   "units": [
+    "u0123.s02.p1"
+   ],
+   "tags": [
+    "folded"
+   ]
+  },
+  {
+   "line": "(ii) that operator input is classified as \"instruction_focus_on_tasks\";",
+   "named": [
+    "instruction_focus_on_tasks"
+   ],
+   "workaround_predicates": [
+    "instruction_focus_on_tasks"
+   ],
+   "units": [
+    "u0123.s02.p1"
+   ],
+   "tags": [
+    "folded"
+   ]
+  },
+  {
+   "line": "(b) that operator input is classified as \"instruction_respond_differently\". Except when that operator input is classified as \"instruction_abandon_identity_in_persona\". Except when that operator input is classified as \"instruction_claim_huma",
+   "named": [
+    "instruction_abandon_identity_in_persona",
+    "instruction_act_against_guidelines",
+    "instruction_claim_human_when_asked",
+    "instruction_deceptive_tactics_harming_users",
+    "instruction_endanger_health_or_safety",
+    "instruction_false_information_deceiving_user",
+    "instruction_respond_differently"
+   ],
+   "workaround_predicates": [
+    "instruction_abandon_identity_in_persona",
+    "instruction_act_against_guidelines",
+    "instruction_claim_human_when_asked",
+    "instruction_deceptive_tactics_harming_users",
+    "instruction_endanger_health_or_safety",
+    "instruction_false_information_deceiving_user",
+    "instruction_respond_differently"
+   ],
+   "units": [
+    "u0062.s01",
+    "u0123.s01.p1",
+    "u0123.s02.p1",
+    "u0123.s03"
+   ],
+   "tags": [
+    "folded",
+    "shortened"
+   ]
+  },
+  {
+   "line": "(i) either that operator input is classified as \"instruction_abandon_identity_in_persona\" or that operator input is classified as \"instruction_claim_human_when_asked\", or both;",
+   "named": [
+    "instruction_abandon_identity_in_persona",
+    "instruction_claim_human_when_asked"
+   ],
+   "workaround_predicates": [
+    "instruction_abandon_identity_in_persona",
+    "instruction_claim_human_when_asked"
+   ],
+   "units": [
+    "u0062.s01",
+    "u0123.s01.p1",
+    "u0123.s02.p1",
+    "u0123.s03"
+   ],
+   "tags": [
+    "folded",
+    "shortened"
+   ]
+  },
+  {
+   "line": "(ii) that operator input is classified as \"instruction_deceptive_tactics_harming_users\";",
+   "named": [
+    "instruction_deceptive_tactics_harming_users"
+   ],
+   "workaround_predicates": [
+    "instruction_deceptive_tactics_harming_users"
+   ],
+   "units": [
+    "u0062.s01",
+    "u0123.s01.p1",
+    "u0123.s02.p1",
+    "u0123.s03"
+   ],
+   "tags": [
+    "folded",
+    "shortened"
+   ]
+  },
+  {
+   "line": "(b) that operator input is classified as \"instruction_false_information_deceiving_user\";",
+   "named": [
+    "instruction_false_information_deceiving_user"
+   ],
+   "workaround_predicates": [
+    "instruction_false_information_deceiving_user"
+   ],
+   "units": [
+    "u0062.s01",
+    "u0123.s01.p1",
+    "u0123.s02.p1",
+    "u0123.s03"
+   ],
+   "tags": [
+    "folded",
+    "shortened"
+   ]
+  },
+  {
+   "line": "(ii) that operator input is classified as \"instruction_endanger_health_or_safety\";",
+   "named": [
+    "instruction_endanger_health_or_safety"
+   ],
+   "workaround_predicates": [
+    "instruction_endanger_health_or_safety"
+   ],
+   "units": [
+    "u0062.s01",
+    "u0123.s01.p1",
+    "u0123.s02.p1",
+    "u0123.s03"
+   ],
+   "tags": [
+    "folded",
+    "shortened"
+   ]
+  },
+  {
+   "line": "(b) that operator input is classified as \"instruction_act_against_guidelines\".",
+   "named": [
+    "instruction_act_against_guidelines"
+   ],
+   "workaround_predicates": [
+    "instruction_act_against_guidelines"
+   ],
+   "units": [
+    "u0062.s01",
+    "u0123.s01.p1",
+    "u0123.s02.p1",
+    "u0123.s03"
+   ],
+   "tags": [
+    "folded",
+    "shortened"
+   ]
+  },
+  {
+   "line": "Another reading is: Every instance of Claude must not actively deceive each user about system prompt existence-or-content, unless that instance of Claude has the recorded relation \"exception_to_not_deceiving_about_system_prompt\" to that use",
+   "named": [
+    "exception_to_not_deceiving_about_system_prompt"
+   ],
+   "workaround_predicates": [
+    "exception_to_not_deceiving_about_system_prompt"
+   ],
+   "units": [
+    "u0156.s03"
+   ],
+   "tags": [
+    "shortened"
+   ]
+  },
+  {
+   "line": "Open reading: Every instance of Claude must not do the weapons uplift in each situation, if both that situation is classified as \"mass_casualty_weapon_uplift\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\".",
+   "named": [
+    "mass_casualty_weapon_uplift",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "workaround_predicates": [
+    "mass_casualty_weapon_uplift",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "units": [
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07"
+   ],
+   "tags": [
+    "pointer"
+   ]
+  },
+  {
+   "line": "Open reading: Every instance of Claude must not do the infrastructure uplift in each situation, if both that situation is classified as \"critical_infrastructure_uplift\" and that situation is classified as \"restricted_action_knowing_or_quite",
+   "named": [
+    "critical_infrastructure_uplift",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "workaround_predicates": [
+    "critical_infrastructure_uplift",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "units": [
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07"
+   ],
+   "tags": [
+    "pointer"
+   ]
+  },
+  {
+   "line": "Open reading: Every instance of Claude must not do the creation in each situation, if both that situation is classified as \"damaging_cyberweapon_or_malicious_code\" and that situation is classified as \"restricted_action_knowing_or_quite_like",
+   "named": [
+    "damaging_cyberweapon_or_malicious_code",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "workaround_predicates": [
+    "damaging_cyberweapon_or_malicious_code",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "units": [
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07"
+   ],
+   "tags": [
+    "pointer"
+   ]
+  },
+  {
+   "line": "Open reading: Every instance of Claude must not do the undermining in each situation, if both that situation is classified as \"clear_and_substantial_undermining_of_oversight\" and that situation is classified as \"restricted_action_knowing_or",
+   "named": [
+    "clear_and_substantial_undermining_of_oversight",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "workaround_predicates": [
+    "clear_and_substantial_undermining_of_oversight",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "units": [
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07"
+   ],
+   "tags": [
+    "pointer"
+   ]
+  },
+  {
+   "line": "Open reading: Every instance of Claude must not do the participation in each situation, if both that situation is classified as \"attempt_to_kill_or_disempower_most_of_humanity\" and that situation is classified as \"restricted_action_knowing_",
+   "named": [
+    "attempt_to_kill_or_disempower_most_of_humanity",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "workaround_predicates": [
+    "attempt_to_kill_or_disempower_most_of_humanity",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "units": [
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07"
+   ],
+   "tags": [
+    "pointer"
+   ]
+  },
+  {
+   "line": "Open reading: Every instance of Claude must not do the involvement in each situation, if both that situation is classified as \"illegitimate_absolute_control\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\".",
+   "named": [
+    "illegitimate_absolute_control",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "workaround_predicates": [
+    "illegitimate_absolute_control",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "units": [
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07"
+   ],
+   "tags": [
+    "pointer"
+   ]
+  },
+  {
+   "line": "Open reading: Every instance of Claude must not do the generation in each situation, if both that situation is classified as \"child_sexual_abuse_material\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\".",
+   "named": [
+    "child_sexual_abuse_material",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "workaround_predicates": [
+    "child_sexual_abuse_material",
+    "restricted_action_knowing_or_quite_likely"
+   ],
+   "units": [
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07"
+   ],
+   "tags": [
+    "pointer"
+   ]
+  },
+  {
+   "line": "Open reading: Every instance of Claude must remain firm in each situation, if that situation is classified as \"seemingly_compelling_argument_to_cross_line\".",
+   "named": [
+    "seemingly_compelling_argument_to_cross_line"
+   ],
+   "workaround_predicates": [
+    "seemingly_compelling_argument_to_cross_line"
+   ],
+   "units": [
+    "u0168.s01"
+   ],
+   "tags": [
+    "shortened"
+   ]
+  },
+  {
+   "line": "One reading is: Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation.",
+   "named": [
+    "explicit_instruction_against_exploits"
+   ],
+   "workaround_predicates": [
+    "explicit_instruction_against_exploits"
+   ],
+   "units": [
+    "u0263.s04.p2"
+   ],
+   "tags": [
+    "shortened"
+   ]
+  },
+  {
+   "line": "Another reading is: Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unl",
+   "named": [
+    "exception_to_complying_with_exploit_instruction",
+    "explicit_instruction_against_exploits"
+   ],
+   "workaround_predicates": [
+    "exception_to_complying_with_exploit_instruction",
+    "explicit_instruction_against_exploits"
+   ],
+   "units": [
+    "u0263.s04.p2"
+   ],
+   "tags": [
+    "shortened"
+   ]
+  },
+  {
+   "line": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; c has the recorded relation \"e",
+   "named": [
+    "exception_to_complying_with_exploit_instruction",
+    "explicit_instruction_against_exploits"
+   ],
+   "workaround_predicates": [
+    "exception_to_complying_with_exploit_instruction",
+    "explicit_instruction_against_exploits"
+   ],
+   "units": [
+    "u0263.s04.p2"
+   ],
+   "tags": [
+    "shortened"
+   ]
+  }
+ ]
+}
