@@ -382,7 +382,8 @@ def test_document_fence_parses_one_checked_sentence(tmp_path, monkeypatch, surfa
     doc = load_document(path)
     assert doc["units"][0]["content"] == ["top"]
     assert calls == []
-    assert lean_calls == ([True] if surface == "english" else [])
+    # The document service calls the Lean English grammar directly.
+    assert lean_calls == []
     assert check_document(path)["premises"]["status"] == "model"
 
 
