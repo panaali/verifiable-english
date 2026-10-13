@@ -1,0 +1,260 @@
+{
+ "ledger": {
+  "path": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z/units.json",
+  "sha256": "353a75284fd4fb9921d4079a55a235bcf8be06061cd1005d1367e956f255ec4c"
+ },
+ "plan": {
+  "path": "docs/spec/quantities-PLAN.md",
+  "sha256": "15fe0bd9cdadb4938745ad15bf639d2ea6a00305a82ae709c6c47f7b19fbb73e"
+ },
+ "qx1": {
+  "budgeted_total": 36,
+  "count_consistent": false,
+  "fully_specified_items": [
+   {
+    "context": "Of the 100 members, 50 voted yes. Is it true that most members voted yes?",
+    "readings": {
+     "more than half": false,
+     "open proportion grade": null
+    },
+    "separates_readings": true,
+    "word": "most"
+   },
+   {
+    "context": "Of the 100 members, 51 voted yes. Is it true that most members voted yes?",
+    "readings": {
+     "more than half": true,
+     "open proportion grade": null
+    },
+    "separates_readings": true,
+    "word": "most"
+   },
+   {
+    "context": "Of the 100 members, 60 voted yes. Is it true that most members voted yes?",
+    "readings": {
+     "more than half": true,
+     "open proportion grade": null
+    },
+    "separates_readings": true,
+    "word": "most"
+   },
+   {
+    "context": "Of the 100 members, 95 voted yes. Is it true that most members voted yes?",
+    "readings": {
+     "more than half": true,
+     "open proportion grade": null
+    },
+    "separates_readings": true,
+    "word": "most"
+   },
+   {
+    "context": "Of the 5 members, 3 voted yes. Is it true that most members voted yes?",
+    "readings": {
+     "more than half": true,
+     "open proportion grade": null
+    },
+    "separates_readings": true,
+    "word": "most"
+   },
+   {
+    "context": "1 copies are running. Are multiple copies running?",
+    "readings": {
+     "at least two": false
+    },
+    "separates_readings": false,
+    "word": "multiple"
+   },
+   {
+    "context": "2 copies are running. Are multiple copies running?",
+    "readings": {
+     "at least two": true
+    },
+    "separates_readings": false,
+    "word": "multiple"
+   },
+   {
+    "context": "16 of the 18 policymakers expect X. Is it compatible with this that 17 of the 18 expect X?",
+    "readings": {
+     "at least": true,
+     "exactly": false
+    },
+    "separates_readings": true,
+    "word": "bare n of the m"
+   },
+   {
+    "context": "The September estimate is 105 percent of the June estimate. Is a value of 105.4 percent compatible?",
+    "readings": {
+     "exact": false,
+     "to the nearest percent (halfEven)": true,
+     "to the nearest percent (tiesUp)": true
+    },
+    "separates_readings": true,
+    "word": "bare 105 percent of"
+   }
+  ],
+  "listed_items": {
+   "bare 105 percent of": 6,
+   "bare n of the m": 6,
+   "few": 6,
+   "many": 6,
+   "most": 6,
+   "multiple": 6,
+   "several": 6
+  },
+  "listed_total": 42,
+  "most_contexts_required": 6,
+  "most_points_named": 5,
+  "seeded_order_of_fully_specified_items": [
+   6,
+   4,
+   8,
+   7,
+   3,
+   1,
+   2,
+   0,
+   5
+  ],
+  "unspecified": [
+   "the six contexts each for 'many', 'few' and 'several' (only their purpose, the cardinal against the proportional reading, is given)",
+   "the sixth 'most' context",
+   "four of the six 'multiple' contexts (two points given)",
+   "five of the six contexts each for bare 'n of the m' and bare '105 percent of' (one question each)",
+   "the answer format and the analysis (the plan states no bar for QX-1)"
+  ]
+ },
+ "qx2": {
+  "total_bytes": 826,
+  "units": [
+   {
+    "bytes": 147,
+    "excerpt": "* Provide serious uplift to those seeking to create biological, chemical, nuclear, or radiological weapons with the potential for mass casualties.",
+    "graded_words": [
+     "mass",
+     "serious"
+    ],
+    "latest_audit_of_current_form": "UNFAITHFUL",
+    "open_terms": [
+     "mass_casualty_weapon_uplift",
+     "restricted_action_knowing_or_quite_likely"
+    ],
+    "plan_decomposed_form": "FB1 (dimension uplift on response, grade gives_serious_uplift)",
+    "status": "OPEN",
+    "unit": "u0165.s01"
+   },
+   {
+    "bytes": 139,
+    "excerpt": "* Provide serious uplift to attacks on critical infrastructure (power grids, water systems, financial systems) or critical safety systems.",
+    "graded_words": [
+     "serious"
+    ],
+    "latest_audit_of_current_form": "UNFAITHFUL",
+    "open_terms": [
+     "critical_infrastructure_uplift",
+     "restricted_action_knowing_or_quite_likely"
+    ],
+    "plan_decomposed_form": null,
+    "status": "OPEN",
+    "unit": "u0165.s02"
+   },
+   {
+    "bytes": 89,
+    "excerpt": "* Create cyberweapons or malicious code that could cause significant damage if deployed.",
+    "graded_words": [
+     "significant"
+    ],
+    "latest_audit_of_current_form": "UNFAITHFUL",
+    "open_terms": [
+     "damaging_cyberweapon_or_malicious_code",
+     "restricted_action_knowing_or_quite_likely"
+    ],
+    "plan_decomposed_form": null,
+    "status": "OPEN",
+    "unit": "u0165.s03"
+   },
+   {
+    "bytes": 175,
+    "excerpt": "* Take actions that clearly and substantially undermine Anthropic’s ability to oversee and correct advanced AI models (see [Being broadly safe](#being-broadly-s",
+    "graded_words": [
+     "clearly",
+     "substantially"
+    ],
+    "latest_audit_of_current_form": "UNFAITHFUL",
+    "open_terms": [
+     "clear_and_substantial_undermining_of_oversight",
+     "restricted_action_knowing_or_quite_likely"
+    ],
+    "plan_decomposed_form": null,
+    "status": "OPEN",
+    "unit": "u0165.s04"
+   },
+   {
+    "bytes": 116,
+    "excerpt": "* Engage or assist in an attempt to kill or disempower the vast majority of humanity or the human species as whole.",
+    "graded_words": [
+     "vast majority"
+    ],
+    "latest_audit_of_current_form": "UNFAITHFUL",
+    "open_terms": [
+     "attempt_to_kill_or_disempower_most_of_humanity",
+     "restricted_action_knowing_or_quite_likely"
+    ],
+    "plan_decomposed_form": "FB6 (dimension share_of_humanity_targeted on attempt, grade vast_majority)",
+    "status": "OPEN",
+    "unit": "u0165.s05"
+   },
+   {
+    "bytes": 160,
+    "excerpt": "* Engage or assist any individual or group with an attempt to seize unprecedented and illegitimate degrees of absolute societal, military, or economic control.",
+    "graded_words": [
+     "absolute",
+     "unprecedented"
+    ],
+    "latest_audit_of_current_form": "UNFAITHFUL",
+    "open_terms": [
+     "illegitimate_absolute_control",
+     "restricted_action_knowing_or_quite_likely"
+    ],
+    "plan_decomposed_form": null,
+    "status": "OPEN",
+    "unit": "u0165.s06"
+   }
+  ],
+  "units_with_plan_decomposition": 2
+ },
+ "qx3": {
+  "items": [
+   {
+    "counting_label": "depends on the grade's threshold: valid exactly when the threshold is above one half (smallest valid grid point: 51/100)",
+    "item": "The vast majority voted. Did a majority vote?",
+    "label_agrees": false,
+    "needs": "the bridge 'the vast majority implies more than half', which section 5 says is not offered on any vote and waits for QX-4's proved bridge",
+    "plan_label": "valid"
+   },
+   {
+    "counting_label": "satisfiable without the premise that no voter voted both; contradiction with it",
+    "item": "A majority voted yes and a majority voted no.",
+    "label_agrees": false,
+    "needs": "the exclusion premise 'no one voted both yes and no' (as FA1 needs 'no policymaker expects both')",
+    "plan_label": "contradiction"
+   },
+   {
+    "counting_label": "valid (no countermodel up to N_MAX)",
+    "item": "Most S are P; every P is Q. Are most S Q?",
+    "label_agrees": true,
+    "needs": null,
+    "plan_label": "valid"
+   },
+   {
+    "counting_label": "invalid: smallest countermodel region sizes (none, S only, P only, both) = [0, 0, 1, 1]",
+    "item": "Most S are P. Are most P S?",
+    "label_agrees": true,
+    "needs": null,
+    "plan_label": "invalid"
+   }
+  ],
+  "items_required": 20,
+  "items_stated": 4,
+  "n_max": 12
+ }
+}
