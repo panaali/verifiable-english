@@ -277,6 +277,25 @@ def test_the_suite_conftest_installs_the_scheduler():
     assert conftest.pytest_xdist_make_scheduler(Config(2, "loadfile"), None) is None
 
 
+def test_a_worker_added_mid_run_gets_two_tests_to_start():
+    """xdist restarts a crashed worker as a new node and schedules again; a worker holding one test idles,
+    so a batch of one test is topped up."""
+    collection = [f"tests/test_{i}.py::t" for i in range(20)]
+    seconds = {nodeid: 100.0 - i for i, nodeid in enumerate(collection)}
+    scheduler = test_schedule.make_scheduler(Config(2), None, seconds)
+    nodes = [Node("gw0"), Node("gw1")]
+    for node in nodes:
+        scheduler.add_node(node)
+        scheduler.add_node_collection(node, collection)
+    scheduler.schedule()
+    assert [len(scheduler.node2pending[node]) for node in nodes] == [2, 2]
+    late = Node("gw2")
+    scheduler.add_node(late)
+    scheduler.add_node_collection(late, collection)
+    scheduler.schedule()
+    assert len(scheduler.node2pending[late]) == 2 and late.queue == scheduler.node2pending[late]
+
+
 PROJECT_CONFTEST = '''
 import pytest
 

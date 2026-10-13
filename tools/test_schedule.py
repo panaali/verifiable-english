@@ -194,7 +194,8 @@ def make_scheduler(config, log, durations: Mapping[str, float] | None = None,
                 return
             if not self.pending:
                 node.shutdown()
-            elif len(self.node2pending[node]) < 2:
+            # A worker holding fewer than two tests idles (a worker added mid-run holds none).
+            while self.pending and len(self.node2pending[node]) < 2:
                 self._send_next(node)
 
         def _send_next(self, node):
