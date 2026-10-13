@@ -275,8 +275,15 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.strings_arr
 #print axioms ResponseShape.Encoders.ReadingsRoute.strings_toJson
 #print axioms ResponseShape.Encoders.ReadingsRoute.strip_spec
+#print axioms ResponseShape.Encoders.ReadingsRoute.supAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supCandidates_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supResult_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supScopeJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supUnchecked_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.supUnitsFrom_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.supUnits_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supVerdicts_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supWord_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.toJson_strings
 #print axioms ResponseShape.Encoders.ReadingsRoute.toList_of_mapM
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateND_fits

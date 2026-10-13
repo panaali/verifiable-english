@@ -232,10 +232,7 @@ class S2Wording:
         target = "the exception" if own else f"the exception to {sentence}"
         return f"{self.s1.decider(decided)} decides {target} applies to {subject}"
 
-
-
     # -- E3's lines (2.3 item 1)
-
 
     def pair_premise(self, label):
         """norm-defaults 4.1's pair sentence for a used `Fill_T` label `unsaid:pair:<r>,<m>` (readings-defaults 2.2):
@@ -263,8 +260,6 @@ class S2Wording:
         if found is None:
             raise VEError(f"InvalidInput: slot label {label} names no {decoded.kind}")
         return found
-
-
 
     # -- the report (2.3 items 1, 3 and 6)
 
@@ -379,9 +374,6 @@ class S2Wording:
         return found
 
 
-
-
-
 PAIR_LABEL = "unsaid:pair:"
 # The result ids of Lean's plan (`Readings.Line.result`) and the kinds `result_sentence` renders.
 PLAN_RESULTS = {"R1": "conflict_free", "R2": "follows", "R3": "countermodel", "R4": "conflict", "R5": "premise_model",
@@ -432,8 +424,6 @@ def _series(values):
     if len(values) == 2:
         return f"{values[0]} and {values[1]}"
     return ", ".join(values[:-1]) + " and " + values[-1]
-
-
 
 
 __all__ = ["S2Wording", "filled_gaps", "query_english", "report_english"]

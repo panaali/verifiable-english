@@ -37,12 +37,6 @@ def context(doc):
     return doc["_readings_s2_context"]
 
 
-
-
-
-
-
-
 def dead_finding(set_id, index):
     """The finding of a dead reading (1.9), Lean's `deadReadingsJson` text; both routes report it."""
     return f"DeadReading: {set_id}:{index}"
@@ -57,8 +51,6 @@ def _dropped(sets, narrowings, set_id, index):
                 R.candidates[index].id not in narrowing["keeps"]:
             return narrowing["id"]
     return None
-
-
 
 
 class _Route:
@@ -225,9 +217,6 @@ class Superposed(_Route):
                 current, proof = trial, again
         return proof.certificate
 
-
-
-
     def _generate_conflict(self, A=()):
         """The conflict status under the atoms of `A` (4.5): certificates for every target over
         Background_base′ ++ slot ++ atoms, or a witness model, each checked by `readings-conflict`."""
@@ -263,7 +252,6 @@ class Superposed(_Route):
             result["certificates"] = certificates
         self._conflicts[key] = result
         return result
-
 
     def _witness(self, A, premises, missing):
         from .ast import Not
@@ -468,12 +456,7 @@ class Superposed(_Route):
                                      "found on the superposed document")
         return {"certificate": certificate, "assumed": [list(x) for x in A]}
 
-
-
     # -- the questions of 4.5
-
-
-
 
     def _core_environment(self):
         """The choice vocabulary alone, with no generated Background: `deadCheck` replays a certificate over the
@@ -493,10 +476,6 @@ class Superposed(_Route):
         if background(env):
             raise CheckerUnavailable("ReadingsConformance: the choice vocabulary has a generated Background")
         return env
-
-
-
-
 
     def _ask(self, question, A=(), *, gamma=(), conclusion=None):
         """Request Lean's whole answer. The evidence map is proposals only; no fold is computed here."""
@@ -641,10 +620,6 @@ class Superposed(_Route):
         return {"status": conflict["status_text"],
                 "conflict": {key: value for key, value in conflict.items() if key not in ("model", "gaps", "selected")},
                 "dead_readings": None if dead is None else [d["finding"] for d in dead]}
-
-
-
-
 
 
 # ---------------------------------------------------------------------------------------------------------------

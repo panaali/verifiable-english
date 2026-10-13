@@ -11,25 +11,15 @@ open VE.Rights (correlate)
 open VE.Compose (slotConflictFreeCheck)
 universe u
 
-def SupEntails (D : Doc) (Γ : List VE.Formula) (φ : VE.Formula) (c : Choice) : Prop :=
-  ∀ B : VE.Structure.{u}, VE.Rights.BaseAdmissibleR (choiceDoc D c).1 B →
-    Sat (expand (choiceDoc D c).1 B) ((choiceDoc D c).2 ++ Γ) →
-    φ.denote (expand (choiceDoc D c).1 B) []
-def SupCounter (D : Doc) (Γ : List VE.Formula) (φ : VE.Formula) (c : Choice) : Prop :=
-  ∃ B : VE.Structure.{0}, VE.Rights.BaseAdmissibleR (choiceDoc D c).1 B ∧
-    Sat (expand (choiceDoc D c).1 B) ((choiceDoc D c).2 ++ Γ) ∧
-    ¬ φ.denote (expand (choiceDoc D c).1 B) []
-def SupRowHolds (D : Doc) (Γ : List VE.Formula) (φ : VE.Formula) (c : Choice) : ChoiceResult → Prop
-  | .proved => SupEntails.{u} D Γ φ c
-  | .refuted => SupCounter D Γ φ c
-  | _ => True
-
 /-- ALL from one certificate, including the global A = [] case. -/
 theorem readings_wire_sup_verdicts_all (j : Lean.Json) (r : CertificateReplay)
     (h : replayCertificate j = .ok r)
     (hc : slotConflictFreeCheck (correlate (sup r.D).1) (slotUnder r.D r.assumed) r.conflictCerts = true)
     (ha : supCertificateCheck r.D r.assumed r.Γ r.φ r.cert = true) :
-    ∀ c, Compatible r.D c → (∀ x ∈ r.assumed, x ∈ c) → SupEntails.{u} r.D r.Γ r.φ c :=
+    ∀ c, Compatible r.D c → (∀ x ∈ r.assumed, x ∈ c) → ∀ B : VE.Structure.{u},
+      VE.Rights.BaseAdmissibleR (choiceDoc r.D c).1 B →
+      Sat (expand (choiceDoc r.D c).1 B) ((choiceDoc r.D c).2 ++ r.Γ) →
+      r.φ.denote (expand (choiceDoc r.D c).1 B) [] :=
   readings_wire_all_sound j r h hc ha
 
 /-- A wire countermodel is attached to the choice its bits encode, never another reading. -/
@@ -37,37 +27,49 @@ theorem readings_wire_sup_counter_row (j : Lean.Json) (r : ModelReplay) (h : rep
     (hm : supModelCheck r.D r.assumed r.Γ r.M = true)
     (hn : (circ (correlate (sup r.D).1) r.φ).eval r.M [] = false) :
     ∃ c, Compatible r.D c ∧ (∀ x ∈ r.assumed, x ∈ c) ∧ Encodes r.D c r.M.asStructure ∧
-      SupCounter r.D r.Γ r.φ c := by
+      ∃ B : VE.Structure.{0}, VE.Rights.BaseAdmissibleR (choiceDoc r.D c).1 B ∧
+        Sat (expand (choiceDoc r.D c).1 B) ((choiceDoc r.D c).2 ++ r.Γ) ∧
+        ¬ r.φ.denote (expand (choiceDoc r.D c).1 B) [] := by
   obtain ⟨c, hc, hA, he, hB, hp, hf⟩ := readings_wire_model_sound j r h hm hn
   exact ⟨c, hc, hA, he, pull r.D c r.M.asStructure, hB, hp, hf⟩
 
-/-- SOME is a proved choice and a choice with a checked countermodel, past the conflict gate. -/
+/-- SOME is a proved choice and a choice with a checked countermodel, past the conflict gate. Each row's
+    hypotheses are what its evidence proves: a certificate for `proved`, a countermodel for `refuted`. -/
 theorem readings_wire_sup_verdicts_some (D : Doc) (Γ : List VE.Formula) (φ : VE.Formula)
     (cs rs : List (Choice × ChoiceResult))
-    (rows : ∀ x ∈ rs, Compatible D x.1 ∧ SupRowHolds.{u} D Γ φ x.1 x.2)
+    (rows : ∀ x ∈ rs, Compatible D x.1 ∧
+      (x.2 = .proved → ∀ B : VE.Structure.{u}, VE.Rights.BaseAdmissibleR (choiceDoc D x.1).1 B →
+        Sat (expand (choiceDoc D x.1).1 B) ((choiceDoc D x.1).2 ++ Γ) →
+        φ.denote (expand (choiceDoc D x.1).1 B) []) ∧
+      (x.2 = .refuted → ∃ B : VE.Structure.{0}, VE.Rights.BaseAdmissibleR (choiceDoc D x.1).1 B ∧
+        Sat (expand (choiceDoc D x.1).1 B) ((choiceDoc D x.1).2 ++ Γ) ∧
+        ¬ φ.denote (expand (choiceDoc D x.1).1 B) []))
     (h : foldEntailment cs rs = .some) :
-    (∃ c, Compatible D c ∧ SupEntails.{u} D Γ φ c) ∧
-      ∃ c, Compatible D c ∧ SupCounter D Γ φ c := by
+    (∃ c, Compatible D c ∧ ∀ B : VE.Structure.{u}, VE.Rights.BaseAdmissibleR (choiceDoc D c).1 B →
+        Sat (expand (choiceDoc D c).1 B) ((choiceDoc D c).2 ++ Γ) → φ.denote (expand (choiceDoc D c).1 B) []) ∧
+      ∃ c, Compatible D c ∧ ∃ B : VE.Structure.{0}, VE.Rights.BaseAdmissibleR (choiceDoc D c).1 B ∧
+        Sat (expand (choiceDoc D c).1 B) ((choiceDoc D c).2 ++ Γ) ∧ ¬ φ.denote (expand (choiceDoc D c).1 B) [] := by
   obtain ⟨_, ⟨p, hp, he⟩, ⟨m, hm, hn⟩⟩ := foldEntailment_some h
   have pp := rows p hp
   have mm := rows m hm
-  rw [he] at pp
-  rw [hn] at mm
-  exact ⟨⟨p.1, pp.1, pp.2⟩, m.1, mm.1, mm.2⟩
+  exact ⟨⟨p.1, pp.1, pp.2.1 he⟩, m.1, mm.1, mm.2.2 hn⟩
 
 /-- NONE covers every compatible choice taking A, with its own checked countermodel. -/
 theorem readings_wire_sup_verdicts_none (D : Doc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
     (cs rs : List (Choice × ChoiceResult))
     (covers : ∀ c, (Compatible D c ∧ ∀ x ∈ A, x ∈ c) ↔ c ∈ rs.map (·.1))
-    (rows : ∀ x ∈ rs, SupRowHolds.{0} D Γ φ x.1 x.2)
+    (rows : ∀ x ∈ rs, x.2 = .refuted → ∃ B : VE.Structure.{0}, VE.Rights.BaseAdmissibleR (choiceDoc D x.1).1 B ∧
+        Sat (expand (choiceDoc D x.1).1 B) ((choiceDoc D x.1).2 ++ Γ) ∧
+        ¬ φ.denote (expand (choiceDoc D x.1).1 B) [])
     (h : foldEntailment cs rs = .none) :
-    ∀ c, Compatible D c → (∀ x ∈ A, x ∈ c) → SupCounter D Γ φ c := by
+    ∀ c, Compatible D c → (∀ x ∈ A, x ∈ c) → ∃ B : VE.Structure.{0}, VE.Rights.BaseAdmissibleR (choiceDoc D c).1 B ∧
+        Sat (expand (choiceDoc D c).1 B) ((choiceDoc D c).2 ++ Γ) ∧ ¬ φ.denote (expand (choiceDoc D c).1 B) [] := by
   obtain ⟨_, _, hall⟩ := foldEntailment_none h
   intro c hc hA
   obtain ⟨x, hx, he⟩ := List.mem_map.mp ((covers c).mp ⟨hc, hA⟩)
-  have hh := rows x hx
-  rw [hall x hx] at hh
-  simpa [he] using hh
+  have hh := rows x hx (hall x hx)
+  subst he
+  exact hh
 
 /-- A per-reading premise model, read from the same checked model theorem at bottom. -/
 theorem readings_wire_sup_premises_model (j : Lean.Json) (r : ModelReplay) (h : replayModel j = .ok r)
