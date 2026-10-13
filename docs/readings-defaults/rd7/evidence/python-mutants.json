@@ -1,0 +1,38 @@
+{
+ "mutants": [
+  {
+   "id": "P1",
+   "file": "ve/readings_verdicts.py",
+   "claim": "Every required scope is present, even when model references are reindexed.",
+   "source_sha256": "b47d47c9e136f46fe28c20596152f16e959644eef84198bbc5f87c78ef6e4ead",
+   "tests": [
+    "tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.8,
+   "output_tail": "                         [100%]\n=================================== FAILURES ===================================\n________ test_missing_proof_scope_cannot_hide_behind_a_reindexed_model _________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-8676/test_missing_proof_scope_canno0')\n\n    def test_missing_proof_scope_cannot_hide_behind_a_reindexed_model(tmp_path):\n        from tests.test_readings_s2_document import every\n        _, route, _ = example(tmp_path)\n        route.entailment(every(\"avoid_required\"))\n        answer = route.query_answer(every(\"avoid_required\"))\n        request = route.requests[id(answer)]\n        out = deepcopy(answer)\n        assert out[\"scopes\"][1][\"row\"][\"query\"] == \"proved\"\n        out[\"scopes\"].pop(1)\n        for line in out[\"english\"]:\n            if line[\"model\"] is not None:\n                piece, _, index = line[\"model\"].partition(\"@\")\n                assert int(index) > 1\n                line[\"model\"] = f\"{piece}@{int(index) - 1}\"\n>       with pytest.raises(CheckerUnavailable):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE CheckerUnavailable\n\ntests/test_readings_sup_verdicts.py:164: Failed\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model\n1 failed in 1.61s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-d8fma8ns)\n"
+  },
+  {
+   "id": "P2",
+   "file": "ve/readings_s2_wording.py",
+   "claim": "Every producer-planned English line is relayed.",
+   "source_sha256": "c8a1953e3c8c36f4aed77770ba87e7f8df5ec1a26c410c7168f295b0de755b74",
+   "tests": [
+    "tests/test_readings_sup_verdicts.py::test_sup_service_all_some_none_and_english"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_sup_verdicts.py::test_sup_service_all_some_none_and_english"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.5,
+   "output_tail": "oute.query_answer(phi)\n            assert answer[\"route\"] == \"superposed\"\n>           assert len(wording.plan(answer, wording.conclusion(phi))) == len(answer[\"english\"])\nE           AssertionError: assert 0 == 2\nE            +  where 0 = len([])\nE            +    where [] = plan({'dead': [], 'dead_readings': None, 'english': [{'frame': 'E26', 'gaps': [], 'label': None, 'model': None, ...}, {'frame': 'E13', 'gaps': [], 'label': None, 'model': None, ...}], 'id': 'readings-verdicts', ...}, '*For every agent, for every user, that agent must help that user.*')\nE            +      where plan = <ve.readings_s2_wording.S2Wording object at 0x7f9031f017f0>.plan\nE            +      and   '*For every agent, for every user, that agent must help that user.*' = conclusion(['forall', 'agent', ['forall', 'user', ['binary', 'help_required', ['var', 1], ['var', 0]]]])\nE            +        where conclusion = <ve.readings_s2_wording.S2Wording object at 0x7f9031f017f0>.conclusion\nE            +  and   2 = len([{'frame': 'E26', 'gaps': [], 'label': None, 'model': None, ...}, {'frame': 'E13', 'gaps': [], 'label': None, 'model': None, ...}])\n\ntests/test_readings_sup_verdicts.py:31: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_sup_service_all_some_none_and_english\n1 failed in 2.96s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-im016pku)\n"
+  }
+ ]
+}

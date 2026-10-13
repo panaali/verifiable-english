@@ -1,0 +1,40 @@
+{
+  "base": "d006b1f4876bd2d6be8347b9e45790ab1fc4900d",
+  "uncommitted_worktree": true,
+  "files": [
+    {
+      "file": "ve/readings_verdicts.py",
+      "deleted_functions": [
+        "Superposed._choice_conflicts",
+        "Superposed._coherence",
+        "Superposed._conflict_proofs",
+        "Superposed._dependencies",
+        "Superposed._fold",
+        "Superposed._gated_choice",
+        "Superposed._mentions",
+        "_dead_readings",
+        "_literal",
+        "_predicates",
+        "_replays",
+        "_restrictions",
+        "_used"
+      ],
+      "worktree_sha256": "069dc8b689d69d8cf0cef81807777210ec9930a67fdec52da27f17768475e8fa"
+    },
+    {
+      "file": "ve/readings_s2_wording.py",
+      "deleted_functions": [
+        "S2Wording._countermodel",
+        "S2Wording._dependencies",
+        "S2Wording._mentions",
+        "S2Wording._restrictions",
+        "S2Wording._rule_name",
+        "S2Wording.classification",
+        "S2Wording.independent",
+        "S2Wording.provided",
+        "_predicates"
+      ],
+      "worktree_sha256": "892e11ca857aca518602493dc8837dea88b696436f9fd877f66e3fec1aaf30f4"
+    }
+  ]
+}

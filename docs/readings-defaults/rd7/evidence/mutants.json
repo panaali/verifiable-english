@@ -1,0 +1,48 @@
+{
+  "mutants": [
+    {
+      "id": "P1",
+      "file": "ve/readings_verdicts.py",
+      "find": "_need(scope_choices == expected)",
+      "replace": "_need(False)",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model"
+      ],
+      "claim": "A constant-reject scope guard cannot hide behind a forged-answer test: genuine complete rows must remain available."
+    },
+    {
+      "id": "P2",
+      "file": "ve/readings_s2_wording.py",
+      "find": "out.append(self._plan_line(line, answer, slot))",
+      "replace": "pass",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_sup_service_all_some_none_and_english"
+      ],
+      "claim": "Every producer-planned English line is relayed."
+    },
+    {
+      "id": "L1",
+      "file": "lean/VE/Readings/SupDependencies.lean",
+      "find": "List String := usedLabels (supReplayMiddle D A (supProofs D certs proof)) [] (slotLabelled D ++ Q) []",
+      "replace": "List String := []",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake env lean VE/Readings/SupDependencies.lean"
+      ],
+      "claim": "Dropping needed conditions breaks supDependencies_replay."
+    },
+    {
+      "id": "L2",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "find": "| .some => fs := fs ++ [(\"verdict\", .str \"SOME\")",
+      "replace": "| .some => fs := fs ++ [(\"verdict\", .str \"ALL\")",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build VE.Readings.SupVerdictsExamples"
+      ],
+      "claim": "The superposed SOME encoder cannot claim ALL; its computed boundary guard fails."
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+P1: killed by tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model
+P2: killed by tests/test_readings_sup_verdicts.py::test_sup_service_all_some_none_and_english
+mutants: 2/2 killed
