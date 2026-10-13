@@ -225,6 +225,16 @@ def test_quick_tests_go_out_by_estimated_seconds_not_by_count():
     _, end = simulate(test_schedule.make_scheduler(Config(4), None, recorded, 0.1), collection, seconds, 4)
     ideal = sum(seconds.values()) / 4  # 317.5 s
     assert end <= ideal + 3.0 < load_end - 30
+    # Medium tests first: a run of a fixed share of the tests left (400 / 8 = 50 of them, 100 s) would wait
+    # behind a long test; a share of the seconds left, less what the worker holds, does not.
+    collection = ([f"tests/test_long{i}.py::t" for i in range(4)] + [f"tests/test_a.py::t{i}" for i in range(200)]
+                  + [f"tests/test_b.py::t{i}" for i in range(200)])
+    seconds = dict(zip(collection, [5.0, 100.0, 100.0, 100.0]))
+    seconds.update({nodeid: 2.0 for nodeid in collection[4:204]})
+    seconds.update({nodeid: 0.05 for nodeid in collection[204:]})
+    recorded = {nodeid: value for nodeid, value in seconds.items() if value >= test_schedule.RECORDED_SECONDS}
+    _, end = simulate(test_schedule.make_scheduler(Config(4), None, recorded, 0.05), collection, seconds, 4)
+    assert end <= sum(seconds.values()) / 4 + 2.0  # 178.75 s
 
 
 def test_bulk_count_takes_at_least_the_least_then_up_to_the_target():

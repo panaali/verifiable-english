@@ -1,0 +1,146 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "tools/test_schedule.py",
+   "claim": "the long tests start longest batch first",
+   "find": "key=lambda batch: (-sum(estimate[i] for i in batch), batch[0])",
+   "replace": "key=lambda batch: (sum(estimate[i] for i in batch), batch[0])",
+   "tests": [
+    "tests/test_test_schedule.py::test_head_first_is_a_permutation_led_by_the_recorded_long_tests_longest_first",
+    "tests/test_test_schedule.py::test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds"
+   ]
+  },
+  {
+   "id": "M2",
+   "file": "tools/test_schedule.py",
+   "claim": "a module's tests go out in runs no longer than the longest test",
+   "find": "        if batch is None or total + estimate[index] > cap:",
+   "replace": "        if batch is None:",
+   "tests": [
+    "tests/test_test_schedule.py::test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test"
+   ]
+  },
+  {
+   "id": "M2b",
+   "file": "tools/test_schedule.py",
+   "claim": "a module with a long test goes out whole, its quick tests with it",
+   "find": "        if unit not in long:",
+   "replace": "        if unit not in long or durations.get(nodeid, 0.0) < head_seconds:",
+   "tests": [
+    "tests/test_test_schedule.py::test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test"
+   ]
+  },
+  {
+   "id": "M3",
+   "file": "tools/test_schedule.py",
+   "claim": "the scheduler hands the long tests out before the rest",
+   "find": "            self.pending[:] = order",
+   "replace": "            self.pending[:] = sorted(order)",
+   "tests": [
+    "tests/test_test_schedule.py::test_longest_first_starts_the_long_tests_first_and_ends_sooner_than_load",
+    "tests/test_test_schedule.py::test_an_xdist_run_keeps_the_gates_collection_accounting"
+   ]
+  },
+  {
+   "id": "M4",
+   "file": "tools/test_schedule.py",
+   "claim": "the worker with the longest batch gets the shortest of the first two rounds",
+   "find": "            for node in [*self.nodes, *reversed(self.nodes)]:",
+   "replace": "            for node in [*self.nodes, *self.nodes]:",
+   "tests": [
+    "tests/test_test_schedule.py::test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds"
+   ]
+  },
+  {
+   "id": "M5",
+   "file": "tools/test_schedule.py",
+   "claim": "after the long tests, runs are sized by estimated seconds, not by count",
+   "find": "                count = bulk_count((self.estimate[index] for index in self.pending),",
+   "replace": "                count = len(self.pending) // (BULK_SHARE * len(self.nodes)) or bulk_count((self.estimate[index] for index in self.pending),",
+   "tests": [
+    "tests/test_test_schedule.py::test_quick_tests_go_out_by_estimated_seconds_not_by_count"
+   ]
+  },
+  {
+   "id": "M6",
+   "file": "tools/test_schedule.py",
+   "claim": "what a worker holds counts against its share of the rest",
+   "find": "self.remaining / (BULK_SHARE * len(self.nodes)) - held,",
+   "replace": "self.remaining / (BULK_SHARE * len(self.nodes)),",
+   "tests": [
+    "tests/test_test_schedule.py::test_longest_first_starts_the_long_tests_first_and_ends_sooner_than_load"
+   ]
+  },
+  {
+   "id": "M7",
+   "file": "tools/test_schedule.py",
+   "claim": "a run that names another --dist mode keeps that mode",
+   "find": "    if config.getvalue(\"dist\") != \"load\":",
+   "replace": "    if config.getvalue(\"dist\") == \"no\":",
+   "tests": [
+    "tests/test_test_schedule.py::test_without_recorded_long_tests_or_under_another_mode_xdist_decides"
+   ]
+  },
+  {
+   "id": "M8",
+   "file": "tools/test_schedule.py",
+   "claim": "a durations entry that is not seconds is dropped, never coerced",
+   "find": "    return type(value) in (int, float) and 0 <= value < float(\"inf\")",
+   "replace": "    return isinstance(value, (int, float)) and 0 <= value < float(\"inf\")",
+   "tests": [
+    "tests/test_test_schedule.py::test_durations_file_round_trips_and_a_bad_file_leaves_the_load_order"
+   ]
+  },
+  {
+   "id": "M9",
+   "file": "tools/run_order.py",
+   "claim": "selected runs start the slowest recorded test file first within each group",
+   "find": "    units = sorted(set(units), key=lambda unit: (-seconds.get(unit, 0.0), unit))",
+   "replace": "    units = sorted(set(units))",
+   "tests": [
+    "tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first"
+   ]
+  },
+  {
+   "id": "M10",
+   "file": "tools/test_schedule.py",
+   "claim": "a test file's seconds are the sum of its tests'",
+   "find": "        totals[unit_of(nodeid)] = totals.get(unit_of(nodeid), 0.0) + value",
+   "replace": "        totals[unit_of(nodeid)] = value",
+   "tests": [
+    "tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first"
+   ]
+  },
+  {
+   "id": "M11",
+   "file": "tools/pytest_profile.py",
+   "claim": "a test that patches the clocks cannot skew its profile record",
+   "find": "        record[phase] = _monotonic() - start",
+   "replace": "        record[phase] = time.monotonic() - start",
+   "tests": [
+    "tests/test_suite_tail.py::test_profile_records_keep_real_times_when_a_test_patches_the_clocks"
+   ]
+  },
+  {
+   "id": "M12",
+   "file": "tools/bench/suite_tail.py",
+   "claim": "the durations file keeps only tests the gate still collects",
+   "find": "            if row[\"nodeid\"] in current:",
+   "replace": "            if True:",
+   "tests": [
+    "tests/test_suite_tail.py::test_durations_command_writes_the_scheduler_s_file"
+   ]
+  },
+  {
+   "id": "M13",
+   "file": "tests/conftest.py",
+   "claim": "the suite's xdist runs use the longest-first scheduler",
+   "find": "    return test_schedule.make_scheduler(config, log)",
+   "replace": "    return None",
+   "tests": [
+    "tests/test_test_schedule.py::test_the_suite_conftest_installs_the_scheduler"
+   ]
+  }
+ ]
+}
