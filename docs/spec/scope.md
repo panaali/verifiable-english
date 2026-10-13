@@ -1,13 +1,16 @@
 # Cross-sentence scope (`scope@0`): item-1 specification
 
-> Status: item-1 specification, draft 2, 2026-10-13, design only: no product code, test or generated file changes.
-> Written from [scope-PLAN.md](scope-PLAN.md) draft 3, which applies the converged Astra + Fable design debate
-> (`manage-agents/debates/design-scope/`, CONVERGED after round 3) and the DRI's cross-plan synthesis edits 1–8 of
-> 2026-10-13. Draft 2 applies the statement review of draft 1 (`manage-agents/debates/scope-spec/`, Astra + Fable,
-> CONVERGED after round 3: **FIX**): every correction of the joint position, and no other design change (9.3 lists
-> them, each with where it lands). A confirmation round on this diff only, not a fresh review, decides PASS; a clean
-> confirmation opens SC-1a and SC-3a, while SC-3b and SC-5 stay gated on their approved addenda (9.4). Baseline
-> `main` at `49de179e`, read on branch `design/scope` at `f80910c1`.
+> Status: item-1 specification, draft 3, 2026-10-13, design only: no product code, test or generated file changes.
+> Draft 3 applies the confirmation round's one finding (`manage-agents/scope-p3ver1.final.md`): the document mode
+> calls the run path `governFast`, not `govern` (1.5.8, 5.2, 9.5); no statement changes, and nothing else does.
+> Written from [scope-PLAN.md](scope-PLAN.md) draft 3 (draft 4 adds only that fix), which applies the converged
+> Astra + Fable design debate (`manage-agents/debates/design-scope/`, CONVERGED after round 3) and the DRI's
+> cross-plan synthesis edits 1–8 of 2026-10-13. Draft 2 applies the statement review of draft 1
+> (`manage-agents/debates/scope-spec/`, Astra + Fable, CONVERGED after round 3: **FIX**): every correction of the
+> joint position, and no other design change (9.3 lists them, each with where it lands). A confirmation round on
+> this diff only, not a fresh review, decides PASS; a clean confirmation opens SC-1a and SC-3a, while SC-3b and SC-5
+> stay gated on their approved addenda (9.4). Baseline `main` at `49de179e`, read on branch `design/scope` at
+> `f80910c1`.
 > **Checked, not proved.** Every definition and theorem statement in sections 4 and 5 was elaborated by Lean
 > v4.24.0 as a scratch stub, `lean/SpecStubs_scope.lean` (untracked, never committed), against the merged modules
 > it names (`VE.Readings.Wire`, `VE.Discourse.{Wire,Access,WellFormed}`, `VE.Finite`, `VE.Attribution.Status`),
@@ -217,8 +220,9 @@ the `ScopeNoEffect` check in governor order; then the patch.
 `baseName`), so `orderCheck` and `affected`, which ask for every unit, are cubic on the pinned pilot (1,132 units).
 The run path is `governFast`, SC-1a's own definition: the same steps with each governor's reach and each rule unit's
 base name computed once, into a table keyed by governor id that the reach tests read. `governFast_eq` states that it
-answers exactly as `govern`, so every theorem about `govern` holds of the run path. Its speed is measured by a
-benchmark row on the full pilot (7.2 B1), never asserted in the suite.
+answers exactly as `govern`, so every theorem about `govern` holds of the run path. SC-1b's document mode calls
+`governFast`, never `govern` (5.2). Its speed is measured by a benchmark row on the full pilot (7.2 B1), never
+asserted in the suite.
 
 ### 1.6 Statuses
 
@@ -1134,6 +1138,8 @@ the layout's binding: every reach names the document's own units, while no layou
 `scope@0` is one row of AR-10's profile-gate table (a wrapper at step 1b over the norms, norm-defaults, soft and
 rights routes); the row carries the composition theorem `scope_admission` for every combination it newly admits,
 and AR-10's generic lemma shows the table runs as written. `foldGovernors` applies 1.6's table with `governorStatus`.
+The document mode calls the run path `governFast` (1.5.8), the function B1 measures; `scope_admission` is stated
+over `govern`, and its proof rewrites the call with `governFast_eq`.
 
 ### 5.3 SC-1c (explain route and relay)
 
@@ -1875,6 +1881,15 @@ approved before its batch is built. SC-1a, SC-3a and the other batches do not wa
    evaluates graph effects, with its own theorems and fixtures.
 6. *The pins.* `Pinned.ruleTyped` and `Pinned.jointPicks` are pinned. `govern_provenance` and
    `govern_no_new_symbols` are stated per choice, through `governAt`, and `scope_choices` over lf-14d's joint set.
+
+### 9.5 Correction from the confirmation round (draft 3)
+
+The confirmation round on draft 2's diff (`manage-agents/scope-p3ver1.final.md`) found every 9.3 correction applied
+and no unrelated change, and one inconsistency; draft 3 corrects it, and nothing else changes.
+
+| # | Finding | Correction | Where | Fixture |
+|---|---|---|---|---|
+| 16 | 1.5.8 makes `governFast` the run path, but the plan's SC-1b had the document mode call `VE.Scope.govern`, so the service would run the cubic path while B1 measured `governFast` | the document mode calls `governFast`; `scope_admission` keeps its statement over `govern`, and its proof rewrites the call with `governFast_eq` | 1.5.8, 5.2, plan SC-1b | B1 |
 
 ## 10. Review checklist
 

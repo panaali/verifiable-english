@@ -1,13 +1,15 @@
 # Cross-sentence scope (`scope@0`): plan
 
-> Status: planning draft 3, 2026-10-13, design only. No product code, tests or generated files change. Baseline
+> Status: planning draft 4, 2026-10-13, design only. No product code, tests or generated files change. Baseline
 > `main` at `49de179e`. Draft 2 applied the converged design debate (`manage-agents/debates/design-scope/`,
 > Astra + Fable, CONVERGED after round 3: REVISE draft 1, then BUILD) and the DRI's cross-plan synthesis edits 1–8
 > of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`), which are part of the final joint position
 > and supersede the debate where they differ (edit 3). Draft 3 applies the statement review of the item-1 spec
 > (`manage-agents/debates/scope-spec/`, Astra + Fable, CONVERGED after round 3: FIX), and nothing else: its
 > corrections, which the spec's 9.3 lists, and the plan sync it asked for (the Boolean `sign`, the status rule,
-> F13's three candidates, one stand-in predicate). The research behind every choice here, with the measurements and
+> F13's three candidates, one stand-in predicate). Draft 4 applies the confirmation round's one finding
+> (`manage-agents/scope-p3ver1.final.md`): SC-1b's document mode calls the run path `governFast`, the function B1
+> measures, not `govern`. Nothing else changes. The research behind every choice here, with the measurements and
 > their methods, is [docs/research/scope.md](../research/scope.md). Lean blocks are statement schemata; the exact
 > statements, type-checked as a scratch stub, are the item-1 specification [docs/spec/scope.md](scope.md), and
 > where a schema here differs, the spec's statement governs. Names marked *(pinned at spec)* depend on in-flight
@@ -372,7 +374,8 @@ The item-1 specification `docs/spec/scope.md` and its statement review come befo
 - The statement review of spec draft 1 (Astra + Fable, `manage-agents/debates/scope-spec/`) returned **FIX** with
   one converged correction set; spec draft 2 applies it (its 9.3).
 - A confirmation round on that diff only, not a fresh review, decides PASS. A clean confirmation opens SC-1a and
-  SC-3a.
+  SC-3a. The first round (`manage-agents/scope-p3ver1.final.md`) found one inconsistency, the document mode's call
+  of `govern` instead of the run path; spec draft 3 and plan draft 4 fix it, and the next round confirms that fix.
 - SC-3b and SC-5 stay gated on approved addenda, whose obligations the spec records now (its 9.4).
 - Theorem statements are type-checked as stubs in a scratch file that is never committed. Elaborating with
   `sorry` only shows that a statement typechecks; every repaired contract also has an executed fixture.
@@ -536,9 +539,10 @@ theorem governFast_eq (D : SDoc) : governFast D = govern D
 - **Shared files touched.**
   - `lean/VE/Compose/Dispatch.lean`: one row of AR-10's profile-gate table, in landing order, and its composition
     proof. No hand edits to `wrapperProfiles`, `Route.scope`, `sitsOn`, `wrapperHead` or the existing case proofs.
-  - `lean/VE/Service/Document.lean` *(pinned at spec; lf-16's file)*: calls `VE.Scope.govern` before the chain,
-    and folds `governorStatus` for governor units. Two call sites, after lf-16g. They join the document-mode queue
-    in landing order: AT-3b, SC-1b, QT-A4, ET-5, WG-4, ME-10.
+  - `lean/VE/Service/Document.lean` *(pinned at spec; lf-16's file)*: calls the run path `VE.Scope.governFast`,
+    never `govern`, before the chain (`governFast_eq` carries `scope_admission`, stated over `govern`, to the
+    call), and folds `governorStatus` for governor units. Two call sites, after lf-16g. They join the
+    document-mode queue in landing order: AT-3b, SC-1b, QT-A4, ET-5, WG-4, ME-10.
   - `ve/profiles.py`: no hand-written line. Python's profile data is generated from AR-10's table.
   - Generated, via `tools/regen_generated.py --write` (never by hand): the document mode's schema,
     `tools/gate-collection.json`, `lean/checkers.lock`, the profile data.
