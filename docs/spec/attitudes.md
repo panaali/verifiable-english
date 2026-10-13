@@ -1,8 +1,11 @@
 # Typed attitudes as conditions of norms (`attitudes@0`): statement spec (AT-0)
 
-> **Status.** Draft 3, 2026-10-13, branch `design/attitudes`. AT-0's statement spec for
-> [attitudes-PLAN.md](attitudes-PLAN.md) draft 4 (cited as **PLAN**; its debate items as **A1–A6**, **F3–F7**, the
+> **Status.** Draft 4, 2026-10-13, branch `research/attitudes-p1`. AT-0's statement spec for
+> [attitudes-PLAN.md](attitudes-PLAN.md) draft 5 (cited as **PLAN**; its debate items as **A1–A6**, **F3–F7**, the
 > cross-plan synthesis edits as **edit 1–10**). For AT-0's statement review; nothing here is built or proved.
+> Draft 4 applies phase 1 ([docs/research/attitudes-phase1.md](../research/attitudes-phase1.md), cited as **P1 n**;
+> its gaps in the pre-registration as **G1–G6**), listed in section 16; it changes no Lean statement or definition.
+> Drafts 1 to 3 were written on branch `design/attitudes`.
 > Draft 2 applies the statement review of draft 1 (Astra and Fable, `manage-agents/debates/attitudes-spec/`,
 > converged after round 3 on **FIX; the build may not start**). Its corrections are cited as **SR-1 to SR-8** and
 > listed in section 14; draft 2 makes them and no other change. Draft 3 applies the re-check of draft 2
@@ -23,12 +26,31 @@
 >
 > **Not passable yet.** AT-0 PASS needs, in this order (SR-8): E1's and E2's outcomes written into `table` with
 > their items, including E2's decision on the asserted-content negated knowledge row (section 3.1's last row,
-> section 11 item 16); the closure review holding on the frozen table; the stub updated to draft 2 and elaborated;
-> every fixture and the section 9 search re-run on the frozen table, with the new refusals (D6a–D6b, D14a–D14d) in
-> the search's pool; and the reviewers' re-review of the statements sections 14 and 15 list as changed, and only
-> those. Until E1 and E2 report, the frozen `table` admits nothing: `knows` and every "thinks it *w*" are
-> refused (fixture D0, section 5). The fixtures use `fixtureTable`, a hypothetical E1/E2 outcome written only for
-> fixtures.
+> section 11 item 16); the closure review holding on the frozen table; the stub updated to the current draft (draft
+> 3's Lean, which draft 4 keeps; section 13) and elaborated; every fixture and the section 9 search re-run on the
+> frozen table, with the new refusals (D6a–D6b, D14a–D14d) in the search's pool; and the reviewers' re-review of
+> the statements sections 14 and 15 list as changed, and only those. Until E1 and E2 report, the frozen `table`
+> admits nothing: `knows` and every "thinks it *w*" are refused (fixture D0, section 5). The fixtures use `fixtureTable`, a hypothetical E1/E2 outcome written only for
+> fixtures. Phase 1 prepared E1 and E2 (items, seeded orders, scorers with the PLAN's bars, and the emitter of the
+> `Table` literal reviewed by this spec's `Table.reviewed`) but ran neither: both need model calls, and both are
+> **DEFERRED** until the DRI confirms their protocol (G1–G6, PLAN section 4) and authorises the calls (PLAN section
+> 9). So SR-8's first step has not started.
+
+**Changes in this draft (draft 4, from phase 1).** No Lean statement, definition, diagnostic or fixture value
+changes, so the stub needs no edit for this draft (it is untracked, outside this worktree, and pinned by sha256 in
+`research/attitudes/experiments.py`; section 13).
+
+1. **E1 and E2: DEFERRED** (status above; section 12's row). `table` stays empty and reviewed.
+2. **The closure resolution has one rule** (section 2.1, G4): a derived entry whose item failed removes the weaker
+   word from `lowerBound`, with every pair and premise naming it, until `Table.reviewed` holds. The debate-round-3
+   items for entries derived without a direct item are empty by construction (P1 3).
+3. **"P, and X does not know that P" is admitted only if six E2 items reach 36 of 40** (section 3.1's last row,
+   section 11 item 16; G5): three "Must P?" and three "Does X know that P?". Draft 3's three items tested only that
+   P is read as asserted.
+4. **AT-0p's A4 measured** what F-AT1's M2 shows in Lean: without typing, the impossible point is UNDECIDED in all
+   seven pilot rules (P1 2); with the frame, M2 fails factivity (section 16).
+5. **Section 13** records the stub's sha256 pin; the status's "stub updated to draft 2" now reads "to the current
+   draft", as PLAN draft 4 already said; **section 16** is new and lists these changes.
 
 ## 0. Reading this spec
 
@@ -37,7 +59,8 @@
   AT-1 to AT-5. Section 7 lists the fixtures with their computed values, and section 9 the counterexample search.
   Section 10 answers the integration questions the PLAN left to AT-0. Section 11 lists every place where this spec
   differs from the PLAN's Lean text, with the reason. Section 12 is the review checklist. Section 14 lists draft 2's
-  corrections (SR-1 to SR-8) and section 15 draft 3's (RC-1 to RC-4), each with the places it changes.
+  corrections (SR-1 to SR-8), section 15 draft 3's (RC-1 to RC-4) and section 16 draft 4's (phase 1), each with
+  the places it changes.
 - Names owned by other plans are used through their reviewed interfaces only. The stub declares stand-ins for them,
   with the bodies the synthesis gives, so that this profile's statements elaborate: QS-1's `VE.Closure.Order`,
   `Caps`, `Order.admit`, `Order.atLeast` (owner: quantities, reviewed in QT-0); PK-1's `PackKind`, `RequestPath`,
@@ -83,6 +106,14 @@ likely as b". The **frozen table** records each admitted entry with the pre-regi
 **closure review** (debate round 3) holds exactly when the reflexive and transitive closure of the frozen pairs
 adds no pair, and no premise-3 word, without its own passing item; every entry is between admitted words; and
 premises 2 and 3 are present only with premise 1.
+
+**Resolution before freezing (draft 4, G4).** E1 asks all 28 pairs (the earlier word of `e1Words` first, G1) and E2
+asks the premise-3 item of all eight words (G3), so every entry the closure can derive has its own item; the
+review can fail only on a derived entry whose item failed. Then the weaker word of that entry leaves `lowerBound`,
+and with it every pair and premise-3 entry that names it; this repeats until `Table.reviewed` holds. Of the PLAN
+draft 4's two options ("the weaker word leaves `lowerBound`, or the scale pair is dropped") it is the only one with
+a unique outcome. The procedure is `resolve` in `research/attitudes/experiments.py`; its output is accepted only if
+Lean's `Table.reviewed` holds on it, so the review stays Lean's.
 
 ```lean
 abbrev Word := String
@@ -679,7 +710,7 @@ content rendered as a clause, with the slot term in place of variable 0 ("that s
 | `act .intends` | "H intends that P" | `reports@0`'s intends, of a content; never intentional action |
 | `act .wants` | "H wants Y to VP", only when the content is one unary base predicate on the slot term `Y` whose template is a verb phrase (as `reports@0` words it); any other `wants` content has no reviewed wording | `reports@0`'s wants |
 | negation of a whole condition | "it is not the case that …" (VE's external negation) | negation, nothing asserted |
-| "P, and X does not know that P" | written "both P and H does not know that P" | `P ∧ ¬knows(P)`; admitted only if its three E2 items reach 36 of 40 (A4) |
+| "P, and X does not know that P" | written "both P and H does not know that P" | `P ∧ ¬knows(P)`; admitted only if its six E2 items reach 36 of 40: three "Must P?", three "Does X know that P?" (A4, G5) |
 
 "Intends to VP" and "wants Y to VP" with an act phrase are not admitted; intentional action stays residual until a
 reviewed act-performance bridge (ET-D2) fits this profile's contract, and act-phrases landing does not admit them
@@ -1415,7 +1446,8 @@ Each is a statement-level decision for the review; none changes the PLAN's desig
     carries no presupposition for readers is VE's convention (as `reports@0`'s `_NOT`), not measured; the review
     decides whether it needs E2-style items. The statement review (SR-8) made this decision, with the admission of
     section 3.1's last row (asserted-content negated knowledge), part of E2's record: both are written into the
-    frozen table's record before PASS.
+    frozen table's record before PASS. Draft 4 (G5): that admission is decided on six items, since the three
+    "Must P?" items test only that P is read as asserted; the three added items ask "Does Claude know that P?".
 
 ## 12. Review checklist
 
@@ -1426,7 +1458,7 @@ Each is a statement-level decision for the review; none changes the PLAN's desig
 | `att_old_language_conservative` has no hypothesis that the frame is empty | yes |
 | every frame premise universal with a quantifier-free body | `frame_universalQF`; F-AT2's `#guard` |
 | generated names cannot collide with other families | prefix `attitudes__` in PK-1's `reservedPrefixes`; D6, D16 |
-| E1's pairs and E2's decisions in `table` with their items, closure review holds | **open**: E1 and E2 have not run; `table` is empty and reviewed. E2's record includes the asserted-content negated knowledge decision (section 11, item 16; SR-8) |
+| E1's pairs and E2's decisions in `table` with their items, closure review holds | **open**: E1 and E2 are DEFERRED (phase 1 prepared them; PLAN section 9 gives the trigger); `table` is empty and reviewed. E2's record includes the asserted-content negated knowledge decision, on six items (section 11, item 16; SR-8, G5); a failed derived entry is resolved by section 2.1's rule (G4) |
 | every key a hypothesis names is in `keys A` (A3) | yes (`hk`, `hp`, `AWellFormed`, `hseed`) |
 | one `#guard` per theorem; the search finds no counterexample | draft 1: section 7.5, section 9. **Open** for drafts 2 and 3: the stub updated and elaborated, the new `#guard`s of section 7.5 and the search rerun with the new pool members (section 9) |
 | contents over the base vocabulary; the frame's typing proved on every route (A2) | D13; `frame_wellFormed`, `frame_typed_fill`, `frame_shared` |
@@ -1447,6 +1479,13 @@ From the worktree root, with the `ve-nightly` build at `49de179e`:
 not committed; it holds no `sorry`. Its sections: S0 stand-ins, S1 definitions, S2–S3 statements, S4 evaluators,
 S5 fixtures and `#guard`s, S6 the search. The stub is still draft 1's: updating it to draft 3 (the lists of sections
 14 and 15) and elaborating it is the next step, and the command above is the one to run then.
+
+Phase 1's closure-review emitter (`research/attitudes/experiments.py table`) evaluates this spec's `Table.reviewed`
+through a copy of that stub, read only, and refuses a stub whose sha256 is not
+`2178fb6eb1dfc2be9e908643538190a17da0b78a346954418d247e386b6a35e8` (`STUB_SHA256`, `8538355c`). The stub's `Table`
+and `Table.reviewed` equal section 2.1's apart from comments (compared by hand, P1 3). So the stub's update to
+draft 3 or later changes that pin in the same commit and reruns `experiments.py selfcheck`; if section 2.1's Lean
+changed, the closure review's statement is re-reviewed before any table is frozen. Draft 4 changes no Lean.
 
 ## 14. Draft 2: the statement review's corrections
 
@@ -1489,3 +1528,27 @@ Definitions changed or added: `lexPred`, `lexTerm`, `lexCovers` (new), `renderCh
 (docstring only). Diagnostics: D14d (new); the D15 fixture. Fixtures: C-d (new); the SR-6 fault-order fixture. Plan:
 AT-1w (new), with the `reports` route kind of section 10 item 6. Every other statement and definition is draft 2's,
 unchanged.
+
+## 16. Draft 4: phase 1
+
+Phase 1 ([docs/research/attitudes-phase1.md](../research/attitudes-phase1.md)) ran the pilot AT-0p and prepared E1
+and E2 without running them (no model calls). Its results reach this spec only through the frozen table's inputs
+and one admitted English row; no Lean statement, definition, diagnostic or fixture value changes, so nothing here
+needs re-elaboration and the stub is not edited. The PLAN (draft 5, sections 4, 9 and 10) carries the protocol, the
+results and the triggers.
+
+| # | Change | From | Where |
+|---|---|---|---|
+| P1-1 | E1 and E2 are DEFERRED; `table` stays empty and reviewed; SR-8's first step waits on the DRI's authorisation and its confirmation of the protocol (G1–G6) | P1 3, 4 | status; 12 |
+| P1-2 | The closure review's resolution is one rule: the weaker word of a derived entry whose item failed leaves `lowerBound`, with every pair and premise-3 entry naming it, until `Table.reviewed` holds. The debate-round-3 items for entries derived without a direct item are empty by construction, since E1 asks every pair (earlier word first, G1) and E2 every word's premise-3 item (G3). `Table.reviewed` and its fixtures are unchanged | G1, G3, G4 | 2.1; 12 |
+| P1-3 | "P, and X does not know that P" is admitted only if six E2 items reach 36 of 40: the three "Must P?" items and three "Does X know that P?" items | G5 | 3.1; 11 item 16; 12 |
+| P1-4 | The stub's sha256 pin in phase 1's emitter, and what updating the stub must do with it | P1 3 (`8538355c`) | 13 |
+| P1-5 | The status's step "the stub updated to draft 2" reads "to the current draft" (draft 3's Lean, which this draft keeps), as PLAN draft 4 already said | — | status |
+
+Measured context, not a change: AT-0p's A4 (P1 2) found that the untyped repair, with the case false and Claude
+knowingly engaging in it, answers UNDECIDED in all seven pilot rules. In the typed profile the matching point is
+F-AT1's M2 (`knows` true, the category false), where the frame fails factivity (section 7.1), and the layered route
+refuses it with the pack's first failing label (PLAN AT-2). So the gap F-AT1's M2 covers is now measured on the
+pilot, not only argued.
+
+Statements changed or added, for the re-review: none. Definitions: none. Diagnostics: none. Fixtures: none.

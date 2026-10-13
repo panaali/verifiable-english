@@ -1,6 +1,10 @@
 # Typed attitudes as conditions of norms (`attitudes@0`): buildable plan
 
-> **Status.** Draft 4, 2026-10-13, branch `design/attitudes`. Draft 1 (2026-10-12, at `49de179e`) was debated by
+> **Status.** Draft 5, 2026-10-13, branch `research/attitudes-p1`. Draft 5 applies phase 1 (pilots and
+> pre-registered experiments, [docs/research/attitudes-phase1.md](../research/attitudes-phase1.md), cited as
+> **P1 n** for its section n; its review `manage-agents/attitudes-p1-review.final.md`, FIX, applied in
+> `8538355c`–`0f07bb4c`). Phase 1's six gaps in the pre-registration are cited as **G1–G6**. Drafts 1 to 4
+> were written on branch `design/attitudes` (draft 4: 2026-10-13). Draft 1 (2026-10-12, at `49de179e`) was debated by
 > Fable and Astra (`manage-agents/debates/design-attitudes/`, converged REVISE after round 3) and revised by the
 > DRI's cross-plan synthesis of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`). Draft 2 made
 > exactly those edits and no others; the debate's items are cited as **A1–A6** (Astra) and **F3–F7** (Fable), the
@@ -22,6 +26,28 @@
 > AT-1's proofs establish the statements. The build starts only by DRI decision, after the dependencies of section 5
 > land (research wave rule `STOP_BEFORE_BUILD=1`).
 
+**Changes in this draft (draft 5, from phase 1).** No batch is cancelled and none is added; no Lean statement
+changes; the cross-plan edits (edit 1–10) and the synthesis's owners, shared items and build order are unchanged.
+
+1. **AT-0p measured: PASS on A1–A7** (P1 2). Its estimates are now measured values: 2,951 claimed bytes unchanged,
+   open terms 33 → 46, the seven audit-case points UNDECIDED → SETTLED no. A8 (the next audit's verdict on the seven
+   units) and AT-0p's landing in the pilot are **DEFERRED**, with their triggers (section 9). Sections 0, 1, 2
+   (D-A10), 3.8, 4 (AT-0p), 5 and 6 updated.
+2. **E1 and E2: DEFERRED** (no model calls in phase 1); items, seeded orders and scorers are ready (P1 3). Their
+   trigger and what each gates are in section 9.
+3. **E1/E2 protocol fixed before any answer** (G1–G6, P1 5), each a gap in draft 4's pre-registration, not a moved
+   bar: pair direction (G1), one fresh context per call (G2), E2 asks the knows → thinks item for all eight words so
+   it does not wait for E1 (G3), the closure resolution's one rule (G4), the framing and E2's wordings, with three
+   added "Does Claude know that P?" items for the asserted-not-know form (G5), and the treatment of answers that
+   are not yes, no or cannot tell (G6). The DRI confirms or changes them before the first call (section 7).
+4. **The debate-round-3 closure items are empty by construction** (P1 3, G4): E2 lists no such items; the closure
+   review and its `#guard` are unchanged.
+5. **"P, and X does not know that P" needs six items, not three** (G5): D-A7, 3.7, E2 and the checklist.
+6. **E2's cost** is 1,040 calls (26 items × 40), not draft 4's implied 600–920 (40 × (15 + |`lowerBound`|));
+   E1's 1,440 is unchanged (section 9).
+7. **New sections:** 9 (phase-1 record: results, what each gates, DEFERRED triggers) and 10 (cross-plan issues for
+   the DRI: four, none changing a shared item).
+
 ## 0. Summary
 
 The constitution's latest audit rejected the seven hard constraints (u0165.s01–s07, 874 B) because a mistaken but
@@ -36,8 +62,10 @@ extra base premises (`BaseAdmissibleX`, `Transfers`). No modal checker, no numbe
 mode (edit 7). Thresholds such as "quite likely" stay open terms with a decider. Intentional action ("intentionally
 does …") stays a hand-named open term until a reviewed act-performance bridge exists (edit 3).
 
-**Pilot path** (arrows are merge order; F7, debate round 3). AT-0p (pilot, no code, now) → E1 and E2 in parallel,
-then the closure review, then the table is frozen → AT-0 PASS → AT-1w → AT-1 → AT-2 → AT-3a → AT-3b → AT-6a
+**Pilot path** (arrows are merge order; F7, debate round 3). AT-0p (pilot, no code; measured in phase 1, PASS on
+A1–A7; landing in the pilot DEFERRED, section 9) → E1 and E2 in parallel (DEFERRED: they wait for the DRI's
+authorisation of their model calls; with G3, E2 does not wait for E1), then the closure review, then the table is
+frozen → AT-0 PASS → AT-1w → AT-1 → AT-2 → AT-3a → AT-3b → AT-6a
 (strict companion, structured input, measured) → **DRI go/no-go** → AT-4 → AT-6b (main translation measured) → AT-5
 (English; after a "go" it may start once AT-3b and `qa-q2` have merged, alongside AT-4). About 46 to 55 hours by
 the table's estimates, experiments included (estimates, not evidence of speed). Off the path, outside core approval
@@ -46,7 +74,11 @@ and each with its own statement review: AT-7 (nesting), AT-8 (`reports@0` units 
 
 **The smallest batch that moves a pilot number** is AT-0p: the pilot rewrites the seven guards with the existing
 language, so the seven "mistaken belief" points move from UNDECIDED to SETTLED no and the seven units can pass the
-next audit. The smallest *product* batch that moves one is AT-3b (it needs AT-1w to AT-3a), measured by AT-6a. Every
+next audit. Phase 1 measured exactly that on working copies of the pinned run (P1 2): 7 of 7 points UNDECIDED →
+SETTLED no, claimed bytes unchanged at 2,951, open terms 33 → 46. It also measured the untyped repair's limit: at
+the impossible point (the case false, Claude knowingly engaging in it) all seven rules answer UNDECIDED (A4), which
+only typed factivity removes. The smallest *product* batch that moves one is AT-3b (it needs AT-1w to AT-3a),
+measured by AT-6a. Every
 product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DRI decides go or no-go after AT-6a
 (F7), on AT-6a's measured results and the next audit's verdict on AT-0p's seven units, before AT-4 and AT-6b.
 
@@ -61,6 +93,11 @@ product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DR
 | Co-blocker `modality/belief` | 628 units; bytes not summed (**estimate** ≈ 106 kB upper bound) | grep count of list entries |
 | Other attitude-conditioned rules | 7 units, 1,070 B, co-blocked | R 2.8 |
 | UDHR | 0 B for this design (upper 97 B) | R 2.5 |
+| AT-0p: audit-case points (case false, thinks-quite-likely true) | 7 of 7 UNDECIDED → SETTLED no | P1 2, A1 and A5; `docs/research/evidence/attitudes/at0p-probe.json` |
+| AT-0p: impossible points (case false, knowingly true) | 7 of 7 UNDECIDED (the untyped repair cannot refuse them) | P1 2, A4 |
+| AT-0p: claimed bytes | 2,951 unchanged (CHECKED 73, LABELLED 349, OPEN 2,529; `bytes_by_status` identical) | P1 2, A6; `at0p-measure.json` |
+| AT-0p: open terms | 33 → 46 in the main translation (14 added, 1 removed); 44 in the strict companion | P1 2, A7 |
+| AT-0p: everything else | 21 of 21 other probe points and 4 of 4 conflict checks as recorded; render byte-identical outside the seven "Open reading" lines | P1 2 |
 
 ## 2. Decisions
 
@@ -88,9 +125,11 @@ product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DR
   bar. The frozen table records, for each admitted entry, the E1 or E2 item that passed it, and a closure review
   (AT-0, a Lean `#guard`) checks that the reflexive-transitive closure of the frozen pairs adds no pair, and no
   premise-3 word, without its own passing item: "knows → strong" and "strong → weak" yield "knows → weak" even when
-  that direct item failed. If a derived entry's item failed or is missing, the weaker word leaves `lowerBound`, or
-  the scale pair is dropped, before freezing. Decided before AT-0 closes, because the profile's meaning freezes when
-  it ships.
+  that direct item failed. If a derived entry's item failed, the weaker word of that entry leaves `lowerBound`,
+  with every pair and premise that names it, and this repeats until the closure is clean, before freezing (G4: of
+  draft 4's two options, "the weaker word leaves" or "the pair is dropped", the only one with a unique outcome).
+  No derived entry can lack a direct item: E1 asks all 28 pairs and E2 every word's premise-3 item (P1 3). Decided
+  before AT-0 closes, because the profile's meaning freezes when it ships.
 - **D-A5. Likelihood words are lower bounds and stay open.** Only words whose lower-bound reading E1's certainty
   item confirms are admitted (`Scale.lowerBound`, A1); any other word, including words that point downward such as
   "unlikely", is refused by `attitudes@0`. For an admitted word, "quite likely" means "quite likely or more"; the
@@ -102,7 +141,9 @@ product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DR
 - **D-A7. One reading.** Refused, each with one-reading rewrites whose readings are exactly the form's candidate
   readings, read at the form's category (a guard in its rule's context, or a whole rule) (AT-5, SR-4, SR-5): a
   negated "knows" (the form "P, and X does not know that P", with its content asserted in the same condition, is
-  admitted only if its E2 items reach 36 of 40, A4; E2's record holds that decision before AT-0 PASS, SR-8);
+  admitted only if its six E2 items reach 36 of 40, A4, G5: the three asserted-content items and three "Does Claude
+  know that P?" items, since the first three test only that P is asserted; E2's record holds that decision before
+  AT-0 PASS, SR-8);
   "unless X knows that P" (its presupposition is unresolved; debate round 3); "does not think it *w* that"
   (neg-raising); bare "thinks that" (as `reports@0` refuses it); attitude adverbs ("knowingly", "intentionally",
   "deliberately"); a holder pronoun that does not resolve to a variable of the rule. AT-0 states a
@@ -125,8 +166,9 @@ product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DR
   (`VE.Acts.table`, which is defined only for *must*, *need not*, *may*, *must not* and *has the right to*).
   Attitudes defines no distribution of its own (edit 4).
 - **D-A10. Residual honesty.** Generated open terms count in the residual like any other. The constitution's count
-  rises by an **estimated** 20: 21 open terms (14 generated, 7 hand-named intention terms, F4) replace one hand-named
-  term; how the residual is displayed is not this plan's decision.
+  rises by 20 in all: 21 open terms (14 generated, 7 hand-named intention terms, F4) replace one hand-named term.
+  The first 13 are measured: AT-0p took the main translation from 33 to 46 (P1 2, A7); AT-6a's further 7
+  (46 → 53) are an **estimate**. How the residual is displayed is not this plan's decision.
 
 ## 3. Design
 
@@ -218,7 +260,7 @@ kinds' decoder, `decodeAttDoc`, also decodes the case's English lexicon with the
 | "X believes that P", "X wants Y to VP", "X intends that P", "X says that P" | `reports@0`'s acts | admitted ("intends to VP" and "wants Y to VP" with an act phrase are not admitted. Intentional action stays residual until a reviewed act-performance bridge, designed by events-time-causation (ET-D2), fits this profile's contract: quantifier-free content over the base vocabulary, one slot. Act-phrases landing does not admit them; edit 3). "X wants Y to VP" only for one unary base predicate on the slot whose wording `reports@0`'s test turns into "Y to VP"; any other `wants` content is refused (SR-2) |
 | a slot its content does not mention; a slot at a constant | one sentence for two keys | refused at admission; a content about a constant is written closed; de re versus de dicto about a named constant is a later admission with its own E2 items (SR-2) |
 | a condition naming a predicate or constant with no entry in the document's lexicon | no sentence | refused at admission (D14d, RC-1) |
-| "P, and X does not know that P" | not knows, content asserted | admitted only if its three E2 items reach 36 of 40; otherwise refused with its rewrites (A4) |
+| "P, and X does not know that P" | not knows, content asserted | admitted only if its six E2 items reach 36 of 40 (three "Must P?", three "Does X know that P?"); otherwise refused with its rewrites (A4, G5) |
 | "unless X knows that P" (carve-out) | unresolved presupposition | refused, with rewrites; E2's three "unless" items are evidence for a later admission with its own statement review only (debate round 3) |
 | "X does not know that P" elsewhere | two readings (with and without P) | refused `NegatedFactive`, with one-reading rewrites |
 | "X does not think it *w* that P" | neg-raising: two readings | refused `NegRaising`, rewrites: "it is not the case that X thinks it *w* that P"; "X thinks it *w* that it is not the case that P" |
@@ -232,8 +274,10 @@ readings are exactly those candidates, pairwise distinct (SR-4, SR-5). The spec'
 
 ### 3.8 Limits and UNKNOWN
 
-No new budget. Generated predicates count against `MAX_PREDICATES` (256; the constitution's main translation uses
-68 now and would use **about** 88: 68 − 1 hand-named term + 14 generated + 7 hand-named intention terms). Above it,
+No new budget. Generated predicates count against `MAX_PREDICATES` (256; the constitution's main translation used
+68 at the pinned run and would use **about** 88: 68 − 1 hand-named term + 14 generated + 7 hand-named intention
+terms. AT-0p's 14 binary open terms replace the one term, **about** 81; phase 1 measured open terms, not the
+predicate count, P1 2). Above it,
 admission refuses (`InvalidInput`), never a verdict. A document's scale is bounded by a `VE.Closure.Caps` value,
 checked by QS-1's `Order.admit` inside `WellFormedAtt` (A5, edit 1). Every UNKNOWN of the routes stays UNKNOWN.
 
@@ -255,7 +299,7 @@ checked by QS-1's `Order.admit` inside `WellFormedAtt` (A5, edit 1). Every UNKNO
 | Refusals and source-word reading sets | rows in english-lean's catalogue | AT-5 adds rows, each with its category and candidate readings (SR-5), no separate refusal table |
 | English lexical data and its validity | the English grammar: `VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`, `Lexicon.failures`; decoders `Env.decode`, `Overlay.decode`, `Run.decodeLexicon` | carried by the document (`AttDoc.lex`), checked in `WellFormedAtt` (D6a, D6b, and per condition D14d, RC-1), decoded at AT-3a; no attitude-local template classifier (SR-3) |
 | The `wants` verb-phrase test | `reports@0` (`_subject_split`, `_infinitive`, `_finite` in `ve/report_english.py`) | **moves** into `lean/VE/Attribution/Words.lean` in AT-1w, which deletes the Python copy in the same batch (SR-3, RC-4) |
-| The hand-named open term `restricted_action_knowing_or_quite_likely` | pilot translation | deleted by AT-0p, then AT-0p's atoms by AT-6 |
+| The hand-named open term `restricted_action_knowing_or_quite_likely` | pilot translation | deleted by AT-0p (measured on working copies, P1 2; lands with the pilot's next run, section 9), then AT-0p's atoms by AT-6 |
 
 ### 3.10 Conservativity
 
@@ -287,9 +331,9 @@ reopens only that statement.
 
 | # | Batch | Hours | Owner | Needs |
 |---|---|---:|---|---|
-| AT-0p | Pilot repair with the existing language (no product code) | 2 | pilot runner | — (first step of the hard-constraint queue, edit 10) |
-| E1 | Likelihood-word order and lower-bound reading (experiment) | 2–3 | experiment runner | — |
-| E2 | Factivity, knows → believes, knows → thinks it *w* per word and per derived pair, negated "know", "unless", "P, and X does not know that P" (experiment) | 2 | experiment runner | — |
+| AT-0p | Pilot repair with the existing language (no product code). **Measured in phase 1: PASS on A1–A7; A8 and the landing DEFERRED** (section 9) | 2 | pilot runner | — (first step of the hard-constraint queue, edit 10) |
+| E1 | Likelihood-word order and lower-bound reading (experiment). **DEFERRED** (section 9): items, orders and scorer ready | 2–3 | experiment runner | the DRI's confirmation of G1, G2, G5, G6 and authorisation of 1,440 calls |
+| E2 | Factivity, knows → believes, knows → thinks it *w* for all eight words (G3), negated "know", "unless", "P, and X does not know that P" with its six items (G5) (experiment). **DEFERRED** (section 9) | 2 | experiment runner | the DRI's confirmation of G2–G6 and authorisation of 1,040 calls; not E1 (G3) |
 | AT-0 | Statement spec `docs/spec/attitudes.md`, stub elaborated against main, small-scope counterexample search, statement review (round 1: FIX, SR-1 to SR-8; re-check: FAIL, RC-1 to RC-4; re-review of the changed statements) | 3–4 | planner | E1, E2 results and the closure review |
 | AT-1w | `reports@0`'s `wants` test moved into Lean, its Python copy deleted, `reports@0`'s Python English reading Lean's through a `reports` kind (RC-4) | 3–4 | Lean, Python | AT-0 PASS |
 | AT-1 | Lean core: syntax, keys, elaboration, frame, semantics, admission with the lexicon and `renderable`, theorems, fixtures | 5–6 | Lean | AT-1w; QS-1 merged (edit 1) |
@@ -326,12 +370,39 @@ branch because VE cannot know, with untyped terms, that knowing implies the cate
 - **Probe points to add** (four per rule, `probes/unspecified-probe.json`): case false and thinks-quite-likely true
   (expected SETTLED no, the audit's case); case true and knowingly true (SETTLED no); neither (UNDECIDED); case
   false and knowingly true (UNDECIDED: an impossible situation the untyped language cannot refuse).
-- **Expected numbers (estimates until measured):** claimed bytes unchanged (2,951); the 7 units (874 B) become
-  candidates for audit verification; open terms 33 → 46; the seven audit-case points UNDECIDED → SETTLED no.
+- **Expected numbers (draft 4's estimates, pre-registered in P1 1.1 and now measured, below):** claimed bytes
+  unchanged (2,951); the 7 units (874 B) become candidates for audit verification; open terms 33 → 46; the seven
+  audit-case points UNDECIDED → SETTLED no.
 - **Not claimed:** typing. AT-6a replaces the fourteen open terms with generated attitudes and seven hand-named
   intention terms (F4).
 - **Queue (edit 10).** AT-0p is the first step of the u0165.s01–s07 queue: `AT-0p → SC-1b → SC-2 → AT-6a/AT-6b →
   WG-5`; each step starts from the translation as the previous step left it.
+
+**Result (phase 1, P1 2).** Run on two working copies of the pinned run `run-20261012T1800Z`, with the run's own
+scripts and probe method, after a byte-identical reproduction of its recorded translation and probe (script
+`research/attitudes/at0p.py`, end to end `run_at0p.sh`; evidence `docs/research/evidence/attitudes/at0p-*.json`).
+
+| # | Bar (P1 1.1) | Measured | Verdict |
+|---|---|---|---|
+| A1 | case false, thinks-quite-likely true: SETTLED no | 7 of 7 | **PASS** |
+| A2 | case true, knowingly true: SETTLED no | 7 of 7 | **PASS** |
+| A3 | neither: UNDECIDED | 14 of 14 (case true and case false) | **PASS** |
+| A4 | case false, knowingly true: UNDECIDED | 7 of 7 | **PASS** |
+| A5 | the audit-case points UNDECIDED → SETTLED no | 7 × UNDECIDED reproduced → 7 × SETTLED no | **PASS** |
+| A6 | claimed bytes unchanged (2,951) | `bytes_by_status` identical: 2,951 = CHECKED 73 + LABELLED 349 + OPEN 2,529 (CHECKED + OPEN = 2,602, also unchanged) | **PASS** |
+| A7 | open terms 33 → 46 | 46 (strict companion: 44) | **PASS** |
+| A8 | the 7 units (874 B) become candidates for audit verification | needs the next audit | **DEFERRED** (section 9) |
+
+Not bars, also measured: the other 21 probe points and the run's four conflict checks give their recorded answers;
+the main translation keeps the run's assertions (premises `model`, plan `enumerate` with 8 choices, CONFLICT-FREE,
+coverage 100 %); the rendering changes only the seven rules' "Open reading" lines. **Observation:** the rendering
+names the new open terms by identifier ("… has the recorded relation "thinks_quite_likely_1" to that situation"),
+as it named the deleted one, so an auditor reading only the rendering sees neither the description nor the factors
+(section 7, risks; section 10, item 4).
+
+**Landing.** AT-0p is measured, not landed: the pilot directory was read only in phase 1. The pilot runner lands
+it in the next constitution run with `at0p.py` (copy, apply) on that run's inputs; SC-1b starts from that
+translation (section 9, section 10 item 2).
 
 ### E1. Likelihood words: order and lower bounds (experiment, 2–3 h)
 
@@ -350,15 +421,45 @@ think it *w* that the file is safe?".
 - Nothing else is concluded. This measures agreement among proxy readers, not truth and not human readers. Cost
   **estimate**: 40 × 36 = 1,440 short calls, under the usage cap rules.
 
+**Protocol fixed before any answer (draft 5; G1, G2, G5, G6 from P1 5).** The bars above are draft 4's, quoted in
+P1 1.2 before any run, and do not move. These say what draft 4 left unsaid. They are phase 1's proposals, written
+into `e1-items.json` and `research/attitudes/experiments.py` except where marked, and the DRI confirms or changes
+each before the first call; after it, nothing here changes.
+
+- **G1, pair direction.** Each of the 28 pairs is asked once, the earlier word in the list above as the first
+  sentence, so a passing item is the scale pair (earlier, later). Item ids `E1.pair.<a>.<b>` and `E1.cert.<w>`.
+- **G2, independence.** One fresh context per call: no system prompt beyond the preamble, no earlier turn. The 40
+  "sessions" are 40 readers per item; the seeded order (`random.Random("attitudes-E1")`, 40 orders) fixes only the
+  call order.
+- **G5, framing.** Preamble: "Read the text and answer the question as an ordinary reader of English. Answer with
+  exactly one of: yes, no, cannot tell." Pair items label their parts "First sentence:", "Second sentence:",
+  "Question:"; certainty items label only "Question:". These choices can move answers; the DRI fixes them.
+- **G6, answers that are not yes, no or cannot tell.** The first line is read; anything else is invalid. An invalid
+  answer is not a yes (it counts against every yes bar) and, for the bar "at most 2 answer no", **counts as a no**
+  (so 36 yes and 4 "Not necessarily." fails, as the bar intends). The invalid count is reported per item. Reader
+  settings (temperature, output limit, extended thinking) are the reader's defaults, recorded with the answers.
+  *Not yet in the scorer:* `experiments.py` still counts invalid as neither for the no cap; it changes, with a
+  self-check case at the boundary, before the run and only after the DRI's decision.
+
+**Status: DEFERRED** (P1 3; section 9). Ready: 36 items, 40 seeded orders, the scorer with the bars as constants
+(`PAIR_YES, PAIR_MAX_NO = 36, 2`; `CERT_YES = 34`), refusal of an answer set without exactly one answer per item
+and reader, and a self-check of 22 boundary cases (`docs/research/evidence/attitudes/e-selfcheck.json`). Cost: 1,440
+calls, as estimated. **Gates:** `table.above` and `table.lowerBound`, hence every `thinks w` mode and frame premise
+4; through the closure review, AT-0 PASS.
+
 ### E2. Factivity and the knowing entailments (experiment, 2 h)
 
 Same protocol. Items: three factivity items ("Claude knows that the file is safe. Must the file be safe?"); three
-"knows → believes"; one "knows → thinks it *w*" item per lower-bound word (A1); one item for each pair the closure
-of E1's pairs derives without a direct E1 item, and for each premise-3 word reached only through the closure
-(debate round 3); three negated-"know" items ("Claude does not know that the file is safe. Must the file be
-safe?", where the expected answer splits); three "unless X knows that P" items (for example, "… unless Claude knows
-that the user is an adult. The user is not an adult. Must Claude not share the file?"); three "P, and X does not
-know that P" items (A4).
+"knows → believes"; one "knows → thinks it *w*" item for each of E1's eight words, scored only for the words that
+enter `lowerBound` (G3; draft 4 asked it per lower-bound word, which made E2 wait for E1); three negated-"know"
+items ("Claude does not know that the file is safe. Must the file be safe?", where the expected answer splits);
+three "unless X knows that P" items (for example, "… unless Claude knows that the user is an adult. The user is not
+an adult. Must Claude not share the file?"); six "P, and X does not know that P" items (A4, G5): three asking "Must
+P?" (expected yes) and three asking "P, and Claude does not know that P. Does Claude know that P?" (expected no).
+Draft 4's further items, one for each pair the closure of E1's pairs derives without a direct E1 item and for each
+premise-3 word reached only through the closure (debate round 3), are **empty by construction** (P1 3): E1 asks
+all 28 pairs and E2 all eight words, so the closure can reach only an entry whose own item failed, which the
+closure review below resolves (G4).
 
 - Frame premise 1 ships iff all three factivity items reach 36 of 40. (If not, `knows` is not admitted at all.)
 - Frame premise 2 ships iff its three items reach 36 of 40. Premise 3 ships per word, iff that word's item reaches
@@ -366,12 +467,28 @@ know that P" items (A4).
 - **Closure review**, then freezing. The frozen table records, for each admitted entry, the item that passed it. A
   Lean `#guard` (`Table.reviewed`, evaluated through QS-1's closure) checks that the reflexive-transitive closure of
   the frozen pairs adds no pair, and no premise-3 word, without its own passing item. If a derived entry's item
-  failed or is missing, the weaker word leaves `lowerBound`, or the scale pair is dropped, before freezing.
+  failed, the weaker word of that entry leaves `lowerBound`, with every pair and premise that names it, until the
+  closure is clean, before freezing (G4, D-A4; `resolve` in `experiments.py`, its output reviewed by Lean).
 - The negated-"know" items are expected to split (that is why D-A7 refuses the form); if instead 36 of 40 agree on
-  one reading, AT-0 records it and keeps the refusal anyway (one reading must not depend on a majority).
-- "P, and X does not know that P" is admitted only if its three items reach 36 of 40; otherwise it is refused, with
-  its rewrites. The "unless" items are evidence only: the form stays refused whatever they show, and a later
-  admission needs its own statement review (debate round 3).
+  one reading, AT-0 records it and keeps the refusal anyway (one reading must not depend on a majority). Invalid
+  answers are left out of that agreement count (G6).
+- "P, and X does not know that P" is admitted only if all six of its items reach 36 of 40 (G5; draft 4 said its
+  three items, but those test only that P is read as asserted, so they could not admit the form); otherwise it is
+  refused, with its rewrites. The "unless" items are evidence only: the form stays refused whatever they show, and a
+  later admission needs its own statement review (debate round 3).
+
+**Protocol fixed before any answer (draft 5; G2–G6 from P1 5).** As E1's (G2, G5's preamble and "Question:" label,
+G6), plus: G3 and G5's three added items above, and E2's wordings, which draft 4 did not give, are those of
+`docs/research/evidence/attitudes/e2-items.json` (seed `attitudes-E2`). The DRI confirms or changes each before the
+first call. *Not yet in the item file and scorer:* G5's three added items (the scorer's decision for the form is
+"refused" whatever the counts until they exist, `8538355c`) and G6's agreement rule; both are added, with
+self-check cases, before the run.
+
+**Status: DEFERRED** (P1 3; section 9). Ready: 23 items, 40 seeded orders, the scorer (`E2_REACH = 36`), the
+emitter of the Lean `Table` literal and its review by Lean's `Table.reviewed` (through the AT-0 stub, pinned by
+sha256). Cost: 1,040 calls (26 items × 40; 920 without G5's three). **Gates:** `table.factive` (and with it every
+`knows` condition), `table.knowsBelieves`, `table.knowsThinks`; the admission of "P, and X does not know that P";
+the closure review and freezing; through them, AT-0 PASS (SR-8).
 
 ### AT-0. Statement spec and review (planner, 3–4 h)
 
@@ -402,6 +519,12 @@ know that P" items (A4).
   RC-4 (spec section 15): D14d, the lexicon entry of every symbol a condition names (RC-1); the SR-6 fault-order
   fixture (RC-2); the D15 fixture's lexicon (RC-3); and AT-1w, so that the `wants` test has one owner at every merge
   (RC-4). The stub is updated to spec draft 3, not 2, before the steps above.
+- **Phase 1 (draft 5).** E1 and E2 are DEFERRED (section 9), so SR-8's first step has not started and AT-0 PASS
+  waits on their trigger. Spec draft 4 changes no Lean statement. The stub's `Table` and `Table.reviewed` are the
+  closure review E2's emitter calls, and `experiments.py` refuses a stub whose sha256 is not the pinned
+  `2178fb6e…` (`8538355c`). So updating the stub to spec draft 3 or later also updates that pin in the same commit
+  and reruns the self-check; if `Table` or `Table.reviewed` changed, the closure review's statement is re-reviewed
+  before any table is frozen.
 - Done when the stub elaborates, the search finds no counterexample, the spec is committed, and the review
   converges on PASS.
 
@@ -1098,8 +1221,9 @@ hand-named intention terms ("…intentionally does the weapons uplift in that si
 and `environment.attitudes = {"holders": ["claude_instance"], "scale": [], "decided_by": "unresolved_decider"}`; the
 cases carry the companion's English lexicon, as AT-3a's decoder requires (SR-3).
 Re-run the unspecified probe and the conflict check. Report, measured: the points of the seven rules (expected: the
-audit's case SETTLED no; unknowing UNDECIDED; impossible points refused), the open terms (expected 21: 14 generated,
-7 hand-named), predicates used, time (one run, not a comparison), `DELTA` against AT-0p's run. No model calls. The
+audit's case SETTLED no; unknowing UNDECIDED; impossible points refused, where AT-0p measured UNDECIDED, P1 2 A4),
+the open terms (expected 21 for the seven rules: 14 generated, 7 hand-named; the companion from AT-0p's measured 44
+to **about** 51), predicates used, time (one run, not a comparison), `DELTA` against AT-0p's run. No model calls. The
 main translation is unchanged until AT-6b. The report says it checks structured input, not English: the zero-training
 claim is accepted only after AT-5 and an audit of the English Lean renders (debate round 3).
 
@@ -1317,7 +1441,8 @@ Formalise 12 honesty units (u0112.s01 to s07, u0113.s02, u0114.s03, u0115.s01, u
 
 | Batch | Waits for | Hand-written shared files | Generated files (regenerate) |
 |---|---|---|---|
-| AT-0p | — | (pilot directory only); first in the hard-constraint queue `AT-0p → SC-1b → SC-2 → AT-6a/AT-6b → WG-5` (edit 10) | — |
+| AT-0p | — (measured in phase 1; lands with the pilot's next constitution run, section 9) | (pilot directory only); first in the hard-constraint queue `AT-0p → SC-1b → SC-2 → AT-6a/AT-6b → WG-5` (edit 10) | — |
+| E1, E2 | the DRI's confirmation of G1–G6 and authorisation of 2,480 model calls (section 9) | none (research scripts and evidence under `research/attitudes/`, `docs/research/evidence/attitudes/`) | — |
 | AT-1w | AT-0 | `lean/VE/Attribution/Run.lean` (one `reports` kind), `lean/ResponseShape/Schemas/Reports.lean`, `lean/ResponseShape/Encoders/Reports.lean` (skeleton row), `ve/reports_route.py`, `ve/reports.py`, `ve/report_english.py` (`lean/VE/Attribution/Words.lean` is new here, with `wantsPhrase?` only; SR-3, RC-4) | `reports.json`, route cases, as AT-1 |
 | AT-1 | AT-1w; QS-1 (edit 1) | none | `lean/VE.lean`, `lean/VE/Audit.lean`, frozen inventory, axioms, statements |
 | AT-2 | AT-1; PK-1 (after `rd-9-int`) | one provider registration line on `lean/VE/NormDefaults/Layered.lean`, first in PK-1's integration order AT-2/AT-3a → WG-3 → ET-4 → QT-B2 | as AT-1 |
@@ -1349,13 +1474,14 @@ Sibling designs: **scope** (u0173.s01 attached to the seven rules, needed for it
 
 ## 6. Expected effect per batch
 
-All **estimates** until the pilot batches measure them.
+AT-0p's row is **measured** (phase 1, P1 2), except its audit-verifiable bytes, which wait on A8; every other row is
+an **estimate** until its pilot batch measures it.
 
 | Batch | Claimed bytes | Audit-verifiable bytes | Answers |
 |---|---:|---:|---|
-| AT-0p | 0 | 874 (7 units) | 7 audit-case points UNDECIDED → SETTLED no; open terms 33 → 46 |
+| AT-0p (measured) | 0 new; 2,951 unchanged | 874 (7 units) if the next audit accepts them (A8, DEFERRED) | 7 audit-case points UNDECIDED → SETTLED no; open terms 33 → 46 (companion 44); the 7 impossible points stay UNDECIDED |
 | AT-0 to AT-3b | 0 | 0 | none (no pilot uses them yet) |
-| AT-6a | 0 | 874 typed (companion) | impossible points refused; open terms 46 → 53 (21: 14 generated, 7 hand-named) |
+| AT-6a | 0 | 874 typed (companion) | impossible points refused (AT-0p: UNDECIDED); open terms in the main translation 46 → 53 at AT-6b, the companion 44 → 51 (21 for the seven rules: 14 generated, 7 hand-named), counted from AT-0p's measured terms; SC-1b and SC-2 land in between (edit 10) and may change the starting counts |
 | AT-4 + AT-6b | 0, or 263 with the scope design | 874 typed (main) | the "intentionally" readings stay residual until the act-performance bridge (edit 3); with premise 3, `guard_collapse` shows the guard's verdicts do not depend on the hand-named intention term |
 | AT-5 | 0 | 0 | the sentences of 3.1 writable in English |
 | AT-7 | 0 now; up to 1,070 | — | — |
@@ -1384,11 +1510,20 @@ NORTH-STAR row 8 (0.1920 from tags) recomputed on this basis: the buildable part
 - **Open (for the DRI):** AT-8's owner (attribution or attitudes); how the residual displays 21 open terms (14
   generated, 7 hand-named); whether "is aware that" may be an input synonym of "knows that" (only if E2-style
   agreement is shown; else refused with that rewrite); the go/no-go after AT-6a (F7).
+- **Open (for the DRI, before E1 and E2's first call; draft 5):** confirm or change G1 (pair direction), G2 (one
+  fresh context per call), G3 (all eight knows → thinks items in E2), G4 (the weaker word leaves `lowerBound`),
+  G5 (the preamble and labels, E2's wordings, the three added "Does Claude know that P?" items) and G6 (invalid
+  answers count as no for E1's no cap and are left out of the negated-"know" agreement; reader settings recorded),
+  as written in section 4; and authorise E1's and E2's 2,480 calls under the usage cap. Each decision is recorded
+  in this plan before any answer exists.
 - **Risks:** the readings route is being rebuilt (AT-4 may need a second statement pass); E2 may reject premise 3
   for "quite likely", in which case `guard_collapse` has no instance on the pilot and the hand-named intention term
   changes verdicts; one slot may be too narrow for the honesty and intentions sections (AT-7 and E4 measure before
   widening it); PK-1, QS-1 and AR-10's table are reviewed by their owners, and a changed interface reopens the
-  statements that name it.
+  statements that name it. From phase 1: the rendering names AT-0p's open terms by identifier, not by their
+  descriptions and factors (P1 2), so A8's audit may judge the identifiers rather than the rules unless it is given
+  the open-term records; AT-5's Lean wording templates remove this for generated attitudes, not for hand-named
+  terms (section 10, item 4).
 
 ## 8. Review checklist (for AT-0)
 
@@ -1404,7 +1539,10 @@ NORTH-STAR row 8 (0.1920 from tags) recomputed on this basis: the buildable part
   combines).
 - E1's pairs and E2's decisions are written into `table` and `entailsMode` before PASS, each entry with the item
   that passed it, and the closure review `#guard` holds (debate round 3). E2's record includes the decision on
-  asserted-content negated knowledge (SR-8).
+  asserted-content negated knowledge, taken on all six of its items (SR-8, G5). A derived entry whose item failed
+  was resolved by G4's one rule, and the record says which words left `lowerBound` and why.
+- E1 and E2 ran under the protocol the DRI confirmed before the first call (G1–G6, section 4), and the item files,
+  orders and scorer used are the committed ones.
 - Every key a hypothesis names is in `keys A` (A3).
 - Every theorem has one `#guard` instance on F-AT1 or F-AT2, and the small-scope counterexample search finds none
   (debate round 3); after the review's corrections, the stub is updated and elaborated and the search rerun with the
@@ -1422,3 +1560,55 @@ NORTH-STAR row 8 (0.1920 from tags) recomputed on this basis: the buildable part
   and P0's answers are unchanged (SR-6); every statement's hypotheses suffice (`frame_unsaidFree` has `hw`, SR-1).
 - No Lean comment uses a word `lean/audit.py` forbids; no theorem name has a prime or exceeds about 57 characters
   with its namespace.
+
+## 9. Phase-1 record: results, what each gates, and DEFERRED triggers (draft 5)
+
+Phase 1 (P1) ran every pre-registered item that needs no model call, with its bars quoted from draft 4 before any
+run (`c0cf207c`). Batches **kept**: all. **Changed:** E2's item list (G3: all eight knows → thinks items; G5: six
+items for the asserted-not-know form; the debate-round-3 closure items dropped as empty by construction) and the
+closure resolution (G4). **Dropped or added:** none. Nothing in phase 1 cancels a product batch: E1 and E2 have
+produced no data, and AT-0p's A4 measures the limit the typed frame removes.
+
+| Item | Result | What it gates | Trigger (for DEFERRED) |
+|---|---|---|---|
+| AT-0p, A1–A7 | **PASS** (P1 2; section 4) | the data of the hard-constraint queue's first step; SC-1b's starting translation, once landed (C23); the motivation of AT-1 to AT-6a (A4) | — |
+| AT-0p, landing in the pilot | **DEFERRED** (the pilot directory was read only) | SC-1b (queue 4.4); A8 | the pilot runner's next constitution run: `research/attitudes/at0p.py` (copy, apply) on that run's inputs, then the run's own `nd.py all`, probe and conflict checks |
+| AT-0p, A8: the 7 units (874 B) audit-verifiable | **DEFERRED** | 874 B audit-verifiable; one of the two inputs of the DRI's go/no-go after AT-6a (F7) | the pilot's next audit of a run with AT-0p landed, given the open-term records with the rendering (section 7, risks); its timing in queue 4.4 is section 10, item 3 |
+| E1 | **DEFERRED** (no model calls in phase 1) | `table.lowerBound` (which words "thinks it *w*" admits), `table.above` (frame premise 4); through the closure review, AT-0 PASS | the DRI confirms G1, G2, G5 and G6 (section 7) and authorises 1,440 calls under the usage cap; before the first call, the scorer implements G6's no-cap rule with its self-check case |
+| E2 | **DEFERRED** (as E1) | `table.factive` (if it fails, `knows` is not admitted at all), `table.knowsBelieves`, `table.knowsThinks`, the admission of "P, and X does not know that P"; through the closure review, AT-0 PASS | the DRI confirms G2–G6 and authorises 1,040 calls; before the first call, the item file gains G5's three items and the scorer G6's agreement rule, with self-check cases. Does not wait for E1 (G3) |
+| E2's negated-"know" and "unless" items | **DEFERRED** with E2 | nothing: both forms stay refused whatever they show (D-A7); evidence for a later admission's own review | E2 |
+| Closure review and freezing `table` | **DEFERRED** | the frozen meaning of `attitudes@0`; AT-0 PASS (SR-8) | E1 and E2 scored; then `experiments.py table`, reviewed by Lean's `Table.reviewed` through the stub pinned by sha256 |
+| AT-0 PASS | **blocked** | AT-1w and every later batch; through AT-3a, SC-2 (synthesis 4.3) | after the closure review, in SR-8's order (section 4, AT-0) |
+
+Cost, for the DRI's scheduling: E1 1,440 calls, E2 1,040 (920 without G5's three items); 2,480 in all. Hours as
+section 4 (estimates).
+
+## 10. Cross-plan issues for the DRI
+
+Phase 1 changes none of the shared parts: the owners (synthesis section 1, edit 8), the shared items (PK-1, AR-10's
+table, QS-1, ET-D2) and the build order (synthesis 4.1–4.4, edits 7, 9 and 10) stand as written above. Where a
+phase-1 result bears on them, it is recorded here, for the DRI, and not edited into the shared part.
+
+1. **E1 and E2 did not run in phase 1, so phase 2's AT-0 review cannot close.** Synthesis 4.1 puts E1 and E2 in
+   phase 1 and AT-0's statement review in phase 2; AT-0 PASS needs E1's and E2's results (SR-8). Through the
+   explicit dependency "AT-3a's guard decoder lands before SC-2" (4.3), and SC-2 writing u0173.s01's governor with
+   attitude nodes (scope's edit 3), queue 4.4's third step and scope's 263 B claim wait on these 2,480 model calls,
+   unless another of AT-3a's prerequisites (PK-1, AR-10's table, `lf-16e`, `qa-q2`) is later. Decision needed:
+   when to authorise E1 and E2 (section 7), or how to reschedule; this plan does not move them.
+2. **Queue 4.4's first step is measured, not landed.** SC-1b starts from AT-0p's translation (C23, scope's edit 3).
+   Phase 1 confirms what SC-1b will find: in each of u0165.s01–s07, the guard `(C_i(s) ∧ knowingly_engages_i(c, s))
+   ∨ thinks_quite_likely_i(c, s)`, with `restricted_action_knowing_or_quite_likely` gone (P1 2;
+   `at0p-measure.json`, `seven_units`). No conflict with the order; but SC-1b cannot start until the pilot runner
+   lands AT-0p (section 9). Decision needed: when the pilot runner's next constitution run lands it.
+3. **The go/no-go's audit input and the queue's order.** F7's go/no-go after AT-6a reads the next audit's verdict
+   on *AT-0p's* seven units. Queue 4.4 lands SC-1b and SC-2 on the same units before AT-6a, and SC-2 moves the
+   attitude conjuncts out of the item guards. An audit run after SC-1b or SC-2 has landed judges their version, not
+   AT-0p's. Not changed here; two options for the DRI: (a) an audit of the seven units between AT-0p's landing and
+   SC-1b's (an added audit point; the queue's order unchanged), which this plan recommends, since it isolates
+   AT-0p's effect; or (b) accept an audit of the queue's later state as F7's input, and say so in F7's record.
+4. **Open terms are rendered by identifier** (P1 2, observation): "… has the recorded relation
+   "thinks_quite_likely_1" to that situation", not the term's description or factors. Every plan in queue 4.4 that
+   adds hand-named open terms to the seven units (SC-1b, SC-2, WG-5, WG-8, QT-B4) and their audits meet it, and the
+   synthesis assigns the document rendering of open terms to none of the seven plans. Decision needed: who owns the
+   fix (rendering an open term's description, or giving auditors the open-term records), so that A8 and the later
+   audits judge the rules rather than the identifiers.
