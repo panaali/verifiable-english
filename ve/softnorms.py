@@ -216,6 +216,19 @@ class SoftenedNormDocument(NormDocument):
         return SoftBaseEnvironment(data, getattr(self, 'soft_premises', ()))
 
 
+# A decision's key as Lean writes it (`SoftNorms.Wire.decisionKeyJson`): its fields in tuple order.
+DECISION_KEY_FIELDS = {"excepted": ("excepted",), "off": ("off", "party"), "outweighs": ("outweighs", "lower", "higher")}
+
+
+def _decision_key(raw):
+    """A decision's key from Lean's row as a tuple: `("excepted", rule)`, `("off", rule, party)` or
+    `("outweighs", act, lower, higher)`."""
+    for kind, fields in DECISION_KEY_FIELDS.items():
+        if type(raw) is dict and set(raw) == set(fields) and all(type(raw[f]) is str for f in fields):
+            return (kind, *(raw[f] for f in fields))
+    raise ValueError(f"undecodable decision key {raw!r}")
+
+
 class SoftNormDocument:
     """Validated soft tree, its W1 elaboration, and regenerated base premises.
 
@@ -245,6 +258,11 @@ class SoftNormDocument:
             raise AttributeError(name)
         self._elaborate()
         return getattr(self, name)
+
+    def decision_name(self, key):
+        """The decision predicate Lean generates for `key` (`keyedDecisions`): `("excepted", rule)`,
+        `("off", rule, party)` or `("outweighs", act, lower, higher)`."""
+        return self.decision_by_key[key]
 
     def extend(self, **attributes):
         """Set `attributes` on `extended_env`, now or once Lean's answer builds it."""
@@ -281,6 +299,24 @@ class SoftNormDocument:
         self._init_rules(env, units)
         by_name = {rule.core.name: rule for rule in self.rules}
         self.decisions = {item['name']: item['arguments'] for item in row['decisions']}
+        # What each decision decides, as Lean keys it (`keyedDecisions`); a reader finds a decision's name by its key
+        # and never spells one. Each key is bound to the request: a declared rule (default for an exception, with the
+        # party among its switches for a switch), or a colliding pair's `outweighs` decision on the pair's act and
+        # between the pair's two ranks.
+        outweighs = {(item['outweighs'], item['act'], frozenset(by_name[n].rank for n in item['pair']))
+                     for item in row['colliding_pairs'] if item['outweighs'] is not None}
+        self.decision_by_key = {}
+        for item in row['decisions']:
+            key = _decision_key(item['key'])
+            if key[0] == 'excepted':
+                bound = by_name[key[1]].mode == 'default'
+            elif key[0] == 'off':
+                bound = key[2] in by_name[key[1]].alterable
+            else:
+                bound = (item['name'], key[1], frozenset(key[2:])) in outweighs
+            if not bound or key in self.decision_by_key:
+                raise ValueError(f"decision {item['name']} is not bound to the request")
+            self.decision_by_key[key] = item['name']
         self.collisions = tuple((by_name[item['pair'][0]], by_name[item['pair'][1]])
                                 for item in row['colliding_pairs'])
         self.rule_acts = row['rule_acts']

@@ -125,6 +125,12 @@ def test_the_english_admission_path_is_relayed_by_function(tmp_path, classes):
     ('hidden = ("unsaid__",)  # relay-lint: non-wording, really', True),
     ('label = "unsaid:pair:" + body', False),
     ('name = "unsaid_" + "_p"', False),
+    # rd-9 soft-chain plan SC-8 (looprecheck2 A2): nor a soft decision's name, in a literal or a comment.
+    ('name = "soft__excepted__" + rule', True),
+    ("name = f\"soft__off__{rule}__{body}\"", True),
+    ('name = rule  # an author soft__x predicate', True),
+    ('name = rule  # an unsaid__ table', True),
+    ('name = "soft:exception:" + rule', False),
 ])
 def test_seeded_readings_modules(tmp_path, line, found):
     module = tmp_path / "readings_x.py"
@@ -143,6 +149,14 @@ def test_every_readings_module_is_read_by_the_reserved_rule():
                                           "readings_verdicts.py", "readings_sup.py", "readings_english.py"}
     for path in modules:
         assert relay_lint.reserved_literals(path) == [], path
+
+
+def test_probe_a2_no_readings_module_spells_a_soft_or_unsaid_name():
+    """PROBE A2 of rd-9-looprecheck2: `! grep -n 'soft__\\|unsaid__' ve/readings*.py`. The readings modules find a
+    decision's name by its key in Lean's row, never by spelling it (plan SC-8)."""
+    for path in sorted(ROOT.glob(relay_lint.READINGS_GLOB)):
+        text = path.read_text()
+        assert "soft__" not in text and "unsaid__" not in text, path
 
 # The third rule (readings-defaults plan RD-8): the senses path never names Python's English reader.
 

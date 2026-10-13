@@ -34030,6 +34030,10 @@ theorem VE.SoftNorms.incompatible_symm
     VE.SoftNorms.Incompatible D M N = VE.SoftNorms.Incompatible D N M
   -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 2886031477
+theorem VE.SoftNorms.keyedDecisions_names
+  ∀ (D : VE.SoftNorms.SoftDoc), List.map (fun x => x.snd) (VE.SoftNorms.keyedDecisions D) = VE.SoftNorms.decisions D
+  -- uses VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.decisions@VE.SoftNorms.Tree VE.SoftNorms.keyedDecisions@VE.SoftNorms.Tree
+  -- expr 77719628
 theorem VE.SoftNorms.le_maxOf
   ∀ {l : List Nat} {x : Nat}, x ∈ l → x ≤ VE.SoftNorms.maxOf l
   -- uses VE.SoftNorms.maxOf@VE.SoftNorms.Tree

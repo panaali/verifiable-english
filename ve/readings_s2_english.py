@@ -149,7 +149,8 @@ def _all_reserved():
 def _hidden_pattern(reserved):
     # A name is generated or reserved by its prefix (Lean's `startsWith`), so a hidden name is a name that begins
     # with one: a prefix counts only where no name character (a letter, digit, `_` or `-`) comes before it. An
-    # author's name that merely contains one (`standard-x`, `save__x`, `my_unsaid__x`) is named as written (G6).
+    # author's name that merely contains one (`standard-x`, `save__x`, `my_` before the completion's prefix) is named
+    # as written (G6).
     # `may not` counts anywhere: G9 has no exception (composition.md 13.20).
     prefixes = "|".join(re.escape(prefix) for prefix in sorted({*_HIDDEN, *reserved}, key=len, reverse=True))
     return re.compile(rf"(?<![\w-])(?:{prefixes})|{re.escape(_MAY_NOT)}")

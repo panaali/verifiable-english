@@ -95,7 +95,7 @@ class S1Environment:
         data["vocabulary"]["soft"] = {"parties": [], "ranks": [], "outranks": [], "ties": [],
                                       "outranking": {"mode": "strict"}}
         # This is an internal soft view of a norms-only source. The source has no soft
-        # layer, so an author's ordinary soft__ predicate remains legal here.
+        # layer, so an author's ordinary predicate with the soft layer's prefix remains legal here.
         return SoftEnvironment(data, generated=True)
 
     def author_environment(self):
@@ -606,29 +606,19 @@ class Side:
         if hasattr(self, "_keys"):
             return self._keys
         sd = self.soft
-        env = sd.env
         keyed = self.keyed_rules()
         keys = []
+        # Each decision's name and sorts are Lean's, found by what it decides (`SoftNormDocument.decision_name`).
         for rule, name, bearer in keyed:
             if rule.mode == "default":
-                keys.append((("excepted", name, bearer), "soft__excepted__" + rule.core.name.replace("-", "_"),
-                             list(env.predicates[rule.core.predicate].arguments)))
+                generated = sd.decision_name(("excepted", rule.core.name))
+                keys.append((("excepted", name, bearer), generated, list(sd.decisions[generated])))
         for rule, name, bearer in keyed:
             for party in rule.alterable:
-                keys.append((("off", name, bearer, party),
-                             f"soft__off__{rule.core.name.replace('-', '_')}__{party}",
-                             list(env.predicates[rule.core.predicate].arguments)))
-        if env.soft["outranking"]["mode"] == "holistic":
-            seen = []
-            for left, right in sd.collisions:
-                generated = sd.override_for_pair.get(frozenset((left.core.name, right.core.name)))
-                if generated is None:
-                    continue
-                _, _, low, high, act = generated.split("__", 4)
-                key = ("outweighs", act, low, high)
-                if key not in seen:
-                    seen.append(key)
-                    keys.append((key, generated, list(env.predicates[left.core.predicate].arguments)))
+                generated = sd.decision_name(("off", rule.core.name, party))
+                keys.append((("off", name, bearer, party), generated, list(sd.decisions[generated])))
+        keys.extend((key, generated, list(sd.decisions[generated]))
+                    for key, generated in sd.decision_by_key.items() if key[0] == "outweighs")
         if self.rights is not None:
             rd = self.rights
             frame = self.senv.frame

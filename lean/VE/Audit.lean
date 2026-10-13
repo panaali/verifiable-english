@@ -1556,6 +1556,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.SoftNorms.mem_children_map
 #print axioms VE.SoftNorms.mem_children_prime
 #print axioms VE.SoftNorms.mem_collidingPairs
+#print axioms VE.SoftNorms.keyedDecisions_names
 #print axioms VE.SoftNorms.mem_dedup
 #print axioms VE.SoftNorms.mem_directBelow
 #print axioms VE.SoftNorms.mem_preds_anyF
