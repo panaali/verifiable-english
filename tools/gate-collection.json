@@ -333,6 +333,8 @@
   "tests/test_ask_fixtures.py::test_the_agent_policy_answers_replay",
   "tests/test_ask_fixtures.py::test_the_deny_document_is_refused_with_leans_reason",
   "tests/test_ask_fixtures.py::test_the_recorded_fixtures_are_the_tools_list",
+  "tests/test_ask_null_free.py::test_a_unit_without_content_is_answered",
+  "tests/test_ask_null_free.py::test_no_request_of_any_route_holds_a_null",
   "tests/test_ask_relay.py::test_a_broken_split_is_not_a_split",
   "tests/test_ask_relay.py::test_a_fence_that_reads_as_two_formulas_is_not_the_cases_unit",
   "tests/test_ask_relay.py::test_a_genuine_answer_is_accepted[G1]",
