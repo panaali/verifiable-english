@@ -1,0 +1,29 @@
+{
+  "command": "uv run python tools/select_tests.py --base $(git merge-base HEAD main) --run",
+  "selected_units": 363,
+  "selected_exit": 1,
+  "selector_final_error": "OSError: read-only default ~/.cache/ve-testmap during test-map write",
+  "nonpassing_units_observed": [
+    {
+      "unit": "tests/test_select_tests.py",
+      "selected_result": "one failed: new top-level evidence directory",
+      "focused_result": "1 passed after moving evidence under docs/ in 888ea166"
+    },
+    {
+      "unit": "tests/test_lean_conformance.py",
+      "selected_result": "test_lean_transitive_axiom_allowlist audit subprocess timeout at 1800 seconds",
+      "focused_result": "1 passed serially in 1668.16 seconds"
+    },
+    {
+      "unit": "tests/test_english_evidence.py",
+      "selected_result": "file timeout at 3600 seconds",
+      "focused_result": "67 passed serially in 6021.93 seconds"
+    },
+    {
+      "unit": "tests/test_wire_gate_corpus.py",
+      "selected_result": "file timeout at 3600 seconds",
+      "focused_result": "serial rerun reported an error in the first recorded-input fixture after roughly one hour; remaining run interrupted, no assertion result"
+    }
+  ],
+  "environment": "Host load average exceeded 130; focused runs used VE_TESTMAP_CACHE=/tmp/ve-testmap-eff-20261011-1."
+}
