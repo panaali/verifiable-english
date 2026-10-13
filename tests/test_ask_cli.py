@@ -159,6 +159,24 @@ def test_q2_d8_more_than_64_readings_reports_leans_limit(tmp_path):
     assert record["proof"] == "not_checked" and record["answer"] == "no_answer"
 
 
+def test_q2_d10_recorded_evidence_is_disclosed_and_bound(tmp_path):
+    from copy import deepcopy
+    source = AF.load("G1")
+    path = tmp_path / "evidence.json"
+    path.write_text(json.dumps(source["case"]["evidence"]))
+    done = cli(ROOT / source["path"], source["question"], "--evidence", path, "--json")
+    assert done.returncode == 0, (done.stdout, done.stderr)
+    record = json.loads(done.stdout)
+    assert record["evidence"] == "recorded" and record["result"]["lead"] == "yes"
+
+    foreign = deepcopy(source["case"]["evidence"])
+    foreign["certificate"]["certificate"]["environment_id"] = "0" * 64
+    path.write_text(json.dumps(foreign))
+    done = cli(ROOT / source["path"], source["question"], "--evidence", path, "--json")
+    record = json.loads(done.stdout)
+    assert done.returncode != 0 or record["result"]["lead"] != "yes", record
+
+
 VARIANTS = {"nbsp": "Is every member eligible?", "double space": "Is every  member eligible?",
             "tab": "Is every\tmember eligible?", "carriage return": "Is every member eligible?\r",
             "curly quote": "Is “every” member eligible?", "kelvin": "Is every member eligibleK?",
