@@ -143,6 +143,12 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   [non-model measurement report](../question-answering-report.md) records the fixtures, the budgets and the agreement
   with the existing route on the fixtures and the corpora, with what each corpus could not compare.
 - **The final-HEAD full gate**: not run after the review fixes (the fixer's instruction); see the acceptance items.
+- **Seen by the corpus agreement, not fixed here** (follow-ups for `ask`'s owner, each a refusal or a wording flaw,
+  never a contradicted lead): a reading name that quotes a word (`the recorded relation "asks"`) makes the R1 line
+  fail W7's gate, so `ask` refuses that question (`CheckerUnavailable`); U1 reads "VE did not use 1 sentences" for one
+  unused sentence (the frame is fixed in the approved `render_unused_once`); a yes citing both a pair and a fill
+  source, or a definition and the background, repeats the same C4 or C3 line. The exposition-unit refusal the same run
+  found is fixed (`tests/test_ask_null_free.py`).
 - **Q2.2's "A/B shows no change outside the new mode"**: no corpus comparison was run; the full gate is the evidence
   that existing behaviour is unchanged, and DELTA D9 names the one generator change that can change a readings
   answer.

@@ -87,7 +87,7 @@ def test_the_trust_growth_is_the_saved_budget():
 
 def test_every_delta_row_has_its_status():
     rows = [line for line in (HERE / "DELTA.md").read_text().splitlines() if re.match(r"\| D\d+ \|", line)]
-    assert [re.match(r"\| (D\d+) \|", row).group(1) for row in rows] == [f"D{n}" for n in range(1, 15)]
+    assert [re.match(r"\| (D\d+) \|", row).group(1) for row in rows] == [f"D{n}" for n in range(1, 16)]
     for row in rows:
         assert "DRI signature needed" in row or re.search(r"SIGNED by standing ruling R\d+", row), row[:60]
 
