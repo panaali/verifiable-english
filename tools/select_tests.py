@@ -59,7 +59,7 @@ import tempfile
 import time
 
 from change_units import Summary, delta
-from layer_policy import ROOT, lean_default_targets, lean_executables, python_exports
+from layer_policy import APP_AREAS, ROOT, lean_default_targets, lean_executables, python_exports
 import nested_pytest
 import quarantine
 import source_graph
@@ -90,8 +90,8 @@ PYTHON_LAYER_INPUTS = {".importlinter", "tools/layer-exceptions.json", "tools/ch
 LEAN_LAYER_INPUTS = {"tools/lean-layer-exceptions.json", "tools/check_lean_imports.py",
                      "tools/lean_header_imports.lean", "tools/layer_policy.py"}
 RUST_LAYER_INPUTS = {"tools/check_rust_deps.py", "tools/layer_policy.py"}
-KNOWN_AREAS = {"ve", "ve_experiments", "experiments", "tests", "tools", "conformance", "lean", "rust",
-               "usecases", "docs", "paper", "examples", "data", "bench", "design"}
+KNOWN_AREAS = {"ve", "tests", "tools", "conformance", "lean", "rust", "docs", "examples", "data", "bench",
+               "design", *APP_AREAS}
 # Cached drift results depend on this file's rules as well as the graph's.
 SELECTOR_VERSION = hashlib.sha256(source_graph.CODE_VERSION.encode()
                                   + Path(__file__).read_bytes()).hexdigest()[:16]
@@ -797,7 +797,8 @@ PYTHON_ROOTS = ("ve", "ve_experiments", "conformance", "tools", "tests", "usecas
 GENERIC = {"ve", "tests", "tools", "conformance", "usecases", "experiments", "docs", "lean", "rust",
            "src", "data", "examples", "json", "README.md", "VE", "spec"}
 # Trees whose directories tests name one component at a time (`ROOT / "usecases" / "asimov-laws"`).
-NAMED_TREES = {"usecases", "experiments", "conformance", "docs", "design", "examples", "data", "paper"}
+NAMED_TREES = {"usecases", "experiments", "conformance", "docs", "design", "examples", "data", "paper",
+               "research"}
 # Test-side code that names these starts (or configures) a native checker: Rust, any
 # Lean executable (the service under the Lean authority), or reads the Lean sources.
 RUST_SIGNALS = ("rust/target", "VE_RUST", "VE_W5_RUST_BIN", "rust_jsonl", "cargo", "VE_AUTHORITY")
