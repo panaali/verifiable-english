@@ -117,12 +117,17 @@ class _Readings:
         from .readings_verdicts import Enumerated, context
         self.doc = doc
         self.context = context(doc)
-        if not isinstance(self.context, Enumerated) or self.context.choices is None:
+        if not isinstance(self.context, Enumerated):
             raise CheckerUnavailable("CheckerUnavailable: ask answers a readings document on the enumerated route "
                                      "with at most 64 compatible readings")
 
     def case(self, ast, extra=None, generate=True):
         route = self.context
+        if getattr(route, "choices", None) is None:
+            # RD-3 counts the choices before checking a row. Send the case without generated evidence so
+            # Lean owns the X5 ResourceLimit and its wording, as it does for every other replay refusal.
+            return {"id": "readings-verdicts", "kind": "readings-verdicts", "environment": route.environment,
+                    "document": route.document, "question": "query", "conclusion": ast, "evidence": []}
         route.premises()
         row = route.query_answer(ast)
         case = copy.deepcopy(route.requests[id(row)])
@@ -611,7 +616,8 @@ def main(argv=None) -> int:
 
     def emit(result: dict | None, error: dict | None = None) -> None:
         if options.json:
-            print(json.dumps({**honesty, **({"result": result} if result is not None else {}),
+            fields = {**honesty, **({"proof": "not_checked", "answer": "no_answer"} if error is not None else {})}
+            print(json.dumps({**fields, **({"result": result} if result is not None else {}),
                               **({"error": error} if error is not None else {})}, ensure_ascii=False, indent=2))
         elif result is not None:
             print("\n".join(result["text"] if result.get("status") == "answered" else _lines(result)))

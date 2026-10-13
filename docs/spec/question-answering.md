@@ -501,10 +501,13 @@ refused candidate beside a candidate that reads does not refuse the question (R3
 
 ### 4.2 Q2 (`ask`)
 
-In order: (1) the question is read by `readQuestion`; any outcome but `one` is the response, with row 1 to 15's
-fields. (2) The binding (5.2, `CaseBinding`); on failure, `CheckerUnavailable: the case is not this document's`. (3)
+In order: (1) the CLI reads the question through `english.question`; any outcome but `one` is shown with its full
+Q1 response, including span, advice and rephrasings where present. The `ask` mode independently reads it and
+returns status, code, class and text with the request identities; the relay binds these to Q1's outcome. (2) The
+binding (5.2, `CaseBinding`); on failure, `CheckerUnavailable: the case is not this document's`. (3)
 The case's conclusion must be the question's formula and `assumed` empty; otherwise `InvalidInput: the case does
-not ask this question`. (4) RD-3's replay; more than 64 compatible choices gives lead *unknown* with X5, and RD-3's
+not ask this question`. (4) RD-3's replay; more than 64 compatible choices gives `ResourceLimit` with X5's text,
+and RD-3's
 own refusals are relayed. (5) Every reading name of an asserted candidate is read back; a failure gives
 `CheckerUnavailable: VE could not check the wording of a reading of sentence <n>` (R8). (6) The rows give the
 leads; an *unknown* lead gives its reason by `Row.reason` (X1 to X4, X6). Routes outside plan D18 give *unknown*
@@ -1019,6 +1022,13 @@ def NameReadsBack (case : Json) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGramm
     VE.EnglishGrammar.read E {} L VE.EnglishGrammar.workBudget (n.text ++ ".") = .ok [(φn, false)] ∧
     candidateContent case n.set n.index = some φn.encode
 
+/-- The decidable read-back check compares canonical JSON text, as UnitBound does. Json has no decidable
+    equality, so NameReadsBack's equality cannot be checked for a submitted request. -/
+def NameReadsBackSame (case : Json) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (n : Name) : Prop :=
+  ∃ φn : VE.EnglishGrammar.EFormula,
+    VE.EnglishGrammar.read E {} L VE.EnglishGrammar.workBudget (n.text ++ ".") = .ok [(φn, false)] ∧
+    ∃ j, candidateContent case n.set n.index = some j ∧ Same j φn.encode
+
 structure Asked where
   request : Json
   text : String
@@ -1043,7 +1053,7 @@ structure Asked where
   hx : x.Γ = [] ∧ x.A = []
   hrows : rows.map (·.choice) = x.evs.map (·.1)
   hok : ∀ r ∈ rows, RowOk.{0} x.r.N x.φ r
-  hnames : ∀ n ∈ names, n.checked = true → NameReadsBack case E L n
+  hnames : ∀ n ∈ names, n.checked = true → NameReadsBackSame case E L n
 
 def replayAsk : Json → Except String Asked   -- Q2.2
 def answerFor : Asked → Except String (Context × Answer)  -- Q2.3; the `ask` route renders only this result
