@@ -199,8 +199,13 @@ reach.
   recorded co-blocker. (The first version of this report gave 260 units, 32,608 B, 17.6%: it counted the 39 title
   headings as governors but none of the text under them, which follows neither reading. Corrected after review;
   the 20 checks of 2.2 are unaffected, and `checks.json` is byte-identical.)
-- **A hand-recorded scope the plan does not list.** Three OPEN permission units, u0062.s01, u0123.s01.p1 and
-  u0123.s02.p1 (613 B), carry `scoped_by` with `scoped_by_source: u0123.s03`. The translator copied the six limits
+- **u0123.s03, measured.** Research 2.3 (`docs/research/scope.md` lines 183–186) already names this gap, quoting
+  the audit of run 20261005T0600Z: "propagate the interpretation of `u0123.s03` into the permissions it limits". It
+  gives no figure, and the plan has no fixture for it. (A reading set named `scope-modal-u0123-s03`, beside
+  `modal-u0123-s02-p1`, also appears in the readings-defaults evidence `docs/readings-defaults/rd6a/gate-note.json`:
+  the linked reading choice, not the scope attachment.) What the pinned ledger adds is the measurement: three OPEN
+  permission units, u0062.s01, u0123.s01.p1 and u0123.s02.p1 (613 B), carry `scoped_by` with
+  `scoped_by_source: u0123.s03`. The translator copied the six limits
   of u0123.s03 ("Operators cannot instruct Claude to ...", 351 B, OPEN, with its own six rules) into each
   permission as six open terms, its exceptions. u0062.s01 ends 38,929 B before u0123.s03 begins. This is the
   copy pattern of research 2.3 a second time, with a governor that has its own content and a reach over named
@@ -233,15 +238,18 @@ Changed (wording and figures; no batch changes):
 - **u0139.s01 is 49 B** (research 2.6 row 11); **the UDHR preamble is 14 units, 2,004 B without its heading**
   (research 2.4).
 
-Added:
-- **u0123.s03 as a representative sentence and a candidate fixture.** It is a later sentence whose limits
-  constrain three earlier permissions by name, written today as six open terms copied into each. It moves no
-  bytes (all four units are OPEN), but it is a one-owner target. Its reading has to be settled before it is a
-  fixture: either a `carve-out` over a `rules` reach (SC-2's effect with SC-4's reach) or a `yields` edge
-  (permission under prohibition, W1 precedence, SC-4), and the two differ only where W1's same-predicate rule
-  applies. Draft 2 should add it to research 2.6 and leave the choice to SC-4's spec. The existing `scoped_by` /
-  `scoped_by_source` fields are a precedent for `governed_by`; the prompt addition keeps them and adds
-  `governed_by` beside them rather than a second record.
+Added (a measurement of a known gap, not a new one):
+- **u0123.s03's figures and a candidate fixture.** Research 2.3 already cites the earlier audit that named this
+  gap (lines 183–186); what this phase adds is its size and shape on the pinned run: 613 B across three OPEN
+  permissions, each carrying the six limits of u0123.s03 as six copied open terms, the farthest ending 38,929 B
+  before u0123.s03 begins, and the audit's FAITHFUL verdict on u0123.s01.p1, so the copy is a duplication rather
+  than a fidelity failure. It moves no bytes (all four units are OPEN), but it is a one-owner target. Draft 2
+  should add these figures beside the existing citation in research 2.3 and list u0123.s03 in research 2.6 as a
+  representative sentence. Its reading has to be settled before it is a fixture: either a `carve-out` over a
+  `rules` reach (SC-2's effect with SC-4's reach) or a `yields` edge (permission under prohibition, W1 precedence,
+  SC-4), and the two differ only where W1's same-predicate rule applies; the choice is SC-4's spec's. The ledger's
+  `scoped_by` / `scoped_by_source` fields are a precedent for `governed_by`; the prompt addition keeps them and
+  adds `governed_by` beside them rather than a second record.
 
 Cancelled: none.
 
@@ -253,3 +261,4 @@ Cancelled: none.
 | The next runs' own `other:scope` tags, `governed_by` and `scope-tally.json` | Each pilot run is a model run. Once one has run, `sc_m0_tally.py` gives the structural reaches to compare its `governed_by` with. |
 | SC-E1 (deictic reaches) | Not a phase-1 item. Its bars 1, 2 and 4 need the Sonnet human-proxy annotation (a model call), and it runs after SC-4. Its frontier computation (bar 3) was not run here, so that bar stays blind. |
 | SC-E2 (presentation) | Not a phase-1 item. It needs SC-1c's presentation and SC-2, and the Sonnet proxy. |
+| A layer for `research/` (for the orchestrator) | `research/` has no layer in `tools/layer_policy.py` (line 175 lists `ve_experiments`, `experiments`, `usecases`, `paper` as layer 5), so `source_layer('research/scope/sc_m0_tally.py')` is `None` and `select_tests.py` selects every test for any branch that touches the script. The brief fixed the location and keeps `tools/` unchanged on this branch. Fix on main: add `research` to that set, or move such scripts under `experiments/`. |
