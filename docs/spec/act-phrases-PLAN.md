@@ -1,20 +1,22 @@
 # Action phrases inside rights and norms: plan
 
-> Status: plan, draft 2 (2026-10-13), branch `design/act-phrases` from `main` at `49de179e`. Draft 1 (`ef82b0a4`,
-> 2026-10-12) is revised here by two converged reviews:
+> Status: plan, draft 3 (2026-10-13), branch `design/act-phrases` from `main` at `49de179e`. Draft 1 (`ef82b0a4`,
+> 2026-10-12) was revised in draft 2 (`02a57b4e`) by two converged reviews:
 >
 > 1. the design debate (`manage-agents/debates/design-act-phrases/{fable,astra}.md`, CONVERGED after round 3:
 >    REVISE, then BUILD in the order of section 4);
 > 2. the cross-plan review of the seven research-wave plans (`manage-agents/debates/plan-synthesis/edits-act-phrases.md`,
 >    2026-10-13), appended to both debate files as part of the final joint position.
 >
-> Section 10 maps every edit to the place it was applied. The plan builds design D2 of the research note
+> Draft 3 applies the statement review of the specification (`manage-agents/debates/act-phrases-spec/{astra,fable}.md`,
+> CONVERGED after round 2 on **FIX**) where it touches this plan, and nothing else. Section 10 maps every edit to the
+> place it was applied. The plan builds design D2 of the research note
 > [docs/research/act-phrases.md](../research/act-phrases.md) (sections 4 to 6), which holds the measurements, the prior
-> art and the alternatives. Docs only. The specification is [act-phrases.md](act-phrases.md), draft 1 (this commit). It
+> art and the alternatives. Docs only. The specification is [act-phrases.md](act-phrases.md), draft 2 (this commit). It
 > writes the definitions, the grammar's rule table, the exact statements, the diagnostics and the fixtures. Where it
-> sharpens a statement of section 3 it lists the change (its section 14), and the statement review decides it. No
-> batch except AP-0 starts before that statement review and a DRI decision. Every number is measured (method in the
-> research note, Appendix A) or labelled *estimate*.
+> sharpens a statement of section 3 it lists the change (its section 14). No batch except AP-0 starts before the
+> bounded re-check of draft 2 (the specification's 13, item 14) and a DRI decision. Every number is measured (method in
+> the research note, Appendix A) or labelled *estimate*.
 
 ## 0. Summary
 
@@ -59,7 +61,7 @@ Measured recall does not establish completeness for unrestricted English.
 | AP-1 | `acts@0`: long single acts, fixed phrases, entitlement wordings | 6 | M1, M2, M3, M4 | 457 (u039, u085, u106); up to 658 with u091 |
 | AP-2 | the act grammar on `VE.Grammar` (Lean only) | 5 | none (enabler) | 0 |
 | AP-3 | joined acts split by the table; the `acts-elaborate` relay | 5 | M1, M2, M4 | 76 (u079b) |
-| AP-4 | readings from derivations; exact reading sets | 6 | M1, M2, M5 | 288 (u076, u092) |
+| AP-4 | readings from derivations; exact reading sets | 6 | M1, M2, M5 | 163 (u092); u076's 125 wait for the readings elaboration (spec F11) |
 | AP-5 | specialisation: `Specialise.lean` and its examples only | 4 | nothing until AP-5b | 0 |
 | AP-5b | design and review: the base-level bridge for `act-specialise@0` | — | nothing by itself | 0 |
 | AP-6 | experiment: n-ary bound slots (two routes) | 4 | decision | (u019, u057 co-blocked: 389) |
@@ -68,8 +70,8 @@ Measured recall does not establish completeness for unrestricted English.
 
 The hours are draft 1's figures. The design debate withdrew them (and its own 41 h correction): the build estimate is
 redone once the specification's contracts pass the statement review. Draft 1's total was about 38 h (*estimate*,
-withdrawn). UDHR claimed coverage is 43.90% today; after AP-1, AP-3 and AP-4 it would be about 51.4% to 53.3%
-(*estimate*, before audits).
+withdrawn). UDHR claimed coverage is 43.90% today; after AP-1, AP-3 and AP-4 it would be about 50.3% to 52.1%
+(*estimate*, before audits; draft 2 said 51.4% to 53.3% before the statement review deferred u076, spec F11).
 
 Pilot metrics (values at run `20261012T1800Z`):
 
@@ -125,7 +127,8 @@ one plain sentence per reading. For u051:
 > 2. Everyone has the right to seek asylum from persecution, and everyone has the right to enjoy asylum from
 >    persecution in other countries.
 
-In authoring, the writer picks one. The chosen paraphrase has one reading by AP-2's `read_normal`. In translation,
+In authoring, the writer picks one. Each simple act of the chosen reading reads back with one meaning, by AP-2's
+`read_normal`; the paraphrases of one listing are pairwise distinct (the specification's 6.2). In translation,
 both stay, as a reading set whose source is the original phrase (AP-4). Nobody sees brackets, slots or frames. The
 IDE asks in plain words ("Is 'a fair and public hearing by an independent and impartial tribunal' one thing?").
 
@@ -217,7 +220,10 @@ voting procedures" is one act. The `split` list is how a frame says an argument 
 intending spouses" is not split, which is u059's point.
 
 Splitting gives one regulated predicate per simple act, named `<pred>__<i>` with the reserved prefix the
-specification fixes. A name over the length limit is refused, never shortened silently. Each source rule becomes one
+specification fixes. A name over the length limit is refused, never shortened silently. The elaborated document passes
+the route's own limits again (regulated predicates, rules, vocabulary with the parts and unsaid predicates counted,
+unspecified names), with their existing diagnostics (specification 6.3). Two parts of one predicate with the same act
+are refused for every role, plain entitlements included. Each source rule becomes one
 rule per simple act, named `<rule>-a<i>`, with the same guard, carve-outs and completion. An `unspecified` predicate's
 parts are `unspecified` too. Precedence follows the simple acts (`M over N` gives `M-a<i> over N-a<i>`). The source
 predicate is removed; a later reference to it is refused with "name one of its parts" (the specification's reference
@@ -314,14 +320,15 @@ unchanged for every existing environment. Without `acts@0` the decoders are toda
 |---|---|---|
 | Accepting acts, fixed phrases, frames; reading acts; the table; elaboration and its source map; readings; source exactness; specialisation premises; honest wordings | Lean (`lean/VE/Acts/*`, the hooks listed per batch) | — |
 | Loading the `acts` block, reading AR-10's generated profile data, CLI, display of Lean's wordings and paraphrases, relaying AP-3's `acts-elaborate` answer and AP-4's proposal mode (schema and binding only), and running the conflict-witness search on the relayed document | Python | no check, no split, no paraphrase computed in Python |
-| Fast checks | Rust | under `acts@0` Rust skips its act lint (Lean's admission has run) and treats acts as opaque identity strings, as it does today; no copy of the grammar |
+| Fast checks | Rust | Rust refuses every `acts@0` environment with `UnsupportedProfile`, as it refuses an `unspecified` completion today, and Lean answers it; no copy of the grammar (draft 2's "skip the act lint" was not enough: Rust also refuses the `acts` key and a plain `act`, and does not fold `’`) |
 
 **Not duplicated:** the reserved list (Lean's `actReserved`, filtered), verb morphology (`conjugatedAct` and
 `verbBase` in Lean), the wording lint (Lean V6), and the reading-set separation (`separates`).
 
 **Retired for `acts@0` documents:** Python's display fallback for plain predicates (their wording is Lean's), Rust's
-act lint, and the retained Python norms path: `_lean_route` is true for `acts@0` documents and the retained path
-refuses them. **Not touched:** Python's norm-sentence matcher. It matches a declared act as one exact terminal today
+decoding (it refuses them), and the retained Python norms path: `_lean_route` is true for `acts@0` documents and the
+retained path refuses them. Python lexes no act and composes no act diagnostic: it binds Lean's token spans and indices,
+and relays the "name one of its parts" text Lean writes. **Not touched:** Python's norm-sentence matcher. It matches a declared act as one exact terminal today
 and keeps doing so; moving it to Lean is E3's.
 
 ## 3. Lean statements
@@ -329,7 +336,12 @@ and keeps doing so; moving it to Lean is E3's.
 These are the statements the specification and the statement review start from. Names follow the existing modules.
 Each block's header names its file and batch. Bodies are omitted; every theorem is proved in its batch, with no
 `sorry` and only the allowed axioms (`lean/audit.py`). The specification writes each statement exactly; where it
-differs from this section it says so (its section 14).
+differs from this section it says so (its section 14). Its draft 2 adds, from the statement review (its 14.3):
+`elaborate_parts`, `distinctTexts_ok`, `paraphrases_nodup`, `checkAuthorN_split`, `decodeElaboratedU_source`,
+`decodeElaboratedU_wellFormed`, `decodeElaboratedU_lexical` and `readings_lexical_only`; and it changes `Source` (a
+three-valued completion), `SourceExact` (rules compared up to order), `elaborate_identity`'s hypotheses, and the
+definitions `framesOk` and `normalOk` that `grammar_wf` and `read_normal` assume. The blocks below are draft 2's and
+are not rewritten.
 
 ```lean
 /-! lean/VE/Acts/LexicalBase.lean (AP-1): below `Norms.Wire`. It holds `actReserved` and `words` (and the
@@ -650,7 +662,7 @@ row, and AP-5b before any integration of AP-5.
 - **New files:**
   - `lean/VE/Acts/LexicalBase.lean` (below `Norms.Wire`: `actReserved`, `words` and their helpers, moved);
   - `lean/VE/Acts/Lexical.lean` and `lean/VE/Acts/LexicalExamples.lean` (`#guard` fixtures A1 to A6, A13, A15 to
-    A19);
+    A19, and the specification's A21 to A30, A32 and A33);
   - `lean/VE/Acts/Compat.lean` (above both `Norms.Wire` and `Acts.Lexical`: `check_extends`);
   - `docs/spec/act-phrases.md` (the specification, written before the batch);
   - `ve/wire_contract/acts@0.json` (contract source);
@@ -661,11 +673,14 @@ row, and AP-5b before any integration of AP-5.
   |---|---|---|
   | `lean/VE/Norms/Wire.lean` | `decodeRegulatedIn` plus `decodeRegulated_without_acts`; `canonicalEnvironmentJson` applies the same check; `actReserved` and `words` move to `LexicalBase` | `lean-first/b14b` edits this file: build after it merges. AP-1's and AP-3's hunks come first on this file; attitudes' AT-3a then adds its guard-node hook to the chain's norm decoder, if AT-0 places it here |
   | `lean/VE/Norms/Tree.lean` | `check` admits an act on a plain predicate (the refusal at :314) | — |
+  | `lean/VE/NormDefaults/Check.lean` | `regBody` (:73) and `fieldsOK` (:158) drop the same refusal, so `check_eq := rfl` (:151) still holds; `regBody_ok` and the proofs over `RegOK` re-proved (statement review, spec 4.1) | — |
+  | `lean/VE/NormDefaults/FillCheck.lean` | `fill_regOK` (:318) re-proved over the new `fieldsOK` | — |
+  | `lean/VE/Norms/Plain.lean`, `lean/VE/EnglishGrammar/Encode.lean`, `lean/VE/Service/Standalone.lean` | the profile-aware decoders where `decodeRegulated` is called (spec finding F1, 4.1) | `Encode.lean` joins the `EnglishGrammar` queue with `Policy.lean` |
   | `lean/VE/Compose/Dispatch.lean` | one row of AR-10's profile-gate table: `acts@0`, `requires := ["norms@0"]`, with its composition proof | after AR-10's table lands (rows in landing order) |
   | `lean/VE/EnglishGrammar/Policy.lean` | the selected wording of a plain predicate with an act is `Lexical.wording`, beside the modal-form case at :504-507 | `question-answering/q2` does not touch it (measured). This hunk is the first edit in the serialised `lean/VE/EnglishGrammar/*` queue, before `AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7` |
   | `ve/environment.py` | load the `acts` block and the plain `act` / `form` fields as data, no check | — |
   | `ve/printer.py` (the natural renderer) | for a plain predicate with an act under `acts@0`, render with the wording Lean selected; Python's own lint makes no decision for it | — |
-  | `rust/ve-kernel/src/environment.rs` | skip the act lint when the profiles contain `acts@0`; then `python3 tools/rust_build.py` | — |
+  | `rust/ve-kernel/src/environment.rs` | refuse every environment whose profiles contain `acts@0` with `UnsupportedProfile`, as for an `unspecified` completion (:405–408); then `python3 tools/rust_build.py` | — |
   | `tools/layer_policy.py` | assign the new modules | — |
 - **Order:** AP-1 builds its new files first, then adds the `Norms/Wire.lean` hunk after `lean-first/b14b` and the
   profile row after AR-10's table.
@@ -682,11 +697,14 @@ row, and AP-5b before any integration of AP-5.
     rows).
   - A plain predicate with an act renders its Lean wording, never "classified as".
 - **Seeded bugs:**
-  - Lean: let a comma pass outside a fixed phrase; fixture A5 must fail.
+  - Lean: let a comma pass outside a fixed phrase; fixture A33 (u092's phrase, refused for its first comma) must fail.
+    Draft 2 seeded it on A5, which has no comma, so it could not fail.
   - Python: drop the `form` field when loading; the wording test must fail.
-  - Rust: keep the lint under `acts@0`; the A1 document must fail to load.
-- **Deleted for `acts@0` documents:** the display fallback for plain predicates with an act; Rust's act lint. No
-  check is copied into Python, and no `ve/profiles.py` row is written by hand: Python reads AR-10's generated data.
+  - Rust: drop the `acts@0` refusal; the test that Rust answers `UnsupportedProfile` for an `acts@0` environment must
+    fail.
+- **Deleted for `acts@0` documents:** the display fallback for plain predicates with an act; Rust's decoding of them
+  (it refuses). No check is copied into Python, and no `ve/profiles.py` row is written by hand: Python reads AR-10's
+  generated data.
 - **Moves** (*estimates*, after AP-0):
   - M1: u039, u085 and u106 (457 B), and possibly u091 (201 B).
   - M2: u020 and u059 (364 B). "Country or territory" and "the free and full consent of the intending spouses" are
@@ -710,7 +728,9 @@ row, and AP-5b before any integration of AP-5.
 - **Statements:** `grammar_wf`, `read_unique`, `readings_exact`, `readings_nodup`, `read_normal`.
 - **Tests** (the specification writes the fixtures): both boundaries of each limit, that is N−1 and N raw
   derivations, and 63, 64 and 65 readings; duplicate derivations that would hide another meaning; raw-cap saturation
-  and an exhausted step budget, each a limit outcome.
+  and an exhausted step budget, each a limit outcome; the statement review's counterexamples to `framesOk` and
+  `normalOk` (spec FR1 to FR7: a marker of spaces, two spellings of one marker, the subject slot as a filler, a
+  repeated marker) and the round trips of the forms a modal uses (N1 to N5).
 - **Seeded bug (Lean):** add a rule attaching a premodifier to a middle item; the u105 fixture (A8) must report 3
   readings and fail.
 - **Moves:** nothing (enabler). The constitution's hidden demand becomes measurable: AP-7 parses its 669 "norms"
@@ -725,16 +745,27 @@ row, and AP-5b before any integration of AP-5.
   writer picks one; in translation the reading set arrives with AP-4's sources. A predicate whose rules, or whose
   dual's rules, give different lists of simple acts is refused ("write the parts as separate predicates").
 - **New files:**
-  - `lean/VE/Acts/{Table,Elaborate,Faithful}.lean` and `lean/VE/Acts/ElaborateExamples.lean`;
+  - `lean/VE/Acts/{Table,Elaborate,Faithful,Decode}.lean` and `lean/VE/Acts/ElaborateExamples.lean` (`Decode.lean`:
+    `ElaboratedU` and `decodeElaboratedU`, spec 6.4);
   - the `acts-elaborate` relay (below);
   - `tests/test_acts_elaborate.py`.
-- **Shared files:** `lean/VE/Norms/Wire.lean`, one more line: after decoding, `VE.Acts.elaborate` when `acts@0` is
-  present (after `lean-first/b14b`; AP-1's and AP-3's hunks come first on this file). `ve/norms.py`: `_lean_route` is
-  true for `acts@0` documents, and the retained Python path refuses them.
+- **Shared files** (statement review: elaboration runs after `decodeSourceU`, not inside `Norms/Wire.lean`; spec 6.4):
+  - `lean/VE/Norms/Wire.lean`: the act check calls `VE.Acts.Wire.checkAct` and the `acts` block's frames are decoded
+    (after `lean-first/b14b`; AP-1's and AP-3's hunks come first on this file). It elaborates nothing: draft 2's "after
+    decoding, `VE.Acts.elaborate`" broke `Source.env` and lost the parts' `unspecified` completions.
+  - `lean/VE/NormDefaults/Wire.lean`: `checkAuthorN` factored through `authorLimits`, which `elaborateMap` re-runs on
+    the elaborated document (`checkAuthorN_split`).
+  - Every entry point an `acts@0` norms document reaches calls `decodeElaboratedU` and runs on the elaborated
+    document; each reached soundness theorem gains a twin over it. The callers of `decodeSource` and `decodeSourceU`
+    measured on `49de179e` are listed in the specification (6.4); AP-3 classifies their reach at build time.
+  - `lean/VE/Readings/Wire.lean`: the frame decoder refuses joined acts under `acts@0` (D-33,
+    `readings_lexical_only`), until a readings elaboration is specified and reviewed.
+  - `ve/norms.py`: `_lean_route` is true for `acts@0` documents, and the retained Python path refuses them.
 - **The `acts-elaborate` relay (mandatory).** It goes through the full CLAUDE.md recipe for a relayed Lean route:
   - a shape, an encoder theorem and a generated schema;
   - binding: each generated `p__i` and `<rule>-a<i>` names its source predicate or rule in the request, plus an index,
-    as `SplitMap` exports them (section 3);
+    as `SplitMap` exports them (section 3); the row's `split` member carries, per split source, its parts and the
+    "name one of its parts" text Lean writes, which Python relays verbatim (spec 6.7, D-28);
   - fuzz tests.
 
   Python's conflict-witness search and its prover then run on the relayed document, so their witnesses and
@@ -746,15 +777,25 @@ row, and AP-5b before any integration of AP-5.
   split rules or acts; neither re-derives a split.
 - **Generated:** as AP-2, plus the relay's response schema and its route cases.
 - **Statements:** `table_*`, `elaborate_identity`, `elaborate_wellFormed`, `elaborate_one_reading`,
-  `elaborate_faithful`, `elaborateMap_fst`, `splitMap_exact`.
+  `elaborate_faithful`, `elaborateMap_fst`, `splitMap_exact`, `elaborate_parts`, `distinctTexts_ok`,
+  `paraphrases_nodup`, `checkAuthorN_split`, `decodeElaboratedU_source`, `decodeElaboratedU_wellFormed`,
+  `decodeElaboratedU_lexical`, `readings_lexical_only`, and the twins of the reached soundness theorems.
 - **Tests:**
   - A6 (u027) gives two prohibitions; A7 (u079b) gives one obligation on "held by secret vote or by equivalent free
-    voting procedures"; A14 (u0123.s03) gives six prohibitions.
+    voting procedures"; A14 (u0123.s03) gives five prohibitions (the specification's G14v and E3) and leaves "provide
+    false information that could deceive the user" as an explicit residual: *false* is a clause word, and the
+    statement review kept the rule (spec F10).
   - Precedence splits pairwise. A predicate whose rules or dual rules give different lists of simple acts is refused.
-  - Documents whose acts are all simple are byte-identical to AP-1's.
+  - Documents whose acts are all simple are byte-identical to AP-1's (`decodeElaboratedU_lexical`).
+  - An unspecified predicate decoded from JSON splits into unspecified parts (spec E5j).
+  - The route limits hold after a split, each at its boundary (spec E12 to E15); two equal parts of a plain
+    entitlement are refused (E16).
+  - A rule with two readings is refused with Lean's numbered paraphrases (E9); the paraphrases of one listing are
+    pairwise distinct (G12 under *must not*: four, spec P12n).
   - Every reference to a split predicate is refused (the reference table's test).
 - **Seeded bugs:**
-  - Lean: let `must` distribute over *or*; A7 must fail.
+  - Lean: let `must` distribute over *or*; the table fixture T8 (G6 under *must*: no reading) must fail. Draft 2
+    seeded it on A7, a single act the table never splits, so it could not fail.
   - Python: display one row per source rule instead of Lean's per-simple-act wordings; the display test must fail.
 - **Deleted:** nothing new; Python computes no split.
 - **Order:** stays on its branch until AP-7 has run; then merges before AP-4.
@@ -772,17 +813,26 @@ row, and AP-5b before any integration of AP-5.
   - the edge rule (2.4) in the grammar, with `modifier_edges`;
   - `Source` and `sourceCheck`: a `readings@1` set that names its source phrase and source rule must hold exactly the
     phrase's readings (`sourceCheck_exact`): a bijection between readings and choices, complete against the grammar,
-    each choice's rules keeping the source rule's modal, sign, guard, carve-outs, precedence and completion;
+    each choice's rules keeping the source rule's modal, sign, guard, carve-outs, precedence and completion. The
+    completion is three-valued (`deny`, `allow`, `unspecified`), read from the original metadata, not from the frame's
+    placeholder; a choice's rules are compared with its reading's simple acts up to order (statement review, spec 7);
   - `atomSituation`, built by Lean and checked by `separates`;
   - a proposal mode that lists the readings (and their paraphrases) of an act phrase, so the translator's tool writes
-    the set Lean then checks.
+    the set Lean then checks. Lean lexes the phrase and returns each act's token indices; Python binds them (in range,
+    none repeated in an act, readings distinct) and lexes nothing.
+  - Binding cannot detect a reading dropped with its row: that is a fault in Lean's content, covered by
+    `phraseReadings_exact`; in translation `sourceCheck` refuses a set that lacks a reading. No test claims more.
+  - On the readings route only AP-1's single acts may be declared (AP-3's D-33). A reading whose simple act is a whole
+    join, or an atom with a joined filler, therefore has no candidate, and its source cannot pass until a readings
+    elaboration is specified and reviewed (spec F11). Of the pilot sets this affects u076 only.
 - **New files:**
   - `lean/VE/Acts/{Readings,Sources,Situation,Run}.lean` and `ReadingsExamples.lean`;
   - `lean/ResponseShape/Schemas/ActReadings.lean` and `lean/ResponseShape/Encoders/ActReadings.lean` (with
     `runActReadings_fits`);
   - `ve/acts.py` (relay: schema and binding only, R8);
   - `tests/test_acts_readings_lean.py` and `tests/test_acts_readings_answer.py` (fuzz: each member dropped, emptied,
-    retyped, duplicated, reordered, an index pushed out of range).
+    retyped, duplicated, reordered, an index pushed out of range, a token span pushed past the phrase, two readings
+    made equal; spec AR1 to AR5).
 - **Shared files:**
 
   | File | Change | Overlapping branches |
@@ -799,16 +849,20 @@ row, and AP-5b before any integration of AP-5.
   - A12 (u087) gives 2.
   - The pilot's rs_u055 and rs_u105b/rs_u105c with their coupling pass `sourceCheck`.
   - A set with a skipped-middle candidate is refused. A set missing a reading is refused. A set whose choice turns a
-    permission into a prohibition is refused.
+    permission into a prohibition is refused. A set whose choice changes only `unspecified` to `deny` is refused (spec
+    S7); one whose rules come in another order passes (S8).
   - The boundaries of `phraseReadings`: 64 readings listed, 65 refused; raw-cap saturation refused.
 - **Seeded bugs:**
   - Lean: drop the "all" reading of a pre-modifier; rs_u105b/c must be refused.
-  - Python: relay a reading list with one reading removed; the binding test must report `CheckerUnavailable`.
+  - Python: drop the token-index range check from the binding; the fuzz mutant with an index pushed out of range (spec
+    AR2) is then accepted, so its test fails. (Draft 2's "relay a reading list with one reading removed" was a claim
+    binding cannot meet: spec AR5.)
 - **Deleted:** the pilot's hand-built separating situations for these sets. Lean's `atomSituation` builds them, the
   proposal tool writes them into the document, and admission checks them with `separates`, as for any set.
 - **Order:** a prototype on its own branch until AP-7 has run; merges after AP-3.
 - **Moves:**
-  - M1: u076 and u092, 288 B (*estimate*).
+  - M1: u092, 163 B (*estimate*). u076 (125 B) waits for the readings elaboration: its one-act reading is a joined
+    act, which the readings route refuses until then (spec F11).
   - M2: u055 checked exact.
   - M5: 3 sets checked against the English.
 
@@ -905,11 +959,11 @@ declarations, its derivation and reading counts and its diagnostics, and adds th
 | A8 | u105a–c | `{0} freely to participate in [the cultural life of the community], to enjoy the arts and to share in [scientific advancement and its benefits]`, form "has the right" | AP-4 | exactly 2 readings (*freely* on the first act, or on all); the pilot's coupled rs_u105b/rs_u105c pass `sourceCheck` |
 | A9 | u055 | `{0} be arbitrarily deprived of their nationality nor denied [the right to change their nationality]`, permission, sign false | AP-4 | exactly 2 readings = rs_u055's `deprivation_only` and `both_acts` |
 | A10 | u092 | `{0} to security in the event of unemployment, sickness, disability, widowhood, old age or [other lack of livelihood] in circumstances beyond their control`, frame *security* with `split: ["in the event of"]` | AP-4 | 2 readings ("in circumstances beyond their control" on the last cause, or on all) |
-| A11 | u076 | `{0} to take part in {1} directly or through [freely chosen representatives]`, form "has the right"; the country slot as u077 | AP-4 | 2 act readings (each way, or one of the ways) × u077's 2 country readings |
+| A11 | u076 | `{0} to take part in {1} directly or through [freely chosen representatives]`, form "has the right"; the country slot as u077 | AP-4 | 2 act readings (each way, or one of the ways) × u077's 2 country readings; its reading set passes `sourceCheck` only after the readings elaboration (spec F11) |
 | A12 | u087 | `{0} to form and to join trade unions for the protection of their interests` | AP-4 | 2 readings ("for the protection …" on *join* or on both); the split itself (*to … and to …*) is AP-3's |
 | A13 | u0156.s03 | `{0} actively deceive {1} about [the existence of a system prompt or its content]` | AP-1 | accepted; replaces "existence-or-content" |
-| A14 | u0123.s03 | the six acts after "cannot instruct Claude to", joined by *or*, permission, sign false; *while* and *when* clauses move to guards | AP-3 | six prohibitions; "instruct" stays `speech-acts@0`'s |
-| A15 | u024, u037 | two predicates with act `{0} take place` and different sorts | AP-1 | accepted (act identity includes sorts); the specification decides whether wording distinctness may also use sorts (open question 8.3) |
+| A14 | u0123.s03 | the six acts after "cannot instruct Claude to", joined by *or*, permission, sign false; *while* and *when* clauses move to guards | AP-3 | five prohibitions plus one explicit residual: "provide false information that could deceive the user" holds the clause word *false*, refused even in a fixed phrase, and the statement review kept that rule (spec F10, G14v); "instruct" stays `speech-acts@0`'s |
+| A15 | u024, u037 | two **permission** predicates with act `{0} take place` and different sorts | AP-1 | accepted (act identity includes sorts, and `actChecks` checks permissions); the specification decides whether wording distinctness may also use sorts (open question 8.3). Draft 2 left the role open; as plain predicates `actChecks` would skip them and the wording would read "has the right take place" |
 | A16 | u041 | `{0} to be presumed innocent until proved guilty according to law in [a public trial at which they have had all the guarantees necessary for their defence]` | AP-1 | accepted as words; not counted in M1 (time is events-time-causation's) |
 | A17 | — | `{0} take part if {1} is open` | AP-1 | refused: clause word (*if*, *is*); "write the condition in the guard" |
 | A18 | — | fixed phrase "the court that is competent" | AP-1 | refused: clause word in a fixed phrase |
@@ -942,6 +996,12 @@ Every new Lean module is a new file under `lean/VE/Acts/`. The shared source fil
 
 - `lean/VE/Norms/Wire.lean` (AP-1, AP-3; first in its queue, after `lean-first/b14b`);
 - `lean/VE/Norms/Tree.lean` (AP-1);
+- `lean/VE/NormDefaults/Check.lean` and `FillCheck.lean` (AP-1: the plain-act refusal `check_eq := rfl` repeats);
+- `lean/VE/Norms/Plain.lean`, `lean/VE/EnglishGrammar/Encode.lean`, `lean/VE/Service/Standalone.lean` (AP-1; spec F1);
+- `lean/VE/NormDefaults/Wire.lean` (AP-3: `authorLimits`);
+- `lean/VE/Readings/Wire.lean` (AP-3: joined acts refused on the readings route);
+- the entry points that call `decodeSource` or `decodeSourceU` and that an `acts@0` document reaches (AP-3: they call
+  `decodeElaboratedU`; the specification's 6.4 lists the callers measured on `49de179e`);
 - `lean/VE/Compose/Dispatch.lean` (AP-1: one row of AR-10's table);
 - `lean/VE/EnglishGrammar/Policy.lean` (AP-1; first in the `EnglishGrammar` queue);
 - `lean/VE/Service/Protocol.lean` (AP-4, through AR-10's registry and the protocol queue);
@@ -965,12 +1025,13 @@ All values are *estimates* on the pinned run `20261012T1800Z`. A pilot rerun and
 | AP-0 | measured | measured | measured | M4 tagged |
 | AP-1 | u039, u085, u106 → OPEN; u091 → OPEN (high) | +457 to +658 | 48.1% to 49.9% | Group C wordings restored (742 B, faithfulness) |
 | AP-3 | u079b → OPEN | +76 | 48.8% to 50.6% | Groups A and B on real acts (1,838 B, faithfulness; A still needs attitudes and the act-performance bridge) |
-| AP-4 | u076, u092 → READINGS | +288 | 51.4% to 53.3% | — |
+| AP-4 | u092 → READINGS | +163 | 50.3% to 52.1% | — |
+| the readings elaboration (a later statement review; spec F11) | u076 → READINGS | +125 | 51.4% to 53.3% | — |
 | AP-5 | — | 0 | — | nothing until AP-5b |
 | beyond this plan | u041, u108 (siblings), u086 (research), u082 (rights as objects) | up to +838 | — | — |
 
-The NORTH-STAR-style score (UDHR weight 4) is 0.30 to 0.37 after AP-4 (*estimate*), against an upper bound of 0.68
-for all 1,860 B.
+The NORTH-STAR-style score (UDHR weight 4) is 0.25 to 0.33 after AP-4 (*estimate*), and 0.30 to 0.37 once u076
+follows, against an upper bound of 0.68 for all 1,860 B.
 
 ## 8. Risks and open questions
 
@@ -992,6 +1053,10 @@ for all 1,860 B.
 7. **Lean audit words.** `lean/audit.py` refuses the words *sorry, axiom, unsafe, partial, opaque, extern* (with word
    boundaries) even in comments and strings. Fixture strings are checked for them. "Impartial" passes (no word
    boundary), but a fixture or comment saying "opaque" would not: the plan's Lean text avoids it.
+8. **Joined acts on the readings route** (statement review). Nothing elaborates a reading set's candidates, so the
+   readings route accepts only AP-1's single acts until a readings elaboration, with its own candidate elaboration and
+   preservation theorems, passes a statement review of its own. Until then u076's reading set waits (spec F11), and
+   any source with a whole-join reading cannot be checked exact.
 
 ## 9. Shared pieces
 
@@ -1011,7 +1076,7 @@ plan's position on each:
 | Finite clauses become guards | the clause-word rule (AP-1) | `right-clauses@0`, scope |
 | Honest Lean wordings for every regulated predicate | `Lexical.wording` (AP-1) | every design adding predicates |
 
-## 10. Edit map (draft 2)
+## 10. Edit map (drafts 2 and 3)
 
 **Design debate** (`debates/design-act-phrases`, final joint position, round 3; Fable's and Astra's points as both
 accepted them):
@@ -1055,14 +1120,39 @@ statement review and the DRI:
 
 - **A14 as written.** *False* is a clause word, so u0123.s03's "provide false information that could deceive the
   user" is refused even inside a fixed phrase, and A14 gives five prohibitions, not six (the specification's finding
-  F10, measured in its stub).
+  F10, measured in its stub). *Decided by the statement review (draft 3, SR13): the rule stays; five prohibitions plus
+  one explicit residual.*
 
 - **The relay's place in the protocol queue.** The debate makes AP-3's `acts-elaborate` relay mandatory; the
   cross-plan queue for `Protocol.lean` and `service_schema.py` (SYNTHESIS 4.2) does not list it, because it predates
   the debate's last round. The specification places it as a case kind of the existing norms modes, which touches
   those modes' response shapes and not `Protocol.lean`; if the review prefers a mode of its own, it joins the protocol
-  queue in landing order, before AP-4.
+  queue in landing order, before AP-4. *The statement review raised no objection; the case kind stands.*
 - **AP-1's decoder reach.** `decodeRegulated` has callers beyond `Norms/Wire.lean` (`Norms/Plain.lean`,
   `EnglishGrammar/Encode.lean`, `Service/Standalone.lean`, `Service/Family.lean`). The specification (its section 4.1)
-  lists them and which ones `acts@0` documents reach; the shared-file list above is draft 1's plus the debate's and
-  the review's additions, and the specification's finding F1 asks the review to add the rest.
+  lists them and which ones `acts@0` documents reach. *Draft 3 adds them to AP-1's shared files, with
+  `NormDefaults/Check.lean` and `FillCheck.lean`, which the statement review found (SR4).*
+
+**Statement review of the specification** (`debates/act-phrases-spec/{astra,fable}.md`, CONVERGED after round 2 on
+**FIX**; the specification's 14.3 maps each edit there, this table maps where it touches the plan). Draft 3 applies
+them and makes no other change. Build stays blocked, except AP-0, until a bounded re-check of the specification's
+draft 2 against a fresh run of its stub passes and the DRI signs (SR16).
+
+| # | Edit | Applied in the plan |
+|---|---|---|
+| SR1 | `framesOk` requires canonical markers; `normalOk` excludes the subject slot and repeated markers; the counterexamples as fixtures | AP-2 tests |
+| SR2 | Modal rendering without infinitive *to*; whole readings rendered from their trees; paraphrases of a listing pairwise distinct (`paraphrases_nodup`) | 3 (preamble); AP-2 tests; AP-3 statements and tests |
+| SR3 | Three-valued completion in `Source` and its comparison, from the original metadata; the `unspecified → deny` mutation | 3 (preamble); AP-4 goal and tests |
+| SR4 | AP-1 inventory: `NormDefaults/Check.lean` and `FillCheck.lean`; an explicit check of duplicate parts for every role | 2.3; AP-1 shared files; AP-3 tests; 6 (shared files); this section's third note |
+| SR5 | The `act-readings` relay claims only what binding shows; a concrete Python seeded bug | AP-4 goal, new files, seeded bugs |
+| SR6 | Elaboration after `decodeSourceU`, with an explicit `ElaboratedU` beside the decoded source; E5 from JSON | AP-3 new files, shared files, statements, tests; 6 (shared files) |
+| SR7 | Route limits re-checked after a split, with their existing texts; boundary fixtures | 2.3; AP-3 shared files and tests |
+| SR8 | Joined acts refused on the readings route until a readings elaboration is reviewed; u076's set waits | 0 (table, coverage); AP-3 shared files; AP-4 goal and moves; A11; 6; 7; 8.8 |
+| SR9 | `elaborate_parts` | 3 (preamble); AP-3 statements |
+| SR10 | Rust refuses `acts@0` with `UnsupportedProfile`; its seeded bug | 2.9; AP-1 shared files, seeded bugs, deleted |
+| SR11 | Exact D-15, D-23 and D-31 texts with guards | AP-3 tests (E9) |
+| SR12 | Lean lexes and writes the "name one of its parts" text; Python binds | 2.9; AP-3 relay; AP-4 goal |
+| SR13 | F10 decided: the clause words stay refused | A14; AP-3 tests; this section's first note |
+| SR14 | A15's predicates are permissions; rules compared up to order; the stub's run record | A15; AP-4 goal and tests |
+| SR15 | Seeded bugs that can fail: the comma bug on A33, the *must*/*or* bug on T8 | AP-1 and AP-3 seeded bugs |
+| SR16 | Bounded re-check, then the DRI | status; this section |

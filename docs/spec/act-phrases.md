@@ -1,21 +1,27 @@
 # Action phrases (`acts@0`): specification
 
-> Status: item-1 statement specification, draft 1 (2026-10-13), written from
-> [act-phrases-PLAN.md](act-phrases-PLAN.md) draft 2. That draft applies the converged design debate
-> (`manage-agents/debates/design-act-phrases/{fable,astra}.md`, CONVERGED after round 3) and the cross-plan review's
-> edits (`manage-agents/debates/plan-synthesis/edits-act-phrases.md`); its section 10 maps them. This document gates
-> every build batch except AP-0: the statement review (Astra and Fable) reads it first, then the DRI decides.
+> Status: item-1 statement specification, draft 2 (2026-10-13), written from
+> [act-phrases-PLAN.md](act-phrases-PLAN.md) draft 3. Draft 1 went to the statement review
+> (`manage-agents/debates/act-phrases-spec/{astra,fable}.md`, CONVERGED after round 2 on **FIX**); draft 2 applies
+> every edit of that joint position and nothing else. Section 14.3 maps each edit (SR1 to SR16) to the place it was
+> applied. The plan's draft 2 applied the converged design debate (`manage-agents/debates/design-act-phrases/`) and the
+> cross-plan review's edits (`manage-agents/debates/plan-synthesis/edits-act-phrases.md`); its section 10 maps them.
+> This document gates every build batch except AP-0: after these edits, a bounded re-check (13, last item) and then the
+> DRI decide.
 >
-> Sections 4 to 8 are the statements. Section 14 lists every place where this draft chose between readings of the
-> plan or sharpened one of its statements, and the findings the review must decide. Theorem statements and fixtures
-> are obligations of the batches, not claims of finished proofs or tests.
+> Sections 4 to 8 are the statements. Section 14 lists every place where a draft chose between readings of the plan or
+> sharpened one of its statements, the review's edits, and the findings. Theorem statements and fixtures are
+> obligations of the batches, not claims of finished proofs or tests.
 >
-> **Verification status.** Every statement of sections 4 to 8 that names only existing modules was type-checked in
-> the scratch stub `lean/SpecStubs_act-phrases.lean` (51 statements, no `sorry`), and every fixture number of
-> section 11 is computed there by a `#guard` (161 guards, all passing, on 2026-10-13 against `main` at `49de179e`).
-> The numbers were first derived by hand; the stub confirmed all of them but one: A14 as the source words it is
-> refused, because *false* is a clause word (finding F10). Section 15 says what the stub holds and what it does not
-> (the AR-10 row, the response shapes and the AP-6 statements, whose modules do not exist yet).
+> **Verification status.** Draft 1's statements that name only existing modules were type-checked in the scratch stub
+> `lean/SpecStubs_act-phrases.lean` (51 statements, no `sorry`), and draft 1's fixture numbers were computed there by
+> `#guard`s (161 guards, all passing, on 2026-10-13 with `leanprover/lean4:v4.24.0` against `main` at `49de179e`).
+> Type-checking a statement does not show it true: the review found four statements false as draft 1 wrote them
+> (`grammar_wf` and `read_normal`, by counterexamples to `framesOk` and `normalOk`; `SourceExact`'s bijection, by
+> the G12 collision; the completion, by its Boolean). Draft 2 corrects them, but **its changed definitions and its new
+> fixtures have not been run in the stub**: this session had no shell. Every number marked *hand, not yet run* is
+> derived by hand. The bounded re-check (13, item 14) runs the stub updated to draft 2 and records its toolchain and
+> sha256 in section 15. Section 15 says what the stub holds and what it does not.
 >
 > Inputs: [norms.md](norms.md) (W1), [norm-defaults.md](norm-defaults.md), [composition-s2.md](composition-s2.md)
 > (`readings@1`), [english-lean.md](english-lean.md) (the grammar engine), `lean/VE/Norms/{Wire,Tree,Elaborate}.lean`,
@@ -46,7 +52,8 @@ review checklist (13), choices and findings (14), and the stub (15).
 
 Out of scope, by the plan: more than two bound slots (AP-6, an experiment); conditions and participles inside an
 object (research R4); acts as events (events-time-causation's ET-D2); attitudes over acts; any change to Python's
-norm-sentence matcher (E3's).
+norm-sentence matcher (E3's). Out of scope by the statement review: joined acts declared on the readings route, which
+is refused (D-33) until a readings elaboration with its own theorems is specified (6.4, SR8).
 
 ## 1. Definitions
 
@@ -116,12 +123,22 @@ A **frame** declares a head and its prepositions:
 The document also declares its **adverbs**: single words that say how an act is done ("freely", "arbitrarily",
 "directly"). The frames and adverbs together are the **vocabulary** `V` of the act grammar.
 
-`framesOk V` holds when: at most 128 frames; heads distinct and none a word-prefix of another; each head word an
-`actWord` in lower case and not a join, function or clause word; in each frame the markers are distinct, the modifiers
-distinct and non-empty, no string is both an argument marker and a modifier marker, `split ⊆ markers`, every marker
-word an `actWord` in lower case and not a grammar join word, *be* or a clause word, and no marker of the frame (argument
-or modifier) a word-prefix of another; the adverbs distinct lower-case `actWord`s, none a join, function or clause
-word, a marker word or a head word; and no head begins with a marker word.
+`framesOk V` holds when: at most 128 frames; heads non-empty, distinct and none a word-prefix of another; each head
+word an `actWord` in lower case and not a join, function or clause word; in each frame the markers are distinct, the
+modifiers distinct and non-empty, no string is both an argument marker and a modifier marker, `split ⊆ markers`,
+**every marker other than `""` and every modifier marker is canonical** (`m = " ".intercalate (wordsOf m)` and
+`wordsOf m ≠ []`: words separated by single spaces, no leading or trailing space, at least one word), every marker word
+an `actWord` in lower case and not a grammar join word, *be* or a clause word, and no marker of the frame (argument or
+modifier) a word-prefix of another; the adverbs distinct lower-case `actWord`s, none a join, function or clause word, a
+marker word or a head word; and no head begins with a marker word. `wordsOf m` is `m` split at spaces, empty pieces
+dropped.
+
+Only the direct-object marker `""` has no words. Because every other marker is canonical, two distinct marker strings
+have distinct word lists, so "distinct" and "no word-prefix" hold of the words the grammar matches, not only of the
+strings (SR1: draft 1 admitted `" "`, whose rule `MK: ` has an empty right side and breaks `grammar_wf`, and admitted
+`"in front"` beside `"in  front"`, which match the same words and doubled every reading). `framesOk V` is
+`(checkVocab V).isOk`, where `checkVocab` checks the conditions in the order of D-31 (10) and raises the first failing
+one's text.
 
 **Filler words of a frame**: every word except the grammar join words, *to*, *be*, the adverbs, the first words of
 the frame's markers and modifier markers, and the first words of all heads. A **filler** is one slot, one fixed phrase,
@@ -180,10 +197,10 @@ reading of one simple act keeps `p` as it is.
 ### 1.8 Sources (AP-4)
 
 A **source** names an act phrase as the source words it, an explicit **source template** (the role and sign, which fix
-the op; the guard, exceptions and precedence; the completion), the units every reading shares, and the reading sets
-the phrase is read into. A source is **exact** when its sets' choices correspond one to one to the phrase's readings,
-complete against the grammar, and every choice's rules regulate exactly its reading's simple acts with the template's
-context.
+the op; the guard, exceptions and precedence; the completion, one of *deny*, *allow* and *unspecified*), the units
+every reading shares, and the reading sets the phrase is read into. A source is **exact** when its sets' choices
+correspond one to one to the phrase's readings, complete against the grammar, and every choice's rules regulate
+exactly its reading's simple acts, in any order, with the template's context.
 
 ### 1.9 Restrictive declarations (AP-5)
 
@@ -199,25 +216,32 @@ narrows an act.
 |---|---|---|
 | plain, with an act and a form (AP-1) | `Lexical.wording`: `{0} has the right` or `{0} is entitled`, then the act after its `{0} ` | `{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}` (A1) |
 | permission or obligation | unchanged: `{0} may`, `must`, `must not`, `need not`, then the act after its `{0} ` | `{0} must not be subjected to torture` |
-| a part `p__i` (AP-3) | as its source's role gives, over the part's act: the rendering of its atom in normal order (5.5) | `{0} be subjected to cruel, inhuman or degrading treatment or punishment` |
+| a part `p__i` (AP-3) | as its source's role gives, over the part's act: its atom's text in normal order, with *to* exactly when the role is plain (`partAct`, 5.5), so a permission part of "to form and to join" is `{0} form trade unions` and reads "{0} may form trade unions" | `{0} be subjected to cruel, inhuman or degrading treatment or punishment` |
 
 A reader never sees "classified as …" for a plain predicate with an act under `acts@0`. Lexicon V4 (wording
 distinctness) is not changed: two predicates whose wordings are equal stay a V4 duplicate (A15; 14, C24).
 
 ### 2.2 Paraphrases of readings
 
-Each reading is shown as one plain sentence, built by `paraphrase` (6.2) from the subject slot, the modal words and
-the rendered simple acts:
+Each reading of a rule is shown as one plain sentence, built by `paraphrase` (6.2) from the subject slot, the modal
+words and the simple acts, each rendered from its tree (5.5):
 
 - **one simple act** `a`: `{0} <modal> <a>.`;
 - **a split** `a₁ … aₙ`: the sentences for each part, joined by `, and ` when there are two, and as `s₁; s₂; …; and
   sₙ.` when there are more;
-- **a whole join by *and***: `{0} <modal> <the source act>, as one act done together (not each on its own).`;
-- **a whole join by *or***: `{0} <modal> <the source act>, as one act done in any one of these ways (not each way on its
+- **a whole join by *and***: `{0} <modal> <the join>, as one act done together (not each on its own).`;
+- **a whole join by *or***: `{0} <modal> <the join>, as one act done in any one of these ways (not each way on its
   own).`
 
-`<modal>` is *must*, *need not*, *may*, *must not*, *has the right* or *is entitled*; `<a>` is the act's rendering
-without its `{0} `. The display replaces `{0}` by the subject noun ("Everyone", "No one"), as for every rule today.
+`<modal>` is *must*, *need not*, *may*, *must not*, *has the right* or *is entitled*. `<a>` is the atom's text without
+its `{0} `, **without its infinitive *to* after *must*, *need not*, *may* and *must not*, and with *to* after *has the
+right* and *is entitled*** (`Op.inf`, 5.5): "{0} must not form trade unions", "{0} has the right to form trade unions"
+(SR2: draft 1 wrote "must not to form"). `<the join>` is the join rendered from its own atoms, each in that form, as a
+list joined by its join word ("A and B", "A, B and C"), so each modifier stays where its reading puts it and whole
+readings that differ in their atoms have different texts (SR2: draft 1 wrote the source phrase for every whole reading, so G12's
+two whole readings under *must not* had one text). The paraphrases of one listing are pairwise distinct, or the
+listing is refused (D-32, `paraphrases_nodup`). The display replaces `{0}` by the subject noun ("Everyone", "No one"),
+as for every rule today.
 
 For u051 (A5), under *has the right*:
 
@@ -232,13 +256,24 @@ For u076 (A11):
 > This sentence has two readings.
 > 1. Everyone has the right to directly take part in the government of their country, and everyone has the right to
 >    take part in the government of their country through freely chosen representatives.
-> 2. Everyone has the right to take part in the government of their country directly or through freely chosen
->    representatives, as one act done in any one of these ways (not each way on its own).
+> 2. Everyone has the right to directly take part in the government of their country or to take part in the
+>    government of their country through freely chosen representatives, as one act done in any one of these ways (not
+>    each way on its own).
 
 (The slot `{1}` shows as its filler's words; u077's two readings of "their country" multiply these, by u077's set.)
 
-In authoring, a rule whose act has two or more readings is refused with this list, headed "This act has two readings.
-Which do you mean?" (10, D-15). In translation the readings become a reading set whose source is the phrase (AP-4).
+These lists are the readings of a phrase under a rule's modal words: `phraseReadings` (7), which the `act-readings`
+mode lists for the translator, and `readingOf`, which refuses a rule whose one act has two or more readings under its
+modal with this list (D-23, as for u076's phrase under *may*: fixture E9). A declared act whose phrase has two or more
+**meanings** (act trees) is refused earlier, by `checkAct`, which knows no modal: D-15 lists the meanings rendered from
+their trees with no modal word (5.5, `Act.text`), as for u051's phrase declared as the act of `p051` (fixture G5d):
+
+> InvalidInput: act phrase for p051 has more than one reading: 1. to seek asylum from persecution and to enjoy asylum
+> from persecution in other countries. 2. to seek asylum from persecution in other countries and to enjoy asylum from
+> persecution in other countries.
+
+The IDE heads either list "Which do you mean?". In translation the readings become a reading set whose source is the
+phrase (AP-4).
 
 ### 2.3 What the IDE asks, in plain words
 
@@ -249,7 +284,7 @@ Which do you mean?" (10, D-15). In translation the readings become a reading set
 | a split marker | Does "subjected to torture or to cruel … treatment" mean two acts, "subjected to torture" and "subjected to cruel … treatment"? |
 | an adverb | Does "freely" say how something is done? |
 | a restrictive word (AP-5) | Is to seek asylum in other countries one way to seek asylum? |
-| a reading (authoring) | This act has two readings. Which do you mean? (then the paraphrases) |
+| a reading (authoring) | This act has two readings. Which do you mean? (then D-15's list of meanings, or D-23's paraphrases, 2.2) |
 
 No question shows brackets, slots, markers or frames.
 
@@ -289,7 +324,7 @@ Under `acts@0` only, the vocabulary may carry:
 |---|---|---|
 | `fixed` | AP-1 | `Lexical.decodeFixed` |
 | `frames`, `adverbs` | AP-3 (AP-2 has them as Lean values only and changes no route) | `VE.Acts.Wire.decodeVocab`: `framesOk` |
-| `sources` | AP-4 | `VE.Acts.Wire.decodeSource` |
+| `sources` | AP-4 | `VE.Acts.Wire.decodeSource`: a source's `default` is decoded as `VE.NormDefaults.Completion` (`deny`, `allow` or `unspecified`; `unspecified` only under `norm-defaults@0`, else today's `UnsupportedProfile: unspecified completion requires norm-defaults@0`) |
 | `restrictive` | AP-5 (used only under `act-specialise@0`, after AP-5b) | `VE.Acts.Wire.decodeRestrictive` |
 
 Unknown fields are refused. A field whose batch has not landed is refused as unknown, so `acts@0` grows only by
@@ -301,7 +336,7 @@ today (the frozen vocabulary decoder refuses the field).
 Under `acts@0`:
 
 - a permission's or obligation's `act` is checked by `Lexical.check` (AP-1), and from AP-3 on by `Wire.checkAct`
-  (a lexical act, or a joined act with one meaning, 6.4);
+  (a lexical act, or a joined act with one meaning, 6.4); on the readings route a joined act is refused (D-33, 6.4);
 - a plain declaration may carry both `act` and `form` (`"has the right"` or `"is entitled"`), or neither; a plain act
   is stored in `Regulated.act` like any act, and `Norms.Tree.check` admits it (4.1);
 - every other field is as in `norms@0`.
@@ -324,6 +359,8 @@ unchanged for every environment without `acts@0`.
 | `lean/VE/Acts/Compat.lean` | new | `check_extends`, importing `Norms.Wire` and `Acts.Lexical` |
 | `lean/VE/Norms/Wire.lean` | hunk | imports `LexicalBase` and `Lexical`; `decodeRegulatedIn`; `decodeNormsEnvironment` calls it with the envelope's profiles and the block's `fixed`; `canonicalActIn` and its use in `canonicalEnvironmentJson` |
 | `lean/VE/Norms/Tree.lean` | hunk | `check` drops its refusal of `.plain, some _` (`Tree.lean:314`) |
+| `lean/VE/NormDefaults/Check.lean` | hunk (SR4) | `regBody` (:73) and `fieldsOK` (:158) drop the same refusal, so that `check_eq : check D = checkSteps D := rfl` (:151) still holds; `regBody_ok` and the characterisation that uses `RegOK` (:391–433) are re-proved |
+| `lean/VE/NormDefaults/FillCheck.lean` | hunk (SR4) | `fill_regOK` (:318), which proves `RegOK` and so `fieldsOK`, is re-proved over the new `fieldsOK` |
 | `lean/VE/Norms/Plain.lean` | hunk (finding F1) | `decodeRegulatedAllIn ps fx`, and `decodeRegulatedAll = decodeRegulatedAllIn [] []` |
 | `lean/VE/EnglishGrammar/Encode.lean` | hunk (F1) | `regulatedView` and `modalForm` read the environment's profiles and use the profile-aware decoders |
 | `lean/VE/EnglishGrammar/Policy.lean` | hunk | the selected wording of a plain predicate with an act is `Lexical.wording`, beside the modal-form case at :504–507 |
@@ -331,7 +368,13 @@ unchanged for every environment without `acts@0`.
 | `lean/VE/Compose/Dispatch.lean` | AR-10 row | 4.4 |
 
 `Wire.lean`, `Tree.lean` and `Plain.lean` are listed in `lean/VE/Route/frozen-sources.sha256`; their hunks regenerate
-that inventory (12).
+that inventory (12). The batch checks at build time whether `NormDefaults/Check.lean` or `FillCheck.lean` is listed
+there too, and regenerates it if so.
+
+`actChecks` (`Tree.lean:273`) checks act identity among permissions and obligations only (`:275` filters plain
+predicates out), and AP-1 does not change that: two plain predicates with equal acts and sorts stay accepted, as two
+plain predicates without acts are today. The duplicate parts of one split predicate are refused by `elaborateMap`'s own
+check for every role, plain included (6.3, D-27; SR4).
 
 ### 4.2 Definitions
 
@@ -486,9 +529,11 @@ theorem gate_acts (ps : List String) (h : "acts@0" ∈ ps) (r : VE.Compose.Route
       (r = .norms ∨ r = .normDefaults ∨ r = .readings)
 ```
 
-The refusals cover every decoder `acts@0` does not hook (finding F2): the soft and rights chains and the alternatives
-route decode norms with their own extensions, and the closure and order families use `Plain.decodeRegulatedAll` on the
-family route. `speech-acts@0` and `reports@0` already exclude `acts@0` (the speech-acts allowlist; reports refuse
+`gate_acts` keeps `.readings`, but from AP-3 on the readings route admits only the acts AP-1 accepts: its frame decoder
+refuses a joined act (D-33, `readings_lexical_only`, 6.4), because nothing elaborates the candidates of a reading set
+(SR8). The refusals cover every decoder `acts@0` does not hook (finding F2): the soft and rights chains and the
+alternatives route decode norms with their own extensions, and the closure and order families use
+`Plain.decodeRegulatedAll` on the family route. `speech-acts@0` and `reports@0` already exclude `acts@0` (the speech-acts allowlist; reports refuse
 `norms@0`). Python reads the generated table; no `ve/profiles.py` row is written by hand.
 
 ## 5. AP-2: Lean statements (the act grammar)
@@ -714,10 +759,52 @@ def analyse (V : Vocab) (N b : Nat) (ts : Array Tok) : Option Atom :=
 The **normal form** of an atom, `Atom.normal`, is the token list `{0}`, *to* if `toWord`, *be* if `beWord`, its adverbs,
 its head, its object, its other arguments in their order (marker words, then the filler; a joined filler as
 `A, B or C` after its marker once), then its prepositional modifiers. `Atom.canon` reorders an atom as the normal form
-reads back: object first, adverbs before prepositional modifiers. The **rendering** of an atom is its normal form as
-text: tokens separated by spaces, a comma attached to the token before it, a fixed phrase as declared (canonical).
-`normalOk V a` is `atomOk V a` plus: every words part is non-empty and made of the frame's filler words, and no joined
-filler sits under a split marker or as a split object.
+reads back: object first, adverbs before prepositional modifiers. The **text** of a token list (`tokText fx`) is its
+tokens separated by spaces, a comma attached to the token before it, a fixed phrase as declared (canonical).
+`normalOk V a` is `atomOk V a` plus: every words part is non-empty and made of the frame's filler words; **no part is
+the subject slot `{0}`** (in an argument, a joined filler or a modifier); **no argument marker occurs twice**
+(`(a.args.map (·.1)).Nodup`); and no joined filler sits under a split marker or as a split object (SR1: draft 1 admitted
+`seek` with the object `{0}`, whose normal form has no reading, since `TOK` accepts only `slot (i+1)`; and nothing
+excluded repeated markers).
+
+```lean
+/-- `a` with *to* exactly when `inf = some true`, without it when `some false`, as read when `none`. -/
+def Atom.withTo (inf : Option Bool) (a : Atom) : Atom := { a with toWord := inf.getD a.toWord }
+def Atom.text (fx : List String) (inf : Option Bool) (a : Atom) : String := tokText fx (a.withTo inf).normal
+/-- "A", "A and B", "A, B and C" (the layout of `listToks`). -/
+def listText (j : String) : List String → String
+  | [] => ""
+  | [x] => x
+  | [x, y] => x ++ " " ++ j ++ " " ++ y
+  | x :: rest => x ++ ", " ++ listText j rest
+/-- A tree rendered from its atoms: each atom's text after its `{0} `, as a list joined by the tree's join word. -/
+def Act.text (fx : List String) (inf : Option Bool) : Act → String
+  | .one a => Atom.text fx inf a
+  | .all _ _ ps => "{0} " ++ listText "and" (ps.map (fun a => (Atom.text fx inf a).drop 4))
+  | .any nor _ ps => "{0} " ++ listText (if nor then "nor" else "or") (ps.map (fun a => (Atom.text fx inf a).drop 4))
+def Simple.text (fx : List String) (inf : Option Bool) : Simple → String
+  | .atom a => Atom.text fx inf a
+  | .whole A => Act.text fx inf A
+/-- *To* after the modal words: after *has the right* and *is entitled*, never after *must*, *need not*, *may* or
+    *must not*. -/
+def Op.inf : Op → Bool
+  | .right => true
+  | _ => false
+/-- A part's act: its atom's text, with *to* exactly when its predicate is plain (read after *has the right*). -/
+def partAct (fx : List String) (role : VE.Norms.Role) (a : Atom) : String := Atom.text fx (some (role == .plain)) a
+```
+
+Three renderings use these, and nothing else renders an act tree:
+
+- **a meaning, with no modal** (D-15, `checkAct`): `Act.text fx none A`, each atom with the *to* it was read with;
+- **a reading, under a modal** (`paraphrase`, 6.2): `Simple.text fx (some op.inf) x`;
+- **a part's act** (`elaborateMap`, 6.3) and **a choice's expected act** (`expected`, 7): `partAct`, and for a whole
+  join `Act.text fx (some (role == .plain))`.
+
+The text of a whole join keeps each atom whole, so a modifier read over one item stays on that item only, and two
+trees of one phrase that differ in their atoms have different texts (SR2); a listing in which two texts still coincide
+is refused (D-32). `read_normal` is the round trip for atoms; it makes no claim for the text of a whole join, which
+only paraphrases and D-15 show.
 
 ### 5.6 Theorems
 
@@ -759,7 +846,9 @@ theorem analyse_one (V : Vocab) {N b ts a} (h : analyse V N b ts = some a) : rea
 ```
 
 These replace the plan's `read_one`, `readings_exact` with a length hypothesis on the deduplicated list, and
-`reads_lexical` (14, C5, C6; plan G1–G3, G6).
+`reads_lexical` (14, C5, C6; plan G1–G3, G6). `grammar_wf` and `read_normal` keep draft 1's statements; what changes is
+their hypotheses' definitions, `framesOk` (1.4) and `normalOk` (5.5), which draft 1 wrote too weak for them to hold
+(SR1). Fixtures FR1 to FR7 (11.2a) pin the counterexamples.
 
 ## 6. AP-3: Lean statements (the table and elaboration)
 
@@ -803,8 +892,41 @@ def table : Op → Act → List (List Simple)
   | .may, A => freeTable A
   | .right, A => freeTable A
 
-def paraphrase (fx : List String) (phrase : String) (op : Op) (f : Option Lexical.Form) : List Simple → String
+/-- "must", "need not", "may", "must not"; for `.right`, the declaration's form ("has the right" when none). -/
+def modalText : Op → Option Lexical.Form → String
+/-- One simple act under a modal: the subject, the modal words, the act in the modal's form (5.5). -/
+def sentence (fx : List String) (op : Op) (f : Option Lexical.Form) (x : Simple) : String :=
+  "{0} " ++ modalText op f ++ " " ++ (Simple.text fx (some op.inf) x).drop 4
+/-- 2.2: one simple act; a split (", and " for two, "; …; and " for more); a whole join with its gloss. -/
+def paraphrase (fx : List String) (op : Op) (f : Option Lexical.Form) : List Simple → String
+  | [.whole (.all s sp ps)] => sentence fx op f (.whole (.all s sp ps)) ++ ", as one act done together (not each on its own)."
+  | [.whole A] => sentence fx op f (.whole A) ++ ", as one act done in any one of these ways (not each way on its own)."
+  | [x] => sentence fx op f x ++ "."
+  | [x, y] => sentence fx op f x ++ ", and " ++ sentence fx op f y ++ "."
+  | xs => "; ".intercalate ((xs.dropLast).map (sentence fx op f)) ++ "; and " ++
+      (xs.getLast?.map (sentence fx op f)).getD "" ++ "."
+/-- "1. t₁ 2. t₂ …": each text numbered from 1, separated by one space. -/
+def numbered (ts : List String) : String :=
+  " ".intercalate ((List.range ts.length).zip ts |>.map (fun (i, t) => toString (i + 1) ++ ". " ++ t))
+/-- The texts of one listing, refused when two coincide (D-32 names the first such pair, from 1). -/
+def distinctTexts (what : String) (ts : List String) : Except String (List String)
+/-- The paraphrases of a listing of readings (D-23, `phraseReadings`' users). -/
+def paraphrases (fx : List String) (op : Op) (f : Option Lexical.Form) (what : String) (Rs : List (List Simple)) :
+    Except String (List String) :=
+  distinctTexts what (Rs.map (paraphrase fx op f))
+/-- The texts of a listing of meanings, with no modal (D-15). -/
+def meaningTexts (fx : List String) (what : String) (As : List Act) : Except String (List String) :=
+  distinctTexts what (As.map (fun A => (Act.text fx none A).drop 4 ++ "."))
+
+theorem distinctTexts_ok (what : String) (ts us : List String) :
+    distinctTexts what ts = .ok us ↔ us = ts ∧ ts.Nodup
+theorem paraphrases_nodup {fx op f what Rs ps} (h : paraphrases fx op f what Rs = .ok ps) :
+    ps = Rs.map (paraphrase fx op f) ∧ ps.Nodup
 ```
+
+`paraphrase` takes no source phrase: draft 1 printed the source phrase for every whole reading (SR2). Every list of
+readings or meanings Lean shows goes through `distinctTexts`: D-15 (`meaningTexts`), D-23 (`paraphrases`), the
+`act-readings` mode and `sourceCheck` (7). A collision is refused with D-32 rather than shown as two equal lines.
 
 The table's equations, each a theorem (all by case analysis):
 
@@ -843,6 +965,7 @@ structure ActsDoc where
   V : Vocab
   fixed : List String
   acts : List (String × Act)      -- each joined act's predicate and its one meaning (from `read`)
+  declared : Nat                  -- the environment's declared predicates, as `checkAuthorN` counts them (SR7)
 
 structure SplitMap where
   preds : List (String × String × Nat)   -- generated `p__i`, its source predicate, i
@@ -856,8 +979,19 @@ def dualOf (T : VE.Norms.Tree) (p : String) : Option String
 /-- The one reading of a predicate's act: `[[atom a]]` for `one a`; for a join, every rule on `p` and on its dual has
     exactly one reading by the table, and all are equal. -/
 def readingOf (D : ActsDoc) (p : String) (A : Act) : Except String (List Simple)
+/-- The atoms `p` splits into: its act's one reading (`readingOf`), when that reading is two or more atoms. -/
+def splitAtoms (D : ActsDoc) (p : String) : Option (List Atom)
+/-- `checkAuthorN`'s limits after its reserved-name loops, in its order and with its texts, the vocabulary counted as
+    `n` instead of read from the environment (AP-3 factors `NormDefaults/Wire.lean:95` through it). -/
+def VE.NormDefaults.Wire.authorLimits (n : Nat) (U : VE.NormDefaults.UDoc) : Except String Unit
+/-- `checkAuthorN`'s two reserved-name loops (`:96–99`), unchanged. -/
+def VE.NormDefaults.Wire.reservedNamesOk (environment : Lean.Json) (U : VE.NormDefaults.UDoc) : Except String Unit
+theorem VE.NormDefaults.Wire.checkAuthorN_split (environment : Lean.Json) (g : Nat) (U : VE.NormDefaults.UDoc) :
+    checkAuthorN environment g U =
+      (reservedNamesOk environment U *> authorLimits ((declaredNames environment).length + g) U)
 /-- AP-3: split every predicate whose reading has two or more atoms; refuse a formula naming a split predicate;
-    check the generated names; backstop: the result is `WellFormedU`. -/
+    check the generated names and parts; re-run the route limits on the result; backstop: the result is
+    `WellFormedU`. -/
 def elaborateMap (D : ActsDoc) : Except String (VE.NormDefaults.UDoc × SplitMap)
 def elaborate (D : ActsDoc) : Except String VE.NormDefaults.UDoc := (elaborateMap D).map (·.1)
 ```
@@ -865,23 +999,43 @@ def elaborate (D : ActsDoc) : Except String VE.NormDefaults.UDoc := (elaborateMa
 `elaborateMap` builds the result as follows; every other field is unchanged (6.5 is the full table):
 
 - `E.predicates`: each part `p__i` has `p`'s sorts; a split `p` is undeclared;
-- `T.regulated`: each split `r` becomes `r__1 … r__n`, with `act := some (rendering of atom i)` and
-  `permission := r.permission.map (· ++ "__" ++ i)`;
+- `T.regulated`: each split `r` becomes `r__1 … r__n`, with `act := some (partAct D.fixed r.role aᵢ)` (5.5: *to* only
+  for a plain `r`) and `permission := r.permission.map (· ++ "__" ++ i)`;
 - `T.nodes`: each rule `N` on a split `p` becomes `N-a1 … N-an` on the parts, `over := N.over.map (partRule · i)`, in
   source order, parts in index order;
 - `unspec`: a split `p` is replaced by its parts.
 
-It refuses (10): a joined act with no rule; a rule with no op, or with zero or two readings; a predicate whose rules or
-dual rules read its act differently; a guard, exception or definition naming a split predicate; a part name already
-declared or over 64 bytes; a part rule name already used or not a rule name (`ruleName`: at most 64 bytes); and any
-result that is not `WellFormedU`.
+It refuses (10), checking in this order and raising the first failure:
+
+1. the readings (`readingOf`): a joined act with no rule; a rule with no op, or with zero or two readings; a predicate
+   whose rules or dual rules read its act differently (D-20 to D-24);
+2. a guard, exception or definition naming a split predicate (D-25);
+3. a part name already declared or over 64 bytes; a part rule name already used or not a rule name (`ruleName`: at most
+   64 bytes) (D-26);
+4. two parts of one predicate whose acts (`partAct`) are equal, for every role, plain included (D-27; SR4: `actChecks`
+   skips plain predicates, so draft 1's "via `actChecks`" missed plain entitlements);
+5. the W1 check of the result, `VE.Norms.validate U'.D`, with its own texts in its own order (among them
+   `ResourceLimit: regulated predicates` above 64, `ResourceLimit: rules` above 256, and `DuplicateActRole: …` for a
+   part equal to another permission or obligation);
+6. the author limits of the result, `authorLimits n U'` with `n = D.declared − s + k`, where `s` is the number of split
+   predicates and `k` the number of parts: `ResourceLimit: vocabulary size` when `n` plus the unsaid predicates
+   (`U'.unspec.length`) exceeds 256; `ResourceLimit: rules` when the rules plus `U'.unspec.length` exceed 256;
+   `ResourceLimit: unspecified name length` when a part of an unspecified predicate is over 56 bytes; then the AST
+   budget and the precedence depth (SR7);
+7. backstop: a result that is not `WellFormedU` (`InvalidInput: the elaborated document is not well formed`).
+
+Steps 5 and 6 reuse the route's existing diagnostics and their order; nothing in them is new text (SR7). A split can
+exceed them only by adding predicates, rules or names, so they are checked on `U'`, not only on the source. On the norms
+route (`unspec = []`) step 6 checks the vocabulary and rule counts that the P0 decoder (`ResourceLimit: vocabulary
+size`, `Route/Wire.lean:107`) and `decodeSource` check on the source.
 
 ### 6.4 The decoder after AP-3
 
 ```lean
 /-- The act check under `acts@0` from AP-3 on: a lexical act (`Lexical.check`), or a joined act: every condition of
     1.3 except 6, every slot standing alone as a word, and exactly one meaning (`read V rawCap stepBudget`). Returns
-    the canonical act and, for a joined act, its act tree. -/
+    the canonical act and, for a joined act, its act tree. With two or more meanings it raises D-15, which lists every
+    meaning of `readings V rawCap stepBudget` through `meaningTexts` (6.2). -/
 def VE.Acts.Wire.checkAct (fx : List String) (V : Vocab) (name : String) (arity : Nat) (raw : Lean.Json) :
     Except String (String × Option Act)
 theorem VE.Acts.Wire.checkAct_lexical (fx V name k raw a) (h : Lexical.check fx name k raw = .ok a) :
@@ -892,6 +1046,73 @@ theorem VE.Acts.Wire.checkAct_joined (fx V name k raw a A) (h : VE.Acts.Wire.che
 
 `checkAct_lexical` is the formal form of "an act AP-1 accepts never enters the grammar" (2.5 of the plan).
 
+**Where elaboration runs (SR6).** `checkAct` runs inside the decoder hook (`decodeRegulatedActs`, 4.2), which stores
+the canonical act in `Regulated.act` as today; it elaborates nothing. Elaboration runs after `decodeSourceU`
+(`NormDefaults/Wire.lean:112`) has decoded the document and recovered its `unspecified` completions, and before any
+check or regeneration reads the document. Draft 1's plan elaborated inside `Norms/Wire.lean` "after decoding", which
+fails twice: the elaborated environment breaks `Source.env : D.E = ne.rv.environment`, and `decodeSourceU` would then
+rebuild `unspec` from the environment's names (`:118–119`), so the parts `p__i` lost `unspecified`. The decoded source
+and its proofs stay as they are; the elaborated document is a separate, explicit result:
+
+```lean
+namespace VE.Acts.Decode
+/-- The decoded source, unchanged, and beside it the elaborated document and its map. -/
+structure ElaboratedU where
+  s : VE.NormDefaults.Wire.SourceU        -- as `decodeSourceU` returns it; its binding proofs are untouched
+  D : ActsDoc                              -- `s.U` with the read acts, the `acts` block and the vocabulary count
+  hU : D.U = s.U
+  U' : VE.NormDefaults.UDoc                -- the document every later check and regeneration reads
+  M : SplitMap
+  hE : elaborateMap D = .ok (U', M)
+
+/-- `decodeSourceU`; then `D`: `V` and `fixed` from the `acts` block, each joined act's tree from `checkAct` (which is
+    deterministic, so it is the decoder's answer), `declared := (declaredNames environment).length`; then
+    `elaborateMap D`. -/
+def decodeElaboratedU (environment norms : Lean.Json) : Except String ElaboratedU
+
+theorem decodeElaboratedU_source {environment norms : Lean.Json} {e : ElaboratedU}
+    (h : decodeElaboratedU environment norms = .ok e) :
+    VE.NormDefaults.Wire.decodeSourceU environment norms = .ok e.s
+theorem decodeElaboratedU_wellFormed {environment norms : Lean.Json} {e : ElaboratedU}
+    (h : decodeElaboratedU environment norms = .ok e) : VE.NormDefaults.WellFormedU e.U' = true
+/-- A document whose acts are all lexical elaborates to itself (AP-3's "byte-identical to AP-1" test). -/
+theorem decodeElaboratedU_lexical {environment norms : Lean.Json} {e : ElaboratedU}
+    (h : decodeElaboratedU environment norms = .ok e) (hl : e.D.acts = []) : e.U' = e.s.U ∧ e.M = ⟨[], []⟩
+end VE.Acts.Decode
+```
+
+Every entry point an `acts@0` norms document reaches calls `decodeElaboratedU` and runs its checks and regeneration
+(targets, Background, `fill`, replay, certificates, reports, the English view) on `e.U'`; without `acts@0` it calls
+today's decoder, unchanged. Measured callers on `49de179e`:
+
+- of `decodeSourceU`: `NormDefaults/{Run,Replay,Report,Admission}.lean`, `Service/Document.lean`,
+  `EnglishGrammar/Run.lean`, `WireContract/Hooks/NormDefaults.lean`;
+- of `Norms.Wire.decodeSource` on the norms route: `Norms/{Run,RunSound,Replay,Admission,Flagged,FlaggedSpec}.lean`;
+- of `Norms.Wire.decodeSource` elsewhere: `Alternatives/Wire.lean` and `Service/FamilyNorms.lean` (routes the AR-10 row
+  refuses), `Readings/SupRun.lean` (the readings route: acts are lexical there, D-33, so `e.U' = e.s.U`) and
+  `Attribution/Wire.lean`. AP-3 confirms each one's reach at build time and lists the result in the batch record.
+
+Each soundness theorem of a reached entry point gains a twin stated with `decodeElaboratedU … = .ok e` and `e.U'` in
+place of `decodeSourceU … = .ok s` and `s.U` (or `src.D`); its proof is the existing one, fed
+`decodeElaboratedU_wellFormed` where it used `s.wfU` or `src.wf`. The existing theorems keep their statements.
+
+**The readings route (SR8).** The readings route decodes its frame through `decodeNormsEnvironment`
+(`Readings/Wire.lean:96`), so from AP-3 on it would accept joined acts, but nothing elaborates a reading set's
+candidates. Until a readings elaboration is specified with its own theorems (a later statement review), the readings
+route refuses every act `Lexical.check` refuses:
+
+```lean
+theorem VE.Readings.Wire.readings_lexical_only {environment : Lean.Json} {re : VE.Readings.Wire.ReadingsEnvironment}
+    (h : VE.Readings.Wire.decodeEnvironment environment = .ok re) (hp : "acts@0" ∈ re.profiles) :
+    ∀ r ∈ re.se.ne.regulated, ∀ a, r.act = some a →
+      Lexical.check (VE.Acts.Wire.fixedOf environment) r.name r.sorts.length (.str a) = .ok a
+```
+
+`fixedOf environment` is the `acts` block's `fixed` list (`[]` when absent). The refusal is D-33. Its consequence for a
+source (7): a reading whose simple act is a whole join, or an atom with a joined filler, renders as a joined act, so no
+candidate on the readings route can carry it, and the source cannot pass `sourceCheck` until the readings elaboration
+exists (finding F11).
+
 ### 6.5 Every place a split predicate can be named (the reference table)
 
 | Field | Treatment |
@@ -900,7 +1121,7 @@ theorem VE.Acts.Wire.checkAct_joined (fx V name k raw a A) (h : VE.Acts.Wire.che
 | `Doc.lits` | unchanged |
 | `Tree.regulated` | `p` replaced by `p__1 … p__n` |
 | `Regulated.name` / `sorts` / `allowByDefault` / `role` | `p__i` / same / same / same |
-| `Regulated.act` | the rendering of atom i |
+| `Regulated.act` | `partAct` of atom i: its text, with *to* exactly when the role is plain (5.5) |
 | `Regulated.permission` | `m__i` when the dual `m` splits with the same reading (guaranteed by `readingOf`); otherwise refused |
 | `Tree.pairs` (derived) | follows `permission` |
 | `Tree.definitions` (`name`, `args`) | unchanged |
@@ -910,11 +1131,11 @@ theorem VE.Acts.Wire.checkAct_joined (fx V name k raw a A) (h : VE.Acts.Wire.che
 | `Node.guard`, `Node.carveOuts` | same; naming a split predicate anywhere: refused, "name one of its parts" |
 | `Node.over` | each entry `m` becomes `m-ai` (precedence stays within one predicate, so `m` is on `p` too) |
 | `UDoc.unspec` | `p` replaced by `p__1 … p__n` |
-| W2 norm units on `p` | elaborated like any rule on `p` |
-| `readings@1` candidates (AP-4) | a candidate's rule on `p` is elaborated like any rule on `p` |
-| models, `data@0` facts, questions and queries (Python inputs) | naming `p`: refused, "name one of its parts" |
+| W2 norm units on `p` | elaborated like any rule on `p` (they are decoded into `s.U` before `elaborateMap` runs, 6.4) |
+| `readings@1` candidates (AP-4) | none: the readings route refuses joined acts (D-33, 6.4), so no predicate splits there until a readings elaboration is specified |
+| models, `data@0` facts, questions and queries (Python inputs) | naming `p`: refused with Lean's text for `p` (D-28, the row's `split` member, 6.7) |
 | conflict witnesses and certificates | computed on the relayed elaborated document (its targets name parts) |
-| `actChecks` identity | checked on the parts: two parts of one predicate with equal renderings are refused |
+| act identity | two parts of one predicate with equal acts: refused by `elaborateMap` for every role (D-27); a part equal to another permission or obligation: `actChecks` in `validate` (`DuplicateActRole`) |
 
 A test (`tests/test_acts_elaborate.py::test_reference_table_complete`) enumerates the fields of `Node`, `Regulated`,
 `Definition`, `Tree`, `Doc` and `UDoc` from the Lean structures (via `#print` output recorded as a fixture) and fails on
@@ -943,8 +1164,26 @@ theorem splitMap_exact (D : ActsDoc) {U' : VE.NormDefaults.UDoc} {M : SplitMap} 
       n = partRule m i ∧ m ∈ D.U.D.T.nodes.map (·.name) ∧ m ∉ U'.D.T.nodes.map (·.name) ∧ 1 ≤ i) ∧
     (∀ q p i j, (q, p, i) ∈ M.preds → 1 ≤ j → j ≤ i → ∃ q', (q', p, j) ∈ M.preds) ∧
     (M.preds.map (·.1)).Nodup ∧ (M.rules.map (·.1)).Nodup
+/-- What a part contains (SR9): part i of `p` is `p`'s declaration with atom i's act and the dual's part i, and keeps
+    `p`'s sorts, role and completion; part rule i of `N` is `N` on part i with its `over` mapped, every other field
+    copied. -/
+theorem elaborate_parts (D : ActsDoc) {U' : VE.NormDefaults.UDoc} {M : SplitMap} (h : elaborateMap D = .ok (U', M)) :
+    (∀ q p i, (q, p, i) ∈ M.preds → ∃ r ∈ D.U.D.T.regulated, r.name = p ∧ ∃ atoms a, splitAtoms D p = some atoms ∧
+       atoms[i - 1]? = some a ∧
+       U'.D.T.regulated.find? (·.name == q) =
+         some { r with name := q, act := some (partAct D.fixed r.role a),
+                       permission := r.permission.map (partPred · i) } ∧
+       U'.D.E.predicates q = D.U.D.E.predicates p ∧ (q ∈ U'.unspec ↔ p ∈ D.U.unspec)) ∧
+    (∀ n m i, (n, m, i) ∈ M.rules → ∃ N ∈ D.U.D.T.nodes, N.name = m ∧
+       U'.D.T.nodes.find? (·.name == n) =
+         some { N with name := n, pred := partPred N.pred i, over := N.over.map (partRule · i) })
+/-- The source document is its own elaboration when no act splits. The hypotheses are the checks `elaborateMap` runs on
+    its result (6.3, steps 5 and 6) beyond `WellFormedU`; `decodeElaboratedU` establishes both for every decoded
+    document (`decodeSource` runs `validate`; `checkAuthorN`, or the P0 vocabulary limit without `norm-defaults@0`,
+    gives `authorLimits`) (SR7). -/
 theorem elaborate_identity (D : ActsDoc) (h : ∀ p A, (p, A) ∈ D.acts → ∃ a, A = .one a)
-    (h0 : VE.NormDefaults.WellFormedU D.U = true) : elaborate D = .ok D.U
+    (h0 : VE.NormDefaults.WellFormedU D.U = true) (hv : VE.Norms.validate D.U.D = .ok ())
+    (hl : VE.NormDefaults.Wire.authorLimits D.declared D.U = .ok ()) : elaborate D = .ok D.U
 theorem elaborate_wellFormed (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : elaborate D = .ok U') :
     VE.NormDefaults.WellFormedU U' = true
 theorem elaborate_one_reading (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : elaborate D = .ok U') :
@@ -958,8 +1197,9 @@ theorem elaborate_faithful (D : ActsDoc) {U' : VE.NormDefaults.UDoc} (h : elabor
     (S : VE.Structure.{u}) : VE.Norms.holdsCatala U'.D.T S ↔ IntendedActs D S
 ```
 
-`elaborate_one_reading`'s first disjunct covers a `one` act, which `readingOf` reads without the table, so a `one`
-act under a rule with no op (plain, sign false) is not refused. `norm-defaults@0`'s fill is applied to `U'` as to any `UDoc`, so the
+`elaborate_parts` closes what `splitMap_exact` leaves open: draft 1's statements held of a result that swapped two
+parts' acts (SR9). `elaborate_one_reading`'s first disjunct covers a `one` act, which `readingOf` reads without the
+table, so a `one` act under a rule with no op (plain, sign false) is not refused. `norm-defaults@0`'s fill is applied to `U'` as to any `UDoc`, so the
 parts of an unspecified predicate each get their own gap (`elaborate_unspec`).
 
 ### 6.7 The `acts-elaborate` relay
@@ -977,6 +1217,7 @@ objects). The row:
 | `predicates` | array of `{name, source, index, sorts, role, default, act, permission}`, one per part; `default` ∈ `allow`, `deny`, `unspecified` |
 | `rules` | array of `{name, source, index, pred, sign, guard, unless, over}`, one per part rule; `guard` and `unless` in the generated-formula shape |
 | `kept` | the source predicates with joined acts that did not split (one simple act) |
+| `split` | array of `{source, parts, text}`, one per split source predicate: `parts` its part names in index order, `text` the D-28 refusal Lean writes for a model, data or question that names `source` (SR12) |
 
 Recipe obligations (CLAUDE.md, "a relayed Lean route"):
 
@@ -987,10 +1228,14 @@ Recipe obligations (CLAUDE.md, "a relayed Lean route"):
 4. `ve/norms.py` binds the row (R8): every `source` names a predicate or rule of the request; for each source the
    indices are exactly 1 to n; each part rule's `sign`, `guard` and `unless` equal its source rule's and its `over` is
    the source's mapped by index; each part's `sorts`, `role` and `default` equal its source's; no row is empty or
-   extra; no generated name is declared in the request; every split source is absent from the relayed document;
+   extra; no generated name is declared in the request; every split source is absent from the relayed document; the
+   `split` rows name exactly the sources of `predicates`, once each, and each one's `parts` are that source's
+   `predicates` rows in index order. Python refuses a model, data or question that names a split source with that
+   row's `text`, verbatim: it checks provenance against the map and composes no text (SR12);
 5. route cases recorded from the suite; `tests/test_acts_elaborate_answer.py` mutates genuine answers one and two
    faults at a time (each member dropped, emptied, retyped, duplicated or reordered; an index pushed out of range; a
-   source renamed): every mutant is `CheckerUnavailable` or changes nothing the relay shows.
+   source renamed; a `split` row's `parts` reordered): every mutant is `CheckerUnavailable` or changes nothing the
+   relay shows.
 
 Python's conflict-witness search and prover then run on the relayed document; `_lean_route` is true for `acts@0`
 documents, and the retained Python path refuses them.
@@ -1021,47 +1266,83 @@ structure Source where
   sign : Bool
   form : Option Lexical.Form
   template : VE.Norms.Node        -- guard, carve-outs and precedence every reading keeps; `name` and `pred` unused
-  allow : Bool                    -- the completion every part keeps
+  completion : VE.NormDefaults.Completion   -- deny, allow or unspecified: the completion every part keeps (SR3)
   units : List String             -- fixed units every reading shares (u105a)
   sets : List String
 
 /-- What a rule says, for comparison: its predicate's act, role and completion; its sign, guard, carve-outs, over. -/
-abbrev View := String × VE.Norms.Role × Bool × VE.Formula × List VE.Formula × List String × Bool
-def ruleView (D : VE.Readings.Doc) (N : VE.SoftNorms.SoftNode) : Option View
-def expected (fx : List String) (s : Source) (x : Simple) : View
+abbrev View := String × VE.Norms.Role × Bool × VE.Formula × List VE.Formula × List String × VE.NormDefaults.Completion
+/-- `unspec` is the frame's original `unspecified` predicates (`VE.Readings.UnspecifiedWire.unspecOf`): the frame
+    itself is decoded with `unspecified` read as the placeholder `deny` (`Readings/Wire.lean:80–84`), so the
+    completion is read as `VE.NormDefaults.completionOf ⟨_, unspec⟩ r` does, never from `allowByDefault` alone. -/
+def ruleView (D : VE.Readings.Doc) (unspec : List String) (N : VE.SoftNorms.SoftNode) : Option View
+/-- The act is `Simple.text fx (some (s.role == .plain)) x`: the part's act for an atom (`partAct`), the join's text
+    for a whole join (5.5). -/
+def expected (fx : List String) (s : Source) (x : Simple) : View :=
+  (Simple.text fx (some (s.role == .plain)) x, s.role, s.sign, s.template.guard, s.template.carveOuts,
+   s.template.over, s.completion)
 def choicesOn (D : VE.Readings.Doc) (sets : List String) : List (List (String × Nat)) :=
   firsts ((VE.Readings.choices D).map (fun c => c.filter (fun x => sets.contains x.1)))
 def choiceRules (D : VE.Readings.Doc) (s : Source) (c : List (String × Nat)) : List VE.SoftNorms.SoftNode
+def choiceViews (D : VE.Readings.Doc) (unspec : List String) (s : Source) : List (List (Option View)) :=
+  (choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec))
+def readingViews (fx : List String) (s : Source) (Rs : List (List Simple)) : List (List (Option View)) :=
+  Rs.map (fun R => R.map (fun x => some (expected fx s x)))
 def opOfSource (s : Source) : Option Op
-def sourceCheck (D : VE.Readings.Doc) (V : Vocab) (fx : List String) (N b : Nat) (s : Source) : Except String Unit
+def sourceCheck (D : VE.Readings.Doc) (unspec : List String) (V : Vocab) (fx : List String) (N b : Nat) (s : Source) :
+    Except String Unit
 
-def SourceExact (D : VE.Readings.Doc) (V : Vocab) (fx : List String) (N b : Nat) (s : Source) : Prop :=
+/-- The outer bijection is kept; each choice's rules are compared with its reading's simple acts up to order (SR14):
+    `σ` lists the choices' views reordered so that the k-th is a permutation of reading k's. -/
+def SourceExact (D : VE.Readings.Doc) (unspec : List String) (V : Vocab) (fx : List String) (N b : Nat)
+    (s : Source) : Prop :=
   ∃ ts op Rs, Lexical.lex fx s.phrase = .ok ts ∧ opOfSource s = some op ∧
     phraseReadings V op N b ts.toArray = .ok Rs ∧
     (∀ R, R ∈ Rs ↔ ∃ A, Derived V ts A ∧ R ∈ table op A) ∧
-    ((choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D))).Nodup ∧
-    List.Perm ((choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D)))
-      (Rs.map (fun R => R.map (fun x => some (expected fx s x))))
+    (Rs.map (paraphrase fx op s.form)).Nodup ∧
+    (choiceViews D unspec s).Pairwise (fun v w => ¬ v.Perm w) ∧
+    ∃ σ, σ.Perm (choiceViews D unspec s) ∧ List.Forall₂ List.Perm σ (readingViews fx s Rs)
 /-- Exactness: a bijection between the phrase's readings, complete against the grammar, and the listed choices;
-    each choice's rules regulate exactly its reading's simple acts with the template's sign, guard, carve-outs,
-    precedence, role and completion. -/
-theorem sourceCheck_exact (D V fx N b s) (h : framesOk V = true) (hc : sourceCheck D V fx N b s = .ok ()) :
-    SourceExact D V fx N b s
-theorem sourceCheck_complete (D V fx N b s) (h : framesOk V = true) (he : SourceExact D V fx N b s) :
-    sourceCheck D V fx N b s = .ok ()
+    each choice's rules regulate exactly its reading's simple acts, in any order, with the template's sign, guard,
+    carve-outs, precedence, role and completion. -/
+theorem sourceCheck_exact (D unspec V fx N b s) (h : framesOk V = true)
+    (hc : sourceCheck D unspec V fx N b s = .ok ()) : SourceExact D unspec V fx N b s
+theorem sourceCheck_complete (D unspec V fx N b s) (h : framesOk V = true)
+    (he : SourceExact D unspec V fx N b s) : sourceCheck D unspec V fx N b s = .ok ()
 
 /-- A separating situation built from simple acts, checked by `VE.Readings.separates` (no new soundness theorem). -/
 def atomSituation (D : VE.Readings.Doc) (s : String) (i j : Nat) : VE.Readings.Situation Nat
 ```
 
-`List.Perm` with the `Nodup` conjunct is the bijection: each reading has exactly one choice and each choice is a
-reading. `expected` renders an atom (5.5) or, for a whole join, the source phrase's canonical act. On the
-norm-defaults readings route the completion compared is `deny`, `allow` or `unspecified`.
+`σ` with the `Pairwise` conjunct is the bijection: each reading has exactly one choice and each choice is a reading,
+and the rules inside a choice may come in any order (draft 1 compared them as ordered lists, in the document's item
+order, which the review found unstated; SR14). `expected` renders an atom as its part's act and a whole join from its
+tree (5.5), so two different readings never share one expected list (draft 1 rendered every whole join as the source
+phrase, so G12's two whole readings under *must not* collided and no reading set could be exact; SR2). `sourceCheck`
+first lists the readings' paraphrases through `paraphrases` (D-32), then compares; its diagnostics are D-29's. The
+completion compared is `deny`, `allow` or `unspecified`, read from the original metadata (`unspec`), so a choice that
+changes only `unspecified` to `deny` is refused (fixture S7; SR3). `Readings/Run.lean`'s admission passes
+`UnspecifiedWire.unspecOf re D` as `unspec`.
 
 **The `act-readings` mode** (AP-4; registered through AR-10's mode registry; the relayed-route recipe): request
-`{phrase, fixed, frames, adverbs, role, sign, form}`; row `{id, status, verdict ∈ {LISTED, LIMIT, REFUSED}, readings:
-[{acts: [{act, text}], paraphrase}], diagnostic}`. Binding: `readings` non-empty with `LISTED`; at most 64; each `act`
-lexes under the request's `fixed`; fuzz as in 6.7.
+`{phrase, fixed, frames, adverbs, role, sign, form}`; row `{id, status, verdict ∈ {LISTED, LIMIT, REFUSED},
+tokens: [[start, end]], readings: [{acts: [{act, text, from: [int]}], paraphrase}], diagnostic}`. `tokens` is Lean's
+lexing of the request's `phrase`: one UTF-8 byte span per token, in order. `from` lists, for each act, the indices
+into `tokens` of the request tokens its text is made of, in the act's order (Lean owns the lexing: SR12). Binding
+(Python, schema and request only, R8 of the DRI rulings):
+
+- `readings` is non-empty with `LISTED` and empty otherwise, and has at most 64 entries;
+- every span lies within the request phrase's UTF-8 length, and the spans are increasing and disjoint;
+- every `from` index is in range of `tokens`, and no index occurs twice in one act's `from`;
+- the readings are pairwise distinct (as their `acts` lists), and so are their `paraphrase`s.
+
+Fuzz as in 6.7, plus each span and each `from` index pushed out of range or duplicated, and two readings made equal.
+
+**What binding cannot show (SR5).** A relay that drops a whole reading, row and all, still passes every binding check:
+neither Python nor any count Lean reports can tell, since a faulty relay drops the count with the reading. A missing
+reading is a fault in Lean's content, covered by `phraseReadings_exact` (and `readings_exact`). In translation, Lean's
+`sourceCheck` refuses a reading set that lacks a reading (D-29, fixture S2). No test claims that binding detects a
+dropped reading.
 
 ## 8. AP-5: Lean statements (specialisation; used only after AP-5b)
 
@@ -1129,7 +1410,7 @@ Every text is Lean's; Python relays it. "D-n" numbers the rows for the fixtures.
 | D-12 | `InvalidInput: fixed phrase '{p}' uses the clause word '{w}'` | `phraseToks` |
 | D-13 | `InvalidInput: fixed phrase '{p}' must hold two words or more` / `… must begin and end with a word other than and, or, nor and for` | `phraseToks` |
 | D-14 | `InvalidInput: fixed phrase '{p}' is declared twice` / `InvalidInput: fixed phrases '{p}' and '{q}' overlap, or one holds the other` | `decodeFixed` |
-| D-15 | `InvalidInput: act phrase for {name} has more than one reading: 1. … 2. …` (paraphrases, 2.2) | `checkAct` (`read` → `many`) |
+| D-15 | `InvalidInput: act phrase for {name} has more than one reading: ` ++ `numbered ts`, where `ts` is `meaningTexts fx ("the act phrase for " ++ name) As` and `As` the meanings `readings` lists: each meaning rendered from its tree with no modal word (`Act.text fx none`, its `{0} ` dropped, a final `.`; 2.2, 5.5) | `checkAct` (`read` → `many`) |
 | D-16 | `InvalidInput: act phrase for {name} has no reading under the declared frames` | `checkAct` (`read` → `none`) |
 | D-17 | `ResourceLimit: act phrase for {name} has too many readings to list; split the sentence` | `checkAct`, `phraseReadings` users (`limit`) |
 | D-18 | `InvalidInput: act phrase for {name} has a slot joined to a word` | `checkAct` |
@@ -1137,25 +1418,54 @@ Every text is Lean's; Python relays it. "D-n" numbers the rows for the fixtures.
 | D-20 | `InvalidInput: the joined act of {p} has no rule to read it by` | `readingOf` |
 | D-21 | `InvalidInput: rule {r} has no modal word for a joined act` | `readingOf` (plain, sign false) |
 | D-22 | `InvalidInput: rule {r} has no reading of its act; rewrite it` | `readingOf` (table `[]`: *need not*, *nor* under *must*, *may* or *has the right to*, a split marker's *or* under *must*) |
-| D-23 | `InvalidInput: rule {r} has more than one reading: 1. … 2. …` | `readingOf` |
+| D-23 | `InvalidInput: rule {r} has more than one reading: ` ++ `numbered ps`, where `ps` is `paraphrases fx op f ("rule " ++ r) (table op A)`: the paraphrases of 2.2 under the rule's modal | `readingOf` |
 | D-24 | `InvalidInput: the rules on {p} and its dual read its act differently; write the parts as separate predicates` | `readingOf` |
 | D-25 | `InvalidInput: rule {r} names a predicate that is split into parts; name one of its parts` / the same for a definition | `elaborateMap` |
-| D-26 | `InvalidInput: the part name {q} is already declared` / `ResourceLimit: the part name {q} is over 64 bytes` / `InvalidInput: the part rule name {n} is already used` / `ResourceLimit: the part rule name {n} is not a rule name of at most 64 bytes` | `elaborateMap` |
-| D-27 | `InvalidInput: two parts of {p} are the same act` | `elaborateMap` (via `actChecks`'s duplicate) |
-| D-28 | `name one of its parts: {p} is split into {p__1}, …` | Python binding of models, data and questions (relayed text from the elaborated document's map) |
+| D-26 | `InvalidInput: the part name {q} is already declared` / `ResourceLimit: the part name {q} is over 64 bytes` / `InvalidInput: the part rule name {n} is already used` / `ResourceLimit: the part rule name {n} is not a rule name of at most 64 bytes` | `elaborateMap` (step 3). The route limits after a split are not D-26: steps 5 and 6 raise the existing texts (`ResourceLimit: regulated predicates`, `ResourceLimit: rules`, `ResourceLimit: vocabulary size`, `ResourceLimit: unspecified name length`, …) in their existing order (6.3) |
+| D-27 | `InvalidInput: two parts of {p} are the same act` | `elaborateMap`'s own check (step 4), for every role, plain included |
+| D-28 | `InvalidInput: name one of its parts: {p} is split into {p__1}, …, {p__n}` | Lean writes it per split source, in the `acts-elaborate` row's `split` member (6.7); Python relays it verbatim when a model, data or question names `{p}` |
 | D-29 | `InvalidInput: the reading sets give {k} choices for a phrase with {n} readings` / `… a reading of the source phrase has no choice: {paraphrase}` / `… a choice is not a reading of the source phrase, or changes the source rule's modal, guard, exceptions, precedence or completion` / `… two choices give the same reading` | `sourceCheck` |
 | D-30 | `UnsupportedProfile: acts@0 …` (4.4) | AR-10's row |
-| D-31 | the frame diagnostics of `decodeVocab`: one text per `framesOk` condition, `InvalidInput: frame '{head}' …` | `VE.Acts.Wire.decodeVocab` |
+| D-31 | the frame diagnostics, one text per `framesOk` condition, in the order of the table below | `checkVocab`, called by `VE.Acts.Wire.decodeVocab` |
+| D-32 | `InvalidInput: readings {i} and {j} of {what} read the same in English; rephrase the act`, with `i < j` the first equal pair, counted from 1, and `{what}` one of `the act phrase for {name}`, `rule {r}`, `the source phrase`, `this act phrase` | `distinctTexts` (6.2), for D-15, D-23, `sourceCheck` and the `act-readings` mode |
+| D-33 | `UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of {name} joins acts` | the readings route's frame decoder (`Readings/Wire.lean`, AP-3; 6.4) |
 
-Rows D-3, D-15 to D-17 and D-22 are refusals of authored text; they also go into english-lean's catalogue as rows if
-it holds refusals by then (plan S7).
+**D-31's texts** (`{h}` is the head's words joined by single spaces; `checkVocab` raises the first failing row):
+
+| # | Condition (1.4) | Text |
+|---|---|---|
+| 31a | at most 128 frames | `ResourceLimit: more than 128 frames` |
+| 31b | each head non-empty | `InvalidInput: a frame has an empty head` |
+| 31c | each head word a lower-case `actWord` | `InvalidInput: frame '{h}' has the head word '{w}', which is not a lower-case word of letters` |
+| 31d | no head word a join, function or clause word | `InvalidInput: frame '{h}' has the reserved head word '{w}'` |
+| 31e | heads distinct | `InvalidInput: frame '{h}' is declared twice` |
+| 31f | no head a word-prefix of another | `InvalidInput: frame heads '{h}' and '{g}' overlap: one begins the other` |
+| 31g | markers distinct | `InvalidInput: frame '{h}' lists the marker '{m}' twice` |
+| 31h | modifier markers distinct | `InvalidInput: frame '{h}' lists the modifier marker '{m}' twice` |
+| 31i | `split ⊆ markers` | `InvalidInput: frame '{h}' splits '{m}', which is not one of its markers` |
+| 31j | modifier markers non-empty | `InvalidInput: frame '{h}' has an empty modifier marker` |
+| 31k | no string both a marker and a modifier marker | `InvalidInput: frame '{h}' lists '{m}' both as a marker and as a modifier marker` |
+| 31l | every marker but `""`, and every modifier marker, canonical (SR1) | `InvalidInput: frame '{h}' has the marker '{m}', which is not words separated by single spaces` |
+| 31m | every marker word a lower-case `actWord` | `InvalidInput: frame '{h}' has the marker word '{w}', which is not a lower-case word of letters` |
+| 31n | no marker word a grammar join word, *be* or a clause word | `InvalidInput: frame '{h}' has the reserved marker word '{w}'` |
+| 31o | no marker of a frame a word-prefix of another | `InvalidInput: frame '{h}' has the markers '{m}' and '{n}', and one begins the other` |
+| 31p | adverbs distinct | `InvalidInput: the adverb '{a}' is declared twice` |
+| 31q | each adverb a lower-case `actWord`, not a join, function or clause word | `InvalidInput: the adverb '{a}' is not a lower-case word of letters, or is reserved` |
+| 31r | no adverb a marker word or a head word | `InvalidInput: the adverb '{a}' is also a marker or head word` |
+| 31s | no head begins with a marker word | `InvalidInput: frame '{h}' begins with the marker word '{w}'` |
+
+`{m}` is printed as written, so 31l shows the offending spaces (`' '`, `'in  front'`).
+
+Rows D-3, D-15 to D-17, D-22 and D-32 are refusals of authored text; they also go into english-lean's catalogue as rows
+if it holds refusals by then (plan S7).
 
 ## 11. Acceptance fixtures
 
 Bytes are UTF-8 bytes of the canonical act. "Raw" is the number of derivations `parse (grammar V) rawCap stepBudget`
 returns; "readings" is `readings`; "phrase readings" is `phraseReadings` under the rule's op. Every number and every
-diagnostic text below is computed by a `#guard` in the stub (section 15); the column headings still say *hand* where
-the number was first derived by hand and then confirmed. In act phrases, `[...]` marks a declared fixed phrase (not
+diagnostic text of draft 1 below is computed by a `#guard` in the stub (section 15); the column headings still say
+*hand* where the number was first derived by hand and then confirmed. Draft 2's new or changed fixtures are marked
+*hand, not yet run*: derived by hand, and computed by the re-check (13, item 14). In act phrases, `[...]` marks a declared fixed phrase (not
 part of the string).
 
 ### 11.1 AP-1 (lexical acts, fixed phrases, wordings)
@@ -1170,7 +1480,7 @@ part of the string).
 | A6 | u027 | `{0} be subjected to torture or to [cruel, inhuman or degrading treatment or punishment]` | refused, D-4 with `'or'`; fixed phrase 51 B; act 85 B |
 | A7 | u079b | `{0} be held by secret vote or by [equivalent free voting procedures]` | refused, D-4 with `'or'`; act 66 B |
 | A13 | u0156.s03 | `{0} actively deceive {1} about [the existence of a system prompt or its content]` | accepted, 78 B; fixed phrase 47 B |
-| A15 | u024, u037 | two plain predicates with act `{0} take place` (14 B), sorts differing | both accepted; act identity includes sorts, so `actChecks` passes; if both carry the same form, their wordings are equal and V4 reports the duplicate (2.1) |
+| A15 | u024, u037 | two **permission** predicates with act `{0} take place` (14 B), sorts differing | both accepted; act identity `(sorts, act, role)` includes sorts, so `actChecks` (which checks permissions and obligations) passes; both wordings are `{0} may take place`, so V4 reports the duplicate (2.1). Draft 1 made them plain, which `actChecks` skips and whose wording read "{0} has the right take place" (SR14) |
 | A16 | u041 | `{0} to be presumed innocent until proved guilty according to law in [a public trial at which they have had all the guarantees necessary for their defence]` | accepted, 152 B; fixed phrase 84 B; not counted in M1 |
 | A17 | — | `{0} take part if {1} is open`, arity 2 | refused, D-3 with `'if'` (the first clause word); 28 B |
 | A18 | — | fixed phrase `the court that is competent` | refused, D-12 with `'is'` |
@@ -1187,7 +1497,8 @@ part of the string).
 | A29 | — | `{0} seek asylum,` | refused, D-6 |
 | A30 | — | a plain declaration with `act` and no `form`; one with `form` and no `act`; one with `form: "may"` | refused, D-19 (twice), D-19 (invalid form) |
 | A31 | corpus | every norms row of `tests/data/route-cases.jsonl` without `acts@0` | `decodeRegulatedIn` and `canonicalEnvironmentJson` give byte-identical results to today's (a Python test in AP-1; not in the stub) |
-| A32 | u0123.s03 | the six fixed phrases of A14 (11.2), among them `false information that could deceive the user` | refused, D-12 with `'false'` (finding F10) |
+| A32 | u0123.s03 | the six fixed phrases of A14 (11.2), among them `false information that could deceive the user` | refused, D-12 with `'false'` (finding F10, decided: the rule stays) |
+| A33 | u092 (source) | G10's phrase, `{0} to security in the event of unemployment, sickness, … or [other lack of livelihood] in circumstances beyond their control` (152 B), arity 1 | refused, D-5: its first comma (after *unemployment*) comes before its *or*. The plan's comma seeded bug makes it D-4 with `'or'`, so this fixture fails under that bug (SR15: draft 1 seeded it on A5, which has no comma) *(hand, not yet run)* |
 
 `check_spec` holds in both directions on these: A1–A4, A13, A15, A16, A19 and A21 satisfy `Accepts` and are accepted;
 A5–A7, A17, A20, A22–A24, A28 and A29 each fail exactly one conjunct of `Accepts` and are refused (the failing
@@ -1212,12 +1523,15 @@ Vocabularies (frames written `head: markers / split / modifiers`; adverbs after 
 - **V14** (u0123.s03): `abandon`, `claim`, `use`, `provide`, `endanger`: `[""]`; `act: ["against"]`; fixed `its core
   identity or principles`, `to be human`, `genuinely deceptive tactics that could harm users`, `false information that
   could deceive the user`, `health or safety`, `Anthropic’s guidelines` (refused as a list: A32); G14v drops the fourth
-  phrase.
+  phrase. F10 is decided (SR13): the clause words stay refused, so u0123.s03 gives the five prohibitions of G14v plus one
+  explicit residual, "provide false information that could deceive the user", recorded as the unit's unformalised part
+  with the reason "clause word *false* in an act".
 - **VL** (limits): `seek` and `enjoy` as in V5; fixed `the first city`, …, `the eighth city`.
 
 | # | Act phrase | Raw | Readings (*hand*) | The readings |
 |---|---|---|---|---|
 | G5 | `{0} to seek and to enjoy in [other countries] asylum from persecution` (67 B) | 2 | 2 | `all false false [seek+obj, enjoy+obj+in]` and the same with `in [other countries]` on both; the edge is `REt` |
+| G5d | G5 declared as the act of `p051` (`checkAct`) | 2 | `many` | D-15, exactly: `InvalidInput: act phrase for p051 has more than one reading: 1. to seek asylum from persecution and to enjoy asylum from persecution in other countries. 2. to seek asylum from persecution in other countries and to enjoy asylum from persecution in other countries.` (the meanings in derivation order, which the stub's re-run confirms; SR11) *(hand, not yet run)* |
 | G5b | the same without the fixed phrase | 0 | 0 (`none`, D-16) | no derivation: in a shared-object last item the object may follow `in other countries` only if that phrase ends with a slot, a fixed phrase or an adverb (5.2), and `enjoy`'s object is required |
 | G6 | `{0} be subjected to torture or to [cruel, …]` (85 B) | 1 | 1 | `any false true [subjected to torture, subjected to [cruel …]]`, both with *be* |
 | G7 | `{0} be held by secret vote or by [equivalent …]` (66 B) | 1 | 1 | `one (be held, by: joined or [secret vote, [equivalent …]])` |
@@ -1257,7 +1571,31 @@ absence.
 
 Render round trip (`read_normal`): the two parts of G6 render as `{0} be subjected to torture` and `{0} be subjected to
 cruel, inhuman or degrading treatment or punishment` and each reads back as `one` of itself; G7's atom renders as
-`{0} be held by secret vote or equivalent free voting procedures` (the marker once) and reads back as itself.
+`{0} be held by secret vote or equivalent free voting procedures` (the marker once) and reads back as itself. The
+renderings a modal uses read back too, each as `one` of its atom with `toWord` as rendered (SR2; *hand, not yet run*):
+
+| # | Vocabulary | Normal form | Reads back as |
+|---|---|---|---|
+| N1 | V12 | `{0} form trade unions` | `one ⟨false, false, [form], [("", trade unions)], []⟩` |
+| N2 | V12 | `{0} join trade unions for the protection of their interests` | `one` of G12's `join` atom with `toWord := false` |
+| N3 | V12 | `{0} to form trade unions for the protection of their interests` | `one` of G12's second-tree `form` atom |
+| N4 | V11 | `{0} directly take part in {1}` | `one` of G11's first atom with `toWord := false` |
+| N5 | V11 | `{0} take part in {1} through [freely chosen representatives]` | `one` of G11's second atom with `toWord := false` |
+
+### 11.2a Frames and normal forms: the review's counterexamples (SR1)
+
+Rows FR1 to FR5 were accepted by draft 1's definitions and broke a theorem; draft 2 refuses them. FR6 and FR7 check
+that the other conditions are unchanged. *Hand, not yet run.*
+
+| # | Input | Draft 1 | Draft 2 |
+|---|---|---|---|
+| FR1 | frame `seek: ["", " "] / [] / []` | `framesOk` true, `(grammar V).wf` false: `MK: ` has an empty right side (`grammar_wf` false) | `framesOk` false; 31l with `' '` |
+| FR2 | frame `stand: ["in front", "in  front"] / [] / []` | `framesOk` true: the two strings are distinct and their word lists equal, so `prefixFree`'s `a == b` exempts them; every phrase using the marker reads twice, once per string | `framesOk` false; 31l with `'in  front'` |
+| FR3 | V5's `seek` atom with the object `{0}`: `⟨true, false, [seek], [("", .one (.slot 0))], []⟩` | `normalOk` true; `read` of its normal form `{0} to seek {0}` is `none` (`TOK` accepts only `slot (i+1)`), so `read_normal` false | `normalOk` false (subject slot) |
+| FR4 | V5's `seek` atom with the modifier `in {0}` | `normalOk` true; its normal form has no reading | `normalOk` false (subject slot) |
+| FR5 | V8's `participate` atom with two arguments `in [the cultural life of the community]` and `in [scientific advancement and its benefits]` | `normalOk` true (nothing excluded repeated markers) | `normalOk` false (repeated argument marker) |
+| FR6 | frame `subjected: ["to"] / ["by"] / []` | `framesOk` false | `framesOk` false; 31i with `'by'` |
+| FR7 | the vocabularies V5 to V14 and VL of 11.2 | `framesOk` true | `framesOk` true (every marker is canonical) |
 
 ### 11.3 AP-3 (the table and elaboration)
 
@@ -1272,8 +1610,8 @@ The table, per cell (`table` on the act trees of 11.2):
 | T5 | *has the right to*, G11 (`any false false`) | 2: two atoms (each way), or `whole` (one act) |
 | T6 | *has the right to*, G12's trees (`all false false`) | 1 each: two atoms |
 | T7 | *has the right to*, G10's trees (`any false true`) | 1 each: six atoms |
-| T8 | *must*, G6 (`any false true`) | 0 (a split marker's *or* under *must*: D-22) |
-| T9 | *must not*, `all false false` (G12's first tree read as a prohibition) | 2: two atoms, or `whole` (only doing both) |
+| T8 | *must*, G6 (`any false true`) | 0 (a split marker's *or* under *must*: D-22). The plan's *must*/*or* seeded bug makes it 1, so this fixture fails under that bug (SR15: draft 1 seeded it on A7, a `one` act the table never splits) |
+| T9 | *must not*, `all false false` (G12's first tree read as a prohibition) | 2: two atoms, or `whole` (only doing both); P12n lists G12's four readings under *must not* with four distinct paraphrases |
 | T10 | *need not*, any join | 0 |
 
 Elaboration (on `UDoc`s built in `ElaborateExamples.lean`; sorts `person`, guards `top`):
@@ -1282,18 +1620,26 @@ Elaboration (on `UDoc`s built in `ElaborateExamples.lean`; sorts `person`, guard
 |---|---|---|
 | E1 | permission `p027` (deny), act G6, rule `r027` sign false | parts `p027__1` (act `{0} be subjected to torture`) and `p027__2`; rules `r027-a1`, `r027-a2`; `SplitMap` = `preds [(p027__1, p027, 1), (p027__2, p027, 2)]`, `rules [(r027-a1, r027, 1), (r027-a2, r027, 2)]` |
 | E2 | obligation `p079` (deny), act G7, rule sign true | unchanged (`elaborate D = .ok D.U`); empty `SplitMap` |
-| E3 | permission `p123`, act G14v, rule sign false | five parts `p123__1` … `p123__5`, five rules |
+| E3 | permission `p123`, act G14v, rule sign false | five parts `p123__1` … `p123__5`, five rules (u0123.s03's sixth act stays its explicit residual, F10) |
 | E4 | E1 plus rule `r027b` sign true (*may*: each, by the split marker) with `over := ["r027"]` | parts as E1; `r027b-a1` over `r027-a1`, `r027b-a2` over `r027-a2` |
 | E5 | E1 with `p027` unspecified | `unspec = [p027__1, p027__2]` |
+| E5j | E5 as wire JSON (profiles `acts@0`, `norm-defaults@0`, `norms@0`; `p027`'s `default` is `"unspecified"`; the `acts` block holds V6's frame and fixed phrase), decoded by `decodeElaboratedU` | `e.s.U.unspec = [p027]`; `e.U'.unspec = [p027__1, p027__2]`; both parts keep `allowByDefault = false` (the placeholder). Draft 1's plan, elaborating inside `Norms/Wire.lean`, gave `unspec = []` here, since `decodeSourceU` rebuilds it from the environment's names (SR6). An AP-3 test (it needs the decoder), *hand, not yet run* |
 | E6 | E1 plus obligation `s` whose rule's guard mentions `p027` | refused, D-25 |
 | E7 | obligation `q` with dual `qm` (same act `{0} use [the tool] or provide [the data]`), rule on `q` sign true (*must*: one act) and rule on `qm` sign false (*must not*: split) | refused, D-24 |
 | E8 | E1 with the predicate named by 62 bytes | refused, D-26 (part name 65 bytes) |
-| E9 | permission `p` with act G11's tree, rule sign true (*may*) | refused, D-23 (two readings) |
+| E9 | permission `p` with act G11's tree, rule `r` sign true (*may*) | refused, D-23, exactly: `InvalidInput: rule r has more than one reading: 1. {0} may directly take part in {1}, and {0} may take part in {1} through freely chosen representatives. 2. {0} may directly take part in {1} or take part in {1} through freely chosen representatives, as one act done in any one of these ways (not each way on its own).` (SR11; *hand, not yet run*) |
 | E10 | plain predicate, act G6's phrase under *has the right*, rule sign false | refused, D-21 |
-| E11 | E1 with a model naming `p027` (Python) | refused, D-28 |
+| E11 | E1 with a model naming `p027` (Python) | refused with the `split` row's text, verbatim: `InvalidInput: name one of its parts: p027 is split into p027__1, p027__2` (D-28) |
+| E12 | E1 in a document with 63 regulated predicates (so 64 after the split); the same with 64 (65 after) | accepted; refused, `ResourceLimit: regulated predicates` (SR7; *hand, not yet run*) |
+| E13 | E1 in an environment declaring 255 predicates (256 after); the same with 256 (257 after) | accepted; refused, `ResourceLimit: vocabulary size` (SR7; *hand, not yet run*) |
+| E14 | E5 with `p027` renamed to a 53-byte name (parts 56 B); to a 54-byte name (parts 57 B) | accepted; refused, `ResourceLimit: unspecified name length` (the source name passes at 54 B; SR7; *hand, not yet run*) |
+| E15 | E5 in a document with 253 rules (after the split: 254 rules and 2 unspecified, 256); with 254 rules (257) | accepted; refused, `ResourceLimit: rules` (SR7; *hand, not yet run*) |
+| E16 | plain predicate `p` with act `{0} to seek asylum and to seek asylum` (V5: one meaning, `all false false` of two equal atoms), rule sign true (*has the right to*: split) | refused, D-27: `InvalidInput: two parts of p are the same act`. Draft 1 accepted it: `actChecks` skips plain predicates (SR4; *hand, not yet run*) |
 
 `splitMap_exact` in both directions on E1: every generated name is in the map with its source and index, and
-`p027` (a source name) and `r027` are not generated names and not in the map. E11 and the `elaborate_faithful` check
+`p027` (a source name) and `r027` are not generated names and not in the map. `elaborate_parts` on E1 and E4: part 1's
+act is `{0} be subjected to torture` and part 2's the rendering of `[cruel, …]`, never the other way round; each part
+rule keeps its source's sign and guard, and `r027b-a2`'s `over` is `[r027-a2]`. E11 and the `elaborate_faithful` check
 are Python and model tests of AP-3, not in the stub: with finite models in `tests/test_acts_elaborate.py`, a model
 where the prohibition on torture holds and the one on cruel treatment fails makes both sides false; a model where
 both hold makes both sides true.
@@ -1307,15 +1653,16 @@ both hold makes both sides true.
 | P9 | G9, *must not* | 2 = `deprivation_only`, `both_acts` |
 | P9m | G9, *may* | 0 (refused, D-22) |
 | P10 | G10, *has the right to* | 2 |
-| P11 | G11, *has the right to* | 2 (each way; or one act) |
+| P11 | G11, *has the right to* | 2 (each way; or one act). The one-act reading renders as a joined act, so a reading set for it cannot pass `sourceCheck` on the readings route until the readings elaboration exists (F11) |
 | P12 | G12, *has the right to* | 2 |
+| P12n | G12, *must not* | 4, with 4 distinct paraphrases (SR2; draft 1 gave the two whole readings one text). In derivation order, as the stub's re-run confirms: 1. `{0} must not form trade unions, and {0} must not join trade unions for the protection of their interests.` 2. `{0} must not form trade unions and join trade unions for the protection of their interests, as one act done together (not each on its own).` 3. `{0} must not form trade unions for the protection of their interests, and {0} must not join trade unions for the protection of their interests.` 4. `{0} must not form trade unions for the protection of their interests and join trade unions for the protection of their interests, as one act done together (not each on its own).` *(hand, not yet run)* |
 | P64 | L6, *has the right to* | 64 (listed) |
 | P65 | L6, *must not* with the join read as *and* (each tree gives 2 readings) | `limit` (128 > 64) |
 
 `phraseReadings_exact` in both directions: P11's two readings are listed and derived; the reading "only through freely
-chosen representatives" (one atom) is neither (checked by value in the stub, with the `whole` reading's paraphrase of
-2.2). `sourceCheck` (in `ReadingsExamples.lean`, on the pilot sets re-written in `acts@0` form, finding F3; these
-need a readings document and are AP-4's, not in the stub):
+chosen representatives" (one atom) is neither (checked by value in the stub; the `whole` reading's paraphrase is draft
+2's, 2.2, *hand, not yet run*). `sourceCheck` (in `ReadingsExamples.lean`, on the pilot sets re-written in `acts@0`
+form, finding F3; these need a readings document and are AP-4's, not in the stub):
 
 | # | Sets | Expected |
 |---|---|---|
@@ -1324,8 +1671,21 @@ need a readings document and are AP-4's, not in the stub):
 | S3 | S1 plus a candidate putting *freely* on `enjoy` only | refused: a choice is not a reading (the skipped middle) |
 | S4 | rs_u055 re-written, source G9 under *must not* | passes |
 | S5 | S4 with one candidate's sign flipped to *may* | refused: the choice changes the source rule's modal |
+| S6 | S4 under `norm-defaults@0`, every candidate's predicate `unspecified`, the source's completion `unspecified` | passes |
+| S7 | S6 with one candidate predicate's `default` changed from `unspecified` to `deny`, nothing else | refused: the choice changes the source rule's completion (D-29). Under draft 1's Boolean completion both read as the placeholder `deny` and S7 passed (SR3) |
+| S8 | S1 with the document's items reordered (rs_u105c before u105a), so each choice's rules come in another order | passes: rules are compared up to order (SR14) |
 
-`sourceCheck_complete` is S1 and S4 read from right to left: their sets are exact, so the check passes.
+`sourceCheck_complete` is S1, S4, S6 and S8 read from right to left: their sets are exact, so the check passes.
+
+The `act-readings` binding (Python, `tests/test_acts_readings_answer.py`; SR5, SR12):
+
+| # | Answer | Expected |
+|---|---|---|
+| AR1 | Lean's genuine `LISTED` answer for P11 | bound; shown |
+| AR2 | AR1 with one `from` index pushed past the last token | `CheckerUnavailable` |
+| AR3 | AR1 with one span's end pushed past the phrase's UTF-8 length | `CheckerUnavailable` |
+| AR4 | AR1 with the second reading replaced by a copy of the first | `CheckerUnavailable` (readings not distinct) |
+| AR5 | AR1 with the second reading removed, row and all | bound: binding cannot see it (7, "What binding cannot show"); no test claims otherwise |
 
 ### 11.5 AP-5 (specialisation)
 
@@ -1344,7 +1704,8 @@ pb x`; on two plain predicates it gives none.
 | raw derivations | `rawCap` = 256 (provisional, AP-0) | 1.6 |
 | step budget | `stepBudget` = 2,100,000 (provisional, AP-0) | 1.6 |
 | readings | 64 | `maxReadings` |
-| part names | 64 bytes (predicate), `ruleName` (rule) | `elaborateMap` |
+| part names | 64 bytes (predicate), `ruleName` (rule) | `elaborateMap` (step 3) |
+| the elaborated document | the route's own limits, re-checked on `U'` with their existing texts: regulated predicates 64, rules 256, vocabulary 256 (parts and unsaid predicates counted), rules plus unspecified 256, unspecified names 56 bytes, AST 10,000 nodes, precedence depth | `elaborateMap` (steps 5 and 6, 6.3; SR7) |
 | join levels | one per act phrase | 5.2 |
 
 **Generated files** (never edited by hand; `uv run python tools/regen_generated.py --write`): per batch as the plan's
@@ -1354,9 +1715,15 @@ schemas (AP-3).
 
 **Python** loads the `acts` block and the plain `act` / `form` fields as data (no check), renders Lean's wordings and
 paraphrases, relays `acts-elaborate` and `act-readings` (schema and binding only), refuses models, data and questions
-that name a split predicate with Lean's text (D-28), and runs its conflict search on the relayed document.
+that name a split predicate with the text Lean wrote for it (D-28, the `split` row), and runs its conflict search on the
+relayed document. It lexes nothing and composes no diagnostic: the `act-readings` binding checks Lean's token spans and
+indices (7), not a lexing of its own (SR12).
 
-**Rust** skips its act lint when the profiles contain `acts@0`, and treats acts as identity strings.
+**Rust** refuses every environment whose profiles contain `acts@0`, with `UnsupportedProfile`, before it reads the
+vocabulary, as it already refuses an `unspecified` completion (`rust/ve-kernel/src/environment.rs:405–408`); Lean
+answers those documents. Skipping the act lint would not be enough (SR10): Rust also refuses the `acts` key
+(`:285–288`) and a plain `act` or `form` (`:414–423`), and its act identity does not fold `’`. Rust holds no copy of
+the grammar or the elaboration.
 
 **Re-estimate** (plan G16; *estimate*, for the DRI, replacing draft 1's withdrawn figures): AP-1 7 h (four more hunks
 than draft 1, F1); AP-2 8 h (the rule table and meaning are larger than draft 1 assumed); AP-3 8 h (the relay and the
@@ -1379,10 +1746,19 @@ reference table); AP-4 7 h; AP-5 3 h; AP-5b 4 h (design and review); total about
 9. Is `SourceExact` the bijection the debate asked for, bound to an explicit template?
 10. Are the AR-10 row's refusals (4.4) right, and is the decoder reach (F1) complete?
 11. Choices C1–C27 (14): accept, or change.
-12. Finding F10: keep *true*, *false*, *no* and *every* out of fixed phrases, or allow them there.
+12. Finding F10: keep *true*, *false*, *no* and *every* out of fixed phrases, or allow them there. *Decided by the
+    review (SR13): they stay out.*
 13. Re-run the stub (15) after any change to a definition here; it is the measurement.
+14. **Bounded re-check of draft 2 (SR16)**, before the DRI signs, against a fresh run of the stub updated to draft 2:
+    (a) the grammar edits: `framesOk` and `normalOk` (1.4, 5.5) and fixtures FR1–FR7, N1–N5; (b) the rendering edits:
+    `Op.inf`, `Act.text`, `paraphrase`, `distinctTexts` (5.5, 6.2) and fixtures G5d, E9, P12n; (c) the completion:
+    `Source.completion`, `ruleView`, `SourceExact` (7) and fixtures S6–S8; (d) Fable's round-1 points 1 to 4: the
+    decoder placement (`decodeElaboratedU`, 6.4, fixture E5j), the limits after a split (6.3 steps 5 and 6, fixtures
+    E12–E15), the readings route (`readings_lexical_only`, D-33) and `elaborate_parts` (6.6); (e) the AP-1 inventory
+    (4.1) and fixture E16. The re-check covers both reviewers' counterexamples. Build stays blocked except AP-0 until it
+    passes and the DRI signs.
 
-## 14. Choices made in this draft, and findings
+## 14. Choices, the statement review's edits, and findings
 
 ### 14.1 Choices (where the plan left room, or a statement is sharpened)
 
@@ -1390,7 +1766,7 @@ reference table); AP-4 7 h; AP-5 3 h; AP-5b 4 h (design and review); total about
 |---|---|---|
 | C1 | Frames gain `mods` (modifier markers); the vocabulary is `V : Vocab` with declared `adverbs`, in place of the plan's `fs : List Frame` | one reading needs known ends for word fillers, and the argument/modifier difference decides sharing against the edge rule (u087's purpose phrase is an edge; u105's "share in" is an argument) |
 | C2 | One join level: `Act` is `one`, `all` or `any` over atoms; the plan's `List Act`, `simple` and the `2 ≤ length` hypotheses go | the pilot needs no nesting, and nested joins multiply readings past what auditors can check; refusing them is honest |
-| C3 | `Atom.joined fs A` becomes `Simple.whole A`; the table returns `List (List Simple)` | a whole join is not an atom; it keeps its predicate and its phrase |
+| C3 | `Atom.joined fs A` becomes `Simple.whole A`; the table returns `List (List Simple)` | a whole join is not an atom; in AP-3 it keeps its predicate and its declared act; its text, in paraphrases and in AP-4's comparison, is rendered from its tree (draft 2, SR2) |
 | C4 | `Atom` has `toWord`, `beWord`, `head`, `args` (with `Filler.joined`) and `mods : List Modifier` | *to* and *be* are shared across items and must be rendered in parts; a non-split marker's list is one filler |
 | C5 | `read` returns `ReadOutcome` (`ok`, `none`, `many`, `limit`) over meanings, not `VE.Grammar.Outcome` over trees | the debate's `read` is about meanings |
 | C6 | `read` and `readings` take `N` and `b`; the product uses `rawCap` and `stepBudget`, both measured by AP-0 | the plan's D2 and AP-0 item 4 |
@@ -1429,7 +1805,33 @@ reference table); AP-4 7 h; AP-5 3 h; AP-5b 4 h (design and review); total about
 | F7 | Elaborated documents hold acts that are not AP-1 acts (a part with a joined filler; a whole join) | they are internal and never re-decoded; the relay carries them as data |
 | F8 | The synthesis's protocol queue does not list AP-3's relay | resolved by C18; if the review prefers a mode, it joins the queue before AP-4 |
 | F9 | Not every statement could be type-checked: the AR-10 row (4.4), the response shapes (6.7, 7) and AP-6 (9) name modules that do not exist yet | each is type-checked by the batch that adds it |
-| F10 | *False* is a clause word (today's `actReserved`), and the clause words also hold *true*, *no*, *not* and *every*, which occur as ordinary words in act phrases. u0123.s03's fourth act, "provide false information that could deceive the user", is therefore refused even as a fixed phrase (A32), so the plan's A14 ("six prohibitions") cannot pass as written; the stub measured this, the hand draft had missed it | either keep the rule (the translator rephrases, and A14 gives five prohibitions plus one act left unformalised), or let a fixed phrase hold *true*, *false*, *no* and *every* as adjectives while still refusing the clause-forming words (*is*, *if*, *then*, *not*, *must* …). The second changes 1.1 condition 3 only; `check_extends` is unaffected, since today's check accepts none of these words. For the review and the DRI |
+| F10 | *False* is a clause word (today's `actReserved`), and the clause words also hold *true*, *no*, *not* and *every*, which occur as ordinary words in act phrases. u0123.s03's fourth act, "provide false information that could deceive the user", is therefore refused even as a fixed phrase (A32), so the plan's A14 ("six prohibitions") cannot pass as written; the stub measured this, the hand draft had missed it | either keep the rule (the translator rephrases, and A14 gives five prohibitions plus one act left unformalised), or let a fixed phrase hold *true*, *false*, *no* and *every* as adjectives while still refusing the clause-forming words (*is*, *if*, *then*, *not*, *must* …). The second changes 1.1 condition 3 only; `check_extends` is unaffected, since today's check accepts none of these words. For the review and the DRI. **Decided by the review (SR13): keep the rule.** u0123.s03 gives five prohibitions (G14v, E3) plus one explicit residual; allowing the words later only widens what is accepted, so it can wait for evidence that readers still give one reading |
+| F11 | (from SR8) The readings route refuses joined acts (D-33). A reading whose simple act is a whole join, or an atom with a joined filler, renders as a joined act, so no candidate on the readings route can carry it, and a source with such a reading cannot pass `sourceCheck`. Of the pilot's AP-4 units, u076 (P11: its one-act reading) is affected; u092 (P10), u105 (P8, S1) and u055 (P9, S4) are not | u076's set waits for the readings elaboration, which needs its own statement review (candidate elaboration and preservation theorems). The plan's AP-4 credit drops to u092 (plan draft 3, AP-4 "Moves" and section 7) |
+| F12 | (from SR6) Elaborating after `decodeSourceU` means every entry point an `acts@0` norms document reaches must take `decodeElaboratedU`; 6.4 lists the callers of `decodeSource` and `decodeSourceU` measured on `49de179e`, some of them on routes the AR-10 row refuses | AP-3 classifies each caller's reach at build time, gives each reached soundness theorem its twin over `e.U'`, and records the list in the batch |
+
+### 14.3 The statement review's edits (draft 2)
+
+`manage-agents/debates/act-phrases-spec/{astra,fable}.md`, CONVERGED after round 2 on **FIX**: the union of both
+reviewers' edit lists, with the round-2 resolutions. Draft 2 applies each one and makes no other design change.
+
+| # | Edit | Who | Applied in |
+|---|---|---|---|
+| SR1 | `framesOk`: every marker but `""`, and every modifier marker, canonical and non-empty in words; `normalOk`: no subject slot `{0}` in an argument or modifier, no repeated argument marker; the counterexamples as fixtures | Astra 1; Fable r2 1 | 1.4; 5.5; 5.6 (note); 10 (D-31, 31l); 11.2a (FR1–FR7) |
+| SR2 | Rendering: a modal takes the act without its infinitive *to* (`Op.inf`); whole readings rendered from their trees, keeping attachment scope, so distinct whole readings have distinct texts; a Lean check that the texts of one listing are pairwise distinct (`distinctTexts`, `paraphrases_nodup`, D-32); G12 under *must not* gives four distinct paraphrases; round-trip fixtures for the modal forms | Astra 2; Fable r2 2 | 2.1; 2.2; 5.5; 6.2; 7; 10 (D-32); 11.2 (N1–N5); 11.4 (P12n) |
+| SR3 | Completion three-valued: `Source.completion : NormDefaults.Completion`, `View` carries it, `ruleView` reads the original metadata (`unspecOf`); a mutation changing only `unspecified` to `deny` | Astra 3; Fable 6 | 1.8; 3.1; 7; 11.4 (S6, S7) |
+| SR4 | AP-1's inventory: `NormDefaults/Check.lean` (`regBody`, `fieldsOK`, `regBody_ok`, `check_eq := rfl`) and `FillCheck.lean` (`fill_regOK`); an explicit D-27 check of the parts for every role, since `actChecks` skips plain predicates | Astra 4; Fable r2 | 4.1; 6.3 (step 4); 6.5; 10 (D-27); 11.3 (E16) |
+| SR5 | The `act-readings` relay claims only what binding shows: a dropped reading is Lean's content (`phraseReadings_exact`), not binding; missing choices stay refused by `sourceCheck`; the seeded Python bug is a concrete binding mutation | Astra 5; Fable r2 | 7 ("What binding cannot show"); 11.4 (AR1–AR5); plan AP-4 |
+| SR6 | Elaboration runs after `decodeSourceU`, before every check and regeneration; the decoded `Source`/`SourceU` and their proofs are kept, and `ElaboratedU` carries the elaborated document and map beside them; E5 decoded from JSON | Fable 1; Astra r2 | 6.4; 6.5; 11.3 (E5j); 14.2 (F12); plan AP-3 |
+| SR7 | Limits after a split: the route's limits re-checked on the result with their existing texts and order, the vocabulary counted with parts and unsaid predicates (`authorLimits`, `ActsDoc.declared`); boundary fixtures; `elaborate_identity`'s hypotheses extended accordingly | Fable 2; Astra r2 1 | 6.3 (steps 5, 6); 6.6; 10 (D-26 note); 11.3 (E12–E15); 12 |
+| SR8 | The readings route refuses joined acts (D-33, `readings_lexical_only`) until a readings elaboration with its own theorems is specified; `gate_acts` keeps `.readings` for lexical acts only | Fable 3; Astra r2 | 0; 3.2; 4.4; 6.4; 6.5; 10 (D-33); 14.2 (F11) |
+| SR9 | `elaborate_parts`: each indexed part's act, sorts, role, completion and dual, and each part rule's copied fields | Fable 4; Astra r2 | 6.3 (`splitAtoms`); 6.6; 11.3 (note) |
+| SR10 | Rust refuses `acts@0` with `UnsupportedProfile`; its seeded bug changes to match | Fable 5; Astra r2 | 12; plan AP-1 |
+| SR11 | Exact texts: D-15 rendered with no modal (`Act.text fx none`), D-23 with the modal paraphrases, D-31 per condition; guards on G5 (G5d) and E9; 2.2 points at D-23 | Fable 7, 10; Astra r2 | 2.2; 10 (D-15, D-23, D-31); 11.2 (G5d); 11.3 (E9) |
+| SR12 | One owner: Lean lexes (token spans and indices in the `act-readings` row, bound by Python) and writes D-28 (the `acts-elaborate` row's `split` member) | Fable 8; Astra r2 | 6.7; 7; 10 (D-28); 12 |
+| SR13 | F10 decided: the clause words stay refused; u0123.s03 gives five prohibitions plus one explicit residual | both | 11.2 (V14); 11.3 (E3); 13 (item 12); 14.2 (F10); plan A14 |
+| SR14 | Small edits: A15's predicates are permissions; `SourceExact` compares each choice's rules with its reading's acts up to order, keeping the outer bijection; the stub's run record | Fable 10; Astra r2 | 7; 11.1 (A15); 11.4 (S8); 15 |
+| SR15 | Seeded bugs that can fail: the comma bug on a fixture with a comma outside a fixed phrase (A33), the *must*/*or* bug on a real `any` under *must* (T8) | Astra r1; Fable r2 7 | 11.1 (A33); 11.3 (T8); plan AP-1, AP-3 |
+| SR16 | A bounded re-check of the edits against a fresh run of the stub, then the DRI; build blocked except AP-0 | both | status; 13 (item 14) |
 
 ## 15. The stub
 
@@ -1450,6 +1852,19 @@ no error and no warning. The first run found one syntax slip in the stub and the
 corrected before the final run. AP-2's `GrammarExamples.lean` and AP-3's `ElaborateExamples.lean` should start from
 it; the worktree copy should be deleted once it is no longer needed.
 
+**Run record (SR14).** Draft 1's run: toolchain `leanprover/lean4:v4.24.0` (`lean/lean-toolchain`), `main` at
+`49de179e`, 51 statements, 161 guards, on 2026-10-13. The stub's own header still says it "has never been elaborated",
+a line written before that run; it is stale, and its sha256 at that run was not recorded. Both reviewers asked for the
+record. The stub must change for draft 2 (`framesOk`, `normalOk`, `partOk`, the renderings, `paraphrase`,
+`distinctTexts`, `Source`, `ruleView`, `SourceExact`, `elaborateMap`'s steps 4 to 6, `elaborate_parts`), so the
+bounded re-check (13, item 14) updates it, adds the guards for the fixtures marked *hand, not yet run*, corrects the
+header, runs it, and records here: the toolchain, the `main` commit, the stub's sha256, and the numbers of statements
+and guards. Draft 2 was written without a shell and has not been run.
+
 ## Change log
 
 - Draft 1 (2026-10-13): first draft, from the plan's draft 2; statements and fixtures checked in the stub (15).
+- Draft 2 (2026-10-13): applies the statement review's FIX (`debates/act-phrases-spec`, CONVERGED round 2), edits
+  SR1 to SR16 (14.3), and nothing else. F10 decided; F11 and F12 added. New diagnostics D-32 and D-33; D-28 gains the
+  `InvalidInput:` code now that Lean writes it. New fixtures A33, G5d, N1–N5, FR1–FR7, E5j, E12–E16, P12n, S6–S8,
+  AR1–AR5, all *hand, not yet run*. Not yet re-run in the stub.
