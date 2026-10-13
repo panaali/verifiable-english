@@ -1,0 +1,199 @@
+# AT-0 stub run, 2026-10-13 (docs/research/attitudes-at0-changed.md)
+# stub: research/attitudes/stub/SpecStubs_attitudes.lean, sha256 0c73f88055c387c4418524c3c892b74ed6079760ed917f5cd121b084847b6a17
+# command (from lean/ at this branch's base 49de179e): lake env lean ../research/attitudes/stub/SpecStubs_attitudes.lean
+# exit 0, no error, every #guard holds; wall clock 10:52.71, max RSS 1476632 kB
+# draft 1's stub on the same machine and base: 2:38.59 (210 documents)
+# the full #eval output follows, unedited
+("F-AT1 check", Except.ok ())
+("F-AT1 names", ["attitudes__knows__1", "attitudes__intends__1", "attitudes__thinks_quite_likely__1"])
+("F-AT1 frame labels",
+  ["attitude:factive:attitudes__knows__1", "attitude:entails:attitudes__knows__1:attitudes__thinks_quite_likely__1"])
+("F-AT1 frame size", 2)
+("F-AT1 frame",
+ [VE.Formula.all
+    "claude_instance"
+    (VE.Formula.all
+      "situation"
+      (VE.Formula.implies
+        (VE.Formula.binary "attitudes__knows__1" (VE.Term.var 1) (VE.Term.var 0))
+        (VE.Formula.unary "mass_casualty_weapon_uplift" (VE.Term.var 0)))),
+  VE.Formula.all
+    "claude_instance"
+    (VE.Formula.all
+      "situation"
+      (VE.Formula.implies
+        (VE.Formula.binary "attitudes__knows__1" (VE.Term.var 1) (VE.Term.var 0))
+        (VE.Formula.binary "attitudes__thinks_quite_likely__1" (VE.Term.var 1) (VE.Term.var 0))))])
+("F-AT1 elaborated guard",
+ some (VE.Formula.or
+   (VE.Formula.and
+     (VE.Formula.binary "attitudes__knows__1" (VE.Term.var 1) (VE.Term.var 0))
+     (VE.Formula.binary "attitudes__intends__1" (VE.Term.var 1) (VE.Term.var 0)))
+   (VE.Formula.binary "attitudes__thinks_quite_likely__1" (VE.Term.var 1) (VE.Term.var 0))))
+("M1 cat false, thinks", true, true, true, true)
+("M2 cat false, knows+thinks", false, false, true, true)
+("M3 cat true, knows only", false, false, false, false)
+("M4 cat true, none", true, true, false, false)
+("collapse M1", true, true)
+("collapse M4", false, false)
+("closure of [thinks]", [("attitudes__thinks_quite_likely__1", [0, 1])])
+("closure of [knows]", [("attitudes__thinks_quite_likely__1", [0, 1]), ("attitudes__knows__1", [0, 1])])
+("closure of [knows] is intended (cat true)", true)
+("closure of [thinks] is intended (cat false): mistaken belief", true)
+("knows forces thinks: forced, reachable", true, true)
+("thinks forces knows: forced, reachable", false, false)
+("knows forces intends: forced, reachable", false, false)
+("F-AT0 check, keys, frame", Except.ok (), 0, 0)
+("F-AT0 envAtt agrees with E on every declared name and three generated-looking names", true)
+("F-AT2 check", Except.ok ())
+("F-AT2 names",
+  ["attitudes__knows__1", "attitudes__intends__1", "attitudes__thinks_quite_likely__1", "attitudes__knows__2",
+    "attitudes__intends__2", "attitudes__thinks_quite_likely__2"])
+("F-AT2 frame labels",
+  ["attitude:factive:attitudes__knows__1", "attitude:factive:attitudes__knows__2",
+    "attitude:entails:attitudes__knows__1:attitudes__thinks_quite_likely__1",
+    "attitude:entails:attitudes__knows__2:attitudes__thinks_quite_likely__2"])
+("F-AT2 knows__1 reaches thinks__1, thinks__2, knows__2",
+  [("attitudes__thinks_quite_likely__1", true), ("attitudes__thinks_quite_likely__2", false),
+    ("attitudes__knows__2", false)])
+("F-AT3 with the document's pair: check, labels",
+ Except.ok (),
+ ["attitude:entails:attitudes__thinks_very_likely__1:attitudes__thinks_quite_likely__1"])
+("F-AT3 without it: check, labels", Except.ok (), [])
+("F-AT3 atLeast (very, quite), (quite, very) with and without", true, false, false)
+("F-AT3 on the frozen table: check, labels",
+ Except.ok (),
+ ["attitude:entails:attitudes__thinks_very_likely__1:attitudes__thinks_quite_likely__1"])
+("F-AT5 check", Except.ok ())
+("F-AT5 generated, hand-named, residual", 14, 7, 21)
+("F-AT5 frame size", 14)
+("F-AT5 names",
+  ["attitudes__knows__1", "attitudes__thinks_quite_likely__1", "attitudes__knows__2",
+    "attitudes__thinks_quite_likely__2", "attitudes__knows__3", "attitudes__thinks_quite_likely__3",
+    "attitudes__knows__4", "attitudes__thinks_quite_likely__4", "attitudes__knows__5",
+    "attitudes__thinks_quite_likely__5", "attitudes__knows__6", "attitudes__thinks_quite_likely__6",
+    "attitudes__knows__7", "attitudes__thinks_quite_likely__7"])
+("tables reviewed: table, fixture, no pair, bad knows, bad pair", true, true, true, false, false)
+("badTablePair closure derives (very likely, likely)", true, false)
+("frozen table: admitted words, pairs, closure pairs among the five words",
+  ["almost certain", "very likely", "quite likely", "likely", "more likely than not"], 10, 10)
+("the fixture lexicon: Lexicon.failures, lexAgrees on F-AT1", [], true)
+[("D1 decided_by", Except.error "InvalidInput: attitudes decided_by is not a token"),
+ ("D2 holder sort", Except.error "UnknownSymbol: Unknown holder sort 'robot'"),
+ ("D3 table review", Except.error "InvalidInput: the attitude table is not closure-reviewed"),
+ ("D4 declared word",
+  Except.error "UnsupportedProfile: a declared scale pair names a word that attitudes@0 does not admit"),
+ ("D5 scale caps", Except.error "ResourceLimit: order edges"),
+ ("D6 reserved prefix", Except.error "InvalidInput: predicate attitudes__x uses the reserved prefix attitudes__"),
+ ("D6a lexicon valid",
+  Except.error "InvalidInput: the English lexicon fails V1 for predicate mass_casualty_weapon_uplift"),
+ ("D6b lexicon describes E",
+  Except.error "InvalidInput: the English lexicon does not describe the document's environment"),
+ ("D7 holder term", Except.error "UnboundVariable: Variable index 5 is outside its scope"),
+ ("D8 holder sort of the term", Except.error "InvalidInput: attitude holder of sort situation is not of a holder sort"),
+ ("D9 word not admitted", Except.error "UnsupportedProfile: 'thinks it unlikely' is not admitted by attitudes@0"),
+ ("D0 a word E1 refused, frozen table",
+  Except.error "UnsupportedProfile: 'thinks it as likely as not' is not admitted by attitudes@0"),
+ ("D10 slot sort", Except.error "UnknownSymbol: Unknown slot sort 'place'"),
+ ("D11 slot term sort", Except.error "TypeMismatch: attitude slot term has sort 'claude_instance', not 'situation'"),
+ ("D12 quantifier", Except.error "InvalidInput: an attitude content has a quantifier"),
+ ("D13 regulated predicate in content", Except.error "UnknownSymbol: Unknown predicate 'weapons_uplift_permitted'"),
+ ("D14 closed content with a variable", Except.error "UnboundVariable: Variable index 0 is outside its scope"),
+ ("D14a slot not mentioned (C-a)", Except.error "InvalidInput: an attitude content does not mention its slot"),
+ ("D14b slot term a constant (C-b)", Except.error "InvalidInput: an attitude slot term is not a variable of the guard"),
+ ("D14c wants wording (C-c)",
+  Except.error "UnsupportedProfile: this 'wants' content has no reviewed wording in attitudes@0"),
+ ("D14d symbol without a lexicon entry (C-d)",
+  Except.error "InvalidInput: an attitude condition names a symbol with no entry in the English lexicon"),
+ ("D15 predicate count", Except.error "ResourceLimit: MAX_PREDICATES"),
+ ("D16 generated name declared", Except.error "DuplicateDeclaration: generated predicate attitudes__knows__1"),
+ ("D17 generated name length",
+  Except.error "ResourceLimit: generated predicate attitudes__thinks_extraordinarily_overwhelmingly_and_almost_certainly_likely__1 exceeds 64 bytes"),
+ ("D18 W1 check of the elaborated document",
+  Except.error "TypeMismatch: Predicate 'mass_casualty_weapon_uplift' expects ('situation',), received ('claude_instance',)")]
+("diagnostics that differ from section 5.2's text", [])
+("C-a closed ⊤, C-b closed C(s1), C-c wants C(x): check", Except.ok (), Except.ok (), Except.ok ())
+("C-d: s1 and extra_case without lexicon entries",
+ Except.error "InvalidInput: an attitude condition names a symbol with no entry in the English lexicon",
+ Except.error "InvalidInput: an attitude condition names a symbol with no entry in the English lexicon")
+("C-a: the two documents' knows keys differ only in slotSort",
+ some { mode := VE.Attitudes.Mode.knows, holderSort := "claude_instance", slotSort := none, content := VE.Formula.top },
+ some { mode := VE.Attitudes.Mode.knows,
+   holderSort := "claude_instance",
+   slotSort := some "situation",
+   content := VE.Formula.top })
+("F-AT8 check, toU some, WellFormedU, a factive premise names the unsaid table", Except.ok (), true, some false, true)
+("F-AT9 check, names, frame labels, elaborated guard",
+ Except.ok (),
+ ["attitudes__knows__1"],
+ ["attitude:factive:attitudes__knows__1"],
+ some (VE.Formula.and
+   (VE.Formula.unary "mass_casualty_weapon_uplift" (VE.Term.var 0))
+   (VE.Formula.not (VE.Formula.binary "attitudes__knows__1" (VE.Term.var 1) (VE.Term.var 0)))))
+("F-AT9's reading is NegatedFactive's first candidate, and P̂ is the category at the rule's situation", true)
+("F-AT9: cat true none, cat true knows, cat false none, cat false knows", (true, true, true), (true, false, false),
+  (true, false, false), false, false, false)
+("U1 WellFormedU", true)
+("frame at RM1..RM4",
+  [none, some "attitude:factive:attitudes__knows__1",
+    some "attitude:entails:attitudes__knows__1:attitudes__thinks_quite_likely__1", none])
+("diagnostic at RM2",
+  some "InvalidModel(attitude:factive:attitudes__knows__1): the model violates a background premise")
+("table3 at RM1, RM4", some false, none)
+("enumerateSettled at RM1, RM4", some false, none)
+("RM4 fillings: fillValid yes/no, outcome yes/no", true, true, true, false)
+("frame unsaid-free on U1", true)
+("frame typed over envAt (fill U1) 0 and baseEnvAtt", true)
+("RM1 fillings: fillValid yes/no, outcome yes/no", true, true, false, false)
+("frame on RM4's two filled situations", true, true)
+("today's W1 decoder on an attitude node", Except.error "array expected")
+("F-AT6 check, labels",
+ Except.ok (),
+ ["attitude:factive:attitudes__knows__1", "attitude:entails:attitudes__knows__1:attitudes__thinks_very_likely__1",
+  "attitude:entails:attitudes__knows__1:attitudes__thinks_quite_likely__1",
+  "attitude:entails:attitudes__thinks_very_likely__1:attitudes__thinks_quite_likely__1"])
+("F-AT7 very likely without its own item: reviewed, check, labels",
+ true,
+ Except.ok (),
+ ["attitude:factive:attitudes__knows__1"])
+("F-AT7 with its own item: check, labels",
+ Except.ok (),
+ ["attitude:factive:attitudes__knows__1", "attitude:entails:attitudes__knows__1:attitudes__thinks_very_likely__1"])
+("F-AT7 on the frozen table (very likely has its own item): check, labels",
+ Except.ok (),
+ ["attitude:factive:attitudes__knows__1", "attitude:entails:attitudes__knows__1:attitudes__thinks_very_likely__1"])
+("interp_admissible: M1 intended (typed J)", true)
+("interp of an untyped J is not admissible", false)
+("restrict (interp M1): J back, base back, base admissible over E", true, true, true)
+("restrict of a frame model is intended: RM1 yes, RM2 no", true, false)
+("interp_restrict on a generated name: tuple in J, tuple not in J", true, true)
+("old_formula_invariant: forall situations category, on cat true and cat false (M, interp)", true, true, false, false)
+("conservativity, the failing direction: empty relations satisfy the frame and refute phi0", true, false, false)
+("knows_factive: intended J with knows has a true content, on cat true / cat false", true, true)
+("guard_collapse with a = intends: (ck ∧ ci) ∨ ct against ct, at an intended J with all three, cat true", true, true,
+  true)
+("F-AT5 collapse with the hand-named term true: intended J = knows+thinks, cat true", true, true, true)
+("F-AT5 collapse, no attitude, hand-named term true, cat true", true, false, false)
+("guards", 477)
+("search lexicon: Lexicon.failures, lexAgrees", [], true)
+{ collapseCases := 768,
+  seeds := 88188,
+  docs := 477,
+  wf := 287,
+  earlier := 210,
+  earlierWf := 210,
+  refused := 190,
+  refusalMiss := 0,
+  unexpected := 0,
+  ankDocs := 40,
+  ankTried := 2080,
+  models := 9184,
+  t1 := 0,
+  t2 := 0,
+  t3 := 0,
+  t3draft1 := 34237,
+  t4 := 0,
+  t5 := 0,
+  t7 := 0,
+  t8 := 0,
+  t9 := 0 }

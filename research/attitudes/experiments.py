@@ -32,11 +32,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 EVIDENCE = ROOT / "docs/research/evidence/attitudes"
-STUB = Path("/home/seyran/code/ve-design-attitudes/lean/SpecStubs_attitudes.lean")
-# The stub is untracked in that worktree (draft 1); its `Table` and `Table.reviewed` are spec draft 3's (section 2.1)
-# apart from comments. Pinned so that a later edit to it cannot silently change the review: a stub with another hash
-# is refused.
-STUB_SHA256 = "2178fb6eb1dfc2be9e908643538190a17da0b78a346954418d247e386b6a35e8"
+STUB = HERE / "stub/SpecStubs_attitudes.lean"
+# The AT-0 stub, updated to spec draft 4's Lean with the frozen table written in (committed here; draft 1's copy was
+# untracked in ve-design-attitudes, sha256 2178fb6e…). Its `Table` and `Table.reviewed` are unchanged from draft 1.
+# Pinned so that a later edit to it cannot silently change the review: a stub with another hash is refused.
+STUB_SHA256 = "0c73f88055c387c4418524c3c892b74ed6079760ed917f5cd121b084847b6a17"
 
 # ---- quoted from the PLAN (E1, E2); the order is E1's list order, strongest first ----
 WORDS = ["almost certain", "very likely", "quite likely", "likely", "more likely than not", "as likely as not",

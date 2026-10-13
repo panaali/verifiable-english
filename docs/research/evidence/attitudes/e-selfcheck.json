@@ -1,7 +1,7 @@
 {
   "synthetic": "counts made up by this self-check; no reader was called",
-  "stub": "/home/seyran/code/ve-design-attitudes/lean/SpecStubs_attitudes.lean",
-  "stub_sha256": "2178fb6eb1dfc2be9e908643538190a17da0b78a346954418d247e386b6a35e8",
+  "stub": "/home/seyran/code/ve-p1-attitudes/research/attitudes/stub/SpecStubs_attitudes.lean",
+  "stub_sha256": "0c73f88055c387c4418524c3c892b74ed6079760ed917f5cd121b084847b6a17",
   "checks": {
     "pair yes=36 no=2 invalid=0": true,
     "pair yes=35 no=0 invalid=0": true,

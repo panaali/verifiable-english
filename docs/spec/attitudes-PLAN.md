@@ -542,6 +542,12 @@ the closure review and freezing; through them, AT-0 PASS (SR-8).
   `2178fb6e…` (`8538355c`). So updating the stub to spec draft 3 or later also updates that pin in the same commit
   and reruns the self-check; if `Table` or `Table.reviewed` changed, the closure review's statement is re-reviewed
   before any table is frozen.
+- **After E1 and E2 (2026-10-13).** E1 and E2 are recorded and the table frozen (section 9). The stub is updated to
+  spec draft 4's Lean with the frozen table (`Table` and `Table.reviewed` unchanged, so the closure review needs no
+  re-review), committed and re-pinned (`0c73f880…`), elaborated, and every fixture and the search are rerun on the
+  frozen table with the asserted-not-know form in the pool: no counterexample (section 9, AT0C). Only the
+  re-review of the changed statements remains
+  ([docs/research/attitudes-at0-changed.md](../research/attitudes-at0-changed.md) section 2).
 - Done when the stub elaborates, the search finds no counterexample, the spec is committed, and the review
   converges on PASS.
 
@@ -1595,7 +1601,8 @@ produced no data, and AT-0p's A4 measures the limit the typed frame removes.
 | E2 | **Run 2026-10-13: MET** (E1E2 4.2). Premise 1 ships (40, 40, 40), premise 2 ships (40, 40, 40), premise 3 for all five `lowerBound` words (40 each). "P, and X does not know that P" **admitted**: "Must P?" 40, 39, 40 yes; "Does Claude know that P?" 40, 40, 40 no | `table.factive` (if it fails, `knows` is not admitted at all), `table.knowsBelieves`, `table.knowsThinks`, the admission of "P, and X does not know that P"; through the closure review, AT-0 PASS | — (AT1; G5's three items and G6's agreement rule added before the first call, `a8e5ae57`) |
 | E2's negated-"know" and "unless" items | **Run** with E2. Negated "know": item 1 splits (15 yes, 6 no, 19 cannot tell), item 2 agrees on cannot tell (38), item 3 on yes (40): the reading depends on the content, and the refusal stands. "unless": 40 of 40 yes on all three | nothing: both forms stay refused whatever they show (D-A7); evidence for a later admission's own review | — |
 | Closure review and freezing `table` | **Done 2026-10-13** (E1E2 4.3): G4 removes no word; Lean's `Table.reviewed` through the stub pinned by sha256 `2178fb6e…` is `true`; the frozen table is `docs/research/evidence/attitudes/e-table.lean` | the frozen meaning of `attitudes@0`; AT-0 PASS (SR-8) | — |
-| AT-0 PASS | **blocked** on SR-8's remaining steps | AT-1w and every later batch; through AT-3a, SC-2 (synthesis 4.3) | SR-8's steps after the frozen table: the stub updated to the current spec draft (with its sha256 pin, the self-check and the table's review rerun), elaborated, fixtures and the counterexample search rerun on the frozen table with the now-admitted asserted-not-know form in the pool, the changed statements re-reviewed (E1E2 6) |
+| AT-0 stub at the current draft, fixtures and search on the frozen table | **Done 2026-10-13** (AT0C, below): the stub carries spec draft 4's Lean with the frozen `table`, is committed, pinned by sha256 `0c73f880…`, and elaborates with every `#guard` holding; every fixture and the search rerun on `table`, the asserted-not-know form (F-AT9) in the pool; no counterexample | the re-review's input; AT-0 PASS (SR-8) | — |
+| AT-0 PASS | **blocked** on SR-8's last step | AT-1w and every later batch; through AT-3a, SC-2 (synthesis 4.3) | the reviewers' re-review of the changed statements only, listed in [docs/research/attitudes-at0-changed.md](../research/attitudes-at0-changed.md) (AT0C) |
 
 Cost, for the DRI's scheduling: E1 1,440 calls, E2 1,040 (920 without G5's three items); 2,480 in all. Hours as
 section 4 (estimates).
@@ -1606,6 +1613,21 @@ before the first call (`a8e5ae57`); all 2,480 calls answered, by `claude-sonnet-
 experiments MET their summary definitions (E1E2 1.3, 4.4); the rows above give the results. Consequences for the
 next drafts are in E1E2 6: the frozen table written in, three words refused, the asserted-not-know form admitted
 (the one statement change, re-reviewed under SR-8), negated "know" and "unless" still refused.
+
+**AT-0's stub, fixtures and search on the frozen table (2026-10-13; cited as AT0C,
+[docs/research/attitudes-at0-changed.md](../research/attitudes-at0-changed.md)).** The stub now carries spec draft
+4's Lean (draft 3's) with E1E2's frozen table in `table`, and is committed at
+`research/attitudes/stub/SpecStubs_attitudes.lean`, sha256 `0c73f880…`; `experiments.py` pins that hash, its
+self-check holds 35 of 35 on it, and its review of the frozen table is `true` with `e-table.lean` unchanged. It
+elaborates against `49de179e` with no error and every `#guard` holding (10 min 53 s). Draft 2's and 3's statements,
+definitions and diagnostics elaborate as the spec writes them, and every value the spec marked *expected* is
+computed as stated (D6a, D6b, D14a–D14d, D15, C-a to C-d, F-AT8). The fixtures run on `table`; their values are
+unchanged, except D4 and D0, whose words the table now admits (D4 uses "as likely as not", same text; D0 is now
+`thinks "as likely as not"`, refused). New fixture F-AT9, the admitted "both P and H does not know that P": true
+exactly where P holds and the knowing does not. The search, with the spec's five new pool members and the admitted
+form: 477 documents (210 of draft 1's, all admitted), 190 refused at their member's row, 287 checked on 9,184
+document-model pairs, no counterexample to T1–T5, T7, T8 or the new T9 (the admitted form's reading). Two seeded bugs
+were caught (AT0C 1). Left: the reviewers' re-review of AT0C section 2 only, then spec draft 5.
 
 ## 10. Cross-plan issues for the DRI
 
