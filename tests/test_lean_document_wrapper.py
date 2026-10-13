@@ -128,7 +128,8 @@ def test_every_seed_document_agrees_with_python_or_fails_closed(seed_answers):
         if name in PYTHON_FALLBACK:
             from ve.document import _lean_answer
             assert python["outcome"] == answer["outcome"] == "ok"
-            assert answer["value"]["coverage"]["residual_total"] != python["value"]["coverage"]["residual_total"]
+            assert answer["value"]["coverage"] == python["value"]["coverage"]
+            assert dw.verdict(python, answer) == "agree", name
             assert _lean_answer(dw.text_of(doc).encode(), True) is None
             continue
         if name in DECIDED:
@@ -137,6 +138,17 @@ def test_every_seed_document_agrees_with_python_or_fails_closed(seed_answers):
         else:
             assert python["outcome"] == "ok" or name == "fence", (name, python)
             assert answer["code"] == "CheckerUnavailable" and FAIL_CLOSED[name] in answer["text"], (name, answer)
+
+
+def test_pilot_readings_decoder_rejection_keeps_its_owner(service):
+    pilot = deepcopy(dict(dw.seeds())["usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"])
+    pilot["front"]["reading_sets"][44]["readings"][0] = False
+    python, answer = both(service, dw.text_of(pilot))
+    assert python["outcome"] == answer["outcome"] == "error"
+    assert python["code"] == answer["code"] == "InvalidInput"
+    assert python["owner"] == "readings"
+    assert python["text"] != answer["text"]
+    assert dw.verdict(python, answer) == "readings"
 
 
 def test_residual_counts_are_nonzero_and_python_s(seed_answers):
