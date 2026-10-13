@@ -26,14 +26,17 @@
 ## Changes in this draft (draft 4)
 
 - **No definition, theorem statement, diagnostic or fixture value changes,** so the scratch stub needs no
-  re-elaboration: phase 1 measured the pilots and reproduced the spec's layout, and found nothing a statement
+  re-elaboration: phase 1 measured the pilots and checked the spec's layout results (C11), and found nothing a statement
   depends on (9.6).
-- **7.0:** the layout fixtures L1, F1, F1‴, F2, F2′, F2″ (its pilot half) and F10 are reproduced on the full pinned
-  layout of 1,132 units by SC-M0's independent transcription of 1.2 and 4.1 (C11); B1's input is that layout.
+- **7.0:** the results C11 checks of the layout fixtures L1, F1, F1‴, F2, F2′, F2″ (its pilot half) and F10 agree
+  on the full pinned layout of 1,132 units under SC-M0's independent transcription of 1.2 and 4.1, and L1's `para`
+  values agree after rebasing (7.0 lists the checked fields); B1's input is that layout.
+- **9.6:** u0123.s03 is six source limits, which act-phrases' AP-3 turns into five prohibitions and one explicit
+  residual (its A14); the open question for SC-4's section accounts for the residual.
 - **1.2:** a note on what `item` counts on the pilot (182 units: every marker, not only `* ` bullets).
 - **New 9.6:** the phase-1 results that bear on the spec, and one open question for SC-4's section: the reading of
   u0123.s03 (candidate fixture F15 in plan SC-4).
-- **10:** one checklist line for the phase-1 reproduction.
+- **10:** one checklist line for the phase-1 layout check.
 
 ## 0. Scope, one paragraph
 
@@ -1625,12 +1628,17 @@ draft 1 gets wrong: F-sym (its statement is false there, computed), F13-r (its `
 beside draft 2's), and, read directly off draft 1's definitions, F-meta (its `govern` returned the document without
 admitting the block) and F11-a (its `admitBlock` required every anchor governor to sit on the heading).
 
-**Reproduced on the full pilot layout (draft 4).** The layout fixtures above were computed on excerpts of the
-pilot's bytes. Phase 1 (SC-M0, check C11) recomputed L1, F1, F1‴, F2, F2′, F2″'s pilot half (`NotALeadIn:
-u0164.s01`) and F10 on the full pinned constitution, 184,893 B and 1,132 units, with an independent Python
-transcription of `ofSource`, `listRun` and `itemRun` (1.2, 4.1) in `research/scope/sc_m0_tally.py`, and got every
-value of 7.1 and 7.5. That is a second implementation agreeing, not a proof, and not the Lean stub; it shows the
-excerpts did not hide a unit that changes a run. B1 (7.2) runs on the same layout.
+**Checked on the full pilot layout (draft 4).** The layout fixtures above were computed on excerpts of the
+pilot's bytes. Phase 1 (SC-M0, check C11) recomputed some of their results on the full pinned constitution,
+184,893 B and 1,132 units, with an independent Python transcription of `ofSource`, `listRun` and `itemRun` (1.2,
+4.1) in `research/scope/sc_m0_tally.py`, and they agree. C11 checks exactly these: F1's run from u0164.s02; F1‴
+(u0166.s01 is not an item and not in that run); L1's u0164.s02 `midLine` and `lead` and u0165.s01–s07
+`item = some 0`; F2's run from u0181.s02; F2′'s run from u0072.s02; F2″'s pilot half (`NotALeadIn: u0164.s01`);
+F10's `itemRun` from u0073.s01. It does not check the other fields or fixtures of 7.1 and 7.5. L1's `para` values
+agree after rebasing, outside C11: on the full layout u0164.s01–s02 have `para = 163`, u0165.s01–s07 `para = 164`
+and u0166.s01 `para = 165`, which are L1's 1 and 2 counted from the excerpt's first paragraph. That is a second
+implementation agreeing on the checked results, not a proof, and not the Lean stub; it shows the excerpts did not
+hide a unit that changes those runs. B1 (7.2) runs on the same layout.
 
 ### 7.1 SC-1a (`Examples.lean` by `decide`/`rfl`; `tests/test_scope_lean.py`)
 
@@ -1933,20 +1941,26 @@ draft 5, 5.0, records every check with its verdict and what it gates. What bears
 - **Facts the spec now states.** `item` counts every list marker (1.2: 182 units on the constitution). No colon
   lead-in of the pilot is `NotALeadIn` (1.2).
 - **Open question for SC-4's section, not decided here.** u0123.s03 ("Operators cannot instruct Claude to ...", 351
-  B, OPEN, six rules after act-phrases' AP-3) limits three OPEN permissions, u0062.s01, u0123.s01.p1 and
-  u0123.s02.p1 (613 B). The pinned translation copies its six limits into each permission as open terms and records
-  `scoped_by_source: u0123.s03`. Two readings fit the governors of 1.3, and they differ only where W1's
-  same-predicate rule applies:
-  1. a governor on u0123.s03 with a `carve-out` whose condition is the six limited acts and whose reach is `rules`,
+  B, OPEN, six limited acts in the source) limits three OPEN permissions, u0062.s01, u0123.s01.p1 and
+  u0123.s02.p1 (613 B). The pinned translation copies its six limits into each permission as open terms (18 copies)
+  and records `scoped_by_source: u0123.s03`. Act-phrases' AP-3 does not give six rules: its A14 gives **five
+  prohibitions plus one explicit residual**, because "provide false information that could deceive the user" holds
+  the clause word *false*, which `acts@0` refuses even in a fixed phrase. So five limits have a rule that
+  `VE.Acts.SplitMap` (1.8) can name and an act phrase a condition can hold; the sixth has neither. Two readings fit
+  the governors of 1.3 for the five, and they differ only where W1's same-predicate rule applies:
+  1. a governor on u0123.s03 with a `carve-out` whose condition is the five limited acts and whose reach is `rules`,
      naming the three permissions; or
-  2. precedence: the permissions yield to the six prohibitions, written as `precedes` on u0123.s03 over a `rules`
+  2. precedence: the permissions yield to the five prohibitions, written as `precedes` on u0123.s03 over a `rules`
      reach naming the permissions (W1 precedence, `precedes_edges`), so the prohibitions' `over` names them.
 
-  In both, rule names that act-phrases' AP-3 splits are named through `VE.Acts.SplitMap` (1.8). Either needs only
+  In both, the five prohibitions are named through `VE.Acts.SplitMap`, and the residual limit is not in the governor's
+  effect: it stays where the pinned translation has it, one open term in each permission (3 of the 18 copies), and
+  the residual stays recorded as AP-3's, never folded into the condition or guessed as a rule. F15's expected values
+  therefore name five acts or five rules and the residual's three surviving copies. Either reading needs only
   definitions and statements already here (`carveOut_applies` with a `rules` reach; `precedes_edges`), so no
-  statement waits on it. SC-4's section chooses, and the candidate becomes fixture F15 with
-  computed values. The plan's cross-plan issue 1 (u0123.s03 is also AP-3's A14) is the DRI's; until it is answered
-  F15 is a candidate only.
+  statement waits on it. SC-4's section chooses, and the candidate becomes fixture F15 with computed values. If
+  AP-3's residual is later admitted, F15 gains the sixth act then, and not before. The plan's cross-plan issue 1
+  (u0123.s03 is also AP-3's A14) is the DRI's; until it is answered F15 is a candidate only.
 
 ## 10. Review checklist
 
@@ -1971,5 +1985,5 @@ draft 5, 5.0, records every check with its verdict and what it gates. What bears
       AT-3a; SC-3b and SC-5 wait for their addenda (9.4).
 - [ ] Every statement elaborates (stub, Lean v4.24.0, re-elaborated for draft 2), and each repaired contract has an
       executed fixture (9.3); nothing is proved yet.
-- [ ] The layout fixtures hold on the full pilot layout, not only on excerpts (SC-M0's C11, 7.0); draft 4 changes no
+- [ ] The layout results C11 checks hold on the full pilot layout, not only on excerpts (7.0); draft 4 changes no
       statement, so the stub was not re-elaborated for it.
