@@ -474,6 +474,8 @@ def test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main(stagin
     staging.stage(INVENTORY, staging.head(INVENTORY))
     staging.stage("lean/Main.lean", staging.head("lean/Main.lean") + b"\n-- edit\n")
     rejects(staging, "lean/Main.lean: existing subcommands changed")
+    staging.stage("lean/Main.lean", None)
+    rejects(staging, "lean/Main.lean missing from the index")
 
 
 def test_english_grammar_checks_the_staged_generated_table(staging):

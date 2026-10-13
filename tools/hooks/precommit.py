@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import contextlib
 import functools
-import hashlib
 import importlib
 import importlib.util
 import io
@@ -409,13 +408,12 @@ def check_frozen(index: Index) -> list[str]:
     whole = any(path in index.changed for path in (INVENTORY, FROZEN_SCRIPT, TRUST_TABLE))
     if not whole and not any(p.endswith(".lean") for p in staged) and MAIN not in index.changed:
         return []
-    inventory_text, table = index.text(INVENTORY), index.text(TRUST_TABLE)
-    if inventory_text is None or table is None:
-        return [f"{INVENTORY} or {TRUST_TABLE} missing from the index"]
+    inventory_text, table, main = index.text(INVENTORY), index.text(TRUST_TABLE), index.text(MAIN)
+    if inventory_text is None or table is None or main is None:
+        return [f"{INVENTORY}, {TRUST_TABLE} or {MAIN} missing from the index"]
     frozen = index.policy().frozen
     bad = frozen.problems(inventory_text, table, lambda name: index.read([f"lean/{name}"])[f"lean/{name}"],
-                          index.text(MAIN) if whole or MAIN in index.changed else None,
-                          only=None if whole else staged)
+                          main if whole or MAIN in index.changed else None, only=None if whole else staged)
     errors = [f"lean/{problem}" for problem in bad]
     if any(": frozen file changed without an inventory update" in problem for problem in bad):
         errors.append(f"rehash it in {INVENTORY} in the same commit (python3 VE/Route/frozen.py --write from lean/)")

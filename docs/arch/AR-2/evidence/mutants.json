@@ -10,7 +10,7 @@
   },
   "test": "tests/test_frozen_sources.py::test_the_list_is_the_k_files_and_the_core_decoders",
   "killed": true,
-  "pytest_summary": "1 failed in 0.36s"
+  "pytest_summary": "1 failed in 1.09s"
  },
  {
   "id": "F2",
@@ -23,7 +23,7 @@
   },
   "test": "tests/test_frozen_sources.py::test_an_unhashed_edit_of_a_k_file_fails",
   "killed": true,
-  "pytest_summary": "1 failed in 0.34s"
+  "pytest_summary": "1 failed in 0.63s"
  },
  {
   "id": "F3",
@@ -36,7 +36,7 @@
   },
   "test": "tests/test_frozen_sources.py::test_a_new_k_module_must_be_listed_and_a_listed_file_must_be_frozen",
   "killed": true,
-  "pytest_summary": "1 failed in 0.38s"
+  "pytest_summary": "1 failed in 2.81s"
  },
  {
   "id": "H1",
@@ -49,7 +49,7 @@
   },
   "test": "tests/test_precommit_hook.py::test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main",
   "killed": true,
-  "pytest_summary": "1 failed in 1.19s"
+  "pytest_summary": "1 failed in 6.92s"
  },
  {
   "id": "H2",
@@ -62,7 +62,20 @@
   },
   "test": "tests/test_precommit_hook.py::test_frozen_file_change_requires_an_inventory_update",
   "killed": true,
-  "pytest_summary": "1 failed in 1.59s"
+  "pytest_summary": "1 failed in 6.80s"
+ },
+ {
+  "id": "H3",
+  "language": "Python",
+  "file": "tools/hooks/precommit.py",
+  "behaviour": "a staged deletion of Main.lean is refused",
+  "mutation": {
+   "from": "if inventory_text is None or table is None or main is None:",
+   "to": "if inventory_text is None or table is None:"
+  },
+  "test": "tests/test_precommit_hook.py::test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main",
+  "killed": true,
+  "pytest_summary": "1 failed in 43.41s"
  },
  {
   "id": "T1",
@@ -75,7 +88,7 @@
   },
   "test": "tests/test_frozen_sources.py::test_a_body_only_edit_of_a_dv_file_is_reported",
   "killed": true,
-  "pytest_summary": "1 failed in 0.48s"
+  "pytest_summary": "1 failed in 2.73s"
  },
  {
   "id": "T2",
@@ -88,7 +101,7 @@
   },
   "test": "tests/test_frozen_sources.py::test_the_report_fails_closed",
   "killed": true,
-  "pytest_summary": "1 failed in 0.43s"
+  "pytest_summary": "1 failed in 1.35s"
  },
  {
   "id": "Q1",
@@ -101,7 +114,7 @@
   },
   "test": "tests/test_frozen_sources.py::test_an_edit_of_a_question_module_needs_no_lock_update",
   "killed": true,
-  "pytest_summary": "1 failed in 0.56s"
+  "pytest_summary": "1 failed in 0.80s"
  },
  {
   "id": "W1",
@@ -114,6 +127,6 @@
   },
   "test": "tests/test_wire_contract_lint.py::test_l13_write_after_a_revision_changes_only_generated_files",
   "killed": true,
-  "pytest_summary": "1 failed in 0.94s"
+  "pytest_summary": "1 failed in 3.78s"
  }
 ]
