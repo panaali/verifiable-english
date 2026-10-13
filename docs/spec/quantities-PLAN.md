@@ -1284,9 +1284,11 @@ hard constraints count only as faithful, not as new bytes, so they are not in th
   scheduled soon, which delays all new wordings (contents stay writable as JSON and display through Lean's
   paraphrase).
 - **Risks found in phase 1**:
-  - Any exact count above two in `relational-fol@0` content ("exactly three", pairwise distinctness of three
-    constants of one sort) makes the document's premise check UNKNOWN under the current search budget (domain size
-    2). This hits every pilot repair of that shape, not only QT-0p.
+  - An exact count above two in `relational-fol@0` content ("exactly three", pairwise distinctness of three
+    constants of one sort) puts every model of the premises above the current search budget (domain size 2), so the
+    premise check cannot return `model`. It returns UNKNOWN unless it finds a checked refutation (`INCONSISTENT`,
+    `ve/vacuity.py`, `premise_status`); for consistent premises, as in QT-0p, the answer is UNKNOWN. This hits every
+    pilot repair of that shape, not only QT-0p.
   - The pilots move under the plan: run 0600Z changed the hard constraints' form within hours of the plan's ledger
     pin. Every experiment record names the run and the SHA-256 of the material it used.
   - Pre-registrations can be incomplete without anyone noticing until execution: all three QX items were. Each
@@ -1361,7 +1363,7 @@ part; each item says what the data shows, what stays as written, and what this p
      find a model needing three or more objects of one sort (a larger or per-sort domain budget), measured for its
      cost on the pilots; (c) drop distinctness, which this plan rejects (the text would say "at most three").
    - Recommendation: (b). Until it lands, QT-0p applies only its UDHR part. Other plans' pilot repairs that state an
-     exact count above two meet the same limit.
+     exact count above two meet the same limit: no `model` at size 2, so UNKNOWN unless a checked refutation is found.
 3. **The 0600Z audit's finding on the shared hard constraints** (synthesis O17 and queue 4.4: u0165.s01–s07, one
    queue).
    - Data (P1 3): run 0600Z's audit rejects u0165.s01–s07 because both guards take only `situation` and neither binds
