@@ -1,10 +1,12 @@
 # Typed attitudes as conditions of norms (`attitudes@0`): buildable plan
 
-> **Status.** Draft 2, 2026-10-13, branch `design/attitudes`. Draft 1 (2026-10-12, at `49de179e`) was debated by
+> **Status.** Draft 3, 2026-10-13, branch `design/attitudes`. Draft 1 (2026-10-12, at `49de179e`) was debated by
 > Fable and Astra (`manage-agents/debates/design-attitudes/`, converged REVISE after round 3) and revised by the
-> DRI's cross-plan synthesis of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`). Draft 2 makes
+> DRI's cross-plan synthesis of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`). Draft 2 made
 > exactly those edits and no others; the debate's items are cited as **A1–A6** (Astra) and **F3–F7** (Fable), the
-> synthesis's as **edit 1–10**. Draft 2 goes straight to AT-0's statement review, without another plan debate.
+> synthesis's as **edit 1–10**. Draft 2 went straight to AT-0's statement review, which converged after round 3 on
+> **FIX; the build may not start** (`manage-agents/debates/attitudes-spec/`). Draft 3 makes that review's
+> corrections, cited as **SR-1 to SR-8** (listed in the spec's section 14), and no other change.
 > Research and measurements: [docs/research/attitudes.md](../research/attitudes.md) (cited as **R n**). Docs only:
 > nothing here is built, proved or measured unless it says so. The Lean blocks are obligations, not proofs; their
 > elaborated text is AT-0's statement spec [docs/spec/attitudes.md](attitudes.md), which governs where the two
@@ -62,16 +64,20 @@ product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DR
 - **D-A1. One new profile, no new checker.** `attitudes@0` is an elaboration (VISION rule 1) into the norms chain
   under `norm-defaults@0`, and into the readings chain under `readings@1`. Its premises are PK-1's `attitudes`
   pack (edit 6). It is one row of AR-10's profile-gate table, with its composition proof (edit 7). Nothing frozen
-  changes (rule 2).
+  changes (rule 2): with `attitudes@0` off, W1's, soft's and P0's decoders keep every answer and their fault order,
+  `array expected` for an attitude object included; the new profile diagnostic is answered only by the attitudes
+  kinds' decoder (SR-6).
 - **D-A2. Modes.** `knows`; `thinks w` ("thinks it *w* that", *w* a word of `Scale.lowerBound`, A1); and
   `reports@0`'s four acts (`says`, `believes`, `wants`, `intends`) reused as `Mode.act a`, never copied. No other
   mode. "Intends to VP" and "wants Y to VP" with an act phrase are not admitted (edit 3).
 - **D-A3. Contents.** A quantifier-free formula (`VE.Norms.Formula.qfree`, A5) over the **base vocabulary** (A2:
   `E` without its regulated and defined predicates, the vocabulary `BaseAdmissible` ranges over), about at most one
-  thing named by a term of the guard (the slot). The frame premises are typed over that base vocabulary extended by
-  the generated attitude predicates, and their typing on every route is proved, not assumed. Content identity is
-  equality of syntax trees, the identity `VE.Reports.content_structural` proves `reports@0`'s digests encode. This
-  profile never hashes a content.
+  thing named by a variable of the guard (the slot), which the content mentions; a content about a constant is
+  written closed (SR-2). Admission is limited to the conditions 3.7 can word, so every admitted key has its
+  sentence and no sentence stands for two keys (SR-2). The frame premises are typed over that base vocabulary
+  extended by the generated attitude predicates, and their typing on every route is proved, not assumed. Content
+  identity is equality of syntax trees, the identity `VE.Reports.content_structural` proves `reports@0`'s digests
+  encode. This profile never hashes a content.
 - **D-A4. The frame, and nothing else.** (1) knowing is factive; (2) knowing implies believing; (3) knowing implies
   thinking it *w*, generated per admitted word, only where E2's item for that word reaches the bar (A1); (4) thinking
   it *w₁* implies thinking it *w₂* when the scale puts *w₁* at or above *w₂*. All four relate keys with the same
@@ -90,17 +96,23 @@ product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DR
 - **D-A6. Every generated atom is an open term.** Its record is generated: arguments (holder sort, slot sort),
   factors from a Lean table by mode ("what counts as knowing that …", "how likely counts as quite likely"),
   `decided_by` the document's `attitudes.decided_by`, else `unresolved_decider`.
-- **D-A7. One reading.** Refused, each with one-reading rewrites (AT-5): a negated "knows" (the form "P, and X does
-  not know that P", with its content asserted in the same condition, is admitted only if its E2 items reach 36 of
-  40, A4); "unless X knows that P" (its presupposition is unresolved; debate round 3); "does not think it *w* that"
+- **D-A7. One reading.** Refused, each with one-reading rewrites whose readings are exactly the form's candidate
+  readings, read at the form's category (a guard in its rule's context, or a whole rule) (AT-5, SR-4, SR-5): a
+  negated "knows" (the form "P, and X does not know that P", with its content asserted in the same condition, is
+  admitted only if its E2 items reach 36 of 40, A4; E2's record holds that decision before AT-0 PASS, SR-8);
+  "unless X knows that P" (its presupposition is unresolved; debate round 3); "does not think it *w* that"
   (neg-raising); bare "thinks that" (as `reports@0` refuses it); attitude adverbs ("knowingly", "intentionally",
   "deliberately"); a holder pronoun that does not resolve to a variable of the rule. AT-0 states a
   complement-boundary rule, and AT-5 checks whole sentences, not only conditions (A4).
 - **D-A8. Lean owns the words.** The four report verbs (`says`, `believes`, `wants`, `intends`) belong to
   `reports@0` and move to `lean/VE/Attribution/Words.lean`; `VE.Attitudes.Words` imports that file and adds only
-  `knows` and `thinks` (F6). Refusals and their rewrites are rows in english-lean's catalogue (edit 9).
-  `reports@0`'s Python literals (`_VERBS`, `_SYNONYMS`, `_REJECTED` in `ve/report_english.py`) are deleted in AT-5
-  and read from the generated export.
+  `knows` and `thinks` (F6). Refusals and their rewrites are rows in english-lean's catalogue (edit 9), each with
+  its category and its candidate readings (SR-5). `reports@0`'s Python literals (`_VERBS`, `_SYNONYMS`, `_REJECTED`
+  in `ve/report_english.py`) are deleted in AT-5 and read from the generated export. The English lexical data
+  (nouns, wordings, spellings) is the English grammar's (`VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`), carried by
+  the document, validated by `Lexicon.failures` and tied to its environment inside `WellFormedAtt`; admission,
+  rendering and reading read that one lexicon (SR-3). `reports@0`'s `wants` verb-phrase test (`_subject_split`,
+  `_infinitive`) moves into `lean/VE/Attribution/Words.lean` in AT-1, whose admission check calls it (SR-3).
 - **D-A9. Nothing from intending, wanting or saying.** No success, no desire, no obligation, no belief follows from
   them; no closure under consequence or conjunction; nothing across holders; no introspection. A joined act phrase
   under `intends` or `believes` is never split or distributed by act-phrases' modal × connective table
@@ -187,7 +199,9 @@ Attitude guard nodes are decoded, when `attitudes@0` is on, by the chain's norm 
 layered decoder dispatch to them), so one guard-node hook serves the norms, soft, layered and readings routes; the
 `environment.attitudes` block is decoded by the `attitudes` pack provider. There is no `attitudes` service mode:
 `attitudes-elaborate`, `attitudes-status`, `attitudes-conflict` and `attitudes-report` are kinds of the layered
-route over the assembled X (edit 7).
+route over the assembled X (edit 7). With `attitudes@0` off, those decoders are unchanged (SR-6). The attitudes
+kinds' decoder, `decodeAttDoc`, also decodes the case's English lexicon with the English grammar's own decoders
+(SR-3), and ends with `checkAtt`, so a decoded document is a checked one (SR-7).
 
 ### 3.7 English and one reading (AT-5)
 
@@ -195,7 +209,8 @@ route over the assembled X (edit 7).
 |---|---|---|
 | "X knows that P" | knows | admitted |
 | "X thinks it *w* that P", *w* in `Scale.lowerBound` | thinks *w* (lower bound) | admitted; any other word refused (A1) |
-| "X believes that P", "X wants Y to VP", "X intends that P", "X says that P" | `reports@0`'s acts | admitted ("intends to VP" and "wants Y to VP" with an act phrase are not admitted. Intentional action stays residual until a reviewed act-performance bridge, designed by events-time-causation (ET-D2), fits this profile's contract: quantifier-free content over the base vocabulary, one slot. Act-phrases landing does not admit them; edit 3) |
+| "X believes that P", "X wants Y to VP", "X intends that P", "X says that P" | `reports@0`'s acts | admitted ("intends to VP" and "wants Y to VP" with an act phrase are not admitted. Intentional action stays residual until a reviewed act-performance bridge, designed by events-time-causation (ET-D2), fits this profile's contract: quantifier-free content over the base vocabulary, one slot. Act-phrases landing does not admit them; edit 3). "X wants Y to VP" only for one unary base predicate on the slot whose wording `reports@0`'s test turns into "Y to VP"; any other `wants` content is refused (SR-2) |
+| a slot its content does not mention; a slot at a constant | one sentence for two keys | refused at admission; a content about a constant is written closed; de re versus de dicto about a named constant is a later admission with its own E2 items (SR-2) |
 | "P, and X does not know that P" | not knows, content asserted | admitted only if its three E2 items reach 36 of 40; otherwise refused with its rewrites (A4) |
 | "unless X knows that P" (carve-out) | unresolved presupposition | refused, with rewrites; E2's three "unless" items are evidence for a later admission with its own statement review only (debate round 3) |
 | "X does not know that P" elsewhere | two readings (with and without P) | refused `NegatedFactive`, with one-reading rewrites |
@@ -203,6 +218,10 @@ route over the assembled X (edit 7).
 | "X thinks that P" | belief or opinion | refused (as `reports@0`), rewrites: "X believes that P"; "X thinks it likely that P" |
 | "X knowingly / intentionally / deliberately VPs" | scope of the adverb | refused `AttitudeAdverb`, rewrite into conditions |
 | "it thinks …" with "it" not a rule variable | unresolved holder | refused (discourse rule: no pronoun crosses a quote boundary) |
+
+Each refused row with rewrites is a catalogue row with its category (a guard, read in its enclosing rule's context;
+or a whole rule, as for "unless") and its candidate readings, written independently of the rewrites; the rewrites'
+readings are exactly those candidates, pairwise distinct (SR-4, SR-5). The spec's section 3.4 governs the rows.
 
 ### 3.8 Limits and UNKNOWN
 
@@ -226,7 +245,9 @@ checked by QS-1's `Order.admit` inside `WellFormedAtt` (A5, edit 1). Every UNKNO
 | Intentional action ("intends to VP") | residual; the bridge's design is events-time-causation's (ET-D2) | not admitted (edit 3) |
 | Distribution over joined acts | none in attitudes | edit 4 |
 | Hedged calc claims | a separate bridge, unowned | edit 5 |
-| Refusals and source-word reading sets | rows in english-lean's catalogue | AT-5 adds rows, no separate refusal table |
+| Refusals and source-word reading sets | rows in english-lean's catalogue | AT-5 adds rows, each with its category and candidate readings (SR-5), no separate refusal table |
+| English lexical data and its validity | the English grammar: `VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`, `Lexicon.failures`; decoders `Env.decode`, `Overlay.decode`, `Run.decodeLexicon` | carried by the document (`AttDoc.lex`), checked in `WellFormedAtt`, decoded at AT-3a; no attitude-local template classifier (SR-3) |
+| The `wants` verb-phrase test | `reports@0` (`_subject_split`, `_infinitive` in `ve/report_english.py`) | **moves** into `lean/VE/Attribution/Words.lean` in AT-1 (SR-3); the Python copy goes in AT-5 (open, section 7) |
 | The hand-named open term `restricted_action_knowing_or_quite_likely` | pilot translation | deleted by AT-0p, then AT-0p's atoms by AT-6 |
 
 ### 3.10 Conservativity
@@ -245,9 +266,13 @@ full gate once, on the final HEAD; corpus A/B where the batch changes an answer;
 characters), regenerated inventories through `uv run python tools/regen_generated.py --write` (never by hand),
 `tools/lean_statements.py` showing additions only, and seeded bugs in each changed language (CLAUDE.md). The seeded
 bugs, one per behaviour claimed: AT-1, factivity generated with its implication reversed (F-AT1's M2 `#guard`
-fails); AT-2, the frame check skipped at a point (M2 is no longer refused); AT-3a, the decoder accepting `degree` on
-a mode other than `thinks`; AT-3b, below; AT-4, the frame dropped from one choice's base premises (an enumerated
-fixture fails); AT-5, a refused form read with one of its two readings (`refused_have_rewrites`'s fixture fails).
+fails), and the constant-slot check (D14b) skipped (collision fixture C-b's `#guard` fails, SR-2); AT-2, the frame
+check skipped at a point (M2 is no longer refused); AT-3a, the decoder accepting `degree` on a mode other than
+`thinks`, the decoder returning before `checkAtt` (a route fixture of a failing check answers an elaboration, SR-7),
+and the hook answering the new profile text with `attitudes@0` off (a W1 compatibility fixture fails, SR-6); AT-3b,
+below; AT-4, the frame dropped from one choice's base premises (an enumerated fixture fails); AT-5, a refused form
+read with one of its two readings, and a rewrite read with a reading outside its row's candidates
+(`refused_have_rewrites`'s fixtures fail, SR-5).
 Statement review before Lean build: AT-0 reviews every statement below; a statement that changes during a build
 reopens only that statement.
 
@@ -256,8 +281,8 @@ reopens only that statement.
 | AT-0p | Pilot repair with the existing language (no product code) | 2 | pilot runner | — (first step of the hard-constraint queue, edit 10) |
 | E1 | Likelihood-word order and lower-bound reading (experiment) | 2–3 | experiment runner | — |
 | E2 | Factivity, knows → believes, knows → thinks it *w* per word and per derived pair, negated "know", "unless", "P, and X does not know that P" (experiment) | 2 | experiment runner | — |
-| AT-0 | Statement spec `docs/spec/attitudes.md`, stub elaborated against main, small-scope counterexample search, statement review | 3–4 | planner | E1, E2 results and the closure review |
-| AT-1 | Lean core: syntax, keys, elaboration, frame, semantics, theorems, fixtures | 5–6 | Lean | AT-0 PASS; QS-1 merged (edit 1) |
+| AT-0 | Statement spec `docs/spec/attitudes.md`, stub elaborated against main, small-scope counterexample search, statement review (round 1: FIX, SR-1 to SR-8; re-review of the changed statements) | 3–4 | planner | E1, E2 results and the closure review |
+| AT-1 | Lean core: syntax, keys, elaboration, frame, semantics, admission with the lexicon and `renderable`, theorems, fixtures; the `wants` test moved into Lean | 5–6 | Lean | AT-0 PASS; QS-1 merged (edit 1) |
 | AT-2 | Lean: the layered route with the `attitudes` pack (statuses, conflicts, report) | 4–5 | Lean | AT-1; PK-1 merged (and so `rd-9-int`) |
 | AT-3a | Lean wire: the guard-node hook in the chain's norm decoders, the pack provider's block decoder, the layered kinds, their shape and encoder theorem | 5–6 | Lean | AT-2; PK-1 and AR-10's table merged; `lf-16e`, `qa-q2` merged; on `lean/VE/Norms/Wire.lean` after act-phrases' AP-1 and AP-3 |
 | AT-3b | Python relay with request-path binding, `ve document` hook, fixtures and fuzz tests | 4–5 | Python | AT-3a; first in the document-mode queue after `lf-16g` |
@@ -356,20 +381,33 @@ know that P" items (A4).
   every X premise (if not, PK-1 adds the check once for all packs); whether `ve document` dispatch is Python or
   Lean's `document` mode after `lf-16e`; the export of the English table (AT-5).
 - Review checklist: section 8.
+- **Round 1 of the statement review (2026-10-13): FIX** (`manage-agents/debates/attitudes-spec/`, converged after
+  round 3). Spec draft 2 and this draft make its corrections, SR-1 to SR-8 (spec section 14). Before PASS, in this
+  order (SR-8): E1 and E2 are recorded in `table` with their items, including E2's decision on asserted-content
+  negated knowledge; the closure review holds and the table is frozen; the stub is updated to spec draft 2 and
+  elaborated; every fixture and the counterexample search are rerun on the frozen table, with the new refusals
+  (D6a–D6b, D14a–D14c) in the search's pool; the reviewers re-review only the statements that changed.
 - Done when the stub elaborates, the search finds no counterexample, the spec is committed, and the review
   converges on PASS.
 
 ### AT-1. Lean core (Lean, 5–6 h)
 
 Files: `lean/VE/Attitudes/Scale.lean`, `Syntax.lean`, `Frame.lean`, `Semantics.lean`, `Theorems.lean`,
-`Examples.lean` (`#guard`s), all new; `lean/ATTITUDES.md` (new). Generated (regenerate, never hand-edit):
+`Examples.lean` (`#guard`s), all new; `lean/VE/Attribution/Words.lean` (new: only `wantsPhrase?`, `reports@0`'s
+`wants` test moved from `_subject_split` and `_infinitive`, which admission check D14c calls; AT-5 adds the verbs,
+SR-3); `lean/ATTITUDES.md` (new). Generated (regenerate, never hand-edit):
 `lean/VE.lean` (import union), `lean/VE/Audit.lean` (one `#print axioms` line per theorem),
 `lean/VE/Route/frozen-sources.sha256`, `lean/axioms.txt`, `lean/statements.txt`, `lean/declarations.txt`,
 `lean/predicates.txt`, `tools/gate-collection.json` (unchanged unless a test is added). No hand-written shared file.
 Needs QS-1 (`lean/VE/Closure/Order.lean`, owned by quantities) merged (edit 1).
 
 The block below is draft 1's with the converged edits made; AT-0's elaborated text
-([attitudes.md](attitudes.md) sections 2 to 4) governs where they differ.
+([attitudes.md](attitudes.md) sections 2 to 4) governs where they differ. In particular the statement review's
+corrections are written there, not here: `AttDoc` gains `lex` (the English grammar's `Env`, `Overlay` and
+`Lexicon`); `checkAtt` gains D6a (`Lexicon.failures`) and D6b (`lexAgrees`) after the reserved-prefix check; and
+`checkCond` ends with `renderCheck` (D14a unused slot, D14b slot at a constant, D14c `wants` without its wording),
+whose success is `renderable` (SR-2, SR-3). The block therefore also imports `VE.EnglishGrammar.Lexicon` and
+`VE.Attribution.Words`.
 
 ```lean
 import VE.Attribution.Content
@@ -564,7 +602,9 @@ def baseEnv (A : AttDoc) : VE.Environment :=
     `A.scale.above` pair is between two such words and contains `table.above`, and the scale passes
     `Order.admit scaleCaps` (A5, edit 1); every base formula is well formed over `E`; generated names are undeclared
     in `E`, at most 64 bytes and pairwise distinct; `E`'s predicates plus the keys stay within
-    `VE.Reports.maxPredicates`; every rule's predicate is regulated; `decidedBy` is non-empty. -/
+    `VE.Reports.maxPredicates`; every rule's predicate is regulated; `decidedBy` is non-empty; the document's English
+    lexicon is valid and describes `E`, and every condition is one 3.7 can word: a slot mentioned by its content, a
+    slot term that is a variable, a `wants` content with its one wording (SR-2, SR-3). -/
 def WellFormedAtt (A : AttDoc) : Bool := wellFormedBody A
 
 /-- The guard-level part of `WellFormedAtt`, as a proposition over one formula in context `Γ`. -/
@@ -772,11 +812,16 @@ or F-AT2, A3):
 - **F-AT0 (conservative).** F-AT1 with the attitude conditions removed: no key, no frame, `envAtt = E`.
 - **The closure review.** `table.reviewed` holds; a table whose closure derives a pair or a premise-3 word without
   its own item fails it.
+- **The lexicon and the renderable subset (SR-2, SR-3).** Every fixture carries the spec's fixture lexicon. D6a, D6b
+  and D14a–D14c each fail at their own check; the collision pairs C-a (`knows ⊤` closed and with an unused slot) and
+  C-b (`C(s1)` closed and `C(var 0)` slotted at the constant `s1`), and the `wants` pair C-c (spec section 7.1).
 
 Deleted, not duplicated: draft 1's `qf` (A5) and `Scale.step` (edit 1). `Act`, `dedup` and content identity are
-`reports@0`'s; the closure is QS-1's.
+`reports@0`'s; the closure is QS-1's; the lexicon and its validity are the English grammar's; the `wants` test is
+`reports@0`'s, moved (SR-3).
 
-Shared files: none hand-written. In-flight overlap: none (new directory).
+Shared files: none hand-written. In-flight overlap: none (new directories). The Python copy of the `wants` test in
+`ve/report_english.py` stays until AT-5 (section 7).
 
 Bytes unlocked: 0 (nothing calls the code).
 
@@ -824,8 +869,10 @@ theorem settled_frame_agree (U : UDoc) (X : List VE.Formula) (hfree : ∀ φ ∈
 theorem undecided_frame_agree (U : UDoc) (X : List VE.Formula) (hfree : ∀ φ ∈ X, UnsaidFree U φ)
     (B : VE.Structure.{u}) (hX : Sat B X) (r : Regulated) (vs : List B.Carrier) :
     UndecidedAt U B r vs ↔ UndecidedAtX U X B r vs
+/-- `hw` is needed (SR-1): a base predicate named `unsaid__<p>` in a `knows` content otherwise puts that name into
+    a factive premise. -/
 theorem frame_unsaidFree (A : AttDoc) (h : WellFormedAtt A = true) (unspec : List String) (U : UDoc)
-    (hU : toU A unspec = some U) : ∀ φ ∈ framePremises A, UnsaidFree U φ
+    (hU : toU A unspec = some U) (hw : WellFormedU U = true) : ∀ φ ∈ framePremises A, UnsaidFree U φ
 /-- The `attitudes` pack (edit 6). -/
 def attitudesPack (A : AttDoc) : VE.NormDefaults.Packs.Pack :=
   { id := "attitudes", kind := .vocabulary, decls := (keys A).map (fun k => (name A k, k.sorts)),
@@ -850,7 +897,9 @@ is `layered_conflict_sound` at PK-1's assembled X. Draft 1's `mistaken_belief_se
 
 Fixtures (`RouteExamples.lean`): F-AT1's points through the layered route's status kind with the X check: M1 SETTLED
 no; M4 UNDECIDED; M2 and M3 refused with PK-1's diagnostic naming the pack's first failing label
-(`attitude:factive…`, `attitude:entails…`). F-AT1 is conflict-free under the assembled X.
+(`attitude:factive…`, `attitude:entails…`). F-AT1 is conflict-free under the assembled X. F-AT8 (SR-1): a base
+predicate `unsaid__weapons_uplift_permitted` in a `knows` content, with `weapons_uplift_permitted` unspecified,
+passes `checkAtt` but not `WellFormedU`, so `frame_unsaidFree` needs `hw`.
 
 Deleted, not duplicated: no second status or conflict semantics; `SettledAsX` is the one missing counterpart of
 `UndecidedAtX` and is defined from the same parts.
@@ -874,7 +923,14 @@ Edit 7: there is no `attitudes` service mode.
   second guard decoder remains. On `lean/VE/Norms/Wire.lean` the edit is serialised after act-phrases' AP-1 and
   AP-3. The generated keys and frame go to the `attitudes` pack. This is the decoder scope's SC-2 depends on: scope
   substitutes a rule's guard JSON for `own` inside a condition that may contain attitude nodes, then calls this
-  decoder. Without `attitudes@0`, the decoder refuses an attitude node; AT-0 fixes the diagnostic text.
+  decoder. Without `attitudes@0`, W1's, soft's and P0's decoders are unchanged: an attitude node gets today's answer
+  (`array expected`) in today's fault order, and the new text `UnsupportedProfile: an attitude condition needs
+  attitudes@0` is answered only by `decodeAttDoc` (SR-6; spec 5.1).
+- **The attitudes kinds' decoder.** `decodeAttDoc` decodes the document, the `environment.attitudes` block and the
+  case's English lexical data (`lexicon`, optional `overlay`), the last with the English grammar's own decoders
+  (`Env.decode`, `Overlay.decode`, `Run.decodeLexicon`), here and not only in AT-5, because `attitudes-elaborate`
+  answers a wording template per key (SR-3). Its last step is `checkAtt`, so it returns only checked documents
+  (`decodeAttDoc_wellFormed`, SR-7); otherwise the first failing check's diagnostic is the kind's answer.
 - **Kinds.** `attitudes-elaborate` becomes a kind of the layered route; `attitudes-status`, `attitudes-conflict` and
   `attitudes-report` are the layered route's own status, conflict and report kinds over the assembled X. Checking
   the frame on a point's model is the layered status kind's check that the point satisfies every X premise; AT-0
@@ -898,6 +954,7 @@ environment.attitudes = { "holders": [sort, …], "scale": [[word, word], …], 
 guard node             = { "attitude": { "holder": term, "mode": "knows" | "thinks" | "believes" | "wants"
                            | "intends" | "says", "degree": word (only with "thinks"),
                            "slot": { "sort": sort, "term": term } (optional), "content": formula } }
+case.lexicon           = the English grammar's lexicon export ("ve.english-lexicon@1"); case.overlay optional (SR-3)
 ```
 
 `attitudes-elaborate` answers the generated predicates (name, sorts, key, wording template, open-term record), the
@@ -909,6 +966,9 @@ Statements (restated for the layered kinds, edit 7):
 
 ```lean
 namespace VE.Attitudes.Wire
+/-- The decoder ends with `checkAtt` (SR-7): a decoded document is well formed, its lexicon included. -/
+theorem decodeAttDoc_wellFormed (j : Lean.Json) (A : AttDoc) (hd : decodeAttDoc j = .ok A) :
+    WellFormedAtt A = true
 /-- The answer is exactly the encoding of the elaboration of the case's own decoded document. -/
 theorem attitudes_elaborate_acceptance (j : Lean.Json) (A : AttDoc) (hd : decodeAttDoc j = .ok A)
     (L : VE.NormDefaults.Wire.LayeredU) (hL : VE.NormDefaults.Wire.decodeLayered j = .ok L) (id : String) :
@@ -928,9 +988,14 @@ end VE.Attitudes.Wire
 `ResponseShape.Encoders.NormDefaults.runCaseReported_fits` keeps its statement; its skeleton gains the new kinds'
 rows.)
 
-Fixtures: F-AT1 as wire cases, each kind; malformed cases (an attitude node without `attitudes@0`, unknown mode,
-`degree` on a non-`thinks` mode, a slot term of the wrong sort, a holder of a non-holder sort, a content with a
-quantifier, a generated name over 64 bytes) refused with their diagnostic in the spec's order.
+Fixtures: F-AT1 as wire cases, each kind, with the fixture lexicon; malformed cases (an attitude node without
+`attitudes@0` on the attitudes kinds, unknown mode, `degree` on a non-`thinks` mode, a slot term of the wrong sort, a
+holder of a non-holder sort, a content with a quantifier, a generated name over 64 bytes, a missing `lexicon`)
+refused with their diagnostic in the spec's order; F-AT1 with one change per check of spec 5.2 (D1, D6a, D6b, D9,
+D14a, D14b, D14c, D18) answering that check's diagnostic, not an elaboration (SR-7). Compatibility (SR-6): on W1's,
+soft's and P0's routes with `attitudes@0` off, malformed and well-formed attitude objects, and documents pairing an
+attitude node with an earlier or a later fault, answer byte for byte what `main` answered before the hook (recorded
+first; `array expected` at `49de179e`).
 
 Deleted from draft 1 (edit 7): the `Protocol.lean` mode constructor, its name, the `modes` entry, the `runMode` case
 and `VE.Service.runMode_attitudes`; the `MODES` entry in `ve/backends/service_schema.py`; the generated
@@ -952,7 +1017,9 @@ Bytes: 0.
 
 ### AT-3b. Relay, document hook and tests (Python, 4–5 h)
 
-Files (new): `ve/attitudes.py` (sends the layered route's attitudes kinds with `rows` from `ve/backends/relay.py`;
+Files (new): `ve/attitudes.py` (sends the layered route's attitudes kinds with `rows` from `ve/backends/relay.py`,
+each case with the document's English lexicon export (`ve.english-lexicon@1`) and overlay, which Lean decodes and
+validates (SR-3);
 binds the answer to the request, A6: an answer's generated environment cannot authenticate itself, so each
 generated key is bound to a request condition by its request path, the full occurrence: holder term, mode, content
 tree, slot term, enclosing rule and guard location; each frame premise is bound to answer keys, and each label to
@@ -982,7 +1049,8 @@ Bytes: 0 by itself; AT-6a measures.
 
 In `readings/all-strict.ve.md`, replace AT-0p's fourteen open terms with attitude conditions (D2's guard) and seven
 hand-named intention terms ("…intentionally does the weapons uplift in that situation", F4), declare `attitudes@0`
-and `environment.attitudes = {"holders": ["claude_instance"], "scale": [], "decided_by": "unresolved_decider"}`.
+and `environment.attitudes = {"holders": ["claude_instance"], "scale": [], "decided_by": "unresolved_decider"}`; the
+cases carry the companion's English lexicon, as AT-3a's decoder requires (SR-3).
 Re-run the unspecified probe and the conflict check. Report, measured: the points of the seven rules (expected: the
 audit's case SETTLED no; unknowing UNDECIDED; impossible points refused), the open terms (expected 21: 14 generated,
 7 hand-named), predicates used, time (one run, not a comparison), `DELTA` against AT-0p's run. No model calls. The
@@ -1071,26 +1139,46 @@ Files: `lean/VE/Attribution/Words.lean` (new: the four report verbs and synonyms
 generated predicates, composed from the content predicate's own template; the frame lines; the glossary line of
 each degree word), the Lean English grammar's admission of the 3.7 rows (files in `lean/VE/EnglishGrammar/` that
 AT-0 names). AT-5's refusals (`NegatedFactive`, `NegRaising`, bare "thinks that", `AttitudeAdverb`, an unresolved
-holder) and their rewrites are rows in english-lean's catalogue; AT-5 adds no separate refusal table (edit 9).
-Whole-sentence fixtures (A4): `readAll` of the 3.1 sentence and of each of the seven pilot guards has length 1;
+holder) and their rewrites are rows in english-lean's catalogue, each with its category and its candidate readings
+(SR-5); AT-5 adds no separate refusal table (edit 9). `lean/VE/Attribution/Words.lean` exists from AT-1 (with
+`wantsPhrase?`); AT-5 adds the verbs to it. Every renderer and reader reads the document's own lexicon (`A.lex`) and
+calls the English grammar's lexicon functions and `wantsPhrase?`, with no template classifier of its own (SR-3).
+Whole-sentence fixtures (A4): `readRuleAll` of the 3.1 sentence and of each of the seven pilot guards has length 1;
 round-trip of conditions alone is not enough.
 
 ```lean
 namespace VE.Attitudes
-/-- Rendering then reading an attitude condition gives it back, under the document's lexicon. -/
+/-- Rendering then reading an admitted attitude condition gives it back, under the document's own lexicon (SR-2). -/
 theorem att_english_roundtrip (A : AttDoc) (h : WellFormedAtt A = true) (Γ : List String) (c : Cond)
-    (hc : c.key A Γ ≠ none) : readCond A Γ (renderCond A Γ c) = .ok c
-/-- Each refused form of 3.7 has no reading and its rewrites have exactly one each. -/
-theorem refused_have_rewrites (A : AttDoc) (s : String) (r : Refusal) (hr : refusalOf A s = some r) :
-    readCond A [] s = .error r.code ∧ ∀ s2 ∈ r.rewrites, (readAll A [] s2).length = 1
+    (hc : (Γ, c) ∈ condsOf A) : readCond A Γ (renderCond A Γ c) = .ok c
+/-- Two admitted conditions of one document and context with one sentence are one condition (SR-2). -/
+theorem renderCond_injective (A : AttDoc) (h : WellFormedAtt A = true) (Γ : List String) (c c2 : Cond)
+    (hc : (Γ, c) ∈ condsOf A) (hc2 : (Γ, c2) ∈ condsOf A) (he : renderCond A Γ c = renderCond A Γ c2) : c = c2
+/-- Each refused form of 3.7 with rewrites, at its category and in its context (SR-4, SR-5): refused with its code;
+    each rewrite has exactly one reading; the rewrites' readings are exactly the row's candidates; the candidates
+    are pairwise distinct. -/
+theorem refused_have_rewrites (A : AttDoc) (h : WellFormedAtt A = true) (site : Site) (s : String) (r : Refusal)
+    (hr : refusalOf A site s = some r) :
+    2 ≤ r.rewrites.length ∧
+      match site, r.candidates with
+      | .guard Γ, .guards cs =>
+          readGuard A Γ s = .error r.code ∧ (∀ s2 ∈ r.rewrites, (readGuardAll A Γ s2).length = 1) ∧
+            r.rewrites.flatMap (readGuardAll A Γ) = cs ∧ cs.Nodup
+      | .rule, .rules cs =>
+          readRule A s = .error r.code ∧ (∀ s2 ∈ r.rewrites, (readRuleAll A s2).length = 1) ∧
+            r.rewrites.flatMap (readRuleAll A) = cs ∧ cs.Nodup
+      | _, _ => False
 end VE.Attitudes
 ```
 
-(`readCond`, `renderCond`, `readAll`, `refusalOf` and `Refusal` (a code and its rewrites) are the batch's new
-definitions; `readAll` lists every derivation, as the all-derivations gate does.)
+(`renderCond`, `readCond` (atomic conditions only), `readGuard`, `readGuardAll` (a guard or carve-out in its
+enclosing rule's context), `readRule`, `readRuleAll` (a whole rule), `refusalOf`, `Site`, `Candidates` and
+`Refusal` (a code, its candidate readings and its rewrites) are the batch's new definitions, as the spec's section
+6.5 writes them; each `…All` lists every derivation, as the all-derivations gate does.)
 
 Deleted: `_VERBS`, `_SYNONYMS` and `_REJECTED` in `ve/report_english.py`; it reads the exported table instead. No
-second verb table remains.
+second verb table remains. The Python copy of the `wants` test (`_subject_split`, `_infinitive`), which AT-1 moved
+into Lean, is removed here too, `reports@0`'s printer taking the phrase from Lean (open, section 7; SR-3).
 
 Shared files: the English grammar files; the export's generator (the `english-codes` entry if its format can carry
 the table, else a new `attitude-words` entry in `tools/regen_generated.py`, which is hand-written); the generated
@@ -1185,13 +1273,13 @@ Formalise 12 honesty units (u0112.s01 to s07, u0113.s02, u0114.s03, u0115.s01, u
 | Batch | Waits for | Hand-written shared files | Generated files (regenerate) |
 |---|---|---|---|
 | AT-0p | — | (pilot directory only); first in the hard-constraint queue `AT-0p → SC-1b → SC-2 → AT-6a/AT-6b → WG-5` (edit 10) | — |
-| AT-1 | AT-0; QS-1 (edit 1) | none | `lean/VE.lean`, `lean/VE/Audit.lean`, frozen inventory, axioms, statements |
+| AT-1 | AT-0; QS-1 (edit 1) | none (`lean/VE/Attribution/Words.lean` is new here, with `wantsPhrase?` only, SR-3) | `lean/VE.lean`, `lean/VE/Audit.lean`, frozen inventory, axioms, statements |
 | AT-2 | AT-1; PK-1 (after `rd-9-int`) | one provider registration line on `lean/VE/NormDefaults/Layered.lean`, first in PK-1's integration order AT-2/AT-3a → WG-3 → ET-4 → QT-B2 | as AT-1 |
 | AT-3a | AT-2; PK-1; AR-10's table; `lf-16e`, `qa-q2`, `fix-main-relay`; on `lean/VE/Norms/Wire.lean` after AP-1 and AP-3 | `lean/VE/Norms/Wire.lean` and the soft norm decoder (the guard-node hook), the layered route's kind table and response-shape files, the AR-10 row, `ve/assurance-manifest.json`, `conformance/binding_probes.py`, `ROADMAP.md` | layered response schema, `ResponseShape` roots and audit, assurance doc, checker pins, trust baseline (signed), AR-10's profile data |
 | AT-3b | AT-3a; `lf-16e`; first in the document-mode queue after `lf-16g` (AT-3b, SC-1b, QT-A4, ET-5, WG-4, ME-10) | document dispatch (Python or Lean), `tools/layer_policy.py` | route cases, `.importlinter`, gate collection |
 | AT-6a, AT-6b | AT-3b (AT-6a); AT-4 (AT-6b); SC-2 in the hard-constraint queue | (pilot directory only) | — |
 | AT-4 | the DRI's "go"; `lf-14d`, `rd-9-int`, `lf-16e`; PK-1 | the pack provider's readings registration, `ve/readings.py` | as AT-1, route cases |
-| AT-5 | the DRI's "go"; AT-3b; `qa-q2`; first in the English queue `AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7` | `lean/VE/Attribution/Words.lean` (new, F6), English grammar files, english-lean's catalogue rows, `ve/report_english.py`, possibly `tools/regen_generated.py` | English grammar lock (needs a person's `--actions-version`), codes |
+| AT-5 | the DRI's "go"; AT-3b; `qa-q2`; first in the English queue `AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7` | `lean/VE/Attribution/Words.lean` (AT-1's, gains the verbs, F6), English grammar files, english-lean's catalogue rows, `ve/report_english.py`, possibly `tools/regen_generated.py` | English grammar lock (needs a person's `--actions-version`), codes |
 | AT-7 | AT-4 | AT-3a's decoder (own file) | as AT-1 |
 | AT-8 | E3; DRI decision | AT-3a's decoder (own file), `ve/attitudes.py` | as AT-1 |
 | AT-9 | risk stage B trigger | `lean/VE/Attitudes/Scale.lean` (own), risk stage B's files | as AT-1 |
@@ -1199,12 +1287,12 @@ Formalise 12 honesty units (u0112.s01 to s07, u0113.s02, u0114.s03, u0115.s01, u
 How conflicts are avoided: every Lean batch writes new files under `lean/VE/Attitudes/`; the hand-written shared
 Lean files are the guard-node hook on `lean/VE/Norms/Wire.lean` and the soft norm decoder (serialised after AP-1 and
 AP-3), one provider line on PK-1's `Layered.lean` (in PK-1's integration order), the layered route's kind table, the
-AR-10 row, and `lean/VE/Attribution/Words.lean` (AT-5). The seven pilot units change in the hard-constraint queue's
-order, each step starting from the translation as the previous step left it. Generated inventories are never
-hand-edited or hand-merged (ruling R12; `tools/regen_generated.py --resolve` finishes a merge whose only conflicts are
-generated). Overlap is checked before each batch with `git diff --name-only main...<branch>` against the in-flight
-branches named above. Landing preference: AT lands after AP and before SC-1/SC-2 (SC-2 needs AT-3a's decoder;
-edit 10).
+AR-10 row, and `lean/VE/Attribution/Words.lean` (new in AT-1, extended in AT-5). The seven pilot units change in
+the hard-constraint queue's order, each step starting from the translation as the previous step left it. Generated
+inventories are never hand-edited or hand-merged (ruling R12; `tools/regen_generated.py --resolve` finishes a merge
+whose only conflicts are generated). Overlap is checked before each batch with `git diff --name-only
+main...<branch>` against the in-flight branches named above. Landing preference: AT lands after AP and before
+SC-1/SC-2 (SC-2 needs AT-3a's decoder; edit 10).
 
 Sibling designs: **scope** (u0173.s01 attached to the seven rules, needed for its 263 B), **events-time-causation**
 (the act-performance bridge, ET-D2); act-phrases supplies act identity only (edit 3), **weighing** (u0173.s02's
@@ -1241,6 +1329,11 @@ NORTH-STAR row 8 (0.1920 from tags) recomputed on this basis: the buildable part
 - **Open (for AT-0):** the guard-node hook point on `lean/VE/Norms/Wire.lean` and the diagnostic when
   `attitudes@0` is off; whether the layered status kind checks the point against every X premise; whether the
   `english-codes` generator can carry the word table; the readings decoder's registration point after `lf-14d`.
+  (Answered in spec draft 1 and 2, section 10; the off-profile diagnostic is today's, SR-6.)
+- **Open (for the re-review, SR-3):** between AT-1, which moves `reports@0`'s `wants` test into Lean for admission
+  check D14c, and AT-5, which removes `_subject_split` and `_infinitive` from `ve/report_english.py`, the test exists
+  in Lean and in Python. If the reviewers do not accept that interval, `reports@0`'s printer switches to the Lean
+  test in AT-1 instead (a Python edit in a Lean batch).
 - **Open (for the DRI):** AT-8's owner (attribution or attitudes); how the residual displays 21 open terms (14
   generated, 7 hand-named); whether "is aware that" may be an input synonym of "knows that" (only if E2-style
   agreement is shown; else refused with that rewrite); the go/no-go after AT-6a (F7).
@@ -1263,11 +1356,20 @@ NORTH-STAR row 8 (0.1920 from tags) recomputed on this basis: the buildable part
   `attitudes__`; `names_fresh` covers declared names, and the route checks the generated families of the profiles it
   combines).
 - E1's pairs and E2's decisions are written into `table` and `entailsMode` before PASS, each entry with the item
-  that passed it, and the closure review `#guard` holds (debate round 3).
+  that passed it, and the closure review `#guard` holds (debate round 3). E2's record includes the decision on
+  asserted-content negated knowledge (SR-8).
 - Every key a hypothesis names is in `keys A` (A3).
 - Every theorem has one `#guard` instance on F-AT1 or F-AT2, and the small-scope counterexample search finds none
-  (debate round 3).
+  (debate round 3); after the review's corrections, the stub is updated and elaborated and the search rerun with the
+  new refusals in its pool (SR-8).
 - Contents are typed over the base vocabulary, and the frame's typing on every route is proved, not assumed (A2).
-- The 3.7 table gives every refused form two or more rewrites with one reading each.
+- The 3.7 table gives every refused form two or more rewrites with one reading each, and those readings are exactly
+  the form's candidate readings, at its category and in its context (SR-4, SR-5).
+- Admission is what English can word: every admitted condition has its one sentence and no sentence two admitted
+  conditions (`renderable`, `att_english_roundtrip` on admitted occurrences, `renderCond_injective`; SR-2).
+- Admission, rendering and reading share one validated lexicon from the English grammar, tied to the document's
+  environment (SR-3).
+- A decoded document is a checked document (`decodeAttDoc_wellFormed`, SR-7); with `attitudes@0` off, W1's, soft's
+  and P0's answers are unchanged (SR-6); every statement's hypotheses suffice (`frame_unsaidFree` has `hw`, SR-1).
 - No Lean comment uses a word `lean/audit.py` forbids; no theorem name has a prime or exceeds about 57 characters
   with its namespace.
