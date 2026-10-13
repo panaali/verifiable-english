@@ -710,7 +710,9 @@
         "ResponseShape.Schemas.ReadingsRoute.verdicts_query",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_row",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_statuses",
-        "ResponseShape.Schemas.ReadingsRoute.verdicts_word"
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_word",
+        "ResponseShape.Schemas.ReadingsRoute.soft_premises",
+        "ResponseShape.Schemas.ReadingsRoute.filledFieldsS"
       ]
     },
     "ResponseShape/Schemas/Reports.lean": {
@@ -4611,13 +4613,18 @@
         "VE.NormDefaults.Run.BindingsMatchSourceAndRegeneration",
         "VE.NormDefaults.Run.encodeAdmitted",
         "VE.NormDefaults.Run.firstFailureU",
-        "VE.NormDefaults.Run.usesNormDefaultsPath"
+        "VE.NormDefaults.Run.usesNormDefaultsPath",
+        "VE.NormDefaults.Admission.AdmissionAnswerX",
+        "VE.NormDefaults.Admission.encodeAdmittedX",
+        "VE.NormDefaults.Admission.conditionalOnX"
       ],
       "G[V]": [
         "VE.NormDefaults.Run.runAdmission",
         "VE.NormDefaults.Run.runCase",
         "VE.NormDefaults.Run.runCaseReported",
-        "VE.NormDefaults.Run.runOtherCase"
+        "VE.NormDefaults.Run.runOtherCase",
+        "VE.NormDefaults.Admission.runAdmissionX",
+        "VE.NormDefaults.Admission.softCase"
       ]
     },
     "VE/NormDefaults/Semantics.lean": {
@@ -6122,7 +6129,11 @@
         "VE.Readings.Run.pendingIn",
         "VE.Readings.Run.runLowerWith",
         "VE.Readings.Run.sideAt",
-        "VE.Readings.Run.sidesOf"
+        "VE.Readings.Run.sidesOf",
+        "VE.Readings.Run.sidesOfS",
+        "VE.Readings.Run.sideAtS",
+        "VE.Readings.Run.softPremisesJson",
+        "VE.Readings.Run.filledJsonS"
       ],
       "G[V]": [
         "VE.Readings.Run.ComponentAdmission",
@@ -6155,13 +6166,27 @@
         "VE.Readings.Run.sideIn",
         "VE.Readings.Run.validateOne",
         "VE.Readings.Run.validateResult",
-        "VE.Readings.Run.validateResultWith"
+        "VE.Readings.Run.validateResultWith",
+        "VE.Readings.Run.setPairsBy",
+        "VE.Readings.Run.validateResultBy",
+        "VE.Readings.Run.sideInS",
+        "VE.Readings.Run.pairFactsS",
+        "VE.Readings.Run.setPairsS",
+        "VE.Readings.Run.filledFieldsS",
+        "VE.Readings.Run.runValidateSD",
+        "VE.Readings.Run.runSeparateSD",
+        "VE.Readings.Run.runElaborateSD",
+        "VE.Readings.Run.runChoiceSD",
+        "VE.Readings.Run.sdRefusal"
       ],
       "G[I]": [
         "VE.Readings.Run.documentHash"
       ],
       "D[R]": [
         "VE.Readings.Run.unknownComponent"
+      ],
+      "C": [
+        "VE.Readings.Run.runSDKind"
       ]
     },
     "VE/Readings/RunExamples.lean": {
@@ -6543,7 +6568,8 @@
         "VE.Readings.Wire.replayPairU",
         "VE.Readings.Wire.replaySeparateU",
         "VE.Readings.Wire.routeND",
-        "VE.Readings.Wire.unsaidDecls"
+        "VE.Readings.Wire.unsaidDecls",
+        "VE.Readings.Wire.choiceLayeredG"
       ],
       "D[R]": [
         "VE.Readings.Wire.choiceStepText",
@@ -6555,18 +6581,16 @@
         "VE.Readings.Wire.setDeclared"
       ],
       "D[V]": [
-        "VE.Readings.Run.ndFormulas",
         "VE.Readings.Wire.conflictPackages",
         "VE.Readings.Wire.encF",
         "VE.Readings.Wire.fillPremisesJson",
         "VE.Readings.Wire.filledJson",
         "VE.Readings.Wire.filledUnitsJson",
         "VE.Readings.Wire.ndFillJson",
-        "VE.Readings.Wire.unspecOf"
+        "VE.Readings.Wire.unspecOf",
+        "VE.Readings.Wire.unitsJsonOf"
       ],
       "G[V]": [
-        "VE.Readings.Run.ndCertificate",
-        "VE.Readings.Run.ndChoiceModel",
         "VE.Readings.Run.ndInner",
         "VE.Readings.Run.runChoiceND",
         "VE.Readings.Run.runElaborateNDFilled",
@@ -6575,7 +6599,10 @@
         "VE.Readings.Wire.normDefaultsProfile",
         "VE.Readings.Wire.underCompletion",
         "VE.Readings.Wire.decisionCount",
-        "VE.Readings.Wire.ndDocTextG"
+        "VE.Readings.Wire.ndDocTextG",
+        "VE.Readings.Run.choiceCertificateX",
+        "VE.Readings.Run.choiceModelX",
+        "VE.Readings.Run.choiceInnerX"
       ],
       "G[R]": [
         "VE.Readings.Wire.ndChoiceCheckText",
@@ -10870,6 +10897,16 @@
         "VE.Readings.Wire.admitSDOf",
         "VE.Readings.Wire.sdChoiceText",
         "VE.Readings.Wire.underSoftCompletion"
+      ],
+      "C": [
+        "VE.Readings.Wire.UnsaidAdmitted",
+        "VE.Readings.Wire.admitUnsaid",
+        "VE.Readings.Wire.SeparateReplayS",
+        "VE.Readings.Wire.replayPairS",
+        "VE.Readings.Wire.replaySeparateS",
+        "VE.Readings.Wire.ChoiceReplayS",
+        "VE.Readings.Wire.replayChoiceAtS",
+        "VE.Readings.Wire.replayChoiceS"
       ]
     },
     "VE/Readings/SoftSeparate.lean": {
@@ -10934,9 +10971,6 @@
         "VE.NormDefaults.Admission.SourceDecodedX",
         "VE.NormDefaults.Admission.CertificatesBoundX",
         "VE.NormDefaults.Admission.filledProfilesX",
-        "VE.NormDefaults.Admission.AdmissionAnswerX",
-        "VE.NormDefaults.Admission.encodeAdmittedX",
-        "VE.NormDefaults.Admission.conditionalOnX",
         "VE.NormDefaults.Admission.instDecidableSoftLeafX",
         "VE.NormDefaults.Admission.instDecidableNodeAdmittedX"
       ],
@@ -10947,10 +10981,6 @@
         "VE.NormDefaults.Admission.filledJsonX",
         "VE.NormDefaults.Wire.LayeredEntailment",
         "VE.NormDefaults.Wire.replayLayeredEntailment"
-      ],
-      "G[V]": [
-        "VE.NormDefaults.Admission.runAdmissionX",
-        "VE.NormDefaults.Admission.softCase"
       ]
     }
   }

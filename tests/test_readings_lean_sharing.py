@@ -131,11 +131,13 @@ def test_the_route_builds_a_candidates_document_only_in_the_request_table(walks)
     assert {caller for caller in callers(edges, BUILD) if not named_under(caller, BUILD)} == {CHOICE}
     # The table is built by admission alone, once per admitted document, and read through `oneOf`: `admitDecoded`
     # is S1's admission after decoding, which `admitReadings` runs on the decoded document and, under the unspecified
-    # completion, `admitNDFull` on the filled document (readings-defaults.md 4.1 step 4), each with its own table.
+    # completion, `admitNDFull` on the filled document (readings-defaults.md 4.1 step 4) and, under the soft
+    # completion, `admitUnsaid` on the document's items over the filled author vocabulary (rd-9-soft-chain.md 4.2),
+    # each with its own table.
     assert callers(edges, TABLE[0]) == {"VE.Readings.Wire.admitDecoded"}
     assert {caller for caller in callers(edges, "VE.Readings.Wire.admitDecoded")
             if not named_under(caller, "VE.Readings.Wire.admitDecoded")} == \
-        {"VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitNDFull"}
+        {"VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitNDFull", "VE.Readings.Wire.admitUnsaid"}
     assert "VE.Readings.Wire.onesOf" not in edges  # the table as specified
     assert "VE.Readings.Wire.oneOf" in edges
     assert {caller for caller in callers(edges, TABLE[1]) if not named_under(caller, TABLE[1])} == \

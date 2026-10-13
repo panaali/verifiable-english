@@ -1,6 +1,7 @@
 import VE.Readings.SoftDefaults
 import VE.Readings.SoftSeparate
 import VE.NormDefaults.LayeredAdmission
+import VE.Readings.SoftWire
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
@@ -5127,3 +5128,10 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.Admission.wire_report_consequenceX
 #print axioms VE.NormDefaults.Admission.runAdmissionX_sound
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admissionX
+#print axioms VE.Readings.Wire.choiceU_E_of
+#print axioms VE.Readings.Wire.choice_soft_frame
+#print axioms VE.Readings.Wire.candidate_unsaid
+#print axioms VE.Readings.Wire.authorEnv_unsaid
+#print axioms VE.Readings.Wire.readings_wire_sd_separate_sound
+#print axioms VE.Readings.Wire.readings_wire_sd_choice_conflict
+#print axioms VE.Readings.Wire.readings_wire_sd_choice_entails

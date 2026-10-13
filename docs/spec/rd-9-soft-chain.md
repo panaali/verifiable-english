@@ -1627,3 +1627,17 @@ Draft 2 (the statement review, `manage-agents/debates/rd-9-spec/`):
     - F6: the gap sentence's place in E14 (2.2).
 
     The debate's wording nit on section 0 ("one binder binds every certificate") needed no edit: 1.8 is precise.
+
+Build (SC-4), pending the bounded re-check of 11 item 11:
+
+24. **`choiceLayeredG` gains `(hN : N.D = b.D)`** after `wfc`. The soft case types its situation vocabulary by soft's
+    `primeModel_valid`, which needs the choice's soft document's `E` to be the request's environment
+    (`re.se.ne.rv.environment`); `Environment` holds functions, so a run-time check under the signature `(b) (N)` of
+    6.8 cannot establish it, and the norms case needs the same fact for `baseModel_valid` (RD-2a's `choiceU_E`). Every
+    caller has it: `AdmittedSD.hN` (`replayChoiceAtS`) and `AdmittedND.hN` (`choiceLayered`). No approved theorem
+    states `choiceLayeredG`; `ChoiceReplayS` and the two `sd_choice` theorems are unchanged.
+    `tools/check_rd9_sc1_statements.py` lists it as pending with this reason.
+25. **`ndTextWith` builds the free document once** (`let freeDoc := free N.D`, then `decisionCount freeDoc.1` and
+    `asU N freeDoc.1`), where 6.8's body writes `decisionCount (free N.D).1` and `freeU N`. `freeU N` is
+    `asU N (free N.D).1` by definition, so the value is the same; the route builds one free document per request,
+    which `tests/test_readings_lean_sharing.py` checks on the compiled call graph. Pending with this reason.
