@@ -179,7 +179,8 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   `report.py` by path (`7b75c7af`); its eight tests passed directly, and the fix selector's 78 units passed with
   zero failures. The new full gate on that clean commit passed (saved `evidence/gate-result.json`, generated block).
   That saved gate applies to `7b75c7af`, not to the later review fixes; this worker was explicitly instructed not to
-  run the full gate. The merge train will run branch verification.
+  run the full gate. The merge train will run branch verification. The A7 end-to-end CLI regression passed on this
+  fix round in 1,420.965 s with its outer timeout raised from 1,800 s to 3,600 s (DRI note 2026-10-13 13:20Z).
 - **Seeded bugs under load**: at load 50 to 80, one run of all 11 mutants passed the one-hour limit (the Lean
   mutants rebuild `ve_service`); `mutants.py` now saves each result as it runs, and the 11 ran in four groups on the
   same code, each caught. The 12th (`python-gap-unbound`) was added with the gap binding; the 13th and 14th
