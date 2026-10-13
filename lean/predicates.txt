@@ -32,6 +32,7 @@ module ResponseShape.Encoders.Route
 module ResponseShape.Encoders.SoftNorms
 module ResponseShape.Encoders.SpeechActs
 module ResponseShape.Encoders.Standalone
+module ResponseShape.Encoders.Words
 module ResponseShape.Encoders
 module ResponseShape.EnumSites
 module ResponseShape.FitsTactic
@@ -68,6 +69,7 @@ module ResponseShape.Schemas.RiskEval
 module ResponseShape.Schemas.Route
 module ResponseShape.Schemas.SoftNorms
 module ResponseShape.Schemas.SpeechActs
+module ResponseShape.Schemas.Words
 module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
@@ -496,6 +498,7 @@ module VE.WireContract.Tables.Corpus
 module VE.WireContract.Tables.NormDefaults
 module VE.WireContract.Tables.Norms
 module VE.WireContract.Tables.SoftNorms
+module VE.Words.Run
 module VE.Words.Situation
 module VE
 Iceberg.Within@Iceberg

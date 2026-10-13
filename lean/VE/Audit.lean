@@ -5090,6 +5090,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Ask.render_unused_once
 #print axioms VE.Ask.answerFor_ok
 #print axioms VE.Ask.answerFor_bound
+#print axioms VE.Ask.memoRead_eq
 #print axioms VE.Ask.gated_some
 #print axioms VE.Ask.answerFor_gated
 #print axioms VE.Ask.certPiece_formula
@@ -5157,3 +5158,4 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Ask.replayZeroAsk_request
 #print axioms VE.Ask.zero_ask_wire_sound
 #print axioms VE.Service.runMode_ask
+#print axioms VE.Service.runMode_words
