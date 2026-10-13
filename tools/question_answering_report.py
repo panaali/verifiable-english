@@ -41,11 +41,35 @@ def render() -> str:
               "These measurements used a warm persistent Lean service for CPU and a cold CLI process for wall time. "
               "`ask` CPU: " + ", ".join(f"{ident} {'PASS' if cpu <= 2 else 'FAIL'}" for ident, cpu in ask_cpu.items()) +
               "; U3 CLI wall: "
-              f"{'PASS' if u3_wall <= 60 else 'FAIL'}.",
-              "", "## Scope", "", "The evaluation made no model calls. Reader and writer accuracy, including the "
-              "comparison of ‘No.’ and ‘Not necessarily.’, remains unmeasured. The conformance-corpus "
-              "agreement comparison with the older verdict routes is not yet recorded; this report does not claim "
-              "that agreement gate has passed.", ""]
+              f"{'PASS' if u3_wall <= 60 else 'FAIL'}."]
+    corpus = agreement.get("corpus")
+    lines += ["", "## Agreement on the corpora", ""]
+    if corpus is None:
+        lines += ["The conformance-corpus agreement comparison is not recorded; this report does not claim that "
+                  "agreement gate has passed."]
+    else:
+        statuses = sorted({status for counts in corpus["counts"].values() for status in counts})
+        lines += [corpus["method"] + ".", "",
+                  "| Corpus | Queries | " + " | ".join(statuses) + " |",
+                  "|---|---:|" + "---:|" * len(statuses)]
+        for name, counts in sorted(corpus["counts"].items()):
+            lines.append(f"| {name} | {sum(counts.values())} | " +
+                         " | ".join(str(counts.get(status, 0)) for status in statuses) + " |")
+        refused = {}
+        for row in corpus["rows"]:
+            if row["status"].startswith(("ask refused", "older route")):
+                reason = (row.get("note") or row["status"]).split(":", 2)
+                key = f"{row['status']}: {reason[1].strip() if len(reason) > 1 else reason[0]}"
+                refused[key] = refused.get(key, 0) + 1
+        review = corpus["requires_review"]
+        lines += ["", f"{corpus['queries']} queries; {len(review)} require review"
+                  + (": " + "; ".join(f"{r['corpus']} {r.get('case') or ''} {r['status']}" for r in review)
+                     if review else " (no lead contradicts the existing route's verdict)") + "."]
+        if refused:
+            lines += ["", "Queries not compared, by reason:", ""]
+            lines += [f"- {key} ({count})" for key, count in sorted(refused.items())]
+    lines += ["", "## Scope", "", "The evaluation made no model calls. Reader and writer accuracy, including the "
+              "comparison of ‘No.’ and ‘Not necessarily.’, remains unmeasured.", ""]
     return "\n".join(lines)
 
 

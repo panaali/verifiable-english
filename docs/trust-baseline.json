@@ -25,7 +25,17 @@
   "S": 9974,
   "V": 37363
  },
- "signed": [],
+ "signed": [
+  {
+   "change": "question answering Q2.4 (plan Q2.4, one owner of situation wording): the words service mode's registration (VE.Service.Mode.words in Mode.name and modes, ResponseShape.Schemas' file list; V +3), the elaboration row's unsaid description (Wire.regeneratedU and its schema, the one source unsaidDescription; V +2) and the zero-set point lines' English environment (ZeroAnswer.zeroPoints; V +1). The lines replace Python paths the same change deletes: readings_s2_wording.situation's base part, readings_route.situation_text's base part, norm_defaults_english.point_clause, _negative_modal and filling_sentence, readings_s2_english.gap_sentences, norm_english.pair_sentence and norm_defaults.fill_description (tests/test_words.py::test_the_python_producers_are_gone). VE.Words, VE.Words.Run and the words schema are G[R] and D[R] (wording and its decoders, as VE.Words.Situation was).",
+   "signed": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "allow": {
+    "K": 0,
+    "S": 0,
+    "V": 6
+   }
+  }
+ ],
  "history": [
   {
    "change": "Review B3 (consolidate-b1): predicates (lean/predicates.txt) out of C, [R] and [I] into K or S unless tied; kernel data types K; kernel modules reviewed (Paths dedup/pivot/reachEval C, ClosedAt P; reach, embed, erase K in Closure and Core; Time QTerm/QEnv.erase K; Bridge helpers D[V]); Rights.PrefixAdmissibleR S. Reclassification only: no Lean change.",

@@ -915,7 +915,8 @@
       ],
       "G[R]": [
         "ResponseShape.Skeletons.diagnose",
-        "ResponseShape.Skeletons.normDefaults"
+        "ResponseShape.Skeletons.normDefaults",
+        "ResponseShape.Skeletons.words"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -4651,6 +4652,9 @@
         "VE.NormDefaults.pairMembers",
         "VE.NormDefaults.unsaidNames",
         "VE.NormDefaults.unspecDeclared"
+      ],
+      "G[I]": [
+        "VE.NormDefaults.unsaidDescription"
       ]
     },
     "VE/NormDefaults/Wire.lean": {
@@ -10876,6 +10880,8 @@
         "VE.Ask.firstUngated",
         "VE.Ask.lineText",
         "VE.Ask.linesGated",
+        "VE.Ask.memoRead",
+        "VE.Ask.memoTable",
         "VE.Ask.render",
         "VE.Ask.renderGroup",
         "VE.Ask.rowPremises",
@@ -11042,21 +11048,25 @@
     },
     "VE/Words/Situation.lean": {
       "G[R]": [
-        "VE.Words.actOf",
         "VE.Words.article",
+        "VE.Words.articleBySound",
         "VE.Words.authorPredicates",
+        "VE.Words.bindings",
+        "VE.Words.clauseAt",
+        "VE.Words.constantName",
         "VE.Words.elementLine",
-        "VE.Words.elementName",
-        "VE.Words.factLine",
         "VE.Words.fill",
         "VE.Words.fillChars",
         "VE.Words.fillingSentence",
         "VE.Words.genericClause",
+        "VE.Words.nameOf",
+        "VE.Words.nounsOnly",
         "VE.Words.pairSentence",
         "VE.Words.pointClause",
-        "VE.Words.pointClauseIds",
+        "VE.Words.regulatedOf",
         "VE.Words.rowLe",
         "VE.Words.situation",
+        "VE.Words.situationText",
         "VE.Words.sortedStrings"
       ]
     },
@@ -11145,6 +11155,33 @@
         "VE.Readings.ComponentsExamples.c1",
         "VE.Readings.ComponentsExamples.docJ",
         "VE.Readings.ComponentsExamples.rows2"
+      ]
+    },
+    "VE/Words/Run.lean": {
+      "D[R]": [
+        "VE.Words.Run.Shown",
+        "VE.Words.Run.decodeShown",
+        "VE.Words.Run.entries",
+        "VE.Words.Run.exactKeys",
+        "VE.Words.Run.invalid",
+        "VE.Words.Run.maxItems",
+        "VE.Words.Run.text",
+        "VE.Words.Run.texts"
+      ],
+      "G[R]": [
+        "VE.Words.Run.caseReported",
+        "VE.Words.Run.line",
+        "VE.Words.Run.pairLine",
+        "VE.Words.Run.pointLine",
+        "VE.Words.Run.situationLine",
+        "VE.Words.Run.wordsCase"
+      ]
+    },
+    "ResponseShape/Schemas/Words.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.Words.file",
+        "ResponseShape.Schemas.Words.result",
+        "ResponseShape.Schemas.Words.row"
       ]
     }
   }

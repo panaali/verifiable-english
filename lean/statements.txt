@@ -1156,12 +1156,15 @@ theorem VE.Ask.answerFor_ok
       VE.Ask.contextOf s.text = Except.ok ctx ∧
         a =
             { request := s.request, text := s.text, case := s.case, x := s.x, asked := s.c,
-              ids := List.map (fun x => x.id) s.x.r.N.D.sets, rows := s.rows, cites := VE.Ask.checkedCites s.request s.x,
+              ids := List.map (fun x => x.id) s.x.r.N.D.sets, rows := s.rows,
+              cites :=
+                VE.Ask.memoRead (VE.Ask.memoTable s.rows (VE.Ask.checkedCites s.request s.x))
+                  (VE.Ask.checkedCites s.request s.x),
               names := s.names, unused := VE.Ask.documentUnused s.text } ∧
           (List.mapM ctx.displayOf a.unused).isSome = Bool.true ∧
             a.rows.all (VE.Ask.certReplays a) = Bool.true ∧ VE.Ask.linesGated (VE.Ask.render ctx a) = Bool.true
-  -- uses VE.Ask.Answer.mk@VE.Ask.Render VE.Ask.Answer.rows@VE.Ask.Render VE.Ask.Answer.unused@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Asked.c@VE.Ask.Wire VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.names@VE.Ask.Wire VE.Ask.Asked.request@VE.Ask.Wire VE.Ask.Asked.rows@VE.Ask.Wire VE.Ask.Asked.text@VE.Ask.Wire VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.Context.displayOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Row@VE.Ask.Basic VE.Ask.answerFor@VE.Ask.Render VE.Ask.certReplays@VE.Ask.Render VE.Ask.checkedCites@VE.Ask.Render VE.Ask.contextOf@VE.Ask.Lines VE.Ask.documentUnused@VE.Ask.Lines VE.Ask.linesGated@VE.Ask.Render VE.Ask.render@VE.Ask.Render VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire
-  -- expr 3802840430
+  -- uses VE.Ask.Answer.mk@VE.Ask.Render VE.Ask.Answer.rows@VE.Ask.Render VE.Ask.Answer.unused@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Asked.c@VE.Ask.Wire VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.names@VE.Ask.Wire VE.Ask.Asked.request@VE.Ask.Wire VE.Ask.Asked.rows@VE.Ask.Wire VE.Ask.Asked.text@VE.Ask.Wire VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.Context.displayOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.answerFor@VE.Ask.Render VE.Ask.certReplays@VE.Ask.Render VE.Ask.checkedCites@VE.Ask.Render VE.Ask.contextOf@VE.Ask.Lines VE.Ask.documentUnused@VE.Ask.Lines VE.Ask.linesGated@VE.Ask.Render VE.Ask.memoRead@VE.Ask.Render VE.Ask.memoTable@VE.Ask.Render VE.Ask.render@VE.Ask.Render VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire
+  -- expr 1945405913
 theorem VE.Ask.any_some
   ∀ {α : Type} {o : Option α} {f : α → Bool}, Option.any f o = Bool.true → ∃ a, o = Option.some a ∧ f a = Bool.true
   -- uses
@@ -1487,6 +1490,11 @@ theorem VE.Ask.mem_cited
     s ∈ VE.Ask.cited srcs used ↔ ∃ i, i ∈ used ∧ srcs[i]? = Option.some s
   -- uses VE.Ask.Source@VE.Ask.Sources VE.Ask.cited@VE.Ask.Sources
   -- expr 2375511432
+theorem VE.Ask.memoRead_eq
+  ∀ {β : Type} (rows : List VE.Ask.Row) (f : VE.Ask.Row → β) (r : VE.Ask.Row),
+    VE.Ask.memoRead (VE.Ask.memoTable rows f) f r = f r
+  -- uses VE.Ask.Row@VE.Ask.Basic VE.Ask.memoRead@VE.Ask.Render VE.Ask.memoTable@VE.Ask.Render
+  -- expr 1994579645
 theorem VE.Ask.mk_text
   ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (l : VE.Ask.Line),
     (VE.Ask.mk ctx v l).text = VE.Ask.lineTextV ctx v (VE.Ask.mk ctx v l)
@@ -32783,6 +32791,10 @@ theorem VE.Service.runMode_speechActs
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.speechActs j = VE.SpeechActs.Run.runCaseReported j
   -- uses VE.Service.Mode.speechActs@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.SpeechActs.Run.runCaseReported@VE.SpeechActs.Run
   -- expr 4195833241
+theorem VE.Service.runMode_words
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.words j = VE.Words.Run.caseReported j
+  -- uses VE.Service.Mode.words@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.Words.Run.caseReported@VE.Words.Run
+  -- expr 2580582220
 theorem VE.Service.runRequest_ok
   ∀ (h : VE.Service.Handles) (r : VE.Service.Request) (budget : VE.Service.Budget)
     (cases expanded : Array (Except String Lean.Json)) (digests : Array String),

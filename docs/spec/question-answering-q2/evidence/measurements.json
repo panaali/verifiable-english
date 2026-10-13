@@ -3,29 +3,29 @@
   "fixtures": {
     "U3": {
       "english.question": {
-        "cpu_s": 0.05,
-        "wall_s": 0.058
+        "cpu_s": 0.06,
+        "wall_s": 0.266
       },
       "ask": {
-        "cpu_s": 2.83,
-        "wall_s": 2.922
+        "cpu_s": 0.7,
+        "wall_s": 2.264
       },
       "ve ask": {
-        "wall_s": 7.813,
+        "wall_s": 11.007,
         "exit": 0
       }
     },
     "A1": {
       "english.question": {
-        "cpu_s": 0.06,
-        "wall_s": 0.065
+        "cpu_s": 0.07,
+        "wall_s": 0.163
       },
       "ask": {
         "cpu_s": 0.6,
-        "wall_s": 0.682
+        "wall_s": 1.226
       },
       "ve ask": {
-        "wall_s": 126.855,
+        "wall_s": 199.109,
         "exit": 0
       }
     }

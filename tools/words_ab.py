@@ -152,18 +152,37 @@ def norm_defaults_corpus(trees: int) -> None:
             english.completion_question(document, predicate, search_reached(document, predicate))
 
 
-def pilot_corpus() -> None:
-    from tools.lean_first_diff import pilot_documents
+def _pilot(item):
+    """`check_document` of one pilot document, its moved sites compared (in a pool worker)."""
+    scratch, name, sha, text = item
     from ve.document import check_document
-    from ve.errors import VEError
-    with tempfile.TemporaryDirectory(prefix="words-ab-pilots-") as scratch:
-        for name, sha, text in pilot_documents(ROOT):
-            path = Path(scratch) / f"{sha[:16]}.ve.md"
-            path.write_bytes(text)
-            try:
-                check_document(path)
-            except VEError:
-                pass
+    from ve.errors import CheckerUnavailable, VEError
+    install()
+    path = Path(scratch) / f"{sha[:16]}.ve.md"
+    path.write_bytes(text)
+    try:
+        check_document(path)
+        return name, sha, None
+    except (VEError, CheckerUnavailable) as exc:
+        # a document VE refuses (or a checker that is unavailable) shows no readings English to compare
+        return name, sha, type(exc).__name__
+
+
+def pilot_corpus(workers: int = 1) -> None:
+    import multiprocessing
+    from tools.lean_first_diff import pilot_documents
+    documents = pilot_documents(ROOT)
+    checked, refused = 0, []
+    with tempfile.TemporaryDirectory(prefix="words-ab-pilots-") as scratch, \
+            multiprocessing.get_context("fork").Pool(workers) as pool:
+        for done, (name, sha, error) in enumerate(pool.imap_unordered(
+                _pilot, [(scratch, name, sha, text) for name, sha, text in documents]), 1):
+            if error is None:
+                checked += 1
+            else:
+                refused.append(f"{name} ({sha[:12]}): {error}")
+            print(f"pilot {done}/{len(documents)}: {name} {error or 'checked'}", flush=True)
+    print(json.dumps({"pilots": len(documents), "pilots_checked": checked, "pilots_refused": refused}, indent=1))
 
 
 def summary(paths, write=False):
@@ -193,6 +212,7 @@ def main(argv=None):
     corpus.add_argument("--out", required=True)
     corpus.add_argument("--trees", type=int, default=1000)
     corpus.add_argument("--skip-pilots", action="store_true")
+    corpus.add_argument("--workers", type=int, default=1)
     show = sub.add_parser("summary")
     show.add_argument("paths", nargs="+")
     show.add_argument("--write", action="store_true")
@@ -201,9 +221,10 @@ def main(argv=None):
         Path(args.out).mkdir(parents=True, exist_ok=True)
         os.environ["VE_WORDS_AB"] = args.out
         install()
-        norm_defaults_corpus(args.trees)
+        if args.trees:
+            norm_defaults_corpus(args.trees)
         if not args.skip_pilots:
-            pilot_corpus()
+            pilot_corpus(args.workers)
         print(json.dumps(summary([args.out])["sites"], indent=1))
         return 0
     result = summary(args.paths, write=args.write)

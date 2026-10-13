@@ -3,7 +3,8 @@
 Branch `question-answering/q2`, first based on `main` at `f0547468` (Q1 merged), synced with `main` at `96887019`. The spec is
 `docs/spec/question-answering.md` (5.2 for the statements, 7 for the fixtures, 8 for the wire); the plan is
 `docs/spec/question-answering-PLAN.md` (Q2.1 to Q2.6). Builder's working notes: `../question-answering-q2-progress.md`.
-User-visible deltas, each needing the DRI's signature: `DELTA.md`. Every number below the generated block's marker is
+User-visible deltas, each signed by a standing ruling or needing the DRI's signature: `DELTA.md`; Q2.4's moved
+wording: `LEDGER.md`. Every number below the generated block's marker is
 regenerated from `evidence/` by `report.py` and checked by `tests/test_question_answering_q2_report.py`.
 
 ## What `ve ask` does now
@@ -33,10 +34,10 @@ exists in the request), and decides nothing (`tools/relay_lint.py`).
 |---|---|---|
 | Q2.1 answer core | done | `lean/VE/Ask/{Basic,Sound,Sources,Groups,Plain,Examples}.lean` |
 | Q2.2 `ask` wire | done, three routes | `lean/VE/Ask/{Binding,Wire,PlainWire,ZeroWire,Run}.lean`; `VE.Service.Protocol` mode `ask` (`runMode_ask`); `lean/ResponseShape/{Schemas,Encoders}/Ask.lean` |
-| Q2.3 words and text | done (see "Not done") | `lean/VE/Words/Situation.lean`, `lean/VE/Ask/{Lines,Render,PlainAnswer,ZeroAnswer}.lean`; the frames' `num` piece (DELTA D3) |
-| Q2.4 one owner of situation wording | **not done** | see "Not done" |
-| Q2.5 `ve ask` | done | `ve/ask.py`, `tools/ask_fixtures.py`, `tests/fixtures/ask/` |
-| Q2.6 evidence and measurement | **partly**: fixtures, non-model timing and the fixture verdict comparison | `../question-answering-report.md`; see "Not done" |
+| Q2.3 words and text | done | `lean/VE/Words/Situation.lean`, `lean/VE/Ask/{Lines,Render,PlainAnswer,ZeroAnswer}.lean`; the frames' `num` piece (DELTA D3) |
+| Q2.4 one owner of situation wording | done: Lean words every situation line, point clause, filled-gap and pair sentence; the Python producers are deleted (`LEDGER.md`); the relay lint's wording rule; the A/B byte-identical | `lean/VE/Words/{Situation,Run}.lean` (mode `words`, `runMode_words`; DELTA D13), `ve/words.py`, `tools/relay_lint.py`, `tools/words_ab.py`, `evidence/words-ab.json` |
+| Q2.5 `ve ask` | done, with one flip search (the point search its instance, the point-only copy deleted) | `ve/ask.py`, `ve/filling_search.py`, `tools/ask_fixtures.py`, `tests/fixtures/ask/` |
+| Q2.6 evidence and measurement | **partly**: fixtures, the CPU and wall budgets (met), the agreement with the existing route on the fixtures and the corpora; the reading and writing evaluation is not run (model calls) | `../question-answering-report.md`; see "Not done" |
 
 The three routes, chosen by Lean from the document's profiles (`routeOfDocument`): *readings* (`readings@1`, RD-3's
 replay; the UDHR pilot, part 7), *plain* (`relational-fol@0`; the G document) and *zero-set norm-defaults*
@@ -118,7 +119,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | 20 | Reports | This report's numbers from saved evidence, by test; what was not run is listed below. |
 | 21 | Acceptance tags | Below. |
 | 22 | Tests | Selected tests while iterating; the full gate once on the final HEAD (generated block). |
-| 23 | DRI rulings | `DELTA.md`: no standing ruling covers a row; each needs the DRI's signature. |
+| 23 | DRI rulings | `DELTA.md`: D14 is signed by R3 and Q2.4's trust growth by R6 (D12, `docs/trust-baseline.json`'s `signed`), each with its test; D1 to D13 need the DRI's signature. |
 
 ## Acceptance items
 
@@ -128,27 +129,20 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | Fixtures G, U, A replayed from recorded evidence | AGENT | done; six leads differ from the spec's derived ones (DELTA D6) |
 | Typed schema, binding, fuzz tests | AGENT | done |
 | Seeded bugs | AGENT | done |
-| Full gate on the final HEAD | AGENT | generated block |
-| Q2.4 one owner of situation wording (Python producers deleted, corpus A/B byte-identical) | AGENT | **deferred** to a later batch; no standing ruling moves it, so the deferral needs the DRI's decision; owner: the orchestrator (DRI) |
-| Q2.3 `VE.Words` `#guard`s recorded against Python's producers on the readings and norm-defaults corpora | AGENT | **deferred** with Q2.4, whose A/B is that comparison |
+| Full gate on the final HEAD | EXTERNAL | the saved gate (generated block) is `7b75c7af`'s; the review fixes after it were checked by their selected tests, `lake build` and `lean/audit.py` only, because the fixer was told not to run the full gate; owner: the merge train's branch verify on the final HEAD |
+| Q2.4 one owner of situation wording (Python producers deleted, corpus A/B byte-identical) | AGENT | done (`LEDGER.md`; `evidence/words-ab.json`: no difference) |
+| Q2.3 `VE.Words` against Python's producers on the readings and norm-defaults corpora | AGENT | done: the A/B compares every moved site with the pre-Q2.4 producers (`tools/words_ab.py`), and `tests/test_words.py` keeps a generated differential |
 | Q2.6 reading and writing evaluation (Sonnet as reader and writer) | EXTERNAL | **deferred**: needs model calls, which this task forbids; owner: the orchestrator |
-| Q2.6 latency and agreement with W2 | AGENT | **deferred** with Q2.6 |
-| Q2.5 one flip generator (the point search as its instance, the copy deleted) | AGENT | **deferred** with Q2.4 |
-| DRI signatures on DELTA D1 to D12 | HUMAN (DRI) | pending |
+| Q2.6 latency and agreement with W2 | AGENT | done: `ask` Lean CPU 0.5 s on U3 and A1 (budget 2 s; `tests/test_ask_budget.py`), U3 `ve ask` wall within 60 s; the agreement table in `../question-answering-report.md` |
+| Q2.5 one flip generator (the point search as its instance, the copy deleted) | AGENT | done (`ve/filling_search.py`, `tests/test_filling_search.py`) |
+| DRI signatures on DELTA D1 to D13 | HUMAN (DRI) | pending |
 
 ## Not done, and not run
 
-- **Q2.4** (Lean routes carrying `VE.Words`' lines, Python's situation-wording producers deleted, the relay-lint rule,
-  the corpus A/B): not started. The task named Q2's answers, proofs, `ve ask`, the schema and binding, fixtures,
-  seeded bugs and this report; Q2.4 touches the merged readings and norm-defaults routes and needs its own A/B.
-  Release needs it (plan: "Release requires Q2.4 and Q2.6").
-- **Q2.6's evaluation and conformance-corpus W2 agreement**: not complete (model calls forbidden here). The
-  [non-model measurement report](../question-answering-report.md) records each fixture comparison, explicit timeouts
-  on the agent-policy route, and U3 `ask` Lean CPU of 2.83 s against the plan's 2 s limit; this budget is unmet.
-- **Q2.5's one flip generator**: `ve.ask._split_piece` flips a countermodel's filling at the gaps Lean's row names;
-  the norm-defaults point search (`ve/norm_defaults.py`, `_point_statuses`) still builds its own all-yes and all-no
-  fillings for Lean's `undecided` method. The plan asks for one generator with the point search as its instance and
-  the point-only copy deleted; that is left with Q2.4, which moves the same producers.
+- **Q2.6's reading and writing evaluation**: not run (model calls are forbidden here). The
+  [non-model measurement report](../question-answering-report.md) records the fixtures, the budgets and the agreement
+  with the existing route on the fixtures and the corpora, with what each corpus could not compare.
+- **The final-HEAD full gate**: not run after the review fixes (the fixer's instruction); see the acceptance items.
 - **Q2.2's "A/B shows no change outside the new mode"**: no corpus comparison was run; the full gate is the evidence
   that existing behaviour is unchanged, and DELTA D9 names the one generator change that can change a readings
   answer.
