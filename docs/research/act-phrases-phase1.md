@@ -514,7 +514,7 @@ to `49de179e` (886 jobs). The Rust binary is main's, checked against `lean/check
 | `b54dc076` | item 1: `ap0_udhr_retry.py`, `udhr-retry.json`, `udhr-retry-run1.json`, the 11 documents |
 | `8839f2e8` | item 4: `ap0_n.py`, the stub copy, `n-measurement.json` |
 | `a7938335`, `a406ae47` | the results, deferred items and consequences (sections 0, 2 to 7) |
-| after `a406ae47` | review fixes (section 9): `ap0_m3_atoms.py`, `m3-workaround-atoms.json`, wording of sections 0, 2, 3, 5 to 7 |
+| `833e4837`, `a0b98ec5` | review fixes (section 9): `ap0_m3_atoms.py`, `m3-workaround-atoms.json`, wording of sections 0, 2, 3, 5 to 7 |
 
 ## 9. Corrections after review
 
