@@ -1,0 +1,44 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "tests/test_relay_mutation_gate.py",
+   "find": "    monkeypatch.setattr(S.Compiler, \"_x_length\", lambda self, pointer, schema, base: None)\n",
+   "replace": "",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "claim": "a client whose length check is intact passes the gate on these routes, so the test fails"
+  },
+  {
+   "id": "M2",
+   "file": "tests/test_relay_mutation_gate.py",
+   "find": "    monkeypatch.setattr(S.Compiler, \"_x_length\", lambda self, pointer, schema, base: None)\n",
+   "replace": "    monkeypatch.setattr(S.Compiler, \"_x_length\", (lambda keep: lambda self, pointer, schema, base: None if base == \"envelope.json\" else keep(self, pointer, schema, base))(S.Compiler._x_length))\n",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "claim": "removing only the envelope's length check leaves the rows' checks, which refuse every asserted mutant"
+  },
+  {
+   "id": "M3",
+   "file": "tests/test_relay_mutation_gate.py",
+   "find": "    monkeypatch.setattr(S.Compiler, \"_x_length\", lambda self, pointer, schema, base: None)\n",
+   "replace": "    monkeypatch.setattr(S.Compiler, \"_x_length\", (lambda keep: lambda self, pointer, schema, base: keep(self, pointer, schema, base) if base == \"rights.json\" else None)(S.Compiler._x_length))\n",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "claim": "the rights row's own length check (`unit_open` against the request's document) is one the test needs removed"
+  },
+  {
+   "id": "M4",
+   "file": "tests/test_relay_mutation_gate.py",
+   "find": "    monkeypatch.setattr(S.Compiler, \"_x_length\", lambda self, pointer, schema, base: None)\n    monkeypatch.setattr(S, \"_compiler\", S.Compiler())\n",
+   "replace": "    S.ROWS[\"evaluate\"], S.ROWS[\"rights\"]\n    monkeypatch.setattr(S.Compiler, \"_x_length\", lambda self, pointer, schema, base: None)\n",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "claim": "the check is removed only by a fresh compiler: validators the module's compiler already holds keep it"
+  }
+ ]
+}
