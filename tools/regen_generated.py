@@ -132,6 +132,7 @@ GENERATED = (
 # of the repository with such a mode is either a writer above or listed here (tests/test_regen_generated.py).
 NOT_REGENERATED = {
     "tools/ask_fixtures.py": "Q2 use-case fixtures: replayed and reviewed with their source documents",
+    "tools/question_answering_report.py": "Q2 batch report from saved measurement and comparison evidence",
     "docs/spec/question-answering-q2/mutants.py": "Q2 seeded-bug evidence: each mutant is run and restored, then its result is saved",
     "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
     "tools/gate.py": "--write-collection is tools/gate_collection.py --write (gate-collection above)",
