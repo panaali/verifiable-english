@@ -1,0 +1,60 @@
+{
+ "base": "11676c2c01d05e8584da0bb8b344dab232938366",
+ "head": "f658025a09d8fe0213e1b8944ff3b1922d298c41",
+ "inventory": {
+  "lines_before": 408,
+  "lines_after": 30,
+  "files_before": 408,
+  "files_after": 28,
+  "frozen": {
+   "VE/Bridge.lean": "K declarations",
+   "VE/CertificateWire.lean": "ve.core@0.1 decoder",
+   "VE/Closure/Consequence.lean": "K declarations",
+   "VE/Closure/Paths.lean": "K declarations",
+   "VE/Closure/Syntax.lean": "K declarations",
+   "VE/Core/Consequence.lean": "K declarations",
+   "VE/Core/Paths.lean": "K declarations",
+   "VE/Core/Route.lean": "K declarations",
+   "VE/Core/Syntax.lean": "K declarations",
+   "VE/Finite.lean": "K declarations",
+   "VE/Json.lean": "ve.core@0.1 decoder",
+   "VE/Norms/Basic.lean": "K declarations",
+   "VE/Norms/Prefix.lean": "K declarations",
+   "VE/Norms/SmallModel.lean": "K declarations",
+   "VE/Norms/Subst.lean": "K declarations",
+   "VE/Norms/Tree.lean": "K declarations",
+   "VE/Order/Consequence.lean": "K declarations",
+   "VE/Order/Finite.lean": "K declarations",
+   "VE/Order/Semantics.lean": "K declarations",
+   "VE/Order/Syntax.lean": "K declarations",
+   "VE/Order/Wire.lean": "ve.core@0.1 decoder",
+   "VE/Route/Checker.lean": "K declarations",
+   "VE/Route/Layer.lean": "K declarations",
+   "VE/Semantics.lean": "K declarations",
+   "VE/Service/GenericGraph.lean": "K declarations",
+   "VE/Syntax.lean": "K declarations",
+   "VE/Time/Semantics.lean": "K declarations",
+   "VE/Time/Syntax.lean": "K declarations"
+  },
+  "k_files": 25,
+  "decoders": [
+   "VE/CertificateWire.lean",
+   "VE/Json.lean",
+   "VE/Order/Wire.lean"
+  ],
+  "dropped": 380,
+  "added": []
+ },
+ "question_lock": {
+  "module_hashes_before": 12,
+  "module_hashes_after": 0
+ },
+ "commits": {
+  "window": "--no-merges --since=2026-09-26 11676c2c -- lean, with a .lean source",
+  "lean_source": 687,
+  "edited_full_inventory": 346,
+  "touched_a_file_now_frozen": 30,
+  "share_full": 0.504,
+  "share_short": 0.044
+ }
+}

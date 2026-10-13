@@ -1,0 +1,105 @@
+{
+ "base": "11676c2c01d05e8584da0bb8b344dab232938366",
+ "head": "f658025a09d8fe0213e1b8944ff3b1922d298c41",
+ "checks": {
+  "frozen": {
+   "command": "python VE/Route/frozen.py",
+   "exit": 0,
+   "tail": [
+    "PASS: frozen Lean sources and Main.lean subcommands unchanged"
+   ]
+  },
+  "question-lock": {
+   "command": "python tools/question_lock.py",
+   "exit": 0,
+   "tail": [
+    "PASS: ve/question/LOCK.json records the service's question version"
+   ]
+  },
+  "trust-since": {
+   "command": "python tools/trust_map.py --since 11676c2c01d05e8584da0bb8b344dab232938366",
+   "exit": 0,
+   "tail": [
+    "class lines: K 997, S 9788, D 13887, G 26962, C 8486, P 71773, T 14705, o 12299",
+    "D/G groups: D[V] 12357, D[R] 1003, D[I] 527, G[V] 24956, G[R] 1765, G[I] 241",
+    "tied 178, unclassified 0, trusted 47939 (K + S + untied [V] + unclassified), 158897 lines in 481 files",
+    "against the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0",
+    "PASS: K, S and untied [V] within 11676c2c01d05e8584da0bb8b344dab232938366 and the allowances signed since"
+   ]
+  },
+  "trust-check": {
+   "command": "python tools/trust_map.py --check",
+   "exit": 0,
+   "tail": [
+    "class lines: K 997, S 9788, D 13887, G 26962, C 8486, P 71773, T 14705, o 12299",
+    "D/G groups: D[V] 12357, D[R] 1003, D[I] 527, G[V] 24956, G[R] 1765, G[I] 241",
+    "tied 178, unclassified 0, trusted 47939 (K + S + untied [V] + unclassified), 158897 lines in 481 files",
+    "against the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0",
+    "PASS: K, S and untied [V] within the baseline and its signed allowances"
+   ]
+  },
+  "lean-statements": {
+   "command": "python tools/lean_statements.py --check",
+   "exit": 0,
+   "tail": [
+    "added: 0",
+    "removed: 0",
+    "changed: 0",
+    "PASS: 5330 statements, the predicate list and the declaration list unchanged"
+   ]
+  },
+  "lean-audit": {
+   "command": "python lean/audit.py --check",
+   "exit": 0,
+   "tail": [
+    "'ResponseShape.Skel.condsOk_field' depends on axioms: [propext, Quot.sound]",
+    "'ResponseShape.Skel.lookup_mem' does not depend on any axioms",
+    "'ResponseShape.getArr_arr' does not depend on any axioms",
+    "'ResponseShape.getObjVal_setObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'ResponseShape.isEmpty_append' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'ResponseShape.isEmpty_empty' does not depend on any axioms",
+    "'ResponseShape.isEmpty_iff_data' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'ResponseShape.kind_setObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'ResponseShape.not_not_true' depends on axioms: [propext]",
+    "'ResponseShape.setObjVal_mkObj' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'ResponseShape.toOption_ok' does not depend on any axioms",
+    "PASS: 481 source files; 5780 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist."
+   ]
+  },
+  "regen-generated": {
+   "command": "python tools/regen_generated.py --check",
+   "exit": 0,
+   "tail": [
+    "---------",
+    "Contracts",
+    "---------",
+    "Analyzed 158 files, 832 dependencies.",
+    "-------------------------------------",
+    "VE inward-only imports (reviewed legacy edges) KEPT (41 ignored imports)",
+    "Contracts: 1 kept, 0 broken.",
+    "== check uv-lock",
+    "== check gate-collection",
+    "regen_generated: checked 24 entries",
+    "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-awqz8wn7)",
+    "Resolved 59 packages in 4ms"
+   ]
+  },
+  "trust-changes": {
+   "command": "python tools/trust_changes.py --since 11676c2c01d05e8584da0bb8b344dab232938366",
+   "exit": 0,
+   "tail": [
+    "0 Lean files changed and 0 deleted since 11676c2c01d05e8584da0bb8b344dab232938366",
+    "D[V]: 0 changed files",
+    "G[V]: 0 changed files"
+   ]
+  }
+ },
+ "trust_changes": {
+  "changed": {},
+  "deleted": [],
+  "by_class": {
+   "D[V]": [],
+   "G[V]": []
+  }
+ }
+}
