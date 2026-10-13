@@ -48,7 +48,11 @@ def unavailable (what : String) : String := "CheckerUnavailable: " ++ what
 `CheckerUnavailable` before its environment is decoded (its own loader would add checks this mode lacks). -/
 def ownedProfiles : List String :=
   ["alternatives@0", "data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0",
-   "readings@1", "relational-fol@0", "rights@0", "risk@0", "soft-norms@0", "time@0"]
+   "readings@1", "relational-fol@0", "rights@0", "risk@0", "time@0"]
+
+/-- A profile the mode owns only beneath another: `soft-norms@0` beneath `rights@0`, whose route composes it (a
+soft-norms document on its own is batch 16f's). -/
+def ownedBeneath (listed : List String) (p : String) : Bool := p == "soft-norms@0" && listed.contains "rights@0"
 
 /-- The kinds of a rights source unit (`right`, `right_lines`, `limitation`, `bar`): under `rights@0` each is a unit
 kind of its own (Python's `load_document` skips `_check_kind` for them) and the key of the rights block the unit
@@ -548,13 +552,8 @@ def environmentOf (environment : Json) : Except String Env := do
   if Standalone.isLegacy environment then
     throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
   let listed := listedProfiles environment
-  if let some p := listed.find? (!ownedProfiles.contains ·) then
+  if let some p := listed.find? fun p => !ownedProfiles.contains p && !ownedBeneath listed p then
     throw (unavailable s!"document checks under {p} need its Lean profile route")
-  -- `soft-norms@0` is owned only beneath `rights@0`, whose route composes it; a soft-norms document is batch 16f's.
-  if listed.contains "soft-norms@0" && !listed.contains "rights@0" then
-    throw (unavailable "document checks under soft-norms@0 need its Lean profile route")
-  if listed.contains "readings@1" && !listed.contains "norm-defaults@0" && !listed.contains "rights@0" then
-    throw (unavailable "readings@1 documents need the Lean readings route")
   let block := blockOf listed
   if listed.contains "norm-defaults@0" && block != .none then
     throw (unavailable "norm-defaults with alternatives or risk needs its composed Lean route")
@@ -843,9 +842,8 @@ def rightsContentOf (E : Env) (R : RightsDoc) (kind : RowKind) (content : Json) 
     | .rights _ => throw VE.Norms.Admission.normKindText
     return (.soft c, mid)
   if (RightsKind.ofName? key).isSome then
-    -- The rights route read this block only if the unit is in the rights source (`rightsSourceUnit`).
-    unless (kind matches .rights _) || isNorm do
-      throw (unavailable "rights content under a unit kind outside the rights source")
+    -- Under any other kind the content environment is `E″′`, which has no `rights@0`.
+    unless kind matches .rights _ do throw "UnsupportedProfile: rights@0 is required"
     return (.rights content, ← bound content)
   if key == "ast" || key == "fence" then
     throw (unavailable "formula content in a rights document is typed in its extended environment")

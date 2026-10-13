@@ -27,7 +27,8 @@ def unit : Shape :=
           ref "#/$defs/soft_content"]),
       ("meaning_id", ref "common.json#/$defs/hex64")]]
 
-/-- A member the soft and rights routes read as absent when it is `null` (`wireJson`). -/
+/-- An optional member, which the soft and rights routes read as absent when it is `null` (`wireJson`); a required
+member is never `null` in an accepted answer, since the decoders refuse it absent. -/
 def nullable (s : Shape) : Shape := .anyOf [.type ["null"], s]
 
 def soft_exception : Shape :=
@@ -51,8 +52,8 @@ def soft_norm : Shape :=
       ("exception", nullable (ref "#/$defs/soft_exception")), ("hard", .type ["boolean", "null"])]]
 
 def cites : Shape :=
-  c "Rights.Wire.decodeCites: each citation key with the unit ids it cites." [
-    obj, .object [] (some (n [arr, .minItems 1, .items str]))]
+  c "Rights.Wire.decodeCites: each citation key with the unit ids it cites (a null one is absent)." [
+    obj, .object [] (some (nullable (n [arr, .minItems 1, .items str])))]
 
 /-- `Service.Document.softCanonical`'s object: the W1 core re-encoded, the soft fields away from their defaults. -/
 def soft_content : Shape :=
@@ -72,7 +73,7 @@ def rights_line : Shape :=
     closed [("kind", enumS ["claim", "liberty", "immunity", "power"]),
       ("norm", nullable (ref "#/$defs/soft_norm")), ("liberty", nullable (ref "#/$defs/soft_norm")),
       ("recognition", nullable (ref "#/$defs/soft_norm")),
-      ("fan_out", nullable (ref "common.json#/$defs/string_map")),
+      ("fan_out", nullable (n [obj, .object [] (some (.type ["string", "null"]))])),
       ("holder_slot", nullable (ref "common.json#/$defs/nat")), ("cites", nullable (ref "#/$defs/cites"))]]
 
 def rights_condition : Shape :=

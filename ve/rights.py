@@ -178,7 +178,10 @@ class RightsDocument:
                 body = unit[kind]
                 right = body["name"] if kind == "right" else body["right"]
                 if kind == "right":
-                    self.rights[right] = {**body, "guard_formula": _Decoder().decode(body["guard"])}
+                    # The rights route reads an absent (or null) holder guard as `top` (`decodeRight`).
+                    guard = body.get("guard")
+                    self.rights[right] = {**body, "guard_formula": _Decoder().decode(
+                        ["top"] if guard is None else guard)}
                 for line in body["lines"]:
                     fields = LINE_RULE_FIELDS[line["kind"]]
                     for field in fields:

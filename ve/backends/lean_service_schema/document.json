@@ -126,8 +126,8 @@
       "type": "object"
     },
     "cites": {
-      "$comment": "Rights.Wire.decodeCites: each citation key with the unit ids it cites.",
-      "additionalProperties": {"items": {"type": "string"}, "minItems": 1, "type": "array"},
+      "$comment": "Rights.Wire.decodeCites: each citation key with the unit ids it cites (a null one is absent).",
+      "additionalProperties": {"anyOf": [{"type": "null"}, {"items": {"type": "string"}, "minItems": 1, "type": "array"}]},
       "type": "object"
     },
     "coverage": {
@@ -292,7 +292,7 @@
       "additionalProperties": false,
       "properties": {
         "cites": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/cites"}]},
-        "fan_out": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/string_map"}]},
+        "fan_out": {"anyOf": [{"type": "null"}, {"additionalProperties": {"type": ["string", "null"]}, "type": "object"}]},
         "holder_slot": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/nat"}]},
         "kind": {"enum": ["claim", "liberty", "immunity", "power"]},
         "liberty": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/soft_norm"}]},

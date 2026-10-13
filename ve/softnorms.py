@@ -190,8 +190,9 @@ def _hydrate_rule(content):
     decoder = _Decoder()
     core = Norm(raw['name'], raw['predicate'], raw['sign'], decoder.decode(raw['guard']),
                 tuple(decoder.decode(item) for item in raw['unless']), tuple(raw['over']))
+    # Lean read a `null` soft field as absent (the wire omits it); an absent `alterable` is no party.
     return SoftRule(core, raw.get('mode', 'strict'), raw.get('rank'),
-                    tuple(raw.get('alterable', ())), raw.get('exception'), raw.get('hard', False))
+                    tuple(raw.get('alterable') or ()), raw.get('exception'), raw.get('hard', False))
 
 
 class SoftBaseEnvironment(Environment):

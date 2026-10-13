@@ -1077,8 +1077,10 @@ def _rights_units(units, exclude=frozenset()):
 
 def _in_rights_source(unit, exclude=frozenset()):
     """A unit of the rights source (Lean `Service.Document.rightsSourceUnit`): object content under a rights kind or
-    `norm`, outside `exclude`."""
-    return (type(unit.get("content")) is dict and unit.get("id") not in exclude and
+    `norm`, outside `exclude` (unit ids; an id that is not a string names no unit, and its unit's own check refuses
+    it)."""
+    uid = unit.get("id")
+    return (type(unit.get("content")) is dict and not (type(uid) is str and uid in exclude) and
             unit.get("kind") in (*_RIGHTS_KINDS, "norm"))
 
 
