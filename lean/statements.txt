@@ -2439,10 +2439,13 @@ theorem VE.Core.Layers.background_generators
   -- uses VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.Layered@VE.Core.Layers VE.Core.Layers.background@VE.Core.Layers VE.Route.Background.generators@VE.Route.Background
   -- expr 2848989012
 theorem VE.Core.Layers.elaborateNary_chain
-  ∀ (E : VE.Environment) (entries ds : List VE.Core.Layers.NaryDef),
-    VE.Core.Layers.elaborateNary E entries = Except.ok ds → VE.Core.Layers.chainOk E ds = Bool.true
-  -- uses VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.chainOk@VE.Core.Layers VE.Core.Layers.elaborateNary@VE.Core.Layers VE.Environment@VE.Syntax
-  -- expr 3785322846
+  ∀ (E : VE.Environment) (fol : List VE.Definitions.Def) (entries : List VE.Core.Layers.NaryDef) (order : List String)
+    (ds : List VE.Core.Layers.NaryDef),
+    VE.Core.Layers.elaborateNary E fol entries = Except.ok (order, ds) →
+      VE.Core.Layers.chainOk E ds = Bool.true ∧
+        VE.Route.dependencyOrder (VE.Core.Layers.definitionNodes fol entries) = Except.ok order
+  -- uses VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.chainOk@VE.Core.Layers VE.Core.Layers.definitionNodes@VE.Core.Layers VE.Core.Layers.elaborateNary@VE.Core.Layers VE.Definitions.Def@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Route.dependencyOrder@VE.Route.Route
+  -- expr 880999423
 theorem VE.Core.Layers.firstBad_none
   ∀ (E : VE.Environment) (ds : List VE.Core.Layers.NaryDef),
     VE.Core.Layers.firstBad E ds = Option.none → VE.Core.Layers.chainOk E ds = Bool.true
