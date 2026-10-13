@@ -87,3 +87,25 @@ def expired_waits(monkeypatch, module, *, expire=lambda argv: True):
     proxy.Popen, proxy.run = Popen, run
     monkeypatch.setattr(module, "subprocess", proxy)
     return waits
+
+
+def busy_cpu(monkeypatch, module):
+    """A CPU clock for the deadlines `module` sets on its children (`module._cpu_seconds`): each
+    reading of a process is one clock tick (the resolution /proc reports) past the last one, and
+    never below its real CPU time. A process seen through it is always working, so a CPU deadline
+    below one tick is passed at the client's next check on any machine; on the real clock a fast
+    machine can answer within one tick, which reads as no CPU at all.
+
+    Returns the readings taken, by process id."""
+    real, tick = module._cpu_seconds, 1 / os.sysconf("SC_CLK_TCK")
+    readings = {}
+
+    def reading(pid):
+        seconds = real(pid)
+        if seconds is None:
+            return None
+        seen = readings.setdefault(pid, [])
+        seen.append(max(seconds, seen[-1] + tick) if seen else seconds)
+        return seen[-1]
+    monkeypatch.setattr(module, "_cpu_seconds", reading)
+    return readings
