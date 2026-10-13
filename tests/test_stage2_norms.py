@@ -12,7 +12,8 @@ from copy import deepcopy
 
 import pytest
 
-from ve.ast import Atom, Binary, Const, Exists, Le, Named, Num, Reach, Top, Unary, Var, _to_data
+from ve.ast import (Atom, Binary, Const, Exists, Forall, Implies, Le, Named, Not, Num, Reach, Top,
+                    Unary, Var, _to_data)
 from ve.backends import dispatch, relay
 from ve.backends.lean_service import CheckerUnavailable
 from ve.background import background
@@ -313,6 +314,80 @@ def test_non_first_order_conflict_witness_is_checked_by_lean(monkeypatch):
     report = check_conflict(doc, model=model)
     assert report.status == "CONFLICT" and report.target == "required->permitted"
     assert ("norms_conflict", "lean") in ops
+
+
+def nary_lower_outcome(*, unused_nary_definition):
+    """A core-family document whose lower regulated outcome holds an n-ary atom
+    under a binder (corpus document 13's shape). An unused n-ary core definition
+    keeps it on the retained Python route (`family_in_scope`, batch 14c)."""
+    raw = flagged(family=("closure@0", "nary@0"), relation=True).to_dict()
+    raw["vocabulary"]["predicates"]["tri"] = {
+        "arguments": ["act", "act", "party"], "description": "tri"}
+    if unused_nary_definition:
+        raw["profiles"] = sorted(set(raw["profiles"]) | {"definitions@0"})
+        raw["vocabulary"]["predicates"]["tri_defined"] = {
+            "arguments": ["act", "act", "party"], "description": "tri_defined",
+            "defined": {"arguments": ["act", "act", "party"], "body": ["top"]}}
+    doc = NormDocument(Environment(raw), [
+        rule("may", "permitted", True, Exists("party", Atom("tri", (Var(1), Var(1), Var(0))))),
+        rule("must", "required", True, Forall("party", Implies(Binary("owner", Var(1), Var(0)),
+                                                               Not(Unary("permitted", Var(1))))))])
+    model = {"complete": True, "domains": {"act": ["a"], "party": ["p"]}, "constants": {},
+             "relations": {"owner": [["a", "p"]], "urgent": [], "before": [], "tri": []}}
+    return doc, model
+
+
+def test_retained_python_route_keeps_the_base_nary_expansion(monkeypatch):
+    """lf-14b review F2: batch 14b's n-ary atom substitution belongs to the
+    Lean family route's generators; every retained Python operation answers as
+    the base did (`TypeMismatch` from the unsubstituted atom) until 14c."""
+    from ve.norms import _lean_route, check_witness
+    doc, model = nary_lower_outcome(unused_nary_definition=True)
+    assert not _lean_route(doc)
+    ops = routed(monkeypatch, "lean")
+    mismatch = "TypeMismatch: Predicate 'tri'"
+    with pytest.raises(VEError, match=mismatch):
+        check_conflict(doc, model=model)
+    with pytest.raises(VEError, match=mismatch):
+        check_conflict(doc, prove=True, tableau_steps=300)
+    with pytest.raises(VEError, match=mismatch):
+        check_witness(doc, "required->permitted", model, ["a"])
+    assert not {op for op, _ in ops if op.startswith("norms_")}
+    # `check_witness` is retained Python on the Lean route too.
+    lean_doc, _ = nary_lower_outcome(unused_nary_definition=False)
+    with pytest.raises(VEError, match=mismatch):
+        check_witness(lean_doc, "required->permitted", model, ["a"])
+
+
+def test_lean_family_route_substitutes_nary_atoms_and_lean_checks_the_witness(monkeypatch):
+    from ve.norms import _lean_route
+    doc, model = nary_lower_outcome(unused_nary_definition=False)
+    assert _lean_route(doc)
+    ops = routed(monkeypatch, "lean")
+    report = check_conflict(doc, model=model)
+    assert (report.status, report.target, report.tuple) == ("CONFLICT", "required->permitted", ("a",))
+    assert ("norms_conflict", "lean") in ops
+
+
+def test_only_the_lean_conflict_route_substitutes_nary_atoms():
+    """The class behind F2: a Lean-route change to a shared Python helper must
+    not reach the retained route. `nary_atoms=True` is passed only from
+    `_check_conflict_lean`; every other caller keeps the base default."""
+    import ast
+    callers = set()
+    for path in sorted((ROOT / "ve").rglob("*.py")):
+        tree = ast.parse(path.read_text(), str(path))
+        for scope in ast.walk(tree):
+            if not isinstance(scope, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            for node in ast.walk(scope):
+                if isinstance(node, ast.Call) and any(
+                        k.arg == "nary_atoms" and not (isinstance(k.value, ast.Constant)
+                                                       and k.value.value is False)
+                        and not (isinstance(k.value, ast.Name) and k.value.id == "nary_atoms")
+                        for k in node.keywords):
+                    callers.add((path.relative_to(ROOT).as_posix(), scope.name))
+    assert callers == {("ve/norms.py", "_check_conflict_lean")}
 
 
 def test_non_first_order_conflict_zero_model_budget_is_unknown():
