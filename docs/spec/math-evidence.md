@@ -1,21 +1,25 @@
 # Science papers in VE: `calc@0`, physical dimensions, `arith@0` and proof imports (statement specification)
 
-> **Status.** Item-1 specification (batch ME-S), draft 2 (2026-10-13), branch `design/math-evidence` from `main` at
-> `49de179e`. Written from [math-evidence-PLAN.md](math-evidence-PLAN.md) draft 3 (cited `plan n`). Draft 1 applied
+> **Status.** Item-1 specification (batch ME-S), draft 3 (2026-10-13), branch `design/math-evidence` from `main` at
+> `49de179e`. Written from [math-evidence-PLAN.md](math-evidence-PLAN.md) draft 4 (cited `plan n`). Draft 1 applied
 > the converged Astra + Fable review of the plan (`manage-agents/debates/design-math-evidence/`, edits A1-A6 and
 > F1-F5; section 15). Draft 2 applies the converged statement review of draft 1
 > (`manage-agents/debates/math-evidence-spec/`, verdict FIX, CONVERGED after round 2): Fable's joint edits J1-J11 with
 > Astra's refinements. Section 17 maps each of them to the statements and fixtures that carry it. No design change
-> beyond those edits was made; section 16 lists the points where draft 2 had to choose a reading of an edit.
+> beyond those edits was made; section 16 lists the points where draft 2 had to choose a reading of an edit. Draft 3
+> applies the verification of draft 2 (`manage-agents/math-evidence-p3ver1.final.md`, FAIL narrowly): J2's
+> `Run.unknown_named` is the agreed disjunction again, and every kind's unknown at the digit limit has a cause (3.4);
+> fixture R-10 adds the unknown and undefined rows of derivations, consistency checks and identities (J3, 13.6); and
+> re-check item 7 names the draft-2 choices beyond J1-J11 that both reviewers must accept explicitly (17).
 >
 > **How it was checked.** Draft 1's Lean statements were type-checked with Lean v4.24.0 against `main`'s `lean/`
 > tree (built modules `VE.Time.Decimal`, `VE.Time.Budget`, `VE.CertificateWire`, `VE.Route.Wire`,
 > `ResponseShape.Skeleton`) in an untracked stub, `lean/SpecStubs_math-evidence.lean`, with
 > `lake env lean SpecStubs_math-evidence.lean`: 0 errors, proofs `sorry`. Draft 1's fixture numbers were computed
-> there with `#eval` or `decide` over core `Rat`. **Draft 2's new and changed statements were not type-checked**: Lean
-> could not be run in the session that wrote them, and the stub still holds draft 1's statements. Every fixture
-> number that draft 2 adds or changes is marked *by hand* in 13.3. Both are the first items of the bounded re-check
-> (17). Names marked *opaque* have only a signature: the batch defines them.
+> there with `#eval` or `decide` over core `Rat`. **Drafts 2's and 3's new and changed statements were not
+> type-checked**: Lean could not be run in the sessions that wrote them, and the stub still holds draft 1's
+> statements. Every fixture number that draft 2 adds or changes is marked *by hand* in 13.3, and draft 3's R-10 (13.6)
+> was derived by hand from 2.7, 4.2 and T-3. Both are the first items of the bounded re-check (17). Names marked *opaque* have only a signature: the batch defines them.
 >
 > **What this is not.** Theorem statements and fixtures are implementation obligations, not claims of completed
 > proofs or tests. No model was called. Build authorisation follows the reviewers' bounded re-check of the changed
@@ -642,7 +646,8 @@ theorem assign_wellFormed (ds : List Decl) (h : WellFormed ds) (ns : List String
 
 /-- *Opaque*: inlining. `.error .undefined` when a name read outside `keep` has no value (a free value, a missing
 name, a counted value that is undefined) or a statistic of known values is outside its domain; `.error .exhausted`
-when it reads, directly or through definitions, a counted value whose budget ran out. -/
+when it reads, directly or through definitions, a counted value whose budget ran out; `.error .tooLarge` when a
+statistic it evaluates, or an input of one, is beyond the digit limit (2.4). -/
 def Expr.inline (ds : List Decl) (keep : List String) (e : Expr) : Except Val Expr
 /-- *Opaque*: `Expr.inline` on each expression of a claim. -/
 def Claim.inline (ds : List Decl) (keep : List String) (c : Claim) : Except Val Claim
@@ -656,6 +661,11 @@ theorem Expr.inline_undefined (ds : List Decl) (h : WellFormed ds) (keep : List 
     (he : e.inline ds keep = .error .undefined) : ∀ κ x, ¬ Denotes (values (assign ds keep κ)) e x
 theorem Expr.inline_exhausted (ds : List Decl) (keep : List String) (e : Expr)
     (he : e.inline ds keep = .error .exhausted) : e.ReadsExhausted ds
+/-- The lowering meets the digit limit only where the expression, directly or through definitions, has a part that
+denotes a value beyond it (draft 3: the cause of 3.4's digit-limit unknown for derivations, consistency checks and
+identities). -/
+theorem Expr.inline_tooLarge (ds : List Decl) (h : WellFormed ds) (keep : List String) (e : Expr)
+    (he : e.inline ds keep = .error .tooLarge) : e.Overflows ds
 theorem Claim.inline_sound (ds : List Decl) (h : WellFormed ds) (keep : List String)
     (hk : ∀ n ∈ keep, n ∈ ds.map Decl.name) (c c' : Claim) (hc : c.inline ds keep = .ok c') (κ : String → Rat) :
     c.Holds (values (assign ds keep κ)) ↔ c'.Holds (fun n => some (κ n))
@@ -665,7 +675,10 @@ theorem Claim.inline_sound (ds : List Decl) (h : WellFormed ds) (keep : List Str
 where it denotes nothing on both sides of `inline_sound`. A statistic reads names, not expressions, and its names are
 stated or counted values (3.1); one whose names are all in `keep` stays, and one with none in `keep` becomes the
 literal of its exact value (or the fault above). The decoder refuses a statistic that mixes the two, so the case does
-not arise. Another fault (`.tooLarge`) can arise only there, and the row is then `unknown (limit .digits)`.
+not arise. Another fault (`.tooLarge`) can arise only there, and the row is then `unknown (limit .digits)`, with the
+cause `inline_tooLarge` names: the statistic reads no kept name, so it, or the input that is too large, denotes its
+value under the declarations themselves. The checkers of 5, 8.1 and 8.2 give no digit-limit unknown of their own
+(3.4's `Check.UnknownCause`).
 
 ## 3. The wire, identity and runner (ME-2)
 
@@ -710,7 +723,9 @@ A **check** (the `claim` of a `claims` entry) is a claim or one of the following
   claim (else `InvalidInput`); each id names an entry of `premises` (else `UnknownPremise`); each link names two free
   values (else `UnknownLink`). Premises are `eq`, `lt`, `le`, `gt`, `ge` or `within` claims (else `InvalidInput`).
   After inlining, every premise and the conclusion must be linear in the free values (else `NonlinearPremise`, naming
-  the term). A premise's `support` is `observation`, `testimony` or `assumption`.
+  the term). Linearity is a property of the form, in which every name other than a free value is a constant, so it
+  needs no value: a premise that reads an exhausted or undefined counted value is not refused, and its row is unknown
+  or undefined (3.4, R-10). A premise's `support` is `observation`, `testimony` or `assumption`.
 - `["consistent", [input names], [outputs]]` (ME-8): each input names a stated value (else `ConsistencyInput`), at
   most once; each output is a claim other than a check of these three kinds. The name rule of 8.1: every name an
   output reads, directly or through definitions, is an input or a value that is not free (else `ConsistencyName`).
@@ -760,9 +775,9 @@ negative unit exponent.
 ### 3.4 Checks, the runner and its rows
 
 Every entry of `claims` is a `Check` (J3). Each kind has its meaning (`Claim.decide`; `Follows` in 5; `Consistent` in
-8.1; `IsIdentity` in 8.2), and `Check.OutcomeMeans` says what each outcome of each kind states. `Check.run_sound` is
-the row theorem: every outcome the runner gives means what its clause says. Each batch adds its constructor, its
-clauses and its case of `Check.run_sound`.
+8.1; `IsIdentity` in 8.2), and `Check.OutcomeMeans` says what each outcome of each kind states; for unknown, that is
+`Check.UnknownCause`, the named cause of J2 (draft 3). `Check.run_sound` is the row theorem: every outcome the runner
+gives means what its clause says. Each batch adds its constructor, its clauses and its case of `Check.run_sound`.
 
 ```lean
 /-- Every question a `calc@0` case asks: a claim (2.2), a derivation (5), a consistency check (8.1) or an identity
@@ -791,11 +806,18 @@ def Check.reasons : Check → List UnknownReason
   | .consistent .. => [.limit .witnessPoints, .consistencyInconclusive, .limit .digits, .limit .evaluations]
   | .identity .. => [.limit .polyTerms, .identityNotShown, .limit .digits, .limit .evaluations]
 
+/-- The named cause of an unknown row (J2). A claim is unknown only at the digit limit with a value on the way beyond
+it, or at the budget with a read of an exhausted counted value: `Claim.run_unknown`'s disjunction. The other kinds
+may also give their own reasons (1.5); at those two limits their causes are the same, in one of their expressions,
+since they meet the digit limit only in the lowering (2.7, `Expr.inline_tooLarge`). -/
+def Check.UnknownCause (ds : List Decl) : Check → UnknownReason → Prop
+  | .claim c, u => (u = .limit .digits ∧ c.Overflows ds) ∨ (u = .limit .evaluations ∧ c.ReadsExhausted ds)
+  | k, u => u ∈ k.reasons ∧ (u = .limit .digits → ∃ e ∈ k.exprs, e.Overflows ds) ∧
+      (u = .limit .evaluations → ∃ e ∈ k.exprs, e.ReadsExhausted ds)
+
 /-- What each outcome states, one clause per kind and outcome; the clauses are tried in order. -/
 def Check.OutcomeMeans (ds : List Decl) : Check → Outcome → Prop
   | .claim c, .decided v => v = c.decide (values ds)
-  | .claim c, .unknown u =>
-      (u = .limit .digits ∧ c.Overflows ds) ∨ (u = .limit .evaluations ∧ c.ReadsExhausted ds)
   | .follows P links C, .decided .holds => Follows ds P links C
   | .follows P links C, .decided .fails => HasCounterexample ds P links C
   | .consistent r inputs outs, .decided .holds => Consistent ds r inputs outs
@@ -803,7 +825,7 @@ def Check.OutcomeMeans (ds : List Decl) : Check → Outcome → Prop
   | .identity a b, .decided .holds => IsIdentity ds a b
   | .identity a b, .decided .fails => NotIdentity ds a b
   | k, .decided .undefined => ∃ e ∈ k.exprs, ∀ κ x, ¬ Denotes (values (assign ds (k.keep ds) κ)) e x
-  | k, .unknown u => u ∈ k.reasons ∧ (u = .limit .evaluations → ∃ e ∈ k.exprs, e.ReadsExhausted ds)
+  | k, .unknown u => k.UnknownCause ds u
 
 /-- *Opaque* beyond claims: the runner of 5, 8.1 and 8.2. -/
 def Check.run (ds : List Decl) : Check → Outcome
@@ -856,13 +878,13 @@ theorem Run.verdict_sound (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .o
     (hi : i < c.claims.length) (cl : Claim) (hk : (c.claims[i]'hi).2 = .claim cl) (v : Verdict)
     (hv : Run.outcomeAt (Run.runCaseReported j) i = some (.decided v)) :
     v = cl.decide (values c.decls)
-/-- Unknown arises only for a reason of the row's kind, and a budget exhaustion only where the row reads an exhausted
-counted value (J2: generalised from draft 1's digits-only statement). -/
+/-- Unknown arises only from its named cause (J2). For a claim row this is the agreed disjunction: the digit limit
+with a value beyond it, or the budget with a read of an exhausted counted value; for the other kinds, a reason of the
+kind, with the same causes at those two limits (draft 3 restores the disjunction that draft 2 had weakened). -/
 theorem Run.unknown_named (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c) (i : Nat)
     (hi : i < c.claims.length) (u : UnknownReason)
     (hu : Run.outcomeAt (Run.runCaseReported j) i = some (.unknown u)) :
-    u ∈ (c.claims[i]'hi).2.reasons ∧
-      (u = .limit .evaluations → ∃ e ∈ (c.claims[i]'hi).2.exprs, e.ReadsExhausted c.decls)
+    (c.claims[i]'hi).2.UnknownCause c.decls u
 
 end VE.Calc
 
@@ -2633,7 +2655,8 @@ values that ME-2 (calc), ME-6 (units) and ME-12 (arith) compute and pin in their
 this draft. A `line` is Lean's display (9, 11); where 11.1 or 11.3 fixes the sentence it is written out, and where
 they do not, it is `"<display>"`, pinned by the batch. These are standalone cases, not a translated document's
 `calculation` content (ME-10), so `finding` is `null`. The values and units of fixtures that draft 1 computed in the
-stub are the stub's; every other number below was computed by hand (draft 2) and is part of the re-check (17).
+stub are the stub's; every other number below was computed by hand (draft 2; R-10 in draft 3) and is part of the
+re-check (17).
 
 **R-1, claims: holds and fails** (V-1, V-1n).
 
@@ -2846,6 +2869,106 @@ revision <rev>, declaration VEImports.bertrand_holds; VE did not replay this pro
 "<sha256 of T-1's bytes>", "format": "csv", "columns": {"judge": "text", "approved": "bool", "score": "number"}}]`,
 its three values and five claims; its rows are claim rows as in R-1 and R-2, with the outcomes of 13.3.
 
+**R-10, derivations, consistency checks and identities: unknown and undefined** (J3, draft 3). Three requests, one
+per kind, so that each runs in its own batch (plan 4.4a). Each is the common part below with its own values and
+checks added: R-10a adds the free value t and the derivations, R-10b the stated value a and the consistency checks,
+R-10c the free value t and the identities. The common part is T-3's data declaration, budget and two counted values:
+
+```json
+{"format": "ve-calc@0",
+ "data": [{"handle": "<sha256 of T-1's bytes>", "format": "csv",
+           "columns": {"judge": "text", "approved": "bool", "score": "number"}}],
+ "budget": 6,
+ "values": [
+   {"name": "approved_32b", "words": "the approved 32B count",
+    "counted": {"data": "<sha256 of T-1's bytes>", "filter": ["and", ["is", "judge", "32B"], ["true", "approved"]],
+                "aggregate": "count"}},
+   {"name": "mean_7b", "words": "the mean 7B score",
+    "counted": {"data": "<sha256 of T-1's bytes>", "filter": ["is", "judge", "7B"], "aggregate": ["mean", "score"]}}]}
+```
+
+R-10a (ME-5) appends `{"name": "t", "words": "the threshold", "free": true}` to `values` and adds:
+
+```json
+{"premises": [
+   {"id": "p1", "claim": ["lt", ["val", "t"], ["val", "approved_32b"]], "support": "assumption"},
+   {"id": "p2", "claim": ["lt", ["val", "t"], ["val", "mean_7b"]], "support": "assumption"}],
+ "claims": [
+   {"id": "f_unknown", "claim": ["follows", ["lt", ["val", "t"], ["lit", "2"]], ["p1"], []]},
+   {"id": "f_undefined", "claim": ["follows", ["lt", ["val", "t"], ["lit", "2"]], ["p2"], []]}]}
+```
+
+```json
+[{"status": "ok", "claim": "f_unknown", "claim_id": "<hex64>", "kind": "follows", "outcome": "unknown",
+  "reason": "unknown: the budget of 6 evaluation steps ran out", "certificate": null, "counterexample": null,
+  "line": "Assume the following. 1. The threshold is less than the approved 32B count. From these, it follows that the threshold is less than 2.",
+  "finding": null, "reproduction": null,
+  "rests_on": [{"premise": "p1", "support": "assumption"},
+               {"name": "approved_32b", "source": "counted", "support": null, "span": "unchecked"},
+               {"name": "t", "source": "free", "support": null, "span": "unchecked"}]},
+ {"status": "ok", "claim": "f_undefined", "claim_id": "<hex64>", "kind": "follows", "outcome": "undefined",
+  "reason": null, "certificate": null, "counterexample": null,
+  "line": "Assume the following. 1. The threshold is less than the mean 7B score. From these, it follows that the threshold is less than 2.",
+  "finding": null, "reproduction": null,
+  "rests_on": [{"premise": "p2", "support": "assumption"},
+               {"name": "mean_7b", "source": "counted", "support": null, "span": "unchecked"},
+               {"name": "t", "source": "free", "support": null, "span": "unchecked"}]}]
+```
+
+R-10b (ME-8) appends `{"name": "a", "words": "the printed share", "stated": "0.4"}` to `values` and adds:
+
+```json
+{"claims": [
+   {"id": "k_unknown", "claim": ["consistent", ["a"], [["lt", ["val", "a"], ["val", "approved_32b"]]]]},
+   {"id": "k_undefined", "claim": ["consistent", ["a"], [["lt", ["val", "a"], ["val", "mean_7b"]]]]}]}
+```
+
+```json
+[{"status": "ok", "claim": "k_unknown", "claim_id": "<hex64>", "kind": "consistent", "outcome": "unknown",
+  "reason": "unknown: the budget of 6 evaluation steps ran out", "witness": null, "refutation": null,
+  "line": "<display>", "finding": null, "reproduction": null,
+  "rests_on": [{"name": "approved_32b", "source": "counted", "support": null, "span": "unchecked"},
+               {"name": "a", "source": "stated", "support": null, "span": "unchecked"}]},
+ {"status": "ok", "claim": "k_undefined", "claim_id": "<hex64>", "kind": "consistent", "outcome": "undefined",
+  "reason": null, "witness": null, "refutation": null,
+  "line": "<display>", "finding": null, "reproduction": null,
+  "rests_on": [{"name": "mean_7b", "source": "counted", "support": null, "span": "unchecked"},
+               {"name": "a", "source": "stated", "support": null, "span": "unchecked"}]}]
+```
+
+R-10c (ME-9) appends t as in R-10a and adds:
+
+```json
+{"claims": [
+   {"id": "i_unknown", "claim": ["identity", ["add", ["val", "t"], ["val", "approved_32b"]],
+                                             ["add", ["val", "approved_32b"], ["val", "t"]]]},
+   {"id": "i_undefined", "claim": ["identity", ["add", ["val", "t"], ["val", "mean_7b"]], ["val", "t"]]}]}
+```
+
+```json
+[{"status": "ok", "claim": "i_unknown", "claim_id": "<hex64>", "kind": "identity", "outcome": "unknown",
+  "reason": "unknown: the budget of 6 evaluation steps ran out", "point": null, "sides": null,
+  "line": "For all values of the unknowns for which both sides are defined, the sum of the threshold and the approved 32B count equals the sum of the approved 32B count and the threshold.",
+  "finding": null, "reproduction": null,
+  "rests_on": [{"name": "approved_32b", "source": "counted", "support": null, "span": "unchecked"},
+               {"name": "t", "source": "free", "support": null, "span": "unchecked"}]},
+ {"status": "ok", "claim": "i_undefined", "claim_id": "<hex64>", "kind": "identity", "outcome": "undefined",
+  "reason": null, "point": null, "sides": null,
+  "line": "For all values of the unknowns for which both sides are defined, the sum of the threshold and the mean 7B score equals the threshold.",
+  "finding": null, "reproduction": null,
+  "rests_on": [{"name": "mean_7b", "source": "counted", "support": null, "span": "unchecked"},
+               {"name": "t", "source": "free", "support": null, "span": "unchecked"}]}]
+```
+
+No outcome depends on a search order: 2.7 and 4.2 decide them. At budget 6 `approved_32b` is exhausted and `mean_7b`
+completes with no value (T-3's visit counts: `approved_32b` needs at least ten visits, `mean_7b` five, and T-1 has no
+7B row). Each check's one faulting read is in its lowering, so the `*_unknown` checks inline to `.error .exhausted`
+and are `unknown (limit .evaluations)` with `Check.UnknownCause`'s cause, `val approved_32b` reading an exhausted
+counted value (`Expr.inline_exhausted`); the `*_undefined` checks inline to `.error .undefined` and are `undefined`,
+since `val mean_7b` denotes nothing whatever values the kept names take (`Expr.inline_undefined`). Without `budget`,
+`approved_32b` is 1 (T-3), so f_unknown, k_unknown and i_unknown hold (t < 1 gives t < 2; a = 2/5, the printed value,
+is a witness; t + 1 = 1 + t), and the `*_undefined` rows are unchanged.
+
 ## 14. Limits and trust
 
 | Limit | Value | When exceeded |
@@ -2854,7 +2977,7 @@ its three values and five claims; its rows are claim rows as in R-1 and R-2, wit
 | exponents (`pow`, `sci`) | 64 | refused |
 | literal digits | 40 (W6's `maxNumeralChars`) | refused |
 | `binomial-tail` trials | 1,000 | refused (`ResourceLimit`) |
-| exact value digits | 4,096 in numerator or denominator | claim unknown (`limit .digits`) |
+| exact value digits | 4,096 in numerator or denominator | every check that needs the value unknown (`limit .digits`; for derivations, consistency checks and identities only in the lowering, 2.7) |
 | table bytes, rows, columns | 16 MB per handle (the service's line cap); 1,000,000; 64 | refused |
 | table evaluation | 1,000,000 (row, filter node) visits per counted value, or the case's smaller `budget` | every check reading it unknown (`limit .evaluations`), through definitions too |
 | derivation search | 64 facts, 16 unknowns, 10,000 combination steps | unknown (`limit .derivationSteps`) |
@@ -2872,11 +2995,11 @@ and a ROADMAP trust-cost line (plan 5).
 
 ## 15. The plan-review edits, statement by statement
 
-The edits of the plan review (`manage-agents/debates/design-math-evidence/`), as draft 2 now carries them.
+The edits of the plan review (`manage-agents/debates/design-math-evidence/`), as draft 3 carries them.
 
 | Edit | Statements | Fixtures |
 |---|---|---|
-| A1 operational outcome | `Outcome`, `UnknownReason` (1.5); `Claim.run`, `run_decided`, `run_unknown`, `run_complete` (2.4); `Check.OutcomeMeans`, `Run.row_sound`, `Run.verdict_sound`, `Run.unknown_named` (3.4); `arithOutcome` and its theorems (12.2); `Case.outcome_unknown` (12.5) | V-11, M-1b, M-4x, T-3, R-2, R-8 |
+| A1 operational outcome | `Outcome`, `UnknownReason` (1.5); `Claim.run`, `run_decided`, `run_unknown`, `run_complete` (2.4); `Check.UnknownCause`, `Check.OutcomeMeans`, `Run.row_sound`, `Run.verdict_sound`, `Run.unknown_named` (3.4); `arithOutcome` and its theorems (12.2); `Case.outcome_unknown` (12.5) | V-11, M-1b, M-4x, T-3, R-2, R-8, R-10 |
 | A2 links in counterexamples | `Counterexample.check_sound`, `counterexample_of_check`, `HasCounterexample` (5) | H-6a, H-6n, R-4 |
 | A3 import binding | `Import`, `Import.admit_sound`, `checkSource`, `currentMeansDigest` (12.4); `Case.import_row`, `Run.import_sound` (12.5), replacing draft 1's `report_import_labelled` | ME-13's seeded bug (plan), R-9 |
 | A4 empty aggregates | `Agg.run_empty`, `Agg.run_nonnumber` (4.2) | T-1 |
@@ -2951,17 +3074,38 @@ Draft 2's choices, each made to carry a statement-review edit (17):
   document's calculation content (ME-10) and is `null` in a standalone case: this is how draft 2 reads draft 1's "in
   translation".
 
+Draft 3's choices, each made to carry a finding of the verification of draft 2 (17):
+
+- **C24 (J2).** A derivation, consistency check or identity is unknown at the digit limit only in its lowering (2.7
+  already said so), and the cause is the claims' one, `Expr.Overflows` of one of its expressions
+  (`Expr.inline_tooLarge`, `Check.UnknownCause`). The checkers' own arithmetic gives no digit-limit unknown.
+- **C25 (J3).** R-10 shows each kind's unknown row through budget exhaustion, the one cause this specification
+  decides without a search order; the kinds' own reasons (`derivationInconclusive`, `consistencyInconclusive`,
+  `identityNotShown` and the search limits) depend on search orders the batches pin. R-10 is three requests, so that
+  each batch runs its own kind before the others land, and its counted values tie it to ME-4 (plan 4.4a).
+- **C26 (J3).** The linearity rule of 3.1 judges a premise's form, every name other than a free value being a
+  constant, so a premise whose counted value is exhausted or undefined gets its row (R-10a) rather than a refusal;
+  draft 2 did not say what the decoder does when the lowering meets a fault.
+
 ## 17. The statement-review edits and the bounded re-check
 
 The converged position (`manage-agents/debates/math-evidence-spec/`, round 2) is Fable's J1-J11 with Astra's
 refinements; both reviewers agreed to a bounded re-check of the changed sections and the new fixtures, not a fresh
 full review.
 
-| Edit | What draft 2 changed | Statements | Fixtures |
+The verification of draft 2 (`manage-agents/math-evidence-p3ver1.final.md`, FAIL narrowly) found all eleven edits
+present, with Astra's refinements, and the hand-computed numbers it checked correct (S-5's 7,424, C-1, T-1, T-3, R-3's
+weights, R-4 and R-6). It asked for three edits, which draft 3 makes: (1) J2: `Run.unknown_named` had dropped
+`Overflows` from the claims' digit-limit unknown, and 3.4 let derivations, consistency checks and identities be
+unknown at the digit limit with no cause; both now conclude `Check.UnknownCause`. (2) J3: no fixture showed an
+unknown or undefined derivation, consistency check or identity; R-10 does. (3) Draft-2 choices that go beyond
+J1-J11 must be accepted explicitly by both reviewers; item 7 below names them.
+
+| Edit | What draft 2 changed (draft 3's additions marked) | Statements | Fixtures |
 |---|---|---|---|
 | J1 (A1) signed integers in identities | canonical decimal strings for printed places and unit exponents; the frozen encoder unchanged; its key sorting stated | 3.3; 12.5's identity | I-1, I-2 |
-| J2 (A2) exhaustion | `Counted`, `Source.counted value run`, `Val.exhausted`, `NameExhausted`, `ReadsExhausted`; `run_unknown` and `unknown_named` disjunctive; `runCounted` takes the budget; `counted_exhausted` | 2.3, 2.4, 3.4, 4.2, 4.3 | T-3 (exhausted count, directly and through a definition, beside an empty mean) |
-| J3 (A3, E1, E6) every kind's contract | full `Expr` and `Claim` (ME-7's constructors); `Check`, `Check.OutcomeMeans`, `Check.run_sound`, `Run.row_sound`; the lowering `Expr.inline` (2.7) and `Claim.facts` (5); `Follows`, `IsIdentity` and their bridge theorems; 12.5's `arith@0` wire, identity, rows, `runMode_arith`, encoder theorem, refusals and deciding values | 2.1, 2.2, 2.7, 3.1, 3.4, 5, 8.2, 12.5 | R-1 to R-9 (13.6) |
+| J2 (A2) exhaustion | `Counted`, `Source.counted value run`, `Val.exhausted`, `NameExhausted`, `ReadsExhausted`; `run_unknown` disjunctive; `runCounted` takes the budget; `counted_exhausted`; draft 3: `Check.UnknownCause` (the claims' disjunction, and a cause at the digit limit and at the budget for every other kind), concluded by `Run.unknown_named` and used by `Check.OutcomeMeans`; `Expr.inline_tooLarge` | 2.3, 2.4, 2.7, 3.4, 4.2, 4.3 | T-3 (exhausted count, directly and through a definition, beside an empty mean); draft 3: R-10 (an exhausted count read by each other kind) |
+| J3 (A3, E1, E6) every kind's contract | full `Expr` and `Claim` (ME-7's constructors); `Check`, `Check.OutcomeMeans`, `Check.run_sound`, `Run.row_sound`; the lowering `Expr.inline` (2.7) and `Claim.facts` (5); `Follows`, `IsIdentity` and their bridge theorems; 12.5's `arith@0` wire, identity, rows, `runMode_arith`, encoder theorem, refusals and deciding values; draft 3: 3.1's linearity rule needs no value (C26) | 2.1, 2.2, 2.7, 3.1, 3.4, 5, 8.2, 12.5 | R-1 to R-10 (13.6): every kind with every outcome; draft 3: R-10, the unknown and undefined rows of derivations, consistency checks and identities |
 | J4 (A4) one consistency proposition | `Consistent`, one name rule (`ConsistencyName`), witness and refutations proved against it over one lowering (draft 1's `witness_sound` and `inconsistent_of_enclosure` become `consistent_of_witness` and `inconsistent_of_refutation`); inputs kept, never replaced by their printed values (Astra) | 8.1 | C-1, R-5 |
 | J5 (A5) statistical domains | `Stat.run`, `Stat.minLength`, `Stat.run_isSome`, `Denotes.binom`'s 0 ≤ p ≤ 1, `binomialTail_unit`, undefined outside the domain | 2.1, 2.2, 7 | S-5 |
 | J6 (A6) dependencies | ME-12 follows ME-1 | 1; plan 0, 6 | — |
@@ -2973,17 +3117,25 @@ full review.
 
 **The re-check list.** PASS when each holds:
 
-1. Draft 2's statements type-check in the stub with Lean v4.24.0 against `main`'s `lean/` tree (`sorry` proofs), and
-   each *by hand* number in 13.3 and 13.6 is recomputed there with `#eval`: S-5, C-1, T-1's added rows, T-3, I-1 and
-   I-2's canonical texts and the "Natural number expected" contrast, M-5's deciding value, and R-1 to R-9.
+1. Drafts 2's and 3's statements type-check in the stub with Lean v4.24.0 against `main`'s `lean/` tree (`sorry`
+   proofs), and each *by hand* number in 13.3 and 13.6 is recomputed there with `#eval`: S-5, C-1, T-1's added rows,
+   T-3, I-1 and I-2's canonical texts and the "Natural number expected" contrast, M-5's deciding value, and R-1 to
+   R-10.
 2. J1: every canonical case and environment hashes with the unchanged frozen encoder; `ve-units@1` identities do not
    move.
-3. J2: no runner theorem allows an unknown without its named cause; exhaustion propagates through definitions; the
-   first fault still decides.
+3. J2: no runner theorem allows an unknown without its named cause: `Run.unknown_named` and `Check.OutcomeMeans`
+   conclude `Check.UnknownCause`, which for a claim row is `Claim.run_unknown`'s disjunction and gives every other
+   kind a cause at the digit limit (`Expr.inline_tooLarge`) and at the budget; exhaustion propagates through
+   definitions; the first fault still decides.
 4. J3: every check kind and every outcome has its `OutcomeMeans` clause; the lowering theorems connect each checker to
-   its kind's meaning; 12.5's rows cover holds, fails and unknown, and its refusals cover unscoped variables and
-   unknown calls.
+   its kind's meaning; R-1 to R-10 show every kind with every outcome; 12.5's rows cover holds, fails and unknown, and
+   its refusals cover unscoped variables and unknown calls.
 5. J4: the witness and the refutations are proved against the one `Consistent`, and C-1's three checks come out as
    13.3 says.
 6. J5 to J11 as the table above, each with its fixture.
-7. Section 16's draft-2 choices C12 to C23 are acceptable, or the reviewers name the edit.
+7. Section 16's choices C12 to C26 are acceptable, or the reviewers name the edit. Both reviewers accept explicitly,
+   by name, the draft-2 changes that the verification of draft 2 found beyond J1-J11: C14 and C15 (the derivation and
+   statistics wire forms redesigned: `["follows", …]` with a `premises` list, statistics over names), C17 (GRIM loses
+   ME-8's route fixture and stays a `#guard`), C19 (the new refusal of more than 1,000 `binomial-tail` trials, beside
+   the 512-premise limit), C20 (the new `ShadowedVariable` refusal) and C21 (only the outermost bounded quantifier's
+   deciding value is reported). A reviewer who does not accept one names the edit, and the next draft makes it.

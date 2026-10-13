@@ -1,6 +1,6 @@
 # Science papers in VE (`calc@0`, physical dimensions, `arith@0` with proof imports): buildable plan
 
-> **Status.** Plan draft 3 (2026-10-13), branch `design/math-evidence` from `main` at `49de179e`. DRI research wave,
+> **Status.** Plan draft 4 (2026-10-13), branch `design/math-evidence` from `main` at `49de179e`. DRI research wave,
 > docs only: no code, proof, test or generated file changed, and no model was called. It is the plan for the design
 > recommended in [docs/research/math-evidence.md](../research/math-evidence.md) (cited `research n`), which holds the
 > evidence, the measured need, the prior art and the comparison of candidates. Draft 2 applied the converged Astra +
@@ -8,12 +8,14 @@
 > edits A1-A6 and F1-F5 as merged in round 3) and the cross-plan synthesis edits of 2026-10-13 (`SYNTHESIS.md`, ten
 > edits). Draft 3 applies the converged statement review of the spec's draft 1
 > (`manage-agents/debates/math-evidence-spec/`, FIX, CONVERGED after round 2: Fable's J1-J11 with Astra's
-> refinements), with no other design change; the change log lists them. The Lean blocks of section 3 are the
-> statements the batches prove, written against `main` at `49de179e` as statement schemata. ME-S's statement spec,
-> [math-evidence.md](math-evidence.md) (draft 2), elaborates them. Draft 1 of the spec was type-checked against
-> `main`'s `lean/` tree in an untracked stub and its fixture numbers computed there with `#eval`; draft 2's changes are
-> not yet type-checked, and its new fixture numbers were computed by hand, both for the reviewers' bounded re-check
-> (spec 17). Where the spec and section 3 differ, the spec governs. Every number is measured (method named) or
+> refinements), with no other design change; the change log lists them. Draft 4 applies the verification of the
+> spec's draft 2 (`manage-agents/math-evidence-p3ver1.final.md`, FAIL narrowly) with the spec's draft 3: J2's
+> `Run.unknown_named` restored, fixture R-10 for J3, and the draft-2 choices both reviewers must accept by name. The
+> Lean blocks of section 3 are the statements the batches prove, written against `main` at `49de179e` as statement
+> schemata. ME-S's statement spec, [math-evidence.md](math-evidence.md) (draft 3), elaborates them. Draft 1 of the
+> spec was type-checked against `main`'s `lean/` tree in an untracked stub and its fixture numbers computed there with
+> `#eval`; drafts 2's and 3's changes are not yet type-checked, and their new fixture numbers were computed by hand,
+> both for the reviewers' bounded re-check (spec 17). Where the spec and section 3 differ, the spec governs. Every number is measured (method named) or
 > labelled **estimate**.
 >
 > **Siblings read.** `design/quantities` (research and plan, read 2026-10-13), `design/attitudes`,
@@ -400,8 +402,9 @@ Schemata (status note), corrected by drafts 2 and 3; [math-evidence.md](math-evi
 statements. Draft 3 changes the schemata only where the statement review changed a statement (3.1's `run_unknown`,
 3.3's filters and counted values, 3.7's consistency, 3.9's rows and the EX-1 snippet); the spec's `Check` type and
 its row theorems (spec 3.4), the lowering (spec 2.7), the derivation, consistency and identity meanings (spec 5, 8)
-and the `arith@0` runner (spec 12.5) are given there only. Names follow `main`'s conventions; `Rat` is core's (via
-`import Std`).
+and the `arith@0` runner (spec 12.5) are given there only. Draft 4 changes no schema here: its edits are the spec's
+3.4 (`Check.UnknownCause`), 2.7 (`Expr.inline_tooLarge`), 3.1 (linearity needs no value) and 13.6 (R-10). Names
+follow `main`'s conventions; `Rat` is core's (via `import Std`).
 
 ### 3.1 ME-1: values, rounding, claims, verdicts
 
@@ -616,7 +619,8 @@ end ResponseShape.Encoders.Calc
 (`Run.outcomeAt` reads the outcome of row `i`; `ResponseShape.Fits` is the predicate the existing encoder theorems
 use, as in `ResponseShape.Encoders.Discourse.runCaseReported_fits`. The spec gives the elaborated forms: from draft 3
 `Case.claims` holds checks, `Run.verdict_sound` is stated for claim rows, and `Run.row_sound` and `Run.unknown_named`
-cover every kind (spec 3.4).)
+cover every kind (spec 3.4). From draft 4 `Run.unknown_named` concludes `Check.UnknownCause`: for a claim row,
+`run_unknown`'s disjunction above; for the other kinds, a cause at the digit limit and at the budget.)
 
 ### 3.3 ME-4: tables and data
 
@@ -1092,8 +1096,11 @@ velocity), against the frozen encoder (J1). T-3: an exhausted count read directl
 empty mean, in both orders (J2). T-1 gains a row whose `approved` cell is absent and one whose cell is the text "yes"
 (J9). S-5: binomial tails at p = 0, 1 and 2, statistics of no values and of one value, the square root of a negative
 value (J5). C-1: a consistency output that reads a stated value left out of the inputs, one whose witness is an
-interval endpoint, and one that reads a free value (J4). R-1 to R-9: a complete request and answer for every kind and
-outcome, `calc@0` and `arith@0` (J3).
+interval endpoint, and one that reads a free value (J4). R-1 to R-10: a complete request and answer for every kind and
+outcome, `calc@0` and `arith@0` (J3). R-10 (draft 4, from the verification of the spec's draft 2) gives the unknown
+(an exhausted count) and undefined (an empty mean) rows of a derivation, a consistency check and an identity, in
+three requests over T-1's bytes, one per kind: R-10a, R-10b and R-10c each run in the later of ME-4 (their counted
+values) and their kind's batch, ME-5, ME-8 and ME-9.
 
 ### 4.5 Negative controls from the pinned pilots, and regressions
 
@@ -1136,8 +1143,9 @@ fixtures of section 4 with definitions separated from expected results); elabora
 `#eval` over `Rat`; settle the names `ResponseShape.Fits`, `Run.verdictAt`, `Nat.choose`, `Nat.bertrand`; define
 `arith`'s fuel accounting (what counts as one step). Statement review by the reviewer pair (section 9); it confirms
 each debate edit (A1-A6, F1-F5) with a fixture. The review of the spec's draft 1 converged on FIX (J1-J11); the spec's
-draft 2 applies it, and a bounded re-check of the changed sections and new fixtures by both reviewers (spec 17), with
-the stub re-run, gates ME-1.
+draft 2 applies it, draft 3 applies the verification of draft 2 (FAIL narrowly: J2's `Run.unknown_named`, J3's
+fixtures, the draft-2 choices to accept by name), and a bounded re-check of the changed sections and new fixtures by
+both reviewers (spec 17), with the stub re-run, gates ME-1.
 
 ### ME-1. Lean core of `calc@0` (Lean, 5-6 h)
 
@@ -1219,8 +1227,9 @@ Shared files: pilot directories only.
   20 rows' counts; H-9 when ME-0 has transcribed the observation tables; empty selections (count 0, sum 0, mean,
   minimum and maximum undefined); an absent cell making a mean undefined; T-1 with its absent and mistyped `approved`
   cells, selected by neither "that are approved" nor "that are not approved"; T-3 (an exhausted count read directly
-  and through a definition beside an empty mean); a wrong digest refused; V-12 (a span over a mistyped value refused);
-  a source finding with every span checked beside "transcription unchecked" with one span missing.
+  and through a definition beside an empty mean); spec 13.6's R-10a and R-10c if ME-5 or ME-9 landed first (4.4a); a
+  wrong digest refused; V-12 (a span over a mistyped value refused); a source finding with every span checked beside
+  "transcription unchecked" with one span missing.
 - Seeded bugs: Lean, `isFalse` selects every row whose cell is not the Boolean true (T-1's "not approved" count
   becomes 3 and its `#guard` fails); Python, the relay sends the bytes of the wrong handle (the digest refusal test
   fails).
@@ -1235,7 +1244,8 @@ Shared files: pilot directories only.
   built it first, and spec 5's `Claim.facts`), the meaning `Follows` with its bridge theorems, and the `follows`
   clauses of `Check.OutcomeMeans` (statement review J3). Each square link is rendered as two premises and listed as a
   residual line (J10).
-- Fixtures: H-6, H-6p, H-6n; spec 13.6's R-3 and R-4; a linear system with no solution and its certificate; a forged
+- Fixtures: H-6, H-6p, H-6n; spec 13.6's R-3 and R-4, and R-10a (unknown and undefined derivations) once ME-4 has
+  landed; a linear system with no solution and its certificate; a forged
   certificate with a negative weight refused; the assignment s = 0, r = 1 against H-6's premises, rejected as a
   counterexample because it breaks the link s = r² (debate A2).
 - Seeded bug (Lean): `Farkas.check` accepts a negative weight; a forged certificate for a false conclusion is accepted
@@ -1281,7 +1291,8 @@ paper: counts recomputed from committed count tables (V-5). Estimated: H +3.0-4.
   `Consistent`, over the lowering with the inputs kept (statement review J4).
 - Fixtures: V-7 (granularity), V-8 (tie rule), V-6 from the printed per-template values (a witness: the printed values
   themselves), C-1 and spec 13.6's R-5 (an output that reads a stated value left out of the inputs; a witness at an
-  interval endpoint; a free value refused), and GRIM as a `#guard` of `mean_grain_refutes` (S-3: a mean of five
+  interval endpoint; a free value refused), R-10b (unknown and undefined consistency checks; ME-4 is in place, since
+  ME-8 follows ME-7), and GRIM as a `#guard` of `mean_grain_refutes` (S-3: a mean of five
   integer scores printed as 3.47, impossible since 5 × 3.47 = 17.35 has no integer within rounding; GRIM has no route
   form, spec 16 C17).
 - Seeded bug (Lean): the enclosure of `sub` uses [lo − lo, hi − hi]; the consistent fixture V-6 is refuted and fails.
@@ -1291,8 +1302,9 @@ paper: counts recomputed from committed count tables (V-5). Estimated: H +3.0-4.
 
 - New files: `lean/VE/Calc/Poly.lean`, `tests/test_calc_algebra.py`.
 - Proves 3.8, over sides inlined with the free values kept, against the meaning `IsIdentity` (statement review J3).
-- Fixtures: H-1, H-2, H-3, H-4 with D free; spec 13.6's R-6; the false "(a + b)² = a² + b²" not shown, with the point
-  a = b = 1; a division by an expression that can be zero denotes nothing at that point.
+- Fixtures: H-1, H-2, H-3, H-4 with D free; spec 13.6's R-6, and R-10c (unknown and undefined identities) once ME-4
+  has landed; the false "(a + b)² = a² + b²" not shown, with the point a = b = 1; a division by an expression that can
+  be zero denotes nothing at that point.
 - Seeded bug (Lean): monomials with different variable lists are merged; "(a + b)² = a² + b²" is reported an identity
   and its regression fails.
 - Bytes: 0.
@@ -1507,8 +1519,11 @@ above.
   result, and exhaustion propagates through definitions; every check kind has its meaning, a clause per outcome and a
   row theorem; `arith@0` has a full request and response contract; one consistency proposition and one name rule;
   statistics are undefined outside their domains; ME-12 follows ME-1; "Let … be" rewrites, `IsExpression`,
-  `PlacesMismatch`, typed negated filters and visible square links. Open until the bounded re-check: draft 2's
-  statements are not yet type-checked, and its new fixture numbers were computed by hand.
+  `PlacesMismatch`, typed negated filters and visible square links. The verification of the spec's draft 2 (FAIL
+  narrowly) added: every unknown row names its cause (`Check.UnknownCause`), and R-10 shows unknown and undefined
+  derivations, consistency checks and identities. Open until the bounded re-check: drafts 2's and 3's statements are
+  not yet type-checked, their new fixture numbers were computed by hand, and both reviewers have still to accept by
+  name the draft-2 choices beyond J1-J11 (spec 17, item 7: C14, C15, C17, C19, C20, C21).
 - **Closed by the cross-plan review**: math-evidence owns the rounding module (`VE.Numbers`, built by ME-1; QT-A2
   proves agreement) and `ve-units@2` (ME-6; QT-A7 consumes it). Quantities' note that "the Lean tree depends on no
   library, so there is no ... rational type" (its plan 2.3) was false, since `lean/Iceberg.lean` uses core `Rat` with
@@ -1540,7 +1555,9 @@ above.
 - No symbol appears in any wording or diagnostic; every refusal names a rewrite.
 - Every new trusted line has a signed allowance and a ROADMAP trust-cost line.
 - (Statement review, spec 17.) Every canonical case and environment hashes with the unchanged frozen encoder; every
-  check kind and every outcome has a meaning clause and a row theorem, with fails and unknown rows in `arith@0` too;
+  check kind and every outcome has a meaning clause, a row theorem and a complete fixture (R-1 to R-10), with fails
+  and unknown rows in `arith@0` too; every unknown row names its cause, for a claim the digit limit with `Overflows` or
+  the budget with an exhausted read;
   witness and refutations prove and refute one `Consistent`; a negated filter never selects an absent or mistyped
   cell; each square link is visible as two premises; statistics are undefined outside their domains.
 
@@ -1619,3 +1636,15 @@ Abstractions several of the seven research-wave designs share, as the cross-plan
     first and uses the spec's `primeDefs` (4.1, 3.9).
   - New fixtures (4.4a): I-1, I-2, T-3, T-1's added rows, S-5, C-1, R-1 to R-9; computed by hand, recomputed in the
     stub at the bounded re-check.
+- Draft 4 (2026-10-13): applies the verification of the spec's draft 2 (`manage-agents/math-evidence-p3ver1.final.md`,
+  FAIL narrowly: J1-J11 present, the numbers it checked correct) with the spec's draft 3; no other design change. Spec
+  16's C24-C26 record the readings draft 3 chose.
+  - J2: `Run.unknown_named` concludes the spec's `Check.UnknownCause`, which is `run_unknown`'s disjunction for a claim
+    row (the spec's draft 2 had kept only the budget's cause) and gives derivations, consistency checks and
+    identities a cause at the digit limit, met only in the lowering (`Expr.inline_tooLarge`); `Check.OutcomeMeans`
+    uses the same cause (3.2's note).
+  - J3: R-10 adds the unknown and undefined rows of each of those kinds, in three requests, each run in the later of
+    ME-4 and its kind's batch (4.4a, ME-4, ME-5, ME-8, ME-9); the spec's linearity rule needs no value, so a premise
+    whose counted value is exhausted or undefined gets its row.
+  - The draft-2 choices beyond J1-J11 (spec 16's C14, C15, C17, C19, C20, C21) are named in the spec's re-check item
+    7, for both reviewers to accept explicitly (8).
