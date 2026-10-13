@@ -1,0 +1,92 @@
+{
+  "e1": {
+    "answers": 1440,
+    "first_call": "2026-10-13T11:21:20Z",
+    "last_call": "2026-10-13T11:32:50Z",
+    "models": {
+      "claude-sonnet-5-5": 1440
+    },
+    "claude_code_version": {
+      "2.1.296": 1440
+    },
+    "attempts": {
+      "1": 1440
+    },
+    "stop_reason": {
+      "end_turn": 1440
+    },
+    "calls_with_thinking": 114,
+    "max_thinking_tokens": 217,
+    "input_tokens_min_max": [
+      615,
+      655
+    ],
+    "max_output_tokens": {
+      "128000": 1440
+    },
+    "parsed": {
+      "no": 834,
+      "yes": 600,
+      "invalid": 6
+    }
+  },
+  "e2": {
+    "answers": 1040,
+    "first_call": "2026-10-13T11:32:50Z",
+    "last_call": "2026-10-13T11:43:07Z",
+    "models": {
+      "claude-sonnet-5-5": 1040
+    },
+    "claude_code_version": {
+      "2.1.296": 1040
+    },
+    "attempts": {
+      "1": 1040
+    },
+    "stop_reason": {
+      "end_turn": 1040
+    },
+    "calls_with_thinking": 321,
+    "max_thinking_tokens": 493,
+    "input_tokens_min_max": [
+      606,
+      634
+    ],
+    "max_output_tokens": {
+      "128000": 1040
+    },
+    "parsed": {
+      "yes": 750,
+      "no": 233,
+      "cannot tell": 57
+    }
+  },
+  "reader": {
+    "command": [
+      "/home/seyran/.local/bin/claude",
+      "-p",
+      "--model",
+      "claude-sonnet-5-5",
+      "--system-prompt",
+      "",
+      "--tools",
+      "",
+      "--strict-mcp-config",
+      "--setting-sources",
+      "",
+      "--no-session-persistence",
+      "--disable-slash-commands",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "<PROMPT with the item>"
+    ],
+    "cwd": "a new empty temporary directory per call",
+    "account": "claude-saeedi-danial (CLAUDE_CONFIG_DIR), the third account named in DRI decision AT1",
+    "parallel": 8,
+    "retries_allowed": 3,
+    "failed_calls": 0,
+    "settings": "reader defaults: temperature, output limit and thinking not set (G6); thinking tokens as reported per call",
+    "usage_at_end": "five-hour 45 %, week 12 % (e-run.log)"
+  }
+}

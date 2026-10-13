@@ -1,0 +1,294 @@
+{
+  "lowerBound": [
+    [
+      "almost certain",
+      "E1.cert.almost-certain"
+    ],
+    [
+      "very likely",
+      "E1.cert.very-likely"
+    ],
+    [
+      "quite likely",
+      "E1.cert.quite-likely"
+    ],
+    [
+      "likely",
+      "E1.cert.likely"
+    ],
+    [
+      "more likely than not",
+      "E1.cert.more-likely-than-not"
+    ]
+  ],
+  "above": [
+    [
+      "almost certain",
+      "very likely",
+      "E1.pair.almost-certain.very-likely"
+    ],
+    [
+      "almost certain",
+      "quite likely",
+      "E1.pair.almost-certain.quite-likely"
+    ],
+    [
+      "almost certain",
+      "likely",
+      "E1.pair.almost-certain.likely"
+    ],
+    [
+      "almost certain",
+      "more likely than not",
+      "E1.pair.almost-certain.more-likely-than-not"
+    ],
+    [
+      "very likely",
+      "quite likely",
+      "E1.pair.very-likely.quite-likely"
+    ],
+    [
+      "very likely",
+      "likely",
+      "E1.pair.very-likely.likely"
+    ],
+    [
+      "very likely",
+      "more likely than not",
+      "E1.pair.very-likely.more-likely-than-not"
+    ],
+    [
+      "quite likely",
+      "likely",
+      "E1.pair.quite-likely.likely"
+    ],
+    [
+      "quite likely",
+      "more likely than not",
+      "E1.pair.quite-likely.more-likely-than-not"
+    ],
+    [
+      "likely",
+      "more likely than not",
+      "E1.pair.likely.more-likely-than-not"
+    ]
+  ],
+  "counts": {
+    "E1.pair.almost-certain.quite-likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.cert.likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.almost-certain.as-likely-as-not": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.unlikely.very-unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.as-likely-as-not.very-unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.quite-likely.more-likely-than-not": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.very-likely.unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.cert.unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.almost-certain.unlikely": {
+      "yes": 0,
+      "no": 39,
+      "cannot tell": 0,
+      "invalid": 1
+    },
+    "E1.pair.likely.more-likely-than-not": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.likely.very-unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.quite-likely.unlikely": {
+      "yes": 0,
+      "no": 38,
+      "cannot tell": 0,
+      "invalid": 2
+    },
+    "E1.pair.likely.unlikely": {
+      "yes": 0,
+      "no": 37,
+      "cannot tell": 0,
+      "invalid": 3
+    },
+    "E1.cert.almost-certain": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.quite-likely.likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.cert.as-likely-as-not": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.very-likely.as-likely-as-not": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.cert.very-unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.quite-likely.as-likely-as-not": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.almost-certain.likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.quite-likely.very-unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.as-likely-as-not.unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.almost-certain.very-unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.cert.more-likely-than-not": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.almost-certain.more-likely-than-not": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.cert.very-likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.cert.quite-likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.more-likely-than-not.very-unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.likely.as-likely-as-not": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.very-likely.likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.more-likely-than-not.as-likely-as-not": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.very-likely.very-unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.almost-certain.very-likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.very-likely.more-likely-than-not": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.more-likely-than-not.unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E1.pair.very-likely.quite-likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    }
+  }
+}

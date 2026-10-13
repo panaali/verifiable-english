@@ -1,0 +1,292 @@
+{
+  "factive": "E2.factive",
+  "knowsBelieves": "E2.knows-believes",
+  "knowsThinks": [
+    [
+      "almost certain",
+      "E2.knows-thinks.almost-certain"
+    ],
+    [
+      "very likely",
+      "E2.knows-thinks.very-likely"
+    ],
+    [
+      "quite likely",
+      "E2.knows-thinks.quite-likely"
+    ],
+    [
+      "likely",
+      "E2.knows-thinks.likely"
+    ],
+    [
+      "more likely than not",
+      "E2.knows-thinks.more-likely-than-not"
+    ]
+  ],
+  "negated_know": {
+    "items": {
+      "E2.negated-know.1": {
+        "counts": {
+          "yes": 15,
+          "no": 6,
+          "cannot tell": 19,
+          "invalid": 0
+        },
+        "agreed_36": false,
+        "top": "cannot tell"
+      },
+      "E2.negated-know.2": {
+        "counts": {
+          "yes": 2,
+          "no": 0,
+          "cannot tell": 38,
+          "invalid": 0
+        },
+        "agreed_36": true,
+        "top": "cannot tell"
+      },
+      "E2.negated-know.3": {
+        "counts": {
+          "yes": 40,
+          "no": 0,
+          "cannot tell": 0,
+          "invalid": 0
+        },
+        "agreed_36": true,
+        "top": "yes"
+      }
+    },
+    "decision": "refused (D-A7), whatever the counts"
+  },
+  "unless": {
+    "items": {
+      "E2.unless.1": {
+        "yes": 40,
+        "no": 0,
+        "cannot tell": 0,
+        "invalid": 0
+      },
+      "E2.unless.2": {
+        "yes": 40,
+        "no": 0,
+        "cannot tell": 0,
+        "invalid": 0
+      },
+      "E2.unless.3": {
+        "yes": 40,
+        "no": 0,
+        "cannot tell": 0,
+        "invalid": 0
+      }
+    },
+    "decision": "refused; evidence only"
+  },
+  "asserted_not_know": {
+    "admitted": true,
+    "reached": {
+      "E2.asserted-not-know.1": true,
+      "E2.asserted-not-know.2": true,
+      "E2.asserted-not-know.3": true,
+      "E2.asserted-not-know-knows.1": true,
+      "E2.asserted-not-know-knows.2": true,
+      "E2.asserted-not-know-knows.3": true
+    },
+    "decision": "admitted",
+    "items": {
+      "E2.asserted-not-know.1": {
+        "yes": 40,
+        "no": 0,
+        "cannot tell": 0,
+        "invalid": 0
+      },
+      "E2.asserted-not-know.2": {
+        "yes": 39,
+        "no": 1,
+        "cannot tell": 0,
+        "invalid": 0
+      },
+      "E2.asserted-not-know.3": {
+        "yes": 40,
+        "no": 0,
+        "cannot tell": 0,
+        "invalid": 0
+      },
+      "E2.asserted-not-know-knows.1": {
+        "yes": 0,
+        "no": 40,
+        "cannot tell": 0,
+        "invalid": 0
+      },
+      "E2.asserted-not-know-knows.2": {
+        "yes": 0,
+        "no": 40,
+        "cannot tell": 0,
+        "invalid": 0
+      },
+      "E2.asserted-not-know-knows.3": {
+        "yes": 0,
+        "no": 40,
+        "cannot tell": 0,
+        "invalid": 0
+      }
+    }
+  },
+  "counts": {
+    "E2.factive.2": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-thinks.quite-likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.factive.1": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.asserted-not-know.2": {
+      "yes": 39,
+      "no": 1,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.asserted-not-know-knows.1": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-thinks.unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-thinks.very-unlikely": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.unless.2": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.asserted-not-know.3": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.asserted-not-know-knows.3": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-believes.1": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.asserted-not-know.1": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-believes.2": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.negated-know.2": {
+      "yes": 2,
+      "no": 0,
+      "cannot tell": 38,
+      "invalid": 0
+    },
+    "E2.unless.3": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-thinks.likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.negated-know.3": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-thinks.almost-certain": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.asserted-not-know-knows.2": {
+      "yes": 0,
+      "no": 40,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-thinks.more-likely-than-not": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.factive.3": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-believes.3": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.negated-know.1": {
+      "yes": 15,
+      "no": 6,
+      "cannot tell": 19,
+      "invalid": 0
+    },
+    "E2.unless.1": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-thinks.very-likely": {
+      "yes": 40,
+      "no": 0,
+      "cannot tell": 0,
+      "invalid": 0
+    },
+    "E2.knows-thinks.as-likely-as-not": {
+      "yes": 14,
+      "no": 26,
+      "cannot tell": 0,
+      "invalid": 0
+    }
+  }
+}

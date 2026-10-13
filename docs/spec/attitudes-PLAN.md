@@ -452,7 +452,7 @@ each before the first call; after it, nothing here changes.
   *Not yet in the scorer:* `experiments.py` still counts invalid as neither for the no cap; it changes, with a
   self-check case at the boundary, before the run and only after the DRI's decision.
 
-**Status: DEFERRED** (P1 3; section 9). Ready: 36 items, 40 seeded orders, the scorer with the bars as constants
+**Status: run 2026-10-13, after the DRI's AT1 (section 9; [docs/research/attitudes-e1e2.md](../research/attitudes-e1e2.md)).** Was DEFERRED in phase 1 (P1 3). Ready then: 36 items, 40 seeded orders, the scorer with the bars as constants
 (`PAIR_YES, PAIR_MAX_NO = 36, 2`; `CERT_YES = 34`), refusal of an answer set without exactly one answer per item and
 reader, and a self-check of 24 cases (`docs/research/evidence/attitudes/e-selfcheck.json`: the bars at their
 boundaries, and G4's resolution with one and with three violations, through Lean). Cost: 1,440 calls, as estimated.
@@ -501,7 +501,7 @@ first call. *Not yet in the item file and scorer:* G5's three added items (the s
 "refused" whatever the counts until they exist, `8538355c`) and G6's agreement rule; both are added, with
 self-check cases, before the run.
 
-**Status: DEFERRED** (P1 3; section 9). Ready: 23 items, 40 seeded orders, the scorer (`E2_REACH = 36`), the
+**Status: run 2026-10-13, after the DRI's AT1 (section 9; [docs/research/attitudes-e1e2.md](../research/attitudes-e1e2.md)).** Was DEFERRED in phase 1 (P1 3). Ready then: 23 items, 40 seeded orders, the scorer (`E2_REACH = 36`), the
 emitter of the Lean `Table` literal and its review by Lean's `Table.reviewed` (through the AT-0 stub, pinned by
 sha256). Cost: 1,040 calls (26 items × 40; 920 without G5's three). **Gates:** `table.factive` (and with it every
 `knows` condition), `table.knowsBelieves`, `table.knowsThinks`; the admission of "P, and X does not know that P";
@@ -1591,14 +1591,21 @@ produced no data, and AT-0p's A4 measures the limit the typed frame removes.
 | AT-0p, A1–A7 | **PASS** (P1 2; section 4) | the data of the hard-constraint queue's first step; SC-1b's starting translation, once landed (C23); the motivation of AT-1 to AT-6a (A4) | — |
 | AT-0p, landing in the pilot | **DEFERRED** (the pilot directory was read only) | SC-1b (queue 4.4); A8 | the pilot runner's next constitution run: `research/attitudes/at0p.py` (copy, apply) on that run's inputs, then the run's own `nd.py all`, probe and conflict checks |
 | AT-0p, A8: the 7 units (874 B) audit-verifiable | **DEFERRED** | 874 B audit-verifiable; one of the two inputs of the DRI's go/no-go after AT-6a (F7) | the pilot's next audit of a run with AT-0p landed, given the open-term records with the rendering (section 7, risks); its timing in queue 4.4 is section 10, item 3 |
-| E1 | **DEFERRED** (no model calls in phase 1) | `table.lowerBound` (which words "thinks it *w*" admits), `table.above` (frame premise 4); through the closure review, AT-0 PASS | the DRI confirms G1, G2, G5 and G6 (section 7) and authorises 1,440 calls under the usage cap; before the first call, the scorer implements G6's no-cap rule with its self-check case |
-| E2 | **DEFERRED** (as E1) | `table.factive` (if it fails, `knows` is not admitted at all), `table.knowsBelieves`, `table.knowsThinks`, the admission of "P, and X does not know that P"; through the closure review, AT-0 PASS | the DRI confirms G2–G6 and authorises 1,040 calls; before the first call, the item file gains G5's three items and the scorer G6's agreement rule, with self-check cases. Does not wait for E1 (G3) |
-| E2's negated-"know" and "unless" items | **DEFERRED** with E2 | nothing: both forms stay refused whatever they show (D-A7); evidence for a later admission's own review | E2 |
-| Closure review and freezing `table` | **DEFERRED** | the frozen meaning of `attitudes@0`; AT-0 PASS (SR-8) | E1 and E2 scored; then `experiments.py table`, reviewed by Lean's `Table.reviewed` through the stub pinned by sha256 |
-| AT-0 PASS | **blocked** | AT-1w and every later batch; through AT-3a, SC-2 (synthesis 4.3) | after the closure review, in SR-8's order (section 4, AT-0) |
+| E1 | **Run 2026-10-13: MET** (E1E2 4.1). Lower bound confirmed for almost certain, very likely, quite likely, likely, more likely than not (40 of 40 each); not for as likely as not, unlikely, very unlikely (0 of 40). All 10 pairs among the five enter `above` (40 yes, 0 no each); the other 18 pairs have 0 yes | `table.lowerBound` (which words "thinks it *w*" admits), `table.above` (frame premise 4); through the closure review, AT-0 PASS | — (AT1 authorised it with G1, G2, G5, G6 unchanged; G6's no-cap rule and its self-check cases added before the first call, `a8e5ae57`) |
+| E2 | **Run 2026-10-13: MET** (E1E2 4.2). Premise 1 ships (40, 40, 40), premise 2 ships (40, 40, 40), premise 3 for all five `lowerBound` words (40 each). "P, and X does not know that P" **admitted**: "Must P?" 40, 39, 40 yes; "Does Claude know that P?" 40, 40, 40 no | `table.factive` (if it fails, `knows` is not admitted at all), `table.knowsBelieves`, `table.knowsThinks`, the admission of "P, and X does not know that P"; through the closure review, AT-0 PASS | — (AT1; G5's three items and G6's agreement rule added before the first call, `a8e5ae57`) |
+| E2's negated-"know" and "unless" items | **Run** with E2. Negated "know": item 1 splits (15 yes, 6 no, 19 cannot tell), item 2 agrees on cannot tell (38), item 3 on yes (40): the reading depends on the content, and the refusal stands. "unless": 40 of 40 yes on all three | nothing: both forms stay refused whatever they show (D-A7); evidence for a later admission's own review | — |
+| Closure review and freezing `table` | **Done 2026-10-13** (E1E2 4.3): G4 removes no word; Lean's `Table.reviewed` through the stub pinned by sha256 `2178fb6e…` is `true`; the frozen table is `docs/research/evidence/attitudes/e-table.lean` | the frozen meaning of `attitudes@0`; AT-0 PASS (SR-8) | — |
+| AT-0 PASS | **blocked** on SR-8's remaining steps | AT-1w and every later batch; through AT-3a, SC-2 (synthesis 4.3) | SR-8's steps after the frozen table: the stub updated to the current spec draft (with its sha256 pin, the self-check and the table's review rerun), elaborated, fixtures and the counterexample search rerun on the frozen table with the now-admitted asserted-not-know form in the pool, the changed statements re-reviewed (E1E2 6) |
 
 Cost, for the DRI's scheduling: E1 1,440 calls, E2 1,040 (920 without G5's three items); 2,480 in all. Hours as
 section 4 (estimates).
+
+**E1 and E2, run after phase 1 (2026-10-13; cited as E1E2 n, [docs/research/attitudes-e1e2.md](../research/attitudes-e1e2.md)).** The DRI's
+AT1 authorised the 2,480 calls with G1–G6 unchanged. The bars were quoted and the pre-run scorer changes committed
+before the first call (`a8e5ae57`); all 2,480 calls answered, by `claude-sonnet-5-5`, one fresh process each. Both
+experiments MET their summary definitions (E1E2 1.3, 4.4); the rows above give the results. Consequences for the
+next drafts are in E1E2 6: the frozen table written in, three words refused, the asserted-not-know form admitted
+(the one statement change, re-reviewed under SR-8), negated "know" and "unless" still refused.
 
 ## 10. Cross-plan issues for the DRI
 
@@ -1606,7 +1613,8 @@ Phase 1 changes none of the shared parts: the owners (synthesis section 1, edit 
 table, QS-1, ET-D2) and the build order (synthesis 4.1–4.4, edits 7, 9 and 10) stand as written above. Where a
 phase-1 result bears on them, it is recorded here, for the DRI, and not edited into the shared part.
 
-1. **E1 and E2 did not run in phase 1, so phase 2's AT-0 review cannot close.** Synthesis 4.1 puts E1 and E2 in
+1. **Resolved by the DRI's AT1** (E1 and E2 authorised and run, 2026-10-13; section 9). As written in draft 5:
+   **E1 and E2 did not run in phase 1, so phase 2's AT-0 review cannot close.** Synthesis 4.1 puts E1 and E2 in
    phase 1 and AT-0's statement review in phase 2; AT-0 PASS needs E1's and E2's results (SR-8). Through the
    explicit dependency "AT-3a's guard decoder lands before SC-2" (4.3), and SC-2 writing u0173.s01's governor with
    attitude nodes (scope's edit 3), queue 4.4's third step and scope's 263 B claim wait on these 2,480 model calls,
