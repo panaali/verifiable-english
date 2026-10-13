@@ -90,7 +90,7 @@ The task's three proof obligations:
 
 ## Seeded bugs
 
-14 seeded bugs, 6 in Lean and 8 in Python, one per behaviour claimed, each in a file this batch changed, each caught,
+19 seeded bugs, 8 in Lean and 11 in Python (five of them for the review fixes F2 and F3), one per behaviour claimed, each in a file this batch changed, each caught,
 then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generated block). No Rust code changed.
 
 ## Build checklist
@@ -109,7 +109,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | 10 | Entry points | `ve ask` (text, `--json`, `--reading`, `--evidence`) all go through one relay call (`ve.ask._ask`); metamorphic test as in 3. |
 | 11 | No regex of a real language | The statement check uses Lean as the oracle; the text comparison is the existing whitespace-collapsed one. |
 | 12 | State machines | Not applicable. |
-| 13 | Tests can fail | 14 seeded bugs; `test_a_replay_can_fail`; the statement check's mutants. |
+| 13 | Tests can fail | 19 seeded bugs; `test_a_replay_can_fail`; the statement check's mutants. |
 | 14 | Hermetic | CLI tests use the env allowlist and `HANG_TIMEOUT`; writes go to `tmp_path`. |
 | 15 | Identity | Every identity field of the answer rebound and refused. |
 | 16 | Lists | Fixture list, gate collection, frozen inventory, decoder pins, binding probe, trust classes, layer policy, import-linter layers: generated or tested. |
@@ -184,13 +184,13 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 
 <!-- BEGIN GENERATED: report.py -->
 
-Scope: `main..HEAD --no-merges` at `7b75c7af` (base `96887019`): 36 commits; 143 new theorems in `lean/statements.txt` (142 in `VE.Ask` and `VE.Words`).
+Scope: `main..HEAD --no-merges` at `6ce96e31` (base `96887019`): 53 commits; 145 new theorems in `lean/statements.txt` (143 in `VE.Ask` and `VE.Words`).
 
 | Language | Files | Lines added | Lines deleted |
 |---|---:|---:|---:|
-| Lean | 26 | 5137 | 698 |
-| Python (product) | 11 | 1171 | 113 |
-| Python (tests) | 9 | 901 | 36 |
+| Lean | 34 | 5582 | 785 |
+| Python (product) | 26 | 2437 | 374 |
+| Python (tests) | 19 | 1437 | 73 |
 | Rust | 0 | 0 | 0 |
 
 Recorded answers (`tests/fixtures/ask`, replayed by `tests/test_ask_fixtures.py`):
@@ -224,7 +224,7 @@ Statement check (`tools/question_statements.py --q2`, exit 0):
       changed Asked: `hnames` uses `NameReadsBackSame` (canonical JSON text, the relation `UnitBound` uses) for the approved `NameReadsBack` (kept as approved): Lean's `Json` has no decidable equality, so `=` on the read-back formula cannot be decided
     Q2 Lean check: 41 approved statements and signatures elaborated against the implementation; PASS
 
-Seeded bugs (`mutants.py`, `evidence/mutants.json`): 14 of 14 caught.
+Seeded bugs (`mutants.py`, `evidence/mutants.json`): 19 of 19 caught.
 
 | Seeded bug | File | Behaviour | Caught by |
 |---|---|---|---|
@@ -242,6 +242,11 @@ Seeded bugs (`mutants.py`, `evidence/mutants.json`): 14 of 14 caught.
 | python-gate-transport-only | `tools/relay_mutation_gate.py` | relay gate: ask's mutants are read as ve ask reads them, not by the transport alone | `tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it` |
 | lean-row-id-untyped | `lean/ResponseShape/Schemas/Ask.lean` | response schema: an answer row's id is the case's id | `tests/test_ask_relay.py::test_the_rows_id_is_typed_and_bound_to_the_case` |
 | python-statement-text-ignored | `tools/question_statements.py` | statement check: a Q2 statement whose text differs from the approved text fails | `tests/test_question_statements.py::test_a_changed_statement_or_definition_fails` |
+| lean-words-article-by-letter | `lean/VE/Words/Situation.lean` | one owner of situation wording (F2): an element line's article is chosen by sound, as before Q2.4 | `lake build VE.Words.Situation` |
+| lean-words-negation-must-not | `lean/VE/Words/Situation.lean` | one owner of point wording (F2): an obligation's negation is `need not`, a permission's `must not` | `tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did` |
+| python-words-count-unbound | `ve/words.py` | words relay binding (F2): one line per requested item | `tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused` |
+| python-lint-element-line | `tools/relay_lint.py` | relay lint (F2): an element line built from parts outside Lean is a finding | `tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back` |
+| python-point-search-own-fillings | `ve/filling_search.py` | one flip search (F3): the point search's fillings are the shared split's | `tests/test_filling_search.py::test_point_search_sends_the_shared_split_to_lean` |
 
 Relay mutation gate (`tools/relay_mutation_gate.py --json`, `evidence/relay-gate.json`): 0 failures and 0 findings over all routes; `ask`: 4735 mutants of 10 fixtures, 4709 refused, 26 accepted, each by a listed by-design class (B0 12, B3 14), 0 untyped.
 

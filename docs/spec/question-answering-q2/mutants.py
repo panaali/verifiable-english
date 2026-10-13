@@ -106,7 +106,7 @@ MUTANTS = [
      "behaviour": "one owner of situation wording (F2): an element line's article is chosen by sound, as before Q2.4",
      "old": 'if ["uni", "use", "usu", "uti", "eu", "one", "once"].any w.startsWith then "a"',
      "new": 'if false then "a"',
-     "test": ["tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did"], "build": True},
+     "test": ["lake", "build", "VE.Words.Situation"], "build": False},
     {"id": "lean-words-negation-must-not", "language": "Lean", "file": "lean/VE/Words/Situation.lean",
      "behaviour": "one owner of point wording (F2): an obligation's negation is `need not`, a permission's `must not`",
      "old": 'else (if role == .permission then "must not" else "need not")',

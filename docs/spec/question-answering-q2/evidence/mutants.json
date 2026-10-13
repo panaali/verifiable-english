@@ -186,6 +186,75 @@
       "evidence": [
         "FAILED tests/test_question_statements.py::test_a_changed_statement_or_definition_fails"
       ]
+    },
+    {
+      "id": "lean-words-article-by-letter",
+      "language": "Lean",
+      "file": "lean/VE/Words/Situation.lean",
+      "behaviour": "one owner of situation wording (F2): an element line's article is chosen by sound, as before Q2.4",
+      "test": [
+        "lake",
+        "build",
+        "VE.Words.Situation"
+      ],
+      "caught": true,
+      "evidence": [
+        "error: VE/Words/Situation.lean:175:0: Expression",
+        "error: VE/Words/Situation.lean:178:0: Expression",
+        "error: Lean exited with code 1"
+      ]
+    },
+    {
+      "id": "lean-words-negation-must-not",
+      "language": "Lean",
+      "file": "lean/VE/Words/Situation.lean",
+      "behaviour": "one owner of point wording (F2): an obligation's negation is `need not`, a permission's `must not`",
+      "test": [
+        "tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]"
+      ]
+    },
+    {
+      "id": "python-words-count-unbound",
+      "language": "Python",
+      "file": "ve/words.py",
+      "behaviour": "words relay binding (F2): one line per requested item",
+      "test": [
+        "tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>4]"
+      ]
+    },
+    {
+      "id": "python-lint-element-line",
+      "language": "Python",
+      "file": "tools/relay_lint.py",
+      "behaviour": "relay lint (F2): an element line built from parts outside Lean is a finding",
+      "test": [
+        "tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def situation(name, noun):\\n    return f\"{name} is {noun}\"\\n]"
+      ]
+    },
+    {
+      "id": "python-point-search-own-fillings",
+      "language": "Python",
+      "file": "ve/filling_search.py",
+      "behaviour": "one flip search (F3): the point search's fillings are the shared split's",
+      "test": [
+        "tests/test_filling_search.py::test_point_search_sends_the_shared_split_to_lean"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_filling_search.py::test_point_search_sends_the_shared_split_to_lean"
+      ]
     }
   ],
   "all_caught": true
