@@ -1,10 +1,13 @@
 # Weighing competing considerations (`weighing@0`): buildable plan
 
-> Status: plan draft 2 (2026-10-13), branch `design/weighing` from `main` at `49de179e`. Research wave of
+> Status: plan draft 3 (2026-10-13), branch `design/weighing` from `main` at `49de179e`. Research wave of
 > 2026-10-12 (DRI). Draft 1 (2026-10-12) was reviewed by Astra and Fable (`manage-agents/debates/design-weighing/`,
 > converged in round 3 on REVISE to draft 2) and by the cross-plan review of 2026-10-13
 > (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`, whose ten edits for this plan settle the debate's one open
-> item). Draft 2 carries both; its only other changes are pointers to WG-1's statement spec. It is the plan for the
+> item). Draft 2 carries both; its only other changes are pointers to WG-1's statement spec. Draft 3 carries the
+> statement review of WG-1's spec (`manage-agents/debates/weighing-spec/`, verdict FIX, settled by `DRI-RULING.md`,
+> items 1 to 14), synchronised with [weighing.md](weighing.md) draft 2; it changes no frozen W1, soft or P0
+> semantics. It is the plan for the
 > design recommended in [docs/research/weighing.md](../research/weighing.md) (cited here as `research n`), which must
 > be read first for the prior art and the comparison of candidate designs. Research sections 2 (the measured need), 5 and 6 are still
 > placeholders, so every claim draft 1 cited from them (unit ids, byte estimates, the CROSSACT class) is withdrawn
@@ -51,10 +54,11 @@ owns meaning, a new profile that changes no existing answer, honest UNKNOWN):
 2. **Say what the weighing decides, without doing it** (zone answers, batches WG-6 to WG-8). At a situation, for an
    act, Lean answers one of: **settled** whatever the open decisions are, claimed only with one admissible completion
    checked; **left to** a named decider, naming the questions the answer turns on; **not said** by the text
-   (norm-defaults' gap); both of the last two together; **inconsistent at this situation**, naming a premise no
-   decision assignment satisfies; or **unknown** with the budget named. The same machinery checks a **decision
-   record** (a decider's findings in one situation): admissible, with the outcome it produces, or ruled out by a
-   named sentence of the document.
+   (norm-defaults' gap); both of the last two together; **inconsistent at this situation**, naming the premises that
+   refute every decision assignment (Lean enumerates them all and refutes each by a labelled premise); or
+   **unknown** with the reason Lean checked (the budget it exceeded, or a branch it could neither refute nor
+   confirm). The same machinery checks a **decision record** (a decider's findings in one situation): admissible,
+   with the outcome it produces, or ruled out by named sentences of the document.
 
 Two further pieces are **experiments** with pre-registered bars (WG-E1, WG-E2): whether collisions between
 *different* acts ("help" against "refuse") need a new construct beyond act identification (if so, `alternatives@0`
@@ -72,16 +76,16 @@ withdrawn, and WG-0 measures.
 | # | Decision | Why | Rejected |
 |---|---|---|---|
 | D1 | Weighing stays a set of named open decisions with deciders. The checker certifies structure, bounds and coherence, and answers where the weighing matters; it never computes an "all things considered" verdict | VISION converged rule item 8 ("unconstrained weighing" is outside certification); soft 0; the source itself delegates the judgment ("we do want Claude to weigh these different priorities", :34) | an inside-the-checker weighing (numeric or argumentation-based), research 4.4 and 4.5 |
-| D2 | A new profile `weighing@0` requires `soft-norms@0` and `norms@0`, registered as one row of AR-10's profile-gate table (`requires := ["soft-norms@0", "norms@0"]`, with the row's composition proof), with a new environment block `weighing` beside the vocabulary's `soft` block. `soft-norms@0`'s bytes, decoders, identities, statements and answers do not change; a document without the block is a soft document (WG-2 `weigh_conservative`) | VISION converged rule item 2 (meaning freeze; extensions are new profiles); soft 3.1's strict decoder rejects unknown fields, so the block cannot live inside `soft`; AR-10's table is the one place a profile is registered | new fields in the `soft` block; a `soft-norms@1`; hand-written profile registry rows |
+| D2 | A new profile `weighing@0` requires `soft-norms@0` and `norms@0`, registered as one row of AR-10's profile-gate table (`requires := ["soft-norms@0", "norms@0"]`, with the row's composition proof; `refuses := [rights@0]` until AR-10's composition proof and a fixture both cover that combination), with a new environment block `weighing` beside the vocabulary's `soft` block. `soft-norms@0`'s bytes, decoders, identities, statements and answers do not change; a document without the block is a soft document (WG-2 `weigh_conservative`) | VISION converged rule item 2 (meaning freeze; extensions are new profiles); soft 3.1's strict decoder rejects unknown fields, so the block cannot live inside `soft`; AR-10's table is the one place a profile is registered | new fields in the `soft` block; a `soft-norms@1`; hand-written profile registry rows |
 | D3 | Every `weighing@0` construct is a **condition on an open decision**, elaborated into labelled base premises `Weigh_T`. `Weigh_T` is PK-1's `weighing` pack (`kind := .constraint`, `decls := []`, `labelled := weighLabelled Wd`, `origins`: each label ↦ the request path of its entry in the `weighing` block); PK-1 assembles X in its fixed order (soft, rights, weighing, attitudes, scales, events), and RD-9's `EntailsX`, `acceptanceX`, `conflictFreeCheckX_sound`, `modelCheckX_sound` apply to it. Weighing constrains existing decisions: its local checks guarantee `weigh_alone_base_free`, and there is no global conservativity claim (8) | soft's exception conditions (`Exc_T`) are already this shape; RD-9 proves the checkers sound for any typed `X`; PK-1 is the one assembler of X; so the only new proof obligations are typing, the meaning of the premises and conservativity at the wire | changing `ValueSoft` or `soften`; a second premise pipeline; an assembly of X in `Weighing/*` |
 | D4 | **Strength.** A declared edge "a outranks b" may be marked `always`. A rank pair `(H, L)` with `H` above `L` is **strict** when some chain of declared edges from `H` down to `L` contains an `always` edge, and **holistic** otherwise; it is computed with QS-1's reachability (`strictPair H L := some always edge (a, b) with H at least a and b at least L`, `VE.Closure.Order.atLeast`). A strict pair contributes `∀x̄. ¬outweighs_{a,L,H}(x̄)` for every act `a` on which the pair's rules collide | one rule a reader can apply ("a lower rank can outweigh a higher one only if no step between them says *always*"); it is monotone both ways (`strictPair_down`, `strictPair_up`), so "safety always outranks ethics" also protects safety from guidelines and helpfulness; the closure is QS-1's, never weighing's own | strictness per declared edge only (it would let guidelines outweigh safety while ethics cannot, research 4.1); strictness only on the first edge; a rank closure in `Weighing/*` |
 | D5 | `always` under the holistic flag removes the override; under the strict flag it is accepted and inert, with a warning (`StrengthInert`). A plain "a outranks b" keeps the flag's meaning. "a generally outranks b" is an input synonym of the plain sentence, shown as the plain sentence; under the strict flag the English layer refuses it (`GenerallyUnderStrictOutranking`). The wire carries only `always` edges | under the strict flag no `outweighs` decision exists (soft 1.3), and creating one would change `E′`, so `soft-norms@0`'s vocabulary would change; a strength with no formal effect on the wire would break the rule that every construct is a premise (debate E5) | creating `outweighs` atoms under the strict flag; a `generally` strength on the wire |
 | D6 | **Override and switch conditions** have soft's exception-condition form: quantifier-free base formulas over the target's argument sorts, naming base predicates of `E` only; factor lists are strings with no premise. Weighing may constrain decisions, never the world on its own: a condition on an `outweighs` decision of a strict pair (D4's closure) is refused (`ConditionOnStrictPair`); a sufficient condition must be shown to imply each necessary condition on its target by a propositional check proved sound in Lean (`ConditionsDisagree`, text "the checker cannot show that condition i implies condition j"; sound, not complete; it never searches, so it never exhausts a budget); a sufficient condition on a switch is refused. A target that names a rule or act `acts@0` split is refused with AP's diagnostic ("name one of its parts"), read from AP's `VE.Acts.SplitMap`, never re-derived; a target may name a generated part | soft 3.2 and 6.1's fragment gate carry over unchanged, so `Weigh_T` stays in the universal function-free fragment; without the two checks a sufficient condition would make X certify a fact about the world (debate E2); AP owns act identity (synthesis edit 8) | conditions over regulated or decision predicates (circular and outside the fragment); a tableau search for the implication; re-deriving a split |
-| D7 | **Delegated switches.** "<Party> may turn off rule n only where <grant>" is a necessary condition on `off_{n,party}`; a grant names its grantor, and the grantor must itself hold a switch on rule n (`DelegationExceedsGrantor`) and the grant's predicate must be attributed to the grantor (`GrantNotAttributed`). The grantee's switch also carries every necessary condition on the grantor's switch and the grantor's own grants, along the whole grant chain (`grant_within_grantor`); every inherited condition is written out in the English. A grant premise is the necessary `.off` case of the one condition generator (`condPremise`) | :138; the bound is a structural check, decidable and stated as a theorem (`delegation_bounded`), and the inheritance carries :138's meaning, which the structural check alone does not (debate E3) | a general authority logic (research 4.6); a separate grant generator |
+| D7 | **Delegated switches.** "<Party> may turn off rule n only where <grant>" is a necessary condition on `off_{n,party}`; a grant names its grantor, and the grantor must itself hold a switch on rule n (`DelegationExceedsGrantor`) and the grant's predicate must be attributed to the grantor (`GrantNotAttributed`). The grantee's switch also carries every necessary condition on the grantor's switch and the grantor's own grants, along the whole grant chain (`grant_within_grantor`); every inherited condition is written out in the English. A grant premise is the necessary `.off` case of the one condition generator (`condPremise`). Grant cycles, self-grants included, are refused (`DelegationCycle: rule <n>, <party>`), an explicit restriction of `weighing@0`, not a soundness necessity | :138; the bound is a structural check, decidable and stated as a theorem (`delegation_bounded`), and the inheritance carries :138's meaning, which the structural check alone does not (debate E3) | a general authority logic (research 4.6); a separate grant generator |
 | D8 | **Zone answers** reuse norm-defaults' three-valued machinery (Kleene evaluation, cones, bounded enumeration, `kleene_sound`, `settled_of_enumeration`) with the set of *open* atoms widened from the unsaid atoms to the unsaid atoms and the decision atoms. The widening is made once, in its owner file `NormDefaults/Evidence.lean`, with today's functions as the instance "open = unsaid" (`rfl`) and the enumeration budget a parameter (norm-defaults keeps 12, zones use 16). The enumeration prunes the assignments that Kleene evaluation refutes against PK-1's whole assembled X and `Fill_T`, as `coneValues` already prunes by `Fill_T` | one owner of three-valued evaluation; norm-defaults' answers stay byte-identical; without pruning by X an outcome that only a weighing condition settles stays UNKNOWN (debate E1) | a second Kleene evaluator in `Weighing/`; Python enumeration; an enumeration that ignores X |
-| D9 | A zone answer separates **left to <decider>** (two admissible decision assignments, same filling, opposite outcomes) from **not said** (norm-defaults' UNDECIDED: same decisions, two fillings) and carries both witness pairs when both hold. "Settled" is claimed only from a complete enumeration of the cone or a replayed certificate **and** one admissible completion checked by `modelCheckX`; without that completion the answer is UNKNOWN. With no admissible completion the answer is **inconsistent at this situation**, citing a premise Kleene evaluation refutes, or UNKNOWN when none is refuted | the constitution sends "unclear or uncertain" hard-constraint cases to "holistic and nuanced prioritization" (:457): today those come out UNDECIDED, which reads as "the text does not say", the wrong message; a "settled" with no admissible completion is vacuous | one UNDECIDED for both; settled without a checked completion |
-| D10 | **Decision records** (a decider's findings in a situation) are checked with the zone machinery with the recorded atoms fixed: ADMISSIBLE with the outcome (and what is still open), RULED OUT with the first violated premise's label rendered as its sentence (no admissible completion agrees with the record, and Kleene evaluation refutes that premise with the record fixed), or UNKNOWN | this is the one place a checker can audit a judgment it does not make: consistency with the document's bounds, not correctness | judging whether the finding is right |
-| D11 | **No new service mode.** A `weighing@0` document is a layered-route document: the layered decoder hands the soft decoder the environment without the block (`stripWeighing`), decodes the block, checks `WellFormedWeigh` and gives PK-1 the `weighing` pack. The layered route's existing kinds (`-elaborate`, `-conflict`, `-status`, `-report`, `-certificate`, `admission`) answer weighing documents directly; `weighing-zone` and `weighing-record` are two new kinds of the layered route, run on the same decoded `LayeredU` with PK-1's X, their certificates bound through `bindCertX` to the full environment. A `weighing@0` document takes the layered route whether or not `norm-defaults@0` is on: with no unspecified predicate `fill U = U.D` and `Fill_T = []` (`fill_conservative`, merged) | one route for every `weighing@0` answer; profile-specific answers are layered-route kinds (SYNTHESIS O3, C9) | a `weighing` service mode; extending `ve_soft_norms_route` (meaning freeze) |
+| D9 | A zone answer separates **left to <decider>** (two admissible decision assignments, same filling, opposite outcomes) from **not said** (norm-defaults' UNDECIDED: same decisions, two fillings) and carries both witness pairs when both hold. "Settled" is claimed only from a complete enumeration of the cone or a replayed certificate **and** one admissible completion checked by `modelCheckX`; without that completion the answer is UNKNOWN. With no admissible completion the answer is **inconsistent at this situation**, citing a premise Kleene evaluation refutes, or on every branch of a complete enumeration the premise that refutes it (labels recomputed by Lean, deduplicated and sorted), or UNKNOWN when neither holds, with the reason Lean checked: the budget exceeded (the enumeration incomplete), or a surviving branch it could neither refute nor confirm; never a budget after a complete enumeration | the constitution sends "unclear or uncertain" hard-constraint cases to "holistic and nuanced prioritization" (:457): today those come out UNDECIDED, which reads as "the text does not say", the wrong message; a "settled" with no admissible completion is vacuous | one UNDECIDED for both; settled without a checked completion |
+| D10 | **Decision records** (a decider's findings in a situation) are checked with the zone machinery with the recorded atoms fixed: ADMISSIBLE with the outcome (and what is still open), RULED OUT with the violated premises' labels rendered as their sentences (no admissible completion agrees with the record, and Kleene evaluation refutes that premise with the record fixed, or on every branch of a complete enumeration), or UNKNOWN with its checked reason | this is the one place a checker can audit a judgment it does not make: consistency with the document's bounds, not correctness | judging whether the finding is right |
+| D11 | **No new service mode.** A `weighing@0` document is a layered-route document: the layered decoder validates the original envelope and profiles (`weighGate`, before anything is stripped), hands the soft decoder the environment without the block (`stripWeighing`), decodes the block, checks `WellFormedWeigh` and gives PK-1 the `weighing` pack. The layered route's existing kinds (`-elaborate`, `-conflict`, `-status`, `-report`, `-certificate`, `admission`) answer weighing documents directly; `weighing-zone` and `weighing-record` are two new kinds of the layered route, run on the same decoded `LayeredU` with PK-1's X, their certificates bound through `bindCertX` to the full environment. A `weighing@0` document takes the layered route whether or not `norm-defaults@0` is on: with no unspecified predicate `fill U = U.D` and `Fill_T = []` (`fill_conservative`, merged) | one route for every `weighing@0` answer; profile-specific answers are layered-route kinds (SYNTHESIS O3, C9) | a `weighing` service mode; extending `ve_soft_norms_route` (meaning freeze) |
 | D12 | English: each new wording has one reading and a deterministic paraphrase; decision predicates, labels and formulas never appear in what a reader sees (zero-training English). Wordings are registered where `soft-norms@0`'s are registered today (`ve/surface/registry.py` records, selected by `ve/norm_english.py` when the profile is on). Once english-lean's catalogue owns norm wordings, the wordings of 2.2 and soft's reading sets for "normally", "typically", "usually" and "in most cases" are rows there instead, never both | one owner per wording | symbols, rank numbers or weights in the text |
 | D13 | No numeric weights, no "weigh" relation computed by the checker, no default inference inside the checker | research 4.4, 4.5; VISION converged rule item 5 | — |
 | D14 | Cross-act collisions and precedents are **experiments first** (WG-E1, WG-E2), each with a pre-registered bar; a build follows only if the bar is met. If WG-E1 passes, exclusive acts come from `alternatives@0` (its chooser, `available` and exclusive choice) composed with soft norms, designed and reviewed in WG-10; weighing defines no exclusivity relation | the need is unmeasured (research section 2 is unfilled); `alternatives@0` owns exclusive choice (SYNTHESIS O9) | building exclusive-act semantics now; extending soft's colliding pairs with declared exclusive acts |
@@ -98,18 +102,27 @@ weighing checks come on top (2.5).
 
 | Wording | The one reading (the paraphrase the IDE shows) | Formal effect |
 |---|---|---|
-| `<Rank a> always outranks <rank b>.` | Where a rule serving <a>, or a rank above <a>, collides on one act with a rule serving <b>, or a rank below <b>, the lower rule never outweighs the higher one. | declared edge `(a, b)` marked `always`; `Str_T` premises (D4) |
-| `<Rank a> outranks <rank b>.` under the holistic flag (`<Rank a> generally outranks <rank b>.` is the same sentence, shown in this form) | Where they collide, the <a> rule gives way to the <b> rule only where <decider> finds that the <b> consideration outweighs it there; a plain *outranks* takes the document's holistic ranking. | soft's declared edge, unchanged (D5) |
+| `<Rank a> always outranks <rank b>.` | Where a rule serving <a>, or a rank above <a>, collides on one act with a rule serving <b>, or a rank below <b>, the lower rule gives way to an effective higher rule, and <decider> may not find that the lower consideration outweighs it: pairwise defeat, as for *outranks*. | declared edge `(a, b)` marked `always`; `Str_T` premises (D4) |
+| `<Rank a> outranks <rank b>.` under the holistic flag (`<Rank a> generally outranks <rank b>.` is the same sentence, shown in this form) | If the pair is holistic: where a rule serving <a> collides on one act with a rule serving <b>, the lower rule gives way to an effective <a> rule unless <decider> finds that the <b> consideration outweighs it there; this document's ranking is holistic, and no step between them is marked *always*. If the pair is strict through another chain: the strict pair paraphrase below. | soft's declared edge, unchanged (D5) |
 | `<Rank l> outweighs <rank h> on <act phrase> only when <condition>.` | <decider> may find that the <l> consideration outweighs the <h> consideration on <act phrase> only in situations where <condition>. | necessary condition on `outweighs_{act,l,h}` |
-| `<Rank l> outweighs <rank h> on <act phrase> when <condition>.` | Wherever <condition>, the <l> consideration outweighs the <h> consideration on <act phrase>. | sufficient condition on `outweighs_{act,l,h}` |
+| `<Rank l> outweighs <rank h> on <act phrase> when <condition>.` | Wherever <condition>, the <l> consideration outweighs the <h> consideration on <act phrase>. Outside this condition, this sentence imposes no requirement; other conditions still apply. | sufficient condition on `outweighs_{act,l,h}` |
 | `Whether <rank l> outweighs <rank h> on <act phrase> takes account of <consideration>[, <consideration>]*.` | Declared considerations for this finding: <consideration>; …; the checker does not verify that they were weighed. | factors (no premise) |
 | `<Party> may turn off rule n only when <condition>.` | Rule n's switch for <party> works only in situations where <condition>. | necessary condition on `off_{n,party}` |
 | `<Party> may turn off rule n only where <grantor> allows it.` | <party>'s switch on rule n works only where <grantor> has allowed it; <grantor> must itself be able to turn rule n off, and every condition on <grantor>'s own switch, written out, applies to <party>'s too. | grant: necessary conditions on `off_{n,party}` over the grantor's attributed predicate and the grantor's inherited conditions (D7) |
+| `<Party> may turn off rule n only where <grantor> allows it, namely where <verbalisation of p>.` | The same, with the grant's predicate named. | the same grant with predicate `p` |
 
 The legend line for a grant's predicate is soft's `instruction_of` line ("<verbalisation> records an instruction of
 <grantor>"). Wordings not in this table are not `weighing@0` wordings: "normally", "typically", "usually", "in most
 cases" stay soft 2.2's reading sets (a default rule or a frequency claim), and "all things considered" has no
 wording (it is the decider's judgment, D1). A switch condition without "only" has no wording (D6).
+
+The first two rows promise pairwise defeat by an effective higher rule, as soft's `outranks` wording does; no
+paraphrase promises that the higher rule finally decides (where the higher rule's exception applies, the lower rule
+may decide despite *always*: W-α). "<grantor> allows it" resolves only when exactly one predicate attributed to the
+grantor is typed over rule n's argument sorts. With none, the English layer refuses and says that such a predicate
+must be declared first; with several, it refuses, lists them and offers the last row's form for each. That form
+elaborates to the same grant, inherits the grantor's conditions and is accepted subject to the normal grant checks
+(2.5 step 5), never unconditionally.
 
 **Paraphrase of a strict pair** (2.3 checklist, extended): "A <l> rule never outweighs a <h> rule: <h> always
 outranks <m>, and <m> outranks <l>." The chain shown is the shortest one containing an `always` edge, in rank-name
@@ -133,8 +146,10 @@ so; no step between them says *always*, and a plain *outranks* takes the documen
 Each `always` pair names a declared `soft.outranks` pair. `act` is soft's act key (soft 1.3). Every list is optional
 and defaults to empty; the block is absent when empty. The canonical environment bytes include the block, so
 `environment_id` changes when any entry changes and is unchanged for every environment without it (WG-3
-`weigh_identity`). The layered decoder hands the soft decoder the environment with the block and `weighing@0` removed
-(`stripWeighing`, a pure function), and every certificate binds the **full** environment (2.6).
+`weigh_identity`). The layered decoder validates the original envelope and profiles first (`weighGate`, 2.5 step 1),
+then hands the soft decoder the environment with the block and `weighing@0` removed (`stripWeighing`, a total pure
+function: the identity on a non-object, rewriting `profiles` and `vocabulary` only when present), and every
+certificate binds the **full** environment (2.6).
 
 ### 2.4 Elaboration: `Weigh_T`
 
@@ -160,10 +175,17 @@ fresh predicate.
 
 ### 2.5 Well-formedness (`WellFormedWeigh`), in order
 
-1. AR-10's row: the profiles contain `weighing@0`, `soft-norms@0` and `norms@0` (`UnsupportedProfile: weighing@0
-   requires soft-norms@0`); the block decodes (shape, field types, lists, sizes: at most 64 `always` edges, 128
-   conditions, 64 factor entries of at most 16 strings of at most 200 bytes, 32 grants).
-2. The stripped document passes `WellFormedSoft` and the layered branch's `WellFormedU (soften D, unspec)`.
+The order is weighing.md 3.2's, authoritative in both documents: the gate, then the stripped document, then the
+block, then the weighing checks. A case with a faulty soft document and a faulty block answers with the soft text
+(the block decoder takes the decoded document, so it cannot run first).
+
+1. The gate (`weighGate`, on the original environment, before anything is stripped): the envelope's `profiles` is a
+   string array, sorted and unique; AR-10's row: the profiles contain `weighing@0`, `soft-norms@0` and `norms@0`
+   (`UnsupportedProfile: weighing@0 requires soft-norms@0`) and not `rights@0` (`UnsupportedProfile: Unsupported
+   profile combination rights@0 x weighing@0`); a `weighing` block only with `weighing@0`.
+2. The stripped document passes `WellFormedSoft` and the layered branch's `WellFormedU (soften D, unspec)`; then the
+   block decodes (shape, field types, lists, sizes: at most 64 `always` edges, 128 conditions, 64 factor entries of at
+   most 16 strings of at most 200 bytes, 32 grants).
 3. Each `always` edge names a declared edge (`StrengthOnUndeclaredEdge: <a>, <b>`), at most once
    (`DuplicateDeclaration: strength <a>, <b>`).
 4. Each condition and factor target: a split source name is refused with AP's diagnostic (D6); the target names an
@@ -173,16 +195,20 @@ fresh predicate.
    mentions <q>`); it is quantifier-free after definition expansion (soft 6.1's gate).
 5. Each grant: the rule exists and `party ∈ alterable(rule)` (`NoSuchDecision`); `grantor ∈ alterable(rule)`
    (`DelegationExceedsGrantor: rule <n>, <party>, <grantor>`); the predicate is a base predicate with
-   `instruction_of = grantor` (`GrantNotAttributed: <predicate>, <grantor>`) and the rule's argument sorts.
+   `instruction_of = grantor` (`GrantNotAttributed: <predicate>, <grantor>`) and the rule's argument sorts. After
+   every grant has passed these checks, the grants are checked in list order for cycles, self-grants included
+   (`DelegationCycle: rule <n>, <party>`, D7).
 6. Each sufficient condition implies each necessary condition on its target, by the propositional check
-   (`ConditionsDisagree: the checker cannot show that condition <i> implies condition <j>`); its size bound is in
-   weighing.md 1.5.
+   (`ConditionsDisagree: the checker cannot show that condition <i> implies condition <j>`). A pair with more than
+   `maxPropAtoms = 12` distinct atoms is refused (`ResourceLimit: conditions <i>, <j>`), never answered; boundary
+   fixtures at 12 atoms (accepted) and 13 (refused), weighing.md 1.5 and θ19/θ20. Conditions on strict pairs stay
+   refused (step 4).
 7. Every generated premise is within `MAX_DEPTH` and `MAX_NODES` (`ResourceLimit: generated weighing premise
    <label>`), computed before it is built (soft 8, "Accepted means elaborable"); X with the background as one checker
    types it is PK-1's assembled check.
 
 Warnings: `StrengthInert: <a>, <b>` (D5). `GenerallyUnderStrictOutranking: <a>, <b>` is the English layer's refusal
-(D5). Diagnostic codes follow AR-13's scheme when it lands (DRI D6); until then the texts above are the contract,
+(D5), as are E7's refusals when "allows it" resolves to no predicate or to several (2.2). Diagnostic codes follow AR-13's scheme when it lands (DRI D6); until then the texts above are the contract,
 identical in Lean and Python's display.
 
 ### 2.6 Zone answers and decision records
@@ -199,15 +225,17 @@ are on) and `Fill_T` on `M` (2.4). Lean answers:
 | `left to <deciders>` | two admissible completions with the **same** filling and opposite values | the two completions, each checked by `modelCheckX`; the decision atoms on which they differ, rendered in document terms |
 | `not said` | two admissible completions with the **same** decisions and opposite values | norm-defaults' witness, as today |
 | `left to` and `not said` | both hold | both witness pairs, in one answer (D9) |
-| `inconsistent at this situation` | no admissible completion | a premise of X or `Fill_T` that Kleene evaluation refutes, by label |
-| `unknown <budget>` | none of the above within the budget (`MAX_OPEN_ATOMS`, 16 by default; norm-defaults' status keeps 12) | the budget named |
+| `inconsistent at this situation` | no admissible completion | labels Lean computes itself: Lean enumerates every assignment of the cone's open atoms compatible with the record (other open atoms stay unknown) and refutes each by Kleene evaluation of a labelled premise of `X ++ Fill_T`; per assignment, the first premise it refutes, then deduplicated and sorted. With no atom to assign, one assignment and one label: a premise refuted outright. Never taken from `proposed` or the search |
+| `unknown <reason>` | none of the above | the reason Lean checked: the budget exceeded, so the enumeration is incomplete (`MAX_OPEN_ATOMS`, 16 by default; norm-defaults' status keeps 12); or a surviving branch of a complete enumeration that Lean could neither refute nor confirm as a witness. A budget is never the reason after a complete enumeration |
 
 With `events@0` on, a completion is reported as a `left to` or `not said` witness only if events' calendar
-completion-preservation theorem covers it; otherwise the answer is `unknown`, with events' `NotCalendar` reason.
+completion-preservation theorem covers it; otherwise the answer is `unknown`, with events' `NotCalendar` reason (a
+branch Lean could not confirm as a witness).
 
 A **decision record** fixes some decision atoms (the decider's findings). The answer is the zone answer over
-completions that agree with the record; when none does, `ruled out by <label>` with a premise refuted by Kleene
-evaluation with the record fixed, rendered as that premise's sentence (`unknown` when no premise is refuted). Without a
+completions that agree with the record; when none does, `ruled out by <labels>`, with the same evidence as
+"inconsistent" (a premise Kleene evaluation refutes with the record fixed, or every branch of a complete enumeration
+refuted), each label rendered as its premise's sentence (`unknown`, with its checked reason, otherwise). Without a
 record, no admissible completion is "inconsistent at this situation". "Assuming no exception applies" is the record
 that fixes every `excepted` atom in the cone to false; the answer says so ("assuming no rule's exception applies
 here").
@@ -216,7 +244,8 @@ English (display only; Lean selects the rows): "Settled: whatever the assistant 
 assistant to <act>." / "Left to the assistant: this depends on whether rule 12's exception applies here, and on
 whether helpfulness outweighs ethics on complying with this instruction here." / "Not said: the text does not say
 whether …" / "Inconsistent at this situation: no way of deciding the open questions here satisfies the document; it
-says …" / "Unknown: more than 16 open questions bear on this point." / "Ruled out: this record finds that guidelines
+says …" / "Unknown: more than 16 open questions bear on this point." / "Unknown: the checker could neither rule out
+nor confirm one way of deciding the open questions here: …" / "Ruled out: this record finds that guidelines
 outweigh safety here; the document says safety always outranks ethics, and ethics outranks guidelines."
 
 ### 2.7 What stays open (the residual, never certified)
@@ -240,7 +269,7 @@ what is specific to this profile). The statements of 3.1 to 3.3 are elaborated i
 | `lean/VE/Weighing/Tree.lean` | `CondKind`, `Target`, `CondDecl`, `FactorDecl`, `GrantDecl`, `WeighEnv`, `WeighDoc`, `rankOrder`, `strictPair`, `strictWitness`, `targetF`, `targetSorts` | WG-2 |
 | `lean/VE/Weighing/Conditions.lean` | `strengthPremises`, `condPremise`, `grantConds`, `weighLabelled`, `weighPremises`, `propImplies`, `checkWeigh`, `WellFormedWeigh`, the theorems of 3.2 | WG-2 |
 | `lean/VE/Weighing/Examples.lean` | `#guard` fixtures W-α to W-λ | WG-2 |
-| `lean/VE/Weighing/Wire.lean` | block decoder, `stripWeighing`, the `weighing` pack provider (PK-1), identity | WG-3 |
+| `lean/VE/Weighing/Wire.lean` | block decoder, `weighGate`, `stripWeighing`, `stripCase`, the `weighing` pack provider (PK-1), identity | WG-3 |
 | `lean/VE/NormDefaults/Evidence.lean` (owner, extended) | `atomVO`, `coneAtomO`, `coneEvalO`, `coneValuesO`, `enumerateSettledO`, `table3O` with today's functions as the `opens = unsaidNames U` instances | WG-6 |
 | `lean/VE/Weighing/Zone.lean`, `ZoneExamples.lean` | `decisionAtoms`, `AdmissibleCompletion`, `SettledZ`, `LeftToZ`, `zoneOf`, `recordCheck`, the theorems of 3.4 | WG-6 |
 | the layered route's response-shape files (`lean/ResponseShape/Schemas/`, `Encoders/`) | the two kinds' row shapes and encoder theorems | WG-7 |
@@ -363,6 +392,15 @@ theorem strictPair_up (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H M L : S
 theorem holistic_iff_no_always_chain (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (H L : String) :
     strictPair Wd H L = false ↔ ∀ c, RankChain Wd H L c → ∀ e ∈ chainEdges c, e ∉ Wd.W.always
 
+/-- D4: `Str_T` has a premise exactly for the `outweighs` decisions of strict pairs, queried at declared ranks and
+    a declared predicate. Without `hL` and `hH` it is false: a rank name may end in `_`, so `outweighsName` aliases
+    (weighing.md F9, F10 and 7.3's regressions; both documents are accepted). -/
+theorem strength_iff (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (a L H : String)
+    (hL : L ∈ Wd.D.soft.ranks) (hH : H ∈ Wd.D.soft.ranks)
+    (ha : ∃ ss, Wd.D.E.predicates a = some ss) :
+    bindAll (actSortsOf Wd.D a) (.not (outweighsF Wd.D a L H)) ∈ strengthPremises Wd ↔
+      (a, L, H) ∈ outweighsTriples Wd.D ∧ strictPair Wd H L = true
+
 /-- The meaning of `always`: in every structure satisfying `Str_T`, a higher effective default rule dominates a
     colliding lower default rule of a strict pair (no holistic override). Fixture W-α. -/
 theorem always_dominates (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
@@ -397,6 +435,22 @@ theorem all_always_is_strict (Wd : WeighDoc) (h : WellFormedWeigh Wd = true)
 theorem propImplies_sound (a b : VE.Formula) (hp : propImplies a b = true) (S : VE.Structure.{u})
     (ρ : VE.Valuation S) (ha : a.denote S ρ) : b.denote S ρ
 
+/-- D6: outside a necessary condition its decision is false (2.2's "only when"). -/
+theorem condition_necessary (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (weighPremises Wd)) (c : CondDecl) (hc : c ∈ Wd.W.conditions)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (targetSorts Wd c.target) vs) :
+    c.kind = .necessary → ¬ c.condition.denote S (tupleVal vs) → ¬ (targetF Wd c.target).denote S (tupleVal vs)
+
+/-- D6: inside a sufficient condition its decision is true (2.2's "when"). -/
+theorem condition_sufficient (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
+    (hS : Sat S (weighPremises Wd)) (c : CondDecl) (hc : c ∈ Wd.W.conditions)
+    (vs : List S.Carrier) (typed : VE.TupleTyped S (targetSorts Wd c.target) vs) :
+    c.kind = .sufficient → c.condition.denote S (tupleVal vs) → (targetF Wd c.target).denote S (tupleVal vs)
+
+/-- D6: factor lists add no premise. -/
+theorem factors_inert (D : SoftDoc) (W : WeighEnv) (sm : VE.Acts.SplitMap) (fs : List FactorDecl) :
+    weighPremises ⟨D, {W with factors := fs}, sm⟩ = weighPremises ⟨D, W, sm⟩
+
 /-- D7: a delegated switch works only where its grant holds. Fixture W-ζ. -/
 theorem grant_needed (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
     (hS : Sat S (weighPremises Wd)) (g : GrantDecl) (hg : g ∈ Wd.W.grants)
@@ -404,7 +458,8 @@ theorem grant_needed (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Str
     (hng : ¬ (atom g.predicate (targetSorts Wd (.off g.rule g.party))).denote S (tupleVal vs)) :
     ¬ (targetF Wd (.off g.rule g.party)).denote S (tupleVal vs)
 
-/-- D7: a switch carries every necessary condition and every grant of each party it is granted through. -/
+/-- D7: a switch carries every necessary condition and every grant of each party it is granted through (`ρ ≠ π` on
+    an accepted document: grant cycles are refused). -/
 theorem grant_within_grantor (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (S : VE.Structure.{u})
     (hS : Sat S (weighPremises Wd)) (n π ρ : String) (hr : grantReach Wd n π ρ = true)
     (vs : List S.Carrier) (typed : VE.TupleTyped S (targetSorts Wd (.off n π)) vs)
@@ -478,16 +533,28 @@ theorem strict_pair_coherent (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (M 
 
 namespace Wire
 /-- The block removed: the profile list without `weighing@0`, the vocabulary without `weighing`; every other byte
-    of the environment is unchanged. -/
+    of the environment is unchanged. Total: the identity on a non-object; `profiles` and `vocabulary` rewritten only
+    when present; no `Json.setObjVal!` on a non-object (weighing.md 1.8). -/
 def stripWeighing (environment : Json) : Json
+/-- The case with its environment stripped, total in the same way. -/
+def stripCase (j : Json) : Json
 theorem stripWeighing_other (environment : Json) (k : String) (hk : k ≠ "weighing") :
     ((stripWeighing environment).getObjValD "vocabulary").getObjValD k =
       (environment.getObjValD "vocabulary").getObjValD k
+theorem stripCase_idem (j : Json) : stripCase (stripCase j) = stripCase j
 
-/-- A case whose `weighing` block is absent gets the layered route's answers byte for byte, except the rebound
-    identity fields: it decodes to the document of its stripped case (`blockOf`, `stripCase`, `LayeredU.core`:
-    weighing.md 1.8). -/
-theorem runWeigh_delegates (j : Json) (hb : blockOf (j.getObjValD "environment") = none) :
+/-- WG-3's step-1 gate (2.5 step 1), run on the original environment before anything is stripped: the envelope,
+    profiles sorted and unique, AR-10's row (prerequisites present, `rights@0` refused), a block only with
+    `weighing@0` (weighing.md 1.8). -/
+def weighGate (environment : Json) : Except String Unit
+
+/-- A case that passes the gate and whose `weighing` block is absent gets the layered route's answers byte for byte,
+    except the rebound identity fields `environment_id` and `document_hash`: it decodes to the document of its
+    stripped case. `LayeredU.core := (route, D, U, labelled, rightsCount, sitVocab, baseEnv)`, with `D` carrying
+    `D.E` and `baseEnv` taken from the stripped environment; certificates are bound to the full source and compared
+    through correspondingly rebound packages (`blockOf`, `stripCase`, `LayeredU.core`: weighing.md 1.8). -/
+theorem runWeigh_delegates (j : Json) (hg : weighGate (j.getObjValD "environment") = .ok ())
+    (hb : blockOf (j.getObjValD "environment") = none) :
     (VE.NormDefaults.Wire.decodeLayered j).map LayeredU.core =
       (VE.NormDefaults.Wire.decodeLayered (stripCase j)).map LayeredU.core
 
@@ -504,7 +571,9 @@ end VE.Weighing
 `weighX`, `weighX_wellFormed` (now PK-1's `assemble_wellFormed` instance) and `VE.Service.runMode_weighing` are
 deleted: X is PK-1's, and there is no `weighing` mode. `runWeigh_delegates` is what makes the profile conservative at
 the wire: the layered route reads a weighing document without a block as the soft document it is, never through a
-second implementation.
+second implementation. Its hypothesis `hg` is needed: without it, a case the gate refuses (a missing prerequisite,
+`weighing@0` twice, an unsorted list, `j = {}`) would be compared with a stripped case that decodes or refuses with
+another text (weighing.md F11 and W-η's refusals).
 
 ### 3.4 Zone answers and records (WG-6)
 
@@ -540,6 +609,10 @@ namespace VE.Weighing
 def decisionAtoms (D : SoftDoc) (M : VE.FiniteModel α) : List (String × List α)
 def openNames (L : VE.NormDefaults.LayeredU) : List String := decisionNames L.D ++ unsaidNames L.U
 
+/-- The labels of a labelled premise list. The zone takes PK-1's assembled X with its labels, and `Fill_T` with
+    norm-defaults' labels (`VE.NormDefaults.Admission.fillLabelled`), so that Lean computes every cited label. -/
+def labelsOf (ps : List (String × VE.Formula)) : List String := ps.map (·.1)
+
 /-- A completion of `M`: relations that agree with `M` off the open names and with the record on its atoms, and
     satisfy PK-1's whole assembled X and `Fill_T`. -/
 def AdmissibleCompletion (U : UDoc) (X : List VE.Formula) (M : VE.FiniteModel α) (opens : List String)
@@ -561,43 +634,58 @@ def LeftToZ (U X M opens record r vs) (unsaid : List String) : Prop :=
   ∃ R₁ R₂, AdmissibleCompletion U X M opens record R₁ ∧ AdmissibleCompletion U X M opens record R₂ ∧
     (∀ n ∈ unsaid, ∀ ws, R₁ n ws ↔ R₂ n ws) ∧ OutcomeIn U M R₁ r vs ∧ ¬ OutcomeIn U M R₂ r vs
 
+/-- Why an answer is `unknown`; each reason is one Lean checked. -/
+inductive ZoneUnknown (α : Type u)
+  | budget (opens limit : Nat)
+      -- the enumeration was not completed: the cone has `opens` open atoms not fixed by the record, over `limit`;
+      -- never given after a complete enumeration
+  | branch (assignment : List ((String × List α) × Bool)) (why : String)
+      -- a complete enumeration left this assignment, which Kleene evaluation does not refute against X ++ Fill_T
+      -- and no completion checked by `modelCheckX` confirms as a witness (`why`: none checked, or events' `NotCalendar`)
+
 inductive ZoneAnswer (α : Type u)
   | settled (b : Bool) (witness : List ((String × List α) × Bool))
   | notSettled
       (leftTo : Option (List (String × List α) × List ((String × List α) × Bool) × List ((String × List α) × Bool)))
       (notSaid : Option (List ((String × List α) × Bool) × List ((String × List α) × Bool)))
-  | ruledOut (label : String)
-  | inconsistent (label : String)
-  | unknown (budget : String)
+  | ruledOut (labels : List String)
+  | inconsistent (labels : List String)
+  | unknown (reason : ZoneUnknown α)
 
-def zoneOf (L : VE.NormDefaults.LayeredU) (X : List VE.Formula) (M : VE.FiniteModel α)
+def zoneOf (L : VE.NormDefaults.LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
     (record : List ((String × List α) × Bool)) (r : Regulated) (vs : List α)
     (proposed : List (List ((String × List α) × Bool))) : ZoneAnswer α
-  -- `proposed`: completions found by the untrusted search; Lean checks each (modelCheckX), never trusts it
+  -- `X`: PK-1's assembled X with its labels. `proposed`: completions found by the untrusted search; Lean checks each
+  -- (modelCheckX), never trusts it. `ruledOut` and `inconsistent` are produced only when Lean itself enumerates every
+  -- assignment of the cone's open atoms compatible with the record (other open atoms stay unknown) and refutes every
+  -- one by Kleene evaluation of a labelled premise of `X ++ fillLabelled L.U`; the labels are Lean's: per assignment
+  -- the first premise it refutes, deduplicated and sorted (with no atom to assign, the one label of a premise
+  -- refuted outright). Never a label from `proposed` or the search.
 
-theorem zone_settled_sound (L : VE.NormDefaults.LayeredU) (X : List VE.Formula) (M : VE.FiniteModel α)
+theorem zone_settled_sound (L : VE.NormDefaults.LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
     (valid : M.Valid (envAt L.U.D 0)) (hb : backgroundValid L.U.D M = true)
     (record) (r : Regulated) (hr : r ∈ L.U.D.T.regulated) (vs : List α)
     (typed : VE.TupleTyped M.asStructure r.sorts vs) (proposed) (b : Bool) (w)
     (hz : zoneOf L X M record r vs proposed = .settled b w) :
-    SettledZ L.U X M (openNames L) record r vs b
+    SettledZ L.U (X.map (·.2)) M (openNames L) record r vs b
 
 theorem zone_leftTo_sound (L X M valid hb record r hr vs typed proposed differ w₁ w₂ ns)
     (hz : zoneOf L X M record r vs proposed = .notSettled (some (differ, w₁, w₂)) ns) :
-    LeftToZ L.U X M (openNames L) record r vs (unsaidNames L.U) ∧
+    LeftToZ L.U (X.map (·.2)) M (openNames L) record r vs (unsaidNames L.U) ∧
     ∀ a ∈ differ, a.1 ∈ decisionNames L.D
 
 theorem zone_notSaid_sound (L X M valid hb record r hr vs typed proposed lt w₁ w₂)
     (hz : zoneOf L X M record r vs proposed = .notSettled lt (some (w₁, w₂))) :
-    VE.NormDefaults.UndecidedAtX L.U X
+    VE.NormDefaults.UndecidedAtX L.U (X.map (·.2))
       { M.asStructure with relation := completionOf M record w₁ } r vs
 
-/-- A record ruled out, or a situation inconsistent: no admissible completion; the label is a premise of X or
-    `Fill_T` that Kleene evaluation refutes (with the record fixed). -/
-theorem zone_ruledOut_sound (L X M valid hb record r hr vs typed proposed label)
-    (hz : zoneOf L X M record r vs proposed = .ruledOut label ∨
-          zoneOf L X M record r vs proposed = .inconsistent label) :
-    ¬ ∃ R, AdmissibleCompletion L.U X M (openNames L) record R
+/-- A record ruled out, or a situation inconsistent: no admissible completion, at least one label, and every label
+    cited is a premise of `X ++ Fill_T` (Lean refuted each branch of a complete enumeration with one). -/
+theorem zone_ruledOut_sound (L X M valid hb record r hr vs typed proposed labels)
+    (hz : zoneOf L X M record r vs proposed = .ruledOut labels ∨
+          zoneOf L X M record r vs proposed = .inconsistent labels) :
+    (¬ ∃ R, AdmissibleCompletion L.U (X.map (·.2)) M (openNames L) record R) ∧ labels ≠ [] ∧
+      ∀ l ∈ labels, l ∈ labelsOf (X ++ VE.NormDefaults.Admission.fillLabelled L.U)
 
 /-- Today's norm-defaults status is the instance with no decision open, no record and budget 12. -/
 theorem zone_extends_status (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) :
@@ -608,7 +696,10 @@ theorem zone_extends_status (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs 
 the value in every structure agreeing on them, `kleene_sound`), the completeness of the enumeration over the cone's
 atoms (`enumerate_all`, generalized), the soundness of pruning (an assignment Kleene evaluation refutes against
 `X ++ Fill_T` extends to no admissible completion, `kleene_sound` against X), and the checked witness, which gives the
-existence conjunct.
+existence conjunct. `zone_ruledOut_sound` uses the same two lemmas without the witness: the enumeration covers every
+assignment of the cone's open atoms compatible with the record, each is refuted by a premise, so no admissible
+completion exists; the label conjuncts hold by construction (each label is read off `X ++ Fill_T` by Lean).
+Existing norm-defaults answers and budgets are unchanged (`zone_extends_status` and its fixtures).
 
 ## 4. Fixtures
 
@@ -621,7 +712,9 @@ holistic flag, decider `the assistant`. Each fixture names its record.
 - **W-α (always).** Soft (α) plus `a always outranks b`, record "no exception applies". `Str_T =
   [∀x. ¬soft__outweighs__b__a__x_permitted(x)]`. Every admissible completion has H alone selecting: `settled yes`. The
   finite base with the `outweighs` atom true at `a` fails `modelCheckX` with label `weigh:strength:a:b:x_permitted`.
-  Without the strength, soft (α)'s two answers.
+  Without the strength, soft (α)'s two answers. With the record "h's exception applies, l's does not": accepted, and
+  the lower rule decides despite `always` (`settled no`): E1 is pairwise defeat. The rank-name aliases of
+  `strength_iff` (`b_`; `c`, `c_`) are regressions of its unrestricted statement, never refusals (weighing.md 7.3).
 - **W-β (closure).** Ranks `s > e > g > h`; `s always outranks e`, `e outranks g`, `g outranks h`.
   `strictPair`: `(s,e)`, `(s,g)`, `(s,h)` strict; `(e,g)`, `(e,h)`, `(g,h)` holistic. `strictWitness s h = [s, e, g,
   h]`. Colliding rules ranked `s` and `h` on X: no override; ranked `e` and `h`: override possible.
@@ -638,37 +731,61 @@ holistic flag, decider `the assistant`. Each fixture names its record.
   Without the record, `left to` the operator's own switch. With `alterable: [user]` only: `DelegationExceedsGrantor:
   rule n, user, operator`. With `instruction_of: user` on the predicate: `GrantNotAttributed: operator_allows,
   operator`. The inheritance of D7 (a condition on the operator's switch; a chain of two grants) is weighing.md's
-  W-ζ2 and W-ζ3.
-- **W-η (conservativity).** Every soft fixture α to υ under `weighing@0` with no block: the layered route's answers
-  equal those of the same case without `weighing@0`, compared without the rebound identity fields (`environment_id`,
-  `document_hash`, `base_environment`), which W-η compares separately (`runWeigh_delegates`); with `weighing@0` off, a
-  `weighing` block is `UnsupportedProfile`. Every norm-defaults fixture's `-status` is byte-identical
-  (`zone_extends_status`, budget 12).
+  W-ζ2 and W-ζ3. Grant cycles: a self-grant and a two-party cycle are refused (`DelegationCycle: rule n, user`);
+  W-ζ3's chain stays accepted.
+- **W-η (conservativity).** Every soft fixture α to υ under `weighing@0` with no block passes the gate, and the
+  layered route's answers equal those of the same case without `weighing@0`, compared without the rebound identity
+  fields (`environment_id`, `document_hash`), which W-η compares separately (`runWeigh_delegates`; `base_environment`
+  is the stripped environment's); certificate answers are compared through rebound packages. Refusals by the gate,
+  each with its exact text recorded and `stripCase` returning on each: profiles `[norms@0, relational-fol@0,
+  weighing@0]` without a block (`UnsupportedProfile: weighing@0 requires soft-norms@0`); `j = {}` (no panic); a
+  malformed envelope; a duplicated profile; unsorted profiles; `rights@0` with `weighing@0`; a `weighing` block with
+  `weighing@0` off. A combined fault (a bad soft document and a bad block) answers with soft's text. Every
+  norm-defaults fixture's `-status` is byte-identical (`zone_extends_status`, budget 12).
 - **W-θ (diagnostics).** `StrengthOnUndeclaredEdge`, `DuplicateDeclaration: strength`, `NoSuchDecision` (an
   `outweighs` target on an act with no colliding pair), `InvalidInput: condition 0 mentions x_required`, a quantified
   condition (fragment gate), `ConditionOnStrictPair` (on a declared `always` edge and through the closure), a
   sufficient switch condition, each grant diagnostic, `ResourceLimit: generated weighing premise <label>` on a
-  condition at the depth limit, and the required regression: contradictory sufficient and necessary conditions on one
-  target (`ConditionsDisagree`), whose premises, without the check, admit no decision assignment where the condition
-  holds (a vacuously "settled" outcome).
+  condition at the depth limit, `ResourceLimit: conditions 0, 1` at 13 distinct atoms beside an accepted pair at 12,
+  an accepted necessary-and-sufficient pair on one target whose necessary condition forces the finding "no" outside
+  the sufficient condition (θ11, why E4's paraphrase says "Outside this condition, this sentence imposes no
+  requirement; other conditions still apply."), and the required regression: contradictory sufficient and necessary
+  conditions on one target (`ConditionsDisagree`), whose premises, without the check, admit no decision assignment
+  where the condition holds (a vacuously "settled" outcome; bypassing admission, the zone answer is "inconsistent",
+  an internal counterexample only, weighing.md W-θ bypassed).
 - **W-ι (identity).** Changing one `always` edge, condition, factor or grant changes `environment_id`; a certificate
   replayed after the change is refused with the stale-binding text.
-- **W-κ (mandatory regression).** Two opposing unranked defaults with true guards, exceptions forbidden, one switch
-  each (`s₁`, `s₂`), and the necessary condition `urgent` on both switches. Where `urgent` is false, the answer is
-  "inconsistent at this situation", citing `weigh:condition:<i>:necessary` and `soft:coherence:M,N`.
+- **W-κ (mandatory regression; complete refutation).** Two opposing unranked defaults with true guards, exceptions
+  forbidden, one switch each (`s₁`, `s₂`), and the necessary condition `urgent` on both switches. Where `urgent` is
+  false, the answer is "inconsistent at this situation", from the complete enumeration of the 16 assignments, each
+  refuted by a labelled premise; the labels are all five of X's (`soft:coherence:M,N`, both `soft:exception:*`
+  labels from the branches with an `excepted` atom true, and both `weigh:condition:<i>:necessary`), computed by Lean
+  (weighing.md 7.2's sixteen-branch table).
 - **W-λ (split names).** An `.off` target naming a split rule is refused with AP's diagnostic; the same target naming
   one of its parts is accepted.
+- **W-μ (argument order).** An act over `(assistant, user)`; a condition and a grant predicate that use both
+  variables; two elements per sort, chosen so that swapping the indices changes the admissible set; the expected
+  answer recorded (weighing.md 7.2: 4 admissible assignments of 256). The seeded bugs of WG-2 swap the index in
+  `(targetSorts _).reverse`, `tupleVal` or `atom`'s `.binary p (var 1) (var 0)`; each must fail this fixture.
 - **Z-α (left to).** Soft (δ), unranked weighing point: zone of `x_required` at `a` is `left to the assistant`, the
   two completions excepting `A` and `B` respectively; the coherence conjunct rules out the completion with neither
   excepted.
-- **Z-β (record).** W-α with the record "b outweighs a on doing x here": `ruled out by weigh:strength:a:b:x_permitted`,
-  rendered "the document says a always outranks b".
+- **Z-β (record).** W-α with the record "b outweighs a on doing x here": `ruled out by
+  [weigh:strength:a:b:x_permitted]` (the one-label case: the premise is refuted with the record fixed and nothing open
+  assigned), rendered "the document says a always outranks b".
 - **Z-γ (not said beside left to).** A default rule on an `unspecified` predicate whose exception is open
   (norm-defaults' u8 frame): zone where the exception may hold: `left to` on the exception and `not said` on the
   gap, both reported in one answer.
-- **Z-δ (budget).** Seventeen open atoms in the cone: `unknown: more than 16 open questions`.
+- **Z-δ (budget; insufficient budget).** Seventeen open atoms in the cone: `unknown` with reason the budget (17 open
+  atoms over 16), "more than 16 open questions"; the enumeration is incomplete, so the answer is never
+  `inconsistent`.
 - **Z-ε (presumption).** Soft (ρ) with the record "assuming no exception applies": `settled yes` "assuming no
   rule's exception applies here"; without the record, `left to`.
+- **Z-ζ (surviving branch).** Soft (α)'s rules on act X beside W-κ's two rules moved to a second act Y; zone of
+  `x_required` at `a` with `urgent(a)` false. The cone of `x_required` holds X's decision atoms only, so W-κ's
+  premises on Y evaluate to Kleene `none` on every branch and refute none, while no completion exists (Y's atoms
+  admit none). Expected: never `inconsistent`; `unknown` with reason the surviving branch, never a budget (the
+  enumeration is complete). WG-6 computes the branch.
 
 ### 4.2 From the constitution (real units, run `20261012T1800Z`)
 
@@ -756,7 +873,10 @@ typing hypothesis; the pruning soundness of `coneValuesO` (by `kleene_sound` aga
 `grant_within_grantor`; the restated `runWeigh_delegates`; the wordings of 2.2 for one reading each. Re-check W-δ, W-ζ,
 Z-β and C-4 against the edited statements, and confirm that the layered gate accepts a stripped document that lacks
 `norm-defaults@0`. Done when the review has converged and this file carries its edits. The item-1 statement
-specification, [weighing.md](weighing.md) (2026-10-13), is WG-1's output for WG-2 to WG-5; its review is pending.
+specification, [weighing.md](weighing.md) (2026-10-13), is WG-1's output for WG-2 to WG-5. Its review
+(`manage-agents/debates/weighing-spec/`) ended FIX, settled by the DRI's ruling; weighing.md draft 2 and this draft 3
+carry all 14 items. Build authorisation follows the corrected statement spec: the untracked stub is re-elaborated
+against draft 2's statements, and its `#eval`s for the values marked *derived* are run, before WG-2 starts.
 
 ### WG-2. Lean: block, strength, conditions, grants (Lean, 5–6 h)
 
@@ -764,7 +884,11 @@ Files (new): `lean/VE/Weighing/{Tree,Conditions,Examples}.lean`, `lean/WEIGHING.
 (import), `lean/VE/Audit.lean` (audit entries for every theorem of 3.2), the frozen inventory and assurance manifest
 (new files pinned).
 
-Fixtures: W-α to W-θ, W-κ and W-λ as `#guard`s on the direct semantics and on the generated premises.
+Fixtures: W-α to W-θ, W-κ, W-λ and W-μ as `#guard`s on the direct semantics and on the generated premises,
+including weighing.md's draft 2 rows (W-α with h excepted, θ11's zone, θ19/θ20, the grant cycles, W-κ's sixteen
+branches, the `strength_iff` regressions). Seeded bugs (lean-first gate): among them, swapping the index in
+`(targetSorts _).reverse`, in `tupleVal` and in `atom`'s `.binary p (var 1) (var 0)`, each failing W-μ, recorded with
+the failing check.
 
 Deleted, not duplicated: no second premise generator (`condPremise` has soft's `excPremisesOf` shape but targets
 decisions soft does not constrain; the statement review checks whether `excPremisesOf` can be stated as the
@@ -778,9 +902,10 @@ theorem is in `WEIGHING.md` in plain words, and the gate passes. No answer can c
 ### WG-3. Lean: the block on the layered route (Lean, 5–6 h)
 
 Files (new): `lean/VE/Weighing/Wire.lean` (the block decoder, `stripWeighing`, the `weighing` pack provider,
-identity). Shared: PK-1's provider line in `lean/VE/NormDefaults/Layered.lean`/`Packs.lean` (the layered decoder strips
-the block, decodes the stripped source, decodes the block, checks `WellFormedWeigh` and adds the pack), AR-10's table
-(one `ProfileRow` for `weighing@0`, `requires := ["soft-norms@0", "norms@0"]`, with the row's composition proof),
+identity). Shared: PK-1's provider line in `lean/VE/NormDefaults/Layered.lean`/`Packs.lean` (the layered decoder runs
+`weighGate` on the original environment, strips the block, decodes the stripped source, decodes the block, checks
+`WellFormedWeigh` and adds the pack), AR-10's table (one `ProfileRow` for `weighing@0`, `requires := ["soft-norms@0",
+"norms@0"]`, `refuses := [rights@0]`, with the row's composition proof),
 `lean/VE/Audit.lean`. No service mode: no `Protocol.lean` constructor, dispatch arm or `runMode_weighing`, no entry in
 `ve/backends/service_schema.py`'s `MODES`, no `ve/backends/lean_service_schema/weighing.json`; the Python profile side
 is generated by AR-10.
@@ -788,16 +913,17 @@ is generated by AR-10.
 The layered route's existing kinds answer weighing documents with PK-1's X; certificates go through `bindCertX` with
 the full environment. No kind is reimplemented.
 
-Fixtures: W-η through the layered route (rows compared without the identity fields), W-ι, and W-α, W-δ, W-ζ's
-conflict and certificate answers. Route-case fixtures recorded into `tests/data/route-cases.jsonl` by
+Fixtures: W-η through the layered route (rows compared without the identity fields, certificates through rebound
+packages; the gate's refusals with their exact texts; `stripCase` on each refused case; the combined fault), W-ι,
+and W-α, W-δ, W-ζ's conflict and certificate answers. Route-case fixtures recorded into `tests/data/route-cases.jsonl` by
 `tests/route_case_recorder.py` and checked by `tests/test_route_row_schemas.py` (WG-4 adds the Python tests that
 record them).
 
 Deleted, not duplicated: no premise assembly and no service mode in `Weighing/*`; weighing is one PK-1 pack and two
 layered-route kinds. `repo_map.py --check` passes (no new mode).
 
-Done when: the fixtures pass, `runWeigh_delegates` is proved, the corpus A/B is identical (no corpus document has the
-profile), and the gate passes.
+Done when: the fixtures pass, `runWeigh_delegates` and `stripCase_idem` are proved, the corpus A/B is identical (no
+corpus document has the profile), and the gate passes.
 
 ### WG-4. Python: surface, relay, documents (Python, 4–5 h)
 
@@ -814,7 +940,10 @@ wordings), and the regenerated `tools/gate-collection.json`.
 
 English paraphrases: rendered from Lean's elaboration row (`strictWitness`, labels, targets, inherited conditions) by
 display code only; `tools/relay_lint.py` gains `weigh__`-free checks (no premise label or decision name in rendered
-text).
+text). E7's resolution of "allows it" (2.2) with weighing.md 7.6's fixtures: one match accepted; none refused (the
+predicate must be declared first); several refused with the list and the offer; the offered form accepted and shown
+to inherit, with the control that fails. The Sonnet 5.5 comprehension check of 8's open question is saved evidence
+under the batch's `docs/<batch>/`, not a suite test: suite tests make no model calls.
 
 Deleted, not duplicated: Python builds no `Weigh_T`, no `strictPair`, no `X`; it renders Lean's rows.
 
@@ -842,7 +971,10 @@ X, which includes the attitudes, scales and events packs when those profiles are
 With `events@0` on, a completion is reported as a `left to` or `not said` witness only if events' calendar
 completion-preservation theorem covers it; otherwise the answer is `unknown`, with events' `NotCalendar` reason.
 
-Fixtures: Z-α to Z-ε as `#guard`s; every norm-defaults `-status` fixture byte-identical (`zone_extends_status`).
+Fixtures: Z-α to Z-ζ as `#guard`s, with the three regressions of the zone evidence: complete refutation (W-κ,
+labels computed by Lean), insufficient budget (Z-δ, `unknown` naming the budget), a surviving unrefuted branch (Z-ζ,
+never `inconsistent`, its reason the branch, not a budget); the bypassed W-θ documents as internal counterexamples;
+every norm-defaults `-status` fixture byte-identical (`zone_extends_status`, budgets unchanged).
 
 Deleted, not duplicated: no second Kleene evaluator, cone or enumeration; the bodies of `atomV`, `coneAtom`,
 `coneAtomV`, `coneValues`, `enumerateSettled` become one-line instances of their `*O` forms (ledger lines recorded).
@@ -860,7 +992,7 @@ environment (no second search); the English of 2.6 rendered from Lean's rows; CL
 <file> --act <phrase> [--record <file>] [--assume-no-exceptions]` in `ve/__main__.py` (shared: one subcommand). Fuzz
 tests as WG-4 on both kinds.
 
-Done when: Z-α to Z-ε pass through the CLI, the fuzz tests pass, and the gate passes.
+Done when: Z-α to Z-ζ pass through the CLI, the fuzz tests pass, and the gate passes.
 
 ### WG-8. Zone probe on the constitution (pilot, 3 h)
 
@@ -869,7 +1001,8 @@ first): for each hard constraint (u0165.s01 to s07) at the one-element situation
 `probes/unspecified-probe.json`, for each "should" set, and for each grant WG-5 added, record the zone answer verbatim.
 Expected (C-7): `settled no` where the knowing-or-likely condition holds; `left to the assistant` where the case holds
 but the condition does not, if the default reading of :457 is translated; `not said` only where the act is
-unspecified and no rule speaks. No coverage is claimed from the probe; every `unknown` is listed with its budget.
+unspecified and no rule speaks. No coverage is claimed from the probe; every `unknown` is listed with its reason (the
+budget, or the surviving branch).
 
 ### WG-E1. Experiment: collisions between different acts (planner, 4 h)
 
@@ -962,7 +1095,8 @@ Coverage is measured as soft-norms-PLAN 4 requires: a unit changes status only a
 `ve document`, against a baseline of the same split at the same commit, and after a blind whole-span fidelity review;
 claimed and audit-verified bytes are reported separately; no figure is predicted (draft 1's estimates cited research
 5.2, which is unfilled, and are withdrawn). Zone answers are reported as counts of `settled`, `left to`, `not said`,
-`inconsistent` and `unknown` answers on the probe set, never as coverage.
+`inconsistent` (each with the labels Lean computed) and `unknown` answers (split by reason: budget or surviving
+branch) on the probe set, never as coverage.
 
 ## 8. Not claimed, risks, open questions
 
@@ -976,7 +1110,8 @@ claimed and audit-verified bytes are reported separately; no figure is predicted
 - **Risk: false comfort from "settled".** A `settled` answer is about the rules on one act at one situation, under the
   document's premises; it says nothing about other acts or about whether the situation is described correctly. The
   English says "the text requires", never "the assistant should". A situation with no admissible completion is
-  "inconsistent at this situation", never "settled".
+  "inconsistent at this situation" when Lean refutes every branch of a complete enumeration, else `unknown`; never
+  "settled".
 - **Risk: residual size.** Strength and conditions add premises, not decisions, so the residual does not grow; grants
   add none either. Zone answers can name many questions; WG-7 shows at most five, then "and <n> more".
 - **Risk: reading drift on "always".** "Safety always outranks ethics" is a translator's reading of :40, never the
@@ -985,7 +1120,8 @@ claimed and audit-verified bytes are reported separately; no figure is predicted
   wait on PK-1; WG-3 on AR-10's table. WG-1, WG-E1 and WG-E2 do not.
 - **Open question (WG-1).** Is D4's "some chain contains `always`" the reading readers take from "always outranks"?
   WG-4's unambiguity test and a Sonnet 5.5 comprehension check (as RD-9's SC-9 does) on three paraphrases are the
-  evidence; the DRI decides if they disagree.
+  evidence; the check is saved evidence under the batch's `docs/<batch>/`, not a suite test (suite tests make no
+  model calls); the DRI decides if they disagree.
 
 ## 9. Review checklist (WG-1)
 
@@ -996,14 +1132,19 @@ claimed and audit-verified bytes are reported separately; no figure is predicted
    2.2.
 3. `always_dominates`, `always_no_override` (on the override disjunct), `all_always_is_strict` against soft's
    `DomWithD`.
-4. Conditions and grants: their premises, `ConditionOnStrictPair`, `propImplies_sound`, `grant_needed`,
-   `grant_within_grantor`, `delegation_bounded`, the fragment gate.
+4. Conditions and grants: their premises, `ConditionOnStrictPair`, `propImplies_sound` and its 12-atom bound,
+   `condition_necessary`, `condition_sufficient`, `factors_inert`, `grant_needed`, `grant_within_grantor`,
+   `delegation_bounded`, `DelegationCycle`, the fragment gate; `strength_iff` with its declared-name hypotheses.
 5. The route: the `weighing` pack, `weighPremises_wellFormed`, `weigh_acceptance` and `weigh_conflict_free` at PK-1's
-   X, `stripWeighing_other`, `runWeigh_delegates`, `weigh_identity`.
+   X, `stripWeighing_other`, `stripCase_idem`, `weighGate`, `runWeigh_delegates` under `hg`, `weigh_identity`; the
+   order gate, stripped document, block (2.5); `rights@0` refused by the row.
 6. Zone: the definitions of 3.4, the pruning by X, settled with a checked completion, the four soundness theorems, the
-   separation of `left to` from `not said` and both together (D9), "inconsistent at this situation", and that no
-   evaluator is duplicated (D8).
-7. The wordings of 2.2: one reading each; no symbol in what a reader sees.
+   separation of `left to` from `not said` and both together (D9), "inconsistent at this situation" and "ruled out"
+   only from a complete enumeration with every branch refuted and labels Lean computed (`zone_ruledOut_sound`'s three
+   conjuncts), `unknown`'s checked reasons (never a budget after a complete enumeration), and that no evaluator is
+   duplicated (D8).
+7. The wordings of 2.2: one reading each, E7 by its resolution; pairwise defeat, never a promise that the higher rule
+   finally decides; no symbol in what a reader sees.
 8. The two experiments' bars, fixed before any data is read.
 
 ## Change log
@@ -1012,3 +1153,4 @@ claimed and audit-verified bytes are reported separately; no figure is predicted
 |---|---|---|
 | 2026-10-12 | Draft 1 | Plan for the design recommended in docs/research/weighing.md: decisions D1 to D14; `weighing@0` (strength, override and switch conditions, grants) as premises on open decisions over RD-9's generic `X`; zone answers and decision records on norm-defaults' widened three-valued machinery; Lean statements; fixtures W-α to W-ι, Z-α to Z-ε and C-1 to C-7; batches WG-0 to WG-10 with dependencies and shared files; two pre-registered experiments. Planning only. |
 | 2026-10-13 | Draft 2 | The converged debate (rounds 1 to 3) and the cross-plan synthesis edits 1 to 10. Debate: `settled` prunes by X and needs a checked completion (E1); `ConditionOnStrictPair`, the propositional `ConditionsDisagree`, no sufficient switch condition (E2, reduced); grants inherit the grantor's conditions along the chain with one generator, `grant_within_grantor` (E3); `runWeigh_delegates` restated without the identity fields (E4); `generally` an input synonym, only `always` on the wire, the upward-closure and plain-edge paraphrases (E5); fixtures name their records; `ZoneAnswer` carries both witness sets and a no-completion result; `always_no_override` on the override disjunct; factor paraphrase; budget a parameter (12 and 16); build order WG-2 → WG-3 → WG-4 → WG-5 → WG-6 → WG-7 → WG-8 with the grant evidence split between WG-5 and WG-8; research-cited unit ids and estimates withdrawn. Synthesis: `weigh_alone_base_free` and W-κ, no global conservativity (1); X assembled by PK-1, `weighX` deleted (2); no `weighing` mode, two layered-route kinds (3); AR-10's row and WG-3's slot (4); `strictPair` through QS-1 (5); zone answers on the whole X, events' `NotCalendar` (6); WG-10 through `alternatives@0` (7); split names, W-λ (8); the hard-constraint queue (9); dependencies and the english-lean catalogue (10). WG-1's item-1 statement spec is weighing.md. |
+| 2026-10-13 | Draft 3 | The statement review of weighing.md draft 1 (`manage-agents/debates/weighing-spec/`, FIX, `DRI-RULING.md` items 1 to 14), synchronised with weighing.md draft 2. `strength_iff` in 3.2 with `hL`, `hH`, `ha` (1); `runWeigh_delegates` under `hg`, total `stripWeighing`/`stripCase`, `stripCase_idem`, `weighGate`, the seven-field `core`, rebound certificate packages (2, D11, 2.3, 3.3, W-η); E1/E2 as pairwise defeat by an effective higher rule, W-α with h excepted (3); E4's "Outside this condition, …", θ11 (4); E7's resolution and the explicit form (5, 2.2, WG-4); grant cycles refused (6, D7, 2.5); `condition_necessary`, `condition_sufficient`, `factors_inert` (7, 3.2); W-μ and its seeded bugs (8, WG-2); zone evidence: `ruledOut`/`inconsistent` with label lists from a complete enumeration, `ZoneUnknown`'s checked reasons, labelled X, `labelsOf`, `zone_ruledOut_sound`'s three conjuncts, W-κ's five labels, Z-δ and the new Z-ζ (9, 0, D9, D10, 2.6, 3.4, 7, 9); 2.5's order gate, stripped document, block, and the combined fault (10); `maxPropAtoms = 12` with boundary fixtures (11); `rights@0` refused by the row (12, D2, WG-3); the comprehension check as saved evidence (13, 8, WG-4). |
