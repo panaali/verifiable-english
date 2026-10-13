@@ -1,0 +1,26 @@
+{
+  "source_bytes": 2651,
+  "accounted_bytes": 2651,
+  "coverage_percent": 100,
+  "bytes_by_kind": {
+    "meta": 226,
+    "unformalised": 2386,
+    "exposition": 39
+  },
+  "bytes_by_status": {
+    "LABELLED": 265,
+    "UNFORMALISED": 2386
+  },
+  "unformalised_reasons": {
+    "arith-import": 38,
+    "calc-derive": 1,
+    "arith": 4
+  },
+  "residual": {
+    "open_terms": 0,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 0
+  },
+  "residual_total": 0
+}

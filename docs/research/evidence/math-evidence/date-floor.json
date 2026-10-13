@@ -1,0 +1,13 @@
+{
+ "1887-07-08": {
+  "exit": 1,
+  "accepted": false,
+  "last_line": "ve.errors.VEError: DateRange(1887-07-08)"
+ },
+ "1970-01-01": {
+  "exit": 0,
+  "accepted": true,
+  "last_line": "}"
+ },
+ "pass": true
+}

@@ -1,0 +1,36 @@
+exit 1; VE_RUST_TIMEOUT=None
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/__main__.py", line 409, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/__main__.py", line 43, in main
+    return _main(argv)
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/__main__.py", line 121, in _main
+    return document_main(argv[1:])
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/document.py", line 1748, in main
+    data = check_document(args.path)
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/assurance.py", line 127, in guarded
+    return fn(*args, **kwargs)
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/document.py", line 1299, in check_document
+    return _check_document(path)
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/document.py", line 1305, in _check_document
+    return _report(doc)
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/document.py", line 1359, in _report
+    return _check_quantity_document(doc, active_reading_sets(doc["meta"].get("reading_sets", [])))
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/document.py", line 1272, in _check_quantity_document
+    result["admission"] = admit_document(env, quantity_admission_input(doc, active))
+                          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/assurance.py", line 127, in guarded
+    return fn(*args, **kwargs)
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/admission.py", line 206, in admit_document
+    return _lean_quantity_admission(env, document)
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/admission.py", line 292, in _lean_quantity_admission
+    [row] = decide("quantity", [{"id": "admission", "kind": "document",
+            ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                 "environment": env.to_dict(), "document": document}])
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-pilot-20261013T0600Z/ve/backends/relay.py", line 138, in decide
+    raise _raised(entry)
+ve.errors.VEError: graph rejected: cycle, duplicate name, dangling premise, ill-typed claim or invalid certificate

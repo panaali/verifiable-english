@@ -1,0 +1,46 @@
+{
+ "tags": [
+  "calc",
+  "calc-data",
+  "calc-derive",
+  "calc-dimension",
+  "calc-stats",
+  "calc-algebra",
+  "arith",
+  "arith-import",
+  "approximation",
+  "evidence",
+  "statistic",
+  "mathematic",
+  "calculat",
+  "equation",
+  "empiric",
+  "science",
+  "probabilit",
+  "number",
+  "arithmetic"
+ ],
+ "pilots": {
+  "constitution": {
+   "units_json": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z/units.json",
+   "units_json_sha256": "353a75284fd4fb9921d4079a55a235bcf8be06061cd1005d1367e956f255ec4c",
+   "units": 1132,
+   "flattened_units": 1132,
+   "matching_units": 0,
+   "matching_bytes": 0,
+   "matches": [],
+   "residual_missing_features_matches": []
+  },
+  "udhr": {
+   "units_json": "/home/seyran/code/manage-agents/pilots/udhr/run-20261012T1800Z/units.json",
+   "units_json_sha256": "0a43de590810bb70761dcce88e55eaf5777a9503dfeef0f1aba388905f296686",
+   "units": 130,
+   "flattened_units": 130,
+   "matching_units": 0,
+   "matching_bytes": 0,
+   "matches": [],
+   "residual_missing_features_matches": []
+  }
+ },
+ "pass": true
+}

@@ -1,0 +1,30 @@
+{
+  "source_bytes": 8883,
+  "accounted_bytes": 8883,
+  "coverage_percent": 100,
+  "bytes_by_kind": {
+    "meta": 1810,
+    "asserted": 483,
+    "exposition": 2045,
+    "unformalised": 4545
+  },
+  "bytes_by_status": {
+    "LABELLED": 3855,
+    "CHECKED": 483,
+    "UNFORMALISED": 4545
+  },
+  "unformalised_reasons": {
+    "approximation": 4,
+    "calc": 4,
+    "calc-data": 4,
+    "calc-stats": 27,
+    "attitudes": 5
+  },
+  "residual": {
+    "open_terms": 0,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 0
+  },
+  "residual_total": 0
+}

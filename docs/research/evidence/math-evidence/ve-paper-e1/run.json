@@ -1,0 +1,110 @@
+{
+ "checkout": "/home/seyran/code/ve-pilot-20261013T0600Z",
+ "checkout_head": "55b194cc6a320fe926589b965444c00501164092",
+ "product_tree_equals_main_406736a4": true,
+ "sources": {
+  "source-04-e1.md": {
+   "document": "source-04-e1.ve.md",
+   "document_bytes": 57763,
+   "document_sha256": "fe788edfa96fe54dad24752db9081776736ce63410441e236236d2458ef4105c",
+   "check_exit": 0,
+   "admitted": true,
+   "check_error": null,
+   "premises": {
+    "status": "UNKNOWN",
+    "budget": {
+     "max_proof_steps": 10000,
+     "max_domain_size": 2,
+     "max_models": 10000,
+     "max_evaluations": 100000
+    }
+   },
+   "rust_timeout_raised_to": null,
+   "graph_nodes": 7,
+   "certified_consequences": [
+    "candidates_partition",
+    "trials_cross_views_and_explanations",
+    "templates_partition",
+    "count_identities"
+   ],
+   "coverage_exit": 0,
+   "coverage": {
+    "source_bytes": 8883,
+    "accounted_bytes": 8883,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+     "meta": 1810,
+     "asserted": 483,
+     "exposition": 2045,
+     "unformalised": 4545
+    },
+    "bytes_by_status": {
+     "LABELLED": 3855,
+     "CHECKED": 483,
+     "UNFORMALISED": 4545
+    },
+    "unformalised_reasons": {
+     "approximation": 4,
+     "calc": 4,
+     "calc-data": 4,
+     "calc-stats": 27,
+     "attitudes": 5
+    },
+    "residual": {
+     "open_terms": 0,
+     "assumptions": 0,
+     "bridge_leaves": 0,
+     "unresolved_reading_sets": 0
+    },
+    "residual_total": 0
+   }
+  },
+  "source-appendix-per-template.md": {
+   "document": "source-appendix-per-template.ve.md",
+   "document_bytes": 34181,
+   "document_sha256": "6b4576e495b53cc24d4951b96dc070c890c0cf99eba1f4ae065f8bbf5b7589b6",
+   "check_exit": 0,
+   "admitted": null,
+   "check_error": null,
+   "premises": {
+    "status": "UNKNOWN",
+    "budget": {
+     "max_proof_steps": 10000,
+     "max_domain_size": 2,
+     "max_models": 10000,
+     "max_evaluations": 100000
+    }
+   },
+   "rust_timeout_raised_to": null,
+   "graph_nodes": 0,
+   "certified_consequences": [],
+   "coverage_exit": 0,
+   "coverage": {
+    "source_bytes": 1054,
+    "accounted_bytes": 1054,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+     "meta": 74,
+     "exposition": 159,
+     "asserted": 716,
+     "unformalised": 105
+    },
+    "bytes_by_status": {
+     "LABELLED": 233,
+     "CHECKED": 716,
+     "UNFORMALISED": 105
+    },
+    "unformalised_reasons": {
+     "calc-stats": 4
+    },
+    "residual": {
+     "open_terms": 0,
+     "assumptions": 0,
+     "bridge_leaves": 0,
+     "unresolved_reading_sets": 0
+    },
+    "residual_total": 0
+   }
+  }
+ }
+}

@@ -1,0 +1,147 @@
+{
+ "source": "source-appendix-per-template.md",
+ "source_sha256": "5ce7733c2b651a2ff94313474704f6e38666d75b1c1a0856db8b1e25519b095f",
+ "source_bytes": 1054,
+ "units": [
+  {
+   "id": "a001",
+   "span": [
+    0,
+    74
+   ],
+   "bytes": 74,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Per-template differences of the co-primary contrasts (false approval)\n\n"
+  },
+  {
+   "id": "a002",
+   "span": [
+    74,
+    207
+   ],
+   "bytes": 133,
+   "kind": "table",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "| judge | contrast | per-template differences | SD between templates | SE with 12 templates | 97.5% half-width with 12 (t = 2.593) |\n"
+  },
+  {
+   "id": "a003",
+   "span": [
+    207,
+    233
+   ],
+   "bytes": 26,
+   "kind": "table",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "|---|---|---|---|---|---|\n"
+  },
+  {
+   "id": "a004.p1",
+   "parent": "a004",
+   "span": [
+    233,
+    414
+   ],
+   "bytes": 181,
+   "kind": "table",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "| 14B AWQ | P1 attacker | t01: -0.100, t02: -0.133, t05: +0.094, t06: -0.192, t07: +0.021, t08: +0.086, t09: -0.057, t10: +0.000, t11: +0.061, t12: -0.050, t15: -0.246, t16: -0.029 "
+  },
+  {
+   "id": "a004.p2",
+   "parent": "a004",
+   "span": [
+    414,
+    440
+   ],
+   "bytes": 26,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 0.108 | 0.031 | 0.081 |\n"
+  },
+  {
+   "id": "a005.p1",
+   "parent": "a005",
+   "span": [
+    440,
+    617
+   ],
+   "bytes": 177,
+   "kind": "table",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "| 14B AWQ | P2 none | t01: -0.150, t02: -0.378, t05: -0.264, t06: -0.135, t07: +0.128, t08: +0.029, t09: -0.075, t10: +0.022, t11: +0.020, t12: -0.100, t15: -0.308, t16: -0.058 "
+  },
+  {
+   "id": "a005.p2",
+   "parent": "a005",
+   "span": [
+    617,
+    643
+   ],
+   "bytes": 26,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 0.151 | 0.044 | 0.113 |\n"
+  },
+  {
+   "id": "a006.p1",
+   "parent": "a006",
+   "span": [
+    643,
+    824
+   ],
+   "bytes": 181,
+   "kind": "table",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "| 32B AWQ | P1 attacker | t01: +0.050, t02: +0.022, t05: +0.132, t06: -0.250, t07: +0.000, t08: -0.086, t09: +0.208, t10: +0.087, t11: +0.000, t12: -0.025, t15: +0.000, t16: +0.188 "
+  },
+  {
+   "id": "a006.p2",
+   "parent": "a006",
+   "span": [
+    824,
+    850
+   ],
+   "bytes": 26,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 0.124 | 0.036 | 0.093 |\n"
+  },
+  {
+   "id": "a007.p1",
+   "parent": "a007",
+   "span": [
+    850,
+    1027
+   ],
+   "bytes": 177,
+   "kind": "table",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "| 32B AWQ | P2 none | t01: +0.050, t02: -0.044, t05: -0.057, t06: -0.077, t07: +0.021, t08: +0.057, t09: +0.019, t10: +0.043, t11: +0.082, t12: +0.025, t15: +0.031, t16: -0.116 "
+  },
+  {
+   "id": "a007.p2",
+   "parent": "a007",
+   "span": [
+    1027,
+    1054
+   ],
+   "bytes": 27,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 0.061 | 0.018 | 0.046 |\n\n"
+  }
+ ]
+}

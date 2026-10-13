@@ -1,0 +1,8673 @@
+{
+ "source": "source.txt",
+ "source_sha256": "116aead543dcea4b0123aa099e358e003fba342ae2ba4a4d5e3d3d041a5c7606",
+ "source_bytes": 66858,
+ "units": [
+  {
+   "id": "d001",
+   "span": [
+    0,
+    61
+   ],
+   "bytes": 61,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Highly accurate protein structure prediction with AlphaFold\n\n"
+  },
+  {
+   "id": "d002",
+   "span": [
+    61,
+    180
+   ],
+   "bytes": 119,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "John Jumper et al. (34 authors), Nature 596, 583-589 (2021), doi:10.1038/s41586-021-03819-2, licensed under CC BY 4.0\n\n"
+  },
+  {
+   "id": "d003",
+   "span": [
+    180,
+    192
+   ],
+   "bytes": 12,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "# Abstract\n\n"
+  },
+  {
+   "id": "d004",
+   "span": [
+    192,
+    320
+   ],
+   "bytes": 128,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proteins are essential to life, and understanding their structure can facilitate a mechanistic understanding of their function. "
+  },
+  {
+   "id": "d005",
+   "span": [
+    320,
+    532
+   ],
+   "bytes": 212,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "Through an enormous experimental effort[1]–[4], the structures of around 100,000 unique proteins have been determined[5], but this represents a small fraction of the billions of known protein sequences[6],[7]. "
+  },
+  {
+   "id": "d006",
+   "span": [
+    532,
+    663
+   ],
+   "bytes": 131,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Structural coverage is bottlenecked by the months to years of painstaking effort required to determine a single protein structure. "
+  },
+  {
+   "id": "d007",
+   "span": [
+    663,
+    781
+   ],
+   "bytes": 118,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Accurate computational approaches are needed to address this gap and to enable large-scale structural bioinformatics. "
+  },
+  {
+   "id": "d008",
+   "span": [
+    781,
+    1040
+   ],
+   "bytes": 259,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "events",
+   "text": "Predicting the three-dimensional structure that a protein will adopt based solely on its amino acid sequence—the structure prediction component of the ‘protein folding problem’[8]—has been an important open research problem for more than 50 years[9]. "
+  },
+  {
+   "id": "d009",
+   "span": [
+    1040,
+    1182
+   ],
+   "bytes": 142,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "Despite recent progress[10]–[14], existing methods fall far short of atomic accuracy, especially when no homologous structure is available. "
+  },
+  {
+   "id": "d010",
+   "span": [
+    1182,
+    1350
+   ],
+   "bytes": 168,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "Here we provide the first computational method that can regularly predict protein structures with atomic accuracy even in cases in which no similar structure is known. "
+  },
+  {
+   "id": "d011",
+   "span": [
+    1350,
+    1658
+   ],
+   "bytes": 308,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "We validated an entirely redesigned version of our neural network-based model, AlphaFold, in the challenging 14th Critical Assessment of protein Structure Prediction (CASP14)[15], demonstrating accuracy competitive with experimental structures in a majority of cases and greatly outperforming other methods. "
+  },
+  {
+   "id": "d012",
+   "span": [
+    1658,
+    1904
+   ],
+   "bytes": 246,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Underpinning the latest version of AlphaFold is a novel machine learning approach that incorporates physical and biological knowledge about protein structure, leveraging multi-sequence alignments, into the design of the deep learning algorithm.\n\n"
+  },
+  {
+   "id": "d013",
+   "span": [
+    1904,
+    1913
+   ],
+   "bytes": 9,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Main\n\n"
+  },
+  {
+   "id": "d014",
+   "span": [
+    1913,
+    2153
+   ],
+   "bytes": 240,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The development of computational methods to predict three-dimensional (3D) protein structures from the protein sequence has proceeded along two complementary paths that focus on either the physical interactions or the evolutionary history. "
+  },
+  {
+   "id": "d015",
+   "span": [
+    2153,
+    2367
+   ],
+   "bytes": 214,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The physical interaction programme heavily integrates our understanding of molecular driving forces into either thermodynamic or kinetic simulation of protein physics[16] or statistical approximations thereof[17]. "
+  },
+  {
+   "id": "d016",
+   "span": [
+    2367,
+    2673
+   ],
+   "bytes": 306,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Although theoretically very appealing, this approach has proved highly challenging for even moderate-sized proteins due to the computational intractability of molecular simulation, the context dependence of protein stability and the difficulty of producing sufficiently accurate models of protein physics. "
+  },
+  {
+   "id": "d017",
+   "span": [
+    2673,
+    2963
+   ],
+   "bytes": 290,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The evolutionary programme has provided an alternative in recent years, in which the constraints on protein structure are derived from bioinformatics analysis of the evolutionary history of proteins, homology to solved structures[18],[19] and pairwise evolutionary correlations[20]–[24]. "
+  },
+  {
+   "id": "d018",
+   "span": [
+    2963,
+    3240
+   ],
+   "bytes": 277,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "This bioinformatics approach has benefited greatly from the steady growth of experimental protein structures deposited in the Protein Data Bank (PDB)[5], the explosion of genomic sequencing and the rapid development of deep learning techniques to interpret these correlations. "
+  },
+  {
+   "id": "d019",
+   "span": [
+    3240,
+    3549
+   ],
+   "bytes": 309,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "Despite these advances, contemporary physical and evolutionary-history-based approaches produce predictions that are far short of experimental accuracy in the majority of cases in which a close homologue has not been solved experimentally and this has limited their utility for many biological applications.\n\n"
+  },
+  {
+   "id": "d020",
+   "span": [
+    3549,
+    3722
+   ],
+   "bytes": 173,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "In this study, we develop the first, to our knowledge, computational approach capable of predicting protein structures to near experimental accuracy in a majority of cases. "
+  },
+  {
+   "id": "d021",
+   "span": [
+    3722,
+    3943
+   ],
+   "bytes": 221,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "events",
+   "text": "The neural network AlphaFold that we developed was entered into the CASP14 assessment (May–July 2020; entered under the team name ‘AlphaFold2’ and a completely different model from our CASP13 AlphaFold system[10]). "
+  },
+  {
+   "id": "d022",
+   "span": [
+    3943,
+    4246
+   ],
+   "bytes": 303,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The CASP assessment is carried out biennially using recently solved structures that have not been deposited in the PDB or publicly disclosed so that it is a blind test for the participating methods, and has long served as the gold-standard assessment for the accuracy of structure prediction[25],[26].\n\n"
+  },
+  {
+   "id": "d023",
+   "span": [
+    4246,
+    4328
+   ],
+   "bytes": 82,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "In CASP14, AlphaFold structures were vastly more accurate than competing methods. "
+  },
+  {
+   "id": "d024",
+   "span": [
+    4328,
+    4746
+   ],
+   "bytes": 418,
+   "kind": "comparison",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "AlphaFold structures had a median backbone accuracy of 0.96 Å r.m.s.d.95 (Cα root-mean-square deviation at 95% residue coverage) (95% confidence interval = 0.85–1.16 Å) whereas the next best performing method had a median backbone accuracy of 2.8 Å r.m.s.d.95 (95% confidence interval = 2.7–4.0 Å) (measured on CASP domains; see Fig. 1a for backbone accuracy and Supplementary Fig. 14 for all-atom accuracy). "
+  },
+  {
+   "id": "d025",
+   "span": [
+    4746,
+    4839
+   ],
+   "bytes": 93,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "As a comparison point for this accuracy, the width of a carbon atom is approximately 1.4 Å. "
+  },
+  {
+   "id": "d026",
+   "span": [
+    4839,
+    5097
+   ],
+   "bytes": 258,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "In addition to very accurate domain structures (Fig. 1b), AlphaFold is able to produce highly accurate side chains (Fig. 1c) when the backbone is highly accurate and considerably improves over template-based methods even when strong templates are available. "
+  },
+  {
+   "id": "d027",
+   "span": [
+    5097,
+    5304
+   ],
+   "bytes": 207,
+   "kind": "comparison",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "The all-atom accuracy of AlphaFold was 1.5 Å r.m.s.d.95 (95% confidence interval = 1.2–1.6 Å) compared with the 3.5 Å r.m.s.d.95 (95% confidence interval = 3.1–4.2 Å) of the best alternative method. "
+  },
+  {
+   "id": "d028",
+   "span": [
+    5304,
+    5483
+   ],
+   "bytes": 179,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "Our methods are scalable to very long proteins with accurate domains and domain-packing (see Fig. 1d for the prediction of a 2,180-residue protein with no structural homologues). "
+  },
+  {
+   "id": "d029",
+   "span": [
+    5483,
+    5631
+   ],
+   "bytes": 148,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "Finally, the model is able to provide precise, per-residue estimates of its reliability that should enable the confident use of these predictions.\n\n"
+  },
+  {
+   "id": "d030",
+   "span": [
+    5631,
+    5887
+   ],
+   "bytes": 256,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Fig. 1 AlphaFold produces highly accurate structures. a, The performance of AlphaFold on the CASP14 dataset (n = 87 protein domains) relative to the top-15 entries (out of 146 entries), group numbers correspond to the numbers assigned to entrants by CASP. "
+  },
+  {
+   "id": "d031",
+   "span": [
+    5887,
+    6106
+   ],
+   "bytes": 219,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Data are median and the 95% confidence interval of the median, estimated from 10,000 bootstrap samples. b, Our prediction of CASP14 target T1049 (PDB 6Y4F, blue) compared with the true (experimental) structure (green). "
+  },
+  {
+   "id": "d032",
+   "span": [
+    6106,
+    6242
+   ],
+   "bytes": 136,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Four residues in the C terminus of the crystal structure are B-factor outliers and are not depicted. c, CASP14 target T1056 (PDB 6YJ1). "
+  },
+  {
+   "id": "d033",
+   "span": [
+    6242,
+    6590
+   ],
+   "bytes": 348,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "An example of a well-predicted zinc-binding site (AlphaFold has accurate side chains even though it does not explicitly predict the zinc ion). d, CASP target T1044 (PDB 6VR4)—a 2,180-residue single chain—was predicted with correct domain packing (the prediction was made after CASP using AlphaFold without intervention). e, Model architecture. "
+  },
+  {
+   "id": "d034",
+   "span": [
+    6590,
+    6677
+   ],
+   "bytes": 87,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Arrows show the information flow among the various components described in this paper. "
+  },
+  {
+   "id": "d035",
+   "span": [
+    6677,
+    6839
+   ],
+   "bytes": 162,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Array shapes are shown in parentheses with s, number of sequences (Nseq in the main text); r, number of residues (Nres in the main text); c, number of channels.\n\n"
+  },
+  {
+   "id": "d036",
+   "span": [
+    6839,
+    7192
+   ],
+   "bytes": 353,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "We demonstrate in Fig. 2a that the high accuracy that AlphaFold demonstrated in CASP14 extends to a large sample of recently released PDB structures; in this dataset, all structures were deposited in the PDB after our training data cut-off and are analysed as full chains (see Methods, Supplementary Fig. 15 and Supplementary Table 6 for more details). "
+  },
+  {
+   "id": "d037",
+   "span": [
+    7192,
+    7507
+   ],
+   "bytes": 315,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "Furthermore, we observe high side-chain accuracy when the backbone prediction is accurate (Fig. 2b) and we show that our confidence measure, the predicted local-distance difference test (pLDDT), reliably predicts the Cα local-distance difference test (lDDT-Cα) accuracy of the corresponding prediction (Fig. 2c). "
+  },
+  {
+   "id": "d038",
+   "span": [
+    7507,
+    7636
+   ],
+   "bytes": 129,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "We also find that the global superposition metric template modelling score (TM-score)[27] can be accurately estimated (Fig. 2d). "
+  },
+  {
+   "id": "d039",
+   "span": [
+    7636,
+    7953
+   ],
+   "bytes": 317,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "Overall, these analyses validate that the high accuracy and reliability of AlphaFold on CASP14 proteins also transfers to an uncurated collection of recent PDB submissions, as would be expected (see Supplementary Methods 1.15 and Supplementary Fig. 11 for confirmation that this high accuracy extends to new folds).\n\n"
+  },
+  {
+   "id": "d040",
+   "span": [
+    7953,
+    8008
+   ],
+   "bytes": 55,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Fig. 2 Accuracy of AlphaFold on recent PDB structures. "
+  },
+  {
+   "id": "d041",
+   "span": [
+    8008,
+    8082
+   ],
+   "bytes": 74,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The analysed structures are newer than any structure in the training set. "
+  },
+  {
+   "id": "d042",
+   "span": [
+    8082,
+    8229
+   ],
+   "bytes": 147,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Further filtering is applied to reduce redundancy (see Methods). a, Histogram of backbone r.m.s.d. for full chains (Cα r.m.s.d. at 95% coverage). "
+  },
+  {
+   "id": "d043",
+   "span": [
+    8229,
+    8280
+   ],
+   "bytes": 51,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Error bars are 95% confidence intervals (Poisson). "
+  },
+  {
+   "id": "d044",
+   "span": [
+    8280,
+    8475
+   ],
+   "bytes": 195,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "This dataset excludes proteins with a template (identified by hmmsearch) from the training set with more than 40% sequence identity covering more than 1% of the chain (n = 3,144 protein chains). "
+  },
+  {
+   "id": "d045",
+   "span": [
+    8475,
+    8549
+   ],
+   "bytes": 74,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The overall median is 1.46 Å (95% confidence interval = 1.40–1.56 Å). "
+  },
+  {
+   "id": "d046",
+   "span": [
+    8549,
+    8788
+   ],
+   "bytes": 239,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Note that this measure will be highly sensitive to domain packing and domain accuracy; a high r.m.s.d. is expected for some chains with uncertain packing or packing errors. b, Correlation between backbone accuracy and side-chain accuracy. "
+  },
+  {
+   "id": "d047",
+   "span": [
+    8788,
+    8958
+   ],
+   "bytes": 170,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Filtered to structures with any observed side chains and resolution better than 2.5 Å (n = 5,317 protein chains); side chains were further filtered to B-factor <30 Å2. "
+  },
+  {
+   "id": "d048",
+   "span": [
+    8958,
+    9040
+   ],
+   "bytes": 82,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A rotamer is classified as correct if the predicted torsion angle is within 40°. "
+  },
+  {
+   "id": "d049",
+   "span": [
+    9040,
+    9151
+   ],
+   "bytes": 111,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Each point aggregates a range of lDDT-Cα, with a bin size of 2 units above 70 lDDT-Cα and 5 units otherwise. "
+  },
+  {
+   "id": "d050",
+   "span": [
+    9151,
+    9345
+   ],
+   "bytes": 194,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Points correspond to the mean accuracy; error bars are 95% confidence intervals (Student t-test) of the mean on a per-residue basis. c, Confidence score compared to the true accuracy on chains. "
+  },
+  {
+   "id": "d051",
+   "span": [
+    9345,
+    9456
+   ],
+   "bytes": 111,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Least-squares linear fit lDDT-Cα = 0.997 × pLDDT − 1.17 (Pearson’s r = 0.76). n = 10,795 protein chains. "
+  },
+  {
+   "id": "d052",
+   "span": [
+    9456,
+    9570
+   ],
+   "bytes": 114,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The shaded region of the linear fit represents a 95% confidence interval estimated from 10,000 bootstrap samples. "
+  },
+  {
+   "id": "d053",
+   "span": [
+    9570,
+    9741
+   ],
+   "bytes": 171,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In the companion paper[39], additional quantification of the reliability of pLDDT as a confidence measure is provided. d, Correlation between pTM and full chain TM-score. "
+  },
+  {
+   "id": "d054",
+   "span": [
+    9741,
+    9847
+   ],
+   "bytes": 106,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Least-squares linear fit TM-score = 0.98 × pTM + 0.07 (Pearson’s r = 0.85). n = 10,795 protein chains. "
+  },
+  {
+   "id": "d055",
+   "span": [
+    9847,
+    9962
+   ],
+   "bytes": 115,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The shaded region of the linear fit represents a 95% confidence interval estimated from 10,000 bootstrap samples.\n\n"
+  },
+  {
+   "id": "d056",
+   "span": [
+    9962,
+    9988
+   ],
+   "bytes": 26,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## The AlphaFold network\n\n"
+  },
+  {
+   "id": "d057",
+   "span": [
+    9988,
+    10213
+   ],
+   "bytes": 225,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "AlphaFold greatly improves the accuracy of structure prediction by incorporating novel neural network architectures and training procedures based on the evolutionary, physical and geometric constraints of protein structures. "
+  },
+  {
+   "id": "d058",
+   "span": [
+    10213,
+    10710
+   ],
+   "bytes": 497,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In particular, we demonstrate a new architecture to jointly embed multiple sequence alignments (MSAs) and pairwise features, a new output representation and associated loss that enable accurate end-to-end structure prediction, a new equivariant attention architecture, use of intermediate losses to achieve iterative refinement of predictions, masked MSA loss to jointly train with the structure, learning from unlabelled protein sequences using self-distillation and self-estimates of accuracy.\n\n"
+  },
+  {
+   "id": "d059",
+   "span": [
+    10710,
+    10997
+   ],
+   "bytes": 287,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The AlphaFold network directly predicts the 3D coordinates of all heavy atoms for a given protein using the primary amino acid sequence and aligned sequences of homologues as inputs (Fig. 1e; see Methods for details of inputs including databases, MSA construction and use of templates). "
+  },
+  {
+   "id": "d060",
+   "span": [
+    10997,
+    11073
+   ],
+   "bytes": 76,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A description of the most important ideas and components is provided below. "
+  },
+  {
+   "id": "d061",
+   "span": [
+    11073,
+    11170
+   ],
+   "bytes": 97,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The full network architecture and training procedure are provided in the Supplementary Methods.\n\n"
+  },
+  {
+   "id": "d062",
+   "span": [
+    11170,
+    11209
+   ],
+   "bytes": 39,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The network comprises two main stages. "
+  },
+  {
+   "id": "d063",
+   "span": [
+    11209,
+    11517
+   ],
+   "bytes": 308,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "First, the trunk of the network processes the inputs through repeated layers of a novel neural network block that we term Evoformer to produce an Nseq × Nres array (Nseq, number of sequences; Nres, number of residues) that represents a processed MSA and an Nres × Nres array that represents residue pairs. "
+  },
+  {
+   "id": "d064",
+   "span": [
+    11517,
+    11655
+   ],
+   "bytes": 138,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The MSA representation is initialized with the raw MSA (although see Supplementary Methods 1.2.7 for details of handling very deep MSAs). "
+  },
+  {
+   "id": "d065",
+   "span": [
+    11655,
+    11748
+   ],
+   "bytes": 93,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The Evoformer blocks contain a number of attention-based and non-attention-based components. "
+  },
+  {
+   "id": "d066",
+   "span": [
+    11748,
+    11914
+   ],
+   "bytes": 166,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "We show evidence in ‘Interpreting the neural network’ that a concrete structural hypothesis arises early within the Evoformer blocks and is continuously refined. "
+  },
+  {
+   "id": "d067",
+   "span": [
+    11914,
+    12120
+   ],
+   "bytes": 206,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The key innovations in the Evoformer block are new mechanisms to exchange information within the MSA and pair representations that enable direct reasoning about the spatial and evolutionary relationships.\n\n"
+  },
+  {
+   "id": "d068",
+   "span": [
+    12120,
+    12324
+   ],
+   "bytes": 204,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The trunk of the network is followed by the structure module that introduces an explicit 3D structure in the form of a rotation and translation for each residue of the protein (global rigid body frames). "
+  },
+  {
+   "id": "d069",
+   "span": [
+    12324,
+    12553
+   ],
+   "bytes": 229,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "These representations are initialized in a trivial state with all rotations set to the identity and all positions set to the origin, but rapidly develop and refine a highly accurate protein structure with precise atomic details. "
+  },
+  {
+   "id": "d070",
+   "span": [
+    12553,
+    12919
+   ],
+   "bytes": 366,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Key innovations in this section of the network include breaking the chain structure to allow simultaneous local refinement of all parts of the structure, a novel equivariant transformer to allow the network to implicitly reason about the unrepresented side-chain atoms and a loss term that places substantial weight on the orientational correctness of the residues. "
+  },
+  {
+   "id": "d071",
+   "span": [
+    12919,
+    13147
+   ],
+   "bytes": 228,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Both within the structure module and throughout the whole network, we reinforce the notion of iterative refinement by repeatedly applying the final loss to outputs and then feeding the outputs recursively into the same modules. "
+  },
+  {
+   "id": "d072",
+   "span": [
+    13147,
+    13395
+   ],
+   "bytes": 248,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "The iterative refinement using the whole network (which we term ‘recycling’ and is related to approaches in computer vision[28],[29]) contributes markedly to accuracy with minor extra training time (see Supplementary Methods 1.8 for details).\n\n"
+  },
+  {
+   "id": "d073",
+   "span": [
+    13395,
+    13409
+   ],
+   "bytes": 14,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Evoformer\n\n"
+  },
+  {
+   "id": "d074",
+   "span": [
+    13409,
+    13658
+   ],
+   "bytes": 249,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The key principle of the building block of the network—named Evoformer (Figs. 1e, 3a)—is to view the prediction of protein structures as a graph inference problem in 3D space in which the edges of the graph are defined by residues in proximity. "
+  },
+  {
+   "id": "d075",
+   "span": [
+    13658,
+    13768
+   ],
+   "bytes": 110,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The elements of the pair representation encode information about the relation between the residues (Fig. 3b). "
+  },
+  {
+   "id": "d076",
+   "span": [
+    13768,
+    13930
+   ],
+   "bytes": 162,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The columns of the MSA representation encode the individual residues of the input sequence while the rows represent the sequences in which those residues appear. "
+  },
+  {
+   "id": "d077",
+   "span": [
+    13930,
+    14089
+   ],
+   "bytes": 159,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Within this framework, we define a number of update operations that are applied in each block in which the different update operations are applied in series.\n\n"
+  },
+  {
+   "id": "d078",
+   "span": [
+    14089,
+    14139
+   ],
+   "bytes": 50,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Fig. 3 Architectural details. a, Evoformer block. "
+  },
+  {
+   "id": "d079",
+   "span": [
+    14139,
+    14173
+   ],
+   "bytes": 34,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Arrows show the information flow. "
+  },
+  {
+   "id": "d080",
+   "span": [
+    14173,
+    14354
+   ],
+   "bytes": 181,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The shape of the arrays is shown in parentheses. b, The pair representation interpreted as directed edges in a graph. c, Triangle multiplicative update and triangle self-attention. "
+  },
+  {
+   "id": "d081",
+   "span": [
+    14354,
+    14386
+   ],
+   "bytes": 32,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The circles represent residues. "
+  },
+  {
+   "id": "d082",
+   "span": [
+    14386,
+    14576
+   ],
+   "bytes": 190,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Entries in the pair representation are illustrated as directed edges and in each diagram, the edge being updated is ij. d, Structure module including Invariant point attention (IPA) module. "
+  },
+  {
+   "id": "d083",
+   "span": [
+    14576,
+    14822
+   ],
+   "bytes": 246,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The single representation is a copy of the first row of the MSA representation. e, Residue gas: a representation of each residue as one free-floating rigid body for the backbone (blue triangles) and χ angles for the side chains (green circles). "
+  },
+  {
+   "id": "d084",
+   "span": [
+    14822,
+    14910
+   ],
+   "bytes": 88,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The corresponding atomic structure is shown below. f, Frame aligned point error (FAPE). "
+  },
+  {
+   "id": "d085",
+   "span": [
+    14910,
+    14999
+   ],
+   "bytes": 89,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Green, predicted structure; grey, true structure; (Rk, tk), frames; xi, atom positions.\n\n"
+  },
+  {
+   "id": "d086",
+   "span": [
+    14999,
+    15140
+   ],
+   "bytes": 141,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The MSA representation updates the pair representation through an element-wise outer product that is summed over the MSA sequence dimension. "
+  },
+  {
+   "id": "d087",
+   "span": [
+    15140,
+    15361
+   ],
+   "bytes": 221,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In contrast to previous work[30], this operation is applied within every block rather than once in the network, which enables the continuous communication from the evolving MSA representation to the pair representation.\n\n"
+  },
+  {
+   "id": "d088",
+   "span": [
+    15361,
+    15434
+   ],
+   "bytes": 73,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Within the pair representation, there are two different update patterns. "
+  },
+  {
+   "id": "d089",
+   "span": [
+    15434,
+    15684
+   ],
+   "bytes": 250,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Both are inspired by the necessity of consistency of the pair representation—for a pairwise description of amino acids to be representable as a single 3D structure, many constraints must be satisfied including the triangle inequality on distances. "
+  },
+  {
+   "id": "d090",
+   "span": [
+    15684,
+    15850
+   ],
+   "bytes": 166,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "On the basis of this intuition, we arrange the update operations on the pair representation in terms of triangles of edges involving three different nodes (Fig. 3c). "
+  },
+  {
+   "id": "d091",
+   "span": [
+    15850,
+    16149
+   ],
+   "bytes": 299,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In particular, we add an extra logit bias to axial attention[31] to include the ‘missing edge’ of the triangle and we define a non-attention update operation ‘triangle multiplicative update’ that uses two edges to update the missing third edge (see Supplementary Methods 1.6.5 for details). "
+  },
+  {
+   "id": "d092",
+   "span": [
+    16149,
+    16389
+   ],
+   "bytes": 240,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "The triangle multiplicative update was developed originally as a more symmetric and cheaper replacement for the attention, and networks that use only the attention or multiplicative update are both able to produce high-accuracy structures. "
+  },
+  {
+   "id": "d093",
+   "span": [
+    16389,
+    16452
+   ],
+   "bytes": 63,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "However, the combination of the two updates is more accurate.\n\n"
+  },
+  {
+   "id": "d094",
+   "span": [
+    16452,
+    16524
+   ],
+   "bytes": 72,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "We also use a variant of axial attention within the MSA representation. "
+  },
+  {
+   "id": "d095",
+   "span": [
+    16524,
+    16646
+   ],
+   "bytes": 122,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "During the per-sequence attention in the MSA, we project additional logits from the pair stack to bias the MSA attention. "
+  },
+  {
+   "id": "d096",
+   "span": [
+    16646,
+    16943
+   ],
+   "bytes": 297,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "This closes the loop by providing information flow from the pair representation back into the MSA representation, ensuring that the overall Evoformer block is able to fully mix information between the pair and MSA representations and prepare for structure generation within the structure module.\n\n"
+  },
+  {
+   "id": "d097",
+   "span": [
+    16943,
+    16979
+   ],
+   "bytes": 36,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## End-to-end structure prediction\n\n"
+  },
+  {
+   "id": "d098",
+   "span": [
+    16979,
+    17181
+   ],
+   "bytes": 202,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The structure module (Fig. 3d) operates on a concrete 3D backbone structure using the pair representation and the original sequence row (single representation) of the MSA representation from the trunk. "
+  },
+  {
+   "id": "d099",
+   "span": [
+    17181,
+    17333
+   ],
+   "bytes": 152,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The 3D backbone structure is represented as Nres independent rotations and translations, each with respect to the global frame (residue gas) (Fig. 3e). "
+  },
+  {
+   "id": "d100",
+   "span": [
+    17333,
+    17564
+   ],
+   "bytes": 231,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "These rotations and translations—representing the geometry of the N-Cα-C atoms—prioritize the orientation of the protein backbone so that the location of the side chain of each residue is highly constrained within that frame. "
+  },
+  {
+   "id": "d101",
+   "span": [
+    17564,
+    17878
+   ],
+   "bytes": 314,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "Conversely, the peptide bond geometry is completely unconstrained and the network is observed to frequently violate the chain constraint during the application of the structure module as breaking this constraint enables the local refinement of all parts of the chain without solving complex loop closure problems. "
+  },
+  {
+   "id": "d102",
+   "span": [
+    17878,
+    17979
+   ],
+   "bytes": 101,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Satisfaction of the peptide bond geometry is encouraged during fine-tuning by a violation loss term. "
+  },
+  {
+   "id": "d103",
+   "span": [
+    17979,
+    18140
+   ],
+   "bytes": 161,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Exact enforcement of peptide bond geometry is only achieved in the post-prediction relaxation of the structure by gradient descent in the Amber[32] force field. "
+  },
+  {
+   "id": "d104",
+   "span": [
+    18140,
+    18369
+   ],
+   "bytes": 229,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "Empirically, this final relaxation does not improve the accuracy of the model as measured by the global distance test (GDT)[33] or lDDT-Cα[34] but does remove distracting stereochemical violations without the loss of accuracy.\n\n"
+  },
+  {
+   "id": "d105",
+   "span": [
+    18369,
+    18448
+   ],
+   "bytes": 79,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The residue gas representation is updated iteratively in two stages (Fig. 3d). "
+  },
+  {
+   "id": "d106",
+   "span": [
+    18448,
+    18754
+   ],
+   "bytes": 306,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "First, a geometry-aware attention operation that we term ‘invariant point attention’ (IPA) is used to update an Nres set of neural activations (single representation) without changing the 3D positions, then an equivariant update operation is performed on the residue gas using the updated activations. "
+  },
+  {
+   "id": "d107",
+   "span": [
+    18754,
+    19005
+   ],
+   "bytes": 251,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The IPA augments each of the usual attention queries, keys and values with 3D points that are produced in the local frame of each residue such that the final value is invariant to global rotations and translations (see Methods ‘IPA’ for details). "
+  },
+  {
+   "id": "d108",
+   "span": [
+    19005,
+    19165
+   ],
+   "bytes": 160,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The 3D queries and keys also impose a strong spatial/locality bias on the attention, which is well-suited to the iterative refinement of the protein structure. "
+  },
+  {
+   "id": "d109",
+   "span": [
+    19165,
+    19317
+   ],
+   "bytes": 152,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "After each attention operation and element-wise transition block, the module computes an update to the rotation and translation of each backbone frame. "
+  },
+  {
+   "id": "d110",
+   "span": [
+    19317,
+    19480
+   ],
+   "bytes": 163,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The application of these updates within the local frame of each residue makes the overall attention and update block an equivariant operation on the residue gas.\n\n"
+  },
+  {
+   "id": "d111",
+   "span": [
+    19480,
+    19681
+   ],
+   "bytes": 201,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Predictions of side-chain χ angles as well as the final, per-residue accuracy of the structure (pLDDT) are computed with small per-residue networks on the final activations at the end of the network. "
+  },
+  {
+   "id": "d112",
+   "span": [
+    19681,
+    19837
+   ],
+   "bytes": 156,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The estimate of the TM-score (pTM) is obtained from a pairwise error prediction that is computed as a linear projection from the final pair representation. "
+  },
+  {
+   "id": "d113",
+   "span": [
+    19837,
+    20008
+   ],
+   "bytes": 171,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The final loss (which we term the frame-aligned point error (FAPE) (Fig. 3f)) compares the predicted atom positions to the true positions under many different alignments. "
+  },
+  {
+   "id": "d114",
+   "span": [
+    20008,
+    20199
+   ],
+   "bytes": 191,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For each alignment, defined by aligning the predicted frame (Rk, tk) to the corresponding true frame, we compute the distance of all predicted atom positions xi from the true atom positions. "
+  },
+  {
+   "id": "d115",
+   "span": [
+    20199,
+    20279
+   ],
+   "bytes": 80,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The resulting Nframes × Natoms distances are penalized with a clamped L1 loss. "
+  },
+  {
+   "id": "d116",
+   "span": [
+    20279,
+    20558
+   ],
+   "bytes": 279,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "This creates a strong bias for atoms to be correct relative to the local frame of each residue and hence correct with respect to its side-chain interactions, as well as providing the main source of chirality for AlphaFold (Supplementary Methods 1.9.3 and Supplementary Fig. 9).\n\n"
+  },
+  {
+   "id": "d117",
+   "span": [
+    20558,
+    20605
+   ],
+   "bytes": 47,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Training with labelled and unlabelled data\n\n"
+  },
+  {
+   "id": "d118",
+   "span": [
+    20605,
+    20822
+   ],
+   "bytes": 217,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "The AlphaFold architecture is able to train to high accuracy using only supervised learning on PDB data, but we are able to enhance accuracy (Fig. 4a) using an approach similar to noisy student self-distillation[35]. "
+  },
+  {
+   "id": "d119",
+   "span": [
+    20822,
+    21032
+   ],
+   "bytes": 210,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "In this procedure, we use a trained network to predict the structure of around 350,000 diverse sequences from Uniclust30[36] and make a new dataset of predicted structures filtered to a high-confidence subset. "
+  },
+  {
+   "id": "d120",
+   "span": [
+    21032,
+    21357
+   ],
+   "bytes": 325,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "We then train the same architecture again from scratch using a mixture of PDB data and this new dataset of predicted structures as the training data, in which the various training data augmentations such as cropping and MSA subsampling make it challenging for the network to recapitulate the previously predicted structures. "
+  },
+  {
+   "id": "d121",
+   "span": [
+    21357,
+    21508
+   ],
+   "bytes": 151,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "This self-distillation procedure makes effective use of the unlabelled sequence data and considerably improves the accuracy of the resulting network.\n\n"
+  },
+  {
+   "id": "d122",
+   "span": [
+    21508,
+    21747
+   ],
+   "bytes": 239,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Fig. 4 Interpreting the neural network. a, Ablation results on two target sets: the CASP14 set of domains (n = 87 protein domains) and the PDB test set of chains with template coverage of ≤30% at 30% identity (n = 2,261 protein chains). "
+  },
+  {
+   "id": "d123",
+   "span": [
+    21747,
+    21812
+   ],
+   "bytes": 65,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Domains are scored with GDT and chains are scored with lDDT-Cα. "
+  },
+  {
+   "id": "d124",
+   "span": [
+    21812,
+    21910
+   ],
+   "bytes": 98,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The ablations are reported as a difference compared with the average of the three baseline seeds. "
+  },
+  {
+   "id": "d125",
+   "span": [
+    21910,
+    22243
+   ],
+   "bytes": 333,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Means (points) and 95% bootstrap percentile intervals (error bars) are computed using bootstrap estimates of 10,000 samples. b, Domain GDT trajectory over 4 recycling iterations and 48 Evoformer blocks on CASP14 targets LmrP (T1024) and Orf8 (T1064) where D1 and D2 refer to the individual domains as defined by the CASP assessment. "
+  },
+  {
+   "id": "d126",
+   "span": [
+    22243,
+    22447
+   ],
+   "bytes": 204,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Both T1024 domains obtain the correct structure early in the network, whereas the structure of T1064 changes multiple times and requires nearly the full depth of the network to reach the final structure. "
+  },
+  {
+   "id": "d127",
+   "span": [
+    22447,
+    22508
+   ],
+   "bytes": 61,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Note, 48 Evoformer blocks comprise one recycling iteration.\n\n"
+  },
+  {
+   "id": "d128",
+   "span": [
+    22508,
+    22735
+   ],
+   "bytes": 227,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Additionally, we randomly mask out or mutate individual residues within the MSA and have a Bidirectional Encoder Representations from Transformers (BERT)-style[37] objective to predict the masked elements of the MSA sequences. "
+  },
+  {
+   "id": "d129",
+   "span": [
+    22735,
+    22911
+   ],
+   "bytes": 176,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "This objective encourages the network to learn to interpret phylogenetic and covariation relationships without hardcoding a particular correlation statistic into the features. "
+  },
+  {
+   "id": "d130",
+   "span": [
+    22911,
+    23083
+   ],
+   "bytes": 172,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The BERT objective is trained jointly with the normal PDB structure loss on the same training examples and is not pre-trained, in contrast to recent independent work[38].\n\n"
+  },
+  {
+   "id": "d131",
+   "span": [
+    23083,
+    23119
+   ],
+   "bytes": 36,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Interpreting the neural network\n\n"
+  },
+  {
+   "id": "d132",
+   "span": [
+    23119,
+    23351
+   ],
+   "bytes": 232,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "To understand how AlphaFold predicts protein structure, we trained a separate structure module for each of the 48 Evoformer blocks in the network while keeping all parameters of the main network frozen (Supplementary Methods 1.14). "
+  },
+  {
+   "id": "d133",
+   "span": [
+    23351,
+    23582
+   ],
+   "bytes": 231,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Including our recycling stages, this provides a trajectory of 192 intermediate structures—one per full Evoformer block—in which each intermediate represents the belief of the network of the most likely structure at that block. "
+  },
+  {
+   "id": "d134",
+   "span": [
+    23582,
+    23816
+   ],
+   "bytes": 234,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "The resulting trajectories are surprisingly smooth after the first few blocks, showing that AlphaFold makes constant incremental improvements to the structure until it can no longer improve (see Fig. 4b for a trajectory of accuracy). "
+  },
+  {
+   "id": "d135",
+   "span": [
+    23816,
+    23878
+   ],
+   "bytes": 62,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "These trajectories also illustrate the role of network depth. "
+  },
+  {
+   "id": "d136",
+   "span": [
+    23878,
+    24062
+   ],
+   "bytes": 184,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "For very challenging proteins such as ORF8 of SARS-CoV-2 (T1064), the network searches and rearranges secondary structure elements for many layers before settling on a good structure. "
+  },
+  {
+   "id": "d137",
+   "span": [
+    24062,
+    24170
+   ],
+   "bytes": 108,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "For other proteins such as LmrP (T1024), the network finds the final structure within the first few layers. "
+  },
+  {
+   "id": "d138",
+   "span": [
+    24170,
+    24380
+   ],
+   "bytes": 210,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Structure trajectories of CASP14 targets T1024, T1044, T1064 and T1091 that demonstrate a clear iterative building process for a range of protein sizes and difficulties are shown in Supplementary Videos 1–4. "
+  },
+  {
+   "id": "d139",
+   "span": [
+    24380,
+    24505
+   ],
+   "bytes": 125,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In Supplementary Methods 1.16 and Supplementary Figs. 12, 13, we interpret the attention maps produced by AlphaFold layers.\n\n"
+  },
+  {
+   "id": "d140",
+   "span": [
+    24505,
+    24664
+   ],
+   "bytes": 159,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "Figure 4a contains detailed ablations of the components of AlphaFold that demonstrate that a variety of different mechanisms contribute to AlphaFold accuracy. "
+  },
+  {
+   "id": "d141",
+   "span": [
+    24664,
+    24890
+   ],
+   "bytes": 226,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Detailed descriptions of each ablation model, their training details, extended discussion of ablation results and the effect of MSA depth on each ablation are provided in Supplementary Methods 1.13 and Supplementary Fig. 10.\n\n"
+  },
+  {
+   "id": "d142",
+   "span": [
+    24890,
+    24929
+   ],
+   "bytes": 39,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## MSA depth and cross-chain contacts\n\n"
+  },
+  {
+   "id": "d143",
+   "span": [
+    24929,
+    25121
+   ],
+   "bytes": 192,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Although AlphaFold has a high accuracy across the vast majority of deposited PDB structures, we note that there are still factors that affect accuracy or limit the applicability of the model. "
+  },
+  {
+   "id": "d144",
+   "span": [
+    25121,
+    25274
+   ],
+   "bytes": 153,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "The model uses MSAs and the accuracy decreases substantially when the median alignment depth is less than around 30 sequences (see Fig. 5a for details). "
+  },
+  {
+   "id": "d145",
+   "span": [
+    25274,
+    25383
+   ],
+   "bytes": 109,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "We observe a threshold effect where improvements in MSA depth over around 100 sequences lead to small gains. "
+  },
+  {
+   "id": "d146",
+   "span": [
+    25383,
+    25623
+   ],
+   "bytes": 240,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "We hypothesize that the MSA information is needed to coarsely find the correct structure within the early stages of the network, but refinement of that prediction into a high-accuracy model does not depend crucially on the MSA information. "
+  },
+  {
+   "id": "d147",
+   "span": [
+    25623,
+    25876
+   ],
+   "bytes": 253,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "The other substantial limitation that we have observed is that AlphaFold is much weaker for proteins that have few intra-chain or homotypic contacts compared to the number of heterotypic contacts (further details are provided in a companion paper[39]). "
+  },
+  {
+   "id": "d148",
+   "span": [
+    25876,
+    26054
+   ],
+   "bytes": 178,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "This typically occurs for bridging domains within larger complexes in which the shape of the protein is created almost entirely by interactions with other chains in the complex. "
+  },
+  {
+   "id": "d149",
+   "span": [
+    26054,
+    26200
+   ],
+   "bytes": 146,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "Conversely, AlphaFold is often able to give high-accuracy predictions for homomers, even when the chains are substantially intertwined (Fig. 5b). "
+  },
+  {
+   "id": "d150",
+   "span": [
+    26200,
+    26423
+   ],
+   "bytes": 223,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "We expect that the ideas of AlphaFold are readily applicable to predicting full hetero-complexes in a future system and that this will remove the difficulty with protein chains that have a large number of hetero-contacts.\n\n"
+  },
+  {
+   "id": "d151",
+   "span": [
+    26423,
+    26695
+   ],
+   "bytes": 272,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Fig. 5 Effect of MSA depth and cross-chain contacts. a, Backbone accuracy (lDDT-Cα) for the redundancy-reduced set of the PDB after our training data cut-off, restricting to proteins in which at most 25% of the long-range contacts are between different heteromer chains. "
+  },
+  {
+   "id": "d152",
+   "span": [
+    26695,
+    26922
+   ],
+   "bytes": 227,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "We further consider two groups of proteins based on template coverage at 30% sequence identity: covering more than 60% of the chain (n = 6,743 protein chains) and covering less than 30% of the chain (n = 1,596 protein chains). "
+  },
+  {
+   "id": "d153",
+   "span": [
+    26922,
+    27114
+   ],
+   "bytes": 192,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "MSA depth is computed by counting the number of non-gap residues for each position in the MSA (using the Neff weighting scheme; see Methods for details) and taking the median across residues. "
+  },
+  {
+   "id": "d154",
+   "span": [
+    27114,
+    27479
+   ],
+   "bytes": 365,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The curves are obtained through Gaussian kernel average smoothing (window size is 0.2 units in log10(Neff)); the shaded area is the 95% confidence interval estimated using bootstrap of 10,000 samples. b, An intertwined homotrimer (PDB 6SK0) is correctly predicted without input stoichiometry and only a weak template (blue is predicted and green is experimental).\n\n"
+  },
+  {
+   "id": "d155",
+   "span": [
+    27479,
+    27496
+   ],
+   "bytes": 17,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Related work\n\n"
+  },
+  {
+   "id": "d156",
+   "span": [
+    27496,
+    27641
+   ],
+   "bytes": 145,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The prediction of protein structures has had a long and varied development, which is extensively covered in a number of reviews[14],[40]–[43]. "
+  },
+  {
+   "id": "d157",
+   "span": [
+    27641,
+    27814
+   ],
+   "bytes": 173,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "attribution",
+   "text": "Despite the long history of applying neural networks to structure prediction[14],[42],[43], they have only recently come to improve structure prediction[10],[11],[44],[45]. "
+  },
+  {
+   "id": "d158",
+   "span": [
+    27814,
+    28196
+   ],
+   "bytes": 382,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "These approaches effectively leverage the rapid improvement in computer vision systems[46] by treating the problem of protein structure prediction as converting an ‘image’ of evolutionary couplings[22]–[24] to an ‘image’ of the protein distance matrix and then integrating the distance predictions into a heuristic system that produces the final 3D coordinate prediction. "
+  },
+  {
+   "id": "d159",
+   "span": [
+    28196,
+    28402
+   ],
+   "bytes": 206,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "attribution",
+   "text": "A few recent studies have been developed to predict the 3D coordinates directly[47]–[50], but the accuracy of these approaches does not match traditional, hand-crafted structure prediction pipelines[51]. "
+  },
+  {
+   "id": "d160",
+   "span": [
+    28402,
+    28632
+   ],
+   "bytes": 230,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In parallel, the success of attention-based networks for language processing[52] and, more recently, computer vision[31],[53] has inspired the exploration of attention-based methods for interpreting protein sequences[54]–[56].\n\n"
+  },
+  {
+   "id": "d161",
+   "span": [
+    28632,
+    28647
+   ],
+   "bytes": 15,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Discussion\n\n"
+  },
+  {
+   "id": "d162",
+   "span": [
+    28647,
+    29008
+   ],
+   "bytes": 361,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The methodology that we have taken in designing AlphaFold is a combination of the bioinformatics and physical approaches: we use a physical and geometric inductive bias to build components that learn from PDB data with minimal imposition of handcrafted features (for example, AlphaFold builds hydrogen bonds effectively without a hydrogen bond score function). "
+  },
+  {
+   "id": "d163",
+   "span": [
+    29008,
+    29173
+   ],
+   "bytes": 165,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "This results in a network that learns far more efficiently from the limited data in the PDB but is able to cope with the complexity and variety of structural data.\n\n"
+  },
+  {
+   "id": "d164",
+   "span": [
+    29173,
+    29392
+   ],
+   "bytes": 219,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "In particular, AlphaFold is able to handle missing the physical context and produce accurate models in challenging cases such as intertwined homomers or proteins that only fold in the presence of an unknown haem group. "
+  },
+  {
+   "id": "d165",
+   "span": [
+    29392,
+    29585
+   ],
+   "bytes": 193,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The ability to handle underspecified structural conditions is essential to learning from PDB structures as the PDB represents the full range of conditions in which structures have been solved. "
+  },
+  {
+   "id": "d166",
+   "span": [
+    29585,
+    29701
+   ],
+   "bytes": 116,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In general, AlphaFold is trained to produce the protein structure most likely to appear as part of a PDB structure. "
+  },
+  {
+   "id": "d167",
+   "span": [
+    29701,
+    29901
+   ],
+   "bytes": 200,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "For example, in cases in which a particular stochiometry, ligand or ion is predictable from the sequence alone, AlphaFold is likely to produce a structure that respects those constraints implicitly.\n\n"
+  },
+  {
+   "id": "d168",
+   "span": [
+    29901,
+    30075
+   ],
+   "bytes": 174,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "attribution",
+   "text": "AlphaFold has already demonstrated its utility to the experimental community, both for molecular replacement[57] and for interpreting cryogenic electron microscopy maps[58]. "
+  },
+  {
+   "id": "d169",
+   "span": [
+    30075,
+    30365
+   ],
+   "bytes": 290,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "Moreover, because AlphaFold outputs protein coordinates directly, AlphaFold produces predictions in graphics processing unit (GPU) minutes to GPU hours depending on the length of the protein sequence (for example, around one GPU minute per model for 384 residues; see Methods for details). "
+  },
+  {
+   "id": "d170",
+   "span": [
+    30365,
+    30569
+   ],
+   "bytes": 204,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "This opens up the exciting possibility of predicting structures at the proteome-scale and beyond—in a companion paper[39], we demonstrate the application of AlphaFold to the entire human proteome[39].\n\n"
+  },
+  {
+   "id": "d171",
+   "span": [
+    30569,
+    30800
+   ],
+   "bytes": 231,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The explosion in available genomic sequencing techniques and data has revolutionized bioinformatics but the intrinsic challenge of experimental structure determination has prevented a similar expansion in our structural knowledge. "
+  },
+  {
+   "id": "d172",
+   "span": [
+    30800,
+    31101
+   ],
+   "bytes": 301,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "By developing an accurate protein structure prediction algorithm, coupled with existing large and well-curated structure and sequence databases assembled by the experimental community, we hope to accelerate the advancement of structural bioinformatics that can keep pace with the genomics revolution. "
+  },
+  {
+   "id": "d173",
+   "span": [
+    31101,
+    31262
+   ],
+   "bytes": 161,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "We hope that AlphaFold—and computational approaches that apply its techniques for other biophysical problems—will become essential tools of modern biology.\n\n"
+  },
+  {
+   "id": "d174",
+   "span": [
+    31262,
+    31274
+   ],
+   "bytes": 12,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Methods\n\n"
+  },
+  {
+   "id": "d175",
+   "span": [
+    31274,
+    31302
+   ],
+   "bytes": 28,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "### Full algorithm details\n\n"
+  },
+  {
+   "id": "d176",
+   "span": [
+    31302,
+    31654
+   ],
+   "bytes": 352,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Extensive explanations of the components and their motivations are available in Supplementary Methods 1.1–1.10, in addition, pseudocode is available in Supplementary Information Algorithms 1–32, network diagrams in Supplementary Figs. 1–8, input features in Supplementary Table 1 and additional details are provided in Supplementary Tables 2, 3. "
+  },
+  {
+   "id": "d177",
+   "span": [
+    31654,
+    31767
+   ],
+   "bytes": 113,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Training and inference details are provided in Supplementary Methods 1.11–1.12 and Supplementary Tables 4, 5.\n\n"
+  },
+  {
+   "id": "d178",
+   "span": [
+    31767,
+    31776
+   ],
+   "bytes": 9,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "### IPA\n\n"
+  },
+  {
+   "id": "d179",
+   "span": [
+    31776,
+    31944
+   ],
+   "bytes": 168,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The IPA module combines the pair representation, the single representation and the geometric representation to update the single representation (Supplementary Fig. 8). "
+  },
+  {
+   "id": "d180",
+   "span": [
+    31944,
+    32090
+   ],
+   "bytes": 146,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Each of these representations contributes affinities to the shared attention weights and then uses these weights to map its values to the output. "
+  },
+  {
+   "id": "d181",
+   "span": [
+    32090,
+    32120
+   ],
+   "bytes": 30,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The IPA operates in 3D space. "
+  },
+  {
+   "id": "d182",
+   "span": [
+    32120,
+    32204
+   ],
+   "bytes": 84,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Each residue produces query points, key points and value points in its local frame. "
+  },
+  {
+   "id": "d183",
+   "span": [
+    32204,
+    32333
+   ],
+   "bytes": 129,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "These points are projected into the global frame using the backbone frame of the residue in which they interact with each other. "
+  },
+  {
+   "id": "d184",
+   "span": [
+    32333,
+    32400
+   ],
+   "bytes": 67,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The resulting points are then projected back into the local frame. "
+  },
+  {
+   "id": "d185",
+   "span": [
+    32400,
+    32730
+   ],
+   "bytes": 330,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The affinity computation in the 3D space uses squared distances and the coordinate transformations ensure the invariance of this module with respect to the global frame (see Supplementary Methods 1.8.2 ‘Invariant point attention (IPA)’ for the algorithm, proof of invariance and a description of the full multi-head version). "
+  },
+  {
+   "id": "d186",
+   "span": [
+    32730,
+    32898
+   ],
+   "bytes": 168,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A related construction that uses classic geometric invariants to construct pairwise features in place of the learned 3D points has been applied to protein design[59].\n\n"
+  },
+  {
+   "id": "d187",
+   "span": [
+    32898,
+    33055
+   ],
+   "bytes": 157,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In addition to the IPA, standard dot product attention is computed on the abstract single representation and a special attention on the pair representation. "
+  },
+  {
+   "id": "d188",
+   "span": [
+    33055,
+    33239
+   ],
+   "bytes": 184,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The pair representation augments both the logits and the values of the attention process, which is the primary way in which the pair representation controls the structure generation.\n\n"
+  },
+  {
+   "id": "d189",
+   "span": [
+    33239,
+    33268
+   ],
+   "bytes": 29,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "### Inputs and data sources\n\n"
+  },
+  {
+   "id": "d190",
+   "span": [
+    33268,
+    33547
+   ],
+   "bytes": 279,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Inputs to the network are the primary sequence, sequences from evolutionarily related proteins in the form of a MSA created by standard tools including jackhmmer[60] and HHBlits[61], and 3D atom coordinates of a small number of homologous structures (templates) where available. "
+  },
+  {
+   "id": "d191",
+   "span": [
+    33547,
+    33737
+   ],
+   "bytes": 190,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For both the MSA and templates, the search processes are tuned for high recall; spurious matches will probably appear in the raw MSA but this matches the training condition of the network.\n\n"
+  },
+  {
+   "id": "d192",
+   "span": [
+    33737,
+    33907
+   ],
+   "bytes": 170,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "One of the sequence databases used, Big Fantastic Database (BFD), was custom-made and released publicly (see ‘Data availability’) and was used by several CASP teams. "
+  },
+  {
+   "id": "d193",
+   "span": [
+    33907,
+    33985
+   ],
+   "bytes": 78,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "BFD is one of the largest publicly available collections of protein families. "
+  },
+  {
+   "id": "d194",
+   "span": [
+    33985,
+    34176
+   ],
+   "bytes": 191,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "It consists of 65,983,866 families represented as MSAs and hidden Markov models (HMMs) covering 2,204,359,010 protein sequences from reference databases, metagenomes and metatranscriptomes.\n\n"
+  },
+  {
+   "id": "d195",
+   "span": [
+    34176,
+    34206
+   ],
+   "bytes": 30,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "BFD was built in three steps. "
+  },
+  {
+   "id": "d196",
+   "span": [
+    34206,
+    34526
+   ],
+   "bytes": 320,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "First, 2,423,213,294 protein sequences were collected from UniProt (Swiss-Prot&TrEMBL, 2017-11)[62], a soil reference protein catalogue and the marine eukaryotic reference catalogue[7], and clustered to 30% sequence identity, while enforcing a 90% alignment coverage of the shorter sequences using MMseqs2/Linclust[63]. "
+  },
+  {
+   "id": "d197",
+   "span": [
+    34526,
+    34565
+   ],
+   "bytes": 39,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "This resulted in 345,159,030 clusters. "
+  },
+  {
+   "id": "d198",
+   "span": [
+    34565,
+    34683
+   ],
+   "bytes": 118,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "For computational efficiency, we removed all clusters with less than three members, resulting in 61,083,719 clusters. "
+  },
+  {
+   "id": "d199",
+   "span": [
+    34683,
+    34901
+   ],
+   "bytes": 218,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Second, we added 166,510,624 representative protein sequences from Metaclust NR (2017-05; discarding all sequences shorter than 150 residues)[63] by aligning them against the cluster representatives using MMseqs2[64]. "
+  },
+  {
+   "id": "d200",
+   "span": [
+    34901,
+    35013
+   ],
+   "bytes": 112,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Sequences that fulfilled the sequence identity and coverage criteria were assigned to the best scoring cluster. "
+  },
+  {
+   "id": "d201",
+   "span": [
+    35013,
+    35163
+   ],
+   "bytes": 150,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "The remaining 25,347,429 sequences that could not be assigned were clustered separately and added as new clusters, resulting in the final clustering. "
+  },
+  {
+   "id": "d202",
+   "span": [
+    35163,
+    35309
+   ],
+   "bytes": 146,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Third, for each of the clusters, we computed an MSA using FAMSA[65] and computed the HMMs following the Uniclust HH-suite database protocol[36].\n\n"
+  },
+  {
+   "id": "d203",
+   "span": [
+    35309,
+    35376
+   ],
+   "bytes": 67,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The following versions of public datasets were used in this study. "
+  },
+  {
+   "id": "d204",
+   "span": [
+    35376,
+    35454
+   ],
+   "bytes": 78,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Our models were trained on a copy of the PDB[5] downloaded on 28 August 2019. "
+  },
+  {
+   "id": "d205",
+   "span": [
+    35454,
+    35624
+   ],
+   "bytes": 170,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "For finding template structures at prediction time, we used a copy of the PDB downloaded on 14 May 2020, and the PDB70[66] clustering database downloaded on 13 May 2020. "
+  },
+  {
+   "id": "d206",
+   "span": [
+    35624,
+    35764
+   ],
+   "bytes": 140,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For MSA lookup at both training and prediction time, we used Uniref90[67] v.2020_01, BFD, Uniclust30[36] v.2018_08 and MGnify[6] v.2018_12. "
+  },
+  {
+   "id": "d207",
+   "span": [
+    35764,
+    35871
+   ],
+   "bytes": 107,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For sequence distillation, we used Uniclust30[36] v.2018_08 to construct a distillation structure dataset. "
+  },
+  {
+   "id": "d208",
+   "span": [
+    35871,
+    35928
+   ],
+   "bytes": 57,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Full details are provided in Supplementary Methods 1.2.\n\n"
+  },
+  {
+   "id": "d209",
+   "span": [
+    35928,
+    36085
+   ],
+   "bytes": 157,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For MSA search on BFD + Uniclust30, and template search against PDB70, we used HHBlits[61] and HHSearch[66] from hh-suite v.3.0-beta.3 (version 14/07/2017). "
+  },
+  {
+   "id": "d210",
+   "span": [
+    36085,
+    36169
+   ],
+   "bytes": 84,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For MSA search on Uniref90 and clustered MGnify, we used jackhmmer from HMMER3[68]. "
+  },
+  {
+   "id": "d211",
+   "span": [
+    36169,
+    36274
+   ],
+   "bytes": 105,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For constrained relaxation of structures, we used OpenMM v.7.3.1[69] with the Amber99sb force field[32]. "
+  },
+  {
+   "id": "d212",
+   "span": [
+    36274,
+    36409
+   ],
+   "bytes": 135,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For neural network construction, running and other analyses, we used TensorFlow[70], Sonnet[71], NumPy[72], Python[73] and Colab[74].\n\n"
+  },
+  {
+   "id": "d213",
+   "span": [
+    36409,
+    36565
+   ],
+   "bytes": 156,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "To quantify the effect of the different sequence data sources, we re-ran the CASP14 proteins using the same models but varying how the MSA was constructed. "
+  },
+  {
+   "id": "d214",
+   "span": [
+    36565,
+    36726
+   ],
+   "bytes": 161,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Removing BFD reduced the mean accuracy by 0.4 GDT, removing Mgnify reduced the mean accuracy by 0.7 GDT, and removing both reduced the mean accuracy by 6.1 GDT. "
+  },
+  {
+   "id": "d215",
+   "span": [
+    36726,
+    36859
+   ],
+   "bytes": 133,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "In each case, we found that most targets had very small changes in accuracy but a few outliers had very large (20+ GDT) differences. "
+  },
+  {
+   "id": "d216",
+   "span": [
+    36859,
+    37069
+   ],
+   "bytes": 210,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "This is consistent with the results in Fig. 5a in which the depth of the MSA is relatively unimportant until it approaches a threshold value of around 30 sequences when the MSA size effects become quite large. "
+  },
+  {
+   "id": "d217",
+   "span": [
+    37069,
+    37338
+   ],
+   "bytes": 269,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "We observe mostly overlapping effects between inclusion of BFD and Mgnify, but having at least one of these metagenomics databases is very important for target classes that are poorly represented in UniRef, and having both was necessary to achieve full CASP accuracy.\n\n"
+  },
+  {
+   "id": "d218",
+   "span": [
+    37338,
+    37360
+   ],
+   "bytes": 22,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "### Training regimen\n\n"
+  },
+  {
+   "id": "d219",
+   "span": [
+    37360,
+    37447
+   ],
+   "bytes": 87,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "To train, we use structures from the PDB with a maximum release date of 30 April 2018. "
+  },
+  {
+   "id": "d220",
+   "span": [
+    37447,
+    37543
+   ],
+   "bytes": 96,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc",
+   "text": "Chains are sampled in inverse proportion to cluster size of a 40% sequence identity clustering. "
+  },
+  {
+   "id": "d221",
+   "span": [
+    37543,
+    37625
+   ],
+   "bytes": 82,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "We then randomly crop them to 256 residues and assemble into batches of size 128. "
+  },
+  {
+   "id": "d222",
+   "span": [
+    37625,
+    37755
+   ],
+   "bytes": 130,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "We train the model on Tensor Processing Unit (TPU) v3 with a batch size of 1 per TPU core, hence the model uses 128 TPU v3 cores. "
+  },
+  {
+   "id": "d223",
+   "span": [
+    37755,
+    37986
+   ],
+   "bytes": 231,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "The model is trained until convergence (around 10 million samples) and further fine-tuned using longer crops of 384 residues, larger MSA stack and reduced learning rate (see Supplementary Methods 1.11 for the exact configuration). "
+  },
+  {
+   "id": "d224",
+   "span": [
+    37986,
+    38107
+   ],
+   "bytes": 121,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "The initial training stage takes approximately 1 week, and the fine-tuning stage takes approximately 4 additional days.\n\n"
+  },
+  {
+   "id": "d225",
+   "span": [
+    38107,
+    38184
+   ],
+   "bytes": 77,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The network is supervised by the FAPE loss and a number of auxiliary losses. "
+  },
+  {
+   "id": "d226",
+   "span": [
+    38184,
+    38335
+   ],
+   "bytes": 151,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "First, the final pair representation is linearly projected to a binned distance distribution (distogram) prediction, scored with a cross-entropy loss. "
+  },
+  {
+   "id": "d227",
+   "span": [
+    38335,
+    38504
+   ],
+   "bytes": 169,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Second, we use random masking on the input MSAs and require the network to reconstruct the masked regions from the output MSA representation using a BERT-like loss[37]. "
+  },
+  {
+   "id": "d228",
+   "span": [
+    38504,
+    38625
+   ],
+   "bytes": 121,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Third, the output single representations of the structure module are used to predict binned per-residue lDDT-Cα values. "
+  },
+  {
+   "id": "d229",
+   "span": [
+    38625,
+    38749
+   ],
+   "bytes": 124,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Finally, we use an auxiliary side-chain loss during training, and an auxiliary structure violation loss during fine-tuning. "
+  },
+  {
+   "id": "d230",
+   "span": [
+    38749,
+    38833
+   ],
+   "bytes": 84,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Detailed descriptions and weighting are provided in the Supplementary Information.\n\n"
+  },
+  {
+   "id": "d231",
+   "span": [
+    38833,
+    38987
+   ],
+   "bytes": 154,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "An initial model trained with the above objectives was used to make structure predictions for a Uniclust dataset of 355,993 sequences with the full MSAs. "
+  },
+  {
+   "id": "d232",
+   "span": [
+    38987,
+    39226
+   ],
+   "bytes": 239,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "These predictions were then used to train a final model with identical hyperparameters, except for sampling examples 75% of the time from the Uniclust prediction set, with sub-sampled MSAs, and 25% of the time from the clustered PDB set.\n\n"
+  },
+  {
+   "id": "d233",
+   "span": [
+    39226,
+    39441
+   ],
+   "bytes": 215,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "We train five different models using different random seeds, some with templates and some without, to encourage diversity in the predictions (see Supplementary Table 5 and Supplementary Methods 1.12.1 for details). "
+  },
+  {
+   "id": "d234",
+   "span": [
+    39441,
+    39592
+   ],
+   "bytes": 151,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "We also fine-tuned these models after CASP14 to add a pTM prediction objective (Supplementary Methods 1.9.7) and use the obtained models for Fig. 2d.\n\n"
+  },
+  {
+   "id": "d235",
+   "span": [
+    39592,
+    39615
+   ],
+   "bytes": 23,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "### Inference regimen\n\n"
+  },
+  {
+   "id": "d236",
+   "span": [
+    39615,
+    39729
+   ],
+   "bytes": 114,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "We inference the five trained models and use the predicted confidence score to select the best model per target.\n\n"
+  },
+  {
+   "id": "d237",
+   "span": [
+    39729,
+    39956
+   ],
+   "bytes": 227,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Using our CASP14 configuration for AlphaFold, the trunk of the network is run multiple times with different random choices for the MSA cluster centres (see Supplementary Methods 1.11.2 for details of the ensembling procedure). "
+  },
+  {
+   "id": "d238",
+   "span": [
+    39956,
+    40061
+   ],
+   "bytes": 105,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The full time to make a structure prediction varies considerably depending on the length of the protein. "
+  },
+  {
+   "id": "d239",
+   "span": [
+    40061,
+    40225
+   ],
+   "bytes": 164,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Representative timings for the neural network using a single model on V100 GPU are 4.8 min with 256 residues, 9.2 min with 384 residues and 18 h at 2,500 residues. "
+  },
+  {
+   "id": "d240",
+   "span": [
+    40225,
+    40394
+   ],
+   "bytes": 169,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "quantities",
+   "text": "These timings are measured using our open-source code, and the open-source code is notably faster than the version we ran in CASP14 as we now use the XLA compiler[75].\n\n"
+  },
+  {
+   "id": "d241",
+   "span": [
+    40394,
+    40576
+   ],
+   "bytes": 182,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "Since CASP14, we have found that the accuracy of the network without ensembling is very close or equal to the accuracy with ensembling and we turn off ensembling for most inference. "
+  },
+  {
+   "id": "d242.p1",
+   "parent": "d242",
+   "span": [
+    40576,
+    40626
+   ],
+   "bytes": 50,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc",
+   "text": "Without ensembling, the network is 8× faster and "
+  },
+  {
+   "id": "d242.p2",
+   "parent": "d242",
+   "span": [
+    40626,
+    40761
+   ],
+   "bytes": 135,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "the representative timings for a single model are 0.6 min with 256 residues, 1.1 min with 384 residues and 2.1 h with 2,500 residues.\n\n"
+  },
+  {
+   "id": "d243",
+   "span": [
+    40761,
+    40834
+   ],
+   "bytes": 73,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Inferencing large proteins can easily exceed the memory of a single GPU. "
+  },
+  {
+   "id": "d244",
+   "span": [
+    40834,
+    41038
+   ],
+   "bytes": 204,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "For a V100 with 16 GB of memory, we can predict the structure of proteins up to around 1,300 residues without ensembling and the 256- and 384-residue inference times are using the memory of a single GPU. "
+  },
+  {
+   "id": "d245",
+   "span": [
+    41038,
+    41225
+   ],
+   "bytes": 187,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "The memory usage is approximately quadratic in the number of residues, so a 2,500-residue protein involves using unified memory so that we can greatly exceed the memory of a single V100. "
+  },
+  {
+   "id": "d246",
+   "span": [
+    41225,
+    41365
+   ],
+   "bytes": 140,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "In our cloud setup, a single V100 is used for computation on a 2,500-residue protein but we requested four GPUs to have sufficient memory.\n\n"
+  },
+  {
+   "id": "d247",
+   "span": [
+    41365,
+    41544
+   ],
+   "bytes": 179,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Searching genetic sequence databases to prepare inputs and final relaxation of the structures take additional central processing unit (CPU) time but do not require a GPU or TPU.\n\n"
+  },
+  {
+   "id": "d248",
+   "span": [
+    41544,
+    41557
+   ],
+   "bytes": 13,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "### Metrics\n\n"
+  },
+  {
+   "id": "d249",
+   "span": [
+    41557,
+    41761
+   ],
+   "bytes": 204,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The predicted structure is compared to the true structure from the PDB in terms of lDDT metric[34], as this metric reports the domain accuracy without requiring a domain segmentation of chain structures. "
+  },
+  {
+   "id": "d250",
+   "span": [
+    41761,
+    41893
+   ],
+   "bytes": 132,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The distances are either computed between all heavy atoms (lDDT) or only the Cα atoms to measure the backbone accuracy (lDDT-Cα). "
+  },
+  {
+   "id": "d251",
+   "span": [
+    41893,
+    42007
+   ],
+   "bytes": 114,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "As lDDT-Cα only focuses on the Cα atoms, it does not include the penalty for structural violations and clashes. "
+  },
+  {
+   "id": "d252",
+   "span": [
+    42007,
+    42132
+   ],
+   "bytes": 125,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "Domain accuracies in CASP are reported as GDT[33] and the TM-score[27] is used as a full chain global superposition metric.\n\n"
+  },
+  {
+   "id": "d253",
+   "span": [
+    42132,
+    42211
+   ],
+   "bytes": 79,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "We also report accuracies using the r.m.s.d.95 (Cα r.m.s.d. at 95% coverage). "
+  },
+  {
+   "id": "d254",
+   "span": [
+    42211,
+    42468
+   ],
+   "bytes": 257,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "We perform five iterations of (1) a least-squares alignment of the predicted structure and the PDB structure on the currently chosen Cα atoms (using all Cα atoms in the first iteration); (2) selecting the 95% of Cα atoms with the lowest alignment error. "
+  },
+  {
+   "id": "d255",
+   "span": [
+    42468,
+    42545
+   ],
+   "bytes": 77,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The r.m.s.d. of the atoms chosen for the final iterations is the r.m.s.d.95. "
+  },
+  {
+   "id": "d256",
+   "span": [
+    42545,
+    42734
+   ],
+   "bytes": 189,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "This metric is more robust to apparent errors that can originate from crystal structure artefacts, although in some cases the removed 5% of residues will contain genuine modelling errors.\n\n"
+  },
+  {
+   "id": "d257",
+   "span": [
+    42734,
+    42772
+   ],
+   "bytes": 38,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "### Test set of recent PDB sequences\n\n"
+  },
+  {
+   "id": "d258",
+   "span": [
+    42772,
+    42890
+   ],
+   "bytes": 118,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "For evaluation on recent PDB sequences (Figs. 2a–d, 4a, 5a), we used a copy of the PDB downloaded 15 February 2021. "
+  },
+  {
+   "id": "d259",
+   "span": [
+    42890,
+    43030
+   ],
+   "bytes": 140,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Structures were filtered to those with a release date after 30 April 2018 (the date limit for inclusion in the training set for AlphaFold). "
+  },
+  {
+   "id": "d260",
+   "span": [
+    43030,
+    43200
+   ],
+   "bytes": 170,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Chains were further filtered to remove sequences that consisted of a single amino acid as well as sequences with an ambiguous chemical component at any residue position. "
+  },
+  {
+   "id": "d261",
+   "span": [
+    43200,
+    43316
+   ],
+   "bytes": 116,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Exact duplicates were removed, with the chain with the most resolved Cα atoms used as the representative sequence. "
+  },
+  {
+   "id": "d262",
+   "span": [
+    43316,
+    43439
+   ],
+   "bytes": 123,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Subsequently, structures with less than 16 resolved residues, with unknown residues or solved by NMR methods were removed. "
+  },
+  {
+   "id": "d263",
+   "span": [
+    43439,
+    43607
+   ],
+   "bytes": 168,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "As the PDB contains many near-duplicate sequences, the chain with the highest resolution was selected from each cluster in the PDB 40% sequence clustering of the data. "
+  },
+  {
+   "id": "d264",
+   "span": [
+    43607,
+    43761
+   ],
+   "bytes": 154,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Furthermore, we removed all sequences for which fewer than 80 amino acids had the alpha carbon resolved and removed chains with more than 1,400 residues. "
+  },
+  {
+   "id": "d265",
+   "span": [
+    43761,
+    43816
+   ],
+   "bytes": 55,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "The final dataset contained 10,795 protein sequences.\n\n"
+  },
+  {
+   "id": "d266",
+   "span": [
+    43816,
+    43916
+   ],
+   "bytes": 100,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The procedure for filtering the recent PDB dataset based on prior template identity was as follows. "
+  },
+  {
+   "id": "d267",
+   "span": [
+    43916,
+    44026
+   ],
+   "bytes": 110,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Hmmsearch was run with default parameters against a copy of the PDB SEQRES fasta downloaded 15 February 2021. "
+  },
+  {
+   "id": "d268",
+   "span": [
+    44026,
+    44129
+   ],
+   "bytes": 103,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Template hits were accepted if the associated structure had a release date earlier than 30 April 2018. "
+  },
+  {
+   "id": "d269",
+   "span": [
+    44129,
+    44249
+   ],
+   "bytes": 120,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Each residue position in a query sequence was assigned the maximum identity of any template hit covering that position. "
+  },
+  {
+   "id": "d270",
+   "span": [
+    44249,
+    44388
+   ],
+   "bytes": 139,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Filtering then proceeded as described in the individual figure legends, based on a combination of maximum identity and sequence coverage.\n\n"
+  },
+  {
+   "id": "d271",
+   "span": [
+    44388,
+    44525
+   ],
+   "bytes": 137,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The MSA depth analysis was based on computing the normalized number of effective sequences (Neff) for each position of a query sequence. "
+  },
+  {
+   "id": "d272",
+   "span": [
+    44525,
+    44791
+   ],
+   "bytes": 266,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "Per-residue Neff values were obtained by counting the number of non-gap residues in the MSA for this position and weighting the sequences using the Neff scheme[76] with a threshold of 80% sequence identity measured on the region that is non-gap in either sequence.\n\n"
+  },
+  {
+   "id": "d273",
+   "span": [
+    44791,
+    44814
+   ],
+   "bytes": 23,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "### Reporting summary\n\n"
+  },
+  {
+   "id": "d274",
+   "span": [
+    44814,
+    44930
+   ],
+   "bytes": 116,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Further information on research design is available in the Nature Research Reporting Summary linked to this paper.\n\n"
+  },
+  {
+   "id": "d275",
+   "span": [
+    44930,
+    44949
+   ],
+   "bytes": 19,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Online content\n\n"
+  },
+  {
+   "id": "d276",
+   "span": [
+    44949,
+    45268
+   ],
+   "bytes": 319,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Any methods, additional references, Nature Research reporting summaries, source data, extended data, supplementary information, acknowledgements, peer review information; details of author contributions and competing interests; and statements of data and code availability are available at 10.1038/s41586-021-03819-2.\n\n"
+  },
+  {
+   "id": "d277",
+   "span": [
+    45268,
+    45298
+   ],
+   "bytes": 30,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Supplementary information\n\n"
+  },
+  {
+   "id": "d278",
+   "span": [
+    45298,
+    45328
+   ],
+   "bytes": 30,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Supplementary information\n\n"
+  },
+  {
+   "id": "d279",
+   "span": [
+    45328,
+    45421
+   ],
+   "bytes": 93,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The online version contains supplementary material available at 10.1038/s41586-021-03819-2.\n\n"
+  },
+  {
+   "id": "d280",
+   "span": [
+    45421,
+    45442
+   ],
+   "bytes": 21,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Acknowledgements\n\n"
+  },
+  {
+   "id": "d281",
+   "span": [
+    45442,
+    45533
+   ],
+   "bytes": 91,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "We thank A. Rrustemi, A. Gu, A. Guseynov, B. Hechtman, C. Beattie, C. Jones, C. Donner, E. "
+  },
+  {
+   "id": "d282",
+   "span": [
+    45533,
+    45547
+   ],
+   "bytes": 14,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Parisotto, E. "
+  },
+  {
+   "id": "d283",
+   "span": [
+    45547,
+    45557
+   ],
+   "bytes": 10,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Elsen, F. "
+  },
+  {
+   "id": "d284",
+   "span": [
+    45557,
+    45570
+   ],
+   "bytes": 13,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Popovici, G. "
+  },
+  {
+   "id": "d285",
+   "span": [
+    45570,
+    45581
+   ],
+   "bytes": 11,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Necula, H. "
+  },
+  {
+   "id": "d286",
+   "span": [
+    45581,
+    45593
+   ],
+   "bytes": 12,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Maclean, J. "
+  },
+  {
+   "id": "d287",
+   "span": [
+    45593,
+    45604
+   ],
+   "bytes": 11,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Menick, J. "
+  },
+  {
+   "id": "d288",
+   "span": [
+    45604,
+    45620
+   ],
+   "bytes": 16,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Kirkpatrick, J. "
+  },
+  {
+   "id": "d289",
+   "span": [
+    45620,
+    45631
+   ],
+   "bytes": 11,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Molloy, J. "
+  },
+  {
+   "id": "d290",
+   "span": [
+    45631,
+    45639
+   ],
+   "bytes": 8,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Yim, J. "
+  },
+  {
+   "id": "d291",
+   "span": [
+    45639,
+    45651
+   ],
+   "bytes": 12,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Stanway, K. "
+  },
+  {
+   "id": "d292",
+   "span": [
+    45651,
+    45712
+   ],
+   "bytes": 61,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Simonyan, L. Sifre, L. Martens, M. Johnson, M. O’Neill, N. "
+  },
+  {
+   "id": "d293",
+   "span": [
+    45712,
+    45726
+   ],
+   "bytes": 14,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Antropova, R. "
+  },
+  {
+   "id": "d294",
+   "span": [
+    45726,
+    45738
+   ],
+   "bytes": 12,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Hadsell, S. "
+  },
+  {
+   "id": "d295",
+   "span": [
+    45738,
+    45752
+   ],
+   "bytes": 14,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Blackwell, S. "
+  },
+  {
+   "id": "d296",
+   "span": [
+    45752,
+    45760
+   ],
+   "bytes": 8,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Das, S. "
+  },
+  {
+   "id": "d297",
+   "span": [
+    45760,
+    45768
+   ],
+   "bytes": 8,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Hou, S. "
+  },
+  {
+   "id": "d298",
+   "span": [
+    45768,
+    45778
+   ],
+   "bytes": 10,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Gouws, S. "
+  },
+  {
+   "id": "d299",
+   "span": [
+    45778,
+    45794
+   ],
+   "bytes": 16,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Wheelwright, T. "
+  },
+  {
+   "id": "d300",
+   "span": [
+    45794,
+    45807
+   ],
+   "bytes": 13,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Hennigan, T. "
+  },
+  {
+   "id": "d301",
+   "span": [
+    45807,
+    45816
+   ],
+   "bytes": 9,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Ward, Z. "
+  },
+  {
+   "id": "d302",
+   "span": [
+    45816,
+    45824
+   ],
+   "bytes": 8,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Wu, Ž. "
+  },
+  {
+   "id": "d303",
+   "span": [
+    45824,
+    45967
+   ],
+   "bytes": 143,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Avsec and the Research Platform Team for their contributions; M. Mirdita for his help with the datasets; M. Piovesan-Forster, A. Nelson and R. "
+  },
+  {
+   "id": "d304",
+   "span": [
+    45967,
+    46225
+   ],
+   "bytes": 258,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Kemp for their help managing the project; the JAX, TensorFlow and XLA teams for detailed support and enabling machine learning models of the complexity of AlphaFold; our colleagues at DeepMind, Google and Alphabet for their encouragement and support; and J. "
+  },
+  {
+   "id": "d305",
+   "span": [
+    46225,
+    46324
+   ],
+   "bytes": 99,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Moult and the CASP14 organizers, and the experimentalists whose structures enabled the assessment. "
+  },
+  {
+   "id": "d306",
+   "span": [
+    46324,
+    46527
+   ],
+   "bytes": 203,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "M.S. acknowledges support from the National Research Foundation of Korea grant (2019R1A6A1A10073437, 2020M3A9G7103933) and the Creative-Pioneering Researchers Program through Seoul National University.\n\n"
+  },
+  {
+   "id": "d307",
+   "span": [
+    46527,
+    46552
+   ],
+   "bytes": 25,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Author contributions\n\n"
+  },
+  {
+   "id": "d308",
+   "span": [
+    46552,
+    46584
+   ],
+   "bytes": 32,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J.J. and D.H. led the research. "
+  },
+  {
+   "id": "d309",
+   "span": [
+    46584,
+    46674
+   ],
+   "bytes": 90,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J.J., R.E., A. Pritzel, M.F., O.R., R.B., A. Potapenko, S.A.A.K., B.R.-P., J.A., M.P., T. "
+  },
+  {
+   "id": "d310",
+   "span": [
+    46674,
+    46750
+   ],
+   "bytes": 76,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Berghammer and O.V. developed the neural network architecture and training. "
+  },
+  {
+   "id": "d311",
+   "span": [
+    46750,
+    46886
+   ],
+   "bytes": 136,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "T.G., A.Ž., K.T., R.B., A.B., R.E., A.J.B., A.C., S.N., R.J., D.R., M.Z. and S.B. developed the data, analytics and inference systems. "
+  },
+  {
+   "id": "d312",
+   "span": [
+    46886,
+    46940
+   ],
+   "bytes": 54,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "D.H., K.K., P.K., C.M. and E.C. managed the research. "
+  },
+  {
+   "id": "d313",
+   "span": [
+    46940,
+    46973
+   ],
+   "bytes": 33,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "T.G. led the technical platform. "
+  },
+  {
+   "id": "d314",
+   "span": [
+    46973,
+    47017
+   ],
+   "bytes": 44,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "P.K., A.W.S., K.K., O.V., D.S., S.P. and T. "
+  },
+  {
+   "id": "d315",
+   "span": [
+    47017,
+    47062
+   ],
+   "bytes": 45,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Back contributed technical advice and ideas. "
+  },
+  {
+   "id": "d316",
+   "span": [
+    47062,
+    47147
+   ],
+   "bytes": 85,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "M.S. created the BFD genomics database and provided technical assistance on HHBlits. "
+  },
+  {
+   "id": "d317",
+   "span": [
+    47147,
+    47208
+   ],
+   "bytes": 61,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "D.H., R.E., A.W.S. and K.K. conceived the AlphaFold project. "
+  },
+  {
+   "id": "d318",
+   "span": [
+    47208,
+    47265
+   ],
+   "bytes": 57,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J.J., R.E. and A.W.S. conceived the end-to-end approach. "
+  },
+  {
+   "id": "d319",
+   "span": [
+    47265,
+    47359
+   ],
+   "bytes": 94,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J.J., A. Pritzel, O.R., A. Potapenko, R.E., M.F., T.G., K.T., C.M. and D.H. wrote the paper.\n\n"
+  },
+  {
+   "id": "d320",
+   "span": [
+    47359,
+    47381
+   ],
+   "bytes": 22,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Data availability\n\n"
+  },
+  {
+   "id": "d321",
+   "span": [
+    47381,
+    47439
+   ],
+   "bytes": 58,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "All input data are freely available from public sources.\n\n"
+  },
+  {
+   "id": "d322",
+   "span": [
+    47439,
+    47724
+   ],
+   "bytes": 285,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Structures from the PDB were used for training and as templates (https://www.wwpdb.org/ftp/pdb-ftp-sites; for the associated sequence data and 40% sequence clustering see also https://ftp.wwpdb.org/pub/pdb/derived_data/ and https://cdn.rcsb.org/resources/sequence/clusters/bc-40.out). "
+  },
+  {
+   "id": "d323",
+   "span": [
+    47724,
+    47858
+   ],
+   "bytes": 134,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Training used a version of the PDB downloaded 28 August 2019, while the CASP14 template search used a version downloaded 14 May 2020. "
+  },
+  {
+   "id": "d324",
+   "span": [
+    47858,
+    48005
+   ],
+   "bytes": 147,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "The template search also used the PDB70 database, downloaded 13 May 2020 (https://wwwuser.gwdg.de/~compbiol/data/hhsuite/databases/hhsuite_dbs/).\n\n"
+  },
+  {
+   "id": "d325",
+   "span": [
+    48005,
+    48157
+   ],
+   "bytes": 152,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "We show experimental structures from the PDB with accession numbers 6Y4F[77], 6YJ1[78], 6VR4[79], 6SK0[80], 6FES[81], 6W6W[82], 6T1Z[83] and 7JTL[84].\n\n"
+  },
+  {
+   "id": "d326",
+   "span": [
+    48157,
+    48543
+   ],
+   "bytes": 386,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For MSA lookup at both the training and prediction time, we used UniRef90 v.2020_01 (https://ftp.ebi.ac.uk/pub/databases/uniprot/previous_releases/release-2020_01/uniref/), BFD (https://bfd.mmseqs.com), Uniclust30 v.2018_08 (https://wwwuser.gwdg.de/~compbiol/uniclust/2018_08/) and MGnify clusters v.2018_12 (https://ftp.ebi.ac.uk/pub/databases/metagenomics/peptide_database/2018_12/). "
+  },
+  {
+   "id": "d327",
+   "span": [
+    48543,
+    48639
+   ],
+   "bytes": 96,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Uniclust30 v.2018_08 was also used as input for constructing a distillation structure dataset.\n\n"
+  },
+  {
+   "id": "d328",
+   "span": [
+    48639,
+    48661
+   ],
+   "bytes": 22,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Code availability\n\n"
+  },
+  {
+   "id": "d329",
+   "span": [
+    48661,
+    48821
+   ],
+   "bytes": 160,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Source code for the AlphaFold model, trained weights and inference script are available under an open-source license at https://github.com/deepmind/alphafold.\n\n"
+  },
+  {
+   "id": "d330",
+   "span": [
+    48821,
+    49069
+   ],
+   "bytes": 248,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Neural networks were developed with TensorFlow v.1 (https://github.com/tensorflow/tensorflow), Sonnet v.1 (https://github.com/deepmind/sonnet), JAX v.0.1.69 (https://github.com/google/jax/) and Haiku v.0.0.4 (https://github.com/deepmind/dm-haiku). "
+  },
+  {
+   "id": "d331",
+   "span": [
+    49069,
+    49152
+   ],
+   "bytes": 83,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The XLA compiler is bundled with JAX and does not have a separate version number.\n\n"
+  },
+  {
+   "id": "d332",
+   "span": [
+    49152,
+    49342
+   ],
+   "bytes": 190,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For MSA search on BFD+Uniclust30, and for template search against PDB70, we used HHBlits and HHSearch from hh-suite v.3.0-beta.3 release 14/07/2017 (https://github.com/soedinglab/hh-suite). "
+  },
+  {
+   "id": "d333",
+   "span": [
+    49342,
+    49464
+   ],
+   "bytes": 122,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For MSA search on UniRef90 and clustered MGnify, we used jackhmmer from HMMER v.3.3 (http://eddylab.org/software/hmmer/). "
+  },
+  {
+   "id": "d334",
+   "span": [
+    49464,
+    49597
+   ],
+   "bytes": 133,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "For constrained relaxation of structures, we used OpenMM v.7.3.1 (https://github.com/openmm/openmm) with the Amber99sb force field.\n\n"
+  },
+  {
+   "id": "d335",
+   "span": [
+    49597,
+    49737
+   ],
+   "bytes": 140,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Construction of BFD used MMseqs2 v.925AF (https://github.com/soedinglab/MMseqs2) and FAMSA v.1.2.5 (https://github.com/refresh-bio/FAMSA).\n\n"
+  },
+  {
+   "id": "d336",
+   "span": [
+    49737,
+    50281
+   ],
+   "bytes": 544,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Data analysis used Python v.3.6 (https://www.python.org/), NumPy v.1.16.4 (https://github.com/numpy/numpy), SciPy v.1.2.1 (https://www.scipy.org/), seaborn v.0.11.1 (https://github.com/mwaskom/seaborn), Matplotlib v.3.3.4 (https://github.com/matplotlib/matplotlib), bokeh v.1.4.0 (https://github.com/bokeh/bokeh), pandas v.1.1.5 (https://github.com/pandas-dev/pandas), plotnine v.0.8.0 (https://github.com/has2k1/plotnine), statsmodels v.0.12.2 (https://github.com/statsmodels/statsmodels) and Colab (https://research.google.com/colaboratory). "
+  },
+  {
+   "id": "d337",
+   "span": [
+    50281,
+    50383
+   ],
+   "bytes": 102,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "TM-align v.20190822 (https://zhanglab.dcmb.med.umich.edu/TM-align/) was used for computing TM-scores. "
+  },
+  {
+   "id": "d338",
+   "span": [
+    50383,
+    50491
+   ],
+   "bytes": 108,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Structure visualizations were created in Pymol v.2.3.0 (https://github.com/schrodinger/pymol-open-source).\n\n"
+  },
+  {
+   "id": "d339",
+   "span": [
+    50491,
+    50515
+   ],
+   "bytes": 24,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Competing interests\n\n"
+  },
+  {
+   "id": "d340",
+   "span": [
+    50515,
+    50904
+   ],
+   "bytes": 389,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J.J., R.E., A. Pritzel, T.G., M.F., O.R., R.B., A.B., S.A.A.K., D.R. and A.W.S. have filed non-provisional patent applications 16/701,070 and PCT/EP2020/084238, and provisional patent applications 63/107,362, 63/118,917, 63/118,918, 63/118,921 and 63/118,919, each in the name of DeepMind Technologies Limited, each pending, relating to machine learning for predicting protein structures. "
+  },
+  {
+   "id": "d341",
+   "span": [
+    50904,
+    50955
+   ],
+   "bytes": 51,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The other authors declare no competing interests.\n\n"
+  },
+  {
+   "id": "d342",
+   "span": [
+    50955,
+    50969
+   ],
+   "bytes": 14,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "# References\n\n"
+  },
+  {
+   "id": "d343",
+   "span": [
+    50969,
+    50973
+   ],
+   "bytes": 4,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "1.. "
+  },
+  {
+   "id": "d344",
+   "span": [
+    50973,
+    51001
+   ],
+   "bytes": 28,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Thompson, M. C., Yeates, T. "
+  },
+  {
+   "id": "d345",
+   "span": [
+    51001,
+    51020
+   ],
+   "bytes": 19,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "O. & Rodriguez, J. "
+  },
+  {
+   "id": "d346",
+   "span": [
+    51020,
+    51105
+   ],
+   "bytes": 85,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A. Advances in methods for atomic resolution macromolecular structure determination. "
+  },
+  {
+   "id": "d347",
+   "span": [
+    51105,
+    51115
+   ],
+   "bytes": 10,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "F1000Res. "
+  },
+  {
+   "id": "d348",
+   "span": [
+    51115,
+    51179
+   ],
+   "bytes": 64,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "9, 667 (2020).10.12688/f1000research.25097.1PMC733336132676184\n\n"
+  },
+  {
+   "id": "d349",
+   "span": [
+    51179,
+    51183
+   ],
+   "bytes": 4,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "2.. "
+  },
+  {
+   "id": "d350",
+   "span": [
+    51183,
+    51222
+   ],
+   "bytes": 39,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Bai, X.-C., McMullan, G. & Scheres, S. "
+  },
+  {
+   "id": "d351",
+   "span": [
+    51222,
+    51225
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "H. "
+  },
+  {
+   "id": "d352",
+   "span": [
+    51225,
+    51279
+   ],
+   "bytes": 54,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "W. How cryo-EM is revolutionizing structural biology. "
+  },
+  {
+   "id": "d353",
+   "span": [
+    51279,
+    51295
+   ],
+   "bytes": 16,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Trends Biochem. "
+  },
+  {
+   "id": "d354",
+   "span": [
+    51295,
+    51356
+   ],
+   "bytes": 61,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Sci. 40, 49–57 (2015).25544475 10.1016/j.tibs.2014.10.005\n\n"
+  },
+  {
+   "id": "d355",
+   "span": [
+    51356,
+    51360
+   ],
+   "bytes": 4,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "3.. "
+  },
+  {
+   "id": "d356",
+   "span": [
+    51360,
+    51503
+   ],
+   "bytes": 143,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Jaskolski, M., Dauter, Z. & Wlodawer, A. A brief history of macromolecular crystallography, illustrated by a family tree and its Nobel fruits. "
+  },
+  {
+   "id": "d357",
+   "span": [
+    51503,
+    51511
+   ],
+   "bytes": 8,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "FEBS J. "
+  },
+  {
+   "id": "d358",
+   "span": [
+    51511,
+    51574
+   ],
+   "bytes": 63,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "281, 3985–4009 (2014).24698025 10.1111/febs.12796PMC6309182\n\n"
+  },
+  {
+   "id": "d359",
+   "span": [
+    51574,
+    51578
+   ],
+   "bytes": 4,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "4.. "
+  },
+  {
+   "id": "d360",
+   "span": [
+    51578,
+    51592
+   ],
+   "bytes": 14,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Wüthrich, K. "
+  },
+  {
+   "id": "d361",
+   "span": [
+    51592,
+    51631
+   ],
+   "bytes": 39,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The way to NMR structures of proteins. "
+  },
+  {
+   "id": "d362",
+   "span": [
+    51631,
+    51636
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d363",
+   "span": [
+    51636,
+    51644
+   ],
+   "bytes": 8,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Struct. "
+  },
+  {
+   "id": "d364",
+   "span": [
+    51644,
+    51650
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d365",
+   "span": [
+    51650,
+    51700
+   ],
+   "bytes": 50,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "8, 923–925 (2001).11685234 10.1038/nsb1101-923\n\n"
+  },
+  {
+   "id": "d366",
+   "span": [
+    51700,
+    51722
+   ],
+   "bytes": 22,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "5.. wwPDB Consortium. "
+  },
+  {
+   "id": "d367",
+   "span": [
+    51722,
+    51805
+   ],
+   "bytes": 83,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Protein Data Bank: the single global archive for 3D macromolecular structure data. "
+  },
+  {
+   "id": "d368",
+   "span": [
+    51805,
+    51824
+   ],
+   "bytes": 19,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nucleic Acids Res. "
+  },
+  {
+   "id": "d369",
+   "span": [
+    51824,
+    51885
+   ],
+   "bytes": 61,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "47, D520–D528 (2018).10.1093/nar/gky949PMC632405630357364\n\n"
+  },
+  {
+   "id": "d370",
+   "span": [
+    51885,
+    51889
+   ],
+   "bytes": 4,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "6.. "
+  },
+  {
+   "id": "d371",
+   "span": [
+    51889,
+    51962
+   ],
+   "bytes": 73,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mitchell, A. L. et al. MGnify: the microbiome analysis resource in 2020. "
+  },
+  {
+   "id": "d372",
+   "span": [
+    51962,
+    51981
+   ],
+   "bytes": 19,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nucleic Acids Res. "
+  },
+  {
+   "id": "d373",
+   "span": [
+    51981,
+    52044
+   ],
+   "bytes": 63,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "48, D570–D578 (2020).31696235 10.1093/nar/gkz1035PMC7145632\n\n"
+  },
+  {
+   "id": "d374",
+   "span": [
+    52044,
+    52048
+   ],
+   "bytes": 4,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "7.. "
+  },
+  {
+   "id": "d375",
+   "span": [
+    52048,
+    52090
+   ],
+   "bytes": 42,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Steinegger, M., Mirdita, M. & Söding, J. "
+  },
+  {
+   "id": "d376",
+   "span": [
+    52090,
+    52184
+   ],
+   "bytes": 94,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Protein-level assembly increases protein sequence recovery from metagenomic samples manyfold. "
+  },
+  {
+   "id": "d377",
+   "span": [
+    52184,
+    52189
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d378",
+   "span": [
+    52189,
+    52253
+   ],
+   "bytes": 64,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Methods16, 603–606 (2019).31235882 10.1038/s41592-019-0437-4\n\n"
+  },
+  {
+   "id": "d379",
+   "span": [
+    52253,
+    52257
+   ],
+   "bytes": 4,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "8.. "
+  },
+  {
+   "id": "d380",
+   "span": [
+    52257,
+    52266
+   ],
+   "bytes": 9,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Dill, K. "
+  },
+  {
+   "id": "d381",
+   "span": [
+    52266,
+    52280
+   ],
+   "bytes": 14,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A., Ozkan, S. "
+  },
+  {
+   "id": "d382",
+   "span": [
+    52280,
+    52309
+   ],
+   "bytes": 29,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "B., Shell, M. S. & Weikl, T. "
+  },
+  {
+   "id": "d383",
+   "span": [
+    52309,
+    52312
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "R. "
+  },
+  {
+   "id": "d384",
+   "span": [
+    52312,
+    52341
+   ],
+   "bytes": 29,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The protein folding problem. "
+  },
+  {
+   "id": "d385",
+   "span": [
+    52341,
+    52347
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Annu. "
+  },
+  {
+   "id": "d386",
+   "span": [
+    52347,
+    52352
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Rev. "
+  },
+  {
+   "id": "d387",
+   "span": [
+    52352,
+    52361
+   ],
+   "bytes": 9,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biophys. "
+  },
+  {
+   "id": "d388",
+   "span": [
+    52361,
+    52443
+   ],
+   "bytes": 82,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "37, 289–316 (2008).18573083 10.1146/annurev.biophys.37.092707.153558PMC2443096\n\n"
+  },
+  {
+   "id": "d389",
+   "span": [
+    52443,
+    52447
+   ],
+   "bytes": 4,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "9.. "
+  },
+  {
+   "id": "d390",
+   "span": [
+    52447,
+    52517
+   ],
+   "bytes": 70,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Anfinsen, C. B. Principles that govern the folding of protein chains. "
+  },
+  {
+   "id": "d391",
+   "span": [
+    52517,
+    52584
+   ],
+   "bytes": 67,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Science181, 223–230 (1973).4124164 10.1126/science.181.4096.223\n\n"
+  },
+  {
+   "id": "d392",
+   "span": [
+    52584,
+    52589
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "10.. "
+  },
+  {
+   "id": "d393",
+   "span": [
+    52589,
+    52685
+   ],
+   "bytes": 96,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Senior, A. W. et al. Improved protein structure prediction using potentials from deep learning. "
+  },
+  {
+   "id": "d394",
+   "span": [
+    52685,
+    52749
+   ],
+   "bytes": 64,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nature577, 706–710 (2020).31942072 10.1038/s41586-019-1923-7\n\n"
+  },
+  {
+   "id": "d395",
+   "span": [
+    52749,
+    52754
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "11.. "
+  },
+  {
+   "id": "d396",
+   "span": [
+    52754,
+    52800
+   ],
+   "bytes": 46,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Wang, S., Sun, S., Li, Z., Zhang, R. & Xu, J. "
+  },
+  {
+   "id": "d397",
+   "span": [
+    52800,
+    52881
+   ],
+   "bytes": 81,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Accurate de novo prediction of protein contact map by ultra-deep learning model. "
+  },
+  {
+   "id": "d398",
+   "span": [
+    52881,
+    52894
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "PLOS Comput. "
+  },
+  {
+   "id": "d399",
+   "span": [
+    52894,
+    52900
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d400",
+   "span": [
+    52900,
+    52969
+   ],
+   "bytes": 69,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "13, e1005324 (2017).28056090 10.1371/journal.pcbi.1005324PMC5249242\n\n"
+  },
+  {
+   "id": "d401",
+   "span": [
+    52969,
+    52974
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "12.. "
+  },
+  {
+   "id": "d402",
+   "span": [
+    52974,
+    53064
+   ],
+   "bytes": 90,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Zheng, W. et al. Deep-learning contact-map guided protein structure prediction in CASP13. "
+  },
+  {
+   "id": "d403",
+   "span": [
+    53064,
+    53134
+   ],
+   "bytes": 70,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proteins87, 1149–1164 (2019).31365149 10.1002/prot.25792PMC6851476\n\n"
+  },
+  {
+   "id": "d404",
+   "span": [
+    53134,
+    53139
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "13.. "
+  },
+  {
+   "id": "d405",
+   "span": [
+    53139,
+    53165
+   ],
+   "bytes": 26,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Abriata, L. A., Tamò, G. "
+  },
+  {
+   "id": "d406",
+   "span": [
+    53165,
+    53301
+   ],
+   "bytes": 136,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "E. & Dal Peraro, M. A further leap of improvement in tertiary structure prediction in CASP13 prompts new routes for future assessments. "
+  },
+  {
+   "id": "d407",
+   "span": [
+    53301,
+    53361
+   ],
+   "bytes": 60,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proteins87, 1100–1112 (2019).31344267 10.1002/prot.25787\n\n"
+  },
+  {
+   "id": "d408",
+   "span": [
+    53361,
+    53366
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "14.. "
+  },
+  {
+   "id": "d409",
+   "span": [
+    53366,
+    53389
+   ],
+   "bytes": 23,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Pearce, R. & Zhang, Y. "
+  },
+  {
+   "id": "d410",
+   "span": [
+    53389,
+    53491
+   ],
+   "bytes": 102,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Deep learning techniques have significantly impacted protein structure prediction and protein design. "
+  },
+  {
+   "id": "d411",
+   "span": [
+    53491,
+    53497
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Curr. "
+  },
+  {
+   "id": "d412",
+   "span": [
+    53497,
+    53503
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Opin. "
+  },
+  {
+   "id": "d413",
+   "span": [
+    53503,
+    53511
+   ],
+   "bytes": 8,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Struct. "
+  },
+  {
+   "id": "d414",
+   "span": [
+    53511,
+    53517
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d415",
+   "span": [
+    53517,
+    53584
+   ],
+   "bytes": 67,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "68, 194–207 (2021).33639355 10.1016/j.sbi.2021.01.007PMC8222070\n\n"
+  },
+  {
+   "id": "d416",
+   "span": [
+    53584,
+    53589
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "15.. "
+  },
+  {
+   "id": "d417",
+   "span": [
+    53589,
+    53741
+   ],
+   "bytes": 152,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Moult, J., Fidelis, K., Kryshtafovych, A., Schwede, T. & Topf, M. Critical assessment of techniques for protein structure prediction, fourteenth round. "
+  },
+  {
+   "id": "d418",
+   "span": [
+    53741,
+    53836
+   ],
+   "bytes": 95,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "CASP 14 Abstract Bookhttps://www.predictioncenter.org/casp14/doc/CASP14_Abstracts.pdf (2020).\n\n"
+  },
+  {
+   "id": "d419",
+   "span": [
+    53836,
+    53841
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "16.. "
+  },
+  {
+   "id": "d420",
+   "span": [
+    53841,
+    53878
+   ],
+   "bytes": 37,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Brini, E., Simmerling, C. & Dill, K. "
+  },
+  {
+   "id": "d421",
+   "span": [
+    53878,
+    53916
+   ],
+   "bytes": 38,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Protein storytelling through physics. "
+  },
+  {
+   "id": "d422",
+   "span": [
+    53916,
+    53988
+   ],
+   "bytes": 72,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Science370, eaaz3041 (2020).33243857 10.1126/science.aaz3041PMC7945008\n\n"
+  },
+  {
+   "id": "d423",
+   "span": [
+    53988,
+    53993
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "17.. "
+  },
+  {
+   "id": "d424",
+   "span": [
+    53993,
+    54006
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Sippl, M. J. "
+  },
+  {
+   "id": "d425",
+   "span": [
+    54006,
+    54077
+   ],
+   "bytes": 71,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Calculation of conformational ensembles from potentials of mean force. "
+  },
+  {
+   "id": "d426",
+   "span": [
+    54077,
+    54165
+   ],
+   "bytes": 88,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "An approach to the knowledge-based prediction of local structures in globular proteins. "
+  },
+  {
+   "id": "d427",
+   "span": [
+    54165,
+    54168
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J. "
+  },
+  {
+   "id": "d428",
+   "span": [
+    54168,
+    54173
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mol. "
+  },
+  {
+   "id": "d429",
+   "span": [
+    54173,
+    54179
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d430",
+   "span": [
+    54179,
+    54240
+   ],
+   "bytes": 61,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "213, 859–883 (1990).2359125 10.1016/s0022-2836(05)80269-4\n\n"
+  },
+  {
+   "id": "d431",
+   "span": [
+    54240,
+    54270
+   ],
+   "bytes": 30,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "18.. Šali, A. & Blundell, T. "
+  },
+  {
+   "id": "d432",
+   "span": [
+    54270,
+    54342
+   ],
+   "bytes": 72,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "L. Comparative protein modelling by satisfaction of spatial restraints. "
+  },
+  {
+   "id": "d433",
+   "span": [
+    54342,
+    54345
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J. "
+  },
+  {
+   "id": "d434",
+   "span": [
+    54345,
+    54350
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mol. "
+  },
+  {
+   "id": "d435",
+   "span": [
+    54350,
+    54356
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d436",
+   "span": [
+    54356,
+    54410
+   ],
+   "bytes": 54,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "234, 779–815 (1993).8254673 10.1006/jmbi.1993.1626\n\n"
+  },
+  {
+   "id": "d437",
+   "span": [
+    54410,
+    54415
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "19.. "
+  },
+  {
+   "id": "d438",
+   "span": [
+    54415,
+    54450
+   ],
+   "bytes": 35,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Roy, A., Kucukural, A. & Zhang, Y. "
+  },
+  {
+   "id": "d439",
+   "span": [
+    54450,
+    54536
+   ],
+   "bytes": 86,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "I-TASSER: a unified platform for automated protein structure and function prediction. "
+  },
+  {
+   "id": "d440",
+   "span": [
+    54536,
+    54541
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d441",
+   "span": [
+    54541,
+    54611
+   ],
+   "bytes": 70,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Protocols5, 725–738 (2010).20360767 10.1038/nprot.2010.5PMC2849174\n\n"
+  },
+  {
+   "id": "d442",
+   "span": [
+    54611,
+    54616
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "20.. "
+  },
+  {
+   "id": "d443",
+   "span": [
+    54616,
+    54780
+   ],
+   "bytes": 164,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Altschuh, D., Lesk, A. M., Bloomer, A. C. & Klug, A. Correlation of co-ordinated amino acid substitutions with function in viruses related to tobacco mosaic virus. "
+  },
+  {
+   "id": "d444",
+   "span": [
+    54780,
+    54783
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J. "
+  },
+  {
+   "id": "d445",
+   "span": [
+    54783,
+    54788
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mol. "
+  },
+  {
+   "id": "d446",
+   "span": [
+    54788,
+    54794
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d447",
+   "span": [
+    54794,
+    54854
+   ],
+   "bytes": 60,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "193, 693–707 (1987).3612789 10.1016/0022-2836(87)90352-4\n\n"
+  },
+  {
+   "id": "d448",
+   "span": [
+    54854,
+    54859
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "21.. "
+  },
+  {
+   "id": "d449",
+   "span": [
+    54859,
+    54874
+   ],
+   "bytes": 15,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Shindyalov, I. "
+  },
+  {
+   "id": "d450",
+   "span": [
+    54874,
+    54892
+   ],
+   "bytes": 18,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "N., Kolchanov, N. "
+  },
+  {
+   "id": "d451",
+   "span": [
+    54892,
+    55011
+   ],
+   "bytes": 119,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A. & Sander, C. Can three-dimensional contacts in protein structures be predicted by analysis of correlated mutations? "
+  },
+  {
+   "id": "d452",
+   "span": [
+    55011,
+    55024
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Protein Eng. "
+  },
+  {
+   "id": "d453",
+   "span": [
+    55024,
+    55077
+   ],
+   "bytes": 53,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "7, 349–358 (1994).8177884 10.1093/protein/7.3.349\n\n"
+  },
+  {
+   "id": "d454",
+   "span": [
+    55077,
+    55082
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "22.. "
+  },
+  {
+   "id": "d455",
+   "span": [
+    55082,
+    55103
+   ],
+   "bytes": 21,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Weigt, M., White, R. "
+  },
+  {
+   "id": "d456",
+   "span": [
+    55103,
+    55130
+   ],
+   "bytes": 27,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A., Szurmant, H., Hoch, J. "
+  },
+  {
+   "id": "d457",
+   "span": [
+    55130,
+    55143
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A. & Hwa, T. "
+  },
+  {
+   "id": "d458",
+   "span": [
+    55143,
+    55238
+   ],
+   "bytes": 95,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Identification of direct residue contacts in protein–protein interaction by message passing. "
+  },
+  {
+   "id": "d459",
+   "span": [
+    55238,
+    55327
+   ],
+   "bytes": 89,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proc. Natl Acad. Sci. USA106, 67–72 (2009).19116270 10.1073/pnas.0805923106PMC2629192\n\n"
+  },
+  {
+   "id": "d460",
+   "span": [
+    55327,
+    55332
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "23.. "
+  },
+  {
+   "id": "d461",
+   "span": [
+    55332,
+    55342
+   ],
+   "bytes": 10,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Marks, D. "
+  },
+  {
+   "id": "d462",
+   "span": [
+    55342,
+    55420
+   ],
+   "bytes": 78,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "S. et al. Protein 3D structure computed from evolutionary sequence variation. "
+  },
+  {
+   "id": "d463",
+   "span": [
+    55420,
+    55494
+   ],
+   "bytes": 74,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "PLoS ONE6, e28766 (2011).22163331 10.1371/journal.pone.0028766PMC3233603\n\n"
+  },
+  {
+   "id": "d464",
+   "span": [
+    55494,
+    55499
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "24.. "
+  },
+  {
+   "id": "d465",
+   "span": [
+    55499,
+    55509
+   ],
+   "bytes": 10,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Jones, D. "
+  },
+  {
+   "id": "d466",
+   "span": [
+    55509,
+    55524
+   ],
+   "bytes": 15,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "T., Buchan, D. "
+  },
+  {
+   "id": "d467",
+   "span": [
+    55524,
+    55685
+   ],
+   "bytes": 161,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "W. A., Cozzetto, D. & Pontil, M. PSICOV: precise structural contact prediction using sparse inverse covariance estimation on large multiple sequence alignments. "
+  },
+  {
+   "id": "d468",
+   "span": [
+    55685,
+    55760
+   ],
+   "bytes": 75,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Bioinformatics28, 184–190 (2012).22101153 10.1093/bioinformatics/btr638\n\n"
+  },
+  {
+   "id": "d469",
+   "span": [
+    55760,
+    55765
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "25.. "
+  },
+  {
+   "id": "d470",
+   "span": [
+    55765,
+    55789
+   ],
+   "bytes": 24,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Moult, J., Pedersen, J. "
+  },
+  {
+   "id": "d471",
+   "span": [
+    55789,
+    55818
+   ],
+   "bytes": 29,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "T., Judson, R. & Fidelis, K. "
+  },
+  {
+   "id": "d472",
+   "span": [
+    55818,
+    55891
+   ],
+   "bytes": 73,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A large-scale experiment to assess protein structure prediction methods. "
+  },
+  {
+   "id": "d473",
+   "span": [
+    55891,
+    55950
+   ],
+   "bytes": 59,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proteins23, ii–iv (1995).8710822 10.1002/prot.340230303\n\n"
+  },
+  {
+   "id": "d474",
+   "span": [
+    55950,
+    55955
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "26.. "
+  },
+  {
+   "id": "d475",
+   "span": [
+    55955,
+    56021
+   ],
+   "bytes": 66,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Kryshtafovych, A., Schwede, T., Topf, M., Fidelis, K. & Moult, J. "
+  },
+  {
+   "id": "d476",
+   "span": [
+    56021,
+    56103
+   ],
+   "bytes": 82,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Critical assessment of methods of protein structure prediction (CASP)-round XIII. "
+  },
+  {
+   "id": "d477",
+   "span": [
+    56103,
+    56173
+   ],
+   "bytes": 70,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proteins87, 1011–1020 (2019).31589781 10.1002/prot.25823PMC6927249\n\n"
+  },
+  {
+   "id": "d478",
+   "span": [
+    56173,
+    56178
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "27.. "
+  },
+  {
+   "id": "d479",
+   "span": [
+    56178,
+    56203
+   ],
+   "bytes": 25,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Zhang, Y. & Skolnick, J. "
+  },
+  {
+   "id": "d480",
+   "span": [
+    56203,
+    56284
+   ],
+   "bytes": 81,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Scoring function for automated assessment of protein structure template quality. "
+  },
+  {
+   "id": "d481",
+   "span": [
+    56284,
+    56342
+   ],
+   "bytes": 58,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proteins57, 702–710 (2004).15476259 10.1002/prot.20264\n\n"
+  },
+  {
+   "id": "d482",
+   "span": [
+    56342,
+    56347
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "28.. "
+  },
+  {
+   "id": "d483",
+   "span": [
+    56347,
+    56364
+   ],
+   "bytes": 17,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Tu, Z. & Bai, X. "
+  },
+  {
+   "id": "d484",
+   "span": [
+    56364,
+    56457
+   ],
+   "bytes": 93,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Auto-context and its application to high-level vision tasks and 3D brain image segmentation. "
+  },
+  {
+   "id": "d485",
+   "span": [
+    56457,
+    56469
+   ],
+   "bytes": 12,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "IEEE Trans. "
+  },
+  {
+   "id": "d486",
+   "span": [
+    56469,
+    56483
+   ],
+   "bytes": 14,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Pattern Anal. "
+  },
+  {
+   "id": "d487",
+   "span": [
+    56483,
+    56489
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mach. "
+  },
+  {
+   "id": "d488",
+   "span": [
+    56489,
+    56497
+   ],
+   "bytes": 8,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Intell. "
+  },
+  {
+   "id": "d489",
+   "span": [
+    56497,
+    56553
+   ],
+   "bytes": 56,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "32, 1744–1757 (2010).20724753 10.1109/TPAMI.2009.186\n\n"
+  },
+  {
+   "id": "d490",
+   "span": [
+    56553,
+    56558
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "29.. "
+  },
+  {
+   "id": "d491",
+   "span": [
+    56558,
+    56613
+   ],
+   "bytes": 55,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Carreira, J., Agrawal, P., Fragkiadaki, K. & Malik, J. "
+  },
+  {
+   "id": "d492",
+   "span": [
+    56613,
+    56666
+   ],
+   "bytes": 53,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Human pose estimation with iterative error feedback. "
+  },
+  {
+   "id": "d493",
+   "span": [
+    56666,
+    56755
+   ],
+   "bytes": 89,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In Proc. IEEE Conference on Computer Vision and Pattern Recognition 4733–4742 (2016).\n\n"
+  },
+  {
+   "id": "d494",
+   "span": [
+    56755,
+    56760
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "30.. "
+  },
+  {
+   "id": "d495",
+   "span": [
+    56760,
+    56861
+   ],
+   "bytes": 101,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mirabello, C. & Wallner, B. rawMSA: end-to-end deep learning using raw multiple sequence alignments. "
+  },
+  {
+   "id": "d496",
+   "span": [
+    56861,
+    56938
+   ],
+   "bytes": 77,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "PLoS ONE14, e0220182 (2019).31415569 10.1371/journal.pone.0220182PMC6695225\n\n"
+  },
+  {
+   "id": "d497",
+   "span": [
+    56938,
+    56943
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "31.. "
+  },
+  {
+   "id": "d498",
+   "span": [
+    56943,
+    57016
+   ],
+   "bytes": 73,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Huang, Z. et al. CCNet: criss-cross attention for semantic segmentation. "
+  },
+  {
+   "id": "d499",
+   "span": [
+    57016,
+    57097
+   ],
+   "bytes": 81,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In Proc. IEEE/CVF International Conference on Computer Vision 603–612 (2019).\n\n"
+  },
+  {
+   "id": "d500",
+   "span": [
+    57097,
+    57102
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "32.. "
+  },
+  {
+   "id": "d501",
+   "span": [
+    57102,
+    57219
+   ],
+   "bytes": 117,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Hornak, V. et al. Comparison of multiple Amber force fields and development of improved protein backbone parameters. "
+  },
+  {
+   "id": "d502",
+   "span": [
+    57219,
+    57287
+   ],
+   "bytes": 68,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proteins65, 712–725 (2006).16981200 10.1002/prot.21123PMC4805110\n\n"
+  },
+  {
+   "id": "d503",
+   "span": [
+    57287,
+    57292
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "33.. "
+  },
+  {
+   "id": "d504",
+   "span": [
+    57292,
+    57367
+   ],
+   "bytes": 75,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Zemla, A. LGA: a method for finding 3D similarities in protein structures. "
+  },
+  {
+   "id": "d505",
+   "span": [
+    57367,
+    57386
+   ],
+   "bytes": 19,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nucleic Acids Res. "
+  },
+  {
+   "id": "d506",
+   "span": [
+    57386,
+    57447
+   ],
+   "bytes": 61,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "31, 3370–3374 (2003).12824330 10.1093/nar/gkg571PMC168977\n\n"
+  },
+  {
+   "id": "d507",
+   "span": [
+    57447,
+    57452
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "34.. "
+  },
+  {
+   "id": "d508",
+   "span": [
+    57452,
+    57620
+   ],
+   "bytes": 168,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mariani, V., Biasini, M., Barbato, A. & Schwede, T. lDDT: a local superposition-free score for comparing protein structures and models using distance difference tests. "
+  },
+  {
+   "id": "d509",
+   "span": [
+    57620,
+    57707
+   ],
+   "bytes": 87,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Bioinformatics29, 2722–2728 (2013).23986568 10.1093/bioinformatics/btt473PMC3799472\n\n"
+  },
+  {
+   "id": "d510",
+   "span": [
+    57707,
+    57712
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "35.. "
+  },
+  {
+   "id": "d511",
+   "span": [
+    57712,
+    57753
+   ],
+   "bytes": 41,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Xie, Q., Luong, M.-T., Hovy, E. & Le, Q. "
+  },
+  {
+   "id": "d512",
+   "span": [
+    57753,
+    57756
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "V. "
+  },
+  {
+   "id": "d513",
+   "span": [
+    57756,
+    57823
+   ],
+   "bytes": 67,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Self-training with noisy student improves imagenet classification. "
+  },
+  {
+   "id": "d514",
+   "span": [
+    57823,
+    57918
+   ],
+   "bytes": 95,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In Proc. IEEE/CVF Conference on Computer Vision and Pattern Recognition 10687–10698 (2020).\n\n"
+  },
+  {
+   "id": "d515",
+   "span": [
+    57918,
+    57923
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "36.. "
+  },
+  {
+   "id": "d516",
+   "span": [
+    57923,
+    58029
+   ],
+   "bytes": 106,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mirdita, M. et al. Uniclust databases of clustered and deeply annotated protein sequences and alignments. "
+  },
+  {
+   "id": "d517",
+   "span": [
+    58029,
+    58048
+   ],
+   "bytes": 19,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nucleic Acids Res. "
+  },
+  {
+   "id": "d518",
+   "span": [
+    58048,
+    58111
+   ],
+   "bytes": 63,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "45, D170–D176 (2017).27899574 10.1093/nar/gkw1081PMC5614098\n\n"
+  },
+  {
+   "id": "d519",
+   "span": [
+    58111,
+    58116
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "37.. "
+  },
+  {
+   "id": "d520",
+   "span": [
+    58116,
+    58166
+   ],
+   "bytes": 50,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Devlin, J., Chang, M.-W., Lee, K. & Toutanova, K. "
+  },
+  {
+   "id": "d521",
+   "span": [
+    58166,
+    58248
+   ],
+   "bytes": 82,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "BERT: pre-training of deep bidirectional transformers for language understanding. "
+  },
+  {
+   "id": "d522",
+   "span": [
+    58248,
+    58405
+   ],
+   "bytes": 157,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In Proc. 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies 1, 4171–4186 (2019).\n\n"
+  },
+  {
+   "id": "d523",
+   "span": [
+    58405,
+    58410
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "38.. "
+  },
+  {
+   "id": "d524",
+   "span": [
+    58410,
+    58442
+   ],
+   "bytes": 32,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Rao, R. et al. MSA transformer. "
+  },
+  {
+   "id": "d525",
+   "span": [
+    58442,
+    58532
+   ],
+   "bytes": 90,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In Proc. 38th International Conference on Machine Learning PMLR 139, 8844–8856 (2021).\n\n"
+  },
+  {
+   "id": "d526",
+   "span": [
+    58532,
+    58537
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "39.. "
+  },
+  {
+   "id": "d527",
+   "span": [
+    58537,
+    58633
+   ],
+   "bytes": 96,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Tunyasuvunakool, K. et al. Highly accurate protein structure prediction for the human proteome. "
+  },
+  {
+   "id": "d528",
+   "span": [
+    58633,
+    58719
+   ],
+   "bytes": 86,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nature10.1038/s41586-021-03828-1 (2021).10.1038/s41586-021-03828-1PMC838724034293799\n\n"
+  },
+  {
+   "id": "d529",
+   "span": [
+    58719,
+    58724
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "40.. "
+  },
+  {
+   "id": "d530",
+   "span": [
+    58724,
+    58803
+   ],
+   "bytes": 79,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Kuhlman, B. & Bradley, P. Advances in protein structure prediction and design. "
+  },
+  {
+   "id": "d531",
+   "span": [
+    58803,
+    58808
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d532",
+   "span": [
+    58808,
+    58813
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Rev. "
+  },
+  {
+   "id": "d533",
+   "span": [
+    58813,
+    58818
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mol. "
+  },
+  {
+   "id": "d534",
+   "span": [
+    58818,
+    58829
+   ],
+   "bytes": 11,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Cell Biol. "
+  },
+  {
+   "id": "d535",
+   "span": [
+    58829,
+    58896
+   ],
+   "bytes": 67,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "20, 681–697 (2019).31417196 10.1038/s41580-019-0163-xPMC7032036\n\n"
+  },
+  {
+   "id": "d536",
+   "span": [
+    58896,
+    58901
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "41.. "
+  },
+  {
+   "id": "d537",
+   "span": [
+    58901,
+    58911
+   ],
+   "bytes": 10,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Marks, D. "
+  },
+  {
+   "id": "d538",
+   "span": [
+    58911,
+    58924
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "S., Hopf, T. "
+  },
+  {
+   "id": "d539",
+   "span": [
+    58924,
+    58994
+   ],
+   "bytes": 70,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A. & Sander, C. Protein structure prediction from sequence variation. "
+  },
+  {
+   "id": "d540",
+   "span": [
+    58994,
+    58999
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d541",
+   "span": [
+    58999,
+    59011
+   ],
+   "bytes": 12,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biotechnol. "
+  },
+  {
+   "id": "d542",
+   "span": [
+    59011,
+    59071
+   ],
+   "bytes": 60,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "30, 1072–1080 (2012).23138306 10.1038/nbt.2419PMC4319528\n\n"
+  },
+  {
+   "id": "d543",
+   "span": [
+    59071,
+    59076
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "42.. "
+  },
+  {
+   "id": "d544",
+   "span": [
+    59076,
+    59101
+   ],
+   "bytes": 25,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Qian, N. & Sejnowski, T. "
+  },
+  {
+   "id": "d545",
+   "span": [
+    59101,
+    59104
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J. "
+  },
+  {
+   "id": "d546",
+   "span": [
+    59104,
+    59189
+   ],
+   "bytes": 85,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Predicting the secondary structure of globular proteins using neural network models. "
+  },
+  {
+   "id": "d547",
+   "span": [
+    59189,
+    59192
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "J. "
+  },
+  {
+   "id": "d548",
+   "span": [
+    59192,
+    59197
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mol. "
+  },
+  {
+   "id": "d549",
+   "span": [
+    59197,
+    59203
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d550",
+   "span": [
+    59203,
+    59263
+   ],
+   "bytes": 60,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "202, 865–884 (1988).3172241 10.1016/0022-2836(88)90564-5\n\n"
+  },
+  {
+   "id": "d551",
+   "span": [
+    59263,
+    59268
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "43.. "
+  },
+  {
+   "id": "d552",
+   "span": [
+    59268,
+    59321
+   ],
+   "bytes": 53,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Fariselli, P., Olmea, O., Valencia, A. & Casadio, R. "
+  },
+  {
+   "id": "d553",
+   "span": [
+    59321,
+    59395
+   ],
+   "bytes": 74,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Prediction of contact maps with neural networks and correlated mutations. "
+  },
+  {
+   "id": "d554",
+   "span": [
+    59395,
+    59408
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Protein Eng. "
+  },
+  {
+   "id": "d555",
+   "span": [
+    59408,
+    59465
+   ],
+   "bytes": 57,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "14, 835–843 (2001).11742102 10.1093/protein/14.11.835\n\n"
+  },
+  {
+   "id": "d556",
+   "span": [
+    59465,
+    59470
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "44.. "
+  },
+  {
+   "id": "d557",
+   "span": [
+    59470,
+    59567
+   ],
+   "bytes": 97,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Yang, J. et al. Improved protein structure prediction using predicted interresidue orientations. "
+  },
+  {
+   "id": "d558",
+   "span": [
+    59567,
+    59660
+   ],
+   "bytes": 93,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proc. Natl Acad. Sci. USA117, 1496–1503 (2020).31896580 10.1073/pnas.1914677117PMC6983395\n\n"
+  },
+  {
+   "id": "d559",
+   "span": [
+    59660,
+    59665
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "45.. "
+  },
+  {
+   "id": "d560",
+   "span": [
+    59665,
+    59811
+   ],
+   "bytes": 146,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Li, Y. et al. Deducing high-accuracy protein contact-maps from a triplet of coevolutionary matrices through deep residual convolutional networks. "
+  },
+  {
+   "id": "d561",
+   "span": [
+    59811,
+    59824
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "PLOS Comput. "
+  },
+  {
+   "id": "d562",
+   "span": [
+    59824,
+    59830
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d563",
+   "span": [
+    59830,
+    59899
+   ],
+   "bytes": 69,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "17, e1008865 (2021).33770072 10.1371/journal.pcbi.1008865PMC8026059\n\n"
+  },
+  {
+   "id": "d564",
+   "span": [
+    59899,
+    59904
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "46.. "
+  },
+  {
+   "id": "d565",
+   "span": [
+    59904,
+    59941
+   ],
+   "bytes": 37,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "He, K., Zhang, X., Ren, S. & Sun, J. "
+  },
+  {
+   "id": "d566",
+   "span": [
+    59941,
+    59987
+   ],
+   "bytes": 46,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Deep residual learning for image recognition. "
+  },
+  {
+   "id": "d567",
+   "span": [
+    59987,
+    60074
+   ],
+   "bytes": 87,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In Proc. IEEE Conference on Computer Vision and Pattern Recognition 770–778 (2016).\n\n"
+  },
+  {
+   "id": "d568",
+   "span": [
+    60074,
+    60079
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "47.. "
+  },
+  {
+   "id": "d569",
+   "span": [
+    60079,
+    60151
+   ],
+   "bytes": 72,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "AlQuraishi, M. End-to-end differentiable learning of protein structure. "
+  },
+  {
+   "id": "d570",
+   "span": [
+    60151,
+    60162
+   ],
+   "bytes": 11,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Cell Syst. "
+  },
+  {
+   "id": "d571",
+   "span": [
+    60162,
+    60229
+   ],
+   "bytes": 67,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "8, 292–301 (2019).31005579 10.1016/j.cels.2019.03.006PMC6513320\n\n"
+  },
+  {
+   "id": "d572",
+   "span": [
+    60229,
+    60234
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "48.. "
+  },
+  {
+   "id": "d573",
+   "span": [
+    60234,
+    60394
+   ],
+   "bytes": 160,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Senior, A. W. et al. Protein structure prediction using multiple deep neural networks in the 13th Critical Assessment of Protein Structure Prediction (CASP13). "
+  },
+  {
+   "id": "d574",
+   "span": [
+    60394,
+    60464
+   ],
+   "bytes": 70,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proteins87, 1141–1148 (2019).31602685 10.1002/prot.25834PMC7079254\n\n"
+  },
+  {
+   "id": "d575",
+   "span": [
+    60464,
+    60469
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "49.. "
+  },
+  {
+   "id": "d576",
+   "span": [
+    60469,
+    60525
+   ],
+   "bytes": 56,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Ingraham, J., Riesselman, A. J., Sander, C. & Marks, D. "
+  },
+  {
+   "id": "d577",
+   "span": [
+    60525,
+    60528
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "S. "
+  },
+  {
+   "id": "d578",
+   "span": [
+    60528,
+    60659
+   ],
+   "bytes": 131,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Learning protein structure with a differentiable simulator. in Proc. International Conference on Learning Representations (2019).\n\n"
+  },
+  {
+   "id": "d579",
+   "span": [
+    60659,
+    60664
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "50.. "
+  },
+  {
+   "id": "d580",
+   "span": [
+    60664,
+    60671
+   ],
+   "bytes": 7,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Li, J. "
+  },
+  {
+   "id": "d581",
+   "span": [
+    60671,
+    60713
+   ],
+   "bytes": 42,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Universal transforming geometric network. "
+  },
+  {
+   "id": "d582",
+   "span": [
+    60713,
+    60767
+   ],
+   "bytes": 54,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Preprint at https://arxiv.org/abs/1908.00723 (2019).\n\n"
+  },
+  {
+   "id": "d583",
+   "span": [
+    60767,
+    60772
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "51.. "
+  },
+  {
+   "id": "d584",
+   "span": [
+    60772,
+    60803
+   ],
+   "bytes": 31,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Xu, J., McPartlon, M. & Li, J. "
+  },
+  {
+   "id": "d585",
+   "span": [
+    60803,
+    60900
+   ],
+   "bytes": 97,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Improved protein structure prediction by deep learning irrespective of co-evolution information. "
+  },
+  {
+   "id": "d586",
+   "span": [
+    60900,
+    60905
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d587",
+   "span": [
+    60905,
+    60911
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mach. "
+  },
+  {
+   "id": "d588",
+   "span": [
+    60911,
+    60919
+   ],
+   "bytes": 8,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Intell. "
+  },
+  {
+   "id": "d589",
+   "span": [
+    60919,
+    60986
+   ],
+   "bytes": 67,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "3, 601–609 (2021).34368623 10.1038/s42256-021-00348-5PMC8340610\n\n"
+  },
+  {
+   "id": "d590",
+   "span": [
+    60986,
+    60991
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "52.. "
+  },
+  {
+   "id": "d591",
+   "span": [
+    60991,
+    61037
+   ],
+   "bytes": 46,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Vaswani, A. et al. Attention is all you need. "
+  },
+  {
+   "id": "d592",
+   "span": [
+    61037,
+    61111
+   ],
+   "bytes": 74,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "In Advances in Neural Information Processing Systems 5998–6008 (2017).\n\n"
+  },
+  {
+   "id": "d593",
+   "span": [
+    61111,
+    61116
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "53.. "
+  },
+  {
+   "id": "d594",
+   "span": [
+    61116,
+    61273
+   ],
+   "bytes": 157,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Wang, H. et al. Axial-deeplab: stand-alone axial-attention for panoptic segmentation. in European Conference on Computer Vision 108–126 (Springer, 2020).\n\n"
+  },
+  {
+   "id": "d595",
+   "span": [
+    61273,
+    61278
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "54.. "
+  },
+  {
+   "id": "d596",
+   "span": [
+    61278,
+    61288
+   ],
+   "bytes": 10,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Alley, E. "
+  },
+  {
+   "id": "d597",
+   "span": [
+    61288,
+    61346
+   ],
+   "bytes": 58,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "C., Khimulya, G., Biswas, S., AlQuraishi, M. & Church, G. "
+  },
+  {
+   "id": "d598",
+   "span": [
+    61346,
+    61436
+   ],
+   "bytes": 90,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "M. Unified rational protein engineering with sequence-based deep representation learning. "
+  },
+  {
+   "id": "d599",
+   "span": [
+    61436,
+    61441
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d600",
+   "span": [
+    61441,
+    61517
+   ],
+   "bytes": 76,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Methods16, 1315–1322 (2019).31636460 10.1038/s41592-019-0598-1PMC7067682\n\n"
+  },
+  {
+   "id": "d601",
+   "span": [
+    61517,
+    61522
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "55.. "
+  },
+  {
+   "id": "d602",
+   "span": [
+    61522,
+    61630
+   ],
+   "bytes": 108,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Heinzinger, M. et al. Modeling aspects of the language of life through transfer-learning protein sequences. "
+  },
+  {
+   "id": "d603",
+   "span": [
+    61630,
+    61709
+   ],
+   "bytes": 79,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "BMC Bioinformatics20, 723 (2019).31847804 10.1186/s12859-019-3220-8PMC6918593\n\n"
+  },
+  {
+   "id": "d604",
+   "span": [
+    61709,
+    61714
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "56.. "
+  },
+  {
+   "id": "d605",
+   "span": [
+    61714,
+    61841
+   ],
+   "bytes": 127,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Rives, A. et al. Biological structure and function emerge from scaling unsupervised learning to 250 million protein sequences. "
+  },
+  {
+   "id": "d606",
+   "span": [
+    61841,
+    61934
+   ],
+   "bytes": 93,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proc. Natl Acad. Sci. USA118, e2016239118 (2021).33876751 10.1073/pnas.2016239118PMC8053943\n\n"
+  },
+  {
+   "id": "d607",
+   "span": [
+    61934,
+    61939
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "57.. "
+  },
+  {
+   "id": "d608",
+   "span": [
+    61939,
+    62012
+   ],
+   "bytes": 73,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Pereira, J. et al. High-accuracy protein structure prediction in CASP14. "
+  },
+  {
+   "id": "d609",
+   "span": [
+    62012,
+    62075
+   ],
+   "bytes": 63,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proteins10.1002/prot.26171 (2021).34218458 10.1002/prot.26171\n\n"
+  },
+  {
+   "id": "d610",
+   "span": [
+    62075,
+    62080
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "58.. "
+  },
+  {
+   "id": "d611",
+   "span": [
+    62080,
+    62208
+   ],
+   "bytes": 128,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Gupta, M. et al. CryoEM and AI reveal a structure of SARS-CoV-2 Nsp2, a multifunctional protein involved in key host processes. "
+  },
+  {
+   "id": "d612",
+   "span": [
+    62208,
+    62255
+   ],
+   "bytes": 47,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Preprint at 10.1101/2021.05.10.443524 (2021).\n\n"
+  },
+  {
+   "id": "d613",
+   "span": [
+    62255,
+    62260
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "59.. "
+  },
+  {
+   "id": "d614",
+   "span": [
+    62260,
+    62283
+   ],
+   "bytes": 23,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Ingraham, J., Garg, V. "
+  },
+  {
+   "id": "d615",
+   "span": [
+    62283,
+    62315
+   ],
+   "bytes": 32,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "K., Barzilay, R. & Jaakkola, T. "
+  },
+  {
+   "id": "d616",
+   "span": [
+    62315,
+    62440
+   ],
+   "bytes": 125,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Generative models for graph-based protein design. in Proc. 33rd Conference on Neural Information Processing Systems (2019).\n\n"
+  },
+  {
+   "id": "d617",
+   "span": [
+    62440,
+    62445
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "60.. "
+  },
+  {
+   "id": "d618",
+   "span": [
+    62445,
+    62470
+   ],
+   "bytes": 25,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Johnson, L. S., Eddy, S. "
+  },
+  {
+   "id": "d619",
+   "span": [
+    62470,
+    62489
+   ],
+   "bytes": 19,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "R. & Portugaly, E. "
+  },
+  {
+   "id": "d620",
+   "span": [
+    62489,
+    62561
+   ],
+   "bytes": 72,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Hidden Markov model speed heuristic and iterative HMM search procedure. "
+  },
+  {
+   "id": "d621",
+   "span": [
+    62561,
+    62639
+   ],
+   "bytes": 78,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "BMC Bioinformatics11, 431 (2010).20718988 10.1186/1471-2105-11-431PMC2931519\n\n"
+  },
+  {
+   "id": "d622",
+   "span": [
+    62639,
+    62644
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "61.. "
+  },
+  {
+   "id": "d623",
+   "span": [
+    62644,
+    62695
+   ],
+   "bytes": 51,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Remmert, M., Biegert, A., Hauser, A. & Söding, J. "
+  },
+  {
+   "id": "d624",
+   "span": [
+    62695,
+    62778
+   ],
+   "bytes": 83,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "HHblits: lightning-fast iterative protein sequence searching by HMM-HMM alignment. "
+  },
+  {
+   "id": "d625",
+   "span": [
+    62778,
+    62783
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d626",
+   "span": [
+    62783,
+    62838
+   ],
+   "bytes": 55,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Methods9, 173–175 (2012).10.1038/nmeth.181822198341\n\n"
+  },
+  {
+   "id": "d627",
+   "span": [
+    62838,
+    62843
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "62.. "
+  },
+  {
+   "id": "d628",
+   "span": [
+    62843,
+    62867
+   ],
+   "bytes": 24,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The UniProt Consortium. "
+  },
+  {
+   "id": "d629",
+   "span": [
+    62867,
+    62921
+   ],
+   "bytes": 54,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "UniProt: the universal protein knowledgebase in 2021. "
+  },
+  {
+   "id": "d630",
+   "span": [
+    62921,
+    62940
+   ],
+   "bytes": 19,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nucleic Acids Res. "
+  },
+  {
+   "id": "d631",
+   "span": [
+    62940,
+    63003
+   ],
+   "bytes": 63,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "49, D480–D489 (2020).10.1093/nar/gkaa1100PMC777890833237286\n\n"
+  },
+  {
+   "id": "d632",
+   "span": [
+    63003,
+    63008
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "63.. "
+  },
+  {
+   "id": "d633",
+   "span": [
+    63008,
+    63037
+   ],
+   "bytes": 29,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Steinegger, M. & Söding, J. "
+  },
+  {
+   "id": "d634",
+   "span": [
+    63037,
+    63091
+   ],
+   "bytes": 54,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Clustering huge protein sequence sets in linear time. "
+  },
+  {
+   "id": "d635",
+   "span": [
+    63091,
+    63096
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d636",
+   "span": [
+    63096,
+    63104
+   ],
+   "bytes": 8,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Commun. "
+  },
+  {
+   "id": "d637",
+   "span": [
+    63104,
+    63166
+   ],
+   "bytes": 62,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "9, 2542 (2018).29959318 10.1038/s41467-018-04964-5PMC6026198\n\n"
+  },
+  {
+   "id": "d638",
+   "span": [
+    63166,
+    63171
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "64.. "
+  },
+  {
+   "id": "d639",
+   "span": [
+    63171,
+    63200
+   ],
+   "bytes": 29,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Steinegger, M. & Söding, J. "
+  },
+  {
+   "id": "d640",
+   "span": [
+    63200,
+    63292
+   ],
+   "bytes": 92,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. "
+  },
+  {
+   "id": "d641",
+   "span": [
+    63292,
+    63297
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d642",
+   "span": [
+    63297,
+    63309
+   ],
+   "bytes": 12,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biotechnol. "
+  },
+  {
+   "id": "d643",
+   "span": [
+    63309,
+    63359
+   ],
+   "bytes": 50,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "35, 1026–1028 (2017).29035372 10.1038/nbt.3988\n\n"
+  },
+  {
+   "id": "d644",
+   "span": [
+    63359,
+    63364
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "65.. "
+  },
+  {
+   "id": "d645",
+   "span": [
+    63364,
+    63491
+   ],
+   "bytes": 127,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Deorowicz, S., Debudaj-Grabysz, A. & Gudyś, A. FAMSA: fast and accurate multiple sequence alignment of huge protein families. "
+  },
+  {
+   "id": "d646",
+   "span": [
+    63491,
+    63501
+   ],
+   "bytes": 10,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Sci. Rep. "
+  },
+  {
+   "id": "d647",
+   "span": [
+    63501,
+    63555
+   ],
+   "bytes": 54,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "6, 33964 (2016).27670777 10.1038/srep33964PMC5037421\n\n"
+  },
+  {
+   "id": "d648",
+   "span": [
+    63555,
+    63560
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "66.. "
+  },
+  {
+   "id": "d649",
+   "span": [
+    63560,
+    63656
+   ],
+   "bytes": 96,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Steinegger, M. et al. HH-suite3 for fast remote homology detection and deep protein annotation. "
+  },
+  {
+   "id": "d650",
+   "span": [
+    63656,
+    63735
+   ],
+   "bytes": 79,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "BMC Bioinformatics20, 473 (2019).31521110 10.1186/s12859-019-3019-7PMC6744700\n\n"
+  },
+  {
+   "id": "d651",
+   "span": [
+    63735,
+    63740
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "67.. "
+  },
+  {
+   "id": "d652",
+   "span": [
+    63740,
+    63803
+   ],
+   "bytes": 63,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Suzek, B. E., Wang, Y., Huang, H., McGarvey, P. B. & Wu, C. H. "
+  },
+  {
+   "id": "d653",
+   "span": [
+    63803,
+    63905
+   ],
+   "bytes": 102,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "UniRef clusters: a comprehensive and scalable alternative for improving sequence similarity searches. "
+  },
+  {
+   "id": "d654",
+   "span": [
+    63905,
+    63990
+   ],
+   "bytes": 85,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Bioinformatics31, 926–932 (2015).25398609 10.1093/bioinformatics/btu739PMC4375400\n\n"
+  },
+  {
+   "id": "d655",
+   "span": [
+    63990,
+    63995
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "68.. "
+  },
+  {
+   "id": "d656",
+   "span": [
+    63995,
+    64004
+   ],
+   "bytes": 9,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Eddy, S. "
+  },
+  {
+   "id": "d657",
+   "span": [
+    64004,
+    64007
+   ],
+   "bytes": 3,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "R. "
+  },
+  {
+   "id": "d658",
+   "span": [
+    64007,
+    64041
+   ],
+   "bytes": 34,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Accelerated profile HMM searches. "
+  },
+  {
+   "id": "d659",
+   "span": [
+    64041,
+    64054
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "PLOS Comput. "
+  },
+  {
+   "id": "d660",
+   "span": [
+    64054,
+    64060
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d661",
+   "span": [
+    64060,
+    64128
+   ],
+   "bytes": 68,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "7, e1002195 (2011).22039361 10.1371/journal.pcbi.1002195PMC3197634\n\n"
+  },
+  {
+   "id": "d662",
+   "span": [
+    64128,
+    64133
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "69.. "
+  },
+  {
+   "id": "d663",
+   "span": [
+    64133,
+    64235
+   ],
+   "bytes": 102,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Eastman, P. et al. OpenMM 7: rapid development of high performance algorithms for molecular dynamics. "
+  },
+  {
+   "id": "d664",
+   "span": [
+    64235,
+    64248
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "PLOS Comput. "
+  },
+  {
+   "id": "d665",
+   "span": [
+    64248,
+    64254
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d666",
+   "span": [
+    64254,
+    64323
+   ],
+   "bytes": 69,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "13, e1005659 (2017).28746339 10.1371/journal.pcbi.1005659PMC5549999\n\n"
+  },
+  {
+   "id": "d667",
+   "span": [
+    64323,
+    64328
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "70.. "
+  },
+  {
+   "id": "d668",
+   "span": [
+    64328,
+    64419
+   ],
+   "bytes": 91,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Ashish, A. M. A. et al. TensorFlow: large-scale machine learning on heterogeneous systems. "
+  },
+  {
+   "id": "d669",
+   "span": [
+    64419,
+    64473
+   ],
+   "bytes": 54,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Preprint at https://arxiv.org/abs/1603.04467 (2015).\n\n"
+  },
+  {
+   "id": "d670",
+   "span": [
+    64473,
+    64478
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "71.. "
+  },
+  {
+   "id": "d671",
+   "span": [
+    64478,
+    64571
+   ],
+   "bytes": 93,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Reynolds, M. et al. Open sourcing Sonnet – a new library for constructing neural networks. "
+  },
+  {
+   "id": "d672",
+   "span": [
+    64571,
+    64644
+   ],
+   "bytes": 73,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "DeepMindhttps://deepmind.com/blog/open-sourcing-sonnet/ (7 April 2017).\n\n"
+  },
+  {
+   "id": "d673",
+   "span": [
+    64644,
+    64649
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "72.. "
+  },
+  {
+   "id": "d674",
+   "span": [
+    64649,
+    64700
+   ],
+   "bytes": 51,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Harris, C. R. et al. Array programming with NumPy. "
+  },
+  {
+   "id": "d675",
+   "span": [
+    64700,
+    64774
+   ],
+   "bytes": 74,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nature585, 357–362 (2020).32939066 10.1038/s41586-020-2649-2PMC7759461\n\n"
+  },
+  {
+   "id": "d676",
+   "span": [
+    64774,
+    64779
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "73.. "
+  },
+  {
+   "id": "d677",
+   "span": [
+    64779,
+    64806
+   ],
+   "bytes": 27,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Van Rossum, G. & Drake, F. "
+  },
+  {
+   "id": "d678",
+   "span": [
+    64806,
+    64857
+   ],
+   "bytes": 51,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "L. Python 3 Reference Manual (CreateSpace, 2009).\n\n"
+  },
+  {
+   "id": "d679",
+   "span": [
+    64857,
+    64862
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "74.. "
+  },
+  {
+   "id": "d680",
+   "span": [
+    64862,
+    65014
+   ],
+   "bytes": 152,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Bisong, E. in Building Machine Learning and Deep Learning Models on Google Cloud Platform: A Comprehensive Guide for Beginners 59–64 (Apress, 2019).\n\n"
+  },
+  {
+   "id": "d681",
+   "span": [
+    65014,
+    65019
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "75.. "
+  },
+  {
+   "id": "d682",
+   "span": [
+    65019,
+    65031
+   ],
+   "bytes": 12,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "TensorFlow. "
+  },
+  {
+   "id": "d683",
+   "span": [
+    65031,
+    65112
+   ],
+   "bytes": 81,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "XLA: Optimizing Compiler for TensorFlow. https://www.tensorflow.org/xla (2018).\n\n"
+  },
+  {
+   "id": "d684",
+   "span": [
+    65112,
+    65117
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "76.. "
+  },
+  {
+   "id": "d685",
+   "span": [
+    65117,
+    65159
+   ],
+   "bytes": 42,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Wu, T., Hou, J., Adhikari, B. & Cheng, J. "
+  },
+  {
+   "id": "d686",
+   "span": [
+    65159,
+    65257
+   ],
+   "bytes": 98,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Analysis of several key factors influencing deep learning-based inter-residue contact prediction. "
+  },
+  {
+   "id": "d687",
+   "span": [
+    65257,
+    65344
+   ],
+   "bytes": 87,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Bioinformatics36, 1091–1098 (2020).31504181 10.1093/bioinformatics/btz679PMC7703788\n\n"
+  },
+  {
+   "id": "d688",
+   "span": [
+    65344,
+    65349
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "77.. "
+  },
+  {
+   "id": "d689",
+   "span": [
+    65349,
+    65454
+   ],
+   "bytes": 105,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Jiang, W. et al. MrpH, a new class of metal-binding adhesin, requires zinc to mediate biofilm formation. "
+  },
+  {
+   "id": "d690",
+   "span": [
+    65454,
+    65467
+   ],
+   "bytes": 13,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "PLoS Pathog. "
+  },
+  {
+   "id": "d691",
+   "span": [
+    65467,
+    65536
+   ],
+   "bytes": 69,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "16, e1008707 (2020).32780778 10.1371/journal.ppat.1008707PMC7444556\n\n"
+  },
+  {
+   "id": "d692",
+   "span": [
+    65536,
+    65541
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "78.. "
+  },
+  {
+   "id": "d693",
+   "span": [
+    65541,
+    65609
+   ],
+   "bytes": 68,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Dunne, M., Ernst, P., Sobieraj, A., Pluckthun, A. & Loessner, M. J. "
+  },
+  {
+   "id": "d694",
+   "span": [
+    65609,
+    65679
+   ],
+   "bytes": 70,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The M23 peptidase domain of the Staphylococcal phage 2638A endolysin. "
+  },
+  {
+   "id": "d695",
+   "span": [
+    65679,
+    65711
+   ],
+   "bytes": 32,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "PDB10.2210/pdb6YJ1/pdb (2020).\n\n"
+  },
+  {
+   "id": "d696",
+   "span": [
+    65711,
+    65716
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "79.. "
+  },
+  {
+   "id": "d697",
+   "span": [
+    65716,
+    65812
+   ],
+   "bytes": 96,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Drobysheva, A. V. et al. Structure and function of virion RNA polymerase of a crAss-like phage. "
+  },
+  {
+   "id": "d698",
+   "span": [
+    65812,
+    65887
+   ],
+   "bytes": 75,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nature589, 306–309 (2021).33208949 10.1038/s41586-020-2921-5PMC12127119\n\n"
+  },
+  {
+   "id": "d699",
+   "span": [
+    65887,
+    65892
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "80.. "
+  },
+  {
+   "id": "d700",
+   "span": [
+    65892,
+    66020
+   ],
+   "bytes": 128,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Flaugnatti, N. et al. Structural basis for loading and inhibition of a bacterial T6SS phospholipase effector by the VgrG spike. "
+  },
+  {
+   "id": "d701",
+   "span": [
+    66020,
+    66028
+   ],
+   "bytes": 8,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "EMBO J. "
+  },
+  {
+   "id": "d702",
+   "span": [
+    66028,
+    66092
+   ],
+   "bytes": 64,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "39, e104129 (2020).32350888 10.15252/embj.2019104129PMC7265238\n\n"
+  },
+  {
+   "id": "d703",
+   "span": [
+    66092,
+    66097
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "81.. "
+  },
+  {
+   "id": "d704",
+   "span": [
+    66097,
+    66202
+   ],
+   "bytes": 105,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "ElGamacy, M. et al. An interface-driven design strategy yields a novel, corrugated protein architecture. "
+  },
+  {
+   "id": "d705",
+   "span": [
+    66202,
+    66213
+   ],
+   "bytes": 11,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "ACS Synth. "
+  },
+  {
+   "id": "d706",
+   "span": [
+    66213,
+    66219
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d707",
+   "span": [
+    66219,
+    66277
+   ],
+   "bytes": 58,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "7, 2226–2235 (2018).30148951 10.1021/acssynbio.8b00224\n\n"
+  },
+  {
+   "id": "d708",
+   "span": [
+    66277,
+    66282
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "82.. "
+  },
+  {
+   "id": "d709",
+   "span": [
+    66282,
+    66380
+   ],
+   "bytes": 98,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Lim, C. J. et al. The structure of human CST reveals a decameric assembly bound to telomeric DNA. "
+  },
+  {
+   "id": "d710",
+   "span": [
+    66380,
+    66455
+   ],
+   "bytes": 75,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Science368, 1081–1085 (2020).32499435 10.1126/science.aaz9649PMC7559292\n\n"
+  },
+  {
+   "id": "d711",
+   "span": [
+    66455,
+    66460
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "83.. "
+  },
+  {
+   "id": "d712",
+   "span": [
+    66460,
+    66576
+   ],
+   "bytes": 116,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Debruycker, V. et al. An embedded lipid in the multidrug transporter LmrP suggests a mechanism for polyspecificity. "
+  },
+  {
+   "id": "d713",
+   "span": [
+    66576,
+    66581
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Nat. "
+  },
+  {
+   "id": "d714",
+   "span": [
+    66581,
+    66589
+   ],
+   "bytes": 8,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Struct. "
+  },
+  {
+   "id": "d715",
+   "span": [
+    66589,
+    66594
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Mol. "
+  },
+  {
+   "id": "d716",
+   "span": [
+    66594,
+    66600
+   ],
+   "bytes": 6,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Biol. "
+  },
+  {
+   "id": "d717",
+   "span": [
+    66600,
+    66667
+   ],
+   "bytes": 67,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "27, 829–835 (2020).32719456 10.1038/s41594-020-0464-yPMC7951658\n\n"
+  },
+  {
+   "id": "d718",
+   "span": [
+    66667,
+    66672
+   ],
+   "bytes": 5,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "84.. "
+  },
+  {
+   "id": "d719",
+   "span": [
+    66672,
+    66683
+   ],
+   "bytes": 11,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Flower, T. "
+  },
+  {
+   "id": "d720",
+   "span": [
+    66683,
+    66766
+   ],
+   "bytes": 83,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "G. et al. Structure of SARS-CoV-2 ORF8, a rapidly evolving immune evasion protein. "
+  },
+  {
+   "id": "d721",
+   "span": [
+    66766,
+    66858
+   ],
+   "bytes": 92,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Proc. Natl Acad. Sci. USA118, e2021785118 (2021).33361333 10.1073/pnas.2021785118PMC7812859\n"
+  }
+ ]
+}

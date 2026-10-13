@@ -217,12 +217,13 @@ def main() -> int:
         summary[source_name] = {
             "document": doc_path.name, "document_bytes": len(document),
             "document_sha256": hashlib.sha256(document).hexdigest(),
-            "check_exit": code, "admitted": admitted, "check_error": checked.get("error"),
+            "check_exit": code, "accepted": code == 0 and not checked.get("error") and "format" in checked,
+            "graph_admitted": admitted, "check_error": checked.get("error"),
             "premises": checked.get("premises"), "rust_timeout_raised_to": raised,
             "graph_nodes": len(graph["nodes"]) if graph else 0,
             "certified_consequences": [n["name"] for n in graph["nodes"] if "certificate" in n] if graph else [],
             "coverage_exit": ccode, "coverage": coverage}
-        print(source_name, "check exit", code, "admitted", admitted, "VE_RUST_TIMEOUT", raised)
+        print(source_name, "check exit", code, "graph admitted", admitted, "VE_RUST_TIMEOUT", raised)
         print(json.dumps(coverage)[:600] if coverage else ctext[-2000:])
     if summary:
         (out / "run.json").write_text(json.dumps({"checkout": str(CHECKOUT), "checkout_head": subprocess.run(

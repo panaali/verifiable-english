@@ -1,0 +1,1117 @@
+{
+ "source": "source-04-e1.md",
+ "source_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
+ "source_bytes": 8883,
+ "units": [
+  {
+   "id": "v001",
+   "span": [
+    0,
+    40
+   ],
+   "bytes": 40,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "# E1: exact-translation discrimination\n\n"
+  },
+  {
+   "id": "v002",
+   "span": [
+    40,
+    80
+   ],
+   "bytes": 40,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Design and development observations\n\n"
+  },
+  {
+   "id": "v003",
+   "span": [
+    80,
+    266
+   ],
+   "bytes": 186,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "The scored inventory contains 96 base items from 12 authored templates with\nfresh vocabulary bindings, yielding 874 candidates: 280 equivalent and 594\nnon-equivalent to their reference. "
+  },
+  {
+   "id": "v004",
+   "span": [
+    266,
+    335
+   ],
+   "bytes": 69,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Good candidates include canonical formulas\nand verified equivalents. "
+  },
+  {
+   "id": "v005",
+   "span": [
+    335,
+    533
+   ],
+   "bytes": 198,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Bad candidates include mechanical and model-written\nattacks, retained only when the oracle validates non-equivalence and decides\nboth implication directions; UNKNOWN candidates never reach a judge. "
+  },
+  {
+   "id": "v006",
+   "span": [
+    533,
+    619
+   ],
+   "bytes": 86,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The\nrequirements are short, near-formal descriptions authored with the reference\nAST. "
+  },
+  {
+   "id": "v007",
+   "span": [
+    619,
+    708
+   ],
+   "bytes": 89,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "No independent source-intent validation or specification-size manipulation\nis performed. "
+  },
+  {
+   "id": "v008",
+   "span": [
+    708,
+    758
+   ],
+   "bytes": 50,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "Symbolic statements average about 92 characters.\n\n"
+  },
+  {
+   "id": "v009",
+   "span": [
+    758,
+    875
+   ],
+   "bytes": 117,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "Each candidate is crossed with five views and explanation present/absent,\nproducing 8,740 sign-off trials per judge. "
+  },
+  {
+   "id": "v010",
+   "span": [
+    875,
+    950
+   ],
+   "bytes": 75,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Requirements and the compact vocabulary\nlegend are identical across views. "
+  },
+  {
+   "id": "v011",
+   "span": [
+    950,
+    1039
+   ],
+   "bytes": 89,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Judges have no tools, see no reference AST,\nand are asked to approve exact translations. "
+  },
+  {
+   "id": "v012.p1",
+   "parent": "v012",
+   "span": [
+    1039,
+    1103
+   ],
+   "bytes": 64,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Both scored judges are Qwen2.5\nAWQ models, decode greedily, and "
+  },
+  {
+   "id": "v012.p2",
+   "parent": "v012",
+   "span": [
+    1103,
+    1144
+   ],
+   "bytes": 41,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "receive the same 400-token response cap.\n"
+  },
+  {
+   "id": "v013.p1",
+   "parent": "v013",
+   "span": [
+    1144,
+    1259
+   ],
+   "bytes": 115,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Failures remain in assigned denominators as false approvals for bad candidates\nand rejections for good candidates; "
+  },
+  {
+   "id": "v013.p2",
+   "parent": "v013",
+   "span": [
+    1259,
+    1288
+   ],
+   "bytes": 29,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "no E1 sign-off trial failed. "
+  },
+  {
+   "id": "v014.p1",
+   "parent": "v014",
+   "span": [
+    1288,
+    1370
+   ],
+   "bytes": 82,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "E1b separately\nasks for truth in two finite models without showing a requirement, "
+  },
+  {
+   "id": "v014.p2",
+   "parent": "v014",
+   "span": [
+    1370,
+    1401
+   ],
+   "bytes": 31,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "adding\n4,370 calls per judge.\n\n"
+  },
+  {
+   "id": "v015",
+   "span": [
+    1401,
+    1444
+   ],
+   "bytes": 43,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Development drove prompt and role choices. "
+  },
+  {
+   "id": "v016",
+   "span": [
+    1444,
+    1595
+   ],
+   "bytes": 151,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc",
+   "text": "The 32B symbolic/no-explanation\nbaseline was 34/110 false approvals, only one candidate inside the primary\n30--60% gate; 14B was permissive at 73/110. "
+  },
+  {
+   "id": "v017",
+   "span": [
+    1595,
+    1673
+   ],
+   "bytes": 78,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "Changing the legend alone had moved\n32B false approval from about .15 to .31. "
+  },
+  {
+   "id": "v018",
+   "span": [
+    1673,
+    1790
+   ],
+   "bytes": 117,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc",
+   "text": "Its scored baseline, 176/594 = .296,\nis outside the gate band; we retain the frozen role rather than reselecting it.\n"
+  },
+  {
+   "id": "v019",
+   "span": [
+    1790,
+    1913
+   ],
+   "bytes": 123,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "Hosted development references (GPT-5.6 Luna and Claude Haiku 4.5) achieved about\n.97 accuracy and .04--.05 false approval. "
+  },
+  {
+   "id": "v020",
+   "span": [
+    1913,
+    2000
+   ],
+   "bytes": 87,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "They were near ceiling on these\nitems, and were not scored on the held-out inventory.\n\n"
+  },
+  {
+   "id": "v021",
+   "span": [
+    2000,
+    2052
+   ],
+   "bytes": 52,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The largest development effect was not a rendering. "
+  },
+  {
+   "id": "v022",
+   "span": [
+    2052,
+    2177
+   ],
+   "bytes": 125,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "approximation",
+   "text": "Candidate-conditioned,\nhonest structured descriptions (recipe e2) reduced 32B symbolic false approval\nfrom about .31 to .05. "
+  },
+  {
+   "id": "v023",
+   "span": [
+    2177,
+    2271
+   ],
+   "bytes": 94,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "This exceeds any observed rendering effect and motivates\na trusted back-translation baseline. "
+  },
+  {
+   "id": "v024",
+   "span": [
+    2271,
+    2351
+   ],
+   "bytes": 80,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "E2-style explanation here means recipe e2,\nnot the unrun scaling experiment E2. "
+  },
+  {
+   "id": "v025",
+   "span": [
+    2351,
+    2494
+   ],
+   "bytes": 143,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The final explanation recipe e3 instead\nasserts the requirement's faithful reading, using exactly one text for every\ncandidate in a base item. "
+  },
+  {
+   "id": "v026",
+   "span": [
+    2494,
+    2536
+   ],
+   "bytes": 42,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "On bad candidates the assertion is false. "
+  },
+  {
+   "id": "v027",
+   "span": [
+    2536,
+    2621
+   ],
+   "bytes": 85,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "It is\nnot an adaptive attack written after seeing the candidate or judge objections.\n"
+  },
+  {
+   "id": "v028",
+   "span": [
+    2621,
+    2756
+   ],
+   "bytes": 135,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "It lowered both false approval and honest acceptance; \"attacker\" is the frozen\ncondition name, not evidence of successful persuasion.\n\n"
+  },
+  {
+   "id": "v029",
+   "span": [
+    2756,
+    2788
+   ],
+   "bytes": 32,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Frozen decisions, unchanged\n\n"
+  },
+  {
+   "id": "v030",
+   "span": [
+    2788,
+    2863
+   ],
+   "bytes": 75,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "E1's co-primaries compare strict VE minus symbols: P1 with e3, P2 without.\n"
+  },
+  {
+   "id": "v031",
+   "span": [
+    2863,
+    2949
+   ],
+   "bytes": 86,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The estimand is the unweighted mean of paired template differences in false\napproval. "
+  },
+  {
+   "id": "v032",
+   "span": [
+    2949,
+    3036
+   ],
+   "bytes": 87,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "Each uses a 97.5% cluster-t interval over 12 templates (Bonferroni for\ntwo contrasts). "
+  },
+  {
+   "id": "v033",
+   "span": [
+    3036,
+    3219
+   ],
+   "bytes": 183,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "Support requires an upper bound at most -.05 and an honest-\nacceptance constraint: paired HA lower bound at least -.10, point difference\nat least -.05, and strict-VE HA at least .70. "
+  },
+  {
+   "id": "v034",
+   "span": [
+    3219,
+    3327
+   ],
+   "bytes": 108,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "A lower FA bound above -.05\nrefutes the specified five-point benefit; otherwise the result is inconclusive.\n"
+  },
+  {
+   "id": "v035",
+   "span": [
+    3327,
+    3353
+   ],
+   "bytes": 26,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "Both HA constraints hold. "
+  },
+  {
+   "id": "v036",
+   "span": [
+    3353,
+    3459
+   ],
+   "bytes": 106,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The overall E1 decision remains **inconclusive**:\nP1 is inconclusive and P2 refutes a five-point benefit. "
+  },
+  {
+   "id": "v037",
+   "span": [
+    3459,
+    3526
+   ],
+   "bytes": 67,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "This is not evidence\nthat all rendering effects are exactly zero.\n\n"
+  },
+  {
+   "id": "v038",
+   "span": [
+    3526,
+    3641
+   ],
+   "bytes": 115,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The compact table retains all frozen per-judge decisions, including E4's\nstrict-parser pilot rule discussed below. "
+  },
+  {
+   "id": "v039",
+   "span": [
+    3641,
+    3741
+   ],
+   "bytes": 100,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Only E1 32B has a primary role;\n14B E1 contrasts cannot support or refute the preregistered claim.\n\n"
+  },
+  {
+   "id": "v040",
+   "span": [
+    3741,
+    3796
+   ],
+   "bytes": 55,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "<!-- INCLUDE generated/preregistered-decisions.md -->\n\n"
+  },
+  {
+   "id": "v041",
+   "span": [
+    3796,
+    3880
+   ],
+   "bytes": 84,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "E4's \"supports protection\" is the original rule's label, not a new mechanism\nclaim. "
+  },
+  {
+   "id": "v042",
+   "span": [
+    3880,
+    3941
+   ],
+   "bytes": 61,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "Its gate failures and feedback content limit interpretation. "
+  },
+  {
+   "id": "v043",
+   "span": [
+    3941,
+    4049
+   ],
+   "bytes": 108,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The 7B frozen interval excludes the .22 planning reduction, but its prose\nfloor cannot identify protection. "
+  },
+  {
+   "id": "v044",
+   "span": [
+    4049,
+    4123
+   ],
+   "bytes": 74,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The preregistrations have repository freezes\nbut no external timestamps.\n\n"
+  },
+  {
+   "id": "v045",
+   "span": [
+    4123,
+    4183
+   ],
+   "bytes": 60,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Post hoc discrimination and paired sensitivity analyses\n\n"
+  },
+  {
+   "id": "v046",
+   "span": [
+    4183,
+    4375
+   ],
+   "bytes": 192,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "**Everything in this subsection is POST HOC.** All 20 judge-by-view-by-\nexplanation cells have reproducible FA, HA, balanced accuracy, signal-detection\n$d'$ and criterion $c$ in the appendix. "
+  },
+  {
+   "id": "v047",
+   "span": [
+    4375,
+    4411
+   ],
+   "bytes": 36,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc",
+   "text": "Balanced accuracy is\n$(HA+1-FA)/2$. "
+  },
+  {
+   "id": "v048",
+   "span": [
+    4411,
+    4585
+   ],
+   "bytes": 174,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "For $d'$ and $c$, the log-linear correction adds .5 to successes\nand 1 to denominators in both signal (good) and noise (bad) rates, including\ncells away from the boundaries. "
+  },
+  {
+   "id": "v049",
+   "span": [
+    4585,
+    4627
+   ],
+   "bytes": 42,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "Positive $c$ denotes reluctant approval.\n\n"
+  },
+  {
+   "id": "v050",
+   "span": [
+    4627,
+    4756
+   ],
+   "bytes": 129,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "For 32B without explanation, balanced accuracy is .809 for symbols and .812\nfor strict VE; with explanation it is .821 and .823. "
+  },
+  {
+   "id": "v051",
+   "span": [
+    4756,
+    4834
+   ],
+   "bytes": 78,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The near-null strict\ncontrast therefore persists in a discrimination measure. "
+  },
+  {
+   "id": "v052",
+   "span": [
+    4834,
+    4957
+   ],
+   "bytes": 123,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "For 14B, fluent\nbalanced accuracy is .730 versus symbolic .641 without explanation, and .771\nversus .629 with explanation. "
+  },
+  {
+   "id": "v053",
+   "span": [
+    4957,
+    5148
+   ],
+   "bytes": 191,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "In 32B symbols, e3 moves criterion from -.412\nto +.107 while $d'$ changes from 1.892 to 1.840: the approval decline is\nconsistent with a threshold shift rather than improved discrimination.\n\n"
+  },
+  {
+   "id": "v054",
+   "span": [
+    5148,
+    5280
+   ],
+   "bytes": 132,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "We enumerate all $2^{12}$ sign flips of the paired template differences and\ninvert the same two-sided location tests for intervals. "
+  },
+  {
+   "id": "v055",
+   "span": [
+    5280,
+    5461
+   ],
+   "bytes": 181,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "These are post hoc\nsign-randomisation sensitivities, not design-based causal tests: templates are\nfixed authored structures, and sign exchangeability/independence is an\nassumption. "
+  },
+  {
+   "id": "v056",
+   "span": [
+    5461,
+    5574
+   ],
+   "bytes": 113,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Intervals further assume a common symmetric location shift; exact\nenumeration does not remove those assumptions. "
+  },
+  {
+   "id": "v057",
+   "span": [
+    5574,
+    5668
+   ],
+   "bytes": 94,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The full output includes\nleave-one-template-out ranges and the inversion grid specification.\n\n"
+  },
+  {
+   "id": "v058",
+   "span": [
+    5668,
+    5764
+   ],
+   "bytes": 96,
+   "kind": "table",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "| Post hoc contrast | Template FA difference | Raw two-sided p | Leave-one-template-out range |\n"
+  },
+  {
+   "id": "v059",
+   "span": [
+    5764,
+    5782
+   ],
+   "bytes": 18,
+   "kind": "table",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "|---|---|---|---|\n"
+  },
+  {
+   "id": "v060",
+   "span": [
+    5782,
+    5846
+   ],
+   "bytes": 64,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 32B strict - symbols, P1 | +.027 | .460938 | +.011 to +.052 |\n"
+  },
+  {
+   "id": "v061",
+   "span": [
+    5846,
+    5910
+   ],
+   "bytes": 64,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 32B strict - symbols, P2 | +.003 | .875488 | -.004 to +.014 |\n"
+  },
+  {
+   "id": "v062",
+   "span": [
+    5910,
+    5986
+   ],
+   "bytes": 76,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 14B fluent - symbols, no explanation | -.141 | .000977 | -.158 to -.123 |\n"
+  },
+  {
+   "id": "v063",
+   "span": [
+    5986,
+    6050
+   ],
+   "bytes": 64,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 14B fluent - symbols, e3 | -.147 | .001953 | -.160 to -.129 |\n"
+  },
+  {
+   "id": "v064",
+   "span": [
+    6050,
+    6126
+   ],
+   "bytes": 76,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 32B fluent - symbols, no explanation | -.044 | .218750 | -.053 to -.018 |\n"
+  },
+  {
+   "id": "v065",
+   "span": [
+    6126,
+    6191
+   ],
+   "bytes": 65,
+   "kind": "table",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "| 32B fluent - symbols, e3 | +.001 | .993164 | -.017 to +.037 |\n\n"
+  },
+  {
+   "id": "v066",
+   "span": [
+    6191,
+    6316
+   ],
+   "bytes": 125,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The two co-primary p values above are unadjusted (Bonferroni doubles them,\ncapped at one); all fluent tests are exploratory. "
+  },
+  {
+   "id": "v067",
+   "span": [
+    6316,
+    6402
+   ],
+   "bytes": 86,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The 32B post hoc 97.5%\nintervals are [-.068, +.115] for P1 and [-.047, +.048] for P2. "
+  },
+  {
+   "id": "v068",
+   "span": [
+    6402,
+    6549
+   ],
+   "bytes": 147,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "Changing the\nsmallest-useful-effect threshold to .03 makes both inconclusive; at .05, P1\nis inconclusive and P2 refuted; at .08, both are refuted. "
+  },
+  {
+   "id": "v069",
+   "span": [
+    6549,
+    6631
+   ],
+   "bytes": 82,
+   "kind": "empirical claim",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "This holds with either\nthe frozen t intervals or the post hoc inverted intervals. "
+  },
+  {
+   "id": "v070",
+   "span": [
+    6631,
+    6741
+   ],
+   "bytes": 110,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The threshold is a\njudgment, not a derived operational loss model, and no threshold supports a\nbenefit here.\n\n"
+  },
+  {
+   "id": "v071",
+   "span": [
+    6741,
+    7015
+   ],
+   "bytes": 274,
+   "kind": "caption",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "![POST HOC template-level false-approval differences. V is strict VE; F is fluent; S is symbolic FOL. Each point is a within-template paired rate difference. Templates are authored structures, not population samples.](generated/posthoc-template-differences.pdf){width=85%}\n\n"
+  },
+  {
+   "id": "v072",
+   "span": [
+    7015,
+    7093
+   ],
+   "bytes": 78,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A mixed-effects package (`statsmodels`) was unavailable in the offline cache.\n"
+  },
+  {
+   "id": "v073",
+   "span": [
+    7093,
+    7299
+   ],
+   "bytes": 206,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "We therefore fitted a post hoc binomial logistic model separately for good and\nbad candidates, with fixed view, explanation, judge, and view-by-judge terms,\nand a sandwich covariance clustered by template. "
+  },
+  {
+   "id": "v074",
+   "span": [
+    7299,
+    7389
+   ],
+   "bytes": 90,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Base items are nested within\nthose clusters; no random-intercept variances are estimated. "
+  },
+  {
+   "id": "v075",
+   "span": [
+    7389,
+    7509
+   ],
+   "bytes": 120,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "This alternative\nallows dependence within a template but relies on only 12 clusters and an\nadditive explanation effect. "
+  },
+  {
+   "id": "v076",
+   "span": [
+    7509,
+    7661
+   ],
+   "bytes": 152,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "On bad candidates, the 32B interaction relative\nto 14B is +.429 log odds for strict VE (95% interval [.089, .768]) and +.486\nfor fluent ([.089, .882]). "
+  },
+  {
+   "id": "v077",
+   "span": [
+    7661,
+    7798
+   ],
+   "bytes": 137,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "These exploratory, unadjusted associations agree\nwith a weaker rendering benefit at 32B; they do not establish a general\ncapability law. "
+  },
+  {
+   "id": "v078",
+   "span": [
+    7798,
+    7861
+   ],
+   "bytes": 63,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Full coefficients and convergence checks are in the artifact.\n\n"
+  },
+  {
+   "id": "v079",
+   "span": [
+    7861,
+    7897
+   ],
+   "bytes": 36,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "## Post hoc weakening attacks only\n\n"
+  },
+  {
+   "id": "v080",
+   "span": [
+    7897,
+    8022
+   ],
+   "bytes": 125,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-data",
+   "text": "A weakening is selected by the materials' oracle relation: faithful entails\nattacked, but attacked does not entail faithful. "
+  },
+  {
+   "id": "v081",
+   "span": [
+    8022,
+    8069
+   ],
+   "bytes": 47,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "This is not inferred from\nattack-family names. "
+  },
+  {
+   "id": "v082",
+   "span": [
+    8069,
+    8148
+   ],
+   "bytes": 79,
+   "kind": "quantity",
+   "status": "CHECKED",
+   "feature": null,
+   "text": "There are 243 such candidates in nine templates; three\ntemplates contain none. "
+  },
+  {
+   "id": "v083",
+   "span": [
+    8148,
+    8300
+   ],
+   "bytes": 152,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "All view-by-judge rates and 95% inverted sign-flip\nintervals are in the appendix, with pooled rates distinguished from equally\nweighted template rates. "
+  },
+  {
+   "id": "v084",
+   "span": [
+    8300,
+    8344
+   ],
+   "bytes": 44,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The paired test uses all $2^9$ sign flips.\n\n"
+  },
+  {
+   "id": "v085",
+   "span": [
+    8344,
+    8509
+   ],
+   "bytes": 165,
+   "kind": "comparison",
+   "status": "UNFORMALISED",
+   "feature": "calc",
+   "text": "For **32B with explanation, strict VE is worse than symbols in this inventory**:\nfalse approval is 52/243 (.214) versus 31/243 (.128), an 8.6-point pooled\nincrease. "
+  },
+  {
+   "id": "v086",
+   "span": [
+    8509,
+    8615
+   ],
+   "bytes": 106,
+   "kind": "quantity",
+   "status": "UNFORMALISED",
+   "feature": "calc-stats",
+   "text": "The equal-template difference is +.088, with post hoc 95% interval\n[-.009, +.214] and two-sided p = .125. "
+  },
+  {
+   "id": "v087",
+   "span": [
+    8615,
+    8682
+   ],
+   "bytes": 67,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "It is compatible with substantial harm,\nbut does not exclude zero. "
+  },
+  {
+   "id": "v088",
+   "span": [
+    8682,
+    8785
+   ],
+   "bytes": 103,
+   "kind": "hedge",
+   "status": "UNFORMALISED",
+   "feature": "attitudes",
+   "text": "A possible safety cost is therefore visible even\nthough the all-attack primary result is inconclusive. "
+  },
+  {
+   "id": "v089",
+   "span": [
+    8785,
+    8883
+   ],
+   "bytes": 98,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Strengthening and\nincomparable attacks should not be silently treated as the same safety outcome.\n"
+  }
+ ]
+}

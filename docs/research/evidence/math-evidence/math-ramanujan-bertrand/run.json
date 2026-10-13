@@ -1,0 +1,49 @@
+{
+ "checkout": "/home/seyran/code/ve-pilot-20261013T0600Z",
+ "checkout_head": "55b194cc6a320fe926589b965444c00501164092",
+ "product_tree_equals_main_406736a4": true,
+ "sources": {
+  "source.txt": {
+   "document": "source.ve.md",
+   "document_bytes": 12631,
+   "document_sha256": "038048d21869f79690f1550ea5d7d2d930b1a3563f35d23e9533d29a66390fe1",
+   "check_exit": 0,
+   "admitted": null,
+   "check_error": null,
+   "premises": {
+    "status": "model",
+    "model_id": "3fa3afd49cafcfde9d590e63b9f812ab8c7bb16e798ced19a659a89d926ec3e1"
+   },
+   "rust_timeout_raised_to": null,
+   "graph_nodes": 0,
+   "certified_consequences": [],
+   "coverage_exit": 0,
+   "coverage": {
+    "source_bytes": 2651,
+    "accounted_bytes": 2651,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+     "meta": 226,
+     "unformalised": 2386,
+     "exposition": 39
+    },
+    "bytes_by_status": {
+     "LABELLED": 265,
+     "UNFORMALISED": 2386
+    },
+    "unformalised_reasons": {
+     "arith-import": 38,
+     "calc-derive": 1,
+     "arith": 4
+    },
+    "residual": {
+     "open_terms": 0,
+     "assumptions": 0,
+     "bridge_leaves": 0,
+     "unresolved_reading_sets": 0
+    },
+    "residual_total": 0
+   }
+  }
+ }
+}

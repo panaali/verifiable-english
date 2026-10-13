@@ -1,0 +1,634 @@
+{
+ "fixtures": [
+  {
+   "fixture": "H-1",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "Then ${T=\\frac{D}{V-v}}$, ${T_{/}=\\frac{D}{V+v}}$.": [
+     6698,
+     6748
+    ],
+    "The whole time of going and coming is ${T+T_{/}=2D \\frac{V}{V^2-v^2}}$": [
+     6749,
+     6819
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "Same equations as TeX; the source writes T-sub-slash for T1 and 2D V/(V^2 - v^2)."
+  },
+  {
+   "fixture": "H-2",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "the distance traveled in this time is ${2D \\frac{V^2}{V^2-v^2}=2D \\left(1+\\frac{v^2}{V^2}\\right)}$": [
+     6825,
+     6923
+    ],
+    "neglecting terms of the fourth order": [
+     6925,
+     6961
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "Same equation; the source's line break is inside the sentence."
+  },
+  {
+   "fixture": "H-3",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "or to the same degree of accuracy, ${2D \\left( 1+\\frac{v^2}{2V^2}\\right)}$": [
+     7038,
+     7112
+    ],
+    "The difference is therefore ${D\\frac{v^2}{V^2}}$.": [
+     7114,
+     7163
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "Same equation. The Wikisource TeX of the preceding square root is unbalanced (`\\sqrt{(1+\\frac{v^2}{V^2}}`), a transcription defect outside the case."
+  },
+  {
+   "fixture": "H-4",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "hence the displacement of the interference fringes should be ${2D \\frac{v^2}{V^2}}$": [
+     7265,
+     7348
+    ],
+    "Considering only the velocity of the earth in its orbit, this would be ${2D \\times 10^{-8}}$.": [
+     7350,
+     7443
+    ]
+   },
+   "outcome": "CHANGED",
+   "reason": "The case takes 'v/V = 10^-4 stated'; the source states no v/V. It gives v^2/V^2 = 10^-8 only through '2D x 10^-8' (twice: h049, h113). The case's premise must be v^2/V^2 = 10^-8, read from those spans, or an external premise with its own support."
+  },
+  {
+   "fixture": "H-5",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "2×10^7 wave-lengths of yellow light; hence the displacement to be expected was 0•4 fringe": [
+     15790,
+     15882
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "Numbers as the case uses them; the source's decimal point is a bullet ('0•4'). With the source's own 10^-8 (h113): 2 x 2x10^7 x 10^-8 = 0.4. The source also has the 1881 version (h050): D = 2x10^6 gives 0.04, a further fixture."
+  },
+  {
+   "fixture": "H-6",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "The actual displacement was certainly less than the twentieth part of this": [
+     15884,
+     15958
+    ],
+    "But since the displacement is proportional to the square of the velocity": [
+     16002,
+     16074
+    ],
+    "and certainly less than one-fourth": [
+     16187,
+     16221
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Premises and claim are in h115-h116 in these words."
+  },
+  {
+   "fixture": "H-6p",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "and probably less than the fortieth part": [
+     15960,
+     16000
+    ],
+    "is probably less than one sixth the earth's orbital velocity": [
+     16125,
+     16185
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "In these words."
+  },
+  {
+   "fixture": "H-6n",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {},
+   "outcome": "NOT A QUOTE",
+   "reason": "A negative control the plan constructs."
+  },
+  {
+   "fixture": "H-7",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "T=time light occupies to pass from a to c.": [
+     6598,
+     6640
+    ],
+    "D=distance ab or ac, fig. 1.": [
+     6569,
+     6597
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "D (a length) and T (a time) are defined by the source; D/(V - v), D/lambda and D + T are the case's expressions."
+  },
+  {
+   "fixture": "H-8",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "The distance D was about eleven meters, or 2×10^7 wave-lengths of yellow light": [
+     15747,
+     15826
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "In these words ('2×10^7' renders the superscript). The wavelength is an external premise, as the case says."
+  },
+  {
+   "fixture": "H-9",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "The following tables give the means of the six readings": [
+     12968,
+     13023
+    ],
+    "Mean | 43.1 | 41.6": [
+     13918,
+     13936
+    ],
+    "Mean in w. l. | .862": [
+     14042,
+     14062
+    ],
+    "Final mean | .784": [
+     14239,
+     14256
+    ]
+   },
+   "outcome": "CHANGED",
+   "reason": "The table is not 'readings at 16 azimuths per session': each cell is already the mean of six readings (the readings themselves are not printed), there are 17 columns (mark 16 at the start and end of a turn), three sessions per table, and three derived rows (Mean, Mean in w. l., Final mean) plus a repeated half row. Today's W6a certifies the Mean and Final mean rows (section 3 of the results); only 'Mean in w. l.' needs a unit change."
+  },
+  {
+   "fixture": "H-10",
+   "file": "docs/research/evidence/math-evidence/physics-michelson-morley/source.txt",
+   "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
+   "spans": {
+    "July 8 | 44.7": [
+     13541,
+     13554
+    ],
+    "July 11 | 27.3": [
+     13793,
+     13807
+    ],
+    "July 12 | 66.8": [
+     14585,
+     14599
+    ],
+    "November 1887": [
+     176,
+     189
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "The dates are row labels without a year; 1887 comes from the publication line. The case's '1887' is inferred, not printed beside the dates."
+  },
+  {
+   "fixture": "M-1",
+   "file": "docs/research/evidence/math-evidence/math-ramanujan-bertrand/source.txt",
+   "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
+   "spans": {
+    "Thus Bertrand’s Postulate is proved for all values of x, not less than 162: and, \nby actual verification, we find that it is true for smaller values.": [
+     1990,
+     2141
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "The case is the whole-number reading of the source's real x (M-3r)."
+  },
+  {
+   "fixture": "M-2",
+   "file": "docs/research/evidence/math-evidence/math-ramanujan-bertrand/source.txt",
+   "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
+   "spans": {},
+   "outcome": "NOT A QUOTE",
+   "reason": "The plan marks it 'not Ramanujan's wording'."
+  },
+  {
+   "fixture": "M-3",
+   "file": "docs/research/evidence/math-evidence/math-ramanujan-bertrand/source.txt",
+   "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
+   "spans": {
+    "truth of which was conjectured by Bertrand: namely that there is at least \none prime": [
+     177,
+     261
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "The statement's formula is OCR-garbled in both scans ('®<ps;2®, if ®>1'; 'æ< p«2z, if z 21'): x < p <= 2x if x >= 1, read from the scan, not from the OCR bytes."
+  },
+  {
+   "fixture": "M-3r",
+   "file": "docs/research/evidence/math-evidence/math-ramanujan-bertrand/source.txt",
+   "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
+   "spans": {
+    "where [®] denotes as usual the greatest integer in ®.": [
+     586,
+     641
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "The source's x is real (it takes the integer part of x)."
+  },
+  {
+   "fixture": "M-4",
+   "file": "docs/research/evidence/math-evidence/math-ramanujan-bertrand/source.txt",
+   "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
+   "spans": {
+    "> 1, 2, 3, 4,5,..., if * » 2, 11, 17, 29, 41": [
+     2575,
+     2620
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Formula (18): pi(x) - pi(x/2) >= 1, 2, 3, 4, 5 for x >= 2, 11, 17, 29, 41 (OCR-garbled symbols, numbers intact). The case uses the second pair (2 at 11); the other four pairs are further fixtures."
+  },
+  {
+   "fixture": "M-4x",
+   "file": "docs/research/evidence/math-evidence/math-ramanujan-bertrand/source.txt",
+   "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
+   "spans": {},
+   "outcome": "NOT A QUOTE",
+   "reason": "A constructed budget fixture."
+  },
+  {
+   "fixture": "M-5",
+   "file": "docs/research/evidence/math-evidence/math-ramanujan-bertrand/source.txt",
+   "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
+   "spans": {},
+   "outcome": "NOT A QUOTE",
+   "reason": "A constructed negative control."
+  },
+  {
+   "fixture": "V-1",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-04-e1.md",
+   "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
+   "spans": {
+    "Its scored baseline, 176/594 = .296, is outside the gate band": [
+     1673,
+     1734
+    ],
+    "30--60% gate": [
+     1551,
+     1563
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Exact words; the source breaks the line after '.296,'."
+  },
+  {
+   "fixture": "V-1n",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-04-e1.md",
+   "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
+   "spans": {},
+   "outcome": "NOT A QUOTE",
+   "reason": "Constructed (0.297)."
+  },
+  {
+   "fixture": "V-2",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-04-e1.md",
+   "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
+   "spans": {
+    "false approval is 52/243 (.214) versus 31/243 (.128), an 8.6-point pooled increase": [
+     8425,
+     8507
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Exact words across a line break."
+  },
+  {
+   "fixture": "V-3",
+   "file": "paper/sections/05-e4.md",
+   "file_sha256": "03992c97e2bdc93829f4aa12a817a773c9c31e513539baf04053cbc078945797",
+   "spans": {
+    "For 7B, prose rejects 56/60 valid inferences; checked feedback increases HA from 4/60 to 52/60": [
+     2694,
+     2788
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Exact words (outside ME-0's pinned E1 slice; anchored in the repository file)."
+  },
+  {
+   "fixture": "V-4",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-04-e1.md",
+   "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
+   "spans": {
+    "The 32B symbolic/no-explanation baseline was 34/110 false approvals, only one candidate inside the primary 30--60% gate": [
+     1444,
+     1563
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Exact words."
+  },
+  {
+   "fixture": "V-5",
+   "file": "paper/generated/posthoc-weakening-rates.md",
+   "file_sha256": "6725d1cbb8f233bee569b6da44e9a410f2823d6e8929611551f322b43b4cf9b0",
+   "spans": {
+    "| 151/243 | 0.621 |": [
+     181,
+     200
+    ],
+    "| 155/243 | 0.638 |": [
+     245,
+     264
+    ],
+    "| 136/243 | 0.560 |": [
+     309,
+     328
+    ],
+    "| 90/243 | 0.370 |": [
+     777,
+     795
+    ],
+    "| 43/243 | 0.177 |": [
+     1226,
+     1244
+    ],
+    "| 37/243 | 0.152 |": [
+     1427,
+     1445
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "The six example rows of the 20."
+  },
+  {
+   "fixture": "V-6",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-appendix-per-template.md",
+   "file_sha256": "5ce7733c2b651a2ff94313474704f6e38666d75b1c1a0856db8b1e25519b095f",
+   "spans": {
+    "t01: -0.100, t02: -0.133, t05: +0.094, t06: -0.192, t07: +0.021, t08: +0.086, t09: -0.057, t10: +0.000, t11: +0.061, t12: -0.050, t15: -0.246, t16: -0.029 | 0.108 | 0.031 | 0.081 |": [
+     259,
+     439
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Row '14B AWQ | P1 attacker'."
+  },
+  {
+   "fixture": "V-6r",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-appendix-per-template.md",
+   "file_sha256": "5ce7733c2b651a2ff94313474704f6e38666d75b1c1a0856db8b1e25519b095f",
+   "spans": {},
+   "outcome": "NOT A QUOTE",
+   "reason": "The population reading the case constructs."
+  },
+  {
+   "fixture": "V-7",
+   "file": "paper/generated/posthoc-weakening-contrasts.md",
+   "file_sha256": "a2f0042589068e3fbf9cd6f6781bc5799eedeb0f26435b561946ad63e0023525",
+   "spans": {
+    "| 0.812500 |": [
+     200,
+     212
+    ],
+    "| 0.085938 |": [
+     262,
+     274
+    ],
+    "| 0.687500 |": [
+     328,
+     340
+    ],
+    "| 0.679688 |": [
+     456,
+     468
+    ],
+    "| 0.359375 |": [
+     518,
+     530
+    ],
+    "| 0.125000 |": [
+     584,
+     596
+    ],
+    "| 0.875000 |": [
+     650,
+     662
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Seven of the eight rows; the eighth is V-8."
+  },
+  {
+   "fixture": "V-8",
+   "file": "paper/generated/posthoc-weakening-contrasts.md",
+   "file_sha256": "a2f0042589068e3fbf9cd6f6781bc5799eedeb0f26435b561946ad63e0023525",
+   "spans": {
+    "| 14B | F - S | attacker | -0.180 | [-0.312, -0.055] | 0.007812 |": [
+     341,
+     406
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Row '14B F - S attacker'."
+  },
+  {
+   "fixture": "V-9",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-04-e1.md",
+   "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
+   "spans": {},
+   "outcome": "NOT A QUOTE",
+   "reason": "Constructed software-convention fixture."
+  },
+  {
+   "fixture": "V-10",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-04-e1.md",
+   "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
+   "spans": {},
+   "outcome": "NOT A QUOTE",
+   "reason": "Constructed software-convention fixture."
+  },
+  {
+   "fixture": "V-11",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-04-e1.md",
+   "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
+   "spans": {},
+   "outcome": "NOT A QUOTE",
+   "reason": "Constructed limit fixture."
+  },
+  {
+   "fixture": "V-12",
+   "file": "docs/research/evidence/math-evidence/ve-paper-e1/source-04-e1.md",
+   "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
+   "spans": {
+    ".296,": [
+     1704,
+     1709
+    ]
+   },
+   "outcome": "RE-WORDED",
+   "reason": "Constructed over the real span '.296' of V-1."
+  },
+  {
+   "fixture": "D-1",
+   "file": "ROADMAP.md",
+   "file_sha256": "3ab0e45380ef7cecb731736e7105905655d2f7c7988fa4578ceb47d227f34f6d",
+   "spans": {
+    "Math mini paper: **17/19** current verified outcomes (15 tableau certificates plus T9 and T9e by closure induction)": [
+     5295,
+     5410
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Exact words."
+  },
+  {
+   "fixture": "D-2",
+   "file": "/home/seyran/code/manage-agents/pilots/udhr/run-20261012T1800Z/SUMMARY.md",
+   "file_sha256": "d8e920d4c41de6a320b54a5969b4c25f613402817a0fe015dbcf7807196a478c",
+   "spans": {
+    "claimed covered bytes 4,792 (43.90%": [
+     973,
+     1008
+    ],
+    "all 10,916 bytes accounted": [
+     1053,
+     1079
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Exact words in the pinned pilot summary."
+  },
+  {
+   "fixture": "D-3",
+   "file": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z/SUMMARY.md",
+   "file_sha256": "413716d933ec1006c8026e10ce61af6d46f210f3787d3eca5ebc3a8a51325ba6",
+   "spans": {
+    "Claimed coverage is unchanged at 2,951 bytes (1.60%)": [
+     282,
+     334
+    ]
+   },
+   "outcome": "ANCHORED",
+   "reason": "Exact words; coverage.json gives CHECKED 73, LABELLED 349, OPEN 2,529 of 184,893 (checked below)."
+  }
+ ],
+ "changed_or_absent": [
+  "H-4",
+  "H-9"
+ ],
+ "pass": false,
+ "counts": {
+  "ANCHORED": 15,
+  "RE-WORDED": 10,
+  "CHANGED": 2,
+  "ABSENT": 0,
+  "NOT A QUOTE": 9
+ },
+ "constitution_coverage_by_status": {
+  "CHECKED": 73,
+  "LABELLED": 349,
+  "OPEN": 2529,
+  "UNFORMALISED": 181942
+ },
+ "prechecks_not_ve_verdicts": {
+  "V-1 176/594 at 3 places (ties up)": "37/125",
+  "V-2 52/243, 31/243 at 3; 100*21/243 at 1": [
+   "107/500",
+   "16/125",
+   "43/5"
+  ],
+  "V-6 sum (thousandths), sample variance": [
+   "-545",
+   "1527611/132000000"
+  ],
+  "V-6 sqrt(sample var) in [0.1075, 0.1085)": true,
+  "V-6r sqrt(population var) in [0.1025, 0.1035)": true,
+  "main-text p values as k/4096 at 6 places, ties up / half even (new fixture candidate)": {
+   ".460938": [
+    "230469/500000",
+    "230469/500000",
+    true
+   ],
+   ".875488": [
+    "27359/31250",
+    "27359/31250",
+    false
+   ],
+   ".000977": [
+    "977/1000000",
+    "977/1000000",
+    false
+   ],
+   ".001953": [
+    "1953/1000000",
+    "1953/1000000",
+    false
+   ],
+   ".218750": [
+    "7/32",
+    "7/32",
+    false
+   ],
+   ".993164": [
+    "248291/250000",
+    "248291/250000",
+    false
+   ]
+  },
+  "H-5 2 x 2e7 x 1e-8; h050 2 x 2e6 x 1e-8": [
+   "2/5",
+   "1/25"
+  ],
+  "H-6 1/20 <= 1/16; H-6p 1/40 <= 1/36; H-6n 1/20 <= 1/25": [
+   true,
+   true,
+   false
+  ],
+  "M-4 smallest x (whole, and half-integers, to 2000) with pi(x)-pi(x/2) >= 1..5": [
+   2,
+   11,
+   17,
+   29,
+   41
+  ],
+  "D-3 73+349+2529, 100*2951/184893 at 2 places": [
+   2951,
+   "8/5"
+  ],
+  "AlphaFold '8x faster': ensembled/plain time (new fixture candidate)": {
+   "256": [
+    "8",
+    "8"
+   ],
+   "384": [
+    "92/11",
+    "8"
+   ],
+   "2500 (h)": [
+    "60/7",
+    "9"
+   ]
+  },
+  "AlphaFold 'around 350,000' vs 355,993 rounded at the written place (10^4)": "360000"
+ }
+}

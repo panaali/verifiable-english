@@ -1,0 +1,70 @@
+{
+ "checkout": "/home/seyran/code/ve-pilot-20261013T0600Z",
+ "checkout_head": "55b194cc6a320fe926589b965444c00501164092",
+ "product_tree_equals_main_406736a4": true,
+ "sources": {
+  "source.txt": {
+   "document": "source.ve.md",
+   "document_bytes": 268666,
+   "document_sha256": "69e18ea769e263acca05d1a4c64a9095db9353c736cf6367e8fb38bbd4d79ee9",
+   "check_exit": 0,
+   "admitted": true,
+   "check_error": null,
+   "premises": {
+    "status": "UNKNOWN",
+    "budget": {
+     "max_proof_steps": 10000,
+     "max_domain_size": 2,
+     "max_models": 10000,
+     "max_evaluations": 100000
+    }
+   },
+   "rust_timeout_raised_to": null,
+   "graph_nodes": 24,
+   "certified_consequences": [
+    "alphafold_medians_below_alternatives",
+    "point_estimates_inside_their_intervals",
+    "bfd_counts_ordered_as_described",
+    "sampling_shares_sum_to_whole",
+    "one_example_per_core_gives_the_batch",
+    "test_limit_is_training_cutoff",
+    "data_availability_dates_match_methods",
+    "stated_numbers_cohere"
+   ],
+   "coverage_exit": 0,
+   "coverage": {
+    "source_bytes": 66858,
+    "accounted_bytes": 66858,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+     "meta": 30126,
+     "exposition": 19581,
+     "unformalised": 12698,
+     "asserted": 4453
+    },
+    "bytes_by_status": {
+     "LABELLED": 49707,
+     "UNFORMALISED": 12698,
+     "CHECKED": 4453
+    },
+    "unformalised_reasons": {
+     "approximation": 10,
+     "events": 2,
+     "quantities": 20,
+     "calc-data": 15,
+     "attitudes": 6,
+     "attribution": 3,
+     "calc": 2,
+     "calc-stats": 8
+    },
+    "residual": {
+     "open_terms": 0,
+     "assumptions": 0,
+     "bridge_leaves": 0,
+     "unresolved_reading_sets": 0
+    },
+    "residual_total": 0
+   }
+  }
+ }
+}

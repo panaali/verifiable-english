@@ -1,0 +1,609 @@
+{
+ "source": "source.txt",
+ "source_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
+ "source_bytes": 2651,
+ "units": [
+  {
+   "id": "m001",
+   "span": [
+    0,
+    36
+   ],
+   "bytes": 36,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A PROOF OF BERTRAND’S POSTULATE \n\n"
+  },
+  {
+   "id": "m002",
+   "span": [
+    36,
+    105
+   ],
+   "bytes": 69,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "(Journal of the Indian Mathematical Society , XI, 1919, 181—182) \n\n"
+  },
+  {
+   "id": "m003",
+   "span": [
+    105,
+    108
+   ],
+   "bytes": 3,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "1. "
+  },
+  {
+   "id": "m004",
+   "span": [
+    108,
+    295
+   ],
+   "bytes": 187,
+   "kind": "theorem",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "Landau in his Eandbuch, pp. 89—92, gives a proof of a theorem the \ntruth of which was conjectured by Bertrand: namely that there is at least \none prime jj'such that ®<ps;2®, if ®>1. "
+  },
+  {
+   "id": "m005",
+   "span": [
+    295,
+    370
+   ],
+   "bytes": 75,
+   "kind": "citation",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "Landau’s proof is substantially \nthe same as that given by Tschebyschef. "
+  },
+  {
+   "id": "m006",
+   "span": [
+    370,
+    409
+   ],
+   "bytes": 39,
+   "kind": "exposition",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "The following is a much simpler one. \n\n"
+  },
+  {
+   "id": "m007",
+   "span": [
+    409,
+    498
+   ],
+   "bytes": 89,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "Let v (of) denote the sum of the logarithms of all the primes not exceeding \nx and let \n\n"
+  },
+  {
+   "id": "m008",
+   "span": [
+    498,
+    542
+   ],
+   "bytes": 44,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "+ («) = » («) + »(«*)+>'(«») +.(!) \n\n"
+  },
+  {
+   "id": "m009",
+   "span": [
+    542,
+    586
+   ],
+   "bytes": 44,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "log [x]\\=f(x) + f(%x) + ir(ix)+ ..., .(2) \n\n"
+  },
+  {
+   "id": "m010",
+   "span": [
+    586,
+    644
+   ],
+   "bytes": 58,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "where [®] denotes as usual the greatest integer in ®. \n\n"
+  },
+  {
+   "id": "m011",
+   "span": [
+    644,
+    663
+   ],
+   "bytes": 19,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "From (1) we have \n\n"
+  },
+  {
+   "id": "m012",
+   "span": [
+    663,
+    715
+   ],
+   "bytes": 52,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "f (®) - 2* ( V®) = v O) - v (si) + v (si) -.(3) \n\n"
+  },
+  {
+   "id": "m013",
+   "span": [
+    715,
+    730
+   ],
+   "bytes": 15,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "and from (2) \n\n"
+  },
+  {
+   "id": "m014",
+   "span": [
+    730,
+    786
+   ],
+   "bytes": 56,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "log [s]! - 2 log [Js] !- + («)-* (is) + + (*«)-.(4) \n\n"
+  },
+  {
+   "id": "m015",
+   "span": [
+    786,
+    894
+   ],
+   "bytes": 108,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "Now remembering that v (s) and i|r (at) are steadily increasing functions, we \nfind from (3) and (4) that \n\n"
+  },
+  {
+   "id": "m016",
+   "span": [
+    894,
+    933
+   ],
+   "bytes": 39,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "^(®)-2t(v'®)«i'(®)<f (*•);.(5) \n\n"
+  },
+  {
+   "id": "m017",
+   "span": [
+    933,
+    1049
+   ],
+   "bytes": 116,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "and f (at) - f (4®) < log [®]! - 2 log [is] k -f (*) - f (4®) + -f (4*)- • - (6) \nBut it is easy to see that \n\n"
+  },
+  {
+   "id": "m018",
+   "span": [
+    1049,
+    1108
+   ],
+   "bytes": 59,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "log r (at) - 2 log r (4®+4)«log [®] i - 2 log [4®] \\ \n\n"
+  },
+  {
+   "id": "m019",
+   "span": [
+    1108,
+    1152
+   ],
+   "bytes": 44,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "log r (®+1) - 2 log r (i® + i). ...(7) \n\n\n"
+  },
+  {
+   "id": "m020",
+   "span": [
+    1152,
+    1215
+   ],
+   "bytes": 63,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "Now using Stirling’s approximation we deduce from (7) that \n\n"
+  },
+  {
+   "id": "m021",
+   "span": [
+    1215,
+    1259
+   ],
+   "bytes": 44,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "log M! - 2 log [|®]! < i x, if ® > .(8) \n\n"
+  },
+  {
+   "id": "m022",
+   "span": [
+    1259,
+    1314
+   ],
+   "bytes": 55,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "and log [®]! - 2 log [4®]! > §®, if ® > 300.(9) \n\n"
+  },
+  {
+   "id": "m023",
+   "span": [
+    1314,
+    1354
+   ],
+   "bytes": 40,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "It follows from (6), (8) and (9) that \n\n"
+  },
+  {
+   "id": "m024",
+   "span": [
+    1354,
+    1400
+   ],
+   "bytes": 46,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "-f (®) - \\jr (4®) < |®, if ® > 0; .(10) \n\n"
+  },
+  {
+   "id": "m025",
+   "span": [
+    1400,
+    1463
+   ],
+   "bytes": 63,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "and ( x ) ~ 'h (4*) + 'h (4*) > 1 ®. if »>300.(11) \n\n\n\n\n\n\n\n\n\n"
+  },
+  {
+   "id": "m026",
+   "span": [
+    1463,
+    1503
+   ],
+   "bytes": 40,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "A Proof of Bertrand’s Postulate 209 \n\n"
+  },
+  {
+   "id": "m027",
+   "span": [
+    1503,
+    1590
+   ],
+   "bytes": 87,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "Now changing x to \\x t \\x, J«,... in (10) and adding up all the results, \nwe obtain \n\n"
+  },
+  {
+   "id": "m028",
+   "span": [
+    1590,
+    1614
+   ],
+   "bytes": 24,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "*(*)<§*, if *>0.(12) \n\n"
+  },
+  {
+   "id": "m029",
+   "span": [
+    1614,
+    1630
+   ],
+   "bytes": 16,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "Again we have \n\n"
+  },
+  {
+   "id": "m030",
+   "span": [
+    1630,
+    1688
+   ],
+   "bytes": 58,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "f(x) -■f(ix)+i/rQx)^p(x) + 2ifr(^/x)-v (i x) + -f Qx) \n\n"
+  },
+  {
+   "id": "m031",
+   "span": [
+    1688,
+    1722
+   ],
+   "bytes": 34,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "<v(x)-v(\\x) + \\x + Zd*, ~.{rz) \n\n\n"
+  },
+  {
+   "id": "m032",
+   "span": [
+    1722,
+    1751
+   ],
+   "bytes": 29,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "in virtue of (5) and (12). \n\n"
+  },
+  {
+   "id": "m033",
+   "span": [
+    1751,
+    1788
+   ],
+   "bytes": 37,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "It follows from (11) and (13) that \n\n"
+  },
+  {
+   "id": "m034",
+   "span": [
+    1788,
+    1823
+   ],
+   "bytes": 35,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "v(x)-v(lx)>\\x-3dx, if *>300.(14) \n\n"
+  },
+  {
+   "id": "m035",
+   "span": [
+    1823,
+    1875
+   ],
+   "bytes": 52,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "calc-derive",
+   "text": "But it is obvious that — 3 \\Jx > 0, if x ^ 324. \n\n"
+  },
+  {
+   "id": "m036",
+   "span": [
+    1875,
+    1917
+   ],
+   "bytes": 42,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "Hence v (2*)- v (x) > 0, if *^162.(15) \n\n\n"
+  },
+  {
+   "id": "m037",
+   "span": [
+    1917,
+    1990
+   ],
+   "bytes": 73,
+   "kind": "theorem",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "In other words there is at least one prime between x and 2x if x > 162. \n"
+  },
+  {
+   "id": "m038.p1",
+   "parent": "m038",
+   "span": [
+    1990,
+    2074
+   ],
+   "bytes": 84,
+   "kind": "theorem",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "Thus Bertrand’s Postulate is proved for all values of x, not less than 162: and, \n"
+  },
+  {
+   "id": "m038.p2",
+   "parent": "m038",
+   "span": [
+    2074,
+    2144
+   ],
+   "bytes": 70,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith",
+   "text": "by actual verification, we find that it is true for smaller values. \n\n"
+  },
+  {
+   "id": "m039",
+   "span": [
+    2144,
+    2147
+   ],
+   "bytes": 3,
+   "kind": "meta",
+   "status": "LABELLED",
+   "feature": null,
+   "text": "2. "
+  },
+  {
+   "id": "m040",
+   "span": [
+    2147,
+    2204
+   ],
+   "bytes": 57,
+   "kind": "definition",
+   "status": "UNFORMALISED",
+   "feature": "arith",
+   "text": "Let t r (x) denote the number of primes not exceeding x. "
+  },
+  {
+   "id": "m041",
+   "span": [
+    2204,
+    2297
+   ],
+   "bytes": 93,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "Then, since \nir (x) - w (\\x) is the number of primes between x and J®, and v(x)-v(\\x) is \n\n\n"
+  },
+  {
+   "id": "m042",
+   "span": [
+    2297,
+    2369
+   ],
+   "bytes": 72,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "the sum of logarithms of primes between x and \\x , it is obvious that \n\n"
+  },
+  {
+   "id": "m043",
+   "span": [
+    2369,
+    2416
+   ],
+   "bytes": 47,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "v{x)-v (\\x) « {tt (*) - -x (**)} log®.(16) \n\n"
+  },
+  {
+   "id": "m044",
+   "span": [
+    2416,
+    2436
+   ],
+   "bytes": 20,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "for all values of*. "
+  },
+  {
+   "id": "m045",
+   "span": [
+    2436,
+    2473
+   ],
+   "bytes": 37,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "It follows from (14) and (16) that \n\n"
+  },
+  {
+   "id": "m046",
+   "span": [
+    2473,
+    2524
+   ],
+   "bytes": 51,
+   "kind": "equation",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "w (*) - w {\\x) > -L (j* - 3 V*), if * > 300.(17) \n\n"
+  },
+  {
+   "id": "m047",
+   "span": [
+    2524,
+    2558
+   ],
+   "bytes": 34,
+   "kind": "proof step",
+   "status": "UNFORMALISED",
+   "feature": "arith-import",
+   "text": "From this we easily deduce that \n\n"
+  },
+  {
+   "id": "m048",
+   "span": [
+    2558,
+    2636
+   ],
+   "bytes": 78,
+   "kind": "theorem",
+   "status": "UNFORMALISED",
+   "feature": "arith",
+   "text": "7T (*) - 7T (ix) > 1, 2, 3, 4,5,..., if * » 2, 11, 17, 29, 41,...... .(18) \n\n"
+  },
+  {
+   "id": "m049",
+   "span": [
+    2636,
+    2651
+   ],
+   "bytes": 15,
+   "kind": "theorem",
+   "status": "UNFORMALISED",
+   "feature": "arith",
+   "text": "respectively. \n"
+  }
+ ]
+}
