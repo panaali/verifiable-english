@@ -19,7 +19,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from test_gate_rerun import BASELINE, FakeGate
-from tools import gate, nested_pytest, quarantine
+from tools import gate, gate_collection, nested_pytest, quarantine
 
 ROOT = Path(__file__).resolve().parents[1]
 HELD = "tests/b.py::test_b"
@@ -144,7 +144,7 @@ def test_a_passing_suite_retries_nothing(fake):
 
 def test_the_tracked_quarantine_is_valid_and_names_collected_tests():
     entries = quarantine.load()
-    collected = set(json.loads((ROOT / "tools/gate-collection.json").read_text()))
+    collected = set(gate_collection.collect(prebuilt=True))
     assert entries, "the first entry is tests/test_difffuzz.py::test_ci_run"
     for item in entries:
         assert item["test"] in collected, item["test"]
