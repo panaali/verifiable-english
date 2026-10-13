@@ -22,7 +22,7 @@ from types import SimpleNamespace
 import pytest
 
 from conformance.alternatives import environment as alternatives_environment
-from subprocesses import HANG_TIMEOUT, expired_waits
+from subprocesses import HANG_TIMEOUT, busy_cpu, expired_waits
 from ve import admission, alternatives, discourse, norm_defaults_route, readings_route, reports_route, risk
 from ve.backends import lean as lean_backend
 from tools.hooks import precommit
@@ -407,6 +407,65 @@ def test_a_wire_check_that_outlasts_its_wait_blocks_the_commit(tmp_path, monkeyp
         precommit.check_wire_contract(StagedIndex(tmp_path, staged, None))
     assert isinstance(caught.value, Exception) and caught.value.timeout == 1234.5
     assert waits == [1234.5]
+
+
+TICK = 1 / os.sysconf("SC_CLK_TCK")
+
+
+def test_the_busy_cpu_clock_advances_a_tick_per_reading_above_the_real_one(monkeypatch):
+    """An ARM runner answered a question within one /proc tick, so a 1e-6 s CPU deadline never tripped."""
+    real = {7: 5.0, 8: None}
+    module = SimpleNamespace(_cpu_seconds=lambda pid: real[pid])
+    readings = busy_cpu(monkeypatch, module)
+    assert [module._cpu_seconds(7) for _ in range(3)] == [5.0, 5.0 + TICK, 5.0 + 2 * TICK]
+    real[7] = 9.0
+    assert module._cpu_seconds(7) == 9.0 and module._cpu_seconds(8) is None
+    assert readings == {7: [5.0, 5.0 + TICK, 5.0 + 2 * TICK, 9.0]}
+
+
+def _sub_tick_deadlines(source):
+    """The test functions in `source` that set a mode's CPU deadline below one /proc tick (a constant
+    `(base, per_mib)` given to `setitem(... DEADLINES, mode, ...)` or assigned to `DEADLINES[mode]`)
+    without reading the service's CPU on `busy_cpu`: whether such a deadline trips depends on the
+    machine's speed."""
+    def sub_tick(value):
+        return isinstance(value, ast.Tuple) and any(
+            isinstance(item, ast.Constant) and isinstance(item.value, (int, float)) and 0 < item.value < TICK
+            for item in value.elts)
+    found = []
+    for function in ast.walk(ast.parse(source)):
+        if not isinstance(function, ast.FunctionDef) or not function.name.startswith("test"):
+            continue
+        nodes = list(ast.walk(function))
+        lowered = any(
+            isinstance(node, ast.Call) and ast.unparse(node.func).endswith("setitem") and len(node.args) == 3
+            and ast.unparse(node.args[0]).endswith("DEADLINES") and sub_tick(node.args[2])
+            or isinstance(node, ast.Assign) and sub_tick(node.value)
+            and any(isinstance(target, ast.Subscript) and ast.unparse(target.value).endswith("DEADLINES")
+                    for target in node.targets)
+            for node in nodes)
+        clocked = any(isinstance(node, ast.Call) and ast.unparse(node.func) == "busy_cpu" for node in nodes)
+        if lowered and not clocked:
+            found.append(function.name)
+    return found
+
+
+def test_every_sub_tick_cpu_deadline_is_read_on_the_busy_clock():
+    found = {str(path.relative_to(ROOT)): _sub_tick_deadlines(path.read_text())
+             for path in sorted((ROOT / "tests").rglob("test_*.py")) if "__pycache__" not in path.parts}
+    assert {path: names for path, names in found.items() if names} == {}
+
+
+@pytest.mark.parametrize("source, found", [
+    ("def test_a(monkeypatch):\n    monkeypatch.setitem(lean_service.DEADLINES, 'x', (1e-6, 1e-6))\n", ["test_a"]),
+    ("def test_a():\n    lean_service.DEADLINES['x'] = (0.0, 1e-4)\n", ["test_a"]),
+    ("def test_a(monkeypatch):\n    monkeypatch.setitem(DEADLINES, 'x', (1e-6, 1e-6))\n"
+     "    busy_cpu(monkeypatch, lean_service)\n", []),
+    ("def test_a(monkeypatch):\n    monkeypatch.setitem(lean_service.DEADLINES, 'x', (0.3, 0.0))\n", []),
+    ("def test_a(monkeypatch):\n    monkeypatch.setitem(lean_service.DEADLINES, 'x', (seconds, 0.0))\n", []),
+])
+def test_the_sub_tick_lint_sees_each_form(source, found):
+    assert _sub_tick_deadlines(source) == found
 
 
 def _start_child(env=None):
