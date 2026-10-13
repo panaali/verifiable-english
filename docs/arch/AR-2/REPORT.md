@@ -128,6 +128,7 @@ All are Python, the only language whose product code changed. No `.lean` and no 
 | F3 | `lean/VE/Route/frozen.py` | a listed file that is neither K nor a decoder is refused | `tests/test_frozen_sources.py::test_a_new_k_module_must_be_listed_and_a_listed_file_must_be_frozen` |
 | H1 | `tools/hooks/precommit.py` | a staged trust-class table re-checks the whole list | `tests/test_precommit_hook.py::test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main` |
 | H2 | `tools/hooks/precommit.py` | the hook refuses an unhashed edit of a frozen file | `tests/test_precommit_hook.py::test_frozen_file_change_requires_an_inventory_update` |
+| H3 | `tools/hooks/precommit.py` | a staged deletion of `Main.lean` is refused (found in self-review: the first version skipped the rule) | `tests/test_precommit_hook.py::test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main` |
 | T1 | `tools/trust_changes.py` | a body-only edit of a D[V] file is reported | `tests/test_frozen_sources.py::test_a_body_only_edit_of_a_dv_file_is_reported` |
 | T2 | `tools/trust_changes.py` | no report from a classification that does not validate | `tests/test_frozen_sources.py::test_the_report_fails_closed` |
 | Q1 | `tools/question_lock.py` | a Question module edit needs no lock update | `tests/test_frozen_sources.py::test_an_edit_of_a_question_module_needs_no_lock_update` |
