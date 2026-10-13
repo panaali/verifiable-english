@@ -98,3 +98,152 @@ sessions"), so neither can be run here; they are **DEFERRED** (section 4), and t
 because it needs E1's pairs and E2's items. What this phase does for them is everything that does not need a reader:
 the item sets, the seeded orders, and the scoring scripts with the bars above written in, tested at the bars'
 boundaries, so that the run, when authorised, is mechanical and cannot choose its bars after the data.
+
+## 2. AT-0p: result
+
+**Result status.** Run 2026-10-13 after the pre-registration above (commit `c0cf207c`). Script
+`research/attitudes/at0p.py`, end to end `research/attitudes/run_at0p.sh` (about 5 min). Evidence:
+`docs/research/evidence/attitudes/at0p-probe.json`, `at0p-measure.json`, `at0p-rendered.md`, `at0p-reproduction.json`.
+
+**Method.** The pilot run was copied to two working copies (`research/attitudes/run-baseline/`, `run-at0p/`,
+untracked), whose scripts then run against this checkout's VE (Lean built from `49de179e` sources, Rust binary
+pinned in `lean/checkers.lock`). Every VE run had a 6 GiB address-space limit. The pilot directory was not written,
+with one exception, now repaired: the first `apply` imported the run's `spec.py` from the pilot path, which wrote
+`__pycache__/spec.cpython-314.pyc` into it. That file was deleted (the directory had no `__pycache__` before), the
+script now imports from the working copy, and `run_at0p.sh` checks that no `__pycache__` appears.
+
+1. **Reproduction (control).** On the unmodified copy, the run's own `nd.py all` rebuilt a main translation
+   byte-identical to the run's `translation.ve.md`, and the run's own `probe_unspecified.py` wrote a file
+   byte-identical to the recorded `probes/unspecified-probe.json`. So this checkout gives the run's recorded answers.
+   They include the audit's case: "the case does not hold (the knowledge atom does)" is UNDECIDED for all 7 rules.
+2. **Rewrite.** `at0p.py apply` makes the PLAN's rewrite in both documents `nd.py` reads (`translation-without-content.ve.md`
+   and `readings/all-strict.ve.md`). For each u0165.s0i the guard becomes
+   `["or", ["and", C_i(var 0), knowingly_engages_i(var 1, var 0)], thinks_quite_likely_i(var 1, var 0)]`
+   (de Bruijn: `var 0` is the situation, `var 1` the instance of Claude). The 14 binary predicates on
+   (`claude_instance`, `situation`) are added, each with a W2 open-term record (`decided_by: unresolved_decider`;
+   factors "what counts as knowingly and intentionally engaging in an action of the category" and "how likely
+   counts as quite likely"). `restricted_action_knowing_or_quite_likely` is deleted from the vocabulary, the
+   open-term list and each unit's `meaning.open`. The run's `nd.py all` then rebuilt the main translation, which
+   VE admitted and checked.
+3. **Probe.** The plan's points were asked exactly as the run's probe asks them (Lean `norm-defaults-status` at a
+   one-element situation, with the run's fallback for UNKNOWN). The run's 21 other points were asked again.
+
+| # | Bar (quoted in 1.1) | Measured | Verdict |
+|---|---|---|---|
+| A1 | case false, thinks-quite-likely true: SETTLED no | 7 of 7 `SETTLED no` | **PASS** |
+| A2 | case true, knowingly true: SETTLED no | 7 of 7 `SETTLED no` | **PASS** |
+| A3 | neither: UNDECIDED | 14 of 14 `UNDECIDED` (7 with the case true, 7 with it false) | **PASS** |
+| A4 | case false, knowingly true: UNDECIDED | 7 of 7 `UNDECIDED` | **PASS** |
+| A5 | the seven audit-case points UNDECIDED → SETTLED no | before: 7 × `UNDECIDED` (reproduced); after: 7 × `SETTLED no` (A1) | **PASS** |
+| A6 | claimed bytes unchanged (2,951) | `bytes_by_status` identical to the run's: CHECKED 73, LABELLED 349, OPEN 2,529, UNFORMALISED 181,942 (73 + 349 + 2,529 = 2,951) | **PASS** |
+| A7 | open terms 33 → 46 | 46 in the main translation: 14 added (`knowingly_engages_1..7`, `thinks_quite_likely_1..7`), 1 removed (`restricted_action_knowing_or_quite_likely`). The strict companion has 44 | **PASS** |
+| A8 | the 7 units (874 B) become candidates for audit verification | needs the next audit | **DEFERRED** (section 4) |
+
+Not bars, also measured:
+
+- The informative points both give `SETTLED no`: case true with thinks-quite-likely true, and case false with both
+  attitudes true.
+- All 21 other probe points give the run's recorded status (21 of 21).
+- The main translation keeps the run's own assertions: premises `model`, reading plan `enumerate` with 8 choices,
+  readings CONFLICT-FREE, coverage 100 %. The strict companion's premises are `model`.
+- `ve document render` is byte-identical outside the seven rules (`at0p-rendered.md`).
+
+**Observation (not a bar).** The rendering names the new open terms by their identifiers, not by their
+verbalisations: "(b) that instance of Claude has the recorded relation "thinks_quite_likely_1" to that situation".
+The run rendered the old term the same way ("… is classified as "restricted_action_knowing_or_quite_likely""). So
+an auditor who reads only the rendering sees the name, not the description or the factors.
+
+**What A4 shows.** The untyped repair is not faithful at the impossible point. Where the case does not hold but
+Claude knowingly engages in it, the rules answer UNDECIDED, because nothing ties knowing to the category. That is
+the gap typed attitudes close (D-A4 premise 1, factivity, makes that point unreachable). The plan predicted this
+("an impossible situation the untyped language cannot refuse"); it is now measured.
+
+## 3. E1 and E2: prepared, not run
+
+Neither experiment was run: both are defined by model readers, and this phase makes no model calls (**DEFERRED**,
+section 4). Everything that needs no reader is done and committed (`cd6af1cb`):
+
+| Piece | Where | What |
+|---|---|---|
+| E1 items | `evidence/attitudes/e1-items.json` | 28 pair items in E1's list order plus 8 certainty items = 36. Ids follow the spec stub (`E1.pair.<a>.<b>`, `E1.cert.<w>`). 40 call orders from `random.Random("attitudes-E1")`. 1,440 calls |
+| E2 items | `evidence/attitudes/e2-items.json` | 3 factivity, 3 knows → believes, 8 knows → thinks it *w* (all eight words, G3), 3 negated "know", 3 "unless", 3 "P, and X does not know that P" = 23 items. Seed `attitudes-E2`. 920 calls |
+| Protocol | both files, `protocol` | reader `claude-sonnet-5-5`; one fresh context per call (G2); the prompt text; the parsing rule (first line: yes / no / cannot tell, anything else invalid, which counts as neither yes nor no) |
+| Scoring | `research/attitudes/experiments.py score-e1`, `score-e2` | the quoted bars as constants (`PAIR_YES, PAIR_MAX_NO = 36, 2`; `CERT_YES = 34`; `E2_REACH = 36`). An answer set must hold exactly one answer per item and session, or it is refused and not scored |
+| Frozen table | `experiments.py table` | emits the Lean `Table` literal (spec 2.1) and evaluates `Table.reviewed` with `lake env lean` on a copy of the AT-0 stub (`ve-design-attitudes/lean/SpecStubs_attitudes.lean`, read only), so the closure review is Lean's, not Python's |
+| Self-check | `experiments.py selfcheck`; `evidence/attitudes/e-selfcheck.json` | 20 checks on synthetic counts (no reader): each bar at its boundary (pair 36/2 in, 35/0 out, 36/3 out; certainty 34 in, 33 out; factivity 36 in, 35 out, with premises 2 and 3 dropped too); refusal of missing and duplicate answers; parsing; and through Lean, a table with a failed derived pair is not reviewed, the resolved one is, and an all-pass table is. All 20 hold |
+| Seeded bug | `PAIR_YES` 36 → 35 | the self-check fails ("pair yes=35 no=0": false, exit 1); restored |
+
+**Found while preparing (no data involved).** The item design makes the debate-round-3 clause empty. E1 asks all
+28 pairs directly, in list order, and every lower-bound word has its own knows → thinks item. So the closure of the
+passing pairs can never reach a pair, or a premise-3 word, that has *no* direct item. It can only reach one whose
+direct item *failed*. "One item for each pair the closure derives without a direct E1 item, and for each premise-3
+word reached only through the closure" therefore adds no items. What remains is the plan's resolution rule for a
+failed derived entry, and that rule has two options (G4).
+
+## 4. DEFERRED
+
+| Item | Why it is not done here | What is ready |
+|---|---|---|
+| E1 run | needs 1,440 model calls (Sonnet 5.5 readers); this phase makes none | items, orders, protocol, scorer, self-check |
+| E2 run | needs 920 model calls; same reason | same |
+| Closure review on real data and freezing `table` (spec 2.1) | needs E1's and E2's answers | `experiments.py table`, reviewed by Lean through the stub |
+| AT-0p A8: the next audit's verdict on the seven units (874 B) | needs the pilot's next audit, outside this phase; it is also the DRI's go/no-go input after AT-6a (F7) | the AT-0p documents (rebuilt by `run_at0p.sh`), the before/after rendering |
+| Landing AT-0p in the pilot (the next constitution run) | the pilot directory is read only for this task; the pilot runner applies it | `research/attitudes/at0p.py` (copy, apply) on that run's inputs |
+| AT-0 PASS (SR-8 order) | waits on E1, E2 and the closure review | — |
+
+The UDHR run was not used: no phase-1 item touches it (the plan gives UDHR 0 B for this design, R 2.5).
+
+## 5. Consequences for draft 2
+
+**Confirmed.**
+
+- **AT-0p, as specified.** Every measurable bar passes, and every estimate matches the measurement exactly:
+  2,951 B claimed and unchanged, open terms 33 → 46, and the seven audit-case points UNDECIDED → SETTLED no. Draft 2
+  can mark AT-0p's row in the section-7 table and its numbers as measured, citing this report. The queue (edit 10,
+  synthesis 4.4) is unchanged: AT-0p → SC-1b → SC-2 → AT-6a/AT-6b → WG-5. SC-1b starts from the AT-0p translation
+  (open terms `knowingly_engages_i` and `thinks_quite_likely_i`, synthesis C23).
+- **The motivation for AT-1 to AT-3b and AT-6a.** A4 measures the untyped repair's limit: the impossible point is
+  UNDECIDED. Nothing in phase 1 cancels a product batch. The go/no-go after AT-6a still waits on A8.
+
+**Changed (to make before E1 and E2 run; each is a gap in the pre-registration, not a moved bar).** Each needs the
+DRI's decision, recorded in the plan before any answer exists:
+
+- **G1. Pair direction.** "28 pairs" fixes one direction per pair, but the plan does not say which. Proposal (used
+  in `e1-items.json`): the earlier word in E1's list is the first sentence, so a passing item is the scale pair
+  (earlier, later).
+- **G2. Independence.** "40 independent sessions with no shared context" and "1,440 short calls" do not say whether
+  a session's 36 items share one context. If they do, earlier items prime later ones, and the 40 answers to an item
+  are not 40 independent readers. Proposal: one fresh context per call. The seeded order then fixes only the call
+  order.
+- **G3. E1 ∥ E2.** The pilot path runs E1 and E2 in parallel, but E2's per-word items are defined by E1's
+  `lowerBound`. Proposal: E2 asks the knows → thinks item for all eight words (8 items, 320 calls) and scores only
+  the lower-bound words. Then E2 does not wait for E1.
+- **G4. The closure resolution has two outcomes.** "The weaker word leaves `lowerBound`, or the scale pair is
+  dropped" is a choice, and the frozen meaning depends on it. Proposal (implemented as `resolve` in
+  `experiments.py`, output reviewed by Lean): until the closure is clean, the weaker word of a derived entry whose
+  item failed leaves `lowerBound`, with every pair and premise that names it. This is the only one of the two
+  options with a unique outcome. Also, by section 3, the debate-round-3 closure items are empty by construction, so
+  draft 2 can say so instead of listing them.
+- **G5. Unspecified wordings and questions.** The plan gives no text for the knows → believes, knows → thinks *w*
+  and "P, and X does not know that P" items, nor which answer "reaches 36 of 40" for the last of these. Proposal
+  in `e2-items.json`: the question "Must P?" with "yes" expected. It tests that P is read as asserted, but not how
+  "does not know" is read. The DRI may prefer to add "Does Claude know that P?" (expected "no"), which costs
+  three more items.
+- **G6. Reader settings and invalid answers.** Temperature, output limit and extended thinking are not stated.
+  Neither is the treatment of an answer that is not yes, no or cannot tell (proposal: invalid, counted as neither
+  yes nor no, so it counts against every yes bar). Fix them before the run.
+
+**Cancelled.** Nothing. E1 and E2 have produced no data, so no batch is confirmed or cancelled by them. Until they
+report, `table` admits nothing (spec fixture D0), and AT-0's PASS stays blocked (SR-8).
+
+**Cost, for the DRI's scheduling.** E1 is 1,440 calls (as the plan estimates). With G3, E2 is 920 calls
+(23 items × 40), against the plan's implied 40 × (15 + |`lowerBound`|).
+
+## 6. Commits
+
+| Commit | What |
+|---|---|
+| `c0cf207c` | pre-registration: section 1, the bars quoted before any run |
+| `0c3be928` | AT-0p script, probe, measurements, evidence |
+| `cd6af1cb` | E1/E2 items, orders, scorers, Lean-reviewed table emitter, self-check |
+| (this commit) | results, DEFERRED list, consequences |
