@@ -64,19 +64,27 @@ def reachBodyUnsupported : String :=
   "UnsupportedProfile: definition bodies with reachability require a closure definition layer"
 
 /-- Python `_compile_python`'s name for a body of the definition of `p` that a Lean
-decoder rejected with `e`, in Python's order: its `_Decoder`'s text
-(`Preflight.decoderFault`); for a body that decoder accepts, its reachability gate,
-then its typing check (`bodyNotTyped`), since a body the core decoder rejects too (a
-name that is not a string, a numeric term) is not a typed core formula. A core formula
-the layer does not admit (an n-ary atom in a unary or binary body) keeps the layer's
-text `e`. The one owner for unary, binary and n-ary bodies (`Core.Layers.naryEntries`). -/
+decoder rejected with `e`, in Python's order. Python decodes only an array body: any
+other JSON value (a number, a string, an object) goes straight to its typing check
+(`bodyNotTyped`). An array body gets its `_Decoder`'s text (`Preflight.decoderFault`);
+for one that decoder accepts, its reachability gate, then its typing check, since a body
+the core decoder rejects too (a name that is not a string, a numeric term) is not a typed
+core formula. A core formula the layer does not admit (an n-ary atom in a unary or
+binary body) keeps the layer's text `e`. The one owner for unary, binary and n-ary
+bodies (`Core.Layers.naryEntries`). -/
 def bodyFault (p : String) (j : Json) (e : String) : String :=
-  match VE.Reports.Preflight.decoderFault j with
-  | some m => m
-  | none =>
-    if VE.Reports.Preflight.hasReach 65 j then reachBodyUnsupported
-    else if (VE.Core.Bridge.decodeFormula 64 j).isOk then e
-    else VE.Definitions.bodyNotTyped p
+  match j with
+  | .arr _ =>
+    match VE.Reports.Preflight.decoderFault j with
+    | some m => m
+    | none =>
+      if VE.Reports.Preflight.hasReach 65 j then reachBodyUnsupported
+      else if (VE.Core.Bridge.decodeFormula 64 j).isOk then e
+      else VE.Definitions.bodyNotTyped p
+  | _ => VE.Definitions.bodyNotTyped p
+
+#guard bodyFault "p" (7 : Nat) "e" == VE.Definitions.bodyNotTyped "p"
+#guard bodyFault "p" (.arr #[]) "e" == "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
 
 /-- The body of the definition of `p`: a v0 formula within the AST limits of one
 decoded formula (Python decodes each body with its own decoder). Reachability bodies
