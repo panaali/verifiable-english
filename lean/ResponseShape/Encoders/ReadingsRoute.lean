@@ -516,8 +516,17 @@ theorem verdicts_fits (lower : List String → Json → Json) (id : String) (b :
   unfold runVerdicts
   okfits
   all_goals first
-    | (apply ndVerdictsAnswer_fits; assumption)
-    | (apply verdictsAnswer_fits; assumption)
+    | (apply ndVerdictsAnswer_fits; exact VerdictsRequest.hq _)
+    | (apply verdictsAnswer_fits; exact VerdictsRequest.hq _)
+    | skip
+
+set_option maxHeartbeats 1000000 in
+theorem verdictsSD_fits (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/verdicts") (runVerdictsSD id b j) := by
+  unfold runVerdictsSD
+  okfits
+  all_goals first
+    | (apply ndVerdictsAnswer_fits; exact VerdictsRequest.hq _)
     | skip
 
 theorem runNDKind_fits (id kind : String) (f : Wire.AdmittedNDFull) (j : Json)
@@ -642,6 +651,7 @@ theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) 
     | skip
   all_goals (try (intro v hv; fits_from verdicts_fits _ _ _ _ v hv))
   all_goals (try (intro v hv; fits_from verdicts_fits _ _ _ _ v hv))
+  all_goals (try (intro v hv; fits_from verdictsSD_fits _ _ _ v hv))
   all_goals (try kind_norm)
   all_goals (try with_reducible exact runNDKind_fits _ _ _ _ hK0)
   all_goals (try with_reducible exact runSDKind_fits _ _ _ _ hK0)

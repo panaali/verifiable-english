@@ -2,7 +2,7 @@ import VE.Readings.Wire
 import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
-import VE.Readings.SoftWire
+import VE.Readings.SoftVerdicts
 import VE.Readings.SupFillWire
 import VE.Readings.VerdictsWire
 import VE.Readings.Companions
@@ -496,8 +496,7 @@ def runSDKind (id kind : String) (r : AdmittedSD) (j : Json) : Except String Jso
     (S1 4.9). `b` is the case's one admission. -/
 def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
   if underSoftCompletion b.a.re b.D then
-    if kind == "readings-verdicts" then
-      throw "UnsupportedProfile: readings-verdicts under the soft completion is not implemented"
+    if kind == "readings-verdicts" then return ← runVerdictsSD id b j
     return ← runSDKind id kind (← admitSDOf b) j
   if kind == "readings-verdicts" then return ← runVerdicts lower id b j
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j

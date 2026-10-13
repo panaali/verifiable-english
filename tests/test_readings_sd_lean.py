@@ -490,3 +490,177 @@ def test_fsd2_generated_documents_answer_as_without_the_profile(lean):
         assert all(e["premises"] == [] for e in nd["fill_premises"])
         compared += 1
     assert compared >= 10, compared
+
+
+# SC-5: `readings-verdicts` under the soft completion (spec 4.4, 8.3 F-SD1.verdicts and F-SD2's verdicts).
+
+AVOID_ALL = Forall("agent", Forall("user", Binary("avoid_required", Var(1), Var(0))))
+TWINS = (norm("no-deception", "avoid_required", True), norm("no-deception", "avoid_required", True, "default"))
+# A model of each choice's premises: the default choice's base declares its decision table.
+FREE_MODELS = ({"model": layered_model(), "filling": {}},
+               {"model": layered_model({"soft__excepted__no_deception": []}), "filling": {}})
+
+
+def _bindings(lean, raw, document, choice):
+    return run(lean, [choice_case(raw, document, choice, {"kind": "norm-defaults-elaborate"})])[0]["inner"]
+
+
+def _packages(lean, raw, document, choice, *sources):
+    """The choice's conflict packages, proposed by the pinned oracle on its source and bound to Lean's ids."""
+    row = _bindings(lean, raw, document, choice)
+    doc = layered.document("soft", lower(raw), list(sources))
+    report = layered.nd.check_conflict(doc, prove=True)
+    return {t: {**p, "environment_id": row["environment_id"], "document_hash": row["document_hash"]}
+            for t, p in report.certificates.items()}
+
+
+def _twin_evidence(lean, raw, document, *, query=False, models=True):
+    """F-SD1's evidence: each choice's packages; for the query a certificate of the strict choice and a countermodel
+    of the default one (`excepted = {(a, u)}`, the filling no); a model of each choice's premises."""
+    evidence = []
+    for i, source in enumerate(TWINS):
+        piece = {"choice": [["rs1", i]], "conflict": {"packages": _packages(lean, raw, document, [("rs1", i)], source)}}
+        if models:
+            piece["model"] = FREE_MODELS[i]
+        evidence.append(piece)
+    if query:
+        certificate, _, _ = _choice_certificate(lean, raw, document, [("rs1", 0)], AVOID_ALL, [])
+        evidence[0]["certificate"] = {"certificate": certificate}
+        evidence[1]["countermodel"] = {"model": layered_model({"soft__excepted__no_deception": [["a", "u"]]}),
+                                       "filling": {}}
+    return evidence
+
+
+def _verdicts(lean, raw, document, question, evidence, **fields):
+    return one(lean, "readings-verdicts", raw, document, question=question, evidence=evidence, **fields)
+
+
+def _query(raw):
+    doc = layered.document("soft", lower(raw), [TWINS[0]])
+    return formula_to_data(doc.filled.env, AVOID_ALL)
+
+
+def test_fsd1_verdicts_conflict_free_with_decided_units(lean):
+    """8.3 F-SD1.verdicts: CONFLICT-FREE under both readings, each row decided, so `decided_units` is the set's unit
+    (1.12); under `--under rs1:0` the rows cover one choice, so none."""
+    raw, document, _ = fsd1()
+    evidence = _twin_evidence(lean, raw, document)
+    answer = _verdicts(lean, raw, document, "conflict", evidence)
+    assert answer["status"] == "ok", answer
+    assert answer["result"]["status"] == "CONFLICT-FREE", answer["result"]
+    assert [(e["choice"], e["conflict"]) for e in answer["per_choice"]] == [
+        ([["rs1", 0]], "CONFLICT-FREE"), ([["rs1", 1]], "CONFLICT-FREE")]
+    assert answer["finding_sets"] == ["rs1"] and answer["decided_units"] == ["u1"]
+    under = _verdicts(lean, raw, document, "conflict", evidence, assumed=[["rs1", 0]])
+    assert under["result"]["status"] == "CONFLICT-FREE" and under["decided_units"] == []
+    premises = _verdicts(lean, raw, document, "premises", evidence)
+    assert premises["result"]["status"] == "model" and premises["decided_units"] == ["u1"]
+
+
+def test_fsd1_verdicts_query_some_all_none(lean):
+    """8.3 F-SD1.verdicts: the query `∀ agent ∀ user. avoid_required` is SOME (choice 0 proved, choice 1 refuted by
+    `excepted = {(a, u)}` and the filling no); ALL under `rs1:0`; NONE under `rs1:1`."""
+    raw, document, _ = fsd1()
+    evidence = _twin_evidence(lean, raw, document, query=True)
+    fields = {"premises": [], "conclusion": _query(raw)}
+    some = _verdicts(lean, raw, document, "query", evidence, **fields)
+    assert some["status"] == "ok", some
+    assert some["result"]["verdict"] == "SOME", some["result"]
+    assert [e["query"] for e in some["per_choice"]] == ["proved", "refuted"]
+    assert some["result"]["proof"]["choice"] == [["rs1", 0]]
+    assert some["result"]["countermodel"]["choice"] == [["rs1", 1]]
+    assert some["decided_units"] == ["u1"]
+    every = _verdicts(lean, raw, document, "query", evidence, assumed=[["rs1", 0]], **fields)
+    assert every["result"]["verdict"] == "ALL" and every["decided_units"] == []
+    none = _verdicts(lean, raw, document, "query", evidence, assumed=[["rs1", 1]], **fields)
+    assert none["result"]["verdict"] == "NONE" and none["decided_units"] == []
+
+
+def test_fsd2_verdicts_take_the_enumerated_route(lean):
+    """8.3 F-SD2, `readings-verdicts`: K18 answers RD-3's request on its two choices, not K1's superposed answer:
+    CONFLICT-FREE; the query SOME, ALL under `rs1:0`, NONE under `rs1:1`; `decided_units` as F-SD1's."""
+    raw = env_sd(unspecified=())
+    document, _ = k1_document(raw)
+    evidence = _twin_evidence(lean, raw, document, query=True)
+    conflict = _verdicts(lean, raw, document, "conflict", evidence)
+    assert (conflict["route"], conflict["result"]["status"], conflict["decided_units"]) == (
+        "enumerated", "CONFLICT-FREE", ["u1"]), conflict
+    fields = {"premises": [], "conclusion": _query(raw)}
+    assert _verdicts(lean, raw, document, "query", evidence, **fields)["result"]["verdict"] == "SOME"
+    assert _verdicts(lean, raw, document, "query", evidence, assumed=[["rs1", 0]], **fields)["result"]["verdict"] \
+        == "ALL"
+    assert _verdicts(lean, raw, document, "query", evidence, assumed=[["rs1", 1]], **fields)["result"]["verdict"] \
+        == "NONE"
+
+
+def test_fsd4_a_conflict_free_answer_rests_on_the_coherence_premise(lean):
+    """8.3 F-SD4: `coherent` beside its strict twin (here with `x_permitted` allowed, so the packages close). Under
+    the default reading the CONFLICT-FREE answer is `conditional_on` the coherence premise its packages use, and the
+    plan cites it after E3; under the strict reading nothing."""
+    raw = env4()
+    raw["vocabulary"]["predicates"]["x_permitted"]["regulated"]["default"] = "allow"
+    document = doc4(raw)
+    need_not, units = document["units"][0]["content"], document["reading_sets"][0]["readings"]
+    evidence = [{"choice": [["rs1", i]], "conflict": {"packages": _packages(
+        lean, raw, document, [("rs1", i)], need_not, units[i]["content"])}} for i in (0, 1)]
+    label = "soft:coherence:must-x,need-not-x"
+    default = _verdicts(lean, raw, document, "conflict", evidence, assumed=[["rs1", 1]])
+    assert default["result"]["status"] == "CONFLICT-FREE", default
+    assert default["result"]["conditional_on"] == [label] and default["labels"] == [label]
+    assert [line["label"] for line in default["english"] if line["label"]] == [label]
+    strict = _verdicts(lean, raw, document, "conflict", evidence, assumed=[["rs1", 0]])
+    assert strict["result"]["status"] == "CONFLICT-FREE" and strict["result"]["conditional_on"] == []
+
+
+def test_fsd8_evidence_for_another_choice_is_never_a_verdict(lean):
+    """8.3 F-SD8 in `readings-verdicts`: the strict choice's packages and certificate supplied as the default choice's
+    are refused there: its rows are UNKNOWN, so the answer is neither CONFLICT-FREE nor ALL."""
+    raw, document, _ = fsd1()
+    evidence = _twin_evidence(lean, raw, document, query=True)
+    evidence[1]["conflict"] = copy.deepcopy(evidence[0]["conflict"])
+    evidence[1]["certificate"] = copy.deepcopy(evidence[0]["certificate"])
+    del evidence[1]["countermodel"]
+    conflict = _verdicts(lean, raw, document, "conflict", evidence)
+    assert conflict["result"]["status"] == "UNKNOWN", conflict["result"]
+    assert [e["conflict"] for e in conflict["per_choice"]] == ["CONFLICT-FREE", "UNKNOWN"]
+    under = _verdicts(lean, raw, document, "query", evidence, assumed=[["rs1", 1]], premises=[],
+                      conclusion=_query(raw))
+    assert under["result"]["verdict"] == "UNKNOWN", under["result"]
+    assert [e["query"] for e in under["per_choice"]] == ["UNKNOWN"]
+    assert under["per_choice"][0]["errors"]["certificate"] == STALE
+
+
+def test_fsd9_verdicts_beyond_64_choices(lean):
+    """8.3 F-SD9: seven sets, 128 choices: the query is W2's budget answer (UNKNOWN) and `decided_units` is `[]`."""
+    raw = env_sd()
+    sets, units = [], []
+    for k in range(7):
+        rule = f"no-deception-{k}"
+        sets.append(reading_set(f"rs{k}", f"u{k}", [reading("strict", norm(rule, "avoid_required", True), {}),
+                                                    reading("default", norm(rule, "avoid_required", True, "default"),
+                                                            {})], {}))
+        units.append({"id": f"u{k}"})
+    document = {"units": units, "reading_sets": sets}
+    answer = _verdicts(lean, raw, document, "query", [], premises=[], conclusion=_query(raw))
+    assert answer["status"] == "ok", answer
+    assert answer["result"]["verdict"] == "UNKNOWN" and answer["result"]["budget"] == {"max_choices": 64}
+    assert answer["decided_units"] == [] and answer["per_choice"] == []
+    conflict = _verdicts(lean, raw, document, "conflict", [])
+    assert conflict["result"]["status_text"] == "UNKNOWN: more than 64 compatible readings"
+
+
+def test_fsd11_a_verdict_certificate_binds_the_assertions_it_takes(lean):
+    """8.3 F-SD11 in `readings-verdicts`: with a fixed assertion unit, the strict choice's certificate is accepted
+    (ALL under `rs1:0`); with its binding leaving the assertion out, the piece is refused and the row UNKNOWN."""
+    raw, document, _ = fsd1(fixed_units=[("u0", ASKS_ALL)])
+    certificate, packages, doc = _choice_certificate(lean, raw, document, [("rs1", 0)], AVOID_ALL, [ASKS_ALL])
+    fields = {"premises": [], "conclusion": formula_to_data(doc.filled.env, AVOID_ALL), "assumed": [["rs1", 0]]}
+    evidence = [{"choice": [["rs1", 0]], "conflict": {"packages": packages}, "certificate": {"certificate": certificate}}]
+    every = _verdicts(lean, raw, document, "query", evidence, **fields)
+    assert every["result"]["verdict"] == "ALL", every
+    without = copy.deepcopy(evidence)
+    without[0]["certificate"]["certificate"]["premise_meaning_ids"].pop()
+    answer = _verdicts(lean, raw, document, "query", without, **fields)
+    assert answer["result"]["verdict"] == "UNKNOWN"
+    assert answer["per_choice"][0]["query"] == "UNKNOWN"
+    assert answer["per_choice"][0]["errors"] == {"certificate": STALE}

@@ -6684,7 +6684,6 @@
         "VE.Readings.Wire.NDVerdicts.conflictRows",
         "VE.Readings.Wire.NDVerdicts.premiseRows",
         "VE.Readings.Wire.NDVerdicts.queryRows",
-        "VE.Readings.Wire.castFM",
         "VE.Readings.Wire.chosenOf",
         "VE.Readings.Wire.fullEnv",
         "VE.Readings.Wire.localFree",
@@ -6693,7 +6692,20 @@
         "VE.Readings.Wire.ndFree",
         "VE.Readings.Wire.ndModelOk",
         "VE.Readings.Wire.ndPremiseRow",
-        "VE.Readings.Wire.ndQueryRow"
+        "VE.Readings.Wire.ndQueryRow",
+        "VE.Readings.Wire.XEvidence",
+        "VE.Readings.Wire.XVerdicts",
+        "VE.Readings.Wire.XVerdicts.conflictRows",
+        "VE.Readings.Wire.XVerdicts.queryRows",
+        "VE.Readings.Wire.XVerdicts.premiseRows",
+        "VE.Readings.Wire.xFree",
+        "VE.Readings.Wire.xCertOk",
+        "VE.Readings.Wire.xModelOk",
+        "VE.Readings.Wire.xConflictRow",
+        "VE.Readings.Wire.xQueryRow",
+        "VE.Readings.Wire.xPremiseRow",
+        "VE.Readings.Wire.castXE",
+        "VE.Readings.Wire.NDVerdicts.toX"
       ],
       "D[R]": [
         "VE.Readings.Run.lowerError",
@@ -6720,9 +6732,7 @@
         "VE.Readings.Run.untakenJson",
         "VE.Readings.Wire.gapsJson",
         "VE.Readings.Wire.membersOf",
-        "VE.Readings.Wire.ndBoundCert",
         "VE.Readings.Wire.ndEvidenceOf",
-        "VE.Readings.Wire.ndFilled",
         "VE.Readings.Wire.pieceOf",
         "VE.Readings.Wire.shownOf",
         "VE.Readings.Wire.shownOk",
@@ -6731,7 +6741,9 @@
         "VE.Readings.jchoice",
         "VE.Readings.jgaps",
         "VE.Readings.jstrings",
-        "VE.Readings.strOf"
+        "VE.Readings.strOf",
+        "VE.Readings.Wire.xFilled",
+        "VE.Readings.Wire.xEvidenceOf"
       ],
       "G[V]": [
         "VE.Readings.Line",
@@ -6760,7 +6772,6 @@
         "VE.Readings.Run.lowerInfo",
         "VE.Readings.Run.lowerNote",
         "VE.Readings.Run.lowerRun",
-        "VE.Readings.Run.ndInfo",
         "VE.Readings.Run.ndInfos",
         "VE.Readings.Run.premisesResult",
         "VE.Readings.Run.resultOf",
@@ -6792,7 +6803,12 @@
         "VE.Readings.Run.partDecided",
         "VE.Readings.Run.readingPremise",
         "VE.Readings.Wire.pairGapsOn",
-        "VE.Readings.Wire.probeFormulaOn"
+        "VE.Readings.Wire.probeFormulaOn",
+        "VE.Readings.Run.rowInfoOf",
+        "VE.Readings.Run.xInfos",
+        "VE.Readings.Run.overInfos",
+        "VE.Readings.Run.VerdictsRequest",
+        "VE.Readings.Run.verdictsRequest"
       ]
     },
     "VE/Readings/Wire.lean": {
@@ -10981,6 +10997,19 @@
         "VE.NormDefaults.Admission.filledJsonX",
         "VE.NormDefaults.Wire.LayeredEntailment",
         "VE.NormDefaults.Wire.replayLayeredEntailment"
+      ]
+    },
+    "VE/Readings/SoftVerdicts.lean": {
+      "C": [
+        "VE.Readings.Wire.sdSem",
+        "VE.Readings.Wire.SDVerdicts",
+        "VE.Readings.Wire.mapSigma",
+        "VE.Readings.Wire.sdEvidenceOf",
+        "VE.Readings.Wire.replaySD",
+        "VE.Readings.Wire.replayVerdictsSD"
+      ],
+      "G[V]": [
+        "VE.Readings.Run.runVerdictsSD"
       ]
     }
   }
