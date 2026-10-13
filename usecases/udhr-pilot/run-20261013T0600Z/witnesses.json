@@ -1,0 +1,1935 @@
+{
+  "norm_defaults_status": {
+    "u020.prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "distinction_by_country_status_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u020-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "distinction_by_country_status_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u020-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "distinction_by_country_status_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [
+          "u020-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "distinction_by_country_status_permitted",
+        "row": [
+          "c3"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u022a.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_life",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u022a-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u022b.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_liberty",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u022b-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u022c.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_security_of_person",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u022c-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u024.prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "holding_in_slavery_or_servitude_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u024-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "holding_in_slavery_or_servitude_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u024-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "holding_in_slavery_or_servitude_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u025.practice_prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "slavery_or_slave_trade_practice_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u025-practice-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "slavery_or_slave_trade_practice_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u025-practice-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "slavery_or_slave_trade_practice_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u025.required_prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "prohibition_of_slavery_and_slave_trade_required",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u025-required-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "prohibition_of_slavery_and_slave_trade_required",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u025-required-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "prohibition_of_slavery_and_slave_trade_required",
+        "row": [
+          "c2"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u027.prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "subjection_to_ill_treatment_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u027-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "subjection_to_ill_treatment_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u027-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "subjection_to_ill_treatment_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [
+          "u027-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "subjection_to_ill_treatment_permitted",
+        "row": [
+          "c3"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "subjection_to_ill_treatment_permitted",
+        "row": [
+          "c4"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u029.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_recognition_as_a_person",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u029-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u032.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "is_entitled_to_equal_protection_of_the_law",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u032-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u033a.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "is_entitled_to_protection_against_discrimination",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u033a-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u033b.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "is_entitled_to_protection_against_incitement",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u033b-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u035.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_an_effective_remedy",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u035-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u037.prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "arrest_detention_or_exile_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u037-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "arrest_detention_or_exile_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u037-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "arrest_detention_or_exile_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "arrest_detention_or_exile_permitted",
+        "row": [
+          "c3"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u045a.prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "interference_with_private_domains_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u045a-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "interference_with_private_domains_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u045a-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "interference_with_private_domains_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [
+          "u045a-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "interference_with_private_domains_permitted",
+        "row": [
+          "c3"
+        ],
+        "rules": [
+          "u045a-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "interference_with_private_domains_permitted",
+        "row": [
+          "c4"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "interference_with_private_domains_permitted",
+        "row": [
+          "c5"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u045b.prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "attack_upon_honour_or_reputation_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u045b-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "attack_upon_honour_or_reputation_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u045b-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "attack_upon_honour_or_reputation_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u046.entitlement_arbitrary": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_protection_of_the_law_against",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u046-entitlement-arbitrary"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "has_the_right_to_protection_of_the_law_against",
+        "row": [
+          "c1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_protection_of_the_law_against",
+        "row": [
+          "c2"
+        ],
+        "rules": [
+          "u046-entitlement-arbitrary"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "has_the_right_to_protection_of_the_law_against",
+        "row": [
+          "c3"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "has_the_right_to_protection_of_the_law_against",
+        "row": [
+          "c4"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u048.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_movement_and_residence",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u048-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u049.entitlement_nationality": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_leave_and_return_nationality",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u049-entitlement-nationality"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u049.entitlement_residence": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_leave_and_return_residence",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u049-entitlement-residence"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u051.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_seek_and_enjoy_asylum",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u051-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u052.invocation_barred": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "invoke_asylum_right_in_case_permitted",
+        "row": [
+          "p0",
+          "x0"
+        ],
+        "rules": [
+          "asylum-not-invocable-in-the-case-of-such-prosecutions"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "invoke_asylum_right_in_case_permitted",
+        "row": [
+          "p0",
+          "x1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u054.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "is_entitled_to_a_nationality",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u054-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u055.both_acts": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "loss_of_nationality_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u055-both-acts"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "loss_of_nationality_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u055-both-acts"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "loss_of_nationality_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "loss_of_nationality_permitted",
+        "row": [
+          "c3"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u055.deprivation_only": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "loss_of_nationality_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u055-deprivation-only"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "loss_of_nationality_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u055-deprivation-only"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "loss_of_nationality_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [
+          "u055-deprivation-only"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "loss_of_nationality_permitted",
+        "row": [
+          "c3"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u059.prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "entry_into_marriage_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u059-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "entry_into_marriage_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u059-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "entry_into_marriage_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [
+          "u059-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "entry_into_marriage_permitted",
+        "row": [
+          "c3"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u061.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "is_entitled_to_protection_by_society_and_the_state",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u061-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u063.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_own_property",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u063-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u064.prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "deprivation_of_property_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u064-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "deprivation_of_property_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u066.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_thought_conscience_religion",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u066-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u070.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_opinion_and_expression",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u070-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u073.peaceful_assembly_and_association": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "right_to_peaceful_assembly_and_any_association",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u073-peaceful-assembly-and-association"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u073.peaceful_both": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "right_to_peaceful_assembly_and_peaceful_association",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u073-peaceful-both"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u074.prohibition": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "compel_association_membership_permitted",
+        "row": [
+          "a0",
+          "p0"
+        ],
+        "rules": [
+          "no-compelled-association-membership"
+        ],
+        "status": "SETTLED",
+        "value": false
+      }
+    ],
+    "u077.entitlement_nationality": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_right_to_equal_public_service_access_nationality",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u077-entitlement-nationality"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u077.entitlement_residence": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_right_to_equal_public_service_access_residence",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u077-entitlement-residence"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u081.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_social_security_as_a_member_of_society",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u081-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u084a.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_work",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u084a-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u084b.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_free_choice_of_employment",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u084b-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u084c.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_just_and_favourable_conditions_of_work",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u084c-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u084d.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_protection_against_unemployment",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u084d-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u087.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_form_and_join_trade_unions",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u087-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u096.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_education",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u096-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u098.unassigned": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "elementary_education_compulsory_required",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u098-unassigned"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "elementary_education_compulsory_required",
+        "row": [
+          "c1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u099a.unassigned": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "education_generally_available_required",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u099a-unassigned"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "education_generally_available_required",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u099a-unassigned"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "education_generally_available_required",
+        "row": [
+          "c2"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u099b.unassigned": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "equal_access_to_higher_education_required",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u099b-unassigned"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u100a.unassigned": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "education_directed_to_personality_required",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u100a-unassigned"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u100b.unassigned": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "education_directed_to_respect_for_rights_required",
+        "row": [
+          "c0"
+        ],
+        "rules": [
+          "u100b-unassigned"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u105a.entitlement": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_take_part_in_cultural_life",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u105a-entitlement"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u105b.freely_attaches": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_freely_to_enjoy_the_arts",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u105b-freely-attaches"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u105b.freely_participate_only": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_the_right_to_enjoy_the_arts_unqualified",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u105b-freely-participate-only"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u105c.freely_attaches": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_right_freely_share_scientific_advancement",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u105c-freely-attaches"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u105c.freely_participate_only": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "lean_point_status": "SETTLED yes",
+        "predicate": "has_right_share_scientific_advancement_unqualified",
+        "row": [
+          "p0"
+        ],
+        "rules": [
+          "u105c-freely-participate-only"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u111.both_aims": [
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [
+          "u111-both-aims"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [
+          "u111-both-aims"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c3"
+        ],
+        "rules": [
+          "u111-both-aims"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c4"
+        ],
+        "rules": [
+          "u111-both-aims"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c5"
+        ],
+        "rules": [
+          "u111-both-aims"
+        ],
+        "status": "SETTLED",
+        "value": false
+      }
+    ],
+    "u111.listed_aims": [
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c0"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c2"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c3"
+        ],
+        "rules": [
+          "u111-listed-aims"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c4"
+        ],
+        "rules": [
+          "u111-listed-aims"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "limitation_permitted",
+        "row": [
+          "c5"
+        ],
+        "rules": [
+          "u111-listed-aims"
+        ],
+        "status": "SETTLED",
+        "value": false
+      }
+    ],
+    "u112.exercise_prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "exercise_permitted",
+        "row": [
+          "e0"
+        ],
+        "rules": [
+          "no-exercise-contrary-to-un"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "exercise_permitted",
+        "row": [
+          "e1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u114.interpretive_ban": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "interpretation_permitted",
+        "row": [
+          "i0"
+        ],
+        "rules": [
+          "no-interpretation-implying-a-right-to-destroy-rights"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "interpretation_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ]
+  }
+}
