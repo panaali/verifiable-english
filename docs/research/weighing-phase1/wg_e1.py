@@ -4,9 +4,9 @@ Pre-registered in docs/research/weighing.md section 2.1 and docs/research/weighi
 section 2 before any unit was drawn. Reads the constitution pilot of run 20261012T1800Z from git at a
 pinned commit (never a checkout), so the inputs stay read-only. No model call.
 
-    python3 research/weighing/wg_e1.py screen   # the CROSSACT population
-    python3 research/weighing/wg_e1.py draw     # the 40 units, with their source context
-    python3 research/weighing/wg_e1.py tally    # the bar, from the reader's classification
+    python3 docs/research/weighing-phase1/wg_e1.py screen   # the CROSSACT population
+    python3 docs/research/weighing-phase1/wg_e1.py draw     # the 40 units, with their source context
+    python3 docs/research/weighing-phase1/wg_e1.py tally    # the bar, from the reader's classification
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE = ROOT / "docs" / "research" / "evidence" / "weighing"
 
 # The pilot branch pilot/cc-20261012T1800Z, pinned.

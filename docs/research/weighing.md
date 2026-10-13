@@ -99,7 +99,8 @@ CROSSACT is the screen WG-E1 (plan WG-E1) draws from: the units of the constitut
 collision between different acts. It is a lexical screen, deliberately broad; the reader's classification, not the
 screen, decides what a unit expresses. It was written and committed before any unit was drawn and before the number
 of units it selects was known, and it is not changed after the draw. Its one implementation is
-`research/weighing/wg_e1.py` (`CONTRAST`, `HELP_SIDE`, `REFUSE_SIDE`, `crossact_cues`).
+`docs/research/weighing-phase1/wg_e1.py` (`CONTRAST`, `HELP_SIDE`, `REFUSE_SIDE`, `crossact_cues`; committed at
+`f904d675` as `research/weighing/wg_e1.py` and moved after the review, with the class unchanged).
 
 - **Ledger.** `units.json` of run `20261012T1800Z`, read from git at `pilot/cc-20261012T1800Z` (`ecfd1ace`); the
   unit's text is its `source_excerpt`. Units do not overlap (measured: 0 overlapping spans of 1,132).

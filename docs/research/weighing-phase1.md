@@ -4,7 +4,7 @@
 > [docs/spec/weighing-PLAN.md](../spec/weighing-PLAN.md)). Phase 1 of the cross-plan build order
 > (`manage-agents/debates/plan-synthesis/SYNTHESIS.md` 4.1): "Now, no product code", with WG-E1 under its own gates
 > and WG-0 "once RD-9 SC-8 is on `main`". No product code (`ve/`, `lean/VE/`, `rust/`, `tools/`) is changed and no
-> model is called. Scripts are in `research/weighing/`, evidence in `docs/research/evidence/weighing/`. The pilot
+> model is called. Scripts are in `docs/research/weighing-phase1/`, evidence in `docs/research/evidence/weighing/`. The pilot
 > inputs are read from git at pinned commits, never checked out or edited.
 
 ## 1. WG-0: the value order and the hard constraints' immunity
