@@ -3,9 +3,10 @@
 > Status: complete (2026-10-13), branch `research/weighing-p1` from the converged weighing design (plan draft 4,
 > [docs/spec/weighing-PLAN.md](../spec/weighing-PLAN.md)). Phase 1 of the cross-plan build order
 > (`manage-agents/debates/plan-synthesis/SYNTHESIS.md` 4.1): "Now, no product code", with WG-E1 under its own gates
-> and WG-0 "once RD-9 SC-8 is on `main`". No product code (`ve/`, `lean/VE/`, `rust/`, `tools/`) is changed and no
-> model is called. Scripts are in `docs/research/weighing-phase1/`, evidence in `docs/research/evidence/weighing/`. The pilot
-> inputs are read from git at pinned commits, never checked out or edited.
+> and WG-0 "once RD-9 SC-8 is on `main`". No product code (`ve/`, `lean/VE/`, `rust/`, `tools/`) is changed. One
+> model call is made: WG-E1's blind second reader, run after review and saved as evidence (2.4). Scripts are in
+> `docs/research/weighing-phase1/`, evidence in `docs/research/evidence/weighing/`. The pilot inputs are read from git
+> at pinned commits, never checked out or edited.
 
 ## 1. WG-0: the value order and the hard constraints' immunity
 
@@ -96,33 +97,64 @@ and the reading, tally and sensitivity at `1369e004`. Evidence is in `docs/resea
   sentence states a preference, not a duty, so with the acts exclusive no two duties ever meet. Its shape is a
   preference between alternatives (research 4.7: `alternatives@0` with `risk@0`'s "less severe worst case"), not a
   collision of two rules.
-- **Help against refuse is (i).** Every unit that names refusing ("decline to assist", "refuse to assist", "unhelpful
-  responses": u0147.s04, u0179.s02, u0137.s02) reads as not doing the requested act. The guideline-against-ethics units
-  (u0101.s01, u0020.s03) are one act that one consideration requires and another forbids. These collisions are
-  soft's same-act collisions once act-phrases identifies the acts.
-- **Most units are (iv)**, and the largest group among them names values or considerations without naming acts: the
-  value order (u0017.s03, u0019.s05, u0213.s04), balancing considerations (u0066.s02, u0129.s03), and factor lists
-  (u0183). The rest are explanations or single norms with a rejected contrast ("rather than adopting a fixed ethical
-  framework").
+- **Help against refuse is (i).** The three units that name refusing ("decline to assist", "refuse to assist",
+  "unhelpful responses": u0147.s04, u0179.s02, u0137.s02) read as not doing the requested act. The other seven (i)
+  units are of other kinds: a guideline against ethics (u0101.s01, u0020.s03), safety against other values
+  (u0019.s07), defer against judge (u0200.s01, u0221.s04), a promise (u0289.s05) and Anthropic's own conduct
+  (u0274.s02). The review contested u0200.s01, u0221.s04 and u0274.s02, and the second reader did not share any of
+  the three calls (2.4).
+- **Most units are (iv).** (iv) is the catch-all category, and the classification records no field for what a (iv)
+  unit would need. Among the 27, the first reader's notes name the value order (u0017.s03, u0019.s05, u0213.s04),
+  balancing considerations (u0066.s02, u0129.s03) and a factor list (u0183); others are explanations, definitions or
+  single norms with a rejected contrast ("rather than adopting a fixed ethical framework"). These groups were not
+  counted, and the report makes no claim about their sizes.
 - **Outside the sample.** The paragraph of u0200.s01 (:520) has an explicit exclusive pair in a later unit that was
   not drawn: "alerting authorities or refusing to continue the task" against "complete the assigned work". So (ii)
-  exists in the source, but it is rare.
+  exists in the source. In the sample it is 1 of 40 CROSSACT units (3 of 40 with the second reader's calls on the
+  contested units, 2.4).
 - **Robustness** (post hoc, not a bar). Under the most generous reading, every unit that sets two positively described
   acts or stances against each other counts as (ii). That gives 8 units, just reaching clause 1. None of them changes a
   checked answer, so the verdict is still FAIL (`wg-e1-sensitivity.json`). The observed (ii) rate is 1/40, with a 95%
   Clopper–Pearson upper bound of 0.132, below the bar's 0.20. If the true rate were 0.20, a draw with at most 1 (ii)
-  would have probability 0.0015.
-- **Limits.** There is one reader (2.4). CROSSACT is a lexical screen, so a unit outside it could express (ii); the bar
-  is defined on the screen. Clause 2 was judged against the run's translation and the rules WG-0 plans to add, not
-  against a WG-0 translation, which does not exist yet. Clause 1 decided the verdict without it.
+  would have probability 0.0015. With the second reader's calls on the three contested units, (ii) is 3 of 40: the
+  upper bound is 0.204, and P(at most 3 | rate 0.20) is 0.028. Both of the new (ii) units are in the generous set
+  above and change no checked answer, so clause 2 is still 0 and the verdict is still FAIL.
+- **Limits.** CROSSACT is a lexical screen, so a unit outside it could express (ii); the bar is defined on the screen.
+  The second reader's subset of 10 is mostly (iv), so it says little about the (i)/(ii) boundary, and on that
+  boundary the two readers differed (2.4). Clause 2 was judged against the run's translation and the rules WG-0 plans
+  to add, not against a WG-0 translation, which does not exist yet. Clause 1 decided the verdict without it.
 
-### 2.4 Deferred
+### 2.4 The second reader
 
-- **The second reader's blind classification and the agreement figure.** This needs a human or a model call, and this
-  phase makes no model call. The subset is frozen: orders 1 to 10 of `wg-e1-sample.json`, marked `second_reader`. The
-  second reader should get `excerpt`, `before` and `after` only, never `wg-e1-classification.json`. Agreement is part
-  of the protocol but not of the bar, so the verdict stands without it. To change the verdict, 7 more of the 39
-  non-(ii) units would have to be (ii) and 5 of them would have to change a checked answer.
+The plan: "A second reader classifies 10 of them blind; agreement is reported." The first submission deferred this
+(rule 6 of 2.2: "this phase makes no model call"). The review rejected that reason: the plan allows model calls saved
+as evidence and bars them only from suite tests (plan 8 and 9). So the second reader was run after the review, on the
+subset rule 6 froze before the draw. Rule 6 is left as it was written; this section records what was done instead.
+
+- **Setup.** `wg_e1.py blind` writes the input (`wg-e1-second-reader-input.json`) and the prompt
+  (`wg-e1-second-reader-prompt.txt`). The prompt was committed at `c999832a`, before the reading. The second reader
+  gets, for each unit, the 400 bytes before, the unit's full span from the pinned source, the 400 bytes after, and
+  rule 4 of 2.2 read verbatim from this report. It gets nothing else: no first reading, no notes, no rule 5. The
+  saved `excerpt` field is cut at about 180 characters, and the first reader read full spans, so the second reader
+  gets full spans too.
+- **The reader.** A fresh Claude Fable 5.1 subagent session. It is a different model from the first reader (Claude
+  Opus 5.5) and shares none of its context. It made 0 tool calls, so it opened no file. Its answer is saved verbatim
+  in `wg-e1-second-reader.json`.
+- **Agreement (pre-registered subset, orders 1 to 10).** The readers agree on 10 of 10: nine (iv) and u0204.s01 (ii).
+  Cohen's κ is 1.0, but chance agreement is 0.82 because 9 of the 10 are (iv), so this subset tests little beyond
+  "(iv) is (iv)". The second reader recorded (ii) as a secondary category for u0012.s02 and u0199.s03, the two
+  stance contrasts that the generous reading already counts (`wg-e1-agreement.json`).
+- **The contested units (post hoc, not in the agreement figure).** The review named three (i) calls as contestable.
+  They were added unmarked to the blind input:
+  - u0200.s01 (:520): first reader (i), second reader (ii);
+  - u0221.s04 (:590): first reader (i), second reader (ii);
+  - u0274.s02 (:700): first reader (i), second reader (iv), with (ii) as its secondary category.
+
+  So the readers agree on 0 of 3 where the boundary is hard. Under the second reader's calls, (ii) is 3 of 40,
+  against a bar of 8. u0200.s01 is a question and states no rule, and u0221.s04's rule ("defer on those issues")
+  meets no rule that requires Claude's own judgment on those issues (`wg-e1-sensitivity.json`). So clause 2 stays at
+  0. The verdict does not change. To change it, 7 more of the 39 non-(ii) units would have to be (ii) and 5 of them
+  would have to change a checked answer.
 
 ### 2.5 The UDHR pilot
 
@@ -139,11 +171,14 @@ should:
      history.
    - Remove `alternatives@0` (WG-10) from §6's design-wave row and from synthesis edit 10's dependency list.
    - D14's sentence "If WG-E1 passes, exclusive acts come from `alternatives@0` …" becomes a record of the outcome:
-     WG-E1 failed (1 of 40), and no exclusive-act construct is planned.
+     WG-E1 failed (1 of 40; 3 of 40 under the second reader's calls on the contested units), and no exclusive-act
+     construct is planned.
    - Synthesis edit 7 has nothing left to apply.
 2. **Make cross-act collisions residual.**
    - §2.7 changes from "collisions between different acts (until WG-E1, and then through `alternatives@0`, WG-10)" to
-     "collisions between different acts (measured rare by WG-E1; not planned)".
+     "collisions between different acts (not planned: WG-E1 found 1 of 40 sampled CROSSACT units to be two exclusive
+     positive acts, 95% upper bound 0.13)". The scope is the CROSSACT screen of the constitution's `norms` units; (ii)
+     pairs exist outside the sample (2.3).
    - §8's "Not claimed: anything about collisions between different acts before WG-10" changes to "anything about
      collisions between different acts".
    - Soft 4.5's stage 3 and NORTH-STAR's "priority across different obligations" row can cite this result.
@@ -151,19 +186,26 @@ should:
    - Replace "Needs: WG-0; research 2.1's CROSSACT class written first" with "done: FAIL (`weighing-phase1.md`)".
      WG-E1 did not need WG-0, because clause 1 decided it.
    - Fix the text "(draft 1 cited it, and research 2.1 is unfilled)": research 2.1 is now written.
-   - The second reader's agreement stays an open line, not a gate.
-4. **Strengthen the dependency on act identity.** The constitution's help-against-refuse language is (i): refusing is
-   not complying. So the path for it is soft's same-act collision after act-phrases identifies the acts (AP-1 to AP-3),
-   not a new construct.
-   - Draft 2's D6 and the split-map edit (synthesis edit 8) are confirmed. Weighing's targets name acts as AP identifies
-     them.
-   - Add a line to §6 or §8: the value-conflict units WG-E1 classified (i) need AP's identity of "decline", "refuse"
-     and "unhelpful response" with "not comply" before weighing's conditions can target them.
-5. **WG-0 and WG-5 are confirmed as the main path; WG-E2's target is confirmed.**
-   - Of the 27 (iv) units, the largest group names a rank between values or a set of considerations without naming
-     acts. That is what WG-0 (ranks, the holistic flag) and WG-2 to WG-5 (strength, conditions, factors) express.
-   - The cost-benefit units (u0129.s03 :321, u0183 :479) are the open decision and factors that WG-E2 is expected to
-     pick (:325-347). No change to WG-E2's bar.
+   - Record the second reader's result: 10 of 10 on the frozen subset, 0 of 3 on the contested units (2.4). The
+     (i)/(ii) boundary is where readers differ; a later measurement that depends on it should have two readers on
+     every unit, not on a subset.
+4. **Act identity for refusals.** The three sampled units that name refusing (u0147.s04, u0179.s02, u0137.s02) are
+   (i): refusing or declining to assist, or giving an unhelpful response, is not doing the requested act. For those,
+   the path is soft's same-act collision after act-phrases identifies the acts (AP-1 to AP-3), not a new construct.
+   - This is consistent with D6 and the split-map edit (synthesis edit 8), not a test of them.
+   - Add a line to §6 or §8: units like these three need AP's identity of "decline to assist", "refuse to assist" and
+     "unhelpful response" with not doing the requested act before weighing's conditions can target them.
+   - The other seven (i) units are of other kinds (2.3), and two of the three the review contested were (ii) for the
+     second reader. They are not evidence for this line.
+5. **WG-0, WG-2 to WG-5 and WG-E2: consistent with, not tested by WG-E1.**
+   - WG-E1 classified conflicts between acts. It did not measure which construct a unit needs, and (iv) is its
+     catch-all. Some (iv) units name a rank between values (u0017.s03, u0019.s05, u0213.s04) or considerations to
+     balance (u0066.s02, u0129.s03), which is the kind of text WG-0 (ranks, the holistic flag) and WG-2 to WG-5
+     (strength, conditions, factors) are planned to express. How many such units there are was not counted.
+   - Two cost-benefit units (u0129.s03 :321, u0183 :479) look like the open decision and factors WG-E2 is expected to
+     pick (:325-347). Two citations do not confirm a target; WG-E2's own pre-registered measurement does that. No
+     change to WG-E2's bar.
+   - Draft 2 should not cite WG-E1 as evidence for these batches.
 6. **Best response stays research.** 2 of 40 units are (iii) (u0034.s01, :70; u0036.s01, :78), and the one (ii) unit
    has the shape of a preference among alternatives. Draft 2 should keep research 4.7 as research and plan no batch.
    This result neither raises nor lowers its priority.
@@ -174,6 +216,18 @@ should:
      replaces it.
    - WG-5's dependency on WG-0 is unchanged.
 
-Batches this phase confirms: WG-0 (priority), WG-2 to WG-5 (the constructs the sampled units need), and WG-E2 (its
-expected target). Cancelled: WG-10. Changed: WG-E1's row (done), D14, §2.7, §6 and §8's wording, and the dependency
-table (`alternatives@0` removed).
+Cancelled: WG-10. Changed: WG-E1's row (done, with the second reader's result), D14, §2.7, §6 and §8's wording, and the
+dependency table (`alternatives@0` removed). Not tested by this phase, and unchanged: WG-0 (blocked on RD-9 SC-8),
+WG-2 to WG-5, WG-E2, and research 4.7.
+
+## 4. Changes after review
+
+- **Second reader run** (2.4), with its input and prompt committed before the reading (`111218fb`, `c999832a`) and
+  the answer and agreement after (`1de755c6`). Rule 6 of 2.2 is unchanged as written.
+- **Consequences narrowed** (3, items 2, 4 and 5, and the closing line), and the (iv) and refusal bullets of 2.3
+  reworded, so that they claim only what the classification records.
+- **Script moved** from `research/weighing/wg_e1.py` to `docs/research/weighing-phase1/wg_e1.py` (`68d62236`).
+  `tools/layer_policy.py` has no layer for a top-level `research/`, so a branch that touched the old path made
+  `select_tests.py` select all 368 test units and the Rust builds. At the new path it selects 82, about the same as
+  any file added under `docs/` (79). Only `ROOT` and the usage lines changed in the move; `screen`, `draw` and `tally`
+  rerun from the new path write byte-identical evidence. `blind` and `agree` were added after the move.
