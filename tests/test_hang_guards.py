@@ -417,9 +417,10 @@ def test_the_busy_cpu_clock_advances_a_tick_per_reading_above_the_real_one(monke
     real = {7: 5.0, 8: None}
     module = SimpleNamespace(_cpu_seconds=lambda pid: real[pid])
     readings = busy_cpu(monkeypatch, module)
-    assert [module._cpu_seconds(7) for _ in range(3)] == [5.0, 5.0 + TICK, 5.0 + 2 * TICK]
+    read = module._cpu_seconds  # an injected clock: the values are the fake's, not a measurement
+    assert [read(7) for _ in range(3)] == [5.0, 5.0 + TICK, 5.0 + 2 * TICK]
     real[7] = 9.0
-    assert module._cpu_seconds(7) == 9.0 and module._cpu_seconds(8) is None
+    assert read(7) == 9.0 and read(8) is None
     assert readings == {7: [5.0, 5.0 + TICK, 5.0 + 2 * TICK, 9.0]}
 
 
