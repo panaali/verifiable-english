@@ -19,12 +19,13 @@ and the response encoder and shapes. No Rust product code changed. The
 
 ## Gate evidence
 
-The [1,350-record family corpus comparison](evidence/corpus-ab.json) has 1,334
-identical results and 16 listed changes in four n-ary core documents. The
-[DELTA.md](DELTA.md) states the old candidate substitution bug and the pending
-DRI signature. It also records signed standing rulings R4, R6, R7, R8 and R12 with
-their tests. No approved theorem statement changed (`lean/statements.txt` is
-unchanged).
+The [1,350-record family corpus comparison](evidence/corpus-ab.json) has 1,350
+identical results on the Lean family route. The
+[retained-route comparison](evidence/fallback-compare.json) also has 1,350
+identical results with the Lean route switched off. [DELTA.md](DELTA.md) explains
+why the base's n-ary `TypeMismatch` is kept until batch 14c, and records signed
+standing rulings R4, R6, R7, R8 and R12 with their tests. No approved theorem
+statement changed (`lean/statements.txt` is unchanged).
 
 | Evidence | Base/head result |
 |---|---|
@@ -44,8 +45,8 @@ unchanged).
 
 Raw corpus and differential-fuzz recordings are on the local
 `lean-first/b14b-evidence` branch; its manifest checks compressed record
-hashes, counts and commit list. The final release-gate result is
-`gate-result.json` at the worktree root, run on the committed final HEAD.
+hashes, counts and commit list. The full release gate on the final HEAD is
+run by the merge train's branch verify (see "Review fixes", F1).
 
 The first clean full gate, on `e44ff402`, ran 14,654 selected Python tests
 and 36 Rust tests, then reported eight Python failures. Three were stale
@@ -89,7 +90,8 @@ with 39 routes, 109,195 mutants and 0 failures
 passed (18 tests). The full release gate then ran once on the committed
 `f06911d8`. Its status is passed: 14,562 Python tests passed, none failed,
 92 were skipped (allowed) and 36 Rust tests passed (`gate-result.json`
-at the worktree root). Only this report changed after that commit.
+at the worktree root). The review fixes below changed `ve/norms.py` after that
+commit, so that gate result does not cover the final HEAD.
 
 ## Review of sibling findings
 
@@ -109,8 +111,9 @@ with only the release binary's new hash.
 | Item | Type | State |
 |---|---|---|
 | Lean owner, Python relay, deletion ledger and typed/bound rows | AGENT | Implemented; focused tests passed |
-| Corpus, pilots, fuzzer, answer keys, latency and full release gate | AGENT | Evidence cited above and in the final gate JSON |
-| Four n-ary core documents' 16 rejection-to-answer changes | HUMAN (DRI) | Signature requested; deferred to DRI |
+| Corpus, pilots, fuzzer, answer keys and latency | AGENT | Evidence cited above |
+| Full release gate on the final HEAD | AGENT (merge train) | Pending: the merge train's branch verify |
+| Four n-ary core documents' 16 rejection-to-answer changes | — | Removed: the head answers as the base did; the change moves to batch 14c |
 | External service or publication | EXTERNAL | None requested |
 
 The applicable build-checklist checks are the Lean-owned response contract and
@@ -122,14 +125,14 @@ English grammar, state machine, or source-document interpretation.
 
 ## Seeded bugs and final checks
 
-Six seeded faults in the changed Lean and Python product files are specified
+Eight seeded faults in the changed Lean and Python product files are specified
 in `mutants.py`. Their caught-test results are in `evidence/mutants.json`.
 The selector chose all 364 test units. Every unit's recorded run exited zero,
 including the long wire, readings and soft-review corpora. The selector process
 then exited one while writing its coverage map to the read-only home cache;
 that post-run cache failure is not counted as a passing selector command. The
-final clean release gate provides the complete suite result on the committed
-HEAD and writes `gate-result.json` at the worktree root.
+merge train's full release gate provides the complete suite result on the final
+HEAD.
 
 | Seeded fault | Changed product file | Detecting test |
 |---|---|---|
@@ -139,8 +142,10 @@ HEAD and writes `gate-result.json` at the worktree root.
 | Treat a refused witness as confirmed | `ve/norms.py` | `test_non_first_order_conflict_refused_witness_is_unavailable` |
 | Turn a zero model budget into a conflict | `ve/norms.py` | `test_non_first_order_conflict_zero_model_budget_is_unknown` |
 | Misclassify reach as first order | `lean/VE/Norms/Family.lean` | `/tmp/lf14b-family-route-guard.lean` |
+| Substitute n-ary atoms in conflict expansion | `ve/norms.py` | `test_retained_python_route_keeps_the_base_nary_expansion` |
+| Change a Lean-route conflict answer only | `ve/norms.py` | `test_lean_family_route_answers_as_the_retained_python_route` |
 
-All six planted versions failed their detecting checks, all six restored versions
+All eight planted versions failed their detecting checks, all eight restored versions
 passed, and `lake build ve_service ve_response_decode` passed after restoration
 ([record](evidence/mutants.json)). `tools/trust_map.py --check` passed with zero
 unclassified lines and no drift beyond the R6 allowance; the regenerated
