@@ -2519,15 +2519,28 @@
    ]
   },
   "would_be_other_scope": {
-   "rule": "governor units: colon lead-ins with a list run, bold-label items, markdown headings, restrictive connective units; governed units: list-run items, label item units, units under a When/If heading",
-   "governor_units": {
-    "units": 126,
-    "bytes": 14796,
+   "rule": "governor units: colon lead-ins with a list run, bold-label items, When/If headings, restrictive connective units; governed units: list-run items, label item units, units under a When/If heading. A title heading governs nothing and is not tagged. Every label counts as if it may be a condition.",
+   "bound": "lower: the units a restrictive connective governs (its frontier reach) are not computed (SC-E1)",
+   "title_headings_not_counted": {
+    "units": 39,
+    "bytes": 349,
     "by_status": {
      "LABELLED": {
       "units": 39,
       "bytes": 349
-     },
+     }
+    },
+    "by_primary_tag": {
+     "None": {
+      "units": 39,
+      "bytes": 349
+     }
+    }
+   },
+   "governor_units": {
+    "units": 87,
+    "bytes": 14447,
+    "by_status": {
      "OPEN": {
       "units": 1,
       "bytes": 234
@@ -2541,10 +2554,6 @@
      "norms": {
       "units": 42,
       "bytes": 7239
-     },
-     "None": {
-      "units": 40,
-      "bytes": 583
      },
      "other:discourse": {
       "units": 20,
@@ -2565,6 +2574,10 @@
      "causation": {
       "units": 3,
       "bytes": 657
+     },
+     "None": {
+      "units": 1,
+      "bytes": 234
      },
      "attribution": {
       "units": 1,
@@ -2617,13 +2630,9 @@
     }
    },
    "all": {
-    "units": 260,
-    "bytes": 32608,
+    "units": 221,
+    "bytes": 32259,
     "by_status": {
-     "LABELLED": {
-      "units": 39,
-      "bytes": 349
-     },
      "OPEN": {
       "units": 8,
       "bytes": 1108
@@ -2637,10 +2646,6 @@
      "norms": {
       "units": 85,
       "bytes": 15529
-     },
-     "None": {
-      "units": 47,
-      "bytes": 1457
      },
      "other:discourse": {
       "units": 42,
@@ -2661,6 +2666,10 @@
      "counting": {
       "units": 10,
       "bytes": 1775
+     },
+     "None": {
+      "units": 8,
+      "bytes": 1108
      },
      "attribution": {
       "units": 1,
@@ -3042,8 +3051,9 @@
   ],
   "governed_by": {},
   "would_be_other_scope": {
-   "rule": "governor units: colon lead-ins with a list run, bold-label items, markdown headings, restrictive connective units; governed units: list-run items, label item units, units under a When/If heading",
-   "governor_units": {
+   "rule": "governor units: colon lead-ins with a list run, bold-label items, When/If headings, restrictive connective units; governed units: list-run items, label item units, units under a When/If heading. A title heading governs nothing and is not tagged. Every label counts as if it may be a condition.",
+   "bound": "lower: the units a restrictive connective governs (its frontier reach) are not computed (SC-E1)",
+   "title_headings_not_counted": {
     "units": 32,
     "bytes": 495,
     "by_status": {
@@ -3058,6 +3068,12 @@
       "bytes": 495
      }
     }
+   },
+   "governor_units": {
+    "units": 0,
+    "bytes": 0,
+    "by_status": {},
+    "by_primary_tag": {}
    },
    "governed_units": {
     "units": 0,
@@ -3066,20 +3082,10 @@
     "by_primary_tag": {}
    },
    "all": {
-    "units": 32,
-    "bytes": 495,
-    "by_status": {
-     "LABELLED": {
-      "units": 32,
-      "bytes": 495
-     }
-    },
-    "by_primary_tag": {
-     "None": {
-      "units": 32,
-      "bytes": 495
-     }
-    }
+    "units": 0,
+    "bytes": 0,
+    "by_status": {},
+    "by_primary_tag": {}
    },
    "unformalised_with_no_co_blocker": {
     "units": 0,

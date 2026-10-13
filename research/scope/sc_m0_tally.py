@@ -321,7 +321,10 @@ def tally(root, rel, name):
                 governed_by[v].append(h["unit"])
 
     ok_leads = [r["unit"] for r in leadins if "run" in r]
-    gov_units = sorted(set(ok_leads) | {r["unit"] for r in labels} | {h["unit"] for h in hs}
+    # A title heading changes nothing (spec 1.3, `title_identity`), so it governs nothing and is not tagged; only a
+    # When/If heading is a governor, over its section.
+    title_hs = [h["unit"] for h in hs if h["effect"] == "title"]
+    gov_units = sorted(set(ok_leads) | {r["unit"] for r in labels} | {h["unit"] for h in hs if h["effect"] != "title"}
                        | {u["id"] for u in restrictive}, key=idx.get)
     governed = sorted(governed_by, key=idx.get)
     tagged = sorted(set(gov_units) | set(governed), key=idx.get)
@@ -354,8 +357,11 @@ def tally(root, rel, name):
         "headings": [{k: h[k] for k in ("unit", "level", "line", "effect")} | {"section_units": len(h["section"])} for h in hs],
         "governed_by": {k: governed_by[k] for k in governed},
         "would_be_other_scope": {
-            "rule": "governor units: colon lead-ins with a list run, bold-label items, markdown headings, restrictive "
-                    "connective units; governed units: list-run items, label item units, units under a When/If heading",
+            "rule": "governor units: colon lead-ins with a list run, bold-label items, When/If headings, restrictive "
+                    "connective units; governed units: list-run items, label item units, units under a When/If heading. "
+                    "A title heading governs nothing and is not tagged. Every label counts as if it may be a condition.",
+            "bound": "lower: the units a restrictive connective governs (its frontier reach) are not computed (SC-E1)",
+            "title_headings_not_counted": summary(us(title_hs)),
             "governor_units": summary(us(gov_units)),
             "governed_units": summary(us(governed)),
             "all": summary(us(tagged)),

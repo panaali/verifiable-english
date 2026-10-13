@@ -112,7 +112,8 @@ typography (research 1.1), and the pinned constitution translation has no discou
 Run on 2026-10-13 at commit `9a98c33f`: `python3 -I research/scope/sc_m0_tally.py manage-agents/pilots
 docs/research/evidence/scope`. A second run into a fresh directory gave byte-identical outputs (same SHA-256 for
 both files). The SHA-256 of each input is recorded in `scope-tally.json` (`inputs`). No `ve` run, no Lean build and
-no model call was needed.
+no model call was needed. After review, the would-be `other:scope` rule was corrected (2.3) and the script rerun
+the same way, twice, with byte-identical outputs; `checks.json` did not change.
 
 ### 2.1 SC-M0 against its bar
 
@@ -171,7 +172,7 @@ reach.
 | `list`, refused (`NotALeadIn`) | none | 0: every colon lead-in in the source is followed by a list item | — |
 | `label` (bold-label item) | title or condition: not decided by layout | 42 units, 8,651 B (1 OPEN: u0073.s05) | 37 more units, 6,982 B, all UNFORMALISED |
 | `anchor` candidate, heading that is a When/If clause | condition (SC-3b) | 0 | 0 |
-| `anchor` candidate, any other heading | `title` | 39 heading units, 349 B, all LABELLED | none (a title changes nothing) |
+| `anchor` candidate, any other heading | `title` | 39 heading units, 349 B, all LABELLED; not governors for the would-be tags below | none (a title changes nothing) |
 | `frontier` candidate (restrictive connective) | not decided (SC-E1) | 22 units, 4,196 B, all UNFORMALISED; 20 carry co-blockers | not computed (SC-E1) |
 | `list_name`, `rules` | — | not structural: u0164.s01 (list name, from the plan); "subject to" in 4 units, none a precedence wording ("less subject to honesty norms", "subject to the constraint that", "subject to meaningful checks", "subject to ongoing inquiry"); "notwithstanding" in none | — |
 
@@ -180,10 +181,24 @@ reach.
   has one OPEN item of three; every other run is wholly UNFORMALISED.
 - The 130 UNFORMALISED list items are blocked by their own content: primary tags quantities 30, norms 29,
   discourse 29, causation 18, defaults 15, counting 9.
-- **Would-be `other:scope` tags** under the prompt rule of SC-M0 (governors: lead-ins with a run, labels,
-  headings, restrictive connective units; governed: list items, label item units): 260 units, 32,608 B (17.6% of
-  the bytes); 126 governor units, 175 governed units (the `governed_by` map). Of them, 49 units (5,019 B) are
-  UNFORMALISED with no co-blocker today, so `other:scope` would be their only recorded co-blocker.
+- **Would-be `other:scope` tags: at least 221 units, 32,259 B (17.4% of the bytes).** The plan's rule ("every
+  governor unit and governed unit") needs a reading of which units govern; the figure is under this one, which the
+  script and the drafted prompt text now share:
+  - governors: colon lead-ins with a list run, bold-label items, When/If headings (none here) and restrictive
+    connective units; governed: list-run items, label item units and the units under a When/If heading;
+  - a title heading governs nothing and is not tagged, nor is the text under it: a title changes no rule (spec 1.3,
+    `title_identity`). The 39 title headings (349 B, all LABELLED) are reported apart
+    (`would_be_other_scope.title_headings_not_counted`);
+  - every bold label counts, with its item units, because layout cannot tell a title label from a condition label;
+  - it is a **lower bound**: the units the 22 restrictive connectives govern (their frontier reach) were not computed
+    (SC-E1), so only the connective units themselves are counted; and list-name and rules governors are not
+    structural, so u0164.s01 (68 B, the list name) is not counted either.
+
+  That is 87 governor units (14,447 B) and 175 governed units (26,356 B, the `governed_by` map), 41 of them both. Of
+  the 221, 49 units (5,019 B) are UNFORMALISED with no co-blocker today, so `other:scope` would be their only
+  recorded co-blocker. (The first version of this report gave 260 units, 32,608 B, 17.6%: it counted the 39 title
+  headings as governors but none of the text under them, which follows neither reading. Corrected after review;
+  the 20 checks of 2.2 are unaffected, and `checks.json` is byte-identical.)
 - **A hand-recorded scope the plan does not list.** Three OPEN permission units, u0062.s01, u0123.s01.p1 and
   u0123.s02.p1 (613 B), carry `scoped_by` with `scoped_by_source: u0123.s03`. The translator copied the six limits
   of u0123.s03 ("Operators cannot instruct Claude to ...", 351 B, OPEN, with its own six rules) into each
