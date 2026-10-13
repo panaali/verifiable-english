@@ -1,6 +1,6 @@
 //! Independent order@0 AST and finite-model route. Proof certificates remain on
 //! the Lean route; this evaluator cannot certify entailment.
-use crate::search::{domain_sizes, increment as odometer, next_combination};
+use crate::search::{DomainSizes, increment as odometer, next_combination};
 use num_bigint::BigInt;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
@@ -861,7 +861,7 @@ fn order_models(env: &Environment, formulas: &[&Value], minimum: usize, maximum:
         least
     }).collect();
     let relation_names: Vec<&String> = env.predicates().keys().filter(|p| !env.is_defined(p)).collect();
-    for sizes in domain_sizes(&minima, maximum) {
+    for sizes in DomainSizes::new(&minima, maximum) {
         let domains: BTreeMap<&String, Vec<String>> = sorts.iter().zip(&sizes)
             .map(|(sort, n)| (sort, (0..*n).map(|i| format!("e{i}")).collect())).collect();
         let mut assignment = vec![0; int_constants.len()];

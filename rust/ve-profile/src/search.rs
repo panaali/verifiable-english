@@ -150,31 +150,57 @@ pub(crate) fn next_combination(indices: &mut [usize], n: usize) -> bool {
     false
 }
 /// Python `search._domain_sizes`: bounded vectors by total entities, then lexicographically.
-pub(crate) fn domain_sizes(minima: &[usize], maximum: usize) -> Vec<Vec<usize>> {
-    fn walk(minima: &[usize], suffix: &[usize], maximum: usize, index: usize, remaining: usize,
-            prefix: &mut Vec<usize>, out: &mut Vec<Vec<usize>>) {
-        if index == minima.len() {
-            if remaining == 0 { out.push(prefix.clone()); }
-            return;
+/// Lazy: there are up to (maximum + 1)^sorts vectors (3^22 for the whole UDHR's 22 sorts at
+/// domain bound 2), so the list is never built; one vector is held at a time.
+pub(crate) struct DomainSizes {
+    minima: Vec<usize>,
+    maximum: usize,
+    total: usize,
+    next: Option<Vec<usize>>,
+}
+impl DomainSizes {
+    pub(crate) fn new(minima: &[usize], maximum: usize) -> Self {
+        // The fewest entities is every minimum; a minimum above the bound admits no vector.
+        let next = minima.iter().all(|m| *m <= maximum).then(|| minima.to_vec());
+        Self { minima: minima.to_vec(), maximum, total: minima.iter().sum(), next }
+    }
+    /// The least vector from `start` on whose entries sum to `remaining`.
+    fn fill(&self, sizes: &mut [usize], start: usize, mut remaining: usize) {
+        for index in start..sizes.len() {
+            let rest = self.maximum * (sizes.len() - index - 1);
+            sizes[index] = self.minima[index].max(remaining.saturating_sub(rest));
+            remaining -= sizes[index];
         }
-        let rest = maximum * (minima.len() - index - 1);
-        let low = minima[index].max(remaining.saturating_sub(rest));
-        let Some(high) = remaining.checked_sub(suffix[index + 1]) else { return };
-        for size in low..=high.min(maximum) {
-            prefix.push(size);
-            walk(minima, suffix, maximum, index + 1, remaining - size, prefix, out);
-            prefix.pop();
+    }
+    fn successor(&mut self, sizes: &[usize]) -> Option<Vec<usize>> {
+        // Same total: raise the last entry that can grow while its suffix can shrink.
+        let (mut suffix, mut suffix_minima) = (0, 0);
+        for index in (0..sizes.len()).rev() {
+            if index + 1 < sizes.len() && sizes[index] < self.maximum && suffix > suffix_minima {
+                let mut next = sizes.to_vec();
+                next[index] += 1;
+                self.fill(&mut next, index + 1, suffix - 1);
+                return Some(next);
+            }
+            suffix += sizes[index];
+            suffix_minima += self.minima[index];
         }
+        self.total += 1;
+        if self.total > self.minima.len() * self.maximum {
+            return None;
+        }
+        let mut next = vec![0; sizes.len()];
+        self.fill(&mut next, 0, self.total);
+        Some(next)
     }
-    let mut suffix = vec![0; minima.len() + 1];
-    for index in (0..minima.len()).rev() {
-        suffix[index] = minima[index] + suffix[index + 1];
+}
+impl Iterator for DomainSizes {
+    type Item = Vec<usize>;
+    fn next(&mut self) -> Option<Vec<usize>> {
+        let sizes = self.next.take()?;
+        self.next = self.successor(&sizes);
+        Some(sizes)
     }
-    let mut out = Vec::new();
-    for total in suffix[0]..=minima.len() * maximum {
-        walk(minima, &suffix, maximum, 0, total, &mut Vec::new(), &mut out);
-    }
-    out
 }
 /// Python `search._models` for the relational families, in its exact order:
 /// domain sizes by total entities, used-relation subsets by tuple count (a
@@ -186,8 +212,8 @@ struct Models<'a> {
     sorts: Vec<String>,
     names: Vec<String>,
     used: BTreeSet<String>,
-    sizes: Vec<Vec<usize>>,
-    size_index: usize,
+    sizes: DomainSizes,
+    size: Vec<usize>,
     domains: BTreeMap<String, Vec<String>>,
     atoms: Vec<(String, Vec<String>)>,
     subset: Vec<usize>,
@@ -250,15 +276,16 @@ impl<'a> Models<'a> {
             }
         }
         used.retain(|p| !env.is_defined(p));
-        let sizes = domain_sizes(&minima, maximum);
+        let mut sizes = DomainSizes::new(&minima, maximum);
+        let size = sizes.next();
         Self {
             env,
             sorts,
             names: env.constants().keys().cloned().collect(),
             used,
-            done: sizes.is_empty(),
+            done: size.is_none(),
             sizes,
-            size_index: 0,
+            size: size.unwrap_or_default(),
             domains: BTreeMap::new(),
             atoms: Vec::new(),
             subset: Vec::new(),
@@ -268,7 +295,7 @@ impl<'a> Models<'a> {
         }
     }
     fn prepare(&mut self) -> Result<()> {
-        self.domains = self.sorts.iter().zip(&self.sizes[self.size_index])
+        self.domains = self.sorts.iter().zip(&self.size)
             .map(|(s, n)| (s.clone(), (0..*n).map(|i| format!("e{i}")).collect()))
             .collect();
         let count: usize = self.used.iter()
@@ -375,8 +402,10 @@ impl<'a> Models<'a> {
     }
     fn next_sizes(&mut self) {
         self.ready = false;
-        self.size_index += 1;
-        self.done = self.size_index >= self.sizes.len();
+        match self.sizes.next() {
+            Some(size) => self.size = size,
+            None => self.done = true,
+        }
     }
 }
 
@@ -639,5 +668,65 @@ pub fn find_distinguishing_model_with_nonvacuity(
                 return Ok(result);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod domain_size_tests {
+    use super::DomainSizes;
+
+    /// The eager enumeration `DomainSizes` replaced (it built every vector up front, which
+    /// exhausted memory on the 22-sort whole UDHR), kept as the order oracle.
+    fn eager(minima: &[usize], maximum: usize) -> Vec<Vec<usize>> {
+        fn walk(minima: &[usize], suffix: &[usize], maximum: usize, index: usize, remaining: usize,
+                prefix: &mut Vec<usize>, out: &mut Vec<Vec<usize>>) {
+            if index == minima.len() {
+                if remaining == 0 { out.push(prefix.clone()); }
+                return;
+            }
+            let rest = maximum * (minima.len() - index - 1);
+            let low = minima[index].max(remaining.saturating_sub(rest));
+            let Some(high) = remaining.checked_sub(suffix[index + 1]) else { return };
+            for size in low..=high.min(maximum) {
+                prefix.push(size);
+                walk(minima, suffix, maximum, index + 1, remaining - size, prefix, out);
+                prefix.pop();
+            }
+        }
+        let mut suffix = vec![0; minima.len() + 1];
+        for index in (0..minima.len()).rev() {
+            suffix[index] = minima[index] + suffix[index + 1];
+        }
+        let mut out = Vec::new();
+        for total in suffix[0]..=minima.len() * maximum {
+            walk(minima, &suffix, maximum, 0, total, &mut Vec::new(), &mut out);
+        }
+        out
+    }
+
+    #[test]
+    fn lazy_sizes_are_the_eager_order() {
+        // Every minima vector over 0..=4 sorts with entries 0..=3, at every bound 0..=3,
+        // including minima above the bound (a `$string` sort with more constants).
+        for sorts in 0..=4usize {
+            for code in 0..4usize.pow(sorts as u32) {
+                let minima: Vec<usize> = (0..sorts).map(|i| code / 4usize.pow(i as u32) % 4).collect();
+                for maximum in 0..=3 {
+                    let lazy: Vec<_> = DomainSizes::new(&minima, maximum).collect();
+                    assert_eq!(lazy, eager(&minima, maximum), "minima {minima:?} maximum {maximum}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn many_sorts_hold_one_vector() {
+        // 3^22 vectors: the eager list needed hundreds of GB before the first model.
+        let mut sizes = DomainSizes::new(&[0; 22], 2);
+        assert_eq!(sizes.next(), Some(vec![0; 22]));
+        let mut one = vec![0; 22];
+        one[21] = 1;
+        assert_eq!(sizes.next(), Some(one));
+        assert_eq!(sizes.nth(10_000).map(|v| v.len()), Some(22));
     }
 }
