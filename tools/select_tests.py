@@ -797,8 +797,7 @@ PYTHON_ROOTS = ("ve", "ve_experiments", "conformance", "tools", "tests", "usecas
 GENERIC = {"ve", "tests", "tools", "conformance", "usecases", "experiments", "docs", "lean", "rust",
            "src", "data", "examples", "json", "README.md", "VE", "spec"}
 # Trees whose directories tests name one component at a time (`ROOT / "usecases" / "asimov-laws"`).
-NAMED_TREES = {"usecases", "experiments", "conformance", "docs", "design", "examples", "data", "paper",
-               "research"}
+NAMED_TREES = {"usecases", "experiments", "conformance", "docs", "design", "examples", "data", "paper"}
 # Test-side code that names these starts (or configures) a native checker: Rust, any
 # Lean executable (the service under the Lean authority), or reads the Lean sources.
 RUST_SIGNALS = ("rust/target", "VE_RUST", "VE_W5_RUST_BIN", "rust_jsonl", "cargo", "VE_AUTHORITY")
