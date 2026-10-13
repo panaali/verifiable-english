@@ -46,7 +46,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 OUT = ROOT / "docs/spec/question-answering-q2/evidence/agreement.json.gz"
-LEGACY_OUT = OUT.with_suffix("")
 _spec = importlib.util.spec_from_file_location("ask_fixtures", ROOT / "tools/ask_fixtures.py")
 AF = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(AF)
@@ -60,10 +59,8 @@ OLDER_BUDGET_REASON = "no complete checked classification within the search budg
 
 
 def saved_agreement() -> dict:
-    """Read the small committed gzip record, or the earlier plain JSON while migrating it."""
-    if OUT.exists():
-        return json.loads(gzip.decompress(OUT.read_bytes()))
-    return json.loads(LEGACY_OUT.read_text()) if LEGACY_OUT.exists() else {}
+    """Read the compressed, committed agreement record."""
+    return json.loads(gzip.decompress(OUT.read_bytes())) if OUT.exists() else {}
 
 
 def save_agreement(data: dict) -> None:
