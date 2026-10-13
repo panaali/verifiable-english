@@ -1,0 +1,150 @@
+{
+  "before": "research/attitudes/run-baseline/rendered-raw.md (this checkout's render of the run's translation; cmp-identical to the run's recorded rendered-raw.md)",
+  "after": "research/attitudes/run-at0p/rendered-raw.md",
+  "sha256": {
+    "before": "7e54c691730af9ee0f5e92cfe6d1cfda0e6e6caf225c3716b1dd939fb57f65f9",
+    "recorded": "7e54c691730af9ee0f5e92cfe6d1cfda0e6e6caf225c3716b1dd939fb57f65f9",
+    "after": "82facbe2931e73992c1cf37f00fcde79cc119a7ab335f603bf0a08fa5d614481"
+  },
+  "lines": {
+    "before": 2292,
+    "after": 2306
+  },
+  "lines_changed_before": 7,
+  "only_the_seven_rules_changed": true,
+  "hunks": [
+    {
+      "tag": "replace",
+      "before_lines": [
+        1278,
+        1278
+      ],
+      "after_lines": [
+        1278,
+        1280
+      ],
+      "before": [
+        "Open reading: Every instance of Claude must not do the weapons uplift in each situation, if both that situation is classified as \"mass_casualty_weapon_uplift\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\"."
+      ],
+      "after": [
+        "Open reading: Every instance of Claude must not do the weapons uplift in each situation, if at least one of the following holds:",
+        "  (a) both that situation is classified as \"mass_casualty_weapon_uplift\" and that instance of Claude has the recorded relation \"knowingly_engages_1\" to that situation;",
+        "  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_1\" to that situation."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_lines": [
+        1280,
+        1280
+      ],
+      "after_lines": [
+        1282,
+        1284
+      ],
+      "before": [
+        "Open reading: Every instance of Claude must not do the infrastructure uplift in each situation, if both that situation is classified as \"critical_infrastructure_uplift\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\"."
+      ],
+      "after": [
+        "Open reading: Every instance of Claude must not do the infrastructure uplift in each situation, if at least one of the following holds:",
+        "  (a) both that situation is classified as \"critical_infrastructure_uplift\" and that instance of Claude has the recorded relation \"knowingly_engages_2\" to that situation;",
+        "  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_2\" to that situation."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_lines": [
+        1282,
+        1282
+      ],
+      "after_lines": [
+        1286,
+        1288
+      ],
+      "before": [
+        "Open reading: Every instance of Claude must not do the creation in each situation, if both that situation is classified as \"damaging_cyberweapon_or_malicious_code\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\"."
+      ],
+      "after": [
+        "Open reading: Every instance of Claude must not do the creation in each situation, if at least one of the following holds:",
+        "  (a) both that situation is classified as \"damaging_cyberweapon_or_malicious_code\" and that instance of Claude has the recorded relation \"knowingly_engages_3\" to that situation;",
+        "  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3\" to that situation."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_lines": [
+        1284,
+        1284
+      ],
+      "after_lines": [
+        1290,
+        1292
+      ],
+      "before": [
+        "Open reading: Every instance of Claude must not do the undermining in each situation, if both that situation is classified as \"clear_and_substantial_undermining_of_oversight\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\"."
+      ],
+      "after": [
+        "Open reading: Every instance of Claude must not do the undermining in each situation, if at least one of the following holds:",
+        "  (a) both that situation is classified as \"clear_and_substantial_undermining_of_oversight\" and that instance of Claude has the recorded relation \"knowingly_engages_4\" to that situation;",
+        "  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_4\" to that situation."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_lines": [
+        1286,
+        1286
+      ],
+      "after_lines": [
+        1294,
+        1296
+      ],
+      "before": [
+        "Open reading: Every instance of Claude must not do the participation in each situation, if both that situation is classified as \"attempt_to_kill_or_disempower_most_of_humanity\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\"."
+      ],
+      "after": [
+        "Open reading: Every instance of Claude must not do the participation in each situation, if at least one of the following holds:",
+        "  (a) both that situation is classified as \"attempt_to_kill_or_disempower_most_of_humanity\" and that instance of Claude has the recorded relation \"knowingly_engages_5\" to that situation;",
+        "  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_5\" to that situation."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_lines": [
+        1288,
+        1288
+      ],
+      "after_lines": [
+        1298,
+        1300
+      ],
+      "before": [
+        "Open reading: Every instance of Claude must not do the involvement in each situation, if both that situation is classified as \"illegitimate_absolute_control\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\"."
+      ],
+      "after": [
+        "Open reading: Every instance of Claude must not do the involvement in each situation, if at least one of the following holds:",
+        "  (a) both that situation is classified as \"illegitimate_absolute_control\" and that instance of Claude has the recorded relation \"knowingly_engages_6\" to that situation;",
+        "  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_6\" to that situation."
+      ]
+    },
+    {
+      "tag": "replace",
+      "before_lines": [
+        1290,
+        1290
+      ],
+      "after_lines": [
+        1302,
+        1304
+      ],
+      "before": [
+        "Open reading: Every instance of Claude must not do the generation in each situation, if both that situation is classified as \"child_sexual_abuse_material\" and that situation is classified as \"restricted_action_knowing_or_quite_likely\"."
+      ],
+      "after": [
+        "Open reading: Every instance of Claude must not do the generation in each situation, if at least one of the following holds:",
+        "  (a) both that situation is classified as \"child_sexual_abuse_material\" and that instance of Claude has the recorded relation \"knowingly_engages_7\" to that situation;",
+        "  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_7\" to that situation."
+      ]
+    }
+  ]
+}

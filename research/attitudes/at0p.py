@@ -166,12 +166,14 @@ def dump(name, obj):
 
 def cmd_probe():
     """The plan's probe points on the AT-0p strict companion, asked as the run's probe_unspecified.py asks them (Lean's
-    norm-defaults-status row at a one-element situation; UNKNOWN falls back to the run's "undecided" tables). Every
-    point of the run's probe not about the seven rules is asked again and compared with the run's recorded status."""
+    norm-defaults-status row at a one-element situation; UNKNOWN falls back to the run's "undecided" tables; at an
+    `operator_input_permitted` point, the run's conflict check). Every point of the run's probe not about the seven
+    rules is asked again and compared with the run's recorded status, and so are the run's conflict checks."""
     import json
     sys.path.insert(0, str(ROOT))
     sys.path.insert(0, str(WORK))
     from itertools import product
+    from conformance import frozen_norm_defaults as fnd  # the run's evidence proposer; Lean replays every proposal
     from ve.document import load_document
     from ve.norm_defaults_route import run_case, source_case
     import probe_unspecified as run_probe  # the working copy's module: situation() only; its main() is not called
@@ -179,9 +181,18 @@ def cmd_probe():
 
     doc = load_document(WORK / "readings/all-strict.ve.md")["norm_defaults"]
     env = doc.env
+    fdoc = fnd.UnspecifiedDocument(doc.env, doc.author.rules)
     assert GONE not in env.predicates
 
     def status(predicate, atoms):
+        text = point_status(predicate, atoms)
+        if predicate == "operator_input_permitted":  # as the run: the point status does not show a rule conflict
+            report = fnd.check_conflict(fdoc, model=run_probe.situation(doc, atoms).to_dict())
+            if report.status == "CONFLICT" and report.target == predicate:
+                text = f"CONFLICT ({report.kind}: permitted by one rule, forbidden by another)"
+        return text
+
+    def point_status(predicate, atoms):
         model = run_probe.situation(doc, atoms)
         values = [x + "0" for x in env.predicates[predicate].arguments]
         case = source_case(doc, "norm-defaults-status", model=model.to_dict(), predicate=predicate, tuple=values,
@@ -219,11 +230,25 @@ def cmd_probe():
         if p["label"].startswith("u0165"):
             continue
         got = status(p["predicate"], p["true_atoms"])
-        recorded_status = p["status"]
-        if recorded_status.startswith("CONFLICT"):  # the run adds a conflict check for one predicate; not asked here
-            got = got + " (conflict check not repeated)"
         others.append({"label": p["label"], "predicate": p["predicate"], "true_atoms": p["true_atoms"], "status": got,
-                       "recorded": recorded_status, "same": got == recorded_status})
+                       "recorded": p["status"], "same": got == p["status"],
+                       "conflict_checked": p["predicate"] == "operator_input_permitted"})
+
+    # the run's conflict section: the three witness situations, then the whole document (proof attempt, Lean's row)
+    conflicts = {}
+    for label, atoms in [("a role-play instruction that also claims to be human",
+                          ["instruction_role_play_custom_persona", "instruction_claim_human_when_asked"]),
+                         ("a persona that also is an instruction to claim to be human",
+                          ["input_is_persona", "instruction_claim_human_when_asked"]),
+                         ("no atom true", [])]:
+        report = fnd.check_conflict(fdoc, model=run_probe.situation(doc, atoms).to_dict())
+        conflicts[label] = {"status": report.status, "target": report.target, "kind": report.kind,
+                            "tuple": list(report.tuple)}
+    proof = fnd.check_conflict(fdoc, prove=True)
+    lean = run_case(source_case(doc, "norm-defaults-conflict", packages=dict(proof.certificates)))
+    conflicts["whole document, proof attempt"] = {"status": lean.get("verdict"), "detail": "", "oracle_status": proof.status,
+                                                  "lean_row_keys": sorted(lean)}
+    conflict_same = {k: conflicts[k] == recorded["conflict"][k] for k in conflicts}
 
     def bar(name):
         rows = [r for r in hard if r["bar"] == name]
@@ -237,14 +262,19 @@ def cmd_probe():
                       "verdict": "PASS" if (len(a5_baseline) == 7 and all(s == "UNDECIDED" for _, s in a5_baseline)
                                             and verdicts["A1"]["verdict"] == "PASS") else "FAIL"}
     out = {"document": "research/attitudes/run-at0p/readings/all-strict.ve.md (AT-0p strict companion)",
-           "pilot": str(PILOT), "method": "probe_unspecified.py's point(): Lean norm-defaults-status, one-element situation",
+           "pilot": str(PILOT), "method": ("probe_unspecified.py's point(): Lean norm-defaults-status, one-element situation; "
+                                           "at operator_input_permitted points, the run's conflict check"),
            "verdicts": verdicts, "hard_constraint_points": hard,
-           "other_points": {"asked": len(others), "same_as_recorded": sum(o["same"] for o in others), "rows": others}}
+           "other_points": {"asked": len(others), "same_as_recorded": sum(o["same"] for o in others),
+                            "conflict_checked": sum(o["conflict_checked"] for o in others), "rows": others},
+           "conflict": {"checks": conflicts, "same_as_recorded": conflict_same}}
     dump("at0p-probe.json", out)
     for r in hard:
         print(f"{r['bar']:5} {r['unit']} {r['status']:12} {r['label']}")
     print(json.dumps(verdicts, indent=1))
-    print("other points same as recorded:", out["other_points"]["same_as_recorded"], "/", len(others))
+    print("other points same as recorded:", out["other_points"]["same_as_recorded"], "/", len(others),
+          "(conflict-checked:", out["other_points"]["conflict_checked"], ")")
+    print("conflict checks same as recorded:", conflict_same)
 
 
 def cmd_measure():
@@ -291,5 +321,36 @@ def cmd_measure():
     print(json.dumps({k: out[k] for k in ("A6", "A7", "regressions")}, indent=1)[:4000])
 
 
+def cmd_render():
+    """`ve document render` of the AT-0p translation against this checkout's render of the unmodified run (which
+    run_at0p.sh first checks is byte-identical to the run's recorded rendered-raw.md): every line that differs must be
+    one of the seven rules' "Open reading" lines that name the deleted term, and each must be replaced."""
+    import difflib
+    import hashlib
+    before = (BASELINE / "rendered-raw.md").read_text().splitlines()
+    after = (WORK / "rendered-raw.md").read_text().splitlines()
+    hunks = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, before, after, autojunk=False).get_opcodes():
+        if tag != "equal":
+            hunks.append({"tag": tag, "before_lines": [i1 + 1, i2], "after_lines": [j1 + 1, j2],
+                          "before": before[i1:i2], "after": after[j1:j2]})
+    changed = [line for h in hunks for line in h["before"]]
+    only_seven = (len(hunks) == 7 and all(h["tag"] == "replace" and len(h["before"]) == 1 for h in hunks)
+                  and all(line.startswith("Open reading:") and f'"{GONE}"' in line for line in changed)
+                  and sum(f'"{GONE}"' in line for line in before) == 7 and not any(GONE in line for line in after))
+    sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+    out = {"before": "research/attitudes/run-baseline/rendered-raw.md (this checkout's render of the run's translation; "
+                     "cmp-identical to the run's recorded rendered-raw.md)",
+           "after": "research/attitudes/run-at0p/rendered-raw.md",
+           "sha256": {"before": sha(BASELINE / "rendered-raw.md"), "recorded": sha(PILOT / "rendered-raw.md"),
+                      "after": sha(WORK / "rendered-raw.md")},
+           "lines": {"before": len(before), "after": len(after)}, "lines_changed_before": len(changed),
+           "only_the_seven_rules_changed": only_seven, "hunks": hunks}
+    dump("at0p-render-diff.json", out)
+    print("hunks:", len(hunks), "lines changed:", len(changed), "only the seven rules:", only_seven)
+    sys.exit(0 if only_seven else 1)
+
+
 if __name__ == "__main__":
-    {"copy": cmd_copy, "apply": cmd_apply, "probe": cmd_probe, "measure": cmd_measure}[sys.argv[1]]()
+    {"copy": cmd_copy, "apply": cmd_apply, "probe": cmd_probe, "measure": cmd_measure,
+     "render": cmd_render}[sys.argv[1]]()

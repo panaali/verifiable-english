@@ -1,7 +1,7 @@
 {
   "document": "research/attitudes/run-at0p/readings/all-strict.ve.md (AT-0p strict companion)",
   "pilot": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z",
-  "method": "probe_unspecified.py's point(): Lean norm-defaults-status, one-element situation",
+  "method": "probe_unspecified.py's point(): Lean norm-defaults-status, one-element situation; at operator_input_permitted points, the run's conflict check",
   "verdicts": {
     "A1": {
       "points": 7,
@@ -659,6 +659,7 @@
   "other_points": {
     "asked": 21,
     "same_as_recorded": 21,
+    "conflict_checked": 10,
     "rows": [
       {
         "label": "u0156.s03: any situation",
@@ -666,7 +667,8 @@
         "true_atoms": [],
         "status": "SETTLED no",
         "recorded": "SETTLED no",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0125.s04.p2: any situation",
@@ -674,7 +676,8 @@
         "true_atoms": [],
         "status": "SETTLED no",
         "recorded": "SETTLED no",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0052.s01: any situation (added in run 20261008T0600Z: the unit is now one strict reading)",
@@ -682,7 +685,8 @@
         "true_atoms": [],
         "status": "SETTLED yes",
         "recorded": "SETTLED yes",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0123.s01: a dishonest-looking instruction within the honesty principles",
@@ -692,7 +696,8 @@
         ],
         "status": "SETTLED yes",
         "recorded": "SETTLED yes",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0062.s01: input is a persona",
@@ -702,7 +707,8 @@
         ],
         "status": "SETTLED yes",
         "recorded": "SETTLED yes",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0062.s01: input is none of the three",
@@ -710,7 +716,8 @@
         "true_atoms": [],
         "status": "UNDECIDED",
         "recorded": "UNDECIDED",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0062.s01: input is specific instructions",
@@ -720,7 +727,8 @@
         ],
         "status": "SETTLED yes",
         "recorded": "SETTLED yes",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0062.s01 and u0123.s03: a persona that also is an instruction to claim to be human",
@@ -731,7 +739,8 @@
         ],
         "status": "SETTLED no",
         "recorded": "SETTLED no",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0062.s01 and u0123.s03: specific instructions that also endanger health or safety",
@@ -742,7 +751,8 @@
         ],
         "status": "SETTLED no",
         "recorded": "SETTLED no",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0123.s01 and u0123.s03: a dishonest-looking instruction that also acts against the guidelines",
@@ -753,7 +763,8 @@
         ],
         "status": "SETTLED no",
         "recorded": "SETTLED no",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0123.s02: persona role-play instruction",
@@ -763,7 +774,8 @@
         ],
         "status": "SETTLED yes",
         "recorded": "SETTLED yes",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0123.s03: instruction to claim to be human",
@@ -773,7 +785,8 @@
         ],
         "status": "SETTLED no",
         "recorded": "SETTLED no",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0123.s02 and u0123.s03: a role-play instruction that also claims to be human",
@@ -784,7 +797,8 @@
         ],
         "status": "SETTLED no",
         "recorded": "SETTLED no",
-        "same": true
+        "same": true,
+        "conflict_checked": true
       },
       {
         "label": "u0036.s05: genuine ambiguity",
@@ -794,7 +808,8 @@
         ],
         "status": "SETTLED yes",
         "recorded": "SETTLED yes",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0036.s05: no genuine ambiguity",
@@ -802,7 +817,8 @@
         "true_atoms": [],
         "status": "UNDECIDED",
         "recorded": "UNDECIDED",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0073.s05: the case holds",
@@ -812,7 +828,8 @@
         ],
         "status": "SETTLED yes",
         "recorded": "SETTLED yes",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0073.s05: the case does not hold",
@@ -820,7 +837,8 @@
         "true_atoms": [],
         "status": "UNDECIDED",
         "recorded": "UNDECIDED",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0073.s05: the case holds but complying is unsafe",
@@ -831,7 +849,8 @@
         ],
         "status": "UNDECIDED",
         "recorded": "UNDECIDED",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0073.s05: the case holds and the “generally” exception applies",
@@ -842,7 +861,8 @@
         ],
         "status": "UNDECIDED",
         "recorded": "UNDECIDED",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0168.s01: the case holds",
@@ -852,7 +872,8 @@
         ],
         "status": "SETTLED yes",
         "recorded": "SETTLED yes",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       },
       {
         "label": "u0168.s01: the case does not hold",
@@ -860,8 +881,48 @@
         "true_atoms": [],
         "status": "UNDECIDED",
         "recorded": "UNDECIDED",
-        "same": true
+        "same": true,
+        "conflict_checked": false
       }
     ]
+  },
+  "conflict": {
+    "checks": {
+      "a role-play instruction that also claims to be human": {
+        "status": "UNKNOWN",
+        "target": null,
+        "kind": "",
+        "tuple": []
+      },
+      "a persona that also is an instruction to claim to be human": {
+        "status": "UNKNOWN",
+        "target": null,
+        "kind": "",
+        "tuple": []
+      },
+      "no atom true": {
+        "status": "UNKNOWN",
+        "target": null,
+        "kind": "",
+        "tuple": []
+      },
+      "whole document, proof attempt": {
+        "status": "CONFLICT-FREE",
+        "detail": "",
+        "oracle_status": "CONFLICT-FREE",
+        "lean_row_keys": [
+          "id",
+          "status",
+          "targets",
+          "verdict"
+        ]
+      }
+    },
+    "same_as_recorded": {
+      "a role-play instruction that also claims to be human": true,
+      "a persona that also is an instruction to claim to be human": true,
+      "no atom true": true,
+      "whole document, proof attempt": true
+    }
   }
 }
