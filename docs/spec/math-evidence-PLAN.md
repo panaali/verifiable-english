@@ -1,6 +1,34 @@
 # Science papers in VE (`calc@0`, physical dimensions, `arith@0` with proof imports): buildable plan
 
-> **Status.** Plan draft 4 (2026-10-13), branch `design/math-evidence` from `main` at `49de179e`. DRI research wave,
+## Changes in this draft
+
+Draft 5 (2026-10-13) applies phase 1 (ME-0; [docs/research/math-evidence-phase1.md](../research/math-evidence-phase1.md),
+reviewed FIX and fixed: `manage-agents/math-evidence-ph1-review.final.md`, `math-evidence-ph1-fix.final.md`). It is
+the "draft 2" that the cross-plan edits and the phase-1 report name. No owner, shared item or build order of the
+cross-plan review (`SYNTHESIS.md`, `edits-math-evidence.md`) changes; the last section, "Cross-plan issues for the DRI", lists what phase 1 raises for them.
+
+- ME-0 is **done** (P1 PASS); section 0.1 records every phase-1 result, PASS or FAIL, and what it gates.
+- The deep-learning target is **AlphaFold** (Jumper et al. 2021, CC BY 4.0) by D22's rule; LoRA and Registers are
+  arXiv non-exclusive (D22, 4.4).
+- P4 FAILED: H-4, H-5 and H-9 were CHANGED against the pinned text. H-4 and H-5 now read the source's
+  v²/V² = 10⁻⁸; H-9 is the source's table (17 marks, three sessions, Mean, Mean in w. l., Final mean), and it needs
+  ME-1 only, so it moves from ME-4 and ME-P2 to ME-1 and ME-P1. Every fixture of 4.1 to 4.3 names its phase-1 anchor.
+- New fixtures: H-5b (the 1881 figure 0.04), V-7b (six main-text p values over 2¹²), M-4b (formula (18)'s other
+  four pairs), DL-1 to DL-4 from AlphaFold's own numbers; the LoRA-shaped DL-1 to DL-5 are dropped.
+- Bytes: every per-batch estimate is replaced by the **measured ceiling** from the ME-0 partition (7). After the plan:
+  H ≤ 21.7% (was 20-31%), DL ≤ 13.9% and ≤ 8.9% without figure data (was 14-25%), M ≤ 10.3% without imports and
+  ≤ 23.2% with them (was 6-12% and 10-20%), V's E1 slice ≤ 50.7% (whole paper still unmeasured).
+- The measure reports CHECKED in two parts, *stated only* and *in a certified relation*, beside the document's
+  premise status, which is UNKNOWN for H, V and DL today (7).
+- The pilot order "physics, then deep learning, then mathematics" names its basis: bytes a batch can check (0).
+- EX-3 (tensor shapes) is demoted to a trigger: the pinned DL text has no equations (5).
+- ME-P1 moves the ME-0 ledgers to `usecases/`, writes each `SOURCE.md` from the fetch logs and partitions the rest of
+  VE's paper; ME-P4 starts from a person's transcription of Ramanujan's formulas (OCR garbles them).
+- Risks gain the Rust accelerator's 5 s default limit and the UNKNOWN premise status (8); both go to the DRI ("Cross-plan issues for the DRI"), with the word "around" and the NORTH-STAR rows.
+- No Lean statement of section 3 changes.
+
+> **Status.** Plan draft 5 (2026-10-13), branch `research/math-evidence-p1`; drafts 1 to 4 on `design/math-evidence`
+> from `main` at `49de179e`. Draft 5 applies phase 1 (list above); the rest of this note is draft 4's. DRI research wave,
 > docs only: no code, proof, test or generated file changed, and no model was called. It is the plan for the design
 > recommended in [docs/research/math-evidence.md](../research/math-evidence.md) (cited `research n`), which holds the
 > evidence, the measured need, the prior art and the comparison of candidates. Draft 2 applied the converged Astra +
@@ -25,42 +53,48 @@
 
 ## 0. Summary
 
-The pinned constitution and UDHR pilots have **no unit** blocked by this topic (research 2.2), so no batch claims a
-byte there. The need is in three new use cases (NORTH-STAR rows M, H, DL, weight 3 each, unmeasured) and VE's own
-paper (row V, weight 3): their checkable spine is calculations, tables, derivations, physical dimensions, statistics
-and, for mathematics, theorems about whole numbers.
+The pinned constitution and UDHR pilots have **no unit** blocked by this topic (research 2.2; measured by ME-0's P3:
+0 of 1,132 and 0 of 130 units), so no batch claims a byte there. The need is in three new use cases (NORTH-STAR rows
+M, H, DL, weight 3 each, measured by ME-0) and VE's own paper (row V, weight 3; its E1 slice measured): their
+checkable spine is calculations, tables, derivations, physical dimensions, statistics and, for mathematics, theorems
+about whole numbers.
+
+In the last column, a byte count after a pilot is its **measured ceiling**: the bytes of the ME-0 ledger's units
+tagged with that pilot's features, as if every one became CHECKED (7). Approximation units are left out: D17 makes
+them reading sets, never CHECKED.
 
 | # | Batch | Hours | Owner | Moves a pilot number? |
 |---|---|---:|---|---|
-| ME-0 | Pin the targets; baseline partition with today's language | 3-4 | pilot runner | **yes**: H, M, V (and DL if a licence is confirmed) go from unmeasured to measured; H 1.5-2.5 KB checked via W6a (**estimate**) |
+| ME-0 | Pin the targets; baseline partition with today's language | 3-4 | pilot runner | **done** (P1 PASS): H 1,858 B CHECKED, V's E1 slice 1,199 B, DL 4,453 B, M 0 (measured) |
 | ME-S | Statement spec, Lean stub, statement review | 4-5 | planner | no |
 | ME-1 | Lean core of `calc@0` and the shared `VE.Numbers`: exact values, rounding, claims, verdicts, rendering | 5-6 | Lean | no |
 | ME-2 | Wire and service mode `calc`, shapes, identities | 5-6 | Lean | no |
 | ME-3 | Python relay `ve/calc.py`, `ve calc check`, fuzz tests | 4-5 | Python | no |
-| ME-P1 | Pilot (backend evidence): physics and VE paper, ground calculations as companion cases | 2-3 | pilot runner | H +0.6-1.0 KB, V +0.8-1.5 KB |
+| ME-P1 | Pilot (backend evidence): physics and VE paper, ground calculations and the physics table as companion cases; ledgers to `usecases/`; the rest of VE's paper partitioned | 4-5 | pilot runner | ceiling H +2,216 B, V's slice +469 B |
 | ME-4 | Tables pinned by SHA-256; data handles; counts, sums, means | 5-6 | Lean, Python | no |
 | ME-5 | Derivations over rational unknowns: Farkas certificates, the square rule | 5-6 | Lean | no |
 | ME-6 | Physical dimensions and unit-change invariance; owns `ve-units@2` | 4-5 | Lean | no |
-| ME-P2 | Pilot (backend evidence): physics tables, bounds, dimensions; VE paper counts from data | 3 | pilot runner | H +3.0-4.5 KB, V +1-2 KB |
+| ME-P2 | Pilot (backend evidence): physics bounds and dimensions; VE paper counts from data | 3 | pilot runner | ceiling H +467 B, V's slice +512 B |
 | ME-7 | Exact statistics: mean, variance, SD by squared bounds, sign-flip p, binomial, kappa | 5-6 | Lean | no |
 | ME-8 | Consistency of printed numbers: witnesses, enclosures, granularity | 4-5 | Lean | no |
 | ME-9 | Algebraic identities: a proved normaliser over ℚ | 5-6 | Lean | no |
 | ME-10 | Calculation content in `ve-document@1`; the `calc:` leaf label | 5-6 | Lean, Python | no (turns companions into document units) |
 | ME-11 | English: arithmetic phrases, rounding, tables, derivations in Lean's engine | 5-6 | Lean | no (readability) |
-| ME-P3 | Pilot (backend evidence): physics complete, VE paper statistics, DL if pinned | 3-4 | pilot runner | H +1.5-2.5 KB, V +10-16 KB, DL +5-8.5 KB |
+| ME-P3 | Pilot (backend evidence): physics complete, VE paper statistics, AlphaFold | 3-4 | pilot runner | ceiling H +752 B, V's slice +2,858 B, DL +1,475 B (+3,355 B more only with figure data) |
 | ME-12 | Lean core of `arith@0`: statements, meaning, bounded evaluation | 5-6 | Lean | no |
 | EX-1 | **Experiment**: Mathlib proofs of VE's own statements (Bertrand's postulate) | 4-6 | planner, Lean | decides ME-13 |
 | ME-13 | Import records (only if EX-1 passes) | 4-5 | Lean, Python | no |
-| ME-P4 | Pilot: mathematics | 2-3 | pilot runner | M +0.5-1.0 KB |
+| ME-P4 | Pilot: mathematics, from a person's transcription of the formulas | 2-3 | pilot runner, a person | ceiling M +272 B (+344 B more with imports) |
 | EX-2 | **Experiment**: approximations with error bounds; square-root and sum-of-squares certificates | 5-6 | Lean | research |
-| EX-3 | **Experiment**: tensor shapes for deep-learning equations | 4-5 | Lean | research |
+| EX-3 | **Trigger** (draft 5; was an experiment): tensor shapes for deep-learning equations | — | — | trigger only |
 | EX-4 | **Trigger**: folds over lists and induction inside `arith@0` | — | — | trigger only |
 | EX-5 | **Experiment**: a 21 MB data file through the service in chunks | 3-4 | Lean, Python | V's raw recounts |
 
 Order:
 
-1. ME-0 now (no code, no dependency).
-2. Draft 2 → ME-S. ME-S's statement review confirms each debate edit with a fixture.
+1. ME-0 now (no code, no dependency). **Done** in phase 1 (0.1).
+2. Draft 2 (this draft 5) → ME-S. ME-S's statement review confirms each debate edit with a fixture, and its bounded
+   re-check covers the fixtures phase 1 changed or added.
 3. ME-1 right after ME-S: it builds the shared foundation `VE.Numbers` and lands before quantities' QT-A2, which
    waits for it. Then ME-1 → ME-2 → ME-3 → ME-P1.
 4. ME-4 and ME-5 may overlap. ME-6 follows ME-1 with no other wait and lands before quantities' QT-A7. All three come
@@ -76,11 +110,48 @@ Order:
 ME-5 and ME-12's core are Lean-core work that may run in parallel with the other plans' cores. The rest of ME lands
 last among the seven plans (AP → AT → SC-1/SC-2 → QT → WG → ET → SC-3…SC-7 → ME), a preference subject to the
 explicit dependencies above. ME-P1 to ME-P3 are backend evidence: companion cases in JSON, not the English
-milestone. **Pilot order: physics, then deep learning, then mathematics** (research 7).
+milestone. **Pilot order: physics, then deep learning, then mathematics** (research 7), confirmed by ME-0 on one
+basis, named here: **bytes a batch can check**, that is, bytes tagged with this plan's features less the
+approximation units (D17) and the comparisons that need unpinned figure data: H 3,435 B, DL 1,475 B, M 272 B without
+imports. The share of the source gives the same order (H 25.3%, DL 9.8%). Raw tagged bytes do not: DL has 6,560 B
+against H's 6,166 B.
 
-**The first batch that moves a pilot number** is ME-0: it pins the texts, partitions every byte, and records what
+**The first batch that moved a pilot number** is ME-0: it pinned the texts, partitioned every byte, and recorded what
 today's VE checks (W6a quantities and linear comparisons, attributions, labels; the 1887 dates are outside W6's
-calendar). It needs no product code.
+calendar). It needed no product code.
+
+### 0.1 Phase 1: results and what they gate
+
+Phase 1 ran ME-0 against bars pre-registered at `0d9db6e1` before any measurement
+([math-evidence-phase1.md](../research/math-evidence-phase1.md) 1; evidence in
+`docs/research/evidence/math-evidence/`, today's VE = `main` at `406736a4`). No bar moved after review.
+
+| Item | Bar (phase-1 report 1) | Measured | Result | What it gates |
+|---|---|---|---|---|
+| P1 ME-0's done-condition | every ledger 100% accounted, documents accepted, `SUMMARY.md` written | H 24,368 B, M 2,651 B, V 8,883 + 1,054 B, DL 66,858 B, all at 100% (Lean coverage); all accepted; premise status UNKNOWN for H, V, DL | **PASS** | ME-0 is done; ME-S may start on this draft; the measure's denominators (7) |
+| P2 DL target (D22) | the first ranked candidate whose licence field is CC BY | LoRA and Registers: arXiv non-exclusive; AlphaFold: CC BY 4.0 (Nature page field, Europe PMC JATS) | **AlphaFold pinned** (a rule, not a bar) | DL fixtures (4.4), ME-P3's DL part, EX-3's trigger |
+| P3 pilots stay at zero | 0 units and 0 bytes in both pilots | 0 of 1,132 (constitution), 0 of 130 (UDHR) | **PASS** | every batch's constitution and UDHR column stays 0 (7) |
+| P4 fixture anchors | no fixture CHANGED or ABSENT | 32 in scope: 14 ANCHORED, 9 RE-WORDED, **3 CHANGED (H-4, H-5, H-9)**, 0 ABSENT, 6 NOT A QUOTE | **FAIL** | H-4, H-5 and H-9 are rewritten (4.2) and re-checked in ME-S (spec 17, item 8); ME-1's and ME-P1's fixtures use the rewritten cases |
+| P5 paper denominator | 73,801 B at the ME-0 commit and on `main` | 73,801 B on the branch, on `main` and at `49de179e` | **PASS** | V's denominator (7) |
+| P6 H-10, 1887 dates | 1887 refused, 1970-01-01 admitted | `DateRange(1887-07-08)`; 1970-01-01 accepted | **PASS** | H-10 stays refused until ET-T3 (4.2) |
+| P7 estimates | not bars | inside: H 1.5-2.5 KB CHECKED (1,858 B), M 0, constitution and UDHR 0; outside: H LABELLED 11,560 B (est. 13-16 KB), H text 24,368 B (30-40 KB), V-E1 1,199 B (0.3-0.8 KB), M text 2,651 B (4-6 KB), DL 4,453 B (2-4 KB for LoRA), every exposition share (below) | reported, not judged | every estimate of 7 is replaced by a measured ceiling |
+
+The plan's experiments did not run in phase 1; each waits for its batch (5): EX-1 for ME-12, EX-2 for ME-9, EX-5 for
+ME-4; EX-3 is now a trigger and EX-4 stays one.
+
+**DEFERRED, each with its trigger.**
+
+| Item | Why not done | Trigger |
+|---|---|---|
+| NORTH-STAR rows M, H, DL, V | the file is in `ve-northstar`, outside this worktree; the measured text is in the phase-1 report 4.4 | the DRI's next NORTH-STAR update ("Cross-plan issues for the DRI", item 4) |
+| A person's transcription of Ramanujan's formulas | needs a person reading the scan; OCR garbles 79.7% of M | ME-12 lands; the transcription is ME-P4's first step |
+| Pinning AlphaFold's figure source data and supplement | not part of ME-0's pinned text | ME-4 lands **and** D22's licence rule confirms CC BY for those files; until then DL's ceiling is 8.9% |
+| Partition of the rest of VE's paper (63,864 B outside the E1 slice) | ME-0 pinned only E1 and the appendix rows | ME-P1, which partitions it first |
+| `usecases/` directories and per-target `SOURCE.md` | phase 1 kept the evidence under `docs/research/evidence/` and the pins in `raw/fetch-log.json` and `SUMMARY.md` | ME-P1 moves the ledgers and writes `SOURCE.md` from those records; bytes and digests unchanged |
+| ME-S's bounded re-check (spec 17) | needs the reviewer pair (model calls) | this draft |
+| The pre-registered writing and comprehension eval (D17) | needs Sonnet as reader and writer | ME-10 and ME-11 land |
+| EX-1, EX-2, EX-5 | each needs its batch and product code or Mathlib | ME-12, ME-9, ME-4 respectively |
+| EX-3 | the pinned DL text has no equations (ME-0's sentence kinds: 0) | a pinned DL text with method equations over matrix operands (5) |
 
 ## 1. Decisions
 
@@ -107,7 +178,7 @@ calendar). It needs no product code.
 | D19 | **Mathematics** is a separate profile **`arith@0`**: whole numbers and integers, addition, subtraction, multiplication, divisibility, order, functions and predicates defined by non-recursive terms and formulas, bounded and unbounded quantifiers; meaning `VE.Arith.Holds` in core Lean, where a count is the number of values for which `Holds` of its condition is true (classical decision), never defined through the evaluator; **bounded evaluation** decides statements whose quantifiers are all bounded, within a stated budget (one unit per formula-node visit, as W6's `VE.Time.evalB`; default and maximum 1,000,000); exhaustion is UNKNOWN, tested apart from undefined values; `arith@0` is one row of AR-10's profile-gate table and its mode stays separate from `calc` | finite checks ("by actual verification ... for smaller values") are decidable; the rest needs proofs VE does not search for | function symbols, recursion or induction inside the tableau (research D4, rejected) |
 | D20 | **Proof imports**: a Lake project outside `lean/` (`imports/mathlib/`) requires Mathlib and VE and proves `VE.Arith.Holds ... s` for VE's own statement `s`. Lean renders the definitions `D` and the statement `φ` as Lean terms, and the import project compiles a generated `theorem check : Defs.Means ⟨D⟩ ⟨φ⟩ := <declaration>`, so the external kernel checks the declaration's type, not just its axioms. VE's record binds the statement's id, the digest of VE's meaning sources (the VE `lean/` revision), the project revision, toolchain, Mathlib revision, declaration, the generated check file's digest and the axioms; each imported conclusion needs an import with its own statement id. Admission stays conditional on that external build. The import enters reports only as a leaf labelled `import:<project>@<revision>/<declaration>`, counted in the residual (VISION rule 6). Never linked into `ve_service`. Built only if EX-1 passes | the statement a reader approves is the statement Lean proves; VE's trusted runtime does not grow | Mathlib inside `lean/`; hand-written Lean statements reviewed against English (the iceberg's gap) |
 | D21 | **Rust: none.** Python: the `ve calc` and `ve arith` commands, file reading, relays, display; no arithmetic, no search | `CLAUDE.md` ownership; exact arithmetic is cheap in Lean | a Rust accelerator before a measured need |
-| D22 | **Targets** (research 2.4): physics = Michelson and Morley 1887 (public domain); mathematics = Ramanujan 1919 (public domain); deep learning = the first of the ranked candidates whose CC-BY licence ME-0 confirms by reading the licence field of its abstract page with a plain HTTP fetch and no model; VE's own paper is the in-repository fixture source | measured claims only; no copied text without a licence | storing a text whose licence is unconfirmed |
+| D22 | **Targets** (research 2.4): physics = Michelson and Morley 1887 (public domain); mathematics = Ramanujan 1919 (public domain); deep learning = the first of the ranked candidates whose CC-BY licence ME-0 confirms by reading the licence field of its abstract page with a plain HTTP fetch and no model; VE's own paper is the in-repository fixture source. **Result (ME-0, P2):** LoRA (arXiv 2106.09685) and Registers (arXiv 2309.16588) carry arXiv's non-exclusive licence, so deep learning = **AlphaFold** (Jumper et al. 2021, *Nature* 596: 583-589), CC BY 4.0 by the Nature page's `license` field and the Europe PMC JATS licence; pinned as the JATS text of PMC8371605 (66,858 B). The Nature page is dynamic, so its pinned bytes are checked only against their SHA-256; the committed JATS licence and the three licence fields re-derive. Research 2.4's ranking stays the record of the rule's inputs | measured claims only; no copied text without a licence | storing a text whose licence is unconfirmed |
 
 ## 2. Design
 
@@ -1027,10 +1098,17 @@ theorem VEImports.bertrand_holds : VE.Arith.Examples.primeDefs.Means VE.Arith.Ex
 ## 4. Fixtures
 
 Expected results were computed by hand in exact arithmetic for this plan; ME-S recomputes every one with `#eval` in the
-stub and the batches pin them as `#guard`s and route cases. Target sentences marked *paraphrase* are from memory and
-are re-anchored to the pinned text's byte spans in ME-0; their arithmetic does not depend on the exact wording.
+stub and the batches pin them as `#guard`s and route cases. Target sentences marked *paraphrase* were from memory;
+ME-0 re-anchored each to the pinned text's byte spans (P4, `docs/research/evidence/math-evidence/fixture-anchors.json`,
+which holds every span and the source's SHA-256). Each row below names its outcome: ANCHORED (the source's words and
+numbers), RE-WORDED (the source's numbers, other words), NOT A QUOTE (constructed), or, in draft 4, CHANGED, which
+draft 5 rewrites to the source. Draft 5's new fixtures' numbers were computed with exact fractions in phase 1's
+scripts and by hand; they are not VE verdicts, and ME-S recomputes them in the stub.
 
 ### 4.1 VE's own paper and documentation (in the repository; exact quotes)
+
+ME-0 found V-1 to V-8 and D-1 to D-3 ANCHORED in these words, except the constructed V-1n and V-6r (NOT A QUOTE).
+V-9 to V-11 are constructed; V-12 is constructed over V-1's real span ".296".
 
 | Id | Source | Case | Expected |
 |---|---|---|---|
@@ -1044,6 +1122,7 @@ are re-anchored to the pinned text's byte spans in ME-0; their arithmetic does n
 | V-6r | the same printed SD under the population reading (divisor 12) | 0.127301/12 = 0.010608; its root 0.1030 prints as 0.103 | **fails**: the calculation distinguishes the two readings of "SD" |
 | V-7 | `paper/generated/posthoc-weakening-contrasts.md`, column "Two-sided p", 9 templates | granularity: a printed p must be within rounding of a multiple of 1/512 (0.812500 = 416/512, 0.687500 = 352/512, 0.359375 = 184/512, 0.125000 = 64/512, 0.875000 = 448/512; 0.085938 from 44/512 and 0.679688 from 348/512, both exact ties at the lower end of their intervals) | consistent for 7 of 8 under ties upward; the fourth row (0.007812) is V-8 (ME-8) |
 | V-8 | the same table, row "14B F − S attacker", printed "0.007812" | 4/512 = 0.0078125 is an exact tie at six places: half to even on the exact value gives 0.007812 (holds), ties up gives 0.007813 (fails) | holds only under "rounded half to even"; in translation without a declared rule, a **reading set** whose distinguishing value is this row |
+| V-7b | (draft 5, from ME-0) `paper/sections/04-e1.md`, the six main-text p values of the contrast table (units v060-v065): .460938, .875488, .000977, .001953, .218750, .993164 | granularity over 2¹² sign flips: each printed p is within rounding at six places of k/4096 for k = 1,888, 3,586, 4, 8, 896, 4,068 (1,888/4,096 = 0.4609375 is an exact tie whose upper neighbour 460,938 is even, so both rules print .460938) | consistent for all six under either rule (ME-8) |
 | V-9 | software convention: 2.675 printed as 2.67 at two places (Python's `round(2.675, 2)`, which rounds the nearest binary double) | the exact value 107/40 is a tie at two places; both rules give 2.68 | the exact claim **fails**; software reproduction **unknown** ("floating-point computation not modelled"); no source finding |
 | V-10 | software convention: 0.1 + 0.2 − 0.3 printed as 0.0000000000000001 at sixteen places (what Python prints; no tie is involved) | the exact value is 0, which rounds to 0 at sixteen places | the exact claim **fails**; software reproduction **unknown**; no source finding |
 | V-11 | a limit hit against a zero divisor (debate A1): x = 10³⁹, y = x⁶⁴, z = y × y; claims z < 1 and 1/(x − x) = 1 | z has 4,993 digits, above 4,096; x − x = 0 | **unknown** (limit named) and **undefined**: two distinct outcomes |
@@ -1052,41 +1131,63 @@ are re-anchored to the pinned text's byte spans in ME-0; their arithmetic does n
 | D-2 | UDHR pilot SUMMARY (copied into the test data with its path and digest): "claimed covered bytes 4,792 (43.90%)" of 10,916 | 100 × 4,792/10,916 = 43.899 → 43.90 (8,779 ≤ 8,779.8 < 8,781) | holds |
 | D-3 | constitution pilot SUMMARY: "Claimed coverage is unchanged at 2,951 bytes (1.60%)", with `coverage.json` bytes CHECKED 73, LABELLED 349, OPEN 2,529 | 73 + 349 + 2,529 = 2,951; 100 × 2,951/184,893 = 1.596 → 1.60 | holds ×2 |
 
-### 4.2 Physics (Michelson and Morley 1887; paraphrases until ME-0 anchors them)
+### 4.2 Physics (Michelson and Morley 1887; anchored by ME-0)
 
-| Id | Sentence (paraphrase) | Case | Expected |
+Spans are byte offsets in the pinned `physics-michelson-morley/source.txt` (24,368 B, SHA-256 `7bc59a08…a1946b`),
+whose equations are Wikisource's TeX; unit ids (`h049`) are the ME-0 ledger's.
+
+| Id | Sentence (ME-0 outcome) | Case | Expected |
 |---|---|---|---|
-| H-1 | "T = D/(V − v), T₁ = D/(V + v); the whole time of going and coming is T + T₁ = 2DV/(V² − v²)" | `identity` over free D, V, v | identity (ME-9), side conditions V ≠ v, V ≠ −v |
-| H-2 | "the distance traveled in this time is 2DV²/(V² − v²) = 2D(1 + v²/V²), neglecting terms of the fourth order" | the exact remainder: 2DV²/(V² − v²) − 2D(1 + v²/V²) = 2Dv⁴/(V²(V² − v²)) | identity (ME-9); "neglecting" becomes the exact remainder, bounded numerically at v/V = 10⁻⁴ by ME-1 (EX-2 for the general bound) |
-| H-3 | "the difference is therefore Dv²/V²" | 2D(1 + v²/V²) − 2D(1 + v²/(2V²)) = Dv²/V² | identity (ME-9) |
-| H-4 | "the displacement ... should be 2Dv²/V² ... this would be 2D × 10⁻⁸" | with v/V = 10⁻⁴ stated and D free: 2D × (10⁻⁴)² = 2D × 10⁻⁸ | identity in D (ME-9); with D stated, holds (ME-1) |
-| H-5 | "D ... 2 × 10⁷ wave-lengths of yellow light; hence the displacement to be expected was 0.4 fringe" | 2 × (2 × 10⁷) × (10⁻⁴)² = 0.4 | holds (ME-1) |
-| H-6 | "certainly less than the twentieth part of this ... the relative velocity ... certainly less than one-fourth [of the orbital velocity]" | premises: displacement = 0.4 fringe × r² (assumption: proportional to the square), r ≥ 0, displacement < 0.4/20 fringe; claim r < 1/4 | **follows** (ME-5: Farkas gives r² < 1/20; square rule with 1/20 ≤ 1/16) |
-| H-6p | the "probably" pair: fortieth part, one sixth | r² < 1/40 and 1/40 ≤ 1/36 | follows; the hedge "probably" stays a `hedged` label until a separately reviewed calc–attitudes bridge exists |
-| H-6n | negative control: "less than one fifth" from "less than the twentieth part" | 1/20 ≤ 1/25 is false | **does not follow**; counterexample r = 1/5 (r² = 1/25 < 1/20; the search tries the claimed bound itself first) |
-| H-7 | physical dimensions: "D/(V − v)" is a time; "D/λ" is dimensionless; negative "D + T" | ME-6 | time; dimensionless; `DimensionMismatch(length, time)` |
-| H-8 | "about eleven meters, or 2 × 10⁷ wave-lengths of yellow light" | with the external premise "the wavelength of yellow light is 5.89 × 10⁻⁷ meters" (stated, `support: testimony`, cited): 11 m / λ = 1.868 × 10⁷, rounds to 2 × 10⁷ at places −7 (3 ≤ 3.735 < 5) | holds; "about" is a reading set in translation; the wavelength is a residual leaf |
-| H-9 | the two observation tables: readings at 16 azimuths per session and their printed means | `counted` means over the transcribed table (ME-4) against the printed means | whatever exact arithmetic gives; a mismatch is a finding (no outcome is presumed here) |
-| H-10 | the observation dates (July 8, 9, 11 and 12, 1887) | W6a date literals start at 1970-01-01 (W6 6.1), so these are refused | refused; a recorded trigger, ET-T3 in events' plan, to extend W6's `VE.Time.Calendar` below 1970 under W6's own review. Never a second calendar; until then H-10 stays refused (section 10, piece 8) |
+| H-1 | "T = D/(V − v), T₁ = D/(V + v); the whole time of going and coming is T + T₁ = 2DV/(V² − v²)" (RE-WORDED: the source's TeX, with T-sub-slash for T₁) | `identity` over free D, V, v | identity (ME-9), side conditions V ≠ v, V ≠ −v |
+| H-2 | "the distance traveled in this time is 2DV²/(V² − v²) = 2D(1 + v²/V²), neglecting terms of the fourth order" (RE-WORDED) | the exact remainder: 2DV²/(V² − v²) − 2D(1 + v²/V²) = 2Dv⁴/(V²(V² − v²)) | identity (ME-9); "neglecting" becomes the exact remainder, bounded numerically at v²/V² = 10⁻⁸ by ME-1 (EX-2 for the general bound) |
+| H-3 | "the difference is therefore Dv²/V²" (RE-WORDED) | 2D(1 + v²/V²) − 2D(1 + v²/(2V²)) = Dv²/V² | identity (ME-9) |
+| H-4 | (draft 5; CHANGED in draft 4, which took "v/V = 10⁻⁴ stated", a premise the source never states) "hence the displacement of the interference fringes should be 2D v²/V². Considering only the velocity of the earth in its orbit, this would be 2D × 10⁻⁸." (spans 7,265-7,348 and 7,350-7,443, unit h049; again in h113) | the squared speed ratio `sq` stated as 10⁻⁸ (`["sci", "1", -8]`, `support: testimony`, span in h049), D free: 2D × sq = 2D × 10⁻⁸ | identity in D (ME-9); with D stated (2 × 10⁷), 2D × sq = 0.4 holds (ME-1) |
+| H-5 | (draft 5; CHANGED in draft 4, which used H-4's unstated v/V) "The distance D was about eleven meters, or 2×10⁷ wave-lengths of yellow light; hence the displacement to be expected was 0•4 fringe." (span 15,790-15,882, unit h114; the decimal point is a bullet in the source) | D = 2 × 10⁷ (stated, span), sq = 10⁻⁸ (stated, span in h113): 2 × D × sq = 0.4 | holds (ME-1): 2 × (2 × 10⁷) × 10⁻⁸ = 2/5, the source's route |
+| H-5b | (draft 5, from ME-0) "If, as was the case in the first experiment, D = 2 × 10⁶ waves of yellow light, the displacement to be expected would be 0.04 of the distance between the interference fringes." (unit h050, ANCHORED) | D = 2 × 10⁶, sq = 10⁻⁸: 2 × D × sq = 0.04 | holds (ME-1): 1/25 |
+| H-6 | "The actual displacement was certainly less than the twentieth part of this ... the relative velocity of the earth and the ether is ... certainly less than one-fourth" (ANCHORED, h115-h116) | premises: displacement = 0.4 fringe × r² (assumption: proportional to the square, as the source says), r ≥ 0, displacement < 0.4/20 fringe; claim r < 1/4 | **follows** (ME-5: Farkas gives r² < 1/20; square rule with 1/20 ≤ 1/16) |
+| H-6p | "and probably less than the fortieth part" ... "is probably less than one sixth the earth's orbital velocity" (ANCHORED) | r² < 1/40 and 1/40 ≤ 1/36 | follows; the hedge "probably" stays a `hedged` label until a separately reviewed calc–attitudes bridge exists |
+| H-6n | negative control: "less than one fifth" from "less than the twentieth part" (NOT A QUOTE) | 1/20 ≤ 1/25 is false | **does not follow**; counterexample r = 1/5 (r² = 1/25 < 1/20; the search tries the claimed bound itself first) |
+| H-7 | physical dimensions: "D/(V − v)" is a time; "D/λ" is dimensionless; negative "D + T" (RE-WORDED: D and T are the source's definitions, the expressions the case's) | ME-6 | time; dimensionless; `DimensionMismatch(length, time)` |
+| H-8 | "The distance D was about eleven meters, or 2×10⁷ wave-lengths of yellow light" (ANCHORED) | with the external premise "the wavelength of yellow light is 5.89 × 10⁻⁷ meters" (stated, `support: testimony`, cited): 11 m / λ = 1.868 × 10⁷, rounds to 2 × 10⁷ at places −7 (3 ≤ 3.735 < 5) | holds; "about" is a reading set in translation; the wavelength is a residual leaf |
+| H-9 | (draft 5; CHANGED in draft 4, which assumed printed readings at 16 azimuths) the two tables, noon and evening (spans 12,968-15,143, units h086-h106): "The following tables give the means of the six readings"; each table has 17 marks (mark 16 at the start and end of a turn), three sessions (noon: July 8, 9, 11; evening: July 8, 9, 12) and the rows Mean, Mean in w. l., a repeated half row (marks 8-16) and Final mean; "one division means 0.02 wave-length" | stated: the 102 session cells and the printed rows; for each mark, Mean = the sum of the three sessions divided by 3, rounded at one place (34 claims); Mean in w. l. = 0.02 × the printed Mean (34 equalities; the factor stated with its span, or ME-6's unit `division` with factor 0.02 wave-length); the half row repeats marks 8-16 (18); Final mean at mark k = the average of Mean in w. l. at k and k + 8 (18). Negative control: noon Mean at mark 1 printed 41.9 instead of 41.6 | all 104 hold (exact fractions in phase 1; no rounding tie can occur, since a sum of tenths divided by 3 is never an odd twentieth: noon mark 16 is 647/15 = 43.13…, printed 43.1; 0.02 × 43.1 = 0.862; (0.862 + 0.706)/2 = 0.784); the control **fails**. ME-1 suffices: the inputs are printed means, not a data file. Today's W6a already certifies the Mean, half-row and Final-mean relations; only Mean in w. l. is beyond it (cross-tag arithmetic) |
+| H-10 | the observation dates (July 8, 9, 11 and 12; RE-WORDED: the tables print no year, which comes from the publication line "November 1887") | W6a date literals start at 1970-01-01 (W6 6.1), so these are refused (ME-0 P6: `DateRange(1887-07-08)`, the 1970-01-01 control admitted) | refused; a recorded trigger, ET-T3 in events' plan, to extend W6's `VE.Time.Calendar` below 1970 under W6's own review. Never a second calendar; until then H-10 stays refused (section 10, piece 8). The year enters as a stated premise with its span |
 
-### 4.3 Mathematics (Ramanujan 1919; paraphrases)
+The supplement's trigonometric derivation (units h134-h142, tagged `approximation`) has no batch in this plan; its
+bytes are named residual, beyond EX-2's bar.
+
+### 4.3 Mathematics (Ramanujan 1919; anchored by ME-0 in OCR bytes)
+
+The pinned text (`math-ramanujan-bertrand/source.txt`, 2,651 B) is the OCR of the 1927 *Collected Papers*, and both
+available scans garble the formulas: 2,114 B (79.7%) is analytic (logarithms, Chebyshev's functions, Stirling), which
+no batch states in VE. The numbers the fixtures use are intact. ME-0's outcomes: M-1, M-3, M-3r and M-4 RE-WORDED;
+M-2, M-4x and M-5 NOT A QUOTE.
 
 | Id | Sentence or case | Expected |
 |---|---|---|
-| M-1 | "by actual verification ... true for smaller values": "for every whole number n from 1 to 161, there is a prime p with n < p and p at most twice n" | bounded evaluation: holds (ME-12) |
+| M-1 | "Thus Bertrand's Postulate is proved for all values of x, not less than 162: and, by actual verification, we find that it is true for smaller values": "for every whole number n from 1 to 161, there is a prime p with n < p and p at most twice n" | bounded evaluation: holds (ME-12) |
 | M-2 | the standard check of the small cases (not Ramanujan's wording): the chain 2, 3, 5, 7, 13, 23, 43, 83, 163, each prime and each less than twice the one before | holds (3 < 4, 5 < 6, 7 < 10, 13 < 14, 23 < 26, 43 < 46, 83 < 86, 163 < 166) |
-| M-3 | Bertrand's postulate, whole-number reading: "for every whole number n that is at least 1 there is a prime p with n < p and p at most twice n" | unbounded: no bounded decision; proved only by import (EX-1) |
-| M-3r | the same with a real x (Ramanujan's x is real) | a reading set {whole number, real}; `arith@0` has no reals, so the real reading stays residual |
-| M-4 | "π(x) − π(x/2) ≥ 2 if x ≥ 11", bounded part for whole x from 11 to the measured bound | holds by evaluation (at x = 10 the difference is 1, at x = 11 it is 2); the unbounded remainder is residual or import. ME-S defines the fuel accounting; ME-12 measures M-4 at the candidate bounds 200 and 1,000 and takes the completing bound from that measurement (the spec's reference count: 248 completes within 1,000,000 visits, 249 does not); no runtime estimate is part of the semantics |
-| M-4x | exhaustion: M-1 with a deliberately insufficient budget (1,000 visits) | the evaluator stops | **unknown** (limit named), never fails; tested apart from undefined values |
+| M-3 | Bertrand's postulate, whole-number reading: "for every whole number n that is at least 1 there is a prime p with n < p and p at most twice n" (the source: "conjectured by Bertrand: namely that there is at least one prime p such that x < p ≤ 2x if x ≥ 1", read from the scan since the OCR garbles the formula, with x real) | unbounded: no bounded decision; proved only by import (EX-1) |
+| M-3r | the same with a real x (Ramanujan's x is real: "[x] denotes as usual the greatest integer in x") | a reading set {whole number, real}; `arith@0` has no reals, so the real reading stays residual |
+| M-4 | formula (18)'s second pair, "π(x) − π(x/2) ≥ 2 if x ≥ 11", bounded part for whole x from 11 to the measured bound (RE-WORDED: the OCR span 2,575-2,620 reads "> 1, 2, 3, 4,5,..., if * » 2, 11, 17, 29, 41"; the numbers are intact, the words are not) | holds by evaluation (at x = 10 the difference is 1, at x = 11 it is 2); the unbounded remainder is residual or import. ME-S defines the fuel accounting; ME-12 measures M-4 at the candidate bounds 200 and 1,000 and takes the completing bound from that measurement (the spec's reference count: 248 completes within 1,000,000 visits, 249 does not); no runtime estimate is part of the semantics |
+| M-4b | (draft 5, from ME-0) formula (18)'s other four pairs: π(x) − π(x/2) ≥ 1, 3, 4, 5 if x ≥ 2, 17, 29, 41 | for each pair, bounded evaluation from its threshold to the bound ME-12 measures: holds; one below each threshold the difference is one less (0 at x = 1, 2 at 16, 3 at 28, 4 at 40), so each threshold is the least whole number that works (exact counts in phase 1, to 1,000) |
+| M-4x | exhaustion: M-1 with a deliberately insufficient budget (1,000 visits) | the evaluator stops: **unknown** (limit named), never fails; tested apart from undefined values |
 | M-5 | negative control: strict "n < p < 2n" from 1 to 161 | **fails** at n = 1, reported as the row's deciding value (spec 12.5) |
 
-### 4.4 Deep learning (after ME-0 pins a CC-BY text; shapes only, no numbers presumed)
+### 4.4 Deep learning (AlphaFold, pinned by ME-0)
 
-DL-1 "our method has the highest score in column C" (maximum over the table's rows equals the method's cell); DL-2 "on
-average across the eight tasks" (mean of a row); DL-3 "reduces the number of trainable parameters by about N times"
-(a ratio of stated counts; "about" a reading set {rounded to the written digits, open tolerance}); DL-4 a parameter
-count from a stated formula and stated sizes; DL-5 "on par with" (refused in authoring; an open term in translation).
+Draft 4's DL-1 to DL-5 were shapes for a LoRA-like text. ME-0 pinned AlphaFold instead (D22), whose main text has no
+result tables (its results are in five figures and the supplement) and no equations, so DL-1 ("the highest score in
+column C"), DL-2 ("on average across the eight tasks") and DL-4 ("a parameter count from a stated formula") have no
+span, and "on par" (DL-5) does not occur; all five are dropped ("on par" stays a refused wording in ME-11 with a
+constructed fixture). Draft 5's fixtures are AlphaFold's own numbers. Spans are units of the ME-0 ledger
+(`dl-alphafold/source.txt`, 66,858 B).
+
+| Id | Source | Case | Expected |
+|---|---|---|---|
+| DL-1 | d024: "AlphaFold structures had a median backbone accuracy of 0.96 Å r.m.s.d.95 … (95% confidence interval = 0.85–1.16 Å) whereas the next best performing method had a median backbone accuracy of 2.8 Å r.m.s.d.95 (95% confidence interval = 2.7–4.0 Å)"; d027: all-atom 1.5 Å (1.2–1.6 Å) against 3.5 Å (3.1–4.2 Å) | each median within its interval; AlphaFold's median less than the alternative's, for both measures | holds × 6 (ME-1); already CHECKED today with certified order (W6a), so the case is a parity check, not new bytes |
+| DL-2 | d239: "4.8 min with 256 residues, 9.2 min with 384 residues and 18 h at 2,500 residues"; d242: "Without ensembling, the network is 8× faster and the representative timings for a single model are 0.6 min …, 1.1 min … and 2.1 h …" | for each length, the timing with ensembling divided by the timing without, against "8×": 4.8/0.6 = 8, 9.2/1.1 = 92/11 = 8.36…, 18/2.1 = 60/7 = 8.57… | "8×" is a **reading set** in translation {rounded to the written digit, an open tolerance}: under the rounded reading the first two hold and the third **fails** (60/7 rounds to 9), a finding ("transcription unchecked" until ME-4 checks spans); the tolerance reading needs its decider |
+| DL-3 | d119: "we use a trained network to predict the structure of around 350,000 diverse sequences"; d231: "a Uniclust dataset of 355,993 sequences" (that the two name one set is a translation premise, `support: assumption`) | "around 350,000" against 355,993 | a **reading set** {rounded to the written digits, an open tolerance}: 355,993 rounds to neither 350,000 at its last written digit nor at its last nonzero digit (360,000 at ten thousands), so the rounded reading fails and only the tolerance holds. "Around" is not in the shared approximation row as section 10 piece 6 lists it; where it belongs is a question for the DRI ("Cross-plan issues for the DRI", item 3), and until then it is treated as that row's words are |
+| DL-4 | d214: "Removing BFD reduced the mean accuracy by 0.4 GDT, removing Mgnify reduced the mean accuracy by 0.7 GDT, and removing both reduced the mean accuracy by 6.1 GDT." | stated drops; constructed claim (NOT A QUOTE) "the drop from removing both is more than the sum of the two single drops": 0.4 + 0.7 < 6.1 | holds (ME-1); the stated values are CHECKED today |
 
 ### 4.4a Fixtures added by the statement review
 
@@ -1134,6 +1235,12 @@ person) and a ROADMAP trust-cost line, hermetic tests, three-valued verdicts, an
 - Shared files: none (new directories). Estimated: H 1.5-2.5 KB CHECKED, 13-16 KB LABELLED; V-E1 0.3-0.8 KB CHECKED;
   M 0 CHECKED; DL 2-4 KB if pinned (all **estimates**). Constitution and UDHR: 0.
 - Done when the four (or three) ledgers account for 100% of their source bytes and `SUMMARY.md` states the numbers.
+- **Done (phase 1, P1 PASS; 0.1).** Measured: H 1,858 B CHECKED (276 stated only, 1,582 in certified relations),
+  11,560 B LABELLED, 10,950 B UNFORMALISED; V's E1 slice 1,199 B CHECKED (817 / 382), 4,088 B LABELLED; DL 4,453 B
+  CHECKED (1,905 / 2,548), 49,707 B LABELLED; M 0 CHECKED, 265 B LABELLED, 2,386 B UNFORMALISED. Two deviations,
+  accepted: the files are under `docs/research/evidence/math-evidence/`, not `usecases/`, and the pins are in
+  `raw/fetch-log.json` and `SUMMARY.md`'s Sources table, not `SOURCE.md`; ME-P1 moves them (bytes and digests
+  unchanged).
 
 ### ME-S. Statement spec, Lean stub, statement review (planner, 4-5 h)
 
@@ -1145,7 +1252,9 @@ fixtures of section 4 with definitions separated from expected results); elabora
 each debate edit (A1-A6, F1-F5) with a fixture. The review of the spec's draft 1 converged on FIX (J1-J11); the spec's
 draft 2 applies it, draft 3 applies the verification of draft 2 (FAIL narrowly: J2's `Run.unknown_named`, J3's
 fixtures, the draft-2 choices to accept by name), and a bounded re-check of the changed sections and new fixtures by
-both reviewers (spec 17), with the stub re-run, gates ME-1.
+both reviewers (spec 17), with the stub re-run, gates ME-1. The spec's draft 4 applies phase 1 to the fixtures (no
+Lean statement changes); the re-check adds its item 8: H-4, H-5 and H-9 as rewritten, and the new H-5b, V-7b, M-4b
+and DL-1 to DL-4, recomputed in the stub.
 
 ### ME-1. Lean core of `calc@0` (Lean, 5-6 h)
 
@@ -1161,7 +1270,9 @@ both reviewers (spec 17), with the stub re-run, gates ME-1.
   beside it). Every rendered rounding line names its tie rule. If quantities' QT-E has not landed, ME-1 moves W6's
   comparison phrases (`ve/english.py:51`, `_COMPARISONS`) into one Lean table, and Python reads them from a generated
   file; if QT-E landed first, ME-1 reads QT-E's table.
-- `#guard` fixtures: V-1, V-1n, V-2, V-4, V-9, V-10, V-11, D-1, H-5, and H-4 with D stated.
+- `#guard` fixtures: V-1, V-1n, V-2, V-4, V-9, V-10, V-11, D-1, H-5, H-5b and H-4 with D stated (all three over the
+  source's sq = 10⁻⁸), H-9's noon column at mark 16 (Mean, Mean in w. l., Final mean) and its negative control,
+  DL-1, DL-2 under the rounded reading, DL-4.
 - Hand-written shared: none. Generated: `lean/VE.lean`, `lean/VE/Audit.lean`, frozen inventory, axioms, statements,
   predicates, declarations, trust tables (signed).
 - Seeded bug (Lean): `eval` computes `sub a b` as `b - a`; V-2's third claim fails its `#guard`.
@@ -1204,12 +1315,23 @@ both reviewers (spec 17), with the stub re-run, gates ME-1.
   fuzz test fails.
 - Bytes: 0.
 
-### ME-P1. Pilot (backend evidence): ground calculations (pilot runner, 2-3 h)
+### ME-P1. Pilot (backend evidence): ground calculations (pilot runner, 4-5 h; draft 4 said 2-3 h, before the move and the paper partition)
 
-Companion calc cases beside the ME-0 ledgers (as the UDHR pilot's companion documents): physics H-5, H-4 with D
-stated, H-8 and the theory section's other numeric substitutions; VE paper V-1 to V-4 and the other ratio sentences of `04-e1.md` and `05-e4.md`.
-A unit is CHECKED when every claim of its companion case is decided by Lean. Estimated: H +0.6-1.0 KB, V +0.8-1.5 KB.
-Shared files: pilot directories only.
+Companion calc cases beside the ME-0 ledgers (as the UDHR pilot's companion documents): physics H-5, H-5b, H-4 with D
+stated, H-8 and the theory section's other numeric substitutions, and H-9's two tables in full (104 claims in one
+case, within 2.1's limits); VE paper V-1 to V-4 and the other ratio sentences of `04-e1.md` and `05-e4.md`.
+A unit is CHECKED when every claim of its companion case is decided by Lean.
+
+- First (draft 5): move the ME-0 ledgers to `usecases/physics-michelson-morley/`, `usecases/math-ramanujan-bertrand/`,
+  `usecases/ve-paper-e1/` and `usecases/dl-alphafold/`, and write each `SOURCE.md` from `raw/fetch-log.json` and
+  `SUMMARY.md`'s Sources table (bytes and digests unchanged); then partition the rest of VE's paper (63,864 B outside
+  the E1 slice) with today's VE, as ME-0 did the slice, so row V gets a whole-paper denominator.
+- Measured ceiling: H +2,216 B (`calc`), V's slice +469 B; V outside the slice is measured by the step above. H-9's
+  table rows are already CHECKED (most in certified relations), so H-9 adds almost no bytes: what it adds is the
+  Mean in w. l. relation, which W6a cannot state, and a calc-route check of what W6a certifies today. Its sentence
+  "the means of the six readings" (h086, 153 B, `calc-data`) describes readings that are not printed and stays
+  UNFORMALISED.
+- Shared files: pilot directories only.
 
 ### ME-4. Tables and pinned data (Lean and Python, 5-6 h)
 
@@ -1224,7 +1346,7 @@ Shared files: pilot directories only.
   counted value runs under the case's budget; `runCounted` takes the budget, and an exhausted run is `Counted.exhausted`
   (statement review J2).
 - Fixtures: a 30-row synthetic trial table with counts by filter; V-5 recomputed from a committed table of the
-  20 rows' counts; H-9 when ME-0 has transcribed the observation tables; empty selections (count 0, sum 0, mean,
+  20 rows' counts (draft 5 drops H-9 here: its inputs are printed means, so ME-1 checks it); empty selections (count 0, sum 0, mean,
   minimum and maximum undefined); an absent cell making a mean undefined; T-1 with its absent and mistyped `approved`
   cells, selected by neither "that are approved" nor "that are not approved"; T-3 (an exhausted count read directly
   and through a definition beside an empty mean); spec 13.6's R-10a and R-10c if ME-5 or ME-9 landed first (4.4a); a
@@ -1267,10 +1389,14 @@ Shared files: pilot directories only.
 - Seeded bug (Lean): `dimOf` of `div` adds exponents instead of subtracting; H-7's "D/λ is dimensionless" fails.
 - Bytes: 0.
 
-### ME-P2. Pilot (backend evidence): tables, bounds and dimensions (pilot runner, 3 h)
+### ME-P2. Pilot (backend evidence): bounds, dimensions and counts (pilot runner, 3 h)
 
-Physics: the observation tables (H-9), the velocity bounds (H-6, H-6p), dimensions of the theory section (H-7). VE
-paper: counts recomputed from committed count tables (V-5). Estimated: H +3.0-4.5 KB, V +1-2 KB.
+Physics: the velocity bounds (H-6, H-6p), dimensions of the theory section (H-7), and Mean in w. l. as ME-6's unit
+change if ME-P1 stated the factor as a value. VE paper: counts recomputed from committed count tables (V-5).
+Measured ceiling (draft 4 estimated H +3.0-4.5 KB, V +1-2 KB, before ME-0 found the tables already CHECKED): H +467 B
+(`calc-derive` 222 B, `calc-data` 153 B, `calc-dimension` 92 B; the 153 B are h086, which stays UNFORMALISED, so
+314 B are reachable); V's slice +512 B (`calc-data`). ME-4's physics role is gone; it stays for V's counts, DL's
+figure data and EX-5.
 
 ### ME-7. Exact statistics (Lean, 5-6 h)
 
@@ -1289,7 +1415,8 @@ paper: counts recomputed from committed count tables (V-5). Estimated: H +3.0-4.
 - New files: `lean/VE/Calc/{Interval,Consistency}.lean`, `tests/test_calc_consistency.py`.
 - Proves 3.7 and `signFlipP_grain`'s use as a granularity check: the witness and both refutations against the one
   `Consistent`, over the lowering with the inputs kept (statement review J4).
-- Fixtures: V-7 (granularity), V-8 (tie rule), V-6 from the printed per-template values (a witness: the printed values
+- Fixtures: V-7 (granularity), V-7b (the six main-text p values over 2¹², draft 5), V-8 (tie rule), V-6 from the
+  printed per-template values (a witness: the printed values
   themselves), C-1 and spec 13.6's R-5 (an output that reads a stated value left out of the inputs; a witness at an
   interval endpoint; a free value refused), R-10b (unknown and undefined consistency checks; ME-4 is in place, since
   ME-8 follows ME-7), and GRIM as a `#guard` of `mean_grain_refutes` (S-3: a mean of five
@@ -1348,9 +1475,13 @@ paper: counts recomputed from committed count tables (V-5). Estimated: H +3.0-4.
 
 ### ME-P3. Pilot (backend evidence): physics complete, VE paper statistics, deep learning (pilot runner, 3-4 h)
 
-Physics H-1 to H-3 and the theory section; VE paper V-6 to V-8 and the appendix tables' rows (consistency and
-recomputation); the DL target's tables, comparisons and parameter counts if ME-0 pinned one. Estimated: H +1.5-2.5 KB,
-V +10-16 KB (most of it appendix table rows), DL +5-8 KB.
+Physics H-1 to H-3 and the theory section; VE paper V-6 to V-8, V-7b and the appendix tables' rows (consistency and
+recomputation); AlphaFold's DL-1 to DL-4 and its other stated statistics and comparisons. Measured ceiling (draft 4
+estimated H +1.5-2.5 KB, V +10-16 KB, DL +5-8.5 KB): H +752 B (`calc-algebra`); V's slice +2,858 B (`calc-stats`,
+28.8% of the slice, its largest lever), and outside the slice whatever ME-P1's partition measures; DL +1,475 B
+(`calc-stats` 1,329 B, `calc` 146 B). DL's `calc-data` (3,355 B) compares values that the text gives only in figures;
+it counts only if the figure source data are pinned (DEFERRED in 0.1: after ME-4, under D22's licence rule), else it
+stays UNFORMALISED.
 
 ### ME-12. Lean core of `arith@0` (Lean, 5-6 h; after ME-1, whose `VE.Numbers` it imports; independent of ME-2 to ME-11)
 
@@ -1369,10 +1500,11 @@ V +10-16 KB (most of it appendix table rows), DL +5-8 KB.
   profile-gate table with its composition proof and the mode's entry in AR-10's mode registry, `ve/__main__.py`,
   `tools/layer_policy.py`, the assurance manifest, ROADMAP); waits for AR-10's table; no hand-written `Dispatch.lean`
   rows or `ve/profiles.py` rows. Generated: as ME-2 and ME-3.
-- Fixtures: M-1, M-2, M-4, M-4x, M-5 (with its deciding value n = 1); spec 13.6's R-7 and R-8; a definition that
+- Fixtures: M-1, M-2, M-4, M-4b (draft 5: formula (18)'s other four pairs), M-4x, M-5 (with its deciding value
+  n = 1); spec 13.6's R-7 and R-8; a definition that
   calls itself refused; an unscoped variable and a call of an undefined name refused; an unbounded statement reported
   "stated, not decided". ME-12 measures M-4 at the candidate bounds 200 and 1,000 and pins the completing bound from
-  that measurement.
+  that measurement, and does the same for each pair of M-4b.
 - Seeded bugs: Lean, a bounded quantifier from lo to hi ranges up to hi + 1 (M-5 fails); Python, the relay accepts a
   row for a statement it did not send (the binding fuzz test fails).
 - Bytes: 0.
@@ -1388,7 +1520,7 @@ V +10-16 KB (most of it appendix table rows), DL +5-8 KB.
   audit by the reviewer pair finds that the English rendering of M-3 states Ramanujan's theorem under the whole-number
   reading.
 - Pass: build ME-13. Fail: record which item failed; mathematics stays at bounded evaluation; the M row's "after the
-  plan" estimate drops to 6-12%.
+  plan" ceiling is 10.3% (measured by ME-0; draft 4 estimated 6-12%) instead of 23.2%.
 - Files: `imports/mathlib/{lakefile.toml,lean-toolchain,VEImports/*.lean,README.md}`, `experiments/math-evidence-EX1/`
   (report and measurements). Shared files: none. No test in the suite builds Mathlib (hermetic tests).
 
@@ -1408,9 +1540,15 @@ V +10-16 KB (most of it appendix table rows), DL +5-8 KB.
   Bertrand's postulate and its test fails).
 - Bytes: 0.
 
-### ME-P4. Pilot: mathematics (pilot runner, 2-3 h)
+### ME-P4. Pilot: mathematics (pilot runner and a person, 2-3 h, plus the person's transcription)
 
-M-1 to M-4 in the Ramanujan ledger; the main theorem by import if ME-13 landed. Estimated: M +0.5-1.0 KB.
+- First (draft 5): a person transcribes the paper's formulas from the scan into a translation companion and checks
+  it against the scan; the pinned source stays the OCR bytes, and every span still points into them. No model is
+  used.
+- Then M-1 to M-4b in the Ramanujan ledger; the main theorem by import if ME-13 landed.
+- Measured ceiling (draft 4 estimated M +0.5-1.0 KB): +272 B without imports (`arith` 220 B, `calc-derive` 52 B;
+  10.3% of the text), +344 B more with imports of the theorem statements (23.2%). The analytic chain (2,114 B,
+  79.7%) stays residual even if EX-1 passes.
 
 ### EX-2. Experiment: approximations with error bounds (Lean, 5-6 h)
 
@@ -1421,12 +1559,15 @@ remainder bound for |v/V| ≤ 10⁻³, (b) the transverse path "2D√(1 + v²/V�
 D(v/V)⁴/4", and (c) the Einstein alternate's "1/√(1 − β²) − 1 − β²/2 is between 0 and β⁴ for 0 ≤ β² ≤ 1/2". Pass:
 plan an `approximation` batch. Fail: these sentences stay residual with the reason named.
 
-### EX-3. Experiment: tensor shapes (Lean, 4-5 h)
+### EX-3. Trigger: tensor shapes (draft 5; was an experiment)
 
 Shapes as a second dimension-like type (rows by columns) for products, transposes and sums of declared matrices.
-**Bar**: on the pinned DL text, at least 80% of its method equations with matrix operands receive a shape, and a
-planted shape error in each is reported. Pass: plan a shapes batch beside ME-6. Fail: method equations stay definitions
-with prose types.
+Draft 4's bar ("on the pinned DL text, at least 80% of its method equations with matrix operands receive a shape")
+cannot be measured: ME-0 counted no equations in AlphaFold's main text, which names array shapes only in one caption
+(d035, 162 B, LABELLED); its shapes are in the unpinned supplement. **Trigger**: a pinned DL text (AlphaFold's
+supplement under D22's rule, or another target) with method equations over matrix operands. Then EX-3 runs with
+draft 4's bar (Lean, 4-5 h; after ME-6): pass plans a shapes batch beside ME-6; fail leaves method equations as
+definitions with prose types.
 
 ### EX-4. Trigger: folds and induction in `arith@0`
 
@@ -1444,12 +1585,12 @@ listed as a finding). Pass: V's counts bind to raw trials. Fail: they stay bound
 
 | Batch | Waits for (branch where known) | Hand-written shared files | Generated (regenerate) |
 |---|---|---|---|
-| ME-0 | — | `usecases/` new directories only | — |
+| ME-0 | — (**done** in phase 1) | none: the evidence is under `docs/research/evidence/math-evidence/` | — |
 | ME-S | draft 2 | `docs/spec/math-evidence.md` (new) | — |
 | ME-1 | ME-S PASS (after the bounded re-check of spec 17); lands before quantities' QT-A2 | none (`lean/VE/Numbers/` and `lean/VE/Calc/` are new); `ve/english.py` (`_COMPARISONS` read from the generated phrase file) only if QT-E has not moved the phrases | `lean/VE.lean`, `lean/VE/Audit.lean` (union merges), frozen inventory, axioms, statements, predicates, declarations, trust tables, the comparison-phrase file |
 | ME-2 | ME-1; AR-10's profile-gate table; `fix/main-relay` (main is red since ts-B1); `lean-first/b14d`, `question-answering/q2` and quantities' QT-A3, each of which edits `Protocol.lean` and `service_schema.py`: merged or rebased onto, in the protocol queue's landing order | `lean/VE/Service/Protocol.lean`, `ve/backends/service_schema.py`, the `calc@0` row of AR-10's table, `ve/assurance-manifest.json`, `ROADMAP.md` | response schemas, `lean/ResponseShape.lean`, `lean/ResponseShape/Audit.lean`, checker pins, assurance doc, route cases, AR-10's profile data, gate collection |
 | ME-3 | ME-2; `mig3/py` if it touches `ve/backends/relay.py` | `ve/__main__.py`, `tools/layer_policy.py`, `tests/data/route-cases.jsonl` | `.importlinter`, gate collection |
-| ME-P1 | ME-3 | pilot directories | — |
+| ME-P1 | ME-3 | pilot directories: the new `usecases/` directories, moved from `docs/research/evidence/math-evidence/` | — |
 | ME-4 | ME-2 | `lean/VE/Service/Protocol.lean` (`Handles`, additive, in the protocol queue) | as ME-2 |
 | ME-5 | ME-1 | none | as ME-1 |
 | ME-6 | ME-1; lands before quantities' QT-A7 | the W6a unit decoder's version switch (`lean/VE/Time/Wire.lean`) only if `ve-units@2` is decoded there | as ME-1 |
@@ -1457,12 +1598,13 @@ listed as a finding). Pass: V's counts bind to raw trials. Fail: they stay bound
 | ME-7, ME-8, ME-9 | ME-1 (ME-7 also ME-4 for its column aggregates; ME-8 also ME-7 for granularity) | none | as ME-1 |
 | ME-10 | ME-2; `lean-first/b16g` (or the batch after `b16e` that gives the `document` mode a content hook); the document-mode queue AT-3b, SC-1b, QT-A4, ET-5, WG-4 before it | `lean/VE/Service/Document.lean` (one branch), else one line in `ve/document.py` | as ME-2 |
 | ME-11 | english-lean E3's quantities step (quantities' QT-E; no branch yet); the english-lean E2 flip; AT-5 and QT-A6 before it in the English queue | `lean/VE/EnglishGrammar/*` (serialised queue `AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7`; additive) | English `Fixed/*.lean`, `LOCK.json` (a person's `--actions-version`), English codes |
-| ME-P3 | ME-7 to ME-9 (ME-10, ME-11 for display) | pilot directories | — |
+| ME-P3 | ME-7 to ME-9 (ME-10, ME-11 for display); DL's figure comparisons also ME-4 and pinned figure data | pilot directories | — |
 | ME-12 | ME-S PASS; ME-1 (`VE.Numbers`: `Verdict`, `UnknownReason`, `Outcome`; statement review J6); AR-10's profile-gate table | as ME-2 and ME-3 | as ME-2 and ME-3 |
 | EX-1 | ME-12 | `imports/` (new), `experiments/math-evidence-EX1/` (new) | — |
 | ME-13 | EX-1 PASS | none | as ME-2 |
-| ME-P4 | ME-12 (ME-13 if built) | pilot directories | — |
-| EX-2, EX-3 | ME-9 (EX-3: ME-6 and a pinned DL text) | new experiment directories | as ME-1 if Lean is added |
+| ME-P4 | ME-12 (ME-13 if built); a person's transcription of the formulas | pilot directories | — |
+| EX-2 | ME-9 | new experiment directories | as ME-1 if Lean is added |
+| EX-3 (trigger) | its trigger (a pinned DL text with method equations over matrix operands), then ME-6 | new experiment directories | as ME-1 if Lean is added |
 | EX-5 | ME-4 | `lean/VE/Service/Protocol.lean` (`Handles`) | as ME-2 |
 
 How conflicts are avoided: all Lean is in new directories (`lean/VE/Calc/`, `lean/VE/Arith/`) and new response-shape
@@ -1477,33 +1619,71 @@ above.
 
 ## 7. The measure
 
-- **Denominators**: the pinned texts' bytes as `SOURCE.md` records them (ME-0); VE's paper sections by SHA-256 at the
-  ME-0 commit (73,801 B at `49de179e`, measured with `wc -c`).
+- **Denominators**: the pinned texts' bytes as ME-0 recorded them (`raw/fetch-log.json` and `SUMMARY.md`'s Sources
+  table until ME-P1 writes `SOURCE.md`): H 24,368 B, M 2,651 B, DL 66,858 B; VE's paper sections by SHA-256 at the
+  ME-0 commit (73,801 B at `49de179e`, measured with `wc -c`, confirmed by P5), of which ME-0 partitioned the E1 slice
+  (8,883 + 1,054 = 9,937 B) and ME-P1 partitions the rest.
 - **Statuses**: CHECKED when every claim of the unit's companion case or document content is decided by Lean (holds,
   or fails with a finding); OPEN when a claim is unknown; UNFORMALISED with a reason otherwise; LABELLED for exposition
   and meta; MIXED units split into parts as W2 specifies. A unit whose numbers are checked but whose hedge or causal
   framing is not is MIXED, never wholly CHECKED.
-- **Reported each pilot run**: bytes and units by status and kind; findings (source arithmetic that fails); the
-  residual (stated values by support, data digests, assumptions, imports); and the NORTH-STAR rows M, H, DL, V
-  refreshed. The constitution and UDHR runs are not touched by these batches.
+- **CHECKED in two parts** (draft 5, from ME-0, where one CHECKED count mixed two strengths): **stated only**, Lean
+  admitted the value (a W6a quantity with `support: testimony`, or a calc `stated` value) and no relation over it was
+  certified; and **in a certified relation**, the unit is a premise or the consequence of a relation whose
+  certificate Lean replayed, or of a calc claim Lean decided. Today: H 276 / 1,582 B, V's slice 817 / 382 B, DL
+  1,905 / 2,548 B. A premise of a certified relation is not itself certified (H's Mean in w. l. rows).
+- **Premise status beside CHECKED** (draft 5): each pilot run reports the document's premise status from
+  `ve document check`, three-valued: a checked model, a contradiction, or UNKNOWN within the budget. CHECKED never
+  says the premises are consistent; with UNKNOWN (H, V and DL today: no model or contradiction within 10,000 proof
+  steps and domain size 2) every certificate is replayed but whether it holds vacuously is undecided, and the report
+  says so. Only M's premises have a checked model.
+- **Reported each pilot run**: bytes and units by status and kind, CHECKED in its two parts, and the premise status;
+  findings (source arithmetic that fails); the residual (stated values by support, data digests, assumptions,
+  imports); and the NORTH-STAR rows M, H, DL, V refreshed. The constitution and UDHR runs are not touched by these
+  batches (P3: 0 and 0).
 
-### Expected effect per batch (all **estimates** until a pilot run measures them)
+### Effect per batch: measured at ME-0, measured ceilings after
 
-| Batch | Constitution | UDHR | Physics | VE paper | Deep learning | Mathematics |
+Every number from ME-1 on is a **ceiling** read from the ME-0 ledgers (`docs/research/evidence/math-evidence/
+summary.json`, `ceilings_percent`): the bytes of the UNFORMALISED units tagged with the features that pilot's batches
+check, as if every one became CHECKED. Approximation units (H 2,731 B, DL 1,730 B, V 376 B) are left out, since D17
+keeps them reading sets, never CHECKED. A pilot run measures the real number; a ceiling is not a forecast. Draft 4's
+estimates are in parentheses.
+
+| Batch | Constitution | UDHR | Physics (24,368 B) | VE paper (E1 slice, 9,937 B) | Deep learning (AlphaFold, 66,858 B) | Mathematics (2,651 B) |
 |---|---|---|---|---|---|---|
-| ME-0 | 0 | 0 | measured; 1.5-2.5 KB checked | measured; 0.3-0.8 KB | measured if pinned; 2-4 KB | measured; 0 |
-| ME-P1 | 0 | 0 | +0.6-1.0 KB | +0.8-1.5 KB | — | — |
-| ME-P2 | 0 | 0 | +3.0-4.5 KB | +1-2 KB | — | — |
-| ME-P3 | 0 | 0 | +1.5-2.5 KB | +10-16 KB | +5-8.5 KB | — |
-| ME-P4 | 0 | 0 | — | — | — | +0.5-1.0 KB |
-| After the plan (research 6 and 7) | 0 | 0 | 20-31% | 16-28% | 14-25% | 10-20% (6-12% if EX-1 fails) |
+| ME-0 (measured) | 0 | 0 | 1,858 B CHECKED, 7.6% (est. 1.5-2.5 KB) | 1,199 B, 12.1% (est. 0.3-0.8 KB) | 4,453 B, 6.7% (est. 2-4 KB for LoRA) | 0 |
+| ME-P1 | 0 | 0 | ≤ +2,216 B (est. +0.6-1.0 KB) | ≤ +469 B (est. +0.8-1.5 KB, whole paper) | — | — |
+| ME-P2 | 0 | 0 | ≤ +467 B, 314 B reachable (est. +3.0-4.5 KB) | ≤ +512 B (est. +1-2 KB) | — | — |
+| ME-P3 | 0 | 0 | ≤ +752 B (est. +1.5-2.5 KB) | ≤ +2,858 B (est. +10-16 KB, whole paper) | ≤ +1,475 B; ≤ +4,830 B with figure data (est. +5-8.5 KB) | — |
+| ME-P4 | 0 | 0 | — | — | — | ≤ +272 B; ≤ +616 B with imports (est. +0.5-1.0 KB) |
+| After the plan | 0 | 0 | ≤ 21.7% (research 7: 20-31%) | ≤ 50.7% of the slice; whole paper unmeasured (research 7: 16-28%) | ≤ 13.9%; ≤ 8.9% without figure data (research 7: 14-25%) | ≤ 10.3% without imports, ≤ 23.2% with imports of the theorem statements (research 7: 6-12% and 10-20%) |
+
+Research 7's physics upper range needed the approximation units to become CHECKED, which D17 rules out, and assumed
+30-40 KB of text where ME-0 measured 24,368 B. The VE paper's whole-paper row stays research 7's **estimate** until
+ME-P1's partition.
 
 ## 8. Not claimed, risks, open questions
 
 - **Not claimed**: any byte before a pilot run measures it; that any stated value, data file or imported proof is true
   beyond what is checked; that a passing calculation makes a source's conclusion true; that readers follow worded
-  equations (unmeasured; it needs human or proxy readers, which this plan does not call); any DL licence.
-- **Risks**: the paper texts' sizes and sentence kinds are estimates from memory until ME-0; exact arithmetic on large
+  equations (unmeasured; it needs human or proxy readers, which this plan does not call); any DL licence beyond
+  AlphaFold's CC BY 4.0, which ME-0 read from its licence fields; that a CHECKED unit's premises are consistent (7).
+- **Risks found by ME-0** (draft 5):
+  - *The Rust accelerator's default limit.* At its default 5 s wall-clock limit the untrusted Rust checker stops the
+    physics document (216 W6a constants), which is then CheckerUnavailable; with `VE_RUST_TIMEOUT=1800` Lean admits it
+    in about 47 s (157 MB peak). VE's paper document hit the limit on one run of three, so it depends on load. A paper
+    with two tables already reaches it. The calc route is Lean-only (D21), so ME-1's cases do not meet it; W6a
+    documents and the `document` mode's other content do. It belongs to the Rust fast path's owner ("Cross-plan issues for the DRI", item 1).
+  - *Premise consistency at scale.* `ve document check` leaves the premise set of the H, V and DL documents UNKNOWN
+    (a few hundred stated quantities; domain size 2, 10,000 steps), so certificates are replayed but non-vacuity is
+    undecided. A premise-consistency route that scales to a few hundred stated quantities is not in this plan
+    ("Cross-plan issues for the DRI", item 2); until it exists the measure reports the status (7).
+  - *OCR mathematics.* Both available texts of Ramanujan 1919 garble the formulas (79.7% of M is analytic and
+    garbled); ME-P4 starts from a person's transcription.
+  - *Figure-only results.* AlphaFold's comparisons rest on figure data (3,355 B); without pinned source data they
+    stay UNFORMALISED and DL's ceiling is 8.9%.
+- **Risks**: the paper texts' sizes and sentence kinds were estimates from memory until ME-0 measured them; exact arithmetic on large
   powers or long tables may hit limits (UNKNOWN, never a wrong verdict; measured in `tools/bench`); printed tables come
   from software whose floating-point results VE does not model (D6: the exact claim is decided, software reproduction
   is UNKNOWN, an undeclared tie rule is a reading set); Mathlib's build cost may fail EX-1's bar; english-lean E3 may be
@@ -1560,6 +1740,10 @@ above.
   the budget with an exhausted read;
   witness and refutations prove and refute one `Consistent`; a negated filter never selects an absent or mistyped
   cell; each square link is visible as two premises; statistics are undefined outside their domains.
+- (Phase 1, spec 17 item 8.) Every source fixture's case reads only what its anchored span states: H-4 and H-5 take
+  the source's v²/V² = 10⁻⁸, never v/V = 10⁻⁴; H-9's case is the printed table (means of unprinted readings), not
+  readings; the DL fixtures are AlphaFold's; every number of H-5b, H-9, V-7b, M-4b and DL-1 to DL-4 is recomputed in
+  the stub.
 
 ## 10. Shared pieces
 
@@ -1648,3 +1832,39 @@ Abstractions several of the seven research-wave designs share, as the cross-plan
     whose counted value is exhausted or undefined gets its row.
   - The draft-2 choices beyond J1-J11 (spec 16's C14, C15, C17, C19, C20, C21) are named in the spec's re-check item
     7, for both reviewers to accept explicitly (8).
+- Draft 5 (2026-10-13, branch `research/math-evidence-p1`): applies phase 1 (ME-0) with the spec's draft 4; the list
+  at the top gives the changes. No Lean statement, owner, shared item or build order changes. Kept: every batch ME-1 to
+  ME-13 (phase 1 cancels none), EX-1, EX-2, EX-5. Changed: H-4, H-5, H-9 (P4), the DL target and fixtures (P2), ME-P1
+  (H-9, the move to `usecases/`, the paper partition), ME-P2 (no H-9), ME-P3 (AlphaFold), ME-P4 (transcription first),
+  the measure (CHECKED in two parts, premise status, ceilings). Demoted: EX-3 to a trigger. Dropped: draft 4's DL-1 to
+  DL-5.
+
+## Cross-plan issues for the DRI
+
+Phase-1 results that bear on what the cross-plan review settled (`SYNTHESIS.md`, `edits-math-evidence.md`). None of
+the shared parts is changed in this plan; each item names the owner and what the DRI is asked to decide.
+
+1. **The Rust accelerator's default limit stops a two-table paper** (owner: the Rust fast path in `rust/` and its
+   relay timeout; not this plan, D21). At the default 5 s wall-clock limit the untrusted checker stops ME-0's physics
+   document (216 W6a constants) and, under load, VE's paper document; the answer is CheckerUnavailable, and Lean admits
+   both with `VE_RUST_TIMEOUT=1800` (physics in about 47 s). The UDHR pilot reported the same load dependence. The
+   calc route is Lean-only and is not affected; every pilot that states a table as W6a facts is. To decide: a limit
+   set by measurement, a Lean-only path for large stated documents, or stated tables carried as ME-4 data handles
+   (which keeps ME-4's shared item, a data kind in `VE.Service.Handles`, but widens what it carries). Until then this
+   plan's pilots run with a raised `VE_RUST_TIMEOUT` and say so.
+2. **Premise consistency for documents with a few hundred stated quantities** (owner: the `document` mode's premise
+   check, `ve document check`; not this plan). It leaves H, V and DL UNKNOWN (domain size 2, 10,000 steps), so every
+   certified relation in them has undecided non-vacuity. This affects every plan whose pilot counts certified bytes.
+   To decide: who builds a premise-consistency route that scales (for example, one that exploits that stated W6a
+   facts are ground). This plan only reports the status (7).
+3. **"Around" and the shared approximation row** (owner: english-lean's catalogue; QT-A6 adds the row, and edit 8 and
+   section 10 piece 6 fix its words as "about", "approximately", "roughly", "nearly", with ME adding only "on the
+   order of", "on par", "comparable"). AlphaFold uses "around" ("around 350,000 diverse sequences", DL-3; "around
+   1,300 residues"), and piece 6 already cites events' "around noon". To decide: whether "around" joins the shared row
+   in QT-A6 or is a row ME-11 adds. This plan adds neither.
+4. **NORTH-STAR rows M, H, DL and V** (owner: the DRI; the file is in `ve-northstar`). The measured text is the
+   phase-1 report's 4.4: H 7.6% CHECKED, ceiling 21.7%; M 0%, ceilings 10.3% and 23.2%; DL 6.7%, ceilings 13.9% and
+   8.9%; V's E1 slice 12.1%. To decide: apply it at the next NORTH-STAR update; the weights are unchanged.
+5. **No change asked** (recorded so the DRI need not check): ME-4 loses its physics fixture (H-9 needs only ME-1), but
+   its shared item and protocol-queue place stay, since V's counts, DL's figure data and EX-5 need it; the pilot order
+   and the build order are confirmed; H-10 stays refused until events' ET-T3, as edit 7 says.

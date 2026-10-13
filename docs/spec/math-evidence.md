@@ -1,7 +1,29 @@
 # Science papers in VE: `calc@0`, physical dimensions, `arith@0` and proof imports (statement specification)
 
-> **Status.** Item-1 specification (batch ME-S), draft 3 (2026-10-13), branch `design/math-evidence` from `main` at
-> `49de179e`. Written from [math-evidence-PLAN.md](math-evidence-PLAN.md) draft 4 (cited `plan n`). Draft 1 applied
+## Changes in this draft
+
+Draft 4 (2026-10-13) applies phase 1 (ME-0, [math-evidence-phase1.md](../research/math-evidence-phase1.md)) with the
+plan's draft 5. It changes fixtures and prose only: **no Lean statement changes**, so the untracked stub
+`lean/SpecStubs_math-evidence.lean` needs no edit for this draft (it is not tracked in this branch, and its
+re-run stays the re-check's item 1).
+
+- 13.2 and 13.3: every physics, mathematics and VE-paper fixture names its ME-0 anchor (span and outcome) instead of
+  *paraphrase*.
+- H-4 and H-5 (CHANGED by ME-0) read the source's v²/V² = 10⁻⁸ (spans in h049 and h113), never the unstated
+  v/V = 10⁻⁴; same results (identity in D; 2/5).
+- H-9 (CHANGED by ME-0) is the source's printed table: Mean rounding, Mean in w. l. = 0.02 × Mean, the repeated half
+  row, Final mean; 104 claims, all hold, and a negative control. It needs `calc@0`'s core only (ME-1), not counted
+  values.
+- New fixtures: H-5b (the 1881 figure 0.04), V-7b (six main-text p values over 2¹²), M-4b (formula (18)'s other four
+  pairs), DL-1 to DL-4 (AlphaFold, the pinned deep-learning target). H-7u is marked constructed.
+- Section 10 says how pilots report CHECKED (two parts) and the premise status (UNKNOWN for H, V, DL today).
+- Section 17's re-check gains item 8: the phase-1 fixtures, recomputed in the stub.
+- Section 0: EX-3 is now a trigger.
+
+> **Status.** Item-1 specification (batch ME-S), draft 4 (2026-10-13), branch `research/math-evidence-p1`; drafts 1
+> to 3 on `design/math-evidence` from `main` at `49de179e`. Draft 4 applies phase 1 (list above); the rest of this
+> note is draft 3's. Written from [math-evidence-PLAN.md](math-evidence-PLAN.md) draft 4 (cited `plan n`); draft 4
+> follows the plan's draft 5. Draft 1 applied
 > the converged Astra + Fable review of the plan (`manage-agents/debates/design-math-evidence/`, edits A1-A6 and
 > F1-F5; section 15). Draft 2 applies the converged statement review of draft 1
 > (`manage-agents/debates/math-evidence-spec/`, verdict FIX, CONVERGED after round 2): Fable's joint edits J1-J11 with
@@ -45,7 +67,7 @@ meaning and its own row theorem (3.4): a **claim** about declared values (2.2), 
 **consistency check** of printed numbers (8.1) and an **identity** (8.2). An `arith@0` case asks for statements
 (12.5).
 
-Out of scope: approximations with error bounds (EX-2), tensor shapes (EX-3), folds and induction inside `arith@0`
+Out of scope: approximations with error bounds (EX-2), tensor shapes (EX-3, a trigger from plan draft 5), folds and induction inside `arith@0`
 (EX-4), chunked data (EX-5), the calc–attitudes bridge for hedged calculations (no plan owns it), dates before 1970
 (W6's trigger ET-T3), section-scoped rounding declarations (scope's anchor reach), real numbers in `arith@0`.
 
@@ -1753,6 +1775,13 @@ theorem calcLeaf_claim_holds (c : Case) (h : WellFormed c.decls) (claimId : Stri
 end VE.Calc
 ```
 
+Pilot reports (plan 7, draft 4 of this spec) split CHECKED bytes into **stated only** (Lean admitted the value; no
+relation over it was decided) and **in a certified relation** (the unit is a premise or the consequence of a relation
+Lean replayed, or of a claim Lean decided), and give the document's premise status beside them, three-valued: a
+checked model, a contradiction, or UNKNOWN within budget. CHECKED never asserts that the premises are consistent; ME-0
+found them UNKNOWN for the H, V and DL documents. Both are reporting rules over Lean's answers, not new statements:
+`unitStatus` is unchanged.
+
 A unit whose numbers are checked but whose hedge or causal framing is not is MIXED (plan 7): hedged calculation units
 ("probably less than one sixth") stay `hedged` labels until a separately reviewed calc–attitudes bridge exists. A W6a
 or relational claim may not cite a `calc:` leaf (no bridge between the profiles is designed). Residual lines use W2's
@@ -2479,7 +2508,14 @@ No diagnostic text contains a symbol (plan 9); each refusal names its rewrite.
 ### 13.2 Fixture definitions
 
 Definitions are given here; the expected results are in 13.3, computed in the stub for draft 1's fixtures and by hand
-for draft 2's (marked there). Sources marked *paraphrase* are re-anchored to byte spans in ME-0.
+for draft 2's (marked there). Draft 4's fixtures (marked *phase 1*) were computed with exact fractions by phase 1's
+scripts (`fixture-anchors.json`'s pre-checks, not VE verdicts) and by hand, and are recomputed in the stub at the
+re-check (17, item 8). Draft 3's *paraphrase* sources were re-anchored by ME-0 to byte spans of the pinned texts
+(`docs/research/evidence/math-evidence/fixture-anchors.json`); each row now gives its anchor. Physics spans are in
+`physics-michelson-morley/source.txt` (24,368 B), mathematics spans in the OCR text
+`math-ramanujan-bertrand/source.txt` (2,651 B), deep-learning units in `dl-alphafold/source.txt` (66,858 B). A
+source span written in TeX ("10^{-8}") or with a superscript ("2×10^7") is not read by 4.4's source-number grammar,
+so a finding over it stays "transcription unchecked" (2.5).
 
 | Id | Source | Case |
 |---|---|---|
@@ -2493,6 +2529,7 @@ for draft 2's (marked there). Sources marked *paraphrase* are re-anchored to byt
 | V-6r | the same | `sqrt-rounds` of the population variance to 0.108 |
 | V-7 | `paper/generated/posthoc-weakening-contrasts.md`, "Two-sided p", 8 rows of 9 templates | `grainRefutes 512` of each printed p, both rules |
 | V-8 | the same, row "14B F − S attacker", "0.007812" | 4/512 at six places, both rules |
+| V-7b | *phase 1*: `paper/sections/04-e1.md`, the six main-text p values (ME-0 units v060-v065): .460938, .875488, .000977, .001953, .218750, .993164 | `grainRefutes 4096` of each printed p at six places, both rules |
 | V-9 | software convention "Python 3.12": 2.675 printed as 2.67 | stated 2.675; `rounds tiesUp (267, 2)`; `"software"` declared |
 | V-10 | software convention: 0.1 + 0.2 − 0.3 printed as 0.0000000000000001 | `rounds tiesUp` of the sum to (1, 16); `"software"` declared |
 | V-11 | debate A1 | x = 10³⁹ (stated), y = x⁶⁴, z = y × y; claims `z < 1`, `1 / (x − x) = 1`, `y < 1` |
@@ -2503,23 +2540,24 @@ for draft 2's (marked there). Sources marked *paraphrase* are re-anchored to byt
 | D-1 | ROADMAP: "17/19 … (15 tableau certificates plus T9 and T9e)" | `15 + 2 = 17` |
 | D-2 | UDHR pilot SUMMARY: "claimed covered bytes 4,792 (43.90%)" of 10,916 | `rounds tiesUp (100 × 4792 / 10916) (4390, 2)` |
 | D-3 | constitution pilot SUMMARY: 2,951 bytes (1.60%); 73 + 349 + 2,529 | `73 + 349 + 2529 = 2951`; `rounds tiesUp (100 × 2951 / 184893) (160, 2)` |
-| H-1 | *paraphrase*: D/(V − v) + D/(V + v) = 2DV/(V² − v²) | identity over free D, V, v |
-| H-2 | *paraphrase*: 2DV²/(V² − v²) − 2D(1 + v²/V²) = 2Dv⁴/(V²(V² − v²)) | identity |
-| H-3 | *paraphrase*: 2D(1 + v²/V²) − 2D(1 + v²/(2V²)) = Dv²/V² | identity |
-| H-4 | *paraphrase*: 2D × (10⁻⁴)² = 2D × 10⁻⁸; with D = 2 × 10⁷ stated | identity in D; with D stated, `2 × D × ratio² = 0.4` |
-| H-5 | *paraphrase*: "the displacement to be expected was 0.4 fringe" | path = 2 × 10⁷, ratio = 10⁻⁴: `2 × path × ratio² = 0.4` |
-| H-6 | *paraphrase*: "certainly less than the twentieth part … less than one-fourth" | premises d = 0.4 s, d < 0.02; link (s, r); conclusion r < 1/4; certificate weights [1, 0, 1, 0.4] on [d − 0.4s ≥ 0, 0.4s − d ≥ 0, 0.02 − d > 0, negated goal] |
-| H-6p | the "probably" pair: fortieth part, one sixth | d < 0.01; conclusion r < 1/6; same weights |
+| H-1 | RE-WORDED (the source's TeX, spans from 6,698): D/(V − v) + D/(V + v) = 2DV/(V² − v²) | identity over free D, V, v |
+| H-2 | RE-WORDED: 2DV²/(V² − v²) − 2D(1 + v²/V²) = 2Dv⁴/(V²(V² − v²)) | identity |
+| H-3 | RE-WORDED: 2D(1 + v²/V²) − 2D(1 + v²/(2V²)) = Dv²/V² | identity |
+| H-4 | *phase 1* (CHANGED in draft 3, which stated v/V = 10⁻⁴; the source never does): "hence the displacement of the interference fringes should be ${2D \frac{v^2}{V^2}}$. Considering only the velocity of the earth in its orbit, this would be ${2D \times 10^{-8}}$." (spans [7,265, 7,348) and [7,350, 7,443), unit h049) | sq stated `["sci", "1", -8]` (the squared speed ratio, `support: testimony`, span in h049), D free: `["identity", 2 × D × sq, 2 × D × ["sci", "1", -8]]`; with D = 2 × 10⁷ stated, `2 × D × sq = 0.4` |
+| H-5 | *phase 1* (CHANGED in draft 3, which used H-4's unstated v/V): "The distance D was about eleven meters, or 2×10^7 wave-lengths of yellow light; hence the displacement to be expected was 0•4 fringe." (span [15,790, 15,882), unit h114; the source's decimal point is a bullet) | path = 2 × 10⁷ (stated, span), sq = 10⁻⁸ (stated, span in h113): `2 × path × sq = 0.4` |
+| H-5b | *phase 1*: "If, as was the case in the first experiment, ${D =2\times 10^{6}}$ waves of yellow light, the displacement to be expected would be 0.04 of the distance between the interference fringes." (unit h050) | path = 2 × 10⁶, sq = 10⁻⁸: `2 × path × sq = 0.04` |
+| H-6 | ANCHORED (h115-h116): "The actual displacement was certainly less than the twentieth part of this … the relative velocity of the earth and the ether is … certainly less than one-fourth" | premises d = 0.4 s, d < 0.02; link (s, r); conclusion r < 1/4; certificate weights [1, 0, 1, 0.4] on [d − 0.4s ≥ 0, 0.4s − d ≥ 0, 0.02 − d > 0, negated goal] |
+| H-6p | ANCHORED: "and probably less than the fortieth part" … "probably less than one sixth the earth's orbital velocity" | d < 0.01; conclusion r < 1/6; same weights |
 | H-6n | negative control: "less than one fifth" | conclusion r < 1/5; candidate κ: r = 1/5, s = 1/25, d = 0.016 |
 | H-6a | debate A2 | H-6's premises; candidate κ: r = 1, s = 0, d = 0, against r < 1/4, with and without the link |
 | H-7 | physical dimensions | Γ: D, λ lengths; V, v length per time; T time; D/(V − v), D/λ, D + T |
-| H-7u | unit change | path 2 × 10⁷ (length), ratio 10⁻⁴ (dimensionless); rescale length by 1,000; `2 × path × ratio² < path` and `rounds tiesUp (2 × ratio²) (2, 8)`; negative pair: `2 × path × ratio² = 0.4 × path` and `rounds tiesUp (2 × ratio²) (3, 8)` |
+| H-7u | unit change (constructed: its ratio 10⁻⁴ is not the source's, which states only v²/V² = 10⁻⁸; the results do not depend on it) | path 2 × 10⁷ (length), ratio 10⁻⁴ (dimensionless); rescale length by 1,000; `2 × path × ratio² < path` and `rounds tiesUp (2 × ratio²) (2, 8)`; negative pair: `2 × path × ratio² = 0.4 × path` and `rounds tiesUp (2 × ratio²) (3, 8)` |
 | H-7c | conversion | 2.5 × kilometer against 2,500 × meter (factors 1,000 and 1) |
 | H-7l | legacy tags | `usd_cent` and `eur_cent` as `ve-units@1` tags; `a + b` |
 | H-7d | `day` | a `ve-units@2` declaration giving `day` `{"time": 1}` |
-| H-8 | *paraphrase*: "about eleven meters, or 2 × 10⁷ wave-lengths" | length 11, wavelength 5.89 × 10⁻⁷ (testimony): `rounds tiesUp (length / wavelength) (2, −7)` |
-| H-9 | the two observation tables | counted means against the printed means; no outcome is presumed |
-| H-10 | the dates July 8-12, 1887 | refused (W6a dates start at 1970-01-01); W6's trigger ET-T3 |
+| H-8 | ANCHORED (h114): "The distance D was about eleven meters, or 2×10^7 wave-lengths of yellow light" | length 11, wavelength 5.89 × 10⁻⁷ (testimony): `rounds tiesUp (length / wavelength) (2, −7)` |
+| H-9 | *phase 1* (CHANGED in draft 3, which assumed printed readings at 16 azimuths): the noon and evening tables, spans [12,968, 15,143), units h086-h106. "The following tables give the means of the six readings"; 17 marks per row (mark 16 at the start and end of a turn); sessions noon July 8, 9, 11 and evening July 8, 9, 12; rows Mean, Mean in w. l., a repeated half row (marks 8-16), Final mean; "one division means 0.02 wave-length" | stated: the 102 session cells and the 104 printed derived cells; factor = 0.02 (stated, span); columns j = 0 … 16 in printed order (column 0 is mark 16 at the start of the turn); for each table t and column j: m(t, j) defined as the sum of the three session cells divided by 3, claim `rounds tiesUp m(t, j) Mean(t, j)` at one place (34); `factor × Mean(t, j) = WL(t, j)` (34); `Half(t, i) = WL(t, 8 + i)` for i = 0 … 8 (18); `(WL(t, i) + WL(t, i + 8)) / 2 = Final(t, i)` for i = 0 … 8 (18). Negative control H-9n: the noon Mean at mark 1 stated 41.9 instead of 41.6 |
+| H-10 | RE-WORDED: the dates July 8, 9, 11 and 12 (row labels without a year; "November 1887" is the publication line, span [176, 189)) | refused (W6a dates start at 1970-01-01; ME-0 P6: `DateRange(1887-07-08)`, the 1970-01-01 control admitted); W6's trigger ET-T3; the year is a stated premise with its span |
 | S-1 | kappa and binomial | `kappa?` of [[20, 5], [10, 15]] and [[5, 0], [0, 0]]; `binomialTail 10 8 (1/2)`, `binomialTail 10 0 (1/3)` |
 | S-2 | sign flips | `signFlipP [1, 1, 1, 1]`; `signFlipP [1, 2, −1, 3, 2, 1, −2, 4, 1, 2, 3, −1]`; `(signs 12).length` |
 | S-3 | GRIM | a mean of five integers printed as 3.47, 3.40, 3.4 |
@@ -2529,15 +2567,20 @@ for draft 2's (marked there). Sources marked *paraphrase* are re-anchored to byt
 | T-1 | tables (A4, J9) | table judge (text) / approved (bool) / score (number), as the CSV bytes `judge,approved,score\n32B,true,3\n32B,false,5\n14B,true,\n14B,,4\n14B,yes,6\n`: rows ("32B", true, 3), ("32B", false, 5), ("14B", true, absent), ("14B", absent, 4), ("14B", text "yes", 6); filters `judge is "7B"` (empty), `judge is "32B"`, `approved`, `not approved` (`["false", "approved"]`), `judge is not "32B"`, `score does not equal 3` |
 | T-2 | digest | a data handle whose bytes hash differently |
 | T-3 | exhaustion through definitions (J2) | T-1's bytes, `"budget": 6`; values: `approved_32b` counted (`count`, `["and", ["is", "judge", "32B"], ["true", "approved"]]`), `share` defined `approved_32b / 2`, `mean_7b` counted (`["mean", "score"]`, `["is", "judge", "7B"]`); claims c1 `approved_32b = 1`, c2 `share < 1`, c3 `mean_7b < 1`, c4 `mean_7b + share < 1`, c5 `share + mean_7b < 1`; the same case without `budget` |
-| M-1 | Ramanujan, *paraphrase*: true for n from 1 to 161 | `allFromTo 1 161 (exFromTo (n + 1) (2n) (prime p))` |
+| M-1 | Ramanujan, RE-WORDED: "Thus Bertrand's Postulate is proved for all values of x, not less than 162: and, by actual verification, we find that it is true for smaller values" (whole n from 1 to 161) | `allFromTo 1 161 (exFromTo (n + 1) (2n) (prime p))` |
 | M-1b | budget boundary | M-1 with budgets 17,010 and 17,011 |
 | M-2 | the chain 2, 3, 5, 7, 13, 23, 43, 83, 163 | each prime, each less than twice the one before |
 | M-3 | Bertrand's postulate, whole-number reading | `bertrand` (12.3) |
 | M-3r | the real reading of x | a reading set {whole number, real}; `arith@0` has no reals |
-| M-4 | π(x) − π(x/2) ≥ 2 for x ≥ 11 | `primeCount x = #{p ∈ [1, x] : prime p}`, `halfPrimeCount x = #{p ∈ [1, x] : 2p ≤ x ∧ prime p}`; `allFromTo 11 N (2 ≤ primeCount x − halfPrimeCount x)` at N = 200, 248, 249, 1,000 |
+| M-4 | π(x) − π(x/2) ≥ 2 for x ≥ 11; RE-WORDED: formula (18), OCR span [2,575, 2,620) "> 1, 2, 3, 4,5,..., if * » 2, 11, 17, 29, 41" (numbers intact, symbols garbled) | `primeCount x = #{p ∈ [1, x] : prime p}`, `halfPrimeCount x = #{p ∈ [1, x] : 2p ≤ x ∧ prime p}`; `allFromTo 11 N (2 ≤ primeCount x − halfPrimeCount x)` at N = 200, 248, 249, 1,000 |
+| M-4b | *phase 1*: formula (18)'s other pairs, the same span | for (k, T) = (1, 2), (3, 17), (4, 29), (5, 41): `allFromTo T N (k ≤ primeCount x − halfPrimeCount x)` at the bound N ME-12 measures for each, and the single instance at x = T − 1 |
 | M-4x | exhaustion | M-1 with budget 1,000 |
 | M-5 | negative control | strict n < p < 2n for n from 1 through 161; its deciding value (12.5) |
 | M-6 | the prime predicate | VE's `prime` against `IsPrime` on 0 through 400 |
+| DL-1 | *phase 1*, AlphaFold d024 and d027: medians 0.96 Å (95% interval 0.85–1.16) against 2.8 Å (2.7–4.0); all-atom 1.5 Å (1.2–1.6) against 3.5 Å (3.1–4.2) | stated medians and bounds; claims `within` for each median (4) and `alphafold < alternative` for each measure (2) |
+| DL-2 | *phase 1*, d239 and d242: "4.8 min with 256 residues, 9.2 min with 384 residues and 18 h at 2,500 residues"; "Without ensembling, the network is 8× faster and the representative timings for a single model are 0.6 min …, 1.1 min … and 2.1 h …" | for each length, `rounds tiesUp (with / without) (8, 0)`; the two timings of a length share their unit |
+| DL-3 | *phase 1*, d119 "around 350,000 diverse sequences" and d231 "a Uniclust dataset of 355,993 sequences" (one set: a translation premise, `support: assumption`) | `rounds tiesUp 355993 (350000, 0)`, `rounds tiesUp 355993 (35, −4)` |
+| DL-4 | *phase 1*, d214: "Removing BFD reduced the mean accuracy by 0.4 GDT, removing Mgnify reduced the mean accuracy by 0.7 GDT, and removing both reduced the mean accuracy by 6.1 GDT." | stated 0.4, 0.7, 6.1; constructed claim `0.4 + 0.7 < 6.1` |
 | E-1 | documents | case: a = 52, n = 243, r = a / n; claims c1 `rounds r (214, 3)`, c2 `rounds r (213, 3)`; leaves c1, c2, c3; statuses of [holds, fails], [holds, unknown], [holds, undefined], [] |
 
 ### 13.3 Expected results (computed in the stub)
@@ -2554,6 +2597,7 @@ for draft 2's (marked there). Sources marked *paraphrase* are re-anchored to byt
 | V-6r | **fails** | population variance 1,527,611/144,000,000; its root rounds to 0.103 only (the only D in 0…199 with `SqrtRoundsTo tiesUp (D, 3)`) |
 | V-7 | 7 of 8 not refuted under ties up; the fourth (0.007812) refuted under ties up, not under half to even (J11: draft 1 said "the eighth") | the multiples m/512 that round to each printed p under ties up: 416, 44, 352, none, 348, 184, 64, 448; under half to even the fourth is 4. 44/512 = 11/128 and 348/512 = 87/128 are exact ties at six places whose upper neighbour is even, so both rules agree |
 | V-8 | holds only under half to even | `tieAt 6 (4/512)` = true; ties up false, half to even true; `round tiesUp` 7,813, `round halfEven` 7,812 |
+| V-7b | *phase 1*: none of the six refuted, under either rule | the multiples k/4,096 that round to each printed p: 1,888, 3,586, 4, 8, 896, 4,068 (0.4609375, 0.87548828125, 0.0009765625, 0.001953125, 0.21875, 0.9931640625); 1,888/4,096 is an exact tie at six places whose upper neighbour 460,938 is even, so both rules give .460938; no other is a tie |
 | V-9 | exact claim **fails**; reproduction unknown; finding `softwareUnreproduced` | ties up false, half to even false; `tieAt 2 2.675` = true; both rules round to 268 |
 | V-10 | exact claim **fails**; reproduction unknown; finding `softwareUnreproduced` | exact value 0; both rules false; `round tiesUp 16 0` = 0 |
 | V-11 | **unknown** (`limit .digits`), **undefined**, **fails** | digit counts of 10³⁹, 10^(39·64), 10^(39·128): 40, 2,497, 4,993 |
@@ -2565,7 +2609,8 @@ for draft 2's (marked there). Sources marked *paraphrase* are re-anchored to byt
 | D-2 | holds | 200 × 100 × 4,792/10,916 = 23,960,000/2,729 = 8,779.77… in [8,779, 8,781) |
 | D-3 | holds × 2 | 73 + 349 + 2,529 = 2,951; 200 × 100 × 2,951/184,893 = 59,020,000/184,893 = 319.21… in [319, 321) |
 | H-1, H-2, H-3 | identity (ME-9) | the stub evaluated both sides at (D, V, v) = (11, 3, 1), (2, 5, −3), (7/3, 1/2, 1/7): no point differs; at V = v the left side of H-1 does not denote; the normaliser's result is ME-9's |
-| H-4, H-5 | holds | 2 × (2 × 10⁷) × (10⁻⁴)² = 0.4 exactly |
+| H-4, H-5 | *phase 1*: identity in D; holds | 2 × (2 × 10⁷) × 10⁻⁸ = 2/5 exactly (draft 3 reached the same 0.4 through the unstated (10⁻⁴)²) |
+| H-5b | *phase 1*: holds | 2 × (2 × 10⁶) × 10⁻⁸ = 1/25 = 0.04 |
 | H-6 | **follows** | 0.02/0.4 = 1/20 and 0.4/20 = 1/50; `Farkas.check` with weights [1, 0, 1, 0.4] true; with −0.4 false (forged); 1/20 ≤ (1/4)² true |
 | H-6p | **follows**; "probably" stays a `hedged` label | `Farkas.check` true; 1/40 ≤ (1/6)² true |
 | H-6n | **does not follow** | 1/20 ≤ (1/5)² false; `counterexampleCheck` true with r = 1/5, s = 1/25, d = 2/125 |
@@ -2576,8 +2621,8 @@ for draft 2's (marked there). Sources marked *paraphrase* are re-anchored to byt
 | H-7l | `DimensionMismatch` | `legacyDim usd_cent ≠ legacyDim eur_cent`; `dimOf (a + b)` = none |
 | H-7d | refused (`CalendarTagNotUnit`) | decoder check (ME-6) |
 | H-8 | holds; "about" is a reading set; the wavelength is a residual leaf | 11/(5.89 × 10⁻⁷) = 11,000,000,000/589 = 18,675,721.5…; 2y = 2,200/589 = 3.735… in [3, 5); printed (2, −7) |
-| H-9 | whatever exact arithmetic gives; a mismatch is a finding | not presumed |
-| H-10 | refused | W6a dates start at 1970-01-01 |
+| H-9 | *phase 1*: all 104 claims hold; H-9n **fails** | no rounding tie can occur (a sum of tenths divided by 3 is never an odd twentieth); noon column 0: (44.7 + 57.4 + 27.3)/3 = 647/15 = 43.13…, ten times it in [430.5, 431.5), printed 43.1; 0.02 × 43.1 = 0.862; Half(0, 0) = WL(0, 8) = 0.706; (0.862 + 0.706)/2 = 0.784; evening column 0: 154/3 = 51.33…, printed 51.3, WL 1.026; H-9n: noon column 1 is (44.0 + 57.3 + 23.5)/3 = 41.6 exactly, not within rounding of 41.9. Today's W6a certifies the Mean, Half and Final relations (ME-0); only `factor × Mean = WL` is beyond it |
+| H-10 | refused | W6a dates start at 1970-01-01; ME-0 measured `DateRange(1887-07-08)` |
 | S-1 | 2/5; none; 7/128; 1 | as computed |
 | S-2 | 1/8; 57/1,024; 4,096 | as computed |
 | S-3 | 3.47 refuted (GRIM); 3.40 and 3.4 not refuted | 17/5 = 3.4, 18/5 = 3.6 |
@@ -2593,10 +2638,15 @@ for draft 2's (marked there). Sources marked *paraphrase* are re-anchored to byt
 | M-3 | stated, not decided (`unboundedStatement`); proved only by import (EX-1) | `Bounded` false |
 | M-3r | reading set; the real reading stays residual | — |
 | M-4 | holds through 248 within 1,000,000 units; unknown from 249 | π(10) − π(5) = 1 (111 units) and π(11) − π(5) = 2 (127 units); at N = 200: (true, 576,518); at 248: (true, 998,395); at 249: none, and (true, 1,008,568) with a budget of 2,000,000; at 1,000: none |
+| M-4b | *phase 1*: each pair holds from its threshold to its measured bound; each instance at x = T − 1 fails | primeCount − halfPrimeCount at x = 1, 16, 28, 40 is 0, 2, 3, 4 (one less than k), at x = 2, 17, 29, 41 it is 1, 3, 4, 5; its minimum over T … 1,000 is k for each pair (exact counts in phase 1); the bounds N are ME-12's, as for M-4 |
 | M-4x | unknown (`limit .evaluations`) | none at budget 1,000 |
 | M-5 | **fails** at n = 1: deciding value 1 | (false, 2 units): the range 2…1 is empty; *by hand*: `decidingValue` is 1, the first n, since the evaluator stops there |
 | M-6 | agree on 0…400 | 78 primes |
 | E-1 | c1 discharged, c2 not (fails), c3 not (missing); statuses CHECKED, OPEN, UNFORMALISED, UNFORMALISED | as computed |
+| DL-1 | *phase 1*: holds × 6 | 0.85 ≤ 0.96 ≤ 1.16, 2.7 ≤ 2.8 ≤ 4.0, 1.2 ≤ 1.5 ≤ 1.6, 3.1 ≤ 3.5 ≤ 4.2; 0.96 < 2.8, 1.5 < 3.5 |
+| DL-2 | *phase 1*: holds, holds, **fails** | 4.8/0.6 = 8; 9.2/1.1 = 92/11 = 8.36…; 18/2.1 = 60/7 = 8.57…, outside [7.5, 8.5); in translation "8×" is a reading set, and this row distinguishes its readings |
+| DL-3 | *phase 1*: **fails**, **fails** | 355,993 is not 350,000 (places 0), and 355,993 × 10⁻⁴ = 35.5993 is outside [34.5, 35.5) (it rounds to 36, that is 360,000); only an open tolerance reading holds |
+| DL-4 | *phase 1*: holds | 0.4 + 0.7 = 1.1 < 6.1 |
 
 M-4's candidate bounds were 200 and 1,000 (debate F5). Under the accounting of 12.2, which is part of the semantics,
 the largest completing bound is 248; ME-12 re-measures it with its implementation (which must charge identically, so
@@ -3139,3 +3189,13 @@ J1-J11 must be accepted explicitly by both reviewers; item 7 below names them.
    ME-8's route fixture and stays a `#guard`), C19 (the new refusal of more than 1,000 `binomial-tail` trials, beside
    the 512-premise limit), C20 (the new `ShadowedVariable` refusal) and C21 (only the outermost bounded quantifier's
    deciding value is reported). A reviewer who does not accept one names the edit, and the next draft makes it.
+8. (Draft 4, phase 1.) The fixtures phase 1 changed or added are as 13.2 and 13.3 give them, recomputed in the stub
+   with `#eval`: H-4 and H-5 over sq = 10⁻⁸ (and no fixture of the source reads v/V = 10⁻⁴; H-7u is marked
+   constructed); H-5b; H-9's 104 claims and H-9n; V-7b's six multiples of 1/4,096; M-4b at x = T − 1 and T (its
+   bounds are ME-12's); DL-1 to DL-4. Each source row's span is the one `fixture-anchors.json` records against the
+   pinned source's SHA-256. No Lean statement changed in draft 4, so items 1 to 7 are unchanged.
+
+**Phase 1 (draft 4).** ME-0's pre-registered fixture check (P4) failed: of 32 fixtures in scope, 14 were ANCHORED, 9
+RE-WORDED, 6 NOT A QUOTE and 3 CHANGED (H-4, H-5, H-9), none ABSENT. Draft 4 rewrites the three to the source, adds
+the fixtures phase 1 found (H-5b, V-7b, M-4b, DL-1 to DL-4), and records every anchor in 13.2. The results of H-4 and
+H-5 do not change; H-9's does, from "not presumed" to 104 claims that hold.
