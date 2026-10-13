@@ -63,6 +63,18 @@ def test_q2_f4_agreement_classifies_evidence_differences_by_saved_reasons():
     assert classify(["unknown"], "ALL", ask_reasons=["X1"]) == "ask unknown (X1 conflict)"
     assert classify(["unknown"], "NONE", ask_reasons=["X4"]) == "ask unknown (other)"
     assert classify(["yes"], "ALL") == "same verdict"
+    assert classify(["notSettled"], "UNKNOWN") == "compatible difference"
+    assert classify(["notNecessarily"], "UNKNOWN") == "compatible difference"
     assert classify([], "ALL").startswith("requires review")
     assert classify(["yes"], "DECIDED").startswith("requires review")
     assert classify(["true"], "ALL").startswith("requires review")
+
+
+def test_q2_f5_d9_readings_generator_changes_no_decided_verdict():
+    saved = json.loads((REPORT.EVIDENCE / "d9-readings-ab.json").read_text())
+    assert saved["queries"] == len(saved["rows"]) == 8
+    assert saved["changes"] == [row for row in saved["rows"]
+                                if row["before"]["verdict"] != row["after"]["verdict"]]
+    for row in saved["changes"]:
+        assert row["before"]["verdict"] == "UNKNOWN"
+        assert row["after"]["verdict"] in {"ALL", "SOME", "NONE"}
