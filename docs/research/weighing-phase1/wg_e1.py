@@ -188,12 +188,39 @@ def category_rules() -> str:
     return text[start:end].rstrip() + "\n"
 
 
+SECOND_READER_TASK = """\
+You are the second reader in a pre-registered research measurement on a published document (an AI constitution). \
+Your reading is blind: answer ONLY from the text in this message. Do not use any tools, do not open or search any \
+file, and do not look for another reader's answers.
+
+Task. For each unit below, classify the conflict that the UNIT TEXT's main clause expresses, using exactly these \
+category rules (the BEFORE and AFTER text is context only, to help you identify the act phrases):
+
+{categories}
+For each unit give: the category (one of i, ii, iii, iv), a secondary category or null, the act phrases the conflict \
+sets against each other (a list, possibly empty), and a one-sentence reason.
+
+Answer with a single JSON object and nothing else, in this form, with the units in the order given:
+{{"rows": [{{"id": "<unit id>", "category": "i|ii|iii|iv", "secondary": "i|ii|iii|iv" or null, "acts": ["..."], \
+"reason": "..."}}]}}
+
+The units:
+"""
+
+
 def blind() -> None:
-    """The second reader's input: the frozen subset with its text only, never the first reading."""
+    """The second reader's input and prompt: the frozen subset's text only, never the first reading."""
+    _, source = load_inputs()
     sample = json.loads((EVIDENCE / "wg-e1-sample.json").read_text(encoding="utf-8"))["sample"]
-    units = [{"order": s["order"], "id": s["id"], "before": s["before"], "excerpt": s["excerpt"],
-              "after": s["after"]} for s in sample if s["second_reader"] or s["id"] in CONTESTED]
-    write_json("wg-e1-second-reader-input.json", {"categories": category_rules(), "units": units})
+    units = [{"order": s["order"], "id": s["id"], "before": s["before"],
+              "text": source[s["span"][0]:s["span"][1]].decode("utf-8", "replace"), "after": s["after"]}
+             for s in sample if s["second_reader"] or s["id"] in CONTESTED]
+    categories = category_rules()
+    write_json("wg-e1-second-reader-input.json", {"categories": categories, "units": units})
+    prompt = SECOND_READER_TASK.format(categories=categories) + "".join(
+        f"\n--- unit {u['id']} ---\n[BEFORE]\n{u['before']}\n[UNIT TEXT, classify this]\n{u['text']}\n"
+        f"[AFTER]\n{u['after']}\n" for u in units)
+    (EVIDENCE / "wg-e1-second-reader-prompt.txt").write_text(prompt, encoding="utf-8")
     print(f"{len(units)} units for the second reader")
 
 
