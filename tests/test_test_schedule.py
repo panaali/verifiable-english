@@ -37,23 +37,29 @@ def test_head_first_is_a_permutation_led_by_the_recorded_long_tests_longest_firs
     assert test_schedule.head_first([], durations) == ([], [])
 
 
-def test_a_modules_long_tests_go_out_together_up_to_the_longest_test():
-    """A module fixture is set up once per run of the module's tests on a worker: one module's long tests go
-    to a worker together, consecutive in collection order, in batches no longer than the longest test."""
+def test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test():
+    """What a module's tests share in one process (a module fixture, a module-level cache) is paid by the first
+    of them a worker runs: a module with a long test goes to workers whole, in runs of consecutive tests no
+    longer than the longest test, so neither its long tests nor its quick ones pay it again alone."""
     collection = ["tests/test_m.py::a", "tests/test_m.py::quick", "tests/test_m.py::b", "tests/test_other.py::long",
-                  "tests/test_m.py::c", "tests/test_m.py::d", "tests/test_m.py::e", "tests/test_n.py::f"]
+                  "tests/test_m.py::c", "tests/test_m.py::d", "tests/test_m.py::e", "tests/test_n.py::f",
+                  "tests/test_q.py::quick", "tests/test_n.py::unrecorded"]
     durations = {"tests/test_m.py::a": 10.0, "tests/test_m.py::b": 10.0, "tests/test_m.py::c": 10.0,
                  "tests/test_m.py::d": 10.0, "tests/test_m.py::e": 10.0, "tests/test_other.py::long": 40.0,
-                 "tests/test_n.py::f": 6.0, "tests/test_m.py::quick": 0.1}
-    assert test_schedule.head_batches(collection, durations) == [[0, 2, 4, 5], [3], [6], [7]]
+                 "tests/test_n.py::f": 6.0, "tests/test_m.py::quick": 0.1, "tests/test_q.py::quick": 3.0}
+    # m: a + quick + b + c = 30.1, then d + e (adding d would pass the 40 s of the longest test); test_q.py
+    # holds no long test and stays with the rest; test_n.py's unrecorded test goes with f.
+    assert test_schedule.head_batches(collection, durations) == [[3], [0, 1, 2, 4], [5, 6], [7, 9]]
     order, sizes = test_schedule.head_first(collection, durations)
-    assert order == [0, 2, 4, 5, 3, 6, 7, 1] and sizes == [4, 1, 1, 1]
+    assert order == [3, 0, 1, 2, 4, 5, 6, 7, 9, 8] and sizes == [1, 4, 2, 2]
     # In a run, each batch's tests run back to back on one worker.
-    started, _ = simulate(test_schedule.make_scheduler(Config(2), None, durations), collection, durations, 2)
+    started, _ = simulate(test_schedule.make_scheduler(Config(2), None, durations), collection,
+                          {**durations, "tests/test_n.py::unrecorded": 0.1}, 2)
     by_worker = {}
     for index, (at, worker) in sorted(started.items(), key=lambda row: row[1][0]):
         by_worker.setdefault(worker, []).append(index)
-    assert any(run[:4] == [0, 2, 4, 5] for run in by_worker.values()), by_worker
+    runs = [run[i:i + 4] for run in by_worker.values() for i in range(len(run))]
+    assert [0, 1, 2, 4] in runs, by_worker
 
 
 def test_durations_file_round_trips_and_a_bad_file_leaves_the_load_order(tmp_path):
@@ -293,12 +299,14 @@ def test_an_xdist_run_keeps_the_gates_collection_accounting(tmp_path):
     order (merge_pytest_events accepts the run), every test has one result, and each worker runs the
     long tests it is sent before any quick one."""
     cases = 40
-    long_ids = [f"test_project.py::test_case[{case}]" for case in (35, 38, 39, 12)]
+    long_ids = [f"test_slow.py::test_case[{case}]" for case in (3, 1, 2, 0)]
     durations = {nodeid: 10.0 + rank for rank, nodeid in enumerate(reversed(long_ids))}
     (tmp_path / "conftest.py").write_text(PROJECT_CONFTEST.format(DURATIONS=durations))
     (tmp_path / "test_project.py").write_text(PROJECT_TESTS.format(CASES=cases))
+    (tmp_path / "test_slow.py").write_text(PROJECT_TESTS.format(CASES=4))
     env = nested_pytest.environment(os.environ, PYTHONPATH=str(ROOT))
-    arguments = ["-q", "-p", "no:cacheprovider", "-p", "tools.gate_pytest", "-o", "addopts=", "test_project.py"]
+    arguments = ["-q", "-p", "no:cacheprovider", "-p", "tools.gate_pytest", "-o", "addopts=", "test_project.py",
+                 "test_slow.py"]
 
     def run(command, events):
         result = subprocess.run(command, cwd=tmp_path, env={**env, "VE_GATE_PYTEST_RESULT": str(events)},
@@ -309,7 +317,8 @@ def test_an_xdist_run_keeps_the_gates_collection_accounting(tmp_path):
     collection = run(nested_pytest.command(["--collect-only", *arguments]), tmp_path / "collection.json")
     suite = run(nested_pytest.command(arguments, workers=3), tmp_path / "suite.json")
     merged = gate.merge_pytest_events(collection, suite)
-    assert merged["selected"] == [f"test_project.py::test_case[{case}]" for case in range(cases)]
+    assert merged["selected"] == [*(f"test_project.py::test_case[{case}]" for case in range(cases)),
+                                  *(f"test_slow.py::test_case[{case}]" for case in range(4))]
     assert len(merged["workers"]) == 3
     assert sorted(merged["tests"]) == sorted(merged["selected"])
     assert {row["outcome"] for row in merged["tests"].values()} == {"passed"}

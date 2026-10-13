@@ -5,12 +5,13 @@ the rest in shrinking chunks as workers finish. A test that takes minutes and ha
 the collection then starts when the other workers are nearly done, and they idle until it ends (the
 "tail"). `LongestFirst` is `load` with two changes, both driven by `tools/test-durations.json`:
 
-- The tests it records as taking at least HEAD_SECONDS go first, longest first, each batch to the next
-  worker that is free. A batch is one module's long tests, consecutive in collection order, together no
-  longer than the longest single test (`head_batches`): a module fixture is set up once per run of the
-  module's tests on a worker and torn down when the worker turns to another module, so sent one by one,
-  every long test of a module with a costly fixture (a minute or more for some) would set it up again.
-  The cap keeps a batch from taking longer than the longest test, which bounds the run anyway.
+- The modules that hold a test it records as taking at least HEAD_SECONDS go first, longest batch first,
+  each batch to the next worker that is free. A batch is a run of one module's tests in collection order,
+  together no longer than the longest single test (`head_batches`). A module goes whole because what its
+  tests share in one process (a module fixture, a module-level cache: a minute or more for some, ten for
+  the p1 experiment's) is paid by whichever of them runs first on a worker: a long test sent alone would
+  pay it again, and a cheap test left for later could pay it last, alone. The cap keeps a batch from
+  taking longer than the longest test, which bounds the run anyway.
 - The rest follow in collection order, as runs of consecutive tests (which keep a module's tests
   together on a worker, as `load`'s do) sized by their estimated seconds rather than their number
   (`bulk_count`): `load`'s first run after the long tests held some 900 tests and 30 minutes of work,
@@ -96,34 +97,39 @@ def unit_seconds(durations: Mapping[str, float] | None = None) -> dict[str, floa
 
 
 def head_batches(collection: Sequence[str], durations: Mapping[str, float],
-                 head_seconds: float = HEAD_SECONDS) -> list[list[int]]:
-    """The tests of `collection` recorded as taking at least `head_seconds`, as batches of indices: each
-    batch is one module's tests, consecutive in collection order among that module's long tests, together
-    no longer than the longest of them all (a test alone may reach it); the batches longest first, ties
-    in collection order."""
-    long = [index for index, nodeid in enumerate(collection) if durations.get(nodeid, 0.0) >= head_seconds]
+                 head_seconds: float = HEAD_SECONDS, unrecorded: float = UNRECORDED_SECONDS) -> list[list[int]]:
+    """The modules of `collection` that hold a test recorded as taking at least `head_seconds`, whole, as
+    batches of indices: each batch is a run of one module's tests in collection order, together estimated
+    (`durations`, else `unrecorded`) no longer than the longest test (a test alone may reach it); the
+    batches longest first, ties in collection order. A module goes whole because what its tests share in
+    one process (a module fixture, a module-level cache) is paid by whichever of them runs first there:
+    a quick test sent on its own to another worker would pay it again, at the end."""
+    estimate = [durations.get(nodeid, unrecorded) for nodeid in collection]
+    long = {unit_of(nodeid) for nodeid in collection if durations.get(nodeid, 0.0) >= head_seconds}
     if not long:
         return []
-    cap = max(durations[collection[index]] for index in long)
+    cap = max(value for nodeid, value in zip(collection, estimate) if unit_of(nodeid) in long)
     batches: list[list[int]] = []
     open_batch: dict[str, tuple[list[int], float]] = {}
-    for index in long:
-        unit, seconds = unit_of(collection[index]), durations[collection[index]]
+    for index, nodeid in enumerate(collection):
+        unit = unit_of(nodeid)
+        if unit not in long:
+            continue
         batch, total = open_batch.get(unit, (None, 0.0))
-        if batch is None or total + seconds > cap:
+        if batch is None or total + estimate[index] > cap:
             batch, total = [], 0.0
             batches.append(batch)
         batch.append(index)
-        open_batch[unit] = (batch, total + seconds)
-    return sorted(batches, key=lambda batch: (-sum(durations[collection[i]] for i in batch), batch[0]))
+        open_batch[unit] = (batch, total + estimate[index])
+    return sorted(batches, key=lambda batch: (-sum(estimate[i] for i in batch), batch[0]))
 
 
 def head_first(collection: Sequence[str], durations: Mapping[str, float],
-               head_seconds: float = HEAD_SECONDS) -> tuple[list[int], list[int]]:
+               head_seconds: float = HEAD_SECONDS, unrecorded: float = UNRECORDED_SECONDS) -> tuple[list[int], list[int]]:
     """The indices of `collection` in the order they are handed out, and the sizes of the batches that
     lead it (`head_batches`); then every other test in collection order. Always a permutation of
     range(len(collection))."""
-    batches = head_batches(collection, durations, head_seconds)
+    batches = head_batches(collection, durations, head_seconds, unrecorded)
     head = [index for batch in batches for index in batch]
     chosen = set(head)
     return head + [index for index in range(len(collection)) if index not in chosen], [len(b) for b in batches]
@@ -166,7 +172,7 @@ def make_scheduler(config, log, durations: Mapping[str, float] | None = None,
             if self.collection is not None or not self.durations or not self._check_nodes_have_same_collection():
                 return super().schedule()
             collection = next(iter(self.node2collection.values()))
-            order, self.batches = head_first(collection, self.durations)
+            order, self.batches = head_first(collection, self.durations, unrecorded=self.unrecorded)
             self.estimate = [self.durations.get(nodeid, self.unrecorded) for nodeid in collection]
             self.collection = collection
             self.pending[:] = order
