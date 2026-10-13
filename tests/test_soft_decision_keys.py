@@ -146,3 +146,35 @@ def test_f11_public_rights_route_binds_lean_row(monkeypatch):
     monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: forged)
     with pytest.raises(CheckerUnavailable):
         rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
+
+
+@pytest.mark.parametrize('mutation', [
+    pytest.param(lambda row: row.__setitem__('conditional_on', ['soft:coherence:absent:nobody']),
+                 id='unbound conditional label'),
+    pytest.param(lambda row: row.__setitem__('conditional_on', [row['colliding_pairs'][0]['label']] * 2),
+                 id='duplicate conditional label'),
+    pytest.param(lambda row: row['colliding_pairs'][0].__setitem__('label', 'soft:coherence:absent,nobody'),
+                 id='unbound pair label'),
+    pytest.param(lambda row: row.__setitem__('default_exceptions_by_decider', {'absent': 2}),
+                 id='unbound decider'),
+    pytest.param(lambda row: row.__setitem__('default_exceptions_by_decider', {'unstated': 1}),
+                 id='unused fallback decider'),
+    pytest.param(lambda row: row.__setitem__('default_exceptions_by_decider', {'assistant': 9}),
+                 id='decider count exceeds defaults'),
+    pytest.param(lambda row: row['soft_residual'].__setitem__('default_exceptions', 9),
+                 id='default count exceeds rules'),
+    pytest.param(lambda row: row['soft_residual'].__setitem__('instruction_switches', 9),
+                 id='switch count exceeds rules'),
+    pytest.param(lambda row: row['soft_residual'].__setitem__('holistic_overrides', 9),
+                 id='override count exceeds decisions'),
+    pytest.param(lambda row: row['soft_residual'].__setitem__('weighing_points', 9),
+                 id='weighing count exceeds pairs'),
+])
+def test_f12_public_soft_route_rejects_unbound_output(monkeypatch, genuine, mutation):
+    from ve import soft_route
+    document = _document(monkeypatch, copy.deepcopy(genuine))
+    row = copy.deepcopy(genuine)
+    mutation(row)
+    monkeypatch.setattr(soft_route, '_run', lambda case: row)
+    with pytest.raises(CheckerUnavailable):
+        soft_route.elaborate_soft_document(document)
