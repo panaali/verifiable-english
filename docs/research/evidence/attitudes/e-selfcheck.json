@@ -1,5 +1,7 @@
 {
   "synthetic": "counts made up by this self-check; no reader was called",
+  "stub": "/home/seyran/code/ve-design-attitudes/lean/SpecStubs_attitudes.lean",
+  "stub_sha256": "2178fb6eb1dfc2be9e908643538190a17da0b78a346954418d247e386b6a35e8",
   "checks": {
     "pair yes=36 no=2": true,
     "pair yes=35 no=0": true,
@@ -15,12 +17,14 @@
     "parse 'Cannot tell.'": true,
     "parse 'I think yes'": true,
     "parse ''": true,
+    "parse 'Not necessarily.'": true,
     "factive item yes=36": true,
     "factive item yes=35": true,
     "lean: raw table with a failed derived pair is not reviewed": true,
     "lean: resolved table is reviewed": true,
     "lean: all-pass table is reviewed": true,
-    "resolution removes the weaker word": true
+    "resolution removes the weaker word": true,
+    "refuses a stub with another hash": true
   },
   "removed": [
     "likely"

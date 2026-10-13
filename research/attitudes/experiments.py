@@ -33,6 +33,10 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 EVIDENCE = ROOT / "docs/research/evidence/attitudes"
 STUB = Path("/home/seyran/code/ve-design-attitudes/lean/SpecStubs_attitudes.lean")
+# The stub is untracked in that worktree (draft 1); its `Table` and `Table.reviewed` are spec draft 3's (section 2.1)
+# apart from comments. Pinned so that a later edit to it cannot silently change the review: a stub with another hash
+# is refused.
+STUB_SHA256 = "2178fb6eb1dfc2be9e908643538190a17da0b78a346954418d247e386b6a35e8"
 
 # ---- quoted from the PLAN (E1, E2); the order is E1's list order, strongest first ----
 WORDS = ["almost certain", "very likely", "quite likely", "likely", "more likely than not", "as likely as not",
@@ -167,12 +171,14 @@ def score_e2(counts, e1):
     negated = {f"E2.negated-know.{n}": {"counts": counts[f"E2.negated-know.{n}"],
                                          "agreed_36": max(counts[f"E2.negated-know.{n}"].values()) >= E2_REACH,
                                          "top": top(f"E2.negated-know.{n}")} for n in (1, 2, 3)}
+    # "Must P?" tests that P is read as asserted, not how "does not know" is read: these items cannot admit the form (G5)
     asserted = all(reach(f"E2.asserted-not-know.{n}") for n in (1, 2, 3))
     return {"factive": factive, "knowsBelieves": believes, "knowsThinks": thinks,
             "negated_know": {"items": negated, "decision": "refused (D-A7), whatever the counts"},
             "unless": {"items": {f"E2.unless.{n}": counts[f"E2.unless.{n}"] for n in (1, 2, 3)},
                        "decision": "refused; evidence only"},
-            "asserted_not_know": {"admitted": asserted,
+            "asserted_not_know": {"must_p_items_reach_36": asserted,
+                                  "decision": "refused: the current items cannot admit the form (phase 1 report, G5)",
                                   "items": {f"E2.asserted-not-know.{n}": counts[f"E2.asserted-not-know.{n}"] for n in (1, 2, 3)}},
             "counts": counts}
 
@@ -221,6 +227,10 @@ def lean_table(name, lower, above, factive, believes, thinks):
 
 def lean_review(stub, tables):
     """Evaluates `Table.reviewed` (the stub's, i.e. the spec's) on each emitted table with `lake env lean`."""
+    import hashlib
+    digest = hashlib.sha256(Path(stub).read_bytes()).hexdigest()
+    if digest != STUB_SHA256:
+        raise SystemExit(f"refused: stub {stub} has sha256 {digest}, not the pinned {STUB_SHA256}")
     text = Path(stub).read_text()
     with tempfile.TemporaryDirectory() as tmp:
         f = Path(tmp) / "ReviewTables.lean"
@@ -316,7 +326,8 @@ def cmd_selfcheck(stub):
             checks[f"refuses {what}"] = False
         except SystemExit:
             checks[f"refuses {what}"] = True
-    for raw, want in [("Yes.", "yes"), ("no", "no"), ("Cannot tell.", "cannot tell"), ("I think yes", "invalid"), ("", "invalid")]:
+    for raw, want in [("Yes.", "yes"), ("no", "no"), ("Cannot tell.", "cannot tell"), ("I think yes", "invalid"), ("", "invalid"),
+                      ("Not necessarily.", "invalid")]:  # the current rule (G6): a clear negative is not "no"
         checks[f"parse {raw!r}"] = parse(raw) == want
     # E2 at its boundary, and premise 2/3 only with premise 1
     e2 = e2_items()
@@ -339,8 +350,16 @@ def cmd_selfcheck(stub):
     checks["lean: resolved table is reviewed"] = reviewed["frozenTable"] is True
     checks["lean: all-pass table is reviewed"] = reviewed["allPassTable"] is True
     checks["resolution removes the weaker word"] = removed[:1] == ["likely"]
-    out = {"synthetic": "counts made up by this self-check; no reader was called", "checks": checks, "removed": removed,
-           "all_pass": all(checks.values())}
+    with tempfile.TemporaryDirectory() as tmp:
+        edited = Path(tmp) / "SpecStubs_attitudes.lean"
+        edited.write_bytes(Path(stub).read_bytes() + b"\n")
+        try:
+            lean_review(edited, [("allPassTable", allpass)])
+            checks["refuses a stub with another hash"] = False
+        except SystemExit:
+            checks["refuses a stub with another hash"] = True
+    out = {"synthetic": "counts made up by this self-check; no reader was called", "stub": str(stub),
+           "stub_sha256": STUB_SHA256, "checks": checks, "removed": removed, "all_pass": all(checks.values())}
     dump("e-selfcheck.json", out)
     print(json.dumps(out, indent=1))
     return 0 if out["all_pass"] else 1
