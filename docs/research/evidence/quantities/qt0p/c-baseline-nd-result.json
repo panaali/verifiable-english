@@ -6,10 +6,10 @@
   "OPEN": 2529,
   "UNFORMALISED": 181942
  },
- "check_seconds": 89.9,
+ "check_seconds": 52.7,
  "document": "usecases/claude-constitution-pilot/run-20261012T1800Z/readings/nd-all.ve.md",
  "group": "all",
- "load_seconds": 12.6,
+ "load_seconds": 13.2,
  "pairs_without_situation": [],
  "premises": {
   "candidates": [
@@ -224,7 +224,7 @@
   "status": "model"
  },
  "search_limits": [],
- "search_seconds": 127.9,
+ "search_seconds": 155.2,
  "sets": [
   {
    "candidates": [

@@ -124,16 +124,33 @@
   ]
  },
  "qx2": {
+  "audits": [
+   {
+    "first_line": "**Faithful: 17/20 sampled + 5/12 changed.** Four overlap; 28 unique units audited.",
+    "path": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z/AUDIT.md",
+    "run": "run-20261012T1800Z",
+    "sha256": "99f31e4674dd598c9fcdd25785cd83eeff65fac261cba694defafe508f30611d"
+   },
+   {
+    "first_line": "Faithful: **14/20 sampled + 1/8 changed**.",
+    "path": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261013T0600Z/AUDIT.md",
+    "run": "run-20261013T0600Z",
+    "sha256": "6e1db63a8a63ed00f4fffcd1866eb785af4a6c5c7478dfab35fafe8ecf565660"
+   }
+  ],
   "total_bytes": 826,
   "units": [
    {
+    "audit_of_the_runs_form": {
+     "run-20261012T1800Z": "UNFAITHFUL",
+     "run-20261013T0600Z": "UNFAITHFUL"
+    },
     "bytes": 147,
     "excerpt": "* Provide serious uplift to those seeking to create biological, chemical, nuclear, or radiological weapons with the potential for mass casualties.",
     "graded_words": [
      "mass",
      "serious"
     ],
-    "latest_audit_of_current_form": "UNFAITHFUL",
     "open_terms": [
      "mass_casualty_weapon_uplift",
      "restricted_action_knowing_or_quite_likely"
@@ -143,12 +160,15 @@
     "unit": "u0165.s01"
    },
    {
+    "audit_of_the_runs_form": {
+     "run-20261012T1800Z": "UNFAITHFUL",
+     "run-20261013T0600Z": "UNFAITHFUL"
+    },
     "bytes": 139,
     "excerpt": "* Provide serious uplift to attacks on critical infrastructure (power grids, water systems, financial systems) or critical safety systems.",
     "graded_words": [
      "serious"
     ],
-    "latest_audit_of_current_form": "UNFAITHFUL",
     "open_terms": [
      "critical_infrastructure_uplift",
      "restricted_action_knowing_or_quite_likely"
@@ -158,12 +178,15 @@
     "unit": "u0165.s02"
    },
    {
+    "audit_of_the_runs_form": {
+     "run-20261012T1800Z": "UNFAITHFUL",
+     "run-20261013T0600Z": "UNFAITHFUL"
+    },
     "bytes": 89,
     "excerpt": "* Create cyberweapons or malicious code that could cause significant damage if deployed.",
     "graded_words": [
      "significant"
     ],
-    "latest_audit_of_current_form": "UNFAITHFUL",
     "open_terms": [
      "damaging_cyberweapon_or_malicious_code",
      "restricted_action_knowing_or_quite_likely"
@@ -173,13 +196,16 @@
     "unit": "u0165.s03"
    },
    {
+    "audit_of_the_runs_form": {
+     "run-20261012T1800Z": "UNFAITHFUL",
+     "run-20261013T0600Z": "UNFAITHFUL"
+    },
     "bytes": 175,
     "excerpt": "* Take actions that clearly and substantially undermine Anthropic’s ability to oversee and correct advanced AI models (see [Being broadly safe](#being-broadly-s",
     "graded_words": [
      "clearly",
      "substantially"
     ],
-    "latest_audit_of_current_form": "UNFAITHFUL",
     "open_terms": [
      "clear_and_substantial_undermining_of_oversight",
      "restricted_action_knowing_or_quite_likely"
@@ -189,12 +215,15 @@
     "unit": "u0165.s04"
    },
    {
+    "audit_of_the_runs_form": {
+     "run-20261012T1800Z": "UNFAITHFUL",
+     "run-20261013T0600Z": "UNFAITHFUL"
+    },
     "bytes": 116,
     "excerpt": "* Engage or assist in an attempt to kill or disempower the vast majority of humanity or the human species as whole.",
     "graded_words": [
      "vast majority"
     ],
-    "latest_audit_of_current_form": "UNFAITHFUL",
     "open_terms": [
      "attempt_to_kill_or_disempower_most_of_humanity",
      "restricted_action_knowing_or_quite_likely"
@@ -204,13 +233,16 @@
     "unit": "u0165.s05"
    },
    {
+    "audit_of_the_runs_form": {
+     "run-20261012T1800Z": "UNFAITHFUL",
+     "run-20261013T0600Z": "UNFAITHFUL"
+    },
     "bytes": 160,
     "excerpt": "* Engage or assist any individual or group with an attempt to seize unprecedented and illegitimate degrees of absolute societal, military, or economic control.",
     "graded_words": [
      "absolute",
      "unprecedented"
     ],
-    "latest_audit_of_current_form": "UNFAITHFUL",
     "open_terms": [
      "illegitimate_absolute_control",
      "restricted_action_knowing_or_quite_likely"

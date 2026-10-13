@@ -14,8 +14,11 @@ Each repair is checked twice: as a small companion document over exactly the uni
 into a copy of the pilot's own translation (constitution `translation.ve.md`; UDHR `translation-part03.ve.md`),
 with `ve document check` and `ve document coverage` on main. Probes: "Is there a fourth type of principal?"
 (expected SETTLED no) and "Must higher education be free under this sentence?" (expected UNDECIDED).
-Outputs go to docs/research/evidence/quantities/qt0p/; the spliced copies to research/quantities/out/ (not
-committed; their SHA-256 is recorded).
+The constitution's rebuild is repeated on the next pilot run (0600Z, the same three units at the same spans), the run
+the repair will actually be applied to; UDHR part03 is byte-identical in both runs (checked).
+Outputs go to docs/research/evidence/quantities/qt0p/; the spliced copies to experiments/quantities-phase1/out/
+(not committed; their SHA-256 is recorded). A re-run deletes and rewrites the committed evidence directory: compare with
+`git diff` afterwards.
 """
 from __future__ import annotations
 
@@ -26,11 +29,11 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import (CONSTITUTION_RUN, EVIDENCE, MAIN, REPO, UDHR_RUN, main_head, run_ve, sha256, split_document,
-                    ve_python, write_document, write_json)
+from common import (CONSTITUTION_NEXT, CONSTITUTION_RUN, EVIDENCE, MAIN, REPO, UDHR_NEXT, UDHR_RUN, check_main, run_ve,
+                    sha256, split_document, ve_python, write_document, write_json)
 
 OUT = EVIDENCE / "qt0p"
-WORK = REPO / "research" / "quantities" / "out" / "qt0p"
+WORK = Path(__file__).resolve().parent / "out" / "qt0p"
 
 # ---------------------------------------------------------------- constitution
 
@@ -96,10 +99,15 @@ THREE = conj(
     neq(NAMES[0], NAMES[1]), neq(NAMES[0], NAMES[2]), neq(NAMES[1], NAMES[2]),
     ["forall", "principal_type", ["implies", cpt(v(0)), disj(*(["eq", v(0), n] for n in NAMES))]])
 
-# Probe "Is there a fourth type of principal?": SETTLED no means the negation follows (ALL) and the question's
-# positive form is refuted (NONE).
+# Probe "Is there a fourth type of principal?": SETTLED no means the negation follows under every reading (ALL on
+# NO_FOURTH). On the readings route NONE means a countermodel under every reading, i.e. the conclusion does not
+# follow; it is not a refutation, so the positive form FOURTH is run only as an extra, unregistered check.
+# Both are over Claude's types (`claude_principal_type`): the closure says nothing about other principal types.
 FOURTH = ["exists", "principal_type", conj(cpt(v(0)), *(neq(v(0), n) for n in NAMES))]
 NO_FOURTH = ["not", FOURTH]
+# Extra, for departure 2: "there is no principal type other than the three" over every principal type. The closure
+# is limited to Claude's types, so this is expected not to follow.
+NO_OTHER_TYPE = ["not", ["exists", "principal_type", conj(*(neq(v(0), n) for n in NAMES))]]
 # Control: "Anthropic is one of Claude's types of principals" follows from u0043.s02's facts.
 ANTHROPIC_IS_ONE = cpt(c("anthropic"))
 
@@ -149,7 +157,7 @@ def constitution_companion() -> Path:
     return path
 
 
-def constitution_rebuild(repaired: bool) -> dict:
+def constitution_rebuild(pilot_run: Path, repaired: bool) -> dict:
     """Re-run the pilot's own rebuild (`nd.py all`) on a work copy, with or without the repair.
 
     The repair adds vocabulary, so the environment id changes and every reading-set identity and situation must be
@@ -157,16 +165,16 @@ def constitution_rebuild(repaired: bool) -> dict:
     `readings/all-strict.ve.md`). The pilot's scripts and inputs are copied, never edited in place; `nd.py` imports
     `tools/readings_s1_pilot.py` from its repository root, which here is a copy of main's.
     """
-    tag = "repaired" if repaired else "baseline"
+    tag = ("repaired" if repaired else "baseline") + ("" if pilot_run == CONSTITUTION_RUN else f"-{pilot_run.name[4:]}")
     root = WORK / f"constitution-{tag}"
-    run = root / "usecases" / "claude-constitution-pilot" / CONSTITUTION_RUN.name
+    run = root / "usecases" / "claude-constitution-pilot" / pilot_run.name
     (run / "readings").mkdir(parents=True, exist_ok=True)
     (root / "tools").mkdir(parents=True, exist_ok=True)
     (root / "tools" / "readings_s1_pilot.py").write_bytes((MAIN / "tools" / "readings_s1_pilot.py").read_bytes())
     for name in ("nd.py", "spec_nd.py", "spec.py"):
-        (run / name).write_bytes((CONSTITUTION_RUN / name).read_bytes())
-    (run / "readings" / "all-strict.ve.md").write_bytes((CONSTITUTION_RUN / "readings" / "all-strict.ve.md").read_bytes())
-    meta, body = split_document(CONSTITUTION_RUN / "translation-without-content.ve.md")
+        (run / name).write_bytes((pilot_run / name).read_bytes())
+    (run / "readings" / "all-strict.ve.md").write_bytes((pilot_run / "readings" / "all-strict.ve.md").read_bytes())
+    meta, body = split_document(pilot_run / "translation-without-content.ve.md")
     if repaired:
         meta = copy.deepcopy(meta)
         meta["environment"]["vocabulary"] = constitution_vocabulary(meta["environment"]["vocabulary"])
@@ -187,7 +195,7 @@ def constitution_rebuild(repaired: bool) -> dict:
     result = json.loads(result_path.read_text()) if result_path.exists() else None
     if result is not None:
         write_json(OUT / f"c-{tag}-nd-result.json", {k: v for k, v in result.items() if k != "readings"})
-    return {"returncode": proc.returncode, "document": run / "readings" / "nd-all.ve.md", "result": result}
+    return {"tag": tag, "returncode": proc.returncode, "document": run / "readings" / "nd-all.ve.md", "result": result}
 
 
 # ---------------------------------------------------------------- UDHR
@@ -386,13 +394,22 @@ def record(name: str, args: list[str]) -> dict:
     return {"args": args, "returncode": proc.returncode, "json": parsed}
 
 
-def readings_probe(name: str, doc: Path, formula, expected: str) -> dict:
+def readings_probe(name: str, doc: Path, formula, expected: str | None) -> dict:
+    """`expected` None: an extra probe, not registered, recorded without a pass or fail."""
     conclusion = OUT / f"{name}.conclusion.json"
     write_json(conclusion, formula)
     res = record(name, ["document", "readings", str(doc), "--conclusion", str(conclusion)])
     verdict = res["json"].get("verdict") if isinstance(res["json"], dict) else None
-    return {"probe": name, "expected": expected, "verdict": verdict, "as_expected": verdict == expected,
-            "returncode": res["returncode"]}
+    return {"probe": name, "registered": expected is not None, "expected": expected, "verdict": verdict,
+            "as_expected": None if expected is None else verdict == expected, "returncode": res["returncode"]}
+
+
+def rebuild_summary(r: dict) -> dict:
+    return {"returncode": r["returncode"], "admitted": (r["result"] or {}).get("admitted"),
+            "premises": ((r["result"] or {}).get("premises") or {}).get("status"),
+            "bytes_by_status": (r["result"] or {}).get("bytes_by_status"),
+            "pairs_without_situation": (r["result"] or {}).get("pairs_without_situation"),
+            "document_sha256": sha256(r["document"]) if r["document"].exists() else None}
 
 
 def check_summary(res: dict) -> dict:
@@ -408,30 +425,29 @@ def coverage_delta(before: dict, after: dict) -> dict:
 
 
 def main() -> None:
+    pin = check_main()
     shutil.rmtree(OUT, ignore_errors=True)
     shutil.rmtree(WORK, ignore_errors=True)
     OUT.mkdir(parents=True, exist_ok=True)
     WORK.mkdir(parents=True, exist_ok=True)
-    summary = {"main_head": main_head(), "inputs": {
+    summary = {"main": pin, "inputs": {
         "constitution": {"path": str(CONSTITUTION_RUN / "translation.ve.md"),
                          "sha256": sha256(CONSTITUTION_RUN / "translation.ve.md")},
         "udhr_part03": {"path": str(UDHR_RUN / "translation-part03.ve.md"),
-                        "sha256": sha256(UDHR_RUN / "translation-part03.ve.md")}}}
+                        "sha256": sha256(UDHR_RUN / "translation-part03.ve.md")},
+        "constitution_next": {"path": str(CONSTITUTION_NEXT / "translation.ve.md"),
+                              "sha256": sha256(CONSTITUTION_NEXT / "translation.ve.md")},
+        "udhr_part03_next": {"path": str(UDHR_NEXT / "translation-part03.ve.md"),
+                             "sha256": sha256(UDHR_NEXT / "translation-part03.ve.md")}}}
 
     comp = constitution_companion()
-    base = constitution_rebuild(repaired=False)
-    rep = constitution_rebuild(repaired=True)
+    base = constitution_rebuild(CONSTITUTION_RUN, repaired=False)
+    rep = constitution_rebuild(CONSTITUTION_RUN, repaired=True)
     summary["constitution"] = {
         "companion": str(comp.relative_to(REPO)),
         "companion_check": check_summary(record("c-companion-check", ["document", "check", str(comp)])),
         "model_search": constitution_model(),
-        "rebuild": {tag: {"returncode": r["returncode"],
-                          "admitted": (r["result"] or {}).get("admitted"),
-                          "premises": ((r["result"] or {}).get("premises") or {}).get("status"),
-                          "bytes_by_status": (r["result"] or {}).get("bytes_by_status"),
-                          "pairs_without_situation": (r["result"] or {}).get("pairs_without_situation"),
-                          "document_sha256": sha256(r["document"]) if r["document"].exists() else None}
-                    for tag, r in (("baseline", base), ("repaired", rep))},
+        "rebuild": {"baseline": rebuild_summary(base), "repaired": rebuild_summary(rep)},
     }
     if rep["document"].exists():
         doc = rep["document"]
@@ -441,8 +457,9 @@ def main() -> None:
         # rebuilt pilot translation, as the pilot's own conclusion probes do.
         summary["constitution"]["probes"] = [
             readings_probe("c-repaired-no-fourth", doc, NO_FOURTH, "ALL"),
-            readings_probe("c-repaired-fourth", doc, FOURTH, "NONE"),
-            readings_probe("c-repaired-anthropic-is-one", doc, ANTHROPIC_IS_ONE, "ALL")]
+            readings_probe("c-repaired-fourth", doc, FOURTH, None),
+            readings_probe("c-repaired-no-other-type", doc, NO_OTHER_TYPE, None),
+            readings_probe("c-repaired-anthropic-is-one", doc, ANTHROPIC_IS_ONE, None)]
     if base["document"].exists():
         summary["constitution"]["baseline_coverage"] = record("c-baseline-coverage",
                                                               ["document", "coverage", str(base["document"])])["json"]
@@ -450,12 +467,29 @@ def main() -> None:
     if isinstance(bc, dict) and isinstance(rc, dict):
         summary["constitution"]["coverage_delta_bytes_by_status"] = coverage_delta(bc, rc)
 
+    # The same repair on top of the next run (0600Z): its rebuilt baseline must equal its own translation.
+    nbase = constitution_rebuild(CONSTITUTION_NEXT, repaired=False)
+    nrep = constitution_rebuild(CONSTITUTION_NEXT, repaired=True)
+    nxt = {"rebuild": {"baseline": rebuild_summary(nbase), "repaired": rebuild_summary(nrep)}}
+    nxt["baseline_equals_pilot_translation"] = (nxt["rebuild"]["baseline"]["document_sha256"]
+                                                == summary["inputs"]["constitution_next"]["sha256"])
+    for tag, r in (("baseline", nbase), ("repaired", nrep)):
+        if r["document"].exists():
+            nxt[f"{tag}_coverage"] = record(f"c-{r['tag']}-coverage", ["document", "coverage", str(r["document"])])["json"]
+    if isinstance(nxt.get("baseline_coverage"), dict) and isinstance(nxt.get("repaired_coverage"), dict):
+        nxt["coverage_delta_bytes_by_status"] = coverage_delta(nxt["baseline_coverage"], nxt["repaired_coverage"])
+    if nrep["document"].exists():
+        nxt["probes"] = [readings_probe(f"c-{nrep['tag']}-no-fourth", nrep["document"], NO_FOURTH, "ALL")]
+    summary["constitution_next"] = nxt
+
     ucomp = udhr_companion()
     uspliced = udhr_spliced()
     before_u = record("u-part03-original-coverage",
                       ["document", "coverage", str(UDHR_RUN / "translation-part03.ve.md")])["json"]
     summary["udhr"] = {
         "companion": str(ucomp.relative_to(REPO)), "spliced_sha256": sha256(uspliced),
+        "part03_same_in_next_run": summary["inputs"]["udhr_part03"]["sha256"]
+                                   == summary["inputs"]["udhr_part03_next"]["sha256"],
         "companion_check": check_summary(record("u-companion-check", ["document", "check", str(ucomp)])),
         "companion_coverage": record("u-companion-coverage", ["document", "coverage", str(ucomp)])["json"],
         "companion_status": run_status(ucomp),
@@ -465,6 +499,7 @@ def main() -> None:
     }
     if isinstance(before_u, dict) and isinstance(summary["udhr"]["spliced_coverage"], dict):
         summary["udhr"]["coverage_delta_bytes_by_status"] = coverage_delta(before_u, summary["udhr"]["spliced_coverage"])
+    summary["main_after"] = check_main()
     write_json(OUT / "summary.json", summary)
     print(json.dumps(summary, indent=1)[:6000])
 

@@ -7,7 +7,8 @@ plan's own text and the pinned pilot inputs, and computes what the plan fixes wi
 - QX-1: the item count the plan lists against the count it budgets; for every item the plan specifies completely
   (numbers given), each reading's answer and whether the item separates the readings; the seeded order of those items.
 - QX-2: the six units (bytes and status from the pinned ledger), the graded words in each, which units the plan gives
-  a decomposed form (a QT-B1 fixture), and the latest audit verdict of the current form.
+  a decomposed form (a QT-B1 fixture), and the audit verdict of the current form in the pinned run (1800Z) and in the
+  next run (0600Z, which repaired the guards again), each audit file with its SHA-256.
 - QX-3: the four example items the plan states, with their labels re-derived under counting semantics by exhaustive
   enumeration of region sizes (every population up to N_MAX objects), and the premise each label silently needs.
 
@@ -24,7 +25,7 @@ from fractions import Fraction
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import CONSTITUTION_RUN, EVIDENCE, REPO, sha256, write_json
+from common import CONSTITUTION_NEXT, CONSTITUTION_RUN, EVIDENCE, REPO, sha256, write_json
 
 PLAN = REPO / "docs" / "spec" / "quantities-PLAN.md"
 N_MAX = 12  # populations up to 12 objects in QX-3's enumeration
@@ -88,19 +89,27 @@ PLAN_DECOMPOSITION = {"u0165.s01": "FB1 (dimension uplift on response, grade giv
                       "u0165.s05": "FB6 (dimension share_of_humanity_targeted on attempt, grade vast_majority)"}
 
 
+AUDITED_RUNS = (CONSTITUTION_RUN, CONSTITUTION_NEXT)
+
+
+def qx2_audits() -> list[dict]:
+    return [{"run": r.name, "path": str(r / "AUDIT.md"), "sha256": sha256(r / "AUDIT.md"),
+             "first_line": (r / "AUDIT.md").read_text().splitlines()[0]} for r in AUDITED_RUNS]
+
+
 def qx2_units() -> list[dict]:
     units = {u["id"]: u for u in json.loads((CONSTITUTION_RUN / "units.json").read_text())}
-    audit = (CONSTITUTION_RUN / "AUDIT.md").read_text()
+    audits = {r.name: (r / "AUDIT.md").read_text() for r in AUDITED_RUNS}
     rows = []
     for uid in QX2_UNITS:
         u = units[uid]
-        verdict = re.search(rf"^{re.escape(uid)} (\w+)$", audit, re.M)
+        verdicts = {name: re.search(rf"^{re.escape(uid)} (\w+)$", text, re.M) for name, text in audits.items()}
         rows.append({"unit": uid, "bytes": u["span"][1] - u["span"][0], "status": u["status"],
                      "excerpt": u["source_excerpt"].strip(),
                      "graded_words": sorted({m.group(1).lower() for m in GRADED.finditer(u["source_excerpt"])}),
                      "open_terms": u.get("open_terms"),
                      "plan_decomposed_form": PLAN_DECOMPOSITION.get(uid),
-                     "latest_audit_of_current_form": verdict.group(1) if verdict else None})
+                     "audit_of_the_runs_form": {name: m.group(1) if m else None for name, m in verdicts.items()}})
     return rows
 
 
@@ -212,7 +221,7 @@ def main() -> None:
                                 "five of the six contexts each for bare 'n of the m' and bare '105 percent of' "
                                 "(one question each)",
                                 "the answer format and the analysis (the plan states no bar for QX-1)"]},
-        "qx2": {"units": qx2_units()},
+        "qx2": {"audits": qx2_audits(), "units": qx2_units()},
         "qx3": {"n_max": N_MAX, "items_stated": 4, "items_required": 20, "items": qx3_items()},
     }
     report["qx2"]["total_bytes"] = sum(r["bytes"] for r in report["qx2"]["units"])

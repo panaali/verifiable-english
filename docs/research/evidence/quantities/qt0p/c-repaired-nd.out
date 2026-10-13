@@ -1,7 +1,7 @@
 {
  "document": "usecases/claude-constitution-pilot/run-20261012T1800Z/readings/nd-all.ve.md",
  "group": "all",
- "search_seconds": 205.4,
+ "search_seconds": 110.0,
  "sets": [
   {
    "set": "force-u0036-s05",
@@ -48,9 +48,9 @@
  ],
  "pairs_without_situation": [],
  "search_limits": [],
- "load_seconds": 28.3,
+ "load_seconds": 13.6,
  "admitted": true,
- "check_seconds": 111.1,
+ "check_seconds": 87.5,
  "premises": {
   "status": "UNKNOWN",
   "route": "superposed",
