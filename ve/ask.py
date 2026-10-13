@@ -617,6 +617,8 @@ def main(argv=None) -> int:
     def emit(result: dict | None, error: dict | None = None) -> None:
         if options.json:
             fields = {**honesty, **({"proof": "not_checked", "answer": "no_answer"} if error is not None else {})}
+            if error is None and result is not None and options.evidence and not options.reading:
+                fields["evidence"] = "recorded"
             print(json.dumps({**fields, **({"result": result} if result is not None else {}),
                               **({"error": error} if error is not None else {})}, ensure_ascii=False, indent=2))
         elif result is not None:
