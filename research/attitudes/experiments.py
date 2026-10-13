@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """E1 and E2 (docs/spec/attitudes-PLAN.md section 4): item sets, seeded orders and scoring, with the plan's bars written in.
 
-No reader is called here. The readers (Sonnet 5.5 as human proxy, 40 independent sessions) are model calls, which phase 1
-does not make; the run is DEFERRED (docs/research/attitudes-phase1.md). This script prepares everything a run needs, so
+No reader is called here: `run_readers.py` makes the calls (Sonnet 5.5 as human proxy, 40 independent readers per
+item; authorised by the DRI's decision AT1, 2026-10-13). This script holds the items, the seeded orders and the bars, so
 that the run is mechanical and its bars are fixed before any answer exists:
 
     uv run python research/attitudes/experiments.py items             # -> docs/research/evidence/attitudes/e{1,2}-items.json
@@ -103,7 +103,11 @@ def e2_items():
     for n, (p, p_be) in enumerate(CONTENTS, 1):  # the question is this phase's proposal (G5)
         items.append({"id": f"E2.asserted-not-know.{n}", "kind": "asserted-not-know", "group": "E2.asserted-not-know",
                       "expected": "yes", "text": f"{p[0].upper()}{p[1:]}, and Claude does not know that {p}. Question: Must {p_be}?"})
-    assert len(items) == 23
+    for n, (p, _) in enumerate(CONTENTS, 1):  # G5's three added items: is "does not know" read as not knowing?
+        items.append({"id": f"E2.asserted-not-know-knows.{n}", "kind": "asserted-not-know-knows",
+                      "group": "E2.asserted-not-know", "expected": "no",
+                      "text": f"{p[0].upper()}{p[1:]}, and Claude does not know that {p}. Question: Does Claude know that {p}?"})
+    assert len(items) == 26
     return items
 
 
@@ -120,7 +124,8 @@ def orders(items, seed):
 
 
 def parse(text):
-    """yes / no / cannot tell, from the first line; anything else is "invalid" (counted as neither yes nor no)."""
+    """yes / no / cannot tell, from the first line; anything else is "invalid". An invalid answer is never a yes; for E1's
+    no cap it counts as a no, and it is left out of the negated-"know" agreement count (G6, in the scorers)."""
     first = (text or "").strip().splitlines()[0].strip().lower() if (text or "").strip() else ""
     first = re.sub(r"[^a-z' ]", "", first).strip()
     if first.startswith("cannot tell") or first.startswith("can't tell") or first.startswith("cant tell"):
@@ -156,30 +161,34 @@ def score_e1(counts):
     for i, a in enumerate(WORDS):
         for b in WORDS[i + 1:]:
             c = counts[f"E1.pair.{slug(a)}.{slug(b)}"]
-            if c["yes"] >= PAIR_YES and c["no"] <= PAIR_MAX_NO and a in words and b in words:
+            if c["yes"] >= PAIR_YES and c["no"] + c["invalid"] <= PAIR_MAX_NO and a in words and b in words:  # G6
                 above.append((a, b, f"E1.pair.{slug(a)}.{slug(b)}"))
     return {"lowerBound": lower, "above": above, "counts": counts}
 
 
 def score_e2(counts, e1):
-    reach = lambda i: counts[i]["yes"] >= E2_REACH
+    expected = {i["id"]: i["expected"] for i in e2_items()}
+    reach = lambda i: counts[i][expected[i]] >= E2_REACH  # 36 of 40 give the item's expected answer
     factive = "E2.factive" if all(reach(f"E2.factive.{n}") for n in (1, 2, 3)) else None
     believes = "E2.knows-believes" if factive and all(reach(f"E2.knows-believes.{n}") for n in (1, 2, 3)) else None
     words = [w for w, _ in e1["lowerBound"]]
     thinks = [(w, f"E2.knows-thinks.{slug(w)}") for w in words if factive and reach(f"E2.knows-thinks.{slug(w)}")]
-    top = lambda i: max(counts[i], key=lambda k: counts[i][k])
+    top = lambda i: max(ANSWERS, key=lambda k: counts[i][k])
+    # agreement on one reading among yes, no and cannot tell; invalid answers are left out of the count (G6)
     negated = {f"E2.negated-know.{n}": {"counts": counts[f"E2.negated-know.{n}"],
-                                         "agreed_36": max(counts[f"E2.negated-know.{n}"].values()) >= E2_REACH,
+                                         "agreed_36": max(counts[f"E2.negated-know.{n}"][k] for k in ANSWERS) >= E2_REACH,
                                          "top": top(f"E2.negated-know.{n}")} for n in (1, 2, 3)}
-    # "Must P?" tests that P is read as asserted, not how "does not know" is read: these items cannot admit the form (G5)
-    asserted = all(reach(f"E2.asserted-not-know.{n}") for n in (1, 2, 3))
+    # admitted only if all six items reach 36 of 40: three "Must P?" (yes: P is asserted) and three "Does Claude know
+    # that P?" (no: "does not know" is read as not knowing) (A4, G5)
+    six = [f"E2.asserted-not-know.{n}" for n in (1, 2, 3)] + [f"E2.asserted-not-know-knows.{n}" for n in (1, 2, 3)]
+    admitted = all(reach(i) for i in six)
     return {"factive": factive, "knowsBelieves": believes, "knowsThinks": thinks,
             "negated_know": {"items": negated, "decision": "refused (D-A7), whatever the counts"},
             "unless": {"items": {f"E2.unless.{n}": counts[f"E2.unless.{n}"] for n in (1, 2, 3)},
                        "decision": "refused; evidence only"},
-            "asserted_not_know": {"must_p_items_reach_36": asserted,
-                                  "decision": "refused: the current items cannot admit the form (phase 1 report, G5)",
-                                  "items": {f"E2.asserted-not-know.{n}": counts[f"E2.asserted-not-know.{n}"] for n in (1, 2, 3)}},
+            "asserted_not_know": {"admitted": admitted, "reached": {i: reach(i) for i in six},
+                                  "decision": "admitted" if admitted else "refused, with its rewrites",
+                                  "items": {i: counts[i] for i in six}},
             "counts": counts}
 
 
@@ -295,7 +304,8 @@ def cmd_table(stub):
 
 
 def synthetic(item_ids, yes, no=None, cannot=None):
-    """Answer lines with exact counts per item, for the self-check only (no reader is involved)."""
+    """Answer lines with exact counts per item, for the self-check only (no reader is involved). The rest of the 40 is
+    invalid ("Maybe.")."""
     no, cannot = no or {}, cannot or {}
     lines = []
     for i in item_ids:
@@ -312,9 +322,12 @@ def cmd_selfcheck(stub):
     p = "E1.pair.very-likely.quite-likely"
     base = {i: 40 for i in ids}
     checks = {}
-    for yes, no, want in [(36, 2, True), (35, 0, False), (36, 3, False), (40, 0, True), (37, 3, False)]:
-        r = score_e1(tally(e1, synthetic(ids, {**base, p: yes}, {p: no})))
-        checks[f"pair yes={yes} no={no}"] = (any(x[2] == p for x in r["above"]) == want)
+    # the rest of the 40 is "cannot tell" unless named; G6: an invalid answer counts as a no for the no cap
+    for yes, no, inv, want in [(36, 2, 0, True), (35, 0, 0, False), (36, 3, 0, False), (40, 0, 0, True), (37, 3, 0, False),
+                               (36, 2, 1, False), (36, 0, 4, False), (38, 0, 2, True), (36, 1, 1, True)]:
+        cannot = SESSIONS - yes - no - inv
+        r = score_e1(tally(e1, synthetic(ids, {**base, p: yes}, {p: no}, {p: cannot})))
+        checks[f"pair yes={yes} no={no} invalid={inv}"] = (any(x[2] == p for x in r["above"]) == want)
     c = "E1.cert.likely"
     for yes, want in [(34, True), (33, False)]:
         r = score_e1(tally(e1, synthetic(ids, {**base, c: yes})))
@@ -338,6 +351,20 @@ def cmd_selfcheck(stub):
     for yes, want in [(36, "E2.factive"), (35, None)]:
         r = score_e2(tally(e2, synthetic(ids2, {**full, "E2.factive.2": yes})), r1)
         checks[f"factive item yes={yes}"] = r["factive"] == want and (want is not None or (r["knowsBelieves"] is None and r["knowsThinks"] == []))
+    # the asserted-not-know form: six items, the three "Does Claude know that P?" items reach on "no" (G5)
+    knows = [f"E2.asserted-not-know-knows.{n}" for n in (1, 2, 3)]
+    yes_full = {i: (0 if i in knows else 40) for i in ids2}
+    for k_no, want in [(36, True), (35, False)]:
+        r = score_e2(tally(e2, synthetic(ids2, yes_full, {**{k: 40 for k in knows}, knows[1]: k_no})), r1)
+        checks[f"asserted-not-know: knows item no={k_no}"] = r["asserted_not_know"]["admitted"] is want
+    r = score_e2(tally(e2, synthetic(ids2, full)), r1)
+    checks["asserted-not-know: 'yes' to 'Does Claude know?' refuses the form"] = r["asserted_not_know"]["admitted"] is False
+    # G6: the negated-"know" agreement count leaves invalid answers out (35 no + 5 invalid is not agreement)
+    neg = "E2.negated-know.1"
+    for no, cannot, want in [(36, 0, True), (35, 0, False), (35, 1, False), (0, 0, False)]:
+        r = score_e2(tally(e2, synthetic(ids2, {**full, neg: 0}, {neg: no}, {neg: cannot})), r1)
+        checks[f"negated-know agreement no={no} cannot={cannot} invalid={40 - no - cannot}"] = (
+            r["negated_know"]["items"][neg]["agreed_36"] is want)
     # a synthetic outcome with a closure failure: (very likely, likely) fails while the chain through quite likely passes
     fail = "E1.pair.very-likely.likely"
     rf = score_e1(tally(e1, synthetic(ids, {**base, fail: 20}, {fail: 20})))
