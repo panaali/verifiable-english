@@ -416,23 +416,26 @@ _BUDGET_FIELDS = ("max_proof_steps", "max_domain_size", "max_models", "max_evalu
 
 
 def premise_budget(env: Any, premises: Sequence[Any]) -> PremiseBudget:
-    """Lean's premise-check budget for `premises` over `env` (service mode `search-budget`).
+    """Lean's premise-check budget for `premises` over `env` (service mode `search-budget`), for
+    every declared sort of the environment the search reads.
 
-    The service checks the row against `search-budget.json`; this binds it to the request: every
-    sort it raises is a declared sort of the environment sent, named once, and nothing else is
-    read from it. Anything else is `CheckerUnavailable`; Python computes no budget of its own."""
+    The service checks the row against `search-budget.json` (one entry per requested sort, in the
+    request's order); this binds it to the request by position and reads nothing else from it.
+    Anything else is `CheckerUnavailable`; Python computes no budget of its own."""
     from .ast import _to_data
     from .backends.lean_runner import metered_environment
     from .backends.relay import decide
     environment = metered_environment(env)
     case = {"id": "search-budget", "environment": environment,
-            "premises": [_to_data(p) for p in _premises(premises)]}
+            "premises": [_to_data(p) for p in _premises(premises)],
+            "sorts": list(environment.get("vocabulary", {}).get("sorts", {}))}
     [row] = decide("search-budget", [case])
     return _bind_budget(row, case)
 
 
 def _bind_budget(row: Any, case: dict) -> PremiseBudget:
-    """A `search-budget` row bound to its case (R8: schema and binding only)."""
+    """A `search-budget` row bound to its case (R8: schema and binding only): its own fields, typed,
+    and one entry per requested sort, which raises that sort or is null."""
     def unavailable(why):
         return CheckerUnavailable(f"CheckerUnavailable: the Lean search budget is not an answer to the case ({why})")
     if type(row) is not dict or row.get("id") != case["id"] or row.get("status") != "ok":
@@ -441,19 +444,17 @@ def _bind_budget(row: Any, case: dict) -> PremiseBudget:
         raise unavailable("fields")
     if any(type(row[k]) is not int or row[k] < 0 for k in _BUDGET_FIELDS):
         raise unavailable("budget")
-    declared = case["environment"].get("vocabulary", {}).get("sorts", {})
-    sorts = row["sorts"]
-    if type(sorts) is not list:
-        raise unavailable("sorts")
+    entries = row["sorts"]
+    if type(entries) is not list or len(entries) != len(case["sorts"]):
+        raise unavailable("not one entry per requested sort")
     bounds: dict[str, tuple[int, int]] = {}
-    for entry in sorts:
-        if type(entry) is not dict or set(entry) != {"sort", "least", "most"}:
-            raise unavailable("sort row")
-        sort, least, most = entry["sort"], entry["least"], entry["most"]
-        if (type(sort) is not str or sort not in declared or sort in bounds
-                or type(least) is not int or type(most) is not int or least < 0 or most < 0):
+    for sort, entry in zip(case["sorts"], entries):
+        if entry is None:
+            continue
+        if (type(entry) is not dict or set(entry) != {"least", "most"}
+                or any(type(entry[k]) is not int or entry[k] < 0 for k in ("least", "most"))):
             raise unavailable(f"sort {sort!r}")
-        bounds[sort] = (least, most)
+        bounds[sort] = (entry["least"], entry["most"])
     return PremiseBudget(row["max_proof_steps"], row["max_domain_size"], row["max_models"],
                          row["max_evaluations"], bounds)
 
