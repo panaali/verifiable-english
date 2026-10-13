@@ -655,6 +655,7 @@
   "tests/test_assurance_manifest.py::test_every_real_answer_is_counted_and_indexed",
   "tests/test_assurance_manifest.py::test_guard_allows_the_lean_engine",
   "tests/test_assurance_manifest.py::test_guard_blocks_every_python_entry_once_migrated",
+  "tests/test_assurance_manifest.py::test_json_use_sees_a_constructor_walk",
   "tests/test_assurance_manifest.py::test_lean_bindings_name_real_executables_modes_and_kinds",
   "tests/test_assurance_manifest.py::test_lean_call_sites_are_exactly_the_backend_calls",
   "tests/test_assurance_manifest.py::test_lean_only_operations_have_no_python_verdict_path",
