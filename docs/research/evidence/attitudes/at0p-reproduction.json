@@ -1,0 +1,8 @@
+{
+  "pilot": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z",
+  "nd_all_rebuild_cmp_translation": "identical",
+  "probe_unspecified_cmp_recorded": "identical",
+  "pilot_files_unchanged_sha256_translation": "adecddd32c6c13068253be88c7af2703044ac72d802afaed86efc517bb7145c0",
+  "checkout": "c0cf207c4b5bb50ac72ff7866b40ded47a2b6001",
+  "lean_checkers_lock_rust": "3ec83dee23e692b412f7a79b4af70066fc09c3298d82838bea7f4e5fb0e8eac8"
+}

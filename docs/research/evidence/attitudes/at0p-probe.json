@@ -1,0 +1,867 @@
+{
+  "document": "research/attitudes/run-at0p/readings/all-strict.ve.md (AT-0p strict companion)",
+  "pilot": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z",
+  "method": "probe_unspecified.py's point(): Lean norm-defaults-status, one-element situation",
+  "verdicts": {
+    "A1": {
+      "points": 7,
+      "as_expected": 7,
+      "verdict": "PASS"
+    },
+    "A2": {
+      "points": 7,
+      "as_expected": 7,
+      "verdict": "PASS"
+    },
+    "A3": {
+      "points": 14,
+      "as_expected": 14,
+      "verdict": "PASS"
+    },
+    "A4": {
+      "points": 7,
+      "as_expected": 7,
+      "verdict": "PASS"
+    },
+    "A5": {
+      "baseline_points": [
+        [
+          "u0165.s01",
+          "UNDECIDED"
+        ],
+        [
+          "u0165.s02",
+          "UNDECIDED"
+        ],
+        [
+          "u0165.s03",
+          "UNDECIDED"
+        ],
+        [
+          "u0165.s04",
+          "UNDECIDED"
+        ],
+        [
+          "u0165.s05",
+          "UNDECIDED"
+        ],
+        [
+          "u0165.s06",
+          "UNDECIDED"
+        ],
+        [
+          "u0165.s07",
+          "UNDECIDED"
+        ]
+      ],
+      "baseline_all_undecided": true,
+      "after": "A1",
+      "verdict": "PASS"
+    }
+  },
+  "hard_constraint_points": [
+    {
+      "bar": "A1",
+      "unit": "u0165.s01",
+      "predicate": "weapons_uplift_permitted",
+      "label": "case false, thinks-quite-likely true",
+      "true_atoms": [
+        "thinks_quite_likely_1"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A2",
+      "unit": "u0165.s01",
+      "predicate": "weapons_uplift_permitted",
+      "label": "case true, knowingly true",
+      "true_atoms": [
+        "knowingly_engages_1",
+        "mass_casualty_weapon_uplift"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s01",
+      "predicate": "weapons_uplift_permitted",
+      "label": "neither attitude; case true",
+      "true_atoms": [
+        "mass_casualty_weapon_uplift"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s01",
+      "predicate": "weapons_uplift_permitted",
+      "label": "neither attitude; case false",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A4",
+      "unit": "u0165.s01",
+      "predicate": "weapons_uplift_permitted",
+      "label": "case false, knowingly true",
+      "true_atoms": [
+        "knowingly_engages_1"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s01",
+      "predicate": "weapons_uplift_permitted",
+      "label": "case true, thinks-quite-likely true",
+      "true_atoms": [
+        "mass_casualty_weapon_uplift",
+        "thinks_quite_likely_1"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s01",
+      "predicate": "weapons_uplift_permitted",
+      "label": "case false, knowingly and thinks-quite-likely true",
+      "true_atoms": [
+        "knowingly_engages_1",
+        "thinks_quite_likely_1"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "A1",
+      "unit": "u0165.s02",
+      "predicate": "infrastructure_uplift_permitted",
+      "label": "case false, thinks-quite-likely true",
+      "true_atoms": [
+        "thinks_quite_likely_2"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A2",
+      "unit": "u0165.s02",
+      "predicate": "infrastructure_uplift_permitted",
+      "label": "case true, knowingly true",
+      "true_atoms": [
+        "critical_infrastructure_uplift",
+        "knowingly_engages_2"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s02",
+      "predicate": "infrastructure_uplift_permitted",
+      "label": "neither attitude; case true",
+      "true_atoms": [
+        "critical_infrastructure_uplift"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s02",
+      "predicate": "infrastructure_uplift_permitted",
+      "label": "neither attitude; case false",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A4",
+      "unit": "u0165.s02",
+      "predicate": "infrastructure_uplift_permitted",
+      "label": "case false, knowingly true",
+      "true_atoms": [
+        "knowingly_engages_2"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s02",
+      "predicate": "infrastructure_uplift_permitted",
+      "label": "case true, thinks-quite-likely true",
+      "true_atoms": [
+        "critical_infrastructure_uplift",
+        "thinks_quite_likely_2"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s02",
+      "predicate": "infrastructure_uplift_permitted",
+      "label": "case false, knowingly and thinks-quite-likely true",
+      "true_atoms": [
+        "knowingly_engages_2",
+        "thinks_quite_likely_2"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "A1",
+      "unit": "u0165.s03",
+      "predicate": "cyberweapon_creation_permitted",
+      "label": "case false, thinks-quite-likely true",
+      "true_atoms": [
+        "thinks_quite_likely_3"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A2",
+      "unit": "u0165.s03",
+      "predicate": "cyberweapon_creation_permitted",
+      "label": "case true, knowingly true",
+      "true_atoms": [
+        "damaging_cyberweapon_or_malicious_code",
+        "knowingly_engages_3"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s03",
+      "predicate": "cyberweapon_creation_permitted",
+      "label": "neither attitude; case true",
+      "true_atoms": [
+        "damaging_cyberweapon_or_malicious_code"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s03",
+      "predicate": "cyberweapon_creation_permitted",
+      "label": "neither attitude; case false",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A4",
+      "unit": "u0165.s03",
+      "predicate": "cyberweapon_creation_permitted",
+      "label": "case false, knowingly true",
+      "true_atoms": [
+        "knowingly_engages_3"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s03",
+      "predicate": "cyberweapon_creation_permitted",
+      "label": "case true, thinks-quite-likely true",
+      "true_atoms": [
+        "damaging_cyberweapon_or_malicious_code",
+        "thinks_quite_likely_3"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s03",
+      "predicate": "cyberweapon_creation_permitted",
+      "label": "case false, knowingly and thinks-quite-likely true",
+      "true_atoms": [
+        "knowingly_engages_3",
+        "thinks_quite_likely_3"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "A1",
+      "unit": "u0165.s04",
+      "predicate": "oversight_undermining_permitted",
+      "label": "case false, thinks-quite-likely true",
+      "true_atoms": [
+        "thinks_quite_likely_4"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A2",
+      "unit": "u0165.s04",
+      "predicate": "oversight_undermining_permitted",
+      "label": "case true, knowingly true",
+      "true_atoms": [
+        "clear_and_substantial_undermining_of_oversight",
+        "knowingly_engages_4"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s04",
+      "predicate": "oversight_undermining_permitted",
+      "label": "neither attitude; case true",
+      "true_atoms": [
+        "clear_and_substantial_undermining_of_oversight"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s04",
+      "predicate": "oversight_undermining_permitted",
+      "label": "neither attitude; case false",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A4",
+      "unit": "u0165.s04",
+      "predicate": "oversight_undermining_permitted",
+      "label": "case false, knowingly true",
+      "true_atoms": [
+        "knowingly_engages_4"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s04",
+      "predicate": "oversight_undermining_permitted",
+      "label": "case true, thinks-quite-likely true",
+      "true_atoms": [
+        "clear_and_substantial_undermining_of_oversight",
+        "thinks_quite_likely_4"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s04",
+      "predicate": "oversight_undermining_permitted",
+      "label": "case false, knowingly and thinks-quite-likely true",
+      "true_atoms": [
+        "knowingly_engages_4",
+        "thinks_quite_likely_4"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "A1",
+      "unit": "u0165.s05",
+      "predicate": "humanity_attack_participation_permitted",
+      "label": "case false, thinks-quite-likely true",
+      "true_atoms": [
+        "thinks_quite_likely_5"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A2",
+      "unit": "u0165.s05",
+      "predicate": "humanity_attack_participation_permitted",
+      "label": "case true, knowingly true",
+      "true_atoms": [
+        "attempt_to_kill_or_disempower_most_of_humanity",
+        "knowingly_engages_5"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s05",
+      "predicate": "humanity_attack_participation_permitted",
+      "label": "neither attitude; case true",
+      "true_atoms": [
+        "attempt_to_kill_or_disempower_most_of_humanity"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s05",
+      "predicate": "humanity_attack_participation_permitted",
+      "label": "neither attitude; case false",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A4",
+      "unit": "u0165.s05",
+      "predicate": "humanity_attack_participation_permitted",
+      "label": "case false, knowingly true",
+      "true_atoms": [
+        "knowingly_engages_5"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s05",
+      "predicate": "humanity_attack_participation_permitted",
+      "label": "case true, thinks-quite-likely true",
+      "true_atoms": [
+        "attempt_to_kill_or_disempower_most_of_humanity",
+        "thinks_quite_likely_5"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s05",
+      "predicate": "humanity_attack_participation_permitted",
+      "label": "case false, knowingly and thinks-quite-likely true",
+      "true_atoms": [
+        "knowingly_engages_5",
+        "thinks_quite_likely_5"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "A1",
+      "unit": "u0165.s06",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "label": "case false, thinks-quite-likely true",
+      "true_atoms": [
+        "thinks_quite_likely_6"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A2",
+      "unit": "u0165.s06",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "label": "case true, knowingly true",
+      "true_atoms": [
+        "illegitimate_absolute_control",
+        "knowingly_engages_6"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s06",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "label": "neither attitude; case true",
+      "true_atoms": [
+        "illegitimate_absolute_control"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s06",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "label": "neither attitude; case false",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A4",
+      "unit": "u0165.s06",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "label": "case false, knowingly true",
+      "true_atoms": [
+        "knowingly_engages_6"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s06",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "label": "case true, thinks-quite-likely true",
+      "true_atoms": [
+        "illegitimate_absolute_control",
+        "thinks_quite_likely_6"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s06",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "label": "case false, knowingly and thinks-quite-likely true",
+      "true_atoms": [
+        "knowingly_engages_6",
+        "thinks_quite_likely_6"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "A1",
+      "unit": "u0165.s07",
+      "predicate": "csam_generation_permitted_for_claude",
+      "label": "case false, thinks-quite-likely true",
+      "true_atoms": [
+        "thinks_quite_likely_7"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A2",
+      "unit": "u0165.s07",
+      "predicate": "csam_generation_permitted_for_claude",
+      "label": "case true, knowingly true",
+      "true_atoms": [
+        "child_sexual_abuse_material",
+        "knowingly_engages_7"
+      ],
+      "status": "SETTLED no",
+      "expected": "SETTLED no",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s07",
+      "predicate": "csam_generation_permitted_for_claude",
+      "label": "neither attitude; case true",
+      "true_atoms": [
+        "child_sexual_abuse_material"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A3",
+      "unit": "u0165.s07",
+      "predicate": "csam_generation_permitted_for_claude",
+      "label": "neither attitude; case false",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "A4",
+      "unit": "u0165.s07",
+      "predicate": "csam_generation_permitted_for_claude",
+      "label": "case false, knowingly true",
+      "true_atoms": [
+        "knowingly_engages_7"
+      ],
+      "status": "UNDECIDED",
+      "expected": "UNDECIDED",
+      "as_expected": true
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s07",
+      "predicate": "csam_generation_permitted_for_claude",
+      "label": "case true, thinks-quite-likely true",
+      "true_atoms": [
+        "child_sexual_abuse_material",
+        "thinks_quite_likely_7"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    },
+    {
+      "bar": "info",
+      "unit": "u0165.s07",
+      "predicate": "csam_generation_permitted_for_claude",
+      "label": "case false, knowingly and thinks-quite-likely true",
+      "true_atoms": [
+        "knowingly_engages_7",
+        "thinks_quite_likely_7"
+      ],
+      "status": "SETTLED no",
+      "expected": null,
+      "as_expected": null
+    }
+  ],
+  "other_points": {
+    "asked": 21,
+    "same_as_recorded": 21,
+    "rows": [
+      {
+        "label": "u0156.s03: any situation",
+        "predicate": "system_prompt_deception_permitted",
+        "true_atoms": [],
+        "status": "SETTLED no",
+        "recorded": "SETTLED no",
+        "same": true
+      },
+      {
+        "label": "u0125.s04.p2: any situation",
+        "predicate": "denial_of_being_claude_permitted",
+        "true_atoms": [],
+        "status": "SETTLED no",
+        "recorded": "SETTLED no",
+        "same": true
+      },
+      {
+        "label": "u0052.s01: any situation (added in run 20261008T0600Z: the unit is now one strict reading)",
+        "predicate": "judgment_use_required",
+        "true_atoms": [],
+        "status": "SETTLED yes",
+        "recorded": "SETTLED yes",
+        "same": true
+      },
+      {
+        "label": "u0123.s01: a dishonest-looking instruction within the honesty principles",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [
+          "instruction_dishonest_looking_within_honesty"
+        ],
+        "status": "SETTLED yes",
+        "recorded": "SETTLED yes",
+        "same": true
+      },
+      {
+        "label": "u0062.s01: input is a persona",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [
+          "input_is_persona"
+        ],
+        "status": "SETTLED yes",
+        "recorded": "SETTLED yes",
+        "same": true
+      },
+      {
+        "label": "u0062.s01: input is none of the three",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [],
+        "status": "UNDECIDED",
+        "recorded": "UNDECIDED",
+        "same": true
+      },
+      {
+        "label": "u0062.s01: input is specific instructions",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [
+          "input_is_specific_instructions"
+        ],
+        "status": "SETTLED yes",
+        "recorded": "SETTLED yes",
+        "same": true
+      },
+      {
+        "label": "u0062.s01 and u0123.s03: a persona that also is an instruction to claim to be human",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [
+          "input_is_persona",
+          "instruction_claim_human_when_asked"
+        ],
+        "status": "SETTLED no",
+        "recorded": "SETTLED no",
+        "same": true
+      },
+      {
+        "label": "u0062.s01 and u0123.s03: specific instructions that also endanger health or safety",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [
+          "input_is_specific_instructions",
+          "instruction_endanger_health_or_safety"
+        ],
+        "status": "SETTLED no",
+        "recorded": "SETTLED no",
+        "same": true
+      },
+      {
+        "label": "u0123.s01 and u0123.s03: a dishonest-looking instruction that also acts against the guidelines",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [
+          "instruction_act_against_guidelines",
+          "instruction_dishonest_looking_within_honesty"
+        ],
+        "status": "SETTLED no",
+        "recorded": "SETTLED no",
+        "same": true
+      },
+      {
+        "label": "u0123.s02: persona role-play instruction",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [
+          "instruction_role_play_custom_persona"
+        ],
+        "status": "SETTLED yes",
+        "recorded": "SETTLED yes",
+        "same": true
+      },
+      {
+        "label": "u0123.s03: instruction to claim to be human",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [
+          "instruction_claim_human_when_asked"
+        ],
+        "status": "SETTLED no",
+        "recorded": "SETTLED no",
+        "same": true
+      },
+      {
+        "label": "u0123.s02 and u0123.s03: a role-play instruction that also claims to be human",
+        "predicate": "operator_input_permitted",
+        "true_atoms": [
+          "instruction_claim_human_when_asked",
+          "instruction_role_play_custom_persona"
+        ],
+        "status": "SETTLED no",
+        "recorded": "SETTLED no",
+        "same": true
+      },
+      {
+        "label": "u0036.s05: genuine ambiguity",
+        "predicate": "clarification_required",
+        "true_atoms": [
+          "genuine_ambiguity"
+        ],
+        "status": "SETTLED yes",
+        "recorded": "SETTLED yes",
+        "same": true
+      },
+      {
+        "label": "u0036.s05: no genuine ambiguity",
+        "predicate": "clarification_required",
+        "true_atoms": [],
+        "status": "UNDECIDED",
+        "recorded": "UNDECIDED",
+        "same": true
+      },
+      {
+        "label": "u0073.s05: the case holds",
+        "predicate": "system_prompt_compliance_required",
+        "true_atoms": [
+          "operator_prompt_addresses_case"
+        ],
+        "status": "SETTLED yes",
+        "recorded": "SETTLED yes",
+        "same": true
+      },
+      {
+        "label": "u0073.s05: the case does not hold",
+        "predicate": "system_prompt_compliance_required",
+        "true_atoms": [],
+        "status": "UNDECIDED",
+        "recorded": "UNDECIDED",
+        "same": true
+      },
+      {
+        "label": "u0073.s05: the case holds but complying is unsafe",
+        "predicate": "system_prompt_compliance_required",
+        "true_atoms": [
+          "compliance_unsafe",
+          "operator_prompt_addresses_case"
+        ],
+        "status": "UNDECIDED",
+        "recorded": "UNDECIDED",
+        "same": true
+      },
+      {
+        "label": "u0073.s05: the case holds and the “generally” exception applies",
+        "predicate": "system_prompt_compliance_required",
+        "true_atoms": [
+          "general_exception_to_complying",
+          "operator_prompt_addresses_case"
+        ],
+        "status": "UNDECIDED",
+        "recorded": "UNDECIDED",
+        "same": true
+      },
+      {
+        "label": "u0168.s01: the case holds",
+        "predicate": "firmness_required",
+        "true_atoms": [
+          "seemingly_compelling_argument_to_cross_line"
+        ],
+        "status": "SETTLED yes",
+        "recorded": "SETTLED yes",
+        "same": true
+      },
+      {
+        "label": "u0168.s01: the case does not hold",
+        "predicate": "firmness_required",
+        "true_atoms": [],
+        "status": "UNDECIDED",
+        "recorded": "UNDECIDED",
+        "same": true
+      }
+    ]
+  }
+}
