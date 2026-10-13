@@ -600,8 +600,10 @@ def soft_label(label, rules):
     condition of one of them (`soft:exception:<rule>:<role>:<i>`), or the pair of two (`soft:coherence:<a>,<b>`)."""
     if label.startswith(SOFT_EXCEPTION_LABEL):
         parts = label[len(SOFT_EXCEPTION_LABEL):].rsplit(":", 2)
-        return (len(parts) == 3 and parts[0] in rules and parts[1] in ("sufficient", "necessary")
-                and parts[2].isdigit() and str(int(parts[2])) == parts[2])
+        # The index as Lean prints a natural number: ASCII digits, no leading zero.
+        index = parts[2] if len(parts) == 3 else ""
+        return (parts[0] in rules and parts[1] in ("sufficient", "necessary") and index.isascii()
+                and index.isdigit() and (index == "0" or not index.startswith("0")))
     if label.startswith(SOFT_COHERENCE_LABEL):
         pair = label[len(SOFT_COHERENCE_LABEL):].split(",")
         return len(pair) == 2 and pair[0] != pair[1] and all(name in rules for name in pair)
