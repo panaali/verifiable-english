@@ -118,3 +118,85 @@ The selection recorded 363 passing units and three failed units; the focused `py
 `3 passed`. This is evidence for the changed behavior and the requested rerun policy, not a passing release gate.
 The full gate was not run under this task's explicit test instruction. No `PROBE Fk:` executable probes occur in
 either review.
+
+## rd-9-looprecheck1 fix round (2026-10-13)
+
+The one open A/B finding of `rd-9-looprecheck1.final.md` is **Astra A / Fable B2**: `softX_wellFormed` unbuilt,
+SC-2 to SC-6, SC-8 and three-way fixtures open, the soft route refusing. This round builds the soft route through
+Lean and the document path. RD-9 is still not accepted: the items under "Still open" and the DRI signatures remain.
+No model calls or push were made.
+
+| Part of the finding | Fix | Regression tests | Commit |
+| --- | --- | --- | --- |
+| `softX_wellFormed` unbuilt (PROBE A) | `softX_wellFormed` proved through `Wire.softLabelledU_wellFormed`; the statement checker covers every built block of spec 6 | `tests/test_rd9_statements.py::test_rd9_statements_match_the_approved_text_with_nothing_unbuilt` (PROBE A failed before the fix: "unbuilt in this batch: softX_wellFormed"; passes after) | d420445e |
+| SC-2 separation | `SoftSeparate.lean`: `separatesS`, `separatesS_sound`, `separatesS_separated` on filled sides; computed fixtures F-SD1 to F-SD5, K2, NSDp, NSDq, C1′, C2′, C9′ | `SoftSeparateExamples.lean` guards; `test_rd9_statements.py` (6.6) | d420445e |
+| SC-6 layered kinds | admission and certificate kinds on the soft branch (`LayeredAdmission.lean`), `softCase` dispatch, schema and encoder | `tests/test_norm_defaults_soft_kinds.py` (8 tests) | 1c1cce1e |
+| SC-4 wire | the readings route under the soft completion: admission, separation, elaborate and choice on `choiceLayeredG`, `soft_premises` relayed and bound | `tests/test_readings_sd_lean.py`, `tests/test_readings_sd_relay.py` | 321e610a |
+| SC-5 verdicts | `XEvidence`, the `x*` rows and `x_rowsHold`; `NDEvidence = XEvidence (choiceU N c) []` with one per-choice decoder (`xEvidenceOf`) for both chains; `SoftVerdicts.lean` (`replayVerdictsSD`, seven `readings_wire_sd_verdicts_*` theorems); `readings-verdicts` answered under the soft completion with `decided_units` | `test_readings_sd_lean.py::test_fsd1_verdicts_*`, `::test_fsd2_verdicts_take_the_enumerated_route`, `::test_fsd4_a_conflict_free_answer_rests_on_the_coherence_premise`, `::test_fsd8_evidence_for_another_choice_is_never_a_verdict`, `::test_fsd9_verdicts_beyond_64_choices`, `::test_fsd11_a_verdict_certificate_binds_the_assertions_it_takes`; RD-3's verdict, component and decided-share tests unchanged (320 passed) | cecc1754 |
+| SC-8 documents, relay, generators | the refusal narrowed to the rights route (3.11 row 7); no W1 container or Python soft premise under the soft completion; `_FilledChoiceDocument` reads the chain, `Soft_T` and the decision tables from Lean's row; the search filters by Lean's `soft_premises`; one soft-label binder | `tests/test_readings_sd_document.py` (F-SD1 load, check, render, `readings --conclusion`, generator, rights refusal); `test_readings_sd_relay.py::test_a_soft_label_the_request_does_not_declare_is_unavailable` | 4ff93b21, eba352a6 |
+| Three-way fixtures (checklist 2) | the soft completion's differential: generated twins, Python's search against Lean, 1- and 2-fault mutations compared by text, the relay equal to Lean's row. Rust has no readings role (its replay was deleted in lean-first batch 3), so the third leg is Lean's own answer on the unmutated input | `tests/test_readings_sd_differential.py` (4 tests) | ec064fa9 |
+
+### Seeded bugs (each restored)
+
+| Seed | Language | Temporary change | Failing check |
+| --- | --- | --- | --- |
+| S2-M1 | Lean | `separatesS`'s `fillHoldsS` conjunct made vacuous | `lake build VE.Readings.SoftSeparateExamples`: `separatesS_sound` no longer elaborates |
+| S6-M1 | Lean | `replayLayeredEntailment` bound without `X` | `test_norm_defaults_soft_kinds.py::test_the_soft_premises_are_part_of_the_binding` |
+| S4-M1 | Python | `_bind_soft_premises` returns at once | 12 of `test_readings_sd_relay.py::test_a_mutated_soft_row_is_unavailable[*]` |
+| S4-M2 | Lean | `pairFactsS` without the witness's `Fill_T` | `test_readings_sd_lean.py::test_fill_holds_alone_decides_the_pair` |
+| S5-M1 | Lean | `xEvidenceOf` binds certificates without the choice's assertions | `test_readings_sd_lean.py::test_fsd11_a_verdict_certificate_binds_the_assertions_it_takes` |
+| S8-M1 | Python | `_FilledChoiceDocument` without the choice's decision tables | `test_readings_sd_document.py::test_fsd1_check_folds_leans_verdicts`, `::test_fsd1_readings_conclusion_some_all_none` |
+| S8-M2 | Python | `soft_label` accepts every label | 11 tests of `test_readings_sd_relay.py` |
+
+No Rust product code changed.
+
+### Evidence
+
+- `lake build`: PASS (900 jobs). `python3 lean/audit.py`: PASS, 489 source files, 5,371 named theorems, standard
+  axioms only. `tools/check_rd9_sc1_statements.py`: every block of SC-1, SC-2, SC-4, SC-5 and SC-6 matches, with two
+  declarations pending the bounded statement re-check (spec 12.24 `choiceLayeredG`, 12.25 `ndTextWith`).
+- `tools/regen_generated.py --check`: every generated file fresh except `trust-tables` (the budget below).
+- Selected tests (`tools/select_tests.py --base $(git merge-base HEAD main) --run --jobs 8`, 372 units, in effect
+  the whole suite) on ec064fa9: the run reached its one-hour foreground limit after 291 files, 289 passing. The 80
+  files it had not reached ran by `pytest -n 8` on the same commit: 2,886 passed. Two failures were this branch's:
+  `test_numeral_conversion.py::test_every_int_conversion_in_ve_is_bounded_or_reviewed` (`int()` in the moved soft
+  label check) and `test_consolidation_tools.py::test_committed_ledger_names_real_declarations` (the plan's
+  measured ledger rows); both are fixed in eba352a6 and pass on rerun with the tests the fix affects (343 passed).
+- The release gate was not run, as this task requires.
+
+### DRI rulings and open signatures
+
+| Delta | Ruling and evidence |
+| --- | --- |
+| `soft_premises` per reading (validate, elaborate) | SIGNED by standing ruling R3 (DRI-RULINGS.md): information added, nothing removed; bound to the request by `_bind_soft_premises` and checked against Lean's rows by `test_readings_sd_relay.py` |
+| Soft-completion documents answered (K18 and every soft-chain document under `norm-defaults@0`; the refusal narrowed to the rights route) | **Needs DRI signature**: it widens what is accepted (never covered by a standing ruling) |
+| The layered certificate kind's refusal of a rights source ("property not found: premises") | **Needs DRI signature** (availability change) |
+| `normDefaults_wire_admission` gains the hypothesis that the source is not on the soft layered route | **Needs DRI signature**: an approved statement changed |
+| `choiceLayeredG` gains `(hN : N.D = b.D)`; `ndTextWith` keeps `let freeDoc` | **Pending the bounded statement re-check** (spec 12.24, 12.25) |
+| Trusted Lean lines: K +0, S +171, trusted +529 against the signed baseline | **Needs DRI signature**: R6 does not apply (no Python or Rust decision path deleted) |
+| `decided_units`, E19's gap selection (earlier rounds) | **Still need item-specific DRI signatures** |
+| The E3 line of a soft label | **Needs a DRI wording decision**: D12 assumed soft-norms 2.1's and 2.3's sentences exist as renderers; no renderer words a coherence premise, so Lean's plan gives the label an `unworded` line and the answer is unavailable (`test_readings_sd_document.py::test_a_verdict_on_a_soft_label_is_unavailable_until_its_sentence_exists`) |
+
+### Still open
+
+- SC-3 (`decision_only_soundS`, off the path: E25 stays "not certified").
+- SC-8's `soft__` relay lint: S1's and S2's Python still name decision predicates (`readings_s1.Side.gen_keys`,
+  `readings_s2_wording._decision_names`, `readings_sup.name_map`). Removing them needs Lean to emit each decision's key
+  in the soft row (a soft-norms wire change); not done in this round.
+- The generator does not model `F_p` on the soft chain (no filled readings document exists there, 4.1): a separation
+  whose guard reads a gap is not found (recorded in
+  `test_readings_sd_document.py::test_generator_records_not_found_where_a_guard_reads_a_gap`).
+- SC-9 (the constitution `CE4`, C1 to C10) and its EXTERNAL source check; SC-10 and SC-11 (superposition).
+- The full release gate on the final HEAD.
+
+### Build checklist (this round)
+
+| Line | Status |
+| --- | --- |
+| 2 | Done for the soft completion's Python/Lean legs (`test_readings_sd_differential.py`); no Rust readings leg exists |
+| 4 | Done: `soft_premises` and soft verdict labels mutated and retyped (`test_readings_sd_relay.py`) |
+| 9 | Open for soft labels (the wording decision above); F-SD1's lines pass the existing renderers |
+| 13 | Done: S2-M1 to S8-M2 above |
+| 17 | Done except the two pending declarations above |
+| 22 | Selected tests run as above; the full gate not run (task instruction) |
+| 23 | As the table above |
