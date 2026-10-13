@@ -1,7 +1,7 @@
 {
  "range": "main..HEAD --no-merges",
  "base": "968870193193b9e8138183ed77c41e376a6e376c",
- "captured_head": "7b75c7afb22e4be192c19fbf7f50d66c60687444",
+ "captured_head": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
  "commits": [
   "bbbe98a444a2b6d173e6a40739e1a1c9abe4d88e",
   "d2dcdac37e85db935d83b2bfe97f8ebca4926a41",
@@ -38,7 +38,24 @@
   "ff1a28a227dc9df8ecb006df2d0cb0ae5107ad24",
   "c8ec761fd85ac325d8d13aa36baac245192dff66",
   "4be32836912a59ab873d4294c9361877e6a48db6",
-  "7b75c7afb22e4be192c19fbf7f50d66c60687444"
+  "7b75c7afb22e4be192c19fbf7f50d66c60687444",
+  "1f3333cac80260857aa26837d8e5b144d7b6356e",
+  "cfb973edbad1effc9a2d69242353aba18f935507",
+  "ec839f5892f46fd865103f975eb541bd72226604",
+  "d22bbcb8c6190ccedda0763649cfa8d1b79bd06f",
+  "de32056155c19aca585512d10c2af0bb7d216fa6",
+  "77f7997ce3c25da0c3a3d32c921d75f383bccc9d",
+  "86a94f859bca0d3f39decae4fbeffc9329f71cad",
+  "bf5b5775adfc2ebe083b47097427897785e18f0f",
+  "79d0662333f4d16cd6fe0680761e9ff50eb65f28",
+  "310dabfc4c499cadca058a562381d8a2937242cc",
+  "41887e902754d17fec9d785459feafa70e3fb446",
+  "4edf751efb5678871d40ac104bdad062a705655c",
+  "5904bc82c22e823d566016a6cbc7cca2d72e1cec",
+  "f3a4c90152020c592bf2c76616554378c0202c10",
+  "c1372c296f915188bcec19b7cfc207c2b6fdf9d1",
+  "6feff0f8085494a0168b693a3f836044fb591b21",
+  "6ce96e3132185fd22e250a35bb2a6f85469f64d0"
  ],
  "numstat": [
   {
@@ -1300,6 +1317,660 @@
    "path": "tests/test_question_answering_q2_report.py",
    "added": 6,
    "deleted": 4
+  },
+  {
+   "commit": "1f3333cac80260857aa26837d8e5b144d7b6356e",
+   "path": "docs/spec/question-answering-q2/REPORT.md",
+   "added": 8,
+   "deleted": 3
+  },
+  {
+   "commit": "1f3333cac80260857aa26837d8e5b144d7b6356e",
+   "path": "docs/spec/question-answering-q2/evidence/gate-initial-failed.json",
+   "added": 613,
+   "deleted": 0
+  },
+  {
+   "commit": "1f3333cac80260857aa26837d8e5b144d7b6356e",
+   "path": "docs/spec/question-answering-q2/evidence/gate-result.json",
+   "added": 578,
+   "deleted": 0
+  },
+  {
+   "commit": "1f3333cac80260857aa26837d8e5b144d7b6356e",
+   "path": "docs/spec/question-answering-q2/evidence/scope.json",
+   "added": 22,
+   "deleted": 2
+  },
+  {
+   "commit": "cfb973edbad1effc9a2d69242353aba18f935507",
+   "path": "docs/spec/question-answering-q2/DELTA.md",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "commit": "ec839f5892f46fd865103f975eb541bd72226604",
+   "path": "lean/ResponseShape/Schemas/Ask.lean",
+   "added": 30,
+   "deleted": 3
+  },
+  {
+   "commit": "ec839f5892f46fd865103f975eb541bd72226604",
+   "path": "tests/test_ask_relay.py",
+   "added": 15,
+   "deleted": 0
+  },
+  {
+   "commit": "ec839f5892f46fd865103f975eb541bd72226604",
+   "path": "ve/backends/lean_service_schema/ask.json",
+   "added": 34,
+   "deleted": 2
+  },
+  {
+   "commit": "d22bbcb8c6190ccedda0763649cfa8d1b79bd06f",
+   "path": "docs/ARCHITECTURE-LAYERS.md",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "d22bbcb8c6190ccedda0763649cfa8d1b79bd06f",
+   "path": "tests/test_ask_cli.py",
+   "added": 18,
+   "deleted": 4
+  },
+  {
+   "commit": "d22bbcb8c6190ccedda0763649cfa8d1b79bd06f",
+   "path": "tests/test_filling_search.py",
+   "added": 38,
+   "deleted": 0
+  },
+  {
+   "commit": "d22bbcb8c6190ccedda0763649cfa8d1b79bd06f",
+   "path": "tools/layer_policy.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "d22bbcb8c6190ccedda0763649cfa8d1b79bd06f",
+   "path": "ve/ask.py",
+   "added": 1,
+   "deleted": 12
+  },
+  {
+   "commit": "d22bbcb8c6190ccedda0763649cfa8d1b79bd06f",
+   "path": "ve/filling_search.py",
+   "added": 45,
+   "deleted": 0
+  },
+  {
+   "commit": "d22bbcb8c6190ccedda0763649cfa8d1b79bd06f",
+   "path": "ve/norm_defaults.py",
+   "added": 3,
+   "deleted": 19
+  },
+  {
+   "commit": "de32056155c19aca585512d10c2af0bb7d216fa6",
+   "path": "lean/declarations.txt",
+   "added": 7,
+   "deleted": 6
+  },
+  {
+   "commit": "de32056155c19aca585512d10c2af0bb7d216fa6",
+   "path": "tools/trust-classes.json",
+   "added": 1,
+   "deleted": 0
+  },
+  {
+   "commit": "77f7997ce3c25da0c3a3d32c921d75f383bccc9d",
+   "path": "docs/spec/question-answering-q2/REPORT.md",
+   "added": 6,
+   "deleted": 2
+  },
+  {
+   "commit": "77f7997ce3c25da0c3a3d32c921d75f383bccc9d",
+   "path": "docs/spec/question-answering-q2/evidence/agreement.json",
+   "added": 113,
+   "deleted": 0
+  },
+  {
+   "commit": "77f7997ce3c25da0c3a3d32c921d75f383bccc9d",
+   "path": "docs/spec/question-answering-q2/evidence/measurements.json",
+   "added": 33,
+   "deleted": 0
+  },
+  {
+   "commit": "77f7997ce3c25da0c3a3d32c921d75f383bccc9d",
+   "path": "docs/spec/question-answering-report.md",
+   "added": 64,
+   "deleted": 0
+  },
+  {
+   "commit": "77f7997ce3c25da0c3a3d32c921d75f383bccc9d",
+   "path": "tests/test_question_answering_measure_report.py",
+   "added": 19,
+   "deleted": 0
+  },
+  {
+   "commit": "77f7997ce3c25da0c3a3d32c921d75f383bccc9d",
+   "path": "tools/question_answering_agreement.py",
+   "added": 62,
+   "deleted": 0
+  },
+  {
+   "commit": "77f7997ce3c25da0c3a3d32c921d75f383bccc9d",
+   "path": "tools/question_answering_measure.py",
+   "added": 92,
+   "deleted": 0
+  },
+  {
+   "commit": "77f7997ce3c25da0c3a3d32c921d75f383bccc9d",
+   "path": "tools/question_answering_report.py",
+   "added": 60,
+   "deleted": 0
+  },
+  {
+   "commit": "86a94f859bca0d3f39decae4fbeffc9329f71cad",
+   "path": "docs/spec/question-answering-q2/DELTA.md",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "bf5b5775adfc2ebe083b47097427897785e18f0f",
+   "path": ".importlinter",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "79d0662333f4d16cd6fe0680761e9ff50eb65f28",
+   "path": "tools/gate-collection.json",
+   "added": 30,
+   "deleted": 0
+  },
+  {
+   "commit": "310dabfc4c499cadca058a562381d8a2937242cc",
+   "path": "docs/spec/question-answering-q2/DELTA.md",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "310dabfc4c499cadca058a562381d8a2937242cc",
+   "path": "tools/regen_generated.py",
+   "added": 1,
+   "deleted": 0
+  },
+  {
+   "commit": "41887e902754d17fec9d785459feafa70e3fb446",
+   "path": "tests/test_filling_search.py",
+   "added": 41,
+   "deleted": 9
+  },
+  {
+   "commit": "41887e902754d17fec9d785459feafa70e3fb446",
+   "path": "ve/ask.py",
+   "added": 6,
+   "deleted": 6
+  },
+  {
+   "commit": "41887e902754d17fec9d785459feafa70e3fb446",
+   "path": "ve/filling_search.py",
+   "added": 32,
+   "deleted": 13
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "conformance/frozen_norm_defaults_route.py",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "conformance/frozen_words.py",
+   "added": 86,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/ResponseShape/Encoders.lean",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/ResponseShape/Encoders/Words.lean",
+   "added": 19,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/ResponseShape/Schemas.lean",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/ResponseShape/Schemas/NormDefaults.lean",
+   "added": 3,
+   "deleted": 2
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/ResponseShape/Schemas/Words.lean",
+   "added": 29,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/ResponseShape/Skeletons.lean",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/Ask/Lines.lean",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/Ask/Render.lean",
+   "added": 3,
+   "deleted": 3
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/Ask/ZeroAnswer.lean",
+   "added": 5,
+   "deleted": 4
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/NormDefaults/Admission.lean",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/NormDefaults/Layered.lean",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/NormDefaults/Tree.lean",
+   "added": 4,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/NormDefaults/Wire.lean",
+   "added": 3,
+   "deleted": 2
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/Service/Protocol.lean",
+   "added": 8,
+   "deleted": 2
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/Words/Run.lean",
+   "added": 161,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/VE/Words/Situation.lean",
+   "added": 137,
+   "deleted": 65
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "lean/checkers.lock",
+   "added": 3,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "tests/test_norm_defaults.py",
+   "added": 6,
+   "deleted": 3
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "tests/test_norm_defaults_relay_english.py",
+   "added": 3,
+   "deleted": 1
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "tests/test_readings_defaults_english.py",
+   "added": 20,
+   "deleted": 13
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "tests/test_readings_defaults_names.py",
+   "added": 3,
+   "deleted": 3
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "tests/test_readings_s2_document.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "tests/test_words.py",
+   "added": 258,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "tools/relay_lint.py",
+   "added": 89,
+   "deleted": 3
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "tools/words_ab.py",
+   "added": 216,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/backends/lean_service.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/backends/lean_service_schema/envelope.json",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/backends/lean_service_schema/norm-defaults.json",
+   "added": 4,
+   "deleted": 2
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/backends/lean_service_schema/words.json",
+   "added": 38,
+   "deleted": 0
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/backends/service_schema.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/norm_defaults.py",
+   "added": 1,
+   "deleted": 5
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/norm_defaults_english.py",
+   "added": 38,
+   "deleted": 48
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/norm_english.py",
+   "added": 0,
+   "deleted": 15
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/readings_route.py",
+   "added": 8,
+   "deleted": 26
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/readings_s2_english.py",
+   "added": 15,
+   "deleted": 13
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/readings_s2_wording.py",
+   "added": 28,
+   "deleted": 40
+  },
+  {
+   "commit": "4edf751efb5678871d40ac104bdad062a705655c",
+   "path": "ve/words.py",
+   "added": 132,
+   "deleted": 0
+  },
+  {
+   "commit": "5904bc82c22e823d566016a6cbc7cca2d72e1cec",
+   "path": "lean/VE/Ask/Render.lean",
+   "added": 29,
+   "deleted": 3
+  },
+  {
+   "commit": "5904bc82c22e823d566016a6cbc7cca2d72e1cec",
+   "path": "lean/checkers.lock",
+   "added": 1,
+   "deleted": 0
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "docs/spec/question-answering-q2/DELTA.md",
+   "added": 9,
+   "deleted": 3
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "docs/spec/question-answering-q2/LEDGER.md",
+   "added": 28,
+   "deleted": 0
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "docs/spec/question-answering-q2/REPORT.md",
+   "added": 17,
+   "deleted": 23
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "docs/spec/question-answering-q2/evidence/measurements.json",
+   "added": 9,
+   "deleted": 9
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "docs/spec/question-answering-q2/mutants.py",
+   "added": 26,
+   "deleted": 0
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "docs/trust-baseline.json",
+   "added": 11,
+   "deleted": 1
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "lean/ResponseShape/Audit.lean",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "lean/VE.lean",
+   "added": 1,
+   "deleted": 0
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "lean/VE/Audit.lean",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "lean/declarations.txt",
+   "added": 272,
+   "deleted": 237
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "lean/predicates.txt",
+   "added": 3,
+   "deleted": 0
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "lean/statements.txt",
+   "added": 15,
+   "deleted": 3
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "tests/test_ask_budget.py",
+   "added": 34,
+   "deleted": 0
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "tests/test_question_answering_measure_report.py",
+   "added": 18,
+   "deleted": 0
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "tests/test_question_answering_q2_report.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "tools/question_answering_agreement.py",
+   "added": 273,
+   "deleted": 33
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "tools/question_answering_report.py",
+   "added": 29,
+   "deleted": 5
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "tools/trust-classes.json",
+   "added": 42,
+   "deleted": 5
+  },
+  {
+   "commit": "f3a4c90152020c592bf2c76616554378c0202c10",
+   "path": "tools/words_ab.py",
+   "added": 34,
+   "deleted": 13
+  },
+  {
+   "commit": "c1372c296f915188bcec19b7cfc207c2b6fdf9d1",
+   "path": ".importlinter",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "c1372c296f915188bcec19b7cfc207c2b6fdf9d1",
+   "path": "docs/ARCHITECTURE-LAYERS.md",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "c1372c296f915188bcec19b7cfc207c2b6fdf9d1",
+   "path": "docs/spec/question-answering-q2/evidence/agreement.json",
+   "added": 111,
+   "deleted": 111
+  },
+  {
+   "commit": "c1372c296f915188bcec19b7cfc207c2b6fdf9d1",
+   "path": "docs/spec/question-answering-q2/evidence/words-ab.json",
+   "added": 137,
+   "deleted": 0
+  },
+  {
+   "commit": "c1372c296f915188bcec19b7cfc207c2b6fdf9d1",
+   "path": "lean/axioms.txt",
+   "added": 4,
+   "deleted": 0
+  },
+  {
+   "commit": "c1372c296f915188bcec19b7cfc207c2b6fdf9d1",
+   "path": "tools/layer_policy.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "6feff0f8085494a0168b693a3f836044fb591b21",
+   "path": "tools/gate-collection.json",
+   "added": 65,
+   "deleted": 3
+  },
+  {
+   "commit": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
+   "path": "docs/spec/question-answering-q2/DELTA.md",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "commit": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
+   "path": "docs/spec/question-answering-q2/REPORT.md",
+   "added": 6,
+   "deleted": 0
+  },
+  {
+   "commit": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
+   "path": "docs/spec/question-answering-q2/evidence/agreement.json",
+   "added": 75141,
+   "deleted": 1
+  },
+  {
+   "commit": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
+   "path": "docs/spec/question-answering-report.md",
+   "added": 36,
+   "deleted": 11
+  },
+  {
+   "commit": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
+   "path": "tests/test_ask_null_free.py",
+   "added": 54,
+   "deleted": 0
+  },
+  {
+   "commit": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
+   "path": "tests/test_question_answering_measure_report.py",
+   "added": 6,
+   "deleted": 1
+  },
+  {
+   "commit": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
+   "path": "tests/test_question_answering_q2_report.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "commit": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
+   "path": "tools/question_answering_report.py",
+   "added": 5,
+   "deleted": 4
+  },
+  {
+   "commit": "6ce96e3132185fd22e250a35bb2a6f85469f64d0",
+   "path": "ve/ask.py",
+   "added": 4,
+   "deleted": 1
   }
  ],
  "new_theorems": [
@@ -1367,6 +2038,7 @@
   "VE.Ask.lookup_assignment",
   "VE.Ask.match_iff",
   "VE.Ask.mem_cited",
+  "VE.Ask.memoRead_eq",
   "VE.Ask.mk_text",
   "VE.Ask.nameReadsBack_sound",
   "VE.Ask.ndModelOk_base",
@@ -1445,6 +2117,7 @@
   "VE.Ask.zeroSplitModels_base",
   "VE.Ask.zeroSplit_sound",
   "VE.Ask.zero_ask_wire_sound",
-  "VE.Service.runMode_ask"
+  "VE.Service.runMode_ask",
+  "VE.Service.runMode_words"
  ]
 }
