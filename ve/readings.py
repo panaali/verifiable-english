@@ -531,11 +531,20 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
                     "reason": "non-assertion elaborator is not yet available"}
         conclusion = formula_from_data(env, conclusion_ast)
         fixed_formulas = [formula_from_data(env, ast) for ast in fixed]
-        formulas = {f"{s['id']}@{s['version']}": [formula_from_data(env, r["content"])
-                                                   for r in s["readings"]] for s in sets}
+        # Discourse choices enumerate active open sets only. Keep their source
+        # order for both proof premises and the Lean wire vectors: a mapping's
+        # insertion order is not part of the choice semantics.
+        choice_sets = [s for s in sets if s.get("status") != "authored"]
+        choice_keys = [f"{s['id']}@{s['version']}" for s in choice_sets]
+        formulas = [[formula_from_data(env, r["content"]) for r in s["readings"]]
+                    for s in choice_sets]
         positive, negative, choice_evidence = [], [], []
         for choice in joint_choices["choices"]:
-            premises = [*fixed_formulas, *(formulas[key][index] for key, index in choice.items())]
+            if set(choice) != set(choice_keys):
+                raise VEError("InvalidCompatibility: joint choice does not name the open reading sets")
+            selection = [choice[key] for key in choice_keys]
+            premises = [*fixed_formulas, *(formulas[i][index]
+                                           for i, index in enumerate(selection))]
             proof = prove_entailment(env, premises, conclusion, max_steps=max_steps)
             if proof.status == "Found" and check_entailment_certificate(
                     env, premises, conclusion, proof.certificate, max_steps=max_steps).valid:
@@ -544,7 +553,7 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
                                      env, premises, max_proof_steps=max_steps,
                                      max_domain_size=max_domain_size, max_models=max_models,
                                      max_evaluations=max_evaluations)})
-                choice_evidence.append({"choice": [choice[f"{s['id']}@{s['version']}"] for s in sets],
+                choice_evidence.append({"choice": selection,
                                         "certificate": proof.certificate})
                 continue
             model = find_countermodel(env, premises, conclusion,
@@ -554,14 +563,14 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
                     env, premises, conclusion, model.model,
                     max_evaluations=max_evaluations).valid:
                 negative.append({"choice": choice, "model_id": model.model.model_id})
-                choice_evidence.append({"choice": [choice[f"{s['id']}@{s['version']}"] for s in sets],
+                choice_evidence.append({"choice": selection,
                                         "model": model.model.to_dict()})
             else:
-                choice_evidence.append({"choice": [choice[f"{s['id']}@{s['version']}"] for s in sets],
+                choice_evidence.append({"choice": selection,
                                         "status": "UNKNOWN"})
-        verdict = (_choice_verdict(env, sets, conclusion_ast, fixed, "joint-choices", choice_evidence,
-                                   joint=[[c[f"{s['id']}@{s['version']}"] for s in sets]
-                                          for c in joint_choices["choices"]]) if verify_choices else
+        verdict = (_choice_verdict(env, choice_sets, conclusion_ast, fixed, "joint-choices", choice_evidence,
+                                   joint=[row["choice"] for row in choice_evidence]) if verify_choices else
+                   "UNKNOWN" if len(positive) + len(negative) != len(choice_evidence) else
                    "SOME" if positive and negative else
                    "ALL" if positive and len(positive) == len(choice_evidence) else
                    "NONE" if negative and len(negative) == len(choice_evidence) else "UNKNOWN")
