@@ -45,7 +45,9 @@ def check_soft_source(environment, norms=None, *, generated=False, layers=frozen
                "environment": _wire(source), "norms": _wire(list(norms or ()))}
     if not generated and "readings@1" in layers and not layers.intersection({"rights@0", "norm-defaults@0"}):
         payload["identity_environment"] = _wire(environment)
-    return _run(payload)
+    row = _run(payload)
+    bind_soft_elaboration(row, payload['norms'], source['vocabulary']['predicates'])
+    return row
 
 
 def load_soft_document(environment, norms):
@@ -229,6 +231,63 @@ def _decision_key(raw):
     raise ValueError(f"undecodable decision key {raw!r}")
 
 
+def bind_soft_elaboration(row, norms, predicates, *, rights_rules=()):
+    """Bind the IDs in a Lean soft elaboration to its submitted rules and vocabulary.
+
+    Rights supplies its correlated rule names separately: their generated node names
+    are checked against the authored lines by the rights route.  The decisions and
+    collisions use this same binding for both public elaboration routes.
+    """
+    try:
+        rules = {unit['norm']['name']: unit['norm'] for unit in norms}
+        if len(rules) != len(norms):
+            raise ValueError('duplicate rule')
+        rules.update(rights_rules)
+        acts = set(predicates)
+        rule_acts = row.get('rule_acts')
+        if rule_acts is not None and (set(rule_acts) != set(rules) or
+                                      any(act not in acts for act in rule_acts.values())):
+            raise ValueError('unbound rule act')
+
+        expected = set()
+        for name, rule in rules.items():
+            if rule.get('mode', 'strict') == 'default':
+                expected.add(('excepted', name))
+            expected.update(('off', name, party) for party in rule.get('alterable', ()))
+
+        seen_pairs = set()
+        for pair in row['colliding_pairs']:
+            names = pair['pair']
+            if (len(names) != 2 or names[0] == names[1] or
+                any(name not in rules for name in names) or pair['act'] not in acts or
+                (rule_acts is not None and any(rule_acts[name] != pair['act'] for name in names))):
+                raise ValueError('unbound colliding pair')
+            pair_names = frozenset(names)
+            if pair_names in seen_pairs:
+                raise ValueError('duplicate colliding pair')
+            seen_pairs.add(pair_names)
+            if pair['outweighs'] is not None:
+                ranks = {rules[name].get('rank') for name in names}
+                if None in ranks or len(ranks) != 2:
+                    raise ValueError('unbound weighing ranks')
+                expected.add(('outweighs', pair['act'], *sorted(ranks)))
+
+        found = set()
+        names = set()
+        for decision in row['decisions']:
+            key = _decision_key(decision['key'])
+            if key[0] == 'outweighs':
+                key = ('outweighs', key[1], *sorted(key[2:]))
+            if key not in expected or key in found or decision['name'] in names:
+                raise ValueError('unbound or duplicate decision')
+            found.add(key)
+            names.add(decision['name'])
+        if found != expected:
+            raise ValueError('missing decision')
+    except (KeyError, TypeError, ValueError) as error:
+        raise CheckerUnavailable(f'CheckerUnavailable: Lean soft elaboration is not bound to the request: {error}') from error
+
+
 class SoftNormDocument:
     """Validated soft tree, its W1 elaboration, and regenerated base premises.
 
@@ -297,6 +356,7 @@ class SoftNormDocument:
 
     def _init_soft(self, env: SoftEnvironment, units, row):
         self._init_rules(env, units)
+        bind_soft_elaboration(row, units, env.to_dict()['vocabulary']['predicates'])
         by_name = {rule.core.name: rule for rule in self.rules}
         self.decisions = {item['name']: item['arguments'] for item in row['decisions']}
         # What each decision decides, as Lean keys it (`keyedDecisions`); a reader finds a decision's name by its key
