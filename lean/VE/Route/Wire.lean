@@ -10,6 +10,8 @@ import VE.Route.Decode
 import VE.Route.Flags
 import VE.Route.Steps
 import VE.Route.AstLimit
+import VE.Route.PyDecoder
+import VE.Core.Bridge
 
 /-! Wire decoding for the `route` subcommand (`ve.core@0.2`). The envelope is
 decoded by `Gate.decodeEnvelope`; the vocabulary by the family's decoder, which
@@ -61,29 +63,45 @@ def RouteVocabulary.baseModelVocabulary (rv : RouteVocabulary) : VE.Bridge.Vocab
 def reachBodyUnsupported : String :=
   "UnsupportedProfile: definition bodies with reachability require a closure definition layer"
 
-/-- A definition body: a v0 formula within the AST limits of one decoded
-formula (Python decodes each body with its own decoder). Reachability bodies
+/-- Python `_compile_python`'s name for a body of the definition of `p` that a Lean
+decoder rejected with `e`, in Python's order: its `_Decoder`'s text
+(`Preflight.decoderFault`); for a body that decoder accepts, its reachability gate,
+then its typing check (`bodyNotTyped`), since a body the core decoder rejects too (a
+name that is not a string, a numeric term) is not a typed core formula. A core formula
+the layer does not admit (an n-ary atom in a unary or binary body) keeps the layer's
+text `e`. The one owner for unary, binary and n-ary bodies (`Core.Layers.naryEntries`). -/
+def bodyFault (p : String) (j : Json) (e : String) : String :=
+  match VE.Reports.Preflight.decoderFault j with
+  | some m => m
+  | none =>
+    if VE.Reports.Preflight.hasReach 65 j then reachBodyUnsupported
+    else if (VE.Core.Bridge.decodeFormula 64 j).isOk then e
+    else VE.Definitions.bodyNotTyped p
+
+/-- The body of the definition of `p`: a v0 formula within the AST limits of one
+decoded formula (Python decodes each body with its own decoder). Reachability bodies
 are not yet admitted by the Lean definitions layer. -/
-def decodeBody (j : Json) : Except String VE.Formula := do
+def decodeBody (p : String) (j : Json) : Except String VE.Formula := do
   AstLimit.check [j]
-  match VE.Bridge.decodeFormula 64 j with
-  | .ok a => .ok a
-  | .error e => match VE.Closure.Bridge.decodeFormula 64 j with
-    | .ok _ => .error reachBodyUnsupported
-    | .error _ => .error e
+  (VE.Bridge.decodeFormula 64 j).mapError (bodyFault p j)
+
+/-- Python's text for a `defined` payload whose arguments are not the declaration's. -/
+def argumentsDiffer (p : String) : String :=
+  s!"Definition {VE.Reports.Preflight.quote p} arguments differ from its declaration"
 
 /-- The `defined` payload of predicate `p` with signature `ss`: exactly its
-arguments, equal to the declaration's, and its body. -/
+arguments, equal to the declaration's (any other value, a list of non-strings included,
+differs, as in Python), and its body. -/
 def definedPayload (p : String) (ss : List String) (payload : Json) : Except String Json := do
   exactFields payload ["arguments", "body"]
-  unless (← strings (← payload.getObjVal? "arguments")) == ss do
-    throw s!"Definition {p} arguments differ from its declaration"
+  unless (strings (← payload.getObjVal? "arguments")).toOption == some ss do
+    throw (argumentsDiffer p)
   payload.getObjVal? "body"
 
 /-- The identity-bound `defined` payload of predicate `p` with signature `ss`. -/
 def decodeDefined (p : String) (ss : List String) (payload : Json) :
     Except String (String × List String × VE.Formula) := do
-  pure (p, ss, ← decodeBody (← definedPayload p ss payload))
+  pure (p, ss, ← decodeBody p (← definedPayload p ss payload))
 
 /-- A declared `$string` literal: the sort is required and the description is
 optional (and nonempty when present). -/

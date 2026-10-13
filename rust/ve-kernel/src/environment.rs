@@ -536,7 +536,7 @@ impl Environment {
             if p["arguments"] != json!(signature) {
                 return error(
                     "InvalidInput",
-                    format!("Definition {name:?} arguments differ from its declaration"),
+                    format!("Definition '{name}' arguments differ from its declaration"),
                 );
             }
             let body = decode_formula(&p["body"])?;

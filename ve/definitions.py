@@ -12,7 +12,7 @@ from . import ast
 from .background import dependency_order
 from .environment import Environment
 from .errors import UnsupportedProfile, VEError
-from .wire import digest
+from .wire import digest, validate_json
 
 
 @dataclass(frozen=True, slots=True)
@@ -112,7 +112,9 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
 
 def _wire_entries(env: Environment, entries) -> dict | None:
     """`entries` embedded as `defined` fields of `env`'s declarations, or None
-    when they cannot be (then only Python's structural decoder reads them)."""
+    when they cannot be (then only Python's structural decoder reads them): an
+    entry that is not an object of arguments and body, a body that is neither
+    JSON nor an AST, or a value outside the restricted JSON subset (a `null`)."""
     if type(entries) is not dict:
         return None
     raw = env.to_dict()
@@ -123,8 +125,17 @@ def _wire_entries(env: Environment, entries) -> dict | None:
         if name not in predicates or type(entry) is not dict or set(entry) != {"arguments", "body"}:
             return None
         body = entry["body"]
-        predicates[name]["defined"] = {"arguments": entry["arguments"],
-                                       "body": body if type(body) is list else ast._to_data(body)}
+        if type(body) is not list:
+            try:
+                body = ast._to_data(body)
+            except (AttributeError, TypeError):  # not an AST node: it has no wire form
+                return None
+        defined = {"arguments": entry["arguments"], "body": body}
+        try:
+            validate_json(defined)
+        except VEError:
+            return None
+        predicates[name]["defined"] = defined
     return raw
 
 
