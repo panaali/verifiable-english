@@ -1453,22 +1453,16 @@
         "VE.Reports.Preflight.Scope",
         "VE.Reports.Preflight.Step",
         "VE.Reports.Preflight.Typing",
-        "VE.Reports.Preflight.Walk",
         "VE.Reports.Preflight.acts",
         "VE.Reports.Preflight.arr",
         "VE.Reports.Preflight.assessment",
-        "VE.Reports.Preflight.atomTerms",
         "VE.Reports.Preflight.bridgeRow",
         "VE.Reports.Preflight.check",
         "VE.Reports.Preflight.context",
-        "VE.Reports.Preflight.decimal",
-        "VE.Reports.Preflight.decodeNode",
         "VE.Reports.Preflight.decodeStep",
-        "VE.Reports.Preflight.decoderFault",
         "VE.Reports.Preflight.descend",
         "VE.Reports.Preflight.field",
         "VE.Reports.Preflight.firstRepeat",
-        "VE.Reports.Preflight.formulaArity",
         "VE.Reports.Preflight.formulaFault",
         "VE.Reports.Preflight.formulaOk",
         "VE.Reports.Preflight.hasKey",
@@ -1490,8 +1484,6 @@
         "VE.Reports.Preflight.pyList",
         "VE.Reports.Preflight.pyRepr",
         "VE.Reports.Preflight.pyStr",
-        "VE.Reports.Preflight.quote",
-        "VE.Reports.Preflight.reachEdge",
         "VE.Reports.Preflight.records",
         "VE.Reports.Preflight.reportKeys",
         "VE.Reports.Preflight.resolve",
@@ -1500,7 +1492,6 @@
         "VE.Reports.Preflight.scopeOf",
         "VE.Reports.Preflight.scopedRow",
         "VE.Reports.Preflight.setNull",
-        "VE.Reports.Preflight.termArity",
         "VE.Reports.Preflight.units"
       ]
     },
@@ -2042,6 +2033,7 @@
         "VE.Core.Layers.coreEnvironment",
         "VE.Core.Layers.decodeLayered",
         "VE.Core.Layers.decodeLayers",
+        "VE.Core.Layers.definitionPremises",
         "VE.Core.Layers.definitionsProfile",
         "VE.Core.Layers.folEntry",
         "VE.Core.Layers.folPredicates",
@@ -2058,6 +2050,7 @@
         "VE.Core.Layers.NaryDef.head",
         "VE.Core.Layers.bodyValue",
         "VE.Core.Layers.coreCertificate",
+        "VE.Core.Layers.definitionNodes",
         "VE.Core.Layers.elaborateNary",
         "VE.Core.Layers.firstBad",
         "VE.Core.Layers.folModel",
@@ -8320,6 +8313,8 @@
         "VE.Route.Wire.reachBodyUnsupported"
       ],
       "D[R]": [
+        "VE.Route.Wire.argumentsDiffer",
+        "VE.Route.Wire.bodyFault",
         "VE.Route.Wire.constantDisplay"
       ]
     },
@@ -10826,6 +10821,20 @@
         "VE.Readings.ComponentsExamples.c1",
         "VE.Readings.ComponentsExamples.docJ",
         "VE.Readings.ComponentsExamples.rows2"
+      ]
+    },
+    "VE/Route/PyDecoder.lean": {
+      "D[R]": [
+        "VE.Reports.Preflight.Walk",
+        "VE.Reports.Preflight.atomTerms",
+        "VE.Reports.Preflight.decimal",
+        "VE.Reports.Preflight.decodeNode",
+        "VE.Reports.Preflight.decoderFault",
+        "VE.Reports.Preflight.formulaArity",
+        "VE.Reports.Preflight.hasReach",
+        "VE.Reports.Preflight.quote",
+        "VE.Reports.Preflight.reachEdge",
+        "VE.Reports.Preflight.termArity"
       ]
     }
   }

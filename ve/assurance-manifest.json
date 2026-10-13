@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 29393,
+    "total_lines": 29442,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -160,12 +160,12 @@
       },
       {
         "file": "lean/VE/Attribution/Preflight.lean",
-        "lines": 550,
-        "sha256": "e54406c9b67683b603b85378829e76002f7e5b359503b25cb1de64cdc275ff9f",
+        "lines": 457,
+        "sha256": "fa6956756459b539f6016b1687d20da3cecd2196d40644a5ab2176a7484c920a",
         "ranges": [
           [
             1,
-            550
+            457
           ]
         ],
         "declarations": [
@@ -174,6 +174,22 @@
           "formulaFault"
         ],
         "reason": "the reports document's public fault order and texts, read before the decoder; it only rejects; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Route/PyDecoder.lean",
+        "lines": 124,
+        "sha256": "1a90eaf1a90c2bb2086414f1d8410e8410acb85d78aea6ea15d0d04377cae52f",
+        "ranges": [
+          [
+            1,
+            124
+          ]
+        ],
+        "declarations": [
+          "decoderFault",
+          "hasReach"
+        ],
+        "reason": "Python's AST decoder walk (decoderFault) and its reachability gate on the raw JSON, which name a formula a Lean decoder already rejected (the reports preflight, the document walk, Route.Wire.bodyFault); it only names rejections; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Attribution/Wire.lean",
@@ -987,12 +1003,12 @@
       },
       {
         "file": "lean/VE/Route/Wire.lean",
-        "lines": 700,
-        "sha256": "b57833738386b2c074008bb6a31d9587ad1448627414cd1b61abd88d2a4af37f",
+        "lines": 718,
+        "sha256": "833205ec3d78eb4f422a1960a78ceaa26147e6e4f6ec7dc217d832b66b3e4fe6",
         "ranges": [
           [
             1,
-            700
+            718
           ]
         ],
         "declarations": [
@@ -1057,7 +1073,7 @@
       {
         "file": "lean/VE/Service/Document.lean",
         "lines": 1104,
-        "sha256": "b4401d47cd746f71bc560dcb79ad0d43a91b721ba59d6a7fa282f123a41c8d4c",
+        "sha256": "7c0d7c3388f27aa94d17992c6992a99d2dd2612b6fda9e90d890592ec31f474c",
         "ranges": [
           [
             1,
