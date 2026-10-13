@@ -463,7 +463,7 @@ def test_every_sub_tick_cpu_deadline_is_read_on_the_busy_clock():
      "    busy_cpu(monkeypatch, lean_service)\n", []),
     ("def test_a(monkeypatch):\n    monkeypatch.setitem(lean_service.DEADLINES, 'x', (0.3, 0.0))\n", []),
     ("def test_a(monkeypatch):\n    monkeypatch.setitem(lean_service.DEADLINES, 'x', (seconds, 0.0))\n", []),
-])
+], ids=["setitem below a tick", "assigned below a tick", "on the busy clock", "above a tick", "not a constant"])
 def test_the_sub_tick_lint_sees_each_form(source, found):
     assert _sub_tick_deadlines(source) == found
 
