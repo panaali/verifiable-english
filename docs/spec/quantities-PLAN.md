@@ -1,23 +1,54 @@
 # Quantities: plan (counts and proportions; comparisons and graded words)
 
-> **Status.** Draft 3, 2026-10-13, branch `design/quantities` from `main` at `49de179e`. Draft 1 (2026-10-12) plus the
-> converged plan debate (Fable and Astra, rounds 1 and 2) and the cross-plan synthesis edits 1–10 (`SYNTHESIS.md`,
-> 2026-10-13), which settle the debate's rounding dispute. Draft 3 applies the QT-0 statement review's FIX (debate
-> `quantities-spec`, A1–A4, E1–E5, E6a; the spec's section 2.2) wherever this plan states the same thing; no other
-> change. DRI research wave: docs only, no product code, no tests, no
-> generated file touched, no model calls. Research and measurements:
+> **Status.** Draft 4, 2026-10-13, branch `research/quantities-p1`. Draft 3 (branch `design/quantities` from `main` at
+> `49de179e`: draft 1 of 2026-10-12, the converged plan debate of Fable and Astra, the cross-plan synthesis edits 1–10
+> of `SYNTHESIS.md`, and the QT-0 statement review's FIX) plus the results of phase 1:
+> [docs/research/quantities-phase1.md](../research/quantities-phase1.md) (cited as P1 and a section number), as
+> revised after its review. Draft 4 changes only what phase 1 measured or found; the synthesis edits (owners, shared
+> items, build order) are unchanged, and where a phase-1 result bears on them it is written in section 11, "Cross-plan
+> issues for the DRI". Docs only: no product code, no tests, no generated file touched, no model calls. Research and
+> measurements:
 > [docs/research/quantities.md](../research/quantities.md) (cited as R and a section number). This plan builds R6's
 > recommendation: a pilot repair with the existing language, then two tracks, **A** (`cardinality@0`: counts,
 > proportions, rounding) and **B** (`scales@0`: comparatives, equatives, graded words). Every number is measured (method
 > in R2.1) or marked **estimate**. QT-0's statement spec is [quantities.md](quantities.md): it elaborates the Lean
 > blocks of section 4 against `main` and lists every change its stub forced; where they differ, the spec's statement is
-> the one under review.
+> the one under review. Its draft 2 passed the verification of the review's FIX (`manage-agents/quantities-p3ver1`);
+> its draft 3 carries phase 1's results and changes no Lean statement.
+
+**Changes in this draft (draft 4)**
+
+1. **Phase-1 results recorded** (new section 0.1): QT-0p's bytes and probes PASS, measured on copies; its pilot re-run
+   and its audit DEFERRED. QX-1, QX-2 and QX-3 DEFERRED: not executed (model calls; line "Experiment execution stays
+   under its own authorisation"), and each pre-registration found incomplete. Every deferred item has a trigger
+   (section 0.2). No bar was changed.
+2. **QT-0p kept, rewritten to what was built** (section 4): the closure over Claude's types (P1 1.1, departure 2, kept
+   on purpose), u097 on the translation's own `education_kind` predicates (departure 3), and the heading's claim
+   without names (departure 1). Bytes: C +128 B and U +76 B, measured on copies, at the top of both estimated ranges.
+   **Split**: the UDHR part applies at the next pilot run; the constitution part waits for a premise budget that can
+   find its three-object model, or the DRI's acceptance of UNKNOWN (section 11, item 2), because "exactly three"
+   turns the whole constitution's premise check from `model` to UNKNOWN.
+3. **QX-1 changed before execution**: 42 items (six per word or form, as listed), so 1,680 calls, not 36 items and
+   1,440; the sixth "most" point named (2 of 4); the unwritten contexts are a pre-execution step with its own review.
+4. **QX-2 changed before execution**: the bar is unchanged and needs forms for at least five units, so decomposed
+   forms are written for all six; four (u0165.s02, s03, s04, s06) are a pre-execution step. For its result to gate
+   QT-B4, the comparator should be the form QT-B4 starts from, not today's; when QX-2 runs is a cross-plan question
+   (section 11, item 1).
+5. **QX-3 changed before execution**: item 1 leaves the scored twenty (its label holds only with the unproved
+   bridge); item 2 states that no one voted both; the seventeen unwritten items (sixteen unstated, plus item 1's
+   replacement) are a pre-execution step.
+6. **QT-B4**: "826 B faithful" now says that the last two audits (runs 1800Z and 0600Z) rejected the current form of
+   these units for its applicability guard, so it needs queue 4.4's repair as well as QX-2.
+7. **Bytes** (sections 0, 7): QT-0p's figures are measured; the others stay estimates. Section 8 gains phase 1's
+   risks.
+8. **New section 11, "Cross-plan issues for the DRI"**: QX-2's timing against synthesis phase 1; the premise budget;
+   the 0600Z audit's guard finding on the shared units u0165.s01–s07.
 
 ## 0. Summary
 
 | # | Batch | Hours | Owner | Moves a pilot number? |
 |---|---|---:|---|---|
-| QT-0p | Pilot repair with the existing language | 2 | pilot runner | yes: C 0–128 B, U 0–76 B (**estimate**) |
+| QT-0p | Pilot repair with the existing language (UDHR part now; constitution part after the premise budget) | 2 | pilot runner | yes: C +128 B, U +76 B claimed, **measured** on copies (P1 1.3); until audited |
 | QT-0 | Statement spec, Lean stub, statement review | 3–4 | planner | no |
 | QT-A1 | Lean core of `cardinality@0`: counts, regions, erasure, soundness (one soundness milestone with QT-A2) | 5–6 | Lean | no |
 | QT-A2 | Lean: "rounds to" with a named tie rule (`VE.Numbers`) and "percent of"; after ME-1 | 3–4 | Lean | no |
@@ -30,10 +61,10 @@
 | QT-B1 | Lean core of `scales@0`: dimensions, graded words, premises, degrees | 5–6 | Lean | no |
 | QT-B2 | Scale premises as PK-1's `scales` pack; layered-route kind `scales-coherence` | 5–6 | Lean, Python | no |
 | QT-B3 | Scale and graded-word wordings in Lean; refusals | 4–5 | Lean | no |
-| QT-B4 | Pilots: dial, trust levels, hard constraints, UDHR equalities | 3 | pilot tooling | C 0–781 B new, 826 B faithful; U 0–191 B |
-| QX-1 | Experiment: "most", "many", "multiple", bare "16 of the 18", bare "105 percent of" | 2–3 | experiment runner | shapes rewrites and reading sets |
-| QX-2 | Experiment: hard-constraint decomposition audit | 2 | experiment runner | gates QT-B4's 826 B |
-| QX-3 | Experiment: inferences with proportional grades | 2–3 | experiment runner | shapes rewrites |
+| QT-B4 | Pilots: dial, trust levels, hard constraints, UDHR equalities | 3 | pilot tooling | C 0–781 B new, 826 B faithful (needs queue 4.4's repair and QX-2); U 0–191 B |
+| QX-1 | Experiment: "most", "many", "multiple", bare "16 of the 18", bare "105 percent of" (42 items) | 2–3, plus writing the items | experiment runner | shapes rewrites and reading sets |
+| QX-2 | Experiment: hard-constraint decomposition audit (four decomposed forms to write first) | 2, plus writing the forms | experiment runner | gates QT-B4's 826 B |
+| QX-3 | Experiment: inferences with proportional grades (17 items to write first) | 2–3, plus writing the items | experiment runner | shapes rewrites |
 | QX-4 | Research experiment: the 1,000-users passage | 4 | planner, Lean stub | research |
 | QS-1 | Order closure over `VE.Closure` (standalone; before AT-1, QT-B1 and WG-2) | 3–4 | Lean (quantities) | no |
 
@@ -47,6 +78,41 @@ Order:
 - QT-E before QT-A6 and QT-B3. QT-B4 waits for QX-2's audit and its slot in the hard-constraint queue.
 - Landing preference: track A and QT-B1 land after attitudes and scope's SC-1/SC-2. QT-B2 lands after ET-4 in the
   integration order. QT-A7 follows ME-6.
+
+Phase 1 (the first line above) has run as far as it can without model calls or edits to the pilots' own
+translations; sections 0.1 and 0.2 give its results and what is left. The order above is unchanged.
+
+### 0.1 Phase-1 results (2026-10-13, P1)
+
+Every bar is quoted from draft 3 and was fixed before its result; none was changed after. "Measured on copies" means
+rebuilt copies of the pilots' inputs from runs 20261012T1800Z and 20261013T0600Z, with `main` at `406736a4`.
+
+| Item | Bar (draft 3) | Result | Verdict | What it gates |
+|---|---|---|---|---|
+| QT-0p bytes | "C 0–128 B, U 0–76 B, until audited" | C +128 B claimed (+113 CHECKED, +15 LABELLED; 2,951 B, 1.60%, to 3,079 B, 1.67%), the same on both runs; U +76 B OPEN, measured on part03 (whole declaration computed: 4,792 B, 43.90%, to 4,868 B, 44.60%) | **PASS**, on copies | the pilot numbers only; no batch waits for QT-0p |
+| QT-0p probes | "fourth type of principal" SETTLED no; "higher education free" UNDECIDED | ALL on the negation, by certificate, on both runs; UNDECIDED (no rule) in the companion and in the rebuilt part | **PASS**, on copies | — |
+| QT-0p re-run | "Done when both pilots re-run with the repair" | not done: the pilots' own translations are the pilot runner's | **DEFERRED** (0.2) | QT-0p's "done" |
+| QT-0p audit | "… and the next audit samples the changed units" | not done: an independent audit is a model call | **DEFERRED** (0.2) | claimed bytes becoming audit-verified |
+| QT-0p cost (not registered) | — | the whole constitution's premise check falls from `model` to UNKNOWN: "exactly three" needs three objects, and the check searches up to domain size 2. The repaired content has a Lean-checked model at size 3 | recorded; no pass or fail | the constitution part's application (0.2; section 11, item 2) |
+| QX-1 | no numeric bar: the experiment "only shapes the rewrites and the members of each reading set" | not run. Audit: 42 items listed, 36 budgeted; "most" names five points for six contexts; 33 contexts unwritten; answer format and analysis unstated | **DEFERRED** (0.2) | the reading-set members of "most" and "multiple" (spec decision j, "pending"), and QT-A6's rewrites; never an authoring refusal |
+| QX-2 | "faithful on at least 5 of 6 units, introduces no threshold on any, and is judged no worse than the current form on every unit" | not run. Audit: decomposed forms exist for 2 of 6 units (FB1, FB6); the current form was rejected by the audits of runs 1800Z and 0600Z, each time for its applicability guard, not its graded words | **DEFERRED** (0.2) | QT-B4's 826 B |
+| QX-3 | no bar: "The answers shape rewrites only" | not run. Audit: 4 of 20 items stated; item 1's label "valid" needs the bridge the plan does not offer; item 2's "contradiction" needs "no one voted both"; items 3 and 4 confirmed | **DEFERRED** (0.2) | QT-A6's rewrites only |
+
+Phase 1 cancels no batch and changes no Lean statement. It changes QT-0p (split, section 4), the three experiments'
+material before execution (section 5) and one QT-B4 claim (section 4).
+
+### 0.2 Deferred items and their triggers
+
+| Item | Trigger | Then |
+|---|---|---|
+| QT-0p, UDHR part (u097) | the next UDHR pilot run (part03 is byte-identical in runs 1800Z and 0600Z) | the pilot runner applies `docs/research/evidence/quantities/qt0p/udhr-u097.ve.md`'s content, rebuilds part03 and the whole declaration, and records the measured bytes |
+| QT-0p, constitution part (u0042.presupposition, u0043.s02) | a premise budget that finds a three-object model of one sort is on `main` (section 11, item 2), **or** the DRI accepts the constitution's premise check as UNKNOWN | the pilot runner first checks that the three units' spans and kinds are unchanged (as P1 1.2, step 3, did for run 0600Z), then applies the repair with `nd.py all` and records the bytes and the premise status |
+| QT-0p audit | the first pilot audit after either part is in a pilot translation | it samples the changed units (u0042.presupposition, u0043.s02's CHECKED and LABELLED parts, u097); only then are the bytes audit-verified |
+| QX-1 execution | the 42 items written and reviewed (section 5; still pre-registration, since no data exists), and execution authorised | run as pre-registered |
+| QX-2 execution | the four missing decomposed forms written and reviewed (section 5); the comparator form fixed (section 11, item 1); execution authorised | run as pre-registered, bar unchanged |
+| QX-3 execution | the twenty scored items written, each label re-derived under counting semantics, and reviewed; execution authorised | run as pre-registered |
+| A premise budget for "exactly n" with n > 2 | the DRI assigns an owner (section 11, item 2) | it unblocks QT-0p's constitution part |
+| News rows 7b and 22b (94 B) | the DRI's decision (section 8) | unchanged from draft 3 |
 
 ## 1. Scope, owners and rules
 
@@ -238,25 +304,56 @@ Lean statements (Lean batches); fixtures; deletions; seeded bugs; bytes (**estim
 
 ### QT-0p. Pilot repair with the existing language (pilot runner, 2 h)
 
-No product code. Smallest step that moves a pilot number.
+No product code. Smallest step that moves a pilot number. Phase 1 wrote both parts, measured them on rebuilt copies of
+the pilots' inputs (P1 1), and left their application to the pilot runner. The content is in
+`docs/research/evidence/quantities/qt0p/` (`constitution-u0042-u0043.ve.md`, `udhr-u097.ve.md`), as phase 1 built it.
 
 - **Constitution, u0042.presupposition (38 B) and u0043.s02 (90 B)**: "At the moment, Claude’s three types of
   principals are Anthropic, operators, and users." Content in `relational-fol@0`: a sort `principal_type`, constants
-  `anthropic`, `operators`, `users`, the three facts, their pairwise distinctness, and closure
-  `∀t:principal_type. t = anthropic ∨ t = operators ∨ t = users`. "At the moment" becomes a LABELLED part (MIXED
-  unit) naming the document's present without a date; the heading's presupposed claim is the same content. Once
+  `anthropic`, `operators`, `users`, a unary predicate `claude_principal_type` ("is one of Claude's types of
+  principals"), the three facts, their pairwise distinctness, and the closure over Claude's types,
+  `∀t:principal_type. claude_principal_type(t) → t = anthropic ∨ t = operators ∨ t = users`. "At the moment" (15 B)
+  becomes a LABELLED part (MIXED unit) naming the document's present without a date; the other 75 B are CHECKED. Once
   `events@0` lands, "the date of this document" is events' anchor, the one indexical day; QT-0p adds no date and no
-  second indexical.
-- **UDHR, u097 (76 B)**: "Education shall be free, at least in the elementary and fundamental stages." A duty
-  guarded by the stage (`elementary`, `fundamental`, constants of a sort `education_stage`) with norm-defaults'
-  `unspecified` completion for other stages: "the text does not say" for higher stages is exactly what "at least"
-  leaves open. The bearer follows the UDHR translation's existing reading sets.
-- **Probes added**: "Is there a fourth type of principal?" (SETTLED no); "Must higher education be free under this
-  sentence?" (UNDECIDED).
+  second indexical. u0043.s01 is unchanged (UNFORMALISED, `counting`).
+  - **The heading** (u0042.presupposition, "Claude’s three types of principals") presupposes only that Claude has
+    exactly three types of principals: three pairwise different objects, each one of Claude's types, and every one
+    of Claude's types among them. It names none of them; u0043.s02 does (P1 1.1, departure 1). CHECKED.
+  - **The closure is over Claude's types, by decision** (P1 1.1, departure 2). Draft 3's closure,
+    `∀t:principal_type. t = anthropic ∨ t = operators ∨ t = users`, would also say that no other kind of principal
+    exists at all, which the source does not say. The registered probe is answered the same way under both, because
+    it is about Claude's types; a probe about every principal type ("there is no principal type other than the
+    three") is UNKNOWN under this closure (measured) and is not a claim of this repair.
+- **UDHR, u097 (76 B)**: "Education shall be free, at least in the elementary and fundamental stages." A duty with no
+  bearer, written as u098 is. Its guard is "elementary or fundamental", over the translation's own `education_kind`
+  with its existing `is_elementary` and a new `is_fundamental` (P1 1.1, departure 3: one vocabulary with u098, and no
+  assumption that the two stages differ, which the source does not state). Other stages fall to norm-defaults'
+  `unspecified` completion: "the text does not say" for higher stages is exactly what "at least" leaves open. "Free"
+  is the open term `free_education`, as "compulsory" is in u098, so the unit is OPEN, not CHECKED.
+- **Probes added**: "Is there a fourth type of principal?" (SETTLED no, tested as ALL on the negation: on the readings
+  route NONE means only "does not follow"); "Must higher education be free under this sentence?" (UNDECIDED).
+  Companion documents cannot carry `readings@1` probes without a reading set, so the constitution's probes run on the
+  full translation.
+- **Measured** (P1 1.3, on copies; runs 1800Z and 0600Z alike): C +128 B claimed (+113 CHECKED, +15 LABELLED, −128 B
+  UNFORMALISED); U +76 B OPEN on part03; both probes as registered. Phase-1 verdict: bytes and probes PASS; the
+  re-run and the audit DEFERRED (section 0.2).
+- **Cost** (measured, not foreseen in draft 3): with "exactly three" in the translation, the whole constitution's
+  premise check is UNKNOWN instead of `model`. The check's search stops at domain size 2 (`ve/vacuity.py`,
+  `premise_status`), and a model needs three principal types; at size 3 the search finds one, checked by Lean
+  ({anthropic, operators, users}, each one of Claude's types). UDHR part03 keeps `model`. Three options were weighed:
+  - Keep the repair and accept UNKNOWN: +128 B (0.07% of the constitution) for the loss of the one whole-document
+    consistency result the pilot reports. Not chosen by this plan; the DRI may choose it (section 11, item 2).
+  - Drop pairwise distinctness: the text would say "at most three", which the source does not say. Rejected.
+  - A premise budget that finds the model: product code outside this plan (section 11, item 2). **Chosen as the
+    trigger** for the constitution part.
+- **Split.** The UDHR part applies at the next UDHR pilot run; it has no cost. The constitution part waits for its
+  trigger (section 0.2). Each part is done when its pilot re-runs with it and the next audit samples its changed
+  units.
 - **Not done here**: news rows 7b and 22b (94 B) could be written in W6a today with named earlier values, but that
   reverses a converged W6 review ruling (units-schema 7.1, N07b, N22b); recorded as a DRI decision item, not done.
-- Bytes: C 0–128 B, U 0–76 B, until audited. Done when both pilots re-run with the repair and the next audit samples
-  the changed units.
+- QT-A1 is not needed for these units, and nothing here changes QT-A1.
+- Bytes: C +128 B, U +76 B, claimed and measured on copies, until audited. Done when both pilots re-run with the
+  repair and the next audit samples the changed units.
 
 ### QT-0. Statement spec, stub and review (planner, 3–4 h)
 
@@ -975,6 +1072,10 @@ research, R5.2). Fixtures: each wording round-trips; each refusal names its rewr
 - Measure: claimed and audit-verified bytes, the residual (each graded word is an open term in it), and the carried
   probes. Bytes: C 0–781 B newly claimed; 826 B faithful (audit-verifiable after the next audit); U 0–191 B
   (**estimates**).
+- The current form of u0165.s01–s06 was rejected by the last two pilot audits (P1 3), each time for its applicability
+  guard, not its graded words: run 1800Z's guard lost the mistaken-but-confident cases; run 0600Z's repaired guard
+  binds only `situation`, not the regulated Claude instance. So "826 B faithful" needs both queue 4.4's repair of the
+  guards and QX-2's pass on the graded words; neither alone is enough. FB1 and FB6 (QT-B1) are unaffected.
 
 ### QS-1. Order closure over `VE.Closure` (Lean, quantities, 3–4 h)
 
@@ -1012,13 +1113,16 @@ theorem risk_closure_eq         -- VE.Risk.closure agrees likewise (risk file un
 
 Readers for QX-1 and QX-3: Sonnet 5.5 as human proxy (`claude-sonnet-5-5`), 40 independent sessions with no shared
 context, items in a seeded random order. This measures agreement among proxy readers, not truth and not human
-readers. No experiment ran for this plan. Experiments cannot select a meaning by vote: they improve explicit rewrites
-and identify translation alternatives. Experiment execution stays under its own authorisation.
+readers. No experiment has been executed for this plan: phase 1 audited the three pre-registrations without model
+calls (P1 2–4; `docs/research/evidence/quantities/qx/prereg-audit.json`) and found each incomplete. The material each
+still needs is listed below as a pre-execution step; writing it is still pre-registration, because no data exists,
+and each step is reviewed before execution. No bar changes. Experiments cannot select a meaning by vote: they improve
+explicit rewrites and identify translation alternatives. Experiment execution stays under its own authorisation.
 
 ### QX-1. "most", "many", "multiple", bare "16 of the 18", bare "105 percent of" (2–3 h)
 
 Seed `quantities-QX1`. Items: for "most", six neutral contexts ("Of the 100 members, 51 voted yes. Is it true that
-most members voted yes?") at 50, 51, 60 and 95 of 100 and at 3 of 5; for "many", "few" and "several", six contexts
+most members voted yes?") at 50, 51, 60 and 95 of 100, at 3 of 5 and at 2 of 4; for "many", "few" and "several", six contexts
 each that separate the cardinal from the proportional reading (Partee); for "multiple", six contexts at 1 and 2; for
 bare "16 of the 18 … expect X", six contexts asking whether 17 expecting X is compatible; for bare "105 percent of",
 six contexts asking whether a value of 105.4 percent is compatible (exact against rounded).
@@ -1032,7 +1136,17 @@ six contexts asking whether a value of 105.4 percent is compatible (exact agains
   the nearest percent" with a tie rule; in translation it is a reading set {exact, rounded}.
 - The experiment only shapes the rewrites and the members of each reading set; agreement among proxy readers never
   admits an ambiguous wording.
-- Cost **estimate**: 40 sessions × 36 items = 1,440 short calls, within the usage-cap rules.
+- Cost **estimate**: 40 sessions × 42 items (six for each of seven words or forms, as listed) = 1,680 short calls,
+  within the usage-cap rules. Draft 3's "36 items, 1,440 calls" did not match its own list (P1 2).
+- **Before execution** (phase 1 found these missing): write the 33 unwritten contexts (all eighteen for "many",
+  "few" and "several"; the sixth "most" context, at 2 of 4; four of the six "multiple" contexts; five each for bare
+  "n of the m" and bare "105 percent of"), the answer format and the analysis; then fix the seeded order over all 42
+  (phase 1's order of the nine written items is not the order to run).
+- **What the written items can show** (P1 2, computed from the reading sets above): "most" at 50 of 100, and now at 2
+  of 4, are the only "most" items where "more than half" says no; at every other point it says yes, so those items
+  separate "more than half" only from the open grade, which gives no answer. Bare "16 of the 18" (is 17
+  compatible?) and bare "105 percent of" (is 105.4 compatible?) separate their readings; 105.4 is not a tie, so
+  `tiesUp` and `halfEven` agree on it.
 
 ### QX-2. Hard-constraint decomposition (2 h)
 
@@ -1043,14 +1157,51 @@ threshold, number or comparison present that the source does not give?" Bar: the
 least 5 of 6 units, introduces no threshold on any, and is judged no worse than the current form on every unit. Then
 QT-B4 ships it; otherwise the whole-clause terms stay, with the auditor's reason recorded.
 
+Phase 1 (P1 3) found that QX-2 cannot run as written:
+
+- **Decomposed forms exist for 2 of the 6 units** (FB1 for u0165.s01, FB6 for u0165.s05), and the bar needs one for
+  at least five. The bar stays as registered, so **before execution** a decomposed form (dimension, sort, comparative,
+  graded word, direction, and the W2 open term of each graded word) is written and reviewed for each of the other
+  four. From the source's graded words (bytes from the ledger of run 1800Z):
+
+  | Unit | Bytes | Graded words | Form to write |
+  |---|---:|---|---|
+  | u0165.s02 | 139 | "serious" (uplift) | candidate: FB1's dimension `uplift` and grade `gives_serious_uplift`, if the compared sort is the same |
+  | u0165.s03 | 89 | "significant" (damage) | a damage dimension and an upper grade; the form must also settle the scope the 0600Z audit flags ("that could cause significant damage if deployed" may modify both alternatives or only "malicious code") |
+  | u0165.s04 | 175 | "clearly", "substantially" (undermine) | an undermining dimension with "substantially" as an upper grade; whether "clearly" is a second grade or an epistemic word outside the dimension is part of the form, and QT-B3's refusal of "substantially more" (a grade of a difference) does not apply to a grade of the act |
+  | u0165.s06 | 160 | "unprecedented", "absolute" (degrees of control) | a control dimension with one or two upper grades |
+
+  The forms are design inputs to the audit, not QT-B1 fixtures; a form that QT-B4 ships becomes a fixture then.
+- **The comparator is the form QT-B4 starts from.** The current form has changed once since draft 3 (run 0600Z
+  repaired its guard) and is rejected by both audits for its guard, which QX-2 does not test. Queue 4.4 rewrites
+  these units (AT-0p → SC-1b → SC-2 → AT-6a/AT-6b → WG-5) before QT-B4, so an audit against today's form would judge a
+  comparator QT-B4 never starts from. "The current form" is the form in the translation when QX-2 runs; for the
+  result to gate QT-B4, that should be the form after WG-5. When QX-2 runs is set by synthesis phase 1, so this plan
+  does not move it: section 11, item 1, asks the DRI. Whatever the timing, the auditors judge the graded words apart
+  from the guard, and the record names the form audited (run and SHA-256).
+
 ### QX-3. Inferences with proportional grades (2–3 h)
 
-Seed `quantities-QX3`. Twenty items, ten valid under counting semantics and ten invalid: "The vast majority voted.
-Did a majority vote?" (valid); "A majority voted yes and a majority voted no." (contradiction); "Most S are P; every P
-is Q. Are most S Q?" (valid); "Most S are P. Are most P S?" (invalid). The answers shape rewrites only. The majority
-schema ("the vast majority implies more than half") is not offered on any vote: it waits for a proved bridge from
-scales to cardinality (QX-4's plan item), and no fidelity credit is claimed for it. Soundness for counts is not
+Seed `quantities-QX3`. Twenty items, ten valid under counting semantics and ten invalid, where "most S are P" means
+more than half of a nonempty S: "A majority voted yes and a majority voted no. No one voted both yes and no."
+(contradiction); "Most S are P; every P is Q. Are most S Q?" (valid); "Most S are P. Are most P S?" (invalid; the
+smallest countermodel is one object that is S and P and one that is P only). The answers shape rewrites only. The
+majority schema ("the vast majority implies more than half") is not offered on any vote: it waits for a proved bridge
+from scales to cardinality (QX-4's plan item), and no fidelity credit is claimed for it. Soundness for counts is not
 measured here: on the cardinality route it follows from region arithmetic (FA1-style certificates).
+
+Phase 1 (P1 4) re-derived draft 3's four stated labels under counting semantics and changed two:
+
+- Draft 3's item "The vast majority voted. Did a majority vote?" (labelled valid) is valid only when the grade's
+  threshold is above one half, which is the bridge this section does not offer. It leaves the scored twenty. It may
+  be asked as an unscored extra, labelled "valid only with the unproved bridge"; its answers inform QX-4, not the
+  valid ten.
+- "A majority voted yes and a majority voted no." is satisfiable unless no one voted both; the item now states that
+  premise, as FA1 states its exclusion premise.
+- **Before execution**: write the other seventeen scored items (draft 3 stated four, and item 1 has left), so that
+  ten are valid and ten invalid; re-derive each label under counting semantics as phase 1 did
+  (`experiments/quantities-phase1/qx_prereg.py` enumerates populations of up to 12 objects; enumeration is a check,
+  so each item also gets a short exact argument or a countermodel); then review them.
 
 ### QX-4. The 1,000-users passage (research, 4 h)
 
@@ -1066,7 +1217,7 @@ Otherwise the passage stays UNFORMALISED with the failing feature named in the l
 
 | Batch | Waits for (in-flight item; branch where known) | Hand-written shared files | Generated (regenerate) |
 |---|---|---|---|
-| QT-0p | — | pilot directories only | — |
+| QT-0p | UDHR part: the next UDHR pilot run. Constitution part: a premise budget that finds a three-object model, or the DRI's acceptance of UNKNOWN (section 11, item 2) | pilot directories only | — |
 | QT-0 | the cross-plan synthesis (done); QX-1 for the reading-set members of "most" and "multiple" (else "pending") | `docs/spec/quantities.md` (new) | — |
 | QT-A1, QT-B1 | QT-0 PASS; QT-B1 also QS-1 | none | `lean/VE.lean`, `lean/VE/Audit.lean`, frozen inventory, axioms, statements, predicates, declarations; trust tables (signed) |
 | QT-A2 | QT-A1 (one soundness milestone); ME-1 (`VE.Numbers`) | none | as QT-A1 |
@@ -1079,7 +1230,7 @@ Otherwise the passage stays UNFORMALISED with the failing feature named in the l
 | QT-B2 | QT-B1; PK-1; AR-10's profile-gate table; `lf-16e`, `lf-14d`, `rd-9-int` (`rd-9/integrate`); last in the integration order on `Layered.lean`, after ET-4 | `lean/VE/NormDefaults/Layered.lean` (one provider line), the layered route's response-shape files, the `scales@0` table row, `ve/assurance-manifest.json`, `ROADMAP.md` | as QT-A1, the layered route's schema, gate collection |
 | QT-B3 | QT-B2; QT-E or english-lean E3's norm step; the English queue (after ME-11) | `lean/VE/EnglishGrammar/*` | as QT-E |
 | QT-B4 | QT-B2 (QT-B3 for display); QX-2 for the hard constraints; the hard-constraint queue (after WG-5; with WG-8, whichever is ready first) | pilot directories | — |
-| QX-1 to QX-3 | — (execution under its own authorisation) | `experiments/quantities-QX*/` (new) | — |
+| QX-1 to QX-3 | — (execution under its own authorisation); each its pre-execution material (section 5): QX-1's 33 contexts, QX-2's four decomposed forms, QX-3's seventeen items. QX-2's timing: section 11, item 1 | `experiments/quantities-QX*/` (new); phase 1's audit scripts are in `experiments/quantities-phase1/` | — |
 | QX-4 | QT-A4; weighing and attitudes outcomes | `experiments/quantities-QX4/` | — |
 | QS-1 | QT-0 PASS (its statements); lands before AT-1, QT-B1 and WG-2 | `lean/VE/Closure/Order.lean` (new; `Paths.lean` unchanged) | as QT-A1 |
 
@@ -1093,23 +1244,27 @@ checked with `git diff --name-only main...<branch>` against the branches above.
 
 ## 7. Expected effect per batch
 
-All **estimates** until a pilot run measures them.
+All **estimates** until a pilot run measures them, except QT-0p's row, which phase 1 measured on rebuilt copies of
+the pilots' inputs (P1 1.3); its bytes are claimed, not yet audit-verified.
 
 | Batch | Constitution | UDHR | News | Other |
 |---|---|---|---|---|
-| QT-0p | 0–128 B claimed (u0042.presupposition, u0043.s02); probe "no fourth principal type" SETTLED no | 0–76 B (u097); probe "higher education" UNDECIDED | — | — |
+| QT-0p | **+128 B** claimed, measured (u0042.presupposition 38 B CHECKED; u0043.s02 75 B CHECKED and 15 B LABELLED): 2,951 B (1.60%) to 3,079 B (1.67%); probe "no fourth principal type" SETTLED no (ALL on the negation). Premise check `model` to UNKNOWN, so this part waits (section 0.2) | **+76 B** OPEN, measured on part03 (u097); whole declaration computed, 4,792 B (43.90%) to 4,868 B (44.60%); probe "higher education" UNDECIDED | — | — |
 | QT-A1 to QT-A4 | 0 | 0 | 0 | W6a's Python count copy deleted (92 lines) |
 | QT-A5 | 0 | 0 | 0–194 B (`s3_count`); one certified consequence under both readings | paper: n of 20 sampled ratio lines expressible |
 | QT-E | 0 | 0 | 0 | `ve/surface/time.py` parser and renderer deleted (298 lines) |
 | QT-A6 | 0 | 0 | readable wording for the count | eligibility P4 accepted |
 | QT-A7 | 0 | 0 | 0 | eligibility's weeks exact |
 | QT-B1 to QT-B3 | 0 | 0 | 0 | — |
-| QT-B4 | 0–781 B newly claimed (u0043.s01, u0226.s01, s02); 826 B of OPEN hard constraints faithful if QX-2 passes | 0–191 B (u031, u093, u094) with rights | — | — |
+| QT-B4 | 0–781 B newly claimed (u0043.s01, u0226.s01, s02); 826 B of OPEN hard constraints faithful if queue 4.4 repairs their guards and QX-2 passes | 0–191 B (u031, u093, u094) with rights | — | — |
 | QX-4 | research: up to 2,107 B after weighing and attitudes | — | — | — |
 
 NORTH-STAR rows 3 and 9 (combined C score 0.62 from primary tags) recomputed from units with a quantity construct:
 at most about 0.29 (R2.6); the buildable part of this plan alone: about 0.19 summed over C, U and N
-(5 × 909 / 184,893 + 4 × 267 / 10,916 + 2 × 194 / 5,448).
+(5 × 909 / 184,893 + 4 × 267 / 10,916 + 2 × 194 / 5,448). Phase 1 leaves this unchanged: QT-0p measured at the top of
+its ranges (128 of C's 909 B, 76 of U's 267 B), and the rest are still the estimates' upper ends. What phase 1 makes
+available now is U's 76 B (4 × 76 / 10,916, about 0.03); C's 128 B (about 0.003) waits for its trigger, and 826 B of
+hard constraints count only as faithful, not as new bytes, so they are not in the sum.
 
 ## 8. Not claimed, open questions, risks
 
@@ -1118,7 +1273,8 @@ at most about 0.29 (R2.6); the buildable part of this plan alone: about 0.19 sum
 - **Open for QT-0**: the carrier of the scales block; the exact name of the response-shape fit predicate; the tie rules
   QT-A2 admits; the `scales` pack's `kind`; whether the closed interval is kept as a separate relation; whether
   english-lean E3's layer mechanism allows separate rule files.
-- **Open for the DRI**: news rows 7b and 22b (94 B: a W6 ruling to revisit with a reading set).
+- **Open for the DRI**: news rows 7b and 22b (94 B: a W6 ruling to revisit with a reading set). Phase 1's cross-plan
+  questions are in section 11.
 - **Limit**: "the vast majority" does not imply "more than half" until a proved bridge from scales to cardinality
   exists (QX-4's plan item); no fidelity credit is claimed for numerical-majority readings.
 - **Risks**: the region count grows as 2^n (capped at 6 predicates per sort, refused above); certificate search on the
@@ -1127,6 +1283,17 @@ at most about 0.29 (R2.6); the buildable part of this plan alone: about 0.19 sum
   rebuilt (`rd-9`, `lf-14d`, `lf-16e`), so QT-B2 may need a second statement pass; english-lean E3 may not be
   scheduled soon, which delays all new wordings (contents stay writable as JSON and display through Lean's
   paraphrase).
+- **Risks found in phase 1**:
+  - Any exact count above two in `relational-fol@0` content ("exactly three", pairwise distinctness of three
+    constants of one sort) makes the document's premise check UNKNOWN under the current search budget (domain size
+    2). This hits every pilot repair of that shape, not only QT-0p.
+  - The pilots move under the plan: run 0600Z changed the hard constraints' form within hours of the plan's ledger
+    pin. Every experiment record names the run and the SHA-256 of the material it used.
+  - Pre-registrations can be incomplete without anyone noticing until execution: all three QX items were. Each
+    pre-execution step (section 5) is reviewed before any model call.
+  - The readings route shows a unary predicate by its wording only when that wording is one word after "is"
+    (`other:english_wording`); QT-0p's `claude_principal_type` displays as `classified as "claude_principal_type"`.
+    Display only; recorded, not fixed here.
 
 ## 9. Review checklist (QT-0)
 
@@ -1165,3 +1332,47 @@ events-time-causation and scope; (6) exact rationals and rounding: math-evidence
 engine, in the serialised English queue AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7, with refusals and reading sets as rows of
 english-lean's catalogue ("about" one row shared with math-evidence); (9) one owner per wording for population and
 frequency statements ("1 in 1,000", "almost always") among this plan, attitudes and math-evidence.
+
+## 11. Cross-plan issues for the DRI
+
+Phase-1 results that bear on what `SYNTHESIS.md` and `edits-quantities.md` fixed. This plan does not change the shared
+part; each item says what the data shows, what stays as written, and what this plan recommends.
+
+1. **When QX-2 runs** (synthesis 4.1, phase 1: "QX-1–QX-3, each under its own gates"; this plan's Order line, edit 10:
+   "QT-0p and QX-1 to QX-3 run now").
+   - Data (P1 3): QX-2's comparator, the current form of u0165.s01–s06, changed between runs 1800Z and 0600Z, and
+     queue 4.4 (AT-0p → SC-1b → SC-2 → AT-6a/AT-6b → WG-5) rewrites it again before QT-B4. An audit run now judges
+     a comparator QT-B4 never starts from, and both audits so far rejected that comparator for its guard, which QX-2
+     does not test.
+   - Unchanged here: the Order line and synthesis 4.1. QT-B4 still waits for QX-2 (synthesis 4.3).
+   - Recommendation: write QX-2's four missing decomposed forms now (phase 1 work, no model call), and execute the
+     audit after WG-5, as the step before QT-B4 in queue 4.4. This costs QT-B4 nothing, since it already waits for
+     WG-5, and the audit then compares with the form QT-B4 edits. The alternative, running now on the graded words
+     alone, needs a second audit after WG-5 to gate QT-B4.
+2. **A premise budget for exact counts above two** (no shared item covers it; no plan owns it).
+   - Data (P1 1.3): QT-0p's "exactly three" turns the whole constitution's premise check from `model` to UNKNOWN.
+     The check's model search stops at domain size 2 (`ve/vacuity.py`, `premise_status`; the readings route's
+     `ve/readings_verdicts.py`, `BUDGET`), and the repaired content's smallest model has three principal types,
+     found at size 3 and checked by Lean.
+   - The budget is product code: today a default of `premise_status`, and by the repository's rule a limit is
+     Lean's. It is outside this plan and outside QT-A1.
+   - Options: (a) the DRI accepts UNKNOWN for the constitution's premise check, and QT-0p's constitution part (+128
+     B) applies at the next pilot run; (b) a small item, with an owner the DRI names, that lets the premise check
+     find a model needing three or more objects of one sort (a larger or per-sort domain budget), measured for its
+     cost on the pilots; (c) drop distinctness, which this plan rejects (the text would say "at most three").
+   - Recommendation: (b). Until it lands, QT-0p applies only its UDHR part. Other plans' pilot repairs that state an
+     exact count above two meet the same limit.
+3. **The 0600Z audit's finding on the shared hard constraints** (synthesis O17 and queue 4.4: u0165.s01–s07, one
+   queue).
+   - Data (P1 3): run 0600Z's audit rejects u0165.s01–s07 because both guards take only `situation` and neither binds
+     the regulated Claude instance, so one instance's knowledge or belief forbids every instance; it also flags
+     u0165.s03's scope ("that could cause significant damage if deployed" may modify both alternatives or only
+     "malicious code").
+   - This is the queue's to repair, starting with AT-0p; QT-B4 edits only the graded words. Unchanged here: the queue
+     and QT-B4's place in it.
+   - Recommendation: give the finding to AT-0p's owner as an input. QT-B4's "826 B faithful" needs this repair as well
+     as QX-2 (section 4, QT-B4).
+
+Checked, with no conflict: the owners table (section 1.2) and the shared pieces (section 10) are unchanged; QT-0p's
+"at the moment" was built as edit 9 says (no date, no second indexical); QS-1, PK-1, AR-10, `VE.Numbers`, `ve-units@2`,
+the English queue and the integration order are untouched by phase 1.

@@ -1,13 +1,24 @@
 # Quantities: statement spec (QT-0)
 
-> **Status.** Draft 2, 2026-10-13, branch `design/quantities`. Draft 1 plus every correction of the QT-0 statement
-> review (Astra and Fable, debate `quantities-spec`, converged in round 3 on FIX: A1–A4, E1–E5 and E6a); section 2.2
-> lists each edit and where it is applied. No other design change. It is the statement spec that
-> [quantities-PLAN.md](quantities-PLAN.md) draft 3 asks of QT-0: definitions, wire, diagnostics in order, limits,
+> **Status.** Draft 3, 2026-10-13, branch `research/quantities-p1`. Draft 2 (branch `design/quantities`: draft 1 plus
+> every correction of the QT-0 statement review, Astra and Fable, debate `quantities-spec`, converged in round 3 on
+> FIX: A1–A4, E1–E5 and E6a; section 2.2 lists each) passed the verification of that FIX
+> (`manage-agents/quantities-p3ver1`). Draft 3 adds only what phase 1
+> ([docs/research/quantities-phase1.md](../research/quantities-phase1.md), cited as P1) found that bears on this
+> spec; it changes **no Lean statement, definition body or computed fixture** (section 2.3). It is the statement spec
+> that [quantities-PLAN.md](quantities-PLAN.md) draft 4 asks of QT-0: definitions, wire, diagnostics in order, limits,
 > wordings with one reading each and their paraphrases, refusals with rewrites, the Lean statements of QT-A1, QT-A2,
 > QT-B1 and QS-1 (and those of QT-A3 and QT-B2 that `main` can type), and acceptance fixtures. Docs only: no product
-> code, no tests, no generated file, no model calls. Next: both reviewers check only the draft-2 diff and the new stub
-> results, and PASS if they satisfy the edit set; build approval waits for that PASS.
+> code, no tests, no generated file, no model calls.
+>
+> **Changes in this draft (draft 3)**
+> 1. Decision j (QX-1's results): still pending, now with the reason: QX-1 has not run, and phase 1 found its item
+>    list incomplete. Plan draft 4 completes it before execution; the authoring refusals stand whatever it finds.
+> 2. Section 7.4: the "most" and "multiple" rows say why their members are pending, and what the written QX-1 items
+>    can separate (P1 2).
+> 3. Section 9.3: FB1 and FB6 are the only decomposed hard-constraint forms; QX-2 needs four more (u0165.s02, s03,
+>    s04, s06), which are audit material in plan draft 4, not fixtures of this spec until QT-B4 ships one.
+> 4. New section 2.3: what phase 1 changed here, and that the stub was not re-run because no statement changed.
 >
 > **Checked.** Every statement below was type-checked as a `def … : Prop` in a scratch file
 > `lean/SpecStubs_quantities.lean` (untracked, deleted before commit) with `lake env lean` against a build of this
@@ -24,7 +35,7 @@
 - Section 1 records the decisions QT-0 makes. Section 2.1 lists every place where this spec's statements differ from
   the plan's Lean blocks, with the reason (an elaboration failure, a false statement found by a computed example, or a
   converged edit made precise). Where they differ, this spec's statement is the one under review. Section 2.2 lists
-  the statement review's corrections (draft 2).
+  the statement review's corrections (draft 2); section 2.3, what phase 1 changed (draft 3).
 - Sections 3 to 6 are the statements: track A (`cardinality@0`), QS-1, track B (`scales@0`), and the QT-A3 and QT-B2
   contracts that `main` can type.
 - Section 7 is the English: wordings with one reading each, Lean's paraphrase of each, refusals with rewrites, and the
@@ -45,7 +56,7 @@
 | g | Name of the response-shape fit predicate | `ResponseShape.Fits req skel row` (`lean/ResponseShape/Skeleton.lean:288`), as `ResponseShape.Encoders.Discourse.runCaseReported_fits` uses it | Read from `main` |
 | h | Core typing check in the statements | `VE.Formula.WellFormed E []` (a `Prop`), as PK-1's obligation is stated | Edit 4 of the synthesis |
 | i | Diagnostic for a cyclic `above` | `VE.Route.kahn`'s own text, `DependencyCycle: <sorted names>`, unchanged | One owner for the cycle diagnostic; the plan's `ScaleCycle` would be a second wording |
-| j | QX-1's results | Pending. They only shape rewrites and the members of reading sets; "most" and "multiple" are refused in authoring whatever they find | Debate (Astra A3) |
+| j | QX-1's results | Pending. QX-1 has not run: phase 1 found its pre-registration incomplete (42 items listed against 36 budgeted; 33 contexts unwritten; P1 2), and plan draft 4 completes it before execution. Its results only shape rewrites and the members of reading sets; "most" and "multiple" are refused in authoring whatever they find | Debate (Astra A3); P1 2 |
 | k | Whether english-lean E3 allows separate rule files | Open (english-lean's) | Not decidable from this branch |
 
 ## 2. Changes
@@ -89,6 +100,22 @@ where the plan states the same thing, in the plan (draft 3). The W1, soft and P0
 | E4 | The percent row's paraphrase said only "rounds up", which readers of Java's or Python's HALF_UP take as away from zero for −0.5 | Both tie-up paraphrases say "rounds up, to the larger number"; a rendering fixture at a negative half | 7.2; FA4e |
 | E5 | No statement said the erased problem is one W6a admits (`VE.Time.tentails_of_entails`, `lean/VE/Time/Semantics.lean:625`, needs `Admitted` for every premise and the conclusion) | `erasedProblem_admitted`, with FA1 and FA4c as computed examples; its role is stated in 3.6 | 3.6, 8; FA1, FA4c |
 | E6a | "Each in order, depth first and left to right" left open whether checks loop over nodes or nodes over checks, and S1 and S2 are whole-statement checks | S1 and S2 on the whole statement first; then one depth-first, left-to-right pass with S3–S10 in order at each node; W6a's own order inside S4; competing-fault fixtures | 4.2; FA13 |
+
+### 2.3 Draft 3: phase 1
+
+Phase 1 (QT-0p and the audits of QX-1 to QX-3, P1) touched no statement of this spec. QT-0p is written in the existing
+`relational-fol@0` and `norm-defaults@0` languages, with no cardinality or scales content, and the three experiments
+were not executed. So:
+
+- **No Lean statement, definition body or fixture number changes.** The stub (`lean/SpecStubs_quantities.lean`) is
+  untracked and was deleted before draft 2's commit; nothing in it would change, so it was not rebuilt, and the
+  "Checked" note above still describes draft 2's run.
+- **Pending stays pending**: decision j and section 7.4's "most" and "multiple" rows.
+- **Hard-constraint fixtures**: FB1 and FB6 remain the only decompositions of u0165 units; section 9.3 says what QX-2
+  needs beyond them.
+- **Recorded, not changed**: QT-0p's "exactly three" makes the constitution's premise check UNKNOWN under the model
+  search's domain-size budget of 2 (plan draft 4, QT-0p and section 11, item 2). That budget is not a statement of
+  this spec; section 3.10's limits are about the cardinality route and are unchanged.
 
 ## 3. Track A: `cardinality@0` (QT-A1 with QT-A2)
 
@@ -1283,8 +1310,13 @@ No symbol appears in any wording, paraphrase or diagnostic.
 | bare "105 percent of" | {exactly 105 percent of; 105 percent of to the nearest percent, each admitted rule} | 105.4 percent |
 | "N percent more than" on percent-displayed operands ("the September estimate was 5 percent more than June's") | {exactly 105 percent of; "… minus … equals 5 percentage points"} | June at 360 basis points (3.60 percent): September at 378 makes only the first true, at 860 only the second (FA5b) |
 | "rounds to 0.296" with no stated rule (VE's paper: "176/594 = .296") | one member per admitted rule | a value exactly halfway (none when the value is not a tie: then every member agrees, FA4) |
-| "most" | {more than half; an open proportion grade (a W2 open term)}; further members pending QX-1 | 51 of 100 |
-| "multiple" | {at least two}; further members pending QX-1 | — |
+| "most" | {more than half; an open proportion grade (a W2 open term)}; further members pending QX-1 (not yet run, P1 2) | 51 of 100 |
+| "multiple" | {at least two}; further members pending QX-1 (not yet run, P1 2) | — |
+
+On QX-1's written items (P1 2, computed from these two sets): "most" at 50 of 100 (and at 2 of 4, the point plan
+draft 4 adds) is where "more than half" says no; at 51, 60 and 95 of 100 and 3 of 5 it says yes, and the open grade
+gives no answer anywhere, so those items separate "more than half" only from the open grade. "Multiple" at 1 and 2
+has one reading and checks agreement only.
 
 QT-A5 keeps a source's stated tie convention, or reports the rounding as unresolved; it never imposes one.
 
@@ -1534,6 +1566,13 @@ models with the share above the fraction.
   false in every model of the facts.
 - **FB6 (u0165.s05).** Grade `vast_majority` (upper) on `share_of_humanity_targeted`: the premises hold in a model
   where the one attempt has the grade and in one where it does not (`grade_open`'s two witnesses).
+- **The hard constraints beyond FB1 and FB6 (draft 3; P1 3).** FB1 and FB6 are the only decomposed forms of the
+  hard constraints u0165.s01–s06 in this spec or the plan. QX-2's bar needs a decomposed form for at least five of
+  the six units, so plan draft 4 asks for forms for u0165.s02 ("serious" uplift), s03 ("significant" damage), s04
+  ("clearly", "substantially" undermine) and s06 ("unprecedented", "absolute" degrees of control) before QX-2 runs.
+  They are audit material, not fixtures here: a form becomes a QT-B1 or QT-B4 fixture, computed in the stub, only
+  once QT-B4 ships it. The last two pilot audits (runs 1800Z and 0600Z) rejected the current form of all six units
+  for its applicability guard, not its graded words; FB1 and FB6 are unaffected.
 - **FB8 (hostile `WellFormed`).** False for: a comparative that is not declared; an `above` cycle; `above` across
   directions; `comparable` without `same`; a graded word that is not a W2 open term. True for: the FB1 dimension;
   the same dimension with another declared open-term grade; the chain "grave uplift above serious uplift".
