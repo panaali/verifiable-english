@@ -73,7 +73,7 @@ class Staging:
         require; a path it does not list (a module without K declarations) needs no line."""
         lines = self.git("cat-file", "blob", f":{INVENTORY}").decode().splitlines(keepends=True)
         header = "".join(line for line in lines if line.startswith("#"))
-        recorded = dict(reversed(line.split(maxsplit=1)) for line in lines if not line.startswith("#"))
+        recorded = dict(reversed(line.split()) for line in lines if not line.startswith("#"))
         for path in paths:
             if path.removeprefix("lean/") in recorded:
                 recorded[path.removeprefix("lean/")] = hashlib.sha256(
