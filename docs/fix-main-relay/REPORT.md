@@ -81,7 +81,7 @@ No user-visible delta (the change is test-only), so no DRI-RULINGS row applies.
 - Second sync: `main` moved to 406736a4 (eff-20261011-1, arch-AR-9; it touches `tests/test_gate_integrity.py`),
   merged as b7600e38. The same 64 tests pass, M1–M4 are still killed (4/4), `regen_generated.py --check` passes.
 - Full gate on the final code, 4a45372d: **passed**, 14889 passed, 92 skipped (all allowed), 0 failures, Rust 36 passed
-  (`docs/fix-main-relay/gate-result.json`). The commit that adds it changes only this folder. The first attempt on
+  (`docs/fix-main-relay/gate-result-4a45372d.json`). The commit that adds it changes only this folder. The first attempt on
   4a45372d was stopped by the tool's 2-hour limit while still in the Python suite (load about 80 on 32 cores) and
   wrote no record. It was rerun on the same commit under `setsid` and took 2 h 05 min.
 - Operational note: my first attempt at the gate used `--workers auto`. At load 64 on 32 cores it picked 1 xdist
