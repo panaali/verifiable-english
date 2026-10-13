@@ -526,6 +526,11 @@ def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption
     monkeypatch.setattr(gate, "POLICY", policy)
     monkeypatch.setattr(gate, "COLLECTION", collection)
     monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
+    # This test exercises interruption after setup, not the ambient Python
+    # environment or the checkout's current Lake traces. Both vary when the
+    # test itself runs inside the full release gate.
+    monkeypatch.setattr(gate, "check_python_project", lambda result, env: None)
+    monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda lean, env=None: [])
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
 
     def fake_command(args, *, env, stage, cwd=None):
