@@ -1,0 +1,184 @@
+{
+  "source": "usecases/udhr-pilot/run-20261006T1800Z at bd6c7ab2 (git show)",
+  "profiles_added": [
+    "norm-defaults@0",
+    "readings@1"
+  ],
+  "sets": 49,
+  "migrated": [
+    "rs_u025",
+    "rs_u029",
+    "rs_u032",
+    "rs_u033a",
+    "rs_u033b",
+    "rs_u035",
+    "rs_u046",
+    "rs_u054",
+    "rs_u061",
+    "rs_u077",
+    "rs_u081",
+    "rs_u084c",
+    "rs_u084d",
+    "rs_u098",
+    "rs_u099a",
+    "rs_u099b",
+    "rs_u100a",
+    "rs_u100b",
+    "rs_u105c",
+    "rs_u110",
+    "rs_u111",
+    "rs_u114"
+  ],
+  "not_migrated": [
+    {
+      "set": "rs_u020",
+      "reason": "InvalidInput: readings rs_u020@2:0 and rs_u020@2:1 declare avoid_distinction_by_country_status_required differently"
+    },
+    {
+      "set": "rs_u022a",
+      "reason": "InvalidInput: readings rs_u022a@3:1 and rs_u022a@3:2 declare avoid_life_required differently"
+    },
+    {
+      "set": "rs_u022b",
+      "reason": "InvalidInput: readings rs_u022b@3:1 and rs_u022b@3:2 declare avoid_liberty_required differently"
+    },
+    {
+      "set": "rs_u022c",
+      "reason": "InvalidInput: readings rs_u022c@3:1 and rs_u022c@3:2 declare avoid_security_of_person_required differently"
+    },
+    {
+      "set": "rs_u024",
+      "reason": "InvalidInput: readings rs_u024@2:0 and rs_u024@2:1 declare avoid_holding_in_slavery_or_servitude_required differently"
+    },
+    {
+      "set": "rs_u027",
+      "reason": "InvalidInput: readings rs_u027@2:0 and rs_u027@2:1 declare avoid_torture_or_ill_treatment_required differently"
+    },
+    {
+      "set": "rs_u037",
+      "reason": "InvalidInput: readings rs_u037@2:0 and rs_u037@2:1 declare avoid_arbitrary_arrest_detention_exile_required differently"
+    },
+    {
+      "set": "rs_u045a",
+      "reason": "InvalidInput: readings rs_u045a@2:0 and rs_u045a@2:1 declare avoid_arbitrary_interference_required differently"
+    },
+    {
+      "set": "rs_u045b",
+      "reason": "InvalidInput: readings rs_u045b@2:0 and rs_u045b@2:1 declare avoid_attacks_upon_honour_and_reputation_required differently"
+    },
+    {
+      "set": "rs_u048",
+      "reason": "InvalidInput: readings rs_u048@5:1 and rs_u048@5:2 declare avoid_denying_right_u048_required differently"
+    },
+    {
+      "set": "rs_u049",
+      "reason": "InvalidInput: readings rs_u049@3:1 and rs_u049@3:3 declare avoid_leave_and_return_required differently"
+    },
+    {
+      "set": "rs_u051",
+      "reason": "InvalidInput: readings rs_u051@5:2 and rs_u051@5:3 declare avoid_barring_asylum_required differently"
+    },
+    {
+      "set": "rs_u052",
+      "reason": "InvalidInput: readings rs_u052@4:0 and rs_u052@4:1 declare arises_from_acts_contrary_to_un differently"
+    },
+    {
+      "set": "rs_u055",
+      "reason": "InvalidInput: readings rs_u055@2:0 and rs_u055@2:1 declare avoid_loss_of_nationality_required differently"
+    },
+    {
+      "set": "rs_u059",
+      "reason": "InvalidInput: readings rs_u059@2:0 and rs_u059@2:1 declare avoid_marriage_without_free_and_full_consent_required differently"
+    },
+    {
+      "set": "rs_u063",
+      "reason": "InvalidInput: readings rs_u063@5:1 and rs_u063@5:2 declare avoid_denying_right_u063_required differently"
+    },
+    {
+      "set": "rs_u064",
+      "reason": "InvalidInput: readings rs_u064@2:0 and rs_u064@2:1 declare avoid_arbitrary_deprivation_of_property_required differently"
+    },
+    {
+      "set": "rs_u066",
+      "reason": "InvalidInput: readings rs_u066@5:1 and rs_u066@5:2 declare avoid_thought_conscience_religion_required differently"
+    },
+    {
+      "set": "rs_u070",
+      "reason": "InvalidInput: readings rs_u070@3:1 and rs_u070@3:2 declare avoid_opinion_and_expression_required differently"
+    },
+    {
+      "set": "rs_u073",
+      "reason": "InvalidInput: readings rs_u073@5:1 and rs_u073@5:2 declare avoid_assembly_and_association_required differently"
+    },
+    {
+      "set": "rs_u084a",
+      "reason": "InvalidInput: readings rs_u084a@5:1 and rs_u084a@5:2 declare avoid_work_required differently"
+    },
+    {
+      "set": "rs_u084b",
+      "reason": "InvalidInput: readings rs_u084b@3:1 and rs_u084b@3:2 declare avoid_free_choice_of_employment_required differently"
+    },
+    {
+      "set": "rs_u087",
+      "reason": "InvalidInput: readings rs_u087@3:0 and rs_u087@3:1 declare avoid_trade_unions_required differently"
+    },
+    {
+      "set": "rs_u096",
+      "reason": "InvalidInput: readings rs_u096@3:1 and rs_u096@3:2 declare avoid_education_required differently"
+    },
+    {
+      "set": "rs_u105a",
+      "reason": "InvalidInput: readings rs_u105a@5:1 and rs_u105a@5:2 declare avoid_cultural_life_required differently"
+    },
+    {
+      "set": "rs_u105b",
+      "reason": "InvalidInput: readings rs_u105b@3:1 and rs_u105b@3:2 declare avoid_enjoyment_of_the_arts_required differently"
+    },
+    {
+      "set": "rs_u112",
+      "reason": "InvalidInput: readings rs_u112@5:0 and rs_u112@5:1 declare exercise_contrary_to_un differently"
+    }
+  ],
+  "copied_declarations": {
+    "rs_u052:case_excluded": [
+      "sort prosecution",
+      "predicate arises_from_acts_contrary_to_un",
+      "predicate arises_from_non_political_crime",
+      "predicate asylum_right_covers_case"
+    ],
+    "rs_u112:exercise_unprotected": [
+      "sort exercise",
+      "predicate exercise_contrary_to_un",
+      "predicate exercise_of_declared_right",
+      "predicate right_protects_exercise"
+    ],
+    "rs_u114:no_implied_right": [
+      "sort bearer",
+      "predicate declaration_implies_destructive_right"
+    ]
+  },
+  "situations": {
+    "rs_u025": 1,
+    "rs_u029": 1,
+    "rs_u032": 1,
+    "rs_u033a": 1,
+    "rs_u033b": 1,
+    "rs_u035": 1,
+    "rs_u046": 6,
+    "rs_u054": 0,
+    "rs_u061": 0,
+    "rs_u077": 1,
+    "rs_u081": 2,
+    "rs_u084c": 1,
+    "rs_u084d": 1,
+    "rs_u098": 2,
+    "rs_u099a": 0,
+    "rs_u099b": 0,
+    "rs_u100a": 1,
+    "rs_u100b": 1,
+    "rs_u105c": 2,
+    "rs_u110": 1,
+    "rs_u111": 5,
+    "rs_u114": 1
+  }
+}
