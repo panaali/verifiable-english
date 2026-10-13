@@ -1,9 +1,9 @@
 [
   {"id": "S1", "file": "tests/subprocesses.py", "change": "busy_cpu adds 0 instead of one tick per reading",
-   "test": "tests/test_hang_guards.py::test_the_busy_cpu_clock_advances_a_tick_per_reading_above_the_real_one",
+   "test": "tests/test_hang_guards.py::test_the_busy_cpu_clock_advances_a_tick_per_reading_above_the_real_one (renamed ..._in_its_phases_only in the F1 fix)",
    "result": "1 failed"},
   {"id": "S2", "file": "tests/subprocesses.py", "change": "busy_cpu drops the real reading as its floor",
-   "test": "tests/test_hang_guards.py::test_the_busy_cpu_clock_advances_a_tick_per_reading_above_the_real_one",
+   "test": "tests/test_hang_guards.py::test_the_busy_cpu_clock_advances_a_tick_per_reading_above_the_real_one (renamed ..._in_its_phases_only in the F1 fix)",
    "result": "1 failed"},
   {"id": "S3", "file": "tests/test_question_reading.py", "change": "the question test reads the real clock (busy_cpu call removed)",
    "test": "tests/test_hang_guards.py::test_every_sub_tick_cpu_deadline_is_read_on_the_busy_clock",
@@ -16,5 +16,14 @@
    "result": "2 failed"},
   {"id": "S6", "file": "ve/backends/lean_service.py", "change": "the deadline's CheckerUnavailable names operation 'lean', not the mode",
    "test": "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
-   "result": "1 failed"}
+   "result": "1 failed"},
+  {"id": "S7", "file": "tests/subprocesses.py", "change": "review F1: busy_cpu ticks from the first reading in every phase (the clock before the fix)",
+   "test": "tests/test_lean_service.py::test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline tests/test_lean_document_wrapper.py::test_a_document_past_its_cpu_deadline_is_unavailable_never_ok tests/test_hang_guards.py -k busy_cpu",
+   "result": "7 failed, 3 passed (service tests); 2 failed (clock unit tests)"},
+  {"id": "S8", "file": "ve/backends/lean_service.py", "change": "_wait skips the CPU check while waiting for the response",
+   "test": "tests/test_lean_service.py::test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline tests/test_lean_document_wrapper.py::test_a_document_past_its_cpu_deadline_is_unavailable_never_ok",
+   "result": "4 failed (response-checked, response-write unchecked, both deadline tests), 4 passed"},
+  {"id": "S9", "file": "ve/backends/lean_service.py", "change": "_wait skips the CPU check while writing the request",
+   "test": "tests/test_lean_service.py::test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline tests/test_lean_document_wrapper.py::test_a_document_past_its_cpu_deadline_is_unavailable_never_ok",
+   "result": "2 failed (write-checked, write-response unchecked), 6 passed"}
 ]
