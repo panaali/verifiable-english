@@ -20,7 +20,8 @@ The deleted Python is the whole fallback: the `definitions@0` branch of `parser.
 
 ## Gate 5.1
 
-1. **Suite.** The full gate on the final HEAD (`evidence/gate.json`, see the build report). Test changes are only
+1. **Suite.** The full gate runs once, last, on the committed final HEAD (the commit that adds
+   [REPORT.md](REPORT.md)); its record is `gate-result.json` in the worktree and its numbers are in the build report. Test changes are only
    the sugar tests: `tests/test_stage2_parse.py` now asserts that Lean is asked about every sugared source.
 2. **Corpus A/B** (`evidence/corpus-ab.json`, made by `tools/lean_first_diff.py compare` with
    [`DELTA.json`](DELTA.json)): probe (python and lean authorities), conformance (both authorities), every
