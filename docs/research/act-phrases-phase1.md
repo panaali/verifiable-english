@@ -419,7 +419,7 @@ Nothing in phase 1 needed product code, a model call or a branch not on `main`, 
      - Draft 2 should choose one of: (i) refuse a joined filler whose first or last member has more than one word, so
        the translator must declare a fixed phrase or reword; (ii) give joined fillers an edge rule; (iii) state that
        exactness for joined fillers is relative to the declared fixed phrases, with an audit item that names the case.
-     - Either way, D3 and D4 must stay provisional, and AP-7's sample should include u037, u045a, u0062.s01, u0101 and
+     - Either way, D3 and D4 must stay provisional, and AP-7's sample should include u037, u045a, u0062.s01, u101 and
        u0156.s03.
 7. **AP-1's wording vs. today's display limit (an item for the bounded re-check).**
    - Today a verbalisation holds at most 256 characters (`lean/VE/Bridge.lean:123`; u082). AP-1 allows 400-byte acts,
