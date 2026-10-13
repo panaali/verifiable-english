@@ -97,6 +97,9 @@ def test_a_question_not_read_is_refused_with_leans_words():
     lines = done.stdout.splitlines()
     assert lines == ['VE cannot tell whether "a" here means every or some. Ask one of these instead:',
                      "Is every member eligible?", "Is some member eligible?"]
+    structured = json.loads(cli(ROOT / AF.load("G1")["path"], "Is a member eligible?", "--json").stdout)
+    assert structured["result"]["span"] == [0, 21]
+    assert structured["result"]["rephrasings"] == lines[1:]
 
 
 def test_the_json_is_leans_result_with_the_honesty_fields():
