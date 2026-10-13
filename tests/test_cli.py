@@ -228,7 +228,12 @@ def test_check_display_overflow_never_changes_acceptance(tmp_path):
     try:
         expected = check(Environment.from_json(path.read_bytes()), source.read_bytes())
     finally:
-        stdout, stderr = process.communicate(timeout=HANG_TIMEOUT)
+        try:
+            stdout, stderr = process.communicate(timeout=HANG_TIMEOUT)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.communicate()
+            raise
     result = subprocess.CompletedProcess(process.args, process.returncode, stdout, stderr)
     assert result.returncode == 0
     record = json.loads(result.stdout)

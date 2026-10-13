@@ -118,7 +118,7 @@ Not split, with the reason:
 ## Seeded bugs
 
 All in Python (no Lean or Rust product code changed). `docs/test-tail/mutants.json`, run with
-`tools/mutants.py`; result `docs/test-tail/evidence/mutants-result.json`: 14 of 14 killed, each test passing
+`tools/mutants.py`; result `docs/test-tail/evidence/mutants-result.json`: 15 of 15 killed, each test passing
 on the unmutated file first.
 
 | id | file | behaviour | killed by |
@@ -137,6 +137,12 @@ on the unmutated file first.
 | M11 | tools/pytest_profile.py | a test patching the clocks cannot skew its record | test_suite_tail::test_profile_records_keep_real_times_when_a_test_patches_the_clocks |
 | M12 | tools/bench/suite_tail.py | the durations file keeps only collected tests | test_suite_tail::test_durations_command_writes_the_scheduler_s_file |
 | M13 | tests/conftest.py | the suite's xdist runs use the scheduler | test_test_schedule::test_the_suite_conftest_installs_the_scheduler |
+| M14 | tools/test_schedule.py | a worker added mid-run (a restarted one) is topped up to the two tests it needs to start | test_test_schedule::test_a_worker_added_mid_run_gets_two_tests_to_start |
+
+Found in review of the diff, after the measured runs: a worker that xdist adds mid-run (to replace a
+crashed one) and that was sent a head batch of one test would hold one test, which an xdist worker never
+starts, and the run would not end. `check_schedule` now tops a worker up to two tests (M14). The measured
+runs had no crashed worker, so the fix changes nothing they did.
 
 ## Rulings and deltas
 

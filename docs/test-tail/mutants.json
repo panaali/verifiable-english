@@ -141,6 +141,16 @@
    "tests": [
     "tests/test_test_schedule.py::test_the_suite_conftest_installs_the_scheduler"
    ]
+  },
+  {
+   "id": "M14",
+   "file": "tools/test_schedule.py",
+   "claim": "a worker added mid-run is topped up to the two tests it needs to start",
+   "find": "            while self.pending and len(self.node2pending[node]) < 2:",
+   "replace": "            if self.pending and len(self.node2pending[node]) < 2:",
+   "tests": [
+    "tests/test_test_schedule.py::test_a_worker_added_mid_run_gets_two_tests_to_start"
+   ]
   }
  ]
 }
