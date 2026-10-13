@@ -6,7 +6,8 @@ the same way.
 
 Later runs (the pin exists, as on a clone): never rewrite `fetch-log.json`. A file present on disk is checked against
 its logged SHA-256; a file absent (the gitignored third-party pages) is fetched again and written only if its bytes
-match the logged SHA-256. A mismatch is reported with the new digest and nothing is written; the exit status is 1.
+match the logged SHA-256. A mismatch is reported with the new digest, the new bytes go to `raw/refetched/` (never to
+the pinned name), and the exit status is 1.
 
     python3 -I research/math-evidence/fetch_sources.py
 """
@@ -87,7 +88,9 @@ def verify(target: str) -> list[str]:
         digest = hashlib.sha256(body).hexdigest()
         if digest != entry["sha256"]:
             failures.append(f"{target}/{entry['file']}: {how}, sha256 {digest} != pinned {entry['sha256']}")
-            print(target, entry["file"], how, "MISMATCH")
+            print(target, entry["file"], how, "MISMATCH; kept under raw/refetched/, not as the pin")
+            (raw / "refetched").mkdir(exist_ok=True)
+            (raw / "refetched" / entry["file"]).write_bytes(body)
             continue
         if not path.exists():
             path.write_bytes(body)
