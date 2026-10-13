@@ -78,6 +78,8 @@ No user-visible delta (the change is test-only), so no DRI-RULINGS row applies.
 - After the merge: `tests/test_relay_mutation_gate.py`, `tests/test_service_schema*.py` and
   `tests/test_gate_integrity.py`: 64 passed. M1–M4 are still killed and S1 still survives. `regen_generated.py --check`
   passes (24 entries).
+- Second sync: `main` moved to 406736a4 (eff-20261011-1, arch-AR-9; it touches `tests/test_gate_integrity.py`),
+  merged as b7600e38. The same 64 tests pass, M1–M4 are still killed (4/4), `regen_generated.py --check` passes.
 - Full gate on the final HEAD: `docs/fix-main-relay/gate-result.json`.
 - Operational note: my first attempt at the gate used `--workers auto`. At load 64 on 32 cores it picked 1 xdist
   worker, so I stopped it at about 47% and started `--workers 8` on the same commit. That stop only reached the
