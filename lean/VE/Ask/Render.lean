@@ -331,6 +331,28 @@ def firstUngated (ls : List Line) : String :=
 /-- Every line passes W7's all-derivations gate as its frame (`VE.Question.gated`). -/
 def linesGated (ls : List Line) : Bool := ls.all fun l => (VE.Question.gated (gateName l.frame) l.text).isSome
 
+/-- `f` on each of `rows`, as a table, computed once when the answer is built. -/
+def memoTable {β : Type} (rows : List Row) (f : Row → β) : List (Row × β) := rows.map fun r => (r, f r)
+
+/-- A row's value read from a `memoTable` of `f` (else `f` itself), so every reader of a row's citations (its key,
+    its group, each line) shares one replay of its certificate. -/
+def memoRead {β : Type} (table : List (Row × β)) (f : Row → β) (r : Row) : β :=
+  match table.find? (·.1 == r) with
+  | some (_, b) => b
+  | none => f r
+
+theorem memoRead_eq {β : Type} (rows : List Row) (f : Row → β) (r : Row) :
+    memoRead (memoTable rows f) f r = f r := by
+  unfold memoRead
+  split
+  · rename_i r' b h
+    have hm := List.mem_of_find?_eq_some h
+    have he : r' = r := by simpa using List.find?_some h
+    simp only [memoTable, List.mem_map, Prod.mk.injEq] at hm
+    obtain ⟨x, _, hx1, hx2⟩ := hm
+    rw [← hx2, hx1, he]
+  · rfl
+
 /-- The answer of a replayed request: its context from the document, the rows' citations from their accepted
     certificates; refused when an unused unit has no display number, a decided row's certificate does not replay,
     or a line does not pass the gate. -/
@@ -338,8 +360,9 @@ def answerFor (s : Asked) : Except String (Context × Answer) :=
   match contextOf s.text with
   | .error e => .error e
   | .ok ctx =>
+    let table := memoTable s.rows (checkedCites s.request s.x)
     let a : Answer := ⟨s.request, s.text, s.case, s.x, s.c, s.x.r.N.D.sets.map (·.id), s.rows,
-      checkedCites s.request s.x, s.names, documentUnused s.text⟩
+      memoRead table (checkedCites s.request s.x), s.names, documentUnused s.text⟩
     if (a.unused.mapM ctx.displayOf).isSome then
       if a.rows.all (certReplays a) then
         match unworded a (render ctx a) with
@@ -358,7 +381,8 @@ open Lean VE.Readings VE.Readings.Wire VE.NormDefaults
 
 theorem answerFor_ok {s : Asked} {ctx : Context} {a : Answer} (h : answerFor s = .ok (ctx, a)) :
     contextOf s.text = .ok ctx ∧
-    a = ⟨s.request, s.text, s.case, s.x, s.c, s.x.r.N.D.sets.map (·.id), s.rows, checkedCites s.request s.x, s.names,
+    a = ⟨s.request, s.text, s.case, s.x, s.c, s.x.r.N.D.sets.map (·.id), s.rows,
+      memoRead (memoTable s.rows (checkedCites s.request s.x)) (checkedCites s.request s.x), s.names,
       documentUnused s.text⟩ ∧
     (a.unused.mapM ctx.displayOf).isSome = true ∧ a.rows.all (certReplays a) = true ∧
     linesGated (render ctx a) = true := by
@@ -387,7 +411,7 @@ theorem answerFor_bound : ∀ (asked : Asked) (ctx : Context) (a : Answer),
       a.asked = asked.c ∧ a.rows = asked.rows ∧ a.names = asked.names := by
   intro s ctx a h
   obtain ⟨hc, rfl, hu, _, _⟩ := answerFor_ok h
-  exact ⟨⟨hc, s.hrequest.2.2, s.hreplay, s.hrows, fun _ _ => rfl, rfl, Option.isSome_iff_exists.mp hu⟩,
+  exact ⟨⟨hc, s.hrequest.2.2, s.hreplay, s.hrows, fun r _ => memoRead_eq _ _ r, rfl, Option.isSome_iff_exists.mp hu⟩,
     rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 theorem gated_some {f line : String} (h : (VE.Question.gated f line).isSome = true) :
@@ -450,6 +474,8 @@ theorem answerFor_cites : ∀ (asked : Asked) (ctx : Context) (a : Answer), answ
     obtain ⟨hs, _, hent⟩ := checkedCites_spec a.request a.x r ψ k hk'
     refine ⟨ψ, k, hk, certPiece_formula hk, fun t => ?_, hent hrep⟩
     rw [ha] at hs ⊢
+    show t ∈ memoRead (memoTable s.rows (checkedCites s.request s.x)) (checkedCites s.request s.x) r ↔ _
+    rw [memoRead_eq]
     exact hs t
   · cases hrep
 
