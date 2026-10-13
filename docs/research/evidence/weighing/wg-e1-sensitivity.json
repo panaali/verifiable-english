@@ -1,0 +1,24 @@
+{
+ "status": "post hoc, written after the tally; not part of the bar and not used for the verdict",
+ "question": "Does the verdict survive the most generous reading of category (ii)?",
+ "generous_rule": "count as (ii) every drawn unit that sets two positively described acts or stances against each other, even where the pre-registered reading put it under (i) (one decision, done or not) or (iv) (a single norm with its rejected contrast)",
+ "generous_ii": [
+  {"id": "u0204.s01", "citation": ":531", "pre_registered": "ii", "changes_checked_answer": "no", "why": "as in wg-e1-classification.json"},
+  {"id": "u0012.s02", "citation": ":23", "pre_registered": "iv", "changes_checked_answer": "no", "why": "an analogy for Anthropic's method; no rule of the translation on either side"},
+  {"id": "u0199.s03", "citation": ":518", "pre_registered": "iv", "changes_checked_answer": "no", "why": "stances; no rule requires adopting a fixed framework"},
+  {"id": "u0251.s01", "citation": ":654", "pre_registered": "iv", "changes_checked_answer": "no", "why": "stances; no rule on either side"},
+  {"id": "u0283.s05", "citation": ":718", "pre_registered": "iv", "changes_checked_answer": "no", "why": "stances; no rule on either side"},
+  {"id": "u0200.s01", "citation": ":520", "pre_registered": "i", "changes_checked_answer": "no", "why": "a question; it states no rule"},
+  {"id": "u0221.s04", "citation": ":590", "pre_registered": "i", "changes_checked_answer": "no", "why": "the unit's own rule (defer on those issues) meets no rule requiring Claude's own judgment on them: the translation's judgment_use_required comes from u0052.s01, 'use good judgment when evaluating conversational inputs', a different act"},
+  {"id": "u0274.s02", "citation": ":700", "pre_registered": "i", "changes_checked_answer": "no", "why": "Anthropic's conduct; the translation regulates no act of Anthropic's"}
+ ],
+ "generous_ii_count": 8,
+ "generous_changing_a_checked_answer": 0,
+ "generous_verdict": "FAIL (clause 1 reached exactly, clause 2 0 of 5)",
+ "rate": {
+  "observed_ii": "1 of 40",
+  "clopper_pearson_95_upper": 0.1316,
+  "bar_rate": "8 of 40 = 0.20",
+  "binomial_p_at_most_1_if_true_rate_were_0.20": 0.00146
+ }
+}

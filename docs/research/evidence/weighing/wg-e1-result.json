@@ -1,0 +1,17 @@
+{
+ "units": 40,
+ "counts": {
+  "i": 10,
+  "ii": 1,
+  "iii": 2,
+  "iv": 27
+ },
+ "exclusive_units": [
+  "u0204.s01"
+ ],
+ "exclusive_changing_a_checked_answer": 0,
+ "exclusive_needing_WG-0": 0,
+ "clause_1_ii_at_least_8": false,
+ "clause_2_at_least_5_change": false,
+ "verdict": "FAIL"
+}
