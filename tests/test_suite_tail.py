@@ -113,3 +113,18 @@ def test_durations_command_writes_the_scheduler_s_file(tmp_path, monkeypatch):
     assert suite_tail.main() == 0
     assert test_schedule.read_durations(output) == {"t::a": 6.5, "t::b": 8.0, "t::c": 2.0}
     assert json.loads(output.read_text())["source"] == "a test"
+
+
+def test_durations_command_collects_current_gate_ids_by_default(tmp_path, monkeypatch):
+    profile = tmp_path / "profile"
+    profile.mkdir()
+    (profile / "main-7.jsonl").write_text("".join(json.dumps(row) + "\n" for row in (
+        {"kind": "test", "nodeid": "t::current", "call": 3.0},
+        {"kind": "test", "nodeid": "t::gone", "call": 20.0},
+    )))
+    monkeypatch.setattr(suite_tail.gate_collection, "collect", lambda root: ["t::current"])
+    output = tmp_path / "durations.json"
+    monkeypatch.setattr(sys, "argv", ["suite_tail.py", "durations", str(profile), "--output", str(output),
+                                      "--source", "a test"])
+    assert suite_tail.main() == 0
+    assert test_schedule.read_durations(output) == {"t::current": 3.0}
