@@ -123,6 +123,31 @@ three-authority and corpus comparisons (2, 10, 19), the fail-able mutations
 gate and signed delta ledger (20–23). This batch changes no text normalizer,
 English grammar, state machine, or source-document interpretation.
 
+## Review fixes (lf-14b-review.final.md)
+
+* **F1, full gate missed final HEAD.** Commits after `f06911d8` changed
+  `ve/norms.py`, so that gate result does not count for the final HEAD, and
+  this report no longer claims it does. The fix round ran the selected tests,
+  `lake build` and `lean/audit.py`. The full release gate on the final HEAD is
+  run by the merge train's branch verify. `evidence_manifest.py` refuses to
+  write or check the batch manifest unless `gate-result.json` names the clean
+  final HEAD and passed, so a gate on an earlier commit cannot count for it.
+* **F2, retained Python route changed.** The n-ary atom substitution in
+  `_instantiate` reached every retained caller of `_expand`. It is removed (see
+  F3), so the retained route answers as the base did: the
+  [comparison](evidence/fallback-compare.json) has 0 differences in 1,350
+  operations, against 16 before the fix. The review's probe passes.
+  `test_retained_python_route_keeps_the_base_nary_expansion` is its regression
+  test.
+* **F3, 16 unsigned rejection-to-answer changes.** The head no longer makes
+  them. The Lean family route expands n-ary lower outcomes as the base did, and
+  the [corpus comparison](evidence/corpus-ab.json) has 0 differences. Batch 14c
+  owns n-ary scope, so the substitution moves there with its own DRI signature.
+  Class regression test: `test_lean_family_route_answers_as_the_retained_python_route`
+  checks that every conflict operation answers the same on both routes.
+* **F4 (C, follow-up).** The five readings-route allow-list entries stay
+  filed under F10 and F11 for the readings-route owner, as reported above.
+
 ## Seeded bugs and final checks
 
 Eight seeded faults in the changed Lean and Python product files are specified
