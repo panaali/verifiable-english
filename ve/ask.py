@@ -177,7 +177,7 @@ class _Plain:
 
     def _premises(self):
         from .ast import formula_from_data
-        return [formula_from_data(self.env, u["content"]) for u in self.units if u["content"] is not None]
+        return [formula_from_data(self.env, u["content"]) for u in self.units if u.get("content") is not None]
 
     def _certificate(self, conclusion):
         from .entailment import _binding, _validate_inputs, prove_entailment
@@ -235,7 +235,7 @@ def _zero_generator(doc):
             self.route, self.choice, self.side = None, (), None
             units = _units(doc)
             nd = UnspecifiedDocument(doc["environment"], [u["content"] for u in units
-                                                           if u["kind"] == "norm" and u["content"] is not None])
+                                                           if u["kind"] == "norm" and u.get("content") is not None])
             self.elaboration = nd.elaboration
             self.base = nd.filled.base_environment()
             self.env = nd.filled.env
@@ -245,7 +245,7 @@ def _zero_generator(doc):
             self.layers = [f for _, f in nd.filled.premises()]
             self.targets = [(t["target"], tuple(t["sorts"]), _Decoder().decode(t["ast"]))
                             for t in nd.elaboration["conflict_targets"]]
-            self.assertions = [u["content"] for u in units if u["kind"] == "asserted" and u["content"] is not None]
+            self.assertions = [u["content"] for u in units if u["kind"] == "asserted" and u.get("content") is not None]
             self.view = _FilledView(self.source_env, self.env, self.fill, self.layers)
             self.units = units
 
