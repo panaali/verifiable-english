@@ -37,36 +37,10 @@ def context(doc):
     return doc["_readings_s2_context"]
 
 
-def _used(certificate, count):
-    """The indices below `count` that the certificate's trace expands. A literal is closed against without an
-    `expand`, so callers count literal premises as used too (an over-approximation, never an omission)."""
-    found, stack = set(), [certificate.get("trace")]
-    while stack:
-        node = stack.pop()
-        if type(node) is dict:
-            if type(node.get("at")) is int and node["at"] < count:
-                found.add(node["at"])
-            stack.extend(node.get("children") or [])
-            for value in node.values():
-                if type(value) is dict:
-                    stack.append(value)
-    return found
 
 
-def _replays(env, premises, conclusion, certificate):
-    """Whether the certificate's trace closes on `premises` (after the Background), bound afresh to them: Python's
-    own replay of a trace it generated, which only narrows what an answer is worded as depending on."""
-    from .entailment import _binding, _validate_inputs, check_entailment_certificate
-    full = _validate_inputs(env, premises, conclusion)
-    bound = {**certificate, **_binding(env, full, conclusion)}
-    return check_entailment_certificate(env, full, conclusion, bound, max_steps=BUDGET["max_steps"],
-                                        _background=False).valid
 
 
-def _literal(formula):
-    from .ast import Binary, Bottom, Not, Top, Unary
-    inner = formula.body if isinstance(formula, Not) else formula
-    return isinstance(inner, (Unary, Binary, Top, Bottom))
 
 
 def dead_finding(set_id, index):
@@ -85,29 +59,6 @@ def _dropped(sets, narrowings, set_id, index):
     return None
 
 
-def _restrictions(sets, couplings, narrowings, A=()):
-    """The slot labels (`coupling:<id>`, `narrowing:<id>`, in `choiceCore D`'s order) of the couplings and the
-    narrowings in force that exclude some complete choice taking `A` (Lean's `restrictionsFor`): a verdict combined
-    over the compatible choices holds only given them (review A of compose-s2 looprecheck2). An over-approximation
-    of what selected the choices, never an omission."""
-    from .readings_sup import SlotLabel, in_force
-    fixed = {s: i for s, i in A}
-    by_id = {R.id: R for R in sets}
-    out = []
-    for coupling in couplings:
-        axis, refs = coupling["axis"], coupling["sets"]
-        if any(ref["set"] not in by_id for ref in refs):
-            continue
-        pairs = [(by_id[left["set"]], by_id[right["set"]]) for left, right in zip(refs, refs[1:])]
-        if any(fixed.get(L.id, i) == i and fixed.get(R.id, j) == j and
-               (a.labels.get(axis) is None or a.labels.get(axis) != b.labels.get(axis))
-               for L, R in pairs for i, a in enumerate(L.candidates) for j, b in enumerate(R.candidates)):
-            out.append(SlotLabel("coupling", key=coupling["id"]).render())
-    for narrowing in narrowings:
-        R = next((R for R in sets if in_force(R, narrowing)), None)
-        if R is not None and R.id not in fixed and any(a.id not in narrowing["keeps"] for a in R.candidates):
-            out.append(SlotLabel("narrowing", key=narrowing["id"]).render())
-    return out
 
 
 class _Route:
@@ -117,7 +68,6 @@ class _Route:
     def __init__(self, doc):
         from .readings_route import document_wire
         from .readings_s1 import Document, S1Environment, wire
-        from .readings_sup import MAX_CHOICES, choices
         meta = doc["meta"]
         self.doc = doc
         self.row = doc["readings_s2"]
@@ -134,14 +84,8 @@ class _Route:
         self.completion = filled is not None
         self.source = Document(S1Environment(self.environment, filled), self.document, filled)
         self.sets = self.source.sets
-        if self.route == "enumerated":
-            # The compatible choices are Lean's (the route's row, bound to the request by the relay; on the lower
-            # route also checked against the retained search); none is enumerated or counted here.
-            self.choices = None if self.row["choices"] == "over" else [
-                {s: i for s, i in choice} for choice in self.row["choices"]]
-        else:
-            found, over = choices(self.sets, self.couplings, self.narrowings, limit=MAX_CHOICES)
-            self.choices = None if over else found
+        self.choices = None if self.row["choices"] == "over" else [
+            {s: i for s, i in choice} for choice in self.row["choices"]]
         self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
 
     def lean(self, kind, **fields):
@@ -168,7 +112,8 @@ class _Route:
         return [(R.id, i) for R in self.sets for i in range(len(R.candidates))]
 
     def restrictions(self, A=()):
-        return _restrictions(self.sets, self.couplings, self.narrowings, A)
+        return (self._ask("conflict", A) if self.route == "superposed" else
+                self._verdicts("conflict", assumed=[list(x) for x in A]))["restrictions"]
 
     def report_fields(self):
         return {}
@@ -206,7 +151,7 @@ class Pending(_Route):
 class Superposed(_Route):
     def __init__(self, doc):
         super().__init__(doc)
-        from .readings_sup import MAX_CHOICE_CHECKS, choices, superposed_document
+        from .readings_sup import superposed_document
         _, contents, soft = superposed_document(self.source)
         self.soft = soft
         self.ext = soft.extended_env
@@ -220,14 +165,22 @@ class Superposed(_Route):
         self.assertions = [content.body for content in contents if content.kind == "assertion"]
         # DRI ruling 5: past the checked choices no superposed verdict is claimed.
         self.checked = type(self.row.get("choices_checked")) is int
-        found, over = choices(self.sets, self.couplings, self.narrowings, limit=MAX_CHOICE_CHECKS)
-        self.all_choices = None if over else found
+        self._evidence = {}
+        self._answers = {}
+        self.requests = {}
         self._conflicts = {}
         self._models = {}
 
     def taken(self, A):
-        """Some compatible choice takes every candidate of `A` (Lean's `takenBy`; exact while `checked`)."""
-        return self.all_choices is not None and any(all(c.get(s) == i for s, i in A) for c in self.all_choices)
+        if not A:
+            return self.checked
+        try:
+            self._ask("conflict", A)
+        except VEError as exc:
+            if str(exc).startswith("ReadingsUnsatisfiable:"):
+                return False
+            raise
+        return True
 
     # -- premise lists in Lean's order (8.4 `supCertificateCheck`, `supModelCheck`, `slotConflictFreeCheck`)
 
@@ -256,7 +209,7 @@ class Superposed(_Route):
         """A certificate of `conclusion` from the labelled premises ++ rest (the prover prepends the Background) that
         needs as few labelled premises as the prover finds: each is replaced by ⊤ in turn and stays replaced when a
         proof remains. The certificate returned never expands a replaced premise, so it checks against the full
-        list as well; what it depends on is `_dependencies`'."""
+        list as well; its conditions are computed by Lean's joint replay."""
         from .ast import Top
         from .entailment import prove_entailment
         current = [f for _, f in labelled]
@@ -272,46 +225,10 @@ class Superposed(_Route):
                 current, proof = trial, again
         return proof.certificate
 
-    def _dependencies(self, proofs):
-        """The one dependency set of an answer (compose-s2 fix4 A1): the slot labels its certificates rely on, the
-        conflict certificates it is accepted under included, in label order (the slot's, then `Fill_T`'s). `proofs`
-        are (environment, labelled premises, rest, conclusion, certificate), each certificate over the Background ++
-        the labelled premises ++ rest. Every certificate is replayed with premises replaced by ⊤, one label at a time
-        in label order, and a label stays out when every certificate still closes: each certificate closes without
-        the labels left out, and none of them closes once any label kept is left out too. Both the English
-        conditions (E3) and the independence statement (E13) are worded from this set, never from a separate
-        computation."""
-        from .ast import Top
-        labels = [label for label, _ in self.labelled]
-        kept = {label: True for label in labels}
-        for label in labels:
-            trial = {**kept, label: False}
-            if all(_replays(env, [f if name is None or trial[name] else Top() for name, f in labelled] + list(rest),
-                            phi, cert)
-                   for env, labelled, rest, phi, cert in proofs):
-                kept = trial
-        return [label for label in labels if kept[label]]
 
-    def _conflict_proofs(self, A, certificates):
-        """The conflict certificates under `A` as `_dependencies` replays them: over Background_base′ ++ slot ++
-        atoms ++ `Fill_T`, each of its target's closed negation."""
-        from .ast import Not
-        from .norms import _bind
-        labelled = self._labelled(self.base, A)
-        return [(self.base, labelled, [], _bind(Not(formula), sorts), certificates[target])
-                for target, sorts, formula in self.soft.elaborated.conflict_targets() if target in certificates]
 
-    def _coherence(self, certificate, env):
-        """The coherence labels of the Background a certificate expands, or that are literals (a literal is closed
-        against without an `expand`): an over-approximation, never an omission."""
-        from .background import background
-        prefix = [p.formula for p in background(env)]
-        used = _used(certificate, len(prefix))
-        return [label for label, formula in getattr(env, "soft_premises", ())
-                if label.startswith("soft:coherence:") and any(
-                    prefix[k] == formula and (k in used or _literal(formula)) for k in range(len(prefix)))]
 
-    def conflict(self, A=()):
+    def _generate_conflict(self, A=()):
         """The conflict status under the atoms of `A` (4.5): certificates for every target over
         Background_base′ ++ slot ++ atoms, or a witness model, each checked by `readings-conflict`."""
         from .ast import Not
@@ -340,30 +257,13 @@ class Superposed(_Route):
             if row["verdict"] != "CONFLICT-FREE":
                 raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict certificates "
                                          "Python's prover found on the superposed document")
-            coherence = set()
-            for certificate in certificates.values():
-                coherence.update(self._coherence(certificate, self.base))
-            used = self._dependencies(self._conflict_proofs(A, certificates))
-            coh = [label for label, _ in self.soft.extended_env.soft_premises if label in coherence]
-            result = {"status": "CONFLICT-FREE", "evidence": "certificates", "assumed": assumed,
-                      "certificates": certificates, "conditional_on": coh + used, "reading_premises_used": used,
-                      "status_text": f"CONFLICT-FREE among rules on the same act, conditional on {len(coh)} "
-                                     f"coherence premises" + (f" and {len(used)} reading premises" if used else "")}
+            result = {"status": "CONFLICT-FREE", "certificates": certificates}
         else:
             result = self._witness(A, premises, missing)
-        if not A and self.completion and self.choices is not None:
-            result["choices"] = self._choice_conflicts(result)
+            result["certificates"] = certificates
         self._conflicts[key] = result
         return result
 
-    def _choice_conflicts(self, result):
-        """Under the completion, each compatible choice's conflict status, as RD-3's enumerated answer lists them
-        (review B3 of rd-6b). CONFLICT-FREE certified under no assumed reading is every compatible choice's
-        (`readings_wire_nd_conflict_sound`); otherwise each choice's status is its own, under its atoms."""
-        if result["status"] == "CONFLICT-FREE":
-            return [{"choice": self.choice_json(c), "status": "CONFLICT-FREE"} for c in self.choices]
-        return [{"choice": self.choice_json(c),
-                 "status": self.conflict([(R.id, c[R.id]) for R in self.sets])["status"]} for c in self.choices]
 
     def _witness(self, A, premises, missing):
         from .ast import Not
@@ -394,19 +294,9 @@ class Superposed(_Route):
                                          "search found on the superposed document")
             self._shadow(data, A, target=(target, sorts, formula))
             gaps = self._lean_gaps(row, data)
-            kind = f"pair conflict on {target}" if "->" in target else f"strict collision on {target}"
-            selected = None
-            if target in self.soft.elaborated.order:
-                role = self.soft.elaborated.env.predicates[target].regulated.role
-                pos = "permits" if role == "permission" else "requires" if role == "obligation" else "affirms"
-                neg = "forbids" if role == "permission" else "releases" if role == "obligation" else "denies"
-                selected = [(rule.name, pos if rule.sign else neg)
-                            for rule in self.soft.elaborated.selected_rules(target, model, values)]
-            return {"status": "CONFLICT", "evidence": "witness", "assumed": [list(x) for x in A],
+            return {"status": "CONFLICT", "assumed": [list(x) for x in A],
                     "target": target, "sorts": list(sorts), "tuple": list(values), "choice": row["choice"],
-                    "model": data, "gaps": gaps, "selected": selected,
-                    "status_text": f"CONFLICT: {kind} at {', '.join(values)} under "
-                                   f"{self.choice_text(row['choice'])}"}
+                    "model": data, "gaps": gaps}
         return {"status": "UNKNOWN", "assumed": [list(x) for x in A],
                 "detail": f"tableau budget or open branch: {missing}",
                 "status_text": f"UNKNOWN: tableau budget or open branch: {missing}, budget {BUDGET['max_steps']}",
@@ -469,8 +359,6 @@ class Superposed(_Route):
                                      "the request")
         return gaps
 
-    MAX_LIFTS = 16
-
     def _shadow(self, data, A=(), gamma=(), conclusion=None, target=None):
         """Rust evaluates the Python-generated formulas of `sup D` on a model shown, untrusted (4.2, 10): the slot
         with the assumed atoms, the assertions and Γ and the conclusion read on the base through the outcome
@@ -513,12 +401,10 @@ class Superposed(_Route):
     def _lifted(self, A, gamma, conclusion):
         from .ast import Bottom, formula_from_data
         from .search import check_countermodel, find_countermodel
-        pool = self.all_choices if self.all_choices is not None else self.choices
-        if pool is None:
-            from .readings_sup import choices
-            pool, _ = choices(self.sets, self.couplings, self.narrowings, limit=self.MAX_LIFTS)
-        taking = [c for c in pool if all(c.get(s) == i for s, i in A)][:self.MAX_LIFTS]
-        for choice in taking:
+        proposal = self._ask("premises" if conclusion is None else "query", A,
+                             gamma=gamma, conclusion=conclusion)
+        for reading in proposal["model_proposals"]:
+            choice = dict(reading)
             own = _ChoiceDocument(self, choice)
             premises = own._all(gamma) + own.searched
             phi = Bottom() if conclusion is None else formula_from_data(own.env, conclusion, _generated=True)
@@ -559,12 +445,12 @@ class Superposed(_Route):
         return {"complete": True, "domains": {**data["domains"], READING_SORT: ["here"]},
                 "constants": {**data.get("constants", {}), HERE: "here"}, "relations": relations}
 
-    def certificate(self, A=(), gamma=(), conclusion=None):
+    def _generate_certificate(self, A=(), gamma=(), conclusion=None):
         """A certificate of `conclusion` (⊥ when None) under `A`, checked by `readings-certificate`; only when the
         conflict status under `A` is CONFLICT-FREE (4.5, 14.8). None within the budget."""
         from .ast import Bottom, formula_from_data
         from .entailment import prove_entailment
-        conflict = self.conflict(A)
+        conflict = self._generate_conflict(A)
         if conflict["status"] != "CONFLICT-FREE":
             return None
         phi = Bottom() if conclusion is None else formula_from_data(self.ext, conclusion, _generated=True)
@@ -580,85 +466,14 @@ class Superposed(_Route):
         if row["accepted"] is not True:
             raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the certificate Python's prover "
                                      "found on the superposed document")
-        # Review A1 of compose-s2 fix4: Lean accepts the certificate only under the conflict certificates, so the
-        # answer depends on their slot labels too (a narrowing that removes a collision proves nothing itself).
-        used = self._dependencies(self._conflict_proofs(A, conflict["certificates"]) +
-                                  [(self.ext, labelled, rest, phi, certificate)])
-        labels = {label for label, _ in self.labelled}
-        coherence = [label for label in conflict["conditional_on"] if label not in labels]
-        return {"certificate": certificate, "assumed": [list(x) for x in A],
-                "reading_premises_used": used, "mentions": self._mentions(A, used),
-                "conditional_on": list(dict.fromkeys(coherence + used))}
+        return {"certificate": certificate, "assumed": [list(x) for x in A]}
 
-    def _mentions(self, A, used):
-        """The open sets a used leaf mentions (2.3: a leaf mentions a set when its formula contains a bit
-        predicate of that set), with whether an atom of it was assumed."""
-        from .readings_sup import bit_name, bits_of
-        asts = dict(self.labelled)
-        mentioned = []
-        for position, R in enumerate(self.sets, 1):
-            bits = {bit_name(position, j) for j in range(bits_of(len(R.candidates)))}
-            if any(R.id == s for s, _ in A) or any(bits & _predicates(asts[label]) for label in used):
-                mentioned.append(R.id)
-        return mentioned
+
 
     # -- the questions of 4.5
 
-    def premises(self):
-        from .readings_sup import CHECK_BUDGET_TEXT
-        if not self.checked:
-            return {"status": "UNKNOWN", "route": "superposed", "reason": CHECK_BUDGET_TEXT}
-        found = self.model(())
-        if found is not None:
-            result = {"status": "model", "route": "superposed", "evidence": "model", "choice": found["choice"],
-                      "model": found["model"], "gaps": found["gaps"]}
-        else:
-            proof = self.certificate((), (), None)
-            if proof is not None:
-                result = {"status": "INCONSISTENT", "route": "superposed", "evidence": "certificate",
-                          "conditional_on": proof["conditional_on"],
-                          "reading_premises_used": proof["reading_premises_used"]}
-            else:
-                conflict = self.conflict(())
-                result = {"status": "UNKNOWN", "route": "superposed", "budget": dict(BUDGET),
-                          **({"reason": f"conflict status: {conflict['status']}"}
-                             if conflict["status"] != "CONFLICT-FREE" else {})}
-        result["candidates"] = self.candidate_premises()
-        return result
 
-    def candidate_premises(self):
-        """Per candidate (4.5): `model`, `dead` (finding), `narrowed` (a narrowing in force drops it, E7),
-        `INCONSISTENT` (⊥ certified under its atom, only when CONFLICT-FREE there) or `UNKNOWN`."""
-        dead = {(d["set"], d["index"]) for d in (self.dead_readings() or [])}
-        out = []
-        for s, i in self.candidates():
-            entry = {"set": s, "index": i}
-            narrowing = self.dropped(s, i)
-            if narrowing is not None:
-                entry.update(status="narrowed", narrowing=narrowing)
-            elif (s, i) in dead:
-                entry.update(status="dead")
-            elif not self.taken([(s, i)]):
-                entry.update(status="UNKNOWN", reason=self.untaken_text([(s, i)]))
-            else:
-                found = self.model([(s, i)])
-                if found is not None:
-                    entry.update(status="model", choice=found["choice"])
-                elif self.certificate([(s, i)], (), None) is not None:
-                    entry.update(status="INCONSISTENT")
-                else:
-                    entry.update(status="UNKNOWN")
-            out.append(entry)
-        return out
 
-    def dead_readings(self):
-        """`DeadReading: <set>:<i>` for every candidate no compatible choice takes and no narrowing in force drops,
-        each with a certificate of ¬χ from `choiceCore D` checked by `readings-dead` (1.9, 14.7). None when the
-        compatible choices exceed the checked budget, or when a certificate cannot be found within the budget
-        (`_dead_readings`)."""
-        if "_dead" not in self.__dict__:
-            self._dead = _dead_readings(self, self.all_choices)
-        return self._dead
 
     def _core_environment(self):
         """The choice vocabulary alone, with no generated Background: `deadCheck` replays a certificate over the
@@ -679,152 +494,157 @@ class Superposed(_Route):
             raise CheckerUnavailable("ReadingsConformance: the choice vocabulary has a generated Background")
         return env
 
+
+
+
+
+    def _ask(self, question, A=(), *, gamma=(), conclusion=None):
+        """Request Lean's whole answer. The evidence map is proposals only; no fold is computed here."""
+        from .readings_route import run_lean
+        allowed = {"conflict", "witness"} | ({"unsat", "model"} if question == "premises" else
+                                           {"certificate", "countermodel"} if question == "query" else set())
+        case = {"id": "readings-verdicts", "kind": "readings-verdicts", "environment": self.environment,
+                "document": self.document, "question": question,
+                "evidence": [{"choice": [list(x) for x in key], **{k: v for k, v in pieces.items() if k in allowed}}
+                             for key, pieces in self._evidence.items()],
+                "premises": list(gamma), "conclusion": conclusion, "budget": dict(BUDGET)}
+        if A is not None:
+            case["assumed"] = [list(x) for x in A]
+        if question == "premises" and getattr(self, "_dead", None) is not None:
+            case["dead"] = self._dead
+        [row] = run_lean([case])
+        if row.get("status") != "ok":
+            error = row.get("error", "")
+            if error.startswith("ReadingsUnsatisfiable:"):
+                raise VEError(error)
+            raise CheckerUnavailable(f"ReadingsConformance: Lean refused readings-verdicts: {error}")
+        _check_sup_answer(row, case, self)
+        self.requests[id(row)] = case
+        return row
+
+    def _pieces(self, A):
+        return self._evidence.setdefault(tuple(tuple(x) for x in A), {})
+
+    def _prepare_conflict(self, A):
+        result = self._generate_conflict(A)
+        pieces = self._pieces(A)
+        if "certificates" in result:
+            pieces["conflict"] = {"conflict_certificates": result["certificates"]}
+        if "model" in result:
+            pieces["witness"] = {"witness": {"model": result["model"], "target": result["target"],
+                                              "tuple": result["tuple"]}}
+        return result
+
+    def _prepare(self, question, A=(), gamma=(), conclusion=None):
+        row = self._ask(question, A, gamma=gamma, conclusion=conclusion)
+        for scope in row["scopes"]:
+            own = scope["row"]["choice"]
+            self._prepare_conflict(own)
+        return self._ask(question, A, gamma=gamma, conclusion=conclusion)
+
+    def conflict_answer(self):
+        if "conflict" not in self._answers:
+            self._answers["conflict"] = self._prepare("conflict", None)
+        return self._answers["conflict"]
+
+    def conflict(self, A=()):
+        row = self._prepare("conflict", A) if A else self.conflict_answer()
+        # Retained solely for callers proposing certificates; the report excludes the traces.
+        result = dict(row["result"])
+        generated = self._generate_conflict(A)
+        if generated.get("status") == "CONFLICT-FREE" and "certificates" in generated:
+            result["certificates"] = generated["certificates"]
+        return result
+
+    def certificate(self, A=(), gamma=(), conclusion=None):
+        for pieces in self._evidence.values():
+            pieces.pop("certificate", None)
+            pieces.pop("countermodel", None)
+        piece = self._generate_certificate(A, gamma, conclusion)
+        if piece is None:
+            return None
+        self._prepare_conflict(A)
+        self._pieces(A)["certificate" if conclusion is not None else "unsat"] = piece
+        row = self._ask("query" if conclusion is not None else "premises", A, gamma=gamma, conclusion=conclusion)
+        scope = next(s for s in row["scopes"] if s["row"]["choice"] == [list(x) for x in A])
+        name = "certificate" if conclusion is not None else "unsat"
+        labels = scope["used"].get(name, [])
+        return {**piece, "reading_premises_used": labels, "conditional_on": labels,
+                "mentions": scope["mentions"].get(name, [])}
+
+    def premises_answer(self):
+        if "premises" not in self._answers:
+            row = self._prepare("premises", None)
+            for scope in row["scopes"]:
+                A = scope["row"]["choice"]
+                proof = self._generate_certificate(A)
+                if proof is not None:
+                    self._pieces(A)["unsat"] = proof
+                else:
+                    found = self.model(A)
+                    if found is not None:
+                        self._pieces(A)["model"] = {"model": found["model"]}
+            row = self._ask("premises", None)
+            if row["untaken"]:
+                self._dead = _dead_certificates(self, row["untaken"])
+                if self._dead is not None:
+                    row = self._ask("premises", None)
+            self._answers["premises"] = row
+        return self._answers["premises"]
+
+    def premises(self):
+        return self.premises_answer()["result"]
+
+    def candidate_premises(self):
+        return self.premises()["candidates"]
+
+    def dead_readings(self):
+        return self.premises_answer()["dead_readings"]
+
     def entailment(self, conclusion_ast, premises=(), assumed=None):
-        """ALL, SOME or NONE for `conclusion_ast` over the shared vocabulary (4.5); with `assumed`, whether it
-        follows under the named readings. An entailment is certified only under readings whose conflict status is
-        CONFLICT-FREE: otherwise `UNKNOWN (conflict status: <status>)` (14.8)."""
-        from .readings_sup import CHECK_BUDGET_TEXT
-        if not self.checked:
-            return {"verdict": "UNKNOWN", "route": "superposed", "reason": CHECK_BUDGET_TEXT,
-                    **({"assumed": [list(x) for x in assumed]} if assumed is not None else {})}
-        if assumed is not None:
-            A = [tuple(x) for x in assumed]
-            if not self.taken(A):
-                # Review A1's class: every verdict under readings no compatible choice takes would be vacuous.
-                raise VEError(self.untaken_text(A))
-            conflict = self.conflict(A)
-            if conflict["status"] != "CONFLICT-FREE":
-                return {"verdict": "UNKNOWN", "route": "superposed", "assumed": [list(x) for x in A],
-                        "status": f"UNKNOWN (conflict status: {conflict['status']})",
-                        "conflict_status": conflict["status"], **self._gated_choice(conflict)}
-            proof = self.certificate(A, premises, conclusion_ast)
+        # Query evidence is tied to this query, never reused under a different formula.
+        for pieces in self._evidence.values():
+            pieces.pop("certificate", None)
+            pieces.pop("countermodel", None)
+        row = self._prepare("query", assumed, premises, conclusion_ast)
+        for scope in row["scopes"]:
+            A = scope["row"]["choice"]
+            proof = self._generate_certificate(A, premises, conclusion_ast)
             if proof is not None:
-                return {"verdict": "ALL", "route": "superposed", "evidence": "certificate",
-                        "assumed": [list(x) for x in A], "conditional_on": proof["conditional_on"],
-                        "reading_premises_used": proof["reading_premises_used"], "mentions": proof["mentions"]}
-            if self.completion and self.choices is not None:
-                # Under the completion the named readings are answered as RD-3's enumerated route answers them: the
-                # fold over the compatible choices taking them (review B3 of rd-6b: a countermodel under the only
-                # such choice is NONE, never a weaker NOT ALL).
-                taking = [c for c in self.choices if all(c.get(s) == i for s, i in A)]
-                return {**self._fold(taking, premises, conclusion_ast, A), "assumed": [list(x) for x in A]}
-            found = self.model(A, premises, conclusion_ast)
-            if found is not None:
-                return {"verdict": "NOT ALL", "route": "superposed", "assumed": [list(x) for x in A],
-                        "countermodel": found}
-            return {"verdict": "UNKNOWN", "route": "superposed", "assumed": [list(x) for x in A],
-                    "budget": dict(BUDGET)}
-        conflict = self.conflict(())
-        if conflict["status"] != "CONFLICT-FREE":
-            return {"verdict": "UNKNOWN", "route": "superposed",
-                    "status": f"UNKNOWN (conflict status: {conflict['status']})",
-                    "conflict_status": conflict["status"], **self._gated_choice(conflict)}
-        proof = self.certificate((), premises, conclusion_ast)
-        if proof is not None:
-            return {"verdict": "ALL", "route": "superposed", "evidence": "certificate", "assumed": [],
-                    "conditional_on": proof["conditional_on"],
-                    "reading_premises_used": proof["reading_premises_used"], "mentions": proof["mentions"]}
-        if self.choices is None:
-            found = self.model((), premises, conclusion_ast)
-            if found is not None:
-                return {"verdict": "UNKNOWN", "route": "superposed", "budget": {"max_choices": 64},
-                        "status": f"UNKNOWN (not ALL: countermodel under {self.choice_text(found['choice'])})",
-                        "countermodel": found}
-            return {"verdict": "UNKNOWN", "route": "superposed", "budget": {"max_choices": 64}}
-        return self._fold(self.choices, premises, conclusion_ast)
-
-    def _gated_choice(self, conflict):
-        """Under the completion a query gated by a CONFLICT names the choice Lean's witness encodes, as RD-3's
-        enumerated answer does (review B3 of rd-6b)."""
-        return {"choice": conflict["choice"]} if self.completion and "choice" in conflict else {}
-
-    def _fold(self, choices, premises, conclusion_ast, assumed=()):
-        """ALL, SOME, NONE or UNKNOWN for `conclusion_ast` over `choices` (compatible, complete, each taking
-        `assumed`): per choice a checked countermodel or certificate under its atoms, then combined with the
-        restrictions that selected them."""
-        proofs, counters, unknown = [], [], []
-        for choice in choices:
-            A = [(R.id, choice[R.id]) for R in self.sets]
-            found = self.model(A, premises, conclusion_ast)
-            if found is not None:
-                counters.append(found)
-                continue
-            proof = self.certificate(A, premises, conclusion_ast)
-            if proof is not None:
-                proofs.append({"choice": self.choice_json(choice), "conditional_on": proof["conditional_on"],
-                               "reading_premises_used": proof["reading_premises_used"]})
+                self._pieces(A)["certificate"] = proof
             else:
-                unknown.append({"choice": self.choice_json(choice)})
-        if proofs and counters:
-            return {"verdict": "SOME", "route": "superposed", "proof": proofs[0], "countermodel": counters[0]}
-        if unknown:
-            return {"verdict": "UNKNOWN", "route": "superposed", "choice": unknown[0]["choice"],
-                    "budget": dict(BUDGET)}
-        # Combined over the compatible choices: the couplings and narrowings that excluded the others are kept
-        # (review A of compose-s2 looprecheck2), as a certificate on `sup D` keeps the slot labels it uses.
-        restrictions = self.restrictions(assumed)
-        if proofs:
-            conditional = list(dict.fromkeys([label for p in proofs for label in p["conditional_on"]] + restrictions))
-            # Review A1 of compose-s2 fix4: the combined answer depends on what each choice's certificates rely on
-            # as well as on the restrictions that selected the choices.
-            used = {label for p in proofs for label in p["reading_premises_used"]} | set(restrictions)
-            labels = [label for label, _ in self.labelled]
-            return {"verdict": "ALL", "route": "superposed", "evidence": "certificates", "proofs": proofs,
-                    "conditional_on": conditional, "restrictions": restrictions,
-                    "reading_premises_used": [label for label in labels if label in used] +
-                                             [label for label in restrictions if label not in labels]}
-        return {"verdict": "NONE", "route": "superposed", "countermodels": counters, "restrictions": restrictions}
+                found = self.model(A, premises, conclusion_ast)
+                if found is not None:
+                    self._pieces(A)["countermodel"] = {"model": found["model"]}
+        row = self._ask("query", assumed, gamma=premises, conclusion=conclusion_ast)
+        self._answers[("query", _request_key(conclusion_ast, premises, assumed))] = row
+        return row["result"]
+
+    def query_answer(self, conclusion_ast, assumed=None, premises=()):
+        key = ("query", _request_key(conclusion_ast, premises, assumed))
+        if key not in self._answers:
+            self.entailment(conclusion_ast, premises, assumed)
+        return self._answers[key]
+
+    def answer_for(self, result, conclusion):
+        """The exact answer returned for this query, including its premises and whether --under was supplied."""
+        for answer in self._answers.values():
+            if answer.get("question") == "query" and answer["result"] is result:
+                if self.requests[id(answer)]["conclusion"] != conclusion:
+                    raise CheckerUnavailable("ReadingsConformance: the displayed conclusion differs from the bound query")
+                return answer
+        raise CheckerUnavailable("ReadingsConformance: this query result has no bound Lean answer")
 
     def report_fields(self):
-        conflict = self.conflict(())
+        conflict = self.conflict_answer()["result"]
         dead = self.dead_readings()
-        return {"status": conflict["status_text"] if "status_text" in conflict else
-                f"UNKNOWN: {conflict.get('reason', '')}",
-                "conflict": {key: value for key, value in conflict.items()
-                             if key not in ("certificates", "model", "gaps", "selected")},
+        return {"status": conflict["status_text"],
+                "conflict": {key: value for key, value in conflict.items() if key not in ("model", "gaps", "selected")},
                 "dead_readings": None if dead is None else [d["finding"] for d in dead]}
 
 
-def _dead_readings(route, pool):
-    """The dead readings of 1.9 over the compatible choices `pool` (exact, or None when not enumerated): every
-    candidate no choice of `pool` takes and no narrowing in force drops, each certified by `readings-dead`. A
-    candidate whose certificate the prover cannot find within the budget makes the list incomplete, so the answer
-    is None, never a list that silently leaves it out (review B of compose-s2 looprecheck1): an empty list says
-    that no candidate is dead."""
-    from .ast import Not, formula_from_data
-    from .entailment import prove_entailment
-    from .readings_sup import choice_atom, choice_core
-    if pool is None:
-        return None
-    taken = {(R.id, choice[R.id]) for choice in pool for R in route.sets}
-    env = Superposed._core_environment(route)
-    core = [formula_from_data(env, ast, _generated=True)
-            for _, ast in choice_core(route.sets, route.couplings, route.narrowings)]
-    dead = []
-    for s, i in route.candidates():
-        if (s, i) in taken or route.dropped(s, i) is not None:
-            continue
-        atom = formula_from_data(env, choice_atom(route.sets, s, i), _generated=True)
-        proof = prove_entailment(env, core, Not(atom), max_steps=BUDGET["max_steps"])
-        if proof.status != "Found":
-            return None
-        row = route.lean("readings-dead", set=s, index=i, certificate=proof.certificate)
-        if row["accepted"] is not True or row["finding"] != dead_finding(s, i):
-            raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the dead reading Python's "
-                                     "prover certified")
-        dead.append({"set": s, "index": i, "finding": row["finding"]})
-    return dead
 
 
-def _predicates(ast):
-    out, stack = set(), [ast]
-    while stack:
-        node = stack.pop()
-        if type(node) is list and node:
-            if node[0] in ("unary", "binary") and type(node[1]) is str:
-                out.add(node[1])
-            stack.extend(item for item in node[1:] if type(item) is list)
-    return out
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -1333,6 +1153,174 @@ def _check_answer(row, case, frame):
         if note.get("accepted") is not True:
             raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the dead reading Python's prover "
                                      "certified")
+
+
+def _check_sup_answer(row, case, route):
+    """The generated shape and request relations only; Lean owns every derived result and English line."""
+    from .backends.service_schema import check_row
+    from .readings_s2_wording import PLAN_FRAMES, PLAN_RESULTS
+    A = case.get("assumed") or []
+    sent = {json.dumps(e["choice"]): e for e in case["evidence"]}
+    candidates = [[R.id, i] for R in route.sets for i in range(len(R.candidates))]
+    labels = {name for name, _ in route.labelled} | {name for name, _ in getattr(route.base, "soft_premises", ())}
+    sets = {R.id for R in route.sets}
+    versions = {R.id: R.version for R in route.sets}
+    rules = {u["content"]["norm"]["name"] for u in route.document["units"]
+             if isinstance(u.get("content"), dict) and "norm" in u["content"]}
+    rules.update(obj["name"] for envelope in (route.environment, route.row.get("filled", {}))
+                 for obj in _walk(envelope) if isinstance(obj.get("name"), str))
+    for entry in route.row.get("names", []):
+        for candidate in entry["candidates"]:
+            for original, qualified in candidate["names"]:
+                rules.update((original, qualified,
+                              f"{original} under {entry['set']}@{versions[entry['set']]}:{candidate['index']}"))
+
+    def choice(c, complete=False):
+        _need(type(c) is list and all(x in candidates for x in c))
+        _need(len({x[0] for x in c}) == len(c))
+        if complete:
+            _need([x[0] for x in c] == [R.id for R in route.sets])
+            if route.choices is not None:
+                _need(c in [route.choice_json(x) for x in route.choices])
+
+    def label(value):
+        _need(value in labels)
+
+    with relayed():
+        check_row("readings-route", row, case, 0)
+        _need(row["id"] == case["id"] and row["question"] == case["question"] and row["route"] == "superposed")
+        scopes = row["scopes"]
+        proposals = row["model_proposals"]
+        _need(proposals or not route.checked)
+        _need(len({json.dumps(c) for c in proposals}) == len(proposals))
+        for c in proposals:
+            choice(c, complete=True)
+            _need(all(x in c for x in A))
+        scope_choices = [x["row"]["choice"] for x in scopes]
+        _need(scopes and scope_choices[0] == A)
+        _need(len({json.dumps(x) for x in scope_choices}) == len(scope_choices))
+        if route.choices is not None:
+            full = [route.choice_json(c) for c in route.choices]
+            required = [c for c in full if all(x in c for x in A)]
+            if case["question"] == "premises":
+                required += [[c] for c in candidates if any(c in x for x in full)]
+            expected = [A]
+            for c in required:
+                if c not in expected:
+                    expected.append(c)
+            _need(scope_choices == expected)
+        else:
+            _need(all(c == A or case["question"] == "premises" and len(c) == 1 for c in scope_choices))
+        for scope in scopes:
+            entry = scope["row"]
+            choice(entry["choice"])
+            pieces = sent.get(json.dumps(entry["choice"]), {})
+            noted = entry["evidence"]
+            _need(set(noted) == set(pieces) - {"choice"})
+            _need(set(entry["errors"]) <= set(noted))
+            _need(set(entry["shown"]) == set(scope["encoded"]))
+            _need(set(entry["shown"]) <= set(noted) and set(entry["gaps"]) <= set(entry["shown"]))
+            _need(set(scope["used"]) <= set(noted) and set(scope["mentions"]) == set(scope["used"]))
+            for key, model in entry["shown"].items():
+                _need(model == _shown_of(pieces[key], key))
+                choice(scope["encoded"][key], complete=True)
+                _need(all(c in scope["encoded"][key] for c in entry["choice"]))
+                _bound_gaps(entry["gaps"].get(key, []), model, route)
+            for ls in scope["used"].values():
+                for l in ls:
+                    label(l)
+            for mentioned in scope["mentions"].values():
+                _need(set(mentioned) <= sets)
+            for field in {"conflict", case["question"]}:
+                word = entry[field]
+                _need(word == "UNKNOWN" or noted.get(ROW_PIECES[field].get(word)) is True)
+            for key, accepted in noted.items():
+                if key != "conflict":
+                    _need(accepted is True)
+            _need(entry["status_text"] is None or "witness" in noted)
+        result = row["result"]
+        if "budget" in result and "max_choices" not in result["budget"]:
+            _need(result["budget"] == case["budget"])
+        if "target" in result:
+            _need(any(p.get("witness", {}).get("target") == result["target"] and
+                      p.get("witness", {}).get("tuple") == result.get("tuple")
+                      for e in case["evidence"] for p in [e.get("witness", {})]))
+        _need(result["route"] == "superposed")
+        _need("verdict" in result if case["question"] == "query" else "status" in result)
+        if case["question"] == "query":
+            _need(result.get("assumed", []) == A)
+        references = [result]
+        references += [result[name] for name in ("proof", "countermodel") if name in result]
+        references += [obj for name in ("proofs", "countermodels", "choices", "candidates")
+                       for obj in result.get(name, [])]
+        for obj in references:
+            _need(set(obj.get("mentions", [])) <= sets)
+            _need(all(s in route.base.sorts for s in obj.get("sorts", [])))
+            _need(all(name in rules for name, _ in obj.get("selected") or []))
+            if "choice" in obj:
+                choice(obj["choice"], complete=True)
+            for key in ("conditional_on", "reading_premises_used", "restrictions"):
+                for l in obj.get(key, []):
+                    label(l)
+            if "model" in obj:
+                _need(any(obj["model"] == s["row"]["shown"].get(k) and obj.get("choice") == s["encoded"].get(k)
+                          for s in scopes for k in ("witness", "model", "countermodel")))
+                _bound_gaps(obj.get("gaps", []), obj["model"], route)
+        for member in ("proofs", "countermodels", "choices"):
+            if member in result:
+                _need(route.choices is not None)
+                _need([obj["choice"] for obj in result[member]] ==
+                      [route.choice_json(c) for c in route.choices if all(x in route.choice_json(c) for x in A)])
+        for proof in ([result["proof"]] if "proof" in result else []) + result.get("proofs", []):
+            _need(any(s["row"]["choice"] == proof["choice"] and s["row"]["evidence"].get("certificate") is True
+                      for s in scopes))
+        for l in row["restrictions"]:
+            label(l)
+        sent_dead = case.get("dead", []) if case["question"] == "premises" else []
+        _need(len(row["dead"]) == len(sent_dead))
+        for note, sent_note in zip(row["dead"], sent_dead):
+            _need((note.get("set"), note.get("index")) == (sent_note.get("set"), sent_note.get("index")))
+        _need(len({(d["set"], d["index"]) for d in row["dead_readings"] or []}) == len(row["dead_readings"] or []))
+        _need(len({tuple(c) for c in row["untaken"]}) == len(row["untaken"]))
+        if case["question"] == "premises":
+            _need("candidates" in result or result.get("status") == "UNKNOWN" and type(result.get("reason")) is str)
+            _need("candidates" not in result or [[c["set"], c["index"]] for c in result["candidates"]] == candidates)
+            for c in result.get("candidates", []):
+                if "choice" in c:
+                    _need([c["set"], c["index"]] in c["choice"])
+                if "narrowing" in c:
+                    _need(any(n["id"] == c["narrowing"] and n["set"] == c["set"] for n in route.narrowings))
+        for d in row["dead_readings"] or []:
+            _need([d["set"], d["index"]] in candidates and d["finding"] == dead_finding(d["set"], d["index"]))
+            _need(any(e.get("set") == d["set"] and e.get("index") == d["index"] for e in case.get("dead", [])))
+        _need(all(c in candidates for c in row["untaken"]))
+        for note in row["dead"]:
+            _need(note.get("accepted") is True and any(e.get("set") == note.get("set") and
+                  e.get("index") == note.get("index") for e in case.get("dead", [])))
+        for line in row["english"]:
+            _need(line["frame"] in PLAN_FRAMES and (line["result"] is None or line["result"] in PLAN_RESULTS))
+            choice(line["readings"])
+            if line["label"] is not None:
+                if line["frame"] == "status":
+                    _need(any(s["row"]["status_text"] == line["label"] for s in scopes))
+                else:
+                    label(line["label"])
+            if line["model"] is not None:
+                from .ast import decimal_value
+                piece, sep, index = line["model"].partition("@")
+                _need(sep and index.isascii() and index.isdecimal())
+                scope = scopes[decimal_value(index)]
+                _need(piece in scope["encoded"] and line["readings"] == scope["encoded"][piece])
+                _bound_gaps(line["gaps"], scope["row"]["shown"][piece], route)
+
+
+def _bound_gaps(gaps, model, route):
+    predicates = route.doc["environment"].predicates
+    for name, values, answer in gaps:
+        _need(name in predicates and predicates[name].regulated is not None and
+              predicates[name].regulated.default == "unspecified" and len(values) == len(predicates[name].arguments) and
+              all(e in model["domains"].get(sort, []) for sort, e in zip(predicates[name].arguments, values)) and
+              type(answer) is bool)
 
 
 def _dead_certificates(route, untaken):

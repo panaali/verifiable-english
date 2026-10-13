@@ -617,6 +617,52 @@ def verdicts : Shape :=
       verdictsFor "conflict" "#/$defs/verdicts_conflict",
       verdictsFor "premises" "#/$defs/verdicts_premises",
       verdictsFor "query" "#/$defs/verdicts_query"]]
+/-! RD-7: fully typed superposed results and scoped evidence. -/
+def supProof : Shape := n [obj, .required ["choice", "conditional_on", "reading_premises_used"],
+  closed [("choice", ref "#/$defs/choice"), ("conditional_on", ref "common.json#/$defs/strings"),
+    ("reading_premises_used", ref "common.json#/$defs/strings")]]
+def supModel : Shape := n [obj, .required ["choice", "model", "gaps"],
+  closed [("choice", ref "#/$defs/choice"), ("model", shownModel), ("gaps", ref "#/$defs/gaps")]]
+def supCandidate : Shape := n [obj, .required ["set", "index", "status"],
+  closed [("set", str), ("index", ref "common.json#/$defs/nat"),
+    ("status", enumS ["narrowed", "dead", "model", "INCONSISTENT", "UNKNOWN"]),
+    ("narrowing", str), ("reason", str), ("choice", ref "#/$defs/choice")]]
+def supResult : Shape := n [obj, .required ["route"], closed [
+  ("route", constS "superposed"), ("status", .anyOf [ref "#/$defs/verdicts_word",
+    n [str, .pattern (Re.prefixes ["UNKNOWN (conflict status: ", "UNKNOWN (not ALL: "])]]),
+  ("verdict", enumS ["ALL", "SOME", "NONE", "NOT ALL", "UNKNOWN"]),
+  ("assumed", ref "#/$defs/choice"), ("evidence", enumS ["certificate", "certificates", "model", "witness"]),
+  ("conditional_on", ref "common.json#/$defs/strings"), ("reading_premises_used", ref "common.json#/$defs/strings"),
+  ("restrictions", ref "common.json#/$defs/strings"), ("mentions", ref "common.json#/$defs/strings"),
+  ("status_text", str), ("choice", ref "#/$defs/choice"), ("model", shownModel), ("gaps", ref "#/$defs/gaps"),
+  ("choices", ref "#/$defs/verdicts_statuses"), ("candidates", n [arr, .items supCandidate]),
+  ("conflict_status", ref "#/$defs/verdicts_word"),
+  ("budget", .anyOf [n [obj, .required ["max_choices"], closed [("max_choices", ref "common.json#/$defs/nat")]],
+    n [obj, .required ["max_steps", "max_domain_size", "max_models", "max_evaluations"], closed [
+      ("max_steps", ref "common.json#/$defs/nat"), ("max_domain_size", ref "common.json#/$defs/nat"),
+      ("max_models", ref "common.json#/$defs/nat"), ("max_evaluations", ref "common.json#/$defs/nat")]]]),
+  ("reason", str), ("detail", str), ("target", str),
+  ("sorts", ref "common.json#/$defs/strings"), ("tuple", ref "common.json#/$defs/strings"),
+  ("selected", .anyOf [.type ["null"], n [arr, .items (n [arr, .minItems 2, .maxItems 2,
+    .prefixItems [str, str]])]]),
+  ("proof", supProof), ("proofs", n [arr, .items supProof]),
+  ("countermodel", supModel), ("countermodels", n [arr, .items supModel])]]
+def supScope : Shape := n [obj, .required ["row", "encoded", "used", "mentions"], closed [
+  ("row", ref "#/$defs/verdicts_row"),
+  ("encoded", n [obj, .object [] (some (ref "#/$defs/choice"))]),
+  ("used", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
+  ("mentions", n [obj, .object [] (some (ref "common.json#/$defs/strings"))])]]
+def supVerdicts : Shape := n [obj,
+  .required ["id", "status", "route", "question", "result", "scopes", "model_proposals", "restrictions", "dead_readings", "untaken", "dead", "english"],
+  closed [("id", ref "common.json#/$defs/id_ok"), ("status", constS "ok"), ("route", constS "superposed"),
+    ("question", enumS ["conflict", "premises", "query"]), ("result", ref "#/$defs/sup_result"),
+    ("scopes", n [arr, .items (ref "#/$defs/sup_scope")]),
+    ("model_proposals", n [arr, .items (ref "#/$defs/choice")]), ("restrictions", ref "common.json#/$defs/strings"),
+    ("dead_readings", .anyOf [.type ["null"], n [arr, .items (n [obj, .required ["set", "index", "finding"],
+      closed [("set", str), ("index", ref "common.json#/$defs/nat"), ("finding", str)]])]]),
+    ("untaken", ref "#/$defs/choice"), ("dead", n [arr, .items (ref "#/$defs/verdicts_dead")]),
+    ("english", n [arr, .items (ref "#/$defs/verdicts_line")])]]
+
 /-- `readings-validate` or `readings-elaborate` on a document with companion sets: each case of the split, `main`
     first, with that case's answer (readings-defaults.md 3; plan RD-4a); `readings-elaborate`'s rows also carry the
     case's environment and the document its answer reads (plan RD-4b). -/
@@ -771,7 +817,8 @@ def «row» : Shape :=
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/route_path_error",
       ref "#/$defs/verdicts",
-      ref "#/$defs/verdicts_components"]),
+      ref "#/$defs/verdicts_components",
+      ref "#/$defs/sup_verdicts"]),
     ((.bool true), .anyOf [
       ref "rights.json#/row",
       ref "soft-norms.json#/row",
@@ -821,6 +868,10 @@ def file : File where
     ("verdicts_line", .schema verdicts_line),
     ("verdicts_dead", .schema verdicts_dead),
     ("verdicts", .schema verdicts),
+    ("sup_verdicts", .schema supVerdicts),
+    ("sup_result", .schema supResult),
+    ("sup_candidate", .schema supCandidate),
+    ("sup_scope", .schema supScope),
     ("verdicts_component_status", .schema verdicts_component_status),
     ("product_conflict", .schema product_conflict),
     ("product_premises", .schema product_premises),

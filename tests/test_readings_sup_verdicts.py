@@ -1,0 +1,180 @@
+"""RD-7: the superposed service owns verdicts, dependency replay and the complete English plan."""
+from copy import deepcopy
+import json
+
+import pytest
+
+from ve.errors import CheckerUnavailable
+from ve.readings_verdicts import BUDGET, _check_sup_answer
+
+
+def example(tmp_path):
+    from tests.test_readings_s2_document import DF, HELP_X, S, s2_document, _wording
+    return _wording(s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X)]))
+
+
+def test_sup_service_all_some_none_and_english(tmp_path):
+    from tests.test_readings_s2_document import every
+    doc, route, wording = example(tmp_path)
+    assert route.route == "superposed"
+    all_result = route.entailment(every("help_required"))
+    assert all_result["verdict"] == "ALL" and all_result["evidence"] == "certificate"
+    with pytest.raises(CheckerUnavailable, match="displayed conclusion"):
+        wording.query(every("help_required", negated=True), all_result)
+    some = route.entailment(every("avoid_required"))
+    assert some["verdict"] == "SOME"
+    assert some["proof"]["choice"] == [["rs1", 0]]
+    assert some["countermodel"]["choice"] == [["rs1", 1]]
+    none = route.entailment(every("help_required", negated=True))
+    assert none["verdict"] == "NONE" and len(none["countermodels"]) == 2
+    for phi in (every("help_required"), every("avoid_required"), every("help_required", negated=True)):
+        answer = route.query_answer(phi)
+        assert answer["route"] == "superposed"
+        assert len(wording.plan(answer, wording.conclusion(phi))) == len(answer["english"])
+        _check_sup_answer(answer, route.requests[id(answer)], route)
+
+
+def test_sup_zero_budget_is_unknown(tmp_path, monkeypatch):
+    from tests.test_readings_s2_document import every
+    _, route, _ = example(tmp_path)
+    monkeypatch.setitem(BUDGET, "max_steps", 0)
+    monkeypatch.setitem(BUDGET, "max_models", 0)
+    assert route.entailment(every("help_required"))["verdict"] == "UNKNOWN"
+    assert route.premises()["status"] == "UNKNOWN"
+    assert route.conflict()["status"] == "UNKNOWN"
+
+
+def paths(value, prefix=()):
+    yield prefix, value
+    if isinstance(value, dict):
+        for key, child in value.items():
+            yield from paths(child, prefix + (key,))
+    elif isinstance(value, list):
+        for key, child in enumerate(value):
+            yield from paths(child, prefix + (key,))
+
+
+def changed(value, path, replacement):
+    out = deepcopy(value)
+    if not path:
+        return replacement
+    parent = out
+    for key in path[:-1]:
+        parent = parent[key]
+    parent[path[-1]] = replacement
+    return out
+
+
+def test_sup_response_retypes_every_field_and_rebinds_references(tmp_path):
+    from tests.test_readings_s2_document import every
+    _, route, wording = example(tmp_path)
+    route.entailment(every("avoid_required"))
+    answer = route.query_answer(every("avoid_required"))
+    request = route.requests[id(answer)]
+    _check_sup_answer(answer, request, route)
+    # Every leaf and container gets every other JSON type, including bool for int.
+    mutations = []
+    for path, value in paths(answer):
+        for replacement in (None, True, 7, 7.5, "unknown-id", [], {}):
+            if type(value) is type(replacement):
+                continue
+            mutations.append((path, replacement))
+            out = changed(answer, path, replacement)
+            try:
+                _check_sup_answer(out, request, route)
+            except CheckerUnavailable:
+                pass
+            else:
+                slot = wording.conclusion(every("avoid_required"))
+                if path == ("dead_readings",) and value is None and replacement == []:
+                    # R8: this typed union is unused by a query; it changes no displayed line.
+                    assert wording.plan(out, slot) == wording.plan(answer, slot)
+                elif len(path) == 3 and path[0] == "english" and path[-1] in {"result", "model", "label"} and replacement is None:
+                    # A typed nullable slot cannot be shown in a frame that needs a result.
+                    with pytest.raises(CheckerUnavailable):
+                        wording.plan(out, slot)
+                else:
+                    pytest.fail(f"accepted retype {path}: {replacement!r}")
+    # Two independent leaf faults, retaining both changes in the forged answer.
+    leaves = [(path, replacement) for path, replacement in mutations
+              if path and path != ("dead_readings",) and not (len(path) == 3 and path[0] == "english" and path[-1] in {"result", "model", "label"}) and not isinstance(dict(paths(answer))[path], (dict, list))]
+    unique = list(dict(leaves).items())
+    for left, right in zip(unique[::2], unique[1::2]):
+        out = changed(changed(answer, *left), *right)
+        with pytest.raises(CheckerUnavailable):
+            _check_sup_answer(out, request, route)
+    for path, value in paths(answer):
+        if path and (path[-1] in ("choice", "readings") or path[-1] == "model" and isinstance(value, str)):
+            out = changed(answer, path, [["unknown-set", 0]] if isinstance(value, list) else "model@999999")
+            with pytest.raises(CheckerUnavailable):
+                _check_sup_answer(out, request, route)
+    for path, value in paths(answer):
+        if path and isinstance(value, str) and value in {R.id for R in route.sets}:
+            with pytest.raises(CheckerUnavailable):
+                _check_sup_answer(changed(answer, path, "unknown-set"), request, route)
+        if path and isinstance(value, str) and value in {l for l, _ in route.labelled}:
+            with pytest.raises(CheckerUnavailable):
+                _check_sup_answer(changed(answer, path, "unknown-label"), request, route)
+    for out in (changed(answer, ("model_proposals",), []),
+                changed(answer, ("model_proposals",), answer["model_proposals"] + [answer["model_proposals"][0]]),
+                changed(answer, ("scopes",), []),
+                changed(answer, ("scopes",), answer["scopes"] + [answer["scopes"][0]]),
+                changed(answer, ("scopes",), answer["scopes"][1:]),
+                changed(answer, ("scopes",), answer["scopes"][:1] + answer["scopes"][2:]),
+                changed(answer, ("scopes",), list(reversed(answer["scopes"])) )):
+        with pytest.raises(CheckerUnavailable):
+            _check_sup_answer(out, request, route)
+
+
+def test_python_sup_has_no_fold_or_dependency_replay():
+    import ast
+    from pathlib import Path
+    tree = ast.parse(Path("ve/readings_verdicts.py").read_text())
+    cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "Superposed")
+    names = {n.name for n in cls.body if isinstance(n, ast.FunctionDef)}
+    assert not names & {"_fold", "_dependencies", "_mentions", "_choice_conflicts", "_gated_choice"}
+    assert not any(isinstance(n, ast.FunctionDef) and n.name == "_replays" for n in tree.body)
+
+
+def test_a_canonical_base_with_a_local_collision_is_not_a_premise_model(tmp_path):
+    from tests.test_readings_s2_document import DF, NEVER_AVOID, S, s2_document, _wording
+    _, route, _ = _wording(s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]),
+                                                ("fixed", "u0", NEVER_AVOID)]))
+    witness = route.conflict_answer()
+    assert witness["result"]["status"] == "CONFLICT"
+    request = route.requests[id(witness)]
+    for member, replacement in (("sorts", ["unknown-sort"]), ("target", "unknown-target"),
+                                ("tuple", ["unknown-entity"]),
+                                ("selected", [["unknown-rule", "selects"]])):
+        with pytest.raises(CheckerUnavailable):
+            _check_sup_answer(changed(witness, ("result", member), replacement), request, route)
+    found = route.model([("rs1", 1)])
+    assert found is not None
+    bad = deepcopy(found["model"])
+    # M3's strict reading: all base and decision tables empty, bit 0, so both strict rules apply.
+    bad["relations"] = {name: [] for name in bad["relations"]}
+    bad["domains"]["agent"] = ["a"]
+    bad["domains"]["user"] = ["u"]
+    lower = route.lean("readings-model", assumed=[["rs1", 0]], premises=[], conclusion=None, model=bad)
+    assert lower["valid"] is True
+    route._pieces([["rs1", 0]])["model"] = {"model": bad}
+    with pytest.raises(CheckerUnavailable):
+        route._ask("premises", [["rs1", 0]])
+
+
+def test_missing_proof_scope_cannot_hide_behind_a_reindexed_model(tmp_path):
+    from tests.test_readings_s2_document import every
+    _, route, _ = example(tmp_path)
+    route.entailment(every("avoid_required"))
+    answer = route.query_answer(every("avoid_required"))
+    request = route.requests[id(answer)]
+    out = deepcopy(answer)
+    assert out["scopes"][1]["row"]["query"] == "proved"
+    out["scopes"].pop(1)
+    for line in out["english"]:
+        if line["model"] is not None:
+            piece, _, index = line["model"].partition("@")
+            assert int(index) > 1
+            line["model"] = f"{piece}@{int(index) - 1}"
+    with pytest.raises(CheckerUnavailable):
+        _check_sup_answer(out, request, route)

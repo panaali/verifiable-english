@@ -2,7 +2,7 @@ import VE.Readings.Wire
 import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
-import VE.Readings.SupFillWire
+import VE.Readings.SupVerdictsSound
 import VE.Readings.VerdictsWire
 import VE.Readings.Companions
 import VE.Readings.ComponentsWire
@@ -347,7 +347,12 @@ def runSeparateND (id : String) (f : AdmittedNDFull) (j : Json) : Except String 
     RD-6b). A document of such an environment without a content-bearing set, or of any other environment, is today's
     (S1 4.9). `b` is the case's one admission. -/
 def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
-  if kind == "readings-verdicts" then return ← runVerdicts lower id b j
+  if kind == "readings-verdicts" then
+    if underCompletion b.a.re b.D then
+      let f ← admitNDFull b
+      if routeND f.r.N == .superposed then return ← runSupVerdicts id b j
+    else if routeOf (b.a.re.lower.contains "norm-defaults@0") b.D == .superposed then return ← runSupVerdicts id b j
+    return ← runVerdicts lower id b j
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
   runNDKind id kind (← admitNDFull b) j
 
@@ -454,8 +459,12 @@ def runAdmitted (j : Json) (id kind : String) (ready : ComponentAdmission) : Exc
   -- order: before the completion's kinds), so the completion's admission of an `nd` component runs once more there.
   if kind == "readings-verdicts" then
     match ready with
-    | .s2 b => return ← runVerdicts runLowerWith id b j
-    | .nd f => return ← runVerdicts runLowerWith id f.r.b j
+    | .s2 b =>
+      if routeOf (b.a.re.lower.contains "norm-defaults@0") b.D == .superposed then return ← runSupVerdicts id b j
+      return ← runVerdicts runLowerWith id b j
+    | .nd f =>
+      if routeND f.r.N == .superposed then return ← runSupVerdicts id f.r.b j
+      return ← runVerdicts runLowerWith id f.r.b j
     | .s1 _ => throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
   match ready with
   | .s2 b => runS2 runLowerWith id kind b j

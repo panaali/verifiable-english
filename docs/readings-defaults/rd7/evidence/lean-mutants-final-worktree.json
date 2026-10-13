@@ -1,0 +1,36 @@
+{
+ "mutants": [
+  {
+   "id": "L1",
+   "file": "lean/VE/Readings/SupDependencies.lean",
+   "claim": "Dropping needed conditions breaks supDependencies_replay.",
+   "source_sha256": "fab61cdc0c807d44ce6ddad6f616b243ed0d017e3cadd0b16c88e3c9421761d3",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake env lean VE/Readings/SupDependencies.lean"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 190.2,
+   "output_tail": "VE/Readings/SupDependencies.lean:52:21: warning: unused variable `D`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:52:31: warning: unused variable `A`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:52:44: warning: unused variable `Q`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:53:5: warning: unused variable `certs`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:53:52: warning: unused variable `proof`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:80:2: error: Type mismatch\n  greedy_replay_sound (supReplayMiddle D A (supProofs D certs proof)) (slotLabelled D ++ Q) h\nhas type\n  supReplayMiddle D A (supProofs D certs proof)\n      (blank (slotLabelled D ++ Q)\n        (usedLabels (supReplayMiddle D A (supProofs D certs proof)) [] (slotLabelled D ++ Q) [])) =\n    true\nbut is expected to have type\n  supReplayMiddle D A (supProofs D certs proof) (blank (slotLabelled D ++ Q) (supDependencies D A Q certs proof)) = true\n"
+  },
+  {
+   "id": "L2",
+   "file": "lean/VE/Readings/SupVerdictsWire.lean",
+   "claim": "The superposed SOME encoder cannot claim ALL; its computed boundary guard fails.",
+   "source_sha256": "bf3820c67955059ec64798577297ba2833d5366817318b897c334eec33b2f5b0",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build VE.Readings.SupVerdictsExamples"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 44.1,
+   "output_tail": "ExtendedClosure.lean:97:15: This simp argument is unused:\n  ground\n\nHint: Omit it from the simp argument list.\n  simp only [g\u0335r\u0335o\u0335u\u0335n\u0335d\u0335,\u0335 \u0335bind, Option.bind] at hg\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [190/196] Replayed VE.Readings.SupExtra\nwarning: VE/Readings/SupExtra.lean:70:47: unused variable `hA`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2714 [207/209] Built VE.Readings.SupVerdictsWire (14s)\n\u2714 [208/209] Built VE.Readings.SupVerdictsSound (11s)\n\u2716 [209/209] Building VE.Readings.SupVerdictsExamples (7.8s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-rd-7/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-rd-7/lean/VE/Readings/SupVerdictsExamples.lean -o /home/seyran/code/ve-rd-7/lean/.lake/build/lib/lean/VE/Readings/SupVerdictsExamples.olean -i /home/seyran/code/ve-rd-7/lean/.lake/build/lib/lean/VE/Readings/SupVerdictsExamples.ilean -c /home/seyran/code/ve-rd-7/lean/.lake/build/ir/VE/Readings/SupVerdictsExamples.c --setup /home/seyran/code/ve-rd-7/lean/.lake/build/ir/VE/Readings/SupVerdictsExamples.setup.json --json\nerror: VE/Readings/SupVerdictsExamples.lean:32:0: Expression\n  strOf ((supResult Examples.K1 [] false \"query\" [] none [g, p, m] [] budget).getObjValD \"verdict\") == \"SOME\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Readings.SupVerdictsExamples\nerror: build failed\n"
+  }
+ ]
+}

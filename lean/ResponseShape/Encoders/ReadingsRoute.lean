@@ -482,6 +482,64 @@ theorem verdicts_fits (lower : List String → Json → Json) (id : String) (b :
     | (apply verdictsAnswer_fits; assumption)
     | skip
 
+/-! RD-7's superposed encoder has a closed shape all the way to each model and evidence note. -/
+theorem supScopeJson_fits (q : String) (s : SupScope) :
+    Fits req (skel% "readings-route.json#/$defs/sup_scope") (supScopeJson q s) := by
+  unfold supScopeJson
+  fits using perChoiceJson_fits
+
+theorem supWord_fits (r : ChoiceResult) :
+    Fits req (.strIn ["CONFLICT-FREE", "CONFLICT", "UNKNOWN", "proved", "refuted", "model", "INCONSISTENT"])
+      (.str (word r)) := by
+  cases r <;> fits
+
+theorem supCandidates_fits (D : Doc) (ss : List SupScope) (dead : List (String × Nat)) :
+    Fits req (.arr [] (skel% "readings-route.json#/$defs/sup_candidate"))
+      (Json.arr (supCandidateJson D ss dead).toArray) := by
+  unfold supCandidateJson
+  fits
+  all_goals (repeat' split) <;> fits
+
+set_option maxHeartbeats 2000000 in
+theorem supResult_fits (D : Doc) (Q : VE.Compose.Labelled) (nd : Bool) (q : String) (A : Choice) (named : Option Choice)
+    (ss : List SupScope) (dead : List (String × Nat)) (budget : SupBudget) :
+    Fits req (skel% "readings-route.json#/$defs/sup_result") (supResult D Q nd q A named ss dead budget) := by
+  by_cases hc : (q == "conflict") = true
+  all_goals by_cases hp : (q == "premises") = true
+  all_goals try (exfalso; simp_all (config := {decide := true}); done)
+  all_goals unfold supResult supProofJson supModelJson SupBudget.json
+  all_goals simp only [hc, hp]
+  all_goals generalize hs : supFind ss A = s
+  all_goals cases named
+  all_goals dsimp only [Id.run, Bind.bind, Pure.pure, Id.instMonad, assumedFields]
+  all_goals (repeat' split)
+  all_goals try (exfalso; simp_all (config := {decide := true}); done)
+  all_goals try simp only [List.cons_append, List.nil_append, List.append_nil]
+  all_goals fits using supWord_fits, supCandidates_fits
+
+theorem supUnchecked_fits (q reason : String) (named : Option Choice) :
+    Fits req (skel% "readings-route.json#/$defs/sup_result") (supUnchecked q reason named) := by
+  unfold supUnchecked
+  cases named <;> simp only [assumedFields] <;> (repeat' split) <;>
+    simp only [List.cons_append, List.nil_append, List.append_nil] <;> fits
+
+set_option maxHeartbeats 1000000 in
+theorem supAnswer_fits (id q : String) (x : SupContext) (A : Choice) (named : Option Choice)
+    (ss : List SupScope) (dead : List Json) (budget : SupBudget) (hq : verdictsQuestions.contains q) :
+    Fits req (skel% "readings-route.json#/$defs/sup_verdicts") (supAnswer id q x A named ss dead budget) := by
+  simp only [verdictsQuestions, List.contains_cons, List.contains_nil, Bool.or_false, Bool.or_eq_true, beq_iff_eq] at hq
+  rcases hq with rfl | rfl | rfl
+  all_goals
+    unfold supAnswer deadReadingsJson untakenJson
+    simp only [okWith, VE.Route.Wire.ok]
+    (repeat' split) <;> fits using supScopeJson_fits, supResult_fits, supUnchecked_fits, line_fits, deadNote_fits
+
+theorem supVerdicts_fits (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/sup_verdicts") (runSupVerdicts id b j) := by
+  unfold runSupVerdicts
+  okfits
+  all_goals (try (apply supAnswer_fits; assumption))
+
 theorem runNDKind_fits (id kind : String) (f : Wire.AdmittedNDFull) (j : Json)
     (hK : KindRead "evaluate" req kind) : OkFits req Skeletons.readingsRoute (runNDKind id kind f j) := by
   unfold runNDKind
@@ -497,6 +555,7 @@ theorem runNDKind_fits (id kind : String) (f : Wire.AdmittedNDFull) (j : Json)
     | (intro v hv; fits_from certificateND_fits _ _ _ v hv)
     | (intro v hv; fits_from modelND_fits _ _ _ v hv)
 
+set_option maxHeartbeats 1000000 in
 theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) (b : Wire.Admitted2) (j : Json)
     (hK : KindRead "evaluate" req kind) : OkFits req Skeletons.readingsRoute (runS2ND lower id kind b j) := by
   have hK0 := hK
@@ -507,7 +566,9 @@ theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) 
   all_goals first
     | exact runS2_fits _ _ _ _ _ hK0
     | skip
+  all_goals (try (intro v hv; fits_from supVerdicts_fits _ _ _ v hv))
   all_goals (try (intro v hv; fits_from verdicts_fits _ _ _ _ v hv))
+  all_goals (try (intro v hv; fits_from supVerdicts_fits _ _ _ v hv))
   all_goals (try (intro v hv; fits_from verdicts_fits _ _ _ _ v hv))
   all_goals (try kind_norm)
   all_goals (try exact runNDKind_fits _ _ _ _ hK0)
@@ -618,6 +679,7 @@ theorem runAdmitted_fits (j : Json) (id kind : String) (ready : ComponentAdmissi
   all_goals (try kind_norm)
   all_goals first
     | exact runS2_fits _ _ _ _ _ hK0
+    | (intro v hv; fits_from supVerdicts_fits _ _ _ v hv)
     | (intro v hv; fits_from verdicts_fits _ _ _ _ v hv)
     | fits_from validate_fits _ _ _ ‹_›
     | (intro v hv; fits_from validateND_fits _ _ v hv)

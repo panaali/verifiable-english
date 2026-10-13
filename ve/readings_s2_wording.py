@@ -232,63 +232,10 @@ class S2Wording:
         target = "the exception" if own else f"the exception to {sentence}"
         return f"{self.s1.decider(decided)} decides {target} applies to {subject}"
 
-    def classification(self, conflict):
-        """The lower route's classification line of a witness (R4 follows it), each rule of a candidate named as
-        the author named it with ` under <set>@<v>:<i>` (6)."""
-        sorts, values = conflict.get("sorts", []), conflict["tuple"]
-        setting = ", ".join(f"{sort} {value}" for sort, value in zip(sorts, values))
-        target = conflict["target"]
-        kind = f"pair conflict on {target}" if "->" in target else f"strict collision on {target}"
-        rules = conflict.get("selected")
-        if not rules:
-            return f"CONFLICT: {kind} at {setting}"
-        return (f"CONFLICT: {kind} at {setting}: " +
-                "; ".join(f"rule {self._rule_name(name)} {verb}" for name, verb in rules))
 
-    def _rule_name(self, name):
-        versions = {R.id: R.version for R in self.sets}
-        for entry in self.route.row.get("names", []):
-            for candidate in entry["candidates"]:
-                for original, qualified in candidate["names"]:
-                    if qualified == name:
-                        return f"{original} under {entry['set']}@{versions[entry['set']]}:{candidate['index']}"
-        return name
 
     # -- E3's lines (2.3 item 1)
 
-    def provided(self, used):
-        """E3's lines for the slot labels an answer uses, each read by its kind (`slot_label`), never by its ending:
-        a coupling or narrowing id may itself be `one` or `quiet` (compose-s2 looprecheck1 A)."""
-        from .readings_sup import slot_label
-        E, lines = self.E, []
-        quiet = False
-        for label in used:
-            if label.startswith(PAIR_LABEL):
-                lines.append(E.pair_line(self.pair_premise(label), self.slots))
-                continue
-            decoded = slot_label(label)
-            if decoded.kind == "one":
-                R = self._set(decoded.set, decoded.version, label)
-                lines.append(E.one_reading(self.set_number[R.id], len(R.candidates), self.slots))
-            elif decoded.kind in ("own", "shared"):
-                quiet = True
-            elif decoded.kind == "coupling":
-                from .readings_english import coupling_sentence
-                coupling = self._restriction(self.route.couplings, decoded, label)
-                sets = {R.id: {"unit": R.unit} for R in self.sets}
-                lines.append(E.gated("E5", coupling_sentence(coupling, sets, self.doc["units"]), self.slots))
-            elif decoded.kind == "narrowing":
-                narrowing = self._restriction(self.route.narrowings, decoded, label)
-                R = self._set(narrowing["set"], narrowing["version"], label)
-                cited = [self.numbers[u] for u in narrowing["reason_spans"]]
-                for i, a in enumerate(R.candidates):
-                    if a.id not in narrowing["keeps"]:
-                        lines.append(E.narrowed(self.set_number[R.id], self.name(R.id, i), cited, self.slots))
-            else:
-                raise VEError(f"InvalidInput: unknown slot label kind {decoded.kind}")
-        if quiet:
-            lines.append(E.quiet(self.slots))
-        return ([E.provided(self.slots)] + lines) if lines else []
 
     def pair_premise(self, label):
         """norm-defaults 4.1's pair sentence for a used `Fill_T` label `unsaid:pair:<r>,<m>` (readings-defaults 2.2):
@@ -317,124 +264,19 @@ class S2Wording:
             raise VEError(f"InvalidInput: slot label {label} names no {decoded.kind}")
         return found
 
-    def independent(self, mentions):
-        return [self.E.independent(self.set_number[R.id], self.slots) for R in self.sets if R.id not in mentions]
 
-    def _mentions(self, used):
-        """The open sets the used labels mention: a slot leaf by its bit predicates, and on the enumerated route a
-        coupling or narrowing label by the sets it restricts."""
-        from .readings_sup import bit_name, bits_of, in_force
-        asts = {entry["label"]: entry["ast"] for entry in self.route.row.get("slot", [])}
-        from .readings_sup import slot_label
-        restricted = set()
-        for label in used:
-            if label.startswith(PAIR_LABEL):
-                continue  # a pair premise of the completion mentions no open set
-            decoded = slot_label(label)
-            if decoded.kind == "coupling":
-                coupling = self._restriction(self.route.couplings, decoded, label)
-                restricted.update(ref["set"] for ref in coupling["sets"])
-            elif decoded.kind == "narrowing":
-                narrowing = self._restriction(self.route.narrowings, decoded, label)
-                restricted.update(R.id for R in self.sets if in_force(R, narrowing))
-        out = []
-        for position, R in enumerate(self.sets, 1):
-            bits = {bit_name(position, j) for j in range(bits_of(len(R.candidates)))}
-            if R.id in restricted or any(bits & _predicates(asts.get(label, [])) for label in used):
-                out.append(R.id)
-        return out
 
     # -- the report (2.3 items 1, 3 and 6)
 
     def report(self):
-        from .readings_verdicts import Enumerated
-        if isinstance(self.route, Enumerated):
-            # readings-defaults RD-3: Lean's plan for the conflict question, then for the premises.
-            return (self.plan(self.route.conflict_answer()) + self.plan(self.route.premises_answer()))
-        E, route, lines = self.E, self.route, []
-        k = len(self.sets)
-        finding = route.row.get("finding")
-        if finding is not None:
-            sets = finding["text"].split(": ", 1)[1].split(", ")
-            lines.append(E.not_superposed([self.set_number[s] for s in sets], self.slots))
-        conflict = route.conflict(())
-        if conflict["status"] == "CONFLICT-FREE":
-            lines.append(E.every_result(k, "conflict_free", self.slots))
-            used = self._dependencies(conflict)
-            lines += self.provided(used)
-            lines += self.independent(self._mentions(used))
-        elif conflict["status"] == "CONFLICT" and "model" in conflict:
-            lines.append(E.named_result(self.readings(conflict["choice"]), "conflict", self.slots,
-                                        situation=self.situation(conflict["model"], conflict["choice"]),
-                                        gaps=self.gaps(conflict)))
-            lines.append(self.classification(conflict))
-        elif conflict["status"] == "CONFLICT":
-            for witness in conflict.get("witnesses", []):
-                lines.append(E.named_result(self.readings(witness["choice"]), "conflict", self.slots,
-                                            situation=self.situation(witness["model"], witness["choice"]),
-                                            gaps=self.gaps(witness)))
-                if witness.get("status_text"):
-                    lines.append(witness["status_text"])
-        premises = route.premises()
-        if premises["status"] == "model" and "model" in premises:
-            lines.append(E.named_result(self.readings(premises["choice"]), "premise_model", self.slots,
-                                        situation=self.situation(premises["model"], premises["choice"]),
-                                        gaps=self.gaps(premises)))
-        elif premises["status"] == "INCONSISTENT" and premises.get("evidence") == "certificate":
-            # A certificate with A = [] (2.3 item 1): E3 and E13 from what it and its conflict certificates rely on.
-            lines.append(E.every_result(k, "inconsistent", self.slots))
-            used = self._dependencies(premises)
-            lines += self.provided(used)
-            lines += self.independent(self._mentions(used))
-        for dead in route.dead_readings() or []:
-            lines.append(E.dead_reading(self.set_number[dead["set"]], self.name(dead["set"], dead["index"]),
-                                        self.slots))
-        return lines
+        return self.plan(self.route.conflict_answer()) + self.plan(self.route.premises_answer())
 
     # -- a query (2.3 items 1, 2, 4, 5 and 7)
 
     def query(self, conclusion_ast, data):
-        from .readings_verdicts import Enumerated
-        if isinstance(self.route, Enumerated):
-            slot = self.conclusion(conclusion_ast)
-            return self.plan(self.route.query_answer(conclusion_ast, data.get("assumed")), slot)
-        E, lines = self.E, []
-        k = len(self.sets)
-        verdict = data["verdict"]
-        # Review A of compose-s2 looprecheck1: a result under named readings is worded under exactly those readings
-        # (2.3 item 2, on either route); E10, E26, E27 and E28 speak of every reading and never word one.
-        assumed = data.get("assumed") or []
-        slot = self.conclusion(conclusion_ast)
-        if verdict == "ALL":
-            if assumed:
-                lines.append(E.named_result(self.readings(assumed), "follows", self.slots, conclusion=slot))
-            else:
-                lines.append(E.every_result(k, "follows", self.slots, conclusion=slot))
-            # Review A1 of compose-s2 fix4: the conditions and the independence statement are both worded from the
-            # answer's one dependency set, its conflict certificates' included. Combined over the compatible choices
-            # (review A of compose-s2 looprecheck2) the set holds the couplings and narrowings that excluded the
-            # others (E3 with E5 and E7), and no independence is claimed.
-            used = self._dependencies(data)
-            lines += self.provided(used)
-            if data.get("evidence") == "certificate":
-                lines += self.independent(set(self._mentions(used)) | {s for s, _ in assumed})
-        elif verdict == "SOME":
-            lines.append(E.named_result(self.readings(data["proof"]["choice"]), "follows", self.slots,
-                                        conclusion=slot))
-            lines += self.provided(self._dependencies(data["proof"]))
-            lines.append(self._countermodel(data["countermodel"]))
-        elif verdict == "NOT ALL":
-            lines.append(self._countermodel(data["countermodel"]))
-        elif verdict == "NONE":
-            if k >= 2 and not assumed:
-                lines.append(E.none_result(k, self.slots))
-            lines += [self._countermodel(c) for c in data["countermodels"]]
-            lines += self.provided(self._restrictions(data))
-        elif verdict == "UNKNOWN" and "countermodel" in data and data.get("budget") == {"max_choices": 64} \
-                and not assumed:
-            lines.append(E.over_budget(self.slots))
-            lines.append(self._countermodel(data["countermodel"]))
-        return lines
+        answer = (self.route.answer_for(data, conclusion_ast) if hasattr(self.route, "answer_for") else
+                  self.route.query_answer(conclusion_ast, data.get("assumed")))
+        return self.plan(answer, self.conclusion(conclusion_ast))
 
     # -- Lean's English plan (readings-defaults 2.4; the enumerated route from RD-3)
 
@@ -447,9 +289,9 @@ class S2Wording:
         for line in answer["english"]:
             try:
                 out.append(self._plan_line(line, answer, slot))
-            except (KeyError, TypeError, ValueError, IndexError) as exc:
+            except (KeyError, TypeError, ValueError, IndexError, VEError) as exc:
                 raise CheckerUnavailable(f"ReadingsConformance: Lean's English plan has a line Python cannot render: "
-                                         f"{line}") from exc
+                                         f"{line}: {exc}") from exc
         return out
 
     def _plan_line(self, line, answer, slot):
@@ -462,7 +304,11 @@ class S2Wording:
         if line["model"] is not None:
             from .ast import decimal_value
             piece, _, k = line["model"].partition("@")
-            entry = answer["per_choice"][decimal_value(k)]
+            if answer["route"] == "superposed":
+                scope = answer["scopes"][decimal_value(k)]
+                entry = {**scope["row"], "choice": scope["encoded"][piece]}
+            else:
+                entry = answer["per_choice"][decimal_value(k)]
             model, choice = entry["shown"][piece], [(s, i) for s, i in entry["choice"]]
             if frame != "E12" or readings != choice:
                 raise CheckerUnavailable("ReadingsConformance: Lean's plan shows a model under another frame")
@@ -487,6 +333,12 @@ class S2Wording:
             return E.named_result(self.readings(readings), kind, self.slots, conclusion=slot)
         if frame == "E29":
             return E.not_superposed([self.set_number[s] for s, _ in readings], self.slots)
+        if frame == "E4":
+            [(s, _)] = readings
+            R = next(R for R in self.sets if R.id == s)
+            return E.one_reading(self.set_number[s], len(R.candidates), self.slots)
+        if frame == "E9":
+            return E.quiet(self.slots)
         if frame == "E3":
             return E.provided(self.slots)
         if frame == "P1":
@@ -526,29 +378,8 @@ class S2Wording:
         self.slots.clauses.update(clause for clause, _ in found)
         return found
 
-    @staticmethod
-    def _dependencies(data):
-        """The slot labels a Lean-checked answer depends on (`reading_premises_used`, `Superposed._dependencies` on
-        the superposed route, the restrictions on the enumerated route); an answer without them is refused, never
-        worded as depending on no reading."""
-        if "reading_premises_used" not in data:
-            raise VEError("InvalidInput: a checked answer's wording needs the reading premises it depends on")
-        return data["reading_premises_used"]
 
-    @staticmethod
-    def _restrictions(data):
-        """The restrictions a combined verdict keeps; a combined verdict without the field is refused, never worded
-        as if no coupling or narrowing had selected its choices."""
-        if "restrictions" not in data:
-            raise VEError("InvalidInput: a verdict combined over the compatible choices needs its restrictions")
-        return data["restrictions"]
 
-    def _countermodel(self, counter):
-        model = counter.get("model")
-        if model is None:
-            raise VEError("InvalidInput: a countermodel's wording needs its checked model")
-        return self.E.named_result(self.readings(counter["choice"]), "countermodel", self.slots,
-                                   situation=self.situation(model, counter["choice"]), gaps=self.gaps(counter))
 
 
 PAIR_LABEL = "unsaid:pair:"
@@ -557,7 +388,7 @@ PLAN_RESULTS = {"R1": "conflict_free", "R2": "follows", "R3": "countermodel", "R
                 "R6": "inconsistent", "R7": "undecided", "R8": "conflict_unchecked", "R9": "query_unchecked"}
 # The frames of Lean's plan (`Readings.PlanItem.line`) that `S2Wording._plan_line` words; those that carry a result
 # sentence, the results that show a checked model, and the frames whose line carries a label.
-PLAN_FRAMES = frozenset({"E3", "E5", "E7", "E10", "E12", "E13", "E17", "E26", "E27", "E28", "E29", "E30", "E31",
+PLAN_FRAMES = frozenset({"E4", "E9", "E3", "E5", "E7", "E10", "E12", "E13", "E17", "E26", "E27", "E28", "E29", "E30", "E31",
                          "E32", "P1", "status", "unworded"})
 RESULT_FRAMES = frozenset({"E10", "E12", "E26", "E30"})
 MODEL_RESULTS = frozenset(r for r, kind in PLAN_RESULTS.items() if kind in SITUATION_RESULTS)
@@ -603,15 +434,6 @@ def _series(values):
     return ", ".join(values[:-1]) + " and " + values[-1]
 
 
-def _predicates(ast):
-    out, stack = set(), [ast]
-    while stack:
-        node = stack.pop()
-        if type(node) is list and node:
-            if node[0] in ("unary", "binary") and type(node[1]) is str:
-                out.add(node[1])
-            stack.extend(item for item in node[1:] if type(item) is list)
-    return out
 
 
 __all__ = ["S2Wording", "filled_gaps", "query_english", "report_english"]

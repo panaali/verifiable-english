@@ -315,11 +315,17 @@ def test_m6_dead_reading_certified_by_lean(tmp_path):
 
 
 def test_dead_readings_null_when_not_enumerated(tmp_path, monkeypatch):
-    from ve import readings_sup
-    from ve.readings_verdicts import context
-    doc = load_document(_m6(tmp_path))
-    monkeypatch.setattr(readings_sup, "MAX_CHOICE_CHECKS", 1)
+    from ve.readings_verdicts import BUDGET, context
+    # A real request beyond Lean's 64-choice enumeration budget; Python no longer owns that limit.
+    path = s2_document(tmp_path, [("set", f"rs{i}", f"u{i}",
+                                  [("strict", norm(f"rule-{i}", "avoid_required", True), "norm", None),
+                                   ("default", norm(f"rule-{i}", "avoid_required", True, "default"), "norm", None)])
+                                 for i in range(7)])
+    doc = load_document(path)
+    monkeypatch.setitem(BUDGET, "max_steps", 0)
+    monkeypatch.setitem(BUDGET, "max_models", 0)
     route = context(doc)
+    assert route.choices is None
     assert route.dead_readings() is None and route.report_fields()["dead_readings"] is None
 
 
@@ -558,7 +564,9 @@ def test_n8_e8_gated_on_the_quiet_label_of_m1(tmp_path):
     from ve.readings_s2_english import PROVIDED, QUIET
     path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF])])
     _, _, wording = _wording(path)
-    lines = wording.provided(["readings:rs1@1:1:quiet"])
+    lines = wording.plan({"english": [
+        {"frame": f, "result": None, "readings": [], "model": None, "gaps": [], "label": None}
+        for f in ("E3", "E9")]})
     assert lines == [PROVIDED, QUIET]
     _one_derivation(lines, wording)
 
@@ -1369,6 +1377,11 @@ def test_fix4_a1_english_conditions_are_the_certificate_dependencies(tmp_path, f
     _assert_fix4_wording(tmp_path, fixture, narrowed)
 
 
+def _expected_independent(wording, route, mentions):
+    return [wording.E.independent(wording.set_number[R.id], wording.slots)
+            for R in route.sets if R.id not in mentions]
+
+
 def _expected_provided(wording, route, used):
     """E3's lines for `used` from the test's own table, each label's kind found by regenerating every label from
     the document (its couplings, narrowings and open sets), never by reading the label: a restriction id may be any
@@ -1425,8 +1438,7 @@ def _assert_fix4_wording(tmp_path, fixture, narrowed, ident="n1", coupling="c1")
         else:
             assert used == route.restrictions(())
         head = lines.index(wording.E.every_result(len(route.sets), "conflict_free", wording.slots))
-        assert wording.provided(used) == _expected_provided(wording, route, used), used
-        tail = wording.provided(used) + wording.independent(_mentioned(route, used))
+        tail = _expected_provided(wording, route, used) + _expected_independent(wording, route, _mentioned(route, used))
         assert lines[head + 1:head + 1 + len(tail)] == tail, (lines, used)
     checked = 0
     assumptions = [None] + [[(s, i)] for s, i in route.candidates()
@@ -1448,17 +1460,16 @@ def _assert_fix4_wording(tmp_path, fixture, narrowed, ident="n1", coupling="c1")
                     assert proof["reading_premises_used"] == used
                     _assert_exact_dependencies(route, _certificate_checks(route, A, conclusion, proof["certificate"]),
                                                used)
-                    tail = wording.provided(used) + wording.independent(_mentioned(route, used) | {s for s, _ in A})
+                    tail = _expected_provided(wording, route, used) + _expected_independent(wording, route, _mentioned(route, used) | {s for s, _ in A})
                 elif superposed:
                     per_choice = {label for p in data["proofs"] for label in
                                   route.certificate([tuple(x) for x in p["choice"]], (), conclusion)[
                                       "reading_premises_used"]}
                     assert set(used) == per_choice | set(route.restrictions(A)), used
-                    tail = wording.provided(used)
+                    tail = _expected_provided(wording, route, used)
                 else:
                     assert used == route.restrictions(A)
-                    tail = wording.provided(used)
-                assert wording.provided(used) == _expected_provided(wording, route, used), used
+                    tail = _expected_provided(wording, route, used)
                 assert lines[1:] == tail, (lines, used)
                 _one_derivation(lines, wording)
     # Every fixture but M3 (a CONFLICT, every entailment UNKNOWN) words some checked answer without a narrowing; a
@@ -1567,13 +1578,15 @@ def test_looprecheck1_a_every_generated_slot_label_has_its_kind(tmp_path):
                 assert decoded.kind in ("one", "own", "shared"), label
 
 
-def test_fix4_a1_wording_refuses_an_answer_without_its_dependencies(tmp_path):
+def test_fix4_a1_native_plan_keeps_dependencies_without_result_metadata(tmp_path):
+    """R8: the native plan carries the conditions; deleting unused result metadata changes no displayed line."""
     path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X)])
     doc, route, wording = _wording(path)
     data = route.entailment(every("help_required"))
+    before = wording.query(every("help_required"), data)
+    assert before
     del data["reading_premises_used"]
-    with pytest.raises(VEError, match="reading premises it depends on"):
-        wording.query(every("help_required"), data)
+    assert wording.query(every("help_required"), data) == before
 
 
 def _power_env():
