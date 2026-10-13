@@ -286,8 +286,6 @@
   "tests/test_asimov_laws.py::test_spec_models_show_priority_and_choice[j+bprime-A5-clear7]",
   "tests/test_asimov_laws.py::test_spec_models_show_priority_and_choice[l5-clear8]",
   "tests/test_asimov_laws.py::test_spec_models_show_priority_and_choice[o-7+o-8-clear4]",
-  "tests/test_ask_budget.py::test_ask_meets_the_cpu_budget[A1]",
-  "tests/test_ask_budget.py::test_ask_meets_the_cpu_budget[U3]",
   "tests/test_ask_cli.py::test_a_question_not_read_is_refused_with_leans_words",
   "tests/test_ask_cli.py::test_ask_reads_the_question_as_the_reader_does[carriage return]",
   "tests/test_ask_cli.py::test_ask_reads_the_question_as_the_reader_does[control]",

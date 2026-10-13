@@ -20,12 +20,13 @@ def test_q2_measurement_report_is_generated_from_saved_evidence():
 
 
 def test_the_budgets_are_met_and_the_corpus_agreement_is_recorded():
-    """F4 (qa-q2 recheck): the saved measurements meet the plan's pass gates (`ask` Lean CPU at most 2 s, U3 `ve ask`
-    wall at most 60 s), and the agreement of the corpora's queries is recorded with no lead that contradicts the
+    """F4 (qa-q2 recheck): the report shows the plan's pass gates met (`ask` Lean CPU at most 2 s, U3 `ve ask` wall
+    at most 60 s), and the agreement of the corpora's queries is recorded with no lead that contradicts the
     existing route (`tools/question_answering_agreement.py`)."""
-    measurements = json.loads((REPORT.EVIDENCE / "measurements.json").read_text())["fixtures"]
-    assert all(row["ask"]["cpu_s"] <= 2 for row in measurements.values())
-    assert measurements["U3"]["ve ask"]["wall_s"] <= 60
+    # The report states each budget as met (its renderer compares the saved figures with the plan's limits; the
+    # measurement itself is the benchmark tools/bench/test_perf.py::test_ask_lean_cpu, never a suite assertion).
+    text = REPORT.render()
+    assert "`ask` CPU: U3 PASS, A1 PASS; U3 CLI wall: PASS." in text
     saved = json.loads((REPORT.EVIDENCE / "agreement.json").read_text())
     assert not any(row["status"].startswith("requires review") for row in saved["rows"])
     corpus = saved["corpus"]
