@@ -8,8 +8,8 @@ runs the gate's pytest command (`tools.gate.pytest_args`, the same plugins, preb
 (/proc/stat) every second, and writes one JSON: wall seconds, the outcome counts, the machine's busy
 CPU and 1-minute load per minute, the workers' occupancy per minute (the share of worker-seconds spent
 inside a test), when each worker finished its last test, and the slowest tests (setup + call +
-teardown). `durations PROFILE --output tools/test-durations.json` writes the durations file that
-`tools/test_schedule.py` orders the suite by. A measurement, never a test criterion: the numbers depend
+teardown). `durations PROFILE [PROFILE ...] --output tools/test-durations.json` writes the durations file
+that `tools/test_schedule.py` orders the suite by (a test measured by a later run takes that run's time). A measurement, never a test criterion: the numbers depend
 on the machine and its load, which the file records.
 """
 from __future__ import annotations
@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter, defaultdict
 import json
+import math
 import os
 from pathlib import Path
 import subprocess
@@ -81,7 +82,7 @@ def per_minute(values: list[tuple[float, float]], start: float) -> list[float]:
 
 def occupancy(rows: list[dict], workers: int, start: float, end: float) -> list[float]:
     """Per minute of the run, the percentage of worker-seconds spent inside a test."""
-    minutes = int((end - start) // 60) + 1
+    minutes = max(1, math.ceil((end - start) / 60))
     busy = [0.0] * minutes
     for row in rows:
         a, b = row["start"] - start, row["end"] - start
@@ -149,8 +150,11 @@ def run(args) -> int:
 
 
 def durations(args) -> int:
-    rows = records(args.profile)
-    timed = {row["nodeid"]: seconds(row) for row in rows}
+    """The durations file from one or more profiled runs; a test measured by a later run takes that run's time,
+    and a test the gate's collection baseline no longer has (renamed, split or removed) is left out."""
+    current = set(json.loads(args.collection.read_text()))
+    timed = {row["nodeid"]: seconds(row) for profile in args.profile for row in records(profile)
+             if row["nodeid"] in current}
     args.output.write_text(test_schedule.durations_text(timed, source=args.source))
     kept = sum(value >= test_schedule.RECORDED_SECONDS for value in timed.values())
     print(f"wrote {kept} of {len(timed)} tests to {args.output}")
@@ -167,9 +171,10 @@ def main() -> int:
     measure.add_argument("--profile", type=Path, required=True, help="a new directory for the raw records")
     measure.add_argument("files", nargs="*", help="test files instead of the whole suite")
     record = commands.add_parser("durations", help="write the durations file from a profiled run")
-    record.add_argument("profile", type=Path)
+    record.add_argument("profile", type=Path, nargs="+", help="profile directories, earliest first")
     record.add_argument("--output", type=Path, default=test_schedule.DURATIONS)
     record.add_argument("--source", required=True, help="the commit and machine the run measured")
+    record.add_argument("--collection", type=Path, default=gate.COLLECTION, help="the test IDs to keep")
     args = parser.parse_args()
     return run(args) if args.command == "run" else durations(args)
 
