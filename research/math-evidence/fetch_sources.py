@@ -1,8 +1,12 @@
 """ME-0: fetch the target texts with a plain HTTP client (no model) and pin them.
 
-Writes, per target, the raw bytes fetched and `fetch-log.json` (URL, retrieval time, HTTP status, SHA-256, size)
-into a fresh directory `docs/research/evidence/math-evidence/<target>/raw/`. Licence evidence is fetched the same way.
-Run once; rerunning refuses to overwrite an existing raw directory.
+First run (no `fetch-log.json` for a target): writes the raw bytes fetched and `fetch-log.json` (URL, retrieval time,
+HTTP status, SHA-256, size) into `docs/research/evidence/math-evidence/<target>/raw/`. Licence evidence is fetched
+the same way.
+
+Later runs (the pin exists, as on a clone): never rewrite `fetch-log.json`. A file present on disk is checked against
+its logged SHA-256; a file absent (the gitignored third-party pages) is fetched again and written only if its bytes
+match the logged SHA-256. A mismatch is reported with the new digest and nothing is written; the exit status is 1.
 
     python3 -I research/math-evidence/fetch_sources.py
 """
@@ -56,23 +60,51 @@ def fetch(url: str) -> tuple[int, bytes]:
         return response.status, response.read()
 
 
+def pin(target: str, items: list[tuple[str, str]]) -> None:
+    raw = EVIDENCE / target / "raw"
+    raw.mkdir(parents=True)
+    log = []
+    for name, url in items:
+        when = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
+        status, body = fetch(url)
+        (raw / name).write_bytes(body)
+        log.append({"file": name, "url": url, "retrieved": when, "http_status": status,
+                    "bytes": len(body), "sha256": hashlib.sha256(body).hexdigest()})
+        print(target, name, status, len(body))
+    (raw / "fetch-log.json").write_text(json.dumps(log, indent=1) + "\n")
+
+
+def verify(target: str) -> list[str]:
+    raw = EVIDENCE / target / "raw"
+    failures = []
+    for entry in json.loads((raw / "fetch-log.json").read_text()):
+        path = raw / entry["file"]
+        if path.exists():
+            body, how = path.read_bytes(), "on disk"
+        else:
+            status, body = fetch(entry["url"])
+            how = f"fetched again (HTTP {status})"
+        digest = hashlib.sha256(body).hexdigest()
+        if digest != entry["sha256"]:
+            failures.append(f"{target}/{entry['file']}: {how}, sha256 {digest} != pinned {entry['sha256']}")
+            print(target, entry["file"], how, "MISMATCH")
+            continue
+        if not path.exists():
+            path.write_bytes(body)
+        print(target, entry["file"], how, "matches the pin")
+    return failures
+
+
 def main() -> int:
+    failures = []
     for target, items in TARGETS.items():
-        raw = EVIDENCE / target / "raw"
-        if raw.exists():
-            print(f"{raw} exists; not overwriting", file=sys.stderr)
-            return 1
-        raw.mkdir(parents=True)
-        log = []
-        for name, url in items:
-            when = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
-            status, body = fetch(url)
-            (raw / name).write_bytes(body)
-            log.append({"file": name, "url": url, "retrieved": when, "http_status": status,
-                        "bytes": len(body), "sha256": hashlib.sha256(body).hexdigest()})
-            print(target, name, status, len(body))
-        (raw / "fetch-log.json").write_text(json.dumps(log, indent=1) + "\n")
-    return 0
+        if (EVIDENCE / target / "raw/fetch-log.json").exists():
+            failures += verify(target)
+        else:
+            pin(target, items)
+    for line in failures:
+        print(line, file=sys.stderr)
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":

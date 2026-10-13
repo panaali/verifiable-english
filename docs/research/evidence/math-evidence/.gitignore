@@ -1,6 +1,10 @@
 # Regenerable or third-party bulk files: their URLs, sizes and SHA-256 are in raw/fetch-log.json and run.json.
+# fetch_sources.py re-fetches an ignored raw file and keeps it only if it matches the logged SHA-256.
 *.ve.md
 *.check.json
 !*.default-limit.json
 **/raw/*.html
 **/raw/*_djvu.txt
+# Committed: the OCR text math-ramanujan-bertrand/source.txt is sliced from. Public domain: Collected Papers of
+# Srinivasa Ramanujan, Cambridge University Press, 1927 (published before 1931; editors died by 1947).
+!math-ramanujan-bertrand/raw/collected-papers-1927-kerala-item_djvu.txt
