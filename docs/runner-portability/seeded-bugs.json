@@ -1,0 +1,20 @@
+[
+  {"id": "S1", "file": "tests/subprocesses.py", "change": "busy_cpu adds 0 instead of one tick per reading",
+   "test": "tests/test_hang_guards.py::test_the_busy_cpu_clock_advances_a_tick_per_reading_above_the_real_one",
+   "result": "1 failed"},
+  {"id": "S2", "file": "tests/subprocesses.py", "change": "busy_cpu drops the real reading as its floor",
+   "test": "tests/test_hang_guards.py::test_the_busy_cpu_clock_advances_a_tick_per_reading_above_the_real_one",
+   "result": "1 failed"},
+  {"id": "S3", "file": "tests/test_question_reading.py", "change": "the question test reads the real clock (busy_cpu call removed)",
+   "test": "tests/test_hang_guards.py::test_every_sub_tick_cpu_deadline_is_read_on_the_busy_clock",
+   "result": "1 failed"},
+  {"id": "S4", "file": "tests/test_hang_guards.py", "change": "the sub-tick lint reports clocked tests instead of unclocked ones",
+   "test": "tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form",
+   "result": "3 failed, 2 passed"},
+  {"id": "S5", "file": "ve/backends/lean_service.py", "change": "the CPU deadline check in _wait never fires",
+   "test": "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline tests/test_lean_document_wrapper.py::test_a_document_past_its_cpu_deadline_is_unavailable_never_ok",
+   "result": "2 failed"},
+  {"id": "S6", "file": "ve/backends/lean_service.py", "change": "the deadline's CheckerUnavailable names operation 'lean', not the mode",
+   "test": "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
+   "result": "1 failed"}
+]
