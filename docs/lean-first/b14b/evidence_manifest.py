@@ -32,6 +32,14 @@ CORPORA = {
     "document": 3632,
     "pilots": 486,
 }
+# lf-14b review F5: the changes on n-ary capture documents listed in DELTA.md for a DRI signature.
+CAPTURE = {"documents": 20, "records": 280, "listed": sorted([
+    ("mixed-exists-depth1", "conflict-model-0"), ("mixed-exists-depth1", "conflict-model-3"),
+    ("mixed-nested-depth1", "conflict-model-1"),
+    ("same-exists-depth1", "conflict-model-0"), ("same-exists-depth1", "conflict-model-3"),
+    ("same-exists-proved", "conflict-model-0"), ("same-exists-proved", "conflict-model-3"),
+    ("same-exists-proved", "conflict-prove"), ("same-exists-situation", "conflict-model-3"),
+    ("same-open-depth1", "conflict-model-0"), ("same-open-depth1", "conflict-model-3")])}
 FUZZ_RUNS = ["ci"] + [f"deep-1---seed-202609{day}" for day in range(26, 31)] + [
     f"deep-1---seed-202610{day:02d}" for day in range(1, 10)]
 
@@ -90,6 +98,10 @@ def snapshot(raw: Path) -> dict:
     if (fallback.get("documents") != 150 or fallback.get("records") != 1350
             or fallback.get("identical") is not True or fallback.get("differences")):
         raise ValueError("retained Python route differs from the base recording")
+    capture = read(EVIDENCE / "capture-delta.json")
+    if (capture.get("documents") != CAPTURE["documents"] or capture.get("records") != CAPTURE["records"]
+            or sorted((row["document"], row["op"]) for row in capture.get("differences", [])) != CAPTURE["listed"]):
+        raise ValueError("n-ary capture changes differ from the DELTA.md list awaiting the DRI")
     pilots = read(EVIDENCE / "pilots-delta.json")
     if len(pilots.get("unavailable", [])) != 6:
         raise ValueError("R7 pilot listing changed")
@@ -133,6 +145,8 @@ def snapshot(raw: Path) -> dict:
         "own_corpus": {"records": 1350, "same": 1350,
                        "sha256": digest(EVIDENCE / "corpus-ab.json")},
         "fallback": {"records": 1350, "same": 1350, "sha256": digest(EVIDENCE / "fallback-compare.json")},
+        "capture_delta": {"records": CAPTURE["records"], "listed": len(CAPTURE["listed"]),
+                          "sha256": digest(EVIDENCE / "capture-delta.json")},
         "difffuzz": {"runs": len(runs), "sha256": digest(fuzz_path), "head_only": 0},
         "pilots_delta_sha256": digest(EVIDENCE / "pilots-delta.json"),
         "latency_sha256": digest(EVIDENCE / "latency.json"),

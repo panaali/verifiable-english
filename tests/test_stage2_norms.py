@@ -440,17 +440,29 @@ def capture_documents():
         for (p, permit), (c, cite) in product(permits.items(), cites.items()):
             docs[f"{kind}-{p}-{c}"] = NormDocument(env, [rule("may", "permitted", True, permit),
                                                          rule("must", "required", True, cite)])
+    env = capture_environment("act")
+    permit = rule("may", "permitted", True, Exists("act", Atom("tri", (Var(1), Var(1), Var(0)))))
+    # Lean's `required->permitted` is unsatisfiable; the captured base expansion is not.
+    docs["same-exists-proved"] = NormDocument(env, [permit, rule("must", "required", True, Exists(
+        "act", And(Binary("before", Var(1), Var(0)), Unary("permitted", Var(1)))))])
+    # `cited` releases `required` only under the captured base expansion.
+    docs["same-exists-situation"] = NormDocument(env, [
+        permit, rule("must", "required", True, Unary("urgent", Var(0))),
+        rule("release", "required", False, Unary("urgent", Var(0))),
+        rule("cited", "required", False, Forall("act", Implies(Binary("before", Var(1), Var(0)),
+                                                               Unary("permitted", Var(1)))))])
     return docs
 
 
 def capture_models(third):
     last = {"act": ["a", "b"], "party": ["p"]}[third]
     return [{"complete": True, "domains": {"act": ["a", "b"], "party": ["p"]}, "constants": {},
-             "relations": {"before": before, "owner": owner, "urgent": [], "tri": tri}}
-            for before, owner, tri in [
-                ([["a", "b"]], [["a", "p"]], [["b", "b", last[-1]]]),
-                ([["a", "b"], ["b", "b"]], [], [["a", "a", last[0]], ["a", "b", last[0]]]),
-                ([], [["b", "p"]], [])]]
+             "relations": {"before": before, "owner": owner, "urgent": urgent, "tri": tri}}
+            for before, owner, urgent, tri in [
+                ([["a", "b"]], [["a", "p"]], [], [["b", "b", last[-1]]]),
+                ([["a", "b"], ["b", "b"]], [], [], [["a", "a", last[0]], ["a", "b", last[0]]]),
+                ([], [["b", "p"]], [], []),
+                ([["a", "b"]], [], [["a"]], [["b", "b", last[-1]]])]]
 
 
 def lean_targets(doc):
@@ -526,14 +538,7 @@ def test_lean_route_situation_names_the_rules_selected_by_leans_targets(monkeypa
     """lf-14b review F5's class in the CONFLICT record: the situation names the
     rules selected under the substituted outcome Lean checks, not a rule the
     captured base expansion would select."""
-    env = capture_environment("act")
-    cited = Forall("act", Implies(Binary("before", Var(1), Var(0)), Unary("permitted", Var(1))))
-    doc = NormDocument(env, [rule("may", "permitted", True, Exists("act", Atom("tri", (Var(1), Var(1), Var(0))))),
-                             rule("must", "required", True, Unary("urgent", Var(0))),
-                             rule("release", "required", False, Unary("urgent", Var(0))),
-                             rule("cited", "required", False, cited)])
-    model = {"complete": True, "domains": {"act": ["a", "b"], "party": ["p"]}, "constants": {},
-             "relations": {"before": [["a", "b"]], "urgent": [["a"]], "owner": [], "tri": [["b", "b", "b"]]}}
+    doc, model = capture_documents()["same-exists-situation"], capture_models("act")[3]
     routed(monkeypatch, "lean")
     report = check_conflict(doc, model=model)
     assert (report.status, report.target, report.tuple) == ("CONFLICT", "required", ("a",))
@@ -544,11 +549,7 @@ def test_lean_route_proof_search_proves_the_targets_lean_replays(monkeypatch):
     """lf-14b review F5's class in proof search: Python's prover proves the
     substituted targets, so Lean replays its certificates. The captured base
     expansion of `required->permitted` is satisfiable; Lean's target is not."""
-    env = capture_environment("act")
-    doc = NormDocument(env, [
-        rule("may", "permitted", True, Exists("act", Atom("tri", (Var(1), Var(1), Var(0))))),
-        rule("must", "required", True, Exists("act", And(Binary("before", Var(1), Var(0)),
-                                                         Unary("permitted", Var(1)))))])
+    doc = capture_documents()["same-exists-proved"]
     ops = routed(monkeypatch, "lean")
     assert check_conflict(doc, prove=True, tableau_steps=2000).status == "CONFLICT-FREE"
     assert ("norms_conflict", "lean") in ops
