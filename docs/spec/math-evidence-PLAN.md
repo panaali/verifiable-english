@@ -1,16 +1,20 @@
 # Science papers in VE (`calc@0`, physical dimensions, `arith@0` with proof imports): buildable plan
 
-> **Status.** Plan draft 2 (2026-10-13), branch `design/math-evidence` from `main` at `49de179e`. DRI research wave,
+> **Status.** Plan draft 3 (2026-10-13), branch `design/math-evidence` from `main` at `49de179e`. DRI research wave,
 > docs only: no code, proof, test or generated file changed, and no model was called. It is the plan for the design
 > recommended in [docs/research/math-evidence.md](../research/math-evidence.md) (cited `research n`), which holds the
-> evidence, the measured need, the prior art and the comparison of candidates. Draft 2 applies the converged Astra +
+> evidence, the measured need, the prior art and the comparison of candidates. Draft 2 applied the converged Astra +
 > Fable review of draft 1 (`manage-agents/debates/design-math-evidence/`, REVISE narrowly, CONVERGED after round 3:
 > edits A1-A6 and F1-F5 as merged in round 3) and the cross-plan synthesis edits of 2026-10-13 (`SYNTHESIS.md`, ten
-> edits); the change log lists them. The Lean blocks of section 3 are the statements the batches prove, written
-> against `main` at `49de179e` as statement schemata. ME-S's statement spec,
-> [math-evidence.md](math-evidence.md), elaborates them: its statements were type-checked against `main`'s `lean/` tree
-> in an untracked stub and its fixture numbers computed there with `#eval`. Where the spec and section 3 differ, the
-> spec governs. Every number is measured (method named) or labelled **estimate**.
+> edits). Draft 3 applies the converged statement review of the spec's draft 1
+> (`manage-agents/debates/math-evidence-spec/`, FIX, CONVERGED after round 2: Fable's J1-J11 with Astra's
+> refinements), with no other design change; the change log lists them. The Lean blocks of section 3 are the
+> statements the batches prove, written against `main` at `49de179e` as statement schemata. ME-S's statement spec,
+> [math-evidence.md](math-evidence.md) (draft 2), elaborates them. Draft 1 of the spec was type-checked against
+> `main`'s `lean/` tree in an untracked stub and its fixture numbers computed there with `#eval`; draft 2's changes are
+> not yet type-checked, and its new fixture numbers were computed by hand, both for the reviewers' bounded re-check
+> (spec 17). Where the spec and section 3 differ, the spec governs. Every number is measured (method named) or
+> labelled **estimate**.
 >
 > **Siblings read.** `design/quantities` (research and plan, read 2026-10-13), `design/attitudes`,
 > `design/events-time-causation`, `design/act-phrases`, `design/weighing` (plan), `design/scope` (shared pieces). Where
@@ -63,8 +67,9 @@ Order:
 6. ME-10 follows `lean-first/b16g` (or its successor that gives the `document` mode a content hook) and takes its
    place in the document-mode queue; ME-11 follows quantities' QT-E and is third in the English queue. ME-10, ME-11
    and the pre-registered writing and comprehension eval gate the document and English authoring milestone.
-7. Independently: ME-S → ME-12 → EX-1 (after ME-12's statement API) → ME-13 only if EX-1 passes → the import part of
-   ME-P4. Imports are always residual support.
+7. Independently of ME-2 to ME-11: ME-S → ME-1 → ME-12 → EX-1 (after ME-12's statement API) → ME-13 only if EX-1
+   passes → the import part of ME-P4. ME-12 waits for ME-1 because `VE.Arith` imports `VE.Numbers`'s `Verdict`,
+   `UnknownReason` and `Outcome` (statement review J6). Imports are always residual support.
 
 ME-5 and ME-12's core are Lean-core work that may run in parallel with the other plans' cores. The rest of ME lands
 last among the seven plans (AP → AT → SC-1/SC-2 → QT → WG → ET → SC-3…SC-7 → ME), a preference subject to the
@@ -144,6 +149,10 @@ A case is a JSON object of format `ve-calc@0`. Example (fixture V-2, VE paper `0
 - Limits, checked first and in this order: 10,000 JSON nodes, expression depth 64, 512 values, 512 claims, exponents
   at most 64, literals at most 40 digits (W6's numeral limit); a `pow` or `div` chain whose exact result would exceed
   4,096 digits in numerator or denominator gives **unknown** with the limit named.
+- From ME-5, ME-8 and ME-9 a `claims` entry may also be a derivation, a consistency check or an identity (2.6, 2.9,
+  2.10). Each kind has its own meaning, a row theorem per outcome, and its own response fields (a certificate, a
+  counterexample, a witness, a refutation or a point); spec 3.1 and 3.4 give the full wire and the rows, and spec 13.6
+  a complete request and answer per kind (statement review J3).
 
 ### 2.2 Identity
 
@@ -152,7 +161,10 @@ over the canonical case with `words` excluded: value literals in canonical form 
 value), printed numbers with their written places ("0.30" and "0.3" as rounding targets are two claims). A renamed
 verbalisation does not change the meaning; the approved wording is bound separately, as for W6a constants. Each claim has its own id: the case id plus the claim's
 canonical JSON. Changing a value, a source, a tie rule or a printed spelling changes the id and voids every approval
-or citation of it.
+or citation of it. The frozen canonical encoder (`VE.CertificateWire.canonical`) accepts only natural JSON numbers and
+sorts object keys, so the canonical case and environment write every signed integer (printed places such as H-8's
+−7, unit exponents such as a velocity's −1) as a canonical decimal string, and the encoder stays unchanged
+(statement review J1; spec 3.3, fixtures I-1 and I-2).
 
 ### 2.3 Values and printed numbers
 
@@ -188,10 +200,18 @@ names the convention and never blames the source.
   line, columns read by top-level key. Numbers are read by their written digits (D10); "true"/"false" for booleans;
   a missing key or empty field is *absent*.
 - A `counted` value is `{"data": sha256, "filter": F, "aggregate": A}` with filters `["is", column, text]`,
-  `["equals", column, number]`, `["true", column]`, `["not", F]`, `["and", F, F]`, `["or", F, F]`, `["all"]` and
-  aggregates `"count"`, `["sum", column]`, `["mean", column]`, `["min", column]`, `["max", column]`. Over an empty
-  selection, count and sum are 0, and mean, minimum and maximum are **undefined**. Over a selection with an absent or
-  non-number cell in its column, sum, mean, minimum and maximum are **undefined**.
+  `["is-not", column, text]`, `["equals", column, number]`, `["not-equals", column, number]`, `["true", column]`,
+  `["false", column]`, `["and", F, F]`, `["or", F, F]`, `["all"]` and aggregates `"count"`, `["sum", column]`,
+  `["mean", column]`, `["min", column]`, `["max", column]` (ME-7 adds `["variance", column]` and
+  `["population-variance", column]`). There is no general negation: each negated atom selects only a cell of its
+  type, so "that are not approved" selects the Boolean false, and a row whose cell is absent or mistyped is selected
+  by neither "that are approved" nor "that are not approved" (statement review J9). Over an empty selection, count and
+  sum are 0, and mean, minimum and maximum are **undefined**. Over a selection with an absent or non-number cell in its
+  column, sum, mean, minimum and maximum are **undefined**.
+- Each counted value is computed within the case's budget on its own. A counted value keeps its mathematical value
+  (the aggregate of the pinned table) apart from its operational result, which is that value or **exhausted**; an
+  exhausted value makes every claim that reads it, directly or through definitions, **unknown** with the evaluation
+  limit named (statement review J2).
 - The pinned source of a translated document is registered the same way, as a data handle. Lean then checks each
   stated value's and printed number's `span` against those bytes; a span whose text does not read as the stated
   number, written places included, is refused (`SpanMismatch`).
@@ -201,10 +221,13 @@ names the convention and never blames the source.
 ### 2.6 Derivations over unknowns
 
 A case may declare `free` values (unknowns) and **premise** claims about them, and ask whether a claim **follows**:
-`{"id", "follows": claim, "from": [claim ids], "square_links": [[square, root], …]}`. Lean substitutes known values,
-linearises (a premise that is not linear in the unknowns is refused, naming the term), searches Farkas multipliers by
-Fourier-Motzkin elimination within a budget, and checks them; a square link `s = r²` with `0 ≤ r` allows one proved
-step of the square rule (D11). Outcomes: **follows** (with the replayed certificate), **does not follow** (with exact
+the check `["follows", claim, [premise ids], [[square, root], …]]`, whose premises are entries of the case's
+`premises` list, each with its `support` (statement review J3; a premise is not itself a reported claim). Lean inlines
+the stated, defined and counted values, linearises (a premise that is not linear in the unknowns is refused, naming
+the term), searches Farkas multipliers by Fourier-Motzkin elimination within a budget, and checks them; a square link
+`s = r²` with `0 ≤ r` allows one proved step of the square rule (D11). The reader sees both halves of each link: it is
+rendered as two numbered premises, "S equals the square of R." and "R is at least 0.", each `support: assumption`,
+and listed as a residual line; the wire keeps links apart from ordinary premises (statement review J10). Outcomes: **follows** (with the replayed certificate), **does not follow** (with exact
 values of the unknowns satisfying every premise, every square link and its nonnegativity condition, and refuting the
 claim, checked by evaluation; for purely linear
 premises Fourier-Motzkin yields such values whenever no certificate exists, and across a square link the search tries
@@ -232,8 +255,12 @@ Durations use `elapsed_day`.
 New expression forms over a table column or a list of values: `["mean", xs]`, `["variance", xs]` (sample, divisor
 n − 1), `["population-variance", xs]` (divisor n), `["sign-flip-p", xs]` (two-sided, exact over all 2^n sign vectors,
 n ≤ 16), `["binomial-tail", n, k, p]` (P(X ≥ k)), `["kappa", table]` (Cohen's kappa of a square agreement table). A
-square root appears only in claims: `["sqrt-rounds", e, printed]` means "the square root of e, rounded, is printed",
-defined by squared bounds (exact). Each form carries its assumption leaves, rendered in the residual: sign-flip,
+list is a list of names of stated or counted values; a table column is a counted aggregate (the mean and the two
+variances; the sign-flip p takes a list only). A square root appears only in claims: `["sqrt-rounds", e, printed]`
+means "the square root of e, rounded, is printed", defined by squared bounds (exact). Outside its domain a statistic
+is **undefined**, like a division by 0: the mean, the population variance and the sign-flip p need one value, the
+sample variance two, the binomial tail 0 ≤ p ≤ 1, and the square root a value at least 0 (statement review J5;
+unguarded, the formula gives a "probability" of 2 at n = k = 1, p = 2). Each form carries its assumption leaves, rendered in the residual: sign-flip,
 "the differences are independent and their signs exchangeable under the null"; binomial, "the trials are independent
 with one success probability"; t-based half-width, "the stated quantile is the 97.5% point of Student's t with 11
 degrees of freedom" (a stated constant with `support: testimony` and its source).
@@ -247,11 +274,16 @@ output claim holds) proves *consistent*; an **enclosure** (interval evaluation o
 output's printed interval proves *inconsistent*. A granularity rule covers enumeration counts: an exact sign-flip p over
 n values is a multiple of 1/2^n, so a printed p with no such multiple in its rounding interval is inconsistent.
 Otherwise *unknown*. Lean searches witnesses by trying the printed values themselves and the interval endpoints; a
-witness from elsewhere is replayed the same way.
+witness from elsewhere is replayed the same way. Both certificates are proved against **one** proposition,
+`Consistent`, under **one** name rule: an output may read the inputs and any value that is not free, and a stated value
+left out of the inputs keeps its exact value, in the witness as in the enclosure. The checkers work on the outputs with
+every other value inlined and the inputs kept, never replaced by their printed values (statement review J4; spec 8.1,
+fixture C-1).
 
 ### 2.10 Algebraic identities
 
-`["identity", a, b]` over free values: Lean normalises both sides to polynomials over ℚ (sorted monomials, merged
+`["identity", a, b]` over free values: Lean first inlines the named values the sides read (statement review J3), then
+normalises both sides to polynomials over ℚ (sorted monomials, merged
 coefficients, zeros dropped) or, with division, to numerator and denominator, compares cross-multiplied normal forms,
 and reports **identity** or **not shown** (with a rational point where the sides differ when one is found by trying
 small values; otherwise unknown). Soundness needs only that equal normal forms mean equal values wherever both sides
@@ -264,21 +296,25 @@ Reader-facing wordings (one reading each; rendered by Lean from ME-1, readable a
 | Wording | Meaning |
 |---|---|
 | "The path length is 11 meters." | stated value with unit |
-| "The expected displacement is twice the path length divided by the wavelength, times the square of the speed ratio." | **refused**: two parses; rewrite: "Let the path in wavelengths be the path length divided by the wavelength. The expected displacement is twice the product of the path in wavelengths and the square of the speed ratio." |
+| "The expected displacement is twice the path length divided by the wavelength, times the square of the speed ratio." | **refused**: two parses; rewrite: "Let the path in wavelengths be the path length divided by the wavelength. Let the squared ratio be the square of the speed ratio. Let the expected displacement be twice the product of the path in wavelengths and the squared ratio." |
 | "Let the speed ratio be the orbital speed divided by the speed of light." | defined value |
 | "A equals B", "A is less than B", "A is at most B", "A is from L through H" | comparisons (W6's wordings, one Lean table: D17) |
 | "The false-approval rate is 0.296 when rounded to three decimal places, with exact ties going up." | `rounds`, ties upward |
 | "The p value is 0.007812 when rounded to six decimal places, with exact ties going to the even digit." | `rounds`, half to even on the exact value |
-| "The lower bound is 0.019 rounded down to three decimal places." | `rounds-down` |
-| "In the trial table, the number of rows whose judge is the 32B judge, whose view is symbols, whose explanation is none, whose label is bad and that are approved is 176." | counted value; the table's digest is shown on request |
+| "The lower bound is 0.019 when rounded down to three decimal places." | `rounds-down` |
+| "Let the count of approved 32B trials be the number of rows of the trial table whose judge is 32B, whose view is symbols, whose explanation is none, whose label is bad and that are approved. The count of approved 32B trials equals 176." | counted value, then a claim; the table's digest is shown on request |
 | "The standard deviation of the twelve differences, with divisor eleven, is 0.108 when rounded to three decimal places." | `sqrt-rounds` of the sample variance; "standard deviation" alone is a reading set {divisor n − 1, divisor n} in translation and refused in authoring |
-| "From these, it follows that the velocity ratio is less than one fourth." | a derivation; the premises are listed above it as numbered sentences |
-| "The round-trip time is the sum of the path length divided by the speed of light minus the speed and the path length divided by the sum of the speed of light and the speed." | **refused**: "and" at two levels and "minus" inside "divided by" give several parses; rewrite: "Let the closing speed be the speed of light minus the speed. Let the outward time be the path length divided by the closing speed. Let the return time be the path length divided by the sum of the speed of light and the speed. The round-trip time is the sum of the outward time and the return time." |
+| "From these, it follows that the velocity ratio is less than 1 divided by 4." | a derivation; the premises are listed above it as numbered sentences using "equals" ("The displacement equals the product of 0.4 and the squared velocity ratio."), and each square link as two of them (statement review J10) |
+| "The round-trip time is the sum of the path length divided by the speed of light minus the speed and the path length divided by the sum of the speed of light and the speed." | **refused**: "and" at two levels and "minus" inside "divided by" give several parses; rewrite: "Let the closing speed be the speed of light minus the speed. Let the outward time be the path length divided by the closing speed. Let the return time be the path length divided by the sum of the speed of light and the speed. Let the round-trip time be the sum of the outward time and the return time." |
+| "The round-trip time is the sum of the outward time and the return time." | **refused**: "A is E" with an expression E is a definition or a claim; rewrites "Let the round-trip time be …" or "The round-trip time equals …" (statement review J7) |
+| "The rate is 0.3 when rounded to two decimal places, with exact ties going up." | **refused** (`PlacesMismatch`): the spelling has one place, the phrase two; rewrites "0.30 when rounded to two decimal places" or "0.3 when rounded to one decimal place" (statement review J8) |
 
 Arithmetic phrases: "the sum of A and B", "A minus B", "the product of A and B", "A divided by B", "twice A", "half
 of A", "the square of A", "the cube of A", "A to the power N", "D times ten to the power N". Operands are names,
 numbers or one of these phrases with name or number operands; deeper nesting is refused with the rewrite "Let ... be
-..." naming the inner value. Refused words with rewrites: "the difference between A and B" (many readers take it to
+..." naming the inner value. Every rewrite that names a value uses "Let ... be ...", and claims and premises use
+"equals"; "is" followed by anything but a numeral, a comparison phrase or a rounding phrase is refused, and "be" is a
+reserved word in value words (statement review J7). Refused words with rewrites: "the difference between A and B" (many readers take it to
 mean the size of the gap; rewrite: "A minus B"); "about", "approximately", "roughly", "nearly" (one row of
 english-lean's catalogue shared with quantities, which QT-A6 adds), "on the order of" (rewrite: the rounding sentence or
 an inclusive range); "on par", "comparable" (an open term with a decider); every symbol (`+`, `×`, `/`, `^`, `=`, `≈`)
@@ -308,7 +344,9 @@ non-recursive: a function by a term, a predicate by a formula, each over earlier
 prime exactly when p is at least 2 and no whole number from 2 to p minus 1 divides p"). Meaning:
 `VE.Arith.Holds`, in core Lean; a count is the number of values for which `Holds` of its condition is true, so the
 meaning never depends on the evaluator. Lean decides a statement whose every quantifier is bounded, by evaluation within
-a budget (true, false with the deciding values, or unknown). The budget is stated: one unit per formula-node visit as in
+a budget (true, false with the deciding value of its outermost bounded quantifier, or unknown). Spec 12.5 gives the
+`ve-arith@0` request, its limits and identity, its rows (holds, fails, unknown), their theorems and the refusals of
+unscoped variables and unknown calls (statement review J3). The budget is stated: one unit per formula-node visit as in
 W6's `VE.Time.evalB`, default and maximum 1,000,000, and a case may set a smaller one; exhaustion is unknown and is
 tested apart from undefined values. An unbounded statement is stated, rendered and identified; it is proved only by an
 import (ME-13, if EX-1 passes). An import record names the statement's `meaning_id`, the digest of VE's meaning
@@ -358,8 +396,12 @@ computation not modelled", D6); exposition, which stays LABELLED.
 
 ## 3. Lean statements
 
-Schemata (status note), corrected by draft 2; [math-evidence.md](math-evidence.md) gives the elaborated statements.
-Names follow `main`'s conventions; `Rat` is core's (via `import Std`).
+Schemata (status note), corrected by drafts 2 and 3; [math-evidence.md](math-evidence.md) gives the elaborated
+statements. Draft 3 changes the schemata only where the statement review changed a statement (3.1's `run_unknown`,
+3.3's filters and counted values, 3.7's consistency, 3.9's rows and the EX-1 snippet); the spec's `Check` type and
+its row theorems (spec 3.4), the lowering (spec 2.7), the derivation, consistency and identity meanings (spec 5, 8)
+and the `arith@0` runner (spec 12.5) are given there only. Names follow `main`'s conventions; `Rat` is core's (via
+`import Std`).
 
 ### 3.1 ME-1: values, rounding, claims, verdicts
 
@@ -525,11 +567,13 @@ theorem values_free (ds : List Decl) (h : WellFormed ds) (d : Decl) (hd : d ∈ 
 /-- The claim's outcome within the limits of 2.1; `Overflows` says a value on the way exceeds 4,096 digits. -/
 def Claim.run (ds : List Decl) (c : Claim) : Outcome
 
-/-- A decided outcome is the mathematical verdict; unknown arises only when the named limit is exceeded. -/
+/-- A decided outcome is the mathematical verdict; unknown arises only when a named limit is met: the digit limit,
+or (from ME-4) a counted value, read directly or through definitions, whose budget ran out (statement review J2). -/
 theorem Claim.run_decided (ds : List Decl) (h : WellFormed ds) (c : Claim) (v : Verdict)
     (hr : c.run ds = .decided v) : v = c.decide (values ds)
 theorem Claim.run_unknown (ds : List Decl) (h : WellFormed ds) (c : Claim) (u : UnknownReason)
-    (hr : c.run ds = .unknown u) : u = .limit .digits ∧ c.Overflows ds
+    (hr : c.run ds = .unknown u) :
+    (u = .limit .digits ∧ c.Overflows ds) ∨ (u = .limit .evaluations ∧ c.ReadsExhausted ds)
 
 end VE.Calc
 ```
@@ -570,7 +614,9 @@ end ResponseShape.Encoders.Calc
 ```
 
 (`Run.outcomeAt` reads the outcome of row `i`; `ResponseShape.Fits` is the predicate the existing encoder theorems
-use, as in `ResponseShape.Encoders.Discourse.runCaseReported_fits`. The spec gives the elaborated forms.)
+use, as in `ResponseShape.Encoders.Discourse.runCaseReported_fits`. The spec gives the elaborated forms: from draft 3
+`Case.claims` holds checks, `Run.verdict_sound` is stated for claim rows, and `Run.row_sound` and `Run.unknown_named`
+cover every kind (spec 3.4).)
 
 ### 3.3 ME-4: tables and data
 
@@ -585,9 +631,11 @@ structure Table where
   columns : List String
   rows : List (List Cell)
 
+/-- No general negation (statement review J9): each negated atom needs a cell of its type. -/
 inductive Filter where
-  | all | isText (col v : String) | equals (col : String) (q : Rat) | isTrue (col : String)
-  | not (f : Filter) | and (f g : Filter) | or (f g : Filter)
+  | all | isText (col v : String) | isNotText (col v : String) | equals (col : String) (q : Rat)
+  | notEquals (col : String) (q : Rat) | isTrue (col : String) | isFalse (col : String)
+  | and (f g : Filter) | or (f g : Filter)
 
 inductive Agg where
   | count | sum (col : String) | mean (col : String) | min (col : String) | max (col : String)
@@ -617,11 +665,12 @@ theorem Agg.run_empty (T : Table) (f : Filter) (h : T.select f = []) (col : Stri
 /-- Decoders: the CSV and JSON-lines subsets of 2.5. -/
 def decodeTable (format : String) (columns : List (String × String)) (bytes : ByteArray) : Except String Table
 
-/-- A counted value is computed only from bytes whose SHA-256 is the declared handle. -/
-theorem counted_bound (handles : List (String × ByteArray)) (d : String) (f : Filter) (a : Agg) (q : Rat)
-    (h : runCounted handles d f a = some q) :
+/-- A counted value is computed only from bytes whose SHA-256 is the declared handle, within the budget `limit`; its
+result is the aggregate's value or exhausted (statement review J2). -/
+theorem counted_bound (limit : Nat) (handles : List (String × ByteArray)) (d : String) (f : Filter) (a : Agg)
+    (v : Option Rat) (h : runCounted limit handles d f a = .ok (.ok v)) :
     ∃ bytes T, handles.lookup d = some bytes ∧ VE.CertificateWire.sha256 bytes = d ∧
-      decodeTable (formatOf d) (columnsOf d) bytes = .ok T ∧ Agg.run T f a = some q
+      decodeTable (formatOf d) (columnsOf d) bytes = .ok T ∧ Agg.run T f a = v
 
 /-- Debate F1: a span is checked against the pinned source's bytes; the text must read as the printed number. -/
 theorem spanMatches_iff (src : ByteArray) (s : Span) (p : Printed) :
@@ -631,7 +680,8 @@ end VE.Calc
 ```
 
 (`runCounted`, `formatOf` and `columnsOf` are ME-4's; SHA-256 is trusted code without a refinement theorem, as for
-the risk log, and the plan does not claim more.)
+the risk log, and the plan does not claim more. The spec adds `counted_exhausted`, `Filter.bool_atoms` and
+`Filter.negated_typed`, and fixture T-3 for an exhausted count read through a definition beside an empty mean.)
 
 ### 3.4 ME-5: derivations over rational unknowns
 
@@ -796,7 +846,10 @@ def kappa? (t : List (List Nat)) : Option Rat
 end VE.Calc
 ```
 
-(`Nat.choose` is core's if present in the pinned toolchain; otherwise ME-7 defines it with `choose_succ_succ`.)
+(`Nat.choose` is core's if present in the pinned toolchain; otherwise ME-7 defines it with `choose_succ_succ`; ME-S
+found it absent. Draft 3: the domains are in the meaning, not in these functions, which are total: a binomial tail
+denotes only for 0 ≤ p ≤ 1, and a statistic over too few values is undefined (`Stat.run`, `Stat.run_isSome`,
+`binomialTail_unit`; statement review J5, spec 7, fixture S-5).)
 
 ### 3.7 ME-8: consistency of printed numbers
 
@@ -804,22 +857,25 @@ end VE.Calc
 namespace VE.Calc
 
 /-- A printed input stands for every value in its rounding interval. -/
-def InBox (r : Rounding) (inputs : List (String × Printed)) (σ : Values) : Prop :=
-  ∀ i ∈ inputs, ∃ x, σ i.1 = some x ∧ RoundsTo r i.2 x
+def InBox (r : Rounding) (inputs : List (String × Printed)) (κ : String → Rat) : Prop :=
+  ∀ i ∈ inputs, RoundsTo r i.2 (κ i.1)
 
-/-- Witness: exact inputs inside their boxes under which every output claim holds. -/
-theorem witness_sound (r : Rounding) (inputs : List (String × Printed)) (outs : List Claim) (σ : Values)
-    (h : witnessCheck r inputs outs σ = true) : InBox r inputs σ ∧ ∀ c ∈ outs, c.Holds σ
+/-- One proposition (statement review J4): exact inputs inside their intervals make every output hold, every other
+declaration keeping its meaning. -/
+def Consistent (ds : List Decl) (r : Rounding) (inputs : List (String × Printed)) (outs : List Claim) : Prop :=
+  ∃ κ : String → Rat, InBox r inputs κ ∧ ∀ c ∈ outs, c.Holds (values (assign ds (inputs.map Prod.fst) κ))
 
-/-- Exact interval evaluation over the boxes encloses every value the expression can take. -/
-theorem enclose_sound (r : Rounding) (inputs : List (String × Printed)) (e : Expr) (lo hi : Rat)
-    (h : enclose r inputs e = some (lo, hi)) :
-    ∀ σ x, InBox r inputs σ → (∀ n, σ n ≠ none → n ∈ inputs.map Prod.fst) → Denotes σ e x → lo ≤ x ∧ x ≤ hi
+/-- Witness: over the outputs inlined with the inputs kept, a checked witness proves `Consistent`. -/
+theorem consistent_of_witness (ds : List Decl) (h : WellFormed ds) (r : Rounding)
+    (inputs : List (String × Printed)) (hk : ∀ i ∈ inputs, i.1 ∈ ds.map Decl.name) (outs outs' : List Claim)
+    (hl : outs.mapM (Claim.inline ds (inputs.map Prod.fst)) = .ok outs') (w : List (String × Rat))
+    (hw : witnessCheck r inputs outs' w = true) : Consistent ds r inputs outs
 
-/-- An enclosure that misses an output's printed interval proves the printed numbers inconsistent. -/
-theorem inconsistent_of_enclosure (r : Rounding) (inputs : List (String × Printed)) (c : Claim)
-    (h : refuteByEnclosure r inputs c = true) :
-    ¬ ∃ σ, InBox r inputs σ ∧ (∀ n, σ n ≠ none → n ∈ inputs.map Prod.fst) ∧ c.Holds σ
+/-- An enclosure that misses an inlined output, or a sign-flip granularity refutation, refutes the same proposition. -/
+theorem inconsistent_of_refutation (ds : List Decl) (h : WellFormed ds) (r : Rounding)
+    (inputs : List (String × Printed)) (hk : ∀ i ∈ inputs, i.1 ∈ ds.map Decl.name) (outs outs' : List Claim)
+    (hl : outs.mapM (Claim.inline ds (inputs.map Prod.fst)) = .ok outs') (c : Claim) (hc : c ∈ outs')
+    (hr : refuteByEnclosure r inputs c = true ∨ refuteByGrain c = true) : ¬ Consistent ds r inputs outs
 
 end VE.Calc
 ```
@@ -933,15 +989,13 @@ theorem Import.admit_sound (D : Defs) (φ : Formula) (i : Import) (h : i.admit D
       i.checkDigest = VE.CertificateWire.sha256 (checkSource D φ i.declaration).toUTF8 ∧
       ∀ a ∈ i.axioms, a ∈ allowedAxioms
 
-/-- A report row for an unbounded conclusion is supported by an import admitted for that conclusion's own
-statement, whose leaf `import:<project>@<rev>/<declaration>` is among the assumptions, or by a bounded decision. -/
-theorem report_import_labelled (r : Report) (h : r.Accepted) :
-    ∀ row ∈ r.rows,
-      (∃ limit w, row.support = .bounded limit ∧
-        decideBounded row.conclusion.defs limit row.conclusion.formula = some (true, w)) ∨
-      (∃ i, row.support = .imported i ∧
-        i.statementId = statementIdOf row.conclusion.defs row.conclusion.formula ∧
-        importLabel i ∈ r.assumptions)
+/-- A holds row on an unbounded statement rests on an import admitted for that statement's own id, whose leaf
+`import:<project>@<rev>/<declaration>` is the row's residual line (spec 12.5's `Run.import_sound`). Draft 3: the
+rows hold, fail or are unknown; draft 2's `Report.Accepted` described only rows that hold (statement review J3). -/
+theorem Case.import_row (c : Case) (s : String × Formula) (hb : s.2.Bounded c.defs = false)
+    (h : c.outcome s = .decided .holds) :
+    ∃ i, c.imports.lookup s.1 = some i ∧ i.statementId = statementIdOf c.defs s.2 ∧
+      i.meansDigest = currentMeansDigest ∧ (∀ a ∈ i.axioms, a ∈ allowedAxioms)
 
 end VE.Arith
 ```
@@ -954,15 +1008,16 @@ the declaration at exactly the type `Defs.Means D φ`:
 import Mathlib.NumberTheory.Bertrand
 import VE.Arith.Examples
 
-theorem VEImports.bertrand_holds : VE.Arith.Examples.bertrandDefs.Means VE.Arith.Examples.bertrand := by
+/-- The one bridge lemma for this vocabulary, declared before its use (statement review J11): VE's definition of
+prime is Mathlib's. -/
+theorem VEImports.isPrime_iff_nat_prime (p : Nat) :
+    VE.Arith.Examples.IsPrime p ↔ Nat.Prime p
+
+theorem VEImports.bertrand_holds : VE.Arith.Examples.primeDefs.Means VE.Arith.Examples.bertrand := by
   rw [VE.Arith.Examples.bertrand_means_iff]          -- core-Lean unfolding lemma, proved in VE
   intro n hn
   obtain ⟨p, hp, h1, h2⟩ := Nat.bertrand n (by omega)
   exact ⟨p, (VEImports.isPrime_iff_nat_prime p).mpr hp, h1, h2⟩
-
-/-- The one bridge lemma for this vocabulary: VE's definition of prime is Mathlib's. -/
-theorem VEImports.isPrime_iff_nat_prime (p : Nat) :
-    VE.Arith.Examples.IsPrime p ↔ Nat.Prime p
 ```
 
 ## 4. Fixtures
@@ -983,7 +1038,7 @@ are re-anchored to the pinned text's byte spans in ME-0; their arithmetic does n
 | V-5 | `paper/generated/posthoc-weakening-rates.md`, 20 rows "Approved / weakening" against "Pooled FA" | e.g. 151/243 → 0.621, 155/243 → 0.638, 136/243 → 0.560, 90/243 → 0.370, 43/243 → 0.177, 37/243 → 0.152 | all 20 hold (hand-checked) |
 | V-6 | `paper/sections/10-appendices.md`, row "14B AWQ, P1 attacker": twelve printed per-template differences, "SD between templates 0.108", "SE with 12 templates 0.031", "97.5% half-width with 12 (t = 2.593) 0.081" | values in thousandths: Σx = −545 (thousandths), Σx² = 152,053 (millionths), n = 12; sample variance v = 1,527,611 / 132,000,000; `sqrt-rounds` v to 0.108 (1,525,425 ≤ 1,527,611 < 1,553,937 in units of 1/132,000,000, the squares of 0.1075 and 0.1085); v/12 to 0.031; 2.593² × v/12 to 0.081 (0.00648430 against the lower bound 0.0805² = 0.00648025) | holds ×3; t = 2.593 is a stated constant with its source |
 | V-6r | the same printed SD under the population reading (divisor 12) | 0.127301/12 = 0.010608; its root 0.1030 prints as 0.103 | **fails**: the calculation distinguishes the two readings of "SD" |
-| V-7 | `paper/generated/posthoc-weakening-contrasts.md`, column "Two-sided p", 9 templates | granularity: a printed p must be within rounding of a multiple of 1/512 (0.812500 = 416/512, 0.687500 = 352/512, 0.359375 = 184/512, 0.125000 = 64/512, 0.875000 = 448/512; 0.085938 from 44/512 and 0.679688 from 348/512, both exact ties at the lower end of their intervals) | consistent for 7 of 8 under ties upward; the eighth is V-8 (ME-8) |
+| V-7 | `paper/generated/posthoc-weakening-contrasts.md`, column "Two-sided p", 9 templates | granularity: a printed p must be within rounding of a multiple of 1/512 (0.812500 = 416/512, 0.687500 = 352/512, 0.359375 = 184/512, 0.125000 = 64/512, 0.875000 = 448/512; 0.085938 from 44/512 and 0.679688 from 348/512, both exact ties at the lower end of their intervals) | consistent for 7 of 8 under ties upward; the fourth row (0.007812) is V-8 (ME-8) |
 | V-8 | the same table, row "14B F − S attacker", printed "0.007812" | 4/512 = 0.0078125 is an exact tie at six places: half to even on the exact value gives 0.007812 (holds), ties up gives 0.007813 (fails) | holds only under "rounded half to even"; in translation without a declared rule, a **reading set** whose distinguishing value is this row |
 | V-9 | software convention: 2.675 printed as 2.67 at two places (Python's `round(2.675, 2)`, which rounds the nearest binary double) | the exact value 107/40 is a tie at two places; both rules give 2.68 | the exact claim **fails**; software reproduction **unknown** ("floating-point computation not modelled"); no source finding |
 | V-10 | software convention: 0.1 + 0.2 − 0.3 printed as 0.0000000000000001 at sixteen places (what Python prints; no tie is involved) | the exact value is 0, which rounds to 0 at sixteen places | the exact claim **fails**; software reproduction **unknown**; no source finding |
@@ -1020,7 +1075,7 @@ are re-anchored to the pinned text's byte spans in ME-0; their arithmetic does n
 | M-3r | the same with a real x (Ramanujan's x is real) | a reading set {whole number, real}; `arith@0` has no reals, so the real reading stays residual |
 | M-4 | "π(x) − π(x/2) ≥ 2 if x ≥ 11", bounded part for whole x from 11 to the measured bound | holds by evaluation (at x = 10 the difference is 1, at x = 11 it is 2); the unbounded remainder is residual or import. ME-S defines the fuel accounting; ME-12 measures M-4 at the candidate bounds 200 and 1,000 and takes the completing bound from that measurement (the spec's reference count: 248 completes within 1,000,000 visits, 249 does not); no runtime estimate is part of the semantics |
 | M-4x | exhaustion: M-1 with a deliberately insufficient budget (1,000 visits) | the evaluator stops | **unknown** (limit named), never fails; tested apart from undefined values |
-| M-5 | negative control: strict "n < p < 2n" from 1 to 161 | **fails** at n = 1 |
+| M-5 | negative control: strict "n < p < 2n" from 1 to 161 | **fails** at n = 1, reported as the row's deciding value (spec 12.5) |
 
 ### 4.4 Deep learning (after ME-0 pins a CC-BY text; shapes only, no numbers presumed)
 
@@ -1028,6 +1083,17 @@ DL-1 "our method has the highest score in column C" (maximum over the table's ro
 average across the eight tasks" (mean of a row); DL-3 "reduces the number of trainable parameters by about N times"
 (a ratio of stated counts; "about" a reading set {rounded to the written digits, open tolerance}); DL-4 a parameter
 count from a stated formula and stated sizes; DL-5 "on par with" (refused in authoring; an open term in translation).
+
+### 4.4a Fixtures added by the statement review
+
+The spec (13.2, 13.3, 13.6) defines them; their numbers were computed by hand and are recomputed in the stub at the
+bounded re-check. I-1 and I-2: identities with a negative printed place (H-8) and a negative unit exponent (a
+velocity), against the frozen encoder (J1). T-3: an exhausted count read directly and through a definition, beside an
+empty mean, in both orders (J2). T-1 gains a row whose `approved` cell is absent and one whose cell is the text "yes"
+(J9). S-5: binomial tails at p = 0, 1 and 2, statistics of no values and of one value, the square root of a negative
+value (J5). C-1: a consistency output that reads a stated value left out of the inputs, one whose witness is an
+interval endpoint, and one that reads a free value (J4). R-1 to R-9: a complete request and answer for every kind and
+outcome, `calc@0` and `arith@0` (J3).
 
 ### 4.5 Negative controls from the pinned pilots, and regressions
 
@@ -1069,7 +1135,9 @@ fixtures of section 4 with definitions separated from expected results); elabora
 `lean/SpecStubs_math_evidence.lean` against `main` (or a build at the same `lean/` tree); recompute every fixture with
 `#eval` over `Rat`; settle the names `ResponseShape.Fits`, `Run.verdictAt`, `Nat.choose`, `Nat.bertrand`; define
 `arith`'s fuel accounting (what counts as one step). Statement review by the reviewer pair (section 9); it confirms
-each debate edit (A1-A6, F1-F5) with a fixture.
+each debate edit (A1-A6, F1-F5) with a fixture. The review of the spec's draft 1 converged on FIX (J1-J11); the spec's
+draft 2 applies it, and a bounded re-check of the changed sections and new fixtures by both reviewers (spec 17), with
+the stub re-run, gates ME-1.
 
 ### ME-1. Lean core of `calc@0` (Lean, 5-6 h)
 
@@ -1078,7 +1146,9 @@ each debate edit (A1-A6, F1-F5) with a fixture.
   `lean/VE/Calc/{Syntax,Eval,Decls,Render,Examples}.lean`, `lean/CALC.md` (statement review notes, as
   `lean/RISK.md`). `VE.Calc` imports `VE.Numbers`. ME-1 lands before quantities' QT-A2, which proves
   `roundsTo_ratio_agree` against `VE.Numbers.RoundsTo`.
-- Proves 3.1. `Render.lean` gives the English line of each claim from `words` and the fixed phrases of 2.11 (display
+- Proves 3.1. It builds the operational types in their final shape (spec 2.3, 2.4): `Val.exhausted`, the `Counted`
+  result of a counted source and `NameExhausted`, so that ME-4 only fills counted values (statement review J2).
+  `Render.lean` gives the English line of each claim from `words` and the fixed phrases of 2.11 (display
   only; parse-back arrives with ME-11, whose engine then replaces `Render.lean`'s phrase table rather than sitting
   beside it). Every rendered rounding line names its tie rule. If quantities' QT-E has not landed, ME-1 moves W6's
   comparison phrases (`ve/english.py:51`, `_COMPARISONS`) into one Lean table, and Python reads them from a generated
@@ -1093,7 +1163,9 @@ each debate edit (A1-A6, F1-F5) with a fixture.
 
 - New files: `lean/VE/Calc/{Wire,Run}.lean`, `lean/ResponseShape/Schemas/Calc.lean`,
   `lean/ResponseShape/Encoders/Calc.lean`.
-- Proves 3.2 and the decoder limits of 2.1 in order; identities of 2.2.
+- Proves 3.2 and the decoder limits of 2.1 in order; identities of 2.2, with every signed integer written as a
+  canonical decimal string for the unchanged frozen encoder (statement review J1). It introduces spec 3.4's `Check`
+  with its `claim` constructor, `Check.OutcomeMeans` and `Run.row_sound`; later batches add their kinds.
 - Hand-written shared: `lean/VE/Service/Protocol.lean` (constructor, name, list entry, dispatch line,
   `runMode_calc`) and `ve/backends/service_schema.py` (`MODES`), which join the protocol queue in landing order; the
   `calc@0` row of AR-10's profile-gate table with its composition proof for the combinations it newly admits, and the
@@ -1104,15 +1176,17 @@ each debate edit (A1-A6, F1-F5) with a fixture.
   `lean/checkers.lock`, `docs/spec/assurance-manifest.md`, `lean/VE/Route/examples/route-cases.json`, AR-10's
   generated profile data, and ME-1's list.
 - Route cases: V-1, V-2, V-5 (20 claims in one case), V-11 (a limit hit beside a zero divisor), a software-convention
-  case (V-9), a hostile set (unknown name, a name defined after its use, `pow` above the limit, a literal of 41
-  digits, a printed spelling with a sign error, a forged `meaning_id`).
+  case (V-9), I-1 (H-8's negative printed place), spec 13.6's R-1 and R-2 (every claim outcome), a hostile set
+  (unknown name, a name defined after its use, `pow` above the limit, a literal of 41 digits, a printed spelling with a
+  sign error, a forged `meaning_id`).
 - Seeded bug (Lean): the runner reports claim i + 1's verdict for claim i; the route-case test fails.
 - Bytes: 0.
 
 ### ME-3. Python relay, command, fuzz tests (Python, 4-5 h)
 
 - New files: `ve/calc.py` (sends cases with `rows` from `ve/backends/relay.py`; binds every claim id, value name and
-  data handle in the answer to the request; displays Lean's English lines and exact values), `tests/test_calc_lean.py`,
+  data handle in the answer to the request, and each row's `kind` and kind fields as spec 3.4 lists them, each later
+  batch extending the binding for its kind; displays Lean's English lines and exact values), `tests/test_calc_lean.py`,
   `tests/test_calc_answer.py` (fuzz: each member dropped, emptied, retyped, duplicated, reordered, an index out of
   range, one and two faults at a time; every mutant is `CheckerUnavailable` or changes nothing shown).
 - Hand-written shared: `ve/__main__.py` (subcommand `ve calc check FILE`), `tools/layer_policy.py` (one row),
@@ -1138,13 +1212,18 @@ Shared files: pilot directories only.
   sends them; Lean recomputes the digest. A translated document's pinned source is registered the same way, and Lean
   checks every `span` against it (debate F1); from here a failed claim can be a source finding. Residual lines use
   W2's `support` provenance field.
+- Filters have negated atoms, each needing a cell of its type, and no general negation (statement review J9). Each
+  counted value runs under the case's budget; `runCounted` takes the budget, and an exhausted run is `Counted.exhausted`
+  (statement review J2).
 - Fixtures: a 30-row synthetic trial table with counts by filter; V-5 recomputed from a committed table of the
   20 rows' counts; H-9 when ME-0 has transcribed the observation tables; empty selections (count 0, sum 0, mean,
-  minimum and maximum undefined); an absent cell making a mean undefined; a wrong digest refused; V-12 (a span over a
-  mistyped value refused); a source finding with every span checked beside "transcription unchecked" with one span
-  missing.
-- Seeded bugs: Lean, `not` in a filter selects the same rows as its operand (a count fixture fails); Python, the
-  relay sends the bytes of the wrong handle (the digest refusal test fails).
+  minimum and maximum undefined); an absent cell making a mean undefined; T-1 with its absent and mistyped `approved`
+  cells, selected by neither "that are approved" nor "that are not approved"; T-3 (an exhausted count read directly
+  and through a definition beside an empty mean); a wrong digest refused; V-12 (a span over a mistyped value refused);
+  a source finding with every span checked beside "transcription unchecked" with one span missing.
+- Seeded bugs: Lean, `isFalse` selects every row whose cell is not the Boolean true (T-1's "not approved" count
+  becomes 3 and its `#guard` fails); Python, the relay sends the bytes of the wrong handle (the digest refusal test
+  fails).
 - Bytes: 0 (lands in ME-P2).
 
 ### ME-5. Derivations over rational unknowns (Lean, 5-6 h)
@@ -1152,9 +1231,13 @@ Shared files: pilot directories only.
 - New files: `lean/VE/Calc/{Linear,FourierMotzkin,Derive}.lean`, `tests/test_calc_derive.py`.
 - Proves 3.4. Fourier-Motzkin elimination with multiplier tracking, within a budget (64 facts, 16 unknowns, 10,000
   combination steps); its output is replayed by `Farkas.check`; counterexamples are checked by evaluation.
-- Fixtures: H-6, H-6p, H-6n; a linear system with no solution and its certificate; a forged certificate with a
-  negative weight refused; the assignment s = 0, r = 1 against H-6's premises, rejected as a counterexample because it
-  breaks the link s = r² (debate A2).
+- Adds the `follows` check and the case's `premises` list, the lowering (spec 2.7's `Expr.inline`, unless ME-8 or ME-9
+  built it first, and spec 5's `Claim.facts`), the meaning `Follows` with its bridge theorems, and the `follows`
+  clauses of `Check.OutcomeMeans` (statement review J3). Each square link is rendered as two premises and listed as a
+  residual line (J10).
+- Fixtures: H-6, H-6p, H-6n; spec 13.6's R-3 and R-4; a linear system with no solution and its certificate; a forged
+  certificate with a negative weight refused; the assignment s = 0, r = 1 against H-6's premises, rejected as a
+  counterexample because it breaks the link s = r² (debate A2).
 - Seeded bug (Lean): `Farkas.check` accepts a negative weight; a forged certificate for a false conclusion is accepted
   and its regression fails.
 - Bytes: 0.
@@ -1169,7 +1252,8 @@ Shared files: pilot directories only.
   `day` is never a unit of a physical dimension and never converts; durations use `elapsed_day`.
 - Fixtures: H-7; meters against kilometers converted by factors; a sum of a length and a time refused with both names;
   two identically declared `ve-units@1` tags still incompatible; a declaration that gives `day` `base_exponents`
-  refused.
+  refused; I-2 (a velocity's exponent −1 written as a canonical decimal string in the environment's identity, so the
+  frozen encoder accepts it; statement review J1).
 - Seeded bug (Lean): `dimOf` of `div` adds exponents instead of subtracting; H-7's "D/λ is dimensionless" fails.
 - Bytes: 0.
 
@@ -1181,28 +1265,34 @@ paper: counts recomputed from committed count tables (V-5). Estimated: H +3.0-4.
 ### ME-7. Exact statistics (Lean, 5-6 h)
 
 - New files: `lean/VE/Calc/Stats.lean`, `tests/test_calc_stats.py`.
-- Proves 3.6. Assumption leaves per procedure (2.8).
-- Fixtures: V-6, V-6r; a sign-flip p over 12 synthetic differences checked against exhaustive hand enumeration; a
-  binomial tail; Cohen's kappa of a 2 × 2 table.
+- Proves 3.6. Assumption leaves per procedure (2.8). Adds the constructors `stat`, `binom`, `kappa` and `sqrtRounds`
+  to ME-1's `Expr` and `Claim` (its own `lean/VE/Calc/` files), with their meaning clauses, and re-proves ME-1's
+  theorems for them; the column aggregates `variance` and `populationVariance` join ME-4's `Agg`, so that part waits
+  for ME-4. Domains are in the meaning: undefined outside them (statement review J5).
+- Fixtures: V-6, V-6r; S-5 (domain boundaries); a sign-flip p over 12 synthetic differences checked against
+  exhaustive hand enumeration; a binomial tail; Cohen's kappa of a 2 × 2 table.
 - Seeded bug (Lean): the sample variance divides by n; V-6's SD claim fails (it would print 0.103).
 - Bytes: 0.
 
 ### ME-8. Consistency of printed numbers (Lean, 4-5 h)
 
 - New files: `lean/VE/Calc/{Interval,Consistency}.lean`, `tests/test_calc_consistency.py`.
-- Proves 3.7 and `signFlipP_grain`'s use as a granularity check.
+- Proves 3.7 and `signFlipP_grain`'s use as a granularity check: the witness and both refutations against the one
+  `Consistent`, over the lowering with the inputs kept (statement review J4).
 - Fixtures: V-7 (granularity), V-8 (tie rule), V-6 from the printed per-template values (a witness: the printed values
-  themselves), and an inconsistent synthetic table (a mean of five integer scores printed as 3.47, impossible since
-  5 × 3.47 = 17.35 has no integer within rounding: GRIM).
+  themselves), C-1 and spec 13.6's R-5 (an output that reads a stated value left out of the inputs; a witness at an
+  interval endpoint; a free value refused), and GRIM as a `#guard` of `mean_grain_refutes` (S-3: a mean of five
+  integer scores printed as 3.47, impossible since 5 × 3.47 = 17.35 has no integer within rounding; GRIM has no route
+  form, spec 16 C17).
 - Seeded bug (Lean): the enclosure of `sub` uses [lo − lo, hi − hi]; the consistent fixture V-6 is refuted and fails.
 - Bytes: 0.
 
 ### ME-9. Algebraic identities (Lean, 5-6 h)
 
 - New files: `lean/VE/Calc/Poly.lean`, `tests/test_calc_algebra.py`.
-- Proves 3.8.
-- Fixtures: H-1, H-2, H-3, H-4 with D free; the false "(a + b)² = a² + b²" not shown, with the point a = b = 1; a division by an
-  expression that can be zero denotes nothing at that point.
+- Proves 3.8, over sides inlined with the free values kept, against the meaning `IsIdentity` (statement review J3).
+- Fixtures: H-1, H-2, H-3, H-4 with D free; spec 13.6's R-6; the false "(a + b)² = a² + b²" not shown, with the point
+  a = b = 1; a division by an expression that can be zero denotes nothing at that point.
 - Seeded bug (Lean): monomials with different variable lists are merged; "(a + b)² = a² + b²" is reported an identity
   and its regression fails.
 - Bytes: 0.
@@ -1211,7 +1301,8 @@ paper: counts recomputed from committed count tables (V-5). Estimated: H +3.0-4.
 
 - New files: `lean/VE/Calc/Document.lean`, `tests/test_calc_document.py`.
 - `calculation` content in `ve-document@1` goes through Lean's `document` mode; the `calc:` leaf label (2.12); statuses
-  and findings; coverage counts `support: calculation` units as checked only with a Lean verdict.
+  and findings; coverage counts `support: calculation` units as checked only with a Lean verdict. A discharged leaf
+  states its check's meaning for every kind (spec 10's `calcLeaf_holds`).
 - Hand-written shared: the `document` mode's content dispatch (`lean/VE/Service/Document.lean`, one branch; after
   `lean-first/b16g` or its successor adds a content hook, rebased onto it; it joins the document-mode queue in
   landing order AT-3b, SC-1b, QT-A4, ET-5, WG-4, ME-10), `lean/VE/ClaimGraph.lean` is **not**
@@ -1225,7 +1316,9 @@ paper: counts recomputed from committed count tables (V-5). Estimated: H +3.0-4.
 
 - Rules for the wordings of 2.11 in Lean's English engine, whole-sentence derivation uniqueness, parse-back of every
   rendered line to the same canonical case, refusals with rewrites in Lean's diagnostic table (the nested-phrase
-  refusal, "the difference between", "on the order of", "on par", "comparable", every symbol). The approximation
+  refusal, "the difference between", "on the order of", "on par", "comparable", every symbol, "A is E" with an
+  expression E (`IsExpression`, statement review J7), and a places phrase that does not name the printed spelling's
+  places (`PlacesMismatch`, J8)). A square link reads back from its two consecutive premises (J10). The approximation
   words "about", "approximately", "roughly" and "nearly" are one row of english-lean's catalogue shared with
   quantities: QT-A6, earlier in the queue, adds it; ME-11 reuses it and adds only what is missing ("on the order of",
   "on par", "comparable"). The engine's rules replace `Render.lean`'s phrase table rather than sitting beside it, and
@@ -1234,8 +1327,8 @@ paper: counts recomputed from committed count tables (V-5). Estimated: H +3.0-4.
   `AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7` (ME-11 is third; QT-E gates QT-A6, ME-11 and QT-B3); additive rules, rebased in
   turn. Generated: `lean/VE/EnglishGrammar/Fixed/*.lean`, `ve/english_grammar/LOCK.json` (a person's
   `--actions-version`), `ve/english_grammar/codes.json`.
-- Fixtures: every wording of 2.11 round-trips, including one rounding sentence per tie rule; the two refused sentences
-  give their rewrites; "standard deviation" alone is refused in authoring.
+- Fixtures: every wording of 2.11 round-trips, including one rounding sentence per tie rule and a derivation with a
+  square link; the refused sentences give their rewrites; "standard deviation" alone is refused in authoring.
 - Seeded bug (Lean): "A minus B" built as B minus A; the round-trip fixture fails.
 - The English authoring milestone needs, beyond ME-10 and ME-11, a pre-registered writing and comprehension eval with
   Sonnet as reader and writer, as in the readability eval; ME-11's parse-back is internal evidence only.
@@ -1247,7 +1340,7 @@ Physics H-1 to H-3 and the theory section; VE paper V-6 to V-8 and the appendix 
 recomputation); the DL target's tables, comparisons and parameter counts if ME-0 pinned one. Estimated: H +1.5-2.5 KB,
 V +10-16 KB (most of it appendix table rows), DL +5-8 KB.
 
-### ME-12. Lean core of `arith@0` (Lean, 5-6 h; independent of ME-1 to ME-11)
+### ME-12. Lean core of `arith@0` (Lean, 5-6 h; after ME-1, whose `VE.Numbers` it imports; independent of ME-2 to ME-11)
 
 - New files: `lean/VE/Arith/{Syntax,Holds,Defs,Bounded,Examples,Wire,Run,Render}.lean`,
   `lean/ResponseShape/Schemas/Arith.lean`, `lean/ResponseShape/Encoders/Arith.lean`, `lean/ARITH.md`, `ve/arith.py`,
@@ -1255,13 +1348,19 @@ V +10-16 KB (most of it appendix table rows), DL +5-8 KB.
 - Proves 3.9's meaning and bounded-evaluation theorems; mode `arith`. A count's meaning is defined through `Holds`;
   the evaluator is proved to agree. The budget is the spec's fuel accounting (one unit per formula-node visit, default
   and maximum 1,000,000).
+- Builds spec 12.5's contract (statement review J3): the `ve-arith@0` request with named variables, its limits, the
+  identity over de Bruijn indices with numerals as canonical decimal strings, the refusals (`UnscopedVariable`,
+  `ShadowedVariable`, `UnknownDefinition`, `RecursiveDefinition`, `ArityMismatch`, `UnboundedCount`), rows that hold,
+  fail or are unknown with their theorems, the deciding value of the outermost bounded quantifier, `runMode_arith` and
+  the encoder theorem; the relay binds each row to its statement.
 - Hand-written shared: as ME-2 and ME-3 (`Protocol.lean`, `service_schema.py`, the `arith@0` row of AR-10's
   profile-gate table with its composition proof and the mode's entry in AR-10's mode registry, `ve/__main__.py`,
   `tools/layer_policy.py`, the assurance manifest, ROADMAP); waits for AR-10's table; no hand-written `Dispatch.lean`
   rows or `ve/profiles.py` rows. Generated: as ME-2 and ME-3.
-- Fixtures: M-1, M-2, M-4, M-4x, M-5; a definition that calls itself refused; an unbounded statement reported "stated,
-  not decided". ME-12 measures M-4 at the candidate bounds 200 and 1,000 and pins the completing bound from that
-  measurement.
+- Fixtures: M-1, M-2, M-4, M-4x, M-5 (with its deciding value n = 1); spec 13.6's R-7 and R-8; a definition that
+  calls itself refused; an unscoped variable and a call of an undefined name refused; an unbounded statement reported
+  "stated, not decided". ME-12 measures M-4 at the candidate bounds 200 and 1,000 and pins the completing bound from
+  that measurement.
 - Seeded bugs: Lean, a bounded quantifier from lo to hi ranges up to hi + 1 (M-5 fails); Python, the relay accepts a
   row for a statement it did not send (the binding fuzz test fails).
 - Bytes: 0.
@@ -1285,10 +1384,11 @@ V +10-16 KB (most of it appendix table rows), DL +5-8 KB.
 
 - New files: `lean/VE/Arith/Import.lean`, `tools/lean_import_check.py` (builds the import project, reads `#print axioms`,
   writes the record; not a test), `tests/test_arith_import.py` (record admission and labels only, hermetic).
-- Proves `Import.admit_sound` and `report_import_labelled`: the record binds the statement's id (one import per
+- Proves `Import.admit_sound`, `Case.import_row` and `Run.import_sound` (spec 12.5, replacing draft 2's
+  `report_import_labelled`, statement review J3): the record binds the statement's id (one import per
   imported conclusion), the digest of VE's meaning sources, the project revision, the declaration and the digest of
   the generated check file whose `theorem check : Defs.Means ⟨D⟩ ⟨φ⟩ := <declaration>` the external build compiled.
-  Admission stays conditional on that external build; imports are always residual support.
+  Admission stays conditional on that external build; imports are always residual support. Fixture: spec 13.6's R-9.
 - Hand-written shared: none beyond ME-12's mode (a new case kind). Generated: as ME-2, plus the meaning-source digest
   file (registered in `tools/regen_generated.py`).
 - Seeded bugs (Lean): `admit` skips the axiom check (a record listing an extra axiom is admitted and its test fails);
@@ -1334,7 +1434,7 @@ listed as a finding). Pass: V's counts bind to raw trials. Fail: they stay bound
 |---|---|---|---|
 | ME-0 | — | `usecases/` new directories only | — |
 | ME-S | draft 2 | `docs/spec/math-evidence.md` (new) | — |
-| ME-1 | ME-S PASS; lands before quantities' QT-A2 | none (`lean/VE/Numbers/` and `lean/VE/Calc/` are new); `ve/english.py` (`_COMPARISONS` read from the generated phrase file) only if QT-E has not moved the phrases | `lean/VE.lean`, `lean/VE/Audit.lean` (union merges), frozen inventory, axioms, statements, predicates, declarations, trust tables, the comparison-phrase file |
+| ME-1 | ME-S PASS (after the bounded re-check of spec 17); lands before quantities' QT-A2 | none (`lean/VE/Numbers/` and `lean/VE/Calc/` are new); `ve/english.py` (`_COMPARISONS` read from the generated phrase file) only if QT-E has not moved the phrases | `lean/VE.lean`, `lean/VE/Audit.lean` (union merges), frozen inventory, axioms, statements, predicates, declarations, trust tables, the comparison-phrase file |
 | ME-2 | ME-1; AR-10's profile-gate table; `fix/main-relay` (main is red since ts-B1); `lean-first/b14d`, `question-answering/q2` and quantities' QT-A3, each of which edits `Protocol.lean` and `service_schema.py`: merged or rebased onto, in the protocol queue's landing order | `lean/VE/Service/Protocol.lean`, `ve/backends/service_schema.py`, the `calc@0` row of AR-10's table, `ve/assurance-manifest.json`, `ROADMAP.md` | response schemas, `lean/ResponseShape.lean`, `lean/ResponseShape/Audit.lean`, checker pins, assurance doc, route cases, AR-10's profile data, gate collection |
 | ME-3 | ME-2; `mig3/py` if it touches `ve/backends/relay.py` | `ve/__main__.py`, `tools/layer_policy.py`, `tests/data/route-cases.jsonl` | `.importlinter`, gate collection |
 | ME-P1 | ME-3 | pilot directories | — |
@@ -1342,11 +1442,11 @@ listed as a finding). Pass: V's counts bind to raw trials. Fail: they stay bound
 | ME-5 | ME-1 | none | as ME-1 |
 | ME-6 | ME-1; lands before quantities' QT-A7 | the W6a unit decoder's version switch (`lean/VE/Time/Wire.lean`) only if `ve-units@2` is decoded there | as ME-1 |
 | ME-P2 | ME-4, ME-5, ME-6 | pilot directories | — |
-| ME-7, ME-8, ME-9 | ME-1 (ME-8 also ME-7 for granularity) | none | as ME-1 |
+| ME-7, ME-8, ME-9 | ME-1 (ME-7 also ME-4 for its column aggregates; ME-8 also ME-7 for granularity) | none | as ME-1 |
 | ME-10 | ME-2; `lean-first/b16g` (or the batch after `b16e` that gives the `document` mode a content hook); the document-mode queue AT-3b, SC-1b, QT-A4, ET-5, WG-4 before it | `lean/VE/Service/Document.lean` (one branch), else one line in `ve/document.py` | as ME-2 |
 | ME-11 | english-lean E3's quantities step (quantities' QT-E; no branch yet); the english-lean E2 flip; AT-5 and QT-A6 before it in the English queue | `lean/VE/EnglishGrammar/*` (serialised queue `AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7`; additive) | English `Fixed/*.lean`, `LOCK.json` (a person's `--actions-version`), English codes |
 | ME-P3 | ME-7 to ME-9 (ME-10, ME-11 for display) | pilot directories | — |
-| ME-12 | ME-S PASS; AR-10's profile-gate table | as ME-2 and ME-3 | as ME-2 and ME-3 |
+| ME-12 | ME-S PASS; ME-1 (`VE.Numbers`: `Verdict`, `UnknownReason`, `Outcome`; statement review J6); AR-10's profile-gate table | as ME-2 and ME-3 | as ME-2 and ME-3 |
 | EX-1 | ME-12 | `imports/` (new), `experiments/math-evidence-EX1/` (new) | — |
 | ME-13 | EX-1 PASS | none | as ME-2 |
 | ME-P4 | ME-12 (ME-13 if built) | pilot directories | — |
@@ -1402,6 +1502,13 @@ above.
   reader is `Run.outcomeAt`; core has no `Nat.choose`, so ME-7 defines `choose`; `arith`'s fuel accounting. Still
   open: Mathlib's name for Bertrand's postulate (no Mathlib was available; EX-1 checks it); whether `Handles` can take
   a data kind without changing its existing theorems (ME-4).
+- **Settled by the statement review** (spec 17; FIX, J1-J11): identities write signed integers as canonical decimal
+  strings for the unchanged frozen encoder; a counted value keeps its mathematical value apart from its operational
+  result, and exhaustion propagates through definitions; every check kind has its meaning, a clause per outcome and a
+  row theorem; `arith@0` has a full request and response contract; one consistency proposition and one name rule;
+  statistics are undefined outside their domains; ME-12 follows ME-1; "Let … be" rewrites, `IsExpression`,
+  `PlacesMismatch`, typed negated filters and visible square links. Open until the bounded re-check: draft 2's
+  statements are not yet type-checked, and its new fixture numbers were computed by hand.
 - **Closed by the cross-plan review**: math-evidence owns the rounding module (`VE.Numbers`, built by ME-1; QT-A2
   proves agreement) and `ve-units@2` (ME-6; QT-A7 consumes it). Quantities' note that "the Lean tree depends on no
   library, so there is no ... rational type" (its plan 2.3) was false, since `lean/Iceberg.lean` uses core `Rat` with
@@ -1432,6 +1539,10 @@ above.
   admitted for its own statement.
 - No symbol appears in any wording or diagnostic; every refusal names a rewrite.
 - Every new trusted line has a signed allowance and a ROADMAP trust-cost line.
+- (Statement review, spec 17.) Every canonical case and environment hashes with the unchanged frozen encoder; every
+  check kind and every outcome has a meaning clause and a row theorem, with fails and unknown rows in `arith@0` too;
+  witness and refutations prove and refute one `Consistent`; a negated filter never selects an absent or mistyped
+  cell; each square link is visible as two premises; statistics are undefined outside their domains.
 
 ## 10. Shared pieces
 
@@ -1487,3 +1598,24 @@ Abstractions several of the seven research-wave designs share, as the cross-plan
     and document-mode queues; the order line.
   - ME-S's statement spec, [math-evidence.md](math-evidence.md), is written with this draft; its statements were
     type-checked and its fixture numbers computed in an untracked stub.
+- Draft 3 (2026-10-13): applies the converged statement review of the spec's draft 1 (Astra + Fable,
+  `manage-agents/debates/math-evidence-spec/`, FIX, CONVERGED after round 2) with the spec's draft 2; no other design
+  change. The spec's section 17 maps each edit to its statements and fixtures, and section 16 (C12-C23) records the
+  readings draft 2 chose.
+  - J1: canonical decimal strings for signed integers in identities; the frozen encoder unchanged (2.2, ME-2, ME-6).
+  - J2: counted values keep the mathematical value and the operational result apart; exhaustion is named and
+    propagates through definitions; `run_unknown` is disjunctive; `runCounted` takes the budget (2.5, 3.1, 3.3, ME-1,
+    ME-4).
+  - J3: every check kind (claim, derivation, consistency, identity) has its meaning, outcome clauses and row theorem;
+    derivations become the claim form `["follows", …]` with a `premises` list; `arith@0` has its request, limits,
+    identity, rows, refusals and deciding values; draft 2's `report_import_labelled` becomes `Case.import_row` (2.1,
+    2.6, 2.10, 2.13, 3.9, ME-2, ME-3, ME-5, ME-9, ME-12, ME-13).
+  - J4: one `Consistent` proposition and one name rule; inputs are kept by the lowering (2.9, 3.7, ME-8).
+  - J5: statistics are undefined outside their domains (2.8, 3.6, ME-7).
+  - J6: ME-12 follows ME-1 (order 7, ME-12, section 6).
+  - J7-J10: "Let … be" rewrites and `IsExpression`; `PlacesMismatch`; typed negated filters; square links shown as
+    two premises (2.5, 2.6, 2.11, ME-4, ME-11).
+  - J11: V-7 names the fourth row; the source-number grammar admits "0"; the EX-1 snippet declares its bridge lemma
+    first and uses the spec's `primeDefs` (4.1, 3.9).
+  - New fixtures (4.4a): I-1, I-2, T-3, T-1's added rows, S-5, C-1, R-1 to R-9; computed by hand, recomputed in the
+    stub at the bounded re-check.
