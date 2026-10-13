@@ -1,6 +1,8 @@
 # Cross-sentence scope (`scope@0`): item-1 specification
 
-> Status: item-1 specification, draft 3, 2026-10-13, design only: no product code, test or generated file changes.
+> Status: item-1 specification, draft 4, 2026-10-13, design only: no product code, test or generated file changes.
+> Draft 4 records the phase-1 results ([docs/research/scope-phase1.md](../research/scope-phase1.md), SC-M0) beside
+> [scope-PLAN.md](scope-PLAN.md) draft 5; it changes no definition, statement or fixture value (9.6).
 > Draft 3 applies the confirmation round's one finding (`manage-agents/scope-p3ver1.final.md`): the document mode
 > calls the run path `governFast`, not `govern` (1.5.8, 5.2, 9.5); no statement changes, and nothing else does.
 > Written from [scope-PLAN.md](scope-PLAN.md) draft 3 (draft 4 adds only that fix), which applies the converged
@@ -20,6 +22,18 @@
 > merges. **Every fixture value in section 7 marked "computed" was produced by `#eval` or `decide` in that stub,
 > not by hand.** Fixtures over the pilot layout use the pilot's own bytes for the units involved, shortened only
 > inside sentences (7.0).
+
+## Changes in this draft (draft 4)
+
+- **No definition, theorem statement, diagnostic or fixture value changes,** so the scratch stub needs no
+  re-elaboration: phase 1 measured the pilots and reproduced the spec's layout, and found nothing a statement
+  depends on (9.6).
+- **7.0:** the layout fixtures L1, F1, F1‴, F2, F2′, F2″ (its pilot half) and F10 are reproduced on the full pinned
+  layout of 1,132 units by SC-M0's independent transcription of 1.2 and 4.1 (C11); B1's input is that layout.
+- **1.2:** a note on what `item` counts on the pilot (182 units: every marker, not only `* ` bullets).
+- **New 9.6:** the phase-1 results that bear on the spec, and one open question for SC-4's section: the reading of
+  u0123.s03 (candidate fixture F15 in plan SC-4).
+- **10:** one checklist line for the phase-1 reproduction.
 
 ## 0. Scope, one paragraph
 
@@ -96,6 +110,10 @@ over the source's UTF-8 bytes `b`:
 | `para` | the number of blank lines (a newline, then only spaces, tabs or CRs, then a newline) before byte `s`; one pass over the bytes gives it for every unit (`paraCounts`) |
 
 Unit ids are distinct (the document loader checks it); the theorems that need it take `(L.map (·.id)).Nodup`.
+
+On the pinned constitution, `item` holds for 182 units: 141 `* ` bullets at depth 0, 37 `+ ` sub-bullets at depth
+1 and 4 numbered items (SC-M0, C7; the research's 141 counted `* ` lines only). Every one of its 23 `lead` units
+(1,600 B) is followed by an item, so the source has no `NotALeadIn` (9.6).
 
 **List run.** For a lead-in `x`: `x.lead` holds and the next unit is an item of some depth `d`. Its governed items
 are the items of depth exactly `d` in the run that follows, where the run continues over every unit that is an item
@@ -1607,6 +1625,13 @@ draft 1 gets wrong: F-sym (its statement is false there, computed), F13-r (its `
 beside draft 2's), and, read directly off draft 1's definitions, F-meta (its `govern` returned the document without
 admitting the block) and F11-a (its `admitBlock` required every anchor governor to sit on the heading).
 
+**Reproduced on the full pilot layout (draft 4).** The layout fixtures above were computed on excerpts of the
+pilot's bytes. Phase 1 (SC-M0, check C11) recomputed L1, F1, F1‴, F2, F2′, F2″'s pilot half (`NotALeadIn:
+u0164.s01`) and F10 on the full pinned constitution, 184,893 B and 1,132 units, with an independent Python
+transcription of `ofSource`, `listRun` and `itemRun` (1.2, 4.1) in `research/scope/sc_m0_tally.py`, and got every
+value of 7.1 and 7.5. That is a second implementation agreeing, not a proof, and not the Lean stub; it shows the
+excerpts did not hide a unit that changes a run. B1 (7.2) runs on the same layout.
+
 ### 7.1 SC-1a (`Examples.lean` by `decide`/`rfl`; `tests/test_scope_lean.py`)
 
 | Id | Fixture | Expected | Direction |
@@ -1891,6 +1916,38 @@ and no unrelated change, and one inconsistency; draft 3 corrects it, and nothing
 |---|---|---|---|---|
 | 16 | 1.5.8 makes `governFast` the run path, but the plan's SC-1b had the document mode call `VE.Scope.govern`, so the service would run the cubic path while B1 measured `governFast` | the document mode calls `governFast`; `scope_admission` keeps its statement over `govern`, and its proof rewrites the call with `governFast_eq` | 1.5.8, 5.2, plan SC-1b | B1 |
 
+### 9.6 Phase-1 results (draft 4)
+
+Phase 1 (SC-M0, [docs/research/scope-phase1.md](../research/scope-phase1.md); evidence in
+`docs/research/evidence/scope/`) recounted the pinned ledgers from the source bytes with the layout of 1.2. Plan
+draft 5, 5.0, records every check with its verdict and what it gates. What bears on this spec:
+
+- **Confirmed, no change.**
+  - The layout definitions: the fixtures of 7.1 and 7.5 over the pilot hold on the full layout (7.0).
+  - The status rule of 1.6 on the pilot: exactly one lead-in, u0164.s02 (22 B), has a wholly admitted run, so F1-doc
+    is the only lead-in whose `governorStatus` is OPEN on the pinned run (C12).
+  - F12 and the absence of far precedence: no unit says "notwithstanding", and "subject to" occurs in 4 units, none
+    a precedence wording; no heading in either source is a When/If clause, so F9 stays synthetic.
+  - The 22 restrictive-connective units, the frozen part of SC-E1's corpus (plan SC-E1), are listed by id in
+    `scope-tally.json`.
+- **Facts the spec now states.** `item` counts every list marker (1.2: 182 units on the constitution). No colon
+  lead-in of the pilot is `NotALeadIn` (1.2).
+- **Open question for SC-4's section, not decided here.** u0123.s03 ("Operators cannot instruct Claude to ...", 351
+  B, OPEN, six rules after act-phrases' AP-3) limits three OPEN permissions, u0062.s01, u0123.s01.p1 and
+  u0123.s02.p1 (613 B). The pinned translation copies its six limits into each permission as open terms and records
+  `scoped_by_source: u0123.s03`. Two readings fit the governors of 1.3, and they differ only where W1's
+  same-predicate rule applies:
+  1. a governor on u0123.s03 with a `carve-out` whose condition is the six limited acts and whose reach is `rules`,
+     naming the three permissions; or
+  2. precedence: the permissions yield to the six prohibitions, written as `precedes` on u0123.s03 over a `rules`
+     reach naming the permissions (W1 precedence, `precedes_edges`), so the prohibitions' `over` names them.
+
+  In both, rule names that act-phrases' AP-3 splits are named through `VE.Acts.SplitMap` (1.8). Either needs only
+  definitions and statements already here (`carveOut_applies` with a `rules` reach; `precedes_edges`), so no
+  statement waits on it. SC-4's section chooses, and the candidate becomes fixture F15 with
+  computed values. The plan's cross-plan issue 1 (u0123.s03 is also AP-3's A14) is the DRI's; until it is answered
+  F15 is a candidate only.
+
 ## 10. Review checklist
 
 - [ ] One reading: every wording of 2.1 and 2.2 maps to one block; ambiguity becomes a reading set or a refusal.
@@ -1914,3 +1971,5 @@ and no unrelated change, and one inconsistency; draft 3 corrects it, and nothing
       AT-3a; SC-3b and SC-5 wait for their addenda (9.4).
 - [ ] Every statement elaborates (stub, Lean v4.24.0, re-elaborated for draft 2), and each repaired contract has an
       executed fixture (9.3); nothing is proved yet.
+- [ ] The layout fixtures hold on the full pilot layout, not only on excerpts (SC-M0's C11, 7.0); draft 4 changes no
+      statement, so the stub was not re-elaborated for it.

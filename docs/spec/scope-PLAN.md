@@ -1,6 +1,9 @@
 # Cross-sentence scope (`scope@0`): plan
 
-> Status: planning draft 4, 2026-10-13, design only. No product code, tests or generated files change. Baseline
+> Status: planning draft 5, 2026-10-13, design only. No product code, tests or generated files change. Draft 5
+> applies the phase-1 results ([docs/research/scope-phase1.md](../research/scope-phase1.md), SC-M0, reviewed FIX and
+> fixed: `manage-agents/scope-ph1-review.final.md`, `manage-agents/scope-ph1-fix.final.md`); the list below names
+> every change, and the rest is draft 4's text. Baseline
 > `main` at `49de179e`. Draft 2 applied the converged design debate (`manage-agents/debates/design-scope/`,
 > Astra + Fable, CONVERGED after round 3: REVISE draft 1, then BUILD) and the DRI's cross-plan synthesis edits 1–8
 > of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`), which are part of the final joint position
@@ -15,7 +18,30 @@
 > where a schema here differs, the spec's statement governs. Names marked *(pinned at spec)* depend on in-flight
 > branches and are fixed there. Byte figures are ledger spans of the pinned runs
 > (`manage-agents/pilots/{claude-constitution,udhr}/run-20261012T1800Z`). Every unlock is an **estimate** until a
-> pilot rerun measures it.
+> pilot rerun measures it. SC-M0 counted the pinned ledgers again from the source bytes; it reran no pilot, so its
+> figures confirm or correct the estimates' inputs, not the unlocks themselves.
+
+## Changes in this draft (draft 5)
+
+- **No batch is added, dropped or reordered,** and no Lean statement changes. Phase 1 reproduced every figure a
+  batch claims (5.0), and the report cancels nothing (phase-1 report 3).
+- **SC-M0:** split into the retrospective tally (**DONE**, 2026-10-13) and the next runs' own tagging
+  (**DEFERRED**, with its trigger). "The 22 colon lead-ins" becomes 23 (1,600 B). The rule for which units count as
+  governors is fixed: a title heading governs nothing (5, SC-M0).
+- **New 5.0, phase-1 results:** each check and experiment with its PASS, FAIL, DONE or DEFERRED and what it gates;
+  each deferred item with its trigger.
+- **Bytes (0 and 5):** each estimate now names its SC-M0 check. SC-1b's +22 B is also the ceiling for lead-ins on the
+  pinned run. SC-5's near-term range narrows from 0–300 B to 0–232 B (the two connective units with no co-blocker).
+  SC-3a, SC-3b and SC-4 stay at 0 B, now measured. The size of the need is new: 221 units, 32,259 B (17.4%) of
+  the constitution would carry `other:scope` under SC-M0's rule.
+- **SC-1a, SC-1b:** the layout fixtures and the B1 input are reproduced on the full 1,132-unit layout (C11).
+- **SC-4:** a candidate fixture F15 for u0123.s03, whose reading is open (a carve-out over a `rules` reach, or
+  precedence edges) and is decided in SC-4's spec section before the build.
+- **SC-E1:** the 22 connective units are frozen by id in the SC-M0 evidence; its scratch script starts from SC-M0's.
+- **Risks (8):** two added, on joint unlocks and on what the would-be count includes and leaves out.
+- **New 10, cross-plan issues for the DRI:** u0123.s03 is also act-phrases' A14 with no shared queue; SC-M0's
+  prompt addition edits the shared pilot prompts; `research/` has no layer. The cross-plan edits (owners, shared
+  items, the queues, the build and landing order) are unchanged.
 
 ## 0. Summary
 
@@ -48,21 +74,30 @@ governed rule written out in full, with one plain sentence saying where each par
 
 The batches, in build order (5):
 
-| Batch | Hours | What it builds | Bytes on the pinned pilots (estimate) |
-|---|---|---|---|
-| SC-M0 | 1–2 | pilot tally; no product code | — |
-| SC-1a | 4–6 | Lean core: lists and lead-ins | 0 |
-| SC-3a | 2–3 | layout anchors (containment moved from discourse), heading and label reaches, titles | 0 pinned |
-| **SC-1b** | 3–5 | on the stack: **first number moves** | **+22 B OPEN** |
-| SC-1c | 3–5 | explain route and relay | 0 |
-| SC-2 | 4–6 | named lists and later qualifications | +68 B LABELLED; +263 B OPEN once attitudes' AT-3a guard decoder lands; fidelity of 874 B |
-| SC-E2 | 2 | experiment: plain-English presentation (Sonnet proxy, preliminary); first run after SC-2, rerun after each batch that adds effects or wordings | — |
-| SC-3b | 2–3 | condition headings and assertion targets, after its approved addendum | 0 pinned |
-| SC-4 | 3–4 | far precedence and forward exceptions | 0 pinned |
-| SC-E1 | 2–3 | experiment: deictic reaches | — |
-| SC-5 | 4–6 | deictic reaches as reading sets, after its approved addendum | up to 4,196 B upper bound; 0–300 B expected in the next two runs |
-| SC-6 | 3–4 | UDHR rights reach | 0 new B; fidelity of 683 B |
-| SC-7 | 4–6 | authoring wordings | — |
+| Batch | Hours | What it builds | Bytes on the pinned pilots (estimate) | SC-M0 check (5.0) |
+|---|---|---|---|---|
+| SC-M0 | 1–2 | pilot tally; no product code | — | retrospective tally **DONE**; next runs' tagging **DEFERRED** |
+| SC-1a | 4–6 | Lean core: lists and lead-ins | 0 | layout fixtures reproduced on the full layout (C11) |
+| SC-3a | 2–3 | layout anchors (containment moved from discourse), heading and label reaches, titles | 0 pinned | measured 0: the 39 headings are titles, already LABELLED |
+| **SC-1b** | 3–5 | on the stack: **first number moves** | **+22 B OPEN**, and no more from lead-ins on the pinned run | C12: u0164.s02 is the only lead-in whose run is wholly admitted |
+| SC-1c | 3–5 | explain route and relay | 0 | — |
+| SC-2 | 4–6 | named lists and later qualifications | +68 B LABELLED; +263 B OPEN once attitudes' AT-3a guard decoder lands; fidelity of 874 B | reproduced (C9) |
+| SC-E2 | 2 | experiment: plain-English presentation (Sonnet proxy, preliminary); first run after SC-2, rerun after each batch that adds effects or wordings | — | not run (DEFERRED) |
+| SC-3b | 2–3 | condition headings and assertion targets, after its approved addendum | 0 pinned | measured 0: no heading in either source is a When/If clause |
+| SC-4 | 3–4 | far precedence and forward exceptions | 0 pinned; u0123.s03's 613 B of copied limits is a one-owner target that moves no bytes (F15, candidate) | measured 0: no "notwithstanding", no precedence "subject to" |
+| SC-E1 | 2–3 | experiment: deictic reaches | — | not run (DEFERRED); its 22 connective units frozen by id |
+| SC-5 | 4–6 | deictic reaches as reading sets, after its approved addendum | up to 4,196 B upper bound; 0–232 B expected in the next two runs | upper bound reproduced (C5); 20 of 22 units co-blocked |
+| SC-6 | 3–4 | UDHR rights reach | 0 new B; fidelity of 683 B | reproduced (U3) |
+| SC-7 | 4–6 | authoring wordings | — | — |
+
+**What phase 1 measured.** On the pinned constitution, 221 units, 32,259 B (17.4% of its bytes) are governors or
+governed units under SC-M0's rule (5, SC-M0; what it leaves out and what it may overcount: risk 10). The unlock
+above is far smaller because the governed units are blocked by their own content: of the 138 units the 23 colon lead-ins govern, 130 are
+UNFORMALISED, with primary tags quantities 30, norms 29, discourse 29, causation 18, defaults 15 and counting 9. So
+past the 22 B of SC-1b and the claims of SC-2, scope's bytes move only together with the plans that own that
+content: up to 1,578 B more of lead-ins as their runs are admitted (the items' own bytes are those plans'). Phase 1
+therefore keeps every batch and its order: SC-1b is still the smallest change that moves a number, and a lead-in's
+bytes are counted only through its governor status, whoever admits the items.
 
 ## 1. The design
 
@@ -387,8 +422,8 @@ The first pilot number moves at **SC-1b**:
   still changing.
 - If lf-16g has merged when building starts, they run as one batch.
 
-Build order (the debate's, unchanged by the cross-plan review):
-1. SC-M0.
+Build order (the debate's, unchanged by the cross-plan review and by phase 1):
+1. SC-M0: the retrospective tally is done (5.0); the next runs' tagging waits for its trigger and gates no batch.
 2. The item-1 spec and its statement review (FIX; draft 2 applies the corrections), then the confirmation round.
 3. SC-1a.
 4. SC-3a, alongside SC-1a or right after it.
@@ -409,17 +444,79 @@ Landing order across the plans (cross-plan synthesis):
 - SC-1/SC-2 land after attitudes and before quantities. SC-2 waits for AT-3a's decoder.
 - SC-3b to SC-7 land after events and before math-evidence.
 
+Phase 1 changes none of these: the retrospective part of SC-M0 has run (5.0), and its deferred part touches files
+shared with the other plans' pilots (10).
+
+### 5.0 Phase-1 results and what they gate
+
+Phase 1 ran on 2026-10-13: [docs/research/scope-phase1.md](../research/scope-phase1.md), the script
+`research/scope/sc_m0_tally.py`, the evidence in `docs/research/evidence/scope/` (`checks.json`,
+`scope-tally.json`, `pilot-prompt-addition.md`). The checks were pre-registered before the script existed; their
+expected values are the figures of draft 4's commit `581d9c02`, and none was re-scored. The review returned FIX on
+two wording points (the would-be `other:scope` rule, the framing of u0123.s03); both were fixed, and `checks.json`
+did not change. `checks.json` holds 18 checks, 13 PASS and 5 FAIL; the report's "15 of 20 pass" (its 2.2) is a
+miscount of the same verdicts, which this table follows.
+
+| Item | Bar | Result | Verdict | What it gates |
+|---|---|---|---|---|
+| SC-M0, retrospective tally over the pinned runs | none ("a tally, not a coverage number") | `scope-tally.json` for both pilots; reproduced byte for byte by the review | **DONE** | nothing; it supplies SC-E1's frozen connective list and the comparison base for the next runs' tags |
+| 18 reproduction checks (C1–C12, C4-tags, U1–U5) | exact equality with the figures of `581d9c02` | 13 PASS; C4, C4-tags, C7, C9, U4 FAIL | 13/18 **PASS** | nothing: every figure a batch claims is reproduced (below) |
+| C12, lead-ins that move now | exactly u0164.s02, 22 B, to OPEN | as expected | **PASS** | SC-1b's +22 B (estimate until SC-1b's pilot rerun) |
+| C11, the layout fixtures on the full layout | the spec's F1, F1‴, L1, F2, F2′, F2″ (u0164.s01), F10 | as expected | **PASS** | SC-1a's and SC-3a's layout fixtures; B1's input |
+| C9, the constitution's 17 named spans | SC-2's 68 B and 263 B, the 874 B, and 14 more | 16 as expected; u0139.s01 is 49 B, not 50 | **FAIL** (on u0139.s01 only) | SC-2's figures, all reproduced; u0139.s01 is no batch's figure |
+| U3, the UDHR's named spans | SC-6's 683 B (u111, u112, u114), u052, u019 | as expected | **PASS** | SC-6's fidelity figure |
+| C5, restrictive connectives | 22 units, 4,196 B | as expected | **PASS** | SC-5's upper bound; SC-E1's corpus |
+| C4, C4-tags, colon lead-ins | 22 units, 1,352 B | 23 units, 1,600 B: u0201.s03's ":" lies past the ledger's 180-character excerpt | **FAIL** | nothing: no batch claims 1,352 B; SC-M0's own count is corrected to 23 |
+| C7, bullet units | 141 | 182: the spec's `item` counts every marker (141 `* `, 37 `+ `, 4 numbered) | **FAIL** | nothing: the spec's definition stands; the research counted `* ` lines only |
+| U4, UDHR preamble | 14 units, 2,004 B | 15 units, 2,017 B with the heading u002 | **FAIL** | nothing |
+| SC-M0, prompt edits and the next runs' own tagging | none | not run | **DEFERRED** | nothing; trigger below |
+| SC-E1, SC-E2 | pre-registered bars (SC-E1, SC-E2 below) | not run; not phase-1 items | **DEFERRED** | SC-E1 gates SC-5; SC-E2 gates presentation wording only |
+
+Deferred items and their triggers:
+
+| Item | Trigger | Owner |
+|---|---|---|
+| The SC-M0 addition to `manage-agents/prompts/pilot-*.txt`, drafted in `docs/research/evidence/scope/pilot-prompt-addition.md` | the next constitution pilot run that the orchestrator schedules; merged with the other plans' prompt changes in one edit (10, issue 2) | the orchestrator |
+| The next runs' `other:scope` tags, `governed_by` and `scope-tally.json` | the first pilot run with the addition; then `sc_m0_tally.py` gives the structural reaches to compare its `governed_by` with (frontier, list-name and `rules` reaches compared by hand) | scope |
+| SC-E1 | build order 11, after SC-4; needs the Sonnet proxy (a model call). Its bar 3 (the frontier computation) was not run in phase 1 | scope |
+| SC-E2 | build order 8, after SC-2 and SC-1c; needs the Sonnet proxy | scope |
+| u0123.s03's reading (F15) | SC-4's spec section, before SC-4 is built; and the DRI's answer on the act-phrases overlap (10, issue 1) | scope, with act-phrases |
+| A layer for `research/` | a `tools/layer_policy.py` change on `main` before the next branch touches `research/` (10, issue 3) | the orchestrator |
+| The research figures the report corrects (research 0, 2.2, 2.4, 2.6: 1,600 B of lead-ins, 49 B for u0139.s01, the preamble without its heading, u0123.s03's measurement), and the report's check count (18 checks, 13 PASS) | the next revision of `docs/research/scope.md` and of the report; this draft cites the evidence instead | scope |
+
 ### SC-M0. Pilot tally (measurement; no product code; 1–2 h)
 
+- **Status.** The retrospective tally is **DONE** (5.0). The prompt edits and the next runs' own tagging are
+  **DEFERRED** to their trigger (5.0); they gate no batch.
 - **Goal.** Make the need measurable. The ledgers record no `other:*` co-blocker, so scope phenomena are filed
   under other tags (research 2.2).
-- **Work.** In the pilot prompts (`manage-agents/prompts/pilot-*.txt`, outside the repository), the next runs:
-  - tag `other:scope` as primary or co-blocker on every governor unit and governed unit;
-  - record `governed_by: [unit ids]` on governed units;
-  - write `scope-tally.json`: units and bytes by reach kind and effect, plus the 22 colon lead-ins and the 22
-    restrictive connectives of research 2.2.
+- **Done (2026-10-13).** `research/scope/sc_m0_tally.py` regenerates the layout of spec 1.2 from each source's bytes
+  (a Python transcription of `ofSource`, `listRun` and `itemRun`, in the scratch script only) and writes
+  `docs/research/evidence/scope/scope-tally.json` for both pilots: units and bytes by reach and effect, the colon
+  lead-ins with their runs, the connective units, `governed_by` and the would-be `other:scope` tags.
+  - Constitution: 23 colon lead-ins (1,600 B), each followed by a list item, so none is `NotALeadIn`; their runs
+    govern 138 units (19,374 B), 8 OPEN. 42 bold labels (8,651 B) and 37 further item units (6,982 B). 39 title
+    headings (349 B, LABELLED) and no When/If heading. 22 restrictive-connective units (4,196 B).
+  - Would-be `other:scope`: **221 units, 32,259 B (17.4%)** under the rule below: 87 governor units (14,447 B) and
+    175 governed units (26,356 B), 41 both. 49 of them (5,019 B) are UNFORMALISED with no co-blocker today, so
+    `other:scope` would be their only recorded co-blocker.
+  - UDHR: no lead-in, label or connective unit; 32 title headings (495 B); the only scope is SC-6's rights reach.
+- **The rule for who governs** (the script and the prompt addition share it): governors are colon lead-ins with a
+  list run, bold-label items, When/If headings and restrictive-connective units; governed units are list-run items,
+  label item units and the units under a When/If heading. **A title heading governs nothing** and is not tagged,
+  nor is the text under it (`title_identity`); the 39 are reported apart. Every bold label counts, since layout
+  cannot tell a title label from a condition label (so some counted labels may be titles). The count leaves out
+  what the connectives govern (their frontier reach, not computed until SC-E1) and the list-name and `rules`
+  governors (u0164.s01, 68 B), which are not structural; in those respects it is a lower bound (risk 10).
+- **Deferred work.** In the pilot prompts (`manage-agents/prompts/pilot-*.txt`, outside the repository), the next
+  runs:
+  - tag `other:scope` as primary or co-blocker on every governor unit and governed unit, under the rule above;
+  - record `governed_by: [unit ids]` on governed units, beside the ledger's existing `scoped_by` and
+    `scoped_by_source` fields rather than as a second record;
+  - write `scope-tally.json`: units and bytes by reach kind and effect, plus the 23 colon lead-ins and the 22
+    restrictive connectives (both listed by id in the SC-M0 evidence).
 - **Moves.** A tally, not a coverage number.
-- **Shared files.** None in the repository.
+- **Shared files.** None in the repository. The deferred part edits the shared pilot prompts (10, issue 2).
 
 ### SC-1a. Lists and lead-ins: Lean core (4–6 h)
 
@@ -520,6 +617,12 @@ theorem governFast_eq (D : SDoc) : governFast D = govern D
 | F-sym | a decoded governor whose payload is not in the block (`block = null`) | the answer holds a string in neither the document nor the block: the binding hypothesis of `govern_no_new_symbols` is needed |
 | F-rs | a governed unit owned by a reading set | `ScopeReadings: <unit>`; an unrelated reading set is returned unchanged |
 
+SC-M0 (C11) reproduced the spec's L1, F1, F1‴, F2 (`listRun u0181.s02`), F2′, F10 and F2″'s pilot half
+(`listRun u0164.s01` is `NotALeadIn`) on the full pinned layout of 1,132 units, through a Python transcription of
+the spec's layout functions (not Lean). Every colon lead-in of the source is followed by a list item, so the "lead-in
+followed by prose" half of F2″ stays synthetic. `item` marks 182 units of the constitution (141 `* `, 37 `+ `, 4
+numbered), as the spec defines it.
+
 - **Bytes.** 0 (no route yet).
 - **Deleted / not duplicated.** No rule field list in scope: decoding is `VE.Readings.Wire.decodeNorm`.
 - **Exit.** `lake build`; the audit; `Examples` by `decide`; seeded Lean bugs (one per theorem family) shown to fail
@@ -588,7 +691,7 @@ theorem scope_absent_unchanged (j : Lean.Json) (h : "scope@0" ∉ profilesOf j) 
 | F1-doc | the pilot's hard-constraint block rewritten with the lead-in part and seven item parts, checked end to end | the seven units OPEN as today; u0164.s02 OPEN |
 | F1-off | the same document without `scope@0` | the `part` contents decode as pending (`decodeContent` returns `.pending` for an unknown key), so the seven units are UNFORMALISED |
 | F1-bad | one item not admitted | u0164.s02 UNFORMALISED |
-| B1 | a `tools/bench` row: F1-doc's document, the full pinned constitution pilot (184,893 B, 1,132 units), through the layout and the run path `governFast` | a benchmark row with its baseline; never a timing assertion in the suite |
+| B1 | a `tools/bench` row: F1-doc's document, the full pinned constitution pilot (184,893 B, 1,132 units), through the layout and the run path `governFast` | a benchmark row with its baseline; never a timing assertion in the suite. The input's layout is the one SC-M0 regenerated (C11) |
 
 - **Pilot.**
   - SC-1b's and SC-2's edits to u0164.s01–s02, u0165.s01–s07 and u0173.s01 are steps 2 and 3 of the
@@ -596,7 +699,10 @@ theorem scope_absent_unchanged (j : Lean.Json) (h : "scope@0" ∉ profilesOf j) 
     first). Each step starts from the translation as the previous step left it.
   - Rerun the constitution with the translation's u0164/u0165 block rewritten (pilot data). The item parts keep
     the guards exactly as AT-0p left them.
-  - Measure: u0164.s02, 22 B, from UNFORMALISED to OPEN (**estimate**).
+  - Measure: u0164.s02, 22 B, from UNFORMALISED to OPEN (**estimate**). SC-M0 (C12) found it the only one of the
+    23 lead-ins whose run is wholly admitted on the pinned run, so 22 B is also the most lead-ins can move there.
+    It holds if the seven rules are still admitted after AT-0p, the step before SC-1b in the queue. u0072.s02's run
+    has one OPEN item of three; every other run is wholly UNFORMALISED.
   - Pre-registered: the seven rules keep their statuses and their `ve document check` answers byte for byte, apart
     from the provenance lines.
 - **Deleted.** In the pilot translation, the restated force in each item ("Every instance of Claude must not")
@@ -718,10 +824,11 @@ theorem listName_run (D : SDoc) (n : VE.Discourse.ContentName) (lead : String) (
 
 F5 moves to SC-7 (F5a, the catalogue check) and to the pilot audit (F5b), 2.1: Lean sees no wording.
 
-**Bytes (estimates):**
+**Bytes (estimates; spans and statuses reproduced by SC-M0, C9):**
 - u0164.s01, 68 B: LABELLED, reported apart from semantic coverage.
 - u0173.s01, 263 B: OPEN, **only** with AT-3a's guard decoder; 0 otherwise.
 - Fidelity: the 874 B of u0165.s01–s07, which the audit judged unfaithful, carry the reading the audit asks for.
+- u0173.s01 begins 4,949 B after u0165.s07 ends (C10), so its reach is a list name, not a neighbouring list.
 
 **Pre-registered:**
 - u0173.s01 is claimed only with the full schema, never with the narrowing `G ∧ K`.
@@ -786,7 +893,10 @@ theorem discourse_anchorsOk_unchanged (D : VE.Discourse.DDoc) :
 | F9′ | `## Instructable behaviors` | title |
 | F10 | u0073.s01 "* **There’s no operator prompt:** ..." | the label reaches u0073.s01–s04 and not the "+ Example:" sub-bullets' own label. Structure only: their content is blocked by graded force |
 
-- **Bytes.** 0 on the pinned runs (estimate). The u0073 block (2,475 B) waits on graded force.
+- **Bytes.** 0 on the pinned runs (estimate; measured by SC-M0). The constitution's 39 headings (349 B) are titles,
+  already LABELLED. Its 42 bold labels (8,651 B) and their 37 further item units (6,982 B) are UNFORMALISED but for
+  u0073.s05 (OPEN), blocked by their own content. The UDHR's 32 headings (495 B) are titles, already LABELLED. The
+  u0073 block (2,475 B) waits on graded force.
 - **Deleted.** Discourse's anchor bodies: the three containment definitions and the anchor checks (moved, not
   copied).
 
@@ -816,7 +926,8 @@ theorem assertion_restrict_denote (C φ : VE.Formula) (S : VE.Structure.{u}) :
 |---|---|---|
 | F9 | synthetic `## When there is no operator prompt` over two rules | each guard gains the condition |
 
-- **Bytes.** 0 on the pinned runs (estimate).
+- **Bytes.** 0 on the pinned runs (measured by SC-M0: no heading in either source is a When/If clause). The batch is
+  kept for authoring and for documents whose headings are conditions; F9 stays synthetic.
 
 ### SC-4. Far precedence and forward exceptions (3–4 h)
 
@@ -858,20 +969,29 @@ theorem forward_exception_sound (D : SDoc) (r a : String) (h : forwardCheck D r 
 | F11″ | edges that close a cycle | W1's `DependencyCycle`, unchanged |
 | F12 | u0047.s05–s06 "That said, we discuss some exceptions to this in the section on “broad safety” below." | the reach is an anchor, but no rules are named, so recorded as residual (`UnresolvedScope`), never guessed |
 | F12-f0 | a forward declaration with no later exception, in a document with no governor | `ScopeForward`, never the document |
+| F15 | **candidate** (SC-M0; not a fixture until its reading is chosen): u0123.s03 "Operators cannot instruct Claude to ..." (351 B, OPEN, six rules of its own) over the three OPEN permissions u0062.s01, u0123.s01.p1 and u0123.s02.p1 (613 B), which the pinned translation gives `scoped_by_source: u0123.s03` and the six limits copied as six open terms each; u0062.s01 ends 38,929 B before u0123.s03 begins | one governor in place of the 18 copied terms. Two readings, decided in SC-4's spec section before the build (spec 9.6): a `carve-out` of the six limited acts over a `rules` reach naming the permissions (SC-2's effect, SC-4's reach), or precedence, the permissions yielding to the prohibitions (`precedes` on u0123.s03 over the same reach, W1 precedence). They differ only where W1's same-predicate rule applies. The `rules` reach names act-phrases' split rules through `VE.Acts.SplitMap` (1.6), since AP-3 splits u0123.s03 into six prohibitions (A14) |
 
-- **Bytes.** 0 on the pinned runs (estimate; the units are co-blocked).
+- **Bytes.** 0 on the pinned runs (measured by SC-M0: no unit says "notwithstanding"; "subject to" occurs in 4
+  units, none a precedence wording). F15 moves no bytes (all four units are OPEN; the audit found u0123.s01.p1
+  FAITHFUL, so the copy is a duplication, not a fidelity failure): it is a one-owner target over 613 B of pilot
+  data, and it waits for the DRI's answer on the overlap with act-phrases (10, issue 1).
 
 ### SC-E1. Experiment: are deictic reaches structural? (2–3 h; no product code)
 
 - **Question.** For "This ..." / "That said, ..." qualifiers, is the intended reach one of the right-frontier
   constituents (previous sentence, its paragraph, the list it closes, the enclosing sections), and is the
   candidate set small?
+- **Status.** Not run: **DEFERRED** to build order 11, after SC-4 (5.0). It needs the Sonnet proxy, a model call.
+  It gates SC-5.
 - **Corpus.** 29 cases, frozen before any annotation:
-  - the 22 restrictive-connective units of research 2.2;
+  - the 22 restrictive-connective units of research 2.2, now frozen by id in
+    `docs/research/evidence/scope/scope-tally.json` (`restrictive_connectives.rows`; reproduced by SC-M0, C5);
   - u0046.s02, u0170.s01 and u0179.s03;
   - the 4 "In particular" units;
   - UDHR u052 and u112.
-- **Method.** A scratch script outside the product applies the frontier rule to the ledger structure (SC-M0).
+- **Method.** A scratch script outside the product applies the frontier rule to the ledger structure. It starts
+  from SC-M0's `research/scope/sc_m0_tally.py`, whose layout reproduces the spec's fixtures (C11); SC-M0 did not
+  compute the frontier, so bar 3 is still blind.
   Two independent annotations of the intended reach:
   - the pilot ledger's note, where it names one;
   - a Sonnet 5.5 human-proxy reading, blind to the frontier output.
@@ -955,13 +1075,17 @@ theorem scope_choices (D : SDoc) (g : Governor) (cs : List (List String)) (hc : 
 | F13″ | a frontier with more than 8 constituents | `ResourceLimit: scope` (UNKNOWN), never a truncated list |
 | F13-r | two candidates: one that fits, and one whose composed rule exceeds the decoder's depth limit | both stay live: `AmbiguousScope`, never the fitting candidate as the unique reach; the reach is not fixed, and under the exhausted choice every dependent verdict is UNKNOWN |
 
-- **Bytes.** Upper bound 4,196 B (the 22 restrictive-connective units). Most are co-blocked; 0–300 B expected in
-  the next two runs (estimate).
+- **Bytes.** Upper bound 4,196 B (the 22 restrictive-connective units, all UNFORMALISED; reproduced by SC-M0, C5).
+  20 of the 22 carry co-blockers (measured). The other two, u0125.s04.p1 (7 B) and u0296.s01 (225 B), are both
+  primary `other:discourse`, so 0–232 B is expected in the next two runs (estimate; draft 4 said 0–300 B). The
+  bytes the connectives govern are not counted here: their frontier reach is SC-E1's.
 
 ### SC-E2. Experiment: the plain-English presentation (2 h)
 
 - **Question.** Can a reader with no training answer applicability questions from the reviewed presentation
   (1.6)?
+- **Status.** Not run: **DEFERRED** to build order 8, after SC-2 and SC-1c (5.0). It needs the Sonnet proxy. It
+  gates presentation wording only; no batch waits for it.
 - **Runs.** The first run follows SC-2 and tests only the effects built so far. SC-E2 reruns after every batch
   that adds effects or wordings (SC-3b, SC-4, SC-5, SC-7). "Every effect" is judged on the last run.
 - **Method.** 20 governed rules: the 7 hard constraints after SC-2 plus 13 synthetic, covering every effect built
@@ -1002,7 +1126,8 @@ theorem limitation_scope_of_reach (D : SDoc) (g : Governor) (L L' : VE.Rights.Li
 | F14′ | u114 (Article 30) | its bar reaches every right line |
 | F14″ | u112 | a two-candidate reading set |
 
-- **Bytes.** 0 new (u111 stays READINGS, u112 OPEN, u114 READINGS). Fidelity of 683 B.
+- **Bytes.** 0 new (u111 stays READINGS, u112 OPEN, u114 READINGS). Fidelity of 683 B (spans and statuses
+  reproduced by SC-M0, U3). SC-M0 found no other scope on the UDHR: no lead-in, label or connective unit.
 
 ### SC-7. Authoring wordings (4–6 h)
 
@@ -1083,7 +1208,9 @@ What is deleted:
   - the force restated in seven items (SC-1b);
   - the per-rule attitude conjuncts and the notes copying u0173.s01 (SC-2; the shared open term
     `restricted_action_knowing_or_quite_likely` is already gone after AT-0p);
-  - the UDHR stand-in term `rights_and_freedoms_set_forth` (SC-6).
+  - the UDHR stand-in term `rights_and_freedoms_set_forth` (SC-6);
+  - if SC-4 adopts F15, the six limits of u0123.s03 copied into each of u0062.s01, u0123.s01.p1 and u0123.s02.p1
+    (after the DRI's answer on 10, issue 1).
 
 ## 8. Risks and questions for the review
 
@@ -1105,6 +1232,14 @@ What is deleted:
    the refusal is explicit, and the author restates the condition once.
 8. **Translation fidelity.** In translation an effect, and a single surviving frontier candidate, is a recorded
    claim. Lean checks reach and composition; source fidelity is the pilot audit's (2.1, F5b).
+9. **Scope's bytes are joint (measured by SC-M0).** Scope touches 17.4% of the constitution's bytes (risk 10), but
+   past SC-1b and SC-2 it moves them only when the plans that own the governed content admit it (0). A coverage
+   gain should be credited to scope and to those plans together, never twice.
+10. **The need figure holds under one rule.** The 221 units and 32,259 B leave out the units the connectives
+    govern and the list-name and `rules` governors, which makes the figure a lower bound, as the report states. It
+    also counts every bold label as a possible condition, and some may be titles, which pulls the other way. The
+    next runs' own tags (5.0, deferred) are compared with the structural reaches before the figure is cited as the
+    need.
 
 ## 9. Shared pieces
 
@@ -1120,3 +1255,39 @@ These are abstractions several of the seven topics could share. The cross-plan r
 | **Provenance sentences** in plain English (which sentence contributes which part) | scope, discourse (reviewed presentation), weighing (decision records), attribution (who said it) | one wording table in Lean per owner, one display format in Python |
 | **Section-scoped declarations** (definitions, sense defaults, units of measure, assumptions) | senses, quantities ("all amounts in this section are in euros"), math-evidence, discourse names (already anchor-scoped) | an `anchor` reach on a declaration, using the same layout tree |
 | **Boundary with phrase grammar** | act-phrases, events | In-sentence coordination, ellipsis and quantifier scope ('every day before') are the phrase grammar's (english-lean's engine and act-phrases). Scope never reads inside a unit, and no other plan assigns sentence-internal scope to scope. |
+
+## 10. Cross-plan issues for the DRI
+
+Phase 1 changes no shared part of this plan: the owners (`SYNTHESIS.md` 2.9), the shared items (3), the build
+order and landing preference (4.1), the shared-file queues (4.2), the explicit dependencies (4.3) and the
+hard-constraint queue (4.4) stand as `edits-scope.md` applied them. Checked against the data:
+- **Queue 4.4.** C12 confirms SC-1b's 22 B on the pinned run, which is before AT-0p. It holds after AT-0p only if
+  the seven rules are still admitted then; SC-1b's pilot step measures it on the translation as AT-0p leaves it.
+- **Build order.** SC-M0's retrospective part is done; its deferred part gates no batch, so SC-1a and SC-3a are
+  not held by it.
+- **`VE.Layout` as the shared layout owner.** C11 confirms the spec's layout on the full 1,132-unit pilot. Plans
+  that read it should know that `item` marks every list marker (182 units: `* `, `+ ` and numbered), not only
+  `* ` bullets (141).
+
+Three issues need the DRI's decision; this plan does not decide them.
+
+1. **u0123.s03 is claimed by two plans, with no queue.** SC-M0 measured u0123.s03's limits copied into three OPEN
+   permissions (u0062.s01, u0123.s01.p1, u0123.s02.p1; 613 B), a one-owner target for SC-4 (F15). Act-phrases'
+   AP-3 rewrites the same four units: its research groups them as "coordinated list folded" (964 B), and its A14
+   splits u0123.s03 into six prohibitions. `SYNTHESIS.md` 4.2 gives these units no queue, unlike u0165.s01–s07,
+   which have queue 4.4. Proposal: a second translation queue, **AP-3 → SC-4**, each step starting from the translation
+   as the previous one left it, which matches the landing preference (AP before SC-3…SC-7). SC-4's `rules` reach
+   then names AP-3's split rules through `VE.Acts.SplitMap`, as cross-plan edit 4 already requires. Until the DRI
+   answers, F15 stays a candidate and moves nothing.
+2. **SC-M0's deferred part edits the shared pilot prompts.** `SYNTHESIS.md` 4.1 lists SC-M0 among the phase-1
+   pilots with AP-0, AT-0p, QT-0p, ET-0, ET-1 and ME-0. Its tagging addition
+   (`docs/research/evidence/scope/pilot-prompt-addition.md`) goes into `manage-agents/prompts/pilot-*.txt`, the
+   files those pilots' runs also use, and the newest prompt (`pilot-20261013T0600Z.txt`) does not have it. 4.2 has
+   no queue for these files. Proposal: the orchestrator merges every plan's pending prompt additions into one new
+   prompt before the next constitution run, so one run carries all of them and each plan's tally reads it.
+3. **`research/` has no layer.** `tools/layer_policy.py` gives layer 5 to `ve_experiments`, `experiments`,
+   `usecases` and `paper` only, so `source_layer('research/scope/sc_m0_tally.py')` is `None` and
+   `tools/select_tests.py` selects every test for any branch that touches the script (368 of 368 on this branch).
+   Several plans append to `tools/layer_policy.py` (SC-1a, AT-3b, QT-A4, ET, AP, ME-3), and 4.2 gives it no queue.
+   Proposal: one change on `main` before the next branch touches `research/`, adding `research` to layer 5, or a
+   rule that such scripts live under `experiments/`. SC-1a's own append is unchanged either way.
