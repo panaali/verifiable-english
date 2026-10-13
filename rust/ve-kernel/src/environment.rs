@@ -539,15 +539,22 @@ impl Environment {
                     format!("Definition '{name}' arguments differ from its declaration"),
                 );
             }
-            let body = decode_formula(&p["body"])?;
-            if has_reach(&body) {
+            // Python decodes only an array body; any other value reaches the typing
+            // check below undecoded, mentioning nothing (Lean `Wire.bodyFault`).
+            let body = match &p["body"] {
+                Value::Array(_) => Some(decode_formula(&p["body"])?),
+                _ => None,
+            };
+            if body.as_ref().is_some_and(has_reach) {
                 return error(
                     "UnsupportedProfile",
                     "definition bodies with reachability require a closure definition layer",
                 );
             }
             let mut mentions = BTreeSet::new();
-            body.predicates(&mut mentions);
+            if let Some(body) = &body {
+                body.predicates(&mut mentions);
+            }
             nodes.push((name.clone(), mentions.into_iter().collect()));
             decoded.insert(name, (signature, body));
         }
@@ -559,9 +566,10 @@ impl Environment {
         let mut result = Vec::new();
         for name in order {
             let (signature, body) = decoded.remove(&name).expect("ordered node");
-            check_in_context(&below, &body, &signature)
-                .map_err(|_| Error::new("InvalidInput",
-                    format!("Definition {name}: the body is not a typed formula over the symbols below it")))?;
+            let not_typed = || Error::new("InvalidInput",
+                format!("Definition {name}: the body is not a typed formula over the symbols below it"));
+            let body = body.ok_or_else(not_typed)?;
+            check_in_context(&below, &body, &signature).map_err(|_| not_typed())?;
             below.predicates.insert(name.clone(), signature.clone());
             // The generated biconditional has the AST limits of any formula,
             // 10,000 nodes and depth 64 (Python checks `premise(definition)`

@@ -257,6 +257,40 @@ def test_direct_definition_diagnostics_are_pythons(target):
     assert differ == []
 
 
+@pytest.mark.parametrize("target", ["derived", "v"])
+def test_identity_bound_definition_diagnostics_are_pythons(target):
+    """The same replacements in the environment's own `defined` payload (the route decodes it,
+    `Wire.decodeBody`): the environment's answer is the retained Python elaborator's on the same
+    entries. A body that is not an array (`7`, `{}`) is never decoded by Python, only typed, so it
+    is `the body is not a typed formula`, not the decoder's `SyntaxError` (the residual of review
+    F2's class, found in the reports fault corpus)."""
+    from ve import definitions
+    raw, _ = case()
+    raw["vocabulary"]["predicates"]["u"] = {"arguments": ["s"], "description": "u"}
+    raw["vocabulary"]["predicates"]["v"] = {"arguments": ["s"], "description": "v", "defined": {
+        "arguments": ["s"], "body": ["and", ["unary", "u", ["var", 0]], ["not", ["bottom"]]]}}
+    env = Environment(raw)
+    seed = env.definition_entries[target]
+    differ = []
+    for at in _paths(seed["body"], ("body",)):
+        for item in REPLACEMENTS:
+            if item is None:  # the restricted JSON reader refuses `null` before any definition
+                continue
+            replaced = _put(seed, at, item)
+            changed = deepcopy(raw)
+            changed["vocabulary"]["predicates"][target]["defined"] = replaced
+            entries = {**env.definition_entries, target: replaced}
+
+            def lean():
+                built = Environment(changed)
+                return compile_definitions(built, built.definition_entries, version=built.environment_id)
+
+            python = _outcome(lambda: definitions._compile_python(env, entries, version=env.environment_id))
+            if _outcome(lean) != python:
+                differ.append((at, item, _outcome(lean), python))
+    assert differ == []
+
+
 def _rust_binary():
     import sys
     sys.path.insert(0, str(ROOT / "tools"))
@@ -283,3 +317,24 @@ def test_definition_arguments_mismatch_quotes_the_name_on_every_engine():
     rust, = three_way.run([str(_rust_binary()), "conformance"],
                           [{"id": "env", **three_way.rust_envelope(raw)}])
     assert rust["status"] == "error" and rust["error"]["message"].endswith(expected), rust
+
+
+@pytest.mark.parametrize("body", [7, True, {}, "x"], ids=["number", "boolean", "object", "string"])
+def test_a_body_that_is_not_an_array_is_untyped_on_every_engine(body):
+    """Python decodes only an array body; any other value is `the body is not a typed formula`
+    (InvalidInput), on Python, the Lean route (environment construction) and Rust, which said
+    `SyntaxError: expected tagged AST array`."""
+    from conformance import three_way
+    from ve.errors import VEError
+    raw, _ = case()
+    raw["vocabulary"]["predicates"]["u"] = {"arguments": ["s"], "description": "u"}
+    raw["vocabulary"]["predicates"]["v"] = {"arguments": ["s"], "description": "v",
+                                            "defined": {"arguments": ["s"], "body": body}}
+    expected = "Definition v: the body is not a typed formula over the symbols below it"
+    with pytest.raises(VEError) as python:
+        Environment(raw)
+    assert (python.value.code, str(python.value)) == ("InvalidInput", expected)
+    rust, = three_way.run([str(_rust_binary()), "conformance"],
+                          [{"id": "env", **three_way.rust_envelope(raw)}])
+    assert rust["status"] == "error" and rust["error"]["code"] == "InvalidInput", rust
+    assert rust["error"]["message"].endswith(expected), rust
