@@ -142,6 +142,10 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 - **Q2.6's reading and writing evaluation**: not run (model calls are forbidden here). The
   [non-model measurement report](../question-answering-report.md) records the fixtures, the budgets and the agreement
   with the existing route on the fixtures and the corpora, with what each corpus could not compare.
+- **D5 bounded statement review**: the DRI's conditional signature calls for an independent Opus or Astra review of
+  the zero-set statements. No model calls are permitted in this task; owner: the orchestrator's independent review.
+  Once RD-3's admission is fast enough for the zero-set case, fold this route into that admission to retire one of
+  the three wire adapters.
 - **A1d route gap (DELTA D6)**: the `norms@0` document with `data@0` flags has no supported answer route, so `ask`
   refuses it with `UnsupportedProfile: norms route with data flags is not implemented`
   (`tests/test_ask_cli.py::test_ve_ask_refuses_the_recorded_unsupported_profile`). A later batch can add that route
