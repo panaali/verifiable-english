@@ -1,0 +1,72 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "tests/test_relay_mutation_gate.py",
+   "claim": "a client whose length check is intact passes the gate on these routes, so the test fails",
+   "source_sha256": "64802abf80fd114b19420ab2e8bc0b83c74861857d09a635f753e3d692a95be9",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 35.7,
+   "output_tail": "ice:evaluate \\w+ results/\\*/result/values\", failures, re.M), failures\nE       AssertionError: allow-list path matches nothing: B5 service:rights drop results/*/result/report/assumptions/*/label\nE         allow-list path matches nothing: B5 service:rights drop results/*/result/report/root/label\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/label\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/name\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/root/label\nE       assert None\nE        +  where None = <function search at 0x78881ccab8a0>('^accepted service:evaluate \\\\w+ results/\\\\*/result/values', 'allow-list path matches nothing: B5 service:rights drop results/*/result/report/assumptions/*/label\\nallow-list path ...eport/assumptions/*/name\\nallow-list path matches nothing: F4 service:rights rebind results/*/result/report/root/label', re.MULTILINE)\nE        +    where <function search at 0x78881ccab8a0> = re.search\nE        +    and   re.MULTILINE = re.M\n\ntests/test_relay_mutation_gate.py:287: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate\n1 failed in 18.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-af2dcuat)\n"
+  },
+  {
+   "id": "M2",
+   "file": "tests/test_relay_mutation_gate.py",
+   "claim": "removing only the envelope's length check leaves the rows' checks, which refuse every asserted mutant",
+   "source_sha256": "64802abf80fd114b19420ab2e8bc0b83c74861857d09a635f753e3d692a95be9",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 38.7,
+   "output_tail": "ice:evaluate \\w+ results/\\*/result/values\", failures, re.M), failures\nE       AssertionError: allow-list path matches nothing: B5 service:rights drop results/*/result/report/assumptions/*/label\nE         allow-list path matches nothing: B5 service:rights drop results/*/result/report/root/label\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/label\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/name\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/root/label\nE       assert None\nE        +  where None = <function search at 0x7e5f698cb8a0>('^accepted service:evaluate \\\\w+ results/\\\\*/result/values', 'allow-list path matches nothing: B5 service:rights drop results/*/result/report/assumptions/*/label\\nallow-list path ...eport/assumptions/*/name\\nallow-list path matches nothing: F4 service:rights rebind results/*/result/report/root/label', re.MULTILINE)\nE        +    where <function search at 0x7e5f698cb8a0> = re.search\nE        +    and   re.MULTILINE = re.M\n\ntests/test_relay_mutation_gate.py:288: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate\n1 failed in 18.86s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ytvi5shp)\n"
+  },
+  {
+   "id": "M3",
+   "file": "tests/test_relay_mutation_gate.py",
+   "claim": "the rights row's own length check (`unit_open` against the request's document) is one the test needs removed",
+   "source_sha256": "64802abf80fd114b19420ab2e8bc0b83c74861857d09a635f753e3d692a95be9",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 39.6,
+   "output_tail": "ult/report/assumptions/*/label\nE         allow-list path matches nothing: B5 service:rights drop results/*/result/report/root/label\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/label\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/name\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/root/label\nE         accepted service:evaluate empty results/*/result/values: empty\nE         accepted service:evaluate duplicate results/*/result/values: duplicate\nE       assert None\nE        +  where None = <function search at 0x788cba9e78a0>('^accepted service:rights \\\\w+ results/\\\\*/result/[\\\\w/*]*unit_open', 'allow-list path matches nothing: B5 service:rights drop results/*/result/report/assumptions/*/label\\nallow-list path ...:evaluate empty results/*/result/values: empty\\naccepted service:evaluate duplicate results/*/result/values: duplicate', re.MULTILINE)\nE        +    where <function search at 0x788cba9e78a0> = re.search\nE        +    and   re.MULTILINE = re.M\n\ntests/test_relay_mutation_gate.py:289: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate\n1 failed in 20.47s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qdy1uf8a)\n"
+  },
+  {
+   "id": "M4",
+   "file": "tests/test_relay_mutation_gate.py",
+   "claim": "the check is removed only by a fresh compiler: validators the module's compiler already holds keep it",
+   "source_sha256": "64802abf80fd114b19420ab2e8bc0b83c74861857d09a635f753e3d692a95be9",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 41.3,
+   "output_tail": "ice:evaluate \\w+ results/\\*/result/values\", failures, re.M), failures\nE       AssertionError: allow-list path matches nothing: B5 service:rights drop results/*/result/report/assumptions/*/label\nE         allow-list path matches nothing: B5 service:rights drop results/*/result/report/root/label\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/label\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/name\nE         allow-list path matches nothing: F4 service:rights rebind results/*/result/report/root/label\nE       assert None\nE        +  where None = <function search at 0x736eb0ce78a0>('^accepted service:evaluate \\\\w+ results/\\\\*/result/values', 'allow-list path matches nothing: B5 service:rights drop results/*/result/report/assumptions/*/label\\nallow-list path ...eport/assumptions/*/name\\nallow-list path matches nothing: F4 service:rights rebind results/*/result/report/root/label', re.MULTILINE)\nE        +    where <function search at 0x736eb0ce78a0> = re.search\nE        +    and   re.MULTILINE = re.M\n\ntests/test_relay_mutation_gate.py:288: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate\n1 failed in 20.06s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-no49975n)\n"
+  }
+ ]
+}
