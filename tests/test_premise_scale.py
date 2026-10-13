@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tests.premise_scale_fixtures import (exactly_chain, exactly_constants, distinct, quantity_environment,
                                           relational_environment, stated_quantities, conjunction)
 from ve.ast import Bottom, formula_from_data
@@ -227,12 +228,13 @@ def test_the_default_limit_grows_with_the_case(monkeypatch):
         seen.append(timeout)
         raise subprocess.TimeoutExpired(argv, timeout)
     monkeypatch.setattr(rust_jsonl, "_run_checker", checker)
+    case = {"id": "search", "environment": quantity_environment(217), "premises": stated_quantities(217),
+            "conclusion": ["bottom"]}
     monkeypatch.delenv("VE_RUST_TIMEOUT", raising=False)
-    env = Environment(quantity_environment(217))
     with pytest.raises(rust_jsonl.RustTimeout):
-        find_countermodel(env, formulas(env, stated_quantities(217)), Bottom())
+        rust_jsonl.run(case)  # no child starts: the stand-in records the limit the call waits
     assert seen == [limit(217)]
-    monkeypatch.setenv("VE_RUST_TIMEOUT", "1234")
+    monkeypatch.setenv("VE_RUST_TIMEOUT", str(HANG_TIMEOUT))
     with pytest.raises(rust_jsonl.RustTimeout):
-        find_countermodel(env, formulas(env, stated_quantities(217)), Bottom())
-    assert seen[-1] == 1234.0
+        rust_jsonl.run(case)
+    assert seen[-1] == float(HANG_TIMEOUT)
