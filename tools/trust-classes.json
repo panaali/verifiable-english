@@ -5471,6 +5471,9 @@
       "G[R]": [
         "VE.Question.Piece",
         "VE.Question.answerFrames",
+        "VE.Question.answerLeadPhrases",
+        "VE.Question.digits",
+        "VE.Question.citationTextValid",
         "VE.Question.pieceReadings",
         "VE.Question.frameReadings",
         "VE.Question.gated",
