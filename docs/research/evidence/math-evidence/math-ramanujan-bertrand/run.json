@@ -8,7 +8,8 @@
    "document_bytes": 12631,
    "document_sha256": "038048d21869f79690f1550ea5d7d2d930b1a3563f35d23e9533d29a66390fe1",
    "check_exit": 0,
-   "admitted": null,
+   "accepted": true,
+   "graph_admitted": null,
    "check_error": null,
    "premises": {
     "status": "model",

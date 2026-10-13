@@ -1,0 +1,7 @@
+{
+  "status": "CheckerUnavailable",
+  "error": {
+    "code": "CheckerUnavailable",
+    "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-pilot-20261013T0600Z/rust/target/release/ve', 'jsonl', '-']' timed out after 4.99764378007967 seconds"
+  }
+}

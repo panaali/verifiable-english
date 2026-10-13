@@ -1,0 +1,463 @@
+{
+ "ledgers": {
+  "H": {
+   "target": "physics-michelson-morley",
+   "source_bytes": 24368,
+   "all_documents_accepted": true,
+   "bytes_by_status": {
+    "LABELLED": 11560,
+    "UNFORMALISED": 10950,
+    "CHECKED": 1858
+   },
+   "checked_percent": 7.62,
+   "checked_bytes_in_certified_consequences": 1582,
+   "checked_bytes_stated_only": 276,
+   "bytes_by_kind": {
+    "exposition": 9591,
+    "equation": 2724,
+    "hedge": 2633,
+    "table": 1829,
+    "empirical claim": 1821,
+    "quantity": 1618,
+    "comparison": 1467,
+    "citation": 1095,
+    "definition": 715,
+    "caption": 513,
+    "meta": 362
+   },
+   "units_by_kind": {
+    "exposition": 65,
+    "equation": 20,
+    "table": 16,
+    "hedge": 13,
+    "caption": 12,
+    "quantity": 11,
+    "empirical claim": 9,
+    "meta": 7,
+    "citation": 7,
+    "definition": 7,
+    "comparison": 6
+   },
+   "unformalised_bytes_by_feature": {
+    "approximation": 2731,
+    "attitudes": 2633,
+    "calc": 2216,
+    "attribution": 1093,
+    "calc-algebra": 752,
+    "events": 679,
+    "quantities": 379,
+    "calc-derive": 222,
+    "calc-data": 153,
+    "calc-dimension": 92
+   },
+   "unformalised_units_by_feature": {
+    "approximation": 18,
+    "calc": 15,
+    "attitudes": 13,
+    "calc-algebra": 6,
+    "attribution": 5,
+    "events": 4,
+    "quantities": 2,
+    "calc-dimension": 2,
+    "calc-data": 1,
+    "calc-derive": 1
+   },
+   "unformalised_bytes_this_plan": 6166,
+   "unformalised_bytes_siblings": 4784,
+   "exposition_share": 0.394,
+   "sources": {
+    "source.txt": {
+     "document_sha256": "20c8f5d732c88b42d767d9707e7cb2ebced8d7ed23e74baae7bcb4a8b275a1e3",
+     "document_bytes": 1219270,
+     "accepted": true,
+     "graph_admitted": true,
+     "premises": {
+      "status": "UNKNOWN",
+      "budget": {
+       "max_proof_steps": 10000,
+       "max_domain_size": 2,
+       "max_models": 10000,
+       "max_evaluations": 100000
+      }
+     },
+     "rust_timeout_raised_to": "1800",
+     "certified_consequences": [
+      "noon_means_are_rounded_means",
+      "noon_second_half_repeats_marks_8_to_16",
+      "noon_final_means_average_opposite_marks",
+      "pm_means_are_rounded_means",
+      "pm_second_half_repeats_marks_8_to_16",
+      "pm_final_means_average_opposite_marks",
+      "table_arithmetic"
+     ],
+     "units": 173,
+     "source_bytes": 24368
+    }
+   },
+   "ceilings_percent": {
+    "this_plan_all_features": 32.93,
+    "this_plan_without_approximation (D17: reading sets, never CHECKED)": 21.72,
+    "also_without_calc_data (DL: the data are figures and supplements, not pinned)": 21.09,
+    "without_imports (EX-1 fails)": 21.72,
+    "with_imports_of_theorem_statements_only": 21.72
+   },
+   "estimates": {
+    "checked": {
+     "estimate": [
+      1500,
+      2500
+     ],
+     "measured": 1858,
+     "inside": true
+    },
+    "size": {
+     "estimate": [
+      30000,
+      40000
+     ],
+     "measured": 24368,
+     "inside": false
+    },
+    "labelled": {
+     "estimate": [
+      13000,
+      16000
+     ],
+     "measured": 11560,
+     "inside": false
+    },
+    "exposition_share": {
+     "estimate": 0.6,
+     "measured": 0.394
+    }
+   }
+  },
+  "M": {
+   "target": "math-ramanujan-bertrand",
+   "source_bytes": 2651,
+   "all_documents_accepted": true,
+   "bytes_by_status": {
+    "LABELLED": 265,
+    "UNFORMALISED": 2386
+   },
+   "checked_percent": 0.0,
+   "checked_bytes_in_certified_consequences": 0,
+   "checked_bytes_stated_only": 0,
+   "bytes_by_kind": {
+    "equation": 953,
+    "proof step": 792,
+    "theorem": 437,
+    "definition": 204,
+    "citation": 144,
+    "meta": 82,
+    "exposition": 39
+   },
+   "units_by_kind": {
+    "equation": 19,
+    "proof step": 15,
+    "theorem": 5,
+    "meta": 4,
+    "definition": 3,
+    "citation": 2,
+    "exposition": 1
+   },
+   "unformalised_bytes_by_feature": {
+    "arith-import": 2114,
+    "arith": 220,
+    "calc-derive": 52
+   },
+   "unformalised_units_by_feature": {
+    "arith-import": 38,
+    "arith": 4,
+    "calc-derive": 1
+   },
+   "unformalised_bytes_this_plan": 2386,
+   "unformalised_bytes_siblings": 0,
+   "exposition_share": 0.015,
+   "sources": {
+    "source.txt": {
+     "document_sha256": "038048d21869f79690f1550ea5d7d2d930b1a3563f35d23e9533d29a66390fe1",
+     "document_bytes": 12631,
+     "accepted": true,
+     "graph_admitted": null,
+     "premises": {
+      "status": "model",
+      "model_id": "3fa3afd49cafcfde9d590e63b9f812ab8c7bb16e798ced19a659a89d926ec3e1"
+     },
+     "rust_timeout_raised_to": null,
+     "certified_consequences": [],
+     "units": 49,
+     "source_bytes": 2651
+    }
+   },
+   "ceilings_percent": {
+    "this_plan_all_features": 90.0,
+    "this_plan_without_approximation (D17: reading sets, never CHECKED)": 90.0,
+    "also_without_calc_data (DL: the data are figures and supplements, not pinned)": 90.0,
+    "without_imports (EX-1 fails)": 10.26,
+    "with_imports_of_theorem_statements_only": 23.24
+   },
+   "estimates": {
+    "checked": {
+     "estimate": [
+      0,
+      0
+     ],
+     "measured": 0,
+     "inside": true
+    },
+    "size": {
+     "estimate": [
+      4000,
+      6000
+     ],
+     "measured": 2651,
+     "inside": false
+    },
+    "exposition_share": {
+     "estimate": 0.15,
+     "measured": 0.015
+    }
+   }
+  },
+  "V": {
+   "target": "ve-paper-e1",
+   "source_bytes": 9937,
+   "all_documents_accepted": true,
+   "bytes_by_status": {
+    "LABELLED": 4088,
+    "CHECKED": 1199,
+    "UNFORMALISED": 4650
+   },
+   "checked_percent": 12.07,
+   "checked_bytes_in_certified_consequences": 382,
+   "checked_bytes_stated_only": 817,
+   "bytes_by_kind": {
+    "exposition": 1931,
+    "meta": 1610,
+    "table": 1503,
+    "quantity": 1443,
+    "definition": 1423,
+    "comparison": 744,
+    "empirical claim": 574,
+    "hedge": 435,
+    "caption": 274
+   },
+   "units_by_kind": {
+    "exposition": 21,
+    "meta": 19,
+    "table": 14,
+    "definition": 13,
+    "quantity": 11,
+    "comparison": 6,
+    "empirical claim": 6,
+    "hedge": 5,
+    "caption": 1
+   },
+   "unformalised_bytes_by_feature": {
+    "calc-stats": 2858,
+    "calc-data": 512,
+    "calc": 469,
+    "attitudes": 435,
+    "approximation": 376
+   },
+   "unformalised_units_by_feature": {
+    "calc-stats": 31,
+    "attitudes": 5,
+    "approximation": 4,
+    "calc": 4,
+    "calc-data": 4
+   },
+   "unformalised_bytes_this_plan": 4215,
+   "unformalised_bytes_siblings": 435,
+   "exposition_share": 0.194,
+   "sources": {
+    "source-04-e1.md": {
+     "document_sha256": "fe788edfa96fe54dad24752db9081776736ce63410441e236236d2458ef4105c",
+     "document_bytes": 57763,
+     "accepted": true,
+     "graph_admitted": true,
+     "premises": {
+      "status": "UNKNOWN",
+      "budget": {
+       "max_proof_steps": 10000,
+       "max_domain_size": 2,
+       "max_models": 10000,
+       "max_evaluations": 100000
+      }
+     },
+     "rust_timeout_raised_to": null,
+     "certified_consequences": [
+      "candidates_partition",
+      "trials_cross_views_and_explanations",
+      "templates_partition",
+      "count_identities"
+     ],
+     "units": 89,
+     "source_bytes": 8883
+    },
+    "source-appendix-per-template.md": {
+     "document_sha256": "6b4576e495b53cc24d4951b96dc070c890c0cf99eba1f4ae065f8bbf5b7589b6",
+     "document_bytes": 34181,
+     "accepted": true,
+     "graph_admitted": null,
+     "premises": {
+      "status": "UNKNOWN",
+      "budget": {
+       "max_proof_steps": 10000,
+       "max_domain_size": 2,
+       "max_models": 10000,
+       "max_evaluations": 100000
+      }
+     },
+     "rust_timeout_raised_to": null,
+     "certified_consequences": [],
+     "units": 7,
+     "source_bytes": 1054
+    }
+   },
+   "ceilings_percent": {
+    "this_plan_all_features": 54.48,
+    "this_plan_without_approximation (D17: reading sets, never CHECKED)": 50.7,
+    "also_without_calc_data (DL: the data are figures and supplements, not pinned)": 45.55,
+    "without_imports (EX-1 fails)": 50.7,
+    "with_imports_of_theorem_statements_only": 50.7
+   },
+   "estimates": {
+    "checked": {
+     "estimate": [
+      300,
+      800
+     ],
+     "measured": 1199,
+     "inside": false
+    }
+   }
+  },
+  "DL": {
+   "target": "dl-alphafold",
+   "source_bytes": 66858,
+   "all_documents_accepted": true,
+   "bytes_by_status": {
+    "LABELLED": 49707,
+    "UNFORMALISED": 12698,
+    "CHECKED": 4453
+   },
+   "checked_percent": 6.66,
+   "checked_bytes_in_certified_consequences": 2548,
+   "checked_bytes_stated_only": 1905,
+   "bytes_by_kind": {
+    "exposition": 19581,
+    "citation": 16048,
+    "meta": 7685,
+    "caption": 6393,
+    "quantity": 5558,
+    "empirical claim": 4835,
+    "comparison": 4030,
+    "definition": 1425,
+    "hedge": 1303
+   },
+   "units_by_kind": {
+    "citation": 381,
+    "exposition": 109,
+    "meta": 96,
+    "caption": 41,
+    "quantity": 37,
+    "empirical claim": 25,
+    "comparison": 17,
+    "definition": 9,
+    "hedge": 6
+   },
+   "unformalised_bytes_by_feature": {
+    "quantities": 3802,
+    "calc-data": 3355,
+    "approximation": 1730,
+    "calc-stats": 1329,
+    "attitudes": 1303,
+    "attribution": 553,
+    "events": 480,
+    "calc": 146
+   },
+   "unformalised_units_by_feature": {
+    "quantities": 20,
+    "calc-data": 15,
+    "approximation": 10,
+    "calc-stats": 8,
+    "attitudes": 6,
+    "attribution": 3,
+    "events": 2,
+    "calc": 2
+   },
+   "unformalised_bytes_this_plan": 6560,
+   "unformalised_bytes_siblings": 6138,
+   "exposition_share": 0.293,
+   "sources": {
+    "source.txt": {
+     "document_sha256": "69e18ea769e263acca05d1a4c64a9095db9353c736cf6367e8fb38bbd4d79ee9",
+     "document_bytes": 268666,
+     "accepted": true,
+     "graph_admitted": true,
+     "premises": {
+      "status": "UNKNOWN",
+      "budget": {
+       "max_proof_steps": 10000,
+       "max_domain_size": 2,
+       "max_models": 10000,
+       "max_evaluations": 100000
+      }
+     },
+     "rust_timeout_raised_to": null,
+     "certified_consequences": [
+      "alphafold_medians_below_alternatives",
+      "point_estimates_inside_their_intervals",
+      "bfd_counts_ordered_as_described",
+      "sampling_shares_sum_to_whole",
+      "one_example_per_core_gives_the_batch",
+      "test_limit_is_training_cutoff",
+      "data_availability_dates_match_methods",
+      "stated_numbers_cohere"
+     ],
+     "units": 721,
+     "source_bytes": 66858
+    }
+   },
+   "ceilings_percent": {
+    "this_plan_all_features": 16.47,
+    "this_plan_without_approximation (D17: reading sets, never CHECKED)": 13.88,
+    "also_without_calc_data (DL: the data are figures and supplements, not pinned)": 8.87,
+    "without_imports (EX-1 fails)": 13.88,
+    "with_imports_of_theorem_statements_only": 13.88
+   },
+   "estimates": {
+    "checked": {
+     "estimate": [
+      2000,
+      4000
+     ],
+     "measured": 4453,
+     "inside": false
+    },
+    "exposition_share": {
+     "estimate": 0.45,
+     "measured": 0.293
+    }
+   }
+  }
+ },
+ "P1_pass": true,
+ "P2_pinned": "AlphaFold (Nature 596, 583-589, doi:10.1038/s41586-021-03819-2)",
+ "P3_pass": true,
+ "P4_pass": false,
+ "P4_counts": {
+  "ANCHORED": 15,
+  "RE-WORDED": 10,
+  "CHANGED": 2,
+  "ABSENT": 0,
+  "NOT A QUOTE": 9
+ },
+ "P4_changed_or_absent": [
+  "H-4",
+  "H-9"
+ ],
+ "P6_pass": true
+}

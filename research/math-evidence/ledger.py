@@ -222,6 +222,7 @@ def main() -> int:
             "premises": checked.get("premises"), "rust_timeout_raised_to": raised,
             "graph_nodes": len(graph["nodes"]) if graph else 0,
             "certified_consequences": [n["name"] for n in graph["nodes"] if "certificate" in n] if graph else [],
+            "graph_leaf_units": [n["unit"] for n in graph["nodes"] if "unit" in n] if graph else [],
             "coverage_exit": ccode, "coverage": coverage}
         print(source_name, "check exit", code, "graph admitted", admitted, "VE_RUST_TIMEOUT", raised)
         print(json.dumps(coverage)[:600] if coverage else ctext[-2000:])

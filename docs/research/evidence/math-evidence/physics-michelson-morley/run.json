@@ -8,7 +8,8 @@
    "document_bytes": 1219270,
    "document_sha256": "20c8f5d732c88b42d767d9707e7cb2ebced8d7ed23e74baae7bcb4a8b275a1e3",
    "check_exit": 0,
-   "admitted": true,
+   "accepted": true,
+   "graph_admitted": true,
    "check_error": null,
    "premises": {
     "status": "UNKNOWN",
@@ -29,6 +30,22 @@
     "pm_second_half_repeats_marks_8_to_16",
     "pm_final_means_average_opposite_marks",
     "table_arithmetic"
+   ],
+   "graph_leaf_units": [
+    "h092",
+    "h093",
+    "h094",
+    "h095",
+    "h096",
+    "h097",
+    "h098",
+    "h100",
+    "h101",
+    "h102",
+    "h103",
+    "h104",
+    "h105",
+    "h106"
    ],
    "coverage_exit": 0,
    "coverage": {

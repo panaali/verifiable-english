@@ -8,7 +8,8 @@
    "document_bytes": 268666,
    "document_sha256": "69e18ea769e263acca05d1a4c64a9095db9353c736cf6367e8fb38bbd4d79ee9",
    "check_exit": 0,
-   "admitted": true,
+   "accepted": true,
+   "graph_admitted": true,
    "check_error": null,
    "premises": {
     "status": "UNKNOWN",
@@ -30,6 +31,24 @@
     "test_limit_is_training_cutoff",
     "data_availability_dates_match_methods",
     "stated_numbers_cohere"
+   ],
+   "graph_leaf_units": [
+    "d024",
+    "d027",
+    "d194",
+    "d197",
+    "d198",
+    "d199",
+    "d201",
+    "d204",
+    "d205",
+    "d219",
+    "d221",
+    "d222",
+    "d232",
+    "d259",
+    "d323",
+    "d324"
    ],
    "coverage_exit": 0,
    "coverage": {

@@ -8,7 +8,8 @@
    "document_bytes": 57763,
    "document_sha256": "fe788edfa96fe54dad24752db9081776736ce63410441e236236d2458ef4105c",
    "check_exit": 0,
-   "admitted": true,
+   "accepted": true,
+   "graph_admitted": true,
    "check_error": null,
    "premises": {
     "status": "UNKNOWN",
@@ -26,6 +27,11 @@
     "trials_cross_views_and_explanations",
     "templates_partition",
     "count_identities"
+   ],
+   "graph_leaf_units": [
+    "v003",
+    "v009",
+    "v082"
    ],
    "coverage_exit": 0,
    "coverage": {
@@ -64,7 +70,8 @@
    "document_bytes": 34181,
    "document_sha256": "6b4576e495b53cc24d4951b96dc070c890c0cf99eba1f4ae065f8bbf5b7589b6",
    "check_exit": 0,
-   "admitted": null,
+   "accepted": true,
+   "graph_admitted": null,
    "check_error": null,
    "premises": {
     "status": "UNKNOWN",
@@ -78,6 +85,7 @@
    "rust_timeout_raised_to": null,
    "graph_nodes": 0,
    "certified_consequences": [],
+   "graph_leaf_units": [],
    "coverage_exit": 0,
    "coverage": {
     "source_bytes": 1054,
