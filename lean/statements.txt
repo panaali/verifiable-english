@@ -31418,6 +31418,11 @@ theorem VE.Service.Diagnose.diagnoseCase_registered
         VE.Service.Diagnose.diagnoseCase j = VE.WireContract.Diagnose.diagnoseCase registered j
   -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.WireContract.Diagnose.Registered@VE.WireContract.Diagnose VE.WireContract.Diagnose.diagnoseCase@VE.WireContract.Diagnose VE.WireContract.Diagnose.units@VE.WireContract.Diagnose
   -- expr 1136295329
+theorem VE.Service.Document.decodeRowKind_json
+  ∀ (rights : Bool) (j : Lean.Json) (k : VE.Service.Document.RowKind),
+    VE.Service.Document.decodeRowKind rights j = Except.ok k → k.json = j
+  -- uses VE.Service.Document.RowKind.json@VE.Service.Document VE.Service.Document.RowKind@VE.Service.Document VE.Service.Document.decodeRowKind@VE.Service.Document
+  -- expr 2427365272
 theorem VE.Service.Family.closureRefutes_sound
   ∀ (names : List String) (E : VE.Environment) (M : VE.Service.Family.ClosureModel E) (Γ : List VE.Closure.Formula)
     (φ : VE.Closure.Formula),

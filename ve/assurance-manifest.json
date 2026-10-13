@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 29352,
+    "total_lines": 29597,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -494,15 +494,16 @@
       },
       {
         "file": "lean/VE/Norms/Admission.lean",
-        "lines": 469,
-        "sha256": "ea1bc557cd7bc5353eb941c720ee19674c7225f3574545a866255c8446aca99d",
+        "lines": 472,
+        "sha256": "33bcac01b062c50a7c18e90fdc10d7f1cf3600177890a2755bff8f906d5a42a0",
         "ranges": [
           [
-            22,
-            49
+            21,
+            52
           ]
         ],
         "declarations": [
+          "normKindText",
           "normRole",
           "splitUnit",
           "splitDocument"
@@ -1056,12 +1057,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 1104,
-        "sha256": "b4401d47cd746f71bc560dcb79ad0d43a91b721ba59d6a7fa282f123a41c8d4c",
+        "lines": 1345,
+        "sha256": "eefa14da52970503028bda5bcdecd1d88165b86277ea26bbc0e27237582fba39",
         "ranges": [
           [
             1,
-            1104
+            1345
           ]
         ],
         "declarations": [
@@ -1071,6 +1072,10 @@
           "noLoneSurrogate",
           "split",
           "environmentOf",
+          "rightsDoc",
+          "rightsContentOf",
+          "softCanonical",
+          "decodeRowKind",
           "contentOf",
           "sourceUnit",
           "unitsOf",
@@ -1080,7 +1085,7 @@
           "check",
           "documentCase"
         ],
-        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates, unit partition and contents, reading sets and their status fold, narrowings, graph admission, statuses and coverage; full file pinned conservatively"
+        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates, unit partition and contents, a rights document's rights source (the rights route's decoder), soft canonical content and statuses, reading sets and their status fold, narrowings, graph admission, statuses and coverage; full file pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Family.lean",
