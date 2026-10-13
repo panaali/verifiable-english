@@ -812,7 +812,7 @@ module ResponseShape.Schemas.Discourse 8353c1b6889628bf6b907396a6ec1572251cbc0f7
 203:0-222:59 def ResponseShape.Schemas.Discourse.joint@ResponseShape.Schemas.Discourse
 224:0-234:42 def ResponseShape.Schemas.Discourse.row@ResponseShape.Schemas.Discourse
 236:0-252:29 def ResponseShape.Schemas.Discourse.file@ResponseShape.Schemas.Discourse
-module ResponseShape.Schemas.Document 93944fa06b194918bf89c6402179dc5f1ee0f8dcf32169c35eff93218eba1279
+module ResponseShape.Schemas.Document ea206e5529cf6a9b5e1f023b2fdc47a85960b8230f048bea63971e1cb4556f97
 11:0-28:54 def ResponseShape.Schemas.Document.unit@ResponseShape.Schemas.Document
 30:0-32:62 def ResponseShape.Schemas.Document.nullable@ResponseShape.Schemas.Document
 34:0-40:53 def ResponseShape.Schemas.Document.soft_exception@ResponseShape.Schemas.Document

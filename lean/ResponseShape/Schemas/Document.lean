@@ -47,7 +47,7 @@ def soft_norm : Shape :=
     closed [("name", str), ("predicate", .type ["string", "null"]), ("sign", .type ["boolean"]),
       ("guard", ref "common.json#/$defs/generated_formula"),
       ("unless", ref "common.json#/$defs/generated_formulas"), ("over", ref "common.json#/$defs/strings"),
-      ("mode", nullable (enumS ["strict", "default"])), ("rank", .type ["string", "null"]),
+      ("mode", .enum [.null, .str "strict", .str "default"]), ("rank", .type ["string", "null"]),
       ("alterable", nullable (ref "common.json#/$defs/strings")),
       ("exception", nullable (ref "#/$defs/soft_exception")), ("hard", .type ["boolean", "null"])]]
 
