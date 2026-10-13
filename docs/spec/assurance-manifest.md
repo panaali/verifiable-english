@@ -151,11 +151,11 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/EnglishGrammar/Run.lean` | 735 | 735 | 1–735 | `f9355148f683…` |
 | `lean/VE/Question/Run.lean` | 219 | 219 | 1–219 | `431e6147b032…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
-| `lean/VE/NormDefaults/Admission.lean` | 350 | 350 | 1–350 | `b60054268019…` |
-| `lean/VE/NormDefaults/Layered.lean` | 445 | 445 | 1–445 | `7e9484be44f9…` |
+| `lean/VE/NormDefaults/Admission.lean` | 350 | 350 | 1–350 | `038a4536b962…` |
+| `lean/VE/NormDefaults/Layered.lean` | 445 | 445 | 1–445 | `a8e5bdb9d1c3…` |
 | `lean/VE/NormDefaults/Replay.lean` | 411 | 411 | 1–411 | `8a6191d5e0bc…` |
 | `lean/VE/NormDefaults/Report.lean` | 519 | 519 | 1–519 | `b4e17dd5611c…` |
-| `lean/VE/NormDefaults/Wire.lean` | 440 | 440 | 1–440 | `3d555723f812…` |
+| `lean/VE/NormDefaults/Wire.lean` | 441 | 441 | 1–441 | `a065b15d37f7…` |
 | `lean/VE/Norms/Admission.lean` | 465 | 24 | 22–45 | `a57c5bf09a15…` |
 | `lean/VE/Norms/Flagged.lean` | 389 | 389 | 1–389 | `2921520480a4…` |
 | `lean/VE/Norms/Replay.lean` | 404 | 69 | 103–151, 283–302 | `741968e0457a…` |
@@ -199,12 +199,13 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Ask/ZeroWire.lean` | 461 | 461 | 1–461 | `9a62220daa1f…` |
 | `lean/VE/Ask/Binding.lean` | 205 | 205 | 1–205 | `d681c27217de…` |
 | `lean/VE/Ask/Run.lean` | 152 | 152 | 1–152 | `fcc0c0d47f68…` |
-| `lean/VE/Ask/Lines.lean` | 651 | 651 | 1–651 | `eb76321532c4…` |
-| `lean/VE/Ask/Render.lean` | 456 | 456 | 1–456 | `dd26af40f362…` |
+| `lean/VE/Ask/Lines.lean` | 651 | 651 | 1–651 | `d3f48533dbce…` |
+| `lean/VE/Ask/Render.lean` | 482 | 482 | 1–482 | `2c61326d01c9…` |
 | `lean/VE/Ask/PlainAnswer.lean` | 118 | 118 | 1–118 | `2c2a2a253778…` |
-| `lean/VE/Ask/ZeroAnswer.lean` | 143 | 143 | 1–143 | `1a032116a1eb…` |
+| `lean/VE/Ask/ZeroAnswer.lean` | 144 | 144 | 1–144 | `327fc754a2b9…` |
 | `lean/VE/Readings/ComponentsWire.lean` | 636 | 636 | 1–636 | `b633797b5624…` |
-| **total** | | **31,616** | | |
+| `lean/VE/Words/Run.lean` | 161 | 161 | 1–161 | `0678825160c8…` |
+| **total** | | **31,805** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
