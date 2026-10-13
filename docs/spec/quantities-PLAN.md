@@ -1,8 +1,10 @@
 # Quantities: plan (counts and proportions; comparisons and graded words)
 
-> **Status.** Draft 2, 2026-10-13, branch `design/quantities` from `main` at `49de179e`. Draft 1 (2026-10-12) plus the
+> **Status.** Draft 3, 2026-10-13, branch `design/quantities` from `main` at `49de179e`. Draft 1 (2026-10-12) plus the
 > converged plan debate (Fable and Astra, rounds 1 and 2) and the cross-plan synthesis edits 1–10 (`SYNTHESIS.md`,
-> 2026-10-13), which settle the debate's rounding dispute. DRI research wave: docs only, no product code, no tests, no
+> 2026-10-13), which settle the debate's rounding dispute. Draft 3 applies the QT-0 statement review's FIX (debate
+> `quantities-spec`, A1–A4, E1–E5, E6a; the spec's section 2.2) wherever this plan states the same thing; no other
+> change. DRI research wave: docs only, no product code, no tests, no
 > generated file touched, no model calls. Research and measurements:
 > [docs/research/quantities.md](../research/quantities.md) (cited as R and a section number). This plan builds R6's
 > recommendation: a pilot repair with the existing language, then two tracks, **A** (`cardinality@0`: counts,
@@ -103,22 +105,32 @@ in "has the right to equal pay" (**rights**, merged).
 
 | English (one reading each) | Meaning |
 |---|---|
+| "There are finitely many FOMC policymakers." | a declaration, not a statement: the sort joins `finite_sorts`; the paraphrase shows it as an assumption ("The document assumes there are finitely many FOMC policymakers.") |
 | "Exactly 16 of the 18 FOMC policymakers expect a further increase." | #policymakers = 18 and #(policymakers expecting a further increase) = 16 |
 | "At least 16 of the 18 FOMC policymakers …" / "At most 2 of the 18 …" | ≥ / ≤ instead of = for the second count |
 | "More than half of the users are curious." | #users > 0 and 2 × #(curious users) > #users; the paraphrase says there is at least one user |
 | "At least 1 in 1,000 of the users intend harm." | #users > 0 and 1,000 × #(users intending harm) ≥ #users; the paraphrase says there is at least one user |
-| "The number of false approvals out of the number of scored decisions rounds to 0.296, to the nearest thousandth with exact ties going up." | d > 0 and `VE.Numbers.RoundsTo .tiesUp ⟨296, 3⟩ (f / d)`, that is (2 × 296 − 1) × d ≤ 2,000 × f < (2 × 296 + 1) × d; the operands are counts or quantities (`CTerm`); "… with exact ties going to the even digit" is `.halfEven` |
-| "The September estimate is exactly 105 percent of the June estimate." / "… is exactly 5 percent more than …" | 100 × sept = 105 × june, june > 0 (same unit tag) |
-| "The September estimate is 105 percent of the June estimate, to the nearest percent with exact ties going up." | june > 0 and `VE.Numbers.RoundsTo .tiesUp ⟨105, 0⟩ (100 × sept / june)` |
+| "The number of scored decisions that are false approvals, divided by the number of scored decisions, rounds to 0.296, rounded to the nearest thousandth with exact ties going up." | d > 0 and `VE.Numbers.RoundsTo .tiesUp ⟨296, 3⟩ (f / d)`, with f the number of scored decisions that are false approvals and d the number of scored decisions, that is (2 × 296 − 1) × d ≤ 2,000 × f < (2 × 296 + 1) × d; the operands are counts or quantities (`CTerm`), each rendered with its whole body; "… with exact ties going to the even digit" is `.halfEven`; the paraphrase says "a value exactly halfway rounds up, to the larger number" |
+| "The September estimate is exactly 105 percent of the June estimate." / "… is exactly 5 percent more than …" (the second only for operands whose unit is not declared with `display: percent`) | 100 × sept = 105 × june, june > 0 (same unit tag) |
+| "The September estimate is 105 percent of the June estimate, to the nearest percent with exact ties going up." | june > 0 and `VE.Numbers.RoundsTo .tiesUp ⟨105, 0⟩ (100 × sept / june)`; the paraphrase says "rounds up, to the larger number" |
 | "GBP 35,000.00", "1,000 users" | thousands separators accepted on input, in groups of exactly three digits ("1,00" is refused) |
 
 Refused, with rewrites (authoring): "most" (rewrite "more than half") and "multiple" (rewrite "at least two"), always,
 whatever QX-1 finds; "many", "few", "several", "a lot of"; bare "16 of the 18" (rewrite with "exactly" or "at least");
 bare "105 percent of" (rewrites "exactly 105 percent of" and "105 percent of, to the nearest percent" with a tie rule);
-"rounds to" with no tie rule (one rewrite per rule); "about". In translation, a bare "16 of the 18" becomes a reading
-set {exactly, at least} with a distinguishing model; a bare "105 percent of" a reading set {exact, rounded}; a "rounds
-to" whose source states no rule a reading set over the rules; "most" and "multiple" reading sets whose members QX-1
-shapes.
+"rounds to" with no tie rule (one rewrite per rule); "about"; "out of" between counts (rewrites with "divided by" for
+each reading); "N percent more/less than" when the operands' unit is declared with `display: percent` (rewrites
+"exactly 105 percent of" and W6a's "… minus … equals 5 percentage points"). In translation, a bare "16 of the 18"
+becomes a reading set {exactly, at least} with a distinguishing model; a bare "105 percent of" a reading set {exact,
+rounded}; a "rounds to" whose source states no rule a reading set over the rules; "N percent more than" on
+percent-displayed operands a reading set {relative, percentage points}; "most" and "multiple" reading sets whose
+members QX-1 shapes.
+
+Which route a count takes is decided in English only (spec 7.1): over a sort declared finite, counts are cardinality
+count atoms; over a sort not declared finite, "at least / at most / exactly N" and "n of the m" use W6a's counting
+sugar within its caps, and beyond the caps, and for proportions and count operands, the sentence is refused with a
+rewrite that adds the declaration sentence. No declaration is added silently; on the wire a count over a sort not
+declared finite is still `CardinalityNotFinite`.
 
 ### 2.2 Environment and wire
 
@@ -126,7 +138,10 @@ shapes.
   `"cardinality": {"finite_sorts": ["fomc_policymaker", …]}` beside W6a's `unit_schema`/`units` (both required; empty
   `units` allowed). Profiles: `cardinality@0` with `order@0`, `relational-fol@0`, `time@0`, and `documents@1` for
   documents. A declared finite sort restricts admissible structures to finitely many objects of that sort; this is a
-  declared assumption shown in the paraphrase ("there are finitely many FOMC policymakers").
+  declared assumption, written "There are finitely many FOMC policymakers." and shown in the paraphrase ("The document
+  assumes there are finitely many FOMC policymakers."). The W6a part is decoded by W6a's own decoder on a projection
+  that removes both cardinality fields and removes `cardinality@0` from `profiles` (W6a's decoder accepts only its own
+  two profile lists).
 - **Statement**: `{"cardinality": {"format": "ve-cardinality@1", "formula": F}}`, with
   `["quantity", S]` (a W6a `ve-quantity@1` tree, unchanged), `["count", sort, [[k, body], …], rel, bound]` (`rel` is
   `lt`, `le` or `eq`; `k`, `bound` canonical integer strings), `["rounds_to", rule, num, den, "0.296"]` (the decimal's
@@ -134,9 +149,10 @@ shapes.
   `["percent_of", part, whole, "105"]` (exact) and its rounded form with a rule, and `not`, `and`, `or`, `implies`.
   Ratio operands are typed terms `CTerm := quantity QTerm | count sort body`, so a ratio can take counts. Bodies:
   `["is", p]`, `["any"]`, `["not", b]`, `["and", b, b]`, `["or", b, b]`.
-- **Identity**: the `meaning_id` is over the whole canonical `ve-cardinality@1` object in the environment-bound
-  domain; the regenerated W6a problem keeps its own W6a identities; reports bind both, as W6a binds annotated and
-  erased identities. Region constants never appear on the wire as input.
+- **Identity**: the original environment's identity and the projection's W6a identities are computed separately and
+  never substituted for each other. The `meaning_id` is over the whole canonical `ve-cardinality@1` object in the
+  cardinality environment's domain; the regenerated W6a problem keeps its own W6a identities; reports carry and bind
+  both, as W6a binds annotated and erased identities. Region constants never appear on the wire as input.
 
 ### 2.3 Meaning and erasure
 
@@ -161,7 +177,9 @@ vocabulary; Lean computes the region sizes by enumeration and runs W6a's existin
 
 At most 8 counted sorts, 6 predicates per counted sort (64 regions), 64 terms per count atom, 512 region constants per
 problem; literals within W6a's 40-digit numeral limit; the erased problem within W6a's 10,000-node aggregate
-(`quantityLimits`). Excess is `ResourceLimit` naming the bound, never a partial answer.
+(`quantityLimits`). Excess is `ResourceLimit` naming the bound, never a partial answer. Within one statement the
+envelope and the source-size preflight come first; then one depth-first, left-to-right pass runs the remaining checks
+in order at each node, with W6a's own order inside a W6a part (spec 4.2).
 
 ## 3. Track B design: `scales@0`
 
@@ -201,8 +219,11 @@ Klein's relations agree). The premises never fix a graded word on any object (`g
 
 - On norm routes, the premises enter as PK-1's `scales` pack (`decls := []`, `labelled := scalePremises D`), placed
   in X by PK-1's fixed order (after attitudes, before events), so a rule guard may use a graded word ("no response
-  gives serious uplift to …") and the conflict, status and unspecified checks see the coherence. A rule whose guard
-  mentions no scale symbol keeps every status (`scales_conflictFree_iff`).
+  gives serious uplift to …") and the conflict, status and unspecified checks see the coherence. What is proved about
+  adding the block is `scales_conflictFree_iff` and no more: when the block is well formed at `envAt (fill U) 0`, no
+  guard, carve-out or definition of the filled document mentions a scale symbol, and no other extra premise in X does,
+  the whole document is conflict-free with the scale premises exactly when it is without them. Nothing is claimed
+  about any one rule's status, or about a document whose guards use a graded word.
 - A **coherence check** of recorded decisions (the layered-route kind `scales-coherence`, run on the decoded
   `LayeredU` with the assembled X): given ground facts (grade decisions, recorded comparisons), Lean answers COHERENT
   with a finite model of the facts and X, checked by Lean; INCOHERENT with a refutation of the facts plus the
@@ -539,6 +560,8 @@ Fixtures (`Examples.lean`, `#guard`):
 - **FA8 (hostile)**: a count over a sort not declared finite (`CardinalityNotFinite`); a body with a binary
   predicate; seven predicates on one sort (`ResourceLimit`); a vocabulary symbol beginning `cardinality__`; a body
   predicate of another sort.
+- **Admission is preserved**: the spec's statement (3.6) adds `erasedProblem_admitted` (every formula of the erased
+  problem is W6a-admitted in `E.elab`), proved here, with FA1's and FA4c's erased problems as its examples.
 
 Seeded bug: `Body.inRegion` reads `not b` as `b`; FA1's certificate replay and FA1b's countermodel `#guard`s fail.
 Bytes: 0. Done when `lake build`, `lean/audit.py` and the `#guard`s pass and `lean/statements.txt` shows additions only.
@@ -575,11 +598,16 @@ names its tie rule, for example "… rounds to 0.296, rounded to the nearest tho
 Fixtures (from VE's paper, `paper/sections/04-e1.md`): FA4 "176 out of 594 rounds to 0.296" true (591 × 594 = 351,054
 ≤ 352,000 < 352,242 = 593 × 594) and "rounds to 0.297" false; "52 out of 243 rounds to 0.214", "31 out of 243 rounds
 to 0.128", and their difference "21 out of 243 rounds to 0.086" (41,553 ≤ 42,000 < 42,039); "0.30" against "0.3" (two
-places against one: different claims); news FA5 "the September estimate out of the June estimate rounds to 1.028" true
-(2,055 × 360 = 739,800 ≤ 740,000 < 740,520 = 2,057 × 360) and "about 103 percent" refused (no "about"). The tie
-fixture is one fixture per rule: "1 out of 8 rounds to 0.13" holds and "0.12" fails under `tiesUp`; the reverse holds
-under `halfEven`. Seeded bug: the upper bound erased with `≤`; the `tiesUp` tie fixture "1 out of 8 rounds to 0.12"
-becomes true and its `#guard` fails. Bytes: 0 on the pilots; VE's paper unmeasured.
+places against one: different claims); news FA5 "the September estimate divided by the June estimate rounds to
+1.028" true (2,055 × 360 = 739,800 ≤ 740,000 < 740,520 = 2,057 × 360) and "about 103 percent" refused (no "about").
+The tie fixture is one fixture per rule: "1 out of 8 rounds to 0.13" holds and "0.12" fails under `tiesUp`; the
+reverse holds under `halfEven`. FA4d: with 3 unscored false approvals, "the number of scored decisions that are false approvals,
+divided by the number of scored decisions" rounds to 0.296 while "the number of false approvals, divided by …" rounds
+to 0.301 (the two readings "out of" allowed). FA4e: −1/2 rounds to 0, not −1, under `tiesUp`, for a ratio and a
+percent ("to the larger number"). FA5b: on FA5's percent-displayed operands, "exactly 105 percent of" and "… minus …
+equals 5 percentage points" separate at September 378 and 860 (June 360). Seeded bug: the upper bound erased with
+`≤`; the `tiesUp` tie fixture "1 out of 8 rounds to 0.12" becomes true and its `#guard` fails. Bytes: 0 on the pilots;
+VE's paper unmeasured.
 
 ### QT-A3. Wire and service mode `cardinality` (Lean, 5–6 h)
 
@@ -628,10 +656,15 @@ end ResponseShape.Encoders.Cardinality
 (`CardEnv`, `CAdmission`, `CardCertificate`, `CardReport.Sound` and `admitDocument` are this batch's, following
 `VE.Time.Wire.W6Env`, `Admission`, `W6Certificate` and `VE.Time.Document`; the decoder proves the decoded `CEnv` is
 `WellFormed`; `ResponseShape.Fits` stands for the predicate the existing encoder theorems use, named in QT-0.)
+The W6a part of the environment is decoded by `VE.Time.Wire.decodeEnvironment` on the spec's projection `projectW6`
+(both cardinality fields and `cardinality@0` removed); `CardEnv.environmentId` is the original environment's identity
+and `CardEnv.w6` carries the projection's W6a identities, bound separately.
 Fixtures: FA1 and FA1b as route cases; the hostile set
 of QT-A1 at the wire (each diagnostic in the order of section 2.4); a forged region table and a forged claimed erased
-problem, both refused. Seeded bug: the decoder accepts a count whose sort is not in `finite_sorts`; the hostile route
-case fails. Bytes: 0.
+problem, both refused; FA11, a cardinality environment that decodes through the projection, and a certificate bound
+to the wrong one of the two identities, refused; FA13, the competing-fault cases (one node with two faults, two
+faulty nodes, an operand's fault before its node's tag mismatch). Seeded bug: the decoder accepts a count whose sort
+is not in `finite_sorts`; the hostile route case fails. Bytes: 0.
 
 ### QT-A4. Python relay, document hook, fuzz tests (Python, 6–7 h, **estimate**)
 
@@ -680,15 +713,19 @@ test corpora (`tests/test_time_surface_w6a.py` and the W6a regression files). Sh
 
 In the serialised English queue on `lean/VE/EnglishGrammar/*`: AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7; QT-E gates QT-A6,
 ME-11 and QT-B3, not AT-5. Rules in the engine (new rule module files if E3's layer mechanism allows, else additive
-lines): the wordings of section 2.1, rendering that parses back to the same canonical `F` (the per-output check of
-english-lean 3.5). QT-A6's refusals and translation reading sets are rows in english-lean's catalogue, with no
+lines): the wordings of section 2.1, including the sentence that declares a sort finite, rendering that parses back to
+the same canonical `F` (the per-output check of english-lean 3.5), and the dispatch of counts by declared finiteness
+(spec 7.1). QT-A6's refusals and translation reading sets are rows in english-lean's catalogue, with no
 separate table: "most", "many", "few", "several", "a lot of" (and "multiple"); bare "16 of the 18"; bare "105 percent
-of"; "rounds to" with no tie rule; "about". "About", "approximately", "roughly" and "nearly" form **one** catalogue
+of"; "rounds to" with no tie rule; "about"; "out of" between counts; "N percent more/less than" on percent-displayed
+operands; a proportion, or a count beyond W6a's caps, over a sort not declared finite (the rewrite adds the
+declaration). "About", "approximately", "roughly" and "nearly" form **one** catalogue
 row shared with math-evidence: QT-A6 adds it, being earlier in the queue, and ME-11 reuses it. Fixtures: every wording
 of 2.1 round-trips; FA6 "GBP 35,000.00" lowers to 3,500,000 `gbp_penny` (eligibility's probe P4 now accepted; W6a's
 canonical rendering is unchanged, separators are an input alias in groups of exactly three digits, "1,00" refused);
-FA7 bare "16 of the 18" refused with both rewrites. Seeded bug: "at most n of the m" built as "at least"; the
-round-trip fixture fails. Bytes: 0 (readability of QT-A5's content).
+FA7 bare "16 of the 18" refused with both rewrites; FA4d's and FA5b's wordings; FA4e, a tie-up paraphrase at a
+negative half; FA12, the declaration's paraphrase and each dispatch case. Seeded bug: "at most n of the m" built as
+"at least"; the round-trip fixture fails. Bytes: 0 (readability of QT-A5's content).
 
 ### QT-A7. Exact duration conversions through `ve-units@2` (Lean, Python, 4–5 h; on trigger)
 
@@ -743,8 +780,9 @@ structure ScaleDoc where
 /-- The grade order of a dimension is a QS-1 `Order` (no closure of this plan's own). -/
 def gradeOrder (d : Dimension) : VE.Closure.Order String := ⟨d.grades.map (·.name), d.above⟩
 
-/-- Predicates declared with the right signatures; grades are W2 open terms; one dimension per predicate; `above`
-pairs within one dimension and one direction, acyclic by `VE.Route.kahn`; `comparable` only with `same`. -/
+/-- Predicates declared with the right signatures; grades are W2 open terms; one dimension per predicate; no two
+premises share a label (so no two dimensions share a name and no `above` pair is repeated); `above` pairs within one
+dimension and one direction, acyclic by `VE.Route.kahn`; `comparable` only with `same`. -/
 def WellFormed (E : VE.Environment) (openTerms : List String) (D : ScaleDoc) : Bool
 
 /-- Labelled premises of one dimension (section 3.2); every body is quantifier-free under universal binders. -/
@@ -825,6 +863,10 @@ obligation of PK-1's `scales` pack (QT-B2). -/
 theorem premises_wellTyped (E : VE.Environment) (ots : List String) (D : ScaleDoc) (hD : WellFormed E ots D = true) :
     ∀ a ∈ (scalePremises D).map (·.2), a.WellFormed E []
 
+/-- **One premise per label**: a reported label or instance, and its `origins` entry, names one premise. -/
+theorem scalePremises_labels_nodup (E : VE.Environment) (ots : List String) (D : ScaleDoc)
+    (hD : WellFormed E ots D = true) : ((scalePremises D).map (·.1)).Nodup
+
 end VE.Scales
 ```
 
@@ -835,8 +877,10 @@ as symbols whose meaning the old document did not constrain.) Fixtures (`Example
   `serious_uplift` with factor "what counts as serious uplift"). Decisions "r1 gives serious uplift", "r2 gives more
   uplift than r1", "r2 does not give serious uplift": refuted, the failing premise being upward closure.
 - **FB2 (u0226.s01, s02)**: dimension `autonomy` on sort `disposition` with constants `fully_corrigible` and
-  `fully_autonomous` and the facts that every other disposition lies strictly between them; "a disposition more
-  autonomous than fully autonomous" is refuted.
+  `fully_autonomous`, the facts that every other disposition lies strictly between them, and the endpoint premise
+  "Fully autonomous is more autonomous than fully corrigible."; "a disposition more autonomous than fully autonomous"
+  is refuted. Without the endpoint premise it is not: with no other disposition, fully corrigible may be above fully
+  autonomous (that countermodel stays a fixture). QT-B4 must justify the premise from u0226's text.
 - **FB3 (u0043.s01)**: dimension `trust` on `principal_type`; "different levels of trust" as a reading set {not all
   the same; pairwise different}, with a distinguishing model.
 - **FB4 (UDHR u094)**: dimension `social_protection` on `child` with `same`; "all children enjoy the same social
@@ -846,7 +890,8 @@ as symbols whose meaning the old document did not constrain.) Fixtures (`Example
   majority implies more than half" waits for a proved bridge from scales to cardinality (QX-4's plan item); no
   fidelity credit is claimed for it.
 - **FB8 (hostile)**: a comparative on an undeclared dimension; an `above` cycle (`ScaleCycle`, from `VE.Route.kahn`'s
-  diagnostic); `above` across directions; `comparable` without `same`; a graded word that is not a W2 open term.
+  diagnostic); `above` across directions; `comparable` without `same`; a graded word that is not a W2 open term; two
+  dimensions with one name; a repeated `above` pair (both rejected for duplicate labels, not deduplicated).
 
 Seeded bug: the lower-direction closure generated with the comparative reversed; FB1's lower twin (a "minor harm"
 fixture) is accepted wrongly and its `#guard` fails. Bytes: 0.
@@ -878,10 +923,10 @@ namespace VE.Scales
 
 /-- With no guard and no other extra premise mentioning scale structure, conflict-freedom is unchanged. -/
 theorem scales_conflictFree_iff (U : VE.NormDefaults.UDoc) (X : List VE.Formula) (ots : List String)
-    (D : ScaleDoc) (hD : WellFormed (VE.NormDefaults.envAt U.D 0) ots D = true)
+    (D : ScaleDoc) (hD : WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) 0) ots D = true)
     (hguards : GuardsFresh U D) (hX : ∀ a ∈ X, Fresh D a) :
-    VE.NormDefaults.ConflictFreeX.{u} U X ↔
-      VE.NormDefaults.ConflictFreeX.{u} U (X ++ (scalePremises D).map (·.2))
+    VE.NormDefaults.Wire.ConflictFreeX.{u} U X ↔
+      VE.NormDefaults.Wire.ConflictFreeX.{u} U (X ++ (scalePremises D).map (·.2))
 
 /-- A coherence answer is sound: INCOHERENT carries a refutation of the facts plus the generated premises, checked by
 Lean, and lists the premise instances it uses; COHERENT carries a finite model of the facts and X, checked by Lean;
@@ -892,12 +937,16 @@ theorem coherence_sound (E : VE.Environment) (X : List (String × VE.Formula)) (
 end VE.Scales
 ```
 
-(`GuardsFresh`, `CoherenceResult.Sound` and `checkCoherence` are this batch's.) Fixtures: FB1 as a coherence case;
-the three-step cycle r1 > r2, r2 > r3, r3 > r1 (no single premise instance is false in every model of the facts; the
-refutation uses two transitivity instances and irreflexivity); the constitution's main document with an empty scales
-block, whose carried probes stay byte-identical (FB7). Seeded bugs: Lean, the block's premises dropped on one reading
-choice (an enumerated fixture fails); Python, the binding check skips an instance's label (a fuzz mutant passes and
-the test fails). Bytes: 0.
+(`GuardsFresh`, `CoherenceResult.Sound` and `checkCoherence` are this batch's; the spec, 6.3, gives their statements.
+`scales_conflictFree_iff` is stated at `envAt (fill U) 0`, the environment of the pack's typing obligation.) By
+`scalePremises_labels_nodup`, each label in `origins` and in a reported instance names one premise. Fixtures: FB1 as
+a coherence case; the three-step cycle r1 > r2, r2 > r3, r3 > r1 (no single premise instance is false in every model
+of the facts; the refutation uses two transitivity instances and irreflexivity); `scales_conflictFree_iff` with a
+nonempty block and every hypothesis holding, conflict-free with and without it (FB9) and conflicting with and without
+it (FB10); and, as a separate regression, the constitution's main document with an empty scales block, whose carried
+probes stay byte-identical (FB7). Seeded bugs: Lean, the block's premises dropped on one reading choice (an
+enumerated fixture fails); Python, the binding check skips an instance's label (a fuzz mutant passes and the test
+fails). Bytes: 0.
 
 ### QT-B3. Scale and graded-word wordings in Lean (Lean, 4–5 h)
 
@@ -913,6 +962,9 @@ research, R5.2). Fixtures: each wording round-trips; each refusal names its rewr
 
 ### QT-B4. Pilots (pilot tooling, 3 h)
 
+- FB2's endpoint premise ("Fully autonomous is more autonomous than fully corrigible.") is used only with u0226.s01's
+  own words for it ("a disposition dial that goes from fully corrigible … to fully autonomous"), accepted by the
+  audit; otherwise FB2's refutation is not claimed.
 - Constitution companion, then main document: FB2 (dial, u0226.s01 and s02, 680 B), FB3 (u0043.s01, 101 B), FB1 and
   FB6 for the hard constraints u0165.s01 to s06 (826 B, already OPEN) only if QX-2 passes. QT-B4's edits to
   u0165.s01–s06 sit in the hard-constraint queue: they come after AT-0p → SC-1b → SC-2 → AT-6a/AT-6b → WG-5, then run
@@ -1094,6 +1146,11 @@ at most about 0.29 (R2.6); the buildable part of this plan alone: about 0.19 sum
   1 out of 8 tie under each rule, duration-to-date cast).
 - Every refusal names a rewrite in plain English; no symbol appears in any wording or diagnostic.
 - Every new trusted line has a signed allowance and a ROADMAP trust-cost line.
+- The statement review's corrections (spec 2.2): the W6a projection decodes and its identities are bound apart from
+  the original's; FB2 states its endpoint premise; each premise label names one premise; only the actual guarantee
+  of `scales_conflictFree_iff` is claimed; ratio operands use "divided by"; percentage changes on percent-displayed
+  operands are refused; finite sorts are declared in English and counts dispatch by them; tie-up paraphrases say "to
+  the larger number"; `erasedProblem_admitted`; the diagnostic order is pinned.
 
 ## 10. Shared pieces
 
