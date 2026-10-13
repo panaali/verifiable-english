@@ -526,9 +526,9 @@ def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption
     monkeypatch.setattr(gate, "POLICY", policy)
     monkeypatch.setattr(gate, "COLLECTION", collection)
     monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
-    # This case injects an interruption at Lean build; the trace scan needs a
-    # toolchain that the mocked setup intentionally does not install.
-    monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda *args, **kwargs: [])
+    # This case skips toolchain setup and interrupts Lean build; the trace scan
+    # would otherwise seek Lean under the gate's isolated HOME.
+    monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda lean, env: [])
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
 
     def fake_command(args, *, env, stage, cwd=None):

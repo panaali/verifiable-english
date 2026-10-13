@@ -1,0 +1,72 @@
+{
+ "lean_statements_check": [
+  "added: 0",
+  "removed: 0",
+  "changed: 0",
+  "PASS: 5330 statements, the predicate list and the declaration list unchanged"
+ ],
+ "lean_statements_diff_base_to_head": {
+  "base": "8b9927f2",
+  "added": 528,
+  "removed": 0,
+  "changed": 0,
+  "lines": [
+   "added: 528",
+   "removed: 0",
+   "changed: 0"
+  ]
+ },
+ "audit_check": [
+  "PASS: 481 source files; 5780 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist."
+ ],
+ "trust_map_since_base": [
+  "class lines: K 997, S 9791, D 13777, G 26636, C 8329, P 70985, T 14661, o 12170",
+  "tied 178, unclassified 0, trusted 47553 (K + S + untied [V] + unclassified), 157346 lines in 479 files",
+  "against the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0",
+  "PASS: K, S and untied [V] within cc534bfc571de0f140fecc7acefee65fcdfb8ad9 and the allowances signed since"
+ ],
+ "frozen": "PASS: frozen Lean sources and Main.lean subcommands unchanged",
+ "check_lean_imports": "Lean layer graph kept (481 modules, 22 reviewed legacy edges)",
+ "manifest_import_build_noop_seconds": 2.4,
+ "audit_check_note": "run on the merge 372652cf with main 8b9927f2 (rd6b): 5330 in VE/Audit.lean, 450 in ResponseShape/Audit.lean; the final gate's audit stage is in gate-result.json.",
+ "trust_map_check": [
+  "tied 178, unclassified 0, trusted 47690 (K + S + untied [V] + unclassified), 158648 lines in 481 files",
+  "against the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0",
+  "PASS: K, S and untied [V] within the baseline and its signed allowances"
+ ],
+ "regen_generated_check": "regen_generated: checked 24 entries (after the merge of main 8b9927f2)",
+ "merge_resolution": "conflicts in both Audit.lean, axioms.txt, declarations.txt, statements.txt, frozen-sources.sha256 only: took main's side, lake build, lean_statements.py, audit.py --write, frozen.py --write",
+ "audit_wall_time_seconds": {
+  "machine": "32 cores, load average 45-90 (other workers), 2026-10-11",
+  "base_5479466f_manifests_sequential": {
+   "lean/VE/Audit.lean": 1235,
+   "lean/ResponseShape/Audit.lean": 232,
+   "sum": 1467
+  },
+  "head_manifests_sequential": {
+   "lake build imports": 2,
+   "lean/VE/Audit.lean": 1365,
+   "lean/ResponseShape/Audit.lean": 221,
+   "audit.py total": 1820
+  },
+  "head_manifests_in_parallel": {
+   "test_lean_transitive_axiom_allowlist (audit.py)": 1234,
+   "note": "two lean runs (one per manifest), load average about 70"
+  },
+  "note": "audit.py splits each manifest's #print axioms lines into runs of at most PART = 400 theorems (each importing its theorems' declaring modules) and runs them at once; output order, checks and axioms.txt unchanged",
+  "gate_db470d0c": "the full gate's own lean_audit stage passed; test_lean_transitive_axiom_allowlist (two runs) timed out at 1800 s at load average 140-160, and again on the serial --rerun-failed at load 165 (R13 does not apply)",
+  "head_parts_of_750": {
+   "test_lean_transitive_axiom_allowlist (audit.py)": 1213,
+   "load_average": "155-177"
+  },
+  "head_parts_of_400": {
+   "test_lean_transitive_axiom_allowlist (audit.py)": 606,
+   "load_average": "138-160",
+   "runs": "14 (VE) + 2 (ResponseShape)"
+  },
+  "one_run_imports_only": {
+   "cpu_seconds": 1.56,
+   "max_rss_kb": 1472360
+  }
+ }
+}
