@@ -1,0 +1,27 @@
+{
+ "units": 10,
+ "agreements": 10,
+ "observed_agreement": 1.0,
+ "chance_agreement": 0.82,
+ "cohen_kappa": 1.0,
+ "first_reader_ii": 1,
+ "second_reader_ii": 1,
+ "disagreements": [],
+ "post_hoc_contested": [
+  {
+   "id": "u0200.s01",
+   "first": "i",
+   "second": "ii"
+  },
+  {
+   "id": "u0221.s04",
+   "first": "i",
+   "second": "ii"
+  },
+  {
+   "id": "u0274.s02",
+   "first": "i",
+   "second": "iv"
+  }
+ ]
+}
