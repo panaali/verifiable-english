@@ -1,17 +1,22 @@
 # Cross-sentence scope (`scope@0`): item-1 specification
 
-> Status: item-1 specification, draft 1, 2026-10-13, design only: no product code, test or generated file changes.
-> Written from [scope-PLAN.md](scope-PLAN.md) draft 2, which applies the converged Astra + Fable design debate
+> Status: item-1 specification, draft 2, 2026-10-13, design only: no product code, test or generated file changes.
+> Written from [scope-PLAN.md](scope-PLAN.md) draft 3, which applies the converged Astra + Fable design debate
 > (`manage-agents/debates/design-scope/`, CONVERGED after round 3) and the DRI's cross-plan synthesis edits 1–8 of
-> 2026-10-13. It is the statement under the Astra + Opus statement review (Fable arbiter only on disagreement); a
-> draft alone opens nothing. Baseline `main` at `49de179e`, read on branch `design/scope` at `3372d8e0`.
+> 2026-10-13. Draft 2 applies the statement review of draft 1 (`manage-agents/debates/scope-spec/`, Astra + Fable,
+> CONVERGED after round 3: **FIX**): every correction of the joint position, and no other design change (9.3 lists
+> them, each with where it lands). A confirmation round on this diff only, not a fresh review, decides PASS; a clean
+> confirmation opens SC-1a and SC-3a, while SC-3b and SC-5 stay gated on their approved addenda (9.4). Baseline
+> `main` at `49de179e`, read on branch `design/scope` at `f80910c1`.
 > **Checked, not proved.** Every definition and theorem statement in sections 4 and 5 was elaborated by Lean
-> v4.24.0 as a scratch stub, `lean/SpecStubs_scope.lean`, against the merged modules it names (`VE.Readings.Wire`,
-> `VE.Discourse.{Wire,Access}`, `VE.Finite`, `VE.Attribution.Status`), with `sorry` for every proof; the stub was
-> deleted before commit and nothing here is proved. Names that in-flight branches own are typed against `opaque`
-> placeholders in a `Pinned` namespace (8.1) and are pinned when each branch merges. **Every fixture value in
-> section 7 marked "computed" was produced by `#eval` or `decide` in that stub, not by hand.** Fixtures over the
-> pilot layout use the pilot's own bytes for the units involved, shortened only inside sentences (7.0).
+> v4.24.0 as a scratch stub, `lean/SpecStubs_scope.lean` (untracked, never committed), against the merged modules
+> it names (`VE.Readings.Wire`, `VE.Discourse.{Wire,Access,WellFormed}`, `VE.Finite`, `VE.Attribution.Status`),
+> with `sorry` for every proof. Elaborating with `sorry` establishes only that the statements typecheck: nothing
+> here is proved, and each repaired contract also has its executed counterfixture (9.3). Names that in-flight
+> branches own are typed against `opaque` placeholders in a `Pinned` namespace (8.1) and are pinned when each branch
+> merges. **Every fixture value in section 7 marked "computed" was produced by `#eval` or `decide` in that stub,
+> not by hand.** Fixtures over the pilot layout use the pilot's own bytes for the units involved, shortened only
+> inside sentences (7.0).
 
 ## 0. Scope, one paragraph
 
@@ -27,8 +32,8 @@ nodes), and scope's proof obligations are about composition only: one owner per 
 independence, reaches regenerated from structure, preservation of the whole document, no new symbol, governor
 status. A reach the source leaves open is a reading set, never a guess (SC-5, gated). The sections: definitions (1),
 English (2), wire (3), Lean definitions (4), theorem statements by batch (5), diagnostics (6), acceptance fixtures
-(7), pinned names, limits and files (8), the choices this draft made and the questions for the review (9), the
-review checklist (10).
+(7), pinned names, limits and files (8), the choices the drafts made, the review's answers and corrections, and the
+addenda that gate SC-3b and SC-5 (9), the review checklist (10).
 
 Out of scope, by the plan: anything inside a unit (in-sentence coordination, ellipsis and quantifier scope are the
 phrase grammar's: english-lean's engine and act-phrases); what attitude words, weighing words or rights mean
@@ -59,14 +64,17 @@ doc        the complete document after RESOLVE, as JSON: an object whose "units"
 block      the "scope" block as written (3)
 governors  the decoded governors (1.3)
 listNames  the decoded list names: discourse's ContentName, the lead-in whose run it names, the registering unit
-anchors    discourse's anchors, decoded by discourse's decoder from the block (SC-3a; 9.2)
+anchors    discourse's anchors, decoded by discourse's decoder from the block and checked by discourse's anchor
+           checks, moved to VE.Layout (SC-3a; 1.2)
 re         the chain's decoding environment, VE.Readings.Wire.ReadingsEnvironment (pinned, 8.1)
 ```
 
 GOVERN's output is the complete document, as JSON: `doc` with the content of each **affected** unit (1.5.4)
-replaced by its composed rule, and nothing else changed. With no governor and no `part` content it is `doc` itself,
-byte for byte as a value (`govern_identity`), so the chain's ordinary decoding is exactly today's. A document
-without `scope@0` never reaches GOVERN (`scope_absent_unchanged`).
+replaced by its composed rule, and nothing else changed. GOVERN first admits the block (`admitBlock`, 6.1), with or
+without governors, so malformed metadata (list names, anchors, at SC-4 forward declarations) is refused before
+anything else (`govern_admits`). With no governor, an admitted block and no `part` content, the output is `doc`
+itself, byte for byte as a value (`govern_identity`), so the chain's ordinary decoding is exactly today's. A
+document without `scope@0` never reaches GOVERN (`scope_absent_unchanged`).
 
 ### 1.2 Layout: what the source bytes say
 
@@ -82,7 +90,7 @@ over the source's UTF-8 bytes `b`:
 | `item` | `some d` when the unit is not `midLine`, a marker is at `f`, and the number of spaces `f − ls` is even, with `d = (f − ls) / 2`; else `none`. An odd indentation is not an item |
 | `lead` | the last byte of `[s, e)` that is not a space, tab, CR or newline is `:` |
 | `label` | an item whose text after the marker is `**`, a nonempty text without a newline, `**`, with `:` just before or just after the closing `**` (`**There’s no operator prompt:**`, `**Process**:`) |
-| `para` | the number of blank lines (a newline, then only spaces, tabs or CRs, then a newline) before byte `s` |
+| `para` | the number of blank lines (a newline, then only spaces, tabs or CRs, then a newline) before byte `s`; one pass over the bytes gives it for every unit (`paraCounts`) |
 
 Unit ids are distinct (the document loader checks it); the theorems that need it take `(L.map (·.id)).Nodup`.
 
@@ -98,7 +106,12 @@ that is a deeper item or begins mid-line, up to the first other unit. Otherwise 
 **Anchors (SC-3a).** Discourse's containment bodies move to `VE.Layout` over `(unit spans, anchors)`: `within`
 (the unit's span lies inside the anchor's), `narrower` and `innermostAnchor`. Discourse's three definitions become
 one-line calls (`discourse_within_unchanged`, `discourse_innermost_unchanged`). An anchor's units are the layout
-units within it, in source order; the first is its **heading**; the anchor reach is the others.
+units within it, in source order; the first is its **heading**; the anchor reach is the others. Discourse's anchor
+checks (its 4.1(2): one tree, nested and non-overlapping spans, unique labels per parent, exports) move the same
+way, over `(anchors, the spans of the definition units, the environment's unary test)`, with the generic helpers
+they call; discourse's `anchorsOk` becomes a one-line call (`discourse_anchorsOk_unchanged`) and its anchor fixtures
+pass unchanged. So one body checks anchors for both discourse and scope (`admitBlock` step 7), and no view of a
+discourse document has to be invented for scope.
 
 ### 1.3 Governors, reaches, effects
 
@@ -109,8 +122,8 @@ recorded, which Lean regenerates and compares (`ManifestMismatch: scope.governor
 |---|---|---|
 | `list <lead>` | the list run's governed items of the lead-in (1.2) | SC-1a |
 | `list_name <name>` | the run of the lead-in the name registers; the name's recorded units must equal it | SC-2 |
-| `anchor <id>` | the anchor's units after its heading; the governor's unit must be the heading | SC-3a |
-| `label <item>` | the item units of 1.2; the governor's unit must be the item | SC-3a |
+| `anchor <id>` | the anchor's units after its heading; a unary or `title` governor's unit must be the heading, while a `precedes` or `yields` governor's unit is its own rule and may be any unit | SC-3a |
+| `label <item>` | the item units of 1.2; a unary or `title` governor's unit must be the item, while a graph governor's unit may be any unit | SC-3a |
 | `rules [names]` | the rule units whose base rule (1.5.1) has one of the names; an unknown name is `ScopeUnknownRule` | SC-4 |
 | `frontier` | the candidates of 1.7 | SC-5 |
 
@@ -119,12 +132,15 @@ recorded, which Lean regenerates and compares (`ManifestMismatch: scope.governor
 | `frame <part>` | the lead-in's part, joined to each governed item's part with disjoint keys (one owner per field); the governor's unit is the lead-in | `list`, `list_name` | SC-1a |
 | `reguard <c>` | the rule's `guard` becomes `c` with `own` replaced by the rule's guard (1.4) | any but `frontier` before SC-5 | SC-2 |
 | `carve_out <c>` | one more element of the rule's `unless`, `c` with `own` replaced by the rule's guard | as `reguard` | SC-2 |
-| `precedes` | each reached rule on the same predicate joins the governor's own rule's `over` | any | SC-4 |
-| `yields` | the governor's own rule's name joins the `over` of each reached rule on the same predicate | any | SC-4 |
+| `precedes` | each reached rule on the same predicate joins the governor's own rule's `over` | any but `frontier` | SC-4 |
+| `yields` | the governor's own rule's name joins the `over` of each reached rule on the same predicate | any but `frontier` | SC-4 |
 | `title` | nothing | `anchor`, `label` | SC-3a |
 
 `frame`, `reguard` and `carve_out` change content; `reguard` and `carve_out` are the **unary** effects;
-`precedes` and `yields` are the **graph** effects (1.5.5).
+`precedes` and `yields` are the **graph** effects (1.5.5). A graph governor's own rule is the unit it sits on, so
+"Notwithstanding the rules of section 3, <rule>." sits outside section 3 and reaches it by `anchor` (F11-a). A
+`frontier` reach carries a unary effect only: a graph effect there is `ScopeReach` (`frontier_graph_refused`) until
+SC-5's addendum adds graph fitting (9.4).
 
 ### 1.4 Conditions and `own`
 
@@ -191,9 +207,18 @@ affected unit's `content` member is replaced: a part content becomes `{"norm": o
 written), a norm content keeps its other members and gets `"norm": o`, where `o` is the composed object with its
 edges. Every other unit value is the original value.
 
-**1.5.7 Fault order.** `govern D`: with no governor, the document itself, or `ScopeOrphanPart` for the first part
-unit; otherwise `admitBlock` (6.1, in order), `orderCheck`, composition of every affected unit in document order,
-`ruleTable`, the `ScopeNoEffect` check in governor order, and (SC-4) the forward declarations; then the patch.
+**1.5.7 Fault order.** `govern D`: first `admitBlock` (6.1, in order, with or without governors; from SC-4 its last
+step checks the forward declarations, 1.9); then, with no governor, the document itself, or `ScopeOrphanPart` for
+the first part unit; otherwise `orderCheck`, composition of every affected unit in document order, `ruleTable` and
+the `ScopeNoEffect` check in governor order; then the patch.
+
+**1.5.8 Run path.** `govern` is the statement. It recomputes a governor's reach wherever a unit asks for it
+(`coversU`, `frameOn`, `governorsOf`), and a `rules` reach decodes every rule unit's base rule each time (`covered`,
+`baseName`), so `orderCheck` and `affected`, which ask for every unit, are cubic on the pinned pilot (1,132 units).
+The run path is `governFast`, SC-1a's own definition: the same steps with each governor's reach and each rule unit's
+base name computed once, into a table keyed by governor id that the reach tests read. `governFast_eq` states that it
+answers exactly as `govern`, so every theorem about `govern` holds of the run path. Its speed is measured by a
+benchmark row on the full pilot (7.2 B1), never asserted in the suite.
 
 ### 1.6 Statuses
 
@@ -223,10 +248,12 @@ never a rejection, never a chosen reach (`frontier_limit_iff`). The frontier rea
 (`frontier_no_heuristic`).
 
 **Three-valued fit.** At one unit, `fitAt` is `none` when the unit is not admitted (no base rule the chain's decoder
-reads), else whether the effect applies and the composed rule is typed by the chain's own rule check (pinned at
-SC-5's addendum, 8.1). A candidate **fails** only when every unit is admitted and the effect fails at one; it
-**fits** when every unit fits; otherwise it is **unresolved** (`fitOf_fails_iff`). Live candidates are those that
-do not fail.
+reads) or when a resource limit stops the decoding of the composed rule (`ResourceLimit`: exhaustion is UNKNOWN,
+never evidence against a candidate, `fitAt_limit`); else whether the effect applies and the composed rule is typed
+by the chain's own rule check (pinned at SC-5's addendum, 8.1). A candidate **fails** only when every unit is
+admitted and the effect fails at one; it **fits** when every unit fits; otherwise it is **unresolved**
+(`fitOf_fails_iff`). Live candidates are those that do not fail. A frontier reach carries a unary effect only (1.3),
+so fitting applies the effect at each unit and never needs the governor's own rule or the graph step.
 
 **Validation.**
 - no live candidate: `UnresolvedScope: <g>: no candidate fits`; the governor stays UNFORMALISED;
@@ -251,15 +278,21 @@ admits are exactly the live candidates (`scope_choices`, stated over lf-14d's se
 GOVERN writes JSON before any owner's decoder runs, so every symbol an owner generates (act-phrases' `<rule>-a<i>`
 and `p__i`, a pack's generated names and labels) is generated downstream from the composed content, by its owner,
 and kept. Scope introduces no symbol: every string value of GOVERN's output is a string value of the document or of
-the block (`govern_no_new_symbols`). For provenance, scope reads the owner's exported map and never re-derives a
-split or a key: for act-phrases `VE.Acts.SplitMap.rules` (AP-3), for the packs their `origins` (PK-1). The explain
-route lists a generated rule under its source unit and names its source rule (`explain_generated`).
+a governor's **payload**, its frame part or its condition (`govern_strings`; the rule names `addOver` writes are
+read verbatim by the chain's decoder, `decodeNorm_name`). For governors bound to the block as written
+(`BlockBound`: every string value of a payload is one of the block), every string value of the output is one of
+the document or the block (`govern_no_new_symbols`), and SC-1b's decoder guarantees that binding for every decoded
+document (`decodeScope_bound`). The binding is needed: a governor list that is not tied to the block puts a string
+into the output that is in neither (F-sym). For provenance, scope reads the owner's exported map and never
+re-derives a split or a key: for act-phrases `VE.Acts.SplitMap.rules` (AP-3), for the packs their `origins` (PK-1).
+The explain route lists a generated rule under its source unit and names its source rule (`explain_generated`).
 
 ### 1.9 Forward declarations (SC-4)
 
 "Rule r has exceptions stated later in this section." is recorded as `(unit w, rule r, anchor a)` and checked: some
 unit of `a` after `w` has a base rule whose `over` names `r` (`forward_exception_sound`, and its converse
-`forward_exception_complete`); otherwise `ScopeForward: <w>: rule <r> has no later exception in <a>`. A forward
+`forward_exception_complete`); otherwise `ScopeForward: <w>: rule <r> has no later exception in <a>`. The check is
+the last step of `admitBlock` (6.1), so it runs with or without governors, before the identity shortcut. A forward
 announcement whose exceptions the source never identifies is not recorded: the unit stays UNFORMALISED with the
 residual `UnresolvedScope` (F12), never a guessed edge.
 
@@ -295,10 +328,10 @@ rows in english-lean's catalogue (the one grammar owner); scope adds no grammar 
 |---|---|---|
 | `Every instance of Claude must not:` followed by a bulleted list | `frame` over `list` | "Each item below is its own rule: ‘Every instance of Claude must not <item>.’" Each item must complete the sentence |
 | `The rules below are called the hard constraints.` | list name | "‘The hard constraints’ names the rules of the list that follows." |
-| `The hard constraints apply only where <condition>.` | `reguard ["and", "own", C]` over `list_name` | "Each of the 7 rules called ‘the hard constraints’ applies only where <condition>." |
-| `The hard constraints apply only where Claude knows that the act is of its kind, or thinks it quite likely that it is.` | `reguard` with attitude nodes and `own` | "‘Its kind’ is each rule's own act." (`own`; the attitude words are attitudes') |
-| `The hard constraints do not apply when <condition>.` | `carve_out` over `list_name` | "None of the 7 rules applies when <condition>; then the other rules and the default decide." |
-| `Rule 9 takes precedence over the rules of section 3.` | `precedes` over `anchor` | "Where rule 9 and a rule of section 3 regulate the same act, rule 9 decides." |
+| `The hard constraints apply only where <condition>.`, where <condition> does not mention "its kind" | `reguard ["and", "own", C]` over `list_name`, `C` free of `own` | "Each of the 7 rules called ‘the hard constraints’ applies only where <condition>." A condition that mentions "its kind" takes the next row's wording |
+| `In place of their own condition, the hard constraints apply only where Claude knows that the act is of its kind, or thinks it quite likely that it is.` | `reguard` over `list_name` with attitude nodes and `own` (F3's condition) | "Each of the 7 rules now applies where Claude knows that the act is of its kind, or thinks it quite likely that it is, instead of where its own act occurs; its existing carve-outs still apply. ‘Its kind’ is each rule's own act." ("In place of" marks the replacement; F4 separates it from the previous row's reading) |
+| `The hard constraints do not apply when <condition>.` | `carve_out` over `list_name` | "None of the 7 rules applies when <condition>; other rules may decide; if none does, <the default sentence of each rule's predicate>." (W1 2.5: the default is named, never "the default decides") |
+| `Notwithstanding the rules of section 3, <rule>.` (the rule is rule 9) | `precedes` over `anchor`, on rule 9's own unit | "Wherever rule 9, or a rule that takes precedence over it directly or through other rules, applies, no rule of section 3 decides on that act." (W1 2.3 and 4.2: rule 9's subtree yields) |
 | `## When there is no operator prompt` (a heading that is a full `When`/`If` clause) | `reguard ["and", "own", C]` over `anchor` | "Every rule in this section applies only when there is no operator prompt." |
 | any other heading | `title` | "A title: it changes no rule." |
 | `This applies only where <condition>.` after a rule or list (SC-5) | `reguard` over `frontier` | one candidate established to fit: "This qualifies <the rule above / the list above>"; otherwise a question |
@@ -354,9 +387,9 @@ Item unit content: `{"part": {"name": "hc-cbrn-uplift", "predicate": "…", "gua
 | Member | Form | Notes |
 |---|---|---|
 | `version` | `"scope@0"` | required |
-| `list_names` | array of `{"name", "units", "scope", "lead", "unit"}` | optional; `lead` and `unit` are read by scope, the rest is passed to `VE.Discourse.Wire.decodeContentName` unchanged |
-| `anchors` | array of discourse anchor objects | optional (SC-3a); decoded by `VE.Discourse.Wire.decodeAnchor` and checked by discourse's anchor checks (9.2) |
-| `forward` | array of `{"unit", "rule", "anchor"}` | optional (SC-4) |
+| `list_names` | array of `{"name", "units", "scope", "lead", "unit"}` | optional; at most 256; `lead` and `unit` are read by scope, the rest is passed to `VE.Discourse.Wire.decodeContentName` unchanged; in `scope@0` the name's `scope` must be `"doc"` (anything else is `InvalidInput`), since no scoped lookup exists yet |
+| `anchors` | array of discourse anchor objects | optional (SC-3a); decoded by `VE.Discourse.Wire.decodeAnchor` and checked by discourse's anchor checks, moved to `VE.Layout` (1.2) |
+| `forward` | array of `{"unit", "rule", "anchor"}` | optional (SC-4); checked by the last step of `admitBlock` (1.9) |
 | `governors` | array of `{"id", "unit", "reach", "effect", "units"}` | `units` absent only for a frontier reach |
 | `reach` | `{"list": id}`, `{"list_name": name}`, `{"anchor": id}`, `{"label": id}`, `{"rules": [names]}`, or `"frontier"` | |
 | `effect` | `{"frame": object}`, `{"reguard": condition}`, `{"carve_out": condition}`, or `"precedes"`, `"yields"`, `"title"` | |
@@ -377,7 +410,8 @@ Wire rules:
 New files (plan 4): `lean/VE/Layout/{List,Anchors}.lean`, `lean/VE/Scope/{Wire,Govern,Effects,Frontier,English,Run,
 Theorems,Examples}.lean`, `lean/SCOPE.md`. No `mutual`, no primed theorem names, no `native_decide`, no `partial`;
 JSON recursion is by fuel 64 (1.4). The definitions below are the stub's, verbatim apart from shortened doc
-comments and the `-- SC-5` remark in `coveredLayout`.
+comments and the `-- SC-5` remark in `coveredLayout`. Inside `namespace VE.Layout` the name `Unit` is the layout's
+structure, so the type of a check's success is written `_root_.Unit` there.
 
 ### 4.1 `VE.Layout`
 
@@ -428,16 +462,20 @@ def boldLabel (b : ByteArray) (p e : Nat) : Bool :=
       (b.get! (p + 1 + k) == 58 || (p + 4 + k < e && b.get! (p + 4 + k) == 58))
   | none => false
 
-def blankLinesBefore (b : ByteArray) (s : Nat) : Nat :=
-  ((List.range s).filter (fun k => b.get! k == nl &&
-    let j := ((List.range (s - (k + 1))).find? (fun i => !(b.get! (k + 1 + i) == sp ||
-      b.get! (k + 1 + i) == 9 || b.get! (k + 1 + i) == 13))).map (k + 1 + ·)
-    match j with
-    | some j => b.get! j == nl
-    | none => false)).length
+/-- One pass over the bytes: at each position `s ≤ b.size`, the number of blank lines (a newline, then only
+    spaces, tabs or CRs, then a newline) whose last newline lies before `s`. -/
+def paraCounts (b : ByteArray) : Array Nat :=
+  let r := b.foldl (fun (acc : Array Nat × Nat × Bool) c =>
+    let (arr, cnt, blank) := acc
+    let arr := arr.push cnt
+    if c == nl then (arr, if blank then cnt + 1 else cnt, true)
+    else if c == sp || c == 9 || c == 13 then (arr, cnt, blank)
+    else (arr, cnt, false)) (#[], 0, false)
+  r.1.push r.2.1
 
 def ofSource (prose : String) (units : List (String × Nat × Nat)) : List Unit :=
   let b := prose.toUTF8
+  let pc := paraCounts b
   units.map fun (id, s, e) =>
     let ls := lineStart b s
     let f := skipSpaces b s e
@@ -450,7 +488,7 @@ def ofSource (prose : String) (units : List (String × Nat × Nat)) : List Unit 
       | some _, some k => boldLabel b (f + k) e
       | _, _ => false
     { id, span := (s, e), item, midLine := mid, lead := lastNonBlank b s e == some 58, label,
-      para := blankLinesBefore b s }
+      para := pc.getD s 0 }
 
 def indexOf (L : List Unit) (u : String) : Option Nat := L.findIdx? (·.id == u)
 
@@ -530,8 +568,44 @@ def anchorReach (L : List Unit) (anchors : List VE.Discourse.Anchor) (a : String
   | [] => .error s!"ScopeUnknownAnchor: {a}"
   | _ :: us => .ok us
 
+/-! Discourse's anchor checks (SC-3a), moved; discourse's `anchorsOk` calls this. -/
+
+open VE.Discourse (req runAll allOk dupOf spanIn spansDisjoint)
+
+def reachesRoot (anchors : List VE.Discourse.Anchor) : Nat → VE.Discourse.Anchor → Bool
+  | 0, _ => false
+  | n + 1, a => match a.parent with
+    | none => true
+    | some p => match anchors.find? (·.id == p) with
+      | some b => spanIn a.span b.span && reachesRoot anchors n b
+      | none => false
+
+def anchorsOk (anchors : List VE.Discourse.Anchor) (defSpans : List (Nat × Nat)) (unary : String → Bool) :
+    Except String _root_.Unit := runAll [
+  fun _ => req (anchors.length ≤ 1024) "ResourceLimit: anchors",
+  fun _ => match dupOf (anchors.map VE.Discourse.Anchor.id) with
+    | some a => .error ("DuplicateDeclaration: anchor " ++ a)
+    | none => .ok (),
+  fun _ => req ((anchors.filter (·.parent.isNone)).length == 1 || anchors.isEmpty)
+    "InvalidInput: anchors must form one tree",
+  fun _ => allOk anchors fun a => req (reachesRoot anchors (anchors.length + 1) a)
+    ("DanglingAnchor: " ++ ((a.parent).getD a.id)),
+  fun _ => allOk anchors fun a => allOk anchors fun b =>
+    if a.id != b.id && a.parent == b.parent && a.parent.isSome then
+      if a.label.toLower == b.label.toLower then .error ("DuplicateAnchor: " ++ a.label)
+      else req (spansDisjoint a.span b.span) ("InvalidInput: anchors " ++ a.id ++ ", " ++ b.id ++ " overlap")
+    else .ok (),
+  fun _ => allOk anchors fun a => req (a.exports.all fun p => unary p && defSpans.any (spanIn · a.span))
+    ("ManifestMismatch: anchors." ++ a.id ++ ".exports")]
+
 end VE.Layout
 ```
+
+The bodies are discourse's `reachesRoot` and `anchorsOk` (`lean/VE/Discourse/WellFormed.lean`), with `anchorOf D`
+read as `anchors.find?` and `definitionIn D a` as `defSpans.any`. The generic helpers they open (`req`, `runAll`,
+`allOk`, `dupOf`, `spanIn`, `spansDisjoint`, with their lemmas) sit in `WellFormed.lean` above `Access.lean` in the
+import graph today; SC-3a moves them with the bodies, below `Access.lean`, and discourse opens them from there. The
+stub opens them from `VE.Discourse.WellFormed`.
 
 ### 4.2 `VE.Scope`
 
@@ -684,7 +758,7 @@ def coveredLayout (D : SDoc) : Reach → Except String (List String)
   | .anchor a => VE.Layout.anchorReach D.layout D.anchors a
   | .label i => VE.Layout.itemRun D.layout i
   | .rules _ => .ok []
-  | .frontier => throw "UnsupportedProfile: scope@0 frontier reach requires SC-5"   -- SC-5: validateFrontier
+  | .frontier => throw "UnsupportedProfile: scope@0 frontier reach requires SC-5"   -- SC-5: its addendum (9.4)
   | .fixed us => .ok us
 
 def frameOn (D : SDoc) (u : String) : List Governor :=
@@ -792,8 +866,16 @@ def firstDup : List String → Option String
   | [] => none
   | x :: xs => if xs.contains x then some x else firstDup xs
 
+def kindOf (doc : Json) (u : String) : String :=
+  (((unitsOf doc).find? (idOf · == u)).map (fun x => (x.getObjValD "kind").getStr?.toOption.getD "")).getD ""
+
+/-- The spans of the definition units, for discourse's export check. -/
+def defSpans (D : SDoc) : List (Nat × Nat) :=
+  (D.layout.filter (fun x => kindOf D.doc x.id == "definition")).map (·.span)
+
 def admitBlock (D : SDoc) : Except String Unit := do
   if D.governors.length > 256 then throw "ResourceLimit: scope governors"
+  if D.listNames.length > 256 then throw "ResourceLimit: scope list names"
   if let some i := firstDup (D.governors.map (·.id)) then throw s!"DuplicateDeclaration: governor {i}"
   if let some n := firstDup (D.listNames.map (·.1.name)) then throw s!"DuplicateDeclaration: list name {n}"
   for g in D.governors do
@@ -801,9 +883,11 @@ def admitBlock (D : SDoc) : Except String Unit := do
   if D.governors.any (fun g => !(conditions g.effect).isEmpty) && (vocabularyNames D).contains "own" then
     throw "ScopeReserved: own"
   for (cn, lead, unit) in D.listNames do
+    unless cn.scope == "doc" do throw s!"InvalidInput: scope@0 list_names.{cn.name}.scope must be doc"
     unless (unitIds D.doc).contains unit do throw s!"ScopeUnknownUnit: {unit}"
     let us ← VE.Layout.listRun D.layout lead
     unless cn.units == us do throw s!"ManifestMismatch: scope.list_names.{cn.name}.units"
+  VE.Layout.anchorsOk D.anchors (defSpans D) (VE.Discourse.unaryPred D.re.se.ne.rv.environment)
   for g in D.governors do
     for c in conditions g.effect do
       unless depthOk depthLimit c do throw "ResourceLimit: scope condition depth exceeds 64"
@@ -818,12 +902,14 @@ def admitBlock (D : SDoc) : Except String Unit := do
     | .title, .anchor _ => pure ()
     | .title, .label _ => pure ()
     | .title, _ => throw s!"ScopeReach: {g.id}"
+    | .precedes, .frontier => throw s!"ScopeReach: {g.id}"
+    | .yields, .frontier => throw s!"ScopeReach: {g.id}"
     | _, _ => pure ()
     match g.reach with
     | .anchor a =>
-      unless VE.Layout.headingOf D.layout D.anchors a == some g.unit do
+      unless graph g.effect || VE.Layout.headingOf D.layout D.anchors a == some g.unit do
         throw s!"ManifestMismatch: scope.governors.{g.id}.unit"
-    | .label i => unless i == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit"
+    | .label i => unless graph g.effect || i == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit"
     | _ => pure ()
     let us ← covered D g.reach
     unless us == g.units do throw s!"ManifestMismatch: scope.governors.{g.id}.units"
@@ -843,13 +929,14 @@ def patch (D : SDoc) (comp : List (String × Json)) : Json :=
     | some o => u.setObjVal! "content" (newContent (u.getObjValD "content") o)
     | none => u).toArray)
 
-def govern (D : SDoc) : Except String Json :=
+/-- The block is admitted first, with or without governors. -/
+def govern (D : SDoc) : Except String Json := do
+  admitBlock D
   if D.governors.isEmpty then
     match partUnits D with
-    | [] => .ok D.doc
-    | u :: _ => .error s!"ScopeOrphanPart: {u}"
-  else do
-    admitBlock D
+    | [] => pure D.doc
+    | u :: _ => throw s!"ScopeOrphanPart: {u}"
+  else
     orderCheck D
     let comp ← (affected D).mapM (fun u => do pure (u, ← composed D u))
     let t ← ruleTable D
@@ -863,12 +950,26 @@ inductive HasStr (s : String) : Json → Prop
   | arr {xs : Array Json} {x : Json} : x ∈ xs → HasStr s x → HasStr s (.arr xs)
   | obj {j x : Json} {k : String} : j.getObjVal? k = .ok x → HasStr s x → HasStr s j
 
+/-- What a governor's effect can write into the output: its frame part or its condition; nothing for the others. -/
+def payload : Effect → Json
+  | .frame p => p
+  | .reguard c => c
+  | .carveOut c => c
+  | _ => .null
+
+/-- The decoded governors are bound to the block as written: every string value of a payload is one of the block. -/
+def BlockBound (D : SDoc) : Prop :=
+  ∀ g ∈ D.governors, ∀ s, HasStr s (payload g.effect) → HasStr s D.block
+
 end VE.Scope
 ```
 
-SC-4 adds a `forwards : List (String × String × String)` field and, after the `ScopeNoEffect` loop of `govern`,
-`for (w, r, a) in D.forwards do forwardCheck D w r a` (5.6). SC-5 replaces `coveredLayout`'s `frontier` case by
-`validateFrontier` (5.7) and adds `governAt`.
+SC-4 adds a `forwards : List (String × String × String)` field and, as the **last step of `admitBlock`** (step 9),
+`for (w, r, a) in D.forwards do forwardCheck D w r a` (5.6). The forward declarations are then checked before the
+no-governor branch of `govern`, and every hypothesis `admitBlock D = .ok ()` (`govern_identity`, `govern_orphan`,
+`order_refused`, `listName_run`, `no_effect_refused`) covers them with no change to its statement. SC-5's frontier
+validation and its per-choice `governAt` (5.7) cannot be wired into `coveredLayout` as written; how it is wired is
+an obligation of SC-5's addendum (9.4).
 
 ## 5. Theorem statements, by batch
 
@@ -912,12 +1013,16 @@ theorem itemRule_decoder (D : SDoc) (u : String) (lead item : Json) (N : SoftNod
     (h : itemRule D u lead item = .ok N) :
     ∃ m, mergeParts u lead item = .ok m ∧ VE.Readings.Wire.decodeNorm D.re m = .ok N
 
-/-- Identity: without governors, `govern` returns the document exactly as written. -/
-theorem govern_identity (D : SDoc) (h : D.governors = []) (hp : partUnits D = []) : govern D = .ok D.doc
+/-- Identity: without governors, an admitted block leaves the document exactly as written. -/
+theorem govern_identity (D : SDoc) (h₀ : admitBlock D = .ok ()) (h : D.governors = []) (hp : partUnits D = []) :
+    govern D = .ok D.doc
 
-/-- Without governors a `part` content is refused. -/
-theorem govern_orphan (D : SDoc) (h : D.governors = []) (u : String) (hu : u ∈ partUnits D) :
-    ∃ e, govern D = .error e ∧ e.startsWith "ScopeOrphanPart" = true
+/-- Without governors, once the block is admitted, a `part` content is refused. -/
+theorem govern_orphan (D : SDoc) (h₀ : admitBlock D = .ok ()) (h : D.governors = []) (u : String)
+    (hu : u ∈ partUnits D) : ∃ e, govern D = .error e ∧ e.startsWith "ScopeOrphanPart" = true
+
+/-- The block is admitted before anything else, with or without governors. -/
+theorem govern_admits (D : SDoc) (out : Json) (ho : govern D = .ok out) : admitBlock D = .ok ()
 
 /-- Preservation: every member outside `units`, the unit order, every unit member but `content`, and every
     content outside `affected D`, are the document's own. -/
@@ -939,9 +1044,25 @@ theorem govern_provenance (D : SDoc) (out : Json) (ho : govern D = .ok out) (u :
 theorem governorsOf_iff (D : SDoc) (u : String) (g : Governor) :
     g ∈ governorsOf D u ↔ g ∈ D.governors ∧ unary g.effect = true ∧ ∃ us, covered D g.reach = .ok us ∧ u ∈ us
 
-/-- Scope introduces no symbol: every string value of the answer is a string value of the document or the block. -/
-theorem govern_no_new_symbols (D : SDoc) (out : Json) (ho : govern D = .ok out) (s : String) (hs : HasStr s out) :
-    HasStr s D.doc ∨ HasStr s D.block
+/-- The chain's decoder reads a rule's name from the object as written (the names `addOver` writes). -/
+theorem decodeNorm_name (re : VE.Readings.Wire.ReadingsEnvironment) (o : Json) (N : SoftNode)
+    (h : VE.Readings.Wire.decodeNorm re o = .ok N) : HasStr N.name o
+
+/-- Every string value of the answer is a string value of the document or of a governor's payload. -/
+theorem govern_strings (D : SDoc) (out : Json) (ho : govern D = .ok out) (s : String) (hs : HasStr s out) :
+    HasStr s D.doc ∨ ∃ g ∈ D.governors, HasStr s (payload g.effect)
+
+/-- Scope introduces no symbol: for governors bound to the block, every string value of the answer is a string
+    value of the document or the block. -/
+theorem govern_no_new_symbols (D : SDoc) (hb : BlockBound D) (out : Json) (ho : govern D = .ok out) (s : String)
+    (hs : HasStr s out) : HasStr s D.doc ∨ HasStr s D.block
+
+/-- A frontier reach carries a unary effect only (until SC-5's addendum): a graph governor on it is refused. -/
+theorem frontier_graph_refused (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (hf : g.reach = .frontier)
+    (he : graph g.effect = true) : (govern D).isOk = false
+
+/-- The run path (1.5.8) answers exactly as `govern`, so every theorem about `govern` holds of it. -/
+theorem governFast_eq (D : SDoc) : Pinned.governFast D = govern D
 
 /-- A governor or a governed unit that a reading set owns is refused. -/
 theorem readings_refused (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (us : List String)
@@ -957,6 +1078,12 @@ theorem nonrule_refused (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (he :
 
 end VE.Scope
 ```
+
+`govern_no_new_symbols` follows from `govern_strings` and `BlockBound`; draft 1 stated it without the binding, and
+then it was false (F-sym). `decodeNorm_name` is the fact the proof needs about the chain's decoder: no merged module
+states it, so SC-1a states and proves it in its theorem file, as a lemma about the merged decoder; it edits no
+decoder file. W1's `VE.Norms.Wire.decodeNorm` reads `name` as the JSON string written, and soft's
+`Phases.ruleFields` reads it through that same decoder.
 
 ### 5.2 SC-1b (on the stack)
 
@@ -984,8 +1111,25 @@ theorem scope_admission (front ans : Json) (h : Pinned.checkDoc front = .ok ans)
 theorem scope_absent_unchanged (front : Json) (h : "scope@0" ∉ Pinned.profilesOf front) :
     Pinned.checkDoc front = Pinned.checkCore front
 
+/-- SC-1b's decoder binds the governors to the block as written. -/
+theorem decodeScope_bound (front : Json) (D : SDoc) (h : Pinned.decodeScope front = .ok D) : BlockBound D
+
+/-- SC-1b's decoder reads the layout of exactly the document's units, in order. -/
+theorem decodeScope_layout (front : Json) (D : SDoc) (h : Pinned.decodeScope front = .ok D) :
+    D.layout.map (·.id) = unitIds D.doc
+
+/-- For a decoded document, every string value GOVERN writes is one of the document or of its scope block. -/
+theorem decoded_no_new_symbols (front : Json) (D : SDoc) (h : Pinned.decodeScope front = .ok D) (out : Json)
+    (ho : govern D = .ok out) (s : String) (hs : HasStr s out) : HasStr s D.doc ∨ HasStr s D.block
+
 end VE.Scope
 ```
+
+`decoded_no_new_symbols` is draft 1's claim, restated for the inputs it was meant for: it follows from
+`decodeScope_bound` and `govern_no_new_symbols`, and with `scope_admission` it covers every `scope@0` document the
+document mode answers. `decodeScope_layout` is
+the layout's binding: every reach names the document's own units, while no layout string reaches the output, since
+`patch` maps over `D.doc`'s units.
 
 `scope@0` is one row of AR-10's profile-gate table (a wrapper at step 1b over the norms, norm-defaults, soft and
 rights routes); the row carries the composition theorem `scope_admission` for every combination it newly admits,
@@ -1152,6 +1296,12 @@ theorem discourse_innermost_unchanged (D : VE.Discourse.DDoc) (u : String) :
     VE.Discourse.innermostAnchor D u =
       innermostAnchor ((VE.Discourse.unitKeys D).map (fun k => (k.1, k.2.1, k.2.2.1))) D.K.anchors u
 
+/-- Discourse's anchor checks are the moved body, on discourse's own anchors, definition spans and environment. -/
+theorem discourse_anchorsOk_unchanged (D : VE.Discourse.DDoc) :
+    VE.Discourse.anchorsOk D = anchorsOk D.K.anchors
+      ((D.base.units.filter (fun x => decide (x.kind = .definition))).map (fun x => (x.start, x.stop)))
+      (VE.Discourse.unaryPred D.E)
+
 end VE.Layout
 
 namespace VE.Scope
@@ -1180,9 +1330,13 @@ theorem assertion_carve_denote (C φ : VE.Formula) (S : VE.Structure.{v}) :
 end VE.Scope
 ```
 
-SC-3b extends `baseObj` to an assertion content (an array) under a plain narrowing or an own-free carve-out of an
-`anchor` or `label` reach: the content becomes `["implies", C, φ]` or `["implies", ["not", C], φ]`, closed
-conditions only. Any other effect on an assertion stays `ScopeNotARule: <unit>`.
+SC-3b's intent is unchanged: an assertion content (an array) under a plain narrowing or an own-free carve-out of an
+`anchor` or `label` reach becomes `["implies", C, φ]` or `["implies", ["not", C], φ]`, closed conditions only, and
+any other effect on an assertion stays `ScopeNotARule: <unit>`. The two denotation lemmas above are its meaning.
+Its composition is not one paragraph's work: `baseObj`, `ruleUnits`, `affected`, the `ScopeNotARule` check of
+`admitBlock` and `newContent` all exclude assertions or write norm wrappers today. SC-3b is therefore built only
+after an approved addendum that specifies those functions' assertion cases and the matching preservation and
+provenance statements (9.4).
 
 ### 5.6 SC-4 (far precedence and forward exceptions)
 
@@ -1225,7 +1379,7 @@ theorem forward_exception_complete (D : SDoc) (w r a : String) (x : String) (o :
 end VE.Scope
 ```
 
-### 5.7 SC-5 (frontier reaches; after SC-E1, lf-14d and an approved per-choice contract)
+### 5.7 SC-5 (frontier reaches; after SC-E1, lf-14d and its approved addendum, 9.4)
 
 ```lean
 namespace VE.Scope
@@ -1269,15 +1423,19 @@ def frontier (D : SDoc) (u : String) : Except String (List (List String)) :=
 inductive Fit | fits | fails | unresolved
   deriving DecidableEq, Repr
 
+/-- One unit's rule with one effect applied, decoded by the chain's own decoder. -/
+def composedRule (D : SDoc) (e : Effect) (u : String) : Except String SoftNode := do
+  let o ← baseObj D u
+  let o' ← applyEffect u e o
+  VE.Readings.Wire.decodeNorm D.re o'
+
+/-- `none` when the unit is not admitted or a resource limit stops the composed rule's decoding. -/
 def fitAt (D : SDoc) (e : Effect) (u : String) : Option Bool :=
   match (baseObj D u).toOption.bind (fun o => (VE.Readings.Wire.decodeNorm D.re o).toOption) with
   | none => none
-  | some _ => some (match (do
-        let o ← baseObj D u
-        let o' ← applyEffect u e o
-        VE.Readings.Wire.decodeNorm D.re o') with
-      | .ok N' => Pinned.ruleTyped D.re N'
-      | .error _ => false)
+  | some _ => match composedRule D e u with
+    | .ok N' => some (Pinned.ruleTyped D.re N')
+    | .error err => if err.startsWith "ResourceLimit" then none else some false
 
 def fitFrom (rs : List (Option Bool)) : Fit :=
   if rs.all Option.isSome && rs.any (· == some false) then .fails
@@ -1313,6 +1471,10 @@ theorem frontier_no_heuristic (D D₂ : SDoc) (u : String) (hL : D.layout = D₂
 theorem frontier_limit_iff (D : SDoc) (u : String) :
     (frontier D u).isOk = false ↔ 8 < (frontierRaw D u).length
 
+/-- Exhaustion is never evidence against a candidate: a resource limit leaves the unit unresolved. -/
+theorem fitAt_limit (D : SDoc) (e : Effect) (u : String) (err : String) (h : composedRule D e u = .error err)
+    (hr : err.startsWith "ResourceLimit" = true) : fitAt D e u = none
+
 theorem fitOf_fails_iff (D : SDoc) (e : Effect) (us : List String) :
     fitOf D e us = .fails ↔ (∀ u ∈ us, (fitAt D e u).isSome) ∧ ∃ u ∈ us, fitAt D e u = some false
 
@@ -1347,9 +1509,12 @@ theorem scope_choices (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (hf : g
 end VE.Scope
 ```
 
-SC-5's addendum, approved before SC-5 is built, pins `Pinned.ruleTyped` (the chain's existing per-rule typing
-check) and `Pinned.jointPicks` (lf-14d's joint choices read as a pick per frontier governor), and states
-`govern_provenance` and `govern_no_new_symbols` per choice.
+These are the statements of the frontier's parts. SC-5 is built only after an approved addendum (9.4) that, among
+its obligations, wires the frontier into `govern` (as written, `coveredLayout` cannot call `validateFrontier`),
+pins `Pinned.ruleTyped` (the chain's existing per-rule typing check) and `Pinned.jointPicks` (lf-14d's joint
+choices read as a pick per frontier governor), and states `govern_provenance` and `govern_no_new_symbols` per
+choice. Two repairs hold now, before the addendum: a resource limit in fitting is `none` (`fitAt_limit`, F13-r), and
+a frontier reach carries a unary effect only (`frontier_graph_refused`).
 
 ### 5.8 SC-6 and SC-7
 
@@ -1376,21 +1541,24 @@ end VE.Scope
 | Text | When | Stage |
 |---|---|---|
 | `InvalidInput: scope@0 unknown member <path>`, `InvalidInput: scope@0 <member> must be <form>` | a malformed block (3) | wire decoder |
-| `ResourceLimit: scope governors` | more than 256 governors | `admitBlock` 1 |
+| `ResourceLimit: scope governors` / `ResourceLimit: scope list names` | more than 256 governors / list names | `admitBlock` 1 |
 | `DuplicateDeclaration: governor <id>` / `DuplicateDeclaration: list name <n>` | a repeated id or name | `admitBlock` 2–3 |
 | `ScopeUnknownUnit: <unit>` | a governor's or registering unit, or a lead-in or item, not in the document | `admitBlock` 4, 6; reaches |
 | `ScopeReserved: own` | a condition, and the vocabulary declares `own` | `admitBlock` 5 |
-| `NotALeadIn: <unit>` | a list reach or list name whose unit does not end with ":" or is not followed by an item | reaches |
+| `InvalidInput: scope@0 list_names.<n>.scope must be doc` | a list name with another `scope` than `"doc"` | `admitBlock` 6 |
+| `NotALeadIn: <unit>` | a list reach or list name whose unit does not end with ":" or is not followed by an item | `admitBlock` 6; reaches |
 | `ManifestMismatch: scope.list_names.<n>.units` | a list name's recorded units differ from the run | `admitBlock` 6; reaches |
-| `ResourceLimit: scope condition depth exceeds 64` | a condition deeper than 64 | `admitBlock` 7 |
-| `ScopeOwnBound: <g>` | `own` under a binder | `admitBlock` 7 |
-| `ManifestMismatch: scope.governors.<g>.unit` | a frame not on its lead-in, an anchor governor not on its heading, a label governor not on its item | `admitBlock` 7 |
-| `ScopeReach: <g>` | a frame over another reach than a list or list name; a title over another reach than an anchor or label | `admitBlock` 7 |
+| discourse's anchor texts, unchanged (`ResourceLimit: anchors`, `DuplicateDeclaration: anchor <a>`, `InvalidInput: anchors must form one tree`, `DanglingAnchor: <a>`, `DuplicateAnchor: <label>`, `InvalidInput: anchors <a>, <b> overlap`, `ManifestMismatch: anchors.<a>.exports`) | anchors that fail discourse's checks (1.2) | `admitBlock` 7 |
+| `ResourceLimit: scope condition depth exceeds 64` | a condition deeper than 64 | `admitBlock` 8 |
+| `ScopeOwnBound: <g>` | `own` under a binder | `admitBlock` 8 |
+| `ManifestMismatch: scope.governors.<g>.unit` | a frame not on its lead-in; a unary or title governor over an anchor not on its heading, or over a label not on its item | `admitBlock` 8 |
+| `ScopeReach: <g>` | a frame over another reach than a list or list name; a title over another reach than an anchor or label; a `precedes` or `yields` over a frontier reach | `admitBlock` 8 |
 | `NotALabel: <unit>`, `ScopeUnknownAnchor: <a>`, `ScopeUnknownName: <n>`, `ScopeUnknownRule: <r>` | a reach that does not exist | reaches |
-| `UnsupportedProfile: scope@0 frontier reach requires SC-5` | a frontier reach before SC-5 | reaches |
-| `ManifestMismatch: scope.governors.<g>.units` | the recorded reach differs from the regenerated one | `admitBlock` 7 |
-| `ScopeReadings: <unit>` | the governor's unit or a governed unit is the unit of a reading set | `admitBlock` 7 |
-| `ScopeNotARule: <unit>` | a `frame`, `reguard` or `carve_out` covers a unit whose written content is neither a part nor a norm | `admitBlock` 7 |
+| `UnsupportedProfile: scope@0 frontier reach requires SC-5` | a unary governor over a frontier reach before SC-5 | reaches |
+| `ManifestMismatch: scope.governors.<g>.units` | the recorded reach differs from the regenerated one | `admitBlock` 8 |
+| `ScopeReadings: <unit>` | the governor's unit or a governed unit is the unit of a reading set | `admitBlock` 8 |
+| `ScopeNotARule: <unit>` | a `frame`, `reguard` or `carve_out` covers a unit whose written content is neither a part nor a norm | `admitBlock` 8 |
+| `ScopeForward: <w>: rule <r> has no later exception in <a>` | a forward declaration with no later exception (SC-4) | `admitBlock` 9 |
 | `ScopeOrder: <unit>: <g1>, <g2>` | two unary governors on a unit that do not commute; two frames on a unit | `orderCheck`; composition |
 | `ScopeNotARule: <unit>` | an effect on a unit whose content is not a part or norm (or lacks `guard`/`unless`) | composition |
 | `ScopeOrphanPart: <unit>` | a part content no frame covers | composition; `govern` without governors |
@@ -1398,8 +1566,8 @@ end VE.Scope
 | `ScopeConflict: <unit>: <key>` | a key written by both the lead-in and the item | composition |
 | the chain decoder's own text | a composed rule the chain's decoder refuses (F1″) | `ruleTable`, or the chain |
 | `ScopeNoEffect: <g>` | a graph governor whose reach has no other rule on the same predicate | graph step |
-| `ScopeForward: <w>: rule <r> has no later exception in <a>` | a forward declaration with no later exception | SC-4 stage |
 | `ResourceLimit: scope` | more than 8 frontier constituents (UNKNOWN) | SC-5 |
+| a decoder's `ResourceLimit…` text on a candidate's composed rule | the candidate's unit is unresolved (`fitAt` is `none`), never failing (UNKNOWN) | SC-5 fitting |
 | `UnresolvedScope: <g>: no candidate fits` / `UnresolvedScope: <g>: a unit of its only candidate is not admitted` | 1.7 | SC-5 |
 | `AmbiguousScope: <g>: <candidates>` | two or more live candidates | SC-5 |
 
@@ -1407,12 +1575,14 @@ The texts join AR-13's typed codes if AR-13 has merged; the codes are the words 
 
 ### 6.2 Order
 
-`govern` reports the first fault in this order (1.5.7): the wire decoder; `admitBlock` steps 1 to 7 (step 7 per
-governor in block order: depth, `ownSafe`, the unit checks, the reach, the recorded units, reading sets, units it
-cannot change); `orderCheck`
-in document order of units and order 1.4 of governors; composition of affected units in document order; `ruleTable`;
-`ScopeNoEffect` in order 1.4; forward declarations in block order. A `ResourceLimit` is UNKNOWN for every dependent
-verdict, never a rejection.
+`govern` reports the first fault in this order (1.5.7): the wire decoder; `admitBlock` steps 1 to 9, with or without
+governors (step 6 per list name in block order: its scope, its registering unit, its run; step 7 discourse's anchor
+checks in their own order; step 8 per governor in block order: depth, `ownSafe`, the effect's reach and unit, the
+anchor or label unit, the recorded units, reading sets, units it cannot change; step 9, from SC-4, the forward
+declarations in block order); with no governor, `ScopeOrphanPart` for the first part unit; otherwise `orderCheck` in
+document order of units and order 1.4 of governors, composition of affected units in document order, `ruleTable`,
+and `ScopeNoEffect` in order 1.4. A `ResourceLimit` is UNKNOWN for every dependent verdict, never a rejection, and in
+fitting never evidence against a candidate (1.7).
 
 ## 7. Acceptance fixtures
 
@@ -1423,15 +1593,22 @@ source's own bytes for each unit, shortened only inside sentences; each piece ke
 line starts, its indentation, its marker, its trailing newlines), so `item`, `midLine`, `lead`, `label` and `para`
 are those of the source. The pilot rule names, predicates and guards in the `govern` fixtures are stand-ins with the
 pilot's shape; SC-1b's pilot fixtures compare against the translation itself (7.2). Each "exactly when" claim has a
-fixture in each direction; the column "Direction" says which.
+fixture in each direction; the column "Direction" says which. Anchor fixtures carry the document's root anchor
+`doc`, because `admitBlock` now runs discourse's anchor checks and they require one tree (draft 1's F8 anchors,
+two children of a missing root, are refused: F8-tree). Each contract the statement review repaired has an executed
+fixture: F-sym, F-meta and F-fg (7.1), F4-r3 and F4-c (7.4), F11-a (7.6), F13-r (7.7). Four of them are cases that
+draft 1 gets wrong: F-sym (its statement is false there, computed), F13-r (its `fitAt` fixes the reach, computed
+beside draft 2's), and, read directly off draft 1's definitions, F-meta (its `govern` returned the document without
+admitting the block) and F11-a (its `admitBlock` required every anchor governor to sit on the heading).
 
 ### 7.1 SC-1a (`Examples.lean` by `decide`/`rfl`; `tests/test_scope_lean.py`)
 
 | Id | Fixture | Expected | Direction |
 |---|---|---|---|
 | L1 | the layout of u0164.s01–u0166.s01 (hard constraints) | computed: u0164.s02 `midLine`, `lead`; u0165.s01–s07 `item = some 0`, `para = 1`; u0166.s01 `para = 2`, not an item | — |
+| L1-p | `paraCounts` against draft 1's per-unit count, at every byte of the three pilot layouts (L1, F2, F2′) and of a synthetic layout with tab, CR and space-only blank lines | computed: equal at every position (`true` four times) | — |
 | F1 | `listRun` from u0164.s02 | computed: `.ok [u0165.s01, …, u0165.s07]` | `listRun_iff` →, `listRun_ok_iff` → |
-| F1-m | `mergeParts` of the frame `{"sign": false, "unless": [], "over": []}` and the item `{"name": "hc-cbrn-uplift", "predicate": "cbrn_uplift_avoidance_required", "guard": ["unary", "mass_casualty_weapon_uplift", ["var", 1]]}` | computed: equal to the whole rule object (all six W1 keys) | `mergeParts_keys` |
+| F1-m | `mergeParts` of the frame `{"sign": false, "unless": [], "over": []}` and the item `{"name": "hc-cbrn-uplift", "predicate": "restricted_act_permitted", "guard": ["unary", "mass_casualty_weapon_uplift", ["var", 1]]}` (the one stand-in predicate of every F1 fixture) | computed: equal to the whole rule object (all six W1 keys) | `mergeParts_keys` |
 | F1-g | `govern` with the frame governor `g1` over seven part units | computed: u0165.s01's content is `{"norm":{"guard":["unary","mass_casualty_weapon_uplift",["var",1]],"name":"hc-cbrn-uplift","over":[],"predicate":"restricted_act_permitted","sign":false,"unless":[]}}`; u0165.s07's likewise with `hc-csam` and `csam_generation`; u0164.s02 keeps no content | `govern_provenance` |
 | F1′ | u0165.s03's part also writes `sign` | computed: `ScopeConflict: u0165.s03: sign` | `mergeParts_conflict` |
 | F1″ | an item missing `predicate` | `govern` succeeds; the chain's decoder refuses the rule with its own text, computed on the norms chain: `fields do not match: expected [name, predicate, sign, guard, unless, over], got [guard, name, over, sign, unless]` (the soft chain's own text there) | — |
@@ -1439,8 +1616,11 @@ fixture in each direction; the column "Direction" says which.
 | F2 | u0181.s02 "Key questions include:" over u0182.s01–s05 | computed: `.ok [u0182.s01, u0182.s02, u0182.s04]`; u0182.s03 ("Or does it escape these mechanisms?") and u0182.s05 are mid-line continuations | `listRun_iff` ← |
 | F2′ | u0072.s02 over u0073.s01–s10 | computed: `.ok [u0073.s01, u0073.s05, u0073.s08]`; the "+ Example:" sub-bullets s04, s06, s07, s09, s10 are depth 1 | `listRun_iff` ← |
 | F2″ | a lead-in followed by prose; a unit not ending with ":" | computed: `NotALeadIn: x.s01`; `NotALeadIn: u0164.s01` | `listRun_ok_iff` ← |
-| F-id | no governors, no part (a four-unit norm document) | computed: `govern` returns the document, equal as a value | `govern_identity` |
+| F-id | no governors, no part (a four-unit norm document); and no governors, no content, with a well-formed list name | computed: `govern` returns the document, equal as a value, both times | `govern_identity` |
 | F-orph | no governors, seven part units | computed: `ScopeOrphanPart: u0165.s01` | `govern_orphan` |
+| F-meta | malformed metadata with no governor, on the hard-constraint layout with no content (draft 1 returned the document each time): a list name recording six of the seven units; a list name with `scope` `"section"`; 257 list names; two root anchors (with SC-3a's checks) | computed: `ManifestMismatch: scope.list_names.the hard constraints.units`; `InvalidInput: scope@0 list_names.the hard constraints.scope must be doc`; `ResourceLimit: scope list names`; `InvalidInput: anchors must form one tree` | `govern_admits` |
+| F-sym | **counterfixture**: `block = null`, the frame `g1` and a carve-out governor whose condition is `["unary", "invented", ["var", 1]]` | computed: `govern` succeeds; u0165.s01's `unless` is `[["unary","invented",["var",1]]]`; the output contains "invented", the document and the block do not. Draft 1's unrestricted `govern_no_new_symbols` is false here; `govern_strings` holds (the string is the governor's payload) and `BlockBound` fails, so `govern_no_new_symbols` does not apply | `govern_strings`, `govern_no_new_symbols` (its hypothesis) |
+| F-fg | a `precedes` governor over a `frontier` reach | computed: `ScopeReach: gF` | `frontier_graph_refused` |
 | F-mm | the frame governor recording six of the seven units | computed: `ManifestMismatch: scope.governors.g1.units` | — |
 | F-2f | two frame governors over the same list | computed: `ScopeOrder: u0165.s01: g1, g1b` | — |
 | F-rs | a reading set on u0165.s03 | computed: `ScopeReadings: u0165.s03` | `readings_refused` |
@@ -1458,6 +1638,8 @@ fixture in each direction; the column "Direction" says which.
 | F1-bad | one item not admitted | computed: `governorStatus` is `UNFORMALISED`; u0164.s02 UNFORMALISED | `governor_status_weakest` |
 | F1-none | a governed unit with no status, or no governed unit | computed: `governorStatus` is `none` | `governor_status_none` |
 | F1-lead | the frame part for the pilot | exactly the members on which all seven rules (as AT-0p left them) agree, minus `name`, `predicate` and `guard`; computed from the translation at SC-1b start | — |
+| F1-dec | F1-doc's front matter through `decodeScope` | the decoded governors' payloads are sub-values of the `scope` block, and the layout's ids are the document's unit ids in order; every string of `govern`'s answer is one of the document or the block | `decodeScope_bound`, `decodeScope_layout`, `decoded_no_new_symbols` |
+| B1 | a `tools/bench` row: F1-doc's document, the full pinned constitution pilot (184,893 B, 1,132 units), through `ofSource` and `governFast` | a benchmark row with its baseline; never a timing assertion in the suite | `governFast_eq` (the bench runs the run path) |
 
 ### 7.3 SC-1c
 
@@ -1473,6 +1655,8 @@ fixture in each direction; the column "Direction" says which.
 |---|---|---|---|
 | F3 | u0164.s01 registers "the hard constraints" over u0164.s02's run; u0173.s01 is `reguard` with the condition of 3 | computed guard JSON of u0165.s01: `["or",["and",["unary","mass_casualty_weapon_uplift",["var",1]],{"attitude":{"content":["unary","mass_casualty_weapon_uplift",["var",1]],"holder":["var",0],"mode":"knows"}}],{"attitude":{"content":["unary","mass_casualty_weapon_uplift",["var",1]],"degree":"quite likely","holder":["var",0],"mode":"thinks"}}]`. With `attitudes@0`, AT-3a's decoder reads it as `(G ∧ K(G)) ∨ L(G)`; without, the decoder refuses the node and u0173.s01 stays UNFORMALISED | `reguard_applies` (base part) |
 | F4 | **the audit's case**: a two-element model (an instance `c`, a situation `s`) where Claude thinks it quite likely that `s` is of the category and `s` is not | computed by `decide` (attitude atoms standing in for AT-3a's generated predicates): F3's guard holds (`true`), the narrowed guard `G ∧ K` does not (`false`) | — |
+| F4-r3 | F4 against row 3 of 2.2: the replacement wording's condition read instead as a narrowing (`["and", "own", C]`, the "only where" row), giving `G ∧ ((G ∧ K) ∨ L)` | computed by `decide` in F4's model: the replacement guard `(G ∧ K) ∨ L` holds (`true`), the narrowing reading does not (`false`), so "In place of" decides a verdict | — |
+| F4-c | carve-outs survive the replacement: u0173.s01's `reguard` on a rule whose `unless` is `[T]` (`T` = tested by Anthropic), and F4's model with and without `T` | computed: the composed `unless` is still `[["unary","tested_by_anthropic",["var",1]]]`; by `decide`, `(G ∧ K ∨ L) ∧ ¬T` holds without `T` (`true`) and not with it (`false`) | `reguard_applies` (`¬ anyF N.carveOuts`) |
 | F6 | "The hard constraints do not apply when Claude is being tested by Anthropic." | computed: each rule's `unless` is `[["unary","tested_by_anthropic",["var",1]]]` | `carveOut_applies` |
 | F6′ | a carve-out on a rule already at its route's carve-out limit | the decoding route's own limit diagnostic, unchanged (on the soft route today `InvalidInput: invalid sign or too many carve-outs`) | — |
 | F7 | F3's `reguard` and a narrowing on one rule (the §8 note of the plan) | computed: `ScopeOrder: u0165.s01: gN, g2` | `order_refused` |
@@ -1488,7 +1672,8 @@ separate the two readings.
 
 | Id | Fixture | Expected | Direction |
 |---|---|---|---|
-| F8 | UDHR u109 "## Article 29" over u110–u112 as a title | computed: the anchor reach is `[u110, u111, u112]`, the heading `u109`; `govern` returns the document unchanged (equal as a value) | `title_identity`, `anchorReach_iff` → |
+| F8 | UDHR u109 "## Article 29" over u110–u112 as a title, Articles 29 and 30 under the root anchor `doc` | computed: the anchor reach is `[u110, u111, u112]`, the heading `u109`; `govern` returns the document unchanged (equal as a value) | `title_identity`, `anchorReach_iff` → |
+| F8-tree | F8 with draft 1's anchors: Articles 29 and 30 as children of a missing root | computed: `InvalidInput: anchors must form one tree` (discourse's text, from `admitBlock` step 7) | `discourse_anchorsOk_unchanged` (discourse's anchor fixtures also pass unchanged) |
 | F8-out | u109 (the heading) and u113 (Article 30's heading) | not in Article 29's reach | `anchorReach_iff` ← |
 | F9′ | `## Instructable behaviors` | a title, as F8 | `title_identity` |
 | F10 | u0073.s01 "* **There’s no operator prompt:** ..." | computed: the label reaches `[u0073.s01, u0073.s02, u0073.s03, u0073.s04]` (the item, its two continuing sentences, its "+ Example:" sub-bullet), not u0073.s05; u0073.s04 is not a label (`NotALabel: u0073.s04`, no bold label); u0182.s02's label reaches `[u0182.s02, u0182.s03]` | `itemRun_iff`, `label_reach_iff` both |
@@ -1500,18 +1685,21 @@ separate the two readings.
 | Id | Fixture | Expected | Direction |
 |---|---|---|---|
 | F11 | "Notwithstanding section 3, every operator may share." over rules `r3a` (same predicate) and `r3b` (another) | computed: `r9`'s `over` is `["r3a"]`; `r3b` adds nothing | `precedes_edges` |
+| F11-a | F11's wording recorded with reach `{"anchor": "sec3"}`, the governor on r9's own unit, outside section 3 (end to end through `govern`) | computed: `r9`'s `over` is `["r3a"]`; as `yields`, `r3a`'s `over` is `["r9"]`; a narrowing over the same anchor on the same unit is still `ManifestMismatch: scope.governors.g11n.unit` | `precedes_edges`, `yields_edges` |
 | F11-y | the same as `yields` | computed: `r3a`'s `over` is `["r9"]` | `yields_edges` |
 | F11′ | the same over `r3b` only | computed: `ScopeNoEffect: g11` | `no_effect_refused` |
 | F11-u | an unknown rule name | computed: `ScopeUnknownRule: r7` | — |
 | F11″ | edges that close a cycle | W1's `DependencyCycle`, unchanged | — |
 | F12 | u0047.s05–s06 "That said, we discuss some exceptions to this in the section on “broad safety” below." | not recorded as a forward declaration (no rule is named): u0047.s06 stays UNFORMALISED with residual `UnresolvedScope`, never a guessed edge | — |
 | F12-f | a forward declaration on h.s02 for rule `r1` in section `sec` | computed: with a later rule whose `over` is `["r1"]`, `.ok ()`; without, `ScopeForward: h.s02: rule r1 has no later exception in sec` | `forward_exception_sound`, `_complete` |
+| F12-f0 | F12-f's failing declaration in a document with no governor | `ScopeForward: h.s02: rule r1 has no later exception in sec` from `govern` (`admitBlock` step 9), never the document | `govern_admits` (at SC-4) |
 
 ### 7.7 SC-5
 
 | Id | Fixture | Expected | Direction |
 |---|---|---|---|
-| F13 | u0046.s02 "This is not a strict hierarchy, however." in its section | computed frontier: `[[u0046.s01], [u0045.s01, u0045.s02, u0045.s03], [u0044.s02, …, u0046.s01]]`: the previous sentence, the ordered list, the section's earlier units (three, not the plan's two: 9.1); every unit unadmitted, so all three live: `AmbiguousScope`; in translation one reading set with three candidates | `frontier_ambiguous` |
+| F13 | u0046.s02 "This is not a strict hierarchy, however." in its section | computed frontier, the same with and without the root anchor `doc`: `[[u0046.s01], [u0045.s01, u0045.s02, u0045.s03], [u0044.s02, …, u0046.s01]]`: the previous sentence, the ordered list, the section's earlier units (three, not two: 9.1); every unit unadmitted, so all three live: `AmbiguousScope`; in translation one reading set with three candidates | `frontier_ambiguous` |
+| F13-r | **counterfixture**: "Rule 1. … Rule 4. … This applies only where the user is an adult." with r1's base guard 64 levels deep (it decodes) and r4's `["top"]`; candidates `[r4]` (fits) and `[r1, r4]` | computed: r1's composed rule is `ResourceLimit: formula depth exceeds 64`, so `fitAt` at r1 is `none` (draft 1: `some false`); frontier `[[r.s02], [r.s01, r.s02]]`; with r4 fitting, `AmbiguousScope: g13: [[r.s02], [r.s01, r.s02]]`, never `.ok [r.s02]` (draft 1's answer, computed beside it): the reach is not fixed by exhaustion, and under the choice `[r1, r4]` the chain's decoder answers `ResourceLimit` for r1, UNKNOWN for every dependent verdict | `fitAt_limit`, `fitOf_fails_iff` |
 | F13′ | "Rule 4. ... This applies only where the user is an adult." with candidates `[r4]` (fits) and `[r1, r4]` (fails) | computed: the reach is fixed, `.ok [r4]` | `frontier_accepted`, `scopeCandidates_iff` both |
 | F13‴ | an unsupported alternative: `[r4]` fits, `[r1, r4]` unresolved | computed: `AmbiguousScope: g13: [[r4], [r1, r4]]`, never a unique reach | `scopeCandidates_iff` |
 | F13⁗ | an unresolved singleton: `[r4]` unresolved, `[r1, r4]` fails | computed: `UnresolvedScope: g13: a unit of its only candidate is not admitted` | `frontier_unresolved` |
@@ -1538,6 +1726,7 @@ separate the two readings.
 |---|---|---|
 | `Pinned.checkCore`, `Pinned.checkDoc`, `Pinned.profilesOf`, `Pinned.withUnits` | lf-16g's Lean document mode (`lean/VE/Service/Document.lean`; today `VE.Service.Document.check`) | its entry at SC-1b start; `checkCore` is the entry without scope's branch |
 | `Pinned.decodeScope`, `Pinned.foldGovernors` | SC-1b's own definitions | written by SC-1b |
+| `Pinned.governFast` | SC-1a's own definition: the run path (1.5.8) | written by SC-1a; its contract is `governFast_eq` |
 | `VE.Readings.Wire.ReadingsEnvironment`, `VE.Readings.Wire.decodeNorm` | the chain's decoder (merged) | as merged; for a document without `readings@1`, SC-1b builds the same record from the chain's environment decoding |
 | `Pinned.ruleTyped` | the chain's per-rule typing check | SC-5's addendum |
 | `Pinned.jointPicks` | lf-14d (`VE.Discourse` joint choices in Lean) | SC-5's addendum |
@@ -1549,20 +1738,22 @@ separate the two readings.
 
 ### 8.2 Limits
 
-Governors ≤ 256; list names ≤ 256 (the governor limit's); anchors ≤ 1,024 (discourse's); condition depth ≤ 64;
-frontier constituents ≤ 8; reading-set candidates ≤ 8 (one choice per frontier governor). Every limit is
-`ResourceLimit`, UNKNOWN.
+Governors ≤ 256; list names ≤ 256 (the governor limit's, enforced by `admitBlock` step 1); anchors ≤ 1,024
+(discourse's); condition depth ≤ 64; frontier constituents ≤ 8; reading-set candidates ≤ 8 (one choice per frontier
+governor). Every limit is `ResourceLimit`, UNKNOWN; a decoder's limit met while fitting a candidate leaves it live.
 
 ### 8.3 Files, generated files and the audit
 
-As the plan's batches list them. Generated files (schemas, `tools/gate-collection.json`, `lean/checkers.lock`,
-Python's profile data, `lean/VE/Route/frozen-sources.sha256`, route cases) are regenerated with
-`tools/regen_generated.py --write`, never by hand. Each theorem gets one `#print axioms` line in
-`lean/VE/Audit.lean` (or AR-1's generator); the audit allowlist is unchanged.
+As the plan's batches list them; SC-3a's shared files now include `lean/VE/Discourse/WellFormed.lean` (the anchor
+checks and their helpers move out of it, 1.2), whose line in `lean/VE/Route/frozen-sources.sha256` is regenerated
+with `Access.lean`'s. SC-1b adds the benchmark row B1 to `tools/bench`. Generated files (schemas,
+`tools/gate-collection.json`, `lean/checkers.lock`, Python's profile data, `lean/VE/Route/frozen-sources.sha256`,
+route cases) are regenerated with `tools/regen_generated.py --write`, never by hand. Each theorem gets one
+`#print axioms` line in `lean/VE/Audit.lean` (or AR-1's generator); the audit allowlist is unchanged.
 
-## 9. Choices this draft made, and questions for the review
+## 9. Choices, the review's answers and corrections, and the addenda
 
-### 9.1 Where the draft chose between readings of the plan
+### 9.1 Where the drafts chose between readings of the plan or of the review
 
 1. **The document representation is JSON, and effects act on the rule's JSON object.** The debate required a
    return type that can express preservation and conditions decoded by the owner's decoder after `own` is
@@ -1576,7 +1767,7 @@ Python's profile data, `lean/VE/Route/frozen-sources.sha256`, route cases) are r
 4. **Governors record their reach units** (`units`), regenerated and compared, as the plan's wire rule says for
    reaches; readers of the front matter see what each governor governs.
 5. **Anchors ride in scope's block** until composition S4 lets a discourse manifest sit beside norm content, as the
-   plan already does for list names (9.2 asks how they are checked).
+   plan already does for list names; they are checked by discourse's own checks, moved (1.2; 9.2 question 1).
 6. **Status order is `VE.Reports.Status.rank`** (attribution's spec 6, the one merged order); the document mode
    names statuses with the same words.
 7. **Governor status applies only to content-less governor units with meaning `specified`** (1.6): scope never
@@ -1597,18 +1788,93 @@ Python's profile data, `lean/VE/Route/frozen-sources.sha256`, route cases) are r
     governor could be claimed over a unit it did not change. An unwritten (pending) unit stays allowed and makes
     the governor UNFORMALISED.
 
-### 9.2 Questions for the statement review
+Draft 2's choices, where the review allowed more than one repair:
 
-1. Anchors in scope's block: should their tree, duplicate and overlap checks be discourse's `anchorsOk` called on
-   a manifest view (it takes a `DDoc`), or should SC-3a move those check bodies into `VE.Layout` beside
-   containment, as it moves `within`? The second adds `lean/VE/Discourse/WellFormed.lean` to SC-3a's shared files.
-2. Is the any-depth `"own"` with the reserved name acceptable to attitudes (AT-3a's node has no member whose value
-   could be the string `own` except `content`), and to the other packs whose guard nodes may follow?
-3. Is the status rule of 1.6 (content-less governors with meaning `specified` only) the intended reading of the
-   plan's "weakest of governed", or should a governor with another meaning take the weaker of its own status and
-   the governed ones?
-4. `restrict_applies` and `reguard_applies` are stated for the base guard grammar only. Is a statement over
-   AT-3a's decoder needed in scope at all, or is attitudes' own decoder theorem the right and only owner?
+14. **The run path is `governFast` with `governFast_eq`** (1.5.8), of the two repairs the review allowed (a reach
+    table that `coversU`, `frameOn` and `governorsOf` read, or a proved-equal fast form). The statement functions
+    and every theorem about them stay as written; only the run path changes.
+15. **The source binding is stated both ways.** The reviewers' last rounds crossed, each conceding the other's form:
+    the payload form (`govern_strings`, no hypothesis) and the binding form (`govern_no_new_symbols` with
+    `BlockBound`) are both stated, the second a corollary of the first, and SC-1b proves the binding for decoded
+    documents (`decodeScope_bound`, with `decodeScope_layout`).
+16. **Forward declarations are the last step of `admitBlock`** (step 9), which puts them before the identity
+    shortcut and inside every existing `admitBlock D = .ok ()` hypothesis, so no theorem's statement changes at SC-4.
+17. **The anchor checks' generic helpers move with the bodies** (`req`, `runAll`, `allOk`, `dupOf`, `spanIn`,
+    `spansDisjoint`, 1.2), the only way the bodies can sit below `Access.lean` in the import graph.
+18. **`decodeNorm_name` is stated in scope's theorem file**, about the merged decoder, which no merged module states;
+    no decoder file is edited (5.1).
+19. **A list name's `scope` must be `"doc"`** (checked, no longer ignored): of Astra's two options, scoped lookup or
+    the wire restricted to the document scope, the review agreed on the second until scoped lookup exists.
+20. **The addendum obligations of SC-3b and SC-5**, which the review asked to record here, are listed in 9.4, beside
+    the gate they set.
+
+### 9.2 Questions for the statement review, answered
+
+1. *Anchors in scope's block: discourse's `anchorsOk` on a manifest view, or the check bodies moved into
+   `VE.Layout`?* **Moved** (both reviewers, round 3). `anchorsOk` takes a `DDoc` with `E`, `base`, `K`, `sourceId`,
+   `text`, `sets`, `status`, `prose`, `files` and `nouns`, and its export check reads unit kinds from
+   `D.base.units`, so a view would have to invent those values. SC-3a moves the bodies beside `within` (1.2, 4.1),
+   with `discourse_anchorsOk_unchanged`; `lean/VE/Discourse/WellFormed.lean` joins SC-3a's shared files (8.3).
+2. *Any-depth `"own"` with the reserved name.* No finding: Fable's round 1 accepted `own`, `ownSafe` and `Commutes`,
+   and Astra raised none. Draft 1's choice stands.
+3. *The status rule of 1.6.* No finding: Fable's round 1 accepted the statuses, and Astra raised none. It stands.
+4. *A statement over AT-3a's decoder in scope.* Not raised. 5.4 stands: attitudes' decoder theorems own what the
+   attitude words mean.
+
+### 9.3 Corrections from the statement review (draft 2)
+
+The review (`manage-agents/debates/scope-spec/`, round 3, both reviewers CONVERGED on FIX) agreed on this set of
+corrections; draft 2 applies each, and nothing else changes.
+
+| # | Finding (who raised it) | Correction | Where | Fixture |
+|---|---|---|---|---|
+| 1 | `govern_no_new_symbols` is false for an unrestricted `SDoc`: a decoded governor list is not tied to `block` (Astra) | `payload`, `BlockBound`; `govern_strings`; `govern_no_new_symbols` takes `hb : BlockBound D`; `decodeNorm_name`; SC-1b proves `decodeScope_bound` and `decodeScope_layout`, and from them `decoded_no_new_symbols` | 1.8, 4.2, 5.1, 5.2 | F-sym, F1-dec |
+| 2 | Without governors `govern` returned before `admitBlock`: malformed metadata was accepted, and SC-4's forward checks were bypassed (Astra) | `govern` admits the block first; `govern_identity` and `govern_orphan` take `admitBlock D = .ok ()`; `govern_admits`; forward checks are `admitBlock`'s last step | 1.1, 1.5.7, 1.9, 4.2, 5.1, 6 | F-meta, F12-f0 |
+| 3 | The 256-list-name limit was advertised, not enforced (Astra) | `admitBlock` step 1, `ResourceLimit: scope list names` | 4.2, 6.1, 8.2 | F-meta |
+| 4 | `ContentName.scope` was ignored (Astra) | must be `"doc"`, else `InvalidInput` (step 6) | 3, 4.2, 6.1 | F-meta |
+| 5 | Anchor validation had no owner (9.2 question 1; both) | discourse's checks move to `VE.Layout`, `discourse_anchorsOk_unchanged`, `admitBlock` step 7; fixtures carry the root anchor | 1.2, 4.1, 4.2, 5.5, 7.5, 8.3 | F8-tree |
+| 6 | `admitBlock` required every anchor or label governor on the heading or item, so "Notwithstanding section 3" could not reach by anchor (both) | the check applies to unary and `title` effects only; the authoring row is the in-rule form | 1.3, 2.2, 4.2, 6.1 | F11-a |
+| 7 | Rows 3 and 4 of 2.2 gave one sentence two blocks, since row 4's sentence is an instance of row 3's template (both); the first proposed fix, "apply exactly where", would be false, since carve-outs survive a replacement (Astra) | row 3 for conditions that do not mention "its kind"; row 4 is "In place of their own condition, …", paraphrased as a guard replacement whose carve-outs still apply | 2.2 | F4-r3, F4-c |
+| 8 | The precedence and carve-out paraphrases did not follow W1 2.3 and 2.5 (Astra) | "Wherever rule 9, or a rule that takes precedence over it directly or through other rules, applies, no rule of section 3 decides on that act."; the carve-out paraphrase names the predicate's default sentence | 2.2 | — |
+| 9 | `fitAt` read every composed-decoder error, `ResourceLimit` included, as `some false`, so exhaustion could eliminate a candidate (Astra) | `composedRule`; a `ResourceLimit` is `none`; `fitAt_limit` | 1.7, 5.7, 6 | F13-r |
+| 10 | Graph effects cannot be fitted: `applyEffect` treats them as identity and fitting lacks the governor's own rule (Astra) | a `frontier` reach carries a unary effect only (`ScopeReach`); `frontier_graph_refused`; lifting it is an SC-5 addendum obligation | 1.3, 1.7, 4.2, 5.1, 9.4 | F-fg |
+| 11 | `blankLinesBefore` and `covered` are quadratic and cubic on the 1,132-unit pilot (Fable) | `paraCounts`, one fold; the run path `governFast` with `governFast_eq`; a pilot benchmark row | 1.2, 1.5.8, 4.1, 5.1, 7.2, 8.1 | L1-p, B1 |
+| 12 | SC-5's step "replace `coveredLayout`'s frontier case by `validateFrontier`" does not typecheck (Fable) | recorded as SC-5 addendum obligations | 4.2, 5.7, 9.4 | — |
+| 13 | SC-3b cannot extend `baseObj` alone: admission, `ruleUnits`, `affected` and `newContent` exclude assertions or wrap them as norms (Astra) | SC-3b is gated on an approved addendum | 5.5, 9.4 | — |
+| 14 | F1-m and F1-g used different stand-in predicates (Fable) | `restricted_act_permitted` throughout, F1-m recomputed | 7.1 | F1-m |
+| 15 | The plan disagreed with the spec on the Boolean `sign`, the status rule and F13's candidates (Astra) | plan draft 3 synced, with one stand-in predicate | the plan | — |
+
+### 9.4 Addenda required before SC-3b and SC-5
+
+Each addendum is a spec section with its own statements and fixtures. It goes through the statement review and is
+approved before its batch is built. SC-1a, SC-3a and the other batches do not wait for either.
+
+**SC-3b (assertion targets).** It specifies:
+1. the assertion cases of `baseObj` (an assertion under a plain narrowing or an own-free carve-out of an `anchor` or
+   `label` reach becomes `["implies", C, φ]` or `["implies", ["not", C], φ]`, closed conditions only);
+2. the assertion cases of `ruleUnits` (or a separate list of governable units), of `affected`, and of the
+   `ScopeNotARule` check of `admitBlock`;
+3. `newContent` writing an assertion back as an assertion, never in a norm wrapper;
+4. the matching preservation and provenance statements for assertion units (`govern_preserves`,
+   `govern_provenance`, `govern_strings`), with F9-a both ways.
+
+**SC-5 (frontier reaches).** It settles:
+1. *The governor parameter.* `coveredLayout : Reach → …` cannot call `validateFrontier D g`, which needs the
+   governor.
+2. *The dependency cycle.* That call would recurse through `fitAt → baseObj → frameOn → coveredLayout`, and no
+   `mutual` is allowed. The addendum fixes the order, for example validating before `govern` and handing it only
+   `fixed` reaches.
+3. *The empty manifest.* An unfixed frontier governor records `units = []`, so it fails `admitBlock`'s
+   `us == g.units`. The addendum fixes what is recorded and compared.
+4. *Resource uncertainty per choice.* `fitAt_limit` holds now. Per choice, a composed rule that meets a decoder
+   limit leaves every dependent verdict UNKNOWN, and F13-r stays: exhaustion never makes a competing candidate the
+   unique reach.
+5. *Graph fitting.* Frontier reaches stay unary-only (`frontier_graph_refused`), and the addendum enforces that
+   before any frontier reach becomes an internal `fixed` reach: after `fixAt`, `admitBlock` sees a `fixed` reach,
+   which it does not refuse. Lifting the restriction needs fitting that receives the governor's own rule and
+   evaluates graph effects, with its own theorems and fixtures.
+6. *The pins.* `Pinned.ruleTyped` and `Pinned.jointPicks` are pinned. `govern_provenance` and
+   `govern_no_new_symbols` are stated per choice, through `governAt`, and `scope_choices` over lf-14d's joint set.
 
 ## 10. Review checklist
 
@@ -1616,11 +1882,20 @@ Python's profile data, `lean/VE/Route/frozen-sources.sha256`, route cases) are r
 - [ ] Lean owns meaning: no effect is decided in Python; every effect's meaning is the chain's decoder's (5.4).
 - [ ] One owner per piece of logic: no rule-field list in scope; containment moved, not copied; split maps and pack
       origins read, not re-derived; the wording table in Lean.
-- [ ] Preservation is expressible and strong (`govern_identity`, `govern_preserves`, `govern_no_new_symbols`).
-- [ ] Precedence is a graph step with provenance (`govern_provenance`'s edges, `precedes_edges`, `yields_edges`).
+- [ ] Preservation is expressible and strong (`govern_identity` after admission, `govern_admits`,
+      `govern_preserves`, `govern_strings`, `govern_no_new_symbols` under `BlockBound`).
+- [ ] Every hypothesis a statement needs is stated and discharged where the input arises (`BlockBound` by
+      `decodeScope_bound`; `admitBlock D = .ok ()` by `govern_admits`).
+- [ ] Precedence is a graph step with provenance (`govern_provenance`'s edges, `precedes_edges`, `yields_edges`),
+      and a graph governor may sit outside its anchor (F11-a).
 - [ ] `Commutes` is syntactic and conservative; everything else is `ScopeOrder`.
-- [ ] Three-valued `Fits`; unresolved singletons stay unresolved; overflow is UNKNOWN, never truncated.
+- [ ] Three-valued `Fits`; unresolved singletons stay unresolved; overflow is UNKNOWN, never truncated; exhaustion
+      in fitting is UNKNOWN, never evidence against a candidate (`fitAt_limit`, F13-r).
 - [ ] Every "exactly when" claim has a fixture each way (7, column "Direction").
+- [ ] Every paraphrase follows W1's meaning (2.2: precedence per W1 2.3 and 4.2, carve-outs naming the default per
+      W1 2.5) and no sentence has two blocks (rows 3 and 4, F4-r3).
+- [ ] The run path is fast and proved equal (`governFast_eq`, `paraCounts`, B1).
 - [ ] Honest limits: translation effects are recorded claims; SC-E2 is proxy evidence; the 263 B claim waits for
-      AT-3a.
-- [ ] Every statement elaborates (stub, Lean v4.24.0); nothing is proved yet.
+      AT-3a; SC-3b and SC-5 wait for their addenda (9.4).
+- [ ] Every statement elaborates (stub, Lean v4.24.0, re-elaborated for draft 2), and each repaired contract has an
+      executed fixture (9.3); nothing is proved yet.
