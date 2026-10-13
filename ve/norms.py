@@ -12,7 +12,7 @@ from itertools import product
 import re
 
 from .assurance import semantic_entry
-from .ast import (And, Atom, Binary, Bottom, Exists, Forall, Implies, Not, Or,
+from .ast import (And, Binary, Bottom, Exists, Forall, Implies, Not, Or,
                   Top, Unary, Var, _Checker, _Decoder, _to_data)
 from .background import dependency_order
 from .environment import UNSAID_PREFIX
@@ -69,37 +69,32 @@ def _shift_term(term, depth):
     return term
 
 
-def _instantiate(formula, terms, depth=0, *, nary_atoms=False):
+def _instantiate(formula, terms, depth=0):
     """Replace the tuple variables of an open formula, respecting inner binders.
 
-    n-ary atoms are substituted only on request (`nary_atoms`): the batch-14b
-    Lean family route's untrusted witness and proof generators ask for it, and
-    every retained Python caller keeps the base's expansion until batch 14c
-    moves its scope (lf-14b review F2)."""
+    n-ary atoms are left as the base left them on every route: substituting
+    them changes answers (lf-14b review F2/F3) and belongs to batch 14c, which
+    moves n-ary scope with a DRI-signed delta."""
     from .ast import Eq, Reach, Body, Lt, Le
     if isinstance(formula, (Unary, Binary)):
         args = (formula.term,) if isinstance(formula, Unary) else (formula.left, formula.right)
         mapped = tuple(_replace_term(x, terms, depth) for x in args)
         return Unary(formula.predicate, mapped[0]) if len(mapped) == 1 else Binary(formula.predicate, *mapped)
-    if isinstance(formula, Atom) and nary_atoms:
-        return Atom(formula.predicate, tuple(_replace_term(x, terms, depth) for x in formula.terms))
     if isinstance(formula, (Eq, Lt, Le)):
         return type(formula)(_replace_term(formula.left, terms, depth),
                              _replace_term(formula.right, terms, depth))
     if isinstance(formula, Reach):
-        edge = (Body(formula.edge.sort, _instantiate(formula.edge.formula, terms, depth + 2,
-                                                 nary_atoms=nary_atoms))
+        edge = (Body(formula.edge.sort, _instantiate(formula.edge.formula, terms, depth + 2))
                 if isinstance(formula.edge, Body) else formula.edge)
         return Reach(formula.kind, edge, _replace_term(formula.left, terms, depth),
                      _replace_term(formula.right, terms, depth))
     if isinstance(formula, Not):
-        return Not(_instantiate(formula.body, terms, depth, nary_atoms=nary_atoms))
+        return Not(_instantiate(formula.body, terms, depth))
     if isinstance(formula, (And, Or, Implies)):
-        return type(formula)(_instantiate(formula.left, terms, depth, nary_atoms=nary_atoms),
-                             _instantiate(formula.right, terms, depth, nary_atoms=nary_atoms))
+        return type(formula)(_instantiate(formula.left, terms, depth),
+                             _instantiate(formula.right, terms, depth))
     if isinstance(formula, (Forall, Exists)):
-        return type(formula)(formula.sort, _instantiate(formula.body, terms, depth + 1,
-                                                        nary_atoms=nary_atoms))
+        return type(formula)(formula.sort, _instantiate(formula.body, terms, depth + 1))
     return formula
 
 
@@ -290,16 +285,15 @@ class NormDocument:
             raise VEError("UnsupportedProfile: norm-defaults@0 documents are checked through fill "
                           "(ve.norm_defaults)")
 
-    def outcome(self, predicate, *, base=False, nary_atoms=False):
+    def outcome(self, predicate, *, base=False):
         self._require_completion()
         positive, negative, _ = self.selection(predicate)
         default = self.env.predicates[predicate].regulated.default
         outcome = positive if default == "deny" else Not(negative)
-        return self._expand(outcome, predicate, nary_atoms=nary_atoms) if base else outcome
+        return self._expand(outcome, predicate) if base else outcome
 
-    def _expand(self, formula, current, stack=(), *, nary_atoms=False):
-        """Replace lower regulated atoms by completed outcomes (`_instantiate`
-        says which callers substitute n-ary atoms)."""
+    def _expand(self, formula, current, stack=()):
+        """Replace lower regulated atoms by completed outcomes."""
         if isinstance(formula, (Unary, Binary)) and formula.predicate != current:
             decl = self.env.predicates[formula.predicate]
             if decl.regulated is not None:
@@ -307,16 +301,14 @@ class NormDocument:
                     raise VEError("DependencyCycle: " + formula.predicate)
                 args = (formula.term,) if isinstance(formula, Unary) else (formula.left, formula.right)
                 return _instantiate(self._expand(self.outcome(formula.predicate), formula.predicate,
-                                                  (*stack, formula.predicate), nary_atoms=nary_atoms),
-                                    args, nary_atoms=nary_atoms)
+                                                  (*stack, formula.predicate)), args)
         if isinstance(formula, Not):
-            return Not(self._expand(formula.body, current, stack, nary_atoms=nary_atoms))
+            return Not(self._expand(formula.body, current, stack))
         if isinstance(formula, (And, Or, Implies)):
-            return type(formula)(self._expand(formula.left, current, stack, nary_atoms=nary_atoms),
-                                 self._expand(formula.right, current, stack, nary_atoms=nary_atoms))
+            return type(formula)(self._expand(formula.left, current, stack),
+                                 self._expand(formula.right, current, stack))
         if isinstance(formula, (Forall, Exists)):
-            return type(formula)(formula.sort, self._expand(formula.body, current, stack,
-                                                            nary_atoms=nary_atoms))
+            return type(formula)(formula.sort, self._expand(formula.body, current, stack))
         return formula
 
     def _lean_regenerated(self) -> dict:
@@ -391,22 +383,21 @@ class NormDocument:
         """A rule identity binds its AST and environment, never its display number."""
         return norm_meaning_id(self.env, self.by_name[name])
 
-    def conflict_targets(self, *, nary_atoms=False):
+    def conflict_targets(self):
         targets = []
         for p in self.order:
             positive, negative, _ = self.selection(p)
-            formula = And(self._expand(positive, p, nary_atoms=nary_atoms),
-                          self._expand(negative, p, nary_atoms=nary_atoms))
+            formula = And(self._expand(positive, p), self._expand(negative, p))
             targets.append((p, self.env.predicates[p].arguments, formula))
         for required, decl in sorted(self.env.predicates.items()):
             reg = decl.regulated
             if reg is not None and reg.permission is not None:
-                formula = And(self.outcome(required, base=True, nary_atoms=nary_atoms),
-                              Not(self.outcome(reg.permission, base=True, nary_atoms=nary_atoms)))
+                formula = And(self.outcome(required, base=True),
+                              Not(self.outcome(reg.permission, base=True)))
                 targets.append((f"{required}->{reg.permission}", decl.arguments, formula))
         return tuple(targets)
 
-    def selected_rules(self, predicate, model, values, *, max_evaluations=1_000_000, nary_atoms=False):
+    def selected_rules(self, predicate, model, values, *, max_evaluations=1_000_000):
         from .evaluate import _Evaluator
         sorts = self.env.predicates[predicate].arguments
         if len(values) != len(sorts) or any(v not in model.domains[s] for s, v in zip(sorts, values)):
@@ -415,8 +406,7 @@ class NormDocument:
         bindings = tuple(zip(reversed(sorts), reversed(values)))
         evaluator = _Evaluator(self.base_environment(), model, max_evaluations, trace=False)
         return tuple(rule for rule in self.rules if rule.predicate == predicate and
-                     evaluator.formula(self._expand(selected[rule.name], predicate, nary_atoms=nary_atoms),
-                                       bindings)[0])
+                     evaluator.formula(self._expand(selected[rule.name], predicate), bindings)[0])
 
     def overlap_witnesses(self, model):
         """Same-sign selections with a checked example; overlap is not conflict."""
@@ -560,12 +550,12 @@ def _base_model(document, env, model):
     return model
 
 
-def _find_conflict(document, env, model, max_evaluations, *, nary_atoms=False):
+def _find_conflict(document, env, model, max_evaluations):
     """Python's witness search: the first target and typed tuple whose conflict
     formula evaluates true on `model`, or None. Raises `_Exhausted`."""
     from .evaluate import _Evaluator
     evaluator = _Evaluator(env, model, max_evaluations, trace=False)
-    for target, sorts, formula in document.conflict_targets(nary_atoms=nary_atoms):
+    for target, sorts, formula in document.conflict_targets():
         _Checker(env).formula(formula, tuple(reversed(sorts)))
         for values in product(*(model.domains[s] for s in sorts)):
             bindings = tuple(zip(reversed(sorts), reversed(values)))
@@ -574,11 +564,11 @@ def _find_conflict(document, env, model, max_evaluations, *, nary_atoms=False):
     return None
 
 
-def _conflict_report(document, target, sorts, model, values, *, nary_atoms=False):
+def _conflict_report(document, target, sorts, model, values):
     """The CONFLICT record; its situation names the rules Python selects there."""
     setting = ", ".join(f"{sort} {value}" for sort, value in zip(sorts, values))
     if target in document.order:
-        selected = document.selected_rules(target, model, values, nary_atoms=nary_atoms)
+        selected = document.selected_rules(target, model, values)
         role = document.env.predicates[target].regulated.role
         pos = "permits" if role == "permission" else "requires" if role == "obligation" else "affirms"
         neg = "forbids" if role == "permission" else "releases" if role == "obligation" else "denies"
@@ -589,12 +579,12 @@ def _conflict_report(document, target, sorts, model, values, *, nary_atoms=False
     return ConflictReport("CONFLICT", target, tuple(values), f"{setting}: {decisions}")
 
 
-def _prove_targets(document, env, tableau_steps, *, nary_atoms=False):
+def _prove_targets(document, env, tableau_steps):
     """Certificates for every conflict target from Python's (untrusted) prover,
     or the UNKNOWN record of the first target it cannot prove."""
     from .entailment import prove_entailment
     certificates = {}
-    for target, sorts, formula in document.conflict_targets(nary_atoms=nary_atoms):
+    for target, sorts, formula in document.conflict_targets():
         result = prove_entailment(env, (), _bind(Not(formula), sorts), max_steps=tableau_steps)
         if result.status != "Found":
             return ConflictReport("UNKNOWN", detail=f"tableau budget or open branch: {target}")
@@ -687,7 +677,7 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
     if model is not None:
         model = _base_model(document, env, model)
         try:
-            found = _find_conflict(document, env, model, max_evaluations, nary_atoms=True)
+            found = _find_conflict(document, env, model, max_evaluations)
             if found is not None:
                 target, sorts, values = found
                 witness = {"target": target, "model": model.to_dict(), "tuple": list(values)}
@@ -696,11 +686,11 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
                 if row["verdict"] != "CONFLICT" or row.get("target") != target:
                     raise CheckerUnavailable("CheckerUnavailable: Lean does not confirm the conflict "
                                              "witness Python's search found")
-                return _conflict_report(document, target, sorts, model, values, nary_atoms=True)
+                return _conflict_report(document, target, sorts, model, values)
         except _Exhausted:
             return ConflictReport("UNKNOWN", detail="MAX_EVALUATIONS")
     if prove:
-        certificates = _prove_targets(document, env, tableau_steps, nary_atoms=True)
+        certificates = _prove_targets(document, env, tableau_steps)
         if isinstance(certificates, ConflictReport):
             return certificates
     if certificates is not None:

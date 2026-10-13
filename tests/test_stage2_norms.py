@@ -337,57 +337,76 @@ def nary_lower_outcome(*, unused_nary_definition):
     return doc, model
 
 
-def test_retained_python_route_keeps_the_base_nary_expansion(monkeypatch):
-    """lf-14b review F2: batch 14b's n-ary atom substitution belongs to the
-    Lean family route's generators; every retained Python operation answers as
-    the base did (`TypeMismatch` from the unsubstituted atom) until 14c."""
-    from ve.norms import _lean_route, check_witness
-    doc, model = nary_lower_outcome(unused_nary_definition=True)
-    assert not _lean_route(doc)
-    ops = routed(monkeypatch, "lean")
-    mismatch = "TypeMismatch: Predicate 'tri'"
-    with pytest.raises(VEError, match=mismatch):
-        check_conflict(doc, model=model)
-    with pytest.raises(VEError, match=mismatch):
-        check_conflict(doc, prove=True, tableau_steps=300)
-    with pytest.raises(VEError, match=mismatch):
-        check_witness(doc, "required->permitted", model, ["a"])
-    assert not {op for op, _ in ops if op.startswith("norms_")}
-    # `check_witness` is retained Python on the Lean route too.
-    lean_doc, _ = nary_lower_outcome(unused_nary_definition=False)
-    with pytest.raises(VEError, match=mismatch):
-        check_witness(lean_doc, "required->permitted", model, ["a"])
+def answer(run):
+    """An operation's answer or its raised diagnostic, for route comparisons."""
+    try:
+        return ("ok", run())
+    except VEError as error:
+        return ("error", type(error).__name__, str(error))
 
 
-def test_lean_family_route_substitutes_nary_atoms_and_lean_checks_the_witness(monkeypatch):
-    from ve.norms import _lean_route
-    doc, model = nary_lower_outcome(unused_nary_definition=False)
-    assert _lean_route(doc)
+def conflict_answers(doc, model):
+    from ve.norms import check_witness
+    return {"model": answer(lambda: check_conflict(doc, model=model)),
+            "prove": answer(lambda: check_conflict(doc, prove=True, tableau_steps=300)),
+            "missing": answer(lambda: check_conflict(doc, certificates={})),
+            "witness": answer(lambda: check_witness(doc, "required->permitted", model, ["a"]))}
+
+
+def route_documents():
+    """Family documents with a conflict target on the Lean family route, first
+    order or not, including corpus document 13's n-ary lower outcome."""
+    model = {"complete": True, "domains": {"act": ["a"], "party": ["p"]}, "constants": {},
+             "relations": {"owner": [["a", "p"]], "urgent": [["a"]], "before": [["a", "a"]]}}
+    docs = {}
+    for name, family, guard in [
+            ("closure-urgent", ("closure@0",), Unary("urgent", Var(0))),
+            ("closure-reach", ("closure@0",), Reach("star", Named("before"), Var(0), Var(0))),
+            ("core-reach", ("closure@0", "nary@0"), Reach("star", Named("before"), Var(0), Var(0))),
+            ("order-urgent", ("order@0",), Unary("urgent", Var(0))),
+            ("order-le", ("order@0",), Le(Num(1), Num(2)))]:
+        env = flagged(family=family, relation="order@0" not in family, data="order@0" not in family)
+        relations = {k: v for k, v in model["relations"].items() if k in env.predicates}
+        docs[name] = (NormDocument(env, [rule("must", "required", True, guard)]),
+                      {**model, "relations": relations})
+    nary, nary_model = nary_lower_outcome(unused_nary_definition=False)
+    docs["nary-lower-outcome"] = (nary, nary_model)
+    return docs
+
+
+@pytest.mark.parametrize("name", sorted(route_documents()))
+def test_lean_family_route_answers_as_the_retained_python_route(monkeypatch, name):
+    """lf-14b review F2/F3, the class: a batch-14b change to a shared Python
+    helper must not change an answer on either route. Every conflict operation
+    answers on the Lean family route exactly as the retained Python route (the
+    base's) answers, including the base's `TypeMismatch` for an unsubstituted
+    n-ary lower outcome, until batch 14c signs that change."""
+    import ve.norms
+    doc, model = route_documents()[name]
+    assert ve.norms._lean_route(doc)
     ops = routed(monkeypatch, "lean")
-    report = check_conflict(doc, model=model)
-    assert (report.status, report.target, report.tuple) == ("CONFLICT", "required->permitted", ("a",))
+    lean = conflict_answers(doc, model)
     assert ("norms_conflict", "lean") in ops
+    monkeypatch.setattr(ve.norms, "_lean_route", lambda document: False)
+    assert conflict_answers(doc, model) == lean
 
 
-def test_only_the_lean_conflict_route_substitutes_nary_atoms():
-    """The class behind F2: a Lean-route change to a shared Python helper must
-    not reach the retained route. `nary_atoms=True` is passed only from
-    `_check_conflict_lean`; every other caller keeps the base default."""
-    import ast
-    callers = set()
-    for path in sorted((ROOT / "ve").rglob("*.py")):
-        tree = ast.parse(path.read_text(), str(path))
-        for scope in ast.walk(tree):
-            if not isinstance(scope, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                continue
-            for node in ast.walk(scope):
-                if isinstance(node, ast.Call) and any(
-                        k.arg == "nary_atoms" and not (isinstance(k.value, ast.Constant)
-                                                       and k.value.value is False)
-                        and not (isinstance(k.value, ast.Name) and k.value.id == "nary_atoms")
-                        for k in node.keywords):
-                    callers.add((path.relative_to(ROOT).as_posix(), scope.name))
-    assert callers == {("ve/norms.py", "_check_conflict_lean")}
+def test_retained_python_route_keeps_the_base_nary_expansion(monkeypatch):
+    """lf-14b review F2/F3: the n-ary lower outcome answers as the base did
+    (`TypeMismatch` from the unsubstituted atom) on the retained route and on
+    the Lean family route alike."""
+    from ve.norms import _lean_route, check_witness
+    mismatch = "TypeMismatch: Predicate 'tri'"
+    for unused_nary_definition in (True, False):
+        doc, model = nary_lower_outcome(unused_nary_definition=unused_nary_definition)
+        assert _lean_route(doc) is not unused_nary_definition
+        routed(monkeypatch, "lean")
+        with pytest.raises(VEError, match=mismatch):
+            check_conflict(doc, model=model)
+        with pytest.raises(VEError, match=mismatch):
+            check_conflict(doc, prove=True, tableau_steps=300)
+        with pytest.raises(VEError, match=mismatch):
+            check_witness(doc, "required->permitted", model, ["a"])
 
 
 def test_non_first_order_conflict_zero_model_budget_is_unknown():
