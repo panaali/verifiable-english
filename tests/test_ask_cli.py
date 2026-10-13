@@ -111,6 +111,54 @@ def test_the_json_is_leans_result_with_the_honesty_fields():
     assert reading["operation"] == "question.read" and reading["answer"] == "not_asked"
 
 
+@pytest.mark.parametrize("error,exit_code", [
+    ("CheckerUnavailable", 5), ("ResourceLimit", 4), ("VEError", 2),
+])
+def test_q2_d2_json_error_never_claims_a_checked_answer(error, exit_code, tmp_path, monkeypatch, capsys):
+    from ve import ask
+    from ve import errors
+    path = tmp_path / "document.ve.md"
+    path.write_text("source")
+
+    def fail(*_args):
+        raise getattr(errors, error)("refused")
+
+    monkeypatch.setattr(ask, "answer", fail)
+    assert ask.main([str(path), "Is it so?", "--json"]) == exit_code
+    record = json.loads(capsys.readouterr().out)
+    assert record["error"]["class"] == error
+    assert record["proof"] == "not_checked" and record["answer"] == "no_answer"
+    assert "result" not in record
+
+
+def test_q2_d8_more_than_64_readings_reports_leans_limit(tmp_path):
+    from tests.test_document import unit, write_doc
+    from tests.test_readings_nd_lean import doc1, env1
+    from ve.document import _environment
+    from ve.readings import s1_content_meaning_id
+    raw = env1()
+    env = _environment(raw)
+    text = b"Every agent must help each user.\n" * 7
+    units, sets = [], []
+    width = len(b"Every agent must help each user.\n")
+    for k in range(7):
+        uid, set_id = f"u{k}", f"rs{k}"
+        document, _ = doc1(raw, set_id=set_id, unit=uid, rule=f"must-help-{k}")
+        reading_set = document["reading_sets"][0]
+        for candidate in reading_set["readings"]:
+            candidate["meaning_id"] = s1_content_meaning_id(env, set_id, candidate)
+        sets.append(reading_set)
+        units.append(unit(uid, k * width, (k + 1) * width, "norm", "specified"))
+    path = write_doc(tmp_path, text, units, environment_json=raw, reading_sets=sets)
+    done = cli(path, "Is it the case that for every agent, for every user, that agent must help that user?", "--json")
+    assert done.returncode == 4, (done.stdout, done.stderr)
+    record = json.loads(done.stdout)
+    assert record["error"] == {"class": "ResourceLimit", "message":
+                               "ResourceLimit: There are more than 64 ways to read this document's open sentences. "
+                               "VE did not check them all."}
+    assert record["proof"] == "not_checked" and record["answer"] == "no_answer"
+
+
 VARIANTS = {"nbsp": "Is every member eligible?", "double space": "Is every  member eligible?",
             "tab": "Is every\tmember eligible?", "carriage return": "Is every member eligible?\r",
             "curly quote": "Is “every” member eligible?", "kelvin": "Is every member eligibleK?",
