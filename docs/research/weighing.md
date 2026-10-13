@@ -302,4 +302,56 @@ RESIDUAL-PENDING
 
 ## 6. Recommendation
 
-RECOMMENDATION-PENDING
+Build candidates A (a) to (c) and B, as one new profile; test candidate C and 4.1 (d) by experiment first; keep
+candidate D out of the core. The plan, [docs/spec/weighing-PLAN.md](../spec/weighing-PLAN.md), builds this. Its draft 1
+was reviewed by Astra and Fable (`manage-agents/debates/design-weighing/`, converged in round 3 on REVISE) and by the
+cross-plan review of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`); draft 2 carries both, and the
+recommendation below is the one they converged on.
+
+1. **First, with no product code: the value order in today's `soft-norms@0`** (plan WG-0). Ranks, the holistic flag
+   with its decider, and the hard constraints' immunity, written once RD-9's SC-8 lets a soft document sit beside
+   `norm-defaults@0` (1.4). This is the first step that can move a pilot number. Its effect is measured by WG-0, not
+   estimated here: section 2 is not filled, and the plan withdrew the estimates that cited it.
+2. **Candidate A (a) to (c) as `weighing@0`** (plan WG-2 to WG-5): `always` on a rank edge, necessary and sufficient
+   conditions on an override, necessary conditions on a switch, and delegated switches. Each is a labelled premise on
+   an open decision that already exists, in the `weighing` pack of the layered route's extra premises `X`; `ValueSoft`,
+   `soften` and `fill` are unchanged. The review narrowed the candidate in four places:
+   - "generally outranks" is an input synonym of a plain "outranks", and only `always` edges are on the wire, so every
+     construct has a formal effect;
+   - weighing constrains decisions, never the world: a condition on a strict pair is refused, a sufficient condition
+     must be shown to imply each necessary condition on its target, and a switch takes no sufficient condition;
+   - a grantee's switch carries every condition on the grantor's own switch along the whole grant chain, which is
+     what :138 means and what the structural bound alone does not give;
+   - the guarantee is that the weighing premises alone never constrain the world (`weigh_alone_base_free`), not
+     conservativity: through soft's coherence, conditions can leave a situation with no admissible decision, and the
+     answer then says "inconsistent at this situation".
+3. **Candidate B: zone answers and decision records** (plan WG-6 to WG-8), as two kinds of the layered route rather
+   than a new service mode, on norm-defaults' three-valued machinery widened in its owner file. "Settled" is claimed
+   only with one admissible completion checked, the enumeration discards what the whole `X` refutes, and "left to" and
+   "not said" are kept apart and reported together where both hold.
+4. **Experiments with bars fixed before any data is read** (plan WG-E1, WG-E2). Precedents (candidate C) are built
+   only if every worked example can be written with factors the source lists, the precedents are consistent, and the
+   compiled conditions force at least half of the held-out outcomes and contradict none. Collisions between different
+   acts (4.1 d) are built only if enough sampled units need them and they would change a checked answer, and then as
+   `alternatives@0` composed with soft norms (plan WG-10), never as an exclusivity relation of weighing's own.
+5. **Not recommended**: candidate D inside the checker (4.4), numeric weights and a reading set over orders (4.5),
+   and a general logic of authority (4.6). The best response among options (4.7) stays research.
+
+**Why.**
+
+- **It adds what the text says without new semantics.** A's sentences are premises, and RD-9 already proves the
+  checkers sound for any typed `X`, so the new proof obligations are typing, the meaning of the premises and the local
+  checks. B adds no sentence at all. Candidate D and 4.1 (d) would each add a semantics with its own faithfulness
+  proof; D's would be non-monotone and need certificates that no defeater applies.
+- **It keeps discretion as discretion.** The source grants judgment (:34); the design names each decision and its
+  decider and bounds what the decider may find, instead of choosing a weighing the source never states (D, numeric
+  weights) or misreading granted judgment as ambiguity (4.5).
+- **B is what a checker can honestly certify about a weighing it does not perform**: whether the weighing matters at
+  all, which named questions the answer turns on, and whether a recorded judgment stays inside the document's bounds.
+  It also corrects a wrong message today: the unclear cases :457 sends to holistic judgment come out "the text does
+  not say", where the right answer is "left to the assistant".
+- **The order follows the dependencies.** Nothing moves a pilot number before RD-9's SC-8; WG-0 needs no code; A
+  comes before B because A is what the constitution's translation writes (WG-5) and B reports answers on the result
+  (WG-8).
+- **The two extensions wait on evidence** because their need is unmeasured: the cross-act class of section 2 is not
+  yet written, and a precedent is only as good as its factors, so the experiments fail on any invented factor.
