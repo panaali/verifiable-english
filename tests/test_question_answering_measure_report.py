@@ -14,9 +14,7 @@ _spec.loader.exec_module(REPORT)
 
 
 def _agreement():
-    compressed = REPORT.EVIDENCE / "agreement.json.gz"
-    return (json.loads(gzip.decompress(compressed.read_bytes())) if compressed.exists() else
-            json.loads((REPORT.EVIDENCE / "agreement.json").read_text()))
+    return json.loads(gzip.decompress((REPORT.EVIDENCE / "agreement.json.gz").read_bytes()))
 
 
 def test_q2_measurement_report_is_generated_from_saved_evidence():

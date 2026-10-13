@@ -14,9 +14,7 @@ DESTINATION = ROOT / "docs/spec/question-answering-report.md"
 def render() -> str:
     fixtures = json.loads((EVIDENCE / "fixtures.json").read_text())["fixtures"]
     measurements = json.loads((EVIDENCE / "measurements.json").read_text())
-    compressed = EVIDENCE / "agreement.json.gz"
-    agreement = (json.loads(gzip.decompress(compressed.read_bytes())) if compressed.exists() else
-                 json.loads((EVIDENCE / "agreement.json").read_text()))
+    agreement = json.loads(gzip.decompress((EVIDENCE / "agreement.json.gz").read_bytes()))
     lines = ["# Question answering: Q2 non-model evidence", "",
              "The recorded answer fixtures were replayed through Lean's `ask` mode by "
              "`tests/test_ask_fixtures.py`. The table records those saved results; it does not infer a "
