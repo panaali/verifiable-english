@@ -1,0 +1,8 @@
+<noinclude><pagequality level="4" user="Lar" />{{RunningHeader|338|''Earth and the Luminiferous Ether.''|}}</noinclude>their surfaces measured 5.0 by 7.5 centimeters. The second of these was placed in the path of one of the pencils to compensate for the passage of the other through the same thickness of glass. The whole of the optical portion of the apparatus was kept covered with a wooden cover to prevent air currents and rapid changes of temperature.
+
+The adjustment was effected as follows: The mirrors having been adjusted by screws in the castings which held the
+
+[[Image:On the Relative Motion of the Earth and the Luminiferous Ether - Fig 4.png|400px|center]]
+
+mirrors, against which they were pressed by springs, till light from both pencils could be seen in the telescope, the lengths of the two paths were measured by a light wooden rod reaching diagonally from mirror to mirror, the distance being read from a small steel scale to tenths of millimeters. The difference in the lengths of the two paths was then annulled by moving the mirror ''e''<sub>/</sub>. This mirror had three adjustments; it had an adjustment in altitude and one in azimuth, like all the other mirrors,<noinclude>
+<references/></noinclude>

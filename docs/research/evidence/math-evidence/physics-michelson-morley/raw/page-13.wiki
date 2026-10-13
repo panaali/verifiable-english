@@ -1,0 +1,6 @@
+<noinclude><pagequality level="4" user="Lar" />{{RunningHeader||''Michelson and Morley—Motion of the Earth, etc.''|345}}</noinclude>motions only, though it seems likely that by the immense improvements in the photography of stellar spectra, the information thus obtained will be far more accurate than any other.
+
+3. Finally there remains the determination of the velocity of light by observations of the eclipses of Jupiter's satellites. If the improved photometric methods practiced at the Harvard observatory make it possible to observe these with sufficient accuracy, the difference in the results found for the velocity of light when Jupiter is nearest to and farthest from the line of motion will give, not merely the motion of the solar system with reference to the stars, but with reference to the luminiferous ether itself.<noinclude>
+{{rule}}
+----
+<references/></noinclude>

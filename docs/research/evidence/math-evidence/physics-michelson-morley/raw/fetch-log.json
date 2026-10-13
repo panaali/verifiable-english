@@ -1,0 +1,114 @@
+[
+ {
+  "file": "index.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether",
+  "retrieved": "2026-10-13T08:15:57+00:00",
+  "http_status": 200,
+  "bytes": 782,
+  "sha256": "d70be98577d82d83e49ff6b0faedc293ca9297956c242fbc96972937e48a4104"
+ },
+ {
+  "file": "page-01.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/1",
+  "retrieved": "2026-10-13T08:15:57+00:00",
+  "http_status": 200,
+  "bytes": 1667,
+  "sha256": "0cc259614fd3247a04fdfdc7d1ef4ea75e59ee95ca4237fd33eb8dea7ffb55ab"
+ },
+ {
+  "file": "page-02.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/2",
+  "retrieved": "2026-10-13T08:15:57+00:00",
+  "http_status": 200,
+  "bytes": 3509,
+  "sha256": "7628bf7870a8b5515b487551fea4bcaa71190410d879864fdc4934859d4acc3b"
+ },
+ {
+  "file": "page-03.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/3",
+  "retrieved": "2026-10-13T08:15:57+00:00",
+  "http_status": 200,
+  "bytes": 1679,
+  "sha256": "10a79cc6ad2f9420fcc352c05915cef630c75d43d44f0339c86b3b31ccf0bcb2"
+ },
+ {
+  "file": "page-04.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/4",
+  "retrieved": "2026-10-13T08:15:58+00:00",
+  "http_status": 200,
+  "bytes": 3063,
+  "sha256": "4004586e7e672a4300612443a1049813a5c5d114272f78c0b9ebb8fc45f9b914"
+ },
+ {
+  "file": "page-05.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/5",
+  "retrieved": "2026-10-13T08:15:58+00:00",
+  "http_status": 200,
+  "bytes": 2081,
+  "sha256": "cce09990a7286b5fbf96a2907d6d15bbb89601e08dc1591655bbf2309fdb8856"
+ },
+ {
+  "file": "page-06.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/6",
+  "retrieved": "2026-10-13T08:15:58+00:00",
+  "http_status": 200,
+  "bytes": 1226,
+  "sha256": "dde10f679afb9e96620dae754414d398369c62f249932840d0b121b322962071"
+ },
+ {
+  "file": "page-07.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/7",
+  "retrieved": "2026-10-13T08:15:58+00:00",
+  "http_status": 200,
+  "bytes": 2628,
+  "sha256": "e9593dca744c716edbfa0d4ac49d005b8c750e1cc54e0b74b7673996bb20df08"
+ },
+ {
+  "file": "page-08.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/8",
+  "retrieved": "2026-10-13T08:15:58+00:00",
+  "http_status": 200,
+  "bytes": 2964,
+  "sha256": "3f0807591286ef10faf4cf2ebd93a6156da616ff5ac12a5afd6bf8efa9facd9b"
+ },
+ {
+  "file": "page-09.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/9",
+  "retrieved": "2026-10-13T08:15:58+00:00",
+  "http_status": 200,
+  "bytes": 2837,
+  "sha256": "e9246594f0c9d3c805ae5a9ca115c555ecc68ce3e5e2f76a816ac67bdfcf0cea"
+ },
+ {
+  "file": "page-10.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/10",
+  "retrieved": "2026-10-13T08:15:58+00:00",
+  "http_status": 200,
+  "bytes": 2898,
+  "sha256": "078e30aefe8536ac696e6b63772e28f3844be8e614655b81243907aaf0d21d00"
+ },
+ {
+  "file": "page-11.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/11",
+  "retrieved": "2026-10-13T08:15:59+00:00",
+  "http_status": 200,
+  "bytes": 287,
+  "sha256": "82b678cb02230a49aaa52b708ed3d98e899a8717aa35d6ea88fc97e835c5283a"
+ },
+ {
+  "file": "page-12.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/12",
+  "retrieved": "2026-10-13T08:15:59+00:00",
+  "http_status": 200,
+  "bytes": 3153,
+  "sha256": "e5f65d358975c29fb7e284d444905dbeef91758fcc78d0a26a74945f7c88ffc4"
+ },
+ {
+  "file": "page-13.wiki",
+  "url": "https://en.wikisource.org/w/index.php?action=raw&title=Page:On_the_Relative_Motion_of_the_Earth_and_the_Luminiferous_Ether.djvu/13",
+  "retrieved": "2026-10-13T08:15:59+00:00",
+  "http_status": 200,
+  "bytes": 885,
+  "sha256": "80e1418f68e644f538b68b67c75d97ec1274c8f01576a5e9fa6208b18425f174"
+ }
+]

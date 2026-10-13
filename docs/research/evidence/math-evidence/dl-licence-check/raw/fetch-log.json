@@ -1,0 +1,18 @@
+[
+ {
+  "file": "arxiv-2106.09685-abs.html",
+  "url": "https://arxiv.org/abs/2106.09685",
+  "retrieved": "2026-10-13T08:16:04+00:00",
+  "http_status": 200,
+  "bytes": 44248,
+  "sha256": "70bb70b4fd6d41b8a0f53fc5148017bf6ef5b73acba822027397f861aee135c6"
+ },
+ {
+  "file": "arxiv-2309.16588-abs.html",
+  "url": "https://arxiv.org/abs/2309.16588",
+  "retrieved": "2026-10-13T08:16:04+00:00",
+  "http_status": 200,
+  "bytes": 40040,
+  "sha256": "4be628168a8ab91a5a22b37a6f40f359cfe9b8a353adc10ee0cc3c049eb93146"
+ }
+]

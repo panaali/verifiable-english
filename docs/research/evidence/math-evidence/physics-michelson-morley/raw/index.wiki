@@ -1,0 +1,29 @@
+{{header
+ | title    = On the Relative Motion of the Earth and the Luminiferous Ether
+ | author   = |override_author= [[Author:Albert Abraham Michelson|Albert Abraham Michelson]] and [[Author:Edward Morley|Edward Morley]]
+ | section  =
+ | previous =
+ | next     =
+ | year = 1887
+ | portal = Relativity
+ | edition  = yes
+ | notes    = 
+American Journal of Science, 1887, '''34''' (203): 333–345, [https://history.aip.org/exhibits/gap/PDF/michelson.pdf Online]
+
+}}
+
+<div class=indented-page>
+<pages index="On the Relative Motion of the Earth and the Luminiferous Ether.djvu" from=1 to=13 />
+
+==Notes==
+<references/>
+</div>
+
+{{PD/US|1931}}
+
+[[Category:Research articles]]
+[[Category:Physics]]
+[[Category:Relativity]]
+
+
+[[pt:Sobre o Movimento Relativo da Terra e o Éter Luminífero]]

@@ -1,0 +1,6 @@
+# Regenerable or third-party bulk files: their URLs, sizes and SHA-256 are in raw/fetch-log.json and run.json.
+*.ve.md
+*.check.json
+!*.default-limit.json
+**/raw/*.html
+**/raw/*_djvu.txt

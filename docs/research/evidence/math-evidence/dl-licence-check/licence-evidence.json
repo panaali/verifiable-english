@@ -1,0 +1,39 @@
+{
+ "rule": "first ranked candidate whose licence field is CC BY (plan D22)",
+ "pinned": "AlphaFold (Nature 596, 583-589, doi:10.1038/s41586-021-03819-2)",
+ "candidates": [
+  {
+   "rank": "1",
+   "candidate": "LoRA (arXiv 2106.09685)",
+   "page": "dl-licence-check/raw/arxiv-2106.09685-abs.html",
+   "page_sha256": "70bb70b4fd6d41b8a0f53fc5148017bf6ef5b73acba822027397f861aee135c6",
+   "licence_field": [
+    "http://arxiv.org/licenses/nonexclusive-distrib/1.0/"
+   ],
+   "cc_by": false
+  },
+  {
+   "rank": "2",
+   "candidate": "Vision Transformers Need Registers (arXiv 2309.16588)",
+   "page": "dl-licence-check/raw/arxiv-2309.16588-abs.html",
+   "page_sha256": "4be628168a8ab91a5a22b37a6f40f359cfe9b8a353adc10ee0cc3c049eb93146",
+   "licence_field": [
+    "http://arxiv.org/licenses/nonexclusive-distrib/1.0/"
+   ],
+   "cc_by": false
+  },
+  {
+   "rank": "3",
+   "candidate": "AlphaFold (Nature 596, 583-589, doi:10.1038/s41586-021-03819-2)",
+   "page": "dl-alphafold/raw/nature-article.html",
+   "page_sha256": "f55aa2afb79a119d6caa3d8e1773e1e0a5e2fed63419c035e18d7df9fd13e384",
+   "licence_field": [
+    "http://creativecommons.org/licenses/by/4.0/"
+   ],
+   "cc_by": true
+  }
+ ],
+ "europepmc_jats_licence": [
+  "https://creativecommons.org/licenses/by/4.0/"
+ ]
+}

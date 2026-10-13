@@ -1,0 +1,26 @@
+[
+ {
+  "file": "collected-papers-1927-hardy-item_djvu.txt",
+  "url": "https://archive.org/download/g.-h.-hardy-p.-v.-seshu-aiyan-b.-m.-wilson-ed.-collected-papers-of-srinivasa-ram/G.%20H.%20Hardy%2C%20P.%20V.%20Seshu%20Aiyan%2C%20B.%20M.%20Wilson%2C%20ed.%20-%20Collected%20Papers%20of%20Srinivasa%20Ramanujan-Cambridge%20University%20Press%20%281927%29_djvu.txt",
+  "retrieved": "2026-10-13T08:15:59+00:00",
+  "http_status": 200,
+  "bytes": 635190,
+  "sha256": "ba308ce6511e1faba610352f14dda546291aa159b1d1040699efba475d456a4d"
+ },
+ {
+  "file": "collected-papers-1927-kerala-item_djvu.txt",
+  "url": "https://archive.org/download/pli.kerala.rare.28155/pli.kerala.rare.28155_djvu.txt",
+  "retrieved": "2026-10-13T08:16:00+00:00",
+  "http_status": 200,
+  "bytes": 527311,
+  "sha256": "f8fb71b0d790a9f5b5ef2d23f77300855a1a0f35ca7a2ee73d70c04710c08185"
+ },
+ {
+  "file": "hardy-item-metadata.json",
+  "url": "https://archive.org/metadata/g.-h.-hardy-p.-v.-seshu-aiyan-b.-m.-wilson-ed.-collected-papers-of-srinivasa-ram",
+  "retrieved": "2026-10-13T08:16:01+00:00",
+  "http_status": 200,
+  "bytes": 10392,
+  "sha256": "de5b6dd8e109bc2eeea1f8951eec38c47e00fc872967d426947405c867d16351"
+ }
+]

@@ -1,0 +1,8 @@
+<noinclude><pagequality level="4" user="AdamBMorgan" />{{RunningHeader||''Michelson and Morley—Relative Motion of the''|335}}</noinclude>The discussion of this oversight and of the entire experiment forms the subject of a very searching analysis by [[w:Hendrik Lorentz|H. A. Lorentz]],<ref>De l'Influence du Mouvement de la Terre sur les Phen. Lum. Archives Néerlandaises, xxi, 2<sup>me</sup> livr., 1886.</ref> who finds that this effect can by no means be disregarded. In consequence, the quantity to be measured had in fact but one-half the value supposed, and as it was already barely beyond the limits of errors of experiment, the conclusion drawn from the result of the experiment might well be questioned; since, however, the main portion of the theory remains unquestioned, it was decided to repeat the experiment with such modifications as would insure a theoretical result much too large to be masked by experimental errors. The theory of the method may be briefly stated as follows:
+
+Let ''sa'', fig. 1, be a ray of light which is partly reflected in ''ab'', and partly transmitted in ''ac'', being returned by the mirrors ''b'' and ''c'', along ''ba'' and ''ca''. ''ba'' is partly transmitted along ''ad'',
+
+[[Image:On the Relative Motion of the Earth and the Luminiferous Ether - Fig 1 and 2.png|405px|center]]
+
+and ''ca'' is partly reflected along ''ad''. If then the paths ''ab'' and'' ac'' are equal, the two rays interfere along ''ad''. Suppose now, the ether being at rest, that the whole apparatus moves in the direction ''sc'', with the velocity of the earth in its orbit, the {{Hyphenated word start|direc|directions}}<noinclude>
+<references/></noinclude>

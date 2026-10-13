@@ -1,0 +1,18 @@
+[
+ {
+  "file": "nature-article.html",
+  "url": "https://www.nature.com/articles/s41586-021-03819-2",
+  "retrieved": "2026-10-13T08:16:01+00:00",
+  "http_status": 200,
+  "bytes": 617136,
+  "sha256": "f55aa2afb79a119d6caa3d8e1773e1e0a5e2fed63419c035e18d7df9fd13e384"
+ },
+ {
+  "file": "europepmc-fulltext.xml",
+  "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8371605/fullTextXML",
+  "retrieved": "2026-10-13T08:16:03+00:00",
+  "http_status": 200,
+  "bytes": 177643,
+  "sha256": "a93693b00ee4ba41da6bc50f04712a66aa1aa2184d3a85b4b68ec7a35757c028"
+ }
+]

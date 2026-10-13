@@ -1,0 +1,105 @@
+A PROOF OF BERTRAND’S POSTULATE 
+
+(Journal of the Indian Mathematical Society , XI, 1919, 181—182) 
+
+1. Landau in his Eandbuch, pp. 89—92, gives a proof of a theorem the 
+truth of which was conjectured by Bertrand: namely that there is at least 
+one prime jj'such that ®<ps;2®, if ®>1. Landau’s proof is substantially 
+the same as that given by Tschebyschef. The following is a much simpler one. 
+
+Let v (of) denote the sum of the logarithms of all the primes not exceeding 
+x and let 
+
++ («) = » («) + »(«*)+>'(«») +.(!) 
+
+log [x]\=f(x) + f(%x) + ir(ix)+ ..., .(2) 
+
+where [®] denotes as usual the greatest integer in ®. 
+
+From (1) we have 
+
+f (®) - 2* ( V®) = v O) - v (si) + v (si) -.(3) 
+
+and from (2) 
+
+log [s]! - 2 log [Js] !- + («)-* (is) + + (*«)-.(4) 
+
+Now remembering that v (s) and i|r (at) are steadily increasing functions, we 
+find from (3) and (4) that 
+
+^(®)-2t(v'®)«i'(®)<f (*•);.(5) 
+
+and f (at) - f (4®) < log [®]! - 2 log [is] k -f (*) - f (4®) + -f (4*)- • - (6) 
+But it is easy to see that 
+
+log r (at) - 2 log r (4®+4)«log [®] i - 2 log [4®] \ 
+
+log r (®+1) - 2 log r (i® + i). ...(7) 
+
+
+Now using Stirling’s approximation we deduce from (7) that 
+
+log M! - 2 log [|®]! < i x, if ® > .(8) 
+
+and log [®]! - 2 log [4®]! > §®, if ® > 300.(9) 
+
+It follows from (6), (8) and (9) that 
+
+-f (®) - \jr (4®) < |®, if ® > 0; .(10) 
+
+and ( x ) ~ 'h (4*) + 'h (4*) > 1 ®. if »>300.(11) 
+
+
+
+
+
+
+
+
+
+A Proof of Bertrand’s Postulate 209 
+
+Now changing x to \x t \x, J«,... in (10) and adding up all the results, 
+we obtain 
+
+*(*)<§*, if *>0.(12) 
+
+Again we have 
+
+f(x) -■f(ix)+i/rQx)^p(x) + 2ifr(^/x)-v (i x) + -f Qx) 
+
+<v(x)-v(\x) + \x + Zd*, ~.{rz) 
+
+
+in virtue of (5) and (12). 
+
+It follows from (11) and (13) that 
+
+v(x)-v(lx)>\x-3dx, if *>300.(14) 
+
+But it is obvious that — 3 \Jx > 0, if x ^ 324. 
+
+Hence v (2*)- v (x) > 0, if *^162.(15) 
+
+
+In other words there is at least one prime between x and 2x if x > 162. 
+Thus Bertrand’s Postulate is proved for all values of x, not less than 162: and, 
+by actual verification, we find that it is true for smaller values. 
+
+2. Let t r (x) denote the number of primes not exceeding x. Then, since 
+ir (x) - w (\x) is the number of primes between x and J®, and v(x)-v(\x) is 
+
+
+the sum of logarithms of primes between x and \x , it is obvious that 
+
+v{x)-v (\x) « {tt (*) - -x (**)} log®.(16) 
+
+for all values of*. It follows from (14) and (16) that 
+
+w (*) - w {\x) > -L (j* - 3 V*), if * > 300.(17) 
+
+From this we easily deduce that 
+
+7T (*) - 7T (ix) > 1, 2, 3, 4,5,..., if * » 2, 11, 17, 29, 41,...... .(18) 
+
+respectively. 

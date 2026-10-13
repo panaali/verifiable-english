@@ -1,0 +1,18 @@
+<noinclude><pagequality level="4" user="Lar" />{{RunningHeader|342|''Earth and the Luminiferous Ether.''|}}</noinclude>preparation of this paper. This is founded on the fact that reflection from surfaces in motion varies from the ordinary laws of reflection.
+
+Let ''ab'' (fig. 1) be a plane wave falling on the mirror ''mn'' at an incidence of 45°. If the mirror is at rest, the wave front after reflection will be ''ac''.
+
+Now suppose the mirror to move in a direction which makes an angle ''a'' with its normal, with a velocity <math>\omega</math>. Let V be the velocity of light in the ether supposed stationary, and let ''cd'' be the increase in the distance the light has to travel to reach ''d''. In this time the mirror will have moved a distance <math>\tfrac{cd}{\sqrt{2} cos \alpha }</math>. We have <math>\tfrac{cd}{ad}=\tfrac{\omega\sqrt 2\cos\alpha}{V}</math> which put = ''r'', and <math>\tfrac{ac}{ad} = 1 - r</math>.
+
+In order to find the new wave front, draw the arc ''fg'' with ''b'' as a center and ''ad'' as radius; the tangent to this arc from ''d'' will be the new wave front, and the normal to the tangent from ''b'' will be the new direction. This will differ from the direction ''ba'' by the angle <math>\theta</math> which it is required to find. From the equality of the triangles ''adb'' and ''edb'' it follows that <math>\theta = 2\phi</math>, <math>ab=ac</math>,
+
+{{c/s}}<math> \tan {adb} = \tan {\left(45^o - \frac{\theta}{2} \right)} = \frac{1-\tan{\frac{\theta}{2}}}{1+\tan{\frac{\theta}{2}}} = \frac{ac}{ad}=1-r</math>,{{c/e}}
+
+or neglecting terms of the order <math>r^2</math>,
+
+{{c/s}}<math>\theta=r+\frac{r^2}{2}=\frac{\sqrt{2}\omega \cos \alpha}{V}+\frac{\omega^2}{V^2}\cos^{2}\alpha</math>{{c/e}}
+
+Now let the light fall on a parallel mirror facing the first, we should then have <math>\theta_/ = \tfrac{-\sqrt{2} \omega \cos \alpha}{V}+\tfrac{\omega^2}{V^2}\cos^2\alpha</math> and the total deviation would be <math>\theta+\theta_/=2\rho^2\cos^2\alpha</math> where <math>\rho</math> is the angle of aberration, if only the orbital motion of the earth is considered. The maximum displacement obtained by revolving the whole apparatus through 90° would be <math>\Delta=2 {\rho}^2 = 2 = 0\cdot004''</math>. With fifty such couples the displacement would be 0•2". But astronomical observations in circumstances far less favorable than those in which these may be taken have been made to hundredths of a second; so that this new method bids fair to be at least as sensitive as the former.
+
+The arrangement of apparatus might be as in fig. 2; ''s'' in the focus of the lens ''a'', is a slit; ''bb'' ''cc'' are two glass mirrors optically plane and so silvered as to allow say one-twentieth of the-light to pass through, and reflecting say ninety per cent. The intensity of the light falling on the observing telescope ''df''<noinclude>
+<references/></noinclude>
