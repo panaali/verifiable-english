@@ -830,6 +830,9 @@
       ],
       "G[R]": [
         "ResponseShape.Schemas.SoftNorms.error"
+      ],
+      "G[I]": [
+        "ResponseShape.Schemas.SoftNorms.decision_key"
       ]
     },
     "ResponseShape/Schemas/SpeechActs.lean": {
@@ -9673,6 +9676,17 @@
         "VE.SoftNorms.outweighsName",
         "VE.SoftNorms.rankFuel",
         "VE.SoftNorms.rulesOn"
+      ],
+      "G[I]": [
+        "VE.SoftNorms.DecisionKey"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.SoftNorms.keyedDecisions",
+          "tied": [
+            "VE.SoftNorms.keyedDecisions_names"
+          ]
+        }
       ]
     },
     "VE/SoftNorms/Wire.lean": {
@@ -9713,7 +9727,8 @@
       "D[I]": [
         "VE.SoftNorms.Wire.SoftEntailmentReplay.valid",
         "VE.SoftNorms.Wire.canonicalNorm",
-        "VE.SoftNorms.Wire.softDocumentHash"
+        "VE.SoftNorms.Wire.softDocumentHash",
+        "VE.SoftNorms.Wire.decisionKeyJson"
       ],
       "G[V]": [
         "VE.SoftNorms.Wire.SoftConflictReplay",

@@ -63,7 +63,8 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     """
     from .readings_s1 import Document, S1Environment
     from .readings_sup import (choices, choice_vocabulary, choices_checked, first_nonuniform, name_map,
-                               route_refusal, sup_ready, superposed_elaboration, superposed_units)
+                               route_refusal, sup_ready, superposed_document, superposed_elaboration,
+                               superposed_units)
 
     environment = wire(environment)
     document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
@@ -100,7 +101,8 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
             expected_text = f"ReadingsNotSuperposable: {first[0]}"
         else:
             try:
-                regenerated = superposed_elaboration(source, couplings, narrowings)
+                superposed = superposed_document(source)
+                regenerated = superposed_elaboration(source, couplings, narrowings, superposed)
             except (VEError, SyntaxError) as exc:
                 expected_route, cause = "enumerated", _message(exc)
             else:
@@ -144,7 +146,7 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 vocabulary")
             if row.get("units") != superposed_units(source):
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 units")
-            if row.get("names") != name_map(source):
+            if row.get("names") != name_map(source, superposed[2]):
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 names")
             python_slot, python_sizes = regenerated
             if row.get("slot") != [{"label": label, "ast": formula} for label, formula in python_slot]:

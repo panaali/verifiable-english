@@ -313,6 +313,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.SoftNorms.admitDocument_kinds
 #print axioms ResponseShape.Encoders.SoftNorms.checkSource_ok
 #print axioms ResponseShape.Encoders.SoftNorms.classify_ok
+#print axioms ResponseShape.Encoders.SoftNorms.decisionKeyJson_fits
 #print axioms ResponseShape.Encoders.SoftNorms.decision_entries_fit
 #print axioms ResponseShape.Encoders.SoftNorms.declarations_ok
 #print axioms ResponseShape.Encoders.SoftNorms.documentReferences_ok

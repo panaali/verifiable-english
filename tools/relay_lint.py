@@ -19,10 +19,12 @@ into a module of its own.
 An explicitly owned surface parser remains outside the relay even when only a
 relayed file adapter imports it.
 
-A second rule keeps the unspecified completion's `fill` in Lean (readings-defaults plan, RD-2b and D12): no
-readings module (`ve/readings*.py`) holds a string literal containing a reserved completion name prefix
-(`RESERVED`), so none builds a filled name. A literal that only keeps such names out of the English (a non-wording
-guard) carries the marker `# relay-lint: non-wording` on its line; marked literals are counted in the report.
+A second rule keeps the unspecified completion's `fill` in Lean (readings-defaults plan, RD-2b and D12) and the soft
+decisions' names too (rd-9 soft-chain plan SC-8): no readings module (`ve/readings*.py`) holds a string literal or a
+comment containing a reserved completion name prefix (`RESERVED`) or the soft layer's decision prefix
+(`READINGS_RESERVED`), so none builds a filled name or a decision's name. A literal that only keeps such names out
+of the English (a non-wording guard) carries the marker `# relay-lint: non-wording` on its line; marked literals are
+counted in the report.
 
 A third rule keeps the senses path's English in Lean (readings-defaults plan, RD-8): no module of the senses path
 (`PARSE_FREE`) names `parse_english`, and in `ve/document.py` no `if` statement whose test reads `senses` names it
@@ -36,8 +38,10 @@ from __future__ import annotations
 
 import ast
 import importlib
+import io
 import pkgutil
 import sys
+import tokenize
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -64,6 +68,10 @@ FILE_IO = "# relay-lint: file I/O"
 # The modules that may not build the completion's names, and the reserved prefixes (norm-defaults 2.1).
 READINGS_GLOB = "ve/readings*.py"
 from ve.environment import RESERVED_PREFIXES as RESERVED  # noqa: E402  (one table with the checker's)
+from ve.environment import WORDING_LAYER_PREFIXES  # noqa: E402
+# The readings modules also never spell a soft decision's name (rd-9 soft-chain plan SC-8): they find it by its key in
+# Lean's row (`SoftNormDocument.decision_name`, `generated_predicates`). The prefix is the wording table's own.
+READINGS_RESERVED = (*RESERVED, *WORDING_LAYER_PREFIXES["soft-norms@0"])
 NON_WORDING = "# relay-lint: non-wording"
 # The senses path (RD-8): the modules that may not name Python's English reader, and the loader whose senses
 # branches may not.
@@ -196,22 +204,26 @@ def helpers(relayed: list[Path]) -> list[Path]:
     return found
 
 def reserved_literals(path: Path, marked: list | None = None) -> list[str]:
-    """Every string literal of the module (f-string parts and docstrings included) that contains a reserved
-    completion prefix, read with Python's own parser; a literal whose line carries `NON_WORDING` is counted in
-    `marked` instead."""
-    lines = path.read_text().splitlines()
+    """Every string literal of the module (f-string parts and docstrings included) and every comment that contains a
+    reserved prefix (`READINGS_RESERVED`: the completion's and the soft decisions'), read with Python's own parser
+    and tokenizer; a literal whose line carries `NON_WORDING` is counted in `marked` instead."""
+    text = path.read_text()
+    lines = text.splitlines()
     tree = ast.parse("\n".join(lines), filename=str(path))
+    where = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
     out = []
     for node in ast.walk(tree):
         if not (isinstance(node, ast.Constant) and isinstance(node.value, str)
-                and any(prefix in node.value for prefix in RESERVED)):
+                and any(prefix in node.value for prefix in READINGS_RESERVED)):
             continue
         if any(line.rstrip().endswith(NON_WORDING) for line in lines[node.lineno - 1:node.end_lineno]):
             if marked is not None:
                 marked.append(f"{path.name}:{node.lineno}")
             continue
-        out.append(f"{path.relative_to(ROOT) if path.is_relative_to(ROOT) else path}:{node.lineno}: "
-                   "a readings module holds a reserved completion name")
+        out.append(f"{where}:{node.lineno}: a readings module holds a reserved completion name")
+    for token in tokenize.generate_tokens(io.StringIO(text).readline):
+        if token.type == tokenize.COMMENT and any(prefix in token.string for prefix in READINGS_RESERVED):
+            out.append(f"{where}:{token.start[0]}: a readings module's comment spells a reserved name")
     return out
 
 

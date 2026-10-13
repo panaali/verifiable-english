@@ -294,6 +294,21 @@ def decisions (D : SoftDoc) : List (String × List String) :=
 
 def decisionNames (D : SoftDoc) : List String := (decisions D).map (·.1)
 
+/-- What a decision predicate decides: the exception of rule `r`, rule `r`'s switch for party `π`, or the
+`outweighs` triple `(a, L, H)`. A reader finds a decision's name by its key, never by spelling it. -/
+inductive DecisionKey | excepted (r : String) | off (r π : String) | outweighs (a L H : String)
+  deriving DecidableEq, Repr
+
+/-- `decisions` with each entry's key, in the same order (`keyedDecisions_names`). -/
+def keyedDecisions (D : SoftDoc) : List (DecisionKey × String × List String) :=
+  (D.T.nodes.filter (·.mode == .default)).map (fun N => (.excepted N.name, exceptedName N, sortsOf D N.pred)) ++
+  D.T.nodes.flatMap (fun N => N.alterable.map (fun π => (.off N.name π, offName N π, sortsOf D N.pred))) ++
+  (outweighsTriples D).map (fun (a, L, H) => (.outweighs a L H, outweighsName a L H, actSortsOf D a))
+
+theorem keyedDecisions_names (D : SoftDoc) : (keyedDecisions D).map (·.2) = decisions D := by
+  simp [keyedDecisions, decisions, exceptedDecisions, offDecisions, outweighsDecisions, List.map_flatMap,
+    Function.comp_def]
+
 /-- `E′ = E + decisions`. -/
 def envPrime (D : SoftDoc) : VE.Environment :=
   { D.E with predicates := fun p => match (decisions D).find? (·.1 == p) with
