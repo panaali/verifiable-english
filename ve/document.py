@@ -27,7 +27,7 @@ from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
-from .readings import (active_reading_sets, check_readings, plan_choices, s1_content_kind,
+from .readings import (active_reading_sets, check_readings, plan_choices, rights_meaning_id, s1_content_kind,
                        validate_couplings, validate_narrowings, validate_reading_sets)
 from .wire import LONE_SURROGATE, digest
 from .vacuity import premise_status
@@ -464,7 +464,13 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             soft_document = rights_document.soft_document
             formula_env = soft_document.extended_env
         for unit in units:
-            if "content" in unit and unit["meaning_id"] != _bound_meaning_id(env, formula_env, unit):
+            # A rights document's content is bound to its content environment, with the nullable decider slots
+            # `_content` keeps (`rights_meaning_id`, Lean's `nullableMeaningId`).
+            if "content" in unit and unit["meaning_id"] != (
+                    rights_meaning_id(_content_environment(env, formula_env, unit["kind"]), unit["content"])
+                    if rights_document is not None else
+                    digest(f"ve-meaning-{env.identity_version}\n",
+                           {"environment_id": env.environment_id, "ast": unit["content"]})):
                 raise unavailable("is not bound to the document sent")
         # A rights block the binding found equal to the authored one is built as the authored object itself: the
         # rights containers hold the source's lines by identity (`ve.surface.rights._line`), as on Python's path.
@@ -1056,17 +1062,6 @@ def _content_environment(env, formula_env, kind):
     """`content_env` of a unit of either path: under `rights@0` a rights block's own environment for a rights kind,
     else the environment its formulas and norms are read in (the rights route's `E″′`)."""
     return env if "rights@0" in env.profiles and type(kind) is str and kind in _RIGHTS_KINDS else formula_env
-
-
-def _bound_meaning_id(env, formula_env, unit):
-    """The `meaning_id` a Lean answer unit's content is bound to: over its content environment, with the nullable
-    decider slots of rights and soft content (`soft_digest`, Lean's `nullableMeaningId`) in a rights document."""
-    if "rights@0" in env.profiles:
-        from .softnorms import soft_digest
-        bound = _content_environment(env, formula_env, unit["kind"])
-        return soft_digest(f"ve-meaning-{bound.identity_version}\n",
-                           {"environment_id": bound.environment_id, "ast": unit["content"]})
-    return digest(f"ve-meaning-{env.identity_version}\n", {"environment_id": env.environment_id, "ast": unit["content"]})
 
 
 def _rights_units(units, exclude=frozenset()):

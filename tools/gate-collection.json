@@ -828,6 +828,7 @@
   "tests/test_b16e_rights_document.py::test_the_unowned_parts_of_a_rights_document_keep_the_retained_path[couplings]",
   "tests/test_b16e_rights_document.py::test_the_unowned_parts_of_a_rights_document_keep_the_retained_path[graph]",
   "tests/test_b16e_rights_document.py::test_the_unowned_parts_of_a_rights_document_keep_the_retained_path[reading_sets]",
+  "tests/test_b16e_rights_document.py::test_value_mutants_of_copied_content_are_refused_by_the_binding",
   "tests/test_b17_evidence.py::test_b17_path_ab_covers_both_changed_paths_and_signed_budget_deltas",
   "tests/test_b17_evidence.py::test_b17_report_ab_from_saved_comparison",
   "tests/test_b17_evidence.py::test_b17_report_change_metrics_from_saved_scope",
