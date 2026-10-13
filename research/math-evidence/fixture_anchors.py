@@ -41,9 +41,10 @@ FIXTURES = [
                 "through '2D x 10^-8' (twice: h049, h113). The case's premise must be v^2/V^2 = 10^-8, read from "
                 "those spans, or an external premise with its own support."),
     ("H-5", H, ["2×10^7 wave-lengths of yellow light; hence the displacement to be expected was 0•4 fringe"],
-     "RE-WORDED", "Numbers as the case uses them; the source's decimal point is a bullet ('0•4'). With the source's "
-                  "own 10^-8 (h113): 2 x 2x10^7 x 10^-8 = 0.4. The source also has the 1881 version (h050): "
-                  "D = 2x10^6 gives 0.04, a further fixture."),
+     "CHANGED", "The case computes 2 x (2x10^7) x (10^-4)^2 = 0.4, so it uses H-4's premise v/V = 10^-4, which the "
+                "source never states (see H-4). The result 0.4 is the source's ('0•4', the decimal point a bullet), "
+                "but the source reaches it through v^2/V^2 = 10^-8 ('2D x 10^-8', h113): 2 x 2x10^7 x 10^-8 = 0.4. "
+                "The source also has the 1881 version (h050): D = 2x10^6 gives 0.04, a further fixture."),
     ("H-6", H, ["The actual displacement was certainly less than the twentieth part of this",
                 "But since the displacement is proportional to the square of the velocity",
                 "and certainly less than one-fourth"],
@@ -78,8 +79,9 @@ FIXTURES = [
     ("M-3r", M, ["where [®] denotes as usual the greatest integer in ®."],
      "RE-WORDED", "The source's x is real (it takes the integer part of x)."),
     ("M-4", M, ["> 1, 2, 3, 4,5,..., if * » 2, 11, 17, 29, 41"],
-     "ANCHORED", "Formula (18): pi(x) - pi(x/2) >= 1, 2, 3, 4, 5 for x >= 2, 11, 17, 29, 41 (OCR-garbled symbols, "
-                 "numbers intact). The case uses the second pair (2 at 11); the other four pairs are further fixtures."),
+     "RE-WORDED", "Formula (18): pi(x) - pi(x/2) >= 1, 2, 3, 4, 5 for x >= 2, 11, 17, 29, 41. The symbols are "
+                  "OCR-garbled, so the case's words are not in the pinned bytes; its numbers are (intact). The case "
+                  "uses the second pair (2 at 11); the other four pairs are further fixtures."),
     ("M-4x", M, [], "NOT A QUOTE", "A constructed budget fixture."),
     ("M-5", M, [], "NOT A QUOTE", "A constructed negative control."),
     ("V-1", V, ["Its scored baseline, 176/594 = .296, is outside the gate band", "30--60% gate"],
@@ -118,6 +120,16 @@ FIXTURES = [
      ["Claimed coverage is unchanged at 2,951 bytes (1.60%)"], "ANCHORED",
      "Exact words; coverage.json gives CHECKED 73, LABELLED 349, OPEN 2,529 of 184,893 (checked below)."),
 ]
+
+
+# P4's pre-registered scope: H-1 to H-10, M-1 to M-5, V-1 to V-8, D-1 to D-3, each with its lettered variants
+# (H-6p, H-6n, M-3r, M-4x, V-1n, V-6r). V-9 to V-12 lie outside it; they are reported, not counted toward the bar.
+SCOPE = {"H": 10, "M": 5, "V": 8, "D": 3}
+
+
+def in_scope(fid: str) -> bool:
+    family, number = fid.split("-")
+    return int(re.match(r"\d+", number).group()) <= SCOPE[family]
 
 
 def find(data: bytes, needle: str) -> list[int] | None:
@@ -187,14 +199,16 @@ def main() -> None:
             raise SystemExit(f"{fid}: needle not found: {missing}")
         rows.append({"fixture": fid, "file": str(path.relative_to(ROOT) if path.is_relative_to(ROOT) else path),
                      "file_sha256": hashlib.sha256(data).hexdigest(), "spans": spans, "outcome": outcome,
-                     "reason": why})
-        if outcome in ("CHANGED", "ABSENT"):
+                     "reason": why, "in_preregistered_scope": in_scope(fid)})
+        if outcome in ("CHANGED", "ABSENT") and in_scope(fid):
             bar_fail.append(fid)
     cov = json.loads((PILOTS / "claude-constitution/run-20261012T1800Z/coverage.json").read_text())
     cov = cov.get("coverage", cov)
+    outcomes = ("ANCHORED", "RE-WORDED", "CHANGED", "ABSENT", "NOT A QUOTE")
     result = {"fixtures": rows, "changed_or_absent": bar_fail, "pass": not bar_fail,
-              "counts": {o: sum(r["outcome"] == o for r in rows) for o in
-                         ("ANCHORED", "RE-WORDED", "CHANGED", "ABSENT", "NOT A QUOTE")},
+              "counts": {o: sum(r["outcome"] == o for r in rows if r["in_preregistered_scope"]) for o in outcomes},
+              "counts_outside_scope": {o: sum(r["outcome"] == o for r in rows if not r["in_preregistered_scope"])
+                                       for o in outcomes},
               "constitution_coverage_by_status": cov.get("bytes_by_status"),
               "prechecks_not_ve_verdicts": prechecks()}
     (EV / "fixture-anchors.json").write_text(json.dumps(result, indent=1, ensure_ascii=False, default=str) + "\n")

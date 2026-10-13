@@ -18,6 +18,7 @@
    "rust_timeout_raised_to": null,
    "graph_nodes": 0,
    "certified_consequences": [],
+   "graph_leaf_units": [],
    "coverage_exit": 0,
    "coverage": {
     "source_bytes": 2651,

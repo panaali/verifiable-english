@@ -449,14 +449,15 @@
  "P3_pass": true,
  "P4_pass": false,
  "P4_counts": {
-  "ANCHORED": 15,
-  "RE-WORDED": 10,
-  "CHANGED": 2,
+  "ANCHORED": 14,
+  "RE-WORDED": 9,
+  "CHANGED": 3,
   "ABSENT": 0,
-  "NOT A QUOTE": 9
+  "NOT A QUOTE": 6
  },
  "P4_changed_or_absent": [
   "H-4",
+  "H-5",
   "H-9"
  ],
  "P6_pass": true

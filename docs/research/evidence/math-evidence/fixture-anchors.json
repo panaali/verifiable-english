@@ -15,7 +15,8 @@
     ]
    },
    "outcome": "RE-WORDED",
-   "reason": "Same equations as TeX; the source writes T-sub-slash for T1 and 2D V/(V^2 - v^2)."
+   "reason": "Same equations as TeX; the source writes T-sub-slash for T1 and 2D V/(V^2 - v^2).",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-2",
@@ -32,7 +33,8 @@
     ]
    },
    "outcome": "RE-WORDED",
-   "reason": "Same equation; the source's line break is inside the sentence."
+   "reason": "Same equation; the source's line break is inside the sentence.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-3",
@@ -49,7 +51,8 @@
     ]
    },
    "outcome": "RE-WORDED",
-   "reason": "Same equation. The Wikisource TeX of the preceding square root is unbalanced (`\\sqrt{(1+\\frac{v^2}{V^2}}`), a transcription defect outside the case."
+   "reason": "Same equation. The Wikisource TeX of the preceding square root is unbalanced (`\\sqrt{(1+\\frac{v^2}{V^2}}`), a transcription defect outside the case.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-4",
@@ -66,7 +69,8 @@
     ]
    },
    "outcome": "CHANGED",
-   "reason": "The case takes 'v/V = 10^-4 stated'; the source states no v/V. It gives v^2/V^2 = 10^-8 only through '2D x 10^-8' (twice: h049, h113). The case's premise must be v^2/V^2 = 10^-8, read from those spans, or an external premise with its own support."
+   "reason": "The case takes 'v/V = 10^-4 stated'; the source states no v/V. It gives v^2/V^2 = 10^-8 only through '2D x 10^-8' (twice: h049, h113). The case's premise must be v^2/V^2 = 10^-8, read from those spans, or an external premise with its own support.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-5",
@@ -78,8 +82,9 @@
      15882
     ]
    },
-   "outcome": "RE-WORDED",
-   "reason": "Numbers as the case uses them; the source's decimal point is a bullet ('0•4'). With the source's own 10^-8 (h113): 2 x 2x10^7 x 10^-8 = 0.4. The source also has the 1881 version (h050): D = 2x10^6 gives 0.04, a further fixture."
+   "outcome": "CHANGED",
+   "reason": "The case computes 2 x (2x10^7) x (10^-4)^2 = 0.4, so it uses H-4's premise v/V = 10^-4, which the source never states (see H-4). The result 0.4 is the source's ('0•4', the decimal point a bullet), but the source reaches it through v^2/V^2 = 10^-8 ('2D x 10^-8', h113): 2 x 2x10^7 x 10^-8 = 0.4. The source also has the 1881 version (h050): D = 2x10^6 gives 0.04, a further fixture.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-6",
@@ -100,7 +105,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Premises and claim are in h115-h116 in these words."
+   "reason": "Premises and claim are in h115-h116 in these words.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-6p",
@@ -117,7 +123,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "In these words."
+   "reason": "In these words.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-6n",
@@ -125,7 +132,8 @@
    "file_sha256": "7bc59a084e94a08d5f98e97e18d872df6fc432fef454449e51acb07350a1946b",
    "spans": {},
    "outcome": "NOT A QUOTE",
-   "reason": "A negative control the plan constructs."
+   "reason": "A negative control the plan constructs.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-7",
@@ -142,7 +150,8 @@
     ]
    },
    "outcome": "RE-WORDED",
-   "reason": "D (a length) and T (a time) are defined by the source; D/(V - v), D/lambda and D + T are the case's expressions."
+   "reason": "D (a length) and T (a time) are defined by the source; D/(V - v), D/lambda and D + T are the case's expressions.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-8",
@@ -155,7 +164,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "In these words ('2×10^7' renders the superscript). The wavelength is an external premise, as the case says."
+   "reason": "In these words ('2×10^7' renders the superscript). The wavelength is an external premise, as the case says.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-9",
@@ -180,7 +190,8 @@
     ]
    },
    "outcome": "CHANGED",
-   "reason": "The table is not 'readings at 16 azimuths per session': each cell is already the mean of six readings (the readings themselves are not printed), there are 17 columns (mark 16 at the start and end of a turn), three sessions per table, and three derived rows (Mean, Mean in w. l., Final mean) plus a repeated half row. Today's W6a certifies the Mean and Final mean rows (section 3 of the results); only 'Mean in w. l.' needs a unit change."
+   "reason": "The table is not 'readings at 16 azimuths per session': each cell is already the mean of six readings (the readings themselves are not printed), there are 17 columns (mark 16 at the start and end of a turn), three sessions per table, and three derived rows (Mean, Mean in w. l., Final mean) plus a repeated half row. Today's W6a certifies the Mean and Final mean rows (section 3 of the results); only 'Mean in w. l.' needs a unit change.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "H-10",
@@ -205,7 +216,8 @@
     ]
    },
    "outcome": "RE-WORDED",
-   "reason": "The dates are row labels without a year; 1887 comes from the publication line. The case's '1887' is inferred, not printed beside the dates."
+   "reason": "The dates are row labels without a year; 1887 comes from the publication line. The case's '1887' is inferred, not printed beside the dates.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "M-1",
@@ -218,7 +230,8 @@
     ]
    },
    "outcome": "RE-WORDED",
-   "reason": "The case is the whole-number reading of the source's real x (M-3r)."
+   "reason": "The case is the whole-number reading of the source's real x (M-3r).",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "M-2",
@@ -226,7 +239,8 @@
    "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
    "spans": {},
    "outcome": "NOT A QUOTE",
-   "reason": "The plan marks it 'not Ramanujan's wording'."
+   "reason": "The plan marks it 'not Ramanujan's wording'.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "M-3",
@@ -239,7 +253,8 @@
     ]
    },
    "outcome": "RE-WORDED",
-   "reason": "The statement's formula is OCR-garbled in both scans ('®<ps;2®, if ®>1'; 'æ< p«2z, if z 21'): x < p <= 2x if x >= 1, read from the scan, not from the OCR bytes."
+   "reason": "The statement's formula is OCR-garbled in both scans ('®<ps;2®, if ®>1'; 'æ< p«2z, if z 21'): x < p <= 2x if x >= 1, read from the scan, not from the OCR bytes.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "M-3r",
@@ -252,7 +267,8 @@
     ]
    },
    "outcome": "RE-WORDED",
-   "reason": "The source's x is real (it takes the integer part of x)."
+   "reason": "The source's x is real (it takes the integer part of x).",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "M-4",
@@ -264,8 +280,9 @@
      2620
     ]
    },
-   "outcome": "ANCHORED",
-   "reason": "Formula (18): pi(x) - pi(x/2) >= 1, 2, 3, 4, 5 for x >= 2, 11, 17, 29, 41 (OCR-garbled symbols, numbers intact). The case uses the second pair (2 at 11); the other four pairs are further fixtures."
+   "outcome": "RE-WORDED",
+   "reason": "Formula (18): pi(x) - pi(x/2) >= 1, 2, 3, 4, 5 for x >= 2, 11, 17, 29, 41. The symbols are OCR-garbled, so the case's words are not in the pinned bytes; its numbers are (intact). The case uses the second pair (2 at 11); the other four pairs are further fixtures.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "M-4x",
@@ -273,7 +290,8 @@
    "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
    "spans": {},
    "outcome": "NOT A QUOTE",
-   "reason": "A constructed budget fixture."
+   "reason": "A constructed budget fixture.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "M-5",
@@ -281,7 +299,8 @@
    "file_sha256": "25ec19b53cadd398789a759dd68b1e4954600368d93c0d6c62b3ade7c4f90711",
    "spans": {},
    "outcome": "NOT A QUOTE",
-   "reason": "A constructed negative control."
+   "reason": "A constructed negative control.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-1",
@@ -298,7 +317,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Exact words; the source breaks the line after '.296,'."
+   "reason": "Exact words; the source breaks the line after '.296,'.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-1n",
@@ -306,7 +326,8 @@
    "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
    "spans": {},
    "outcome": "NOT A QUOTE",
-   "reason": "Constructed (0.297)."
+   "reason": "Constructed (0.297).",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-2",
@@ -319,7 +340,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Exact words across a line break."
+   "reason": "Exact words across a line break.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-3",
@@ -332,7 +354,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Exact words (outside ME-0's pinned E1 slice; anchored in the repository file)."
+   "reason": "Exact words (outside ME-0's pinned E1 slice; anchored in the repository file).",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-4",
@@ -345,7 +368,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Exact words."
+   "reason": "Exact words.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-5",
@@ -378,7 +402,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "The six example rows of the 20."
+   "reason": "The six example rows of the 20.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-6",
@@ -391,7 +416,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Row '14B AWQ | P1 attacker'."
+   "reason": "Row '14B AWQ | P1 attacker'.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-6r",
@@ -399,7 +425,8 @@
    "file_sha256": "5ce7733c2b651a2ff94313474704f6e38666d75b1c1a0856db8b1e25519b095f",
    "spans": {},
    "outcome": "NOT A QUOTE",
-   "reason": "The population reading the case constructs."
+   "reason": "The population reading the case constructs.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-7",
@@ -436,7 +463,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Seven of the eight rows; the eighth is V-8."
+   "reason": "Seven of the eight rows; the eighth is V-8.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-8",
@@ -449,7 +477,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Row '14B F - S attacker'."
+   "reason": "Row '14B F - S attacker'.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "V-9",
@@ -457,7 +486,8 @@
    "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
    "spans": {},
    "outcome": "NOT A QUOTE",
-   "reason": "Constructed software-convention fixture."
+   "reason": "Constructed software-convention fixture.",
+   "in_preregistered_scope": false
   },
   {
    "fixture": "V-10",
@@ -465,7 +495,8 @@
    "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
    "spans": {},
    "outcome": "NOT A QUOTE",
-   "reason": "Constructed software-convention fixture."
+   "reason": "Constructed software-convention fixture.",
+   "in_preregistered_scope": false
   },
   {
    "fixture": "V-11",
@@ -473,7 +504,8 @@
    "file_sha256": "a4a416703c3f83587cf5790e1ed69d0641d36fc52e0f447f90a065fc9e0b1bb1",
    "spans": {},
    "outcome": "NOT A QUOTE",
-   "reason": "Constructed limit fixture."
+   "reason": "Constructed limit fixture.",
+   "in_preregistered_scope": false
   },
   {
    "fixture": "V-12",
@@ -486,7 +518,8 @@
     ]
    },
    "outcome": "RE-WORDED",
-   "reason": "Constructed over the real span '.296' of V-1."
+   "reason": "Constructed over the real span '.296' of V-1.",
+   "in_preregistered_scope": false
   },
   {
    "fixture": "D-1",
@@ -499,7 +532,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Exact words."
+   "reason": "Exact words.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "D-2",
@@ -516,7 +550,8 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Exact words in the pinned pilot summary."
+   "reason": "Exact words in the pinned pilot summary.",
+   "in_preregistered_scope": true
   },
   {
    "fixture": "D-3",
@@ -529,20 +564,29 @@
     ]
    },
    "outcome": "ANCHORED",
-   "reason": "Exact words; coverage.json gives CHECKED 73, LABELLED 349, OPEN 2,529 of 184,893 (checked below)."
+   "reason": "Exact words; coverage.json gives CHECKED 73, LABELLED 349, OPEN 2,529 of 184,893 (checked below).",
+   "in_preregistered_scope": true
   }
  ],
  "changed_or_absent": [
   "H-4",
+  "H-5",
   "H-9"
  ],
  "pass": false,
  "counts": {
-  "ANCHORED": 15,
-  "RE-WORDED": 10,
-  "CHANGED": 2,
+  "ANCHORED": 14,
+  "RE-WORDED": 9,
+  "CHANGED": 3,
   "ABSENT": 0,
-  "NOT A QUOTE": 9
+  "NOT A QUOTE": 6
+ },
+ "counts_outside_scope": {
+  "ANCHORED": 0,
+  "RE-WORDED": 1,
+  "CHANGED": 0,
+  "ABSENT": 0,
+  "NOT A QUOTE": 3
  },
  "constitution_coverage_by_status": {
   "CHECKED": 73,
