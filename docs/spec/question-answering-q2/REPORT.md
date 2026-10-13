@@ -119,7 +119,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | 20 | Reports | This report's numbers from saved evidence, by test; what was not run is listed below. |
 | 21 | Acceptance tags | Below. |
 | 22 | Tests | Selected tests while iterating; the full gate once on the final HEAD (generated block). |
-| 23 | DRI rulings | `DELTA.md`: D14 is signed by R3 and Q2.4's trust growth by R6 (D12, `docs/trust-baseline.json`'s `signed`), each with its test; D1 to D13 need the DRI's signature. |
+| 23 | DRI rulings | `DELTA.md` records the DRI's 2026-10-13 signatures and their satisfied tests, D14 under R3, and Q2.4's trust growth under R6. The remaining conditional rows are named there. |
 
 ## Acceptance items
 
@@ -135,7 +135,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | Q2.6 reading and writing evaluation (Sonnet as reader and writer) | EXTERNAL | **deferred**: needs model calls, which this task forbids; owner: the orchestrator |
 | Q2.6 latency and agreement with W2 | AGENT | done: `ask` Lean CPU 0.5 s on U3 and A1 (budget 2 s; the benchmark `tools/bench/test_perf.py::test_ask_lean_cpu` against its stored baseline, since a correctness test never accepts on speed), U3 `ve ask` wall within 60 s; the agreement table in `../question-answering-report.md` |
 | Q2.5 one flip generator (the point search as its instance, the copy deleted) | AGENT | done (`ve/filling_search.py`, `tests/test_filling_search.py`) |
-| DRI signatures on DELTA D1 to D13 | HUMAN (DRI) | pending |
+| DRI conditional signatures in DELTA | AGENT / EXTERNAL | D1, D2, D4, D6, D7, D8, D10, D11 and D14 are recorded as signed; D3, D5, D9, D12, D13 and D15 still have conditions (see `DELTA.md` and the 2026-10-13 DRI note) |
 
 ## Not done, and not run
 
@@ -149,6 +149,13 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 - **Focused prover evidence (DELTA D6)**: record certificates for A2, A3 and A4 with `--evidence`, as A5's package
   is recorded, to show the derived leads when that evidence exists. A1's recorded `ve ask` wall time is 199.109 s:
   within the registered U3-only wall budget but too slow for ordinary use (`evidence/measurements.json`).
+- **Older verdict route (DELTA D15)**: some `ve document readings --conclusion` rows report ALL or NONE while `ask`
+  has checked an X1 conflict. Investigate the older route's conflict fold in its own batch; this report separates
+  those rows from identical verdicts. The s125 answer's citations are sufficient but not minimal: it names the
+  audit rules for a `must be done` question and repeats C4 and C3 lines. A wording pass should remove those repeats.
+- **Trust ties (DELTA D12)**: tie G[V] declarations in Render, Wire, Lines and Schemas/Ask to the existing encoder
+  and wire soundness theorems where their statements cover them. Move the EFormula and ETerm response shapes into
+  `Common.lean` if a second mode needs them, so the shape has one owner.
 - **The final-HEAD full gate**: not run after the review fixes (the fixer's instruction); see the acceptance items.
 - **The relay mutation gate on `words`**: run on its own route (`tools/relay_mutation_gate.py --route
   service:words`: 2 fixtures, 342 mutants, all refused, 0 allowed); `evidence/relay-gate.json` is the earlier run of
