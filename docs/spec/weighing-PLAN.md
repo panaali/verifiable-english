@@ -1,13 +1,15 @@
 # Weighing competing considerations (`weighing@0`): buildable plan
 
-> Status: plan draft 3 (2026-10-13), branch `design/weighing` from `main` at `49de179e`. Research wave of
+> Status: plan draft 4 (2026-10-13), branch `design/weighing` from `main` at `49de179e`. Research wave of
 > 2026-10-12 (DRI). Draft 1 (2026-10-12) was reviewed by Astra and Fable (`manage-agents/debates/design-weighing/`,
 > converged in round 3 on REVISE to draft 2) and by the cross-plan review of 2026-10-13
 > (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`, whose ten edits for this plan settle the debate's one open
 > item). Draft 2 carries both; its only other changes are pointers to WG-1's statement spec. Draft 3 carries the
 > statement review of WG-1's spec (`manage-agents/debates/weighing-spec/`, verdict FIX, settled by `DRI-RULING.md`,
 > items 1 to 14), synchronised with [weighing.md](weighing.md) draft 2; it changes no frozen W1, soft or P0
-> semantics. It is the plan for the
+> semantics. Draft 4 carries the bounded re-check of weighing.md draft 2 (`manage-agents/weighing-p3ver1.final.md`,
+> FAIL on ruling item 1), synchronised with weighing.md draft 3: the second accepted document that falsifies
+> `strength_iff`'s unrestricted statement (4.1, W-α); it changes no statement. It is the plan for the
 > design recommended in [docs/research/weighing.md](../research/weighing.md) (cited here as `research n`), which must
 > be read first for the prior art and the comparison of candidate designs. Research sections 2 (the measured need), 5 and 6 are still
 > placeholders, so every claim draft 1 cited from them (unit ids, byte estimates, the CROSSACT class) is withdrawn
@@ -393,8 +395,9 @@ theorem holistic_iff_no_always_chain (Wd : WeighDoc) (h : WellFormedWeigh Wd = t
     strictPair Wd H L = false ↔ ∀ c, RankChain Wd H L c → ∀ e ∈ chainEdges c, e ∉ Wd.W.always
 
 /-- D4: `Str_T` has a premise exactly for the `outweighs` decisions of strict pairs, queried at declared ranks and
-    a declared predicate. Without `hL` and `hH` it is false: a rank name may end in `_`, so `outweighsName` aliases
-    (weighing.md F9, F10 and 7.3's regressions; both documents are accepted). -/
+    a declared predicate. Without `hL` and `hH` it is false: a rank name may end in `_`, so `outweighsName` aliases,
+    and two accepted documents falsify it (weighing.md F9 and F13, 7.3); a third alias names an undeclared act, and
+    the unrestricted statement survives it (F10). -/
 theorem strength_iff (Wd : WeighDoc) (h : WellFormedWeigh Wd = true) (a L H : String)
     (hL : L ∈ Wd.D.soft.ranks) (hH : H ∈ Wd.D.soft.ranks)
     (ha : ∃ ss, Wd.D.E.predicates a = some ss) :
@@ -713,8 +716,12 @@ holistic flag, decider `the assistant`. Each fixture names its record.
   [∀x. ¬soft__outweighs__b__a__x_permitted(x)]`. Every admissible completion has H alone selecting: `settled yes`. The
   finite base with the `outweighs` atom true at `a` fails `modelCheckX` with label `weigh:strength:a:b:x_permitted`.
   Without the strength, soft (α)'s two answers. With the record "h's exception applies, l's does not": accepted, and
-  the lower rule decides despite `always` (`settled no`): E1 is pairwise defeat. The rank-name aliases of
-  `strength_iff` (`b_`; `c`, `c_`) are regressions of its unrestricted statement, never refusals (weighing.md 7.3).
+  the lower rule decides despite `always` (`settled no`): E1 is pairwise defeat. Two accepted renamings of W-α
+  falsify `strength_iff`'s unrestricted statement, as regressions, never refusals (weighing.md 7.3): the lower rank
+  `b_`, queried at `(x_permitted, b, _a)` (F9), and ranks `c > c_`, queried at `(x_permitted, c, _c)`, where `c` is
+  declared and only `hH` excludes the query (F13). Ranks `c`, `c_`, `l` with the triple `(x_permitted, l, c_)`,
+  queried at `(_x_permitted, l, c)`, is a name collision the unrestricted statement survives: the act is undeclared,
+  so the query's formula is `¬⊥` (F10).
 - **W-β (closure).** Ranks `s > e > g > h`; `s always outranks e`, `e outranks g`, `g outranks h`.
   `strictPair`: `(s,e)`, `(s,g)`, `(s,h)` strict; `(e,g)`, `(e,h)`, `(g,h)` holistic. `strictWitness s h = [s, e, g,
   h]`. Colliding rules ranked `s` and `h` on X: no override; ranked `e` and `h`: override possible.
@@ -874,9 +881,11 @@ typing hypothesis; the pruning soundness of `coneValuesO` (by `kleene_sound` aga
 Z-β and C-4 against the edited statements, and confirm that the layered gate accepts a stripped document that lacks
 `norm-defaults@0`. Done when the review has converged and this file carries its edits. The item-1 statement
 specification, [weighing.md](weighing.md) (2026-10-13), is WG-1's output for WG-2 to WG-5. Its review
-(`manage-agents/debates/weighing-spec/`) ended FIX, settled by the DRI's ruling; weighing.md draft 2 and this draft 3
-carry all 14 items. Build authorisation follows the corrected statement spec: the untracked stub is re-elaborated
-against draft 2's statements, and its `#eval`s for the values marked *derived* are run, before WG-2 starts.
+(`manage-agents/debates/weighing-spec/`) ended FIX, settled by the DRI's ruling; weighing.md draft 2 and plan draft 3
+carry all 14 items, and weighing.md draft 3 and this draft 4 carry the bounded re-check's one finding (item 1's
+second falsifying regression, F13). Build authorisation follows the corrected statement spec: the untracked stub is
+re-elaborated against draft 2's statements (draft 3 changes none), and its `#eval`s for the values marked *derived*
+are run, before WG-2 starts.
 
 ### WG-2. Lean: block, strength, conditions, grants (Lean, 5–6 h)
 
@@ -1154,3 +1163,4 @@ branch) on the probe set, never as coverage.
 | 2026-10-12 | Draft 1 | Plan for the design recommended in docs/research/weighing.md: decisions D1 to D14; `weighing@0` (strength, override and switch conditions, grants) as premises on open decisions over RD-9's generic `X`; zone answers and decision records on norm-defaults' widened three-valued machinery; Lean statements; fixtures W-α to W-ι, Z-α to Z-ε and C-1 to C-7; batches WG-0 to WG-10 with dependencies and shared files; two pre-registered experiments. Planning only. |
 | 2026-10-13 | Draft 2 | The converged debate (rounds 1 to 3) and the cross-plan synthesis edits 1 to 10. Debate: `settled` prunes by X and needs a checked completion (E1); `ConditionOnStrictPair`, the propositional `ConditionsDisagree`, no sufficient switch condition (E2, reduced); grants inherit the grantor's conditions along the chain with one generator, `grant_within_grantor` (E3); `runWeigh_delegates` restated without the identity fields (E4); `generally` an input synonym, only `always` on the wire, the upward-closure and plain-edge paraphrases (E5); fixtures name their records; `ZoneAnswer` carries both witness sets and a no-completion result; `always_no_override` on the override disjunct; factor paraphrase; budget a parameter (12 and 16); build order WG-2 → WG-3 → WG-4 → WG-5 → WG-6 → WG-7 → WG-8 with the grant evidence split between WG-5 and WG-8; research-cited unit ids and estimates withdrawn. Synthesis: `weigh_alone_base_free` and W-κ, no global conservativity (1); X assembled by PK-1, `weighX` deleted (2); no `weighing` mode, two layered-route kinds (3); AR-10's row and WG-3's slot (4); `strictPair` through QS-1 (5); zone answers on the whole X, events' `NotCalendar` (6); WG-10 through `alternatives@0` (7); split names, W-λ (8); the hard-constraint queue (9); dependencies and the english-lean catalogue (10). WG-1's item-1 statement spec is weighing.md. |
 | 2026-10-13 | Draft 3 | The statement review of weighing.md draft 1 (`manage-agents/debates/weighing-spec/`, FIX, `DRI-RULING.md` items 1 to 14), synchronised with weighing.md draft 2. `strength_iff` in 3.2 with `hL`, `hH`, `ha` (1); `runWeigh_delegates` under `hg`, total `stripWeighing`/`stripCase`, `stripCase_idem`, `weighGate`, the seven-field `core`, rebound certificate packages (2, D11, 2.3, 3.3, W-η); E1/E2 as pairwise defeat by an effective higher rule, W-α with h excepted (3); E4's "Outside this condition, …", θ11 (4); E7's resolution and the explicit form (5, 2.2, WG-4); grant cycles refused (6, D7, 2.5); `condition_necessary`, `condition_sufficient`, `factors_inert` (7, 3.2); W-μ and its seeded bugs (8, WG-2); zone evidence: `ruledOut`/`inconsistent` with label lists from a complete enumeration, `ZoneUnknown`'s checked reasons, labelled X, `labelsOf`, `zone_ruledOut_sound`'s three conjuncts, W-κ's five labels, Z-δ and the new Z-ζ (9, 0, D9, D10, 2.6, 3.4, 7, 9); 2.5's order gate, stripped document, block, and the combined fault (10); `maxPropAtoms = 12` with boundary fixtures (11); `rights@0` refused by the row (12, D2, WG-3); the comprehension check as saved evidence (13, 8, WG-4). |
+| 2026-10-13 | Draft 4 | The bounded re-check of weighing.md draft 2 (`manage-agents/weighing-p3ver1.final.md`, FAIL on ruling item 1), synchronised with weighing.md draft 3 (F13). Item 1's two falsifying regressions are now the lower rank `b_` (F9) and ranks `c > c_` queried at `(x_permitted, c, _c)` (F13); the ruling's `c`/`c_` document with an undeclared act is a collision the unrestricted statement survives (F10). 3.2's `strength_iff` docstring, 4.1's W-α and WG-1 updated; no statement changed. |

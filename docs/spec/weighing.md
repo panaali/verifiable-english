@@ -1,10 +1,12 @@
 # Weighing (`weighing@0`), item 1: statement specification
 
-> Status: item-1 specification, draft 2 (2026-10-13), written by WG-1 from [weighing-PLAN.md](weighing-PLAN.md)
-> draft 3, which carries the converged Astra/Fable debate (`manage-agents/debates/design-weighing/`, rounds 1 to 3) and
+> Status: item-1 specification, draft 3 (2026-10-13), written by WG-1 from [weighing-PLAN.md](weighing-PLAN.md)
+> draft 4, which carries the converged Astra/Fable debate (`manage-agents/debates/design-weighing/`, rounds 1 to 3) and
 > the cross-plan synthesis edits of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`). Draft 2 carries
 > the statement review of draft 1 (`manage-agents/debates/weighing-spec/`: Astra and Fable, verdict FIX, settled by
-> `DRI-RULING.md`, items 1 to 14); it changes no frozen W1, soft or P0 semantics. It covers the
+> `DRI-RULING.md`, items 1 to 14); it changes no frozen W1, soft or P0 semantics. Draft 3 carries the bounded re-check
+> of draft 2 (`manage-agents/weighing-p3ver1.final.md`, FAIL on ruling item 1): the second accepted document that
+> falsifies `strength_iff`'s unrestricted statement (F13, 7.3); it changes no statement. It covers the
 > plan's item 1, "constrain the open decisions" (batches WG-2 to WG-5): the block, strength, conditions and grants,
 > their premises and theorems (WG-2), the wire, the pack and identity (WG-3), the English (WG-4) and the constitution
 > fixtures (WG-5). Item 2 (zone answers and decision records, WG-6 to WG-8) is not specified here, beyond the zone
@@ -28,6 +30,10 @@
 > access. Values new in draft 2 are marked *derived*: derived by hand from the definitions of this file, or taken from
 > a reviewer's Lean evaluation where the row says so. The ruling's item 14 applies: the stub is re-elaborated against
 > these statements, and its `#eval`s are run, before WG-2 starts; a difference is a fix to this file, not to the stub.
+> Draft 3's three `strength_iff` rows of 7.3 (F9, F10, F13) were computed by `#eval` in the stub with
+> `lake --dir /home/seyran/code/ve-rd-9-int/lean env lean <stub>`, against `rd-9/integrate` at `ec064fa9` (its
+> `lean/VE/{SoftNorms,Norms,Closure,NormDefaults}` and `lean/VE/{Syntax,Semantics,Finite}.lean` equal `321e610a`'s);
+> every other value new in draft 2 stays *derived* until that re-elaboration.
 >
 > **Interfaces not on `main`.** QS-1's `VE.Closure.Order` (`atLeast := reachEval .star`, SYNTHESIS 2.3), PK-1's
 > `VE.NormDefaults.Packs.Pack` (2.1), AR-10's `VE.Compose.ProfileRow` (2.2) and AP's `VE.Acts.SplitMap` with its
@@ -51,10 +57,16 @@ The statement review of draft 1 (`manage-agents/debates/weighing-spec/`) found:
 
 | # | Finding | Evidence | Consequence |
 |---|---|---|---|
-| F9 | Draft 1's `strength_iff` is false: `validSoftName` allows a trailing `_`, so `outweighsName` aliases across rank names | Astra's Lean evaluation (round 1): W-α with the lower rank `b_`, query `(x_permitted, b, _a)`: `WellFormedWeigh` true, membership true, right side false | `hL`, `hH`, `ha` added (5.1); regressions in 7.3 |
-| F10 | The second alias (ranks `c`, `c_`, query `(_x, L, c)`) builds the same name, but draft 1's statement holds there: `_x` is no regulated predicate, so `actSortsOf D "_x" = []` and `atom _ [] = ⊥`; the query's formula is `¬⊥`, never a strength premise (regulated arity is 1 or 2, `regulated_arity`) | *derived* from `sortsIn`, `atom` (`Norms/Basic.lean:27`) | kept in 7.3 as the ruling asks, marked as a name collision that the statement survives; `ha` stays, so the proof rests on injectivity alone |
+| F9 | Draft 1's `strength_iff` is false: `validSoftName` allows a trailing `_`, so `outweighsName` aliases across rank names | Astra's Lean evaluation (round 1), and the stub's `#eval` (draft 3): W-α with the lower rank `b_`, query `(x_permitted, b, _a)`: `WellFormedWeigh` true, membership true, right side false; neither `b` nor `_a` a declared rank | `hL`, `hH`, `ha` added (5.1); the first falsifying regression in 7.3 |
+| F10 | The second alias of the ruling (ranks `c`, `c_`, `l`, triple `(x_permitted, l, c_)`, query `(_x_permitted, l, c)`) builds the same name, but draft 1's statement holds there: `_x_permitted` is no declared predicate, so `actSortsOf D "_x_permitted" = []` and `atom _ [] = ⊥`; the query's formula is `¬⊥`, never a strength premise (regulated arity is 1 or 2, `regulated_arity`) | the stub's `#eval` (draft 3): `WellFormedWeigh` true, query formula `["not",["bottom"]]`, membership false, right side false; `l` and `c` declared, `_x_permitted` not | kept in 7.3 as a name collision that the statement survives, not as one of ruling item 1's two falsifying documents (F13 supplies the second); `ha` alone excludes the query, and with it the proof rests on injectivity alone |
 | F11 | Draft 1's `runWeigh_delegates` is false: profiles `[norms@0, relational-fol@0, weighing@0]` without a block answer `…weighing@0 requires soft-norms@0` against the stripped case's `…needs soft-norms@0 or rights@0`; `j = {}` panics in `Json.setObjVal!` | Fable, round 1 (`Lean/Data/Json/Basic.lean:281`) | `weighGate` hypothesis, total strip, `stripCase_idem`, wider `core` (1.8, 6) |
 | F12 | W-κ's predicted single-label "inconsistent" cannot be produced: with nothing assigned, every premise of X evaluates to Kleene `none` | Astra and Fable, rounds 1 and 3 | the zone evidence contract of plan D9/D10 widened to a complete enumeration with Lean-recomputed labels (7.2, W-κ) |
+
+The bounded re-check of draft 2 (`manage-agents/weighing-p3ver1.final.md`) found:
+
+| # | Finding | Evidence | Consequence |
+|---|---|---|---|
+| F13 | Ruling item 1 asks for two accepted documents that falsify draft 1's `strength_iff`; draft 2 had one (F9), since F10's does not falsify it. F10's alias crosses the boundary between the higher rank and the act, so its query names an act starting with `_`, which is undeclared; F9's crosses the boundary between the lower and the higher rank and keeps the declared act. The second falsifying document crosses F9's boundary with the lower rank's twin declared: W-α with ranks `c > c_` (`always [[c, c_]]`, `h` ranked `c`, `l` ranked `c_`), query `(x_permitted, c, _c)`, which builds the name of the real triple `(x_permitted, c_, c)` | the stub's `#eval` (draft 3): names equal, `WellFormedWeigh` true, triples `[(x_permitted, c_, c)]`, membership true, right side false; `c` declared, `_c` not | the second falsifying regression in 7.3; `hL` holds there, so `hH` alone excludes the query. No statement changes |
 
 ## 1. Definitions (WG-2: `lean/VE/Weighing/Tree.lean`, `Conditions.lean`)
 
@@ -660,10 +672,12 @@ Plain words: "always" protects every pair whose chain passes through the marked 
 `outranksPlus_eq_above`. `strength_iff`'s forward direction needs `outweighsName` injective on declared ranks and a
 declared predicate: every such name starts with a letter (`validSoftName`, `Surface.identifier`) and a rank name has
 no `__` (`validSoftName`), so each `__` separator is the last two underscores of its run, and `L`, `H` and `a` are
-recovered from the name. Without `hL` and `hH` the statement is false (F9: rank `b_`, query `(x_permitted, b, _a)`);
-`ha` is the declared-predicate form (weaker than "regulated", so the theorem is stronger), and with it the proof
-rests on injectivity alone (F10). Both aliases are regressions of the unrestricted statement in 7.3, never admission
-refusals: both documents are accepted.
+recovered from the name. Without `hL` and `hH` the statement is false on two accepted documents: F9 (rank `b_`,
+query `(x_permitted, b, _a)`, neither `b` nor `_a` declared) and F13 (ranks `c > c_`, query `(x_permitted, c, _c)`,
+where `c` is declared, so `hH` alone excludes it). `ha` is the declared-predicate form (weaker than "regulated", so
+the theorem is stronger), and with it the proof rests on injectivity alone: F10's alias (query `(_x_permitted, l, c)`)
+names an undeclared act, its formula is `¬⊥`, and the unrestricted statement survives it. All three are rows of 7.3,
+never admission refusals: the three documents are accepted.
 
 ### 5.2 What `always` means
 
@@ -1150,7 +1164,7 @@ subset of the base atoms and every `excepted` assignment, `freeWitness` satisfie
 | Claim | Holds (one direction) | Fails (the other) |
 |---|---|---|
 | D4 / `holistic_iff_no_always_chain` / `strictWitness_isSome` | W-β: 3 strict pairs, each with a witness chain | W-β: 13 pairs, no chain with an `always` edge (e.g. `e,g,h`), witness `none` |
-| `strength_iff` | W-β1 `(s,h)`: premise present | W-β2 `(e,h)`: absent; W-γ: no triple, absent. Regressions of draft 1's unrestricted statement (both documents accepted, never refused): W-α with the lower rank `b_`, query `(x_permitted, b, _a)` builds the name of the real triple `(x_permitted, b_, a)`: membership true, right side false (F9, Astra's Lean evaluation); ranks `c`, `c_`, `l` with triple `(x_permitted, l, c_)`, query `(_x_permitted, l, c)` builds the same name, but its formula is `¬⊥`, so the unrestricted statement holds there (F10, *derived*) |
+| `strength_iff` | W-β1 `(s,h)`: premise present | W-β2 `(e,h)`: absent; W-γ: no triple, absent. Two accepted documents falsify draft 1's unrestricted statement (regressions, never refusals): W-α with the lower rank `b_`, query `(x_permitted, b, _a)` builds the name of the real triple `(x_permitted, b_, a)`: membership true, right side false; neither `b` nor `_a` declared (F9); W-α with ranks `c > c_` (`always [[c, c_]]`), query `(x_permitted, c, _c)` builds the name of the real triple `(x_permitted, c_, c)`: membership true, right side false; `c` declared, `_c` not, so `hH` alone excludes it (F13). A third accepted document is a name collision the unrestricted statement survives: ranks `c`, `c_`, `l` with triple `(x_permitted, l, c_)`, query `(_x_permitted, l, c)` builds the same name, but `_x_permitted` is undeclared, its formula is `¬⊥`, and both sides are false; `ha` alone excludes it (F10). All three computed by the stub's `#eval` |
 | `all_always_is_strict` (↔) | W-β1: assignments with both sides yes | W-β1: assignments with both sides no; W-β2 shows `hall` is needed |
 | `wellFormedWeigh_empty` (=) | W-η: 8 documents, `true = true` | soft (α) with duplicate rules: `false = false` |
 | `factors_inert` (=) | W-δ with a factor entry: premises unchanged | control: W-δ against W-ε (a condition's kind changed): premises differ |
@@ -1227,7 +1241,8 @@ takes two arguments, so it is never a candidate):
 ## 9. Questions for the statement review, answered
 
 Reviewed by Astra and Fable (`manage-agents/debates/weighing-spec/`); Astra converged in round 2, Fable held two points
-through round 3, and the DRI's ruling (`DRI-RULING.md`) settled the verdict FIX. Draft 2 carries all 14 items.
+through round 3, and the DRI's ruling (`DRI-RULING.md`) settled the verdict FIX. Draft 2 carries all 14 items; draft 3
+completes item 1's two falsifying regressions after the bounded re-check (F13).
 
 1. `maxPropAtoms = 12`, and a pair over it refused (`ResourceLimit: conditions i, j`), never answered: kept, with
    boundary fixtures θ19 and θ20 (item 11).
@@ -1247,3 +1262,4 @@ through round 3, and the DRI's ruling (`DRI-RULING.md`) settled the verdict FIX.
 |---|---|---|
 | 2026-10-13 | Draft 1 | WG-1's item-1 statement specification for weighing-PLAN.md draft 2: definitions, English, wire, diagnostics, WG-2 and WG-3 theorems, fixtures W-α to W-λ and C-2 to C-6. Every statement elaborated in an untracked stub against `rd-9/integrate` (equal to `main` on the files read); every fixture value computed by `#eval` from wire JSON through Lean's soft decoder. Findings F1 to F8. |
 | 2026-10-13 | Draft 2 | The statement review's ruling (`manage-agents/debates/weighing-spec/DRI-RULING.md`), items 1 to 14, with weighing-PLAN.md draft 3. Changed statements: `strength_iff` (`hL`, `hH`, `ha`), `runWeigh_delegates` (`hg`), `stripWeighing` and `stripCase` (total), `LayeredU.core` (seven fields), `checkWeigh` (`DelegationCycle`), `weighingRow` (`rights@0` refused). New: `dropField`, `dropProfile`, `weighGate`, `stripCase_idem`, `condition_necessary`, `condition_sufficient`, `factors_inert`. English: E1, E2 (pairwise defeat by an effective higher rule), E4 ("Outside this condition, …"), E7's resolution and E7′, the comprehension check as saved evidence. Diagnostics: 3.2's order authoritative (block shape after the stripped document), `DelegationCycle` at 4.5, gate texts at 4.1. Fixtures: W-α with h excepted, θ11's zone, θ19/θ20, W-ζ cycles, W-η refusals and the combined fault, W-κ's sixteen branches and five labels, the bypassed W-θ labels, W-μ, the `strength_iff` regressions, 7.6. Findings F9 to F12. Not yet elaborated: new values are marked *derived*, and the stub (with an `#eval` for each) is re-elaborated before WG-2. |
+| 2026-10-13 | Draft 3 | The bounded re-check of draft 2 (`manage-agents/weighing-p3ver1.final.md`, FAIL on ruling item 1), with weighing-PLAN.md draft 4. Finding F13: the ruling's second alias (F10) does not falsify the unrestricted `strength_iff`; a second accepted document that does, W-α with ranks `c > c_` and query `(x_permitted, c, _c)`, joins 7.3 beside F9, and F10's document stays there as a collision the statement survives. 0, 5.1, 7.3 and 9 updated. The three `strength_iff` rows computed by `#eval` in the stub (header); no statement, wording, diagnostic or other fixture changed. |
