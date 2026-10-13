@@ -348,7 +348,7 @@
         "exception": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/soft_exception"}]},
         "guard": {"$ref": "common.json#/$defs/generated_formula"},
         "hard": {"type": ["boolean", "null"]},
-        "mode": {"anyOf": [{"type": "null"}, {"enum": ["strict", "default"]}]},
+        "mode": {"enum": [null, "strict", "default"]},
         "name": {"type": "string"},
         "over": {"$ref": "common.json#/$defs/strings"},
         "predicate": {"type": ["string", "null"]},

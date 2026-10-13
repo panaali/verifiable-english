@@ -67,7 +67,7 @@ there too (a differing error is saved as `prior_error`; there are none), and a r
 invalid input (any error but `CheckerUnavailable`; a `ResourceLimit` only with Lean's own text).
 
 The A/B recorded all nine corpora at the merge base `8cec935a` (a detached worktree with its own Lean build) and at
-`9122d41f` (this branch; no product code changed after it). Rows a loaded machine's wall-clock guards decided
+`9122d41f` (this branch; after it only `document.json`'s `soft_norm.mode` was re-expressed as one enum with `null`, which accepts the same values, so that `tests/test_enum_domains.py` keeps the field's domain). Rows a loaded machine's wall-clock guards decided
 (load average 30 to 110) were re-recorded on both sides with one worker and the same `VE_RUST_TIMEOUT` (a guard, not
 a work limit), and spliced in by key (`splice_recording.py`): two UDHR whole-translation pilots (both sides stop at
 the recorder's 600 s) and four document-corpus rows that hit the Rust checker's 5 s guard on one side.
