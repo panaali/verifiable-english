@@ -73,6 +73,58 @@ def test_complete_choice_verdict_is_lean_checked(monkeypatch, joint):
     assert {"certificate", "model"} <= {key for row in case["choice_evidence"] for key in row}
 
 
+@pytest.mark.parametrize("authored_first", [False, True])
+def test_joint_choices_ignore_authored_sets_in_every_wire_vector(monkeypatch, authored_first):
+    open_set = copy.deepcopy(ALTERNATIVES[0])
+    open_set["status"] = "open"
+    authored = {"id": "a", "version": 1, "status": "authored",
+                "readings": [{"kind": "asserted", "content": ["top"]}]}
+    sets = [authored, open_set] if authored_first else [open_set, authored]
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    captured = []
+    real = relay.decide
+
+    def spy(mode, batch, **kw):
+        if mode == "readings-choices":
+            captured.extend(copy.deepcopy(batch))
+        return real(mode, batch, **kw)
+
+    monkeypatch.setattr(relay, "decide", spy)
+    result = check_readings(env(), sets, ["top"],
+                            joint_choices={"status": "complete", "choices": [{"s@2": 0}]})
+    assert result["verdict"] == "ALL"
+    assert len(captured) == 1
+    assert [item["id"] for item in captured[0]["set_meta"]] == ["s"]
+    assert captured[0]["joint_choices"] == [[0]]
+    assert captured[0]["choice_evidence"][0]["choice"] == [0]
+
+
+@pytest.mark.parametrize("reverse_keys", [False, True])
+def test_joint_proof_premises_follow_set_order_not_mapping_order(monkeypatch, reverse_keys):
+    sets = [{"id": key, "version": 1, "readings": [{"kind": "asserted", "content": formula}]}
+            for key, formula in (("a", ATOM), ("b", NEGATED))]
+    choice = dict(reversed([("a@1", 0), ("b@1", 0)])) if reverse_keys else {"a@1": 0, "b@1": 0}
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    result = check_readings(env(), sets, ["bottom"],
+                            joint_choices={"status": "complete", "choices": [choice]})
+    assert result["verdict"] == "ALL"
+    assert result["proofs"][0]["choice"] == choice
+
+
+@pytest.mark.parametrize("authority", ["python", "lean"])
+def test_joint_unclassified_choice_forces_unknown(monkeypatch, authority):
+    from tests.test_reports import environment
+    monkeypatch.setenv("VE_AUTHORITY", authority)
+    sets = [{"id": "s", "version": 1, "readings": [
+        {"kind": "asserted", "content": formula}
+        for formula in (["bottom"], ["top"], ["unary", "safe", ["const", "alice"]])]}]
+    joint = {"status": "complete", "choices": [{"s@1": i} for i in range(3)]}
+    bounded = check_readings(environment(), sets, ["bottom"], max_models=1,
+                             joint_choices=joint)
+    assert bounded["verdict"] == "UNKNOWN"
+    assert check_readings(environment(), sets, ["bottom"], joint_choices=joint)["verdict"] == "SOME"
+
+
 @pytest.mark.parametrize("mutation", [
     lambda c: c["choice_evidence"].pop(),
     lambda c: c["choice_evidence"].append(copy.deepcopy(c["choice_evidence"][0])),
