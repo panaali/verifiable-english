@@ -1,7 +1,28 @@
 # Weighing competing considerations (`weighing@0`): buildable plan
 
-> Status: plan draft 4 (2026-10-13), branch `design/weighing` from `main` at `49de179e`. Research wave of
-> 2026-10-12 (DRI). Draft 1 (2026-10-12) was reviewed by Astra and Fable (`manage-agents/debates/design-weighing/`,
+## Changes in this draft
+
+Draft 5 (2026-10-13) applies phase 1, [weighing-phase1.md](../research/weighing-phase1.md) (reviewed FIX in
+`manage-agents/weighing-ph1-review.final.md`, fixed in `weighing-ph1-fix.final.md`). No Lean statement, wording,
+diagnostic or fixture changes, and the cross-plan edits are kept as written.
+
+- **WG-E1: FAIL.** 1 of 40 sampled CROSSACT units is two exclusive positive acts (the bar is 8), and none would change
+  a checked answer (the bar is 5). WG-E1's row, its section and D14 record the result.
+- **WG-10: closed** by WG-E1. Its text is kept as history. No exclusive-act construct is planned; 2.7 and 8 make
+  collisions between different acts residual.
+- **WG-0: DEFERRED.** Trigger: RD-9 SC-8 on `main`, not met on 2026-10-13. Otherwise unchanged; its pilot effect is
+  still "measured by WG-0".
+- **Status after phase 1** (5.0): every batch and experiment with its result or trigger, and what it gates.
+- **Measured numbers** (7): WG-E1's counts and the sampled bytes by class. WG-10's measured effect is 0 B of checked
+  answers.
+- **Refusal units** (8): the three sampled units that name refusing need AP's act identity, not a weighing construct.
+- **Not tested by phase 1, unchanged:** WG-1 to WG-9, WG-E2 and research 4.7.
+- **Cross-plan:** the synthesis still names WG-10 as `alternatives@0`'s consumer (edits 7 and 10, SYNTHESIS O9, 2.9
+  and C17). That text is kept here; the conflict is in "Cross-plan issues for the DRI" at the end.
+
+> Status: plan draft 5 (2026-10-13), branch `research/weighing-p1`; draft 4 was on `design/weighing` from `main` at
+> `49de179e`. Draft 5 applies phase 1's results ([weighing-phase1.md](../research/weighing-phase1.md)): WG-E1 FAIL,
+> WG-10 closed, WG-0 DEFERRED. Research wave of 2026-10-12 (DRI). Draft 1 (2026-10-12) was reviewed by Astra and Fable (`manage-agents/debates/design-weighing/`,
 > converged in round 3 on REVISE to draft 2) and by the cross-plan review of 2026-10-13
 > (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`, whose ten edits for this plan settle the debate's one open
 > item). Draft 2 carries both; its only other changes are pointers to WG-1's statement spec. Draft 3 carries the
@@ -11,11 +32,12 @@
 > FAIL on ruling item 1), synchronised with weighing.md draft 3: the second accepted document that falsifies
 > `strength_iff`'s unrestricted statement (4.1, W-α); it changes no statement. It is the plan for the
 > design recommended in [docs/research/weighing.md](../research/weighing.md) (cited here as `research n`), which must
-> be read first for the prior art and the comparison of candidate designs. Research sections 2 (the measured need), 5 and 6 are still
-> placeholders, so every claim draft 1 cited from them (unit ids, byte estimates, the CROSSACT class) is withdrawn
-> below and marked where it stood. Planning only: no code, proof, test or generated file changed, and no model was
-> called. The Lean blocks below are the plan's statements; WG-1 elaborated them in an untracked stub, and the item-1
-> statement specification [weighing.md](weighing.md) holds the elaborated statements for WG-2 to WG-5, the fixture
+> be read first for the prior art and the comparison of candidate designs. Research section 2 (the measured need) is
+> filled only in 2.1, the CROSSACT class written for WG-E1 before its draw, and section 5 is still a placeholder.
+> So every claim draft 1 cited from them (unit ids, byte estimates) stays withdrawn below and is marked where it
+> stood. Planning only: no code, proof, test or generated file changed, and no model was called for this draft (phase
+> 1 made one, WG-E1's second reader, saved as evidence). The Lean blocks below are the plan's statements; WG-1
+> elaborated them in an untracked stub, and the item-1 statement specification [weighing.md](weighing.md) holds the elaborated statements for WG-2 to WG-5, the fixture
 > values computed in Lean and the stub's findings. Numbers are measured (the method is named beside each) or labelled
 > *estimate*.
 >
@@ -25,8 +47,9 @@
 > `design/rd-9` and its build on `rd-9/integrate` (`LayeredEntail.lean`, `LayeredAdmission.lean`), [VISION.md](../../VISION.md)
 > (the converged rule "elaborate by default", items 1, 2, 5 and 8), `lean/VE/SoftNorms/{Tree,Soften,Semantics}.lean`,
 > `lean/VE/NormDefaults/{Premises,Layered,Evidence,Routes}.lean`, the pinned constitution and UDHR pilots of
-> run `20261012T1800Z`, and SYNTHESIS.md's shared items PK-1 (premise packs), AR-10 (profile-gate table), QS-1 (order
-> closure), AP's split map and the hard-constraint queue.
+> run `20261012T1800Z`, SYNTHESIS.md's shared items PK-1 (premise packs), AR-10 (profile-gate table), QS-1 (order
+> closure), AP's split map and the hard-constraint queue, and phase 1's report
+> [weighing-phase1.md](../research/weighing-phase1.md) with its evidence in `docs/research/evidence/weighing/`.
 
 ## 0. Summary
 
@@ -62,16 +85,18 @@ owns meaning, a new profile that changes no existing answer, honest UNKNOWN):
    confirm). The same machinery checks a **decision record** (a decider's findings in one situation): admissible,
    with the outcome it produces, or ruled out by named sentences of the document.
 
-Two further pieces are **experiments** with pre-registered bars (WG-E1, WG-E2): whether collisions between
-*different* acts ("help" against "refuse") need a new construct beyond act identification (if so, `alternatives@0`
-composed with soft norms supplies it, WG-10), and whether worked examples can bind a decider as precedents (Horty's a
-fortiori constraint, compiled into the same decision conditions). A holistic choice among explicit alternatives,
-numeric weights and a defeasible-logic engine inside the checker are not planned (research 4, 5).
+Two further pieces were planned as **experiments** with pre-registered bars (WG-E1, WG-E2). WG-E1 asked whether
+collisions between *different* acts ("help" against "refuse") need a new construct beyond act identification. It ran
+in phase 1 and **failed** its bar: 1 of 40 sampled units is two exclusive positive acts, and none would change a
+checked answer (5.0, 7). So WG-10 is closed, and no exclusive-act construct is planned. WG-E2 asks whether worked
+examples can bind a decider as precedents (Horty's a fortiori constraint, compiled into the same decision
+conditions); it runs after WG-2. A holistic choice among explicit alternatives, numeric weights and a
+defeasible-logic engine inside the checker are not planned (research 4, 5).
 
 **The first batch that moves a pilot number** is WG-0: no product code, it writes the constitution's value order and
 the hard constraints' immunity with what `soft-norms@0` already offers, once RD-9 lets a soft document sit beside
 `norm-defaults@0` (RD-9 SC-8). Draft 1's estimate of its effect cited research 5.2, which is unfilled; the estimate is
-withdrawn, and WG-0 measures.
+withdrawn, and WG-0 measures. WG-0 is **DEFERRED**: on 2026-10-13 SC-8 is not on `main` (5.0).
 
 ## 1. Decisions
 
@@ -90,7 +115,7 @@ withdrawn, and WG-0 measures.
 | D11 | **No new service mode.** A `weighing@0` document is a layered-route document: the layered decoder validates the original envelope and profiles (`weighGate`, before anything is stripped), hands the soft decoder the environment without the block (`stripWeighing`), decodes the block, checks `WellFormedWeigh` and gives PK-1 the `weighing` pack. The layered route's existing kinds (`-elaborate`, `-conflict`, `-status`, `-report`, `-certificate`, `admission`) answer weighing documents directly; `weighing-zone` and `weighing-record` are two new kinds of the layered route, run on the same decoded `LayeredU` with PK-1's X, their certificates bound through `bindCertX` to the full environment. A `weighing@0` document takes the layered route whether or not `norm-defaults@0` is on: with no unspecified predicate `fill U = U.D` and `Fill_T = []` (`fill_conservative`, merged) | one route for every `weighing@0` answer; profile-specific answers are layered-route kinds (SYNTHESIS O3, C9) | a `weighing` service mode; extending `ve_soft_norms_route` (meaning freeze) |
 | D12 | English: each new wording has one reading and a deterministic paraphrase; decision predicates, labels and formulas never appear in what a reader sees (zero-training English). Wordings are registered where `soft-norms@0`'s are registered today (`ve/surface/registry.py` records, selected by `ve/norm_english.py` when the profile is on). Once english-lean's catalogue owns norm wordings, the wordings of 2.2 and soft's reading sets for "normally", "typically", "usually" and "in most cases" are rows there instead, never both | one owner per wording | symbols, rank numbers or weights in the text |
 | D13 | No numeric weights, no "weigh" relation computed by the checker, no default inference inside the checker | research 4.4, 4.5; VISION converged rule item 5 | — |
-| D14 | Cross-act collisions and precedents are **experiments first** (WG-E1, WG-E2), each with a pre-registered bar; a build follows only if the bar is met. If WG-E1 passes, exclusive acts come from `alternatives@0` (its chooser, `available` and exclusive choice) composed with soft norms, designed and reviewed in WG-10; weighing defines no exclusivity relation | the need is unmeasured (research section 2 is unfilled); `alternatives@0` owns exclusive choice (SYNTHESIS O9) | building exclusive-act semantics now; extending soft's colliding pairs with declared exclusive acts |
+| D14 | Cross-act collisions and precedents are **experiments first** (WG-E1, WG-E2), each with a pre-registered bar; a build follows only if the bar is met. If WG-E1 passes, exclusive acts come from `alternatives@0` (its chooser, `available` and exclusive choice) composed with soft norms, designed and reviewed in WG-10; weighing defines no exclusivity relation. **Outcome (phase 1):** WG-E1 failed (1 of 40 sampled CROSSACT units are two exclusive positive acts, or 3 of 40 with the second reader's calls on the contested units; none would change a checked answer). WG-10 is closed, and no exclusive-act construct is planned. Weighing still defines no exclusivity relation | when D14 was written the need was unmeasured; WG-E1 then measured it for cross-act collisions ([weighing-phase1.md](../research/weighing-phase1.md) 2.3, 2.4). Precedents stay unmeasured until WG-E2. `alternatives@0` owns exclusive choice (SYNTHESIS O9) | building exclusive-act semantics now; extending soft's colliding pairs with declared exclusive acts |
 
 ## 2. Design
 
@@ -255,8 +280,10 @@ outweigh safety here; the document says safety always outranks ethics, and ethic
 The findings themselves (`excepted`, `outweighs`, `off`); whether a decider considered the listed factors; whether a
 finding is wise; "the spirit of the document" (:44); which category a consideration falls under (:44, "it may be
 unclear which category a given consideration falls under"), which stays a translator's reading set over a rule's rank;
-collisions between different acts (until WG-E1, and then through `alternatives@0`, WG-10); "best" responses among
-alternatives (research 4.7).
+collisions between different acts (not planned: WG-E1 found 1 of 40 sampled CROSSACT units to be two exclusive
+positive acts, 95% upper bound 0.13; the scope is the CROSSACT screen of the constitution's `norms` units, and such
+pairs exist outside the sample, weighing-phase1.md 2.3); "best" responses among alternatives (research 4.7, research
+only: 2 of the 40 sampled units ask for one).
 
 ## 3. Lean statements
 
@@ -822,7 +849,7 @@ codes when they land (DRI D6); every identity is Lean's (DRI D7). Generated file
 
 | # | Batch | Hours | Owner | Needs | Pilot effect |
 |---|---|---:|---|---|---|
-| WG-0 | The value order and the hard constraints' immunity with today's `soft-norms@0` | 3–4 | pilot | RD-9 SC-8 on `main`; SC-9's soft form adopted or on the same pilot branch | measured by WG-0 (draft 1's estimate cited research 5.2, unfilled; withdrawn) |
+| WG-0 | The value order and the hard constraints' immunity with today's `soft-norms@0` | 3–4 | pilot | RD-9 SC-8 on `main`; SC-9's soft form adopted or on the same pilot branch. **DEFERRED** on 2026-10-13 (5.0) | measured by WG-0 (draft 1's estimate cited research 5.2, unfilled; withdrawn; phase 1 measured nothing to replace it) |
 | WG-1 | Statement review of section 3, elaborated in a stub; fixture values computed | 3–4 | planner | — | none |
 | WG-2 | Lean: block, strength, conditions, grants, premises and their theorems | 5–6 | Lean | WG-1; QS-1; AP's split map (for the split checks); `main` | none |
 | WG-3 | Lean: block decoder, `stripWeighing`, the `weighing` pack, AR-10's row, identity | 5–6 | Lean | WG-2; RD-9 SC-1 and SC-6 on `main`; PK-1; AR-10's table | none |
@@ -831,20 +858,41 @@ codes when they land (DRI D6); every identity is Lean's (DRI D7). Generated file
 | WG-6 | Lean: zone answers and records (open atoms widened in their owner) | 5–6 | Lean | WG-3; RD-9 SC-A on `main`; PK-1 | none |
 | WG-7 | Layered-route kinds and display: `weighing-zone`, `weighing-record`, English, CLI | 5–6 | Lean, Python | WG-6, WG-4; PK-1 | none |
 | WG-8 | The constitution: zone probe on the hard constraints, the "should" sets and each grant | 3 | pilot | WG-7; the hard-constraint queue | no coverage claim; answers recorded |
-| WG-E1 | Experiment: do collisions between different acts need a new construct? | 4 | planner | WG-0; research 2.1's CROSSACT class written first | decides WG-10 |
+| WG-E1 | Experiment: do collisions between different acts need a new construct? | 4 | planner | done: **FAIL** ([weighing-phase1.md](../research/weighing-phase1.md)). It did not need WG-0, because clause 1 decided it | decided WG-10: closed |
 | WG-E2 | Experiment: can worked examples bind a decider as precedents? | 5–6 | planner | WG-2 | decides WG-9 |
 | WG-9 | (only if E2 passes) Lean: precedents compiled into decision conditions | 5–6 | Lean | WG-E2, WG-3 | per E2's measurement |
-| WG-10 | (only if E1 passes) design and review of `alternatives@0` composed with soft norms | 3 | planner | WG-E1; `alternatives@0` | — |
+| WG-10 | **CLOSED** by WG-E1's FAIL (kept as history). Was: (only if E1 passes) design and review of `alternatives@0` composed with soft norms | 3 | planner | WG-E1 (failed); `alternatives@0` | none. Measured: 0 B; no sampled (ii) unit changes a checked answer (7) |
 
-**Order.** WG-1 and WG-E1's reading can start now; WG-2 needs QS-1. The constitution's path is WG-0 → WG-2 → WG-3 →
+**Order.** WG-1's statement review is done (one obligation is left before WG-2, see 5.0), and WG-E1 is done (FAIL);
+WG-2 needs QS-1. The constitution's path is WG-0 → WG-2 → WG-3 →
 WG-4 → WG-5, then WG-6 → WG-7 → WG-8: WG-5 shows each grant's effect through `modelCheckX`, and WG-8 records each
 grant's zone answer, so no requirement depends on a later batch. WG-0 runs on its own after SC-8; the RD-9
-prerequisites stay as stated, and the experiments keep their pre-registered bars. WG-3 lands on `Layered.lean` after
+prerequisites stay as stated, and WG-E2 keeps its pre-registered bar. WG-3 lands on `Layered.lean` after
 AT-2/AT-3a and before ET-4 and QT-B2 (PK-1's integration order); WG-5's and WG-8's edits to u0165.s01–s07 run in the
 hard-constraint queue. Landing preference: weighing lands after quantities' track A and before events. About 38 to 47
 builder-hours on the path (*estimate*, not evidence of speed).
 
+### 5.0 Status after phase 1 (2026-10-13)
+
+Phase 1 is the cross-plan build order's "Now, no product code" step (SYNTHESIS 4.1). The report is
+[weighing-phase1.md](../research/weighing-phase1.md), and its evidence is in `docs/research/evidence/weighing/`.
+
+| Item | Status | Result, or the trigger that releases it | What it gates |
+|---|---|---|---|
+| WG-0 | **DEFERRED** | Trigger: RD-9 SC-8 on `main`. That means `rd-9/integrate` is merged, and `ve/document.py` no longer refuses `soft-norms@0` beside `norm-defaults@0`. Not met on 2026-10-13: at `main` `d006b1f4`, `rd-9/integrate` (`5019007c`) is not an ancestor, `LayeredEntail.lean` and `LayeredAdmission.lean` are absent, and the refusal is at `ve/document.py:630-634`. Not attempted | WG-5 (with WG-4); the first measured pilot number |
+| WG-1 | done, with one obligation left | The statement spec is [weighing.md](weighing.md). Before WG-2 starts, the untracked stub is re-elaborated against draft 2's statements and its `#eval`s for the *derived* values are run. The stub is not in the repository today | WG-2 |
+| WG-2 to WG-8 | not started; unchanged | Their "Needs" in the table above. Phase 1 did not test them: WG-E1 classified conflicts between acts, not the construct a unit needs | — |
+| WG-E1 | **FAIL** | (ii) is 1 of 40 against a bar of 8, and 0 (ii) units change a checked answer against a bar of 5. With the second reader's calls on the three contested units, (ii) is 3 of 40 and still 0 change an answer. Clopper–Pearson 95% upper bound on the (ii) rate: 0.132 (0.204 with those calls); the bar's rate is 0.20 | WG-10, now closed |
+| WG-E1's second reader | done | 10 of 10 agree on the frozen subset (orders 1 to 10; κ 1.0, chance agreement 0.82, 9 of the 10 are (iv)). Post hoc, 0 of 3 agree on the contested (i)/(ii) units. A later measurement that depends on the (i)/(ii) boundary should have two readers on every unit, not on a subset | — (reported, not part of the bar) |
+| WG-E2 | **DEFERRED** (not run) | Trigger: WG-2 lands (its "Needs"). The bar is unchanged. Two cost-benefit units WG-E1 drew (u0129.s03 :321, u0183 :479) look like the decision WG-E2 expects to pick (:325-347). That is consistent with WG-E2's protocol, not evidence for it | WG-9 |
+| WG-9 | **DEFERRED** | Trigger: WG-E2 passes | precedents in `Dec_T` |
+| WG-10 | **CLOSED** | WG-E1 FAIL: "Otherwise record the result and close" | — |
+| research 4.7 (best response) | research, no batch | 2 of the 40 sampled units are (iii) (u0034.s01 :70, u0036.s01 :78), and the one (ii) unit has the shape of a preference among alternatives. Its priority neither rises nor falls | — |
+
 ### WG-0. The value order and the hard constraints' immunity (pilot, 3–4 h)
+
+**DEFERRED** until RD-9 SC-8 is on `main` (5.0). Phase 1 checked that prerequisite on 2026-10-13, found it unmet, and
+did not attempt the translation. Nothing below changes.
 
 On a pilot branch (`pilot/cc-<stamp>`), scripts under `usecases/claude-constitution-pilot/run-<stamp>/`, all at one
 commit, in the foreground, host load recorded. No product code.
@@ -1020,13 +1068,36 @@ neither soft's same-act collision nor act identification ("refuse" read as "not 
 
 Pre-registered protocol: draw 40 units at random (seed `20261012`) from the units whose primary blocker is `norms`
 and whose text hits the CROSSACT class of research 2.1, which must be written and committed before any unit is drawn
-(draft 1 cited it, and research 2.1 is unfilled); for each, a reader classifies the conflict it expresses as
+(it was: research 2.1, committed at `f904d675` before the draw; drafts 1 to 4 read "draft 1 cited it, and research
+2.1 is unfilled", and weighing-phase1.md 2.1 quotes the protocol as it was pre-registered); for each, a reader
+classifies the conflict it expresses as
 (i) same act after identification, (ii) two exclusive positive acts, (iii) a choice of the best response among
 several, (iv) no conflict between acts. The reader records the act phrases and the citation for each. A second reader
 classifies 10 of them blind; agreement is reported.
 
 Bar: build exclusive acts (WG-10) only if (ii) is at least 8 of 40 **and** at least 5 of those 8 would change a
 checked answer of the translation (a conflict found or resolved). Otherwise record the result and close.
+
+**Result: FAIL** (phase 1, [weighing-phase1.md](../research/weighing-phase1.md) 2.3 and 2.4). The pre-registration was
+committed at `f904d675`, the screen and draw at `878e7345`, and the reading at `1369e004`; the second reader's input and
+prompt at `111218fb` and `c999832a`, before the reading, and its answer at `1de755c6`.
+
+- Of 669 units with primary blocker `norms`, 106 are in CROSSACT, and 40 were drawn. Tally: 10 (i), **1 (ii)**, 2
+  (iii), 27 (iv). Clause 1 fails (1 against 8), and clause 2 fails (0 against 5).
+- The one (ii) unit is u0204.s01 (:531): "raising concerns, seeking clarification, or declining to proceed are
+  generally preferable to unilateral intervention". It states a preference, not a duty. The translation regulates
+  nothing on unilateral intervention, so declaring the acts exclusive changes no checked answer.
+- Second reader (a fresh Fable 5.1 session with 0 tool calls, given each unit's full span and rule 4 of the report's
+  2.2). It agrees on 10 of 10 on the frozen subset, but 9 of the 10 are (iv). Post hoc, it agrees on 0 of the 3
+  contested units: u0200.s01 and u0221.s04 are (ii) for it, u0274.s02 is (iv). With its calls, (ii) is 3 of 40, and
+  still 0 change a checked answer.
+- Post hoc, under the most generous reading, (ii) is 8 of 40, which meets clause 1 exactly. None of the 8 changes a
+  checked answer, so the verdict is still FAIL.
+- Limits: CROSSACT is a lexical screen, so (ii) pairs exist outside the sample (the paragraph of u0200.s01 has one).
+  Clause 2 was judged against the run's translation and WG-0's planned rules, not against a WG-0 translation.
+
+WG-10 is closed. WG-E1 did not test WG-0, WG-2 to WG-5 or WG-E2: (iv) is its catch-all category, and the constructs
+(iv) units would need were not counted. This plan cites no WG-E1 number as evidence for those batches.
 
 ### WG-E2. Experiment: precedents (planner, 5–6 h)
 
@@ -1079,7 +1150,11 @@ theorem afortiori_sound (Wd : WeighDoc) (P : Precedent) (S : VE.Structure.{u}) (
 
 The compiled premises join `Dec_T`; nothing else changes. Deleted, not duplicated: none.
 
-### WG-10. Exclusive acts (design batch, only if WG-E1 passes)
+### WG-10. Exclusive acts (design batch, only if WG-E1 passes): CLOSED
+
+**Closed by WG-E1's FAIL** (phase 1). Nothing is designed, reviewed or built, and no exclusive-act construct is
+planned. Weighing still defines no exclusivity relation. The text below is kept as history: it is synthesis edit 7,
+and the cross-plan issue it raises is at the end of this plan.
 
 If WG-E1 passes, WG-10 designs and reviews a composition of `alternatives@0` (its chooser, `available` and exclusive
 choice) with soft norms, and weighing consumes it. Weighing defines no exclusivity relation and does not extend soft's
@@ -1091,7 +1166,7 @@ WG-E1's bar is unchanged.
 | In-flight item (branch) | What this plan uses | How conflicts are avoided |
 |---|---|---|
 | RD-9 (`rd-9/lean`, `rd-9/integrate`, `rd-9/py`; plan on `design/rd-9`) | SC-1's `EntailsX`, `acceptanceX`, `conflictFreeCheckX_sound`, `modelCheckX_sound`, `softLabelledU_wellFormed`; SC-6's `LayeredAdmission.lean` and `bindCertX`; SC-8's `ve document` path for soft documents under `norm-defaults@0`; SC-9's pilot migration; SC-A's edits to `NormDefaults/Evidence.lean` | WG-3 starts only after SC-1 and SC-6 are on `main`; WG-4 after SC-8; WG-6 (the only batch editing a file RD-9 edits, `Evidence.lean`) after SC-A; WG-0 after SC-8, on the pilot branch SC-9 uses |
-| design wave siblings and shared items (SYNTHESIS.md) | PK-1 (WG-3, WG-6, WG-7); AR-10's table (WG-3); QS-1 (WG-2); AP's split map (WG-2's checks); `alternatives@0` (WG-10); the hard-constraint queue (WG-5, WG-8). The wordings of 2.2 and soft's reading sets for "normally", "typically", "usually" and "in most cases" are rows in english-lean's catalogue once it owns norm wordings (D12: never both) | shared files in WG-0 to WG-8: `lean/VE.lean`, `lean/VE/Audit.lean`, PK-1's provider line in `Layered.lean`/`Packs.lean` (integration order AT-2/AT-3a → WG-3 → ET-4 → QT-B2), AR-10's table row, `ve/document.py` (the document-mode queue after `lf-16g`: AT-3b, SC-1b, QT-A4, ET-5, WG-4, ME-10), `ve/norm_english.py`, `ve/__main__.py` (append-only edits; merge-train regenerates generated files with `regen_generated.py --resolve`) |
+| design wave siblings and shared items (SYNTHESIS.md) | PK-1 (WG-3, WG-6, WG-7); AR-10's table (WG-3); QS-1 (WG-2); AP's split map (WG-2's checks); `alternatives@0` (WG-10; kept as synthesis edit 10 wrote it, though WG-10 is closed by WG-E1, so nothing consumes it: see "Cross-plan issues for the DRI"); the hard-constraint queue (WG-5, WG-8). The wordings of 2.2 and soft's reading sets for "normally", "typically", "usually" and "in most cases" are rows in english-lean's catalogue once it owns norm wordings (D12: never both) | shared files in WG-0 to WG-8: `lean/VE.lean`, `lean/VE/Audit.lean`, PK-1's provider line in `Layered.lean`/`Packs.lean` (integration order AT-2/AT-3a → WG-3 → ET-4 → QT-B2), AR-10's table row, `ve/document.py` (the document-mode queue after `lf-16g`: AT-3b, SC-1b, QT-A4, ET-5, WG-4, ME-10), `ve/norm_english.py`, `ve/__main__.py` (append-only edits; merge-train regenerates generated files with `regen_generated.py --resolve`) |
 | lean-first and arch items (`infra/arch-AR-*`, lf-14 to lf-18) | AR-13's diagnostic codes (DRI D6) | new diagnostics are texts until AR-13 lands, then take its codes in the batch after |
 
 Every shared file a batch touches is listed in its section. New code goes in new files (`lean/VE/Weighing/*`,
@@ -1107,14 +1182,34 @@ claimed and audit-verified bytes are reported separately; no figure is predicted
 `inconsistent` (each with the labels Lean computed) and `unknown` answers (split by reason: budget or surviving
 branch) on the probe set, never as coverage.
 
+**Measured so far (phase 1, WG-E1).** These numbers describe WG-E1's sample, not the pilot as a whole, and none of them
+replaces a pilot-effect estimate of WG-0 to WG-8. Units and verdicts come from weighing-phase1.md 2.3 and 2.4. Bytes
+are the units' span lengths: the spans in `wg-e1-sample.json` are byte offsets into the pinned source, joined with the
+categories of `wg-e1-classification.json`, and this draft sums them from that saved evidence. Nothing is extrapolated
+to the 106 CROSSACT units or the 669 `norms` units.
+
+| Measure | Units | Bytes |
+|---|---:|---:|
+| Units with primary blocker `norms` (run `20261012T1800Z`) | 669 | — |
+| of those, in CROSSACT | 106 | — |
+| drawn (seed `20261012`) | 40 | 8,104 |
+| (i) same act after identification | 10 | 2,146 |
+| of which name refusing (u0147.s04, u0179.s02, u0137.s02) | 3 | 527 |
+| (ii) two exclusive positive acts (u0204.s01) | 1 | 131 |
+| (iii) best response among several | 2 | 264 |
+| (iv) no conflict between acts | 27 | 5,563 |
+| (ii) that would change a checked answer: WG-10's measured effect | 0 | 0 |
+| (ii) with the second reader's calls on the contested units (u0204.s01, u0200.s01, u0221.s04) | 3 | 464 |
+| of those, changing a checked answer | 0 | 0 |
+
 ## 8. Not claimed, risks, open questions
 
 - **Not claimed.** That any finding of a decider is right; that a decider considered the listed factors; completeness
   of the zone search (`unknown` is honest); completeness of the implication check (it says "cannot show");
   completeness of the classification of colliding pairs beyond soft 9.5; anything about collisions between different
-  acts before WG-10; any speed. That X is conservative: through soft coherence, switch and override conditions can
-  leave a situation with no admissible decision assignment, and `X` can then entail base facts (in W-κ the premises
-  entail `urgent`). Weighing is a constraint on existing decisions, not a conservative extension; its guarantee is
+  acts (WG-E1 failed, and WG-10 is closed); any speed. That X is conservative: through soft coherence, switch and
+  override conditions can leave a situation with no admissible decision assignment, and `X` can then entail base
+  facts (in W-κ the premises entail `urgent`). Weighing is a constraint on existing decisions, not a conservative extension; its guarantee is
   `weigh_alone_base_free`.
 - **Risk: false comfort from "settled".** A `settled` answer is about the rules on one act at one situation, under the
   document's premises; it says nothing about other acts or about whether the situation is described correctly. The
@@ -1126,7 +1221,14 @@ branch) on the probe set, never as coverage.
 - **Risk: reading drift on "always".** "Safety always outranks ethics" is a translator's reading of :40, never the
   only one: C-2 keeps the reading set. WG-0 and WG-5's blind review audits it.
 - **Risk: RD-9 and the shared items slip.** WG-0, WG-3 to WG-8 wait on RD-9; WG-2 waits on QS-1; WG-3, WG-6 and WG-7
-  wait on PK-1; WG-3 on AR-10's table. WG-1, WG-E1 and WG-E2 do not.
+  wait on PK-1; WG-3 on AR-10's table. The risk has started to show: on 2026-10-13 WG-0 is DEFERRED because SC-8 is
+  not on `main` (5.0). WG-1 does not wait on RD-9, WG-E1 is done, and WG-E2 waits only on WG-2.
+- **Dependency, not a batch: refusals as not doing the act.** The three sampled WG-E1 units that name refusing
+  (u0147.s04, u0179.s02, u0137.s02; 527 B) are (i). Refusing or declining to assist, or giving an unhelpful response,
+  is not doing the requested act. A weighing condition can target units like these only after AP's act identity
+  (AP-1 to AP-3) identifies "decline to assist", "refuse to assist" and "unhelpful response" with not doing the
+  requested act; then soft's same-act collision applies. This is consistent with D6 and synthesis edit 8 but does not
+  test them. The other seven (i) units are of other kinds and are not evidence for this line.
 - **Open question (WG-1).** Is D4's "some chain contains `always`" the reading readers take from "always outranks"?
   WG-4's unambiguity test and a Sonnet 5.5 comprehension check (as RD-9's SC-9 does) on three paraphrases are the
   evidence; the check is saved evidence under the batch's `docs/<batch>/`, not a suite test (suite tests make no
@@ -1154,7 +1256,8 @@ branch) on the probe set, never as coverage.
    duplicated (D8).
 7. The wordings of 2.2: one reading each, E7 by its resolution; pairwise defeat, never a promise that the higher rule
    finally decides; no symbol in what a reader sees.
-8. The two experiments' bars, fixed before any data is read.
+8. The two experiments' bars, fixed before any data is read. WG-E1's was fixed first (`f904d675`), and it failed
+   (5.0). WG-E2's stays as written.
 
 ## Change log
 
@@ -1164,3 +1267,37 @@ branch) on the probe set, never as coverage.
 | 2026-10-13 | Draft 2 | The converged debate (rounds 1 to 3) and the cross-plan synthesis edits 1 to 10. Debate: `settled` prunes by X and needs a checked completion (E1); `ConditionOnStrictPair`, the propositional `ConditionsDisagree`, no sufficient switch condition (E2, reduced); grants inherit the grantor's conditions along the chain with one generator, `grant_within_grantor` (E3); `runWeigh_delegates` restated without the identity fields (E4); `generally` an input synonym, only `always` on the wire, the upward-closure and plain-edge paraphrases (E5); fixtures name their records; `ZoneAnswer` carries both witness sets and a no-completion result; `always_no_override` on the override disjunct; factor paraphrase; budget a parameter (12 and 16); build order WG-2 → WG-3 → WG-4 → WG-5 → WG-6 → WG-7 → WG-8 with the grant evidence split between WG-5 and WG-8; research-cited unit ids and estimates withdrawn. Synthesis: `weigh_alone_base_free` and W-κ, no global conservativity (1); X assembled by PK-1, `weighX` deleted (2); no `weighing` mode, two layered-route kinds (3); AR-10's row and WG-3's slot (4); `strictPair` through QS-1 (5); zone answers on the whole X, events' `NotCalendar` (6); WG-10 through `alternatives@0` (7); split names, W-λ (8); the hard-constraint queue (9); dependencies and the english-lean catalogue (10). WG-1's item-1 statement spec is weighing.md. |
 | 2026-10-13 | Draft 3 | The statement review of weighing.md draft 1 (`manage-agents/debates/weighing-spec/`, FIX, `DRI-RULING.md` items 1 to 14), synchronised with weighing.md draft 2. `strength_iff` in 3.2 with `hL`, `hH`, `ha` (1); `runWeigh_delegates` under `hg`, total `stripWeighing`/`stripCase`, `stripCase_idem`, `weighGate`, the seven-field `core`, rebound certificate packages (2, D11, 2.3, 3.3, W-η); E1/E2 as pairwise defeat by an effective higher rule, W-α with h excepted (3); E4's "Outside this condition, …", θ11 (4); E7's resolution and the explicit form (5, 2.2, WG-4); grant cycles refused (6, D7, 2.5); `condition_necessary`, `condition_sufficient`, `factors_inert` (7, 3.2); W-μ and its seeded bugs (8, WG-2); zone evidence: `ruledOut`/`inconsistent` with label lists from a complete enumeration, `ZoneUnknown`'s checked reasons, labelled X, `labelsOf`, `zone_ruledOut_sound`'s three conjuncts, W-κ's five labels, Z-δ and the new Z-ζ (9, 0, D9, D10, 2.6, 3.4, 7, 9); 2.5's order gate, stripped document, block, and the combined fault (10); `maxPropAtoms = 12` with boundary fixtures (11); `rights@0` refused by the row (12, D2, WG-3); the comprehension check as saved evidence (13, 8, WG-4). |
 | 2026-10-13 | Draft 4 | The bounded re-check of weighing.md draft 2 (`manage-agents/weighing-p3ver1.final.md`, FAIL on ruling item 1), synchronised with weighing.md draft 3 (F13). Item 1's two falsifying regressions are now the lower rank `b_` (F9) and ranks `c > c_` queried at `(x_permitted, c, _c)` (F13); the ruling's `c`/`c_` document with an undeclared act is a collision the unrestricted statement survives (F10). 3.2's `strength_iff` docstring, 4.1's W-α and WG-1 updated; no statement changed. |
+| 2026-10-13 | Draft 5 | Phase 1's results ([weighing-phase1.md](../research/weighing-phase1.md), reviewed FIX and fixed), synchronised with weighing.md draft 4. WG-E1 FAIL (1 of 40 (ii), 0 changing a checked answer; second reader 10 of 10 on the frozen subset, 0 of 3 on the contested units): its row, section, D14 and 9.8 record it. WG-10 closed, kept as history. 2.7 and 8 make collisions between different acts residual. WG-0 DEFERRED with its trigger (RD-9 SC-8 on `main`). New 5.0 status table (WG-E2 and WG-9 DEFERRED with their triggers). 7 gains WG-E1's measured counts and sampled bytes. 8 gains the refusal-identity dependency on AP. The header's research-placeholder sentence is corrected (2.1 is written). No Lean statement, wording, diagnostic, fixture or cross-plan edit changed; `alternatives@0` (WG-10) stays in 6 as edit 10 wrote it, and the conflict is raised under "Cross-plan issues for the DRI". |
+
+## Cross-plan issues for the DRI
+
+Phase 1's results conflict with one shared part. It is kept above as the cross-plan edits wrote it and is raised here
+for the DRI; this plan does not change it.
+
+1. **`alternatives@0`'s weighing consumer no longer exists.** WG-E1 failed, so WG-10 is closed
+   (weighing-phase1.md 3, item 1, which proposes removing the dependency). The shared text still names WG-10 as a
+   consumer:
+   - synthesis edit 7 (WG-10's body; kept as history in WG-10's section);
+   - synthesis edit 10's dependency list, "`alternatives@0` (WG-10)" (kept in 6's design-wave row, marked as having no
+     consumer);
+   - SYNTHESIS O9's row, 2.9 ("WG-10 consumes a reviewed alternatives/soft composition") and C17.
+
+   This plan's own wording follows the result: 2.7's residual line and 8's "Not claimed" no longer point to WG-10
+   through `alternatives@0` (weighing.md 8 likewise), and D14 keeps edit 7's rule with the outcome added.
+
+   Unaffected: O9's ownership. `alternatives@0` still owns exclusive choice, and weighing still defines no
+   exclusivity relation. [alternatives.md](alternatives.md) does not name WG-10.
+
+   **For the DRI to decide:**
+   - (a) whether to drop WG-10 from O9's "plans" column, from 2.9's "What the plans do" cell and from edit 10's list,
+     and to mark edit 7 as void;
+   - (b) whether any weight given to `alternatives@0` for weighing's sake (in its plan's priority or in NORTH-STAR's
+     "priority across different obligations" row) should be lowered. WG-E1 measured 1 of 40 sampled CROSSACT units
+     (131 B), with a 95% upper bound of 0.13, and 0 B of checked answers. Soft 4.5's stage 3 and that NORTH-STAR row
+     may cite this result.
+
+   Until the DRI decides, nothing in this plan depends on `alternatives@0`.
+
+Not conflicts, for the record: WG-0's deferral leaves SYNTHESIS 4.1's "WG-0 runs once RD-9 SC-8 is on `main`"
+unchanged. WG-E1 ran in phase 1 under its own gates, as 4.1 lists it. The hard-constraint queue (4.4), PK-1's
+integration order, AR-10's row, QS-1 and AP's split map are untouched by phase 1.

@@ -1,12 +1,27 @@
 # Weighing (`weighing@0`), item 1: statement specification
 
-> Status: item-1 specification, draft 3 (2026-10-13), written by WG-1 from [weighing-PLAN.md](weighing-PLAN.md)
-> draft 4, which carries the converged Astra/Fable debate (`manage-agents/debates/design-weighing/`, rounds 1 to 3) and
+## Changes in this draft
+
+Draft 4 (2026-10-13) is synchronised with [weighing-PLAN.md](weighing-PLAN.md) draft 5, which applies phase 1
+([weighing-phase1.md](../research/weighing-phase1.md)). Phase 1 tested nothing this file specifies, so:
+
+- **No Lean statement, definition, wording, diagnostic or fixture changes.** The stub `lean/SpecStubs_weighing.lean`
+  is not tracked (and is not in the checkout), and no statement changed, so there is nothing to re-elaborate. The
+  ruling's item 14 is unchanged: the stub is re-elaborated before WG-2.
+- **8, "Not claimed":** collisions between different acts are now residual. WG-E1 failed its bar (1 of 40 sampled
+  CROSSACT units, none changing a checked answer), and WG-10 is closed, so they no longer point to WG-10 or
+  `alternatives@0`.
+- **7.5:** WG-0, which records the constitution's unit ids, is DEFERRED until RD-9 SC-8 is on `main` (plan 5.0).
+- The header cites plan draft 5.
+
+> Status: item-1 specification, draft 4 (2026-10-13), written by WG-1 from [weighing-PLAN.md](weighing-PLAN.md),
+> now at draft 5. Draft 4 records phase 1's results where they touch this file (8, 7.5) and changes no statement. The
+> plan carries the converged Astra/Fable debate (`manage-agents/debates/design-weighing/`, rounds 1 to 3) and
 > the cross-plan synthesis edits of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`). Draft 2 carries
 > the statement review of draft 1 (`manage-agents/debates/weighing-spec/`: Astra and Fable, verdict FIX, settled by
 > `DRI-RULING.md`, items 1 to 14); it changes no frozen W1, soft or P0 semantics. Draft 3 carries the bounded re-check
 > of draft 2 (`manage-agents/weighing-p3ver1.final.md`, FAIL on ruling item 1): the second accepted document that
-> falsifies `strength_iff`'s unrestricted statement (F13, 7.3); it changes no statement. It covers the
+> falsifies `strength_iff`'s unrestricted statement (F13, 7.3); it changes no statement. This file covers the
 > plan's item 1, "constrain the open decisions" (batches WG-2 to WG-5): the block, strength, conditions and grants,
 > their premises and theorems (WG-2), the wire, the pack and identity (WG-3), the English (WG-4) and the constitution
 > fixtures (WG-5). Item 2 (zone answers and decision records, WG-6 to WG-8) is not specified here, beyond the zone
@@ -1197,7 +1212,8 @@ subset of the base atoms and every `excepted` assignment, `freeWitness` satisfie
 
 ### 7.5 The constitution (WG-5, pilot branch, through `ve document`)
 
-Unit ids and spans come from the pilot's ledger at WG-0 (research 2.5 is unfilled; plan 4.2).
+Unit ids and spans come from the pilot's ledger at WG-0 (research 2.5 is unfilled; plan 4.2). WG-0 is DEFERRED until
+RD-9 SC-8 is on `main`, which was not the case on 2026-10-13 (plan 5.0), so these rows still name sources, not units.
 
 | Fixture | Source | VE sentences | Expected |
 |---|---|---|---|
@@ -1234,7 +1250,10 @@ takes two arguments, so it is never a candidate):
   necessity.
 - That the higher rule of a strict pair finally decides: E1 and `always_dominates` are pairwise defeat by an effective
   higher rule (W-α, h's exception applies).
-- Anything about collisions between different acts (WG-E1, WG-10 through `alternatives@0`).
+- Anything about collisions between different acts. They are residual: WG-E1 failed its bar (1 of 40 sampled CROSSACT
+  units were two exclusive positive acts, 95% upper bound 0.13, and none would change a checked answer;
+  [weighing-phase1.md](../research/weighing-phase1.md) 2.3), WG-10 is closed, and no exclusive-act construct is
+  planned (plan D14).
 - `Transfers` on the readings route and AR-10's composition theorem: stated by WG-3 once PK-1 and AR-10 are reviewed
   (section 6).
 
@@ -1263,3 +1282,4 @@ completes item 1's two falsifying regressions after the bounded re-check (F13).
 | 2026-10-13 | Draft 1 | WG-1's item-1 statement specification for weighing-PLAN.md draft 2: definitions, English, wire, diagnostics, WG-2 and WG-3 theorems, fixtures W-α to W-λ and C-2 to C-6. Every statement elaborated in an untracked stub against `rd-9/integrate` (equal to `main` on the files read); every fixture value computed by `#eval` from wire JSON through Lean's soft decoder. Findings F1 to F8. |
 | 2026-10-13 | Draft 2 | The statement review's ruling (`manage-agents/debates/weighing-spec/DRI-RULING.md`), items 1 to 14, with weighing-PLAN.md draft 3. Changed statements: `strength_iff` (`hL`, `hH`, `ha`), `runWeigh_delegates` (`hg`), `stripWeighing` and `stripCase` (total), `LayeredU.core` (seven fields), `checkWeigh` (`DelegationCycle`), `weighingRow` (`rights@0` refused). New: `dropField`, `dropProfile`, `weighGate`, `stripCase_idem`, `condition_necessary`, `condition_sufficient`, `factors_inert`. English: E1, E2 (pairwise defeat by an effective higher rule), E4 ("Outside this condition, …"), E7's resolution and E7′, the comprehension check as saved evidence. Diagnostics: 3.2's order authoritative (block shape after the stripped document), `DelegationCycle` at 4.5, gate texts at 4.1. Fixtures: W-α with h excepted, θ11's zone, θ19/θ20, W-ζ cycles, W-η refusals and the combined fault, W-κ's sixteen branches and five labels, the bypassed W-θ labels, W-μ, the `strength_iff` regressions, 7.6. Findings F9 to F12. Not yet elaborated: new values are marked *derived*, and the stub (with an `#eval` for each) is re-elaborated before WG-2. |
 | 2026-10-13 | Draft 3 | The bounded re-check of draft 2 (`manage-agents/weighing-p3ver1.final.md`, FAIL on ruling item 1), with weighing-PLAN.md draft 4. Finding F13: the ruling's second alias (F10) does not falsify the unrestricted `strength_iff`; a second accepted document that does, W-α with ranks `c > c_` and query `(x_permitted, c, _c)`, joins 7.3 beside F9, and F10's document stays there as a collision the statement survives. 0, 5.1, 7.3 and 9 updated. The three `strength_iff` rows computed by `#eval` in the stub (header); no statement, wording, diagnostic or other fixture changed. |
+| 2026-10-13 | Draft 4 | Synchronised with weighing-PLAN.md draft 5 (phase 1, [weighing-phase1.md](../research/weighing-phase1.md)). 8: collisions between different acts are residual (WG-E1 FAIL, WG-10 closed). 7.5: WG-0 DEFERRED until RD-9 SC-8 is on `main`. Header and "Changes in this draft". No statement, wording, diagnostic or fixture changed, so the stub (untracked) has nothing to re-elaborate. |
