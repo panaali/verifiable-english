@@ -84,4 +84,8 @@ whose behaviour the two fixed tests claim.
   on the final HEAD covers it.
 - Not run: the aarch64 runner itself (no access from this VM); the frozen-reading reproduction above
   stands in for it.
-- Full gate: see `gate-result.json` in this folder.
+- Full gate, once, on the final code commit 336e8c93 with `--workers 8`: **passed**, 14,896 passed,
+  92 skipped (all allowed), 0 failures, 36 Rust tests passed (`gate-result.json` in this folder). Only
+  this report and that file were committed after it. An earlier start of the gate on the same commit
+  was stopped unfinished: under a machine load of about 86 on 32 CPUs, `-n auto` gave the suite one
+  worker, and after 2.4 hours it was about 16% through. It produced no result, so this is not a rerun.
