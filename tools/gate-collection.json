@@ -6316,6 +6316,7 @@
   "tests/test_gate_integrity.py::test_gate_resets_record_uses_own_binary_and_checks_source_at_end[False-False]",
   "tests/test_gate_integrity.py::test_gate_resets_record_uses_own_binary_and_checks_source_at_end[False-True]",
   "tests/test_gate_integrity.py::test_gate_resets_record_uses_own_binary_and_checks_source_at_end[True-False]",
+  "tests/test_gate_integrity.py::test_gate_scratch_root_can_avoid_system_tmp",
   "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[AttributeError]",
   "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt]",
   "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[TypeError]",
