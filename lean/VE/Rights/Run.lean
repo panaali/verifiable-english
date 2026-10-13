@@ -340,9 +340,6 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
     (fun S hS hg ho => Admission.rights_wire_report_consequence environment document res hr S hS hg ho),
     canonical, envId, hc, he, hd⟩
 
-def witnessKind (t : String × List String × VE.Formula) : String :=
-  if (t.1.splitOn "->").length > 1 then s!"pair conflict on {t.1}" else s!"strict collision on {t.1}"
-
 def runRightsKind (id kind : String) (j : Json) : Except String Json := do
   if kind == "admission" then
     return ← runAdmission id (← j.getObjVal? "environment") (← j.getObjVal? "document")
