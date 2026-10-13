@@ -12,7 +12,8 @@ def elaborate_soft_document(soft_document: SoftNormDocument):
     norms = [rule.to_dict() for rule in soft_document.rules]
     elaborated = _run({"id": "soft-elaborate", "kind": "soft-elaborate",
                        "environment": env.to_dict(), "norms": norms})
-    bind_soft_elaboration(elaborated, norms, env.to_dict()['vocabulary']['predicates'])
+    vocabulary = env.to_dict()['vocabulary']
+    bind_soft_elaboration(elaborated, norms, vocabulary['predicates'], soft=vocabulary.get('soft', {}))
     return elaborated
 
 

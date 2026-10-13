@@ -46,7 +46,8 @@ def check_soft_source(environment, norms=None, *, generated=False, layers=frozen
     if not generated and "readings@1" in layers and not layers.intersection({"rights@0", "norm-defaults@0"}):
         payload["identity_environment"] = _wire(environment)
     row = _run(payload)
-    bind_soft_elaboration(row, payload['norms'], source['vocabulary']['predicates'])
+    bind_soft_elaboration(row, payload['norms'], source['vocabulary']['predicates'],
+                          soft=source['vocabulary'].get('soft', {}))
     return row
 
 
@@ -231,7 +232,7 @@ def _decision_key(raw):
     raise ValueError(f"undecodable decision key {raw!r}")
 
 
-def bind_soft_elaboration(row, norms, predicates, *, rights_rules=()):
+def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None):
     """Bind the IDs in a Lean soft elaboration to its submitted rules and vocabulary.
 
     Rights supplies its correlated rule names separately: their generated node names
@@ -256,6 +257,7 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=()):
             expected.update(('off', name, party) for party in rule.get('alterable', ()))
 
         seen_pairs = set()
+        pair_labels = set()
         for pair in row['colliding_pairs']:
             names = pair['pair']
             if (len(names) != 2 or names[0] == names[1] or
@@ -266,6 +268,10 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=()):
             if pair_names in seen_pairs:
                 raise ValueError('duplicate colliding pair')
             seen_pairs.add(pair_names)
+            if pair['label'] not in {f'soft:coherence:{names[0]},{names[1]}',
+                                     f'soft:coherence:{names[1]},{names[0]}'} or pair['label'] in pair_labels:
+                raise ValueError('unbound or duplicate coherence label')
+            pair_labels.add(pair['label'])
             if pair['outweighs'] is not None:
                 ranks = {rules[name].get('rank') for name in names}
                 if None in ranks or len(ranks) != 2:
@@ -284,6 +290,25 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=()):
             names.add(decision['name'])
         if found != expected:
             raise ValueError('missing decision')
+        if soft is not None:
+            conditional = row['conditional_on']
+            if len(conditional) != len(set(conditional)) or not set(conditional) <= pair_labels:
+                raise ValueError('unbound or duplicate conditional label')
+            defaults = [rule for rule in rules.values() if rule.get('mode', 'strict') == 'default']
+            switches = sum(len(rule.get('alterable', ())) for rule in rules.values())
+            overrides = sum(key[0] == 'outweighs' for key in found)
+            bounds = {'default_exceptions': len(defaults), 'instruction_switches': switches,
+                      'holistic_overrides': overrides, 'weighing_points': len(pair_labels)}
+            if any(row['soft_residual'][field] > maximum for field, maximum in bounds.items()):
+                raise ValueError('soft residual count exceeds request')
+            deciders = {
+                (rule.get('exception') or {}).get('decided_by') or soft.get('exception_decider') or 'unstated'
+                for rule in defaults
+            }
+            counts = row['default_exceptions_by_decider']
+            if (any(name not in deciders or count == 0 for name, count in counts.items()) or
+                    sum(counts.values()) > len(defaults)):
+                raise ValueError('unbound default exception decider or count')
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(f'CheckerUnavailable: Lean soft elaboration is not bound to the request: {error}') from error
 
@@ -356,7 +381,8 @@ class SoftNormDocument:
 
     def _init_soft(self, env: SoftEnvironment, units, row):
         self._init_rules(env, units)
-        bind_soft_elaboration(row, units, env.to_dict()['vocabulary']['predicates'])
+        vocabulary = env.to_dict()['vocabulary']
+        bind_soft_elaboration(row, units, vocabulary['predicates'], soft=vocabulary.get('soft', {}))
         by_name = {rule.core.name: rule for rule in self.rules}
         self.decisions = {item['name']: item['arguments'] for item in row['decisions']}
         # What each decision decides, as Lean keys it (`keyedDecisions`); a reader finds a decision's name by its key
