@@ -1,0 +1,3608 @@
+{
+  "document": "readings/all-strict.ve.md",
+  "points": [
+    {
+      "label": "u0165.s01: Claude would be knowingly and intentionally doing it",
+      "predicate": "weapons_uplift_permitted",
+      "true_atoms": [
+        "knowingly_mass_casualty_weapon_uplift"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-cbrn-uplift"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s01: Claude thinks it quite likely that the action falls into the category",
+      "predicate": "weapons_uplift_permitted",
+      "true_atoms": [
+        "thought_likely_mass_casualty_weapon_uplift"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-cbrn-uplift"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s01: both",
+      "predicate": "weapons_uplift_permitted",
+      "true_atoms": [
+        "knowingly_mass_casualty_weapon_uplift",
+        "thought_likely_mass_casualty_weapon_uplift"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-cbrn-uplift"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s01: only another category's knowing atom holds",
+      "predicate": "weapons_uplift_permitted",
+      "true_atoms": [
+        "knowingly_critical_infrastructure_uplift"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s01: only another category's belief atom holds",
+      "predicate": "weapons_uplift_permitted",
+      "true_atoms": [
+        "thought_likely_critical_infrastructure_uplift"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s01: neither (an unclear, uncertain or unknowing case)",
+      "predicate": "weapons_uplift_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s02: Claude would be knowingly and intentionally doing it",
+      "predicate": "infrastructure_uplift_permitted",
+      "true_atoms": [
+        "knowingly_critical_infrastructure_uplift"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-infrastructure-uplift"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s02: Claude thinks it quite likely that the action falls into the category",
+      "predicate": "infrastructure_uplift_permitted",
+      "true_atoms": [
+        "thought_likely_critical_infrastructure_uplift"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-infrastructure-uplift"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s02: both",
+      "predicate": "infrastructure_uplift_permitted",
+      "true_atoms": [
+        "knowingly_critical_infrastructure_uplift",
+        "thought_likely_critical_infrastructure_uplift"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-infrastructure-uplift"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s02: only another category's knowing atom holds",
+      "predicate": "infrastructure_uplift_permitted",
+      "true_atoms": [
+        "knowingly_damaging_cyberweapon_or_malicious_code"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s02: only another category's belief atom holds",
+      "predicate": "infrastructure_uplift_permitted",
+      "true_atoms": [
+        "thought_likely_damaging_cyberweapon_or_malicious_code"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s02: neither (an unclear, uncertain or unknowing case)",
+      "predicate": "infrastructure_uplift_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s03: Claude would be knowingly and intentionally doing it",
+      "predicate": "cyberweapon_creation_permitted",
+      "true_atoms": [
+        "knowingly_damaging_cyberweapon_or_malicious_code"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-cyberweapons"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s03: Claude thinks it quite likely that the action falls into the category",
+      "predicate": "cyberweapon_creation_permitted",
+      "true_atoms": [
+        "thought_likely_damaging_cyberweapon_or_malicious_code"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-cyberweapons"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s03: both",
+      "predicate": "cyberweapon_creation_permitted",
+      "true_atoms": [
+        "knowingly_damaging_cyberweapon_or_malicious_code",
+        "thought_likely_damaging_cyberweapon_or_malicious_code"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-cyberweapons"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s03: only another category's knowing atom holds",
+      "predicate": "cyberweapon_creation_permitted",
+      "true_atoms": [
+        "knowingly_clear_and_substantial_undermining_of_oversight"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s03: only another category's belief atom holds",
+      "predicate": "cyberweapon_creation_permitted",
+      "true_atoms": [
+        "thought_likely_clear_and_substantial_undermining_of_oversight"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s03: neither (an unclear, uncertain or unknowing case)",
+      "predicate": "cyberweapon_creation_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s04: Claude would be knowingly and intentionally doing it",
+      "predicate": "oversight_undermining_permitted",
+      "true_atoms": [
+        "knowingly_clear_and_substantial_undermining_of_oversight"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-oversight-undermining"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s04: Claude thinks it quite likely that the action falls into the category",
+      "predicate": "oversight_undermining_permitted",
+      "true_atoms": [
+        "thought_likely_clear_and_substantial_undermining_of_oversight"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-oversight-undermining"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s04: both",
+      "predicate": "oversight_undermining_permitted",
+      "true_atoms": [
+        "knowingly_clear_and_substantial_undermining_of_oversight",
+        "thought_likely_clear_and_substantial_undermining_of_oversight"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-oversight-undermining"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s04: only another category's knowing atom holds",
+      "predicate": "oversight_undermining_permitted",
+      "true_atoms": [
+        "knowingly_attempt_to_kill_or_disempower_most_of_humanity"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s04: only another category's belief atom holds",
+      "predicate": "oversight_undermining_permitted",
+      "true_atoms": [
+        "thought_likely_attempt_to_kill_or_disempower_most_of_humanity"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s04: neither (an unclear, uncertain or unknowing case)",
+      "predicate": "oversight_undermining_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s05: Claude would be knowingly and intentionally doing it",
+      "predicate": "humanity_attack_participation_permitted",
+      "true_atoms": [
+        "knowingly_attempt_to_kill_or_disempower_most_of_humanity"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-humanity-attempt"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s05: Claude thinks it quite likely that the action falls into the category",
+      "predicate": "humanity_attack_participation_permitted",
+      "true_atoms": [
+        "thought_likely_attempt_to_kill_or_disempower_most_of_humanity"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-humanity-attempt"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s05: both",
+      "predicate": "humanity_attack_participation_permitted",
+      "true_atoms": [
+        "knowingly_attempt_to_kill_or_disempower_most_of_humanity",
+        "thought_likely_attempt_to_kill_or_disempower_most_of_humanity"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-humanity-attempt"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s05: only another category's knowing atom holds",
+      "predicate": "humanity_attack_participation_permitted",
+      "true_atoms": [
+        "knowingly_illegitimate_absolute_control"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s05: only another category's belief atom holds",
+      "predicate": "humanity_attack_participation_permitted",
+      "true_atoms": [
+        "thought_likely_illegitimate_absolute_control"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s05: neither (an unclear, uncertain or unknowing case)",
+      "predicate": "humanity_attack_participation_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s06: Claude would be knowingly and intentionally doing it",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "true_atoms": [
+        "knowingly_illegitimate_absolute_control"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-illegitimate-control"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s06: Claude thinks it quite likely that the action falls into the category",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "true_atoms": [
+        "thought_likely_illegitimate_absolute_control"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-illegitimate-control"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s06: both",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "true_atoms": [
+        "knowingly_illegitimate_absolute_control",
+        "thought_likely_illegitimate_absolute_control"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-illegitimate-control"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s06: only another category's knowing atom holds",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "true_atoms": [
+        "knowingly_child_sexual_abuse_material"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s06: only another category's belief atom holds",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "true_atoms": [
+        "thought_likely_child_sexual_abuse_material"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s06: neither (an unclear, uncertain or unknowing case)",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s07: Claude would be knowingly and intentionally doing it",
+      "predicate": "csam_generation_permitted_for_claude",
+      "true_atoms": [
+        "knowingly_child_sexual_abuse_material"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-csam"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s07: Claude thinks it quite likely that the action falls into the category",
+      "predicate": "csam_generation_permitted_for_claude",
+      "true_atoms": [
+        "thought_likely_child_sexual_abuse_material"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-csam"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s07: both",
+      "predicate": "csam_generation_permitted_for_claude",
+      "true_atoms": [
+        "knowingly_child_sexual_abuse_material",
+        "thought_likely_child_sexual_abuse_material"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "hc-csam"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0165.s07: only another category's knowing atom holds",
+      "predicate": "csam_generation_permitted_for_claude",
+      "true_atoms": [
+        "knowingly_mass_casualty_weapon_uplift"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s07: only another category's belief atom holds",
+      "predicate": "csam_generation_permitted_for_claude",
+      "true_atoms": [
+        "thought_likely_mass_casualty_weapon_uplift"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0165.s07: neither (an unclear, uncertain or unknowing case)",
+      "predicate": "csam_generation_permitted_for_claude",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0156.s03: any situation",
+      "predicate": "system_prompt_deception_permitted",
+      "true_atoms": [],
+      "status": "SETTLED no",
+      "rules": [
+        "no-system-prompt-deception"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0125.s04.p2: any situation",
+      "predicate": "denial_of_being_claude_permitted",
+      "true_atoms": [],
+      "status": "SETTLED no",
+      "rules": [
+        "no-denying-being-claude"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0052.s01: any situation (added in run 20261008T0600Z: the unit is now one strict reading)",
+      "predicate": "judgment_use_required",
+      "true_atoms": [],
+      "status": "SETTLED yes",
+      "rules": [
+        "judgment-conversational-inputs"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0123.s01: a dishonest-looking instruction within the honesty principles",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_dishonest_looking_within_honesty"
+      ],
+      "status": "SETTLED yes",
+      "rules": [
+        "op-may-ask-dishonest-looking-within-honesty"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0062.s01: input is a persona",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "input_is_persona"
+      ],
+      "status": "SETTLED yes",
+      "rules": [
+        "op-may-give-persona"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0062.s01: input is none of the three",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0062.s01: input is specific instructions",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "input_is_specific_instructions"
+      ],
+      "status": "SETTLED yes",
+      "rules": [
+        "op-may-give-instructions"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0062.s01 and u0123.s03: a persona that also is an instruction to claim to be human",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "input_is_persona",
+        "instruction_claim_human_when_asked"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "op-not-claim-human-when-asked"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0062.s01 and u0123.s03: specific instructions that also endanger health or safety",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "input_is_specific_instructions",
+        "instruction_endanger_health_or_safety"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "op-not-endanger-health-safety"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0123.s01 and u0123.s03: a dishonest-looking instruction that also acts against the guidelines",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_act_against_guidelines",
+        "instruction_dishonest_looking_within_honesty"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "op-not-act-against-guidelines"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0123.s02: persona role-play instruction",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_role_play_custom_persona"
+      ],
+      "status": "SETTLED yes",
+      "rules": [
+        "op-may-role-play-persona"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0123.s03: instruction to claim to be human",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_claim_human_when_asked"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "op-not-claim-human-when-asked"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0123.s02 and u0123.s03: a role-play instruction that also claims to be human",
+      "predicate": "operator_input_permitted",
+      "true_atoms": [
+        "instruction_claim_human_when_asked",
+        "instruction_role_play_custom_persona"
+      ],
+      "status": "SETTLED no",
+      "rules": [
+        "op-not-claim-human-when-asked"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0036.s05: genuine ambiguity",
+      "predicate": "clarification_required",
+      "true_atoms": [
+        "genuine_ambiguity"
+      ],
+      "status": "SETTLED yes",
+      "rules": [
+        "clarify-ambiguity"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0036.s05: no genuine ambiguity",
+      "predicate": "clarification_required",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0073.s05: the case holds",
+      "predicate": "system_prompt_compliance_required",
+      "true_atoms": [
+        "operator_prompt_addresses_case"
+      ],
+      "status": "SETTLED yes",
+      "rules": [
+        "comply-operator-prompt"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0073.s05: the case does not hold",
+      "predicate": "system_prompt_compliance_required",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0073.s05: the case holds but complying is unsafe",
+      "predicate": "system_prompt_compliance_required",
+      "true_atoms": [
+        "compliance_unsafe",
+        "operator_prompt_addresses_case"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0073.s05: the case holds and the “generally” exception applies",
+      "predicate": "system_prompt_compliance_required",
+      "true_atoms": [
+        "general_exception_to_complying",
+        "operator_prompt_addresses_case"
+      ],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "u0168.s01: the case holds",
+      "predicate": "firmness_required",
+      "true_atoms": [
+        "seemingly_compelling_argument_to_cross_line"
+      ],
+      "status": "SETTLED yes",
+      "rules": [
+        "remain-firm-under-argument"
+      ],
+      "differs": []
+    },
+    {
+      "label": "u0168.s01: the case does not hold",
+      "predicate": "firmness_required",
+      "true_atoms": [],
+      "status": "UNDECIDED",
+      "rules": [],
+      "differs": [
+        {
+          "predicate": "clarification_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "csam_generation_permitted_for_claude",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "cyberweapon_creation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "denial_of_being_claude_permitted",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "exploit_instruction_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "firmness_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "humanity_attack_participation_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "illegitimate_control_involvement_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "infrastructure_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "judgment_use_required",
+          "tuple": [
+            "claude_instance0"
+          ]
+        },
+        {
+          "predicate": "operator_input_permitted",
+          "tuple": [
+            "operator0",
+            "operator_input0"
+          ]
+        },
+        {
+          "predicate": "oversight_undermining_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_compliance_required",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        },
+        {
+          "predicate": "system_prompt_deception_permitted",
+          "tuple": [
+            "claude_instance0",
+            "user0"
+          ]
+        },
+        {
+          "predicate": "weapons_uplift_permitted",
+          "tuple": [
+            "claude_instance0",
+            "situation0"
+          ]
+        }
+      ]
+    }
+  ],
+  "conflict": {
+    "a role-play instruction that also claims to be human": {
+      "status": "UNKNOWN",
+      "target": null,
+      "kind": "",
+      "tuple": []
+    },
+    "a persona that also is an instruction to claim to be human": {
+      "status": "UNKNOWN",
+      "target": null,
+      "kind": "",
+      "tuple": []
+    },
+    "no atom true": {
+      "status": "UNKNOWN",
+      "target": null,
+      "kind": "",
+      "tuple": []
+    },
+    "whole document, proof attempt": {
+      "status": "CONFLICT-FREE",
+      "detail": "",
+      "oracle_status": "CONFLICT-FREE",
+      "lean_row_keys": [
+        "id",
+        "status",
+        "targets",
+        "verdict"
+      ]
+    }
+  },
+  "gaps": {
+    "clarification_required": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "csam_generation_permitted_for_claude": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "cyberweapon_creation_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "denial_of_being_claude_permitted": {
+      "completion": "unspecified",
+      "reached": "none",
+      "inherits_from": []
+    },
+    "exploit_instruction_compliance_required": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "firmness_required": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "humanity_attack_participation_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "illegitimate_control_involvement_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "infrastructure_uplift_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "judgment_use_required": {
+      "completion": "unspecified",
+      "reached": "none",
+      "inherits_from": []
+    },
+    "operator_input_permitted": {
+      "completion": "unspecified",
+      "reached": "unknown",
+      "inherits_from": []
+    },
+    "oversight_undermining_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "system_prompt_compliance_required": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    },
+    "system_prompt_deception_permitted": {
+      "completion": "unspecified",
+      "reached": "none",
+      "inherits_from": []
+    },
+    "weapons_uplift_permitted": {
+      "completion": "unspecified",
+      "reached": "reachable",
+      "inherits_from": []
+    }
+  }
+}
