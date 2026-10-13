@@ -44,6 +44,12 @@ DEFAULT_TIMEOUT = 5.0
 ADDRESS_SPACE_HEADROOM = 1 << 30
 
 
+class RustTimeout(CheckerUnavailable):
+    """A Rust call that gave no record within its wall-clock limit. Rust is an untrusted
+    accelerator: a caller whose answer Lean decides without it (the premise check's search,
+    DRI decision ME1) reads this as "no witness", never as a verdict."""
+
+
 def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
     """The wall-clock timeout of one Rust call whose caller's default is `default`:
     `VE_RUST_TIMEOUT` when set (the test suite raises it to its hang guard, so
@@ -331,7 +337,9 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
     memory_limit()  # an invalid budget setting is refused before any process starts
     try:
         completed = _run_checker([str(binary), "jsonl", "-"], input=data, timeout=timeout)
-    except (OSError, subprocess.TimeoutExpired) as exc:
+    except subprocess.TimeoutExpired as exc:
+        raise RustTimeout(f"CheckerUnavailable: Rust checker failed: {exc}") from None
+    except OSError as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: Rust checker failed: {exc}") from None
     valid = False
     try:

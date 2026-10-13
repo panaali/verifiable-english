@@ -1,0 +1,36 @@
+{
+  "$id": "search-budget.json",
+  "$comment": "Mode search-budget: SearchBudget.Run.runCaseReported, the premise check's search budget.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "max_domain_size": {"$ref": "common.json#/$defs/nat"},
+          "max_evaluations": {"$ref": "common.json#/$defs/nat"},
+          "max_models": {"$ref": "common.json#/$defs/nat"},
+          "max_proof_steps": {"$ref": "common.json#/$defs/nat"},
+          "sorts": {"items": {"$ref": "#/$defs/bound"}, "type": "array"},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "max_proof_steps", "max_domain_size", "max_models", "max_evaluations", "sorts"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "bound": {
+      "additionalProperties": false,
+      "properties": {
+        "least": {"$ref": "common.json#/$defs/nat"},
+        "most": {"$ref": "common.json#/$defs/nat"},
+        "sort": {"type": "string"}
+      },
+      "required": ["sort", "least", "most"],
+      "type": "object"
+    }
+  }
+}
