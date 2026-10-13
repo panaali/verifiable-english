@@ -9,11 +9,12 @@ from __future__ import annotations
 
 from pathlib import Path
 from copy import deepcopy
+from itertools import product
 
 import pytest
 
-from ve.ast import (Atom, Binary, Const, Exists, Forall, Implies, Le, Named, Not, Num, Reach, Top,
-                    Unary, Var, _to_data)
+from ve.ast import (And, Atom, Binary, Body, Const, Exists, Forall, Implies, Le, Named, Not, Num, Reach,
+                    Top, Unary, Var, _to_data)
 from ve.backends import dispatch, relay
 from ve.backends.lean_service import CheckerUnavailable
 from ve.background import background
@@ -407,6 +408,150 @@ def test_retained_python_route_keeps_the_base_nary_expansion(monkeypatch):
             check_conflict(doc, prove=True, tableau_steps=300)
         with pytest.raises(VEError, match=mismatch):
             check_witness(doc, "required->permitted", model, ["a"])
+
+
+def capture_environment(third):
+    """A core-family environment with `tri(act, act, third)`."""
+    raw = flagged(family=("closure@0", "nary@0"), relation=True, data=False).to_dict()
+    raw["vocabulary"]["predicates"]["tri"] = {"arguments": ["act", "act", third], "description": "tri"}
+    return Environment(raw)
+
+
+def capture_documents():
+    """lf-14b review F5's class: Lean-family-route documents whose lower
+    regulated outcome holds an n-ary atom over its tuple variable, cited under
+    zero to two binders of a higher rule. The base expansion leaves the atom's
+    variables unsubstituted, so they are captured by the citing binders: a
+    mixed-sort atom no longer types (the base `TypeMismatch`), a same-sort atom
+    silently means something else."""
+    docs = {}
+    for kind, third in (("same", "act"), ("mixed", "party")):
+        env = capture_environment(third)
+        permits = {"exists": Exists(third, Atom("tri", (Var(1), Var(1), Var(0)))),
+                   "nested": Exists(third, Not(Forall("act", Atom("tri", (Var(2), Var(0), Var(1))))))}
+        if kind == "same":
+            permits["open"] = Atom("tri", (Var(0), Var(0), Var(0)))
+            permits["reach-body"] = Reach("star", Body("act", Atom("tri", (Var(0), Var(1), Var(2)))),
+                                          Var(0), Var(0))
+        cites = {"depth0": Not(Unary("permitted", Var(0))),
+                 "depth1": Forall("act", Implies(Binary("before", Var(1), Var(0)), Unary("permitted", Var(1)))),
+                 "depth2": Exists("act", Forall("party", Implies(Binary("owner", Var(1), Var(0)),
+                                                                 Unary("permitted", Var(2)))))}
+        for (p, permit), (c, cite) in product(permits.items(), cites.items()):
+            docs[f"{kind}-{p}-{c}"] = NormDocument(env, [rule("may", "permitted", True, permit),
+                                                         rule("must", "required", True, cite)])
+    return docs
+
+
+def capture_models(third):
+    last = {"act": ["a", "b"], "party": ["p"]}[third]
+    return [{"complete": True, "domains": {"act": ["a", "b"], "party": ["p"]}, "constants": {},
+             "relations": {"before": before, "owner": owner, "urgent": [], "tri": tri}}
+            for before, owner, tri in [
+                ([["a", "b"]], [["a", "p"]], [["b", "b", last[-1]]]),
+                ([["a", "b"], ["b", "b"]], [], [["a", "a", last[0]], ["a", "b", last[0]]]),
+                ([], [["b", "p"]], [])]]
+
+
+def lean_targets(doc):
+    from ve.ast import _Decoder
+    return {t["target"]: (t["sorts"], _Decoder().decode(t["ast"]))
+            for t in doc._lean_regenerated()["conflict_targets"]}
+
+
+@pytest.mark.parametrize("name", sorted(capture_documents()))
+def test_lean_route_generators_search_the_targets_lean_regenerates(monkeypatch, name):
+    """lf-14b review F5, the class: on the Lean family route Python's untrusted
+    witness search and prover work on exactly the conflict targets Lean's
+    `norms-elaborate` regenerates (and `norms-conflict` checks), whatever the
+    base expansion captured; the base expansion stays the admission check."""
+    import ve.norms
+    doc = capture_documents()[name]
+    assert ve.norms._lean_route(doc)
+    routed(monkeypatch, "lean")
+    searched = {n: (list(s), f) for n, s, _, f in ve.norms._generator_targets(doc, lean=True)}
+    assert searched == lean_targets(doc)
+    assert [t[:3] for t in ve.norms._generator_targets(doc, lean=False)] == list(doc.conflict_targets())
+
+
+@pytest.mark.parametrize("name", sorted(capture_documents()))
+def test_lean_route_model_check_answers_as_lean_checks_each_candidate(monkeypatch, name):
+    """lf-14b review F5: a finite-model conflict check on the Lean family route
+    never proposes a witness Lean refutes (which was `CheckerUnavailable`). Its
+    answer is the first target, in Python's order, whose base expansion is
+    admitted and which has a tuple Lean confirms, or the base `TypeMismatch` at
+    the first target the base expansion does not type, or UNKNOWN."""
+    from ve.backends.relay import decide
+    from ve.norms import _Checker, _lean_case
+    doc = capture_documents()[name]
+    routed(monkeypatch, "lean")
+    env = doc.base_environment()
+    third = doc.env.predicates["tri"].arguments[2]
+    for model in capture_models(third):
+        expected = ("ok", "UNKNOWN", None, ())
+        for target, sorts, admitted in doc.conflict_targets():
+            try:
+                _Checker(env).formula(admitted, tuple(reversed(sorts)))
+            except VEError as error:
+                expected = ("error", str(error))
+                break
+            confirmed = [values for values in product(*(model["domains"][s] for s in sorts))
+                         if decide("family-norms", [_lean_case(doc, "norms-conflict", witness={
+                             "target": target, "model": model, "tuple": list(values)})])[0]["verdict"] == "CONFLICT"]
+            if confirmed:
+                expected = ("ok", "CONFLICT", target, tuple(confirmed[0]))
+                break
+        try:
+            report = check_conflict(doc, model=model)
+            got = ("ok", report.status, report.target, report.tuple)
+        except VEError as error:
+            got = ("error", str(error))
+        assert got == expected, model
+
+
+def test_lean_route_f5_witness_is_unknown_not_checker_unavailable(monkeypatch):
+    """lf-14b review F5's probe: same-sort n-ary arguments; the base expansion
+    proposes `required->permitted` at `a`, which Lean refutes at both tuples."""
+    doc = capture_documents()["same-exists-depth1"]
+    routed(monkeypatch, "lean")
+    model = {"complete": True, "domains": {"act": ["a", "b"], "party": ["p"]}, "constants": {},
+             "relations": {"before": [["a", "b"]], "urgent": [], "owner": [], "tri": [["b", "b", "b"]]}}
+    assert check_conflict(doc, model=model).status == "UNKNOWN"
+    model["relations"]["tri"] = [["a", "a", "b"]]
+    report = check_conflict(doc, model=model)
+    assert (report.status, report.target, report.tuple) == ("CONFLICT", "required->permitted", ("b",))
+
+
+def test_lean_route_situation_names_the_rules_selected_by_leans_targets(monkeypatch):
+    """lf-14b review F5's class in the CONFLICT record: the situation names the
+    rules selected under the substituted outcome Lean checks, not a rule the
+    captured base expansion would select."""
+    env = capture_environment("act")
+    cited = Forall("act", Implies(Binary("before", Var(1), Var(0)), Unary("permitted", Var(1))))
+    doc = NormDocument(env, [rule("may", "permitted", True, Exists("act", Atom("tri", (Var(1), Var(1), Var(0))))),
+                             rule("must", "required", True, Unary("urgent", Var(0))),
+                             rule("release", "required", False, Unary("urgent", Var(0))),
+                             rule("cited", "required", False, cited)])
+    model = {"complete": True, "domains": {"act": ["a", "b"], "party": ["p"]}, "constants": {},
+             "relations": {"before": [["a", "b"]], "urgent": [["a"]], "owner": [], "tri": [["b", "b", "b"]]}}
+    routed(monkeypatch, "lean")
+    report = check_conflict(doc, model=model)
+    assert (report.status, report.target, report.tuple) == ("CONFLICT", "required", ("a",))
+    assert report.situation == "act a: rule must requires; rule release releases"
+
+
+def test_lean_route_proof_search_proves_the_targets_lean_replays(monkeypatch):
+    """lf-14b review F5's class in proof search: Python's prover proves the
+    substituted targets, so Lean replays its certificates. The captured base
+    expansion of `required->permitted` is satisfiable; Lean's target is not."""
+    env = capture_environment("act")
+    doc = NormDocument(env, [
+        rule("may", "permitted", True, Exists("act", Atom("tri", (Var(1), Var(1), Var(0))))),
+        rule("must", "required", True, Exists("act", And(Binary("before", Var(1), Var(0)),
+                                                         Unary("permitted", Var(1)))))])
+    ops = routed(monkeypatch, "lean")
+    assert check_conflict(doc, prove=True, tableau_steps=2000).status == "CONFLICT-FREE"
+    assert ("norms_conflict", "lean") in ops
 
 
 def test_non_first_order_conflict_zero_model_budget_is_unknown():

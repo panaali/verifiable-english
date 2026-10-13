@@ -79,19 +79,33 @@ def main() -> None:
                  'if row.get("target") != target:',
                  "tests/test_stage2_norms.py::test_non_first_order_conflict_refused_witness_is_unavailable"),
         mutation("zero_budget_unknown", "ve/norms.py",
-                 '                return _conflict_report(document, target, sorts, model, values)\n'
+                 '                return _conflict_report(document, target, sorts, model, values, lean=True)\n'
                  '        except _Exhausted:\n'
                  '            return ConflictReport("UNKNOWN", detail="MAX_EVALUATIONS")',
-                 '                return _conflict_report(document, target, sorts, model, values)\n'
+                 '                return _conflict_report(document, target, sorts, model, values, lean=True)\n'
                  '        except _Exhausted:\n'
                  '            return ConflictReport("CONFLICT")',
                  "tests/test_stage2_norms.py::test_non_first_order_conflict_zero_model_budget_is_unknown"),
         mutation("nary_substitution", "ve/norms.py",
-                 "    from .ast import Eq, Reach, Body, Lt, Le\n",
-                 "    from .ast import Atom, Eq, Reach, Body, Lt, Le\n"
-                 "    if isinstance(formula, Atom):\n"
-                 "        return Atom(formula.predicate, tuple(_replace_term(x, terms, depth) for x in formula.terms))\n",
+                 "    if isinstance(formula, Atom) and nary_atoms:\n",
+                 "    if isinstance(formula, Atom):\n",
                  "tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion"),
+        mutation("search_admission_substituted", "ve/norms.py",
+                 "_Checker(env).formula(admitted, tuple(reversed(sorts)))",
+                 "_Checker(env).formula(formula, tuple(reversed(sorts)))",
+                 "tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion"),
+        mutation("prove_admission_substituted", "ve/norms.py",
+                 "_validate_inputs(env, (), _bind(Not(admitted), sorts))",
+                 "_validate_inputs(env, (), _bind(Not(formula), sorts))",
+                 "tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion"),
+        mutation("lean_generators_base_expansion", "ve/norms.py",
+                 "searched = document.conflict_targets(nary_atoms=True) if lean else base",
+                 "searched = base",
+                 "tests/test_stage2_norms.py::test_lean_route_f5_witness_is_unknown_not_checker_unavailable"),
+        mutation("lean_situation_base_expansion", "ve/norms.py",
+                 "document.selected_rules(target, model, values, nary_atoms=lean)",
+                 "document.selected_rules(target, model, values)",
+                 "tests/test_stage2_norms.py::test_lean_route_situation_names_the_rules_selected_by_leans_targets"),
         mutation("lean_route_answer_drift", "ve/norms.py",
                  'return ConflictReport("UNKNOWN", detail=row["detail"])',
                  'return ConflictReport("UNKNOWN", detail="tableau budget or search bound")',
