@@ -1073,10 +1073,12 @@ class _Frame:
         self.couplings = list(document.get("couplings") or [])
         self.narrowings = list(document.get("narrowings") or [])
         self.predicates = set((((case.get("environment") or {}).get("vocabulary") or {}).get("predicates") or {}))
-        # The rules the request's document declares (a unit's or a reading's norm), which a soft label names.
+        # The rules the request's document declares (a unit's or a reading's norm), with the exception conditions a
+        # soft label names (`readings_route.soft_rules`).
+        from .readings_route import soft_rules
         contents = [unit.get("content") for unit in document["units"]] + [
             a.get("content") for R in active for a in R["readings"]]
-        self.rules = {c["norm"]["name"] for c in contents if type(c) is dict and type(c.get("norm")) is dict}
+        self.rules = soft_rules(c["norm"] for c in contents if type(c) is dict and type(c.get("norm")) is dict)
         self.choices, self.completion, self.finding_sets = choices, completion, list(finding_sets)
         self.candidates = [[R.id, i] for R in self.sets for i in range(len(R.candidates))]
 

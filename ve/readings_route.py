@@ -584,29 +584,54 @@ def _bind_soft_premises(entries, document):
     sets = document.sets
     readings = [(R.id, i) for R in sets for i, a in enumerate(R.candidates) if a.content is not None]
     _need([(e["set"], e["index"]) for e in entries] == readings)
-    fixed = {name for item in document.items if item[0] == "fixed"
-             for kind, name in item[2].declared() if kind == "rule"}
+    fixed = [body for item in document.items if item[0] == "fixed" for body in item[2].rules()]
     for e in entries:
         R = next(R for R in sets if R.id == e["set"])
-        rules = fixed | {name for kind, name in R.candidates[e["index"]].content.declared() if kind == "rule"}
+        rules = soft_rules(fixed + R.candidates[e["index"]].content.rules())
         labels = [premise["label"] for premise in e["premises"]]
         _need(len(set(labels)) == len(labels))
         for label in labels:
             _need(soft_label(label, rules))
 
 
+def soft_rules(bodies):
+    """The rules a request declares, as a soft label names them (soft-norms 6.1, `excLabels` and `collidingPairs`):
+    each rule's name with the shapes it has as Lean decodes it (`node_value`), a default rule's numbers of
+    sufficient and necessary exception conditions, `None` for a strict rule. A name two readings declare has both
+    shapes; a body that does not decode has none (Lean refuses its document)."""
+    from .readings_s1 import _UNDECODED, node_value
+    rules = {}
+    for body in bodies:
+        try:
+            _core, mode, _rank, _alterable, exception, _hard = node_value(body)
+            name = body["name"]
+        except _UNDECODED:
+            continue
+        shape = (len(exception[1]), len(exception[2])) if mode == "default" else None
+        rules.setdefault(name, set()).add(shape)
+    return rules
+
+
 def soft_label(label, rules):
-    """A soft premise's label (rd-9-soft-chain.md 3) bound to the rules `rules` a request declares: an exception
-    condition of one of them (`soft:exception:<rule>:<role>:<i>`), or the pair of two (`soft:coherence:<a>,<b>`)."""
+    """A soft premise's label (rd-9-soft-chain.md 3) bound to the rules `rules` (`soft_rules`) a request declares: an
+    exception condition a default rule has (`soft:exception:<rule>:<role>:<i>`, `i` below that rule's number of
+    conditions in the role), or the pair of two default rules in Lean's order, the names ascending
+    (`soft:coherence:<a>,<b>`, `collidingPairs`)."""
+    if type(label) is not str:
+        return False
     if label.startswith(SOFT_EXCEPTION_LABEL):
         parts = label[len(SOFT_EXCEPTION_LABEL):].rsplit(":", 2)
         # The index as Lean prints a natural number: ASCII digits, no leading zero.
         index = parts[2] if len(parts) == 3 else ""
-        return (parts[0] in rules and parts[1] in ("sufficient", "necessary") and index.isascii()
-                and index.isdigit() and (index == "0" or not index.startswith("0")))
+        if not (parts[1:2] in (["sufficient"], ["necessary"]) and index.isascii() and index.isdigit()
+                and (index == "0" or not index.startswith("0"))):
+            return False
+        role = 0 if parts[1] == "sufficient" else 1
+        return any(shape is not None and decimal_value(index) < shape[role] for shape in rules.get(parts[0], ()))
     if label.startswith(SOFT_COHERENCE_LABEL):
         pair = label[len(SOFT_COHERENCE_LABEL):].split(",")
-        return len(pair) == 2 and pair[0] != pair[1] and all(name in rules for name in pair)
+        return (len(pair) == 2 and pair[0] < pair[1]
+                and all(any(shape is not None for shape in rules.get(name, ())) for name in pair))
     return False
 
 

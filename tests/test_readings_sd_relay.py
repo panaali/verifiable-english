@@ -69,6 +69,18 @@ MUTATIONS = {
         "label", "soft:coherence:must-x,no-such-rule"),
     "label of another kind": lambda row: _soft(row)[0].__setitem__("label", "unsaid:pair:x_required,x_permitted"),
     "exception role unknown": lambda row: _soft(row)[0].__setitem__("label", "soft:exception:must-x:other:0"),
+    # Bound to the request's conditions (looprecheck2 B3): `must-x` has one sufficient and no necessary condition.
+    "sufficient index past the rule's conditions": lambda row: _soft(row)[0].__setitem__(
+        "label", "soft:exception:must-x:sufficient:9"),
+    "sufficient index at the rule's count": lambda row: _soft(row)[0].__setitem__(
+        "label", "soft:exception:must-x:sufficient:1"),
+    "necessary condition the rule lacks": lambda row: _soft(row)[0].__setitem__(
+        "label", "soft:exception:must-x:necessary:0"),
+    "coherence pair reversed": lambda row: _soft(row)[1].__setitem__("label", "soft:coherence:need-not-x,must-x"),
+    "the strict reading given the default one's label": lambda row: row["soft_premises"][0]["premises"].append(
+        copy.deepcopy(_soft(row)[0])),
+    "the strict reading given the default one's pair": lambda row: row["soft_premises"][0]["premises"].append(
+        copy.deepcopy(_soft(row)[1])),
     "label retyped": lambda row: _soft(row)[0].__setitem__("label", 7),
     "ast null": lambda row: _soft(row)[0].__setitem__("ast", None),
     "premise duplicated": lambda row: _soft(row).append(copy.deepcopy(_soft(row)[0])),
@@ -142,7 +154,11 @@ def test_a_genuine_soft_verdict_binds(coherent_conflict):
                                    "soft:coherence:must-x", "soft:exception:no-such-rule:sufficient:0",
                                    "soft:exception:must-x:other:0", "soft:exception:must-x:sufficient:01",
                                    "soft:exception:must-x", "soft:exception:must-x:sufficient:\u0661",
-                                   "soft:other:must-x"])
+                                   "soft:other:must-x",
+                                   # looprecheck2 B3: bound to the rules' conditions and Lean's pair order.
+                                   "soft:exception:must-x:sufficient:9", "soft:exception:must-x:sufficient:1",
+                                   "soft:exception:must-x:necessary:0", "soft:exception:need-not-x:sufficient:0",
+                                   "soft:coherence:need-not-x,must-x"])
 def test_a_soft_label_the_request_does_not_declare_is_unavailable(coherent_conflict, label):
     from ve.readings_verdicts import _check_answer
     row, case = coherent_conflict
@@ -150,3 +166,29 @@ def test_a_soft_label_the_request_does_not_declare_is_unavailable(coherent_confl
     mutant["labels"] = [label]
     with pytest.raises(CheckerUnavailable):
         _check_answer(mutant, case, _verdicts_frame(case))
+
+
+def test_probe_b3_an_exception_index_past_the_rules_conditions_is_unavailable(elaborated):
+    """PROBE B3 of rd-9-looprecheck2: `must-x` has one sufficient condition, so index 9 names nothing."""
+    row, case = elaborated
+    mutant = copy.deepcopy(row)
+    mutant["soft_premises"][1]["premises"][0]["label"] = "soft:exception:must-x:sufficient:9"
+    with pytest.raises(CheckerUnavailable):
+        readings_route._completion_elaborate(mutant, case)
+
+
+def test_the_binder_accepts_exactly_the_exception_labels_lean_regenerates(elaborated):
+    """The class of B3: over every rule, role and index up to 3, the exception labels the binder accepts for a reading
+    are exactly the ones Lean regenerates on it (`excLabels`), and the coherence labels it accepts include Lean's."""
+    row, case = elaborated
+    document = readings_route.Document(None, case["document"])
+    fixed = [body for item in document.items if item[0] == "fixed" for body in item[2].rules()]
+    [R] = document.sets
+    for entry in row["soft_premises"]:
+        rules = readings_route.soft_rules(fixed + R.candidates[entry["index"]].content.rules())
+        lean_labels = [p["label"] for p in entry["premises"]]
+        space = [f"soft:exception:{name}:{role}:{i}" for name in ("must-x", "need-not-x")
+                 for role in ("sufficient", "necessary") for i in range(4)]
+        assert [x for x in space if readings_route.soft_label(x, rules)] == [
+            x for x in lean_labels if x.startswith("soft:exception:")]
+        assert all(readings_route.soft_label(x, rules) for x in lean_labels)
