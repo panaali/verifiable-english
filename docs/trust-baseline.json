@@ -25,7 +25,15 @@
   "S": 9788,
   "V": 37154
  },
- "signed": [],
+ "signed": [
+  {
+   "change": "premise-scale: the search-budget service mode (VE.Service.Mode.searchBudget, its name and runMode case, ResponseShape.Skeletons.searchBudget and its row case, the schema list entry): untied [V] +5 in existing verdict-bearing declarations (VE/Service/Protocol.lean +2, ResponseShape/Skeletons.lean +2, ResponseShape/Schemas.lean +1). The mode replaces Python's own premise-check budget (ve/vacuity.py's hard-coded defaults, deleted): Lean owns the budget. The new modules' declarations are classified C (proved: demand_sound, sortBounds_spec, sortBounds_sound) or [R] (a wrong budget only bounds an untrusted search, whose models Lean checks).",
+   "signed": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "allow": {
+    "V": 5
+   }
+  }
+ ],
  "history": [
   {
    "change": "Review B3 (consolidate-b1): predicates (lean/predicates.txt) out of C, [R] and [I] into K or S unless tied; kernel data types K; kernel modules reviewed (Paths dedup/pivot/reachEval C, ClosedAt P; reach, embed, erase K in Closure and Core; Time QTerm/QEnv.erase K; Bridge helpers D[V]); Rights.PrefixAdmissibleR S. Reclassification only: no Lean change.",
