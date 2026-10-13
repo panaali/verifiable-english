@@ -133,7 +133,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | Q2.4 one owner of situation wording (Python producers deleted, corpus A/B byte-identical) | AGENT | done (`LEDGER.md`; `evidence/words-ab.json`: no difference) |
 | Q2.3 `VE.Words` against Python's producers on the readings and norm-defaults corpora | AGENT | done: the A/B compares every moved site with the pre-Q2.4 producers (`tools/words_ab.py`), and `tests/test_words.py` keeps a generated differential |
 | Q2.6 reading and writing evaluation (Sonnet as reader and writer) | EXTERNAL | **deferred**: needs model calls, which this task forbids; owner: the orchestrator |
-| Q2.6 latency and agreement with W2 | AGENT | done: `ask` Lean CPU 0.5 s on U3 and A1 (budget 2 s; `tests/test_ask_budget.py`), U3 `ve ask` wall within 60 s; the agreement table in `../question-answering-report.md` |
+| Q2.6 latency and agreement with W2 | AGENT | done: `ask` Lean CPU 0.5 s on U3 and A1 (budget 2 s; the benchmark `tools/bench/test_perf.py::test_ask_lean_cpu` against its stored baseline, since a correctness test never accepts on speed), U3 `ve ask` wall within 60 s; the agreement table in `../question-answering-report.md` |
 | Q2.5 one flip generator (the point search as its instance, the copy deleted) | AGENT | done (`ve/filling_search.py`, `tests/test_filling_search.py`) |
 | DRI signatures on DELTA D1 to D13 | HUMAN (DRI) | pending |
 
