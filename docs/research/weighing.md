@@ -91,7 +91,27 @@ pilot-moving batch of this plan waits for its SC-8.
 
 ## 2. The need, measured
 
-MEASUREMENTS-PENDING
+MEASUREMENTS-PENDING, except 2.1.
+
+### 2.1 The CROSSACT class (written 2026-10-13, before any unit was drawn)
+
+CROSSACT is the screen WG-E1 (plan WG-E1) draws from: the units of the constitution pilot whose text may express a
+collision between different acts. It is a lexical screen, deliberately broad; the reader's classification, not the
+screen, decides what a unit expresses. It was written and committed before any unit was drawn and before the number
+of units it selects was known, and it is not changed after the draw. Its one implementation is
+`research/weighing/wg_e1.py` (`CONTRAST`, `HELP_SIDE`, `REFUSE_SIDE`, `crossact_cues`).
+
+- **Ledger.** `units.json` of run `20261012T1800Z`, read from git at `pilot/cc-20261012T1800Z` (`ecfd1ace`); the
+  unit's text is its `source_excerpt`. Units do not overlap (measured: 0 overlapping spans of 1,132).
+- **Population.** Units whose primary blocker (`missing_feature`) is `norms`: 669.
+- **Class.** A unit is in CROSSACT when its text, case-insensitive and on whole words, has
+  - (A) a cue that sets courses of action or considerations against each other: *rather than*, *instead*, *versus*
+    or *vs.*, *at the expense of*, *in favour of*, *trade-off*, *weigh* or *outweigh*, *balance*, *conflict*,
+    *tension*, *compete* or *competing*, *priority* or *prioritise*, *alternative*, *option*, *choose* or *choice*,
+    *either*; or
+  - (B) both a helping cue (*help*, *assist*, *comply*, *compliance*, *fulfil*, *provide*) and a refusing cue
+    (*refuse*, *decline*, *reject*, *withhold*, *unhelpful*, *turn down*, *push back*, *conscientious objector*,
+    *say no*), which is soft 4.5's "help against refuse".
 
 ## 3. Prior art
 
