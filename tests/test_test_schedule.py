@@ -1,7 +1,7 @@
 """The suite starts its slowest tests first (tools/test_schedule.py), and that changes nothing but the order.
 
 The scheduler is checked three ways: `head_first` on its own (a permutation; the recorded long tests lead,
-longest first; the rest keep collection order); the scheduler against xdist's `load` in a simulation of
+longest first, a module's together; the rest keep collection order); the scheduler against xdist's `load` in a simulation of
 workers that run what they are sent (a long test placed last in the collection starts first, and the run
 ends sooner); and a real xdist run of a small project under the gate's event plugin, whose workers collect
 exactly the collection run's selection (`tools.gate.merge_pytest_events`) and run every test once.
@@ -25,26 +25,49 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_head_first_is_a_permutation_led_by_the_recorded_long_tests_longest_first():
-    collection = [f"t{i}" for i in range(10)]
-    durations = {"t2": 7.0, "t5": 30.0, "t7": 7.0, "t8": test_schedule.HEAD_SECONDS, "t9": 4.9, "t1": 0.5}
-    order, head = test_schedule.head_first(collection, durations)
+    collection = [f"tests/test_{i}.py::t" for i in range(10)]
+    durations = {collection[2]: 7.0, collection[5]: 30.0, collection[7]: 7.0, collection[8]: test_schedule.HEAD_SECONDS,
+                 collection[9]: 4.9, collection[1]: 0.5}
+    order, sizes = test_schedule.head_first(collection, durations)
     assert sorted(order) == list(range(10))
-    # t5 longest; t2 and t7 tie and keep collection order; t8 is at the threshold; t9 and t1 are not.
-    assert [collection[i] for i in order[:head]] == ["t5", "t2", "t7", "t8"]
-    assert order[head:] == [0, 1, 3, 4, 6, 9]
-    assert test_schedule.head_first(collection, {}) == (list(range(10)), 0)
-    assert test_schedule.head_first([], durations) == ([], 0)
+    # 5 longest; 2 and 7 tie and keep collection order; 8 is at the threshold; 9 and 1 are not.
+    assert order[:sum(sizes)] == [5, 2, 7, 8] and sizes == [1, 1, 1, 1]
+    assert order[sum(sizes):] == [0, 1, 3, 4, 6, 9]
+    assert test_schedule.head_first(collection, {}) == (list(range(10)), [])
+    assert test_schedule.head_first([], durations) == ([], [])
+
+
+def test_a_modules_long_tests_go_out_together_up_to_the_longest_test():
+    """A module fixture is set up once per run of the module's tests on a worker: one module's long tests go
+    to a worker together, consecutive in collection order, in batches no longer than the longest test."""
+    collection = ["tests/test_m.py::a", "tests/test_m.py::quick", "tests/test_m.py::b", "tests/test_other.py::long",
+                  "tests/test_m.py::c", "tests/test_m.py::d", "tests/test_m.py::e", "tests/test_n.py::f"]
+    durations = {"tests/test_m.py::a": 10.0, "tests/test_m.py::b": 10.0, "tests/test_m.py::c": 10.0,
+                 "tests/test_m.py::d": 10.0, "tests/test_m.py::e": 10.0, "tests/test_other.py::long": 40.0,
+                 "tests/test_n.py::f": 6.0, "tests/test_m.py::quick": 0.1}
+    assert test_schedule.head_batches(collection, durations) == [[0, 2, 4, 5], [3], [6], [7]]
+    order, sizes = test_schedule.head_first(collection, durations)
+    assert order == [0, 2, 4, 5, 3, 6, 7, 1] and sizes == [4, 1, 1, 1]
+    # In a run, each batch's tests run back to back on one worker.
+    started, _ = simulate(test_schedule.make_scheduler(Config(2), None, durations), collection, durations, 2)
+    by_worker = {}
+    for index, (at, worker) in sorted(started.items(), key=lambda row: row[1][0]):
+        by_worker.setdefault(worker, []).append(index)
+    assert any(run[:4] == [0, 2, 4, 5] for run in by_worker.values()), by_worker
 
 
 def test_durations_file_round_trips_and_a_bad_file_leaves_the_load_order(tmp_path):
     path = tmp_path / "durations.json"
-    path.write_text(test_schedule.durations_text({"b": 12.34, "a": 1.0, "c": 0.99}, source="here"))
-    assert test_schedule.read_durations(path) == {"a": 1.0, "b": 12.3}
+    path.write_text(test_schedule.durations_text({"b": 12.34, "a": 1.0, "c": 0.99, "d": 0.01}, source="here"))
+    assert test_schedule.read_estimates(path) == ({"a": 1.0, "b": 12.3}, 0.5)  # the mean of c and d
     assert list(json.loads(path.read_text())["seconds"]) == ["a", "b"]
     for text in ("", "[]", "{}", json.dumps({"format": "other@1", "seconds": {"a": 9}}),
                  json.dumps({"format": test_schedule.FORMAT, "seconds": []})):
         path.write_text(text)
-        assert test_schedule.read_durations(path) == {}
+        assert test_schedule.read_estimates(path) == ({}, test_schedule.UNRECORDED_SECONDS)
+    for unrecorded in (True, -1, "0.2", None, 1e999):
+        path.write_text(json.dumps({"format": test_schedule.FORMAT, "unrecorded_seconds": unrecorded, "seconds": {}}))
+        assert test_schedule.read_estimates(path)[1] == test_schedule.UNRECORDED_SECONDS
     # Entries that are not seconds are dropped, never coerced.
     path.write_text(json.dumps({"format": test_schedule.FORMAT,
                                 "seconds": {"a": True, "b": -1, "c": "9", "d": None, "e": 6}}))
@@ -56,7 +79,9 @@ def test_committed_durations_file_is_read_whole():
     data = json.loads(test_schedule.DURATIONS.read_text())
     assert data["format"] == test_schedule.FORMAT and data["source"]
     assert list(data["seconds"]) == sorted(data["seconds"])
-    assert test_schedule.read_durations() == {nodeid: float(value) for nodeid, value in data["seconds"].items()}
+    assert test_schedule.read_estimates() == ({nodeid: float(value) for nodeid, value in data["seconds"].items()},
+                                              data["unrecorded_seconds"])
+    assert 0 < data["unrecorded_seconds"] < test_schedule.RECORDED_SECONDS
     assert min(data["seconds"].values()) >= test_schedule.RECORDED_SECONDS
     assert max(data["seconds"].values()) >= test_schedule.HEAD_SECONDS
 
@@ -123,7 +148,7 @@ def simulate(scheduler, collection, seconds, workers):
 
 def workload():
     """200 quick tests in collection order, then four long ones, as in a suite whose slowest tests come late."""
-    collection = [f"tests/test_a.py::test_{i}" for i in range(200)] + [f"tests/test_z.py::test_slow_{i}" for i in range(4)]
+    collection = [f"tests/test_a.py::test_{i}" for i in range(200)] + [f"tests/test_z{i}.py::test_slow" for i in range(4)]
     seconds = {nodeid: 1.0 for nodeid in collection}
     seconds.update({collection[200]: 60.0, collection[201]: 120.0, collection[202]: 30.0, collection[203]: 90.0})
     return collection, seconds
@@ -171,6 +196,38 @@ def test_without_recorded_long_tests_or_under_another_mode_xdist_decides():
     assert simulate(test_schedule.make_scheduler(Config(3), None, {}), collection, seconds, 3) == plain
     for dist in ("loadfile", "loadscope", "loadgroup", "worksteal", "each", "no"):
         assert test_schedule.make_scheduler(Config(3, dist), None, {collection[0]: 99.0}) is None
+
+
+def test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds():
+    """Each worker holds two batches from the start; pairing the longest with the shortest evens them out."""
+    collection = [f"tests/test_{i}.py::t" for i in range(8)]
+    seconds = {nodeid: 10.0 * (8 - i) for i, nodeid in enumerate(collection)}  # 80, 70, ..., 10
+    _, end = simulate(test_schedule.make_scheduler(Config(4), None, seconds), collection, seconds, 4)
+    assert end == 90.0  # 80 + 10, 70 + 20, 60 + 30, 50 + 40
+
+
+def test_quick_tests_go_out_by_estimated_seconds_not_by_count():
+    """After the long tests, `load` sent the next free worker some 900 consecutive tests worth 30 minutes,
+    which it then ran alone. Runs sized by estimated seconds end together."""
+    collection = ([f"tests/test_long{i}.py::t" for i in range(4)] + [f"tests/test_a.py::t{i}" for i in range(600)]
+                  + [f"tests/test_b.py::t{i}" for i in range(200)])
+    seconds = dict(zip(collection, [10.0, 200.0, 200.0, 200.0]))  # one worker is free after 10 s
+    seconds.update({nodeid: 0.1 for nodeid in collection[4:604]})
+    seconds.update({nodeid: 3.0 for nodeid in collection[604:]})
+    recorded = {nodeid: value for nodeid, value in seconds.items() if value >= test_schedule.RECORDED_SECONDS}
+    _, load_end = simulate(LoadScheduling(Config(4)), collection, seconds, 4)
+    _, end = simulate(test_schedule.make_scheduler(Config(4), None, recorded, 0.1), collection, seconds, 4)
+    ideal = sum(seconds.values()) / 4  # 317.5 s
+    assert end <= ideal + 3.0 < load_end - 30
+
+
+def test_bulk_count_takes_at_least_the_least_then_up_to_the_target():
+    assert test_schedule.bulk_count([1.0, 1.0, 1.0, 5.0], target=2.5, least=1) == 2
+    assert test_schedule.bulk_count([9.0, 1.0], target=2.5, least=1) == 1
+    assert test_schedule.bulk_count([9.0, 1.0], target=-4.0, least=2) == 2
+    assert test_schedule.bulk_count([1.0], target=10.0, least=2) == 1
+    assert test_schedule.bulk_count([], target=10.0, least=2) == 0
+    assert test_schedule.bulk_count(iter([0.5] * 100), target=10.0, least=1) == 20
 
 
 def test_fewer_tests_than_two_per_worker_all_run():

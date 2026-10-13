@@ -3,25 +3,32 @@
 xdist's default `load` scheduler hands each worker a run of consecutive tests in collection order and
 the rest in shrinking chunks as workers finish. A test that takes minutes and happens to come late in
 the collection then starts when the other workers are nearly done, and they idle until it ends (the
-"tail"). `LongestFirst` is `load` with one change: the tests that `tools/test-durations.json` records as
-taking at least HEAD_SECONDS go first, one at a time, longest first, each to the next worker that is
-free; the rest follow in collection order under `load`'s own chunking, which keeps a module's tests
-together on a worker.
+"tail"). `LongestFirst` is `load` with two changes, both driven by `tools/test-durations.json`:
 
-It changes only the order in which tests are handed to workers. Every worker still collects the whole
-selection in collection order (the gate's `merge_pytest_events` checks this), every collected
-test runs once, and a test the durations file does not name is scheduled exactly as `load` would. A
-run that names another `--dist` mode keeps that mode.
+- The tests it records as taking at least HEAD_SECONDS go first, longest first, each batch to the next
+  worker that is free. A batch is one module's long tests, consecutive in collection order, together no
+  longer than the longest single test (`head_batches`): a module fixture is set up once per run of the
+  module's tests on a worker and torn down when the worker turns to another module, so sent one by one,
+  every long test of a module with a costly fixture (a minute or more for some) would set it up again.
+  The cap keeps a batch from taking longer than the longest test, which bounds the run anyway.
+- The rest follow in collection order, as runs of consecutive tests (which keep a module's tests
+  together on a worker, as `load`'s do) sized by their estimated seconds rather than their number
+  (`bulk_count`): `load`'s first run after the long tests held some 900 tests and 30 minutes of work,
+  which one worker then ran alone at the end.
+
+It changes only which worker runs a test and when. Every worker still collects the whole selection in
+collection order (the gate's `merge_pytest_events` checks this) and every collected test runs once.
+Without a durations file the run is `load`'s; a run that names another `--dist` mode keeps that mode.
 
 The durations file is measured data, not a generated file: the `durations` command of the benchmark
-script `suite_tail.py` writes it from a profiled run. A stale file only makes the order less good; it
-never changes which tests run. (Every test's import closure holds this module, through the suite's
-conftest, and the test selector reads each path its strings name as data every test reads: so its
-strings name no path but the durations file.)
+script that measures the suite's tail writes it from profiled runs. A stale file only makes the order
+less good; it never changes which tests run. (Every test's import closure holds this module, through the
+suite's conftest, and the test selector takes each path or file name its strings hold as data that every
+test reads: so its strings name no file but the durations file.)
 """
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 import json
 from pathlib import Path
 
@@ -30,96 +37,176 @@ DURATIONS = ROOT / "tools/test-durations.json"
 FORMAT = "ve-test-durations@1"
 # Tests at least this long (setup + call + teardown, seconds) are recorded in the durations file.
 RECORDED_SECONDS = 1.0
-# Tests at least this long are started first, longest first, one per free worker.
+# Tests at least this long are started first, longest batch first.
 HEAD_SECONDS = 5.0
+# The estimate of a test the file does not record, when the file does not say (its `unrecorded_seconds`:
+# the mean of the measured tests shorter than RECORDED_SECONDS).
+UNRECORDED_SECONDS = 0.1
+# After the long tests, a free worker gets consecutive tests worth 1/(BULK_SHARE * workers) of the estimated
+# seconds left: large runs while much is left, single tests at the end, as `load` does by count.
+BULK_SHARE = 2
 
 
 def durations_text(timed: Mapping[str, float], *, source: str) -> str:
     """The durations file for the measured `timed` seconds per test ID: the tests of at least
-    RECORDED_SECONDS, rounded to a tenth of a second, sorted by ID."""
+    RECORDED_SECONDS, rounded to a tenth of a second, sorted by ID, and the mean of the others."""
     kept = {nodeid: round(value, 1) for nodeid, value in sorted(timed.items()) if value >= RECORDED_SECONDS}
-    return json.dumps({"format": FORMAT, "source": source, "seconds": kept}, indent=1) + "\n"
+    short = [value for value in timed.values() if value < RECORDED_SECONDS]
+    unrecorded = round(sum(short) / len(short), 3) if short else UNRECORDED_SECONDS
+    return json.dumps({"format": FORMAT, "source": source, "unrecorded_seconds": unrecorded, "seconds": kept},
+                      indent=1) + "\n"
 
 
-def read_durations(path: Path = DURATIONS) -> dict[str, float]:
-    """The recorded seconds per test ID; empty when the file is missing or not a durations file,
-    which leaves the run in `load`'s order."""
+def seconds_value(value) -> bool:
+    return type(value) in (int, float) and 0 <= value < float("inf")
+
+
+def read_estimates(path: Path = DURATIONS) -> tuple[dict[str, float], float]:
+    """The recorded seconds per test ID, and the estimate of an unrecorded test; ({}, UNRECORDED_SECONDS)
+    when the file is missing or not a durations file, which leaves the run to `load`."""
     try:
         data = json.loads(path.read_text())
     except (OSError, ValueError):
-        return {}
+        return {}, UNRECORDED_SECONDS
     if not isinstance(data, dict) or data.get("format") != FORMAT or not isinstance(data.get("seconds"), dict):
-        return {}
-    return {nodeid: float(value) for nodeid, value in data["seconds"].items()
-            if isinstance(nodeid, str) and type(value) in (int, float) and value >= 0}
+        return {}, UNRECORDED_SECONDS
+    unrecorded = data.get("unrecorded_seconds", UNRECORDED_SECONDS)
+    return ({nodeid: float(value) for nodeid, value in data["seconds"].items()
+             if isinstance(nodeid, str) and seconds_value(value)},
+            float(unrecorded) if seconds_value(unrecorded) else UNRECORDED_SECONDS)
+
+
+def read_durations(path: Path = DURATIONS) -> dict[str, float]:
+    """The recorded seconds per test ID (`read_estimates`)."""
+    return read_estimates(path)[0]
+
+
+def unit_of(nodeid: str) -> str:
+    """The test file of a test ID: a module, and a unit of the test selector's runs."""
+    return nodeid.split("::", 1)[0]
 
 
 def unit_seconds(durations: Mapping[str, float] | None = None) -> dict[str, float]:
-    """The recorded seconds of each test file (a unit of the test selector's runs): the sum over its
-    recorded tests (`durations`, default the durations file)."""
+    """The recorded seconds of each test file: the sum over its recorded tests (`durations`, default the
+    durations file)."""
     totals: dict[str, float] = {}
     for nodeid, value in (read_durations() if durations is None else durations).items():
-        unit = nodeid.split("::", 1)[0]
-        totals[unit] = totals.get(unit, 0.0) + value
+        totals[unit_of(nodeid)] = totals.get(unit_of(nodeid), 0.0) + value
     return totals
 
 
+def head_batches(collection: Sequence[str], durations: Mapping[str, float],
+                 head_seconds: float = HEAD_SECONDS) -> list[list[int]]:
+    """The tests of `collection` recorded as taking at least `head_seconds`, as batches of indices: each
+    batch is one module's tests, consecutive in collection order among that module's long tests, together
+    no longer than the longest of them all (a test alone may reach it); the batches longest first, ties
+    in collection order."""
+    long = [index for index, nodeid in enumerate(collection) if durations.get(nodeid, 0.0) >= head_seconds]
+    if not long:
+        return []
+    cap = max(durations[collection[index]] for index in long)
+    batches: list[list[int]] = []
+    open_batch: dict[str, tuple[list[int], float]] = {}
+    for index in long:
+        unit, seconds = unit_of(collection[index]), durations[collection[index]]
+        batch, total = open_batch.get(unit, (None, 0.0))
+        if batch is None or total + seconds > cap:
+            batch, total = [], 0.0
+            batches.append(batch)
+        batch.append(index)
+        open_batch[unit] = (batch, total + seconds)
+    return sorted(batches, key=lambda batch: (-sum(durations[collection[i]] for i in batch), batch[0]))
+
+
 def head_first(collection: Sequence[str], durations: Mapping[str, float],
-               head_seconds: float = HEAD_SECONDS) -> tuple[list[int], int]:
-    """The indices of `collection` in the order they are handed out, and how many lead it: the tests
-    recorded as taking at least `head_seconds`, longest first (ties in collection order), then every
-    other test in collection order. Always a permutation of range(len(collection))."""
-    head = sorted((index for index, nodeid in enumerate(collection)
-                   if durations.get(nodeid, 0.0) >= head_seconds),
-                  key=lambda index: (-durations[collection[index]], index))
+               head_seconds: float = HEAD_SECONDS) -> tuple[list[int], list[int]]:
+    """The indices of `collection` in the order they are handed out, and the sizes of the batches that
+    lead it (`head_batches`); then every other test in collection order. Always a permutation of
+    range(len(collection))."""
+    batches = head_batches(collection, durations, head_seconds)
+    head = [index for batch in batches for index in batch]
     chosen = set(head)
-    return head + [index for index in range(len(collection)) if index not in chosen], len(head)
+    return head + [index for index in range(len(collection)) if index not in chosen], [len(b) for b in batches]
 
 
-def make_scheduler(config, log, durations: Mapping[str, float] | None = None):
-    """A LongestFirst scheduler for a `--dist load` run, else None (xdist picks the scheduler)."""
+def bulk_count(estimates: Iterable[float], target: float, least: int) -> int:
+    """How many of the next tests (their `estimates`, in order) to send together: at least `least` (when
+    there are that many), then more while their sum stays within `target`."""
+    count, total = 0, 0.0
+    for estimate in estimates:
+        if count >= least and total + estimate > target:
+            break
+        count, total = count + 1, total + estimate
+    return count
+
+
+def make_scheduler(config, log, durations: Mapping[str, float] | None = None,
+                   unrecorded: float = UNRECORDED_SECONDS):
+    """A LongestFirst scheduler for a `--dist load` run, else None (xdist picks the scheduler). `durations`
+    and `unrecorded` default to the durations file's."""
     if config.getvalue("dist") != "load":
         return None
     from xdist.scheduler import LoadScheduling
 
     class LongestFirst(LoadScheduling):
-        """`load`, with the recorded long tests handed out first, one at a time, longest first."""
+        """`load`, with the recorded long tests handed out first, a batch at a time, longest first, and the
+        rest in runs of consecutive tests sized by their estimated seconds."""
 
         def __init__(self, config, log=None):
             super().__init__(config, log)
-            self.durations = read_durations() if durations is None else durations
-            self.head = 0  # the long tests not yet handed out: the first `head` entries of `pending`
+            if durations is None:
+                self.durations, self.unrecorded = read_estimates()
+            else:
+                self.durations, self.unrecorded = durations, unrecorded
+            self.batches: list[int] = []  # the sizes of the head batches not yet handed out, which lead `pending`
+            self.estimate: list[float] = []  # the estimated seconds of each test of the collection
+            self.remaining, self.counted = 0.0, 0  # the estimated seconds of `pending`, summed at this length
 
         def schedule(self):
-            if self.collection is not None or not self._check_nodes_have_same_collection():
+            if self.collection is not None or not self.durations or not self._check_nodes_have_same_collection():
                 return super().schedule()
             collection = next(iter(self.node2collection.values()))
-            order, self.head = head_first(collection, self.durations)
-            if not self.head:
-                return super().schedule()
+            order, self.batches = head_first(collection, self.durations)
+            self.estimate = [self.durations.get(nodeid, self.unrecorded) for nodeid in collection]
             self.collection = collection
             self.pending[:] = order
-            if self.maxschedchunk is None:
-                self.maxschedchunk = len(self.collection)
-            # A worker runs a test only once it holds the next one (or is shutting down), so each
-            # worker gets two. The second round goes in reverse order, so the worker holding the
-            # longest test holds the shortest of the first 2n.
+            self.remaining, self.counted = sum(self.estimate), len(self.pending)
+            # A worker runs a test only once it holds the next one (or is shutting down), so each worker
+            # gets two batches. The second round goes in reverse order, so the worker holding the longest
+            # batch holds the shortest of the first 2n.
             for node in [*self.nodes, *reversed(self.nodes)]:
                 if self.pending:
-                    self._send_one(node)
+                    self._send_next(node)
             if not self.pending:
                 for node in self.nodes:
                     node.shutdown()
 
-        def _send_one(self, node):
-            self.head = max(0, self.head - 1)
-            self._send_tests(node, 1)
-
         def check_schedule(self, node, duration: float = 0) -> None:
-            if self.head and not node.shutting_down:
-                if len(self.node2pending[node]) < 2:
-                    self._send_one(node)
+            if not self.estimate:  # no durations: `load` itself
+                return super().check_schedule(node, duration)
+            if node.shutting_down:
                 return
-            super().check_schedule(node, duration)
+            if not self.pending:
+                node.shutdown()
+            elif len(self.node2pending[node]) < 2:
+                self._send_next(node)
+
+        def _send_next(self, node):
+            """The next head batch, else the next tests in collection order up to a share of the estimated
+            seconds left, less what the worker holds (`bulk_count`), and at least enough for it to hold two."""
+            if self.batches:
+                count = self.batches.pop(0)
+            else:
+                if len(self.pending) != self.counted:  # a crashed worker's tests came back
+                    self.remaining = sum(self.estimate[index] for index in self.pending)
+                # What the worker holds counts against its share: one still running a long test gets
+                # only the test it needs to go on to.
+                held = sum(self.estimate[index] for index in self.node2pending[node])
+                count = bulk_count((self.estimate[index] for index in self.pending),
+                                   self.remaining / (BULK_SHARE * len(self.nodes)) - held,
+                                   max(1, 2 - len(self.node2pending[node])))
+            self.remaining -= sum(self.estimate[index] for index in self.pending[:count])
+            self._send_tests(node, count)
+            self.counted = len(self.pending)
 
     return LongestFirst(config, log)
