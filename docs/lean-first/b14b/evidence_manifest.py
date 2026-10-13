@@ -86,6 +86,10 @@ def snapshot(raw: Path) -> dict:
     if (own.get("documents") != 150 or own.get("records") != 1350
             or len(own.get("differences", [])) != 16):
         raise ValueError("own corpus's listed changes changed")
+    fallback = read(EVIDENCE / "fallback-compare.json")
+    if (fallback.get("documents") != 150 or fallback.get("records") != 1350
+            or fallback.get("identical") is not True or fallback.get("differences")):
+        raise ValueError("retained Python route differs from the base recording")
     pilots = read(EVIDENCE / "pilots-delta.json")
     if len(pilots.get("unavailable", [])) != 6:
         raise ValueError("R7 pilot listing changed")
@@ -128,6 +132,7 @@ def snapshot(raw: Path) -> dict:
         "comparisons": comparisons,
         "own_corpus": {"records": 1350, "same": 1334, "listed": 16,
                        "sha256": digest(EVIDENCE / "corpus-ab.json")},
+        "fallback": {"records": 1350, "same": 1350, "sha256": digest(EVIDENCE / "fallback-compare.json")},
         "difffuzz": {"runs": len(runs), "sha256": digest(fuzz_path), "head_only": 0},
         "pilots_delta_sha256": digest(EVIDENCE / "pilots-delta.json"),
         "latency_sha256": digest(EVIDENCE / "latency.json"),
