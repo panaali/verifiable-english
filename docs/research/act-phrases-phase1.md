@@ -7,8 +7,23 @@
 > [evidence/act-phrases/](evidence/act-phrases/). The pilot inputs (UDHR and constitution runs `20261012T1800Z`) were
 > read only.
 >
-> Section 1 is the pre-registration, committed before any measurement ran. Results follow in later sections, each
-> against the bar quoted here.
+> Section 1 is the pre-registration, committed before any measurement ran (`34009f5f`) and not edited since. Results
+> follow in sections 2 to 5, each against the bar quoted from section 1.
+
+## 0. Summary
+
+| Item | Bar (section 1) | Measured | Verdict |
+|---|---|---|---|
+| 1. Re-try the 11 M1 units | before: M1 = 1,860 B, 11 units; a unit made expressible is credited to AP-0 | all 11 load as opaque entitlements; 4 (u039, u085, u091, u106; 658 B) meet every criterion with nothing hidden in a name. M1 after = **1,202 B, 7 units** (primary), 0 B (loose) | PASS (measured); M1 moves, pending the pilot's audit |
+| 2. Count M3 | before: unmeasured | **100 lines** (UDHR 72, constitution 28), 160 occurrences | PASS (measured) |
+| 3. Tag the constitution's 18 norm units | before: M4 = 18 units, 2,580 B | **17 units, 2,502 B** (pointer 7, folded 3, shortened 7, none 1: u0052.s01) | PASS (measured); M4 moves by one unit |
+| 4. Measure N | R ≤ 64 keeps N = 256; 10 S ≤ 2,100,000 keeps `stepBudget` | **R = 2**, **S = 14,440** | **PASS** (N = 256, `stepBudget` = 2,100,000 stand) |
+
+Main consequence (section 7): all of AP-1's estimated UDHR byte credit (u039, u085, u106, u091: 658 B) is available
+today as opaque entitlements, so it moves to AP-0. AP-1 keeps its display and faithfulness gains (M2, M3, M4), not
+bytes. The measurement also found a gap in the grammar, outside every bar: a joined filler made of plain words gets
+one fixed grouping with no reading set ("arbitrary arrest, detention or exile"). That bears on D4, AP-7 and the
+bounded re-check.
 
 ## 1. Pre-registration (written before any run)
 
@@ -167,3 +182,265 @@ Secondary (reported, no bar): phrases where raw > readings (two derivations with
   (`units.json`, `metrics.json`): the pilot inputs are read-only here; the orchestrator's next pilot run copies them
   from the evidence files.
 - M2 (5 units, 669 B) is not re-measured: AP-0 has no item for it.
+
+## 2. Item 1: the 11 M1 units under today's language
+
+**Bar** (1.1, 1.2): before, M1 = 1,860 B in 11 units. `expressible_today` = yes exactly when C1 to C4 hold and the unit's
+hidden-structure list is empty. A unit made expressible is credited to AP-0.
+
+**Run.** `prlimit --as=8589934592 uv run python research/act-phrases/ap0_udhr_retry.py` at this commit (Lean built at
+`49de179e`, Rust binary pinned in `lean/checkers.lock`). Evidence: `evidence/act-phrases/udhr-retry.json`, the 11
+documents in `evidence/act-phrases/udhr-retry/`, and the first run, kept unchanged, in `udhr-retry-run1.json`.
+
+| Unit | Bytes | C1 | C2 | C3 | C4 | Hidden in the name (1.2) | `expressible_today` | Attempts |
+|---|---|---|---|---|---|---|---|---|
+| u039 | 201 | ✓ | ✓ | ✓ | ✓ (determination slot, guard on it) | — | **yes** | run 1: guard variables reversed (an authoring error, below) |
+| u041 | 201 | ✓ | ✓ | ✓ | ✓ | time ("until proved guilty") | no | 1 |
+| u076 | 125 | ✓ | ✓ | ✓ | ✓ | two readings (AP-4) | no | 1 |
+| u079b | 76 | ✓ | ✓ | ✓ | ✓ | an obligation stated as a plain property of elections, with a disjunctive act (AP-3); subject from u079a | no | 1 |
+| u082 | 277 | ✓ | ✓ | ✓ | ✓ | rights as objects; a limit other units cite | no | 2: the full wording exceeds the 256-character verbalisation limit (`ResourceLimit: verbalisation size`, `lean/VE/Bridge.lean:123`); without the display-only verbalisation, the description carrying every word, it passes |
+| u085 | 85 | ✓ | ✓ | ✓ | ✓ | — | **yes** | 1 |
+| u086 | 216 | ✓ | ✓ | ✓ | ✓ | condition inside the object (R4) | no | 1 |
+| u091 | 201 | ✓ | ✓ | ✓ | ✓ | — | **yes** | 1 |
+| u092 | 163 | ✓ | ✓ | ✓ | ✓ | two readings (AP-4) | no | 1 |
+| u106 | 171 | ✓ | ✓ | ✓ | ✓ (production slot, guard on it) | — | **yes** | run 1: guard variables reversed; attempt 1 (kinds as three guard predicates) failed only C4 as implemented; attempt 2 (kinds as one predicate) passes |
+| u108 | 144 | ✓ | ✓ | ✓ | ✓ | modality ("can be") | no | 1 |
+
+Every Lean check returned `model` (no conflict found), coverage 100%, status OPEN.
+
+**Result.**
+
+- `loads_as_opaque_entitlement`: **11 of 11**. M1 (loose) after = **0 B**.
+- `expressible_today` = yes: **u039, u085, u091, u106 (4 units, 658 B)**, credited to AP-0.
+- M1 (primary) after = **1,202 B, 7 units** (u041, u076, u079b, u082, u086, u092, u108), from 1,860 B.
+- **Verdict: PASS.** The measurement was made by the registered method, and M1 moves. The faithfulness of the four
+  `yes` units needs the pilot's independent audit, which is deferred (section 6).
+
+**What went wrong on the way, all recorded:**
+
+- In run 1, u039 and u106 failed C1 with `TypeMismatch`. The guard variables were written in the wrong order: a guard
+  variable counts from the last argument, so in a rule over (person, x), `var 0` is x. This was a translator's error,
+  not a language limit. After fixing the order, both pass C1.
+- u106's first attempt carried the three kinds as three guard predicates in a disjunction. That carries them with
+  more structure, but C4 as implemented reads each phrase from a single text. The check was not changed. A second
+  attempt, kept in the evidence beside the first, uses one predicate ("The production is scientific, literary or
+  artistic") and passes.
+- u082 meets a real limit of today's language: a verbalisation holds at most 256 characters. Its 277-byte sentence
+  fits only in the description, so its display falls back to "classified as".
+
+**The price of these encodings.** All 11 documents render the fallback sentence. Ten say "classified as …"; u039, with
+two arguments, says "has the recorded relation …". Each act is one opaque string, which is also its status under
+AP-1, because AP-1 does not change an act's meaning (plan 2.5, D1).
+
+## 3. Item 2: M3
+
+**Bar** (1.3): before, unmeasured. M3 (primary) = the rendered lines containing `classified as` or
+`has the recorded relation`.
+
+**Run.** `prlimit --as=8589934592 uv run python research/act-phrases/ap0_m3.py`. Evidence:
+`evidence/act-phrases/m3-count.json` and the five renderings in `evidence/act-phrases/m3-rendered/`.
+
+| Document | Lines matching | "classified as" | "has the recorded relation" | Distinct predicates | Lines naming an entitlement by name (exploratory) |
+|---|---|---|---|---|---|
+| UDHR part 1 | 23 | 34 | 0 | 27 | 9 |
+| UDHR part 2 | 17 | 23 | 0 | 20 | 9 |
+| UDHR part 3 | 11 | 11 | 0 | 11 | 7 |
+| UDHR part 4 | 21 | 17 | 6 | 15 | 3 |
+| **UDHR** | **72** | 85 | 6 | 72 | 28 |
+| **Constitution** (main document) | **28** | 60 | 9 | 33 | 0 |
+| **M3** | **100** | | | | |
+
+- **Verdict: PASS** (measured): M3 = **100 lines**, 160 occurrences.
+- **Consistency check.** The four UDHR renderings are byte-identical to the pilot's own `rendered-parts/*.md` of that
+  run.
+- **The registered split** shows (a) 0 lines naming a plain regulated predicate and (b) 100 lines naming another
+  predicate. The reason is that the part documents declare their entitlements as ordinary predicates, stated as
+  assertions. Only the one-unit companions declare them `role: plain`. So the split by declared kind cannot see
+  entitlements in the parts.
+- **Exploratory count** (added after the run, not registered): 28 UDHR lines name a predicate called
+  `has_the_right…` or `is_entitled…`. These are the lines AP-1's "entitlements with an act render in English" could
+  reach, once the pilot declares those entitlements as plain predicates with an act and a form. The other 72 lines
+  (44 UDHR, 28 constitution) name base predicates, which AP-1 does not touch.
+
+## 4. Item 3: `act_workaround` on the constitution's 18 norm units
+
+**Bar** (1.4): before, M4 = 18 units, 2,580 B. M4 after = the units with a tag other than `none`.
+
+**Run.** `uv run python research/act-phrases/ap0_m4.py`. Evidence: `evidence/act-phrases/m4-act-workaround.json` (each
+unit with its act, source, tag and reason).
+
+| Tag | Units | Bytes | Units |
+|---|---|---|---|
+| pointer | 7 | 874 | u0165.s01–s07 |
+| folded | 3 | 784 | u0062.s01, u0123.s02.p1, u0123.s03 |
+| shortened | 7 | 844 | u0036.s05, u0073.s05, u0123.s01.p1, u0125.s04.p2, u0156.s03, u0168.s01, u0263.s04.p2 |
+| none | 1 | 78 | u0052.s01 |
+
+- **Verdict: PASS** (measured): M4 = **17 units, 2,502 B**, from 18 units and 2,580 B.
+- **Disagreements with the research note's groups** (reported; the rule was not changed):
+  - **u0052.s01** (note: shortened; rule: none). Its act, "use good judgment when evaluating conversational inputs",
+    is in the source as written. The only word not carried is *always* in "should always use", which stands outside
+    the act. Nothing about the act phrase was worked around.
+  - **u0123.s01.p1** (note: folded; rule: shortened). Its guard is a single atom, and its act "give Claude {1}"
+    rewords "ask Claude to behave …". It is still a workaround, so M4 is unaffected.
+- **Sensitivity** (not registered). The registered rule drops a slot-introducing marker only when the marker is a word
+  run of its own. So "remain firm in {1}" leaves the run "remain firm in", which is not in the source, and u0168.s01 is
+  tagged shortened. If a final marker before a slot were dropped too, u0168.s01 would be `none`, and M4 would be
+  16 units, 2,406 B. The registered value stands.
+
+## 5. Item 4: N and the step budget
+
+**Bar** (1.5): with R the largest raw derivation count over the corpus, R ≤ 64 keeps N = 256 (PASS). With S the
+largest step count at cap 256, 10 S ≤ 2,100,000 keeps `stepBudget` (PASS).
+
+**Run.** `prlimit --as=8589934592 uv run python research/act-phrases/ap0_n.py`. One `lake env lean` elaboration of the
+stub copy (sha256 `6e33f85c…`, verbatim) plus the generated measurement section, against this worktree's build of
+`49de179e`. Exit 0, no other output: the stub's own 161 `#guard`s also pass at this commit. Evidence:
+`evidence/act-phrases/n-measurement.json`.
+
+| Row | Unit | Bytes | Raw | Meanings | `readings` at 256 / 2.1 M | Steps (cap 256) |
+|---|---|---|---|---|---|---|
+| G5 | u051 | 67 | 2 | 2 | ok 2 | 5,612 |
+| G6 | u027 | 85 | 1 | 1 | ok 1 | 2,788 |
+| G7 | u079b | 66 | 1 | 1 | ok 1 | 3,302 |
+| G8 | u105 | 138 | 2 | 2 | ok 2 | 9,272 |
+| G9 | u055 | 97 | 2 | 2 | ok 2 | 4,850 |
+| G10 | u092 | 152 | 2 | 2 | ok 2 | 9,176 |
+| G11 | u076 | 73 | 1 | 1 | ok 1 | 3,915 |
+| G12 | u087 | 74 | 2 | 2 | ok 2 | 8,575 |
+| G14v | u0123.s03 | 185 | 1 | 1 | ok 1 | **14,440** |
+| X024 | u024 | 35 | 1 | 1 | ok 1 | 2,527 |
+| X037 | u037 | 56 | 1 | 1 | ok 1 | 3,622 |
+| X045a | u045a | 93 | 1 | 1 | ok 1 | 5,608 |
+| X045ab | u045a+u045b | 142 | 0 | 0 | ok 0 | 8,632 |
+| X057 | u057 | 34 | 1 | 0 | ok 0 | 3,482 |
+| X067 | u067 | 38 | 1 | 1 | ok 1 | 2,522 |
+| X068 | u068 | 153 | 0 | 0 | ok 0 | 10,538 |
+| X071b | u071b | 99 | 0 | 0 | ok 0 | 12,438 |
+| X101 | u101 | 97 | 1 | 1 | ok 1 | 5,854 |
+| X0062 | u0062.s01 | 73 | 1 | 1 | ok 1 | 5,231 |
+| X0156 | u0156.s03 | 78 | 1 | 1 | ok 1 | 6,264 |
+| X0165s05 | u0165.s05 | 116 | 1 | 1 | ok 1 | 2,781 |
+| X0165s06 | u0165.s06 | 160 | 1 | 1 | ok 1 | 5,167 |
+
+(Bytes are the strings as written. G14v is 183 B after folding `’`, as the specification counts.)
+
+- **R = 2** (G5, G8, G9, G10, G12: one binary edge each). **N = 256 stands. Verdict: PASS.**
+- **S = 14,440** (G14v), so 10 S = 144,400 ≤ 2,100,000. **`stepBudget` = 2,100,000 stands. Verdict: PASS.** The margin
+  is about 145 times.
+- The specification's own figures are reproduced: the raw and reading counts of G5 to G14v equal 11.2's.
+- **Stress family** (not part of the bar), L6 to L12, with 64 to 4,096 derivations: at cap 256, a saturated parse stops
+  after at most 297,098 steps (L12, 257 B, 31 tokens). Enumerating L12 completely takes 916,618 steps. For phrases of
+  this shape, the raw cap binds long before the step budget does.
+- **Secondary.** Raw exceeds meanings only in X057: one derivation, whose meaning is refused. No phrase had two
+  derivations with one meaning, so this corpus holds no counterexample to "only the five edge rules give several
+  derivations" (checklist item 3). Four phrases have no reading: X045ab, X057, X068, X071b (section 7, item 5).
+
+**Exploratory: a joined filler of plain words gets one fixed grouping** (meanings in the evidence's
+`exploratory_meanings`; not part of any bar). With the vocabularies of the corpus (no fixed phrase for these words),
+the grammar returns exactly one reading for phrases whose English has more than one:
+
+- X037, "subjected to arbitrary arrest, detention or exile": `to: joined or [arbitrary arrest, detention, exile]`.
+  *Arbitrary* is read on *arrest* only, and the reading over all three is never listed. u037 is a covered unit today.
+- X045a, "subjected to arbitrary interference with their privacy, family, home or correspondence":
+  `[arbitrary interference with their privacy], [family], [home], [correspondence]`. The source means interference
+  with each of the four.
+- X0062, "give Claude a specific set of instructions, a persona, or information": `[Claude a specific set of
+  instructions], [a persona], [information]`.
+- X101, "among all nations, racial or religious groups": `[all nations], [racial], [religious groups]`.
+- X0165s06, "any individual or group": `[any individual], [group]`.
+- X0156, "about the existence of a system prompt or its content": `[the existence of a system prompt] or [its
+  content]`. The other attachment, the existence of either, is not listed.
+
+## 6. Deferred
+
+| Item | Why deferred |
+|---|---|
+| The independent audit of the 4 `yes` units (u039, u085, u091, u106) | the pilot's blind audit is a model call |
+| Writing the re-tried units, M3 and the `act_workaround` tags into the pilot runs' `units.json` and `metrics.json`, and checking the 4 units inside their part documents (not only as one-unit companions) | the pilot inputs are read-only here; the orchestrator's next pilot run copies them from `evidence/act-phrases/` |
+| M2 (5 units, 669 B) | AP-0 has no item for it; not re-measured |
+| Running the stub updated to draft 2 | that is the specification's bounded re-check (13, item 14), not AP-0. Item 4 used draft 1's stub, whose rule table and meaning are draft 2's (byte-identical sections). Draft 2's added `framesOk` condition (canonical markers) was checked by the script on every corpus vocabulary: all pass |
+
+Nothing in phase 1 needed product code, a model call or a branch not on `main`, except the audit above.
+
+## 7. Consequences for draft 2
+
+1. **AP-1's byte credit moves to AP-0 (changes AP-1, section 0's table and section 7 of the plan).**
+   - u039, u085 and u106 (457 B), plus u091 (201 B), are expressible today as opaque entitlements, with every word
+     and the arguments the ledgers asked for. That is all of AP-1's estimated UDHR credit, 658 B.
+   - AP-1 cannot add to them: under AP-1 an accepted act is still one canonical string (D1, 2.5). What AP-1 adds is
+     the honest wording, auditable fixed phrases, M2 (u020, u059) and M4 Group C.
+   - Plan row AP-1: "UDHR bytes 0 (credited to AP-0); moves M2, M3, M4".
+   - Claimed coverage after AP-0, if the audit passes: 4,792 + 658 = 5,450 B = **49.93%**. With AP-3 (u079b, 76 B) and
+     AP-4 (u092, 163 B): 5,689 B = 52.12%. With u076 later (125 B): 53.26%.
+   - The plan's top estimate is unchanged; most of it is credited earlier, and to the pilot rather than to the
+     language. This is risk 8.1 ("AP-0 may shrink the credit") coming true, as the research note expected.
+2. **AP-3 and AP-4 keep their credit (confirms).**
+   - u079b, u076 and u092 load today only by hiding what those batches build: an obligation with a disjunctive act,
+     and two readings. So their bytes stay with AP-3 and AP-4.
+   - The 7 units still blocked are u041 (time), u082 (rights as objects), u086 (R4) and u108 (modality), plus the
+     three above.
+   - u079b loaded with its own sort, `election`, so AP-3's u079b does not need u079a's subject (u079a is UNFORMALISED,
+     time). Draft 2 can drop "if the subject is carried from u079a".
+3. **M3 baseline = 100 lines (new).**
+   - AP-1's M3 claim should name its target: the 28 UDHR lines whose predicate is an entitlement (exploratory count).
+     They move only when the pilot re-declares those predicates as plain predicates with an act and a form.
+   - The other 72 lines name base predicates. That fallback belongs to the wording lint (english-lean), not to this
+     plan.
+4. **M4 = 17 units, 2,502 B (changes AP-1's and AP-3's M4 lines).**
+   - u0052.s01 carries its act as written, so Group C is 6 units, 664 B, not 7.
+   - The mechanical rule puts u0123.s01.p1 with the shortened acts, not the folded ones. It is a workaround either way,
+     so whether it goes to AP-3 (Group B) or AP-1 (Group C) needs a reading of the unit.
+   - Sensitivity: 16 units, 2,406 B if u0168.s01's "remain firm in {1}" counts as carried.
+5. **N and the step budget are measured (confirms D2; AP-2 unchanged).**
+   - `rawCap` = 256 and `stepBudget` = 2,100,000 stand. The largest pilot raw count is 2, which leaves seven doublings
+     of headroom, and the largest pilot step count is 1/145 of the budget.
+   - The specification can drop "provisional" from 1.6 and 12 at the bounded re-check.
+6. **Grammar gaps the measurement found (changes the bounded re-check's scope and AP-7's sample; no bar involved).**
+   - (a) **"to marry and to found a family" (u057) has no reading.**
+     - An item with no material joined to one with an object fits none of the three coordination patterns. The
+       shared-object pattern gives *marry* the object its frame forbids, and the full pattern needs material on every
+       item but the last.
+     - AP-6 targets u057, and its act phrase fails before arity matters. Draft 2 should add a pattern, or record the
+       refusal and the rewording.
+   - (b) **u068 and u071b have no reading.** Prepositional phrases before the head have no rule, and joined modifiers
+     inside a coordination break the one join level (C2). The research note's own reading counted u067, u068 and u071b
+     (328 B) as coordinated act phrases. Only u067 reads.
+   - (c) **Silent single readings inside joined fillers** (section 5, exploratory). This is the important one.
+     - D4's edge rule covers modifiers over joined *items*. It does not cover words shared inside a non-split
+       joined *filler*: an adjective before the list ("arbitrary arrest, detention or exile"), a determiner ("any
+       individual or group"), or a head noun with its preposition ("interference with their privacy, family, home or
+       correspondence").
+     - The grammar then lists one grouping, and for X045a and X0062 not the one the source means. No declaration is
+       involved: these are the vocabularies' defaults, so the audit item "fixed phrases name one thing" does not catch
+       them.
+     - The plan's section 0 says a known ambiguity the grammar does not model is refused or rephrased. Here it is read
+       one way.
+     - Draft 2 should choose one of: (i) refuse a joined filler whose first or last member has more than one word, so
+       the translator must declare a fixed phrase or reword; (ii) give joined fillers an edge rule; (iii) state that
+       exactness for joined fillers is relative to the declared fixed phrases, with an audit item that names the case.
+     - Either way, D3 and D4 must stay provisional, and AP-7's sample should include u037, u045a, u0062.s01, u0101 and
+       u0156.s03.
+7. **AP-1's wording vs. today's display limit (an item for the bounded re-check).**
+   - Today a verbalisation holds at most 256 characters (`lean/VE/Bridge.lean:123`; u082). AP-1 allows 400-byte acts,
+     and `Lexical.wording` adds "{0} is entitled".
+   - The specification should say whether a generated wording passes through that limit. If it does, the effective
+     act limit is lower than 400; if not, it should say what bounds the display.
+
+Batches confirmed: AP-2 (N and the budget), AP-3 and AP-4 (credit). Changed: AP-1 (no byte credit; M3 and M4 targets),
+the bounded re-check's scope (6c, 7), AP-6's u057 fixture (6a), AP-7's sample (6c). Cancelled: none.
+
+## 8. Reproduction and commits
+
+Every command ran in the foreground from the worktree root. `ve` runs and the Lean measurement used
+`prlimit --as=8589934592`, and no pytest was run. The Lean build was main's `.lake` copied in and rebuilt incrementally
+to `49de179e` (886 jobs). The Rust binary is main's, checked against `lean/checkers.lock` by `tools/rust_build.py
+--check`; `rust/` is identical at both commits.
+
+| Commit | What |
+|---|---|
+| `34009f5f` | pre-registration (section 1) and `corpus.json`, before any run |
+| `81c3f0bc` | item 3: `ap0_m4.py`, `m4-act-workaround.json` |
+| `b3897cce` | item 2: `ap0_m3.py`, `m3-count.json`, renderings |
+| `b54dc076` | item 1: `ap0_udhr_retry.py`, `udhr-retry.json`, `udhr-retry-run1.json`, the 11 documents |
+| `8839f2e8` | item 4: `ap0_n.py`, the stub copy, `n-measurement.json` |
