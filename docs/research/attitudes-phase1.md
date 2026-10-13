@@ -102,8 +102,10 @@ boundaries, so that the run, when authorised, is mechanical and cannot choose it
 ## 2. AT-0p: result
 
 **Result status.** Run 2026-10-13 after the pre-registration above (commit `c0cf207c`). Script
-`research/attitudes/at0p.py`, end to end `research/attitudes/run_at0p.sh` (about 5 min). Evidence:
-`docs/research/evidence/attitudes/at0p-probe.json`, `at0p-measure.json`, `at0p-rendered.md`, `at0p-reproduction.json`.
+`research/attitudes/at0p.py`, end to end `research/attitudes/run_at0p.sh` (5 to 20 min, by machine load). Evidence:
+`docs/research/evidence/attitudes/at0p-probe.json`, `at0p-measure.json` and `at0p-render-diff.json` (written by the
+script); `at0p-rendered.md` and `at0p-reproduction.json` (assembled by hand from the script's outputs; what they
+claim is checked by the script: the `cmp` steps in `run_at0p.sh`, and `at0p.py render`).
 
 **Method.** The pilot run was copied to two working copies (`research/attitudes/run-baseline/`, `run-at0p/`,
 untracked), whose scripts then run against this checkout's VE (Lean built from `49de179e` sources, Rust binary
@@ -125,8 +127,13 @@ script now imports from the working copy, and `run_at0p.sh` checks that no `__py
    counts as quite likely"). `restricted_action_knowing_or_quite_likely` is deleted from the vocabulary, the
    open-term list and each unit's `meaning.open`. The run's `nd.py all` then rebuilt the main translation, which
    VE admitted and checked.
-3. **Probe.** The plan's points were asked exactly as the run's probe asks them (Lean `norm-defaults-status` at a
+3. **Probe.** The plan's points were asked as the run's probe asks them (Lean `norm-defaults-status` at a
    one-element situation, with the run's fallback for UNKNOWN). The run's 21 other points were asked again.
+   *Correction after review:* the first version of `at0p.py` did not repeat the run's conflict check, which the run
+   adds at each `operator_input_permitted` point (10 of the 21), nor the run's conflict section (three witness
+   situations and a whole-document proof attempt). So its "21 of 21 the same as recorded" could not have caught a new
+   conflict on those points. The probe now repeats both, as the run does (`93c41310`); the rerun gives the same
+   statuses at every point, and all four conflict checks equal the recorded ones.
 
 | # | Bar (quoted in 1.1) | Measured | Verdict |
 |---|---|---|---|
@@ -135,7 +142,7 @@ script now imports from the working copy, and `run_at0p.sh` checks that no `__py
 | A3 | neither: UNDECIDED | 14 of 14 `UNDECIDED` (7 with the case true, 7 with it false) | **PASS** |
 | A4 | case false, knowingly true: UNDECIDED | 7 of 7 `UNDECIDED` | **PASS** |
 | A5 | the seven audit-case points UNDECIDED → SETTLED no | before: 7 × `UNDECIDED` (reproduced); after: 7 × `SETTLED no` (A1) | **PASS** |
-| A6 | claimed bytes unchanged (2,951) | `bytes_by_status` identical to the run's: CHECKED 73, LABELLED 349, OPEN 2,529, UNFORMALISED 181,942 (73 + 349 + 2,529 = 2,951) | **PASS** |
+| A6 | claimed bytes unchanged (2,951) | `bytes_by_status` identical to the run's: CHECKED 73, LABELLED 349, OPEN 2,529, UNFORMALISED 181,942. The claimed 2,951 is CHECKED + LABELLED + OPEN (73 + 349 + 2,529); CHECKED + OPEN, the sum 1.1's note names, is 2,602. Both are unchanged, because every status is | **PASS** |
 | A7 | open terms 33 → 46 | 46 in the main translation: 14 added (`knowingly_engages_1..7`, `thinks_quite_likely_1..7`), 1 removed (`restricted_action_knowing_or_quite_likely`). The strict companion has 44 | **PASS** |
 | A8 | the 7 units (874 B) become candidates for audit verification | needs the next audit | **DEFERRED** (section 4) |
 
@@ -143,10 +150,16 @@ Not bars, also measured:
 
 - The informative points both give `SETTLED no`: case true with thinks-quite-likely true, and case false with both
   attitudes true.
-- All 21 other probe points give the run's recorded status (21 of 21).
+- All 21 other probe points give the run's recorded status (21 of 21; the 10 `operator_input_permitted` points with
+  the run's conflict check). The run's four conflict checks give the recorded results (three witness situations
+  UNKNOWN, the whole document CONFLICT-FREE).
 - The main translation keeps the run's own assertions: premises `model`, reading plan `enumerate` with 8 choices,
   readings CONFLICT-FREE, coverage 100 %. The strict companion's premises are `model`.
-- `ve document render` is byte-identical outside the seven rules (`at0p-rendered.md`).
+- `ve document render` is byte-identical outside the seven rules. Checked by script: this checkout's render of the
+  unmodified run is byte-identical to the run's recorded `rendered-raw.md` (`cmp` in `run_at0p.sh`), and against it
+  the AT-0p render changes 7 lines (1278, 1280, …, 1290), each the "Open reading" line of one rule naming the deleted
+  term, each replaced by three lines (`at0p.py render`, `at0p-render-diff.json`). `at0p-rendered.md` is a hand-made
+  excerpt of those lines.
 
 **Observation (not a bar).** The rendering names the new open terms by their identifiers, not by their
 verbalisations: "(b) that instance of Claude has the recorded relation "thinks_quite_likely_1" to that situation".
@@ -167,10 +180,10 @@ section 4). Everything that needs no reader is done and committed (`cd6af1cb`):
 |---|---|---|
 | E1 items | `evidence/attitudes/e1-items.json` | 28 pair items in E1's list order plus 8 certainty items = 36. Ids follow the spec stub (`E1.pair.<a>.<b>`, `E1.cert.<w>`). 40 call orders from `random.Random("attitudes-E1")`. 1,440 calls |
 | E2 items | `evidence/attitudes/e2-items.json` | 3 factivity, 3 knows → believes, 8 knows → thinks it *w* (all eight words, G3), 3 negated "know", 3 "unless", 3 "P, and X does not know that P" = 23 items. Seed `attitudes-E2`. 920 calls |
-| Protocol | both files, `protocol` | reader `claude-sonnet-5-5`; one fresh context per call (G2); the prompt text; the parsing rule (first line: yes / no / cannot tell, anything else invalid, which counts as neither yes nor no) |
+| Protocol | both files, `protocol` | reader `claude-sonnet-5-5`; one fresh context per call (G2); the prompt text and item labels (this phase's choice, G5); the parsing rule (first line: yes / no / cannot tell, anything else invalid, which counts as neither yes nor no; its effects are in G6) |
 | Scoring | `research/attitudes/experiments.py score-e1`, `score-e2` | the quoted bars as constants (`PAIR_YES, PAIR_MAX_NO = 36, 2`; `CERT_YES = 34`; `E2_REACH = 36`). An answer set must hold exactly one answer per item and session, or it is refused and not scored |
-| Frozen table | `experiments.py table` | emits the Lean `Table` literal (spec 2.1) and evaluates `Table.reviewed` with `lake env lean` on a copy of the AT-0 stub (`ve-design-attitudes/lean/SpecStubs_attitudes.lean`, read only), so the closure review is Lean's, not Python's |
-| Self-check | `experiments.py selfcheck`; `evidence/attitudes/e-selfcheck.json` | 20 checks on synthetic counts (no reader): each bar at its boundary (pair 36/2 in, 35/0 out, 36/3 out; certainty 34 in, 33 out; factivity 36 in, 35 out, with premises 2 and 3 dropped too); refusal of missing and duplicate answers; parsing; and through Lean, a table with a failed derived pair is not reviewed, the resolved one is, and an all-pass table is. All 20 hold |
+| Frozen table | `experiments.py table` | emits the Lean `Table` literal (spec 2.1) and evaluates `Table.reviewed` with `lake env lean` on a copy of the AT-0 stub (`ve-design-attitudes/lean/SpecStubs_attitudes.lean`, read only), so the closure review is Lean's, not Python's. The stub is untracked in that worktree and still draft 1; its `Table` and `Table.reviewed` are spec draft 3's (section 2.1) apart from comments (compared by hand, 2026-10-13). It is pinned by sha256 `2178fb6eb1dfc2be9e908643538190a17da0b78a346954418d247e386b6a35e8` (`STUB_SHA256`), and a stub with another hash is refused (`8538355c`), so a later edit cannot silently change the review. The review also uses this checkout's `VE.Closure.Order.atLeast` (QS-1's closure, `lean/` at `49de179e`) |
+| Self-check | `experiments.py selfcheck`; `evidence/attitudes/e-selfcheck.json` | 22 checks on synthetic counts (no reader): each bar at its boundary (pair 36/2 in, 35/0 out, 36/3 out; certainty 34 in, 33 out; factivity 36 in, 35 out, with premises 2 and 3 dropped too); refusal of missing and duplicate answers; parsing (including that "Not necessarily." is invalid under the current rule, G6); through Lean, a table with a failed derived pair is not reviewed, the resolved one is, and an all-pass table is; and a stub with another hash is refused. All 22 hold (20 at `cd6af1cb`; the last two added at `8538355c`) |
 | Seeded bug | `PAIR_YES` 36 → 35 | the self-check fails ("pair yes=35 no=0": false, exit 1); restored |
 
 **Found while preparing (no data involved).** The item design makes the debate-round-3 clause empty. E1 asks all
@@ -224,20 +237,44 @@ DRI's decision, recorded in the plan before any answer exists:
   item failed leaves `lowerBound`, with every pair and premise that names it. This is the only one of the two
   options with a unique outcome. Also, by section 3, the debate-round-3 closure items are empty by construction, so
   draft 2 can say so instead of listing them.
-- **G5. Unspecified wordings and questions.** The plan gives no text for the knows → believes, knows → thinks *w*
-  and "P, and X does not know that P" items, nor which answer "reaches 36 of 40" for the last of these. Proposal
-  in `e2-items.json`: the question "Must P?" with "yes" expected. It tests that P is read as asserted, but not how
-  "does not know" is read. The DRI may prefer to add "Does Claude know that P?" (expected "no"), which costs
-  three more items.
-- **G6. Reader settings and invalid answers.** Temperature, output limit and extended thinking are not stated.
-  Neither is the treatment of an answer that is not yes, no or cannot tell (proposal: invalid, counted as neither
-  yes nor no, so it counts against every yes bar). Fix them before the run.
+- **G5. Unspecified framing, wordings and questions.**
+  - *Framing (E1 and E2).* The plan gives E1's two sentences and its question, but no preamble and no layout. Both
+    item files add a preamble, "Read the text and answer the question as an ordinary reader of English. Answer with
+    exactly one of: yes, no, cannot tell." (`PROMPT` in `experiments.py`, the `protocol.prompt` of both files). E1's
+    pair items label their parts "First sentence:", "Second sentence:", "Question:"; its certainty items and every
+    E2 item label only "Question:" (`e1_items`, `e2_items`). These are this phase's choices, not the plan's, and
+    they can move answers (what "an ordinary reader" invites, and offering exactly three answers), so the DRI fixes
+    them before any answer exists.
+  - *E2's wordings.* The plan gives no text for the knows → believes, knows → thinks *w* and "P, and X does not
+    know that P" items. Proposals are in `e2-items.json`.
+  - *"P, and X does not know that P".* The plan does not say which question its items ask, nor which answer
+    "reaches 36 of 40". The current items ask "Must P?" and expect "yes". That tests that P is read as asserted,
+    not how "does not know" is read, so **the current items cannot admit the form**: a pass would admit it without
+    testing it. The scorer still computes the plan's bar on them (`must_p_items_reach_36`), but its decision is
+    "refused" whatever the counts (`8538355c`). Proposal: draft 2 adds three items "P, and Claude does not know
+    that P. Question: Does Claude know that P?" (expected "no"; 120 calls), and the form is admitted only if all
+    six reach 36 of 40. If draft 2 does not add them, the form stays refused, with its rewrites.
+- **G6. Reader settings, and answers that are not yes, no or cannot tell.** Temperature, output limit and extended
+  thinking are not stated. Nor is the treatment of other answers. The current rule (`parse` in `experiments.py`)
+  reads the first line; anything but yes, no or cannot tell is "invalid", counted as neither yes nor no. That rule
+  has three effects, not one:
+  - (a) An invalid answer counts against every yes bar (it is not a yes).
+  - (b) It loosens E1's "at most 2 answer no". "Not necessarily." parses as invalid, not as no (the self-check
+    records this). So a pair with 36 yes and 4 "Not necessarily." passes, although the bar's intent refuses it.
+  - (c) For the negated-"know" items, `agreed_36` takes the largest of the four counts, invalid included. So 36
+    invalid answers would be recorded as "36 of 40 agree on one reading". The form is refused either way, so only
+    what AT-0 records is affected.
+
+  Proposal: for (b), count invalid answers as no for the no cap. That is conservative, and unlike mapping clear
+  negatives ("not necessarily", "it need not") to no, it needs no list of phrases. For (c), leave invalid answers
+  out of agreement. In both, report the invalid count per item. The scorer implements the current rule until the
+  DRI decides, and it changes only with that decision, recorded in the plan before the run.
 
 **Cancelled.** Nothing. E1 and E2 have produced no data, so no batch is confirmed or cancelled by them. Until they
 report, `table` admits nothing (spec fixture D0), and AT-0's PASS stays blocked (SR-8).
 
 **Cost, for the DRI's scheduling.** E1 is 1,440 calls (as the plan estimates). With G3, E2 is 920 calls
-(23 items × 40), against the plan's implied 40 × (15 + |`lowerBound`|).
+(23 items × 40), against the plan's implied 40 × (15 + |`lowerBound`|); with G5's three extra items, 1,040.
 
 ## 6. Commits
 
@@ -246,4 +283,7 @@ report, `table` admits nothing (spec fixture D0), and AT-0's PASS stays blocked 
 | `c0cf207c` | pre-registration: section 1, the bars quoted before any run |
 | `0c3be928` | AT-0p script, probe, measurements, evidence |
 | `cd6af1cb` | E1/E2 items, orders, scorers, Lean-reviewed table emitter, self-check |
-| (this commit) | results, DEFERRED list, consequences |
+| `25f7e9fa` | results, DEFERRED list, consequences |
+| `8538355c` | review fixes: the AT-0 stub pinned by sha256; the asserted-not-know items do not admit the form; self-check 22 of 22 |
+| `93c41310` | review fixes: the AT-0p probe repeats the run's conflict checks; the render diff is checked by script; timeouts for a loaded machine. The rerun gives the same A1–A7 results, and `at0p-measure.json` is byte-identical |
+| (this commit) | review fixes in this report: G5 (framing; the asserted-not-know items), G6 (the three effects of "invalid"), the probe method, the A6 sums, what was checked by hand |
