@@ -194,14 +194,14 @@ def gapTuple (U : UDoc) (p : String) (ids : List String) : List VE.Bridge.Entity
 def pointsOf (a : Answer) (kind : String) (c : Choice) : List String :=
   match wordsOf a with
   | none => []
-  | some (_, L) =>
+  | some (E, L) =>
     if kind == "S2p" then match splitOf a c with
       | some (m₁, m₂) => (differs _ m₁ m₂).filterMap fun (p, vs) =>
-          (VE.Words.pointClause L m₁.M p vs).map fun clause => "The text does not say whether " ++ clause ++ "."
+          (VE.Words.pointClause E L m₁.M p vs).map fun clause => "The text does not say whether " ++ clause ++ "."
       | none => []
     else if kind == "S3" then match counterOf a c with
       | some m => (gapsOfCounter a c m).filterMap fun (p, ids, _) =>
-          (VE.Words.pointClause L m.M p (gapTuple (choiceU a.x.r.N c) p ids)).map VE.Words.fillingSentence
+          (VE.Words.pointClause E L m.M p (gapTuple (choiceU a.x.r.N c) p ids)).map (VE.Words.fillingSentence · false)
       | none => []
     else []
 

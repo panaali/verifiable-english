@@ -7,7 +7,8 @@ S2's own Python construction, kept apart from `ve/readings_route.py`, whose S1 a
 from __future__ import annotations
 
 from .errors import VEError
-from .readings_route import Wording, _article
+from . import words as lean_words
+from .readings_route import Wording
 from .readings_s2_english import SITUATION_RESULTS
 
 
@@ -104,23 +105,13 @@ class S2Wording:
                     add(rule, (R.id, i), qualify(position(self.sets, R.id, i), rule["name"]))
         return out
 
-    def situation(self, data, choice):
+    def shown_situation(self, data, choice):
         """`<situation>` (2.1): the pulled situation of a model of the reading `choice` names: the elements by
-        sort, the author's base facts, and each decision as a supposition attributed to who decides; no choice
+        sort and the author's base facts, worded by Lean (`VE.Words`, the `words` mode), then each decision as a
+        supposition attributed to who decides (Python's until the soft and rights chains move, plan 4.5); no choice
         vocabulary and no generated name."""
-        words = self.s1.words
-        facts = []
-        for sort in sorted(data["domains"]):
-            if sort == "ve__reading":
-                continue
-            noun = words.sorts[sort]
-            for name in sorted(data["domains"][sort]):
-                facts.append(f"{name} is {_article(noun)} {noun}")
         relations = data.get("relations", {})
-        for predicate in sorted(relations):
-            if predicate in self.author:
-                for row in sorted(relations[predicate]):
-                    facts.append(words.predicates[predicate].format(*row))
+        suppose = []
         chosen = {(s, i) for s, i in choice}
         own = self._choice_decisions(choice)
         for predicate in sorted(relations):
@@ -130,11 +121,12 @@ class S2Wording:
                 phrase = (self._decision(predicate, row, chosen) if own is None else
                           self._choice_decision(own, predicate, row, chosen))
                 if phrase is not None:
-                    facts.append("suppose " + phrase)
+                    suppose.append("suppose " + phrase)
                 elif self.generated[predicate]["layer"] in ("soft", "rights"):
                     # Review A of compose-s2 looprecheck2: a decision the situation needs is never left out.
                     raise VEError(f"InvalidInput: a situation's decision table {predicate} has no wording")
-        text = "; ".join(facts) if facts else "nothing exists"
+        text = lean_words.situation(self.frame, data, [p for p in relations if p in self.author], suppose,
+                                    omit_sorts=("ve__reading",))
         self.slots.situations.add(text)
         return text
 
@@ -289,7 +281,6 @@ class S2Wording:
         """norm-defaults 4.1's pair sentence for a used `Fill_T` label `unsaid:pair:<r>,<m>` (readings-defaults 2.2):
         `r` must be a regulated obligation of the frame whose declared permission is `m`; any other label is refused,
         never worded."""
-        from .norm_english import pair_sentence
         body = label[len(PAIR_LABEL):]
         required, _, permission = body.partition(",")
         decl = self.frame.predicates.get(required) if required else None
@@ -297,7 +288,7 @@ class S2Wording:
         if (regulated is None or regulated.role != "obligation" or not permission
                 or regulated.permission != permission):
             raise VEError(f"InvalidInput: slot label {label} names no declared pair")
-        return pair_sentence(self.frame, required)
+        return lean_words.pair(self.frame, required)
 
     def _set(self, set_id, version, label):
         R = next((R for R in self.sets if (R.id, R.version) == (set_id, version)), None)
@@ -360,20 +351,20 @@ class S2Wording:
             lines += self.independent(self._mentions(used))
         elif conflict["status"] == "CONFLICT" and "model" in conflict:
             lines.append(E.named_result(self.readings(conflict["choice"]), "conflict", self.slots,
-                                        situation=self.situation(conflict["model"], conflict["choice"]),
+                                        situation=self.shown_situation(conflict["model"], conflict["choice"]),
                                         gaps=self.gaps(conflict["model"])))
             lines.append(self.classification(conflict))
         elif conflict["status"] == "CONFLICT":
             for witness in conflict.get("witnesses", []):
                 lines.append(E.named_result(self.readings(witness["choice"]), "conflict", self.slots,
-                                            situation=self.situation(witness["model"], witness["choice"]),
+                                            situation=self.shown_situation(witness["model"], witness["choice"]),
                                             gaps=self.gaps(witness["model"])))
                 if witness.get("status_text"):
                     lines.append(witness["status_text"])
         premises = route.premises()
         if premises["status"] == "model" and "model" in premises:
             lines.append(E.named_result(self.readings(premises["choice"]), "premise_model", self.slots,
-                                        situation=self.situation(premises["model"], premises["choice"]),
+                                        situation=self.shown_situation(premises["model"], premises["choice"]),
                                         gaps=self.gaps(premises["model"])))
         elif premises["status"] == "INCONSISTENT" and premises.get("evidence") == "certificate":
             # A certificate with A = [] (2.3 item 1): E3 and E13 from what it and its conflict certificates rely on.
@@ -460,7 +451,8 @@ class S2Wording:
             model, choice = entry["shown"][piece], [(s, i) for s, i in entry["choice"]]
             if frame != "E12" or readings != choice:
                 raise CheckerUnavailable("ReadingsConformance: Lean's plan shows a model under another frame")
-            return E.named_result(self.readings(choice), kind, self.slots, situation=self.situation(model, choice),
+            return E.named_result(self.readings(choice), kind, self.slots,
+                                  situation=self.shown_situation(model, choice),
                                   gaps=self.plan_gaps(model, line["gaps"]))
         if frame in ("E26", "E10"):
             text = E.every_result(len(self.sets), kind, self.slots, conclusion=slot)
@@ -510,12 +502,12 @@ class S2Wording:
         raise CheckerUnavailable(f"ReadingsConformance: Lean's English plan has an unknown frame {frame}")
 
     def plan_gaps(self, model, gaps):
-        """The filled gaps Lean's plan lists after a shown situation (readings-defaults 2.2): each point's clause
-        (norm-defaults' `point_clause`) and the filling's answer, in Lean's order."""
-        from types import SimpleNamespace
-        from .norm_defaults_english import point_clause
-        situation = SimpleNamespace(constants=model.get("constants") or {})
-        found = [(point_clause(self.frame, situation, predicate, tuple(ids)), value) for predicate, ids, value in gaps]
+        """The filled gaps Lean's plan lists after a shown situation (readings-defaults 2.2): each point's clause and
+        its filled-gap sentence with the filling's answer, both Lean's (`VE.Words`), in the plan's order."""
+        if any(type(value) is not bool for _, _, value in gaps):
+            raise VEError("InvalidInput: a filled gap needs its clause and a yes or no answer")
+        found = lean_words.fillings(self.frame, lean_words.constants_of(model),
+                                    [(predicate, tuple(ids), value) for predicate, ids, value in gaps])
         self.slots.clauses.update(clause for clause, _ in found)
         return found
 
@@ -541,7 +533,7 @@ class S2Wording:
         if model is None:
             raise VEError("InvalidInput: a countermodel's wording needs its checked model")
         return self.E.named_result(self.readings(counter["choice"]), "countermodel", self.slots,
-                                   situation=self.situation(model, counter["choice"]), gaps=self.gaps(model))
+                                   situation=self.shown_situation(model, counter["choice"]), gaps=self.gaps(model))
 
 
 PAIR_LABEL = "unsaid:pair:"
@@ -558,22 +550,18 @@ LABELLED_FRAMES = frozenset({"E5", "E7", "P1", "status", "unworded"})
 
 
 def filled_gaps(frame, tables, model):
-    """[(clause, answer)] for every point of every filled table (`tables`: table → its predicate, from Lean's filled
-    document) over the elements of `model`, a situation's or model's JSON: the point's clause (norm-defaults'
-    `point_clause`) and whether the model's table holds there. In table order, then tuple order."""
+    """[(clause, sentence)] for every point of every filled table (`tables`: table → its predicate, from Lean's
+    filled document) over the elements of `model`, a situation's or model's JSON, in table order, then tuple order:
+    Lean's clause of the point and its filled-gap sentence, answering whether the model's table holds there."""
     from itertools import product
-    from types import SimpleNamespace
-    from .norm_defaults_english import point_clause
-    situation = SimpleNamespace(constants=model.get("constants") or {})
     relations = model.get("relations") or {}
-    out = []
+    points = []
     for table in sorted(tables):
         predicate = tables[table]
         rows = {tuple(row) for row in relations.get(table, ())}
         domains = [sorted(model["domains"].get(sort, ())) for sort in frame.predicates[predicate].arguments]
-        for values in product(*domains):
-            out.append((point_clause(frame, situation, predicate, values), values in rows))
-    return out
+        points += [(predicate, values, values in rows) for values in product(*domains)]
+    return lean_words.fillings(frame, lean_words.constants_of(model), points)
 
 
 def _active_generated(entries, profiles):

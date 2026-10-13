@@ -56,14 +56,15 @@ def zeroRuleUnits (case : Json) (pred : String) : List String :=
 
 /-- The point lines of a zero-set answer: S2p, one per point where the split's fillings differ; S3, one per gap the
     countermodel's failure depends on. -/
-def zeroPoints (p : ZeroParts) (case : Json) (L : VE.EnglishGrammar.Lexicon) (kind : String) : List String :=
+def zeroPoints (p : ZeroParts) (case : Json) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon)
+    (kind : String) : List String :=
   if kind == "S2p" then match zeroSplitModels p (p.piece case "split") with
     | some (m₁, m₂) => (differs p.U m₁ m₂).filterMap fun (q, vs) =>
-        (VE.Words.pointClause L m₁.M q vs).map fun clause => "The text does not say whether " ++ clause ++ "."
+        (VE.Words.pointClause E L m₁.M q vs).map fun clause => "The text does not say whether " ++ clause ++ "."
     | none => []
   else if kind == "S3" then match zeroModel p (p.piece case "countermodel") with
     | some m => (VE.Readings.Wire.gapsOf p.U (m.M.withFill m.F) [] (VE.Norms.subst (fill p.U).T (size (fill p.U)) p.ψ)).filterMap
-        fun (q, ids, _) => (VE.Words.pointClause L m.M q (gapTuple p.U q ids)).map VE.Words.fillingSentence
+        fun (q, ids, _) => (VE.Words.pointClause E L m.M q (gapTuple p.U q ids)).map (VE.Words.fillingSentence · false)
     | none => []
   else []
 
@@ -81,7 +82,7 @@ def zeroView (s : ZeroAsked) (p : ZeroParts) (unused : List String) : View :=
         else none
       | none => none,
     points := fun kind _ => match words with
-      | some (_, L) => zeroPoints p s.case L kind
+      | some (E, L) => zeroPoints p s.case E L kind
       | none => [],
     ruleUnits := fun _ pred => zeroRuleUnits s.case pred,
     gaps := fun _ => match zeroModel p (p.piece s.case "countermodel") with

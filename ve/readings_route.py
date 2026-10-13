@@ -658,29 +658,21 @@ class Wording:
         """`<situation>`: elements by sort then name, true base tuples, then each decision supposed. Under the
         completion a filled table is no fact of the situation: it is shown by `gap_text`."""
         from .ast import formula_from_data  # noqa: F401  (vocabulary is the frame's)
+        from . import words as lean_words
         base = entry["base"]
-        facts = []
-        for sort in sorted(base["domains"]):
-            noun = self.words.sorts[sort]
-            for name in sorted(base["domains"][sort]):
-                facts.append(f"{name} is {_article(noun)} {noun}")
-        for predicate in sorted(base["relations"]):
-            if predicate in self.admission.doc.filled_tables:
-                continue
-            for row in sorted(base["relations"][predicate]):
-                facts.append(self.words.predicates[predicate].format(*row))
-        for table, own in [(t, False) for t in entry["fixed"]] + [(t, True) for t in entry["decisions"]]:
-            for row in table["tuples"]:
-                facts.append("suppose " + self.decision(set_id, witness, table["key"], row, own))
-        return "; ".join(facts) if facts else "nothing exists"
+        facts = [p for p in base["relations"] if p not in self.admission.doc.filled_tables]
+        suppose = ["suppose " + self.decision(set_id, witness, table["key"], row, own)
+                   for table, own in [(t, False) for t in entry["fixed"]] + [(t, True) for t in entry["decisions"]]
+                   for row in table["tuples"]]
+        return lean_words.situation(self.admission.senv.frame, base, facts, suppose)
 
     def gap_text(self, base):
         """norm-defaults 3.2's filled-gap sentences after a shown situation (readings-defaults 2.2), each led by a
         space: under the completion, every point of every filled table over the situation's elements, with the
         situation's answer (Lean's plan selects the ones a result depends on from RD-3 on)."""
-        from .readings_s2_english import gap_sentences
+        from .readings_s2_english import shown_gaps
         from .readings_s2_wording import filled_gaps
-        return gap_sentences(filled_gaps(self.admission.senv.frame, self.admission.doc.filled_tables, base))
+        return shown_gaps(filled_gaps(self.admission.senv.frame, self.admission.doc.filled_tables, base))
 
     def decision(self, set_id, witness, key_json_value, row, own):
         """`<decision>` of 2.1."""
@@ -862,16 +854,6 @@ def _finding_pairs(entry, code):
     """The candidate indices of each of Lean's findings with this code, in Lean's order (`parse_finding`, the
     reader `validate` checked them with)."""
     return [(i, j) for found, _, i, j in map(parse_finding, entry["findings"]) if found == code]
-
-
-def _article(noun):
-    """`a` or `an` by the sound of the noun's first letters (`a user`, `an agent`, `an hour`)."""
-    word = noun.lower()
-    if word.startswith(("uni", "use", "usu", "uti", "eu", "one", "once")):
-        return "a"
-    if word.startswith(("hour", "honest", "honour", "heir")):
-        return "an"
-    return "an" if word[:1] in "aeiou" else "a"
 
 
 def rule_sentence(env, body, *, rule=None):

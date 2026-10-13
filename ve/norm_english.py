@@ -152,21 +152,6 @@ def unspecified_clause(env, predicate, arguments=None):
     return reg.act.replace("{0} ", "{0} " + modal + " ", 1).format(*arguments)
 
 
-def pair_sentence(env, required):
-    """norm-defaults 4.1: the profile premise of a declared pair, render-only."""
-    decl = env.predicates[required]
-    reg = decl.regulated
-    if reg is None or reg.permission is None:
-        raise VEError(f"UnknownSymbol: declared pair {required}")
-    words = _words(env)
-    scope, nouns = _bindings(decl, words)
-    refs = [scope[len(scope) - i - 1][1] for i in range(len(nouns))]
-    first = [("an " if n[0].lower() in "aeiou" else "a ") + n for n in nouns]
-    must = reg.act.replace("{0} ", "{0} must ", 1).format(*first)
-    may = reg.act.replace("{0} ", "{0} may ", 1).format("it", *refs[1:])
-    return "Whenever " + must + ", " + may + "."
-
-
 def render_rule_sentence(rule, env, words=None):
     """Render the content of one rule, including quoted rules outside a layer."""
     words = _words(env) if words is None else words
