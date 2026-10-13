@@ -86,7 +86,10 @@ whether these mutants are binding gaps to fix (R8) belongs to the readings-route
 owner. After the change, the gate passed
 with 39 routes, 109,195 mutants and 0 failures
 ([report](evidence/relay-gate.json)). `tests/test_relay_mutation_gate.py`
-passed (18 tests).
+passed (18 tests). The full release gate then ran once on the committed
+`f06911d8`. Its status is passed: 14,562 Python tests passed, none failed,
+92 were skipped (allowed) and 36 Rust tests passed (`gate-result.json`
+at the worktree root). Only this report changed after that commit.
 
 ## Review of sibling findings
 
