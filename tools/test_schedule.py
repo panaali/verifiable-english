@@ -9,12 +9,15 @@ free; the rest follow in collection order under `load`'s own chunking, which kee
 together on a worker.
 
 It changes only the order in which tests are handed to workers. Every worker still collects the whole
-selection in collection order (tools/gate.py's `merge_pytest_events` checks this), every collected
+selection in collection order (the gate's `merge_pytest_events` checks this), every collected
 test runs once, and a test the durations file does not name is scheduled exactly as `load` would. A
 run that names another `--dist` mode keeps that mode.
 
-The durations file is measured data, not a generated file: `tools/bench/suite_tail.py durations` writes
-it from a profiled run. A stale file only makes the order less good; it never changes which tests run.
+The durations file is measured data, not a generated file: the `durations` command of the benchmark
+script `suite_tail.py` writes it from a profiled run. A stale file only makes the order less good; it
+never changes which tests run. (Every test's import closure holds this module, through the suite's
+conftest, and the test selector reads each path its strings name as data every test reads: so its
+strings name no path but the durations file.)
 """
 from __future__ import annotations
 
@@ -49,6 +52,16 @@ def read_durations(path: Path = DURATIONS) -> dict[str, float]:
         return {}
     return {nodeid: float(value) for nodeid, value in data["seconds"].items()
             if isinstance(nodeid, str) and type(value) in (int, float) and value >= 0}
+
+
+def unit_seconds(durations: Mapping[str, float] | None = None) -> dict[str, float]:
+    """The recorded seconds of each test file (a unit of the test selector's runs): the sum over its
+    recorded tests (`durations`, default the durations file)."""
+    totals: dict[str, float] = {}
+    for nodeid, value in (read_durations() if durations is None else durations).items():
+        unit = nodeid.split("::", 1)[0]
+        totals[unit] = totals.get(unit, 0.0) + value
+    return totals
 
 
 def head_first(collection: Sequence[str], durations: Mapping[str, float],
