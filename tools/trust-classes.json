@@ -8773,6 +8773,7 @@
         "VE.Service.Document.frontJson",
         "VE.Service.Document.graphLabels",
         "VE.Service.Document.listedProfiles",
+        "VE.Service.Document.ownedBeneath",
         "VE.Service.Document.ownedProfiles",
         "VE.Service.Document.parsedLabels",
         "VE.Service.Document.pythonMayRead",
