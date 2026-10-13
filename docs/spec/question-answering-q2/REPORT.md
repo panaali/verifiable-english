@@ -142,6 +142,13 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 - **Q2.6's reading and writing evaluation**: not run (model calls are forbidden here). The
   [non-model measurement report](../question-answering-report.md) records the fixtures, the budgets and the agreement
   with the existing route on the fixtures and the corpora, with what each corpus could not compare.
+- **A1d route gap (DELTA D6)**: the `norms@0` document with `data@0` flags has no supported answer route, so `ask`
+  refuses it with `UnsupportedProfile: norms route with data flags is not implemented`
+  (`tests/test_ask_cli.py::test_ve_ask_refuses_the_recorded_unsupported_profile`). A later batch can add that route
+  or rebuild `a-deny` under `norm-defaults@0` with deny defaults.
+- **Focused prover evidence (DELTA D6)**: record certificates for A2, A3 and A4 with `--evidence`, as A5's package
+  is recorded, to show the derived leads when that evidence exists. A1's recorded `ve ask` wall time is 199.109 s:
+  within the registered U3-only wall budget but too slow for ordinary use (`evidence/measurements.json`).
 - **The final-HEAD full gate**: not run after the review fixes (the fixer's instruction); see the acceptance items.
 - **The relay mutation gate on `words`**: run on its own route (`tools/relay_mutation_gate.py --route
   service:words`: 2 fixtures, 342 mutants, all refused, 0 allowed); `evidence/relay-gate.json` is the earlier run of
