@@ -1,0 +1,50 @@
+[
+  {
+    "merge": "17573bbb",
+    "clean": true,
+    "merged_budget": {
+      "K": 997,
+      "S": 9791,
+      "V": 36969
+    },
+    "committed_budget": {
+      "K": 997,
+      "S": 9791,
+      "V": 36969
+    },
+    "committed_files_check": [],
+    "totals_match": true
+  },
+  {
+    "merge": "6aafef85",
+    "clean": true,
+    "merged_budget": {
+      "K": 997,
+      "S": 9788,
+      "V": 37087
+    },
+    "committed_budget": {
+      "K": 997,
+      "S": 9788,
+      "V": 37087
+    },
+    "committed_files_check": [],
+    "totals_match": true
+  },
+  {
+    "merge": "fc106062",
+    "clean": true,
+    "merged_budget": {
+      "K": 997,
+      "S": 9974,
+      "V": 37363
+    },
+    "committed_budget": {
+      "K": 997,
+      "S": 9974,
+      "V": 37363
+    },
+    "committed_files_check": [],
+    "totals_match": true
+  }
+]
