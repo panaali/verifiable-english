@@ -1,12 +1,15 @@
 # Quantities: plan (counts and proportions; comparisons and graded words)
 
-> **Status.** Draft 1, 2026-10-12, branch `design/quantities` from `main` at `49de179e`. DRI research wave: docs only,
-> no product code, no tests, no generated file touched, no model calls. Research and measurements:
+> **Status.** Draft 2, 2026-10-13, branch `design/quantities` from `main` at `49de179e`. Draft 1 (2026-10-12) plus the
+> converged plan debate (Fable and Astra, rounds 1 and 2) and the cross-plan synthesis edits 1–10 (`SYNTHESIS.md`,
+> 2026-10-13), which settle the debate's rounding dispute. DRI research wave: docs only, no product code, no tests, no
+> generated file touched, no model calls. Research and measurements:
 > [docs/research/quantities.md](../research/quantities.md) (cited as R and a section number). This plan builds R6's
 > recommendation: a pilot repair with the existing language, then two tracks, **A** (`cardinality@0`: counts,
 > proportions, rounding) and **B** (`scales@0`: comparatives, equatives, graded words). Every number is measured (method
-> in R2.1) or marked **estimate**. The cross-plan review of the seven research-wave plans runs before any spec or
-> build and may move the shared pieces of section 10.
+> in R2.1) or marked **estimate**. QT-0's statement spec is [quantities.md](quantities.md): it elaborates the Lean
+> blocks of section 4 against `main` and lists every change its stub forced; where they differ, the spec's statement is
+> the one under review.
 
 ## 0. Summary
 
@@ -14,41 +17,51 @@
 |---|---|---:|---|---|
 | QT-0p | Pilot repair with the existing language | 2 | pilot runner | yes: C 0–128 B, U 0–76 B (**estimate**) |
 | QT-0 | Statement spec, Lean stub, statement review | 3–4 | planner | no |
-| QT-A1 | Lean core of `cardinality@0`: counts, regions, erasure, soundness | 5–6 | Lean | no |
-| QT-A2 | Lean: "rounds to" and "percent of" | 3–4 | Lean | no |
-| QT-A3 | Lean wire and service mode `cardinality`, shapes, documents, certificates | 5–6 | Lean | no |
-| QT-A4 | Python relay, document hook, fuzz tests; delete `ve/surface/count.py` | 4–5 | Python | no |
+| QT-A1 | Lean core of `cardinality@0`: counts, regions, erasure, soundness (one soundness milestone with QT-A2) | 5–6 | Lean | no |
+| QT-A2 | Lean: "rounds to" with a named tie rule (`VE.Numbers`) and "percent of"; after ME-1 | 3–4 | Lean | no |
+| QT-A3 | Lean wire and service mode `cardinality` (registered through AR-10), shapes, documents, certificates | 5–6 | Lean | no |
+| QT-A4 | Python relay, document hook, fuzz tests; move six test files to Lean; delete `ve/surface/count.py` | 6–7 (**estimate**) | Python | no |
 | QT-A5 | News and paper measurement | 2–3 | pilot tooling | news 0–194 B |
 | QT-E | Quantity English into Lean's engine (english-lean E3's quantities step) | 2 × 5–6 | english-lean owner | no |
 | QT-A6 | Count, proportion and rounding wordings in Lean; refusals with rewrites | 4–5 | Lean | no (readability) |
-| QT-A7 | Declared exact unit conversions (on trigger) | 4–5 | Lean, Python | no |
+| QT-A7 | Exact duration conversions through ME-6's `ve-units@2` (on trigger) | 4–5 | Lean, Python | no |
 | QT-B1 | Lean core of `scales@0`: dimensions, graded words, premises, degrees | 5–6 | Lean | no |
-| QT-B2 | Scale premises on the norm routes; wire, mode `scales`, coherence of decisions | 5–6 | Lean, Python | no |
+| QT-B2 | Scale premises as PK-1's `scales` pack; layered-route kind `scales-coherence` | 5–6 | Lean, Python | no |
 | QT-B3 | Scale and graded-word wordings in Lean; refusals | 4–5 | Lean | no |
 | QT-B4 | Pilots: dial, trust levels, hard constraints, UDHR equalities | 3 | pilot tooling | C 0–781 B new, 826 B faithful; U 0–191 B |
-| QX-1 | Experiment: "most", "many", "multiple", bare "16 of the 18" | 2–3 | experiment runner | decides wordings |
+| QX-1 | Experiment: "most", "many", "multiple", bare "16 of the 18", bare "105 percent of" | 2–3 | experiment runner | shapes rewrites and reading sets |
 | QX-2 | Experiment: hard-constraint decomposition audit | 2 | experiment runner | gates QT-B4's 826 B |
-| QX-3 | Experiment: inferences with proportional grades | 2–3 | experiment runner | decides premises |
+| QX-3 | Experiment: inferences with proportional grades | 2–3 | experiment runner | shapes rewrites |
 | QX-4 | Research experiment: the 1,000-users passage | 4 | planner, Lean stub | research |
-| QS-1 | Shared ordered-scale module (proposal for the synthesis review) | 3–4 | set by synthesis | no |
+| QS-1 | Order closure over `VE.Closure` (standalone; before AT-1, QT-B1 and WG-2) | 3–4 | Lean (quantities) | no |
 
-Order: QT-0p and QX-1 to QX-3 can start now; QT-0 next; then track A (QT-A1 to QT-A5) and QT-B1 in parallel; QT-B2
-waits for `lf-16e`, `lf-14d` and `rd-9-int`; English waits for QT-E.
+Order:
+- QT-0p and QX-1 to QX-3 run now. Experiment execution stays under its own authorisation.
+- QT-0 reviews QS-1's statements too. QS-1 then lands before AT-1, QT-B1 and WG-2.
+- QT-A1 runs in parallel with the other plans' Lean cores. QT-A2 follows ME-1, still as one soundness milestone with
+  QT-A1; then QT-A3, QT-A4 (six test files) and QT-A5.
+- QT-B1 after QT-0's statement approval. QT-B2 after PK-1, AR-10's table, `lf-16e`, `lf-14d`, `rd-9-int` and the
+  corrected coherence contract.
+- QT-E before QT-A6 and QT-B3. QT-B4 waits for QX-2's audit and its slot in the hard-constraint queue.
+- Landing preference: track A and QT-B1 land after attitudes and scope's SC-1/SC-2. QT-B2 lands after ET-4 in the
+  integration order. QT-A7 follows ME-6.
 
 ## 1. Scope, owners and rules
 
 ### 1.1 In scope, and what siblings own
 
-In scope: counts over sorts declared finite; proportions with literal thresholds ("more than half", "at least 1 in
-1,000"); "n of the m" beyond W6a's caps; exact rounding and percent-of over W6a quantities; thousands separators;
-declared exact conversions between unit tags; comparatives, equatives and graded words on declared dimensions; the
-coherence of a decider's grade decisions; refusals and rewrites for vague quantity words.
+In scope: counts over sorts declared finite; proportions with literal thresholds over a nonempty population ("more than
+half", "at least 1 in 1,000"); "n of the m" beyond W6a's caps; exact rounding with a named tie rule and percent-of over
+W6a quantities and counts; thousands separators; exact duration conversions through ME-6's `ve-units@2` (QT-A7);
+comparatives, equatives and graded words on declared dimensions; the coherence of a decider's grade decisions;
+refusals and rewrites for vague quantity words.
 
 Not in scope, by owner: likelihood words and their order (**attitudes**, `VE.Attitudes.Scale`); ranks, the strength of
 a priority step, delegated switches, "outweighs" (**weighing**); days, weeks as calendar units, months, time-indexed
 values such as "the rate before the decision" (**events-time-causation**); act phrases such as "pay for work"
 (**act-phrases**); which sentence a quantifier scopes over (**scope**); statistics, confidence intervals, real-valued
-physics (**math-evidence**); the duty in "has the right to equal pay" (**rights**, merged).
+physics, exact rationals and the tie rules (`VE.Numbers`), the unit registry `ve-units@2` (**math-evidence**); the duty
+in "has the right to equal pay" (**rights**, merged).
 
 ### 1.2 One owner per piece of logic
 
@@ -56,15 +69,18 @@ physics (**math-evidence**); the duty in "has the right to equal pay" (**rights*
 |---|---|---|
 | Linear integer arithmetic and its certificates | `order@0` (`VE.Order.Tableau`: Farkas combinations, cuts) | reused through erasure; no second arithmetic checker |
 | Unit tags, decimals, W6a typing, W6a certificates | `VE.Time.*` | reused unchanged; `cardinality@0` wraps W6a statements |
-| W6a counting sugar ("at least 8") | `VE.Time.Count` (`atLeast`, `expand_atLeast_iff`) | not duplicated: `count_atLeast_agree` proves the new count atoms agree with it; the Python copy `ve/surface/count.py` is deleted (QT-A4) |
+| W6a counting sugar ("at least 8") | `VE.Time.Count` (`atLeast`, `atMost`, `exactly`, `nOfM`; `expand_atLeast_iff`, `expand_exactly_iff`, `expand_atMost_iff`) | not duplicated: `count_atLeast_agree`, `count_atMost_agree` and `count_exactly_agree` prove the new count atoms agree with all three forms, and `count_nOfM_agree` follows from `exactly`; the Python copy `ve/surface/count.py` is deleted (QT-A4, after its six importing test files move to Lean's wire forms) |
 | Counts and region arithmetic | **new** `VE.Cardinality` | one owner |
-| Comparison, equatives, graded words, their premises | **new** `VE.Scales` | one owner; QS-1 proposes one module for every declared order |
+| Rounding and exact ratios | math-evidence's `VE.Numbers` (ME-1, core `Rat`) | QT-A2 proves `roundsTo_ratio_agree`; no second rounding definition |
+| Unit declarations and conversions | ME-6's `ve-units@2` | QT-A7 declares `week` and `elapsed_day` in it; no `converts` of its own |
+| Comparison, equatives, graded words, their premises | **new** `VE.Scales` | one owner; the grade order is a QS-1 `Order` |
+| Order closure | QS-1 (quantities) over `VE.Closure` | `lean/VE/Closure/Order.lean`; no second `Reach` |
 | Acyclicity of a declared order | `VE.Route.kahn`, `DagAcyclic` | reused for the grade order |
 | Open-term records (`decided_by`, factors, precedents) | W2 schema ([document.md](document.md)) | graded words reference W2 records; no second record type |
-| Extra base premises on norm routes | `LayeredU.X`, `BaseAdmissibleX` (norm-defaults) | reused; one hook shared with attitudes (section 6) |
-| Quantity English (reading, rendering, refusals) | Lean's English engine after english-lean E3 | no new Python English; `ve/surface/time.py`'s parser and renderer leave with QT-E |
+| Extra base premises on norm routes | PK-1 packs (RD-9 composition owner) | quantities is the `scales` provider |
+| Quantity English (reading, rendering, refusals) | Lean's English engine after english-lean E3; refusals and reading sets are rows of english-lean's catalogue | no new Python English; `ve/surface/time.py`'s parser and renderer leave with QT-E |
 | Certificate search | untrusted: Python's existing `prove_quantity` on Lean's regenerated problem | no Python semantics; Lean checks every certificate and countermodel |
-| Profile registration | Lean `VE.Compose.Dispatch` | Python's `ve/profiles.py` row is the existing duplicate; one row each, not widened |
+| Profile registration | AR-10's profile-gate table (generated Python data) | `cardinality@0` and `scales@0` are one row each, with their composition proofs |
 
 ### 1.3 Rules for every batch
 
@@ -89,15 +105,20 @@ physics (**math-evidence**); the duty in "has the right to equal pay" (**rights*
 |---|---|
 | "Exactly 16 of the 18 FOMC policymakers expect a further increase." | #policymakers = 18 and #(policymakers expecting a further increase) = 16 |
 | "At least 16 of the 18 FOMC policymakers …" / "At most 2 of the 18 …" | ≥ / ≤ instead of = for the second count |
-| "More than half of the users are curious." | 2 × #(curious users) > #users |
-| "At least 1 in 1,000 of the users intend harm." | 1,000 × #(users intending harm) ≥ #users |
-| "The number of false approvals out of the number of scored decisions rounds to 0.296." | (2 × 296 − 1) × d ≤ 2,000 × f < (2 × 296 + 1) × d, with d > 0 |
-| "The September estimate is 105 percent of the June estimate." / "… is 5 percent more than …" | 100 × sept = 105 × june (same unit tag) |
-| "GBP 35,000.00", "1,000 users" | thousands separators accepted on input |
+| "More than half of the users are curious." | #users > 0 and 2 × #(curious users) > #users; the paraphrase says there is at least one user |
+| "At least 1 in 1,000 of the users intend harm." | #users > 0 and 1,000 × #(users intending harm) ≥ #users; the paraphrase says there is at least one user |
+| "The number of false approvals out of the number of scored decisions rounds to 0.296, to the nearest thousandth with exact ties going up." | d > 0 and `VE.Numbers.RoundsTo .tiesUp ⟨296, 3⟩ (f / d)`, that is (2 × 296 − 1) × d ≤ 2,000 × f < (2 × 296 + 1) × d; the operands are counts or quantities (`CTerm`); "… with exact ties going to the even digit" is `.halfEven` |
+| "The September estimate is exactly 105 percent of the June estimate." / "… is exactly 5 percent more than …" | 100 × sept = 105 × june, june > 0 (same unit tag) |
+| "The September estimate is 105 percent of the June estimate, to the nearest percent with exact ties going up." | june > 0 and `VE.Numbers.RoundsTo .tiesUp ⟨105, 0⟩ (100 × sept / june)` |
+| "GBP 35,000.00", "1,000 users" | thousands separators accepted on input, in groups of exactly three digits ("1,00" is refused) |
 
-Refused, with rewrites (authoring): bare "most" (unless QX-1 admits "more than half" as its meaning), "many", "few",
-"several", "a lot of"; bare "16 of the 18" (rewrite with "exactly" or "at least"). In translation, a bare "16 of the
-18" becomes a reading set {exactly, at least} with a distinguishing model.
+Refused, with rewrites (authoring): "most" (rewrite "more than half") and "multiple" (rewrite "at least two"), always,
+whatever QX-1 finds; "many", "few", "several", "a lot of"; bare "16 of the 18" (rewrite with "exactly" or "at least");
+bare "105 percent of" (rewrites "exactly 105 percent of" and "105 percent of, to the nearest percent" with a tie rule);
+"rounds to" with no tie rule (one rewrite per rule); "about". In translation, a bare "16 of the 18" becomes a reading
+set {exactly, at least} with a distinguishing model; a bare "105 percent of" a reading set {exact, rounded}; a "rounds
+to" whose source states no rule a reading set over the rules; "most" and "multiple" reading sets whose members QX-1
+shapes.
 
 ### 2.2 Environment and wire
 
@@ -108,9 +129,11 @@ Refused, with rewrites (authoring): bare "most" (unless QX-1 admits "more than h
   declared assumption shown in the paraphrase ("there are finitely many FOMC policymakers").
 - **Statement**: `{"cardinality": {"format": "ve-cardinality@1", "formula": F}}`, with
   `["quantity", S]` (a W6a `ve-quantity@1` tree, unchanged), `["count", sort, [[k, body], …], rel, bound]` (`rel` is
-  `lt`, `le` or `eq`; `k`, `bound` canonical integer strings), `["rounds_to", num, den, "0.296"]` (the decimal's
-  written places are kept: "0.30" and "0.3" are different claims), `["percent_of", part, whole, "105"]`, and `not`,
-  `and`, `or`, `implies`. Bodies: `["is", p]`, `["any"]`, `["not", b]`, `["and", b, b]`, `["or", b, b]`.
+  `lt`, `le` or `eq`; `k`, `bound` canonical integer strings), `["rounds_to", rule, num, den, "0.296"]` (the decimal's
+  written places are kept: "0.30" and "0.3" are different claims; `rule` names a `VE.Numbers` tie rule),
+  `["percent_of", part, whole, "105"]` (exact) and its rounded form with a rule, and `not`, `and`, `or`, `implies`.
+  Ratio operands are typed terms `CTerm := quantity QTerm | count sort body`, so a ratio can take counts. Bodies:
+  `["is", p]`, `["any"]`, `["not", b]`, `["and", b, b]`, `["or", b, b]`.
 - **Identity**: the `meaning_id` is over the whole canonical `ve-cardinality@1` object in the environment-bound
   domain; the regenerated W6a problem keeps its own W6a identities; reports bind both, as W6a binds annotated and
   erased identities. Region constants never appear on the wire as input.
@@ -118,19 +141,23 @@ Refused, with rewrites (authoring): bare "most" (unless QX-1 admits "more than h
 ### 2.3 Meaning and erasure
 
 A count atom means `Σ kᵢ × (number of objects of the sort with bodyᵢ) rel bound`, where a number of objects is the
-length of a duplicate-free list of exactly those objects (as W6a's `expand_atLeast_iff` counts; the Lean tree depends
-on no library, so there is no `Set.ncard` or rational type, and ratios are integer pairs as in `VE.Time.Decimal`).
+length of a duplicate-free list of exactly those objects (as W6a's `expand_atLeast_iff` counts; counts stay integers;
+exact ratios use core `Rat` through `VE.Numbers`). Every proportion requires a nonempty population, as "rounds to"
+requires d > 0. Region constants are fresh: `CEnv.WellFormed` (finite sorts declared, no declared symbol with the
+region prefix) is established by the decoder and is a hypothesis of `withRegions_admissible`, `erase_iff`,
+`cardinality_elab_sound` and `refutesC_sound`.
 Lean **erases** a problem (premises and conclusion together) into W6a: for each counted sort it lists the unary
 predicates the problem's counts and universal statements mention on that sort (at most 6), makes one dimensionless
 integer constant per region (each combination of true and false for those predicates: at most 64), replaces each
 count by the sum of its regions' constants, replaces a universal statement over a counted sort whose body is a Boolean
 combination of those predicates ("every policymaker expects a further increase or expects rates to stay") by "the
 regions outside it sum to 0", writes `0 ≤ n` for every region constant, and replaces the ratio operations by their
-linear integer forms. The erased problem goes to W6a's existing certificate route. Soundness (`cardinality_elab_sound`)
+linear integer forms; a count operand of a ratio becomes its dimensionless region sum. The erased problem goes to
+W6a's existing certificate route. Soundness (`cardinality_elab_sound`)
 is proved by reading each region constant as the size of its region. Countermodels are finite models of the original
 vocabulary; Lean computes the region sizes by enumeration and runs W6a's existing countermodel check.
 
-### 2.4 Limits (static, checked first, same order in Lean and the relay)
+### 2.4 Limits (static, checked first; Lean alone decides the limits and the diagnostic order; Python checks schema and request binding only)
 
 At most 8 counted sorts, 6 predicates per counted sort (64 regions), 64 terms per count atom, 512 region constants per
 problem; literals within W6a's 40-digit numeral limit; the erased problem within W6a's 10,000-node aggregate
@@ -144,7 +171,9 @@ A **dimension** names the compared sort, its comparative predicate ("gives more 
 predicate ("gives as much uplift as"), and whether "any two can be compared" (allowed only with an equative). It may
 list **graded words**: unary predicates on the sort, each an existing W2 open term (its decider and factors stay in
 the W2 record), each with a direction (upper: "serious", "the vast majority"; lower: "minor", "slight"), and pairs
-"whatever is g is h" ("very serious" above "serious"; "the vast majority" above "a majority"). All predicates are
+"whatever is g is h" ("very serious" above "serious"). "A majority" is not a vague word, so it is not a graded word:
+it is a proportion (track A); a bridge from "the vast majority" to "more than half" waits for a proved bridge from
+scales to cardinality (QX-4's plan item). All predicates are
 ordinary declared vocabulary with their verbalisations; the scale block only adds structure. The block is
 identity-bound and Lean-decoded; whether it is an environment extension or a document block (as rights and soft norms
 carry theirs) is fixed in QT-0.
@@ -170,12 +199,16 @@ Klein's relations agree). The premises never fix a graded word on any object (`g
 
 ### 3.4 Use
 
-- On norm routes, the premises enter as labelled extra base premises (`LayeredU.X` and `BaseAdmissibleX`), so a rule
-  guard may use a graded word ("no response gives serious uplift to …") and the conflict, status and unspecified
-  checks see the coherence. A rule whose guard mentions no scale symbol keeps every status (`scales_conflictFree_iff`).
-- A **coherence check** of recorded decisions (service mode `scales`, case `coherence`): given ground facts (grade
-  decisions, recorded comparisons), Lean answers COHERENT with a checked finite model, INCOHERENT naming the premise
-  instance that fails, or UNKNOWN.
+- On norm routes, the premises enter as PK-1's `scales` pack (`decls := []`, `labelled := scalePremises D`), placed
+  in X by PK-1's fixed order (after attitudes, before events), so a rule guard may use a graded word ("no response
+  gives serious uplift to …") and the conflict, status and unspecified checks see the coherence. A rule whose guard
+  mentions no scale symbol keeps every status (`scales_conflictFree_iff`).
+- A **coherence check** of recorded decisions (the layered-route kind `scales-coherence`, run on the decoded
+  `LayeredU` with the assembled X): given ground facts (grade decisions, recorded comparisons), Lean answers COHERENT
+  with a finite model of the facts and X, checked by Lean; INCOHERENT with a refutation of the facts plus the
+  generated premises, checked by Lean, listing the premise instances it uses; otherwise UNKNOWN. (A single failing
+  instance is not enough: r1 > r2, r2 > r3, r3 > r1 is refuted only by two transitivity steps and irreflexivity
+  together.)
 
 ## 4. Batches
 
@@ -190,7 +223,9 @@ No product code. Smallest step that moves a pilot number.
   principals are Anthropic, operators, and users." Content in `relational-fol@0`: a sort `principal_type`, constants
   `anthropic`, `operators`, `users`, the three facts, their pairwise distinctness, and closure
   `∀t:principal_type. t = anthropic ∨ t = operators ∨ t = users`. "At the moment" becomes a LABELLED part (MIXED
-  unit) naming the document's present; the heading's presupposed claim is the same content.
+  unit) naming the document's present without a date; the heading's presupposed claim is the same content. Once
+  `events@0` lands, "the date of this document" is events' anchor, the one indexical day; QT-0p adds no date and no
+  second indexical.
 - **UDHR, u097 (76 B)**: "Education shall be free, at least in the elementary and fundamental stages." A duty
   guarded by the stage (`elementary`, `fundamental`, constants of a sort `education_stage`) with norm-defaults'
   `unspecified` completion for other stages: "the text does not say" for higher stages is exactly what "at least"
@@ -205,15 +240,21 @@ No product code. Smallest step that moves a pilot number.
 ### QT-0. Statement spec, stub and review (planner, 3–4 h)
 
 - `docs/spec/quantities.md`: sections 2 and 3 as a statement spec (definitions, wire, diagnostics in order, limits,
-  wordings with one reading each, refusals with rewrites, fixtures), the Lean blocks of QT-A1, QT-A2 and QT-B1
-  verbatim, QX-1's result where it has landed (otherwise "pending" for "most" and "multiple").
+  wordings with one reading each, refusals with rewrites, fixtures), the Lean blocks of QT-A1, QT-A2, QT-B1 and QS-1
+  verbatim, QX-1's result where it has landed (otherwise "pending" for the reading-set members of "most" and
+  "multiple").
 - `lean/SpecStubs_quantities.lean`, untracked: every definition with the bodies given here and every theorem as a
-  `def … : Prop`, elaborated with `lake env lean` against a build of main; every failure fixed in the spec.
+  `def … : Prop`, elaborated with `lake env lean` against a build of main; every failure fixed in the spec. The stub
+  also computes the adversarial examples: a colliding region constant, the three-step cycle, an empty population, the
+  1 out of 8 tie under each rule, and a duration-to-date cast.
 - Decides: (a) a new mode `cardinality` (this plan's choice: `VE.Time.Wire.decodeEnvironment` rejects unknown
   fields, so the quantity runner's `Extension` hook cannot receive a cardinality environment) or another carrier;
   (b) the carrier of the scales block (section 3.1); (c) the profile name `cardinality@0` (not PLAN-EXPAND2's deferred
-  evaluation-only `count@0`, which this replaces with a proof-carrying layer).
+  evaluation-only `count@0`, which this replaces with a proof-carrying layer); (d) the tie rules QT-A2 admits, at
+  least `tiesUp` and `halfEven`; (e) the `kind` of PK-1's `scales` pack, with its matching obligation; (f) whether the
+  closed interval is kept as a separate approximation relation (QT-A2).
 - Done when the stub elaborates, the spec is committed, and the review converges on PASS (checklist in section 9).
+  Elaboration alone is not enough: the review is an adversarial statement review.
 
 ### QT-A1. Lean core of `cardinality@0` (Lean, 5–6 h)
 
@@ -224,6 +265,7 @@ Hand-written shared: none. Generated: `lean/VE.lean`, `lean/VE/Audit.lean`, `lea
 ```lean
 import VE.Time.Semantics
 import VE.Time.Count
+import VE.Numbers        -- ME-1 (math-evidence); QT-A1 and QT-A2 complete as one milestone after it
 
 namespace VE.Cardinality
 open VE.Time (QEnv QTerm QFormula TStructure TEntails)
@@ -252,12 +294,20 @@ structure CountAtom where
   bound : Int
   deriving DecidableEq, Repr
 
-/-- W6a statements, count atoms, the two ratio operations (QT-A2 gives their erasure) and the connectives. -/
+/-- A ratio operand: a W6a quantity term, or the number of objects of a counted sort with a body (dimensionless). -/
+inductive CTerm where
+  | quantity (t : QTerm)
+  | count (sort : String) (body : Body)
+  deriving DecidableEq, Repr
+
+/-- W6a statements, count atoms, the ratio operations with their tie rules (QT-A2 gives their erasure) and the
+connectives. -/
 inductive CFormula where
   | quantity (a : QFormula)
   | count (c : CountAtom)
-  | roundsTo (num den : QTerm) (digits : Int) (places : Nat)
-  | percentOf (part whole : QTerm) (digits : Int) (places : Nat)
+  | roundsTo (r : VE.Numbers.Rounding) (num den : CTerm) (digits : Int) (places : Nat)
+  | percentOf (part whole : CTerm) (digits : Int) (places : Nat)                              -- exactly
+  | percentRoundsTo (r : VE.Numbers.Rounding) (part whole : CTerm) (digits : Int) (places : Nat)  -- to the nearest
   | not (a : CFormula)
   | and (a b : CFormula)
   | or (a b : CFormula)
@@ -268,6 +318,12 @@ inductive CFormula where
 structure CEnv where
   q : QEnv
   finite : List String
+
+/-- What the environment decoder establishes: finite sorts are declared, and no declared symbol begins with the
+region prefix, so region constants are fresh. -/
+structure CEnv.WellFormed (E : CEnv) : Prop where
+  finiteDeclared : ∀ s ∈ E.finite, s ∈ E.q.sorts
+  fresh : ∀ c τ, E.q.constants c = some τ → c.startsWith "cardinality__" = false
 
 /-! ## Meaning, stated without erasure -/
 
@@ -299,21 +355,18 @@ def CountAtom.holds {α : Type u} (T : TStructure α) (c : CountAtom) : Prop :=
   ∃ ns : List Nat, Counts T c.sort c.terms ns ∧
     c.rel.holds ((c.terms.zip ns).map (fun p => p.1.1 * (p.2 : Int))).sum c.bound
 
-/-- `a / b` rounded to `k` decimal places, nearest with ties upward, as an integer number of `10^-k` steps:
-`⌊(2·10^k·a + b) / (2b)⌋` (floor division; rationals are written as integer pairs, as `VE.Time.Decimal` does). -/
-def roundHalfUp (a b : Int) (k : Nat) : Int := Int.fdiv (2 * 10 ^ k * a + b) (2 * b)
+/-- The integer an operand denotes: a closed tagged term's coordinate, or a count of its sort with its body. -/
+def intOf {α : Type u} (T : TStructure α) (t : CTerm) : Option Int
 
-/-- The integer coordinate a closed tagged term denotes, if any. -/
-def intOf {α : Type u} (T : TStructure α) (t : QTerm) : Option Int :=
-  match t.tdenote T [] with
-  | some (.qty _ z) => some z
-  | _ => none
-
+/-- Rounding is `VE.Numbers.RoundsTo` with the sentence's own tie rule; this plan has no rounding definition. -/
 def CFormula.holds {α : Type u} (T : TStructure α) : CFormula → Prop
   | .quantity a => a.tdenote T []
   | .count c => c.holds T
-  | .roundsTo n d D k => ∃ a b, intOf T n = some a ∧ intOf T d = some b ∧ 0 < b ∧ roundHalfUp a b k = D
-  | .percentOf p w D k => ∃ a b, intOf T p = some a ∧ intOf T w = some b ∧ 100 * 10 ^ k * a = D * b
+  | .roundsTo r n d D k => ∃ a b, intOf T n = some a ∧ intOf T d = some b ∧ 0 < b ∧
+      VE.Numbers.RoundsTo r ⟨D, k⟩ ((a : Rat) / b)
+  | .percentOf p w D k => ∃ a b, intOf T p = some a ∧ intOf T w = some b ∧ 0 < b ∧ 100 * 10 ^ k * a = D * b
+  | .percentRoundsTo r p w D k => ∃ a b, intOf T p = some a ∧ intOf T w = some b ∧ 0 < b ∧
+      VE.Numbers.RoundsTo r ⟨D, k⟩ ((100 * a : Rat) / b)
   | .not a => ¬ a.holds T
   | .and a b => a.holds T ∧ b.holds T
   | .or a b => a.holds T ∨ b.holds T
@@ -335,16 +388,27 @@ def BodyTyped (E : CEnv) (s : String) : Body → Prop
   | .not b => BodyTyped E s b
   | .and a b | .or a b => BodyTyped E s a ∧ BodyTyped E s b
 
+/-- The tie rules QT-A2 admits; QT-0 lists them (at least `tiesUp` and `halfEven`). -/
+def admittedRules : List VE.Numbers.Rounding
+
+/-- A ratio operand's tag: a quantity's W6a tag, or `dimensionless` for a count over a declared finite sort with a
+typed body. -/
+inductive CTermTyped (E : CEnv) : CTerm → String → Prop
+  | quantity {t g} : VE.Time.HasType E.q [] t (.qty g) → CTermTyped E (.quantity t) g
+  | count {s b} : s ∈ E.finite → BodyTyped E s b → CTermTyped E (.count s b) VE.Time.dimensionless
+
 /-- Independent admission: counts name a declared finite sort with typed bodies; ratio operands share one tag that
-is not `day`; W6a parts are W6a-admitted. (The environment decoder separately refuses declared symbols beginning
-with `cardinality__`, so region constants are always fresh.) -/
+is not `day`, and a rounding names a rule QT-0 admits; W6a parts are W6a-admitted. (Freshness of region constants
+is `CEnv.WellFormed`, which the environment decoder establishes.) -/
 inductive Admitted (E : CEnv) : CFormula → Prop
   | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)
   | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)
-  | roundsTo {n d D k t} : t ≠ VE.Time.dayTag → VE.Time.HasType E.q [] n (.qty t) →
-      VE.Time.HasType E.q [] d (.qty t) → Admitted E (.roundsTo n d D k)
-  | percentOf {p w D k t} : t ≠ VE.Time.dayTag → VE.Time.HasType E.q [] p (.qty t) →
-      VE.Time.HasType E.q [] w (.qty t) → Admitted E (.percentOf p w D k)
+  | roundsTo {r n d D k t} : r ∈ admittedRules → t ≠ VE.Time.dayTag → CTermTyped E n t →
+      CTermTyped E d t → Admitted E (.roundsTo r n d D k)
+  | percentOf {p w D k t} : t ≠ VE.Time.dayTag → CTermTyped E p t → CTermTyped E w t →
+      Admitted E (.percentOf p w D k)
+  | percentRoundsTo {r p w D k t} : r ∈ admittedRules → t ≠ VE.Time.dayTag → CTermTyped E p t →
+      CTermTyped E w t → Admitted E (.percentRoundsTo r p w D k)
   | not {a} : Admitted E a → Admitted E (.not a)
   | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)
   | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)
@@ -393,39 +457,55 @@ theorem hasCount_exists_unique {α : Type u} (E : CEnv) (T : TStructure α) (hT 
     (s : String) (hs : s ∈ E.finite) (b : Body) :
     ∃ n, HasCount T s b n ∧ ∀ m, HasCount T s b m → m = n
 
-theorem withRegions_admissible {α : Type u} (E : CEnv) (fs : List CFormula) (T : TStructure α)
-    (hT : Admissible E T) : (withRegions E fs T).Admissible (E.elab fs)
+theorem withRegions_admissible {α : Type u} (E : CEnv) (hE : E.WellFormed) (fs : List CFormula)
+    (T : TStructure α) (hT : Admissible E T) : (withRegions E fs T).Admissible (E.elab fs)
 
 theorem nonneg_hold {α : Type u} (E : CEnv) (fs : List CFormula) (T : TStructure α) :
     ∀ a ∈ nonnegPremises E fs, a.tdenote (withRegions E fs T) []
 
 /-- **Erasure is faithful**: on an admissible structure, a formula of the problem holds exactly when its erasure holds
 where region constants are region sizes. -/
-theorem erase_iff {α : Type u} (E : CEnv) (fs : List CFormula) (T : TStructure α) (hT : Admissible E T)
-    (a : CFormula) (ha : Admitted E a) (hin : a ∈ fs) :
+theorem erase_iff {α : Type u} (E : CEnv) (hE : E.WellFormed) (fs : List CFormula) (T : TStructure α)
+    (hT : Admissible E T) (a : CFormula) (ha : Admitted E a) (hin : a ∈ fs) :
     a.holds T ↔ (a.erase E fs).tdenote (withRegions E fs T) []
 
 /-- **Soundness**: W6a entailment of the erased problem, with the region premises, gives counting entailment. -/
-theorem cardinality_elab_sound (E : CEnv) (ps : List CFormula) (c : CFormula)
+theorem cardinality_elab_sound (E : CEnv) (hE : E.WellFormed) (ps : List CFormula) (c : CFormula)
     (hps : ∀ a ∈ ps, Admitted E a) (hc : Admitted E c)
     (h : TEntails.{v} (E.elab (c :: ps))
       (nonnegPremises E (c :: ps) ++ ps.map (CFormula.erase E (c :: ps)))
       (c.erase E (c :: ps))) :
     CEntails.{v} E ps c
 
-/-! ## Agreement with W6a's counting sugar -/
+/-! ## Agreement with W6a's counting sugar (all four forms; on the wire `n_of_m` means "exactly") -/
 
-/-- "At least n" as a count atom: `-1 · #b ≤ -n`. -/
+/-- "At least n" as a count atom: `-1 · #b ≤ -n`; "at most n": `#b ≤ n`; "exactly n": `#b = n`. -/
 def atLeastAtom (s : String) (b : Body) (n : Nat) : CountAtom := ⟨s, [(-1, b)], .le, -(n : Int)⟩
+def atMostAtom (s : String) (b : Body) (n : Nat) : CountAtom := ⟨s, [(1, b)], .le, n⟩
+def exactlyAtom (s : String) (b : Body) (n : Nat) : CountAtom := ⟨s, [(1, b)], .eq, n⟩
+/-- "Exactly n of the m": W6a's `nOfM`, exactly m selected and exactly n of them with the property. -/
+def nOfMFormula (s : String) (n m : Nat) (sel prop : Body) : CFormula :=
+  .and (.count (exactlyAtom s sel m)) (.count (exactlyAtom s (.and sel prop) n))
 
 /-- The body as an order@0 formula on the counted variable (de Bruijn index 0). -/
 def Body.toFormula : Body → VE.Order.Formula
 
-/-- On a declared finite sort, a count atom and W6a's sugar say the same thing, so "at least 3" has one meaning on
-both routes. -/
+/-- On a declared finite sort, a count atom and W6a's sugar say the same thing, so "at least 3", "at most 3" and
+"exactly 3" each have one meaning on both routes. -/
 theorem count_atLeast_agree {α : Type u} (E : CEnv) (T : TStructure α) (hT : Admissible E T)
     (s : String) (hs : s ∈ E.finite) (b : Body) (hb : BodyTyped E s b) (n : Nat) :
     (CFormula.count (atLeastAtom s b n)).holds T ↔ (VE.Time.atLeast s n b.toFormula).denote T.lower []
+theorem count_atMost_agree {α : Type u} (E : CEnv) (T : TStructure α) (hT : Admissible E T)
+    (s : String) (hs : s ∈ E.finite) (b : Body) (hb : BodyTyped E s b) (n : Nat) :
+    (CFormula.count (atMostAtom s b n)).holds T ↔ (VE.Time.atMost s n b.toFormula).denote T.lower []
+theorem count_exactly_agree {α : Type u} (E : CEnv) (T : TStructure α) (hT : Admissible E T)
+    (s : String) (hs : s ∈ E.finite) (b : Body) (hb : BodyTyped E s b) (n : Nat) :
+    (CFormula.count (exactlyAtom s b n)).holds T ↔ (VE.Time.exactly s n b.toFormula).denote T.lower []
+/-- Follows from `count_exactly_agree`. -/
+theorem count_nOfM_agree {α : Type u} (E : CEnv) (T : TStructure α) (hT : Admissible E T)
+    (s : String) (hs : s ∈ E.finite) (sel prop : Body) (h₁ : BodyTyped E s sel) (h₂ : BodyTyped E s prop)
+    (n m : Nat) :
+    (nOfMFormula s n m sel prop).holds T ↔ (VE.Time.nOfM s n m sel.toFormula prop.toFormula).denote T.lower []
 
 /-! ## Finite countermodels -/
 
@@ -437,8 +517,8 @@ def withRegionsFinite {α : Type} [DecidableEq α] (E : CEnv) (fs : List CFormul
 def refutesC {α : Type} [DecidableEq α] (E : CEnv) (ps : List CFormula) (c : CFormula)
     (M : VE.Order.FiniteModel α) : Bool
 
-theorem refutesC_sound {α : Type} [DecidableEq α] (E : CEnv) (ps : List CFormula) (c : CFormula)
-    (M : VE.Order.FiniteModel α) (hps : ∀ a ∈ ps, Admitted E a) (hc : Admitted E c)
+theorem refutesC_sound {α : Type} [DecidableEq α] (E : CEnv) (hE : E.WellFormed) (ps : List CFormula)
+    (c : CFormula) (M : VE.Order.FiniteModel α) (hps : ∀ a ∈ ps, Admitted E a) (hc : Admitted E c)
     (h : refutesC E ps c M = true) : ¬ CEntails.{0} E ps c
 
 end VE.Cardinality
@@ -452,8 +532,9 @@ Fixtures (`Examples.lean`, `#guard`):
   a further increase or expects rates to stay": the erased problem has 4 regions and a Farkas certificate. Under the
   reading "at least 16" the conclusion still holds. **FA1b**: without the exclusion premise, the countermodel (one
   policymaker expects both, one neither) refutes it.
-- **FA2 (agreement)**: `atLeastAtom` against `VE.Time.atLeast` on the units-schema 8 gate-4 models (six, seven and
-  eight entities); the evaluation counts of the pinned W6a fixtures are unchanged.
+- **FA2 (agreement)**: `atLeastAtom`, `atMostAtom`, `exactlyAtom` and `nOfMFormula` against `VE.Time.atLeast`,
+  `atMost`, `exactly` and `nOfM` on the units-schema 8 gate-4 models (six, seven and eight entities); the evaluation
+  counts of the pinned W6a fixtures are unchanged.
 - **FA3 (caps)**: "exactly 16 of the 18" is admitted here and still refused by W6a's sugar (`CountingBound`).
 - **FA8 (hostile)**: a count over a sort not declared finite (`CardinalityNotFinite`); a body with a binary
   predicate; seven predicates on one sort (`ResourceLimit`); a vocabulary symbol beginning `cardinality__`; a body
@@ -464,32 +545,40 @@ Bytes: 0. Done when `lake build`, `lean/audit.py` and the `#guard`s pass and `le
 
 ### QT-A2. Rounding and percent-of (Lean, 3–4 h)
 
-New file: `lean/VE/Cardinality/Ratio.lean` (erasure cases of `roundsTo` and `percentOf`, completing
-`CFormula.erase`). Shared and generated files as QT-A1.
+New file: `lean/VE/Cardinality/Ratio.lean` (erasure cases of `roundsTo`, `percentOf` and `percentRoundsTo`,
+completing `CFormula.erase`). Shared and generated files as QT-A1. Waits for ME-1 (`VE.Numbers`); with QT-A1 it is one
+soundness milestone (`erase_iff` and `cardinality_elab_sound` cover the ratio constructors).
 
 ```lean
 namespace VE.Cardinality
 
-/-- The erased pair of integer inequalities is exactly "D is a / b rounded to k places, ties upward"
-(the floor-division meaning of `roundHalfUp`). -/
-theorem roundsTo_linear_iff (a b D : Int) (k : Nat) (hb : 0 < b) :
-    ((2 * D - 1) * b ≤ 2 * 10 ^ k * a ∧ 2 * 10 ^ k * a < (2 * D + 1) * b) ↔ roundHalfUp a b k = D
+/-- The linear integer form handed to W6a: "a / b rounds to D / 10^k under rule r", for b > 0. -/
+def erasedRounding (r : VE.Numbers.Rounding) (a b D : Int) (k : Nat) : Prop
 
-/-- Rounding to `k` places never moves the value by more than half a step: `|2·10^k·a − 2·D·b| ≤ b`. -/
-theorem roundHalfUp_close (a b : Int) (k : Nat) (hb : 0 < b) :
-    -b ≤ 2 * 10 ^ k * a - 2 * roundHalfUp a b k * b ∧ 2 * 10 ^ k * a - 2 * roundHalfUp a b k * b < b
+/-- The erased inequalities mean exactly `VE.Numbers.RoundsTo` under the sentence's rule. -/
+theorem roundsTo_ratio_agree (r : VE.Numbers.Rounding) (a b D : Int) (k : Nat) (hb : 0 < b) :
+    erasedRounding r a b D k ↔ VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((a : Rat) / b)
 
 end VE.Cardinality
 ```
 
-"a is D / 10^k percent of b" means `100 · 10^k · a = D · b` by definition (reviewed in QT-0); its erasure is the
-W6a equation `scale (100 · 10^k) a = scale D b` in the operands' tag, covered by `erase_iff`. Fixtures (from VE's
-paper, `paper/sections/04-e1.md`): FA4 "176 out of 594 rounds to 0.296" true (591 × 594 = 351,054 ≤ 352,000 <
-352,242 = 593 × 594) and "rounds to 0.297" false; "52 out of 243 rounds to 0.214", "31 out of 243 rounds to 0.128",
-and their difference "21 out of 243 rounds to 0.086" (41,553 ≤ 42,000 < 42,039); "0.30" against "0.3" (two places
-against one: different claims); news FA5 "the September estimate out of the June estimate rounds to 1.028" true
-(2,055 × 360 = 739,800 ≤ 740,000 < 740,520 = 2,057 × 360) and "about 103 percent" refused (no "about"). Seeded bug:
-the upper bound erased with `≤`; the tie fixture "1 out of 8 rounds to 0.12" (false: 0.125 ties upward to 0.13)
+`roundHalfUp` is no longer the meaning; it may stay as an executable helper, with a lemma equating it to the `tiesUp`
+case. Closeness is ME's `roundsTo_close`. QT-0 lists the rules QT-A2 admits: at least `tiesUp` and `halfEven`. If
+QT-0 keeps the closed interval `(2D−1)·b ≤ 2·10^k·a ≤ (2D+1)·b`, it is a separate approximation relation with its own
+name and wording (for example "is 0.296 to three places") and its own fixtures; it is never the meaning of "rounds
+to".
+
+"a is exactly D / 10^k percent of b" means `100 · 10^k · a = D · b` and b > 0 by definition (reviewed in QT-0); its
+erasure is the W6a equation `scale (100 · 10^k) a = scale D b` in the operands' tag, covered by `erase_iff`. "a is
+D / 10^k percent of b, to the nearest …" uses `RoundsTo` with its stated rule in the same way. Every rounding sentence
+names its tie rule, for example "… rounds to 0.296, rounded to the nearest thousandth with exact ties going up".
+Fixtures (from VE's paper, `paper/sections/04-e1.md`): FA4 "176 out of 594 rounds to 0.296" true (591 × 594 = 351,054
+≤ 352,000 < 352,242 = 593 × 594) and "rounds to 0.297" false; "52 out of 243 rounds to 0.214", "31 out of 243 rounds
+to 0.128", and their difference "21 out of 243 rounds to 0.086" (41,553 ≤ 42,000 < 42,039); "0.30" against "0.3" (two
+places against one: different claims); news FA5 "the September estimate out of the June estimate rounds to 1.028" true
+(2,055 × 360 = 739,800 ≤ 740,000 < 740,520 = 2,057 × 360) and "about 103 percent" refused (no "about"). The tie
+fixture is one fixture per rule: "1 out of 8 rounds to 0.13" holds and "0.12" fails under `tiesUp`; the reverse holds
+under `halfEven`. Seeded bug: the upper bound erased with `≤`; the `tiesUp` tie fixture "1 out of 8 rounds to 0.12"
 becomes true and its `#guard` fails. Bytes: 0 on the pilots; VE's paper unmeasured.
 
 ### QT-A3. Wire and service mode `cardinality` (Lean, 5–6 h)
@@ -497,9 +586,11 @@ becomes true and its `#guard` fails. Bytes: 0 on the pilots; VE's paper unmeasur
 New files: `lean/VE/Cardinality/{Wire,Document,Run,Render}.lean`, `lean/ResponseShape/Schemas/Cardinality.lean`,
 `lean/ResponseShape/Encoders/Cardinality.lean`.
 Hand-written shared: `lean/VE/Service/Protocol.lean` (mode constructor, name, list entry, dispatch line, theorem
-`runMode_cardinality`), `ve/backends/service_schema.py` (`MODES`), `lean/VE/Compose/Dispatch.lean` (the profile row;
-`#guard` examples added in `lean/VE/Compose/Examples.lean`, none changed), `ve/profiles.py` (one row),
-`ve/assurance-manifest.json` (decoder pins, reviewed by hand), `ROADMAP.md` (trust-cost line).
+`runMode_cardinality`) and `ve/backends/service_schema.py` (`MODES`), both in the protocol queue in landing order; the
+`cardinality@0` row of AR-10's profile-gate table, with its composition proof (Python data generated; no
+`Dispatch.lean` profile row or gate-lemma edit, no `ve/profiles.py` row); the `cardinality` mode registers through
+AR-10's mode registry and keeps the relayed-route recipe; `ve/assurance-manifest.json` (decoder pins, reviewed by
+hand), `ROADMAP.md` (trust-cost line).
 Generated: `ve/backends/lean_service_schema/cardinality.json`, `lean/ResponseShape.lean`,
 `lean/ResponseShape/Audit.lean`, `lean/checkers.lock`, `docs/spec/assurance-manifest.md`,
 `lean/VE/Route/examples/route-cases.json`, and QT-A1's list.
@@ -535,24 +626,28 @@ end ResponseShape.Encoders.Cardinality
 ```
 
 (`CardEnv`, `CAdmission`, `CardCertificate`, `CardReport.Sound` and `admitDocument` are this batch's, following
-`VE.Time.Wire.W6Env`, `Admission`, `W6Certificate` and `VE.Time.Document`; `ResponseShape.Fits` stands for the
-predicate the existing encoder theorems use, named in QT-0.) Fixtures: FA1 and FA1b as route cases; the hostile set
+`VE.Time.Wire.W6Env`, `Admission`, `W6Certificate` and `VE.Time.Document`; the decoder proves the decoded `CEnv` is
+`WellFormed`; `ResponseShape.Fits` stands for the predicate the existing encoder theorems use, named in QT-0.)
+Fixtures: FA1 and FA1b as route cases; the hostile set
 of QT-A1 at the wire (each diagnostic in the order of section 2.4); a forged region table and a forged claimed erased
 problem, both refused. Seeded bug: the decoder accepts a count whose sort is not in `finite_sorts`; the hostile route
 case fails. Bytes: 0.
 
-### QT-A4. Python relay, document hook, fuzz tests (Python, 4–5 h)
+### QT-A4. Python relay, document hook, fuzz tests (Python, 6–7 h, **estimate**)
 
 New files: `ve/cardinality.py` (sends cases with `rows` from `ve/backends/relay.py`, binds every id, span, unit and
 region name to the request; runs the existing `prove_quantity` search on Lean's regenerated problem and sends the
 certificate back to Lean), `tests/test_cardinality_lean.py`, `tests/test_cardinality_answer.py` (fuzz: each member
 dropped, emptied, retyped, duplicated, reordered, an index out of range, one and two faults at a time).
-Hand-written shared: the document hook for `cardinality` content: through Lean's `document` mode if `lf-16g` has
-landed, else one dispatch line in `ve/document.py` (rebased after `lf-16e`/`lf-16f`); `tools/layer_policy.py` (one
-row); `tests/data/route-cases.jsonl` (recorded by `tests/route_case_recorder.py`, append-only).
+Hand-written shared: the document hook for `cardinality` content joins the document-mode queue after `lf-16g` (Lean's
+`document` mode; `ve/document.py` while it exists), in landing order AT-3b, SC-1b, QT-A4, ET-5, WG-4, ME-10;
+`tools/layer_policy.py` (one row); `tests/data/route-cases.jsonl` (recorded by `tests/route_case_recorder.py`,
+append-only); the six test files that import `ve/surface/count.py`.
 Generated: `.importlinter`, `tools/gate-collection.json`.
-**Deleted**: `ve/surface/count.py` (92 lines, a Python copy of `VE.Time.Count` used only by
-`tests/test_count_w6a.py`); that test now asks Lean's existing `count` route case for the expansion.
+**Deleted**: `ve/surface/count.py` (92 lines, a Python copy of `VE.Time.Count`), after its six importing test files
+move onto Lean's wire forms (Lean's existing `count` route case for the expansion): `tests/test_count_w6a.py`,
+`tests/test_constitution_w6a_controls.py`, `tests/test_w6a_looprecheck1.py`, `tests/test_units_w6a.py`,
+`tests/test_units_relay_w6a.py` and `tests/test_units_lean_w6a.py`.
 Seeded bug: the binding check skips the region table; a fuzz mutant that renames a region is accepted and the test
 fails. Bytes: 0.
 
@@ -566,12 +661,14 @@ fails. Bytes: 0.
   property REIFIED).
 - VE's paper: a seeded sample of 20 of the 48 lines with ratios (seed `quantities-QT-A5`), each written as cardinality
   content by hand, checked, and reported as "n of 20 expressible"; no byte claim (the paper is not partitioned).
+- Rounding in sources: QT-A5 keeps a source's stated tie convention, or reports the rounding as unresolved (a reading
+  set over the rules); it never imposes one.
 - Bytes: news 0–194 B (**estimate** until the run). Done when the measured partition is committed with its run.
 
 ### QT-E. Quantity English into Lean's engine (english-lean owner, two batches of 5–6 h)
 
 This is english-lean-PLAN 2.5's quantities step of E3, owned by that plan; listed here because QT-A6 and QT-B3 need
-it. Lexer terminal classes for ISO dates, `D Month YYYY`, decimals, labelled amounts, percentages and (new) thousands
+it. QT-E gates QT-A6, ME-11 and QT-B3; it does not gate AT-5. Lexer terminal classes for ISO dates, `D Month YYYY`, decimals, labelled amounts, percentages and (new) thousands
 separators; W6a's frames (comparisons, `within`, `shift`, `elapsed`, the percentage-point alias) as rules of the
 engine with whole-sentence derivation uniqueness. **Deleted** by that step: `ve/surface/time.py`'s parser and
 renderer (298 lines) and their two call sites in `ve/document.py` (`:145`, `:1549`), after a delta report on the W6
@@ -581,22 +678,28 @@ test corpora (`tests/test_time_surface_w6a.py` and the W6a regression files). Sh
 
 ### QT-A6. Count, proportion and rounding wordings in Lean (Lean, 4–5 h)
 
-Rules in the engine (new rule module files if E3's layer mechanism allows, else additive lines): the wordings of
-section 2.1, rendering that parses back to the same canonical `F` (the per-output check of english-lean 3.5), and
-refusals with rewrites in Lean's diagnostic table: "most" (unless QX-1 admitted it), "many", "few", "several", "a lot
-of", "about", bare "16 of the 18". Fixtures: every wording of 2.1 round-trips; FA6 "GBP 35,000.00" lowers to
-3,500,000 `gbp_penny` (eligibility's probe P4 now accepted; W6a's canonical rendering is unchanged, separators are an
-input alias); FA7 bare "16 of the 18" refused with both rewrites. Seeded bug: "at most n of the m" built as "at
-least"; the round-trip fixture fails. Bytes: 0 (readability of QT-A5's content).
+In the serialised English queue on `lean/VE/EnglishGrammar/*`: AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7; QT-E gates QT-A6,
+ME-11 and QT-B3, not AT-5. Rules in the engine (new rule module files if E3's layer mechanism allows, else additive
+lines): the wordings of section 2.1, rendering that parses back to the same canonical `F` (the per-output check of
+english-lean 3.5). QT-A6's refusals and translation reading sets are rows in english-lean's catalogue, with no
+separate table: "most", "many", "few", "several", "a lot of" (and "multiple"); bare "16 of the 18"; bare "105 percent
+of"; "rounds to" with no tie rule; "about". "About", "approximately", "roughly" and "nearly" form **one** catalogue
+row shared with math-evidence: QT-A6 adds it, being earlier in the queue, and ME-11 reuses it. Fixtures: every wording
+of 2.1 round-trips; FA6 "GBP 35,000.00" lowers to 3,500,000 `gbp_penny` (eligibility's probe P4 now accepted; W6a's
+canonical rendering is unchanged, separators are an input alias in groups of exactly three digits, "1,00" refused);
+FA7 bare "16 of the 18" refused with both rewrites. Seeded bug: "at most n of the m" built as "at least"; the
+round-trip fixture fails. Bytes: 0 (readability of QT-A5's content).
 
-### QT-A7. Declared exact unit conversions (Lean, Python, 4–5 h; on trigger)
+### QT-A7. Exact duration conversions through `ve-units@2` (Lean, Python, 4–5 h; on trigger)
 
-Trigger: a pinned document needs a conversion (eligibility's "52 weeks" entered as 364 days is the candidate).
-`ve-units@2` adds `"converts": {"week": {"to": "day", "factor": "7"}}` between scale-1 tags of one dimension; the
-statement layer gains `convert(tag, t)`, typed from the source tag to the target, erased to a literal `scale`. Theorem
-`convert_iff` (the erased term denotes `factor × value` in the target tag) and `units_v1_conservative` (a `ve-units@1`
-environment means what it meant). Currencies never convert. Calendar months and years are events-time-causation's
-and are not fixed factors. Bytes: 0 on the pilots.
+Trigger: a pinned document needs a conversion (eligibility's "52 weeks" is the candidate). Waits for ME-6, which owns
+`ve-units@2` (base dimensions, units with `base_exponents`, an exact positive `factor` to the coherent unit) and
+`units_v1_conservative`; QT-A7 has no `"converts"` design and no `convert_iff`. On its trigger QT-A7 declares `week`
+and `elapsed_day` as units of the time physical dimension with exact factors in ME-6's registry, and converts with
+`VE.Calc.convert_by_factors`. It never converts into or out of `day`, W6a's calendar-date tag: durations use
+`elapsed_day`, and a duration-to-date cast is refused. `ve-units@1` tags stay nominal. Currencies never convert.
+Calendar months and years remain events-time-causation's. ("Dimension" in this plan is a comparison scale; ME's units
+have a "physical dimension".) Bytes: 0 on the pilots.
 
 ### QT-B1. Lean core of `scales@0` (Lean, 5–6 h)
 
@@ -606,6 +709,7 @@ Hand-written shared: none. Generated: as QT-A1.
 ```lean
 import VE.Semantics
 import VE.Route.Route
+import VE.Closure.Order   -- QS-1
 
 namespace VE.Scales
 universe u
@@ -635,6 +739,9 @@ structure Dimension where
 structure ScaleDoc where
   dims : List Dimension
   deriving DecidableEq, Repr
+
+/-- The grade order of a dimension is a QS-1 `Order` (no closure of this plan's own). -/
+def gradeOrder (d : Dimension) : VE.Closure.Order String := ⟨d.grades.map (·.name), d.above⟩
 
 /-- Predicates declared with the right signatures; grades are W2 open terms; one dimension per predicate; `above`
 pairs within one dimension and one direction, acyclic by `VE.Route.kahn`; `comparable` only with `same`. -/
@@ -713,16 +820,16 @@ theorem grade_open (E : VE.Environment) (ots : List String) (D : ScaleDoc) (hD :
     (∃ S : VE.Structure.{0}, S.Admissible (envScales E D) ∧
       (∀ a ∈ (scalePremises D).map (·.2), a.denote S []) ∧ ∃ x, S.domain d.sort x ∧ ¬ S.relation g.name [x])
 
-/-- The premises are well typed in the declared environment, so every route that takes typed extra premises takes them. -/
+/-- The premises are well typed in the declared environment; at `E := envAt (fill U) 0` this is the typing
+obligation of PK-1's `scales` pack (QT-B2). -/
 theorem premises_wellTyped (E : VE.Environment) (ots : List String) (D : ScaleDoc) (hD : WellFormed E ots D = true) :
-    ∀ a ∈ (scalePremises D).map (·.2), a.check E [] = true
+    ∀ a ∈ (scalePremises D).map (·.2), a.WellFormed E []
 
 end VE.Scales
 ```
 
 (`Fresh`'s symbols are the dimension's comparative, equative and graded predicates; `scales_conservative` reads them
-as symbols whose meaning the old document did not constrain. `a.check` stands for the core typing check the routes
-use, named in QT-0.) Fixtures (`Examples.lean`):
+as symbols whose meaning the old document did not constrain.) Fixtures (`Examples.lean`):
 
 - **FB1 (u0165.s01)**: dimension `uplift` on sort `response`, grade `gives_serious_uplift` (upper, W2 open term
   `serious_uplift` with factor "what counts as serious uplift"). Decisions "r1 gives serious uplift", "r2 gives more
@@ -734,23 +841,37 @@ use, named in QT-0.) Fixtures (`Examples.lean`):
   the same; pairwise different}, with a distinguishing model.
 - **FB4 (UDHR u094)**: dimension `social_protection` on `child` with `same`; "all children enjoy the same social
   protection" as `∀c₁ c₂. same(c₁, c₂)` (the duty form is rights').
-- **FB6 (u0165.s05)**: dimension `share_of_humanity_targeted` on `attempt`, grades `vast_majority` above `majority`
-  (upper); "an attempt on the vast majority is an attempt on a majority" is entailed.
+- **FB6 (u0165.s05)**: dimension `share_of_humanity_targeted` on `attempt`, grade `vast_majority` (upper, an open
+  term); u0165.s05 says only "vast majority". "A majority" is not a vague word, so it is not a graded word. "The vast
+  majority implies more than half" waits for a proved bridge from scales to cardinality (QX-4's plan item); no
+  fidelity credit is claimed for it.
 - **FB8 (hostile)**: a comparative on an undeclared dimension; an `above` cycle (`ScaleCycle`, from `VE.Route.kahn`'s
   diagnostic); `above` across directions; `comparable` without `same`; a graded word that is not a W2 open term.
 
 Seeded bug: the lower-direction closure generated with the comparative reversed; FB1's lower twin (a "minor harm"
 fixture) is accepted wrongly and its `#guard` fails. Bytes: 0.
 
-### QT-B2. Scale premises on the norm routes; mode `scales` (Lean, Python, 5–6 h)
+### QT-B2. Scale premises as PK-1's `scales` pack; layered-route kind `scales-coherence` (Lean, Python, 5–6 h)
 
-Needs `lf-16e`, `lf-14d` and `rd-9-int` merged. New files: `lean/VE/Scales/{Wire,Coherence,Run}.lean`,
-`lean/ResponseShape/{Schemas,Encoders}/Scales.lean`, `ve/scales.py`, `tests/test_scales_lean.py`,
-`tests/test_scales_answer.py`. Hand-written shared: the norm-defaults and readings wire decoders gain one call that
-adds the block's labelled premises to `X` (or, preferably, one generic "extra premise providers" hook added by the
-first of attitudes AT-4 and this batch, which the other then uses); `Protocol.lean`, `service_schema.py`,
-`Compose/Dispatch.lean`, `ve/profiles.py`, `ve/assurance-manifest.json`, `ROADMAP.md` as in QT-A3; the document hook
-as in QT-A4. Generated: as QT-A3, with `scales.json`.
+Needs PK-1 and AR-10's profile-gate table, in addition to `lf-16e`, `lf-14d` and `rd-9-int` merged. It lands last in
+the integration order on `Layered.lean` (AT-2/AT-3a → WG-3 → ET-4 → QT-B2); its position inside X is PK-1's fixed
+order: after attitudes, before events. New files: `lean/VE/Scales/{Wire,Coherence}.lean`, `ve/scales.py`,
+`tests/test_scales_lean.py`, `tests/test_scales_answer.py`. QT-B2 registers PK-1's `scales` pack:
+- `decls := []`, since the block adds no symbol;
+- `labelled := scalePremises D`;
+- `origins`: each label ↦ its request path;
+- its `kind` is declared in QT-0 with the matching obligation. No conservativity claim for a combination goes beyond
+  what `scales_conservative` states.
+
+The pack's typing obligation is `premises_wellTyped` at `envAt (fill U) 0`:
+`∀ a ∈ (scalePremises D).map (·.2), a.WellFormed (envAt (fill U) 0) []`. On the readings route, QT-B2 proves its own
+`Transfers`, and PK-1's `transfers_append` combines the packs. The `coherence` case is the layered-route kind
+`scales-coherence`, run on the decoded `LayeredU` with the assembled X; its shape goes into the layered route's
+response-shape files. `scales@0` is one row of AR-10's profile-gate table, with its composition proof. Hand-written
+shared: `Layered.lean` (one provider line, in integration order), the layered route's response-shape files,
+`ve/assurance-manifest.json`, `ROADMAP.md`; the document hook as in QT-A4. There is no `scales` mode: no
+`Protocol.lean` constructor, no `runMode_scales`, no `service_schema.py` entry and no generated `scales.json`.
+Generated: as QT-A1, plus the layered route's regenerated schema.
 
 ```lean
 namespace VE.Scales
@@ -762,26 +883,26 @@ theorem scales_conflictFree_iff (U : VE.NormDefaults.UDoc) (X : List VE.Formula)
     VE.NormDefaults.ConflictFreeX.{u} U X ↔
       VE.NormDefaults.ConflictFreeX.{u} U (X ++ (scalePremises D).map (·.2))
 
-/-- A coherence answer is sound: INCOHERENT names a premise instance false in every model of the facts; COHERENT
-carries a finite model of the facts and the premises, checked by Lean. -/
-theorem coherence_sound (E : VE.Environment) (ots : List String) (D : ScaleDoc) (facts : List VE.Formula)
-    (r : CoherenceResult) (h : checkCoherence E ots D facts = .ok r) : r.Sound E D facts
+/-- A coherence answer is sound: INCOHERENT carries a refutation of the facts plus the generated premises, checked by
+Lean, and lists the premise instances it uses; COHERENT carries a finite model of the facts and X, checked by Lean;
+a search that finds neither returns UNKNOWN. -/
+theorem coherence_sound (E : VE.Environment) (X : List (String × VE.Formula)) (facts : List VE.Formula)
+    (r : CoherenceResult) (h : checkCoherence E X facts = .ok r) : r.Sound E X facts
 
 end VE.Scales
-
-namespace VE.Service
-theorem runMode_scales (j : Json) : runMode .scales j = VE.Scales.Run.runCaseReported j := rfl
-end VE.Service
 ```
 
 (`GuardsFresh`, `CoherenceResult.Sound` and `checkCoherence` are this batch's.) Fixtures: FB1 as a coherence case;
-the constitution's main document with an empty scales block, whose carried probes stay byte-identical (FB7). Seeded
-bugs: Lean, the block's premises dropped on one reading choice (an enumerated fixture fails); Python, the binding
-check skips the failing premise's label (a fuzz mutant passes and the test fails). Bytes: 0.
+the three-step cycle r1 > r2, r2 > r3, r3 > r1 (no single premise instance is false in every model of the facts; the
+refutation uses two transitivity instances and irreflexivity); the constitution's main document with an empty scales
+block, whose carried probes stay byte-identical (FB7). Seeded bugs: Lean, the block's premises dropped on one reading
+choice (an enumerated fixture fails); Python, the binding check skips an instance's label (a fuzz mutant passes and
+the test fails). Bytes: 0.
 
 ### QT-B3. Scale and graded-word wordings in Lean (Lean, 4–5 h)
 
-After QT-E (or english-lean E3's norm step) and QT-B2. Declarations: "Responses are compared by uplift: one response
+After QT-B2, in the serialised English queue AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7; QT-E gates it (QT-B3 may instead
+follow english-lean E3's norm step). Its refusals are rows in english-lean's catalogue. Declarations: "Responses are compared by uplift: one response
 gives more uplift than another." "Two responses can give equal uplift." "Any two responses can be compared by
 uplift." "Serious uplift is a degree of uplift decided by …" "Very serious uplift is serious uplift." Uses: "Response
 A gives more uplift than response B." "Response A gives serious uplift." "Act A is more harmful than act B." "A is
@@ -793,43 +914,73 @@ research, R5.2). Fixtures: each wording round-trips; each refusal names its rewr
 ### QT-B4. Pilots (pilot tooling, 3 h)
 
 - Constitution companion, then main document: FB2 (dial, u0226.s01 and s02, 680 B), FB3 (u0043.s01, 101 B), FB1 and
-  FB6 for the hard constraints u0165.s01 to s06 (826 B, already OPEN) only if QX-2 passes.
+  FB6 for the hard constraints u0165.s01 to s06 (826 B, already OPEN) only if QX-2 passes. QT-B4's edits to
+  u0165.s01–s06 sit in the hard-constraint queue: they come after AT-0p → SC-1b → SC-2 → AT-6a/AT-6b → WG-5, then run
+  one at a time with WG-8, whichever is ready first. QT-B4 still also waits for QT-B2 and QX-2, and starts from the
+  translation as the previous step left it.
 - UDHR companion probe: FB4 (u094, 90 B), u093 ("special care", 73 B) and u031 ("equal before the law", 28 B) with the
   rights route.
 - Measure: claimed and audit-verified bytes, the residual (each graded word is an open term in it), and the carried
   probes. Bytes: C 0–781 B newly claimed; 826 B faithful (audit-verifiable after the next audit); U 0–191 B
   (**estimates**).
 
-### QS-1. One ordered-scale module (proposal for the synthesis review, 3–4 h)
+### QS-1. Order closure over `VE.Closure` (Lean, quantities, 3–4 h)
 
-A generic finite grade order (`grades`, `above`), its reflexive-transitive closure, `atLeast_refl`,
-`atLeast_trans`, acyclicity through `VE.Route.kahn`, and lemmas proving the existing frozen closures equal to it
-(`VE.SoftNorms.outranksPlus`, `VE.Risk.closure`) without editing them; attitudes' planned `VE.Attitudes.Scale.atLeast`
-and this plan's grade order would use it. The owner is decided by the synthesis review; if no owner is chosen,
-QT-B1 uses `VE.Route.kahn` only and adds no closure of its own.
+Quantities' standalone batch. Its statements are reviewed in QT-0. It lands **before AT-1, QT-B1 and WG-2**. There is
+no new algorithm and no second `Reach` definition: the implementation is `VE.Closure` on `main`
+(`lean/VE/Closure/Paths.lean`: `Path`, `Reachable .plus/.star`, the deduplicated Warshall closure, `reachEval`,
+`reachEval_iff`). In a new file `lean/VE/Closure/Order.lean`, with `Paths.lean` unchanged, QS-1 delivers:
+
+```lean
+structure Order (α : Type) where
+  elems : List α
+  edges : List (α × α)
+structure Caps where
+  elems : Nat
+  edges : Nat
+def Order.admit   [DecidableEq α] (c : Caps) (o : Order α) : Except String Unit   -- ResourceLimit
+def Order.above   [DecidableEq α] (o : Order α) (a b : α) : Bool := reachEval .plus o.edges a b
+def Order.atLeast [DecidableEq α] (o : Order α) (a b : α) : Bool := reachEval .star o.edges a b
+theorem path_iff_transGen : Path R a b ↔ Relation.TransGen R a b
+theorem reachable_star_iff : Reachable .star R a b ↔ a = b ∨ Relation.TransGen R a b
+theorem atLeast_refl ; theorem atLeast_trans ; theorem above_iff ; theorem atLeast_iff
+theorem outranksPlus_eq_above   -- VE.SoftNorms.outranksPlus agrees with `above` (soft file unedited)
+theorem risk_closure_eq         -- VE.Risk.closure agrees likewise (risk file unedited)
+```
+
+- `Relation.ReflTransGen` does not exist in the pinned Lean v4.24.0 core, and VE has no Mathlib. Reflexive agreement
+  is therefore stated as `a = b ∨ Relation.TransGen`.
+- Acyclicity stays `VE.Route.kahn`.
+- Each consumer keeps its own meaning: attitudes, the likelihood table and its gating; weighing, a strict pair needs
+  a chain containing an `always` edge; QT-B1, the grade order is a QS-1 `Order`.
+- Cardinality, ordinal grades and physical dimensions stay distinct: QS-1 is an order closure only, with no numbers
+  and no units.
 
 ## 5. Experiments (pre-registered)
 
 Readers for QX-1 and QX-3: Sonnet 5.5 as human proxy (`claude-sonnet-5-5`), 40 independent sessions with no shared
 context, items in a seeded random order. This measures agreement among proxy readers, not truth and not human
-readers. No experiment ran for this plan.
+readers. No experiment ran for this plan. Experiments cannot select a meaning by vote: they improve explicit rewrites
+and identify translation alternatives. Experiment execution stays under its own authorisation.
 
-### QX-1. "most", "many", "multiple", bare "16 of the 18" (2–3 h)
+### QX-1. "most", "many", "multiple", bare "16 of the 18", bare "105 percent of" (2–3 h)
 
 Seed `quantities-QX1`. Items: for "most", six neutral contexts ("Of the 100 members, 51 voted yes. Is it true that
 most members voted yes?") at 50, 51, 60 and 95 of 100 and at 3 of 5; for "many", "few" and "several", six contexts
 each that separate the cardinal from the proportional reading (Partee); for "multiple", six contexts at 1 and 2; for
-bare "16 of the 18 … expect X", six contexts asking whether 17 expecting X is compatible.
+bare "16 of the 18 … expect X", six contexts asking whether 17 expecting X is compatible; for bare "105 percent of",
+six contexts asking whether a value of 105.4 percent is compatible (exact against rounded).
 
-- "most" gets "more than half" as its meaning iff at least 36 of 40 answer true at 51 of 100 and at least 36 of 40
-  answer false at 50 of 100, on at least 5 of the 6 contexts. Otherwise "most" is refused in authoring and a reading
-  set {more than half; an open proportion grade} in translation.
-- "many", "few", "several" get a fixed meaning only with 36 of 40 agreement on one reading on 5 of 6 items (expected
-  to fail); otherwise refused with rewrites.
-- "multiple" means "at least two" iff 36 of 40 on 5 of 6.
-- Bare "n of the m" stays refused in authoring whatever the result; in translation it is a reading set unless 36 of
-  40 choose "exactly" on 5 of 6, which is recorded but narrows nothing by itself.
-- Cost **estimate**: 40 sessions × 30 items = 1,200 short calls, within the usage-cap rules.
+- Authoring always refuses "most" and "multiple", whatever the result, and offers the rewrites "more than half" and
+  "at least two". Translation keeps reading sets ("most": {more than half; an open proportion grade}).
+- "many", "few", "several" stay refused with rewrites; the answers shape the rewrites.
+- Bare "n of the m" stays refused in authoring whatever the result; in translation it is a reading set
+  {exactly, at least}.
+- Bare "105 percent of" stays refused in authoring with the rewrites "exactly 105 percent of" and "105 percent of, to
+  the nearest percent" with a tie rule; in translation it is a reading set {exact, rounded}.
+- The experiment only shapes the rewrites and the members of each reading set; agreement among proxy readers never
+  admits an ambiguous wording.
+- Cost **estimate**: 40 sessions × 36 items = 1,440 short calls, within the usage-cap rules.
 
 ### QX-2. Hard-constraint decomposition (2 h)
 
@@ -844,10 +995,10 @@ QT-B4 ships it; otherwise the whole-clause terms stay, with the auditor's reason
 
 Seed `quantities-QX3`. Twenty items, ten valid under counting semantics and ten invalid: "The vast majority voted.
 Did a majority vote?" (valid); "A majority voted yes and a majority voted no." (contradiction); "Most S are P; every P
-is Q. Are most S Q?" (valid); "Most S are P. Are most P S?" (invalid). A premise schema (for example "vast majority
-is above majority") is declared in fixtures and offered by the assistant iff at least 36 of 40 accept each of its valid
-items and at most 4 of 40 accept its invalid twins. Soundness for counts is not measured here: on the cardinality route
-it follows from region arithmetic (FA1-style certificates).
+is Q. Are most S Q?" (valid); "Most S are P. Are most P S?" (invalid). The answers shape rewrites only. The majority
+schema ("the vast majority implies more than half") is not offered on any vote: it waits for a proved bridge from
+scales to cardinality (QX-4's plan item), and no fidelity credit is claimed for it. Soundness for counts is not
+measured here: on the cardinality route it follows from region arithmetic (FA1-style certificates).
 
 ### QX-4. The 1,000-users passage (research, 4 h)
 
@@ -855,7 +1006,8 @@ u0146.s01 to u0147.s05 (bytes 88,637–90,744, 2,107 B) as a companion document:
 finite sort, its proportions as cardinality content, "should decline" as a soft norm, "probably" as attitudes'
 likelihood word, "1 in 1,000 (or 1 in 1 million)" as a reading set. Needs QT-A4 and the weighing and attitudes
 outcomes. Bar: an independent audit finds at least 4 of the 5 key units faithful (u0146.s03, u0146.s04, u0147.s02,
-u0147.s04, u0147.s05) and no threshold invented; then a plan item composes `cardinality@0` with the norm routes.
+u0147.s04, u0147.s05) and no threshold invented; then a plan item composes `cardinality@0` with the norm routes and
+proves the bridge from proportional grades ("the vast majority") to cardinality.
 Otherwise the passage stays UNFORMALISED with the failing feature named in the ledger.
 
 ## 6. Dependencies and merge conflicts
@@ -863,24 +1015,26 @@ Otherwise the passage stays UNFORMALISED with the failing feature named in the l
 | Batch | Waits for (in-flight item; branch where known) | Hand-written shared files | Generated (regenerate) |
 |---|---|---|---|
 | QT-0p | — | pilot directories only | — |
-| QT-0 | QX-1 for the "most" row (else "pending") | `docs/spec/quantities.md` (new) | — |
-| QT-A1, QT-A2, QT-B1 | QT-0 PASS | none | `lean/VE.lean`, `lean/VE/Audit.lean`, frozen inventory, axioms, statements, predicates, declarations; trust tables (signed) |
-| QT-A3 | QT-A2; `fix-main-relay`; `lf-16e` and `qa-q2` (`question-answering/q2`) merged or rebased onto, since both edit `Protocol.lean` and `service_schema.py` | `lean/VE/Service/Protocol.lean`, `ve/backends/service_schema.py`, `lean/VE/Compose/Dispatch.lean`, `lean/VE/Compose/Examples.lean`, `ve/profiles.py`, `ve/assurance-manifest.json`, `ROADMAP.md` | response schemas, `lean/ResponseShape.lean`, `lean/ResponseShape/Audit.lean`, checker pins, assurance doc, route cases, gate collection |
-| QT-A4 | QT-A3; `lf-16g` for the document hook (else one line in `ve/document.py` after `lf-16e`/`lf-16f`) | `ve/document.py` (or none), `tools/layer_policy.py`, `tests/data/route-cases.jsonl` | `.importlinter`, gate collection |
+| QT-0 | the cross-plan synthesis (done); QX-1 for the reading-set members of "most" and "multiple" (else "pending") | `docs/spec/quantities.md` (new) | — |
+| QT-A1, QT-B1 | QT-0 PASS; QT-B1 also QS-1 | none | `lean/VE.lean`, `lean/VE/Audit.lean`, frozen inventory, axioms, statements, predicates, declarations; trust tables (signed) |
+| QT-A2 | QT-A1 (one soundness milestone); ME-1 (`VE.Numbers`) | none | as QT-A1 |
+| QT-A3 | QT-A2; AR-10's profile-gate table and mode registry; `fix-main-relay`; the protocol queue on `Protocol.lean` and `service_schema.py` (after `lf-16e`, `qa-q2`, `lean-first/b14d`, AR-10's registry, ME-2; in landing order) | `lean/VE/Service/Protocol.lean`, `ve/backends/service_schema.py`, the `cardinality@0` table row, `ve/assurance-manifest.json`, `ROADMAP.md` | response schemas, `lean/ResponseShape.lean`, `lean/ResponseShape/Audit.lean`, checker pins, assurance doc, route cases, gate collection, AR-10's generated profile data |
+| QT-A4 | QT-A3; the document-mode queue after `lf-16g` (AT-3b, SC-1b, QT-A4, ET-5, WG-4, ME-10, in landing order) | Lean `document` mode (`ve/document.py` while it exists), `tools/layer_policy.py`, `tests/data/route-cases.jsonl`, the six test files importing `ve/surface/count.py` | `.importlinter`, gate collection |
 | QT-A5 | QT-A4 | `usecases/news-article/*` | — |
 | QT-E | english-lean E3 scheduling; english-lean E2 flip (Lean decides English) | `lean/VE/EnglishGrammar/*`, `ve/document.py` (two call sites) | English grammar `Fixed/*` and `LOCK.json` (a person's `--actions-version`), English codes |
-| QT-A6 | QT-E, QT-A3, QX-1 | `lean/VE/EnglishGrammar/*` (act-phrases and attitudes AT-5 edit the same files: additive rules only, rebased in turn) | as QT-E |
-| QT-A7 | trigger; events-time-causation's decision on calendar units | the W6a unit decoder (one version switch) | as QT-A3 |
-| QT-B2 | QT-B1; `lf-16e`, `lf-14d`, `rd-9-int` (`rd-9/integrate`); attitudes AT-4's hook if it lands first | norm-defaults and readings wire decoders (one call or the shared hook), then as QT-A3 | as QT-A3 |
-| QT-B3 | QT-B2; QT-E or english-lean E3's norm step | `lean/VE/EnglishGrammar/*` | as QT-E |
-| QT-B4 | QT-B2 (QT-B3 for display); QX-2 for the hard constraints | pilot directories | — |
-| QX-1 to QX-3 | — | `experiments/quantities-QX*/` (new) | — |
+| QT-A6 | QT-E, QT-A3, QX-1; the English queue AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7 | `lean/VE/EnglishGrammar/*` (one batch at a time; catalogue rows only, no separate table) | as QT-E |
+| QT-A7 | trigger; ME-6 (`ve-units@2`) | ME-6's unit registry (declarations of `week` and `elapsed_day`) | as QT-A3 |
+| QT-B2 | QT-B1; PK-1; AR-10's profile-gate table; `lf-16e`, `lf-14d`, `rd-9-int` (`rd-9/integrate`); last in the integration order on `Layered.lean`, after ET-4 | `lean/VE/NormDefaults/Layered.lean` (one provider line), the layered route's response-shape files, the `scales@0` table row, `ve/assurance-manifest.json`, `ROADMAP.md` | as QT-A1, the layered route's schema, gate collection |
+| QT-B3 | QT-B2; QT-E or english-lean E3's norm step; the English queue (after ME-11) | `lean/VE/EnglishGrammar/*` | as QT-E |
+| QT-B4 | QT-B2 (QT-B3 for display); QX-2 for the hard constraints; the hard-constraint queue (after WG-5; with WG-8, whichever is ready first) | pilot directories | — |
+| QX-1 to QX-3 | — (execution under its own authorisation) | `experiments/quantities-QX*/` (new) | — |
 | QX-4 | QT-A4; weighing and attitudes outcomes | `experiments/quantities-QX4/` | — |
-| QS-1 | the synthesis review | as decided | as QT-A1 |
+| QS-1 | QT-0 PASS (its statements); lands before AT-1, QT-B1 and WG-2 | `lean/VE/Closure/Order.lean` (new; `Paths.lean` unchanged) | as QT-A1 |
 
-How conflicts are avoided: all Lean code is in new directories (`lean/VE/Cardinality/`, `lean/VE/Scales/`), all
-Python in new modules (`ve/cardinality.py`, `ve/scales.py`) and new test files; the only hand-written shared Lean
-file is `Protocol.lean` (additive lines, after its in-flight editors merge) plus one decoder call or hook in QT-B2.
+How conflicts are avoided: all Lean code is in new directories or files (`lean/VE/Cardinality/`, `lean/VE/Scales/`,
+`lean/VE/Closure/Order.lean`), all Python in new modules (`ve/cardinality.py`, `ve/scales.py`) and new test files; the
+hand-written shared Lean files are `Protocol.lean` (QT-A3, additive lines in the protocol queue) and `Layered.lean`
+(QT-B2's one provider line, after ET-4).
 `lf-14b` (norm guards on the order family) touches `norms._lean_route`, which no batch here edits. Generated
 inventories are never hand-edited or hand-merged (`regen_generated.py --resolve`). Before each batch, overlap is
 checked with `git diff --name-only main...<branch>` against the branches above.
@@ -909,10 +1063,12 @@ at most about 0.29 (R2.6); the buildable part of this plan alone: about 0.19 sum
 
 - **Not claimed**: any byte before a pilot run measures it; that any count reported in a source is true; any
   threshold for a graded word; that proxy readers stand for human readers.
-- **Open for QT-0**: the carrier of the scales block; the exact names of the response-shape fit predicate and the core
-  typing check used in the statements above; whether english-lean E3's layer mechanism allows separate rule files.
-- **Open for the DRI**: news rows 7b and 22b (94 B: a W6 ruling to revisit with a reading set); who owns the generic
-  extra-premise hook (attitudes or this plan, whichever lands first); QS-1's owner.
+- **Open for QT-0**: the carrier of the scales block; the exact name of the response-shape fit predicate; the tie rules
+  QT-A2 admits; the `scales` pack's `kind`; whether the closed interval is kept as a separate relation; whether
+  english-lean E3's layer mechanism allows separate rule files.
+- **Open for the DRI**: news rows 7b and 22b (94 B: a W6 ruling to revisit with a reading set).
+- **Limit**: "the vast majority" does not imply "more than half" until a proved bridge from scales to cardinality
+  exists (QX-4's plan item); no fidelity credit is claimed for numerical-majority readings.
 - **Risks**: the region count grows as 2^n (capped at 6 predicates per sort, refused above); certificate search on the
   erased problem may be slow for many regions (UNKNOWN, never a wrong answer; measured in `tools/bench`, not the
   suite); QX-2 may reject the decomposition, leaving the hard constraints as they are; the norm routes are being
@@ -925,21 +1081,30 @@ at most about 0.29 (R2.6); the buildable part of this plan alone: about 0.19 sum
 - `CFormula.holds` and `Intended` state meanings without reference to erasure or generated formulas.
 - `cardinality_elab_sound` has no hypothesis about the structure beyond `Admissible`; `Admissible` adds only
   finiteness of declared sorts.
-- Region constants cannot collide with declared symbols, and never appear as input.
-- `count_atLeast_agree` holds on declared finite sorts for every typed body, so no English count wording has two
-  meanings across routes.
-- `roundsTo` keeps the written number of places; the tie rule is stated in the paraphrase.
+- Region constants cannot collide with declared symbols (`CEnv.WellFormed`, a hypothesis of `withRegions_admissible`,
+  `erase_iff`, `cardinality_elab_sound` and `refutesC_sound`, established by the decoder), and never appear as input.
+- `count_atLeast_agree`, `count_atMost_agree`, `count_exactly_agree` and `count_nOfM_agree` hold on declared finite
+  sorts for every typed body, so no English count wording has two meanings across routes.
+- Every proportion requires a nonempty population, and the paraphrase says so.
+- `roundsTo` keeps the written number of places; the tie rule is stated in the sentence.
 - `grade_open`: no premise fixes a graded word; `scales_conservative` has no hypothesis that the scale block is empty.
+- INCOHERENT carries a Lean-checked refutation and lists the instances it uses; COHERENT a Lean-checked model;
+  otherwise UNKNOWN.
+- The stub computes the adversarial examples (colliding region constant, three-step cycle, empty population, the
+  1 out of 8 tie under each rule, duration-to-date cast).
 - Every refusal names a rewrite in plain English; no symbol appears in any wording or diagnostic.
 - Every new trusted line has a signed allowance and a ROADMAP trust-cost line.
 
 ## 10. Shared pieces
 
-The full list, with users, is R7. For this plan: (1) one ordered-scale module (QS-1); (2) comparison on a dimension
-with generated coherence premises, which weighing's precedent rule ("a case at least as strong") and risk's "less
-severe" could use; (3) graded open terms (a W2 record plus a dimension and a direction), shared with attitudes'
-"quite likely"; (4) one hook for extra base premises on the norm routes, shared with attitudes; (5) counts over finite
-sets and closed listings, shared with events-time-causation and scope; (6) exact rationals and rounding, shared with
-math-evidence; (7) unit declarations and conversions, shared with events-time-causation and math-evidence; (8) quantity
-English in Lean's engine, sharing grammar files with act-phrases, attitudes and scope; (9) one owner per wording for
-population and frequency statements ("1 in 1,000", "almost always") among this plan, attitudes and math-evidence.
+The full list, with users, is R7. For this plan: (1) order closure: QS-1 (quantities) over `VE.Closure`, used by
+attitudes AT-1, weighing WG-2 and QT-B1; (2) comparison on a dimension with generated coherence premises, which
+weighing's precedent rule ("a case at least as strong") and risk's "less severe" could use; (3) graded open terms (a
+W2 record plus a dimension and a direction), shared with attitudes' "quite likely"; (4) extra base premises on the
+norm routes: PK-1 packs (RD-9 composition owner), with quantities as the `scales` provider; profile registration:
+AR-10's profile-gate table (generated Python data); (5) counts over finite sets and closed listings, shared with
+events-time-causation and scope; (6) exact rationals and rounding: math-evidence's `VE.Numbers` (QT-A2 proves
+`roundsTo_ratio_agree`); (7) unit declarations and conversions: ME-6's `ve-units@2`; (8) quantity English in Lean's
+engine, in the serialised English queue AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7, with refusals and reading sets as rows of
+english-lean's catalogue ("about" one row shared with math-evidence); (9) one owner per wording for population and
+frequency statements ("1 in 1,000", "almost always") among this plan, attitudes and math-evidence.
