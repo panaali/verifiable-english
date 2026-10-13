@@ -3,39 +3,29 @@
  "totals": {
   "K": 997,
   "S": 9974,
-  "D": 13833,
-  "G": 27473,
-  "C": 9220,
-  "P": 72800,
-  "T": 14441,
-  "o": 12434,
-  "D[V]": 12299,
-  "D[R]": 1007,
+  "D": 13881,
+  "G": 27692,
+  "C": 9231,
+  "P": 72830,
+  "T": 14464,
+  "o": 12496,
+  "D[V]": 12301,
+  "D[R]": 1053,
   "D[I]": 527,
-  "G[V]": 25223,
-  "G[R]": 1996,
-  "G[I]": 254,
+  "G[V]": 25254,
+  "G[R]": 2180,
+  "G[I]": 258,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 48334,
-  "lines": 161172
+  "trusted": 48367,
+  "lines": 161565
  },
  "budget": {
   "K": 997,
   "S": 9974,
-  "V": 37363
+  "V": 37396
  },
- "signed": [
-  {
-   "change": "question answering Q2.4 (plan Q2.4, one owner of situation wording): the words service mode's registration (VE.Service.Mode.words in Mode.name and modes, ResponseShape.Schemas' file list; V +3), the elaboration row's unsaid description (Wire.regeneratedU and its schema, the one source unsaidDescription; V +2) and the zero-set point lines' English environment (ZeroAnswer.zeroPoints; V +1). The lines replace Python paths the same change deletes: readings_s2_wording.situation's base part, readings_route.situation_text's base part, norm_defaults_english.point_clause, _negative_modal and filling_sentence, readings_s2_english.gap_sentences, norm_english.pair_sentence and norm_defaults.fill_description (tests/test_words.py::test_the_python_producers_are_gone). VE.Words, VE.Words.Run and the words schema are G[R] and D[R] (wording and its decoders, as VE.Words.Situation was).",
-   "signed": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
-   "allow": {
-    "K": 0,
-    "S": 0,
-    "V": 6
-   }
-  }
- ],
+ "signed": [],
  "history": [
   {
    "change": "Review B3 (consolidate-b1): predicates (lean/predicates.txt) out of C, [R] and [I] into K or S unless tied; kernel data types K; kernel modules reviewed (Paths dedup/pivot/reachEval C, ClosedAt P; reach, embed, erase K in Closure and Core; Time QTerm/QEnv.erase K; Bridge helpers D[V]); Rights.PrefixAdmissibleR S. Reclassification only: no Lean change.",
@@ -497,6 +487,34 @@
     "V": 36765
    },
    "to": {
+    "K": 997,
+    "S": 9974,
+    "V": 37363
+   }
+  },
+  {
+   "change": "question answering Q2.4 (plan Q2.4, one owner of situation wording): the words service mode's registration (VE.Service.Mode.words in Mode.name and modes, ResponseShape.Schemas' file list; V +3), the elaboration row's unsaid description (Wire.regeneratedU and its schema, the one source unsaidDescription; V +2) and the zero-set point lines' English environment (ZeroAnswer.zeroPoints; V +1). The lines replace Python paths the same change deletes: readings_s2_wording.situation's base part, readings_route.situation_text's base part, norm_defaults_english.point_clause, _negative_modal and filling_sentence, readings_s2_english.gap_sentences, norm_english.pair_sentence and norm_defaults.fill_description (tests/test_words.py::test_the_python_producers_are_gone). VE.Words, VE.Words.Run and the words schema are G[R] and D[R] (wording and its decoders, as VE.Words.Situation was).",
+   "signed": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "allow": {
+    "K": 0,
+    "S": 0,
+    "V": 6
+   },
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9974,
+    "V": 37363
+   }
+  },
+  {
+   "change": "Question answering Q2 final trust at the reviewed tree after F8/F9: K 997, S 9,974, V 37,396; against main 96887019 K +0, S +183, V +631. The previously budgeted Q2 S +183 and V +598 remain, Q2.4's V +6 is separately signed by R6, and F1's fully typed EFormula/ETerm response decoder adds V +27 in ResponseShape/Schemas/Ask.lean. F9's 15 frame-helper lines are G[R], not trusted. Follow-up: tie eligible Render, Wire, Lines and Schemas/Ask G[V] declarations to the proved render, encoder and wire soundness theorems; move EFormula/ETerm shapes to Common.lean if a second mode needs them.",
+   "signed": "SIGNED by DRI 2026-10-13 (qa-q2 D12, conditional signature in manage-agents/reviews/dri-signatures-qa-q2-rd-9.md)",
+   "allow": {
+    "K": 0,
+    "S": 0,
+    "V": 27
+   },
+   "rebaselined_from": {
     "K": 997,
     "S": 9974,
     "V": 37363
@@ -3796,7 +3814,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 457,
+   "T": 459,
    "o": 7,
    "D[V]": 0,
    "D[R]": 0,
@@ -3807,7 +3825,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 464
+   "lines": 466
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -4289,15 +4307,15 @@
    "trusted": 0,
    "lines": 148
   },
-  "ResponseShape/Encoders.lean": {
+  "ResponseShape/Encoders/Words.lean": {
    "K": 0,
    "S": 0,
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 36,
+   "P": 11,
    "T": 0,
-   "o": 39,
+   "o": 8,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -4307,7 +4325,27 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 75
+   "lines": 19
+  },
+  "ResponseShape/Encoders.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 0,
+   "C": 0,
+   "P": 37,
+   "T": 0,
+   "o": 40,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 77
   },
   "ResponseShape/EnumSites.lean": {
    "K": 0,
@@ -4373,7 +4411,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 109,
+   "G": 136,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4381,13 +4419,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 109,
+   "G[V]": 136,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 109,
-   "lines": 121
+   "trusted": 136,
+   "lines": 148
   },
   "ResponseShape/Schemas/Bundle.lean": {
    "K": 0,
@@ -4713,7 +4751,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 265,
+   "G": 266,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4721,13 +4759,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 228,
+   "G[V]": 229,
    "G[R]": 37,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 228,
-   "lines": 274
+   "trusted": 229,
+   "lines": 275
   },
   "ResponseShape/Schemas/Norms.lean": {
    "K": 0,
@@ -5009,25 +5047,45 @@
    "trusted": 195,
    "lines": 204
   },
+  "ResponseShape/Schemas/Words.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 19,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 10,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 19,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 29
+  },
   "ResponseShape/Schemas.lean": {
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 45,
+   "G": 46,
    "C": 0,
    "P": 0,
    "T": 4,
-   "o": 42,
+   "o": 43,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 45,
+   "G[V]": 46,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 45,
-   "lines": 91
+   "trusted": 46,
+   "lines": 93
   },
   "ResponseShape/Skeleton.lean": {
    "K": 0,
@@ -5053,7 +5111,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 80,
+   "G": 82,
    "C": 0,
    "P": 0,
    "T": 3,
@@ -5062,12 +5120,12 @@
    "D[R]": 0,
    "D[I]": 0,
    "G[V]": 77,
-   "G[R]": 2,
+   "G[R]": 4,
    "G[I]": 1,
    "tied": 0,
    "unclassified": 0,
    "trusted": 77,
-   "lines": 101
+   "lines": 103
   },
   "ResponseShape.lean": {
    "K": 0,
@@ -5416,8 +5474,8 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 80,
-   "o": 20,
+   "T": 88,
+   "o": 21,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -5427,7 +5485,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 100
+   "lines": 109
   },
   "VE/Ask/Groups.lean": {
    "K": 0,
@@ -5534,8 +5592,8 @@
    "S": 17,
    "D": 0,
    "G": 106,
-   "C": 94,
-   "P": 209,
+   "C": 105,
+   "P": 224,
    "T": 0,
    "o": 30,
    "D[V]": 0,
@@ -5547,7 +5605,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 123,
-   "lines": 456
+   "lines": 482
   },
   "VE/Ask/Run.lean": {
    "K": 0,
@@ -5633,7 +5691,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 42,
+   "G": 43,
    "C": 43,
    "P": 45,
    "T": 0,
@@ -5641,13 +5699,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 42,
+   "G[V]": 43,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 42,
-   "lines": 143
+   "trusted": 43,
+   "lines": 144
   },
   "VE/Ask/ZeroWire.lean": {
    "K": 0,
@@ -5976,7 +6034,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 4945,
+   "T": 4947,
    "o": 214,
    "D[V]": 0,
    "D[R]": 0,
@@ -5987,7 +6045,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 5159
+   "lines": 5161
   },
   "VE/Bridge.lean": {
    "K": 22,
@@ -8773,7 +8831,7 @@
    "K": 0,
    "S": 42,
    "D": 0,
-   "G": 0,
+   "G": 4,
    "C": 61,
    "P": 0,
    "T": 0,
@@ -8783,22 +8841,22 @@
    "D[I]": 0,
    "G[V]": 0,
    "G[R]": 0,
-   "G[I]": 0,
+   "G[I]": 4,
    "tied": 0,
    "unclassified": 0,
    "trusted": 42,
-   "lines": 129
+   "lines": 133
   },
   "VE/NormDefaults/Wire.lean": {
    "K": 0,
    "S": 5,
-   "D": 118,
+   "D": 119,
    "G": 32,
    "C": 57,
    "P": 182,
    "T": 0,
    "o": 46,
-   "D[V]": 110,
+   "D[V]": 111,
    "D[R]": 0,
    "D[I]": 8,
    "G[V]": 32,
@@ -8806,8 +8864,8 @@
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 147,
-   "lines": 440
+   "trusted": 148,
+   "lines": 441
   },
   "VE/Norms/Admission.lean": {
    "K": 0,
@@ -9653,7 +9711,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 67,
+   "G": 93,
    "C": 0,
    "P": 30,
    "T": 0,
@@ -9662,12 +9720,12 @@
    "D[R]": 0,
    "D[I]": 0,
    "G[V]": 0,
-   "G[R]": 67,
+   "G[R]": 93,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 114
+   "lines": 140
   },
   "VE/Question/Help.lean": {
    "K": 0,
@@ -12412,22 +12470,22 @@
   "VE/Service/Protocol.lean": {
    "K": 0,
    "S": 0,
-   "D": 327,
-   "G": 231,
+   "D": 328,
+   "G": 232,
    "C": 0,
-   "P": 188,
+   "P": 191,
    "T": 19,
-   "o": 100,
-   "D[V]": 226,
+   "o": 101,
+   "D[V]": 227,
    "D[R]": 0,
    "D[I]": 101,
-   "G[V]": 192,
+   "G[V]": 193,
    "G[R]": 39,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 418,
-   "lines": 865
+   "trusted": 420,
+   "lines": 871
   },
   "VE/Service/Readings.lean": {
    "K": 0,
@@ -13569,25 +13627,45 @@
    "trusted": 2,
    "lines": 8
   },
-  "VE/Words/Situation.lean": {
+  "VE/Words/Run.lean": {
    "K": 0,
    "S": 0,
-   "D": 0,
-   "G": 92,
+   "D": 46,
+   "G": 84,
    "C": 0,
    "P": 0,
-   "T": 10,
-   "o": 22,
+   "T": 0,
+   "o": 31,
    "D[V]": 0,
-   "D[R]": 0,
+   "D[R]": 46,
    "D[I]": 0,
    "G[V]": 0,
-   "G[R]": 92,
+   "G[R]": 84,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 124
+   "lines": 161
+  },
+  "VE/Words/Situation.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 145,
+   "C": 0,
+   "P": 0,
+   "T": 21,
+   "o": 30,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 145,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 196
   },
   "VE.lean": {
    "K": 0,
@@ -13597,7 +13675,7 @@
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 138,
+   "o": 139,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -13607,7 +13685,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 138
+   "lines": 139
   }
  }
 }
