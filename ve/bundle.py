@@ -131,27 +131,24 @@ def check_bundle(data, *, lean_executable=None):
     lemmas). A Lean rejection raises `VEError`; Lean giving no answer raises
     `CheckerUnavailable`, which is operational and never a verdict.
 
-    Under a backend authority the bundle's acceptance is Lean's route bundle
-    verdict (`bundle_sound`); the report (leaves, reading choices, English) is
-    built by the Python walk, which also names a rejection both make.
+    The bundle's acceptance is Lean's bundle verdict (`bundle_sound`) under
+    every authority (lean-first batch 13b); the report (leaves, reading
+    choices, English) is built by the Python walk only after Lean accepts.
+    Bundles outside Lean's bundle modes (statement layers, W6 units, and a
+    container with no decodable ve.core@0.2 environment) keep the retained
+    Python walk, a recorded scope gap.
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import owned
 
-    def python():
-        return _check_bundle_python(data, lean_executable=lean_executable)
-
-    if authority_for("bundle") in ("python", "rust-experimental"):
-        return python()
     mode = _lean_bundle_mode(data)
     if mode is None:
-        return python()
-    return execute("bundle", {"kind": "bundle"}, python,
-                   lean=lambda: _explicit_lean(_check_bundle_lean(data, mode), data, lean_executable))
+        return _check_bundle_python(data, lean_executable=lean_executable)
+    return owned("bundle", lambda: _explicit_lean(_check_bundle_lean(data, mode), data, lean_executable))
 
 
 def _check_bundle_lean(data, mode="route"):
     from .backends.relay import decide
-    from .backends.validation import decided, key
+    from .backends.validation import construct_after_lean, key
     _bundle_container(data)
     case = {"id": "bundle", **({"kind": "bundle"} if mode == "route" else {}),
             "environment": data["environment"],
@@ -160,9 +157,9 @@ def _check_bundle_lean(data, mode="route"):
         cache = key("bundle", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
-    return decided(lambda: _check_bundle_python(data), cache, lambda: decide(mode, [case])[0],
-                   lambda report, row: row.get("lemmas") == [r["meaning_id"] for r in report["lemmas"]],
-                   "a bundle")
+    return construct_after_lean(lambda: _check_bundle_python(data), cache, lambda: decide(mode, [case])[0],
+                                lambda report, row: row.get("lemmas") == [r["meaning_id"] for r in report["lemmas"]],
+                                "bundle")
 
 
 def _bundle_container(data) -> None:

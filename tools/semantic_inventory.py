@@ -73,7 +73,7 @@ AUTHORITY = {
     "definitions": {"compile_definitions", "expand"},
     "norms": {"NormDocument.elaborate", "NormDocument.premises", "NormDocument.conflict_targets", "check_witness", "check_norm_entailment_certificate", "check_conflict"},
     "norm_admission": {"admit_norm_document"},
-    "admission": {"_check_graph", "admit_document"},
+    "admission": {"admit_document"},
     "bundle": {"check_bundle"},
     "parser": {"parse_with_metadata", "parse", "canonicalize", "is_canonical"},
     "argument": {"_check_edge", "_lean_deductions", "check_argument"},

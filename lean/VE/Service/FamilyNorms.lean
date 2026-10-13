@@ -38,7 +38,7 @@ def folView (environment : Json) : Except String Json := do
     (fun p => p != "closure@0" && p != "nary@0" && p != "order@0")
   let vocabulary ← environment.getObjVal? "vocabulary"
   let predicates ← fields (← vocabulary.getObjVal? "predicates")
-  let kept := predicates.filter (fun (_, entry) => VE.Core.Layers.arity entry ≤ 2)
+  let kept := predicates.filter (fun (_, entry) => VE.Core.Layers.folEntry entry)
   pure ((environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
     (vocabulary.setObjVal! "predicates" (Json.mkObj kept)))
 
