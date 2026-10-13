@@ -252,6 +252,15 @@ def test_a_crashed_worker_s_tests_run_elsewhere():
     assert set(held) <= set(scheduler.pending) | set(scheduler.node2pending[nodes[1]])
 
 
+def test_the_suite_conftest_installs_the_scheduler():
+    """tests/conftest.py hands every `load` run of the suite to LongestFirst with the committed durations."""
+    import conftest
+    scheduler = conftest.pytest_xdist_make_scheduler(Config(2), None)
+    assert type(scheduler).__name__ == "LongestFirst"
+    assert (scheduler.durations, scheduler.unrecorded) == test_schedule.read_estimates()
+    assert conftest.pytest_xdist_make_scheduler(Config(2, "loadfile"), None) is None
+
+
 PROJECT_CONFTEST = '''
 import pytest
 
