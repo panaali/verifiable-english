@@ -79,16 +79,23 @@ def main() -> None:
                  'if row.get("target") != target:',
                  "tests/test_stage2_norms.py::test_non_first_order_conflict_refused_witness_is_unavailable"),
         mutation("zero_budget_unknown", "ve/norms.py",
-                 '                return _conflict_report(document, target, sorts, model, values, nary_atoms=True)\n'
+                 '                return _conflict_report(document, target, sorts, model, values)\n'
                  '        except _Exhausted:\n'
                  '            return ConflictReport("UNKNOWN", detail="MAX_EVALUATIONS")',
-                 '                return _conflict_report(document, target, sorts, model, values, nary_atoms=True)\n'
+                 '                return _conflict_report(document, target, sorts, model, values)\n'
                  '        except _Exhausted:\n'
                  '            return ConflictReport("CONFLICT")',
                  "tests/test_stage2_norms.py::test_non_first_order_conflict_zero_model_budget_is_unknown"),
-        mutation("fallback_nary_substitution", "ve/norms.py",
-                 "if isinstance(formula, Atom) and nary_atoms:", "if isinstance(formula, Atom):",
+        mutation("nary_substitution", "ve/norms.py",
+                 "    from .ast import Eq, Reach, Body, Lt, Le\n",
+                 "    from .ast import Atom, Eq, Reach, Body, Lt, Le\n"
+                 "    if isinstance(formula, Atom):\n"
+                 "        return Atom(formula.predicate, tuple(_replace_term(x, terms, depth) for x in formula.terms))\n",
                  "tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion"),
+        mutation("lean_route_answer_drift", "ve/norms.py",
+                 'return ConflictReport("UNKNOWN", detail=row["detail"])',
+                 'return ConflictReport("UNKNOWN", detail="tableau budget or search bound")',
+                 "tests/test_stage2_norms.py::test_lean_family_route_answers_as_the_retained_python_route"),
         mutation("lean_non_fol_selector", "lean/VE/Norms/Family.lean",
                  '| .ok a => (VE.Core.erase a).isSome', '| .ok _ => true', str(GUARD), lean=True),
     ]

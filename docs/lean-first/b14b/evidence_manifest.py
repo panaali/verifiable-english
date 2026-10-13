@@ -84,8 +84,8 @@ def snapshot(raw: Path) -> dict:
         raise ValueError("CI plus 14 date-seed differential baseline grew")
     own = read(EVIDENCE / "corpus-ab.json")
     if (own.get("documents") != 150 or own.get("records") != 1350
-            or len(own.get("differences", [])) != 16):
-        raise ValueError("own corpus's listed changes changed")
+            or own.get("identical") is not True or own.get("differences")):
+        raise ValueError("Lean family route differs from the base recording")
     fallback = read(EVIDENCE / "fallback-compare.json")
     if (fallback.get("documents") != 150 or fallback.get("records") != 1350
             or fallback.get("identical") is not True or fallback.get("differences")):
@@ -130,7 +130,7 @@ def snapshot(raw: Path) -> dict:
         "commits_no_merges": git("log", "--no-merges", "--format=%H", f"{BASE}..HEAD").splitlines(),
         "gate": {"sha256": digest(gate_path), "status": gate["status"], "counts": gate.get("counts")},
         "comparisons": comparisons,
-        "own_corpus": {"records": 1350, "same": 1334, "listed": 16,
+        "own_corpus": {"records": 1350, "same": 1350,
                        "sha256": digest(EVIDENCE / "corpus-ab.json")},
         "fallback": {"records": 1350, "same": 1350, "sha256": digest(EVIDENCE / "fallback-compare.json")},
         "difffuzz": {"runs": len(runs), "sha256": digest(fuzz_path), "head_only": 0},
