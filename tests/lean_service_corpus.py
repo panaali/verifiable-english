@@ -280,7 +280,27 @@ def corpus():
     return {"evaluate": evaluate_cases(), "check-certificate": certificate_cases(),
             "order": order_cases(), "route": route_cases(), "norms": norms_cases(),
             "english": english_cases(), "environment": standalone_env,
-            "model": standalone_model, "identity": identities, "document": document_cases()}
+            "model": standalone_model, "identity": identities, "document": document_cases(),
+            "words": words_cases()}
+
+
+def words_cases():
+    """The `words` mode's answers (plan Q2.4): a situation, a point's clause and its negation, a filled-gap
+    sentence and a pair sentence over a generated norm-defaults environment, an item Lean cannot word, and
+    malformed requests."""
+    from conformance import norm_defaults_differential as generator
+    from ve import words
+    env, _, situation = generator.case(0, profiled=True)
+    model = {"domains": situation["domains"], "relations": situation["relations"],
+             "constants": situation["constants"]}
+    items = [words.situation_item(model, list(situation["relations"])),
+             words.point_item(model["constants"], "x_required", ["a"], True),
+             words.point_item(model["constants"], "x_permitted", ["b"], False),
+             words.point_item(model["constants"], "a_permitted", ["a"], True, kind="filling"),
+             words.pair_item("x_required")]
+    return [{**words.request(env, items), "id": "all"},
+            {**words.request(env, [words.pair_item("x_permitted")]), "id": "not-a-pair"},
+            {**words.request(env, []), "id": "none"}, {"id": "bad"}, *ADVERSARIAL]
 
 
 def document_cases():

@@ -143,6 +143,9 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   [non-model measurement report](../question-answering-report.md) records the fixtures, the budgets and the agreement
   with the existing route on the fixtures and the corpora, with what each corpus could not compare.
 - **The final-HEAD full gate**: not run after the review fixes (the fixer's instruction); see the acceptance items.
+- **The relay mutation gate on `words`**: run on its own route (`tools/relay_mutation_gate.py --route
+  service:words`: 2 fixtures, 342 mutants, all refused, 0 allowed); `evidence/relay-gate.json` is the earlier run of
+  every route and was not rerun.
 - **Seen by the corpus agreement, not fixed here** (follow-ups for `ask`'s owner, each a refusal or a wording flaw,
   never a contradicted lead): a reading name that quotes a word (`the recorded relation "asks"`) makes the R1 line
   fail W7's gate, so `ask` refuses that question (`CheckerUnavailable`); U1 reads "VE did not use 1 sentences" for one

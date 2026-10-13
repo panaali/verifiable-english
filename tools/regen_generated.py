@@ -133,6 +133,8 @@ GENERATED = (
 NOT_REGENERATED = {
     "tools/ask_fixtures.py": "Q2 use-case fixtures: replayed and reviewed with their source documents",
     "tools/question_answering_report.py": "Q2 batch report from saved measurement and comparison evidence",
+    "tools/question_answering_agreement.py": "Q2.6 evidence: the agreement of ask with the existing route, run on corpora and saved",
+    "tools/words_ab.py": "Q2.4 evidence: the A/B of Lean's wording against the pre-Q2.4 producers, run on corpora and saved",
     "docs/spec/question-answering-q2/mutants.py": "Q2 seeded-bug evidence: each mutant is run and restored, then its result is saved",
     "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
     "tools/gate.py": "--write-collection is tools/gate_collection.py --write (gate-collection above)",
