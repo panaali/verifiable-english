@@ -341,7 +341,8 @@ class Document:
 
     With `filled` (Lean's filled document under the completion, readings-defaults 3) every content is Lean's filled
     one, matched by unit and by set and index, and Lean's generated units (each `F_p`, after every item) are fixed
-    items; `filled_tables` maps each table such a unit reads to its predicate. Python builds no `fill` (D12)."""
+    items; `filled_tables` maps each table Lean's filled environment adds to the predicate it fills. Python builds
+    no `fill` (D12)."""
 
     def __init__(self, senv, document, filled=None):
         self.senv = senv
@@ -371,6 +372,14 @@ class Document:
                 self.items.append(("bar", uid, content["bar"]))
         if filled is not None:
             self._fill(filled["units"])
+            # Each table Lean's filled environment adds (E‴, bound to the request by the route's
+            # `_bind_completion`), with the regulated predicate it fills. On the norms chain an `F_p` unit reads it,
+            # on the soft chain a rule of each reading's filled tree (rd-9-soft-chain.md 3): neither is how a table
+            # is found.
+            from .norm_defaults import unsaid_name
+            request = wire(senv.data)["vocabulary"]["predicates"]
+            added = set(wire(filled["environment"])["vocabulary"]["predicates"]) - set(request)
+            self.filled_tables = {unsaid_name(p): p for p in request if unsaid_name(p) in added}
 
     def _fill(self, units):
         """Lean's filled contents in place of the author's, and Lean's generated units after every item. A filled
@@ -398,8 +407,6 @@ class Document:
                 items.append(item)
         for uid, content in generated:
             items.append(("fixed", uid, content))
-            guard = content.body["guard"]
-            self.filled_tables[guard[1]] = content.body["predicate"]
         self.items = items
 
     @staticmethod
