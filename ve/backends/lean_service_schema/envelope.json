@@ -74,7 +74,8 @@
           {"contains": {"const": "readings-route"}},
           {"contains": {"const": "diagnose"}},
           {"contains": {"const": "document"}},
-          {"contains": {"const": "english.question"}}
+          {"contains": {"const": "english.question"}},
+          {"contains": {"const": "search-budget"}}
         ]
       },
       "protocol": {"const": 2},

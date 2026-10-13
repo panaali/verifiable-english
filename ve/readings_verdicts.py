@@ -22,6 +22,34 @@ PENDING = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pen
 _NOT_SUPERPOSABLE = "ReadingsNotSuperposable: "
 
 
+def _found(search):
+    """A search's Found result, or None: NotFound, a spent budget, or a Rust call that timed out (no
+    witness; the answer is then Lean's alone, DRI decision ME1)."""
+    from .backends.rust_jsonl import RustTimeout
+    try:
+        found = search()
+    except RustTimeout:
+        return None
+    return found if found.status == "Found" else None
+
+
+def _scaled(env, premises, phi):
+    """premise-scale, after the route's own searches found no model: the search again over `sup D` with
+    the sorts Lean's budget raises (`ve.search.premise_budget`), then the ground-fact route (the
+    premises' stated facts as their own model). Each runs only when every earlier search found
+    nothing, so no model an earlier search finds changes; Lean checks whatever is found."""
+    from .search import find_countermodel, premise_budget
+    budget = premise_budget(env, premises)
+    options = {"max_domain_size": budget.max_domain_size, "max_models": budget.max_models,
+               "max_evaluations": budget.max_evaluations, "sort_bounds": budget.sort_bounds}
+    found = None
+    if budget.sort_bounds:
+        found = _found(lambda: find_countermodel(env, premises, phi, **options))
+    if found is None:
+        found = _found(lambda: find_countermodel(env, premises, phi, **options, ground_only=True))
+    return found
+
+
 def context(doc):
     """The verdict context of a loaded document with a content-bearing set, by its route; None on W2's route. A
     document whose readings carry their own vocabulary is the product of its cases (readings-defaults RD-4b)."""
@@ -436,10 +464,13 @@ class Superposed(_Route):
         result = self._lifted(A, gamma, conclusion) if usable and not self.completion else None
         if result is None and usable:
             phi = Bottom() if conclusion is None else formula_from_data(self.ext, conclusion, _generated=True)
-            found = find_countermodel(self.ext, self._full(A, gamma), phi,
-                                      max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
-                                      max_evaluations=BUDGET["max_evaluations"])
-            if found.status == "Found":
+            full = self._full(A, gamma)
+            found = _found(lambda: find_countermodel(
+                self.ext, full, phi, max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
+                max_evaluations=BUDGET["max_evaluations"]))
+            if found is None:
+                found = _scaled(self.ext, full, phi)
+            if found is not None:
                 data = self._lean_model(found.model)
                 row = self.lean("readings-model", assumed=[list(x) for x in A], premises=list(gamma),
                                 conclusion=conclusion, model=data)

@@ -216,8 +216,8 @@ fn case(v: &Value) -> Result<Value> {
             .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
         let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
         let (guard, semantic) = nonvacuity(&env, v)?;
-        let mut out = find_countermodel_with_nonvacuity(&env, &problem, bounds,
-            minimum.max(usize::from(nonempty)), guard.as_ref(), semantic)?.to_value();
+        let mut out = find_countermodel_bounded(&env, &problem, bounds,
+            minimum.max(usize::from(nonempty)), guard.as_ref(), semantic, &sort_bounds(v)?, ground_only(v)?)?.to_value();
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }
