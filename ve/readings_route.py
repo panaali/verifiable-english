@@ -592,14 +592,20 @@ def _bind_soft_premises(entries, document):
         labels = [premise["label"] for premise in e["premises"]]
         _need(len(set(labels)) == len(labels))
         for label in labels:
-            if label.startswith(SOFT_EXCEPTION_LABEL):
-                rule, role, index = label[len(SOFT_EXCEPTION_LABEL):].rsplit(":", 2)
-                _need(rule in rules and role in ("sufficient", "necessary") and index.isdigit()
-                      and str(int(index)) == index)
-            else:
-                _need(label.startswith(SOFT_COHERENCE_LABEL))
-                pair = label[len(SOFT_COHERENCE_LABEL):].split(",")
-                _need(len(pair) == 2 and pair[0] != pair[1] and all(name in rules for name in pair))
+            _need(soft_label(label, rules))
+
+
+def soft_label(label, rules):
+    """A soft premise's label (rd-9-soft-chain.md 3) bound to the rules `rules` a request declares: an exception
+    condition of one of them (`soft:exception:<rule>:<role>:<i>`), or the pair of two (`soft:coherence:<a>,<b>`)."""
+    if label.startswith(SOFT_EXCEPTION_LABEL):
+        parts = label[len(SOFT_EXCEPTION_LABEL):].rsplit(":", 2)
+        return (len(parts) == 3 and parts[0] in rules and parts[1] in ("sufficient", "necessary")
+                and parts[2].isdigit() and str(int(parts[2])) == parts[2])
+    if label.startswith(SOFT_COHERENCE_LABEL):
+        pair = label[len(SOFT_COHERENCE_LABEL):].split(",")
+        return len(pair) == 2 and pair[0] != pair[1] and all(name in rules for name in pair)
+    return False
 
 
 def _typed_filled_content(raw):
@@ -759,7 +765,8 @@ class Wording:
             self.document = document_wire(doc["units"], doc["meta"].get("reading_sets", []))
             # Under the completion the documents are Lean's filled ones (readings-defaults 3, `validate`'s row).
             row = doc.get("readings_s1") or {}
-            self.admission = Decoded(self.environment, self.document, row.get("filled"), row.get("fill_premises"))
+            self.admission = Decoded(self.environment, self.document, row.get("filled"), row.get("fill_premises"),
+                                     row.get("soft_premises"))
             self.words = EnglishVocabulary(self.admission.senv.frame)
             # One case of a split document is numbered as the whole document (readings-defaults RD-4b).
             self.numbers = numbers or {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
