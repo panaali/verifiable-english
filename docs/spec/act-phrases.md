@@ -1,6 +1,13 @@
 # Action phrases (`acts@0`): specification
 
-> Status: item-1 statement specification, draft 2 (2026-10-13), written from
+> Status: item-1 statement specification, draft 3 (2026-10-13), branch `research/act-phrases-p1`, beside the plan's
+> draft 4. Draft 3 records the results of phase 1 (AP-0, [act-phrases-phase1.md](../research/act-phrases-phase1.md),
+> reviewed FIX and fixed) where they touch this specification, and nothing else: **no Lean statement and no
+> definition changes**, so the stub needs no update for it (the stub, `lean/SpecStubs_act-phrases.lean`, is not
+> tracked in the repository; section 15). The joined-filler question (F13) is the plan's decision D9, taken at the
+> bounded re-check; this draft states the options and the proposed rule, not a changed definition.
+>
+> Draft 2 (2026-10-13), written from
 > [act-phrases-PLAN.md](act-phrases-PLAN.md) draft 3. Draft 1 went to the statement review
 > (`manage-agents/debates/act-phrases-spec/{astra,fable}.md`, CONVERGED after round 2 on **FIX**); draft 2 applies
 > every edit of that joint position and nothing else. Section 14.3 maps each edit (SR1 to SR16) to the place it was
@@ -29,6 +36,33 @@
 > `lean/VE/Compose/Dispatch.lean`, `lean/VE/EnglishGrammar/{Encode,Policy}.lean`, the research note
 > [docs/research/act-phrases.md](../research/act-phrases.md) and the cross-plan synthesis (`SYNTHESIS.md` 2.1, 2.2).
 > Nothing here changes a frozen contract, a `norms@0` hash or a W1 theorem statement.
+>
+> **Phase 1 (AP-0) re-ran draft 1's stub.** A verbatim copy (sha256 `6e33f85c…`, equal to the untracked original's)
+> was elaborated against `main` at `49de179e` with a measurement section appended: exit 0, all 161 `#guard`s pass,
+> and the raw and reading counts of G5 to G14v equal 11.2's. Draft 2's sections 5.2 and 5.3 are byte-identical to
+> draft 1's, so those counts hold for draft 2's rule table; draft 2's canonical-marker condition of `framesOk` was
+> checked by a script on every phase-1 vocabulary (all pass). Draft 2's other changed definitions are still not run.
+
+## Changes in this draft
+
+Draft 3, from phase 1 (the report's section 7; the plan's draft 4, section 10, P1 to P10):
+
+1. **Limits measured** (1.6, 5.4, 12): R = 2 and S = 14,440 on the registered 22-phrase corpus, so `rawCap` = 256 and
+   `stepBudget` = 2,100,000 pass AP-0's bar. Both stay **provisional** until F13 (the plan's D9) is decided; then they
+   are re-measured on a wider corpus.
+2. **Finding F13, words shared inside a joined filler** (5.2, 14.2): the rule table lists one grouping for "arbitrary
+   arrest, detention or exile", with no reading set, and for u045a and u0062.s01 not the source's. Options (i) to (iii)
+   and the proposed rule for (i) are in F13; an interim audit item is added (2.4, item 7).
+3. **Findings F14 (u057 has no reading), F15 (u068 and u071b have no reading), F16 (the display bound), F17 (the
+   corpus behind N is a hand selection)** (14.2).
+4. **Display bound stated** (2.1, 12): the wording of a plain predicate passes neither the 256-character verbalisation
+   check nor the 80-character template lint; at most 414 bytes, from the act limit.
+5. **New 11.2b**: the 13 phase-1 corpus phrases with their measured raw and meaning counts, as regression rows for
+   AP-2 and the re-measurement.
+6. **The bounded re-check's scope grows** (13, item 14 (f)): D9, u057, the N re-measurement, the display bound.
+7. **Run record** (15): the stub's sha256, recorded by phase 1.
+8. No statement, definition, diagnostic or existing fixture changed; the comments on `rawCap` and `stepBudget` (5.4)
+   now cite the measurement.
 
 ## 0. Scope, one paragraph
 
@@ -173,11 +207,19 @@ meanings, in derivation order.
 
 Three limits apply, each with a constant fixed by AP-0 (D2):
 
-| Limit | Constant | Provisional value | What happens at the limit |
-|---|---|---|---|
-| raw derivation budget | `rawCap` (N) | 256 | the parser's cap: a parse that returns N trees is **saturated** and may hide more |
-| step budget | `stepBudget` | 2,100,000 (the order of `VE.EnglishGrammar.workBudget`; a separate constant, measured with N) | the parse stops |
-| public listing limit | `maxReadings` | 64 (= `readings@1`'s `maxChoices`) | more readings than this are not listed |
+| Limit | Constant | Provisional value | Measured by AP-0 (phase 1) | What happens at the limit |
+|---|---|---|---|---|
+| raw derivation budget | `rawCap` (N) | 256 | largest raw count R = 2 on the registered 22-phrase corpus (R ≤ 64 keeps 256: PASS) | the parser's cap: a parse that returns N trees is **saturated** and may hide more |
+| step budget | `stepBudget` | 2,100,000 (the order of `VE.EnglishGrammar.workBudget`; a separate constant, measured with N) | largest step count S = 14,440 at cap 256 (G14v; 10 S ≤ 2,100,000: PASS) | the parse stops |
+| public listing limit | `maxReadings` | 64 (= `readings@1`'s `maxChoices`) | — | more readings than this are not listed |
+
+`rawCap` and `stepBudget` stay **provisional**. R = 2 holds for draft 2's rule table on a hand-selected corpus (F17),
+and the joined-filler question (F13) may change the table: option (ii) would raise raw counts. Once F13 is decided,
+R and S are re-measured on the same corpus plus the M1 act phrases it left out, by the same rule (R ≤ 64 keeps 256;
+64 < R < 256 gives 1,024; R ≥ 256 gives the least power of two ≥ 4R; 10 S ≤ 2,100,000 keeps the budget, otherwise
+10 S rounded up to the next 100,000), and only then is "provisional" dropped here and in 12. On the stress family
+L6 to L12 (64 to 4,096 derivations), a saturated parse at cap 256 stopped within 297,098 steps, so for such phrases
+the raw cap binds long before the step budget.
 
 A listing is `ok xs` only when the parse finished within the step budget, returned fewer than N trees, and gave at
 most 64 distinct meanings. Every other case is `limit`: a refusal, never a choice. Exactly 64 readings are listed.
@@ -220,6 +262,17 @@ narrows an act.
 
 A reader never sees "classified as …" for a plain predicate with an act under `acts@0`. Lexicon V4 (wording
 distinctness) is not changed: two predicates whose wordings are equal stay a V4 duplicate (A15; 14, C24).
+
+**What bounds the display** (F16). Two limits exist today, and neither applies to these wordings. The 256-character
+limit (`displayString`, `lean/VE/Bridge.lean:123`, `ResourceLimit: verbalisation size`) checks a declaration's
+`verbalisation` field when it is decoded; phase 1 met it on u082, whose 277-byte sentence then rendered "classified
+as …". The template lint's `TEMPLATE_LENGTH` (more than 80 characters or 8 words, `Policy.lean:341`; 160 and 24 above
+arity 2, `:364`) applies to declared wordings. `Lexical.wording` is computed, not decoded, and Policy's hunk (4.1)
+selects it beside the modal-form case (`Policy.lean:504–507`), which takes its wording without the lint. So the wording
+is bounded by the act limit only: `{0} has the right ` adds 14 bytes to the act after its `{0} ` and `{0} is entitled `
+12, so a wording is at most 414 bytes (A21 as a plain act). Permission and obligation wordings take the modal-form
+path today and are bounded the same way, by the act limit plus their modal words. *Read from the code at `49de179e`,
+not run*; the bounded re-check confirms it (13, item 14 (f)).
 
 ### 2.2 Paraphrases of readings
 
@@ -297,6 +350,11 @@ No question shows brackets, slots, markers or frames.
 4. Each adverb says how the act is done.
 5. Each restrictive declaration (AP-5) is true of the source's acts.
 6. Each part's wording (2.1) says what the source says of that act.
+7. *Interim, until F13 is decided* (phase 1): in each joined filler whose marker is written once, a word before the
+   first member or after the last ("arbitrary arrest, detention or exile", "any individual or group") is read on that
+   member only; check that this is the source's reading, or declare the list as a fixed phrase. Under F13's option
+   (iii) this item stays, as the audit item that names the case; under (i) Lean refuses those fillers and the item
+   becomes item 1's ("each fixed phrase names one thing").
 
 Exactness is relative to these declarations (plan section 0); the audit checks them.
 
@@ -663,6 +721,12 @@ What the table says, in words:
   words are shared or the adverb stands before the first function word; an adverb after the first item's own *to* is
   that item's.
 - **No item of a coordination** holds a split construct (one join level).
+- **A joined filler** whose marker is written once (`OLh`, `Oh`'s `PLh`, `OSh`) is a list of parts, each a slot, a
+  fixed phrase or a run of filler words ending at the next comma or join word. So words shared by the members, an
+  adjective or determiner before the first ("arbitrary arrest, detention or exile") or a head noun and preposition
+  ("interference with their privacy, family, home or correspondence"), are read as part of the first or last member
+  only, in one derivation; the other groupings are never listed (F13, measured in phase 1). A list whose marker is
+  repeated (`RLh`: "by secret vote or by …") has no such sharing.
 - **The object** comes right after the head, except in the last item of a shared-object coordination, where it may
   follow modifiers whose last one ends with a slot, a fixed phrase or an adverb (u051's "enjoy in [other countries]
   asylum from persecution").
@@ -719,8 +783,8 @@ def grammar (V : Vocab) : VE.Grammar.Grammar Term       -- 5.2
 def meaning (V : Vocab) : VE.Grammar.Meaning Tok Unit String Act   -- 5.3
 def atomOk (V : Vocab) (a : Atom) : Bool
 
-def rawCap : Nat := 256          -- provisional: AP-0 measures it
-def stepBudget : Nat := 2100000  -- provisional: AP-0 measures it
+def rawCap : Nat := 256          -- provisional: AP-0 measured R = 2 (1.6); re-measured after F13
+def stepBudget : Nat := 2100000  -- provisional: AP-0 measured S = 14,440 (1.6); re-measured after F13
 def maxReadings : Nat := 64
 
 inductive Listing (α : Type) | ok (xs : List α) | limit
@@ -1597,6 +1661,34 @@ that the other conditions are unchanged. *Hand, not yet run.*
 | FR6 | frame `subjected: ["to"] / ["by"] / []` | `framesOk` false | `framesOk` false; 31i with `'by'` |
 | FR7 | the vocabularies V5 to V14 and VL of 11.2 | `framesOk` true | `framesOk` true (every marker is canonical) |
 
+### 11.2b The phase-1 corpus (measured with draft 1's stub)
+
+The 13 `ap0` rows of `research/act-phrases/corpus.json` (vocabularies there, written before the run;
+`docs/research/evidence/act-phrases/n-measurement.json`). Raw and meanings are measured, with draft 1's rule table and
+meaning (identical to draft 2's). They are regression rows for AP-2's `GrammarExamples.lean` and for the
+re-measurement after F13. The last column is *hand, not yet run*: what F13's proposed rule (i) would change (its
+refusal is in the meaning, so raw counts do not change).
+
+| # | Unit | Act phrase (vocabulary) | Raw | Meanings | Note | Under F13 (i) |
+|---|---|---|---|---|---|---|
+| X024 | u024 | `{0} be held in slavery or servitude` (`held: ["in"]`) | 1 | 1 | | unchanged (one-word members) |
+| X037 | u037 | `{0} be subjected to arbitrary arrest, detention or exile` (`subjected: ["to"]`) | 1 | 1 | `to: joined or [arbitrary arrest, detention, exile]`: *arbitrary* on *arrest* only (F13) | 0 meanings: declare a fixed phrase or reword |
+| X045a | u045a | `{0} be subjected to arbitrary interference with their privacy, family, home or correspondence` | 1 | 1 | `[arbitrary interference with their privacy], [family], [home], [correspondence]`: not the source's grouping (F13) | 0 meanings |
+| X045ab | u045a+u045b | X045a `, nor to attacks upon their honour and reputation` (`to` split) | 0 | 0 | two join words in one list (C2) | unchanged |
+| X057 | u057 | `{0} to marry and to found a family` (`marry: []`, `found: [""]`) | 1 | 0 | the shared-object derivation gives *marry* an object its frame forbids; no pattern fits (F14) | unchanged |
+| X067 | u067 | `{0} to change their religion or belief` (`change: [""]`) | 1 | 1 | `[their religion], [belief]` | 0 meanings (first member of two words): declare `their religion or belief` |
+| X068 | u068 | `{0} either alone or in community with others and in public or private, to manifest their religion or belief in teaching, practice, worship and observance` | 0 | 0 | prepositional phrases before the head have no rule (F15) | unchanged |
+| X071b | u071b | `{0} to seek, receive and impart information and ideas through any media and regardless of frontiers` | 0 | 0 | a joined object and joined modifiers inside a coordination (one join level, C2; F15) | unchanged |
+| X101 | u101 | `{0} promote understanding, tolerance and friendship among all nations, racial or religious groups` (`promote: ["", "among"]`) | 1 | 1 | `among: [all nations], [racial], [religious groups]` (F13) | 0 meanings |
+| X0062 | u0062.s01 | `{0} give Claude a specific set of instructions, a persona, or information` (`give: [""]`) | 1 | 1 | `[Claude a specific set of instructions], [a persona], [information]`: not the source's grouping (F13) | 0 meanings |
+| X0156 | u0156.s03 | `{0} actively deceive {1} about the existence of a system prompt or its content` (no fixed phrase; A13 declares one) | 1 | 1 | `[the existence of a system prompt] or [its content]`; the other attachment is not listed (F13) | 0 meanings; A13 (with its fixed phrase) unchanged |
+| X0165s05 | u0165.s05 | `{0} engage or assist in [an attempt to kill or disempower … as whole]` (90-byte fixed phrase) | 1 | 1 | | unchanged |
+| X0165s06 | u0165.s06 | `{0} engage or assist any individual or group with [an attempt to seize …]` | 1 | 1 | `[any individual], [group]` (F13) | 0 meanings |
+
+Steps at cap 256 range from 2,522 (X067) to 12,438 (X071b); the largest over the whole corpus is G14v's 14,440. Raw
+exceeds meanings only in X057, and no phrase has two derivations with one meaning, so the corpus holds no
+counterexample to checklist item 3 (13).
+
 ### 11.3 AP-3 (the table and elaboration)
 
 The table, per cell (`table` on the act trees of 11.2):
@@ -1701,8 +1793,9 @@ pb x`; on two plain predicates it gives none.
 | act phrase | 400 bytes | `Lexical.maxActBytes` |
 | fixed phrase | 300 bytes; 128 per document | `maxPhraseBytes`, `maxPhrases` |
 | frames | 128 per document | `framesOk` |
-| raw derivations | `rawCap` = 256 (provisional, AP-0) | 1.6 |
-| step budget | `stepBudget` = 2,100,000 (provisional, AP-0) | 1.6 |
+| raw derivations | `rawCap` = 256 (provisional: AP-0 measured R = 2, PASS; re-measured after F13) | 1.6 |
+| step budget | `stepBudget` = 2,100,000 (provisional: AP-0 measured S = 14,440, PASS; re-measured after F13) | 1.6 |
+| a plain predicate's wording | at most 414 bytes, from the act limit; not the 256-character verbalisation limit, not `TEMPLATE_LENGTH` (F16) | 2.1 |
 | readings | 64 | `maxReadings` |
 | part names | 64 bytes (predicate), `ruleName` (rule) | `elaborateMap` (step 3) |
 | the elaborated document | the route's own limits, re-checked on `U'` with their existing texts: regulated predicates 64, rules 256, vocabulary 256 (parts and unsaid predicates counted), rules plus unspecified 256, unspecified names 56 bytes, AST 10,000 nodes, precedence depth | `elaborateMap` (steps 5 and 6, 6.3; SR7) |
@@ -1757,6 +1850,12 @@ reference table); AP-4 7 h; AP-5 3 h; AP-5b 4 h (design and review); total about
     E12–E15), the readings route (`readings_lexical_only`, D-33) and `elaborate_parts` (6.6); (e) the AP-1 inventory
     (4.1) and fixture E16. The re-check covers both reviewers' counterexamples. Build stays blocked except AP-0 until it
     passes and the DRI signs.
+    **(f) Phase 1 adds** (draft 3): the DRI's decision on F13 (the plan's D9), and, if (i) or (ii), the changed
+    meaning (5.3) or rule table (5.2) written out, with the rows of 11.2b as fixtures in both directions; u057 (F14): a
+    coordination pattern, or the refusal and the rewording; after F13, the re-measurement of R and S (1.6) on the
+    22-phrase corpus plus u039, u041, u082, u085, u086, u091, u106 and u108, with vocabularies written by someone other
+    than the person measuring; and a confirmation of the display bound (F16) by a fixture rendering A21 as a plain
+    act.
 
 ## 14. Choices, the statement review's edits, and findings
 
@@ -1808,6 +1907,11 @@ reference table); AP-4 7 h; AP-5 3 h; AP-5b 4 h (design and review); total about
 | F10 | *False* is a clause word (today's `actReserved`), and the clause words also hold *true*, *no*, *not* and *every*, which occur as ordinary words in act phrases. u0123.s03's fourth act, "provide false information that could deceive the user", is therefore refused even as a fixed phrase (A32), so the plan's A14 ("six prohibitions") cannot pass as written; the stub measured this, the hand draft had missed it | either keep the rule (the translator rephrases, and A14 gives five prohibitions plus one act left unformalised), or let a fixed phrase hold *true*, *false*, *no* and *every* as adjectives while still refusing the clause-forming words (*is*, *if*, *then*, *not*, *must* …). The second changes 1.1 condition 3 only; `check_extends` is unaffected, since today's check accepts none of these words. For the review and the DRI. **Decided by the review (SR13): keep the rule.** u0123.s03 gives five prohibitions (G14v, E3) plus one explicit residual; allowing the words later only widens what is accepted, so it can wait for evidence that readers still give one reading |
 | F11 | (from SR8) The readings route refuses joined acts (D-33). A reading whose simple act is a whole join, or an atom with a joined filler, renders as a joined act, so no candidate on the readings route can carry it, and a source with such a reading cannot pass `sourceCheck`. Of the pilot's AP-4 units, u076 (P11: its one-act reading) is affected; u092 (P10), u105 (P8, S1) and u055 (P9, S4) are not | u076's set waits for the readings elaboration, which needs its own statement review (candidate elaboration and preservation theorems). The plan's AP-4 credit drops to u092 (plan draft 3, AP-4 "Moves" and section 7) |
 | F12 | (from SR6) Elaborating after `decodeSourceU` means every entry point an `acts@0` norms document reaches must take `decodeElaboratedU`; 6.4 lists the callers of `decodeSource` and `decodeSourceU` measured on `49de179e`, some of them on routes the AR-10 row refuses | AP-3 classifies each caller's reach at build time, gives each reached soundness theorem its twin over `e.U'`, and records the list in the batch |
+| F13 | (phase 1, report 5 and 7.6c) **Words shared inside a joined filler.** The edge rule covers modifiers over joined items, not words shared inside one joined filler whose marker is written once: an adjective or determiner before the first member, or a head noun and preposition. A run of filler words ends at the comma or join word (5.2), so the grammar lists one grouping and never the others: X037, X045a, X0062, X101, X0156, X0165s06 (11.2b). For X045a and X0062 it is not the source's grouping. No declaration is involved, so checklist item 1 does not catch it, and section 0 of the plan says such an ambiguity is refused or rephrased. Inside one simple act the act's text is unchanged; under a split marker the parts would lose the shared word. Phase 1's u106 met the same pattern: it passed only with "scientific, literary or artistic" merged into one predicate | The plan's D9, decided at the bounded re-check. **(i), recommended:** in the meaning (5.3), a joined filler whose marker is written once (`OLh`, `Oh`'s `PLh`, `OSh`) has no meaning when its first or last part is `words` of two or more words; the derivation stays (raw counts unchanged), the phrase gets D-16 if no other derivation has a meaning, and the translator declares a fixed phrase (checklist item 1) or rewords. A new diagnostic text naming the case is for the re-check to write. G5 to G14v are unchanged (none has such a filler); X037, X045a, X067, X101, X0062, X0156 and X0165s06 lose their meaning. **(ii):** an edge rule for joined fillers (first or all, last or all), which lists the other groupings; it raises raw counts, needs the rule table re-reviewed and N re-measured. **(iii):** exactness relative to the declared fixed phrases, with checklist item 7 as the audit item that names the case. D3, D4 and N stay provisional until it is decided |
+| F14 | (phase 1, 7.6a) u057's "to marry and to found a family" has no reading (X057: one derivation, meaning refused). A bare item before an item with an object fits none of the three coordination patterns (5.2): the shared-object pattern gives *marry* the object its frame forbids, and the full pattern needs material on every item but the last. AP-6 targets u057, which now fails before arity matters | the bounded re-check adds a pattern (bare items whose frames take no object, then a full last item), keeping one derivation per reading (checklist item 3), or records the refusal and the rewording. *Hand, not yet run:* "to found a family and to marry" fits the full pattern (`TM:F → J LM:CB`, a bare last item) |
+| F15 | (phase 1, 7.6b) u068 and u071b have no reading: prepositional phrases before the head have no rule (X068), and a joined object and joined modifiers inside a coordination break the one join level, C2 (X071b). The research note counted u067, u068 and u071b (328 B) as coordinated act phrases; only u067 reads | recorded; no rule is added until AP-7 shows the need (plan 8.11). The phrases are refused (D-16), and the translator rewords them or writes one rule per act |
+| F16 | (phase 1, 7.7) AP-1 allows 400-byte acts, and today a `verbalisation` holds at most 256 characters (`Bridge.lean:123`; u082 met it). Does a generated wording pass through that limit? | No: the limit checks the declared field on decoding, and the template lint's `TEMPLATE_LENGTH` checks declared wordings; `Lexical.wording` is computed and selected beside the modal-form case without the lint. The wording is bounded by the act limit: at most 414 bytes (2.1, 12). Read from the code; the re-check confirms it |
+| F17 | (phase 1, 5; review finding 4) The corpus behind R = 2 has 22 phrases, registered before the run, chosen by hand without a written rule. It leaves out the longest M1 act phrases (u039, u082, u091, u086, u106, u108, u041, u085), holds 5 of the constitution's 18 norm acts, 4 of its 13 `ap0` rows have no reading, and its vocabularies, written by the person measuring, sometimes absorb a coordination into a fixed phrase (X0165s05: 90 bytes) | R is this corpus's, not all the pilots'. The verdict would change only above 64. The re-measurement after F13 widens the corpus (1.6; 13, item 14 (f)) |
 
 ### 14.3 The statement review's edits (draft 2)
 
@@ -1861,6 +1965,15 @@ bounded re-check (13, item 14) updates it, adds the guards for the fixtures mark
 header, runs it, and records here: the toolchain, the `main` commit, the stub's sha256, and the numbers of statements
 and guards. Draft 2 was written without a shell and has not been run.
 
+**Phase 1's run (draft 3).** The untracked original in the `design/act-phrases` worktree has sha256
+`6e33f85c0727c5aa3fd8d9b3975128be279f716674085acd1c3680493e32c215` (the review checked that it equals phase 1's copy).
+Phase 1 copied it verbatim to `research/act-phrases/stub/`, appended a generated measurement section, and ran
+`lake env lean` against `main` at `49de179e`: exit 0, no other output, so the 161 `#guard`s still pass, and G5 to
+G14v's counts equal 11.2's (`docs/research/evidence/act-phrases/n-measurement.json`). This is draft 1's stub, not the
+update the bounded re-check needs. Draft 3 changes no definition or statement, so it adds nothing to that update
+beyond the rows of 11.2b and whatever F13 and F14 decide. The stub is not tracked in this repository, so draft 3
+touches no stub file.
+
 ## Change log
 
 - Draft 1 (2026-10-13): first draft, from the plan's draft 2; statements and fixtures checked in the stub (15).
@@ -1868,3 +1981,7 @@ and guards. Draft 2 was written without a shell and has not been run.
   SR1 to SR16 (14.3), and nothing else. F10 decided; F11 and F12 added. New diagnostics D-32 and D-33; D-28 gains the
   `InvalidInput:` code now that Lean writes it. New fixtures A33, G5d, N1–N5, FR1–FR7, E5j, E12–E16, P12n, S6–S8,
   AR1–AR5, all *hand, not yet run*. Not yet re-run in the stub.
+- Draft 3 (2026-10-13): records phase 1 (AP-0): the measured limits with their provisional status (1.6, 5.4
+  comments, 12); the display bound (2.1, 12); the interim checklist item 7 (2.4); the joined-filler note in 5.2; the
+  phase-1 corpus rows (11.2b); the re-check's part (f) (13); findings F13 to F17 (14.2); the stub's sha256 and phase
+  1's run (15). No statement, definition, diagnostic or existing fixture changed.
