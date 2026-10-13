@@ -420,15 +420,18 @@ def fillPremisesJson (N : NDoc) (side : String → Nat → RightsDoc × List VE.
     ("premises", Json.arr ((VE.NormDefaults.Admission.fillLabelled (asU N (side c.1.id c.2).1)).map (fun (l, a) =>
       Json.mkObj [("label", .str l), ("ast", encF a)])).toArray)])).toArray
 
-/-- The units of `fillDoc N` in source order: each fixed unit's filled content (the `F_p` units last), each reading's
-    filled content with its set and index. -/
-def filledUnitsJson (N : NDoc) : List Json :=
-  (fillDoc N).items.flatMap (fun it => match it with
+/-- A document's units in source order: each fixed unit's content, each reading's content with its set and index. -/
+def unitsJsonOf (items : List Item) : List Json :=
+  items.flatMap (fun it => match it with
     | .fixed u c _ => [Json.mkObj [("unit", .str u), ("content", contentJson c)]]
     | .bar u _ => [Json.mkObj [("unit", .str u), ("content", Json.mkObj [("kind", .str "bar")])]]
     | .set R => (List.range R.candidates.length).filterMap (fun i =>
         (R.candidates[i]?.bind (·.content)).map (fun c => Json.mkObj [("unit", .str R.unit), ("set", .str R.id),
           ("version", toJson R.version), ("index", toJson i), ("content", contentJson c)])))
+
+/-- The units of `fillDoc N` in source order: each fixed unit's filled content (the `F_p` units last), each reading's
+    filled content with its set and index. -/
+def filledUnitsJson (N : NDoc) : List Json := unitsJsonOf (fillDoc N).items
 
 /-- `filled`: the lower environment with each `unspecified` read as `deny`, `norm-defaults@0` removed and every
     `unsaid__p` added (10a's `withUnsaid`, which reads only the frame's regulated predicates), and the filled units.
@@ -456,31 +459,81 @@ theorem strict_choice (N : NDoc) (hn : normsShaped N.D = true) (c : Choice) : St
     | some i => rw [hi] at h; exact List.mem_of_getElem? h)
 
 /-- A choice's filled document reads the frame's environment. -/
+theorem choiceU_E_of (b : Admitted2) (N : NDoc) (hN : N.D = b.D) (hn : normsShaped N.D = true) (c : Choice) :
+    (choiceU N c).D.E = b.a.re.se.ne.rv.environment := by
+  have hX := strict_choice N hn c
+  simp only [choiceU, asU]
+  rw [(correlate_noRights _ hX.1).1, soften_strict _ hX.2]
+  show (choiceDoc N.D c).1.soft.E = _
+  rw [show (choiceDoc N.D c).1.soft.E = N.D.frame.soft.E from (keepsFrame_build _ _ _).E, hN, b.frame]
+  rfl
+
 theorem choiceU_E (r : AdmittedND) (c : Choice) : (choiceU r.N c).D.E = r.b.a.re.se.ne.rv.environment := by
   have hn : normsShaped r.N.D = true := by
     have h := r.wfU
     simp only [WellFormedND, Bool.and_eq_true] at h
     exact h.1.1.1.2
-  have hX := strict_choice r.N hn c
-  simp only [choiceU, asU]
-  rw [(correlate_noRights _ hX.1).1, soften_strict _ hX.2]
-  show (choiceDoc r.N.D c).1.soft.E = _
-  rw [show (choiceDoc r.N.D c).1.soft.E = r.N.D.frame.soft.E from (keepsFrame_build _ _ _).E, r.hN, r.b.frame]
-  rfl
+  exact choiceU_E_of r.b r.N r.hN hn c
+
+/-- The facts of the frame a soft choice's document keeps that its soft source needs: the environment, the literals
+    and no definition (`frameOf`). -/
+theorem choice_soft_frame (b : Admitted2) (N : NDoc) (hN : N.D = b.D) (c : Choice) :
+    (choiceDoc N.D c).1.soft.E = b.a.re.se.ne.rv.environment ∧
+      (choiceDoc N.D c).1.soft.lits = b.a.re.se.ne.rv.literals ∧ (choiceDoc N.D c).1.soft.T.definitions = [] := by
+  obtain ⟨e, h⟩ := build_soft N.D (fun _ => true) (fun R => (c.index R.id).bind (R.candidates[·]?))
+  have h' : (choiceDoc N.D c).1.soft = { N.D.frame.soft with T := { N.D.frame.soft.T with
+      nodes := N.D.frame.soft.T.nodes ++ e } } := h
+  rw [h', hN, b.frame]
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The choice's document as the layered branch's source, on either chain (4.3). On the norms chain it is RD-2a's
+    (route `norms@0`, no extra base premise since `choiceX = []`, `choiceX_normsShaped`); on the soft chain its route
+    is `soft-norms@0`, its source `correlate (choiceDoc N.D c).1`, its extra base premises soft's regenerated on the
+    filled tree (`softXL`), its situation vocabulary soft's prime vocabulary (base and decision predicates) and its
+    packages bound to `E‴_base` with the decisions. Each fact the source needs that the signature does not carry is
+    checked here. -/
+def choiceLayeredG (b : Admitted2) (N : NDoc) (c : Choice)
+    (wfc : VE.NormDefaults.WellFormedU (choiceU N c) = true) (hN : N.D = b.D) :
+    Except String {L : VE.NormDefaults.Wire.LayeredU // L.U = choiceU N c ∧ L.X = choiceX N c ∧
+      ∀ a ∈ L.X, a.WellFormed (envAt (VE.NormDefaults.fill L.U) 0) []} := do
+  let re := b.a.re
+  let U := choiceU N c
+  let X := (choiceDoc N.D c).1
+  let profiles := VE.NormDefaults.Wire.profilesOf re.lowerJson
+  if hn : normsShaped N.D = true then
+    let baseEnv ← VE.NormDefaults.Wire.baseEnvironmentJsonU re.lowerJson U
+    let envId ← VE.Route.Wire.environmentId profiles (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU re.lowerJson)
+    let docHash ← VE.Readings.Run.choiceHash b (VE.Readings.Run.choiceJsons b.a.doc.itemsJ c)
+    pure ⟨⟨"norms@0", correlate X, U, wfc, softXL N X, 0,
+      VE.Norms.Replay.baseModelVocabulary re.se.ne U.D,
+      VE.Norms.Replay.baseModel_valid re.se.ne U.D (choiceU_E_of b N hN hn c), baseEnv, envId, docHash⟩, rfl, rfl,
+      fun a ha => by
+        have : choiceX N c = [] := choiceX_normsShaped N hn c
+        simp only [VE.NormDefaults.Wire.LayeredU.X] at ha
+        exact absurd (show a ∈ choiceX N c from ha) (by rw [this]; exact List.not_mem_nil)⟩
+  else if N.D.chain == .soft then
+    if hnr : noRights X = true then
+      if hws : VE.SoftNorms.WellFormedSoft (correlate X) = true then
+        have hf := choice_soft_frame b N hN c
+        have hc := (correlate_noRights X hnr).1
+        let src : VE.SoftNorms.Wire.SoftSource :=
+          ⟨re.se, correlate X, hws, by rw [hc]; exact hf.1, by rw [hc]; exact hf.2.1, by rw [hc]; exact hf.2.2⟩
+        let env' ← VE.NormDefaults.Wire.placeholderJson re.lowerJson
+        let baseEnv ← VE.NormDefaults.Wire.withUnsaid U (← VE.SoftNorms.Wire.basePrimeJson (correlate X) env')
+        let envId ← VE.Route.Wire.environmentId profiles (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU re.lowerJson)
+        let docHash ← VE.Readings.Run.choiceHash b (VE.Readings.Run.choiceJsons b.a.doc.itemsJ c)
+        pure ⟨⟨"soft-norms@0", correlate X, U, wfc, softXL N X, 0,
+          VE.SoftNorms.Wire.primeModelVocabulary re.se (correlate X), VE.SoftNorms.Wire.primeModel_valid src,
+          baseEnv, envId, docHash⟩, rfl, rfl, softX_wellFormed N X hws wfc⟩
+      else throw ("InvalidInput: soft norm document is not well-formed under " ++ choiceText N.D c)
+    else throw ("UnsupportedProfile: rights content requires rights@0 under " ++ choiceText N.D c)
+  else throw "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
 
 /-- The choice's document as the layered branch's source (no extra base premise on the norms chain): its packages
-    are bound to the case's environment id, the choice's document hash and its `E‴_base`. -/
+    are bound to the case's environment id, the choice's document hash and its `E‴_base` (`choiceLayeredG`). -/
 def choiceLayered (r : AdmittedND) (c : Choice) (wfc : VE.NormDefaults.WellFormedU (choiceU r.N c) = true) :
-    Except String {L : VE.NormDefaults.Wire.LayeredU // L.U = choiceU r.N c} := do
-  let re := r.b.a.re
-  let U := choiceU r.N c
-  let profiles := VE.NormDefaults.Wire.profilesOf re.lowerJson
-  let baseEnv ← VE.NormDefaults.Wire.baseEnvironmentJsonU re.lowerJson U
-  let envId ← VE.Route.Wire.environmentId profiles (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU re.lowerJson)
-  let docHash ← VE.Readings.Run.choiceHash r.b (VE.Readings.Run.choiceJsons r.b.a.doc.itemsJ c)
-  pure ⟨⟨"norms@0", correlate (choiceDoc r.N.D c).1, U, wfc, [], 0,
-    VE.Norms.Replay.baseModelVocabulary re.se.ne U.D,
-    VE.Norms.Replay.baseModel_valid re.se.ne U.D (choiceU_E r c), baseEnv, envId, docHash⟩, rfl⟩
+    Except String {L : VE.NormDefaults.Wire.LayeredU // L.U = choiceU r.N c} :=
+  (choiceLayeredG r.b r.N c wfc r.hN).map (fun L => ⟨L.1, L.2.1⟩)
 
 /-- The conflict packages of the case: `conflict.packages` for a certificate, else `packages`. -/
 def conflictPackages (inner : Json) : Json :=
@@ -667,52 +720,55 @@ def runElaborateNDFilled (id : String) (f : AdmittedNDFull) : Except String Json
   runElaborateNDWith id f.r (do
     pure [("fill_premises", fillPremisesJson f.r.N f.r.b.a.side), ("filled", ← filledJson f.r)])
 
-/-- The case's own premises and conclusion over the complete environment of `fill U`, the regenerated assertions of
-    the choice first. -/
-def ndFormulas (x : ChoiceReplayU) (inner : Json) : Except String (List VE.Formula × VE.Formula) := do
-  let E := envAt (fill (choiceU x.r.N x.c)) (size (fill (choiceU x.r.N x.c)))
-  -- Absent premises are none, as `runChoice` sends the regenerated assertions alone.
-  let (Γ, φ) ← choiceFormulas E (if inner.getObjValD "premises" == .null then inner.setObjVal! "premises" (.arr #[])
-    else inner)
-  pure ((choiceDoc x.r.N.D x.c).2 ++ Γ, φ)
-
-/-- A certificate of the choice's filled document, bound as the norm-defaults route binds it: the regenerated
-    premises of `fill U` and the choice's assertions, then the case's premises as written. The answer is the
-    norm-defaults route's (`valid`, the number of premises); `runChoiceND` adds the conflict status. -/
-def ndCertificate (x : ChoiceReplayU) (inner : Json) : Except String (List (String × Json)) := do
-  let re := x.r.b.a.re
-  let U := choiceU x.r.N x.c
+/-- A certificate of a choice's layered source, bound by the one binder (`bindCertX`): the source environment, the
+    regenerated premises `premisesX L.U L.X A` and the case's premises and conclusion as written; checked over
+    `premisesX L.U L.X (A ++ Γ)` (4.3). On the norms chain `L.X = []`, so the premises are today's (`premisesX_nil`).
+    The answer is the norm-defaults route's (`valid`, the number of premises); the runner adds the conflict status. -/
+def choiceCertificateX (re : ReadingsEnvironment) (L : VE.NormDefaults.Wire.LayeredU) (A : List VE.Formula)
+    (inner : Json) : Except String (List (String × Json)) := do
   unless (inner.getObjVal? "conflict") matches .ok (.obj _) do
     throw "InvalidInput: a reading's certificate needs the choice's conflict packages"
-  let (Γ, φ) ← ndFormulas x inner
+  let E := envAt (fill L.U) (size (fill L.U))
+  let (Γ, φ) ← choiceFormulas E (if inner.getObjValD "premises" == .null then inner.setObjVal! "premises" (.arr #[])
+    else inner)
   let own ← match inner.getObjValD "premises" with
     | .null => pure []
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: premises must be an array"
-  let cert ← VE.NormDefaults.Wire.bindCertX re.lowerJson U [] (choiceDoc x.r.N.D x.c).2 own
-    (inner.getObjValD "conclusion") (← inner.getObjVal? "certificate")
-  let valid := VE.Tableau.checkCertificate (envAt (fill U) (size (fill U))) (VE.NormDefaults.Wire.premisesU U Γ) φ cert
-  pure [("valid", .bool valid), ("premises", toJson (VE.NormDefaults.Wire.premisesU U Γ).length)]
+  let cert ← VE.NormDefaults.Wire.bindCertX re.lowerJson L.U L.X A own (inner.getObjValD "conclusion")
+    (← inner.getObjVal? "certificate")
+  let valid := VE.Tableau.checkCertificate E (VE.NormDefaults.Wire.premisesX L.U L.X (A ++ Γ)) φ cert
+  pure [("valid", .bool valid), ("premises", toJson (VE.NormDefaults.Wire.premisesX L.U L.X (A ++ Γ)).length)]
 
-/-- A base model of the choice's document with a separate `filling` (`modelCheckU`). -/
-def ndChoiceModel (x : ChoiceReplayU) (L : VE.NormDefaults.Wire.LayeredU) (id : String) (inner : Json)
+/-- A base model of a choice's layered source with a separate `filling` (`modelCheckX`; on the norms chain
+    `modelCheckU`, `modelCheckX_nil`). -/
+def choiceModelX (L : VE.NormDefaults.Wire.LayeredU) (A : List VE.Formula) (id : String) (inner : Json)
     (assertions : Nat) : Except String Json := do
   let S ← VE.NormDefaults.Wire.situationX L (← inner.getObjVal? "model")
   let F ← VE.NormDefaults.Wire.decodeFilling L.U S.M (inner.getObjValD "filling")
-  let (Γ, φ) ← ndFormulas x inner
-  let U := L.U
-  let res := VE.NormDefaults.modelCheckU U S.M F Γ φ
+  let E := envAt (fill L.U) (size (fill L.U))
+  let (Γ, φ) ← choiceFormulas E (if inner.getObjValD "premises" == .null then inner.setObjVal! "premises" (.arr #[])
+    else inner)
+  let res := VE.NormDefaults.modelCheckX L.U L.X S.M F (A ++ Γ) φ
   pure (modelAnswer id res.1 res.2
-    (Γ.map (fun a => (VE.Norms.subst (fill U).T (size (fill U)) a).eval (S.M.withFill F) [])) assertions)
+    ((A ++ Γ).map (fun a => (VE.Norms.subst (fill L.U).T (size (fill L.U)) a).eval (S.M.withFill F) [])) assertions)
 
-/-- The inner kinds of a choice under the completion (plan 3.4), answered on `choiceU N c`: the layered kinds by the
-    norm-defaults branch's own dispatch (`layeredCase`), so each answer is that route's on the choice's document; any
+/-- The inner kinds of a choice under the completion, on either chain (4.3), answered on the choice's layered
+    source: the certificate kind first (`choiceCertificateX`), the layered kinds by the norm-defaults branch's own
+    dispatch (`layeredCase`), so each answer is that route's on the choice's document, and the choice model; any
     other kind is the norm-defaults route's refusal. -/
-def ndInner (x : ChoiceReplayU) (L : VE.NormDefaults.Wire.LayeredU) (id kind : String) (inner : Json) (assertions : Nat) : Except String Json := do
+def choiceInnerX (re : ReadingsEnvironment) (L : VE.NormDefaults.Wire.LayeredU) (A : List VE.Formula)
+    (id kind : String) (inner : Json) (assertions : Nat) : Except String Json := do
+  if kind == "norm-defaults-certificate" then return VE.Route.Wire.ok id (← choiceCertificateX re L A inner)
   if let some a ← VE.NormDefaults.Wire.layeredCase L id kind inner then return a
-  if kind == "norm-defaults-certificate" then return VE.Route.Wire.ok id (← ndCertificate x inner)
-  if kind == "choice-model" then return ← ndChoiceModel x L id inner assertions
+  if kind == "choice-model" then return ← choiceModelX L A id inner assertions
   throw s!"UnsupportedProfile: case kind {kind} is not available on the norm-defaults route"
+
+/-- The inner kinds of a choice on the norms chain under the completion: `choiceInnerX` on the choice's layered
+    source with its regenerated assertions. -/
+def ndInner (x : ChoiceReplayU) (L : VE.NormDefaults.Wire.LayeredU) (id kind : String) (inner : Json)
+    (assertions : Nat) : Except String Json :=
+  choiceInnerX x.r.b.a.re L (choiceDoc x.r.N.D x.c).2 id kind inner assertions
 
 /-- `readings-choice` under the completion: the choice replayed (`replayChoiceAt`), then its inner kind on the
     regenerated `choiceU N c`. The answer's shape is `runChoice`'s: the choice, its document hash, the number of its
@@ -729,8 +785,9 @@ def runChoiceND (id : String) (r : AdmittedND) (j : Json) : Except String Json :
     | .ok a => a
     | .error e => Json.mkObj [("id", .str id), ("status", .str "error"), ("error", .str e)]
   -- As `runChoice`: a certificate is accepted only with the choice's conflict packages CONFLICT-FREE (S2a 14.8),
-  -- here `conflictFreeCheckU` on the replayed certificates, the hypothesis of `readings_wire_nd_choice_entails`.
-  let free := VE.NormDefaults.Wire.conflictFreeCheckU (choiceU x.r.N x.c) x.certs
+  -- here `conflictFreeCheckX` on the replayed certificates (`conflictFreeCheckU`'s value, `L.X = []`), the
+  -- hypothesis of `readings_wire_nd_choice_entails`.
+  let free := VE.NormDefaults.Wire.conflictFreeCheckX L.1.U L.1.X x.certs
   let valid := answer.getObjValD "valid" == .bool true
   let accepted := if kind == "norm-defaults-certificate" then
       [("conflict_free", .bool free), ("accepted", .bool (free && valid))]

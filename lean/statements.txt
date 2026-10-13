@@ -8148,7 +8148,7 @@ theorem VE.NormDefaults.Admission.runAdmissionX_sound
   ∀ (id : String) (environment document answer : Lean.Json),
     VE.NormDefaults.Admission.runAdmissionX id environment document = Except.ok answer →
       VE.NormDefaults.Admission.AdmissionAnswerX id environment document answer
-  -- uses VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.runAdmissionX@VE.NormDefaults.LayeredAdmission
+  -- uses VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.Run VE.NormDefaults.Admission.runAdmissionX@VE.NormDefaults.Run
   -- expr 2037136431
 theorem VE.NormDefaults.Admission.softLeafX_formula
   ∀ (L : VE.NormDefaults.Wire.LayeredU) (w : VE.Route.Admission.WireNode),
@@ -8202,7 +8202,7 @@ theorem VE.NormDefaults.Run.normDefaults_wire_admissionX
               VE.Bridge.stringField j "id" = Except.ok id ∧
                 VE.NormDefaults.Admission.AdmissionAnswerX id (j.getObjValD "environment") (j.getObjValD "document")
                   answer
-  -- uses VE.Bridge.stringField@VE.Bridge VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Run.runCase@VE.NormDefaults.Run VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.NormDefaults.Wire.layeredRoute@VE.NormDefaults.Layered VE.Route.Run.caseKind@VE.Route.Run
+  -- uses VE.Bridge.stringField@VE.Bridge VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.Run VE.NormDefaults.Run.runCase@VE.NormDefaults.Run VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.NormDefaults.Wire.layeredRoute@VE.NormDefaults.Layered VE.Route.Run.caseKind@VE.Route.Run
   -- expr 4176715051
 theorem VE.NormDefaults.Run.runAdmission_sound
   ∀ (id : String) (environment document answer : Lean.Json),
@@ -15958,6 +15958,11 @@ theorem VE.Readings.Wire.authorEnv_filled
     VE.Readings.authorEnv fa.a.D = VE.Readings.authorEnv (VE.Readings.fillDoc r.N)
   -- uses VE.Environment@VE.Syntax VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.FilledAdmitted.a@VE.Readings.UnspecifiedWire VE.Readings.Wire.FilledAdmitted@VE.Readings.UnspecifiedWire VE.Readings.authorEnv@VE.Readings.Separate VE.Readings.fillDoc@VE.Readings.Unspecified
   -- expr 2398616153
+theorem VE.Readings.Wire.authorEnv_unsaid
+  ∀ {r : VE.Readings.Wire.AdmittedSD} (fa : VE.Readings.Wire.UnsaidAdmitted r),
+    VE.Readings.authorEnv fa.a.D = VE.Readings.filledAuthorEnv r.N
+  -- uses VE.Environment@VE.Syntax VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.AdmittedSD@VE.Readings.SoftWire VE.Readings.Wire.UnsaidAdmitted.a@VE.Readings.SoftWire VE.Readings.Wire.UnsaidAdmitted@VE.Readings.SoftWire VE.Readings.authorEnv@VE.Readings.Separate VE.Readings.filledAuthorEnv@VE.Readings.SoftDefaults
+  -- expr 3418797970
 theorem VE.Readings.Wire.author_valid
   ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Readings.Doc) (units : List String),
     D.frame = VE.Readings.Wire.frameOf re units →
@@ -16006,6 +16011,11 @@ theorem VE.Readings.Wire.candidate_of_fill
       ∀ (x : String × Nat), x ∈ A → (VE.Readings.candidate N.D x.fst x.snd).isSome = Bool.true
   -- uses VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.candidate@VE.Readings.Doc VE.Readings.fillDoc@VE.Readings.Unspecified
   -- expr 1250991727
+theorem VE.Readings.Wire.candidate_unsaid
+  ∀ {r : VE.Readings.Wire.AdmittedSD} (fa : VE.Readings.Wire.UnsaidAdmitted r) (s : String) (i : Nat),
+    VE.Readings.candidate fa.a.D s i = VE.Readings.candidate r.N.D s i
+  -- uses VE.Readings.Candidate@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.AdmittedSD@VE.Readings.SoftWire VE.Readings.Wire.UnsaidAdmitted.a@VE.Readings.SoftWire VE.Readings.Wire.UnsaidAdmitted@VE.Readings.SoftWire VE.Readings.candidate@VE.Readings.Doc
+  -- expr 3726796730
 theorem VE.Readings.Wire.chainText_eq
   ∀ (c : VE.Readings.Chain) (X : VE.Rights.RightsDoc × List VE.Formula),
     VE.Readings.Wire.chainText c X = VE.Readings.Wire.chainTextSpec c X
@@ -16016,6 +16026,22 @@ theorem VE.Readings.Wire.choiceU_E
     (VE.Readings.choiceU r.N c).D.E = r.b.a.re.se.ne.rv.environment
   -- uses VE.Environment@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND.b@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.ReadingsEnvironment.se@VE.Readings.Wire VE.Readings.choiceU@VE.Readings.Unspecified VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire
   -- expr 1035165244
+theorem VE.Readings.Wire.choiceU_E_of
+  ∀ (b : VE.Readings.Wire.Admitted2) (N : VE.Readings.NDoc),
+    N.D = b.D →
+      VE.Readings.normsShaped N.D = Bool.true →
+        ∀ (c : VE.Readings.Choice), (VE.Readings.choiceU N c).D.E = b.a.re.se.ne.rv.environment
+  -- uses VE.Environment@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.D@VE.Readings.SupWire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.Admitted2@VE.Readings.SupWire VE.Readings.Wire.ReadingsEnvironment.se@VE.Readings.Wire VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.normsShaped@VE.Readings.Unspecified VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire
+  -- expr 1200336177
+theorem VE.Readings.Wire.choice_soft_frame
+  ∀ (b : VE.Readings.Wire.Admitted2) (N : VE.Readings.NDoc),
+    N.D = b.D →
+      ∀ (c : VE.Readings.Choice),
+        (VE.Readings.choiceDoc N.D c).fst.soft.E = b.a.re.se.ne.rv.environment ∧
+          (VE.Readings.choiceDoc N.D c).fst.soft.lits = b.a.re.se.ne.rv.literals ∧
+            (VE.Readings.choiceDoc N.D c).fst.soft.T.definitions = []
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Definition@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.D@VE.Readings.SupWire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.Admitted2@VE.Readings.SupWire VE.Readings.Wire.ReadingsEnvironment.se@VE.Readings.Wire VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.lits@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.definitions@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire
+  -- expr 1949801247
 theorem VE.Readings.Wire.choicesSoftChecked_of_nd
   ∀ {re : VE.Readings.Wire.ReadingsEnvironment} {N : VE.Readings.NDoc},
     VE.Readings.Wire.ndChecked re N = Bool.true → VE.Readings.choicesSoftChecked (VE.Readings.fillDoc N) = Bool.true
@@ -16665,6 +16691,43 @@ theorem VE.Readings.Wire.readings_wire_satisfiable
     VE.Readings.Wire.replaySup j = Except.ok r → ∃ c, VE.Readings.Compatible r.D c
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Wire.SupReplay.D@VE.Readings.SupWire VE.Readings.Wire.SupReplay@VE.Readings.SupWire VE.Readings.Wire.replaySup@VE.Readings.SupWire
   -- expr 1505476592
+theorem VE.Readings.Wire.readings_wire_sd_choice_conflict
+  ∀ (j : Lean.Json) (x : VE.Readings.Wire.ChoiceReplayS),
+    VE.Readings.Wire.replayChoiceS j = Except.ok x →
+      ∀ (packages : Lean.Json),
+        VE.NormDefaults.Wire.conflictFreeX x.L packages = Bool.true →
+          VE.Readings.Compatible x.r.N.D x.c ∧
+            VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU x.r.N x.c) (VE.Readings.choiceX x.r.N x.c)
+  -- uses VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeX@VE.NormDefaults.Layered VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS.L@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS.c@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS.r@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS@VE.Readings.SoftWire VE.Readings.Wire.replayChoiceS@VE.Readings.SoftWire VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults
+  -- expr 3496498444
+theorem VE.Readings.Wire.readings_wire_sd_choice_entails
+  ∀ (j : Lean.Json) (x : VE.Readings.Wire.ChoiceReplayS),
+    VE.Readings.Wire.replayChoiceS j = Except.ok x →
+      ∀ (Γ : List VE.Formula) (φ : VE.Formula) (cert : VE.Tableau.Certificate),
+        VE.Tableau.checkCertificate
+              (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU x.r.N x.c))
+                (VE.Norms.size (VE.NormDefaults.fill (VE.Readings.choiceU x.r.N x.c))))
+              (VE.NormDefaults.Wire.premisesX (VE.Readings.choiceU x.r.N x.c) (VE.Readings.choiceX x.r.N x.c)
+                ((VE.Readings.choiceDoc x.r.N.D x.c).snd ++ Γ))
+              φ cert =
+            Bool.true →
+          ∀ (packages : Lean.Json),
+            VE.NormDefaults.Wire.conflictFreeX x.L packages = Bool.true →
+              VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU x.r.N x.c) (VE.Readings.choiceX x.r.N x.c) ∧
+                VE.NormDefaults.EntailsX (VE.Readings.choiceU x.r.N x.c) (VE.Readings.choiceX x.r.N x.c)
+                  ((VE.Readings.choiceDoc x.r.N.D x.c).snd ++ Γ) φ
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS.L@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS.c@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS.r@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS@VE.Readings.SoftWire VE.Readings.Wire.replayChoiceS@VE.Readings.SoftWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Rights.RightsDoc@VE.Rights.Tree VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
+  -- expr 3788432347
+theorem VE.Readings.Wire.readings_wire_sd_separate_sound
+  ∀ (j : Lean.Json) (x : VE.Readings.Wire.SeparateReplayS),
+    VE.Readings.Wire.replaySeparateS j = Except.ok x →
+      VE.Readings.separatesS x.r.N x.set x.witness x.other x.σ = Bool.true →
+        VE.Readings.AchievesS x.r.N x.set x.witness x.σ.base.asStructure (VE.Readings.tablesOf x.σ.fixed) x.σ.probe
+            x.σ.value ∧
+          ¬VE.Readings.AchievesS x.r.N x.set x.other x.σ.base.asStructure (VE.Readings.tablesOf x.σ.fixed) x.σ.probe
+              x.σ.value
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Readings.AchievesS@VE.Readings.SoftSeparate VE.Readings.Situation.base@VE.Readings.Separate VE.Readings.Situation.fixed@VE.Readings.Separate VE.Readings.Situation.probe@VE.Readings.Separate VE.Readings.Situation.value@VE.Readings.Separate VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.other@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.r@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.set@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.witness@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.σ@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS@VE.Readings.SoftWire VE.Readings.Wire.replaySeparateS@VE.Readings.SoftWire VE.Readings.separatesS@VE.Readings.SoftSeparate VE.Readings.tablesOf@VE.Readings.Separate VE.Structure.Carrier@VE.Semantics
+  -- expr 3592466522
 theorem VE.Readings.Wire.readings_wire_separate_sound
   ∀ (j : Lean.Json) (r : VE.Readings.Wire.SeparateReplay),
     VE.Readings.Wire.replaySeparate j = Except.ok r →

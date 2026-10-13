@@ -27,10 +27,18 @@ from .readings_s1 import KEY_FIELDS, KEY_OPTIONAL, Decoded, Document, content_be
     wire
 from .readings_s2_english import s1_gated as _s1_gated
 
-# readings-defaults.md 1.1 (Lean's `routeOf` and `completionFinding`): under `norm-defaults@0` the norms chain takes the
-# enumerated route with this cause; the soft and rights chains keep the abstention.
+# readings-defaults.md 1.1 and rd-9-soft-chain.md 1.1 (Lean's `routeOf` and `completionFinding`): under
+# `norm-defaults@0` the norms and soft chains take the enumerated route with this cause; the rights chain keeps the
+# abstention.
 COMPLETION_CAUSE = "the unspecified completion"
 NORM_DEFAULTS = "norm-defaults@0"
+
+
+def soft_chain(environment):
+    """The soft chain (rd-9-soft-chain.md 1.1): `soft-norms@0` among the profiles without `rights@0`, as Lean's
+    `Compose.dispatch` reads it."""
+    profiles = environment.get("profiles", ())
+    return "soft-norms@0" in profiles and "rights@0" not in profiles
 
 def document_wire(units, reading_sets, *, couplings=(), narrowings=()):
     """The document as the readings route reads it: every unit with its kind (1.2), content when it has one."""
@@ -396,7 +404,12 @@ FILL_PREMISES = _arr(_obj({"set": _str, "index": _nat,
 FILLED = _obj({"environment": lambda v: type(v) is dict,
                "units": _arr(_obj({"unit": _name, "content": lambda v: type(v) is dict},
                                   {"set": _str, "version": _nat, "index": _nat}))})
-_COMPLETION = {"fill_premises": FILL_PREMISES, "filled": FILLED}
+# Under the soft completion (rd-9-soft-chain.md 3) Lean also adds, per reading, soft's premises regenerated on its
+# filled tree; their binding is `_bind_soft_premises`.
+SOFT_PREMISES = FILL_PREMISES
+_COMPLETION = {"fill_premises": FILL_PREMISES, "soft_premises": SOFT_PREMISES, "filled": FILLED}
+# A soft premise's label (soft-norms 6.1): an exception condition of a rule, or a colliding pair of rules.
+SOFT_EXCEPTION_LABEL, SOFT_COHERENCE_LABEL = "soft:exception:", "soft:coherence:"
 # A `Fill_T` premise's label (norm-defaults 2.4): `unsaid:pair:<obligation>,<permission>`.
 FILL_LABEL = "unsaid:pair:"
 ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}, _COMPLETION),
@@ -490,13 +503,17 @@ def _bind_completion(row, case, *, checked_part=False):
     # units) is under the completion with its environment alone.
     completion = (NORM_DEFAULTS in case["environment"].get("profiles", ())
                   and (checked_part or any(content_bearing(R) for R in sets)))
-    _need(("fill_premises" in row) is completion and ("filled" in row) is completion)
+    soft = completion and soft_chain(case["environment"])
+    _need(("fill_premises" in row) is completion and ("filled" in row) is completion
+          and ("soft_premises" in row) is soft)
     for entry in row.get("sets", ()):
         for pair in entry["pairs"]:
             _need(("gaps" in pair["pair"]) is completion)
     if not completion:
         return
     _need(FILL_PREMISES(row["fill_premises"]) and FILLED(row["filled"]))
+    if soft:
+        _bind_soft_premises(row["soft_premises"], document)
     request = Environment(case["environment"])
     for entry in row.get("sets", ()):
         R = next((R for R in sets if R.id == entry["set"]), None)
@@ -547,6 +564,8 @@ def _bind_completion(row, case, *, checked_part=False):
         content = _typed_filled_content(unit["content"])
         _need({k: v for k, v in unit.items() if k != "content"} == where and getattr(content, "kind", None) == kind)
     generated = units[len(expected):]
+    # On the soft chain `F_p` is a rule of each reading's filled tree, never a unit (rd-9-soft-chain.md 3).
+    _need(not (soft and generated))
     names = [unit["unit"] for unit in generated]
     _need(len(set(names)) == len(names) and not set(names) & set(document.unit_ids))
     for unit in generated:
@@ -556,6 +575,31 @@ def _bind_completion(row, case, *, checked_part=False):
         guard = rule["guard"]
         _need(rule["name"] == unit["unit"] and request.predicates[rule["predicate"]].regulated is not None
               and guard[0] in ("unary", "binary") and guard[1] in added)
+
+
+def _bind_soft_premises(entries, document):
+    """`soft_premises` (rd-9-soft-chain.md 3) bound to the request: one entry per reading with content, in admission
+    order, as `fill_premises`; each label an exception condition of a rule that reading's document declares, or a
+    pair of two such rules, each premise once. The formulas are Lean's alone."""
+    sets = document.sets
+    readings = [(R.id, i) for R in sets for i, a in enumerate(R.candidates) if a.content is not None]
+    _need([(e["set"], e["index"]) for e in entries] == readings)
+    fixed = {name for item in document.items if item[0] == "fixed"
+             for kind, name in item[2].declared() if kind == "rule"}
+    for e in entries:
+        R = next(R for R in sets if R.id == e["set"])
+        rules = fixed | {name for kind, name in R.candidates[e["index"]].content.declared() if kind == "rule"}
+        labels = [premise["label"] for premise in e["premises"]]
+        _need(len(set(labels)) == len(labels))
+        for label in labels:
+            if label.startswith(SOFT_EXCEPTION_LABEL):
+                rule, role, index = label[len(SOFT_EXCEPTION_LABEL):].rsplit(":", 2)
+                _need(rule in rules and role in ("sufficient", "necessary") and index.isdigit()
+                      and str(int(index)) == index)
+            else:
+                _need(label.startswith(SOFT_COHERENCE_LABEL))
+                pair = label[len(SOFT_COHERENCE_LABEL):].split(",")
+                _need(len(pair) == 2 and pair[0] != pair[1] and all(name in rules for name in pair))
 
 
 def _typed_filled_content(raw):

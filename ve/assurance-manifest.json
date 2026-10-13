@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 29438,
+    "total_lines": 30089,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -387,12 +387,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Admission.lean",
-        "lines": 350,
-        "sha256": "b60054268019832d7de8374fb800954933526f31d93ad86a42958b72da4895a5",
+        "lines": 367,
+        "sha256": "57d08f4366fbfc0e8e1bfb3f365ac61f720d9c2d19caa9fb1173c50c9d993811",
         "ranges": [
           [
             1,
-            350
+            367
           ]
         ],
         "declarations": [
@@ -405,12 +405,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
-        "lines": 445,
-        "sha256": "7e9484be44f96cdd53a72f62943e918e47a4d98a4124b20f00727fc215b3d212",
+        "lines": 446,
+        "sha256": "c97435a3392c2a196fc1c86faef7fb9ee2c1a6116cf8ea72515e822c968c5d9b",
         "ranges": [
           [
             1,
-            445
+            446
           ]
         ],
         "declarations": [
@@ -681,12 +681,12 @@
       },
       {
         "file": "lean/VE/Readings/UnspecifiedWire.lean",
-        "lines": 741,
-        "sha256": "2f1b7bfa232f996b81cc6440cdc2227bc731c221cd95cf7591d8ecd82dabfc10",
+        "lines": 798,
+        "sha256": "45e70a1505939a5cf85b6b19ca0ad62ee661937910f5f7a12d560cbe6f8df7db",
         "ranges": [
           [
             1,
-            741
+            798
           ]
         ],
         "declarations": [
@@ -699,13 +699,11 @@
           "conflictPackages",
           "replayChoiceAt",
           "replayChoiceU",
-          "ndFormulas",
-          "ndCertificate",
-          "ndChoiceModel",
           "ndInner",
           "runChoiceND",
           "decisionCount",
-          "ndDocTextG"
+          "ndDocTextG",
+          "choiceLayeredG"
         ],
         "reason": "readings-defaults RD-2a: admission, separation and each choice under the unspecified completion; the inner case of readings-choice (its kind, conflict packages, premises, certificate, model and filling) read through the pinned NormDefaults and SupWire decoders and by `conflictPackages` and `ndCertificate`; the full file is pinned conservatively"
       },
@@ -759,7 +757,7 @@
       {
         "file": "lean/VE/Readings/Wire.lean",
         "lines": 1006,
-        "sha256": "637e7310b7de06c22f754fa2bf4aa77ccfe42910e6f2aaced543a6916d60dc41",
+        "sha256": "f8ab116400a3c18b422e3dac26ae96a0f2d2964ac25ed5b99b92c09912b65dd9",
         "ranges": [
           [
             1,
@@ -1358,6 +1356,45 @@
           "gateLines"
         ],
         "reason": "readings-defaults RD-4b: the document product decoder, per-component evidence replay on each regenerated case, conclusion typing, --under binding, product verdict, decided units and English plan; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/NormDefaults/LayeredAdmission.lean",
+        "lines": 378,
+        "sha256": "c68165ab906c49ce0e605336187026598ea003826640e1d6dd35b18d2dc5fd18",
+        "ranges": [
+          [
+            1,
+            378
+          ]
+        ],
+        "declarations": [
+          "replayLayeredEntailment",
+          "admitNodesX",
+          "filledJsonX",
+          "admitDocumentX"
+        ],
+        "reason": "rd-9 SC-6: the soft branch under norm-defaults@0, its certificate replay (the source by decodeSoftU, the formulas, bindCertX) and W2 admission on the filled soft tree (the soft source, the quoted norms, the units and graph nodes over E‴, certificates bound to the regenerated soft E‴); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/SoftWire.lean",
+        "lines": 198,
+        "sha256": "0a0c5f133b9d4ca1b50586dca94b9295f80f0603df0f66017c55de8e5dcf8c58",
+        "ranges": [
+          [
+            1,
+            198
+          ]
+        ],
+        "declarations": [
+          "admitSDOf",
+          "admitSD",
+          "admitUnsaid",
+          "replayPairS",
+          "replaySeparateS",
+          "replayChoiceAtS",
+          "replayChoiceS"
+        ],
+        "reason": "rd-9 SC-4: admission under the soft completion, the document over the filled author vocabulary, the pair replay and the choice replay; the full file is pinned conservatively"
       }
     ],
     "other_json": {

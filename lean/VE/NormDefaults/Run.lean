@@ -52,6 +52,78 @@ delegates every other case to it.
   premise or `Fill_T` premise (`unsaid:pair:<r>,<m>`).
 * A case with the profile or an `unspecified` default but another kind is
   `UnsupportedProfile`; every other case goes to `VE.Norms.Run.runCase`. -/
+/-! ## The soft branch's admission answer and its dispatch (rd-9-soft-chain.md 4.5 and 6.10; SC-6)
+
+Beside the runner: the answer encodes Norms' report (`Norms.Run.reportJson`) and binds its id as `runAdmission` does. -/
+namespace VE.NormDefaults.Admission
+open Lean
+open VE.Norms
+open VE.Order.ProfileGate (bind_ok)
+universe u
+
+/-- The open coherence labels the report uses, as the soft route's admission answer lists them. -/
+def conditionalOnX (res : AdmittedX) : List String :=
+  (VE.SoftNorms.Wire.openCoherence res.L.D).filter (fun l => res.report.assumptions.any (fun c => c.label == l))
+def encodeAdmittedX (id reportId : String) (res : AdmittedX) : Json :=
+  VE.Route.Wire.ok id [("admitted", .bool true), ("report", VE.Norms.Run.reportJson res.report),
+    ("report_id", .str reportId), ("kinds", Json.arr res.kinds.toArray),
+    ("conditional_on", toJson (conditionalOnX res))]
+def AdmissionAnswerX (id : String) (environment document answer : Json) : Prop :=
+  ∃ res : AdmittedX, ∃ reportId : String,
+    admitDocumentX environment document = .ok res ∧
+    answer = encodeAdmittedX id reportId res ∧
+    SourceDecodedX environment document res ∧
+    CertificatesBoundX environment res ∧
+    ReportAdmittedX res ∧
+    (∃ canonical envId, Wire.canonicalEnvironmentJsonU environment = .ok canonical ∧
+      VE.Route.Wire.environmentId (Wire.profilesOf environment) canonical = .ok envId ∧
+      VE.CertificateWire.digest (VE.Norms.Run.reportDomain (Wire.profilesOf environment))
+        (VE.Norms.Run.reportPayload envId document res.report) = .ok reportId) ∧
+    (∀ S : VE.Structure.{0}, S.Admissible (fill res.L.U).E →
+      Sat S (VE.Data.Background.generate res.doc.flags) →
+      Sat S (background (fill res.L.U) ++ res.L.X ++ fillPremises res.L.U ++ elaborate (fill res.L.U).T) →
+      Sat S ((otherAssumptionsX res).map (·.formula)) →
+      res.report.root.formula.denote S [])
+
+/-- The admission answer: the report id bound to the source environment under its own profiles, as `runAdmission`
+    binds it. -/
+def runAdmissionX (id : String) (environment document : Json) : Except String Json := do
+  let res ← admitDocumentX environment document
+  let canonical ← Wire.canonicalEnvironmentJsonU environment
+  let envId ← VE.Route.Wire.environmentId (Wire.profilesOf environment) canonical
+  let reportId ← VE.CertificateWire.digest (VE.Norms.Run.reportDomain (Wire.profilesOf environment))
+    (VE.Norms.Run.reportPayload envId document res.report)
+  return encodeAdmittedX id reportId res
+
+theorem runAdmissionX_sound (id : String) (environment document answer : Json)
+    (h : runAdmissionX id environment document = .ok answer) :
+    AdmissionAnswerX id environment document answer := by
+  unfold runAdmissionX at h
+  obtain ⟨res, hres, h⟩ := bind_ok h
+  obtain ⟨canonical, hc, h⟩ := bind_ok h
+  obtain ⟨envId, he, h⟩ := bind_ok h
+  obtain ⟨reportId, hd, h⟩ := bind_ok h
+  cases h
+  obtain ⟨hsrc, hbound, hsound, hnodes, hleaves, hcit, hch⟩ :=
+    admitDocumentX_spec.{0} environment document res hres
+  exact ⟨res, reportId, hres, rfl, hsrc, hbound, ⟨hsound, hnodes, hleaves, hcit, hch⟩,
+    ⟨canonical, envId, hc, he, hd⟩,
+    fun S hS hf hg ho => wire_report_consequenceX environment document res hres S hS hf hg ho⟩
+
+/-- The soft branch's two kinds `layeredCase` lacks: `admission` and `norm-defaults-certificate`; `none` otherwise. -/
+def softCase (id kind : String) (j : Json) : Except String (Option Json) := do
+  if kind == "admission" then
+    let environment ← j.getObjVal? "environment"
+    let document ← j.getObjVal? "document"
+    return some (← runAdmissionX id environment document)
+  if kind == "norm-defaults-certificate" then
+    let r ← Wire.replayLayeredEntailment j
+    return some (VE.Route.Wire.ok id [("valid", .bool r.valid),
+      ("premises", toJson (Wire.premisesX r.L.U r.L.X []).length)])
+  return none
+
+end VE.NormDefaults.Admission
+
 namespace VE.NormDefaults.Run
 open Lean
 

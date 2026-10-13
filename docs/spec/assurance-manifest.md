@@ -151,8 +151,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/EnglishGrammar/Run.lean` | 735 | 735 | 1–735 | `f9355148f683…` |
 | `lean/VE/Question/Run.lean` | 219 | 219 | 1–219 | `431e6147b032…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
-| `lean/VE/NormDefaults/Admission.lean` | 350 | 350 | 1–350 | `b60054268019…` |
-| `lean/VE/NormDefaults/Layered.lean` | 445 | 445 | 1–445 | `7e9484be44f9…` |
+| `lean/VE/NormDefaults/Admission.lean` | 367 | 367 | 1–367 | `57d08f4366fb…` |
+| `lean/VE/NormDefaults/Layered.lean` | 446 | 446 | 1–446 | `c97435a3392c…` |
 | `lean/VE/NormDefaults/Replay.lean` | 411 | 411 | 1–411 | `8a6191d5e0bc…` |
 | `lean/VE/NormDefaults/Report.lean` | 519 | 519 | 1–519 | `b4e17dd5611c…` |
 | `lean/VE/NormDefaults/Wire.lean` | 440 | 440 | 1–440 | `3d555723f812…` |
@@ -164,9 +164,9 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Readings/Companions.lean` | 923 | 923 | 1–923 | `dc0e72746649…` |
 | `lean/VE/Readings/SupFillWire.lean` | 302 | 302 | 1–302 | `e8d7e1dc2262…` |
 | `lean/VE/Readings/SupWire.lean` | 397 | 397 | 1–397 | `5d8393aeea86…` |
-| `lean/VE/Readings/UnspecifiedWire.lean` | 741 | 741 | 1–741 | `2f1b7bfa232f…` |
+| `lean/VE/Readings/UnspecifiedWire.lean` | 798 | 798 | 1–798 | `45e70a150593…` |
 | `lean/VE/Readings/VerdictsWire.lean` | 1719 | 1719 | 1–1719 | `3ccf1a5af55a…` |
-| `lean/VE/Readings/Wire.lean` | 1006 | 1006 | 1–1006 | `637e7310b7de…` |
+| `lean/VE/Readings/Wire.lean` | 1006 | 1006 | 1–1006 | `f8ab116400a3…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
 | `lean/VE/Rights/Wire.lean` | 696 | 696 | 1–696 | `753feb56dae0…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
@@ -196,7 +196,9 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `43eff830ca8c…` |
 | `lean/VE/Readings/ComponentsWire.lean` | 607 | 607 | 1–607 | `921d1275c0ac…` |
-| **total** | | **29,438** | | |
+| `lean/VE/NormDefaults/LayeredAdmission.lean` | 378 | 378 | 1–378 | `c68165ab906c…` |
+| `lean/VE/Readings/SoftWire.lean` | 198 | 198 | 1–198 | `0a0c5f133b9d…` |
+| **total** | | **30,089** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

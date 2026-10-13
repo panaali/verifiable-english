@@ -2,6 +2,7 @@ import VE.Readings.Wire
 import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
+import VE.Readings.SoftWire
 import VE.Readings.SupFillWire
 import VE.Readings.VerdictsWire
 import VE.Readings.Companions
@@ -219,11 +220,10 @@ def setPairsSpec (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (Li
       out := out ++ [Json.mkObj [("reading", .str x.id), ("other", .str y.id), ("pair", pairJson f sid)]]
   pure out
 
-/-- `setPairsSpec` with each candidate's side built once for the set (plan F5d, `setPairs_eq`), each pair's facts
-    read through `adjust` (`id` here; under the unspecified completion `ndPairFacts`, readings-defaults.md 4.2). -/
-def setPairsWith (adjust : PairFacts → PairFacts) (a : Admitted) (R : ReadingSet) (RJ : SetJ) :
+/-- 4.5 for every pair of a set, neither pending, in index order, each pair's facts from `facts sid other`: each must
+    be separated by its situation. -/
+def setPairsBy (facts : String → String → Except String PairFacts) (R : ReadingSet) (RJ : SetJ) :
     Except String (List Json) := do
-  let sides := sidesOf a R.id R.candidates.length
   let mut out : List Json := []
   for (x, ix) in R.candidates.zip (List.range R.candidates.length) do
     for (y, iy) in R.candidates.zip (List.range R.candidates.length) do
@@ -238,18 +238,25 @@ def setPairsWith (adjust : PairFacts → PairFacts) (a : Admitted) (R : ReadingS
       -- witness would check another pair and leave this one uncompared.
       unless w == x.id || w == y.id do throw s!"InvalidInput: invalid situation {sid}"
       let otherName := if w == x.id then y.id else x.id
-      let f := adjust (← pairFactsIn a (sideAt a R.id sides) R.id sid otherName)
+      let f ← facts sid otherName
       unless f.witnessValid do throw "distinguishing model violates a generated premise"
       unless f.separated do throw "distinguishing model does not separate readings"
       out := out ++ [Json.mkObj [("reading", .str x.id), ("other", .str y.id), ("pair", pairJson f sid)]]
   pure out
+
+/-- `setPairsSpec` with each candidate's side built once for the set (plan F5d, `setPairs_eq`), each pair's facts
+    read through `adjust` (`id` here; under the unspecified completion `ndPairFacts`, readings-defaults.md 4.2). -/
+def setPairsWith (adjust : PairFacts → PairFacts) (a : Admitted) (R : ReadingSet) (RJ : SetJ) :
+    Except String (List Json) :=
+  let sides := sidesOf a R.id R.candidates.length
+  setPairsBy (fun sid other => adjust <$> pairFactsIn a (sideAt a R.id sides) R.id sid other) R RJ
 
 def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List Json) := setPairsWith id a R RJ
 
 theorem setPairs_eq (a : Admitted) (R : ReadingSet) (RJ : SetJ) : setPairs a R RJ = setPairsSpec a R RJ := by
   have h : ∀ sid other, pairFactsIn a (sideAt a R.id (sidesOf a R.id R.candidates.length)) R.id sid other =
       pairFactsSpec a R.id sid other := fun sid other => pairFactsIn_eq a _ R.id sid other (sideAt_sidesOf a R.id _)
-  simp only [setPairs, setPairsWith, setPairsSpec, h, id]
+  simp only [setPairs, setPairsWith, setPairsBy, setPairsSpec, h, id_map]
 
 /-- The finding of 1.7 for strict twin `i` and default twin `j`. Its theorem `decision_only_sound` is not proved
     yet (`lean/READINGS.md`), so the finding says on its face that it is not certified, and nothing reads it as a
@@ -305,18 +312,23 @@ theorem setFindings_eq (a : Admitted) (R : ReadingSet) : setFindings a R = setFi
       simp [h1, h2, h3]
     · rfl
 
-def validateResultWith (adjust : PairFacts → PairFacts) (a : Admitted) : Except String (List (String × Json)) := do
+/-- S1's rows of an admitted document, each set's pairs from `pairs R RJ`. -/
+def validateResultBy (pairs : ReadingSet → SetJ → Except String (List Json)) (a : Admitted) :
+    Except String (List (String × Json)) := do
   let sets := a.D.sets.filter contentBearing
   if sets.isEmpty then return [("content_bearing", .bool false)]
   let mut rows : List Json := []
   for R in sets do
     let some RJ := setJ a.doc R.id | throw invalidSet
     let cands ← (List.range R.candidates.length).mapM (candidateJson a R)
-    let pairs ← setPairsWith adjust a R RJ
+    let pairs ← pairs R RJ
     rows := rows ++ [Json.mkObj [("set", .str R.id), ("version", toJson R.version),
       ("candidates", Json.arr cands.toArray), ("pairs", Json.arr pairs.toArray),
       ("findings", toJson (setFindings a R))]]
   pure [("content_bearing", .bool true), ("sets", Json.arr rows.toArray)]
+
+def validateResultWith (adjust : PairFacts → PairFacts) (a : Admitted) : Except String (List (String × Json)) :=
+  validateResultBy (setPairsWith adjust a) a
 
 def validateResult (a : Admitted) : Except String (List (String × Json)) := validateResultWith id a
 
@@ -357,11 +369,136 @@ def runSeparateND (id : String) (f : AdmittedNDFull) (j : Json) : Except String 
   let p ← pairFactsIn f.fa.a (sideIn f.fa.a s) s sid (← stringField j "other")
   pure (VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson (ndPairFacts f p) sid)])
 
+/-! ## Under the soft completion (rd-9-soft-chain.md 3, 4.2 and 4.3; plan SC-4) -/
+
+/-- Candidate i of set s's filled side, its document read from the request's table. -/
+def sideInS (r : AdmittedSD) (s : String) (i : Nat) : Side := sideOfS r.N (r.b.a.side s i)
+
+/-- Every candidate's filled side of set `s`, each built when first read. -/
+def sidesOfS (r : AdmittedSD) (s : String) (n : Nat) : List (Thunk Side) :=
+  (List.range n).map (fun i => Thunk.mk (fun _ => sideInS r s i))
+
+def sideAtS (r : AdmittedSD) (s : String) (sides : List (Thunk Side)) (i : Nat) : Side :=
+  match sides[i]? with
+  | some t => t.get
+  | none => sideInS r s i
+
+/-- The facts of one pair on filled sides (4.2): the pair replayed over the filled author vocabulary (`replayPairS`),
+    the bound on the other side's cells, then S1's pair check `pairEval` on the two filled sides. The witness is
+    admissible only when its `Fill_T` holds on its completion, and `separated` adds the same condition, so it is
+    `separatesS`, the hypothesis of `readings_wire_sd_separate_sound`. The pair's `gaps` are D9's: the witness side's
+    and, when `other_value` is shown, the other side's, with duplicate atoms removed. -/
+def pairFactsS (r : AdmittedSD) (fa : UnsaidAdmitted r) (side : Nat → Side) (s sid other : String) :
+    Except String PairFacts := do
+  let (x, rp, sj) ← replayPairS r fa s sid other
+  let Pi := side x.witness
+  let Pj := side x.other
+  if cellsOn r.N.D s x.other Pj x.σ.base > maxCells then throw "ResourceLimit: decision assignments"
+  let (sep, valid, value, oa, ov) := pairEval (m := Id) (pure ()) (pure ()) r.N.D s x.witness x.other Pi Pj x.σ
+  let T := tablesForOf Pi.X (x.σ.fixed ++ x.σ.decisions)
+  let fills := fillHoldsOf r.N Pi.X (tablesModel Pi.X x.σ.base T)
+  let witnessGaps := pairGapsOn (asU r.N Pi.X) Pi x.σ.base T x.σ.probe
+  let otherGaps := if ov.isSome then
+      pairGapsOn (asU r.N Pj.X) Pj x.σ.base (tablesForOf Pj.X x.σ.fixed) x.σ.probe
+    else []
+  pure ⟨rp, sj.witness, sep && fills, valid && fills, value, oa, ov, some (witnessGaps ++ otherGaps).eraseDups⟩
+
+/-- 4.5 for every pair of a set on filled sides, each candidate's side built once for the set. -/
+def setPairsS (r : AdmittedSD) (fa : UnsaidAdmitted r) (R : ReadingSet) (RJ : SetJ) : Except String (List Json) :=
+  let sides := sidesOfS r R.id R.candidates.length
+  setPairsBy (fun sid other => pairFactsS r fa (sideAtS r R.id sides) R.id sid other) R RJ
+
+/-- Per reading with content, in admission order: soft's premises regenerated on its filled tree (`softXL`), each
+    labelled `soft:exception:…` or `soft:coherence:…`, its document read from `side` (the request's table). -/
+def softPremisesJson (N : NDoc) (side : String → Nat → VE.Rights.RightsDoc × List VE.Formula) : Json :=
+  Json.arr ((activeOf N.D).map (fun c => Json.mkObj [("set", .str c.1.id), ("index", toJson c.2),
+    ("premises", Json.arr ((softXL N (side c.1.id c.2).1).map (fun (l, a) =>
+      Json.mkObj [("label", .str l), ("ast", encF a)])).toArray)])).toArray
+
+/-- `filled` on the soft chain: the lower environment with each `unspecified` read as `deny`, `norm-defaults@0`
+    removed and every `unsaid__p` added, and the document's units as decoded (no `F_p` unit: `F_p` is a rule of each
+    filled tree). -/
+def filledJsonS (r : AdmittedSD) : Except String Json := do
+  let env ← VE.NormDefaults.Wire.withUnsaid (asU r.N r.N.D.frame)
+    (← VE.NormDefaults.Wire.placeholderJson r.b.a.re.lowerJson)
+  pure (Json.mkObj [("environment", env), ("units", Json.arr (unitsJsonOf r.N.D.items).toArray)])
+
+/-- The completion's fields of `readings-validate` and `readings-elaborate` on the soft chain (3). -/
+def filledFieldsS (r : AdmittedSD) : Except String (List (String × Json)) := do
+  pure [("fill_premises", fillPremisesJson r.N r.b.a.side), ("soft_premises", softPremisesJson r.N r.b.a.side),
+    ("filled", ← filledJsonS r)]
+
+/-- `readings-validate` under the soft completion: S1's rows with every pair on filled sides, then `fill_premises`
+    and `soft_premises` per reading and `filled` once (3). -/
+def runValidateSD (id : String) (r : AdmittedSD) (fa : UnsaidAdmitted r) : Except String Json := do
+  let rows ← validateResultBy (setPairsS r fa) r.b.a
+  pure (VE.Route.Wire.ok id (rows ++ (← filledFieldsS r)))
+
+/-- `readings-separate` under the soft completion: S1's pair on filled sides (`replaySeparateS`'s replay). -/
+def runSeparateSD (id : String) (r : AdmittedSD) (fa : UnsaidAdmitted r) (j : Json) : Except String Json := do
+  let s ← stringField j "set"
+  let sid ← stringField j "situation"
+  let sides := sidesOfS r s ((r.N.D.sets.find? (·.id == s)).map (·.candidates.length) |>.getD 0)
+  let p ← pairFactsS r fa (sideAtS r s sides) s sid (← stringField j "other")
+  pure (VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson p sid)])
+
+/-- `readings-elaborate` under the soft completion (3): no verdict over no reading, then the enumerated row with the
+    finding `ReadingsNotSuperposable` and its cause, the unspecified completion, then the completion's fields. -/
+def runElaborateSD (id : String) (r : AdmittedSD) : Except String Json := do
+  let D := r.N.D
+  if (choices D).isEmpty then throw (unsatText D)
+  pure (okWith id ([("route", .str Route.enumerated.text),
+    ("generated_predicates", generatedPredicatesJson .enumerated D),
+    ("finding", Json.mkObj [("text", .str (notSuperposableText (completionFinding D).1)),
+      ("cause", .str (completionFinding D).2)]),
+    ("narrowings_stale", toJson (staleNarrowings D))] ++ choicesJson D ++
+    [("choices_checked", checkedJson .enumerated D)] ++ (← filledFieldsS r)))
+
+/-- `readings-choice` under the soft completion: the choice replayed (`replayChoiceAtS`), then its inner kind on the
+    choice's layered source (`choiceInnerX`). The answer is `runChoiceND`'s; for a certificate `conflict_free` is
+    `conflictFreeX x.L (conflictPackages inner)`, the hypothesis of `readings_wire_sd_choice_conflict` and
+    `readings_wire_sd_choice_entails`, and `accepted` is it with `valid`. -/
+def runChoiceSD (id : String) (r : AdmittedSD) (j : Json) : Except String Json := do
+  let c ← decodeChoice (j.getObjValD "choice")
+  let inner := j.getObjValD "inner"
+  let x ← replayChoiceAtS r c
+  let kind := match inner.getObjValD "kind" with | .str k => k | _ => ""
+  let units := choiceJsons r.b.a.doc.itemsJ c
+  let assertions := (choiceDoc r.N.D c).2.length
+  let answer := match choiceInnerX r.b.a.re x.L (choiceDoc r.N.D c).2 id kind inner assertions with
+    | .ok a => a
+    | .error e => Json.mkObj [("id", .str id), ("status", .str "error"), ("error", .str e)]
+  let free := VE.NormDefaults.Wire.conflictFreeX x.L (conflictPackages inner)
+  let valid := answer.getObjValD "valid" == .bool true
+  let accepted := if kind == "norm-defaults-certificate" then
+      [("conflict_free", .bool free), ("accepted", .bool (free && valid))]
+    else []
+  pure (okWith id ([("choice", choiceJson c), ("document_hash", .str (← choiceHash r.b units)),
+    ("assertions", toJson assertions), ("inner", answer)] ++ accepted))
+
+/-- The superposed kinds under the soft completion: superposition is not built for it (plan SC-10, SC-11), so the
+    route is the enumerated one and these kinds refuse with its finding. -/
+def sdRefusal (N : NDoc) : String :=
+  s!"{notSuperposableText (completionFinding N.D).1} ({(completionFinding N.D).2}); use readings-choice"
+
+/-- The S2a kinds of a document under the soft completion, admitted once (`admitSDOf`). -/
+def runSDKind (id kind : String) (r : AdmittedSD) (j : Json) : Except String Json := do
+  if kind == "readings-elaborate" then return ← runElaborateSD id r
+  if kind == "readings-choice" then return ← runChoiceSD id r j
+  if kind == "readings-dead" then return ← deadAnswer id r.N.D j
+  if kind == "readings-conflict" || kind == "readings-certificate" || kind == "readings-model" then
+    throw (sdRefusal r.N)
+  throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
+
 /-- The S2a kinds under the completion (`runNDKind`): elaborate and choice as `UnspecifiedWire.lean` answers them,
     dead as today (it reads no rule), and the superposed kinds on the filled document (`SupFillWire.lean`, plan
     RD-6b). A document of such an environment without a content-bearing set, or of any other environment, is today's
     (S1 4.9). `b` is the case's one admission. -/
 def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
+  if underSoftCompletion b.a.re b.D then
+    if kind == "readings-verdicts" then
+      throw "UnsupportedProfile: readings-verdicts under the soft completion is not implemented"
+    return ← runSDKind id kind (← admitSDOf b) j
   if kind == "readings-verdicts" then return ← runVerdicts lower id b j
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
   runNDKind id kind (← admitNDFull b) j
@@ -396,6 +533,9 @@ def validateOne (id : String) (environment document : Json) : Except String Json
   let a ← admitReadings environment document
   if underCompletion a.re a.D then
     return ← runValidateND id (← admitNDFull (← admitS2Of a document))
+  if underSoftCompletion a.re a.D then
+    let r ← admitSDOf (← admitS2Of a document)
+    return ← runValidateSD id r (← admitUnsaid r)
   return VE.Route.Wire.ok id (← validateResult a)
 
 /-- `readings-elaborate` on one case of the split (`runS2ND`'s dispatch). -/
@@ -410,6 +550,9 @@ def runOne (j : Json) (id kind : String) (environment document : Json) : Except 
     let a ← admitReadings environment document
     if underCompletion a.re a.D then
       return ← runSeparateND id (← admitNDFull (← admitS2Of a document)) j
+    if underSoftCompletion a.re a.D then
+      let r ← admitSDOf (← admitS2Of a document)
+      return ← runSeparateSD id r (← admitUnsaid r) j
     let s ← stringField j "set"
     let sid ← stringField j "situation"
     let f ← pairFactsIn a (sideIn a s) s sid (← stringField j "other")

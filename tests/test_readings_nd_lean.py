@@ -465,17 +465,21 @@ def test_fnd3_over_64_choices(lean):
 
 # Conservativity (4.6, SR5): outside the completion nothing changes.
 
-def test_fnd6_soft_chain_keeps_the_abstention(lean):
+def test_fnd6_soft_chain_is_under_the_soft_completion(lean):
+    """RD-9 lifted the soft chain's abstention (rd-9-soft-chain.md 1.1, F-SD2; `tests/test_readings_sd_lean.py`):
+    K18 is admitted on the enumerated row, and a choice's inner kind is the norm-defaults route's, so a soft route
+    kind is that route's refusal."""
     raw = env_k(profiles=("norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"))
     document, _ = k1_document(raw)
-    for kind in ("readings-validate", "readings-elaborate", "readings-choice"):
-        row = one(lean, kind, raw, document, choice=[["rs1", 0]], inner={"kind": "soft-conflict"})
-        assert row["error"] == "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
+    assert one(lean, "readings-validate", raw, document)["status"] == "ok"
+    assert one(lean, "readings-elaborate", raw, document)["route"] == "enumerated"
+    row = one(lean, "readings-choice", raw, document, choice=[["rs1", 0]], inner={"kind": "soft-conflict"})
+    assert row["inner"]["error"] == "UnsupportedProfile: case kind soft-conflict is not available on the norm-defaults route"
 
 
 def test_fnd6_rights_chain_keeps_the_abstention(lean):
-    """The completion is the norms chain's alone (1.1, `routeOf`): a rights-chain set of right readings beside
-    `norm-defaults@0` keeps the abstention on every readings kind, as the soft chain does (K18 above)."""
+    """The rights chain keeps the abstention (1.1, `routeOf`): a rights-chain set of right readings beside
+    `norm-defaults@0` is refused on every readings kind (the norms and soft chains are under their completions)."""
     raw = env_rights()
     raw["profiles"] = sorted({*raw["profiles"], "norm-defaults@0"})
 

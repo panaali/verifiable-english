@@ -27,10 +27,26 @@ SECTIONS = (
      {"theorem": 14, "def": 7, "structure": 1}, set()),
     ("SC-2 separation", "### 6.6", "### 6.7", [LEAN / "Readings/SoftSeparate.lean"],
      {"theorem": 6, "def": 6, "structure": 0}, set()),
+    ("SC-4 wire", "### 6.8", "### 6.9",
+     [LEAN / "Readings/UnspecifiedWire.lean", LEAN / "Readings/SoftWire.lean"],
+     {"theorem": 7, "def": 13, "structure": 3}, set()),
     ("SC-6 layered kinds", "### 6.10", "### 6.11",
      [LEAN / "NormDefaults/LayeredAdmission.lean", LEAN / "NormDefaults/Admission.lean", LEAN / "NormDefaults/Run.lean"],
      {"theorem": 6, "def": 18, "structure": 2}, set()),
 )
+
+
+# Declarations whose build differs from the approved text, each awaiting the bounded statement re-check (spec 11 item
+# 11, plan SC-0) with its reason; any other difference fails.
+PENDING = {
+    "choiceLayeredG": "gains `(hN : N.D = b.D)`: the soft case types its situation vocabulary by `primeModel_valid`, "
+                      "which needs the choice's `E` to be the request's, and `Environment` holds functions, so the "
+                      "signature `(b) (N)` cannot check it at run time; every caller has the fact (`AdmittedSD.hN`, "
+                      "`AdmittedND.hN`), and no approved theorem states `choiceLayeredG` (spec 12.24)",
+    "ndTextWith": "builds `free N.D` once (`let freeDoc`), as the route builds one document per request "
+                  "(tests/test_readings_lean_sharing.py); the approved body builds it twice, through `decisionCount` "
+                  "and `freeU N`, which is `asU N (free N.D).1` by definition, so the value is the same (spec 12.25)",
+}
 
 
 def approved_block(start: str, stop: str) -> dict:
@@ -55,7 +71,8 @@ def main(sections=SECTIONS) -> int:
         counted = dict(expected)
         for kind in counted:
             counted[kind] -= sum(1 for name in later for key in [(kind, name)] if key in approved_block(start, stop))
-        e, _ = compare(title, approved, sources, counted, {}, set())
+        pending = {name: why for name, why in PENDING.items() if any(key[1] == name for key in approved)}
+        e, _ = compare(title, approved, sources, counted, pending, set())
         errors.extend(e)
         if later:
             word = "unbuilt" if title.startswith("SC-1") else "not built yet"
