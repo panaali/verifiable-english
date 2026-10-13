@@ -200,3 +200,80 @@ No Rust product code changed.
 | 17 | Done except the two pending declarations above |
 | 22 | Selected tests run as above; the full gate not run (task instruction) |
 | 23 | As the table above |
+
+## rd-9-looprecheck2 fix round (2026-10-13)
+
+`rd-9-looprecheck2.final.md` has two open A/B findings: **Astra A / Fable B2** (narrowed to the `CE4` fixtures C1 to C8
+and SC-8's relay lint) and **new B3** (soft labels not bound to the request's conditions). Each is fixed as a class.
+RD-9 is still not accepted: the DRI signatures and the deferred items below remain. No model calls or push were made.
+
+| Finding | Fix | Regression tests | Commit |
+| --- | --- | --- | --- |
+| B3: a soft label is bound to a declared rule only, not to its conditions (PROBE B3) | One binder for `soft_premises` and verdict labels: `readings_route.soft_rules` reads each declared rule's shape as Lean decodes it (`node_value`: default or strict, the numbers of sufficient and necessary conditions); `soft_label` accepts `soft:exception:<rule>:<role>:<i>` only for a default rule with `i` below that role's count, and `soft:coherence:<a>,<b>` only for two default rules in Lean's order (`collidingPairs`: `a < b`). This also closes the FOLLOW-UP "the coherence pair's order isn't bound" | `tests/test_readings_sd_relay.py::test_probe_b3_an_exception_index_past_the_rules_conditions_is_unavailable` (the probe: failed before, "DID NOT RAISE"; passes after); `::test_the_binder_accepts_exactly_the_exception_labels_lean_regenerates` (every rule × role × index ≤ 3: accepted = Lean's `excLabels`); 6 new `::test_a_mutated_soft_row_is_unavailable[…]` and 5 new `::test_a_soft_label_the_request_does_not_declare_is_unavailable[…]` | ca40261b |
+| A2, part 1: SC-8's relay lint; 12 `soft__` literals in `ve/readings*.py` | Lean's soft-norms row keys each decision: `SoftNorms.keyedDecisions` (`keyedDecisions_names`: its names are `decisions`), `Wire.decisionKeyJson`, the `decision_key` shape and `decisionKeyJson_fits`. The relay binds each key to the request (`SoftNormDocument.decision_by_key`: a declared rule, default for an exception, the party among its switches, an `outweighs` on a colliding pair's act and ranks). `Side.gen_keys`, `superposed_elaboration`, `name_map` and the S2 wording's decision map read names from Lean's rows (the soft row, a candidate side's soft row, `generated_predicates`); the `"__"`-splitting of `outweighs` names is gone. `tools/relay_lint.py` forbids the soft decision prefix as well as the completion's, in literals and comments (read with `tokenize`) | `tests/test_relay_lint.py::test_probe_a2_no_readings_module_spells_a_soft_or_unsaid_name` (the probe's grep half); 5 new `::test_seeded_readings_modules[…]`; `tests/test_soft_decision_keys.py` (19 tests: Lean's keys, lookup, 16 one-fault and one two-fault mutants) | 812437cc |
+| A2, part 2: the `CE4` fixtures C1 to C8 | `tests/ce4.py` builds `CE4` from the pinned translation (pilot commit `76922d6c`, kept byte for byte in `tests/data/ce4/` and checked against its git blob id; read back from the commit when the repository has it). C1 to C4 and C1.4 through Lean's readings route; C1 to C8 through `ve document load`, `check`, `render` and `readings --conclusion`; SC-8's generator run recorded (found for all eight ordered pairs) | `tests/test_readings_sd_ce4.py` (18 tests: `test_c1_to_c4_validate_separates_by_the_decision_alone[C1…C4]`, `test_c1_4_status_undecided_under_default_settled_no_under_strict`, `test_c1_to_c4_render_one_gap_sentence_on_each_separation_line[C1…C4]`, `test_c5_…`, `test_c6_…`, `test_c7_…`, `test_c8_…`, the generator and the pin) | 5019007c |
+| Found while building C6 (class of B9/B12): the countermodel line read "e0 is classified as \"unsaid__denial_of_being_claude_permitted\"" | Filled tables were found only from `F_p` units, which the soft chain does not have. `readings_s1.Document` now reads them from Lean's filled environment (the predicates it adds, already bound by `_bind_completion`) on both chains | `tests/test_readings_sd_ce4.py::test_c6_the_denial_query_some_all_none` (asserts no reserved name in any line), `::test_the_filled_tables_are_those_leans_filled_environment_adds`; the norms chain's `tests/test_readings_nd_document.py` unchanged and passing | 5019007c |
+
+PROBE A2 (`grep -rlq 76922d6c tests/ && ! grep -n 'soft__\|unsaid__' ve/readings*.py`): failed on 67edc98b (no
+test names the pilot commit; 12 literals), exits 0 on 5019007c.
+
+The recorded wire-gate input is committed after 5019007c, with this report. PROBE B3: as in the table.
+
+The plan's C1 to C8 against what Lean answers (all *derived* expectations hold):
+
+| # | Plan | Observed |
+| --- | --- | --- |
+| C1, C3 | σ separates, witness `default` true, strict false; `SeparatedByDecisionOnly` with S1's wording rule; E14 with *should* / *shouldn't* | as planned; the finding carries ` (not certified)` (D5, E25 in force); one gap each, answered 'yes' |
+| C2, C4 | σ separates, default false, strict true; C2's one gap sentence "whether c must seek clarification in s; … 'no'" | as planned, word for word |
+| C1.4 | UNDECIDED under `default`, R7's sentence; SETTLED no under `strict` | as planned (`readings-choice`, `norm-defaults-status`) |
+| C5 | 16 choices, each CONFLICT-FREE, `conditional_on: []` | as planned |
+| C6 | SOME; ALL under `:0`; NONE under `:1` with the supposition and "… may directly deny being Claude; this situation answers 'yes'." | as planned, after the filled-table fix above |
+| C7 | SOME; ALL under `force-u0036-s05:0` | as planned |
+| C8 | the four units when C5's rows are decided and every premise status is `model` | Lean's premises answer: the four units; under an assumed reading, none. The conflict answer alone carries none on this path (its request sends no models, so the premise rows are not yet decided) |
+
+### Seeded bugs (each restored)
+
+| Seed | Language | Temporary change | Failing check |
+| --- | --- | --- | --- |
+| B3-M1 | Python | `soft_label` without the index bound | 9 tests of `test_readings_sd_relay.py`, the probe test among them |
+| A2-M1 | Python | `SoftNormDocument` accepts every decision key | 8 of `test_soft_decision_keys.py::test_a_mutated_decision_key_is_unavailable[…]` and the two-fault test |
+| A2-M2 | Lean | `keyedDecisions` writes a switch's key as `.off π N.name` (service rebuilt and pinned for the run, then restored) | `test_soft_decision_keys.py::test_every_decision_carries_leans_key`, `::test_the_relay_finds_each_name_by_its_key` (the relay refuses the row) |
+| A2-M3 | Python | `superposed_elaboration` spells `"soft__excepted__" + …` again | `test_relay_lint.py::test_every_relayed_module_exists_and_passes`, `::test_every_readings_module_is_read_by_the_reserved_rule`, `::test_probe_a2_…` |
+| CE4-M1 | Python | no filled table on the soft chain (the old behaviour) | `test_readings_sd_ce4.py::test_c6_the_denial_query_some_all_none` |
+
+No Rust product code changed (Rust has no readings or soft-norms elaboration role).
+
+### DRI rulings and open signatures
+
+| Delta | Ruling and evidence |
+| --- | --- |
+| `key` on each `decisions` entry of the soft-norms elaboration row (and so of `rights-elaborate`) | SIGNED by standing ruling R3 (DRI-RULINGS.md): information added, nothing removed or renamed; the generated schema and its encoder theorem cover it; `test_every_decision_carries_leans_key` checks the field equals Lean's key; `test_a_mutated_decision_key_is_unavailable` binds it to the request |
+| The relay refuses soft labels outside the request's conditions or Lean's pair order | No user-visible delta: only a tampered row changes (R8's binding) |
+| Soft-chain English no longer names a filled table as an author fact | No delta against `main` (which refuses soft-completion documents); it restores spec 2.5 |
+| Trusted Lean lines: K +0, S +171, trusted +531 against the signed baseline (+2 in this round: the `decisions` shape and `regeneratedCore`; `keyedDecisions` is tied by `keyedDecisions_names`, `DecisionKey`, `decisionKeyJson` and the `decision_key` shape are `[I]`) | **Needs DRI signature** with the earlier growth: R6 does not apply |
+| Lean CPU: a soft-chain side's decision names now come from its soft row, and the S2 name map elaborates each default or switchable candidate's own side | Not measured in this round; S1 already elaborated every side it evaluates. For the gate's benchmarks (R4 needs the saved figures) |
+| Earlier rounds' items (soft-chain documents answered, the rights-source certificate refusal, `normDefaults_wire_admission`'s hypothesis, `decided_units`, the gap selection, soft-label wording) | Unchanged: **still need DRI signatures** |
+
+### Evidence
+
+- `lake build`: PASS (900 jobs). `python3 lean/audit.py`: PASS (also inside the selected run).
+- `tools/regen_generated.py --check`: every generated file fresh except `trust-tables` (the budget above).
+- Selected tests (`select_tests.py --base $(git merge-base HEAD main) --run --jobs 8` on 5019007c) selected all 374
+  units: the checker pin and `Audit.lean` changed. The run reached the one-hour foreground limit with 269 files
+  finished, every one exit 0 (the builds, the audit and the layer checks passed first). The 104 files it had not
+  finished ran by `pytest -n 8` on the same commit in two halves: 1,938 passed; 1,565 passed and one failed,
+  `test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit` (the new soft source of
+  `test_soft_decision_keys.py` was not yet a recorded gate input). Its inputs were recorded (`python -m conformance.wire_contract_gate --record-test-inputs`, the test-inputs file
+  only); that file and every `tests/test_wire_contract*.py` file then passed (355 passed).
+- The release gate was not run, as this task requires.
+
+### Still open
+
+- DEFERRED as in the recheck: the DRI signatures above; the bounded statement re-check of `choiceLayeredG` and
+  `ndTextWith`; the full gate on the final HEAD; SC-9's Sonnet comprehension check (C10) and external source check;
+  C9 on the translation (SC-9).
+- FOLLOW-UP: `soft_chain` (`readings_route.py`) still copies Lean's `chainOf`; Fable C1 to C7 and recheck C8 to
+  C10. `python -m conformance.wire_contract_gate --record-test-inputs` on this commit rewrites the stored
+  `soft-norms@0-gate.json` (last written 12481cac, 2026-10-03) with boundary problems such as
+  `0:r0-guard-nodes: function record or message differs` (the relayed text carries `ResourceLimit: `, the record
+  does not). No diagnostic changed in this round; the stored report is kept and only the test inputs are recorded.
