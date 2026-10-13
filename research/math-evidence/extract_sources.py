@@ -1,6 +1,6 @@
 """ME-0: derive each target's pinned plain text (`source.txt`) from the raw bytes `fetch_sources.py` pinned.
 
-Deterministic; the rules are stated per target below and repeated in each `SOURCE.md`. The derived text is the
+Deterministic; the rules are stated per target below and summarised in `SUMMARY.md`'s Sources table. The derived text is the
 denominator of the ledger. Formulas stay as the source writes them (TeX for Wikisource, OCR for the 1927 scan):
 ME-0 never transcribes a formula into words in a source file (plan, ME-0).
 

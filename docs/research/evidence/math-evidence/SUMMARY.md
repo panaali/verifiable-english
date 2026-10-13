@@ -16,12 +16,14 @@ consequences are in [docs/research/math-evidence-phase1.md](../../math-evidence-
 | V | VE paper, `paper/sections/04-e1.md` and the appendix section "Per-template differences …" | 8,883 + 1,054 | repository at this branch (paper bytes equal `main` and `49de179e`) | the repository |
 
 URLs, retrieval times, HTTP status, sizes and SHA-256 of every fetched file are in each `raw/fetch-log.json`. The
-large third-party files (the Nature HTML, both OCR texts, the arXiv pages) are not committed. Their digests are in
-those logs. Each source's own SHA-256 is in its `*.units.json`.
+third-party pages (the Nature HTML, the Hardy-item OCR text, the arXiv pages) are not committed. Their digests are
+in those logs, and `fetch_sources.py` re-fetches them, keeping a page only if it matches. The Kerala OCR text that M is
+sliced from is committed (the 1927 edition is public domain). Each source's own SHA-256 is in its `*.units.json`.
+These logs and this table stand in for the per-target `SOURCE.md` that the plan's ME-0 names.
 
 ## Partition by status (Lean's `ve document coverage`; every ledger accounts for 100% of its bytes)
 
-| Row | Bytes | CHECKED | of which in Lean-certified relations | LABELLED | UNFORMALISED | CHECKED % |
+| Row | Bytes | CHECKED | of which in units taking part in Lean-certified relations | LABELLED | UNFORMALISED | CHECKED % |
 |---|---:|---:|---:|---:|---:|---:|
 | H | 24,368 | 1,858 | 1,582 | 11,560 | 10,950 | 7.62 |
 | M | 2,651 | 0 | 0 | 265 | 2,386 | 0.00 |
@@ -29,8 +31,10 @@ those logs. Each source's own SHA-256 is in its `*.units.json`.
 | DL | 66,858 | 4,453 | 2,548 | 49,707 | 12,698 | 6.66 |
 
 CHECKED means Lean admitted the unit's W6a statement (support: testimony). Where noted, the statement is also a
-premise of a consequence whose certificate Lean replayed. It never means the source's numbers are true. Certified
-relations:
+premise of a consequence whose certificate Lean replayed. It never means the source's numbers are true. The premise
+set of the H, V and DL documents is UNKNOWN to `ve document check` (no model or contradiction within budget, domain
+size 2), so every certificate is replayed but its non-vacuity is undecided; only M's premises have a checked model.
+Certified relations:
 
 - H: each printed Mean is the tenths-rounding of its three sessions (34 values); the unlabelled row repeats marks
   8-16 (18); each Final mean averages marks k and k + 8 (18).
@@ -82,5 +86,6 @@ is admitted in about 47 s. The V document hit the same limit on one of three run
   (`pilots-zero.json`).
 - An 1887 W6a date is refused with `DateRange(1887-07-08)`, and the 1970-01-01 control is admitted
   (`date-floor.json`).
-- Fixture anchors: 15 ANCHORED, 10 RE-WORDED, 2 CHANGED (H-4, H-9), 0 ABSENT, 9 NOT A QUOTE
+- Fixture anchors, over the 32 fixtures in P4's pre-registered scope: 14 ANCHORED, 9 RE-WORDED, 3 CHANGED (H-4,
+  H-5, H-9), 0 ABSENT, 6 NOT A QUOTE. V-9 to V-12 lie outside the scope (1 RE-WORDED, 3 NOT A QUOTE)
   (`fixture-anchors.json`, with exact-fraction pre-checks for ME-S that are not VE verdicts).
