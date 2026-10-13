@@ -1,113 +1,113 @@
 {
-  "method": "ve document readings --conclusion on each recorded question AST",
-  "rows": [
-    {
-      "fixture": "G1",
-      "ask": "yes",
-      "older": "ALL",
-      "status": "compared"
-    },
-    {
-      "fixture": "G2",
-      "ask": "yes",
-      "older": "ALL",
-      "status": "compared"
-    },
-    {
-      "fixture": "G3",
-      "ask": "notNecessarily",
-      "older": "NONE",
-      "status": "compared"
-    },
-    {
-      "fixture": "G4",
-      "ask": "no",
-      "older": "NONE",
-      "status": "compared"
-    },
-    {
-      "fixture": "G10",
-      "ask": "yes",
-      "older": "ALL",
-      "status": "compared"
-    },
-    {
-      "fixture": "U2",
-      "ask": "yes",
-      "older": "ALL",
-      "status": "compared"
-    },
-    {
-      "fixture": "U3",
-      "ask": "by_reading",
-      "older": "SOME",
-      "status": "compared"
-    },
-    {
-      "fixture": "U5",
-      "ask": "by_reading",
-      "older": "SOME",
-      "status": "compared"
-    },
-    {
-      "fixture": "U6",
-      "ask": "yes",
-      "older": "ALL",
-      "status": "compared"
-    },
-    {
-      "fixture": "U7",
-      "ask": "by_reading",
-      "older": "UNKNOWN",
-      "status": "compared"
-    },
-    {
-      "fixture": "A1",
-      "ask": "notSettled",
-      "older": null,
-      "status": "older route exceeded 120 s wall"
-    },
-    {
-      "fixture": "A1d",
-      "ask": "refused",
-      "older": null,
-      "status": "outside ask route"
-    },
-    {
-      "fixture": "A2",
-      "ask": "unknown",
-      "older": null,
-      "status": "older route exceeded 120 s wall"
-    },
-    {
-      "fixture": "A3",
-      "ask": "notNecessarily",
-      "older": null,
-      "status": "older route exceeded 120 s wall"
-    },
-    {
-      "fixture": "A4",
-      "ask": "unknown",
-      "older": null,
-      "status": "older route exceeded 120 s wall"
-    },
-    {
-      "fixture": "A5",
-      "ask": "unknown",
-      "older": null,
-      "status": "older route exceeded 120 s wall"
-    },
-    {
-      "fixture": "A7",
-      "ask": "notSettled",
-      "older": null,
-      "status": "older route exceeded 120 s wall"
-    },
-    {
-      "fixture": "A8",
-      "ask": "notSettled",
-      "older": null,
-      "status": "older route exceeded 120 s wall"
-    }
-  ]
+ "method": "ve document readings --conclusion on each recorded question AST",
+ "rows": [
+  {
+   "fixture": "G1",
+   "ask": "yes",
+   "older": "ALL",
+   "status": "compared"
+  },
+  {
+   "fixture": "G2",
+   "ask": "yes",
+   "older": "ALL",
+   "status": "compared"
+  },
+  {
+   "fixture": "G3",
+   "ask": "notNecessarily",
+   "older": "NONE",
+   "status": "compared"
+  },
+  {
+   "fixture": "G4",
+   "ask": "no",
+   "older": "NONE",
+   "status": "compared"
+  },
+  {
+   "fixture": "G10",
+   "ask": "yes",
+   "older": "ALL",
+   "status": "compared"
+  },
+  {
+   "fixture": "U2",
+   "ask": "yes",
+   "older": "ALL",
+   "status": "compared"
+  },
+  {
+   "fixture": "U3",
+   "ask": "by_reading",
+   "older": "SOME",
+   "status": "compared"
+  },
+  {
+   "fixture": "U5",
+   "ask": "by_reading",
+   "older": "SOME",
+   "status": "compared"
+  },
+  {
+   "fixture": "U6",
+   "ask": "yes",
+   "older": "ALL",
+   "status": "compared"
+  },
+  {
+   "fixture": "U7",
+   "ask": "by_reading",
+   "older": "UNKNOWN",
+   "status": "compared"
+  },
+  {
+   "fixture": "A1",
+   "ask": "notSettled",
+   "older": "UNKNOWN",
+   "status": "compared"
+  },
+  {
+   "fixture": "A1d",
+   "ask": "refused",
+   "older": null,
+   "status": "outside ask route"
+  },
+  {
+   "fixture": "A2",
+   "ask": "unknown",
+   "older": "UNKNOWN",
+   "status": "compared"
+  },
+  {
+   "fixture": "A3",
+   "ask": "notNecessarily",
+   "older": "UNKNOWN",
+   "status": "compared"
+  },
+  {
+   "fixture": "A4",
+   "ask": "unknown",
+   "older": "UNKNOWN",
+   "status": "compared"
+  },
+  {
+   "fixture": "A5",
+   "ask": "unknown",
+   "older": "UNKNOWN",
+   "status": "compared"
+  },
+  {
+   "fixture": "A7",
+   "ask": "notSettled",
+   "older": "UNKNOWN",
+   "status": "compared"
+  },
+  {
+   "fixture": "A8",
+   "ask": "notSettled",
+   "older": "UNKNOWN",
+   "status": "compared"
+  }
+ ]
 }
