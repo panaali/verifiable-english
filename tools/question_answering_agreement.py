@@ -90,11 +90,13 @@ def classify(leads: list[str], older: str | None, older_reason: str | None = Non
         return "requires review: older ALL, a row neither yes nor unknown"
     if older == "NONE" and "yes" in leads:
         return "requires review: older NONE, a row yes"
-    if (older, tuple(leads)) in {("ALL", ("yes",)), ("NONE", ("no",)), ("UNKNOWN", ("unknown",))}:
+    if "unknown" in leads and ask_reasons and "X1" in ask_reasons:
+        return "ask unknown (X1 conflict)"
+    if ((older == "ALL" and all(lead == "yes" for lead in leads)) or
+            (older == "NONE" and all(lead == "no" for lead in leads)) or
+            (older == "UNKNOWN" and all(lead == "unknown" for lead in leads))):
         return "same verdict"
     if "unknown" in leads:
-        if ask_reasons and "X1" in ask_reasons:
-            return "ask unknown (X1 conflict)"
         return "ask unknown (other)"
     return "compatible difference"
 

@@ -61,10 +61,14 @@ def test_q2_f4_agreement_classifies_evidence_differences_by_saved_reasons():
     assert classify(["yes"], "UNKNOWN", "some other limit") == "requires review: every row yes, older UNKNOWN"
     assert classify(["yes"], "UNKNOWN", OLDER_BUDGET_REASON) == "older budget exhausted"
     assert classify(["unknown"], "ALL", ask_reasons=["X1"]) == "ask unknown (X1 conflict)"
+    assert classify(["unknown"], "UNKNOWN", ask_reasons=["X1"]) == "ask unknown (X1 conflict)"
     assert classify(["unknown"], "NONE", ask_reasons=["X4"]) == "ask unknown (other)"
     assert classify(["yes"], "ALL") == "same verdict"
+    assert classify(["yes", "yes"], "ALL") == "same verdict"
+    assert classify(["unknown", "unknown"], "UNKNOWN") == "same verdict"
     assert classify(["notSettled"], "UNKNOWN") == "compatible difference"
     assert classify(["notNecessarily"], "UNKNOWN") == "compatible difference"
+    assert classify(["notSettled"], "SOME") == "compatible difference"
     assert classify([], "ALL").startswith("requires review")
     assert classify(["yes"], "DECIDED").startswith("requires review")
     assert classify(["true"], "ALL").startswith("requires review")
