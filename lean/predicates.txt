@@ -802,9 +802,6 @@ VE.Readings.Transfers@VE.Readings.SupExtra
 VE.Readings.Twin@VE.Readings.Force
 VE.Readings.TwinDocs@VE.Readings.Force
 VE.Readings.Wire.Distinct@VE.Readings.Companions
-VE.Readings.Wire.SupCounter@VE.Readings.SupVerdictsSound
-VE.Readings.Wire.SupEntails@VE.Readings.SupVerdictsSound
-VE.Readings.Wire.SupRowHolds@VE.Readings.SupVerdictsSound
 VE.Readings.Wire.TermsDistinct@VE.Readings.Companions
 VE.Readings.bitOn@VE.Readings.Superpose
 VE.Readings.tablesOf@VE.Readings.Separate
