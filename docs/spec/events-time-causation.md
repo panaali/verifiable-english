@@ -1,6 +1,11 @@
 # Events, time and causation (`events@0`, and `alternatives@0` with the completion): statement spec (ET-2)
 
-> Status: item-1 statement spec, draft 1 (2026-10-13), branch `design/events-time-causation`, written from
+> Status: item-1 statement spec, draft 2 (2026-10-13), branch `design/events-time-causation`. Draft 2 applies the
+> converged statement review of draft 1 (`manage-agents/debates/events-time-causation-spec/{astra,fable}.md`,
+> CONVERGED in round 3: **FIX**; build authorization pending). Its items are cited **SR-A1** to **SR-A4** (ET-7) and
+> **SR-B1** to **SR-B5** (events), because 2.4 already names reading candidates A1, B1 and so on; SR-B3 includes
+> Astra's round-3 hypothesis `hb` (literal distinctness of the situation). The regressions R-A2, R-A3 and R-A4 of
+> Fable's round 3 are fixtures T12d, T12e and T12f. Section 12 lists the changes. Draft 1 was written from
 > [events-time-causation-PLAN.md](events-time-causation-PLAN.md) draft 2, which applies the converged Astra + Fable
 > review of the plan (`manage-agents/debates/design-events-time-causation/{astra,fable}.md`, CONVERGED in round 3:
 > **REVISE now, BUILD after this spec's statement review**) and the DRI's cross-plan synthesis edits X1 to X10 (same
@@ -9,15 +14,22 @@
 > reading of every wording, the Lean statements, the diagnostics and the acceptance fixtures (definitions first,
 > expectations after). Every "exactly when" claim has a fixture for each direction.
 >
-> **Elaboration: not yet run.** In the session that wrote this draft the harness refused to run `lake` and `lean`, so
-> no statement here has been elaborated. Every Lean block of section 6, and every fixture value marked *guarded*, is
-> in the scratch stub `SpecStubs_events-time-causation.lean` (each `theorem T b : C` as `def T b : Prop := C`, with
-> the same binders; definitions with the bodies stated here; fixture values as `#guard` lines; no `sorry`). The stub
-> is not committed; 11 says where it is and the one command that elaborates it. Fixture values marked *guarded* were
-> derived by reading the sources, and the day numbers were cross-checked with a Python transcription of `Civil.num`
-> that agrees with the proved anchors `num_epoch` (0) and `num_lastDate` (2932896); the `#guard` lines are the check.
+> **Elaboration: not yet run.** In the session that wrote draft 1 the harness refused to run `lake` and `lean`, and
+> draft 2's worktree has no build, so no statement here has been elaborated. Every Lean block of section 6, and every
+> fixture value marked *guarded*, is in the scratch stub `SpecStubs_events-time-causation.lean` (each
+> `theorem T b : C` as `def T b : Prop := C`, with the same binders; definitions with the bodies stated here; fixture
+> values as `#guard` lines; no `sorry`). The stub is not committed; 11 says where it is and the one command that
+> elaborates it. Fixture values marked *guarded* were derived by reading the sources, and the day numbers were
+> cross-checked with a Python transcription of `Civil.num` that agrees with the proved anchors `num_epoch` (0) and
+> `num_lastDate` (2932896); the `#guard` lines are the check.
 > Values marked *derived* are obligations of the batch named. Statements are implementation obligations, not claims
 > of completed proofs. No model was called.
+>
+> Draft 2 also read, at `ac4a62f8`: `lean/VE/NormDefaults/Wire.lean` (`decodeSourceU`, `checkAuthor`),
+> `lean/VE/NormDefaults/Evidence.lean` (`fillBody`, `admissible_of_fillValid`), `lean/VE/NormDefaults/Report.lean`
+> (`admissibleX_of_fill`), `lean/VE/NormDefaults/Layered.lean` (`situationX`, `filledX`, `replayStatusX`),
+> `lean/VE/Alternatives/{Followable,Replay,Validate}.lean` (`dilemma_witness_sound`, the wire theorems,
+> `validateAlternatives`).
 >
 > Inputs, read at `892fe1fc` (`main` at `49de179e` plus the plan): `lean/VE/{Syntax,Semantics,Finite}.lean`,
 > `lean/VE/Time/Calendar.lean`, `lean/VE/Norms/{Tree,Prefix,Subst,Conflict,SmallModel}.lean`,
@@ -28,9 +40,12 @@
 > (`usecases/eligibility/PLAN.md` C25 to C27).
 >
 > The gate: ET-3 opens on the PASS of the statement review the DRI assigns (two frontier reviewers), after the
-> elaboration run of 11 succeeds. PASS requires both reviewers to accept each statement as **true under its
-> hypotheses**; that the stub elaborates is not enough. Each reviewer derives the expectations of 8.1 before reading
-> 8.2. The review may pass section 5 (ET-7) before the rest; ET-7 then starts.
+> elaboration run of 11 succeeds. PASS requires three things: the corrections of draft 2 are in (this file, the plan
+> and the stub), both reviewers have re-read the changed statements and accept each statement as **true under its
+> hypotheses**, and the corrected stub's elaboration is recorded with its command, its log and the reviewed commit;
+> that the stub elaborates is necessary, not sufficient. Each reviewer derives the expectations of 8.1 before reading
+> 8.2. The review may pass section 5 (ET-7) before the rest, once SR-A1 to SR-A4 and their fixtures (T12c to T12f)
+> are in and the ET-7 part of the stub elaborates; ET-7 then starts.
 
 ## 0. Scope, one paragraph
 
@@ -49,7 +64,7 @@ contract (C). Out of scope: durations over events, deadlines, branching time, or
 
 In this spec: definitions (1), the English (2), wire and identity (3), diagnostics (4), the ET-7 evidence contract
 (5), the Lean statements (6), what is not claimed (7), the acceptance fixtures (8), the review checklist (9), the
-differences from the plan's blocks (10), and the elaboration record (11).
+differences from the plan's blocks (10), the elaboration record (11), and draft 2's changes (12).
 
 ## 1. Definitions
 
@@ -190,6 +205,8 @@ refutation (the plan's A).
 day the number of the last named day below it plus the rank difference (below the first named day: that day's number
 minus the difference; with no named date: its rank). **`embeddable V M` holds exactly when some numbering embeds
 `M`** (`embeddable_sound` with `numbering`, and `embeddable_complete`); fixtures T3 and T3e give both directions.
+`embeddable_sound` assumes no calendar premise of `M`: the check gives them (step 1 the order, step 3 the date facts,
+step 4 with a gap of 0 the adjacency), so a caller that knows only the base, as SETTLED's, can use it (SR-B2).
 
 ### 1.7 The calendar completion and its fragment (A, X2)
 
@@ -221,6 +238,20 @@ the reverse for `down`. **`dayExtension_transfer`** (6.2): in every day extensio
 formulas stay false (in the contrapositive form above), at every valuation of old elements. Atoms are exact because
 old tuples are `M`'s.
 
+**The filled completion (SR-B1).** A situation with a filling of its unsaid tables is completed by completing its
+base and extending the filling: `completionFill` keeps the filling on tuples of old elements and takes
+`canonicalFill` (true on the unsaid tables of permission members, false elsewhere) on every tuple with an added day;
+`completed U V M F` is the completion with that filling, and it is the situation every situation-based answer
+reports. Its days, order and constants are the completion's, and it is a day extension of the filled situation with
+`ng = unguarded U V` (1.8). `Fill_T` cannot be tested as a whole: each of its premises quantifies over its pair's
+tuples, a day among them, with no guard (`fillPremises` binds `[agent, day]`), so its `up` is false for every
+day-indexed pair with an unspecified member. Only the **body** of each fill premise is tested with `up`: on tuples of
+old elements the body transfers, and on tuples with an added day it holds pointwise because the canonical filling
+answers "yes" to every permission member and "no" to every obligation member there, as in `canonical_fill_sat`
+(`fillPremises_canonical_completion`, 6.3). Leaving the added-day tuples empty would not do: an added day before a
+closure makes an obligation true by its rule while its unspecified permission member is false there, which breaks
+`Fill_T`.
+
 **In plain words.** A claim "there is a day such that …" that a situation refutes stays refuted when days are added
 only if every such day must also satisfy a role, link or author atom that no added day satisfies; a claim "on each
 day …" that a situation refutes stays refuted because the counterexample day is one of the situation's own. Order
@@ -240,23 +271,33 @@ them to added days.
 ### 1.8 Which answers need which polarity, and where R1 falls
 
 Every situation-based answer on a document with `events@0`, on every route that admits the profile (weighing's zone
-completions included, X2), is reported only when the situation (with its filling) is `embeddable` and the formulas
-its check reads pass the polarity test of its kind. `ng` is `unguarded U V` = `before` and the unsaid predicates.
-"Premises" are the base background, `Fill_T`, every other pack's premises in the assembled `X`, the events
-conventions and, for a model check, each premise of `Γ`; rules and definitions are read expanded (outcome
-substitution), so they are tested inside the formulas that use them. The calendar premises are not tested: every
-calendar reading satisfies them.
+completions included, X2), is reported only when the situation is `embeddable` and the formulas its check reads pass
+the polarity test of its kind; the situation reported is the filled completion `completed U V M F` (1.7). `ng` is
+`unguarded U V` = `before` and the unsaid predicates. "Premises" are the base background, `Fill_T`, every other
+pack's premises in the assembled `X`, the events conventions and, for a model check, each premise of `Γ`; rules and
+definitions are read expanded (outcome substitution), so they are tested inside the formulas that use them. For
+`up`, `Fill_T` is tested through the body of each of its premises (`fillBodies`, SR-B1); for `down`, as a whole. The
+calendar premises are not tested: every calendar reading satisfies them.
 
 | Answer | Premises | Queried formula | Lean |
 |---|---|---|---|
 | a countermodel or model (NOT ENTAILED, a readings NONE or SOME model, a scenario, a zone completion) | `up` | `down` if reported false, `up` if reported true | `modelSafe`, `events_model_calendar` |
 | a CONFLICT witness, a `gaps: reachable` witness | `up` | the target: `up` | `witnessSafe`, `events_witness_calendar` |
 | UNDECIDED (two fillings) | `up` | the outcome: `up` and `down` | `undecidedSafe`, `events_undecided_calendar` |
-| SETTLED (`table3`, enumeration) | base background and `Fill_T`: `down` | the outcome: `up` and `down` | `settledSafe`, `events_settled_calendar` |
+| SETTLED (`table3`, enumeration) | `up`; and the base background and `Fill_T`: `down` | the outcome: `up` and `down` | `settledSafe`, `events_settled_calendar` |
 
 A failing test makes the answer UNKNOWN with `NotCalendar: <label> may change when the missing calendar days are
 added` (4), naming the first failing formula in the order of the table's columns. A certificate is never suppressed:
 certificates hold in every structure of the premises (`events_certificate_calendar`), so in every calendar reading.
+
+**SETTLED needs a situation of the document (SR-B3).** `SettledAs` quantifies over the admissible fillings of the
+situation and holds vacuously when there is none, and it reads neither the other packs' `X` nor the conventions. So
+SETTLED is reported only on a situation whose base background holds (`backgroundValid`, which includes the
+distinctness of declared literals), with a filling that passes `fillValid` and `extraValid` over the whole assembled
+`X ++ eventsX V`, and with the `up` test above; `events_settled_calendar` then also gives an admissible filled
+completion satisfying the whole `X`. A situation that violates a generated premise or another pack's premise is that
+pack's `InvalidModel` (4), one whose literals coincide is `InvalidModel(literals)`, and a situation for which no
+filling is validated is UNKNOWN, never SETTLED (T14).
 
 **Where R1 falls: inside, for its refutations.** R1's claim is "that stay is in progress on each day from 21
 September 2026 through 27 September 2026"; its premises are atoms (each stay's days) and the conventions. With the
@@ -365,7 +406,7 @@ situation is shown with it. ET-5 writes these rows, rows only, into english-lean
 | "m X until E" (E an event), for each modality m | U1: m X on each day before the day E happens (silent from that day); U2: U1, and the opposite of m on each day from the day E happens. The opposite of "may" is "must not", of "must" is "need not", of "must not" is "may", of "need not" is "must" (R2) | E's day, the day before it and a later day (T11, T11b); with the predicate unspecified, U1 is UNDECIDED from E's day and U2 settled to the opposite |
 | "m X until D" (D a date) | the four candidates exclusive (each day before D) or inclusive (each day no later than D), each silent after or with the opposite from the next day (R2) | D itself and the day after D (T11c) |
 | "by D" (a deadline) | B1: before D; B2: no later than D | the act on D itself |
-| "within n days of D" | W1: no later than the date n days after D; W2: before that date (the translator names the end date) | the act on the end date. "within n days of <event>" has no candidate: UNFORMALISED, reason `duration` (ET-T1) |
+| "within n days of D" | W1: on or after D and no later than the date n days after D; W2: on or after D and before the date n days after D; W3: on or after the date n days before D and no later than the date n days after D. The translator names both end dates as named dates (SR-B4) | an act on the date n days after D (W1 and W3 against W2) and an act before D, within n days of it (W3 against W1 and W2) (T11d). "within n days of <event>" has no candidate: UNFORMALISED, reason `duration` (ET-T1) |
 | "during S", "while S" (temporal) | on each day on which S is in progress | none (one candidate; the legend's inclusive end decides the last day) |
 | "while" (contrast) | the two clauses joined by "and" | a reading set with the temporal candidate; a day on which S is not in progress |
 | "since E" | S1: on each day after the day E happens; S2: on each day on or after that day | E's own day |
@@ -441,24 +482,46 @@ At answer time:
   days after <iso>, at most <m>`, `NotCalendar: <n> days, at most 2932897` ("1 day" for one).
 - A situation outside the fragment (1.8): UNKNOWN with `NotCalendar: <label> may change when the missing calendar days
   are added`, the label being a premise's label, `the conclusion`, `the target <name>` or `the outcome of <p>`.
+- For a status (1.8, SR-B3): a situation whose declared literals coincide is the layered route's existing
+  `InvalidModel(literals): the model violates a background premise`; a supplied filling that violates another pack's
+  premise is that pack's text (`InvalidModel(soft): the model violates a background premise`); a situation for which
+  no filling passes `fillValid` and `extraValid` is UNKNOWN, never SETTLED.
+
+`NotCalendar: <iso> denotes no day` is unreachable through the service: a valid situation interprets every declared
+constant in its sort (the first clause of `Admissible`), so it is checked by a Lean `#guard` on `calendarCheck` only
+(T3, SR-B5).
 
 ## 5. `alternatives@0` with the completion (ET-7): the evidence contract (C)
 
-The alternatives route accepts `norm-defaults@0` beside `alternatives@0` and `norms@0` (D13). It decodes the source
-with the existing decoder over the placeholder completions and records the unspecified predicates in regulated order
-(`decodeAltSourceU`); with no `unspecified` value and no `norm-defaults@0` it is today's decoder
-(`decodeAltSourceU_conservative`). It answers:
+The alternatives route accepts `norm-defaults@0` beside `alternatives@0` and `norms@0` (D13). Its decoder
+(`decodeAltSourceU`) has `decodeSourceU`'s two branches (SR-A2). **Without `norm-defaults@0`**, an `unspecified`
+value is `UnsupportedProfile: unspecified completion requires norm-defaults@0`, and otherwise today's decoder runs
+unchanged, its texts included (`decodeAltSourceU_conservative`). **With it**, the decoder checks the original
+profile list with today's gate (`profileGate`: sorted and unique, `alternatives@0` and `norms@0` present, no
+`soft-norms@0`), reads each `unspecified` default as the placeholder and sets the profile aside (`placeholderJson`),
+runs today's decoder on the result (the rest of the profile list, the block, the rules and Γ), records the
+unspecified predicates in regulated order, then checks the reserved names and author limits of nd 8 (`checkAuthor`)
+and `WellFormedU`, each failure under its own text. It answers:
 
+- **CONFLICT-FREE** over the alternatives route's own base: no conflict in any structure of `BaseAdmissibleAltU`,
+  which includes the slot premises (`AltConflictFreeU`, as today's `AltConflictFree` over `BaseAdmissibleAlt`;
+  SR-A3). As today, CONFLICT-FREE is the prerequisite of the document's FOLLOWABLE and DILEMMA.
 - **FOLLOWABLE** from a certificate over `backgroundBaseAltU A unspec ++ A.Γ` for `allFollowableU` (`followableU_sound`,
   proved; on the wire `alternativesU_wire_followable_sound`).
-- **DILEMMA** from a witness situation, a filling validated by `fillValid`, and a typed chooser at which
-  `¬ followable°` holds (`alternativesU_dilemma_witness_sound`).
+- **DILEMMA** from a witness situation that passes today's scenario validation (`M.Valid`, `backgroundValidAlt`, the
+  signed rows, the existence checks and Γ), a filling validated by `fillValid`, and a typed chooser at which
+  `¬ followable°` holds (`alternativesU_dilemma_witness_sound`). Its statement assumes `WellFormedAlt A`: Γ is typed
+  over the base vocabulary, which declares no unsaid predicate, so Γ keeps its value when the filling is added
+  (SR-A1, T12c).
 - **Per alternative**, in a scenario: **clear** or **not clear** only when its `clear` formula is settled under every
   admissible filling, from a definite Kleene value (`kleene_sound`) or an enumeration of its cone within
   `MAX_UNSAID_ATOMS` (as `settled_of_enumeration`); **UNDECIDED** only from two fillings, each validated, that give
   `clear` opposite values (as `undecided_witness_sound`, nd 2.5); **UNKNOWN** otherwise, naming the budget when it was
   exhausted. A Kleene "unknown" alone is UNKNOWN, never UNDECIDED. Each row carries its evidence (`ScenarioRowU`'s
-  soundness fields, 6.4), as `StatusX` does on the layered route.
+  soundness fields, 6.4), as `StatusX` does on the layered route, and every row also carries the scenario's validity
+  (today's validation with its signed rows, a typed chooser and action) and one filling validated by `fillValid`, so
+  no status is vacuous (SR-A4). A scenario that fails validation answers with today's validation text; one for which
+  no filling is validated is UNKNOWN for every alternative; neither is ever clear or not clear (T12f).
 - The untrusted diagnosis gains `UNSETTLED(<alternatives>)` before NONE-PERMITTED, listing only alternatives with
   UNDECIDED evidence; nothing new is claimed for it.
 
@@ -792,10 +855,10 @@ theorem eventsPremises_satisfiable (E : VE.Environment) (V : EventsEnv) (h : Wel
     ∃ M : VE.FiniteModel VE.Bridge.Entity, M.Valid (regenEnv E V) ∧ Sat M.asStructure (eventsX V) ∧
       embeddable V M = true
 
-/-- The check passes only when the numbering embeds the situation ... -/
+/-- The check passes only when the numbering embeds the situation (the check itself gives the calendar premises on
+    the situation's days, so none is assumed: SR-B2) ... -/
 theorem embeddable_sound {α : Type} [DecidableEq α] (E : VE.Environment) (V : EventsEnv)
-    (hT : EventsTyped E V = true) (M : VE.FiniteModel α) (valid : M.Valid E)
-    (hp : Sat M.asStructure (calendarPremises V)) (he : embeddable V M = true) :
+    (hT : EventsTyped E V = true) (M : VE.FiniteModel α) (valid : M.Valid E) (he : embeddable V M = true) :
     Embeds V M.asStructure (numbering V M)
 
 /-- ... and passes whenever some numbering does. -/
@@ -845,8 +908,9 @@ theorem events_conservative (E : VE.Environment) (V : EventsEnv) (h : WellFormed
 ### 6.3 The pack, the wire and the answers (ET-4)
 
 ```lean
-open VE.NormDefaults (UDoc fill WellFormedU FiniteFill EntailsX modelCheckX fillPremises unsaidNames SettledAs)
-open VE.NormDefaults.Wire (BaseAdmissibleX UndecidedAtX extraValid)
+open VE.NormDefaults (UDoc fill WellFormedU FiniteFill FillTables withFill finFill fillValid fillBody openPairs
+  canonicalFill BaseAdmissibleU EntailsX modelCheckX fillPremises unsaidNames SettledAs)
+open VE.NormDefaults.Wire (BaseAdmissibleX extraValid)
 open VE.Norms (subst size envAt backgroundBase outcomeBase Regulated tupleVal)
 
 structure EventsDecoded where
@@ -865,8 +929,26 @@ theorem eventsX_absent (environment : Lean.Json) (h : (environment.getObjVal? "e
     decodeEvents environment = .ok none
 
 def unguarded (U : UDoc) (V : EventsEnv) : List String := V.before :: unsaidNames U
+
+/-- The body of each `Fill_T` premise, before its pair's universal closure (`fillBody`, nd's owner; SR-B1). -/
+def fillBodies (U : UDoc) : List VE.Formula := (openPairs U).map (fillBody U)
+
+/-- Every premise-side formula an `up` test reads, except the calendar premises; `Fill_T` through its bodies. -/
 def checkedPremises (U : UDoc) (V : EventsEnv) (X : List VE.Formula) : List VE.Formula :=
-  backgroundBase (fill U) ++ fillPremises U ++ X ++ conventionPremises V
+  backgroundBase (fill U) ++ fillBodies U ++ X ++ conventionPremises V
+
+/-- A filling extended to the completion (SR-B1): the filling on tuples of old elements, `canonicalFill` on tuples
+    with an added day. -/
+def completionFill {α : Type} [DecidableEq α] (U : UDoc) (V : EventsEnv) (M : VE.FiniteModel α) (num : α → Nat)
+    (F : FillTables U M.asStructure) : FillTables U (completion V M num) :=
+  fun n zs => match oldTuple (α := α) zs with
+    | some xs => F n xs
+    | none => canonicalFill U (completion V M num) n zs
+
+/-- The filled completion every situation-based answer reports. -/
+def completed {α : Type} [DecidableEq α] (U : UDoc) (V : EventsEnv) (M : VE.FiniteModel α)
+    (F : FillTables U M.asStructure) : VE.Structure.{0} :=
+  withFill U (completion V M (numbering V M)) (completionFill U V M (numbering V M) F)
 
 def modelSafe (U : UDoc) (V : EventsEnv) (X Γ : List VE.Formula) (φ : VE.Formula) (value : Bool) : Bool :=
   let ng := unguarded U V
@@ -875,14 +957,27 @@ def modelSafe (U : UDoc) (V : EventsEnv) (X Γ : List VE.Formula) (φ : VE.Formu
     (if value then up V.day ng (sub φ) else down V.day ng (sub φ))
 def witnessSafe (U : UDoc) (V : EventsEnv) (X : List VE.Formula) (ψ : VE.Formula) : Bool :=
   (checkedPremises U V X).all (up V.day (unguarded U V)) && up V.day (unguarded U V) ψ
-def settledSafe (U : UDoc) (V : EventsEnv) (n : String) : Bool :=
+def settledSafe (U : UDoc) (V : EventsEnv) (X : List VE.Formula) (n : String) : Bool :=
   let ng := unguarded U V
   (backgroundBase (fill U) ++ fillPremises U).all (down V.day ng) &&
+    (checkedPremises U V X).all (up V.day ng) &&
     up V.day ng (outcomeBase (fill U) n) && down V.day ng (outcomeBase (fill U) n)
 def undecidedSafe (U : UDoc) (V : EventsEnv) (X : List VE.Formula) (n : String) : Bool :=
   let ng := unguarded U V
   (checkedPremises U V X).all (up V.day ng) &&
     up V.day ng (outcomeBase (fill U) n) && down V.day ng (outcomeBase (fill U) n)
+
+/-- SR-B1, the canonical extension: an admissible filling of the situation, extended by `completionFill`, is an
+    admissible filling of the completion. Proof: the filled completion is a day extension of the filled situation
+    with `ng = unguarded U V`; on tuples of old elements the base background and each fill premise's body transfer
+    by `dayExtension_transfer`; on a tuple with an added day the body holds pointwise, as in `canonical_fill_sat`
+    (`fill_sat_of`). -/
+theorem fillPremises_canonical_completion {α : Type} [DecidableEq α] (U : UDoc) (h : WellFormedU U = true)
+    (V : EventsEnv) (hT : EventsTyped (envAt U.D 0) V = true) (M : VE.FiniteModel α)
+    (valid : M.Valid (envAt U.D 0)) (num : α → Nat) (hm : Embeds V M.asStructure num)
+    (F : FillTables U M.asStructure) (hF : BaseAdmissibleU U (withFill U M.asStructure F))
+    (hs : (backgroundBase (fill U) ++ fillBodies U).all (up V.day (unguarded U V)) = true) :
+    BaseAdmissibleU U (withFill U (completion V M num) (completionFill U V M num F))
 
 /-- Certified entailment at PK-1's assembled X (events last). With `calendar_sat`, every calendar reading that
     satisfies the other packs, the conventions and Γ satisfies φ (D7). -/
@@ -893,51 +988,67 @@ theorem events_certificate_calendar (U : UDoc) (h : WellFormedU U = true) (V : E
       (VE.NormDefaults.Wire.premisesX U (X ++ eventsX V) Γ) φ cert = true) :
     EntailsX.{u} U (X ++ eventsX V) Γ φ
 
-/-- A model check inside the fragment is a calendar situation: every civil day, the whole assembled X, Γ, and the
-    conclusion at the reported value. -/
+/-- A model check inside the fragment is a calendar situation: the filled completion has every civil day,
+    satisfies the whole assembled X and Γ, and gives the conclusion the reported value. -/
 theorem events_model_calendar (U : UDoc) (h : WellFormedU U = true) (V : EventsEnv) (X : List VE.Formula)
     (hT : EventsTyped (envAt U.D 0) V = true)
     (M : VE.FiniteModel VE.Bridge.Entity) (valid : M.Valid (envAt U.D 0))
     (F : FiniteFill U VE.Bridge.Entity) (Γ : List VE.Formula) (φ : VE.Formula)
     (hm : (modelCheckX U (X ++ eventsX V) M F Γ φ).1 = true)
-    (he : embeddable V (M.withFill F) = true)
+    (he : embeddable V M = true)
     (hs : modelSafe U V X Γ φ (modelCheckX U (X ++ eventsX V) M F Γ φ).2 = true) :
-    ∃ (S : VE.Structure.{0}) (num : S.Carrier → Nat), CalendarReading V S num ∧
-      BaseAdmissibleX U (X ++ eventsX V) S ∧
-      (∀ a ∈ Γ, (subst (fill U).T (size (fill U)) a).denote S []) ∧
-      ((subst (fill U).T (size (fill U)) φ).denote S [] ↔ (modelCheckX U (X ++ eventsX V) M F Γ φ).2 = true)
+    CalendarReading V (completion V M (numbering V M)) (numOf (numbering V M)) ∧
+      BaseAdmissibleX U (X ++ eventsX V) (completed U V M (finFill M F)) ∧
+      (∀ a ∈ Γ, (subst (fill U).T (size (fill U)) a).denote (completed U V M (finFill M F)) []) ∧
+      ((subst (fill U).T (size (fill U)) φ).denote (completed U V M (finFill M F)) [] ↔
+        (modelCheckX U (X ++ eventsX V) M F Γ φ).2 = true)
 
-/-- A CONFLICT or `reachable` witness inside the fragment is a calendar situation where the target holds. -/
+/-- A CONFLICT or `reachable` witness inside the fragment is a calendar situation where the target holds: the
+    filled completion, at the witness's own tuple. -/
 theorem events_witness_calendar (U : UDoc) (h : WellFormedU U = true) (V : EventsEnv) (X : List VE.Formula)
     (hT : EventsTyped (envAt U.D 0) V = true)
     (M : VE.FiniteModel VE.Bridge.Entity) (valid : M.Valid (envAt U.D 0))
     (hb : VE.Norms.backgroundValid U.D M = true)
-    (F : FiniteFill U VE.Bridge.Entity) (hF : VE.NormDefaults.fillValid U M F = true)
+    (F : FiniteFill U VE.Bridge.Entity) (hF : fillValid U M F = true)
     (hX : extraValid U (X ++ eventsX V) M F = true)
     (ψ : VE.Formula) (ss : List String) (vs : List VE.Bridge.Entity)
     (typed : VE.TupleTyped M.asStructure ss vs) (hw : ψ.eval (M.withFill F) (tupleVal vs) = true)
-    (he : embeddable V (M.withFill F) = true) (hs : witnessSafe U V X ψ = true) :
-    ∃ (S : VE.Structure.{0}) (num : S.Carrier → Nat) (ws : List S.Carrier), CalendarReading V S num ∧
-      BaseAdmissibleX U (X ++ eventsX V) S ∧ VE.TupleTyped S ss ws ∧ ψ.denote S (tupleVal ws)
-
-/-- SETTLED in the situation is SETTLED in its completion. -/
-theorem events_settled_calendar (U : UDoc) (h : WellFormedU U = true) (V : EventsEnv)
-    (hT : EventsTyped (envAt U.D 0) V = true) (M : VE.FiniteModel VE.Bridge.Entity)
-    (valid : M.Valid (envAt U.D 0)) (he : embeddable V M = true)
-    (r : Regulated) (vs : List VE.Bridge.Entity) (b : Bool) (hset : SettledAs.{0} U M.asStructure r vs b)
-    (hs : settledSafe U V r.name = true) :
+    (he : embeddable V M = true) (hs : witnessSafe U V X ψ = true) :
     CalendarReading V (completion V M (numbering V M)) (numOf (numbering V M)) ∧
-      SettledAs.{0} U (completion V M (numbering V M)) r (vs.map Sum.inl) b
+      BaseAdmissibleX U (X ++ eventsX V) (completed U V M (finFill M F)) ∧
+      VE.TupleTyped (completed U V M (finFill M F)) ss (vs.map Sum.inl) ∧
+      ψ.denote (completed U V M (finFill M F)) (tupleVal (vs.map Sum.inl))
 
-/-- UNDECIDED in the situation is UNDECIDED in its completion. -/
+/-- SETTLED in the situation is SETTLED in its completion, and the filled completion is an admissible situation
+    of the whole assembled X (SR-B3: the review's `∃ F'`, with its witness named), so the answer is about a
+    situation of the document, never vacuous. -/
+theorem events_settled_calendar (U : UDoc) (h : WellFormedU U = true) (V : EventsEnv) (X : List VE.Formula)
+    (hT : EventsTyped (envAt U.D 0) V = true) (M : VE.FiniteModel VE.Bridge.Entity)
+    (valid : M.Valid (envAt U.D 0)) (hb : VE.Norms.backgroundValid U.D M = true) (he : embeddable V M = true)
+    (F : FiniteFill U VE.Bridge.Entity) (hF : fillValid U M F = true)
+    (hX : extraValid U (X ++ eventsX V) M F = true)
+    (r : Regulated) (vs : List VE.Bridge.Entity) (b : Bool) (hset : SettledAs.{0} U M.asStructure r vs b)
+    (hs : settledSafe U V X r.name = true) :
+    CalendarReading V (completion V M (numbering V M)) (numOf (numbering V M)) ∧
+      SettledAs.{0} U (completion V M (numbering V M)) r (vs.map Sum.inl) b ∧
+      BaseAdmissibleX U (X ++ eventsX V) (completed U V M (finFill M F))
+
+/-- UNDECIDED in the situation is UNDECIDED in its completion, both fillings extended over the same completed
+    base (SR-B1). -/
 theorem events_undecided_calendar (U : UDoc) (h : WellFormedU U = true) (V : EventsEnv) (X : List VE.Formula)
     (hT : EventsTyped (envAt U.D 0) V = true) (M : VE.FiniteModel VE.Bridge.Entity)
     (valid : M.Valid (envAt U.D 0)) (he : embeddable V M = true)
-    (r : Regulated) (vs : List VE.Bridge.Entity)
-    (hu : UndecidedAtX.{0} U (X ++ eventsX V) M.asStructure r vs)
+    (r : Regulated) (vs : List VE.Bridge.Entity) (F₁ F₂ : FillTables U M.asStructure)
+    (h₁ : BaseAdmissibleX U (X ++ eventsX V) (withFill U M.asStructure F₁))
+    (h₂ : BaseAdmissibleX U (X ++ eventsX V) (withFill U M.asStructure F₂))
+    (v₁ : (outcomeBase (fill U) r.name).denote (withFill U M.asStructure F₁) (tupleVal vs))
+    (v₂ : ¬ (outcomeBase (fill U) r.name).denote (withFill U M.asStructure F₂) (tupleVal vs))
     (hs : undecidedSafe U V X r.name = true) :
     CalendarReading V (completion V M (numbering V M)) (numOf (numbering V M)) ∧
-      UndecidedAtX.{0} U (X ++ eventsX V) (completion V M (numbering V M)) r (vs.map Sum.inl)
+      BaseAdmissibleX U (X ++ eventsX V) (completed U V M F₁) ∧
+      BaseAdmissibleX U (X ++ eventsX V) (completed U V M F₂) ∧
+      (outcomeBase (fill U) r.name).denote (completed U V M F₁) (tupleVal (vs.map Sum.inl)) ∧
+      ¬ (outcomeBase (fill U) r.name).denote (completed U V M F₂) (tupleVal (vs.map Sum.inl))
 
 structure EventsEntailmentReplay where
   U : UDoc
@@ -957,6 +1068,12 @@ theorem events_wire_acceptance (j : Lean.Json) (r : EventsEntailmentReplay) (h :
       EntailsX.{u} r.U (r.X ++ eventsX r.V) r.premises r.conclusion
 ```
 
+The four answer-level theorems state their situation explicitly (SR-B1): the filled completion `completed U V M F`
+of the situation's own filling (for UNDECIDED, of each of its two fillings, over the same completed base). The
+calendar reading is stated on the base completion; `completed` has its carrier, days, `before` and named dates,
+since `withFill` changes only the unsaid tables. The calendar check is therefore taken on the base `M` (`he`), which
+gives the same answer as on `M.withFill F`, whose only extra tables are unsaid ones.
+
 `events_wire_acceptance` is instantiated per route that enables the profile, as nd's wire theorems are; the readings
 route uses the same `X` per choice (RD-9's `choiceX`). **`events_row_composition`** (stated against AR-10's names
 when its table lands): for every profile list the `events@0` row admits, the route chosen is the one chosen for the
@@ -967,32 +1084,53 @@ any events check (4, item 1).
 
 ```lean
 namespace VE.Alternatives
-open VE.NormDefaults (UDoc fill WellFormedU ConflictFreeU BaseAdmissibleAltU backgroundBaseAltU allFollowableU
+open VE.NormDefaults (UDoc fill WellFormedU BaseAdmissibleAltU backgroundBaseAltU allFollowableU
   followableFU clearFU FiniteFill fillValid FillTables withFill)
+open VE.NormDefaults.Wire (hasProfile unspecifiedNames placeholderJson checkAuthor)
 
 structure AltSourceU where
   src : Wire.AltSource
   unspec : List String          -- the regulated predicates whose `default` is "unspecified", in regulated order
 
-def decodeAltSourceU (environment norms premises : Lean.Json) : Except String AltSourceU := do
-  let src ← Wire.decodeAltSource (← VE.NormDefaults.Wire.placeholderJson environment) norms premises
-  pure ⟨src, (src.A.T.regulated.map (·.name)).filter ((VE.NormDefaults.Wire.unspecifiedNames environment).contains ·)⟩
+/-- `decodeSourceU`'s two branches (SR-A2). With `norm-defaults@0`: today's gate on the original profile list
+    (`profileGate`), the placeholders (`placeholderJson` sets the profile aside), today's decoder on the result (the
+    rest of the profile list, the block, the rules, Γ), then the reserved names and author limits of nd 8 and
+    `WellFormedU`. Without it: an `unspecified` value is refused, and otherwise today's decoder runs unchanged. -/
+def decodeAltSourceU (environment norms premises : Lean.Json) : Except String AltSourceU :=
+  if hasProfile environment then do
+    let _ ← Wire.profileGate environment
+    let src ← Wire.decodeAltSource (← placeholderJson environment) norms premises
+    let unspec := (src.A.T.regulated.map (·.name)).filter ((unspecifiedNames environment).contains ·)
+    checkAuthor environment ⟨inlineTree src.A, unspec⟩
+    unless WellFormedU ⟨inlineTree src.A, unspec⟩ do
+      throw "InvalidInput: norm-defaults document is not well formed"
+    pure ⟨src, unspec⟩
+  else do
+    unless (unspecifiedNames environment).isEmpty do
+      throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+    let src ← Wire.decodeAltSource environment norms premises
+    pure ⟨src, []⟩
 
 def noUnspecified (environment : Lean.Json) : Bool :=
-  (VE.NormDefaults.Wire.unspecifiedNames environment).isEmpty &&
-    !(VE.NormDefaults.Wire.profilesOf environment).contains "norm-defaults@0"
+  !hasProfile environment && (unspecifiedNames environment).isEmpty
 
 def notFollowableFU (A : AltDoc) (unspec : List String) : VE.Formula := .not (followableFU A unspec)
 
-/-- No `unspecified` value and no `norm-defaults@0`: today's decoder. -/
+/-- No `unspecified` value and no `norm-defaults@0`: today's decoder, texts included (by unfolding the second
+    branch, as `decode_conservative`). -/
 theorem decodeAltSourceU_conservative (environment norms premises : Lean.Json)
     (h : noUnspecified environment = true) :
     decodeAltSourceU environment norms premises =
       (Wire.decodeAltSource environment norms premises).map (fun s => AltSourceU.mk s [])
 
+/-- Conflict freedom over the route's own base, the slot premises included, as `AltConflictFree` is over
+    `BaseAdmissibleAlt` (SR-A3). -/
+def AltConflictFreeU (A : AltDoc) (unspec : List String) : Prop :=
+  ∀ B : VE.Structure.{u}, BaseAdmissibleAltU A unspec B → VE.Norms.ConflictFree (fill ⟨inlineTree A, unspec⟩) B
+
 structure FollowableUReplay where
   src : AltSourceU
-  followable : Bool
+  followable : Bool             -- CONFLICT-FREE first, then the certificate, as `FollowableReplay.followable`
 
 def replayFollowableU (j : Lean.Json) : Except String FollowableUReplay
 
@@ -1001,14 +1139,16 @@ theorem alternativesU_wire_followable_sound (j : Lean.Json) (res : FollowableURe
     (h : replayFollowableU j = .ok res) (hv : res.followable = true) :
     decodeAltSourceU (j.getObjValD "environment") (j.getObjValD "norms") (j.getObjValD "premises") = .ok res.src ∧
     WellFormedU ⟨inlineTree res.src.src.A, res.src.unspec⟩ = true ∧
-    ConflictFreeU.{u} ⟨inlineTree res.src.src.A, res.src.unspec⟩ ∧
+    AltConflictFreeU.{u} res.src.src.A res.src.unspec ∧
     ∀ B : VE.Structure.{u}, BaseAdmissibleAltU res.src.src.A res.src.unspec B → VE.Norms.Sat B res.src.src.A.Γ →
       (allFollowableU res.src.src.A res.src.unspec).denote B []
 
 /-- DILEMMA: a valid witness, a validated filling and a typed chooser at which ¬followable° holds refute the
-    document-wide claim. -/
+    document-wide claim. `hA` types Γ over the base vocabulary, which declares no unsaid predicate, so Γ holds in the
+    filled witness (`withFill_agrees`); the base and slot premises hold there by `admissible_of_fillValid` and
+    `withFill_agrees` (SR-A1). -/
 theorem alternativesU_dilemma_witness_sound {α : Type u} [DecidableEq α] (A : AltDoc) (unspec : List String)
-    (h : WellFormedU ⟨inlineTree A, unspec⟩ = true) (M : VE.FiniteModel α)
+    (hA : WellFormedAlt A = true) (h : WellFormedU ⟨inlineTree A, unspec⟩ = true) (M : VE.FiniteModel α)
     (F : FiniteFill ⟨inlineTree A, unspec⟩ α) (valid : M.Valid (VE.Norms.envAt (inlineTree A) 0))
     (hb : backgroundValidAlt A M = true) (hfill : fillValid ⟨inlineTree A, unspec⟩ M F = true)
     (hΓ : A.Γ.all (fun p => p.eval M []) = true) (r : α) (typed : r ∈ M.domains A.alt.chooser)
@@ -1035,12 +1175,22 @@ inductive AltStatus
   | undecided
   | unknown
 
-/-- A scenario row carries the evidence its status needs (C); `unknown` needs none. -/
+/-- A scenario row: the scenario's validity, today's (its model, its background with the slot premises, its signed
+    rows, the existence checks and Γ), a typed chooser and action, and one filling validated by `fillValid`, so that
+    no status is vacuous (SR-A4); then the evidence its status needs (C). `unknown` needs no more. -/
 structure ScenarioRowU (A : AltDoc) (unspec : List String) where
   M : VE.FiniteModel VE.Bridge.Entity
+  rows : List Row
   chooser : VE.Bridge.Entity
   action : VE.Bridge.Entity
   status : AltStatus
+  valid : M.Valid (VE.Norms.envAt (inlineTree A) 0)
+  background : backgroundValidAlt A M = true
+  checked : validateAlternatives A M rows = .ok ()
+  chooser_typed : chooser ∈ M.domains A.alt.chooser
+  action_typed : action ∈ M.domains A.alt.action
+  F : FiniteFill ⟨inlineTree A, unspec⟩ VE.Bridge.Entity
+  filled : fillValid ⟨inlineTree A, unspec⟩ M F = true
   clear_sound : status = .clear → SettledF.{0} A unspec M.asStructure (clearFU A unspec) [chooser, action] true
   notClear_sound : status = .notClear →
     SettledF.{0} A unspec M.asStructure (clearFU A unspec) [chooser, action] false
@@ -1048,8 +1198,12 @@ structure ScenarioRowU (A : AltDoc) (unspec : List String) where
 ```
 
 `clearFU`'s variable 0 is the action and variable 1 the chooser, so the tuple `[chooser, action]` reads through
-`tupleVal`. The scenario function that builds rows (`scenarioRowU`) is the batch's: Kleene first (`kleene_sound`),
-then enumeration of the cone, then the untrusted search's two fillings checked by `fillValid`; any other outcome is
+`tupleVal`. With `valid`, `background` and `filled`, `admissible_of_fillValid` and `withFill_agrees` give an
+admissible filling of `M` (`BaseAdmissibleAltU`), so `SettledF` is never vacuous. The scenario function that builds
+rows (`scenarioRowU`) is the batch's: today's validation of the scenario (its text on failure), the typed chooser and
+action (today's `InvalidInput: <x> is not in the <s> domain` otherwise), a filling checked by `fillValid` (when none
+is, the scenario has no rows and answers UNKNOWN for every alternative), then Kleene (`kleene_sound`), then
+enumeration of the cone, then the untrusted search's two fillings checked by `fillValid`; any other outcome is
 `.unknown`.
 
 ### 6.5 Pruning (optional; J)
@@ -1067,6 +1221,10 @@ give. Until then, if ET-6's bar fails, the fallback stands: the block is not add
 - A refutation outside the completion fragment: UNKNOWN, never false (A).
 - Completeness outside norms 7.1 (B), and any conservativity beyond `events_conservative`'s `oldEnv` (X2).
 - Persistence of a state without a stated end (F).
+- A status on a situation with no validated filling (none passes `fillValid` and `extraValid` over the whole
+  assembled `X`): UNKNOWN, never SETTLED (SR-B3).
+- "within n days of <event>" (ET-T1); "within n days of D" only as the reading set W1 to W3 of 2.4, with both end
+  dates named (SR-B4).
 - A consequence that needs counting the days between two named dates more than one day apart: UNKNOWN unless a
   certificate gives it (only the one-day gap has a premise).
 - Dates before 1970 (ET-T3); `events@0` with `data@0` (ET-T4).
@@ -1086,7 +1244,7 @@ are in `before` order and whose named dates denote the given days.
 | T1 | `base [2026-10-12, 2027-01-05]`: the premises' labels; `datesOrder_iff` for (2026-10-12, 2027-01-05) and the reverse; `datesOrder_calendar` for the same pairs |
 | T2 | `base [2026-10-12, 2026-10-13]`: labels; the claim "there is a day such that that day is after 12 October 2026 and that day is before 13 October 2026" |
 | T2b | `base []`; the claim "for each day and each day, if neither day is before the other, the two days are the same day"; then `linearF` dropped |
-| T3 | `base [2026-10-12, 2026-10-14]`; `chain` with 3, 2, 1 and 0 unnamed days between the two named days; with the named dates swapped; with only 12 October named |
+| T3 | `base [2026-10-12, 2026-10-14]`; `chain` with 3, 2, 1 and 0 unnamed days between the two named days; with the named dates swapped; with only 12 October named (this last case a Lean `#guard` on `calendarCheck` only, not through the service: SR-B5) |
 | T3b | T3's block, the situation with no day between the named days, the claim of T2 with 14 for 13 October; then the situation with one day between |
 | T3c | `base [2026-10-12]`, a situation whose only day is 12 October, the claim "there is a day such that that day is after 12 October 2026" |
 | T3d | an event sort `act` (`committed_on`) beside T3c's block; the claim "there is an act and a day such that that act is committed on that day and that day is after 12 October 2026", in a situation with no act |
@@ -1101,9 +1259,15 @@ are in `before` order and whose named dates denote the given days.
 | T11 | the permission "until": U1 "Every person may be presumed innocent on each day, if it is not the case that there is a conviction such that that conviction is of that person and that conviction happens no later than that day." with `presumed_innocent_permitted(person, day)` unspecified; U2 adds "Every person must not be presumed innocent on each day, if there is a conviction such that that conviction is of that person and that conviction happens no later than that day."; dates 4, 5 and 7 January 2027; a conviction of P on 5 January 2027; the status of P on each of the three days under U1 and under U2 |
 | T11b | the obligation "until": U1 "Every agent must file a report on each day, if it is not the case that there is a closure such that that closure is of that agent and that closure happens no later than that day." on `x_required(agent, day)`, `x_permitted` its pair, both unspecified; U2 adds "Every agent need not file a report on each day, if there is a closure such that …"; a closure of A on 5 January 2027; A on 7 January 2027 |
 | T11c | "valid until 31 December 2026" on a permission; the four candidates of 2.4; days 31 December 2026 and 1 January 2027 |
+| T11d | "within" (SR-B4): the source clause "the act is committed within 10 days of 5 January 2027" on event sort `act` (`committed_on`); named dates 26 December 2026 and 1, 5 and 15 January 2027; candidates W1 "that act is committed on or after 5 January 2027, and that act is committed no later than 15 January 2027", W2 the same with "before 15 January 2027", W3 the same as W1 with "26 December 2026" for "5 January 2027"; situations: one act committed on 15 January 2027, one on 1 January 2027, one on 5 January 2027; then the clause "within 10 days of the conviction" |
 | T12 | ET-7: nd fixture u10 (chooser R; pull forbidden by a rule, push with no rule; `permitted` unspecified); then with "Every action may be performed, if that action is push." |
 | T12b | ET-7: push's permission given by the rule "Every action may be performed, if that agent may Y, or it is not the case that that agent may Y." (nd u12's guard), `y_permitted` unspecified; then with `MAX_UNSAID_ATOMS = 0` |
+| T12c | ET-7, SR-A1 (Astra's regression): one chooser R, actions a1 and a2 both available to R, the permission member `allow`, the obligation member unspecified with its fulfilment declared, no rules, and Γ = [`allFollowableU A unspec`] as a Lean term; the unfilled model, and its filling that requires both actions |
+| T12d | ET-7, SR-A2 and R-A2, the decoder: `{"profiles":[]}`; T12's environment with `norm-defaults@0` removed and `unspecified` kept; then, with `norm-defaults@0`: the profile listed twice; an unknown profile `zzz@0`; a declared predicate `unsaid__x`; an unspecified predicate whose name is 57 bytes long; a document that passes the author checks and fails `WellFormedU` (taken from nd's fixtures) |
+| T12e | ET-7, SR-A3 and R-A3: T12's document with a rule pair that requires and forbids performing an action exactly when it is available to two different choosers, which the slot premise `alternatives:own` excludes |
+| T12f | ET-7, SR-A4 and R-A4: T12's document with a scenario in which push is available to R and to a second chooser R2 (so no filling is admissible: the slot premise fails); then a scenario whose chooser names an entity of the action domain |
 | T13 | events `confirmation`, `action`; "that confirmation happens before that action"; a confirmation on 12 October 2026 and the action on 13 October 2026; then both on 13 October 2026 |
+| T14 | SETTLED on the events chain (SR-B3): T11's U1 document, the status of P on 4 January 2027 by `table3`, in four situations: (a) the conviction of P on both 4 and 5 January 2027, the canonical filling supplied; (b) with `soft-norms@0` and a soft premise, read on base predicates only, that the situation violates, the canonical filling supplied; (c) Astra's case: no conviction, and the declared literals `P` and `Q` interpreted as the same person; (d) with `soft-norms@0` and a soft premise, read through the outcome of `presumed_innocent_permitted`, that every filling of the situation violates, no filling supplied |
 | F1 | the fragment functions on the formulas of T3b, T3c, T3d, R1's claim and their negations; the conventions of T6's block; its calendar premises |
 | R1 | the norms chain (`documents@1`, `events@0`, `norm-defaults@0`, `norms@0`, `relational-fol@0`); state sort `stay` (`stay_begins`, `stay_ends`); dates 2026-06-29, 2026-09-20, 2026-09-21, 2026-09-26, 2026-09-27; per case, the claim "that stay is in progress on each day from 21 September 2026 through 27 September 2026": C25 (begins 2026-06-29, ends 2026-09-26), C26 (begins 2026-06-29, ends 2026-09-27), C27 (begins 2026-06-29, ends 2026-09-20), C28 (begins 2026-06-29, no end stated), C28n (C28 with the premise "there is no day such that that stay ends on that day") |
 | R2 | asimov-laws with `permitted` switched to `unspecified` (ET-8) |
@@ -1119,7 +1283,7 @@ audits and are stated there.
 | T1 | labels `events:irreflexive`, `events:transitive`, `events:linear`, `events:date:2026-10-12:2027-01-05`; no adjacency. `before(c_2026_10_12, c_2027_01_05)` certified, and its reverse refuted by certificate (transitivity and irreflexivity); `datesOrder_calendar` true and true for the pair, false and false for the reverse | *guarded* (labels, the two `num` comparisons); certificates *derived* (ET-3) |
 | T2 | labels as T1's with `events:date:2026-10-12:2026-10-13` and `events:adjacent:2026-10-12:2026-10-13`; the claim refuted by certificate (adjacency) | labels *guarded*; certificate *derived* |
 | T2b | certified; with `linearF` dropped (ET-3's seeded bug) the certificate is not accepted. T2's certificate does not need `linear` (I) | *derived* |
-| T3 | 3 days: `NotCalendar: 3 days between 2026-10-12 and 2026-10-14, at most 1`; 2 days: `NotCalendar: 2 days between 2026-10-12 and 2026-10-14, at most 1`; 1 day and 0 days: accepted, the unnamed day numbered as 13 October 2026; swapped: `NotCalendar: 2026-10-12 is not before 2026-10-14`; only 12 October named: `NotCalendar: 2026-10-14 denotes no day` | *guarded* |
+| T3 | 3 days: `NotCalendar: 3 days between 2026-10-12 and 2026-10-14, at most 1`; 2 days: `NotCalendar: 2 days between 2026-10-12 and 2026-10-14, at most 1`; 1 day and 0 days: accepted, the unnamed day numbered as 13 October 2026; swapped: `NotCalendar: 2026-10-12 is not before 2026-10-14`; only 12 October named: `NotCalendar: 2026-10-14 denotes no day` (`#guard` only: a valid situation cannot reach it, 4) | *guarded* |
 | T3b | the claim is never refuted: UNKNOWN with `NotCalendar: the conclusion may change when the missing calendar days are added` (its `down` is false); in the situation with one day between, the claim holds and the model is reported, completed | fragment *guarded*; answers *derived* (ET-4) |
 | T3c | never refuted: UNKNOWN with `NotCalendar` as T3b | fragment *guarded*; answer *derived* |
 | T3d | refuted: NOT ENTAILED, with the completed calendar situation (its `down` is true) | fragment *guarded*; answer *derived* |
@@ -1131,12 +1295,18 @@ audits and are stated there.
 | T8 | without the block: `environment_id` and every hash unchanged; with it: `environment_id` changes; `decodeEvents` gives `none` exactly when the block is absent | *derived* |
 | T9 | one derivation each; role wordings: the first two accepted, the other four `EventsVerbalisation`; each pattern rejected with its advice | role wordings *guarded*; the rest *derived* (ET-5) |
 | T10 | 64 dates well formed, 65 `ResourceLimit: events dates`; `DateRange(1969-12-31)`; `EventsReserved: date__x`; `DuplicateDeclaration: date 2026-10-12` | 64/65, `DateRange` and the duplicate *guarded*; texts *derived* |
-| T11 | 6 calendar premises (3 order, 2 date, 1 adjacency: 4 and 5 January). 4 January: SETTLED yes under U1 and U2. 5 and 7 January: U1 UNDECIDED (the text does not say), U2 SETTLED no. The three days form the distinguishing situation; E's own day is in it | count *guarded*; statuses *derived* (ET-4) |
-| T11b | U2: `x_required` SETTLED no on 7 January; `x_permitted` UNDECIDED there, never SETTLED no (the obligation stops; nothing is forbidden). U1: `x_required` UNDECIDED on 7 January | *derived* |
+| T11 | 6 calendar premises (3 order, 2 date, 1 adjacency: 4 and 5 January). 4 January: SETTLED yes under U1 and U2 (with a validated filling of the whole assembled `X`, SR-B3). 5 and 7 January: U1 UNDECIDED (the text does not say), U2 SETTLED no. The three days form the distinguishing situation; E's own day is in it | count *guarded*; statuses *derived* (ET-4) |
+| T11b | U2: `x_required` SETTLED no on 7 January; `x_permitted` UNDECIDED there, never SETTLED no (the obligation stops; nothing is forbidden). U1: `x_required` UNDECIDED on 7 January. The UNDECIDED answers and their fillings are reported through the canonical extension (SR-B1): the body of each fill premise is `up`, its day quantifier is not | *derived* |
 | T11c | 31 December 2026 tells the exclusive candidates from the inclusive ones; 1 January 2027 tells "silent" from "ends" | *derived* |
+| T11d | 15 January 2027: W1 and W3 true, W2 false; 1 January 2027: W3 true, W1 and W2 false; 5 January 2027: all three true (not distinguishing). The reading set shows the first two situations. The end dates: 15 January 2027 is 10 days after 5 January 2027, and 26 December 2026 is 10 days before it (`Civil.num` 20833, 20823 and 20813). "within 10 days of the conviction": UNFORMALISED, reason `duration` | end dates *guarded*; truth values *derived* (ET-5) |
 | T12 | DILEMMA; push UNDECIDED from two validated fillings; diagnosis `UNSETTLED(push)`; with the push rule FOLLOWABLE | *derived* (ET-7) |
 | T12b | Kleene unknown; enumeration settles push clear; never UNDECIDED; with `MAX_UNSAID_ATOMS = 0`: UNKNOWN naming the budget | *derived* (ET-7) |
+| T12c | `WellFormedAlt A` is false (Γ names an unsaid predicate, which `envAt (inlineTree A) 0` does not declare), so `alternativesU_dilemma_witness_sound` has no instance here. Without `hA` its statement is false here: the unfilled model satisfies Γ (no action is required), the filling that requires both actions passes `fillValid` and leaves R with no clear action, and the conclusion would deny "Γ implies Γ". Such a Γ cannot be written on the wire: the decoder types premises over the base vocabulary | *derived* (ET-7) |
+| T12d | `{"profiles":[]}`: `UnsupportedProfile: alternatives@0 is required`, today's text (the two decoders agree). `unspecified` without the profile: `UnsupportedProfile: unspecified completion requires norm-defaults@0`. With the profile: listed twice, `UnsupportedProfile: profiles must be sorted and unique`; `zzz@0`, `UnsupportedProfile: Unsupported profile zzz@0`; `unsaid__x`, `InvalidInput: reserved name unsaid__x`; the 57-byte name, `ResourceLimit: unspecified name length`; the ill-formed document, `InvalidInput: norm-defaults document is not well formed` | the first *guarded*; the rest *derived* (ET-7) |
+| T12e | CONFLICT-FREE: no conflict in any structure of `BaseAdmissibleAltU` (`AltConflictFreeU`), so FOLLOWABLE or DILEMMA may follow. The conflict lives only in structures that violate `alternatives:own`, so draft 1's `ConflictFreeU`, which drops the slot premises, is false here | *derived* (ET-7) |
+| T12f | first: today's validation text, `InvalidModel(alternatives): action push is available to two choosers: R, R2`; second: today's `InvalidInput: <x> is not in the <s> domain`, `<s>` the chooser sort; for neither is any alternative clear or not clear | *derived* (ET-7) |
 | T13 | first: certified; second: its negation certified (the same day is not before); never UNDECIDED | *derived* |
+| T14 | (a) `InvalidModel(events): the model violates a background premise`, detail `events:one_day:conviction`; (b) `InvalidModel(soft): the model violates a background premise`; (c) `InvalidModel(literals): the model violates a background premise` (without `hb` SETTLED would hold vacuously: no filling satisfies the base background, and the completion keeps the two constants equal); (d) UNKNOWN, no filling validated. None is SETTLED | *derived* (ET-4) |
 | F1 | `down` false and `up` true for T3b's claim; `down` false for T3c's; `down` true for T3d's; for R1's claim `down` true and `up` false; for T3b's negation `up` false and `down` true; every convention of T6's block `up` and `down`; T6's block's calendar premises not all `up` | *guarded* |
 | R1 | 9 calendar premises (3 order, 4 date, 2 adjacency: 20/21 and 26/27 September). C26: in progress throughout, certified. C25 (not in progress on 27 September) and C27 (not on 21 September): the negation certified. C28: not entailed, with a calendar countermodel (the stay ends between 21 and 27 September); its negation is not certified, and the countermodel to it (a situation where the stay never ends) is outside the fragment, so that answer is UNKNOWN with `NotCalendar: the conclusion may change when the missing calendar days are added`. C28n: in progress throughout, certified. Matches the answer key: C26 throughout, C25 and C27 not | count and adjacency labels *guarded*; answers *derived* (ET-5) |
 | R2 | the README's measured bound becomes the computed result: clear actions only where a rule permits; `UNSETTLED(...)` only with two validated fillings | *derived* (ET-8) |
@@ -1146,7 +1316,10 @@ adjacency exactly for consecutive day numbers (T2 has it, T3 has none); `embedda
 (T3 and T3e, failing and passing); "is in progress on" exactly when begun and not ended before (R1, C26 against C25
 and C27); `link_forward` for a state effect exactly when the state ends (T6, the last two cases); U1 and U2 differ
 exactly from E's day (T11, 4 January against 5 and 7 January); UNDECIDED exactly with two validated fillings (T12
-against T12b); `decodeEvents` gives no pack exactly when the block is absent (T8); conservativity both ways (T7).
+against T12b); `decodeEvents` gives no pack exactly when the block is absent (T8); conservativity both ways (T7);
+SETTLED exactly on a situation of the document with a validated filling of the whole assembled `X` (T11 against
+T14); W2 against W1 and W3 exactly on the end date, W3 against W1 and W2 exactly before D (T11d);
+`decodeAltSourceU` is today's decoder exactly without the profile and without `unspecified` (T12d).
 
 ## 9. Review checklist
 
@@ -1155,12 +1328,16 @@ against T12b); `decodeEvents` gives no pack exactly when the block is absent (T8
 2. Is `dayExtension_transfer` true as stated, for every case of `hits`, `vacuous`, `up` and `down`, and is
    `completion_extension` true with `ng = [before]`?
 3. Does 1.8's table cover every formula each answer's check reads (other packs' `X`, `Fill_T`, the base background,
-   the expanded rules and definitions, the conclusion), and is each route-level statement of 6.3 true?
+   the expanded rules and definitions, the conclusion), and is each route-level statement of 6.3 true? In particular
+   `fillPremises_canonical_completion` with `Fill_T` tested through its bodies (SR-B1), and SETTLED's hypotheses
+   `hb`, `hF`, `hX` with its conclusion over the whole `X` (SR-B3)?
 4. Are T3b and T3c never refuted, and is R1 inside the fragment as 1.8 says?
 5. Are the conventions exactly the plan's (D4, D10), each universal, and `conventions_exact`?
 6. Is each wording of 2.2 one reading, and do 2.4's candidates and 2.5's advice say what to write?
 7. Is "until" right per modality (2.4, T11, T11b), with E's own day and the inclusive date readings?
-8. Is ET-7's contract (5, 6.4) nd 2.5's rule, with no UNDECIDED from Kleene alone?
+8. Is ET-7's contract (5, 6.4) nd 2.5's rule, with no UNDECIDED from Kleene alone, and are SR-A1 to SR-A4 right:
+   `WellFormedAlt A` in DILEMMA, the decoder's two branches, `AltConflictFreeU` over `BaseAdmissibleAltU`, and the
+   scenario row's validity and filling?
 9. Is the profile row (1.1) right, in particular refusing `data@0` and `alternatives@0`?
 10. Is the pack's kind (1.11) and its condition what X2 requires?
 
@@ -1189,12 +1366,23 @@ against T12b); `decodeEvents` gives no pack exactly when the block is absent (T8
   `InvalidModel("events", "premise … fails")`).
 - **Named dates' verbalisation** is the ISO form, read and rendered by W6's literal class, so events holds no month
   table.
+- **`embeddable_sound`** assumes no calendar premise of the situation (the plan's `hp` is gone, SR-B2).
+- **The answer-level theorems** name their situation, the filled completion `completed` (SR-B1), take the calendar
+  check on the base `M`, and SETTLED takes the situation's background check, a validated filling and `X` (SR-B3).
+- **`decodeAltSourceU`** has `decodeSourceU`'s two branches (SR-A2); the wire theorem concludes `AltConflictFreeU`
+  (SR-A3); DILEMMA assumes `WellFormedAlt A` (SR-A1).
 
 ## 11. Elaboration record
 
 - The stub `SpecStubs_events-time-causation.lean` holds every definition and statement of 6 and the *guarded*
-  fixtures of 8. It was **not run**: in this session the harness refused `lake` and `lean`. It is not committed; a
-  copy is kept at `manage-agents/debates/design-events-time-causation/SpecStubs_events-time-causation.lean`.
+  fixtures of 8. Draft 2's stub is the untracked `lean/SpecStubs_events-time-causation.lean` of this branch's
+  worktree (`ve-design-events-time-causation`), with draft 2's statements and the new *guarded* values (T11d's end
+  dates, T12d's first case). It has **not been run**: draft 1's session could not run `lake` and `lean`, and draft
+  2's worktree has no build. It is not committed. The copy at
+  `manage-agents/debates/design-events-time-causation/SpecStubs_events-time-causation.lean` is draft 1's; the run
+  uses the worktree's stub.
+- PASS needs this record filled in: the command, its log (kept beside the stub copy) and the commit of this file the
+  reviewers accepted. Elaborating is necessary, not sufficient.
 - To elaborate: copy it to `lean/` in a checkout of this branch with the build of `main` at `49de179e` (or later),
   then `cd lean && PATH=~/.elan/bin:$PATH lake env lean SpecStubs_events-time-causation.lean`. It imports
   `VE.NormDefaults.{Layered,Routes}`, `VE.Alternatives.{Wire,Background}` and `VE.Time.Calendar`. Expected: no
@@ -1204,3 +1392,36 @@ against T12b); `decodeEvents` gives no pack exactly when the block is absent (T8
   PK-1's `Pack` is stated as the synthesis defines it. When either lands under other names, 6.3 is renamed to match.
 - If the run reports an error, the statement is corrected here and in the stub before the review starts; a wrong
   `#guard` value is corrected in 8.2 from the `#eval` of the same expression.
+
+## 12. Changes in draft 2 (the statement review's FIX)
+
+ET-7 (5, 6.4):
+
+- **SR-A1.** `alternativesU_dilemma_witness_sound` assumes `WellFormedAlt A`, as `dilemma_witness_sound` does: without
+  it Γ may name unsaid predicates, hold before the filling and fail after it. Astra's counterexample is T12c.
+- **SR-A2.** `decodeAltSourceU` takes `decodeSourceU`'s two branches: without the profile, `unspecified` is refused and
+  today's decoder runs unchanged; with it, today's gate on the original profile list, the placeholders, today's
+  decoder, then `checkAuthor` and `WellFormedU`.
+  Draft 1 called `placeholderJson` first, so `{"profiles":[]}` failed on the missing vocabulary instead of today's
+  text, and the equation `decodeAltSourceU_conservative` was false. Fixtures T12d (R-A2).
+- **SR-A3.** The wire theorem concludes `AltConflictFreeU`, over `BaseAdmissibleAltU` with the slot premises, not
+  nd's `ConflictFreeU`, which drops them; CONFLICT-FREE stays the prerequisite of FOLLOWABLE and DILEMMA. Fixture
+  T12e (R-A3).
+- **SR-A4.** `ScenarioRowU` carries the scenario's validity (`valid`, `background`, `checked` with the signed rows),
+  the typed chooser and action, and a filling that passes `fillValid`, so `SettledF` is never vacuous. Fixture T12f
+  (R-A4).
+
+Events (1.6 to 1.8, 2.4, 4, 6.2, 6.3, 7, 8):
+
+- **SR-B1.** `Fill_T`'s day quantifier is never guarded, so draft 1's `up` test failed on every day-indexed pair with
+  an unspecified member, and T11b's UNDECIDED answers could not be reported. The completion now extends a filling
+  canonically on tuples with an added day (`completionFill`, `completed`); `up` tests each fill premise's body
+  (`fillBodies`, from nd's `fillBody`); `fillPremises_canonical_completion` is new; the model, witness and UNDECIDED
+  theorems state their situation as the filled completion, both UNDECIDED fillings over the same completed base.
+- **SR-B2.** `embeddable_sound` drops `hp`: the check gives the calendar premises, and SETTLED's caller has no `hp`.
+- **SR-B3.** SETTLED takes `hb` (Astra, round 3), `hF` and `hX` over the whole `X ++ eventsX V`; `settledSafe`
+  takes `X` and adds the `up` test of the base background, the fill bodies, `X` and the conventions; the conclusion
+  adds an admissible filled completion satisfying the whole `X`. Fixture T14, with Astra's literal case as (c).
+- **SR-B4.** "within n days of D" has three bounded candidates, W1 to W3, each with its direction and end points.
+  Fixture T11d.
+- **SR-B5.** T3's "denotes no day" is a `#guard` fixture only.
