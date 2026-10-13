@@ -7,6 +7,8 @@ pinned commit (never a checkout), so the inputs stay read-only. No model call.
     python3 docs/research/weighing-phase1/wg_e1.py screen   # the CROSSACT population
     python3 docs/research/weighing-phase1/wg_e1.py draw     # the 40 units, with their source context
     python3 docs/research/weighing-phase1/wg_e1.py tally    # the bar, from the reader's classification
+    python3 docs/research/weighing-phase1/wg_e1.py blind    # the second reader's input (orders 1 to 10)
+    python3 docs/research/weighing-phase1/wg_e1.py agree    # the two readers' agreement on those 10
 """
 
 from __future__ import annotations
@@ -172,5 +174,59 @@ def tally() -> None:
     print(json.dumps(result, indent=1))
 
 
+REPORT = ROOT / "docs" / "research" / "weighing-phase1.md"
+# Post hoc, not pre-registered: three (i) calls the review of the first reading contested. The second reader
+# gets them unmarked among the blind subset; they are reported apart and never enter the agreement figure.
+CONTESTED = ("u0200.s01", "u0221.s04", "u0274.s02")
+
+
+def category_rules() -> str:
+    """Rule 4 of the report's section 2.2, verbatim: the categories as the readers apply them."""
+    text = REPORT.read_text(encoding="utf-8")
+    start = text.index("4. **The categories, as the reader applies them.**")
+    end = text.index("5. **\"Would change a checked answer", start)
+    return text[start:end].rstrip() + "\n"
+
+
+def blind() -> None:
+    """The second reader's input: the frozen subset with its text only, never the first reading."""
+    sample = json.loads((EVIDENCE / "wg-e1-sample.json").read_text(encoding="utf-8"))["sample"]
+    units = [{"order": s["order"], "id": s["id"], "before": s["before"], "excerpt": s["excerpt"],
+              "after": s["after"]} for s in sample if s["second_reader"] or s["id"] in CONTESTED]
+    write_json("wg-e1-second-reader-input.json", {"categories": category_rules(), "units": units})
+    print(f"{len(units)} units for the second reader")
+
+
+def agree() -> None:
+    first = json.loads((EVIDENCE / "wg-e1-classification.json").read_text(encoding="utf-8"))["rows"]
+    second = json.loads((EVIDENCE / "wg-e1-second-reader.json").read_text(encoding="utf-8"))["rows"]
+    blind_ids = [u["id"] for u in json.loads(
+        (EVIDENCE / "wg-e1-second-reader-input.json").read_text(encoding="utf-8"))["units"]]
+    if [r["id"] for r in second] != blind_ids:
+        raise SystemExit("the second reading must name the blind subset, in draw order")
+    by_id = {r["id"]: r["category"] for r in first}
+    contested = [{"id": r["id"], "first": by_id[r["id"]], "second": r["category"]}
+                 for r in second if r["id"] in CONTESTED]
+    second = [r for r in second if r["id"] not in CONTESTED]
+    pairs = [(by_id[r["id"]], r["category"]) for r in second]
+    if any(b not in CATEGORIES for _, b in pairs) or any(c["second"] not in CATEGORIES for c in contested):
+        raise SystemExit("the second reading has a category outside (i) to (iv)")
+    n = len(pairs)
+    observed = sum(1 for a, b in pairs if a == b) / n
+    expected = sum((sum(1 for a, _ in pairs if a == c) / n) * (sum(1 for _, b in pairs if b == c) / n)
+                   for c in CATEGORIES)
+    kappa = None if expected == 1 else round((observed - expected) / (1 - expected), 4)
+    result = {"units": n, "agreements": sum(1 for a, b in pairs if a == b),
+              "observed_agreement": round(observed, 4), "chance_agreement": round(expected, 4),
+              "cohen_kappa": kappa,
+              "first_reader_ii": sum(1 for a, _ in pairs if a == "ii"),
+              "second_reader_ii": sum(1 for _, b in pairs if b == "ii"),
+              "disagreements": [{"id": r["id"], "first": by_id[r["id"]], "second": r["category"]}
+                                for r in second if by_id[r["id"]] != r["category"]],
+              "post_hoc_contested": contested}
+    write_json("wg-e1-agreement.json", result)
+    print(json.dumps(result, indent=1))
+
+
 if __name__ == "__main__":
-    {"screen": screen, "draw": draw, "tally": tally}[sys.argv[1]]()
+    {"screen": screen, "draw": draw, "tally": tally, "blind": blind, "agree": agree}[sys.argv[1]]()
