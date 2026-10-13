@@ -27,7 +27,8 @@ ENV_ALLOW = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "PYTHONPATH", "PYTHONNO
 def cli(*args):
     env = {k: v for k, v in os.environ.items() if k in ENV_ALLOW or k.startswith("VE_")}
     return subprocess.run([sys.executable, "-m", "ve", "ask", *map(str, args)], cwd=ROOT, env=env,
-                          text=True, capture_output=True, timeout=HANG_TIMEOUT)
+                          text=True, capture_output=True,
+                          timeout=int(os.environ.get("VE_ASK_CLI_TIMEOUT", HANG_TIMEOUT)))
 
 
 @pytest.mark.parametrize("ident", ["G1", "G2", "G3", "G4", "G10", "U2", "U3", "U5", "U6", "U7",
@@ -44,6 +45,29 @@ def test_ve_ask_prints_leans_lines(ident, tmp_path):
     done = cli(ROOT / entry["path"], entry["question"], *options)
     assert done.returncode == (3 if entry["result"]["lead"] == "unknown" else 0), (done.stdout, done.stderr)
     assert done.stdout.splitlines() == entry["result"]["text"]
+
+
+def test_q2_f8_contentless_units_reach_both_generators():
+    """All unit kinds may omit content; the case encoder preserves that absence."""
+    from ve.ask import _Plain, _zero_generator, environment
+    units = [{"id": "u", "kind": "exposition"}, {"id": "v", "kind": "norm"},
+             {"id": "w", "kind": "asserted"}]
+    plain = {"environment": environment((ROOT / AF.GROUP).read_bytes()), "units": units}
+    assert _Plain(plain)._premises() == []
+    norms = {"environment": environment((ROOT / (AF.AGENT + "a-unspecified.ve.md")).read_bytes()),
+             "units": units}
+    generated = _zero_generator(norms)
+    assert generated.units == units and generated.assertions == []
+
+
+def test_q2_f9_answer_accepts_separator_words_in_acts_and_reading_names(tmp_path):
+    """The valid reading document from F9 completes the answer through Lean's frame gate."""
+    from tests.test_readings_s2_document import _completion_document
+    from ve.ask import answer
+    path = _completion_document(tmp_path)[2]
+    result = answer(path, path.read_bytes(),
+                    "Is it the case that for every agent, for every user, that agent must help that user?")
+    assert result["lines"] and any(line["frame"].startswith("R1") for line in result["lines"])
 
 
 def test_ve_ask_refuses_the_recorded_unsupported_profile():

@@ -1,5 +1,6 @@
 import VE.Ask.Groups
 import VE.Ask.Sound
+import VE.Ask.Lines
 import VE.Question.Frames
 
 /-! The figures of docs/spec/question-answering.md 7.6, computed: every row's lead and reason, the agreement with
@@ -91,6 +92,14 @@ and U1 lines have one derivation each, and a line whose number is not digits has
 #guard VE.Question.gated "C1" "Sentence twelve says: \"Elementary education shall be compulsory.\"" = none
 #guard (VE.Question.frameReadings ("If sentence 10 means \"Every person must be spared exclusion from education\" " ++
   "(VE has not checked this wording), yes.")).length = 1
+#guard VE.Question.answerLeadPhrases = (VE.Ask.leads).map VE.Ask.leadPhrase
+-- F9: the act and a reading name may themselves contain the frame's separator.
+#guard VE.Question.gated "C2" "Sentences 1 and 2 say when agents say when help is needed." =
+  some ["1 and 2", "agents say when help is needed"]
+#guard VE.Question.gated "R1" "If sentence 1 means \"help, yes, when asked\", yes." =
+  some ["1", "help, yes, when asked\"", "yes"]
+#guard VE.Question.gated "C2" "Sentences words say when help is needed." = none
+#guard VE.Question.gated "R1" "If sentence 1 means \"help\", invented." = none
 #guard VE.Question.gated "U1"
   "VE did not use 9 sentences of this document that it could not read formally: sentences 3, 5 and 8." =
   some ["9", "sentences 3, 5 and 8"]
