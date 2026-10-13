@@ -1,0 +1,28 @@
+{
+ "candidates": 270,
+ "by_corpus_and_label": {
+  "pilot:constitution D D-event": 1,
+  "pilot:constitution N": 88,
+  "pilot:constitution O": 1,
+  "pilot:udhr N": 10,
+  "usecase:asimov-extended N": 1,
+  "usecase:eligibility D D-event": 4,
+  "usecase:eligibility N": 95,
+  "usecase:eligibility O": 47,
+  "usecase:safety-framework D D-duration": 3,
+  "usecase:safety-framework D D-event": 2,
+  "usecase:safety-framework N": 18
+ },
+ "pilot_units_O_or_D": [
+  "u0057.s02",
+  "u0204.s03"
+ ],
+ "pilot_unit_count": 2,
+ "use_cases_O_or_D": [
+  "eligibility",
+  "safety-framework"
+ ],
+ "use_case_count": 2,
+ "bar": "pilot units >= 5 or answer-key use cases >= 2",
+ "bar_met": true
+}
