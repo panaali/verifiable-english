@@ -12,16 +12,16 @@
         "tail": [
           "E     ",
           "E     Extra items in the left set:",
-          "E     'norms_certificate'",
           "E     'norms_conflict'",
+          "E     'norms_certificate'",
           "E     'norms_elaborate'",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_norms_are_dispatched_and_match_python[family0-<lambda>]",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_norms_are_dispatched_and_match_python[family1-<lambda>]",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_norms_are_dispatched_and_match_python[family2-<lambda>]",
-          "3 failed in 0.66s",
+          "3 failed in 4.47s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-darnocph)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ad1b3l34)"
         ]
       },
       "restored_build": {
@@ -31,9 +31,9 @@
         "exit": 0,
         "tail": [
           "...                                                                      [100%]",
-          "3 passed in 0.49s",
+          "3 passed in 2.33s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-nn5zwcfn)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-17grnqk0)"
         ]
       }
     },
@@ -50,15 +50,15 @@
           "F                                                                        [100%]",
           "=================================== FAILURES ===================================",
           "______________ test_non_first_order_conflict_refuses_extra_target ______________",
-          "tests/test_stage2_norms.py:272: in test_non_first_order_conflict_refuses_extra_target",
+          "tests/test_stage2_norms.py:273: in test_non_first_order_conflict_refuses_extra_target",
           "    with pytest.raises(CheckerUnavailable, match=\"bound to the request\"):",
           "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
           "E   Failed: DID NOT RAISE CheckerUnavailable",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_conflict_refuses_extra_target",
-          "1 failed in 0.40s",
+          "1 failed in 2.22s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-3p4of7_1)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-87ny4m08)"
         ]
       },
       "restored_build": {
@@ -68,9 +68,9 @@
         "exit": 0,
         "tail": [
           ".                                                                        [100%]",
-          "1 passed in 0.30s",
+          "1 passed in 2.35s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-omxzk40n)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-l1jm3m2b)"
         ]
       }
     },
@@ -87,15 +87,15 @@
           "F                                                                        [100%]",
           "=================================== FAILURES ===================================",
           "_________ test_non_first_order_certificate_refuses_unbound_layer_count _________",
-          "tests/test_stage2_norms.py:290: in test_non_first_order_certificate_refuses_unbound_layer_count",
+          "tests/test_stage2_norms.py:291: in test_non_first_order_certificate_refuses_unbound_layer_count",
           "    with pytest.raises(CheckerUnavailable, match=\"bound to the request\"):",
           "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
           "E   Failed: DID NOT RAISE CheckerUnavailable",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_certificate_refuses_unbound_layer_count",
-          "1 failed in 0.45s",
+          "1 failed in 0.97s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-mrcjhiuh)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-zrtg6lqd)"
         ]
       },
       "restored_build": {
@@ -105,9 +105,9 @@
         "exit": 0,
         "tail": [
           ".                                                                        [100%]",
-          "1 passed in 0.42s",
+          "1 passed in 0.76s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ng8bmelm)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-iuvu3txp)"
         ]
       }
     },
@@ -124,15 +124,15 @@
           "F                                                                        [100%]",
           "=================================== FAILURES ===================================",
           "_________ test_non_first_order_conflict_refused_witness_is_unavailable _________",
-          "tests/test_stage2_norms.py:437: in test_non_first_order_conflict_refused_witness_is_unavailable",
+          "tests/test_stage2_norms.py:583: in test_non_first_order_conflict_refused_witness_is_unavailable",
           "    with pytest.raises(CheckerUnavailable, match=\"does not confirm\"):",
           "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
           "E   Failed: DID NOT RAISE CheckerUnavailable",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_conflict_refused_witness_is_unavailable",
-          "1 failed in 0.42s",
+          "1 failed in 2.71s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-rwc0t3rc)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qf71cjqc)"
         ]
       },
       "restored_build": {
@@ -142,9 +142,9 @@
         "exit": 0,
         "tail": [
           ".                                                                        [100%]",
-          "1 passed in 0.38s",
+          "1 passed in 1.14s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-lsrn0ux9)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-hdb47d0a)"
         ]
       }
     },
@@ -159,7 +159,7 @@
         "exit": 1,
         "tail": [
           "__________ test_non_first_order_conflict_zero_model_budget_is_unknown __________",
-          "tests/test_stage2_norms.py:418: in test_non_first_order_conflict_zero_model_budget_is_unknown",
+          "tests/test_stage2_norms.py:564: in test_non_first_order_conflict_zero_model_budget_is_unknown",
           "    assert check_conflict(doc, model=model, max_evaluations=0).status == \"UNKNOWN\"",
           "E   AssertionError: assert 'CONFLICT' == 'UNKNOWN'",
           "E     ",
@@ -167,9 +167,9 @@
           "E     + CONFLICT",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_non_first_order_conflict_zero_model_budget_is_unknown",
-          "1 failed in 0.42s",
+          "1 failed in 1.76s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-bhb2ymi9)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-68sylvml)"
         ]
       },
       "restored_build": {
@@ -179,9 +179,9 @@
         "exit": 0,
         "tail": [
           ".                                                                        [100%]",
-          "1 passed in 0.39s",
+          "1 passed in 1.22s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-wus0krpr)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-d1rqdmx0)"
         ]
       }
     },
@@ -198,15 +198,15 @@
           "F                                                                        [100%]",
           "=================================== FAILURES ===================================",
           "___________ test_retained_python_route_keeps_the_base_nary_expansion ___________",
-          "tests/test_stage2_norms.py:404: in test_retained_python_route_keeps_the_base_nary_expansion",
+          "tests/test_stage2_norms.py:405: in test_retained_python_route_keeps_the_base_nary_expansion",
           "    with pytest.raises(VEError, match=mismatch):",
           "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
           "E   Failed: DID NOT RAISE VEError",
           "=========================== short test summary info ============================",
           "FAILED tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion",
-          "1 failed in 0.44s",
+          "1 failed in 1.90s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-iiet7tr9)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-d_zy8bc3)"
         ]
       },
       "restored_build": {
@@ -216,9 +216,157 @@
         "exit": 0,
         "tail": [
           ".                                                                        [100%]",
-          "1 passed in 0.45s",
+          "1 passed in 1.67s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-8773qq3m)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-9ax4m9gy)"
+        ]
+      }
+    },
+    {
+      "name": "search_admission_substituted",
+      "file": "ve/norms.py",
+      "test": "tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion",
+      "compiled": {
+        "exit": 0
+      },
+      "planted": {
+        "exit": 1,
+        "tail": [
+          "F                                                                        [100%]",
+          "=================================== FAILURES ===================================",
+          "___________ test_retained_python_route_keeps_the_base_nary_expansion ___________",
+          "tests/test_stage2_norms.py:405: in test_retained_python_route_keeps_the_base_nary_expansion",
+          "    with pytest.raises(VEError, match=mismatch):",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "E   Failed: DID NOT RAISE VEError",
+          "=========================== short test summary info ============================",
+          "FAILED tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion",
+          "1 failed in 1.88s",
+          "",
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-2aq8vrlk)"
+        ]
+      },
+      "restored_build": {
+        "exit": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tail": [
+          ".                                                                        [100%]",
+          "1 passed in 3.39s",
+          "",
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-meshp3ci)"
+        ]
+      }
+    },
+    {
+      "name": "prove_admission_substituted",
+      "file": "ve/norms.py",
+      "test": "tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion",
+      "compiled": {
+        "exit": 0
+      },
+      "planted": {
+        "exit": 1,
+        "tail": [
+          "F                                                                        [100%]",
+          "=================================== FAILURES ===================================",
+          "___________ test_retained_python_route_keeps_the_base_nary_expansion ___________",
+          "tests/test_stage2_norms.py:407: in test_retained_python_route_keeps_the_base_nary_expansion",
+          "    with pytest.raises(VEError, match=mismatch):",
+          "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "E   Failed: DID NOT RAISE VEError",
+          "=========================== short test summary info ============================",
+          "FAILED tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion",
+          "1 failed in 3.96s",
+          "",
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-9dcexhbc)"
+        ]
+      },
+      "restored_build": {
+        "exit": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tail": [
+          ".                                                                        [100%]",
+          "1 passed in 3.34s",
+          "",
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qjn6w_rc)"
+        ]
+      }
+    },
+    {
+      "name": "lean_generators_base_expansion",
+      "file": "ve/norms.py",
+      "test": "tests/test_stage2_norms.py::test_lean_route_f5_witness_is_unknown_not_checker_unavailable",
+      "compiled": {
+        "exit": 0
+      },
+      "planted": {
+        "exit": 1,
+        "tail": [
+          "           ^^^^^",
+          "ve/norms.py:641: in <lambda>",
+          "    return owned(\"norms_conflict\", lambda: _check_conflict_lean(document, **options))",
+          "                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "ve/norms.py:718: in _check_conflict_lean",
+          "    raise CheckerUnavailable(\"CheckerUnavailable: Lean does not confirm the conflict \"",
+          "E   ve.errors.CheckerUnavailable: CheckerUnavailable: Lean does not confirm the conflict witness Python's search found",
+          "=========================== short test summary info ============================",
+          "FAILED tests/test_stage2_norms.py::test_lean_route_f5_witness_is_unknown_not_checker_unavailable",
+          "1 failed in 3.46s",
+          "",
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-90ute7fk)"
+        ]
+      },
+      "restored_build": {
+        "exit": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tail": [
+          ".                                                                        [100%]",
+          "1 passed in 4.68s",
+          "",
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ijmkpen0)"
+        ]
+      }
+    },
+    {
+      "name": "lean_situation_base_expansion",
+      "file": "ve/norms.py",
+      "test": "tests/test_stage2_norms.py::test_lean_route_situation_names_the_rules_selected_by_leans_targets",
+      "compiled": {
+        "exit": 0
+      },
+      "planted": {
+        "exit": 1,
+        "tail": [
+          "tests/test_stage2_norms.py:545: in test_lean_route_situation_names_the_rules_selected_by_leans_targets",
+          "    assert report.situation == \"act a: rule must requires; rule release releases\"",
+          "E   AssertionError: assert 'act a: rule ...ited releases' == 'act a: rule ...ease releases'",
+          "E     ",
+          "E     Skipping 37 identical leading characters in diff, use -v to show",
+          "E     - se releases",
+          "E     + se releases; rule cited releases",
+          "=========================== short test summary info ============================",
+          "FAILED tests/test_stage2_norms.py::test_lean_route_situation_names_the_rules_selected_by_leans_targets",
+          "1 failed in 5.09s",
+          "",
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-02k7s3ge)"
+        ]
+      },
+      "restored_build": {
+        "exit": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tail": [
+          ".                                                                        [100%]",
+          "1 passed in 1.89s",
+          "",
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-dbfmtk3z)"
         ]
       }
     },
@@ -241,9 +389,9 @@
           "FAILED tests/test_stage2_norms.py::test_lean_family_route_answers_as_the_retained_python_route[nary-lower-outcome]",
           "FAILED tests/test_stage2_norms.py::test_lean_family_route_answers_as_the_retained_python_route[order-le]",
           "FAILED tests/test_stage2_norms.py::test_lean_family_route_answers_as_the_retained_python_route[order-urgent]",
-          "6 failed in 1.23s",
+          "6 failed in 10.63s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-bqxze6gt)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-o4cx1p_g)"
         ]
       },
       "restored_build": {
@@ -253,9 +401,9 @@
         "exit": 0,
         "tail": [
           "......                                                                   [100%]",
-          "6 passed in 1.63s",
+          "6 passed in 4.21s",
           "",
-          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-794vjg5t)"
+          "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-_noqk0pm)"
         ]
       }
     },
@@ -276,7 +424,7 @@
           "  simp only [g\u0335r\u0335o\u0335u\u0335n\u0335d\u0335,\u0335 \u0335bind, Option.bind] at hg",
           "",
           "Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
-          "\u2714 [105/105] Built VE.Norms.Family (18s)",
+          "\u2714 [105/105] Built VE.Norms.Family (9.0s)",
           "Build completed successfully (105 jobs)."
         ]
       },
@@ -303,7 +451,7 @@
           "  simp only [g\u0335r\u0335o\u0335u\u0335n\u0335d\u0335,\u0335 \u0335bind, Option.bind] at hg",
           "",
           "Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
-          "\u2714 [105/105] Built VE.Norms.Family (15s)",
+          "\u2714 [105/105] Built VE.Norms.Family (7.8s)",
           "Build completed successfully (105 jobs)."
         ]
       },
