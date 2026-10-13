@@ -32,7 +32,7 @@ import sys
 
 from .errors import CheckerUnavailable, ResourceLimit, VEError
 from .document import MAX_DOCUMENT_BYTES
-from .filling_search import flip as _flipped
+from .filling_search import split as _split
 
 OPERATION = "question.read"
 ANSWER_OPERATION = "question.answer"
@@ -98,13 +98,13 @@ def _strip(name):
 
 
 def _split_piece(countermodel: dict, gaps) -> dict | None:
-    """One flip generator for points and sentences (plan Q2.5): the countermodel's base situation with its own
-    filling, under which the asked sentence fails, and the filling flipped at every gap its failure depends on, under
-    which it may hold. Lean checks both fillings on the same base (`splitOk_sound`)."""
+    """The asked sentence's instance of the one flip search (`filling_search.split`, plan Q2.5): the countermodel's
+    base situation with its own filling, under which the asked sentence fails, and that filling flipped at every gap
+    its failure depends on (Lean's `gaps` of the row), under which it may hold. Lean checks both fillings on the
+    same base (`splitOk_sound`)."""
     if not gaps or "filling" not in countermodel:
         return None
-    return {"kind": "split", "model": countermodel["model"], "true": _flipped(countermodel["filling"], gaps),
-            "false": countermodel["filling"]}
+    return {"kind": "split", "model": countermodel["model"], **_split(countermodel["filling"], gaps)}
 
 
 class _Readings:
