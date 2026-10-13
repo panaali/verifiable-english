@@ -114,6 +114,7 @@ with only the release binary's new hash.
 | Corpus, pilots, fuzzer, answer keys and latency | AGENT | Evidence cited above |
 | Full release gate on the final HEAD | AGENT (merge train) | Pending: the merge train's branch verify |
 | Four n-ary core documents' 16 rejection-to-answer changes | — | Removed: the head answers as the base did; the change moves to batch 14c |
+| 11 changes on n-ary capture documents (review F5) | HUMAN (DRI) | Listed in DELTA.md for a DRI signature; bound by the evidence manifest |
 | External service or publication | EXTERNAL | None requested |
 
 The applicable build-checklist checks are the Lean-owned response contract and
@@ -148,9 +149,34 @@ English grammar, state machine, or source-document interpretation.
 * **F4 (C, follow-up).** The five readings-route allow-list entries stay
   filed under F10 and F11 for the readings-route owner, as reported above.
 
+## Review fixes (lf-14b-looprecheck1.final.md)
+
+* **F5, valid model check crashes.** On the Lean family route, Python's
+  untrusted witness search, prover and CONFLICT situation used the base
+  expansion. That expansion leaves same-sort n-ary atoms unsubstituted, so the
+  citing binders capture their variables. Python then proposed witnesses that
+  Lean refutes, and the model check raised `CheckerUnavailable`. The class is
+  "the generators work on a formula other than the one Lean checks". On the
+  Lean route the generators now use the substituted targets (`nary_atoms`,
+  `_generator_targets`). Each target is still admitted by the base's expansion,
+  so F3's `TypeMismatch` rejections are unchanged. The retained Python route is
+  unchanged. The review's probe failed before the fix and passes after it.
+  Regression tests: `test_lean_route_f5_witness_is_unknown_not_checker_unavailable`
+  (the probe); `test_lean_route_generators_search_the_targets_lean_regenerates`
+  (20 capture shapes, compared with Lean's `norms-elaborate` targets); and
+  `test_lean_route_model_check_answers_as_lean_checks_each_candidate` (Lean's
+  witness check as the oracle, four models each). Two more tests cover the
+  proof search and the situation. The corpus answers were re-recorded at this
+  fix: 0 changes on the Lean route and 0 on the retained route. The 11
+  capture-document answers that now differ from the base are listed in
+  DELTA.md for a DRI signature ([record](evidence/capture-delta.json)).
+* **F1 and F6 (deferred).** F1 is unchanged: the merge train's branch verify
+  runs the full gate on the final HEAD. F6, complete packages changing base
+  UNKNOWN into CONFLICT-FREE, waits for the DRI together with the F5 list.
+
 ## Seeded bugs and final checks
 
-Eight seeded faults in the changed Lean and Python product files are specified
+Twelve seeded faults in the changed Lean and Python product files are specified
 in `mutants.py`. Their caught-test results are in `evidence/mutants.json`.
 The selector chose all 364 test units. Every unit's recorded run exited zero,
 including the long wire, readings and soft-review corpora. The selector process
@@ -168,9 +194,13 @@ HEAD.
 | Turn a zero model budget into a conflict | `ve/norms.py` | `test_non_first_order_conflict_zero_model_budget_is_unknown` |
 | Misclassify reach as first order | `lean/VE/Norms/Family.lean` | `/tmp/lf14b-family-route-guard.lean` |
 | Substitute n-ary atoms in conflict expansion | `ve/norms.py` | `test_retained_python_route_keeps_the_base_nary_expansion` |
+| Admit the search's targets by the substituted expansion | `ve/norms.py` | `test_retained_python_route_keeps_the_base_nary_expansion` |
+| Admit the prover's targets by the substituted expansion | `ve/norms.py` | `test_retained_python_route_keeps_the_base_nary_expansion` |
+| Search the base expansion on the Lean route | `ve/norms.py` | `test_lean_route_f5_witness_is_unknown_not_checker_unavailable` |
+| Select situation rules by the base expansion on the Lean route | `ve/norms.py` | `test_lean_route_situation_names_the_rules_selected_by_leans_targets` |
 | Change a Lean-route conflict answer only | `ve/norms.py` | `test_lean_family_route_answers_as_the_retained_python_route` |
 
-All eight planted versions failed their detecting checks, all eight restored versions
+All twelve planted versions failed their detecting checks, all twelve restored versions
 passed, and `lake build ve_service ve_response_decode` passed after restoration
 ([record](evidence/mutants.json)). `tools/trust_map.py --check` passed with zero
 unclassified lines and no drift beyond the R6 allowance; the regenerated
