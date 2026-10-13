@@ -4,26 +4,26 @@
   "K": 997,
   "S": 9788,
   "D": 13887,
-  "G": 26962,
+  "G": 27482,
   "C": 8486,
-  "P": 71773,
-  "T": 14705,
-  "o": 12299,
+  "P": 71958,
+  "T": 14749,
+  "o": 12363,
   "D[V]": 12357,
   "D[R]": 1003,
   "D[I]": 527,
-  "G[V]": 24956,
+  "G[V]": 25476,
   "G[R]": 1765,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 47939,
-  "lines": 158897
+  "trusted": 48459,
+  "lines": 159710
  },
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37154
+  "V": 37674
  },
  "signed": [],
  "history": [
@@ -672,6 +672,19 @@
     "K": 997,
     "S": 9788,
     "V": 37154
+   }
+  },
+  {
+   "change": "readings-defaults RD-7: readings-verdicts on the superposed route in Lean. V +520, K +0, S +0: VE/Readings/SupVerdictsWire.lean +413 (superposed folds ALL/SOME/NONE, per-reading premise statuses, dead readings, witness texts and the English plan selection), VE/Readings/SupDependencies.lean +51 (joint dependency replay and set mentions), ResponseShape/Schemas/ReadingsRoute.lean +50 (the typed sup_verdicts response), VE/Readings/Run.lean +9 (dispatch), VE/Norms/WitnessKind.lean +3 (one owner of the witness kind; Rights/Run.lean -3, SoftNorms/Run.lean -3). Every line replaces a Python decision path deleted in the same change (Superposed._fold, _dependencies, _replays, _mentions, _restrictions, _dead_readings, candidate_premises, S2Wording.provided/independent/classification/report/query selection; docs/readings-defaults/rd7/evidence/deletion-ledger.json): SIGNED by standing ruling R6 (DRI-RULINGS.md).",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37154
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37674
    }
   }
  ],
@@ -3968,7 +3981,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 450,
+   "T": 457,
    "o": 30,
    "D[V]": 0,
    "D[R]": 0,
@@ -3979,7 +3992,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 480
+   "lines": 487
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -4267,9 +4280,9 @@
    "D": 0,
    "G": 13,
    "C": 0,
-   "P": 1155,
+   "P": 1216,
    "T": 0,
-   "o": 33,
+   "o": 34,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -4279,7 +4292,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 29,
-   "lines": 1217
+   "lines": 1279
   },
   "ResponseShape/Encoders/Reports.lean": {
    "K": 0,
@@ -4985,21 +4998,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 818,
+   "G": 868,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 14,
+   "o": 15,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 818,
+   "G[V]": 868,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 818,
-   "lines": 832
+   "trusted": 868,
+   "lines": 883
   },
   "ResponseShape/Schemas/Reports.lean": {
    "K": 0,
@@ -5808,8 +5821,8 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 5330,
-   "o": 318,
+   "T": 5340,
+   "o": 320,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -5819,7 +5832,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 5648
+   "lines": 5660
   },
   "VE/Bridge.lean": {
    "K": 22,
@@ -9081,6 +9094,26 @@
    "trusted": 251,
    "lines": 333
   },
+  "VE/Norms/WitnessKind.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 3,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 7,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 3,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 3,
+   "lines": 10
+  },
   "VE/Order/Checks.lean": {
    "K": 0,
    "S": 0,
@@ -10145,7 +10178,7 @@
    "K": 0,
    "S": 0,
    "D": 100,
-   "G": 334,
+   "G": 343,
    "C": 0,
    "P": 67,
    "T": 0,
@@ -10153,13 +10186,13 @@
    "D[V]": 97,
    "D[R]": 3,
    "D[I]": 0,
-   "G[V]": 326,
+   "G[V]": 335,
    "G[R]": 0,
    "G[I]": 8,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 423,
-   "lines": 550
+   "trusted": 432,
+   "lines": 559
   },
   "VE/Readings/RunExamples.lean": {
    "K": 0,
@@ -10361,6 +10394,26 @@
    "trusted": 0,
    "lines": 150
   },
+  "VE/Readings/SupDependencies.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 51,
+   "C": 0,
+   "P": 26,
+   "T": 0,
+   "o": 11,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 51,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 51,
+   "lines": 88
+  },
   "VE/Readings/SupEnv.lean": {
    "K": 0,
    "S": 0,
@@ -10520,6 +10573,66 @@
    "unclassified": 0,
    "trusted": 0,
    "lines": 148
+  },
+  "VE/Readings/SupVerdictsExamples.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 0,
+   "C": 0,
+   "P": 0,
+   "T": 27,
+   "o": 9,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 36
+  },
+  "VE/Readings/SupVerdictsSound.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 0,
+   "C": 0,
+   "P": 98,
+   "T": 0,
+   "o": 14,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 112
+  },
+  "VE/Readings/SupVerdictsWire.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 413,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 17,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 413,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 413,
+   "lines": 430
   },
   "VE/Readings/SupWire.lean": {
    "K": 0,
@@ -10925,7 +11038,7 @@
    "K": 0,
    "S": 0,
    "D": 125,
-   "G": 209,
+   "G": 206,
    "C": 14,
    "P": 38,
    "T": 0,
@@ -10933,13 +11046,13 @@
    "D[V]": 125,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 209,
+   "G[V]": 206,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 334,
-   "lines": 439
+   "trusted": 331,
+   "lines": 436
   },
   "VE/Rights/Scope.lean": {
    "K": 0,
@@ -12465,21 +12578,21 @@
    "K": 0,
    "S": 61,
    "D": 51,
-   "G": 217,
+   "G": 214,
    "C": 80,
    "P": 39,
    "T": 0,
-   "o": 37,
+   "o": 38,
    "D[V]": 51,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 151,
+   "G[V]": 148,
    "G[R]": 52,
    "G[I]": 14,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 263,
-   "lines": 485
+   "trusted": 260,
+   "lines": 483
   },
   "VE/SoftNorms/Semantics.lean": {
    "K": 0,
@@ -13449,7 +13562,7 @@
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 122,
+   "o": 123,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -13459,7 +13572,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 122
+   "lines": 123
   }
  }
 }
