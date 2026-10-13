@@ -330,6 +330,7 @@ module VE.Readings.SoftExamples
 module VE.Readings.SoftFacts
 module VE.Readings.SoftSeparate
 module VE.Readings.SoftSeparateExamples
+module VE.Readings.SoftVerdicts
 module VE.Readings.SoftWire
 module VE.Readings.Strings
 module VE.Readings.SupAll

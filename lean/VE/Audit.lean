@@ -2,6 +2,7 @@ import VE.Readings.SoftDefaults
 import VE.Readings.SoftSeparate
 import VE.NormDefaults.LayeredAdmission
 import VE.Readings.SoftWire
+import VE.Readings.SoftVerdicts
 import VE.Order.Conservativity
 import VE.Time.Wire
 import VE.Route.Budget
@@ -4360,18 +4361,13 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.usedLabels_sound
 #print axioms VE.Readings.Wire.conflictFree_of_localFree
 #print axioms VE.Readings.Wire.expansion_of_modelCheck
-#print axioms VE.Readings.Wire.ndFree_sound
-#print axioms VE.Readings.Wire.ndCertOk_sound
-#print axioms VE.Readings.Wire.ndModelOk_sound
 #print axioms VE.Readings.Wire.ndConflictRow_holds
 #print axioms VE.Readings.Wire.ndQueryRow_holds
 #print axioms VE.Readings.Wire.ndPremiseRow_holds
 #print axioms VE.Readings.Wire.mem_chosenOf
-#print axioms VE.Readings.Wire.NDVerdicts.covers
 #print axioms VE.Readings.Wire.mem_rows
 #print axioms VE.Readings.Wire.nd_rowsHold
 #print axioms VE.Readings.Wire.nd_premiseRowsHold
-#print axioms VE.Readings.Wire.notFreeU_of_notFreeX
 #print axioms VE.Readings.plan_no_every_for_models
 #print axioms VE.Readings.plan_model_names_every_set
 #print axioms VE.Readings.jstrings_toJson
@@ -5135,3 +5131,26 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.readings_wire_sd_separate_sound
 #print axioms VE.Readings.Wire.readings_wire_sd_choice_conflict
 #print axioms VE.Readings.Wire.readings_wire_sd_choice_entails
+#print axioms VE.Readings.Wire.expansionX_of_modelCheck
+#print axioms VE.Readings.Wire.xFree_sound
+#print axioms VE.Readings.Wire.xCertOk_sound
+#print axioms VE.Readings.Wire.xModelOk_sound
+#print axioms VE.Readings.Wire.xConflictRow_holds
+#print axioms VE.Readings.Wire.xQueryRow_holds
+#print axioms VE.Readings.Wire.xPremiseRow_holds
+#print axioms VE.Readings.Wire.holds_of_xSem_nil
+#print axioms VE.Readings.Wire.normsShaped_of_ND
+#print axioms VE.Readings.Wire.XVerdicts.covers
+#print axioms VE.Readings.Wire.x_rowsHold
+#print axioms VE.Readings.Wire.x_premiseRowsHold
+#print axioms VE.Readings.Run.xInfos_rows
+#print axioms VE.Readings.Wire.sdSem_normsShaped
+#print axioms VE.Readings.Wire.sd_rowsHold
+#print axioms VE.Readings.Wire.sd_premiseRowsHold
+#print axioms VE.Readings.Wire.readings_wire_sd_verdicts_all
+#print axioms VE.Readings.Wire.readings_wire_sd_verdicts_none
+#print axioms VE.Readings.Wire.readings_wire_sd_verdicts_some
+#print axioms VE.Readings.Wire.readings_wire_sd_verdicts_conflict_free
+#print axioms VE.Readings.Wire.readings_wire_sd_verdicts_conflict
+#print axioms VE.Readings.Wire.readings_wire_sd_verdicts_model
+#print axioms VE.Readings.Wire.readings_wire_sd_verdicts_inconsistent

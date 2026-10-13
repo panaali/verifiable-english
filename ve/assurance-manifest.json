@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 30089,
+    "total_lines": 30402,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -709,12 +709,12 @@
       },
       {
         "file": "lean/VE/Readings/VerdictsWire.lean",
-        "lines": 1719,
-        "sha256": "3ccf1a5af55ae1fa3d3db8f91ba959b11cfb616bc773d804a2605ad5cb0fa0b5",
+        "lines": 1842,
+        "sha256": "675e5ae97da33ddd35e3ade9a95a39e304fb9dd3c796bf42020ecb60a2e94d21",
         "ranges": [
           [
             1,
-            1719
+            1842
           ]
         ],
         "declarations": [
@@ -723,8 +723,8 @@
           "shownOk",
           "shownOf",
           "pieceOf",
-          "ndBoundCert",
-          "ndFilled",
+          "xFilled",
+          "xEvidenceOf",
           "ndEvidenceOf",
           "strOf",
           "isNull",
@@ -750,9 +750,11 @@
           "readingPremise",
           "partDecided",
           "documentOrder",
-          "ndVerdictsAnswer"
+          "ndVerdictsAnswer",
+          "verdictsRequest",
+          "overInfos"
         ],
-        "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
+        "reason": "readings-defaults RD-3 readings-verdicts decoder: the question, assumed, the query's premises and conclusion, and each choice's evidence (decoded once on its layered source, `xEvidenceOf`, for the norms chain at X = [] and for the soft chain with its Soft_T: conflict packages bound to the choice's E''' base and document hash, filled witnesses, certificates bound as the norm-defaults route binds them, base models with a separate filling, each shown model bound to the checked one) are decoded on the choice's document Lean regenerates; under the completion every row is a Lean check with its Holds proof (nd_rowsHold), on the lower route each piece is readings-choice's own inner case; the English plan reads only Lean's own answer; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
@@ -1395,6 +1397,24 @@
           "replayChoiceS"
         ],
         "reason": "rd-9 SC-4: admission under the soft completion, the document over the filled author vocabulary, the pair replay and the choice replay; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Readings/SoftVerdicts.lean",
+        "lines": 190,
+        "sha256": "091687de6752f3eb3c7430f56398d86f2acc1b235492c7cb1a8c7560723b4c40",
+        "ranges": [
+          [
+            1,
+            190
+          ]
+        ],
+        "declarations": [
+          "sdEvidenceOf",
+          "replaySD",
+          "replayVerdictsSD",
+          "runVerdictsSD"
+        ],
+        "reason": "rd-9 SC-5: readings-verdicts under the soft completion: each compatible choice taking assumed checked by sdChoiceText and its evidence decoded on its own choiceLayeredG source (xEvidenceOf) as XEvidence (choiceU N c) (choiceX N c); every row holds of sdSem (sd_rowsHold); beyond 64 only the evidence's own choices; the full file is pinned conservatively"
       }
     ],
     "other_json": {

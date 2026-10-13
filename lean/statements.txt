@@ -15413,6 +15413,13 @@ theorem VE.Readings.Run.verdicts_conditions_some
                     line.label = Option.some l
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult.proved@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Doc@VE.Readings.Doc VE.Readings.Line.label@VE.Readings.VerdictsWire VE.Readings.Line@VE.Readings.VerdictsWire VE.Readings.ReadingVerdict.some@VE.Readings.Verdicts VE.Readings.ReadingVerdict@VE.Readings.Verdicts VE.Readings.Run.RowInfo.choice@VE.Readings.VerdictsWire VE.Readings.Run.RowInfo.conflict@VE.Readings.VerdictsWire VE.Readings.Run.RowInfo.on@VE.Readings.VerdictsWire VE.Readings.Run.RowInfo.query@VE.Readings.VerdictsWire VE.Readings.Run.RowInfo@VE.Readings.VerdictsWire VE.Readings.Run.proofJson@VE.Readings.VerdictsWire VE.Readings.Run.verdictsAnswer@VE.Readings.VerdictsWire VE.Readings.Run.verdictsPlan@VE.Readings.VerdictsWire VE.Readings.foldEntailment@VE.Readings.Verdicts VE.Readings.instDecidableEqChoiceResult@VE.Readings.Verdicts
   -- expr 4271920700
+theorem VE.Readings.Run.xInfos_rows
+  ∀ (x : VE.Readings.Wire.XVerdicts),
+    List.map (fun i => (i.choice, i.conflict)) (VE.Readings.Run.xInfos x) = x.conflictRows ∧
+      List.map (fun i => (i.choice, i.query)) (VE.Readings.Run.xInfos x) = x.queryRows ∧
+        List.map (fun i => (i.choice, i.premise)) (VE.Readings.Run.xInfos x) = x.premiseRows
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Run.RowInfo.choice@VE.Readings.VerdictsWire VE.Readings.Run.RowInfo.conflict@VE.Readings.VerdictsWire VE.Readings.Run.RowInfo.premise@VE.Readings.VerdictsWire VE.Readings.Run.RowInfo.query@VE.Readings.VerdictsWire VE.Readings.Run.RowInfo@VE.Readings.VerdictsWire VE.Readings.Run.xInfos@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.premiseRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.queryRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts@VE.Readings.VerdictsWire
+  -- expr 4062733788
 theorem VE.Readings.SupExtraExamples.bare_admissible
   VE.Readings.SupExtraExamples.X1Checks →
     VE.Compose.BaseAdmissibleP (VE.Rights.correlate (VE.Readings.choiceDoc VE.Readings.Examples.K1 [("rs1", 0)]).fst)
@@ -15859,15 +15866,16 @@ theorem VE.Readings.Wire.Admitted.side_eq
   ∀ (a : VE.Readings.Wire.Admitted) (s : String) (i : Nat), a.side s i = VE.Readings.one a.D s i
   -- uses VE.Formula@VE.Syntax VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.Admitted.side@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 1465611242
-theorem VE.Readings.Wire.NDVerdicts.covers
-  ∀ (x : VE.Readings.Wire.NDVerdicts) {rs : List (VE.Readings.Choice × VE.Readings.ChoiceResult)},
-    List.map (fun x => x.fst) rs = List.map (fun x_1 => x_1.fst) x.evs → VE.Readings.Covers x.r.N x.A rs
-  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Covers@VE.Readings.Verdicts VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.evs@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
-  -- expr 1603407474
 theorem VE.Readings.Wire.SupReplayND.hyps
   ∀ (r : VE.Readings.Wire.SupReplayND), VE.Readings.Hyps (VE.Readings.fillDoc r.f.r.N)
   -- uses VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedNDFull.r@VE.Readings.UnspecifiedWire VE.Readings.Wire.SupReplayND.f@VE.Readings.SupFillWire VE.Readings.Wire.SupReplayND@VE.Readings.SupFillWire VE.Readings.fillDoc@VE.Readings.Unspecified
   -- expr 3096146114
+theorem VE.Readings.Wire.XVerdicts.covers
+  ∀ (x : VE.Readings.Wire.XVerdicts) {rs : List (VE.Readings.Choice × VE.Readings.ChoiceResult)},
+    List.map (fun x => x.fst) rs = List.map (fun x_1 => x_1.fst) x.evs →
+      VE.Readings.CoversG (VE.Readings.xSem x.N x.Xf) x.A rs
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.CoversG@VE.Readings.Verdicts VE.Readings.Wire.XEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.N@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.Xf@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.evs@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts@VE.Readings.VerdictsWire VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.xSem@VE.Readings.Verdicts
+  -- expr 184552080
 theorem VE.Readings.Wire.addDecl_mono
   ∀ {acc acc' : List (String × String × Lean.Json)} {src : String} {e : String × Lean.Json},
     VE.Readings.Wire.addDecl acc src e = Except.ok acc' → ∀ (x : String × String × Lean.Json), x ∈ acc → x ∈ acc'
@@ -16108,6 +16116,28 @@ theorem VE.Readings.Wire.entries_mem
   ∀ {j d : Lean.Json} {n : String}, j.getObjVal? n = Except.ok d → (n, d) ∈ VE.Readings.Wire.entries j
   -- uses VE.Readings.Wire.entries@VE.Readings.Companions
   -- expr 2852445746
+theorem VE.Readings.Wire.expansionX_of_modelCheck
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (X : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt U.D 0) →
+          ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (Γ : List VE.Formula) (φ : VE.Formula),
+            (∀ (a : VE.Formula),
+                a ∈ Γ →
+                  VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) (VE.Norms.size (VE.NormDefaults.fill U)))
+                    [] a) →
+              VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) (VE.Norms.size (VE.NormDefaults.fill U))) []
+                  φ →
+                (VE.NormDefaults.modelCheckX U X M F Γ φ).fst = Bool.true →
+                  VE.Readings.Wire.localFree U M F = Bool.true →
+                    ∃ S,
+                      VE.NormDefaults.Wire.BaseAdmissibleX U X (VE.Norms.restrictAll (VE.NormDefaults.fill U).T S) ∧
+                        VE.Norms.DocumentExpansion (VE.NormDefaults.fill U)
+                            (VE.Norms.restrictAll (VE.NormDefaults.fill U).T S) S ∧
+                          VE.Norms.Sat S Γ ∧
+                            (VE.Formula.denote S [] φ ↔ (VE.NormDefaults.modelCheckX U X M F Γ φ).snd = Bool.true)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.modelCheckX@VE.NormDefaults.LayeredEntail VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.envAt@VE.Norms.Tree VE.Norms.restrictAll@VE.Norms.Subst VE.Norms.size@VE.Norms.Tree VE.Readings.Wire.localFree@VE.Readings.VerdictsWire VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1835421000
 theorem VE.Readings.Wire.expansion_of_modelCheck
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -16193,6 +16223,11 @@ theorem VE.Readings.Wire.getObjValD_ok
   ∀ {j v : Lean.Json} {k : String}, j.getObjVal? k = Except.ok v → j.getObjValD k = v
   -- uses
   -- expr 2586305039
+theorem VE.Readings.Wire.holds_of_xSem_nil
+  ∀ {N : VE.Readings.NDoc} {Γ : List VE.Formula} {φ : VE.Formula} {c : VE.Readings.Choice} {r : VE.Readings.ChoiceResult},
+    VE.Readings.HoldsG (VE.Readings.xSem N fun x => []) Γ φ c r → VE.Readings.Holds N Γ φ c r
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Holds@VE.Readings.Verdicts VE.Readings.HoldsG@VE.Readings.Verdicts VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.xSem@VE.Readings.Verdicts
+  -- expr 3836406790
 theorem VE.Readings.Wire.jcontains_iff
   ∀ (l : List Lean.Json) (x : Lean.Json), l.contains x = Bool.true ↔ x ∈ l
   -- uses VE.Readings.Wire.instBEqJson_vE@VE.Readings.Companions
@@ -16269,12 +16304,11 @@ theorem VE.Readings.Wire.mem_chosenOf
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.chosenOf@VE.Readings.VerdictsWire VE.Readings.choices@VE.Readings.Choice VE.Readings.maxChoices@VE.Readings.Choice VE.Readings.supReady@VE.Readings.Choice
   -- expr 715166518
 theorem VE.Readings.Wire.mem_rows
-  ∀ {N : VE.Readings.NDoc} {evs : List ((c : VE.Readings.Choice) × VE.Readings.Wire.NDEvidence N c)}
-    {f : (c : VE.Readings.Choice) → VE.Readings.Wire.NDEvidence N c → VE.Readings.ChoiceResult}
-    {y : VE.Readings.Choice × VE.Readings.ChoiceResult},
+  ∀ {E : VE.Readings.Choice → Type} {evs : List ((c : VE.Readings.Choice) × E c)}
+    {f : (c : VE.Readings.Choice) → E c → VE.Readings.ChoiceResult} {y : VE.Readings.Choice × VE.Readings.ChoiceResult},
     y ∈ List.map (fun e => (e.fst, f e.fst e.snd)) evs → ∃ e, e ∈ evs ∧ y = (e.fst, f e.fst e.snd)
-  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire
-  -- expr 2759084588
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts
+  -- expr 2645286088
 theorem VE.Readings.Wire.mergeCategory_mono
   ∀ (k : String) (acc acc' : List (String × String × Lean.Json)) (sources : List (String × Lean.Json)),
     VE.Readings.Wire.mergeCategory k acc sources = Except.ok acc' →
@@ -16371,13 +16405,6 @@ theorem VE.Readings.Wire.mkObj_get
     (List.map (fun x => x.fst) l).Nodup → (k, v) ∈ l → (Lean.Json.mkObj l).getObjVal? k = Except.ok v
   -- uses
   -- expr 872787718
-theorem VE.Readings.Wire.ndCertOk_sound
-  ∀ {N : VE.Readings.NDoc} {c : VE.Readings.Choice} (e : VE.Readings.Wire.NDEvidence N c) (Γ : List VE.Formula)
-    (φ : VE.Formula) (k : VE.Tableau.Certificate),
-    VE.Readings.Wire.ndCertOk N c Γ φ k = Bool.true →
-      VE.NormDefaults.EntailsU (VE.Readings.choiceU N c) ((VE.Readings.choiceDoc N.D c).snd ++ Γ) φ
-  -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsU@VE.NormDefaults.Wire VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.ndCertOk@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree VE.Tableau.Certificate@VE.Tableau
-  -- expr 3840691616
 theorem VE.Readings.Wire.ndChecked_spec
   ∀ {re : VE.Readings.Wire.ReadingsEnvironment} {N : VE.Readings.NDoc},
     VE.Readings.supReady (VE.Readings.fillDoc N) = Bool.true →
@@ -16398,23 +16425,6 @@ theorem VE.Readings.Wire.ndDocText_eq_G
     VE.Readings.Wire.ndDocText re U = VE.Readings.Wire.ndDocTextG re 0 U
   -- uses VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.ndDocText@VE.Readings.UnspecifiedWire VE.Readings.Wire.ndDocTextG@VE.Readings.UnspecifiedWire
   -- expr 2078582851
-theorem VE.Readings.Wire.ndFree_sound
-  ∀ {N : VE.Readings.NDoc} {c : VE.Readings.Choice} (e : VE.Readings.Wire.NDEvidence N c),
-    VE.Readings.Wire.ndFree e = Bool.true → VE.NormDefaults.ConflictFreeU (VE.Readings.choiceU N c)
-  -- uses VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.ndFree@VE.Readings.VerdictsWire VE.Readings.choiceU@VE.Readings.Unspecified
-  -- expr 3360578189
-theorem VE.Readings.Wire.ndModelOk_sound
-  ∀ {N : VE.Readings.NDoc} {c : VE.Readings.Choice} (e : VE.Readings.Wire.NDEvidence N c) (Γ : List VE.Formula)
-    (φ : VE.Formula) (m : VE.Readings.Wire.FilledModel (VE.Readings.choiceU N c)) (v : Bool),
-    VE.Readings.Wire.ndModelOk N c Γ φ m v = Bool.true →
-      ∃ S,
-        VE.NormDefaults.BaseAdmissibleU (VE.Readings.choiceU N c)
-            (VE.Norms.restrictAll (VE.NormDefaults.fill (VE.Readings.choiceU N c)).T S) ∧
-          VE.Norms.DocumentExpansion (VE.NormDefaults.fill (VE.Readings.choiceU N c))
-              (VE.Norms.restrictAll (VE.NormDefaults.fill (VE.Readings.choiceU N c)).T S) S ∧
-            VE.Norms.Sat S ((VE.Readings.choiceDoc N.D c).snd ++ Γ) ∧ (VE.Formula.denote S [] φ ↔ v = Bool.true)
-  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.restrictAll@VE.Norms.Subst VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.ndModelOk@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 1425840834
 theorem VE.Readings.Wire.ndPremiseRow_holds
   ∀ {N : VE.Readings.NDoc} {c : VE.Readings.Choice} (e : VE.Readings.Wire.NDEvidence N c),
     VE.Readings.Holds N [] VE.Formula.bottom c (VE.Readings.Wire.ndPremiseRow e)
@@ -16453,11 +16463,10 @@ theorem VE.Readings.Wire.nd_rowsHold
   ∀ (x : VE.Readings.Wire.NDVerdicts), VE.Readings.RowsHold x.r.N x.A x.Γ x.φ x.conflictRows x.queryRows
   -- uses VE.Readings.RowsHold@VE.Readings.Verdicts VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.queryRows@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.Γ@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
   -- expr 2919201448
-theorem VE.Readings.Wire.notFreeU_of_notFreeX
-  ∀ {L : VE.NormDefaults.Wire.LayeredU} {U : VE.NormDefaults.UDoc},
-    L.U = U → ¬VE.NormDefaults.Wire.ConflictFreeX L.U L.X → ¬VE.NormDefaults.ConflictFreeU U
-  -- uses VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
-  -- expr 223251869
+theorem VE.Readings.Wire.normsShaped_of_ND
+  ∀ (r : VE.Readings.Wire.AdmittedND), VE.Readings.normsShaped r.N.D = Bool.true
+  -- uses VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.normsShaped@VE.Readings.Unspecified
+  -- expr 1879791082
 theorem VE.Readings.Wire.objOf_get
   ∀ {acc : List (String × String × Lean.Json)} {n src : String} {d : Lean.Json},
     (n, src, d) ∈ acc → VE.Readings.Wire.Distinct acc → (VE.Readings.Wire.objOf acc).getObjVal? n = Except.ok d
@@ -16728,6 +16737,93 @@ theorem VE.Readings.Wire.readings_wire_sd_separate_sound
               x.σ.value
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Readings.AchievesS@VE.Readings.SoftSeparate VE.Readings.Situation.base@VE.Readings.Separate VE.Readings.Situation.fixed@VE.Readings.Separate VE.Readings.Situation.probe@VE.Readings.Separate VE.Readings.Situation.value@VE.Readings.Separate VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.other@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.r@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.set@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.witness@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS.σ@VE.Readings.SoftWire VE.Readings.Wire.SeparateReplayS@VE.Readings.SoftWire VE.Readings.Wire.replaySeparateS@VE.Readings.SoftWire VE.Readings.separatesS@VE.Readings.SoftSeparate VE.Readings.tablesOf@VE.Readings.Separate VE.Structure.Carrier@VE.Semantics
   -- expr 3592466522
+theorem VE.Readings.Wire.readings_wire_sd_verdicts_all
+  ∀ (j : Lean.Json) (y : VE.Readings.Wire.SDVerdicts),
+    VE.Readings.Wire.replayVerdictsSD j = Except.ok y →
+      VE.Readings.foldEntailment y.x.conflictRows y.x.queryRows = VE.Readings.ReadingVerdict.all →
+        ∀ (c : VE.Readings.Choice),
+          VE.Readings.Compatible y.r.N.D c →
+            (∀ (z : String × Nat), z ∈ y.x.A → z ∈ c) →
+              VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c) ∧
+                VE.NormDefaults.EntailsX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c)
+                  ((VE.Readings.choiceDoc y.r.N.D c).snd ++ y.x.Γ) y.x.φ
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.ReadingVerdict.all@VE.Readings.Verdicts VE.Readings.ReadingVerdict@VE.Readings.Verdicts VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.queryRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.Γ@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.replayVerdictsSD@VE.Readings.SoftVerdicts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.foldEntailment@VE.Readings.Verdicts VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 3961500950
+theorem VE.Readings.Wire.readings_wire_sd_verdicts_conflict
+  ∀ (j : Lean.Json) (y : VE.Readings.Wire.SDVerdicts),
+    VE.Readings.Wire.replayVerdictsSD j = Except.ok y →
+      VE.Readings.foldConflict y.x.conflictRows = VE.Readings.ChoiceResult.conflict →
+        ∃ c,
+          VE.Readings.Compatible y.r.N.D c ∧
+            (∀ (z : String × Nat), z ∈ y.x.A → z ∈ c) ∧
+              ¬VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c)
+  -- uses VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult.conflict@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.replayVerdictsSD@VE.Readings.SoftVerdicts VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.foldConflict@VE.Readings.Verdicts
+  -- expr 3086755322
+theorem VE.Readings.Wire.readings_wire_sd_verdicts_conflict_free
+  ∀ (j : Lean.Json) (y : VE.Readings.Wire.SDVerdicts),
+    VE.Readings.Wire.replayVerdictsSD j = Except.ok y →
+      VE.Readings.foldConflict y.x.conflictRows = VE.Readings.ChoiceResult.free →
+        ∀ (c : VE.Readings.Choice),
+          VE.Readings.Compatible y.r.N.D c →
+            (∀ (z : String × Nat), z ∈ y.x.A → z ∈ c) →
+              VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c)
+  -- uses VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult.free@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.replayVerdictsSD@VE.Readings.SoftVerdicts VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.foldConflict@VE.Readings.Verdicts
+  -- expr 1932827393
+theorem VE.Readings.Wire.readings_wire_sd_verdicts_inconsistent
+  ∀ (j : Lean.Json) (y : VE.Readings.Wire.SDVerdicts),
+    VE.Readings.Wire.replayVerdictsSD j = Except.ok y →
+      VE.Readings.foldPremises y.x.premiseRows = VE.Readings.ChoiceResult.inconsistent →
+        ∀ (c : VE.Readings.Choice),
+          VE.Readings.Compatible y.r.N.D c →
+            (∀ (z : String × Nat), z ∈ y.x.A → z ∈ c) →
+              VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c) ∧
+                VE.NormDefaults.EntailsX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c)
+                  (VE.Readings.choiceDoc y.r.N.D c).snd VE.Formula.bottom
+  -- uses VE.Formula.bottom@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult.inconsistent@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.premiseRows@VE.Readings.VerdictsWire VE.Readings.Wire.replayVerdictsSD@VE.Readings.SoftVerdicts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.foldPremises@VE.Readings.Verdicts VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 4233676541
+theorem VE.Readings.Wire.readings_wire_sd_verdicts_model
+  ∀ (j : Lean.Json) (y : VE.Readings.Wire.SDVerdicts),
+    VE.Readings.Wire.replayVerdictsSD j = Except.ok y →
+      VE.Readings.foldPremises y.x.premiseRows = VE.Readings.ChoiceResult.model →
+        ∃ c,
+          VE.Readings.Compatible y.r.N.D c ∧
+            (∀ (z : String × Nat), z ∈ y.x.A → z ∈ c) ∧
+              VE.Readings.ConsistentX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c)
+                (VE.Readings.choiceDoc y.r.N.D c).snd
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult.model@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Compatible@VE.Readings.Choice VE.Readings.ConsistentX@VE.Readings.Verdicts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.premiseRows@VE.Readings.VerdictsWire VE.Readings.Wire.replayVerdictsSD@VE.Readings.SoftVerdicts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.foldPremises@VE.Readings.Verdicts VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1509439563
+theorem VE.Readings.Wire.readings_wire_sd_verdicts_none
+  ∀ (j : Lean.Json) (y : VE.Readings.Wire.SDVerdicts),
+    VE.Readings.Wire.replayVerdictsSD j = Except.ok y →
+      VE.Readings.foldEntailment y.x.conflictRows y.x.queryRows = VE.Readings.ReadingVerdict.none →
+        ∀ (c : VE.Readings.Choice),
+          VE.Readings.Compatible y.r.N.D c →
+            (∀ (z : String × Nat), z ∈ y.x.A → z ∈ c) →
+              VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c) ∧
+                VE.Readings.CounterX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c)
+                  ((VE.Readings.choiceDoc y.r.N.D c).snd ++ y.x.Γ) y.x.φ
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.CounterX@VE.Readings.Verdicts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.ReadingVerdict.none@VE.Readings.Verdicts VE.Readings.ReadingVerdict@VE.Readings.Verdicts VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.queryRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.Γ@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.replayVerdictsSD@VE.Readings.SoftVerdicts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.foldEntailment@VE.Readings.Verdicts VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 918971958
+theorem VE.Readings.Wire.readings_wire_sd_verdicts_some
+  ∀ (j : Lean.Json) (y : VE.Readings.Wire.SDVerdicts),
+    VE.Readings.Wire.replayVerdictsSD j = Except.ok y →
+      VE.Readings.foldEntailment y.x.conflictRows y.x.queryRows = VE.Readings.ReadingVerdict.some →
+        (∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible y.r.N.D c →
+              (∀ (z : String × Nat), z ∈ y.x.A → z ∈ c) →
+                VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c)) ∧
+          (∃ c,
+              VE.Readings.Compatible y.r.N.D c ∧
+                (∀ (z : String × Nat), z ∈ y.x.A → z ∈ c) ∧
+                  VE.NormDefaults.EntailsX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c)
+                    ((VE.Readings.choiceDoc y.r.N.D c).snd ++ y.x.Γ) y.x.φ) ∧
+            ∃ c,
+              VE.Readings.Compatible y.r.N.D c ∧
+                (∀ (z : String × Nat), z ∈ y.x.A → z ∈ c) ∧
+                  VE.Readings.CounterX (VE.Readings.choiceU y.r.N c) (VE.Readings.choiceX y.r.N c)
+                    ((VE.Readings.choiceDoc y.r.N.D c).snd ++ y.x.Γ) y.x.φ
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.CounterX@VE.Readings.Verdicts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.ReadingVerdict.some@VE.Readings.Verdicts VE.Readings.ReadingVerdict@VE.Readings.Verdicts VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.queryRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.Γ@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.replayVerdictsSD@VE.Readings.SoftVerdicts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.foldEntailment@VE.Readings.Verdicts VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1437322667
 theorem VE.Readings.Wire.readings_wire_separate_sound
   ∀ (j : Lean.Json) (r : VE.Readings.Wire.SeparateReplay),
     VE.Readings.Wire.replaySeparate j = Except.ok r →
@@ -16749,6 +16845,25 @@ theorem VE.Readings.Wire.same_name
       ∀ (t : Lean.Json), t ∈ l → ∀ (t' : Lean.Json), t' ∈ l → t.getObjValD "name" = t'.getObjValD "name" → t = t'
   -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
   -- expr 4220798877
+theorem VE.Readings.Wire.sdSem_normsShaped
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.normsShaped N.D = Bool.true →
+      ∀ (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Readings.Choice) (r : VE.Readings.ChoiceResult),
+        VE.Readings.HoldsG (VE.Readings.Wire.sdSem N) Γ φ c r ↔ VE.Readings.HoldsG (VE.Readings.ndSem N) Γ φ c r
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.HoldsG@VE.Readings.Verdicts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.sdSem@VE.Readings.SoftVerdicts VE.Readings.ndSem@VE.Readings.Verdicts VE.Readings.normsShaped@VE.Readings.Unspecified
+  -- expr 1895307051
+theorem VE.Readings.Wire.sd_premiseRowsHold
+  ∀ (y : VE.Readings.Wire.SDVerdicts),
+    VE.Readings.CoversG (VE.Readings.Wire.sdSem y.r.N) y.x.A y.x.premiseRows ∧
+      ∀ (z : VE.Readings.Choice × VE.Readings.ChoiceResult),
+        z ∈ y.x.premiseRows → VE.Readings.HoldsG (VE.Readings.Wire.sdSem y.r.N) [] VE.Formula.bottom z.fst z.snd
+  -- uses VE.Formula.bottom@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.CoversG@VE.Readings.Verdicts VE.Readings.HoldsG@VE.Readings.Verdicts VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.premiseRows@VE.Readings.VerdictsWire VE.Readings.Wire.sdSem@VE.Readings.SoftVerdicts
+  -- expr 1037991341
+theorem VE.Readings.Wire.sd_rowsHold
+  ∀ (y : VE.Readings.Wire.SDVerdicts),
+    VE.Readings.RowsHoldG (VE.Readings.Wire.sdSem y.r.N) y.x.A y.x.Γ y.x.φ y.x.conflictRows y.x.queryRows
+  -- uses VE.Readings.RowsHoldG@VE.Readings.Verdicts VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.queryRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.Γ@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.sdSem@VE.Readings.SoftVerdicts
+  -- expr 4057575929
 theorem VE.Readings.Wire.separates_filled
   ∀ {r : VE.Readings.Wire.AdmittedND} (fa : VE.Readings.Wire.FilledAdmitted r) {α : Type u} [inst : DecidableEq α]
     (s : String) (i j : Nat) (σ : VE.Readings.Situation α),
@@ -16849,6 +16964,58 @@ theorem VE.Readings.Wire.withArrays_arr
       (k, l) ∈ repl → VE.Readings.Wire.arr (VE.Readings.Wire.withArrays base repl) k = l
   -- uses VE.Readings.Wire.arr@VE.Readings.Companions VE.Readings.Wire.withArrays@VE.Readings.Companions
   -- expr 1308873461
+theorem VE.Readings.Wire.xCertOk_sound
+  ∀ {U : VE.NormDefaults.UDoc} {X : List VE.Formula} (e : VE.Readings.Wire.XEvidence U X) (A Γ : List VE.Formula)
+    (φ : VE.Formula) (k : VE.Tableau.Certificate),
+    VE.Readings.Wire.xCertOk U X A Γ φ k = Bool.true → VE.NormDefaults.EntailsX U X (A ++ Γ) φ
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Readings.Wire.XEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.xCertOk@VE.Readings.VerdictsWire VE.Tableau.Certificate@VE.Tableau
+  -- expr 742855081
+theorem VE.Readings.Wire.xConflictRow_holds
+  ∀ {N : VE.Readings.NDoc} {Xf : VE.Readings.Choice → List VE.Formula} {c : VE.Readings.Choice}
+    (e : VE.Readings.Wire.XEvidence (VE.Readings.choiceU N c) (Xf c)),
+    VE.Readings.HoldsG (VE.Readings.xSem N Xf) [] VE.Formula.bottom c (VE.Readings.Wire.xConflictRow e)
+  -- uses VE.Formula.bottom@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.HoldsG@VE.Readings.Verdicts VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.XEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.xConflictRow@VE.Readings.VerdictsWire VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.xSem@VE.Readings.Verdicts
+  -- expr 3293214569
+theorem VE.Readings.Wire.xFree_sound
+  ∀ {U : VE.NormDefaults.UDoc} {X : List VE.Formula} (e : VE.Readings.Wire.XEvidence U X),
+    VE.Readings.Wire.xFree e = Bool.true → VE.NormDefaults.Wire.ConflictFreeX U X
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Wire.XEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.xFree@VE.Readings.VerdictsWire
+  -- expr 2713398028
+theorem VE.Readings.Wire.xModelOk_sound
+  ∀ {U : VE.NormDefaults.UDoc} {X : List VE.Formula} (e : VE.Readings.Wire.XEvidence U X) (A Γ : List VE.Formula)
+    (φ : VE.Formula) (m : VE.Readings.Wire.FilledModel U) (v : Bool),
+    VE.Readings.Wire.xModelOk U X A Γ φ m v = Bool.true →
+      ∃ S,
+        VE.NormDefaults.Wire.BaseAdmissibleX U X (VE.Norms.restrictAll (VE.NormDefaults.fill U).T S) ∧
+          VE.Norms.DocumentExpansion (VE.NormDefaults.fill U) (VE.Norms.restrictAll (VE.NormDefaults.fill U).T S) S ∧
+            VE.Norms.Sat S (A ++ Γ) ∧ (VE.Formula.denote S [] φ ↔ v = Bool.true)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.restrictAll@VE.Norms.Subst VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Readings.Wire.XEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.xModelOk@VE.Readings.VerdictsWire VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1896908231
+theorem VE.Readings.Wire.xPremiseRow_holds
+  ∀ {N : VE.Readings.NDoc} {Xf : VE.Readings.Choice → List VE.Formula} {c : VE.Readings.Choice}
+    (e : VE.Readings.Wire.XEvidence (VE.Readings.choiceU N c) (Xf c)),
+    VE.Readings.HoldsG (VE.Readings.xSem N Xf) [] VE.Formula.bottom c
+      (VE.Readings.Wire.xPremiseRow e (VE.Readings.choiceDoc N.D c).snd)
+  -- uses VE.Formula.bottom@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.HoldsG@VE.Readings.Verdicts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.XEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.xPremiseRow@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.xSem@VE.Readings.Verdicts VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 2118479978
+theorem VE.Readings.Wire.xQueryRow_holds
+  ∀ {N : VE.Readings.NDoc} {Xf : VE.Readings.Choice → List VE.Formula} {c : VE.Readings.Choice}
+    (e : VE.Readings.Wire.XEvidence (VE.Readings.choiceU N c) (Xf c)) (Γ : List VE.Formula) (φ : VE.Formula),
+    VE.Readings.HoldsG (VE.Readings.xSem N Xf) Γ φ c (VE.Readings.Wire.xQueryRow e (VE.Readings.choiceDoc N.D c).snd Γ φ)
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.HoldsG@VE.Readings.Verdicts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.XEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.xQueryRow@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.xSem@VE.Readings.Verdicts VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 279286722
+theorem VE.Readings.Wire.x_premiseRowsHold
+  ∀ (x : VE.Readings.Wire.XVerdicts),
+    VE.Readings.CoversG (VE.Readings.xSem x.N x.Xf) x.A x.premiseRows ∧
+      ∀ (y : VE.Readings.Choice × VE.Readings.ChoiceResult),
+        y ∈ x.premiseRows → VE.Readings.HoldsG (VE.Readings.xSem x.N x.Xf) [] VE.Formula.bottom y.fst y.snd
+  -- uses VE.Formula.bottom@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.CoversG@VE.Readings.Verdicts VE.Readings.HoldsG@VE.Readings.Verdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.N@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.Xf@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.premiseRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts@VE.Readings.VerdictsWire VE.Readings.xSem@VE.Readings.Verdicts
+  -- expr 3273234599
+theorem VE.Readings.Wire.x_rowsHold
+  ∀ (x : VE.Readings.Wire.XVerdicts),
+    VE.Readings.RowsHoldG (VE.Readings.xSem x.N x.Xf) x.A x.Γ x.φ x.conflictRows x.queryRows
+  -- uses VE.Readings.RowsHoldG@VE.Readings.Verdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.N@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.Xf@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.queryRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.Γ@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts@VE.Readings.VerdictsWire VE.Readings.xSem@VE.Readings.Verdicts
+  -- expr 1006995443
 theorem VE.Readings.achievesU_iff
   ∀ (N : VE.Readings.NDoc),
     VE.Readings.normsShaped N.D = Bool.true →

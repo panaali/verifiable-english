@@ -39,7 +39,7 @@ def test_every_built_batch_block_is_compared():
     """The sections cover SC-1's three blocks and every later batch's block that is built."""
     titles = [section[0].split()[0] for section in _checker().SECTIONS]
     assert titles[:3] == ["SC-1", "SC-1", "SC-1"]
-    assert "SC-2" in titles and "SC-4" in titles and "SC-6" in titles
+    assert titles[3:] == ["SC-2", "SC-4", "SC-5", "SC-6"]
 
 
 def _mutated_sections(checker, tmp_path, section_index, name):
@@ -64,9 +64,11 @@ def _mutated_sections(checker, tmp_path, section_index, name):
 
 @pytest.mark.parametrize("section_index, name", [
     (1, "softX_wellFormed"), (0, "acceptanceX"), (2, "foldG_all_sound"), (3, "separatesS_sound"),
-    (3, "observeOn_sideOfS_sound"), (5, "admitDocumentX_spec"), (5, "normDefaults_wire_admission"),
+    (3, "observeOn_sideOfS_sound"), (6, "admitDocumentX_spec"), (6, "normDefaults_wire_admission"),
     (4, "readings_wire_sd_separate_sound"), (4, "readings_wire_sd_choice_entails"),
-    (5, "normDefaults_wire_admissionX"), (5, "layered_wire_acceptance"),
+    (6, "normDefaults_wire_admissionX"), (6, "layered_wire_acceptance"),
+    (5, "xQueryRow_holds"), (5, "x_rowsHold"), (5, "sdSem_normsShaped"), (5, "readings_wire_sd_verdicts_all"),
+    (5, "readings_wire_sd_verdicts_inconsistent"),
 ])
 def test_the_check_fails_on_a_changed_statement(tmp_path, capsys, section_index, name):
     checker = _checker()
