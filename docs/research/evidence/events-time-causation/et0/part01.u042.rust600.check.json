@@ -1,0 +1,7 @@
+{
+  "status": "CheckerUnavailable",
+  "error": {
+    "code": "CheckerUnavailable",
+    "message": "CheckerUnavailable: Rust checker failed: the Rust checker ended its output (exit -6; memory allocation of 1610612736 bytes failed\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace)"
+  }
+}

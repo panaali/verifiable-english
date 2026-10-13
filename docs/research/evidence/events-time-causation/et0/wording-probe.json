@@ -1,0 +1,79 @@
+[
+ {
+  "wording": "{0} happens on {1}",
+  "accepted": true,
+  "codes": []
+ },
+ {
+  "wording": "{0} is committed on {1}",
+  "accepted": false,
+  "codes": [
+   "BINARY_AUXILIARY"
+  ]
+ },
+ {
+  "wording": "{0} was committed on {1}",
+  "accepted": false,
+  "codes": [
+   "BINARY_AUXILIARY"
+  ]
+ },
+ {
+  "wording": "{0} occurs on {1}",
+  "accepted": true,
+  "codes": []
+ },
+ {
+  "wording": "{0} begins on {1}",
+  "accepted": true,
+  "codes": []
+ },
+ {
+  "wording": "{0} ends on {1}",
+  "accepted": true,
+  "codes": []
+ },
+ {
+  "wording": "{0} is dissolved on {1}",
+  "accepted": false,
+  "codes": [
+   "BINARY_AUXILIARY"
+  ]
+ },
+ {
+  "wording": "{0} is before {1}",
+  "accepted": false,
+  "codes": [
+   "BINARY_AUXILIARY"
+  ]
+ },
+ {
+  "wording": "{0} precedes {1}",
+  "accepted": true,
+  "codes": []
+ },
+ {
+  "wording": "{0} contributed to {1}",
+  "accepted": false,
+  "codes": [
+   "BINARY_CONVERSE",
+   "BINARY_VERB"
+  ]
+ },
+ {
+  "wording": "{0} was necessary for {1}",
+  "accepted": false,
+  "codes": [
+   "BINARY_AUXILIARY",
+   "BINARY_CONVERSE",
+   "LOGICAL_WORD"
+  ]
+ },
+ {
+  "wording": "{0} constitutes a penal offence on {1}",
+  "accepted": false,
+  "codes": [
+   "LOGICAL_WORD"
+  ]
+ }
+]

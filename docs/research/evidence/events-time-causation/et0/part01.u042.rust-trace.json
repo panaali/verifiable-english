@@ -1,0 +1,27 @@
+{
+ "result": {
+  "ok": false,
+  "error": "CheckerUnavailable: CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-p1-events-time-causation/rust/target/release/ve', 'jsonl', '-']' timed out after 4.993138669990003 seconds"
+ },
+ "calls": [
+  {
+   "keys": [
+    "conclusion",
+    "environment",
+    "id",
+    "max_domain_size",
+    "max_evaluations",
+    "max_models",
+    "min_domain_size",
+    "nonempty_domains",
+    "premises"
+   ],
+   "mode": null,
+   "bytes": 27862,
+   "timeout": 5.0,
+   "outcome": "timeout",
+   "seconds": 5.65,
+   "saved": "/tmp/et0-u042.case0.json"
+  }
+ ]
+}

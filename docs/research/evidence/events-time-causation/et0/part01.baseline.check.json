@@ -1,0 +1,351 @@
+{
+  "format": "ve-document@1",
+  "source_id": "21e79137e9b2a73deed618c2ea187ddf0370fe9daa0ba8199f6f575d59677017",
+  "document_id": "e2342daaf8e3b9e1d5e65050faae7eb9c861ddf70ea2a61868afbbb1964039cf",
+  "coverage": {
+    "accounted_bytes": 4724,
+    "bytes_by_kind": {
+      "asserted": 628,
+      "attributed": 801,
+      "meta": 265,
+      "norm": 947,
+      "unformalised": 2083
+    },
+    "bytes_by_status": {
+      "CHECKED": 192,
+      "LABELLED": 265,
+      "OPEN": 1132,
+      "UNFORMALISED": 3135
+    },
+    "coverage_percent": 100,
+    "residual": {
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "open_terms": 52,
+      "unresolved_reading_sets": 1,
+      "separations": 1,
+      "readings_findings": 1,
+      "pending_candidates": 0,
+      "couplings": 0,
+      "gaps": 9,
+      "ungrounded_defaults": 0
+    },
+    "residual_total": 64,
+    "source_bytes": 4724,
+    "unformalised_reasons": {
+      "attribution": 4,
+      "causation": 2,
+      "defaults": 1,
+      "modality_belief": 2,
+      "norms": 5,
+      "other_act_phrase_grammar": 2,
+      "other_evaluative_open_claim": 1,
+      "other_metaphorical_endowment": 1,
+      "time": 3
+    },
+    "norm_defaults": {
+      "gaps": [
+        "arrest_detention_or_exile_permitted",
+        "attack_upon_honour_or_reputation_permitted",
+        "compel_association_membership_permitted",
+        "distinction_by_country_status_permitted",
+        "holding_in_slavery_or_servitude_permitted",
+        "interference_with_private_domains_permitted",
+        "prohibition_of_slavery_and_slave_trade_required",
+        "slavery_or_slave_trade_practice_permitted",
+        "subjection_to_ill_treatment_permitted"
+      ],
+      "findings": []
+    }
+  },
+  "reading_plan": {
+    "route": "enumerate",
+    "choices": [
+      {
+        "rs_u025": 0
+      },
+      {
+        "rs_u025": 1
+      }
+    ]
+  },
+  "norm_defaults": {
+    "environment_id": "057afd2187f25be4cbf328405b86e8d75a35732272a0b32c5f9c819762222605",
+    "filled_environment_id": "ddaecf54f95e13abd7ebedd772477b001a3b58c7f08ad17e72c0bf93e0e817a6",
+    "fill_hash": "66e3b69bb1274adec06a5cd1a0a74c1a6cd64d6d77abaa4fa3ab4d470a13c5a0",
+    "unsaid_predicates": [
+      "unsaid__arrest_detention_or_exile_permitted",
+      "unsaid__attack_upon_honour_or_reputation_permitted",
+      "unsaid__compel_association_membership_permitted",
+      "unsaid__distinction_by_country_status_permitted",
+      "unsaid__holding_in_slavery_or_servitude_permitted",
+      "unsaid__interference_with_private_domains_permitted",
+      "unsaid__prohibition_of_slavery_and_slave_trade_required",
+      "unsaid__slavery_or_slave_trade_practice_permitted",
+      "unsaid__subjection_to_ill_treatment_permitted"
+    ],
+    "background_labels": [],
+    "report": {
+      "arrest_detention_or_exile_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "attack_upon_honour_or_reputation_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "compel_association_membership_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "distinction_by_country_status_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "holding_in_slavery_or_servitude_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "interference_with_private_domains_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "prohibition_of_slavery_and_slave_trade_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "slavery_or_slave_trade_practice_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "subjection_to_ill_treatment_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ]
+    }
+  },
+  "premises": {
+    "status": "model",
+    "route": "superposed",
+    "evidence": "model",
+    "choice": [
+      [
+        "rs_u025",
+        0
+      ]
+    ],
+    "model": {
+      "complete": true,
+      "domains": {
+        "actor": [],
+        "attack": [],
+        "bearer": [],
+        "community": [],
+        "distinction": [],
+        "holding": [],
+        "interference": [],
+        "intrusion": [],
+        "measure": [],
+        "person": [],
+        "practice": [],
+        "prosecution": [],
+        "subjection": [],
+        "ve__reading": [
+          "e0"
+        ]
+      },
+      "constants": {
+        "ve__here": "e0"
+      },
+      "relations": {
+        "arises_from_acts_contrary_to_un": [],
+        "arises_from_non_political_crime": [],
+        "asylum_right_covers_case": [],
+        "based_on_international_status": [],
+        "based_on_jurisdictional_status": [],
+        "based_on_political_status": [],
+        "concerns_correspondence": [],
+        "concerns_correspondence_u046": [],
+        "concerns_family": [],
+        "concerns_family_u046": [],
+        "concerns_home": [],
+        "concerns_home_u046": [],
+        "concerns_honour": [],
+        "concerns_privacy": [],
+        "concerns_privacy_u046": [],
+        "concerns_reputation": [],
+        "declaration_implies_destructive_right": [],
+        "full_development_possible_in": [],
+        "has_the_right_to_an_effective_remedy": [],
+        "has_the_right_to_liberty": [],
+        "has_the_right_to_life": [],
+        "has_the_right_to_protection_of_the_law_against": [],
+        "has_the_right_to_recognition_as_a_person": [],
+        "has_the_right_to_security_of_person": [],
+        "is_arbitrary": [],
+        "is_arbitrary_u045a": [],
+        "is_arbitrary_u046": [],
+        "is_arrest": [],
+        "is_attack_upon_honour": [],
+        "is_attack_upon_reputation": [],
+        "is_cruel": [],
+        "is_degrading": [],
+        "is_detention": [],
+        "is_entitled_to_equal_protection_of_the_law": [],
+        "is_entitled_to_protection_against_discrimination": [],
+        "is_entitled_to_protection_against_incitement": [],
+        "is_exile": [],
+        "is_inhuman": [],
+        "is_punishment": [],
+        "is_servitude": [],
+        "is_slave_trade": [],
+        "is_slavery": [],
+        "is_slavery_u025": [],
+        "is_torture": [],
+        "is_treatment": [],
+        "owes_duties_to": [],
+        "unsaid__arrest_detention_or_exile_permitted": [],
+        "unsaid__attack_upon_honour_or_reputation_permitted": [],
+        "unsaid__compel_association_membership_permitted": [],
+        "unsaid__distinction_by_country_status_permitted": [],
+        "unsaid__holding_in_slavery_or_servitude_permitted": [],
+        "unsaid__interference_with_private_domains_permitted": [],
+        "unsaid__prohibition_of_slavery_and_slave_trade_required": [],
+        "unsaid__slavery_or_slave_trade_practice_permitted": [],
+        "unsaid__subjection_to_ill_treatment_permitted": [],
+        "ve__bit__1__0": []
+      }
+    },
+    "gaps": [],
+    "candidates": [
+      {
+        "set": "rs_u025",
+        "index": 0,
+        "status": "model",
+        "choice": [
+          [
+            "rs_u025",
+            0
+          ]
+        ]
+      },
+      {
+        "set": "rs_u025",
+        "index": 1,
+        "status": "model",
+        "choice": [
+          [
+            "rs_u025",
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  "readings": {
+    "checked_by": {
+      "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+      "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+      "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+    },
+    "sets": [
+      {
+        "set": "rs_u025",
+        "version": 3,
+        "unit": "u025",
+        "candidates": [
+          {
+            "id": "required_prohibited",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "practice_prohibited",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "required_prohibited",
+              "practice_prohibited"
+            ],
+            "situation": "6a6b647f2f32a8f07102060ab0392e14ba25aebddc505f9cce7558368b911c92",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: actor is an actor; attack is an attack; b is a bearer; c is a community; d is a distinction; h is a holding; interference is an interference; intrusion is an intrusion; m is a measure; person is a person; practice is a practice; prosecution is a prosecution; s is a subjection; practice is classified as \"is_slave_trade\". Here the text does not say whether m may take place; this situation answers 'no'. Here the text does not say whether attack may be launched; this situation answers 'no'. Here the text does not say whether actor may compel person to belong to an association; this situation answers 'no'. Here the text does not say whether d may be made; this situation answers 'no'. Here the text does not say whether h may take place; this situation answers 'no'. Here the text does not say whether interference may be committed; this situation answers 'no'. Here the text does not say whether practice must be prohibited; this situation answers 'no'. Here the text does not say whether practice may be carried out; this situation answers 'no'. Here the text does not say whether s may be inflicted; this situation answers 'no'. Under *Every practice must be prohibited, if either that practice is classified as \"is_slavery_u025\" or that practice is classified as \"is_slave_trade\", or both*, practice still must. Under *Every practice must not be carried out, if either that practice is classified as \"is_slavery_u025\" or that practice is classified as \"is_slave_trade\", or both*, practice is not required to."
+          }
+        ],
+        "findings": [
+          "SeparatedByActOnly: rs_u025: 0, 1"
+        ],
+        "not_certified": []
+      }
+    ],
+    "separations": {
+      "outcome": 1,
+      "selects": 0,
+      "holds": 0
+    },
+    "findings": {
+      "SeparatedByDecisionOnly": 0,
+      "SeparatedByActOnly": 1
+    },
+    "pending_candidates": 0,
+    "couplings": 0,
+    "route": "superposed",
+    "choice_count": 2,
+    "choices_checked": 2,
+    "narrowings_stale": [],
+    "reading_premises": [],
+    "not_superposable": null,
+    "sizes": {
+      "limits": {
+        "nodes": 10000,
+        "predicates": 256,
+        "sorts": 32
+      },
+      "nodes": 96,
+      "predicates": 65,
+      "sorts": 14
+    },
+    "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+    "conflict": {
+      "status": "CONFLICT-FREE",
+      "evidence": "certificates",
+      "assumed": [],
+      "conditional_on": [],
+      "reading_premises_used": [],
+      "status_text": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+      "choices": [
+        {
+          "choice": [
+            [
+              "rs_u025",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "rs_u025",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        }
+      ]
+    },
+    "dead_readings": [],
+    "english": [
+      "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+      "This does not depend on how sentence 30 is read.",
+      "Read sentence 30 as *Every practice must be prohibited, if either that practice is classified as \"is_slavery_u025\" or that practice is classified as \"is_slave_trade\", or both*: the sentences of this document can all be true together, as here: nothing exists."
+    ]
+  }
+}

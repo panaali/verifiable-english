@@ -1,0 +1,13 @@
+{
+ "note": "ET-0 proposal only; the pinned ledger manage-agents/pilots/udhr/run-20261012T1800Z/units.json is not edited. Nothing is claimed: the part check did not complete on main (CheckerUnavailable) and no audit has run.",
+ "baseline_part_sha256": "see docs/research/events-time-causation-phase1.md 2.1",
+ "rows": [
+  {"id": "u042", "span": [4151, 4351], "bytes": 200, "status_in_run": "UNFORMALISED", "status_on_load": "CHECKED",
+   "part_document": "part01.u042.ve.md", "part_check_on_main": "CheckerUnavailable (Rust countermodel-search, 17 sorts)",
+   "standalone_check_on_main": "CHECKED 200 B, premises model", "audit": "DEFERRED (model call)", "claimed": false},
+  {"id": "u043", "span": [4351, 4469], "bytes": 118, "status_in_run": "UNFORMALISED", "status_on_load": "OPEN",
+   "open_terms": ["heavier"], "part_document": "part01.u042u043.ve.md",
+   "part_check_on_main": "CheckerUnavailable (Rust countermodel-search, 20 sorts)",
+   "standalone_check_on_main": "OPEN 118 B, premises model", "audit": "DEFERRED (model call)", "claimed": false}
+ ]
+}

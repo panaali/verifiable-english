@@ -1,0 +1,7 @@
+{
+  "status": "CheckerUnavailable",
+  "error": {
+    "code": "CheckerUnavailable",
+    "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-p1-events-time-causation/rust/target/release/ve', 'jsonl', '-']' timed out after 4.998951129964553 seconds"
+  }
+}

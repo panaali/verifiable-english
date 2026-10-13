@@ -1,0 +1,57 @@
+{
+  "format": "ve-document@1",
+  "source_id": "4a8278f2ac1b7373c8b8d2c4c028b89b0df50f3f977bf1d76b1457c734f92701",
+  "document_id": "c1c9700d8dca4a203640869a115cae9840a83523bfe5dc4337772fbd97191465",
+  "coverage": {
+    "accounted_bytes": 200,
+    "bytes_by_kind": {
+      "norm": 200
+    },
+    "bytes_by_status": {
+      "CHECKED": 200
+    },
+    "coverage_percent": 100,
+    "residual": {
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "open_terms": 0,
+      "unresolved_reading_sets": 0,
+      "gaps": 1,
+      "ungrounded_defaults": 0
+    },
+    "residual_total": 1,
+    "source_bytes": 200,
+    "unformalised_reasons": {},
+    "norm_defaults": {
+      "gaps": [
+        "finding_of_guilt_permitted"
+      ],
+      "findings": []
+    }
+  },
+  "reading_plan": {
+    "route": "single",
+    "choices": [
+      {}
+    ]
+  },
+  "norm_defaults": {
+    "environment_id": "34887a912e3a2c7319469d8d8e38413c7ec931771fc9eba520a0aba396d92541",
+    "filled_environment_id": "028b33ba10f2369c22517e7f144d8ab97ab28467f25614bce53650653abd99d9",
+    "fill_hash": "539d006206a586d2fc054447957102b7238289ff8af0f2a0352474a35aeaee06",
+    "unsaid_predicates": [
+      "unsaid__finding_of_guilt_permitted"
+    ],
+    "background_labels": [],
+    "report": {
+      "finding_of_guilt_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ]
+    }
+  },
+  "premises": {
+    "status": "model",
+    "model_id": "b1e915ceefcd9699fb5f172d66fe60dcf3978f86dc50b3023fe74b32971aa32c"
+  }
+}
