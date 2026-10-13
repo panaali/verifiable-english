@@ -263,6 +263,7 @@ module VE.Norms.Subst
 module VE.Norms.Tree
 module VE.Norms.Valid
 module VE.Norms.Wire
+module VE.Norms.WitnessKind
 module VE.Order.Checks
 module VE.Order.Consequence
 module VE.Order.Conservativity
@@ -327,6 +328,7 @@ module VE.Readings.SoftFacts
 module VE.Readings.Strings
 module VE.Readings.SupAll
 module VE.Readings.SupConflict
+module VE.Readings.SupDependencies
 module VE.Readings.SupEnv
 module VE.Readings.SupExtra
 module VE.Readings.SupExtraExamples
@@ -335,6 +337,9 @@ module VE.Readings.SupFillWire
 module VE.Readings.SupFree
 module VE.Readings.SupRun
 module VE.Readings.SupSlot
+module VE.Readings.SupVerdictsExamples
+module VE.Readings.SupVerdictsSound
+module VE.Readings.SupVerdictsWire
 module VE.Readings.SupWire
 module VE.Readings.SupWireSound
 module VE.Readings.SupWitness
@@ -797,6 +802,9 @@ VE.Readings.Transfers@VE.Readings.SupExtra
 VE.Readings.Twin@VE.Readings.Force
 VE.Readings.TwinDocs@VE.Readings.Force
 VE.Readings.Wire.Distinct@VE.Readings.Companions
+VE.Readings.Wire.SupCounter@VE.Readings.SupVerdictsSound
+VE.Readings.Wire.SupEntails@VE.Readings.SupVerdictsSound
+VE.Readings.Wire.SupRowHolds@VE.Readings.SupVerdictsSound
 VE.Readings.Wire.TermsDistinct@VE.Readings.Companions
 VE.Readings.bitOn@VE.Readings.Superpose
 VE.Readings.tablesOf@VE.Readings.Separate

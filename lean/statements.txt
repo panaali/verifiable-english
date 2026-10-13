@@ -18409,6 +18409,114 @@ theorem VE.Readings.Wire.readings_wire_separate_sound
               r.σ.value
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Readings.Achieves@VE.Readings.Separate VE.Readings.Situation.base@VE.Readings.Separate VE.Readings.Situation.fixed@VE.Readings.Separate VE.Readings.Situation.probe@VE.Readings.Separate VE.Readings.Situation.value@VE.Readings.Separate VE.Readings.Wire.SeparateReplay.D@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.other@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.set@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.witness@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.σ@VE.Readings.Wire VE.Readings.Wire.SeparateReplay@VE.Readings.Wire VE.Readings.Wire.replaySeparate@VE.Readings.Wire VE.Readings.separates@VE.Readings.Separate VE.Readings.tablesOf@VE.Readings.Separate VE.Structure.Carrier@VE.Semantics
   -- expr 2305353467
+theorem VE.Readings.Wire.readings_wire_sup_counter_row
+  ∀ (j : Lean.Json) (r : VE.Readings.Wire.ModelReplay),
+    VE.Readings.Wire.replayModel j = Except.ok r →
+      VE.Readings.supModelCheck r.D r.assumed r.Γ r.M = Bool.true →
+        VE.Formula.eval r.M [] (VE.SoftNorms.circ (VE.Rights.correlate (VE.Readings.sup r.D).fst) r.φ) = Bool.false →
+          ∃ c,
+            VE.Readings.Compatible r.D c ∧
+              (∀ (x : String × Nat), x ∈ r.assumed → x ∈ c) ∧
+                VE.Readings.Encodes r.D c r.M.asStructure ∧ VE.Readings.Wire.SupCounter r.D r.Γ r.φ c
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Wire.ModelReplay.M@VE.Readings.SupWire VE.Readings.Wire.ModelReplay.assumed@VE.Readings.SupWire VE.Readings.Wire.ModelReplay.toSupReplay@VE.Readings.SupWire VE.Readings.Wire.ModelReplay.Γ@VE.Readings.SupWire VE.Readings.Wire.ModelReplay.φ@VE.Readings.SupWire VE.Readings.Wire.ModelReplay@VE.Readings.SupWire VE.Readings.Wire.SupCounter@VE.Readings.SupVerdictsSound VE.Readings.Wire.SupReplay.D@VE.Readings.SupWire VE.Readings.Wire.replayModel@VE.Readings.SupWire VE.Readings.sup@VE.Readings.Choice VE.Readings.supModelCheck@VE.Readings.Route VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.circ@VE.SoftNorms.Semantics
+  -- expr 2937639330
+theorem VE.Readings.Wire.readings_wire_sup_dead
+  ∀ (D : VE.Readings.Doc),
+    VE.Readings.supReady D = Bool.true →
+      ∀ (s : String) (i : Nat) (cert : VE.Tableau.Certificate),
+        VE.Readings.deadCheck D s i cert = Bool.true →
+          ∀ (c : VE.Readings.Choice), VE.Readings.Compatible D c → ¬(s, i) ∈ c
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.deadCheck@VE.Readings.Superpose VE.Readings.supReady@VE.Readings.Choice VE.Tableau.Certificate@VE.Tableau
+  -- expr 846305781
+theorem VE.Readings.Wire.readings_wire_sup_nd_all
+  ∀ (j : Lean.Json) (r : VE.Readings.Wire.CertificateReplayND),
+    VE.Readings.Wire.replayCertificateNDJ j = Except.ok r →
+      VE.Compose.slotConflictFreeCheck (VE.Rights.correlate (VE.Readings.sup (VE.Readings.fillDoc r.f.r.N)).fst)
+            (VE.Readings.slotUnder (VE.Readings.fillDoc r.f.r.N) r.assumed ++ VE.Readings.Wire.ndQ r.f.r.N)
+            r.conflictCerts =
+          Bool.true →
+        VE.Readings.supCertificateCheckExtra (VE.Readings.fillDoc r.f.r.N) r.assumed (VE.Readings.Wire.ndQ r.f.r.N) r.Γ
+              r.φ r.cert =
+            Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible r.f.r.N.D c →
+              (∀ (x : String × Nat), x ∈ r.assumed → x ∈ c) →
+                VE.NormDefaults.ConflictFreeU (VE.Readings.choiceU r.f.r.N c) ∧
+                  VE.NormDefaults.EntailsU (VE.Readings.choiceU r.f.r.N c)
+                    ((VE.Readings.choiceDoc r.f.r.N.D c).snd ++ r.Γ) r.φ
+  -- uses VE.Compose.slotConflictFreeCheck@VE.Compose.Slot VE.Formula@VE.Syntax VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises VE.NormDefaults.EntailsU@VE.NormDefaults.Wire VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedNDFull.r@VE.Readings.UnspecifiedWire VE.Readings.Wire.CertificateReplayND.assumed@VE.Readings.SupFillWire VE.Readings.Wire.CertificateReplayND.cert@VE.Readings.SupFillWire VE.Readings.Wire.CertificateReplayND.conflictCerts@VE.Readings.SupFillWire VE.Readings.Wire.CertificateReplayND.toSupReplayND@VE.Readings.SupFillWire VE.Readings.Wire.CertificateReplayND.Γ@VE.Readings.SupFillWire VE.Readings.Wire.CertificateReplayND.φ@VE.Readings.SupFillWire VE.Readings.Wire.CertificateReplayND@VE.Readings.SupFillWire VE.Readings.Wire.SupReplayND.f@VE.Readings.SupFillWire VE.Readings.Wire.ndQ@VE.Readings.UnspecifiedWire VE.Readings.Wire.replayCertificateNDJ@VE.Readings.SupFillWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.fillDoc@VE.Readings.Unspecified VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supCertificateCheckExtra@VE.Readings.SupExtra VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate
+  -- expr 3816837811
+theorem VE.Readings.Wire.readings_wire_sup_nd_counter
+  ∀ (j : Lean.Json) (r : VE.Readings.Wire.ModelReplayND),
+    VE.Readings.Wire.replayModelNDJ j = Except.ok r →
+      VE.Readings.supModelCheckExtra (VE.Readings.fillDoc r.f.r.N) r.assumed (VE.Readings.Wire.ndQ r.f.r.N) r.Γ r.M =
+          Bool.true →
+        VE.Formula.eval r.M []
+              (VE.SoftNorms.circ (VE.Rights.correlate (VE.Readings.sup (VE.Readings.fillDoc r.f.r.N)).fst) r.φ) =
+            Bool.false →
+          ∃ c,
+            VE.Readings.Compatible r.f.r.N.D c ∧
+              (∀ (x : String × Nat), x ∈ r.assumed → x ∈ c) ∧
+                VE.Readings.Encodes (VE.Readings.fillDoc r.f.r.N) c r.M.asStructure ∧
+                  VE.NormDefaults.BaseAdmissibleU (VE.Readings.choiceU r.f.r.N c)
+                      (VE.Readings.pull (VE.Readings.fillDoc r.f.r.N) c r.M.asStructure) ∧
+                    VE.Norms.Sat
+                        (VE.SoftNorms.canon (VE.NormDefaults.fill (VE.Readings.choiceU r.f.r.N c))
+                          (VE.Readings.pull (VE.Readings.fillDoc r.f.r.N) c r.M.asStructure))
+                        ((VE.Readings.choiceDoc r.f.r.N.D c).snd ++ r.Γ) ∧
+                      ¬VE.Formula.denote
+                          (VE.SoftNorms.canon (VE.NormDefaults.fill (VE.Readings.choiceU r.f.r.N c))
+                            (VE.Readings.pull (VE.Readings.fillDoc r.f.r.N) c r.M.asStructure))
+                          [] r.φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedNDFull.r@VE.Readings.UnspecifiedWire VE.Readings.Wire.ModelReplayND.M@VE.Readings.SupFillWire VE.Readings.Wire.ModelReplayND.assumed@VE.Readings.SupFillWire VE.Readings.Wire.ModelReplayND.toSupReplayND@VE.Readings.SupFillWire VE.Readings.Wire.ModelReplayND.Γ@VE.Readings.SupFillWire VE.Readings.Wire.ModelReplayND.φ@VE.Readings.SupFillWire VE.Readings.Wire.ModelReplayND@VE.Readings.SupFillWire VE.Readings.Wire.SupReplayND.f@VE.Readings.SupFillWire VE.Readings.Wire.ndQ@VE.Readings.UnspecifiedWire VE.Readings.Wire.replayModelNDJ@VE.Readings.SupFillWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.fillDoc@VE.Readings.Unspecified VE.Readings.pull@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supModelCheckExtra@VE.Readings.SupExtra VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics
+  -- expr 2806754877
+theorem VE.Readings.Wire.readings_wire_sup_premises_model
+  ∀ (j : Lean.Json) (r : VE.Readings.Wire.ModelReplay),
+    VE.Readings.Wire.replayModel j = Except.ok r →
+      VE.Readings.supModelCheck r.D r.assumed r.Γ r.M = Bool.true →
+        VE.Formula.eval r.M [] (VE.SoftNorms.circ (VE.Rights.correlate (VE.Readings.sup r.D).fst) r.φ) = Bool.false →
+          ∃ c,
+            VE.Readings.Compatible r.D c ∧
+              (∀ (x : String × Nat), x ∈ r.assumed → x ∈ c) ∧
+                ∃ B,
+                  VE.Rights.BaseAdmissibleR (VE.Readings.choiceDoc r.D c).fst B ∧
+                    VE.Norms.Sat (VE.Readings.expand (VE.Readings.choiceDoc r.D c).fst B)
+                      ((VE.Readings.choiceDoc r.D c).snd ++ r.Γ)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Wire.ModelReplay.M@VE.Readings.SupWire VE.Readings.Wire.ModelReplay.assumed@VE.Readings.SupWire VE.Readings.Wire.ModelReplay.toSupReplay@VE.Readings.SupWire VE.Readings.Wire.ModelReplay.Γ@VE.Readings.SupWire VE.Readings.Wire.ModelReplay.φ@VE.Readings.SupWire VE.Readings.Wire.ModelReplay@VE.Readings.SupWire VE.Readings.Wire.SupReplay.D@VE.Readings.SupWire VE.Readings.Wire.replayModel@VE.Readings.SupWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.expand@VE.Readings.Separate VE.Readings.sup@VE.Readings.Choice VE.Readings.supModelCheck@VE.Readings.Route VE.Rights.BaseAdmissibleR@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.Structure@VE.Semantics
+  -- expr 2241254771
+theorem VE.Readings.Wire.readings_wire_sup_verdicts_all
+  ∀ (j : Lean.Json) (r : VE.Readings.Wire.CertificateReplay),
+    VE.Readings.Wire.replayCertificate j = Except.ok r →
+      VE.Compose.slotConflictFreeCheck (VE.Rights.correlate (VE.Readings.sup r.D).fst)
+            (VE.Readings.slotUnder r.D r.assumed) r.conflictCerts =
+          Bool.true →
+        VE.Readings.supCertificateCheck r.D r.assumed r.Γ r.φ r.cert = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible r.D c →
+              (∀ (x : String × Nat), x ∈ r.assumed → x ∈ c) → VE.Readings.Wire.SupEntails r.D r.Γ r.φ c
+  -- uses VE.Compose.slotConflictFreeCheck@VE.Compose.Slot VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Wire.CertificateReplay.assumed@VE.Readings.SupWire VE.Readings.Wire.CertificateReplay.cert@VE.Readings.SupWire VE.Readings.Wire.CertificateReplay.conflictCerts@VE.Readings.SupWire VE.Readings.Wire.CertificateReplay.toSupReplay@VE.Readings.SupWire VE.Readings.Wire.CertificateReplay.Γ@VE.Readings.SupWire VE.Readings.Wire.CertificateReplay.φ@VE.Readings.SupWire VE.Readings.Wire.CertificateReplay@VE.Readings.SupWire VE.Readings.Wire.SupEntails@VE.Readings.SupVerdictsSound VE.Readings.Wire.SupReplay.D@VE.Readings.SupWire VE.Readings.Wire.replayCertificate@VE.Readings.SupWire VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supCertificateCheck@VE.Readings.Route VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate
+  -- expr 2251329049
+theorem VE.Readings.Wire.readings_wire_sup_verdicts_none
+  ∀ (D : VE.Readings.Doc) (A : VE.Readings.Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (VE.Readings.Choice × VE.Readings.ChoiceResult)),
+    (∀ (c : VE.Readings.Choice),
+        (VE.Readings.Compatible D c ∧ ∀ (x : String × Nat), x ∈ A → x ∈ c) ↔ c ∈ List.map (fun x => x.fst) rs) →
+      (∀ (x : VE.Readings.Choice × VE.Readings.ChoiceResult), x ∈ rs → VE.Readings.Wire.SupRowHolds D Γ φ x.fst x.snd) →
+        VE.Readings.foldEntailment cs rs = VE.Readings.ReadingVerdict.none →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible D c → (∀ (x : String × Nat), x ∈ A → x ∈ c) → VE.Readings.Wire.SupCounter D Γ φ c
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingVerdict.none@VE.Readings.Verdicts VE.Readings.ReadingVerdict@VE.Readings.Verdicts VE.Readings.Wire.SupCounter@VE.Readings.SupVerdictsSound VE.Readings.Wire.SupRowHolds@VE.Readings.SupVerdictsSound VE.Readings.foldEntailment@VE.Readings.Verdicts
+  -- expr 500359570
+theorem VE.Readings.Wire.readings_wire_sup_verdicts_some
+  ∀ (D : VE.Readings.Doc) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (VE.Readings.Choice × VE.Readings.ChoiceResult)),
+    (∀ (x : VE.Readings.Choice × VE.Readings.ChoiceResult),
+        x ∈ rs → VE.Readings.Compatible D x.fst ∧ VE.Readings.Wire.SupRowHolds D Γ φ x.fst x.snd) →
+      VE.Readings.foldEntailment cs rs = VE.Readings.ReadingVerdict.some →
+        (∃ c, VE.Readings.Compatible D c ∧ VE.Readings.Wire.SupEntails D Γ φ c) ∧
+          ∃ c, VE.Readings.Compatible D c ∧ VE.Readings.Wire.SupCounter D Γ φ c
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingVerdict.some@VE.Readings.Verdicts VE.Readings.ReadingVerdict@VE.Readings.Verdicts VE.Readings.Wire.SupCounter@VE.Readings.SupVerdictsSound VE.Readings.Wire.SupEntails@VE.Readings.SupVerdictsSound VE.Readings.Wire.SupRowHolds@VE.Readings.SupVerdictsSound VE.Readings.foldEntailment@VE.Readings.Verdicts
+  -- expr 2763138907
 theorem VE.Readings.Wire.replayPair_D
   ∀ {a : VE.Readings.Wire.Admitted} {s sid other : String} {x : VE.Readings.Wire.SeparateReplay}
     {sj : VE.Readings.Wire.SituationJ}, VE.Readings.Wire.replayPair a s sid other = Except.ok (x, sj) → x.D = a.D
@@ -22059,6 +22167,11 @@ theorem VE.Readings.get_prefix
     VE.Readings.AsciiL A → ∀ (c : Char) (rest : List Char), s.data = A ++ c :: rest → s.get { byteIdx := A.length } = c
   -- uses VE.Readings.AsciiL@VE.Readings.Strings
   -- expr 693809251
+theorem VE.Readings.greedy_replay_sound
+  ∀ (check : List VE.Formula → Bool) (L : VE.Compose.Labelled),
+    check L.formulas = Bool.true → check (VE.Readings.blank L (VE.Readings.usedLabels check [] L [])) = Bool.true
+  -- uses VE.Compose.Labelled.formulas@VE.Compose.Slot VE.Compose.Labelled@VE.Compose.Slot VE.Formula@VE.Syntax VE.Readings.blank@VE.Readings.Verdicts VE.Readings.usedLabels@VE.Readings.Verdicts
+  -- expr 3560674991
 theorem VE.Readings.grows_bar
   ∀ (X : VE.Rights.RightsDoc) (b : VE.Rights.Bar),
     VE.Readings.Grows X
@@ -25253,6 +25366,17 @@ theorem VE.Readings.supCertificateCheckExtra_nil
     VE.Readings.supCertificateCheckExtra D A [] Γ φ cert = VE.Readings.supCertificateCheck D A Γ φ cert
   -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.supCertificateCheck@VE.Readings.Route VE.Readings.supCertificateCheckExtra@VE.Readings.SupExtra VE.Tableau.Certificate@VE.Tableau
   -- expr 260027920
+theorem VE.Readings.supDependencies_replay
+  ∀ (D : VE.Readings.Doc) (A : VE.Readings.Choice) (Q : VE.Compose.Labelled)
+    (certs : List (Option VE.Tableau.Certificate))
+    (proof : Option (List VE.Formula × VE.Formula × VE.Tableau.Certificate)),
+    VE.Readings.supReplayMiddle D A (VE.Readings.supProofs D certs proof) (VE.Readings.slotLabelled D ++ Q).formulas =
+        Bool.true →
+      VE.Readings.supReplayMiddle D A (VE.Readings.supProofs D certs proof)
+          (VE.Readings.blank (VE.Readings.slotLabelled D ++ Q) (VE.Readings.supDependencies D A Q certs proof)) =
+        Bool.true
+  -- uses VE.Compose.Labelled.formulas@VE.Compose.Slot VE.Compose.Labelled@VE.Compose.Slot VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.blank@VE.Readings.Verdicts VE.Readings.slotLabelled@VE.Readings.Choice VE.Readings.supDependencies@VE.Readings.SupDependencies VE.Readings.supProofs@VE.Readings.SupDependencies VE.Readings.supReplayMiddle@VE.Readings.SupDependencies VE.Tableau.Certificate@VE.Tableau
+  -- expr 2460397750
 theorem VE.Readings.supFrame_fillDoc
   ∀ (N : VE.Readings.NDoc),
     N.D.frame.soft.T.nodes = [] →
