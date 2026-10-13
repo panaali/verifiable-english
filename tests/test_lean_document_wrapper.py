@@ -503,8 +503,11 @@ def test_a_malformed_later_reading_is_a_diagnostic_not_a_key_error(service):
              "admission": {"who": "alice", "why": "w", "distinguishing_models": {"q": "m"}}}
     sets = [{"id": "s", "unit": "a", "version": 1, "status": "open", "readings": [first, {}]}]
     python, answer = both(service, document("AB", [unit("a", [0, 2])], environment_json=env, reading_sets=sets))
-    assert python == answer == {"outcome": "error", "code": "InvalidInput",
-                                "text": "each other reading needs a distinguishing model id"}
+    expected = {"outcome": "error", "code": "InvalidInput",
+                "text": "each other reading needs a distinguishing model id"}
+    assert answer == expected
+    # The Python comparator also records which nested decoder raised the diagnostic.
+    assert python == {**expected, "owner": "readings"}
 
 
 # ---------------------------------------------------------------- budgets and deadlines
