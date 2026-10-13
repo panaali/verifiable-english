@@ -1,0 +1,20 @@
+{
+ "mutants": [
+  {
+   "id": "S1",
+   "file": "tests/test_relay_mutation_gate.py",
+   "claim": "EXPECTED TO SURVIVE: the envelope validator left untouched; its x-length on results repeats the count x-rows checks on the same array",
+   "source_sha256": "64802abf80fd114b19420ab2e8bc0b83c74861857d09a635f753e3d692a95be9",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [],
+   "killed": false,
+   "mutant_exit": 0,
+   "seconds": 36.0,
+   "output_tail": ".                                                                        [100%]\n1 passed in 17.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ndbn_rie)\n",
+   "problem": "the mutant survives"
+  }
+ ]
+}
