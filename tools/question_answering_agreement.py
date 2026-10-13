@@ -74,11 +74,12 @@ def save_agreement(data: dict) -> None:
 def classify(leads: list[str], older: str | None, older_reason: str | None = None,
              ask_reasons: list[str | None] | None = None) -> str:
     """Compare evidence without calling a merely compatible verdict identical."""
+    from ve.ask import LEADS  # The relay schema is the owner of the lead vocabulary.
     if older is None:
         return "older route gave no verdict"
-    if older not in {"ALL", "NONE", "UNKNOWN"}:
+    if older not in {"ALL", "SOME", "NONE", "UNKNOWN"}:
         return f"requires review: unrecognized older verdict {older}"
-    if not leads or any(lead not in {"yes", "no", "unknown"} for lead in leads):
+    if not leads or any(lead not in LEADS for lead in leads):
         return "requires review: missing or unrecognized ask lead"
     all_yes = bool(leads) and all(lead == "yes" for lead in leads)
     if all_yes and older != "ALL":
@@ -294,7 +295,11 @@ def corpus(paths, write=False, workers=1, checkpoint: Path | None = None):
         for line in checkpoint.read_text(encoding="utf-8").splitlines():
             saved = json.loads(line)
             if saved["key"] in seen:
-                done[saved["key"]] = saved["row"]
+                row = saved["row"]
+                if "leads" in row:
+                    row["status"] = classify(row["leads"], row["older"], row.get("older_reason"),
+                                             row.get("ask_reasons"))
+                done[saved["key"]] = row
     pending = [(i, key, record) for i, (key, record) in enumerate(records) if key not in done]
     with tempfile.TemporaryDirectory(prefix="ve-q2-corpus-") as scratch, \
             multiprocessing.get_context("fork").Pool(workers) as pool, \
