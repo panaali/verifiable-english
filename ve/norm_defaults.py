@@ -25,10 +25,6 @@ def fill_name(predicate):
     return "unsaid--" + predicate.replace("_", "-")
 
 
-def fill_description(predicate):
-    return f"the text does not say whether {predicate}"
-
-
 def _placeholder(data):
     """Build the accepted container vocabulary; Lean checks the resulting id."""
     data = copy.deepcopy(data)
@@ -95,7 +91,7 @@ class UnspecifiedDocument:
         for item in row["unsaid"]:
             predicate = item["name"].removeprefix("unsaid__")
             raw["vocabulary"]["predicates"][item["name"]] = {
-                "arguments": item["sorts"], "description": fill_description(predicate)}
+                "arguments": item["sorts"], "description": item["description"]}
         try:
             filled_env = Environment(raw)
             self.author = NormDocument(self.env, units)
