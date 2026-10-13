@@ -1,0 +1,524 @@
+[
+ {
+  "id": "C1",
+  "check": "status totals",
+  "expected": {
+   "CHECKED": {
+    "units": 2,
+    "bytes": 73
+   },
+   "LABELLED": {
+    "units": 39,
+    "bytes": 349
+   },
+   "OPEN": {
+    "units": 14,
+    "bytes": 2246
+   },
+   "READINGS": {
+    "units": 3,
+    "bytes": 283
+   },
+   "UNFORMALISED": {
+    "units": 1074,
+    "bytes": 181942
+   }
+  },
+  "measured": {
+   "CHECKED": {
+    "units": 2,
+    "bytes": 73
+   },
+   "LABELLED": {
+    "units": 39,
+    "bytes": 349
+   },
+   "OPEN": {
+    "units": 14,
+    "bytes": 2246
+   },
+   "READINGS": {
+    "units": 3,
+    "bytes": 283
+   },
+   "UNFORMALISED": {
+    "units": 1074,
+    "bytes": 181942
+   }
+  },
+  "result": "PASS"
+ },
+ {
+  "id": "C2",
+  "check": "primary other:discourse",
+  "expected": {
+   "units": 81,
+   "bytes": 8222
+  },
+  "measured": {
+   "units": 81,
+   "bytes": 8222
+  },
+  "result": "PASS"
+ },
+ {
+  "id": "C3",
+  "check": "other:* co-blockers; other:scope anywhere",
+  "expected": [
+   0,
+   0
+  ],
+  "measured": [
+   0,
+   0
+  ],
+  "result": "PASS"
+ },
+ {
+  "id": "C4",
+  "check": "colon lead-ins (all; discourse-tagged; others)",
+  "expected": [
+   {
+    "units": 22,
+    "bytes": 1352
+   },
+   {
+    "units": 9,
+    "bytes": 506
+   },
+   {
+    "units": 13,
+    "bytes": 846
+   }
+  ],
+  "measured": [
+   {
+    "units": 23,
+    "bytes": 1600
+   },
+   {
+    "units": 9,
+    "bytes": 506
+   },
+   {
+    "units": 14,
+    "bytes": 1094
+   }
+  ],
+  "result": "FAIL"
+ },
+ {
+  "id": "C4-tags",
+  "check": "primary tags of the 13 others (as the research names them)",
+  "expected": {
+   "norms": 6,
+   "quantities": 3,
+   "defaults": 1,
+   "counting": 1,
+   "causation": 1,
+   "attribution": 1
+  },
+  "measured": {
+   "norms": 6,
+   "defaults": 1,
+   "counting": 1,
+   "causation": 2,
+   "quantities": 3,
+   "attribution": 1
+  },
+  "result": "FAIL"
+ },
+ {
+  "id": "C5",
+  "check": "restrictive connective units",
+  "expected": {
+   "units": 22,
+   "bytes": 4196
+  },
+  "measured": {
+   "units": 22,
+   "bytes": 4196
+  },
+  "result": "PASS"
+ },
+ {
+  "id": "C6",
+  "check": "This/These/Such units",
+  "expected": {
+   "units": 68,
+   "bytes": 10981
+  },
+  "measured": {
+   "units": 68,
+   "bytes": 10981
+  },
+  "result": "PASS"
+ },
+ {
+  "id": "C7",
+  "check": "bullet units",
+  "expected": 141,
+  "measured": 182,
+  "result": "FAIL"
+ },
+ {
+  "id": "C8",
+  "check": "split heading titles (all; discourse-tagged)",
+  "expected": [
+   {
+    "units": 29,
+    "bytes": 999
+   },
+   {
+    "units": 14,
+    "bytes": 437
+   }
+  ],
+  "measured": [
+   {
+    "units": 29,
+    "bytes": 999
+   },
+   {
+    "units": 14,
+    "bytes": 437
+   }
+  ],
+  "result": "PASS"
+ },
+ {
+  "id": "C9",
+  "check": "named spans and statuses",
+  "expected": {
+   "u0164.s02": [
+    22,
+    "UNFORMALISED"
+   ],
+   "u0164.s01": [
+    68,
+    "UNFORMALISED"
+   ],
+   "u0173.s01": [
+    263,
+    "UNFORMALISED"
+   ],
+   "u0165.s01-s07": [
+    874,
+    [
+     "OPEN"
+    ]
+   ],
+   "u0170.s01": 108,
+   "u0046.s02": 41,
+   "u0179.s03": 63,
+   "u0047.s05": 95,
+   "u0047.s06": 209,
+   "u0062.s03": 16,
+   "u0079": 64,
+   "u0080.s01-s06": 1252,
+   "u0072.s02": 84,
+   "u0073.s01": 166,
+   "u0073 block": 2475,
+   "u0138.s02": 41,
+   "u0139.s01": 50
+  },
+  "measured": {
+   "u0164.s02": [
+    22,
+    "UNFORMALISED"
+   ],
+   "u0164.s01": [
+    68,
+    "UNFORMALISED"
+   ],
+   "u0173.s01": [
+    263,
+    "UNFORMALISED"
+   ],
+   "u0165.s01-s07": [
+    874,
+    [
+     "OPEN"
+    ]
+   ],
+   "u0170.s01": 108,
+   "u0046.s02": 41,
+   "u0179.s03": 63,
+   "u0047.s05": 95,
+   "u0047.s06": 209,
+   "u0062.s03": 16,
+   "u0079": 64,
+   "u0080.s01-s06": 1252,
+   "u0072.s02": 84,
+   "u0073.s01": 166,
+   "u0073 block": 2475,
+   "u0138.s02": 41,
+   "u0139.s01": 49
+  },
+  "result": "FAIL"
+ },
+ {
+  "id": "C10",
+  "check": "u0165.s07 end to u0173.s01 start",
+  "expected": 4949,
+  "measured": 4949,
+  "result": "PASS"
+ },
+ {
+  "id": "C11",
+  "check": "spec layout fixtures on the full pinned layout",
+  "expected": {
+   "F1": [
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07"
+   ],
+   "F1'''": {
+    "u0166.s01 item": null,
+    "in run": false
+   },
+   "L1": {
+    "u0164.s02": {
+     "midLine": true,
+     "lead": true
+    },
+    "u0165 items": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "F2": [
+    "u0182.s01",
+    "u0182.s02",
+    "u0182.s04"
+   ],
+   "F2'": [
+    "u0073.s01",
+    "u0073.s05",
+    "u0073.s08"
+   ],
+   "F2''": "NotALeadIn",
+   "F10": [
+    "u0073.s01",
+    "u0073.s02",
+    "u0073.s03",
+    "u0073.s04"
+   ]
+  },
+  "measured": {
+   "F1": [
+    "u0165.s01",
+    "u0165.s02",
+    "u0165.s03",
+    "u0165.s04",
+    "u0165.s05",
+    "u0165.s06",
+    "u0165.s07"
+   ],
+   "F1'''": {
+    "u0166.s01 item": null,
+    "in run": false
+   },
+   "L1": {
+    "u0164.s02": {
+     "midLine": true,
+     "lead": true
+    },
+    "u0165 items": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "F2": [
+    "u0182.s01",
+    "u0182.s02",
+    "u0182.s04"
+   ],
+   "F2'": [
+    "u0073.s01",
+    "u0073.s05",
+    "u0073.s08"
+   ],
+   "F2''": "NotALeadIn",
+   "F10": [
+    "u0073.s01",
+    "u0073.s02",
+    "u0073.s03",
+    "u0073.s04"
+   ]
+  },
+  "result": "PASS"
+ },
+ {
+  "id": "C12",
+  "check": "lead-ins that move now",
+  "expected": [
+   {
+    "unit": "u0164.s02",
+    "bytes": 22,
+    "to": "OPEN"
+   }
+  ],
+  "measured": [
+   {
+    "unit": "u0164.s02",
+    "bytes": 22,
+    "to": "OPEN"
+   }
+  ],
+  "result": "PASS"
+ },
+ {
+  "id": "U1",
+  "check": "status totals",
+  "expected": {
+   "CHECKED": {
+    "units": 18,
+    "bytes": 1019
+   },
+   "LABELLED": {
+    "units": 34,
+    "bytes": 535
+   },
+   "OPEN": {
+    "units": 21,
+    "bytes": 1870
+   },
+   "READINGS": {
+    "units": 11,
+    "bytes": 1368
+   },
+   "UNFORMALISED": {
+    "units": 46,
+    "bytes": 6124
+   }
+  },
+  "measured": {
+   "CHECKED": {
+    "units": 18,
+    "bytes": 1019
+   },
+   "LABELLED": {
+    "units": 34,
+    "bytes": 535
+   },
+   "OPEN": {
+    "units": 21,
+    "bytes": 1870
+   },
+   "READINGS": {
+    "units": 11,
+    "bytes": 1368
+   },
+   "UNFORMALISED": {
+    "units": 46,
+    "bytes": 6124
+   }
+  },
+  "result": "PASS"
+ },
+ {
+  "id": "U2",
+  "check": "primary other:discourse or naming scope",
+  "expected": 0,
+  "measured": 0,
+  "result": "PASS"
+ },
+ {
+  "id": "U3",
+  "check": "named spans",
+  "expected": {
+   "u111": [
+    337,
+    "READINGS"
+   ],
+   "u112": [
+    121,
+    "OPEN"
+   ],
+   "u114": [
+    225,
+    "READINGS"
+   ],
+   "u052": [
+    182,
+    "READINGS"
+   ],
+   "u019": [
+    251,
+    "UNFORMALISED"
+   ]
+  },
+  "measured": {
+   "u111": [
+    337,
+    "READINGS"
+   ],
+   "u112": [
+    121,
+    "OPEN"
+   ],
+   "u114": [
+    225,
+    "READINGS"
+   ],
+   "u052": [
+    182,
+    "READINGS"
+   ],
+   "u019": [
+    251,
+    "UNFORMALISED"
+   ]
+  },
+  "result": "PASS"
+ },
+ {
+  "id": "U4",
+  "check": "preamble",
+  "expected": {
+   "units": 14,
+   "bytes": 2004
+  },
+  "measured": {
+   "units": 15,
+   "bytes": 2017
+  },
+  "result": "FAIL"
+ },
+ {
+  "id": "U5",
+  "check": "F8 layout",
+  "expected": {
+   "u109": "## Article 29",
+   "after": [
+    "u110",
+    "u111",
+    "u112"
+   ]
+  },
+  "measured": {
+   "u109": "## Article 29",
+   "after": [
+    "u110",
+    "u111",
+    "u112"
+   ]
+  },
+  "result": "PASS"
+ }
+]
