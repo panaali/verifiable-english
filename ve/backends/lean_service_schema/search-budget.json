@@ -27,8 +27,12 @@
         {"type": "null"},
         {
           "additionalProperties": false,
-          "properties": {"least": {"$ref": "common.json#/$defs/nat"}, "most": {"$ref": "common.json#/$defs/nat"}},
-          "required": ["least", "most"],
+          "properties": {
+            "least": {"$ref": "common.json#/$defs/nat"},
+            "most": {"$ref": "common.json#/$defs/nat"},
+            "sort": {"type": "string", "x-equals": ""}
+          },
+          "required": ["sort", "least", "most"],
           "type": "object"
         }
       ]

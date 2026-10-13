@@ -8366,6 +8366,16 @@
         "VE.SearchBudget.statesDistinct"
       ]
     },
+    "VE/SearchBudget/Examples.lean": {
+      "T": [
+        "VE.SearchBudget.Examples.allDistinct",
+        "VE.SearchBudget.Examples.ne",
+        "VE.SearchBudget.Examples.nine",
+        "VE.SearchBudget.Examples.threeChain",
+        "VE.SearchBudget.Examples.threeConstants",
+        "VE.SearchBudget.Examples.types"
+      ]
+    },
     "VE/SearchBudget/Run.lean": {
       "D[R]": [
         "VE.SearchBudget.Run.boundJson",
