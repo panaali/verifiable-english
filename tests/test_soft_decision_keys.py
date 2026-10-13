@@ -88,3 +88,61 @@ def test_two_faults_together_are_unavailable(monkeypatch, genuine):
     _key(row, 0).__setitem__("lower", "a")
     with pytest.raises(CheckerUnavailable):
         _document(monkeypatch, row)
+
+
+def test_f11_forged_act_in_key_and_collision_is_unavailable(monkeypatch, genuine):
+    row = copy.deepcopy(genuine)
+    row['decisions'][3]['key']['outweighs'] = 'absent'
+    row['colliding_pairs'][0]['act'] = 'absent'
+    with pytest.raises(CheckerUnavailable):
+        _document(monkeypatch, row)
+
+
+@pytest.mark.parametrize('mutation', [
+    lambda row: row['colliding_pairs'][0].__setitem__('act', 'absent'),
+    lambda row: row['colliding_pairs'][0]['pair'].__setitem__(0, 'absent'),
+    lambda row: row['rule_acts'].__setitem__('h', 'absent'),
+    lambda row: row.__setitem__('decisions', []),
+    lambda row: row['decisions'].pop(0),
+    lambda row: row['decisions'].pop(2),
+    lambda row: row['decisions'].pop(3),
+])
+def test_f11_unbound_or_missing_decision_rows_are_unavailable(monkeypatch, genuine, mutation):
+    row = copy.deepcopy(genuine)
+    mutation(row)
+    with pytest.raises(CheckerUnavailable):
+        _document(monkeypatch, row)
+
+
+def test_f11_public_soft_elaboration_binds_lean_row(monkeypatch, genuine):
+    from ve.backends import soft_relay
+    raw, norms = _source()
+    row = copy.deepcopy(genuine)
+    row['decisions'][0]['key']['excepted'] = 'absent'
+    monkeypatch.setattr(soft_relay, 'run', lambda case: row)
+    with pytest.raises(CheckerUnavailable):
+        softnorms.check_soft_source(raw, norms)
+
+
+def test_f11_public_soft_route_binds_lean_row(monkeypatch, genuine):
+    from ve import soft_route
+    document = _document(monkeypatch, copy.deepcopy(genuine))
+    row = copy.deepcopy(genuine)
+    row['decisions'][0]['key']['excepted'] = 'absent'
+    monkeypatch.setattr(soft_route, '_run', lambda case: row)
+    with pytest.raises(CheckerUnavailable):
+        soft_route.elaborate_soft_document(document)
+
+
+def test_f11_public_rights_route_binds_lean_row(monkeypatch):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    row = rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
+    forged = copy.deepcopy(row)
+    forged['decisions'].append({'name': 'soft__excepted__absent', 'arguments': [],
+                                'key': {'excepted': 'absent'}})
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: forged)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')

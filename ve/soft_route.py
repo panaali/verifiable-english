@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from .errors import CheckerUnavailable, VEError
-from .softnorms import SoftEnvironment, SoftNormDocument
+from .softnorms import SoftEnvironment, SoftNormDocument, bind_soft_elaboration
 from .backends.soft_relay import run as _run, wire as _wire
 
 
@@ -12,6 +12,7 @@ def elaborate_soft_document(soft_document: SoftNormDocument):
     norms = [rule.to_dict() for rule in soft_document.rules]
     elaborated = _run({"id": "soft-elaborate", "kind": "soft-elaborate",
                        "environment": env.to_dict(), "norms": norms})
+    bind_soft_elaboration(elaborated, norms, env.to_dict()['vocabulary']['predicates'])
     return elaborated
 
 
