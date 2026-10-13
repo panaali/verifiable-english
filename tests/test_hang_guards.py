@@ -412,16 +412,58 @@ def test_a_wire_check_that_outlasts_its_wait_blocks_the_commit(tmp_path, monkeyp
 TICK = 1 / os.sysconf("SC_CLK_TCK")
 
 
-def test_the_busy_cpu_clock_advances_a_tick_per_reading_above_the_real_one(monkeypatch):
-    """An ARM runner answered a question within one /proc tick, so a 1e-6 s CPU deadline never tripped."""
+class _Unavailable(Exception):
+    pass
+
+
+def _busy_module(real):
+    """A stand-in for `lean_service`: its write phase reads the CPU twice, its response phase twice and
+    then finds the deadline passed when asked to."""
+    module = SimpleNamespace(_cpu_seconds=lambda pid: real[pid], CheckerUnavailable=_Unavailable)
+
+    class Service:
+        def _write_all(self, data, deadline):
+            return [module._cpu_seconds(7) for _ in range(2)]
+
+        def _read_line(self, deadline):
+            seen = [module._cpu_seconds(7) for _ in range(2)]
+            if deadline == "passed":
+                raise _Unavailable(seen)
+            return seen
+    module.LeanService = Service
+    return module
+
+
+def test_the_busy_cpu_clock_advances_a_tick_per_reading_in_its_phases_only(monkeypatch):
+    """An ARM runner answered a question within one /proc tick, so a 1e-6 s CPU deadline never tripped.
+    Review F1: a clock that moved from its first reading found that deadline passed while the request was
+    still being written, so the response wait's own check went untested; it moves in the response wait only."""
     real = {7: 5.0, 8: None}
-    module = SimpleNamespace(_cpu_seconds=lambda pid: real[pid])
-    readings = busy_cpu(monkeypatch, module)
-    read = module._cpu_seconds  # an injected clock: the values are the fake's, not a measurement
-    assert [read(7) for _ in range(3)] == [5.0, 5.0 + TICK, 5.0 + 2 * TICK]
+    module = _busy_module(real)
+    clock = busy_cpu(monkeypatch, module)
+    read, service = module._cpu_seconds, module.LeanService()  # an injected clock, not a measurement
+    assert read(7) == 5.0
+    real[7] = 6.0  # a slow machine's service, busy while the request is written: seen standing still
+    assert service._write_all(b"", None) == [5.0, 5.0] and read(7) == 6.0
+    real[7] = 4.0  # never below an earlier reading
+    assert read(7) == 6.0 and service._read_line(None) == [6.0 + TICK, 6.0 + 2 * TICK]
     real[7] = 9.0
-    assert read(7) == 9.0 and read(8) is None
-    assert readings == {7: [5.0, 5.0 + TICK, 5.0 + 2 * TICK, 9.0]}
+    with pytest.raises(_Unavailable, match=re.escape(str([9.0, 9.0 + TICK]))):
+        service._read_line("passed")
+    assert read(8) is None and clock.fired == ["response"] and clock.phase is None
+    assert clock.readings == {7: [5.0, 5.0, 5.0, 6.0, 6.0, 6.0 + TICK, 6.0 + 2 * TICK, 9.0, 9.0 + TICK]}
+
+
+def test_the_busy_cpu_clock_can_move_while_the_request_is_written(monkeypatch):
+    real = {7: 5.0}
+    module = _busy_module(real)
+    clock = busy_cpu(monkeypatch, module, phases=("write",))
+    read, service = module._cpu_seconds, module.LeanService()
+    assert read(7) == 5.0 and service._write_all(b"", None) == [5.0 + TICK, 5.0 + 2 * TICK]
+    real[7] = 9.0
+    assert service._read_line(None) == [5.0 + 2 * TICK] * 2 and clock.fired == []
+    with pytest.raises(AssertionError):
+        busy_cpu(monkeypatch, module, phases=("handshake",))
 
 
 def _sub_tick_deadlines(source):
