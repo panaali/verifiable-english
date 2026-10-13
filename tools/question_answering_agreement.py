@@ -283,15 +283,23 @@ def _compare(item):
 def corpus(paths, write=False, workers=1, checkpoint: Path | None = None):
     import multiprocessing
     records, seen = [], set()
+    input_counts = {}
+    raw_cases = {}
     for path in paths:
         for f in (sorted(Path(path).glob("*.jsonl")) if Path(path).is_dir() else [Path(path)]):
             for line in f.read_text(encoding="utf-8").splitlines():
                 record = json.loads(line)
+                input_counts[record["corpus"]] = input_counts.get(record["corpus"], 0) + 1
+                if record["corpus"] == "norm-defaults":
+                    raw_cases[record["case"]] = raw_cases.get(record["case"], 0) + 1
                 key = hashlib.sha256((record["document"] + "\n" + json.dumps(record["conclusion"],
                                                                          sort_keys=True)).encode()).hexdigest()
                 if key not in seen:
                     seen.add(key)
                     records.append((key, record))
+    incomplete = {case: count for case, count in raw_cases.items() if count != 8}
+    if incomplete:
+        raise ValueError(f"norm-defaults raw corpus has incomplete or repeated trees: {incomplete}")
     done = {}
     if checkpoint is not None and checkpoint.exists():
         for line in checkpoint.read_text(encoding="utf-8").splitlines():
@@ -321,7 +329,8 @@ def corpus(paths, write=False, workers=1, checkpoint: Path | None = None):
     trees = len({row["case"] for row in results if row["corpus"] == "norm-defaults"})
     scope = (f"all captured readings-suite queries and {trees} generated norm-defaults trees, "
              "with one ground and one universal query per regulated predicate")
-    summary = {"method": CORPUS_METHOD, "scope": scope, "queries": len(results), "counts": counts,
+    summary = {"method": CORPUS_METHOD, "scope": scope, "input_counts": input_counts,
+               "queries": len(results), "counts": counts,
                "requires_review": [r for r in results if r["status"].startswith("requires review")],
                "rows": results}
     if write:

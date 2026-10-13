@@ -5,6 +5,7 @@ import importlib.util
 import gzip
 import json
 from pathlib import Path
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location("question_answering_report", ROOT / "tools/question_answering_report.py")
@@ -44,6 +45,8 @@ def test_the_budgets_are_met_and_the_corpus_agreement_is_recorded():
     for row in corpus["requires_review"]:
         assert row["review"].startswith("reviewed (DELTA D") and row["review"][16:19].rstrip(")") in delta, row
     assert {"readings", "norm-defaults"} <= set(corpus["counts"])
+    assert corpus["input_counts"]["norm-defaults"] == 8000
+    assert corpus["input_counts"]["readings"] >= 8
     assert sum(counts.get("same verdict", 0) for counts in corpus["counts"].values()) > 0
     assert {int(row["case"][1:]) for row in corpus["rows"] if row["corpus"] == "norm-defaults"} == set(range(1000))
     for row in corpus["rows"]:
@@ -82,3 +85,12 @@ def test_q2_f5_d9_readings_generator_changes_no_decided_verdict():
     for row in saved["changes"]:
         assert row["before"]["verdict"] == "UNKNOWN"
         assert row["after"]["verdict"] in {"ALL", "SOME", "NONE"}
+
+
+def test_q2_f4_corpus_rejects_an_incomplete_generated_tree(tmp_path):
+    from tools.question_answering_agreement import corpus
+    path = tmp_path / "incomplete.jsonl"
+    path.write_text(json.dumps({"corpus": "norm-defaults", "case": "s0", "document": "",
+                                "conclusion": ["unary", "p", ["const", "k"]], "older": "UNKNOWN"}) + "\n")
+    with pytest.raises(ValueError, match="incomplete or repeated trees"):
+        corpus([path])
