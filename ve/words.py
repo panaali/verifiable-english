@@ -65,8 +65,12 @@ def lines(env, items: list[dict]) -> list[str]:
         return []
     from .backends.relay import decide_once
     case = request(env, items)
-    row = decide_once(MODE, case)
-    problem = answer_problem(row.get("result"), case, env)
+    return read_answer(decide_once(MODE, case), case, env)
+
+
+def read_answer(row, case: dict, env) -> list[str]:
+    """Lean's lines of the service row `row` answering `case`, after the binding check (`answer_problem`)."""
+    problem = answer_problem(row.get("result") if isinstance(row, dict) else None, case, env)
     if problem is not None:
         raise CheckerUnavailable(f"CheckerUnavailable: Lean's words answer is not bound to its request: {problem}")
     return list(row["result"]["lines"])

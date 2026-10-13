@@ -7,8 +7,9 @@ A *route* is one way `ve` reads a Lean answer:
 
 * each mode of the persistent service (`ve.backends.service_schema.MODES`, checked against the modes the
   built service lists in its handshake), read by `LeanService.exchange` (the transport of `relay`) and, for a
-  mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`), by
-  that caller's reader too, on every fixture whose genuine answer is not a rejection row;
+  mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`;
+  `words`, read by `ve.words.read_answer`), by that caller's reader too, on every fixture whose genuine answer
+  is not a rejection row;
 * each one-shot runner call that a `ve` call site makes: every assurance-manifest binding of a runner other
   than `ve_service` whose operation has Lean call sites, and every call of the one-shot route reader
   (`run_route_cases`, `run_english_cases`, `read_rows`) outside `ve/backends/lean.py`, read by the call
@@ -339,9 +340,19 @@ def _ask_reader(case):
     return lambda response: ask.read_answer(relay.decided(response["results"])[0], case, bound, expected)
 
 
+def _words_reader(case):
+    """How `ve.words` reads the service's response to `case`: `relay.decided`, then `ve.words.read_answer` (the
+    identities of the case's environment and lexicon, one non-empty line per item)."""
+    from ve import words
+    from ve.backends import relay
+    from ve.environment import Environment
+    env = Environment(case["environment"])
+    return lambda response: words.read_answer(relay.decided(response["results"])[0], case, env)
+
+
 # Service modes whose one caller reads the transport's answer further: the mode's reader for a case, a function of
 # the decoded response that raises as the caller does.
-SERVICE_READERS = {"ask": _ask_reader}
+SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader}
 
 
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:
