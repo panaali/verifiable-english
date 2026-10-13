@@ -140,8 +140,12 @@ class SoftRule:
 
 
 def _rule_source(env: SoftEnvironment):
-    """The lower soft source used for individual quoted rules."""
+    """The lower soft source used for individual quoted rules: under norm-defaults@0 its placeholder, each
+    unspecified completion read as deny (norm-defaults 2.3)."""
     source = env.to_dict()
+    if "norm-defaults@0" in source["profiles"]:
+        from .norms import _norm_defaults_placeholder
+        source = _norm_defaults_placeholder(source)
     source["profiles"] = [p for p in source["profiles"]
                           if p not in ("norm-defaults@0", "readings@1", "rights@0")]
     source["vocabulary"].pop("rights", None)

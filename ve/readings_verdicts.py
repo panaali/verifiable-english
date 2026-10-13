@@ -11,6 +11,7 @@ Nothing here is computed for W2's, the pending or the abstaining route (1.1).
 """
 from __future__ import annotations
 
+import copy
 import json
 from contextlib import contextmanager
 from itertools import product
@@ -1072,17 +1073,25 @@ class _Frame:
         self.couplings = list(document.get("couplings") or [])
         self.narrowings = list(document.get("narrowings") or [])
         self.predicates = set((((case.get("environment") or {}).get("vocabulary") or {}).get("predicates") or {}))
+        # The rules the request's document declares (a unit's or a reading's norm), which a soft label names.
+        contents = [unit.get("content") for unit in document["units"]] + [
+            a.get("content") for R in active for a in R["readings"]]
+        self.rules = {c["norm"]["name"] for c in contents if type(c) is dict and type(c.get("norm")) is dict}
         self.choices, self.completion, self.finding_sets = choices, completion, list(finding_sets)
         self.candidates = [[R.id, i] for R in self.sets for i in range(len(R.candidates))]
 
     def label(self, label):
-        """A condition label the request names: a coupling or narrowing of its document, or the pair label of two
-        predicates of its environment (`unsaid:pair:<required>,<permission>`)."""
+        """A condition label the request names: a coupling or narrowing of its document, a soft premise's label
+        naming its rules (`readings_route.soft_label`, under the soft completion), or the pair label of two predicates
+        of its environment (`unsaid:pair:<required>,<permission>`)."""
+        from .readings_route import SOFT_COHERENCE_LABEL, SOFT_EXCEPTION_LABEL, soft_label
         _need(type(label) is str)
         if label.startswith("coupling:"):
             _need(any(K["id"] == label[len("coupling:"):] for K in self.couplings))
         elif label.startswith("narrowing:"):
             _need(any(N["id"] == label[len("narrowing:"):] for N in self.narrowings))
+        elif label.startswith((SOFT_EXCEPTION_LABEL, SOFT_COHERENCE_LABEL)):
+            _need(soft_label(label, self.rules))
         else:
             required, comma, permission = label.removeprefix(PAIR_LABEL).partition(",")
             _need(label.startswith(PAIR_LABEL) and comma and {required, permission} <= self.predicates)
@@ -1550,45 +1559,62 @@ class _ChoiceDocument:
 
 class _FilledView:
     """What `norm_defaults_route.filled_certificate` reads of a document, from Lean's rows: the source environment,
-    `Fill_T` and the filled layers over E‴."""
+    the extra base premises `X` (`Soft_T` on the soft chain, none on the norms chain), `Fill_T` and the filled layers
+    over E‴."""
 
-    def __init__(self, env, filled_env, fill, layers):
+    def __init__(self, env, filled_env, fill, layers, base_premises=()):
         from types import SimpleNamespace
         self.env = env
+        self.base_premises = [(None, f) for f in base_premises]
         self.fill_premises = [(None, f) for f in fill]
         self.filled = SimpleNamespace(env=filled_env, premises=lambda: [(None, f) for f in layers])
 
 
 class _FilledChoiceDocument:
-    """A choice's document under the unspecified completion (readings-defaults 3.4): `choiceU N c` as Lean
-    regenerates it. Lean's `norm-defaults-elaborate` row for the choice (a `readings-choice` inner kind) gives
-    `E‴_base`, the base Background, `Fill_T`, the filled layers and the conflict targets; Python's prover and model
-    search run on those formulas only (untrusted generators, D12: Python builds no `fill`), and every certificate,
-    witness and model goes back to `readings-choice` with norm-defaults' inner kinds, which checks it on the choice's
-    document. A refusal of evidence Python's own check accepted is `CheckerUnavailable`, never a verdict."""
-
-    chain = "norms"
+    """A choice's document under the unspecified or the soft completion (readings-defaults 3.4, rd-9-soft-chain
+    4.3): `choiceU N c` as Lean regenerates it on its layered source. Lean's `norm-defaults-elaborate` row for the
+    choice (a `readings-choice` inner kind) gives `E‴_base`, the base Background, `Soft_T` on the filled tree (the
+    extra base premises `X`, none on the norms chain), `Fill_T`, the filled layers and the conflict targets; Python's
+    prover and model search run on those formulas only (untrusted generators, D12: Python builds no `fill`, `X` or
+    `Coh_T`), and every certificate, witness and model goes back to `readings-choice` with norm-defaults' inner kinds,
+    which checks it on the choice's document. A refusal of evidence Python's own check accepted is
+    `CheckerUnavailable`, never a verdict."""
 
     def __init__(self, route, choice):
         from .ast import _Decoder, formula_from_data
         from .environment import Environment
         self.route, self.choice = route, choice
-        self.side = None  # a choice's decision tables: none on the norms chain (`S2Wording._choice_decisions`)
         senv = route.source.senv
+        self.chain = senv.chain
         row = self._inner({"kind": "norm-defaults-elaborate"})
         self.elaboration = row
         self.base = Environment(row["base_environment"])
-        # E‴: the filled frame, the same for every choice (the frame's unspecified predicates), Lean's.
-        self.env = Environment(route.row["filled"]["environment"])
+        # E‴: the filled frame (the frame's unspecified predicates), Lean's, with the choice's own base predicates
+        # (on the soft chain its decision tables) from its `E‴_base`.
+        filled = copy.deepcopy(route.row["filled"]["environment"])
+        for name, declaration in row["base_environment"]["vocabulary"]["predicates"].items():
+            filled["vocabulary"]["predicates"].setdefault(name, declaration)
+        if self.chain == "norms":
+            self.env = Environment(filled)
+        else:
+            from .softnorms import SoftEnvironment
+            self.env = SoftEnvironment(filled, generated=True)
         self.source_env = Environment(senv.lower_data)
         self.tables = [item["name"] for item in row["unsaid"]]
+        self.soft = [formula_from_data(self.env, item["ast"], _generated=True) for item in row["soft"]]
         self.fill = [formula_from_data(self.env, item["ast"], _generated=True) for item in row["fill"]]
         self.layers = [formula_from_data(self.env, item["ast"], _generated=True) for item in row["premises"]]
+        # A choice's decision tables for the wording (`S2Wording._choice_decisions`): none on the norms chain.
+        self.side = None
+        if self.chain != "norms":
+            from .readings_s1 import Side
+            self.side = Side(senv, self._contents(), route.source.unit_ids)
+            self.side._elaborate()
         # A target is open over its sorts (Lean's `conflict_targets`); it is typed once closed (`_bind`).
         self.targets = [(t["target"], tuple(t["sorts"]), _Decoder().decode(t["ast"]))
                         for t in row["conflict_targets"]]
         self.assertions = [c.body for c in self._contents() if c.kind == "assertion"]
-        self.view = _FilledView(self.source_env, self.env, self.fill, self.layers)
+        self.view = _FilledView(self.source_env, self.env, self.fill, self.layers, self.soft)
 
     def _contents(self):
         from .readings_sup import choice_contents
@@ -1627,11 +1653,11 @@ class _FilledChoiceDocument:
         return {"kind": "norm-defaults-conflict", "packages": self._packages()}
 
     def _packages(self):
-        """A certificate of each target's closed negation from `Fill_T` over `E‴_base` (norm-defaults 3.1: on the norms
-        chain the base Background is `Fill_T`, Lean's `baseBackgroundU`), bound as Lean binds a package
-        (`decodePackageX`): to the choice's environment id and document hash (the row's), and its certificate to
-        `E‴_base` and the ASTs of `Fill_T`."""
-        from .ast import Not, formula_to_data
+        """A certificate of each target's closed negation from the layered base background over `E‴_base`
+        (`L.background`: `Background_base(E‴)`'s literals, `X`, then `Fill_T`; on the norms chain Lean's
+        `baseBackgroundU`), bound as Lean binds a package (`decodePackageX`): to the choice's environment id and
+        document hash (the row's), and its certificate to `E‴_base` and the ASTs of that background."""
+        from .ast import Not, formula_from_data, formula_to_data
         from .entailment import prove_entailment
         from .norms import _bind
         from .wire import digest
@@ -1640,7 +1666,8 @@ class _FilledChoiceDocument:
         def meaning(ast):
             return digest(f"ve-meaning-{self.base.identity_version}\n",
                           {"environment_id": self.base.environment_id, "ast": ast})
-        fill = self._base_fill()
+        listed = self._base_background()
+        fill = [formula_from_data(self.base, ast, _generated=True) for ast in listed]
         packages = {}
         for target, sorts, formula in self.targets:
             conclusion = _bind(Not(formula), sorts)
@@ -1648,7 +1675,7 @@ class _FilledChoiceDocument:
             if proof.status != "Found":
                 continue
             certificate = {**proof.certificate, "environment_id": self.base.environment_id,
-                           "premise_meaning_ids": [meaning(item["ast"]) for item in row["fill"]],
+                           "premise_meaning_ids": [meaning(ast) for ast in listed],
                            "conclusion_meaning_id": meaning(formula_to_data(self.base, conclusion, _generated=True))}
             packages[target] = {"environment_id": row["environment_id"], "document_hash": row["document_hash"],
                                 "target": target, "certificate": certificate}
@@ -1664,10 +1691,17 @@ class _FilledChoiceDocument:
                                                               "filling": filling, "tuple": witness["tuple"]},
                 "shown": witness["model"]}
 
+    def _base_background(self):
+        """The ASTs of the layered base background, Lean's `L.background`: the row's literal Background, `X` (its
+        `soft`), then `Fill_T`; each reads base predicates and the filled tables only."""
+        row = self.elaboration
+        return ([item["ast"] for item in row["background"] if item["generator"] == "literals"] +
+                [item["ast"] for item in row["soft"]] + [item["ast"] for item in row["fill"]])
+
     def _base_fill(self):
-        """`Fill_T` over `E‴_base`: it reads base predicates and the filled tables only."""
+        """The layered base background over `E‴_base` (`_base_background`)."""
         from .ast import formula_from_data
-        return [formula_from_data(self.base, item["ast"], _generated=True) for item in self.elaboration["fill"]]
+        return [formula_from_data(self.base, ast, _generated=True) for ast in self._base_background()]
 
     def _witness(self):
         """A base model and filling where `Fill_T` holds and some conflict target holds, with its tuple."""
@@ -1713,7 +1747,7 @@ class _FilledChoiceDocument:
         """A model of the choice's filled document and Γ with `conclusion_ast` false (any model when None): its base
         and its filling apart (`choice-model`), the complete model shown. None within the budget."""
         from .search import check_countermodel, find_countermodel
-        premises, phi = self.fill + self.layers + self._gamma(gamma), self._phi(conclusion_ast)
+        premises, phi = self.soft + self.fill + self.layers + self._gamma(gamma), self._phi(conclusion_ast)
         found = find_countermodel(self.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
                                   max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
         if found.status != "Found" or not check_countermodel(self.env, premises, phi, found.model,

@@ -800,15 +800,18 @@ class Decoded:
     Nothing is checked (Lean's `admitReadings` is the check).
 
     Under the completion `filled` and `fill_premises` are Lean's (a readings route's answer, readings-defaults 3):
-    the sides are the readings' filled documents, and each reading's `Fill_T` is Lean's list of formulas."""
+    the sides are the readings' filled documents, and each reading's `Fill_T` is Lean's list of formulas; under the
+    soft completion so are each reading's `Soft_T` on the filled tree (`soft_premises`, rd-9-soft-chain 4.2)."""
 
-    def __init__(self, environment, document, filled=None, fill_premises=None):
+    def __init__(self, environment, document, filled=None, fill_premises=None, soft_premises=None):
         self.senv = S1Environment(environment, filled)
         self.doc = Document(self.senv, document, filled)
         self.attached = self.doc.attached()
         self.sides = {}
-        self.fill_premises = {(e["set"], e["index"]): [p["ast"] for p in e["premises"]]
-                              for e in (fill_premises or ())}
+        # The witness's generated premises Lean lists for each reading: `Soft_T` (soft chain), then `Fill_T`.
+        self.fill_premises = {}
+        for e in (*(soft_premises or ()), *(fill_premises or ())):
+            self.fill_premises.setdefault((e["set"], e["index"]), []).extend(p["ast"] for p in e["premises"])
         self._fill_formulas = {}
         self._rules_warm = self.senv.chain != "rights"
 
@@ -884,8 +887,9 @@ class Decoded:
         return side.observe(side.model(model, tables), probe)
 
     def fill_holds(self, s, i, model, tables):
-        """The reading's `Fill_T` (Lean's formulas, readings-defaults 4.2) on the base: what the witness's filling
-        must satisfy. With no `Fill_T` listed (outside the completion) it holds."""
+        """The reading's `Fill_T`, after its `Soft_T` on the soft chain (Lean's formulas, readings-defaults 4.2,
+        rd-9-soft-chain 4.2) on the base: what the witness's filling and decisions must satisfy. With none listed
+        (outside the completion) it holds."""
         from .ast import formula_from_data
         from .evaluate import _Evaluator
         asts = self.fill_premises.get((s, i), ())
@@ -1041,7 +1045,8 @@ def search(environment, document, set_id, *, max_size=2, hints=(), decoded=None,
     a witness's base must satisfy its `Fill_T` (4.2)."""
     from .model import FiniteModel
     decoded = decoded or Decoded(environment, document, *(() if filled is None else
-                                                          (filled["filled"], filled["fill_premises"])))
+                                                          (filled["filled"], filled["fill_premises"],
+                                                           filled.get("soft_premises"))))
     R = decoded.doc.set_by_id(set_id)
     found = {}
     author = decoded.senv.author_environment()

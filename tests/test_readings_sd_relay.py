@@ -106,3 +106,46 @@ def test_a_mutated_soft_validate_row_is_unavailable(validated, name):
     MUTATIONS[name](mutant)
     with pytest.raises(CheckerUnavailable):
         readings_route._check(mutant, case)
+
+
+# `readings-verdicts` under the soft completion (plan SC-5, SC-8): the answer's soft labels are bound to the rules the
+# request declares (`readings_route.soft_label`, the one binder `soft_premises` uses too).
+
+@pytest.fixture(scope="module")
+def coherent_conflict(lean):
+    from tests.test_readings_sd_lean import _packages, _verdicts
+    raw = env4()
+    raw["vocabulary"]["predicates"]["x_permitted"]["regulated"]["default"] = "allow"
+    document = doc4(raw)
+    need_not, readings = document["units"][0]["content"], document["reading_sets"][0]["readings"]
+    evidence = [{"choice": [["rs1", i]], "conflict": {"packages": _packages(
+        lean, raw, document, [("rs1", i)], need_not, readings[i]["content"])}} for i in (0, 1)]
+    case = _case("readings-verdicts", raw, document)
+    case.update(question="conflict", evidence=evidence, assumed=[["rs1", 1]])
+    row = _verdicts(lean, raw, document, "conflict", evidence, assumed=[["rs1", 1]])
+    assert row["result"]["conditional_on"] == ["soft:coherence:must-x,need-not-x"], row
+    return row, case
+
+
+def _verdicts_frame(case):
+    from ve.readings_verdicts import _Frame
+    return _Frame(case, [[["rs1", 0]], [["rs1", 1]]], True, ["rs1"])
+
+
+def test_a_genuine_soft_verdict_binds(coherent_conflict):
+    from ve.readings_verdicts import _check_answer
+    row, case = coherent_conflict
+    _check_answer(copy.deepcopy(row), case, _verdicts_frame(case))
+
+
+@pytest.mark.parametrize("label", ["soft:coherence:must-x,no-such-rule", "soft:coherence:must-x,must-x",
+                                   "soft:coherence:must-x", "soft:exception:no-such-rule:sufficient:0",
+                                   "soft:exception:must-x:other:0", "soft:exception:must-x:sufficient:01",
+                                   "soft:exception:must-x", "soft:other:must-x"])
+def test_a_soft_label_the_request_does_not_declare_is_unavailable(coherent_conflict, label):
+    from ve.readings_verdicts import _check_answer
+    row, case = coherent_conflict
+    mutant = copy.deepcopy(row)
+    mutant["labels"] = [label]
+    with pytest.raises(CheckerUnavailable):
+        _check_answer(mutant, case, _verdicts_frame(case))
