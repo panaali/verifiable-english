@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import importlib.util
 import re
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -100,3 +101,15 @@ def test_the_saved_gate_passed_on_a_clean_tree():
     assert result["status"] == "passed" and result["dirty"] is False
     assert re.fullmatch(r"[0-9a-f]{40}", result["commit_sha"])
     assert result["counts"]["passed"] > 0 and result["counts"].get("failed", 0) == 0
+
+
+def test_q2_f6_historical_gate_cannot_claim_the_current_head():
+    archived = json.loads((report.EVIDENCE / "gate-previous-passed.json").read_text())
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True,
+                          text=True).stdout.strip()
+    assert archived["status"] == "passed" and archived["commit_sha"] != head
+    current = report.EVIDENCE / "gate-result.json"
+    if current.exists():
+        assert json.loads(current.read_text())["commit_sha"] == head
+    else:
+        assert "Full gate: not yet saved" in report.block()
