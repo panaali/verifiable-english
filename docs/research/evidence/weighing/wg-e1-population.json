@@ -1,0 +1,669 @@
+{
+ "pilot_commit": "ecfd1ace71eaf87b1518e163aa5041cfbad064e0",
+ "run": "usecases/claude-constitution-pilot/run-20261012T1800Z",
+ "norms_units": 669,
+ "crossact_units": 106,
+ "cue_counts": {
+  "alternative": 1,
+  "balance": 13,
+  "choose": 10,
+  "conflict": 13,
+  "either": 8,
+  "help and refuse": 6,
+  "instead": 4,
+  "option": 3,
+  "prioritise": 16,
+  "rather than": 22,
+  "tension": 5,
+  "trade-off": 2,
+  "versus": 2,
+  "weigh": 10
+ },
+ "units": [
+  {
+   "id": "u0011.s05",
+   "cues": [
+    "weigh",
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0012.s02",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0014.s02",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0016.s01",
+   "cues": [
+    "conflict",
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0016.s02",
+   "cues": [
+    "rather than",
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0017.s02",
+   "cues": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0017.s03",
+   "cues": [
+    "conflict",
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0019.s01",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0019.s03",
+   "cues": [
+    "instead"
+   ]
+  },
+  {
+   "id": "u0019.s05",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0019.s07",
+   "cues": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0020.s03",
+   "cues": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0021.s02",
+   "cues": [
+    "weigh"
+   ]
+  },
+  {
+   "id": "u0025.s03",
+   "cues": [
+    "instead"
+   ]
+  },
+  {
+   "id": "u0034.s01",
+   "cues": [
+    "weigh"
+   ]
+  },
+  {
+   "id": "u0035.s02",
+   "cues": [
+    "option"
+   ]
+  },
+  {
+   "id": "u0036.s01",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0036.s02",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0036.s03",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0052.s03",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0060.s03",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0066.s02",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0068.s04",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0077.s01",
+   "cues": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0091.s01",
+   "cues": [
+    "either"
+   ]
+  },
+  {
+   "id": "u0091.s02",
+   "cues": [
+    "help and refuse"
+   ]
+  },
+  {
+   "id": "u0099.s01",
+   "cues": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0099.s02",
+   "cues": [
+    "rather than",
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0101.s01",
+   "cues": [
+    "either"
+   ]
+  },
+  {
+   "id": "u0101.s03",
+   "cues": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0104.s04",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0107.s02",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0118.s04",
+   "cues": [
+    "alternative"
+   ]
+  },
+  {
+   "id": "u0120.s03",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0127.s02",
+   "cues": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0129.s03",
+   "cues": [
+    "weigh"
+   ]
+  },
+  {
+   "id": "u0137.s01",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0137.s02",
+   "cues": [
+    "help and refuse"
+   ]
+  },
+  {
+   "id": "u0141.s07",
+   "cues": [
+    "weigh"
+   ]
+  },
+  {
+   "id": "u0141.s09",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0142.s01",
+   "cues": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0142.s02",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0147.s02",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0147.s04",
+   "cues": [
+    "help and refuse"
+   ]
+  },
+  {
+   "id": "u0153.s01",
+   "cues": [
+    "help and refuse"
+   ]
+  },
+  {
+   "id": "u0153.s02",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0156.s04",
+   "cues": [
+    "help and refuse"
+   ]
+  },
+  {
+   "id": "u0156.s07",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0159.s04",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0166.s03",
+   "cues": [
+    "weigh"
+   ]
+  },
+  {
+   "id": "u0170.s02",
+   "cues": [
+    "either"
+   ]
+  },
+  {
+   "id": "u0170.s04",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0172.s02",
+   "cues": [
+    "either"
+   ]
+  },
+  {
+   "id": "u0172.s03",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0173.s01",
+   "cues": [
+    "either"
+   ]
+  },
+  {
+   "id": "u0173.s02",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0175.s05",
+   "cues": [
+    "weigh"
+   ]
+  },
+  {
+   "id": "u0179.s02",
+   "cues": [
+    "help and refuse"
+   ]
+  },
+  {
+   "id": "u0183",
+   "cues": [
+    "weigh"
+   ]
+  },
+  {
+   "id": "u0187.s03",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0187.s04",
+   "cues": [
+    "weigh"
+   ]
+  },
+  {
+   "id": "u0187.s05",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0190.s03",
+   "cues": [
+    "versus"
+   ]
+  },
+  {
+   "id": "u0193.s02",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0194.s02",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0194.s03",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0196.s01",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0199.s03",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0199.s05",
+   "cues": [
+    "trade-off"
+   ]
+  },
+  {
+   "id": "u0200.s01",
+   "cues": [
+    "instead"
+   ]
+  },
+  {
+   "id": "u0200.s02",
+   "cues": [
+    "versus",
+    "tension"
+   ]
+  },
+  {
+   "id": "u0204.s01",
+   "cues": [
+    "option"
+   ]
+  },
+  {
+   "id": "u0204.s03",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0205.s02",
+   "cues": [
+    "instead",
+    "balance"
+   ]
+  },
+  {
+   "id": "u0206.s02",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0209.s02",
+   "cues": [
+    "either"
+   ]
+  },
+  {
+   "id": "u0209.s03",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0213.s04",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0215.s03",
+   "cues": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0218.s03",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0218.s04",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0218.s19",
+   "cues": [
+    "option"
+   ]
+  },
+  {
+   "id": "u0221.s01",
+   "cues": [
+    "tension"
+   ]
+  },
+  {
+   "id": "u0221.s04",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0225.s01",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0228.s02",
+   "cues": [
+    "either"
+   ]
+  },
+  {
+   "id": "u0229.s03",
+   "cues": [
+    "weigh",
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0234.s02",
+   "cues": [
+    "rather than",
+    "conflict"
+   ]
+  },
+  {
+   "id": "u0244.s01",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0251.s01",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0264.s04",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0264.s05",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0271.s07",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0274.s02",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0283.s01",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0283.s05",
+   "cues": [
+    "rather than"
+   ]
+  },
+  {
+   "id": "u0288.s02",
+   "cues": [
+    "prioritise"
+   ]
+  },
+  {
+   "id": "u0289.s02",
+   "cues": [
+    "tension"
+   ]
+  },
+  {
+   "id": "u0289.s04",
+   "cues": [
+    "tension"
+   ]
+  },
+  {
+   "id": "u0289.s05",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0290.s01",
+   "cues": [
+    "tension"
+   ]
+  },
+  {
+   "id": "u0290.s02",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0291.s01",
+   "cues": [
+    "choose"
+   ]
+  },
+  {
+   "id": "u0291.s03",
+   "cues": [
+    "either"
+   ]
+  },
+  {
+   "id": "u0291.s05",
+   "cues": [
+    "balance"
+   ]
+  },
+  {
+   "id": "u0291.s06",
+   "cues": [
+    "trade-off"
+   ]
+  }
+ ]
+}
