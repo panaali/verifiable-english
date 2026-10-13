@@ -1,0 +1,102 @@
+{
+  "format": "ve-document@1",
+  "source_id": "6b7e27dc922576da04415b58d838185d7986dbc99de87339a4bd6016e5ffc339",
+  "document_id": "b629ee7276c3e9904f1263ab63201246dc9ec190ca009caf34b6944d33f6dbcd",
+  "coverage": {
+    "accounted_bytes": 3004,
+    "bytes_by_kind": {
+      "asserted": 351,
+      "meta": 105,
+      "norm": 638,
+      "unformalised": 1910
+    },
+    "bytes_by_status": {
+      "CHECKED": 379,
+      "LABELLED": 105,
+      "OPEN": 610,
+      "UNFORMALISED": 1910
+    },
+    "coverage_percent": 100,
+    "residual": {
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "open_terms": 53,
+      "unresolved_reading_sets": 2,
+      "gaps": 3,
+      "ungrounded_defaults": 0
+    },
+    "residual_total": 58,
+    "source_bytes": 3004,
+    "unformalised_reasons": {
+      "causation": 2,
+      "other_act_phrase_grammar": 7,
+      "other_comparison": 2,
+      "other_grounding_of_authority": 1,
+      "other_priority_of_rights": 1,
+      "time": 2
+    },
+    "norm_defaults": {
+      "gaps": [
+        "education_free_required",
+        "education_generally_available_required",
+        "elementary_education_compulsory_required"
+      ],
+      "findings": []
+    }
+  },
+  "reading_plan": {
+    "route": "assertion-disjunction",
+    "choices": null,
+    "all": "one proof from per-unit disjunctions",
+    "none": "one shared finite model satisfying every reading"
+  },
+  "norm_defaults": {
+    "environment_id": "6d3d7ff6ef9d27fb4f231f47ab3e886dba5d1b26f3597055dd0062d7cb46152d",
+    "filled_environment_id": "390d4bf3b82ce414357d7d0ad2bf0f8ef46e74c25705a41422229fa438377101",
+    "fill_hash": "d6ec5d0b594a0a95f7fb20d3b122d8a6cfb8e79395491ecbb1df651fe9654b96",
+    "unsaid_predicates": [
+      "unsaid__compel_association_membership_permitted",
+      "unsaid__education_directed_to_personality_required",
+      "unsaid__education_directed_to_respect_for_rights_required",
+      "unsaid__education_free_required",
+      "unsaid__education_generally_available_required",
+      "unsaid__elementary_education_compulsory_required",
+      "unsaid__equal_access_to_higher_education_required"
+    ],
+    "background_labels": [],
+    "report": {
+      "compel_association_membership_permitted": [
+        "completion: unspecified",
+        "gaps: none"
+      ],
+      "education_directed_to_personality_required": [
+        "completion: unspecified",
+        "gaps: none"
+      ],
+      "education_directed_to_respect_for_rights_required": [
+        "completion: unspecified",
+        "gaps: none"
+      ],
+      "education_free_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "education_generally_available_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "elementary_education_compulsory_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+      ],
+      "equal_access_to_higher_education_required": [
+        "completion: unspecified",
+        "gaps: none"
+      ]
+    }
+  },
+  "premises": {
+    "status": "model",
+    "model_id": "9e754c744828b94a38c9bb283d2ba3e54b422251f83886cba874dd11172626ec"
+  }
+}

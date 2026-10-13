@@ -1,0 +1,15 @@
+{
+  "verdict": "ALL",
+  "route": "superposed",
+  "evidence": "certificate",
+  "assumed": [],
+  "conditional_on": [],
+  "reading_premises_used": [],
+  "mentions": [],
+  "english": [
+    "Under every reading of the 3 open sentences, the conclusion follows: *It is not the case that there is a type of principal such that all of the following hold:\n  (a) that type of principal is classified as \"claude_principal_type\";\n  (b) all of the following hold:\n    (i) it is not the case that that type of principal is the same as anthropic;\n    (ii) both of the following hold:\n      (a) it is not the case that that type of principal is the same as operators;\n      (b) it is not the case that that type of principal is the same as users.*",
+    "This does not depend on how sentence 132 is read.",
+    "This does not depend on how sentence 590 is read.",
+    "This does not depend on how sentence 1001 is read."
+  ]
+}

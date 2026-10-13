@@ -1,0 +1,102 @@
+{
+ "admitted": true,
+ "bytes_by_status": {
+  "CHECKED": 186,
+  "LABELLED": 364,
+  "OPEN": 2529,
+  "UNFORMALISED": 181814
+ },
+ "check_seconds": 111.1,
+ "document": "usecases/claude-constitution-pilot/run-20261012T1800Z/readings/nd-all.ve.md",
+ "group": "all",
+ "load_seconds": 28.3,
+ "pairs_without_situation": [],
+ "premises": {
+  "budget": {
+   "max_domain_size": 2,
+   "max_evaluations": 100000,
+   "max_models": 10000,
+   "max_steps": 10000
+  },
+  "candidates": [
+   {
+    "index": 0,
+    "set": "force-u0036-s05",
+    "status": "UNKNOWN"
+   },
+   {
+    "index": 1,
+    "set": "force-u0036-s05",
+    "status": "UNKNOWN"
+   },
+   {
+    "index": 0,
+    "set": "force-u0156-s03",
+    "status": "UNKNOWN"
+   },
+   {
+    "index": 1,
+    "set": "force-u0156-s03",
+    "status": "UNKNOWN"
+   },
+   {
+    "index": 0,
+    "set": "force-u0263-s04-p2",
+    "status": "UNKNOWN"
+   },
+   {
+    "index": 1,
+    "set": "force-u0263-s04-p2",
+    "status": "UNKNOWN"
+   }
+  ],
+  "route": "superposed",
+  "status": "UNKNOWN"
+ },
+ "search_limits": [],
+ "search_seconds": 205.4,
+ "sets": [
+  {
+   "candidates": [
+    {
+     "content": "norm",
+     "id": "strict"
+    },
+    {
+     "content": "norm",
+     "id": "default"
+    }
+   ],
+   "set": "force-u0036-s05",
+   "unit": "u0036.s05"
+  },
+  {
+   "candidates": [
+    {
+     "content": "norm",
+     "id": "strict"
+    },
+    {
+     "content": "norm",
+     "id": "default"
+    }
+   ],
+   "set": "force-u0156-s03",
+   "unit": "u0156.s03"
+  },
+  {
+   "candidates": [
+    {
+     "content": "norm",
+     "id": "strict"
+    },
+    {
+     "content": "norm",
+     "id": "default"
+    }
+   ],
+   "set": "force-u0263-s04-p2",
+   "unit": "u0263.s04.p2"
+  }
+ ]
+}

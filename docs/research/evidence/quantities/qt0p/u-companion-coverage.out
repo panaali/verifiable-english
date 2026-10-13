@@ -1,0 +1,27 @@
+{
+  "accounted_bytes": 76,
+  "bytes_by_kind": {
+    "norm": 76
+  },
+  "bytes_by_status": {
+    "OPEN": 76
+  },
+  "coverage_percent": 100,
+  "residual": {
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "open_terms": 1,
+    "unresolved_reading_sets": 0,
+    "gaps": 1,
+    "ungrounded_defaults": 0
+  },
+  "residual_total": 2,
+  "source_bytes": 76,
+  "unformalised_reasons": {},
+  "norm_defaults": {
+    "gaps": [
+      "education_free_required"
+    ],
+    "findings": []
+  }
+}

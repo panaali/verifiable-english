@@ -1,0 +1,42 @@
+{
+  "accounted_bytes": 3004,
+  "bytes_by_kind": {
+    "asserted": 351,
+    "meta": 105,
+    "norm": 638,
+    "unformalised": 1910
+  },
+  "bytes_by_status": {
+    "CHECKED": 379,
+    "LABELLED": 105,
+    "OPEN": 610,
+    "UNFORMALISED": 1910
+  },
+  "coverage_percent": 100,
+  "residual": {
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "open_terms": 53,
+    "unresolved_reading_sets": 2,
+    "gaps": 3,
+    "ungrounded_defaults": 0
+  },
+  "residual_total": 58,
+  "source_bytes": 3004,
+  "unformalised_reasons": {
+    "causation": 2,
+    "other_act_phrase_grammar": 7,
+    "other_comparison": 2,
+    "other_grounding_of_authority": 1,
+    "other_priority_of_rights": 1,
+    "time": 2
+  },
+  "norm_defaults": {
+    "gaps": [
+      "education_free_required",
+      "education_generally_available_required",
+      "elementary_education_compulsory_required"
+    ],
+    "findings": []
+  }
+}

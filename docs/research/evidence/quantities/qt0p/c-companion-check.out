@@ -1,0 +1,45 @@
+{
+  "format": "ve-document@1",
+  "source_id": "dccdda5f703ec9688d77cc96ddee8d7039e3987b24772fc924ab290302f08c53",
+  "document_id": "f66720df2e3870bef9156c3b6569b6cbdbf2a1fdcb0fbf3470f9f52ef1a85eb9",
+  "coverage": {
+    "source_bytes": 229,
+    "accounted_bytes": 229,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+      "asserted": 113,
+      "unformalised": 101,
+      "meta": 15
+    },
+    "bytes_by_status": {
+      "CHECKED": 113,
+      "UNFORMALISED": 101,
+      "LABELLED": 15
+    },
+    "unformalised_reasons": {
+      "counting": 1
+    },
+    "residual": {
+      "open_terms": 0,
+      "assumptions": 2,
+      "bridge_leaves": 0,
+      "unresolved_reading_sets": 0
+    },
+    "residual_total": 2
+  },
+  "reading_plan": {
+    "route": "single",
+    "choices": [
+      {}
+    ]
+  },
+  "premises": {
+    "status": "UNKNOWN",
+    "budget": {
+      "max_proof_steps": 10000,
+      "max_domain_size": 2,
+      "max_models": 10000,
+      "max_evaluations": 100000
+    }
+  }
+}

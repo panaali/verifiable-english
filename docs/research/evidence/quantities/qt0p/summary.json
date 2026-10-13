@@ -1,0 +1,475 @@
+{
+ "constitution": {
+  "baseline_coverage": {
+   "accounted_bytes": 184893,
+   "bytes_by_kind": {
+    "asserted": 22,
+    "attributed": 634,
+    "meta": 349,
+    "norm": 2580,
+    "unformalised": 181308
+   },
+   "bytes_by_status": {
+    "CHECKED": 73,
+    "LABELLED": 349,
+    "OPEN": 2529,
+    "UNFORMALISED": 181942
+   },
+   "coverage_percent": 100,
+   "norm_defaults": {
+    "findings": [],
+    "gaps": [
+     "clarification_required",
+     "csam_generation_permitted_for_claude",
+     "cyberweapon_creation_permitted",
+     "exploit_instruction_compliance_required",
+     "firmness_required",
+     "humanity_attack_participation_permitted",
+     "illegitimate_control_involvement_permitted",
+     "infrastructure_uplift_permitted",
+     "oversight_undermining_permitted",
+     "system_prompt_compliance_required",
+     "system_prompt_deception_permitted",
+     "weapons_uplift_permitted"
+    ]
+   },
+   "residual": {
+    "assumptions": 19,
+    "bridge_leaves": 0,
+    "couplings": 0,
+    "gaps": 12,
+    "open_terms": 33,
+    "pending_candidates": 0,
+    "readings_findings": 0,
+    "separations": 3,
+    "ungrounded_defaults": 0,
+    "unresolved_reading_sets": 3
+   },
+   "residual_total": 70,
+   "source_bytes": 184893,
+   "unformalised_reasons": {
+    "attribution": 12,
+    "causation": 76,
+    "counting": 31,
+    "defaults": 50,
+    "modality_belief": 25,
+    "norms": 669,
+    "other.discourse": 81,
+    "other.graded-force": 1,
+    "other.open-list": 1,
+    "quantities": 119,
+    "time": 9
+   }
+  },
+  "companion": "docs/research/evidence/quantities/qt0p/constitution-u0042-u0043.ve.md",
+  "companion_check": {
+   "bytes_by_status": {
+    "CHECKED": 113,
+    "LABELLED": 15,
+    "UNFORMALISED": 101
+   },
+   "premises": "UNKNOWN",
+   "returncode": 0,
+   "status": null
+  },
+  "coverage_delta_bytes_by_status": {
+   "CHECKED": 113,
+   "LABELLED": 15,
+   "OPEN": 0,
+   "UNFORMALISED": -128
+  },
+  "model_search": {
+   "bottom@2": {
+    "found": false,
+    "model": null,
+    "status": "NotFound"
+   },
+   "bottom@3": {
+    "found": true,
+    "model": {
+     "complete": true,
+     "constants": {
+      "anthropic": "e0",
+      "operators": "e1",
+      "users": "e2"
+     },
+     "domains": {
+      "principal_type": [
+       "e0",
+       "e1",
+       "e2"
+      ]
+     },
+     "relations": {
+      "claude_principal_type": [
+       [
+        "e0"
+       ],
+       [
+        "e1"
+       ],
+       [
+        "e2"
+       ]
+      ]
+     }
+    },
+    "status": "Found"
+   },
+   "fourth@2": {
+    "found": false,
+    "model": null,
+    "status": "NotFound"
+   },
+   "fourth@3": {
+    "found": true,
+    "model": {
+     "complete": true,
+     "constants": {
+      "anthropic": "e0",
+      "operators": "e1",
+      "users": "e2"
+     },
+     "domains": {
+      "principal_type": [
+       "e0",
+       "e1",
+       "e2"
+      ]
+     },
+     "relations": {
+      "claude_principal_type": [
+       [
+        "e0"
+       ],
+       [
+        "e1"
+       ],
+       [
+        "e2"
+       ]
+      ]
+     }
+    },
+    "status": "Found"
+   }
+  },
+  "probes": [
+   {
+    "as_expected": true,
+    "expected": "ALL",
+    "probe": "c-repaired-no-fourth",
+    "returncode": 0,
+    "verdict": "ALL"
+   },
+   {
+    "as_expected": false,
+    "expected": "NONE",
+    "probe": "c-repaired-fourth",
+    "returncode": 0,
+    "verdict": "UNKNOWN"
+   },
+   {
+    "as_expected": true,
+    "expected": "ALL",
+    "probe": "c-repaired-anthropic-is-one",
+    "returncode": 0,
+    "verdict": "ALL"
+   }
+  ],
+  "rebuild": {
+   "baseline": {
+    "admitted": true,
+    "bytes_by_status": {
+     "CHECKED": 73,
+     "LABELLED": 349,
+     "OPEN": 2529,
+     "UNFORMALISED": 181942
+    },
+    "document_sha256": "adecddd32c6c13068253be88c7af2703044ac72d802afaed86efc517bb7145c0",
+    "pairs_without_situation": [],
+    "premises": "model",
+    "returncode": 0
+   },
+   "repaired": {
+    "admitted": true,
+    "bytes_by_status": {
+     "CHECKED": 186,
+     "LABELLED": 364,
+     "OPEN": 2529,
+     "UNFORMALISED": 181814
+    },
+    "document_sha256": "2f871e80298712d394ba49b8fd1d4261057a170a7dadb0daccb945ea2c8c4d9b",
+    "pairs_without_situation": [],
+    "premises": "UNKNOWN",
+    "returncode": 0
+   }
+  },
+  "repaired_coverage": {
+   "accounted_bytes": 184893,
+   "bytes_by_kind": {
+    "asserted": 135,
+    "attributed": 634,
+    "meta": 364,
+    "norm": 2580,
+    "unformalised": 181180
+   },
+   "bytes_by_status": {
+    "CHECKED": 186,
+    "LABELLED": 364,
+    "OPEN": 2529,
+    "UNFORMALISED": 181814
+   },
+   "coverage_percent": 100,
+   "norm_defaults": {
+    "findings": [],
+    "gaps": [
+     "clarification_required",
+     "csam_generation_permitted_for_claude",
+     "cyberweapon_creation_permitted",
+     "exploit_instruction_compliance_required",
+     "firmness_required",
+     "humanity_attack_participation_permitted",
+     "illegitimate_control_involvement_permitted",
+     "infrastructure_uplift_permitted",
+     "oversight_undermining_permitted",
+     "system_prompt_compliance_required",
+     "system_prompt_deception_permitted",
+     "weapons_uplift_permitted"
+    ]
+   },
+   "residual": {
+    "assumptions": 21,
+    "bridge_leaves": 0,
+    "couplings": 0,
+    "gaps": 12,
+    "open_terms": 33,
+    "pending_candidates": 0,
+    "readings_findings": 0,
+    "separations": 3,
+    "ungrounded_defaults": 0,
+    "unresolved_reading_sets": 3
+   },
+   "residual_total": 72,
+   "source_bytes": 184893,
+   "unformalised_reasons": {
+    "attribution": 12,
+    "causation": 76,
+    "counting": 29,
+    "defaults": 50,
+    "modality_belief": 25,
+    "norms": 669,
+    "other.discourse": 81,
+    "other.graded-force": 1,
+    "other.open-list": 1,
+    "quantities": 119,
+    "time": 9
+   }
+  }
+ },
+ "inputs": {
+  "constitution": {
+   "path": "/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z/translation.ve.md",
+   "sha256": "adecddd32c6c13068253be88c7af2703044ac72d802afaed86efc517bb7145c0"
+  },
+  "udhr_part03": {
+   "path": "/home/seyran/code/manage-agents/pilots/udhr/run-20261012T1800Z/translation-part03.ve.md",
+   "sha256": "20437df2b63fa28cc0449c2a604a266abbe6b494aca154d8e38efa9d9df4bd1e"
+  }
+ },
+ "main_head": "406736a47beb0b3dc27f035f67cd53b6a8eec8a0",
+ "udhr": {
+  "companion": "docs/research/evidence/quantities/qt0p/udhr-u097.ve.md",
+  "companion_check": {
+   "bytes_by_status": {
+    "OPEN": 76
+   },
+   "premises": "model",
+   "returncode": 0,
+   "status": null
+  },
+  "companion_coverage": {
+   "accounted_bytes": 76,
+   "bytes_by_kind": {
+    "norm": 76
+   },
+   "bytes_by_status": {
+    "OPEN": 76
+   },
+   "coverage_percent": 100,
+   "norm_defaults": {
+    "findings": [],
+    "gaps": [
+     "education_free_required"
+    ]
+   },
+   "residual": {
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "gaps": 1,
+    "open_terms": 1,
+    "ungrounded_defaults": 0,
+    "unresolved_reading_sets": 0
+   },
+   "residual_total": 2,
+   "source_bytes": 76,
+   "unformalised_reasons": {}
+  },
+  "companion_status": [
+   {
+    "as_expected": true,
+    "expected": "SETTLED yes",
+    "lean_point_status": "SETTLED yes",
+    "name": "education_free_required(e0)",
+    "row": [
+     "e0"
+    ],
+    "rules": [
+     "u097-free-at-least-elementary-and-fundamental"
+    ]
+   },
+   {
+    "as_expected": true,
+    "expected": "SETTLED yes",
+    "lean_point_status": "SETTLED yes",
+    "name": "education_free_required(e1)",
+    "row": [
+     "e1"
+    ],
+    "rules": [
+     "u097-free-at-least-elementary-and-fundamental"
+    ]
+   },
+   {
+    "as_expected": true,
+    "expected": "UNDECIDED",
+    "lean_point_status": "UNDECIDED",
+    "name": "education_free_required(e2)",
+    "row": [
+     "e2"
+    ],
+    "rules": []
+   },
+   {
+    "as_expected": true,
+    "expected": "SETTLED yes",
+    "lean_point_status": "SETTLED yes",
+    "name": "education_free_required(e3)",
+    "row": [
+     "e3"
+    ],
+    "rules": [
+     "u097-free-at-least-elementary-and-fundamental"
+    ]
+   }
+  ],
+  "coverage_delta_bytes_by_status": {
+   "CHECKED": 0,
+   "LABELLED": 0,
+   "OPEN": 76,
+   "UNFORMALISED": -76
+  },
+  "spliced_check": {
+   "bytes_by_status": {
+    "CHECKED": 379,
+    "LABELLED": 105,
+    "OPEN": 610,
+    "UNFORMALISED": 1910
+   },
+   "premises": "model",
+   "returncode": 0,
+   "status": null
+  },
+  "spliced_coverage": {
+   "accounted_bytes": 3004,
+   "bytes_by_kind": {
+    "asserted": 351,
+    "meta": 105,
+    "norm": 638,
+    "unformalised": 1910
+   },
+   "bytes_by_status": {
+    "CHECKED": 379,
+    "LABELLED": 105,
+    "OPEN": 610,
+    "UNFORMALISED": 1910
+   },
+   "coverage_percent": 100,
+   "norm_defaults": {
+    "findings": [],
+    "gaps": [
+     "education_free_required",
+     "education_generally_available_required",
+     "elementary_education_compulsory_required"
+    ]
+   },
+   "residual": {
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "gaps": 3,
+    "open_terms": 53,
+    "ungrounded_defaults": 0,
+    "unresolved_reading_sets": 2
+   },
+   "residual_total": 58,
+   "source_bytes": 3004,
+   "unformalised_reasons": {
+    "causation": 2,
+    "other_act_phrase_grammar": 7,
+    "other_comparison": 2,
+    "other_grounding_of_authority": 1,
+    "other_priority_of_rights": 1,
+    "time": 2
+   }
+  },
+  "spliced_sha256": "525759fcf218a0bf902161875d1436cbc24eb79d86af3edac0a8e8c1b45b27c5",
+  "spliced_status": [
+   {
+    "as_expected": true,
+    "expected": "SETTLED yes",
+    "lean_point_status": "SETTLED yes",
+    "name": "education_free_required(e0)",
+    "row": [
+     "e0"
+    ],
+    "rules": [
+     "u097-free-at-least-elementary-and-fundamental"
+    ]
+   },
+   {
+    "as_expected": true,
+    "expected": "SETTLED yes",
+    "lean_point_status": "SETTLED yes",
+    "name": "education_free_required(e1)",
+    "row": [
+     "e1"
+    ],
+    "rules": [
+     "u097-free-at-least-elementary-and-fundamental"
+    ]
+   },
+   {
+    "as_expected": true,
+    "expected": "UNDECIDED",
+    "lean_point_status": "UNDECIDED",
+    "name": "education_free_required(e2)",
+    "row": [
+     "e2"
+    ],
+    "rules": []
+   },
+   {
+    "as_expected": true,
+    "expected": "SETTLED yes",
+    "lean_point_status": "SETTLED yes",
+    "name": "education_free_required(e3)",
+    "row": [
+     "e3"
+    ],
+    "rules": [
+     "u097-free-at-least-elementary-and-fundamental"
+    ]
+   }
+  ]
+ }
+}

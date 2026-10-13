@@ -1,0 +1,281 @@
+{
+ "document": "usecases/claude-constitution-pilot/run-20261012T1800Z/readings/nd-all.ve.md",
+ "group": "all",
+ "search_seconds": 205.4,
+ "sets": [
+  {
+   "set": "force-u0036-s05",
+   "unit": "u0036.s05",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "force-u0156-s03",
+   "unit": "u0156.s03",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "force-u0263-s04-p2",
+   "unit": "u0263.s04.p2",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  }
+ ],
+ "pairs_without_situation": [],
+ "search_limits": [],
+ "load_seconds": 28.3,
+ "admitted": true,
+ "check_seconds": 111.1,
+ "premises": {
+  "status": "UNKNOWN",
+  "route": "superposed",
+  "budget": {
+   "max_steps": 10000,
+   "max_domain_size": 2,
+   "max_models": 10000,
+   "max_evaluations": 100000
+  },
+  "candidates": [
+   {
+    "set": "force-u0036-s05",
+    "index": 0,
+    "status": "UNKNOWN"
+   },
+   {
+    "set": "force-u0036-s05",
+    "index": 1,
+    "status": "UNKNOWN"
+   },
+   {
+    "set": "force-u0156-s03",
+    "index": 0,
+    "status": "UNKNOWN"
+   },
+   {
+    "set": "force-u0156-s03",
+    "index": 1,
+    "status": "UNKNOWN"
+   },
+   {
+    "set": "force-u0263-s04-p2",
+    "index": 0,
+    "status": "UNKNOWN"
+   },
+   {
+    "set": "force-u0263-s04-p2",
+    "index": 1,
+    "status": "UNKNOWN"
+   }
+  ]
+ },
+ "bytes_by_status": {
+  "CHECKED": 186,
+  "LABELLED": 364,
+  "OPEN": 2529,
+  "UNFORMALISED": 181814
+ }
+}
+{
+ "checked_by": {
+  "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+  "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+  "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+ },
+ "separations": {
+  "outcome": 2,
+  "selects": 1,
+  "holds": 0
+ },
+ "findings": {
+  "SeparatedByDecisionOnly": 0,
+  "SeparatedByActOnly": 0
+ },
+ "pending_candidates": 0,
+ "couplings": 0,
+ "route": "superposed",
+ "choice_count": 8,
+ "choices_checked": 8,
+ "narrowings_stale": [],
+ "reading_premises": [],
+ "not_superposable": null,
+ "sizes": {
+  "limits": {
+   "nodes": 10000,
+   "predicates": 256,
+   "sorts": 32
+  },
+  "nodes": 210,
+  "predicates": 69,
+  "sorts": 9
+ },
+ "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+ "conflict": {
+  "status": "CONFLICT-FREE",
+  "evidence": "certificates",
+  "assumed": [],
+  "conditional_on": [],
+  "reading_premises_used": [],
+  "status_text": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+  "choices": [
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   }
+
