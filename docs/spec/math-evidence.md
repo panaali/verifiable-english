@@ -2578,7 +2578,7 @@ so a finding over it stays "transcription unchecked" (2.5).
 | M-5 | negative control | strict n < p < 2n for n from 1 through 161; its deciding value (12.5) |
 | M-6 | the prime predicate | VE's `prime` against `IsPrime` on 0 through 400 |
 | DL-1 | *phase 1*, AlphaFold d024 and d027: medians 0.96 Å (95% interval 0.85–1.16) against 2.8 Å (2.7–4.0); all-atom 1.5 Å (1.2–1.6) against 3.5 Å (3.1–4.2) | stated medians and bounds; claims `within` for each median (4) and `alphafold < alternative` for each measure (2) |
-| DL-2 | *phase 1*, d239 and d242: "4.8 min with 256 residues, 9.2 min with 384 residues and 18 h at 2,500 residues"; "Without ensembling, the network is 8× faster and the representative timings for a single model are 0.6 min …, 1.1 min … and 2.1 h …" | for each length, `rounds tiesUp (with / without) (8, 0)`; the two timings of a length share their unit |
+| DL-2 | *phase 1*, d239, d242.p1 and d242.p2: "4.8 min with 256 residues, 9.2 min with 384 residues and 18 h at 2,500 residues"; "Without ensembling, the network is 8× faster and the representative timings for a single model are 0.6 min …, 1.1 min … and 2.1 h …" | for each length, `rounds tiesUp (with / without) (8, 0)`; the two timings of a length share their unit |
 | DL-3 | *phase 1*, d119 "around 350,000 diverse sequences" and d231 "a Uniclust dataset of 355,993 sequences" (one set: a translation premise, `support: assumption`) | `rounds tiesUp 355993 (350000, 0)`, `rounds tiesUp 355993 (35, −4)` |
 | DL-4 | *phase 1*, d214: "Removing BFD reduced the mean accuracy by 0.4 GDT, removing Mgnify reduced the mean accuracy by 0.7 GDT, and removing both reduced the mean accuracy by 6.1 GDT." | stated 0.4, 0.7, 6.1; constructed claim `0.4 + 0.7 < 6.1` |
 | E-1 | documents | case: a = 52, n = 243, r = a / n; claims c1 `rounds r (214, 3)`, c2 `rounds r (213, 3)`; leaves c1, c2, c3; statuses of [holds, fails], [holds, unknown], [holds, undefined], [] |
@@ -2645,7 +2645,7 @@ so a finding over it stays "transcription unchecked" (2.5).
 | E-1 | c1 discharged, c2 not (fails), c3 not (missing); statuses CHECKED, OPEN, UNFORMALISED, UNFORMALISED | as computed |
 | DL-1 | *phase 1*: holds × 6 | 0.85 ≤ 0.96 ≤ 1.16, 2.7 ≤ 2.8 ≤ 4.0, 1.2 ≤ 1.5 ≤ 1.6, 3.1 ≤ 3.5 ≤ 4.2; 0.96 < 2.8, 1.5 < 3.5 |
 | DL-2 | *phase 1*: holds, holds, **fails** | 4.8/0.6 = 8; 9.2/1.1 = 92/11 = 8.36…; 18/2.1 = 60/7 = 8.57…, outside [7.5, 8.5); in translation "8×" is a reading set, and this row distinguishes its readings |
-| DL-3 | *phase 1*: **fails**, **fails** | 355,993 is not 350,000 (places 0), and 355,993 × 10⁻⁴ = 35.5993 is outside [34.5, 35.5) (it rounds to 36, that is 360,000); only an open tolerance reading holds |
+| DL-3 | *phase 1*: **fails**, **fails** | 355,993 is not 350,000 (places 0), and 355,993 × 10⁻⁴ = 35.5993 is outside [34.5, 35.5) (it rounds to 36, that is 360,000); the open tolerance reading is not decided (no tolerance is stated and no decider exists), so it stays unresolved |
 | DL-4 | *phase 1*: holds | 0.4 + 0.7 = 1.1 < 6.1 |
 
 M-4's candidate bounds were 200 and 1,000 (debate F5). Under the accounting of 12.2, which is part of the semantics,
@@ -3192,8 +3192,15 @@ J1-J11 must be accepted explicitly by both reviewers; item 7 below names them.
 8. (Draft 4, phase 1.) The fixtures phase 1 changed or added are as 13.2 and 13.3 give them, recomputed in the stub
    with `#eval`: H-4 and H-5 over sq = 10⁻⁸ (and no fixture of the source reads v/V = 10⁻⁴; H-7u is marked
    constructed); H-5b; H-9's 104 claims and H-9n; V-7b's six multiples of 1/4,096; M-4b at x = T − 1 and T (its
-   bounds are ME-12's); DL-1 to DL-4. Each source row's span is the one `fixture-anchors.json` records against the
-   pinned source's SHA-256. No Lean statement changed in draft 4, so items 1 to 7 are unchanged.
+   bounds are ME-12's); DL-1 to DL-4. The spans of the fixtures `fixture-anchors.json` lists (H-1 to H-10, M-1 to
+   M-5, V-1 to V-12, D-1 to D-3) are the ones it records against the pinned source's SHA-256; M-4b shares M-4's span
+   there (2,575-2,620). The fixtures phase 1 added have no entry in it and are anchored to units of the saved
+   ledgers (`docs/research/evidence/math-evidence/<ledger>/…units.json`, each with its `source_sha256`):
+   H-5b to h050 (7,444-7,631) of `physics-michelson-morley/source.units.json` (7bc59a08…); V-7b to v060-v065
+   (5,782-6,191) of `ve-paper-e1/source-04-e1.units.json` (a4a41670…); DL-1 to d024 (4,328-4,746) and d027
+   (5,097-5,304), DL-2 to d239 (40,061-40,225), d242.p1 (40,576-40,626) and d242.p2 (40,626-40,761), DL-3 to d119
+   (20,822-21,032) and d231 (38,833-38,987), DL-4 to d214 (36,565-36,726), all of `dl-alphafold/source.units.json`
+   (116aead5…). No Lean statement changed in draft 4, so items 1 to 7 are unchanged.
 
 **Phase 1 (draft 4).** ME-0's pre-registered fixture check (P4) failed: of 32 fixtures in scope, 14 were ANCHORED, 9
 RE-WORDED, 6 NOT A QUOTE and 3 CHANGED (H-4, H-5, H-9), none ABSENT. Draft 4 rewrites the three to the source, adds
