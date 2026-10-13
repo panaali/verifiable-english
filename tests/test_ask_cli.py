@@ -75,7 +75,7 @@ def test_ve_ask_refuses_the_recorded_unsupported_profile():
     entry = AF.load("A1d")
     done = cli(ROOT / entry["path"], entry["question"])
     assert done.returncode != 0
-    assert entry["error"]["class"] in done.stderr
+    assert done.stderr.strip() == "UnsupportedProfile: norms route with data flags is not implemented"
 
 
 def test_the_leads_are_the_specs():
