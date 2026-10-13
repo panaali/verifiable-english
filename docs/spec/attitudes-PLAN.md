@@ -1,12 +1,15 @@
 # Typed attitudes as conditions of norms (`attitudes@0`): buildable plan
 
-> **Status.** Draft 3, 2026-10-13, branch `design/attitudes`. Draft 1 (2026-10-12, at `49de179e`) was debated by
+> **Status.** Draft 4, 2026-10-13, branch `design/attitudes`. Draft 1 (2026-10-12, at `49de179e`) was debated by
 > Fable and Astra (`manage-agents/debates/design-attitudes/`, converged REVISE after round 3) and revised by the
 > DRI's cross-plan synthesis of 2026-10-13 (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`). Draft 2 made
 > exactly those edits and no others; the debate's items are cited as **A1–A6** (Astra) and **F3–F7** (Fable), the
 > synthesis's as **edit 1–10**. Draft 2 went straight to AT-0's statement review, which converged after round 3 on
 > **FIX; the build may not start** (`manage-agents/debates/attitudes-spec/`). Draft 3 makes that review's
-> corrections, cited as **SR-1 to SR-8** (listed in the spec's section 14), and no other change.
+> corrections, cited as **SR-1 to SR-8** (listed in the spec's section 14), and no other change. The re-check of
+> spec draft 2 (`manage-agents/attitudes-p3ver1.final.md`) returned FAIL on three problems; draft 4 and spec draft 3
+> make its corrections, cited as **RC-1 to RC-4** (listed in the spec's section 15), and no other change. RC-4 adds
+> one batch, AT-1w, so that the `wants` test has one owner at every merge.
 > Research and measurements: [docs/research/attitudes.md](../research/attitudes.md) (cited as **R n**). Docs only:
 > nothing here is built, proved or measured unless it says so. The Lean blocks are obligations, not proofs; their
 > elaborated text is AT-0's statement spec [docs/spec/attitudes.md](attitudes.md), which governs where the two
@@ -34,16 +37,16 @@ mode (edit 7). Thresholds such as "quite likely" stay open terms with a decider.
 does …") stays a hand-named open term until a reviewed act-performance bridge exists (edit 3).
 
 **Pilot path** (arrows are merge order; F7, debate round 3). AT-0p (pilot, no code, now) → E1 and E2 in parallel,
-then the closure review, then the table is frozen → AT-0 PASS → AT-1 → AT-2 → AT-3a → AT-3b → AT-6a (strict
-companion, structured input, measured) → **DRI go/no-go** → AT-4 → AT-6b (main translation measured) → AT-5
-(English; after a "go" it may start once AT-3b and `qa-q2` have merged, alongside AT-4). About 43 to 51 hours by
+then the closure review, then the table is frozen → AT-0 PASS → AT-1w → AT-1 → AT-2 → AT-3a → AT-3b → AT-6a
+(strict companion, structured input, measured) → **DRI go/no-go** → AT-4 → AT-6b (main translation measured) → AT-5
+(English; after a "go" it may start once AT-3b and `qa-q2` have merged, alongside AT-4). About 46 to 55 hours by
 the table's estimates, experiments included (estimates, not evidence of speed). Off the path, outside core approval
 and each with its own statement review: AT-7 (nesting), AT-8 (`reports@0` units in norm documents, after E3), AT-9
 (numeric bands, on risk stage B's trigger), E3, E4 (research).
 
 **The smallest batch that moves a pilot number** is AT-0p: the pilot rewrites the seven guards with the existing
 language, so the seven "mistaken belief" points move from UNDECIDED to SETTLED no and the seven units can pass the
-next audit. The smallest *product* batch that moves one is AT-3b (it needs AT-1 to AT-3a), measured by AT-6a. Every
+next audit. The smallest *product* batch that moves one is AT-3b (it needs AT-1w to AT-3a), measured by AT-6a. Every
 product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DRI decides go or no-go after AT-6a
 (F7), on AT-6a's measured results and the next audit's verdict on AT-0p's seven units, before AT-4 and AT-6b.
 
@@ -110,9 +113,12 @@ product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DR
   its category and its candidate readings (SR-5). `reports@0`'s Python literals (`_VERBS`, `_SYNONYMS`, `_REJECTED`
   in `ve/report_english.py`) are deleted in AT-5 and read from the generated export. The English lexical data
   (nouns, wordings, spellings) is the English grammar's (`VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`), carried by
-  the document, validated by `Lexicon.failures` and tied to its environment inside `WellFormedAtt`; admission,
-  rendering and reading read that one lexicon (SR-3). `reports@0`'s `wants` verb-phrase test (`_subject_split`,
-  `_infinitive`) moves into `lean/VE/Attribution/Words.lean` in AT-1, whose admission check calls it (SR-3).
+  the document, validated by `Lexicon.failures` and tied to its environment inside `WellFormedAtt`; every predicate
+  and constant an admitted condition names has its entry there (D14d, RC-1); admission, rendering and reading read
+  that one lexicon (SR-3). `reports@0`'s `wants` verb-phrase test (`_subject_split`, `_infinitive`, and `_finite`,
+  the form `_infinitive` checks against) moves into `lean/VE/Attribution/Words.lean` in AT-1w, before AT-1's
+  admission check calls it, and AT-1w deletes the Python copy, `reports@0`'s Python English reading Lean's; so the
+  test has one owner at every merge (SR-3, RC-4).
 - **D-A9. Nothing from intending, wanting or saying.** No success, no desire, no obligation, no belief follows from
   them; no closure under consequence or conjunction; nothing across holders; no introspection. A joined act phrase
   under `intends` or `believes` is never split or distributed by act-phrases' modal × connective table
@@ -211,6 +217,7 @@ kinds' decoder, `decodeAttDoc`, also decodes the case's English lexicon with the
 | "X thinks it *w* that P", *w* in `Scale.lowerBound` | thinks *w* (lower bound) | admitted; any other word refused (A1) |
 | "X believes that P", "X wants Y to VP", "X intends that P", "X says that P" | `reports@0`'s acts | admitted ("intends to VP" and "wants Y to VP" with an act phrase are not admitted. Intentional action stays residual until a reviewed act-performance bridge, designed by events-time-causation (ET-D2), fits this profile's contract: quantifier-free content over the base vocabulary, one slot. Act-phrases landing does not admit them; edit 3). "X wants Y to VP" only for one unary base predicate on the slot whose wording `reports@0`'s test turns into "Y to VP"; any other `wants` content is refused (SR-2) |
 | a slot its content does not mention; a slot at a constant | one sentence for two keys | refused at admission; a content about a constant is written closed; de re versus de dicto about a named constant is a later admission with its own E2 items (SR-2) |
+| a condition naming a predicate or constant with no entry in the document's lexicon | no sentence | refused at admission (D14d, RC-1) |
 | "P, and X does not know that P" | not knows, content asserted | admitted only if its three E2 items reach 36 of 40; otherwise refused with its rewrites (A4) |
 | "unless X knows that P" (carve-out) | unresolved presupposition | refused, with rewrites; E2's three "unless" items are evidence for a later admission with its own statement review only (debate round 3) |
 | "X does not know that P" elsewhere | two readings (with and without P) | refused `NegatedFactive`, with one-reading rewrites |
@@ -246,8 +253,8 @@ checked by QS-1's `Order.admit` inside `WellFormedAtt` (A5, edit 1). Every UNKNO
 | Distribution over joined acts | none in attitudes | edit 4 |
 | Hedged calc claims | a separate bridge, unowned | edit 5 |
 | Refusals and source-word reading sets | rows in english-lean's catalogue | AT-5 adds rows, each with its category and candidate readings (SR-5), no separate refusal table |
-| English lexical data and its validity | the English grammar: `VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`, `Lexicon.failures`; decoders `Env.decode`, `Overlay.decode`, `Run.decodeLexicon` | carried by the document (`AttDoc.lex`), checked in `WellFormedAtt`, decoded at AT-3a; no attitude-local template classifier (SR-3) |
-| The `wants` verb-phrase test | `reports@0` (`_subject_split`, `_infinitive` in `ve/report_english.py`) | **moves** into `lean/VE/Attribution/Words.lean` in AT-1 (SR-3); the Python copy goes in AT-5 (open, section 7) |
+| English lexical data and its validity | the English grammar: `VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`, `Lexicon.failures`; decoders `Env.decode`, `Overlay.decode`, `Run.decodeLexicon` | carried by the document (`AttDoc.lex`), checked in `WellFormedAtt` (D6a, D6b, and per condition D14d, RC-1), decoded at AT-3a; no attitude-local template classifier (SR-3) |
+| The `wants` verb-phrase test | `reports@0` (`_subject_split`, `_infinitive`, `_finite` in `ve/report_english.py`) | **moves** into `lean/VE/Attribution/Words.lean` in AT-1w, which deletes the Python copy in the same batch (SR-3, RC-4) |
 | The hand-named open term `restricted_action_knowing_or_quite_likely` | pilot translation | deleted by AT-0p, then AT-0p's atoms by AT-6 |
 
 ### 3.10 Conservativity
@@ -265,8 +272,10 @@ full gate once, on the final HEAD; corpus A/B where the batch changes an answer;
 (`python3 lean/audit.py`: no forbidden word even in comments, no primes in theorem names, names under about 57
 characters), regenerated inventories through `uv run python tools/regen_generated.py --write` (never by hand),
 `tools/lean_statements.py` showing additions only, and seeded bugs in each changed language (CLAUDE.md). The seeded
-bugs, one per behaviour claimed: AT-1, factivity generated with its implication reversed (F-AT1's M2 `#guard`
-fails), and the constant-slot check (D14b) skipped (collision fixture C-b's `#guard` fails, SR-2); AT-2, the frame
+bugs, one per behaviour claimed: AT-1w, `wantsPhrase?` without the irregular `is` → `be` (the recorded infinitive of
+"is classified as …" changes), and the relay accepting a row for a phrase it did not send (a fuzz test fails, RC-4); AT-1, factivity generated with its implication reversed (F-AT1's M2 `#guard` fails), the constant-slot check
+(D14b) skipped (collision fixture C-b's `#guard` fails, SR-2), and the lexicon-entry check (D14d) skipped for
+constants (C-d's first document is admitted, RC-1); AT-2, the frame
 check skipped at a point (M2 is no longer refused); AT-3a, the decoder accepting `degree` on a mode other than
 `thinks`, the decoder returning before `checkAtt` (a route fixture of a failing check answers an elaboration, SR-7),
 and the hook answering the new profile text with `attitudes@0` off (a W1 compatibility fixture fails, SR-6); AT-3b,
@@ -281,8 +290,9 @@ reopens only that statement.
 | AT-0p | Pilot repair with the existing language (no product code) | 2 | pilot runner | — (first step of the hard-constraint queue, edit 10) |
 | E1 | Likelihood-word order and lower-bound reading (experiment) | 2–3 | experiment runner | — |
 | E2 | Factivity, knows → believes, knows → thinks it *w* per word and per derived pair, negated "know", "unless", "P, and X does not know that P" (experiment) | 2 | experiment runner | — |
-| AT-0 | Statement spec `docs/spec/attitudes.md`, stub elaborated against main, small-scope counterexample search, statement review (round 1: FIX, SR-1 to SR-8; re-review of the changed statements) | 3–4 | planner | E1, E2 results and the closure review |
-| AT-1 | Lean core: syntax, keys, elaboration, frame, semantics, admission with the lexicon and `renderable`, theorems, fixtures; the `wants` test moved into Lean | 5–6 | Lean | AT-0 PASS; QS-1 merged (edit 1) |
+| AT-0 | Statement spec `docs/spec/attitudes.md`, stub elaborated against main, small-scope counterexample search, statement review (round 1: FIX, SR-1 to SR-8; re-check: FAIL, RC-1 to RC-4; re-review of the changed statements) | 3–4 | planner | E1, E2 results and the closure review |
+| AT-1w | `reports@0`'s `wants` test moved into Lean, its Python copy deleted, `reports@0`'s Python English reading Lean's through a `reports` kind (RC-4) | 3–4 | Lean, Python | AT-0 PASS |
+| AT-1 | Lean core: syntax, keys, elaboration, frame, semantics, admission with the lexicon and `renderable`, theorems, fixtures | 5–6 | Lean | AT-1w; QS-1 merged (edit 1) |
 | AT-2 | Lean: the layered route with the `attitudes` pack (statuses, conflicts, report) | 4–5 | Lean | AT-1; PK-1 merged (and so `rd-9-int`) |
 | AT-3a | Lean wire: the guard-node hook in the chain's norm decoders, the pack provider's block decoder, the layered kinds, their shape and encoder theorem | 5–6 | Lean | AT-2; PK-1 and AR-10's table merged; `lf-16e`, `qa-q2` merged; on `lean/VE/Norms/Wire.lean` after act-phrases' AP-1 and AP-3 |
 | AT-3b | Python relay with request-path binding, `ve document` hook, fixtures and fuzz tests | 4–5 | Python | AT-3a; first in the document-mode queue after `lf-16g` |
@@ -386,28 +396,59 @@ know that P" items (A4).
   order (SR-8): E1 and E2 are recorded in `table` with their items, including E2's decision on asserted-content
   negated knowledge; the closure review holds and the table is frozen; the stub is updated to spec draft 2 and
   elaborated; every fixture and the counterexample search are rerun on the frozen table, with the new refusals
-  (D6a–D6b, D14a–D14c) in the search's pool; the reviewers re-review only the statements that changed.
+  (D6a–D6b, D14a–D14d) in the search's pool; the reviewers re-review only the statements that changed.
+- **The re-check of spec draft 2 (2026-10-13): FAIL** (`manage-agents/attitudes-p3ver1.final.md`): SR-1, SR-2, SR-4,
+  SR-5, SR-7 and SR-8 present and correct; three problems remain. Spec draft 3 and this draft correct them, RC-1 to
+  RC-4 (spec section 15): D14d, the lexicon entry of every symbol a condition names (RC-1); the SR-6 fault-order
+  fixture (RC-2); the D15 fixture's lexicon (RC-3); and AT-1w, so that the `wants` test has one owner at every merge
+  (RC-4). The stub is updated to spec draft 3, not 2, before the steps above.
 - Done when the stub elaborates, the search finds no counterexample, the spec is committed, and the review
   converges on PASS.
+
+### AT-1w. `reports@0`'s `wants` test moved into Lean (Lean, Python, 3–4 h)
+
+`reports@0`'s `wants` verb-phrase test is Python only on `main` (`_subject_split`, `_infinitive`, and `_finite`, the
+form `_infinitive` checks against; `ve/report_english.py`). AT-1's admission check D14c and AT-5's renderer call it
+in Lean, and one owner per piece of logic means it must never exist in both languages at once (RC-4). So this batch,
+before AT-1, moves it and switches its Python callers in one merge (spec section 10, item 6).
+
+Files: `lean/VE/Attribution/Words.lean` (new: only `wantsPhrase?` and the finite form it checks against; AT-5 adds
+the verbs, F6). Hand-written shared files: `lean/VE/Attribution/Run.lean` (one new kind of the existing `reports`
+mode, answering for each verb phrase the case sends its infinitive under the test, absent when the test refuses it,
+and for each infinitive its finite form), `lean/ResponseShape/Schemas/Reports.lean` (the kind's row, typed to the
+leaves; `ResponseShape.Encoders.Reports.runCaseReported_fits` keeps its statement, its skeleton gaining the row),
+`ve/reports_route.py` and `ve/reports.py` (the relay, reached by `ve/report_english.py` through the `reports`
+document object it is already given, since the surface layer does not import the relay, `tools/layer_policy.py`),
+`ve/report_english.py` (`_infinitive` and `_finite` deleted; the printer's `_subject_split` and the parser's "to
+VP" readings take both forms from Lean). Generated: `ve/backends/lean_service_schema/reports.json`, recorded route
+cases, the Lean inventories and the gate collection, as AT-1.
+
+Python checks the kind's rows for schema and binding only: each phrase it sent answered once, in order, nothing
+extra (the DRI rulings' R8). Fixtures: before deleting them, the batch records `_infinitive` and `_finite` on every phrase the suite's
+`reports@0` cases reach, and Lean's kind answers the same; every existing `reports@0` English test
+(`tests/test_report_english.py`, `tests/test_reports.py`) keeps its answer; fuzz tests drop, empty, retype, duplicate
+and reorder each row's members and add a row for a phrase not sent.
+
+Bytes unlocked: 0. Done when no `reports@0` English answer changes, the Python copy is gone, the audit passes, and
+the gate passes.
 
 ### AT-1. Lean core (Lean, 5–6 h)
 
 Files: `lean/VE/Attitudes/Scale.lean`, `Syntax.lean`, `Frame.lean`, `Semantics.lean`, `Theorems.lean`,
-`Examples.lean` (`#guard`s), all new; `lean/VE/Attribution/Words.lean` (new: only `wantsPhrase?`, `reports@0`'s
-`wants` test moved from `_subject_split` and `_infinitive`, which admission check D14c calls; AT-5 adds the verbs,
-SR-3); `lean/ATTITUDES.md` (new). Generated (regenerate, never hand-edit):
+`Examples.lean` (`#guard`s), all new; `lean/VE/Attribution/Words.lean` is AT-1w's (its `wantsPhrase?` is the test
+admission check D14c calls; SR-3, RC-4); `lean/ATTITUDES.md` (new). Generated (regenerate, never hand-edit):
 `lean/VE.lean` (import union), `lean/VE/Audit.lean` (one `#print axioms` line per theorem),
 `lean/VE/Route/frozen-sources.sha256`, `lean/axioms.txt`, `lean/statements.txt`, `lean/declarations.txt`,
 `lean/predicates.txt`, `tools/gate-collection.json` (unchanged unless a test is added). No hand-written shared file.
-Needs QS-1 (`lean/VE/Closure/Order.lean`, owned by quantities) merged (edit 1).
+Needs AT-1w, and QS-1 (`lean/VE/Closure/Order.lean`, owned by quantities) merged (edit 1).
 
 The block below is draft 1's with the converged edits made; AT-0's elaborated text
 ([attitudes.md](attitudes.md) sections 2 to 4) governs where they differ. In particular the statement review's
 corrections are written there, not here: `AttDoc` gains `lex` (the English grammar's `Env`, `Overlay` and
 `Lexicon`); `checkAtt` gains D6a (`Lexicon.failures`) and D6b (`lexAgrees`) after the reserved-prefix check; and
-`checkCond` ends with `renderCheck` (D14a unused slot, D14b slot at a constant, D14c `wants` without its wording),
-whose success is `renderable` (SR-2, SR-3). The block therefore also imports `VE.EnglishGrammar.Lexicon` and
-`VE.Attribution.Words`.
+`checkCond` ends with `renderCheck` (D14a unused slot, D14b slot at a constant, D14c `wants` without its wording,
+D14d a predicate or constant with no lexicon entry), whose success is `renderable` (SR-2, SR-3, RC-1). The block
+therefore also imports `VE.EnglishGrammar.Lexicon` and `VE.Attribution.Words`.
 
 ```lean
 import VE.Attribution.Content
@@ -604,7 +645,8 @@ def baseEnv (A : AttDoc) : VE.Environment :=
     in `E`, at most 64 bytes and pairwise distinct; `E`'s predicates plus the keys stay within
     `VE.Reports.maxPredicates`; every rule's predicate is regulated; `decidedBy` is non-empty; the document's English
     lexicon is valid and describes `E`, and every condition is one 3.7 can word: a slot mentioned by its content, a
-    slot term that is a variable, a `wants` content with its one wording (SR-2, SR-3). -/
+    slot term that is a variable, a `wants` content with its one wording, every predicate and constant with its
+    lexicon entry (SR-2, SR-3, RC-1). -/
 def WellFormedAtt (A : AttDoc) : Bool := wellFormedBody A
 
 /-- The guard-level part of `WellFormedAtt`, as a proposition over one formula in context `Γ`. -/
@@ -812,16 +854,18 @@ or F-AT2, A3):
 - **F-AT0 (conservative).** F-AT1 with the attitude conditions removed: no key, no frame, `envAtt = E`.
 - **The closure review.** `table.reviewed` holds; a table whose closure derives a pair or a premise-3 word without
   its own item fails it.
-- **The lexicon and the renderable subset (SR-2, SR-3).** Every fixture carries the spec's fixture lexicon. D6a, D6b
-  and D14a–D14c each fail at their own check; the collision pairs C-a (`knows ⊤` closed and with an unused slot) and
-  C-b (`C(s1)` closed and `C(var 0)` slotted at the constant `s1`), and the `wants` pair C-c (spec section 7.1).
+- **The lexicon and the renderable subset (SR-2, SR-3, RC-1, RC-3).** Every fixture carries the spec's fixture
+  lexicon, extended for D15's 240 predicates (RC-3). D6a, D6b and D14a–D14d each fail at their own check; the
+  collision pairs C-a (`knows ⊤` closed and with an unused slot) and C-b (`C(s1)` closed and `C(var 0)` slotted at
+  the constant `s1`), the `wants` pair C-c, and C-d (a constant and a predicate declared in `E` with no lexicon
+  entry, refused at D14d) (spec section 7.1).
 
 Deleted, not duplicated: draft 1's `qf` (A5) and `Scale.step` (edit 1). `Act`, `dedup` and content identity are
 `reports@0`'s; the closure is QS-1's; the lexicon and its validity are the English grammar's; the `wants` test is
-`reports@0`'s, moved (SR-3).
+`reports@0`'s, moved by AT-1w (SR-3, RC-4).
 
-Shared files: none hand-written. In-flight overlap: none (new directories). The Python copy of the `wants` test in
-`ve/report_english.py` stays until AT-5 (section 7).
+Shared files: none hand-written. In-flight overlap: none (new directories). No Python copy of the `wants` test
+remains: AT-1w deleted it (RC-4).
 
 Bytes unlocked: 0 (nothing calls the code).
 
@@ -992,10 +1036,12 @@ Fixtures: F-AT1 as wire cases, each kind, with the fixture lexicon; malformed ca
 `attitudes@0` on the attitudes kinds, unknown mode, `degree` on a non-`thinks` mode, a slot term of the wrong sort, a
 holder of a non-holder sort, a content with a quantifier, a generated name over 64 bytes, a missing `lexicon`)
 refused with their diagnostic in the spec's order; F-AT1 with one change per check of spec 5.2 (D1, D6a, D6b, D9,
-D14a, D14b, D14c, D18) answering that check's diagnostic, not an elaboration (SR-7). Compatibility (SR-6): on W1's,
-soft's and P0's routes with `attitudes@0` off, malformed and well-formed attitude objects, and documents pairing an
-attitude node with an earlier or a later fault, answer byte for byte what `main` answered before the hook (recorded
-first; `array expected` at `49de179e`).
+D14a, D14b, D14c, D14d, D18) answering that check's diagnostic, not an elaboration (SR-7). Compatibility (SR-6): on
+W1's, soft's and P0's routes with `attitudes@0` off, malformed and well-formed attitude objects, and documents pairing
+an attitude node with an earlier or a later fault, answer byte for byte what `main` answered before the hook (recorded
+first; `array expected` at `49de179e`). On W1's route a document pairing an unknown predicate with an attitude node
+answers `array expected` in both orders, since `decodeSource` decodes every rule before `validate` raises the
+unknown predicate (spec 7.6, RC-2).
 
 Deleted from draft 1 (edit 7): the `Protocol.lean` mode constructor, its name, the `modes` entry, the `runMode` case
 and `VE.Service.runMode_attitudes`; the `MODES` entry in `ve/backends/service_schema.py`; the generated
@@ -1140,7 +1186,7 @@ generated predicates, composed from the content predicate's own template; the fr
 each degree word), the Lean English grammar's admission of the 3.7 rows (files in `lean/VE/EnglishGrammar/` that
 AT-0 names). AT-5's refusals (`NegatedFactive`, `NegRaising`, bare "thinks that", `AttitudeAdverb`, an unresolved
 holder) and their rewrites are rows in english-lean's catalogue, each with its category and its candidate readings
-(SR-5); AT-5 adds no separate refusal table (edit 9). `lean/VE/Attribution/Words.lean` exists from AT-1 (with
+(SR-5); AT-5 adds no separate refusal table (edit 9). `lean/VE/Attribution/Words.lean` exists from AT-1w (with
 `wantsPhrase?`); AT-5 adds the verbs to it. Every renderer and reader reads the document's own lexicon (`A.lex`) and
 calls the English grammar's lexicon functions and `wantsPhrase?`, with no template classifier of its own (SR-3).
 Whole-sentence fixtures (A4): `readRuleAll` of the 3.1 sentence and of each of the seven pilot guards has length 1;
@@ -1177,8 +1223,7 @@ enclosing rule's context), `readRule`, `readRuleAll` (a whole rule), `refusalOf`
 6.5 writes them; each `…All` lists every derivation, as the all-derivations gate does.)
 
 Deleted: `_VERBS`, `_SYNONYMS` and `_REJECTED` in `ve/report_english.py`; it reads the exported table instead. No
-second verb table remains. The Python copy of the `wants` test (`_subject_split`, `_infinitive`), which AT-1 moved
-into Lean, is removed here too, `reports@0`'s printer taking the phrase from Lean (open, section 7; SR-3).
+second verb table remains. The `wants` test is not touched here: AT-1w moved it and deleted its Python copy (RC-4).
 
 Shared files: the English grammar files; the export's generator (the `english-codes` entry if its format can carry
 the table, else a new `attitude-words` entry in `tools/regen_generated.py`, which is hand-written); the generated
@@ -1273,13 +1318,14 @@ Formalise 12 honesty units (u0112.s01 to s07, u0113.s02, u0114.s03, u0115.s01, u
 | Batch | Waits for | Hand-written shared files | Generated files (regenerate) |
 |---|---|---|---|
 | AT-0p | — | (pilot directory only); first in the hard-constraint queue `AT-0p → SC-1b → SC-2 → AT-6a/AT-6b → WG-5` (edit 10) | — |
-| AT-1 | AT-0; QS-1 (edit 1) | none (`lean/VE/Attribution/Words.lean` is new here, with `wantsPhrase?` only, SR-3) | `lean/VE.lean`, `lean/VE/Audit.lean`, frozen inventory, axioms, statements |
+| AT-1w | AT-0 | `lean/VE/Attribution/Run.lean` (one `reports` kind), `lean/ResponseShape/Schemas/Reports.lean`, `lean/ResponseShape/Encoders/Reports.lean` (skeleton row), `ve/reports_route.py`, `ve/reports.py`, `ve/report_english.py` (`lean/VE/Attribution/Words.lean` is new here, with `wantsPhrase?` only; SR-3, RC-4) | `reports.json`, route cases, as AT-1 |
+| AT-1 | AT-1w; QS-1 (edit 1) | none | `lean/VE.lean`, `lean/VE/Audit.lean`, frozen inventory, axioms, statements |
 | AT-2 | AT-1; PK-1 (after `rd-9-int`) | one provider registration line on `lean/VE/NormDefaults/Layered.lean`, first in PK-1's integration order AT-2/AT-3a → WG-3 → ET-4 → QT-B2 | as AT-1 |
 | AT-3a | AT-2; PK-1; AR-10's table; `lf-16e`, `qa-q2`, `fix-main-relay`; on `lean/VE/Norms/Wire.lean` after AP-1 and AP-3 | `lean/VE/Norms/Wire.lean` and the soft norm decoder (the guard-node hook), the layered route's kind table and response-shape files, the AR-10 row, `ve/assurance-manifest.json`, `conformance/binding_probes.py`, `ROADMAP.md` | layered response schema, `ResponseShape` roots and audit, assurance doc, checker pins, trust baseline (signed), AR-10's profile data |
 | AT-3b | AT-3a; `lf-16e`; first in the document-mode queue after `lf-16g` (AT-3b, SC-1b, QT-A4, ET-5, WG-4, ME-10) | document dispatch (Python or Lean), `tools/layer_policy.py` | route cases, `.importlinter`, gate collection |
 | AT-6a, AT-6b | AT-3b (AT-6a); AT-4 (AT-6b); SC-2 in the hard-constraint queue | (pilot directory only) | — |
 | AT-4 | the DRI's "go"; `lf-14d`, `rd-9-int`, `lf-16e`; PK-1 | the pack provider's readings registration, `ve/readings.py` | as AT-1, route cases |
-| AT-5 | the DRI's "go"; AT-3b; `qa-q2`; first in the English queue `AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7` | `lean/VE/Attribution/Words.lean` (AT-1's, gains the verbs, F6), English grammar files, english-lean's catalogue rows, `ve/report_english.py`, possibly `tools/regen_generated.py` | English grammar lock (needs a person's `--actions-version`), codes |
+| AT-5 | the DRI's "go"; AT-3b; `qa-q2`; first in the English queue `AT-5 → QT-A6 → ME-11 → QT-B3 → SC-7` | `lean/VE/Attribution/Words.lean` (AT-1w's, gains the verbs, F6), English grammar files, english-lean's catalogue rows, `ve/report_english.py`, possibly `tools/regen_generated.py` | English grammar lock (needs a person's `--actions-version`), codes |
 | AT-7 | AT-4 | AT-3a's decoder (own file) | as AT-1 |
 | AT-8 | E3; DRI decision | AT-3a's decoder (own file), `ve/attitudes.py` | as AT-1 |
 | AT-9 | risk stage B trigger | `lean/VE/Attitudes/Scale.lean` (own), risk stage B's files | as AT-1 |
@@ -1287,7 +1333,8 @@ Formalise 12 honesty units (u0112.s01 to s07, u0113.s02, u0114.s03, u0115.s01, u
 How conflicts are avoided: every Lean batch writes new files under `lean/VE/Attitudes/`; the hand-written shared
 Lean files are the guard-node hook on `lean/VE/Norms/Wire.lean` and the soft norm decoder (serialised after AP-1 and
 AP-3), one provider line on PK-1's `Layered.lean` (in PK-1's integration order), the layered route's kind table, the
-AR-10 row, and `lean/VE/Attribution/Words.lean` (new in AT-1, extended in AT-5). The seven pilot units change in
+AR-10 row, `lean/VE/Attribution/Words.lean` (new in AT-1w, extended in AT-5), and AT-1w's `reports` kind with its
+shape, relay and `ve/report_english.py` (the `reports@0` files). The seven pilot units change in
 the hard-constraint queue's order, each step starting from the translation as the previous step left it. Generated
 inventories are never hand-edited or hand-merged (ruling R12; `tools/regen_generated.py --resolve` finishes a merge
 whose only conflicts are generated). Overlap is checked before each batch with `git diff --name-only
@@ -1330,10 +1377,10 @@ NORTH-STAR row 8 (0.1920 from tags) recomputed on this basis: the buildable part
   `attitudes@0` is off; whether the layered status kind checks the point against every X premise; whether the
   `english-codes` generator can carry the word table; the readings decoder's registration point after `lf-14d`.
   (Answered in spec draft 1 and 2, section 10; the off-profile diagnostic is today's, SR-6.)
-- **Open (for the re-review, SR-3):** between AT-1, which moves `reports@0`'s `wants` test into Lean for admission
-  check D14c, and AT-5, which removes `_subject_split` and `_infinitive` from `ve/report_english.py`, the test exists
-  in Lean and in Python. If the reviewers do not accept that interval, `reports@0`'s printer switches to the Lean
-  test in AT-1 instead (a Python edit in a Lean batch).
+- **Closed (RC-4):** draft 3 left open whether the `wants` test could exist in Lean and in Python between AT-1 and
+  AT-5. The re-check found that interval breaks the one-owner rule. AT-1w, before AT-1, moves the test and deletes
+  its Python copy in one merge, so it never exists twice; a batch of its own, since AT-1 with a relayed kind would
+  exceed six hours.
 - **Open (for the DRI):** AT-8's owner (attribution or attitudes); how the residual displays 21 open terms (14
   generated, 7 hand-named); whether "is aware that" may be an input synonym of "knows that" (only if E2-style
   agreement is shown; else refused with that rewrite); the go/no-go after AT-6a (F7).
@@ -1368,7 +1415,9 @@ NORTH-STAR row 8 (0.1920 from tags) recomputed on this basis: the buildable part
 - Admission is what English can word: every admitted condition has its one sentence and no sentence two admitted
   conditions (`renderable`, `att_english_roundtrip` on admitted occurrences, `renderCond_injective`; SR-2).
 - Admission, rendering and reading share one validated lexicon from the English grammar, tied to the document's
-  environment (SR-3).
+  environment (SR-3), with an entry for every predicate and constant an admitted condition names (D14d, RC-1).
+- The `wants` test has one owner at every merge: AT-1w moves it into Lean and deletes its Python copy before AT-1
+  calls it (RC-4).
 - A decoded document is a checked document (`decodeAttDoc_wellFormed`, SR-7); with `attitudes@0` off, W1's, soft's
   and P0's answers are unchanged (SR-6); every statement's hypotheses suffice (`frame_unsaidFree` has `hw`, SR-1).
 - No Lean comment uses a word `lean/audit.py` forbids; no theorem name has a prime or exceeds about 57 characters

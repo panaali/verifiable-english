@@ -1,29 +1,32 @@
 # Typed attitudes as conditions of norms (`attitudes@0`): statement spec (AT-0)
 
-> **Status.** Draft 2, 2026-10-13, branch `design/attitudes`. AT-0's statement spec for
-> [attitudes-PLAN.md](attitudes-PLAN.md) draft 3 (cited as **PLAN**; its debate items as **A1–A6**, **F3–F7**, the
+> **Status.** Draft 3, 2026-10-13, branch `design/attitudes`. AT-0's statement spec for
+> [attitudes-PLAN.md](attitudes-PLAN.md) draft 4 (cited as **PLAN**; its debate items as **A1–A6**, **F3–F7**, the
 > cross-plan synthesis edits as **edit 1–10**). For AT-0's statement review; nothing here is built or proved.
 > Draft 2 applies the statement review of draft 1 (Astra and Fable, `manage-agents/debates/attitudes-spec/`,
 > converged after round 3 on **FIX; the build may not start**). Its corrections are cited as **SR-1 to SR-8** and
-> listed in section 14; draft 2 makes them and no other change.
+> listed in section 14; draft 2 makes them and no other change. Draft 3 applies the re-check of draft 2
+> (`manage-agents/attitudes-p3ver1.final.md`, **FAIL**: SR-1, SR-2, SR-4, SR-5, SR-7 and SR-8 present and correct,
+> three problems remaining). Its corrections are cited as **RC-1 to RC-4** and listed in section 15; draft 3 makes
+> them and no other change.
 >
 > **What was checked, and how.** Draft 1's definitions and statements were type-checked in the untracked stub
 > `lean/SpecStubs_attitudes.lean`, each statement as `def <name> (binders) : Prop := <conclusion>` (the stub
 > prefixes unused binder names with `_`), by `lake --dir /home/seyran/code/ve-nightly/lean env lean
 > lean/SpecStubs_attitudes.lean` against the build of `main` at `49de179e`, this branch's base (the branch adds
 > docs only). Draft 1's fixture numbers were computed by `#eval`, `#guard` or `decide` in that stub, not by hand.
-> **Draft 2's changes are not elaborated**: the stub in the worktree is still draft 1's, and every definition,
-> statement, diagnostic text and fixture value that section 14 lists as changed or new is written here, not
-> computed. They are marked *expected* where a value is given. Elaborating a statement is not evidence that it holds:
+> **Draft 2's and draft 3's changes are not elaborated**: the stub in the worktree is still draft 1's, and every
+> definition, statement, diagnostic text and fixture value that section 14 or 15 lists as changed or new is written
+> here, not computed. They are marked *expected* where a value is given. Elaborating a statement is not evidence that it holds:
 > a small-scope counterexample search (section 9) found none on draft 1, and only AT-1's proofs will establish the
 > statements. No model calls were made.
 >
 > **Not passable yet.** AT-0 PASS needs, in this order (SR-8): E1's and E2's outcomes written into `table` with
 > their items, including E2's decision on the asserted-content negated knowledge row (section 3.1's last row,
 > section 11 item 16); the closure review holding on the frozen table; the stub updated to draft 2 and elaborated;
-> every fixture and the section 9 search re-run on the frozen table, with draft 2's new refusals (D6a–D6b,
-> D14a–D14c) in the search's pool; and the reviewers' re-review of the statements section 14 lists as changed, and
-> only those. Until E1 and E2 report, the frozen `table` admits nothing: `knows` and every "thinks it *w*" are
+> every fixture and the section 9 search re-run on the frozen table, with the new refusals (D6a–D6b, D14a–D14d) in
+> the search's pool; and the reviewers' re-review of the statements sections 14 and 15 list as changed, and only
+> those. Until E1 and E2 report, the frozen `table` admits nothing: `knows` and every "thinks it *w*" are
 > refused (fixture D0, section 5). The fixtures use `fixtureTable`, a hypothetical E1/E2 outcome written only for
 > fixtures.
 
@@ -34,7 +37,7 @@
   AT-1 to AT-5. Section 7 lists the fixtures with their computed values, and section 9 the counterexample search.
   Section 10 answers the integration questions the PLAN left to AT-0. Section 11 lists every place where this spec
   differs from the PLAN's Lean text, with the reason. Section 12 is the review checklist. Section 14 lists draft 2's
-  corrections (SR-1 to SR-8), each with the places it changes.
+  corrections (SR-1 to SR-8) and section 15 draft 3's (RC-1 to RC-4), each with the places it changes.
 - Names owned by other plans are used through their reviewed interfaces only. The stub declares stand-ins for them,
   with the bodies the synthesis gives, so that this profile's statements elaborate: QS-1's `VE.Closure.Order`,
   `Caps`, `Order.admit`, `Order.atLeast` (owner: quantities, reviewed in QT-0); PK-1's `PackKind`, `RequestPath`,
@@ -42,16 +45,16 @@
   `profileTable`, `gateOf` (owner: AR-10). The functions new in AT-3a (`decodeAttDoc`, `encodeElaboration`) and AT-5
   (`renderCond`, `readCond`, `readGuard`, `readGuardAll`, `readRule`, `readRuleAll`, `refusalOf`) are stand-ins
   too; their bodies are those batches' work. So is `VE.Attribution.Words.wantsPhrase?`, `reports@0`'s `wants` test
-  moved into Lean by AT-1 (section 2.6, SR-3). The English grammar's lexical data (`VE.EnglishGrammar.Env`,
-  `Overlay`, `Lexicon`, `Lexicon.failures`) is used as it is on `main`. A changed interface reopens only the
-  statements that name it.
+  moved into Lean by AT-1w, the batch before AT-1 (section 2.6, section 10 item 6; SR-3, RC-4). The English
+  grammar's lexical data (`VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`, `Lexicon.failures`, `Env.predicate?`) is
+  used as it is on `main`. A changed interface reopens only the statements that name it.
 
 ## 1. Owners
 
 | Piece | Owner | Here |
 |---|---|---|
 | The four report acts and their names | `VE.Reports.Act`, `Act.name` (`reports@0`) | reused as `Mode.act` |
-| Their English verbs and synonyms | `lean/VE/Attribution/Words.lean` (new: AT-1 creates it with the `wants` test, SR-3; AT-5 adds the verbs, F6) | `VE.Attitudes.Words` imports it and adds only `knows` and `thinks` |
+| Their English verbs and synonyms | `lean/VE/Attribution/Words.lean` (new: AT-1w creates it with the `wants` test, SR-3, RC-4; AT-5 adds the verbs, F6) | `VE.Attitudes.Words` imports it and adds only `knows` and `thinks` |
 | Content identity | syntax-tree equality (`VE.Reports.content_structural`) | reused; no hashing |
 | De-duplication of keys | `VE.Reports.dedup` | reused |
 | Quantifier-free formulas | `VE.Norms.Formula.qfree` | reused (A5) |
@@ -60,8 +63,8 @@
 | Extra base premises on the layered and readings routes | PK-1 packs, `transfers_append` | attitudes is the `attitudes` provider (edit 6) |
 | Profile registration | AR-10's profile-gate table | one row (edit 7) |
 | Refusals and their rewrites (English) | english-lean's catalogue | rows added by AT-5 (edit 9), each with its category and candidate readings (SR-5) |
-| English lexical data: sort nouns, predicate wordings, constant spellings, and their validity | the English grammar: `VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`, `Lexicon.failures`, `Lexicon.valid` (`lean/VE/EnglishGrammar/Lexicon.lean`); decoded by `Env.decode`, `Overlay.decode`, `Run.decodeLexicon` | carried as `AttDoc.lex`; checked by D6a–D6b; read by D14c, `renderCond` and the readers (SR-3) |
-| The `wants` verb-phrase test ("Y to VP") | `reports@0`: `_subject_split` and `_infinitive` in `ve/report_english.py` (Python only on `main`) | moved into Lean as `VE.Attribution.Words.wantsPhrase?` by AT-1, the first batch whose check calls it; D14c and `renderCond` call it; no attitude-local classifier (SR-3; section 12 records the Python copy's removal as open) |
+| English lexical data: sort nouns, predicate wordings, constant spellings, and their validity | the English grammar: `VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`, `Lexicon.failures`, `Lexicon.valid` (`lean/VE/EnglishGrammar/Lexicon.lean`); decoded by `Env.decode`, `Overlay.decode`, `Run.decodeLexicon` | carried as `AttDoc.lex`; checked by D6a–D6b, and per condition by D14d (RC-1); read by D14c, `renderCond` and the readers (SR-3) |
+| The `wants` verb-phrase test ("Y to VP") | `reports@0`: `_subject_split` and `_infinitive` (with `_finite`, the form `_infinitive` checks against) in `ve/report_english.py` (Python only on `main`) | moved into Lean as `VE.Attribution.Words.wantsPhrase?` by AT-1w, before AT-1's check D14c calls it; AT-1w also deletes the Python copy, `reports@0`'s Python English reading both forms from Lean, so the test has one owner at every merge (RC-4, section 10 item 6); D14c and `renderCond` call it; no attitude-local classifier (SR-3) |
 | Intentional action ("intends to VP") | residual; events-time-causation's ET-D2 designs the bridge | not admitted (edit 3) |
 | Distribution over joined acts | act-phrases, deontic modals only | none here (edit 4) |
 | Hedged calculation claims | a separate bridge, unowned | not attitude conditions (edit 5) |
@@ -354,14 +357,20 @@ twice. `AWellFormed` is the guard-level condition `att_elaboration_faithful` rea
 
 **Admission is what English can word (SR-2).** `checkAtt` admits only conditions that section 3.1 can word, so every
 admitted key has the wording template that `attitudes-elaborate` answers (section 4) and the legend's line
-(section 3.3). After D7–D14 have typed the condition and admitted its mode, `renderable` adds three checks, each
+(section 3.3). After D7–D14 have typed the condition and admitted its mode, `renderable` adds four checks, each
 with its own diagnostic: a slot's content mentions the slot (D14a: otherwise `knows ⊤` with an unused slot and the
 closed `knows ⊤` are two keys with one sentence); a slot term is a variable of the guard (D14b: otherwise `C(var 0)`
 slotted at a constant `s1` and the closed `C(s1)` are two keys with one sentence; write the closed content; telling
 de re from de dicto about a named constant is a later admission with its own E2 items); a `wants` content is section
-3.1's one `wants` wording (D14c). The lexicon those checks and the renderer read is `A.lex`; `checkAtt` validates it
-with the English grammar's own `Lexicon.failures` (D6a) and checks that it describes `A.E` (D6b), so
-`WellFormedAtt` carries both to every statement that assumes it (SR-3).
+3.1's one `wants` wording (D14c); and every predicate and constant the condition names, in its holder, its slot term
+and its content, has its entry in the lexicon, agreeing with `A.E` (D14d, RC-1). The lexicon those checks and the
+renderer read is `A.lex`; `checkAtt` validates it with the English grammar's own `Lexicon.failures` (D6a) and checks
+that it describes `A.E` (D6b), so `WellFormedAtt` carries both to every statement that assumes it (SR-3). D6b checks
+the lexicon's symbols against `A.E`; the converse cannot be checked document-wide, since `A.E.constants` is a
+function and cannot be listed, and `A.E` may declare predicates outside `authorPredicates` (fixture D16 does). So
+D14d checks it per condition, for the symbols the renderer must word (RC-1). The sorts a condition names need no
+check of their own: the holder's sort is a holder sort (D8), holder sorts and the slot sort are sorts of `A.E` (D2,
+D10), every sort of `A.E` is in the lexical view (D6b), and each of those has its noun (D6a's V1).
 
 ```lean
 def throwIf (b : Bool) (msg : String) : Except String Unit := if b then .error msg else .ok ()
@@ -377,6 +386,28 @@ def mentionsSlot : VE.Formula → Bool
   | .implies a b => mentionsSlot a || mentionsSlot b
   | _ => false
 
+/-- A predicate a condition names has its lexicon entry (RC-1): the lexical view declares it with `A.E`'s argument
+    sorts, and the lexicon selects its wording. -/
+def lexPred (A : AttDoc) (p : String) : Bool :=
+  (A.lex.env.predicate? p).any (fun d => A.E.predicates p == some d.args && d.arity == d.args.length) &&
+    (A.lex.lexicon.wordings.lookup p).isSome
+
+/-- A term a condition names has its lexicon entry (RC-1): a variable needs none; the lexical view declares a
+    constant with its `A.E` sort, and the lexicon selects its spelling. -/
+def lexTerm (A : AttDoc) : VE.Term → Bool
+  | .var _ => true
+  | .const c => (A.lex.env.constants.find? (·.name == c)).any (fun d => A.E.constants c == some d.sort) &&
+      (A.lex.lexicon.spellings.lookup c).isSome
+
+/-- Every predicate and constant of a content has its lexicon entry (RC-1). -/
+def lexCovers (A : AttDoc) : VE.Formula → Bool
+  | .top | .bottom => true
+  | .unary p t => lexPred A p && lexTerm A t
+  | .binary p t u => lexPred A p && lexTerm A t && lexTerm A u
+  | .eq t u => lexTerm A t && lexTerm A u
+  | .not a | .all _ a | .ex _ a => lexCovers A a
+  | .and a b | .or a b | .implies a b => lexCovers A a && lexCovers A b
+
 /-- The conditions section 3.1 can word, after D7–D14 (SR-2): one definition, whose first failing part is the
     condition's diagnostic. `wantsPhrase?` is reports@0's `wants` test (section 1); the wording it reads is the
     document's selected one. -/
@@ -391,12 +422,15 @@ def renderCheck (A : AttDoc) (c : Cond) : Except String Unit := do
     | .act .wants, _, _ => false
     | _, _, _ => true
   throwIf (!worded) "UnsupportedProfile: this 'wants' content has no reviewed wording in attitudes@0"
+  throwIf (!(lexTerm A c.holder && c.slot.all (fun p => lexTerm A p.2) && lexCovers A c.content))
+    "InvalidInput: an attitude condition names a symbol with no entry in the English lexicon"
 
 def renderable (A : AttDoc) (c : Cond) : Bool := (renderCheck A c).toBool
 
 /-- The lexicon describes the document's environment (SR-3): the same sorts; the author's predicates and no others
     (symbols the lexical view marks generated aside), each with its `A.E` argument sorts; every constant with its
-    `A.E` sort. -/
+    `A.E` sort. It checks the lexicon's symbols against `A.E`; that each symbol a condition names is in the
+    lexicon is D14d's check, `lexCovers` (RC-1). -/
 def lexAgrees (A : AttDoc) : Bool :=
   let L := A.lex.env
   let ps := L.predicates.filter (!·.generated)
@@ -655,7 +689,8 @@ The structured form admits exactly the conditions this table words (SR-2, sectio
 a condition without a sentence, and no sentence stands for two admitted conditions: a slot is mentioned by its
 content (D14a), a slot term is a variable of the guard (D14b; about a constant, write the closed content, "H knows
 that s1 is classified as …"), and `wants` takes only its row's wording (D14c). `H`, `P`, `Y` and the verb phrase are
-rendered from the document's own lexicon (`A.lex`), the one `checkAtt` validated (SR-3).
+rendered from the document's own lexicon (`A.lex`), the one `checkAtt` validated (SR-3), which has an entry for every
+predicate and constant an admitted condition names (D14d, RC-1).
 
 ### 3.2 Boundaries: framed connectives and the complement-boundary rule
 
@@ -769,9 +804,10 @@ grammar decoders' own texts; then `checkAtt`, in section 5.2's order (SR-7).
 
 ### 5.2 `checkAtt`, in order (each fixture fails exactly its own check)
 
-Draft 1's rows were computed in the stub. Rows D6a, D6b and D14a–D14c are new in draft 2 (SR-2, SR-3): their texts
-are fixed here and their fixtures' answers are *expected*, to be computed when the stub is updated to draft 2. Every
-fixture document now carries the fixture lexicon (section 7), and an earlier row's answer is unchanged by it.
+Draft 1's rows were computed in the stub. Rows D6a, D6b and D14a–D14c are new in draft 2 (SR-2, SR-3), and D14d in
+draft 3 (RC-1): their texts are fixed here and their fixtures' answers are *expected*, to be computed when the stub
+is updated to draft 3. Every fixture document now carries the fixture lexicon (section 7), extended with the symbols
+a row adds where its check comes after D6b (D15, RC-3), so that an earlier row's answer is unchanged by it.
 
 | # | Check | Fixture (F-AT1 with one change) | Diagnostic |
 |---|---|---|---|
@@ -795,13 +831,14 @@ fixture document now carries the fixture lexicon (section 7), and an earlier row
 | D14a | a slot's content mentions the slot (`renderable`) | the `knows` content `⊤`, slot kept | *expected* `InvalidInput: an attitude content does not mention its slot` |
 | D14b | a slot term is a variable of the guard (`renderable`) | the `knows` slot `(situation, s1)`, `s1` a constant of sort `situation` | *expected* `InvalidInput: an attitude slot term is not a variable of the guard` |
 | D14c | a `wants` content has section 3.1's wording (`renderable`) | the `intends` condition made `wants`, content `and C(var 0) csam_generation(var 0)` | *expected* `UnsupportedProfile: this 'wants' content has no reviewed wording in attitudes@0` |
-| D15 | predicates within `MAX_PREDICATES` | 240 more author predicates | `ResourceLimit: MAX_PREDICATES` (as `reports@0`) |
+| D14d | every predicate and constant of the condition has its lexicon entry (`renderable`, RC-1) | the `knows` content the closed `C(s1)`, `s1` declared in `E` but in neither the lexical view nor the lexicon (C-d's first document) | *expected* `InvalidInput: an attitude condition names a symbol with no entry in the English lexicon` |
+| D15 | predicates within `MAX_PREDICATES` | 240 more author predicates, each declared in `E` on `situation` and in the fixture lexicon with its quoted fallback wording `{0} is classified as "<name>"`, so that D6a and D6b still pass (RC-3) | `ResourceLimit: MAX_PREDICATES` (as `reports@0`; *expected* with the extended lexicon) |
 | D16 | generated names undeclared | `E` declares `attitudes__knows__1` | `DuplicateDeclaration: generated predicate attitudes__knows__1` |
 | D17 | generated names at most 64 bytes | a table word of 58 bytes | `ResourceLimit: generated predicate attitudes__thinks_extraordinarily_overwhelmingly_and_almost_certainly_likely__1 exceeds 64 bytes` |
 | D18 | W1's check of the elaborated document | a base conjunct `C(var 1)` | `TypeMismatch: Predicate 'mass_casualty_weapon_uplift' expects ('situation',), received ('claude_instance',)` |
 
 The table is in `checkAtt`'s order: D1–D6, D6a, D6b, D7–D9 (D0 is D9's check on the frozen table), D10–D14,
-D14a–D14c, D15–D18. Draft 1's numbers are kept, so its fixtures keep their names. The check `generated predicate
+D14a–D14d, D15–D18. Draft 1's numbers are kept, so its fixtures keep their names. The check `generated predicate
 names collide` follows D17 and cannot fire with E1's words (no two slugs coincide); it stays as a guard on future
 tables.
 
@@ -1094,7 +1131,8 @@ structure Refusal where
   rewrites : List String
 
 /-- Rendering then reading an admitted attitude condition gives it back, under the document's own lexicon `A.lex`,
-    which `WellFormedAtt` validates and ties to `A.E` (D6a, D6b). -/
+    which `WellFormedAtt` validates and ties to `A.E` (D6a, D6b), with an entry for every symbol the condition
+    names (D14d). -/
 theorem att_english_roundtrip (A : AttDoc) (h : WellFormedAtt A = true) (Γ : List String) (c : Cond)
     (hc : (Γ, c) ∈ condsOf A) : readCond A Γ (renderCond A Γ c) = .ok c
 /-- Rendering is injective on the admitted occurrences of one document, lexicon and context: two admitted conditions
@@ -1126,7 +1164,7 @@ the all-derivations gate does. All of them read `A.lex` and call the English gra
 `att_english_roundtrip` (apply `readCond A Γ` to `he`). Whole-sentence acceptance (A4): `readRuleAll A s` has length 1
 for the section 3.3 sentence and for each of the seven pilot guards rendered as rules.
 
-## 7. Fixtures (draft 1's computed in the stub; draft 2's new ones *expected*)
+## 7. Fixtures (draft 1's computed in the stub; draft 2's and draft 3's new ones *expected*)
 
 The fixture environment: sorts `claude_instance`, `situation`; base predicates the seven category atoms on
 `situation` (`mass_casualty_weapon_uplift`, `critical_infrastructure_attack_uplift`, `damaging_cyberweapon`,
@@ -1142,7 +1180,9 @@ selects the pilot's wordings: nouns "instance of Claude" and "situation"; each c
 "<category>"`; each hand-named term its own pilot wording (`{0} intentionally does the weapons uplift in {1}` for
 the first, section 3.3; no two alike, as V4 requires); the regulated act's wording. Its letters and spellings are
 the grammar's defaults. `Lexicon.valid` holds on it and `lexAgrees` holds (*expected*). Draft 2 adds a constant
-`s1 : situation` (spelled "s1") for the D14b fixture and its collision pair only.
+`s1 : situation` (spelled "s1") for the D14b fixture and its collision pair only. Draft 3 extends it for D15 with
+that row's 240 predicates (RC-3), and leaves out of it the symbols C-d's documents (and so D14d's fixture) declare
+in `E` only (RC-1).
 
 ### 7.1 Documents
 
@@ -1160,6 +1200,7 @@ the grammar's defaults. `Lexicon.valid` holds on it and `lexAgrees` holds (*expe
 | C-a (SR-2) | two documents: F-AT1 with the `knows` content the closed `⊤` (no slot); and with the content `⊤`, slot kept | *expected*: draft 1 admitted both, as two keys differing only in `slotSort`, with one sentence (section 3's rendering does not show an unused slot); draft 2 admits the first and refuses the second at D14a |
 | C-b (SR-2) | two documents: F-AT1 with the `knows` content the closed `mass_casualty_weapon_uplift(s1)`; and with the content `mass_casualty_weapon_uplift(var 0)`, slot `(situation, s1)` | *expected*: draft 1 admitted both (two keys, unrelated relations) with one sentence "… knows that s1 is classified as "mass_casualty_weapon_uplift""; draft 2 admits the first and refuses the second at D14b |
 | C-c (SR-2) | F-AT1 with the `intends` condition made `wants`: content `mass_casualty_weapon_uplift(var 0)`; and content `and mass_casualty_weapon_uplift(var 0) csam_generation(var 0)` | *expected*: the first is admitted ("that instance of Claude wants that situation to be classified as …", `wantsPhrase?` of `is classified as …` is `be classified as …`); the second is refused at D14c |
+| C-d (RC-1) | two documents: C-b's first document (the closed `knows` content `mass_casualty_weapon_uplift(s1)`) with `s1` declared in `E` but in neither the lexical view nor the lexicon; and F-AT1 with a base predicate `extra_case` on `situation`, declared in `E` but in none of `authorPredicates`, the lexical view and the lexicon, and the `knows` content `extra_case(var 0)` | *expected*: draft 2 admitted both (D6a and D6b pass, since `lexAgrees` checks only the lexicon's symbols against `A.E`), so `renderCond` had no spelling for `s1` and no wording for `extra_case`, and `att_english_roundtrip` failed on them (the re-check's counterexample); draft 3 refuses both at D14d |
 
 ### 7.2 F-AT1's points (one instance `0`, one situation `1`)
 
@@ -1201,7 +1242,8 @@ on both of RM4's filled situations.
 | premise 3 exactly where its item passed (D-A4) | F-AT7 with the item | F-AT7 without it |
 | premise 4 exactly when the scale orders the words | F-AT3 with the pair | F-AT3 without it; and the reverse direction |
 | `Table.reviewed` exactly when the closure adds nothing unreviewed | `fixtureTable`, `table` | `badTableKnows`, `badTablePair` |
-| `checkAtt` | F-AT0 to F-AT8, the first document of C-a and of C-b, and the first of C-c pass | D1 to D18, D0, D6a, D6b and D14a–D14c each fail at their own check (draft 2's rows *expected*) |
+| `checkAtt` | F-AT0 to F-AT8, the first document of C-a and of C-b, and the first of C-c pass | D1 to D18, D0, D6a, D6b and D14a–D14d each fail at their own check (draft 2's and draft 3's rows *expected*) |
+| D14d: admitted exactly when every symbol has its entry (RC-1) | C-b's first document, `s1` in the lexical view and the lexicon: admitted | C-d's two documents: refused at D14d (*expected*) |
 | `frame_unsaidFree`'s `hw` (SR-1) | F-AT1 with `unspec := ["weapons_uplift_permitted"]`: `WellFormedU` true, the frame unsaid-free | F-AT8: `WellFormedU` false, a factive premise names an unsaid table (*expected*) |
 | `renderCond_injective` (SR-2) | the three conditions of F-AT1: three sentences | each collision pair C-a, C-b: one sentence for two keys in draft 1; in draft 2 one of the two is not admitted (*expected*) |
 
@@ -1214,7 +1256,8 @@ on both of RM4's filled situations.
 (F-AT1); `table_reviewed`; `settledX_of_settled` (RM1, through `table3 = some false`); `attitudesPack_premises`
 (F-AT1); the diagnostics D1–D18 all fail. Every `#guard` of draft 1 holds. Draft 2 adds, to be written and run when
 the stub is updated: `frame_unsaidFree` on F-AT1 (with `hw`) and F-AT8 (without it); the diagnostics D6a, D6b and
-D14a–D14c; the collision pairs C-a, C-b and the `wants` pair C-c. The statements about wire, route kinds, readings
+D14a–D14c; the collision pairs C-a, C-b and the `wants` pair C-c. Draft 3 adds D14d and C-d (RC-1), and reruns D15
+with its extended lexicon (RC-3). The statements about wire, route kinds, readings
 and English (sections 6.3 to 6.5) have no finite instance before their batches; section 7.6 lists their acceptance
 fixtures.
 
@@ -1227,14 +1270,16 @@ fixtures.
   `attitudes_row_composes`'s lists (`norms@0` with `norm-defaults@0`, `norms@0` with `readings@1`, and a list with
   `reports@0` refused).
 - AT-3a, the decoder's last step (SR-7): `attitudes-elaborate` on F-AT1's wire case with one change of section 5.2
-  (D1, D6a, D6b, D9, D14a, D14b, D14c, D18) answers that row's diagnostic, not an elaboration; and with the
+  (D1, D6a, D6b, D9, D14a, D14b, D14c, D14d, D18) answers that row's diagnostic, not an elaboration; and with the
   `lexicon` field missing, the decoder's own text.
 - AT-3a, unchanged contracts (SR-6): on W1's, soft's and P0's routes, with `attitudes@0` off, a guard holding
   `{"attitude": {}}`, `{"attitude": 1}`, a well-formed attitude node, or an attitude node with an extra field
   answers exactly what `main` at AT-3a's base answers (`array expected` at `49de179e`); and fault order is today's:
-  a document with an unknown predicate in an earlier rule and an attitude node in a later one answers the unknown
-  predicate, and with the two swapped answers `array expected`, as `main` does. Recorded from `main` before the hook
-  lands, then compared byte for byte after it.
+  a document pairing an unknown predicate in one rule with an attitude node in another answers what `main` answers,
+  in both orders. On W1's route that is `array expected` in both orders, read from the code (RC-2): `decodeSource`
+  decodes every rule (`lean/VE/Norms/Wire.lean:303`) before `validate` (`:306`), where the unknown predicate is raised
+  (`lean/VE/Norms/Tree.lean:241`). Soft's and P0's answers are whatever `main` answers. Recorded from `main` before
+  the hook lands, then compared byte for byte after it.
 - AT-3b: fuzz mutants as PLAN AT-3b, including swaps of two keys' holders, request paths and labels.
 - AT-4: every existing readings fixture byte-identical; the main translation's eight choices with the frame.
 - AT-5: `att_english_roundtrip` on every condition of F-AT1 to F-AT8 and of C-c's admitted document;
@@ -1280,14 +1325,16 @@ Result (computed; the stub's final `#guard` asserts it):
 The control shows the search finds A3's counterexample class, as the debate expected: a `thinks` condition whose key
 is not in the document. The search is evidence against small counterexamples only; AT-1's proofs decide.
 
-**The rerun for draft 2 (SR-8; not yet run).** The result above is this spec's draft 1's. Before PASS the search
-runs again on the frozen table, with a lexicon for the search vocabulary (valid, and `lexAgrees` holds) and four
-more pool members: three that draft 2's new checks refuse, `knows ⊤` with an unused slot (D14a), `knows
-p_case(var 0)` slotted at a constant `c0 : situation` (D14b) and `wants` of `p_case(x) ∧ q_case(x)` (D14c); and one
-they admit, `wants` of `p_case(x)`. Every document holding a refused member must fail `checkAtt` at that member's
-row, and every other document is checked for T1–T8 as above. Each of the twelve earlier members has a closed content,
-or a slot term that is a guard variable and a content that mentions it, and none is `wants`, so draft 2 is expected
-to admit all 210 earlier documents; the new counts replace the table above.
+**The rerun for drafts 2 and 3 (SR-8, RC-1; not yet run).** The result above is this spec's draft 1's. Before PASS
+the search runs again on the frozen table, with a lexicon for the search vocabulary (valid, and `lexAgrees` holds)
+and five more pool members: four that the new checks refuse, `knows ⊤` with an unused slot (D14a), `knows
+p_case(var 0)` slotted at a constant `c0 : situation` (D14b), `wants` of `p_case(x) ∧ q_case(x)` (D14c) and, in draft
+3, the closed `knows p_case(c1)` with a constant `c1 : situation` that `E` declares and the lexicon does not (D14d);
+and one they admit, `wants` of `p_case(x)`. Every document holding a refused member must fail `checkAtt` at that
+member's row, and every other document is checked for T1–T8 as above. Each of the twelve earlier members has a closed
+content, or a slot term that is a guard variable and a content that mentions it, names only symbols the search
+lexicon covers, and none is `wants`, so drafts 2 and 3 are expected to admit all 210 earlier documents; the new
+counts replace the table above.
 
 ## 10. Integration points AT-0 pins
 
@@ -1313,6 +1360,18 @@ to admit all 210 earlier documents; the new counts replace the table above.
    generated entry `attitude-words` in `tools/regen_generated.py` (a hand-written registration).
 5. **The readings route.** The decoder's call reduces to the `attitudes` pack provider's registration plus the hook of
    item 1 (edit 7); it lands after `lf-14d`.
+6. **The `wants` test's one owner (RC-4).** On `main` the test is Python only: `_subject_split` calls `_infinitive`,
+   which accepts a candidate only when `_finite` gives the finite phrase back, and the parser's "to VP" readings call
+   `_finite` (`ve/report_english.py`). AT-1w, the batch before AT-1, moves it into Lean as
+   `VE.Attribution.Words.wantsPhrase?` (with the finite form it checks against), and in the same batch deletes
+   `_infinitive` and `_finite`: `reports@0`'s Python English takes both forms from Lean through one new kind of the
+   existing `reports` mode (`lean/VE/Attribution/Run.lean`), relayed by `ve/reports_route.py` and checked for schema
+   and binding only. `ve/report_english.py` is in the surface layer, which does not import the relay
+   (`tools/layer_policy.py`), so it reaches the kind through the `reports` document object its callers already pass
+   it. `ResponseShape.Encoders.Reports.runCaseReported_fits` keeps its statement; its skeleton gains the kind's row.
+   Every `reports@0` English answer is unchanged: AT-1w records `_infinitive` and `_finite` on every phrase the
+   suite's `reports@0` cases reach, before deleting them, and Lean's kind answers the same. So at no merge does the
+   test exist in two languages; AT-5 no longer touches it.
 
 ## 11. Where this spec differs from the PLAN's Lean text, and why
 
@@ -1369,12 +1428,13 @@ Each is a statement-level decision for the review; none changes the PLAN's desig
 | generated names cannot collide with other families | prefix `attitudes__` in PK-1's `reservedPrefixes`; D6, D16 |
 | E1's pairs and E2's decisions in `table` with their items, closure review holds | **open**: E1 and E2 have not run; `table` is empty and reviewed. E2's record includes the asserted-content negated knowledge decision (section 11, item 16; SR-8) |
 | every key a hypothesis names is in `keys A` (A3) | yes (`hk`, `hp`, `AWellFormed`, `hseed`) |
-| one `#guard` per theorem; the search finds no counterexample | draft 1: section 7.5, section 9. **Open** for draft 2: the stub updated and elaborated, the new `#guard`s of section 7.5 and the search rerun with the new pool members (section 9) |
+| one `#guard` per theorem; the search finds no counterexample | draft 1: section 7.5, section 9. **Open** for drafts 2 and 3: the stub updated and elaborated, the new `#guard`s of section 7.5 and the search rerun with the new pool members (section 9) |
 | contents over the base vocabulary; the frame's typing proved on every route (A2) | D13; `frame_wellFormed`, `frame_typed_fill`, `frame_shared` |
 | every refused form has two or more one-reading rewrites | section 3.4's first table; advice rows for two forms (section 11, item 14); `BareThinks` needs an admitted word |
 | the rewrites are the refused form's readings, at its category and in its context (SR-4, SR-5) | section 3.4's candidate readings; `refused_have_rewrites` with `Site` and `Candidates` |
-| every admitted condition has its one sentence, and no sentence two admitted conditions (SR-2) | `renderable` in `checkCond` (D14a–D14c); `att_english_roundtrip` on `(Γ, c) ∈ condsOf A`; `renderCond_injective`; C-a, C-b, C-c |
-| admission, rendering and reading share one validated lexicon from its owner (SR-3) | `AttDoc.lex`; D6a (`Lexicon.failures`), D6b (`lexAgrees`); decoded at AT-3a (section 4). **Open, for the re-review**: `wantsPhrase?` moves `reports@0`'s Python `_subject_split`/`_infinitive` into Lean in AT-1; until AT-5 removes the Python copy (reports@0's printer then reads Lean's), the test exists twice. If that interval is not accepted, the Python printer's switch moves into AT-1 |
+| every admitted condition has its one sentence, and no sentence two admitted conditions (SR-2) | `renderable` in `checkCond` (D14a–D14d); `att_english_roundtrip` on `(Γ, c) ∈ condsOf A`; `renderCond_injective`; C-a, C-b, C-c, C-d |
+| admission, rendering and reading share one validated lexicon from its owner (SR-3) | `AttDoc.lex`; D6a (`Lexicon.failures`), D6b (`lexAgrees`), and per condition D14d (`lexCovers`: every predicate and constant the condition names has its entry, RC-1); decoded at AT-3a (section 4) |
+| the `wants` test has one owner at every merge (SR-3, RC-4) | AT-1w moves it into Lean and deletes the Python copy (`_infinitive`, `_finite`), `reports@0`'s Python English reading Lean's through a `reports` kind, before AT-1 calls it (section 10 item 6) |
 | a decoded document is a checked document (SR-7) | `decodeAttDoc` ends with `checkAtt`; `decodeAttDoc_wellFormed`; section 7.6's route fixtures |
 | W1, soft and P0 answers unchanged with `attitudes@0` off (SR-6) | section 5.1; section 10 item 1; section 7.6's compatibility fixtures |
 | `frame_unsaidFree` holds as stated (SR-1) | `hw` added; F-AT8 |
@@ -1385,8 +1445,8 @@ Each is a statement-level decision for the review; none changes the PLAN's desig
 From the worktree root, with the `ve-nightly` build at `49de179e`:
 `lake --dir /home/seyran/code/ve-nightly/lean env lean lean/SpecStubs_attitudes.lean`. The stub is untracked and
 not committed; it holds no `sorry`. Its sections: S0 stand-ins, S1 definitions, S2–S3 statements, S4 evaluators,
-S5 fixtures and `#guard`s, S6 the search. The stub is still draft 1's: updating it to draft 2 (section 14's list)
-and elaborating it is the next step, and the command above is the one to run then.
+S5 fixtures and `#guard`s, S6 the search. The stub is still draft 1's: updating it to draft 3 (the lists of sections
+14 and 15) and elaborating it is the next step, and the command above is the one to run then.
 
 ## 14. Draft 2: the statement review's corrections
 
@@ -1410,3 +1470,22 @@ Statements changed or added, for the re-review: `frame_unsaidFree`, `decodeAttDo
 `AttDoc.lex`, `mentionsSlot`, `renderCheck`, `renderable`, `lexAgrees`, `checkCond`, `checkAtt`, `Site`,
 `Candidates`, `Refusal`; the diagnostics D6a, D6b, D14a–D14c and section 5.1's profile-off rule. Every other statement
 is draft 1's, unchanged.
+
+## 15. Draft 3: the re-check's corrections
+
+The re-check of draft 2 (`manage-agents/attitudes-p3ver1.final.md`) returned **FAIL**: SR-1, SR-2, SR-4, SR-5, SR-7
+and SR-8 are present and correct in both files, with no substantive change unrelated to the review, and three
+problems remain. Draft 3 corrects them and changes nothing else.
+
+| # | Correction | Where |
+|---|---|---|
+| RC-1 | SR-3's lexicon check worked one way only. `lexAgrees` checks the lexicon's symbols against `A.E`, not the reverse: `A.E.constants` is a function and cannot be listed, and a predicate is covered only when it is in `authorPredicates`, while `A.E` may declare others (fixture D16 does). So a condition could be admitted while naming a constant or predicate with no lexicon entry: the closed content `C(s1)`, with `s1` missing from the lexical view, passed D6a, D6b and D14a–D14c, and `att_english_roundtrip` and `renderCond_injective` could then fail. `renderCheck` gains D14d, its last part: every predicate and constant of the condition, in its holder, its slot term and its content, has its lexicon entry (`lexPred`, `lexTerm`, `lexCovers`): the lexical view declares it with its `A.E` sorts and the lexicon selects its wording or spelling. The counterexample and its predicate twin are fixture C-d; the section 9 rerun gains a D14d pool member | 1; 2.6; 3.1; 5.2; 6.5 (docstring only); 7; 7.1; 7.4; 7.5; 7.6; 9; 12 |
+| RC-2 | An SR-6 fixture misstated `main`'s fault order. `decodeSource` decodes every rule (`lean/VE/Norms/Wire.lean:303`) before `validate` (`:306`), where "Unknown predicate" is raised (`lean/VE/Norms/Tree.lean:241`), so on W1's route a document pairing an unknown predicate with an attitude node answers `array expected` in both orders, not the unknown predicate in one of them. The fixture now says so, and leaves soft's and P0's answers to the recording from `main` | 7.6 |
+| RC-3 | The D15 fixture ("240 more author predicates") failed at D6b, since `lexAgrees` requires a lexicon entry for every author predicate, against section 5.2's claim that each earlier row keeps its answer. The fixture declares the 240 predicates in `E` and in the fixture lexicon, each with its quoted fallback wording | 5.2; 7; 7.5 |
+| RC-4 | Between AT-1 and AT-5 the `wants` test existed in Lean and in Python, against the one-owner rule SR-3 requires; draft 2 only marked it open. The PLAN's own fallback is taken: the Python switch moves before the Lean check that calls the test. A new batch AT-1w, before AT-1, moves the test into Lean and deletes the Python copy (`_infinitive` and `_finite`, the finite form it checks against), `reports@0`'s Python English reading both forms through a new kind of the `reports` mode; AT-5 no longer touches the test. A batch of its own, because AT-1 with a relayed kind would exceed the PLAN's six hours per batch | 0; 1; 10 item 6; 12 |
+
+Statements changed or added, for the re-review: none; `att_english_roundtrip`'s docstring names D14d.
+Definitions changed or added: `lexPred`, `lexTerm`, `lexCovers` (new), `renderCheck` (gains D14d), `lexAgrees`
+(docstring only). Diagnostics: D14d (new); the D15 fixture. Fixtures: C-d (new); the SR-6 fault-order fixture. Plan:
+AT-1w (new), with the `reports` route kind of section 10 item 6. Every other statement and definition is draft 2's,
+unchanged.
