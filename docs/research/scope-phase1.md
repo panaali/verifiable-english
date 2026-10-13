@@ -211,8 +211,8 @@ Confirmed:
   corpus. 20 of the 22 carry co-blockers, which supports "most are co-blocked".
 
 Changed (wording and figures; no batch changes):
-- **Colon lead-ins: 23 units, 1,600 B, not 22 and 1,352 B** (C4). Plan 1.2's and research 5.1's "up to 1,352 B of
-  lead-ins travelling with their items" becomes "up to 1,600 B"; research 2.2's split becomes discourse 9 (506 B)
+- **Colon lead-ins: 23 units, 1,600 B, not 22 and 1,352 B** (C4). Research 0's, 4's comparison table's and 5.1's "up to
+  1,352 B" of lead-ins travelling with their items becomes "up to 1,600 B" (the plan itself does not cite it); research 2.2's split becomes discourse 9 (506 B)
   and 14 others (1,094 B), causation 2. The SC-M0 bullet "the 22 colon lead-ins" becomes "the 23".
 - **Bullet units: say which count.** 141 `* ` bullets; 182 units with a list marker by the spec's `item` (C7).
 - **u0139.s01 is 49 B** (research 2.6 row 11); **the UDHR preamble is 14 units, 2,004 B without its heading**
