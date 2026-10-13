@@ -27,7 +27,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from tools import gate, nested_pytest, test_schedule  # noqa: E402
+from tools import gate, gate_collection, nested_pytest, test_schedule  # noqa: E402
 
 SLOWEST = 40
 
@@ -154,7 +154,8 @@ def durations(args) -> int:
     pays a cost its process shares with other tests (a module fixture, a module-level cache) pays it only
     where it runs first; started early it cannot leave a tail, started late on the strength of a cheap run
     it can. A test the gate's collection baseline no longer has (renamed, split or removed) is left out."""
-    current = set(json.loads(args.collection.read_text()))
+    current = set(json.loads(args.collection.read_text()) if args.collection is not None
+                  else gate_collection.collect(ROOT))
     timed: dict[str, float] = {}
     for profile in args.profile:
         for row in records(profile):
@@ -179,7 +180,7 @@ def main() -> int:
     record.add_argument("profile", type=Path, nargs="+", help="profile directories")
     record.add_argument("--output", type=Path, default=test_schedule.DURATIONS)
     record.add_argument("--source", required=True, help="the commit and machine the run measured")
-    record.add_argument("--collection", type=Path, default=gate.COLLECTION, help="the test IDs to keep")
+    record.add_argument("--collection", type=Path, help="test IDs to keep (default: collect the current gate suite)")
     args = parser.parse_args()
     return run(args) if args.command == "run" else durations(args)
 
