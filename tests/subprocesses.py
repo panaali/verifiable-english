@@ -89,23 +89,52 @@ def expired_waits(monkeypatch, module, *, expire=lambda argv: True):
     return waits
 
 
-def busy_cpu(monkeypatch, module):
-    """A CPU clock for the deadlines `module` sets on its children (`module._cpu_seconds`): each
-    reading of a process is one clock tick (the resolution /proc reports) past the last one, and
-    never below its real CPU time. A process seen through it is always working, so a CPU deadline
-    below one tick is passed at the client's next check on any machine; on the real clock a fast
-    machine can answer within one tick, which reads as no CPU at all.
+BUSY_PHASES = {"write": "_write_all", "response": "_read_line"}
 
-    Returns the readings taken, by process id."""
+
+def busy_cpu(monkeypatch, module, phases=("response",)):
+    """A CPU clock for the deadlines `module` sets on its service (`module._cpu_seconds`): while the
+    client is in one of `phases` of a request (`write`, sending it; `response`, waiting for the answer
+    after the whole request was sent), each reading of a process is one clock tick (the resolution
+    /proc reports) past the last one and never below the real CPU time; in the request's other phase
+    it stands still at the last reading; outside a request it is the real CPU time, never below an
+    earlier reading. A process seen through it is working in `phases` only, so a CPU deadline below
+    one tick is passed at the client's first check in the first of them, whatever the machine's speed:
+    on the real clock a fast machine can answer within one tick, which reads as no CPU at all, and a
+    slow one can pass the deadline while the request is still being written.
+
+    The default is the response wait: there the service has the whole request, so a deadline found
+    passed there is one the service's work passed, not one the client found while still writing.
+
+    Returns the clock's record: `readings` by process id, and `fired`, the phase of each request whose
+    deadline was found passed (in order)."""
+    assert phases and set(phases) <= set(BUSY_PHASES), phases
     real, tick = module._cpu_seconds, 1 / os.sysconf("SC_CLK_TCK")
-    readings = {}
+    clock = SimpleNamespace(readings={}, fired=[], phase=None)
 
     def reading(pid):
         seconds = real(pid)
         if seconds is None:
             return None
-        seen = readings.setdefault(pid, [])
-        seen.append(max(seconds, seen[-1] + tick) if seen else seconds)
+        seen = clock.readings.setdefault(pid, [])
+        if not seen or clock.phase is None:
+            seen.append(max([seconds, *seen[-1:]]))
+        else:
+            seen.append(max(seconds, seen[-1] + tick) if clock.phase in phases else seen[-1])
         return seen[-1]
+
+    def within(phase, method):
+        def call(self, *arguments):
+            saved, clock.phase = clock.phase, phase
+            try:
+                return method(self, *arguments)
+            except module.CheckerUnavailable:
+                clock.fired.append(phase)
+                raise
+            finally:
+                clock.phase = saved
+        return call
     monkeypatch.setattr(module, "_cpu_seconds", reading)
-    return readings
+    for phase, name in BUSY_PHASES.items():
+        monkeypatch.setattr(module.LeanService, name, within(phase, getattr(module.LeanService, name)))
+    return clock
