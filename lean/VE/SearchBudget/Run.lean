@@ -10,10 +10,11 @@ check's budget (`premiseBudget`) and, for each requested sort in order, its rais
 (`sortBound`) or `null` where the shared bound stands:
 
     {"id", "status": "ok", "max_proof_steps", "max_domain_size", "max_models", "max_evaluations",
-     "sorts": [{"least", "most"} | null, ...]}
+     "sorts": [{"sort", "least", "most"} | null, ...]}
 
-The answer names no sort: its `sorts` is one entry per requested sort, so the client binds it by
-position (`search-budget.json`, `x-zip`). The constants are the environment's `vocabulary.constants`
+Its `sorts` is one entry per requested sort, in the request's order, and a raised entry names its
+sort, so the client binds each entry to the sort at its position (`search-budget.json`, `x-zip` and
+`x-equals`). The constants are the environment's `vocabulary.constants`
 entries whose `sort` is a string. The facts are read leniently: each premise's top-level conjuncts
 are decoded one at a time (`VE.Bridge.decodeFormula`), and a conjunct outside the core first-order
 syntax (an order comparison, an n-ary atom, a reachability atom) is left out, so it only forces
@@ -46,9 +47,9 @@ def decodeConstants (vocabulary : Json) : List (String × String) :=
       | _ => none
   | _ => []
 
-/-- A requested sort's entry: its raised bounds, or `null` where the shared bound stands. -/
+/-- A requested sort's entry: the sort and its raised bounds, or `null` where the shared bound stands. -/
 def boundJson : Option (String × Nat × Nat) → Json
-  | some (_, least, most) => Json.mkObj [("least", toJson least), ("most", toJson most)]
+  | some (sort, least, most) => Json.mkObj [("sort", .str sort), ("least", toJson least), ("most", toJson most)]
   | none => .null
 
 def runCase (j : Json) : Except String Json := do

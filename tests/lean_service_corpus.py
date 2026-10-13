@@ -401,6 +401,7 @@ def english_cases(negations=(64, 200)):
 def corpus():
     """{mode: [case, ...]} with every result kind of every mode."""
     from tests.probe_matrix import raw_environment, model_wire
+    from tests.premise_scale_fixtures import search_budget_cases
     from ve import Environment, FiniteModel
     env = Environment(raw_environment(()))
     model = FiniteModel.from_dict(env, model_wire(env))
@@ -420,7 +421,8 @@ def corpus():
     return {"evaluate": evaluate_cases(), "check-certificate": certificate_cases(),
             "order": order_cases(), "route": route_cases(), "norms": norms_cases(),
             "english": english_cases(), "environment": standalone_env,
-            "model": standalone_model, "identity": identities, "document": document_cases()}
+            "model": standalone_model, "identity": identities, "document": document_cases(),
+            "search-budget": [*search_budget_cases(), *ADVERSARIAL]}
 
 
 def document_cases():

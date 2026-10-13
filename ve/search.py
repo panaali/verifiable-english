@@ -435,7 +435,7 @@ def premise_budget(env: Any, premises: Sequence[Any]) -> PremiseBudget:
 
 def _bind_budget(row: Any, case: dict) -> PremiseBudget:
     """A `search-budget` row bound to its case (R8: schema and binding only): its own fields, typed,
-    and one entry per requested sort, which raises that sort or is null."""
+    and one entry per requested sort, which names and raises that sort or is null."""
     def unavailable(why):
         return CheckerUnavailable(f"CheckerUnavailable: the Lean search budget is not an answer to the case ({why})")
     if type(row) is not dict or row.get("id") != case["id"] or row.get("status") != "ok":
@@ -451,7 +451,7 @@ def _bind_budget(row: Any, case: dict) -> PremiseBudget:
     for sort, entry in zip(case["sorts"], entries):
         if entry is None:
             continue
-        if (type(entry) is not dict or set(entry) != {"least", "most"}
+        if (type(entry) is not dict or set(entry) != {"sort", "least", "most"} or entry["sort"] != sort
                 or any(type(entry[k]) is not int or entry[k] < 0 for k in ("least", "most"))):
             raise unavailable(f"sort {sort!r}")
         bounds[sort] = (entry["least"], entry["most"])

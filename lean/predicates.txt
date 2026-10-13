@@ -404,6 +404,7 @@ module VE.Route.Wire
 module VE.Route.WireSound
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
+module VE.SearchBudget.Examples
 module VE.SearchBudget.Run
 module VE.Semantics
 module VE.Senses.Assignment

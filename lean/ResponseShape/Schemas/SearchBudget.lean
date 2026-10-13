@@ -1,16 +1,17 @@
 import ResponseShape
 
 /-! The `search-budget` row (`VE.SearchBudget.Run`): the premise check's budget and, for each sort
-the request lists, its raised bounds `{"least", "most"}` or `null`, one entry per requested sort in
-order (`x-zip`), so the answer names no sort the request does not. -/
+the request lists, its raised bounds `{"sort", "least", "most"}` or `null`, one entry per requested
+sort in order (`x-zip`), a raised entry naming the sort at its position (`x-equals`). -/
 namespace ResponseShape.Schemas.SearchBudget
 open Lean ResponseShape
 
 def bound : Shape :=
   .anyOf [
     .type ["null"],
-    n [obj, .required ["least", "most"],
-      closed [("least", ref "common.json#/$defs/nat"), ("most", ref "common.json#/$defs/nat")]]]
+    n [obj, .required ["sort", "least", "most"],
+      closed [("sort", n [str, .equals ""]), ("least", ref "common.json#/$defs/nat"),
+        ("most", ref "common.json#/$defs/nat")]]]
 
 def «row» : Shape :=
   .anyOf [
