@@ -3,27 +3,27 @@
  "totals": {
   "K": 997,
   "S": 9788,
-  "D": 13883,
-  "G": 26899,
+  "D": 14068,
+  "G": 27003,
   "C": 8486,
-  "P": 71772,
-  "T": 14245,
-  "o": 12151,
-  "D[V]": 12353,
-  "D[R]": 1003,
-  "D[I]": 527,
-  "G[V]": 24893,
+  "P": 71796,
+  "T": 14253,
+  "o": 12166,
+  "D[V]": 12518,
+  "D[R]": 1017,
+  "D[I]": 533,
+  "G[V]": 24997,
   "G[R]": 1765,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 47872,
-  "lines": 158221
+  "trusted": 48141,
+  "lines": 158557
  },
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37087
+  "V": 37356
  },
  "signed": [],
  "history": [
@@ -581,6 +581,19 @@
     "K": 997,
     "S": 9788,
     "V": 37087
+   }
+  },
+  {
+   "change": "lean-first/b16e: Lean's document mode composes the rights route for rights@0 documents (rights source decode, statuses, soft single-rule check and canonical content, request-bound typed answer: VE/Service/Document.lean +185) and types the copied rights and soft content in the response schema (ResponseShape/Schemas/Document.lean +84). R6 does not cover this growth: Python's retained loader stays for the parts the mode leaves unowned (reading sets, couplings and claim graphs of rights documents; soft-norms@0 alone). NEEDS A DRI SIGNATURE (docs/lean-first/b16e/DELTA.md); no K or S growth.",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37087
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37356
    }
   }
  ],
@@ -3877,7 +3890,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 452,
+   "T": 453,
    "o": 7,
    "D[V]": 0,
    "D[R]": 0,
@@ -3888,7 +3901,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 459
+   "lines": 460
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -3996,7 +4009,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 64,
+   "P": 72,
    "T": 0,
    "o": 6,
    "D[V]": 0,
@@ -4008,7 +4021,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 70
+   "lines": 78
   },
   "ResponseShape/Encoders/English.lean": {
    "K": 0,
@@ -4554,7 +4567,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 93,
+   "G": 177,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -4562,13 +4575,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 93,
+   "G[V]": 177,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 93,
-   "lines": 104
+   "trusted": 177,
+   "lines": 188
   },
   "ResponseShape/Schemas/English.lean": {
    "K": 0,
@@ -5717,7 +5730,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 4849,
+   "T": 4850,
    "o": 200,
    "D[V]": 0,
    "D[R]": 0,
@@ -5728,7 +5741,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 5049
+   "lines": 5050
   },
   "VE/Bridge.lean": {
    "K": 22,
@@ -8553,14 +8566,14 @@
   "VE/Norms/Admission.lean": {
    "K": 0,
    "S": 128,
-   "D": 18,
+   "D": 21,
    "G": 8,
    "C": 64,
    "P": 229,
    "T": 0,
    "o": 22,
    "D[V]": 18,
-   "D[R]": 0,
+   "D[R]": 3,
    "D[I]": 0,
    "G[V]": 8,
    "G[R]": 0,
@@ -8568,7 +8581,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 154,
-   "lines": 469
+   "lines": 472
   },
   "VE/Norms/Basic.lean": {
    "K": 22,
@@ -12013,22 +12026,22 @@
   "VE/Service/Document.lean": {
    "K": 0,
    "S": 0,
-   "D": 778,
-   "G": 245,
+   "D": 960,
+   "G": 265,
    "C": 0,
-   "P": 0,
-   "T": 18,
-   "o": 63,
-   "D[V]": 485,
-   "D[R]": 283,
-   "D[I]": 10,
-   "G[V]": 231,
+   "P": 16,
+   "T": 24,
+   "o": 78,
+   "D[V]": 650,
+   "D[R]": 294,
+   "D[I]": 16,
+   "G[V]": 251,
    "G[R]": 14,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 716,
-   "lines": 1104
+   "trusted": 901,
+   "lines": 1343
   },
   "VE/Service/EnglishRun.lean": {
    "K": 0,
