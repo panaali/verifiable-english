@@ -1,0 +1,608 @@
+{
+ "run": "/home/seyran/code/manage-agents/pilots/udhr/run-20261012T1800Z",
+ "rule": "docs/research/act-phrases-phase1.md 1.2",
+ "profiles": [
+  "documents@1",
+  "norm-defaults@0",
+  "norms@0",
+  "relational-fol@0"
+ ],
+ "m1_before": {
+  "count": 11,
+  "bytes": 1860
+ },
+ "m1_after_primary": {
+  "units": [
+   "u041",
+   "u076",
+   "u079b",
+   "u082",
+   "u086",
+   "u092",
+   "u108"
+  ],
+  "count": 7,
+  "bytes": 1202
+ },
+ "m1_after_loose": {
+  "units": [],
+  "count": 0,
+  "bytes": 0
+ },
+ "credited_to_ap0": {
+  "units": [
+   "u039",
+   "u085",
+   "u091",
+   "u106"
+  ],
+  "count": 4,
+  "bytes": 658
+ },
+ "units": [
+  {
+   "unit": "u039",
+   "bytes": 201,
+   "source": "Everyone is entitled in full equality to a fair and public hearing by an independent and impartial tribunal, in the determination of his rights and obligations and of any criminal charge against him.",
+   "variant": "full description and verbalisation",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u039.entitlement.ve.md",
+   "entitlement": "is_entitled_to_a_fair_hearing_in_full_equality",
+   "hidden_structure": [],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 199
+    },
+    "residual_total": 4
+   },
+   "C2": true,
+   "rendered": "Everyone is entitled in full equality to a fair and public hearing by an independent and impartial tribunal, in the determination of his rights and obligations and of any criminal charge against him.\nOpen reading: Every person has the recorded relation \"is_entitled_to_a_fair_hearing_in_full_equality\" to each determination, if either that determination has the recorded relation \"determines_rights_and_obligations_of\" to that person or that determination has the recorded relation \"determines_criminal_charge_against\" to that person, or both.\n",
+   "renders_classified_as": false,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "in full equality",
+     "in_one_text": true
+    },
+    {
+     "phrase": "fair and public hearing by an independent and impartial tribunal",
+     "in_one_text": true
+    },
+    {
+     "phrase": "of his rights and obligations",
+     "in_one_text": true
+    },
+    {
+     "phrase": "of any criminal charge against him",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": true,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "yes",
+   "reason": "loads as one opaque entitlement carrying every word and the argument the ledger asks for; the act stays one string, as under AP-1; pending the pilot's audit",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u041",
+   "bytes": 201,
+   "source": "1. Everyone charged with a penal offence has the right to be presumed innocent until proved guilty according to law in a public trial at which he has had all the guarantees necessary for his defence.",
+   "variant": "full description and verbalisation",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u041.entitlement.ve.md",
+   "entitlement": "has_the_right_to_be_presumed_innocent",
+   "hidden_structure": [
+    "time ('until proved guilty'): events-time-causation"
+   ],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 199
+    },
+    "residual_total": 2
+   },
+   "C2": true,
+   "rendered": "1. Everyone charged with a penal offence has the right to be presumed innocent until proved guilty according to law in a public trial at which he has had all the guarantees necessary for his defence.\nOpen reading: Every person is classified as \"has_the_right_to_be_presumed_innocent\", if that person is classified as \"is_charged_with_a_penal_offence\".\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "until proved guilty according to law in a public trial at which he has had all the guarantees necessary for his defence",
+     "in_one_text": true
+    },
+    {
+     "phrase": "charged with a penal offence",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": null,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "no",
+   "reason": "loads as one opaque entitlement only by hiding, in its name: time ('until proved guilty'): events-time-causation",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u076",
+   "bytes": 125,
+   "source": "1. Everyone has the right to take part in the government of his country, directly or through freely chosen representatives.",
+   "variant": "full description and verbalisation",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u076.entitlement.ve.md",
+   "entitlement": "has_the_right_to_take_part_in_government",
+   "hidden_structure": [
+    "two readings of 'directly or through ...' (AP-4)"
+   ],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 123
+    },
+    "residual_total": 1
+   },
+   "C2": true,
+   "rendered": "1. Everyone has the right to take part in the government of his country, directly or through freely chosen representatives.\nOpen reading: Every person is classified as \"has_the_right_to_take_part_in_government\".\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "the government of his country",
+     "in_one_text": true
+    },
+    {
+     "phrase": "directly or through freely chosen representatives",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": null,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "no",
+   "reason": "loads as one opaque entitlement only by hiding, in its name: two readings of 'directly or through ...' (AP-4)",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u079b",
+   "bytes": 76,
+   "source": "and shall be held by secret vote or by equivalent free voting procedures.",
+   "variant": "full description and verbalisation",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u079b.entitlement.ve.md",
+   "entitlement": "is_held_by_secret_vote_or_equivalent_free_procedure",
+   "hidden_structure": [
+    "an obligation ('shall') stated as a plain property, with a disjunctive act (AP-3)",
+    "the subject is carried from u079a, which is UNFORMALISED (time)"
+   ],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 73
+    },
+    "residual_total": 1
+   },
+   "C2": true,
+   "rendered": "and shall be held by secret vote or by equivalent free voting procedures.\nOpen reading: Every election is classified as \"is_held_by_secret_vote_or_equivalent_free_procedure\".\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "by secret vote or by equivalent free voting procedures",
+     "in_one_text": true
+    },
+    {
+     "phrase": "elections",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": null,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "no",
+   "reason": "loads as one opaque entitlement only by hiding, in its name: an obligation ('shall') stated as a plain property, with a disjunctive act (AP-3); the subject is carried from u079a, which is UNFORMALISED (time)",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u082",
+   "bytes": 277,
+   "source": "and is entitled to realization, through national effort and international co-operation and in accordance with the organization and resources of each State, of the economic, social and cultural rights indispensable for his dignity and the free development of his personality.",
+   "variant": "no verbalisation on the entitlement (description carries the words)",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u082.entitlement.ve.md",
+   "entitlement": "is_entitled_to_realization_of_rights",
+   "hidden_structure": [
+    "rights as objects (the object ranges over rights)",
+    "the limit is cited by the other Article 22 to 27 units"
+   ],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 274
+    },
+    "residual_total": 2
+   },
+   "C2": true,
+   "rendered": "and is entitled to realization, through national effort and international co-operation and in accordance with the organization and resources of each State, of the economic, social and cultural rights indispensable for his dignity and the free development of his personality.\nOpen reading: Every person is classified as \"is_entitled_to_realization_of_rights\".\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "through national effort and international co-operation",
+     "in_one_text": true
+    },
+    {
+     "phrase": "in accordance with the organization and resources of each State",
+     "in_one_text": true
+    },
+    {
+     "phrase": "the economic, social and cultural rights indispensable for his dignity and the free development of his personality",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": null,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "no",
+   "reason": "loads as one opaque entitlement only by hiding, in its name: rights as objects (the object ranges over rights); the limit is cited by the other Article 22 to 27 units",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": false,
+     "C2": false,
+     "C3": true,
+     "C4": true,
+     "error": "ResourceLimit: ResourceLimit: verbalisation size"
+    },
+    {
+     "variant": "no verbalisation on the entitlement (description carries the words)",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u085",
+   "bytes": 85,
+   "source": "2. Everyone, without any discrimination, has the right to equal pay for equal work.",
+   "variant": "full description and verbalisation",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u085.entitlement.ve.md",
+   "entitlement": "has_the_right_to_equal_pay_for_equal_work",
+   "hidden_structure": [],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 83
+    },
+    "residual_total": 2
+   },
+   "C2": true,
+   "rendered": "2. Everyone, without any discrimination, has the right to equal pay for equal work.\nOpen reading: Every person is classified as \"has_the_right_to_equal_pay_for_equal_work\".\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "equal pay for equal work",
+     "in_one_text": true
+    },
+    {
+     "phrase": "without any discrimination",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": null,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "yes",
+   "reason": "loads as one opaque entitlement carrying every word and the argument the ledger asks for; the act stays one string, as under AP-1; pending the pilot's audit",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u086",
+   "bytes": 216,
+   "source": "3. Everyone who works has the right to just and favourable remuneration ensuring for himself and his family an existence worthy of human dignity, and supplemented, if necessary, by other means of social protection.",
+   "variant": "full description and verbalisation",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u086.entitlement.ve.md",
+   "entitlement": "has_the_right_to_just_and_favourable_remuneration",
+   "hidden_structure": [
+    "a condition ('if necessary') inside the object (research R4)"
+   ],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 214
+    },
+    "residual_total": 3
+   },
+   "C2": true,
+   "rendered": "3. Everyone who works has the right to just and favourable remuneration ensuring for himself and his family an existence worthy of human dignity, and supplemented, if necessary, by other means of social protection.\nOpen reading: Every person is classified as \"has_the_right_to_just_and_favourable_remuneration\", if that person is works.\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "ensuring for himself and his family an existence worthy of human dignity",
+     "in_one_text": true
+    },
+    {
+     "phrase": "supplemented, if necessary, by other means of social protection",
+     "in_one_text": true
+    },
+    {
+     "phrase": "who works",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": null,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "no",
+   "reason": "loads as one opaque entitlement only by hiding, in its name: a condition ('if necessary') inside the object (research R4)",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u091",
+   "bytes": 201,
+   "source": "1. Everyone has the right to a standard of living adequate for the health and well-being of himself and of his family, including food, clothing, housing and medical care and necessary social services,",
+   "variant": "full description and verbalisation",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u091.entitlement.ve.md",
+   "entitlement": "has_the_right_to_an_adequate_standard_of_living",
+   "hidden_structure": [],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 200
+    },
+    "residual_total": 1
+   },
+   "C2": true,
+   "rendered": "1. Everyone has the right to a standard of living adequate for the health and well-being of himself and of his family, including food, clothing, housing and medical care and necessary social services,\nOpen reading: Every person is classified as \"has_the_right_to_an_adequate_standard_of_living\".\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "adequate for the health and well-being of himself and of his family",
+     "in_one_text": true
+    },
+    {
+     "phrase": "including food, clothing, housing and medical care and necessary social services",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": null,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "yes",
+   "reason": "loads as one opaque entitlement carrying every word and the argument the ledger asks for; the act stays one string, as under AP-1; pending the pilot's audit",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u092",
+   "bytes": 163,
+   "source": "and the right to security in the event of unemployment, sickness, disability, widowhood, old age or other lack of livelihood in circumstances beyond his control.",
+   "variant": "full description and verbalisation",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u092.entitlement.ve.md",
+   "entitlement": "has_the_right_to_security_in_lack_of_livelihood",
+   "hidden_structure": [
+    "two readings of 'in circumstances beyond his control' (AP-4)"
+   ],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 161
+    },
+    "residual_total": 1
+   },
+   "C2": true,
+   "rendered": "and the right to security in the event of unemployment, sickness, disability, widowhood, old age or other lack of livelihood in circumstances beyond his control.\nOpen reading: Every person is classified as \"has_the_right_to_security_in_lack_of_livelihood\".\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "in the event of unemployment, sickness, disability, widowhood, old age or other lack of livelihood",
+     "in_one_text": true
+    },
+    {
+     "phrase": "in circumstances beyond his control",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": null,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "no",
+   "reason": "loads as one opaque entitlement only by hiding, in its name: two readings of 'in circumstances beyond his control' (AP-4)",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u106",
+   "bytes": 171,
+   "source": "2. Everyone has the right to the protection of the moral and material interests resulting from any scientific, literary or artistic production of which he is the author.",
+   "variant": "the kinds as one guard predicate (C4 reads a phrase in one text)",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u106.entitlement.ve.md",
+   "entitlement": "has_the_right_to_protection_of_interests_in",
+   "hidden_structure": [],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 169
+    },
+    "residual_total": 2
+   },
+   "C2": true,
+   "rendered": "2. Everyone has the right to the protection of the moral and material interests resulting from any scientific, literary or artistic production of which he is the author.\nOpen reading: Every person has the recorded relation \"has_the_right_to_protection_of_interests_in\" to each production, if both that person has the recorded relation \"is_author_of\" to that production and that production is classified as \"is_scientific_literary_or_artistic\".\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "the moral and material interests",
+     "in_one_text": true
+    },
+    {
+     "phrase": "scientific, literary or artistic",
+     "in_one_text": true
+    },
+    {
+     "phrase": "of which he is the author",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": true,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "yes",
+   "reason": "loads as one opaque entitlement carrying every word and the argument the ledger asks for; the act stays one string, as under AP-1; pending the pilot's audit",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": false
+    },
+    {
+     "variant": "the kinds as one guard predicate (C4 reads a phrase in one text)",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  },
+  {
+   "unit": "u108",
+   "bytes": 144,
+   "source": "Everyone is entitled to a social and international order in which the rights and freedoms set forth in this Declaration can be fully realized.",
+   "variant": "full description and verbalisation",
+   "document": "docs/research/evidence/act-phrases/udhr-retry/u108.entitlement.ve.md",
+   "entitlement": "is_entitled_to_a_social_and_international_order",
+   "hidden_structure": [
+    "modality ('can be fully realized')"
+   ],
+   "C1": true,
+   "check_status": "model",
+   "coverage": {
+    "coverage_percent": 100,
+    "bytes_by_status": {
+     "OPEN": 142
+    },
+    "residual_total": 1
+   },
+   "C2": true,
+   "rendered": "Everyone is entitled to a social and international order in which the rights and freedoms set forth in this Declaration can be fully realized.\nOpen reading: Every person is classified as \"is_entitled_to_a_social_and_international_order\".\n",
+   "renders_classified_as": true,
+   "C3_missing": [],
+   "C3": true,
+   "C4_carry": [
+    {
+     "phrase": "a social and international order in which the rights and freedoms set forth in this Declaration can be fully realized",
+     "in_one_text": true
+    }
+   ],
+   "C4_argument": null,
+   "C4": true,
+   "loads_as_opaque_entitlement": true,
+   "expressible_today": "no",
+   "reason": "loads as one opaque entitlement only by hiding, in its name: modality ('can be fully realized')",
+   "attempts": [
+    {
+     "variant": "full description and verbalisation",
+     "C1": true,
+     "C2": true,
+     "C3": true,
+     "C4": true
+    }
+   ]
+  }
+ ]
+}
