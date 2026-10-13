@@ -17,6 +17,13 @@ from subprocesses import HANG_TIMEOUT
 from tools import gate, nested_pytest
 
 
+def test_gate_scratch_root_can_avoid_system_tmp(tmp_path, monkeypatch):
+    monkeypatch.setenv("VE_GATE_SCRATCH_ROOT", str(tmp_path))
+    assert gate.gate_scratch_root() == tmp_path
+    with gate.tempfile.TemporaryDirectory(prefix="ve-gate-", dir=gate.gate_scratch_root()) as scratch:
+        assert Path(scratch).parent == tmp_path
+
+
 def empty_result():
     return {"counts": {}, "failures": [], "skips": []}
 

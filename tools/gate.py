@@ -530,6 +530,11 @@ def write_collection() -> int:
     return gate_collection.write(prebuilt=True)
 
 
+def gate_scratch_root() -> Path:
+    """Allow a durable scratch root when system /tmp is cleaned during a long gate."""
+    return Path(os.environ.get("VE_GATE_SCRATCH_ROOT", "/tmp")).resolve()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
@@ -562,7 +567,7 @@ def main() -> int:
     write_result(output, result)
     started_clean = False
     completed = False
-    with tempfile.TemporaryDirectory(prefix="ve-gate-", dir="/tmp") as directory:
+    with tempfile.TemporaryDirectory(prefix="ve-gate-", dir=gate_scratch_root()) as directory:
         scratch = Path(directory)
         try:
             env = record_environment(result, "base", gate_environment(scratch))

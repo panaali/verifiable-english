@@ -10,7 +10,7 @@ No VE verdict, diagnostic, wire field, theorem statement, or accepted input chan
 
 The [summary](evidence/summary.json) pins the code and evidence commit list from a fixed base through `569648af`, excluding later report-only commits. [check_evidence.py](check_evidence.py) checks those fixed commits and the saved counts; it does not compare with a moving `main`. The [coverage map](evidence/coverage-map.json.gz) records 368 test units and all 32 current service modes: 354 clean recorded units, 9 failed units, 2 timed-out units, and 3 opaque units. The latter 14 use the static fallback. `tools/lean_mode_deps.py --check` verifies the generated table against its Lean sources.
 
-The [mode mutation evidence](evidence/mode-mutants.json) plants and restores 31 wrong Lean mode dependencies, one for each non-document mode. Each makes the compiled table regeneration test fail. For every mode, the evidence also names a recorded test selected when its Lean root changes. The document branch is covered by the separate Lean mutation below. The [behavior mutations](evidence/mutants.json) record four additional planted and restored bugs, with their failing tests:
+The [mode mutation evidence](evidence/mode-mutants.json) plants and restores 31 wrong Lean mode dependencies, one for each non-document mode. Each makes the compiled table regeneration test fail. For every mode, the evidence also names a recorded test selected when its Lean root changes. The document branch is covered by the separate Lean mutation below. The [behavior mutations](evidence/mutants.json) record four planted and restored bugs. A fifth gate-scratch bug was planted and restored after the first full gate failed. Their failing tests were:
 
 | Changed file | Seeded bug | Failing test |
 | --- | --- | --- |
@@ -18,10 +18,13 @@ The [mode mutation evidence](evidence/mode-mutants.json) plants and restores 31 
 | `ve/backends/lean_service.py` | Remove the mode audit event | `test_lean_service_emits_mode_before_dispatch` |
 | `tools/test_map_recorder.py` | Drop the mode event | `test_recorder_tracks_each_service_request_mode` |
 | `tools/select_tests.py` | Drop known matching service users | `test_service_modes_narrow_only_known_recorded_users` |
+| `tools/gate.py` | Ignore the configured durable scratch root | `test_gate_scratch_root_can_avoid_system_tmp` |
 
 The [shadow replay](evidence/shadow.json) compares selections for ten fixed merged items with their archived full-suite gates. Four selections narrow to 25, 41, 58, and 313 of 368 current units; six conservatively select all 368. No archived passed gate has a failure outside selection. The first failed `eff-tests` gate has one failing test file, `tests/test_run_cache.py`, and that file is selected; its later saved full gate passed. This is a retrospective shadow comparison using a current v7 map and archived gates. It does not rerun historical trees or measure elapsed-time savings on them.
 
-Focused verification passed: 540 previously failing inventory and relay tests (two later trust/frozen inventory failures were corrected and their 42 focused checks passed), 165 selector and relay tests, the four behavior mutations, the 31 mode mutations, the evidence checker, and the generated mode-table check. The branch selected run used the required `--base` and chose the full suite because `.gitattributes` is an unknown changed input. It built Lean and passed audit and layer checks, then was stopped at 3% of the Python suite after an early slow group; the final release gate is the authoritative full-suite result. `gate-result.json` at the worktree root is retained after that final gate.
+Focused verification passed: 540 previously failing inventory and relay tests (two later trust/frozen inventory failures were corrected and their 42 focused checks passed), 165 selector and relay tests, five behavior mutations, the 31 mode mutations, the evidence checker, and the generated mode-table check. The branch selected run used the required `--base` and chose the full suite because `.gitattributes` is an unknown changed input. It built Lean and passed audit and layer checks, then was stopped at 3% of the Python suite after an early slow group; the final release gate is the authoritative full-suite result. `gate-result.json` at the worktree root is retained after that final gate.
+
+The first full gate on `0c7ad126` lost its `/tmp/ve-gate-*` scratch directory during the Python suite. Its [saved failure summary](evidence/failed-gate-summary.json) records 1,980 missing-scratch errors among 1,986 failed tests; the gate wrapper log also disappeared. The four earlier failures (three gate-integrity interruption variants and one English roundtrip CPU deadline) passed a focused rerun on that same HEAD. The gate now accepts `VE_GATE_SCRATCH_ROOT`; the final rerun uses an ignored workspace directory so external `/tmp` cleanup cannot remove its scratch files. The scratch-root test failed under a planted override-ignoring bug and passed after restoration.
 
 ## Checklist and handoff
 
@@ -29,7 +32,7 @@ Applicable build-checklist items: the Lean extractor uses the compiler environme
 
 | Acceptance item | Owner | State |
 | --- | --- | --- |
-| B2 implementation, 31 mode seeds, four behavior seeds, ten-item shadow evidence, final release gate | AGENT | Code and evidence saved; gate result retained in `gate-result.json` |
+| B2 implementation, 31 mode seeds, five behavior seeds, ten-item shadow evidence, final release gate | AGENT | Code and evidence saved; gate result retained in `gate-result.json` |
 | Independent review of the diff and shadow limits | HUMAN: DRI reviewer | Deferred to review |
 | Nightly full-suite operation after merge | EXTERNAL: CI owner | Existing nightly schedule |
 
