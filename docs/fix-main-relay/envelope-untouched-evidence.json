@@ -12,8 +12,8 @@
    "killed_by": [],
    "killed": false,
    "mutant_exit": 0,
-   "seconds": 58.7,
-   "output_tail": ".                                                                        [100%]\n1 passed in 31.82s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-k97ti8dt)\n",
+   "seconds": 36.0,
+   "output_tail": ".                                                                        [100%]\n1 passed in 17.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ndbn_rie)\n",
    "problem": "the mutant survives"
   }
  ]
