@@ -140,3 +140,146 @@ def test_python_routes_nary_definitions_to_lean(monkeypatch):
     ordered = compile_definitions(built, built.definition_entries, version=built.environment_id)
     assert [definition.name for definition in ordered] == ["derived"]
     assert FiniteModel.from_dict(built, model).relations["derived"] == {("a", "a", "b")}
+
+
+# ---------------------------------------------------------------- lf-14c review F1: one definition order
+
+def mixed(definitions):
+    """The case's environment with its defined predicates `(name, arity, mentions)` of arity 1
+    or 3 in place of `derived`: a unary body mentions unary predicates, an n-ary body any."""
+    env, _ = case()
+    predicates = env["vocabulary"]["predicates"]
+    del predicates["derived"]
+    predicates["u"] = {"arguments": ["s"], "description": "u"}
+    arities = {name: arity for name, arity, _ in definitions}
+
+    def mention(name, arity):
+        if arities.get(name, 1) == 1:
+            return ["unary", name, ["var", 0]]
+        return ["atom", name, [["var", index] for index in reversed(range(arity))]]
+
+    for name, arity, mentions in definitions:
+        body = ["unary", "u", ["var", 0]] if arity == 1 else ["atom", "base", [["var", 2], ["var", 1], ["var", 0]]]
+        for other in mentions:
+            body = ["and", body, mention(other, arity)]
+        predicates[name] = {"arguments": ["s"] * arity, "description": name,
+                            "defined": {"arguments": ["s"] * arity, "body": body}}
+    return env
+
+
+ORDERS = {
+    # The review's reproducer: independent n-ary `aaa` and unary `zzz`.
+    "independent": ([("aaa", 3, []), ("zzz", 1, [])], ["aaa", "zzz"]),
+    # A ready n-ary definition comes before a unary one with a larger name, and after the unary one it mentions.
+    "interleaved": ([("p3", 3, []), ("q1", 1, []), ("a3", 3, ["q1"]), ("b1", 1, [])], ["b1", "p3", "q1", "a3"]),
+    "chain": ([("c3", 3, ["b3"]), ("b3", 3, ["a1"]), ("a1", 1, []), ("z1", 1, [])], ["a1", "b3", "c3", "z1"]),
+}
+
+
+@pytest.mark.parametrize("name", sorted(ORDERS))
+def test_definitions_share_one_dependency_order_across_arities(monkeypatch, name):
+    """Lean placed every unary or binary definition before every n-ary one; Python orders all of
+    them in one dependency order. The Lean-owned compilation, the retained Python elaborator and
+    the route's regenerated Background (every caller of `Core.Layers.background`) agree on it."""
+    from ve import definitions
+    definitions_, expected = ORDERS[name]
+    raw = mixed(definitions_)
+    env = Environment(raw)
+    compiled = compile_definitions(env, env.definition_entries, version=env.environment_id)
+    retained = definitions._compile_python(env, env.definition_entries, version=env.environment_id)
+    assert [d.name for d in compiled] == [d.name for d in retained] == expected
+    row, = route([{"id": "bg", "kind": "background", "environment": raw}])
+    premises = [p for p, g in zip(row["premises"], row["generators"], strict=True) if g == "definitions"]
+    assert [definitions._lean_definition(env, p).name for p in premises] == expected
+
+
+# ---------------------------------------------------------------- lf-14c review F2: direct entries' diagnostics
+
+def _outcome(call):
+    """`("ok", names)`, or the exception's class and text without the code prefix the relay writes."""
+    from ve.errors import VEError
+    try:
+        return "ok", tuple(d.name for d in call())
+    except VEError as exc:
+        return type(exc).__name__, str(exc).removeprefix(f"{type(exc).__name__}: ")
+
+
+def _paths(value, at=()):
+    yield at
+    if type(value) is list:
+        for index, item in enumerate(value):
+            yield from _paths(item, (*at, index))
+    elif type(value) is dict:
+        for key, item in value.items():
+            yield from _paths(item, (*at, key))
+
+
+def _put(value, at, item):
+    if not at:
+        return item
+    value = deepcopy(value)
+    node = value
+    for key in at[:-1]:
+        node = node[key]
+    node[at[-1]] = item
+    return value
+
+
+REPLACEMENTS = (7, True, None, [], {}, "x", ["bogus"], ["not"], ["reach", "plus", ["named", "u"], ["var", 0], ["var", 0]])
+
+
+@pytest.mark.parametrize("target", ["derived", "v"])
+def test_direct_definition_diagnostics_are_pythons(target):
+    """A direct `compile_definitions` entry, n-ary (`derived`) or unary (`v`), with each node of its
+    arguments and body replaced by each JSON kind, a bad tag, a short node or a Reach: the
+    Lean-owned answer is the retained Python elaborator's, class and text (the review's `bogus`
+    tag gave `invalid indexed formula`; a mismatched argument list lost the quoted name; a
+    `null` gave the restricted reader's offset). Only VEError escapes."""
+    from ve import definitions
+    from ve.errors import SyntaxError as VESyntaxError
+    raw, _ = case()
+    raw["vocabulary"]["predicates"]["u"] = {"arguments": ["s"], "description": "u"}
+    raw["vocabulary"]["predicates"]["v"] = {"arguments": ["s"], "description": "v", "defined": {
+        "arguments": ["s"], "body": ["and", ["unary", "u", ["var", 0]], ["not", ["bottom"]]]}}
+    env = Environment(raw)
+    version = env.environment_id
+    with pytest.raises(VESyntaxError, match="'bogus'"):
+        compile_definitions(env, {target: {**env.definition_entries[target], "body": ["bogus"]}}, version=version)
+    seed = env.definition_entries[target]
+    differ = []
+    for at in _paths(seed):
+        for item in REPLACEMENTS:
+            entries = {target: _put(seed, at, item)}
+            lean = _outcome(lambda: compile_definitions(env, entries, version=version))
+            python = _outcome(lambda: definitions._compile_python(env, entries, version=version))
+            if lean != python:
+                differ.append((at, item, lean, python))
+    assert differ == []
+
+
+def _rust_binary():
+    import sys
+    sys.path.insert(0, str(ROOT / "tools"))
+    import rust_build
+    import os
+    if os.environ.get("VE_RUST_PREBUILT"):
+        return Path(os.environ["VE_RUST_BINARY"])
+    binary = rust_build.RELEASE_BINARY
+    if not binary.is_file() or rust_build.digest(binary) not in rust_build.pinned_digests():
+        pytest.skip("build the pinned Rust release binary with python3 tools/rust_build.py")
+    return binary
+
+
+def test_definition_arguments_mismatch_quotes_the_name_on_every_engine():
+    """Python's `Definition 'derived' arguments differ from its declaration`: the Lean route
+    (environment construction) and Rust quote the name as Python's `repr` does."""
+    from conformance import three_way
+    raw, _ = case()
+    raw["vocabulary"]["predicates"]["derived"]["defined"]["arguments"] = ["s", "s"]
+    expected = "Definition 'derived' arguments differ from its declaration"
+    with pytest.raises(Exception) as python:
+        Environment(raw)
+    assert str(python.value).endswith(expected)
+    rust, = three_way.run([str(_rust_binary()), "conformance"],
+                          [{"id": "env", **three_way.rust_envelope(raw)}])
+    assert rust["status"] == "error" and rust["error"]["message"].endswith(expected), rust
