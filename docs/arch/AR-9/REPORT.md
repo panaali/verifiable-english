@@ -157,8 +157,13 @@ Each fault was removed by the script; every named test passes again afterwards.
   changed between the gated `eb433e5b` and the sweep's commit, and `check_evidence.py` requires
   that. Under the lead's devtime rule (2026-10-12) fixers do not rerun the release gate; the merge
   train's branch verify runs the full gate on the final HEAD, which also covers the changed
-  `docs/arch/AR-9/` scripts. After the revert: `lake build` passed, `lean/audit.py` passed, and
-  the selected tests for the change passed (fix report).
+  `docs/arch/AR-9/` scripts. After the revert: `lake build` passed, `lean/audit.py` passed,
+  `tools/regen_generated.py --check` reported all 25 entries current, and 366 tests passed in
+  `test_assist_split.py`, `test_lean_service_schema.py`, `test_relay_mutation_gate.py`,
+  `test_enum_domains.py`, `test_response_schemas.py`, `test_gate_collection.py`,
+  `test_encoder_shapes.py` and `test_readings_route_relay.py`. `select_tests.py --base` the merge
+  base selects all 360 units (`tests/conftest.py` changed); that set was not rerun, because the code
+  tree is the one the 360/360 selected run and the full gate at `eb433e5b` already passed.
 - 4.1 item 2 does not apply: the plan's AR-9 row says assist has no corpus in the A/B and its
   tests are the gate. `tools/lean_first_diff.py` was not run.
 - 4.1 item 3: no Lean file changes (`main...HEAD` names none).
