@@ -10647,6 +10647,7 @@
   "tests/test_readings_sd_relay.py::test_a_soft_label_the_request_does_not_declare_is_unavailable[soft:coherence:must-x]",
   "tests/test_readings_sd_relay.py::test_a_soft_label_the_request_does_not_declare_is_unavailable[soft:exception:must-x:other:0]",
   "tests/test_readings_sd_relay.py::test_a_soft_label_the_request_does_not_declare_is_unavailable[soft:exception:must-x:sufficient:01]",
+  "tests/test_readings_sd_relay.py::test_a_soft_label_the_request_does_not_declare_is_unavailable[soft:exception:must-x:sufficient:\\u0661]",
   "tests/test_readings_sd_relay.py::test_a_soft_label_the_request_does_not_declare_is_unavailable[soft:exception:must-x]",
   "tests/test_readings_sd_relay.py::test_a_soft_label_the_request_does_not_declare_is_unavailable[soft:exception:no-such-rule:sufficient:0]",
   "tests/test_readings_sd_relay.py::test_a_soft_label_the_request_does_not_declare_is_unavailable[soft:other:must-x]",

@@ -141,7 +141,8 @@ def test_a_genuine_soft_verdict_binds(coherent_conflict):
 @pytest.mark.parametrize("label", ["soft:coherence:must-x,no-such-rule", "soft:coherence:must-x,must-x",
                                    "soft:coherence:must-x", "soft:exception:no-such-rule:sufficient:0",
                                    "soft:exception:must-x:other:0", "soft:exception:must-x:sufficient:01",
-                                   "soft:exception:must-x", "soft:other:must-x"])
+                                   "soft:exception:must-x", "soft:exception:must-x:sufficient:\u0661",
+                                   "soft:other:must-x"])
 def test_a_soft_label_the_request_does_not_declare_is_unavailable(coherent_conflict, label):
     from ve.readings_verdicts import _check_answer
     row, case = coherent_conflict
