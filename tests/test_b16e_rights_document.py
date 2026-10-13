@@ -359,3 +359,29 @@ def test_a_meaning_id_over_another_environment_is_unbound(monkeypatch, tmp_path)
         monkeypatch.setattr(relay, "answer", lambda *_, forged=forged: (forged, None))
         with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
             D.load_document(path)
+
+
+def test_value_mutants_of_copied_content_are_refused_by_the_binding():
+    """The relay mutation gate's by-design entry B7 (tools/relay-gate-allow.json): the transport schema accepts these
+    valid shapes of copied content; the document binding refuses each, as it differs from the authored content."""
+    text, raw, row, meta, source, declared = _row()
+    right = next(i for i, u in enumerate(row["units"]) if u["kind"] == "right")
+    norm = next(i for i, u in enumerate(row["units"]) if u["kind"] == "norm")
+    mutants = []
+    changed = deepcopy(row)
+    changed["units"][right]["content"]["right"].pop("guard")
+    mutants.append(changed)
+    changed = deepcopy(row)
+    changed["units"][right]["content"]["right"]["guard"] = None
+    mutants.append(changed)
+    changed = deepcopy(row)
+    lines = changed["units"][right]["content"]["right"]["lines"]
+    lines.append(deepcopy(lines[0]))
+    mutants.append(changed)
+    changed = deepcopy(row)
+    over = changed["units"][norm]["content"]["norm"]["over"]
+    over.extend(over[:1] or ["claim-1"])
+    mutants.append(changed)
+    for changed in mutants:
+        with pytest.raises(ValueError, match="disagrees"):
+            D._bind_document_answer(source, meta, declared, changed)
