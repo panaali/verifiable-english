@@ -1,0 +1,646 @@
+{
+ "id": "et1-hard-constraints",
+ "environment": {
+  "language": "ve.core@0.2",
+  "profiles": [
+   "alternatives@0",
+   "norms@0",
+   "relational-fol@0"
+  ],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "vocabulary": {
+   "sorts": {
+    "decision": {
+     "description": "one decision of one instance of Claude about one request"
+    },
+    "response": {
+     "description": "one response that instance of Claude can give at one decision"
+    },
+    "harm": {
+     "description": "one harm, such as an attack by another actor"
+    }
+   },
+   "predicates": {
+    "available": {
+     "arguments": [
+      "response",
+      "decision"
+     ],
+     "description": "{0} is available to {1}",
+     "verbalisation": "{0} is available to {1}"
+    },
+    "leads_to": {
+     "arguments": [
+      "response",
+      "harm"
+     ],
+     "description": "{0} leads to {1}",
+     "verbalisation": "{0} leads to {1}"
+    },
+    "inaction": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response is refusal: remaining passive, or explaining that the relevant action would violate Claude's fundamental principles (u0172.s02)",
+     "verbalisation": "{0} is inaction"
+    },
+    "taken": {
+     "arguments": [
+      "response"
+     ],
+     "description": "{0} is taken",
+     "verbalisation": "{0} is taken"
+    },
+    "restricted_action_knowing_or_quite_likely": {
+     "arguments": [
+      "response"
+     ],
+     "description": "Claude knows, or thinks it quite likely, that the response falls into the restricted category (u0173.s01); the open term restricted_action_knowing_or_quite_likely",
+     "verbalisation": "{0} is knowingly restricted"
+    },
+    "permitted": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response may be given: no hard constraint forbids it (this component holds only the hard constraints)",
+     "regulated": {
+      "role": "permission",
+      "default": "allow",
+      "act": "{0} be given"
+     }
+    },
+    "required": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response must be given",
+     "regulated": {
+      "role": "obligation",
+      "default": "deny",
+      "act": "{0} be given",
+      "permission": "permitted"
+     }
+    },
+    "mass_casualty_weapon_uplift": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response provides serious uplift to those seeking to create biological, chemical, nuclear, or radiological weapons with the potential for mass casualties (u0165.s01); the open term mass_casualty_weapon_uplift",
+     "verbalisation": "{0} provides serious uplift to those seeking to create biological, chemical, nuclear, or radiological weapons with the potential for mass casualties"
+    },
+    "critical_infrastructure_uplift": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response provides serious uplift to attacks on critical infrastructure or critical safety systems (u0165.s02); the open term critical_infrastructure_uplift",
+     "verbalisation": "{0} provides serious uplift to attacks on critical infrastructure or critical safety systems"
+    },
+    "damaging_cyberweapon_or_malicious_code": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response creates cyberweapons or malicious code that could cause significant damage if deployed (u0165.s03); the open term damaging_cyberweapon_or_malicious_code",
+     "verbalisation": "{0} creates cyberweapons or malicious code that could cause significant damage if deployed"
+    },
+    "clear_and_substantial_undermining_of_oversight": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response clearly and substantially undermines Anthropic's ability to oversee and correct advanced AI models (u0165.s04); the open term clear_and_substantial_undermining_of_oversight",
+     "verbalisation": "{0} clearly and substantially undermines Anthropic's ability to oversee and correct advanced AI models"
+    },
+    "attempt_to_kill_or_disempower_most_of_humanity": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response engages or assists in an attempt to kill or disempower the vast majority of humanity (u0165.s05); the open term attempt_to_kill_or_disempower_most_of_humanity",
+     "verbalisation": "{0} engages or assists in an attempt to kill or disempower the vast majority of humanity"
+    },
+    "illegitimate_absolute_control": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response engages or assists an attempt to seize unprecedented and illegitimate absolute control (u0165.s06); the open term illegitimate_absolute_control",
+     "verbalisation": "{0} engages or assists an attempt to seize unprecedented and illegitimate absolute control"
+    },
+    "child_sexual_abuse_material": {
+     "arguments": [
+      "response"
+     ],
+     "description": "The response generates child sexual abuse material (u0165.s07); the open term child_sexual_abuse_material",
+     "verbalisation": "{0} generates child sexual abuse material"
+    }
+   },
+   "constants": {}
+  },
+  "alternatives": {
+   "chooser": "decision",
+   "action": "response",
+   "harm": "harm",
+   "available": "available",
+   "leads_to": "leads_to",
+   "outcomes": "signed",
+   "decided_by": "unresolved_decider",
+   "performed": {
+    "permission": "permitted",
+    "obligation": "required"
+   },
+   "inaction": "inaction",
+   "taken": "taken",
+   "fulfilments": []
+  }
+ },
+ "norms": [
+  {
+   "norm": {
+    "name": "hc-s01",
+    "predicate": "permitted",
+    "sign": false,
+    "guard": [
+     "and",
+     [
+      "unary",
+      "mass_casualty_weapon_uplift",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "unary",
+      "restricted_action_knowing_or_quite_likely",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "unless": [],
+    "over": []
+   }
+  },
+  {
+   "norm": {
+    "name": "hc-s02",
+    "predicate": "permitted",
+    "sign": false,
+    "guard": [
+     "and",
+     [
+      "unary",
+      "critical_infrastructure_uplift",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "unary",
+      "restricted_action_knowing_or_quite_likely",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "unless": [],
+    "over": []
+   }
+  },
+  {
+   "norm": {
+    "name": "hc-s03",
+    "predicate": "permitted",
+    "sign": false,
+    "guard": [
+     "and",
+     [
+      "unary",
+      "damaging_cyberweapon_or_malicious_code",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "unary",
+      "restricted_action_knowing_or_quite_likely",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "unless": [],
+    "over": []
+   }
+  },
+  {
+   "norm": {
+    "name": "hc-s04",
+    "predicate": "permitted",
+    "sign": false,
+    "guard": [
+     "and",
+     [
+      "unary",
+      "clear_and_substantial_undermining_of_oversight",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "unary",
+      "restricted_action_knowing_or_quite_likely",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "unless": [],
+    "over": []
+   }
+  },
+  {
+   "norm": {
+    "name": "hc-s05",
+    "predicate": "permitted",
+    "sign": false,
+    "guard": [
+     "and",
+     [
+      "unary",
+      "attempt_to_kill_or_disempower_most_of_humanity",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "unary",
+      "restricted_action_knowing_or_quite_likely",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "unless": [],
+    "over": []
+   }
+  },
+  {
+   "norm": {
+    "name": "hc-s06",
+    "predicate": "permitted",
+    "sign": false,
+    "guard": [
+     "and",
+     [
+      "unary",
+      "illegitimate_absolute_control",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "unary",
+      "restricted_action_knowing_or_quite_likely",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "unless": [],
+    "over": []
+   }
+  },
+  {
+   "norm": {
+    "name": "hc-s07",
+    "predicate": "permitted",
+    "sign": false,
+    "guard": [
+     "and",
+     [
+      "unary",
+      "child_sexual_abuse_material",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "unary",
+      "restricted_action_knowing_or_quite_likely",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "unless": [],
+    "over": []
+   }
+  }
+ ],
+ "units": [
+  {
+   "label": "u0172.s02:refusal-available",
+   "ast": [
+    "forall",
+    "decision",
+    [
+     "exists",
+     "response",
+     [
+      "and",
+      [
+       "binary",
+       "available",
+       [
+        "var",
+        0
+       ],
+       [
+        "var",
+        1
+       ]
+      ],
+      [
+       "unary",
+       "inaction",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "label": "u0172.s02:refusal-compatible",
+   "ast": [
+    "forall",
+    "response",
+    [
+     "implies",
+     [
+      "unary",
+      "inaction",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "not",
+      [
+       "or",
+       [
+        "or",
+        [
+         "or",
+         [
+          "or",
+          [
+           "or",
+           [
+            "or",
+            [
+             "and",
+             [
+              "unary",
+              "mass_casualty_weapon_uplift",
+              [
+               "var",
+               0
+              ]
+             ],
+             [
+              "unary",
+              "restricted_action_knowing_or_quite_likely",
+              [
+               "var",
+               0
+              ]
+             ]
+            ],
+            [
+             "and",
+             [
+              "unary",
+              "critical_infrastructure_uplift",
+              [
+               "var",
+               0
+              ]
+             ],
+             [
+              "unary",
+              "restricted_action_knowing_or_quite_likely",
+              [
+               "var",
+               0
+              ]
+             ]
+            ]
+           ],
+           [
+            "and",
+            [
+             "unary",
+             "damaging_cyberweapon_or_malicious_code",
+             [
+              "var",
+              0
+             ]
+            ],
+            [
+             "unary",
+             "restricted_action_knowing_or_quite_likely",
+             [
+              "var",
+              0
+             ]
+            ]
+           ]
+          ],
+          [
+           "and",
+           [
+            "unary",
+            "clear_and_substantial_undermining_of_oversight",
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "unary",
+            "restricted_action_knowing_or_quite_likely",
+            [
+             "var",
+             0
+            ]
+           ]
+          ]
+         ],
+         [
+          "and",
+          [
+           "unary",
+           "attempt_to_kill_or_disempower_most_of_humanity",
+           [
+            "var",
+            0
+           ]
+          ],
+          [
+           "unary",
+           "restricted_action_knowing_or_quite_likely",
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        ],
+        [
+         "and",
+         [
+          "unary",
+          "illegitimate_absolute_control",
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "unary",
+          "restricted_action_knowing_or_quite_likely",
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ],
+       [
+        "and",
+        [
+         "unary",
+         "child_sexual_abuse_material",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "restricted_action_knowing_or_quite_likely",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  }
+ ],
+ "scenario": {
+  "model": {
+   "complete": true,
+   "domains": {
+    "decision": [
+     "d"
+    ],
+    "response": [
+     "undermine",
+     "refuse",
+     "answer"
+    ],
+    "harm": [
+     "attack"
+    ]
+   },
+   "constants": {},
+   "relations": {
+    "available": [
+     [
+      "undermine",
+      "d"
+     ],
+     [
+      "refuse",
+      "d"
+     ],
+     [
+      "answer",
+      "d"
+     ]
+    ],
+    "leads_to": [
+     [
+      "refuse",
+      "attack"
+     ],
+     [
+      "answer",
+      "attack"
+     ]
+    ],
+    "inaction": [
+     [
+      "refuse"
+     ]
+    ],
+    "taken": [],
+    "restricted_action_knowing_or_quite_likely": [
+     [
+      "undermine"
+     ]
+    ],
+    "mass_casualty_weapon_uplift": [],
+    "critical_infrastructure_uplift": [],
+    "damaging_cyberweapon_or_malicious_code": [],
+    "clear_and_substantial_undermining_of_oversight": [
+     [
+      "undermine"
+     ]
+    ],
+    "attempt_to_kill_or_disempower_most_of_humanity": [],
+    "illegitimate_absolute_control": [],
+    "child_sexual_abuse_material": []
+   }
+  },
+  "outcomes": [
+   {
+    "action": "undermine",
+    "harm": "attack",
+    "leads_to": false,
+    "support": "testimony"
+   },
+   {
+    "action": "refuse",
+    "harm": "attack",
+    "leads_to": true,
+    "support": "testimony"
+   },
+   {
+    "action": "answer",
+    "harm": "attack",
+    "leads_to": true,
+    "support": "testimony"
+   }
+  ]
+ }
+}

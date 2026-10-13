@@ -1,0 +1,160 @@
+{
+ "step1": {
+  "accepted": true,
+  "premises": {
+   "status": "UNKNOWN",
+   "reason": "alternatives premise satisfiability requires the alternatives route"
+  },
+  "coverage": {
+   "OPEN": 147,
+   "CHECKED": 213
+  },
+  "admission": null
+ },
+ "elaborate": {
+  "status": "ok",
+  "fragment": true,
+  "order": [
+   "permitted",
+   "required"
+  ],
+  "legend": [
+   "Each decision faces one choice among the actions available to it and takes at most one of them.",
+   "Each response is available to at most one decision.",
+   "Doing nothing counts as one of a decision's actions; every checked situation lists exactly one inaction per decision with any alternative.",
+   "\"<response> leads to <harm>\" records the declared model; for an action not taken it is a counterfactual judgment by unresolved_decider.",
+   "Every cell of the outcome table is stated."
+  ],
+  "unmapped_obligations": [],
+  "slot_premises": [
+   "alternatives:own",
+   "alternatives:one_taken",
+   "alternatives:one_inaction"
+  ],
+  "conflict_targets": [
+   "permitted",
+   "required",
+   "required->permitted"
+  ]
+ },
+ "conflict_proofs": {
+  "permitted": "Found",
+  "required": "Found",
+  "required->permitted": "Found"
+ },
+ "conflict": {
+  "id": "et1-hard-constraints",
+  "status": "ok",
+  "targets": [
+   "permitted",
+   "required",
+   "required->permitted"
+  ],
+  "verdict": "CONFLICT-FREE"
+ },
+ "followable_producer": "Found",
+ "followable": {
+  "conditional_on": [
+   "u0172.s02:refusal-available",
+   "u0172.s02:refusal-compatible"
+  ],
+  "id": "et1-hard-constraints",
+  "status": "ok",
+  "text": "FOLLOWABLE: at every choice some available action is permitted, forgoes no required alternative and discharges the mapped obligations (); unmapped obligations: none; conditional on u0172.s02:refusal-available, u0172.s02:refusal-compatible; certificate 76cdf7608b2acd639b534d7b72539be3b262d25a9f44f615e281593ecae3cf05. Certified over every structure satisfying the slot premises; existence facts (E1, E2, E3) are validated on situations and not assumed.",
+  "verdict": "FOLLOWABLE"
+ },
+ "control_without_first_premise": {
+  "producer": "NotFound",
+  "answer": {
+   "id": "et1-hard-constraints",
+   "status": "ok",
+   "text": "UNKNOWN: no accepted followability certificate for this source",
+   "verdict": "UNKNOWN"
+  }
+ },
+ "control_without_second_premise": {
+  "producer": "NotFound",
+  "answer": {
+   "id": "et1-hard-constraints",
+   "status": "ok",
+   "text": "UNKNOWN: no accepted followability certificate for this source",
+   "verdict": "UNKNOWN"
+  }
+ },
+ "u0171_s03": {
+  "producer": "Found",
+  "lean": {
+   "background": 4,
+   "conditional_on": [
+    "alternatives:own",
+    "alternatives:one_taken",
+    "alternatives:one_inaction"
+   ],
+   "id": "et1-hard-constraints",
+   "layers": 2,
+   "status": "ok",
+   "valid": true
+  },
+  "same_certificate_other_conclusion": {
+   "error": "certificate is stale or bound to different inputs",
+   "id": "et1-hard-constraints",
+   "status": "error"
+  }
+ },
+ "scenario": {
+  "assumed_harm_free": [],
+  "choosers": [
+   {
+    "allows": [
+     [
+      "refuse",
+      "attack"
+     ],
+     [
+      "answer",
+      "attack"
+     ]
+    ],
+    "alternatives": [
+     "undermine",
+     "refuse",
+     "answer"
+    ],
+    "avoidable": [
+     "attack"
+    ],
+    "breaches": [],
+    "chooser": "d",
+    "clear": [
+     "refuse",
+     "answer"
+    ],
+    "inaction": [
+     "refuse"
+    ],
+    "permitted": [
+     "refuse",
+     "answer"
+    ],
+    "prevents": [
+     [
+      "undermine",
+      "attack"
+     ]
+    ],
+    "required": [],
+    "text": "d has a clear action: refuse, answer",
+    "unavoidable": [],
+    "violations": []
+   }
+  ],
+  "conditional_on": [],
+  "document_hash": "f285fceb11b58541f583d7eef1d52a457d475f6d30dccad94d566e7fac90fee5",
+  "environment_id": "08d88d1d6b3ab5cbd9645c21b8e417038790e67e948d5c4b3a18a1e6048539ac",
+  "id": "et1-hard-constraints",
+  "model_id": "a6732f825651735386c8e2a80394610ef9a687b7692fef23cb7bbc813cf92c11",
+  "status": "ok",
+  "text": "scenario (model a6732f825651735386c8e2a80394610ef9a687b7692fef23cb7bbc813cf92c11): d has a clear action: refuse, answer; unmapped obligations: none",
+  "unmapped_obligations": "none"
+ }
+}
