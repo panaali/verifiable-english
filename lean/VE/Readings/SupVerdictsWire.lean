@@ -1,6 +1,6 @@
 import VE.Readings.SupDependencies
 import VE.Readings.SupFillWire
-import VE.SoftNorms.Run
+import VE.Norms.WitnessKind
 
 /-! RD-7. The superposed verdict service. Evidence is checked by the existing superposed wire
 replays; this module owns the folds, dependency replay, candidate statuses and English selection. -/
@@ -78,7 +78,7 @@ def supWitnessTexts (x : SupContext) (p answer : Json) : SupWitnessNote := Id.ru
   let W := soften X
   let t := ((targets W).find? (·.1 == name)).getD (name, [], .bottom)
   let values := jstrings (w.getObjValD "tuple")
-  let kind := VE.SoftNorms.Run.witnessKind t
+  let kind := VE.Norms.witnessKind t
   let summary := s!"CONFLICT: {kind} at {", ".intercalate values} under {choiceText x.D (jchoice (answer.getObjValD "choice"))}"
   let setting := ", ".intercalate ((t.2.1.zip values).map (fun (sort, id) => s!"{sort} {id}"))
   let model := match x.nd with

@@ -1,5 +1,6 @@
 import VE.SoftNorms.Admission
 import VE.Norms.Run
+import VE.Norms.WitnessKind
 
 /-! The `ve_service` mode `soft-norms` (docs/spec/soft-norms.md 9.4), formerly the one-shot `ve_soft_norms_route`. Each case is
 `{"id", "environment", "kind", ...}`; a `soft-norms@0` environment must also
@@ -205,9 +206,6 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
     fun S hS hf hg ho => Admission.soft_wire_report_consequence environment document res hr S hS hf hg ho⟩
 
 /-! ## Dispatch -/
-
-def witnessKind (t : String × List String × VE.Formula) : String :=
-  if (t.1.splitOn "->").length > 1 then s!"pair conflict on {t.1}" else s!"strict collision on {t.1}"
 
 /-- A situation supplied by a searcher is checked against the regenerated base vocabulary.
 Warnings are emitted only for a model with a typed tuple and the exception premises. -/
