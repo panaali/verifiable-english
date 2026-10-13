@@ -184,9 +184,10 @@ def score_e2(counts, e1):
 
 
 def resolve(lower, above, thinks):
-    """PROPOSED (G4), not the PLAN's: while the closure of the frozen pairs reaches a pair without its own passing item,
-    or a premise-3 word without its own item, the weaker word leaves lowerBound (with every pair and premise naming it).
-    The PLAN allows "the weaker word leaves lowerBound, or the scale pair is dropped"; only the first has one outcome."""
+    """G4 (PLAN draft 5, section 4): while the closure of the frozen pairs reaches a pair without its own passing item,
+    or a premise-3 word without its own item, the weaker word of one such entry leaves lowerBound (with every pair and
+    premise naming it): of all offending words, the weakest (the last in E1's list) first, one per round. The order
+    is part of the rule; with several violations another order can leave a different table that Lean also reviews."""
     lower, above, thinks = list(lower), list(above), list(thinks)
     removed = []
     while True:
@@ -345,11 +346,27 @@ def cmd_selfcheck(stub):
     src, removed = frozen(rf, r2)
     allpass = lean_table("allPassTable", r1["lowerBound"], r1["above"], "E2.factive", "E2.knows-believes",
                          [(w, f"E2.knows-thinks.{slug(w)}") for w, _ in r1["lowerBound"]])
-    reviewed = lean_review(stub, [("rawTable", raw), ("frozenTable", src), ("allPassTable", allpass)])
+    # three violations at once: only the chain almost certain > very likely > quite likely > likely passes among these
+    # four, so (almost certain, quite likely), (almost certain, likely) and (very likely, likely) are derived and failed.
+    # Removing "quite likely" alone would also leave a reviewed table; the weakest-offending-word rule removes "likely"
+    # first, then "quite likely" (G4: the order is the rule, Lean's review accepts both outcomes)
+    fails = ["E1.pair.almost-certain.quite-likely", "E1.pair.almost-certain.likely", "E1.pair.very-likely.likely"]
+    rm = score_e1(tally(e1, synthetic(ids, {**base, **{f: 20 for f in fails}}, {f: 20 for f in fails})))
+    r2m = score_e2(tally(e2, synthetic(ids2, full)), rm)
+    multi, removed_multi = frozen(rm, r2m)
+    multi = multi.replace("def frozenTable", "def multiTable")
+    keep = lambda p: "quite likely" not in p[:2]
+    other = lean_table("otherOrderTable", [p for p in rm["lowerBound"] if keep(p)], [p for p in rm["above"] if keep(p)],
+                       r2m["factive"], r2m["knowsBelieves"], [p for p in r2m["knowsThinks"] if keep(p)])
+    reviewed = lean_review(stub, [("rawTable", raw), ("frozenTable", src), ("allPassTable", allpass),
+                                  ("multiTable", multi), ("otherOrderTable", other)])
     checks["lean: raw table with a failed derived pair is not reviewed"] = reviewed["rawTable"] is False
     checks["lean: resolved table is reviewed"] = reviewed["frozenTable"] is True
     checks["lean: all-pass table is reviewed"] = reviewed["allPassTable"] is True
     checks["resolution removes the weaker word"] = removed[:1] == ["likely"]
+    checks["three violations: weakest offending word first, then the next"] = removed_multi == ["likely", "quite likely"]
+    checks["lean: three violations resolved is reviewed (and the other order too, so the order is pre-registered)"] = (
+        reviewed["multiTable"] is True and reviewed["otherOrderTable"] is True)
     with tempfile.TemporaryDirectory() as tmp:
         edited = Path(tmp) / "SpecStubs_attitudes.lean"
         edited.write_bytes(Path(stub).read_bytes() + b"\n")
@@ -359,7 +376,8 @@ def cmd_selfcheck(stub):
         except SystemExit:
             checks["refuses a stub with another hash"] = True
     out = {"synthetic": "counts made up by this self-check; no reader was called", "stub": str(stub),
-           "stub_sha256": STUB_SHA256, "checks": checks, "removed": removed, "all_pass": all(checks.values())}
+           "stub_sha256": STUB_SHA256, "checks": checks, "removed": removed,
+           "removed_three_violations": removed_multi, "all_pass": all(checks.values())}
     dump("e-selfcheck.json", out)
     print(json.dumps(out, indent=1))
     return 0 if out["all_pass"] else 1

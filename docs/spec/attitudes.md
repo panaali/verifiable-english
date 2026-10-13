@@ -42,8 +42,10 @@ changes, so the stub needs no edit for this draft (it is untracked, outside this
 
 1. **E1 and E2: DEFERRED** (status above; section 12's row). `table` stays empty and reviewed.
 2. **The closure resolution has one rule** (section 2.1, G4): a derived entry whose item failed removes the weaker
-   word from `lowerBound`, with every pair and premise naming it, until `Table.reviewed` holds. The debate-round-3
-   items for entries derived without a direct item are empty by construction (P1 3).
+   word from `lowerBound`, with every pair and premise naming it, until `Table.reviewed` holds; with several such
+   entries, the weakest offending word goes first, one per round, since another order can leave a different
+   reviewed table (self-check case with three violations; 24 checks, all hold). The debate-round-3 items for
+   entries derived without a direct item are empty by construction (P1 3).
 3. **"P, and X does not know that P" is admitted only if six E2 items reach 36 of 40** (section 3.1's last row,
    section 11 item 16; G5): three "Must P?" and three "Does X know that P?". Draft 3's three items tested only that
    P is read as asserted.
@@ -51,6 +53,11 @@ changes, so the stub needs no edit for this draft (it is untracked, outside this
    seven pilot rules (P1 2); with the frame, M2 fails factivity (section 16).
 5. **Section 13** records the stub's sha256 pin; the status's "stub updated to draft 2" now reads "to the current
    draft", as PLAN draft 4 already said; **section 16** is new and lists these changes.
+6. **Section 8's predicate count** names the count the limit uses: `MAX_PREDICATES` (256) bounds the declared
+   plus the unspecified predicates (norm-defaults 5.1, "filled"): 65 at the pinned run (50 declared), 78 in AT-0p
+   (63 declared), **about** 85 with the seven intention terms. Draft 3's "68 … about 88" was the readings route's
+   size count, which adds the route's own three generated predicates (bit declarations and decisions, `sizesJson`)
+   to the filled count.
 
 ## 0. Reading this spec
 
@@ -109,11 +116,20 @@ premises 2 and 3 are present only with premise 1.
 
 **Resolution before freezing (draft 4, G4).** E1 asks all 28 pairs (the earlier word of `e1Words` first, G1) and E2
 asks the premise-3 item of all eight words (G3), so every entry the closure can derive has its own item; the
-review can fail only on a derived entry whose item failed. Then the weaker word of that entry leaves `lowerBound`,
-and with it every pair and premise-3 entry that names it; this repeats until `Table.reviewed` holds. Of the PLAN
-draft 4's two options ("the weaker word leaves `lowerBound`, or the scale pair is dropped") it is the only one with
-a unique outcome. The procedure is `resolve` in `research/attitudes/experiments.py`; its output is accepted only if
-Lean's `Table.reviewed` holds on it, so the review stays Lean's.
+review can fail only on a derived entry whose item failed. Each round collects the **offending words**: for a
+derived pair `(a, b)` whose own item failed, its weaker word `b` (the later in `e1Words`, since every pair is asked
+earlier word first); for a premise-3 word reached through the closure whose own item failed, that word. The
+offending word latest in `e1Words` (the weakest) leaves `lowerBound`, and with it every pair and premise-3 entry
+that names it; the closure is recomputed, and this repeats, one word per round, until `Table.reviewed` holds.
+**The order is part of the rule.** With several violations, removing another offending word first can leave a
+different table that `Table.reviewed` also accepts: if, of the pairs among "almost certain", "very likely", "quite
+likely" and "likely", only the chain's three pass, removing "quite likely" first leaves a reviewed table that keeps
+"likely", while the rule removes "likely", then "quite likely". Of the PLAN draft 4's two options ("the weaker word
+leaves `lowerBound`, or the scale pair is dropped") only the first, with this order, has a unique outcome. The
+procedure is `resolve` in `research/attitudes/experiments.py`; its output is accepted only if Lean's
+`Table.reviewed` holds on it, so the review stays Lean's. The self-check runs that three-violation case
+(`removed_three_violations` = `["likely", "quite likely"]` in `docs/research/evidence/attitudes/e-selfcheck.json`)
+and has Lean review both tables, so that the order, not the review, is what makes the outcome unique.
 
 ```lean
 abbrev Word := String
@@ -1324,8 +1340,14 @@ fixtures.
 No new budget. Generated predicates count against `MAX_PREDICATES` (256, with the author's; D15). A document's
 scale: at most 8 words and 64 pairs (`scaleCaps`, D5). A generated name is at most 64 bytes (D17). Formulas share
 W1's node budget (10,000) and depth (64). A refused document is refused, never given a verdict. Every UNKNOWN of the
-routes stays UNKNOWN. The constitution's main translation would use about 88 predicates (68 − 1 + 14 + 7;
-**estimate**).
+routes stays UNKNOWN. `MAX_PREDICATES` bounds the declared plus the unspecified predicates (norm-defaults 5.1, the
+"filled" count; `ve/norm_defaults_contract.py`). The constitution's main translation has 50 declared and 65 filled at
+the pinned run, and AT-0p's has 63 declared and 78 filled (50 − 1 hand-named term + 14 open terms; 15 unspecified).
+With the seven hand-named intention terms it would have **about** 70 declared and 85 filled (**estimate**: AT-1's 14
+generated predicates replace AT-0p's 14 open terms one for one). The readings route's size count (`sizesJson`) adds
+its own three generated predicates to the filled count and is checked against the same 256: 68 at the pinned run and
+81 in AT-0p, measured (`readings/nd-all-check.json` in `research/attitudes/run-baseline` and `run-at0p`; the filled
+counts are these less three), **about** 88 with the intention terms.
 
 ## 9. Small-scope counterexample search (debate round 3)
 
@@ -1540,10 +1562,11 @@ results and the triggers.
 | # | Change | From | Where |
 |---|---|---|---|
 | P1-1 | E1 and E2 are DEFERRED; `table` stays empty and reviewed; SR-8's first step waits on the DRI's authorisation and its confirmation of the protocol (G1–G6) | P1 3, 4 | status; 12 |
-| P1-2 | The closure review's resolution is one rule: the weaker word of a derived entry whose item failed leaves `lowerBound`, with every pair and premise-3 entry naming it, until `Table.reviewed` holds. The debate-round-3 items for entries derived without a direct item are empty by construction, since E1 asks every pair (earlier word first, G1) and E2 every word's premise-3 item (G3). `Table.reviewed` and its fixtures are unchanged | G1, G3, G4 | 2.1; 12 |
+| P1-2 | The closure review's resolution is one rule: the weaker word of a derived entry whose item failed leaves `lowerBound`, with every pair and premise-3 entry naming it, until `Table.reviewed` holds; of several offending words the weakest (the last in `e1Words`) goes first, one per round, since another order can leave a different reviewed table (self-check: three violations remove "likely", then "quite likely"). The debate-round-3 items for entries derived without a direct item are empty by construction, since E1 asks every pair (earlier word first, G1) and E2 every word's premise-3 item (G3). `Table.reviewed` and its fixtures are unchanged | G1, G3, G4 | 2.1; 12 |
 | P1-3 | "P, and X does not know that P" is admitted only if six E2 items reach 36 of 40: the three "Must P?" items and three "Does X know that P?" items | G5 | 3.1; 11 item 16; 12 |
 | P1-4 | The stub's sha256 pin in phase 1's emitter, and what updating the stub must do with it | P1 3 (`8538355c`) | 13 |
 | P1-5 | The status's step "the stub updated to draft 2" reads "to the current draft" (draft 3's Lean, which this draft keeps), as PLAN draft 4 already said | — | status |
+| P1-6 | The predicate count names the count `MAX_PREDICATES` bounds: declared plus unspecified (norm-defaults 5.1, "filled"), 65 at the pinned run and 78 in AT-0p, **about** 85 with the intention terms; draft 3's 68 and about 88 were the readings route's size count, which adds its own three generated predicates | checker of PLAN draft 5 | 8 |
 
 Measured context, not a change: AT-0p's A4 (P1 2) found that the untyped repair, with the case false and Claude
 knowingly engaging in it, answers UNDECIDED in all seven pilot rules. In the typed profile the matching point is

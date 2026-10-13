@@ -24,10 +24,16 @@
     "lean: resolved table is reviewed": true,
     "lean: all-pass table is reviewed": true,
     "resolution removes the weaker word": true,
+    "three violations: weakest offending word first, then the next": true,
+    "lean: three violations resolved is reviewed (and the other order too, so the order is pre-registered)": true,
     "refuses a stub with another hash": true
   },
   "removed": [
     "likely"
+  ],
+  "removed_three_violations": [
+    "likely",
+    "quite likely"
   ],
   "all_pass": true
 }

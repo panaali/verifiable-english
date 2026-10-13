@@ -32,14 +32,17 @@ changes; the cross-plan edits (edit 1–10) and the synthesis's owners, shared i
 1. **AT-0p measured: PASS on A1–A7** (P1 2). Its estimates are now measured values: 2,951 claimed bytes unchanged,
    open terms 33 → 46, the seven audit-case points UNDECIDED → SETTLED no. A8 (the next audit's verdict on the seven
    units) and AT-0p's landing in the pilot are **DEFERRED**, with their triggers (section 9). Sections 0, 1, 2
-   (D-A10), 3.8, 4 (AT-0p), 5 and 6 updated.
+   (D-A10), 3.8, 4 (AT-0p), 5 and 6 updated. Section 3.8 now names the count `MAX_PREDICATES` bounds, declared
+   plus unspecified ("filled"): 65 at the pinned run, 78 in AT-0p, **about** 85 with the intention terms (drafts
+   1–4's 68 and about 88 were the readings route's size count, three higher).
 2. **E1 and E2: DEFERRED** (no model calls in phase 1); items, seeded orders and scorers are ready (P1 3). Their
    trigger and what each gates are in section 9.
 3. **E1/E2 protocol fixed before any answer** (G1–G6, P1 5), each a gap in draft 4's pre-registration, not a moved
    bar: pair direction (G1), one fresh context per call (G2), E2 asks the knows → thinks item for all eight words so
-   it does not wait for E1 (G3), the closure resolution's one rule (G4), the framing and E2's wordings, with three
-   added "Does Claude know that P?" items for the asserted-not-know form (G5), and the treatment of answers that
-   are not yes, no or cannot tell (G6). The DRI confirms or changes them before the first call (section 7).
+   it does not wait for E1 (G3), the closure resolution's one rule and its removal order (G4), the framing and E2's
+   wordings, with three added "Does Claude know that P?" items for the asserted-not-know form (G5), and the
+   treatment of answers that are not yes, no or cannot tell (G6). The DRI confirms or changes them before the first
+   call (section 7).
 4. **The debate-round-3 closure items are empty by construction** (P1 3, G4): E2 lists no such items; the closure
    review and its `#guard` are unchanged.
 5. **"P, and X does not know that P" needs six items, not three** (G5): D-A7, 3.7, E2 and the checklist.
@@ -126,8 +129,11 @@ product batch claims 0 bytes and AT-0p alone moves the audit's number, so the DR
   (AT-0, a Lean `#guard`) checks that the reflexive-transitive closure of the frozen pairs adds no pair, and no
   premise-3 word, without its own passing item: "knows → strong" and "strong → weak" yield "knows → weak" even when
   that direct item failed. If a derived entry's item failed, the weaker word of that entry leaves `lowerBound`,
-  with every pair and premise that names it, and this repeats until the closure is clean, before freezing (G4: of
-  draft 4's two options, "the weaker word leaves" or "the pair is dropped", the only one with a unique outcome).
+  with every pair and premise that names it, and this repeats until the closure is clean, before freezing. With
+  several such entries, the weakest offending word (the last in E1's list) goes first, one word per round: the
+  order is part of the rule, since another order can leave a different table that the review also accepts (G4: of
+  draft 4's two options, "the weaker word leaves" or "the pair is dropped", only the first, with this order, has a
+  unique outcome; spec 2.1).
   No derived entry can lack a direct item: E1 asks all 28 pairs and E2 every word's premise-3 item (P1 3). Decided
   before AT-0 closes, because the profile's meaning freezes when it ships.
 - **D-A5. Likelihood words are lower bounds and stay open.** Only words whose lower-bound reading E1's certainty
@@ -274,12 +280,17 @@ readings are exactly those candidates, pairwise distinct (SR-4, SR-5). The spec'
 
 ### 3.8 Limits and UNKNOWN
 
-No new budget. Generated predicates count against `MAX_PREDICATES` (256; the constitution's main translation used
-68 at the pinned run and would use **about** 88: 68 − 1 hand-named term + 14 generated + 7 hand-named intention
-terms. AT-0p's 14 binary open terms replace the one term, **about** 81; phase 1 measured open terms, not the
-predicate count, P1 2). Above it,
-admission refuses (`InvalidInput`), never a verdict. A document's scale is bounded by a `VE.Closure.Caps` value,
-checked by QS-1's `Order.admit` inside `WellFormedAtt` (A5, edit 1). Every UNKNOWN of the routes stays UNKNOWN.
+No new budget. Generated predicates count against `MAX_PREDICATES` (256), which bounds the declared plus the
+unspecified predicates (norm-defaults 5.1, the **filled** count; `ve/norm_defaults_contract.py`). The constitution's
+main translation has 50 declared and 65 filled at the pinned run; AT-0p's 14 binary open terms replace one
+hand-named term, giving 63 declared and 78 filled (15 unspecified in both). With the 7 hand-named intention terms:
+**about** 70 declared and 85 filled (**estimate**; AT-1's 14 generated predicates replace AT-0p's 14 open terms one
+for one). The readings route's own size count (`sizesJson`) adds its three generated predicates and is checked
+against the same 256: 68 and 81 measured (`readings/nd-all-check.json` of `research/attitudes/run-baseline` and
+`run-at0p`), **about** 88 projected; drafts 1–4's "uses 68 … about 88" quoted that count as the limit's. Above the
+limit, admission refuses (`InvalidInput`), never a verdict. A document's scale is bounded by a `VE.Closure.Caps`
+value, checked by QS-1's `Order.admit` inside `WellFormedAtt` (A5, edit 1). Every UNKNOWN of the routes stays
+UNKNOWN.
 
 ### 3.9 One owner per piece of logic
 
@@ -442,10 +453,11 @@ each before the first call; after it, nothing here changes.
   self-check case at the boundary, before the run and only after the DRI's decision.
 
 **Status: DEFERRED** (P1 3; section 9). Ready: 36 items, 40 seeded orders, the scorer with the bars as constants
-(`PAIR_YES, PAIR_MAX_NO = 36, 2`; `CERT_YES = 34`), refusal of an answer set without exactly one answer per item
-and reader, and a self-check of 22 boundary cases (`docs/research/evidence/attitudes/e-selfcheck.json`). Cost: 1,440
-calls, as estimated. **Gates:** `table.above` and `table.lowerBound`, hence every `thinks w` mode and frame premise
-4; through the closure review, AT-0 PASS.
+(`PAIR_YES, PAIR_MAX_NO = 36, 2`; `CERT_YES = 34`), refusal of an answer set without exactly one answer per item and
+reader, and a self-check of 24 cases (`docs/research/evidence/attitudes/e-selfcheck.json`: the bars at their
+boundaries, and G4's resolution with one and with three violations, through Lean). Cost: 1,440 calls, as estimated.
+**Gates:** `table.above` and `table.lowerBound`, hence every `thinks w` mode and frame premise 4; through the
+closure review, AT-0 PASS.
 
 ### E2. Factivity and the knowing entailments (experiment, 2 h)
 
@@ -468,7 +480,12 @@ closure review below resolves (G4).
   Lean `#guard` (`Table.reviewed`, evaluated through QS-1's closure) checks that the reflexive-transitive closure of
   the frozen pairs adds no pair, and no premise-3 word, without its own passing item. If a derived entry's item
   failed, the weaker word of that entry leaves `lowerBound`, with every pair and premise that names it, until the
-  closure is clean, before freezing (G4, D-A4; `resolve` in `experiments.py`, its output reviewed by Lean).
+  closure is clean, before freezing; of several offending words the weakest goes first, one per round (G4, D-A4;
+  `resolve` in `experiments.py`, its output reviewed by Lean). **Pre-registered example:** if, of the pairs among
+  "almost certain", "very likely", "quite likely" and "likely", only the chain's three pass, three derived pairs
+  fail; the rule removes "likely", then "quite likely". Removing "quite likely" first would keep "likely" and also
+  pass the review, so the review alone does not fix the outcome; the self-check runs this case through Lean
+  (`removed_three_violations` in `e-selfcheck.json`).
 - The negated-"know" items are expected to split (that is why D-A7 refuses the form); if instead 36 of 40 agree on
   one reading, AT-0 records it and keeps the refusal anyway (one reading must not depend on a majority). Invalid
   answers are left out of that agreement count (G6).
@@ -1511,11 +1528,11 @@ NORTH-STAR row 8 (0.1920 from tags) recomputed on this basis: the buildable part
   generated, 7 hand-named); whether "is aware that" may be an input synonym of "knows that" (only if E2-style
   agreement is shown; else refused with that rewrite); the go/no-go after AT-6a (F7).
 - **Open (for the DRI, before E1 and E2's first call; draft 5):** confirm or change G1 (pair direction), G2 (one
-  fresh context per call), G3 (all eight knows → thinks items in E2), G4 (the weaker word leaves `lowerBound`),
-  G5 (the preamble and labels, E2's wordings, the three added "Does Claude know that P?" items) and G6 (invalid
-  answers count as no for E1's no cap and are left out of the negated-"know" agreement; reader settings recorded),
-  as written in section 4; and authorise E1's and E2's 2,480 calls under the usage cap. Each decision is recorded
-  in this plan before any answer exists.
+  fresh context per call), G3 (all eight knows → thinks items in E2), G4 (the weaker word leaves `lowerBound`,
+  weakest offending word first), G5 (the preamble and labels, E2's wordings, the three added "Does Claude know that
+  P?" items) and G6 (invalid answers count as no for E1's no cap and are left out of the negated-"know" agreement;
+  reader settings recorded), as written in section 4; and authorise E1's and E2's 2,480 calls under the usage cap.
+  Each decision is recorded in this plan before any answer exists.
 - **Risks:** the readings route is being rebuilt (AT-4 may need a second statement pass); E2 may reject premise 3
   for "quite likely", in which case `guard_collapse` has no instance on the pilot and the hand-named intention term
   changes verdicts; one slot may be too narrow for the honesty and intentions sections (AT-7 and E4 measure before
