@@ -38,7 +38,6 @@ its merge strategy:
 | layer-ledgers | `tools/layer-exceptions.json`, `lean-layer-exceptions.json` | json (check only) |
 | import-contract | `.importlinter` | regenerate |
 | uv-lock | `uv.lock` | regenerate |
-| gate-collection | `tools/gate-collection.json` (last) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);
