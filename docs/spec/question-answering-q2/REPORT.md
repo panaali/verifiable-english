@@ -129,7 +129,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | Fixtures G, U, A replayed from recorded evidence | AGENT | done; six leads differ from the spec's derived ones (DELTA D6) |
 | Typed schema, binding, fuzz tests | AGENT | done |
 | Seeded bugs | AGENT | done |
-| Full gate on the final HEAD | EXTERNAL | the saved gate (generated block) is `7b75c7af`'s; the review fixes after it were checked by their selected tests, `lake build` and `lean/audit.py` only, because the fixer was told not to run the full gate; owner: the merge train's branch verify on the final HEAD |
+| Full gate on the final HEAD | EXTERNAL | the historical gate (`evidence/gate-previous-passed.json`) is `7b75c7af`'s; the review fixes after it were checked by focused tests, `lake build` and `lean/audit.py` only, because the fixer was told not to run the full gate; owner: the merge train's branch verify on the final HEAD |
 | Q2.4 one owner of situation wording (Python producers deleted, corpus A/B byte-identical) | AGENT | done (`LEDGER.md`; `evidence/words-ab.json`: no difference) |
 | Q2.3 `VE.Words` against Python's producers on the readings and norm-defaults corpora | AGENT | done: the A/B compares every moved site with the pre-Q2.4 producers (`tools/words_ab.py`), and `tests/test_words.py` keeps a generated differential |
 | Q2.6 reading and writing evaluation (Sonnet as reader and writer) | EXTERNAL | **deferred**: needs model calls, which this task forbids; owner: the orchestrator |
@@ -177,7 +177,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
   14,433 selected Python tests, but six Q2 report tests failed because full-suite collection had already imported
   another module named `report` (`evidence/gate-initial-failed.json`). The report test now loads this batch's
   `report.py` by path (`7b75c7af`); its eight tests passed directly, and the fix selector's 78 units passed with
-  zero failures. The new full gate on that clean commit passed (saved `evidence/gate-result.json`, generated block).
+  zero failures. The new full gate on that clean commit passed (archived as `evidence/gate-previous-passed.json`).
   That saved gate applies to `7b75c7af`, not to the later review fixes; this worker was explicitly instructed not to
   run the full gate. The merge train will run branch verification. The A7 end-to-end CLI regression passed on this
   fix round in 1,420.965 s with its outer timeout raised from 1,800 s to 3,600 s (DRI note 2026-10-13 13:20Z).
@@ -256,6 +256,6 @@ Relay mutation gate (`tools/relay_mutation_gate.py --json`, `evidence/relay-gate
 
 Trust budget (`docs/trust-baseline.json`): K 997 → 997 (+0), S 9791 → 9974 (+183), V 36765 → 37363 (+598).
 
-Full gate (`tools/gate.py`, `evidence/gate-result.json`): passed on `7b75c7af` (dirty: false); stages toolchains, lean_build, lean_audit, rust_build, cargo_test, pytest; collected 14434, deselected 1, failed 0, passed 14341, rust_ignored 0, rust_passed 36, selected 14433, skipped 92.
+Full gate: not yet saved (`evidence/gate-result.json` is written after the gate).
 
 <!-- END GENERATED: report.py -->
