@@ -14026,7 +14026,7 @@
   "tests/test_t1c.py::test_transport_controls_without_calls",
   "tests/test_t1c.py::test_trusted_premises_hold_in_the_policy_model",
   "tests/test_test_schedule.py::test_a_crashed_worker_s_tests_run_elsewhere",
-  "tests/test_test_schedule.py::test_a_modules_long_tests_go_out_together_up_to_the_longest_test",
+  "tests/test_test_schedule.py::test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test",
   "tests/test_test_schedule.py::test_an_xdist_run_keeps_the_gates_collection_accounting",
   "tests/test_test_schedule.py::test_bulk_count_takes_at_least_the_least_then_up_to_the_target",
   "tests/test_test_schedule.py::test_committed_durations_file_is_read_whole",
