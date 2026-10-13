@@ -4799,6 +4799,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_englishRead
 #print axioms VE.Service.runMode_englishGrammar
 #print axioms VE.Service.runMode_englishCheck
+#print axioms VE.Service.Document.decodeRowKind_json
 #print axioms VE.Senses.readDocument_source
 #print axioms VE.Senses.readDocument_bad_default
 #print axioms VE.Senses.badDefault_none
