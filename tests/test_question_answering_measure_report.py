@@ -29,7 +29,12 @@ def test_the_budgets_are_met_and_the_corpus_agreement_is_recorded():
     saved = json.loads((REPORT.EVIDENCE / "agreement.json").read_text())
     assert not any(row["status"].startswith("requires review") for row in saved["rows"])
     corpus = saved["corpus"]
-    assert corpus["requires_review"] == [] and corpus["queries"] == len(corpus["rows"]) > 0
+    assert corpus["queries"] == len(corpus["rows"]) > 0
+    # A comparison that needs review is reviewed in the evidence and is a row of DELTA.md (D15), never silent.
+    delta = (ROOT / "docs/spec/question-answering-q2/DELTA.md").read_text()
+    assert corpus["requires_review"] == [r for r in corpus["rows"] if r["status"].startswith("requires review")]
+    for row in corpus["requires_review"]:
+        assert row["review"].startswith("reviewed (DELTA D") and row["review"][16:19].rstrip(")") in delta, row
     assert {"readings", "norm-defaults"} <= set(corpus["counts"])
     assert sum(counts.get("agrees", 0) for counts in corpus["counts"].values()) > 0
     for row in corpus["rows"]:

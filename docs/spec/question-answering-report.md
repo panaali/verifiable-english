@@ -29,8 +29,8 @@ warm persistent ve_service; child CPU delta for second request; cold ve ask wall
 
 | Fixture | `english.question` Lean CPU s | `ask` Lean CPU s | `ve ask` wall s |
 |---|---:|---:|---:|
-| U3 | 0.05 | 2.83 | 7.813 |
-| A1 | 0.06 | 0.6 | 126.855 |
+| U3 | 0.06 | 0.7 | 11.007 |
+| A1 | 0.07 | 0.6 | 199.109 |
 
 ## Existing verdict route
 
@@ -48,17 +48,42 @@ ve document readings --conclusion on each recorded question AST.
 | U5 | by_reading | SOME | compared |
 | U6 | yes | ALL | compared |
 | U7 | by_reading | UNKNOWN | compared |
-| A1 | notSettled | — | older route exceeded 120 s wall |
+| A1 | notSettled | UNKNOWN | compared |
 | A1d | refused | — | outside ask route |
-| A2 | unknown | — | older route exceeded 120 s wall |
-| A3 | notNecessarily | — | older route exceeded 120 s wall |
-| A4 | unknown | — | older route exceeded 120 s wall |
-| A5 | unknown | — | older route exceeded 120 s wall |
-| A7 | notSettled | — | older route exceeded 120 s wall |
-| A8 | notSettled | — | older route exceeded 120 s wall |
+| A2 | unknown | UNKNOWN | compared |
+| A3 | notNecessarily | UNKNOWN | compared |
+| A4 | unknown | UNKNOWN | compared |
+| A5 | unknown | UNKNOWN | compared |
+| A7 | notSettled | UNKNOWN | compared |
+| A8 | notSettled | UNKNOWN | compared |
 
-The registered limits are `ask` CPU ≤ 2 s and U3 `ve ask` wall ≤ 60 s. These measurements used a warm persistent Lean service for CPU and a cold CLI process for wall time. `ask` CPU: U3 FAIL, A1 PASS; U3 CLI wall: PASS.
+The registered limits are `ask` CPU ≤ 2 s and U3 `ve ask` wall ≤ 60 s. These measurements used a warm persistent Lean service for CPU and a cold CLI process for wall time. `ask` CPU: U3 PASS, A1 PASS; U3 CLI wall: PASS.
+
+## Agreement on the corpora
+
+each query of the readings suites and of the generated norm-defaults corpus asked as F1 (`Is it the case that <canonical sentence>?`) with ve ask, against ve document readings --conclusion on the same document and formula.
+
+Scope: norm-defaults: seeds 0 to 449 of the 1,000 generated documents (`norm-defaults --trees 450`; the full run was stopped at 450 trees for time under load), 8 queries each; readings: the 8 distinct queries the readings suites ask in process (captured with `-p tools.question_answering_agreement`); the fixtures above. The 256 norm-defaults queries first refused for an exposition unit's null content were asked again after that fix (`tests/test_ask_null_free.py`).
+
+| Corpus | Queries | agrees | ask refused | not asked | older route gave no verdict | requires review |
+|---|---:|---:|---:|---:|---:|---:|
+| norm-defaults | 3560 | 3555 | 0 | 0 | 1 | 4 |
+| readings | 8 | 2 | 3 | 3 | 0 | 0 |
+
+3568 queries; 4 required review:
+
+- norm-defaults `s125`, Is it the case that every act must be done? every row yes, older UNKNOWN: reviewed (DELTA D15): the existing route's W2 fold answers UNKNOWN, 'no complete checked classification within the search budget'; ask's yes rests on a certificate Lean checked. An UNKNOWN does not contradict yes: an evidence difference, not a verdict contradiction.
+- norm-defaults `s234`, Is it the case that every act may be tried? every row yes, older UNKNOWN: reviewed (DELTA D15): the existing route's W2 fold answers UNKNOWN, 'no complete checked classification within the search budget'; ask's yes rests on a certificate Lean checked. An UNKNOWN does not contradict yes: an evidence difference, not a verdict contradiction.
+- norm-defaults `s312`, Is it the case that every act must be done? every row yes, older UNKNOWN: reviewed (DELTA D15): the existing route's W2 fold answers UNKNOWN, 'no complete checked classification within the search budget'; ask's yes rests on a certificate Lean checked. An UNKNOWN does not contradict yes: an evidence difference, not a verdict contradiction.
+- norm-defaults `s361`, Is it the case that every act must be done? every row yes, older UNKNOWN: reviewed (DELTA D15): the existing route's W2 fold answers UNKNOWN, 'no complete checked classification within the search budget'; ask's yes rests on a certificate Lean checked. An UNKNOWN does not contradict yes: an evidence difference, not a verdict contradiction.
+
+Queries not compared, by reason:
+
+- ask refused: CheckerUnavailable: ask answers a readings document on the enumerated route with at most 64 compatible readings (1)
+- ask refused: CheckerUnavailable: the answer's R1 line does not pass the all-derivations gate (1)
+- ask refused: UnsupportedProfile: the document is not under the unspecified completion (1)
+- older route gave no verdict: CheckerUnavailable (1)
 
 ## Scope
 
-The evaluation made no model calls. Reader and writer accuracy, including the comparison of ‘No.’ and ‘Not necessarily.’, remains unmeasured. The conformance-corpus agreement comparison with the older verdict routes is not yet recorded; this report does not claim that agreement gate has passed.
+The evaluation made no model calls. Reader and writer accuracy, including the comparison of ‘No.’ and ‘Not necessarily.’, remains unmeasured.

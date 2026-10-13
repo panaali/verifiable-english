@@ -49,7 +49,7 @@ def render() -> str:
                   "agreement gate has passed."]
     else:
         statuses = sorted({status for counts in corpus["counts"].values() for status in counts})
-        lines += [corpus["method"] + ".", "",
+        lines += [corpus["method"] + ".", "", "Scope: " + corpus["scope"] + ".", "",
                   "| Corpus | Queries | " + " | ".join(statuses) + " |",
                   "|---|---:|" + "---:|" * len(statuses)]
         for name, counts in sorted(corpus["counts"].items()):
@@ -62,9 +62,10 @@ def render() -> str:
                 key = f"{row['status']}: {reason[1].strip() if len(reason) > 1 else reason[0]}"
                 refused[key] = refused.get(key, 0) + 1
         review = corpus["requires_review"]
-        lines += ["", f"{corpus['queries']} queries; {len(review)} require review"
-                  + (": " + "; ".join(f"{r['corpus']} {r.get('case') or ''} {r['status']}" for r in review)
-                     if review else " (no lead contradicts the existing route's verdict)") + "."]
+        lines += ["", f"{corpus['queries']} queries; {len(review)} required review"
+                  + (" (no lead contradicts the existing route's verdict)." if not review else ":"), ""]
+        lines += [f"- {r['corpus']} `{r.get('case') or ''}`, {r['question']} {r['status'].split(': ', 1)[1]}: "
+                  f"{r['review']}." for r in review]
         if refused:
             lines += ["", "Queries not compared, by reason:", ""]
             lines += [f"- {key} ({count})" for key, count in sorted(refused.items())]

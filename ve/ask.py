@@ -159,7 +159,10 @@ class _Readings:
 
 
 def _units(doc):
-    return [{"id": u["id"], "kind": u["kind"], "content": u["content"]} for u in doc["units"]]
+    """The case's units: id, kind and content, a unit without content (exposition) without the field, as the front
+    matter has it (Lean reads an absent content as none; the service's restricted JSON has no null)."""
+    return [{"id": u["id"], "kind": u["kind"], **({"content": u["content"]} if u.get("content") is not None else {})}
+            for u in doc["units"]]
 
 
 class _Plain:
