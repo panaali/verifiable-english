@@ -14036,6 +14036,7 @@
   "tests/test_test_schedule.py::test_longest_first_starts_the_long_tests_first_and_ends_sooner_than_load",
   "tests/test_test_schedule.py::test_quick_tests_go_out_by_estimated_seconds_not_by_count",
   "tests/test_test_schedule.py::test_quick_tests_keep_loads_chunks_in_collection_order",
+  "tests/test_test_schedule.py::test_the_suite_conftest_installs_the_scheduler",
   "tests/test_test_schedule.py::test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds",
   "tests/test_test_schedule.py::test_without_recorded_long_tests_or_under_another_mode_xdist_decides",
   "tests/test_testing_profile_doc.py::test_category_table",

@@ -45,11 +45,12 @@ def test_profile_records_keep_real_times_when_a_test_patches_the_clocks(tmp_path
                                                                         VE_TEST_PROFILE_DIR=str(profile)),
                             capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert result.returncode == 0, result.stdout[-4000:]
+    after = time.time()
     rows = suite_tail.records(profile)
     assert sorted(row["nodeid"] for row in rows) == ["test_clocks.py::test_injects_a_clock", "test_clocks.py::test_plain"]
     for row in rows:
         assert all(row[phase] >= 0 for phase in ("setup", "call", "teardown")), row
-        assert before <= row["start"] <= row["end"] <= time.time(), row
+        assert before <= row["start"] <= row["end"] <= after, row
         assert row["worker"] == "main"
 
 
@@ -94,11 +95,12 @@ def test_durations_command_writes_the_scheduler_s_file(tmp_path, monkeypatch):
                {"kind": "test", "nodeid": "t::b", "setup": 0.0, "call": 0.4, "teardown": 0.0, "start": 1, "end": 2},
                {"kind": "proc", "exe": "lake", "test": "t::a", "wall": 3.0}]
     (profile / "gw0-123.jsonl").write_text("".join(json.dumps(record) + "\n" for record in records))
-    # An earlier run: its time for t::a gives way to the later run's; t::c only it measured.
+    # Another run: t::a took longer in the first (6.54 s) and t::b in this one, which alone measured t::c.
     early = tmp_path / "early"
     early.mkdir()
     (early / "main-7.jsonl").write_text(
-        json.dumps({"kind": "test", "nodeid": "t::a", "setup": 0.0, "call": 99.0, "teardown": 0.0}) + "\n"
+        json.dumps({"kind": "test", "nodeid": "t::a", "setup": 0.0, "call": 3.0, "teardown": 0.0}) + "\n"
+        + json.dumps({"kind": "test", "nodeid": "t::b", "setup": 0.0, "call": 8.0, "teardown": 0.0}) + "\n"
         + json.dumps({"kind": "test", "nodeid": "t::c", "setup": 0.0, "call": 2.0, "teardown": 0.0}) + "\n")
     output = tmp_path / "durations.json"
     # t::gone was measured, but the collection no longer has it.
@@ -109,5 +111,5 @@ def test_durations_command_writes_the_scheduler_s_file(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["suite_tail.py", "durations", str(early), str(profile), "--output", str(output),
                                       "--source", "a test", "--collection", str(collection)])
     assert suite_tail.main() == 0
-    assert test_schedule.read_durations(output) == {"t::a": 6.5, "t::c": 2.0}
+    assert test_schedule.read_durations(output) == {"t::a": 6.5, "t::b": 8.0, "t::c": 2.0}
     assert json.loads(output.read_text())["source"] == "a test"
