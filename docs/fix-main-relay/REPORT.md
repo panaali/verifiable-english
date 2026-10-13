@@ -8,6 +8,11 @@ ts-B1 compiles every service validator lazily through the module's one compiler,
 `ROWS` is a `_Rows` mapping that calls `_compiler.ref(<mode>.json, "#/row")`, and `check_response` and
 `check_handshake` call `_compiler.ref("envelope.json", ...)`. The module-level `RESPONSE` and `HANDSHAKE` are gone.
 
+**Main moved while this ran.** AR-5a's merge (0ae408bb, "test: repair merged trust baseline and relay mutation
+probe", on `main` by da0c04bd) made the same fixture fix. This branch merges `main` (ce68e6b6) and resolves the
+fixture to the one-line form below; the code is equivalent. What this branch adds is the explanation in the
+fixture's docstring, the cause of the ts-B1 miss, and the seeded-bug evidence.
+
 ## Fix (test only)
 
 The fixture `without_length_check` patches `Compiler._x_length` to a no-op and replaces `service_schema._compiler`
@@ -63,4 +68,18 @@ No user-visible delta (the change is test-only), so no DRI-RULINGS row applies.
 
 - `tests/test_relay_mutation_gate.py` and `tests/test_service_schema*.py`: 27 passed.
 - Selected tests for the branch (`tools/select_tests.py --base $(git merge-base HEAD main) --run`): 0 failed.
+- First full gate, on d9bd4082 (before merging main): failed, 14685 passed, 3 failed
+  (`gate-result-d9bd4082-failed.json`). All three failures were
+  `tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[*]`. They pass outside the gate (3 passed).
+  This is the known main failure described in AR-1's report: inside the gate, `tools/lake_outputs.py` looked for
+  `lean` under the gate's replacement HOME. AR-1's fix (320391aa) reached `main` at 11676c2c, after this branch's
+  base 49de179e, so I merged `main` instead of rerunning the failed tests.
+  This branch changes neither file.
+- After the merge: `tests/test_relay_mutation_gate.py`, `tests/test_service_schema*.py` and
+  `tests/test_gate_integrity.py`: 64 passed. M1–M4 are still killed and S1 still survives. `regen_generated.py --check`
+  passes (24 entries).
 - Full gate on the final HEAD: `docs/fix-main-relay/gate-result.json`.
+- Operational note: my first attempt at the gate used `--workers auto`. At load 64 on 32 cores it picked 1 xdist
+  worker, so I stopped it at about 47% and started `--workers 8` on the same commit. That stop only reached the
+  `setsid` wrapper, so the 1-worker gate kept running alongside the second one until I killed its process group.
+  The saved d9bd4082 record is the `--workers 8` run; the 1-worker run never wrote a final record.
