@@ -13,7 +13,7 @@
           "max_evaluations": {"$ref": "common.json#/$defs/nat"},
           "max_models": {"$ref": "common.json#/$defs/nat"},
           "max_proof_steps": {"$ref": "common.json#/$defs/nat"},
-          "sorts": {"items": {"$ref": "#/$defs/bound"}, "type": "array"},
+          "sorts": {"type": "array", "x-zip": {"items": {"$ref": "#/$defs/bound"}, "of": "/sorts"}},
           "status": {"const": "ok"}
         },
         "required": ["id", "status", "max_proof_steps", "max_domain_size", "max_models", "max_evaluations", "sorts"],
@@ -23,14 +23,15 @@
   },
   "$defs": {
     "bound": {
-      "additionalProperties": false,
-      "properties": {
-        "least": {"$ref": "common.json#/$defs/nat"},
-        "most": {"$ref": "common.json#/$defs/nat"},
-        "sort": {"type": "string"}
-      },
-      "required": ["sort", "least", "most"],
-      "type": "object"
+      "anyOf": [
+        {"type": "null"},
+        {
+          "additionalProperties": false,
+          "properties": {"least": {"$ref": "common.json#/$defs/nat"}, "most": {"$ref": "common.json#/$defs/nat"}},
+          "required": ["least", "most"],
+          "type": "object"
+        }
+      ]
     }
   }
 }

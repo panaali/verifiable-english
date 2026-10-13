@@ -1,14 +1,16 @@
 import ResponseShape
 
-/-! The `search-budget` row (`VE.SearchBudget.Run`): the premise check's budget and the sorts it
-raises, each `{"sort", "least", "most"}`. The relay binds every `sort` to a declared sort of the
-request's environment, each at most once (`ve/search.py`, `premise_budget`). -/
+/-! The `search-budget` row (`VE.SearchBudget.Run`): the premise check's budget and, for each sort
+the request lists, its raised bounds `{"least", "most"}` or `null`, one entry per requested sort in
+order (`x-zip`), so the answer names no sort the request does not. -/
 namespace ResponseShape.Schemas.SearchBudget
 open Lean ResponseShape
 
 def bound : Shape :=
-  n [obj, .required ["sort", "least", "most"],
-    closed [("sort", str), ("least", ref "common.json#/$defs/nat"), ("most", ref "common.json#/$defs/nat")]]
+  .anyOf [
+    .type ["null"],
+    n [obj, .required ["least", "most"],
+      closed [("least", ref "common.json#/$defs/nat"), ("most", ref "common.json#/$defs/nat")]]]
 
 def «row» : Shape :=
   .anyOf [
@@ -23,7 +25,7 @@ def «row» : Shape :=
         ("max_domain_size", ref "common.json#/$defs/nat"),
         ("max_models", ref "common.json#/$defs/nat"),
         ("max_evaluations", ref "common.json#/$defs/nat"),
-        ("sorts", n [.type ["array"], .items (ref "#/$defs/bound")])]]]
+        ("sorts", n [.type ["array"], .zip "/sorts" (ref "#/$defs/bound")])]]]
 
 def file : File where
   name := "search-budget.json"

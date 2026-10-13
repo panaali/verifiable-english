@@ -39,6 +39,14 @@ DEFAULT_EXECUTABLE = ROOT / "rust/target/release/ve"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
 MAX_LINE_BYTES = 16 * 1024 * 1024
 DEFAULT_TIMEOUT = 5.0
+# The default wall-clock limit grows with the case (DRI decision ME1): a search spends its 10,000
+# candidate models in about SEARCH_SECONDS + per constant + per constant squared seconds, the
+# least-squares fit over the premise-scale pilots and a synthetic series of ground-fact cases
+# (docs/premise-scale/evidence/rust-timeout.json; the worst case measured 2.5 times its fit). The
+# limit is TIMEOUT_FACTOR times that, and never under DEFAULT_TIMEOUT. It guards against a hung
+# process only: Rust's work limits are its budgets, and Lean's answer stands without Rust's.
+SEARCH_SECONDS = (1.4855, 0.01069, 5.3862e-05)
+TIMEOUT_FACTOR = 4.0
 # Room above the budget for the binary itself and allocator slack. The budget's clean
 # ResourceLimit comes first; the address-space limit is only the backstop.
 ADDRESS_SPACE_HEADROOM = 1 << 30
@@ -56,6 +64,17 @@ def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
     machine load cannot fail a test), else `default`. A guard against a hung
     checker only; Rust's work limits are its evaluation budgets."""
     return configured_seconds("VE_RUST_TIMEOUT", default)
+
+
+def scaled_timeout(case) -> float:
+    """The default wall-clock limit of `case`: `TIMEOUT_FACTOR` times the measured search time of a
+    case with its number of constants (`SEARCH_SECONDS`), at least `DEFAULT_TIMEOUT`."""
+    environment = case.get("environment") if type(case) is dict else None
+    vocabulary = environment.get("vocabulary") if isinstance(environment, dict) else None
+    constants = vocabulary.get("constants") if isinstance(vocabulary, dict) else None
+    n = len(constants) if isinstance(constants, dict) else 0
+    base, linear, square = SEARCH_SECONDS
+    return max(DEFAULT_TIMEOUT, TIMEOUT_FACTOR * (base + linear * n + square * n * n))
 
 
 def memory_limit() -> int:
@@ -306,11 +325,11 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
 
     The case goes to a persistent checker process (`_run_checker`); a process that gives no
     record is killed. A selected Rust backend never falls back to Python. Without a
-    `timeout`, the call waits `configured_timeout()` seconds.
+    `timeout`, the call waits `configured_timeout(scaled_timeout(case))` seconds.
     """
     [case] = wire_checked([case])
     if timeout is None:
-        timeout = configured_timeout()
+        timeout = configured_timeout(scaled_timeout(case))
     binary = Path(executable or os.environ.get("VE_RUST_JSONL") or DEFAULT_EXECUTABLE)
     if not binary.is_file():
         raise CheckerUnavailable(f"CheckerUnavailable: missing Rust executable {binary}")

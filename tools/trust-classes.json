@@ -8371,7 +8371,6 @@
         "VE.SearchBudget.Run.boundJson",
         "VE.SearchBudget.Run.decodeConstants",
         "VE.SearchBudget.Run.decodeFacts",
-        "VE.SearchBudget.Run.decodeSorts",
         "VE.SearchBudget.Run.jsonConjuncts",
         "VE.SearchBudget.Run.maxConjunctNodes"
       ],
