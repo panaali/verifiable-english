@@ -28,6 +28,17 @@ and head (`main`'s). Every DELTA row is signed by a standing ruling (R1, R4, R6,
 The full release gate runs once, as the last step, on the commit that adds this report; its result is kept as
 `gate-result.json` in the worktree (no later commit, so the gate's commit is HEAD).
 
+**First full gate (1e44780b): failed on 3 tests outside the batch.** 14,566 passed, 92 skipped, 36 Rust passed;
+the failures were `tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt|TypeError|AttributeError]`,
+and `--rerun-failed` on the same commit failed them again. Cause: inside the gate `HOME` is the gate's scratch
+directory, so the unpatched `lake_outputs.drop_stale` in that test cannot find `lean`
+("lean is required to check Lake's executables against their traces") and the gate records a failure instead
+of re-raising the interruption. The bug is already in the merge base, since none of `tools/gate.py`, `tools/lake_outputs.py`
+and the test change on this branch, and `main` fixed it in 0341684a (AR-5a). That 2-line test-only commit is
+cherry-picked here unchanged (`-x`). With it, the three tests pass in a gate-like environment (`env -i`, scratch
+`HOME`) and the whole file passes (37). A gate started before that with `-n auto` got a single worker under host
+load ≈80 and was stopped unfinished after 5 h, with no result. The full gate was rerun with `--workers 8`.
+
 ## Seeded bugs
 
 `evidence/mutants.json`: M1 (Lean, `lean/VE/Service/Standalone.lean`), M2 (Lean,
