@@ -94,3 +94,20 @@ def test_q2_f4_corpus_rejects_an_incomplete_generated_tree(tmp_path):
                                 "conclusion": ["unary", "p", ["const", "k"]], "older": "UNKNOWN"}) + "\n")
     with pytest.raises(ValueError, match="incomplete or repeated trees"):
         corpus([path])
+
+
+@pytest.mark.parametrize("case,predicate", [
+    ("s125", "x_required"), ("s234", "y_permitted"),
+    ("s312", "x_required"), ("s361", "x_required"),
+])
+def test_q2_f5_d15_budget_unknown_does_not_contradict_checked_yes(case, predicate):
+    from tools.question_answering_agreement import OLDER_BUDGET_REASON
+    matches = [row for row in _agreement()["corpus"]["rows"]
+               if row["corpus"] == "norm-defaults" and row["case"] == case and
+               row["conclusion"] == ["forall", "act", ["unary", predicate, ["var", 0]]]]
+    assert len(matches) == 1
+    row = matches[0]
+    assert row["older"] == "UNKNOWN"
+    assert row["older_reason"] == OLDER_BUDGET_REASON
+    assert row["leads"] == ["yes"]
+    assert row["status"] == "older budget exhausted"
