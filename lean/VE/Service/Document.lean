@@ -111,6 +111,9 @@ def wireJson : Nat → Json → Json
 /-- Normalize only nulls the rights source decoder treats as absent. Unknown
 members, including unknown members with null values, reach its closed-field
 checks. The response schema copies the authored content without normalization. -/
+def rightsChildContext (context key : String) : String :=
+  if context == "line" && ["norm", "liberty", "recognition"].contains key then "norm" else key
+
 def rightsWireJson : Nat → String → Json → Json
   | 0, _, j => j
   | fuel + 1, context, .arr xs =>
@@ -130,9 +133,10 @@ def rightsWireJson : Nat → String → Json → Json
         | _ => []
       Json.mkObj (kvs.toList.filterMap fun (k, v) =>
         if v == .null && (known.contains k || context == "cites" || context == "fan_out") then none
-        else some (k, rightsWireJson fuel k v))
+        else some (k, rightsWireJson fuel (rightsChildContext context k) v))
   | _, _, j => j
 
+#guard ["norm", "liberty", "recognition"].all (fun key => rightsChildContext "line" key == "norm")
 #guard (rightsWireJson 8 "source" (Json.mkObj [("right", Json.mkObj
   [("guard", .null), ("annotation", .null)])])).getObjValD "right" ==
   Json.mkObj [("annotation", .null)]
