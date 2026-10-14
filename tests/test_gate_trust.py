@@ -3,11 +3,14 @@
 by their writer's schema (`trust_map.files_problems`); missing or malformed counts fail the gate."""
 from __future__ import annotations
 
+import copy
+import json
+
 import pytest
 
 from test_gate_integrity import trust_counts
 from test_gate_rerun import fake  # noqa: F401  (the fixture)
-from tools import gate
+from tools import batch_evidence, gate
 
 
 def test_every_gate_records_the_per_file_trust_counts(fake):
@@ -49,3 +52,111 @@ def test_a_gate_without_valid_trust_counts_fails(fake, counts):
     code, record = fake.run()
     assert (code, record["status"]) == (1, "failed") and "trust" not in record
     assert any(failure["reason"].startswith(gate.TRUST_STAGE) for failure in record["failures"])
+
+
+# arch-AR-4 recheck F7: a reader of a gate record (`docs/arch/AR-4/report.py --check --gate`) crashed on a malformed
+# one. Every reader checks it with the shared checks of `tools/batch_evidence.py`, which refuse any value.
+
+SHA = "a" * 40
+DEEP: list = []
+for _ in range(10_000):
+    DEEP = [DEEP]
+
+
+def _sha(value):
+    """`value` with the fake gate's commit id replaced by a full one."""
+    return json.loads(json.dumps(value).replace('"commit-1"', f'"{SHA}"'))
+
+
+def _records(fake) -> tuple[dict, dict, dict]:
+    """A failed full gate, its R13 rerun and a passed full gate, as `tools/gate.py` writes them."""
+    assert fake.run()[0] == 1
+    failed = _sha(json.loads(fake.output.read_text()))
+    fake.failing = set()
+    rerun = _sha(fake.run("--rerun-failed")[1])
+    passed = _sha(fake.run()[1])
+    return failed, rerun, passed
+
+
+def _checks(failed, rerun, passed) -> dict[str, list[str]]:
+    budget = trust_counts()["budget"]
+    return {"passed": batch_evidence.gate_record_problems(SHA, passed)
+            + batch_evidence.gate_trust_problems(passed, budget),
+            "pair": batch_evidence.rerun_pair_problems(failed, rerun)
+            + batch_evidence.gate_trust_problems(failed, budget) + batch_evidence.gate_trust_problems(rerun, budget)}
+
+
+def _nodes(value, path=()):
+    yield path
+    items = value.items() if isinstance(value, dict) else enumerate(value) if isinstance(value, list) else ()
+    for key, item in items:
+        yield from _nodes(item, (*path, key))
+
+
+def _replace(record, path, new):
+    record = copy.deepcopy(record)
+    if not path:
+        return new
+    node = record
+    for key in path[:-1]:
+        node = node[key]
+    node[path[-1]] = new
+    return record
+
+
+def test_genuine_gate_records_pass_the_shared_checks(fake):
+    failed, rerun, passed = _records(fake)
+    assert _checks(failed, rerun, passed) == {"passed": [], "pair": []}
+    budget = trust_counts()["budget"]
+    assert batch_evidence.gate_trust_problems(passed, {**budget, "V": budget["V"] + 1})  # counts of another tree
+
+
+@pytest.mark.parametrize("record", [{}, [], None, 7, True, "gate", DEEP])
+def test_review_f7_probe_a_malformed_gate_record_is_refused(fake, record):
+    """PROBE F7: `{}` as the full gate record; every check refuses it with a message naming the gate."""
+    failed, rerun, passed = _records(fake)
+    for problems in (*_checks(record, rerun, record).values(), _checks(failed, record, passed)["pair"]):
+        assert problems and all("gate" in problem or "rerun" in problem for problem in problems)
+
+
+# The fields each check reads: a value of another type there is refused (the rest, such as `environment`, is not
+# read).
+READ = {"passed": ("commit_sha", "status", "dirty", "stages", "failures", "trust", *(
+    ("counts", key) for key in ("passed", "skipped", "failed", "selected", "deselected", "collected", "rust_passed"))),
+    "full": ("commit_sha", "tree_sha", "status", "dirty", "stages", ("failures", None, "stage"),
+             ("failures", None, "nodeid"), ("counts", "failed"), "trust"),
+    "rerun": ("commit_sha", "tree_sha", "status", "dirty", "failures", "trust", ("rerun_failed", "tests"),
+              ("rerun_failed", "outcomes"), ("rerun_failed", "previous", "commit_sha"),
+              ("rerun_failed", "previous", "tree_sha"), ("counts", "passed"), ("counts", "selected"))}
+# Containers a check reads only to reach the fields above: replacing the container itself is refused.
+CONTAINERS = {"passed": {("counts",)}, "full": {("failures",), ("failures", None), ("counts",)},
+              "rerun": {("rerun_failed",), ("rerun_failed", "previous"), ("counts",)}}
+
+
+def _read(path, which) -> bool:
+    """Whether a check reads the node at `path`: a field of `READ` or below it, or a container of `CONTAINERS`
+    (None stands for any list index)."""
+    def at(field, exact):
+        return (len(path) == len(field) if exact else len(path) >= len(field)) and all(
+            f is None or f == p for f, p in zip(field, path))
+    return any(at(field if isinstance(field, tuple) else (field,), False) for field in READ[which]) or any(
+        at(field, True) for field in CONTAINERS[which])
+
+
+def test_every_retyped_node_of_a_gate_record_is_a_problem_never_a_crash(fake):
+    """Type confusion over genuine records: each node becomes 7, true, null, [], {}, a string or a list nested
+    10,000 deep. No check raises, and a field a check reads is refused with a value of another type."""
+    failed, rerun, passed = _records(fake)
+    for which, record in (("passed", passed), ("full", failed), ("rerun", rerun)):
+        for path in list(_nodes(record)):
+            for new in (7, True, None, [], {}, "x", DEEP):
+                old = _replace(record, path, new)
+                if json.dumps(old, default=str) == json.dumps(record):
+                    continue
+                sides = {"passed": (failed, rerun, old), "full": (old, rerun, passed), "rerun": (failed, old, passed)}
+                checked = _checks(*sides[which])
+                value = record
+                for key in path:
+                    value = value[key]
+                if _read(path, which) and type(new) is not type(value) or not path:
+                    assert checked["passed" if which == "passed" else "pair"], (which, path, new)

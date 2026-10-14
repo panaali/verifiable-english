@@ -149,6 +149,51 @@ def gate_record_problems(head: str, gate: dict) -> list[str]:
     return errors
 
 
+def rerun_pair_problems(full, rerun) -> list[str]:
+    """Standing ruling R13: a complete full gate whose only failures are tests counts as passed with the serial
+    rerun (`tools/gate.py --rerun-failed`) of the same clean commit and tree that passed exactly those tests. Any
+    value is checked; a malformed record is an error, never an exception."""
+    if not isinstance(full, dict) or not isinstance(rerun, dict):
+        return ["the full gate or its rerun is not a record"]
+    errors = []
+    failures, counts = full.get("failures"), full.get("counts")
+    failures = failures if isinstance(failures, list) else [None]
+    nodeids = [f.get("nodeid") for f in failures if isinstance(f, dict) and f.get("stage") == "pytest"]
+    tests = sorted({nodeid for nodeid in nodeids if isinstance(nodeid, str)})
+    if (full.get("status") != "failed" or full.get("dirty") is not False or not SHA.fullmatch(
+            str(full.get("commit_sha"))) or full.get("stages") != list(REQUIRED_STAGES)
+            or not tests or len(tests) != len(set(map(str, nodeids)))
+            or not all(isinstance(f, dict) and f.get("stage") in ("pytest", "pytest command") for f in failures)
+            or not isinstance(counts, dict) or type(counts.get("failed")) is not int
+            or counts["failed"] != len(tests)):
+        errors.append("the full gate is not a complete gate on a clean commit whose only failures are tests")
+    rerun_failed, rerun_counts = rerun.get("rerun_failed"), rerun.get("counts")
+    previous = rerun_failed.get("previous") if isinstance(rerun_failed, dict) else None
+    same = ("commit_sha", "tree_sha")
+    if (rerun.get("status") != "rerun-passed" or rerun.get("dirty") is not False or rerun.get("failures") != []
+            or any(rerun.get(k) != full.get(k) for k in same) or not isinstance(previous, dict)
+            or any(previous.get(k) != full.get(k) for k in same) or rerun_failed.get("tests") != tests
+            or rerun_failed.get("outcomes") != {test: "passed" for test in tests if isinstance(test, str)}
+            or not isinstance(rerun_counts, dict) or type(rerun_counts.get("passed")) is not int
+            or rerun_counts.get("selected") != rerun_counts["passed"]):
+        errors.append("the serial rerun did not pass every failed test on the full gate's clean commit (R13)")
+    return errors
+
+
+def gate_trust_problems(gate, measured: dict | None = None) -> list[str]:
+    """The per-file trust counts every gate keeps as its record's `trust` (AR-4: `tools/trust_map.py --files`),
+    checked by their writer's schema (`trust_map.files_problems`) on any value; with `measured`, their budget
+    must be that one (the K, S and V the evidence measured on the gated tree)."""
+    from tools import trust_map
+    trust = gate.get("trust") if isinstance(gate, dict) else None
+    errors = trust_map.files_problems(trust)
+    if errors:
+        return [f"the gate record has no per-file trust counts: {'; '.join(errors)}"]
+    if measured is not None and trust["budget"] != measured:
+        return [f"the gate record's trust budget {trust['budget']} is not the measured {measured}"]
+    return []
+
+
 def mutant_source_problems(mutants, head: str, cwd: Path | None = None) -> list[str]:
     """Each `tools/mutants.py` record ran on its file as committed at `head`: its `source_sha256` is that
     blob's. (The records batches kept before the toolkit hash nothing, `tools.evidence.killed`.)"""
