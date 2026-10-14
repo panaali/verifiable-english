@@ -1,0 +1,722 @@
+{
+ "inputs": {
+  "units": "353a75284fd4fb9921d4079a55a235bcf8be06061cd1005d1367e956f255ec4c",
+  "source": "fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd"
+ },
+ "screen": "research 2.3: markers over source_excerpt, case-insensitive, whole words",
+ "expected_from_research": {
+  "units": 99,
+  "bytes": 19857
+ },
+ "units": 99,
+ "bytes": 19857,
+ "research_g_units_in_screen": 18,
+ "rows": [
+  {
+   "id": "u0011.s01",
+   "bytes": 160,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0011.s03",
+   "bytes": 188,
+   "markers": [
+    "in most cases"
+   ]
+  },
+  {
+   "id": "u0016.s01",
+   "bytes": 289,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0016.s02",
+   "bytes": 390,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0020.s02",
+   "bytes": 308,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0020.s05",
+   "bytes": 137,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0025.s02",
+   "bytes": 148,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0031.s04",
+   "bytes": 98,
+   "markers": [
+    "in most cases"
+   ]
+  },
+  {
+   "id": "u0033.s03",
+   "bytes": 95,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0038.s06",
+   "bytes": 152,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0041.s02",
+   "bytes": 116,
+   "markers": [
+    "by default"
+   ]
+  },
+  {
+   "id": "u0044.s03",
+   "bytes": 138,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0044.s04",
+   "bytes": 107,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0044.s09",
+   "bytes": 354,
+   "markers": [
+    "otherwise",
+    "unless"
+   ]
+  },
+  {
+   "id": "u0046.s01",
+   "bytes": 199,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0052.s02",
+   "bytes": 233,
+   "markers": [
+    "unless"
+   ]
+  },
+  {
+   "id": "u0053.s05",
+   "bytes": 278,
+   "markers": [
+    "in general"
+   ]
+  },
+  {
+   "id": "u0054.s01",
+   "bytes": 154,
+   "markers": [
+    "by default"
+   ]
+  },
+  {
+   "id": "u0054.s02",
+   "bytes": 305,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0057.s01",
+   "bytes": 265,
+   "markers": [
+    "absent",
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0058.s01",
+   "bytes": 208,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0058.s05",
+   "bytes": 359,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0059.s06",
+   "bytes": 162,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0060.s01",
+   "bytes": 193,
+   "markers": [
+    "otherwise",
+    "unless"
+   ]
+  },
+  {
+   "id": "u0060.s04",
+   "bytes": 238,
+   "markers": [
+    "unless"
+   ]
+  },
+  {
+   "id": "u0062.s02",
+   "bytes": 188,
+   "markers": [
+    "absent",
+    "default"
+   ]
+  },
+  {
+   "id": "u0063.s01",
+   "bytes": 471,
+   "markers": [
+    "default"
+   ]
+  },
+  {
+   "id": "u0063.s02",
+   "bytes": 185,
+   "markers": [
+    "default"
+   ]
+  },
+  {
+   "id": "u0065.s03",
+   "bytes": 123,
+   "markers": [
+    "absent"
+   ]
+  },
+  {
+   "id": "u0065.s04",
+   "bytes": 97,
+   "markers": [
+    "by default"
+   ]
+  },
+  {
+   "id": "u0067.s01",
+   "bytes": 213,
+   "markers": [
+    "default"
+   ]
+  },
+  {
+   "id": "u0067.s07",
+   "bytes": 255,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0068.s01",
+   "bytes": 160,
+   "markers": [
+    "default"
+   ]
+  },
+  {
+   "id": "u0073.s03",
+   "bytes": 152,
+   "markers": [
+    "default"
+   ]
+  },
+  {
+   "id": "u0073.s05",
+   "bytes": 234,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0076.s01",
+   "bytes": 250,
+   "markers": [
+    "default",
+    "generally"
+   ]
+  },
+  {
+   "id": "u0076.s02",
+   "bytes": 273,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0078.s01",
+   "bytes": 451,
+   "markers": [
+    "unless"
+   ]
+  },
+  {
+   "id": "u0079",
+   "bytes": 64,
+   "markers": [
+    "by default"
+   ]
+  },
+  {
+   "id": "u0081.s05",
+   "bytes": 237,
+   "markers": [
+    "in general"
+   ]
+  },
+  {
+   "id": "u0082.s01",
+   "bytes": 111,
+   "markers": [
+    "in general"
+   ]
+  },
+  {
+   "id": "u0087.s03",
+   "bytes": 286,
+   "markers": [
+    "by default"
+   ]
+  },
+  {
+   "id": "u0100.s03",
+   "bytes": 173,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0107.s01",
+   "bytes": 256,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0107.s02",
+   "bytes": 236,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0109.s05",
+   "bytes": 134,
+   "markers": [
+    "in general"
+   ]
+  },
+  {
+   "id": "u0112.s02",
+   "bytes": 221,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0118.s04",
+   "bytes": 220,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0122.s01",
+   "bytes": 144,
+   "markers": [
+    "in general"
+   ]
+  },
+  {
+   "id": "u0128.s02",
+   "bytes": 211,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0133.s05",
+   "bytes": 129,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0135.s04",
+   "bytes": 151,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0135.s08",
+   "bytes": 236,
+   "markers": [
+    "default"
+   ]
+  },
+  {
+   "id": "u0141.s02",
+   "bytes": 217,
+   "markers": [
+    "unless"
+   ]
+  },
+  {
+   "id": "u0141.s03",
+   "bytes": 390,
+   "markers": [
+    "otherwise",
+    "typically"
+   ]
+  },
+  {
+   "id": "u0141.s05",
+   "bytes": 343,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0144.s02",
+   "bytes": 116,
+   "markers": [
+    "by default"
+   ]
+  },
+  {
+   "id": "u0145.s01",
+   "bytes": 235,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0149.s01",
+   "bytes": 187,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0152.s01",
+   "bytes": 180,
+   "markers": [
+    "by default"
+   ]
+  },
+  {
+   "id": "u0152.s02",
+   "bytes": 116,
+   "markers": [
+    "by default"
+   ]
+  },
+  {
+   "id": "u0153.s02",
+   "bytes": 248,
+   "markers": [
+    "absent",
+    "default"
+   ]
+  },
+  {
+   "id": "u0153.s03",
+   "bytes": 203,
+   "markers": [
+    "absent",
+    "default"
+   ]
+  },
+  {
+   "id": "u0154.s02",
+   "bytes": 214,
+   "markers": [
+    "default"
+   ]
+  },
+  {
+   "id": "u0155.s01",
+   "bytes": 324,
+   "markers": [
+    "default",
+    "typically"
+   ]
+  },
+  {
+   "id": "u0155.s03",
+   "bytes": 168,
+   "markers": [
+    "in general"
+   ]
+  },
+  {
+   "id": "u0156.s06",
+   "bytes": 225,
+   "markers": [
+    "in general"
+   ]
+  },
+  {
+   "id": "u0157.s01",
+   "bytes": 288,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0157.s03",
+   "bytes": 145,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0158",
+   "bytes": 204,
+   "markers": [
+    "absent"
+   ]
+  },
+  {
+   "id": "u0159.s01",
+   "bytes": 52,
+   "markers": [
+    "default"
+   ]
+  },
+  {
+   "id": "u0159.s05",
+   "bytes": 55,
+   "markers": [
+    "default"
+   ]
+  },
+  {
+   "id": "u0159.s10",
+   "bytes": 107,
+   "markers": [
+    "absent",
+    "default"
+   ]
+  },
+  {
+   "id": "u0159.s14",
+   "bytes": 110,
+   "markers": [
+    "absent",
+    "default"
+   ]
+  },
+  {
+   "id": "u0171.s01",
+   "bytes": 147,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0177.s02",
+   "bytes": 262,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0180.s01",
+   "bytes": 279,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0193.s01",
+   "bytes": 223,
+   "markers": [
+    "by default"
+   ]
+  },
+  {
+   "id": "u0193.s02",
+   "bytes": 289,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0193.s04",
+   "bytes": 192,
+   "markers": [
+    "default",
+    "generally"
+   ]
+  },
+  {
+   "id": "u0194.s01",
+   "bytes": 194,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0197.s05",
+   "bytes": 260,
+   "markers": [
+    "generally",
+    "normally"
+   ]
+  },
+  {
+   "id": "u0197.s06",
+   "bytes": 102,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0204.s01",
+   "bytes": 131,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0213.s04",
+   "bytes": 126,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0218.s21",
+   "bytes": 114,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0222.s02",
+   "bytes": 157,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0228.s02",
+   "bytes": 207,
+   "markers": [
+    "usually"
+   ]
+  },
+  {
+   "id": "u0241.s03",
+   "bytes": 196,
+   "markers": [
+    "tend to"
+   ]
+  },
+  {
+   "id": "u0244.s03",
+   "bytes": 216,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0263.s01",
+   "bytes": 166,
+   "markers": [
+    "otherwise"
+   ]
+  },
+  {
+   "id": "u0263.s02",
+   "bytes": 237,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0264.s01",
+   "bytes": 149,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0264.s02",
+   "bytes": 166,
+   "markers": [
+    "in general"
+   ]
+  },
+  {
+   "id": "u0266.s05",
+   "bytes": 144,
+   "markers": [
+    "unless"
+   ]
+  },
+  {
+   "id": "u0274.s01",
+   "bytes": 60,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0274.s03",
+   "bytes": 129,
+   "markers": [
+    "generally"
+   ]
+  },
+  {
+   "id": "u0279.s02",
+   "bytes": 177,
+   "markers": [
+    "typically"
+   ]
+  },
+  {
+   "id": "u0288.s02",
+   "bytes": 272,
+   "markers": [
+    "generally"
+   ]
+  }
+ ]
+}
