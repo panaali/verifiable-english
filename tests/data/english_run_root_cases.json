@@ -1,0 +1,34 @@
+[
+  {
+    "name": "empty_stdin",
+    "mode": "stdin",
+    "input": "{\"environment\":{\"sorts\":[],\"predicates\":{},\"constants\":{}},\"lexicon\":{\"sorts\":{},\"predicates\":{},\"constants\":{}},\"cases\":[]}",
+    "returncode": 0,
+    "stdout": "{\"admissible\":true,\"covers\":true,\"results\":[]}\n",
+    "stderr": ""
+  },
+  {
+    "name": "formula_file",
+    "mode": "file",
+    "input": "{\"environment\":{\"sorts\":[],\"predicates\":{},\"constants\":{}},\"lexicon\":{\"sorts\":{},\"predicates\":{},\"constants\":{}},\"cases\":[{\"tokens\":[],\"formulas\":[[\"top\"]]}]}",
+    "returncode": 0,
+    "stdout": "{\"admissible\":true,\"covers\":true,\"results\":[{\"checked\":true,\"parsed\":null,\"rendered\":[\"this\",\"holds\",\"in\",\"all\",\"cases\",\".\"],\"roundtrip\":true}]}\n",
+    "stderr": ""
+  },
+  {
+    "name": "sort_formula_stdin",
+    "mode": "stdin",
+    "input": "{\"environment\":{\"sorts\":[\"thing\"],\"predicates\":{},\"constants\":{}},\"lexicon\":{\"sorts\":{\"thing\":{\"noun\":[\"thing\"],\"letter\":\"x\"}},\"predicates\":{},\"constants\":{}},\"cases\":[{\"tokens\":[],\"formulas\":[[\"forall\",\"thing\",[\"eq\",[\"var\",0],[\"var\",0]]]]}]}",
+    "returncode": 0,
+    "stdout": "{\"admissible\":true,\"covers\":true,\"results\":[{\"checked\":true,\"parsed\":null,\"rendered\":[\"for\",\"every\",\"thing\",\",\",\"that\",\"thing\",\"is\",\"the\",\"same\",\"as\",\"that\",\"thing\",\".\"],\"roundtrip\":true}]}\n",
+    "stderr": ""
+  },
+  {
+    "name": "malformed_stdin",
+    "mode": "stdin",
+    "input": "{\"environment\":{}}",
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "property not found: sorts\n"
+  }
+]
