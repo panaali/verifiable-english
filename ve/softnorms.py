@@ -290,7 +290,53 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None)
             names.add(decision['name'])
         if found != expected:
             raise ValueError('missing decision')
+        # Labels are request identities. The formula beside a label is Lean's
+        # derived value, but a relay may not invent another premise.
+        expected_labels = set(pair_labels)
+        for name, rule in rules.items():
+            if rule.get('mode', 'strict') != 'default':
+                continue
+            exception = rule.get('exception') or {}
+            for role in ('sufficient', 'necessary'):
+                expected_labels.update(
+                    f'soft:exception:{name}:{role}:{i}'
+                    for i in range(len(exception.get(role, ())))
+                )
+        background_labels = [entry['label'] for entry in row['background']
+                             if entry['generator'] == 'soft']
+        if (len(background_labels) != len(set(background_labels)) or
+                set(background_labels) != expected_labels):
+            raise ValueError('unbound, missing or duplicate soft background label')
+        derived = [entry['rule'] for entry in row['derived']]
+        if len(derived) != len(rules) or set(derived) != set(rules):
+            raise ValueError('unbound, missing or duplicate derived rule')
+        premises = [entry['label'] for entry in row['premises']]
+        if (len(premises) != len(set(premises)) or
+                any(label != f'layer:norms:{name}' for label, name in zip(premises, row['order'])) or
+                len(premises) != len(row['order'])):
+            raise ValueError('unbound layer premise')
+        order = row['order']
+        if len(order) != len(set(order)) or not set(order) <= acts:
+            raise ValueError('unbound layer order')
+        targets = [entry['target'] for entry in row['conflict_targets']]
+        allowed_targets = acts | {f'{name}->{decl["regulated"]["permission"]}'
+                                  for name, decl in predicates.items()
+                                  if type(decl) is dict and type(decl.get('regulated')) is dict
+                                  and decl['regulated'].get('role') == 'obligation'
+                                  and decl['regulated'].get('permission') in acts}
+        if len(targets) != len(set(targets)) or not set(targets) <= allowed_targets:
+            raise ValueError('unbound conflict target')
+        incompatible = [tuple(pair) for pair in row.get('incompatible_pairs', ())]
+        if (len(incompatible) != len(set(incompatible)) or
+                any(len(pair) != 2 or pair[0] == pair[1] or
+                    not set(pair) <= set(rules) for pair in incompatible)):
+            raise ValueError('unbound incompatible pair')
         if soft is not None:
+            ranks = set(soft.get('ranks', ()))
+            above = row['ranks_above']
+            if (set(above) != ranks or any(len(values) != len(set(values)) or
+                   not set(values) <= ranks for values in above.values())):
+                raise ValueError('unbound rank')
             conditional = row['conditional_on']
             if len(conditional) != len(set(conditional)) or not set(conditional) <= pair_labels:
                 raise ValueError('unbound or duplicate conditional label')

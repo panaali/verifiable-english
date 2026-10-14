@@ -194,3 +194,89 @@ def test_f12_decider_counts_are_bound_per_decider(monkeypatch, lean):
     monkeypatch.setattr(soft_route, '_run', lambda case: forged)
     with pytest.raises(CheckerUnavailable):
         soft_route.elaborate_soft_document(document)
+
+
+@pytest.mark.parametrize('mutation', [
+    pytest.param(lambda row: row['background'].append(
+        {'generator': 'soft', 'label': 'soft:exception:nobody:sufficient:7', 'ast': ['top']}),
+        id='F14 undeclared background label'),
+    pytest.param(lambda row: row['background'].append(copy.deepcopy(next(
+        entry for entry in row['background'] if entry['generator'] == 'soft'))),
+        id='duplicate background row'),
+    pytest.param(lambda row: row['background'].__setitem__(slice(None), [
+        entry for entry in row['background'] if entry['generator'] != 'soft']),
+        id='missing background row'),
+    pytest.param(lambda row: row['derived'].append(copy.deepcopy(row['derived'][0])),
+                 id='extra derived row'),
+    pytest.param(lambda row: row['derived'][0].__setitem__('rule', 'absent'),
+                 id='undeclared derived rule'),
+    pytest.param(lambda row: row['premises'][0].__setitem__('label', 'layer:norms:absent'),
+                 id='undeclared layer label'),
+    pytest.param(lambda row: row['ranks_above'].__setitem__('absent', []),
+                 id='undeclared rank'),
+    pytest.param(lambda row: row['ranks_above']['b'].append('absent'),
+                 id='undeclared outranking rank'),
+    pytest.param(lambda row: row['order'].append('absent'),
+                 id='undeclared layer order'),
+    pytest.param(lambda row: row['conflict_targets'].append(
+        {'target': 'absent', 'sorts': [], 'ast': ['top']}),
+        id='extra conflict target'),
+    pytest.param(lambda row: row['incompatible_pairs'].append(['h', 'absent']),
+                 id='unbound incompatible pair'),
+])
+def test_f14_each_soft_identity_field_is_bound(monkeypatch, genuine, mutation):
+    from ve import soft_route
+    document = _document(monkeypatch, copy.deepcopy(genuine))
+    row = copy.deepcopy(genuine)
+    mutation(row)
+    monkeypatch.setattr(soft_route, '_run', lambda case: row)
+    with pytest.raises(CheckerUnavailable):
+        soft_route.elaborate_soft_document(document)
+
+
+@pytest.mark.parametrize('field,value', [
+    ('conditional_on', ['soft:coherence:absent,nobody']),
+    ('conditional_on', ['rights:limitation:absent']),
+    ('targets', ['absent']),
+    ('targets', []),
+    ('targets', ['arrest_permitted', 'arrest_permitted']),
+])
+def test_f15_rights_conflict_identities_are_bound(monkeypatch, field, value):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    real = rights_route.decide_once
+
+    def forged(mode, case):
+        row = copy.deepcopy(real(mode, case))
+        if case['kind'] == 'rights-conflict':
+            row[field] = value
+        return row
+
+    monkeypatch.setattr(rights_route, 'decide_once', forged)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.report_rights(environment, GAMMA)
+
+
+@pytest.mark.parametrize('mutation', [
+    pytest.param(lambda row: row['limitations'][0].__setitem__(
+        'label', 'rights:limitation:absent:arrest_permitted:necessary:determined_by_law'),
+        id='undeclared limitation'),
+    pytest.param(lambda row: row['limitations'].append(copy.deepcopy(row['limitations'][0])),
+                 id='duplicate limitation'),
+    pytest.param(lambda row: row['rights_background'].clear(),
+                 id='missing rights background'),
+    pytest.param(lambda row: row.__setitem__('conditional_on', ['soft:coherence:absent,nobody']),
+                 id='undeclared coherence'),
+])
+def test_rights_elaboration_premise_identities_are_bound(monkeypatch, mutation):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    row = copy.deepcopy(rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate'))
+    mutation(row)
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
