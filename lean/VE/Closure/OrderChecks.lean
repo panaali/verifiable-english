@@ -10,9 +10,9 @@ private def edgeCap : Caps := ⟨16, 1⟩
 private def emptyCaps : Caps := ⟨0, 0⟩
 private def tooMany : Order String := ⟨List.range 17 |>.map toString, []⟩
 private def undeclared : Order String := ⟨names, [("a", "absent")]⟩
-private def result : Except String Unit → String
-  | .ok _ => "ok"
-  | .error s => s
+private def result : Except String Unit → Option String
+  | .ok _ => none
+  | .error s => some s
 
 #guard order.above "a" "c"
 #guard !order.above "c" "a"
@@ -20,13 +20,17 @@ private def result : Except String Unit → String
 #guard order.atLeast "a" "a"
 #guard !order.atLeast "d" "a"
 #guard order.atLeast "a" "c"
-#guard result (order.admit standardCaps) == "ok"
+#guard result (order.admit standardCaps) == none
+#guard result ((⟨List.range 16 |>.map toString, []⟩ : Order String).admit standardCaps) == none
 #guard result (tooMany.admit standardCaps) ==
-  "ResourceLimit: At most 16 grades"
+  some "ResourceLimit: At most 16 grades"
 #guard result (undeclared.admit standardCaps) ==
-  "UnknownSymbol: an order pair names an undeclared element"
-#guard result (order.admit edgeCap) == "ResourceLimit: At most 1 order pairs"
-#guard result (order.admit emptyCaps) == "ResourceLimit: At most 0 grades"
+  some "UnknownSymbol: an order pair names an undeclared element"
+#guard result (order.admit edgeCap) == some "ResourceLimit: At most 1 order pairs"
+#guard result (order.admit emptyCaps) == some "ResourceLimit: At most 0 grades"
+#guard result ((⟨names, List.replicate 64 ("a", "b")⟩ : Order String).admit standardCaps) == none
+#guard result ((⟨names, List.replicate 65 ("a", "b")⟩ : Order String).admit standardCaps) ==
+  some "ResourceLimit: At most 64 order pairs"
 
 private def pairs : List (String × String) := names.flatMap (fun a => names.map (a, ·))
 private def softAgrees : Bool := pairs.all fun p =>
