@@ -1,9 +1,9 @@
 # premise-scale: per-sort domain budget, ground-fact route, measured Rust limit
 
-**DRI signature needed: DELTA rows 1, 2, 4, 5, 6 and 8.** **The relay mutation gate fails with 26 failures,
-all pre-existing on main `8594f1d05`** (routes `service:graph`, `service:route`, `service:parse`, which this
-batch does not touch; `evidence/relay-gate-vs-main.txt`), so the pre-review relay check needs the DRI's
-decision or main's fix (follow-up 5). (UNKNOWN or unavailable becoming a Lean-checked
+**DRI signature needed: DELTA rows 1, 2, 4, 5, 6 and 8.** The pre-review relay failure on
+`service:graph` is fixed below. The all-route mutation run still has 11 pre-existing findings on
+`service:route` and `service:parse` (follow-up 5); none is in the graph route or this batch's
+`search-budget` route. (UNKNOWN or unavailable becoming a Lean-checked
 model, as DRI decisions QT2, ME1 and ME2 direct; a changed Rust limit; a new service mode and search
 options; CPU on documents that now get an answer). Rows 3 and 7 are signed by R3 and R6.
 
@@ -200,14 +200,35 @@ All 12 caught (`evidence/mutants.json`):
 3. The norm-defaults coverage search (`ve/norm_defaults.py`) times out at 5 s on the constitution under
    load on the base; HEAD's scaled limit covers it, since it is a model search.
 4. "Exactly N" in forms the count does not read (counting quantifiers, cardinalities) stays UNKNOWN.
-5. **Main's relay mutation gate fails on `service:graph`, `service:route` and `service:parse`** (30 at
-   `8594f1d05`, 26 after this branch's prune): accepted list mutants of `background`, `premises` and
-   `generators`, untyped `background` ASTs, and stale paths. Owner: main's relay (the lf-14d fixtures).
-   This batch leaves them alone: widening the allow-list would hide the two untyped fields.
+5. **Main's relay mutation gate fails on `service:route` and `service:parse` after this fix** (30
+   findings at `8594f1d05`, 26 on this branch before the graph repair, 11 now). The graph AST and label
+   are typed; its two remaining accepted whole-list mutations are listed at exact B0 paths. The route and
+   parse findings concern their existing response shapes and fixtures. Owner: those routes' relay contracts.
+
+## Pre-review relay repair (2026-10-14, `8808fb359`)
+
+- `ResponseShape/Schemas/Graph.lean` now types every regenerated background AST with the shared
+  `generated_formula` grammar, and restricts its label to `background:` plus a Lean-owned generator.
+  `response_schemas.py` regenerated `graph.json`; the graph encoder theorem and the full Lean build pass.
+- The B0 allowance lists only the exact `service:graph` whole-background list paths. Three graph
+  allowance paths for `supporting_edges` were stale and removed. The graph mutation run went from the
+  pre-review's 12 findings to zero: 4 fixtures, 786 mutants, 764 refused, 22 permitted semantic-content
+  mutations. The complete relay run found 11 findings, all on `service:route` and `service:parse`.
+- `lean_statements.py` refreshed `declarations.txt` after the Lean source changed; no theorem statement
+  changed. `lean/audit.py` passed (489 sources, 5,801 theorems), and `trust_map.py --check` reported zero
+  trusted-line growth. `regen_generated.py --check` passed all 23 entries.
+  `test_route_row_schemas.py`, `test_stage2_graph.py` and
+  `test_regen_generated.py`: 91 passed. The branch selector chose all 377 units due the earlier shared
+  assurance-manifest change; its foreground rerun was stopped after 74 passing files. The chain runs the
+  full release gate on the committed final HEAD.
+- This repair changes no VE verdict, diagnostic, limit, or displayed value. The graph response schema
+  rejects malformed or undeclared generator labels and malformed background formulas earlier as
+  `CheckerUnavailable`; the application's graph projection comparison already refused those values.
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. PASS for this batch's route (the relay gate's other 26 failures are main's, follow-up 5). Every field of the `search-budget` row is typed in `search-budget.json` (rendered from
+1. PASS for this batch's route and the graph repair (the all-route relay gate's other 11 findings are
+   follow-up 5). Every field of the `search-budget` row is typed in `search-budget.json` (rendered from
    `ResponseShape/Schemas/SearchBudget.lean`, encoder theorem `runCaseReported_fits`) and retyped,
    dropped, duplicated and reordered one and two faults at a time: `test_search_budget_answer.py`
    (`test_every_field_is_typed`, `test_one_fault_mutants_…`, `test_two_fault_mutants_…`); relay gate 957/957.
