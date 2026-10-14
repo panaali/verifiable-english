@@ -267,6 +267,10 @@ restored:
   `tests/test_gate_trust.py::test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts` retypes and
   removes each count in genuine gate records and tests zero reruns. M20 and M23 are killed by it. R13 applies
   only when the same-commit serial rerun passes every failed test.
+- **Checks:** both F8/F9 probes failed before the fix and pass after it; M1–M24 are killed. `lake build` passed
+  (888 jobs) and `lean/audit.py` passed (484 source files). The requested selected command expanded to 377/377
+  test units and was stopped to avoid a full suite run. Its first failure was the stale architecture row 9;
+  after correcting the row, that test and the focused gate/evidence tests passed (51 tests).
 
 ### Open after the fixes
 
