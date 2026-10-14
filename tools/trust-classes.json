@@ -4389,8 +4389,7 @@
         "VE.NormDefaults.Examples.u6",
         "VE.NormDefaults.Examples.uBetween",
         "VE.NormDefaults.Examples.uRows",
-        "VE.NormDefaults.Examples.yperm",
-        "VE.NormDefaults.Examples.softAdmissionWitness"
+        "VE.NormDefaults.Examples.yperm"
       ]
     },
     "VE/NormDefaults/Explain.lean": {
@@ -4628,7 +4627,8 @@
         "VE.NormDefaults.Run.runCaseReported",
         "VE.NormDefaults.Run.runOtherCase",
         "VE.NormDefaults.Admission.runAdmissionX",
-        "VE.NormDefaults.Admission.softCase"
+        "VE.NormDefaults.Admission.softCase",
+        "VE.NormDefaults.Run.softAdmissionWitness"
       ]
     },
     "VE/NormDefaults/Semantics.lean": {

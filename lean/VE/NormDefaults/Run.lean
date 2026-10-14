@@ -351,4 +351,18 @@ def runCaseReported (j : Json) : Json :=
         ("error", .str message)]
   else VE.Norms.Run.runCaseReported j
 
+section SoftAdmissionWitness
+
+/-! ## B3: the soft admission needs the complementary wire theorem -/
+
+private def softAdmissionWitness : Lean.Json :=
+  (Lean.Json.parse "{\"id\":\"a\",\"kind\":\"admission\",\"environment\":{\"language\":\"ve.core@0.2\",\"profiles\":[\"norm-defaults@0\",\"norms@0\",\"relational-fol@0\",\"soft-norms@0\"],\"spec_revision\":\"ve-v0.2-expand2-2026-09-25\",\"vocabulary\":{\"sorts\":{\"assistant\":{\"description\":\"assistant\"}},\"predicates\":{\"x_required\":{\"arguments\":[\"assistant\"],\"description\":\"obligation\",\"regulated\":{\"role\":\"obligation\",\"default\":\"deny\",\"act\":\"{0} do x\",\"permission\":\"x_permitted\"}},\"x_permitted\":{\"arguments\":[\"assistant\"],\"description\":\"permission\",\"regulated\":{\"role\":\"permission\",\"default\":\"deny\",\"act\":\"{0} do x\"}},\"y_permitted\":{\"arguments\":[\"assistant\"],\"description\":\"permission\",\"regulated\":{\"role\":\"permission\",\"default\":\"unspecified\",\"act\":\"{0} do y\"}},\"c\":{\"arguments\":[\"assistant\"],\"description\":\"c\"}},\"constants\":{}}},\"document\":{\"units\":[{\"id\":\"u0\",\"span\":[0,5],\"kind\":\"norm\",\"content\":{\"norm\":{\"name\":\"must-x\",\"predicate\":\"x_required\",\"sign\":true,\"guard\":[\"unary\",\"y_permitted\",[\"var\",0]],\"unless\":[],\"over\":[],\"mode\":\"default\",\"exception\":{\"decided_by\":\"unstated\",\"sufficient\":[[\"unary\",\"c\",[\"var\",0]]],\"necessary\":[],\"factors\":[]}}}},{\"id\":\"u1\",\"span\":[10,15],\"kind\":\"norm\",\"content\":{\"norm\":{\"name\":\"need-not-x\",\"predicate\":\"x_required\",\"sign\":false,\"guard\":[\"top\"],\"unless\":[],\"over\":[],\"mode\":\"default\",\"exception\":{\"decided_by\":\"unstated\",\"sufficient\":[],\"necessary\":[],\"factors\":[]}}}}],\"graph\":{\"root\":\"leaf\",\"nodes\":[{\"name\":\"leaf\",\"ast\":[\"forall\",\"assistant\",[\"not\",[\"and\",[\"and\",[\"and\",[\"or\",[\"bottom\"],[\"and\",[\"and\",[\"unary\",\"unsaid__y_permitted\",[\"var\",0]],[\"not\",[\"bottom\"]]],[\"not\",[\"bottom\"]]]],[\"not\",[\"or\",[\"bottom\"],[\"or\",[\"or\",[\"or\",[\"unary\",\"soft__excepted__must_x\",[\"var\",0]],[\"bottom\"]],[\"or\",[\"or\",[\"or\",[\"or\",[\"bottom\"],[\"bottom\"]],[\"or\",[\"bottom\"],[\"bottom\"]]],[\"bottom\"]],[\"bottom\"]]],[\"bottom\"]]]]],[\"not\",[\"bottom\"]]],[\"and\",[\"and\",[\"top\"],[\"not\",[\"or\",[\"bottom\"],[\"or\",[\"or\",[\"or\",[\"unary\",\"soft__excepted__need_not_x\",[\"var\",0]],[\"bottom\"]],[\"or\",[\"or\",[\"or\",[\"or\",[\"bottom\"],[\"bottom\"]],[\"or\",[\"bottom\"],[\"bottom\"]]],[\"bottom\"]],[\"bottom\"]]],[\"bottom\"]]]]],[\"not\",[\"bottom\"]]]]]],\"label\":\"soft:coherence:must-x,need-not-x\"}]}}}").toOption.getD .null
+
+#guard VE.NormDefaults.Wire.layeredRoute
+  (softAdmissionWitness.getObjValD "environment") == some "soft-norms@0"
+#guard (VE.NormDefaults.Run.runCase softAdmissionWitness).toOption.isSome
+#guard (VE.NormDefaults.Admission.softCase "a" "admission" softAdmissionWitness).toOption.getD none |>.isSome
+
+end SoftAdmissionWitness
+
 end VE.NormDefaults.Run

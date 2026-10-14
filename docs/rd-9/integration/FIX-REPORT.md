@@ -285,11 +285,13 @@ F14 and F15 were reproduced before the fix (`DID NOT RAISE CheckerUnavailable`) 
 The soft binder checks the complete set of request-derived soft background labels, derived rule rows, layer labels,
 rank identities and target identities. The rights binder checks limitation labels and the matching background; the
 authored line identities, generated declaration keys, narrowing right/rule pairs and targets, and distinction hits.
+Rule-reading bar rows are bound to their generated aimed predicates and their `over` rule names to elaborated lines.
 The rights conflict path binds its displayed targets and conditional labels to the same bound elaboration. The mutation
 matrix in `test_f14_each_soft_identity_field_is_bound`, `test_rights_elaboration_premise_identities_are_bound` and
 `test_f15_rights_conflict_identities_are_bound` covers undeclared identities, duplicate and missing rows, and empty
 targets. The follow-up reversed coherence label now fails binding; its former two-order allowance was seeded back,
-failed the F14 mutation, and was restored. A seeded Python mutant that accepted extra soft labels failed the F14 regression and was restored. A seeded
+failed the F14 mutation, and was restored. A seeded Python mutant that accepted extra soft labels failed the F14 regression and was restored. A second mutant that omitted the rights bar `over` binding failed
+`test_rights_bar_nodes_are_bound_to_generated_aimed_predicates[undeclared bar over rule]` and was restored. A seeded
 Lean mutant that negated the B3 soft-admission `#guard` failed `lake build VE.NormDefaults.Examples` at line 186 and
 was restored.
 
@@ -299,24 +301,25 @@ The DRI's Task B conditions stand as follows:
 | --- | --- |
 | B1 availability | Binding condition met by F11 to F15 regressions. The full gate and SC-9 external source check remain outside this requested test run. `soft_chain`/`chainOf` consolidation is scheduled for the next readings relay batch before merge; its acceptance test will compare all three chains' field presence and route against Lean. Do not mark B1 signed before those conditions. |
 | B2 certificate kind | Soft source, not rights source; `test_missing_certificate_premises_has_the_norms_branch_text` pins the norms decoder's byte-identical refusal. Follow-up: AR-13 typed `InvalidInput` with path in Lean. |
-| B3 admission theorem | `Examples.lean` has a computed soft-source `#guard` whose `runCase` and `softCase` both succeed on a branch with `layeredRoute = soft-norms@0`. `normDefaults_wire_admissionX` remains a proved theorem. `python3 tools/lean_statements.py --diff` against merge base c9b8cba6 reports exactly one changed statement, `VE.NormDefaults.Run.normDefaults_wire_admission` (107 added and five removed declarations are separate). `mem_rows` retains its original statement via a generic helper. |
+| B3 admission theorem | `Run.lean` has a computed soft-source `#guard` whose `runCase` and `softCase` both succeed on a branch with `layeredRoute = soft-norms@0`. `normDefaults_wire_admissionX` remains a proved theorem. `python3 tools/lean_statements.py --diff` against merge base c9b8cba6 reports exactly one changed statement, `VE.NormDefaults.Run.normDefaults_wire_admission` (107 added and five removed declarations are separate). `mem_rows` retains its original statement via a generic helper. |
 | B4 `choiceLayeredG hN` | Bounded independent statement recheck remains pending; this task forbids model calls. Do not sign before that review. |
 | B5 `decided_units` | Signed by the item-specific DRI decision. `test_completion_decided_units_come_from_leans_folds` and the existing mutation tests bind the added field. |
 | B6 gap selection | **Not claimed: the gap selection is not proved sound.** `coneEval_sound` and `coneEval_definite` are not in the audit. The new `test_unlisted_fnd_gap_flip_keeps_leans_witness_value` and `test_unlisted_ce4_gap_flips_keep_leans_witness_value` flip admissible unlisted completion atoms and compare Lean's displayed witness value for F-ND1, F-ND2, C2 and C4. F-ND1/F-ND2 goldens already retain each removed sentence. |
 | B7 soft coherence wording | Keep unavailable. `test_a_verdict_on_a_soft_label_is_unavailable_until_its_sentence_exists` pins it. Wording follow-up: add one Lean-owned `VE.Words` sentence, W7 derivation gate and external comprehension check. |
-| B8 trust | The regenerated inventory measures K +0, S +171, V +360, trusted +531 against the signed baseline, with unclassified 0. The per-file figures and ties pass below are saved here; a signed baseline allowance remains pending the bounded B4 review and final HEAD. No R6 claim. |
+| B8 trust | The regenerated inventory measures K +0, S +171, V +363, trusted +534 against the signed baseline, with unclassified 0. The per-file figures and ties pass below are saved here; a signed baseline allowance remains pending the bounded B4 review and final HEAD. No R6 claim. |
 | B9 CPU | Final HEAD document and CE4 measurements remain due from the merge train's gate, which this task expressly forbids. No R4 claim without them. |
 
 The B8 trusted-line changes by file (including a negative move) are: `VE/Readings/Run.lean` +145,
 `VE/Readings/VerdictsWire.lean` +69, `VE/NormDefaults/LayeredAdmission.lean` +54,
-`VE/Readings/Verdicts.lean` +52, `VE/NormDefaults/Run.lean` +51, `VE/Readings/SoftWire.lean` +44,
+`VE/NormDefaults/Run.lean` +54, `VE/Readings/Verdicts.lean` +52, `VE/Readings/SoftWire.lean` +44,
 `ResponseShape/Schemas/ReadingsRoute.lean` +30, `VE/Readings/ComponentsWire.lean` -29,
 `VE/Readings/SoftVerdicts.lean` +24, `VE/Readings/SoftSeparate.lean` +20,
 `VE/NormDefaults/Admission.lean` +17, `VE/NormDefaults/LayeredEntail.lean` +15,
 `ResponseShape/Schemas/NormDefaults.lean` +14, `VE/Readings/UnspecifiedWire.lean` +12,
 `VE/Readings/SoftDefaults.lean` +10, `ResponseShape/Schemas/SoftNorms.lean` +2, and
 `VE/NormDefaults/Layered.lean` +1. The `tools/trust_map.py --seed` pass classified the new
-soft admission witness as T; it adds no trusted lines.
+soft admission witness as T. Placing that witness in `Run.lean` instead of `Examples.lean` adds three
+G[V] boundary lines in the trust scanner, which are included in the +534 figure.
 
 Ties pass: `keyedDecisions` remains tied to `keyedDecisions_names`. The table still has untied G[V]
 declarations adjacent to proved wire or encoder theorems, including `NormDefaults.Admission.softCase`,
