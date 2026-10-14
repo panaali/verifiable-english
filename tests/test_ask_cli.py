@@ -202,15 +202,26 @@ def test_q2_f13_malformed_recorded_evidence_is_a_json_refusal(ident, evidence, t
     assert "result" not in result
 
 
-@pytest.mark.parametrize("depth", [140, 1100])
+@pytest.mark.parametrize("depth", [300, 1100])
 def test_q2_f13_deep_recorded_evidence_is_a_json_refusal(depth, tmp_path):
     entry = AF.load("G1")
     path = tmp_path / "evidence.json"
     path.write_text('{"junk":' + "[" * depth + "0" + "]" * depth + "}")
     done = cli(ROOT / entry["path"], entry["question"], "--evidence", path, "--json")
+    assert done.returncode == 4, (done.stdout, done.stderr)
+    result = json.loads(done.stdout)
+    assert result["error"]["class"] == "ResourceLimit" and "nesting" in result["error"]["message"]
+    assert result["proof"] == "not_checked" and result["answer"] == "no_answer"
+
+
+def test_q2_f13_duplicate_evidence_keys_are_a_json_refusal(tmp_path):
+    entry = AF.load("G1")
+    path = tmp_path / "evidence.json"
+    path.write_text('{"certificate":{},"certificate":{}}')
+    done = cli(ROOT / entry["path"], entry["question"], "--evidence", path, "--json")
     assert done.returncode == 2, (done.stdout, done.stderr)
     result = json.loads(done.stdout)
-    assert result["error"]["class"] == "VEError" and "deeply nested" in result["error"]["message"]
+    assert result["error"]["class"] == "DuplicateDeclaration"
     assert result["proof"] == "not_checked" and result["answer"] == "no_answer"
 
 
