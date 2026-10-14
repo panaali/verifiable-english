@@ -1,0 +1,705 @@
+{
+ "main": "49de179e7ba73504e302739d3aab48e45704457d",
+ "head": "d951423eae8e014e14500777b2ab4fc54679ccbd",
+ "in_flight_days": 7,
+ "files": [
+  "docs/arch/AR-9/DELTA.md",
+  "docs/arch/AR-9/REPORT.md",
+  "docs/arch/AR-9/check_evidence.py",
+  "docs/arch/AR-9/evidence/gate.json",
+  "docs/arch/AR-9/evidence/mutants.json",
+  "docs/arch/AR-9/evidence/scope.json",
+  "docs/arch/AR-9/evidence/selected.json",
+  "docs/arch/AR-9/evidence/split.json",
+  "docs/arch/AR-9/measure.py",
+  "docs/arch/AR-9/report.py",
+  "docs/arch/AR-9/seed_faults.py",
+  "tests/conftest.py",
+  "tests/test_assist_split.py",
+  "ve/assist/recovery.py",
+  "ve/assist/recovery_commands.py",
+  "ve/assist/recovery_journal.py",
+  "ve/assist/recovery_replay.py",
+  "ve/assist/session.py",
+  "ve/assist/session_proposals.py",
+  "ve/assist/session_state.py",
+  "ve/assist/session_views.py"
+ ],
+ "generated": [
+  "tools/gate-collection.json"
+ ],
+ "branches": [
+  {
+   "branch": "batch/20261005T0233Z",
+   "tip": "0d2c02a36b11e79dbcc2f204a8331a133216dfa3",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "bench/lean-rust-python",
+   "tip": "7f12a5d2714e4b9595f52e4f801d1de8338137ee",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "bench/profile-english",
+   "tip": "c0174a3e20518cc21e815e444ed38fa0342f92db",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "claude/open-judges",
+   "tip": "fcd378c8dc8f8fd330bed26ed551132c754c10f5",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "codex/e0-rater",
+   "tip": "46be9e1bafc85e37456cbf56e9dc92b6c8178666",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "codex/obf",
+   "tip": "bc5883ab8c5133b197907d0e9e772a585fb38307",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "codex/p5",
+   "tip": "afa11f4fceee246d5948f5d227699b3f34e45cc5",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "codex/v4",
+   "tip": "955fc998d0bf3397043bf2f8830cd7108e820a93",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "critical-review-2026-09",
+   "tip": "9fe83bcc6e34a1e99ae84c3b65b262356a3d653f",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "design/arch-review",
+   "tip": "6ae55ebb87f202d0faf57d4d74815ec9d781f5d0",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "design/attitudes",
+   "tip": "3a5e16f53773b5a5fd47d22ca755f6f2af3e73a4",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "design/consolidate",
+   "tip": "05b906d88a2dcd9ef2e31b4cf13adfaaa5804cf4",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "design/events-time-causation",
+   "tip": "892fe1fcf2f00cd14567e750dc55d1aca8b29b1a",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "design/layers2",
+   "tip": "5a1918de7a4cb8206c4a098936d98a53bb32bb73",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "design/lean-first",
+   "tip": "917fdd25934f8b213a72d037023923481baaa46a",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "design/mig3",
+   "tip": "a6c6b78b738ece5a10dd3d4c9e46b38b372c557d",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "design/policy-audit",
+   "tip": "0cf80ca91e955eab3d8e43915da236a71cca0b8c",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "design/rd-9",
+   "tip": "27e84267c4b9365be142167fed053dd799110662",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "design/risk",
+   "tip": "9668057f079d87c0f0b334f506cf8412c7f33327",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "design/weighing",
+   "tip": "1f307c3d6efa91f4b69de29969e2b628a0d1fb9b",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "design/wire-s6",
+   "tip": "5a14a835329b64cc5802b1c02c9e7f665bbe7876",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "design/wire-s7",
+   "tip": "4248ee84d6d2831d3718034668249500fbdc1389",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "design/wire-s8",
+   "tip": "94ce09c98621217908926887abc821e1f4f2f94a",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "docs/self-reference",
+   "tip": "da8d8e2396cbf00440f68c83fbbeee5298669202",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "docs/trust-map",
+   "tip": "a18a86e609cea909416f6e742bdcfdd8909aa010",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "expand/webapp",
+   "tip": "4d2cac107a1b048ead8a9740938b50d5bfb70833",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "experiment/readability-sonnet",
+   "tip": "ac91e1e48aeb7666d4a13c4b019201d46a0d0aff",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "fix/main-relay",
+   "tip": "d9bd4082ff7d8a77a9fbf20132440331e5162a67",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "infra/arch-20261010-1",
+   "tip": "0ae408bb135f067f546db46e5037a040669b2186",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "infra/arch-20261010-2",
+   "tip": "e57cb510a937fc68343ac1df9f08ea717bd36f26",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "infra/arch-AR-1",
+   "tip": "0d71c3b59d5d84a9e5939b0853153a5534c352fb",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "infra/arch-AR-3",
+   "tip": "8912da31c9e35c08e9b0f9a1458b3c2d93ed36a9",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "infra/arch-AR-4",
+   "tip": "13daca12b1a2f778f3936b401deadd36da8a3f05",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "infra/eff-20261011-1",
+   "tip": "7d8ad9d749fda9f7778c82e1898a76ac5b965f48",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "infra/oom-rootcause",
+   "tip": "949a69bffee658a21f34f3bc52d241c9d4d4c0f9",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "infra/ts-B2",
+   "tip": "0c7ad126a45bdf8a09345e34594a122724052251",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "lean-first/b14a",
+   "tip": "33b182900a8aa92d4fc7a0fc19ec0c776bf8a262",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "lean-first/b14b",
+   "tip": "f06911d83cd345b6f2f702bdcdaa518369e0c249",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "lean-first/b14b-evidence",
+   "tip": "2a60c6eaa3195c9d7777adcb6d89adf1f6b300c8",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "lean-first/b14c",
+   "tip": "0952cc6f96d754194aa8c6db9ee7bdfb9e3ccac3",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "lean-first/b14d",
+   "tip": "d8ad41796a656b2107f5d457e4c87d634fe43e5c",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "lean-first/b16e",
+   "tip": "9801fe700986b3853f1cbbabcffc5fede97d7fc8",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "mig3/lean",
+   "tip": "d41b5602aa45906a3f4c5db2a365ad06bb9e5918",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "mig3/py",
+   "tip": "d0aff14944b20bcc390518571c6356c4a0b2786b",
+   "in_flight": false,
+   "overlap": [
+    "tests/conftest.py"
+   ]
+  },
+  {
+   "branch": "northstar/portfolio",
+   "tip": "0b748585b65c7729d1818d9cfb1bb0525453402a",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "opus/assist-eval",
+   "tip": "2bcfcc35ec59bf0db44484d6fe991d7aac3578af",
+   "in_flight": false,
+   "overlap": [
+    "tests/conftest.py"
+   ]
+  },
+  {
+   "branch": "opus/dgate",
+   "tip": "551a999b59911051cf52f5ce675d6c55c523d349",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "opus/pushback",
+   "tip": "4eb03af1130a8bda40aa2277fc2d5aa4d920f8e4",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "opus/t1d",
+   "tip": "071e1b3cf0f01e9bd0a4c4766104d31ab5b3289d",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "opus/t1e",
+   "tip": "909fd588895cab6fb63ba4b9b4d6457595e3cc95",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "origin",
+   "tip": "9fe83bcc6e34a1e99ae84c3b65b262356a3d653f",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260926T2321Z",
+   "tip": "ebbb2a39e2cb2121c170f91957caef882f1fd985",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260927T0407Z",
+   "tip": "03931bd83502552256b270b8f737cb9cd091248e",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260927T0600Z",
+   "tip": "606b94bd05a016b8453e8c4ef72c8e5c46dc0fb8",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260927T1800Z",
+   "tip": "ba51f24a731037c1cef66770178e5c27c1b9c49b",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260928T0600Z",
+   "tip": "24d788ec7ed3935c882cfd3c58e86507700eccf6",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260928T1800Z",
+   "tip": "1004ca50b85622760f638df675bebcd885dd4141",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260929T0600Z",
+   "tip": "82b3f23e8bbc416069b9f5e244fb014be81f68b0",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260929T1800Z",
+   "tip": "80505a56991c0d5c347f5f3f4fec9258b7a4829c",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260930T0600Z",
+   "tip": "60e8b1c7003b97a3e26002d6663cc10d90c79045",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20260930T1800Z",
+   "tip": "8236b267484855d1cf3f64f01b72f54b9300dc1a",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261001T1800Z",
+   "tip": "865e8c0cf2f4991cc8dc4c61a97e6f945fec9846",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261002T0620Z",
+   "tip": "6cb28e9cf397eb2a7ce3239b8024aa39ac67d0ed",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261002T1800Z",
+   "tip": "e23dfe2f5a27f0a0dc4d040892e2d32a3caa3e5c",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261003T0600Z",
+   "tip": "08bfb3825ac2d0128e2af1e33c7de1694c06e95e",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261004T0600Z",
+   "tip": "23ae67604312888e36714ae51e03f5baf9962133",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261004T1800Z",
+   "tip": "d05f58099aaa925b4817ccc5d32ba5fe11c6dac3",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261005T0600Z",
+   "tip": "3fae7ad6e19c77c2efdc2c7a859bfaf438ab9fca",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261005T1800Z",
+   "tip": "1e517632ddae41835891c4a91062877227016ec0",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261006T1800Z",
+   "tip": "651cf3f66fdf7ea96a66460257c72483ec03b0a5",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261007T1800Z",
+   "tip": "703f4f9340710bb592493de8b30886ecb0eac3b6",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261008T0600Z",
+   "tip": "28e344daa1a4bf8acc6f0a1a6e699691ab4f440f",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261008T1800Z",
+   "tip": "c4d1a0dac406fa4d5da3ef8a2dad6a7dc6dcff8c",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261009T0600Z",
+   "tip": "7ffc5ceabc4a944bff0752cfe053ea917b045613",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261009T1800Z",
+   "tip": "25d5e95ccf247526772056a57d0bd14b8603bbd3",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261010T0600Z",
+   "tip": "0bf2d065bf6e9dbfb0448bb3eb5223cf6f4084f4",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261010T1800Z",
+   "tip": "76922d6c33f9a1338a376e8976172c3d9385197d",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261011T1800Z",
+   "tip": "21d4b8f3132c06569acfeda01714b73a4d1b850f",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261012T0600Z",
+   "tip": "ac90d46d35aff126f06ef83abec3b4e929286638",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/cc-20261012T1800Z",
+   "tip": "ecfd1ace71eaf87b1518e163aa5041cfbad064e0",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20260927T0646Z",
+   "tip": "0bcdf66d3092d4e053d3bb377eef36a170da23d9",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20260927T1800Z",
+   "tip": "f34e99297ce6d8211a71ed8957a265a98b6e3934",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20260928T1800Z",
+   "tip": "f5a786de22752e34e42df49eb7532fab15d73019",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20260929T0600Z",
+   "tip": "2f16fc72794040328d97906279dd6838f6c8ef03",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20260929T1800Z",
+   "tip": "4f97c1864d54327208572e231f3d98d4f42c71bf",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20260930T0600Z",
+   "tip": "79f36d7f002f476dc020ac0023a8b2469ac6afb3",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20260930T1800Z",
+   "tip": "1be4c6583b76618bcf66ec6808b93e3f2e97d330",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261001T1800Z",
+   "tip": "22b6fbd4a4994f3a277e82b0f93eb03afeadf15c",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261002T0600Z",
+   "tip": "a43674a228f30b4b68a93e5e771d09f5a8477727",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261002T1800Z",
+   "tip": "b0a67cc15ce79f5fb820d6546722fdf1bd60c00e",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261003T0600Z",
+   "tip": "dc6da4496494db342822dba6be70153ee38ae58f",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261004T0600Z",
+   "tip": "7f91d9ef7fe4a8e18b7ec2942a4a7dbbb6c6c58a",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261004T1800Z",
+   "tip": "b385c0fc8c86e36e55c7f83d8f08404c669773e8",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261005T0600Z",
+   "tip": "67e3b71ee0d38d91886e37288f93d427dbc56386",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261005T1800Z",
+   "tip": "e3ced631c7c51edfcd36f2fe16482eb3a3cf579b",
+   "in_flight": false,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261006T1800Z",
+   "tip": "bd6c7ab2d984a165180416a55eb8ec0ef1704c7c",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261007T1800Z",
+   "tip": "858b45f81058792e6988788b76fa0e70a228662c",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261008T0600Z",
+   "tip": "c4393bb43d7c4a0d074bd222cda7c04dcdbe01e1",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261008T1800Z",
+   "tip": "946c565373f1ea45d17d9ee4dccfdac377cd64b8",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261009T0600Z",
+   "tip": "54f9f850dbcc8f20682a8eb1195b3db0924d5a7c",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261009T1800Z",
+   "tip": "6fd89fec4468d8e1341a5dfefa639207a167a59a",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261010T0600Z",
+   "tip": "8a65f9bfa4a2d2a175dc38e4ad4df8cc8c51da69",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261010T1800Z",
+   "tip": "c9d8717f4f79a5fc2bdbe7a363a8954ed6ea811d",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261012T0600Z",
+   "tip": "f15d938958b8a857f861fa5a829a14902e129021",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "pilot/udhr-20261012T1800Z",
+   "tip": "b04b68b019e99b6c1ecb83f449381b270cea39dc",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "question-answering/q2",
+   "tip": "79d0662333f4d16cd6fe0680761e9ff50eb65f28",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "rd-9/integrate",
+   "tip": "1c1cce1e440dd0672d99f7e2996fe14bfec90c20",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "rd-9/lean",
+   "tip": "192892287fc6acb820c279c1e01410f874b8641c",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "rd-9/py",
+   "tip": "ab570458e7e5fa7c0b52059dd50e41e2e78a85d4",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "readings-defaults/rd5",
+   "tip": "447045e82a8589b7f6706f4cf0cfa4f8afa2f4eb",
+   "in_flight": true,
+   "overlap": []
+  },
+  {
+   "branch": "worktree-agent-a56cfa97a06c6398b",
+   "tip": "224913fde1da1c26e39b61fff1ad30cd5c329794",
+   "in_flight": true,
+   "overlap": []
+  }
+ ],
+ "gate": "eb433e5b4d6f5350a59424fb6e49b96e1cae8ce6",
+ "changed_since_gate": []
+}

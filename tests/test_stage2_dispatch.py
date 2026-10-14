@@ -68,7 +68,8 @@ def test_shadow_classifies_nested_trace_and_composition(monkeypatch, tmp_path):
               "composition": {"supporting_edge_ids": ["edge-a"]}}
     lean = {"explanation": {"children": [{"kind": "bottom", "value": True}]},
             "composition": {"supporting_edge_ids": ["edge-b"]}}
-    assert execute("graph", {}, lambda: python, lean=lambda: lean) is python
+    # `graph` is Lean's alone since lean-first batch 13b; the shadow classification is the operation's own.
+    assert execute("evaluate", {}, lambda: python, lean=lambda: lean) is python
     assert json.loads(log.read_text())["class"] == ["composition", "explanation"]
 
 

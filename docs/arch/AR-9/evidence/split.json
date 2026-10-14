@@ -1,0 +1,1433 @@
+{
+ "base": "5479466f9faada4cb500bb52bca2436f03662e54",
+ "definitions": [
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RECOVERY_VERSION"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "MAX_REPLIES"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "TASK_SECONDS"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "MAX_PROPOSALS"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "PROPOSAL_SECONDS"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "STATES"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_digest"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "DocumentAdapter"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "GlossaryAdapter"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "ProposerAdapter"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "nearest_wordings"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "Unit"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_Observations"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_InvalidLedger"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_canonical"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "LEDGER_KEYS"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "DIVERGED"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery.py",
+   "head_owner": "RecoveryService",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.__init__"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._state"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._seal"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._resume"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._load_sealed"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_replay.py",
+   "head_owner": "_Replay",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._derived"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery.py",
+   "head_owner": "RecoveryService",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._command"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery.py",
+   "head_owner": "RecoveryService",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._command_uncached"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery.py",
+   "head_owner": "RecoveryService",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._legacy_command"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._restore"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._now"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery.py",
+   "head_owner": "RecoveryService",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._budget"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._event"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._snapshot"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._expect"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery.py",
+   "head_owner": "RecoveryService",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._replay"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery.py",
+   "head_owner": "RecoveryService",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._replay_uncached"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery.py",
+   "head_owner": "RecoveryService",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._replay_inner"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_replay.py",
+   "head_owner": "_Replay",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.from_ledger"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_journal.py",
+   "head_owner": "_Journal",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.to_ledger"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_replay.py",
+   "head_owner": "_Replay",
+   "identical": false,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.verify_ledger"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._invalidate"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.add"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._add"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.word_prompt"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.undo"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": false,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._undo"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_replay.py",
+   "head_owner": "_Replay",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._approval_still_valid"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.edit"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._edit"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.update_versions"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._update_versions"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.start"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._start"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.classify"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._classify"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.continue_catalogue"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._continue_catalogue"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.reply"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._reply"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery.py",
+   "head_owner": "RecoveryService",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.request_proposer"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._request_proposer"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._proposer_result"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.cancel"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._cancel"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.unresolved"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._unresolved"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.set_readings"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._set_readings"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.resolve_pending"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": false,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._resolve_pending"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.record_narrowing"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._record_narrowing"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_replay.py",
+   "head_owner": "_Replay",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._catalogue_complete"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": false,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.approve"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": false,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._approve"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_replay.py",
+   "head_owner": "_Replay",
+   "identical": false,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._approval"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_replay.py",
+   "head_owner": "_Replay",
+   "identical": false,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.approval_valid"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_replay.py",
+   "head_owner": "_Replay",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService._approval_valid"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.add_unit"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.add_reading"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.narrow"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": "_Commands",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "RecoveryService.alias_prompt"
+  },
+  {
+   "base_file": "ve/assist/recovery.py",
+   "head_file": "ve/assist/recovery_commands.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "COMMANDS"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "SESSION_FORMAT"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "TOOL_VERSION"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "ORIGINS"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "DEFAULT_OPTIONS"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistError"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "LedgerReplayError"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_now"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_sha"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "config_digest"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_ident"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_names"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_predicates_of"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_symbols_of"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_conjuncts"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "_constants_of"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": null,
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "Node"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.SECRET_NEEDLES"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.__init__"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.create"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.session_id"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._canonical"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._parse"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.paraphrase_formula"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._sentence_view"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.node_view"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._reject_vacuous"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._premise_key"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._canonical_premises"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._ordered_parents"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._decide"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._lean_refutes"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._lean_replays"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._validity"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._offered"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._require_frozen"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._anchors"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._descendants"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._invalidate"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._budget"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.ACTIONS"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.apply"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_freeze_target"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_add_node"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_accept"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_rewrite"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_remove_node"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_declare"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._invariant"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._check"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.describe_model"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_check_step"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._suggest_premises"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_waive"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_show"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._target_view"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_paraphrase"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_sentences"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.vocabulary"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._resolve"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_compare"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_propose"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_proposals.py",
+   "head_owner": "_Proposals",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_record_usage"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._support"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._anchor_state"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._is_anchored_parent"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.target_graph"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session.py",
+   "head_owner": "AssistSession",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._entails"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_status"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._witnesses"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._anchored_entailment"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._derivation"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._consistency_failures"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._renamed_conclusions"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.usage"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_views.py",
+   "head_owner": "_Views",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._do_export"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": "_Ledger",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.log_rejection"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": "_Ledger",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.to_ledger"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": "_Ledger",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.from_ledger"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": "_Ledger",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.REJECTION_KEYS"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": "_Ledger",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession._replay_rejection"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": "_Ledger",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.recorded_model_call"
+  },
+  {
+   "base_file": "ve/assist/session.py",
+   "head_file": "ve/assist/session_state.py",
+   "head_owner": "_Ledger",
+   "identical": true,
+   "identical_up_to_seams": true,
+   "name": "AssistSession.replaying"
+  }
+ ],
+ "dirty": false,
+ "files": {
+  "base": {
+   "ve/assist/__init__.py": {
+    "function_imports": 0,
+    "lines": 17
+   },
+   "ve/assist/ambiguity_patterns.py": {
+    "function_imports": 0,
+    "lines": 353
+   },
+   "ve/assist/api.py": {
+    "function_imports": 0,
+    "lines": 128
+   },
+   "ve/assist/cli.py": {
+    "function_imports": 1,
+    "lines": 346
+   },
+   "ve/assist/ground.py": {
+    "function_imports": 0,
+    "lines": 113
+   },
+   "ve/assist/premises.py": {
+    "function_imports": 0,
+    "lines": 47
+   },
+   "ve/assist/proposer.py": {
+    "function_imports": 0,
+    "lines": 331
+   },
+   "ve/assist/recovery.py": {
+    "function_imports": 10,
+    "lines": 1359
+   },
+   "ve/assist/session.py": {
+    "function_imports": 14,
+    "lines": 1338
+   },
+   "ve/assist/sources.py": {
+    "function_imports": 0,
+    "lines": 174
+   },
+   "ve/assist/verify.py": {
+    "function_imports": 0,
+    "lines": 218
+   }
+  },
+  "head": {
+   "ve/assist/__init__.py": {
+    "function_imports": 0,
+    "lines": 17
+   },
+   "ve/assist/ambiguity_patterns.py": {
+    "function_imports": 0,
+    "lines": 353
+   },
+   "ve/assist/api.py": {
+    "function_imports": 0,
+    "lines": 128
+   },
+   "ve/assist/cli.py": {
+    "function_imports": 1,
+    "lines": 346
+   },
+   "ve/assist/ground.py": {
+    "function_imports": 0,
+    "lines": 113
+   },
+   "ve/assist/premises.py": {
+    "function_imports": 0,
+    "lines": 47
+   },
+   "ve/assist/proposer.py": {
+    "function_imports": 0,
+    "lines": 331
+   },
+   "ve/assist/recovery.py": {
+    "function_imports": 0,
+    "lines": 348
+   },
+   "ve/assist/recovery_commands.py": {
+    "function_imports": 6,
+    "lines": 661
+   },
+   "ve/assist/recovery_journal.py": {
+    "function_imports": 0,
+    "lines": 194
+   },
+   "ve/assist/recovery_replay.py": {
+    "function_imports": 4,
+    "lines": 245
+   },
+   "ve/assist/session.py": {
+    "function_imports": 8,
+    "lines": 436
+   },
+   "ve/assist/session_proposals.py": {
+    "function_imports": 5,
+    "lines": 281
+   },
+   "ve/assist/session_state.py": {
+    "function_imports": 0,
+    "lines": 234
+   },
+   "ve/assist/session_views.py": {
+    "function_imports": 1,
+    "lines": 441
+   },
+   "ve/assist/sources.py": {
+    "function_imports": 0,
+    "lines": 174
+   },
+   "ve/assist/verify.py": {
+    "function_imports": 0,
+    "lines": 218
+   }
+  }
+ },
+ "head": "e0cbab248448da9a0d01b857d2a5f1a49db63187",
+ "missing_names": {
+  "ve.assist.recovery": [],
+  "ve.assist.session": []
+ }
+}

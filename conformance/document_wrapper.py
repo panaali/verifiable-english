@@ -11,10 +11,10 @@ and the body. `python_answer` and `lean_answers` give each implementation's answ
   Python after the Lean document answer, so the raw Lean mode is compared before that enrichment;
 * `fail-closed`: Lean answers `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or Python
   does (its own checker could not decide);
-* `environment`, `formula`, `admission`: both reject, and Python's rejection is another decoder's (`owner_of`):
+* `environment`, `formula`, `admission`, `readings`: both reject, and Python's rejection is another decoder's (`owner_of`):
   the text its `Environment` gives the embedded environment by itself (the envelope decoder, batch 12), or one
-  raised inside `formula_from_data` (the formula decoder) or `admit_document` (W2 admission), whose texts are
-  batch 13's (docs/LEAN-FIRST-PLAN.md 2.1; conformance/DIFFFUZZ.md DF-3 and DF-9). Only the outcome is compared;
+  raised inside `formula_from_data` (the formula decoder), `admit_document` (W2 admission), or
+  `validate_reading_sets` (the readings decoder on the original document path). Only the outcome is compared;
 * `differ`: anything else, a finding.
 
 `seeds()` is the seed corpus: every `ve-document@1` text of the repository and generated documents that reach
@@ -67,7 +67,8 @@ def wrapper_coverage(coverage, doc):
     """The coverage fields the Lean document mode owns. Python adds norm-defaults gap evidence and
     content-bearing readings findings after that answer; the public result retains both."""
     defaults = doc.get("norm_defaults") is not None
-    readings = (doc.get("readings_s1") or {}).get("content_bearing") is True
+    from ve.document import _content_bearing
+    readings = _content_bearing(doc)
     if not defaults and not readings:
         return coverage
     base = deepcopy(coverage)
@@ -149,8 +150,10 @@ def environment_error(text: str):
 
 # The decoders whose texts another batch owns (docs/LEAN-FIRST-PLAN.md 2.1, conformance/DIFFFUZZ.md): Python's
 # function that raised, by the owner's name. `formula_from_data` is the formula decoder (DF-9, batch 13: the
-# `check` mode's wording becomes the spec), `admit_document` the W2 admission route (DF-9, batch 13).
-OWNERS = {"admit_document": "admission", "formula_from_data": "formula"}
+# `check` mode's wording becomes the spec), `admit_document` the W2 admission route (DF-9, batch 13), and
+# `validate_reading_sets` the original readings decoder for the RD-5 pilot's Python document path.
+OWNERS = {"admit_document": "admission", "formula_from_data": "formula",
+          "validate_reading_sets": "readings"}
 OWNED_ELSEWHERE = ("environment", *OWNERS.values())
 
 

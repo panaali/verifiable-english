@@ -13,10 +13,12 @@ to 64 levels. Arbitrary JSON (echoed ids, `const`) is compared without recursion
 from __future__ import annotations
 
 from decimal import Decimal
+from collections.abc import Mapping
 import json
 from pathlib import Path
 import re
 import reprlib
+import threading
 
 DIRECTORY = Path(__file__).resolve().parent / "lean_service_schema"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
@@ -114,30 +116,61 @@ def _fail(message: str):
     raise Invalid(message)
 
 
+_FILE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*\.json")
+
+
 class Compiler:
-    """Loads every schema file and compiles schemas on demand, sharing `$ref` targets."""
+    """Compiles schemas on demand, sharing `$ref` targets. A schema file is read when a
+    `$ref` first names it, so checking one mode reads only the files that mode reaches.
+
+    Compiling publishes a target's cell before filling it (a grammar may refer to itself),
+    so `ref` and `compile` hold one re-entrant lock: another thread never sees an unfilled
+    cell, and a compile that fails leaves no cell or counter behind."""
 
     def __init__(self, directory: Path = DIRECTORY):
-        self.documents = {path.name: json.loads(path.read_text()) for path in sorted(directory.glob("*.json"))}
+        self.directory = directory
         self.counters: dict[str, int] = {}
+        self._documents: dict[str, object] = {}
         self._compiled: dict[tuple[str, str], list] = {}
+        self._lock = threading.RLock()
+
+    def document(self, name: str) -> object:
+        """The parsed schema file `name`; `SchemaError` if there is none."""
+        with self._lock:
+            document = self._documents.get(name, _MISSING)
+            if document is _MISSING:
+                path = self.directory / name
+                if _FILE_NAME.fullmatch(name) is None or not path.is_file():
+                    raise SchemaError(f"unknown schema file {name}")
+                document = self._documents[name] = json.loads(path.read_text())
+            return document
 
     def ref(self, base: str, reference: str):
         name, _, pointer = reference.partition("#")
         name = name or base
-        if name not in self.documents:
-            raise SchemaError(f"unknown schema file {name}")
         key = (name, pointer)
-        cell = self._compiled.get(key)
-        if cell is None:
-            cell = self._compiled[key] = [None]
-            target = _resolve(self.documents[name], pointer)
-            if target is _MISSING:
-                raise SchemaError(f"unresolved $ref {reference} in {base}")
-            cell[0] = self.compile(target, name)
-        return cell
+        with self._lock:
+            cell = self._compiled.get(key)
+            if cell is not None:
+                return cell
+            compiled, counters, done = dict(self._compiled), dict(self.counters), False
+            try:
+                target = _resolve(self.document(name), pointer)
+                if target is _MISSING:
+                    raise SchemaError(f"unresolved $ref {reference} in {base}")
+                cell = self._compiled[key] = [None]
+                cell[0] = self.compile(target, name)
+                done = True
+            finally:
+                if not done:
+                    self._compiled, self.counters = compiled, counters
+            return cell
 
     def compile(self, schema: object, base: str):
+        with self._lock:
+            return self._compile(schema, base)
+
+    def _compile(self, schema: object, base: str):
         if schema is True:
             return lambda value, ctx, fuel: None
         if schema is False:
@@ -396,6 +429,48 @@ class Compiler:
                 _fail(f"{rule['array']} contains an unbound {rule['field']} outside the request's {rule['in']}")
         return check
 
+    def _x_claim_nodes(self, pointers, schema, base):
+        def check(value, ctx, fuel):
+            for pointer in pointers:
+                claims = _resolve(value, pointer)
+                nodes = _resolve(ctx.value, "/document/graph/nodes")
+                is_array = isinstance(claims, list)
+                if isinstance(claims, dict):
+                    claims = [claims]
+                if not isinstance(claims, list) or not isinstance(nodes, list) or not (is_array or claims):
+                    _fail(f"{pointer} contains a claim outside the request graph")
+                fields = ("name", "ast", "label")
+                def projection(claim):
+                    return tuple(claim.get(key, _MISSING) for key in fields)
+                if any(not isinstance(claim, dict) or not any(
+                        isinstance(node, dict) and all(same_json(a, b) for a, b in
+                            zip(projection(claim), projection(node))) for node in nodes)
+                        for claim in claims):
+                    _fail(f"{pointer} contains a claim outside the request graph")
+        return check
+
+    def _x_max_steps(self, limits, schema, base):
+        def check(value, ctx, fuel):
+            requested = _resolve(ctx.value, "/max_steps")
+            limit = limits["default"] if requested is _MISSING else min(requested, limits["cap"]) if (
+                _kind(requested) == "integer" and requested >= 0) else None
+            if _kind(value) != "integer" or limit is None or value > limit:
+                _fail("steps exceed the request's max_steps")
+        return check
+
+    def _x_background_bound(self, flag, schema, base):
+        def check(value, ctx, fuel):
+            predicates = _resolve(ctx.value, "/environment/vocabulary/predicates")
+            constants = _resolve(ctx.value, "/environment/vocabulary/constants")
+            soft = _resolve(ctx.value, "/soft_premises")
+            if not isinstance(predicates, dict) or not isinstance(constants, dict):
+                _fail("background exceeds what the request vocabulary generates")
+            bound = 4 * len(predicates) + len(constants) * (len(constants) - 1) // 2 + (
+                len(soft) if isinstance(soft, list) else 0)
+            if _kind(value) != "integer" or value > bound:
+                _fail("background exceeds what the request vocabulary generates")
+        return check
+
     def _x_index(self, flag, schema, base):
         def check(value, ctx, fuel):
             if _kind(value) != "integer" or value != ctx.index:
@@ -494,7 +569,8 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-references", "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
+          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-bound",
+          "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
           "x-select", "x-count-where", "x-count-presence", "x-rows",
           "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
@@ -541,7 +617,11 @@ class _Grammar:
     def _slot(compiler: Compiler, sub: object, base: str):
         if isinstance(sub, dict) and set(sub) - {"$comment"} == {"$ref"}:
             name, _, pointer = sub["$ref"].partition("#")
-            if _is_grammar(_resolve(compiler.documents.get(name or base, {}), pointer)):
+            try:
+                document = compiler.document(name or base)
+            except SchemaError:
+                document = {}  # compiling the `$ref` below reports the unknown file
+            if _is_grammar(_resolve(document, pointer)):
                 return compiler.ref(base, sub["$ref"])  # a cell: its grammar is pushed
         return compiler.compile(sub, base)
 
@@ -569,33 +649,62 @@ class _Grammar:
 
 
 _compiler = Compiler()
-ROWS = {mode: _compiler.ref(f"{mode}.json", "#/row") for mode in MODES}
-RIGHTS_BLOCK = _compiler.ref("document.json", "#/$defs/rights_block")
+
+
+class _Rows(Mapping):
+    """Each mode's row validator, compiled when a response in that mode is first checked."""
+
+    def __getitem__(self, mode):
+        if mode not in MODES:
+            raise KeyError(mode)
+        return _compiler.ref(f"{mode}.json", "#/row")
+
+    def __iter__(self):
+        return iter(MODES)
+
+    def __len__(self):
+        return len(MODES)
+
+
+ROWS = _Rows()
+
+
+class _LazyRef:
+    """Expose a schema cell without reading its file during module import."""
+
+    def __init__(self, file: str, pointer: str):
+        self.file = file
+        self.pointer = pointer
+
+    def __getitem__(self, index):
+        return _compiler.ref(self.file, self.pointer)[index]
+
+
+RIGHTS_BLOCK = _LazyRef("document.json", "#/$defs/rights_block")
 
 
 def validate_copied_rights_source(units, wire):
     """Keep the Lean-owned copied-content shape closed before nullable wire conversion."""
     from ..errors import VEError
 
+    rights_block = RIGHTS_BLOCK[0]
     for unit in units:
         if type(unit) is dict and set(unit) & {"right", "right_lines", "limitation", "bar"}:
             try:
-                RIGHTS_BLOCK[0](unit, Context({}), {})
+                rights_block(unit, Context({}), {})
             except Invalid as exc:
                 # Preserve the route's diagnostic when the fault remains after
                 # wire conversion. Reject only a null member it would erase.
                 try:
-                    RIGHTS_BLOCK[0](wire(unit), Context({}), {})
+                    rights_block(wire(unit), Context({}), {})
                 except Invalid:
                     continue
                 raise VEError(f"InvalidInput: invalid rights block: {exc}") from exc
-RESPONSE = _compiler.ref("envelope.json", "#/response")
-HANDSHAKE = _compiler.ref("envelope.json", "#/handshake")
 
 
 def check_handshake(handshake: object) -> None:
     """Raise `Invalid` unless `handshake` is a first line this client can use."""
-    HANDSHAKE[0](handshake, Context(None), {})
+    _compiler.ref("envelope.json", "#/handshake")[0](handshake, Context(None), {})
 
 
 def check_row(mode: str, row: object, case: object, index: int) -> None:
@@ -606,4 +715,4 @@ def check_row(mode: str, row: object, case: object, index: int) -> None:
 def check_response(mode: str, response: object, request: dict) -> None:
     """Raise `Invalid` unless `response` is a possible response line for `request`
     (`{"id", "mode", "cases", "digests", "bytes"}`)."""
-    RESPONSE[0](response, Context(request, rows=ROWS[mode][0]), {})
+    _compiler.ref("envelope.json", "#/response")[0](response, Context(request, rows=ROWS[mode][0]), {})

@@ -1,0 +1,14 @@
+{
+ "mutants": [
+  {
+   "id": "S1",
+   "file": "tests/test_relay_mutation_gate.py",
+   "find": "    monkeypatch.setattr(S.Compiler, \"_x_length\", lambda self, pointer, schema, base: None)\n",
+   "replace": "    monkeypatch.setattr(S.Compiler, \"_x_length\", (lambda keep: lambda self, pointer, schema, base: keep(self, pointer, schema, base) if base == \"envelope.json\" else None)(S.Compiler._x_length))\n",
+   "tests": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ],
+   "claim": "EXPECTED TO SURVIVE: the envelope validator left untouched; its x-length on results repeats the count x-rows checks on the same array"
+  }
+ ]
+}

@@ -403,12 +403,24 @@ def _load(path: Path, *, admit: bool):
 def _lean_answer(raw: bytes, admit: bool):
     """Lean's `document` row for a `ve-document@1` text, or None when Python's own path decides it: the mode
     answered `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or the text is not UTF-8,
-    which the mode cannot be sent. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the
-    service itself is raised, never answered by Python."""
+    which the mode cannot be sent. Pending content-bearing readings under norm defaults still need the original
+    Python coverage path. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service
+    itself is raised, never answered by Python."""
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
         return None
+    try:
+        meta, _, _ = _split(raw)
+        profiles = listed_profiles(meta.get("environment"))
+        sets = meta.get("reading_sets", [])
+        if {"readings@1", "norm-defaults@0"} <= set(profiles) and type(sets) is list:
+            contents = [r.get("content") for s in sets if type(s) is dict
+                        for r in s.get("readings", []) if type(r) is dict]
+            if any(c is None for c in contents) and any(c is not None for c in contents):
+                return None
+    except (KeyError, TypeError, VEError):
+        pass  # Let Lean decide malformed front matter and preserve its diagnostic.
     from .backends.relay import answer
     case = {"id": "document", "document": text, "admit": admit}
     if b"```ve " in raw:

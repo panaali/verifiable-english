@@ -35,7 +35,7 @@ PYTEST_STAGES = ("Python collection", "Python suite")
 
 
 @pytest.mark.parametrize("change,reason", [
-    (lambda e: e["collected"].pop(), "baseline"),
+    (lambda e: e["collected"].pop(), "collected at the merge base are not collected here"),
     (lambda e: e["selected"].pop(), "without a deselection report"),
     (lambda e: e["collection_reports"].append(
         {"nodeid": "tests/c.py", "outcome": "skipped", "reason": "importorskip"}), "collection"),
@@ -208,6 +208,21 @@ def test_poisoned_toolchain_variables_do_not_reach_real_tools(tmp_path, monkeypa
     assert not marker.exists()
 
 
+def pin_base_collection(monkeypatch, ids, records=None):
+    """The merge base's collection is `ids` (no removal recorded since); the records the gate attaches are
+    appended to `records`."""
+    def base_collection(result, base, env, pytest_env, scratch):
+        result["collection"] = {"base": "base-commit", "base_source": "record of base-commit", "base_ids": len(ids)}
+        return list(ids), None
+
+    def record_collection(commit, collected, env, result=None):
+        (records if records is not None else []).append((commit, list(collected)))
+        return "written"
+
+    monkeypatch.setattr(gate, "base_collection", base_collection)
+    monkeypatch.setattr(gate, "record_collection", record_collection)
+
+
 def pin_rust_binary(root, data=b"binary"):
     # The gate refuses a Rust build whose hash checkers.lock does not pin.
     lock = root / "lean/checkers.lock"
@@ -228,11 +243,9 @@ def test_poisoned_ambient_environment_leaves_gate_result_unchanged(tmp_path, mon
     pin_rust_binary(root)
     policy = tmp_path / "policy.json"
     policy.write_text(json.dumps({"version": 1, "optional_tests": [], "deselected_tests": []}))
-    collection = tmp_path / "collection.json"
-    collection.write_text(json.dumps(events()["collected"]))
     monkeypatch.setattr(gate, "ROOT", root)
     monkeypatch.setattr(gate, "POLICY", policy)
-    monkeypatch.setattr(gate, "COLLECTION", collection)
+    pin_base_collection(monkeypatch, events()["collected"])
     monkeypatch.setattr(gate, "REQUIRED_FAMILIES", ())
     versions = {"uv version": "uv 0.0.0", "lake version": "Lake (Lean version 4.24.0)",
                 "lean version": "Lean (version 4.24.0)", "rustc version": "rustc 1.98.1 (x)",
@@ -521,15 +534,13 @@ def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption
     output.write_text('{"status":"passed"}')
     policy = tmp_path / "policy.json"
     policy.write_text(json.dumps({"version": 1}))
-    collection = tmp_path / "collection.json"
-    collection.write_text(json.dumps(["tests/a.py::test_a"]))
     monkeypatch.setattr(gate, "POLICY", policy)
-    monkeypatch.setattr(gate, "COLLECTION", collection)
+    pin_base_collection(monkeypatch, ["tests/a.py::test_a"])
     monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
-    # Other gate tests may rebuild or prune the shared Lean artifacts while this
-    # test runs. Reach the injected interruption without depending on those files.
-    monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda *args, **kwargs: None)
-    monkeypatch.setattr(gate.lake_outputs, "stale", lambda *args, **kwargs: [])
+    # Reach the injected interruption without depending on shared Lean artifacts
+    # or seeking a Lean installation under the gate's isolated HOME.
+    monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda lean, env: [])
+    monkeypatch.setattr(gate.lake_outputs, "stale", lambda lean, env: [])
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
 
     def fake_command(args, *, env, stage, cwd=None):
@@ -568,13 +579,11 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
     rust_binary.chmod(0o755)
     policy = tmp_path / "policy.json"
     policy.write_text(json.dumps({"version": 1, "optional_tests": [], "deselected_tests": []}))
-    collection = tmp_path / "collection.json"
-    collection.write_text(json.dumps(events()["collected"]))
     output = tmp_path / "record.json"
     output.write_text('{"status":"passed"}')
     monkeypatch.setattr(gate, "ROOT", tmp_path)
     monkeypatch.setattr(gate, "POLICY", policy)
-    monkeypatch.setattr(gate, "COLLECTION", collection)
+    pin_base_collection(monkeypatch, events()["collected"])
     monkeypatch.setattr(gate, "REQUIRED_FAMILIES", ())
     monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
@@ -631,12 +640,10 @@ def test_gate_refuses_a_rust_build_checkers_lock_does_not_pin(tmp_path, monkeypa
     pin_rust_binary(tmp_path, b"another build")
     policy = tmp_path / "policy.json"
     policy.write_text(json.dumps({"version": 1, "optional_tests": [], "deselected_tests": []}))
-    collection = tmp_path / "collection.json"
-    collection.write_text(json.dumps(events()["collected"]))
     output = tmp_path / "record.json"
     monkeypatch.setattr(gate, "ROOT", tmp_path)
     monkeypatch.setattr(gate, "POLICY", policy)
-    monkeypatch.setattr(gate, "COLLECTION", collection)
+    pin_base_collection(monkeypatch, events()["collected"])
     monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
     stages = []
