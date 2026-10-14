@@ -25,7 +25,7 @@ ADR = ROOT / "docs/adr/0001-response-binding.md"
 DIALECT = ROOT / "ve/backends/lean_service_schema/README.md"
 SAVED = json.loads((ROOT / numbers.NUMBERS).read_text())
 # Dialect keywords that shape or select a value and bind nothing to the request.
-STRUCTURAL = {"x-tagged", "x-fuel", "x-case", "x-select", "x-row", "x-unique-strings"}
+STRUCTURAL = {"x-tagged", "x-fuel", "x-case", "x-select", "x-row"}
 # Batch 13b introduced these bounded response checks before D1 classified their
 # dialect keywords. Keep the signed Decision section pinned and track the exact
 # outstanding set until its owner reviews the extension.
@@ -306,7 +306,7 @@ SHAPES = {
     "claimNodes": "x-claim-nodes", "maxSteps": "x-max-steps", "backgroundBound": "x-background-bound",
     "count": "x-count", "references": "x-references", "index": "x-index", "digest": "x-digest", "zip": "x-zip",
     "zipOrEmpty": "x-zip-or-empty", "onCase": "x-case", "select": "x-select", "countWhere": "x-count-where",
-    "presenceCount": "x-count-presence", "uniqueStrings": "x-unique-strings", "rows": "x-rows", "row": "x-row",
+    "presenceCount": "x-count-presence", "rows": "x-rows", "row": "x-row",
 }
 # sha256 of the Decision section, whitespace-normalised. It changes only with a new signature of the DRI (D1); a
 # batch that changes the section records the signature and updates this pin in the same merge.
