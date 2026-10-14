@@ -281,9 +281,11 @@ restored:
   F10 probe and this regression both failed before the fix and pass after it. The original `selected == passed`
   condition in `tools/batch_evidence.py` was the seeded Python bug killed by this regression.
 - **Checks:** the F10 probe passes; 68 focused gate and evidence tests pass; `lake build` passes (888 jobs), and
-  `lean/audit.py` passes (484 source files, 5,784 theorem declarations). `report.py --check` passes without gate
-  evidence, and `git diff --check` passes. The requested selected command expanded to 377/377 units, so it was
-  stopped after the gate rerun and trust test units passed; no full suite or release gate ran, as instructed.
+  `lean/audit.py` passes (484 source files, 5,784 theorem declarations), and `git diff --check` passes. The
+  precommit `report.py --check` passed without gate evidence. On the committed HEAD it correctly rejects the
+  three changed code and test files outside the report directory until the merge train supplies a final-HEAD
+  gate record. The requested selected command expanded to 377/377 units, so it was stopped after the gate rerun
+  and trust test units passed; no full suite or release gate ran, as instructed.
 
 ### Open after the fixes
 
