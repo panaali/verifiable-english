@@ -61,13 +61,17 @@ import time
 from change_units import Summary, delta
 from layer_policy import ROOT, lean_default_targets, lean_executables, python_exports
 import nested_pytest
+import quarantine
 import source_graph
 import test_map
+import run_order
 
 TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 EXTRA_UNITS = test_map.EXTRA_UNITS
 # Fast tests across parser, environment, wire and both native backends.
 SMOKE = ("tests/test_conformance.py", "tests/test_surface_registry.py", "tests/test_definitions.py")
+# `--run` stops after this many failed tests outside the quarantine (`--maxfail`; 0 runs everything).
+MAXFAIL = 5
 UV_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python")
 # Every pytest run the plan prints starts with this (tools/nested_pytest.py).
 PYTEST = nested_pytest.command([], python=UV_PYTHON)
@@ -174,6 +178,8 @@ class Coverage:
         self.reads = data["reads"]
         self.dirs = data["dirs"]
         self.programs = data["programs"]
+        self.operations = data["operations"]
+        self.presence = data["presence"]
         self.status = data["status"]
         self.recorded = {test for test, status in data["status"].items()
                          if status["exit"] in (0, 5) and not status["opaque"]}
@@ -196,6 +202,12 @@ class Coverage:
 
     def readers(self, path: str) -> set[str]:
         return self._names(self.reads.get(path, ()))
+
+    def operation_readers(self, op_id: str) -> set[str]:
+        return self._names(set(self.operations.get(op_id, ())) | set(self.operations.get("*", ())))
+
+    def presence_readers(self, op_id: str) -> set[str]:
+        return self._names(self.presence.get(op_id, ()))
 
     def listers(self, path: str) -> set[str]:
         """Tests that listed any directory above `path`, the root "." included.
@@ -339,7 +351,7 @@ def file_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[st
         if d is None or not d.empty or presence_changed:
             python_impact(coverage, graph, all_units, add, path, old, new, d, called or {})
     elif kind == LEAN:
-        add(coverage.runners(runs_lean(lean_programs(graph, path, presence_changed))), f"runs Lean via {path}")
+        add(coverage.runners(runs_lean(lean_programs(graph, path))), f"runs Lean via {path}")
     elif kind == RUST:
         add(coverage.runners(runs_rust), f"runs Rust via {path}")
 
@@ -412,11 +424,12 @@ def taint(coverage: Coverage, graph: source_graph.Graph, all_units: set[str], ad
             taint(coverage, graph, all_units, add, importer, None, summary, reached, seen)
 
 
-def lean_programs(graph: source_graph.Graph, path: str, presence_changed: bool) -> set[str]:
-    """Executables a Lean input can change: those whose root imports the module."""
-    if path.endswith(".lean") and not presence_changed:
+def lean_programs(graph: source_graph.Graph, path: str) -> set[str]:
+    """Executables a Lean input can change: for a module (edited, added or removed) those whose
+    import closure holds it; for a project file, all of them."""
+    if path.endswith(".lean"):
         return graph.executables_using(".".join(Path(path).with_suffix("").parts[1:]))
-    return set(lean_executables())  # a project file, or a module that appeared or vanished
+    return set(lean_executables())
 
 
 def runs_lean(executables: set[str]):
@@ -433,7 +446,7 @@ def lean_change(sel: Selection, change: Change) -> None:
     sel.code = sel.lean = sel.audit = True
     if path.endswith(".lean"):
         sel.checks.add(CHECK_LEAN)
-    executables = lean_programs(sel.graph, path, change.presence_changed)
+    executables = lean_programs(sel.graph, path)
     mapped(sel, change)
     tokens = {f"lean-exe:{name}" for name in executables} | {"lean-tool"}
     sel.static(lambda _, mentions: bool(tokens & mentions), f"runs Lean via {path}")
@@ -457,6 +470,54 @@ def data_change(sel: Selection, change: Change, rust_sources: dict[str, str]) ->
     name = posixpath.basename(path)
     if any(name in text for text in rust_sources.values()):
         sel.rust = True  # Rust tests embed fixtures with include_bytes!
+
+
+MANIFEST = "ve/assurance-manifest.json"
+MANIFEST_TEST = "tests/test_assurance_manifest.py"
+
+
+def changed_manifest_operations(old: str | None, new: str | None) -> set[str] | None:
+    """Changed operation ids, or None when a shared field or shape changed."""
+    try:
+        before, after = json.loads(old), json.loads(new)
+        if not isinstance(before, dict) or not isinstance(after, dict):
+            return None
+        old_rows, new_rows = before.pop("operations"), after.pop("operations")
+        if before != after or not isinstance(old_rows, list) or not isinstance(new_rows, list):
+            return None
+        def indexed(rows):
+            result = {row["id"]: row for row in rows}
+            if len(result) != len(rows) or not all(type(key) is str for key in result):
+                raise ValueError("duplicate or malformed operation id")
+            return result
+        old_by_id, new_by_id = indexed(old_rows), indexed(new_rows)
+        return {op_id for op_id in old_by_id.keys() | new_by_id.keys()
+                if old_by_id.get(op_id) != new_by_id.get(op_id)}
+    except (TypeError, ValueError, KeyError, AttributeError):
+        return None
+
+
+def manifest_presence_changes(old: str, new: str) -> set[str]:
+    before = {row["id"] for row in json.loads(old)["operations"]}
+    after = {row["id"] for row in json.loads(new)["operations"]}
+    return before ^ after
+
+
+def manifest_change(sel: Selection, change: Change) -> None:
+    sel.code = True
+    changed = changed_manifest_operations(change.old, change.new)
+    if changed is None or sel.coverage is None or change.presence_changed:
+        sel.full.append(f"{MANIFEST}: no safe operation map")
+        return
+    sel.add([MANIFEST_TEST], "manifest contract")
+    sel.add(sel.coverage.readers(MANIFEST), "reads the whole manifest")
+    for op_id in changed:
+        sel.add(sel.coverage.operation_readers(op_id), f"reads manifest operation {op_id}")
+    for op_id in manifest_presence_changes(change.old, change.new):
+        sel.add(sel.coverage.presence_readers(op_id), f"registers manifest operation {op_id}")
+    # A unit not covered by the map might read any entry. Include it and all
+    # tests it may affect; mapped direct file reads are included above.
+    sel.add(sel.unmapped, "unmapped manifest reader")
 
 
 def rust_texts() -> dict[str, str]:
@@ -488,9 +549,10 @@ def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: se
         pass
     status = dict(line.split("\t", 1)[::-1] for line in git_lines(
         "diff", "--no-renames", "--name-status", coverage.commit, base_commit))
-    python = [p for p in status if p.endswith(".py")]
-    contents = blobs([f"{rev}:{p}" for p in python for rev in (coverage.commit, base_commit)])
-    versions = {p: (contents[f"{coverage.commit}:{p}"], contents[f"{base_commit}:{p}"]) for p in python}
+    versioned = [p for p in status if p.endswith(".py") or p == MANIFEST]
+    contents = blobs([f"{rev}:{p}" for p in versioned for rev in (coverage.commit, base_commit)])
+    versions = {p: (contents[f"{coverage.commit}:{p}"], contents[f"{base_commit}:{p}"])
+                for p in versioned}
     found = uncertain_units(coverage, graph, all_units, status, versions)
     cache.parent.mkdir(parents=True, exist_ok=True)
     cache.write_text(json.dumps({"uncertain": sorted(found), "drift": len(status)}))
@@ -518,6 +580,8 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
 
     parsed = {}
     for path, (before, after) in versions.items():
+        if not path.endswith(".py"):
+            continue
         module, package = source_graph.module_name(path)
         try:
             parsed[path] = (source_graph.summary_of(before, module, package) if before is not None else None,
@@ -531,6 +595,19 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
                 called[(path, qualname)] = references
     for path, letter in status.items():
         add([path])  # a changed test's own record is stale
+        if path == MANIFEST:
+            before, after = versions.get(path, (None, None))
+            changed = changed_manifest_operations(before, after)
+            if changed is None:
+                add(all_units)
+            else:
+                add(coverage.readers(MANIFEST))
+                add([MANIFEST_TEST])
+                for op_id in changed:
+                    add(coverage.operation_readers(op_id))
+                for op_id in manifest_presence_changes(before, after):
+                    add(coverage.presence_readers(op_id))
+            continue
         python = None
         if path in parsed:
             pair = parsed[path]
@@ -588,6 +665,7 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     graph = source_graph.load(ROOT).overlay({change.path: change.old for change in changes})
     all_units = units()
     cov = resolve_map(base, coverage)
+    missing_map = coverage == "auto" and cov is None
     unmapped = set(all_units)
     uncertain: set[str] = set()
     drift_files = 0
@@ -600,6 +678,8 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     if cov is not None:
         unmapped = (set(all_units) - cov.recorded) | uncertain
     sel = Selection(graph, cov, unmapped, all_units)
+    if missing_map:
+        sel.full.append("missing coverage map")
     if full or not changes:
         sel.full.append("requested" if full else "no changed paths")
     parsed = {change.path: parse(change) for change in changes if change.path.endswith(".py")}
@@ -623,6 +703,9 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
             sel.checks.add(CHECK_RUST)
         if path == "lean/audit.py":
             sel.audit = True
+        if path == MANIFEST:
+            manifest_change(sel, change)
+            continue
         if kind == PYTHON:
             python_change(sel, change, *parsed[path], called)
         elif kind == LEAN:
@@ -955,20 +1038,64 @@ def impacted(paths: list[str], *, full: bool = False) -> dict:
 
 
 def working_changes(commit: str) -> tuple[dict[str, str], dict[str, tuple[str | None, str | None]]]:
-    """Git status letters and Python texts for the working tree against `commit`."""
+    """Git status letters and versioned texts for the working tree against `commit`."""
     status = dict(line.split("\t", 1)[::-1] for line in git_lines(
         "diff", "--no-renames", "--name-status", commit))
     status.update({path: "A" for path in git_lines("ls-files", "--others", "--exclude-standard")})
-    python = [p for p in status if p.endswith(".py")]
-    old = blobs([f"{commit}:{p}" for p in python])
+    versioned = [p for p in status if p.endswith(".py") or p == MANIFEST]
+    old = blobs([f"{commit}:{p}" for p in versioned])
     versions = {p: (old[f"{commit}:{p}"],
                     (ROOT / p).read_text(encoding="utf-8", errors="replace") if (ROOT / p).is_file() else None)
-                for p in python}
+                for p in versioned}
     return status, versions
 
 
-def run_recorded(plan: dict, jobs: int) -> int:
+def quarantined() -> set[str]:
+    """The tests of the active quarantine (tools/quarantine.py); none when its file is malformed."""
+    try:
+        return set(quarantine.active(quarantine.load(), quarantine.today()))
+    except quarantine.QuarantineError as exc:
+        print(f"warning: the quarantine does not apply: {exc}", flush=True)
+        return set()
+
+
+def unit_failures(unit: str, result: dict, report: Path) -> list[str]:
+    """The failed tests of a finished unit: from its JUnit report, or the unit itself without one."""
+    if result["exit"] in (0, 5):
+        return []
+    found = run_order.read_junit(report, unit) if unit.startswith("tests/") else None
+    return (found[1] if found else None) or [unit]
+
+
+def stop_options(maxfail: int, held: set[str]) -> list[str]:
+    """The pytest options that stop a selected run after `maxfail` failed tests outside the quarantine `held`
+    (tools/maxfail_pytest.py), the failures its exit status counts; none for 0. Both run paths take them
+    from here: pytest's own --maxfail would count a quarantined failure and skip the tests after it."""
+    if not maxfail:
+        return []
+    return ["-p", "tools.maxfail_pytest", f"--ve-maxfail={maxfail}",
+            *(f"--ve-quarantined={test}" for test in sorted(held))]
+
+
+def record_ordered(ordered: list[str], work: Path, jobs: int, maxfail: int,
+                   held: set[str]) -> tuple[dict[str, dict], dict[str, list[str]]]:
+    """Record the units in `ordered`, stopping after `maxfail` failed tests outside `held` (0: never): the
+    results of the units that ran to the end, and each one's failed tests."""
+    reports = {unit: work / (unit.replace("/", "__") + ".xml") for unit in ordered}
+    results = test_map.record_units(
+        ordered, work, jobs, test_map.UNIT_TIMEOUT,
+        options=lambda unit: [*stop_options(maxfail, held), *run_order.junit_options(reports[unit])],
+        stop_after=maxfail,
+        failures=lambda unit, result: len(set(unit_failures(unit, result, reports[unit])) - held))
+    return results, {unit: unit_failures(unit, result, reports[unit]) for unit, result in results.items()}
+
+
+def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None = None) -> int:
     """Run the selected units one process each under the recorder, then save a map for this tree.
+
+    The units that failed last time start first, then the changed test files (tools/run_order.py). With
+    `maxfail` N > 0 the run stops after N failed tests outside the quarantine `held` (default: the active
+    one); the units it did not finish are left to the static graph, like the ones below.
 
     Units the run did not record keep their entries from the map the plan
     used, unless the working tree changed code they ran: those are marked
@@ -978,11 +1105,21 @@ def run_recorded(plan: dict, jobs: int) -> int:
     tree = test_map.working_tree_id()
     test_map.build_natives()
     work = Path(tempfile.mkdtemp(prefix="ve-select-run-"))
-    results = test_map.record_units(selected, work, jobs, test_map.UNIT_TIMEOUT)
-    failed = [unit for unit in selected if results[unit]["exit"] not in (0, 5)]
-    for unit in failed:
+    state = run_order.state_path()
+    previous, held = run_order.last_failed(state=state), quarantined() if held is None else held
+    ordered = run_order.order(selected, changed=plan["changed"], failed=previous)
+    print(f"order: failed last time {[unit for unit in ordered if unit in previous]}; changed "
+          f"{[unit for unit in ordered if unit in plan['changed'] and unit not in previous]}; then the rest; "
+          f"--maxfail {maxfail or 'off'}", flush=True)
+    results, failures = record_ordered(ordered, work, jobs, maxfail, held)
+    not_run = [unit for unit in selected if unit not in results]
+    selected = [unit for unit in selected if unit in results]
+    run_order.write_state(state, run_order.updated(previous, completed=selected, failed=failures))
+    failed = [unit for unit in selected if set(failures[unit]) - held]
+    for unit in [unit for unit in selected if failures[unit]]:
         log = work / (unit.replace("/", "__") + ".log")
-        print(f"FAILED {unit} (exit {results[unit]['exit']}); log {log}\n"
+        label = "FAILED" if unit in failed else "QUARANTINED (fails under load; not counted)"
+        print(f"{label} {unit} (exit {results[unit]['exit']}): {', '.join(failures[unit])}; log {log}\n"
               + "\n".join(log.read_text(errors="replace").splitlines()[-25:]), flush=True)
     every = set(units())
     base = resolve_map("HEAD", plan["map"]["path"]) if plan["map"] else None
@@ -991,22 +1128,65 @@ def run_recorded(plan: dict, jobs: int) -> int:
         status, versions = working_changes(base.commit)
         stale = uncertain_units(base, source_graph.load(ROOT), every, status, versions) - set(selected)
         edges = test_map.unit_edges({"tests": base.tests, "functions": base.functions, "reads": base.reads,
-                                     "dirs": base.dirs, "programs": base.programs})
+                                     "dirs": base.dirs, "programs": base.programs,
+                                     "operations": base.operations, "presence": base.presence})
         for unit in sorted(every - set(selected)):
             if unit in edges and unit in base.status:
                 results[unit] = {**edges[unit], **base.status[unit]}
                 if unit in stale:
                     results[unit]["exit"] = "stale"  # ran changed code; not re-run here
+    for unit in not_run:
+        if unit in results:
+            results[unit]["exit"] = "stale"  # selected for the change, but the run stopped first
     data = test_map.build_map(results, base.commit if base is not None else "")
     data["tree"] = tree
     test_map.write_map(data, test_map.tree_map_path(tree))
     shutil.rmtree(work, ignore_errors=True)
-    print(f"recorded {len(selected)} units for tree {tree[:10]}; {len(stale)} others left to the "
-          f"static graph until they run; {len(failed)} failed", flush=True)
-    return 1 if failed else 0
+    print(f"recorded {len(selected)} units for tree {tree[:10]}; {len(set(stale) | set(not_run))} others left "
+          f"to the static graph until they run; {len(failed)} failed", flush=True)
+    if not_run:
+        print(f"STOPPED EARLY (--maxfail {maxfail}): {len(not_run)} selected units did not run: "
+              f"{', '.join(not_run)}", flush=True)
+    return 1 if failed or not_run else 0
 
 
-def run(plan: dict, *, record: bool = True, jobs: int = 8) -> int:
+def run_plain(command: list[str], plan: dict, maxfail: int, env: dict[str, str],
+              held: set[str] | None = None) -> int:
+    """The plan's one pytest process, its files in the agent's order (tools/run_order.py), stopping after
+    `maxfail` failed tests outside the quarantine `held` (default: the active one) when N > 0. A run whose
+    only failures are quarantined tests passes, with a warning."""
+    arguments = command[len(PYTEST):]
+    files = [argument for argument in arguments if argument.startswith("tests/")]
+    options = [argument for argument in arguments if not argument.startswith("tests/")]
+    state = run_order.state_path()
+    previous, held = run_order.last_failed(state=state), quarantined() if held is None else held
+    with tempfile.TemporaryDirectory(prefix="ve-select-junit-") as directory:
+        report = Path(directory) / "junit.xml"
+        command = [*PYTEST, *options, *stop_options(maxfail, held),
+                   *run_order.junit_options(report),
+                   *run_order.order(files, changed=plan["changed"], failed=previous)]
+        print("+", " ".join(command), flush=True)
+        code = subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
+        found = run_order.read_junit(report)
+    if found is None:
+        return code
+    seen, failed = found
+    failures: dict[str, list[str]] = {}
+    for nodeid in failed:
+        failures.setdefault(run_order.unit_of(nodeid), []).append(nodeid)
+    run_order.write_state(state, run_order.updated(previous, completed=seen, failed=failures))
+    if code == 1 and failed and not set(failed) - held:
+        print(f"QUARANTINED (fail under load; not counted): {', '.join(failed)}", flush=True)
+        return 0
+    return code
+
+
+def run(plan: dict, *, record: bool = True, jobs: int = 8, maxfail: int = 0, full: bool = False) -> int:
+    """Run the plan. A `full` run is the whole suite before a green tag: every test runs (no `maxfail`)
+    and every failure counts, a quarantined one too."""
+    if full and maxfail:
+        raise ValueError("a full run never stops early")
+    held = set() if full else quarantined()
     # The selected tests run as the gate runs them, whatever pytest settings the shell has.
     env = nested_pytest.environment(os.environ)
     env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
@@ -1016,13 +1196,18 @@ def run(plan: dict, *, record: bool = True, jobs: int = 8) -> int:
     for command in plan["commands"]:
         if record and (command in [list(c) for c in EXTRA_UNITS.values()] or command[:len(PYTEST)] == PYTEST):
             continue  # recorded below, one process per unit
+        if command[:len(PYTEST)] == PYTEST:
+            code = run_plain(command, plan, maxfail, env, held)
+            if code:
+                return code
+            continue
         print("+", " ".join(command), flush=True)
         cwd = ROOT / "lean" if command[:2] == ["lake", "build"] else ROOT
         result = subprocess.run(command, cwd=cwd, env=env, check=False)
         if result.returncode:
             return result.returncode
     if record and plan["selected"]:
-        return run_recorded(plan, jobs)
+        return run_recorded(plan, jobs, maxfail, held)
     return 0
 
 
@@ -1050,13 +1235,23 @@ def main() -> int:
     parser.add_argument("--no-record", action="store_true",
                         help="with --run: one plain pytest process, nothing recorded")
     parser.add_argument("--jobs", type=int, default=8, help="parallel test files for --run")
+    parser.add_argument("--maxfail", type=int, default=None, metavar="N",
+                        help=f"with --run: stop after N failed tests outside the quarantine (default {MAXFAIL}; "
+                             "0 runs everything). The test files that failed last time and the changed ones run "
+                             "first. The gate and a --full run never stop early, and a --full run counts "
+                             "quarantined failures")
     args = parser.parse_args()
+    if args.maxfail is not None and args.maxfail < 0:
+        parser.error("--maxfail is 0 or a positive count")
+    if args.full and args.maxfail:
+        parser.error("--full runs every test and counts every failure; it takes no --maxfail")
+    args.maxfail = 0 if args.full else MAXFAIL if args.maxfail is None else args.maxfail
     paths = args.paths if args.paths is not None else changed_paths(args.base, args.commit)
     if args.impacted:
         plan = impacted(paths, full=args.full)
         if args.json:
             print(json.dumps(plan, indent=2))
-            return run(plan, record=False) if args.run else 0
+            return run(plan, record=False, maxfail=args.maxfail, full=args.full) if args.run else 0
         print(f"impacted{' (full fallback)' if plan['fallback'] else ''}: "
               f"{plan['selected_count']}/{plan['full_count']} Python test files")
         for path in plan["unreached"]:
@@ -1066,7 +1261,7 @@ def main() -> int:
         print("changed:", ", ".join(paths) or "(none; full fallback)")
         for command in plan["commands"]:
             print("+", " ".join(command))
-        return run(plan, record=False) if args.run else 0
+        return run(plan, record=False, maxfail=args.maxfail, full=args.full) if args.run else 0
     if args.commit:
         base, after = f"{args.commit}^", args.commit
     elif args.base:
@@ -1088,7 +1283,9 @@ def main() -> int:
                 print(f"  {test}: {'; '.join(reasons[:3])}{' ...' if len(reasons) > 3 else ''}")
         for command in plan["commands"]:
             print("+", " ".join(command))
-    return run(plan, record=not args.no_record, jobs=args.jobs) if args.run else 0
+    if not args.run:
+        return 0
+    return run(plan, record=not args.no_record, jobs=args.jobs, maxfail=args.maxfail, full=args.full)
 
 
 if __name__ == "__main__":

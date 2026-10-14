@@ -21,6 +21,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import pwd
 import shutil
 import subprocess
 import sys
@@ -32,9 +33,11 @@ HASHER = ROOT / "tools/lake_output_hash.lean"
 
 def lean_executable(env: dict | None = None) -> str:
     """The `lean` of the pinned toolchain (elan's shim, `lean/lean-toolchain`) on the PATH of `env` (default: this
-    process's); missing is an error."""
+    process's), else in the account's elan; missing is an error. The account's home is the password database's, as
+    in `tools/gate.py`: HOME is ambient and the gate replaces it."""
     path = (env if env is not None else os.environ).get("PATH")
-    found = shutil.which("lean", path=path) or shutil.which("lean", path=str(Path.home() / ".elan/bin"))
+    account = Path(pwd.getpwuid(os.getuid()).pw_dir)
+    found = shutil.which("lean", path=path) or shutil.which("lean", path=str(account / ".elan/bin"))
     if found is None:
         raise RuntimeError("lean is required to check Lake's executables against their traces")
     return found

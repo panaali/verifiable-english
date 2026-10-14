@@ -622,6 +622,15 @@ def test_namesake_cannot_lend_its_class(tmp_path):
     assert problems and files["VE/Demo.lean"]["tied"] == 0 and trust_map.budget(files["VE/Demo.lean"])["V"] == tied + 4
 
 
+def write_manifests(lean: Path) -> None:
+    """The audit manifests of a fixture tree as `lean/audit.py --write` writes them from its dumped
+    declaration list, whose recorded manifest hashes are those of the generated text."""
+    theorems = lean_statements.audit.manifest_theorems(lean_statements.declaration_list(lean / "declarations.txt")[0])
+    for manifest in lean_statements.audit.MANIFESTS:
+        if (lean / manifest).exists():
+            (lean / manifest).write_text(lean_statements.audit.manifest_text(manifest, theorems[manifest]))
+
+
 COLLISION = {
     "lakefile.toml": 'name = "collision"\nversion = "0.1.0"\ndefaultTargets = ["VE"]\n[[lean_lib]]\nname = "VE"\n',
     "VE.lean": "import VE.Decoder\n",
@@ -648,6 +657,7 @@ def test_dump_tells_namesakes_of_two_modules_apart(tmp_path, capsys):
     (lean / "statements.txt").write_text(statements)
     (lean / "predicates.txt").write_text(predicates)
     (lean / "declarations.txt").write_text(declarations)
+    write_manifests(lean)
     assert trust_map.predicate_list(lean / "predicates.txt")[1] == {"VE", "VE.Audit", "VE.Decoder", "VE.Meaning"}
     (tmp_path / "tools").mkdir()
     (tmp_path / "docs").mkdir()
@@ -708,6 +718,7 @@ def test_compiled_names_do_not_depend_on_spelling(tmp_path, capsys):
     statements, predicates, declarations = lean_statements.dump_all(tmp_path)
     for name, text in (("statements", statements), ("predicates", predicates), ("declarations", declarations)):
         (lean / f"{name}.txt").write_text(text)
+    write_manifests(lean)
     assert lean_statements.predicates(lean / "predicates.txt") == {(f"VE.{m}", f"VE.{m}.WellFormed") for m in SPELLINGS}
     (tmp_path / "tools").mkdir()
     (tmp_path / "docs").mkdir()
@@ -782,6 +793,7 @@ def test_where_predicate_is_checked_in_a_fresh_dump(tmp_path, capsys):
         (lean / "VE/Demo.lean").write_text(source)
         for name, text in zip(("statements", "predicates", "declarations"), lean_statements.dump_all(tmp_path)):
             (lean / f"{name}.txt").write_text(text)
+        write_manifests(lean)
 
     def classes(decoder: object) -> None:
         table_path.write_text(json.dumps({"modules": {"VE/Demo.lean": decoder}}))
@@ -897,6 +909,7 @@ def added_tree(tmp_path_factory):
             (lean / path).write_text(text)
         for name, text in zip(("statements", "predicates", "declarations"), lean_statements.dump_all(root)):
             (lean / f"{name}.txt").write_text(text)
+        write_manifests(lean)
 
     dump({"VE/Demo.lean": ELAB_HEADER, "VE/Control.lean": CONTROL})
     assert trust_map.main(["--write", "--root", str(root)]) == 0

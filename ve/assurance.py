@@ -20,9 +20,11 @@ The guard never computes a verdict and never falls back to another engine.
 """
 from __future__ import annotations
 
+from collections.abc import Mapping
 from contextlib import contextmanager
 import functools
 import json
+import sys
 from pathlib import Path
 
 from .errors import AuthorityViolation
@@ -40,9 +42,37 @@ def _load():
     return data
 
 
+class _Operations(Mapping):
+    """The manifest's operations by id. Every read is an audit event, so the test map
+    (tools/test_map_recorder.py) records which entries a test depends on whatever way it
+    reads them: an entry (`ve.manifest.operation`), only an id's presence
+    (`ve.manifest.presence`), or the whole table by iterating, counting or comparing it
+    (`ve.manifest.all`)."""
+
+    def __init__(self, rows: dict[str, dict]):
+        self._rows = rows
+
+    def __getitem__(self, op_id):
+        sys.audit("ve.manifest.operation", op_id)
+        return self._rows[op_id]
+
+    def __contains__(self, op_id):
+        sys.audit("ve.manifest.presence", op_id)
+        return op_id in self._rows
+
+    def __iter__(self):
+        sys.audit("ve.manifest.all")
+        return iter(self._rows)
+
+    def __len__(self):
+        sys.audit("ve.manifest.all")
+        return len(self._rows)
+
+
 _MANIFEST = _load()
-OPERATIONS = {op["id"]: op for op in _MANIFEST["operations"]}
-_migrated = frozenset(op_id for op_id, op in OPERATIONS.items() if op["authority"] == "migrated")
+_BY_ID = {op["id"]: op for op in _MANIFEST["operations"]}
+OPERATIONS = _Operations(_BY_ID)
+_migrated = frozenset(op_id for op_id, op in _BY_ID.items() if op["authority"] == "migrated")
 _simulated: frozenset[str] = frozenset()
 # op id -> [(qualified name, engine)], filled as modules are imported.
 ENTRIES: dict[str, list[tuple[str, str]]] = {}
@@ -50,6 +80,7 @@ ENTRIES: dict[str, list[tuple[str, str]]] = {}
 
 def manifest() -> dict:
     """The parsed manifest (shared; do not mutate)."""
+    sys.audit("ve.manifest.all")
     return _MANIFEST
 
 
@@ -62,11 +93,13 @@ def operation(op_id: str) -> dict:
 
 def enforced_operations() -> frozenset[str]:
     """Operations whose verdict may only come from Lean on this run."""
+    sys.audit("ve.manifest.all")
     return _migrated | _simulated
 
 
 def require_authority(op_id: str, engine: str) -> None:
     """Refuse a verdict for `op_id` from a non-authoritative `engine`."""
+    sys.audit("ve.manifest.operation", op_id)
     if engine != "lean" and op_id in _migrated | _simulated:
         raise AuthorityViolation(
             f"{op_id} is Lean-authoritative; a {engine} implementation cannot produce its verdict",
@@ -75,7 +108,10 @@ def require_authority(op_id: str, engine: str) -> None:
 
 def semantic_entry(op_id: str, *, engine: str = "python"):
     """Register a verdict-producing function for `op_id` and guard its calls."""
-    operation(op_id)
+    # Registration needs only the id's presence. Reading the whole entry here
+    # would make every importer of a registered function depend on every field.
+    if op_id not in OPERATIONS:
+        raise KeyError(f"operation {op_id!r} is not in the assurance manifest")
     if engine not in ENGINES:
         raise ValueError(f"unknown engine {engine!r}")
 
@@ -84,6 +120,8 @@ def semantic_entry(op_id: str, *, engine: str = "python"):
 
         @functools.wraps(fn)
         def guarded(*args, **kwargs):
+            # Only a shortcut: with nothing migrated or simulated, `require_authority`
+            # (which records the read of `op_id`) could not refuse either.
             if _migrated or _simulated:
                 require_authority(op_id, engine)
             return fn(*args, **kwargs)
@@ -140,6 +178,7 @@ def simulate_migration(*op_ids: str):
 
 def render_decoders_markdown() -> str:
     """The generated pinned-decoder table in docs/spec/assurance-manifest.md section 4."""
+    sys.audit("ve.manifest.all")
     decoders = _MANIFEST["lean_decoders"]
     rows = ["| File | File lines | Decoder lines | Ranges | File SHA-256 |", "|---|---:|---:|---|---|"]
     for entry in decoders["files"]:
@@ -152,6 +191,7 @@ def render_decoders_markdown() -> str:
 
 def render_markdown() -> str:
     """The generated per-operation table in docs/spec/assurance-manifest.md."""
+    sys.audit("ve.manifest.all")
     def cell(values):
         return "<br>".join(f"`{v}`" for v in values) if values else "none"
 
