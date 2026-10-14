@@ -17,6 +17,12 @@ SEED = Path(__file__).parent / "data/readings_s2/constitution-nd-readings.ve.md"
 PILOTS = Path(__file__).parent / "data/tarch-b8"
 
 
+def test_saved_pilots_are_not_global_document_seeds():
+    from conformance import document_wrapper
+
+    assert all(not name.startswith("tests/data/tarch-b8/") for name, _ in document_wrapper.seeds())
+
+
 def pilot(name, digest):
     """Use the two pilot blobs recorded for 16d, independent of moving pilot refs."""
     raw = (PILOTS / name).read_bytes()
