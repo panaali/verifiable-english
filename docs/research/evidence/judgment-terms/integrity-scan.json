@@ -1,0 +1,1340 @@
+{
+ "scanned_units": {
+  "udhr/translation-part01.ve.md": {
+   "u022a": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_life"
+    ]
+   },
+   "u022b": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_liberty"
+    ]
+   },
+   "u022c": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_security_of_person"
+    ]
+   },
+   "u029": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_recognition_as_a_person"
+    ]
+   },
+   "u045b": {
+    "status": "CHECKED",
+    "predicates": [
+     "attack_upon_honour_or_reputation_permitted",
+     "concerns_honour",
+     "concerns_reputation"
+    ]
+   }
+  },
+  "udhr/translation-part02.ve.md": {
+   "u048": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_movement_and_residence"
+    ]
+   },
+   "u054": {
+    "status": "CHECKED",
+    "predicates": [
+     "is_entitled_to_a_nationality"
+    ]
+   },
+   "u063": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_own_property"
+    ]
+   },
+   "u066": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_thought_conscience_religion"
+    ]
+   },
+   "u070": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_opinion_and_expression"
+    ]
+   }
+  },
+  "udhr/translation-part03.ve.md": {
+   "u074": {
+    "status": "CHECKED",
+    "predicates": [
+     "compel_association_membership_permitted"
+    ]
+   },
+   "u084a": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_work"
+    ]
+   },
+   "u084b": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_free_choice_of_employment"
+    ]
+   },
+   "u084d": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_protection_against_unemployment"
+    ]
+   },
+   "u087": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_form_and_join_trade_unions"
+    ]
+   },
+   "u096": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_education"
+    ]
+   },
+   "u100b": {
+    "status": "CHECKED",
+    "predicates": [
+     "education_directed_to_respect_for_rights_required"
+    ]
+   }
+  },
+  "udhr/translation-part04.ve.md": {
+   "u105a": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_take_part_in_cultural_life"
+    ]
+   }
+  },
+  "constitution/translation.ve.md": {
+   "u0125.s04.p2": {
+    "status": "CHECKED",
+    "predicates": [
+     "denial_of_being_claude_permitted"
+    ]
+   },
+   "u0248": {
+    "status": "CHECKED",
+    "predicates": []
+   }
+  }
+ },
+ "hits": [],
+ "control_open_and_readings": {
+  "scanned": 49,
+  "units_with_hits": [
+   [
+    "constitution",
+    "u0036.s05"
+   ],
+   [
+    "constitution",
+    "u0052.s01"
+   ],
+   [
+    "constitution",
+    "u0062.s01"
+   ],
+   [
+    "constitution",
+    "u0073.s05"
+   ],
+   [
+    "constitution",
+    "u0123.s01.p1"
+   ],
+   [
+    "constitution",
+    "u0123.s02.p1"
+   ],
+   [
+    "constitution",
+    "u0123.s03"
+   ],
+   [
+    "constitution",
+    "u0156.s03"
+   ],
+   [
+    "constitution",
+    "u0165.s01"
+   ],
+   [
+    "constitution",
+    "u0165.s02"
+   ],
+   [
+    "constitution",
+    "u0165.s03"
+   ],
+   [
+    "constitution",
+    "u0165.s04"
+   ],
+   [
+    "constitution",
+    "u0165.s05"
+   ],
+   [
+    "constitution",
+    "u0165.s06"
+   ],
+   [
+    "constitution",
+    "u0165.s07"
+   ],
+   [
+    "constitution",
+    "u0168.s01"
+   ],
+   [
+    "constitution",
+    "u0263.s04.p2"
+   ],
+   [
+    "udhr",
+    "u024"
+   ],
+   [
+    "udhr",
+    "u025"
+   ],
+   [
+    "udhr",
+    "u027"
+   ],
+   [
+    "udhr",
+    "u032"
+   ],
+   [
+    "udhr",
+    "u033a"
+   ],
+   [
+    "udhr",
+    "u035"
+   ],
+   [
+    "udhr",
+    "u037"
+   ],
+   [
+    "udhr",
+    "u045a"
+   ],
+   [
+    "udhr",
+    "u046"
+   ],
+   [
+    "udhr",
+    "u052"
+   ],
+   [
+    "udhr",
+    "u055"
+   ],
+   [
+    "udhr",
+    "u064"
+   ],
+   [
+    "udhr",
+    "u081"
+   ],
+   [
+    "udhr",
+    "u084c"
+   ],
+   [
+    "udhr",
+    "u098"
+   ],
+   [
+    "udhr",
+    "u099a"
+   ],
+   [
+    "udhr",
+    "u110"
+   ],
+   [
+    "udhr",
+    "u111"
+   ]
+  ],
+  "hits": [
+   {
+    "pilot": "udhr",
+    "unit": "u024",
+    "status": "OPEN",
+    "predicate": "holding_in_slavery_or_servitude_permitted",
+    "open_term_link": [
+     "slavery",
+     "servitude"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u024",
+    "status": "OPEN",
+    "predicate": "is_slavery",
+    "open_term_link": [
+     "slavery"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u024",
+    "status": "OPEN",
+    "predicate": "is_servitude",
+    "open_term_link": [
+     "servitude"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u025",
+    "status": "READINGS",
+    "predicate": "prohibition_of_slavery_and_slave_trade_required",
+    "open_term_link": [
+     "slavery",
+     "slave_trade"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u025",
+    "status": "READINGS",
+    "predicate": "is_slavery_u025",
+    "open_term_link": [
+     "slavery"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u025",
+    "status": "READINGS",
+    "predicate": "is_slave_trade",
+    "open_term_link": [
+     "slave_trade"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u025",
+    "status": "READINGS",
+    "predicate": "slavery_or_slave_trade_practice_permitted",
+    "open_term_link": [
+     "slavery",
+     "slave_trade"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u027",
+    "status": "OPEN",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "open_term_link": [
+     "ill_treatment"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u032",
+    "status": "OPEN",
+    "predicate": "is_entitled_to_equal_protection_of_the_law",
+    "open_term_link": [
+     "equal_protection_of_the_law"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u033a",
+    "status": "OPEN",
+    "predicate": "is_entitled_to_protection_against_discrimination",
+    "open_term_link": [
+     "discrimination"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u035",
+    "status": "OPEN",
+    "predicate": "has_the_right_to_an_effective_remedy",
+    "open_term_link": [
+     "effective"
+    ],
+    "catalogue_words": [
+     "effective"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u037",
+    "status": "OPEN",
+    "predicate": "arrest_detention_or_exile_permitted",
+    "open_term_link": [],
+    "catalogue_words": [
+     "arbitrary"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u037",
+    "status": "OPEN",
+    "predicate": "is_arbitrary",
+    "open_term_link": [
+     "arbitrary"
+    ],
+    "catalogue_words": [
+     "arbitrary"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u045a",
+    "status": "OPEN",
+    "predicate": "interference_with_private_domains_permitted",
+    "open_term_link": [],
+    "catalogue_words": [
+     "arbitrary"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u045a",
+    "status": "OPEN",
+    "predicate": "is_arbitrary_u045a",
+    "open_term_link": [
+     "arbitrary"
+    ],
+    "catalogue_words": [
+     "arbitrary"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u046",
+    "status": "OPEN",
+    "predicate": "is_arbitrary_u046",
+    "open_term_link": [
+     "arbitrary"
+    ],
+    "catalogue_words": [
+     "arbitrary"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u052",
+    "status": "READINGS",
+    "predicate": "arises_from_non_political_crime_u052",
+    "open_term_link": [
+     "non_political_crime"
+    ],
+    "catalogue_words": [
+     "genuinely"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u052",
+    "status": "READINGS",
+    "predicate": "arises_from_acts_contrary_to_un_u052",
+    "open_term_link": [],
+    "catalogue_words": [
+     "genuinely"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u052",
+    "status": "READINGS",
+    "predicate": "arises_from_non_political_crime",
+    "open_term_link": [
+     "non_political_crime"
+    ],
+    "catalogue_words": [
+     "genuinely"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u052",
+    "status": "READINGS",
+    "predicate": "arises_from_acts_contrary_to_un",
+    "open_term_link": [],
+    "catalogue_words": [
+     "genuinely"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u055",
+    "status": "READINGS",
+    "predicate": "is_arbitrary",
+    "open_term_link": [
+     "arbitrary"
+    ],
+    "catalogue_words": [
+     "arbitrary"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u064",
+    "status": "OPEN",
+    "predicate": "deprivation_of_property_permitted",
+    "open_term_link": [],
+    "catalogue_words": [
+     "arbitrary"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u064",
+    "status": "OPEN",
+    "predicate": "is_arbitrary_u064",
+    "open_term_link": [
+     "arbitrary"
+    ],
+    "catalogue_words": [
+     "arbitrary"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u081",
+    "status": "OPEN",
+    "predicate": "has_the_right_to_social_security_as_a_member_of_society",
+    "open_term_link": [
+     "social_security",
+     "member_of_society"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u084c",
+    "status": "OPEN",
+    "predicate": "has_the_right_to_just_and_favourable_conditions_of_work",
+    "open_term_link": [
+     "just",
+     "just_and_favourable_conditions_of_work"
+    ],
+    "catalogue_words": [
+     "just"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u098",
+    "status": "OPEN",
+    "predicate": "elementary_education_compulsory_required",
+    "open_term_link": [
+     "compulsory"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u099a",
+    "status": "OPEN",
+    "predicate": "education_generally_available_required",
+    "open_term_link": [
+     "generally_available"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u110",
+    "status": "READINGS",
+    "predicate": "owes_duties_to",
+    "open_term_link": [
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u110",
+    "status": "READINGS",
+    "predicate": "full_development_possible_in",
+    "open_term_link": [
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u111",
+    "status": "READINGS",
+    "predicate": "is_determined_by_law",
+    "open_term_link": [
+     "determined_by_law"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u111",
+    "status": "READINGS",
+    "predicate": "serves_recognition_of_rights_of_others",
+    "open_term_link": [],
+    "catalogue_words": [
+     "due"
+    ]
+   },
+   {
+    "pilot": "udhr",
+    "unit": "u111",
+    "status": "READINGS",
+    "predicate": "serves_just_requirements",
+    "open_term_link": [
+     "just",
+     "just_requirements"
+    ],
+    "catalogue_words": [
+     "just"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0036.s05",
+    "status": "READINGS",
+    "predicate": "genuine_ambiguity",
+    "open_term_link": [
+     "genuine_ambiguity",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": [
+     "genuine"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0036.s05",
+    "status": "READINGS",
+    "predicate": "exception_to_asking_for_clarification",
+    "open_term_link": [
+     "exception_to_asking_for_clarification",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": [
+     "genuine"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0052.s01",
+    "status": "OPEN",
+    "predicate": "judgment_use_required",
+    "open_term_link": [],
+    "catalogue_words": [
+     "good judgment"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0062.s01",
+    "status": "OPEN",
+    "predicate": "input_is_specific_instructions",
+    "open_term_link": [
+     "input_is_specific_instructions",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0062.s01",
+    "status": "OPEN",
+    "predicate": "input_is_persona",
+    "open_term_link": [
+     "input_is_persona",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0062.s01",
+    "status": "OPEN",
+    "predicate": "input_is_information",
+    "open_term_link": [
+     "input_is_information",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0062.s01",
+    "status": "OPEN",
+    "predicate": "instruction_abandon_identity_in_persona",
+    "open_term_link": [
+     "instruction_abandon_identity_in_persona",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0062.s01",
+    "status": "OPEN",
+    "predicate": "instruction_claim_human_when_asked",
+    "open_term_link": [
+     "instruction_claim_human_when_asked",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0062.s01",
+    "status": "OPEN",
+    "predicate": "instruction_deceptive_tactics_harming_users",
+    "open_term_link": [
+     "instruction_deceptive_tactics_harming_users",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": [
+     "genuinely"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0062.s01",
+    "status": "OPEN",
+    "predicate": "instruction_false_information_deceiving_user",
+    "open_term_link": [
+     "instruction_false_information_deceiving_user",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0062.s01",
+    "status": "OPEN",
+    "predicate": "instruction_endanger_health_or_safety",
+    "open_term_link": [
+     "instruction_endanger_health_or_safety",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0062.s01",
+    "status": "OPEN",
+    "predicate": "instruction_act_against_guidelines",
+    "open_term_link": [
+     "instruction_act_against_guidelines",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0073.s05",
+    "status": "OPEN",
+    "predicate": "compliance_unsafe",
+    "open_term_link": [
+     "compliance_unsafe",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0073.s05",
+    "status": "OPEN",
+    "predicate": "compliance_unethical",
+    "open_term_link": [
+     "compliance_unethical",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0073.s05",
+    "status": "OPEN",
+    "predicate": "compliance_against_guidelines",
+    "open_term_link": [
+     "compliance_against_guidelines",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0073.s05",
+    "status": "OPEN",
+    "predicate": "general_exception_to_complying",
+    "open_term_link": [
+     "general_exception_to_complying",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s01.p1",
+    "status": "OPEN",
+    "predicate": "instruction_dishonest_looking_within_honesty",
+    "open_term_link": [
+     "instruction_dishonest_looking_within_honesty",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s01.p1",
+    "status": "OPEN",
+    "predicate": "instruction_abandon_identity_in_persona",
+    "open_term_link": [
+     "instruction_abandon_identity_in_persona",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s01.p1",
+    "status": "OPEN",
+    "predicate": "instruction_claim_human_when_asked",
+    "open_term_link": [
+     "instruction_claim_human_when_asked",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s01.p1",
+    "status": "OPEN",
+    "predicate": "instruction_deceptive_tactics_harming_users",
+    "open_term_link": [
+     "instruction_deceptive_tactics_harming_users",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": [
+     "genuinely"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s01.p1",
+    "status": "OPEN",
+    "predicate": "instruction_false_information_deceiving_user",
+    "open_term_link": [
+     "instruction_false_information_deceiving_user",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s01.p1",
+    "status": "OPEN",
+    "predicate": "instruction_endanger_health_or_safety",
+    "open_term_link": [
+     "instruction_endanger_health_or_safety",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s01.p1",
+    "status": "OPEN",
+    "predicate": "instruction_act_against_guidelines",
+    "open_term_link": [
+     "instruction_act_against_guidelines",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_role_play_custom_persona",
+    "open_term_link": [
+     "instruction_role_play_custom_persona",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_decline_or_withhold",
+    "open_term_link": [
+     "instruction_decline_or_withhold",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_promote_own_products",
+    "open_term_link": [
+     "instruction_promote_own_products",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_focus_on_tasks",
+    "open_term_link": [
+     "instruction_focus_on_tasks",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_respond_differently",
+    "open_term_link": [
+     "instruction_respond_differently",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_abandon_identity_in_persona",
+    "open_term_link": [
+     "instruction_abandon_identity_in_persona",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_claim_human_when_asked",
+    "open_term_link": [
+     "instruction_claim_human_when_asked",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_deceptive_tactics_harming_users",
+    "open_term_link": [
+     "instruction_deceptive_tactics_harming_users",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": [
+     "genuinely"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_false_information_deceiving_user",
+    "open_term_link": [
+     "instruction_false_information_deceiving_user",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_endanger_health_or_safety",
+    "open_term_link": [
+     "instruction_endanger_health_or_safety",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s02.p1",
+    "status": "OPEN",
+    "predicate": "instruction_act_against_guidelines",
+    "open_term_link": [
+     "instruction_act_against_guidelines",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s03",
+    "status": "OPEN",
+    "predicate": "instruction_abandon_identity_in_persona",
+    "open_term_link": [
+     "instruction_abandon_identity_in_persona",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s03",
+    "status": "OPEN",
+    "predicate": "instruction_claim_human_when_asked",
+    "open_term_link": [
+     "instruction_claim_human_when_asked",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s03",
+    "status": "OPEN",
+    "predicate": "instruction_deceptive_tactics_harming_users",
+    "open_term_link": [
+     "instruction_deceptive_tactics_harming_users",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": [
+     "genuinely"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s03",
+    "status": "OPEN",
+    "predicate": "instruction_false_information_deceiving_user",
+    "open_term_link": [
+     "instruction_false_information_deceiving_user",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s03",
+    "status": "OPEN",
+    "predicate": "instruction_endanger_health_or_safety",
+    "open_term_link": [
+     "instruction_endanger_health_or_safety",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0123.s03",
+    "status": "OPEN",
+    "predicate": "instruction_act_against_guidelines",
+    "open_term_link": [
+     "instruction_act_against_guidelines",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0156.s03",
+    "status": "READINGS",
+    "predicate": "exception_to_not_deceiving_about_system_prompt",
+    "open_term_link": [
+     "exception_to_not_deceiving_about_system_prompt",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s01",
+    "status": "OPEN",
+    "predicate": "weapons_uplift_permitted",
+    "open_term_link": [
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s01",
+    "status": "OPEN",
+    "predicate": "mass_casualty_weapon_uplift",
+    "open_term_link": [
+     "mass_casualty_weapon_uplift",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s01",
+    "status": "OPEN",
+    "predicate": "restricted_action_knowing_or_quite_likely",
+    "open_term_link": [
+     "restricted_action_knowing_or_quite_likely",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s02",
+    "status": "OPEN",
+    "predicate": "infrastructure_uplift_permitted",
+    "open_term_link": [
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s02",
+    "status": "OPEN",
+    "predicate": "critical_infrastructure_uplift",
+    "open_term_link": [
+     "critical_infrastructure_uplift",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s02",
+    "status": "OPEN",
+    "predicate": "restricted_action_knowing_or_quite_likely",
+    "open_term_link": [
+     "restricted_action_knowing_or_quite_likely",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s03",
+    "status": "OPEN",
+    "predicate": "cyberweapon_creation_permitted",
+    "open_term_link": [
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s03",
+    "status": "OPEN",
+    "predicate": "damaging_cyberweapon_or_malicious_code",
+    "open_term_link": [
+     "damaging_cyberweapon_or_malicious_code",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s03",
+    "status": "OPEN",
+    "predicate": "restricted_action_knowing_or_quite_likely",
+    "open_term_link": [
+     "restricted_action_knowing_or_quite_likely",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s04",
+    "status": "OPEN",
+    "predicate": "oversight_undermining_permitted",
+    "open_term_link": [
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s04",
+    "status": "OPEN",
+    "predicate": "clear_and_substantial_undermining_of_oversight",
+    "open_term_link": [
+     "clear_and_substantial_undermining_of_oversight",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s04",
+    "status": "OPEN",
+    "predicate": "restricted_action_knowing_or_quite_likely",
+    "open_term_link": [
+     "restricted_action_knowing_or_quite_likely",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s05",
+    "status": "OPEN",
+    "predicate": "humanity_attack_participation_permitted",
+    "open_term_link": [
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s05",
+    "status": "OPEN",
+    "predicate": "attempt_to_kill_or_disempower_most_of_humanity",
+    "open_term_link": [
+     "attempt_to_kill_or_disempower_most_of_humanity",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s05",
+    "status": "OPEN",
+    "predicate": "restricted_action_knowing_or_quite_likely",
+    "open_term_link": [
+     "restricted_action_knowing_or_quite_likely",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s06",
+    "status": "OPEN",
+    "predicate": "illegitimate_control_involvement_permitted",
+    "open_term_link": [
+     "(description says 'open term')"
+    ],
+    "catalogue_words": [
+     "illegitimate"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s06",
+    "status": "OPEN",
+    "predicate": "illegitimate_absolute_control",
+    "open_term_link": [
+     "illegitimate_absolute_control",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": [
+     "illegitimate"
+    ]
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s06",
+    "status": "OPEN",
+    "predicate": "restricted_action_knowing_or_quite_likely",
+    "open_term_link": [
+     "restricted_action_knowing_or_quite_likely",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s07",
+    "status": "OPEN",
+    "predicate": "csam_generation_permitted_for_claude",
+    "open_term_link": [
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s07",
+    "status": "OPEN",
+    "predicate": "child_sexual_abuse_material",
+    "open_term_link": [
+     "child_sexual_abuse_material",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0165.s07",
+    "status": "OPEN",
+    "predicate": "restricted_action_knowing_or_quite_likely",
+    "open_term_link": [
+     "restricted_action_knowing_or_quite_likely",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0168.s01",
+    "status": "OPEN",
+    "predicate": "seemingly_compelling_argument_to_cross_line",
+    "open_term_link": [
+     "seemingly_compelling_argument_to_cross_line",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   },
+   {
+    "pilot": "constitution",
+    "unit": "u0263.s04.p2",
+    "status": "READINGS",
+    "predicate": "exception_to_complying_with_exploit_instruction",
+    "open_term_link": [
+     "exception_to_complying_with_exploit_instruction",
+     "(description says 'open term')"
+    ],
+    "catalogue_words": []
+   }
+  ]
+ }
+}

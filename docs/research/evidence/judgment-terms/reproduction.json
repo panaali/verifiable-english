@@ -1,0 +1,232 @@
+{
+ "P2": {
+  "expected": {
+   "bytes": 4792,
+   "percent": "43.90%"
+  },
+  "measured": {
+   "bytes": 4792,
+   "percent": "43.90%"
+  },
+  "pass": true
+ },
+ "P3": {
+  "expected": {
+   "u010": 132,
+   "u060": 66
+  },
+  "measured": {
+   "u010": 132,
+   "u060": 66
+  },
+  "pass": true
+ },
+ "P4": {
+  "expected": {
+   "bytes": 4924,
+   "percent": "45.11%"
+  },
+  "measured": {
+   "bytes": 4924,
+   "percent": "45.11%"
+  },
+  "pass": true
+ },
+ "P5": {
+  "expected": {
+   "udhr": [
+    52,
+    52,
+    52,
+    52
+   ],
+   "constitution": 33
+  },
+  "measured": {
+   "udhr": [
+    52,
+    52,
+    52,
+    52
+   ],
+   "constitution": 33
+  },
+  "pass": true
+ },
+ "P6": {
+  "expected": {
+   "units": 11,
+   "bytes": 1333,
+   "by_status": {
+    "OPEN": {
+     "units": 8,
+     "bytes": 706
+    },
+    "READINGS": {
+     "units": 3,
+     "bytes": 627
+    }
+   }
+  },
+  "measured": {
+   "units": 11,
+   "bytes": 1333,
+   "by_status": {
+    "OPEN": {
+     "units": 8,
+     "bytes": 706
+    },
+    "READINGS": {
+     "units": 3,
+     "bytes": 627
+    }
+   }
+  },
+  "pass": true,
+  "ids": [
+   "u027",
+   "u035",
+   "u037",
+   "u045a",
+   "u046",
+   "u052",
+   "u055",
+   "u064",
+   "u084c",
+   "u099b",
+   "u111"
+  ]
+ },
+ "P7": {
+  "expected": {
+   "units": 18,
+   "bytes": 1945
+  },
+  "measured": {
+   "units": 18,
+   "bytes": 1945
+  },
+  "pass": true,
+  "ids": [
+   "u027",
+   "u032",
+   "u033a",
+   "u033b",
+   "u035",
+   "u037",
+   "u045a",
+   "u046",
+   "u051",
+   "u052",
+   "u055",
+   "u059",
+   "u064",
+   "u084c",
+   "u099b",
+   "u100a",
+   "u110",
+   "u111"
+  ]
+ },
+ "P8": {
+  "expected": {
+   "lines_with_word": 203,
+   "non_empty_lines": 454
+  },
+  "measured": {
+   "lines_with_word": 203,
+   "non_empty_lines": 454
+  },
+  "pass": true
+ },
+ "P9": {
+  "expected": {
+   "units": 12,
+   "bytes": 1942
+  },
+  "measured": {
+   "units": 17,
+   "bytes": 2792
+  },
+  "pass": false,
+  "ids": [
+   "u004",
+   "u006",
+   "u007",
+   "u008a",
+   "u009",
+   "u010",
+   "u013bb",
+   "u039",
+   "u041",
+   "u057",
+   "u060",
+   "u079a",
+   "u082",
+   "u086",
+   "u089",
+   "u091",
+   "u097"
+  ],
+  "words": {
+   "u004": [
+    "barbarous"
+   ],
+   "u006": [
+    "essential"
+   ],
+   "u007": [
+    "essential"
+   ],
+   "u008a": [
+    "fundamental"
+   ],
+   "u009": [
+    "fundamental"
+   ],
+   "u010": [
+    "importance"
+   ],
+   "u013bb": [
+    "effective"
+   ],
+   "u039": [
+    "fair",
+    "impartial",
+    "independent"
+   ],
+   "u041": [
+    "necessary"
+   ],
+   "u057": [
+    "due"
+   ],
+   "u060": [
+    "fundamental",
+    "natural"
+   ],
+   "u079a": [
+    "genuine"
+   ],
+   "u082": [
+    "indispensable"
+   ],
+   "u086": [
+    "favourable",
+    "just",
+    "necessary",
+    "worthy"
+   ],
+   "u089": [
+    "reasonable"
+   ],
+   "u091": [
+    "adequate",
+    "necessary"
+   ],
+   "u097": [
+    "fundamental"
+   ]
+  }
+ }
+}

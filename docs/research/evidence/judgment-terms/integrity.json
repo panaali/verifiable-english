@@ -1,0 +1,136 @@
+{
+ "scanned_units": {
+  "udhr/translation-part01.ve.md": {
+   "u022a": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_life"
+    ]
+   },
+   "u022b": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_liberty"
+    ]
+   },
+   "u022c": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_security_of_person"
+    ]
+   },
+   "u029": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_recognition_as_a_person"
+    ]
+   },
+   "u045b": {
+    "status": "CHECKED",
+    "predicates": [
+     "attack_upon_honour_or_reputation_permitted",
+     "concerns_honour",
+     "concerns_reputation"
+    ]
+   }
+  },
+  "udhr/translation-part02.ve.md": {
+   "u048": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_movement_and_residence"
+    ]
+   },
+   "u054": {
+    "status": "CHECKED",
+    "predicates": [
+     "is_entitled_to_a_nationality"
+    ]
+   },
+   "u063": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_own_property"
+    ]
+   },
+   "u066": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_thought_conscience_religion"
+    ]
+   },
+   "u070": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_opinion_and_expression"
+    ]
+   }
+  },
+  "udhr/translation-part03.ve.md": {
+   "u074": {
+    "status": "CHECKED",
+    "predicates": [
+     "compel_association_membership_permitted"
+    ]
+   },
+   "u084a": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_work"
+    ]
+   },
+   "u084b": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_free_choice_of_employment"
+    ]
+   },
+   "u084d": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_protection_against_unemployment"
+    ]
+   },
+   "u087": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_form_and_join_trade_unions"
+    ]
+   },
+   "u096": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_education"
+    ]
+   },
+   "u100b": {
+    "status": "CHECKED",
+    "predicates": [
+     "education_directed_to_respect_for_rights_required"
+    ]
+   }
+  },
+  "udhr/translation-part04.ve.md": {
+   "u105a": {
+    "status": "CHECKED",
+    "predicates": [
+     "has_the_right_to_take_part_in_cultural_life"
+    ]
+   }
+  },
+  "constitution/translation.ve.md": {
+   "u0125.s04.p2": {
+    "status": "CHECKED",
+    "predicates": [
+     "denial_of_being_claude_permitted"
+    ]
+   },
+   "u0248": {
+    "status": "CHECKED",
+    "predicates": []
+   }
+  }
+ },
+ "summary": [],
+ "hits": []
+}

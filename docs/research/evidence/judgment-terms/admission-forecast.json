@@ -1,0 +1,5716 @@
+{
+ "udhr/translation-part01.ve.md": {
+  "records": 52,
+  "first_fault": {
+   "JudgmentUnbound": 52
+  },
+  "fails_check": {
+   "JudgmentUnbound": 52,
+   "JudgmentArguments": 0,
+   "JudgmentRegulated": 0,
+   "JudgmentCriterionAsUnit": 0,
+   "JudgmentDecider": 52
+  },
+  "rows": [
+   {
+    "term": "equal_before_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [
+     "person"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inherent_dignity",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inalienable_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "essential",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "greatest_importance",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "natural_group_unit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "arbitrary",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_arbitrary",
+     "is_arbitrary_u045a",
+     "is_arbitrary_u046"
+    ]
+   },
+   {
+    "term": "fair",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "adequate",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "reasonable",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "genuine",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "spirit_of_brotherhood",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "justice",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "contrary_to_un_purposes_and_principles",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "non_political_crime",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "arises_from_non_political_crime"
+    ]
+   },
+   {
+    "term": "rights_and_freedoms_set_forth",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "aimed_at_destruction_of_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "discrimination",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_entitled_to_protection_against_discrimination"
+    ]
+   },
+   {
+    "term": "equal_protection_of_the_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_entitled_to_equal_protection_of_the_law"
+    ]
+   },
+   {
+    "term": "effective",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_an_effective_remedy"
+    ]
+   },
+   {
+    "term": "competent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fundamental_rights_granted",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "independent_and_impartial",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "guarantees_necessary_for_defence",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "persecution",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_equality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "determined_by_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "due_recognition_and_respect",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_requirements",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "morality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "public_order",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "general_welfare",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "democratic_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "protection_of_the_family",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "duties_to_the_community",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "status_of_country_or_territory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slavery",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "holding_in_slavery_or_servitude_permitted",
+     "is_slavery",
+     "is_slavery_u025",
+     "prohibition_of_slavery_and_slave_trade_required",
+     "slavery_or_slave_trade_practice_permitted"
+    ]
+   },
+   {
+    "term": "servitude",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "holding_in_slavery_or_servitude_permitted",
+     "is_servitude"
+    ]
+   },
+   {
+    "term": "slave_trade",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_slave_trade",
+     "prohibition_of_slavery_and_slave_trade_required",
+     "slavery_or_slave_trade_practice_permitted"
+    ]
+   },
+   {
+    "term": "ill_treatment",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "subjection_to_ill_treatment_permitted"
+    ]
+   },
+   {
+    "term": "private_life",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_consent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "generally_available",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "merit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_development_of_the_human_personality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "social_security",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_and_favourable_conditions_of_work",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "community_of_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "compulsory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "member_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   }
+  ]
+ },
+ "udhr/translation-part02.ve.md": {
+  "records": 52,
+  "first_fault": {
+   "JudgmentUnbound": 52
+  },
+  "fails_check": {
+   "JudgmentUnbound": 52,
+   "JudgmentArguments": 0,
+   "JudgmentRegulated": 0,
+   "JudgmentCriterionAsUnit": 0,
+   "JudgmentDecider": 52
+  },
+  "rows": [
+   {
+    "term": "equal_before_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [
+     "person"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inherent_dignity",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inalienable_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "essential",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "greatest_importance",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "natural_group_unit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "arbitrary",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_arbitrary",
+     "is_arbitrary_u064"
+    ]
+   },
+   {
+    "term": "fair",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "adequate",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "reasonable",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "genuine",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "spirit_of_brotherhood",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "justice",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "contrary_to_un_purposes_and_principles",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "non_political_crime",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "arises_from_non_political_crime",
+     "arises_from_non_political_crime_u052"
+    ]
+   },
+   {
+    "term": "rights_and_freedoms_set_forth",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "aimed_at_destruction_of_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "discrimination",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "equal_protection_of_the_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "effective",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "competent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fundamental_rights_granted",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "independent_and_impartial",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "guarantees_necessary_for_defence",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "persecution",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_equality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "determined_by_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "due_recognition_and_respect",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_requirements",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "morality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "public_order",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "general_welfare",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "democratic_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "protection_of_the_family",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "duties_to_the_community",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "status_of_country_or_territory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slavery",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "servitude",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slave_trade",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "ill_treatment",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "private_life",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_consent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "generally_available",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "merit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_development_of_the_human_personality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "social_security",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_and_favourable_conditions_of_work",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "community_of_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "compulsory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "member_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   }
+  ]
+ },
+ "udhr/translation-part03.ve.md": {
+  "records": 52,
+  "first_fault": {
+   "JudgmentUnbound": 52
+  },
+  "fails_check": {
+   "JudgmentUnbound": 52,
+   "JudgmentArguments": 0,
+   "JudgmentRegulated": 0,
+   "JudgmentCriterionAsUnit": 0,
+   "JudgmentDecider": 52
+  },
+  "rows": [
+   {
+    "term": "equal_before_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [
+     "person"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inherent_dignity",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inalienable_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "essential",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "greatest_importance",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "natural_group_unit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "arbitrary",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fair",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "adequate",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_just_and_favourable_conditions_of_work"
+    ]
+   },
+   {
+    "term": "reasonable",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "genuine",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "spirit_of_brotherhood",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "justice",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "contrary_to_un_purposes_and_principles",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "non_political_crime",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "arises_from_non_political_crime"
+    ]
+   },
+   {
+    "term": "rights_and_freedoms_set_forth",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "aimed_at_destruction_of_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "discrimination",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "equal_protection_of_the_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "effective",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "competent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fundamental_rights_granted",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "independent_and_impartial",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "guarantees_necessary_for_defence",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "persecution",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_equality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "determined_by_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "due_recognition_and_respect",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_requirements",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "morality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "public_order",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "general_welfare",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "democratic_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "protection_of_the_family",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "duties_to_the_community",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "status_of_country_or_territory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slavery",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "servitude",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slave_trade",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "ill_treatment",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "private_life",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_consent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "generally_available",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "education_generally_available_required"
+    ]
+   },
+   {
+    "term": "merit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_development_of_the_human_personality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "social_security",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_social_security_as_a_member_of_society"
+    ]
+   },
+   {
+    "term": "just_and_favourable_conditions_of_work",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_just_and_favourable_conditions_of_work"
+    ]
+   },
+   {
+    "term": "community_of_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "compulsory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "elementary_education_compulsory_required"
+    ]
+   },
+   {
+    "term": "member_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_social_security_as_a_member_of_society"
+    ]
+   }
+  ]
+ },
+ "udhr/translation-part04.ve.md": {
+  "records": 52,
+  "first_fault": {
+   "JudgmentUnbound": 52
+  },
+  "fails_check": {
+   "JudgmentUnbound": 52,
+   "JudgmentArguments": 0,
+   "JudgmentRegulated": 0,
+   "JudgmentCriterionAsUnit": 0,
+   "JudgmentDecider": 52
+  },
+  "rows": [
+   {
+    "term": "equal_before_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [
+     "person"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inherent_dignity",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inalienable_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "essential",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "greatest_importance",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "natural_group_unit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "arbitrary",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fair",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "adequate",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "serves_just_requirements"
+    ]
+   },
+   {
+    "term": "reasonable",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "genuine",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "spirit_of_brotherhood",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "justice",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "contrary_to_un_purposes_and_principles",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "non_political_crime",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "arises_from_non_political_crime"
+    ]
+   },
+   {
+    "term": "rights_and_freedoms_set_forth",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "aimed_at_destruction_of_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "discrimination",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "equal_protection_of_the_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "effective",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "competent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fundamental_rights_granted",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "independent_and_impartial",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "guarantees_necessary_for_defence",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "persecution",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_equality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "determined_by_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_determined_by_law"
+    ]
+   },
+   {
+    "term": "due_recognition_and_respect",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_requirements",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "serves_just_requirements"
+    ]
+   },
+   {
+    "term": "morality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "public_order",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "general_welfare",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "democratic_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "protection_of_the_family",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "duties_to_the_community",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "status_of_country_or_territory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slavery",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "servitude",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slave_trade",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "ill_treatment",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "private_life",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_consent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "generally_available",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "merit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_development_of_the_human_personality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "social_security",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_and_favourable_conditions_of_work",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "community_of_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "compulsory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "member_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   }
+  ]
+ },
+ "udhr-jt0p/translation-part01.ve.md": {
+  "records": 52,
+  "first_fault": {
+   "JudgmentArguments": 1,
+   "JudgmentUnbound": 51
+  },
+  "fails_check": {
+   "JudgmentUnbound": 51,
+   "JudgmentArguments": 1,
+   "JudgmentRegulated": 0,
+   "JudgmentCriterionAsUnit": 0,
+   "JudgmentDecider": 50
+  },
+  "rows": [
+   {
+    "term": "equal_before_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [
+     "person"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inherent_dignity",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inalienable_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "essential",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "of_greatest_importance_for",
+    "first_fault": "JudgmentArguments",
+    "all_faults": [
+     "JudgmentArguments"
+    ],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "understanding",
+     "realization"
+    ],
+    "predicate_sorts": [
+     "thing",
+     "thing"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "natural_and_fundamental_group_unit_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound"
+    ],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "thing"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "arbitrary",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_arbitrary",
+     "is_arbitrary_u045a",
+     "is_arbitrary_u046"
+    ]
+   },
+   {
+    "term": "fair",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "adequate",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "reasonable",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "genuine",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "spirit_of_brotherhood",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "justice",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "contrary_to_un_purposes_and_principles",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "non_political_crime",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "arises_from_non_political_crime"
+    ]
+   },
+   {
+    "term": "rights_and_freedoms_set_forth",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "aimed_at_destruction_of_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "discrimination",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_entitled_to_protection_against_discrimination"
+    ]
+   },
+   {
+    "term": "equal_protection_of_the_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_entitled_to_equal_protection_of_the_law"
+    ]
+   },
+   {
+    "term": "effective",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_an_effective_remedy"
+    ]
+   },
+   {
+    "term": "competent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fundamental_rights_granted",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "independent_and_impartial",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "guarantees_necessary_for_defence",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "persecution",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_equality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "determined_by_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "due_recognition_and_respect",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_requirements",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "morality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "public_order",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "general_welfare",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "democratic_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "protection_of_the_family",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "duties_to_the_community",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "status_of_country_or_territory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slavery",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "holding_in_slavery_or_servitude_permitted",
+     "is_slavery",
+     "is_slavery_u025",
+     "prohibition_of_slavery_and_slave_trade_required",
+     "slavery_or_slave_trade_practice_permitted"
+    ]
+   },
+   {
+    "term": "servitude",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "holding_in_slavery_or_servitude_permitted",
+     "is_servitude"
+    ]
+   },
+   {
+    "term": "slave_trade",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_slave_trade",
+     "prohibition_of_slavery_and_slave_trade_required",
+     "slavery_or_slave_trade_practice_permitted"
+    ]
+   },
+   {
+    "term": "ill_treatment",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "subjection_to_ill_treatment_permitted"
+    ]
+   },
+   {
+    "term": "private_life",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_consent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "generally_available",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "merit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_development_of_the_human_personality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "social_security",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_and_favourable_conditions_of_work",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "community_of_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "compulsory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "member_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   }
+  ]
+ },
+ "udhr-jt0p/translation-part02.ve.md": {
+  "records": 52,
+  "first_fault": {
+   "JudgmentUnbound": 51,
+   "admitted": 1
+  },
+  "fails_check": {
+   "JudgmentUnbound": 51,
+   "JudgmentArguments": 0,
+   "JudgmentRegulated": 0,
+   "JudgmentCriterionAsUnit": 0,
+   "JudgmentDecider": 50
+  },
+  "rows": [
+   {
+    "term": "equal_before_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [
+     "person"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inherent_dignity",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inalienable_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "essential",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "of_greatest_importance_for",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound"
+    ],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "understanding",
+     "realization"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "natural_and_fundamental_group_unit_of_society",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "thing"
+    ],
+    "predicate_sorts": [
+     "thing"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "arbitrary",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_arbitrary",
+     "is_arbitrary_u064"
+    ]
+   },
+   {
+    "term": "fair",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "adequate",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "reasonable",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "genuine",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "spirit_of_brotherhood",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "justice",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "contrary_to_un_purposes_and_principles",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "non_political_crime",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "arises_from_non_political_crime",
+     "arises_from_non_political_crime_u052"
+    ]
+   },
+   {
+    "term": "rights_and_freedoms_set_forth",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "aimed_at_destruction_of_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "discrimination",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "equal_protection_of_the_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "effective",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "competent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fundamental_rights_granted",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "independent_and_impartial",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "guarantees_necessary_for_defence",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "persecution",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_equality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "determined_by_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "due_recognition_and_respect",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_requirements",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "morality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "public_order",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "general_welfare",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "democratic_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "protection_of_the_family",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "duties_to_the_community",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "status_of_country_or_territory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slavery",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "servitude",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slave_trade",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "ill_treatment",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "private_life",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_consent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "generally_available",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "merit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_development_of_the_human_personality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "social_security",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_and_favourable_conditions_of_work",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "community_of_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "compulsory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "member_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   }
+  ]
+ },
+ "udhr-jt0p/translation-part03.ve.md": {
+  "records": 52,
+  "first_fault": {
+   "JudgmentUnbound": 52
+  },
+  "fails_check": {
+   "JudgmentUnbound": 52,
+   "JudgmentArguments": 0,
+   "JudgmentRegulated": 0,
+   "JudgmentCriterionAsUnit": 0,
+   "JudgmentDecider": 50
+  },
+  "rows": [
+   {
+    "term": "equal_before_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [
+     "person"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inherent_dignity",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inalienable_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "essential",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "of_greatest_importance_for",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound"
+    ],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "understanding",
+     "realization"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "natural_and_fundamental_group_unit_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound"
+    ],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "thing"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "arbitrary",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fair",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "adequate",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_just_and_favourable_conditions_of_work"
+    ]
+   },
+   {
+    "term": "reasonable",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "genuine",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "spirit_of_brotherhood",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "justice",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "contrary_to_un_purposes_and_principles",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "non_political_crime",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "arises_from_non_political_crime"
+    ]
+   },
+   {
+    "term": "rights_and_freedoms_set_forth",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "aimed_at_destruction_of_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "discrimination",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "equal_protection_of_the_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "effective",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "competent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fundamental_rights_granted",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "independent_and_impartial",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "guarantees_necessary_for_defence",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "persecution",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_equality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "determined_by_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "due_recognition_and_respect",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_requirements",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "morality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "public_order",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "general_welfare",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "democratic_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "protection_of_the_family",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "duties_to_the_community",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "status_of_country_or_territory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slavery",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "servitude",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slave_trade",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "ill_treatment",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "private_life",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_consent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "generally_available",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "education_generally_available_required"
+    ]
+   },
+   {
+    "term": "merit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_development_of_the_human_personality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "social_security",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_social_security_as_a_member_of_society"
+    ]
+   },
+   {
+    "term": "just_and_favourable_conditions_of_work",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_just_and_favourable_conditions_of_work"
+    ]
+   },
+   {
+    "term": "community_of_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "compulsory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "elementary_education_compulsory_required"
+    ]
+   },
+   {
+    "term": "member_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "has_the_right_to_social_security_as_a_member_of_society"
+    ]
+   }
+  ]
+ },
+ "udhr-jt0p/translation-part04.ve.md": {
+  "records": 52,
+  "first_fault": {
+   "JudgmentUnbound": 52
+  },
+  "fails_check": {
+   "JudgmentUnbound": 52,
+   "JudgmentArguments": 0,
+   "JudgmentRegulated": 0,
+   "JudgmentCriterionAsUnit": 0,
+   "JudgmentDecider": 50
+  },
+  "rows": [
+   {
+    "term": "equal_before_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [
+     "person"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inherent_dignity",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "inalienable_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "essential",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "of_greatest_importance_for",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound"
+    ],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "understanding",
+     "realization"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "natural_and_fundamental_group_unit_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound"
+    ],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "thing"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "arbitrary",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fair",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "adequate",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "serves_just_requirements"
+    ]
+   },
+   {
+    "term": "reasonable",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "genuine",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "spirit_of_brotherhood",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "justice",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "contrary_to_un_purposes_and_principles",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "non_political_crime",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "arises_from_non_political_crime"
+    ]
+   },
+   {
+    "term": "rights_and_freedoms_set_forth",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "aimed_at_destruction_of_rights",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "discrimination",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "equal_protection_of_the_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "effective",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "competent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "fundamental_rights_granted",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "independent_and_impartial",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "guarantees_necessary_for_defence",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "persecution",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_equality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "determined_by_law",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "is_determined_by_law"
+    ]
+   },
+   {
+    "term": "due_recognition_and_respect",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_requirements",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": [
+     "serves_just_requirements"
+    ]
+   },
+   {
+    "term": "morality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "public_order",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "general_welfare",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "democratic_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "protection_of_the_family",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "duties_to_the_community",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "status_of_country_or_territory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slavery",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "servitude",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "slave_trade",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "ill_treatment",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "private_life",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "free_and_full_consent",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "generally_available",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "merit",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "full_development_of_the_human_personality",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "social_security",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "just_and_favourable_conditions_of_work",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "community_of_full_development",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "compulsory",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "member_of_society",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound",
+     "JudgmentDecider"
+    ],
+    "decided_by": "unstated",
+    "arguments": [],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   }
+  ]
+ },
+ "constitution/translation.ve.md": {
+  "records": 33,
+  "first_fault": {
+   "JudgmentArguments": 1,
+   "JudgmentUnbound": 1,
+   "admitted": 31
+  },
+  "fails_check": {
+   "JudgmentUnbound": 1,
+   "JudgmentArguments": 1,
+   "JudgmentRegulated": 0,
+   "JudgmentCriterionAsUnit": 0,
+   "JudgmentDecider": 0
+  },
+  "rows": [
+   {
+    "term": "good_judgment",
+    "first_fault": "JudgmentUnbound",
+    "all_faults": [
+     "JudgmentUnbound"
+    ],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "action",
+     "context"
+    ],
+    "predicate_sorts": null,
+    "rename_candidates": []
+   },
+   {
+    "term": "child_sexual_abuse_material",
+    "first_fault": "JudgmentArguments",
+    "all_faults": [
+     "JudgmentArguments"
+    ],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "material",
+     "context"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "mass_casualty_weapon_uplift",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "critical_infrastructure_uplift",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "damaging_cyberweapon_or_malicious_code",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "clear_and_substantial_undermining_of_oversight",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "attempt_to_kill_or_disempower_most_of_humanity",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "illegitimate_absolute_control",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "genuine_ambiguity",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "seemingly_compelling_argument_to_cross_line",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "compliance_unsafe",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "compliance_unethical",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "compliance_against_guidelines",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "general_exception_to_complying",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "input_is_specific_instructions",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "input_is_persona",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "input_is_information",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_role_play_custom_persona",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_decline_or_withhold",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_promote_own_products",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_focus_on_tasks",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_respond_differently",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_dishonest_looking_within_honesty",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_abandon_identity_in_persona",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_claim_human_when_asked",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_deceptive_tactics_harming_users",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_false_information_deceiving_user",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_endanger_health_or_safety",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "instruction_act_against_guidelines",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "operator_input"
+    ],
+    "predicate_sorts": [
+     "operator_input"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "restricted_action_knowing_or_quite_likely",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "exception_to_asking_for_clarification",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "situation"
+    ],
+    "predicate_sorts": [
+     "situation"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "exception_to_not_deceiving_about_system_prompt",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "claude_instance",
+     "user"
+    ],
+    "predicate_sorts": [
+     "claude_instance",
+     "user"
+    ],
+    "rename_candidates": []
+   },
+   {
+    "term": "exception_to_complying_with_exploit_instruction",
+    "first_fault": null,
+    "all_faults": [],
+    "decided_by": "unresolved_decider",
+    "arguments": [
+     "claude_instance",
+     "situation"
+    ],
+    "predicate_sorts": [
+     "claude_instance",
+     "situation"
+    ],
+    "rename_candidates": []
+   }
+  ]
+ },
+ "udhr/any-part-binds": [],
+ "udhr-jt0p/any-part-binds": [
+  "natural_and_fundamental_group_unit_of_society",
+  "of_greatest_importance_for"
+ ]
+}
