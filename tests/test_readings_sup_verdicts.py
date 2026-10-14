@@ -43,6 +43,24 @@ def test_public_conflict_keeps_service_envelope_private(tmp_path):
     assert "route" not in report["conflict"]
 
 
+def test_superposed_scopes_need_only_the_two_answer_roundtrips(tmp_path, monkeypatch):
+    from ve import readings_route
+
+    _, route, _ = example(tmp_path)
+    original = readings_route.run_lean
+    questions = []
+
+    def counted(cases):
+        if cases[0]["kind"] == "readings-verdicts":
+            questions.append(cases[0]["question"])
+        return original(cases)
+
+    monkeypatch.setattr(readings_route, "run_lean", counted)
+    answer = route.conflict_answer()
+    assert len(answer["scopes"]) > 1
+    assert questions == ["conflict", "conflict"]
+
+
 def test_sup_zero_budget_is_unknown(tmp_path, monkeypatch):
     from tests.test_readings_s2_document import every
     _, route, _ = example(tmp_path)
