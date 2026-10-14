@@ -239,10 +239,14 @@ def _bind_completion_superposed(row, case, sets):
     _need([{k: value for k, value in unit.items() if k != "content"} for unit in row["units"]]
           == expected_units)
     readings = set()
-    for unit in row["units"]:
+    for unit, filled_unit in zip(row["units"], row["filled"]["units"]):
         _typed_filled_content(unit["content"])
         if "set" not in unit:
             continue
+        # GateContent changes the name and guard, but carries the candidate's
+        # precedence references from the filled request document unchanged.
+        if "norm" in unit["content"]:
+            _need(unit["content"]["norm"]["over"] == filled_unit["content"]["norm"]["over"])
         R = by_id.get(unit["set"])
         _need(R is not None and (unit["unit"], unit["version"]) == (R.unit, R.version)
               and unit["index"] < len(R.candidates) and R.candidates[unit["index"]].content is not None)
@@ -255,6 +259,8 @@ def _bind_completion_superposed(row, case, sets):
              if decl.regulated is not None and decl.regulated.role == "obligation"}
     labels = [entry["label"] for entry in row["slot"] + row["fill"]]
     _need(len(set(labels)) == len(labels))
+    _need({entry["label"] for entry in row["fill"]} ==
+          {premise["label"] for reading in row["fill_premises"] for premise in reading["premises"]})
     for entry in row["fill"]:
         decoded = slot_label(entry["label"])
         _need(decoded.kind == FILL and tuple(decoded.key.split(",")) in pairs)

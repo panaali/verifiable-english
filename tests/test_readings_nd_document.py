@@ -482,7 +482,7 @@ def test_superposed_answer_retypes_each_field_and_rebinds_each_reference():
     bad["filled"]["environment"]["vocabulary"]["predicates"]["invented"] = {"arguments": ["agent", "user"]}
     with pytest.raises(CheckerUnavailable, match="invalid answer"):
         _completion_elaborate(bad, case)
-    for field in ("choices", "units", "names", "fill_premises", "filled"):
+    for field in ("choices", "units", "names", "fill", "fill_premises", "filled"):
         bad = copy.deepcopy(row)
         bad[field] = []
         with pytest.raises(CheckerUnavailable, match="invalid answer"):
@@ -493,6 +493,18 @@ def test_superposed_answer_retypes_each_field_and_rebinds_each_reference():
         _completion_elaborate(bad, case)
     bad = copy.deepcopy(row)
     bad["units"].append(copy.deepcopy(bad["units"][0]))
+    with pytest.raises(CheckerUnavailable, match="invalid answer"):
+        _completion_elaborate(bad, case)
+    bad = copy.deepcopy(row)
+    bad["fill"].append(copy.deepcopy(bad["fill"][0]))
+    with pytest.raises(CheckerUnavailable, match="invalid answer"):
+        _completion_elaborate(bad, case)
+    bad = copy.deepcopy(row)
+    bad["fill"][0]["label"] = ""
+    with pytest.raises(CheckerUnavailable, match="invalid answer"):
+        _completion_elaborate(bad, case)
+    bad = copy.deepcopy(row)
+    bad["units"][0]["content"]["norm"]["over"].append(bad["units"][0]["content"]["norm"]["over"][0])
     with pytest.raises(CheckerUnavailable, match="invalid answer"):
         _completion_elaborate(bad, case)
 
