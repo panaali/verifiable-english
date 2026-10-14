@@ -152,6 +152,23 @@ def test_python_sup_has_no_fold_or_dependency_replay():
     assert not any(isinstance(n, ast.FunctionDef) and n.name == "_replays" for n in tree.body)
 
 
+def test_budget_free_nd_verdict_request_keeps_the_enumerated_contract():
+    from pathlib import Path
+    from ve.backends.lean_service import LeanService
+
+    fixture = Path(__file__).resolve().parents[1] / "tests/data/route-cases.jsonl"
+    for line in fixture.read_text().splitlines():
+        mode, case = json.loads(line)
+        if (mode == "readings-route" and case.get("kind") == "readings-verdicts"
+                and "norm-defaults@0" in case["environment"]["profiles"] and "budget" not in case):
+            break
+    else:
+        pytest.fail("the saved enumerated request is missing")
+    with LeanService(allow_unlisted_build=True) as lean:
+        [answer] = lean.run(mode, [case])
+    assert answer["status"] == "ok" and answer["route"] == "enumerated"
+
+
 def test_a_canonical_base_with_a_local_collision_is_not_a_premise_model(tmp_path):
     from tests.test_readings_s2_document import DF, NEVER_AVOID, S, s2_document, _wording
     _, route, _ = _wording(s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]),

@@ -43,6 +43,30 @@
         "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build VE.Readings.SupVerdictsExamples"
       ],
       "claim": "The superposed SOME encoder cannot claim ALL; its computed boundary guard fails."
+    },
+    {
+      "id": "L3",
+      "file": "lean/VE/Readings/Run.lean",
+      "find": "if routeND f.r.N == .superposed && (j.getObjVal? \"budget\").isOk then\n        return ← runSupVerdicts id f.r.b j",
+      "replace": "if routeND f.r.N == .superposed then\n        return ← runSupVerdicts id f.r.b j",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l3-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_budget_free_nd_verdict_request_keeps_the_enumerated_contract"
+      ],
+      "claim": "A saved budget-free ND request still takes its enumerated service contract."
+    },
+    {
+      "id": "L4",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "find": "!(mentioned D ls).contains R.id",
+      "replace": "false",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build VE.Readings.SupVerdictsExamples"
+      ],
+      "claim": "The global proof with only a shared pair condition still says the result does not depend on the reading."
     }
   ]
 }
