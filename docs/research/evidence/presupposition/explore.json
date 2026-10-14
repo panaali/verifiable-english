@@ -1,0 +1,167 @@
+{
+ "never_counted": true,
+ "question": "Question: with no product code, can the pilot carry class A's formulas at all, and in what English?",
+ "variants": {
+  "pinned": {
+   "sort_entity_noun": "entity of sort \"entity\"",
+   "human": "{0} is human",
+   "lint": []
+  },
+  "plan_verbalisations": {
+   "sort_entity_noun": "entity of sort \"entity\"",
+   "human": "{0} is classified as \"human\"",
+   "core_value_of": "{0} has the recorded relation \"core_value_of\" to {1}",
+   "guideline_of": "{0} has the recorded relation \"guideline_of\" to {1}",
+   "open_problem": "{0} is classified as \"open_problem\"",
+   "mission_of": "{0} has the recorded relation \"mission_of\" to {1}",
+   "nature_of": "{0} has the recorded relation \"nature_of\" to {1}",
+   "lint": [
+    "core_value_of:BINARY_AUXILIARY",
+    "core_value_of:BINARY_CONVERSE",
+    "core_value_of:LOGICAL_WORD",
+    "core_value_of:SYMBOL_COLLISION",
+    "guideline_of:BINARY_AUXILIARY",
+    "guideline_of:BINARY_CONVERSE",
+    "guideline_of:LOGICAL_WORD",
+    "guideline_of:SYMBOL_COLLISION",
+    "human:NEGATIVE_WITHOUT_POSITIVE",
+    "human:SYMBOL_COLLISION",
+    "mission_of:BINARY_AUXILIARY",
+    "mission_of:BINARY_CONVERSE",
+    "mission_of:LOGICAL_WORD",
+    "mission_of:SYMBOL_COLLISION",
+    "nature_of:BINARY_AUXILIARY",
+    "nature_of:BINARY_CONVERSE",
+    "nature_of:LOGICAL_WORD",
+    "nature_of:SYMBOL_COLLISION",
+    "open_problem:LOGICAL_WORD",
+    "open_problem:SYMBOL_COLLISION",
+    "open_problem:UNARY_MODIFIER"
+   ]
+  },
+  "bare": {
+   "sort_entity_noun": "entity of sort \"entity\"",
+   "human": "{0} is human",
+   "core_value_of": "{0} has the recorded relation \"core_value_of\" to {1}",
+   "guideline_of": "{0} has the recorded relation \"guideline_of\" to {1}",
+   "open_problem": "{0} is classified as \"open_problem\"",
+   "mission_of": "{0} has the recorded relation \"mission_of\" to {1}",
+   "nature_of": "{0} has the recorded relation \"nature_of\" to {1}",
+   "lint": []
+  }
+ },
+ "units": {
+  "u0013.presupposition": {
+   "rendered": "There is an entity of sort \"entity\" that has the recorded relation \"core_value_of\" to claude.",
+   "exact": true,
+   "rerendered_same": true
+  },
+  "u0095.presupposition": {
+   "rendered": "There is an entity of sort \"entity\" that has the recorded relation \"guideline_of\" to anthropic.",
+   "exact": true,
+   "rerendered_same": true
+  },
+  "u0286.presupposition": {
+   "rendered": "There is an entity of sort \"entity\" that is classified as \"open_problem\".",
+   "exact": true,
+   "rerendered_same": true
+  },
+  "u0002.presupposition": {
+   "rendered": "There is a first entity of sort \"entity\" such that both of the following hold:\n  (a) the first entity of sort \"entity\" has the recorded relation \"mission_of\" to anthropic;\n  (b) for every second entity of sort \"entity\" that has the recorded relation \"mission_of\" to anthropic, the second entity of sort \"entity\" is the same as the first entity of sort \"entity\".",
+   "exact": true,
+   "rerendered_same": true
+  },
+  "u0235.presupposition": {
+   "rendered": "There is a first entity of sort \"entity\" such that both of the following hold:\n  (a) the first entity of sort \"entity\" has the recorded relation \"nature_of\" to claude;\n  (b) for every second entity of sort \"entity\" that has the recorded relation \"nature_of\" to claude, the second entity of sort \"entity\" is the same as the first entity of sort \"entity\".",
+   "exact": true,
+   "rerendered_same": true
+  }
+ },
+ "converted": [
+  "u0002.presupposition",
+  "u0013.presupposition",
+  "u0095.presupposition",
+  "u0235.presupposition",
+  "u0286.presupposition"
+ ],
+ "resituate_pinned_identical": true,
+ "scratch_check": {
+  "returncode": 0,
+  "stderr": "",
+  "admitted": true,
+  "status_delta": {
+   "CHECKED": 145,
+   "UNFORMALISED": -145
+  },
+  "converted_bytes": 145,
+  "readings": {
+   "pinned": {
+    "choice_count": 8,
+    "choices_checked": 8,
+    "conflict_status": "CONFLICT-FREE",
+    "choices_conflict_free": 8,
+    "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+   },
+   "scratch": {
+    "choice_count": 8,
+    "choices_checked": 8,
+    "conflict_status": "CONFLICT-FREE",
+    "choices_conflict_free": 8,
+    "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+   }
+  },
+  "residual": {
+   "pinned": {
+    "assumptions": 19,
+    "bridge_leaves": 0,
+    "open_terms": 33,
+    "unresolved_reading_sets": 3,
+    "separations": 3,
+    "readings_findings": 0,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 12,
+    "ungrounded_defaults": 0
+   },
+   "scratch": {
+    "assumptions": 24,
+    "bridge_leaves": 0,
+    "open_terms": 33,
+    "unresolved_reading_sets": 3,
+    "separations": 3,
+    "readings_findings": 0,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 12,
+    "ungrounded_defaults": 0
+   }
+  },
+  "differences_after_normalising": [
+   "admission",
+   "coverage",
+   "premises",
+   "readings"
+  ],
+  "rendered_lines": {
+   "u0013.presupposition": "There is an entity of sort \"entity\" that has the recorded relation \"core_value_of\" to claude.",
+   "u0095.presupposition": "There is an entity of sort \"entity\" that has the recorded relation \"guideline_of\" to anthropic.",
+   "u0286.presupposition": "There is an entity of sort \"entity\" that is classified as \"open_problem\".",
+   "u0002.presupposition": "There is a first entity of sort \"entity\" such that both of the following hold:",
+   "u0235.presupposition": "There is a first entity of sort \"entity\" such that both of the following hold:"
+  }
+ },
+ "probes": {
+  "conclusion-no-denial.json": {
+   "pinned_returncode": 0,
+   "scratch_returncode": 0,
+   "identical_normalised": true,
+   "byte_identical_raw": true
+  },
+  "conclusion-no-claim-human.json": {
+   "pinned_returncode": 0,
+   "scratch_returncode": 0,
+   "identical_normalised": true,
+   "byte_identical_raw": true
+  }
+ }
+}
