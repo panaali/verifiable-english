@@ -80,13 +80,17 @@ def write() -> dict:
 
 
 def check(data: dict) -> None:
-    assert data["schema"] == 1 and len(data["merges"]) == 10
+    assert data["schema"] == 1 and len(data["merges"]) == len(MERGES)
     assert data["map_sha256"] == digest(MAP)
     coverage = test_map.load(MAP)
     assert data["map_commit"] == coverage["commit"]
-    assert len({row["merge"] for row in data["merges"]}) == 10
+    assert len({row["merge"] for row in data["merges"]}) == len(MERGES)
     assert any(row["selected_count"] < row["full_count"] for row in data["merges"])
-    for row in data["merges"]:
+    for row, (label, short, gate_name) in zip(data["merges"], MERGES, strict=True):
+        # MERGES is also the writer's inventory. Keep each saved selection tied
+        # to the item, merge and archived gate that produced it.
+        assert (row["item"], row["merge"], row["gate"]) == (
+            label, git("rev-parse", short), gate_name)
         gate_path = ROOT / row["gate"]
         gate = json.loads(gate_path.read_text())
         assert row["gate_sha256"] == digest(gate_path)

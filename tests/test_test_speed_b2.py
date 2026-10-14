@@ -25,7 +25,10 @@ def shadow_record(tmp_path, monkeypatch):
     monkeypatch.setattr(shadow, "digest", lambda path: f"digest:{path.name}")
     monkeypatch.setattr(shadow.test_map, "load", lambda path: {
         "commit": "map-commit", "tests": ["tests/test_fail.py", "tests/test_other.py"]})
-    monkeypatch.setattr(shadow, "git", lambda *args: "")
+    monkeypatch.setattr(shadow, "git", lambda *args: f"merge-{int(args[-1])}" if args[0] == "rev-parse" else "")
+    monkeypatch.setattr(shadow, "MERGES", tuple(
+        ("eff-tests" if index == 0 else f"item-{index}", str(index), f"gate-{index}.json")
+        for index in range(10)))
     (tmp_path / "first.json").write_text(json.dumps({
         "status": "failed", "failures": [{"nodeid": "tests/test_fail.py::test_case"}]}))
     rows = []
@@ -34,7 +37,7 @@ def shadow_record(tmp_path, monkeypatch):
         (tmp_path / gate_name).write_text(json.dumps({
             "status": "passed", "commit_sha": f"commit-{index}",
             "counts": {"collected": 2}, "failures": []}))
-        selected = (["tests/test_fail.py", "tests/test_other.py"] if index == 0
+        selected = (["tests/test_fail.py", "tests/test_other.py"] if index in (0, 4, 5)
                     else ["tests/test_other.py"])
         rows.append({"item": "eff-tests" if index == 0 else f"item-{index}",
                      "merge": f"merge-{index}", "paths": [], "gate": gate_name,
@@ -63,5 +66,32 @@ def test_shadow_merge_failure_exclusion_is_recomputed(shadow_record):
     changed = copy.deepcopy(shadow_record)
     row = next(row for row in changed["merges"] if row["item"] == "eff-tests")
     row["failures_outside_selection"].append("tests/test_fail.py")
+    with pytest.raises(AssertionError):
+        shadow.check(changed)
+
+
+@pytest.mark.parametrize("field", ["item", "merge", "gate"])
+def test_shadow_rejects_relabelled_item_merge_or_gate(shadow_record, field):
+    changed = copy.deepcopy(shadow_record)
+    first, second = changed["merges"][1], changed["merges"][0]
+    first[field], second[field] = second[field], first[field]
+    with pytest.raises(AssertionError):
+        shadow.check(changed)
+
+
+def test_shadow_rejects_failure_hidden_by_item_swap(shadow_record):
+    changed = copy.deepcopy(shadow_record)
+    target, other = changed["merges"][0], changed["merges"][1]
+    target["selected"].remove("tests/test_fail.py")
+    target["selected_count"] = len(target["selected"])
+    target["item"], other["item"] = other["item"], target["item"]
+    with pytest.raises(AssertionError):
+        shadow.check(changed)
+
+
+def test_shadow_rejects_full_selection_item_swap(shadow_record):
+    changed = copy.deepcopy(shadow_record)
+    first, second = changed["merges"][4:6]
+    first["item"], second["item"] = second["item"], first["item"]
     with pytest.raises(AssertionError):
         shadow.check(changed)
