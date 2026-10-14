@@ -570,6 +570,7 @@ class _Grammar:
 
 _compiler = Compiler()
 ROWS = {mode: _compiler.ref(f"{mode}.json", "#/row") for mode in MODES}
+RIGHTS_BLOCK = _compiler.ref("document.json", "#/$defs/rights_block")
 RESPONSE = _compiler.ref("envelope.json", "#/response")
 HANDSHAKE = _compiler.ref("envelope.json", "#/handshake")
 

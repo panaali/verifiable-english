@@ -19,7 +19,7 @@ from conformance import rights_differential as generator
 from tools.lean_first_diff import outcome
 from ve import document as D
 from ve.backends import relay
-from ve.backends.service_schema import Context, Invalid, ROWS
+from ve.backends.service_schema import Context, Invalid, RIGHTS_BLOCK, ROWS
 from ve.errors import CheckerUnavailable, VEError
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -280,6 +280,32 @@ def test_f5_optional_rights_metadata_renders_after_acceptance(tmp_path, case, va
         assert "It cites unit None" not in new[1]["returned"]
     elif case == "bar_decider":
         assert "The source names no decider of whether an act is so aimed." in new[1]["returned"]
+
+
+@pytest.mark.parametrize("location,member", [
+    *( (place, "annotation") for place in ("right", "line", "line_norm", "condition", "limitation", "bar") ),
+    *( (place, "guard") for place in ("line", "condition", "limitation", "bar") ),
+])
+def test_f6_closed_rights_content_rejects_forbidden_null_members(tmp_path, location, member):
+    """An unknown null is still a member. Both document paths reject it, and
+    the copied-content response shape is the one source of that rule."""
+    meta, body = _split(_text(2))
+    right = meta["units"][0]["content"]["right"]
+    limitation = next(u for u in meta["units"] if u["kind"] == "limitation")["content"]["limitation"]
+    bar = next(u for u in meta["units"] if u["kind"] == "bar")["content"]["bar"]
+    targets = {"right": right, "line": right["lines"][0],
+               "line_norm": right["lines"][0]["norm"],
+               "condition": limitation["conditions"][0], "limitation": limitation, "bar": bar}
+    targets[location][member] = None
+    with pytest.raises(Invalid):
+        RIGHTS_BLOCK[0](meta["units"][0]["content"] if location in ("right", "line", "line_norm")
+                        else {"bar": bar} if location == "bar" else {"limitation": limitation}, Context({}), {})
+    path = tmp_path / "forbidden-null.ve.md"
+    path.write_text(_join(meta, body))
+    lean, new, old = _both(path)
+    assert lean
+    for outcomes in (new, old):
+        assert all(item.get("raised", {}).get("code") == "InvalidInput" for item in outcomes), outcomes
 
 
 def test_a_right_without_a_holder_guard_is_built_on_both_paths(tmp_path):
