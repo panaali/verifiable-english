@@ -1,0 +1,45 @@
+{
+ "vocabulary_added": {
+  "core_value_of": {
+   "arguments": [
+    "entity",
+    "entity"
+   ],
+   "verbalisation": "{0} is a core value of {1}"
+  },
+  "guideline_of": {
+   "arguments": [
+    "entity",
+    "entity"
+   ],
+   "verbalisation": "{0} is a guideline of {1}"
+  },
+  "open_problem": {
+   "arguments": [
+    "entity"
+   ],
+   "verbalisation": "{0} is an open problem"
+  },
+  "mission_of": {
+   "arguments": [
+    "entity",
+    "entity"
+   ],
+   "verbalisation": "{0} is a mission of {1}"
+  },
+  "nature_of": {
+   "arguments": [
+    "entity",
+    "entity"
+   ],
+   "verbalisation": "{0} is a nature of {1}"
+  }
+ },
+ "constant_added": {
+  "anthropic": {
+   "sort": "entity",
+   "description": "Anthropic in the source."
+  }
+ },
+ "units_converted": {}
+}

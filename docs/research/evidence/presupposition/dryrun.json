@@ -1,0 +1,266 @@
+{
+ "run": "20261012T1800Z",
+ "definitions": "docs/research/presupposition-phase1.md 1.3-1.4",
+ "rust_timeout": "600",
+ "checks": [
+  {
+   "id": "F1",
+   "expected": "all three",
+   "measured": {
+    "u0013.presupposition": false,
+    "u0095.presupposition": false,
+    "u0286.presupposition": false
+   },
+   "pass": false
+  },
+  {
+   "id": "F2",
+   "expected": "open (decides P4)",
+   "measured": {
+    "u0002.presupposition": false,
+    "u0235.presupposition": false
+   },
+   "pass": false
+  },
+  {
+   "id": "F3",
+   "expected": "same exit code, admitted",
+   "measured": {
+    "scratch_returncode": 1,
+    "stdout": ""
+   },
+   "pass": false
+  },
+  {
+   "id": "F6",
+   "expected": "identical after normalising",
+   "measured": {
+    "conclusion-no-denial.json": {
+     "pinned_returncode": 0,
+     "scratch_returncode": 1,
+     "identical_normalised": false,
+     "byte_identical_raw": false,
+     "pinned_verdict": "ALL",
+     "scratch_verdict": null
+    },
+    "conclusion-no-claim-human.json": {
+     "pinned_returncode": 0,
+     "scratch_returncode": 1,
+     "identical_normalised": false,
+     "byte_identical_raw": false,
+     "pinned_verdict": "ALL",
+     "scratch_verdict": null
+    }
+   },
+   "pass": false
+  }
+ ],
+ "pinned_check": {
+  "returncode": 0,
+  "identical_to_pinned_record": true,
+  "bytes_by_status": {
+   "CHECKED": 73,
+   "LABELLED": 349,
+   "OPEN": 2529,
+   "UNFORMALISED": 181942
+  },
+  "readings": {
+   "choice_count": 8,
+   "choices_checked": 8,
+   "conflict_status": "CONFLICT-FREE",
+   "choices_conflict_free": 8,
+   "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+  }
+ },
+ "per_unit": {
+  "u0013.presupposition": {
+   "fence": "Some entity is a core value of Claude.",
+   "expected_formula": [
+    "exists",
+    "entity",
+    [
+     "binary",
+     "core_value_of",
+     [
+      "var",
+      0
+     ],
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'."
+   }
+  },
+  "u0095.presupposition": {
+   "fence": "Some entity is a guideline of Anthropic.",
+   "expected_formula": [
+    "exists",
+    "entity",
+    [
+     "binary",
+     "guideline_of",
+     [
+      "var",
+      0
+     ],
+     [
+      "const",
+      "anthropic"
+     ]
+    ]
+   ],
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'."
+   }
+  },
+  "u0286.presupposition": {
+   "fence": "Some entity is an open problem.",
+   "expected_formula": [
+    "exists",
+    "entity",
+    [
+     "unary",
+     "open_problem",
+     [
+      "var",
+      0
+     ]
+    ]
+   ],
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is not human'. Nearest declared wordings: 'is classified as \"human\"'; 'user'; 'claude'."
+   }
+  },
+  "u0002.presupposition": {
+   "fence": "Some entity is a mission of Anthropic, and every entity that is a mission of Anthropic is that entity.",
+   "expected_formula": [
+    "exists",
+    "entity",
+    [
+     "and",
+     [
+      "binary",
+      "mission_of",
+      [
+       "var",
+       0
+      ],
+      [
+       "const",
+       "anthropic"
+      ]
+     ],
+     [
+      "forall",
+      "entity",
+      [
+       "implies",
+       [
+        "binary",
+        "mission_of",
+        [
+         "var",
+         0
+        ],
+        [
+         "const",
+         "anthropic"
+        ]
+       ],
+       [
+        "eq",
+        [
+         "var",
+         0
+        ],
+        [
+         "var",
+         1
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'."
+   }
+  },
+  "u0235.presupposition": {
+   "fence": "Some entity is a nature of Claude, and every entity that is a nature of Claude is that entity.",
+   "expected_formula": [
+    "exists",
+    "entity",
+    [
+     "and",
+     [
+      "binary",
+      "nature_of",
+      [
+       "var",
+       0
+      ],
+      [
+       "const",
+       "claude"
+      ]
+     ],
+     [
+      "forall",
+      "entity",
+      [
+       "implies",
+       [
+        "binary",
+        "nature_of",
+        [
+         "var",
+         0
+        ],
+        [
+         "const",
+         "claude"
+        ]
+       ],
+       [
+        "eq",
+        [
+         "var",
+         0
+        ],
+        [
+         "var",
+         1
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'."
+   }
+  }
+ },
+ "exploratory_u0002": {
+  "fence": "Exactly one entity is a mission of Anthropic.",
+  "never_counted": true,
+  "loader": {
+   "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one entity'. Nearest declared wordings: 'entity of sort \"entity\"'; 'operator input'; 'anthropic'."
+  }
+ },
+ "vocabulary_only_check": {
+  "returncode": 1,
+  "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 203, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/seyran/code/ve-p1-presupposition/ve/__main__.py\", line 409, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/seyran/code/ve-p1-presupposition/ve/__main__.py\", line 43, in main\n    return _main(argv)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/__main__.py\", line 121, in _main\n    return document_main(argv[1:])\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 1760, in main\n    data = check_document(args.path)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/assurance.py\", line 127, in guarded\n    return fn(*args, **kwargs)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 1311, in check_document\n    return _check_document(path)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 1315, in _check_document\n    doc = _load(Path(path), admit=True)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 386, in _load\n    row = _lean_answer(raw, admit)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 438, in _lean_answer\n    raise error\nve.errors.SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is not human'. Nearest declared wordings: 'is classified as \"human\"'; 'user'; 'claude'.\n"
+ },
+ "scratch_check": {
+  "returncode": 1,
+  "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 203, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/seyran/code/ve-p1-presupposition/ve/__main__.py\", line 409, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/seyran/code/ve-p1-presupposition/ve/__main__.py\", line 43, in main\n    return _main(argv)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/__main__.py\", line 121, in _main\n    return document_main(argv[1:])\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 1760, in main\n    data = check_document(args.path)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/assurance.py\", line 127, in guarded\n    return fn(*args, **kwargs)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 1311, in check_document\n    return _check_document(path)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 1315, in _check_document\n    doc = _load(Path(path), admit=True)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 386, in _load\n    row = _lean_answer(raw, admit)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 438, in _lean_answer\n    raise error\nve.errors.SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is not human'. Nearest declared wordings: 'is classified as \"human\"'; 'user'; 'claude'.\n",
+  "converted": []
+ },
+ "roundtrip": {}
+}
