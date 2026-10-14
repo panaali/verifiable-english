@@ -4,7 +4,7 @@
   "K": 997,
   "S": 9788,
   "D": 13887,
-  "G": 27491,
+  "G": 27494,
   "C": 8486,
   "P": 71959,
   "T": 14750,
@@ -12,18 +12,18 @@
   "D[V]": 12357,
   "D[R]": 1003,
   "D[I]": 527,
-  "G[V]": 25485,
+  "G[V]": 25488,
   "G[R]": 1765,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 48468,
-  "lines": 159721
+  "trusted": 48471,
+  "lines": 159724
  },
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37683
+  "V": 37686
  },
  "signed": [],
  "history": [
@@ -712,6 +712,19 @@
     "K": 997,
     "S": 9788,
     "V": 37683
+   }
+  },
+  {
+   "change": "readings-defaults RD-7 final scoped evidence: V +3 (VE/Readings/SupVerdictsWire.lean +2 for 1024-choice model proposals and checked dead readings; ResponseShape/Schemas/ReadingsRoute.lean +1 for the typed per-scope proposals). These Lean-owned results replace the deleted Python superposed candidate search, count and status paths in docs/readings-defaults/rd7/evidence/deletion-ledger.json; SIGNED by standing ruling R6 (DRI-RULINGS.md), tested by test_scoped_proposals_reach_checked_choices_after_the_64_choice_prefix and test_superposed_scope_count_stays_bounded_above_64_choices.",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37683
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37686
    }
   }
  ],
@@ -5025,7 +5038,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 868,
+   "G": 869,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -5033,13 +5046,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 868,
+   "G[V]": 869,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 868,
-   "lines": 883
+   "trusted": 869,
+   "lines": 884
   },
   "ResponseShape/Schemas/Reports.lean": {
    "K": 0,
@@ -10645,7 +10658,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 416,
+   "G": 418,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -10653,13 +10666,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 416,
+   "G[V]": 418,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 416,
-   "lines": 433
+   "trusted": 418,
+   "lines": 435
   },
   "VE/Readings/SupWire.lean": {
    "K": 0,

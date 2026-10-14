@@ -1,11 +1,18 @@
 """RD-7: the superposed service owns verdicts, dependency replay and the complete English plan."""
 from copy import deepcopy
 import json
+from pathlib import Path
 
 import pytest
 
 from ve.errors import CheckerUnavailable
 from ve.readings_verdicts import BUDGET, _check_sup_answer
+
+
+def _large_choice_case(question, **fields):
+    fixture = json.loads((Path(__file__).parent / "data/readings-rd7-128.json").read_text())
+    return {"id": "readings-verdicts", "kind": "readings-verdicts", **fixture,
+            "question": question, "evidence": [], "budget": dict(BUDGET), **fields}
 
 
 def example(tmp_path):
@@ -267,34 +274,29 @@ def test_superposed_answer_is_stable_when_document_keys_are_reordered(tmp_path):
 
 
 def test_superposed_scope_count_stays_bounded_above_64_choices():
-    from tests.test_readings_nd_lean import case, run
-    from tests.test_readings_verdicts_lean import QUERY, fnd3
+    from ve.backends.lean_service import LeanService
 
-    raw, document = fnd3()
-    [row] = run("ve_readings_route", [case("readings-verdicts", raw, document, question="query",
-                                           evidence=[], premises=[], conclusion=QUERY, budget=dict(BUDGET))])
+    with LeanService(allow_unlisted_build=True) as lean:
+        [row] = lean.run("readings-route", [_large_choice_case(
+            "query", premises=[], conclusion=["forall", "agent", ["forall", "user",
+                ["binary", "help_required", ["var", 1], ["var", 0]]]])])
+        [premises] = lean.run("readings-route", [_large_choice_case("premises")])
     assert row["status"] == "ok" and row["route"] == "superposed"
     # The 128 compatible choices do not become 128 evidence scopes or model proposals.
     assert len(row["scopes"]) == 1
     assert len(row["model_proposals"]) == 16
     assert row["result"]["verdict"] == "UNKNOWN"
-
-    [premises] = run("ve_readings_route", [case("readings-verdicts", raw, document, question="premises",
-                                                evidence=[], budget=dict(BUDGET))])
     assert premises["status"] == "ok" and premises["route"] == "superposed"
     assert premises["dead_readings"] == [] and premises["untaken"] == []
 
 
 def test_scoped_proposals_reach_checked_choices_after_the_64_choice_prefix():
-    from tests.test_readings_nd_lean import case
-    from tests.test_readings_verdicts_lean import QUERY, fnd3
     from ve.backends.lean_service import LeanService
 
-    raw, document = fnd3()
     assumed = [["rs_1", 1], ["rs_2", 1]]
-    request = case("readings-verdicts", raw, document, question="query", assumed=assumed,
-                   evidence=[], premises=[], conclusion=QUERY, budget=dict(BUDGET))
-    # The unlisted-build test path lets a seeded Lean mutant reach the assertion.
+    request = _large_choice_case("query", assumed=assumed, premises=[], conclusion=["forall", "agent",
+        ["forall", "user", ["binary", "help_required", ["var", 1], ["var", 0]]]])
+    # The fixed fixture and unlisted service let a seeded Lean mutant reach the assertion.
     with LeanService(allow_unlisted_build=True) as lean:
         [row] = lean.run("readings-route", [request])
     assert row["status"] == "ok" and row["route"] == "superposed"
