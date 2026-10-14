@@ -84,8 +84,6 @@ correctly classified**: each mark stays a review item in its batch's statement r
 
 ## Consequences
 
-- `x-unique-strings` checks that an array contains distinct strings. It is a structural schema check, not a
-  relation to the request; it does not classify a leaf or extend D1's closed binding list.
 - Review prompts and build checklists cite this ADR. "Python accepts a tampered derived field" is not a B finding
   when (a), (b) and the covering Lean theorem or invariant hold; a missing type or a missing binding is (R8).
 - New relaying code adds no Python recomputation of a derived value. Existing recomputations are debt with an
