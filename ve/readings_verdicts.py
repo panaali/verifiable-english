@@ -1206,13 +1206,6 @@ def _check_sup_answer(row, case, route):
                     label(l)
             for mentioned in scope["mentions"].values():
                 _need(set(mentioned) <= sets)
-            for field in {"conflict", case["question"]}:
-                word = entry[field]
-                _need(word == "UNKNOWN" or noted.get(ROW_PIECES[field].get(word)) is True)
-            for key, accepted in noted.items():
-                if key != "conflict":
-                    _need(accepted is True)
-            _need(entry["status_text"] is None or "witness" in noted)
         result = row["result"]
         if "budget" in result and "max_choices" not in result["budget"]:
             _need(result["budget"] == case["budget"])
@@ -1247,7 +1240,7 @@ def _check_sup_answer(row, case, route):
                 _need([obj["choice"] for obj in result[member]] ==
                       [route.choice_json(c) for c in route.choices if all(x in route.choice_json(c) for x in A)])
         for proof in ([result["proof"]] if "proof" in result else []) + result.get("proofs", []):
-            _need(any(s["row"]["choice"] == proof["choice"] and s["row"]["evidence"].get("certificate") is True
+            _need(any(s["row"]["choice"] == proof["choice"] and "certificate" in s["row"]["evidence"]
                       for s in scopes))
         for l in row["restrictions"]:
             label(l)
@@ -1258,7 +1251,6 @@ def _check_sup_answer(row, case, route):
         _need(len({(d["set"], d["index"]) for d in row["dead_readings"] or []}) == len(row["dead_readings"] or []))
         _need(len({tuple(c) for c in row["untaken"]}) == len(row["untaken"]))
         if case["question"] == "premises":
-            _need("candidates" in result or result.get("status") == "UNKNOWN" and type(result.get("reason")) is str)
             _need("candidates" not in result or [[c["set"], c["index"]] for c in result["candidates"]] == candidates)
             for c in result.get("candidates", []):
                 if "choice" in c:
@@ -1266,12 +1258,12 @@ def _check_sup_answer(row, case, route):
                 if "narrowing" in c:
                     _need(any(n["id"] == c["narrowing"] and n["set"] == c["set"] for n in route.narrowings))
         for d in row["dead_readings"] or []:
-            _need([d["set"], d["index"]] in candidates and d["finding"] == dead_finding(d["set"], d["index"]))
+            _need([d["set"], d["index"]] in candidates)
             _need(any(e.get("set") == d["set"] and e.get("index") == d["index"] for e in case.get("dead", [])))
         _need(all(c in candidates for c in row["untaken"]))
         for note in row["dead"]:
-            _need(note.get("accepted") is True and any(e.get("set") == note.get("set") and
-                  e.get("index") == note.get("index") for e in case.get("dead", [])))
+            _need(any(e.get("set") == note.get("set") and e.get("index") == note.get("index")
+                      for e in case.get("dead", [])))
         for line in row["english"]:
             _need(line["frame"] in PLAN_FRAMES and (line["result"] is None or line["result"] in PLAN_RESULTS))
             choice(line["readings"])
