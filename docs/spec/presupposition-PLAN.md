@@ -14,17 +14,23 @@
 
 - **Phase 1 recorded** (0.1): every pre-registered check with its PASS, FAIL or DEFERRED verdict and what it gates.
 - **PS-0p split.** PS-0p keeps what runs now: the ledger, classes D and E, u0286, class B as audit items and the
-  step-7 count as a translator field. **PS-0p-r** (u0013, u0095, u0002, u0235) is DEFERRED until the relational-noun
-  wordings are admitted (Ph1 F1, F2, 2.5).
+  step-7 count as a translator field. **PS-0p-r** (u0013, u0095, u0002, u0235) is DEFERRED until wordings for their
+  four nouns (core value, guideline, mission, nature) are admitted (Ph1 F1, F2, 2.5). VE already admits some
+  relational nouns through its finite idiom list ("is a citizen of"); the limit is these four nouns, not relational
+  nouns in general.
 - **Bytes.** PS-0p: **+29 B** now (u0286, audit-gated), not +89 B; +145 B with PS-0p-r; stretch +294 B with class B.
   The plan's sentences as written claim 0 B (Ph1 F1–F6 FAIL).
 - **No new sort, no premise-scale.** The sort `entity` keeps its name; the pilot declares its English noun as
   "thing"/"things", a document field (Ph1 2.5). Three pilot rules are added; the quoted fallback English is refused.
 - **Classes D and E confirmed;** u0055 is a wh-title and goes to the audit instead of being deleted (Ph1 H3).
 - **P4** is written in VE's enumerated uniqueness form (Ph1 2.5), not the one-line sentence.
-- **PS-6r** (new, split from PS-6): the relational-noun wording rows; it enables PS-0p-r's +116 B.
+- **PS-6r** (new, split from PS-6): wording rows for the four pilot nouns; it enables PS-0p-r's +116 B.
 - **PS-E2** tests the lines PS-6r produces, or labels its items as target wording.
-- **PS-3**'s internal order is conditional on the step-7 re-count; Risk 7 is bounded above by 98 occurrences.
+- **PS-3**'s internal order is conditional on the step-7 re-count. Risk 7: the G1 role definites ("the user", "the
+  operator") are bounded above by 98 occurrences with 2 source-identity choices; G2 possessives have 32 occurrences;
+  the combined goal count is unknown until the re-count.
+- **X4** asks the DRI for a time-limit exception in pilot checks; until it is granted, the standing rule holds and
+  PS-0p's step 6 waits.
 - **PS-7 and 1.6 counts** use phase 1's whole-unit census.
 - **DRI rulings applied:** PS-C9 (no `presuppositions` mode: the report is a field of the Lean document mode's
   answer, PS-4 absorbs it, PS-2a after lf-16g); PS-NF (`NegatedFactive`'s candidates come from this plan's
@@ -124,7 +130,7 @@ projection, collapse and rule theorems, and per-row definedness lemmas.
 
 **First batch that moves a number.** PS-0p is pilot-only. It claims the heading presuppositions that a word triggers
 and nothing else blocks. Phase 1 measured what VE English can write today (0.1): **+29 B** (u0286, "Some thing is
-unsolved.") now; +145 B (5 units) once the relational-noun wordings land (PS-0p-r, after PS-6r); stretch +294 B (9)
+unsolved.") now; +145 B (5 units) once wordings for the four pilot nouns land (PS-0p-r, after PS-6r); stretch +294 B (9)
 with class B. All are **estimates**, gated by the audit. It also removes 10 recorded heading "presuppositions" that
 no word triggers (315 B; u0055, a wh-title, goes to the audit), stops the pilot assuming what the text withholds
 (u0254, u0268), and records the distinct projected goals in rule acts (Risk 7), so that PS-3's order is decided on a
@@ -137,7 +143,7 @@ count.
 | PS-S | draft-2 statements, spec and statement review (the re-check) | 5–6 | none | 0 | 0 |
 | PS-1 | Lean core, new files, discourse's generalised builders | 6–7 | PS-S review passed | 0 | 0 |
 | PS-E1 | experiment (readers' carriers and wording) | 3 | DRI authorises model calls; finishes before PS-2a | 0 | 0 |
-| PS-6r | English: relational-noun wording rows | 2–3 | English queue (slot: 11, X1) | 0 itself; enables PS-0p-r's +116 | 0 |
+| PS-6r | English: wording rows for the four pilot nouns | 2–3 | English queue (slot: 11, X1) | 0 itself; enables PS-0p-r's +116 | 0 |
 | PS-E2 | experiment (rendering) | 2 | PS-E1, PS-6r (or items labelled target wording) | 0 | 0 |
 | PS-2a | Lean: obligation check and report (no mode, PS-C9) | 4–5 | PS-1, PS-E1, lf-16g | 0 | 0 |
 | PS-4 | on the composition stack: the report field and the status rule | 4–5 | PS-2a, AR-10 table, document-mode queue | 0 | 0 |
@@ -167,14 +173,16 @@ control). Its verdicts, against the bars fixed before any count (Ph1 1.4):
 | F2 | the two uniqueness sentences (open) | none parses | **FAIL** | P4's one-line form; PS-6r's uniqueness sentence |
 | F3–F6 | the scratch translation loads; CHECKED +89 B; 8 of 8 conflict-free; probes byte-identical | does not load: the plan's binary wordings turn u0248's "is human" into a fallback | **FAIL** (F4, F5 not measurable) | the prompt addition as draft 3 wrote it must not be merged |
 | Exploration (never counted) | — | quoted fallback English: loads, +145 B, 8 of 8, probes byte-identical, witnesses in the existing domain | information | the mechanism works; only the English is missing |
-| Post-review (never counted) | — | noun "thing": only display text changes; u0286 as "Some thing is unsolved.": +29 B, 8 of 8, probes identical; every relational-noun wording tried fails the lint; VE's enumerated uniqueness form parses exactly | information | PS-0p now (u0286); PS-0p-r and PS-6r |
-| Step 7 | none (a count) | formalised rules: 4 goal keys in one unit (u0156.s03), none equal; unformalised: at most 98 "the user"/"the operator" matches, 2 source-identity choices | reported | PS-3's internal order, after the re-count |
+| Post-review (never counted) | — | noun "thing": only display text changes; u0286 as "Some thing is unsolved.": +29 B, 8 of 8, probes identical; every wording tried for the four pilot nouns fails the lint; VE's enumerated uniqueness form parses exactly | information | PS-0p now (u0286); PS-0p-r and PS-6r |
+| Step 7 | none (a count) | formalised rules: 4 goal keys in one unit (u0156.s03), none equal; unformalised G1 (role definites): at most 98 "the user"/"the operator" matches, 2 source-identity choices; unformalised G2 (possessives): 32 matches in 29 units; combined goal count unknown | reported | PS-3's internal order, after the re-count |
 | Step 5 (class B) | claimed only if the audit accepts | needs the audit | **DEFERRED** (trigger: as the bar) | stretch +149 B |
 | PS-E1, PS-E2 | 6/40 candidate, 36/40 one-reading, controls 11 of 12 …; 36/40 on 18 of 20 | model calls, not run in phase 1 | **DEFERRED** (triggers: DRI authorises the calls; PS-E2 also PS-6r) | PS-2a's table; PS-6's templates |
 
 Every Rust-backed run used `VE_RUST_TIMEOUT=600` under `prlimit --as=6442450944` (6 GiB), recorded in the evidence;
 peak resident sets were under 140 MiB (Ph1 5). At the 5 s default the pinned translation's own check is
-CheckerUnavailable, so PS-0p's step 6 cannot run without a raised limit (11, X4).
+CheckerUnavailable, so PS-0p's step 6 cannot run without a raised limit. Phase 1's raised limit, under a memory
+cap, is recorded evidence, not a precedent: the standing rule forbids raising `VE_RUST_TIMEOUT` for whole-document
+checks until oom-rootcause merges, so step 6 waits for that merge or a DRI exception (11, X4).
 
 ## 1. The design
 
@@ -315,7 +323,7 @@ R 4.2 has the full table. In short, where the projected goal fails:
 - **Proved.** No extra line by default. "Why" shows: "‘the user’s request’ takes for granted that the user made a
   request; the rule's condition says so."
 - **Assumed.** In the document's assumptions list: "Assumed (from ‘Claude’s core values’): Claude has at least one
-  core value." This is the target wording: VE renders it only once PS-6r admits the relational noun. Today the
+  core value." This is the target wording: VE renders it only once PS-6r admits a wording for "core value". Today the
   renderer writes the quoted fallback ("… has the recorded relation "core_value_of" to claude"), which is not VE
   English (Ph1 2.3).
 - **Conditioned.** The rule rewritten in full with its condition: "Where there is a system prompt, Claude must not
@@ -347,9 +355,11 @@ R 4.2 has the full table. In short, where the projected goal fails:
   (Ph1 H3).
 - **Writing `pre` in VE English** (Ph1 2.2, 2.5). The existence sentence needs a sort noun that is not reserved: the
   pilot declares the sort `entity`'s noun as "thing"/"things" (a document field; no new sort), so "Some thing is
-  unsolved." parses. The restriction needs an admitted wording: today the wording lint admits no relational-noun
-  wording ("{0} is a core value of {1}" and every variant tried fall back to the quoted form), so a `pre` over a
-  relational noun waits for PS-6r. Uniqueness is written in VE's enumerated form ("There is a first thing such that
+  unsolved." parses. The restriction needs an admitted wording. The lint admits the "is a N of" shape only for nouns
+  on VE's finite idiom list (for example "{0} is a citizen of {1}"), and the four pilot nouns are not on it: "{0} is a
+  core value of {1}" and every variant phase 1 tried for core value, guideline, mission and nature fall back to the
+  quoted form, so a `pre` over one of those four waits for PS-6r. A noun already on the idiom list needs no new row;
+  other nouns are unmeasured. Uniqueness is written in VE's enumerated form ("There is a first thing such that
   both of the following hold: (a) …; (b) for every second thing that …, the second thing is the same as the first
   thing."), which parses to exactly `U(D)`; the one-line form is refused. The quoted fallback ("has the recorded
   relation …") is never used to claim a unit: it is not VE English.
@@ -563,7 +573,7 @@ E1 and E2 (the two bracketed paraphrases).
 | P1 | u0013.presupposition (24, U) | "Claude’s core values": a heading obligation (position `heading`), `plural`, restriction `core_value_of(x, claude)`, no body, carrier assumed on its own unit, whose content is exactly `pre`, `∃x core_value_of(x, claude)` (English after PS-6r: "Some thing is a core value of Claude.") | admitted (`admit_heading_goal`, `admit_assumed_sound`); CHECKED as an assumption; "Assumed (from ‘Claude’s core values’): Claude has at least one core value." A unit that says more than `pre` is `PresuppositionAssumedUnit`. The formula round-trips through VE's renderer today (Ph1 2.3); its English waits for PS-6r |
 | P2 | u0095.presupposition (36, U) | "Following Anthropic’s guidelines": a heading obligation, `plural`, `guideline_of(x, anthropic)` | as P1. It cannot prove "Anthropic’s guidelines" in u0073.s05, which comes before it: a proved carrier uses only strictly earlier units (D2-3) |
 | P3 | u0286.presupposition (29, U) | "Acknowledging open problems": a heading obligation, `generic` (factive with a noun object), `pre` = `∃x open_problem(x)`; `open_problem` worded "{0} is unsolved", sort noun "thing": "Some thing is unsolved." | as P1. Writable today: in phase 1 it loads, CHECKED +29 B, 8 of 8 choices conflict-free, probes byte-identical (Ph1 2.5). Whether "unsolved thing" is exactly what "open problems" presupposes is the audit's question |
-| P4 | u0002 (37), u0235 (19) | heading obligations, singular `definite`: `pre` is the uniqueness `U(D)`, "Anthropic has exactly one mission"; "Claude has exactly one nature" | as P1, with the content in VE's enumerated uniqueness form, which parses to exactly `U(D)` (Ph1 2.5). Until PS-6r admits "mission of" and "nature of", UNFORMALISED with the note "waits for the relational-noun wording (PS-6r)" |
+| P4 | u0002 (37), u0235 (19) | heading obligations, singular `definite`: `pre` is the uniqueness `U(D)`, "Anthropic has exactly one mission"; "Claude has exactly one nature" | as P1, with the content in VE's enumerated uniqueness form, which parses to exactly `U(D)` (Ph1 2.5). Until PS-6r admits "mission of" and "nature of", UNFORMALISED with the note "waits for its noun's wording (PS-6r)" |
 | P5 | u0268 (22), u0254 (50) with u0269.s02 | possessive the text withholds | never assumed alone. Optional reading set {assumed: "Claude has wellbeing."; no claim}; claimed only if the audit accepts (PS-5p) |
 | P6 | u0156.s03 (100, READINGS) | "its content" as `plural` in the rule's act, after act phrases split the object | candidates {assumed, conditioned}, separated by a situation without a system prompt. With the conditioned carrier (only if the predicate is `unspecified`), "… and, where there is one, about its content". The open set with the conditioned reading is on the norms chain only |
 | P7 | u0073.s05 (234, OPEN) | "the system prompt’s instructions", with scope SC-3b's label condition in the guard and the bridging premise "An operator prompt that addresses a case gives at least one instruction for it." in an earlier unit or the background | proved: one reading. Without the bridging premise: unresolved {assumed, conditioned} |
@@ -597,7 +607,7 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   draft 3 wrote it claims nothing (F1, F2 FAIL), and its check fails (F3–F6 FAIL: the binary wordings broke an
   existing unit). The mechanism passes with VE's fallback English (never counted), and u0286 passes with a clean
   wording (never counted). The bar is DEFERRED. This draft keeps what the data supports and moves the four
-  relational units to PS-0p-r.
+  units whose nouns (core value, guideline, mission, nature) have no admitted wording to PS-0p-r.
 - **Goal.**
   - Claim the heading presuppositions that a word triggers and that nothing else blocks: today u0286 only.
   - Stop recording claims no word triggers.
@@ -624,25 +634,30 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
      "{0} is unsolved". The span becomes `kind: asserted`, `support: assumption`, `meaning: specified`, with the fence
      "Some thing is unsolved." (`∃x open_problem(x)`), English round trip, and the ledger fields `carrier: assumed`,
      `trigger: factive`, `trigger_words: Acknowledging`. u0013, u0095, u0002 and u0235 stay UNFORMALISED with the
-     note "relational-noun wording not admitted in VE English (PS-6r)" (PS-0p-r). The quoted fallback wording is never
+     note "no admitted VE English wording for this noun yet (PS-6r)" (PS-0p-r). The quoted fallback wording is never
      used to claim a unit.
   4. **Class D** (u0254, u0268). Replace `presupposed_claim` with the note "the text withholds this (u0269.s02): not
      assumed". The status is unchanged.
   5. **Class B** (u0069, u0083, u0245, u0032; 149 B). Offer each to the audit as a separate item, in step 3's form
      (u0032 is OPEN, with `genuine_helpfulness`), only with a wording the lint admits without changing an existing
-     one; phase 1 tested none of their wordings. An item whose wording needs a relational noun ("values other than
-     helpfulness") waits for PS-6r. Each is claimed only if the audit accepts it.
+     one; phase 1 tested none of their wordings. An item whose wording needs one of the four pilot nouns ("values
+     other than helpfulness" needs "core value") waits for PS-6r; a noun on VE's idiom list needs no new row. Each is claimed only if the audit accepts it.
   6. **Check.** After any vocabulary change, regenerate the separating situations (`nd.py all`) and check that every
-     existing fenced unit still parses unchanged. Then `ve document check` on the translation, with the Rust limit
-     raised under a memory cap (11, X4): it loads, the reading-set choices stay conflict-free (8 of 8 today), and the
-     carried probes are byte-identical. Phase 1 measured this for u0286: +29 B, 8 of 8, probes identical.
+     existing fenced unit still parses unchanged. Then `ve document check` on the translation: it loads, the
+     reading-set choices stay conflict-free (8 of 8 today), and the carried probes are byte-identical. Phase 1
+     measured this for u0286 (+29 B, 8 of 8, probes identical) with the Rust limit raised under a memory cap. At the
+     5 s default the check is CheckerUnavailable, and the standing rule forbids raising `VE_RUST_TIMEOUT` for
+     whole-document checks until oom-rootcause merges, so this step waits for that merge or for a DRI exception
+     (11, X4); it does not raise the limit on its own authority.
   7. **Distinct goals, as a translator field.** For each formalised rule whose act contains "the user", "the
      operator", or a role or pronoun possessive, the translator records the unit, the words, the rule's name, guard and
      carve-outs (`presupposition-goals.json`). The count is of trigger occurrences in rule acts and of the distinct
      goals they project, as `(row, restriction, rule guard and carve-outs)` up to the unit's variable names, for "the
      user" and "the operator" separately, with how many share identical applicability. Phase 1 could not take it from
      the pinned ledger: formalised rules give 4 goal keys in one unit (u0156.s03), none equal; the unformalised units
-     give an upper bound of 98 matches, sentence position unknown (Ph1 2.4). This is a count from the ledger, not a
+     give, for G1 ("the user", "the operator") only, an upper bound of 98 matches with 2 source-identity choices, and
+     separately 32 G2 possessive matches in 29 units; sentence positions, goals and the combined count are unknown
+     (Ph1 2.4). This is a count from the ledger, not a
      Lean computation; PS-3 reads it.
 - **Audit additions.**
   - For each heading presupposition claimed: the trigger word is in the title.
@@ -663,10 +678,11 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 - **Deleted.** 10 invented `presupposed_claim` fields (u0055's is replaced by a note).
 - **Seeded bug.** None: no product code.
 
-### PS-0p-r. The relational heading units (pilot, no product code; 1 h; DEFERRED)
+### PS-0p-r. The heading units over the four pilot nouns (pilot, no product code; 1 h; DEFERRED)
 
-- **Trigger.** PS-6r merges (the lint admits a relational-noun wording for "core value of", "guideline of", "mission
-  of" and "nature of" without changing an existing wording); then the next constitution pilot run.
+- **Trigger.** PS-6r merges (the lint admits a wording for "core value of", "guideline of", "mission of" and
+  "nature of" without changing an existing wording); then the next constitution pilot run, with step 6's time-limit
+  condition met (oom-rootcause merged or X4 granted).
 - **Steps.** As PS-0p's step 3, with PS-6r's wordings, the noun "thing" and the constant `anthropic` of sort
   `entity`:
   - **u0013:** `core_value_of(entity, entity)`; `∃x core_value_of(x, claude)`.
@@ -784,20 +800,22 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   conditioned reading's alias wording, at shallow frames.
 - **Bytes.** 0.
 
-### PS-6r. English: relational-noun wording rows (2–3 h; in the English queue; new in draft 4)
+### PS-6r. English: wording rows for the four pilot nouns (2–3 h; in the English queue; new in draft 4)
 
 - **Why (Ph1 2.2, 2.5).** VE English cannot write "Claude has at least one core value" today. The wording lint
-  refuses every relational-noun wording phase 1 tried: "{0} is a core value / guideline / mission / nature of {1}"
-  (BINARY_AUXILIARY, BINARY_CONVERSE, LOGICAL_WORD, SYMBOL_COLLISION, and it turns the existing "{0} is human" into a
-  fallback), "belongs to / counts among / ranks among the core values of", "serves as a core value for", "is valued
-  by", and the owner-first "{0} has core value {1}" (SYMBOL_COLLISION). The "is a N of" shape is admitted only through
-  the finite idiom list of english-lean's catalogue (today `ve/english_vocabulary.py`, product code). This is the one
-  blocker of PS-0p-r's +116 B.
+  refuses every wording phase 1 tried for the four pilot nouns: "{0} is a core value / guideline / mission / nature
+  of {1}" (BINARY_AUXILIARY, BINARY_CONVERSE, LOGICAL_WORD, SYMBOL_COLLISION, and it turns the existing "{0} is
+  human" into a fallback), "belongs to / counts among / ranks among the core values of", "serves as a core value
+  for", "is valued by", and the owner-first "{0} has core value {1}" (SYMBOL_COLLISION). The "is a N of" shape is
+  admitted only through the finite idiom list of english-lean's catalogue (today `ve/english_vocabulary.py`, product
+  code), which already holds relational nouns such as "{0} is a citizen of {1}" ("Some thing is a citizen of acme."
+  parses, in a read-only check by this draft's review); the four pilot nouns are not on it. This is the one blocker
+  of PS-0p-r's +116 B.
 - **Rows** (english-lean's catalogue; plans add rows only, SYNTHESIS O15):
-  - a relational-noun row kind, "{0} is a N of {1}", so that "Some thing is a N of {1}." parses, for the nouns the
-    pilots need first (core value, guideline, mission, nature), admitted by the lint without changing any existing
-    wording's lint (the `human` collision is a fixture);
-  - preferably the one-line uniqueness sentence "{1} has exactly one N." for a relational noun, parsing to exactly
+  - "{0} is a N of {1}" for the nouns the pilots need first (core value, guideline, mission, nature), as idiom-list
+    rows or, if english-lean prefers, a row kind that generalises the list, so that "Some thing is a N of {1}."
+    parses, admitted by the lint without changing any existing wording's lint (the `human` collision is a fixture);
+  - preferably the one-line uniqueness sentence "{1} has exactly one N." for these nouns, parsing to exactly
     `U(D)`; until it lands, VE's enumerated form is the English of a uniqueness `pre`.
 - **Depends on.** Nothing in this plan: it needs no Lean row, no candidate table and no PS-E1 result. Its slot in the
   English queue is the DRI's (11, X1); until assigned, it is the head of PS-6's slot.
@@ -805,7 +823,7 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   `∃x core_value_of(x, claude)`; the enumerated and the one-line uniqueness sentences give the same formula; declaring
   the four wordings beside "{0} is human" leaves its lint unchanged; the quoted fallback is not produced for them.
 - **Seeded bug,** in the language of the catalogue file PS-6r edits (Python while the idiom list is in
-  `ve/english_vocabulary.py`, Lean once english-lean moves it): the collision check stops treating the new row kind
+  `ve/english_vocabulary.py`, Lean once english-lean moves it): the collision check stops treating the new rows
   as its own, so declaring the four wordings turns "{0} is human" into the fallback again; the collision fixture
   fails. Restore.
 - **Bytes.** 0 itself; enables PS-0p-r's +116 B (audit-gated) and the English column of P1, P2 and P4.
@@ -867,8 +885,10 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 
 - **Order inside PS-3 (Ph1 2.4, 4; Risk 7).** Phase 1 could not count the distinct goals in rule acts: in the
   formalised pilot one unit (u0156.s03) has triggers in a rule act and its 4 goal keys are pairwise distinct, so goal
-  coupling has nothing to compress there; the unformalised "the user"/"the operator" matches give only an upper bound
-  of 98 (descriptive sentences and conditions included), against 2 source-identity choices. PS-0p's step 7 records
+  coupling has nothing to compress there; for the unformalised units, the G1 role definites ("the user"/"the operator")
+  give only an upper bound of 98 (descriptive sentences and conditions included), against 2 source-identity choices,
+  and the G2 possessives add 32 matches in 29 units, for which phase 1 recorded no source-identity choice; the combined count
+  of distinct goals is unknown. PS-0p's step 7 records
   the count as a translator field at the next pilot run. Then:
   - **if** the distinct goals in rule acts exceed the joint budget of 64 without shared applicability, the
     source-identity choice lands first (its own statement, `source_identity_entails`, and its labelled choice), and
@@ -945,8 +965,8 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   ME-11 → QT-B3 → SC-7 (SYNTHESIS 4.1, 4.2); PS-6 comes after SC-7 unless the DRI assigns another slot.
 - **Rows.**
   - **Admitted:** definite "the N of t", possessive "t’s N" and "its/their N", plural definite, and factive "knows
-    that" (attitudes' row; only the presupposition column is added, DRI PS-NF). The relational nouns these rows
-    name use PS-6r's wordings; the existence and uniqueness sentences themselves already parse with a sort noun
+    that" (attitudes' row; only the presupposition column is added, DRI PS-NF). A noun these rows name needs an
+    admitted wording: one on the idiom list has it, the four pilot nouns get it from PS-6r; the existence and uniqueness sentences themselves already parse with a sort noun
     that is not reserved (Ph1 2.5).
   - **Factive under negation (DRI PS-NF).** `NegatedFactive`'s candidates are generated by this plan's projection
     (the factive row's `pre` at a negated frame, through `goal` and the candidate table); attitudes' rows consume
@@ -1063,7 +1083,7 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 | State sorts, "in progress" | events | PS-7's `pre` |
 | Act arguments | act phrases | possessive arguments become visible |
 | Titles, label and heading conditions | scope | untriggered headings; label conditions as local context |
-| Source-word rows and refusals; the wording lint and its idiom list | english-lean's catalogue | trigger rows are catalogue rows; PS-6r adds the relational-noun rows there |
+| Source-word rows and refusals; the wording lint and its idiom list | english-lean's catalogue | trigger rows are catalogue rows; PS-6r adds the four pilot nouns' rows there |
 | Profile registration, mode registry | AR-10 | one row; no mode line (DRI PS-C9) |
 | Statuses; the answer's fields | the Lean document mode | the status rule; the `presuppositions` field (DRI PS-C9) |
 | **Frames, projected goals, `plug_congr`, `collapse`, trigger-row readings, root carriers and `carried`, obligation checks, the coupling check, the presupposition lines** | **this plan** (new) | — |
@@ -1101,10 +1121,13 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
    not presuppositions at all (u0055's 34 B is a wh-title, for the audit). The DRI applies it at the next NORTH-STAR
    update (11, X5).
 7. **Cost of coupling.** If distinct goals exceed the joint budget, verdicts are UNKNOWN, which is honest. Phase 1
-   bounds the count above by 98 occurrences and could not take it exactly (Ph1 2.4); PS-0p's step 7 records it at
-   the next pilot run, and PS-3's internal order follows it. Rules with different guards have different goals, so
+   could not take the count (Ph1 2.4). For G1 role definites only ("the user", "the operator") it bounds the
+   occurrences above by 98, with 2 source-identity choices; G2 possessives add 32 occurrences in 29 units, with no
+   recorded bound on their distinct goals; the combined goal count is unknown. PS-0p's step 7 records it at the next
+   pilot run, and PS-3's internal order follows it. Rules with different guards have different goals, so
    only identical applicability or the source-identity choice reduces the count. Still open.
-8. **The English wording lint** (Ph1 2.2, 2.5). The lint refuses every relational-noun wording tried, and declaring
+8. **The English wording lint** (Ph1 2.2, 2.5). The lint refuses every wording tried for the four pilot nouns (core
+   value, guideline, mission, nature; nouns on the idiom list, such as "citizen of", are admitted), and declaring
    one wording can change another's lint (the `human` collision). A pilot that adds wordings must check every
    existing unit still parses (PS-0p step 6); PS-6r's fixtures pin the collision. Until PS-6r, +116 B wait on
    English alone.
@@ -1129,12 +1152,12 @@ Abstractions several topics could share. The cross-plan review may move them.
 Phase 1 bears on these shared parts. This draft does not change them; each is written here for the DRI, with a
 recommendation. Until ruled, the plan follows the shared part as it stands (noted per item).
 
-- **X1. The slot of PS-6r, the relational-noun wordings** (SYNTHESIS O15, 4.1, 4.2). PS-0p-r's +116 B and PS-E2's
+- **X1. The slot of PS-6r, the wordings for the four pilot nouns** (SYNTHESIS O15, 4.1, 4.2). PS-0p-r's +116 B and PS-E2's
   assumed items wait only on these wordings (Ph1 2.3, 2.5). The English queue puts this plan's English after SC-7,
   and the wording lint and its idiom list are english-lean's. Options: (a) PS-6r at the head of PS-6's slot, after
   SC-7 (the plan's default until ruled; PS-E2 then runs with target-wording labels); (b) PS-6r in an earlier slot of
   the English queue, owned by this plan, adding rows only (O15); (c) an english-lean catalogue item owns the
-  relational-noun row kind, as AP3 gave english-lean the base-predicate verbalisations. **Recommendation: (b)**, as
+  rows (or a row kind generalising the idiom list), as AP3 gave english-lean the base-predicate verbalisations. **Recommendation: (b)**, as
   phase 1 does (Ph1 4, PS-6): it is small, needs no Lean row and no PS-E1 result, and unblocks a measured +116 B and
   PS-E2.
 - **X2. The constitution pilot's noun for the sort `entity`** (SC2, the merged prompt). The pinned run declares it as
@@ -1147,13 +1170,17 @@ recommendation. Until ruled, the plan follows the shared part as it stands (note
   existing wording's lint (Ph1 2.2, 2.3: u0248's "is human" stopped parsing). Every plan's pilot additions declare
   vocabulary. **Recommendation:** one rule in the merged prompt for all plans: after any vocabulary change, run the
   situation step (`nd.py all`) and check that every existing fenced unit still parses unchanged.
-- **X4. The Rust time limit in pilot checks** (ME1 and the DRI's 2026-10-14 note). ME1 lets pilots raise
-  `VE_RUST_TIMEOUT` and say so; the 2026-10-14 note forbids the raised limit in pilot checks after the Rust process
-  grew to 70 GB. At the 5 s default the pinned translation's own check is CheckerUnavailable, so PS-0p's step 6
-  cannot run. Phase 1 ran every check at 600 s under `prlimit --as=6442450944` (inherited by the Rust child), recorded
-  the cap and the peak child resident set (under 140 MiB) in its evidence, and nothing failed (Ph1 5).
-  **Recommendation:** allow the raised limit in pilot checks only under a recorded address-space cap, until ME1's
-  measured limit lands. Until ruled, PS-0p's step 6 is run as phase 1 ran it and says so.
+- **X4. The Rust time limit in pilot checks** (ME1, the DRI's 2026-10-14 note, and the standing rule in
+  `manage-agents/ORCHESTRATOR-PLAYBOOK.md`, 2026-10-13/14: "Never raise VE_RUST_TIMEOUT for whole-document checks until
+  oom-rootcause merges"). ME1 lets pilots raise `VE_RUST_TIMEOUT` and say so; the note and the standing rule forbid
+  it after the Rust process grew to 70 GB. At the 5 s default the pinned translation's own check is
+  CheckerUnavailable, so PS-0p's step 6 cannot run. Phase 1 ran every check at 600 s under `prlimit --as=6442450944`
+  (inherited by the Rust child), recorded the cap and the peak child resident set (under 140 MiB) in its evidence,
+  and nothing failed (Ph1 5). **Recommendation:** an exception that allows the raised limit in pilot checks only
+  under a recorded address-space cap, until oom-rootcause merges or ME1's measured limit lands. The measured cap
+  supports this recommendation; it does not authorise it. **Until ruled, the standing rule holds:** PS-0p's step 6
+  and PS-0p-r's check do not raise the limit, and they wait for oom-rootcause to merge or for the DRI to grant the
+  exception.
 - **X5. NORTH-STAR row 12** (the DRI applies NORTH-STAR updates). Phase 1 changes the direct figure: at most 29 B
   today (u0286, audit-gated), 145 B after PS-6r, 294 B stretch; 315 B, not 349 B, are not presuppositions at all
   (Risk 6).

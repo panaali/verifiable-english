@@ -12,9 +12,10 @@ changes: phase 1 changes the English of the pilot's heading units and where the 
 formulas. The scratch stub `lean/SpecStubs_presupposition.lean` is not tracked, so it needs no edit, and the
 elaboration status below is unchanged.
 - **Headings' English** (1.4a, 2.1, 7.4). The formulas of P1–P4 round-trip through VE's renderer (Ph1 2.3), but VE
-  English has no admitted relational-noun wording today ("is a core value of" and every variant tried fall back to
-  the quoted form; Ph1 2.5): P1, P2 and P4's English waits for the plan's PS-6r. P3 is writable now as "Some thing is
-  unsolved." with the sort noun "thing". Uniqueness is written in VE's enumerated form; the one-line form is refused.
+  English has no admitted wording today for the four pilot nouns (core value, guideline, mission, nature): "is a core
+  value of" and every variant phase 1 tried fall back to the quoted form (Ph1 2.5). VE does admit some relational
+  nouns, through the finite idiom list ("{0} is a citizen of {1}"); these four are not on it. P1, P2 and P4's English
+  waits for the plan's PS-6r. P3 is writable now as "Some thing is unsolved." with the sort noun "thing". Uniqueness is written in VE's enumerated form; the one-line form is refused.
 - **The quoted fallback is not VE English** (2.3, 8): "has the recorded relation …" never carries a claim.
 - **The assumed line is the target wording** (2.3): PS-E2 tests what PS-6r's rows render.
 - **The report is a field of the Lean document mode's answer** (4.7; DRI PS-C9): no `presuppositions` service mode.
@@ -163,11 +164,13 @@ may name the obligation's own unit, whose content must then be exactly `pre` (`a
 **The heading unit's English** (Ph1 2.2, 2.5; C19). Lean checks the formula; whether the fenced English says it stays
 the audit's. In the pilot, the existence sentence needs the sort's English noun not to be reserved (the constitution
 pilot declares `entity` as "thing"/"things", a document field), and the restriction needs an admitted wording. Today
-"{0} is unsolved" is admitted (P3: "Some thing is unsolved."), and no relational-noun wording is (P1, P2, P4 wait for
-the plan's PS-6r). A uniqueness `pre` is written in VE's enumerated form, "There is a first thing such that both of
-the following hold: (a) the first thing is a N of t; (b) for every second thing that is a N of t, the second thing is
+"{0} is unsolved" is admitted (P3: "Some thing is unsolved."), and no wording phase 1 tried for the four pilot nouns
+(core value, guideline, mission, nature) is (P1, P2, P4 wait for the plan's PS-6r). Relational nouns on VE's finite
+idiom list are admitted ("Some thing is a citizen of acme." parses, in a read-only check by this draft's review),
+so a `pre` over such a noun is not affected by this limit. A uniqueness `pre` is written in VE's enumerated form,
+"There is a first thing such that both of the following hold: (a) the first thing is a N of t; (b) for every second thing that is a N of t, the second thing is
 the same as the first thing.". With the unary stand-in "unsolved" it parses to exactly the existence-and-uniqueness
-formula (Ph1 2.5); with a relational noun it is measured once PS-6r lands.
+formula (Ph1 2.5); with a pilot noun it is measured once PS-6r lands.
 
 ### 1.5 Several obligations in one unit
 
@@ -290,9 +293,10 @@ elaborations, the unit `u` itself and every later unit are excluded. A certifica
 | plural | "t’s Ns", "the Ns of t", "its/their N" (mass or plural) | "there is at least one N" / "t has at least one N" |
 | generic | factive complement, earlier state, earlier event (owner's row) | the owner's sentence, e.g. "the action was in progress before that day" |
 
-These are the target sentences. "t has at least one N" and "t has exactly one N" need a relational-noun wording that
-the wording lint admits; none is admitted today (Ph1 2.5), and the plan's PS-6r adds it. Until then a `pre` over a
-relational noun has no VE English, and VE's quoted fallback ("… has the recorded relation "core_value_of" to
+These are the target sentences. "t has at least one N" and "t has exactly one N" need a wording for N that the
+wording lint admits. VE admits the "is a N of" shape only for nouns on its finite idiom list (for example "is a
+citizen of"); for the four pilot nouns (core value, guideline, mission, nature) no wording phase 1 tried is admitted
+(Ph1 2.5), and the plan's PS-6r adds them. Until then a `pre` over one of those nouns has no VE English, and VE's quoted fallback ("… has the recorded relation "core_value_of" to
 claude") is not a substitute: it is not VE English, and an audit rejects a claim written in it (C20). "There is at
 least one N" with a unary wording parses today once the sort's noun is not reserved ("Some thing is unsolved.").
 
@@ -329,8 +333,8 @@ conditioned reading at a shallow frame (1.4); the two lines of a merged reading 
 
 - **Proved.** No line by default. "Why": "‘<words>’ takes for granted that <pre>; <the earlier sentence, condition or
   declaration> says so."
-- **Assumed.** In the assumptions list: "Assumed (from ‘<words>’): <goal>." For a relational noun this is the target
-  wording ("Assumed (from ‘Claude’s core values’): Claude has at least one core value."); VE renders it once PS-6r's
+- **Assumed.** In the assumptions list: "Assumed (from ‘<words>’): <goal>." For a pilot noun with no admitted wording
+  (core value, guideline, mission, nature) this is the target wording ("Assumed (from ‘Claude’s core values’): Claude has at least one core value."); VE renders it once PS-6r's
   rows exist, and PS-E2 tests those rendered lines (C21).
 - **Asserted.** The asserted paraphrase of 2.2.
 - **Conditioned.** "This applies only where <goal>." For a rule: "Where <pre>, <rule>. Where not, this rule contributes
@@ -1349,7 +1353,7 @@ P1 to P13 are the plan's (5.2), with its draft 2 and draft 3 corrections:
   parser round-trip all five exactly (Ph1 2.3). In the pilot document: the sort `entity`'s noun is "thing"/"things";
   P3's `open_problem` is worded "{0} is unsolved" and its unit is "Some thing is unsolved." (loads, CHECKED +29 B, 8
   of 8 choices conflict-free, probes byte-identical; Ph1 2.5); P1, P2 and P4 have no admitted wording until PS-6r and
-  stay UNFORMALISED with the note "waits for the relational-noun wording (PS-6r)"; P4's English is the enumerated
+  stay UNFORMALISED with the note "waits for its noun's wording (PS-6r)"; P4's English is the enumerated
   uniqueness form (1.4a), not the plan's one-line shape ("Some thing is a mission of Anthropic, and every thing that
   is a mission of Anthropic is that thing."), whose unary stand-in phase 1 found refused. The Lean fixtures of PS-1 use the formulas; their English column waits for PS-6r.
 - P2 no longer proves u0073.s05 (strictly earlier units).
@@ -1406,9 +1410,11 @@ Each is a rewrite that PS-6 offers; each must parse to exactly one reading.
 - **Validity of trees** is a computed check (W1's `validate` on both trees), not a theorem about conditioning.
 - **Budgets.** Over 256 obligations, or over W1's AST budget, or over lf-14d's joint budget, the answer is UNKNOWN.
 - **Untrusted certificates.** A certificate may come from any prover; Lean only checks it.
-- **Relational-noun English** (Ph1 2.5). Until the plan's PS-6r, VE English has no admitted wording for "t has at
-  least one N" or "t has exactly one N" over a relational noun, so a `pre` over one cannot be written as a fenced
-  unit. The formulas and every check above are unaffected; only the pilot's English and the reader lines of 2.3 wait.
+- **English for the four pilot nouns** (Ph1 2.5). Until the plan's PS-6r, VE English has no admitted wording for
+  "t has at least one N" or "t has exactly one N" when N is core value, guideline, mission or nature (every wording
+  phase 1 tried is refused), so a `pre` over one of them cannot be written as a fenced unit. This is not a limit on
+  relational nouns in general: the "is a N of" shape is admitted for nouns on VE's finite idiom list (for example
+  "is a citizen of"); nouns neither on the list nor tested are unmeasured. The formulas and every check above are unaffected; only the pilot's English and the reader lines of 2.3 wait.
 - **The quoted fallback** (Ph1 2.3). VE's renderer falls back to quoted identifiers ("has the recorded relation …",
   "is classified as …") for a predicate without an admitted wording. Such text loads and checks, but it is not VE
   English; no claim is written in it (C20).
