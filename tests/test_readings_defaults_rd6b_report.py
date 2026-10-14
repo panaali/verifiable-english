@@ -235,21 +235,16 @@ def test_round1_pilots_keep_the_base_statuses_and_the_previous_english():
 
 
 def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
-    """Review B1 of rd-6b: the current tree is the trust baseline (`tests/test_lean_first_b12_report.py` compares
-    them whole), and the growth from the pinned merge base is exactly the baseline's RD-6b entry, as DELTA.md states
-    it: S +0, V +142, of which +16 under R6 and +126 awaiting the DRI's signature. The entry is the reviewed
-    measurement at the branch head before the merge of ve-integration f0547468; the merge's entry carries the
-    same growth over the merged base."""
+    """Review B1 of rd-6b against its saved revision and pinned merge base, independent of later batches.
+    The reviewed growth was S +0, V +142: +16 under R6 and +126 awaiting the DRI's signature."""
     from tools import trust_map
     summary, *_ = saved()
     reviewed = json.loads(subprocess.check_output(
         ["git", "show", f"{RD6B_HEAD}:docs/trust-baseline.json"], cwd=ROOT))
     baseline = json.loads((ROOT / "docs/trust-baseline.json").read_text())
-    current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json", ROOT / "lean/statements.txt")
     parent, parent_problems, _ = trust_map.measure_rev(summary["base_merge_commit"])
     merged, merged_problems, _ = trust_map.measure_rev(MERGED_BASE)
-    assert not problems and not parent_problems and not merged_problems
-    assert baseline["files"] == current and baseline["signed"] == []
+    assert not parent_problems and not merged_problems
     entry = reviewed["history"][-1]
     assert entry["change"].startswith("readings-defaults RD-6b: ")
     assert entry["rebaselined_from"] == trust_map.budget(trust_map.totals(parent))
