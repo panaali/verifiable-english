@@ -576,13 +576,15 @@ class Superposed(_Route):
             row = self._prepare("premises", None)
             for scope in row["scopes"]:
                 A = scope["row"]["choice"]
-                proof = self._generate_certificate(A)
-                if proof is not None:
-                    self._pieces(A)["unsat"] = proof
+                # A model settles this evidence slot without a tableau proof
+                # search. Lean still decides the premise status from the row.
+                found = self.model(A)
+                if found is not None:
+                    self._pieces(A)["model"] = {"model": found["model"]}
                 else:
-                    found = self.model(A)
-                    if found is not None:
-                        self._pieces(A)["model"] = {"model": found["model"]}
+                    proof = self._generate_certificate(A)
+                    if proof is not None:
+                        self._pieces(A)["unsat"] = proof
             row = self._ask("premises", None)
             if row["untaken"]:
                 self._dead = _dead_certificates(self, row["untaken"])
