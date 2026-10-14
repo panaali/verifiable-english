@@ -54,6 +54,18 @@ def _key(row, i):
     return row["decisions"][i]["key"]
 
 
+def _reverse_coherence_label(row):
+    pair = row['colliding_pairs'][0]
+    reversed_label = f"soft:coherence:{pair['pair'][1]},{pair['pair'][0]}"
+    old_label = pair['label']
+    pair['label'] = reversed_label
+    for entry in row['background']:
+        if entry.get('label') == old_label:
+            entry['label'] = reversed_label
+    row['conditional_on'] = [reversed_label if label == old_label else label
+                             for label in row['conditional_on']]
+
+
 MUTATIONS = {
     "key dropped": lambda row: row["decisions"][0].pop("key"),
     "key null": lambda row: row["decisions"][0].__setitem__("key", None),
@@ -223,6 +235,7 @@ def test_f12_decider_counts_are_bound_per_decider(monkeypatch, lean):
         id='extra conflict target'),
     pytest.param(lambda row: row['incompatible_pairs'].append(['h', 'absent']),
                  id='unbound incompatible pair'),
+    pytest.param(_reverse_coherence_label, id='reversed coherence label'),
 ])
 def test_f14_each_soft_identity_field_is_bound(monkeypatch, genuine, mutation):
     from ve import soft_route
@@ -269,6 +282,26 @@ def test_f15_rights_conflict_identities_are_bound(monkeypatch, field, value):
                  id='missing rights background'),
     pytest.param(lambda row: row.__setitem__('conditional_on', ['soft:coherence:absent,nobody']),
                  id='undeclared coherence'),
+    pytest.param(lambda row: row['generated'][0].__setitem__('limitation', 'absent'),
+                 id='undeclared generated limitation'),
+    pytest.param(lambda row: row['generated'].append(copy.deepcopy(row['generated'][0])),
+                 id='duplicate generated key'),
+    pytest.param(lambda row: row['wordings'].__setitem__('rights__absent', 'forged'),
+                 id='extra generated wording'),
+    pytest.param(lambda row: row['distinction'][0].__setitem__('predicate', 'absent'),
+                 id='undeclared distinction predicate'),
+    pytest.param(lambda row: row['lines'][0].__setitem__('right', 'absent'),
+                 id='undeclared line right'),
+    pytest.param(lambda row: row['lines'][0].__setitem__('predicate', 'absent'),
+                 id='undeclared line predicate'),
+    pytest.param(lambda row: row['narrowings'][0].__setitem__('right', 'absent'),
+                 id='undeclared narrowing right'),
+    pytest.param(lambda row: row['narrowings'][0]['mechanisms'][0].__setitem__(
+        'target', 'absent:limitation'), id='undeclared narrowing target'),
+    pytest.param(lambda row: row['distinction'][0]['hits'].append({
+        'right': 'absent', 'rule': row['lines'][0]['rule'],
+        'protected': row['distinction'][0]['predicate'], 'cited': False}),
+                 id='undeclared distinction right'),
 ])
 def test_rights_elaboration_premise_identities_are_bound(monkeypatch, mutation):
     from tests.test_rights_lean import ARREST, GAMMA, env as rights_env

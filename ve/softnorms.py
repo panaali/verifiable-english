@@ -268,8 +268,7 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None)
             if pair_names in seen_pairs:
                 raise ValueError('duplicate colliding pair')
             seen_pairs.add(pair_names)
-            if pair['label'] not in {f'soft:coherence:{names[0]},{names[1]}',
-                                     f'soft:coherence:{names[1]},{names[0]}'} or pair['label'] in pair_labels:
+            if pair['label'] != f'soft:coherence:{names[0]},{names[1]}' or pair['label'] in pair_labels:
                 raise ValueError('unbound or duplicate coherence label')
             pair_labels.add(pair['label'])
             if pair['outweighs'] is not None:
