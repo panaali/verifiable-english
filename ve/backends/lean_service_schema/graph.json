@@ -12,7 +12,10 @@
           "background": {
             "items": {
               "additionalProperties": false,
-              "properties": {"ast": {"minItems": 1, "type": "array"}, "label": {"type": "string"}},
+              "properties": {
+                "ast": {"$ref": "common.json#/$defs/generated_formula"},
+                "label": {"pattern": "background:(flags|definitions|literals|profile)", "type": "string"}
+              },
               "required": ["label", "ast"],
               "type": "object"
             },
