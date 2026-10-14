@@ -849,3 +849,20 @@ def test_f23_an_authored_holder_slot_stays_the_lines_slot(monkeypatch, slot):
     monkeypatch.setattr(rights_route, 'decide_once', reply)
     with pytest.raises(CheckerUnavailable):
         RightsDocument(environment, units)
+
+
+def test_a_hit_cited_with_its_finding_dropped_is_unavailable(monkeypatch):
+    """Two faults together: a distinction hit marked cited and its ProtectedInCone finding removed. The
+    `cited` flag is the line's `guard` citation (Distinction.lean `distinctionHits`), not Lean's to choose."""
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST, rights={
+        'holders': ['person'], 'bearers': ['state', 'person'], 'protected': ['arbitrary_arrest']}))
+    row = copy.deepcopy(rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate'))
+    assert row['findings'] and not row['distinction'][0]['hits'][0]['cited']
+    row['distinction'][0]['hits'][0]['cited'] = True
+    row['findings'] = []
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')

@@ -67,8 +67,6 @@ def check_soft_conflict(soft_document: SoftNormDocument, *, packages=None, witne
         if 'conditional_on' in row and (len(row['conditional_on']) != len(set(row['conditional_on'])) or
                                          not set(row['conditional_on']) <= labels):
             raise ValueError('unbound conflict conditional labels')
-        if witness is not None and row['target'] != witness['target']:
-            raise ValueError('unbound conflict witness target')
         if budget is not None and row['budget'] != budget:
             raise ValueError('unbound conflict budget')
     except (KeyError, TypeError, ValueError) as error:
