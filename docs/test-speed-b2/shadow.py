@@ -104,7 +104,9 @@ def check(data: dict) -> None:
     assert probe["gate"] == FIRST_GATE and probe["sha256"] == digest(ROOT / FIRST_GATE)
     assert first["status"] == probe["status"] == "failed"
     assert probe["failed_files"] == failures(first) and probe["failed_files"]
-    assert probe["outside_selection"] == []
+    selected = next(set(row["selected"]) for row in data["merges"] if row["item"] == "eff-tests")
+    assert probe["outside_selection"] == sorted(set(failures(first)) - selected)
+    assert not probe["outside_selection"]
 
 
 def main() -> None:
