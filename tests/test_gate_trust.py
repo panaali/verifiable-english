@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 from test_gate_integrity import trust_counts
-from test_gate_rerun import fake  # noqa: F401  (the fixture)
+from test_gate_rerun import BASELINE, FAILED, fake  # noqa: F401  (the fixture)
 from tools import batch_evidence, gate
 
 
@@ -150,6 +150,31 @@ def test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts(fake):
     incomplete = copy.deepcopy(failed)
     incomplete["counts"] = {"failed": 1}
     assert batch_evidence.rerun_pair_problems(incomplete, empty)
+
+
+def test_review_f10_r13_allows_an_approved_sibling_skip_but_requires_the_failed_test_to_pass(fake):
+    """PROBE F10: a permitted skip in the failed test's file does not invalidate its successful rerun."""
+    sibling = BASELINE[1]
+    fake.skipping = {sibling}
+    policy = gate.POLICY
+    policy.write_text(json.dumps({"version": 1, "optional_tests": [
+        {"nodeid": sibling, "reason": "optional on this host"}], "deselected_tests": []}))
+    assert fake.run()[0] == 1
+    failed = _sha(json.loads(fake.output.read_text()))
+    fake.failing = set()
+    code, rerun = fake.run("--rerun-failed")
+    rerun = _sha(rerun)
+    assert code == 0 and rerun["status"] == "rerun-passed"
+    assert rerun["counts"]["passed"] == 1 and rerun["counts"]["skipped"] == 1
+    assert rerun["rerun_failed"]["outcomes"] == {FAILED: "passed"}
+    assert batch_evidence.rerun_pair_problems(failed, rerun) == []
+
+    no_pass = copy.deepcopy(rerun)
+    no_pass["counts"].update(passed=0, skipped=2)
+    assert batch_evidence.rerun_pair_problems(failed, no_pass)
+    skipped_failed = copy.deepcopy(rerun)
+    skipped_failed["rerun_failed"]["outcomes"][FAILED] = "skipped"
+    assert batch_evidence.rerun_pair_problems(failed, skipped_failed)
 
 
 @pytest.mark.parametrize("record", [{}, [], None, 7, True, "gate", DEEP])

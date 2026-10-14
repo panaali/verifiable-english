@@ -272,6 +272,19 @@ restored:
   test units and was stopped to avoid a full suite run. Its first failure was the stale architecture row 9;
   after correcting the row, that test and the focused gate/evidence tests passed (51 tests).
 
+### Loop recheck 4 (`arch-AR-4-c141540-looprecheck2.final.md`)
+
+- **F10 (B):** `rerun_pair_problems` now accepts complete rerun counts with policy-approved sibling skips while
+  requiring at least as many passes as the originally failed tests and a `passed` outcome for each of them.
+  `tests/test_gate_trust.py::test_review_f10_r13_allows_an_approved_sibling_skip_but_requires_the_failed_test_to_pass`
+  uses full and rerun records from `tools/gate.py`, and rejects zero passes or a skipped failed test. The supplied
+  F10 probe and this regression both failed before the fix and pass after it. The original `selected == passed`
+  condition in `tools/batch_evidence.py` was the seeded Python bug killed by this regression.
+- **Checks:** the F10 probe passes; 68 focused gate and evidence tests pass; `lake build` passes (888 jobs), and
+  `lean/audit.py` passes (484 source files, 5,784 theorem declarations). `report.py --check` passes without gate
+  evidence, and `git diff --check` passes. The requested selected command expanded to 377/377 units, so it was
+  stopped after the gate rerun and trust test units passed; no full suite or release gate ran, as instructed.
+
 ### Open after the fixes
 
 - **The full gate on the final HEAD** (the chain, then `report.py --check --gate`).
