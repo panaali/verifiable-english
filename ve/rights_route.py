@@ -5,6 +5,7 @@ from collections import Counter
 from string import Formatter
 
 from .backends.relay import decide, decide_once
+from .backends.service_schema import same_json
 from .ast import decimal_value
 from .errors import CheckerUnavailable
 from .softnorms import _act_key, bind_prime_environment, bind_soft_elaboration
@@ -53,6 +54,29 @@ def _narrowing_texts_bound(texts, slots):
         while at < len(texts) and texts[at].startswith(prefix) and texts[at].removeprefix(prefix) in names:
             at += 1
     return at == len(texts)
+
+
+def _in_scope(limits, right, kind):
+    """Tree.lean `inScope` over the authored limitations: a limitation covers the right and the source kind."""
+    return any((limit['scope'] == 'all' or right in limit['scope']) and
+               (limit['kinds'] == 'all' or kind in limit['kinds']) for limit in limits)
+
+
+def _licence_bound(mechanism, *, certificates):
+    """A licence has the form Run.lean `licence` gives its mechanism: `limitation` and `bar` their own word;
+    `collision` only beside a blocking or dominating rule; `effect delivered by strict rule M` only for
+    `blockedBy M`; `certified` only when certificates were sent; else `cited` or none."""
+    licence, text = mechanism['licence'], mechanism['mechanism']
+    if text in ('limitation', 'bar'):
+        return licence == text
+    return (licence in (None, 'cited') or (licence == 'certified' and certificates) or
+            (licence == 'collision' and text.startswith(('blockedBy ', 'dominatedBy '))) or
+            (text.startswith('blockedBy ') and
+             licence == 'effect delivered by strict rule ' + text.removeprefix('blockedBy ')))
+
+
+# Correlate.lean `barNode`: every bar rule is strict, hard and negative, with no carve-out.
+BAR_NODE = {'sign': False, 'hard': True, 'mode': 'strict', 'unless': []}
 
 
 def _bind_elaboration(row, units, environment):
@@ -112,6 +136,7 @@ def _bind_elaboration(row, units, environment):
         if len(row['lines']) != len(source_lines):
             raise ValueError('rights source line count')
         holders = {unit['right']['name']: unit['right']['holder'] for unit in units if 'right' in unit}
+        cites = {}
         predicates = environment['vocabulary']['predicates']
         for entry, (right, kind, name, bearer, predicate, rule, source_line, rule_id) in zip(
                 row['lines'], source_lines):
@@ -126,6 +151,7 @@ def _bind_elaboration(row, units, environment):
                            1 if right not in holders else
                            (objects.index(holders[right]) if holders[right] in objects else len(objects)) + 1)
             node = entry['node']
+            cites[rule_id] = source_line.get('cites') or {}
             if (entry['right'] != right or entry['kind'] != kind or
                     entry['instance'] != instance or
                     type(entry['holder_slot']) is not int or entry['holder_slot'] != holder_slot or
@@ -134,10 +160,14 @@ def _bind_elaboration(row, units, environment):
                     entry.get('source_line', entry['rule']) != name or
                     entry['predicate'] != predicate or node['predicate'] != predicate or
                     any(node[field] != rule.get(field, default) for field, default in
-                        (('sign', None), ('hard', False), ('mode', 'strict'), ('over', [])))):
+                        (('sign', None), ('hard', False), ('mode', 'strict'), ('over', []))) or
+                    # Correlate.lean `nodeOf`: the authored carve-outs, then the limitation pack when in scope.
+                    len(node['unless']) != len(rule.get('unless', [])) + _in_scope(limit_units, right, kind) or
+                    not same_json(node['unless'][:len(rule.get('unless', []))], rule.get('unless', []))):
                 raise ValueError('unbound rights source line')
         for bar in row['bars']:
-            if bar['name'] in correlated or bar['predicate'] not in environment['vocabulary']['predicates']:
+            if (bar['name'] in correlated or bar['predicate'] not in environment['vocabulary']['predicates'] or
+                    any(bar[field] != value for field, value in BAR_NODE.items())):
                 raise ValueError('unbound bar rule')
             correlated[bar['name']] = bar
         bind_soft_elaboration(row, norms, predicates, rights_rules=correlated.items(),
@@ -245,9 +275,7 @@ def _bind_elaboration(row, units, environment):
             targets = [mechanism['target'] for mechanism in entry['mechanisms']]
             line = next(line for line in row['lines'] if line['rule'] == entry['rule'])
             rule = correlated[entry['rule']]
-            limited = any((limit['scope'] == 'all' or entry['right'] in limit['scope']) and
-                          (limit['kinds'] == 'all' or line['kind'] in limit['kinds'])
-                          for limit in limit_units)
+            limited = _in_scope(limit_units, entry['right'], line['kind'])
             # Correlate.lean `barReach`: the line's own permission, or the permission dual
             # of a default obligation line, when that permission is right-derived.
             default = rule.get('mode', 'strict') == 'default'
@@ -255,8 +283,9 @@ def _bind_elaboration(row, units, environment):
                      (default and line['node']['sign'] and
                       _act_key(line['predicate'], predicates) != line['predicate'] and
                       _act_key(line['predicate'], predicates) in permission_lines))
-            if (len(targets) != len(set(targets)) or
-                    any(mechanism['target'] != f"{entry['rule']}:{mechanism['mechanism']}"
+            if (len(targets) != len(set(targets)) or entry['in_scope'] is not limited or
+                    any(mechanism['target'] != f"{entry['rule']}:{mechanism['mechanism']}" or
+                        not _licence_bound(mechanism, certificates=False)
                         for mechanism in entry['mechanisms']) or
                     not _narrowing_texts_bound(
                         [mechanism['mechanism'] for mechanism in entry['mechanisms']],
@@ -271,9 +300,11 @@ def _bind_elaboration(row, units, environment):
         protected = set(environment['vocabulary']['rights'].get('protected', []))
         for entry in row['distinction']:
             hits = [(hit['right'], hit['rule'], hit['protected']) for hit in entry['hits']]
+            # Distinction.lean `distinctionHits`: a hit is cited when its line cites a guard source.
             if (len(hits) != len(set(hits)) or
                     any((right, rule) not in line_pairs or name not in protected
-                        for right, rule, name in hits)):
+                        for right, rule, name in hits) or
+                    any(hit['cited'] is not ('guard' in cites[hit['rule']]) for hit in entry['hits'])):
                 raise ValueError('unbound distinction hit')
         expected_findings = [f"ProtectedInCone: {hit['protected']} in rule {hit['rule']} on right {hit['right']}"
                              for entry in row['distinction'] if not entry['independent']
@@ -289,10 +320,15 @@ def _bind_elaboration(row, units, environment):
         raise CheckerUnavailable(f'CheckerUnavailable: Lean rights elaboration is not bound to the request: {error}') from error
 
 
-def _bind_conflict(row, elaborated):
-    """Bind the conflict's displayed identities to the elaborated source."""
+def _bind_conflict(row, elaborated, witness=None):
+    """Bind the conflict's displayed identities to the elaborated source, and a witness answer's
+    target to the submitted witness."""
     try:
         targets = [entry['target'] for entry in elaborated['conflict_targets']]
+        if witness is not None:
+            if row['targets'] != targets or row['target'] != witness['target']:
+                raise ValueError('unbound conflict witness target')
+            return
         labels = {entry['label'] for entry in elaborated['colliding_pairs']}
         labels.update(entry['label'] for entry in elaborated['limitations'])
         conditional = row['conditional_on']
@@ -328,15 +364,8 @@ def _bind_narrowings(row, elaborated, *, empty_certificates=False):
             for mechanism in actual['mechanisms']:
                 licence = mechanism['licence']
                 text = mechanism['mechanism']
-                fixed = ('limitation' if text == 'limitation' else 'bar' if text == 'bar' else None)
-                if (licence not in (None, 'limitation', 'bar', 'cited', 'collision', 'certified') and
-                        not (text.startswith('blockedBy ') and
-                                 licence == 'effect delivered by strict rule ' + text.removeprefix('blockedBy '))):
+                if not _licence_bound(mechanism, certificates=not empty_certificates):
                     raise ValueError('unbound mechanism licence')
-                if fixed is not None and licence != fixed:
-                    raise ValueError('unbound fixed mechanism licence')
-                if empty_certificates and licence == 'certified':
-                    raise ValueError('unrequested certificate licence')
                 if actual['in_scope'] and licence is None:
                     expected_findings.append(
                         f"UnlicensedLimitation: {text} of rule {actual['rule']} on right {actual['right']}")
@@ -402,9 +431,9 @@ def _run_rights_case(environment, units, kind, extra, elaborated=None):
             _bind_narrowings(row, elaborated, empty_certificates=not extra.get('certificates'))
         else:
             _bind_bar(row, elaborated, units)
-    elif kind == 'rights-conflict' and 'witness' not in extra:
+    elif kind == 'rights-conflict':
         elaborated = run_rights_case(environment, units, 'rights-elaborate')
-        _bind_conflict(row, elaborated)
+        _bind_conflict(row, elaborated, extra.get('witness'))
     return row
 
 
@@ -447,6 +476,8 @@ def admit_rights_document(environment, document, rights=None):
             "document": document}
     row = decide("rights", [_wire(case)])[0]
     try:
+        from .admission import bind_report
+        bind_report(document, row['report'])
         labels = (elaborated['conditional_on'] +
                   [entry['label'] for entry in elaborated['limitations']])
         reported = {assumption.get('label') for assumption in row['report']['assumptions']}
