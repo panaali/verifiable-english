@@ -29,7 +29,8 @@ def sha256(path: Path) -> str:
 
 
 def units(run: Path):
-    return json.loads((run / "units.json").read_text())
+    data = json.loads((run / "units.json").read_text())
+    return data["units"] if isinstance(data, dict) else data
 
 
 def unit_text(source: bytes, unit) -> str:
