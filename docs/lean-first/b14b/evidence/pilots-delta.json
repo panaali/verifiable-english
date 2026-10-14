@@ -1,0 +1,46 @@
+{
+ "unavailable": [
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/readings/s1.ve.md",
+   "op": "document_check",
+   "reason": "Identical unavailable outcome in both recordings (standing ruling R7); no preservation claim for this document."
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "Identical unavailable outcome in both recordings (standing ruling R7); no preservation claim for this document."
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261010T1800Z:usecases/question-answering/agent-policy/a-conflict.ve.md",
+   "op": "document_check",
+   "reason": "Identical unavailable outcome in both recordings (standing ruling R7); no preservation claim for this document."
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261010T1800Z:usecases/question-answering/agent-policy/a-rules.ve.md",
+   "op": "document_check",
+   "reason": "Identical unavailable outcome in both recordings (standing ruling R7); no preservation claim for this document."
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261010T1800Z:usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "op": "document_check",
+   "reason": "Identical unavailable outcome in both recordings (standing ruling R7); no preservation claim for this document."
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md",
+   "op": "document_check",
+   "reason": "Identical unavailable outcome in both recordings (standing ruling R7); no preservation claim for this document."
+  }
+ ]
+}
