@@ -9,7 +9,7 @@ round-trip corpus (5,000 per vocabulary gives the full 85,000 pairs), this
 harness:
 
 1. renders the AST with the Python renderer, tokenizes the text and asks the
-   Lean core parser (`lean/VE/English/Run.lean`) for its reading;
+   Lean core parser (`lean/EnglishRunMain.lean`) for its reading;
 2. asks the Lean core renderer for its canonical core text and checks that the
    Lean parser reads it back;
 3. gives that Lean text to the Python parser (which runs the all-derivations
@@ -46,7 +46,7 @@ from conformance.english_surface import SEED, configurations, directed_formulas,
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / 'lean'
-RUNNER = 'VE/English/Run.lean'
+RUNNER = 'EnglishRunMain.lean'
 PUNCTUATION = ',;:.'
 MARKERS = {'(a)', '(b)', '(i)', '(ii)'}
 V0 = (ast.Top, ast.Bottom, ast.Unary, ast.Binary, ast.Eq, ast.Not, ast.And, ast.Or, ast.Implies,
