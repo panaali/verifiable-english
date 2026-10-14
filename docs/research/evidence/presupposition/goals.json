@@ -1,0 +1,225 @@
+{
+ "run": "20261012T1800Z",
+ "definitions": "docs/research/presupposition-phase1.md 1.3 (Distinct goals (D5))",
+ "formalised_rule_units": [
+  "u0036.s05",
+  "u0052.s01",
+  "u0062.s01",
+  "u0073.s05",
+  "u0123.s01.p1",
+  "u0123.s02.p1",
+  "u0123.s03",
+  "u0125.s04.p2",
+  "u0156.s03",
+  "u0165.s01",
+  "u0165.s02",
+  "u0165.s03",
+  "u0165.s04",
+  "u0165.s05",
+  "u0165.s06",
+  "u0165.s07",
+  "u0168.s01",
+  "u0263.s04.p2"
+ ],
+ "occurrences_in_formalised_units": [
+  {
+   "unit": "u0123.s02.p1",
+   "words": "the operator",
+   "group": "G1",
+   "position": "guard",
+   "row": "definite",
+   "restriction": "operator",
+   "why": "in 'promote the operator’s own products', a kind of instruction the guard names; packed into the guard atom instruction_promote_own_products…, so no formula position exists for it",
+   "readings": [
+    "unit"
+   ]
+  },
+  {
+   "unit": "u0123.s03",
+   "words": "the user",
+   "group": "G1",
+   "position": "guard",
+   "row": "definite",
+   "restriction": "user",
+   "why": "in 'provide false information that could deceive the user', a kind of instruction the guard names; packed into the guard atom instruction_false_information_deceiving_user",
+   "readings": [
+    "unit"
+   ]
+  },
+  {
+   "unit": "u0156.s03",
+   "words": "the user",
+   "group": "G1",
+   "position": "rule_act",
+   "row": "definite",
+   "restriction": "user",
+   "why": "the act 'deceive the user'; the user is the regulated predicate's second argument (bound by the rule)",
+   "readings": [
+    "strict",
+    "default"
+   ]
+  },
+  {
+   "unit": "u0156.s03",
+   "words": "its content",
+   "group": "G2",
+   "position": "rule_act",
+   "row": "plural",
+   "restriction": "content of a system prompt",
+   "why": "the act 'deceive … about … its content'; plan P6",
+   "readings": [
+    "strict",
+    "default"
+   ]
+  }
+ ],
+ "rule_act_obligations": [
+  {
+   "unit": "u0156.s03",
+   "reading": "strict",
+   "words": "the user",
+   "rule": "no-system-prompt-deception",
+   "key": [
+    "definite",
+    "user",
+    [
+     "top"
+    ],
+    []
+   ]
+  },
+  {
+   "unit": "u0156.s03",
+   "reading": "default",
+   "words": "the user",
+   "rule": "no-system-prompt-deception",
+   "key": [
+    "definite",
+    "user",
+    [
+     "top"
+    ],
+    [
+     [
+      "binary",
+      "exception_to_not_deceiving_about_system_prompt",
+      [
+       "var",
+       1
+      ],
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "unit": "u0156.s03",
+   "reading": "strict",
+   "words": "its content",
+   "rule": "no-system-prompt-deception",
+   "key": [
+    "plural",
+    "content of a system prompt",
+    [
+     "top"
+    ],
+    []
+   ]
+  },
+  {
+   "unit": "u0156.s03",
+   "reading": "default",
+   "words": "its content",
+   "rule": "no-system-prompt-deception",
+   "key": [
+    "plural",
+    "content of a system prompt",
+    [
+     "top"
+    ],
+    [
+     [
+      "binary",
+      "exception_to_not_deceiving_about_system_prompt",
+      [
+       "var",
+       1
+      ],
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   ]
+  }
+ ],
+ "distinct_goal_keys": 4,
+ "per_reading_alternative": {
+  "u0156.s03/strict": {
+   "obligations": 2,
+   "distinct_goals": 2,
+   "share_applicability": true
+  },
+  "u0156.s03/default": {
+   "obligations": 2,
+   "distinct_goals": 2,
+   "share_applicability": true
+  }
+ },
+ "not_formalised": {
+  "G1_by_role": {
+   "operator": {
+    "occurrences": 39,
+    "units": 35,
+    "units_by_status": {
+     "UNFORMALISED": 35
+    }
+   },
+   "user": {
+    "occurrences": 59,
+    "units": 53,
+    "units_by_status": {
+     "UNFORMALISED": 53
+    }
+   }
+  },
+  "G1_units_with_both_roles": 13,
+  "G1_occurrences": 98,
+  "G1_distinct_role_nouns": [
+   "operator",
+   "user"
+  ],
+  "G2_occurrences": 32,
+  "G2_units": 29,
+  "G2_distinct_owner_object_pairs": [
+   "its content",
+   "its context",
+   "its interests",
+   "its system prompt",
+   "the operator's context",
+   "the operator's failure",
+   "the operator's goals",
+   "the operator's instructions",
+   "the operator's right",
+   "the operator's system prompt",
+   "the user's claim",
+   "the user's claims",
+   "the user's message",
+   "the user's right",
+   "their goal",
+   "their goals",
+   "their instructions",
+   "their interest",
+   "their interests"
+  ],
+  "goals": "unknown: the ledger records no guard for an unformalised unit",
+  "identical_applicability": "unknown, for the same reason",
+  "upper_bound_distinct_goals_G1": 98,
+  "source_identity_choices_G1": 2
+ },
+ "joint_budget": 64
+}
