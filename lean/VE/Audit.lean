@@ -33,6 +33,7 @@ import VE.Closure.Congruence
 import VE.Closure.Consequence
 import VE.Closure.Finite
 import VE.Closure.Induction
+import VE.Closure.Order
 import VE.Closure.PathRules
 import VE.Closure.Paths
 import VE.Closure.RoundTrip
@@ -545,6 +546,10 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.Tableau.two_holds
 #print axioms VE.Closure.Tableau.typed_extend
 #print axioms VE.Closure.Tableau.unfoldAt_sound
+#print axioms VE.Closure.above_iff
+#print axioms VE.Closure.atLeast_iff
+#print axioms VE.Closure.atLeast_refl
+#print axioms VE.Closure.atLeast_trans
 #print axioms VE.Closure.check_iff_wellFormed
 #print axioms VE.Closure.closure_induction
 #print axioms VE.Closure.conservativity
@@ -571,7 +576,9 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.mem_namedEdges
 #print axioms VE.Closure.mem_pivot
 #print axioms VE.Closure.named_body_denote
+#print axioms VE.Closure.outranksPlus_eq_above
 #print axioms VE.Closure.pair_values
+#print axioms VE.Closure.path_iff_transGen
 #print axioms VE.Closure.pivot_closed
 #print axioms VE.Closure.pivot_preserves_closed
 #print axioms VE.Closure.reachEval_iff
@@ -579,7 +586,19 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.reach_denote
 #print axioms VE.Closure.reachable_congr
 #print axioms VE.Closure.reachable_induction
+#print axioms VE.Closure.reachable_star_iff
 #print axioms VE.Closure.reachable_trans
+#print axioms VE.Closure.risk_closure_eq
+#print axioms VE.Closure.risk_iter_in
+#print axioms VE.Closure.risk_iter_mono
+#print axioms VE.Closure.risk_iter_sound
+#print axioms VE.Closure.risk_iter_succ
+#print axioms VE.Closure.risk_pivot_in
+#print axioms VE.Closure.risk_step_extends
+#print axioms VE.Closure.risk_step_iff
+#print axioms VE.Closure.risk_step_in
+#print axioms VE.Closure.risk_step_mono
+#print axioms VE.Closure.risk_warshall_in
 #print axioms VE.Closure.star_least
 #print axioms VE.Closure.substTerm_denote
 #print axioms VE.Closure.subst_denote

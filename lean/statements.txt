@@ -1735,6 +1735,25 @@ theorem VE.Closure.Tableau.unfoldAt_sound
                       (VE.Closure.Formula.reach k e t r))
   -- uses VE.Closure.Edge@VE.Closure.Syntax VE.Closure.Formula.denote@VE.Closure.Syntax VE.Closure.Formula.reach@VE.Closure.Syntax VE.Closure.Formula@VE.Closure.Syntax VE.Closure.Kind@VE.Closure.Paths VE.Closure.Tableau.Assignment.Typed@VE.TableauExtended VE.Closure.Tableau.Assignment@VE.TableauExtended VE.Closure.Tableau.Branch@VE.TableauExtended VE.Closure.Tableau.Token.denote@VE.TableauExtended VE.Closure.Tableau.Token@VE.TableauExtended VE.Closure.Tableau.bindingsValue@VE.TableauExtended VE.Closure.Tableau.unfoldAt@VE.TableauExtendedRules VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Term@VE.Syntax
   -- expr 1301991121
+theorem VE.Closure.above_iff
+  ∀ {α : Type} [inst : DecidableEq α] (o : VE.Closure.Order α) (a b : α),
+    o.above a b = Bool.true ↔ Relation.TransGen (fun x y => (x, y) ∈ o.edges) a b
+  -- uses VE.Closure.Order.above@VE.Closure.Order VE.Closure.Order.edges@VE.Closure.Order VE.Closure.Order@VE.Closure.Order
+  -- expr 1857380435
+theorem VE.Closure.atLeast_iff
+  ∀ {α : Type} [inst : DecidableEq α] (o : VE.Closure.Order α) (a b : α),
+    o.atLeast a b = Bool.true ↔ a = b ∨ Relation.TransGen (fun x y => (x, y) ∈ o.edges) a b
+  -- uses VE.Closure.Order.atLeast@VE.Closure.Order VE.Closure.Order.edges@VE.Closure.Order VE.Closure.Order@VE.Closure.Order
+  -- expr 1241837120
+theorem VE.Closure.atLeast_refl
+  ∀ {α : Type} [inst : DecidableEq α] (o : VE.Closure.Order α) (a : α), o.atLeast a a = Bool.true
+  -- uses VE.Closure.Order.atLeast@VE.Closure.Order VE.Closure.Order@VE.Closure.Order
+  -- expr 1670988055
+theorem VE.Closure.atLeast_trans
+  ∀ {α : Type} [inst : DecidableEq α] (o : VE.Closure.Order α) {a b c : α},
+    o.atLeast a b = Bool.true → o.atLeast b c = Bool.true → o.atLeast a c = Bool.true
+  -- uses VE.Closure.Order.atLeast@VE.Closure.Order VE.Closure.Order@VE.Closure.Order
+  -- expr 3138186843
 theorem VE.Closure.check_iff_wellFormed
   ∀ (E : VE.Environment) (Γ : List String) (a : VE.Closure.Formula),
     VE.Closure.Formula.check E Γ a = Bool.true ↔ VE.Closure.Formula.WellFormed E Γ a
@@ -1898,10 +1917,20 @@ theorem VE.Closure.named_body_denote
               (VE.Closure.Formula.reachBody k s (VE.Closure.Formula.binary p (VE.Term.var 1) (VE.Term.var 0)) t r))
   -- uses VE.Closure.Formula.binary@VE.Closure.Syntax VE.Closure.Formula.denote@VE.Closure.Syntax VE.Closure.Formula.reachBody@VE.Closure.Syntax VE.Closure.Formula.reachNamed@VE.Closure.Syntax VE.Closure.Kind@VE.Closure.Paths VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics VE.Term.var@VE.Syntax VE.Term@VE.Syntax VE.Valuation@VE.Semantics
   -- expr 1153418488
+theorem VE.Closure.outranksPlus_eq_above
+  ∀ (env : VE.SoftNorms.SoftEnv),
+    VE.SoftNorms.RanksValid env →
+      ∀ (a b : String), VE.SoftNorms.outranksPlus env a b = { elems := env.ranks, edges := env.outranks }.above a b
+  -- uses VE.Closure.Order.above@VE.Closure.Order VE.Closure.Order.mk@VE.Closure.Order VE.SoftNorms.RanksValid@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.outranks@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv.ranks@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv@VE.SoftNorms.Tree VE.SoftNorms.outranksPlus@VE.SoftNorms.Tree
+  -- expr 3058702631
 theorem VE.Closure.pair_values
   ∀ {α : Type u} (P : α → α → Prop) (x y : α), (∃ a b, x = a ∧ y = b ∧ P a b) ↔ P x y
   -- uses
   -- expr 3438024574
+theorem VE.Closure.path_iff_transGen
+  ∀ {α : Type u} {R : α → α → Prop} {a b : α}, VE.Closure.Path R a b ↔ Relation.TransGen R a b
+  -- uses VE.Closure.Path@VE.Closure.Paths
+  -- expr 610524156
 theorem VE.Closure.pivot_closed
   ∀ {α : Type u} [inst : DecidableEq α] (es : List (α × α)) (v : α), VE.Closure.ClosedAt (VE.Closure.pivot v es) v
   -- uses VE.Closure.ClosedAt@VE.Closure.Paths VE.Closure.pivot@VE.Closure.Paths
@@ -1941,11 +1970,85 @@ theorem VE.Closure.reachable_induction
     P x → (∀ (a b : α), P a → R a b → P b) → ∀ (y : α), VE.Closure.Reachable k R x y → P y
   -- uses VE.Closure.Kind@VE.Closure.Paths VE.Closure.Reachable@VE.Closure.Paths
   -- expr 901689698
+theorem VE.Closure.reachable_star_iff
+  ∀ {α : Type u} {R : α → α → Prop} {a b : α},
+    VE.Closure.Reachable VE.Closure.Kind.star R a b ↔ a = b ∨ Relation.TransGen R a b
+  -- uses VE.Closure.Kind.star@VE.Closure.Paths VE.Closure.Reachable@VE.Closure.Paths
+  -- expr 3848293794
 theorem VE.Closure.reachable_trans
   ∀ {α : Type u} {R : α → α → Prop} (k l : VE.Closure.Kind) {a b c : α},
     VE.Closure.Reachable k R a b → VE.Closure.Reachable l R b c → VE.Closure.Reachable (VE.Closure.composeKind k l) R a c
   -- uses VE.Closure.Kind@VE.Closure.Paths VE.Closure.Reachable@VE.Closure.Paths VE.Closure.composeKind@VE.Closure.PathRules
   -- expr 1774377858
+theorem VE.Closure.risk_closure_eq
+  ∀ (R : VE.Risk.RiskDoc),
+    (∀ (e : String × String), e ∈ R.risk.severity.edges → e.fst ∈ R.classes ∧ e.snd ∈ R.classes) →
+      ∀ (a b : String),
+        (VE.Risk.closure R).contains (a, b) = { elems := R.classes, edges := R.risk.severity.edges }.above a b
+  -- uses VE.Closure.Order.above@VE.Closure.Order VE.Closure.Order.mk@VE.Closure.Order VE.Risk.RiskDoc.classes@VE.Risk.Decl VE.Risk.RiskDoc.risk@VE.Risk.Decl VE.Risk.RiskDoc@VE.Risk.Decl VE.Risk.RiskEnv.severity@VE.Risk.Decl VE.Risk.SeverityDecl.edges@VE.Risk.Decl VE.Risk.closure@VE.Risk.Decl
+  -- expr 1616875675
+theorem VE.Closure.risk_iter_in
+  ∀ (cs : List String) (n : Nat) (es : List (String × String)),
+    (∀ (e : String × String), e ∈ es → e.fst ∈ cs ∧ e.snd ∈ cs) →
+      ∀ (e : String × String), e ∈ VE.Risk.closeIter cs n es → e.fst ∈ cs ∧ e.snd ∈ cs
+  -- uses VE.Risk.closeIter@VE.Risk.Decl
+  -- expr 1606591318
+theorem VE.Closure.risk_iter_mono
+  ∀ (cs : List String) (n : Nat) (es fs : List (String × String)),
+    (∀ (e : String × String), e ∈ es → e ∈ fs) →
+      ∀ (e : String × String), e ∈ VE.Risk.closeIter cs n es → e ∈ VE.Risk.closeIter cs n fs
+  -- uses VE.Risk.closeIter@VE.Risk.Decl
+  -- expr 983846990
+theorem VE.Closure.risk_iter_sound
+  ∀ (cs : List String) (n : Nat) (es orig : List (String × String)),
+    (∀ (a b : String), (a, b) ∈ es → VE.Closure.Path (fun x y => (x, y) ∈ orig) a b) →
+      ∀ (a b : String), (a, b) ∈ VE.Risk.closeIter cs n es → VE.Closure.Path (fun x y => (x, y) ∈ orig) a b
+  -- uses VE.Closure.Path@VE.Closure.Paths VE.Risk.closeIter@VE.Risk.Decl
+  -- expr 4283186892
+theorem VE.Closure.risk_iter_succ
+  ∀ (cs : List String) (n : Nat) (es : List (String × String)),
+    (∀ (e : String × String), e ∈ es → e.fst ∈ cs ∧ e.snd ∈ cs) →
+      ∀ (e : String × String), e ∈ VE.Risk.closeIter cs n es → e ∈ VE.Risk.closeIter cs (n + 1) es
+  -- uses VE.Risk.closeIter@VE.Risk.Decl
+  -- expr 1664455399
+theorem VE.Closure.risk_pivot_in
+  ∀ (cs : List String) (v : String),
+    v ∈ cs →
+      ∀ (es : List (String × String)),
+        (∀ (e : String × String), e ∈ es → e.fst ∈ cs ∧ e.snd ∈ cs) →
+          ∀ (e : String × String), e ∈ VE.Closure.pivot v es → e ∈ VE.Risk.closeStep cs es
+  -- uses VE.Closure.pivot@VE.Closure.Paths VE.Risk.closeStep@VE.Risk.Decl
+  -- expr 1756343199
+theorem VE.Closure.risk_step_extends
+  ∀ (cs : List String) (es : List (String × String)),
+    (∀ (e : String × String), e ∈ es → e.fst ∈ cs ∧ e.snd ∈ cs) →
+      ∀ (e : String × String), e ∈ es → e ∈ VE.Risk.closeStep cs es
+  -- uses VE.Risk.closeStep@VE.Risk.Decl
+  -- expr 2318593234
+theorem VE.Closure.risk_step_iff
+  ∀ (cs : List String) (es : List (String × String)) (a b : String),
+    (a, b) ∈ VE.Risk.closeStep cs es ↔ a ∈ cs ∧ b ∈ cs ∧ ((a, b) ∈ es ∨ ∃ m, m ∈ cs ∧ (a, m) ∈ es ∧ (m, b) ∈ es)
+  -- uses VE.Risk.closeStep@VE.Risk.Decl
+  -- expr 4142513507
+theorem VE.Closure.risk_step_in
+  ∀ (cs : List String) (es : List (String × String)) (e : String × String),
+    e ∈ VE.Risk.closeStep cs es → e.fst ∈ cs ∧ e.snd ∈ cs
+  -- uses VE.Risk.closeStep@VE.Risk.Decl
+  -- expr 219185613
+theorem VE.Closure.risk_step_mono
+  ∀ (cs : List String) (es fs : List (String × String)),
+    (∀ (e : String × String), e ∈ es → e ∈ fs) →
+      ∀ (e : String × String), e ∈ VE.Risk.closeStep cs es → e ∈ VE.Risk.closeStep cs fs
+  -- uses VE.Risk.closeStep@VE.Risk.Decl
+  -- expr 2476207865
+theorem VE.Closure.risk_warshall_in
+  ∀ (cs vs : List String),
+    (∀ (v : String), v ∈ vs → v ∈ cs) →
+      ∀ (es : List (String × String)),
+        (∀ (e : String × String), e ∈ es → e.fst ∈ cs ∧ e.snd ∈ cs) →
+          ∀ (e : String × String), e ∈ VE.Closure.warshall vs es → e ∈ VE.Risk.closeIter cs vs.length es
+  -- uses VE.Closure.warshall@VE.Closure.Paths VE.Risk.closeIter@VE.Risk.Decl
+  -- expr 1836742711
 theorem VE.Closure.star_least
   ∀ {α : Type u} {R : α → α → Prop} {a c : α},
     VE.Closure.Reachable VE.Closure.Kind.star R a c ↔

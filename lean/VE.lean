@@ -1,4 +1,5 @@
 import VE.Audit
+import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
 import VE.Grammar.Reading
