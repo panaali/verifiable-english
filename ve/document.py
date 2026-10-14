@@ -1800,12 +1800,15 @@ def main(argv=None):
                 if len(matching) != 1:
                     raise VEError("unknown narrowing")
                 narrowing = matching[0]
-                if not any((r["id"], r["version"]) == (narrowing["set"], narrowing["version"])
-                           for r in sets):
+                matching_sets = [r for r in sets if (r["id"], r["version"]) ==
+                                 (narrowing["set"], narrowing["version"])]
+                if not matching_sets:
                     raise VEError("narrowing does not target an active reading set")
-                if joint is not None and joint["status"] == "complete":
-                    rs = next(r for r in sets if (r["id"], r["version"]) ==
-                              (narrowing["set"], narrowing["version"]))
+                rs = matching_sets[0]
+                # Lean's joint vectors enumerate open sets only. The signed
+                # singleton of an authored set is in every choice implicitly.
+                if (joint is not None and joint["status"] == "complete"
+                        and rs["status"] == "open"):
                     kept = {i for i, candidate in enumerate(rs["readings"])
                             if candidate["id"] in narrowing["keeps"]}
                     key = f"{rs['id']}@{rs['version']}"
