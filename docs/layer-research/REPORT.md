@@ -37,4 +37,26 @@ Each was planted, made the test above fail, and was removed; the outputs are in
 
 - `tools/test_layer_policy.py` `LayerSelectionTests`: 36 passed.
 - `tools/select_tests.py --base $(git merge-base HEAD main) --run`: 86 units, 0 failed.
-- The full gate on the final HEAD: `evidence/gate.json`.
+- The full gate is run by the chain on the committed final HEAD (`gate-result.json` in the worktree).
+  The first chain record (2026-10-13 13:33 UTC) was the placeholder a killed gate leaves: no commit,
+  no stages, no failures; there was no failed test to rerun.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A.: no Lean answer is read or relayed; only the tools' layer table changes.
+2. PASS: the one directive (SC3: `research` in layer 5; a test that a `research/` path is layer 5 and
+   selects only research-related tests) is delivered by fc1ad2d34 and
+   `test_research_tree_is_layer_five_and_selects_its_readers`; no generated file reads these lines;
+   no Lean decision copied, no report test added.
+3. PASS: three seeded bugs, each failing that test (`evidence/mutants.json`).
+4. N.A.: no Python, Lean or Rust checker output changes.
+5. N.A.: no relayed field is read.
+6. PASS: the chain runs the gate on the committed final HEAD; no gate evidence is committed.
+7. PASS: no DELTA row (no user-visible change); no trust-budget growth.
+8. PASS: no user-visible output changes; only `tools/` selection changes, so DELTA is none.
+9. PASS: this is the item's own fix; `test_research_tree_is_layer_five_and_selects_its_readers`
+   shows a `research/` path is not a full run and selects only its readers; seeded bug 3 shows an
+   unrelated selected test is caught.
+10. N.A.: no Lean statement or proof changes.
+11. N.A.: no budget, limit or deadline changes.
+12. N.A.: no checker code path changes; selection only shrinks for `research/` paths.
