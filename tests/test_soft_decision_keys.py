@@ -378,10 +378,16 @@ def test_f16_scope_rows_are_bound_to_elaboration(monkeypatch, mutation):
                  id='extra bar row'),
     pytest.param(lambda row: row['bars'][0]['barred'].append('absent'),
                  id='forged barred rule'),
+    pytest.param(lambda row: row['bars'][0]['barred'].clear(),
+                 id='missing barred rule'),
     pytest.param(lambda row: row['bars'][0]['blocked_defaults'].append('absent'),
                  id='forged blocked default'),
+    pytest.param(lambda row: row['bars'][0]['blocked_defaults'].append('may-impart'),
+                 id='strict rule as blocked default'),
     pytest.param(lambda row: row['bars'][0]['composition_candidates'].append('absent'),
                  id='forged composition candidate'),
+    pytest.param(lambda row: row['bars'][0]['composition_candidates'].append('may-impart'),
+                 id='same-predicate line as composition candidate'),
 ])
 def test_f16_bar_rows_are_bound_to_elaboration(monkeypatch, mutation):
     from tests.test_rights_lean import IMPART, env as rights_env, line, norm, right
@@ -485,6 +491,21 @@ def test_f18_narrowing_mechanism_and_target_bind_to_authored_line(monkeypatch, m
     row = copy.deepcopy(rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate'))
     row['narrowings'][0]['mechanisms'][0].update(
         mechanism=mechanism, target=f'no-arbitrary-arrest:{mechanism}')
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
+
+
+@pytest.mark.parametrize('mechanism', ['blockedBy absent', 'switch absent', 'carve-out 999'])
+def test_f18_extra_undeclared_mechanism_is_unavailable(monkeypatch, mechanism):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    row = copy.deepcopy(rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate'))
+    extra = copy.deepcopy(row['narrowings'][0]['mechanisms'][0])
+    extra.update(mechanism=mechanism, target=f'no-arbitrary-arrest:{mechanism}')
+    row['narrowings'][0]['mechanisms'].append(extra)
     monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
     with pytest.raises(CheckerUnavailable):
         rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
