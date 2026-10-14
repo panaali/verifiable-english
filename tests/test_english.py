@@ -286,6 +286,25 @@ def test_rejected_binary_template_does_not_take_accepted_unary_wordings():
                for issue in lint_vocabulary(env))
 
 
+def test_accepted_head_collection_scans_each_candidate_once(monkeypatch):
+    import ve.printer as printer
+    data = vocabulary()
+    data['vocabulary']['predicates']['importance'] = {
+        'arguments': ['item', 'agent'], 'description': 'Importance',
+        'verbalisation': '{0} is of the greatest importance for {1}'}
+    env = Environment(data)
+    seen = []
+    original = printer._template_head
+
+    def counted(value, arity):
+        seen.append(value)
+        return original(value, arity)
+
+    monkeypatch.setattr(printer, '_template_head', counted)
+    selected = printer._NaturalVocabulary(env)
+    assert sorted(seen) == sorted(env.predicates[name].verbalisation for name in selected._accepted)
+
+
 def test_all_existing_negative_attack_templates_also_reject_in_english():
     from test_fluent import negative_vocabulary, test_attacker_negative_templates_rejected_with_explicit_fallback
     mark, = test_attacker_negative_templates_rejected_with_explicit_fallback.pytestmark

@@ -316,16 +316,16 @@ structure PolicyCtx where
   adjBlocked : List String
   suggestedNegHeads : List String
 
-def PolicyCtx.of (E : Env) (O : Overlay) : PolicyCtx :=
+def PolicyCtx.ofHeads (E : Env) (O : Overlay) (lintHeads : List (String × String)) : PolicyCtx :=
   let preds := E.declaredPreds.map (PredFacts.of E O)
   let predNames := E.declaredPreds.map (·.name)
   let sortNames := E.declaredSorts.map (·.name)
   let constNames := E.declaredConsts.map (·.name)
-  let lintHeads := preds.filterMap fun f => f.lintHead.map (·, f.decl.name)
   let isHeads := preds.filterMap fun f => match f.wording with
-    | some v => if v.startsWith "{0} is " then (splitWs v)[2]? else none
+    | some v => if lintHeads.any (fun (h, p) => p == f.decl.name && some h == f.head) &&
+                   v.startsWith "{0} is " then (splitWs v)[2]? else none
     | none => none
-  let sHeads := predNames ++ preds.filterMap (·.head)
+  let sHeads := predNames ++ lintHeads.map (·.1)
   { E, O, preds, predNames, constNames, names := sortNames ++ predNames ++ constNames, lintHeads,
     nounLasts := E.declaredSorts.flatMap fun s => (sortNouns E O s).map fun n => ((tokens n).getLast?, s.name),
     nounTokens := (sortNames ++ E.declaredSorts.flatMap (sortNouns E O)).map tokens,
@@ -341,8 +341,6 @@ def templateCodesIn (c : PolicyCtx) (value : String) : List String :=
   (if value.length > 80 || (splitWs value).length > 8 then ["TEMPLATE_LENGTH"] else []) ++
   (if c.nounTokens.any (fun ts => !ts.isEmpty &&
       (List.range (tw.length + 1)).any fun i => (tw.drop i).take ts.length == ts) then ["SORT_NOUN"] else [])
-
-def templateCodes (E : Env) (O : Overlay) (value : String) : List String := templateCodesIn (PolicyCtx.of E O) value
 
 /-- The lint codes of a declared wording `value` of predicate `name` (`_NaturalVocabulary`). -/
 def lintCodesIn (c : PolicyCtx) (name value : String) (k : Nat) : List String :=
@@ -384,16 +382,11 @@ def lintCodesIn (c : PolicyCtx) (name value : String) (k : Nat) : List String :=
           | _, _ => [])
     (templateCodesIn c value ++ dup ++ shape).eraseDups
 
-def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List String :=
-  lintCodesIn (PolicyCtx.of E O) name value k
-
 /-- Step 4 of `acceptsDeclared` (english.py:368–372): the key of `p`'s declared wording or negative is the key of
 another declared predicate's wording (its strict wording when it declares none) or declared negative. -/
 def duplicateWordingIn (c : PolicyCtx) (p : String) : Bool :=
   let mine := ((c.E.declaredWording c.O p).toList ++ (c.E.declaredNegative c.O p).toList).map wordingKey
   (c.preds.filter (·.decl.name != p)).any fun f => f.ownKeys.any fun x => mine.any (x == ·)
-
-def duplicateWording (E : Env) (O : Overlay) (p : String) : Bool := duplicateWordingIn (PolicyCtx.of E O) p
 
 /-- Whether Python accepts the declared wording of `name` (english.py:264–372). -/
 def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
@@ -412,8 +405,8 @@ def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
     let occurs := wordOccursIn phraseRuns phrase
     let collision :=
       ((c.predNames ++ c.constNames).filter (· != name)).any occurs ||
-      others.any fun f => match f.head with
-        | some h => !["is", "was", "a", "an"].contains h && occurs h
+      others.any fun f => match c.lintHeads.find? (fun (_, p) => p == f.decl.name) with
+        | some (h, _) => !["is", "was", "a", "an"].contains h && occurs h
         | none => false
     let negated := (splitWs phrase).any c.isHeadNegations.contains
     let ms := (if k == 1 then complementPatterns else activePatterns).filterMap (matchPattern phrase)
@@ -427,7 +420,7 @@ def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
     let idiomCollision := c.constNames.any occurs ||
       others.any fun f =>
         let d2 := f.decl
-        let head := f.head
+        let head := (c.lintHeads.find? (fun (_, p) => p == d2.name)).map (·.1)
         [some d2.name, head].any fun tok? => match tok? with
           | none => false
           | some tok =>
@@ -454,6 +447,23 @@ def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
       (runs isLower (pyLower t)).any comparisonWords.contains)
     accepted4 && !duplicateWordingIn c name
   | _, _ => false
+
+def PolicyCtx.of (E : Env) (O : Overlay) : PolicyCtx :=
+  let preliminary := PolicyCtx.ofHeads E O []
+  let heads := preliminary.preds.filterMap fun f =>
+    match f.wording, f.head with
+    | some w, some h =>
+      if (lintCodesIn preliminary f.decl.name w f.decl.arity).isEmpty then some (h, f.decl.name)
+      else none
+    | _, _ => none
+  PolicyCtx.ofHeads E O heads
+
+def templateCodes (E : Env) (O : Overlay) (value : String) : List String := templateCodesIn (PolicyCtx.of E O) value
+
+def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List String :=
+  lintCodesIn (PolicyCtx.of E O) name value k
+
+def duplicateWording (E : Env) (O : Overlay) (p : String) : Bool := duplicateWordingIn (PolicyCtx.of E O) p
 
 def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool := acceptsDeclaredIn (PolicyCtx.of E O) name
 

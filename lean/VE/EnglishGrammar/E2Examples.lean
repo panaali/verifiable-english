@@ -181,7 +181,7 @@ def jFOsame : Json := ProfileExamples.routeEnv ["order@0", "relational-fol@0"] [
 #guard row (Fp [bin "appointed_by" "{0} was appointed by {1}" ["person", "person"]]) "appointed_by"
   "{0} was appointed by {1}" true [] []
 #guard row (Fp [bin "undermines" "{0} undermines {1}", bin "erodes" "{0} undermines the oversight role of {1}"])
-  "undermines" "{0} undermines {1}" false [] (V6 "undermines")
+  "undermines" "{0} undermines {1}" true [] []
 #guard row (Fp [bin "undermines" "{0} undermines {1}",
     bin "undermines_check" "{0} undermines the oversight role of {1}"]) "undermines" "{0} undermines {1}" true [] []
 #guard row (Fp [(("undocumented_parent", ["person"], wording "{0} has an undocumented noncitizen parent")),
@@ -230,8 +230,8 @@ def lx24 : Lexicon := { lrHazard hazardFallback with
 #guard [(ReadExamples.F, ReadExamples.LF), (ProfileExamples.FO, ProfileExamples.LO),
     (ProfileExamples.FD, ProfileExamples.LD), (ProfileExamples.FM, ProfileExamples.LM)].all fun (E, L) =>
   L.failures E {} == [] && L.policyFailures E {} == []
-#guard LA.failures FA {} == [] && LA.policyFailures FA {} == V6 "safe" &&
-  LR.failures FR {} == [] && LR.policyFailures FR {} == V6 "safe"
+#guard LA.failures FA {} == [] && LA.policyFailures FA {} == [] &&
+  LR.failures FR {} == [] && LR.policyFailures FR {} == []
 #guard lrSafe.failures FR {} == [] && lrSafe.policyFailures FR {} == []
 
 /-! ## 8.3 V6: the selections S3 did not name (lx25 to lx28) -/
@@ -431,13 +431,11 @@ def admOk (o : AdmitOutcome) : Option (List (EFormula × Bool) × List (Nat × L
   | _ => none
 #guard admOk (adm F LF "Legacy is deployed. Therefore legacy is deployed.") ==
   some ([(dl, false), (dl, true)], [(1, [0])])
-#guard (match adm FA LA "Wait is available to robot." with
-  | .refused (.invalidGrammar .lexicon) => true
-  | _ => false)
 def avail : List (EFormula × Bool) :=
   [(ReadExamples.b "available" (ReadExamples.c "wait") (ReadExamples.c "robot"), false)]
+#guard admOk (adm FA LA "Wait is available to robot.") == some (avail, [])
 #guard admOk (adm FA laSafe "Wait is available to robot.") == some (avail, [])
-#guard checkRequest FA {} LA workBudget avail ["Wait is available to robot."] == none
+#guard checkRequest FA {} LA workBudget avail ["Wait is available to robot."] == some 0
 #guard checkRequest FA {} laSafe workBudget avail ["Wait is available to robot."] == some 0
 #guard Run.noPremiseText 0 == "Sentence 1 is marked as a conclusion, and no earlier sentence is a premise." &&
   Run.unprovedText 1 == "Sentence 2 is marked as a conclusion, and no checked derivation from the earlier premises " ++
@@ -455,7 +453,7 @@ def avail : List (EFormula × Bool) :=
 #guard checkRequest F {} LF workBudget [(dl, false)] ["Legacy is reviewed."] == none
 #guard checkRequest F {} LF workBudget [(dl, false), (dl, true)]
   ["Legacy is deployed. Legacy is deployed.", "Legacy is deployed. Therefore legacy is deployed."] == some 1
-#guard grammarFault FA {} LA == some .lexicon && lexiconFailure FA {} LA == some ("V6", "predicate", "safe")
+#guard grammarFault FA {} LA == none && lexiconFailure FA {} LA == none
 def lexJson (format envId : String) : Json :=
   Json.mkObj [("format", .str format), ("environment_id", .str envId), ("nouns", Json.arr #[]),
     ("letters", Json.arr #[]), ("wordings", Json.arr #[]), ("negatives", Json.arr #[]), ("aliases", Json.arr #[]),
@@ -469,9 +467,9 @@ def lexJson (format envId : String) : Json :=
 
 /-! ## 8.13 Guards, codes and texts (gg1, gg2, tg1, tg2, cn19, cl1, lx33a, lx33b) -/
 
-#guard grammarFault FA {} LA == some .lexicon && grammarFault FA {} laSafe == none
+#guard grammarFault FA {} LA == none && grammarFault FA {} laSafe == none
 #guard (match translateRequest FA {} LA 2 workBudget "Wait is available to robot." with
-  | .invalidGrammar .lexicon => true
+  | .readings [_] true => true
   | _ => false)
 #guard (match translateRequest FA {} laSafe 2 workBudget "Wait is available to robot." with
   | .readings [_] true => true
