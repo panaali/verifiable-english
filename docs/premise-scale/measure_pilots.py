@@ -1,9 +1,13 @@
 """Measure the premise check on the premise-scale pilots (time, memory, premise status).
 
 Each pilot runs `check_document` in a fresh process under the pilots' address-space cap
-(`prlimit --as=6442450944`), and the row records the wall time, the peak resident memory of
-the Python process and of its largest checker child, and the premise status. The "before"
-side runs the same Python with the binary of the merge base (`--rust` and `--rust-sha256`).
+(`prlimit --as=6442450944`), and the row records the wall time, the premise status and its
+answer, and peak resident memory: the Python process (`python_peak_mb`), the largest process
+that ended and was waited for, a Rust or one-shot Lean checker (`children_peak_mb`), and the
+processes still running at the end, the persistent Lean service and Rust checkers (their
+VmHWM: `live_children_peak_mb`, the largest, and `live_children_peak_sum_mb`). The "before"
+side runs a checkout of this branch before its change (`--root`, with its own Lean and Rust
+builds).
 
     uv run python docs/premise-scale/measure_pilots.py --label after --out evidence/after.json PILOT...
 """
@@ -29,15 +33,44 @@ try:
 except Exception as exc:  # the row records the failure; the measurement goes on
     premises, error = None, f"{type(exc).__name__}: {str(exc)[:300]}"
 wall = time.monotonic() - start
+
+
+def descendants(pid):
+    import os
+    out = []
+    for tid in os.listdir(f"/proc/{pid}/task"):
+        try:
+            children = open(f"/proc/{pid}/task/{tid}/children").read().split()
+        except OSError:
+            continue
+        for child in map(int, children):
+            out += [child, *descendants(child)]
+    return out
+
+
+def peak_mb(pid):
+    try:
+        for line in open(f"/proc/{pid}/status"):
+            if line.startswith("VmHWM:"):
+                return int(line.split()[1]) // 1024
+    except OSError:
+        pass
+    return 0
+
+
+import os
+live = descendants(os.getpid())  # the persistent Lean service and Rust processes, still running
 print(json.dumps({"premises": premises, "error": error, "check_seconds": round(wall, 2),
-                  "python_peak_mb": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss // 1024}))
+                  "python_peak_mb": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss // 1024,
+                  "live_children_peak_mb": max(map(peak_mb, live), default=0),
+                  "live_children_peak_sum_mb": sum(map(peak_mb, live))}))
 """
 
 
-def measure(path: Path, env: dict, cap: int) -> dict:
+def measure(path: Path, env: dict, cap: int, root: Path) -> dict:
     start = time.monotonic()
     proc = subprocess.run(["prlimit", f"--as={cap}", sys.executable, "-c", INNER, str(path)],
-                          capture_output=True, text=True, env=env, cwd=ROOT)
+                          capture_output=True, text=True, env=env, cwd=root)
     wall = time.monotonic() - start
     import resource
     row = {"pilot": path.name, "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
@@ -61,6 +94,9 @@ def main() -> None:
     parser.add_argument("--rust-sha256", help="its SHA-256 (VE_RUST_SHA256)")
     parser.add_argument("--rust-timeout", help="VE_RUST_TIMEOUT for this run (default: unset)")
     parser.add_argument("--cap", type=int, default=6442450944)
+    parser.add_argument("--root", type=Path, default=ROOT,
+                        help="the checkout whose `ve` runs (the before side: a worktree at the merge base)")
+    parser.add_argument("--record", help="a directory: each pilot's Rust case lines go to <pilot>.cases.jsonl")
     parser.add_argument("pilots", nargs="+", type=lambda p: Path(p).resolve())
     args = parser.parse_args()
     env = {k: v for k, v in os.environ.items() if k not in ("VE_RUST_TIMEOUT", "VE_RUST_JSONL", "VE_RUST_SHA256")}
@@ -68,14 +104,27 @@ def main() -> None:
         env["VE_RUST_JSONL"], env["VE_RUST_SHA256"] = args.rust, args.rust_sha256
     if args.rust_timeout:
         env["VE_RUST_TIMEOUT"] = args.rust_timeout
+    root = args.root.resolve()
+    binary = Path(env.get("VE_RUST_JSONL") or root / "rust/target/release/ve").resolve()
     rows = []
     for path in args.pilots:
+        if args.record:
+            # A pass-through wrapper: the case lines are copied to the record, the binary answers them.
+            record = Path(args.record).resolve() / f"{path.name}.cases.jsonl"
+            record.parent.mkdir(parents=True, exist_ok=True)
+            record.write_text("")
+            wrapper = record.with_suffix(".sh")
+            wrapper.write_text(f"#!/bin/sh\nexec tee -a '{record}' | '{binary}' \"$@\"\n")
+            wrapper.chmod(0o755)
+            env["VE_RUST_JSONL"] = str(wrapper)
+            env["VE_RUST_SHA256"] = hashlib.sha256(wrapper.read_bytes()).hexdigest()
         # One wrapper process per pilot, so its children's peak memory is that pilot's alone.
-        single = subprocess.run([sys.executable, __file__, "--single", str(args.cap), str(path)],
+        single = subprocess.run([sys.executable, __file__, "--single", str(args.cap), str(root), str(path)],
                                 capture_output=True, text=True, env=env, check=True)
         row = json.loads(single.stdout)
         row["label"] = args.label
         row["rust_timeout"] = args.rust_timeout or "default"
+        row["root"] = str(root)
         print(json.dumps({k: row[k] for k in ("pilot", "status", "wall_seconds", "children_peak_mb", "error")
                           if k in row}), flush=True)
         rows.append(row)
@@ -85,6 +134,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     if sys.argv[1:2] == ["--single"]:
-        print(json.dumps(measure(Path(sys.argv[3]), dict(os.environ), int(sys.argv[2]))))
+        print(json.dumps(measure(Path(sys.argv[4]), dict(os.environ), int(sys.argv[2]), Path(sys.argv[3]))))
     else:
         main()
