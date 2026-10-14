@@ -1,0 +1,26 @@
+[
+  {
+    "file": "lean/VE/Calc/Eval.lean",
+    "mutation": "Claim.tieSensitive returns false for an exact tie",
+    "test": "lake build VE.Calc.Examples (tie #guard at Examples.lean:44)",
+    "result": "failed; /tmp/ve-me1-mutant-tie.log; restored"
+  },
+  {
+    "file": "lean/VE/Calc/Render.lean",
+    "mutation": "ties-up English says going down",
+    "test": "lake build VE.Calc.Examples (rounding-line #guard at Examples.lean:45)",
+    "result": "failed; /tmp/ve-me1-mutant-render.log; restored"
+  },
+  {
+    "file": "lean/VE/Calc/Decls.lean",
+    "mutation": "digit limit 4096 to 8192",
+    "test": "lake build VE.Calc.Examples (V-11 #guard at Examples.lean:86)",
+    "result": "failed; /tmp/ve-me1-mutant-limit.log; restored"
+  },
+  {
+    "file": "ve/english.py",
+    "mutation": "less-than phrase mapped to ast.Le",
+    "test": "tests/test_numbers_phrases.py::test_comparison_rows_match_generated_table",
+    "result": "failed; /tmp/ve-me1-mutant-python.log; restored"
+  }
+]
