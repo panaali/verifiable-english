@@ -332,7 +332,7 @@ def _builder(doc):
     return _Plain(doc)
 
 
-def _recorded_evidence(route: str, evidence):
+def _recorded_evidence(route: str, evidence, generate: bool):
     """Check only the container fields the Python generators read; Lean checks the pieces themselves.
 
     Recorded JSON is untrusted. Keep its route-specific outer shape separate from generated evidence so
@@ -343,20 +343,20 @@ def _recorded_evidence(route: str, evidence):
     if route == "readings":
         if type(evidence) is not list or any(type(entry) is not dict or "choice" not in entry
                                                    for entry in evidence):
-            raise VEError("InvalidInput: recorded readings evidence must be a list of entries with a choice")
+            raise VEError("InvalidInput: recorded readings evidence must be a list of entries with a choice")  # relay-lint: file I/O
     elif type(evidence) is not dict:
-        raise VEError("InvalidInput: recorded evidence must be an object")
-    if route == "norm-defaults" and "conflict" in evidence:
+        raise VEError("InvalidInput: recorded evidence must be an object")  # relay-lint: file I/O
+    if route == "norm-defaults" and generate and "conflict" in evidence:
         conflict = evidence["conflict"]
-        if type(conflict) is not dict or type(conflict.get("packages")) is not list:
-            raise VEError("InvalidInput: recorded conflict evidence needs a packages list")
+        if type(conflict) is not dict or type(conflict.get("packages")) is not dict:
+            raise VEError("InvalidInput: recorded conflict evidence needs a packages object")  # relay-lint: file I/O
     pending = [(evidence, 0)]
     while pending:
         value, depth = pending.pop()
         if depth > MAX_RECORDED_DEPTH:
-            raise VEError("InvalidInput: recorded evidence is too deeply nested")
+            raise VEError("InvalidInput: recorded evidence is too deeply nested")  # relay-lint: file I/O
         if type(value) is float and not math.isfinite(value):
-            raise VEError("InvalidInput: recorded evidence contains a non-finite number")
+            raise VEError("InvalidInput: recorded evidence contains a non-finite number")  # relay-lint: file I/O
         if type(value) is dict:
             pending.extend((child, depth + 1) for child in value.values())
         elif type(value) is list:
@@ -606,7 +606,7 @@ def prepare(path, raw: bytes, question: str, evidence=None, generate: bool = Tru
     reading = read(raw, question)
     doc = load_document(path)
     builder = _builder(doc)
-    _recorded_evidence(builder.route, evidence)
+    _recorded_evidence(builder.route, evidence, generate)
     case = builder.case(reading["ast"], evidence) if generate else builder.case(reading["ast"], evidence, False)
     lexicon, expected = _identities(raw, question, doc)
     request = {"id": MODE, "document": raw.decode("utf-8"), "question": question, "lexicon": lexicon,
@@ -681,9 +681,9 @@ def main(argv=None) -> int:
                 try:
                     evidence = json.loads(Path(options.evidence).read_text(encoding="utf-8"))
                 except RecursionError as exc:
-                    raise VEError("InvalidInput: recorded evidence is too deeply nested") from exc
+                    raise VEError("InvalidInput: recorded evidence is too deeply nested") from exc  # relay-lint: file I/O
                 if evidence is None:
-                    raise VEError("InvalidInput: recorded evidence cannot be null")
+                    raise VEError("InvalidInput: recorded evidence cannot be null")  # relay-lint: file I/O
             result = answer(path, raw, options.question, evidence)
     except CheckerUnavailable as exc:
         emit(_answer(exc), {"class": "CheckerUnavailable", "message": str(exc)})
