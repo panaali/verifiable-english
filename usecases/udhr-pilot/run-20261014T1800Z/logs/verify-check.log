@@ -1,0 +1,5 @@
+check 0.3s premises={'status': 'UNKNOWN', 'reason': 'non-assertion reading elaboration pending'}
+
+real	0m0.857s
+user	0m0.486s
+sys	0m0.110s

@@ -1,0 +1,8 @@
+translation-part01.ve.md ok model CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises 13.6
+translation-part02.ve.md ok model CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises 5.6
+translation-part03.ve.md ok model None 4.7
+translation-part04.ve.md ok model CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises 5.6
+
+real	0m29.980s
+user	0m26.634s
+sys	0m3.168s

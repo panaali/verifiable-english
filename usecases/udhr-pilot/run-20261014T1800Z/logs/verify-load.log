@@ -1,0 +1,5 @@
+load 0.2s {'source_bytes': 10916, 'accounted_bytes': 10916, 'coverage_percent': 100}
+
+real	0m0.672s
+user	0m0.480s
+sys	0m0.101s
