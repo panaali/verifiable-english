@@ -61,6 +61,27 @@ def test_superposed_scopes_need_only_the_two_answer_roundtrips(tmp_path, monkeyp
     assert questions == ["conflict", "conflict"]
 
 
+def test_premise_model_short_circuits_proof_search(tmp_path, monkeypatch):
+    _, route, _ = example(tmp_path)
+    modelled, proved = set(), set()
+    original_model, original_proof = route.model, route._generate_certificate
+
+    def model(A=(), gamma=(), conclusion=None):
+        result = original_model(A, gamma, conclusion)
+        if result is not None:
+            modelled.add(tuple(tuple(x) for x in A))
+        return result
+
+    def proof(A=(), gamma=(), conclusion=None):
+        proved.add(tuple(tuple(x) for x in A))
+        return original_proof(A, gamma, conclusion)
+
+    monkeypatch.setattr(route, "model", model)
+    monkeypatch.setattr(route, "_generate_certificate", proof)
+    route.premises_answer()
+    assert modelled and not modelled & proved
+
+
 def test_sup_zero_budget_is_unknown(tmp_path, monkeypatch):
     from tests.test_readings_s2_document import every
     _, route, _ = example(tmp_path)
