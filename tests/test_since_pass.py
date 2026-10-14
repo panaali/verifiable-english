@@ -129,19 +129,29 @@ def test_the_pass_closest_to_head_is_the_base(repo):
 
 
 def test_a_pass_outside_the_branchs_history_since_the_merge_base_is_not_a_base(repo):
+    # A sibling branch from the same main commit, and a commit of this branch after HEAD (HEAD reset back):
+    # both descend from the merge base, neither is an ancestor of HEAD.
     repo.branch("other")
     sibling = repo.commit()
     repo.branch("b", "main")
     repo.commit()
-    # A pass on another branch, and one of main's own commit before the branch (the merge base itself is the
-    # branch's start and is allowed; an older main commit is not).
+    ahead = repo.commit()
+    git(repo.path, "reset", "-q", "--hard", "HEAD~1")
+    decision = since_pass.choose(repo.path, [a_pass(repo, sibling), a_pass(repo, ahead)], now=NOW)
+    assert decision["rule"] == "merge-base" and decision["base"] == repo.base
+
+
+def test_a_pass_of_main_before_the_merge_base_is_not_a_base(repo):
+    # The merge base itself is where the branch starts (allowed); an older main commit is not.
     older = repo.base
     git(repo.path, "checkout", "-q", "main")
     newer_main = repo.commit()
     repo.branch("c", newer_main)
     repo.commit()
-    decision = since_pass.choose(repo.path, [a_pass(repo, sibling), a_pass(repo, older)], now=NOW)
+    decision = since_pass.choose(repo.path, [a_pass(repo, older)], now=NOW)
     assert decision["rule"] == "merge-base" and decision["base"] == newer_main
+    decision = since_pass.choose(repo.path, [a_pass(repo, older), a_pass(repo, newer_main)], now=NOW)
+    assert decision["rule"] == "since-pass" and decision["base"] == newer_main
 
 
 def test_a_row_whose_tree_is_not_its_commits_or_whose_commit_is_absent_is_not_a_base(repo):
