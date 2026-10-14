@@ -47,7 +47,7 @@
    "from": "whole = any(path in index.changed for path in (INVENTORY, FROZEN_SCRIPT, TRUST_TABLE))",
    "to": "whole = any(path in index.changed for path in (INVENTORY, FROZEN_SCRIPT))"
   },
-  "test": "tests/test_precommit_hook.py::test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main",
+  "test": "tests/test_precommit_hook.py::test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main",
   "killed": true,
   "pytest_summary": "1 failed in 6.92s"
  },
@@ -73,7 +73,7 @@
    "from": "if inventory_text is None or table is None or main is None:",
    "to": "if inventory_text is None or table is None:"
   },
-  "test": "tests/test_precommit_hook.py::test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main",
+  "test": "tests/test_precommit_hook.py::test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main",
   "killed": true,
   "pytest_summary": "1 failed in 43.41s"
  },

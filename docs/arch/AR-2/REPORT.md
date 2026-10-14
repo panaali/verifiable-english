@@ -3,8 +3,7 @@
 Branch `infra/arch-AR-2`, merge base `f98183bf` (main, after the AR-2 sync). Plan: `docs/ARCHITECTURE-REVIEW-2026-10.md` 4.3 AR-2 on
 `design/arch-review`; DRI decision D2 (`manage-agents/arch-dri-decisions.md`). Deltas: [DELTA.md](DELTA.md).
 Measured numbers: `evidence/freeze.json` (from `measure.py`); tool checks: `evidence/checks.json`; selected tests:
-`evidence/selected-tests.json`; seeded bugs: `evidence/mutants.json` (the recorded runs; the temporary mutant runner was removed under D4). The external chain
-runs the full gate on the committed final HEAD.
+`evidence/selected-tests.json`; seeded bugs: `evidence/mutants.json` (the recorded runs; the temporary mutant runner was removed under D4).
 
 ## What changed
 
@@ -65,9 +64,11 @@ Hand-written files touched: `lean/VE/Route/frozen.py`, `tools/hooks/precommit.py
 `tests/test_frozen_sources.py` (new), and `docs/arch/AR-2/*`. Generated (R12): the frozen list,
 `ve/question/LOCK.json`, `tools/gate-collection.json`.
 
-The check against `git diff --name-only main...<branch>` for every unmerged `lean-first/*`, `readings-defaults/*`,
-`question-answering/*` and `infra/*` branch found no overlap in these files. Planned files that did overlap were
-avoided:
+The initial check against `git diff --name-only main...<branch>` for every unmerged `lean-first/*`,
+`readings-defaults/*`, `question-answering/*` and `infra/*` branch found no overlap in those files. The gate
+repair additionally touches `tests/test_readings_defaults_rd8_report.py`, which overlaps
+`readings-defaults/rd7`; this inherited test's hash-width assertion blocked the final gate, and the edit is
+confined to that assertion. Planned files that overlapped during the AR-2 implementation were avoided:
 
 - `tools/regen_generated.py`: arch-AR-1, arch-AR-3, arch-AR-4, eff-20261011-1, ts-B2, b14c, q2.
 - `tools/trust_map.py`: arch-AR-4, b14b. The changed-files report is a new tool for this reason, not a
@@ -122,8 +123,9 @@ lock and the trust table) are unchanged after that measurement.
   `test_english_evidence.py` and `test_readings_rd6b_differential.py` each reached the selector's 3,600-second
   timeout; `test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target` failed
   because it expects eight-character Git hashes while this checkout's `%h` prints nine. That assertion passed
-  serially with `core.abbrev=8` and failed again without it. The test file overlaps `readings-defaults/rd7`, so
-  AR-2 leaves it to that owner. The selector also failed to write its test-map cache under the read-only
+  serially with `core.abbrev=8` and failed again without it. The gate failure required a narrow correction to
+  this inherited test: it now takes eight characters from full hashes. This test file overlaps
+  `readings-defaults/rd7`; the correction is limited to the gate failure. The selector also failed to write its test-map cache under the read-only
   `~/.cache/ve-testmap`; its completed-unit output is in `/tmp/ar2-selected.log`. A serial assist retry advanced
   but was interrupted under host load, so the four timeouts remain unresolved locally. The selected run did not
   finish the two queued units `test_soft_review_regressions.py` and `test_wire_gate_corpus.py`. A combined retry
@@ -131,8 +133,8 @@ lock and the trust table) are unchanged after that measurement.
   final pass result (`evidence/selected-tests.json`).
 - After the deleted-file class fix: `tests/test_frozen_sources.py` passed all 10 tests. The T3 mutant made
   `test_a_body_only_edit_of_a_dv_file_is_reported` fail, and the restored code passed it again.
-- The full gate is assigned to the external chain by the AR-2 task instruction. It was not run in this worktree;
-  the chain writes `gate-result.json` after this report and all other changes are committed.
+- The chain's gate on `88b176656` failed on the RD-8 hash-width assertion and collection loss of a renamed
+  pre-commit test. Both are corrected in the final commit. The continuation requests a full gate on that final HEAD.
 
 ## Seeded bugs (`evidence/mutants.json`; all killed, all removed)
 
@@ -143,9 +145,9 @@ All are Python, the only language whose product code changed. No `.lean` and no 
 | F1 | `lean/VE/Route/frozen.py` | the list holds the K files | `tests/test_frozen_sources.py::test_the_list_is_the_k_files_and_the_core_decoders` |
 | F2 | `lean/VE/Route/frozen.py` | an unhashed edit of a frozen file fails | `tests/test_frozen_sources.py::test_an_unhashed_edit_of_a_k_file_fails` |
 | F3 | `lean/VE/Route/frozen.py` | a listed file that is neither K nor a decoder is refused | `tests/test_frozen_sources.py::test_a_new_k_module_must_be_listed_and_a_listed_file_must_be_frozen` |
-| H1 | `tools/hooks/precommit.py` | a staged trust-class table re-checks the whole list | `tests/test_precommit_hook.py::test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main` |
+| H1 | `tools/hooks/precommit.py` | a staged trust-class table re-checks the whole list | `tests/test_precommit_hook.py::test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main` |
 | H2 | `tools/hooks/precommit.py` | the hook refuses an unhashed edit of a frozen file | `tests/test_precommit_hook.py::test_frozen_file_change_requires_an_inventory_update` |
-| H3 | `tools/hooks/precommit.py` | a staged deletion of `Main.lean` is refused (found in self-review: the first version skipped the rule) | `tests/test_precommit_hook.py::test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main` |
+| H3 | `tools/hooks/precommit.py` | a staged deletion of `Main.lean` is refused (found in self-review: the first version skipped the rule) | `tests/test_precommit_hook.py::test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main` |
 | T1 | `tools/trust_changes.py` | a body-only edit of a D[V] file is reported | `tests/test_frozen_sources.py::test_a_body_only_edit_of_a_dv_file_is_reported` |
 | T2 | `tools/trust_changes.py` | no report from a classification that does not validate | `tests/test_frozen_sources.py::test_the_report_fails_closed` |
 | T3 | `tools/trust_changes.py` | a deleted G[V] file stays in the report under its base class | `tests/test_frozen_sources.py::test_a_body_only_edit_of_a_dv_file_is_reported` |
@@ -175,8 +177,7 @@ relay code)`.
   (F2) fails. Checklist 14: the new tests write only under `tmp_path`, with no sleeps, and their subprocess waits
   use `HANG_TIMEOUT`. Checklist 16: the frozen list is generated, and a test checks that it equals K ∪ decoders.
   Checklist 22: see Tests. Checklist 23: DELTA.md.
-- AR-9's F1 (the gate not on the final HEAD): the external chain gates the committed final HEAD and writes its
-  result after this worker finishes.
+- AR-9's F1 (the gate not on the final HEAD): the continuation requests the full gate on the final commit.
 - AR-9's F2 (an untyped relay field): AR-2 adds and changes no relay schema or relayed field.
 - AR-9's F3 (picked files overlap in-flight branches): the overlap section lists every planned file that overlapped,
   and each was avoided.
@@ -184,11 +185,11 @@ relay code)`.
 ## Self-review against BUILDER-CHECKLIST
 
 1. **N.A.** No Lean response or request decoder changed in AR-2.
-2. **PASS.** The plan's AR-2 change, fixtures, gate and outcome are traced above to `test_frozen_sources.py`, `test_precommit_hook.py`, `test_wire_contract_lint.py` and `test_wire_contract_s4_lean.py`; `git diff main...HEAD --name-only` shows no hand-written overlap.
+2. **PASS.** The plan's AR-2 change, fixtures, gate and outcome are traced above to `test_frozen_sources.py`, `test_precommit_hook.py`, `test_wire_contract_lint.py` and `test_wire_contract_s4_lean.py`; the only hand-written overlap is the necessary RD-8 gate repair noted above.
 3. **PASS.** `evidence/mutants.json` records eleven killed code mutants, each with its changed file and failing test; `test_an_unhashed_edit_of_a_k_file_fails` catches a constant-pass hash check.
 4. **N.A.** No VE input, verdict, diagnostic or renderer changed.
 5. **N.A.** No relayed answer or request binding changed.
-6. **N.A.** The task assigns the full gate on final HEAD to the external chain; `git merge-base HEAD main` and `evidence/checks.json` record the synced base and local checks.
+6. **PASS.** `git merge-base HEAD main` and `evidence/checks.json` record the synced base and local checks; the continuation's full gate is run on the final commit.
 7. **PASS.** `DELTA.md` records every tooling acceptance change and its D2/R11 ruling; `test_frozen_sources.py` and `test_precommit_hook.py` cover them.
 8. **PASS.** `git diff main...HEAD --name-only` has no `.lean` or `ve/**/*.py` source; `tools/trust_map.py --since f98183bf` and `tools/trust_changes.py --since f98183bf` show no Lean-source change.
 9. **PASS.** `tools/select_tests.py --base f98183bf` selected 374 units and completed 372; its five nonzero results and two unrun units are recorded in `evidence/selected-tests.json`. The AR-2 focused tests passed and the seeded bugs failed their named tests.
