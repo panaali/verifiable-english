@@ -16,7 +16,7 @@ import subprocess
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 
 
 ROOT = Path(__file__).resolve().parents[1]
