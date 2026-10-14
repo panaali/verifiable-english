@@ -134,7 +134,10 @@ lock and the trust table) are unchanged after that measurement.
 - After the deleted-file class fix: `tests/test_frozen_sources.py` passed all 10 tests. The T3 mutant made
   `test_a_body_only_edit_of_a_dv_file_is_reported` fail, and the restored code passed it again.
 - The chain's gate on `88b176656` failed on the RD-8 hash-width assertion and collection loss of a renamed
-  pre-commit test. Both are corrected in the final commit. The continuation requests a full gate on that final HEAD.
+  pre-commit test. Both are corrected in the final commit. A local gate attempt on `b31c34efc` passed the Lean
+  build and audit, Rust build and tests, and Python collection, then was interrupted during the full suite:
+  `--workers auto` selects one worker at the observed host load (above 55 for 32 available CPUs). The continuation's
+  full gate on the final commit uses eight workers, as the chain's previous VM gate did.
 
 ## Seeded bugs (`evidence/mutants.json`; all killed, all removed)
 
