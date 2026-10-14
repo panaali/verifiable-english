@@ -10804,6 +10804,153 @@
         "VE.Readings.ComponentsExamples.docJ",
         "VE.Readings.ComponentsExamples.rows2"
       ]
+    },
+    "VE/Calc/Decls.lean": {
+      "S": [
+        "VE.Calc.Claim.Overflows",
+        "VE.Calc.Claim.ReadsExhausted",
+        "VE.Calc.Counted",
+        "VE.Calc.Decl",
+        "VE.Calc.Decl.valueUnder",
+        "VE.Calc.Expr.Overflows",
+        "VE.Calc.Expr.ReadsExhausted",
+        "VE.Calc.FindingKind",
+        "VE.Calc.NameExhausted",
+        "VE.Calc.NameOverflows",
+        "VE.Calc.Small",
+        "VE.Calc.Source",
+        "VE.Calc.Val",
+        "VE.Calc.WellFormed",
+        "VE.Calc.values"
+      ],
+      "G[R]": [
+        "VE.Calc.findingKind",
+        "VE.Calc.firstFault",
+        "VE.Calc.maxDigits"
+      ],
+      "C": [
+        "VE.Calc.Claim.run",
+        "VE.Calc.Decl.valL",
+        "VE.Calc.Expr.evalL",
+        "VE.Calc.Val.all",
+        "VE.Calc.Val.bin",
+        "VE.Calc.Val.guard",
+        "VE.Calc.digitCount",
+        "VE.Calc.instDecidableSmall",
+        "VE.Calc.valuesL"
+      ],
+      "P": [
+        "VE.Calc.CausesAt",
+        "VE.Calc.Val.Agrees"
+      ]
+    },
+    "VE/Calc/Eval.lean": {
+      "C": [
+        "VE.Calc.Claim.decide",
+        "VE.Calc.Claim.tieSensitive",
+        "VE.Calc.Expr.eval"
+      ]
+    },
+    "VE/Calc/Examples.lean": {
+      "T": [
+        "VE.Calc.Examples.baseline",
+        "VE.Calc.Examples.baselineDecls",
+        "VE.Calc.Examples.empty",
+        "VE.Calc.Examples.eq",
+        "VE.Calc.Examples.increase",
+        "VE.Calc.Examples.largeDecls",
+        "VE.Calc.Examples.lit",
+        "VE.Calc.Examples.lt",
+        "VE.Calc.Examples.noonMean",
+        "VE.Calc.Examples.physicsDecls",
+        "VE.Calc.Examples.physicsDisplacement",
+        "VE.Calc.Examples.round",
+        "VE.Calc.Examples.sq",
+        "VE.Calc.Examples.strictRate",
+        "VE.Calc.Examples.symbolsRate",
+        "VE.Calc.Examples.words"
+      ]
+    },
+    "VE/Calc/Render.lean": {
+      "G[V]": [
+        "VE.Calc.English.exactWords",
+        "VE.Calc.English.exprAtom",
+        "VE.Calc.English.exprDepth",
+        "VE.Calc.English.fill2",
+        "VE.Calc.English.natWords",
+        "VE.Calc.English.placesPhrase",
+        "VE.Calc.English.printedWords",
+        "VE.Calc.English.renderClaim",
+        "VE.Calc.English.renderExpr"
+      ]
+    },
+    "VE/Calc/Syntax.lean": {
+      "S": [
+        "VE.Calc.Claim",
+        "VE.Calc.Claim.Defined",
+        "VE.Calc.Claim.Holds",
+        "VE.Calc.Denotes",
+        "VE.Calc.Expr",
+        "VE.Calc.Values"
+      ],
+      "C": [
+        "VE.Calc.Claim.exprs",
+        "VE.Calc.Expr.names",
+        "VE.Calc.Expr.subexprs"
+      ]
+    },
+    "VE/Numbers/Decimal.lean": {
+      "S": [
+        "VE.Numbers.decValue",
+        "VE.Numbers.tenPow"
+      ]
+    },
+    "VE/Numbers/Phrases.lean": {
+      "S": [
+        "VE.Numbers.Comparison",
+        "VE.Numbers.Comparison.Holds",
+        "VE.Numbers.Rel",
+        "VE.Numbers.Rel.Holds"
+      ],
+      "G[V]": [
+        "VE.Numbers.equalsPhrase",
+        "VE.Numbers.orderPhrases",
+        "VE.Numbers.withinPhrase"
+      ],
+      "C": [
+        "VE.Numbers.instDecidableHolds"
+      ]
+    },
+    "VE/Numbers/PhrasesMain.lean": {
+      "G[V]": [
+        "main",
+        "phraseJson",
+        "relName"
+      ]
+    },
+    "VE/Numbers/Round.lean": {
+      "S": [
+        "VE.Numbers.Limit",
+        "VE.Numbers.Outcome",
+        "VE.Numbers.Printed",
+        "VE.Numbers.Printed.value",
+        "VE.Numbers.Rounding",
+        "VE.Numbers.RoundsTo",
+        "VE.Numbers.UnknownReason",
+        "VE.Numbers.Verdict",
+        "VE.Numbers.tieAt"
+      ],
+      "G[V]": [
+        "VE.Numbers.Printed.ofDec",
+        "VE.Numbers.Printed.sci"
+      ],
+      "G[R]": [
+        "VE.Numbers.UnknownReason.text"
+      ],
+      "C": [
+        "VE.Numbers.Rounding.round",
+        "VE.Numbers.instDecidableRoundsTo"
+      ]
     }
   }
 }

@@ -41,6 +41,8 @@ private def increase : Expr := .mul (lit 100) (.sub strictRate symbolsRate)
 #guard decide ((round (.sub (.add (lit (1 / 10)) (lit (1 / 5))) (lit (3 / 10))) 1 16).decide empty = .fails)
 #guard decide ((round (lit (4 / 512)) 7812 6).decide empty = .fails)
 #guard decide ((Claim.rounds .halfEven (lit (4 / 512)) ⟨7812, 6⟩).decide empty = .holds)
+#guard (Claim.rounds .tiesUp (lit (4 / 512)) ⟨7812, 6⟩).tieSensitive empty
+#guard !(Claim.rounds .tiesUp (lit (669 / 250)) ⟨267, 2⟩).tieSensitive empty
 
 -- H-4, H-5 and H-5b use the source's stated squared speed ratio 10^-8.
 private def sq : Expr := lit (1 / 100000000)
