@@ -22,13 +22,15 @@ The [mode mutation evidence](evidence/mode-mutants.json) plants and restores 31 
 
 The [shadow replay](evidence/shadow.json) compares selections for ten fixed merged items with their archived full-suite gates. Four selections narrow to 25, 41, 58, and 313 of 368 current units; six conservatively select all 368. No archived passed gate has a failure outside selection. The first failed `eff-tests` gate has one failing test file, `tests/test_run_cache.py`, and that file is selected; its later saved full gate passed. This is a retrospective shadow comparison using a current v7 map and archived gates. It does not rerun historical trees or measure elapsed-time savings on them.
 
-Focused verification passed: 540 previously failing inventory and relay tests (two later trust/frozen inventory failures were corrected and their 42 focused checks passed), 165 selector and relay tests, five behavior mutations, the 31 mode mutations, the evidence checker, and the generated mode-table check. The branch selected run used the required `--base` and chose the full suite because `.gitattributes` is an unknown changed input. It built Lean and passed audit and layer checks, then was stopped at 3% of the Python suite after an early slow group; the final release gate is the authoritative full-suite result. `gate-result.json` at the worktree root is retained after that final gate.
+Focused verification before the sync with main passed: 540 previously failing inventory and relay tests (two later trust/frozen inventory failures were corrected and their 42 focused checks passed), 165 selector and relay tests, five behavior mutations, the 31 mode mutations, the evidence checker, and the generated mode-table check. The branch selected run used the required `--base` and chose the full suite because `.gitattributes` is an unknown changed input. It built Lean and passed audit and layer checks, then was stopped at 3% of the Python suite after an early slow group. The final release gate is delegated to the chain by this task's explicit instruction.
 
 The first full gate on `0c7ad126` lost its `/tmp/ve-gate-*` scratch directory during the Python suite. Its [saved failure summary](evidence/failed-gate-summary.json) records 1,980 missing-scratch errors among 1,986 failed tests; the gate wrapper log also disappeared. The four earlier failures (three gate-integrity interruption variants and one English roundtrip CPU deadline) passed a focused rerun on that same HEAD. The gate now accepts `VE_GATE_SCRATCH_ROOT`; the final rerun uses a durable directory outside this checkout so external `/tmp` cleanup cannot remove its scratch files. The scratch-root test failed under a planted override-ignoring bug and passed after restoration. A direct rerun of the 79 failed files passed 3,076 tests. Of its 32 failures/errors, 31 came from missing gate environment settings or temporary paths inside the checkout; one deadline test passed alone. With the gate's Rust binary setting and a scratch path outside the checkout, the affected four files passed all 90 tests. The [rerun summary](evidence/rerun-summary.json) saves those counts.
 
 The second full gate on `f2f1f7be` kept its durable scratch and completed the suite: 14,692 passed, 9 skipped, 83 expected failures, and three gate-integrity interruption variants failed. The gate's `--rerun-failed` on that unchanged tree reproduced all three. Their nested mock gate reached the real Lake executable hash check before the simulated Lean-build interruption; its sanitized nested environment had no `lean`, so the mock gate returned early with `lean is required to check Lake's executables against their traces`. The interruption test now stubs that unrelated hash check. Its three variants and the whole 38-test gate-integrity file pass. The selector treats this test-file edit as a full-suite selection; the next full release gate on the new committed HEAD supplies that run. The failed gate and rerun logs remain under the ignored `.venv/ve-gate-scratch/` directory; the required final result remains at `gate-result.json`.
 
-The next full gate on `d6e57875` completed Lean build, audit, Rust build and tests, and Python collection (14,787 selected tests). Its Python suite was then terminated by an external SIGTERM after about 75 minutes, before pytest or the gate produced a verdict. The wrapper exited 143 and `gate-result.json` retained only its initialized failure record. The checkout was clean and 35 GB remained free. This interruption is recorded here so the next committed-HEAD gate is distinguishable from a rerun of an unchanged commit.
+The next full gate on `d6e57875` completed Lean build, audit, Rust build and tests, and Python collection (14,787 selected tests). Its Python suite was then terminated by an external SIGTERM after about 75 minutes, before pytest or the gate produced a verdict. The wrapper exited 143 and `gate-result.json` retained only its initialized failure record. The checkout was clean and 35 GB remained free. This interruption is recorded here so the chain's committed-HEAD gate is distinguishable from a rerun of an unchanged commit.
+
+After syncing with main at `f98183bf5`, the merge retained B2's generated Lean mode table and main's newer audit inventory, and accepted main's retirement of `tools/gate-collection.json`. `lake build +VE.Service.Protocol:olean` passed (334 jobs); `tools/lean_mode_deps.py --check`, the generated-entry check and `check_evidence.py` passed. The B2 selector cases passed (9 tests), as did the gate scratch and interruption cases (4 tests), using `--noconftest` after an interrupted native session build held the backend lock. A preliminary full `lake build` was stopped after a Clang bus error compiling generated `VE.Service.EnglishRun.c`; it has no successful full-build verdict. The selector plan against the synced main chooses all 373 current units because `.gitattributes` changed and the current v7 map is absent, so the full-suite fallback is preserved. The chain runs the full gate on the committed final HEAD; this worker does not run `tools/gate.py` under the task's explicit override.
 
 ## Checklist and handoff
 
@@ -36,8 +38,24 @@ Applicable build-checklist items: the Lean extractor uses the compiler environme
 
 | Acceptance item | Owner | State |
 | --- | --- | --- |
-| B2 implementation, 31 mode seeds, five behavior seeds, ten-item shadow evidence, final release gate | AGENT | Code and evidence saved; gate result retained in `gate-result.json` |
+| B2 implementation, 31 mode seeds, five behavior seeds, ten-item shadow evidence | AGENT | Code and evidence saved; focused tests and evidence checker passed |
+| Full release gate on committed final HEAD | EXTERNAL: test runner | Delegated by this task; result will be written to `gate-result.json` |
 | Independent review of the diff and shadow limits | HUMAN: DRI reviewer | Deferred to review |
 | Nightly full-suite operation after merge | EXTERNAL: CI owner | Existing nightly schedule |
 
 The sibling B5 findings concern quarantine `--maxfail` and child-process termination. B2 changes neither run path nor process-group management. The selector tests cover the B2 addition to file impact and the full-service fallbacks.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A. — No Lean answer or request decoder changed.
+2. PASS — B2 plan rows and deliverables are mapped to `test_service_modes_narrow_only_known_recorded_users`, `mode-mutants.json`, and `shadow.json`; generated inventory checked by `regen_generated.py --check --only lean-mode-deps`.
+3. PASS — `mode-mutants.json` and `mutants.json` record failing mutants in the changed Lean and Python files; `check_evidence.py` checks each failure and restored pass.
+4. N.A. — No VE verdict, diagnostic, or parser changed.
+5. N.A. — No relayed answer field or binding changed.
+6. N.A. — The explicit task override assigns the final-HEAD full gate to the external runner; `check_evidence.py` fixes the batch evidence base and commit list.
+7. PASS — The Delivered section records no product-visible delta; `test_lean_service_emits_mode_before_dispatch` covers the only runtime event addition.
+8. PASS — The Delivered section records no VE output delta; `test_lean_service_emits_mode_before_dispatch` checks the instrumentation path.
+9. PASS — `test_service_modes_narrow_only_known_recorded_users`, `test_checker_pin_reader_still_selects_on_lock_change`, and the synced-main selector plan show conservative fallbacks.
+10. N.A. — No theorem statement or response-shape proof changed.
+11. N.A. — No public budget, deadline, or resource limit changed.
+12. N.A. — No VE check or render hot path changed; B2 changes test recording and selection.
