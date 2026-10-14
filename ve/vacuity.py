@@ -5,7 +5,7 @@ from .assurance import semantic_entry
 from .ast import Bottom
 from .entailment import check_entailment_certificate, prove_entailment
 from .backends.rust_jsonl import RustTimeout
-from .search import check_countermodel, find_countermodel, premise_budget
+from .search import check_countermodel, find_countermodel, lean_budget, premise_budget
 
 
 @semantic_entry("premise-status")
@@ -49,8 +49,10 @@ def search_premise_status_witness(env, premises):
     The speech source route replays the returned model or certificate before
     publishing a status. This does not decide whether the evidence is valid.
     """
-    return _premise_status(env, premises, max_proof_steps=10_000, max_domain_size=2,
-                           max_models=10_000, max_evaluations=100_000, sort_bounds={},
+    budget = lean_budget()
+    return _premise_status(env, premises, max_proof_steps=budget.max_proof_steps,
+                           max_domain_size=budget.max_domain_size, max_models=budget.max_models,
+                           max_evaluations=budget.max_evaluations, sort_bounds={},
                            include_witness=True, expanded=True)
 
 
