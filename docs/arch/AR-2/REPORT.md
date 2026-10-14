@@ -4,6 +4,8 @@ Branch `infra/arch-AR-2`, merge base `f98183bf` (main, after the AR-2 sync). Pla
 `design/arch-review`; DRI decision D2 (`manage-agents/arch-dri-decisions.md`). Deltas: [DELTA.md](DELTA.md).
 Measured numbers: `evidence/freeze.json` (from `measure.py`); tool checks: `evidence/checks.json`; selected tests:
 `evidence/selected-tests.json`; seeded bugs: `evidence/mutants.json` (the recorded runs; the temporary mutant runner was removed under D4).
+The pre-review relay repair and its current sweep are recorded below; `evidence/relay-gate-final.json` is the sweep
+of all routes after that repair.
 
 ## What changed
 
@@ -81,6 +83,17 @@ confined to that assertion. Planned files that overlapped during the AR-2 implem
 
 The frozen list (b14a–d, q2) and `ve/question/LOCK.json` (q2) are generated (R12).
 
+The pre-review relay repair also changes `lean/ResponseShape.lean`, `lean/ResponseShape/Schemas/ReadingsRoute.lean`,
+`lean/ResponseShape/Skeleton.lean`, `ve/backends/service_schema.py`, `tests/test_lean_service_schema.py`,
+`tests/test_relay_mutation_gate.py`, `tests/test_architecture_docs.py`, `tools/relay-gate-allow.json`,
+`ve/backends/lean_service_schema/README.md`, `docs/adr/0001-response-binding.md`, and the generated readings schema and
+`lean/declarations.txt`. The hand-written overlap check over every in-flight branch is saved in
+`evidence/relay-overlap.json`: nine branches overlap, including `infra/oom-rootcause`, `infra/premise-scale`,
+`infra/arch-AR-4`, `lean-first/b14a`–`b14c`, `lean-first/b16e`, `question-answering/q2` and
+`readings-defaults/rd7`; the evidence names each shared file. `lean-first/b14b-evidence` has no merge base
+with main, so that comparison is unknown. The repair is required by this continuation's failing pre-review
+relay check. The generated files are R12 inventories.
+
 ## Follow-ups (not done here, because of the overlaps above)
 
 1. `tools/regen_generated.py`'s `question-lock` note still reads "hashes lean/VE/Question/*.lean": change it to
@@ -95,7 +108,7 @@ The frozen list (b14a–d, q2) and `ve/question/LOCK.json` (q2) are generated (R
    `lean_decoders`) are another hash copy, which D2's "no other hash copy is kept" also covers. That file belongs
    to running lean-first work (4.2), so it is left for a later batch.
 
-## Checks at the batch head (`evidence/checks.json`, from `checks.py`)
+## Checks at the freeze-only head (`evidence/checks.json`, from `checks.py`)
 
 All exit 0: `frozen.py`, `tools/question_lock.py`, `tools/trust_map.py --since f98183bf` (K +0, S +0, D +0, G +0,
 tied +0, trusted +0), `trust_map.py --check`, `tools/lean_statements.py --check` (5,330 statements, nothing removed
@@ -104,9 +117,10 @@ or changed), `lean/audit.py --check` (5,780 theorems, standard axioms only) and 
 `evidence/trust-changes-example-87323095.json` shows the report on a base with Lean changes: 16 files, of them
 6 with D[V] lines and 15 with G[V] lines.
 
-Plan 4.1 item 2 (`tools/lean_first_diff.py` over the corpora) was not run. AR-2 changes no `.lean` source and no
-`ve/**/*.py` file, and nothing in `ve/` reads `ve/question/LOCK.json`. So no answer can differ, and
-`lean_statements.py --check` confirms that the compiled Lean is unchanged. Item 5 (English) does not apply.
+Plan 4.1 item 2 (`tools/lean_first_diff.py` over the corpora) was not run at the freeze-only head: that head changed
+no `.lean` source or `ve/**/*.py` file, and nothing in `ve/` reads `ve/question/LOCK.json`. The continuation changes
+only malformed-answer response checks; the Lean/Python decoder agreement test and full relay mutation sweep below
+cover that change. Item 5 (English) does not apply.
 
 `evidence/freeze.json` was remeasured after the sync with main. The files it reads (the frozen list, the question
 lock and the trust table) are unchanged after that measurement.
@@ -134,14 +148,33 @@ lock and the trust table) are unchanged after that measurement.
 - After the deleted-file class fix: `tests/test_frozen_sources.py` passed all 10 tests. The T3 mutant made
   `test_a_body_only_edit_of_a_dv_file_is_reported` fail, and the restored code passed it again.
 - The chain's gate on `88b176656` failed on the RD-8 hash-width assertion and collection loss of a renamed
-  pre-commit test. Both are corrected in the final commit. A local gate attempt on `b31c34efc` passed the Lean
+  pre-commit test. Both were corrected before `924c71dc`. A local gate attempt on `b31c34efc` passed the Lean
   build and audit, Rust build and tests, and Python collection, then was interrupted during the full suite:
-  `--workers auto` selects one worker at the observed host load (above 55 for 32 available CPUs). The continuation's
-  full gate on the final commit uses eight workers, as the chain's previous VM gate did.
+  `--workers auto` selects one worker at the observed host load (above 55 for 32 available CPUs). The chain's
+  gate on `924c71dc` used eight workers, as its previous VM gate did.
+- The chain's full release gate passed on `924c71dc` (`gate-result.json`). The pre-review continuation built
+  `ve_service` and `ve_response_decode`, regenerated `lean/declarations.txt` (5,330 statements unchanged), passed
+  `tools/response_schemas.py --check` and `tools/trust_map.py --since f98183bf` (K, S, D, G and trusted all +0;
+  `evidence/trust-final.txt`), and passed the three new focused tests. The all-route mutation sweep passed with
+  zero failures (`evidence/relay-gate-final.json`). Its four seeded bugs each failed the named test, then were
+  restored. The local standalone `lean/audit.py --check` was stopped under host load above 180; the code-HEAD
+  selected command then passed its Lean audit stage. The user directs the chain to run the full release gate on
+  final HEAD.
+- At code commit `dfb53762e`, `tools/select_tests.py --base f98183bf --run --jobs 8` selected 374 units.
+  It passed the Lean builds and audit, then completed 80 units: 75 passed, `test_architecture_docs.py` found the
+  missing structural keyword inventory, and four unrelated long units reached the 3,600-second selector timeout
+  (`test_assist.py`, `test_assist_invariants.py`, `test_english_evidence.py`, `test_readings_rd6b_differential.py`).
+  The five-failure cutoff left 294 units unrun (`evidence/selected-final.json`). The architecture inventory is
+  corrected without changing the ADR's signed Decision section; `tests/test_architecture_docs.py` then passed
+  all 32 tests. The selected run's full `test_relay_mutation_gate.py` and `test_lean_service_schema.py` units
+  passed.
+- `tools/regen_generated.py --check` passed all 23 entries; `tools/gate_collection.py --check` collected
+  15,096 tests, with 14 added and none removed since the merge base (`evidence/generated-final.txt`).
 
 ## Seeded bugs (`evidence/mutants.json`; all killed, all removed)
 
-All are Python, the only language whose product code changed. No `.lean` and no Rust source changed.
+The freeze-only implementation's eleven seeds are Python. The pre-review relay repair adds three Lean seeds and
+one Python seed. No Rust source changed.
 
 | Id | File | Behaviour | Failing test |
 |---|---|---|---|
@@ -156,15 +189,23 @@ All are Python, the only language whose product code changed. No `.lean` and no 
 | T3 | `tools/trust_changes.py` | a deleted G[V] file stays in the report under its base class | `tests/test_frozen_sources.py::test_a_body_only_edit_of_a_dv_file_is_reported` |
 | Q1 | `tools/question_lock.py` | a Question module edit needs no lock update | `tests/test_frozen_sources.py::test_an_edit_of_a_question_module_needs_no_lock_update` |
 | W1 | `tools/wire_contract.py` | `--write` touches no frozen-inventory line | `tests/test_wire_contract_lint.py::test_l13_write_after_a_revision_changes_only_generated_files` |
+| R1 | `lean/ResponseShape.lean` | the Lean decoder refuses repeated norm `over` names | `tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over` |
+| R2 | `lean/ResponseShape/Schemas/ReadingsRoute.lean` | the Lean decoder refuses an empty `fill` label | same decoder agreement test |
+| R3 | `lean/ResponseShape/Schemas/ReadingsRoute.lean` | the Lean decoder refuses an empty conflict target | same decoder agreement test |
+| R4 | `ve/backends/service_schema.py` | the Python schema refuses repeated strings | `tests/test_lean_service_schema.py::test_unique_string_lists_refuse_duplicate_rule_names` |
 
-## Relay mutation gate (`evidence/relay-gate-branch.json`)
+## Relay mutation gate (`evidence/relay-gate-branch.json`, `evidence/relay-gate-final.json`)
 
-The post-sync sweep ran 39 routes and 109,195 mutants, with **133 failures**. They are the same 133 failures, entry for entry,
-as main's in AR-1's `docs/arch/AR-1/evidence/relay-gate-merged-main-49de179e.json`: none is added and none removed.
-AR-2 changes no relay code. Its only `ve/` change is `ve/question/LOCK.json`, which no `ve/` module reads. The fix
-is AR-1's NEEDS-DRI item (c88e4012 on infra/oom-rootcause, and pruning main's stale allow-list paths). **NEEDS
-DRI:** a review-ready waiver, `arch-AR-2 relay the 133 findings are main's (identical to 49de179e; AR-2 changes no
-relay code)`.
+The freeze-only head's sweep ran 39 routes and 109,195 mutants, with 133 failures inherited unchanged from main:
+128 stale allow-list paths and five accepted readings-route mutations. The pre-review check exposed their tail.
+The continuation closes the five accepted cases: an empty `fill` label, an empty conflict target and a repeated
+`over` name are now schema errors; `fill` itself is recorded as Lean-computed premise content under B0. All stale
+paths are removed from `tools/relay-gate-allow.json` using the route sweep and the saved all-route evidence.
+The final all-route sweep ran **39 routes and 109,195 mutants with zero failures**. The three focused tests above
+passed after all seeds were restored.
+The selected run exposed the architecture keyword census: it now lists `x-unique-strings` as structural and
+`uniqueStrings` as the Lean constructor. `tests/test_architecture_docs.py` passes all 32 tests; D1's signed
+Decision section and its pin are unchanged.
 
 ## Not done, and why
 
@@ -180,22 +221,24 @@ relay code)`.
   (F2) fails. Checklist 14: the new tests write only under `tmp_path`, with no sleeps, and their subprocess waits
   use `HANG_TIMEOUT`. Checklist 16: the frozen list is generated, and a test checks that it equals K ∪ decoders.
   Checklist 22: see Tests. Checklist 23: DELTA.md.
-- AR-9's F1 (the gate not on the final HEAD): the continuation requests the full gate on the final commit.
-- AR-9's F2 (an untyped relay field): AR-2 adds and changes no relay schema or relayed field.
-- AR-9's F3 (picked files overlap in-flight branches): the overlap section lists every planned file that overlapped,
-  and each was avoided.
+- AR-9's F1 (the gate not on the final HEAD): the chain ran its passing gate on `924c71dc`; it will gate this
+  continuation's final committed HEAD again, as the user directs.
+- AR-9's F2 (an untyped relay field): the readings schema is generated from the Lean shape, fully types the
+  repaired fields, and the decoder agreement and relay mutation tests catch malformed values.
+- AR-9's F3 (picked files overlap in-flight branches): the original AR-2 scope avoided overlaps; the necessary
+  pre-review relay repair overlaps are listed above for review.
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. **N.A.** No Lean response or request decoder changed in AR-2.
-2. **PASS.** The plan's AR-2 change, fixtures, gate and outcome are traced above to `test_frozen_sources.py`, `test_precommit_hook.py`, `test_wire_contract_lint.py` and `test_wire_contract_s4_lean.py`; the only hand-written overlap is the necessary RD-8 gate repair noted above.
-3. **PASS.** `evidence/mutants.json` records eleven killed code mutants, each with its changed file and failing test; `test_an_unhashed_edit_of_a_k_file_fails` catches a constant-pass hash check.
+1. **PASS.** `test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over` checks the changed Lean response decoder against the generated Python schema.
+2. **PASS.** The freeze tests and the three relay tests above trace each changed rule to its owner; the overlap section names every new shared hand-written file.
+3. **PASS.** `evidence/mutants.json` records fifteen killed mutants in changed Python and Lean files, including constant-pass checks caught by `test_an_unhashed_edit_of_a_k_file_fails` and `test_unique_string_lists_refuse_duplicate_rule_names`.
 4. **N.A.** No VE input, verdict, diagnostic or renderer changed.
-5. **N.A.** No relayed answer or request binding changed.
-6. **PASS.** `git merge-base HEAD main` and `evidence/checks.json` record the synced base and local checks; the continuation's full gate is run on the final commit.
-7. **PASS.** `DELTA.md` records every tooling acceptance change and its D2/R11 ruling; `test_frozen_sources.py` and `test_precommit_hook.py` cover them.
-8. **PASS.** `git diff main...HEAD --name-only` has no `.lean` or `ve/**/*.py` source; `tools/trust_map.py --since f98183bf` and `tools/trust_changes.py --since f98183bf` show no Lean-source change.
-9. **PASS.** `tools/select_tests.py --base f98183bf` selected 374 units and completed 372; its five nonzero results and two unrun units are recorded in `evidence/selected-tests.json`. The AR-2 focused tests passed and the seeded bugs failed their named tests.
-10. **N.A.** No Lean theorem or response shape changed.
+5. **PASS.** `test_readings_route_refuses_empty_labels_targets_and_repeated_over_names` and `evidence/relay-gate-final.json` show that the repaired relayed fields are typed and malformed rows refused.
+6. **PASS.** The chain's gate passed on `924c71dc`; the user directs the chain to gate the final committed HEAD again. `response_schemas.py --check`, `regen_generated.py --check` and the full relay mutation gate passed locally.
+7. **PASS.** `DELTA.md` records the D2/R11 tooling deltas and the R8 response check; `test_frozen_sources.py`, `test_precommit_hook.py` and the three relay tests cover them.
+8. **PASS.** `tools/lean_statements.py` regenerated the declaration inventory with zero statements added, removed or changed; `test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over` tests the new shape acceptance rule.
+9. **PASS.** The freeze-only attempt and the code-HEAD selected run are saved in `evidence/selected-tests.json` and `evidence/selected-final.json`; the latter completed 80 units, with its architecture failure fixed by the 32-test rerun and four unrelated load timeouts recorded. The three new focused tests and the all-route mutation sweep passed.
+10. **PASS.** The readings response shape changed; `response_schemas.py --check`, `regen_generated.py --check` and the Lean/Python decoder agreement test passed.
 11. **N.A.** No budget, deadline or public operation changed.
-12. **N.A.** No runtime hot path changed; this batch edits build and review tooling.
+12. **N.A.** The schema checks run only when relaying an answer; this batch has no runtime performance claim.
