@@ -110,6 +110,8 @@ module VE.Closure.Congruence
 module VE.Closure.Consequence
 module VE.Closure.Finite
 module VE.Closure.Induction
+module VE.Closure.Order
+module VE.Closure.OrderChecks
 module VE.Closure.PathRules
 module VE.Closure.Paths
 module VE.Closure.RoundTrip

@@ -1815,6 +1815,35 @@
         "VE.Closure.invariantAt"
       ]
     },
+    "VE/Closure/Order.lean": {
+      "S": [
+        "VE.Closure.Order",
+        "VE.Closure.Caps",
+        "VE.Closure.Order.admit",
+        "VE.Closure.Order.above",
+        "VE.Closure.Order.atLeast"
+      ]
+    },
+    "VE/Closure/OrderChecks.lean": {
+      "T": [
+        "VE.Closure.OrderChecks.names",
+        "VE.Closure.OrderChecks.links",
+        "VE.Closure.OrderChecks.order",
+        "VE.Closure.OrderChecks.standardCaps",
+        "VE.Closure.OrderChecks.edgeCap",
+        "VE.Closure.OrderChecks.emptyCaps",
+        "VE.Closure.OrderChecks.tooMany",
+        "VE.Closure.OrderChecks.undeclared",
+        "VE.Closure.OrderChecks.result",
+        "VE.Closure.OrderChecks.pairs",
+        "VE.Closure.OrderChecks.softAgrees",
+        "VE.Closure.OrderChecks.softTrue",
+        "VE.Closure.OrderChecks.riskLinks",
+        "VE.Closure.OrderChecks.riskOrder",
+        "VE.Closure.OrderChecks.riskAgrees",
+        "VE.Closure.OrderChecks.riskTrue"
+      ]
+    },
     "VE/Closure/PathRules.lean": {
       "C": [
         "VE.Closure.composeKind",

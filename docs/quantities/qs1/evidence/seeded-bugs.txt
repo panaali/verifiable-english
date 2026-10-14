@@ -1,0 +1,8 @@
+element cap: lean/VE/Closure/Order.lean -> VE.Closure.OrderChecks; build exit 1
+error: VE/Closure/OrderChecks.lean:19:0: Expression
+
+edge cap: lean/VE/Closure/Order.lean -> VE.Closure.OrderChecks; build exit 1
+error: VE/Closure/OrderChecks.lean:23:0: Expression
+
+undeclared endpoint: lean/VE/Closure/Order.lean -> VE.Closure.OrderChecks; build exit 1
+error: VE/Closure/OrderChecks.lean:21:0: Expression
