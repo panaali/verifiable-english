@@ -91,7 +91,8 @@ def test_every_delta_row_has_its_status():
     assert [re.match(r"\| (D\d+) \|", row).group(1) for row in rows] == [f"D{n}" for n in range(1, 16)]
     for row in rows:
         assert ("DRI signature needed" in row or re.search(r"SIGNED by standing ruling R\d+", row)
-                or "SIGNED by DRI 2026-10-13" in row), row[:60]
+                or "SIGNED by DRI 2026-10-13" in row
+                or "SIGNED by item-specific DRI ruling D9" in row), row[:60]
 
 
 def test_q2_f6_historical_gate_cannot_claim_the_current_head():

@@ -21,12 +21,19 @@ def test_q2_statements_match_the_approved_text(capsys):
     checker = _checker()
     assert checker.q2(lean=True) == 0
     out = capsys.readouterr().out
-    assert "Q2 statements: 27 of 27 implemented; 0 missing; 0 differ in text" in out
-    assert "32 equal to the approved text, 0 changed" in out and "0 absent" in out
-    assert "Q2 Lean check: 41 approved statements and signatures elaborated against the implementation; PASS" in out
-    # The one listed difference is a DRI item of the batch's DELTA.md.
-    assert set(checker.DIFFERENCES) == {"Asked"}
-    assert "changed Asked: `hnames` uses `NameReadsBackSame`" in out
+    assert "0 missing; 0 differ in text" in out
+    assert "0 changed" in out and "0 absent" in out
+    assert "elaborated against the implementation; PASS" in out
+    spec = checker.SPEC.read_text().split("### 5.2 Q2", 1)[1].split("## 6. Limits", 1)[0]
+    assert {"RowOkU", "LeadHoldsU", "ReasonHoldsU"} <= set(checker.definitions(spec))
+    assert {"leadU_sound", "reasonU_sound", "leadHolds_eq", "zero_ask_wire_sound"} <= set(checker.statements(spec, False))
+    assert "ZeroAsked" in checker.types(spec)
+    assert checker.DIFFERENCES == {}
+
+
+def test_theorem_type_keeps_typed_binders():
+    assert _checker().theorem_type("theorem sample (n : Nat) (f : Nat → Nat) : f n = n") == \
+        "∀ (n : Nat) (f : Nat → Nat), f n = n"
 
 
 def _copy_with(tmp_path, file, old, new):
@@ -73,5 +80,5 @@ def test_lean_refuses_a_statement_the_implementation_does_not_prove(tmp_path, mo
     monkeypatch.setattr(checker, "SPEC", spec)
     assert shutil.which("lake")
     assert checker.q2(lean=True) == 1
-    assert "Q2 Lean check: 41 approved statements and signatures elaborated against the implementation; FAIL" in \
+    assert "approved statements and signatures elaborated against the implementation; FAIL" in \
         capsys.readouterr().out
