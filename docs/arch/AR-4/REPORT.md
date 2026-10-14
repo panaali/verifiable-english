@@ -194,6 +194,7 @@ restored:
     passed and one failed, `tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[2]`,
     a Lean CPU deadline (`CheckerUnavailable`, 5.09 s) under host load. It passed on a serial rerun.
     `tools/test_layer_policy.py`: 39 tests, OK.
+    `tests/test_wire_gate_corpus.py` ran last on its own: 8 passed in 21 minutes.
   - Seeded bugs: 22/22 killed (`evidence/mutants.json`).
   - `report.py --check`: exit 0, with the note that no gate record was given.
 
@@ -246,5 +247,3 @@ restored:
 ### Open after the fixes
 
 - **The full gate on the final HEAD** (the chain, then `report.py --check --gate`).
-- `tests/test_wire_gate_corpus.py` (selected because it lists the `docs/arch/AR-4/` directory) was not run in this
-  round; it took over an hour in earlier AR-4 runs. The full gate covers it.
