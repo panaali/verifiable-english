@@ -1,0 +1,43 @@
+{
+  "full_gate": {
+    "commit_sha": "02cccc1b02b1f7700d7151c507ce1aab91d0a87c",
+    "tree_sha": "bbd339834bbb2e16ff27155b24c249bd02b1e044",
+    "status": "failed",
+    "counts": {
+      "collected": 15081,
+      "deselected": 1,
+      "failed": 3,
+      "passed": 14985,
+      "rust_ignored": 0,
+      "rust_passed": 36,
+      "selected": 15080,
+      "skipped": 92
+    },
+    "failed_nodeids": [
+      "tests/test_assist_recovery.py::test_narrowing_uses_w2_and_records_document_dependency",
+      "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-1]",
+      "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-1]"
+    ]
+  },
+  "targeted_rerun": {
+    "commit_sha": "02cccc1b02b1f7700d7151c507ce1aab91d0a87c",
+    "status": "rerun-passed",
+    "counts": {
+      "collected": 101,
+      "deselected": 0,
+      "failed": 0,
+      "passed": 101,
+      "selected": 101,
+      "skipped": 0
+    },
+    "files": [
+      "tests/test_assist_recovery.py",
+      "tests/test_english_evidence.py"
+    ],
+    "outcomes": {
+      "tests/test_assist_recovery.py::test_narrowing_uses_w2_and_records_document_dependency": "passed",
+      "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-1]": "passed",
+      "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-1]": "passed"
+    }
+  }
+}
