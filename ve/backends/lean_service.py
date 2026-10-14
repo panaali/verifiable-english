@@ -589,6 +589,8 @@ class LeanService:
             while True:
                 end = self._buffer.find(b"\n")
                 if end >= 0:
+                    if end > MAX_RESPONSE_BYTES:
+                        raise _Failure("response line exceeds the size limit")
                     line = bytes(self._buffer[:end])
                     del self._buffer[:end + 1]
                     self._wait(deadline, "waiting for the response")

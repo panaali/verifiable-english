@@ -91,17 +91,17 @@ class _Checker:
         detail = self.stderr.read()[-200:].decode("utf-8", "replace").strip()
         return OSError(f"{what} (exit {code}{'; ' + detail if detail else ''})")
 
-    def exchange(self, data: bytes, timeout: float) -> bytes:
-        """The record line answering the case line `data`. `TimeoutExpired` once `timeout`
-        seconds have passed; `OSError` if the process stops reading or ends its output, or its
-        record exceeds the line limit."""
-        deadline = _deadline(timeout)
+    def exchange(self, data: bytes, deadline: float) -> bytes:
+        """The record line answering `data` before the caller's absolute deadline.
+
+        A retry or scheduling pause must not start a fresh response clock.
+        """
         view = memoryview(data)
         with selectors.DefaultSelector() as selector:
             selector.register(self.process.stdin.fileno(), selectors.EVENT_WRITE)
             while view:
                 if time.monotonic() >= deadline:
-                    raise subprocess.TimeoutExpired(self.argv, timeout)
+                    raise subprocess.TimeoutExpired(self.argv, max(0, deadline - time.monotonic()))
                 if not selector.select(deadline - time.monotonic()):
                     continue
                 try:
@@ -116,7 +116,7 @@ class _Checker:
                 if len(self.buffer) > MAX_LINE_BYTES:
                     raise OSError("oversized Rust JSONL response")
                 if time.monotonic() >= deadline:
-                    raise subprocess.TimeoutExpired(self.argv, timeout)
+                    raise subprocess.TimeoutExpired(self.argv, max(0, deadline - time.monotonic()))
                 if not selector.select(deadline - time.monotonic()):
                     continue
                 try:
@@ -126,13 +126,15 @@ class _Checker:
                 if not chunk:
                     raise self._failure("the Rust checker ended its output")
                 self.buffer += chunk
+        if end > MAX_LINE_BYTES:
+            raise OSError("oversized Rust JSONL response")
         line = bytes(self.buffer[:end])
         del self.buffer[:end + 1]
         if self.buffer:
             raise OSError("the Rust checker wrote more than one record")
         # The deadline may have passed during the last write or read: no select follows it.
         if time.monotonic() >= deadline:
-            raise subprocess.TimeoutExpired(self.argv, timeout)
+            raise subprocess.TimeoutExpired(self.argv, max(0, deadline - time.monotonic()))
         return line
 
     def close(self) -> None:
@@ -175,11 +177,11 @@ atexit.register(_close_all)
 os.register_at_fork(after_in_child=_forget_in_child)
 
 
-def _answer(checker: _Checker, data: bytes, timeout: float) -> bytes:
+def _answer(checker: _Checker, data: bytes, deadline: float) -> bytes:
     """`checker`'s record for `data`; a process that gives none is closed, whatever stopped it."""
     answered = False
     try:
-        line = checker.exchange(data, timeout)
+        line = checker.exchange(data, deadline)
         answered = True
         return line
     finally:
@@ -206,23 +208,28 @@ def _run_checker(argv, *, input, timeout):
     if checker is None:
         checker = _Checker(argv)
     try:
-        remaining = deadline - time.monotonic()
-        if remaining <= 0:
+        if time.monotonic() >= deadline:
             raise subprocess.TimeoutExpired(argv, timeout)
-        line = _answer(checker, input, remaining)
+        line = _answer(checker, input, deadline)
     except OSError:
         if not reused:
             raise
         # A reused process may have ended since its last answer: the case goes once to a new one.
         checker = _Checker(argv)
-        remaining = deadline - time.monotonic()
-        if remaining <= 0:
+        if time.monotonic() >= deadline:
             checker.close()
             raise subprocess.TimeoutExpired(argv, timeout)
-        line = _answer(checker, input, remaining)
+        try:
+            line = _answer(checker, input, deadline)
+        except subprocess.TimeoutExpired:
+            checker.close()
+            raise subprocess.TimeoutExpired(argv, timeout) from None
     except subprocess.TimeoutExpired:
         checker.close()
-        raise
+        raise subprocess.TimeoutExpired(argv, timeout) from None
+    if time.monotonic() >= deadline:
+        checker.close()
+        raise subprocess.TimeoutExpired(argv, timeout)
     completed = subprocess.CompletedProcess(list(argv), 0, line + b"\n", b"")
     # The caller owns this process until the response is decoded and bound to its case.
     completed._checker = checker

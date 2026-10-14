@@ -55,6 +55,27 @@ def raw_session(executable, lines: bytes, timeout=HANG_TIMEOUT):
     return [json.loads(line) for line in out[1:-1]], out[1:-1]
 
 
+def test_complete_lean_response_obeys_size_cap(tmp_path, monkeypatch):
+    """F4: a complete, genuine response above the cap is unavailable."""
+    from ve.backends import lean_service
+
+    with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True, retries=0) as service:
+        monkeypatch.setattr(lean_service, "MAX_RESPONSE_BYTES", 64)
+        original = LeanService._write_all
+
+        def send_and_buffer(self, data, deadline):
+            original(self, data, deadline)
+            with monkeypatch.context() as whole:
+                whole.setattr(lean_service, "MAX_RESPONSE_BYTES", 1 << 30)
+                line = LeanService._read_line(self, deadline)
+            assert len(line) > lean_service.MAX_RESPONSE_BYTES
+            self._buffer[:] = line + b"\n"
+
+        monkeypatch.setattr(LeanService, "_write_all", send_and_buffer)
+        with pytest.raises(CheckerUnavailable, match="size limit"):
+            service.run("evaluate", [{"id": "a", "ast": [["top"]]}])
+
+
 def test_english_mode_is_the_generated_copy_of_the_english_runner():
     result = subprocess.run([sys.executable, "VE/Service/english_copy.py", "--check"], cwd=ROOT / "lean",
                             capture_output=True, text=True, timeout=HANG_TIMEOUT)
