@@ -68,6 +68,16 @@ schema and declarations inventory were regenerated through `tools/regen_generate
 This continuation changes rejection of malformed Lean responses only (R8); all normal corpus and pilot
 comparisons above remain the batch's user-visible DELTA. The chain will run its full gate on the new final HEAD.
 
+The final `tools/select_tests.py --base f1b719c7 --run` selected all 365 units on clean commit d0db54b4c.
+It passed the Lean builds and the 5,252-declaration audit, then completed 192 test units: 189 passed,
+`test_assist.py` and `test_assist_invariants.py` hit the runner's 3,600 s per-file timeout, and
+`test_lean_conformance.py` failed only because its nested `lean/audit.py` hit its 1,800 s timeout under
+the eight-job load. The identical top-level audit passed. The local selection was stopped after those
+timeouts; it is not recorded as a passing suite (`evidence/selected-fix.json`). Relevant passing units include `test_gate.py`,
+`test_gate_collection.py`, `test_lean_first_b14a.py`, and `test_lean_service_schema.py`; the separate
+119-test response-schema, readings-route and batch run also passed. The chain's final-HEAD gate remains
+the release verdict.
+
 ## Seeded bugs
 
 `evidence/mutants.json`: M1 (Lean, `lean/VE/Service/Standalone.lean`), M2 (Lean,
