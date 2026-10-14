@@ -1,40 +1,62 @@
 # Judgment terms (`judgments@0`), item 1: statement specification
 
-> **Status.** Draft 1 (2026-10-14), written by JT-0 from [judgment-terms-PLAN.md](judgment-terms-PLAN.md) draft 2,
+> **Status.** Draft 2 (2026-10-14), written by JT-0 from [judgment-terms-PLAN.md](judgment-terms-PLAN.md) draft 3,
 > which carries the converged Astra/Fable debate (`manage-agents/debates/design-judgment-terms/`, rounds 1 to 3:
-> REVISE to draft 2, then BUILD). It states, for the plan's item 1 (JT-1 to JT-4, with JT-3's report): the
-> definitions, the exact Lean statements, the diagnostics, the English wordings with their one reading, and the
-> acceptance fixtures with their values. It changes no frozen W1, W2, soft, rights or P0 semantics; the two frozen files
-> it touches (section 1, section 3) keep every existing caller's bytes.
+> REVISE to draft 2, then BUILD). Draft 2 applies the statement review's converged joint position
+> (`manage-agents/debates/judgment-terms-spec/`, rounds 1 to 3: **FIX**, then PASS once the corrected statements
+> elaborate and the changed fixtures are recomputed): Astra's A1 to A5 and Fable's F2, F3′ and F4, with Astra's
+> precision on completeness, and the F3 wording; it changes nothing else. It states, for the plan's item 1 (JT-1 to
+> JT-4, with JT-3's report): the definitions, the exact Lean statements, the diagnostics, the English wordings with
+> their one reading, and the acceptance fixtures with their values. It changes no frozen W1, W2, soft, rights or P0
+> semantics; the two frozen files it touches (section 1, section 3) keep every existing caller's bytes.
 >
 > **Checked, not proved.** Every definition and theorem statement below was elaborated in an untracked stub
-> (`lean/SpecStubs_judgment-terms.lean`, deleted before commit) with `lake env lean`, against this branch at
-> `eb3d6bf1`, whose `lean/` tree equals `main` at `f98183bf` (`git diff` empty). In the stub, `Loader.openTermNames`
-> with JT-1's one hunk is a copy of today's function with the hunk applied (section 1); everything else is written as
-> below. Twelve statements were proved outright in the stub, and two more from the stated `status_eq` (section 12
-> lists them; among them `nodeOpen_eq`, `faultOf_none_iff`, `status_legacy`, `viewOf_legacy`, `usageMap_unused` and
-> `conflictFree_given`); the others are the batches' obligations. Every fixture value in section 11 was computed by `#eval` in the same stub; none was
-> computed by hand, and no model was called.
+> (`lean/SpecStubs_judgment-terms.lean`, never committed) with `lake env lean`, against this branch at `eb3d6bf1`,
+> whose `lean/` tree equals `main` at `f98183bf` (`git diff` empty). Draft 2 re-elaborated the whole stub with
+> `lake --dir <ve-nightly>/lean env lean`, a build at `f98183bf` (this branch's `lean/` tree still equals it), with no
+> error. In the stub, `Loader.openTermNames` with JT-1's one hunk is a copy of today's function with the hunk applied
+> (section 1); everything else is written as below. Fourteen statements were proved outright in the stub, and two more from the stated `status_eq` (section 12
+> lists them; among them `nodeOpen_eq`, `faultOf_none_iff`, `status_legacy`, `viewOf_legacy`, `usageMap_unused`,
+> `conflictFree_given` and `leftToPair_differ_ne_nil`); the others are the batches' obligations. Every fixture value in
+> section 11 was computed by `#eval` in the same stub; none was computed by hand, and no model was called.
 >
 > **Interfaces not on `main`.** WG-6's zone answer (`VE.Weighing`: `openNames`, `AdmissibleCompletion`, `SettledZ`,
-> `LeftToZ`, `ZoneAnswer`) was written in the stub from weighing-PLAN.md draft 4, section 3.4, with request R1's
-> explicit `opens` (`zoneOfOpens`, an opaque stand-in, and `zoneOf` its `openNames L` instance). english-lean's
-> catalogue rows for evaluative words do not exist yet; `EvaluativeRow` (section 7) is the shape this spec needs, and
-> JT-3 binds it to english-lean's single catalogue. Every statement that names them is re-elaborated when the item
+> `LeftToZ`, `ZoneAnswer`, and `completionOf`, which its `zone_notSaid_sound` names) was written in the stub from
+> weighing-PLAN.md draft 4, section 3.4, with request R1's explicit `opens` (`zoneOfOpens`, an opaque stand-in, and
+> `zoneOf` its `openNames L` instance) and R1's certified pair (`LeftToPair`, 6.1; `completionOf` an opaque stand-in).
+> english-lean's catalogue rows for evaluative words do not exist yet; `EvaluativeRow` (section 7) is the shape this
+> spec needs, and JT-3 binds it to english-lean's single catalogue. Every statement that names them is re-elaborated when the item
 > lands; the batch that consumes it does that first.
 
 ## 0. What the stub found
 
 | # | Finding | Evidence | Consequence |
 |---|---|---|---|
-| F1 | Draft 1's `deciders` ("in first-occurrence order" over the differing atoms) is complete only when record names are distinct: with two records named `arbitrary` (deciders `court`, `unresolved_decider`) it names `court` only | 11.7: `decidersFirst` gives `["court"]`, `deciders` gives `["court", "unresolved_decider"]` | `deciders` reads the records in declaration order (6.2); `deciders_complete` needs no hypothesis. On admitted documents the two agree, since W2 refuses a repeated name |
+| F1 | Draft 1's `deciders` ("in first-occurrence order" over the differing atoms) is complete only when record names are distinct: with two records named `arbitrary` (deciders `court`, `unresolved_decider`) it names `court` only | 11.7: `decidersFirst` gives `["court"]`, `deciders` gives `["court", "unresolved_decider"]` | `deciders` reads the records in declaration order (6.2); `deciders_complete` needs no hypothesis. On admitted documents the two agree, since W2 refuses a repeated name; the two-record row is therefore an internal input to `deciders`, not a service fixture (11) |
 | F2 | J-ι as draft 1 wrote it ("a rule **requiring** the arrest where `court_ordered(a)`") has no conflict on `subjects`: two rules conflict on one regulated predicate when they have opposite signs; an obligation's conflict is the pair conflict `required ∧ ¬permitted` | 11.5: the conflict formula of `subjects` with a forbidding and a **permitting** rule is true at exactly one of the eight assignments | J-ι is written with a permitting rule ("An arrest ordered by a court is permitted") |
-| F3 | **Open, for the statement review.** Dependence through rule chains is not tracked. A rule unit whose guard reads a regulated predicate (`subjects`) that another unit's rule decides on a judgment is CHECKED, and the usage map omits it | 11.6, J-χ: `u2`'s status `CHECKED`; usage map `[("arbitrary", ["u1"])]` | not changed: D4 covers definitions, and the plan records the limit for the usage map (9). The same limit holds for the status, and section 13 says so. A candidate fix is to build the dependence edges from `VE.Norms.stratumNodes` (regulated and defined names, `lean/VE/Norms/Tree.lean:150`) instead of `defEdges`. That would widen D3's scope, which the debate did not settle; the review decides |
+| F3 | **Settled by the statement review.** Dependence through rule chains is not tracked. A rule unit whose guard reads a regulated predicate (`subjects`) that another unit's rule decides on a judgment is CHECKED, and the usage map omits it | 11.3, J-χ: `u2`'s status `CHECKED`; usage map `[("arbitrary", ["u1"])]` | kept, with the narrower guarantee the review agreed: dependence is syntactic use, directly or through W3 definitions (plan D3, D4). A unit's status is about its own meaning, which its W3 definitions are part of and another unit's rule is not; that other unit (`u1`) is already OPEN. An outcome downstream can still vary with a judgment (section 13); the zone answer (JT-4) answers that over the whole cone. J-χ stays as the fixture that shows the limit, and JT-5 records each such unit |
 | F4 | `LayeredU`, `ConflictFreeX`, `BaseAdmissibleX` and `conflictFreeX` live in `VE.NormDefaults.Wire` (`Layered.lean:59`, `:159`, `Report.lean:201`). Draft 1 and WG-6's plan write `VE.NormDefaults.LayeredU` | elaboration | the statements use the `Wire` names |
 | F5 | `layeredElaborate` and `filledX` split `L.labelled` into soft and rights premises by `rightsCount` (`Layered.lean:150-153`, `:289-290`). A source with the criteria appended would mislabel them | reading of the two functions | `withCriteria` (5.2) is read only by the conditional conflict check (`conflictFreeX`, `firstFailureX`); a witness under the criteria is JT-4's own check |
 | F6 | Draft 1's separate `setStatus` is not needed: with one view per unit (plan fix 2) one `status` covers both cases, and its legacy value is `Loader.foldStatus`'s | `viewOf_legacy`, proved | one function, `status` (4.3) |
 | F7 | `VE/Discourse/Loader.lean` and `VE/Rights/Run.lean` are both in the frozen-sources inventory (`lean/VE/Route/frozen-sources.sha256`, lines 88 and 283) | the inventory | JT-1 regenerates it with `tools/regen_generated.py --write`, after both hunks |
 | F8 | Admission must read the W3 definitions to compute the base vocabulary, so `admit` takes them | elaboration of `JudgmentUnbound` through `hide` | `admit E defs regulated rs` (2.2) |
+
+### 0.1 The statement review's corrections (draft 2)
+
+The review (`manage-agents/debates/judgment-terms-spec/`) converged on FIX with these edits. Each changed statement was
+re-elaborated, and each changed fixture recomputed by `#eval`, in the stub; the rows below are the ones to re-check.
+
+| # | Correction | Where |
+|---|---|---|
+| A1 | J-ξ broke W2: an authored set has exactly one signed reading (`Loader.lean:512-513`), and draft 1's two candidates were equivalent formulas, so no model could separate them. J-ξ is now an authored set with one reading; J-ξ′ an open set of u055's two scopes, which really differ, with a model that separates them. "order 1"'s last record is `unreasonable [person]` (a repeated name is W2's refusal, "duplicate or invalid open term", `Loader.lean:378`, before admission). Inputs that W2 refuses on the wire are marked *internal* | 11.2, 11.3, 11.7, 11.8; plan 4.1, 4.2 |
+| A2 | `zone_leftTo` concluded the existential `LeftToZ`, which nothing ties to the returned `w₁`, `w₂` and `differ`, so an empty `differ` satisfied it. It now concludes the certified pair `LeftToPair`: both shown assignments complete `M` admissibly, their outcomes are opposite, they agree on every unsaid atom, and `differ` is exactly the atoms on which they differ. Request R1 asks WG-6 for it; JT-4 adds a wrong-witness and an empty-`differ` mutation | 6.1, 12; plan 3.4, JT-4, 11 (R1) |
+| A3 | "Unconditional" and "whatever is judged" are kept for the plain theorem `conflictFreeU_consistent` only. On the layered route the answer assumes the route's own premises `L.X` (soft coherence, rights limitations): its line names them and says "without additional judgment criteria". `conflictFree_unconditional_given` is renamed `conflictFree_given_mono` | 5.2, 9.4, 11.6, 11.8, 12, 13; plan D6, 2.3, 2.4, 2.5, 3.4, 3.6, 4.1, JT-4 |
+| A4 | `status_eq` says "judgment dependence forces OPEN; otherwise the legacy status applies", not "OPEN exactly when dependent": a legacy OPEN needs no judgment | 4.3, 11.8; plan D3, 2.2 |
+| A5 | The relay checks order: terms in declaration order, unit ids in unit order, so a reordered `judgments` answer is `CheckerUnavailable` | 8.3; plan JT-2 |
+| F2 | A `contextual` or `unformalised` unit whose content uses a judgment moves from LABELLED or UNFORMALISED to OPEN, which JT-5's draft-1 bar ("moves from CHECKED to OPEN") rejected. New bar: every claimed unit keeps its status or moves to OPEN; none moves to CHECKED. Fixture J-υ | 4.3, 11.3, 11.8; plan 4.1, JT-5 |
+| F3 | Dependence stays definition-only, with the narrower guarantee (row F3 above) | 0, 4.3, 13; plan D3, 2.2, 3.6, 9, JT-5 |
+| F3′ | Lean's `preds` (section 7) kept regulated predicates while the relay (8.4) refused them, so a genuine answer naming one was `CheckerUnavailable`. Both now include them: an evaluative word inside a regulated act is the hidden case D15 targets (C u0052.s01). The report never makes a regulated predicate admissible as a judgment | 7, 8.4, 11.7; plan D15, JT-3 |
+| F4 | `JudgmentListedUnused` refused units whose list cannot show a judgment unused: no own content, or an active set with a pending reading. The check, and its conjunct of `status_ok_iff`, now apply only to a complete unit (`UnitView.complete`). Completeness follows `reads`' precedence: with an active set, the set has a reading and none is pending, whatever the unit's own content; without one, the unit has its own content. The pending readings are kept in the traversal (`none`) and omitted by `reads`. The other two unit checks, and today's checks on asserted content, are unchanged. Fixture J-τ′ | 4.2, 4.3, 8.1, 8.2, 11.3, 11.8; plan 2.1, 2.2, 3.3, 4.1 |
 
 ## 1. W2 under the profile (JT-1: one hunk in `lean/VE/Discourse/Loader.lean`)
 
@@ -263,14 +285,16 @@ of a path in `defEdges` names the definition whose body is scanned.
 ### 4.2 One traversal per unit (plan fix 2)
 
 Each unit gives one list of contents: its own content, or, when an active reading set speaks for it, that set's
-candidates. The status and the usage map read only this list.
+candidates. The status and the usage map read only this list. The traversal keeps each pending reading as `none`, so
+that `complete` can see it before `reads` omits it (F4).
 
 ```lean
-/-- The active reading set of a unit, as the loader folds it: its two flags and its candidates. -/
+/-- The active reading set of a unit, as the loader folds it: its two flags and its candidates, in order; a pending
+    reading (`content: null`) is `none`. -/
 structure ActiveSet where
   authored    : Bool
   allAsserted : Bool
-  candidates  : List Content
+  candidates  : List (Option Content)
   deriving DecidableEq, Repr
 
 /-- A unit as the status reads it. `meaning` is `Loader.meaningStatus`'s value; `listed` the names of an `open`
@@ -284,11 +308,19 @@ structure UnitView where
   set      : Option ActiveSet
   deriving DecidableEq, Repr
 
-/-- The one list a unit's status and usage read. -/
+/-- The one list a unit's status and usage read: the active set's elaborated candidates, or the unit's own content. -/
 def UnitView.reads (u : UnitView) : List Content :=
   match u.set with
-  | some s => s.candidates
+  | some s => s.candidates.filterMap fun c => c
   | none => u.own.toList
+
+/-- Whether `reads` is all the unit's content, so that a listed judgment it does not use is really unused. With an
+    active set (which takes precedence, as in `reads`): the set has a reading and none is pending, whatever the unit's
+    own content. Without one: the unit has its own content. -/
+def UnitView.complete (u : UnitView) : Bool :=
+  match u.set with
+  | some s => !s.candidates.isEmpty && s.candidates.all Option.isSome
+  | none => u.own.isSome
 
 /-- Today's status: `w2SetStatus` with an active set, `w2Status` without. -/
 def UnitView.legacy (u : UnitView) : String :=
@@ -297,7 +329,8 @@ def UnitView.legacy (u : UnitView) : String :=
   | none => VE.Discourse.Loader.w2Status u.own.isSome u.meaning
 
 /-- A unit's view: the active set is the one `Loader.foldStatus` finds in `Loader.activeOf`'s list. -/
-def viewOf (active : List (VE.Discourse.FrontSet × List Bool)) (candidates : VE.Discourse.FrontSet → List Content)
+def viewOf (active : List (VE.Discourse.FrontSet × List Bool))
+    (candidates : VE.Discourse.FrontSet → List (Option Content))
     (unit meaning : String) (listed : List String) (asserted : Bool) (own : Option Content) : UnitView :=
   { id := unit, meaning, listed, asserted, own,
     set := (active.find? (·.1.unit == unit)).map fun (rs, kinds) =>
@@ -312,56 +345,67 @@ The rules of the traversal, which JT-2's `candidates` function implements (8.1):
 
 - **Active versions.** Only the active set is read: the one `Loader.activeOf` keeps, the latest version per unit.
   Superseded versions are not read.
-- **Candidates.** Every reading of the active set, in order: an AST content is `.formula`, a `norm` content is `.rule`
-  (decoded as a norm unit is, `VE.Norms.Wire.decodeNorm`), a pending reading (`content: null`) gives nothing. A norm
-  candidate is never read through `readingsSets`' W2 projection, which substitutes `top` for it
-  (`lean/VE/Service/Document.lean:985-990`).
-- **Authored choices.** An authored set has one signed reading (`compileSets` refuses any other), so its list is that
-  reading.
+- **Candidates.** Every reading of the active set, in order: an AST content is `some (.formula φ)`, a `norm` content is
+  `some (.rule N)` (decoded as a norm unit is, `VE.Norms.Wire.decodeNorm`), a pending reading (`content: null`) is
+  `none`: `reads` omits it and `complete` counts it. A norm candidate is never read through `readingsSets`' W2
+  projection, which substitutes `top` for it (`lean/VE/Service/Document.lean:985-990`).
+- **Authored choices.** An authored set has one signed reading (`compileSets` refuses any other, `Loader.lean:512-513`),
+  so its list is that reading. A set holds 1 to 64 readings (`Loader.lean:510`), so on admitted documents `complete`
+  with an active set is "no reading is pending".
 - **History.** `rejected_history` and narrowings are not read: a narrowing does not change the active set's
   candidates, so a set some narrowing would keep to a judgment-free reading stays OPEN (the conservative side).
 
 ### 4.3 Status (D3)
 
 ```lean
-/-- The status under `judgments@0`: the unit refusals of plan 2.1, item 6, in that order, then OPEN if the unit's
-    list depends on a bound judgment, else today's status. -/
+/-- The status under `judgments@0`: the unit refusals of plan 2.1, item 6, in that order (the third only on a
+    complete unit), then OPEN if the unit's list depends on a bound judgment, else today's status. -/
 def status (defs : List VE.Definitions.Def) (J : List String) (u : UnitView) : Except String String := do
   let deps := dependsOnC defs J u.reads
   if u.meaning == "specified" then
     if let some j := deps.head? then throw s!"JudgmentNotChecked: {u.id} {j}"
   if u.meaning == "open" then
     if let some j := deps.find? (!u.listed.contains ·) then throw s!"JudgmentNotListed: {u.id} {j}"
-    if let some j := u.listed.find? (fun j => J.contains j && !deps.contains j) then
-      throw s!"JudgmentListedUnused: {u.id} {j}"
+    if u.complete then
+      if let some j := u.listed.find? (fun j => J.contains j && !deps.contains j) then
+        throw s!"JudgmentListedUnused: {u.id} {j}"
   pure (if deps.isEmpty then u.legacy else "OPEN")
 
-/-- The value: OPEN exactly when the unit's list depends on a bound judgment, today's status otherwise. -/
+/-- The value: judgment dependence forces OPEN; otherwise the legacy status applies. -/
 theorem status_eq (defs J u s) (h : status defs J u = .ok s) :
     s = if dependsOnC defs J u.reads = [] then u.legacy else "OPEN"
 
-/-- "Never present a judgment as checked." -/
+/-- "Never present a judgment as checked": a judgment used in the unit's own content or its definitions. -/
 theorem status_never_checked (defs J u s) (h : status defs J u = .ok s) (hd : dependsOnC defs J u.reads ≠ []) :
     s = "OPEN"
 
 theorem status_checked (defs J u) (h : status defs J u = .ok "CHECKED") : dependsOnC defs J u.reads = []
 
 /-- The refusals, exactly: `specified` content uses no judgment, and an `open` list names every judgment the content
-    depends on and no bound judgment it does not. -/
+    depends on and, when the unit is complete, no bound judgment it does not. -/
 theorem status_ok_iff (defs J u) :
     (∃ s, status defs J u = .ok s) ↔
       (u.meaning = "specified" → dependsOnC defs J u.reads = []) ∧
       (u.meaning = "open" → (∀ j ∈ dependsOnC defs J u.reads, j ∈ u.listed) ∧
-        ∀ j ∈ u.listed, j ∈ J → j ∈ dependsOnC defs J u.reads)
+        (u.complete = true → ∀ j ∈ u.listed, j ∈ J → j ∈ dependsOnC defs J u.reads))
 
 /-- Without bound judgments, today's status. -/
 theorem status_legacy (defs u) : status defs [] u = .ok u.legacy
 ```
 
-A unit with a `contextual` or `unformalised` meaning whose list depends on a judgment is OPEN too (`status_eq`); no
-refusal applies to it, since its meaning names no terms. A stated `status` in the front matter that disagrees is
-refused by today's check ("unit status contradicts content, meaning, or active reading set"), which JT-2 runs after
-this one (8.2).
+Dependence is syntactic use, directly or through W3 definitions (D3, D4); it does not follow one rule's outcome into
+another rule's guard (F3, J-χ, section 13). A legacy OPEN needs no judgment (J-τ′'s units are OPEN with none), so
+`status_eq` is not "OPEN exactly when dependent".
+
+A unit with a `contextual` or `unformalised` meaning whose list depends on a judgment is OPEN too (`status_eq`): it
+moves from LABELLED or UNFORMALISED to OPEN (J-υ). No refusal applies to it, since its meaning names no terms. A stated
+`status` in the front matter that disagrees is refused by today's check ("unit status contradicts content, meaning, or
+active reading set"), which JT-2 runs after this one (8.2).
+
+`JudgmentListedUnused` applies only to a complete unit (F4): a unit with no own content and no active set, or whose
+active set has a pending reading, reads nothing that could show a listed judgment unused, and is OPEN today and under
+the profile alike. The first two checks apply whether or not the unit is complete, and so do today's checks on
+asserted content.
 
 ### 4.4 The usage map (plan 2.2)
 
@@ -388,7 +432,8 @@ theorem usageMap_rows (defs J units j ids) (h : (j, ids) ∈ (usageMap defs J un
 end VE.Judgments
 ```
 
-A unit represented only by a reading set appears in the map through its candidates (J-ξ).
+A unit represented only by a reading set appears in the map through its elaborated candidates (J-ξ, J-ξ′); a pending
+reading contributes nothing.
 
 ## 5. Criteria and "conflict-free, given …" (JT-4: `lean/VE/Judgments/Zone.lean`)
 
@@ -426,20 +471,26 @@ def withCriteria (L : VE.NormDefaults.Wire.LayeredU) (C : List (String × VE.For
     VE.NormDefaults.Wire.LayeredU :=
   { L with labelled := L.labelled ++ C }
 
-/-- "Conflict-free, given <sentences>": accepted certificates over the background with the criteria. -/
+/-- "Conflict-free, given <sentences>": accepted certificates over the background with the route's own premises `L.X`
+    and the criteria. -/
 theorem conflictFree_given (L : VE.NormDefaults.Wire.LayeredU) (C : List (String × VE.Formula)) (packages : Json)
     (h : VE.NormDefaults.Wire.conflictFreeX (withCriteria L C) packages = true) :
     VE.NormDefaults.Wire.ConflictFreeX.{0} L.U (L.X ++ C.map (·.2))
 
-/-- The unconditional answer implies the conditional one; the converse fails (J-ι). -/
-theorem conflictFree_unconditional_given (U : VE.NormDefaults.UDoc) (X C : List VE.Formula)
+/-- The answer without additional judgment criteria implies the one given them; the converse fails (J-ι). -/
+theorem conflictFree_given_mono (U : VE.NormDefaults.UDoc) (X C : List VE.Formula)
     (h : VE.NormDefaults.Wire.ConflictFreeX.{0} U X) : VE.NormDefaults.Wire.ConflictFreeX.{0} U (X ++ C)
 ```
 
 Both were proved in the stub: `conflictFree_given` is `layered_conflict_sound` (`Layered.lean:227`) at
 `withCriteria L C`. The certificates for the conditional answer are bound to the extended background, so the search
-produces them separately; the unconditional answer and its certificates are unchanged. The display shows both lines
-(9.4). The unconditional line for a plain norm-defaults document cites `conflictFreeU_consistent`
+produces them separately; the answer without additional judgment criteria and its certificates are unchanged. The
+display shows both lines (9.4).
+
+Both layered answers assume `L.X`, the route's own premises (the soft norms' coherence premises and the rights'
+limitations), so neither is worded "unconditional" or "whatever is judged" (A3). The line without additional judgment
+criteria names those conditions, and the "given" line adds the criteria `C`. Only the plain norm-defaults line is
+unconditional, "Conflict-free, whatever is judged.", and it cites `conflictFreeU_consistent`
 (`lean/VE/NormDefaults/Status.lean:293`) itself; draft 1's `conflictFree_every_judgment` is dropped (it restated that
 theorem with an unused hypothesis).
 
@@ -454,7 +505,43 @@ WG-6's names below are its plan's (weighing-PLAN.md draft 4, 3.4), with request 
 explicitly, and `VE.Weighing.zoneOf L X M record r vs proposed` is `zoneOfOpens L X M (openNames L) record r vs
 proposed` with `openNames L = VE.SoftNorms.decisionNames L.D ++ VE.NormDefaults.unsaidNames L.U`.
 
+WG-6's `LeftToZ` is existential: nothing in it ties the shown `w₁`, `w₂` and `differ` to its two completions, so an
+empty `differ` satisfied draft 1's `zone_leftTo` (A2). R1 therefore also asks WG-6 for the certified pair below, in its
+file, over its own `completionOf M record w` (the completion `zone_notSaid_sound` already names), and for
+`zone_leftTo_sound` to conclude it.
+
 ```lean
+namespace VE.Weighing
+open VE.Norms VE.NormDefaults
+
+variable {α : Type} [DecidableEq α]
+
+/-- R1: the pair a `left to` answer shows, certified. Both assignments complete `M` to admissible completions, their
+    outcomes are opposite, they agree on every unsaid atom, and `differ` is exactly the atoms on which they differ. -/
+def LeftToPair (U : UDoc) (X : List VE.Formula) (M : VE.FiniteModel α) (opens : List String)
+    (record : List ((String × List α) × Bool)) (r : Regulated) (vs : List α) (unsaid : List String)
+    (differ : List (String × List α)) (w₁ w₂ : List ((String × List α) × Bool)) : Prop :=
+  AdmissibleCompletion U X M opens record (completionOf M record w₁) ∧
+    AdmissibleCompletion U X M opens record (completionOf M record w₂) ∧
+    (∀ n ∈ unsaid, ∀ ws, completionOf M record w₁ n ws ↔ completionOf M record w₂ n ws) ∧
+    OutcomeIn U M (completionOf M record w₁) r vs ∧ ¬ OutcomeIn U M (completionOf M record w₂) r vs ∧
+    ∀ a, a ∈ differ ↔ ¬ (completionOf M record w₁ a.1 a.2 ↔ completionOf M record w₂ a.1 a.2)
+
+/-- The certified pair witnesses `LeftToZ`. -/
+theorem leftToPair_leftTo (U : UDoc) (X : List VE.Formula) (M : VE.FiniteModel α) (opens : List String)
+    (record : List ((String × List α) × Bool)) (r : Regulated) (vs : List α) (unsaid : List String)
+    (differ : List (String × List α)) (w₁ w₂ : List ((String × List α) × Bool))
+    (h : LeftToPair U X M opens record r vs unsaid differ w₁ w₂) :
+    LeftToZ U X M opens record r vs unsaid
+
+/-- An empty `differ` is never certified: the outcomes differ, so the two completions differ somewhere. -/
+theorem leftToPair_differ_ne_nil (U : UDoc) (X : List VE.Formula) (M : VE.FiniteModel α) (opens : List String)
+    (record : List ((String × List α) × Bool)) (r : Regulated) (vs : List α) (unsaid : List String)
+    (w₁ w₂ : List ((String × List α) × Bool)) :
+    ¬ LeftToPair U X M opens record r vs unsaid [] w₁ w₂
+
+end VE.Weighing
+
 namespace VE.Judgments
 open VE.Norms VE.NormDefaults
 
@@ -476,8 +563,9 @@ theorem zone_settled (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE
     (hz : zone L X M J record r vs proposed = .settled b w) :
     VE.Weighing.SettledZ L.U (X.map (·.2)) M (opens L J) record r vs b
 
-/-- Two admissible completions that agree on every unsaid atom and give different answers; each atom on which they
-    differ is a decision atom or a judgment atom. -/
+/-- The pair shown, certified: its two assignments complete `M` admissibly, agree on every unsaid atom and give
+    different answers, and `differ` is exactly the atoms on which they differ; each is a decision atom or a judgment
+    atom. -/
 theorem zone_leftTo (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
     (valid : M.Valid (envAt L.U.D 0)) (hb : backgroundValid L.U.D M = true) (J : List String)
     (record : List ((String × List α) × Bool)) (r : Regulated) (hr : r ∈ L.U.D.T.regulated) (vs : List α)
@@ -485,7 +573,7 @@ theorem zone_leftTo (L : VE.NormDefaults.Wire.LayeredU) (X : List (String × VE.
     (differ : List (String × List α)) (w₁ w₂ : List ((String × List α) × Bool))
     (ns : Option (List ((String × List α) × Bool) × List ((String × List α) × Bool)))
     (hz : zone L X M J record r vs proposed = .notSettled (some (differ, w₁, w₂)) ns) :
-    VE.Weighing.LeftToZ L.U (X.map (·.2)) M (opens L J) record r vs (unsaidNames L.U) ∧
+    VE.Weighing.LeftToPair L.U (X.map (·.2)) M (opens L J) record r vs (unsaidNames L.U) differ w₁ w₂ ∧
       ∀ a ∈ differ, a.1 ∈ VE.SoftNorms.decisionNames L.D ∨ a.1 ∈ J
 
 /-- Without judgments, WG-6's answer. -/
@@ -495,9 +583,17 @@ theorem zone_no_judgments (L : VE.NormDefaults.Wire.LayeredU) (X : List (String 
     zone L X M [] record r vs proposed = VE.Weighing.zoneOf L X M record r vs proposed
 ```
 
-`zone_no_judgments` was proved in the stub from R1's definition of `zoneOf`. `zone_settled` and `zone_leftTo` are
-WG-6's soundness theorems at `opens L J`; R1 asks WG-6 to state them over any `opens` (with "every differing atom is in
-`opens` and not unsaid" as `zone_leftTo_sound`'s last conjunct), so that these follow by instantiation.
+`zone_no_judgments` was proved in the stub from R1's definition of `zoneOf`; `leftToPair_leftTo` and
+`leftToPair_differ_ne_nil` were proved there too, over `completionOf` as an opaque stand-in. `zone_settled` and
+`zone_leftTo` are WG-6's soundness theorems at `opens L J`; R1 asks WG-6 to state them over any `opens`, with
+`zone_leftTo_sound` concluding `LeftToPair` (instead of `LeftToZ`, which follows by `leftToPair_leftTo`) and "every
+differing atom is in `opens` and not unsaid" as its last conjunct, so that these follow by instantiation. The English
+line of 9.4 ("these two admissible completions give different answers and differ on …") is what `LeftToPair` certifies.
+
+JT-4 adds two mutations of a genuine `left to` answer (J-α's): a wrong witness (`w₂` replaced by `w₁`, or one atom of
+a witness flipped) and an empty `differ`. In Lean each is a seeded bug in `zone` that fails J-α's zone fixture; through
+the relay each is `CheckerUnavailable` (an empty `differ` is an empty row; a `differ` that is not exactly the atoms on
+which the two shown witnesses differ is unbound) or changes nothing shown.
 
 ### 6.2 Deciders
 
@@ -535,8 +631,9 @@ def hasPhrase (ph ws : List String) : Bool :=
 def EvaluativeRow.matches (row : EvaluativeRow) (ws : List String) : Bool :=
   ws.contains row.word && !row.otherSenses.any (hasPhrase · ws)
 
-/-- The base predicates whose words match a row and that are not bound, in declaration order. `preds` is each base
-    predicate with its words (its name split at `_`, then its template's words, lower case), read by Lean from the
+/-- The base predicates whose words match a row and that are not bound, in declaration order. `preds` is every
+    predicate of the base environment `baseEnv E defs` (W3-defined names excluded, regulated predicates included),
+    each with its words (its name split at `_`, then its template's words, lower case), read by Lean from the
     environment. -/
 def undeclaredEvaluative (rows : List EvaluativeRow) (preds : List (String × List String)) (J : List String) :
     List String :=
@@ -552,6 +649,11 @@ end VE.Judgments
 The report says only "these words match the catalogue; review them". It is never a refusal, and it never says that a
 unit uses no other judgment: a judgment written in words the catalogue lacks is not found.
 
+Regulated predicates are scanned (F3′): D2 forbids binding one, so an evaluative word inside a regulated act
+(`make_reasonable_efforts`; C u0052.s01's `good_judgment` if it were written as the act) is exactly the hidden judgment
+this report exists to catch. Listing one does not make it admissible as a judgment: declaring it is still
+`JudgmentRegulated` (11.7).
+
 ## 8. The document mode (JT-2, and JT-3's field)
 
 ### 8.1 The hook
@@ -566,7 +668,8 @@ In `VE.Service.Document.check`, when the environment lists `judgments@0`:
    (`Loader.foldStatus`).
 4. Each unit's view: `viewOf active candidates u.id m listed (u.kind == .str "asserted") (u.content.map toContent)`,
    where `m` is `Loader.meaningStatus openNames u.meaning`'s value, `listed` the names of its `open` meaning, and
-   `candidates` reads the active set's raw readings from the front matter by `(id, version)` (4.2).
+   `candidates` reads the active set's raw readings from the front matter by `(id, version)`, a pending reading as
+   `none` (4.2).
 5. `Judgments.status E.rv.definitions (names js) v` for each unit in unit order; the first error is the answer, and
    otherwise its value is the unit's status.
 6. Then today's explicit-status check, and the rest of `check` unchanged.
@@ -586,10 +689,11 @@ With the profile off, none of this runs and every answer is byte-identical (J-λ
 | `JudgmentDecider` | `JudgmentDecider: <term>` | `decided_by` is `unstated` | J-η |
 | `JudgmentNotChecked` | `JudgmentNotChecked: <unit> <term>` | meaning `specified`, and the unit's list depends on `<term>` (the first such judgment in declaration order) | J-β, J-γ, J-γ′ |
 | `JudgmentNotListed` | `JudgmentNotListed: <unit> <term>` | meaning `open`, and `<term>` (the first in declaration order) is depended on but not listed | J-σ |
-| `JudgmentListedUnused` | `JudgmentListedUnused: <unit> <term>` | meaning `open`, and `<term>` (the first in the meaning's list) is a bound judgment the unit's list does not depend on | J-τ |
+| `JudgmentListedUnused` | `JudgmentListedUnused: <unit> <term>` | meaning `open`, the unit is complete (`UnitView.complete`: with an active set, it has a reading and none is pending; without one, the unit has its own content), and `<term>` (the first in the meaning's list) is a bound judgment the unit's list does not depend on | J-τ, J-τ′ (e); not J-τ′ (a) to (d) |
 
 Order: W2's schema check over the whole list first; then admission, the first faulty record in record order and its
-first failing check in the table's order; then the units in unit order, each unit's three checks in the table's order.
+first failing check in the table's order; then the units in unit order, each unit's three checks in the table's order
+(the third only on a complete unit).
 
 ### 8.3 The report field `judgments` (JT-2)
 
@@ -604,16 +708,21 @@ schema and the binding only (R8):
 - every `term` and every `unused` name is a declared open term of the request, and no name appears twice across
   `used` and `unused`;
 - every declared open term appears exactly once;
-- every unit id is a unit of the request, and no `units` list is empty or repeats an id.
+- every unit id is a unit of the request, and no `units` list is empty or repeats an id;
+- the order is Lean's (A5): the `used` terms in declaration order (the order of `open_terms`), the `unused` names in
+  declaration order, and each `units` list in the request's unit order.
 
 Fuzz tests in `tests/test_judgments_answer.py` drop, empty, retype, duplicate and reorder each member, and push a unit id
-out of range: every mutant is `CheckerUnavailable` or changes nothing shown.
+out of range: every mutant is `CheckerUnavailable` or changes nothing shown. A reordered list is `CheckerUnavailable` by
+the order check; membership checks alone would let it through and change what is shown.
 
 ### 8.4 The report field `undeclared_evaluative` (JT-3)
 
 `{"undeclared_evaluative": ["reasonable_grounds"]}`: `undeclaredEvaluative` over english-lean's catalogue rows. Typed
-(a list of strings). The relay binds it: each name is a base predicate of the request's environment (not W3-defined,
-not regulated) and is not a declared open term, and no name repeats. Fuzz tests retype and rebind it as above.
+(a list of strings). The relay binds it: each name is a base predicate of the request's environment (not W3-defined;
+a regulated predicate included, as in section 7) and is not a declared open term, and no name repeats. A genuine
+answer naming the regulated `make_reasonable_efforts` (11.7) is accepted: JT-3's relay test records it. Fuzz tests
+retype and rebind it as above.
 
 ## 9. English: wordings and their one reading
 
@@ -649,7 +758,7 @@ limit it, and does not depend on it.
 | "No arrest ordered by a court is arbitrary." | `∀a:act. arrest(a) ∧ court_ordered(a) → ¬arbitrary(a)`: a criterion unit (5.1) |
 | "An arrest ordered by a court is permitted." | a rule permitting `subjects(p, a)` where `arrest(a) ∧ court_ordered(a)` (J-ι) |
 | "The family is a natural and fundamental group unit of society." | `natural_and_fundamental_group_unit(the_family)`, OPEN (D11). The source's "the … unit" (uniqueness) is presupposition's and is not represented; JT-0p claims no bytes for it |
-| "No one shall be arbitrarily deprived of his nationality …" | two readings of the adverb's scope: a reading set, both candidates OPEN (J-ξ) |
+| "No one shall be arbitrarily deprived of his nationality nor denied the right to change his nationality." | two readings of the adverb's scope, which differ: "arbitrarily" over both acts, or over the deprivation only (then every denial is forbidden). An open reading set with a model that separates them; the unit OPEN (J-ξ′) |
 | "The risks … are just as real …" | "just" here means "equally": not the evaluative row (7, `["just", "as"]`) |
 
 ### 9.4 Zone, record and conflict lines (WG-7's display, JT-4)
@@ -657,10 +766,11 @@ limit it, and does not depend on it.
 | Text | What Lean checked |
 |---|---|
 | "Settled: whatever is judged here, the text requires …" | `zone_settled` with judgment atoms in the cone |
-| "Left to no one the text names: these two admissible completions give different answers and differ on whether the arrest is arbitrary (the text does not say who makes it)." | `zone_leftTo`: a witnessed pair, and the atoms on which it differs, each with its decider (`deciders`); never that each atom alone controls the answer |
+| "Left to no one the text names: these two admissible completions give different answers and differ on whether the arrest is arbitrary (the text does not say who makes it)." | `zone_leftTo`: the certified pair `LeftToPair` (the two shown completions are admissible, agree on every unsaid atom and give different answers), and exactly the atoms on which they differ, each with its decider (`deciders`); never that each atom alone controls the answer |
 | "Given the court's judgment that the arrest is arbitrary, the text requires …" / "Ruled out: this judgment that … contradicts <premise sentence>." | WG-6's record answers |
-| "Conflict-free, whatever is judged." | `conflictFreeU_consistent` (or the layered route's own CONFLICT-FREE) |
-| "Conflict-free, given these sentences: No arrest ordered by a court is arbitrary." | `conflictFree_given`; shown beside the unconditional line, never instead of it |
+| "Conflict-free, whatever is judged." | `conflictFreeU_consistent`, on the plain norm-defaults route only: every base situation, so every way of judging. The only unconditional line |
+| "Conflict-free under the document's own conditions: <condition sentence>; …" | the layered route's CONFLICT-FREE, `ConflictFreeX L.U L.X`: every base situation that satisfies `L.X` (the soft norms' coherence premises and the rights' limitations), without additional judgment criteria. Never worded "whatever is judged" |
+| "Conflict-free, given these sentences: No arrest ordered by a court is arbitrary." (when `L.X` is not empty: "Conflict-free under the document's own conditions and these sentences: …") | `conflictFree_given`, `ConflictFreeX L.U (L.X ++ C)`; shown beside the line without additional judgment criteria, never instead of it |
 | "These rules conflict where an arrest ordered by a court is judged arbitrary." | a CONFLICT witness with `arbitrary(a)` true (J-ι) |
 
 ### 9.5 Refusal in authoring (JT-3)
@@ -684,12 +794,14 @@ The pilot fixtures are plan 4.2's. Two points the statements fix:
 ## 11. Fixtures, with the values the stub computed
 
 The environment of 11.2 to 11.7: sorts `person`, `act`, `thing`; base predicates `arrest`, `arbitrary`,
-`unreasonable`, `detention`, `unlawful`, `court_ordered`, `gives_serious_uplift` (all over `act`),
-`natural_and_fundamental_group_unit(thing)`, `treats_unfairly(person, person)`; regulated `subjects(person, act)` and
-`reports(person, act)`; W3 definitions `wrongful_detention(a) :↔ detention(a) ∧ arbitrary(a)` and
-`unlawful_detention(a) :↔ detention(a) ∧ unlawful(a)`; constant `the_family : thing`. Records have `decided_by:
-unresolved_decider`, empty lists, unless a row says otherwise. Rules on `subjects` are typed in `[act, person]`, so the
-act is `.var 0`. JT-1's `Examples.lean` reproduces each row as a `#guard`; JT-2 reproduces the rows through the service.
+`unreasonable`, `detention`, `unlawful`, `court_ordered`, `gives_serious_uplift`, `deprivation`, `denial` (all over
+`act`), `natural_and_fundamental_group_unit(thing)`, `treats_unfairly(person, person)`; regulated `subjects(person,
+act)`, `reports(person, act)` and `make_reasonable_efforts(person, act)`; W3 definitions `wrongful_detention(a) :↔
+detention(a) ∧ arbitrary(a)` and `unlawful_detention(a) :↔ detention(a) ∧ unlawful(a)`; constant `the_family : thing`.
+Records have `decided_by: unresolved_decider`, empty lists, unless a row says otherwise. Rules on `subjects` are typed in
+`[act, person]`, so the act is `.var 0`. JT-1's `Examples.lean` reproduces each row as a `#guard`; JT-2 reproduces the
+rows through the service, except the rows marked *internal*: inputs to one Lean function that W2 refuses on the wire
+before that function runs (A1). They stay `#guard`s and are never replayed through the service.
 
 ### 11.1 W2 under the profile (on the wire, decoded by Lean's own readers)
 
@@ -713,7 +825,7 @@ act is `.var 0`. JT-1's `Examples.lean` reproduces each row as a `#guard`; JT-2 
 | J-ο | `treats_unfairly [person, person]` | ok |
 | J-ν | `gives_serious_uplift [act]` (a `scales@0` grade) | ok |
 | J-θ | `natural_and_fundamental_group_unit [thing]` | ok |
-| order 1 | `arbitrary [act]`, `reasonable_limitation [act]`, `arbitrary [person]` | `JudgmentUnbound: reasonable_limitation` (the first faulty record) |
+| order 1 | `arbitrary [act]`, `reasonable_limitation [act]`, `unreasonable [person]` | `JudgmentUnbound: reasonable_limitation` (the first faulty record; the third, `JudgmentArguments`, is not reached) |
 | order 2 | `arbitrary [person]`, `unstated`, one `necessary` | `JudgmentArguments: arbitrary` (the first failing check) |
 
 ### 11.3 Status and usage
@@ -730,11 +842,17 @@ act is `.var 0`. JT-1's `Examples.lean` reproduces each row as a `#guard`; JT-2 
 | J-γ″ | formula `∀a. unlawful_detention(a) → ¬court_ordered(a)`, `specified` | ok `CHECKED` | — |
 | J-θ | asserted formula `natural_and_fundamental_group_unit(the_family)`, `open [that term]` | ok `OPEN` | `([(natural_and_fundamental_group_unit, [u1])], [])` |
 | J-μ | rule guarded by `arrest(a)` only, `specified`; `arbitrary` declared | ok `CHECKED` | `([], [arbitrary])` |
-| J-ξ | `u055`, no content, active authored set (all asserted) of two formulas that both use `arbitrary`, `open [arbitrary]` | ok `OPEN` (today's would be `CHECKED`) | `([(arbitrary, [u055])], [])` |
-| J-ξ′ | the same set, `open` (not authored) | ok `OPEN` | — |
+| J-ξ | `u055`, no content, `open [arbitrary]`; an active **authored** set with its one signed, asserted reading `∀a. deprivation(a) ∧ arbitrary(a) → ⊥` | ok `OPEN` (legacy `CHECKED`) | `([(arbitrary, [u055])], [])` |
+| J-ξ′ | `u055`, no content, `open [arbitrary]`; an active **open** set of u055's two scopes, both asserted: wide `∀a. (deprivation(a) ∨ denial(a)) ∧ arbitrary(a) → ⊥`, narrow `∀a. (deprivation(a) ∧ arbitrary(a) → ⊥) ∧ (denial(a) → ⊥)`. Distinguishing model: one act `a`, `denial(a)` true, `deprivation` and `arbitrary` false: wide **true**, narrow **false** | ok `OPEN` (legacy `OPEN`) | `([(arbitrary, [u055])], [])` |
+| J-υ | `u1`, meaning `contextual`; formula `∀a. arrest(a) ∧ arbitrary(a) → ⊥` | ok `OPEN` (legacy `LABELLED`) | — |
 | J-σ | `J₂`; guard `arrest ∧ arbitrary ∧ unreasonable`; `open [arbitrary]` | `JudgmentNotListed: u1 unreasonable` | — |
 | J-τ | `J₂`; guard `arrest ∧ arbitrary`; `open [arbitrary, unreasonable]` | `JudgmentListedUnused: u1 unreasonable` | — |
-| J-λ | each of J-α, J-β, J-γ, J-θ, J-μ, J-ξ, J-ξ′ with `J = []` | `OPEN`, `CHECKED`, `CHECKED`, `OPEN`, `CHECKED`, `CHECKED`, `OPEN`: each equal to `legacy` | — |
+| J-τ′ (a) | `J₂`; `open [arbitrary, unreasonable]`; no own content, no active set | `complete` false; ok `OPEN` (legacy `OPEN`) | — |
+| J-τ′ (b) | the same list; no own content; an open set whose two readings are both pending | `complete` false; ok `OPEN` (legacy `OPEN`) | — |
+| J-τ′ (c) | the same list; no own content; an open set of J-υ's formula and one pending reading | `complete` false; ok `OPEN` (legacy `OPEN`) | — |
+| J-τ′ (d) | the same list; own content J-α's rule, beneath an open set whose one reading is pending (the set takes precedence) | `complete` false; ok `OPEN` (legacy `OPEN`) | — |
+| J-τ′ (e) | the same list; no own content; an authored set of J-υ's formula, asserted (complete) | `complete` true; `JudgmentListedUnused: u1 unreasonable` (legacy `CHECKED`) | — |
+| J-λ | each of J-α, J-β, J-γ, J-θ, J-μ, J-ξ, J-ξ′, J-υ with `J = []` | `OPEN`, `CHECKED`, `CHECKED`, `OPEN`, `CHECKED`, `CHECKED`, `OPEN`, `LABELLED`: each equal to `legacy` | — |
 | J-χ (F3) | J-α's `u1`, and `u2`: a rule on `reports` guarded by `subjects(p, a)`, `specified` | `u2`: ok `CHECKED` | `([(arbitrary, [u1])], [])` |
 
 Dependence directly: `opensIn J₁ [arrest ∧ arbitrary] = [arbitrary]`, `opensIn J₁ [arrest] = []`,
@@ -777,7 +895,8 @@ produce that certificate.
 | J-κ | 17 bound judgments in one guard over one tuple: 17 open atoms, over WG-6's limit 16 → `unknown`, budget |
 | J-μ | settled whatever is judged |
 | J-ν | `gives_serious_uplift`'s atoms are judgment atoms in the zone |
-| J-ι | "Conflict-free, given …" beside the unconditional CONFLICT |
+| J-α (pair) | the `left to` answer's `differ` and witnesses satisfy `LeftToPair`; the two mutations of 6.1 (a wrong witness, an empty `differ`) each fail the fixture in Lean and are `CheckerUnavailable` through the relay |
+| J-ι | "Conflict-free, given …" beside the answer without additional judgment criteria (CONFLICT), never instead of it |
 
 ### 11.7 Deciders and undeclared words
 
@@ -786,9 +905,12 @@ produce that certificate.
 | `deciders [arbitrary ↦ unresolved_decider, reasonable_grounds ↦ we] [arbitrary(a), soft__excepted__r1(a)]` | `[unresolved_decider]` |
 | the same records, `[reasonable_grounds(s)]` | `[we]` |
 | the same records, `[soft__excepted__r1(a)]` (a decision atom only) | `[]` |
-| two records named `arbitrary` (`court`, `unresolved_decider`), `[arbitrary(a)]` | `deciders`: `[court, unresolved_decider]`; draft 1's first-occurrence form: `[court]` (F1) |
+| *internal*: two records named `arbitrary` (`court`, `unresolved_decider`), `[arbitrary(a)]` (W2 refuses the repeated name, "duplicate or invalid open term") | `deciders`: `[court, unresolved_decider]`; draft 1's first-occurrence form: `[court]` (F1) |
 | `undeclaredEvaluative` with rows `reasonable`, `arbitrary`, `due` (not "due date", "due to"), `just` (not "just as"), `necessary` (not "necessary condition"), `effective` (not "effective date"); predicates `reasonable_grounds`, `due_date`, `arbitrary`, `just_as_real`, `just_requirement`, `necessary_condition`, `arrest`; `J = [arbitrary]` | `[reasonable_grounds, just_requirement]` |
 | the same, `J = []` | `[reasonable_grounds, arbitrary, just_requirement]` |
+| F3′, regulated: `(baseEnv E defs).predicates make_reasonable_efforts` | `some [person, act]`: a regulated predicate stays in the base environment |
+| the rows and `J = [arbitrary]` above, with the regulated `make_reasonable_efforts` (words `make reasonable efforts`) appended to the predicates | `[reasonable_grounds, just_requirement, make_reasonable_efforts]`; the relay accepts this answer (8.4) |
+| `admit` of `make_reasonable_efforts [person, act]` | `JudgmentRegulated: make_reasonable_efforts`: listing it for review does not make it admissible |
 
 ### 11.8 Each "exactly when" claim, both directions
 
@@ -798,40 +920,46 @@ produce that certificate.
 | `faultOf_none_iff` / `admit_ok_iff` | J-α, J-ο, J-ν, J-θ admitted | one fixture per conjunct: J-δ and J-π (base predicate), J-ε (sorts), J-ρ (regulated), J-ζ (`necessary`), J-ζ′ (`sufficient`), J-η (decider) |
 | `opensIn_iff` | `arrest ∧ arbitrary` gives `[arbitrary]` | `arrest` gives `[]` |
 | `dependsOn_iff` | J-α (direct), J-γ and J-γ′ (through a definition) | J-γ″ (a definition that does not reach), `dependsOn []` on J-γ's formula |
-| `status_eq` (OPEN exactly when dependent) | J-α, J-θ, J-ξ, J-ξ′, u2 of 11.4: OPEN | J-μ, J-γ″: today's value (`CHECKED`) |
-| `status_ok_iff` (refused exactly when) | J-α, J-θ, J-μ, J-ξ accepted | J-β, J-γ, J-γ′ (`specified`), J-σ (not listed), J-τ (listed, unused) |
+| `status_eq` (judgment dependence forces OPEN; otherwise the legacy status applies) | dependence: J-α, J-θ, J-ξ (legacy `CHECKED`), J-ξ′, J-υ (legacy `LABELLED`), u2 of 11.4: OPEN | no dependence: J-μ, J-γ″ (legacy `CHECKED`), J-τ′ (a), (b), (d) (legacy `OPEN`, with no judgment): the legacy value |
+| `status_ok_iff` (refused exactly when) | J-α, J-θ, J-μ, J-ξ, J-ξ′, J-υ accepted; J-τ′ (a) to (d) accepted (not complete, so a listed judgment they do not use is no refusal) | J-β, J-γ, J-γ′ (`specified`), J-σ (not listed), J-τ and J-τ′ (e) (complete, listed, unused) |
 | `usageMap_unused` | J-μ: `arbitrary` unused | J-α: `arbitrary` used |
-| `usageMap_sound` / `_complete` | J-α, J-θ, J-ξ (a set-only unit is listed) | J-χ's `u2` (no dependence) is not listed |
+| `usageMap_sound` / `_complete` | J-α, J-θ, J-ξ, J-ξ′ (a set-only unit is listed) | J-χ's `u2` (no dependence) is not listed |
 | `criteria_iff` | `u2` and J-θ's unit | a rule unit, a set unit, a CHECKED unit, a non-asserted unit, a unit over a defined name |
 | `deciders_sound` / `_complete` | `[unresolved_decider]`, `[we]` | a decision atom only: `[]` |
-| `undeclaredEvaluative_iff` | `reasonable_grounds`, `just_requirement` (and `arbitrary` when unbound) | `due_date`, `just_as_real`, `necessary_condition` (other sense), `arrest` (no row), `arbitrary` (bound) |
-| `conflictFree_unconditional_given` (one direction only) | — | J-ι: conflict-free given the criterion, not unconditionally |
+| `undeclaredEvaluative_iff` | `reasonable_grounds`, `just_requirement`, the regulated `make_reasonable_efforts` (and `arbitrary` when unbound) | `due_date`, `just_as_real`, `necessary_condition` (other sense), `arrest` (no row), `arbitrary` (bound) |
+| `conflictFree_given_mono` (one direction only) | — | J-ι: conflict-free given the criterion, not without it |
+| `zone_leftTo` (the certified pair, JT-4) | J-α's pair | a wrong witness, an empty `differ` (`leftToPair_differ_ne_nil`) |
 
 ## 12. Obligations
 
 | Statement | In the stub | Owner |
 |---|---|---|
-| `records_refuse`, `faultOf_none_iff`, `opensIn_iff`, `opensIn_isEmpty`, `nodeOpen_eq`, `dependsOn_no_defs`, `viewOf_legacy`, `status_legacy`, `usageMap_unused`, `conflictFree_given`, `conflictFree_unconditional_given`, `zone_no_judgments` | proved | JT-1, JT-4 restate them in the product files |
+| `records_refuse`, `faultOf_none_iff`, `opensIn_iff`, `opensIn_isEmpty`, `nodeOpen_eq`, `dependsOn_no_defs`, `viewOf_legacy`, `status_legacy`, `usageMap_unused`, `conflictFree_given`, `conflictFree_given_mono`, `zone_no_judgments` | proved | JT-1, JT-4 restate them in the product files |
+| `leftToPair_leftTo`, `leftToPair_differ_ne_nil` | proved, over `completionOf` as a stand-in | WG-6 with `LeftToPair` (R1); JT-4 if WG-6 lands without them |
 | `status_never_checked`, `status_checked` | proved from `status_eq` | JT-1 |
 | `openTermNames_sorts`, `records_names`, `admit_ok_iff`, `admit_first_fault`, `dependsOn_iff`, `status_eq`, `status_ok_iff`, `usageMap_sound`, `usageMap_complete`, `usageMap_rows` | stated | JT-1 |
 | `criteria_iff`, `deciders_sound`, `deciders_complete` | stated | JT-4 |
-| `zone_settled`, `zone_leftTo` | stated over WG-6's planned names | JT-4, by instantiating WG-6's theorems (R1) |
+| `zone_settled`, `zone_leftTo` (concluding `LeftToPair`) | stated over WG-6's planned names | JT-4, by instantiating WG-6's theorems (R1) |
 | `undeclaredEvaluative_iff` | stated | JT-3 |
 
 For the audit (`lean/audit.py`): the function name `admit` is allowed (`audit.py:30-34`, applied as `admit E …`), and
-no product file may declare `zoneOfOpens` as the stub did (an `opaque` stand-in): WG-6 defines it.
+no product file may declare `zoneOfOpens` or `completionOf` as the stub did (`opaque` stand-ins): WG-6 defines them.
 
 ## 13. What is not claimed
 
 - No theorem says a judgment is right, that a decider weighed the factors, or where a vague boundary lies.
 - **Declared terms only.** An evaluative word written as an ordinary base predicate is not bound, and its unit can be
   CHECKED. `undeclared_evaluative` lists catalogue matches for review; it never says a unit has no other judgment.
-- **Rule chains are not tracked** (F3): dependence goes through W3 definitions, not through one rule's outcome read in
-  another rule's guard. Open for the statement review.
-- **`left to` is a witnessed pair.** The listed atoms are those on which two admissible completions differ; no
-  minimality and no claim that each atom alone controls the answer.
-- **"Given" is not "whatever".** `conflictFree_given` assumes the criterion sentences; the unconditional answer is
-  reported apart and is never replaced.
+- **Rule chains are not tracked** (F3, settled by the statement review). Dependence is syntactic use, directly or
+  through W3 definitions; it does not follow one rule's outcome into another rule's guard. So an outcome downstream can
+  still vary with a judgment while its unit is CHECKED: J-χ's `u2` reads `subjects`, which `u1` decides on `arbitrary`.
+  `status_never_checked` covers a judgment in the unit's own content or its definitions only. The zone answer (JT-4)
+  is the full answer at a situation, and JT-5 records each such unit.
+- **`left to` is a witnessed pair.** The listed atoms are exactly those on which the two shown admissible completions
+  differ (`LeftToPair`); no minimality and no claim that each atom alone controls the answer.
+- **"Given" is not "whatever".** `conflictFree_given` assumes the criterion sentences, on top of the layered route's
+  own premises `L.X`; the answer without additional judgment criteria is reported apart and is never replaced. Only the
+  plain route's `conflictFreeU_consistent` is unconditional.
 - No completeness beyond WG-6's budget: beyond it the answer is UNKNOWN with the budget as reason.
 - No claim that a criterion written as a unit is faithful to the source: that is the audit's job.
 - JT-E1's result is proxy readability, not human comprehension.
@@ -841,3 +969,4 @@ no product file may declare `zoneOfOpens` as the stub did (an `opaque` stand-in)
 | Date | Draft | Change |
 |---|---|---|
 | 2026-10-14 | 1 | First statement spec, from plan draft 2: W2's profile flag, records and base-predicate admission, the shared scan with rights' switch, one traversal per unit, status, usage map, criteria and the conditional conflict answer, zone answers on WG-6's planned names, deciders, the undeclared-word report; diagnostics, English wordings, fixture values computed in the stub; findings F1 to F8 (F3 open). |
+| 2026-10-14 | 2 | The statement review's joint position (FIX; `manage-agents/debates/judgment-terms-spec/`, section 0.1). A1: J-ξ an authored set with one reading, J-ξ′ an open set of u055's two scopes with a separating model, "order 1" ends with `unreasonable [person]`, *internal* rows marked. A2: `zone_leftTo` concludes R1's certified pair `LeftToPair` (with `leftToPair_leftTo` and `leftToPair_differ_ne_nil`, proved), wrong-witness and empty-`differ` mutations. A3: unconditional wording only for `conflictFreeU_consistent`; layered lines name `L.X` and say "without additional judgment criteria"; `conflictFree_unconditional_given` renamed `conflictFree_given_mono`. A4: `status_eq` worded "judgment dependence forces OPEN; otherwise the legacy status applies". A5: the relay checks declaration and unit order. F2: J-υ (LABELLED → OPEN). F3: settled, definition-only with the narrower guarantee. F3′: regulated predicates scanned and accepted by the relay, fixture rows. F4: `UnitView.complete` guards `JudgmentListedUnused`, pending readings kept as `none`; J-τ′ (a) to (e). Stub re-elaborated with no error; every changed fixture recomputed by `#eval`. |
