@@ -287,6 +287,22 @@ restored:
   gate record. The requested selected command expanded to 377/377 units, so it was stopped after the gate rerun
   and trust test units passed; no full suite or release gate ran, as instructed.
 
+### Loop recheck 5 (`arch-AR-4-c142031-looprecheck1.final.md`)
+
+- **F11 (B):** `interpret_pytest` now counts every selected test without a result as failed, matching the
+  `pytest` failure rows it already wrote. A full-gate record with only such a failure, or with both a missing
+  outcome and an explicit failure, has complete accounting. Under R13, a same-commit serial rerun must pass
+  every named failed test. `tests/test_gate_trust.py::test_review_f11_missing_pytest_results_count_as_failed_for_r13`
+  checks both cases. The supplied F11 probe failed before this fix and passes after it.
+- **Checks:** the old counting expression was planted as a Python bug and both F11 regression cases failed;
+  restoring the fix made both pass. `lake build` passed (888 jobs); `lean/audit.py` passed (484 source files,
+  5,784 theorem declarations); `git diff --check` passed. The branch-wide selector planned 377/377 units,
+  so the path-scoped selector ran 96/377 units for `tools/gate.py` and `tests/test_gate_trust.py`; all 96 unit
+  result records have exit code 0. The Mac runner's slot wait expired and its wrapper ran the same selection
+  on the VM. After the tests, the selector exited 1 trying to save its coverage map under the read-only
+  `/home/seyran/.cache/ve-testmap`. No test failed; the map write was not retried. The three tests listed in
+  `/home/seyran/code/manage-agents/main-known-red.txt` were not edited in this branch.
+
 ### Open after the fixes
 
 - **The full gate on the final HEAD** (the chain, then `report.py --check --gate`).
