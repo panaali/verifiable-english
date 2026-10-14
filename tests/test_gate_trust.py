@@ -177,6 +177,35 @@ def test_review_f10_r13_allows_an_approved_sibling_skip_but_requires_the_failed_
     assert batch_evidence.rerun_pair_problems(failed, skipped_failed)
 
 
+@pytest.mark.parametrize("outcomes", [{}, {"tests/a.py::test_a": "failed"}],
+                         ids=["missing-only", "explicit-and-missing"])
+def test_review_f11_missing_pytest_results_count_as_failed_for_r13(outcomes):
+    """PROBE F11: every selected test without an outcome is a failed test in the gate's accounting.
+
+    A serial rerun that passes all of those tests can then satisfy R13; an explicit failure beside a
+    missing outcome must be counted too.
+    """
+    selected = ["tests/a.py::test_a", "tests/b.py::test_b"]
+    events = {"collected": selected, "selected": selected, "deselected": [], "collection_reports": [],
+              "tests": {node: {"outcome": outcome, "reason": "AssertionError"}
+                        for node, outcome in outcomes.items()}}
+    full = {"commit_sha": SHA, "tree_sha": "b" * 40, "dirty": False, "status": "failed",
+            "stages": list(batch_evidence.REQUIRED_STAGES), "counts": {"rust_passed": 2},
+            "failures": [], "skips": []}
+    gate.interpret_pytest(full, events, {"optional_tests": [], "deselected_tests": []}, selected, families=())
+    missing = set(selected) - set(outcomes)
+    assert full["counts"]["failed"] == len(missing) + sum(o == "failed" for o in outcomes.values())
+    assert {row["nodeid"] for row in full["failures"] if row["stage"] == "pytest"} == set(selected)
+    assert batch_evidence.gate_counts_valid(full["counts"], failed=len(selected))
+
+    rerun = {"commit_sha": SHA, "tree_sha": "b" * 40, "dirty": False, "status": "rerun-passed",
+             "failures": [], "counts": {"passed": 2, "skipped": 0, "failed": 0,
+                                         "selected": 2, "deselected": 0, "collected": 2},
+             "rerun_failed": {"previous": full, "tests": selected,
+                              "outcomes": {node: "passed" for node in selected}}}
+    assert batch_evidence.rerun_pair_problems(full, rerun) == []
+
+
 @pytest.mark.parametrize("record", [{}, [], None, 7, True, "gate", DEEP])
 def test_review_f7_probe_a_malformed_gate_record_is_refused(fake, record):
     """PROBE F7: `{}` as the full gate record; every check refuses it with a message naming the gate."""
