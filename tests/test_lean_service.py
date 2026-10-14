@@ -824,45 +824,32 @@ def test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline(tmp_path, monkey
         assert clock.fired == [phase] and service.stats["retries"] == 0
 
 
-# The tests that set a mode's CPU deadline below one /proc tick and claim it bounds the service's work.
-SUB_TICK_DEADLINE_TESTS = (
-    "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
-    "tests/test_lean_document_wrapper.py::test_a_document_past_its_cpu_deadline_is_unavailable_never_ok",
-)
-# Loaded into a nested run: a machine that answers within one tick (its service's CPU always reads 0), and,
-# with VE_UNCHECKED_RESPONSE, a client that does not check the CPU deadline while waiting for the response.
-FAST_MACHINE = '''import os
-from ve.backends import lean_service
-
-lean_service._cpu_seconds = lambda pid: 0.0
-if os.environ.get("VE_UNCHECKED_RESPONSE"):
-    read = lean_service.LeanService._read_line
-    lean_service.LeanService._read_line = lambda self, deadline: read(
-        self, lean_service._Deadline(deadline.wall, mode=deadline.mode))
-'''
-
-
 @pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="process CPU time is read from /proc")
 @pytest.mark.parametrize("unchecked", [False, True], ids=["checked", "response unchecked"])
-def test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check(tmp_path, unchecked):
+def test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check(monkeypatch, unchecked):
     """The ARM runner's failure and review runner-portability F1's probe: on a machine that answers within one
     tick the sub-tick deadline tests pass, and with the response wait's CPU check dropped each of them fails."""
-    from tools import nested_pytest
-    (tmp_path / "ve_fast_machine.py").write_text(FAST_MACHINE)
-    settings = {"PYTHONPATH": os.pathsep.join(filter(None, [str(tmp_path), os.environ.get("PYTHONPATH")])),
-                "VE_ENGLISH_COMPARATOR": "0", "PYTHONDONTWRITEBYTECODE": "1"}
-    if unchecked:
-        settings["VE_UNCHECKED_RESPONSE"] = "1"
-    run = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-p", "ve_fast_machine",
-                                                f"--basetemp={tmp_path / 'run'}", *SUB_TICK_DEADLINE_TESTS]),
-                         cwd=Path(__file__).resolve().parents[1], env=nested_pytest.environment(os.environ, **settings),
-                         capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    if not unchecked:
-        assert run.returncode == 0 and "2 passed" in run.stdout, run.stdout[-4000:] + run.stderr[-4000:]
-    else:
-        assert run.returncode == pytest.ExitCode.TESTS_FAILED, run.stdout[-4000:] + run.stderr[-4000:]
-        assert "2 failed" in run.stdout and run.stdout.count("DID NOT RAISE CheckerUnavailable") == 2, \
-            run.stdout[-4000:]
+    from test_question_reading import test_the_whole_question_is_bounded_by_the_modes_deadline
+    from test_lean_document_wrapper import test_a_document_past_its_cpu_deadline_is_unavailable_never_ok
+    from ve.backends import lean_service
+
+    failures = []
+    for test in (test_the_whole_question_is_bounded_by_the_modes_deadline,
+                 test_a_document_past_its_cpu_deadline_is_unavailable_never_ok):
+        with monkeypatch.context() as isolated:
+            # The same sub-tick machine as the old pytest plugin, without starting another pytest
+            # session while this session holds the native build lock.
+            isolated.setattr(lean_service, "_cpu_seconds", lambda pid: 0.0)
+            if unchecked:
+                isolated.setattr(LeanService, "_read_line", _without_cpu(LeanService._read_line))
+            try:
+                test(isolated)
+            except pytest.fail.Exception as exc:
+                failures.append((test.__name__, str(exc)))
+    assert [name for name, message in failures if "DID NOT RAISE CheckerUnavailable" in message] == (
+        [test_the_whole_question_is_bounded_by_the_modes_deadline.__name__,
+         test_a_document_past_its_cpu_deadline_is_unavailable_never_ok.__name__] if unchecked else []), failures
+    assert len(failures) == (2 if unchecked else 0), failures
 
 
 def test_a_request_that_gets_no_cpu_meets_the_wall_cap(tmp_path, monkeypatch, expired):
