@@ -1,0 +1,1434 @@
+{
+ "post_hoc": true,
+ "seed": 20261014,
+ "trials": 20000,
+ "summary": {
+  "neither": 9
+ },
+ "pairs": [
+  {
+   "corpus": "agent-policy",
+   "rules": [
+    "write-workspace",
+    "write-outside"
+   ],
+   "pre_registered_class": "both unknown",
+   "post_hoc_class": "neither",
+   "a_implies_b": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "a_implies_b_countermodel": {
+    "domains": {
+     "action": [
+      "e_action_0"
+     ],
+     "file": [
+      "e_file_0"
+     ],
+     "host": [
+      "e_host_0",
+      "e_host_1",
+      "e_host_2"
+     ],
+     "person": [
+      "e_person_0"
+     ],
+     "secret": [
+      "e_secret_0",
+      "e_secret_1"
+     ],
+     "directory": [
+      "e_directory_0",
+      "e_directory_1"
+     ],
+     "$string": [
+      "e__string_0",
+      "e__string_1"
+     ]
+    },
+    "constants": {
+     "workspace": "e_directory_0"
+    },
+    "relations": {
+     "writes": [
+      [
+       "e_action_0",
+       "e_file_0"
+      ]
+     ],
+     "resides_in": [
+      [
+       "e_file_0",
+       "e_directory_0"
+      ],
+      [
+       "e_file_0",
+       "e_directory_1"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_action_0"
+    ],
+    "candidates_refused_before": 0
+   },
+   "b_implies_a": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "b_implies_a_countermodel": {
+    "domains": {
+     "action": [
+      "e_action_0"
+     ],
+     "file": [
+      "e_file_0",
+      "e_file_1",
+      "e_file_2"
+     ],
+     "host": [
+      "e_host_0",
+      "e_host_1",
+      "e_host_2"
+     ],
+     "person": [
+      "e_person_0",
+      "e_person_1",
+      "e_person_2"
+     ],
+     "secret": [
+      "e_secret_0"
+     ],
+     "directory": [
+      "e_directory_0"
+     ],
+     "$string": [
+      "e__string_0"
+     ]
+    },
+    "constants": {
+     "workspace": "e_directory_0"
+    },
+    "relations": {
+     "writes": [
+      [
+       "e_action_0",
+       "e_file_0"
+      ],
+      [
+       "e_action_0",
+       "e_file_2"
+      ]
+     ],
+     "resides_in": []
+    },
+    "arguments_innermost_first": [
+     "e_action_0"
+    ],
+    "candidates_refused_before": 0
+   }
+  },
+  {
+   "corpus": "safety-framework",
+   "rules": [
+    "f9-dm",
+    "f9-rel"
+   ],
+   "pre_registered_class": "both unknown",
+   "post_hoc_class": "neither",
+   "a_implies_b": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "a_implies_b_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0",
+      "e_proposal_1"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1"
+     ],
+     "measure": [
+      "e_measure_0"
+     ],
+     "threat": [
+      "e_threat_0"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_1",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_1",
+       "e_level_1"
+      ]
+     ],
+     "further_development": [],
+     "external": [
+      [
+       "e_proposal_0"
+      ],
+      [
+       "e_proposal_1"
+      ]
+     ],
+     "internal": [],
+     "misuse": [
+      [
+       "e_level_1"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_1"
+    ],
+    "candidates_refused_before": 0
+   },
+   "b_implies_a": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "b_implies_a_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0",
+      "e_proposal_1",
+      "e_proposal_2"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1",
+      "e_domain_2"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1"
+     ],
+     "threat": [
+      "e_threat_0"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_2"
+      ],
+      [
+       "e_proposal_1",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_1",
+       "e_level_2"
+      ],
+      [
+       "e_proposal_2",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_2",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_2",
+       "e_level_2"
+      ]
+     ],
+     "further_development": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "external": [
+      [
+       "e_proposal_1"
+      ],
+      [
+       "e_proposal_2"
+      ]
+     ],
+     "internal": [],
+     "misuse": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_1"
+      ],
+      [
+       "e_level_2"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   }
+  },
+  {
+   "corpus": "safety-framework",
+   "rules": [
+    "f9-dm",
+    "f10-rel-same"
+   ],
+   "pre_registered_class": "both unknown",
+   "post_hoc_class": "neither",
+   "a_implies_b": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "a_implies_b_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1"
+     ],
+     "domain": [
+      "e_domain_0"
+     ],
+     "measure": [
+      "e_measure_0"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_0"
+      ]
+     ],
+     "further_development": [],
+     "critical": [],
+     "external": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_1"
+      ]
+     ],
+     "misuse": [
+      [
+       "e_level_0"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   },
+   "b_implies_a": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "b_implies_a_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1"
+     ],
+     "threat": [
+      "e_threat_0"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_2"
+      ]
+     ],
+     "further_development": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "critical": [
+      [
+       "e_level_0"
+      ]
+     ],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_2"
+      ]
+     ],
+     "external": [],
+     "misuse": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_2"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   }
+  },
+  {
+   "corpus": "safety-framework",
+   "rules": [
+    "f9-rel",
+    "f10-dm-same"
+   ],
+   "pre_registered_class": "both unknown",
+   "post_hoc_class": "neither",
+   "a_implies_b": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "a_implies_b_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0",
+      "e_proposal_1"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1",
+      "e_measure_2"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_2"
+      ],
+      [
+       "e_proposal_1",
+       "e_level_1"
+      ]
+     ],
+     "further_development": [
+      [
+       "e_proposal_0"
+      ],
+      [
+       "e_proposal_1"
+      ]
+     ],
+     "high_risk": [
+      [
+       "e_proposal_0"
+      ],
+      [
+       "e_proposal_1"
+      ]
+     ],
+     "external": [
+      [
+       "e_proposal_0"
+      ],
+      [
+       "e_proposal_1"
+      ]
+     ],
+     "critical": [
+      [
+       "e_level_1"
+      ]
+     ],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_2"
+      ]
+     ],
+     "internal": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "misuse": [
+      [
+       "e_level_1"
+      ],
+      [
+       "e_level_2"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   },
+   "b_implies_a": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "b_implies_a_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1",
+      "e_domain_2"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1",
+      "e_measure_2"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1",
+      "e_threat_2"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "high_risk": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "critical": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_2"
+      ]
+     ],
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_2"
+      ]
+     ],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_1"
+      ],
+      [
+       "e_level_2"
+      ]
+     ],
+     "external": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "further_development": [],
+     "internal": [],
+     "misuse": [
+      [
+       "e_level_2"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   }
+  },
+  {
+   "corpus": "safety-framework",
+   "rules": [
+    "f10-dm-same",
+    "f10-rel-same"
+   ],
+   "pre_registered_class": "both unknown",
+   "post_hoc_class": "neither",
+   "a_implies_b": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "a_implies_b_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0",
+      "e_proposal_1",
+      "e_proposal_2"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1"
+     ],
+     "threat": [
+      "e_threat_0"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "high_risk": [
+      [
+       "e_proposal_2"
+      ]
+     ],
+     "critical": [
+      [
+       "e_level_1"
+      ]
+     ],
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_1",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_1",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_2",
+       "e_level_1"
+      ]
+     ],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_1"
+      ]
+     ],
+     "external": [
+      [
+       "e_proposal_1"
+      ],
+      [
+       "e_proposal_2"
+      ]
+     ],
+     "further_development": [
+      [
+       "e_proposal_0"
+      ],
+      [
+       "e_proposal_1"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_2"
+    ],
+    "candidates_refused_before": 0
+   },
+   "b_implies_a": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "b_implies_a_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0",
+      "e_proposal_1",
+      "e_proposal_2"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1",
+      "e_measure_2"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "reached": [
+      [
+       "e_proposal_1",
+       "e_level_2"
+      ],
+      [
+       "e_proposal_2",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_2",
+       "e_level_2"
+      ]
+     ],
+     "further_development": [
+      [
+       "e_proposal_1"
+      ],
+      [
+       "e_proposal_2"
+      ]
+     ],
+     "critical": [
+      [
+       "e_level_1"
+      ],
+      [
+       "e_level_2"
+      ]
+     ],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_2"
+      ]
+     ],
+     "external": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "high_risk": [
+      [
+       "e_proposal_1"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_2"
+    ],
+    "candidates_refused_before": 0
+   }
+  },
+  {
+   "corpus": "safety-framework",
+   "rules": [
+    "f10-dm-diff",
+    "f10-rel-diff"
+   ],
+   "pre_registered_class": "both unknown",
+   "post_hoc_class": "neither",
+   "a_implies_b": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "a_implies_b_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1",
+      "e_domain_2"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1",
+      "e_measure_2"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1",
+      "e_threat_2"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "high_risk": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "critical": [
+      [
+       "e_level_2"
+      ]
+     ],
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_2"
+      ]
+     ],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_1"
+      ],
+      [
+       "e_level_2"
+      ]
+     ],
+     "external": [],
+     "further_development": []
+    },
+    "arguments_innermost_first": [
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   },
+   "b_implies_a": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "b_implies_a_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1",
+      "e_threat_2"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_2"
+      ]
+     ],
+     "further_development": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "critical": [
+      [
+       "e_level_2"
+      ]
+     ],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_2"
+      ]
+     ],
+     "external": [],
+     "high_risk": []
+    },
+    "arguments_innermost_first": [
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   }
+  },
+  {
+   "corpus": "safety-framework",
+   "rules": [
+    "f11-dm",
+    "f11-rel"
+   ],
+   "pre_registered_class": "both unknown",
+   "post_hoc_class": "neither",
+   "a_implies_b": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "a_implies_b_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1",
+      "e_domain_2"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1",
+      "e_measure_2"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "high_risk": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_2"
+      ]
+     ],
+     "further_development": [],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_2"
+      ]
+     ],
+     "external": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "tracked": [
+      [
+       "e_level_1"
+      ],
+      [
+       "e_level_2"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   },
+   "b_implies_a": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "b_implies_a_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0",
+      "e_proposal_1"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1"
+     ],
+     "domain": [
+      "e_domain_0"
+     ],
+     "measure": [
+      "e_measure_0"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1",
+      "e_threat_2"
+     ]
+    },
+    "constants": {},
+    "relations": {
+     "reached": [
+      [
+       "e_proposal_1",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_1",
+       "e_level_1"
+      ]
+     ],
+     "further_development": [
+      [
+       "e_proposal_0"
+      ],
+      [
+       "e_proposal_1"
+      ]
+     ],
+     "high_risk": [],
+     "ml_rd_and_misalignment": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_1"
+      ]
+     ],
+     "external": [
+      [
+       "e_proposal_0"
+      ]
+     ],
+     "tracked": [
+      [
+       "e_level_0"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_proposal_1"
+    ],
+    "candidates_refused_before": 0
+   }
+  },
+  {
+   "corpus": "safety-framework",
+   "rules": [
+    "f15-same",
+    "f16-ds"
+   ],
+   "pre_registered_class": "both unknown",
+   "post_hoc_class": "neither",
+   "a_implies_b": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "a_implies_b_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0",
+      "e_proposal_1"
+     ],
+     "level": [
+      "e_level_0"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1",
+      "e_domain_2"
+     ],
+     "measure": [
+      "e_measure_0"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1",
+      "e_threat_2"
+     ]
+    },
+    "constants": {
+     "insiders": "e_threat_2"
+    },
+    "relations": {
+     "includes": [],
+     "reached": [
+      [
+       "e_proposal_1",
+       "e_level_0"
+      ]
+     ],
+     "recommends": [],
+     "addresses": [
+      [
+       "e_measure_0",
+       "e_threat_2"
+      ]
+     ],
+     "misuse": [
+      [
+       "e_level_0"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_measure_0",
+     "e_proposal_1"
+    ],
+    "candidates_refused_before": 0
+   },
+   "b_implies_a": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "b_implies_a_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1"
+     ]
+    },
+    "constants": {
+     "insiders": "e_threat_1"
+    },
+    "relations": {
+     "includes": [],
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_2"
+      ]
+     ],
+     "recommends": [
+      [
+       "e_level_0",
+       "e_measure_1"
+      ],
+      [
+       "e_level_1",
+       "e_measure_0"
+      ],
+      [
+       "e_level_2",
+       "e_measure_0"
+      ],
+      [
+       "e_level_2",
+       "e_measure_1"
+      ]
+     ],
+     "addresses": [],
+     "misuse": [
+      [
+       "e_level_1"
+      ],
+      [
+       "e_level_2"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_measure_0",
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   }
+  },
+  {
+   "corpus": "safety-framework",
+   "rules": [
+    "f15-same",
+    "f16-ds-strict"
+   ],
+   "pre_registered_class": "both unknown",
+   "post_hoc_class": "neither",
+   "a_implies_b": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "a_implies_b_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1",
+      "e_level_2"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1",
+      "e_domain_2"
+     ],
+     "measure": [
+      "e_measure_0"
+     ],
+     "threat": [
+      "e_threat_0"
+     ]
+    },
+    "constants": {
+     "insiders": "e_threat_0"
+    },
+    "relations": {
+     "includes": [
+      [
+       "e_measure_0",
+       "e_measure_0"
+      ]
+     ],
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_0"
+      ],
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ]
+     ],
+     "recommends": [],
+     "addresses": [
+      [
+       "e_measure_0",
+       "e_threat_0"
+      ]
+     ],
+     "misuse": [
+      [
+       "e_level_0"
+      ],
+      [
+       "e_level_2"
+      ]
+     ]
+    },
+    "arguments_innermost_first": [
+     "e_measure_0",
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   },
+   "b_implies_a": [
+    "no",
+    "finite countermodel, confirmed false by ve.evaluate"
+   ],
+   "b_implies_a_countermodel": {
+    "domains": {
+     "proposal": [
+      "e_proposal_0"
+     ],
+     "level": [
+      "e_level_0",
+      "e_level_1"
+     ],
+     "domain": [
+      "e_domain_0",
+      "e_domain_1",
+      "e_domain_2"
+     ],
+     "measure": [
+      "e_measure_0",
+      "e_measure_1",
+      "e_measure_2"
+     ],
+     "threat": [
+      "e_threat_0",
+      "e_threat_1"
+     ]
+    },
+    "constants": {
+     "insiders": "e_threat_0"
+    },
+    "relations": {
+     "includes": [
+      [
+       "e_measure_0",
+       "e_measure_1"
+      ],
+      [
+       "e_measure_1",
+       "e_measure_1"
+      ],
+      [
+       "e_measure_1",
+       "e_measure_2"
+      ],
+      [
+       "e_measure_2",
+       "e_measure_0"
+      ]
+     ],
+     "reached": [
+      [
+       "e_proposal_0",
+       "e_level_1"
+      ]
+     ],
+     "recommends": [
+      [
+       "e_level_0",
+       "e_measure_0"
+      ],
+      [
+       "e_level_0",
+       "e_measure_1"
+      ],
+      [
+       "e_level_1",
+       "e_measure_0"
+      ],
+      [
+       "e_level_1",
+       "e_measure_1"
+      ]
+     ],
+     "addresses": [
+      [
+       "e_measure_0",
+       "e_threat_0"
+      ],
+      [
+       "e_measure_0",
+       "e_threat_1"
+      ],
+      [
+       "e_measure_1",
+       "e_threat_1"
+      ],
+      [
+       "e_measure_2",
+       "e_threat_1"
+      ]
+     ],
+     "misuse": []
+    },
+    "arguments_innermost_first": [
+     "e_measure_0",
+     "e_proposal_0"
+    ],
+    "candidates_refused_before": 0
+   }
+  }
+ ]
+}
