@@ -660,8 +660,6 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
                                        {"status": "UNKNOWN"})})
         positive = [row for row in outcomes if "certificate" in row]
         negative = [row for row in outcomes if "model_id" in row]
-        if not outcomes:
-            raise VEError("CouplingUnsatisfiable: " + ", ".join(sorted(item["id"] for item in couplings)))
         verdict = (_choice_verdict(env, sets, conclusion_ast, fixed, "coupled-choices",
                                    choice_evidence, couplings=couplings) if verify_choices else
                    "SOME" if positive and negative else
