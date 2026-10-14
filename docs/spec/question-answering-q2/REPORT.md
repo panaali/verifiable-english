@@ -135,7 +135,7 @@ then removed (`mutants.py`, `evidence/mutants.json`; the table is in the generat
 | Q2.6 reading and writing evaluation (Sonnet as reader and writer) | EXTERNAL | **deferred**: needs model calls, which this task forbids; owner: the orchestrator |
 | Q2.6 latency and agreement with W2 | AGENT | done: `ask` Lean CPU 0.5 s on U3 and A1 (budget 2 s; the benchmark `tools/bench/test_perf.py::test_ask_lean_cpu` against its stored baseline, since a correctness test never accepts on speed), U3 `ve ask` wall within 60 s; the agreement table in `../question-answering-report.md` |
 | Q2.5 one flip generator (the point search as its instance, the copy deleted) | AGENT | done (`ve/filling_search.py`, `tests/test_filling_search.py`) |
-| DRI conditional signatures in DELTA | AGENT / EXTERNAL | D1–D4, D6–D9 and D10–D14 are recorded as signed, including D14 under R3. D13's saved before/after CPU and wall figures are in `evidence/words-perf.json`; D5's independent bounded statement review and D15's agreement evidence remain (see `DELTA.md`). |
+| DRI conditional signatures in DELTA | AGENT / EXTERNAL | D1–D4, D6–D9 and D10–D14 are recorded as signed, including D14 under R3. D13's saved before/after CPU and wall figures are in `evidence/words-perf.json`; D15's agreement evidence is signed; D5's independent bounded statement review remains (see `DELTA.md`). |
 
 ## Not done, and not run
 
