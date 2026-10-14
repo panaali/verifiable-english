@@ -836,9 +836,7 @@
    "route": "service:alternatives",
    "mutation": "drop",
    "path": [
-    "results/*/generator",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/root/label"
+    "results/*/generator"
    ],
    "kind": "by-design",
    "id": "B5",
@@ -886,24 +884,12 @@
    "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
   },
   {
-   "route": "service:norm-defaults",
-   "mutation": "drop",
-   "path": [
-    "results/*/result/report/assumptions/*/label"
-   ],
-   "kind": "by-design",
-   "id": "B5",
-   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
-  },
-  {
    "route": "service:norms",
    "mutation": "drop",
    "path": [
     "results/*/generator",
     "results/*/result/detail",
-    "results/*/result/generator",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/root/label"
+    "results/*/result/generator"
    ],
    "kind": "by-design",
    "id": "B5",
@@ -920,34 +906,10 @@
    "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
   },
   {
-   "route": "service:reports",
-   "mutation": "drop",
-   "path": [
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/root/label"
-   ],
-   "kind": "by-design",
-   "id": "B5",
-   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
-  },
-  {
    "route": "service:rights",
    "mutation": "drop",
    "path": [
-    "results/*/generator",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/root/label"
-   ],
-   "kind": "by-design",
-   "id": "B5",
-   "reason": "Optional diagnostic extras (`generator`, `detail`, `path`, `label` of a report entry) written only when Lean's diagnostic or report has them; the condition is on Lean's text, which the client cannot read off the request."
-  },
-  {
-   "route": "service:risk",
-   "mutation": "drop",
-   "path": [
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/root/label"
+    "results/*/generator"
    ],
    "kind": "by-design",
    "id": "B5",
@@ -958,8 +920,7 @@
    "mutation": "drop",
    "path": [
     "results/*/generator",
-    "results/*/result/generator",
-    "results/*/result/report/assumptions/*/label"
+    "results/*/result/generator"
    ],
    "kind": "by-design",
    "id": "B5",
@@ -969,9 +930,7 @@
    "route": "service:soft-norms",
    "mutation": "drop",
    "path": [
-    "results/*/generator",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/root/label"
+    "results/*/generator"
    ],
    "kind": "by-design",
    "id": "B5",
@@ -1160,9 +1119,6 @@
     "results/*/result/coverage/alternatives/proximate_judgments/*/support",
     "results/*/result/coverage/alternatives/table_complete/decider",
     "results/*/result/order/*",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
-    "results/*/result/report/root/label",
     "results/*/result/target",
     "results/*/result/targets/*",
     "results/*/result/tuple/*"
@@ -1176,18 +1132,6 @@
    "mutation": "rebind",
    "path": [
     "results/*/result/core/*"
-   ],
-   "kind": "follow-up",
-   "id": "F4",
-   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
-  },
-  {
-   "route": "service:discourse",
-   "mutation": "rebind",
-   "path": [
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
-    "results/*/result/report/root/ast/*/*"
    ],
    "kind": "follow-up",
    "id": "F4",
@@ -1241,8 +1185,6 @@
     "results/*/result/reached/*/sorts/*",
     "results/*/result/report/*/predicate",
     "results/*/result/report/*/witness/*/*",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
     "results/*/result/residual/gaps/*",
     "results/*/result/rules/*",
     "results/*/result/targets/*",
@@ -1268,9 +1210,6 @@
     "results/*/result/generator",
     "results/*/result/order/*",
     "results/*/result/premises/*/*/*/*",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
-    "results/*/result/report/root/label",
     "results/*/result/targets/*"
    ],
    "kind": "follow-up",
@@ -1292,8 +1231,7 @@
    "route": "service:quantity",
    "mutation": "rebind",
    "path": [
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name"
+    "results/*/result/report/assumptions/*/label"
    ],
    "kind": "follow-up",
    "id": "F4",
@@ -1346,10 +1284,6 @@
     "results/*/result/environment_reports/vocabulary/reports/evidence",
     "results/*/result/environment_reports/vocabulary/reports/holders/*",
     "results/*/result/environment_reports_id",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
-    "results/*/result/report/root/ast/*/*",
-    "results/*/result/report/root/label",
     "results/*/result/scoped/*/environment_id",
     "results/*/result/scoped/*/id",
     "results/*/result/source_model/*/holds_of/*",
@@ -1383,9 +1317,6 @@
     "results/*/result/narrowings/*/right",
     "results/*/result/narrowings/*/rule",
     "results/*/result/order/*",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
-    "results/*/result/report/root/label",
     "results/*/result/rights_of/*/right",
     "results/*/result/rights_of/*/rule",
     "results/*/result/rights_of/*/tuple/*",
@@ -1423,9 +1354,6 @@
     "results/*/result/margins/*/estimate",
     "results/*/result/order/*",
     "results/*/result/record_invalid/*/estimate",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
-    "results/*/result/report/root/label",
     "results/*/result/risk_premises/*/ast/*/*",
     "results/*/result/statuses/*/alternative",
     "results/*/result/tables/might/*/alternative",
@@ -1445,10 +1373,7 @@
     "results/*/generator",
     "results/*/result/error",
     "results/*/result/generator",
-    "results/*/result/order/*",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
-    "results/*/result/report/root/ast/*/*"
+    "results/*/result/order/*"
    ],
    "kind": "follow-up",
    "id": "F4",
@@ -1463,9 +1388,6 @@
     "results/*/result/environment_prime/profiles/*",
     "results/*/result/order/*",
     "results/*/result/pairs/*/pair/*",
-    "results/*/result/report/assumptions/*/label",
-    "results/*/result/report/assumptions/*/name",
-    "results/*/result/report/root/label",
     "results/*/result/targets/*"
    ],
    "kind": "follow-up",
