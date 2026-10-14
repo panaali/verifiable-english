@@ -7324,6 +7324,8 @@
   "tests/test_lean_handles.py::test_a_rust_process_that_ended_is_replaced",
   "tests/test_lean_handles.py::test_a_rust_process_that_times_out_is_killed_and_not_reused",
   "tests/test_lean_handles.py::test_a_rust_process_that_writes_two_records_is_no_answer",
+  "tests/test_lean_handles.py::test_a_rust_record_completed_past_its_deadline_is_no_answer[response]",
+  "tests/test_lean_handles.py::test_a_rust_record_completed_past_its_deadline_is_no_answer[write]",
   "tests/test_lean_handles.py::test_adapter_environment_is_encoded_once_and_immutable",
   "tests/test_lean_handles.py::test_handles_answer_the_evaluation_corpus_as_resending_does",
   "tests/test_lean_handles.py::test_handles_answer_the_route_corpus_as_resending_does[alternatives]",
