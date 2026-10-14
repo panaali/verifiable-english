@@ -29,7 +29,7 @@ STRUCTURAL = {"x-tagged", "x-fuel", "x-case", "x-select", "x-row"}
 # Batch 13b introduced these bounded response checks before D1 classified their
 # dialect keywords. Keep the signed Decision section pinned and track the exact
 # outstanding set until its owner reviews the extension.
-PENDING_D1 = {"x-claim-nodes", "x-max-steps", "x-background-bound",
+PENDING_D1 = {"x-claim-nodes", "x-max-steps", "x-background-bound", "x-reading-plan",
               # infra/oom-rootcause's readings-route label check, merged after D1 was signed.
               "x-unique-strings"}
 
@@ -306,6 +306,7 @@ SHAPES = {
     **dict.fromkeys(["node", "lean", "copied", "encodedEnvironment"], "inner"),
     "tagged": "x-tagged", "fuel": "x-fuel", "echo": "x-echo", "equals": "x-equals", "length": "x-length",
     "claimNodes": "x-claim-nodes", "maxSteps": "x-max-steps", "backgroundBound": "x-background-bound",
+    "readingPlan": "x-reading-plan",
     "uniqueStrings": "x-unique-strings",
     "count": "x-count", "references": "x-references", "index": "x-index", "digest": "x-digest", "zip": "x-zip",
     "zipOrEmpty": "x-zip-or-empty", "onCase": "x-case", "select": "x-select", "countWhere": "x-count-where",
