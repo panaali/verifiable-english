@@ -6,14 +6,15 @@ and the body. `python_answer` and `lean_answers` give each implementation's answ
 `{"outcome": "ok", "value": <projection>}` or `{"outcome": "error", "code", "text"}` (Python may also crash).
 `verdict` compares two answers under the mode's contract:
 
-* `agree`: the same projection (identities, every unit's span, status and parent, the whole coverage), or the
-  same `(code, text)`;
+* `agree`: the same projection (identities, every unit's span, status and parent, the coverage owned by the
+  wrapper), or the same `(code, text)`. Norm-defaults gap and content-bearing readings findings are added by
+  Python after the Lean document answer, so the raw Lean mode is compared before that enrichment;
 * `fail-closed`: Lean answers `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or Python
   does (its own checker could not decide);
-* `environment`, `formula`, `admission`: both reject, and Python's rejection is another decoder's (`owner_of`):
+* `environment`, `formula`, `admission`, `readings`: both reject, and Python's rejection is another decoder's (`owner_of`):
   the text its `Environment` gives the embedded environment by itself (the envelope decoder, batch 12), or one
-  raised inside `formula_from_data` (the formula decoder) or `admit_document` (W2 admission), whose texts are
-  batch 13's (docs/LEAN-FIRST-PLAN.md 2.1; conformance/DIFFFUZZ.md DF-3 and DF-9). Only the outcome is compared;
+  raised inside `formula_from_data` (the formula decoder), `admit_document` (W2 admission), or
+  `validate_reading_sets` (the readings decoder on the original document path). Only the outcome is compared;
 * `differ`: anything else, a finding.
 
 `seeds()` is the seed corpus: every `ve-document@1` text of the repository and generated documents that reach
@@ -31,7 +32,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 FAIL_CLOSED = ("CheckerUnavailable", "ResourceLimit")
 # `VE.Service.Document.ownedProfiles` (checked against the Lean mode by `tests/test_lean_document_wrapper.py`).
-OWNED = frozenset({"alternatives@0", "data@0", "definitions@0", "documents@1", "norms@0", "relational-fol@0", "risk@0",
+OWNED = frozenset({"alternatives@0", "data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "risk@0",
                    "time@0"})
 
 
@@ -60,6 +61,26 @@ def projection_of(units, coverage, document_id, source_id):
             "coverage": coverage}
 
 
+def wrapper_coverage(coverage, doc):
+    """The coverage fields the Lean document mode owns. Python adds norm-defaults gap evidence and
+    content-bearing readings findings after that answer; the public result retains both."""
+    defaults = doc.get("norm_defaults") is not None
+    from ve.document import _content_bearing
+    readings = _content_bearing(doc)
+    if not defaults and not readings:
+        return coverage
+    base = deepcopy(coverage)
+    if defaults:
+        base.pop("norm_defaults", None)
+        base["residual"].pop("gaps", None)
+        base["residual"].pop("ungrounded_defaults", None)
+    if readings:
+        for key in ("separations", "readings_findings", "pending_candidates", "couplings"):
+            base["residual"].pop(key, None)
+    base["residual_total"] = sum(base["residual"].values())
+    return base
+
+
 def python_answer(text: str) -> dict:
     """Python's answer: its own path (`_load_document`, which `load_document` keeps for the documents the Lean mode
     cannot decide yet, batch 16b), then `check_document`'s wrapper: `_report`, which admits the claim graph and
@@ -85,7 +106,7 @@ def python_answer(text: str) -> dict:
             return {"outcome": "crash", "code": "RecursionError", "text": str(exc)[:200]}
         except Exception as exc:  # noqa: BLE001 - only VEError may escape; the rest is the finding
             return {"outcome": "crash", "code": type(exc).__name__, "text": str(exc)[:200]}
-    return {"outcome": "ok", "value": projection_of(doc["units"], result["coverage"], result["document_id"],
+    return {"outcome": "ok", "value": projection_of(doc["units"], wrapper_coverage(result["coverage"], doc), result["document_id"],
                                                      result["source_id"])}
 
 
@@ -127,8 +148,10 @@ def environment_error(text: str):
 
 # The decoders whose texts another batch owns (docs/LEAN-FIRST-PLAN.md 2.1, conformance/DIFFFUZZ.md): Python's
 # function that raised, by the owner's name. `formula_from_data` is the formula decoder (DF-9, batch 13: the
-# `check` mode's wording becomes the spec), `admit_document` the W2 admission route (DF-9, batch 13).
-OWNERS = {"admit_document": "admission", "formula_from_data": "formula"}
+# `check` mode's wording becomes the spec), `admit_document` the W2 admission route (DF-9, batch 13), and
+# `validate_reading_sets` the original readings decoder for the RD-5 pilot's Python document path.
+OWNERS = {"admit_document": "admission", "formula_from_data": "formula",
+          "validate_reading_sets": "readings"}
 OWNED_ELSEWHERE = ("environment", *OWNERS.values())
 
 
@@ -178,14 +201,11 @@ def owned(document) -> bool:
     return not set(environment) - allowed
 
 
-# Seeds the fuzzer compares as they are but does not mutate, by path prefix, with the reason. Each is a seed Lean's
-# document mode refuses whole (`FAIL_CLOSED` of tests/test_lean_document_wrapper.py, which checks this table against
-# it), so every mutant would meet a constant refusal that agrees with any answer.
+# Seeds the fuzzer compares as they are but does not mutate, by path prefix, with the reason. The question
+# fixture documents are large vocabulary corpora. Their seed answers are checked by the document-wrapper test;
+# mutating them exceeded the bounded fuzzer's useful CPU budget on the question branch.
 UNMUTATED = {
-    "usecases/question-answering/": "the question reader's vocabulary fixtures (docs/spec/question-answering.md 7): Lean "
-                                    "refuses each whole (norm-defaults@0, the norms route, the surface parser); their "
-                                    "mutants added 50 to 70 s of CPU to the fuzzer's 300 s budget and compared nothing "
-                                    "(question-answering-integrate-fix-report.md, base against head)",
+    "usecases/question-answering/": "large question vocabulary fixtures; seed answers are compared separately",
 }
 
 

@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 
 from tests import b15b_model_cases as model_cases
-from ve.background import _background_python
+from ve.background import background
 from ve.environment import Environment
 from ve.profiles import BY_NAME, DISPLAY_FIELDS, MODEL_REDUCTIONS, model_environment
 
@@ -52,7 +52,7 @@ def _model_vocabulary(env) -> dict:
                            for name, decl in env.predicates.items()},
             "constants": {name: decl.sort for name, decl in env.constants.items()},
             "definitions": env.definition_entries,
-            "background": [(premise.generator, repr(premise.formula)) for premise in _background_python(env)],
+            "background": [(premise.generator, repr(premise.formula)) for premise in background(env)],
             "order": env.order, "closure": env.closure}
 
 

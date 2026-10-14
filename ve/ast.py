@@ -372,13 +372,6 @@ class _Checker:
             raise TypeMismatch("Unknown formula constructor")
 
 
-def _typing_in_scope(env) -> bool:
-    """Whether the backend typing adapter takes `env`. W6 quantity environments
-    (`unit_schema`) are typed by the quantity route at admission; Lean's `check`
-    mode does not take them, so their standalone typing stays Python's."""
-    return getattr(env, "unit_schema", None) is None
-
-
 # Lean's accepted typing verdicts, keyed by the environment identity (a digest
 # of the canonical environment) and the canonical AST. Only Lean's answers are
 # kept; a rejection is never cached.
@@ -388,71 +381,44 @@ _LEAN_TYPED_LIMIT = 1 << 16
 
 @semantic_entry("typing")
 def check_formula(env: Environment, formula: Formula) -> Formula:
-    """Check a closed formula. Open formulas are never accepted as claims."""
-    from .backends.dispatch import authority_for, execute
-    if authority_for("typing") == "python" or not _typing_in_scope(env):
-        _Checker(env).formula(formula)
-        return formula
+    """Check a closed formula. Open formulas are never accepted as claims.
+
+    Lean's `check` mode decides under every authority (lean-first batch 13b)."""
+    from .backends.dispatch import owned
     from .backends.relay import decide
-    from .backends.rust_jsonl import run as rust_run
     from .environment_wire import encoded_environment
+    core_gate(env)
     ast = _to_data(formula)
-    payload = {"environment_id": env.environment_id, "ast": ast}
-
-    def case():
-        return {"id": "typing", "environment": encoded_environment(env, "lean-base", env.to_dict), "ast": ast}
-
-    def python():
-        _Checker(env).formula(formula)
-        return formula
 
     def lean():
         key = (env.environment_id, canonical_json(ast))
         if key not in _LEAN_TYPED:
-            decide("check", [case()])
+            decide("check", [{"id": "typing", "environment": encoded_environment(env, "lean-base", env.to_dict),
+                              "ast": ast}])
             if len(_LEAN_TYPED) >= _LEAN_TYPED_LIMIT:
                 _LEAN_TYPED.clear()
             _LEAN_TYPED[key] = True
         return formula
 
-    def rust():
-        rust_run({**case(), "kind": "check"})
-        return formula
-
-    return execute("typing", payload, python, lean=lean, rust=rust)
+    return owned("typing", lean)
 
 
 @semantic_entry("typing")
 def check_document(env: Environment, document: Document) -> Document:
     if type(document) is not Document or not document.formulas:
         raise SyntaxError("A document must contain at least one formula")
-    from .backends.dispatch import authority_for, execute
-    if authority_for("typing") == "python" or not _typing_in_scope(env):
-        checker = _Checker(env)
-        for formula in document.formulas:
-            checker.formula(formula)
-        return document
+    from .backends.dispatch import owned
     from .backends.relay import decide
-    from .backends.rust_jsonl import run as rust_run
     from .environment_wire import encoded_environment
+    core_gate(env)
     case = {"id": "typing", "environment": encoded_environment(env, "lean-base", env.to_dict),
             "ast": [_to_data(formula) for formula in document.formulas]}
-
-    def python():
-        checker = _Checker(env)
-        for formula in document.formulas:
-            checker.formula(formula)
-        return document
 
     def lean():
         decide("check", [case])
         return document
 
-    def rust():
-        rust_run({**case, "kind": "check"})
-        return document
-
-    return execute("typing", case, python, lean=lean, rust=rust)
+    return owned("typing", lean)
 
 
 def _to_data(node):

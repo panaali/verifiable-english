@@ -1,0 +1,1447 @@
+{
+ "head": "f1ab817752407de44f0d1ba41c68afc00ab9672c",
+ "tree": "b6c0f7eb432a32ed3874cd5482b905d671d26804",
+ "unit_count": 360,
+ "units": [
+  {
+   "unit": "tests/test_agent_policy.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_agent_policy_rerun.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_agent_policy_unspecified.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_alternatives_profile.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_alternatives_three_way.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_ar6_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_ar8_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_argument.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_argument_adversarial.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_argument_fixtures.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_asimov_extended.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_asimov_laws.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_assist.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_assist_deadline.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_assist_invariants.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_assist_recovery.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_assist_recovery_replay.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_assist_split.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_assurance_manifest.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_attacks.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_authoring.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_b11b_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_b15a_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_b15b_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_b16a_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_b16b_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_b16c_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_b17_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_b17_owner.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_background.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_batch_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_bench_baselines.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_bench_timing.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_bluedot_grant.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_bundle.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_calendar_regression_w6b.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_cedar_attributes.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_cedar_norms.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_cli.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_closure.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_closure_certificates.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_closure_induction.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_closure_witnesses.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_colab.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_compose_dispatch.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_compose_integration.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_conformance.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_consolidation_tools.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_constitution_w6a_controls.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_count_w6a.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_coverage_dashboard.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_cpu_bounds.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_data_adapters.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_data_flags.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_data_surface.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_data_three_way.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_definitions.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_definitions_differential.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_definitions_english.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_difffuzz.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_discourse.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_discourse_answer.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_discourse_constitution.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_discourse_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_discourse_three_way.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_document.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_document_lean_switch.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_e1_core.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_e1_prompts.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_eff_tests_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_eligibility_wfp.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_encoder_shapes.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e26_ab.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e26_boundary.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e26_diagnosis.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e26_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e26_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_boundary.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_integer_marks.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_ledger_sites.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_overlay.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_profile_matrix.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_python.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_relay.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_responses.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_saved_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_selection.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_e2_statements.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_grammar_gen.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_adapter.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_engine.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_lexer.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_lexicon.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_rejections.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_route.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_s0.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_s2.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_s3.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_s3_compare.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_seal.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_tables.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_lean_tokens.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_english_unambiguity.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_entailment.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_entailment_adversarial.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_entailment_properties.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_enum_domains.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_environment_field_types.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_equivalence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_equivalence_properties.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_evaluate_search.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_evidence_bounds.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_evidence_tools.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_fluent.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_fol_names.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_fret_w6a_rerating.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_gate.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_gate_collection.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_gate_integrity.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_gate_rerun.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_gatekeeper_adapter.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_grammar.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_grammar_backends.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_grammar_cli.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_hang_guards.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_identity_lint.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_inventory_lint.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lake_outputs.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_audit_record.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_authority_values.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_budget_types.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_build.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_certificates.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_conformance.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_decided_share.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_document_wrapper.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_b10a_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_b10b_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_b12_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_b13a.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_b3b_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_b3d_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_b5_delta.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_b6_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_b9_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_diff.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_oracle.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_rule3_measurement.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_first_triage.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_handles.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_import_reader.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_layers_once.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_service.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lean_service_schema.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_legend.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_lexicon.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_llm.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_merge_tooling_evidence.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_metered_differential.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_metered_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_model_environment.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_mutants.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_nary.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_nary_differential.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_nary_folio.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_native_build_lock.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_natural.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_nested_pytest.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_news_w6a_fixtures.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_admission.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_defaults.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_defaults_contract.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_defaults_differential.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_defaults_layered.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_defaults_relay_english.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_defaults_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_defaults_switch.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_defaults_three_way.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norm_english.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norms.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norms_contract.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_norms_three_way.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_numeral_conversion.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_order.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_order_gate.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_order_grammar.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_order_round2.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p0_three_way.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_amendment11.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_amendment12.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_amendment13.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_amendment14.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_amendment15.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_amendment7.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_amendment8.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_amendment9.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_history.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_infrastructure.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_native_counter.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_preflight.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_p1_reconcile.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_parser_renderer.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_precommit_hook.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_profile_artifacts.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_profiles.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_properties.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_propose.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_question_differential.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_question_fixture_sources.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_question_lean_relay.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_question_reading.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_budget_zero.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_companions_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_component_names.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_components_document.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_components_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_components_load.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_english.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_names.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd2a_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd2b_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd3_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd4a_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd4b_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd6a.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd6a_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd6b_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd8_report.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_defaults_statements.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_lazy_pairs.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_lean_sharing.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_nd_document.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_nd_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_rd6b_differential.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_route_fuzz.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_route_relay.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_s1_differential.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_s1_document.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_s1_integration.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_s1_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_s1_python.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_s2_document.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_s2_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_s2_python.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_readings_verdicts_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_regen_generated.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_relay.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_relay_english_scale.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_relay_lint.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_relay_mutation_gate.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_relay_wire_check.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_replay_conservativity.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_report_english.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_reports.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_reports_agreement.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_reports_fault_order.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_reports_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_reports_status.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_response_schemas.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_rights.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_rights_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_rights_render_status.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_rights_three_way.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_diagnostics.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_differential.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_english.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_every_diagnostic.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_fixtures.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_generated_policies.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_integration.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_lean_route.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_margins.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_profile.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_risk_w6_extension.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_route_parity.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_route_row_schemas.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_route_transport.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_run_cache.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_runner.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_rust_conformance.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_rust_jsonl_schema.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_rust_reproducible.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_safety_framework.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_search_options.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_select_tests.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_senses_document.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_senses_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_senses_pack.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_senses_route.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_single_owner.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_soft_candidate_economy.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_soft_norms_conformance.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_soft_norms_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_soft_request_economy.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_soft_review_regressions.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_softnorms_contract.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_softnorms_public_contract.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_speech_acts.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_speech_acts_conformance.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_speech_acts_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_speech_source_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_speech_source_relay.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_speech_source_switch.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage0_inventory.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage0_probe_matrix.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_bundle.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_dispatch.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_evaluation.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_faults.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_graph.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_norms.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_parse.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_readings.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_standalone.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stage2_validation.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_statement_block_environment.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_stats.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_surface_registry.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_t1c.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_testing_profile_doc.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_time_surface_w6a.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_time_w6a.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_units_lean_gate_w6a.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_units_lean_w6a.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_units_relay_w6a.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_units_w6a.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_vacuity.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_ve_iface.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_views.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_views_polish.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a2_looprecheck1.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a2_numeral_characters.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a_certificate_steps.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a_citations.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a_documents.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a_limit_generator.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a_limits.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a_looprecheck1.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a_looprecheck2.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a_review_regressions.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6a_route_limits.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_w6b_gates.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_corpus.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_engine.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_faults.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_generator.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_lint.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_precondition.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_s4_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_s5_admission.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_s5_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_soft_lean.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_contract_three_way.py",
+   "exit": 0
+  },
+  {
+   "unit": "tests/test_wire_gate_corpus.py",
+   "exit": 0
+  },
+  {
+   "unit": "tools/test_layer_policy.py",
+   "exit": 0
+  }
+ ]
+}

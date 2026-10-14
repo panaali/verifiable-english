@@ -58,6 +58,7 @@ module ResponseShape.Schemas.Parse
 module ResponseShape.Schemas.Quantity
 module ResponseShape.Schemas.Question
 module ResponseShape.Schemas.Readings
+module ResponseShape.Schemas.ReadingsChoices
 module ResponseShape.Schemas.ReadingsRoute
 module ResponseShape.Schemas.Reports
 module ResponseShape.Schemas.Rights
@@ -330,6 +331,8 @@ module VE.Readings.SupConflict
 module VE.Readings.SupEnv
 module VE.Readings.SupExtra
 module VE.Readings.SupExtraExamples
+module VE.Readings.SupFill
+module VE.Readings.SupFillWire
 module VE.Readings.SupFree
 module VE.Readings.SupRun
 module VE.Readings.SupSlot
@@ -423,6 +426,7 @@ module VE.Service.Graph
 module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
+module VE.Service.ReadingsChoices
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission
@@ -751,6 +755,7 @@ VE.Readings.AchievesU@VE.Readings.Unspecified
 VE.Readings.AsciiL@VE.Readings.Strings
 VE.Readings.Attached.below@VE.Readings.Doc
 VE.Readings.Attached@VE.Readings.Doc
+VE.Readings.AuthorLite@VE.Readings.SupFill
 VE.Readings.ChoiceExtension@VE.Readings.Choice
 VE.Readings.ChosenAt@VE.Readings.UpSlot
 VE.Readings.ChosenNorm@VE.Readings.ChoiceFacts
@@ -761,6 +766,8 @@ VE.Readings.ConsistentK@VE.Readings.Components
 VE.Readings.ConsistentU@VE.Readings.Verdicts
 VE.Readings.CounterU@VE.Readings.Verdicts
 VE.Readings.Covers@VE.Readings.Verdicts
+VE.Readings.DecidesByD@VE.Readings.SupFill
+VE.Readings.DecidesBySoftD@VE.Readings.SupFill
 VE.Readings.Encodes@VE.Readings.Choice
 VE.Readings.Fits@VE.Readings.Choice
 VE.Readings.FixedNorm@VE.Readings.ChoiceFacts

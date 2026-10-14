@@ -219,6 +219,7 @@ def claim : Shape :=
 def document : Shape :=
   c "Time.Document.runDocument: the admitted quantity document's report and identities." [
     obj,
+    .references "/report/assumptions" "name" "/document/graph/nodes/*/name",
     .required ["id", "status", "admitted", "assurance", "report", "report_id", "environment_id", "kinds"],
     closed [
       ("id", ref "common.json#/$defs/id_ok"),
