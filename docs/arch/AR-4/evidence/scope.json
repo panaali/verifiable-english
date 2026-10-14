@@ -1,7 +1,15 @@
 {
  "base": "9f40783b8fc403a99798d9951615d76aa2088d38",
- "head": "d9196e540444d9e5b081f77cc643fbb6b1b7b072",
+ "head": "2a231176a6ddf85ccf03592ac1122a78a1534650",
  "commits": [
+  {
+   "hash": "2a231176a6ddf85ccf03592ac1122a78a1534650",
+   "subject": "AR-4 mark removed section11 architecture statement corrected"
+  },
+  {
+   "hash": "f58dbda9e75c5ce6b2aa8d05f6685397cc9bc2a5",
+   "subject": "AR-4 bind refreshed scope and metrics to F8 F9 fixes"
+  },
   {
    "hash": "d9196e540444d9e5b081f77cc643fbb6b1b7b072",
    "subject": "AR-4 record F8 and F9 evidence and signed R13 condition"
@@ -172,6 +180,7 @@
   }
  ],
  "files": [
+  "docs/ARCHITECTURE.md",
   "docs/arch/AR-4/DELTA.md",
   "docs/arch/AR-4/REPORT.md",
   "docs/arch/AR-4/evidence/budget.json",
