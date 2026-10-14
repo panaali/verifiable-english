@@ -81,8 +81,8 @@ Never edit a generated file by hand, and never hand-merge one: regenerate it wit
 - `uv run python tools/regen_generated.py --check` fails when a generated file is stale;
   `--write` regenerates them all, in dependency order; `--resolve` finishes a `git merge --no-commit`
   whose only conflicts are generated files.
-- `tools/gate-collection.json` is one of them: regenerate it after any test is added, renamed or
-  removed.
+- The gate records collected test IDs with the commit it checked. `tools/gate_collection.py --check`
+  compares the current collection with its merge base; there is no committed collection file.
 - `lean/checkers.lock` pins the built checkers; `python3 tools/rust_build.py --check` fails when the
   Rust binary is not pinned.
 

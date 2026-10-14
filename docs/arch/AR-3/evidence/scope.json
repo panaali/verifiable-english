@@ -1,0 +1,137 @@
+{
+ "range": "main..HEAD --no-merges",
+ "base": "7478b23dd5b1219e9e29f86acbbece87df76ce33",
+ "head": "b694bafc15ffd5fa340770daceb292d04b554874",
+ "commits": [
+  {
+   "sha": "b694bafc15ffd5fa340770daceb292d04b554874",
+   "subject": "AR-3: measurement and seeded faults for the removal records"
+  },
+  {
+   "sha": "73a9e30d9ddff5d70bf41f26619f3f67a12b3e2e",
+   "subject": "AR-3: removal records for the base tests this batch replaced"
+  },
+  {
+   "sha": "723764dccde2f194ecfcef5bd721a363cc3d7878",
+   "subject": "AR-3: a lost test ID needs a Test-removed trailer; the diff only labels it"
+  },
+  {
+   "sha": "3e958d25844d36620961c8a48b6158df5914233f",
+   "subject": "AR-3: report and DELTA at the new merge base; the retired-file resolution (G7)"
+  },
+  {
+   "sha": "a3a52b6761980efd5f3b68def74d7d0447a117a4",
+   "subject": "AR-3: measurement and seeded faults again at the new merge base, with the retired-file fault"
+  },
+  {
+   "sha": "3f78b8731c1f26c58648d3306db82bd1ebc5d279",
+   "subject": "AR-3: report, DELTA and the report's test over the saved evidence"
+  },
+  {
+   "sha": "da8f28dda6a18d39654c5c07c8d5588b8a6188e4",
+   "subject": "AR-3: measurement, seeded faults and scope scripts with their saved evidence"
+  },
+  {
+   "sha": "3621ea4e354b97c55091696d2863d3a441bb011a",
+   "subject": "AR-3: the base Rust build test checks rust_build's flags"
+  },
+  {
+   "sha": "170211c1d0ad542eaed777d5852efb651d0c9d75",
+   "subject": "AR-3: the base worktree gets a Rust binary its own lock pins"
+  },
+  {
+   "sha": "d98373a55e795e9b7e870042bf9c20716f56c47e",
+   "subject": "AR-3: the gate checks its collection against the merge base's, not a committed baseline"
+  }
+ ],
+ "files": {
+  ".gitattributes": {
+   "added": 0,
+   "deleted": 1
+  },
+  "README.md": {
+   "added": 11,
+   "deleted": 8
+  },
+  "docs/arch/AR-3/DELTA.md": {
+   "added": 16,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/REPORT.md": {
+   "added": 133,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/evidence/measure.json": {
+   "added": 650,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/evidence/mutants.json": {
+   "added": 93,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/evidence/scope.json": {
+   "added": 121,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/measure.py": {
+   "added": 88,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/report.py": {
+   "added": 37,
+   "deleted": 0
+  },
+  "docs/arch/AR-3/seed_faults.py": {
+   "added": 102,
+   "deleted": 0
+  },
+  "docs/merge-tooling.md": {
+   "added": 0,
+   "deleted": 1
+  },
+  "tests/test_ar3_report.py": {
+   "added": 74,
+   "deleted": 0
+  },
+  "tests/test_eff_tests_report.py": {
+   "added": 4,
+   "deleted": 1
+  },
+  "tests/test_gate.py": {
+   "added": 5,
+   "deleted": 9
+  },
+  "tests/test_gate_collection.py": {
+   "added": 552,
+   "deleted": 64
+  },
+  "tests/test_gate_integrity.py": {
+   "added": 20,
+   "deleted": 13
+  },
+  "tests/test_gate_rerun.py": {
+   "added": 15,
+   "deleted": 4
+  },
+  "tests/test_regen_generated.py": {
+   "added": 27,
+   "deleted": 1
+  },
+  "tools/gate-collection.json": {
+   "added": 0,
+   "deleted": 14250
+  },
+  "tools/gate.py": {
+   "added": 62,
+   "deleted": 39
+  },
+  "tools/gate_collection.py": {
+   "added": 463,
+   "deleted": 41
+  },
+  "tools/regen_generated.py": {
+   "added": 12,
+   "deleted": 5
+  }
+ }
+}
