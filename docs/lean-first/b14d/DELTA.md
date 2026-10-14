@@ -12,3 +12,4 @@ The A/B recorder gives each side a distinct temporary pilot directory. Its compa
 ## Pending DRI classification
 
 - `x-reading-plan` is a request-binding relation extension in the generated response schema. It is listed in `docs/INTEGRATION-GAPS.md` and the architecture census's pending D1 set. The DRI owns its final placement in ADR 0001. This does not change a public answer.
+- A joint choice now ignores a non-assertion reading in an authored set when every active open reading is asserted. Such a choice can return `ALL` where this branch previously returned `UNKNOWN`. No standing ruling signs this verdict change; DRI classification is pending. Evidence: `test_joint_choices_ignore_authored_sets_in_every_wire_vector` covers both authored-set positions and both asserted and non-assertion authored readings.
