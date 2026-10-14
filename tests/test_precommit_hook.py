@@ -16,6 +16,8 @@ import subprocess
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
+
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "tools/hooks/pre-commit"
@@ -98,8 +100,8 @@ class Staging:
 def fixture_repo(tmp_path_factory) -> Path:
     """Commit the current source into a private repo; no probe reads a moving HEAD."""
     repo = tmp_path_factory.mktemp("precommit-repo")
-    subprocess.run(["git", "init", "-q", str(repo)], check=True)
-    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).split(b"\0")
+    subprocess.run(["git", "init", "-q", str(repo)], check=True, timeout=HANG_TIMEOUT)
+    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT, timeout=HANG_TIMEOUT).split(b"\0")
     for encoded in tracked:
         if not encoded:
             continue
@@ -110,10 +112,10 @@ def fixture_repo(tmp_path_factory) -> Path:
             target.symlink_to(os.readlink(source))
         else:
             shutil.copy2(source, target)
-    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True)
+    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True, timeout=HANG_TIMEOUT)
     subprocess.run(["git", "-c", "user.name=VE Test", "-c", "user.email=ve@example.invalid",
                     "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture"],
-                   cwd=repo, check=True)
+                   cwd=repo, check=True, timeout=HANG_TIMEOUT)
     return repo
 
 
