@@ -35115,6 +35115,11 @@ theorem VE.Service.runMode_readings
     VE.Service.runMode VE.Service.Mode.readings j = VE.Service.Standalone.reported VE.Service.Family.readingsMode j
   -- uses VE.Service.Family.readingsMode@VE.Service.Family VE.Service.Mode.readings@VE.Service.Protocol VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 429129561
+theorem VE.Service.runMode_readingsChoices
+  ∀ (j : Lean.Json),
+    VE.Service.runMode VE.Service.Mode.readingsChoices j = VE.Service.Standalone.reported VE.Service.ReadingsChoices.run j
+  -- uses VE.Service.Mode.readingsChoices@VE.Service.Protocol VE.Service.ReadingsChoices.run@VE.Service.ReadingsChoices VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- expr 1105078207
 theorem VE.Service.runMode_readingsRoute
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.readingsRoute j = VE.Readings.Run.runCaseReported j
   -- uses VE.Readings.Run.runCaseReported@VE.Readings.Run VE.Service.Mode.readingsRoute@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol

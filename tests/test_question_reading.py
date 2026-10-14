@@ -20,7 +20,7 @@ import sys
 import pytest
 
 import question_fixtures as F
-from subprocesses import HANG_TIMEOUT
+from subprocesses import HANG_TIMEOUT, busy_cpu
 from ve import ask
 from ve.backends import english_lean, relay
 from ve.english import EnglishVocabulary
@@ -525,20 +525,13 @@ def test_text_variants_get_well_formed_answers(name):
 
 def test_the_whole_question_is_bounded_by_the_modes_deadline(monkeypatch):
     """The CPU deadline of `english.question` bounds the whole service operation (decoding, the lexicon's
-    checks, every candidate's reading and the answer): with CPU use advanced after the request write, a question that
-    needs work is CheckerUnavailable naming the mode, never a verdict, a refusal or ResourceLimit."""
+    checks, every candidate's reading and the answer): with the deadline injected near zero, a question that
+    needs work is CheckerUnavailable naming the mode, never a verdict, a refusal or ResourceLimit. The service's
+    CPU is read on the `busy_cpu` clock: on /proc's own a fast machine answers within one tick, which reads as none.
+    The clock moves only once the whole request is sent, so the deadline is found passed while the service works."""
     from ve.backends import lean_service
-    used = [0.0]
-    write_all = lean_service.LeanService._write_all
-
-    def written(self, data, deadline):
-        result = write_all(self, data, deadline)
-        if deadline.mode == MODE:
-            used[0] = deadline.cpu + 1
-        return result
-
-    monkeypatch.setattr(lean_service, "_cpu_seconds", lambda _pid: used[0])
-    monkeypatch.setattr(lean_service.LeanService, "_write_all", written)
+    monkeypatch.setitem(lean_service.DEADLINES, MODE, (1e-6, 1e-6))
+    clock = busy_cpu(monkeypatch, lean_service)
     _, frame, question, _ = next(row for row in F.FIXTURES if row[0] == "U2")
     # A question no earlier request asked, so the relay's answer memo cannot hold it.
     question = question.replace("merit?", "merit ?").replace(" ?", "?") + ""
@@ -546,4 +539,6 @@ def test_the_whole_question_is_bounded_by_the_modes_deadline(monkeypatch):
     case["question"] = case["source"] = question[:-1] + " ?"
     with pytest.raises(CheckerUnavailable, match=f"mode {MODE} used more than its deadline") as caught:
         relay.decide(MODE, [case])
-    assert not isinstance(caught.value, ResourceLimit)
+    assert not isinstance(caught.value, ResourceLimit) and caught.value.operation == MODE
+    # The request's CPU was read at its start and again, after it was sent, when the deadline was found passed.
+    assert clock.fired == ["response"] and any(len(seen) >= 2 for seen in clock.readings.values()), clock
