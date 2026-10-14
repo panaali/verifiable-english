@@ -7,6 +7,8 @@
                                                      # the norm-defaults corpus's queries into DIR
     uv run python tools/question_answering_agreement.py corpus DIR... [--write] [--workers W]
                                                      # ask each query and compare
+    uv run python tools/question_answering_agreement.py refresh-saved READINGS_DIR --workers 4
+                                                     # finish the DRI's measured 450-tree scope and save reasons
 
 For every fixture question, and for every query of the readings and norm-defaults conformance corpora asked as an
 F1 question of its document, Lean's leads (`ve ask`) are compared with `ve document readings --conclusion` on the
@@ -56,6 +58,7 @@ CORPUS_METHOD = ("each query of the readings suites and of the generated norm-de
 
 
 OLDER_BUDGET_REASON = "no complete checked classification within the search budget"
+SAVED_TREES = 450  # DRI 2026-10-14: seeds 450–999 remain deferred.
 
 
 def saved_agreement() -> dict:
@@ -192,18 +195,23 @@ def pytest_configure(config):
 
 # The generated norm-defaults corpus's queries.
 
+def _nd_conclusions():
+    from conformance import norm_defaults_differential as generator
+    for predicate in generator.REGULATED:
+        yield ["forall", "act", ["unary", predicate, ["var", 0]]]
+        yield ["unary", predicate, ["const", "k"]]
+
+
 def _nd_queries(item):
     """The generated document's queries, each with the existing route's verdict (in a pool worker)."""
     scratch, row = item
-    from conformance import norm_defaults_differential as generator
     path = Path(scratch) / f"{row['case']}.ve.md"
     path.write_text(row["text"])
     out = []
-    for predicate in generator.REGULATED:
-        for conclusion in (["forall", "act", ["unary", predicate, ["var", 0]]], ["unary", predicate, ["const", "k"]]):
-            older, note, older_reason = _older_here(path, conclusion)
-            out.append({"corpus": "norm-defaults", "case": row["case"], "document": row["text"],
-                        "conclusion": conclusion, "older": older, "older_reason": older_reason, "note": note})
+    for conclusion in _nd_conclusions():
+        older, note, older_reason = _older_here(path, conclusion)
+        out.append({"corpus": "norm-defaults", "case": row["case"], "document": row["text"],
+                    "conclusion": conclusion, "older": older, "older_reason": older_reason, "note": note})
     return out
 
 
@@ -213,7 +221,7 @@ def norm_defaults(out: Path, trees: int, workers: int, start: int = 0) -> None:
     out.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="ve-q2-nd-") as scratch:
         corpus_file = Path(scratch) / "corpus.json"
-        norm_defaults_corpus(corpus_file)
+        norm_defaults_corpus(corpus_file, trees=trees, include_invalid=False)
         rows = [row for row in json.loads(corpus_file.read_text()) if not row["case"].startswith("invalid/")][start:trees]
         with open(out / "norm-defaults.jsonl", "w", encoding="utf-8") as sink, \
                 multiprocessing.get_context("fork").Pool(workers) as pool:
@@ -337,6 +345,141 @@ def corpus(paths, write=False, workers=1, checkpoint: Path | None = None):
     return summary
 
 
+def _refresh_saved_row(item):
+    """Recheck evidence absent from the first saved run, against its generated document."""
+    scratch, index, old, document = item
+    from ve.ask import answer, prepare
+    from ve.errors import CheckerUnavailable, VEError
+    path = Path(scratch) / f"saved-{index}.ve.md"
+    path.write_text(document)
+    row = dict(old)
+    if row["older"] in {None, "UNKNOWN"}:
+        verdict, note, reason = _older_here(path, row["conclusion"])
+        if row["older"] is None and verdict is not None:
+            # An operational failure in the first run is not a durable verdict.
+            # Ask this query now that the older route returned one.
+            record = {"corpus": row["corpus"], "case": row["case"], "document": document,
+                      "conclusion": row["conclusion"], "older": verdict, "older_reason": reason}
+            _, fresh = _compare((scratch, index, "refreshed", record))
+            return index, fresh
+        if verdict != row["older"]:
+            raise ValueError(f"older verdict changed for {row['case']}: {row['older']} -> {verdict} ({note})")
+        row["older_reason"] = reason
+    else:
+        # The older route only emits a `reason` for UNKNOWN; decided outputs
+        # have no reason member. This is the producer's null, not review prose.
+        row["older_reason"] = None
+    if "leads" in row:
+        if "unknown" in row["leads"]:
+            raw = document.encode()
+            partial = prepare(path, raw, row["question"], generate=False)
+            # X1 is decided by the Lean-checked conflict proof or witness.
+            # The saved lead is already unknown, so query proof search cannot
+            # change this classification. A conflict-only X2 or X4 is counted
+            # as "other"; the row records which evidence was used.
+            if hasattr(partial.builder, "conflict_evidence"):
+                gen = partial.builder.gen
+                partial.request["case"]["evidence"] = partial.builder.conflict_evidence(
+                    {"packages": gen._packages()})
+                try:
+                    trial = partial.ask()
+                except (VEError, CheckerUnavailable):
+                    trial = None
+                if trial is not None and [r["lead"] for r in trial["rows"]] == row["leads"]:
+                    result = trial
+                    row["ask_evidence"] = "conflict only"
+                else:
+                    result = answer(path, raw, row["question"])
+            else:
+                result = answer(path, raw, row["question"])
+            leads = [r["lead"] for r in result["rows"]]
+            if leads != row["leads"]:
+                raise ValueError(f"ask leads changed for {row['case']}: {row['leads']} -> {leads}")
+            row["ask_reasons"] = [r["reason"] for r in result["rows"]]
+        else:
+            row["ask_reasons"] = [None] * len(row["leads"])
+        row["status"] = classify(row["leads"], row["older"], row["older_reason"], row["ask_reasons"])
+    return index, row
+
+
+def refresh_saved(readings_paths, workers: int, checkpoint: Path | None = None) -> dict:
+    """Refresh the previously measured tree scope without expanding it to 1,000 trees.
+
+    Regenerate documents from the schema corpus, capture the older route's budget
+    reasons, and re-ask unknown rows to distinguish checked X1 conflicts. Checked
+    decided leads have no reason by `reason_exact`, so their reasons are null.
+    """
+    import multiprocessing
+    from tools.lean_first_diff import norm_defaults_corpus
+    saved = saved_agreement()
+    previous = saved["corpus"]["rows"]
+    norm_rows = [row for row in previous if row["corpus"] == "norm-defaults"]
+    counts = {}
+    for row in norm_rows:
+        counts[row["case"]] = counts.get(row["case"], 0) + 1
+    expected_cases = {f"s{i}" for i in range(SAVED_TREES)}
+    if not counts or not set(counts) <= expected_cases or set(counts.values()) != {8}:
+        raise ValueError("saved norm-defaults rows are outside the DRI's 450-tree scope or incomplete")
+    readings = corpus(readings_paths, workers=workers)
+    old_readings = [row for row in previous if row["corpus"] == "readings"]
+    if readings["queries"] != len(old_readings):
+        raise ValueError("the captured readings scope changed")
+    with tempfile.TemporaryDirectory(prefix="ve-q2-refresh-") as scratch:
+        generated = Path(scratch) / "generated.json"
+        norm_defaults_corpus(generated, trees=SAVED_TREES, include_invalid=False)
+        generated_rows = {r["case"]: r for r in json.loads(generated.read_text())}
+        if set(generated_rows) != expected_cases:
+            raise ValueError("the DRI's saved generated scope cannot be reproduced")
+        texts = {case: r["text"] for case, r in generated_rows.items()}
+        def query_key(document, conclusion):
+            return hashlib.sha256((document + "\n" + json.dumps(conclusion, sort_keys=True)).encode()).hexdigest()
+        expected = {query_key(r["text"], conclusion) for r in generated_rows.values()
+                    for conclusion in _nd_conclusions()}
+        observed = {query_key(texts[row["case"]], row["conclusion"]) for row in norm_rows}
+        if expected != observed or len(norm_rows) != len(expected):
+            raise ValueError("the saved rows omit or repeat a distinct query of the 450 generated seeds")
+        done = {}
+        if checkpoint is not None and checkpoint.exists():
+            for line in checkpoint.read_text().splitlines():
+                entry = json.loads(line)
+                if (not 0 <= entry["index"] < len(norm_rows) or
+                        entry["row"]["case"] != norm_rows[entry["index"]]["case"] or
+                        entry["row"]["conclusion"] != norm_rows[entry["index"]]["conclusion"]):
+                    raise ValueError("the refresh checkpoint is not for this saved corpus")
+                done[entry["index"]] = entry["row"]
+        pending = [(scratch, i, row, texts[row["case"]]) for i, row in enumerate(norm_rows) if i not in done]
+        with multiprocessing.get_context("fork").Pool(workers) as pool, \
+                (checkpoint.open("a") if checkpoint is not None else contextlib.nullcontext()) as sink:
+            for index, row in pool.imap_unordered(_refresh_saved_row, pending):
+                done[index] = row
+                if checkpoint is not None:
+                    sink.write(json.dumps({"index": index, "row": row}, ensure_ascii=False) + "\n")
+                    sink.flush()
+                if len(done) % 50 == 0:
+                    print(f"refreshed {len(done)}/{len(norm_rows)} saved norm-defaults queries", flush=True)
+    results = readings["rows"] + [done[i] for i in range(len(norm_rows))]
+    buckets = {}
+    for row in results:
+        status = row["status"].split(":")[0]
+        group = buckets.setdefault(row["corpus"], {})
+        group[status] = group.get(status, 0) + 1
+    summary = {"method": CORPUS_METHOD + ("; saved unknown leads were re-asked with Lean-checked conflict evidence "
+                                          "to classify X1, with earlier full-replay reasons retained where recorded"),
+               "scope": (f"all {len(old_readings)} distinct captured readings-suite queries and "
+                         f"{SAVED_TREES} generated norm-defaults seeds ({len(norm_rows)} distinct queries) "
+                         f"(seeds 0–{SAVED_TREES - 1}; seeds {SAVED_TREES}–999 deferred by the DRI), "
+                         "with one ground and one universal "
+                         "query per regulated predicate"),
+               "input_counts": {"readings": readings["input_counts"]["readings"],
+                                "norm-defaults": SAVED_TREES * 8},
+               "queries": len(results), "counts": buckets,
+               "requires_review": [r for r in results if r["status"].startswith("requires review")],
+               "rows": results}
+    saved["corpus"] = summary
+    save_agreement(saved)
+    return summary
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -353,6 +496,10 @@ def main(argv=None):
     cp.add_argument("--write", action="store_true")
     cp.add_argument("--workers", type=int, default=1)
     cp.add_argument("--checkpoint", type=Path, help="append each compared query for a resumable corpus run")
+    refresh = sub.add_parser("refresh-saved")
+    refresh.add_argument("paths", nargs="+", help="captured readings-suite JSONL files or directories")
+    refresh.add_argument("--workers", type=int, default=1)
+    refresh.add_argument("--checkpoint", type=Path)
     args = parser.parse_args(argv)
     if args.command == "fixtures":
         saved = fixtures(set(args.ids), args.timeout)
@@ -360,6 +507,12 @@ def main(argv=None):
     if args.command == "norm-defaults":
         norm_defaults(Path(args.out), args.trees, args.workers, args.start)
         return 0
+    if args.command == "refresh-saved":
+        if args.workers > 4:
+            parser.error("the saved-scope regeneration uses at most 4 workers")
+        summary = refresh_saved(args.paths, args.workers, args.checkpoint)
+        print(json.dumps(summary["counts"], indent=1))
+        return 1 if summary["requires_review"] else 0
     summary = corpus(args.paths, write=args.write, workers=args.workers, checkpoint=args.checkpoint)
     print(json.dumps(summary["counts"], indent=1))
     return 1 if summary["requires_review"] else 0
