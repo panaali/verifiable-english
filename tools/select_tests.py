@@ -485,6 +485,13 @@ def changed_manifest_operations(old: str | None, new: str | None) -> set[str] | 
         if not isinstance(before, dict) or not isinstance(after, dict):
             return None
         old_rows, new_rows = before.pop("operations"), after.pop("operations")
+        # This ledger names Lean files that build JSON outside a request decoder.
+        # A changed reason or new generator has no operation edge; the manifest
+        # contract test still checks the complete set of such files.
+        old_lean, new_lean = before.get("lean_decoders"), after.get("lean_decoders")
+        if isinstance(old_lean, dict) and isinstance(new_lean, dict):
+            old_lean.pop("other_json", None)
+            new_lean.pop("other_json", None)
         if before != after or not isinstance(old_rows, list) or not isinstance(new_rows, list):
             return None
         def indexed(rows):

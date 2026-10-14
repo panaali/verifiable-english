@@ -6,7 +6,7 @@ DRI signature needed: ME-1 introduces S +183 and V +106 trusted Lean lines; no s
 
 - Base: `main` at merge base `f98183bf5`; branch `foundation/me-1`.
 - The reviewed plan and spec were copied verbatim from `research/math-evidence-p1` in `92bfcc54c`.
-- `fafaf7e5e` owns exact numbers, rounding and one Lean comparison phrase table; Python reads only its generated JSON. `0aeb5248f` implements the Calc meaning, checker, limits, rendering, fixtures, and generated inventories. `2a25e5620` adds tie guards and classifies the new Lean declarations.
+- `fafaf7e5e` owns exact numbers, rounding and one Lean comparison phrase table; Python reads only its generated JSON. `0aeb5248f` implements the Calc meaning, checker, limits, rendering, fixtures, and generated inventories. `2a25e5620` adds tie guards and classifies the new Lean declarations. `bb7269293` records the generator's assurance/merge ownership, narrows the consolidation ledger to top-level mains, refreshes the frozen hash, and scopes test selection.
 - Acceptance: **AGENT** for all ME-1 code, proofs, fixtures and generated files; **HUMAN** for the trust allowance signature; **EXTERNAL** for the final full gate on the chain's test runner. No pilot bytes are in ME-1.
 
 ## ME-1 plan ledger
@@ -31,6 +31,8 @@ All mutants were restored before the final build.
 | `lean/VE/Calc/Render.lean`: ties-up English says “going down” | `lake build VE.Calc.Examples`: rounding-line `#guard` failed (`/tmp/ve-me1-mutant-render.log`) |
 | `lean/VE/Calc/Decls.lean`: digit limit 4096 → 8192 | `lake build VE.Calc.Examples`: V-11 `#guard` failed (`/tmp/ve-me1-mutant-limit.log`) |
 | `ve/english.py`: `<` phrases mapped to `ast.Le` | `tests/test_numbers_phrases.py::test_comparison_rows_match_generated_table` failed on the Mac runner (`/tmp/ve-me1-mutant-python.log`) |
+| `tools/select_tests.py`: treat generated `.gitattributes` as a whole-repository change | `tests/test_select_tests.py::test_generated_merge_attributes_select_scoped_tests` failed on the Mac runner (`/tmp/ve-me1-mutant-selector.log`) |
+| `tools/select_tests.py`: remove the `other_json` metadata-only classification | `tests/test_select_tests.py::test_manifest_other_json_classification_selects_manifest_contract` failed locally (`/tmp/ve-me1-mutant-manifest-selector-local.log`) |
 | `lean/VE/Calc/Eval.lean`: subtraction computes `y - x` | `lake build VE.Calc.Examples` failed at the independent soundness/completeness theorems before V-2's guard (`/tmp/ve-me1-mutant-sub.log`); proof break, not counted as a test mutant |
 
 ## Build checklist directives
@@ -58,7 +60,7 @@ All mutants were restored before the final build.
 | 19 use-case formalisation | N.A.: ME-1 only installs core and arithmetic guards, with no source claims presented as findings. |
 | 20 reports from gate JSON | N.A.: no pilot numbers or permanent report test; final gate is external. |
 | 21 AGENT/HUMAN/EXTERNAL | PASS: scope and evidence section above. |
-| 22 selected tests and final gate | Selected tests on Mac; chain runs full gate after final commit per user override. |
+| 22 selected tests and final gate | Selected tests on Mac; chain runs full gate after final commit per user override. Initial 374-unit selected run exposed five inventory tests and was fixed; final scoped run follows. |
 | 23 standing rulings and DELTA | `DELTA.md`; trust signature pending. |
 
 ## Self-review against BUILDER-CHECKLIST
@@ -71,7 +73,7 @@ All mutants were restored before the final build.
 6. PASS — `git merge-base HEAD main`; final gate delegated to the chain on committed HEAD by task instruction.
 7. PASS — `DELTA.md` identifies the only unsigned trust growth; no new status or exit field.
 8. PASS — `tests/test_numbers_phrases.py` pins every existing comparison row; Calc has no public route.
-9. PASS — `tools/select_tests.py --base $(git merge-base HEAD main)` showed full selection caused by generated `.gitattributes`; selected tests run via `mac-pytest.sh --select`.
+9. PASS — `tools/select_tests.py --base $(git merge-base HEAD main)` now selects 163/374 units; the two selector tests above failed under their respective mutants.
 10. PASS — subtraction mutant broke `Expr.eval_sound`/`Denotes.eval_complete`; `lake build VE.Calc.Examples`, `python3 lean/audit.py --check`.
 11. PASS — V-11 `#guard` and digit-limit mutant; no deadline or public budget operation is added in ME-1.
 12. N.A. — no calc service path or pilot measurement in ME-1; Calc becomes public in ME-2.

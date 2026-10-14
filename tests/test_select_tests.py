@@ -64,6 +64,15 @@ def test_generated_merge_attributes_select_scoped_tests():
     assert select_tests.kind_of(".gitignore") == select_tests.EVERYTHING_KIND
 
 
+def test_manifest_other_json_classification_selects_manifest_contract():
+    before = {"operations": [], "lean_decoders": {"total_lines": 0, "other_json": {}}}
+    after = {"operations": [], "lean_decoders": {
+        "total_lines": 0, "other_json": {"lean/VE/Numbers/PhrasesMain.lean": "generator only"}}}
+    assert select_tests.changed_manifest_operations(json.dumps(before), json.dumps(after)) == set()
+    after["lean_decoders"]["total_lines"] = 1
+    assert select_tests.changed_manifest_operations(json.dumps(before), json.dumps(after)) is None
+
+
 QUALNAME_SOURCE = textwrap.dedent('''
     import functools
 
