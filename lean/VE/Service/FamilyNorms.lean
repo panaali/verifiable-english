@@ -1,4 +1,5 @@
 import VE.Norms.Flagged
+import VE.Norms.Family
 import VE.Service.Standalone
 import VE.Order.Conservativity
 
@@ -163,7 +164,139 @@ def conflictCase {F C : Type} (k : Checker F C) (profiles : List String) (enviro
     | some d => [("detail", .str d)]
     | none => []), free)
 
-def runCase (j : Json) : Except String Json := do
+/-! ## Documents with non-first-order guards (`VE.Norms.Family`)
+
+A document the FOL view cannot regenerate (`Family.firstOrder` is false: a
+closure edge, an n-ary atom, a comparison, an arithmetic term or an `$int`
+declaration) is regenerated over the family's own formulas. Certificates and
+witnesses are checked by the family's route over the regenerated formulas:
+
+* `norms-certificate`: the norms route's plain certificate case
+  (`Norms.Plain.run`: the family's Background and profile premises) with the
+  regenerated layer premises before `Γ`;
+* `norms-conflict` with a witness: the family's evaluation of the target at the
+  witness tuple, each tuple value named by a fresh constant of the base
+  environment;
+* `norms-conflict` with packages: each target's `Background_base ⊢ ∀x̄. ¬conflict`
+  certificate checked by the family's certificate case over the base
+  environment, bound as `targetPackage` binds it. -/
+
+/-- Fresh constant names for the witness tuple. -/
+def witnessNames (taken : List String) (n : Nat) : List String :=
+  let k := ((List.range (taken.length + 1)).find? fun k =>
+    (List.range n).all fun i => !taken.contains s!"witness{k}x{i}").getD 0
+  (List.range n).map fun i => s!"witness{k}x{i}"
+
+/-- The base environment and its model with one constant per tuple value. -/
+def withWitness (base model : Json) (sorts values : List String) : Except String (Json × Json × List String) := do
+  let vocabulary ← base.getObjVal? "vocabulary"
+  let constants ← fields (← vocabulary.getObjVal? "constants")
+  let names := witnessNames (constants.map Prod.fst) sorts.length
+  let declared := (names.zip sorts).map fun (c, s) =>
+    (c, Json.mkObj [("sort", .str s), ("description", .str "witness")])
+  let valued ← fields (← model.getObjVal? "constants")
+  pure (base.setObjVal! "vocabulary" (vocabulary.setObjVal! "constants" (Json.mkObj (constants ++ declared))),
+    model.setObjVal! "constants" (Json.mkObj (valued ++ (names.zip values).map fun (c, v) => (c, .str v))),
+    names)
+
+/-- The Background generators of a norms environment, in Python's order. -/
+def backgroundGenerator (g : Json) : Bool :=
+  g == .str "flags" || g == .str "definitions" || g == .str "literals" || g == .str "profile"
+
+def genericCase {F : Type} (R : VE.Norms.Family.Reader F) (j : Json) : Except String Json := do
+  let id ← stringField j "id"
+  let kind ← VE.Route.Run.caseKind j
+  let environment ← j.getObjVal? "environment"
+  let norms := j.getObjValD "norms"
+  let profiles ← VE.Route.Gate.profilesOf environment
+  unless profiles.contains "norms@0" do throw "UnsupportedProfile: norms@0 is required"
+  let D ← VE.Norms.Family.decodeDoc R profiles (← VE.Norms.Family.regulatedOf environment) norms
+  let S := R.ops
+  let ls ← VE.Norms.Family.layers S D
+  let ts := VE.Norms.Family.targets S D ls
+  if kind == "norms-elaborate" then
+    let bg ← VE.Norms.Plain.run (Json.mkObj [("id", .str id), ("kind", .str "background"),
+      ("environment", environment)])
+    let asts ← (← bg.getObjVal? "background").getArr?
+    let generators ← (← bg.getObjVal? "generators").getArr?
+    unless asts.size == generators.size && generators.all backgroundGenerator do
+      throw "CheckerUnavailable: malformed Background"
+    return VE.Route.Wire.ok id [("order", toJson (ls.map (·.name))),
+      ("background", Json.arr ((asts.toList.zip generators.toList).filterMap fun (a, g) => match g with
+        | .str "flags" => some (Json.mkObj [("generator", .str "flags"), ("ast", a)])
+        | .str "definitions" => some (Json.mkObj [("generator", .str "definitions"), ("ast", a)])
+        | .str "literals" => some (Json.mkObj [("generator", .str "literals"), ("ast", a)])
+        | .str "profile" => some (Json.mkObj [("generator", .str "profile"), ("ast", a)])
+        | _ => none).toArray),
+      ("premises", Json.arr ((VE.Norms.Family.elaborate S D ls).map fun (l, φ) =>
+        Json.mkObj [("label", .str l), ("ast", R.encode φ)]).toArray),
+      ("conflict_targets", Json.arr (ts.map fun (n, ss, φ) =>
+        Json.mkObj [("target", .str n), ("sorts", toJson ss), ("ast", R.encode φ)]).toArray),
+      ("fragment", .bool false)]
+  if kind == "norms-certificate" then
+    let premises ← (← j.getObjVal? "premises").getArr?
+    let layered := (VE.Norms.Family.elaborate S D ls).map (R.encode ·.2)
+    let row ← VE.Norms.Plain.run ((j.setObjVal! "kind" (.str "certificate")).setObjVal! "premises"
+      (Json.arr (layered.toArray ++ premises)))
+    let valid ← (← row.getObjVal? "valid").getBool?
+    let background ← (← row.getObjVal? "background").getNat?
+    let steps ← (← row.getObjVal? "steps").getNat?
+    return VE.Route.Wire.ok id [("valid", .bool valid), ("background", toJson background),
+      ("layers", toJson ls.length), ("steps", toJson steps)]
+  let names := toJson (ts.map (·.1))
+  let base ← VE.Norms.Replay.baseEnvironmentJson environment
+  if kind == "norms-conflict" && (j.getObjVal? "witness").toBool then
+    let witness ← j.getObjVal? "witness"
+    let target ← stringField witness "target"
+    let some t := ts.find? (·.1 == target) | throw s!"UnknownSymbol: conflict target {target}"
+    let values ← match witness.getObjValD "tuple" with
+      | .arr vs => vs.toList.mapM fun v => match v with
+        | .str s => pure s
+        | _ => throw "InvalidModel: witness tuple has wrong length or sort"
+      | _ => throw "InvalidModel: witness tuple has wrong length or sort"
+    unless values.length == t.2.1.length do throw "InvalidModel: witness tuple has wrong length or sort"
+    let (environment', model, constants) ← withWitness base (← witness.getObjVal? "model") t.2.1 values
+    let row ← VE.Route.Run.runCase (Json.mkObj [("id", .str id), ("kind", .str "evaluate"),
+      ("environment", environment'), ("ast", Json.arr #[R.encode (S.instConsts constants.reverse t.2.2)]),
+      ("model", model)])
+    let conflict ← match (← (← row.getObjVal? "values").getArr?).toList with
+      | [v] => v.getBool?
+      | _ => throw "CheckerUnavailable: malformed witness evaluation"
+    return VE.Route.Wire.ok id [("verdict", .str (if conflict then "CONFLICT" else "UNKNOWN")),
+      ("target", .str t.1), ("targets", names)]
+  if kind == "norms-conflict" then
+    let packages := j.getObjValD "packages"
+    let envId ← VE.Route.Wire.environmentId profiles (← VE.Norms.Wire.canonicalEnvironmentJson environment)
+    let docHash ← VE.Norms.Replay.documentHash profiles environment norms
+    let bound := fun (name : String) =>
+      let package := packages.getObjValD name
+      package.getObjValD "environment_id" == .str envId && package.getObjValD "document_hash" == .str docHash &&
+        package.getObjValD "target" == .str name
+    let accepted := fun (t : String × List String × F) => bound t.1 &&
+      match VE.Route.Run.runCase (Json.mkObj [("id", .str id), ("kind", .str "certificate"),
+          ("environment", base), ("premises", Json.arr #[]),
+          ("conclusion", R.encode (VE.Norms.Family.targetConclusion S t)),
+          ("certificate", (packages.getObjValD t.1).getObjValD "certificate")]) with
+      | .ok row => row.getObjValD "valid" == .bool true
+      | .error _ => false
+    let failure := ts.find? (fun t => !accepted t)
+    return VE.Route.Wire.ok id ([("verdict", .str (if failure.isNone then "CONFLICT-FREE" else "UNKNOWN")),
+      ("targets", names)] ++ match failure with
+      | some t => [("detail", .str (if bound t.1 then s!"invalid certificate for {t.1}"
+          else s!"missing certificate for {t.1}"))]
+      | none => [])
+  throw s!"UnsupportedProfile: case kind {kind} is not available on the family norms route"
+
+/-- A non-first-order document, read by its family's reader. -/
+def genericRun (j : Json) : Except String Json :=
+  match j.getObjVal? "environment" >>= decodeFamily with
+  | .ok (.closure E) => genericCase (VE.Norms.Family.closureReader E) j
+  | .ok (.core E) => genericCase (VE.Norms.Family.coreReader E) j
+  | .ok (.order E) => genericCase (VE.Norms.Family.orderReader E) j
+  | .error e => .error e
+
+/-- A first-order document, regenerated over the FOL view. -/
+def folCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let kind ← VE.Route.Run.caseKind j
   let environment ← j.getObjVal? "environment"
@@ -200,6 +333,10 @@ def runCase (j : Json) : Except String Json := do
       | .order E => pure (conflictCase (orderChecker E) profiles environment norms src j)
     return (answer.setObjVal! "id" (.str id)).setObjVal! "status" (.str "ok")
   throw s!"UnsupportedProfile: case kind {kind} is not available on the family norms route"
+
+def runCase (j : Json) : Except String Json :=
+  if VE.Norms.Family.firstOrder (j.getObjValD "environment") (j.getObjValD "norms") then folCase j
+  else genericRun j
 
 /-! ## What an accepted certificate proves -/
 
