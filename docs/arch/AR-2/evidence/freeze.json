@@ -1,6 +1,6 @@
 {
- "base": "11676c2c01d05e8584da0bb8b344dab232938366",
- "head": "f658025a09d8fe0213e1b8944ff3b1922d298c41",
+ "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+ "head": "ee31b0156ce78c95a6f5d3587d332d7bab552587",
  "inventory": {
   "lines_before": 408,
   "lines_after": 30,
@@ -50,11 +50,11 @@
   "module_hashes_after": 0
  },
  "commits": {
-  "window": "--no-merges --since=2026-09-26 11676c2c -- lean, with a .lean source",
-  "lean_source": 687,
+  "window": "--no-merges --since=2026-09-26 f98183bf -- lean, with a .lean source",
+  "lean_source": 671,
   "edited_full_inventory": 346,
-  "touched_a_file_now_frozen": 30,
-  "share_full": 0.504,
-  "share_short": 0.044
+  "touched_a_file_now_frozen": 27,
+  "share_full": 0.516,
+  "share_short": 0.04
  }
 }

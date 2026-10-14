@@ -187,7 +187,7 @@
    "mutants": 2061,
    "ok_fixtures": 2,
    "refused": 1989,
-   "seconds": 421.4
+   "seconds": 98.0
   },
   "service:alternatives": {
    "accepted": 274,
@@ -201,14 +201,14 @@
    "mutants": 8352,
    "ok_fixtures": 19,
    "refused": 8078,
-   "seconds": 81.9
+   "seconds": 87.2
   },
   "service:bundle": {
    "fixtures": 4,
    "mutants": 622,
    "ok_fixtures": 2,
    "refused": 622,
-   "seconds": 1.4
+   "seconds": 1.9
   },
   "service:check": {
    "accepted": 22,
@@ -220,7 +220,7 @@
    "mutants": 978,
    "ok_fixtures": 4,
    "refused": 956,
-   "seconds": 1.7,
+   "seconds": 2.6,
    "untyped": 1,
    "untyped:F7": 1
   },
@@ -229,7 +229,7 @@
    "mutants": 923,
    "ok_fixtures": 2,
    "refused": 923,
-   "seconds": 2.0
+   "seconds": 7.6
   },
   "service:diagnose": {
    "accepted": 8,
@@ -241,7 +241,7 @@
    "mutants": 1387,
    "ok_fixtures": 5,
    "refused": 1379,
-   "seconds": 5.6
+   "seconds": 2.4
   },
   "service:discourse": {
    "accepted": 105,
@@ -257,7 +257,7 @@
    "mutants": 4237,
    "ok_fixtures": 12,
    "refused": 4132,
-   "seconds": 24.2
+   "seconds": 19.1
   },
   "service:document": {
    "accepted": 30,
@@ -271,7 +271,7 @@
    "mutants": 1225,
    "ok_fixtures": 2,
    "refused": 1195,
-   "seconds": 5.2
+   "seconds": 2.4
   },
   "service:english": {
    "accepted": 20,
@@ -283,7 +283,7 @@
    "mutants": 710,
    "ok_fixtures": 2,
    "refused": 690,
-   "seconds": 2.6
+   "seconds": 3.5
   },
   "service:english.check": {
    "accepted": 120,
@@ -305,7 +305,7 @@
    "mutants": 1847,
    "ok_fixtures": 2,
    "refused": 540,
-   "seconds": 21.4,
+   "seconds": 26.9,
    "untyped": 49,
    "untyped:F1": 49
   },
@@ -317,7 +317,7 @@
    "mutants": 1166,
    "ok_fixtures": 2,
    "refused": 672,
-   "seconds": 10.4,
+   "seconds": 6.7,
    "untyped": 17,
    "untyped:F1": 17
   },
@@ -329,7 +329,7 @@
    "mutants": 1228,
    "ok_fixtures": 2,
    "refused": 820,
-   "seconds": 2.2,
+   "seconds": 2.9,
    "untyped": 22,
    "untyped:F1": 22
   },
@@ -342,7 +342,7 @@
    "mutants": 1561,
    "ok_fixtures": 4,
    "refused": 1557,
-   "seconds": 3.2
+   "seconds": 3.3
   },
   "service:evaluate": {
    "accepted": 4,
@@ -352,7 +352,7 @@
    "mutants": 1350,
    "ok_fixtures": 4,
    "refused": 1346,
-   "seconds": 3.1
+   "seconds": 16.5
   },
   "service:family-norms": {
    "accepted": 78,
@@ -366,7 +366,7 @@
    "mutants": 2428,
    "ok_fixtures": 9,
    "refused": 2350,
-   "seconds": 5.9
+   "seconds": 9.0
   },
   "service:graph": {
    "accepted": 28,
@@ -377,14 +377,14 @@
    "mutants": 706,
    "ok_fixtures": 2,
    "refused": 678,
-   "seconds": 1.6
+   "seconds": 2.0
   },
   "service:identity": {
    "fixtures": 9,
    "mutants": 1342,
    "ok_fixtures": 4,
    "refused": 1342,
-   "seconds": 2.3
+   "seconds": 4.2
   },
   "service:model": {
    "accepted": 4,
@@ -395,7 +395,7 @@
    "mutants": 1205,
    "ok_fixtures": 2,
    "refused": 1201,
-   "seconds": 2.6
+   "seconds": 3.1
   },
   "service:norm-defaults": {
    "accepted": 347,
@@ -410,7 +410,7 @@
    "mutants": 6503,
    "ok_fixtures": 21,
    "refused": 6156,
-   "seconds": 50.6,
+   "seconds": 47.3,
    "untyped": 9,
    "untyped:B2": 9
   },
@@ -426,7 +426,7 @@
    "mutants": 7324,
    "ok_fixtures": 25,
    "refused": 7215,
-   "seconds": 17.8
+   "seconds": 25.5
   },
   "service:order": {
    "accepted": 10,
@@ -437,7 +437,7 @@
    "mutants": 2040,
    "ok_fixtures": 8,
    "refused": 2030,
-   "seconds": 4.1
+   "seconds": 11.2
   },
   "service:parse": {
    "accepted": 26,
@@ -451,7 +451,7 @@
    "mutants": 326,
    "ok_fixtures": 2,
    "refused": 300,
-   "seconds": 0.6,
+   "seconds": 0.8,
    "untyped": 1,
    "untyped:F7": 1
   },
@@ -465,14 +465,14 @@
    "mutants": 5615,
    "ok_fixtures": 20,
    "refused": 5605,
-   "seconds": 215.1
+   "seconds": 118.3
   },
   "service:readings": {
    "fixtures": 4,
    "mutants": 574,
    "ok_fixtures": 2,
    "refused": 574,
-   "seconds": 1.1
+   "seconds": 1.9
   },
   "service:readings-route": {
    "accepted": 2266,
@@ -492,7 +492,7 @@
    "mutants": 15768,
    "ok_fixtures": 32,
    "refused": 13502,
-   "seconds": 270.9,
+   "seconds": 140.7,
    "untyped": 69,
    "untyped:B1": 63,
    "untyped:B2": 6
@@ -512,7 +512,7 @@
    "mutants": 5357,
    "ok_fixtures": 14,
    "refused": 4960,
-   "seconds": 15.7,
+   "seconds": 20.6,
    "untyped": 15,
    "untyped:B2": 11,
    "untyped:F7": 4
@@ -531,7 +531,7 @@
    "mutants": 6451,
    "ok_fixtures": 15,
    "refused": 6103,
-   "seconds": 29.0,
+   "seconds": 26.8,
    "untyped": 12,
    "untyped:B2": 12
   },
@@ -548,7 +548,7 @@
    "mutants": 8240,
    "ok_fixtures": 18,
    "refused": 7827,
-   "seconds": 257.0
+   "seconds": 67.9
   },
   "service:risk-eval": {
    "accepted": 2,
@@ -559,7 +559,7 @@
    "mutants": 789,
    "ok_fixtures": 2,
    "refused": 787,
-   "seconds": 14.2
+   "seconds": 8.0
   },
   "service:route": {
    "accepted": 26,
@@ -571,7 +571,7 @@
    "mutants": 5244,
    "ok_fixtures": 16,
    "refused": 5218,
-   "seconds": 10.6
+   "seconds": 21.0
   },
   "service:soft-norms": {
    "accepted": 229,
@@ -586,7 +586,7 @@
    "mutants": 5824,
    "ok_fixtures": 18,
    "refused": 5595,
-   "seconds": 39.8,
+   "seconds": 19.8,
    "untyped": 9,
    "untyped:B2": 9
   },
@@ -603,14 +603,14 @@
    "mutants": 4439,
    "ok_fixtures": 11,
    "refused": 4313,
-   "seconds": 28.7
+   "seconds": 47.4
   },
   "ve_conformance:check-certificate:graph.compose": {
    "fixtures": 1,
    "mutants": 40,
    "ok_fixtures": 1,
    "refused": 40,
-   "seconds": 6.3
+   "seconds": 1.0
   },
   "ve_conformance:route:bundle.check": {
    "accepted": 6,
@@ -620,21 +620,21 @@
    "mutants": 124,
    "ok_fixtures": 2,
    "refused": 118,
-   "seconds": 14.8
+   "seconds": 3.7
   },
   "ve_conformance:route:graph.compose": {
    "fixtures": 1,
    "mutants": 48,
    "ok_fixtures": 1,
    "refused": 48,
-   "seconds": 6.1
+   "seconds": 2.1
   },
   "ve_metered::countermodel.search": {
    "fixtures": 2,
    "mutants": 110,
    "ok_fixtures": 2,
    "refused": 110,
-   "seconds": 13.7
+   "seconds": 4.3
   },
   "ve_metered::evaluate": {
    "accepted": 62,
@@ -644,7 +644,7 @@
    "mutants": 144,
    "ok_fixtures": 2,
    "refused": 82,
-   "seconds": 17.6,
+   "seconds": 3.2,
    "untyped": 4,
    "untyped:F8": 4
   },
@@ -657,7 +657,7 @@
    "mutants": 535,
    "ok_fixtures": 2,
    "refused": 523,
-   "seconds": 91.8
+   "seconds": 11.5
   }
  },
  "totals": {

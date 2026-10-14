@@ -128,5 +128,18 @@
   "test": "tests/test_wire_contract_lint.py::test_l13_write_after_a_revision_changes_only_generated_files",
   "killed": true,
   "pytest_summary": "1 failed in 3.78s"
+ },
+ {
+  "id": "T3",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "a deleted G[V] file remains listed under its base class",
+  "mutation": {
+   "from": "[key for key in deleted if old_classes.get(key, {}).get(cls)]",
+   "to": "[key for key in deleted if {}.get(cls)]"
+  },
+  "test": "tests/test_frozen_sources.py::test_a_body_only_edit_of_a_dv_file_is_reported",
+  "killed": true,
+  "pytest_summary": "1 failed in 5.11s"
  }
 ]

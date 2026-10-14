@@ -188,7 +188,9 @@ def test_a_body_only_edit_of_a_dv_file_is_reported(tmp_path, capsys):
     table = json.loads((tmp_path / "tools/trust-classes.json").read_text())
     del table["modules"]["VE/Glue.lean"]
     (tmp_path / "tools/trust-classes.json").write_text(json.dumps(table))
-    assert changes(tmp_path, base, capsys)["deleted"] == ["VE/Glue.lean"]
+    deleted_report = changes(tmp_path, base, capsys)
+    assert deleted_report["deleted"] == ["VE/Glue.lean"]
+    assert deleted_report["by_class"] == {"D[V]": ["VE/Demo.lean"], "G[V]": ["VE/Glue.lean"]}
 
 
 def test_the_report_fails_closed(tmp_path, capsys):

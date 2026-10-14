@@ -10,7 +10,8 @@ The hash freeze covers only the files with K declarations and the `ve.core@0.1` 
 every theorem statement as it was. So the batch gate (`tools/trust_map.py --since BASE` beside this report)
 lists every `.lean` file under `lean/` whose bytes differ from BASE's: added, edited or deleted. Each is shown
 with its K, S, D[V] and G[V] lines as `tools/trust_map.py` measures the current tree, and is listed under every
-one of the classes D[V] and G[V] it holds lines in. A deleted file has no current lines and is listed as deleted.
+one of the classes D[V] and G[V] it holds lines in. A deleted file has no current lines; it is listed as deleted
+under the classes recorded for it at BASE.
 
 It reports and never fails on a change. It exits 1 when git cannot read BASE or the measurement fails (a stale
 `lean/declarations.txt` included), so a report is never made from a classification that did not validate.
@@ -62,12 +63,27 @@ def changed(rev: str, root: Path = ROOT) -> tuple[list[str], list[str]]:
             sorted(before.keys() - now.keys()))
 
 
-def report(files: dict[str, dict[str, int]], edited: list[str], deleted: list[str]) -> dict:
+def base_classes(rev: str, root: Path = ROOT) -> dict[str, dict]:
+    """The base trust table, so deleted D[V] and G[V] files retain their old class in the report."""
+    done = subprocess.run(["git", "-C", str(root), "show", f"{rev}:tools/trust-classes.json"],
+                          capture_output=True, text=True)
+    if done.returncode:
+        raise RuntimeError(f"git show {rev}:tools/trust-classes.json: {done.stderr.strip()}")
+    try:
+        return json.loads(done.stdout)["modules"]
+    except (ValueError, KeyError, TypeError) as error:
+        raise RuntimeError(f"{rev}:tools/trust-classes.json is malformed: {error}") from error
+
+
+def report(files: dict[str, dict[str, int]], edited: list[str], deleted: list[str],
+           old_classes: dict[str, dict]) -> dict:
     """The changed files with their lines per trusted class, and the changed files holding D[V] or G[V] lines,
     by class."""
     rows = {key: {cls: files[key][cls] for cls in CLASSES} for key in edited}
     return {"changed": rows, "deleted": deleted,
-            "by_class": {cls: [key for key in edited if rows[key][cls]] for cls in LISTED}}
+            "by_class": {cls: sorted([key for key in edited if rows[key][cls]] +
+                                     [key for key in deleted if old_classes.get(key, {}).get(cls)])
+                         for cls in LISTED}}
 
 
 def main(argv: list[str]) -> int:
@@ -79,6 +95,7 @@ def main(argv: list[str]) -> int:
     root = args.root.resolve()
     try:
         edited, deleted = changed(args.since, root)
+        old_classes = base_classes(args.since, root)
     except RuntimeError as error:
         print(f"FAIL: {error}", file=sys.stderr)
         return 1
@@ -89,7 +106,7 @@ def main(argv: list[str]) -> int:
     if problems:
         print("FAIL: the changed files are not reported while the trust classification fails", file=sys.stderr)
         return 1
-    out = report(files, edited, deleted)
+    out = report(files, edited, deleted, old_classes)
     if args.json:
         print(json.dumps(out, indent=1))
         return 0
@@ -97,7 +114,10 @@ def main(argv: list[str]) -> int:
     for cls in LISTED:
         print(f"{cls}: {len(out['by_class'][cls])} changed files")
         for key in out["by_class"][cls]:
-            print(f"  {key}: " + ", ".join(f"{c} {n}" for c, n in out["changed"][key].items() if n))
+            if key in out["changed"]:
+                print(f"  {key}: " + ", ".join(f"{c} {n}" for c, n in out["changed"][key].items() if n))
+            else:
+                print(f"  {key}: deleted ({cls} in base)")
     for key in deleted:
         print(f"deleted: {key}")
     return 0
