@@ -37,7 +37,7 @@
 {"path": "ve/propose.py", "scope": "adopt", "domain": "ve-proposal-{}-v1\n", "owner": "python", "record": "proposals"},
 {"path": "ve/propose.py", "scope": "adopt", "domain": "ve-vocabulary-proposal-v1\n", "owner": "python", "record": "proposals"},
 {"path": "ve/readings.py", "scope": "rights_meaning_id", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"},
-{"path": "ve/readings_s1.py", "scope": "S1Environment.situation_id", "domain": "ve-situation-{}\n", "owner": "lean", "removed_by": "AR-15"},
+{"path": "ve/readings_s1.py", "scope": "S1Environment.situation_id_for", "domain": "ve-situation-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/readings_s1.py", "scope": "Side.document_hash", "domain": "ve-rights-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/readings_s1.py", "scope": "Side.document_hash", "domain": "ve-soft-norms-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/readings_s1.py", "scope": "Side.document_hash", "domain": "ve-norms-{}\n", "owner": "lean", "removed_by": "AR-15"},
