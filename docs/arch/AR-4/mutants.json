@@ -171,6 +171,56 @@
    "tests": [
     "tests/test_batch_scope.py::test_a_scope_collected_against_another_base_is_a_problem"
    ]
+  },
+  {
+   "id": "AR4-M18",
+   "claim": "a gate record's per-file trust counts are those of the evidence head (recheck F7)",
+   "file": "tools/batch_evidence.py",
+   "find": "    if measured is not None and trust[\"budget\"] != measured:\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_genuine_gate_records_pass_the_shared_checks"
+   ]
+  },
+  {
+   "id": "AR4-M19",
+   "claim": "an R13 rerun is of the full gate's own commit and tree (recheck F7)",
+   "file": "tools/batch_evidence.py",
+   "find": "            or any(rerun.get(k) != full.get(k) for k in same) or not isinstance(previous, dict)\n",
+   "replace": "            or not isinstance(previous, dict)\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_every_retyped_node_of_a_gate_record_is_a_problem_never_a_crash"
+   ]
+  },
+  {
+   "id": "AR4-M20",
+   "claim": "a boolean failure count is not an integer (recheck F7 type confusion)",
+   "file": "tools/batch_evidence.py",
+   "find": "            or not isinstance(counts, dict) or type(counts.get(\"failed\")) is not int\n",
+   "replace": "            or not isinstance(counts, dict)\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_every_retyped_node_of_a_gate_record_is_a_problem_never_a_crash"
+   ]
+  },
+  {
+   "id": "AR4-M21",
+   "claim": "the merge driver merges AR-4's budget file (no per-file counts) without recomputing it",
+   "file": "tools/regen_generated.py",
+   "find": "    if path not in DERIVED or not isinstance(value, dict) or (source is not None and source not in value):\n",
+   "replace": "    if path not in DERIVED or not isinstance(value, dict):\n",
+   "tests": [
+    "tests/test_regen_generated.py::test_trust_merge_of_the_ar4_budget_file_keeps_main_budget_and_both_allowances"
+   ]
+  },
+  {
+   "id": "AR4-M22",
+   "claim": "the architecture map's trust classes are the commit's measurement, not the budget file's",
+   "file": "tools/architecture_numbers.py",
+   "find": "        \"trust\": {\"totals\": {k: trust_totals[k] for k in TRUST_TOTALS}, \"budget\": trust[\"budget\"]},\n",
+   "replace": "        \"trust\": {\"totals\": {k: trust.get(\"totals\", {}).get(k, 0) for k in TRUST_TOTALS}, \"budget\": trust[\"budget\"]},\n",
+   "tests": [
+    "tests/test_architecture_docs.py::test_measure_on_a_small_tree"
+   ]
   }
  ]
 }
