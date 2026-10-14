@@ -31,6 +31,8 @@ schema, binding, measurements, A/B, deltas and seeded faults are in [DELTA.md](D
 
 ## Recheck verification
 
+The 2026-10-14 DRI note signed the availability and rendering deltas and the V +269 allowance, conditional on final per-file measurement and a retained-loader consolidation follow-up; both are recorded in DELTA.md. F6 now rejects forbidden null members on both paths (`test_f6_closed_rights_content_rejects_forbidden_null_members`). The original F6 probe's assertion that these documents should return successfully conflicts with the later DRI ruling requiring their rejection, so it is replaced by that regression. The final-HEAD release gate remains assigned to the merge train under the same note.
+
 Both F4 and F5 probes passed after the fix; their 13 new parametrized regressions passed, as did the complete
 `test_b16e_rights_document.py` selected unit. `lake build`, `python lean/audit.py` (5,254 theorems), the generated
 schema check, and the trust-budget check passed. The merge-base selector chose 364/364 mapped units. Its stale
