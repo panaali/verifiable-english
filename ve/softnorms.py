@@ -413,14 +413,18 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None,
         regulated = {name for name, decl in predicates.items() if 'regulated' in decl}
         if len(order) != len(set(order)) or set(order) != regulated:
             raise ValueError('unbound layer order')
+        # Norms/Replay.lean `targets`: each layer with its sorts, then each declared
+        # `req->perm` pair with the obligation's sorts (Tree.lean `pairs`).
         targets = [entry['target'] for entry in row['conflict_targets']]
-        allowed_targets = regulated | {f'{name}->{decl["regulated"]["permission"]}'
-                                  for name, decl in predicates.items()
-                                  if type(decl) is dict and type(decl.get('regulated')) is dict
-                                  and decl['regulated'].get('role') == 'obligation'
-                                  and decl['regulated'].get('permission') in acts}
-        if len(targets) != len(set(targets)) or set(targets) != allowed_targets:
-            raise ValueError('unbound conflict target')
+        allowed_targets = {name: predicates[name]['arguments'] for name in regulated} | {
+            f'{name}->{decl["regulated"]["permission"]}': decl['arguments']
+            for name, decl in predicates.items()
+            if type(decl) is dict and type(decl.get('regulated')) is dict
+            and decl['regulated'].get('role') == 'obligation'
+            and decl['regulated'].get('permission') in acts}
+        if (len(targets) != len(set(targets)) or set(targets) != set(allowed_targets) or
+                any(entry['sorts'] != allowed_targets[entry['target']] for entry in row['conflict_targets'])):
+            raise ValueError('unbound conflict target or sorts')
         if 'incompatible_pairs' in row:
             incompatible = [tuple(pair) for pair in row['incompatible_pairs']]
             expected_incompatible = {(a, b) for a in rules for b in rules if a < b and
