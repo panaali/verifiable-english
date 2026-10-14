@@ -63,6 +63,13 @@ All mutants were restored before the final build.
 | 22 selected tests and final gate | Selected tests on Mac; chain runs full gate after final commit per user override. Initial 374-unit selected run exposed five inventory tests and was fixed; final scoped run follows. |
 | 23 standing rulings and DELTA | `DELTA.md`; trust signature pending. |
 
+## Verification and fixes from selected tests
+
+- `mac-pytest.sh --select -- --base f98183bf5 --run` selected 163 units at `3eb40824b`: 161 passed. The RD-6b report test still compared its historical ledger to the moving current tree; it now compares the RD-6b baseline with its pinned commit. `tests/test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature` passed locally and on the Mac after the fix.
+- `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline` had a one-microsecond CPU limit that missed the Mac's CPU tick. The test now advances an injected CPU clock after the request write. It passed locally and on the Mac after the fix. `tests/test_hang_guards.py`: 61 passed locally.
+- `python3 lean/audit.py --check`: 490 Lean source files and 5,840 named theorem declarations audited, standard axiom allowlist only. `tools/repo_map.py --check`: 32 modes have schemas. The approved plan and spec copies match `research/math-evidence-p1` byte-for-byte. `git diff --check main...HEAD` passed.
+- The task reserves `tools/gate.py` for the chain's clean, committed final HEAD. No full release gate was run here.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A. — ME-1 has no Lean service answer or request decoder; ME-2/3 add those.
@@ -70,10 +77,10 @@ All mutants were restored before the final build.
 3. PASS — `VE.Calc.Examples` guards and `tests/test_numbers_phrases.py` failed under the seeded mutations listed above.
 4. N.A. — no calc route exists yet, so no three-way response or new JSON order to compare.
 5. N.A. — no relayed answer exists in ME-1; ME-3 adds R8 binding tests.
-6. PASS — `git merge-base HEAD main`; final gate delegated to the chain on committed HEAD by task instruction.
-7. PASS — `DELTA.md` identifies the only unsigned trust growth; no new status or exit field.
+6. N.A. — the task assigns the final-HEAD full gate and its evidence to the chain.
+7. PASS — `tools/trust_map.py --check` measures S +183 and V +106; `DELTA.md` lists the required DRI signature in its first lines.
 8. PASS — `tests/test_numbers_phrases.py` pins every existing comparison row; Calc has no public route.
-9. PASS — `tools/select_tests.py --base $(git merge-base HEAD main)` now selects 163/374 units; the two selector tests above failed under their respective mutants.
+9. PASS — `tools/select_tests.py --base $(git merge-base HEAD main)` selects 163/374 units; `--paths .gitattributes --impacted` includes the generator and merge tests; the two selector tests above failed under their respective mutants.
 10. PASS — subtraction mutant broke `Expr.eval_sound`/`Denotes.eval_complete`; `lake build VE.Calc.Examples`, `python3 lean/audit.py --check`.
 11. PASS — V-11 `#guard` and digit-limit mutant; no deadline or public budget operation is added in ME-1.
 12. N.A. — no calc service path or pilot measurement in ME-1; Calc becomes public in ME-2.

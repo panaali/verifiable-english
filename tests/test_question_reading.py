@@ -525,13 +525,21 @@ def test_text_variants_get_well_formed_answers(name):
 
 def test_the_whole_question_is_bounded_by_the_modes_deadline(monkeypatch):
     """The CPU deadline of `english.question` bounds the whole service operation (decoding, the lexicon's
-    checks, every candidate's reading and the answer): with the deadline injected near zero, a question that
+    checks, every candidate's reading and the answer): with CPU use advanced after the request write, a question that
     needs work is CheckerUnavailable naming the mode, never a verdict, a refusal or ResourceLimit."""
     from ve.backends import lean_service
-    monkeypatch.setitem(lean_service.DEADLINES, MODE, (1e-6, 1e-6))
+    used = [0.0]
+    write_all = lean_service.LeanService._write_all
+
+    def written(self, data, deadline):
+        result = write_all(self, data, deadline)
+        if deadline.mode == MODE:
+            used[0] = deadline.cpu + 1
+        return result
+
+    monkeypatch.setattr(lean_service, "_cpu_seconds", lambda _pid: used[0])
+    monkeypatch.setattr(lean_service.LeanService, "_write_all", written)
     _, frame, question, _ = next(row for row in F.FIXTURES if row[0] == "U2")
-    env = F.environment(frame)
-    words = EnglishVocabulary(env, _defer_overlay_refusals=True)
     # A question no earlier request asked, so the relay's answer memo cannot hold it.
     question = question.replace("merit?", "merit ?").replace(" ?", "?") + ""
     case = F.request(frame, question)
