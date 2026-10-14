@@ -174,8 +174,10 @@ def test_a_canonical_base_with_a_local_collision_is_not_a_premise_model(tmp_path
     lower = route.lean("readings-model", assumed=[["rs1", 0]], premises=[], conclusion=None, model=bad)
     assert lower["valid"] is True
     route._pieces([["rs1", 0]])["model"] = {"model": bad}
-    with pytest.raises(CheckerUnavailable):
-        route._ask("premises", [["rs1", 0]])
+    answer = route._ask("premises", [["rs1", 0]])
+    assert answer["result"]["status"] == "UNKNOWN"
+    scope = next(s for s in answer["scopes"] if s["row"]["choice"] == [["rs1", 0]])
+    assert scope["row"]["evidence"]["model"] is False
 
 
 def test_missing_proof_scope_cannot_hide_behind_a_reindexed_model(tmp_path):
