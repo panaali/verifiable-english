@@ -313,3 +313,25 @@ def test_rights_elaboration_premise_identities_are_bound(monkeypatch, mutation):
     monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
     with pytest.raises(CheckerUnavailable):
         rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
+
+
+@pytest.mark.parametrize('mutation', [
+    pytest.param(lambda row: row['bars'].append({**copy.deepcopy(row['bars'][0]),
+                                                  'name': 'rights-bar-2'}),
+                 id='extra bar node'),
+    pytest.param(lambda row: row['bars'][0]['over'].append('absent'),
+                 id='undeclared bar over rule'),
+])
+def test_rights_bar_nodes_are_bound_to_generated_aimed_predicates(monkeypatch, mutation):
+    from tests.test_rights_lean import IMPART, env as rights_env, line, norm, right
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(
+        IMPART, sorts=('person', 'idea'), rights={'holders': ['person'], 'bearers': ['person']}))
+    source = [right('r19', [line('liberty', norm('may-impart', 'impart_permitted', True))]),
+              {'bar': {'name': 'b30', 'reading': 'rule'}}]
+    row = copy.deepcopy(rights_route.run_rights_case(environment, source, 'rights-elaborate'))
+    mutation(row)
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, source, 'rights-elaborate')
