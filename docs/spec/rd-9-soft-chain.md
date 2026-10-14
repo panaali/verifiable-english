@@ -1388,6 +1388,8 @@ It elaborates; it is not reviewed for PASS here (plan 4.11).
 - No theorem relates `separatesS` on a norms-shaped document to RD-1's `separates (fillDoc N)` with `fillHolds` (Q3).
 - No minimality of a pair's or a result's gaps. If SC-A does not prove `coneEval_sound` and `coneEval_definite`, the
   selection itself is not claimed sound either, and the answer says nothing more than today's verdict lines do.
+- Not claimed: the gap selection is not proved sound. Until `coneEval_sound` and `coneEval_definite` are proved,
+  the F-ND1, F-ND2 and CE4 unlisted-gap flip tests are bounded evidence only; they are not a general theorem.
 - No superposition under the soft completion before SC-10, nothing about the rights chain under the completion or
   about companions on the soft chain.
 - The four constitution sets do not show "defeasible duties with contextual exceptions": with `X = []` they mean what
