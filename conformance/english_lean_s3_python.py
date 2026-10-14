@@ -445,10 +445,6 @@ def python_text(env_name: str, text: str, words) -> str | None:
 # What the run shows about the spec's fixtures, for the S3 report: each a difference between the spec's
 # hand-written lexicon and the one Python's producer selects for the same environment.
 FINDINGS = {
-    "safe-fallback": "Under `FA` and `FR` Python selects `{0} is classified as \"safe\"` for `safe`: the declared "
-                     "`{0} is safe` carries SYMBOL_COLLISION, because `is` is the head of the fixed role wording "
-                     "`{0} is available to {1}` (`printer.py:201-205`, `:245-246`). The spec's `LA` and `LR` select "
-                     "`{0} is safe`, which V6 (E2.1) would refuse.",
     "action-letter": "Under `FA` Python's letter for the action sort is `C`, not the spec's `A` (al5 to al7).",
 }
 

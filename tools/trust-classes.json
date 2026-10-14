@@ -3635,6 +3635,7 @@
         "VE.EnglishGrammar.PatWord",
         "VE.EnglishGrammar.PolicyCtx",
         "VE.EnglishGrammar.PolicyCtx.of",
+        "VE.EnglishGrammar.PolicyCtx.ofHeads",
         "VE.EnglishGrammar.PredFacts",
         "VE.EnglishGrammar.PredFacts.of",
         "VE.EnglishGrammar.acceptsDeclared",
@@ -3714,11 +3715,13 @@
     "VE/EnglishGrammar/PolicyReference.lean": {
       "T": [
         "VE.EnglishGrammar.PolicyReference.acceptsDeclared",
+        "VE.EnglishGrammar.PolicyReference.acceptedHeads",
         "VE.EnglishGrammar.PolicyReference.bareOk",
         "VE.EnglishGrammar.PolicyReference.duplicateWording",
         "VE.EnglishGrammar.PolicyReference.fallbackNoun",
         "VE.EnglishGrammar.PolicyReference.letterWords",
         "VE.EnglishGrammar.PolicyReference.lintCodes",
+        "VE.EnglishGrammar.PolicyReference.lintCodesWithHeads",
         "VE.EnglishGrammar.PolicyReference.mainSelection",
         "VE.EnglishGrammar.PolicyReference.negativeLeft",
         "VE.EnglishGrammar.PolicyReference.overlayCheck",

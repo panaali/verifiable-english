@@ -30,10 +30,10 @@ from ve.norm_english import render_english  # noqa: E402
 KEY = json.loads((HERE / "answer-key.json").read_text())
 RESULTS = json.loads((HERE / "results.json").read_text())
 
-# PLAN.md section 1.1: v2 is pinned at commit 2205be39.
+# PLAN.md section 1.1: v2 formulas and precedence stay pinned; X2 refreshed two wordings.
 V2_PINS = {
-    "rules.ve": "6517be81f0133438cac436ee713445fcd7aeb1e685604d866b9eb324dbc2a828",
-    "rules.manifest.json": "acfed21b63f063b9d3e1061de8d209ac221ed58d619dbd6009ee68540756d163",
+    "rules.ve": "9d00b09cc9f7fc26aa481244df57e6b96a23abc337c84fd42beb1ec920bde4a5",
+    "rules.manifest.json": "67ea9542f9358a1cd3f0844f34fc95d7ecd87eeefd1b4545ba727d7edd881385",
     "environment.json": "9deb0549202d105142cbf3da0b28dd6583bfab144f0a1e344842c1ec7220eeb3",
     "source.md": "751f2c331eff6cdade0a3f9cd2feb22f032c6be7d1d61df3783b9b67e8510330",
 }
@@ -91,7 +91,7 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_v2_files_are_unchanged():
+def test_v2_artifact_pins():
     assert {name: sha256(V2 / name) for name in V2_PINS} == V2_PINS
 
 

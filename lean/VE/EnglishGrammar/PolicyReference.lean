@@ -1,8 +1,8 @@
 import VE.EnglishGrammar.Policy
 
-/-! Spec 5.2's text of the vocabulary policy, verbatim, as the reference the optimised `Policy.lean` is compared
-with (`E2Examples.lean` `#guard`s, on every fixture environment and the symbol-level selections). Test-only:
-nothing on an admission path reads it. -/
+/-! Spec 5.2's vocabulary policy as a reference for the optimised `Policy.lean` (`E2Examples.lean` `#guard`s).
+The accepted-head table comes from `PolicyCtx.of`, so the fixed-point ownership rule has one implementation.
+Test-only: nothing on an admission path reads this reference. -/
 
 namespace VE.EnglishGrammar.PolicyReference
 open VE.EnglishGrammar
@@ -22,11 +22,10 @@ def templateCodes (E : Env) (O : Overlay) (value : String) : List String :=
       (List.range (tw.length + 1)).any fun i => (tw.drop i).take ts.length == ts) then ["SORT_NOUN"] else [])
 
 /-- The lint codes of a declared wording `value` of predicate `name` (`_NaturalVocabulary`). -/
-def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List String :=
+def lintCodesWithHeads (E : Env) (O : Overlay) (name value : String) (k : Nat)
+    (heads : List (String × String)) : List String :=
   let predNames := E.declaredPreds.map (·.name)
   let names := E.declaredSorts.map (·.name) ++ predNames ++ E.declaredConsts.map (·.name)
-  let heads : List (String × String) := E.declaredPreds.filterMap fun d =>
-    (templateHead ((E.declaredWording O d.name).getD (strictWording d.name d.arity)) d.arity).map (·, d.name)
   let nounTexts : List (String × String) := E.declaredSorts.flatMap fun s => (sortNouns E O s).map (·, s.name)
   let owned (w : String) : Bool :=
     names.any (fun x => x == w && x != name) || heads.any (fun (h, p) => h == w && p != name) ||
@@ -68,6 +67,12 @@ def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List Str
           | _, _ => [])
     (templateCodes E O value ++ dup ++ shape).eraseDups
 
+def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List String :=
+  lintCodesWithHeads E O name value k (PolicyCtx.of E O).lintHeads
+
+def acceptedHeads (E : Env) (O : Overlay) : List (String × String) :=
+  (PolicyCtx.of E O).lintHeads
+
 /-- Step 4 of `acceptsDeclared` (english.py:368–372): the key of `p`'s declared wording or negative is the key of
 another declared predicate's wording (its strict wording when it declares none) or declared negative. -/
 def duplicateWording (E : Env) (O : Overlay) (p : String) : Bool :=
@@ -82,7 +87,8 @@ def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool :=
   match E.predicate? name, E.declaredWording O name with
   | some d, some t =>
     let k := d.arity
-    let codes := lintCodes E O name t k
+    let heads := acceptedHeads E O
+    let codes := lintCodesWithHeads E O name t k heads
     if k > 2 then codes.isEmpty else
     let idiom := (idioms k).contains t
     let p0 := if t.startsWith "{0} " then t.drop 4 else t
@@ -92,11 +98,12 @@ def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool :=
     let collision :=
       ((E.declaredPreds.map (·.name) ++ E.declaredConsts.map (·.name)).filter (· != name)).any
         (wordOccurs · phrase) ||
-      others.any fun d2 => match templateHead ((E.declaredWording O d2.name).getD "") d2.arity with
-        | some h => !["is", "was", "a", "an"].contains h && wordOccurs h phrase
+      others.any fun d2 => match heads.find? (fun (_, p) => p == d2.name) with
+        | some (h, _) => !["is", "was", "a", "an"].contains h && wordOccurs h phrase
         | none => false
     let isHeads := E.declaredPreds.filterMap fun d2 => match E.declaredWording O d2.name with
-      | some v => if v.startsWith "{0} is " then (splitWs v)[2]? else none
+      | some v => if heads.any (fun (h, p) => p == d2.name && some h == templateHead v d2.arity) &&
+                    v.startsWith "{0} is " then (splitWs v)[2]? else none
       | none => none
     let negated := (splitWs phrase).any fun w =>
       (E.declaredPreds.map (·.name) ++ isHeads).any fun h => w == "un" ++ h || w == "non" ++ h
@@ -112,7 +119,7 @@ def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool :=
     let idiomCollision := E.declaredConsts.any (fun c => wordOccurs c.name phrase) ||
       others.any fun d2 =>
         let other := (E.declaredWording O d2.name).getD ""
-        let head := templateHead other d2.arity
+        let head := (heads.find? (fun (_, p) => p == d2.name)).map (·.1)
         [some d2.name, head].any fun tok? => match tok? with
           | none => false
           | some tok =>
@@ -127,8 +134,7 @@ def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool :=
     let suggestedOk := E.suggestedPred name && k == 1 && match unaryPhrase t with
       | none => false
       | some ph =>
-        let sHeads := (E.declaredPreds.map (·.name)) ++
-          E.declaredPreds.filterMap fun d2 => templateHead ((E.declaredWording O d2.name).getD "") d2.arity
+        let sHeads := (E.declaredPreds.map (·.name)) ++ heads.map (·.1)
         let negHeads := ["un", "non", "un-", "non-"].flatMap fun pre => sHeads.map (pre ++ asciiLower ·)
         let phWords := (runs (fun c => isLower c || isDigit c || c == '_' || c == '-') (pyLower ph)).filterMap
           fun w => let cs := w.toList.dropWhile (fun c => !isLower c)
