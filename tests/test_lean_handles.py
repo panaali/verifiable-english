@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import subprocess
 import time
 
 import pytest
@@ -297,8 +298,8 @@ def test_rust_retry_keeps_the_original_deadline(monkeypatch):
         def usable(self):
             return True
 
-        def exchange(self, data, timeout):
-            waits.append(timeout)
+        def exchange(self, data, deadline):
+            waits.append(deadline)
             if self.index == 0:
                 clock[0] = 0.8 * HANG_TIMEOUT
                 raise OSError("reused process ended")
@@ -314,8 +315,68 @@ def test_rust_retry_keeps_the_original_deadline(monkeypatch):
     completed = rust_jsonl._run_checker(argv, input=b"{}\n", timeout=HANG_TIMEOUT)
     rust_jsonl._release(completed, valid=False)
     assert waits[0] == HANG_TIMEOUT
-    assert 0.19 * HANG_TIMEOUT < waits[1] < 0.21 * HANG_TIMEOUT
+    assert waits[1] == HANG_TIMEOUT
     assert completed._checker.closed
+
+
+@pytest.mark.parametrize("reused", [False, True], ids=["initial", "retry"])
+def test_rust_scheduling_pause_keeps_the_outer_deadline(rust, tmp_path, monkeypatch, reused):
+    """F3: a pause after dispatch cannot give either attempt a fresh timeout."""
+    from types import SimpleNamespace
+
+    binary = tmp_path / "ve"
+    record = json.dumps({"id": "typing", "status": "ok", "well_typed": True})
+    binary.write_text(f"#!/bin/sh\nhead -n 1 >/dev/null\necho '{record}'\ncat >/dev/null\n")
+    binary.chmod(0o755)
+    clock = SimpleNamespace(now=0.0, calls=0)
+    monkeypatch.setattr(rust_jsonl, "time", SimpleNamespace(monotonic=lambda: clock.now))
+    original = rust_jsonl._Checker.exchange
+
+    def delayed_exchange(self, data, deadline):
+        clock.calls += 1
+        if reused and clock.calls == 1:
+            raise OSError("reused process ended")
+        clock.now = 2 * HANG_TIMEOUT
+        return original(self, data, deadline)
+
+    monkeypatch.setattr(rust_jsonl._Checker, "exchange", delayed_exchange)
+    if reused:
+        argv = [str(binary), "jsonl", "-"]
+        rust_jsonl._idle[tuple(argv)] = [rust_jsonl._Checker(argv)]
+    with pytest.raises(CheckerUnavailable, match=f"timed out after {HANG_TIMEOUT} seconds"):
+        rust_jsonl.run(_rust_case(), executable=binary, timeout=HANG_TIMEOUT,
+                       expected_sha256=hashlib.sha256(binary.read_bytes()).hexdigest())
+    assert clock.calls == (2 if reused else 1) and not _checkers()
+
+
+def test_rust_exchange_checks_the_outer_deadline_before_transfer(rust, tmp_path, monkeypatch):
+    """F3: the exchange itself cannot rebuild its deadline from a stale duration."""
+    from types import SimpleNamespace
+
+    binary = tmp_path / "ve"
+    binary.write_text("#!/bin/sh\nhead -n 1 >/dev/null\necho '{}'\ncat >/dev/null\n")
+    binary.chmod(0o755)
+    checker = rust_jsonl._Checker([str(binary), "jsonl", "-"])
+    monkeypatch.setattr(rust_jsonl, "time", SimpleNamespace(monotonic=lambda: 2 * HANG_TIMEOUT))
+    try:
+        with pytest.raises(subprocess.TimeoutExpired):
+            checker.exchange(b"{}\n", HANG_TIMEOUT)
+    finally:
+        checker.close()
+
+
+def test_rust_complete_frame_obeys_line_cap(rust, tmp_path, monkeypatch):
+    """A newline in the read chunk does not bypass the framing limit."""
+    binary = tmp_path / "ve"
+    binary.write_text("#!/bin/sh\nhead -n 1 >/dev/null\nprintf '%s\\n' '" + "x" * 65 + "'\ncat >/dev/null\n")
+    binary.chmod(0o755)
+    monkeypatch.setattr(rust_jsonl, "MAX_LINE_BYTES", 64)
+    checker = rust_jsonl._Checker([str(binary), "jsonl", "-"])
+    try:
+        with pytest.raises(OSError, match="oversized Rust JSONL response"):
+            checker.exchange(b"{}\n", rust_jsonl._deadline(HANG_TIMEOUT))
+    finally:
+        checker.close()
 
 
 # -- F3: the same Background request is asked once
