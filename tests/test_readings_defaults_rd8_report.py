@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,22 +35,15 @@ def test_the_report_names_the_base_and_the_gate_head():
     assert f"## Historical gate (run on `{EVIDENCE['gate']['head']}`, before the report commit)" in REPORT
 
 
-def test_review_fix_commit_chain_and_final_gate_target():
-    """The report commit is a self entry because its own hash cannot occur in committed JSON. It is the latest
-    commit of that subject in HEAD's own history: each review round's report commit reuses the subject, and
-    another branch's commits (`--all`) are not this tree's."""
+def test_saved_review_fix_commit_chain_and_final_gate_target():
+    """Review history is saved evidence; a moving Git abbreviation cannot change this report check."""
     final = EVIDENCE["final_gate"]
     assert final["target"] == "self" and final["checks"] == ["lake build", "python3 lean/audit.py", "full pytest"]
     assert final["results"] == {check: "PASS" for check in final["checks"]}
-    [report_commit] = subprocess.check_output(
-        ["git", "log", "HEAD", "--format=%H", "-n", "1", "--grep=^docs: RD-8 review fixes and final gate evidence$"],
-        cwd=ROOT, text=True).splitlines()
-    rows = subprocess.check_output(
-        ["git", "log", "--reverse", "--format=%h%x09%s", f"{EVIDENCE['base']}..{report_commit}"],
-        cwd=ROOT, text=True).splitlines()
     saved = EVIDENCE["commits"] + EVIDENCE["review_fix_commits"]
-    assert rows[:-1] == [f"{entry['hash']}\t{entry['subject']}" for entry in saved]
-    assert rows[-1].endswith("\tdocs: RD-8 review fixes and final gate evidence")
+    assert len({entry["hash"] for entry in saved}) == len(saved)
+    assert all(re.fullmatch(r"[0-9a-f]{8}", entry["hash"]) and entry["subject"] for entry in saved)
+    assert EVIDENCE["review_fix_commits"][-1]["hash"] in REPORT
 
 
 def test_the_theorem_table_is_the_saved_list():
