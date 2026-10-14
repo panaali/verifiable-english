@@ -1,0 +1,384 @@
+{
+ "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+ "changes": [
+  {
+   "added": 120,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/REPORT.md"
+  },
+  {
+   "added": 40,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/deletion-ledger.json"
+  },
+  {
+   "added": 36,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/lean-mutants-final-worktree.json"
+  },
+  {
+   "added": 36,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/lean-mutants.json"
+  },
+  {
+   "added": 72,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/mutants.json"
+  },
+  {
+   "added": 38,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/python-mutants-final-worktree.json"
+  },
+  {
+   "added": 38,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/python-mutants.json"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-collection-final-worktree2.log"
+  },
+  {
+   "added": 10,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-collection.log"
+  },
+  {
+   "added": 4,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-defaults-regressions.log"
+  },
+  {
+   "added": 4,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-final-binding-tests.log"
+  },
+  {
+   "added": 4,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-focused-final-worktree.log"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-git-stage.log"
+  },
+  {
+   "added": 438,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-guards.log"
+  },
+  {
+   "added": 4,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-last-regressions.log"
+  },
+  {
+   "added": 3,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-lean-mutants-final.log"
+  },
+  {
+   "added": 4,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-owner-regression.log"
+  },
+  {
+   "added": 815,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-proposals-build.log"
+  },
+  {
+   "added": 4,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-proposals-tests.log"
+  },
+  {
+   "added": 3,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-python-mutants-final2.log"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-repo-map.log"
+  },
+  {
+   "added": 439,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-restored-guards.log"
+  },
+  {
+   "added": 14,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-s2-regressions.log"
+  },
+  {
+   "added": 15,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-statements-check.log"
+  },
+  {
+   "added": 5,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-sup-proof6.log"
+  },
+  {
+   "added": 4,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/rd7-tests6.log"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/readings-defaults/rd8/DELTA.md"
+  },
+  {
+   "added": 195,
+   "deleted": 55,
+   "path": "docs/trust-baseline.json"
+  },
+  {
+   "added": 23,
+   "deleted": 0,
+   "path": "lean/READINGS.md"
+  },
+  {
+   "added": 7,
+   "deleted": 0,
+   "path": "lean/ResponseShape/Audit.lean"
+  },
+  {
+   "added": 65,
+   "deleted": 2,
+   "path": "lean/ResponseShape/Encoders/ReadingsRoute.lean"
+  },
+  {
+   "added": 52,
+   "deleted": 1,
+   "path": "lean/ResponseShape/Schemas/ReadingsRoute.lean"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "lean/VE.lean"
+  },
+  {
+   "added": 12,
+   "deleted": 0,
+   "path": "lean/VE/Audit.lean"
+  },
+  {
+   "added": 10,
+   "deleted": 0,
+   "path": "lean/VE/Norms/WitnessKind.lean"
+  },
+  {
+   "added": 23,
+   "deleted": 8,
+   "path": "lean/VE/Readings/Run.lean"
+  },
+  {
+   "added": 88,
+   "deleted": 0,
+   "path": "lean/VE/Readings/SupDependencies.lean"
+  },
+  {
+   "added": 37,
+   "deleted": 0,
+   "path": "lean/VE/Readings/SupVerdictsExamples.lean"
+  },
+  {
+   "added": 139,
+   "deleted": 27,
+   "path": "lean/VE/Readings/SupVerdictsSound.lean"
+  },
+  {
+   "added": 444,
+   "deleted": 11,
+   "path": "lean/VE/Readings/SupVerdictsWire.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 3,
+   "path": "lean/VE/Rights/Run.lean"
+  },
+  {
+   "added": 13,
+   "deleted": 8,
+   "path": "lean/VE/Route/frozen-sources.sha256"
+  },
+  {
+   "added": 1,
+   "deleted": 3,
+   "path": "lean/VE/SoftNorms/Run.lean"
+  },
+  {
+   "added": 17,
+   "deleted": 0,
+   "path": "lean/axioms.txt"
+  },
+  {
+   "added": 8,
+   "deleted": 0,
+   "path": "lean/checkers.lock"
+  },
+  {
+   "added": 344,
+   "deleted": 240,
+   "path": "lean/declarations.txt"
+  },
+  {
+   "added": 8,
+   "deleted": 3,
+   "path": "lean/predicates.txt"
+  },
+  {
+   "added": 187,
+   "deleted": 15,
+   "path": "lean/statements.txt"
+  },
+  {
+   "added": 14,
+   "deleted": 10,
+   "path": "tests/test_readings_budget_zero.py"
+  },
+  {
+   "added": 9,
+   "deleted": 13,
+   "path": "tests/test_readings_components_document.py"
+  },
+  {
+   "added": 16,
+   "deleted": 3,
+   "path": "tests/test_readings_defaults_english.py"
+  },
+  {
+   "added": 5,
+   "deleted": 13,
+   "path": "tests/test_readings_defaults_rd8_report.py"
+  },
+  {
+   "added": 13,
+   "deleted": 1,
+   "path": "tests/test_readings_nd_document.py"
+  },
+  {
+   "added": 27,
+   "deleted": 14,
+   "path": "tests/test_readings_s2_document.py"
+  },
+  {
+   "added": 316,
+   "deleted": 3,
+   "path": "tests/test_readings_sup_verdicts.py"
+  },
+  {
+   "added": 5,
+   "deleted": 3,
+   "path": "tests/test_readings_verdicts_lean.py"
+  },
+  {
+   "added": 7,
+   "deleted": 1,
+   "path": "tools/gate-collection.json"
+  },
+  {
+   "added": 40,
+   "deleted": 181,
+   "path": "tools/relay-gate-allow.json"
+  },
+  {
+   "added": 78,
+   "deleted": 4,
+   "path": "tools/trust-classes.json"
+  },
+  {
+   "added": 2,
+   "deleted": 0,
+   "path": "ve/assurance-manifest.json"
+  },
+  {
+   "added": 246,
+   "deleted": 1,
+   "path": "ve/backends/lean_service_schema/readings-route.json"
+  },
+  {
+   "added": 7,
+   "deleted": 1,
+   "path": "ve/readings_route.py"
+  },
+  {
+   "added": 19,
+   "deleted": 207,
+   "path": "ve/readings_s2_wording.py"
+  },
+  {
+   "added": 374,
+   "deleted": 398,
+   "path": "ve/readings_verdicts.py"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "08d5a077f4ab04fac01044034fe33e08d4f5aaf8",
+   "subject": "rd-7: reuse Lean-confirmed scopes while preparing evidence"
+  },
+  {
+   "hash": "0bebbebbc062b65c19faabcd516b66256c768556",
+   "subject": "rd-7: preserve public superposed conflict fields"
+  },
+  {
+   "hash": "506caeeea4f58e8b948b0e2403e524ef99fc2505",
+   "subject": "rd-7: preserve Lean superposed 1024-choice limit"
+  },
+  {
+   "hash": "ec2bfab457d59242ccdba193634a87e08caf9cbb",
+   "subject": "rd-7: bind completion fill rows and prune stale relay allowances"
+  },
+  {
+   "hash": "3047e8194b5aeb4d005eb5f4a7ee283b7a6a4434",
+   "subject": "rd-7: verify superposed verdicts under reordered document keys"
+  },
+  {
+   "hash": "c5c4e823790af2559dd185dfc2888d2d69b853bf",
+   "subject": "rd-7: guard legacy service and shared-condition English with seeded probes"
+  },
+  {
+   "hash": "82dd8b9b57a10c84ccd2510ff9d2941f3113ca4d",
+   "subject": "rd-7: preserve enumerated service requests and complete independent English"
+  },
+  {
+   "hash": "b49f8c428c3673e362b4d1c0fb86b66f4878821d",
+   "subject": "rd-7: update budget and component regressions for superposed verdicts"
+  },
+  {
+   "hash": "0819d20d4006ab913ef57719f75f979dccd6eff8",
+   "subject": "rd-7: pin superposed JSON modules and assert Lean refusal of invalid model"
+  },
+  {
+   "hash": "1f7f06210415f069f61c6ca33914ce2043bc6eb7",
+   "subject": "rd-7: keep superposed relay to schema and request binding"
+  },
+  {
+   "hash": "870227c3dd81513ed2ade63a12d0e3aaffbc5e30",
+   "subject": "rd-7: regenerated statements, audit and frozen manifests; trust baseline with RD-7's R6 allowance (V +520)"
+  },
+  {
+   "hash": "92d9b920e5635cbfc8cb583ea624d9af6bed9d42",
+   "subject": "rd-7: superposed verdict theorems state their conclusions with the existing meaning (no new S predicates); trust classes for the new declarations; tidy the deleted Python's gaps"
+  },
+  {
+   "hash": "6727c1c5577af59e86ab75b8ce47d4467681b22b",
+   "subject": "rd-7: one owner for the conflict witness kind wording (VE.Norms.witnessKind); no outward import from the superposed verdicts"
+  },
+  {
+   "hash": "837bbd18abadec545a770dd70412ab31ba89cb6d",
+   "subject": "rd-7: work left uncommitted (committed by chain)"
+  }
+ ],
+ "head": "08d5a077f4ab04fac01044034fe33e08d4f5aaf8"
+}

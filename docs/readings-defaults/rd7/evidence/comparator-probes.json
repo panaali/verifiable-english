@@ -1,0 +1,22 @@
+{
+  "changed_value": {
+    "error": "/tmp/rd7-ab/probe-value.jsonl: line 1 is no record the recorder writes: outcome: cell: 'BOGUS' is not one of ['S', 'R', 'U', 'X']",
+    "failed": true
+  },
+  "bool_vs_int": {
+    "error": "/tmp/rd7-ab/probe-bool-base.jsonl: line 1 is no record the recorder writes: outcome: cell: 1 is not one of ['S', 'R', 'U', 'X']",
+    "failed": true
+  },
+  "missing_record": {
+    "error": "/tmp/rd7-ab/probe-missing.jsonl does not hold the probe/python corpus: 1 of its 9435 cases missing (first [\"ve.core@0.2\", [\"relational-fol@0\"], \"parse_accept\", \"positive\"]), 0 other cases",
+    "failed": true
+  },
+  "same_file": {
+    "error": "BASE and HEAD are the same file /tmp/rd7-ab/probe-base.jsonl",
+    "failed": true
+  },
+  "empty_input": {
+    "error": "/tmp/rd7-ab/probe-empty.jsonl does not hold the probe/lean corpus: 9435 of its 9435 cases missing (first [\"ve.core@0\", [\"relational-fol@0\", \"english-surface\"], \"parse_accept\", \"budget\"]), 0 other cases",
+    "failed": true
+  }
+}

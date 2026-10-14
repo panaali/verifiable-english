@@ -47,8 +47,8 @@
     {
       "id": "L3",
       "file": "lean/VE/Readings/Run.lean",
-      "find": "if routeND f.r.N == .superposed && (j.getObjVal? \"budget\").isOk then\n        return ← runSupVerdicts id f.r.b j",
-      "replace": "if routeND f.r.N == .superposed then\n        return ← runSupVerdicts id f.r.b j",
+      "find": "if routeND f.r.N == .superposed && (j.getObjVal? \"budget\").isOk then\n        return \u2190 runSupVerdicts id b j",
+      "replace": "if routeND f.r.N == .superposed then\n        return \u2190 runSupVerdicts id b j",
       "command": [
         "bash",
         "-c",
@@ -67,6 +67,80 @@
         "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build VE.Readings.SupVerdictsExamples"
       ],
       "claim": "The global proof with only a shared pair condition still says the result does not depend on the reading."
+    },
+    {
+      "id": "L5",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "find": "(if (choices D).length \u2264 maxChoices then cs else [])",
+      "replace": "cs",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l5-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices"
+      ],
+      "claim": "Above 64 compatible choices the superposed request keeps one scope and sixteen bounded model proposals."
+    },
+    {
+      "id": "P3",
+      "file": "ve/readings_route.py",
+      "find": "_need({entry[\"label\"] for entry in row[\"fill\"]} ==",
+      "replace": "_need(True or {entry[\"label\"] for entry in row[\"fill\"]} ==",
+      "tests": [
+        "tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference"
+      ],
+      "claim": "The completion fill list covers the request-bound Fill_T premise labels."
+    },
+    {
+      "id": "P4",
+      "file": "ve/readings_route.py",
+      "find": "_need(unit[\"content\"][\"norm\"][\"over\"] == filled_unit[\"content\"][\"norm\"][\"over\"])",
+      "replace": "_need(True)",
+      "tests": [
+        "tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference"
+      ],
+      "claim": "A candidate unit cannot add a precedence reference absent from its filled request unit."
+    },
+    {
+      "id": "L6",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "find": "let over := (checkedChoices x.D).length > maxChoiceChecks",
+      "replace": "let over := (choices x.D).length > maxChoiceChecks",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l6-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget"
+      ],
+      "claim": "The 1024-choice budget counts checked compatible choices, not the 64-choice display list."
+    },
+    {
+      "id": "P5",
+      "file": "ve/readings_verdicts.py",
+      "find": "result = _public_sup_conflict(row[\"result\"])",
+      "replace": "result = dict(row[\"result\"])",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_public_conflict_keeps_service_envelope_private"
+      ],
+      "claim": "The public conflict result omits service-only envelope fields while retaining Lean text."
+    },
+    {
+      "id": "P6",
+      "file": "ve/readings_verdicts.py",
+      "find": "key != \"status_text\" or \"reason\" not in result",
+      "replace": "key != \"status_text\" or True",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget"
+      ],
+      "claim": "A limit result displays only the established UNKNOWN status and Lean reason."
+    },
+    {
+      "id": "P7",
+      "file": "ve/readings_verdicts.py",
+      "find": "self._taken[tuple(tuple(x) for x in scope[\"row\"][\"choice\"])] = True",
+      "replace": "pass",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scopes_need_only_the_two_answer_roundtrips"
+      ],
+      "claim": "Lean-confirmed scopes are reused during evidence preparation; the conflict report needs two answer roundtrips, not one extra per scope."
     }
   ]
 }

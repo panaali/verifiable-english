@@ -1,0 +1,219 @@
+{
+  "mutants": [
+    {
+      "id": "P1",
+      "file": "ve/readings_verdicts.py",
+      "claim": "A constant-reject scope guard cannot hide behind a forged-answer test: genuine complete rows must remain available.",
+      "source_sha256": "4404bf76b87ef98c2ac3b4b05208071c1c148252477277142548ecfe62ff9592",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 44.1,
+      "output_tail": "k_sup_answer\n    with relayed():\n         ^^^^^^^^^\n/home/seyran/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/contextlib.py:162: in __exit__\n    self.gen.throw(value)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    @contextmanager\n    def relayed():\n        \"\"\"Checking an answer Lean sent (build checklist 4 and 5): every failure inside is `CheckerUnavailable`, never a\n        crash and never a verdict, whatever the answer holds (a type its schema did not fix, a missing or duplicated\n        row, a decoder's refusal of a value Lean sent). A resource limit stays a resource limit (checklist 6). The one\n        guard of every check of a `readings-verdicts` answer and of the split's answers at load.\"\"\"\n        try:\n            yield\n        except (CheckerUnavailable, ResourceLimit):\n            raise\n        except Exception as exc:  # noqa: BLE001 - any failure of the check is an invalid answer\n>           raise CheckerUnavailable(INVALID_ANSWER) from exc\nE           ve.errors.CheckerUnavailable: the Lean readings route returned an invalid answer\n\nve/readings_verdicts.py:941: CheckerUnavailable\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model\n1 failed in 10.09s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-rl2glrne)\n"
+    },
+    {
+      "id": "P2",
+      "file": "ve/readings_s2_wording.py",
+      "claim": "Every producer-planned English line is relayed.",
+      "source_sha256": "c97091fb39350d1e0e1d275ac6acff5b699e5a8e6982dfaf20d84e605baa7209",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_sup_service_all_some_none_and_english"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_sup_service_all_some_none_and_english"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 51.1,
+      "output_tail": "ute.query_answer(phi)\n            assert answer[\"route\"] == \"superposed\"\n>           assert len(wording.plan(answer, wording.conclusion(phi))) == len(answer[\"english\"])\nE           AssertionError: assert 0 == 2\nE            +  where 0 = len([])\nE            +    where [] = plan({'dead': [], 'dead_readings': None, 'english': [{'frame': 'E26', 'gaps': [], 'label': None, 'model': None, ...}, {'frame': 'E13', 'gaps': [], 'label': None, 'model': None, ...}], 'id': 'readings-verdicts', ...}, '*For every agent, for every user, that agent must help that user.*')\nE            +      where plan = <ve.readings_s2_wording.S2Wording object at 0x7469ab115a90>.plan\nE            +      and   '*For every agent, for every user, that agent must help that user.*' = conclusion(['forall', 'agent', ['forall', 'user', ['binary', 'help_required', ['var', 1], ['var', 0]]]])\nE            +        where conclusion = <ve.readings_s2_wording.S2Wording object at 0x7469ab115a90>.conclusion\nE            +  and   2 = len([{'frame': 'E26', 'gaps': [], 'label': None, 'model': None, ...}, {'frame': 'E13', 'gaps': [], 'label': None, 'model': None, ...}])\n\ntests/test_readings_sup_verdicts.py:33: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_sup_service_all_some_none_and_english\n1 failed in 17.08s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-_l6vsbfh)\n"
+    },
+    {
+      "id": "L1",
+      "file": "lean/VE/Readings/SupDependencies.lean",
+      "claim": "Dropping needed conditions breaks supDependencies_replay.",
+      "source_sha256": "fab61cdc0c807d44ce6ddad6f616b243ed0d017e3cadd0b16c88e3c9421761d3",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake env lean VE/Readings/SupDependencies.lean"
+      ],
+      "baseline_exit": 0,
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 157.5,
+      "output_tail": "VE/Readings/SupDependencies.lean:52:21: warning: unused variable `D`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:52:31: warning: unused variable `A`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:52:44: warning: unused variable `Q`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:53:5: warning: unused variable `certs`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:53:52: warning: unused variable `proof`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nVE/Readings/SupDependencies.lean:80:2: error: Type mismatch\n  greedy_replay_sound (supReplayMiddle D A (supProofs D certs proof)) (slotLabelled D ++ Q) h\nhas type\n  supReplayMiddle D A (supProofs D certs proof)\n      (blank (slotLabelled D ++ Q)\n        (usedLabels (supReplayMiddle D A (supProofs D certs proof)) [] (slotLabelled D ++ Q) [])) =\n    true\nbut is expected to have type\n  supReplayMiddle D A (supProofs D certs proof) (blank (slotLabelled D ++ Q) (supDependencies D A Q certs proof)) = true\n"
+    },
+    {
+      "id": "L2",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "claim": "The superposed SOME encoder cannot claim ALL; its computed boundary guard fails.",
+      "source_sha256": "b6b3bb3f774966462b1612606811603477ca395d98401fc4363269e3f21f5f23",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build VE.Readings.SupVerdictsExamples"
+      ],
+      "baseline_exit": 0,
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 87.1,
+      "output_tail": "or_false,\n           Option.some.injEq, reduceCtorEq] at h\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/VerdictsWire.lean:800:90: This simp argument is unused:\n  Option.some.injEq\n\nHint: Omit it from the simp argument list.\n  simp only [PlanItem.label_text, PlanItem.label_shown, reduceCtorEq,\u0335 \u0335O\u0335p\u0335t\u0335i\u0335o\u0335n\u0335.\u0335s\u0335o\u0335m\u0335e\u0335.\u0335i\u0335n\u0335j\u0335E\u0335q\u0335] at hl\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [185/187] Built VE.Readings.SupVerdictsWire (49s)\n\u2714 [186/187] Built VE.Readings.SupVerdictsSound (19s)\n\u2716 [187/187] Building VE.Readings.SupVerdictsExamples (14s)\ntrace: .> LEAN_PATH=/tmp/rd7-head-code/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /tmp/rd7-head-code/lean/VE/Readings/SupVerdictsExamples.lean -o /tmp/rd7-head-code/lean/.lake/build/lib/lean/VE/Readings/SupVerdictsExamples.olean -i /tmp/rd7-head-code/lean/.lake/build/lib/lean/VE/Readings/SupVerdictsExamples.ilean -c /tmp/rd7-head-code/lean/.lake/build/ir/VE/Readings/SupVerdictsExamples.c --setup /tmp/rd7-head-code/lean/.lake/build/ir/VE/Readings/SupVerdictsExamples.setup.json --json\nerror: VE/Readings/SupVerdictsExamples.lean:32:0: Expression\n  strOf ((supResult Examples.K1 [] false \"query\" [] none [g, p, m] [] budget).getObjValD \"verdict\") == \"SOME\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Readings.SupVerdictsExamples\nerror: build failed\n"
+    },
+    {
+      "id": "L3",
+      "file": "lean/VE/Readings/Run.lean",
+      "claim": "A saved budget-free ND request still takes its enumerated service contract.",
+      "source_sha256": "51b108c971cb3fd271c3859be9bc89acd7e2db6408158a7927e0657f2e05e629",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l3-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_budget_free_nd_verdict_request_keeps_the_enumerated_contract"
+      ],
+      "baseline_exit": 0,
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 171.5,
+      "output_tail": "S ===================================\n______ test_budget_free_nd_verdict_request_keeps_the_enumerated_contract _______\n\n    def test_budget_free_nd_verdict_request_keeps_the_enumerated_contract():\n        from pathlib import Path\n        from ve.backends.lean_service import LeanService\n    \n        fixture = Path(__file__).resolve().parents[1] / \"tests/data/route-cases.jsonl\"\n        for line in fixture.read_text().splitlines():\n            mode, case = json.loads(line)\n            if (mode == \"readings-route\" and case.get(\"kind\") == \"readings-verdicts\"\n                    and \"norm-defaults@0\" in case[\"environment\"][\"profiles\"] and \"budget\" not in case):\n                break\n        else:\n            pytest.fail(\"the saved enumerated request is missing\")\n        with LeanService(allow_unlisted_build=True) as lean:\n            [answer] = lean.run(mode, [case])\n>       assert answer[\"status\"] == \"ok\" and answer[\"route\"] == \"enumerated\"\nE       AssertionError: assert ('ok' == 'ok'\nE         \nE           ok and 'superposed' == 'enumerated'\nE         \nE         - enumerated\nE         + superposed)\n\ntests/test_readings_sup_verdicts.py:178: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_budget_free_nd_verdict_request_keeps_the_enumerated_contract\n1 failed in 2.21s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-573hen9o)\n"
+    },
+    {
+      "id": "L4",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "claim": "The global proof with only a shared pair condition still says the result does not depend on the reading.",
+      "source_sha256": "b6b3bb3f774966462b1612606811603477ca395d98401fc4363269e3f21f5f23",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build VE.Readings.SupVerdictsExamples"
+      ],
+      "baseline_exit": 0,
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 64.9,
+      "output_tail": "s false`\nwarning: VE/Readings/VerdictsWire.lean:800:90: This simp argument is unused:\n  Option.some.injEq\n\nHint: Omit it from the simp argument list.\n  simp only [PlanItem.label_text, PlanItem.label_shown, reduceCtorEq,\u0335 \u0335O\u0335p\u0335t\u0335i\u0335o\u0335n\u0335.\u0335s\u0335o\u0335m\u0335e\u0335.\u0335i\u0335n\u0335j\u0335E\u0335q\u0335] at hl\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [185/187] Built VE.Readings.SupVerdictsWire (25s)\nwarning: VE/Readings/SupVerdictsWire.lean:329:43: unused variable `ls`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2714 [186/187] Built VE.Readings.SupVerdictsSound (18s)\n\u2716 [187/187] Building VE.Readings.SupVerdictsExamples (18s)\ntrace: .> LEAN_PATH=/tmp/rd7-head-code/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /tmp/rd7-head-code/lean/VE/Readings/SupVerdictsExamples.lean -o /tmp/rd7-head-code/lean/.lake/build/lib/lean/VE/Readings/SupVerdictsExamples.olean -i /tmp/rd7-head-code/lean/.lake/build/lib/lean/VE/Readings/SupVerdictsExamples.ilean -c /tmp/rd7-head-code/lean/.lake/build/ir/VE/Readings/SupVerdictsExamples.c --setup /tmp/rd7-head-code/lean/.lake/build/ir/VE/Readings/SupVerdictsExamples.setup.json --json\nerror: VE/Readings/SupVerdictsExamples.lean:35:0: Expression\n  (supIndependent Examples.K1 [] [\"unsaid:pair:x,y\"]).length == Examples.K1.sets.length\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Readings.SupVerdictsExamples\nerror: build failed\n"
+    },
+    {
+      "id": "L5",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "claim": "Above 64 compatible choices the superposed request keeps one scope and sixteen bounded model proposals.",
+      "source_sha256": "b6b3bb3f774966462b1612606811603477ca395d98401fc4363269e3f21f5f23",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l5-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices"
+      ],
+      "baseline_exit": 0,
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 431.4,
+      "output_tail": ", e4560abd36d7fe85b655249634d974776f40e876ada4f3f8abdfb2c06f671411, e60dffcec8c61b3f0775e2561d2489ad596376f663bba1b5a7b411bc8f8085b2, e7f4777e0ba33a4e714d2b774f7c00e3a45ca3702ac18bca3e1cfbcdf48cd7a1, e8ee8b2e46ef51691189c79ddfbdb8fd9b12e30d5814da2dbbbfaee38bec5a8d, ea09d2acda207109238e222c3851fc11cb05bf44543da6728ce07cb9dbb23588, efd52cb29247a36187f5d3dc62a75e540df06d51bc29062e68e0c91f74e92143, f24ffcbcc303769a17a524e660a0249afdb07e629d5b1bb8cfd7479380da9890, f759c31830880ca4337deb14e22585f852e895d67df9c625a7acfe352772caba, f8c4650697d132315eaeb48854c582af92d0860213f1720f47ed20555e07bf26, f9ef4dab6909ff3151e446393849cb73292f9279123c74b73fccc8c3bd171ca2, fb18e14a5c8cf0a30a12933f69a721c792c4e12234ce3d3104a2f3d5ad8ca3b2, fb35ee4fddd063ca33abd0a6ec226befdac0ba7494751b80ec7f5cab7e12ea68, fb9c71456eb86e0de033d5b62428ee7ff9e7a0b4c88815cd08ff01d92a787819, fbbc8c5487e3c19b15ccd14053b17321c387e6a9c9e4c663db4c3879fe2238a1, fd3a693e0a119eed2e56d7f15a38e61a1491602f704b7538e27d54f8305c2bd7, fe03c0764abb901c63f4c2841b62322c62493b940a57557757f8c2ba3681999a, fe906293adbc3ffe897050ff988abcec2b1fea3b8a4d521abcf9d223e1a76f51\n\nve/backends/lean_service.py:455: CheckerUnavailable\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices\n1 failed in 5.77s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-o97b6r0z)\n"
+    },
+    {
+      "id": "P3",
+      "file": "ve/readings_route.py",
+      "claim": "The completion fill list covers the request-bound Fill_T premise labels.",
+      "source_sha256": "63911e276e18a8f3a8dcb0ffb255775289f1abcefc30181601b4958594a09631",
+      "tests": [
+        "tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 26.3,
+      "output_tail": "        (\"names\", 0, \"candidates\", 0, \"id\"): \"absent-reading\",\n            (\"names\", 0, \"candidates\", 0, \"index\"): 99,\n            (\"names\", 0, \"candidates\", 0, \"position\"): 99,\n            (\"fill\", 0, \"label\"): \"unsaid:pair:absent,absent\",\n            (\"fill_premises\", 0, \"set\"): \"absent-set\",\n            (\"fill_premises\", 0, \"index\"): 99,\n            (\"filled\", \"units\", 0, \"set\"): \"absent-set\",\n        }\n        for path, replacement in references.items():\n            change(path, replacement)\n        bad = copy.deepcopy(row)\n        bad[\"filled\"][\"environment\"][\"vocabulary\"][\"predicates\"][\"invented\"] = {\"arguments\": [\"agent\", \"user\"]}\n        with pytest.raises(CheckerUnavailable, match=\"invalid answer\"):\n            _completion_elaborate(bad, case)\n        for field in (\"choices\", \"units\", \"names\", \"fill\", \"fill_premises\", \"filled\"):\n            bad = copy.deepcopy(row)\n            bad[field] = []\n>           with pytest.raises(CheckerUnavailable, match=\"invalid answer\"):\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE           Failed: DID NOT RAISE CheckerUnavailable\n\ntests/test_readings_nd_document.py:488: Failed\n=========================== short test summary info ============================\nFAILED tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference\n1 failed in 6.64s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fsflwcd0)\n"
+    },
+    {
+      "id": "P4",
+      "file": "ve/readings_route.py",
+      "claim": "A candidate unit cannot add a precedence reference absent from its filled request unit.",
+      "source_sha256": "63911e276e18a8f3a8dcb0ffb255775289f1abcefc30181601b4958594a09631",
+      "tests": [
+        "tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 27.3,
+      "output_tail": "\n        bad.update(choices=[], choice_count=0, choices_checked=0)\n        with pytest.raises(CheckerUnavailable, match=\"invalid answer\"):\n            _completion_elaborate(bad, case)\n        bad = copy.deepcopy(row)\n        bad[\"units\"].append(copy.deepcopy(bad[\"units\"][0]))\n        with pytest.raises(CheckerUnavailable, match=\"invalid answer\"):\n            _completion_elaborate(bad, case)\n        bad = copy.deepcopy(row)\n        bad[\"fill\"].append(copy.deepcopy(bad[\"fill\"][0]))\n        with pytest.raises(CheckerUnavailable, match=\"invalid answer\"):\n            _completion_elaborate(bad, case)\n        bad = copy.deepcopy(row)\n        bad[\"fill\"][0][\"label\"] = \"\"\n        with pytest.raises(CheckerUnavailable, match=\"invalid answer\"):\n            _completion_elaborate(bad, case)\n        bad = copy.deepcopy(row)\n        bad[\"units\"][0][\"content\"][\"norm\"][\"over\"].append(bad[\"units\"][0][\"content\"][\"norm\"][\"over\"][0])\n>       with pytest.raises(CheckerUnavailable, match=\"invalid answer\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE CheckerUnavailable\n\ntests/test_readings_nd_document.py:508: Failed\n=========================== short test summary info ============================\nFAILED tests/test_readings_nd_document.py::test_superposed_answer_retypes_each_field_and_rebinds_each_reference\n1 failed in 7.83s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-phb25wi6)\n"
+    },
+    {
+      "id": "L6",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "claim": "The 1024-choice budget counts checked compatible choices, not the 64-choice display list.",
+      "source_sha256": "b6b3bb3f774966462b1612606811603477ca395d98401fc4363269e3f21f5f23",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l6-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget"
+      ],
+      "baseline_exit": 0,
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 716.4,
+      "output_tail": "a2c381, e4560abd36d7fe85b655249634d974776f40e876ada4f3f8abdfb2c06f671411, e60dffcec8c61b3f0775e2561d2489ad596376f663bba1b5a7b411bc8f8085b2, e7f4777e0ba33a4e714d2b774f7c00e3a45ca3702ac18bca3e1cfbcdf48cd7a1, e8ee8b2e46ef51691189c79ddfbdb8fd9b12e30d5814da2dbbbfaee38bec5a8d, ea09d2acda207109238e222c3851fc11cb05bf44543da6728ce07cb9dbb23588, efd52cb29247a36187f5d3dc62a75e540df06d51bc29062e68e0c91f74e92143, f24ffcbcc303769a17a524e660a0249afdb07e629d5b1bb8cfd7479380da9890, f759c31830880ca4337deb14e22585f852e895d67df9c625a7acfe352772caba, f8c4650697d132315eaeb48854c582af92d0860213f1720f47ed20555e07bf26, f9ef4dab6909ff3151e446393849cb73292f9279123c74b73fccc8c3bd171ca2, fb18e14a5c8cf0a30a12933f69a721c792c4e12234ce3d3104a2f3d5ad8ca3b2, fb35ee4fddd063ca33abd0a6ec226befdac0ba7494751b80ec7f5cab7e12ea68, fb9c71456eb86e0de033d5b62428ee7ff9e7a0b4c88815cd08ff01d92a787819, fbbc8c5487e3c19b15ccd14053b17321c387e6a9c9e4c663db4c3879fe2238a1, fd3a693e0a119eed2e56d7f15a38e61a1491602f704b7538e27d54f8305c2bd7, fe03c0764abb901c63f4c2841b62322c62493b940a57557757f8c2ba3681999a, fe906293adbc3ffe897050ff988abcec2b1fea3b8a4d521abcf9d223e1a76f51\n\nve/backends/lean_service.py:455: CheckerUnavailable\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget\n1 failed in 1.09s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-xrzw1dwp)\n"
+    },
+    {
+      "id": "P5",
+      "file": "ve/readings_verdicts.py",
+      "claim": "The public conflict result omits service-only envelope fields while retaining Lean text.",
+      "source_sha256": "4404bf76b87ef98c2ac3b4b05208071c1c148252477277142548ecfe62ff9592",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_public_conflict_keeps_service_envelope_private"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_public_conflict_keeps_service_envelope_private"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 29.2,
+      "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____________ test_public_conflict_keeps_service_envelope_private ______________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-2233/test_public_conflict_keeps_ser0')\n\n    def test_public_conflict_keeps_service_envelope_private(tmp_path):\n        _, route, _ = example(tmp_path)\n        conflict = route.conflict()\n        assert conflict[\"status\"] == \"CONFLICT-FREE\"\n>       assert \"status_text\" in conflict and \"route\" not in conflict\nE       AssertionError: assert ('status_text' in {'assumed': [], 'conditional_on': [], 'evidence': 'certificates', 'reading_premises_used': [], ...} and 'route' not in {'assumed': [], 'conditional_on': [], 'evidence': 'certificates', 'reading_premises_used': [], ...})\n\ntests/test_readings_sup_verdicts.py:41: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_public_conflict_keeps_service_envelope_private\n1 failed in 5.82s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-obqoedx3)\n"
+    },
+    {
+      "id": "P6",
+      "file": "ve/readings_verdicts.py",
+      "claim": "A limit result displays only the established UNKNOWN status and Lean reason.",
+      "source_sha256": "4404bf76b87ef98c2ac3b4b05208071c1c148252477277142548ecfe62ff9592",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 60.2,
+      "output_tail": "          (\"query\", {\"premises\": [], \"conclusion\": QUERY})):\n                [row] = run(\"ve_readings_route\", [case(\"readings-verdicts\", raw, document, question=question,\n                                                       evidence=[], budget=dict(BUDGET), **extra)])\n                assert row[\"status\"] == \"ok\" and row[\"route\"] == \"superposed\"\n                if n == 11:\n                    assert row[\"result\"][\"reason\"] == \"ResourceLimit: more than 1024 readings to check\"\n                    if question == \"conflict\":\n>                       assert _public_sup_conflict(row[\"result\"]) == {\n                            \"status\": \"UNKNOWN\", \"reason\": \"ResourceLimit: more than 1024 readings to check\"}\nE                       AssertionError: assert {'reason': 'R...ngs to check'} == {'status': 'U...ngs to check'}\nE                         \nE                         Omitting 2 identical items, use -vv to show\nE                         Left contains 1 more item:\nE                         {'status_text': 'UNKNOWN: ResourceLimit: more than 1024 readings to check'}\nE                         Use -v to get more diff\n\ntests/test_readings_sup_verdicts.py:263: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget\n1 failed in 21.18s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-z9spp7_5)\n"
+    },
+    {
+      "id": "P7",
+      "file": "ve/readings_verdicts.py",
+      "claim": "Lean-confirmed scopes are reused during evidence preparation; the conflict report needs two answer roundtrips, not one extra per scope.",
+      "source_sha256": "4404bf76b87ef98c2ac3b4b05208071c1c148252477277142548ecfe62ff9592",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scopes_need_only_the_two_answer_roundtrips"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scopes_need_only_the_two_answer_roundtrips"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 20.3,
+      "output_tail": "== FAILURES ===================================\n__________ test_superposed_scopes_need_only_the_two_answer_roundtrips __________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-2238/test_superposed_scopes_need_on0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7de7be866fd0>\n\n    def test_superposed_scopes_need_only_the_two_answer_roundtrips(tmp_path, monkeypatch):\n        from ve import readings_route\n    \n        _, route, _ = example(tmp_path)\n        original = readings_route.run_lean\n        questions = []\n    \n        def counted(cases):\n            if cases[0][\"kind\"] == \"readings-verdicts\":\n                questions.append(cases[0][\"question\"])\n            return original(cases)\n    \n        monkeypatch.setattr(readings_route, \"run_lean\", counted)\n        answer = route.conflict_answer()\n        assert len(answer[\"scopes\"]) > 1\n>       assert questions == [\"conflict\", \"conflict\"]\nE       AssertionError: assert ['conflict', ...', 'conflict'] == ['conflict', 'conflict']\nE         \nE         Left contains 2 more items, first extra item: 'conflict'\nE         Use -v to get more diff\n\ntests/test_readings_sup_verdicts.py:61: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_scopes_need_only_the_two_answer_roundtrips\n1 failed in 4.62s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-gwf_r9sl)\n"
+    }
+  ]
+}

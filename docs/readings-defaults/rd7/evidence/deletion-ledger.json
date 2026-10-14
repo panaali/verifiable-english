@@ -1,6 +1,5 @@
 {
-  "base": "d006b1f4876bd2d6be8347b9e45790ab1fc4900d",
-  "uncommitted_worktree": true,
+  "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
   "files": [
     {
       "file": "ve/readings_verdicts.py",
@@ -19,7 +18,7 @@
         "_restrictions",
         "_used"
       ],
-      "worktree_sha256": "069dc8b689d69d8cf0cef81807777210ec9930a67fdec52da27f17768475e8fa"
+      "head_sha256": "4404bf76b87ef98c2ac3b4b05208071c1c148252477277142548ecfe62ff9592"
     },
     {
       "file": "ve/readings_s2_wording.py",
@@ -34,7 +33,8 @@
         "S2Wording.provided",
         "_predicates"
       ],
-      "worktree_sha256": "892e11ca857aca518602493dc8837dea88b696436f9fd877f66e3fec1aaf30f4"
+      "head_sha256": "c97091fb39350d1e0e1d275ac6acff5b699e5a8e6982dfaf20d84e605baa7209"
     }
-  ]
+  ],
+  "code_head": "08d5a077f4ab04fac01044034fe33e08d4f5aaf8"
 }
