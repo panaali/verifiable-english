@@ -2,6 +2,13 @@
  "run": "20261012T1800Z",
  "definitions": "docs/research/presupposition-phase1.md 1.3-1.4",
  "rust_timeout": "600",
+ "limits_at_start": {
+  "rlimit_as_soft": 6442450944,
+  "rlimit_as_hard": 6442450944,
+  "VE_RUST_TIMEOUT": "600",
+  "children_peak_rss_kib": 0,
+  "self_peak_rss_kib": 30924
+ },
  "checks": [
   {
    "id": "F1",
@@ -262,5 +269,12 @@
   "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 203, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/seyran/code/ve-p1-presupposition/ve/__main__.py\", line 409, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/seyran/code/ve-p1-presupposition/ve/__main__.py\", line 43, in main\n    return _main(argv)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/__main__.py\", line 121, in _main\n    return document_main(argv[1:])\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 1760, in main\n    data = check_document(args.path)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/assurance.py\", line 127, in guarded\n    return fn(*args, **kwargs)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 1311, in check_document\n    return _check_document(path)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 1315, in _check_document\n    doc = _load(Path(path), admit=True)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 386, in _load\n    row = _lean_answer(raw, admit)\n  File \"/home/seyran/code/ve-p1-presupposition/ve/document.py\", line 438, in _lean_answer\n    raise error\nve.errors.SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is not human'. Nearest declared wordings: 'is classified as \"human\"'; 'user'; 'claude'.\n",
   "converted": []
  },
- "roundtrip": {}
+ "roundtrip": {},
+ "limits_at_end": {
+  "rlimit_as_soft": 6442450944,
+  "rlimit_as_hard": 6442450944,
+  "VE_RUST_TIMEOUT": "600",
+  "children_peak_rss_kib": 70796,
+  "self_peak_rss_kib": 38456
+ }
 }

@@ -1,6 +1,13 @@
 {
  "never_counted": true,
  "question": "Question: with no product code, can the pilot carry class A's formulas at all, and in what English?",
+ "limits_at_start": {
+  "rlimit_as_soft": 6442450944,
+  "rlimit_as_hard": 6442450944,
+  "VE_RUST_TIMEOUT": "600",
+  "children_peak_rss_kib": 0,
+  "self_peak_rss_kib": 30140
+ },
  "variants": {
   "pinned": {
    "sort_entity_noun": "entity of sort \"entity\"",
@@ -163,5 +170,12 @@
    "identical_normalised": true,
    "byte_identical_raw": true
   }
+ },
+ "limits_at_end": {
+  "rlimit_as_soft": 6442450944,
+  "rlimit_as_hard": 6442450944,
+  "VE_RUST_TIMEOUT": "600",
+  "children_peak_rss_kib": 132316,
+  "self_peak_rss_kib": 132316
  }
 }
