@@ -180,6 +180,40 @@ def test_q2_d10_recorded_evidence_is_disclosed_and_bound(tmp_path):
     assert done.returncode != 0 or record["result"]["lead"] != "yes", record
 
 
+@pytest.mark.parametrize("ident,evidence", [
+    ("G1", True),                 # F13 probe: a scalar cannot be merged into the plain case
+    ("G1", None),                 # JSON null is recorded data, not an absent --evidence option
+    ("G1", 7),
+    ("G1", {"certificate": float("nan")}),  # Python's decoder accepts this non-JSON value
+    ("A1", {"conflict": {}}),    # F13 probe: a conflict without packages cannot drive witness generation
+    ("A1", []),                  # the one-choice route needs an object
+    ("U2", [True]),              # the readings route needs entries with a choice
+    ("U2", [{}]),
+])
+def test_q2_f13_malformed_recorded_evidence_is_a_json_refusal(ident, evidence, tmp_path):
+    entry = AF.load(ident)
+    path = tmp_path / "evidence.json"
+    path.write_text(json.dumps(evidence))
+    done = cli(ROOT / entry["path"], entry["question"], "--evidence", path, "--json")
+    assert done.returncode == 2, (done.stdout, done.stderr)
+    result = json.loads(done.stdout)
+    assert result["error"]["class"] == "VEError"
+    assert result["proof"] == "not_checked" and result["answer"] == "no_answer"
+    assert "result" not in result
+
+
+@pytest.mark.parametrize("depth", [140, 1100])
+def test_q2_f13_deep_recorded_evidence_is_a_json_refusal(depth, tmp_path):
+    entry = AF.load("G1")
+    path = tmp_path / "evidence.json"
+    path.write_text('{"junk":' + "[" * depth + "0" + "]" * depth + "}")
+    done = cli(ROOT / entry["path"], entry["question"], "--evidence", path, "--json")
+    assert done.returncode == 2, (done.stdout, done.stderr)
+    result = json.loads(done.stdout)
+    assert result["error"]["class"] == "VEError" and "deeply nested" in result["error"]["message"]
+    assert result["proof"] == "not_checked" and result["answer"] == "no_answer"
+
+
 VARIANTS = {"nbsp": "Is every member eligible?", "double space": "Is every  member eligible?",
             "tab": "Is every\tmember eligible?", "carriage return": "Is every member eligible?\r",
             "curly quote": "Is “every” member eligible?", "kelvin": "Is every member eligibleK?",
