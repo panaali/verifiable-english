@@ -1,7 +1,15 @@
 {
  "base": "9f40783b8fc403a99798d9951615d76aa2088d38",
- "head": "6b3e1879a34a544c4c4b7a181d4b33dcaa559072",
+ "head": "150532217b0ce42d93dd39d15c655b978810070f",
  "commits": [
+  {
+   "hash": "150532217b0ce42d93dd39d15c655b978810070f",
+   "subject": "AR-4 validate R13 counts and normalize mutant evidence for rendering"
+  },
+  {
+   "hash": "482c780451f0a4aeefc1b19b3f24c24e305d3113",
+   "subject": "AR-4 evidence re-collected at the second sync (base 9f40783b); REPORT numbers and tests of the sync"
+  },
   {
    "hash": "6b3e1879a34a544c4c4b7a181d4b33dcaa559072",
    "subject": "AR-4 DELTA, REPORT: the merge base is 9f40783b after the second sync (value unchanged); the sync recipe for the merge train"

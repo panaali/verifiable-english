@@ -56,7 +56,7 @@ R11). Its starting budget is signed by standing ruling R15 (DELTA row 1).
 ## Measured outcome
 
 <!-- BEGIN GENERATED AR-4 METRICS -->
-Measured with `tools/trust_map.py` at `6b3e1879` against the merge base `9f40783b`:
+Measured with `tools/trust_map.py` at `15053221` against the merge base `9f40783b`:
 
 | Class | Recorded at the base | Measured at the base | Measured at the head | Starting budget |
 |---|---:|---:|---:|---:|
@@ -67,8 +67,8 @@ Measured with `tools/trust_map.py` at `6b3e1879` against the merge base `9f40783
 `docs/trust-baseline.json`: 13,551 lines at the base, 500 at the head (keys before: comment, totals, budget, signed, history, section11, files; 484 per-file rows and 286 `section11` rows left the tree).
 History: 52 entries, 51 distinct, became 70 allowances (one per class that grew); 6 carry a DRI signature, 64 were rebaselines with a reason before AR-4.
 `trust_map.py --check` at the head: exit 0; allowances introduced: 0, removed: 0.
-Commits (`9f40783b..6b3e1879 --no-merges`): 39; files changed: 26, none under `ve/`, `lean/` or `rust/`: yes.
-Seeded bugs: 22, each killed by its named test: yes.
+Commits (`9f40783b..15053221 --no-merges`): 41; files changed: 26, none under `ve/`, `lean/` or `rust/`: yes.
+Seeded bugs: 24, each killed by its named test: yes.
 <!-- END GENERATED AR-4 METRICS -->
 
 The file is 500 lines: 10 for the comment and the budget, plus 7 for each of the 70 allowances the history became
@@ -151,8 +151,8 @@ budget to the measurement and refuses if the check fails. Commit the file if it 
 
 ## Seeded bugs
 
-The 22 mutants in `mutants.json` were run with `uv run python tools/mutants.py docs/arch/AR-4/mutants.json
---evidence docs/arch/AR-4/evidence/mutants.json`, last on the final tools after the sync. They are in every product
+The 24 mutants in `mutants.json` were run with `uv run python tools/mutants.py docs/arch/AR-4/mutants.json
+--evidence docs/arch/AR-4/evidence/mutants.json`, last after the F8/F9 fixes. They are in every product
 file under `tools/` that changed (Python; no Lean or Rust changed). Each made its named test fail and was then
 restored:
 
@@ -177,9 +177,11 @@ restored:
 | M17 | a saved scope's base need not be the merge base (F3) | `tests/test_batch_scope.py::test_a_scope_collected_against_another_base_is_a_problem` |
 | M18 | a gate record's trust counts of another tree are accepted (F7) | `tests/test_gate_trust.py::test_genuine_gate_records_pass_the_shared_checks` |
 | M19 | an R13 rerun of another commit is accepted (F7) | `tests/test_gate_trust.py::test_every_retyped_node_of_a_gate_record_is_a_problem_never_a_crash` |
-| M20 | a boolean failure count passes as an integer (F7) | `tests/test_gate_trust.py::test_every_retyped_node_of_a_gate_record_is_a_problem_never_a_crash` |
+| M20 | a boolean failure count passes as an integer (F9) | `tests/test_gate_trust.py::test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts` |
 | M21 | the merge driver recomputes AR-4's budget from per-file counts it does not have (sync) | `tests/test_regen_generated.py::test_trust_merge_of_the_ar4_budget_file_keeps_main_budget_and_both_allowances` |
 | M22 | the map reads trust totals from the budget file (sync) | `tests/test_architecture_docs.py::test_measure_on_a_small_tree` |
+| M23 | an R13 rerun passes with zero tests (F9) | `tests/test_gate_trust.py::test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts` |
+| M24 | rendering indexes a validated bare mutant array as an object (F8) | `tests/test_gate_trust.py::test_review_f8_bare_mutants_array_reaches_report_check` |
 
 ## Tests and gate
 
@@ -202,7 +204,7 @@ restored:
     a Lean CPU deadline (`CheckerUnavailable`, 5.09 s) under host load. It passed on a serial rerun.
     `tools/test_layer_policy.py`: 39 tests, OK.
     `tests/test_wire_gate_corpus.py` ran last on its own: 8 passed in 21 minutes.
-  - Seeded bugs: 22/22 killed (`evidence/mutants.json`).
+  - Seeded bugs: 24/24 killed (`evidence/mutants.json`).
   - After the second sync (`9f40783b`, which changed only English-runner Lean and tests on `main`): `lake build`
     888 jobs, `lean/audit.py` PASS (484 files), `trust_map.py --check` PASS. The test files of AR-4's changes, the merge's and
     `tests/test_english_runner_root.py` (12 files, `-n 8`): 611 passed, and `test_stale_statement[9]` failed as on
@@ -254,6 +256,17 @@ restored:
   compares that block).
 - **D4:** `tests/test_ar4_report.py` is removed; its scope cases are covered by `report.py --check` and
   `tests/test_batch_scope.py`. The evidence directory is under 1 MB.
+
+### Loop recheck 3 (`arch-AR-4-c141540-looprecheck1.final.md`)
+
+- **F8 (B):** the shared `batch_evidence.mutant_rows` normalizes the writer's object and the historical bare
+  array for validation, source binding and report rendering. The probe passes; the regression calls
+  `report.py --check` with the bare array. M24 restores the crash and is killed by that test.
+- **F9 (B):** passed gates and R13 pairs use one complete integer pytest-count check. An R13 pair also requires
+  at least one selected rerun test and positive Rust test count in the failed full gate. The probe passes;
+  `tests/test_gate_trust.py::test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts` retypes and
+  removes each count in genuine gate records and tests zero reruns. M20 and M23 are killed by it. R13 applies
+  only when the same-commit serial rerun passes every failed test.
 
 ### Open after the fixes
 
