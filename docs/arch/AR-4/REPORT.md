@@ -56,7 +56,7 @@ R11). Its starting budget is signed by standing ruling R15 (DELTA row 1).
 ## Measured outcome
 
 <!-- BEGIN GENERATED AR-4 METRICS -->
-Measured with `tools/trust_map.py` at `101f9571` against the merge base `8594f1d0`:
+Measured with `tools/trust_map.py` at `6b3e1879` against the merge base `9f40783b`:
 
 | Class | Recorded at the base | Measured at the base | Measured at the head | Starting budget |
 |---|---:|---:|---:|---:|
@@ -64,15 +64,15 @@ Measured with `tools/trust_map.py` at `101f9571` against the merge base `8594f1d
 | S | 9,788 | 9,788 | 9,788 | 9,788 |
 | V | 37,495 | 37,495 | 37,495 | 37,495 |
 
-`docs/trust-baseline.json`: 13,531 lines at the base, 500 at the head (keys before: comment, totals, budget, signed, history, section11, files; 483 per-file rows and 286 `section11` rows left the tree).
+`docs/trust-baseline.json`: 13,551 lines at the base, 500 at the head (keys before: comment, totals, budget, signed, history, section11, files; 484 per-file rows and 286 `section11` rows left the tree).
 History: 52 entries, 51 distinct, became 70 allowances (one per class that grew); 6 carry a DRI signature, 64 were rebaselines with a reason before AR-4.
 `trust_map.py --check` at the head: exit 0; allowances introduced: 0, removed: 0.
-Commits (`8594f1d0..101f9571 --no-merges`): 36; files changed: 26, none under `ve/`, `lean/` or `rust/`: yes.
+Commits (`9f40783b..6b3e1879 --no-merges`): 39; files changed: 26, none under `ve/`, `lean/` or `rust/`: yes.
 Seeded bugs: 22, each killed by its named test: yes.
 <!-- END GENERATED AR-4 METRICS -->
 
 The file is 500 lines: 10 for the comment and the budget, plus 7 for each of the 70 allowances the history became
-(13,031 lines fewer than at the base; the plan estimated "about 12,600" deleted and the file "under 300 lines" when
+(13,051 lines fewer than at the base; the plan estimated "about 12,600" deleted and the file "under 300 lines" when
 the history had 35 entries). The file keeps `json.dumps` indent 1, because the `ve-generated` merge driver
 reproduces only a standard indent; a denser layout would be rewritten at every merge. The file grows by 7 lines per
 signed allowance.
@@ -204,7 +204,9 @@ restored:
     `tests/test_wire_gate_corpus.py` ran last on its own: 8 passed in 21 minutes.
   - Seeded bugs: 22/22 killed (`evidence/mutants.json`).
   - After the second sync (`9f40783b`, which changed only English-runner Lean and tests on `main`): `lake build`
-    888 jobs, `lean/audit.py` PASS (484 files), `trust_map.py --check` PASS, and the AR-4 test files rerun (below).
+    888 jobs, `lean/audit.py` PASS (484 files), `trust_map.py --check` PASS. The test files of AR-4's changes, the merge's and
+    `tests/test_english_runner_root.py` (12 files, `-n 8`): 611 passed, and `test_stale_statement[9]` failed as on
+    `main`.
   - `report.py --check`: exit 0, with the note that no gate record was given.
 
 ## Review fixes
