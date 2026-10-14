@@ -14,6 +14,7 @@ import pytest
 
 from conformance import document_wrapper as dw
 from conformance.p0 import VOCAB, envelope, environment
+from subprocesses import busy_cpu
 from ve.backends.lean_service import CheckerUnavailable, LeanService
 
 
@@ -523,13 +524,17 @@ def test_a_zero_request_budget_is_a_resource_limit_never_an_answer(service):
 @pytest.mark.skipif(not __import__("pathlib").Path("/proc/self/stat").exists(), reason="CPU time from /proc")
 def test_a_document_past_its_cpu_deadline_is_unavailable_never_ok(monkeypatch):
     """The mode's deadline covers the whole case (front matter, units, reading sets, graph admission): a
-    deadline below what the bluedot document needs is `CheckerUnavailable`, never an answer."""
+    deadline below what the bluedot document needs is `CheckerUnavailable`, never an answer. The service's CPU is
+    read on the `busy_cpu` clock: on /proc's own a fast machine answers within one tick, which reads as none. The
+    clock moves only once the whole request is sent, so the deadline is found passed while the service works on it."""
     from ve.backends import lean_service
     text = (dw.ROOT / "usecases/bluedot-grant/document.ve.md").read_text()
     monkeypatch.setitem(lean_service.DEADLINES, "document", (1e-4, 1e-4))
+    clock = busy_cpu(monkeypatch, lean_service)
     with LeanService() as slow:
-        with pytest.raises(CheckerUnavailable, match="mode document"):
+        with pytest.raises(CheckerUnavailable, match="mode document") as caught:
             slow.run("document", [{"id": str(i), "document": text} for i in range(8)])
+    assert caught.value.operation == "document" and clock.fired == ["response"]
 
 
 def test_python_document_diagnostics_carry_the_code_their_text_names():

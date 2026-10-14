@@ -3,27 +3,27 @@
  "totals": {
   "K": 997,
   "S": 9788,
-  "D": 13917,
-  "G": 27026,
+  "D": 13918,
+  "G": 27366,
   "C": 8535,
-  "P": 72017,
-  "T": 14756,
-  "o": 12397,
-  "D[V]": 12358,
+  "P": 72042,
+  "T": 14760,
+  "o": 12417,
+  "D[V]": 12359,
   "D[R]": 1032,
   "D[I]": 527,
-  "G[V]": 24960,
+  "G[V]": 25300,
   "G[R]": 1825,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 47944,
-  "lines": 159433
+  "trusted": 48285,
+  "lines": 159823
  },
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37159
+  "V": 37500
  },
  "signed": [],
  "history": [
@@ -675,6 +675,32 @@
    }
   },
   {
+   "change": "batch 14d: Lean coupled-choice enumeration, evidence coverage and verdict replace the deleted Python decision sites",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37154
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37492
+   }
+  },
+  {
+   "change": "lean-first batch 14d: +3 trusted lines in ReadingsChoices reject duplicate set-version identity before Lean choice planning (R6: replaces coupled Python choice identity decision)",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37492
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37495
+   }
+  },
+  {
    "change": "premise-scale: the search-budget service mode (VE.Service.Mode.searchBudget, its name and runMode case, ResponseShape.Skeletons.searchBudget and its row case, the schema list entry): untied [V] +5 in existing verdict-bearing declarations (VE/Service/Protocol.lean +2, ResponseShape/Skeletons.lean +2, ResponseShape/Schemas.lean +1). The mode replaces Python's own premise-check budget (ve/vacuity.py's hard-coded defaults, deleted): Lean owns the budget. The new modules' declarations are classified C (proved: demand_sound, sortBounds_spec, sortBounds_sound) or [R] (a wrong budget only bounds an untrusted search, whose models Lean checks).",
    "signed": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
    "allow": {
@@ -683,7 +709,7 @@
    "rebaselined_from": {
     "K": 997,
     "S": 9788,
-    "V": 37154
+    "V": 37495
    }
   }
  ],
@@ -3980,7 +4006,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 452,
+   "T": 455,
    "o": 31,
    "D[V]": 0,
    "D[R]": 0,
@@ -3991,7 +4017,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 483
+   "lines": 486
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -4179,7 +4205,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 51,
+   "P": 73,
    "T": 0,
    "o": 12,
    "D[V]": 0,
@@ -4191,7 +4217,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 63
+   "lines": 85
   },
   "ResponseShape/Encoders/NormDefaults.lean": {
    "K": 0,
@@ -4479,7 +4505,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 36,
+   "P": 37,
    "T": 0,
    "o": 39,
    "D[V]": 0,
@@ -4491,7 +4517,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 75
+   "lines": 76
   },
   "ResponseShape/EnumSites.lean": {
    "K": 0,
@@ -5013,6 +5039,26 @@
    "trusted": 18,
    "lines": 25
   },
+  "ResponseShape/Schemas/ReadingsChoices.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 45,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 7,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 45,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 45,
+   "lines": 52
+  },
   "ResponseShape/Schemas/ReadingsRoute.lean": {
    "K": 0,
    "S": 0,
@@ -5197,21 +5243,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 45,
+   "G": 46,
    "C": 0,
    "P": 0,
    "T": 4,
-   "o": 42,
+   "o": 43,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 45,
+   "G[V]": 46,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 45,
-   "lines": 91
+   "trusted": 46,
+   "lines": 93
   },
   "ResponseShape/Skeleton.lean": {
    "K": 0,
@@ -5237,7 +5283,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 80,
+   "G": 82,
    "C": 0,
    "P": 0,
    "T": 3,
@@ -5245,19 +5291,19 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 77,
+   "G[V]": 79,
    "G[R]": 2,
    "G[I]": 1,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 77,
-   "lines": 101
+   "trusted": 79,
+   "lines": 103
   },
   "ResponseShape.lean": {
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 673,
+   "G": 718,
    "C": 0,
    "P": 0,
    "T": 13,
@@ -5265,13 +5311,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 667,
+   "G[V]": 712,
    "G[R]": 6,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 667,
-   "lines": 730
+   "trusted": 712,
+   "lines": 775
   },
   "SensesMain.lean": {
    "K": 0,
@@ -5860,7 +5906,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 5345,
+   "T": 5346,
    "o": 320,
    "D[V]": 0,
    "D[R]": 0,
@@ -5871,7 +5917,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 5665
+   "lines": 5666
   },
   "VE/Bridge.lean": {
    "K": 22,
@@ -12416,22 +12462,22 @@
   "VE/Service/Protocol.lean": {
    "K": 0,
    "S": 0,
-   "D": 327,
-   "G": 231,
+   "D": 328,
+   "G": 232,
    "C": 0,
-   "P": 187,
+   "P": 189,
    "T": 19,
-   "o": 100,
-   "D[V]": 226,
+   "o": 101,
+   "D[V]": 227,
    "D[R]": 0,
    "D[I]": 101,
-   "G[V]": 192,
+   "G[V]": 193,
    "G[R]": 39,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 418,
-   "lines": 864
+   "trusted": 420,
+   "lines": 869
   },
   "VE/Service/Readings.lean": {
    "K": 0,
@@ -12452,6 +12498,26 @@
    "unclassified": 0,
    "trusted": 82,
    "lines": 215
+  },
+  "VE/Service/ReadingsChoices.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 246,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 11,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 246,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 246,
+   "lines": 257
   },
   "VE/Service/Standalone.lean": {
    "K": 0,

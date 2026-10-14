@@ -22,6 +22,7 @@ import ResponseShape.Schemas.Order
 import ResponseShape.Schemas.Parse
 import ResponseShape.Schemas.Quantity
 import ResponseShape.Schemas.Readings
+import ResponseShape.Schemas.ReadingsChoices
 import ResponseShape.Schemas.ReadingsRoute
 import ResponseShape.Schemas.Reports
 import ResponseShape.Schemas.Rights
@@ -65,6 +66,7 @@ def files : List File := [
   Parse.file,
   Quantity.file,
   Readings.file,
+  ReadingsChoices.file,
   ReadingsRoute.file,
   Reports.file,
   Rights.file,
