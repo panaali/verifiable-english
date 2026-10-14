@@ -2,8 +2,21 @@
 
 > **Status.** Draft 3 (2026-10-14), branch `research/judgment-terms-p1`, with
 > [judgment-terms-PLAN.md](judgment-terms-PLAN.md) draft 4. It applies phase 1's results
-> ([docs/research/judgment-terms-phase1.md](../research/judgment-terms-phase1.md)) to this spec. **No definition,
-> theorem statement, diagnostic or existing fixture value changes.**
+> ([docs/research/judgment-terms-phase1.md](../research/judgment-terms-phase1.md)) to this spec. **No existing
+> definition, theorem statement, diagnostic or fixture value changes.** The checker's fix round adds two proved
+> theorems and one validation section.
+>
+> **Fix round (draft 3, the checker's verdict FIX, 2026-10-14).**
+> - 4.4: new `dependsOnC_remove` and `status_remove_unused`, both proved in the stub. A bound judgment can be removed
+>   without changing any status only if no unit's content depends on it (`usageMap`'s second list) **and** no unit's
+>   meaning lists it. Neither condition alone is enough: J-β lists nothing and depends on `arbitrary`, and J-τ lists
+>   `unreasonable` and does not depend on it (new 11.9). Plan JT-5's rule for unused records now says this.
+> - J-ω's rules were on `subjects`, which J-ω's environment did not declare: the norms route's own check refuses
+>   them with `UnknownSymbol: regulated predicate subjects`. J-ω's environment now declares `person` and two
+>   regulated predicates, `subjects_to_measure(person, measure)` and `subjects_to_interference(person, interference)`,
+>   and its rules are on them. Admission is given those two names. No J-ω value changes (11, 11.3).
+> - New 11.9: every rule fixture JT-2 replays passes `VE.Norms.validate` (J-ω's draft-3 rules fail it, as the checker
+>   found), and every formula fixture type-checks in 11's environment.
 >
 > **Changes in this draft (3).**
 > - New 0.2: what phase 1 found that bears on the statements, and why none of them changes.
@@ -31,11 +44,13 @@
 > `lake --dir <ve-nightly>/lean env lean`, a build at `f98183bf` (this branch's `lean/` tree still equals it), with no
 > error. Draft 3 added J-ω and re-elaborated the whole stub the same way: `lake --dir <ve-nightly>/lean env lean`, from
 this branch's `lean/`, whose tree still equals `f98183bf`. The run had no error, and every earlier `#eval` output was
-unchanged; the only new output was J-ω's four lines. The stub stays untracked. Draft 3's copy is kept outside the
+unchanged; the only new output was J-ω's four lines. The fix round re-elaborated it the same way, with no error: the
+earlier outputs are unchanged (J-ω's included), and the only new outputs are 11.9's. The stub stays untracked. Draft 3's copy is kept outside the
 repository, at `manage-agents/judgment-terms-SpecStubs-draft3.lean`, because `lean/audit.py` scans every `.lean` file
 under `lean/`. In the stub, `Loader.openTermNames`
 with JT-1's one hunk is a copy of today's function with the hunk applied
-> (section 1); everything else is written as below. Fourteen statements were proved outright in the stub, and two more from the stated `status_eq` (section 12
+> (section 1); everything else is written as below. Sixteen statements were proved outright in the stub (two of them,
+> `dependsOnC_remove` and `status_remove_unused`, in the fix round), and two more from the stated `status_eq` (section 12
 > lists them; among them `nodeOpen_eq`, `faultOf_none_iff`, `status_legacy`, `viewOf_legacy`, `usageMap_unused`,
 > `conflictFree_given` and `leftToPair_differ_ne_nil`); the others are the batches' obligations. Every fixture value in
 > section 11 was computed by `#eval` in the same stub; none was computed by hand, and no model was called.
@@ -462,11 +477,31 @@ theorem usageMap_unused (defs J units j) :
 /-- No row is empty. -/
 theorem usageMap_rows (defs J units j ids) (h : (j, ids) ∈ (usageMap defs J units).1) : ids ≠ []
 
+/-- Removing a bound judgment that the content does not depend on leaves the dependence unchanged. -/
+theorem dependsOnC_remove (defs J cs j) (h : j ∉ dependsOnC defs J cs) :
+    dependsOnC defs (J.filter (· != j)) cs = dependsOnC defs J cs
+
+/-- Plan JT-5's removal: a judgment that the unit's content does not depend on (directly or through W3 definitions)
+    and that its meaning does not list can be removed without changing the unit's status or refusal. -/
+theorem status_remove_unused (defs J u j) (hd : j ∉ dependsOnC defs J u.reads) (hl : j ∉ u.listed) :
+    status defs (J.filter (· != j)) u = status defs J u
+
 end VE.Judgments
 ```
 
 A unit represented only by a reading set appears in the map through its elaborated candidates (J-ξ, J-ξ′); a pending
 reading contributes nothing.
+
+**Removing a record** (plan JT-5, fix round). `status_remove_unused` needs both hypotheses for every unit:
+`usageMap_unused` gives the first (the record is in the map's second list), and the units' `open` lists give the
+second. Neither alone is enough (11.9):
+
+- J-β lists no term, and its content uses `arbitrary`. The usage map lists `arbitrary` as used. Removing it changes
+  `JudgmentNotChecked: u1 arbitrary` into `CHECKED`.
+- J-τ lists `unreasonable`, and its content does not use it. The usage map lists `unreasonable` as **unused**.
+  Removing it changes `JudgmentListedUnused: u1 unreasonable` into `OPEN`.
+
+Both moves are to a status that hides an error, so neither removal is allowed.
 
 ## 5. Criteria and "conflict-free, given …" (JT-4: `lean/VE/Judgments/Zone.lean`)
 
@@ -848,9 +883,13 @@ Records have `decided_by: unresolved_decider`, empty lists, unless a row says ot
 rows through the service, except the rows marked *internal*: inputs to one Lean function that W2 refuses on the wire
 before that function runs (A1). They stay `#guard`s and are never replayed through the service.
 
-J-ω (draft 3) has its own environment: sorts `measure`, `interference`; base predicates `measure_taken(measure)`,
-`interference_with_privacy(interference)`, `arbitrary_measure(measure)` and `arbitrary_interference(interference)`.
-It has no W3 definitions, and admission is given an empty regulated list.
+J-ω (draft 3; fix round) has its own environment: sorts `person`, `measure`, `interference`; base predicates
+`measure_taken(measure)`, `interference_with_privacy(interference)`, `arbitrary_measure(measure)` and
+`arbitrary_interference(interference)`; regulated `subjects_to_measure(person, measure)` and
+`subjects_to_interference(person, interference)`. It has no W3 definitions, and admission is given the two regulated
+names. Its rules are typed in `[measure, person]` and `[interference, person]`, so `.var 0` is the measure or the
+interference. Draft 3 put them on `subjects`, which this environment does not declare, so the norms check refused them
+(11.9).
 
 ### 11.1 W2 under the profile (on the wire, decoded by Lean's own readers)
 
@@ -905,7 +944,7 @@ It has no W3 definitions, and admission is given an empty regulated list.
 | J-τ′ (e) | the same list; no own content; an authored set of J-υ's formula, asserted (complete) | `complete` true; `JudgmentListedUnused: u1 unreasonable` (legacy `CHECKED`) | — |
 | J-λ | each of J-α, J-β, J-γ, J-θ, J-μ, J-ξ, J-ξ′, J-υ with `J = []` | `OPEN`, `CHECKED`, `CHECKED`, `OPEN`, `CHECKED`, `CHECKED`, `OPEN`, `LABELLED`: each equal to `legacy` | — |
 | J-χ (F3) | J-α's `u1`, and `u2`: a rule on `reports` guarded by `subjects(p, a)`, `specified` | `u2`: ok `CHECKED` | `([(arbitrary, [u1])], [])` |
-| J-ω | `J = [arbitrary_measure, arbitrary_interference]`, no definitions; `u037`: rule guarded by `measure_taken ∧ arbitrary_measure`, `open [arbitrary_measure]`; `u045a`: rule guarded by `interference_with_privacy ∧ arbitrary_interference`, `open [arbitrary_interference]` | each ok `OPEN` | `([(arbitrary_measure, [u037]), (arbitrary_interference, [u045a])], [])`: one row per term |
+| J-ω | `J = [arbitrary_measure, arbitrary_interference]`, no definitions; `u037`: rule forbidding `subjects_to_measure` where `measure_taken ∧ arbitrary_measure`, `open [arbitrary_measure]`; `u045a`: rule forbidding `subjects_to_interference` where `interference_with_privacy ∧ arbitrary_interference`, `open [arbitrary_interference]` | each ok `OPEN` | `([(arbitrary_measure, [u037]), (arbitrary_interference, [u045a])], [])`: one row per term |
 
 Dependence directly: `opensIn J₁ [arrest ∧ arbitrary] = [arbitrary]`, `opensIn J₁ [arrest] = []`,
 `opensIn J₁ [J-γ's formula] = []`. Through definitions: `dependsOn defs J₁ [J-γ's formula] = [arbitrary]`,
@@ -981,12 +1020,38 @@ produce that certificate.
 | `undeclaredEvaluative_iff` | `reasonable_grounds`, `just_requirement`, the regulated `make_reasonable_efforts` (and `arbitrary` when unbound) | `due_date`, `just_as_real`, `necessary_condition` (other sense), `arrest` (no row), `arbitrary` (bound) |
 | `conflictFree_given_mono` (one direction only) | — | J-ι: conflict-free given the criterion, not without it |
 | `zone_leftTo` (the certified pair, JT-4) | J-α's pair | a wrong witness, an empty `differ` (`leftToPair_differ_ne_nil`) |
+| `status_remove_unused` (one direction; both hypotheses needed) | J-μ: `arbitrary` removed, `CHECKED` both ways | J-β (content uses it, not listed): the refusal becomes `CHECKED`; J-τ (listed, not used): the refusal becomes `OPEN` (11.9) |
+
+### 11.9 Removal, and the replayed fixtures as valid documents (fix round)
+
+Removal, with `J.filter (· != j)` for "J without j":
+
+| Unit | Removed | `status` with `J` | `status` without it | `usageMap` with `J` |
+|---|---|---|---|---|
+| J-β | `arbitrary` from `J₁` | `JudgmentNotChecked: u1 arbitrary` | ok `CHECKED` | `([(arbitrary, [u1])], [])` |
+| J-τ | `unreasonable` from `J₂` | `JudgmentListedUnused: u1 unreasonable` | ok `OPEN` | `([(arbitrary, [u1])], [unreasonable])` |
+| J-μ | `arbitrary` from `J₁` | ok `CHECKED` | ok `CHECKED` | `([], [arbitrary])` |
+
+Validity. JT-2 replays the rows of 11.2 and 11.3 through the service, so each must first be a document the service
+accepts. In the stub, each rule fixture is one norm document, checked with the norms route's own
+`VE.Norms.validate` (`lean/VE/Norms/Tree.lean:365`). It has its environment's regulated predicates as permissions and
+11's two W3 definitions. Each formula fixture is type-checked with `Formula.check` in 11's environment:
+
+| Fixture | Check | Result |
+|---|---|---|
+| J-ω (`u037`, `u045a`), on J-ω's regulated predicates | `validate` | ok |
+| J-ω as draft 3 wrote it, on `subjects` | `validate` | `UnknownSymbol: regulated predicate subjects` |
+| J-α, J-β, J-γ′, J-μ, J-σ, J-τ, J-τ′ (d), J-χ (`u1` and `u2`) | `validate` | ok, each |
+| J-γ, J-γ″, J-θ, J-ξ, J-ξ′ (both readings), J-υ | `Formula.check` | true, each |
+
+J-ι's document was already checked (`WellFormed`, 11.5). The rows marked *internal* are not replayed (11), so they
+are not in this table.
 
 ## 12. Obligations
 
 | Statement | In the stub | Owner |
 |---|---|---|
-| `records_refuse`, `faultOf_none_iff`, `opensIn_iff`, `opensIn_isEmpty`, `nodeOpen_eq`, `dependsOn_no_defs`, `viewOf_legacy`, `status_legacy`, `usageMap_unused`, `conflictFree_given`, `conflictFree_given_mono`, `zone_no_judgments` | proved | JT-1, JT-4 restate them in the product files |
+| `records_refuse`, `faultOf_none_iff`, `opensIn_iff`, `opensIn_isEmpty`, `nodeOpen_eq`, `dependsOn_no_defs`, `viewOf_legacy`, `status_legacy`, `usageMap_unused`, `dependsOnC_remove`, `status_remove_unused`, `conflictFree_given`, `conflictFree_given_mono`, `zone_no_judgments` | proved | JT-1, JT-4 restate them in the product files |
 | `leftToPair_leftTo`, `leftToPair_differ_ne_nil` | proved, over `completionOf` as a stand-in | WG-6 with `LeftToPair` (R1); JT-4 if WG-6 lands without them |
 | `status_never_checked`, `status_checked` | proved from `status_eq` | JT-1 |
 | `openTermNames_sorts`, `records_names`, `admit_ok_iff`, `admit_first_fault`, `dependsOn_iff`, `status_eq`, `status_ok_iff`, `usageMap_sound`, `usageMap_complete`, `usageMap_rows` | stated | JT-1 |
@@ -1023,3 +1088,4 @@ no product file may declare `zoneOfOpens` or `completionOf` as the stub did (`op
 | 2026-10-14 | 1 | First statement spec, from plan draft 2: W2's profile flag, records and base-predicate admission, the shared scan with rights' switch, one traversal per unit, status, usage map, criteria and the conditional conflict answer, zone answers on WG-6's planned names, deciders, the undeclared-word report; diagnostics, English wordings, fixture values computed in the stub; findings F1 to F8 (F3 open). |
 | 2026-10-14 | 2 | The statement review's joint position (FIX; `manage-agents/debates/judgment-terms-spec/`, section 0.1). A1: J-ξ an authored set with one reading, J-ξ′ an open set of u055's two scopes with a separating model, "order 1" ends with `unreasonable [person]`, *internal* rows marked. A2: `zone_leftTo` concludes R1's certified pair `LeftToPair` (with `leftToPair_leftTo` and `leftToPair_differ_ne_nil`, proved), wrong-witness and empty-`differ` mutations. A3: unconditional wording only for `conflictFreeU_consistent`; layered lines name `L.X` and say "without additional judgment criteria"; `conflictFree_unconditional_given` renamed `conflictFree_given_mono`. A4: `status_eq` worded "judgment dependence forces OPEN; otherwise the legacy status applies". A5: the relay checks declaration and unit order. F2: J-υ (LABELLED → OPEN). F3: settled, definition-only with the narrower guarantee. F3′: regulated predicates scanned and accepted by the relay, fixture rows. F4: `UnitView.complete` guards `JudgmentListedUnused`, pending readings kept as `none`; J-τ′ (a) to (e). Stub re-elaborated with no error; every changed fixture recomputed by `#eval`. |
 | 2026-10-14 | 3 | Phase 1 (`docs/research/judgment-terms-phase1.md`), with plan draft 4. New 0.2 (P-a to P-e: phase 1's results and why no statement changes). Fixture J-ω (and J-ω′): one word over two sorts is two bound terms, one usage row each, and the other sort is refused as `JudgmentArguments` (11.2, 11.3, 11.8; 9.1's declaration rows). 9: the fallback when the lint rejects a template. 10: the pilot points with phase 1's measurements, and JT-5 split into JT-5a, JT-5r and JT-5b. Stub re-elaborated with no error; earlier outputs unchanged; J-ω's values by `#eval`. |
+| 2026-10-14 | 3, fix round | The checker's verdict FIX. 4.4: `dependsOnC_remove` and `status_remove_unused`, proved in the stub, with the removal paragraph. J-ω's environment declares `person` and the regulated `subjects_to_measure` and `subjects_to_interference`; its rules are on them, and admission is given them (11, 11.3). New 11.9: removal rows (J-β, J-τ, J-μ) and validity (every replayed rule fixture passes `VE.Norms.validate`, draft 3's J-ω fails it, every formula fixture type-checks). 11.8 and 12 updated. Stub re-elaborated with no error; earlier outputs unchanged. |

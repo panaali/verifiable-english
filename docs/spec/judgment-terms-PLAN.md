@@ -7,6 +7,17 @@
 > [docs/research/evidence/judgment-terms/](../research/evidence/judgment-terms/); no bar is moved. The statement spec
 > is at draft 3, which adds one fixture and changes no statement.
 >
+> **Fix round (draft 4, the checker's verdict FIX, 2026-10-14).**
+> - JT-5's rule for unused records was wrong. It defined use by listing, but status also reads content dependence: J-β
+>   lists nothing and uses `arbitrary`, and removing `arbitrary` turns its refusal into CHECKED. A record is now removed
+>   only when no unit's content depends on it (Lean's usage map) **and** no unit lists it. The new spec theorem
+>   `status_remove_unused` (proved in the stub) shows that such a removal changes no status; spec 11.9 shows that
+>   neither condition alone is enough. JT-5r's step 3 follows.
+> - J-ω's rules were on `subjects`, which J-ω's environment did not declare, so the norms check refused them. They are
+>   now on two declared regulated predicates, and every rule and formula fixture JT-2 replays is validated in the stub
+>   (spec 11.9). JT-1 guards that validation. No fixture value changes.
+> - The named `edits-judgment-terms.md` does not exist; 11.1 already says so and names what this plan keeps instead.
+>
 > **Changes in this draft (4).**
 > - New 0.1 and 0.2: each phase-1 result with PASS, FAIL or no bar and what it gates; each DEFERRED item with its
 >   trigger.
@@ -16,8 +27,8 @@
 >   metrics key `open_term_class_borderline`.
 > - JT-5 is split. **JT-5a** switches the constitution (31 of 33 records already bind). The UDHR's records bind none
 >   (52 of 52 refused), so **JT-5r**, a new re-translation step, comes first, and **JT-5b** switches the UDHR after it.
->   JT-5's bar is unchanged. It now says that a record no unit uses may be removed with its reason, because the removal
->   cannot change any status.
+>   JT-5's bar is unchanged. It now says when a record may be removed with its reason: no unit's content depends on
+>   it and no unit lists it, so the removal cannot change any status (corrected in the fix round above).
 > - D2: one word over several sorts is one bound term per sort, the terms sharing their words. This adds fixture J-ω,
 >   computed in the stub, and corrects 4.2's `arbitrary` row: one usage row per sort and per part.
 > - Bytes (8): JT-5's figures are measured (UDHR 18 units, 1,945 B; constitution 13 units, 2,150 B). The JT-0p
@@ -308,6 +319,9 @@ its own, and the document mode maps its `UnitContent` onto it in one line.
   `status_ok_iff` (refused exactly when), `status_legacy`. Draft 1's separate `setStatus` is folded into `status`, since
   the view carries the active set.
 - `usageMap defs J units`: `usageMap_sound`, `usageMap_complete`, `usageMap_unused`, `usageMap_rows` (no empty row).
+- Removal (draft 4's fix round; JT-5's rule for unused records): `dependsOnC_remove` and `status_remove_unused`, a
+  judgment that the content does not depend on and the meaning does not list can be removed without changing the
+  status or refusal. Both are proved in the stub.
 - Draft 1's `conflictFree_every_judgment` is dropped: it restated `conflictFreeU_consistent` with an unused hypothesis.
   The unconditional English line (plain route only) cites `conflictFreeU_consistent` itself.
 
@@ -389,7 +403,7 @@ On the plain norm-defaults route (the UDHR's companions), `zone` and the criteri
 | J-ρ | a regulated predicate (`subjects`) declared as a judgment | `JudgmentRegulated: subjects` |
 | J-σ | two bound judgments used in one guard, meaning `{"open": ["arbitrary"]}` | `JudgmentNotListed: u1 <the other>` |
 | J-τ | J-α's guard, meaning `{"open": ["arbitrary", <another bound judgment>]}` | `JudgmentListedUnused: u1 <the other>` |
-| J-ω | one word over two sorts (D2, phase 1): sorts `measure`, `interference`; bound `arbitrary_measure(measure)` and `arbitrary_interference(interference)`, both with the template "{0} is arbitrary"; u037's rule uses the first, u045a's the second | both admitted; each unit OPEN; usage map `[(arbitrary_measure, [u037]), (arbitrary_interference, [u045a])]`, one row per term. The record `arbitrary_measure` with `arguments: ["interference"]` is `JudgmentArguments: arbitrary_measure` (one record cannot stand for the other sort) |
+| J-ω | one word over two sorts (D2, phase 1): sorts `person`, `measure`, `interference`; bound `arbitrary_measure(measure)` and `arbitrary_interference(interference)`, both with the template "{0} is arbitrary"; u037's rule, on the regulated `subjects_to_measure(person, measure)`, uses the first; u045a's, on `subjects_to_interference(person, interference)`, the second (fix round: draft 4 left the rules on an undeclared `subjects`; the norms check now passes, spec 11.9) | both admitted; each unit OPEN; usage map `[(arbitrary_measure, [u037]), (arbitrary_interference, [u045a])]`, one row per term. The record `arbitrary_measure` with `arguments: ["interference"]` is `JudgmentArguments: arbitrary_measure` (one record cannot stand for the other sort) |
 
 ### 4.2 From the pilots (each sentence is the source text; ids from the run-20261012T1800Z ledgers)
 
@@ -481,14 +495,16 @@ changes, shows a failing test, and restores it (CLAUDE.md).
   passes.
 - **Files.** New: `docs/spec/judgment-terms.md`. Nothing shared.
 - **Status.** Done: spec draft 2 (`85d6372d`). Draft 3 adds J-ω (D2's several sorts), computed in the re-elaborated
-  stub; no statement changed.
+  stub; no statement changed. Its fix round adds `dependsOnC_remove` and `status_remove_unused` (proved), puts J-ω's
+  rules on declared regulated predicates, and validates every replayed rule and formula fixture (spec 11.9).
 
 ### JT-1. Lean core (5–6 h; Lean)
 
 - **What.** Sections 3.1 to 3.3 in `lean/VE/Judgments/{Decl,Scan,Status,Examples}.lean`, with fixtures J-α to J-θ,
-  J-γ′, J-λ, J-μ, J-ξ, J-ξ′, J-ο to J-τ, J-τ′, J-υ, J-χ and J-ω as `#guard`s (and the spec's *internal* rows, which W2
-  refuses on the wire), and `lean/JUDGMENTS.md`, every definition and theorem in plain words. No route, no service
-  change.
+  J-γ′, J-λ, J-μ, J-ξ, J-ξ′, J-ο to J-τ, J-τ′, J-υ, J-χ and J-ω, and spec 11.9's removal rows, as `#guard`s (and the
+  spec's *internal* rows, which W2 refuses on the wire), and `lean/JUDGMENTS.md`, every definition and theorem in
+  plain words. Each replayed rule fixture's document also gets a `#guard` that `VE.Norms.validate` accepts it (spec
+  11.9), so JT-2 never replays a document the norms check refuses. No route, no service change.
   - W2's profile flag in `Loader.openTermNames` (one hunk; every existing caller unchanged, J-λ guards the text with
     the profile off).
   - The shared scan `opensIn` in `Scan.lean`, and rights' `nodeOpen` switched to it, with the equation theorem
@@ -649,13 +665,22 @@ name a predicate with their sorts. **None** of the UDHR's 52 does: every record 
   move to OPEN can come from CHECKED, or from LABELLED or UNFORMALISED when a `contextual` or `unformalised` unit's
   content uses a judgment (J-υ). Any move to OPEN is a finding: a judgment that was shown as checked or labelled,
   recorded unit by unit. No declaration is removed (no open term dropped from `open_terms`) to reach CHECKED.
-- **What the bar means for unused records** (draft 4; P1 2.6, item 2 of its section 3). A record that no unit of the
-  document uses may be removed to pass admission, with its reason recorded. "Uses" means that the unit lists the record
-  in its meaning or in its ledger `open_terms`, and the usage map then lists the record as used. Removing such a record
-  cannot change any unit's status, so it cannot reach CHECKED: a unit's status and refusals read only the judgments
-  its list depends on and those its meaning lists (`status_eq`, `status_ok_iff`), and an unused record is neither. A
-  used term is never removed. Usage is per document: a record that a shared list carries into a part where no unit
-  uses it is unused there.
+- **What the bar means for unused records** (draft 4, corrected in its fix round; P1 2.6, item 2 of its section 3).
+  A record may be removed to pass admission, with its reason recorded, only when **both** hold for every unit of the
+  document:
+  1. no unit's content depends on it, directly or through W3 definitions (Lean's `usageMap` puts it in its second
+     list, `usageMap_unused`). Content is the unit's own content or its active set's candidates (2.2), whatever the
+     unit's meaning. Listing is not what counts here;
+  2. no unit lists it, in its meaning's `open` list or in its ledger `open_terms`.
+
+  Then removing it cannot change any unit's status or refusal (`status_remove_unused`, proved in the spec's stub,
+  spec 4.4), so it cannot reach CHECKED. Neither condition alone is enough (spec 11.9):
+  - J-β lists nothing, and its content uses `arbitrary`. Removing `arbitrary` turns `JudgmentNotChecked` into CHECKED.
+  - J-τ lists `unreasonable`, and its content does not use it, so the usage map shows it as unused. Removing it turns
+    `JudgmentListedUnused` into OPEN.
+
+  A record that fails either condition is never removed. Usage is per document: a record that a shared list carries
+  into a part where no unit meets either condition is unused there.
 - **Expected moves: none.** No CHECKED or LABELLED unit with content in either pilot uses a judgment (0.1: no hit in
   20 units, and the control finds 35 of 49). A move to OPEN would be a finding, as the bar says.
 - **Conflicts.** None in the repository.
@@ -697,8 +722,9 @@ name a predicate with their sorts. **None** of the UDHR's 52 does: every record 
      renamed. Otherwise the judgment is split out of the larger predicate as a conjunct (D10: "an effective remedy"
      is `remedy(x) ∧ effective(x)`), or a predicate is added where the term is in none.
   2. A record with `arguments: []` gets its predicate's sorts.
-  3. Each part keeps the records its units use. Unused records are removed with their reason, as JT-5's bar allows
-     (16 terms are used by no unit in any part).
+  3. Each part keeps the records its units use. Unused records are removed with their reason, as JT-5's bar allows:
+     both conditions, content and listing. The ledger finds 16 terms that no unit in any part lists. Lean's usage map
+     on the re-translated parts confirms the content condition before any is removed.
   4. Every changed unit is re-audited blind, by an auditor that did not write it.
 - **Bar.** Every changed unit is re-audited FAITHFUL and keeps its status, and the claimed bytes do not change (4,792 B,
   or 4,924 B after JT-0p's PASS). A unit that fails reverts to its previous text, with the reason recorded. Its part
@@ -946,3 +972,4 @@ build order. Each is a question or a request for the DRI.
 | 2026-10-14 | 2 | The converged debate's joint position (REVISE to draft 2, then BUILD). Fix 1: arguments are sorts and may repeat under the profile (W2's own validator, one flag), admission reads `hide E (names defs)`, `Loader.lean` shared; fixtures J-ο, J-π. Fix 2: one candidate traversal per unit for status, set status and usage; J-ξ without unit content. Fix 3: J-ι's criterion as a labelled premise, `ConflictFreeX` "given …" apart from unconditional; `conflictFree_every_judgment` dropped. Fix 4: witnessed-pair zone wording with deciders, neutral unit line, sense-tied catalogue rows, JT-E1 as proxy readability. Fix 5: `opensIn` shared, rights switched in JT-1 with an equation theorem and the frozen-sources rehash. Edits A–D: `undeclared_evaluative` report (D15, JT-3) and "declared terms only"; `rv.definitions` named and J-γ′; fixtures J-ρ, J-σ, J-τ and D2's reason for `JudgmentRegulated`; JT-E1 bar (b) "no critical misreading in 40". u060's bytes unclaimed: JT-0p claims u010 only (+132 B); u010 keeps distinct legacy argument labels until JT-5; JT-5's "no declaration removed" bar and `good_judgment` role check. Section 3 now summarises the statements, which are written out and elaborated in [judgment-terms.md](judgment-terms.md). |
 | 2026-10-14 | 3 | The statement review's joint position (FIX; spec section 0.1). A1: J-ξ an authored set with one reading, J-ξ′ an open set of u055's two scopes with a separating model (4.1, 4.2). A2: R1 also asks WG-6 for the certified pair `LeftToPair`; `zone_leftTo` concludes it; JT-4's wrong-witness and empty-`differ` mutations and seeded bugs. A3: "unconditional" and "whatever is judged" only for the plain route's `conflictFreeU_consistent`; the layered lines name `L.X` and say "without additional judgment criteria" (D6, 2.3, 2.4, 2.5, 3.4, 3.6, 4.1, JT-4); `conflictFree_unconditional_given` renamed `conflictFree_given_mono`. A4: "judgment dependence forces OPEN; otherwise the legacy status applies" (D3, 2.2, 3.3). A5: the `judgments` relay checks declaration and unit order (JT-2). F2: JT-5's bar is "keeps its status or moves to OPEN; none moves to CHECKED"; fixture J-υ. F3: dependence is syntactic use, directly or through W3 definitions; outcomes downstream can still vary (D3, 2.2, 3.6, 9); J-χ in 4.1; JT-5 records each such unit. F3′: `undeclared_evaluative` includes regulated predicates, and its relay accepts them (D15, 3.5, JT-3). F4: `JudgmentListedUnused` only on a complete unit, pending readings kept in the traversal (2.1, 2.2, 3.3, JT-2); fixture J-τ′. Seeded bugs for the new behaviours (JT-1 to JT-4). |
 | 2026-10-14 | 4 | Phase 1's results (`docs/research/judgment-terms-phase1.md`; review ACCEPT, no fix round). New 0.1 (each result's verdict and what it gates) and 0.2 (DEFERRED items and their triggers). JT-0p: bar A PASS, bar B DEFERRED; prompt text completed (`thing`, placeholders replaced, reading-set rebuild, no constant `verbalisation`, no template for u010's predicate, `claimed: false`, `open_term_class_borderline`). JT-5 split into JT-5a (constitution, 13 units, 2,150 B measured), JT-5r (new: UDHR re-translation; 52 of 52 records unbound, 31 used terms to split out) and JT-5b (UDHR, 18 units, 1,945 B measured). JT-5's bar unchanged, and its meaning for unused records stated. D2: one bound term per sort, fixture J-ω; 4.2's `arbitrary` row corrected. D7's measured spellings. JT-3: templates the lint rejects. JT-E1 and JT-E3: status, and JT-E3's reporting. Bytes (8) and risks (9) updated. 11.1 keeps R1–R5 with the DRI's decisions; 11.2 adds X1–X7. No batch dropped; no bar moved. |
+| 2026-10-14 | 4, fix round | The checker's verdict FIX. JT-5's rule for unused records: removed only when no unit's content depends on the record (Lean's usage map) and no unit lists it; `status_remove_unused` (spec 4.4, proved) and spec 11.9 (J-β and J-τ: neither condition alone suffices); JT-5r step 3. J-ω's rules on two declared regulated predicates; replayed fixtures validated with `VE.Norms.validate` (spec 11.9), guarded in JT-1. No fixture value changes. |
