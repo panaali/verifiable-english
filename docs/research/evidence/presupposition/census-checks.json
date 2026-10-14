@@ -1,0 +1,356 @@
+{
+ "run": "20261012T1800Z",
+ "definitions": "docs/research/presupposition-phase1.md 1.3-1.4",
+ "checks": [
+  {
+   "id": "H1",
+   "check": "heading presupposition units, bytes; all UNFORMALISED with presupposed_claim",
+   "expected": {
+    "units": 29,
+    "bytes": 999,
+    "all": true
+   },
+   "measured": {
+    "units": 29,
+    "bytes": 999,
+    "all": true
+   },
+   "pass": true
+  },
+  {
+   "id": "H2",
+   "check": "classes A-E (units, bytes); A's first three bytes",
+   "expected": {
+    "A": [
+     5,
+     145
+    ],
+    "B": [
+     4,
+     149
+    ],
+    "C": [
+     7,
+     284
+    ],
+    "D": [
+     2,
+     72
+    ],
+    "E": [
+     11,
+     349
+    ],
+    "A3": 89
+   },
+   "measured": {
+    "A": [
+     5,
+     145
+    ],
+    "B": [
+     4,
+     149
+    ],
+    "C": [
+     7,
+     284
+    ],
+    "D": [
+     2,
+     72
+    ],
+    "E": [
+     11,
+     349
+    ],
+    "A3": 89
+   },
+   "pass": true
+  },
+  {
+   "id": "H3",
+   "check": "title lexicon: none in class E; at least one in each of A-D",
+   "expected": {
+    "E_with_trigger": [],
+    "A_to_D_without": []
+   },
+   "measured": {
+    "E_with_trigger": [
+     "u0055.presupposition"
+    ],
+    "A_to_D_without": []
+   },
+   "pass": false
+  },
+  {
+   "id": "H4",
+   "check": "withholding hits for class D, u0269.s02 among them",
+   "expected": {
+    "each_nonempty": true,
+    "contains": "u0269.s02"
+   },
+   "measured": {
+    "u0254.presupposition": [
+     "u0241.s06",
+     "u0269.s02"
+    ],
+    "u0268.presupposition": [
+     "u0241.s06",
+     "u0269.s02"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "H5",
+   "check": "withholding hits for class A",
+   "expected": {
+    "u0013.presupposition": [],
+    "u0095.presupposition": [],
+    "u0286.presupposition": [],
+    "u0002.presupposition": [],
+    "u0235.presupposition": []
+   },
+   "measured": {
+    "u0013.presupposition": [],
+    "u0095.presupposition": [],
+    "u0286.presupposition": [],
+    "u0002.presupposition": [],
+    "u0235.presupposition": []
+   },
+   "pass": true
+  },
+  {
+   "id": "H6",
+   "check": "trigger words in the title, class A",
+   "expected": {
+    "u0013.presupposition": true,
+    "u0095.presupposition": true,
+    "u0286.presupposition": true,
+    "u0002.presupposition": true,
+    "u0235.presupposition": true
+   },
+   "measured": {
+    "u0013.presupposition": true,
+    "u0095.presupposition": true,
+    "u0286.presupposition": true,
+    "u0002.presupposition": true,
+    "u0235.presupposition": true
+   },
+   "pass": true
+  },
+  {
+   "id": "O1",
+   "check": "source occurrences, G1",
+   "expected": 101,
+   "measured": 101,
+   "pass": true
+  },
+  {
+   "id": "O2",
+   "check": "source occurrences, the role's possessive",
+   "expected": 23,
+   "measured": 23,
+   "pass": true
+  },
+  {
+   "id": "O3",
+   "check": "source occurrences, (Claude|Anthropic)'s",
+   "expected": ">= 205",
+   "measured": 206,
+   "pass": true
+  },
+  {
+   "id": "O4",
+   "check": "source occurrences, G6",
+   "expected": 17,
+   "measured": 15,
+   "pass": false
+  },
+  {
+   "id": "O5",
+   "check": "source occurrences, G3n",
+   "expected": 18,
+   "measured": 18,
+   "pass": true
+  },
+  {
+   "id": "O6",
+   "check": "source occurrences, remain…",
+   "expected": 15,
+   "measured": 16,
+   "pass": false
+  },
+  {
+   "id": "O7",
+   "check": "source occurrences, still (any case)",
+   "expected": 17,
+   "measured": 17,
+   "pass": true
+  },
+  {
+   "id": "O8",
+   "check": "source occurrences, again / return to (any case)",
+   "expected": 4,
+   "measured": 5,
+   "pass": false
+  },
+  {
+   "id": "O9",
+   "check": "source occurrences, G5",
+   "expected": 46,
+   "measured": 48,
+   "pass": false
+  },
+  {
+   "id": "U1",
+   "check": "units with G1",
+   "expected": ">= 68",
+   "measured": 78,
+   "pass": true
+  },
+  {
+   "id": "U2",
+   "check": "units with G2 (units, bytes)",
+   "expected": ">= 22 / >= 4833",
+   "measured": [
+    30,
+    7151
+   ],
+   "pass": true
+  },
+  {
+   "id": "U3",
+   "check": "units with G3 (units, bytes)",
+   "expected": ">= 36 / >= 6887",
+   "measured": [
+    46,
+    9641
+   ],
+   "pass": true
+  },
+  {
+   "id": "U4",
+   "check": "units with G4",
+   "expected": ">= 172",
+   "measured": 195,
+   "pass": true
+  },
+  {
+   "id": "U5",
+   "check": "UDHR heading presupposition units",
+   "expected": 0,
+   "measured": 0,
+   "pass": true
+  }
+ ],
+ "passed": 15,
+ "total": 20,
+ "information": {
+  "constitution": {
+   "units": 1132,
+   "units_with_a_trigger": 331,
+   "by_status": {
+    "UNFORMALISED": [
+     324,
+     65627
+    ],
+    "OPEN": [
+     6,
+     1384
+    ],
+    "READINGS": [
+     1,
+     100
+    ]
+   },
+   "entries": 479,
+   "entries_by_group": {
+    "G1": 101,
+    "G2": 33,
+    "G3": 52,
+    "G4": 230,
+    "G5": 48,
+    "G6": 15
+   },
+   "units_by_group": {
+    "G1": [
+     78,
+     17468
+    ],
+    "G2": [
+     30,
+     7151
+    ],
+    "G3": [
+     46,
+     9641
+    ],
+    "G4": [
+     195,
+     39902
+    ],
+    "G5": [
+     48,
+     10100
+    ],
+    "G6": [
+     15,
+     2470
+    ]
+   },
+   "G1_or_G2_units": 90
+  },
+  "udhr": {
+   "units": 130,
+   "units_with_a_trigger": 4,
+   "by_status": {
+    "UNFORMALISED": [
+     3,
+     553
+    ],
+    "READINGS": [
+     1,
+     98
+    ]
+   },
+   "entries": 4,
+   "entries_by_group": {
+    "G1": 0,
+    "G2": 0,
+    "G3": 1,
+    "G4": 0,
+    "G5": 3,
+    "G6": 0
+   },
+   "units_by_group": {
+    "G1": [
+     0,
+     0
+    ],
+    "G2": [
+     0,
+     0
+    ],
+    "G3": [
+     1,
+     98
+    ],
+    "G4": [
+     0,
+     0
+    ],
+    "G5": [
+     3,
+     553
+    ],
+    "G6": [
+     0,
+     0
+    ]
+   },
+   "G1_or_G2_units": 0
+  }
+ }
+}

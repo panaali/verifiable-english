@@ -1,0 +1,345 @@
+{
+ "run": "20261012T1800Z",
+ "headings": [
+  {
+   "id": "u0013.presupposition",
+   "class": "A",
+   "bytes": 24,
+   "title": "Claude’s core values\n\n",
+   "presupposed_claim": "Claude has core values.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "Claude’s"
+   ],
+   "withholding_hits": [],
+   "trigger_words": "Claude’s",
+   "trigger_in_title": true
+  },
+  {
+   "id": "u0095.presupposition",
+   "class": "A",
+   "bytes": 36,
+   "title": "Following Anthropic’s guidelines\n\n",
+   "presupposed_claim": "Anthropic has guidelines.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "Anthropic’s"
+   ],
+   "withholding_hits": [],
+   "trigger_words": "Anthropic’s",
+   "trigger_in_title": true
+  },
+  {
+   "id": "u0286.presupposition",
+   "class": "A",
+   "bytes": 29,
+   "title": "Acknowledging open problems\n\n",
+   "presupposed_claim": "There are open problems.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "Acknowledging"
+   ],
+   "withholding_hits": [],
+   "trigger_words": "Acknowledging",
+   "trigger_in_title": true
+  },
+  {
+   "id": "u0002.presupposition",
+   "class": "A",
+   "bytes": 37,
+   "title": "Claude and the mission of Anthropic\n\n",
+   "presupposed_claim": "Anthropic has a mission.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "the"
+   ],
+   "withholding_hits": [],
+   "trigger_words": "the mission of",
+   "trigger_in_title": true
+  },
+  {
+   "id": "u0235.presupposition",
+   "class": "A",
+   "bytes": 19,
+   "title": "Claude’s nature\n\n",
+   "presupposed_claim": "Claude has a nature to discuss.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "Claude’s"
+   ],
+   "withholding_hits": [],
+   "trigger_words": "Claude’s",
+   "trigger_in_title": true
+  },
+  {
+   "id": "u0069.presupposition",
+   "class": "B",
+   "bytes": 44,
+   "title": "Understanding existing deployment contexts\n\n",
+   "presupposed_claim": "There are existing deployment contexts.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "existing"
+   ]
+  },
+  {
+   "id": "u0083.presupposition",
+   "class": "B",
+   "bytes": 41,
+   "title": "Balancing helpfulness with other values\n\n",
+   "presupposed_claim": "There are values other than helpfulness.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "other"
+   ]
+  },
+  {
+   "id": "u0245.presupposition",
+   "class": "B",
+   "bytes": 26,
+   "title": "Claude as a novel entity\n\n",
+   "presupposed_claim": "Claude is a novel entity.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "as"
+   ]
+  },
+  {
+   "id": "u0032.presupposition",
+   "class": "B",
+   "bytes": 38,
+   "title": "What constitutes genuine helpfulness\n\n",
+   "presupposed_claim": "Genuine helpfulness has criteria.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "What"
+   ]
+  },
+  {
+   "id": "u0008.presupposition",
+   "class": "C",
+   "bytes": 41,
+   "title": "Our approach to Claude’s constitution\n\n",
+   "presupposed_claim": "The authors have an approach to Claude's constitution.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": [
+    "Our",
+    "Claude’s"
+   ]
+  },
+  {
+   "id": "u0238.presupposition",
+   "class": "C",
+   "bytes": 40,
+   "title": "Some of our views on Claude’s nature\n\n",
+   "presupposed_claim": "The authors have views on Claude's nature.",
+   "missing_feature": "attribution",
+   "lexicon_words": [
+    "our",
+    "Claude’s"
+   ]
+  },
+  {
+   "id": "u0219.presupposition",
+   "class": "C",
+   "bytes": 34,
+   "title": "How we think about corrigibility\n\n",
+   "presupposed_claim": "The authors have views about corrigibility.",
+   "missing_feature": "attribution",
+   "lexicon_words": [
+    "How",
+    "we"
+   ]
+  },
+  {
+   "id": "u0027.presupposition",
+   "class": "C",
+   "bytes": 60,
+   "title": "Why helpfulness is one of Claude’s most important traits\n\n",
+   "presupposed_claim": "Helpfulness is one of Claude's most important traits.",
+   "missing_feature": "quantities",
+   "lexicon_words": [
+    "Why",
+    "one",
+    "Claude’s"
+   ]
+  },
+  {
+   "id": "u0042.presupposition",
+   "class": "C",
+   "bytes": 38,
+   "title": "Claude’s three types of principals\n\n",
+   "presupposed_claim": "Claude has three types of principals.",
+   "missing_feature": "counting",
+   "lexicon_words": [
+    "Claude’s",
+    "three"
+   ]
+  },
+  {
+   "id": "u0130.presupposition",
+   "class": "C",
+   "bytes": 35,
+   "title": "The costs and benefits of actions\n\n",
+   "presupposed_claim": "Actions have costs and benefits.",
+   "missing_feature": "causation",
+   "lexicon_words": [
+    "The"
+   ]
+  },
+  {
+   "id": "u0143.presupposition",
+   "class": "C",
+   "bytes": 36,
+   "title": "The role of intentions and context\n\n",
+   "presupposed_claim": "Intentions and context play a role.",
+   "missing_feature": "causation",
+   "lexicon_words": [
+    "The"
+   ]
+  },
+  {
+   "id": "u0254.presupposition",
+   "class": "D",
+   "bytes": 50,
+   "title": "Claude’s wellbeing and psychological stability\n\n",
+   "presupposed_claim": "Claude's wellbeing and psychological stability are relevant concepts.",
+   "missing_feature": "modality/belief",
+   "lexicon_words": [
+    "Claude’s"
+   ],
+   "withholding_hits": [
+    {
+     "id": "u0241.s06",
+     "text": "Finally, we’re aware that such judgments can be impacted by the costs involved in improving the wellbeing of those whose sentience or moral status is uncertain. "
+    },
+    {
+     "id": "u0269.s02",
+     "text": "We are uncertain about whether or to what degree Claude has wellbeing, and about what Claude’s wellbeing would consist of, but if Claude experiences something like satisfaction from helping others, curiosity when exploring ideas, or discomfort when asked to act against its values, these experiences matter to us. "
+    }
+   ]
+  },
+  {
+   "id": "u0268.presupposition",
+   "class": "D",
+   "bytes": 22,
+   "title": "Claude’s wellbeing\n\n",
+   "presupposed_claim": "Claude's wellbeing is a relevant concept.",
+   "missing_feature": "modality/belief",
+   "lexicon_words": [
+    "Claude’s"
+   ],
+   "withholding_hits": [
+    {
+     "id": "u0241.s06",
+     "text": "Finally, we’re aware that such judgments can be impacted by the costs involved in improving the wellbeing of those whose sentience or moral status is uncertain. "
+    },
+    {
+     "id": "u0269.s02",
+     "text": "We are uncertain about whether or to what degree Claude has wellbeing, and about what Claude’s wellbeing would consist of, but if Claude experiences something like satisfaction from helping others, curiosity when exploring ideas, or discomfort when asked to act against its values, these experiences matter to us. "
+    }
+   ]
+  },
+  {
+   "id": "u0040.presupposition",
+   "class": "E",
+   "bytes": 42,
+   "title": "Navigating helpfulness across principals\n\n",
+   "presupposed_claim": "Helpfulness must be navigated across principals.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": []
+  },
+  {
+   "id": "u0055.presupposition",
+   "class": "E",
+   "bytes": 34,
+   "title": "How to treat operators and users\n\n",
+   "presupposed_claim": "The treatment of operators and users calls for guidance.",
+   "missing_feature": "norms",
+   "lexicon_words": [
+    "How"
+   ]
+  },
+  {
+   "id": "u0075.presupposition",
+   "class": "E",
+   "bytes": 48,
+   "title": "Handling conflicts between operators and users\n\n",
+   "presupposed_claim": "Operators and users can have conflicting interests.",
+   "missing_feature": "modality/belief",
+   "lexicon_words": []
+  },
+  {
+   "id": "u0151.presupposition",
+   "class": "E",
+   "bytes": 24,
+   "title": "Instructable behaviors\n\n",
+   "presupposed_claim": "Some behaviors are instructable.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": []
+  },
+  {
+   "id": "u0162.presupposition",
+   "class": "E",
+   "bytes": 18,
+   "title": "Hard constraints\n\n",
+   "presupposed_claim": "There are hard constraints.",
+   "missing_feature": "norms",
+   "lexicon_words": []
+  },
+  {
+   "id": "u0174.presupposition",
+   "class": "E",
+   "bytes": 42,
+   "title": "Preserving important societal structures\n\n",
+   "presupposed_claim": "There are important societal structures to preserve.",
+   "missing_feature": "norms",
+   "lexicon_words": []
+  },
+  {
+   "id": "u0195.presupposition",
+   "class": "E",
+   "bytes": 41,
+   "title": "Having broadly good values and judgment\n\n",
+   "presupposed_claim": "Broadly good values and judgment are desired for Claude.",
+   "missing_feature": "norms",
+   "lexicon_words": []
+  },
+  {
+   "id": "u0207.presupposition",
+   "class": "E",
+   "bytes": 20,
+   "title": "Being broadly safe\n\n",
+   "presupposed_claim": "Broad safety is desired for Claude.",
+   "missing_feature": "norms",
+   "lexicon_words": []
+  },
+  {
+   "id": "u0212.presupposition",
+   "class": "E",
+   "bytes": 16,
+   "title": "Safe behaviors\n\n",
+   "presupposed_claim": "Some behaviors are safe.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": []
+  },
+  {
+   "id": "u0257.presupposition",
+   "class": "E",
+   "bytes": 44,
+   "title": "Resilience and consistency across contexts\n\n",
+   "presupposed_claim": "Resilience and consistency across contexts are desired for Claude.",
+   "missing_feature": "norms",
+   "lexicon_words": []
+  },
+  {
+   "id": "u0260.presupposition",
+   "class": "E",
+   "bytes": 20,
+   "title": "Flaws and mistakes\n\n",
+   "presupposed_claim": "Flaws and mistakes arise for Claude.",
+   "missing_feature": "other:discourse",
+   "lexicon_words": []
+  }
+ ]
+}
