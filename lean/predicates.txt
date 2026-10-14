@@ -58,6 +58,7 @@ module ResponseShape.Schemas.Parse
 module ResponseShape.Schemas.Quantity
 module ResponseShape.Schemas.Question
 module ResponseShape.Schemas.Readings
+module ResponseShape.Schemas.ReadingsChoices
 module ResponseShape.Schemas.ReadingsRoute
 module ResponseShape.Schemas.Reports
 module ResponseShape.Schemas.Rights
@@ -425,6 +426,7 @@ module VE.Service.Graph
 module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
+module VE.Service.ReadingsChoices
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission
