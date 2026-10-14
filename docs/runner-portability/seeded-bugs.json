@@ -34,5 +34,14 @@
    "result": "1 failed ([write], DID NOT RAISE CheckerUnavailable), 1 passed"},
   {"id": "S12", "file": "ve/backends/rust_jsonl.py", "change": "_Checker.exchange returns the record without the deadline check after the last read",
    "test": "tests/test_lean_handles.py::test_a_rust_record_completed_past_its_deadline_is_no_answer",
-   "result": "1 failed ([response], DID NOT RAISE CheckerUnavailable), 1 passed ([write]: the read loop's first check)"}
+   "result": "1 failed ([response], DID NOT RAISE CheckerUnavailable), 1 passed ([write]: the read loop's first check)"},
+  {"id": "S13", "file": "ve/backends/rust_jsonl.py", "change": "_Checker.exchange rebuilds its deadline from the absolute deadline as a duration",
+   "test": "tests/test_lean_handles.py::test_rust_exchange_checks_the_outer_deadline_before_transfer",
+   "result": "1 failed (DID NOT RAISE TimeoutExpired)"},
+  {"id": "S14", "file": "ve/backends/lean_service.py", "change": "_read_line omits the complete-frame size check",
+   "test": "tests/test_lean_service.py::test_complete_lean_response_obeys_size_cap",
+   "result": "1 failed (DID NOT RAISE CheckerUnavailable)"},
+  {"id": "S15", "file": "ve/backends/rust_jsonl.py", "change": "_Checker.exchange omits the complete-frame size check",
+   "test": "tests/test_lean_handles.py::test_rust_complete_frame_obeys_line_cap",
+   "result": "1 failed (DID NOT RAISE OSError)"}
 ]

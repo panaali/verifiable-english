@@ -91,6 +91,30 @@ only. A late record is `CheckerUnavailable`, never an answer; the process is kil
 Probe F2: before the fix (S10, planted in a scratch worktree) `[response]` failed with `DID NOT RAISE
 CheckerUnavailable`; after it, both cases pass. Seeded bugs S10 to S12 below.
 
+## Recheck 2 fixes F3 and F4: preserve deadlines and frame limits
+
+F3 (B): `_run_checker` computed remaining time from its absolute deadline, but `_Checker.exchange`
+started a fresh clock from that duration. A pause between those steps extended the cap, on an initial
+call and a retry. The Rust transport now passes the original absolute deadline into the exchange;
+its write, read and final checks all use it. The caller also checks the deadline before releasing a
+completed record. `test_rust_scheduling_pause_keeps_the_outer_deadline` is the exact probe's two
+cases; `test_rust_exchange_checks_the_outer_deadline_before_transfer` detects a renewed deadline
+inside the exchange. The prior retry test now asserts both attempts receive the same deadline.
+Probe F3 failed in both cases before the fix and passed in both after it. S13 demonstrates that
+restarting the clock fails the direct regression.
+
+F4 (B): `LeanService._read_line` checked the buffer size only while seeking a newline. A complete
+oversized frame bypassed that check. It now checks the frame length before copying or returning it.
+The sibling Rust JSONL reader also checks a complete frame before copying it. The regressions are
+`test_complete_lean_response_obeys_size_cap` (the exact typed, bound probe, with a 64-byte cap) and
+`test_rust_complete_frame_obeys_line_cap`. Probe F4 failed before the fix and passed after it.
+S14 and S15 remove each complete-frame check and fail those regressions.
+
+Both findings enforce existing transport limits: a late or oversized answer is unavailable. No
+standing ruling signs a missed limit, and no Lean or Rust product semantics changed.
+The retry regression also checks that the unavailable diagnostic still quotes the caller's
+original timeout, so the transport's internal absolute deadline does not change that text.
+
 ## The search for other tests of this kind
 
 For F1's class (a deadline found passed in another phase than the claimed one): the only users of an
@@ -188,3 +212,10 @@ in-place plant (removed with `git reset --keep`).
   `test_relay_wire_check`, `test_route_row_schemas`, `test_rust_reproducible`, `test_lean_layers_once`,
   `test_entailment`): 482 passed; `tools/test_layer_policy.py` OK; `lake build` and `lean/audit.py`
   passed. Full gate left to the merge train's branch verify.
+- Recheck 2: probes F3 (two cases) and F4 (one case) failed before the fixes and passed after them.
+  The five new regression IDs and the prior retry test passed; the ten focused transport files ran
+  locally through `mac-pytest.sh` with `MAC_PYTEST=0` (no runner snapshot push): 969 passed. `lake
+  build` and `lean/audit.py` passed. The branch selector's coverage map is stale: its normal plan
+  selects 370/370 files and its map-free plan selects 369/369. Running either would be the full
+  suite, which this task explicitly leaves to the merge train and nightly run. The generated test
+  collection was updated with all five new IDs.
