@@ -602,8 +602,11 @@
     },
     "ResponseShape/Schemas/Parse.lean": {
       "G[V]": [
+        "ResponseShape.Schemas.Parse.edge",
         "ResponseShape.Schemas.Parse.file",
-        "ResponseShape.Schemas.Parse.row"
+        "ResponseShape.Schemas.Parse.formula",
+        "ResponseShape.Schemas.Parse.row",
+        "ResponseShape.Schemas.Parse.term"
       ],
       "G[R]": [
         "ResponseShape.Schemas.Parse.parse_error"

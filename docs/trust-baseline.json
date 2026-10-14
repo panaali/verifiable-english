@@ -4,26 +4,26 @@
   "K": 997,
   "S": 9775,
   "D": 14113,
-  "G": 27036,
+  "G": 27086,
   "C": 8486,
-  "P": 71772,
-  "T": 14220,
-  "o": 12165,
+  "P": 71773,
+  "T": 14705,
+  "o": 12309,
   "D[V]": 12583,
   "D[R]": 1003,
   "D[I]": 527,
-  "G[V]": 25027,
-  "G[R]": 1768,
+  "G[V]": 25076,
+  "G[R]": 1769,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 48223,
-  "lines": 158564
+  "trusted": 48272,
+  "lines": 159244
  },
  "budget": {
   "K": 997,
   "S": 9775,
-  "V": 37451
+  "V": 37500
  },
  "signed": [],
  "history": [
@@ -685,6 +685,19 @@
     "K": 997,
     "S": 9775,
     "V": 37451
+   }
+  },
+  {
+   "change": "Merge lean-first/b14a with ve-integration: classify the three parse schema shapes as verdict-bearing glue and account for 49 reviewed trusted lines in the source-span response shape and parse schema; no new axioms.",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9775,
+    "V": 37451
+   },
+   "to": {
+    "K": 997,
+    "S": 9775,
+    "V": 37500
    }
   }
  ],
@@ -3981,8 +3994,8 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 452,
-   "o": 7,
+   "T": 450,
+   "o": 30,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -3992,7 +4005,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 459
+   "lines": 480
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -4918,21 +4931,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 30,
+   "G": 62,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 7,
+   "o": 10,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 20,
-   "G[R]": 10,
+   "G[V]": 51,
+   "G[R]": 11,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 20,
-   "lines": 37
+   "trusted": 51,
+   "lines": 72
   },
   "ResponseShape/Schemas/Quantity.lean": {
    "K": 0,
@@ -5218,7 +5231,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 673,
+   "G": 691,
    "C": 0,
    "P": 0,
    "T": 13,
@@ -5226,13 +5239,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 667,
+   "G[V]": 685,
    "G[R]": 6,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 667,
-   "lines": 730
+   "trusted": 685,
+   "lines": 748
   },
   "SensesMain.lean": {
    "K": 0,
@@ -5821,8 +5834,8 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 4849,
-   "o": 200,
+   "T": 5330,
+   "o": 318,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -5832,7 +5845,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 5049
+   "lines": 5648
   },
   "VE/Bridge.lean": {
    "K": 22,
@@ -12540,8 +12553,8 @@
    "D": 6,
    "G": 0,
    "C": 0,
-   "P": 40,
-   "T": 0,
+   "P": 41,
+   "T": 6,
    "o": 17,
    "D[V]": 6,
    "D[R]": 0,
@@ -12552,7 +12565,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 13,
-   "lines": 70
+   "lines": 77
   },
   "VE/SoftNorms/Tree.lean": {
    "K": 0,

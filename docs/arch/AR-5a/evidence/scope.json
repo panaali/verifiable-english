@@ -1,0 +1,192 @@
+{
+ "base": "5479466f9faada4cb500bb52bca2436f03662e54",
+ "changes": [
+  {
+   "added": 18,
+   "deleted": 2,
+   "path": "docs/arch/AR-5a/DELTA.md"
+  },
+  {
+   "added": 147,
+   "deleted": 23,
+   "path": "docs/arch/AR-5a/REPORT.md"
+  },
+  {
+   "added": 30,
+   "deleted": 1,
+   "path": "docs/arch/AR-5a/evidence.toml"
+  },
+  {
+   "added": 7,
+   "deleted": 0,
+   "path": "docs/arch/AR-5a/evidence/b16c-recheck.json"
+  },
+  {
+   "added": 103,
+   "deleted": 0,
+   "path": "docs/arch/AR-5a/evidence/fixtures.json"
+  },
+  {
+   "added": 130,
+   "deleted": 25,
+   "path": "docs/arch/AR-5a/evidence/measure.json"
+  },
+  {
+   "added": 306,
+   "deleted": 60,
+   "path": "docs/arch/AR-5a/evidence/mutants.json"
+  },
+  {
+   "added": 45,
+   "deleted": 0,
+   "path": "docs/arch/AR-5a/evidence/real-runs.json"
+  },
+  {
+   "added": 46,
+   "deleted": 0,
+   "path": "docs/arch/AR-5a/mutants.json"
+  },
+  {
+   "added": 38,
+   "deleted": 0,
+   "path": "docs/arch/AR-5a/recheck-b16c/evidence.toml"
+  },
+  {
+   "added": 658,
+   "deleted": 37,
+   "path": "tests/test_evidence_toolkit.py"
+  },
+  {
+   "added": 2,
+   "deleted": 0,
+   "path": "tests/test_gate_integrity.py"
+  },
+  {
+   "added": 190,
+   "deleted": 34,
+   "path": "tools/batch_evidence.py"
+  },
+  {
+   "added": 119,
+   "deleted": 11,
+   "path": "tools/evidence/__init__.py"
+  },
+  {
+   "added": 47,
+   "deleted": 2,
+   "path": "tools/evidence/__main__.py"
+  },
+  {
+   "added": 92,
+   "deleted": 0,
+   "path": "tools/evidence/ab.py"
+  },
+  {
+   "added": 93,
+   "deleted": 2,
+   "path": "tools/evidence/config.py"
+  },
+  {
+   "added": 226,
+   "deleted": 5,
+   "path": "tools/evidence/fuzz_ab.py"
+  },
+  {
+   "added": 193,
+   "deleted": 1,
+   "path": "tools/evidence/latency.py"
+  },
+  {
+   "added": 165,
+   "deleted": 6,
+   "path": "tools/evidence/report.py"
+  },
+  {
+   "added": 128,
+   "deleted": 37,
+   "path": "tools/gate-collection.json"
+  },
+  {
+   "added": 1,
+   "deleted": 9,
+   "path": "tools/lean_service_latency.py"
+  },
+  {
+   "added": 21,
+   "deleted": 25,
+   "path": "tools/readings_batch_latency.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tools/regen_generated.py"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "3537f55d6c2a3fa03a4f2db49a5685c16d1f8826",
+   "subject": "AR-5a: document gate-test repair and selected test evidence"
+  },
+  {
+   "hash": "0341684afe9032501c549ac92e9e4e9fe493cc3e",
+   "subject": "AR-5a: isolate interrupted gate test from Lean trace check"
+  },
+  {
+   "hash": "0933bfb046e97f7d7b78ae2bcb69e7bd21b2b02d",
+   "subject": "AR-5a: record pre-gate verification and worker adjustment"
+  },
+  {
+   "hash": "811f6e3ae247cb8bc7e40861f61a6a509e12aebc",
+   "subject": "AR-5a: record required checker overlap with AR-3"
+  },
+  {
+   "hash": "bcbd87c30839c7413452d74dc46606be0ddaadac",
+   "subject": "AR-5a: keep latency fixture assertions clear of clock guard"
+  },
+  {
+   "hash": "ba0fb4d73179755c14bfe08a7acb229459f06a2a",
+   "subject": "AR-5a: verify saved scope against fixed Git history and finish toolkit evidence"
+  },
+  {
+   "hash": "6c652a4b3c8dbb918606a4fb21f795bdea080d42",
+   "subject": "AR-5a: merge main 5479466f; re-measure per-batch scripts; report overlap with branches in flight"
+  },
+  {
+   "hash": "7bc6b296626cf4e7aacdf1327cd2fd4e5de0f056",
+   "subject": "AR-5a: merge main; re-measure per-batch scripts on main 96887019"
+  },
+  {
+   "hash": "447bc6fc870292e2d2c5fac6cd0f0d5ed975cc61",
+   "subject": "AR-5a: batch evidence.toml, REPORT, DELTA and saved measurements"
+  },
+  {
+   "hash": "68dba51e9b2dab3848245f57edd890742f895fd8",
+   "subject": "AR-5a: replay rules explain only a status change; toml cannot lower the mutant minimum or raise the latency allowance"
+  },
+  {
+   "hash": "b64be5340bd68923d10c612a6d75fe08bb7dc928",
+   "subject": "AR-5a: register tools/evidence/report.py --write as a batch-report writer"
+  },
+  {
+   "hash": "43ca41899aa540c3dc92b9f65ffe60dc8c004710",
+   "subject": "AR-5a: space-free test ids so the mutant harness reads each failed node"
+  },
+  {
+   "hash": "a07aa5ce563e396c50c5a76689e60308a3572aa5",
+   "subject": "AR-5a: seeded mutants for the toolkit; gate failure-count fixture"
+  },
+  {
+   "hash": "c8932f2ec3c5005da59dcf051cb61691ddd4240f",
+   "subject": "AR-5a: tools.evidence mutants is tools/mutants.py; readings_batch_latency tests on the shared rule"
+  },
+  {
+   "hash": "7d4dfd1f2a1f5fd2a9a37a1fceec462cccba78e6",
+   "subject": "AR-5a: known-answer tests for the evidence toolkit; gate collection"
+  },
+  {
+   "hash": "10842ddc6dbed3c069c9a34e56fbc9eed88a8798",
+   "subject": "AR-5a: tools/evidence toolkit (scope, latency, ab, fuzz_ab, report) and batch_evidence --check"
+  }
+ ],
+ "head": "3537f55d6c2a3fa03a4f2db49a5685c16d1f8826"
+}

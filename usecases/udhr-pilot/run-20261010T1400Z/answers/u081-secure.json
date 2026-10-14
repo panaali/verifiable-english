@@ -1,0 +1,1688 @@
+{
+  "component": "rs_u081",
+  "route": "components",
+  "verdict": "SOME",
+  "sentence": "u081",
+  "components": [
+    {
+      "component": "main",
+      "route": "w2",
+      "question": "premises",
+      "result": {
+        "candidates": [],
+        "choice": [],
+        "choices": [
+          {
+            "choice": [],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "actor": [],
+            "bearer": [],
+            "exercise": [],
+            "person": [],
+            "prosecution": []
+          },
+          "relations": {
+            "arises_from_acts_contrary_to_un": [],
+            "arises_from_non_political_crime": [],
+            "asylum_right_covers_case": [],
+            "compel_association_membership_permitted": [],
+            "declaration_implies_destructive_right": [],
+            "exercise_contrary_to_un": [],
+            "exercise_of_declared_right": [],
+            "right_protects_exercise": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": [
+        {
+          "set": "rs_u020",
+          "status": "UNKNOWN",
+          "unit": "u020"
+        },
+        {
+          "set": "rs_u022a",
+          "status": "UNKNOWN",
+          "unit": "u022a"
+        },
+        {
+          "set": "rs_u022b",
+          "status": "UNKNOWN",
+          "unit": "u022b"
+        },
+        {
+          "set": "rs_u022c",
+          "status": "UNKNOWN",
+          "unit": "u022c"
+        },
+        {
+          "set": "rs_u024",
+          "status": "UNKNOWN",
+          "unit": "u024"
+        },
+        {
+          "set": "rs_u027",
+          "status": "UNKNOWN",
+          "unit": "u027"
+        },
+        {
+          "set": "rs_u037",
+          "status": "UNKNOWN",
+          "unit": "u037"
+        },
+        {
+          "set": "rs_u045a",
+          "status": "UNKNOWN",
+          "unit": "u045a"
+        },
+        {
+          "set": "rs_u045b",
+          "status": "UNKNOWN",
+          "unit": "u045b"
+        },
+        {
+          "set": "rs_u048",
+          "status": "UNKNOWN",
+          "unit": "u048"
+        },
+        {
+          "set": "rs_u049",
+          "status": "UNKNOWN",
+          "unit": "u049"
+        },
+        {
+          "set": "rs_u051",
+          "status": "UNKNOWN",
+          "unit": "u051"
+        },
+        {
+          "set": "rs_u052",
+          "status": "UNKNOWN",
+          "unit": "u052"
+        },
+        {
+          "set": "rs_u055",
+          "status": "UNKNOWN",
+          "unit": "u055"
+        },
+        {
+          "set": "rs_u059",
+          "status": "UNKNOWN",
+          "unit": "u059"
+        },
+        {
+          "set": "rs_u063",
+          "status": "UNKNOWN",
+          "unit": "u063"
+        },
+        {
+          "set": "rs_u064",
+          "status": "UNKNOWN",
+          "unit": "u064"
+        },
+        {
+          "set": "rs_u066",
+          "status": "UNKNOWN",
+          "unit": "u066"
+        },
+        {
+          "set": "rs_u070",
+          "status": "UNKNOWN",
+          "unit": "u070"
+        },
+        {
+          "set": "rs_u073",
+          "status": "UNKNOWN",
+          "unit": "u073"
+        },
+        {
+          "set": "rs_u084a",
+          "status": "UNKNOWN",
+          "unit": "u084a"
+        },
+        {
+          "set": "rs_u084b",
+          "status": "UNKNOWN",
+          "unit": "u084b"
+        },
+        {
+          "set": "rs_u087",
+          "status": "UNKNOWN",
+          "unit": "u087"
+        },
+        {
+          "set": "rs_u096",
+          "status": "UNKNOWN",
+          "unit": "u096"
+        },
+        {
+          "set": "rs_u105a",
+          "status": "UNKNOWN",
+          "unit": "u105a"
+        },
+        {
+          "set": "rs_u105b",
+          "status": "UNKNOWN",
+          "unit": "u105b"
+        },
+        {
+          "set": "rs_u112",
+          "status": "UNKNOWN",
+          "unit": "u112"
+        }
+      ]
+    },
+    {
+      "component": "rs_u025",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u025",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u025",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u025",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u025",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u025",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "practice": [],
+            "state": []
+          },
+          "relations": {
+            "is_slave_trade": [],
+            "is_slavery": [],
+            "prohibit_slavery_and_slave_trade_required": [],
+            "slavery_or_slave_trade_practice_permitted": [],
+            "unsaid__prohibit_slavery_and_slave_trade_required": [],
+            "unsaid__slavery_or_slave_trade_practice_permitted": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u029",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u029",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u029",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u029",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u029",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u029",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "person": [],
+            "state": []
+          },
+          "relations": {
+            "has_the_right_to_recognition_as_a_person": [],
+            "secure_recognition_as_person_required": [],
+            "unsaid__has_the_right_to_recognition_as_a_person": [],
+            "unsaid__secure_recognition_as_person_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u032",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u032",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u032",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u032",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u032",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u032",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "person": [],
+            "state": []
+          },
+          "relations": {
+            "is_entitled_to_equal_protection_of_the_law": [],
+            "secure_equal_protection_required": [],
+            "unsaid__is_entitled_to_equal_protection_of_the_law": [],
+            "unsaid__secure_equal_protection_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u033a",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u033a",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u033a",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u033a",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u033a",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u033a",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "person": [],
+            "state": []
+          },
+          "relations": {
+            "is_entitled_to_protection_against_discrimination": [],
+            "secure_protection_against_discrimination_required": [],
+            "unsaid__is_entitled_to_protection_against_discrimination": [],
+            "unsaid__secure_protection_against_discrimination_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u033b",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u033b",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u033b",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u033b",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u033b",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u033b",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "person": [],
+            "state": []
+          },
+          "relations": {
+            "is_entitled_to_protection_against_incitement": [],
+            "secure_protection_against_incitement_required": [],
+            "unsaid__is_entitled_to_protection_against_incitement": [],
+            "unsaid__secure_protection_against_incitement_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u035",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u035",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u035",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u035",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u035",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u035",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "state": [],
+            "tribunal": [],
+            "violation": []
+          },
+          "relations": {
+            "ensure_remedy_by_tribunals_required": [],
+            "is_competent_for": [],
+            "is_national": [],
+            "provide_effective_remedy_required": [],
+            "unsaid__ensure_remedy_by_tribunals_required": [],
+            "unsaid__provide_effective_remedy_required": [],
+            "violates_granted_fundamental_right": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u046",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u046",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u046",
+            "status": "model"
+          },
+          {
+            "index": 2,
+            "set": "rs_u046",
+            "status": "model"
+          },
+          {
+            "index": 3,
+            "set": "rs_u046",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u046",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u046",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u046",
+                1
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u046",
+                2
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u046",
+                3
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "intrusion": [],
+            "state": []
+          },
+          "relations": {
+            "concerns_correspondence": [],
+            "concerns_family": [],
+            "concerns_home": [],
+            "concerns_privacy": [],
+            "is_arbitrary": [],
+            "is_attack_upon_honour": [],
+            "is_attack_upon_reputation": [],
+            "is_protected_by_law": [],
+            "protect_by_law_against_intrusion_required": [],
+            "unsaid__is_protected_by_law": [],
+            "unsaid__protect_by_law_against_intrusion_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u054",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u054",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u054",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u054",
+                0
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "person": []
+          },
+          "relations": {
+            "is_entitled_to_a_nationality": [],
+            "unsaid__is_entitled_to_a_nationality": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u061",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u061",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u061",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u061",
+                0
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "bearer": [],
+            "family": []
+          },
+          "relations": {
+            "is_society": [],
+            "is_state": [],
+            "protect_required": [],
+            "unsaid__protect_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u077",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u077",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u077",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u077",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u077",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u077",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "country": [],
+            "person": []
+          },
+          "relations": {
+            "give_equal_access_to_public_service_required": [],
+            "has_as_national": [],
+            "has_as_resident": [],
+            "unsaid__give_equal_access_to_public_service_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u081",
+      "route": "enumerated",
+      "question": "query",
+      "result": {
+        "countermodel": {
+          "choice": [
+            [
+              "rs_u081",
+              0
+            ]
+          ],
+          "model": {
+            "complete": true,
+            "constants": {},
+            "domains": {
+              "person": [
+                "e0"
+              ],
+              "state": [
+                "e0"
+              ]
+            },
+            "relations": {
+              "has_the_right_to_social_security": [
+                [
+                  "e0"
+                ]
+              ],
+              "resources_allow": [
+                [
+                  "e0"
+                ]
+              ],
+              "secure_social_security_required": [],
+              "unsaid__has_the_right_to_social_security": [],
+              "unsaid__secure_social_security_required": []
+            }
+          },
+          "outcome": "countermodel"
+        },
+        "proof": {
+          "choice": [
+            [
+              "rs_u081",
+              1
+            ]
+          ],
+          "conditional_on": [],
+          "outcome": "proof"
+        },
+        "route": "enumerated",
+        "verdict": "SOME"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u084c",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u084c",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u084c",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u084c",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u084c",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u084c",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "person": [],
+            "state": []
+          },
+          "relations": {
+            "has_the_right_to_just_and_favourable_conditions_of_work": [],
+            "secure_just_and_favourable_conditions_of_work_required": [],
+            "unsaid__has_the_right_to_just_and_favourable_conditions_of_work": [],
+            "unsaid__secure_just_and_favourable_conditions_of_work_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u084d",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u084d",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u084d",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u084d",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u084d",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u084d",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "person": [],
+            "state": []
+          },
+          "relations": {
+            "has_the_right_to_protection_against_unemployment": [],
+            "secure_protection_against_unemployment_required": [],
+            "unsaid__has_the_right_to_protection_against_unemployment": [],
+            "unsaid__secure_protection_against_unemployment_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u098",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u098",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u098",
+            "status": "model"
+          },
+          {
+            "index": 2,
+            "set": "rs_u098",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u098",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u098",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u098",
+                1
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u098",
+                2
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "guardian": [],
+            "person": [],
+            "state": []
+          },
+          "relations": {
+            "attend_compulsory_elementary_education_required": [],
+            "elementary_education_is_compulsory_for": [],
+            "is_parent_or_guardian_of": [],
+            "make_elementary_education_compulsory_required": [],
+            "see_to_compulsory_elementary_education_required": [],
+            "unsaid__attend_compulsory_elementary_education_required": [],
+            "unsaid__make_elementary_education_compulsory_required": [],
+            "unsaid__see_to_compulsory_elementary_education_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u099a",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u099a",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u099a",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u099a",
+                0
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "education_kind": [],
+            "state": []
+          },
+          "relations": {
+            "is_professional": [],
+            "is_technical": [],
+            "make_education_generally_available_required": [],
+            "unsaid__make_education_generally_available_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u099b",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u099b",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u099b",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u099b",
+                0
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "state": []
+          },
+          "relations": {
+            "make_higher_education_accessible_required": [],
+            "unsaid__make_higher_education_accessible_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u100a",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u100a",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u100a",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u100a",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u100a",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u100a",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "education": [],
+            "state": []
+          },
+          "relations": {
+            "direct_education_to_personality_required": [],
+            "is_directed_to_full_development_of_the_personality": [],
+            "unsaid__direct_education_to_personality_required": [],
+            "unsaid__is_directed_to_full_development_of_the_personality": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u100b",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u100b",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u100b",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u100b",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u100b",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u100b",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "object_of_respect": [],
+            "state": []
+          },
+          "relations": {
+            "direct_education_to_strengthen_respect_required": [],
+            "education_strengthens_respect_of": [],
+            "is_fundamental_freedoms": [],
+            "is_human_rights": [],
+            "unsaid__direct_education_to_strengthen_respect_required": [],
+            "unsaid__education_strengthens_respect_of": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u105c",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u105c",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u105c",
+            "status": "model"
+          },
+          {
+            "index": 2,
+            "set": "rs_u105c",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u105c",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u105c",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u105c",
+                1
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u105c",
+                2
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "person": [],
+            "state": []
+          },
+          "relations": {
+            "has_the_right_to_share_in_scientific_advancement": [],
+            "person_may_share_in_scientific_advancement": [],
+            "secure_scientific_advancement_required": [],
+            "unsaid__has_the_right_to_share_in_scientific_advancement": [],
+            "unsaid__person_may_share_in_scientific_advancement": [],
+            "unsaid__secure_scientific_advancement_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u110",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u110",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u110",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u110",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u110",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u110",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "community": [],
+            "person": []
+          },
+          "relations": {
+            "is_sole_setting_of_full_development": [],
+            "perform_duties_required": [],
+            "perform_duties_to_the_community_required": [],
+            "unsaid__perform_duties_required": [],
+            "unsaid__perform_duties_to_the_community_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u111",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u111",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u111",
+            "status": "model"
+          },
+          {
+            "index": 2,
+            "set": "rs_u111",
+            "status": "model"
+          },
+          {
+            "index": 3,
+            "set": "rs_u111",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u111",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u111",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u111",
+                1
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u111",
+                2
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u111",
+                3
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "bearer": [],
+            "limitation": []
+          },
+          "relations": {
+            "avoid_imposing_limitation_required": [],
+            "is_determined_by_law": [],
+            "is_state": [],
+            "serves_any_other_purpose": [],
+            "serves_just_requirements": [],
+            "serves_recognition_of_rights_of_others": [],
+            "unsaid__avoid_imposing_limitation_required": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    },
+    {
+      "component": "rs_u114",
+      "route": "enumerated",
+      "question": "premises",
+      "result": {
+        "candidates": [
+          {
+            "index": 0,
+            "set": "rs_u114",
+            "status": "model"
+          },
+          {
+            "index": 1,
+            "set": "rs_u114",
+            "status": "model"
+          }
+        ],
+        "choice": [
+          [
+            "rs_u114",
+            0
+          ]
+        ],
+        "choices": [
+          {
+            "choice": [
+              [
+                "rs_u114",
+                0
+              ]
+            ],
+            "status": "model"
+          },
+          {
+            "choice": [
+              [
+                "rs_u114",
+                1
+              ]
+            ],
+            "status": "model"
+          }
+        ],
+        "evidence": "per choice",
+        "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+            "bearer": [],
+            "interpretation": []
+          },
+          "relations": {
+            "declaration_implies_destructive_right": [],
+            "implies_right_to_destroy_declared_rights": [],
+            "interpretation_permitted": [],
+            "unsaid__interpretation_permitted": []
+          }
+        },
+        "route": "enumerated",
+        "status": "model"
+      },
+      "restrictions": [],
+      "conditional_on": [],
+      "unchecked": []
+    }
+  ],
+  "decided_units": [
+    "u025",
+    "u029",
+    "u032",
+    "u033a",
+    "u033b",
+    "u035",
+    "u046",
+    "u054",
+    "u061",
+    "u074",
+    "u077",
+    "u081",
+    "u084c",
+    "u084d",
+    "u098",
+    "u099a",
+    "u099b",
+    "u100a",
+    "u100b",
+    "u105c",
+    "u110",
+    "u111",
+    "u114"
+  ],
+  "english": [
+    "Each open sentence below was checked by itself, under each of its readings.",
+    "Sentence 90 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+    "Read sentence 90 as *Every State must secure each person social security*: the conclusion follows: *For every State that is classified as \"resources_allow\", for every person, that State must secure that person social security.*",
+    "Read sentence 90 as *Every person is classified as \"has_the_right_to_social_security\"*: the conclusion does not follow. It fails here: e0 is a person; e0 is a State; e0 is classified as \"resources_allow\". Here the text does not say whether e0 must secure e0 social security; this situation answers 'no'."
+  ]
+}

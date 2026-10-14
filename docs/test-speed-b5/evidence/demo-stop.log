@@ -1,0 +1,46 @@
+    Finished `release` profile [optimized] target(s) in 0.19s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+14/347 test units (map 3c2c1d2040, 3.06 s)
+changed: tests/test_test_order.py, tests/test_gate_quarantine.py
++ uv run --frozen --group dev python tools/test_layer_policy.py
++ uv run --frozen --group dev python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_conformance.py tests/test_definitions.py tests/test_gate.py tests/test_gate_collection.py tests/test_gate_quarantine.py tests/test_hang_guards.py tests/test_nested_pytest.py tests/test_rust_reproducible.py tests/test_select_tests.py tests/test_stage0_inventory.py tests/test_surface_registry.py tests/test_test_order.py tests/test_wire_gate_corpus.py
+order: failed last time ['tools/test_layer_policy.py']; changed ['tests/test_gate_quarantine.py', 'tests/test_test_order.py']; then the rest; --maxfail 1
+recording 14 units with 8 jobs in /tmp/ve-select-run-aa1h5bf3
+  tests/test_conformance.py: exit 0 in 1.4 s, 556 functions
+  tests/test_definitions.py: exit 0 in 1.7 s, 663 functions
+  tests/test_gate_quarantine.py: exit 0 in 4.8 s, 326 functions
+  tests/test_test_order.py: exit 0 in 8.7 s, 335 functions, OPAQUE
+  tests/test_stage0_inventory.py: exit 0 in 18.7 s, 256 functions
+  tests/test_gate.py: exit 0 in 27.7 s, 2152 functions
+  tests/test_surface_registry.py: exit 0 in 1.2 s, 406 functions
+  tests/test_hang_guards.py: exit 0 in 29.6 s, 801 functions, OPAQUE
+  tests/test_nested_pytest.py: exit 0 in 36.9 s, 664 functions
+  tests/test_rust_reproducible.py: exit 0 in 43.4 s, 261 functions
+  tools/test_layer_policy.py: exit 1 in 71.0 s, 227 functions
+stopping after 1 failed tests (--maxfail 1)
+FAILED tools/test_layer_policy.py (exit 1): tools/test_layer_policy.py; log /tmp/ve-select-run-aa1h5bf3/tools__test_layer_policy.py.log
+..F...................................
+======================================================================
+FAIL: test_documented_python_layers_match_policy (__main__.LayerSelectionTests.test_documented_python_layers_match_policy) (layer=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/ve-ts-B5/tools/test_layer_policy.py", line 539, in test_documented_python_layers_match_policy
+    self.assertEqual([n for n in names if not any(fnmatch(n, p) for p in patterns)], [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['ask'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'ask'
+
+- ['ask']
++ []
+
+----------------------------------------------------------------------
+Ran 38 tests in 70.399s
+
+FAILED (failures=1)
+Lean layer graph kept (2 modules, 0 reviewed legacy edges)
+Rust crate graph kept (2 crates)
+recorded 11 units for tree 309ba6be72; 336 others left to the static graph until they run; 1 failed
+STOPPED EARLY (--maxfail 1): 3 selected units did not run: tests/test_gate_collection.py, tests/test_select_tests.py, tests/test_wire_gate_corpus.py
