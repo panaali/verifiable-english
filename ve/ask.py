@@ -267,15 +267,11 @@ class _NormDefaults:
         self.doc = doc
         self.gen = _zero_generator(doc)
 
-    def case(self, ast, extra=None, generate=True):
+    def conflict_evidence(self, conflict):
+        """The conflict proof or witness, before any query or model search."""
         gen = self.gen
-        extra = dict(extra or {})
-        if not generate:
-            return {"environment": self.doc["environment"].to_dict(), "document": {"units": gen.units},
-                    "conclusion": ast, "evidence": extra}
-        evidence = {"conflict": extra.pop("conflict")} if "conflict" in extra else \
-            {"conflict": {"packages": gen._packages()}}
-        if len(evidence["conflict"]["packages"]) < len(gen.targets):
+        evidence = {"conflict": conflict}
+        if len(conflict["packages"]) < len(gen.targets):
             witness = gen.witness_case()
             if witness is not None:
                 found = dict(witness["witness"])
@@ -283,6 +279,16 @@ class _NormDefaults:
                 model = dict(found["model"])
                 model["relations"] = {**model["relations"], **filling}
                 evidence["witness"] = {"witness": {**found, "model": model}}
+        return evidence
+
+    def case(self, ast, extra=None, generate=True):
+        gen = self.gen
+        extra = dict(extra or {})
+        if not generate:
+            return {"environment": self.doc["environment"].to_dict(), "document": {"units": gen.units},
+                    "conclusion": ast, "evidence": extra}
+        conflict = extra.pop("conflict") if "conflict" in extra else {"packages": gen._packages()}
+        evidence = self.conflict_evidence(conflict)
         for key, conclusion in (("certificate", ast), ("negation", ["not", ast]), ("unsat", None)):
             piece = gen.certificate_case(conclusion)
             if piece is not None:

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import importlib.util
 import gzip
+import hashlib
 import json
 from pathlib import Path
 import pytest
@@ -25,7 +26,7 @@ def test_q2_measurement_report_is_generated_from_saved_evidence():
     assert any(row["status"] == "compared" for row in agreement)
 
 
-def test_the_budgets_are_met_and_the_corpus_agreement_is_recorded():
+def test_the_budgets_are_met_and_the_corpus_agreement_is_recorded(tmp_path):
     """F4 (qa-q2 recheck): the report shows the plan's pass gates met (`ask` Lean CPU at most 2 s, U3 `ve ask` wall
     at most 60 s), and the agreement of the corpora's queries is recorded with no lead that contradicts the
     existing route (`tools/question_answering_agreement.py`)."""
@@ -43,17 +44,86 @@ def test_the_budgets_are_met_and_the_corpus_agreement_is_recorded():
     for row in corpus["requires_review"]:
         assert row["review"].startswith("reviewed (DELTA D") and row["review"][16:19].rstrip(")") in delta, row
     assert {"readings", "norm-defaults"} <= set(corpus["counts"])
-    assert corpus["input_counts"]["norm-defaults"] == 8000
+    # The DRI deferred seeds 450–999. The saved measurement covers exactly 450 complete trees.
+    assert corpus["input_counts"]["norm-defaults"] == 450 * 8
     assert corpus["input_counts"]["readings"] >= 8
     assert sum(counts.get("same verdict", 0) for counts in corpus["counts"].values()) > 0
-    assert {int(row["case"][1:]) for row in corpus["rows"] if row["corpus"] == "norm-defaults"} == set(range(1000))
+    from tools.lean_first_diff import norm_defaults_corpus
+    from tools.question_answering_agreement import _nd_conclusions
+    generated = tmp_path / "generated.json"
+    norm_defaults_corpus(generated, trees=450, include_invalid=False)
+    texts = {row["case"]: row["text"] for row in json.loads(generated.read_text())}
+    assert set(texts) == {f"s{i}" for i in range(450)}
+    def key(document, conclusion):
+        return hashlib.sha256((document + "\n" + json.dumps(conclusion, sort_keys=True)).encode()).hexdigest()
+    expected = {key(document, conclusion) for document in texts.values() for conclusion in _nd_conclusions()}
+    compared = [row for row in corpus["rows"] if row["corpus"] == "norm-defaults"]
+    assert len(compared) == len(expected)
+    assert {key(texts[row["case"]], row["conclusion"]) for row in compared} == expected
     for row in corpus["rows"]:
+        assert "older_reason" in row
+        if "leads" in row:
+            assert len(row["ask_reasons"]) == len(row["leads"])
         if row["status"] in {"same verdict", "ask unknown (X1 conflict)", "ask unknown (other)",
                              "compatible difference", "older budget exhausted"}:
             assert row["question"].startswith("Is it the case that ") and row["leads"]
         if row["status"] == "older budget exhausted":
             from tools.question_answering_agreement import OLDER_BUDGET_REASON
             assert row["older"] == "UNKNOWN" and row["older_reason"] == OLDER_BUDGET_REASON
+
+
+def test_q2_f11_checked_conflicts_are_separate_from_identical_verdicts():
+    corpus = _agreement()["corpus"]
+    conflicts = [row for row in corpus["rows"] if row.get("older") in {"ALL", "NONE"}
+                 and row.get("ask_reasons") and "X1" in row["ask_reasons"]]
+    assert conflicts
+    assert all(row["status"] == "ask unknown (X1 conflict)" for row in conflicts)
+    assert sum(group.get("ask unknown (X1 conflict)", 0) for group in corpus["counts"].values()) >= len(conflicts)
+    rendered = REPORT.render()
+    assert "ask unknown (X1 conflict)" in rendered
+    assert (f"Checked X1 conflicts where the older route answered ALL or NONE: {len(conflicts)} "
+            f"(ALL {sum(row['older'] == 'ALL' for row in conflicts)}; "
+            f"NONE {sum(row['older'] == 'NONE' for row in conflicts)}).") in rendered
+
+
+def test_q2_f11_conflict_only_evidence_is_checked_by_lean(tmp_path):
+    """The faster corpus refresh classifies X1 through the same Lean replay as a full answer."""
+    from tools.lean_first_diff import norm_defaults_corpus
+    from ve.ask import prepare
+    generated = tmp_path / "generated.json"
+    norm_defaults_corpus(generated, trees=450, include_invalid=False)
+    document = next(row["text"] for row in json.loads(generated.read_text()) if row["case"] == "s0")
+    saved = next(row for row in _agreement()["corpus"]["rows"]
+                 if row["corpus"] == "norm-defaults" and row["case"] == "s0"
+                 and row["status"] == "ask unknown (X1 conflict)")
+    path = tmp_path / "s0.ve.md"
+    path.write_text(document)
+    prepared = prepare(path, document.encode(), saved["question"], generate=False)
+    gen = prepared.builder.gen
+    prepared.request["case"]["evidence"] = prepared.builder.conflict_evidence({"packages": gen._packages()})
+    rows = prepared.ask()["rows"]
+    assert [row["lead"] for row in rows] == saved["leads"]
+    assert [row["reason"] for row in rows] == saved["ask_reasons"] == ["X1"]
+
+
+def test_q2_d13_words_timing_covers_readings_norm_defaults_and_pilot():
+    saved = json.loads((REPORT.EVIDENCE / "words-perf.json").read_text())
+    by_case = {}
+    for row in saved["rows"]:
+        assert row["cpu_s"] > 0 and row["wall_s"] > 0
+        by_case.setdefault(row["document"], {}).setdefault(row["revision"], set()).add(row["run"])
+    assert set(by_case) == {"qa-q2-readings-bench.ve.md", "norm-defaults-seed-0",
+                            "qa-q2-pilot-readings.ve.md"}
+    assert all(revisions == {"before": {1, 2}, "after": {1, 2}} for revisions in by_case.values())
+    delta = next(line for line in (ROOT / "docs/spec/question-answering-q2/DELTA.md").read_text().splitlines()
+                 if line.startswith("| D13 |"))
+    assert "evidence/words-perf.json" in delta
+    for case in by_case:
+        rows = [row for row in saved["rows"] if row["document"] == case]
+        for field in ("cpu_s", "wall_s"):
+            before = round(sum(row[field] for row in rows if row["revision"] == "before") / 2, 3)
+            after = round(sum(row[field] for row in rows if row["revision"] == "after") / 2, 3)
+            assert f"{before}→{after} s" in delta
 
 
 def test_q2_f4_agreement_classifies_evidence_differences_by_saved_reasons():
@@ -92,6 +162,13 @@ def test_q2_f4_corpus_rejects_an_incomplete_generated_tree(tmp_path):
                                 "conclusion": ["unary", "p", ["const", "k"]], "older": "UNKNOWN"}) + "\n")
     with pytest.raises(ValueError, match="incomplete or repeated trees"):
         corpus([path])
+
+
+def test_q2_f11_generated_scope_stops_at_the_requested_tree(tmp_path):
+    from tools.lean_first_diff import norm_defaults_corpus
+    path = tmp_path / "bounded.json"
+    norm_defaults_corpus(path, trees=2, include_invalid=False)
+    assert [row["case"] for row in json.loads(path.read_text())] == ["s0", "s1"]
 
 
 @pytest.mark.parametrize("case,predicate", [

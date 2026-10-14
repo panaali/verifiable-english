@@ -56,6 +56,12 @@ def render() -> str:
         for name, counts in sorted(corpus["counts"].items()):
             lines.append(f"| {name} | {sum(counts.values())} | " +
                          " | ".join(str(counts.get(status, 0)) for status in statuses) + " |")
+        checked_conflicts = {verdict: sum(row["status"] == "ask unknown (X1 conflict)" and
+                                          row["older"] == verdict for row in corpus["rows"])
+                             for verdict in ("ALL", "NONE")}
+        lines += ["", "Checked X1 conflicts where the older route answered ALL or NONE: "
+                  f"{sum(checked_conflicts.values())} (ALL {checked_conflicts['ALL']}; "
+                  f"NONE {checked_conflicts['NONE']})."]
         refused = {}
         for row in corpus["rows"]:
             if row["status"].startswith(("ask refused", "older route")):
