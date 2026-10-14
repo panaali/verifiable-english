@@ -76,7 +76,9 @@ The final focused run used the normal collection hook:
 `XDG_CACHE_HOME=/tmp/ve-tarch-xdg VE_NATIVE_PREBUILT=1 ./.venv/bin/python -m pytest -q tests/test_heavy_tests.py tests/test_select_tests.py::test_light_tier_keeps_the_heavy_test_of_a_changed_function tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry`:
 **8 passed**. These focused tests do not call a checker.
 
-Temporary bugs, each restored before the focused run and never committed:
+Temporary bugs, each restored before the focused run and never committed. The same list,
+with file and test keys, is in `evidence/mutants.json`; one bug in each of the three files
+was planted again together at `601100d35`: four tests failed, and after the restore 7 passed.
 
 | Changed product file | Seeded bug | Test that failed |
 |---|---|---|
