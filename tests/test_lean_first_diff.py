@@ -667,3 +667,20 @@ def test_pilot_recording_keeps_the_english_shadow_in_its_writable_scratch(tmp_pa
     monkeypatch.setattr(diff, "pilot_check", lambda _root, _path, env: {"shadow": env["VE_SHADOW_LOG"]})
     [row] = diff.pilot_records(Path("/readonly/base"), tmp_path, workers=1)
     assert row["outcome"]["shadow"] == str(tmp_path / "english-shadow.jsonl")
+
+
+def test_pilot_comparison_normalizes_only_its_own_scratch_directory(tmp_path):
+    def outcome(side, name="pack.json"):
+        return {"exit": 1, "stdout": "", "stderr": [
+            f"Cannot read sense pack: {tmp_path}/{side}.pilots/{name}"]}
+
+    ok = {"exit": 0, "stdout": {"status": "ok"}, "stderr": []}
+    bad = {"exit": 1, "stdout": "", "stderr": ["bad input"]}
+    base = {"ok": ok, "bad": bad, "pack": outcome("base")}
+    head = {"ok": ok, "bad": bad, "pack": outcome("head")}
+    result = _compare(tmp_path, base, head, controls=False, corpus="pilots")
+    assert result["totals"] == {"same": 3}
+    assert result["unlisted"] == 0
+    head["pack"] = outcome("head", "different.json")
+    changed = _compare(tmp_path, base, head, controls=False, corpus="pilots")
+    assert changed["unlisted"] == 1
