@@ -326,3 +326,32 @@ declarations adjacent to proved wire or encoder theorems, including `NormDefault
 `Readings.Wire.admitSD`, `Readings.Run.runCase`, `Readings.Run.ndVerdictsAnswer`, and
 `ResponseShape.Schemas.ReadingsRoute` shapes. A follow-up should tie each declaration only after
 checking that the theorem states its full accepted behavior; no tie was added merely for proximity.
+
+## F18 and response-binding audit (2026-10-14)
+
+The current Python relay checks the schema and the request binding of every
+identity/count it reads or displays. `docs/spec/rd-9-relay-binding.md` inventories
+the fields. Lean still owns the ASTs, verdicts and diagnostic wording (R8).
+The binding-audit review's rows 1–17 and 39–47 are covered by the common soft
+binder and its soft-pairs, soft-conflict and admission callers; rows 18–38 and
+the rights admission caller are covered by the rights binder. The probes mutate
+genuine Lean rows, including coordinated removal of a pair and its labels.
+
+| Finding | Fix | Regression | Commit |
+| --- | --- | --- | --- |
+| F18 | Each narrowing target equals `rule:mechanism`; referenced rules, parties and carve-out indices belong to the submitted source. Required request-implied mechanisms are present. | `test_f18_narrowing_mechanism_and_target_bind_to_authored_line`, `test_f18_extra_undeclared_mechanism_is_unavailable` | a7ba8c025, 7e6cdb201 |
+| Binding audit 1–17, 39–47 | Bind prime predicates/profiles, decisions, pair membership and orientation, ranks, counts, targets, admission labels and the two auxiliary soft results. | `test_binding_audit_soft_fields_reject_forgery`, `test_binding_audit_pair_and_label_removed_together_is_unavailable`, `test_binding_audit_reversed_pair_and_label_together_is_unavailable` | a7ba8c025 |
+| Binding audit 18–38 | Bind source line instances and node fields, generated keys/declarations, limitation labels, wordings, mechanism references, findings and exact bar membership. | `test_binding_audit_rights_fields_reject_forgery`, `test_binding_audit_rights_generated_name_swap_is_unavailable`, `test_f16_bar_rows_are_bound_to_elaboration` | a7ba8c025, 7e6cdb201 |
+
+PROBE F18 failed before the fix with `DID NOT RAISE CheckerUnavailable`
+and passed after it. Two seeded Python bugs were detected and restored:
+`ve/softnorms.py` accepting an extra E′ predicate failed
+`test_binding_audit_soft_fields_reject_forgery[prime extra predicate]`;
+`ve/rights_route.py` accepting any mechanism reference failed
+`test_f18_extra_undeclared_mechanism_is_unavailable[blockedBy absent]`.
+
+The Task B dispositions above still apply. B1 requires the merge train's final
+gate and SC-9 external source check; B4 requires the independent bounded
+statement recheck; B8 requires signing the final-HEAD allowance; B9 requires
+the saved CPU figures from the gate. This worker ran no model calls or release
+gate, as directed. None of those four conditions is claimed signed here.
