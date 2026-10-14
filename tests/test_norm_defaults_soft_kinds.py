@@ -268,3 +268,16 @@ def test_soft_certificate_kind_is_answered_where_it_was_refused(lean_executable)
     kind, env, source = _fixture("u8-unspecified")
     (row,) = route.run_cases([layered.case(kind, env, source, "norm-defaults-certificate")])
     assert row == {"id": "norm-defaults-certificate", "status": "error", "error": "property not found: premises"}
+
+
+def test_missing_certificate_premises_has_the_norms_branch_text(lean_executable):
+    """B2: the soft branch uses the existing replay decoder's missing-field text."""
+    from tests.test_readings_nd_lean import env1
+    kind, env, source = _fixture("u8-unspecified")
+    norms = env1(profiles=("norm-defaults@0", "norms@0", "relational-fol@0"))
+    rows = route.run_cases([
+        layered.case(kind, env, source, "norm-defaults-certificate"),
+        {"id": "norm-defaults-certificate", "kind": "norm-defaults-certificate",
+         "environment": norms, "norms": []},
+    ])
+    assert rows[0]["error"] == rows[1]["error"] == "property not found: premises"

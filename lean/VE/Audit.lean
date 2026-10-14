@@ -4367,6 +4367,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.ndPremiseRow_holds
 #print axioms VE.Readings.Wire.mem_chosenOf
 #print axioms VE.Readings.Wire.mem_rows
+#print axioms VE.Readings.Wire.mem_rowsG
 #print axioms VE.Readings.Wire.nd_rowsHold
 #print axioms VE.Readings.Wire.nd_premiseRowsHold
 #print axioms VE.Readings.plan_no_every_for_models
