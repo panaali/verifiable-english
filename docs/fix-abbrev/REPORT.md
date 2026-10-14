@@ -66,6 +66,12 @@ replaced with the original code, which fails.
   3 passed in 12m48s, including Lean certificate replay. No product or test code was changed for this
   resource-sensitive failure.
 - The full gate is run after this report commit, on its clean final HEAD; its result is `gate-result.json`.
+- A local full-gate attempt on `f95769e9f` used one pytest worker. Lean build and audit and Rust build
+  and tests passed; Python collection found 15,081 tests. The Python suite advanced past the original
+  failing agent-policy fixture, but after roughly six hours its `/tmp/ve-gate-*` scratch directory had
+  disappeared while `gate-result.json` still held only the startup placeholder (empty commit and
+  stages). The attached process was stopped with Ctrl-C (exit 130); this is not passing gate evidence.
+  The final-HEAD gate uses four pytest workers to reduce suite wall time.
 
 ## Self-review against BUILDER-CHECKLIST
 
