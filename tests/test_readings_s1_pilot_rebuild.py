@@ -43,6 +43,10 @@ def test_rebuild_command_updates_every_set_after_environment_edit(tmp_path):
 def test_rebuild_updates_situation_keys_and_admission_references():
     meta, _ = pilot.read(UDHR)
     original = next(item for item in meta["reading_sets"] if item.get("situations"))
+    # A synthetic main-environment set exercises the rekeying branch. The
+    # recorded UDHR set itself belongs to a companion environment.
+    original = {**original, "readings": [{k: v for k, v in r.items() if k != "companion"}
+                                          for r in original["readings"]]}
     changed = pilot._reidentified(pilot._environment(meta["environment"]), original)
     env = pilot._environment(meta["environment"])
     assert len(changed["situations"]) == len(original["situations"])
@@ -51,3 +55,11 @@ def test_rebuild_updates_situation_keys_and_admission_references():
     for reading in changed["readings"]:
         assert set(reading["admission"]["distinguishing_models"].values()) <= (
             set(changed["situations"]) | {"pending"})
+
+
+def test_rebuild_preserves_companion_identities_on_unchanged_udhr(tmp_path):
+    meta, source = pilot.read(UDHR)
+    assert pilot.rebuild_reading_ids(meta)["reading_sets"] == meta["reading_sets"]
+    out = tmp_path / "same.ve.md"
+    assert pilot.main(["--rebuild-reading-ids", str(UDHR), "--check-noop", "--out", str(out)]) == 0
+    assert pilot.read(out) == (meta, source)
