@@ -1,0 +1,24 @@
+{
+  "mutants": [
+    {
+      "file": "lean/EnglishRunMain.lean",
+      "change": "Replace stdin read with an empty string; restored after the failure",
+      "test": "tests/test_english_runner_root.py::test_english_runner_bytes_match_base[empty_stdin]"
+    },
+    {
+      "file": "lean/EnglishRunMain.lean",
+      "change": "Replace file read with an empty string; restored after the failure",
+      "test": "tests/test_english_runner_root.py::test_english_runner_bytes_match_base[formula_file]"
+    },
+    {
+      "file": "lean/EnglishRunMain.lean",
+      "change": "Return exit 0 for malformed input; restored after the failure",
+      "test": "tests/test_english_runner_root.py::test_english_runner_bytes_match_base[malformed_stdin]"
+    },
+    {
+      "file": "conformance/english_lean.py",
+      "change": "Point the harness at the old runner path; restored after the failure",
+      "test": "tests/test_english_runner_root.py::test_differential_harness_uses_executable_root"
+    }
+  ]
+}
