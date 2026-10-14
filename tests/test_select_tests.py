@@ -380,6 +380,19 @@ def test_a_changed_function_selects_the_tests_that_ran_it(tmp_path):
     assert set(impact(tmp_path, "pkg/core.py", new)) == {"tests/test_bounded.py"}
 
 
+def test_light_tier_keeps_the_heavy_test_of_a_changed_function(tmp_path):
+    new = LIBRARY["pkg/core.py"].replace("min(x, LIMIT)", "max(x, LIMIT)")
+    selected = sorted(impact(tmp_path, "pkg/core.py", new))
+    inventory = tmp_path / "heavy.json"
+    inventory.write_text(json.dumps({"run": "fixture", "collected_count": 2,
+                                     "heavy": [{"nodeid": "tests/test_bounded.py::test_bounded",
+                                                "seconds": 30, "run": "fixture"},
+                                               {"nodeid": "tests/test_unrelated.py::test_unrelated",
+                                                "seconds": 30, "run": "fixture"}]}))
+    plan = select_tests.light_tier({"selected": selected, "commands": []}, inventory, jobs=2)
+    assert plan["tier"]["selected_heavy"] == ["tests/test_bounded.py::test_bounded"]
+
+
 def test_a_changed_constant_selects_its_readers_here_and_in_importers(tmp_path):
     new = LIBRARY["pkg/core.py"].replace("LIMIT = 3", "LIMIT = 4")
     # bounded reads LIMIT, doubled reads DERIVED (computed from LIMIT), user imports LIMIT,
