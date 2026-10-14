@@ -4,8 +4,12 @@ the verdict; the Python engine names the first check of the table that fails, `n
 from copy import deepcopy
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
+
+from subprocesses import HANG_TIMEOUT
 
 from conformance.wire_contract_faults import catalogue, expected_record
 from conformance.wire_contract_faults_norm_defaults import LONG, base
@@ -21,6 +25,15 @@ DIRECTORY = ROOT / "ve/wire_contract"
 CONTRACT = load("norm-defaults@0")
 LIMITS = loads_json((DIRECTORY / "limits.json").read_bytes())
 NAMES = loads_json((DIRECTORY / "names.json").read_bytes())
+
+
+def test_product_contract_import_does_not_load_git_oracle():
+    check = subprocess.run(
+        [sys.executable, "-c", "import sys; import ve.norm_defaults_contract; "
+         "assert 'conformance.frozen_norm_defaults' not in sys.modules"],
+        cwd=ROOT, capture_output=True, text=True, timeout=HANG_TIMEOUT,
+    )
+    assert check.returncode == 0, check.stderr
 
 
 def diagnose(environment, norms):

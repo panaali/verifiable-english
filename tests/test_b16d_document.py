@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import hashlib
 import json
 from pathlib import Path
 
@@ -13,6 +14,14 @@ from ve.backends.service_schema import Context, Invalid, ROWS
 from ve.errors import CheckerUnavailable, InvalidModel
 
 SEED = Path(__file__).parent / "data/readings_s2/constitution-nd-readings.ve.md"
+PILOTS = Path(__file__).parent / "data/tarch-b8"
+
+
+def pilot(name, digest):
+    """Use the two pilot blobs recorded for 16d, independent of moving pilot refs."""
+    raw = (PILOTS / name).read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == digest
+    return raw
 
 
 def test_norm_defaults_readings_and_english_fence_are_decided_by_lean(monkeypatch):
@@ -43,10 +52,7 @@ def test_pending_reading_metadata_is_checked_by_lean(tmp_path):
 
 
 def test_coupled_pilot_reading_plan_matches_prior_path(tmp_path):
-    from tools.lean_first_diff import pilot_documents
-
-    suffix = "run-20261009T1800Z/readings/nd-op.ve.md"
-    raw = next(raw for name, _, raw in pilot_documents(Path.cwd()) if name.endswith(suffix))
+    raw = pilot("nd-op.ve.md", "77a7f103a063f57ff1c22fef1feb3d911d00b040dc8f188a119c5ffa925f6824")
     path = tmp_path / "nd-op.ve.md"
     path.write_bytes(raw)
     expected = D._report(D._load_document(raw, path, None))["reading_plan"]
@@ -54,10 +60,7 @@ def test_coupled_pilot_reading_plan_matches_prior_path(tmp_path):
 
 
 def test_labeled_pending_pilot_is_lean_decided(tmp_path, monkeypatch):
-    from tools.lean_first_diff import pilot_documents
-
-    suffix = "run-20261009T0600Z/translation-without-content.ve.md"
-    raw = next(raw for name, _, raw in pilot_documents(Path.cwd()) if name.endswith(suffix))
+    raw = pilot("translation-without-content.ve.md", "4c10dfcb2deac28417836f1367bba340847e0dc723b2ab9b97f29fa421105199")
     path = tmp_path / "without-content.ve.md"
     path.write_bytes(raw)
     expected = D._report(D._load_document(raw, path, None))
