@@ -2110,6 +2110,7 @@
    "mutation": "empty",
    "path": [
     "results/*/result/english/*/frame",
+    "results/*/result/fill/*/label",
     "results/*/result/fill_premises/*/premises/*/label",
     "results/*/result/finding/cause",
     "results/*/result/first_failing",
@@ -2118,6 +2119,8 @@
     "results/*/result/labels/*",
     "results/*/result/reading_premises/*",
     "results/*/result/result/conditional_on/*",
+    "results/*/result/slot/*/label",
+    "results/*/result/targets/*",
     "results/*/result/units/*/content/norm/name",
     "results/*/result/vocabulary/constants/ve__here",
     "results/*/result/vocabulary/predicates/*/arguments/*",
