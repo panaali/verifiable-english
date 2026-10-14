@@ -63,6 +63,33 @@ def test_no_sort_is_raised_within_the_shared_bound_or_past_the_cap(principals):
         "principal_type": (8, 8)}
 
 
+def test_the_readings_budget_is_leans(monkeypatch):
+    """The readings routes' BUDGET holds no numbers of its own: each value is Lean's `search-budget` answer, and
+    a key a test sets stands in for Lean's only until it is deleted."""
+    from ve import readings_verdicts, search
+    from ve.backends import relay
+    lean = search.lean_budget()
+    assert dict(readings_verdicts.BUDGET) == {"max_steps": lean.max_proof_steps, "max_domain_size": lean.max_domain_size,
+                                              "max_models": lean.max_models, "max_evaluations": lean.max_evaluations}
+    real = relay.decide
+
+    def other(mode, cases, *args, **kwargs):
+        [row] = real(mode, cases, *args, **kwargs)
+        return [{**row, "max_models": 7, "max_proof_steps": 9}] if mode == "search-budget" else [row]
+    search.lean_budget.cache_clear()
+    monkeypatch.setattr(relay, "decide", other)
+    try:
+        assert readings_verdicts.BUDGET["max_models"] == 7 and readings_verdicts.BUDGET["max_steps"] == 9
+        readings_verdicts.BUDGET["max_models"] = 0
+        assert readings_verdicts.BUDGET["max_models"] == 0
+        del readings_verdicts.BUDGET["max_models"]
+        assert readings_verdicts.BUDGET["max_models"] == 7
+        with pytest.raises(KeyError):
+            readings_verdicts.BUDGET["max_nodes"] = 1
+    finally:
+        search.lean_budget.cache_clear()
+
+
 def test_a_negated_or_disjoined_inequality_forces_nothing(principals):
     # Only top-level conjuncts are facts: a disjunction of inequalities, or one under a negation, forces no
     # entity, so the sort stays at the shared bound.

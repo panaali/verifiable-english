@@ -6,6 +6,7 @@ reported witness, its non-vacuity included, before it is reported.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cache
 from typing import Any, Mapping, Sequence
 
 from .assurance import semantic_entry
@@ -429,6 +430,17 @@ def premise_budget(env: Any, premises: Sequence[Any]) -> PremiseBudget:
     case = {"id": "search-budget", "environment": environment,
             "premises": [_to_data(p) for p in _premises(premises)],
             "sorts": list(environment.get("vocabulary", {}).get("sorts", {}))}
+    [row] = decide("search-budget", [case])
+    return _bind_budget(row, case)
+
+
+@cache
+def lean_budget() -> PremiseBudget:
+    """Lean's premise-check budget with no sort raised: the answer to a case with no sorts, constants
+    or premises, read once per process (a refused answer is not kept). The readings routes' searches
+    (`ve.readings_verdicts.BUDGET`) and the premise-status witness search take it."""
+    from .backends.relay import decide
+    case = {"id": "search-budget", "environment": {"vocabulary": {}}, "premises": [], "sorts": []}
     [row] = decide("search-budget", [case])
     return _bind_budget(row, case)
 
