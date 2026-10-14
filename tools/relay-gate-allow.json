@@ -374,6 +374,7 @@
     "results/*/result/decisions",
     "results/*/result/derived",
     "results/*/result/english",
+    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
@@ -392,6 +393,7 @@
     "results/*/result/sets/*/pairs",
     "results/*/result/slot",
     "results/*/result/targets",
+    "results/*/result/units/*/content/norm/over",
     "results/*/result/vocabulary/predicates"
    ],
    "kind": "by-design",
@@ -408,6 +410,7 @@
     "results/*/result/derived",
     "results/*/result/english",
     "results/*/result/environment_prime/vocabulary/predicates",
+    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
