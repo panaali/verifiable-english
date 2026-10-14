@@ -10,7 +10,7 @@ R11). Its starting budget is signed by standing ruling R15 (DELTA row 1).
   them on `main`) and `allowances`. Each allowance has the fields `class`, `lines`, `reason`, `signature` and
   `commit`. The allowances are the history, and none is ever removed. The per-file tables, `section11`, `totals`,
   `history` and `signed` are gone. `migrate_baseline.py` wrote the file from the merge base's file, last at the
-  merge base `8594f1d0` when AR-4 synced with `main` on 2026-10-14. It reuses `trust_map.from_history`, so the
+  merge base `9f40783b` when AR-4 last synced with `main` on 2026-10-14. It reuses `trust_map.from_history`, so the
   history has one owner.
 - **`tools/trust_map.py`** has four modes:
   - `--check` measures the head. Its base is `git merge-base HEAD main`. On main's tip the base is the first
@@ -97,9 +97,9 @@ record is kept in the tree: the chain runs the full gate on the final HEAD and p
 ## Reading of the plan
 
 - **The starting budget (DELTA row 1)** is signed by standing ruling R15: the value `tools/trust_map.py` measures
-  at AR-4's merge base with `main` when it merges. After the sync of 2026-10-14 that is K 997, S 9,788, V 37,495
-  at `8594f1d0`. R15 signs a newly measured value when every rise since `5479466f` comes from a reviewed merge on
-  `main`; the budget changed since only through the four `approved by review` merges row 1 lists. If AR-4 syncs
+  at AR-4's merge base with `main` when it merges. After the syncs of 2026-10-14 that is K 997, S 9,788, V 37,495
+  at `9f40783b`. R15 signs a newly measured value when every rise since `5479466f` comes from a reviewed merge on
+  `main`; the budget changed since only through the `approved by review` merges row 1 lists. If AR-4 syncs
   with `main` again and the value changes, `report.py --check` fails until row 1 quotes the new value.
 - **"Reads the merge base's budget"**: the tool does not trust the recorded number. It measures the base's tree,
   which gives the same value whenever the merge train's `--write` has run. When the recorded number is stale, the
@@ -119,10 +119,17 @@ against every `lean-first/*`, `readings-defaults/*`, `question-answering/*` and 
 the files edited after the first review (`tools/gate.py`, `tests/test_gate_rerun.py`, `tests/test_gate_integrity.py`,
 `tools/regen_generated.py`, `docs/merge-tooling.md`) had no conflict.
 
-**Sync with `main` (2026-10-14, `8594f1d0`).** `docs/trust-baseline.json` was the only content conflict, and
-`tools/gate-collection.json` (deleted on `main` by AR-3) took the deletion. The budget file was rewritten by
-`migrate_baseline.py 8594f1d0` (its evidence is `evidence/migration.json`); `trust_map.py --check` passed after the
-merge commit. The Follow-up 3 crash of `merge_json` on a deleted key is fixed on `main` (`_text` of `_MISSING`).
+**Sync with `main` (2026-10-14, `8594f1d0`, then `9f40783b`).** `docs/trust-baseline.json` was the only content
+conflict, and `tools/gate-collection.json` (deleted on `main` by AR-3) took the deletion. Each time the budget file
+was rewritten by `migrate_baseline.py MAIN` (the last evidence is `evidence/migration.json`); `trust_map.py --check`
+passed after each merge commit.
+
+**Syncing AR-4 with `main` again** (the merge train's sync, while `main` still has the format before AR-4):
+`git merge main` conflicts in `docs/trust-baseline.json`. Resolve it by running
+`uv run python docs/arch/AR-4/migrate_baseline.py MERGE_HEAD` (it rewrites the file from main's: the budget is
+main's measured tree, every history entry an allowance), `python3 tools/trust_map.py --check`, commit the merge,
+then `report.py --collect`, `--render`, and set DELTA rows 1 and 2 to the new evidence (row 1 quotes the measured
+value under R15) before `report.py --check`. The Follow-up 3 crash of `merge_json` on a deleted key is fixed on `main` (`_text` of `_MISSING`).
 
 **Collision rule.** "Conflict in `docs/trust-baseline.json`: run `python3 tools/regen_generated.py --resolve`. Its
 json strategy keeps both sides' allowances. If the file still conflicts, the branch's file predates AR-4 (it has
@@ -183,7 +190,7 @@ restored:
   had no trust counts; they are deleted (DRI note of 2026-10-14).
 - This round (looprecheck2 and the DRI note), on the synced branch:
   - `lake build`: success, 887 jobs. `python lean/audit.py`: PASS, 483 source files, 5,784 named theorems.
-  - Selected tests (`select_tests --base 8594f1d0 --run`, 376 units; the Mac runner's setup failed, so it ran on
+  - Selected tests (`select_tests --base 8594f1d0 --run`, before the second sync, 376 units; the Mac runner's setup failed, so it ran on
     the VM): 288 units ran before the one-hour limit. 285 passed. `tests/test_nested_pytest.py` failed on a
     fault of this round's first code (a hand-copied stage tuple, now the gate's `RERUNNABLE`) and passed after the
     fix. `tests/test_architecture_docs.py::test_stale_statement[9]` fails on `main` too (the map names
@@ -196,6 +203,8 @@ restored:
     `tools/test_layer_policy.py`: 39 tests, OK.
     `tests/test_wire_gate_corpus.py` ran last on its own: 8 passed in 21 minutes.
   - Seeded bugs: 22/22 killed (`evidence/mutants.json`).
+  - After the second sync (`9f40783b`, which changed only English-runner Lean and tests on `main`): `lake build`
+    888 jobs, `lean/audit.py` PASS (484 files), `trust_map.py --check` PASS, and the AR-4 test files rerun (below).
   - `report.py --check`: exit 0, with the note that no gate record was given.
 
 ## Review fixes
@@ -220,7 +229,7 @@ restored:
 
 ### Loop recheck 2 (`arch-AR-4-looprecheck2.final.md`) and the DRI note of 2026-10-14
 
-- **F1:** AR-4 synced with `main` (`8594f1d0`). DELTA row 1 states the value measured at that merge base,
+- **F1:** AR-4 synced with `main` (`8594f1d0`, then `9f40783b`). DELTA row 1 states the value measured at that merge base,
   K 997, S 9,788, V 37,495, and its Ruling cell reads `SIGNED by standing ruling R15 (DRI-RULINGS.md): K 997,
   S 9,788, V 37,495`. `report.py --check` requires exactly that text quoting the evidence's measured value, and
   passes.
