@@ -110,6 +110,7 @@ FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "usecases/question-answering/group.ve.md": "surface parser",
                "usecases/question-answering/agent-policy/a-deny.ve.md": "Lean norms route",
                "fence": "surface parser"}
+PYTHON_FALLBACK = {"usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"}
 
 
 @pytest.fixture(scope="module")
@@ -120,14 +121,34 @@ def seed_answers(service):
 
 
 def test_every_seed_document_agrees_with_python_or_fails_closed(seed_answers):
-    assert set(seed_answers) == DECIDED | set(FAIL_CLOSED)
-    for name, (_, python, answer) in seed_answers.items():
+    assert set(seed_answers) == DECIDED | set(FAIL_CLOSED) | PYTHON_FALLBACK
+    assert LARGE_FALLBACK <= PYTHON_FALLBACK
+    assert all(dw.fuzzed(seed_answers[name][0], name) for name in LARGE_FALLBACK)
+    for name, (doc, python, answer) in seed_answers.items():
+        if name in PYTHON_FALLBACK:
+            from ve.document import _lean_answer
+            assert python["outcome"] == answer["outcome"] == "ok"
+            assert answer["value"]["coverage"] == python["value"]["coverage"]
+            assert dw.verdict(python, answer) == "agree", name
+            assert _lean_answer(dw.text_of(doc).encode(), True) is None
+            continue
         if name in DECIDED:
             assert dw.verdict(python, answer) == "agree", (name, python, answer)
             assert python["outcome"] == "ok", (name, python)
         else:
             assert python["outcome"] == "ok" or name == "fence", (name, python)
             assert answer["code"] == "CheckerUnavailable" and FAIL_CLOSED[name] in answer["text"], (name, answer)
+
+
+def test_pilot_readings_decoder_rejection_keeps_its_owner(service):
+    pilot = deepcopy(dict(dw.seeds())["usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"])
+    pilot["front"]["reading_sets"][44]["readings"][0] = False
+    python, answer = both(service, dw.text_of(pilot))
+    assert python["outcome"] == answer["outcome"] == "error"
+    assert python["code"] == answer["code"] == "InvalidInput"
+    assert python["owner"] == "readings"
+    assert python["text"] != answer["text"]
+    assert dw.verdict(python, answer) == "readings"
 
 
 def test_residual_counts_are_nonzero_and_python_s(seed_answers):
@@ -381,12 +402,18 @@ def _null_and_number_mutants(doc):
     return texts
 
 
-@pytest.mark.parametrize("name", sorted(DECIDED | set(FAIL_CLOSED)))
+LARGE_FALLBACK = PYTHON_FALLBACK
+
+
+@pytest.mark.parametrize("name", sorted((DECIDED | set(FAIL_CLOSED)) - LARGE_FALLBACK))
 def test_null_and_number_forms_agree_with_python_or_fail_closed(service, name):
     """16c review B2's class: Lean's JSON reader decided `null` and number forms differently from Python (107
     accepted-to-rejected flips on `null`; `2e0` read as the natural 2 where Python reads a float). Every
     one-member `null` and every number form of every seed is Python's answer or `CheckerUnavailable`, never
-    another verdict; and the seed's own members the mode reads as absent (`content`, `status`) are decided."""
+    another verdict; and the seed's own members the mode reads as absent (`content`, `status`) are decided. RD-5's
+    375 KB pilot is checked whole by `test_every_seed_document_agrees_with_python_or_fails_closed` and mutated by
+    difffuzz; this one-member helper would copy it 12,084 times (4.5 GB of input) while the wrapper uses the
+    original Python path for that documented coverage gap."""
     doc = dict(dw.seeds())[name]
     texts = _null_and_number_mutants(doc)
     assert texts
@@ -476,8 +503,11 @@ def test_a_malformed_later_reading_is_a_diagnostic_not_a_key_error(service):
              "admission": {"who": "alice", "why": "w", "distinguishing_models": {"q": "m"}}}
     sets = [{"id": "s", "unit": "a", "version": 1, "status": "open", "readings": [first, {}]}]
     python, answer = both(service, document("AB", [unit("a", [0, 2])], environment_json=env, reading_sets=sets))
-    assert python == answer == {"outcome": "error", "code": "InvalidInput",
-                                "text": "each other reading needs a distinguishing model id"}
+    expected = {"outcome": "error", "code": "InvalidInput",
+                "text": "each other reading needs a distinguishing model id"}
+    assert answer == expected
+    # The Python comparator also records which nested decoder raised the diagnostic.
+    assert python == {**expected, "owner": "readings"}
 
 
 # ---------------------------------------------------------------- budgets and deadlines
@@ -528,7 +558,7 @@ def test_large_question_fixtures_are_compared_as_seeds_without_mutants():
     from conformance import document_wrapper as dw
     names = [name for name, _ in dw.seeds()]
     unmutated = [name for name in names if any(name.startswith(p) for p in dw.UNMUTATED)]
-    assert unmutated and set(unmutated) <= DECIDED | set(FAIL_CLOSED)
+    assert unmutated and set(unmutated) <= DECIDED | set(FAIL_CLOSED) | PYTHON_FALLBACK
     for prefix in dw.UNMUTATED:
         assert any(name.startswith(prefix) for name in names), prefix
     for name, doc in dw.seeds():
