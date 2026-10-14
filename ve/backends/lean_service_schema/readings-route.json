@@ -200,7 +200,7 @@
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "reading_premises": {"$ref": "common.json#/$defs/strings"},
             "status": {"const": "ok"},
-            "targets": {"$ref": "common.json#/$defs/strings"},
+            "targets": {"items": {"minLength": 1, "type": "string"}, "type": "array"},
             "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]}
           },
           "required": ["id", "status", "verdict", "assumed", "targets", "reading_premises"],
@@ -446,7 +446,10 @@
             "slot": {
               "items": {
                 "additionalProperties": false,
-                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "properties": {
+                  "ast": {"$ref": "common.json#/$defs/generated_formula"},
+                  "label": {"minLength": 1, "type": "string"}
+                },
                 "required": ["label", "ast"],
                 "type": "object"
               },
@@ -659,7 +662,10 @@
             "fill": {
               "items": {
                 "additionalProperties": false,
-                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "properties": {
+                  "ast": {"$ref": "common.json#/$defs/generated_formula"},
+                  "label": {"minLength": 1, "type": "string"}
+                },
                 "required": ["label", "ast"],
                 "type": "object"
               },
@@ -743,7 +749,10 @@
             "slot": {
               "items": {
                 "additionalProperties": false,
-                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "properties": {
+                  "ast": {"$ref": "common.json#/$defs/generated_formula"},
+                  "label": {"minLength": 1, "type": "string"}
+                },
                 "required": ["label", "ast"],
                 "type": "object"
               },
