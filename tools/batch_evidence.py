@@ -184,8 +184,7 @@ def rerun_pair_problems(full, rerun) -> list[str]:
             or any(previous.get(k) != full.get(k) for k in same) or rerun_failed.get("tests") != tests
             or rerun_failed.get("outcomes") != {test: "passed" for test in tests if isinstance(test, str)}
             or not gate_counts_valid(rerun_counts, failed=0)
-            or rerun_counts["selected"] == 0 or rerun_counts["selected"] < len(tests)
-            or rerun_counts["selected"] != rerun_counts["passed"]):
+            or rerun_counts["selected"] == 0 or rerun_counts["passed"] < len(tests)):
         errors.append("the serial rerun did not pass every failed test on the full gate's clean commit (R13)")
     return errors
 

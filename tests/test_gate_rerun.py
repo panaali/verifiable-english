@@ -38,7 +38,7 @@ class FakeGate:
         policy = tmp_path / "policy.json"
         policy.write_text(json.dumps({"version": 1, "optional_tests": [], "deselected_tests": []}))
         self.output = tmp_path / "record.json"
-        self.root, self.tree, self.failing, self.seen = root, "tree-1", {FAILED}, []
+        self.root, self.tree, self.failing, self.skipping, self.seen = root, "tree-1", {FAILED}, set(), []
         self.trust = None  # the counts `trust_map.py --files` writes (None: trust_counts())
         self.toolchains = {"lean": "Lean (version 4.24.0)", "rustc": "rustc 1.90.0"}
         scratches = itertools.count()
@@ -70,7 +70,8 @@ class FakeGate:
             files = [str(arg) for arg in args if str(arg).startswith("tests/")]
             ids = [nodeid for nodeid in BASELINE if not files or nodeid.split("::")[0] in files]
             outcomes = {nodeid: {"outcome": "failed", "reason": "AssertionError"} if nodeid in self.failing
-                        else {"outcome": "passed"} for nodeid in ids}
+                        else {"outcome": "skipped", "reason": "optional on this host"}
+                        if nodeid in self.skipping else {"outcome": "passed"} for nodeid in ids}
             Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps(
                 {"collected": ids, "selected": ids, "deselected": [], "collection_reports": [],
                  "tests": outcomes if stage == "Python suite" else {}, "workers": {"gw0": ids}}))
