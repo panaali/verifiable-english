@@ -197,6 +197,44 @@ def test_superposed_answer_is_stable_when_document_keys_are_reordered(tmp_path):
     assert left.conflict() == right.conflict()
 
 
+def test_superposed_scope_count_stays_bounded_above_64_choices():
+    from tests.test_readings_nd_lean import case, run
+    from tests.test_readings_verdicts_lean import QUERY, fnd3
+
+    raw, document = fnd3()
+    [row] = run("ve_readings_route", [case("readings-verdicts", raw, document, question="query",
+                                           evidence=[], premises=[], conclusion=QUERY, budget=dict(BUDGET))])
+    assert row["status"] == "ok" and row["route"] == "superposed"
+    # The 128 compatible choices do not become 128 evidence scopes or model proposals.
+    assert len(row["scopes"]) == 1
+    assert len(row["model_proposals"]) == 16
+    assert row["result"]["verdict"] == "UNKNOWN"
+
+
+def test_superposed_verdicts_keep_the_1024_choice_budget():
+    from tests.test_readings_nd_lean import case, run
+    from tests.test_readings_verdicts_lean import QUERY
+    from tests.test_readings_nd_lean import doc1, env1
+
+    raw = env1()
+    for n in (10, 11):
+        sets, units = [], []
+        for k in range(n):
+            document, _ = doc1(raw, set_id=f"rs_{k + 1}", unit=f"u{k + 1}", rule=f"must-help-{k + 1}")
+            sets.extend(document["reading_sets"])
+            units.extend(document["units"])
+        document = {"units": units, "reading_sets": sets}
+        for question, extra in (("premises", {}), ("query", {"premises": [], "conclusion": QUERY})):
+            [row] = run("ve_readings_route", [case("readings-verdicts", raw, document, question=question,
+                                                   evidence=[], budget=dict(BUDGET), **extra)])
+            assert row["status"] == "ok" and row["route"] == "superposed"
+            if n == 11:
+                assert row["result"]["reason"] == "ResourceLimit: more than 1024 readings to check"
+            else:
+                assert row["result"].get("reason") != "ResourceLimit: more than 1024 readings to check"
+            assert row["result"]["verdict" if question == "query" else "status"] == "UNKNOWN"
+
+
 def test_a_canonical_base_with_a_local_collision_is_not_a_premise_model(tmp_path):
     from tests.test_readings_s2_document import DF, NEVER_AVOID, S, s2_document, _wording
     _, route, _ = _wording(s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]),

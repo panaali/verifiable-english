@@ -4,26 +4,26 @@
   "K": 997,
   "S": 9788,
   "D": 13887,
-  "G": 27482,
+  "G": 27491,
   "C": 8486,
-  "P": 71958,
-  "T": 14749,
+  "P": 71959,
+  "T": 14750,
   "o": 12363,
   "D[V]": 12357,
   "D[R]": 1003,
   "D[I]": 527,
-  "G[V]": 25476,
+  "G[V]": 25485,
   "G[R]": 1765,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 48459,
-  "lines": 159710
+  "trusted": 48468,
+  "lines": 159721
  },
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37674
+  "V": 37683
  },
  "signed": [],
  "history": [
@@ -685,6 +685,33 @@
     "K": 997,
     "S": 9788,
     "V": 37674
+   }
+  },
+  {
+   "change": "readings-defaults RD-7 follow-up: V +8 (VE/Readings/Run.lean +6 retains the budget-free enumerated service request while Lean selects the superposed route; VE/Readings/SupVerdictsWire.lean +2 restores the E13 independence line from the named conditions). These are part of the RD-7 migration that deletes Python superposed route selection and S2Wording.independent; see docs/readings-defaults/rd7/evidence/deletion-ledger.json.",
+   "signed": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "allow": {
+    "K": 0,
+    "S": 0,
+    "V": 8
+   },
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37674
+   }
+  },
+  {
+   "change": "readings-defaults RD-7 limit correction: V +1 in VE/Readings/SupVerdictsWire.lean moves the 1024-compatible-choice budget into the Lean-owned superposed verdict answer, replacing the deleted Python Superposed.checked decision; SIGNED by standing ruling R6 (DRI-RULINGS.md), tested by test_superposed_verdicts_keep_the_1024_choice_budget and the saved deletion ledger.",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37682
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37683
    }
   }
  ],
@@ -4280,7 +4307,7 @@
    "D": 0,
    "G": 13,
    "C": 0,
-   "P": 1216,
+   "P": 1217,
    "T": 0,
    "o": 34,
    "D[V]": 0,
@@ -4292,7 +4319,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 29,
-   "lines": 1279
+   "lines": 1280
   },
   "ResponseShape/Encoders/Reports.lean": {
    "K": 0,
@@ -10178,7 +10205,7 @@
    "K": 0,
    "S": 0,
    "D": 100,
-   "G": 343,
+   "G": 349,
    "C": 0,
    "P": 67,
    "T": 0,
@@ -10186,13 +10213,13 @@
    "D[V]": 97,
    "D[R]": 3,
    "D[I]": 0,
-   "G[V]": 335,
+   "G[V]": 341,
    "G[R]": 0,
    "G[I]": 8,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 432,
-   "lines": 559
+   "trusted": 438,
+   "lines": 565
   },
   "VE/Readings/RunExamples.lean": {
    "K": 0,
@@ -10581,7 +10608,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 27,
+   "T": 28,
    "o": 9,
    "D[V]": 0,
    "D[R]": 0,
@@ -10592,7 +10619,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 36
+   "lines": 37
   },
   "VE/Readings/SupVerdictsSound.lean": {
    "K": 0,
@@ -10618,7 +10645,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 413,
+   "G": 416,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -10626,13 +10653,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 413,
+   "G[V]": 416,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 413,
-   "lines": 430
+   "trusted": 416,
+   "lines": 433
   },
   "VE/Readings/SupWire.lean": {
    "K": 0,

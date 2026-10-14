@@ -385,14 +385,14 @@ def supUnchecked (q reason : String) (named : Option Choice) : Json :=
 def maxSupModelProposals : Nat := 16
 
 def supAnswer (id q : String) (x : SupContext) (A : Choice) (named : Option Choice)
-    (ss : List SupScope) (dead : List Json) (budget : SupBudget) : Json :=
+    (ss : List SupScope) (dead : List Json) (budget : SupBudget) (over : Bool) : Json :=
   let infos := if (choices x.D).length ≤ maxChoices then (choices x.D).map (fun c => (supFind ss c).info) else []
   let ds := deadOf x.D infos dead
-  let res := if (choices x.D).length > maxChoiceChecks then supUnchecked q checkBudgetText named
+  let res := if over then supUnchecked q checkBudgetText named
     else supResult x.D x.Q x.nd.isSome q A named ss (ds.1.getD []) budget
   okWith id [("route", .str "superposed"), ("question", .str q), ("result", res),
     ("scopes", Json.arr (ss.map (supScopeJson q)).toArray),
-    ("model_proposals", Json.arr ((if (choices x.D).length > maxChoiceChecks then [] else
+    ("model_proposals", Json.arr ((if over then [] else
       (chosenOf x.D A).take maxSupModelProposals).map choiceJson).toArray),
     ("restrictions", toJson (restrictionsFor x.D A)),
     ("dead_readings", if q == "premises" && (choices x.D).length ≤ maxChoices then deadReadingsJson ds.1 else .null),
@@ -427,6 +427,7 @@ def runSupVerdicts (id : String) (b : Admitted2) (j : Json) : Except String Json
         | .ok n => pure n | .error _ => throw s!"InvalidInput: invalid search budget {key}"
       pure (SupBudget.mk (← read "max_steps") (← read "max_domain_size")
         (← read "max_models") (← read "max_evaluations"))
-  pure (supAnswer id q x A named ss dead budget)
+  let over := (checkedChoices x.D).length > maxChoiceChecks
+  pure (supAnswer id q x A named ss dead budget over)
 
 end VE.Readings.Run
