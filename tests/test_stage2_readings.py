@@ -102,6 +102,30 @@ def test_joint_choices_ignore_authored_sets_in_every_wire_vector(
     assert captured[0]["choice_evidence"][0]["choice"] == [0]
 
 
+def test_joint_result_uses_lean_verdict_even_when_python_proposes_all(monkeypatch):
+    """A local ALL proposal cannot override the checked joint verdict."""
+    sets = [{"id": "signed", "version": 1, "status": "authored",
+             "readings": [{"kind": "question", "content": None}]},
+            {"id": "open", "version": 1, "status": "open",
+             "readings": [{"kind": "asserted", "content": ["top"]}]}]
+    real = relay.decide
+    checked = []
+
+    def lean_unknown(mode, batch, **kw):
+        if mode == "readings-choices":
+            checked.extend(copy.deepcopy(batch))
+            return [{"verdict": "UNKNOWN"}]
+        return real(mode, batch, **kw)
+
+    monkeypatch.setattr(relay, "decide", lean_unknown)
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    result = check_readings(env(), sets, ["top"],
+                            joint_choices={"status": "complete", "choices": [{"open@1": 0}]})
+    assert len(checked) == 1
+    assert checked[0]["choice_evidence"][0].get("certificate") is not None
+    assert result["verdict"] == "UNKNOWN"
+
+
 @pytest.mark.parametrize("authored_first", [False, True])
 @pytest.mark.parametrize("signed,verdict", [(ATOM, "ALL"), (NEGATED, "NONE")])
 def test_joint_authored_assertion_is_fixed_in_search_and_lean(
