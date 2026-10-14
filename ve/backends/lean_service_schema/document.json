@@ -275,12 +275,12 @@
       ]
     },
     "rights_condition": {
-      "$comment": "Rights.Wire.decodeCondition: a limitation's condition as written.",
+      "$comment": "Rights.Wire.decodeCondition: a limitation's condition as written. The decoder ignores purposes; copied content binds its arbitrary JSON value to the request.",
       "additionalProperties": false,
       "properties": {
         "decided_by": {"type": ["string", "null"]},
         "name": {"type": "string"},
-        "purposes": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/strings"}]},
+        "purposes": {},
         "role": {"enum": ["necessary", "sufficient"]},
         "verbalisation": {"type": "string"}
       },
