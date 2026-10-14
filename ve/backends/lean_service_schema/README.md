@@ -104,5 +104,6 @@ element of an array (every element must resolve).
 | `x-select: [{when, then}, ...]` | the first `when` valid for the context selects `then`; none fails |
 | `x-count-where: {array, where, equals}` | the number of elements of `array` valid under `where` equals `equals` |
 | `x-count-presence: {value, equals}` | the integer at `equals` is 0 for a null `value`, and 1 otherwise; both paths must exist |
+| `x-unique-strings: true` | an array of distinct strings |
 | `x-rows: s` | one element per case; element `i` is valid under `s` for result `i` (its case `cases[i]`, position `i` and digest `digests[i]`) |
 | `x-row: true` | valid under the mode's `row` with the context of the enclosing result's case |
