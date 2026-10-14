@@ -20,6 +20,27 @@ schema, binding, measurements, A/B, deltas and seeded faults are in [DELTA.md](D
   `evidence/gate-9801fe70.json` and `gate-full-9801fe70.json` and no longer stand as this HEAD's gate. PROBE F3
   (`git notes --ref=refs/notes/ve-gate show HEAD`) cannot pass before a gate runs on HEAD, so it is not a regression
   test here.
+- **F4 (B)**, a copied `purposes` value had a narrower schema than the rights decoder: the decoder ignores that
+  optional metadata. The schema now admits any JSON value for it, while the copied-content binding still requires
+  the exact authored value. PROBE F4 failed before the fix and passes after it. Regression:
+  `test_f4_copied_ignored_condition_metadata_accepts_every_json_type`.
+- **F5 (B)**, rendering an accepted document could crash on a null citation or an absent condition or bar decider.
+  Rendering now treats null citations as absent and reads optional deciders with the same absent/default convention
+  as the decoder. PROBE F5 failed before the fix and passes after it. Regression:
+  `test_f5_optional_rights_metadata_renders_after_acceptance`.
+
+## Recheck verification
+
+Both F4 and F5 probes passed after the fix; their 13 new parametrized regressions passed, as did the complete
+`test_b16e_rights_document.py` selected unit. `lake build`, `python lean/audit.py` (5,254 theorems), the generated
+schema check, and the trust-budget check passed. The merge-base selector chose 364/364 mapped units. Its stale
+collection and declaration failures passed after regenerating `tools/gate-collection.json` and
+`lean/declarations.txt` and rerunning only the failed tests. The unrelated RD-8 report test used Git's variable
+short-hash length; it now checks the full hash against the saved prefix, and its failed test passed on rerun.
+The English evidence unit timed out in the recorded run but passed all 67 tests alone. The Lean conformance
+`test_lean_transitive_axiom_allowlist` hit its 30-minute guard both in the recorded run and alone; the same
+`lean/audit.py` command passed outside that test. The selector's final coverage-cache write failed because its
+default home cache is read-only here; the test-unit results above were recorded in `/tmp/ve-select-run-w38gpwrj`.
 
 Regression tests: `tests/test_b16e_rights_document.py` (the two probes, the corpus sample and the mutation sweep on
 both paths, the three retained-path crashes, the unowned parts, `ownedBeneath`, and the typed and bound fuzz of every
