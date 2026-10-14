@@ -240,19 +240,23 @@ def test_a_timed_out_process_raises_rust_timeout(principals, monkeypatch):
 
 
 def test_the_default_limit_grows_with_the_case(monkeypatch):
-    """Without VE_RUST_TIMEOUT a call waits the scaled limit of its case: 5 s at least, more for a case
-    with more constants (H's 217 constants: about 25 s)."""
-    def limit(n):
+    """Without VE_RUST_TIMEOUT a call waits the scaled limit of its case: 5 s at least, more for a longer case
+    line and for more constants (H's search, 50 kB and 217 constants: about a minute; a constitution search,
+    60 kB and 5 constants: about half a minute)."""
+    def limit(n, size=0):
         return rust_jsonl.scaled_timeout(
-            {"environment": {"vocabulary": {"constants": {f"c{i}": {} for i in range(n)}}}})
-    limits = [limit(n) for n in (0, 5, 62, 217, 800)]
-    assert all(x >= rust_jsonl.DEFAULT_TIMEOUT for x in limits)
-    assert limits == sorted(limits) and limits[-1] > 100 and 20 < limits[3] < 30
-    assert rust_jsonl.scaled_timeout({}) == limit(0)
+            {"environment": {"vocabulary": {"constants": {f"c{i}": {} for i in range(n)}}}}, size)
+    by_constants = [limit(n) for n in (0, 5, 62, 217, 800)]
+    assert all(x >= rust_jsonl.DEFAULT_TIMEOUT for x in by_constants)
+    assert by_constants == sorted(by_constants) and by_constants[-1] > 500
+    by_size = [limit(5, size) for size in (0, 10_000, 60_000, 1_000_000)]
+    assert by_size == sorted(by_size) and by_size[0] < by_size[1] and 20 < by_size[2] < 40
+    assert 50 < limit(217, 50_000) < 80
+    assert rust_jsonl.scaled_timeout({}, 0) == limit(0) == rust_jsonl.TIMEOUT_FACTOR * rust_jsonl.SEARCH_SECONDS[0]
     seen = []
 
     def checker(argv, *, input, timeout):
-        seen.append(timeout)
+        seen.append((len(input), timeout))
         raise subprocess.TimeoutExpired(argv, timeout)
     monkeypatch.setattr(rust_jsonl, "_run_checker", checker)
     case = {"id": "search", "environment": quantity_environment(217), "premises": stated_quantities(217),
@@ -260,8 +264,12 @@ def test_the_default_limit_grows_with_the_case(monkeypatch):
     monkeypatch.delenv("VE_RUST_TIMEOUT", raising=False)
     with pytest.raises(rust_jsonl.RustTimeout):
         rust_jsonl.run(case)  # no child starts: the stand-in records the limit the call waits
-    assert seen == [limit(217)]
+    [(size, waited)] = seen
+    assert size > 10_000 and waited == limit(217, size)
     monkeypatch.setenv("VE_RUST_TIMEOUT", str(HANG_TIMEOUT))
     with pytest.raises(rust_jsonl.RustTimeout):
         rust_jsonl.run(case)
-    assert seen[-1] == float(HANG_TIMEOUT)
+    assert seen[-1][1] == float(HANG_TIMEOUT)
+    monkeypatch.setenv("VE_RUST_TIMEOUT", "soon")
+    with pytest.raises(CheckerUnavailable):
+        rust_jsonl.run(case, executable="/nonexistent/ve")  # the setting is refused before the executable

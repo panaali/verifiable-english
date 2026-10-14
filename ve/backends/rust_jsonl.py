@@ -40,12 +40,13 @@ BUILD_LOCK = ROOT / "lean/checkers.lock"
 MAX_LINE_BYTES = 16 * 1024 * 1024
 DEFAULT_TIMEOUT = 5.0
 # The default wall-clock limit grows with the case (DRI decision ME1): a search spends its 10,000
-# candidate models in about SEARCH_SECONDS + per constant + per constant squared seconds, the
-# least-squares fit over the premise-scale pilots and a synthetic series of ground-fact cases
-# (docs/premise-scale/evidence/rust-timeout.json; the worst case measured 2.5 times its fit). The
-# limit is TIMEOUT_FACTOR times that, and never under DEFAULT_TIMEOUT. It guards against a hung
-# process only: Rust's work limits are its budgets, and Lean's answer stands without Rust's.
-SEARCH_SECONDS = (1.4855, 0.01069, 5.3862e-05)
+# candidate models in about SEARCH_SECONDS[0] + per byte of the case line + per constant squared
+# seconds, the least-squares fit over the searches the premise-scale pilots sent and a synthetic
+# series of ground-fact cases (docs/premise-scale/evidence/rust-timeout.json, measured at load
+# average about 110 on 32 cores; the worst case measured 1.74 times its fit). The limit is
+# TIMEOUT_FACTOR times that, and never under DEFAULT_TIMEOUT. It guards against a hung process
+# only: Rust's work limits are its budgets, and Lean's answer stands without Rust's.
+SEARCH_SECONDS = (2.4734, 7.4237e-05, 2.1123e-04)
 TIMEOUT_FACTOR = 4.0
 # Room above the budget for the binary itself and allocator slack. The budget's clean
 # ResourceLimit comes first; the address-space limit is only the backstop.
@@ -66,15 +67,16 @@ def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
     return configured_seconds("VE_RUST_TIMEOUT", default)
 
 
-def scaled_timeout(case) -> float:
-    """The default wall-clock limit of `case`: `TIMEOUT_FACTOR` times the measured search time of a
-    case with its number of constants (`SEARCH_SECONDS`), at least `DEFAULT_TIMEOUT`."""
+def scaled_timeout(case, size: int) -> float:
+    """The default wall-clock limit of `case`, whose line is `size` bytes: `TIMEOUT_FACTOR` times the
+    measured search time of a case of that size with its number of constants (`SEARCH_SECONDS`), at
+    least `DEFAULT_TIMEOUT`."""
     environment = case.get("environment") if type(case) is dict else None
     vocabulary = environment.get("vocabulary") if isinstance(environment, dict) else None
     constants = vocabulary.get("constants") if isinstance(vocabulary, dict) else None
     n = len(constants) if isinstance(constants, dict) else 0
-    base, linear, square = SEARCH_SECONDS
-    return max(DEFAULT_TIMEOUT, TIMEOUT_FACTOR * (base + linear * n + square * n * n))
+    base, per_byte, square = SEARCH_SECONDS
+    return max(DEFAULT_TIMEOUT, TIMEOUT_FACTOR * (base + per_byte * size + square * n * n))
 
 
 def memory_limit() -> int:
@@ -325,11 +327,12 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
 
     The case goes to a persistent checker process (`_run_checker`); a process that gives no
     record is killed. A selected Rust backend never falls back to Python. Without a
-    `timeout`, the call waits `configured_timeout(scaled_timeout(case))` seconds.
+    `timeout`, the call waits `configured_timeout(scaled_timeout(case, size))` seconds, `size`
+    the bytes of the case line.
     """
     [case] = wire_checked([case])
     if timeout is None:
-        timeout = configured_timeout(scaled_timeout(case))
+        configured_timeout()  # an invalid VE_RUST_TIMEOUT is refused first; the limit needs the line's size
     binary = Path(executable or os.environ.get("VE_RUST_JSONL") or DEFAULT_EXECUTABLE)
     if not binary.is_file():
         raise CheckerUnavailable(f"CheckerUnavailable: missing Rust executable {binary}")
@@ -353,6 +356,8 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
     data = encoded.encode() + b"\n"
     if len(data) > MAX_LINE_BYTES:
         raise ResourceLimit(f"Rust case exceeds {MAX_LINE_BYTES} bytes")
+    if timeout is None:
+        timeout = configured_timeout(scaled_timeout(case, len(data)))
     memory_limit()  # an invalid budget setting is refused before any process starts
     try:
         completed = _run_checker([str(binary), "jsonl", "-"], input=data, timeout=timeout)
