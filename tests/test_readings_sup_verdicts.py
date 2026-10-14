@@ -34,6 +34,15 @@ def test_sup_service_all_some_none_and_english(tmp_path):
         _check_sup_answer(answer, route.requests[id(answer)], route)
 
 
+def test_public_conflict_keeps_service_envelope_private(tmp_path):
+    _, route, _ = example(tmp_path)
+    conflict = route.conflict()
+    assert conflict["status"] == "CONFLICT-FREE"
+    assert "status_text" in conflict and "route" not in conflict
+    report = route.report_fields()
+    assert "route" not in report["conflict"]
+
+
 def test_sup_zero_budget_is_unknown(tmp_path, monkeypatch):
     from tests.test_readings_s2_document import every
     _, route, _ = example(tmp_path)
@@ -215,6 +224,7 @@ def test_superposed_verdicts_keep_the_1024_choice_budget():
     from tests.test_readings_nd_lean import case, run
     from tests.test_readings_verdicts_lean import QUERY
     from tests.test_readings_nd_lean import doc1, env1
+    from ve.readings_verdicts import _public_sup_conflict
 
     raw = env1()
     for n in (10, 11):
@@ -224,12 +234,16 @@ def test_superposed_verdicts_keep_the_1024_choice_budget():
             sets.extend(document["reading_sets"])
             units.extend(document["units"])
         document = {"units": units, "reading_sets": sets}
-        for question, extra in (("premises", {}), ("query", {"premises": [], "conclusion": QUERY})):
+        for question, extra in (("conflict", {}), ("premises", {}),
+                                ("query", {"premises": [], "conclusion": QUERY})):
             [row] = run("ve_readings_route", [case("readings-verdicts", raw, document, question=question,
                                                    evidence=[], budget=dict(BUDGET), **extra)])
             assert row["status"] == "ok" and row["route"] == "superposed"
             if n == 11:
                 assert row["result"]["reason"] == "ResourceLimit: more than 1024 readings to check"
+                if question == "conflict":
+                    assert _public_sup_conflict(row["result"]) == {
+                        "status": "UNKNOWN", "reason": "ResourceLimit: more than 1024 readings to check"}
             else:
                 assert row["result"].get("reason") != "ResourceLimit: more than 1024 readings to check"
             assert row["result"]["verdict" if question == "query" else "status"] == "UNKNOWN"
