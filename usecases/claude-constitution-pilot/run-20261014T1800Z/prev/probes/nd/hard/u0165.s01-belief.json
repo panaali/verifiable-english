@@ -1,0 +1,1 @@
+["forall", "claude_instance", ["forall", "situation", ["implies", ["unary", "thought_likely_mass_casualty_weapon_uplift", ["var", 0]], ["not", ["binary", "weapons_uplift_permitted", ["var", 1], ["var", 0]]]]]]

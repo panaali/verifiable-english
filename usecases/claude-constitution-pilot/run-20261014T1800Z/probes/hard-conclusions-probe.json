@@ -1,0 +1,276 @@
+{
+  "document": "translation.ve.md",
+  "queries": [
+    {
+      "unit": "u0165.s01",
+      "kind": "knowing",
+      "predicate": "weapons_uplift_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": [],
+      "rerun_alone": "the first run (4 queries in parallel) failed with CheckerUnavailable: the Rust checker timed out after 5 s under load; this row is a single re-run"
+    },
+    {
+      "unit": "u0165.s01",
+      "kind": "belief",
+      "predicate": "weapons_uplift_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": []
+    },
+    {
+      "unit": "u0165.s01",
+      "kind": "neither",
+      "predicate": "weapons_uplift_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": []
+    },
+    {
+      "unit": "u0165.s02",
+      "kind": "knowing",
+      "predicate": "infrastructure_uplift_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"knowingly_critical_infrastructure_uplift\", it is not the case that that instance of Claude may do the infrastructure uplift in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s02",
+      "kind": "belief",
+      "predicate": "infrastructure_uplift_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"thought_likely_critical_infrastructure_uplift\", it is not the case that that instance of Claude may do the infrastructure uplift in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s02",
+      "kind": "neither",
+      "predicate": "infrastructure_uplift_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": []
+    },
+    {
+      "unit": "u0165.s03",
+      "kind": "knowing",
+      "predicate": "cyberweapon_creation_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"knowingly_damaging_cyberweapon_or_malicious_code\", it is not the case that that instance of Claude may do the creation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s03",
+      "kind": "belief",
+      "predicate": "cyberweapon_creation_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"thought_likely_damaging_cyberweapon_or_malicious_code\", it is not the case that that instance of Claude may do the creation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s03",
+      "kind": "neither",
+      "predicate": "cyberweapon_creation_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": []
+    },
+    {
+      "unit": "u0165.s04",
+      "kind": "knowing",
+      "predicate": "oversight_undermining_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"knowingly_clear_and_substantial_undermining_of_oversight\", it is not the case that that instance of Claude may do the undermining in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s04",
+      "kind": "belief",
+      "predicate": "oversight_undermining_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"thought_likely_clear_and_substantial_undermining_of_oversight\", it is not the case that that instance of Claude may do the undermining in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s04",
+      "kind": "neither",
+      "predicate": "oversight_undermining_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": []
+    },
+    {
+      "unit": "u0165.s05",
+      "kind": "knowing",
+      "predicate": "humanity_attack_participation_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"knowingly_attempt_to_kill_or_disempower_most_of_humanity\", it is not the case that that instance of Claude may do the participation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s05",
+      "kind": "belief",
+      "predicate": "humanity_attack_participation_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"thought_likely_attempt_to_kill_or_disempower_most_of_humanity\", it is not the case that that instance of Claude may do the participation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s05",
+      "kind": "neither",
+      "predicate": "humanity_attack_participation_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": []
+    },
+    {
+      "unit": "u0165.s06",
+      "kind": "knowing",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"knowingly_illegitimate_absolute_control\", it is not the case that that instance of Claude may do the involvement in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s06",
+      "kind": "belief",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"thought_likely_illegitimate_absolute_control\", it is not the case that that instance of Claude may do the involvement in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s06",
+      "kind": "neither",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": []
+    },
+    {
+      "unit": "u0165.s07",
+      "kind": "knowing",
+      "predicate": "csam_generation_permitted_for_claude",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"knowingly_child_sexual_abuse_material\", it is not the case that that instance of Claude may do the generation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s07",
+      "kind": "belief",
+      "predicate": "csam_generation_permitted_for_claude",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"thought_likely_child_sexual_abuse_material\", it is not the case that that instance of Claude may do the generation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s07",
+      "kind": "neither",
+      "predicate": "csam_generation_permitted_for_claude",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": []
+    }
+  ]
+}

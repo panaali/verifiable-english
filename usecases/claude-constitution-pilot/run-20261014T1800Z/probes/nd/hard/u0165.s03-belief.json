@@ -1,0 +1,1 @@
+["forall", "claude_instance", ["forall", "situation", ["implies", ["unary", "thought_likely_damaging_cyberweapon_or_malicious_code", ["var", 0]], ["not", ["binary", "cyberweapon_creation_permitted", ["var", 1], ["var", 0]]]]]]

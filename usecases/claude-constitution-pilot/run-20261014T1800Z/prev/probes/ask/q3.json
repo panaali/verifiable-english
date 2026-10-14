@@ -1,0 +1,29 @@
+{
+  "operation": "question.read",
+  "assurance": "experimental",
+  "intent": "unconfirmed",
+  "proof": "not_checked",
+  "answer": "not_built",
+  "result": {
+    "class": "SyntaxError",
+    "code": "NoDerivation",
+    "identities": {
+      "actions_version": "28",
+      "environment_id": "2d04c7906b0e289221c4e7bccde079b7234c3eca67c9a4858965e922c6d64f54",
+      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
+      "lexicon_id": "b6d04537d89a92f088d84526bc7e20f0b79bae66620ab4aecfd4390628ac8cc6",
+      "question_version": "question@1",
+      "source_sha256": "d02e23d96a7717d820ed6b47f2a89f43e47e8b921205d96b95d8ad2336475e15"
+    },
+    "span": [
+      0,
+      65
+    ],
+    "status": "none",
+    "text": "The question has no reading with the current vocabulary. Closest sentence tried: \"each may operator give Claude an instruction to claim to be human.\". Unknown English phrase 'each may operator give Claude an instruction to claim to be human'. Nearest declared wordings: 'is classified as \"instruction_decline_or_withhold\"'; 'is classified as \"instruction_focus_on_tasks\"'; 'must comply with the instruction against unintended exploits in {1}'."
+  },
+  "error": {
+    "class": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"each may operator give Claude an instruction to claim to be human.\". Unknown English phrase 'each may operator give Claude an instruction to claim to be human'. Nearest declared wordings: 'is classified as \"instruction_decline_or_withhold\"'; 'is classified as \"instruction_focus_on_tasks\"'; 'must comply with the instruction against unintended exploits in {1}'."
+  }
+}

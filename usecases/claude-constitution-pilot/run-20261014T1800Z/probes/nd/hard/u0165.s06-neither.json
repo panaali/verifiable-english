@@ -1,0 +1,1 @@
+["forall", "claude_instance", ["forall", "situation", ["implies", ["and", ["not", ["unary", "knowingly_illegitimate_absolute_control", ["var", 0]]], ["not", ["unary", "thought_likely_illegitimate_absolute_control", ["var", 0]]]], ["not", ["binary", "illegitimate_control_involvement_permitted", ["var", 1], ["var", 0]]]]]]

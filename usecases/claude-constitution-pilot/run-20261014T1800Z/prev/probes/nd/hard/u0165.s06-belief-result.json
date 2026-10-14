@@ -1,0 +1,15 @@
+{
+  "verdict": "ALL",
+  "route": "superposed",
+  "evidence": "certificate",
+  "assumed": [],
+  "conditional_on": [],
+  "reading_premises_used": [],
+  "mentions": [],
+  "english": [
+    "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"thought_likely_illegitimate_absolute_control\", it is not the case that that instance of Claude may do the involvement in that situation.*",
+    "This does not depend on how sentence 132 is read.",
+    "This does not depend on how sentence 589 is read.",
+    "This does not depend on how sentence 1000 is read."
+  ]
+}
