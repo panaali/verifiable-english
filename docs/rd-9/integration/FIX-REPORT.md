@@ -355,3 +355,27 @@ gate and SC-9 external source check; B4 requires the independent bounded
 statement recheck; B8 requires signing the final-HEAD allowance; B9 requires
 the saved CPU figures from the gate. This worker ran no model calls or release
 gate, as directed. None of those four conditions is claimed signed here.
+
+## F19–F21: exact prime, mechanism slots and generated rule ids (2026-10-14)
+
+Each finding was a binding relation Python checked by membership where the
+request fixes the exact value. All three are R8 (b) bindings; Lean output is
+unchanged and no Lean or Rust product code changed (Rust has no rights relay).
+
+| Finding | Class removed | Regression | Commit |
+| --- | --- | --- | --- |
+| F19 | The prime environment is the request plus exactly the bound declarations. One binder, `softnorms.bind_prime_environment`, now serves soft and rights: every field other than `vocabulary.predicates` equals the request, added names are disjoint, and each decision is declared with its key's argument sorts. | `test_f19_rights_prime_environment_is_the_request_plus_bound_declarations`, `test_f19_soft_prime_environment_is_the_request_plus_bound_declarations` | 19c42811b |
+| F20 | A line's mechanism texts are matched against the slots of Correlate.lean `narrowings`, in order. Request-fixed slots (carve-outs as canonical `carve-out <i>`, `limitation`, `exception`, switches, `bar`) must be exact. Rule-named slots take only other direct rules, with the mode Lean filters on. Duplicates, `carve-out 01`, an unrequested `bar` or `exception`, self-references and reordering are all rejected. | `test_f20_mechanisms_are_exactly_the_request_implied_slots` | 19c42811b |
+| F21 | Generated rule ids follow Tree.lean naming. A line's rule is its authored name or `rights-fan-<k>` (k-th fan-out instance in document order). A bar rule is `rights-bar-<i>` for its aimed predicate's index. | `test_f21_generated_rule_ids_follow_leans_naming` | 19c42811b |
+
+PROBE F19, F20 and F21 (`/tmp/rd9_recheck.py`) each failed before the fix with
+`DID NOT RAISE CheckerUnavailable` and pass after it. The probe's `audit` also
+passes (F19–F21 PASS). Seeded bugs: restoring the pre-fix `ve/rights_route.py`
+and `ve/softnorms.py` made 20 of the 29 new cases fail, for example
+`[F19 decision declared with one argument]`, `[F20 duplicate carve-out 01]` and
+`[F21 invented fan-out rule id]`. The other 9 were already rejected and stay as
+class coverage. Selected tests (Mac runner, HEAD 19c42811b): 373 of 374 files
+pass. The one failure is the known Mac-only
+`test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`,
+which passes on the VM rerun. `lake build` and `python3 lean/audit.py` pass.
+The full gate was not run, as directed.
