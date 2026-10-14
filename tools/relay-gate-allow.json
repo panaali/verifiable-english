@@ -212,8 +212,8 @@
    "mutation": "duplicate",
    "path": [
     "results/*/result/assumptions",
-    "results/*/result/report/assumptions",
-    "results/*/result/supporting_edges"
+    "results/*/result/background",
+    "results/*/result/report/assumptions"
    ],
    "kind": "by-design",
    "id": "B0",
@@ -224,8 +224,8 @@
    "mutation": "empty",
    "path": [
     "results/*/result/assumptions",
-    "results/*/result/report/assumptions",
-    "results/*/result/supporting_edges"
+    "results/*/result/background",
+    "results/*/result/report/assumptions"
    ],
    "kind": "by-design",
    "id": "B0",
@@ -1166,8 +1166,7 @@
    "path": [
     "results/*/result/assumptions/*",
     "results/*/result/report/assumptions/*",
-    "results/*/result/report/root",
-    "results/*/result/supporting_edges/*"
+    "results/*/result/report/root"
    ],
    "kind": "follow-up",
    "id": "F4",
