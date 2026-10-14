@@ -143,55 +143,29 @@
   "pytest_summary": "1 failed in 5.11s"
  },
  {
-  "id": "R1",
-  "language": "Lean",
-  "file": "lean/ResponseShape.lean",
-  "behaviour": "repeated norm over names are refused by the Lean response decoder",
-  "mutation": {
-   "from": "if names.Nodup then pure () else fail \"strings are not distinct\"",
-   "to": "let _ := names; pure ()"
-  },
-  "test": "tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over",
-  "killed": true,
-  "pytest_summary": "1 failed: 1 of 3 Lean/Python decoder verdicts disagreed"
- },
- {
-  "id": "R2",
-  "language": "Lean",
-  "file": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
-  "behaviour": "an empty fill label is refused by the Lean response decoder",
-  "mutation": {
-   "from": "(\"label\", n [str, .minLength 1])",
-   "to": "(\"label\", str)"
-  },
-  "test": "tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over",
-  "killed": true,
-  "pytest_summary": "1 failed: 1 of 3 Lean/Python decoder verdicts disagreed"
- },
- {
-  "id": "R3",
-  "language": "Lean",
-  "file": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
-  "behaviour": "an empty conflict target is refused by the Lean response decoder",
-  "mutation": {
-   "from": "(\"targets\", n [arr, .items (n [str, .minLength 1])])",
-   "to": "(\"targets\", ref \"common.json#/$defs/strings\")"
-  },
-  "test": "tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over",
-  "killed": true,
-  "pytest_summary": "1 failed: 1 of 3 Lean/Python decoder verdicts disagreed"
- },
- {
-  "id": "R4",
+  "id": "T4",
   "language": "Python",
-  "file": "ve/backends/service_schema.py",
-  "behaviour": "repeated norm over names are refused by the Python generated-schema reader",
+  "file": "tools/trust_changes.py",
+  "behaviour": "the report measures the width of trusted lines (AR-2 review F3)",
   "mutation": {
-   "from": "if not isinstance(value, list) or any(type(item) is not str for item in value) or len(value) != len(set(value)): _fail(\"strings are not distinct\")",
-   "to": "pass"
+   "from": "if d.module in lines and d.trusted:",
+   "to": "if d.module in lines and not d.trusted:"
   },
-  "test": "tests/test_lean_service_schema.py::test_unique_string_lists_refuse_duplicate_rule_names",
+  "test": "tests/test_frozen_sources.py::test_trusted_code_collapsed_onto_a_wider_line_is_reported",
   "killed": true,
-  "pytest_summary": "1 failed: DID NOT RAISE Invalid"
+  "pytest_summary": "2 failed, 9 passed in 0.75s (also test_a_body_only_edit_of_a_dv_file_is_reported)"
+ },
+ {
+  "id": "T5",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "a changed file whose trusted lines grew wider than its base is listed as widened (AR-2 review F3)",
+  "mutation": {
+   "from": "widths[key] > old_widths[key]]",
+   "to": "widths[key] > old_widths[key] + 999]"
+  },
+  "test": "tests/test_frozen_sources.py::test_trusted_code_collapsed_onto_a_wider_line_is_reported",
+  "killed": true,
+  "pytest_summary": "1 failed, 10 passed in 0.75s"
  }
 ]

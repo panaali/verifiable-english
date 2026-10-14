@@ -1,5 +1,11 @@
-class lines: K 997, S 9788, D 13887, G 26962, C 8486, P 71773, T 14705, o 12299
-D/G groups: D[V] 12357, D[R] 1003, D[I] 527, G[V] 24956, G[R] 1765, G[I] 241
-tied 178, unclassified 0, trusted 47939 (K + S + untied [V] + unclassified), 158897 lines in 481 files
+class lines: K 997, S 9788, D 13888, G 27302, C 8486, P 71798, T 14709, o 12319
+D/G groups: D[V] 12358, D[R] 1003, D[I] 527, G[V] 25296, G[R] 1765, G[I] 241
+tied 178, unclassified 0, trusted 48280 (K + S + untied [V] + unclassified), 159287 lines in 484 files
 against the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0
-PASS: K, S and untied [V] within f98183bf and the allowances signed since
+PASS: K, S and untied [V] within 4ce477e1889c9c446cf26ca1be8598fc88886b0b and the allowances signed since
+
+tools/trust_changes.py --since 4ce477e1889c9c446cf26ca1be8598fc88886b0b
+0 Lean files changed and 0 deleted since 4ce477e1889c9c446cf26ca1be8598fc88886b0b
+D[V]: 0 changed files
+G[V]: 0 changed files
+widened: 0 changed files hold a trusted line wider than any line they had at base
