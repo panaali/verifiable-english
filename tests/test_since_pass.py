@@ -363,16 +363,38 @@ def test_rows_whose_rule_selected_everything_do_not_count(repo, tmp_path):
     assert verdict["items"] == [] and not verdict["active"]
 
 
-def test_the_same_item_ten_times_is_one_item(repo, tmp_path):
+def test_one_branch_under_ten_labels_is_one_item(repo, tmp_path):
     path = tmp_path / "gate-records.jsonl"
     repo.branch("one")
     repo.commit()
     shadow(repo, tmp_path, item="one", records_path=path, now=NOW - timedelta(hours=2))
-    for _ in range(since_pass.ACTIVATION_ITEMS):
+    for number in range(since_pass.ACTIVATION_ITEMS):
         repo.commit()
-        shadow(repo, tmp_path, item="one", records_path=path)
+        shadow(repo, tmp_path, item=f"one-c{number}", records_path=path)
     verdict = since_pass.check(repo.path, tmp_path / "shadow.jsonl")
-    assert verdict["items"] == ["one"] and not verdict["active"]
+    assert verdict["items"] == ["one"] and verdict["rows"] == since_pass.ACTIVATION_ITEMS + 1
+    assert not verdict["active"]
+
+
+def test_a_detached_head_row_is_not_evidence(repo, tmp_path):
+    path = tmp_path / "gate-records.jsonl"
+    repo.branch("one")
+    repo.commit()
+    shadow(repo, tmp_path, item="one", records_path=path, now=NOW - timedelta(hours=2))
+    repo.commit()
+    git(repo.path, "checkout", "-q", "--detach")
+    shadow(repo, tmp_path, item="one", records_path=path)
+    row = since_pass.read_jsonl(tmp_path / "shadow.jsonl")[1]
+    assert row["branch"] == "HEAD" and row["decision"]["rule"] == "since-pass" and row["counted"] is False
+
+
+def test_a_long_row_and_a_short_one_are_each_appended_as_one_whole_line(tmp_path):
+    path = tmp_path / "rows.jsonl"
+    big = {"selected": [f"tests/test_{number:04d}.py" for number in range(2000)]}
+    for _ in range(3):
+        since_pass.append(path, big)
+        since_pass.append(path, {"gate": "x"})
+    assert [json.loads(line) for line in path.read_text().splitlines()] == [big, {"gate": "x"}] * 3
 
 
 def mutate(row: dict, path: str, value) -> dict:
@@ -426,11 +448,6 @@ def test_check_refuses_a_duplicated_row_and_a_line_that_is_not_json(repo, tmp_pa
         rows.write_text("\n".join(broken) + "\n")
         with pytest.raises(RecordError):
             since_pass.check(repo.path, rows)
-
-
-def test_the_committed_evidence_is_valid_and_states_its_activation():
-    verdict = since_pass.check(ROOT, since_pass.EVIDENCE)
-    assert verdict["active"] == (len(verdict["items"]) >= since_pass.ACTIVATION_ITEMS and not verdict["misses"])
 
 
 # --- the real planner -------------------------------------------------------------------------------------

@@ -28,15 +28,18 @@ selection. `after-gate` writes those rows: the chain runs it after every gate of
 
 and it (1) compares the gate's failures with the selection the rule would have made (and with today's), as
 a row of S, then (2) appends the gate's pass, if it passed, to R. `check` validates an evidence file and
-recomputes every row's misses from its saved lists; it never trusts a saved verdict.
+recomputes every row's misses from its saved lists; it never trusts a saved verdict. An item is a branch: the
+chain's labels for one item's later loops (`rd-9`, `rd-9-c140740`) count once.
 """
 from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
+import fcntl
 from datetime import datetime, timedelta, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -262,9 +265,10 @@ def plan_between(base: str, head: str) -> dict:
 
 def counted(row: dict) -> bool:
     """Whether a row is evidence for the rule: it chose a pass and selected less than everything, beside a full
-    gate whose suite completed."""
+    gate whose suite completed, on a named branch (the item it counts for)."""
     plan = row["since_pass"]
-    return row["decision"]["rule"] == "since-pass" and plan is not None and not plan["full"]
+    return row["decision"]["rule"] == "since-pass" and plan is not None and not plan["full"] \
+        and row["branch"] != "HEAD"
 
 
 def shadow_row(root: Path, result: dict, passes: list[Pass], *, item: str, now: datetime, main: str = MAIN,
@@ -363,10 +367,18 @@ def read_jsonl(path: Path) -> list[dict]:
 
 
 def append(path: Path, row: dict) -> None:
-    """One line, in one write to a file opened for appending (other writers append to the same file)."""
+    """One line, in one write under an exclusive lock to a file opened for appending: other chains append to the
+    same file, and a shadow row is longer than the shell's atomic line."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n")
+    data = (json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n").encode()
+    descriptor = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o644)
+    try:
+        fcntl.flock(descriptor, fcntl.LOCK_EX)
+        written = os.write(descriptor, data)
+        if written != len(data):
+            raise RecordError(f"wrote {written} of {len(data)} bytes to {path}")
+    finally:
+        os.close(descriptor)
 
 
 # --- the evidence check ---------------------------------------------------------------------------------
@@ -476,7 +488,7 @@ def check(root: Path, path: Path) -> dict:
         rows.append(row)
     misses = [{"item": row["item"], "commit": row["commit"], "outside": row["outside"]["since_pass"]}
               for row in rows if row["outside"]["since_pass"]]
-    items = sorted({row["item"] for row in rows if row["counted"]})
+    items = sorted({row["branch"] for row in rows if row["counted"]})  # an item is its branch, whatever its labels
     return {"rows": len(rows), "items": items, "misses": misses,
             "active": len(items) >= ACTIVATION_ITEMS and not misses}
 
