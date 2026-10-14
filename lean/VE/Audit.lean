@@ -5055,3 +5055,5 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Core.Layers.naryCheck_ok
 #print axioms VE.Core.Layers.stepOk_sound
 #print axioms VE.Core.Wire.encodeFormula_embed
+
+#print axioms VE.Core.Layers.stepOkFrom_sound
