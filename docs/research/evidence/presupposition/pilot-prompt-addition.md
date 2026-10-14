@@ -1,8 +1,9 @@
 # PS-0p: pilot-prompt addition (draft for the DRI's merged prompt, SC2)
 
 > From [presupposition-phase1.md](../../presupposition-phase1.md) section 4. Constitution only: the UDHR has no
-> heading presuppositions (U5), so it gets no addition. Class A's claims are **held** (F1–F3): VE English cannot
-> write them today. Text to merge follows the rule line.
+> heading presuppositions (U5), so it gets no addition. Four of class A's five claims are **held**: VE English has no
+> admitted wording for their relational nouns today (F1–F3, section 2.5). u0286 goes to the audit. Text to merge
+> follows the rule line.
 
 ---
 
@@ -18,9 +19,14 @@ without such a word is a title (scope's rule): it records **no** `presupposed_cl
    a way to treat them; the recorded claim was not it", and list it for the audit.
 2. u0254 and u0268: replace `presupposed_claim` with the note "the text withholds this (u0269.s02): not assumed".
    Status unchanged.
-3. u0013, u0095, u0286, u0002, u0235: do **not** claim them. Keep them UNFORMALISED with the note "existence claim not
-   writable in VE English (PS-0p phase 1): the sort `entity` has no English noun and 'is a … of' wordings are refused".
-   Do not use the quoted fallback wording ("has the recorded relation …") to claim them.
+3. Declare the sort `entity`'s English noun as `{"singular": "thing", "plural": "things"}`, not the reserved
+   "entity" (which falls back to `entity of sort "entity"`).
+   - u0013, u0095, u0002, u0235: do **not** claim them. Keep them UNFORMALISED with the note "relational-noun wording
+     not admitted in VE English (PS-0p phase 1): 'is a … of' wordings are refused". Do not use the quoted fallback
+     wording ("has the recorded relation …") to claim them.
+   - u0286: declare `open_problem(entity)` worded "{0} is unsolved", and offer the unit as an assumption with the
+     fence "Some thing is unsolved." (`carrier: assumed`, `trigger: factive`, `trigger_words: Acknowledging`). It is
+     claimed only if the audit accepts it.
 4. Every unit: add `presupposition_triggers`, one entry per trigger (`words`, `class`: definite, possessive, plural,
    factive, change-of-state, iterative or wh-title; `pre` in English; `carrier`: proved, assumed, conditioned,
    asserted, unresolved, or `none` for a title). When a carrier is unresolved, add `presupposition` to
@@ -37,4 +43,6 @@ without such a word is a title (scope's rule): it records **no** `presupposed_cl
 [presupposition plan, PS-0p] For each heading presupposition the run claims: the trigger word is in the title; the
 content is exactly the existence (for a singular description, existence and uniqueness) of what the trigger names,
 and nothing more (no "is desired", "is relevant", "must"); and the source does not withhold it elsewhere (search for
-"whether" or "uncertain" with the noun). Check u0055's note. No class A unit should be claimed in this run.
+"whether" or "uncertain" with the noun). Check u0055's note. Of class A, only u0286 may be claimed in this run:
+accept it only if "Some thing is unsolved." is exactly the existence of what "open problems" names; otherwise it
+reverts to UNFORMALISED. u0013, u0095, u0002 and u0235 should not be claimed.

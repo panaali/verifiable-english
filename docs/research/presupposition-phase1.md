@@ -221,7 +221,9 @@ Step 7 (D5) has no expected value: it is the count the plan asks for.
 
 Everything below was run after section 1 was committed (`882ba72c`). Each script was committed before its run
 (the dry run at `c5b7f1ff`, before any F value existed). Commits: census `ac2af2d5`, dry-run script `c5b7f1ff`,
-dry-run evidence `2ada6c54`, exploration `ee16eef5`, step 7 `b63cc6ae`.
+dry-run evidence `2ada6c54`, exploration `ee16eef5`, step 7 `b63cc6ae`. After review: cap recorded `7fe663d0`
+(script) and `cd519de6` (rerun); post-review script `977277d2`, its evidence and the uniqueness-probe script `9f62912a`,
+uniqueness-probe evidence `cb7e1809`.
 
 ### 2.1 Census: reproduction of R 2.2 and 2.3 (15 of 20 pass)
 
@@ -281,8 +283,14 @@ run's `check.json` **byte for byte** (CHECKED 73 B; 8 of 8 choices checked, CONF
 
 | Id | Expected | Measured | Verdict |
 |---|---|---|---|
-| F1 | the three existence fences parse, round-trip, are exactly the existence | none parses: "Unknown English phrase 'entity is'" | **FAIL** |
-| F2 | (open) the two uniqueness fences | none parses, same refusal | **FAIL**: P4 stays UNFORMALISED |
+| F1 | the three existence fences parse, round-trip, are exactly the existence | none parses | **FAIL** |
+| F2 | (open) the two uniqueness fences | none parses | **FAIL**: P4 stays UNFORMALISED |
+
+Correction after review: `dryrun.json`'s per-unit documents each declared all five predicates, so a unit's recorded
+error is the first refusal in the document, not necessarily its own: u0286's is u0248's "Unknown English phrase 'is
+not human'" (the four binary wordings break `human`, reason 3 below). Each unit alone, with only its own predicate
+declared ([review.json](evidence/presupposition/review.json) `R1_unit_alone`), fails with "Unknown English phrase
+'entity is'", u0286 included. The verdicts do not change.
 | F3 | the scratch translation loads, admitted | exit 1: the pinned unit u0248 "Claude is not human." no longer parses ("Unknown English phrase 'is not human'") | **FAIL** |
 | F4 | CHECKED +89 B (F2 failed) | not measurable (F3) | **FAIL** |
 | F5 | 8 of 8 conflict-free, pinned and scratch | pinned 8 of 8; scratch not measurable (F3) | **FAIL** |
@@ -293,9 +301,12 @@ The exploratory sentence of 1.3 ("Exactly one entity is a mission of Anthropic."
 
 **Why**, read from VE's English vocabulary after the run (`ve.english.EnglishVocabulary`; [explore.json](evidence/presupposition/explore.json)
 `variants`):
-1. **The sort `entity` has no English noun.** "entity" is a reserved word of the English surface, so the sort is
-   written `entity of sort "entity"` in the pinned translation already. No sentence can quantify over it in plain
-   English: "Some entity …", "There is an entity that …", "Exactly one entity …" are all refused.
+1. **The pinned run's noun for the sort `entity` is reserved.** The noun is a field of the document
+   (`environment.vocabulary.sorts.entity.verbalisation`); the pinned run set it to "entity", a reserved word of the
+   English surface, so VE falls back to `entity of sort "entity"` (in its own rendered English, for example the
+   readings' "e0 is an entity of sort "entity""; no pinned fence uses the noun). With that noun, "Some entity …",
+   "There is an entity that …" and "Exactly one entity …" are refused (review.json `R2_wordings.entity`). **This is
+   not a blocker** (section 2.5): with the noun set to "thing"/"things" in the document, the plain sentences parse.
 2. **The plan's wordings fail the vocabulary lint.** Every binary "{0} is a … of {1}" (core value, guideline,
    mission, nature) gets `BINARY_AUXILIARY`, `BINARY_CONVERSE`, `LOGICAL_WORD` and `SYMBOL_COLLISION`, and "{0} is an
    open problem" gets `LOGICAL_WORD`, `SYMBOL_COLLISION` and `UNARY_MODIFIER`. Each falls back to the quoted form
@@ -330,7 +341,8 @@ Script [ps0p_explore.py](../../research/presupposition/ps0p_explore.py), run aft
   (Claude, Anthropic and every witness are `e0`), which confirms the plan's "existential premises can be witnessed by
   existing elements" (no larger domain).
 
-So the mechanism works and costs nothing in conflicts or probes; what is missing is the English.
+So the mechanism works and costs nothing in conflicts or probes; what is missing is the English. (Section 2.5
+narrows which English is missing.)
 
 ### 2.4 Step 7: distinct projected goals (no bar)
 
@@ -345,12 +357,60 @@ Script [ps0p_goals.py](../../research/presupposition/ps0p_goals.py); evidence [g
     rule's applicability but differ in row and restriction, so **no group has equal goals: nothing to couple.**
   - The plan's P7 trigger, "the system prompt’s instructions" in u0073.s05, is outside G1/G2 (its owner is neither
     a role nor a pronoun), so it is not in this count.
-- **Not formalised:** 98 G1 occurrences (the user 59 in 53 units, the operator 39 in 35 units, both roles in 13
-  units; all UNFORMALISED) and 32 G2 occurrences in 29 units over 19 distinct owner–object phrases. Their goals and
-  whether they share applicability are **unknown**: the ledger records no guard for an unformalised unit. The bounds
-  are: at most 98 distinct G1 goals (every rule with its own guard), and 2 source-identity choices ("assume there is
-  a user", "assume there is an operator"). Against the joint budget of 64, 98 independent two-way choices are far
-  over it, and 2 are far under.
+- **Not formalised:** 98 G1 matches (the user 59 in 53 units, the operator 39 in 35 units, both roles in 13 units;
+  all UNFORMALISED) and 32 G2 matches in 29 units over 19 distinct owner–object phrases. These are **every** match
+  in the unit's text, including descriptive sentences and conditions, not only the trigger occurrences in rule acts
+  that step 7 asks for; the ledger does not say which sentence is a rule or where the words sit. So 98 is an **upper
+  bound** on the step-7 occurrences (and on their distinct goals); the actual count, their goals and whether they
+  share applicability are **unknown**. The other bound is the 2 source-identity choices ("assume there is a user",
+  "assume there is an operator"). Whether the step-7 count exceeds the joint budget of 64 is unknown.
+- "No group with equal goals" rests on one formalised unit with the triggers in a rule act (u0156.s03); the other
+  (u0123) has them inside guard atoms. It is a fact about this pilot's 18 formalised rules, not an estimate for the
+  unformalised ones.
+
+### 2.5 Post-review checks, never counted: the sort's noun is a document field
+
+A review of `0fbf57d8` found that section 2.2's reason 1 named the wrong blocker. Scripts
+[ps0p_review.py](../../research/presupposition/ps0p_review.py) and
+[ps0p_review_unique.py](../../research/presupposition/ps0p_review_unique.py), each committed before its run;
+evidence [review.json](evidence/presupposition/review.json) and
+[review-uniqueness.json](evidence/presupposition/review-uniqueness.json). They change no verdict of 2.1–2.4.
+
+- **The noun change alone** (`sorts.entity.verbalisation` = "thing"/"things"; no new sort, no product code, no unit
+  converted, situations regenerated): the translation loads and is admitted; no status moves; 8 of 8 choices
+  CONFLICT-FREE; both conclusion probes byte-identical. The only difference in the check's answer is VE's own
+  rendered text: "e0 is an entity of sort "entity"" becomes "e0 is a thing". The one pinned fence (u0248) does not
+  use the noun.
+- **Wordings** (each declared alone, with the pinned noun and with "thing"; `R2_wordings`). The noun does not change
+  any wording's lint:
+
+  | Wording | Lint | Breaks `human` |
+  |---|---|---|
+  | "{0} is a core value / guideline / mission / nature of {1}" (plan) | BINARY_AUXILIARY, BINARY_CONVERSE, LOGICAL_WORD, SYMBOL_COLLISION | yes |
+  | "{0} belongs to / counts among / ranks among the core values of {1}" | BINARY_CONVERSE, LOGICAL_WORD | no |
+  | "{0} serves as a core value for {1}" | BINARY_CONVERSE, LOGICAL_WORD, SYMBOL_COLLISION | no |
+  | "{0} is valued by {1}" | BINARY_AUXILIARY, BINARY_CONVERSE | yes |
+  | "{0} has core value / guideline / mission / nature {1}" (owner first) | SYMBOL_COLLISION | no |
+  | "{0} is an open problem" (plan) | LOGICAL_WORD, SYMBOL_COLLISION, UNARY_MODIFIER | no |
+  | "{0} is unsolved" | none: admitted | no |
+
+  Every relational-noun wording tried falls back to the quoted form. Only the unary "{0} is unsolved" is admitted.
+- **Sentences.** With "{0} is unsolved": under the pinned noun, "Some entity is unsolved.", "There is an entity that
+  is unsolved." and "Exactly one entity is unsolved." are refused (this records the attempts 2.2 reported without
+  evidence); under "thing", "Some thing is unsolved." and "There is a thing that is unsolved." parse to exactly
+  `∃x open_problem(x)`; "Exactly one thing is unsolved." is still refused.
+- **u0286 converted, full check** (noun "thing", `open_problem` worded "{0} is unsolved", fence "Some thing is
+  unsolved.", situations regenerated): loads and is admitted; CHECKED **+29 B**, UNFORMALISED −29 B, nothing else
+  moves; assumptions 19 → 20; 8 of 8 CONFLICT-FREE; both probes byte-identical. Whether "unsolved thing" is exactly
+  the existence of what "open problems" names is the audit's question (audit addition 2), not settled here.
+- **Uniqueness**, with the clean unary stand-in and the noun "thing": the plan's shape ("Some thing is unsolved, and
+  every thing that is unsolved is that thing.") and four plain variants are refused; VE's own enumerated rendering
+  ("There is a first thing such that both of the following hold: (a) the first thing is unsolved; (b) for every
+  second thing that is unsolved, the second thing is the same as the first thing.") parses to exactly the
+  existence-and-uniqueness formula.
+
+So the missing English is the **relational-noun wording** alone (reason 2 of 2.2), plus, for u0002 and u0235, the
+plan's one-line uniqueness sentence (the enumerated form works).
 
 ## 3. Verdicts
 
@@ -361,50 +421,62 @@ Script [ps0p_goals.py](../../research/presupposition/ps0p_goals.py); evidence [g
 | PS-0p step 6 check | "it loads, the reading-set choices stay conflict-free (8 of 8 today), and the carried probes are byte-identical" | as written, the translation does not load (F3–F6); in the exploration, it loads, 8 of 8, probes byte-identical | **FAIL** as written; the mechanism passes in the exploration (never counted) |
 | PS-0p steps 2 and 4 (classes E and D) | reproduction H1–H4 | classes reproduced exactly; D withheld; E word-free for 10 of 11 | PASS, except u0055 (H3 FAIL) |
 | PS-0p step 1 (ledger) | U1–U4 ≥ R's lower bounds; O1–O9 = R's counts | U1–U4 PASS; O: 5 of 9 equal, 4 differ by named words | PASS for the units; O4, O6, O8, O9 FAIL (lexical) |
-| PS-0p step 7 (distinct goals) | none (a count) | 4 keys in formalised rules, no equal goals; unformalised: unknown, bounds 2–98 | reported |
+| PS-0p step 7 (distinct goals) | none (a count) | 4 keys in formalised rules (one unit), no equal goals; unformalised: unknown, at most 98 occurrences, 2 source-identity choices | reported |
 | PS-0p step 5 (class B) | "claimed only if the audit accepts it" | needs the audit | **DEFERRED** |
 | PS-E1, PS-E2 | 6/40 candidate, 36/40 one-reading, controls 11 of 12 …; 36/40 on 18 of 20 | model calls; run later, separately | **DEFERRED** (out of this phase) |
 
 ## 4. Consequences for draft 2
 
 **PS-0p (changed).**
-- **"Depends on: Nothing" is wrong for class A.** Its claim (+89 B, +145 B) needs two things that are not on
-  `main`: (i) an English noun for existence over the sort `entity`, or a new sort, which DRI ET1 forbids until
-  premise-scale lands; and (ii) admitted wordings for the relational nouns ("{0} is a core value of {1}"), which the
-  vocabulary lint refuses and only the idiom catalogue (english-lean, product code) admits. Until both land, PS-0p
-  claims **0 B**, and P1–P4 stay UNFORMALISED with the note "existence claim not writable in VE English (PS-0p phase
-  1)".
+- **"Depends on: Nothing" is wrong for four of class A's five units.** u0013, u0095, u0002 and u0235 need admitted
+  wordings for relational nouns ("core value of", "guideline of", "mission of", "nature of"). The vocabulary lint
+  refuses every such wording tried (2.5), and only the idiom catalogue (english-lean, product code) admits the "is a
+  N of" shape. That is the one blocker. The sort needs **no** new sort and no premise-scale: its noun is a document
+  field, and setting it to "thing"/"things" makes "Some thing …" parse while changing only VE's rendered text (2.5).
+  (Phase 1's first version said the sort had no English noun and needed a new sort; that was wrong.)
+- **u0286 is writable now, audit-gated.** With the noun "thing" and `open_problem` worded "{0} is unsolved", "Some
+  thing is unsolved." loads, +29 B, 8 of 8, probes identical (2.5). The plan's wording "{0} is an open problem" is
+  refused. Draft 2 should offer u0286 to the audit in that form; it is claimed only if the audit accepts "unsolved
+  thing" as exactly the existence of "open problems".
+- **u0002 and u0235 (P4):** the plan's one-line uniqueness sentence is refused even with a clean wording; VE's
+  enumerated form parses exactly (2.5). Draft 2 should write P4 in the enumerated form, so the note "uniqueness not
+  writable (PS-6)" becomes "waits for the relational-noun wording".
 - **The fallback English is not a way round.** VE can carry the formulas today with quoted identifiers
   (`… has the recorded relation "core_value_of" to claude.`), and the check then passes (2.3). That violates VE's
   "zero-training English, no symbols" rule; an audit should reject it as English. Draft 2 should say so and not
   offer it to the pilot.
-- **Add two pilot rules to PS-0p's prompt addition:** a vocabulary addition is followed by the run's
-  situation-regeneration step (`nd.py all`), and the run checks that no existing wording changed (here, adding the
-  plan's four binary wordings silently turned u0248's "is human" into a fallback, and the translation stopped
-  loading).
+- **Add three pilot rules to PS-0p's prompt addition:** declare the sort `entity`'s noun as "thing"/"things" (not
+  the reserved "entity"); follow any vocabulary change with the run's situation-regeneration step (`nd.py all`); and
+  check that no existing wording changed (here, adding the plan's four binary wordings silently turned u0248's "is
+  human" into a fallback, and the translation stopped loading).
 - **Steps 1, 2 and 4 are confirmed** and can be merged into the prompt now: classes A–E reproduce exactly; class D
   is withheld by u0269.s02; the 11 class E claims are invented, but u0055 is a wh-title and goes to the audit as an
   item instead of being deleted mechanically. Step 1's regular-expression census is a lower bound (it misses "the
   system prompt’s instructions"); the ledger field is the translator's.
-- **The bytes line becomes:** 0 B now; +145 B when (i) and (ii) land (the exploration shows nothing else blocks it:
-  8 of 8, probes identical); stretch +294 B with class B, audit-gated. NORTH-STAR row 12 (Risk 6): 0 B direct today,
-  not 145 B.
+- **The bytes line becomes:** 0 B as the plan writes the sentences; up to +29 B now (u0286, document-only changes,
+  audit-gated); +145 B when the relational-noun wordings land (the exploration shows nothing else blocks it: 8 of 8,
+  probes identical); stretch +294 B with class B, audit-gated. NORTH-STAR row 12 (Risk 6): at most 29 B direct
+  today, not 145 B.
 
-**PS-6 (changed: it becomes the enabler of PS-0p's bytes).** The English rows for possessives and definites must
-include the existence sentence a heading's assumption needs ("Claude has at least one core value.", "Anthropic has
-exactly one mission."), and the relational-noun wording ("is a core value of"). Either PS-6 absorbs class A's
-claim, or a small english-lean catalogue item precedes PS-0p. The DRI picks; this note recommends moving class A's
-bytes to PS-6, since PS-6 is already the English queue's presupposition batch.
+**PS-6 (changed: it becomes the enabler of most of PS-0p's bytes).** The English rows for possessives and definites
+must include the relational-noun wording a heading's assumption needs ("is a core value of", "is the mission of"),
+and preferably a one-line uniqueness sentence ("Anthropic has exactly one mission."); the existence sentence itself
+already works with a non-reserved sort noun. Either PS-6 absorbs the four relational units' claim, or a small
+english-lean catalogue item precedes them. The DRI picks; this note recommends PS-6, since it is already the English
+queue's presupposition batch.
 
 **PS-E2 (changed).** Its rendered lines ("Assumed (from ‘Claude’s core values’): Claude has at least one core
 value.") are not what VE renders today; today the renderer writes the quoted fallback. PS-E2 should test the lines
 PS-6's rows will produce, so it runs after those rows exist, or its items are labelled as the target wording.
 
-**PS-3 (changed in priority).** In the formalised pilot there is **no group with equal goals** (2.4), so goal
-coupling has nothing to compress today. The unformalised "the user"/"the operator" occurrences (98) have unknown
-goals; if their guards differ, as rules usually do, 98 two-way choices are far over the budget of 64 and only the
-source-identity choice (2 choices) helps. Draft 2 should put the source-identity choice first in PS-3 and keep goal
-coupling behind a re-count at the first run that formalises those rules (Risk 7 stands, now measured).
+**PS-3 (re-count first; priority conditional).** In the formalised pilot, one unit (u0156.s03) has the triggers in a
+rule act and its goals are not equal (2.4), so goal coupling has nothing to compress there; that is one unit, not a
+measure of the rest. The unformalised "the user"/"the operator" matches (98) are an upper bound, not the step-7
+count: they include descriptive sentences and conditions. Draft 2 should make step 7's count a translator field at
+the next pilot run (the prompt addition's item 5 records rule acts only) and decide PS-3's order on it: **if** the
+distinct goals in rule acts exceed the budget of 64 without shared applicability, the source-identity choice (2
+choices) goes first and goal coupling waits; otherwise the plan's order stands. Risk 7 stays open: unmeasured, now
+bounded above by 98.
 
 **PS-5p (confirmed).** u0254 and u0268 are withheld by u0269.s02; the optional reading set {assumed, no claim}
 stays audit-gated.
@@ -424,7 +496,8 @@ recorded; four occurrence counts differ from mine by named words (2.1).
 - Merging the prompt addition: the DRI merges prompt additions (SC2). The draft is
   [evidence/presupposition/pilot-prompt-addition.md](evidence/presupposition/pilot-prompt-addition.md), revised by
   section 4.
-- Class A's claim: english-lean wording and a noun or sort for existence (product code; premise-scale for a sort).
+- Class A's claim for u0013, u0095, u0002, u0235: the relational-noun wordings (english-lean idiom catalogue,
+  product code). u0286's claim ("Some thing is unsolved.", +29 B): the next pilot run and its audit.
 - PS-E1 and PS-E2: model calls, run separately.
 
 **Deviations from the task or the pre-registration** (none changes an expected value or a bar):
@@ -433,7 +506,13 @@ recorded; four occurrence counts differ from mine by named words (2.1).
 - **Rust time limit.** `VE_RUST_TIMEOUT=600` for every `ve` run. At the 5 s default the pinned translation's own
   check is CheckerUnavailable (measured), so no comparison is possible. The DRI's 2026-10-14 note forbids the raised
   limit in pilot checks because the Rust process grew to 70 GB; here every run had `prlimit --as=6442450944`, which
-  the Rust child inherits, so its memory was capped at 6 GiB. No run failed.
+  the Rust child inherits, so its memory was capped at 6 GiB. No run failed. The first evidence files recorded only
+  the timeout; after review, the dry-run and exploration scripts were changed only to refuse to run without the cap
+  and to record it (`limits_at_start`, `limits_at_end`: RLIMIT_AS soft and hard 6,442,450,944 B, and the largest
+  resident set of any waited-for descendant, Linux `ru_maxrss` of RUSAGE_CHILDREN), and rerun (`7fe663d0`,
+  `cd519de6`): every other field came out byte-identical. Recorded peaks: dry run 70,796 KiB, exploration 132,316
+  KiB, review 136,280 KiB. A forked child starts from the parent's resident set, so these are upper bounds on the
+  largest checker process; all are under 140 MiB.
 - **Checkers.** This checkout's `lean/` and `rust/` trees are identical to `main` at `dccd9cf5` (`git diff` empty);
   its built `ve_service` and `ve` were copied from the `main` worktree, and both hashes are pinned in this
   checkout's `lean/checkers.lock`. The control check (2.2) reproduces the pinned record byte for byte.
@@ -451,5 +530,7 @@ From the repository root, with `lean/.lake/build/bin/ve_service` and `rust/targe
     python3 -I research/presupposition/ps0p_goals.py                  # seconds
     VE_RUST_TIMEOUT=600 prlimit --as=6442450944 uv run python research/presupposition/ps0p_dryrun.py    # about 4 min
     VE_RUST_TIMEOUT=600 prlimit --as=6442450944 uv run python research/presupposition/ps0p_explore.py   # about 16 min
+    VE_RUST_TIMEOUT=600 prlimit --as=6442450944 uv run python research/presupposition/ps0p_review.py    # about 17 min
+    prlimit --as=6442450944 uv run python research/presupposition/ps0p_review_unique.py                # seconds
 
 Scratch documents go to `/tmp/ps0p` (`PS0P_WORK` overrides it); the pinned runs are only read.
