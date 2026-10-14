@@ -109,6 +109,7 @@ FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "fenced English or strict content",
                "usecases/question-answering/group.ve.md": "surface parser",
                "usecases/question-answering/agent-policy/a-deny.ve.md": "Lean norms route",
+               "tests/data/premise-scale/qt0p-companion.ve.md": "Lean readings route",
                "fence": "surface parser"}
 PYTHON_FALLBACK = {"usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"}
 
