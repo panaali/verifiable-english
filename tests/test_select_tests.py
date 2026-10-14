@@ -59,6 +59,11 @@ def code_qualnames(source: str) -> set[str]:
     return names
 
 
+def test_generated_merge_attributes_select_scoped_tests():
+    assert select_tests.kind_of(".gitattributes") == select_tests.DATA
+    assert select_tests.kind_of(".gitignore") == select_tests.EVERYTHING_KIND
+
+
 QUALNAME_SOURCE = textwrap.dedent('''
     import functools
 

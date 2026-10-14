@@ -15,3 +15,9 @@ def test_comparison_rows_match_generated_table():
     )
     assert len(rows) == 4
     assert len({row["text"] for row in rows}) == 4
+    assert rows == [
+        {"rel": "lt", "swap": False, "text": "{0} is less than {1}"},
+        {"rel": "le", "swap": False, "text": "{0} is at most {1}"},
+        {"rel": "lt", "swap": True, "text": "{0} is more than {1}"},
+        {"rel": "le", "swap": True, "text": "{0} is at least {1}"},
+    ]

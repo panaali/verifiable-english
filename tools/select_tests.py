@@ -83,6 +83,7 @@ AUDIT = ("python3", "lean/audit.py")
 CARGO = ["python3", "tools/rust_build.py"]
 DOCUMENT_SUFFIXES = (".md", ".rst", ".pdf", ".png", ".svg", ".tex", ".bib")
 EVERYTHING = {"tests/conftest.py", "pyproject.toml", "uv.lock", ".gitignore"}
+ROOT_DATA = {".gitattributes"}  # generated merge attributes affect merge tooling, not runtime semantics
 LEAN_PROJECT = {"lean/lakefile.toml", "lean/lean-toolchain", "lean/lake-manifest.json"}
 RUST_PROJECT = {"rust/Cargo.toml", "rust/Cargo.lock", "rust-toolchain.toml"}
 PYTHON_LAYER_INPUTS = {".importlinter", "tools/layer-exceptions.json", "tools/check_python_layers.py",
@@ -316,7 +317,8 @@ def kind_of(path: str) -> str:
     """Which rule a changed path falls under, for the plan and the drift check alike."""
     top = path.split("/", 1)[0]
     if path in EVERYTHING or ("/" not in path and not path.endswith(DOCUMENT_SUFFIXES)
-                              and path not in RUST_PROJECT and path != ".importlinter") \
+                              and path not in RUST_PROJECT and path != ".importlinter"
+                              and path not in ROOT_DATA) \
             or ("/" in path and top not in KNOWN_AREAS):
         return EVERYTHING_KIND
     if path.endswith(".py"):
