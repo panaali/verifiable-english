@@ -64,7 +64,7 @@ def _bind_elaboration(row, units, environment):
             if source not in authored or line['node']['name'] != line['rule'] or line['rule'] in correlated:
                 raise ValueError('unbound rights line')
             seen[source] += 1
-            correlated[line['rule']] = authored[source]
+            correlated[line['rule']] = {**authored[source], 'predicate': line['predicate']}
         if seen != counts:
             raise ValueError('rights line count')
         if len(row['lines']) != len(source_lines):

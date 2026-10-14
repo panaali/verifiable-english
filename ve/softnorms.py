@@ -509,8 +509,14 @@ class SoftNormDocument:
     def _init_soft(self, env: SoftEnvironment, units, row):
         self._init_rules(env, units)
         vocabulary = env.to_dict()['vocabulary']
+        # The public relay has already bound E′ to its actual lower request.
+        # A layered container retains head profiles and author soft__ names
+        # that the lower request deliberately strips before asking Lean.
+        layered = getattr(env, '_generated_source', False) or any(
+            profile in env.to_dict()['profiles']
+            for profile in ('norm-defaults@0', 'readings@1', 'rights@0'))
         bind_soft_elaboration(row, units, vocabulary['predicates'], soft=vocabulary.get('soft', {}),
-                              environment=None if getattr(env, '_generated_source', False) else env.to_dict())
+                              environment=None if layered else env.to_dict())
         by_name = {rule.core.name: rule for rule in self.rules}
         self.decisions = {item['name']: item['arguments'] for item in row['decisions']}
         # What each decision decides, as Lean keys it (`keyedDecisions`); a reader finds a decision's name by its key
