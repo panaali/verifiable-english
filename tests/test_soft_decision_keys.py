@@ -778,3 +778,74 @@ def test_f21_generated_rule_ids_follow_leans_naming(monkeypatch, source, mutatio
     _rights_relay(monkeypatch, mutation)
     with pytest.raises(CheckerUnavailable):
         rights_route.report_rights(environment, units)
+
+
+def _conflict_sorts_relay(route):
+    """The public elaboration call of `route` and the patch point of its Lean answer."""
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from tests.test_soft_norms_lean import env as soft_env
+    from ve import rights_route, soft_route
+    from ve.rights import RightsEnvironment
+    if route == 'rights':
+        environment = RightsEnvironment(rights_env(ARREST))
+        return (lambda: rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate'),
+                rights_route, 'decide_once', 'rights')
+    document = softnorms.SoftNormDocument(softnorms.SoftEnvironment(soft_env()),
+                                          [should_rule('a', 'x_required', True)])
+    return lambda: soft_route.elaborate_soft_document(document), soft_route, '_run', 'soft-norms'
+
+
+def should_rule(name, predicate, sign):
+    from tests.test_soft_norms_lean import should
+    return should(name, predicate, sign)
+
+
+@pytest.mark.parametrize('route,sorts', [
+    (route, sorts) for route in ('rights', 'soft') for sorts in ('undeclared', 'empty', 'reversed', 'extended')
+    if (route, sorts) != ('soft', 'reversed')])  # the soft fixture's targets have one sort
+def test_f22_conflict_target_sorts_are_the_declared_argument_sorts(monkeypatch, route, sorts):
+    """F22 (PROBE F22): each conflict target's sorts are its layer's argument sorts, or for a declared
+    `req->perm` pair the obligation's (Norms/Replay.lean `targets`); both relays share the binder."""
+    from ve.backends.service_schema import check_row
+    call, module, attribute, mode = _conflict_sorts_relay(route)
+    genuine = call()
+    forged = copy.deepcopy(genuine)
+    entry = max(forged['conflict_targets'], key=lambda entry: len(set(entry['sorts'])))
+    entry['sorts'] = {'undeclared': ['ghost'], 'empty': [], 'reversed': entry['sorts'][::-1],
+                      'extended': [*entry['sorts'], entry['sorts'][0]]}[sorts]
+    assert forged != genuine
+
+    def reply(*args):
+        check_row(mode, forged, args[-1], 0)
+        return copy.deepcopy(forged)
+
+    monkeypatch.setattr(module, attribute, reply)
+    with pytest.raises(CheckerUnavailable):
+        call()
+
+
+@pytest.mark.parametrize('slot', [99, 0, 2])
+def test_f23_an_authored_holder_slot_stays_the_lines_slot(monkeypatch, slot):
+    """F23 (PROBE F23): a line's holder slot is Tree.lean `holderSlot`: 0 for a liberty half, the
+    authored `holder_slot` when there is one, else the first object slot of the holder sort."""
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.backends.service_schema import check_row
+    from ve.rights import RightsDocument, RightsEnvironment
+    from ve import rights_route
+    units = copy.deepcopy(GAMMA)
+    units[0]['right']['guard'] = ['top']
+    units[0]['right']['lines'][0]['holder_slot'] = 1
+    environment = RightsEnvironment(rights_env(ARREST))
+    assert RightsDocument(environment, units).instances[0]['holder_slot'] == 1
+    real = rights_route.decide_once
+
+    def reply(mode, case):
+        row = copy.deepcopy(real(mode, case))
+        if case['kind'] == 'rights-elaborate':
+            row['lines'][0]['holder_slot'] = slot
+            check_row(mode, row, case, 0)
+        return row
+
+    monkeypatch.setattr(rights_route, 'decide_once', reply)
+    with pytest.raises(CheckerUnavailable):
+        RightsDocument(environment, units)

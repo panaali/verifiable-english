@@ -111,14 +111,24 @@ def _bind_elaboration(row, units, environment):
             raise ValueError('rights line count')
         if len(row['lines']) != len(source_lines):
             raise ValueError('rights source line count')
+        holders = {unit['right']['name']: unit['right']['holder'] for unit in units if 'right' in unit}
+        predicates = environment['vocabulary']['predicates']
         for entry, (right, kind, name, bearer, predicate, rule, source_line, rule_id) in zip(
                 row['lines'], source_lines):
             instance = (('powerLiberty' if source_line['kind'] == 'power' and
                          rule is source_line.get('liberty') else
                          'powerRecognition' if source_line['kind'] == 'power' else kind))
+            # Tree.lean `holderSlot`: the subject slot of a liberty half, else the authored
+            # `holder_slot`, else the first object slot of the right's holder sort.
+            objects = predicates[predicate]['arguments'][1:]
+            holder_slot = (0 if instance in ('liberty', 'powerLiberty') else
+                           source_line['holder_slot'] if 'holder_slot' in source_line else
+                           1 if right not in holders else
+                           (objects.index(holders[right]) if holders[right] in objects else len(objects)) + 1)
             node = entry['node']
             if (entry['right'] != right or entry['kind'] != kind or
                     entry['instance'] != instance or
+                    type(entry['holder_slot']) is not int or entry['holder_slot'] != holder_slot or
                     entry.get('bearer') != bearer or
                     entry['rule'] != rule_id or
                     entry.get('source_line', entry['rule']) != name or
@@ -130,7 +140,6 @@ def _bind_elaboration(row, units, environment):
             if bar['name'] in correlated or bar['predicate'] not in environment['vocabulary']['predicates']:
                 raise ValueError('unbound bar rule')
             correlated[bar['name']] = bar
-        predicates = environment['vocabulary']['predicates']
         bind_soft_elaboration(row, norms, predicates, rights_rules=correlated.items(),
                               soft=environment['vocabulary'].get('soft', {}))
         limits = {unit['limitation']['name']: unit['limitation'] for unit in units
