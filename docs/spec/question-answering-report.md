@@ -61,28 +61,24 @@ The registered limits are `ask` CPU ≤ 2 s and U3 `ve ask` wall ≤ 60 s. These
 
 ## Agreement on the corpora
 
-each query of the readings suites and of the generated norm-defaults corpus asked as F1 (`Is it the case that <canonical sentence>?`) with ve ask, against ve document readings --conclusion on the same document and formula.
+each query of the readings suites and of the generated norm-defaults corpus asked as F1 (`Is it the case that <canonical sentence>?`) with ve ask, against ve document readings --conclusion on the same document and formula; saved unknown leads were re-asked with Lean-checked conflict evidence to classify X1, with earlier full-replay reasons retained where recorded.
 
-Scope: norm-defaults: seeds 0 to 449 of the 1,000 generated documents (`norm-defaults --trees 450`; the full run was stopped at 450 trees for time under load), 8 queries each; readings: the 8 distinct queries the readings suites ask in process (captured with `-p tools.question_answering_agreement`); the fixtures above. The 256 norm-defaults queries first refused for an exposition unit's null content were asked again after that fix (`tests/test_ask_null_free.py`).
+Scope: all 8 distinct captured readings-suite queries and 450 generated norm-defaults seeds (3560 distinct queries) (seeds 0–449; seeds 450–999 deferred by the DRI), with one ground and one universal query per regulated predicate.
 
-| Corpus | Queries | agrees | ask refused | not asked | older route gave no verdict | requires review |
-|---|---:|---:|---:|---:|---:|---:|
-| norm-defaults | 3560 | 3555 | 0 | 0 | 1 | 4 |
-| readings | 8 | 2 | 3 | 3 | 0 | 0 |
+| Corpus | Queries | ask refused | ask unknown (X1 conflict) | ask unknown (other) | compatible difference | not asked | older budget exhausted | same verdict |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| norm-defaults | 3560 | 0 | 1448 | 5 | 771 | 0 | 4 | 1332 |
+| readings | 8 | 2 | 1 | 0 | 1 | 3 | 0 | 1 |
 
-3568 queries; 4 required review:
+Checked X1 conflicts where the older route answered ALL or NONE: 1392 (ALL 726; NONE 666).
 
-- norm-defaults `s125`, Is it the case that every act must be done? every row yes, older UNKNOWN: reviewed (DELTA D15): the existing route's W2 fold answers UNKNOWN, 'no complete checked classification within the search budget'; ask's yes rests on a certificate Lean checked. An UNKNOWN does not contradict yes: an evidence difference, not a verdict contradiction.
-- norm-defaults `s234`, Is it the case that every act may be tried? every row yes, older UNKNOWN: reviewed (DELTA D15): the existing route's W2 fold answers UNKNOWN, 'no complete checked classification within the search budget'; ask's yes rests on a certificate Lean checked. An UNKNOWN does not contradict yes: an evidence difference, not a verdict contradiction.
-- norm-defaults `s312`, Is it the case that every act must be done? every row yes, older UNKNOWN: reviewed (DELTA D15): the existing route's W2 fold answers UNKNOWN, 'no complete checked classification within the search budget'; ask's yes rests on a certificate Lean checked. An UNKNOWN does not contradict yes: an evidence difference, not a verdict contradiction.
-- norm-defaults `s361`, Is it the case that every act must be done? every row yes, older UNKNOWN: reviewed (DELTA D15): the existing route's W2 fold answers UNKNOWN, 'no complete checked classification within the search budget'; ask's yes rests on a certificate Lean checked. An UNKNOWN does not contradict yes: an evidence difference, not a verdict contradiction.
+3568 queries; 0 required review (no lead contradicts the existing route's verdict).
+
 
 Queries not compared, by reason:
 
 - ask refused: CheckerUnavailable: ask answers a readings document on the enumerated route with at most 64 compatible readings (1)
-- ask refused: CheckerUnavailable: the answer's R1 line does not pass the all-derivations gate (1)
 - ask refused: UnsupportedProfile: the document is not under the unspecified completion (1)
-- older route gave no verdict: CheckerUnavailable (1)
 
 ## Scope
 
