@@ -59,8 +59,45 @@ def _bind_elaboration(row, units, environment):
             correlated[bar['name']] = bar
         predicates = row['environment_prime']['vocabulary']['predicates']
         bind_soft_elaboration(row, norms, predicates, rights_rules=correlated.items())
+        limits = {unit['limitation']['name']: unit['limitation'] for unit in units
+                  if 'limitation' in unit}
+        limitation_labels = []
+        for entry in row['limitations']:
+            label = entry['label']
+            parts = label.split(':', 5)
+            if (len(parts) != 6 or parts[:2] != ['rights', 'limitation'] or
+                    parts[2] not in limits or parts[3] not in environment['vocabulary']['predicates'] or
+                    parts[4] not in ('necessary', 'sufficient') or
+                    not any(condition['name'] == parts[5] and condition['role'] == parts[4]
+                            for condition in limits[parts[2]]['conditions'])):
+                raise ValueError('unbound limitation premise')
+            limitation_labels.append(label)
+        if (len(limitation_labels) != len(set(limitation_labels)) or
+                row['rights_background'] != [
+                    {'generator': 'rights', 'label': entry['label'], 'ast': entry['ast']}
+                    for entry in row['limitations']]):
+            raise ValueError('duplicate or unmatched limitation premise')
+        conditional = row['conditional_on']
+        pair_labels = {entry['label'] for entry in row['colliding_pairs']}
+        if len(conditional) != len(set(conditional)) or not set(conditional) <= pair_labels:
+            raise ValueError('unbound soft coherence premise')
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(f'CheckerUnavailable: Lean rights elaboration is not bound to the request: {error}') from error
+
+
+def _bind_conflict(row, elaborated):
+    """Bind the conflict's displayed identities to the elaborated source."""
+    try:
+        targets = [entry['target'] for entry in elaborated['conflict_targets']]
+        labels = {entry['label'] for entry in elaborated['colliding_pairs']}
+        labels.update(entry['label'] for entry in elaborated['limitations'])
+        conditional = row['conditional_on']
+        if (row['targets'] != targets or len(targets) != len(set(targets)) or
+                len(conditional) != len(set(conditional)) or not set(conditional) <= labels):
+            raise ValueError('unbound conflict target or conditional premise')
+    except (KeyError, TypeError, ValueError) as error:
+        raise CheckerUnavailable(
+            f'CheckerUnavailable: Lean rights conflict is not bound to the request: {error}') from error
 
 
 def run_rights_case(environment, units, kind, **extra):
@@ -73,6 +110,9 @@ def run_rights_case(environment, units, kind, **extra):
     row = decide_once("rights", case)
     if kind == 'rights-elaborate':
         _bind_elaboration(row, units, raw)
+    elif kind == 'rights-conflict' and 'witness' not in extra:
+        elaborated = run_rights_case(environment, units, 'rights-elaborate')
+        _bind_conflict(row, elaborated)
     return row
 
 
