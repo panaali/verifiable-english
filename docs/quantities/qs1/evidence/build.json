@@ -29,7 +29,7 @@
     },
     "required_signature": "S +17"
   },
-  "full_gate": "deferred to chain test runner by task instruction",
+  "full_gate": "run on committed final HEAD in pre-review continuation; see gate-result.json",
   "code_head": "cd14f7ce2dc14767a15e30f4ba1da5b33717aece",
   "commits_through_code_head": [
     {
