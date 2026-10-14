@@ -14,6 +14,9 @@ A/B record compared that base with the scope's head, each seeded mutant ran on i
 head, and every file the check opens is inside the repository and, with `--report-commit`, committed there
 byte for byte (an ignored or uncommitted file is no evidence the merge train can carry).
 
+Identical unavailable pairs count only when the corpus delta lists each with a
+reason (standing ruling R7); a changed unavailable result is not covered.
+
 The gate result lives in a git note so recording it does not move the commit it
 checked. Call this tool with the final commit and the three evidence files before
 attaching the note. No missing or partial measurement counts as a pass.
