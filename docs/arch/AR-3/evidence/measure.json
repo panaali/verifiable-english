@@ -1,0 +1,650 @@
+{
+ "base": "7478b23dd5b1219e9e29f86acbbece87df76ce33",
+ "since": "2026-09-26T15:53:35+00:00",
+ "days": 14,
+ "baseline": {
+  "lines": 14250,
+  "bytes": 1870144,
+  "ids": 14248,
+  "commits": 292,
+  "first_parent_commits": 68
+ },
+ "replay": {
+  "commits": [
+   {
+    "commit": "bdd5ac56796c0b1b6e2e3d233cd90e6d39662473",
+    "subject": "Merge usecase/eligibility (eligibility): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "adecf5c8aee97dd9a0d2110a922b151fae09644c",
+    "subject": "Merge usecase/agent-policy (agent-policy): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "f288e0f5b5eecd8f4016fb3ef4bce7cb3a930082",
+    "subject": "Merge fix/flaky-w6a-limits (flaky4): approved by review; synced and verified",
+    "removed": 2,
+    "recorded": 0,
+    "labelled": 2,
+    "unlabelled": [],
+    "trailers": 2
+   },
+   {
+    "commit": "a1bf3a605905e87480e647760413b70d8f8d4f5e",
+    "subject": "Merge rights/integrate (rights): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "390dabe528f7f6ad2e810095370a528ae9d55fcc",
+    "subject": "Merge fix/eligibility-r7 (eligibility-r7): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "87cb54b3afd7a5ed01e7d3469e9fe08bd36fdc5f",
+    "subject": "Merge infra/precommit (precommit): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "92c0b8a95bdaad61115435b09df067ae67416586",
+    "subject": "Merge risk/integrate (risk): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "465f06510ca9d6c086caa3c4c54e52f176e0c362",
+    "subject": "Merge fix/rust-repro (rust-repro): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "ef3485735bbc98122e64205ec2efe40942e2ef64",
+    "subject": "Merge risk/c5-wording (risk-c5): approved by review; synced and verified",
+    "removed": 2,
+    "recorded": 0,
+    "labelled": 2,
+    "unlabelled": [],
+    "trailers": 2
+   },
+   {
+    "commit": "45ec95102add3719c74ee310c75a3433a6ebe3b8",
+    "subject": "Merge norm-defaults/integrate (norm-defaults): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "c9a345825afefad7d1701012ed2d62cb45d91db1",
+    "subject": "Merge usecase/safety-framework (safety-framework): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "3162c7fdef94c8222433db11f2acecbde2192a19",
+    "subject": "Merge usecase/asimov-extended (asimov-extended): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "46da91864c4ab815657443f517d47344204fcacc",
+    "subject": "Merge compose/integrate (compose): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "a093a14d27c36b9b3c4b3656c0dc414c1d811380",
+    "subject": "Merge wire-s4/integrate (wire-s4): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "bb05a08d9d5316061ccc36f2e6d3a1dd9eec152e",
+    "subject": "Merge infra/layers2-b1 (layers2-b1): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "f4142cb9d446d1f03d80fddc671161bee314e97b",
+    "subject": "Merge fix/env-field-types (env-profiles): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "7ffcb1f81ff17a1c4761d0f8c96620c1a2da6b0c",
+    "subject": "Merge infra/gate-collection (gate-collection): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "753f06e1f7140460c80095a80bb328c0a0619417",
+    "subject": "Merge wire-s5/integrate (wire-s5): approved by review; synced and verified",
+    "removed": 1,
+    "recorded": 0,
+    "labelled": 1,
+    "unlabelled": [],
+    "trailers": 1
+   },
+   {
+    "commit": "84e1385368949bd8daafa6acc818c72e56ad471d",
+    "subject": "Merge infra/testspeed (testspeed): approved by review; synced and verified",
+    "removed": 11,
+    "recorded": 0,
+    "labelled": 11,
+    "unlabelled": [],
+    "trailers": 10
+   },
+   {
+    "commit": "d3201e5ae00d2a9c6094d2f5427e901378327da0",
+    "subject": "Merge lean-first/b0 (lf-0): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "f5e8e91b8cf39b71394bfb678e0c3c36ba3e4548",
+    "subject": "Merge infra/testperf (testperf): approved by review; batch-verified (20261005T0003Z)",
+    "removed": 1,
+    "recorded": 0,
+    "labelled": 1,
+    "unlabelled": [],
+    "trailers": 1
+   },
+   {
+    "commit": "87e391da8ac55b0378ba3e44ad9bf200148686a4",
+    "subject": "Merge infra/testselect (testselect): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "e52e2fdd7cabe503b89221ea7767461c6f17f369",
+    "subject": "Merge lean-first/b4 (lf-4): approved by review; synced and verified",
+    "removed": 4,
+    "recorded": 0,
+    "labelled": 4,
+    "unlabelled": [],
+    "trailers": 4
+   },
+   {
+    "commit": "296d778cbca05d5ae66605e3984f60f2db15ef5d",
+    "subject": "Merge lean-first/b3 (lf-3): approved by review; synced and verified",
+    "removed": 2,
+    "recorded": 0,
+    "labelled": 2,
+    "unlabelled": [],
+    "trailers": 2
+   },
+   {
+    "commit": "95e701492bc0b4d0661659fb0a85b3f2cc541dee",
+    "subject": "Merge infra/testselect2 (testselect2): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "0b849398991b333401a855d4110f342211a95346",
+    "subject": "Merge english-lean/integrate (english-lean): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "629709ec39bddfabb0778b65f5e7a1d2813fa9f2",
+    "subject": "Merge infra/difffuzz (difffuzz): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "e8832d524c051aace9e1f7b025a71716aa80a32c",
+    "subject": "Merge compose-s2/integrate (compose-s2): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "051a43f4d233f95126cbab8d6a16c6e2b0ae4b29",
+    "subject": "Merge infra/consolidate-b1 (consolidate-b1): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "62ca1e7861f71efa23c3423ec84efa03cd962ddc",
+    "subject": "Merge lean-first/b3b (lf-3b): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "2ce1134e532c168853257e6748a11ad96cf26a4b",
+    "subject": "Merge lean-first/b3d (lf-3d): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "24ea9e45f35ef8cc5648d9d3a92ef4b954c3e1e9",
+    "subject": "Merge lean-first/b1 (lf-1): approved by review; synced and verified",
+    "removed": 1149,
+    "recorded": 0,
+    "labelled": 1140,
+    "unlabelled": [
+     "tests/test_assurance_manifest.py::test_every_declared_response_field_is_enforced[admission-ve_norm_defaults_route-default-admission]",
+     "tests/test_assurance_manifest.py::test_every_declared_response_field_is_enforced[admission-ve_norms_route-default-admission]",
+     "tests/test_assurance_manifest.py::test_every_declared_response_field_is_enforced[admission-ve_quantity-default-document]",
+     "tests/test_assurance_manifest.py::test_every_declared_response_field_is_enforced[norms.certificate-ve_norms_route-default-norms-certificate]",
+     "tests/test_assurance_manifest.py::test_every_declared_response_field_is_enforced[norms.conflict-ve_norms_route-default-norms-conflict]",
+     "tests/test_assurance_manifest.py::test_every_declared_response_field_is_enforced[norms.elaborate-ve_norms_route-default-norms-elaborate]",
+     "tests/test_assurance_manifest.py::test_every_declared_response_field_is_enforced[wire.diagnose-ve_diagnose-norm-defaults@0-norm-defaults-elaborate,norm-defaults-conflict,norm-defaults-certificate,admission]",
+     "tests/test_assurance_manifest.py::test_every_declared_response_field_is_enforced[wire.diagnose-ve_diagnose-norms@0-norms-elaborate,norms-conflict,norms-certificate,admission]",
+     "tests/test_assurance_manifest.py::test_every_declared_response_field_is_enforced[wire.diagnose-ve_diagnose-soft-norms@0-soft-elaborate,admission]"
+    ],
+    "trailers": 901
+   },
+   {
+    "commit": "1e68d6d66145d78eb45aa94a8d83f7bab13570a4",
+    "subject": "Merge english-lean-s2/integrate (english-lean-s2): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "95a97a074d6c74cfd43cd635b153a833f953b0b7",
+    "subject": "Merge infra/consolidate-b2 (consolidate-b2): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "26dc5ab1f22bd3f0d9d3b2aeda161c8892452170",
+    "subject": "Merge lean-first/b10a (lf-10a): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "87900bdf1ab8718c29f71bd3ea7861dc82e3b5be",
+    "subject": "Merge lean-first/b11a (lf-11a): approved by review; synced and verified",
+    "removed": 1,
+    "recorded": 0,
+    "labelled": 1,
+    "unlabelled": [],
+    "trailers": 1
+   },
+   {
+    "commit": "9aaf918d538a35e63d64a7c5abc86bbcfbb87472",
+    "subject": "Merge lean-first/b2 (lf-2): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "a35028cdf1358b916f6eb5dec3f0bcd76316312e",
+    "subject": "Merge english-lean-s3/integrate (english-lean-s3): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "bb014a8180c6a3d5b5b4ddfcd4a65c47ba180850",
+    "subject": "Merge lean-first/shapes (shapes): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "eaddd934d6b5c197b4cd2e15c29082de4f3e81ab",
+    "subject": "Merge senses/integrate (senses): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "6cbe1a2632be83b4ac6d49674d1b4d65de9d49f9",
+    "subject": "Merge lean-first/b9 (lf-9): approved by review; synced and verified",
+    "removed": 81,
+    "recorded": 0,
+    "labelled": 81,
+    "unlabelled": [],
+    "trailers": 29
+   },
+   {
+    "commit": "7345e3ed6871e2e810ea53d26b1d60902e27d071",
+    "subject": "Merge lean-first/b7 (lf-7): approved by review; synced and verified",
+    "removed": 3,
+    "recorded": 0,
+    "labelled": 3,
+    "unlabelled": [],
+    "trailers": 3
+   },
+   {
+    "commit": "48cc65a672f1b138ea6fa70b3a04a0d0a7fee14b",
+    "subject": "Merge lean-first/b8 (lf-8): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "56ab4b05816837eb0a822693801eaacdb1741d40",
+    "subject": "Merge lean-first/b5 (lf-5): approved by review; synced and verified",
+    "removed": 10,
+    "recorded": 0,
+    "labelled": 10,
+    "unlabelled": [],
+    "trailers": 5
+   },
+   {
+    "commit": "c7e2000d358dd9181bf9ecd0a5ca562f6574856a",
+    "subject": "Merge lean-first/b11b (lf-11b): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "49d182636268b8c0102d1032d120cadaa9bb6b7e",
+    "subject": "Merge lean-first/b13a (lf-13a): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "167eb8ff09ea693824cd0aedaf52588828f04afc",
+    "subject": "Merge readings-defaults/integrate (readings-defaults): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "29773091b436c14653fb21099152ecff4403476c",
+    "subject": "Merge lean-first/b6 (lf-6): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "acee4ede1c932537e9f0057a906c6f1ac1dc041f",
+    "subject": "Merge lean-first/b10b (lf-10b): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "81d53b6b250943a399d5782350b21f274478b38e",
+    "subject": "Merge readings-defaults/rd8 (rd-8): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "228f01dabe3fbbb678fd5abb4ab9a700172a1cd2",
+    "subject": "Merge readings-defaults/rd6a (rd-6a): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "6fd95b0108cb31a283f481ca14689d40a3f63879",
+    "subject": "Merge english-lean-e2/integrate (english-lean-e2): approved by review; synced and verified",
+    "removed": 46,
+    "recorded": 0,
+    "labelled": 46,
+    "unlabelled": [],
+    "trailers": 29
+   },
+   {
+    "commit": "c07377edbdbbbb48255aca6c29e02efac78387db",
+    "subject": "Merge lean-first/b15a (lf-15a): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "51853586da6dea107a134b425207fda205a11083",
+    "subject": "Merge readings-defaults/rd2a (rd-2a): approved by review; synced and verified",
+    "removed": 1,
+    "recorded": 0,
+    "labelled": 1,
+    "unlabelled": [],
+    "trailers": 1
+   },
+   {
+    "commit": "8350e55f8e8ead02063ee17d05bf729c7e9e81b9",
+    "subject": "Merge lean-first/b16a (lf-16a): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "a3476e669a859b5bd8fbe5c71381954e1668d5a7",
+    "subject": "Merge readings-defaults/rd2b (rd-2b): approved by review; synced and verified",
+    "removed": 1,
+    "recorded": 0,
+    "labelled": 1,
+    "unlabelled": [],
+    "trailers": 1
+   },
+   {
+    "commit": "7550e08a704a1a08690c9b1df9c18ad75590b2bd",
+    "subject": "Merge lean-first/b15b (lf-15b): approved by review; synced and verified",
+    "removed": 23,
+    "recorded": 0,
+    "labelled": 23,
+    "unlabelled": [],
+    "trailers": 21
+   },
+   {
+    "commit": "c85797de464d7b9a955b7e906a3d88e15c7b732f",
+    "subject": "Merge english-lean/e2-flip (e2-flip): approved by review; synced and verified",
+    "removed": 13,
+    "recorded": 0,
+    "labelled": 13,
+    "unlabelled": [],
+    "trailers": 12
+   },
+   {
+    "commit": "af4432de9a909411107fca3e105600e342cc1965",
+    "subject": "Merge readings-defaults/rd4a (rd-4a): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "67ae1e5a11e7ff6414d413875ab6c72bb78bbe69",
+    "subject": "Merge lean-first/b16b (lf-16b): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "19c5bbe69636259f5c66ad9d9529f6d9288af4bd",
+    "subject": "Merge lean-first/b17 (lf-17): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "abc30811855ea9dcb57003c1d961dda94093d5cc",
+    "subject": "Merge lean-first/b12 (lf-12): approved by review; synced and verified",
+    "removed": 7,
+    "recorded": 0,
+    "labelled": 7,
+    "unlabelled": [],
+    "trailers": 7
+   },
+   {
+    "commit": "0d93e591d3963b65d1ad909a508b9d928322a014",
+    "subject": "Merge readings-defaults/rd3 (rd-3): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
+    "subject": "Merge lean-first/b16c (lf-16c): approved by review; synced and verified",
+    "removed": 10,
+    "recorded": 0,
+    "labelled": 10,
+    "unlabelled": [],
+    "trailers": 2
+   },
+   {
+    "commit": "f05474685f3df4313d0b264c32cf1cf673a17d97",
+    "subject": "Merge question-answering/integrate (question-answering): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "cbbab2df54dacf06323769d13ee7bd10d481eec2",
+    "subject": "Merge infra/eff-tests (eff-tests): approved by review; synced and verified",
+    "removed": 1,
+    "recorded": 0,
+    "labelled": 1,
+    "unlabelled": [],
+    "trailers": 1
+   },
+   {
+    "commit": "cc534bfc571de0f140fecc7acefee65fcdfb8ad9",
+    "subject": "Merge readings-defaults/rd4b (rd-4b): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   },
+   {
+    "commit": "7478b23dd5b1219e9e29f86acbbece87df76ce33",
+    "subject": "Merge infra/eff-merge (eff-merge): approved by review; synced and verified",
+    "removed": 0,
+    "recorded": 0,
+    "labelled": 0,
+    "unlabelled": [],
+    "trailers": 0
+   }
+  ],
+  "removed": 1369,
+  "recorded": 0,
+  "labelled": 1360,
+  "unlabelled": 9,
+  "trailers": 1035,
+  "commits_with_removals": 20
+ },
+ "base_collection": {
+  "seconds": 120.6,
+  "ids": 14248,
+  "only_collected": [],
+  "only_pinned": []
+ }
+}
