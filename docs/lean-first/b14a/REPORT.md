@@ -15,7 +15,7 @@ agree with Lean or the parse is `CheckerUnavailable`.
   `Service/ParseDiagnostic`, `Service/Standalone`, the round-trip and proof files that follow the signatures).
   Trusted lines V 37,154 → 37,451 (R6, `docs/trust-baseline.json`); 25 new declarations classified in
   `tools/trust-classes.json`.
-* **Tests:** `tests/test_lean_first_b14a.py` (250 lines, new), `tests/test_stage2_parse.py` (+17/−8). Rust unchanged.
+* **Tests:** `tests/test_lean_first_b14a.py` (283 lines, new), `tests/test_stage2_parse.py` (+17/−8). Rust unchanged.
 
 ## Gate 5.1 evidence
 

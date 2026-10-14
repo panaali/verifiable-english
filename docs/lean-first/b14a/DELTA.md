@@ -13,7 +13,7 @@ owner.
 | Lean (`lean/VE`, product code, generated inventories excluded) | 9 | 416 | 122 |
 | Python (`ve/parser.py`) | 1 | 8 | 39 |
 | Python tools (`tools/inventory_lint.py`, the deleted helper's entry) | 1 | 1 | 1 |
-| Tests (`tests/test_lean_first_b14a.py` new, `tests/test_stage2_parse.py`) | 2 | 267 | 8 |
+| Tests (`tests/test_lean_first_b14a.py` new, `tests/test_stage2_parse.py`) | 2 | 300 | 8 |
 
 The deleted Python is the whole fallback: the `definitions@0` branch of `parser._parse_lean`,
 `parser._parse_python_marked`, the `_Parser.sugar` mark and the `definitions_sugar` exception tag. Rust is unchanged.
