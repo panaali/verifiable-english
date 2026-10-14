@@ -1,0 +1,119 @@
+{
+ "never_counted": true,
+ "stand_in": {
+  "open_problem": "{0} is unsolved"
+ },
+ "sort_noun": "thing",
+ "uniqueness_formula": [
+  "exists",
+  "entity",
+  [
+   "and",
+   [
+    "unary",
+    "open_problem",
+    [
+     "var",
+     0
+    ]
+   ],
+   [
+    "forall",
+    "entity",
+    [
+     "implies",
+     [
+      "unary",
+      "open_problem",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "eq",
+      [
+       "var",
+       0
+      ],
+      [
+       "var",
+       1
+      ]
+     ]
+    ]
+   ]
+  ]
+ ],
+ "rendered_by_ve": "There is a first thing such that both of the following hold:\n  (a) the first thing is unsolved;\n  (b) for every second thing that is unsolved, the second thing is the same as the first thing.",
+ "sentences": {
+  "Some thing is unsolved, and every thing that is unsolved is that thing.": {
+   "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Expected '.' or 'and ' here. Use the English paraphrase as a writing example."
+  },
+  "Some thing is unsolved, and every thing that is unsolved is the same as that thing.": {
+   "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Expected '.' or 'and ' here. Use the English paraphrase as a writing example."
+  },
+  "Exactly one thing is unsolved.": {
+   "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one thing'. Nearest declared wordings: 'thing'; 'hard constraint'; 'instance of Claude'."
+  },
+  "There is exactly one thing that is unsolved.": {
+   "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Expected 'a' or 'an' here. Use the English paraphrase as a writing example."
+  },
+  "There is a thing that is unsolved, and every thing that is unsolved is that thing.": {
+   "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Expected '.' here. Use the English paraphrase as a writing example."
+  },
+  "There is a first thing such that both of the following hold:\n  (a) the first thing is unsolved;\n  (b) for every second thing that is unsolved, the second thing is the same as the first thing.": {
+   "formulas": [
+    [
+     "exists",
+     "entity",
+     [
+      "and",
+      [
+       "unary",
+       "open_problem",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "forall",
+       "entity",
+       [
+        "implies",
+        [
+         "unary",
+         "open_problem",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "eq",
+         [
+          "var",
+          0
+         ],
+         [
+          "var",
+          1
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "is_existence_and_uniqueness": true
+  }
+ },
+ "limits": {
+  "rlimit_as_soft": 6442450944,
+  "rlimit_as_hard": 6442450944,
+  "VE_RUST_TIMEOUT": null,
+  "children_peak_rss_kib": 0,
+  "self_peak_rss_kib": 30524
+ }
+}
