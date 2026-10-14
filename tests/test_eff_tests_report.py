@@ -118,7 +118,10 @@ def test_the_work_table_is_the_saved_run_and_the_limits():
 
 def test_every_seeded_bug_is_in_the_table_with_tests_that_exist():
     bugs = evidence("seeded-bugs.json")["bugs"]
-    pinned = set(json.loads((ROOT / "tools/gate-collection.json").read_text()))
+    # The tests the saved suite run after the change ran (its JUnit record), as node IDs.
+    with gzip.open(EVIDENCE / "suite-after-cold-junit.xml.gz") as stream:
+        pinned = {f"{case.get('classname').replace('.', '/')}.py::{case.get('name')}"
+                  for case in ET.parse(stream).iter("testcase")}
     assert [bug["id"] for bug in bugs] == [f"M{i}" for i in range(1, len(bugs) + 1)]
     for bug in bugs:
         assert (ROOT / bug["file"]).is_file()
