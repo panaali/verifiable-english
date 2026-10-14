@@ -289,13 +289,13 @@ def test_a_gated_environment_never_returns_a_reading():
     assert env.unit_schema is not None
     words = EnglishVocabulary(env, _defer_overlay_refusals=True)
     with pytest.raises(UnsupportedProfile) as raised:
-        english_lean.read_question(env, 'Is wait classified as "safe"?', words, {})
+        english_lean.read_question(env, 'Is wait safe?', words, {})
     assert not hasattr(raised.value, "lean_question")
     with pytest.raises(UnsupportedProfile):
-        english_lean.read(env, 'Wait is classified as "safe".', words, {}).document()
+        english_lean.read(env, 'Wait is safe.', words, {}).document()
     # Lean read the question: only the gate stands between it and the caller.
-    case = english_lean.request(env, 'Is wait classified as "safe"?', words, {})
-    case.update(id=MODE, question='Is wait classified as "safe"?')
+    case = english_lean.request(env, 'Is wait safe?', words, {})
+    case.update(id=MODE, question='Is wait safe?')
     assert relay.decide_once(MODE, case)["result"]["status"] == "one"
 
 
