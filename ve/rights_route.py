@@ -7,7 +7,7 @@ from string import Formatter
 from .backends.relay import decide, decide_once
 from .ast import decimal_value
 from .errors import CheckerUnavailable
-from .softnorms import _act_key, bind_soft_elaboration
+from .softnorms import _act_key, bind_prime_environment, bind_soft_elaboration
 from .rights import LINE_RULE_FIELDS
 
 def _wire(value):
@@ -17,6 +17,42 @@ def _wire(value):
     if type(value) is list:
         return [_wire(item) for item in value]
     return value
+
+
+def _narrowing_slots(own, rule, direct_modes, *, limited, barred):
+    """The mechanisms of one line instance, in the order of Correlate.lean `narrowings`.
+
+    A slot fixed by the request is the exact list of its texts; a slot that Lean fills from
+    the rule structure is `(prefix, names)`: any distinct `prefix + name` with `name` a direct
+    rule (never the line itself) of the mode Lean filters on.
+    """
+    default = rule.get('mode', 'strict') == 'default'
+    others = {name: mode for name, mode in direct_modes.items() if name != own}
+    return [
+        [f'carve-out {index}' for index in range(1, len(rule.get('unless', [])) + 1)],
+        ('exception ', set(others)),
+        ['limitation'] if limited else [],
+        ['exception'] if default else [],
+        [f'switch {party}' for party in rule.get('alterable', [])],
+        ('blockedBy ', {name for name, mode in others.items() if default and mode == 'strict'}),
+        ('dominatedBy ', {name for name, mode in others.items() if default and mode == 'default'}),
+        ['bar'] if barred else [],
+    ]
+
+
+def _narrowing_texts_bound(texts, slots):
+    """Whether `texts` is exactly the slots' texts, in slot order."""
+    at = 0
+    for slot in slots:
+        if type(slot) is list:
+            if texts[at:at + len(slot)] != slot:
+                return False
+            at += len(slot)
+            continue
+        prefix, names = slot
+        while at < len(texts) and texts[at].startswith(prefix) and texts[at].removeprefix(prefix) in names:
+            at += 1
+    return at == len(texts)
 
 
 def _bind_elaboration(row, units, environment):
@@ -29,6 +65,7 @@ def _bind_elaboration(row, units, environment):
         bars = 0
         rule_bar = False
         limit_units = []
+        fan_instances = 0
         for unit in units:
             if 'norm' in unit:
                 norms.append(unit)
@@ -50,10 +87,15 @@ def _bind_elaboration(row, units, environment):
                     fan = line.get('fan_out') or {}
                     counts[name] += len(fan) or 1
                     for bearer in (sorted(fan) if fan else (None,)):
+                        # Tree.lean `instancesOf`: the k-th fan-out instance in
+                        # document order is named `rights-fan-<k>`.
+                        if bearer is not None:
+                            fan_instances += 1
                         source_lines.append((body.get('name', body.get('right')),
                                              line['kind'], name, bearer,
                                              fan[bearer] if bearer is not None else rule['predicate'],
-                                             rule, line))
+                                             rule, line,
+                                             name if bearer is None else f'rights-fan-{fan_instances}'))
 
         if not bars and row['bars']:
             raise ValueError('unrequested bar rules')
@@ -69,7 +111,8 @@ def _bind_elaboration(row, units, environment):
             raise ValueError('rights line count')
         if len(row['lines']) != len(source_lines):
             raise ValueError('rights source line count')
-        for entry, (right, kind, name, bearer, predicate, rule, source_line) in zip(row['lines'], source_lines):
+        for entry, (right, kind, name, bearer, predicate, rule, source_line, rule_id) in zip(
+                row['lines'], source_lines):
             instance = (('powerLiberty' if source_line['kind'] == 'power' and
                          rule is source_line.get('liberty') else
                          'powerRecognition' if source_line['kind'] == 'power' else kind))
@@ -77,6 +120,7 @@ def _bind_elaboration(row, units, environment):
             if (entry['right'] != right or entry['kind'] != kind or
                     entry['instance'] != instance or
                     entry.get('bearer') != bearer or
+                    entry['rule'] != rule_id or
                     entry.get('source_line', entry['rule']) != name or
                     entry['predicate'] != predicate or node['predicate'] != predicate or
                     any(node[field] != rule.get(field, default) for field, default in
@@ -105,7 +149,7 @@ def _bind_elaboration(row, units, environment):
         expected_acts = {}
         for limit in limit_units:
             acts = set()
-            for right, kind, _, _, predicate, _, _ in source_lines:
+            for right, kind, _, _, predicate, _, _, _ in source_lines:
                 if ((limit['scope'] == 'all' or right in limit['scope']) and
                         (limit['kinds'] == 'all' or kind in limit['kinds'])):
                     acts.add(_act_key(predicate, predicates))
@@ -123,21 +167,20 @@ def _bind_elaboration(row, units, environment):
         generated_names = set()
         generated_keys = set()
         prime_predicates = row['environment_prime']['vocabulary']['predicates']
-        if row['environment_prime']['profiles'] != environment['profiles']:
-            raise ValueError('unbound rights prime profiles')
         expected_lim = sorted((name, act) for name, acts in expected_acts.items() for act in acts)
         expected_cond = sorted((limit['name'], act, condition['name'])
                                for limit in limit_units for act in expected_acts[limit['name']]
                                for condition in limit['conditions'])
         permission_lines = {entry['predicate'] for entry in row['lines']
                             if entry['instance'] in ('liberty', 'powerLiberty')}
-        expected_aimed = sorted(permission_lines) if bars else []
+        aimed_index = {predicate: i for i, predicate in
+                       enumerate(sorted(permission_lines) if bars else [], 1)}
         expected_generated = ({('lim', limit, act, None): f'rights__lim__{i}'
                                for i, (limit, act) in enumerate(expected_lim, 1)} |
                               {('cond', limit, act, condition): f'rights__cond__{i}'
                                for i, (limit, act, condition) in enumerate(expected_cond, 1)} |
                               {('aimed', predicate): f'rights__bar__{i}'
-                               for i, predicate in enumerate(expected_aimed, 1)})
+                               for predicate, i in aimed_index.items()})
         for entry in row['generated']:
             name, kind = entry['name'], entry['kind']
             if name in generated_names or name not in prime_predicates:
@@ -163,11 +206,7 @@ def _bind_elaboration(row, units, environment):
                 raise ValueError('unbound generated name or sorts')
         if generated_keys != set(expected_generated):
             raise ValueError('missing or extra generated predicate')
-        original = environment['vocabulary']['predicates']
-        decisions = {item['name'] for item in row['decisions']}
-        if set(prime_predicates) != set(original) | generated_names | decisions or any(
-                prime_predicates[name] != declaration for name, declaration in original.items()):
-            raise ValueError('unbound rights prime vocabulary')
+        bind_prime_environment(row, environment, generated_names)
         if set(row['wordings']) != generated_names:
             raise ValueError('unbound generated wording')
         for name, wording in row['wordings'].items():
@@ -179,7 +218,8 @@ def _bind_elaboration(row, units, environment):
         aimed = Counter(entry['predicate'] for entry in row['generated']
                         if entry['kind'] == 'aimed')
         bar_nodes = Counter(entry['predicate'] for entry in row['bars'])
-        if bar_nodes != (aimed if rule_bar else Counter()):
+        if bar_nodes != (aimed if rule_bar else Counter()) or any(
+                entry['name'] != f"rights-bar-{aimed_index[entry['predicate']]}" for entry in row['bars']):
             raise ValueError('unbound bar nodes')
         if any(entry['over'] != [line['rule'] for line in row['lines']
                                  if line['predicate'] == entry['predicate'] and line['node']['sign']]
@@ -189,37 +229,31 @@ def _bind_elaboration(row, units, environment):
         narrowing_pairs = Counter((entry['right'], entry['rule']) for entry in row['narrowings'])
         if narrowing_pairs != line_pairs:
             raise ValueError('unbound narrowing line')
+        # `directNodes` (Correlate.lean): the line instances and the norm units, without bars.
+        direct_modes = {line['rule']: correlated[line['rule']].get('mode', 'strict') for line in row['lines']}
+        direct_modes.update((unit['norm']['name'], unit['norm'].get('mode', 'strict')) for unit in norms)
         for entry in row['narrowings']:
             targets = [mechanism['target'] for mechanism in entry['mechanisms']]
             line = next(line for line in row['lines'] if line['rule'] == entry['rule'])
             rule = correlated[entry['rule']]
-            allowed_rules = set(correlated) | {unit['norm']['name'] for unit in norms}
-            def valid_mechanism(text):
-                if text in ('limitation', 'exception', 'bar'):
-                    return True
-                if text.startswith('carve-out '):
-                    index = text.removeprefix('carve-out ')
-                    return (index.isascii() and index.isdecimal() and
-                            1 <= decimal_value(index) <= len(rule.get('unless', [])))
-                if text.startswith('switch '):
-                    return text.removeprefix('switch ') in rule.get('alterable', [])
-                for prefix in ('blockedBy ', 'dominatedBy ', 'exception '):
-                    if text.startswith(prefix):
-                        return text.removeprefix(prefix) in allowed_rules
-                return False
+            limited = any((limit['scope'] == 'all' or entry['right'] in limit['scope']) and
+                          (limit['kinds'] == 'all' or line['kind'] in limit['kinds'])
+                          for limit in limit_units)
+            # Correlate.lean `barReach`: the line's own permission, or the permission dual
+            # of a default obligation line, when that permission is right-derived.
+            default = rule.get('mode', 'strict') == 'default'
+            reach = (line['predicate'] in permission_lines or
+                     (default and line['node']['sign'] and
+                      _act_key(line['predicate'], predicates) != line['predicate'] and
+                      _act_key(line['predicate'], predicates) in permission_lines))
             if (len(targets) != len(set(targets)) or
-                    any(mechanism['target'] != f"{entry['rule']}:{mechanism['mechanism']}" or
-                        not valid_mechanism(mechanism['mechanism']) for mechanism in entry['mechanisms'])):
-                raise ValueError('unbound narrowing target')
-            required = {f'carve-out {index}' for index in range(1, len(rule.get('unless', [])) + 1)}
-            required.update(f'switch {party}' for party in rule.get('alterable', []))
-            if rule.get('mode', 'strict') == 'default':
-                required.add('exception')
-            if any((limit['scope'] == 'all' or entry['right'] in limit['scope']) and
-                   (limit['kinds'] == 'all' or line['kind'] in limit['kinds']) for limit in limit_units):
-                required.add('limitation')
-            if not required <= {mechanism['mechanism'] for mechanism in entry['mechanisms']}:
-                raise ValueError('missing request-implied mechanism')
+                    any(mechanism['target'] != f"{entry['rule']}:{mechanism['mechanism']}"
+                        for mechanism in entry['mechanisms']) or
+                    not _narrowing_texts_bound(
+                        [mechanism['mechanism'] for mechanism in entry['mechanisms']],
+                        _narrowing_slots(entry['rule'], rule, direct_modes, limited=limited,
+                                         barred=rule_bar and reach))):
+                raise ValueError('unbound narrowing target or mechanism')
         distinction_predicates = {line['predicate'] for line in row['lines']}
         reported_predicates = [entry['predicate'] for entry in row['distinction']]
         if (len(reported_predicates) != len(set(reported_predicates)) or

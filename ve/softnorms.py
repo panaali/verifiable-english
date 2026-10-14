@@ -257,6 +257,35 @@ def _incompatible(first, second, predicates):
             (second['sign'] and not first['sign'] and _act_key(b, predicates) == a))
 
 
+def bind_prime_environment(row, environment, generated=()):
+    """Bind `environment_prime` to the request, for every route that extends `E`.
+
+    The prime is the submitted environment with only predicates added: each decision of
+    `row['decisions']`, declared with its key's argument sorts, and the route's `generated`
+    names, whose sorts the route binds.  Every other field and every submitted declaration
+    is unchanged.  Callers raise CheckerUnavailable on ValueError, KeyError or TypeError.
+    """
+    prime = row['environment_prime']
+    original = environment['vocabulary']['predicates']
+    entries = prime['vocabulary']['predicates']
+    if ({key: value for key, value in prime.items() if key != 'vocabulary'} !=
+            {key: value for key, value in environment.items() if key != 'vocabulary'} or
+            {key: value for key, value in prime['vocabulary'].items() if key != 'predicates'} !=
+            {key: value for key, value in environment['vocabulary'].items() if key != 'predicates'}):
+        raise ValueError('unbound prime environment')
+    decisions = [decision['name'] for decision in row['decisions']]
+    added = [*decisions, *generated]
+    if (len(set(added)) != len(added) or set(added) & set(original) or
+            set(entries) != set(original) | set(added)):
+        raise ValueError('unbound prime predicate set')
+    if any(entries[name] != declaration for name, declaration in original.items()):
+        raise ValueError('changed source predicate')
+    for decision in row['decisions']:
+        if entries[decision['name']] != {'arguments': decision['arguments'],
+                                          'description': 'soft-norms decision'}:
+            raise ValueError('unbound decision declaration')
+
+
 def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None, environment=None):
     """Bind the IDs in a Lean soft elaboration to its submitted rules and vocabulary.
 
@@ -271,19 +300,7 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None,
         rules.update(rights_rules)
         acts = set(predicates)
         if environment is not None:
-            prime = row['environment_prime']
-            if prime['profiles'] != environment['profiles']:
-                raise ValueError('unbound prime profiles')
-            original = environment['vocabulary']['predicates']
-            entries = prime['vocabulary']['predicates']
-            if set(entries) != set(original) | {d['name'] for d in row['decisions']}:
-                raise ValueError('unbound prime predicate set')
-            if any(entries[name] != declaration for name, declaration in original.items()):
-                raise ValueError('changed source predicate')
-            for decision in row['decisions']:
-                if entries[decision['name']] != {'arguments': decision['arguments'],
-                                                  'description': 'soft-norms decision'}:
-                    raise ValueError('unbound decision declaration')
+            bind_prime_environment(row, environment)
         rule_acts = row.get('rule_acts')
         if rule_acts is not None and (set(rule_acts) != set(rules) or
                                       any(act != _act_key(rule['predicate'], predicates)
