@@ -12,6 +12,7 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 import json
 import os
+from pathlib import Path
 import re
 import warnings
 
@@ -48,8 +49,13 @@ _EXTRA_RESERVED |= frozenset(_ORDINALS)
 _RESERVED = _LOGICAL_WORDS | _EXTRA_RESERVED
 # order@0 comparison wording ("at least n" is a comparison, never a counting quantifier).
 _COMPARISON_WORDS = frozenset('less more than least most same'.split())
-_COMPARISONS = (('{0} is less than {1}', ast.Lt, False), ('{0} is at most {1}', ast.Le, False),
-                ('{0} is more than {1}', ast.Lt, True), ('{0} is at least {1}', ast.Le, True))
+def _comparison_rows():
+    rows = json.loads(Path(__file__).with_name('numbers_phrases.json').read_text())
+    operators = {'eq': ast.Eq, 'lt': ast.Lt, 'le': ast.Le}
+    return tuple((row['text'], operators[row['rel']], row['swap']) for row in rows)
+
+
+_COMPARISONS = _comparison_rows()
 # Integer slots match any bracket depth: outermost bracket groups are masked
 # (length-preserving) before regex matching, and the exact term text is then
 # checked by `int_syntax` and parsed by `int_term`, which budgets term depth
