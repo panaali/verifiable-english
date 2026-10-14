@@ -108,6 +108,31 @@ def wireJson : Nat → Json → Json
 #guard wireJson 8 (Json.mkObj [("a", .null), ("b", Json.arr #[Json.mkObj [("c", .null), ("d", 1)]])]) ==
   Json.mkObj [("b", Json.arr #[Json.mkObj [("d", 1)]])]
 
+/-- Normalize only nulls the rights source decoder treats as absent. Unknown
+members, including unknown members with null values, reach its closed-field
+checks. The response schema copies the authored content without normalization. -/
+def rightsWireJson : Nat → String → Json → Json
+  | 0, _, j => j
+  | fuel + 1, context, .arr xs =>
+      let child := if context == "lines" then "line" else if context == "conditions" then "condition" else context
+      .arr (xs.map (rightsWireJson fuel child))
+  | fuel + 1, context, .obj kvs =>
+      let absent := match context with
+        | "right" => ["guard"]
+        | "line" => ["norm", "liberty", "recognition", "fan_out", "holder_slot", "cites"]
+        | "limitation" | "bar" | "condition" | "exception" => ["decided_by"]
+        | "norm" => ["predicate", "mode", "rank", "alterable", "exception", "hard"]
+        | "source" => ["cites"]
+        | _ => []
+      Json.mkObj (kvs.toList.filterMap fun (k, v) =>
+        if v == .null && (absent.contains k || context == "cites" || context == "fan_out") then none
+        else some (k, rightsWireJson fuel k v))
+  | _, _, j => j
+
+#guard (rightsWireJson 8 "source" (Json.mkObj [("right", Json.mkObj
+  [("guard", .null), ("annotation", .null)])])).getObjValD "right" ==
+  Json.mkObj [("annotation", .null)]
+
 /-- A `meaning_id` over content that may hold authored nulls (the soft route's nullable decider slots: Python's
 `soft_digest`), with the document identity's canonical JSON. -/
 def nullableMeaningId (profiles : List String) (environmentId : String) (content : Json) : Except String String :=
@@ -774,7 +799,7 @@ def rightsDoc (E : Env) (front : Json) (declared : List String) (raw : List Json
   let ids := flat.filterMap fun u => (u.getObjValD "id").getStr?.toOption
   let sourceUnits := flat.filter rightsSourceUnit
   let lower := wireJson 257 E.lower
-  let source := sourceUnits.map fun u => wireJson 257 (u.getObjValD "content")
+  let source := sourceUnits.map fun u => rightsWireJson 257 "source" (u.getObjValD "content")
   let src ← VE.Rights.Wire.decodeRightsSource lower
     (Json.arr (#[Json.mkObj [("source_units", toJson ids)]] ++ source.toArray))
   let generated := (VE.Rights.Wire.genEntries src.D).map (·.1) ++
@@ -795,7 +820,7 @@ def rightsDoc (E : Env) (front : Json) (declared : List String) (raw : List Json
 (`SoftNorms.Wire.decodeSoftNorm`, the `soft-rules` case) under `_rule_source`. -/
 def RightsDoc.checkRule (R : RightsDoc) (norm : Json) : Except String VE.SoftNorms.SoftNode := do
   let some se := R.rules | throw (unavailable "a norm object outside the soft rule source")
-  VE.SoftNorms.Wire.decodeSoftNorm se (wireJson 257 (Json.mkObj [("norm", norm)]))
+  VE.SoftNorms.Wire.decodeSoftNorm se (rightsWireJson 257 "source" (Json.mkObj [("norm", norm)]))
 
 /-- The canonical object of a soft norm the single-rule check decoded (Python's `SoftRule.to_dict`): its W1 core
 re-encoded (`Alternatives.Wire.encodeNode`), then each soft field away from its default value: `mode` `default`,

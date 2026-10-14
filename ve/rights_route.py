@@ -2,6 +2,22 @@
 from __future__ import annotations
 
 from .backends.relay import decide, decide_once
+from .backends.service_schema import Context, Invalid, RIGHTS_BLOCK
+from .errors import VEError
+
+
+def _check_copied_rights(units):
+    """Check authored blocks before the restricted wire drops optional nulls.
+
+    The document response copies these blocks verbatim. Its Lean-owned closed
+    schema therefore also defines which source members may be sent to rights.
+    """
+    for unit in units:
+        if type(unit) is dict and set(unit) & {"right", "right_lines", "limitation", "bar"}:
+            try:
+                RIGHTS_BLOCK[0](unit, Context({}), {})
+            except Invalid as exc:
+                raise VEError(f"InvalidInput: invalid rights block: {exc}") from exc
 
 def _wire(value):
     # The restricted Lean JSON input represents optional null fields by omission.
@@ -13,6 +29,7 @@ def _wire(value):
 
 
 def run_rights_case(environment, units, kind, **extra):
+    _check_copied_rights(units)
     raw = environment.to_dict()
     # readings@1 is a head profile. Its lower rights chain is checked with
     # that profile removed, as the readings route does for each choice.
