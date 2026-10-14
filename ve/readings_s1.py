@@ -111,8 +111,12 @@ class S1Environment:
         return Environment(data)
 
     def situation_id(self, entry):
-        return digest(f"ve-situation-{self.env.identity_version}\n",
-                      {"environment_id": self.env.environment_id, "situation": entry})
+        return self.situation_id_for(self.env, entry)
+
+    @staticmethod
+    def situation_id_for(env, entry):
+        return digest(f"ve-situation-{env.identity_version}\n",
+                      {"environment_id": env.environment_id, "situation": entry})
 
 
 # ---------------------------------------------------------------------------------------------------------------

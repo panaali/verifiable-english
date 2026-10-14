@@ -33,7 +33,7 @@ from ve.document import _environment, check_document, load_document  # noqa: E40
 from ve.errors import VEError  # noqa: E402
 from ve.readings import s1_content_meaning_id  # noqa: E402
 from ve.readings_route import document_wire  # noqa: E402
-from ve.readings_s1 import Decoded, guard_base, record_situations, search  # noqa: E402
+from ve.readings_s1 import Decoded, S1Environment, guard_base, record_situations, search  # noqa: E402
 
 
 def read(path):
@@ -163,26 +163,40 @@ def _identity(env, set_id, reading):
 
 
 def _reidentified(env, item):
-    """A formula-only set with its meaning and model ids recomputed over `env`."""
-    from ve.ast import formula_from_data
-    from ve.identity import meaning_id
+    """Rebuild a set's meaning, model and situation ids over its new environment."""
     from ve.model import FiniteModel
     from ve.readings import _reading_evaluation
     model_env, _ = _reading_evaluation(env)
+
+    def extended(data):
+        return {**data, "domains": {**{sort: [] for sort in model_env.model_sorts}, **data["domains"]},
+                "relations": {**{p: [] for p in model_env.predicates if p not in model_env.definition_entries},
+                              **data["relations"]}}
+
     models = {}
     for old, data in item.get("models", {}).items():
         # Sorts and predicates merged from the companions are empty in today's models.
-        data = {**data, "domains": {**{sort: [] for sort in model_env.model_sorts}, **data["domains"]},
-                "relations": {**{p: [] for p in model_env.predicates if p not in model_env.definition_entries},
-                              **data["relations"]}}
-        models[old] = data
+        models[old] = extended(data)
     renamed = {old: FiniteModel.from_dict(model_env, data).model_id for old, data in models.items()}
+    situations = {old: {**entry, "base": extended(entry["base"])}
+                  for old, entry in item.get("situations", {}).items()}
+    renamed.update({old: S1Environment.situation_id_for(env, entry)
+                    for old, entry in situations.items()})
     readings = []
     for r in item["readings"]:
-        mid = meaning_id(env, formula_from_data(env, r["content"])) if r["content"] is not None else r["meaning_id"]
+        mid = _identity(env, item["id"], r)
         named = {o: renamed.get(m, m) for o, m in r["admission"]["distinguishing_models"].items()}
         readings.append({**r, "meaning_id": mid, "admission": {**r["admission"], "distinguishing_models": named}})
-    return {**item, "readings": readings, "models": {renamed[old]: data for old, data in models.items()}}
+    return {**item, "readings": readings,
+            **({"models": {renamed[old]: data for old, data in models.items()}} if "models" in item else {}),
+            **({"situations": {renamed[old]: data for old, data in situations.items()}}
+               if "situations" in item else {})}
+
+
+def rebuild_reading_ids(meta):
+    """Apply after editing the document's environment; rebuild every set, not only changed units."""
+    env = _environment(meta["environment"])
+    return {**meta, "reading_sets": [_reidentified(env, item) for item in meta.get("reading_sets", [])]}
 
 
 def find_situations(meta):
@@ -266,10 +280,26 @@ def baseline(path):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--rebuild-reading-ids", metavar="DOCUMENT")
+    parser.add_argument("--check-noop", action="store_true")
     parser.add_argument("--constitution")
     parser.add_argument("--udhr")
-    parser.add_argument("--out", required=True)
+    parser.add_argument("--out")
     args = parser.parse_args(argv)
+    if args.rebuild_reading_ids:
+        if args.constitution or args.udhr or (not args.check_noop and not args.out):
+            parser.error("rebuild requires --out unless --check-noop; do not combine pilot reruns")
+        meta, source = read(args.rebuild_reading_ids)
+        rebuilt = rebuild_reading_ids(meta)
+        if args.check_noop and rebuilt["reading_sets"] != meta.get("reading_sets", []):
+            parser.error("reading-set ids changed: rebuild is not a no-op")
+        if args.out:
+            write(args.out, rebuilt, source)
+        print(json.dumps({"sets": len(rebuilt["reading_sets"]), "no_op": rebuilt["reading_sets"] ==
+                          meta.get("reading_sets", [])}))
+        return 0
+    if not args.out:
+        parser.error("pilot reruns require --out")
     Path(args.out).mkdir(parents=True, exist_ok=True)
     results = []
     if args.constitution:
