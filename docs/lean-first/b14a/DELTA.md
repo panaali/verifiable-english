@@ -65,6 +65,20 @@ The deleted Python is the whole fallback: the `definitions@0` branch of `parser.
 
 There are no verdict, order or availability changes, so no row needs a further DRI signature.
 
+## Final review corrections
+
+The three review probes F1–F3 are regressions in `tests/test_lf14a_long_parse.py`
+and `tests/test_lf14a_response_shape.py`.
+F1 restores the base acceptance of long, valid sugar sources: the relay compares
+the whole canonical text internally without imposing the public printer's
+65,536-byte output limit. F2 gives parse AST rows a typed grammar for every
+formula, term and edge constructor; this is R8's schema condition. F3 binds
+diagnostic offsets and line/column to the request source through the shared
+`x-source-span` shape rule; this is R8's request-binding condition. Neither
+schema correction changes a genuine service answer. The existing W1, U1,
+U2, C1 and T1 deltas retain their standing signatures R1, R7, R7, R4 and R6,
+respectively, with the evidence and tests listed above.
+
 The 7 sense-pack probes of the constitution pilot run 20261008T0600Z first differed only in the recorder's
 scratch path inside a missing-file message (the recorder copies `.ve.md` files, not their `pack.json`). They were
 re-recorded with the pack beside them (`rerecord.py`) and are now identical.
