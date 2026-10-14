@@ -74,11 +74,14 @@ def test_complete_choice_verdict_is_lean_checked(monkeypatch, joint):
 
 
 @pytest.mark.parametrize("authored_first", [False, True])
-def test_joint_choices_ignore_authored_sets_in_every_wire_vector(monkeypatch, authored_first):
+@pytest.mark.parametrize("authored_nonasserted", [False, True])
+def test_joint_choices_ignore_authored_sets_in_every_wire_vector(
+        monkeypatch, authored_first, authored_nonasserted):
     open_set = copy.deepcopy(ALTERNATIVES[0])
     open_set["status"] = "open"
     authored = {"id": "a", "version": 1, "status": "authored",
-                "readings": [{"kind": "asserted", "content": ["top"]}]}
+                "readings": [{"kind": "question" if authored_nonasserted else "asserted",
+                              "content": None if authored_nonasserted else ["top"]}]}
     sets = [authored, open_set] if authored_first else [open_set, authored]
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     captured = []

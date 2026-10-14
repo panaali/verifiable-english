@@ -525,16 +525,17 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
         if joint_choices.get("status") == "UNKNOWN":
             return {"verdict": "UNKNOWN", "route": "joint-choices",
                     "budget": {"max_choices": joint_choices["budget"]}}
+        # Joint choices name active open sets. Authored readings are outside
+        # both the assertion check and every proof/Lean choice vector.
+        choice_sets = [s for s in sets if s.get("status") != "authored"]
         if not all(all(r["kind"] == "asserted" and r["content"] is not None
-                       for r in s["readings"]) for s in sets):
+                       for r in s["readings"]) for s in choice_sets):
             return {"verdict": "UNKNOWN", "route": "joint-choices",
                     "reason": "non-assertion elaborator is not yet available"}
         conclusion = formula_from_data(env, conclusion_ast)
         fixed_formulas = [formula_from_data(env, ast) for ast in fixed]
-        # Discourse choices enumerate active open sets only. Keep their source
-        # order for both proof premises and the Lean wire vectors: a mapping's
-        # insertion order is not part of the choice semantics.
-        choice_sets = [s for s in sets if s.get("status") != "authored"]
+        # Keep source order for both proof premises and Lean wire vectors: a
+        # mapping's insertion order is not part of the choice semantics.
         choice_keys = [f"{s['id']}@{s['version']}" for s in choice_sets]
         formulas = [[formula_from_data(env, r["content"]) for r in s["readings"]]
                     for s in choice_sets]
