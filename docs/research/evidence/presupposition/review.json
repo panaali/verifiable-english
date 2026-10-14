@@ -1,0 +1,2102 @@
+{
+ "never_counted": true,
+ "review_of": "0fbf57d8",
+ "limits_at_start": {
+  "rlimit_as_soft": 6442450944,
+  "rlimit_as_hard": 6442450944,
+  "VE_RUST_TIMEOUT": "600",
+  "children_peak_rss_kib": 0,
+  "self_peak_rss_kib": 30428
+ },
+ "R1_unit_alone": {
+  "u0013.presupposition": {
+   "declared": {
+    "core_value_of": "{0} is a core value of {1}"
+   },
+   "fence": "Some entity is a core value of Claude.",
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'."
+   }
+  },
+  "u0095.presupposition": {
+   "declared": {
+    "guideline_of": "{0} is a guideline of {1}"
+   },
+   "fence": "Some entity is a guideline of Anthropic.",
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'."
+   }
+  },
+  "u0286.presupposition": {
+   "declared": {
+    "open_problem": "{0} is an open problem"
+   },
+   "fence": "Some entity is an open problem.",
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is human'."
+   }
+  },
+  "u0002.presupposition": {
+   "declared": {
+    "mission_of": "{0} is a mission of {1}"
+   },
+   "fence": "Some entity is a mission of Anthropic, and every entity that is a mission of Anthropic is that entity.",
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'."
+   }
+  },
+  "u0235.presupposition": {
+   "declared": {
+    "nature_of": "{0} is a nature of {1}"
+   },
+   "fence": "Some entity is a nature of Claude, and every entity that is a nature of Claude is that entity.",
+   "loader": {
+    "error": "SyntaxError: SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'."
+   }
+  }
+ },
+ "pinned_fences": {
+  "count": 1,
+  "using_entity_or_thing": 0
+ },
+ "R2_wordings": {
+  "entity": [
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} is a core value of {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some entity is a core value of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that is a core value of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'is classified as \"human\"'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} belongs to the core values of {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD"
+    ],
+    "sentences": {
+     "Some entity belongs to the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity belongs to the core values of Claude'. Nearest declared wordings: 'has the recorded relation \"core_value_of\" to {1}'; 'instance of Claude'; 'may do the generation in {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that belongs to the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'is information'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} counts among the core values of {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD"
+    ],
+    "sentences": {
+     "Some entity counts among the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity counts among the core values of Claude'. Nearest declared wordings: 'instance of Claude'; 'has the recorded relation \"core_value_of\" to {1}'; 'may do the generation in {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that counts among the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'is information'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} ranks among the core values of {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD"
+    ],
+    "sentences": {
+     "Some entity ranks among the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity ranks among the core values of Claude'. Nearest declared wordings: 'instance of Claude'; 'may do the generation in {1}'; 'has the recorded relation \"core_value_of\" to {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that ranks among the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'is information'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} serves as a core value for {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some entity serves as a core value for Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity serves as a core value'. Nearest declared wordings: 'entity of sort \"entity\"'; 'is classified as \"child_sexual_abuse_material\"'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that serves as a core value for Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'is information'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} is valued by {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE"
+    ],
+    "sentences": {
+     "Some entity is valued by Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that is valued by Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'is classified as \"human\"'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "has_core_value",
+    "wording": "{0} has core value {1}",
+    "selected": "{0} has the recorded relation \"has_core_value\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Claude has core value some entity.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'has core value'. Nearest declared wordings: 'has the recorded relation \"has_core_value\" to {1}'; 'hard constraint'; 'may give Claude {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity such that Claude has core value it.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity such'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'claude'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" such that claude has the recorded relation \"has_core_value\" to that entity of sort \"entity\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "has_core_value",
+         [
+          "const",
+          "claude"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "guideline_of",
+    "wording": "{0} is a guideline of {1}",
+    "selected": "{0} has the recorded relation \"guideline_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some entity is a guideline of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that is a guideline of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'anthropic'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that has the recorded relation \"guideline_of\" to anthropic.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "guideline_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "anthropic"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "has_guideline",
+    "wording": "{0} has guideline {1}",
+    "selected": "{0} has the recorded relation \"has_guideline\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Anthropic has guideline some entity.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'has guideline'. Nearest declared wordings: 'has the recorded relation \"has_guideline\" to {1}'; 'may give Claude {1}'; 'claude'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity such that Anthropic has guideline it.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity such'. Nearest declared wordings: 'entity of sort \"entity\"'; 'anthropic'; 'situation'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" such that anthropic has the recorded relation \"has_guideline\" to that entity of sort \"entity\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "has_guideline",
+         [
+          "const",
+          "anthropic"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "mission_of",
+    "wording": "{0} is a mission of {1}",
+    "selected": "{0} has the recorded relation \"mission_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some entity is a mission of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that is a mission of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'anthropic'.",
+      "rendered_by_ve": false
+     },
+     "Some entity is a mission of Anthropic, and every entity that is a mission of Anthropic is that entity.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'.",
+      "rendered_by_ve": false
+     },
+     "Exactly one entity is a mission of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one entity'. Nearest declared wordings: 'entity of sort \"entity\"'; 'operator input'; 'anthropic'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that has the recorded relation \"mission_of\" to anthropic.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "mission_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "anthropic"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     },
+     "There is a first entity of sort \"entity\" such that both of the following hold:\n  (a) the first entity of sort \"entity\" has the recorded relation \"mission_of\" to anthropic;\n  (b) for every second entity of sort \"entity\" that has the recorded relation \"mission_of\" to anthropic, the second entity of sort \"entity\" is the same as the first entity of sort \"entity\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "and",
+         [
+          "binary",
+          "mission_of",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "anthropic"
+          ]
+         ],
+         [
+          "forall",
+          "entity",
+          [
+           "implies",
+           [
+            "binary",
+            "mission_of",
+            [
+             "var",
+             0
+            ],
+            [
+             "const",
+             "anthropic"
+            ]
+           ],
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "is_existence": false,
+      "is_existence_and_uniqueness": true,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "has_mission",
+    "wording": "{0} has mission {1}",
+    "selected": "{0} has the recorded relation \"has_mission\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Anthropic has mission some entity.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'has mission'. Nearest declared wordings: 'has the recorded relation \"has_mission\" to {1}'; 'situation'; 'is human'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity such that Anthropic has mission it.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity such'. Nearest declared wordings: 'entity of sort \"entity\"'; 'anthropic'; 'situation'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" such that anthropic has the recorded relation \"has_mission\" to that entity of sort \"entity\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "has_mission",
+         [
+          "const",
+          "anthropic"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     },
+     "There is a first entity of sort \"entity\" such that both of the following hold:\n  (a) anthropic has the recorded relation \"has_mission\" to the first entity of sort \"entity\";\n  (b) for every second entity of sort \"entity\" that anthropic has the recorded relation \"has_mission\" to, the second entity of sort \"entity\" is the same as the first entity of sort \"entity\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "and",
+         [
+          "binary",
+          "has_mission",
+          [
+           "const",
+           "anthropic"
+          ],
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "forall",
+          "entity",
+          [
+           "implies",
+           [
+            "binary",
+            "has_mission",
+            [
+             "const",
+             "anthropic"
+            ],
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "is_existence": false,
+      "is_existence_and_uniqueness": true,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "nature_of",
+    "wording": "{0} is a nature of {1}",
+    "selected": "{0} has the recorded relation \"nature_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some entity is a nature of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that is a nature of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'has the recorded relation \"nature_of\" to {1}'.",
+      "rendered_by_ve": false
+     },
+     "Some entity is a nature of Claude, and every entity that is a nature of Claude is that entity.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is classified as \"human\"'.",
+      "rendered_by_ve": false
+     },
+     "Exactly one entity is a nature of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one entity'. Nearest declared wordings: 'entity of sort \"entity\"'; 'operator input'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that has the recorded relation \"nature_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "nature_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     },
+     "There is a first entity of sort \"entity\" such that both of the following hold:\n  (a) the first entity of sort \"entity\" has the recorded relation \"nature_of\" to claude;\n  (b) for every second entity of sort \"entity\" that has the recorded relation \"nature_of\" to claude, the second entity of sort \"entity\" is the same as the first entity of sort \"entity\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "and",
+         [
+          "binary",
+          "nature_of",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "claude"
+          ]
+         ],
+         [
+          "forall",
+          "entity",
+          [
+           "implies",
+           [
+            "binary",
+            "nature_of",
+            [
+             "var",
+             0
+            ],
+            [
+             "const",
+             "claude"
+            ]
+           ],
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "is_existence": false,
+      "is_existence_and_uniqueness": true,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "has_nature",
+    "wording": "{0} has nature {1}",
+    "selected": "{0} has the recorded relation \"has_nature\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Claude has nature some entity.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'has nature'. Nearest declared wordings: 'has the recorded relation \"has_nature\" to {1}'; 'claude'; 'operator'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity such that Claude has nature it.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity such'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'claude'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" such that claude has the recorded relation \"has_nature\" to that entity of sort \"entity\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "has_nature",
+         [
+          "const",
+          "claude"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     },
+     "There is a first entity of sort \"entity\" such that both of the following hold:\n  (a) claude has the recorded relation \"has_nature\" to the first entity of sort \"entity\";\n  (b) for every second entity of sort \"entity\" that claude has the recorded relation \"has_nature\" to, the second entity of sort \"entity\" is the same as the first entity of sort \"entity\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "and",
+         [
+          "binary",
+          "has_nature",
+          [
+           "const",
+           "claude"
+          ],
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "forall",
+          "entity",
+          [
+           "implies",
+           [
+            "binary",
+            "has_nature",
+            [
+             "const",
+             "claude"
+            ],
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "is_existence": false,
+      "is_existence_and_uniqueness": true,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "open_problem",
+    "wording": "{0} is an open problem",
+    "selected": "{0} is classified as \"open_problem\"",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION",
+     "UNARY_MODIFIER"
+    ],
+    "sentences": {
+     "Some entity is an open problem.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is human'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that is an open problem.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'is information'.",
+      "rendered_by_ve": false
+     },
+     "Exactly one entity is an open problem.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one entity'. Nearest declared wordings: 'entity of sort \"entity\"'; 'operator input'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that is classified as \"open_problem\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "unary",
+         "open_problem",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "open_problem",
+    "wording": "{0} is unsolved",
+    "selected": "{0} is unsolved",
+    "accepted": true,
+    "human": "{0} is human",
+    "sort_noun": "entity of sort \"entity\"",
+    "lint": [],
+    "sentences": {
+     "Some entity is unsolved.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity is'. Nearest declared wordings: 'entity of sort \"entity\"'; 'claude'; 'is human'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity that is unsolved.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'entity that'. Nearest declared wordings: 'entity of sort \"entity\"'; 'situation'; 'is information'.",
+      "rendered_by_ve": false
+     },
+     "Exactly one entity is unsolved.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one entity'. Nearest declared wordings: 'entity of sort \"entity\"'; 'operator input'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is an entity of sort \"entity\" that is unsolved.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "unary",
+         "open_problem",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   }
+  ],
+  "thing": [
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} is a core value of {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "thing",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some thing is a core value of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a core value of Claude'. Nearest declared wordings: 'has the recorded relation \"core_value_of\" to {1}'; 'instance of Claude'; 'may give Claude {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that is a core value of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a core value of Claude'. Nearest declared wordings: 'has the recorded relation \"core_value_of\" to {1}'; 'instance of Claude'; 'may give Claude {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} belongs to the core values of {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD"
+    ],
+    "sentences": {
+     "Some thing belongs to the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'belongs to the core values of Claude'. Nearest declared wordings: 'instance of Claude'; 'has the recorded relation \"core_value_of\" to {1}'; 'may do the creation in {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that belongs to the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'belongs to the core values of Claude'. Nearest declared wordings: 'instance of Claude'; 'has the recorded relation \"core_value_of\" to {1}'; 'may do the creation in {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} counts among the core values of {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD"
+    ],
+    "sentences": {
+     "Some thing counts among the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'counts among the core values of Claude'. Nearest declared wordings: 'instance of Claude'; 'may do the generation in {1}'; 'has the recorded relation \"core_value_of\" to {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that counts among the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'counts among the core values of Claude'. Nearest declared wordings: 'instance of Claude'; 'may do the generation in {1}'; 'has the recorded relation \"core_value_of\" to {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} ranks among the core values of {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD"
+    ],
+    "sentences": {
+     "Some thing ranks among the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'ranks among the core values of Claude'. Nearest declared wordings: 'instance of Claude'; 'may do the creation in {1}'; 'may directly deny being Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that ranks among the core values of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'ranks among the core values of Claude'. Nearest declared wordings: 'instance of Claude'; 'may do the creation in {1}'; 'may directly deny being Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} serves as a core value for {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some thing serves as a core value for Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'serves as a core value'. Nearest declared wordings: 'has the recorded relation \"core_value_of\" to {1}'; 'must remain firm in {1}'; 'operator input'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that serves as a core value for Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'serves as a core value'. Nearest declared wordings: 'has the recorded relation \"core_value_of\" to {1}'; 'must remain firm in {1}'; 'operator input'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "core_value_of",
+    "wording": "{0} is valued by {1}",
+    "selected": "{0} has the recorded relation \"core_value_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "thing",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE"
+    ],
+    "sentences": {
+     "Some thing is valued by Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is valued by Claude'. Nearest declared wordings: 'may give Claude {1}'; 'instance of Claude'; 'claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that is valued by Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is valued by Claude'. Nearest declared wordings: 'may give Claude {1}'; 'instance of Claude'; 'claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that has the recorded relation \"core_value_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "core_value_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "has_core_value",
+    "wording": "{0} has core value {1}",
+    "selected": "{0} has the recorded relation \"has_core_value\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Claude has core value some thing.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'has core value'. Nearest declared wordings: 'has the recorded relation \"has_core_value\" to {1}'; 'hard constraint'; 'may give Claude {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing such that Claude has core value it.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Claude has core value it'. Nearest declared wordings: 'has the recorded relation \"has_core_value\" to {1}'; 'instance of Claude'; 'may do the creation in {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing such that claude has the recorded relation \"has_core_value\" to that thing.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "has_core_value",
+         [
+          "const",
+          "claude"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "guideline_of",
+    "wording": "{0} is a guideline of {1}",
+    "selected": "{0} has the recorded relation \"guideline_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "thing",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some thing is a guideline of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a guideline of Anthropic'. Nearest declared wordings: 'has the recorded relation \"guideline_of\" to {1}'; 'anthropic'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that is a guideline of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a guideline of Anthropic'. Nearest declared wordings: 'has the recorded relation \"guideline_of\" to {1}'; 'anthropic'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that has the recorded relation \"guideline_of\" to anthropic.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "guideline_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "anthropic"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "has_guideline",
+    "wording": "{0} has guideline {1}",
+    "selected": "{0} has the recorded relation \"has_guideline\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Anthropic has guideline some thing.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'has guideline'. Nearest declared wordings: 'has the recorded relation \"has_guideline\" to {1}'; 'may give Claude {1}'; 'claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing such that Anthropic has guideline it.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Anthropic has guideline it'. Nearest declared wordings: 'has the recorded relation \"has_guideline\" to {1}'; 'anthropic'; 'is classified as \"compliance_against_guidelines\"'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing such that anthropic has the recorded relation \"has_guideline\" to that thing.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "has_guideline",
+         [
+          "const",
+          "anthropic"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "mission_of",
+    "wording": "{0} is a mission of {1}",
+    "selected": "{0} has the recorded relation \"mission_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "thing",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some thing is a mission of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a mission of Anthropic'. Nearest declared wordings: 'has the recorded relation \"mission_of\" to {1}'; 'anthropic'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that is a mission of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a mission of Anthropic'. Nearest declared wordings: 'has the recorded relation \"mission_of\" to {1}'; 'anthropic'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "Some thing is a mission of Anthropic, and every thing that is a mission of Anthropic is that thing.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a mission of Anthropic'. Nearest declared wordings: 'has the recorded relation \"mission_of\" to {1}'; 'anthropic'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "Exactly one thing is a mission of Anthropic.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one thing'. Nearest declared wordings: 'thing'; 'hard constraint'; 'anthropic'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that has the recorded relation \"mission_of\" to anthropic.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "mission_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "anthropic"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     },
+     "There is a first thing such that both of the following hold:\n  (a) the first thing has the recorded relation \"mission_of\" to anthropic;\n  (b) for every second thing that has the recorded relation \"mission_of\" to anthropic, the second thing is the same as the first thing.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "and",
+         [
+          "binary",
+          "mission_of",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "anthropic"
+          ]
+         ],
+         [
+          "forall",
+          "entity",
+          [
+           "implies",
+           [
+            "binary",
+            "mission_of",
+            [
+             "var",
+             0
+            ],
+            [
+             "const",
+             "anthropic"
+            ]
+           ],
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "is_existence": false,
+      "is_existence_and_uniqueness": true,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "has_mission",
+    "wording": "{0} has mission {1}",
+    "selected": "{0} has the recorded relation \"has_mission\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Anthropic has mission some thing.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'has mission'. Nearest declared wordings: 'has the recorded relation \"has_mission\" to {1}'; 'situation'; 'is human'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing such that Anthropic has mission it.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Anthropic has mission it'. Nearest declared wordings: 'has the recorded relation \"has_mission\" to {1}'; 'anthropic'; 'may do the creation in {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing such that anthropic has the recorded relation \"has_mission\" to that thing.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "has_mission",
+         [
+          "const",
+          "anthropic"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     },
+     "There is a first thing such that both of the following hold:\n  (a) anthropic has the recorded relation \"has_mission\" to the first thing;\n  (b) for every second thing that anthropic has the recorded relation \"has_mission\" to, the second thing is the same as the first thing.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "and",
+         [
+          "binary",
+          "has_mission",
+          [
+           "const",
+           "anthropic"
+          ],
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "forall",
+          "entity",
+          [
+           "implies",
+           [
+            "binary",
+            "has_mission",
+            [
+             "const",
+             "anthropic"
+            ],
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "is_existence": false,
+      "is_existence_and_uniqueness": true,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "nature_of",
+    "wording": "{0} is a nature of {1}",
+    "selected": "{0} has the recorded relation \"nature_of\" to {1}",
+    "accepted": false,
+    "human": "{0} is classified as \"human\"",
+    "sort_noun": "thing",
+    "lint": [
+     "BINARY_AUXILIARY",
+     "BINARY_CONVERSE",
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Some thing is a nature of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a nature of Claude'. Nearest declared wordings: 'instance of Claude'; 'has the recorded relation \"nature_of\" to {1}'; 'may give Claude {1}'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that is a nature of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a nature of Claude'. Nearest declared wordings: 'instance of Claude'; 'has the recorded relation \"nature_of\" to {1}'; 'may give Claude {1}'.",
+      "rendered_by_ve": false
+     },
+     "Some thing is a nature of Claude, and every thing that is a nature of Claude is that thing.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a nature of Claude'. Nearest declared wordings: 'instance of Claude'; 'has the recorded relation \"nature_of\" to {1}'; 'may give Claude {1}'.",
+      "rendered_by_ve": false
+     },
+     "Exactly one thing is a nature of Claude.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one thing'. Nearest declared wordings: 'thing'; 'hard constraint'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that has the recorded relation \"nature_of\" to claude.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "nature_of",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "claude"
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     },
+     "There is a first thing such that both of the following hold:\n  (a) the first thing has the recorded relation \"nature_of\" to claude;\n  (b) for every second thing that has the recorded relation \"nature_of\" to claude, the second thing is the same as the first thing.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "and",
+         [
+          "binary",
+          "nature_of",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "claude"
+          ]
+         ],
+         [
+          "forall",
+          "entity",
+          [
+           "implies",
+           [
+            "binary",
+            "nature_of",
+            [
+             "var",
+             0
+            ],
+            [
+             "const",
+             "claude"
+            ]
+           ],
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "is_existence": false,
+      "is_existence_and_uniqueness": true,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "has_nature",
+    "wording": "{0} has nature {1}",
+    "selected": "{0} has the recorded relation \"has_nature\" to {1}",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [
+     "SYMBOL_COLLISION"
+    ],
+    "sentences": {
+     "Claude has nature some thing.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'has nature'. Nearest declared wordings: 'has the recorded relation \"has_nature\" to {1}'; 'claude'; 'operator'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing such that Claude has nature it.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Claude has nature it'. Nearest declared wordings: 'instance of Claude'; 'has the recorded relation \"has_nature\" to {1}'; 'hard constraint'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing such that claude has the recorded relation \"has_nature\" to that thing.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "binary",
+         "has_nature",
+         [
+          "const",
+          "claude"
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     },
+     "There is a first thing such that both of the following hold:\n  (a) claude has the recorded relation \"has_nature\" to the first thing;\n  (b) for every second thing that claude has the recorded relation \"has_nature\" to, the second thing is the same as the first thing.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "and",
+         [
+          "binary",
+          "has_nature",
+          [
+           "const",
+           "claude"
+          ],
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "forall",
+          "entity",
+          [
+           "implies",
+           [
+            "binary",
+            "has_nature",
+            [
+             "const",
+             "claude"
+            ],
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "eq",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "is_existence": false,
+      "is_existence_and_uniqueness": true,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "open_problem",
+    "wording": "{0} is an open problem",
+    "selected": "{0} is classified as \"open_problem\"",
+    "accepted": false,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [
+     "LOGICAL_WORD",
+     "SYMBOL_COLLISION",
+     "UNARY_MODIFIER"
+    ],
+    "sentences": {
+     "Some thing is an open problem.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is an open problem'. Nearest declared wordings: 'is classified as \"open_problem\"'; 'operator'; 'thing'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that is an open problem.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is an open problem'. Nearest declared wordings: 'is classified as \"open_problem\"'; 'operator'; 'thing'.",
+      "rendered_by_ve": false
+     },
+     "Exactly one thing is an open problem.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one thing'. Nearest declared wordings: 'thing'; 'hard constraint'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     },
+     "There is a thing that is classified as \"open_problem\".": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "unary",
+         "open_problem",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": false,
+      "rendered_by_ve": true
+     }
+    }
+   },
+   {
+    "predicate": "open_problem",
+    "wording": "{0} is unsolved",
+    "selected": "{0} is unsolved",
+    "accepted": true,
+    "human": "{0} is human",
+    "sort_noun": "thing",
+    "lint": [],
+    "sentences": {
+     "Some thing is unsolved.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "unary",
+         "open_problem",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": true,
+      "rendered_by_ve": false
+     },
+     "There is a thing that is unsolved.": {
+      "formulas": [
+       [
+        "exists",
+        "entity",
+        [
+         "unary",
+         "open_problem",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "is_existence": true,
+      "is_existence_and_uniqueness": false,
+      "plain": true,
+      "rendered_by_ve": true
+     },
+     "Exactly one thing is unsolved.": {
+      "error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'Exactly one thing'. Nearest declared wordings: 'thing'; 'hard constraint'; 'instance of Claude'.",
+      "rendered_by_ve": false
+     }
+    }
+   }
+  ]
+ },
+ "R3_noun_only": {
+  "returncode": 0,
+  "stderr": "",
+  "admitted": true,
+  "status_delta": {},
+  "readings": {
+   "pinned": {
+    "choice_count": 8,
+    "choices_checked": 8,
+    "conflict_status": "CONFLICT-FREE",
+    "choices_conflict_free": 8,
+    "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+   },
+   "scratch": {
+    "choice_count": 8,
+    "choices_checked": 8,
+    "conflict_status": "CONFLICT-FREE",
+    "choices_conflict_free": 8,
+    "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+   }
+  },
+  "residual": {
+   "pinned": {
+    "assumptions": 19,
+    "bridge_leaves": 0,
+    "open_terms": 33,
+    "unresolved_reading_sets": 3,
+    "separations": 3,
+    "readings_findings": 0,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 12,
+    "ungrounded_defaults": 0
+   },
+   "scratch": {
+    "assumptions": 19,
+    "bridge_leaves": 0,
+    "open_terms": 33,
+    "unresolved_reading_sets": 3,
+    "separations": 3,
+    "readings_findings": 0,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 12,
+    "ungrounded_defaults": 0
+   }
+  },
+  "differences_after_normalising": [
+   "readings"
+  ],
+  "probes": {
+   "conclusion-no-denial.json": {
+    "pinned_returncode": 0,
+    "scratch_returncode": 0,
+    "identical_normalised": true,
+    "byte_identical_raw": true
+   },
+   "conclusion-no-claim-human.json": {
+    "pinned_returncode": 0,
+    "scratch_returncode": 0,
+    "identical_normalised": true,
+    "byte_identical_raw": true
+   }
+  }
+ },
+ "R3_u0286_unsolved": {
+  "fence": "Some thing is unsolved.",
+  "loader": {
+   "error": "VEError: distinguishing model id does not match model"
+  },
+  "unit_bytes": 29,
+  "returncode": 0,
+  "stderr": "",
+  "admitted": true,
+  "status_delta": {
+   "CHECKED": 29,
+   "UNFORMALISED": -29
+  },
+  "readings": {
+   "pinned": {
+    "choice_count": 8,
+    "choices_checked": 8,
+    "conflict_status": "CONFLICT-FREE",
+    "choices_conflict_free": 8,
+    "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+   },
+   "scratch": {
+    "choice_count": 8,
+    "choices_checked": 8,
+    "conflict_status": "CONFLICT-FREE",
+    "choices_conflict_free": 8,
+    "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+   }
+  },
+  "residual": {
+   "pinned": {
+    "assumptions": 19,
+    "bridge_leaves": 0,
+    "open_terms": 33,
+    "unresolved_reading_sets": 3,
+    "separations": 3,
+    "readings_findings": 0,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 12,
+    "ungrounded_defaults": 0
+   },
+   "scratch": {
+    "assumptions": 20,
+    "bridge_leaves": 0,
+    "open_terms": 33,
+    "unresolved_reading_sets": 3,
+    "separations": 3,
+    "readings_findings": 0,
+    "pending_candidates": 0,
+    "couplings": 0,
+    "gaps": 12,
+    "ungrounded_defaults": 0
+   }
+  },
+  "differences_after_normalising": [
+   "admission",
+   "coverage",
+   "premises",
+   "readings"
+  ],
+  "probes": {
+   "conclusion-no-denial.json": {
+    "pinned_returncode": 0,
+    "scratch_returncode": 0,
+    "identical_normalised": true,
+    "byte_identical_raw": true
+   },
+   "conclusion-no-claim-human.json": {
+    "pinned_returncode": 0,
+    "scratch_returncode": 0,
+    "identical_normalised": true,
+    "byte_identical_raw": true
+   }
+  }
+ },
+ "limits_at_end": {
+  "rlimit_as_soft": 6442450944,
+  "rlimit_as_hard": 6442450944,
+  "VE_RUST_TIMEOUT": "600",
+  "children_peak_rss_kib": 136280,
+  "self_peak_rss_kib": 136280
+ }
+}
