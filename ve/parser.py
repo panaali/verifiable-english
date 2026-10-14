@@ -388,10 +388,14 @@ def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
         return python()
 
     def same(result: ParseResult, row: dict) -> bool:
-        from .printer import print_document
+        from .printer import _render
         if row.get("ast") != [ast._to_data(f) for f in result.document.formulas]:
             return False
-        return "canonical" not in row or row["canonical"] == print_document(env, result.document)
+        # The source is bounded, but sugar can expand its canonical rendering
+        # past the public printer's output cap. This is an internal comparison,
+        # not a request to produce a bounded public rendering.
+        return "canonical" not in row or row["canonical"] == _render(
+            result.document, env, "ve_strict", enforce_source_limit=False)
 
     row = decide("parse", [{"id": "parse", "environment": env.to_dict(), "source": text}])[0]
     try:
