@@ -729,14 +729,16 @@ def test_malformed_evidence_is_no_verdict(evidence):
     assert row["status"] == "error" or row["result"]["verdict"] == "UNKNOWN", row
 
 
-def test_the_superposed_route_is_not_answered_here(tmp_path):
+def test_the_superposed_route_is_answered_here_with_budget(tmp_path):
     from tests.test_readings_s2_document import _m6
+    from ve.readings_verdicts import BUDGET
     doc = load_document(_m6(tmp_path))
     route = context(doc)
     assert route.route == "superposed"
     [row] = run(LEAN, [case("readings-verdicts", route.environment, route.document, question="conflict",
-                            evidence=[])])
-    assert row["status"] == "error" and row["error"].startswith("UnsupportedProfile: readings-verdicts answers")
+                            evidence=[], budget=dict(BUDGET))])
+    assert row["status"] == "ok" and row["route"] == "superposed"
+    assert row["result"]["status"] == "UNKNOWN"
 
 
 def test_answers_are_json_round_trip_stable(tmp_path):

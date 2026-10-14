@@ -350,8 +350,12 @@ def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admi
   if kind == "readings-verdicts" then
     if underCompletion b.a.re b.D then
       let f ← admitNDFull b
-      if routeND f.r.N == .superposed then return ← runSupVerdicts id b j
-    else if routeOf (b.a.re.lower.contains "norm-defaults@0") b.D == .superposed then return ← runSupVerdicts id b j
+      -- RD-3's budget-free enumerated request remains a service contract. RD-7's
+      -- superposed evidence generator supplies its explicit search budget.
+      if routeND f.r.N == .superposed && (j.getObjVal? "budget").isOk then
+        return ← runSupVerdicts id b j
+    else if routeOf (b.a.re.lower.contains "norm-defaults@0") b.D == .superposed then
+      return ← runSupVerdicts id b j
     return ← runVerdicts lower id b j
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
   runNDKind id kind (← admitNDFull b) j
@@ -460,10 +464,12 @@ def runAdmitted (j : Json) (id kind : String) (ready : ComponentAdmission) : Exc
   if kind == "readings-verdicts" then
     match ready with
     | .s2 b =>
-      if routeOf (b.a.re.lower.contains "norm-defaults@0") b.D == .superposed then return ← runSupVerdicts id b j
+      if routeOf (b.a.re.lower.contains "norm-defaults@0") b.D == .superposed then
+        return ← runSupVerdicts id b j
       return ← runVerdicts runLowerWith id b j
     | .nd f =>
-      if routeND f.r.N == .superposed then return ← runSupVerdicts id f.r.b j
+      if routeND f.r.N == .superposed && (j.getObjVal? "budget").isOk then
+        return ← runSupVerdicts id f.r.b j
       return ← runVerdicts runLowerWith id f.r.b j
     | .s1 _ => throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
   match ready with
