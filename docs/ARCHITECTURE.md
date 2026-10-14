@@ -52,6 +52,9 @@ decision A of 2026-10-08).
 | Committed files | the whole tree | 374 MiB | `docs/` 143 MiB, of which `docs/lean-first/` 125 MiB |
 <!-- /numbers:sizes -->
 
+The Tests row records the measured commit. AR-3 subsequently removed `tools/gate-collection.json`;
+the gate now stores collected IDs with the checked commit and compares them with the merge base.
+
 <!-- numbers:counts -->
 | Count | Source | Value |
 |---|---|---:|
