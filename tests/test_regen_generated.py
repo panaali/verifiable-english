@@ -130,7 +130,8 @@ def test_entries_run_in_dependency_order():
                           ("lake-build", "checker-pins"), ("checker-pins", "english-codes"),
                           ("lake-build", "response-schemas"), ("assurance-manifest", "assurance-doc")):
         assert order.index(before) < order.index(after), (before, after)
-    assert order[-1] == "gate-collection"
+    # The test collection is no generated file: the gate takes it from the merge base (tools/gate_collection.py).
+    assert "gate-collection" not in order and R.owner("tools/gate-collection.json") is None
 
 
 
@@ -471,6 +472,31 @@ def test_resolve_refuses_a_ledger_value_both_sides_changed(tmp_path, capsys):
     assert R.resolve((), root) == 2
     assert "ve.a -> ve.b" in capsys.readouterr().err
     assert (_git(root, "status", "--porcelain").stdout, (root / "lean/VE/Audit.lean").read_text()) == before
+
+
+def test_resolve_takes_the_deletion_of_a_retired_file(tmp_path, capsys):
+    # A branch that still edits a deleted generated file (AR-3's collision rule: take the deletion).
+    root = _repository(tmp_path, driver=False)
+    [retired] = R.RETIRED
+    _git(root, "checkout", "-q", "base")
+    _commit(root, {retired: "[]\n"}, "the retired file at the base")
+    for branch, files in (("theirs", {retired: '["tests/a.py::test_a"]\n'}), ("ours", {})):
+        _git(root, "checkout", "-q", branch)
+        _git(root, "merge", "-q", "--no-edit", "base")
+        if files:
+            _commit(root, files, "edit the retired file")
+    _git(root, "rm", "-q", retired)
+    _git(root, "commit", "-q", "-m", "delete the retired file")
+    _git(root, "merge", "--no-commit", "-q", "theirs", check=False)
+    assert retired in _git(root, "diff", "--name-only", "--diff-filter=U").stdout.split()
+    assert R.resolve((), root) == 0
+    assert not (root / retired).exists() and _git(root, "diff", "--name-only", "--diff-filter=U").stdout == ""
+    assert f"resolved {retired} (deleted: " in capsys.readouterr().out
+    _check_merged(root)
+
+
+def test_a_retired_file_has_no_entry():
+    assert all(R.owner(path) is None for path in R.RETIRED)
 
 
 def test_resolve_fails_when_measured_tree_exceeds_merged_trust_budget(tmp_path, monkeypatch):

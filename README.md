@@ -18,14 +18,17 @@ checkout's `.venv`), builds both native backends once, runs the Lean source audi
 the full non-live pytest suite (collected serially, then run on `--workers` xdist
 workers, default `auto`; every worker must collect the same selection), then writes `gate-result.json` with the commit SHA, tool versions, counts,
 every skip and every failure. It exits nonzero for missing backends, unlisted skips,
-missing test IDs, a dirty or changing worktree, or failed stages. Expected test
-IDs, deselected live tests included, are pinned in `tools/gate-collection.json`; regenerate that file after
-intentional test changes with `uv run python tools/gate_collection.py --write`
-(after `(cd lean && lake build)`; `python3 tools/gate.py --write-collection` runs the same
-refresh), which collects with the gate's own pytest command and
-`tools.gate_pytest` and lists every added and removed ID. The gate,
-`tests/test_gate.py` and `tests/test_gate_collection.py` fail whenever
-the collection and the pinned file differ. Optional backend
+missing test IDs, a dirty or changing worktree, or failed stages. The expected test
+IDs, deselected live tests included, are the merge base's (`--base REV` names another commit): the
+collection a gate attached to that commit as the git note `refs/notes/ve-gate-collection`, or, without
+one, the base collected in a scratch worktree (and then attached). New tests are fine; a base ID the head
+does not collect fails the gate unless a commit since the base records its removal with a trailer
+`Test-removed: <test ID, or its deleted function, class or file> — <reason>`, which reviewers read with the
+batch. A trailer naming a test the head still collects fails as stale. `git diff --no-renames base..HEAD`
+only labels each removal: its file or test function deleted, or its parametrisation changed
+(`tools/gate_collection.py`). Every full
+gate attaches its own collection to its commit. `uv run python tools/gate_collection.py --check` (after
+`(cd lean && lake build)`) runs the same comparison on the worktree. Optional backend
 and fixture skips are listed in `tools/gate-optional.json`. The JSON result is local and ignored by Git;
 use `--output PATH` to retain a particular gate record. The package requires
 Python 3.12 or later.
