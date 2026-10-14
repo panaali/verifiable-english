@@ -812,7 +812,7 @@ module ResponseShape.Schemas.Discourse 8353c1b6889628bf6b907396a6ec1572251cbc0f7
 203:0-222:59 def ResponseShape.Schemas.Discourse.joint@ResponseShape.Schemas.Discourse
 224:0-234:42 def ResponseShape.Schemas.Discourse.row@ResponseShape.Schemas.Discourse
 236:0-252:29 def ResponseShape.Schemas.Discourse.file@ResponseShape.Schemas.Discourse
-module ResponseShape.Schemas.Document ea206e5529cf6a9b5e1f023b2fdc47a85960b8230f048bea63971e1cb4556f97
+module ResponseShape.Schemas.Document 14464c8ab521d58c20e2ed3d57e9a3a3cf29c0f8643ed0e328bfe63a6e240344
 11:0-28:54 def ResponseShape.Schemas.Document.unit@ResponseShape.Schemas.Document
 30:0-32:62 def ResponseShape.Schemas.Document.nullable@ResponseShape.Schemas.Document
 34:0-40:53 def ResponseShape.Schemas.Document.soft_exception@ResponseShape.Schemas.Document
@@ -820,7 +820,7 @@ module ResponseShape.Schemas.Document ea206e5529cf6a9b5e1f023b2fdc47a85960b8230f
 54:0-56:73 def ResponseShape.Schemas.Document.cites@ResponseShape.Schemas.Document
 58:0-68:49 def ResponseShape.Schemas.Document.soft_content@ResponseShape.Schemas.Document
 70:0-77:107 def ResponseShape.Schemas.Document.rights_line@ResponseShape.Schemas.Document
-79:0-83:107 def ResponseShape.Schemas.Document.rights_condition@ResponseShape.Schemas.Document
+79:0-83:68 def ResponseShape.Schemas.Document.rights_condition@ResponseShape.Schemas.Document
 85:0-102:116 def ResponseShape.Schemas.Document.rights_block@ResponseShape.Schemas.Document
 104:0-111:102 def ResponseShape.Schemas.Document.meaning@ResponseShape.Schemas.Document
 113:0-121:98 def ResponseShape.Schemas.Document.narrowing@ResponseShape.Schemas.Document

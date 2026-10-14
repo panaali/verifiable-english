@@ -242,6 +242,46 @@ def test_a_null_citation_is_read_as_absent_and_typed_in_the_answer(tmp_path):
     assert lean and new == old and "returned" in new[0]
 
 
+@pytest.mark.parametrize("purpose", [7, True, None, [], {}, ["narrow"], "narrow"])
+def test_f4_copied_ignored_condition_metadata_accepts_every_json_type(tmp_path, purpose):
+    """PROBE F4: purposes is copied and bound, while the rights decoder ignores its value."""
+    meta, body = _split(_text(2))
+    limitation = next(u for u in meta["units"] if u["kind"] == "limitation")["content"]["limitation"]
+    limitation["conditions"][0]["purposes"] = purpose
+    path = tmp_path / "purpose.ve.md"
+    path.write_text(_join(meta, body))
+    lean, new, old = _both(path)
+    assert lean and new == old and "returned" in new[0] and "returned" in new[1]
+
+
+@pytest.mark.parametrize("case", ["null_citation", "condition_decider", "bar_decider"])
+@pytest.mark.parametrize("value", ["missing", "null"])
+def test_f5_optional_rights_metadata_renders_after_acceptance(tmp_path, case, value):
+    """PROBE F5: accepted absent and null metadata have the same rendering on both document paths."""
+    meta, body = _split(_text(0 if case == "null_citation" else 2))
+    if case == "null_citation":
+        target = meta["units"][0]["content"]["right"]["lines"][0]
+        field = "cites"
+    else:
+        kind = "bar" if case == "bar_decider" else "limitation"
+        target = next(u for u in meta["units"] if u["kind"] == kind)["content"][kind]
+        if case == "condition_decider":
+            target = target["conditions"][0]
+        field = "decided_by"
+    if value == "missing":
+        target.pop(field, None)
+    else:
+        target[field] = {"guard": None} if case == "null_citation" else None
+    path = tmp_path / "optional.ve.md"
+    path.write_text(_join(meta, body))
+    lean, new, old = _both(path)
+    assert lean and new == old and "returned" in new[0] and "returned" in new[1]
+    if case == "null_citation":
+        assert "It cites unit None" not in new[1]["returned"]
+    elif case == "bar_decider":
+        assert "The source names no decider of whether an act is so aimed." in new[1]["returned"]
+
+
 def test_a_right_without_a_holder_guard_is_built_on_both_paths(tmp_path):
     """The rights route reads an absent holder guard as `top`; the retained path's container read `body["guard"]`."""
     meta, body = _split(_text(0))

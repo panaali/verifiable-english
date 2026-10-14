@@ -77,10 +77,10 @@ def rights_line : Shape :=
       ("holder_slot", nullable (ref "common.json#/$defs/nat")), ("cites", nullable (ref "#/$defs/cites"))]]
 
 def rights_condition : Shape :=
-  c "Rights.Wire.decodeCondition: a limitation's condition as written." [
+  c "Rights.Wire.decodeCondition: a limitation's condition as written. The decoder ignores purposes; copied content binds its arbitrary JSON value to the request." [
     obj, .required ["name", "role", "verbalisation"],
     closed [("name", str), ("role", enumS ["necessary", "sufficient"]), ("verbalisation", str),
-      ("decided_by", .type ["string", "null"]), ("purposes", nullable (ref "common.json#/$defs/strings"))]]
+      ("decided_by", .type ["string", "null"]), ("purposes", n [])]]
 
 /-- A rights block (`Rights.Wire.addUnit`): one of `right`, `right_lines`, `limitation` and `bar`, as written. -/
 def rights_block : Shape :=
