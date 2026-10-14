@@ -139,14 +139,21 @@ def gate_record_problems(head: str, gate: dict) -> list[str]:
     """`gate_problems`, and the counts and failures of the gate's own record must agree."""
     errors = gate_problems(head, gate)
     counts = gate.get("counts") if isinstance(gate, dict) else None
-    keys = ("passed", "skipped", "failed", "selected", "deselected", "collected")
-    if not isinstance(counts, dict) or not all(type(counts.get(k)) is int and counts[k] >= 0 for k in keys) \
-            or counts["passed"] + counts["skipped"] + counts["failed"] != counts["selected"] \
-            or counts["selected"] + counts["deselected"] != counts["collected"] or counts["failed"] != 0:
+    if not gate_counts_valid(counts, failed=0):
         errors.append("full gate counts do not add up or show a failure")
     if not isinstance(gate, dict) or gate.get("failures") != []:
         errors.append("full gate lists failures")
     return errors
+
+
+def gate_counts_valid(counts: object, *, failed: int) -> bool:
+    """The complete pytest accounting written by the gate, with an expected number of failures."""
+    keys = ("passed", "skipped", "failed", "selected", "deselected", "collected")
+    return (isinstance(counts, dict)
+            and all(type(counts.get(k)) is int and counts[k] >= 0 for k in keys)
+            and counts["failed"] == failed
+            and counts["passed"] + counts["skipped"] + counts["failed"] == counts["selected"]
+            and counts["selected"] + counts["deselected"] == counts["collected"])
 
 
 def rerun_pair_problems(full, rerun) -> list[str]:
@@ -166,8 +173,8 @@ def rerun_pair_problems(full, rerun) -> list[str]:
             or not tests or len(tests) != len(set(map(str, nodeids)))
             or not all(isinstance(f, dict) and isinstance(f.get("stage"), str) and f["stage"] in RERUNNABLE
                        for f in failures)
-            or not isinstance(counts, dict) or type(counts.get("failed")) is not int
-            or counts["failed"] != len(tests)):
+            or not gate_counts_valid(counts, failed=len(tests)) or counts["selected"] == 0
+            or type(counts.get("rust_passed")) is not int or counts["rust_passed"] <= 0):
         errors.append("the full gate is not a complete gate on a clean commit whose only failures are tests")
     rerun_failed, rerun_counts = rerun.get("rerun_failed"), rerun.get("counts")
     previous = rerun_failed.get("previous") if isinstance(rerun_failed, dict) else None
@@ -176,8 +183,8 @@ def rerun_pair_problems(full, rerun) -> list[str]:
             or any(rerun.get(k) != full.get(k) for k in same) or not isinstance(previous, dict)
             or any(previous.get(k) != full.get(k) for k in same) or rerun_failed.get("tests") != tests
             or rerun_failed.get("outcomes") != {test: "passed" for test in tests if isinstance(test, str)}
-            or not isinstance(rerun_counts, dict)
-            or not all(type(rerun_counts.get(k)) is int for k in ("passed", "selected"))
+            or not gate_counts_valid(rerun_counts, failed=0)
+            or rerun_counts["selected"] == 0 or rerun_counts["selected"] < len(tests)
             or rerun_counts["selected"] != rerun_counts["passed"]):
         errors.append("the serial rerun did not pass every failed test on the full gate's clean commit (R13)")
     return errors
@@ -200,7 +207,7 @@ def gate_trust_problems(gate, measured: dict | None = None) -> list[str]:
 def mutant_source_problems(mutants, head: str, cwd: Path | None = None) -> list[str]:
     """Each `tools/mutants.py` record ran on its file as committed at `head`: its `source_sha256` is that
     blob's. (The records batches kept before the toolkit hash nothing, `tools.evidence.killed`.)"""
-    rows = mutants.get("mutants") if isinstance(mutants, dict) else mutants
+    rows = mutant_rows(mutants)
     cwd, errors = cwd or ROOT, []
     for row in rows if isinstance(rows, list) else ():
         if not isinstance(row, dict) or "killed" not in row or not isinstance(row.get("file"), str):
@@ -232,9 +239,14 @@ def committed_problems(paths: list[Path], commit: str | None, cwd: Path | None =
     return errors
 
 
+def mutant_rows(mutants):
+    """The toolkit's envelope and its historical bare array have the same rows for every reader."""
+    return mutants.get("mutants") if isinstance(mutants, dict) else mutants
+
+
 def mutant_problems(mutants, minimum: int = 3) -> list[str]:
     """The errors of seeded-mutant records: at least `minimum`, each named once, each failing its named test."""
-    rows = mutants.get("mutants") if isinstance(mutants, dict) else mutants
+    rows = mutant_rows(mutants)
     if not isinstance(rows, list) or len(rows) < minimum:
         return [f"fewer than {minimum} seeded mutants are recorded"]
     errors = []

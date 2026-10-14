@@ -168,7 +168,7 @@ def _problems(gates: list[Path]) -> list[str]:
     if out:
         return out
     budget, scope, migration = found["budget"], found["scope"], found["migration"]
-    mutants = found["mutants"].get("mutants") if isinstance(found["mutants"], dict) else found["mutants"]
+    mutants = batch_evidence.mutant_rows(found["mutants"])
     commits, out = gate_problems(gates, budget) if gates else ([], [])
     if budget["check_exit"] != 0:
         out.append("trust_map.py --check failed at the evidence commit")
@@ -212,7 +212,7 @@ def problems(gates: list[Path] = ()) -> list[str]:
 def block(found: dict) -> str:
     """REPORT.md's generated block, from the saved evidence `saved()` read and checked."""
     budget, scope, migration = found["budget"], found["scope"], found["migration"]
-    mutants = found["mutants"]["mutants"]
+    mutants = batch_evidence.mutant_rows(found["mutants"])
     head, base = budget["measured_head"], budget["measured_base"]
     lines = [
         f"Measured with `tools/trust_map.py` at `{budget['head'][:8]}` against the merge base `{budget['base'][:8]}`:",

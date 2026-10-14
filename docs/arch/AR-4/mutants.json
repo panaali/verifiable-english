@@ -193,13 +193,33 @@
    ]
   },
   {
-   "id": "AR4-M20",
-   "claim": "a boolean failure count is not an integer (recheck F7 type confusion)",
-   "file": "tools/batch_evidence.py",
-   "find": "            or not isinstance(counts, dict) or type(counts.get(\"failed\")) is not int\n",
-   "replace": "            or not isinstance(counts, dict)\n",
+  "id": "AR4-M20",
+  "claim": "a boolean failure count is not an integer (recheck F7 type confusion)",
+  "file": "tools/batch_evidence.py",
+   "find": "            and all(type(counts.get(k)) is int and counts[k] >= 0 for k in keys)\n",
+   "replace": "            and all(isinstance(counts.get(k), int) and counts[k] >= 0 for k in keys)\n",
    "tests": [
-    "tests/test_gate_trust.py::test_every_retyped_node_of_a_gate_record_is_a_problem_never_a_crash"
+    "tests/test_gate_trust.py::test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts"
+   ]
+  },
+  {
+   "id": "AR4-M23",
+   "claim": "an R13 rerun must execute at least one test (recheck F9)",
+   "file": "tools/batch_evidence.py",
+   "find": "            or rerun_counts[\"selected\"] == 0 or rerun_counts[\"selected\"] < len(tests)\n",
+   "replace": "",
+   "tests": [
+    "tests/test_gate_trust.py::test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts"
+   ]
+  },
+  {
+   "id": "AR4-M24",
+   "claim": "a validated bare mutant array can render the report (recheck F8)",
+   "file": "docs/arch/AR-4/report.py",
+   "find": "    mutants = batch_evidence.mutant_rows(found[\"mutants\"])\n    head, base = budget[\"measured_head\"], budget[\"measured_base\"]\n",
+   "replace": "    mutants = found[\"mutants\"][\"mutants\"]\n    head, base = budget[\"measured_head\"], budget[\"measured_base\"]\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_review_f8_bare_mutants_array_reaches_report_check"
    ]
   },
   {

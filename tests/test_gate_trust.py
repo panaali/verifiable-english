@@ -4,7 +4,9 @@ by their writer's schema (`trust_map.files_problems`); missing or malformed coun
 from __future__ import annotations
 
 import copy
+import importlib.util
 import json
+from pathlib import Path
 
 import pytest
 
@@ -109,6 +111,45 @@ def test_genuine_gate_records_pass_the_shared_checks(fake):
     assert _checks(failed, rerun, passed) == {"passed": [], "pair": []}
     budget = trust_counts()["budget"]
     assert batch_evidence.gate_trust_problems(passed, {**budget, "V": budget["V"] + 1})  # counts of another tree
+
+
+def test_review_f8_bare_mutants_array_reaches_report_check(monkeypatch):
+    """PROBE F8: the shared mutant validator accepts a bare array; rendering must read the same rows."""
+    path = Path(__file__).resolve().parents[1] / "docs/arch/AR-4/report.py"
+    spec = importlib.util.spec_from_file_location("ar4_report_f8", path)
+    assert spec and spec.loader
+    report = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(report)
+    original = report.load
+    expected = report.main(["--check"])
+    monkeypatch.setattr(report, "load", lambda p: original(p)["mutants"] if p.name == "mutants.json" else original(p))
+    assert report.main(["--check"]) == expected
+
+
+def test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts(fake):
+    """PROBE F9, with genuine gate records: missing, retyped and inconsistent counts cannot invoke R13."""
+    failed, rerun, passed = _records(fake)
+    assert batch_evidence.rerun_pair_problems(failed, rerun) == []
+    for record, field in ((failed, "full"), (rerun, "rerun")):
+        for key in ("passed", "skipped", "failed", "selected", "deselected", "collected"):
+            mutant = copy.deepcopy(record)
+            mutant["counts"].pop(key)
+            pair = (mutant, rerun) if field == "full" else (failed, mutant)
+            assert batch_evidence.rerun_pair_problems(*pair), (field, key)
+            mutant = copy.deepcopy(record)
+            mutant["counts"][key] = False
+            pair = (mutant, rerun) if field == "full" else (failed, mutant)
+            assert batch_evidence.rerun_pair_problems(*pair), (field, key)
+        mutant = copy.deepcopy(record)
+        mutant["counts"]["collected"] += 1
+        pair = (mutant, rerun) if field == "full" else (failed, mutant)
+        assert batch_evidence.rerun_pair_problems(*pair), field
+    empty = copy.deepcopy(rerun)
+    empty["counts"].update(passed=0, selected=0, collected=0)
+    assert batch_evidence.rerun_pair_problems(failed, empty)
+    incomplete = copy.deepcopy(failed)
+    incomplete["counts"] = {"failed": 1}
+    assert batch_evidence.rerun_pair_problems(incomplete, empty)
 
 
 @pytest.mark.parametrize("record", [{}, [], None, 7, True, "gate", DEEP])
