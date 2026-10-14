@@ -848,6 +848,7 @@
         "ResponseShape.Skeletons.parse",
         "ResponseShape.Skeletons.quantity",
         "ResponseShape.Skeletons.readings",
+        "ResponseShape.Skeletons.readingsChoices",
         "ResponseShape.Skeletons.readingsRoute",
         "ResponseShape.Skeletons.reports",
         "ResponseShape.Skeletons.rights",
@@ -920,6 +921,7 @@
         "ResponseShape.pointerString",
         "ResponseShape.props",
         "ResponseShape.qualify",
+        "ResponseShape.readingPlanBound",
         "ResponseShape.ref",
         "ResponseShape.render",
         "ResponseShape.resolve",
@@ -3122,8 +3124,7 @@
       "G[V]": [
         "VE.English.Run.covers",
         "VE.English.Run.run",
-        "VE.English.Run.runCase",
-        "main"
+        "VE.English.Run.runCase"
       ]
     },
     "VE/English/Statements.lean": {
@@ -10880,6 +10881,39 @@
     "VE/WireContract/Tables/SoftNorms.lean": {
       "G[V]": [
         "VE.WireContract.Tables.SoftNorms.table"
+      ]
+    },
+    "EnglishRunMain.lean": {
+      "G[V]": [
+        "main"
+      ]
+    },
+    "ResponseShape/Schemas/ReadingsChoices.lean": {
+      "G[V]": [
+        "ResponseShape.Schemas.ReadingsChoices.enumerate",
+        "ResponseShape.Schemas.ReadingsChoices.file",
+        "ResponseShape.Schemas.ReadingsChoices.plan",
+        "ResponseShape.Schemas.ReadingsChoices.row",
+        "ResponseShape.Schemas.ReadingsChoices.unknown",
+        "ResponseShape.Schemas.ReadingsChoices.verdict"
+      ]
+    },
+    "VE/Service/ReadingsChoices.lean": {
+      "G[V]": [
+        "VE.Service.ReadingsChoices.arr",
+        "VE.Service.ReadingsChoices.check",
+        "VE.Service.ReadingsChoices.compatible",
+        "VE.Service.ReadingsChoices.enumerate",
+        "VE.Service.ReadingsChoices.expected",
+        "VE.Service.ReadingsChoices.index",
+        "VE.Service.ReadingsChoices.indices",
+        "VE.Service.ReadingsChoices.label",
+        "VE.Service.ReadingsChoices.metadata",
+        "VE.Service.ReadingsChoices.openUnit",
+        "VE.Service.ReadingsChoices.plan",
+        "VE.Service.ReadingsChoices.run",
+        "VE.Service.ReadingsChoices.selectedAxes",
+        "VE.Service.ReadingsChoices.validateCouplings"
       ]
     }
   }

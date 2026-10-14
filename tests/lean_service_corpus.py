@@ -417,11 +417,27 @@ def corpus():
                   {"id": "model", "kind": "model", "environment": env.to_dict(),
                    "model": model.to_dict()},
                   {"id": "bad", "kind": "unknown"}, *ADVERSARIAL]
+    choice_sets = [{"id": name, "version": 1, "unit": name,
+                    "readings": [{"labels": {"force": value}}
+                                 for value in ("strict", "default")]}
+                   for name in ("a", "b")]
+    choice_couplings = [{"id": "same-force", "axis": "force", "sets": [
+        {"set": name, "version": 1} for name in ("a", "b")]}]
+    choice_plan = {"id": "choices", "kind": "plan", "set_meta": choice_sets,
+                   "couplings": choice_couplings}
+    choice_verdict = {"id": "choices", "environment": env.to_dict(), "fixed": [],
+                      "sets": [[["top"], ["top"]], [["top"], ["top"]]],
+                      "set_meta": choice_sets, "conclusion": ["top"],
+                      "route": "coupled-choices", "couplings": choice_couplings,
+                      "choice_evidence": [{"choice": [index, index], "status": "UNKNOWN"}
+                                          for index in (0, 1)]}
     return {"evaluate": evaluate_cases(), "check-certificate": certificate_cases(),
             "order": order_cases(), "route": route_cases(), "norms": norms_cases(),
             "family-norms": family_norms_cases(),
             "english": english_cases(), "environment": standalone_env,
-            "model": standalone_model, "identity": identities, "document": document_cases()}
+            "model": standalone_model, "identity": identities, "document": document_cases(),
+            "readings-choices": [{**choice_plan, "limit": 64},
+                                 {**choice_plan, "limit": 1}, choice_verdict]}
 
 
 def family_norms_cases():

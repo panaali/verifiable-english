@@ -1,0 +1,48 @@
+{
+  "baseline": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+  "cases": [
+    {
+      "fixture": 0,
+      "input_sha256": "3c3df41942ea52103ab6a82d09737326016e590094d825894d4295343f3a2e8e",
+      "exit": 0,
+      "stdout_sha256": "bb79946a3a74cb45d4811aa09907fe5993673d85e0372e1f35ff42258901fab0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "fixture": 1,
+      "input_sha256": "76b8a7b544d5d5ad79ab76e9807a02c0e56095d1ea0a4d42b421859533738310",
+      "exit": 0,
+      "stdout_sha256": "731d055e7935ccafd9eed032daf8f6b057df0d6acb9d135646290309a456ce12",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "fixture": 2,
+      "input_sha256": "b2df3d91e8d0590427bd6858d35c40bf3b78c26cd674d25b09b6867ed8e169d0",
+      "exit": 0,
+      "stdout_sha256": "dc73501c83c958430b63600196a996803a27e22409307417ec7beaeee24fad6a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "fixture": 3,
+      "input_sha256": "965a1e283e6b82bd03869c205abc712c51a0cf7a6c2d6af30167f83c6e6ee6a9",
+      "exit": 0,
+      "stdout_sha256": "dc73501c83c958430b63600196a996803a27e22409307417ec7beaeee24fad6a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "fixture": 4,
+      "input_sha256": "e2f2fbf17b61bebf1ae49403125f1f4725319d56bdb9fbaa0a779c78cd28b3d8",
+      "exit": 2,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "a8b8078218c84342b04d2c637f042d16ea1e9be21d709fc8537560b433500661"
+    },
+    {
+      "fixture": 5,
+      "input_sha256": "f4fd88c1df37d7c7b838ae6d996223f3c18d2d66b2a37d4081928f907e0b93d9",
+      "exit": 2,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "cacab6143d8e3ace67840e33c4afc013156d2f8e00fb1836b2f012da207a1c35"
+    }
+  ],
+  "identical": 6
+}

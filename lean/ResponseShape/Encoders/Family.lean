@@ -26,6 +26,22 @@ theorem readings_fits (j : Json) : OkFits req Skeletons.readings (Family.reading
   all_goals (try simp only [VE.Route.Wire.ok])
   all_goals fits
 
+theorem readingsChoices_check_fits {F C M : Type} (ctx : Family.Ctx F C M)
+    (valid : C → List F → F → Bool) (refutes : M → List F → F → Bool)
+    (j : Json) :
+    OkFits j Skeletons.readingsChoices (ReadingsChoices.check ctx valid refutes j) := by
+  unfold ReadingsChoices.check
+  okfits
+  all_goals (try simp only [VE.Route.Wire.ok])
+  all_goals fits
+
+theorem readingsChoices_fits (j : Json) :
+    OkFits j Skeletons.readingsChoices (ReadingsChoices.run j) := by
+  unfold ReadingsChoices.run ReadingsChoices.plan
+  okfits
+  all_goals (try simp only [VE.Route.Wire.ok])
+  all_goals first | exact readingsChoices_check_fits _ _ _ j | fits
+
 theorem bundle_fits (j : Json) : OkFits req Skeletons.bundle (FamilyBundle.bundleCase j) := by
   unfold FamilyBundle.bundleCase FamilyBundle.run
   okfits
@@ -73,6 +89,12 @@ theorem graph_reported (j : Json) : Fits j Skeletons.graph (Standalone.reported 
 theorem readings_reported (j : Json) : Fits j Skeletons.readings (Standalone.reported Family.readingsMode j) := by
   unfold Standalone.reported; split
   · exact readings_fits j _ ‹_›
+  · fits
+
+theorem readingsChoices_reported (j : Json) :
+    Fits j Skeletons.readingsChoices (Standalone.reported ReadingsChoices.run j) := by
+  unfold Standalone.reported; split
+  · exact readingsChoices_fits j _ ‹_›
   · fits
 
 theorem bundle_reported (j : Json) : Fits j Skeletons.bundle (Standalone.reported FamilyBundle.bundleCase j) := by
