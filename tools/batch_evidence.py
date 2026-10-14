@@ -36,6 +36,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+from tools import gate_collection  # noqa: E402
 from tools.evidence import EvidenceError, killed, load, merge_base, read_bytes, recording, scope_range  # noqa: E402
 from tools.evidence import ab, config as evidence_config, fuzz_ab, latency as evidence_latency, report  # noqa: E402
 
@@ -245,7 +246,11 @@ def _check(directory: Path, main: str) -> tuple[str, list[str]]:
     errors += scope_history_problems(saved, main)
     head = saved.get("head") if isinstance(saved, dict) else None
     base = saved.get("base") if isinstance(saved, dict) else None  # the merge base, or the check above fails
-    errors += gate_record_problems(head, read("gate"))
+    gate = read("gate")
+    errors += gate_record_problems(head, gate)
+    note = gate_collection.read_gate_result(head, cwd=ROOT)
+    if note is not None and note != gate:
+        errors.append("gate evidence differs from its git note")
     mutants = read("mutants")
     errors += mutant_problems(mutants, config["mutants"].get("min", 3))
     errors += mutant_source_problems(mutants, head) if isinstance(head, str) and SHA.fullmatch(head) else []
@@ -306,9 +311,15 @@ def main(argv=None) -> int:
         else:
             values = [load(p) for p in (args.gate, args.comparison, args.latency)]
             errors = problems(args.head, *values)
+            # A local gate note is authoritative when present. A copy travels
+            # with batch evidence because notes do not travel with a merge.
+            note = gate_collection.read_gate_result(args.head, cwd=Path.cwd())
+            if note is not None and note != values[0]:
+                errors.append("gate evidence differs from its git note")
         if args.report_commit is not None:
             errors += outside_report(changed_since(args.head, args.report_commit), args.report_dir)
-    except (OSError, ValueError, TypeError, KeyError, subprocess.CalledProcessError) as exc:
+    except (OSError, ValueError, TypeError, KeyError, subprocess.CalledProcessError,
+            gate_collection.CollectionError) as exc:
         errors = [str(exc)]
     if errors:
         print("\n".join(errors))
