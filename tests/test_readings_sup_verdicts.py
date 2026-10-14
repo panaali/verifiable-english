@@ -169,6 +169,34 @@ def test_budget_free_nd_verdict_request_keeps_the_enumerated_contract():
     assert answer["status"] == "ok" and answer["route"] == "enumerated"
 
 
+def test_superposed_answer_is_stable_when_document_keys_are_reordered(tmp_path):
+    from pathlib import Path
+    from tests.test_readings_nd_document import fnd1
+    from ve.document import load_document
+    from ve.readings_verdicts import context
+
+    path = fnd1(tmp_path)
+    original = Path(path).read_bytes()
+    end = original.index(b"\n---\n", 4)
+    meta = json.loads(original[4:end])
+
+    def reversed_keys(value):
+        if isinstance(value, dict):
+            return {key: reversed_keys(value[key]) for key in reversed(value)}
+        if isinstance(value, list):
+            return [reversed_keys(item) for item in value]
+        return value
+
+    reordered = tmp_path / "reordered.ve.md"
+    reordered.write_bytes(b"---\n" + json.dumps(reversed_keys(meta), ensure_ascii=False).encode()
+                          + original[end:])
+    assert reordered.read_bytes() != original
+    left = context(load_document(path))
+    right = context(load_document(reordered))
+    assert left.route == right.route == "superposed"
+    assert left.conflict() == right.conflict()
+
+
 def test_a_canonical_base_with_a_local_collision_is_not_a_premise_model(tmp_path):
     from tests.test_readings_s2_document import DF, NEVER_AVOID, S, s2_document, _wording
     _, route, _ = _wording(s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]),
