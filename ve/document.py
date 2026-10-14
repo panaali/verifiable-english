@@ -1555,7 +1555,10 @@ def _report(doc):
              "report": result["admission"]["report"]})
     if joint is not None and joint["constraints"]:
         # the joint disjunction is Lean's (`Joint(K)`, docs/spec/discourse.md 4.8); a premise only
-        # when every reading of an open set is an assertion with content
+        # when every reading of an open set is an assertion with content.
+        # It covers only open sets; signed authored assertions stay fixed.
+        assertions.extend(_assertion_disjunctions(
+            env, [r for r in active if r["status"] == "authored"]))
         joint_formula = None
         if joint["status"] == "complete" and all(c["kind"] == "asserted" and c["content"] is not None
                                                  for r in active if r["status"] == "open"
@@ -1862,12 +1865,15 @@ def main(argv=None):
                 if len(matching) != 1:
                     raise VEError("unknown narrowing")
                 narrowing = matching[0]
-                if not any((r["id"], r["version"]) == (narrowing["set"], narrowing["version"])
-                           for r in sets):
+                matching_sets = [r for r in sets if (r["id"], r["version"]) ==
+                                 (narrowing["set"], narrowing["version"])]
+                if not matching_sets:
                     raise VEError("narrowing does not target an active reading set")
-                if joint is not None and joint["status"] == "complete":
-                    rs = next(r for r in sets if (r["id"], r["version"]) ==
-                              (narrowing["set"], narrowing["version"]))
+                rs = matching_sets[0]
+                # Lean's joint vectors enumerate open sets only. The signed
+                # singleton of an authored set is in every choice implicitly.
+                if (joint is not None and joint["status"] == "complete"
+                        and rs["status"] == "open"):
                     kept = {i for i, candidate in enumerate(rs["readings"])
                             if candidate["id"] in narrowing["keeps"]}
                     key = f"{rs['id']}@{rs['version']}"
