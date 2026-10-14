@@ -5,9 +5,11 @@ from copy import deepcopy
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 import pytest
 
+from tests.subprocesses import HANG_TIMEOUT
 from ve import document as D
 from ve.backends import relay
 from ve.backends.service_schema import Context, Invalid, ROWS
@@ -28,6 +30,53 @@ def pilot(name, digest):
     raw = (PILOTS / name).read_bytes()
     assert hashlib.sha256(raw).hexdigest() == digest
     return raw
+
+
+@pytest.fixture(scope="module")
+def pilot_rows(tmp_path_factory):
+    """Exercise pilot_documents against private branches built from the saved blobs."""
+    from tools.lean_first_diff import pilot_documents
+
+    repo = tmp_path_factory.mktemp("b16d-pilots")
+
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True,
+                              timeout=HANG_TIMEOUT).stdout.decode().strip()
+
+    git("init", "-q")
+    git("-c", "user.name=VE Test", "-c", "user.email=ve@example.invalid",
+        "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null",
+        "commit", "--allow-empty", "-qm", "base")
+    base_branch = git("branch", "--show-current")
+    cases = (
+        ("pilot/nd", "usecases/run-20261009T1800Z/readings/nd-op.ve.md", "nd-op.ve.txt",
+         "77a7f103a063f57ff1c22fef1feb3d911d00b040dc8f188a119c5ffa925f6824"),
+        ("pilot/translation", "usecases/run-20261009T0600Z/translation-without-content.ve.md",
+         "translation-without-content.ve.txt", "4c10dfcb2deac28417836f1367bba340847e0dc723b2ab9b97f29fa421105199"),
+    )
+    for branch, relative, name, digest in cases:
+        git("switch", "-q", "-c", branch, base_branch)
+        path = repo / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(pilot(name, digest))
+        git("add", "--", relative)
+        git("-c", "user.name=VE Test", "-c", "user.email=ve@example.invalid",
+            "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null", "commit", "-qm", "pilot")
+        git("switch", "-q", base_branch)
+    return pilot_documents(repo)
+
+
+def test_private_pilot_fixture_enumerates_saved_branches(pilot_rows):
+    assert {name for name, _, _ in pilot_rows} == {
+        "pilot/nd:usecases/run-20261009T1800Z/readings/nd-op.ve.md",
+        "pilot/translation:usecases/run-20261009T0600Z/translation-without-content.ve.md",
+    }
+
+
+def pilot_from_rows(rows, suffix):
+    matches = [raw for name, _, raw in rows if name.endswith(suffix)]
+    assert len(matches) == 1
+    return matches[0]
 
 
 def test_norm_defaults_readings_and_english_fence_are_decided_by_lean(monkeypatch):
@@ -57,16 +106,16 @@ def test_pending_reading_metadata_is_checked_by_lean(tmp_path):
         D.check_document(path)
 
 
-def test_coupled_pilot_reading_plan_matches_prior_path(tmp_path):
-    raw = pilot("nd-op.ve.txt", "77a7f103a063f57ff1c22fef1feb3d911d00b040dc8f188a119c5ffa925f6824")
+def test_coupled_pilot_reading_plan_matches_prior_path(tmp_path, pilot_rows):
+    raw = pilot_from_rows(pilot_rows, "run-20261009T1800Z/readings/nd-op.ve.md")
     path = tmp_path / "nd-op.ve.md"
     path.write_bytes(raw)
     expected = D._report(D._load_document(raw, path, None))["reading_plan"]
     assert D.check_document(path)["reading_plan"] == expected
 
 
-def test_labeled_pending_pilot_is_lean_decided(tmp_path, monkeypatch):
-    raw = pilot("translation-without-content.ve.txt", "4c10dfcb2deac28417836f1367bba340847e0dc723b2ab9b97f29fa421105199")
+def test_labeled_pending_pilot_is_lean_decided(tmp_path, monkeypatch, pilot_rows):
+    raw = pilot_from_rows(pilot_rows, "run-20261009T0600Z/translation-without-content.ve.md")
     path = tmp_path / "without-content.ve.md"
     path.write_bytes(raw)
     expected = D._report(D._load_document(raw, path, None))
