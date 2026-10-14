@@ -27,7 +27,6 @@ from __future__ import annotations
 import argparse
 import copy
 import json
-import math
 from pathlib import Path
 import sys
 
@@ -58,7 +57,6 @@ ANSWERED_FIELDS = set(_DEFS["answered"]["properties"])
 LINE_FIELDS = set(_DEFS["line"]["properties"])
 ROW_FIELDS = set(_DEFS["row"]["properties"])
 NAME_FIELDS = set(_DEFS["name"]["properties"])
-MAX_RECORDED_DEPTH = 128
 
 
 def environment(raw: bytes):
@@ -340,6 +338,8 @@ def _recorded_evidence(route: str, evidence, generate: bool):
     """
     if evidence is None:
         return
+    from .wire import validate_json
+    validate_json(evidence)
     if route == "readings":
         if type(evidence) is not list or any(type(entry) is not dict or "choice" not in entry
                                                    for entry in evidence):
@@ -350,17 +350,6 @@ def _recorded_evidence(route: str, evidence, generate: bool):
         conflict = evidence["conflict"]
         if type(conflict) is not dict or type(conflict.get("packages")) is not dict:
             raise VEError("InvalidInput: recorded conflict evidence needs a packages object")  # relay-lint: file I/O
-    pending = [(evidence, 0)]
-    while pending:
-        value, depth = pending.pop()
-        if depth > MAX_RECORDED_DEPTH:
-            raise VEError("InvalidInput: recorded evidence is too deeply nested")  # relay-lint: file I/O
-        if type(value) is float and not math.isfinite(value):
-            raise VEError("InvalidInput: recorded evidence contains a non-finite number")  # relay-lint: file I/O
-        if type(value) is dict:
-            pending.extend((child, depth + 1) for child in value.values())
-        elif type(value) is list:
-            pending.extend((child, depth + 1) for child in value)
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -678,12 +667,8 @@ def main(argv=None) -> int:
         else:
             evidence = None
             if options.evidence:
-                try:
-                    evidence = json.loads(Path(options.evidence).read_text(encoding="utf-8"))
-                except RecursionError as exc:
-                    raise VEError("InvalidInput: recorded evidence is too deeply nested") from exc  # relay-lint: file I/O
-                if evidence is None:
-                    raise VEError("InvalidInput: recorded evidence cannot be null")  # relay-lint: file I/O
+                from .wire import loads_json
+                evidence = loads_json(Path(options.evidence).read_bytes())
             result = answer(path, raw, options.question, evidence)
     except CheckerUnavailable as exc:
         emit(_answer(exc), {"class": "CheckerUnavailable", "message": str(exc)})
