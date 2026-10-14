@@ -29,7 +29,7 @@ root = "Serve"
 
 [[lean_exe]]
 name = "ve_english_run"
-root = "VE.English.Run"
+root = "EnglishRunMain"
 
 [[lean_exe]]
 name = "ve_response_decode"
