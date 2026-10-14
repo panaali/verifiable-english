@@ -21,7 +21,9 @@ def _bind_elaboration(row, units, environment):
     """Bind correlated soft rule IDs to the authored rights lines and norm units."""
     try:
         authored = {}
+        right_names = set()
         counts = Counter()
+        source_lines = []
         norms = []
         bars = 0
         for unit in units:
@@ -32,6 +34,7 @@ def _bind_elaboration(row, units, environment):
             body = unit.get('right', unit.get('right_lines'))
             if body is None:
                 continue
+            right_names.add(body.get('name', body.get('right')))
             for line in body['lines']:
                 for field in LINE_RULE_FIELDS[line['kind']]:
                     rule = line[field]
@@ -39,7 +42,12 @@ def _bind_elaboration(row, units, environment):
                     if name in authored:
                         raise ValueError('duplicate authored rule')
                     authored[name] = rule
-                    counts[name] += len(line.get('fan_out') or ()) or 1
+                    fan = line.get('fan_out') or {}
+                    counts[name] += len(fan) or 1
+                    for bearer in (sorted(fan) if fan else (None,)):
+                        source_lines.append((body.get('name', body.get('right')),
+                                             line['kind'], name, bearer,
+                                             fan[bearer] if bearer is not None else rule['predicate']))
 
         if not bars and row['bars']:
             raise ValueError('unrequested bar rules')
@@ -53,11 +61,19 @@ def _bind_elaboration(row, units, environment):
             correlated[line['rule']] = authored[source]
         if seen != counts:
             raise ValueError('rights line count')
+        if len(row['lines']) != len(source_lines):
+            raise ValueError('rights source line count')
+        for entry, (right, kind, name, bearer, predicate) in zip(row['lines'], source_lines):
+            if (entry['right'] != right or entry['kind'] != kind or
+                    entry.get('bearer') != bearer or
+                    entry.get('source_line', entry['rule']) != name or
+                    entry['predicate'] != predicate or entry['node']['predicate'] != predicate):
+                raise ValueError('unbound rights source line')
         for bar in row['bars']:
             if bar['name'] in correlated or bar['predicate'] not in environment['vocabulary']['predicates']:
                 raise ValueError('unbound bar rule')
             correlated[bar['name']] = bar
-        predicates = row['environment_prime']['vocabulary']['predicates']
+        predicates = environment['vocabulary']['predicates']
         bind_soft_elaboration(row, norms, predicates, rights_rules=correlated.items())
         limits = {unit['limitation']['name']: unit['limitation'] for unit in units
                   if 'limitation' in unit}
@@ -77,6 +93,46 @@ def _bind_elaboration(row, units, environment):
                     {'generator': 'rights', 'label': entry['label'], 'ast': entry['ast']}
                     for entry in row['limitations']]):
             raise ValueError('duplicate or unmatched limitation premise')
+        generated_names = set()
+        generated_keys = set()
+        prime_predicates = row['environment_prime']['vocabulary']['predicates']
+        for entry in row['generated']:
+            name, kind = entry['name'], entry['kind']
+            if name in generated_names or name not in prime_predicates:
+                raise ValueError('duplicate or missing generated declaration')
+            generated_names.add(name)
+            if kind in ('lim', 'cond'):
+                limit, act = entry['limitation'], entry['act']
+                if limit not in limits or act not in environment['vocabulary']['predicates']:
+                    raise ValueError('unbound generated limitation')
+                condition = entry.get('condition')
+                if kind == 'cond' and not any(c['name'] == condition for c in limits[limit]['conditions']):
+                    raise ValueError('unbound generated condition')
+                key = (kind, limit, act, condition)
+            else:
+                if not bars or entry['predicate'] not in environment['vocabulary']['predicates']:
+                    raise ValueError('unbound generated bar')
+                key = (kind, entry['predicate'])
+            if key in generated_keys:
+                raise ValueError('duplicate generated source key')
+            generated_keys.add(key)
+        if set(row['wordings']) != generated_names:
+            raise ValueError('unbound generated wording')
+        line_pairs = Counter((line['right'], line['rule']) for line in row['lines'])
+        narrowing_pairs = Counter((entry['right'], entry['rule']) for entry in row['narrowings'])
+        if narrowing_pairs != line_pairs:
+            raise ValueError('unbound narrowing line')
+        for entry in row['narrowings']:
+            targets = [mechanism['target'] for mechanism in entry['mechanisms']]
+            if (len(targets) != len(set(targets)) or
+                    any(not target.startswith(entry['rule'] + ':') for target in targets)):
+                raise ValueError('unbound narrowing target')
+        for entry in row['distinction']:
+            if entry['predicate'] not in environment['vocabulary']['predicates']:
+                raise ValueError('unbound distinction predicate')
+            if any((hit['right'], hit['rule']) not in line_pairs
+                   for hit in entry['hits']):
+                raise ValueError('unbound distinction hit')
         conditional = row['conditional_on']
         pair_labels = {entry['label'] for entry in row['colliding_pairs']}
         if len(conditional) != len(set(conditional)) or not set(conditional) <= pair_labels:

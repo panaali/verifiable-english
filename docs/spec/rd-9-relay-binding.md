@@ -16,7 +16,7 @@ only result of a failed relay check. The following inventory is the complete
 | `derived` | Exactly one rule row per submitted rule | `test_f14_each_soft_identity_field_is_bound` |
 | `order`, `premises` | Layer names are distinct declared predicates; each premise has the matching `layer:norms:` label | `test_f14_each_soft_identity_field_is_bound` |
 | `background` | Every `soft:` label is exactly a submitted default's condition or an elaborated colliding pair, once; formulas and other generators are Lean-derived | `test_f14_each_soft_identity_field_is_bound` |
-| `colliding_pairs` | Pair members are submitted rules, their act is declared, and their label names that pair; no duplicate | `test_f11_unbound_or_missing_decision_rows_are_unavailable`, `test_f12_public_soft_route_rejects_unbound_output` |
+| `colliding_pairs` | Pair members are submitted rules, their act is declared, and their label names the pair in Lean's order; no duplicate | `test_f11_unbound_or_missing_decision_rows_are_unavailable`, `test_f14_each_soft_identity_field_is_bound` |
 | `conflict_targets` | Every target names a declared act or its declared obligation and permission pair, once; formulas are Lean-derived | `test_f14_each_soft_identity_field_is_bound` |
 | `conditional_on` | Distinct labels among the elaborated coherence pairs | `test_f12_public_soft_route_rejects_unbound_output`, `test_rights_elaboration_premise_identities_are_bound` |
 | `fragment`, `warnings` | Lean-derived Boolean and diagnostics; schema and encoder theorem | `test_route_row_schemas` |
@@ -26,9 +26,11 @@ only result of a failed relay check. The following inventory is the complete
 | `soft_residual`, `default_exceptions_by_decider` (soft) | Counts are bounded by submitted defaults, switches, pair and decider declarations; exact semantic residual is Lean-derived | `test_f12_public_soft_route_rejects_unbound_output`, `test_f12_decider_counts_are_bound_per_decider` |
 | `soft_status` (soft) | Lean-derived status; schema and encoder theorem | `test_route_row_schemas` |
 | `overlaps`, `override_cycles` (soft, optional) | Submitted witness results, typed by schema; their validity and message are Lean-derived | `test_route_row_schemas` |
-| `lines`, `generated`, `bars` (rights) | Authored line names and bar predicates bound by the rights elaboration binder; generated values are Lean-derived | `test_f11_public_rights_route_binds_lean_row` |
+| `lines`, `generated`, `bars` (rights) | Each line's right, kind, source rule, bearer and predicate match the corresponding authored line; bar predicates are declared; every generated source key names a submitted limitation, condition, act or bar, and its generated declaration exists once | `test_f11_public_rights_route_binds_lean_row`, `test_rights_elaboration_premise_identities_are_bound` |
 | `limitations`, `rights_background` (rights) | Every limitation label names a submitted limitation, condition, role and declared act, once; the background rows match those labels and formulas exactly | `test_rights_elaboration_premise_identities_are_bound` |
-| `narrowings`, `distinction`, `findings`, `wordings`, `unit_open` (rights) | Lean-derived scope and rendering values, typed by schema and covered by encoder theorem | `test_route_row_schemas` |
+| `narrowings` (rights) | Right and rule pairs equal the elaborated lines; each distinct mechanism target names its rule; scope, conclusion and licence are Lean-derived | `test_rights_elaboration_premise_identities_are_bound` |
+| `findings`, `unit_open` (rights) | Lean-derived diagnostics and one open flag per submitted unit, typed by schema and covered by encoder theorem | `test_route_row_schemas` |
+| `distinction`, `wordings` (rights) | Distinction predicates and hit right/rule pairs refer to submitted acts and elaborated lines; wording keys equal generated names; text and flags are Lean-derived | `test_rights_elaboration_premise_identities_are_bound` |
 
 The displayed `rights-conflict` response also binds `targets` to the complete
 `conflict_targets` list of the same elaboration and `conditional_on` to its
