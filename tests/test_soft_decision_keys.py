@@ -447,3 +447,134 @@ def test_f17_authored_protected_hit_is_accepted_and_duplicate_is_unavailable(mon
     monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: forged)
     with pytest.raises(CheckerUnavailable):
         rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
+
+
+@pytest.mark.parametrize('mutation', [
+    pytest.param(lambda row: row['environment_prime']['vocabulary']['predicates'].__setitem__(
+        'ghost', {'arguments': ['assistant'], 'description': 'base'}), id='prime extra predicate'),
+    pytest.param(lambda row: row['environment_prime']['profiles'].append('readings@1'),
+                 id='prime extra profile'),
+    pytest.param(lambda row: row['decisions'][0].__setitem__('arguments', ['user']),
+                 id='decision arguments'),
+    pytest.param(lambda row: row['decisions'][0].__setitem__('name', 'soft__ghost'),
+                 id='decision name'),
+    pytest.param(lambda row: row['decisions'][0].update(
+        name=row['decisions'][1]['name']), id='decision duplicate name'),
+    pytest.param(lambda row: row['rule_acts'].__setitem__('h', 'x_required'),
+                 id='wrong declared act'),
+    pytest.param(lambda row: row['order'].clear(), id='missing layer'),
+    pytest.param(lambda row: row['conflict_targets'].clear(), id='missing target'),
+    pytest.param(lambda row: row['soft_residual'].__setitem__('default_exceptions', 0),
+                 id='missing default count'),
+    pytest.param(lambda row: row.__setitem__('default_exceptions_by_decider', {}),
+                 id='missing decider'),
+])
+def test_binding_audit_soft_fields_reject_forgery(monkeypatch, genuine, mutation):
+    row = copy.deepcopy(genuine)
+    mutation(row)
+    with pytest.raises(CheckerUnavailable):
+        _document(monkeypatch, row)
+
+
+@pytest.mark.parametrize('mechanism', ['blockedBy absent', 'switch absent', 'carve-out 999'])
+def test_f18_narrowing_mechanism_and_target_bind_to_authored_line(monkeypatch, mechanism):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    row = copy.deepcopy(rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate'))
+    row['narrowings'][0]['mechanisms'][0].update(
+        mechanism=mechanism, target=f'no-arbitrary-arrest:{mechanism}')
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
+
+
+@pytest.mark.parametrize('mutation', [
+    pytest.param(lambda row: row['environment_prime']['vocabulary']['predicates'].__setitem__(
+        'rights__lim__9', {'arguments': ['state', 'person'], 'description': 'forged'}),
+                 id='extra prime predicate'),
+    pytest.param(lambda row: row['environment_prime']['profiles'].append('readings@1'),
+                 id='extra prime profile'),
+    pytest.param(lambda row: row['lines'][0].__setitem__('instance', 'immunity'),
+                 id='wrong line instance'),
+    pytest.param(lambda row: row['lines'][0]['node'].__setitem__('sign', True),
+                 id='wrong line sign'),
+    pytest.param(lambda row: row['lines'][0]['node'].__setitem__('hard', True),
+                 id='wrong line hard'),
+    pytest.param(lambda row: row['lines'][0]['node'].__setitem__('over', ['absent']),
+                 id='wrong line over'),
+    pytest.param(lambda row: row['generated'].clear(), id='missing generated predicates'),
+    pytest.param(lambda row: row['limitations'].clear(), id='missing limitation premise'),
+    pytest.param(lambda row: row['findings'].append('ProtectedInCone: ghost in rule nobody on right nobody'),
+                 id='forged distinction finding'),
+    pytest.param(lambda row: row['wordings'].__setitem__(
+        next(iter(row['wordings'])), '{0.__class__}'), id='unsafe wording placeholder'),
+])
+def test_binding_audit_rights_fields_reject_forgery(monkeypatch, mutation):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    row = copy.deepcopy(rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate'))
+    mutation(row)
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
+
+
+def test_binding_audit_pair_and_label_removed_together_is_unavailable(monkeypatch, genuine):
+    row = copy.deepcopy(genuine)
+    label = row['colliding_pairs'].pop()['label']
+    row['background'][:] = [entry for entry in row['background'] if entry.get('label') != label]
+    row['conditional_on'][:] = [entry for entry in row['conditional_on'] if entry != label]
+    row['decisions'][:] = [entry for entry in row['decisions']
+                           if 'outweighs' not in entry['key']]
+    row['soft_residual']['holistic_overrides'] = 0
+    with pytest.raises(CheckerUnavailable):
+        _document(monkeypatch, row)
+
+
+def test_binding_audit_reversed_pair_and_label_together_is_unavailable(monkeypatch, genuine):
+    row = copy.deepcopy(genuine)
+    pair = row['colliding_pairs'][0]
+    old = pair['label']
+    pair['pair'].reverse()
+    pair['label'] = f"soft:coherence:{pair['pair'][0]},{pair['pair'][1]}"
+    for entry in row['background']:
+        if entry.get('label') == old:
+            entry['label'] = pair['label']
+    row['conditional_on'] = [pair['label'] if label == old else label for label in row['conditional_on']]
+    with pytest.raises(CheckerUnavailable):
+        _document(monkeypatch, row)
+
+
+def test_binding_audit_rights_generated_name_swap_is_unavailable(monkeypatch):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    row = copy.deepcopy(rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate'))
+    first, second = row['generated'][:2]
+    first['name'], second['name'] = second['name'], first['name']
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
+
+
+def test_binding_audit_scope_findings_and_licences_are_bound(monkeypatch):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    real = rights_route.decide_once
+
+    def forged(mode, case):
+        row = copy.deepcopy(real(mode, case))
+        if case['kind'] == 'rights-scope':
+            row['findings'] = ['UnlicensedLimitation: ghost of rule nobody on right nobody']
+        return row
+
+    monkeypatch.setattr(rights_route, 'decide_once', forged)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.report_rights(environment, GAMMA)
