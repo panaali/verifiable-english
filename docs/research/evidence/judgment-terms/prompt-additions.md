@@ -42,7 +42,7 @@ The retrospective values on run 20261012T1800Z, which the first live run should 
 >   predicates change it.
 > - A constant entry has only `sort` and `description` (no `verbalisation`; the Rust checker refuses one).
 > - Give `of_greatest_importance_for` no `verbalisation`. The wording lint rejects "{0} is of the greatest importance
->   for {1}", and its head "is" then takes every one-word "{0} is X" wording in part 1 away (14 predicates fall back to
+>   for {1}", and its head "is" then takes every one-word "{0} is X" wording in part 1 away (13 predicates fall back to
 >   'classified as "…"').
 > - Check that the four parts load and check as before, with u010 and u060 OPEN, and that the rendering changes only
 >   at u010, u060 and the one line of u025's distinguishing situation that now names `thing`.
