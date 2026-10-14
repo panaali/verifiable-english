@@ -6,3 +6,9 @@ error: VE/Closure/OrderChecks.lean:23:0: Expression
 
 undeclared endpoint: lean/VE/Closure/Order.lean -> VE.Closure.OrderChecks; build exit 1
 error: VE/Closure/OrderChecks.lean:21:0: Expression
+
+strictness mutant: lean/VE/Closure/Order.lean (`above` uses .star) -> VE.Closure.above_iff / VE.Closure.OrderChecks; build exit 1
+error: VE/Closure/Order.lean:58:2: Type mismatch
+error: VE/Closure/Order.lean:83:16: Application type mismatch: The argument
+error: VE/Closure/Order.lean:193:6: Tactic `apply` failed: could not unify the conclusion of `(reachEval_iff Kind.plus es a b).mpr`
+error: VE/Closure/Order.lean:197:49: Application type mismatch: The argument
