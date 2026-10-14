@@ -1,0 +1,21 @@
+{
+  "test": "tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check[checked]",
+  "summary": "The nested pytest run timed out after 1800 seconds in two loaded VM integration suites; the checked case passed on both serial retries, and Mac full runs passed both parametrisations.",
+  "observations": [
+    {
+      "source": "integ-runner-portability-verify.log and integ-runner-portability-verify.log.retry, 2026-10-14 09:29-11:30 UTC; main dccd9cf5; pytest -n 14; sar -q 09:30-11:30 UTC",
+      "suite": "FAILED with subprocess.TimeoutExpired: the nested pytest timed out after 1800 seconds; VM 1-minute load 71-129, average 97 on 32 CPUs.",
+      "alone": "Serial retry on the same tree: checked passed; overall 1 failed, 2 passed in 12.03s (the failure was the unrelated RD-8 report test)."
+    },
+    {
+      "source": "integ-lf-14d-verify.log and integ-lf-14d-verify.log.retry, 2026-10-14 11:50-14:21 UTC",
+      "suite": "FAILED with subprocess.TimeoutExpired: the nested pytest timed out after 1800 seconds.",
+      "alone": "Serial retry at VM load 102-116: checked passed; overall 2 failed, 1 passed in 1809.13s (unchecked timed out and the unrelated RD-8 report test failed)."
+    },
+    {
+      "source": "mac-verify.jsonl, 2026-10-14 branch-runner-portability and branch-lf-14d; nightly-verify.final.md, ve-mac-1",
+      "suite": "The Mac full runs passed both sub-tick parametrisations.",
+      "alone": "Not needed on the Mac runner."
+    }
+  ]
+}

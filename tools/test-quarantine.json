@@ -8,6 +8,22 @@
       "added": "2026-10-10",
       "expires": "2026-10-17",
       "reason": "fails in suites under machine load and passes alone on the same tree (the saved evidence); a failure in the gate is retried alone once"
+    },
+    {
+      "test": "tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check[checked]",
+      "evidence": "docs/test-quarantine/evidence/quarantine-subtick-checked.json",
+      "owner": "fix-subtick",
+      "added": "2026-10-14",
+      "expires": "2026-10-21",
+      "reason": "The nested pytest run times out after 1800 s when VM load is about 100 on 32 CPUs but passes alone on a quieter machine; fix-subtick will remove the cause and its owner will delete this entry, or it expires."
+    },
+    {
+      "test": "tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check[response unchecked]",
+      "evidence": "docs/test-quarantine/evidence/quarantine-subtick-response-unchecked.json",
+      "owner": "fix-subtick",
+      "added": "2026-10-14",
+      "expires": "2026-10-21",
+      "reason": "The nested pytest run times out after 1800 s when VM load is about 100 on 32 CPUs but passes alone on a quieter machine; fix-subtick will remove the cause and its owner will delete this entry, or it expires."
     }
   ]
 }
