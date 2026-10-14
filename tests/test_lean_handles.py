@@ -254,6 +254,32 @@ def test_a_rust_process_that_writes_two_records_is_no_answer(rust, tmp_path):
     assert not _checkers()
 
 
+@pytest.mark.parametrize("phase", ["write", "response"])
+def test_a_rust_record_completed_past_its_deadline_is_no_answer(tmp_path, monkeypatch, phase):
+    """The deadline passes during the last write of the case or the read that completes the record
+    (no select follows either): the record is not accepted, and its process is not reused."""
+    from types import SimpleNamespace
+    binary = tmp_path / "ve"
+    record = json.dumps({"id": "typing", "status": "ok", "well_typed": True})
+    binary.write_text(f"#!/bin/sh\nhead -n 1 >/dev/null\necho '{record}'\ncat >/dev/null\n")
+    binary.chmod(0o755)
+    late = SimpleNamespace(offset=0.0)
+    monkeypatch.setattr(rust_jsonl, "time", SimpleNamespace(monotonic=lambda: time.monotonic() + late.offset))
+    native = os.write if phase == "write" else os.read
+
+    def transfer(fd, data):
+        result = native(fd, data)
+        if b"\n" in (bytes(data) if phase == "write" else result):
+            late.offset = 2 * HANG_TIMEOUT
+        return result
+
+    monkeypatch.setattr(rust_jsonl, "os", SimpleNamespace(**{**vars(os), phase.replace("response", "read"): transfer}))
+    with pytest.raises(CheckerUnavailable, match="timed out"):
+        rust_jsonl.run(_rust_case(), executable=binary, timeout=HANG_TIMEOUT,
+                       expected_sha256=hashlib.sha256(binary.read_bytes()).hexdigest())
+    assert late.offset and not _checkers()
+
+
 def test_rust_retry_keeps_the_original_deadline(monkeypatch):
     from types import SimpleNamespace
     rust_jsonl._close_all()
