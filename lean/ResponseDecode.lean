@@ -16,8 +16,8 @@ only: nothing imports it and no theorem depends on it.
   token form) and the runners' dispatch tests (`usesSoftPath`, `Norms.Run.usesNormsPath`,
   ...) deciding beside their schemas, which must agree (`ResponseShape`, `lean` nodes).
 * `invariants` is `decode` and the content the runners guarantee, which the client does
-  not check (docs/spec/lean-service.md, threat model): counts regenerated from the
-  environment, graph unfoldings, dependency orders, distinct layers and conflict targets
+  not check (docs/spec/lean-service.md, threat model): graph unfoldings, dependency
+  orders, certificate counts equal to the runner's regenerated Background, distinct layers and conflict targets
   with their declared argument sorts, verdict details, English check consistency. The
   tests require every genuine service response to satisfy it.
 * `schemas` renders the schema files (`tools/response_schemas.py` writes and checks them).
@@ -55,55 +55,29 @@ def path (j : Json) : List String → Except String Json
 
 def length (j : Json) : Except String Nat := do pure (← j.getArr?).size
 
-/-! ## Counts of regenerated lists (schema README: Counts) -/
-
-/-- The members of the request's array or object at `p`. -/
-def members (case : Json) (p : List String) : Except String (List Json) := do
-  match ← path case p with
-  | .arr xs => pure xs.toList
-  | .obj kvs => pure (kvs.foldl (fun acc _ v => v :: acc) [])
-  | _ => throw "not an array or object"
-
-def countWhere (case : Json) (p : List String) (f : Json → Bool) : Except String Nat := do
-  pure ((← members case p).filter f).length
-
-def isTrue (e : Json) (k : String) : Bool :=
-  match e.getObjVal? k with
-  | .ok (.bool true) => true
-  | _ => false
-
 def predicates : List String := ["environment", "vocabulary", "predicates"]
 
-/-- `Data.Background.generate`: one premise per functional and one per total flag. -/
-def flagsCount (case : Json) : Except String Nat := do
-  pure ((← countWhere case predicates (isTrue · "functional")) + (← countWhere case predicates (isTrue · "total")))
+/-! ## Regenerated Background: the runner's own answer
 
-/-- `Definitions.expand`: one biconditional per defined predicate. -/
-def definitionsCount (case : Json) : Except String Nat := countWhere case predicates (has · "defined")
+A certificate's `background` and `layers` are counts the runner derives (architecture decision
+D1): the client binds them only by `ResponseShape.backgroundBound`, a relation to the request.
+The invariants compare them, and the Background lists of `background` and `norms-elaborate`
+rows, with what the same mode's runner regenerates for the case's environment (a `background`
+or `norms-elaborate` case), never with a count predicted from the request's declarations. -/
 
-/-- `Background.literals`: one premise per pair of `$string` literals. -/
-def literalsCount (case : Json) : Except String Nat := do
-  let n ← countWhere case ["environment", "vocabulary", "constants"]
-    (fun e => e.getObjValD "sort" == .str "$string")
-  pure (n * (n - 1) / 2)
+/-- The mode's answer to a `kind` case over the case's `id`, `environment` and the fields
+`keep`; it must be `ok`. -/
+def regenerate (mode : String) (case : Json) (kind : String) (keep : List String) : Except String Json := do
+  let some m := VE.Service.Mode.ofName? mode | throw s!"unknown mode {mode}"
+  let fields := (["id", "environment"] ++ keep).filterMap fun k => (case.getObjVal? k).toOption.map (k, ·)
+  let r := VE.Service.runMode m (Json.mkObj (fields ++ [("kind", .str kind)]))
+  need (isField r "status" (.str "ok")) s!"the regenerated {kind} is not ok"
+  pure r
 
-/-- `Norms.syms`: one layer per regulated predicate. -/
-def regulatedCount (case : Json) : Except String Nat := countWhere case predicates (has · "regulated")
-
-/-- `Norms.pairs`: one per obligation with a permission dual. -/
-def pairsCount (case : Json) : Except String Nat := countWhere case predicates fun e =>
-  match e.getObjVal? "regulated" with
-  | .ok r => r.getObjValD "role" == .str "obligation" && (match r.getObjVal? "permission" with
-      | .ok (.str _) => true
-      | _ => false)
-  | .error _ => false
-
-/-- The request's runs of generators, in generator order. -/
-def runs (case : Json) (counts : List (String × (Json → Except String Nat))) : Except String (List Json) := do
-  let mut out := []
-  for (g, count) in counts do
-    out := out ++ List.replicate (← count case) (Json.str g)
-  pure out
+/-- The row's `fields` are those of the regenerated answer. -/
+def sameFields (row regenerated : Json) (fields : List String) : Check := do
+  for k in fields do
+    need ((← field row k) == (← field regenerated k)) s!"{k} is not the regenerated Background's"
 
 /-! ## Graph reports -/
 
@@ -168,10 +142,11 @@ namespace Invariants
 def distinct (xs : List Json) (what : String) : Check :=
   need (xs.eraseDups.length == xs.length) s!"duplicate {what}"
 
-/-- The request's predicate declarations, by name (`RBNode` order). -/
+/-- The request's predicate declarations in the FOL projection (`VE.Core.Layers.folEntry`), by
+name (`RBNode` order). -/
 def declarations (case : Json) : Except String (List (String × Json)) := do
   match ← path case predicates with
-  | .obj kvs => pure (kvs.foldl (fun acc k v => acc ++ [(k, v)]) [])
+  | .obj kvs => pure ((kvs.foldl (fun acc k v => acc ++ [(k, v)]) []).filter (VE.Core.Layers.folEntry ·.2))
   | _ => throw "predicates are not an object"
 
 /-- The regulated predicates the request declares. -/
@@ -229,45 +204,33 @@ def normsElaborate (row case : Json) : Check := do
   for t in targets do
     let name ← (← field t "target").getStr?
     need ((← field t "sorts") == (← targetSorts case name)) s!"sorts of {name} are not its declared arguments"
-  let expected ← runs case [("definitions", definitionsCount), ("literals", literalsCount), ("profile", pairsCount)]
-  need ((← (← field row "background").getArr?).toList.map (·.getObjValD "generator") == expected)
-    "Background is not the regenerated generators'"
+  sameFields row (← regenerate "norms" case "norms-elaborate" ["norms"]) ["background"]
 
-def normsOk (row case : Json) : Check := do
-  match ← VE.Route.Run.caseKind case with
-  | "admission" => admissionContent row case
-  | "norms-elaborate" => normsElaborate row case
-  | "norms-certificate" => do
-    let n := (← definitionsCount case) + (← literalsCount case) + (← pairsCount case)
-    need ((← (← field row "background").getNat?) == n) "background is not the regenerated count"
-    need ((← (← field row "layers").getNat?) == (← regulatedCount case)) "not one layer per regulated predicate"
-  | "norms-conflict" => do
-    let targets ← VE.Bridge.strings (← field row "targets")
-    targetNames targets case
-    if has case "witness" then
-      need (targets.contains (← (← field row "target").getStr?)) "target is not a regenerated target"
-    else if has row "detail" then
-      need (isField row "verdict" (.str "UNKNOWN")) "detail without UNKNOWN"
-  | _ => pure ()
-where
-  admissionContent (row case : Json) : Check := do
-    let report ← field row "report"
-    requestNode (← field report "root") case
-    array (← field report "assumptions") (requestNode · case)
-    unfolds (← field report "assumptions") case
+/-- A certificate's Background count is the length of the Background the same runner
+regenerates for its environment, plus the soft premises a plain norms certificate carries
+(`Norms.Plain.run`). -/
+def certificateBackground (mode : String) (row case : Json) : Check := do
+  let regenerated ← length (← field (← regenerate mode case "background" []) "background")
+  let env := case.getObjValD "environment"
+  let plain := mode == "norms" && (VE.Norms.Run.usesNormsPath case || VE.Norms.Plain.layered env)
+  let soft ← if plain && has case "soft_premises" then length (← field case "soft_premises") else pure 0
+  need ((← (← field row "background").getNat?) == regenerated + soft)
+    "background is not the regenerated Background's length"
 
-def admission (row case : Json) : Check := normsOk.admissionContent row case
+def admission (row case : Json) : Check := do
+  let report ← field row "report"
+  requestNode (← field report "root") case
+  array (← field report "assumptions") (requestNode · case)
+  unfolds (← field report "assumptions") case
 
-def routeRow (row case : Json) : Check := do
+def routeRow (mode : String) (row case : Json) : Check := do
   if isField row "status" (.str "error") then
     match VE.Route.Run.generatorOf (← (← field row "error").getStr?) with
     | some g => need (isField row "generator" (.str g)) "generator is not the message's"
     | none => need (!has row "generator") "generator without InvalidModel"
   else match ← VE.Route.Run.caseKind case with
     | "evaluate" => nonemptyValues row
-    | "certificate" => do
-      let n := (← flagsCount case) + (← definitionsCount case) + (← literalsCount case)
-      need ((← (← field row "background").getNat?) == n) "background is not the regenerated count"
+    | "certificate" => certificateBackground mode row case
     | "dependency-order" => do
       let order ← VE.Bridge.strings (← field row "order")
       let nodes ← VE.Route.Wire.decodeNodes (← field case "nodes")
@@ -279,11 +242,29 @@ def routeRow (row case : Json) : Check := do
       need (bg == (← field row "premises")) "premises differ from background"
       let gs ← field row "generators"
       need ((← length bg) == (← length gs)) "not one generator per premise"
-      let expected ← runs case [("flags", flagsCount), ("definitions", definitionsCount),
-        ("literals", literalsCount)]
-      need ((← gs.getArr?).toList == expected) "generators are not the regenerated Background's"
+      sameFields row (← regenerate mode case "background" []) ["background", "generators"]
     | "admission" => admission row case
     | _ => pure ()
+
+def normsOk (row case : Json) : Check := do
+  match ← VE.Route.Run.caseKind case with
+  | "admission" => admission row case
+  | "norms-elaborate" => normsElaborate row case
+  | "certificate" | "background" => routeRow "norms" row case
+  | "norms-certificate" => do
+    let elaborated ← regenerate "norms" case "norms-elaborate" ["norms"]
+    need ((← (← field row "background").getNat?) == (← length (← field elaborated "background")))
+      "background is not the regenerated Background's length"
+    need ((← (← field row "layers").getNat?) == (← length (← field elaborated "premises")))
+      "layers are not the regenerated layer premises"
+  | "norms-conflict" => do
+    let targets ← VE.Bridge.strings (← field row "targets")
+    targetNames targets case
+    if has case "witness" then
+      need (targets.contains (← (← field row "target").getStr?)) "target is not a regenerated target"
+    else if has row "detail" then
+      need (isField row "verdict" (.str "UNKNOWN")) "detail without UNKNOWN"
+  | _ => pure ()
 
 def englishItem (j case : Json) : Check := do
   let checked ← (← field j "checked").getBool?
@@ -317,11 +298,11 @@ def row (mode : String) (r case : Json) (_index : Nat) : Check := do
       | .str "surface" => need (!(← (← field r "ast").getArr?).isEmpty) "empty document"
       | .str "evaluate" => nonemptyValues r
       | _ => pure ()
-  | "route" => routeRow r case
+  | "route" => routeRow "route" r case
   | "norms" =>
     if VE.Norms.Run.usesNormsPath case then
       if ok then normsOk r case
-    else routeRow r case
+    else routeRow "norms" r case
   | "english" =>
     if let .ok results := r.getObjVal? "results" then
       let cases ← (← field case "cases").getArr?

@@ -1,5 +1,6 @@
 import VE.Readings.SupAll
 import VE.Readings.SupWitness
+import VE.Readings.SupFill
 
 /-! S2a with a carried base-premise family (docs/spec/readings-defaults.md 6.7, plan RD-6a).
 
@@ -21,6 +22,7 @@ open VE.Norms (Regulated Sat envAt size restrictAll DocumentExpansion ConstantsT
 open VE.SoftNorms (SoftNode SoftDoc soften canon circ)
 open VE.Rights (RightsDoc correlate)
 open VE.Compose (Content adjoinOne)
+open VE.NormDefaults (EntailsU)
 universe u
 
 section Extra
@@ -329,6 +331,74 @@ example {α : Type u} [DecidableEq α] (D : Doc) (h : WellFormedDoc D = true)
   obtain ⟨c, hc, hA, he, hB, hp, hφc⟩ := superpose_countermodel_extra D h hch hs A [] (fun _ => [])
     (transfers_nil D) Γ φ hΓ hφ M valid (by rw [supModelCheckExtra_nil]; exact hm) hn
   exact ⟨c, hc, hA, he, (baseAdmissibleR_nil _ _).mp hB, hp, hφc⟩
+
+/-! ## Superposition under the completion (RD-6b) -/
+
+theorem fill_transfers (N : NDoc) (hN : WellFormedND N = true) (hF : WellFormedDoc (fillDoc N) = true)
+    (hs : superposable (fillDoc N) = true) (hsu : VE.NormDefaults.WellFormedU (supU N) = true) :
+  Transfers.{u} (fillDoc N) (VE.NormDefaults.fillPremises (supU N)) (fun c => VE.NormDefaults.fillPremises (choiceU N c)) := by
+  refine ⟨fun c hc a ha => ?_, fun c hc B hB he => fillPremises_pull hN hF hs hc hB he hsu⟩
+  have hh := hyps_fill hN hF hs
+  have hw := fillPremises_wf_v (valid_fill_choiceU hN hF hs hc) a ha
+  have he : choiceEnvFull (fillDoc N) c = envAt (VE.NormDefaults.fill (choiceU N c))
+      (size (VE.NormDefaults.fill (choiceU N c))) := by
+    unfold choiceEnvFull; rw [choice_correlate hh c, ← fill_choiceU hN hF hs]
+  rw [he]; exact VE.Norms.envAt_mono (Nat.zero_le _) a [] hw
+theorem nd_superpose_conflict_free (N : NDoc) (hN : WellFormedND N = true) (hF : WellFormedDoc (fillDoc N) = true)
+    (hs : superposable (fillDoc N) = true) (hsu : VE.NormDefaults.WellFormedU (supU N) = true)
+    (A : Choice) (hA : ∀ x ∈ A, (candidate N.D x.1 x.2).isSome) :
+  ConflictFreeP.{u} (correlate (sup (fillDoc N)).1) (slotUnder (fillDoc N) A ++ VE.NormDefaults.fillPremises (supU N)) ↔
+    ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) := by
+  have hh := hyps_fill hN hF hs
+  have hA' : ∀ x ∈ A, (candidate (fillDoc N) x.1 x.2).isSome := fun x hx => by
+    rw [candidate_fillDoc]; simpa using hA x hx
+  rw [superpose_conflict_free_extra (fillDoc N) hF hh.chain hs A hA' _ _ (fill_transfers N hN hF hs hsu)]
+  have hY : ∀ c, VE.Compose.ConflictFreeP.{u} (correlate (choiceDoc (fillDoc N) c).1)
+      (VE.Rights.limPremises (choiceDoc (fillDoc N) c).1 ++ VE.NormDefaults.fillPremises (choiceU N c)) ↔
+      VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) := by
+    intro c
+    have hX := strict_choice_fillDoc N (wellFormedND_parts hN).2.1 c
+    have hfc := (fillDoc_choice N (wellFormedND_parts hN).2.1 (wellFormedND_parts hN).2.2.1 c).1
+    unfold VE.Compose.ConflictFreeP VE.NormDefaults.ConflictFreeU
+    rw [hfc]
+    exact forall_congr' fun B => imp_congr_left (baseAdmissibleP_choiceU hN c B)
+  exact forall_congr' fun c => by rw [compatible_fillDoc, hY c]
+theorem nd_superpose_all (N : NDoc) (hN : WellFormedND N = true) (hF : WellFormedDoc (fillDoc N) = true)
+    (hs : superposable (fillDoc N) = true) (hsu : VE.NormDefaults.WellFormedU (supU N) = true)
+    (A : Choice) (hA : ∀ x ∈ A, (candidate N.D x.1 x.2).isSome)
+    (hcf : ConflictFreeP.{u} (correlate (sup (fillDoc N)).1)
+        (slotUnder (fillDoc N) A ++ VE.NormDefaults.fillPremises (supU N)))
+    (Γ : List VE.Formula) (φ : VE.Formula) (hΓ : ∀ a ∈ Γ, a.WellFormed (sharedEnv (fillDoc N)) [])
+    (hφ : φ.WellFormed (sharedEnv (fillDoc N)) []) (cert : VE.Tableau.Certificate)
+    (accepted : supCertificateCheckExtra (fillDoc N) A (VE.NormDefaults.fillPremises (supU N)) Γ φ cert = true) :
+  ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ := by
+  intro c hc hAc S hBU hE hΓS
+  have hh := hyps_fill hN hF hs
+  have hp := wellFormedND_parts hN
+  have hc' : Compatible (fillDoc N) c := (compatible_fillDoc N c).mpr hc
+  have hA' : ∀ x ∈ A, (candidate (fillDoc N) x.1 x.2).isSome := fun x hx => by
+    rw [candidate_fillDoc]; simpa using hA x hx
+  have hQw : VE.Compose.SlotWellFormed (correlate (sup (fillDoc N)).1) (VE.NormDefaults.fillPremises (supU N)) := by
+    intro a ha
+    have := VE.NormDefaults.Wire.fillPremises_wellFormed hsu a ha
+    rwa [← (fillDoc_sup N hp.2.1 hp.2.2.1).1] at this
+  have hfc := fillDoc_choice N hp.2.1 hp.2.2.1 c
+  have hvY := valid_fill_choiceU hN hF hs hc'
+  have key := superpose_all_extra (fillDoc N) hF hh.chain hs A hA' _ _ (fill_transfers N hN hF hs hsu) hQw hcf Γ φ
+    hΓ hφ cert accepted c hc' hAc _ ((baseAdmissibleP_choiceU hN c _).mpr hBU)
+  unfold expand at key
+  rw [hfc.1, hfc.2] at key
+  have hlift : ∀ a : VE.Formula, a.WellFormed (sharedEnv (fillDoc N)) [] →
+      a.WellFormed (envAt (VE.NormDefaults.fill (choiceU N c)) (size (VE.NormDefaults.fill (choiceU N c)))) [] := by
+    intro a ha
+    have := shared_liftY hh c ha
+    rwa [fill_choiceU hN hF hs]
+  have hsh := asserted_shared (fillDoc N) hF hh.ready c hc'
+  rw [hfc.2] at hsh
+  refine (documentExpansion_canon hvY hE φ (hlift φ hφ)).mpr (key fun a ha => ?_)
+  rcases List.mem_append.mp ha with ha' | ha'
+  · exact (documentExpansion_canon hvY hE a (hlift a (hsh a ha'))).mp (hΓS a ha)
+  · exact (documentExpansion_canon hvY hE a (hlift a (hΓ a ha'))).mp (hΓS a ha)
 
 end Extra
 end VE.Readings

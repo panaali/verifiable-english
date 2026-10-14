@@ -29,13 +29,13 @@
       "type": "object"
     },
     "certificate": {
-      "$comment": "background: the number of regenerated Background premises (fullBackground).",
+      "$comment": "background: the number of regenerated Background premises (fullBackground); its value is the service's.",
       "additionalProperties": false,
       "properties": {
-        "background": {"$ref": "common.json#/$defs/nat"},
+        "background": {"$ref": "common.json#/$defs/nat", "x-background-bound": true},
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
-        "steps": {"$ref": "common.json#/$defs/nat"},
+        "steps": {"$ref": "common.json#/$defs/nat", "x-max-steps": {"cap": 1000000, "default": 10000}},
         "valid": {"type": "boolean"}
       },
       "required": ["id", "status", "valid", "background", "steps"],

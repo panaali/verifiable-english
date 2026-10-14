@@ -4,7 +4,9 @@
 review (`~/code/manage-agents/debates/semantics-migration/`): a persistent JSON-lines service over the
 **existing** runners, with gate 1 restricted to one-shot/service equivalence on existing modes, protocol
 faults, soak and service-call latency. The section-2.1 glue modes (`parse`, `check`, `graph`, …) are stage
-2b. Nothing in `ve` calls the service yet; no Python semantics is switched.
+2b. **Superseded in part (2026-10-10):** the service is now `ve`'s main path to Lean (`ve/backends/relay.py`), and
+every statement-layer route is one of its modes; see [the architecture map](../ARCHITECTURE.md), section 3. What the
+client checks in an answer is settled by [ADR 0001](../adr/0001-response-binding.md).
 
 ## Threat model (design directive 3)
 
@@ -62,7 +64,8 @@ These are tested on the service's outputs instead:
 
 The rule for the boundary: a value the client can read directly off its own request is
 binding and is checked. A value the client would have to compute with VE's semantics is
-content and is not checked.
+content and is not checked. [ADR 0001](../adr/0001-response-binding.md) (DRI decision D1)
+lists the relations that count as binding and makes this rule the contract.
 
 ## Components
 

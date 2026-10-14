@@ -250,6 +250,16 @@ LEAN_OWNED = {
     "english": "Readings.Run.productPlan / verdictsPlan (plan_cites_conditions, plan_conditions_only)",
     "readings": "a plan line's readings (Readings.PlanItem.line)",
 }
+# RD-6b lets a filled component elaborate on the superposed route. These values
+# are derived by Lean from that route; the loader binds the set ids, candidate
+# ids, unit ids, slot labels and choice lists to the component request, while
+# the schema checks the shape of the remaining Lean-owned values.
+SUPERPOSED_LEAN_OWNED = {
+    ("fill",): "the Fill_T formulas and their number (Readings.Wire.elaborateFieldsND)",
+    ("slot",): "the superposed slot formulas and their number (Readings.Route.elaborateFields)",
+    ("vocabulary", "sorts"): "the superposed frame's sorts (Readings.Route.vocabulary)",
+    ("vocabulary", "constants"): "the superposed frame's constants (Readings.Route.vocabulary)",
+}
 # Lists whose length Lean alone decides; their entries' types are still fuzzed.
 LEAN_LENGTHS = {
     "findings": "Readings.Run.setFindings: a set's S1 findings (SeparatedByDecisionOnly, SeparatedByActOnly), Lean's",
@@ -265,6 +275,14 @@ def _mutants(row, prefix):
             continue
         if any(type(p) is str and p in LEAN_OWNED for p in path):
             continue
+        if "answer" in path:
+            rest = path[path.index("answer") + 1:]
+            owned = (any(rest[:len(owned_path)] == owned_path for owned_path in SUPERPOSED_LEAN_OWNED) or
+                     # The candidate's qualified names and a superposed predicate's argument sorts are Lean's.
+                     (len(rest) >= 5 and rest[0] == "names" and rest[2] == "candidates" and rest[4] == "names") or
+                     (len(rest) >= 4 and rest[:2] == ("vocabulary", "predicates") and rest[3] == "arguments"))
+            if owned:
+                continue
         kind = _type(value)
         for other in ("int", "null", "dict") if kind not in ("int", "dict") else ("str", "null", "list"):
             yield "retype", path, OTHER[other]

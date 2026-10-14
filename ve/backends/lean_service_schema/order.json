@@ -21,7 +21,7 @@
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
-        "steps": {"$ref": "common.json#/$defs/nat"},
+        "steps": {"$ref": "common.json#/$defs/nat", "x-max-steps": {"cap": 1000000, "default": 10000}},
         "valid": {"type": "boolean"}
       },
       "required": ["id", "status", "valid", "steps"],

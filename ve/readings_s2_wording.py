@@ -130,12 +130,17 @@ class S2Wording:
         self.slots.situations.add(text)
         return text
 
-    def gaps(self, data):
-        """The filled gaps shown after a situation of `data` under the completion (readings-defaults 2.2): every point
-        of every filled table, with the model's answer; none outside the completion."""
-        found = filled_gaps(self.frame, self.tables, data)
-        self.slots.clauses.update(clause for clause, _ in found)
-        return found
+    def gaps(self, answer):
+        """The filled gaps shown after the situation of a checked answer (readings-defaults 2.2): under the completion
+        Lean's, the gaps the result depends on in Lean's order (`ndModelGaps`, `gapsOf`; review B3 of rd-6b); none
+        outside it. An answer under the completion without Lean's gaps is refused, never worded with others."""
+        if not self.tables:
+            return []
+        if type(answer.get("gaps")) is not list:
+            from .errors import CheckerUnavailable
+            raise CheckerUnavailable("ReadingsConformance: a superposed model under the completion has no gaps from "
+                                     "Lean")
+        return self.plan_gaps(answer["model"], answer["gaps"])
 
     def _choice_decisions(self, choice):
         """On the enumerated route a model is one of the choice's own document, so its decision tables are the ones
@@ -352,20 +357,20 @@ class S2Wording:
         elif conflict["status"] == "CONFLICT" and "model" in conflict:
             lines.append(E.named_result(self.readings(conflict["choice"]), "conflict", self.slots,
                                         situation=self.shown_situation(conflict["model"], conflict["choice"]),
-                                        gaps=self.gaps(conflict["model"])))
+                                        gaps=self.gaps(conflict)))
             lines.append(self.classification(conflict))
         elif conflict["status"] == "CONFLICT":
             for witness in conflict.get("witnesses", []):
                 lines.append(E.named_result(self.readings(witness["choice"]), "conflict", self.slots,
                                             situation=self.shown_situation(witness["model"], witness["choice"]),
-                                            gaps=self.gaps(witness["model"])))
+                                            gaps=self.gaps(witness)))
                 if witness.get("status_text"):
                     lines.append(witness["status_text"])
         premises = route.premises()
         if premises["status"] == "model" and "model" in premises:
             lines.append(E.named_result(self.readings(premises["choice"]), "premise_model", self.slots,
                                         situation=self.shown_situation(premises["model"], premises["choice"]),
-                                        gaps=self.gaps(premises["model"])))
+                                        gaps=self.gaps(premises)))
         elif premises["status"] == "INCONSISTENT" and premises.get("evidence") == "certificate":
             # A certificate with A = [] (2.3 item 1): E3 and E13 from what it and its conflict certificates rely on.
             lines.append(E.every_result(k, "inconsistent", self.slots))
@@ -407,6 +412,7 @@ class S2Wording:
         elif verdict == "SOME":
             lines.append(E.named_result(self.readings(data["proof"]["choice"]), "follows", self.slots,
                                         conclusion=slot))
+            lines += self.provided(self._dependencies(data["proof"]))
             lines.append(self._countermodel(data["countermodel"]))
         elif verdict == "NOT ALL":
             lines.append(self._countermodel(data["countermodel"]))
@@ -506,7 +512,9 @@ class S2Wording:
         its filled-gap sentence with the filling's answer, both Lean's (`VE.Words`), in the plan's order."""
         if any(type(value) is not bool for _, _, value in gaps):
             raise VEError("InvalidInput: a filled gap needs its clause and a yes or no answer")
-        found = lean_words.fillings(self.frame, lean_words.constants_of(model),
+        constants = {name: value for name, value in lean_words.constants_of(model).items()
+                     if name in self.frame.constants}
+        found = lean_words.fillings(self.frame, constants,
                                     [(predicate, tuple(ids), value) for predicate, ids, value in gaps])
         self.slots.clauses.update(clause for clause, _ in found)
         return found
@@ -533,7 +541,7 @@ class S2Wording:
         if model is None:
             raise VEError("InvalidInput: a countermodel's wording needs its checked model")
         return self.E.named_result(self.readings(counter["choice"]), "countermodel", self.slots,
-                                   situation=self.shown_situation(model, counter["choice"]), gaps=self.gaps(model))
+                                   situation=self.shown_situation(model, counter["choice"]), gaps=self.gaps(counter))
 
 
 PAIR_LABEL = "unsaid:pair:"
@@ -561,7 +569,9 @@ def filled_gaps(frame, tables, model):
         rows = {tuple(row) for row in relations.get(table, ())}
         domains = [sorted(model["domains"].get(sort, ())) for sort in frame.predicates[predicate].arguments]
         points += [(predicate, values, values in rows) for values in product(*domains)]
-    return lean_words.fillings(frame, lean_words.constants_of(model), points)
+    constants = {name: value for name, value in lean_words.constants_of(model).items()
+                 if name in frame.constants}
+    return lean_words.fillings(frame, constants, points)
 
 
 def _active_generated(entries, profiles):

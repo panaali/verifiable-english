@@ -1,0 +1,188 @@
+{
+  "item": "devtime-1",
+  "runner": "docs/devtime/devtime-1/seed_bugs.py",
+  "mutants": [
+    {
+      "id": "a-skip-last-mode",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "routes lists every MODES entry exactly once",
+      "old": "    routes = []\n    for mode in MODES:\n",
+      "new": "    routes = []\n    for mode in MODES[:-1]:\n",
+      "test": "tests/test_repo_map.py::test_routes_lists_every_mode_exactly_once",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 5.73s"
+      }
+    },
+    {
+      "id": "b-agents-names-a-missing-path",
+      "language": "markdown",
+      "file": "AGENTS.md",
+      "behaviour": "every path AGENTS.md names exists",
+      "old": "5. **Python relay.** `ve/discourse.py` sends",
+      "new": "5. **Python relay.** `ve/discourse_relay.py` sends",
+      "test": "tests/test_repo_map.py::test_every_path_named_in_agents_md_exists",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 0.16s"
+      }
+    },
+    {
+      "id": "c-check-ignores-a-missing-schema",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "--check fails when a mode has no schema file",
+      "old": "for mode in MODES if f\"{mode}.json\" not in present]",
+      "new": "for mode in MODES if False]",
+      "test": "tests/test_repo_map.py::test_check_fails_on_a_scratch_copy_with_a_schema_file_removed_or_added",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 0.82s"
+      }
+    },
+    {
+      "id": "d-lean-keeps-the-dispatch-module",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "the Lean column names the implementing module, not the dispatch's own module",
+      "old": "                        if module != home]",
+      "new": "                        if module != home or True]",
+      "test": "tests/test_repo_map.py::test_known_routes_print_their_lean_module_and_relay",
+      "observed": {
+        "exit": 1,
+        "summary": "3 failed in 5.51s"
+      }
+    },
+    {
+      "id": "e-relay-ignores-module-constants",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "a relay that names its mode through a module constant is found",
+      "old": "constants.get(v.id) if isinstance(v, ast.Name)",
+      "new": "None if isinstance(v, ast.Name)",
+      "test": "tests/test_repo_map.py::test_known_routes_print_their_lean_module_and_relay",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed, 2 passed in 5.75s"
+      }
+    },
+    {
+      "id": "f-map-tests-by-file-not-function",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "with a coverage map, a recorded test file counts when it ran a function holding a relay call",
+      "old": "sel.add(self.coverage.tests_of(path, qualname), ",
+      "new": "sel.add(self.coverage.file_wide(path, set(self.coverage.functions.get(path, {}))), ",
+      "test": "tests/test_repo_map.py::test_a_map_answers_only_for_the_test_files_it_recorded",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 10.38s"
+      }
+    },
+    {
+      "id": "g-unrecorded-tests-get-no-static-answer",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1: test files the map did not record, or whose run may have changed, get the static answer",
+      "old": "    unmapped = (set(units) - coverage.recorded) | uncertain\n",
+      "new": "    unmapped = set()\n",
+      "test": "tests/test_repo_map.py::test_a_map_answers_only_for_the_test_files_it_recorded",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 12.74s"
+      }
+    },
+    {
+      "id": "h-drift-ignored",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1: a recorded test file whose run may have changed since the map gets the static answer",
+      "old": "    unmapped = (set(units) - coverage.recorded) | uncertain\n",
+      "new": "    unmapped = set(units) - coverage.recorded\n",
+      "test": "tests/test_repo_map.py::test_a_test_file_whose_run_may_have_changed_gets_the_static_answer",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 16.60s"
+      }
+    },
+    {
+      "id": "i-map-from-an-unknown-commit-trusted",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1 (the probe): a map whose commit is not in the repository answers for nothing",
+      "old": "    except subprocess.CalledProcessError:\n        return without(",
+      "new": "    except subprocess.CalledProcessError:\n        uncertain, drift, status, versions = set(), 0, {}, {}\n    if False:\n        return without(",
+      "test": "tests/test_repo_map.py::test_a_map_from_a_commit_not_in_the_repository_gives_the_static_answer",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 15.15s"
+      }
+    },
+    {
+      "id": "j-file-path-not-normalised",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F2: `file` names a path the same however it is spelled",
+      "old": "    return posixpath.normpath(Path(path).as_posix())\n",
+      "new": "    return path\n",
+      "test": "tests/test_repo_map.py::test_file_prints_the_same_for_every_spelling",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 11.18s"
+      }
+    },
+    {
+      "id": "k-routes-command-drops-a-row",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F3: the `routes` command prints the whole table",
+      "old": "        print_routes(routes, tests.source)\n",
+      "new": "        print_routes(routes[1:], tests.source)\n",
+      "test": "tests/test_repo_map.py::test_routes_command_prints_the_table",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 12.04s"
+      }
+    },
+    {
+      "id": "l-file-command-asks-the-wrong-owner",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F3: the `file` command prints the generator that owns the file",
+      "old": "    print(f\"generator: {owner(root, path)}\")\n",
+      "new": "    print(f\"generator: {owner(root, path + '.orig')}\")\n",
+      "test": "tests/test_repo_map.py::test_file_command_prints_modes_layer_tests_and_generator",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 17.89s"
+      }
+    },
+    {
+      "id": "m-commit-drift-ignored",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1 on the real tree: a map recorded before a relay file changed answers for no test file whose run that change may alter",
+      "old": "        uncertain, drift = select_tests.uncertain_since(coverage, graph, set(units), \"HEAD\")\n",
+      "new": "        uncertain, drift = set(), 0\n",
+      "test": "tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 36.06s"
+      }
+    },
+    {
+      "id": "n-file-asks-no-rule",
+      "language": "python",
+      "file": "tools/repo_map.py",
+      "behaviour": "F1: `file` on a Python file no recorded test ran answers with select_tests' rule, not \"none found\"",
+      "old": "            select_tests.python_change(sel, change, None, None, {})\n",
+      "new": "            pass\n",
+      "test": "tests/test_repo_map.py::test_file_answers_for_a_file_the_map_never_saw",
+      "observed": {
+        "exit": 1,
+        "summary": "1 failed in 42.06s"
+      }
+    }
+  ]
+}

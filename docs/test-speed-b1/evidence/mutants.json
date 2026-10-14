@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "mutants": [
+    {
+      "file": "tools/select_tests.py",
+      "test": "tests/test_select_tests.py::test_five_manifest_edits_select_their_readers[parse]",
+      "seeded_bug": "drop the changed operation readers",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": ", new) == {op_id}\n        reader, other = \"tests/test_reader.py\", \"tests/test_other.py\"\n        edges = {reader: {\"m\": [op_id]}, other: {\"p\": [op_id]},\n                 select_tests.MANIFEST_TEST: {\"m\": [\"*\"]}}\n        coverage = select_tests.Coverage(make_map(edges))\n        graph = make_graph(tmp_path, {\"tests/test_reader.py\": \"\", \"tests/test_other.py\": \"\"})\n        selection = select_tests.Selection(graph, coverage, set(), list(edges))\n        select_tests.manifest_change(selection, select_tests.Change(select_tests.MANIFEST, old, new))\n>       assert reader in selection.reasons\nE       AssertionError: assert 'tests/test_reader.py' in {'tests/test_assurance_manifest.py': {'manifest contract'}}\nE        +  where {'tests/test_assurance_manifest.py': {'manifest contract'}} = <select_tests.Selection object at 0x71f64b25aba0>.reasons\n\ntests/test_select_tests.py:442: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_select_tests.py::test_five_manifest_edits_select_their_readers[parse]\n1 failed in 0.92s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-y5_06lta)\n"
+    },
+    {
+      "file": "tools/select_tests.py",
+      "test": "tests/test_select_tests.py::test_added_and_removed_lean_modules_select_only_importing_executables",
+      "seeded_bug": "invalidate every executable for an added Lean module",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": "import Lean\\n\",\n                                                \"lean/Used.lean\": \"import Shared\\n\"})\n        graph.lean_imports[\"Main\"] = [\"Used\"]\n        graph.lean_imports[\"OtherMain\"] = []\n        from unittest.mock import patch\n        with patch.object(source_graph, \"lean_executables\", return_value={\"first\": \"Main\", \"second\": \"OtherMain\"}):\n>           assert select_tests.lean_programs(graph, \"lean/Shared.lean\", True) == {\"first\"}\nE           AssertionError: assert {'ve_conforma..._decode', ...} == {'first'}\nE             \nE             Extra items in the left set:\nE             've_metered'\nE             've_english_route'\nE             've_speech_acts_route'\nE             've_conformance'\nE             've_service'...\nE             \nE             ...Full output truncated (7 lines hidden), use '-vv' to show\n\ntests/test_select_tests.py:494: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_select_tests.py::test_added_and_removed_lean_modules_select_only_importing_executables\n1 failed in 0.65s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-z3suji9h)\n"
+    },
+    {
+      "file": "ve/backends/service_schema.py",
+      "test": "tests/test_lean_service_schema.py::test_mode_rows_compile_only_when_used",
+      "seeded_bug": "compile all mode rows at import",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": "   subprocess.CalledProcessError: Command '['/home/seyran/code/ve-ts-B1/.venv/bin/python', '-c', \"from ve.backends.service_schema import ROWS, _compiler\\nassert not any(pointer == '/row' for _, pointer in _compiler._compiled)\\nassert 'parse' in ROWS and 'not-a-mode' not in ROWS\\nrow = ROWS['parse']\\nassert row is ROWS['parse']\\nassert {name for name, pointer in _compiler._compiled if pointer == '/row'} == {'parse.json'}\\n\"]' returned non-zero exit status 1.\n\n../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError\n----------------------------- Captured stderr call -----------------------------\nTraceback (most recent call last):\n  File \"<string>\", line 2, in <module>\n    assert not any(pointer == '/row' for _, pointer in _compiler._compiled)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n=========================== short test summary info ============================\nFAILED tests/test_lean_service_schema.py::test_mode_rows_compile_only_when_used\n1 failed in 1.27s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-4q_q_ybv)\n"
+    },
+    {
+      "file": "tools/select_tests.py",
+      "test": "tests/test_select_tests.py::test_automatic_selection_without_a_map_runs_full_suite",
+      "seeded_bug": "skip the missing-map full fallback",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": "F                                                                        [100%]\n=================================== FAILURES ===================================\n____________ test_automatic_selection_without_a_map_runs_full_suite ____________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x734eb6135cd0>\n\n    def test_automatic_selection_without_a_map_runs_full_suite(monkeypatch):\n        monkeypatch.setattr(select_tests, \"resolve_map\", lambda base, coverage: None)\n        plan = select_tests.select(changes=[select_tests.Change(\"docs/example.md\", \"before\", \"after\")],\n                                   coverage=\"auto\")\n>       assert plan[\"full\"] and plan[\"full_reasons\"] == [\"missing coverage map\"]\nE       assert (False)\n\ntests/test_select_tests.py:483: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_select_tests.py::test_automatic_selection_without_a_map_runs_full_suite\n1 failed in 31.79s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-5y0jyog_)\n"
+    },
+    {
+      "file": "tools/test_map_recorder.py",
+      "test": "tests/test_select_tests.py::test_recorder_tracks_manifest_operations_without_import_read",
+      "seeded_bug": "record presence as an entry read",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": "ys\n            def _load():\n                return json.loads(pathlib.Path(__file__).with_name(\"assurance-manifest.json\").read_text())\n            DATA = _load()\n            sys.audit(\"ve.manifest.presence\", \"typing\")\n            def operation(name):\n                sys.audit(\"ve.manifest.operation\", name)\n                return DATA[name]\n        ''')\n        result = recorder_run(tmp_path, \"from ve import assurance\\nassurance.operation('parse')\\n\",\n                              files={\"ve/__init__.py\": \"\", \"ve/assurance.py\": assurance,\n                                     \"ve/assurance-manifest.json\": '{\"parse\": 1}'})\n>       assert result[\"m\"] == {\"parse\"}\nE       AssertionError: assert {'parse', 'typing'} == {'parse'}\nE         \nE         Extra items in the left set:\nE         'typing'\nE         Use -v to get more diff\n\ntests/test_select_tests.py:700: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_select_tests.py::test_recorder_tracks_manifest_operations_without_import_read\n1 failed in 0.56s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-vmvy47o_)\n"
+    },
+    {
+      "file": "ve/assurance.py",
+      "test": "tests/test_select_tests.py::test_semantic_registration_reads_only_presence",
+      "seeded_bug": "register an operation as a full entry read",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": "                                                     [100%]\n=================================== FAILURES ===================================\n________________ test_semantic_registration_reads_only_presence ________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x719a07fc1f30>\n\n    def test_semantic_registration_reads_only_presence(monkeypatch):\n        from ve import assurance\n        events = []\n        monkeypatch.setattr(assurance.sys, \"audit\", lambda *args: events.append(args))\n        assurance.semantic_entry(\"parse\")\n>       assert events == [(\"ve.manifest.presence\", \"parse\")]\nE       AssertionError: assert [('ve.manifes...on', 'parse')] == [('ve.manifes...ce', 'parse')]\nE         \nE         At index 0 diff: ('ve.manifest.operation', 'parse') != ('ve.manifest.presence', 'parse')\nE         Use -v to get more diff\n\ntests/test_select_tests.py:466: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_select_tests.py::test_semantic_registration_reads_only_presence\n1 failed in 0.43s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ec0hr0o0)\n"
+    }
+  ]
+}

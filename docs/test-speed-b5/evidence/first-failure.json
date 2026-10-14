@@ -1,0 +1,1721 @@
+{
+ "files": 340,
+ "files_saving_10_min_or_more": 180,
+ "jobs": 8,
+ "makespan_name_order": 3469.5,
+ "map": {
+  "commit": "c24aeab20ee513e3e1bef310c5e3263fab3998cc",
+  "created": "2026-10-10T07:13:36+00:00",
+  "file": "tree-c6f37e55120748d8d577c3ee4be421ac21753b8f.json.gz",
+  "tree": "c6f37e55120748d8d577c3ee4be421ac21753b8f"
+ },
+ "rows": {
+  "tests/test_agent_policy.py": {
+   "first": 20.5,
+   "name_order": 20.5,
+   "seconds": 20.5
+  },
+  "tests/test_agent_policy_rerun.py": {
+   "first": 111.1,
+   "name_order": 111.1,
+   "seconds": 111.1
+  },
+  "tests/test_agent_policy_unspecified.py": {
+   "first": 72.9,
+   "name_order": 72.9,
+   "seconds": 72.9
+  },
+  "tests/test_alternatives_profile.py": {
+   "first": 4.9,
+   "name_order": 4.9,
+   "seconds": 4.9
+  },
+  "tests/test_alternatives_three_way.py": {
+   "first": 2.9,
+   "name_order": 2.9,
+   "seconds": 2.9
+  },
+  "tests/test_ar6_report.py": {
+   "first": 1.9,
+   "name_order": 1.9,
+   "seconds": 1.9
+  },
+  "tests/test_argument.py": {
+   "first": 1.2,
+   "name_order": 1.2,
+   "seconds": 1.2
+  },
+  "tests/test_argument_adversarial.py": {
+   "first": 1.3,
+   "name_order": 1.3,
+   "seconds": 1.3
+  },
+  "tests/test_argument_fixtures.py": {
+   "first": 3.6,
+   "name_order": 4.8,
+   "seconds": 3.6
+  },
+  "tests/test_asimov_extended.py": {
+   "first": 60.6,
+   "name_order": 61.9,
+   "seconds": 60.6
+  },
+  "tests/test_asimov_laws.py": {
+   "first": 28.4,
+   "name_order": 30.3,
+   "seconds": 28.4
+  },
+  "tests/test_assist.py": {
+   "first": 278.4,
+   "name_order": 281.3,
+   "seconds": 278.4
+  },
+  "tests/test_assist_deadline.py": {
+   "first": 11.6,
+   "name_order": 16.4,
+   "seconds": 11.6
+  },
+  "tests/test_assist_invariants.py": {
+   "first": 407.6,
+   "name_order": 412.5,
+   "seconds": 407.6
+  },
+  "tests/test_assist_recovery.py": {
+   "first": 14.8,
+   "name_order": 31.2,
+   "seconds": 14.8
+  },
+  "tests/test_assist_recovery_replay.py": {
+   "first": 51.3,
+   "name_order": 71.8,
+   "seconds": 51.3
+  },
+  "tests/test_assurance_manifest.py": {
+   "first": 33.7,
+   "name_order": 64.0,
+   "seconds": 33.7
+  },
+  "tests/test_attacks.py": {
+   "first": 2.1,
+   "name_order": 33.3,
+   "seconds": 2.1
+  },
+  "tests/test_authoring.py": {
+   "first": 1.2,
+   "name_order": 34.5,
+   "seconds": 1.2
+  },
+  "tests/test_b11b_report.py": {
+   "first": 1.3,
+   "name_order": 35.8,
+   "seconds": 1.3
+  },
+  "tests/test_b15a_evidence.py": {
+   "first": 3.5,
+   "name_order": 39.3,
+   "seconds": 3.5
+  },
+  "tests/test_b15b_evidence.py": {
+   "first": 7.6,
+   "name_order": 46.9,
+   "seconds": 7.6
+  },
+  "tests/test_b16a_evidence.py": {
+   "first": 1.0,
+   "name_order": 47.9,
+   "seconds": 1.0
+  },
+  "tests/test_b16b_evidence.py": {
+   "first": 1.0,
+   "name_order": 48.9,
+   "seconds": 1.0
+  },
+  "tests/test_b16c_evidence.py": {
+   "first": 2.0,
+   "name_order": 50.9,
+   "seconds": 2.0
+  },
+  "tests/test_b17_evidence.py": {
+   "first": 6.3,
+   "name_order": 57.2,
+   "seconds": 6.3
+  },
+  "tests/test_b17_owner.py": {
+   "first": 1.6,
+   "name_order": 58.8,
+   "seconds": 1.6
+  },
+  "tests/test_background.py": {
+   "first": 1.3,
+   "name_order": 60.1,
+   "seconds": 1.3
+  },
+  "tests/test_batch_evidence.py": {
+   "first": 1.5,
+   "name_order": 61.6,
+   "seconds": 1.5
+  },
+  "tests/test_bench_baselines.py": {
+   "first": 0.8,
+   "name_order": 62.4,
+   "seconds": 0.8
+  },
+  "tests/test_bench_timing.py": {
+   "first": 0.8,
+   "name_order": 62.7,
+   "seconds": 0.8
+  },
+  "tests/test_bluedot_grant.py": {
+   "first": 5.3,
+   "name_order": 67.7,
+   "seconds": 5.3
+  },
+  "tests/test_bundle.py": {
+   "first": 3.0,
+   "name_order": 65.7,
+   "seconds": 3.0
+  },
+  "tests/test_calendar_regression_w6b.py": {
+   "first": 0.8,
+   "name_order": 64.8,
+   "seconds": 0.8
+  },
+  "tests/test_cedar_attributes.py": {
+   "first": 0.8,
+   "name_order": 65.6,
+   "seconds": 0.8
+  },
+  "tests/test_cedar_norms.py": {
+   "first": 8.3,
+   "name_order": 73.9,
+   "seconds": 8.3
+  },
+  "tests/test_cli.py": {
+   "first": 48.2,
+   "name_order": 113.9,
+   "seconds": 48.2
+  },
+  "tests/test_closure.py": {
+   "first": 9.5,
+   "name_order": 77.2,
+   "seconds": 9.5
+  },
+  "tests/test_closure_certificates.py": {
+   "first": 3.5,
+   "name_order": 75.3,
+   "seconds": 3.5
+  },
+  "tests/test_closure_induction.py": {
+   "first": 3.4,
+   "name_order": 76.3,
+   "seconds": 3.4
+  },
+  "tests/test_closure_witnesses.py": {
+   "first": 1.5,
+   "name_order": 75.4,
+   "seconds": 1.5
+  },
+  "tests/test_colab.py": {
+   "first": 1.3,
+   "name_order": 76.6,
+   "seconds": 1.3
+  },
+  "tests/test_compose_dispatch.py": {
+   "first": 2.1,
+   "name_order": 77.5,
+   "seconds": 2.1
+  },
+  "tests/test_compose_integration.py": {
+   "first": 1.1,
+   "name_order": 77.4,
+   "seconds": 1.1
+  },
+  "tests/test_conformance.py": {
+   "first": 2.6,
+   "name_order": 79.2,
+   "seconds": 2.6
+  },
+  "tests/test_consolidation_tools.py": {
+   "first": 300.3,
+   "name_order": 377.5,
+   "seconds": 300.3
+  },
+  "tests/test_constitution_w6a_controls.py": {
+   "first": 0.9,
+   "name_order": 78.3,
+   "seconds": 0.9
+  },
+  "tests/test_count_w6a.py": {
+   "first": 3.4,
+   "name_order": 80.9,
+   "seconds": 3.4
+  },
+  "tests/test_coverage_dashboard.py": {
+   "first": 0.8,
+   "name_order": 79.1,
+   "seconds": 0.8
+  },
+  "tests/test_cpu_bounds.py": {
+   "first": 6.1,
+   "name_order": 85.2,
+   "seconds": 6.1
+  },
+  "tests/test_data_adapters.py": {
+   "first": 0.8,
+   "name_order": 80.0,
+   "seconds": 0.8
+  },
+  "tests/test_data_flags.py": {
+   "first": 0.9,
+   "name_order": 80.9,
+   "seconds": 0.9
+  },
+  "tests/test_data_surface.py": {
+   "first": 56.0,
+   "name_order": 136.9,
+   "seconds": 56.0
+  },
+  "tests/test_data_three_way.py": {
+   "first": 3.6,
+   "name_order": 84.5,
+   "seconds": 3.6
+  },
+  "tests/test_definitions.py": {
+   "first": 2.5,
+   "name_order": 87.0,
+   "seconds": 2.5
+  },
+  "tests/test_definitions_differential.py": {
+   "first": 35.4,
+   "name_order": 120.6,
+   "seconds": 35.4
+  },
+  "tests/test_definitions_english.py": {
+   "first": 3.7,
+   "name_order": 90.7,
+   "seconds": 3.7
+  },
+  "tests/test_difffuzz.py": {
+   "first": 352.6,
+   "name_order": 443.3,
+   "seconds": 352.6
+  },
+  "tests/test_discourse.py": {
+   "first": 5.3,
+   "name_order": 116.4,
+   "seconds": 5.3
+  },
+  "tests/test_discourse_answer.py": {
+   "first": 21.4,
+   "name_order": 135.3,
+   "seconds": 21.4
+  },
+  "tests/test_discourse_constitution.py": {
+   "first": 1.6,
+   "name_order": 118.0,
+   "seconds": 1.6
+  },
+  "tests/test_discourse_lean.py": {
+   "first": 27.6,
+   "name_order": 145.6,
+   "seconds": 27.6
+  },
+  "tests/test_discourse_three_way.py": {
+   "first": 1.8,
+   "name_order": 122.4,
+   "seconds": 1.8
+  },
+  "tests/test_document.py": {
+   "first": 8.8,
+   "name_order": 131.2,
+   "seconds": 8.8
+  },
+  "tests/test_document_lean_switch.py": {
+   "first": 14.1,
+   "name_order": 145.3,
+   "seconds": 14.1
+  },
+  "tests/test_e1_core.py": {
+   "first": 4.6,
+   "name_order": 139.9,
+   "seconds": 4.6
+  },
+  "tests/test_e1_prompts.py": {
+   "first": 66.0,
+   "name_order": 202.9,
+   "seconds": 66.0
+  },
+  "tests/test_eligibility_wfp.py": {
+   "first": 139.0,
+   "name_order": 278.9,
+   "seconds": 139.0
+  },
+  "tests/test_encoder_shapes.py": {
+   "first": 83.1,
+   "name_order": 228.4,
+   "seconds": 83.1
+  },
+  "tests/test_english.py": {
+   "first": 135.3,
+   "name_order": 280.9,
+   "seconds": 135.3
+  },
+  "tests/test_english_e26_ab.py": {
+   "first": 8.7,
+   "name_order": 211.6,
+   "seconds": 8.7
+  },
+  "tests/test_english_e26_boundary.py": {
+   "first": 1.8,
+   "name_order": 213.4,
+   "seconds": 1.8
+  },
+  "tests/test_english_e26_diagnosis.py": {
+   "first": 1.5,
+   "name_order": 214.9,
+   "seconds": 1.5
+  },
+  "tests/test_english_e26_evidence.py": {
+   "first": 1.2,
+   "name_order": 216.1,
+   "seconds": 1.2
+  },
+  "tests/test_english_e26_report.py": {
+   "first": 1.2,
+   "name_order": 217.3,
+   "seconds": 1.2
+  },
+  "tests/test_english_e2_boundary.py": {
+   "first": 1.4,
+   "name_order": 218.7,
+   "seconds": 1.4
+  },
+  "tests/test_english_e2_integer_marks.py": {
+   "first": 3.6,
+   "name_order": 222.3,
+   "seconds": 3.6
+  },
+  "tests/test_english_e2_ledger_sites.py": {
+   "first": 2.5,
+   "name_order": 224.8,
+   "seconds": 2.5
+  },
+  "tests/test_english_e2_overlay.py": {
+   "first": 2.0,
+   "name_order": 226.8,
+   "seconds": 2.0
+  },
+  "tests/test_english_e2_profile_matrix.py": {
+   "first": 11.5,
+   "name_order": 238.3,
+   "seconds": 11.5
+  },
+  "tests/test_english_e2_python.py": {
+   "first": 1.3,
+   "name_order": 229.7,
+   "seconds": 1.3
+  },
+  "tests/test_english_e2_relay.py": {
+   "first": 1.4,
+   "name_order": 231.1,
+   "seconds": 1.4
+  },
+  "tests/test_english_e2_report.py": {
+   "first": 1.2,
+   "name_order": 232.3,
+   "seconds": 1.2
+  },
+  "tests/test_english_e2_responses.py": {
+   "first": 3.9,
+   "name_order": 236.2,
+   "seconds": 3.9
+  },
+  "tests/test_english_e2_saved_evidence.py": {
+   "first": 1.2,
+   "name_order": 237.4,
+   "seconds": 1.2
+  },
+  "tests/test_english_e2_selection.py": {
+   "first": 3.1,
+   "name_order": 240.5,
+   "seconds": 3.1
+  },
+  "tests/test_english_e2_statements.py": {
+   "first": 3.1,
+   "name_order": 241.4,
+   "seconds": 3.1
+  },
+  "tests/test_english_evidence.py": {
+   "first": 2030.6,
+   "name_order": 2271.1,
+   "seconds": 2030.6
+  },
+  "tests/test_english_grammar_gen.py": {
+   "first": 9.0,
+   "name_order": 250.4,
+   "seconds": 9.0
+  },
+  "tests/test_english_lean_adapter.py": {
+   "first": 1.4,
+   "name_order": 251.8,
+   "seconds": 1.4
+  },
+  "tests/test_english_lean_engine.py": {
+   "first": 7.3,
+   "name_order": 259.1,
+   "seconds": 7.3
+  },
+  "tests/test_english_lean_lexer.py": {
+   "first": 1.3,
+   "name_order": 260.4,
+   "seconds": 1.3
+  },
+  "tests/test_english_lean_lexicon.py": {
+   "first": 3.5,
+   "name_order": 263.9,
+   "seconds": 3.5
+  },
+  "tests/test_english_lean_rejections.py": {
+   "first": 3.0,
+   "name_order": 266.9,
+   "seconds": 3.0
+  },
+  "tests/test_english_lean_route.py": {
+   "first": 55.1,
+   "name_order": 322.0,
+   "seconds": 55.1
+  },
+  "tests/test_english_lean_s0.py": {
+   "first": 1.6,
+   "name_order": 280.5,
+   "seconds": 1.6
+  },
+  "tests/test_english_lean_s2.py": {
+   "first": 1.6,
+   "name_order": 282.1,
+   "seconds": 1.6
+  },
+  "tests/test_english_lean_s3.py": {
+   "first": 19.5,
+   "name_order": 300.4,
+   "seconds": 19.5
+  },
+  "tests/test_english_lean_s3_compare.py": {
+   "first": 1.9,
+   "name_order": 283.2,
+   "seconds": 1.9
+  },
+  "tests/test_english_lean_seal.py": {
+   "first": 1.3,
+   "name_order": 283.4,
+   "seconds": 1.3
+  },
+  "tests/test_english_lean_tables.py": {
+   "first": 1.3,
+   "name_order": 284.5,
+   "seconds": 1.3
+  },
+  "tests/test_english_lean_tokens.py": {
+   "first": 1.8,
+   "name_order": 285.2,
+   "seconds": 1.8
+  },
+  "tests/test_english_unambiguity.py": {
+   "first": 3.5,
+   "name_order": 288.0,
+   "seconds": 3.5
+  },
+  "tests/test_entailment.py": {
+   "first": 2.3,
+   "name_order": 287.5,
+   "seconds": 2.3
+  },
+  "tests/test_entailment_adversarial.py": {
+   "first": 2.1,
+   "name_order": 289.6,
+   "seconds": 2.1
+  },
+  "tests/test_entailment_properties.py": {
+   "first": 5.3,
+   "name_order": 293.3,
+   "seconds": 5.3
+  },
+  "tests/test_enum_domains.py": {
+   "first": 499.2,
+   "name_order": 788.8,
+   "seconds": 499.2
+  },
+  "tests/test_environment_field_types.py": {
+   "first": 246.6,
+   "name_order": 539.9,
+   "seconds": 246.6
+  },
+  "tests/test_equivalence.py": {
+   "first": 2.1,
+   "name_order": 302.5,
+   "seconds": 2.1
+  },
+  "tests/test_equivalence_properties.py": {
+   "first": 10.9,
+   "name_order": 313.4,
+   "seconds": 10.9
+  },
+  "tests/test_evaluate_search.py": {
+   "first": 2.4,
+   "name_order": 315.8,
+   "seconds": 2.4
+  },
+  "tests/test_evidence_bounds.py": {
+   "first": 11.8,
+   "name_order": 327.6,
+   "seconds": 11.8
+  },
+  "tests/test_evidence_tools.py": {
+   "first": 1.6,
+   "name_order": 323.6,
+   "seconds": 1.6
+  },
+  "tests/test_fluent.py": {
+   "first": 110.0,
+   "name_order": 433.6,
+   "seconds": 110.0
+  },
+  "tests/test_fol_names.py": {
+   "first": 1.3,
+   "name_order": 328.9,
+   "seconds": 1.3
+  },
+  "tests/test_fret_w6a_rerating.py": {
+   "first": 1.5,
+   "name_order": 330.4,
+   "seconds": 1.5
+  },
+  "tests/test_gate.py": {
+   "first": 57.4,
+   "name_order": 387.8,
+   "seconds": 57.4
+  },
+  "tests/test_gate_collection.py": {
+   "first": 128.6,
+   "name_order": 506.1,
+   "seconds": 128.6
+  },
+  "tests/test_gate_integrity.py": {
+   "first": 7.5,
+   "name_order": 395.3,
+   "seconds": 7.5
+  },
+  "tests/test_gatekeeper_adapter.py": {
+   "first": 1.2,
+   "name_order": 396.5,
+   "seconds": 1.2
+  },
+  "tests/test_grammar.py": {
+   "first": 54.0,
+   "name_order": 450.5,
+   "seconds": 54.0
+  },
+  "tests/test_grammar_backends.py": {
+   "first": 1.3,
+   "name_order": 413.8,
+   "seconds": 1.3
+  },
+  "tests/test_grammar_cli.py": {
+   "first": 4.1,
+   "name_order": 417.9,
+   "seconds": 4.1
+  },
+  "tests/test_hang_guards.py": {
+   "first": 40.2,
+   "name_order": 458.1,
+   "seconds": 40.2
+  },
+  "tests/test_identity_lint.py": {
+   "first": 35.3,
+   "name_order": 468.9,
+   "seconds": 35.3
+  },
+  "tests/test_inventory_lint.py": {
+   "first": 3.1,
+   "name_order": 446.4,
+   "seconds": 3.1
+  },
+  "tests/test_lean_audit_record.py": {
+   "first": 14.2,
+   "name_order": 460.6,
+   "seconds": 14.2
+  },
+  "tests/test_lean_authority_values.py": {
+   "first": 82.5,
+   "name_order": 533.0,
+   "seconds": 82.5
+  },
+  "tests/test_lean_budget_types.py": {
+   "first": 2.1,
+   "name_order": 460.2,
+   "seconds": 2.1
+  },
+  "tests/test_lean_build.py": {
+   "first": 1.2,
+   "name_order": 461.4,
+   "seconds": 1.2
+  },
+  "tests/test_lean_certificates.py": {
+   "first": 15.4,
+   "name_order": 476.0,
+   "seconds": 15.4
+  },
+  "tests/test_lean_conformance.py": {
+   "first": 638.7,
+   "name_order": 1100.1,
+   "seconds": 638.7
+  },
+  "tests/test_lean_decided_share.py": {
+   "first": 1.5,
+   "name_order": 470.4,
+   "seconds": 1.5
+  },
+  "tests/test_lean_document_wrapper.py": {
+   "first": 198.0,
+   "name_order": 668.4,
+   "seconds": 198.0
+  },
+  "tests/test_lean_first_b10a_report.py": {
+   "first": 1.4,
+   "name_order": 477.4,
+   "seconds": 1.4
+  },
+  "tests/test_lean_first_b10b_report.py": {
+   "first": 1.3,
+   "name_order": 478.7,
+   "seconds": 1.3
+  },
+  "tests/test_lean_first_b12_report.py": {
+   "first": 14.6,
+   "name_order": 493.3,
+   "seconds": 14.6
+  },
+  "tests/test_lean_first_b13a.py": {
+   "first": 5.9,
+   "name_order": 499.2,
+   "seconds": 5.9
+  },
+  "tests/test_lean_first_b3b_report.py": {
+   "first": 1.4,
+   "name_order": 500.6,
+   "seconds": 1.4
+  },
+  "tests/test_lean_first_b3d_report.py": {
+   "first": 1.7,
+   "name_order": 502.3,
+   "seconds": 1.7
+  },
+  "tests/test_lean_first_b5_delta.py": {
+   "first": 1.1,
+   "name_order": 503.4,
+   "seconds": 1.1
+  },
+  "tests/test_lean_first_b6_report.py": {
+   "first": 1.1,
+   "name_order": 504.5,
+   "seconds": 1.1
+  },
+  "tests/test_lean_first_b9_report.py": {
+   "first": 1.2,
+   "name_order": 505.7,
+   "seconds": 1.2
+  },
+  "tests/test_lean_first_diff.py": {
+   "first": 23.4,
+   "name_order": 529.1,
+   "seconds": 23.4
+  },
+  "tests/test_lean_first_oracle.py": {
+   "first": 4.0,
+   "name_order": 510.1,
+   "seconds": 4.0
+  },
+  "tests/test_lean_first_rule3_measurement.py": {
+   "first": 1.5,
+   "name_order": 511.6,
+   "seconds": 1.5
+  },
+  "tests/test_lean_first_triage.py": {
+   "first": 1.8,
+   "name_order": 513.4,
+   "seconds": 1.8
+  },
+  "tests/test_lean_handles.py": {
+   "first": 10.5,
+   "name_order": 523.9,
+   "seconds": 10.5
+  },
+  "tests/test_lean_import_reader.py": {
+   "first": 10.3,
+   "name_order": 534.2,
+   "seconds": 10.3
+  },
+  "tests/test_lean_layers_once.py": {
+   "first": 13.0,
+   "name_order": 542.1,
+   "seconds": 13.0
+  },
+  "tests/test_lean_service.py": {
+   "first": 38.0,
+   "name_order": 571.0,
+   "seconds": 38.0
+  },
+  "tests/test_lean_service_schema.py": {
+   "first": 332.1,
+   "name_order": 866.3,
+   "seconds": 332.1
+  },
+  "tests/test_legend.py": {
+   "first": 1.6,
+   "name_order": 541.5,
+   "seconds": 1.6
+  },
+  "tests/test_lexicon.py": {
+   "first": 4.1,
+   "name_order": 545.6,
+   "seconds": 4.1
+  },
+  "tests/test_llm.py": {
+   "first": 1.3,
+   "name_order": 543.4,
+   "seconds": 1.3
+  },
+  "tests/test_metered_differential.py": {
+   "first": 111.3,
+   "name_order": 654.7,
+   "seconds": 111.3
+  },
+  "tests/test_metered_lean.py": {
+   "first": 3.5,
+   "name_order": 549.1,
+   "seconds": 3.5
+  },
+  "tests/test_model_environment.py": {
+   "first": 199.9,
+   "name_order": 749.0,
+   "seconds": 199.9
+  },
+  "tests/test_nary.py": {
+   "first": 1.9,
+   "name_order": 572.9,
+   "seconds": 1.9
+  },
+  "tests/test_nary_differential.py": {
+   "first": 67.3,
+   "name_order": 640.2,
+   "seconds": 67.3
+  },
+  "tests/test_nary_folio.py": {
+   "first": 2.7,
+   "name_order": 642.9,
+   "seconds": 2.7
+  },
+  "tests/test_native_build_lock.py": {
+   "first": 11.6,
+   "name_order": 654.5,
+   "seconds": 11.6
+  },
+  "tests/test_natural.py": {
+   "first": 87.1,
+   "name_order": 741.6,
+   "seconds": 87.1
+  },
+  "tests/test_nested_pytest.py": {
+   "first": 45.9,
+   "name_order": 700.6,
+   "seconds": 45.9
+  },
+  "tests/test_news_w6a_fixtures.py": {
+   "first": 3.2,
+   "name_order": 671.6,
+   "seconds": 3.2
+  },
+  "tests/test_norm_admission.py": {
+   "first": 2.5,
+   "name_order": 674.1,
+   "seconds": 2.5
+  },
+  "tests/test_norm_defaults.py": {
+   "first": 6.1,
+   "name_order": 680.2,
+   "seconds": 6.1
+  },
+  "tests/test_norm_defaults_contract.py": {
+   "first": 12.3,
+   "name_order": 692.5,
+   "seconds": 12.3
+  },
+  "tests/test_norm_defaults_differential.py": {
+   "first": 17.6,
+   "name_order": 710.1,
+   "seconds": 17.6
+  },
+  "tests/test_norm_defaults_layered.py": {
+   "first": 3.8,
+   "name_order": 704.4,
+   "seconds": 3.8
+  },
+  "tests/test_norm_defaults_relay_english.py": {
+   "first": 4.9,
+   "name_order": 709.3,
+   "seconds": 4.9
+  },
+  "tests/test_norm_defaults_report.py": {
+   "first": 46.3,
+   "name_order": 755.6,
+   "seconds": 46.3
+  },
+  "tests/test_norm_defaults_switch.py": {
+   "first": 2.6,
+   "name_order": 712.7,
+   "seconds": 2.6
+  },
+  "tests/test_norm_defaults_three_way.py": {
+   "first": 150.7,
+   "name_order": 863.4,
+   "seconds": 150.7
+  },
+  "tests/test_norm_english.py": {
+   "first": 2.6,
+   "name_order": 744.2,
+   "seconds": 2.6
+  },
+  "tests/test_norms.py": {
+   "first": 1.7,
+   "name_order": 745.9,
+   "seconds": 1.7
+  },
+  "tests/test_norms_contract.py": {
+   "first": 9.3,
+   "name_order": 755.2,
+   "seconds": 9.3
+  },
+  "tests/test_norms_three_way.py": {
+   "first": 15.7,
+   "name_order": 764.7,
+   "seconds": 15.7
+  },
+  "tests/test_numeral_conversion.py": {
+   "first": 8.7,
+   "name_order": 763.9,
+   "seconds": 8.7
+  },
+  "tests/test_order.py": {
+   "first": 67.2,
+   "name_order": 822.8,
+   "seconds": 67.2
+  },
+  "tests/test_order_gate.py": {
+   "first": 2.9,
+   "name_order": 766.8,
+   "seconds": 2.9
+  },
+  "tests/test_order_grammar.py": {
+   "first": 4.1,
+   "name_order": 768.8,
+   "seconds": 4.1
+  },
+  "tests/test_order_round2.py": {
+   "first": 10.1,
+   "name_order": 776.9,
+   "seconds": 10.1
+  },
+  "tests/test_p0_three_way.py": {
+   "first": 12.1,
+   "name_order": 780.9,
+   "seconds": 12.1
+  },
+  "tests/test_p1.py": {
+   "first": 33.2,
+   "name_order": 810.1,
+   "seconds": 33.2
+  },
+  "tests/test_p1_amendment11.py": {
+   "first": 6.1,
+   "name_order": 787.0,
+   "seconds": 6.1
+  },
+  "tests/test_p1_amendment12.py": {
+   "first": 176.1,
+   "name_order": 963.1,
+   "seconds": 176.1
+  },
+  "tests/test_p1_amendment13.py": {
+   "first": 188.3,
+   "name_order": 977.1,
+   "seconds": 188.3
+  },
+  "tests/test_p1_amendment14.py": {
+   "first": 46.8,
+   "name_order": 856.9,
+   "seconds": 46.8
+  },
+  "tests/test_p1_amendment15.py": {
+   "first": 179.8,
+   "name_order": 1002.6,
+   "seconds": 179.8
+  },
+  "tests/test_p1_amendment7.py": {
+   "first": 33.5,
+   "name_order": 890.4,
+   "seconds": 33.5
+  },
+  "tests/test_p1_amendment8.py": {
+   "first": 29.3,
+   "name_order": 892.7,
+   "seconds": 29.3
+  },
+  "tests/test_p1_amendment9.py": {
+   "first": 44.2,
+   "name_order": 910.5,
+   "seconds": 44.2
+  },
+  "tests/test_p1_history.py": {
+   "first": 8.0,
+   "name_order": 898.4,
+   "seconds": 8.0
+  },
+  "tests/test_p1_infrastructure.py": {
+   "first": 6.4,
+   "name_order": 899.1,
+   "seconds": 6.4
+  },
+  "tests/test_p1_native_counter.py": {
+   "first": 4.6,
+   "name_order": 903.0,
+   "seconds": 4.6
+  },
+  "tests/test_p1_preflight.py": {
+   "first": 34.5,
+   "name_order": 933.6,
+   "seconds": 34.5
+  },
+  "tests/test_p1_reconcile.py": {
+   "first": 30.0,
+   "name_order": 933.0,
+   "seconds": 30.0
+  },
+  "tests/test_parser_renderer.py": {
+   "first": 1.8,
+   "name_order": 912.3,
+   "seconds": 1.8
+  },
+  "tests/test_precommit_hook.py": {
+   "first": 203.5,
+   "name_order": 1115.8,
+   "seconds": 203.5
+  },
+  "tests/test_profile_artifacts.py": {
+   "first": 2.2,
+   "name_order": 935.2,
+   "seconds": 2.2
+  },
+  "tests/test_profiles.py": {
+   "first": 2.1,
+   "name_order": 935.7,
+   "seconds": 2.1
+  },
+  "tests/test_properties.py": {
+   "first": 93.5,
+   "name_order": 1028.7,
+   "seconds": 93.5
+  },
+  "tests/test_propose.py": {
+   "first": 67.0,
+   "name_order": 1002.7,
+   "seconds": 67.0
+  },
+  "tests/test_readings_budget_zero.py": {
+   "first": 10.6,
+   "name_order": 973.7,
+   "seconds": 10.6
+  },
+  "tests/test_readings_companions_lean.py": {
+   "first": 4.3,
+   "name_order": 978.0,
+   "seconds": 4.3
+  },
+  "tests/test_readings_component_names.py": {
+   "first": 4.1,
+   "name_order": 981.2,
+   "seconds": 4.1
+  },
+  "tests/test_readings_defaults_english.py": {
+   "first": 8.6,
+   "name_order": 986.6,
+   "seconds": 8.6
+  },
+  "tests/test_readings_defaults_names.py": {
+   "first": 17.6,
+   "name_order": 998.8,
+   "seconds": 17.6
+  },
+  "tests/test_readings_defaults_rd2a_report.py": {
+   "first": 1.5,
+   "name_order": 988.1,
+   "seconds": 1.5
+  },
+  "tests/test_readings_defaults_rd2b_report.py": {
+   "first": 1.7,
+   "name_order": 989.8,
+   "seconds": 1.7
+  },
+  "tests/test_readings_defaults_rd3_report.py": {
+   "first": 1.7,
+   "name_order": 991.5,
+   "seconds": 1.7
+  },
+  "tests/test_readings_defaults_rd4a_report.py": {
+   "first": 2.4,
+   "name_order": 993.9,
+   "seconds": 2.4
+  },
+  "tests/test_readings_defaults_rd6a.py": {
+   "first": 2.7,
+   "name_order": 996.6,
+   "seconds": 2.7
+  },
+  "tests/test_readings_defaults_rd6a_report.py": {
+   "first": 3.4,
+   "name_order": 1000.0,
+   "seconds": 3.4
+  },
+  "tests/test_readings_defaults_rd8_report.py": {
+   "first": 2.7,
+   "name_order": 1001.5,
+   "seconds": 2.7
+  },
+  "tests/test_readings_defaults_statements.py": {
+   "first": 10.1,
+   "name_order": 1010.1,
+   "seconds": 10.1
+  },
+  "tests/test_readings_lazy_pairs.py": {
+   "first": 20.3,
+   "name_order": 1021.8,
+   "seconds": 20.3
+  },
+  "tests/test_readings_lean_sharing.py": {
+   "first": 21.8,
+   "name_order": 1024.4,
+   "seconds": 21.8
+  },
+  "tests/test_readings_nd_document.py": {
+   "first": 13.0,
+   "name_order": 1015.7,
+   "seconds": 13.0
+  },
+  "tests/test_readings_nd_lean.py": {
+   "first": 8.4,
+   "name_order": 1018.5,
+   "seconds": 8.4
+  },
+  "tests/test_readings_route_fuzz.py": {
+   "first": 21.6,
+   "name_order": 1037.3,
+   "seconds": 21.6
+  },
+  "tests/test_readings_route_relay.py": {
+   "first": 4.4,
+   "name_order": 1022.9,
+   "seconds": 4.4
+  },
+  "tests/test_readings_s1_differential.py": {
+   "first": 43.3,
+   "name_order": 1065.1,
+   "seconds": 43.3
+  },
+  "tests/test_readings_s1_document.py": {
+   "first": 8.0,
+   "name_order": 1030.9,
+   "seconds": 8.0
+  },
+  "tests/test_readings_s1_integration.py": {
+   "first": 2.6,
+   "name_order": 1027.0,
+   "seconds": 2.6
+  },
+  "tests/test_readings_s1_lean.py": {
+   "first": 6.8,
+   "name_order": 1033.8,
+   "seconds": 6.8
+  },
+  "tests/test_readings_s1_python.py": {
+   "first": 2.3,
+   "name_order": 1031.0,
+   "seconds": 2.3
+  },
+  "tests/test_readings_s2_document.py": {
+   "first": 402.9,
+   "name_order": 1433.8,
+   "seconds": 402.9
+  },
+  "tests/test_readings_s2_lean.py": {
+   "first": 3.0,
+   "name_order": 1034.0,
+   "seconds": 3.0
+  },
+  "tests/test_readings_s2_python.py": {
+   "first": 1.5,
+   "name_order": 1035.3,
+   "seconds": 1.5
+  },
+  "tests/test_readings_verdicts_lean.py": {
+   "first": 40.0,
+   "name_order": 1074.0,
+   "seconds": 40.0
+  },
+  "tests/test_relay.py": {
+   "first": 11.4,
+   "name_order": 1046.7,
+   "seconds": 11.4
+  },
+  "tests/test_relay_english_scale.py": {
+   "first": 3.3,
+   "name_order": 1040.6,
+   "seconds": 3.3
+  },
+  "tests/test_relay_lint.py": {
+   "first": 6.1,
+   "name_order": 1046.7,
+   "seconds": 6.1
+  },
+  "tests/test_relay_wire_check.py": {
+   "first": 2.7,
+   "name_order": 1049.4,
+   "seconds": 2.7
+  },
+  "tests/test_replay_conservativity.py": {
+   "first": 6.2,
+   "name_order": 1052.9,
+   "seconds": 6.2
+  },
+  "tests/test_report_english.py": {
+   "first": 5.5,
+   "name_order": 1054.9,
+   "seconds": 5.5
+  },
+  "tests/test_reports.py": {
+   "first": 4.3,
+   "name_order": 1057.2,
+   "seconds": 4.3
+  },
+  "tests/test_reports_agreement.py": {
+   "first": 4.2,
+   "name_order": 1059.1,
+   "seconds": 4.2
+  },
+  "tests/test_reports_fault_order.py": {
+   "first": 39.0,
+   "name_order": 1096.2,
+   "seconds": 39.0
+  },
+  "tests/test_reports_lean.py": {
+   "first": 74.5,
+   "name_order": 1133.6,
+   "seconds": 74.5
+  },
+  "tests/test_reports_status.py": {
+   "first": 11.9,
+   "name_order": 1077.0,
+   "seconds": 11.9
+  },
+  "tests/test_response_schemas.py": {
+   "first": 1.6,
+   "name_order": 1075.6,
+   "seconds": 1.6
+  },
+  "tests/test_rights.py": {
+   "first": 45.9,
+   "name_order": 1121.5,
+   "seconds": 45.9
+  },
+  "tests/test_rights_lean.py": {
+   "first": 2.3,
+   "name_order": 1079.3,
+   "seconds": 2.3
+  },
+  "tests/test_rights_render_status.py": {
+   "first": 1.6,
+   "name_order": 1080.9,
+   "seconds": 1.6
+  },
+  "tests/test_rights_three_way.py": {
+   "first": 39.3,
+   "name_order": 1120.2,
+   "seconds": 39.3
+  },
+  "tests/test_risk_diagnostics.py": {
+   "first": 6.6,
+   "name_order": 1102.8,
+   "seconds": 6.6
+  },
+  "tests/test_risk_differential.py": {
+   "first": 4.1,
+   "name_order": 1104.2,
+   "seconds": 4.1
+  },
+  "tests/test_risk_english.py": {
+   "first": 4.3,
+   "name_order": 1107.1,
+   "seconds": 4.3
+  },
+  "tests/test_risk_every_diagnostic.py": {
+   "first": 2.4,
+   "name_order": 1106.6,
+   "seconds": 2.4
+  },
+  "tests/test_risk_fixtures.py": {
+   "first": 64.6,
+   "name_order": 1171.2,
+   "seconds": 64.6
+  },
+  "tests/test_risk_generated_policies.py": {
+   "first": 293.3,
+   "name_order": 1400.4,
+   "seconds": 293.3
+  },
+  "tests/test_risk_integration.py": {
+   "first": 3.2,
+   "name_order": 1119.0,
+   "seconds": 3.2
+  },
+  "tests/test_risk_lean_route.py": {
+   "first": 7.0,
+   "name_order": 1126.0,
+   "seconds": 7.0
+  },
+  "tests/test_risk_margins.py": {
+   "first": 1013.8,
+   "name_order": 2134.0,
+   "seconds": 1013.8
+  },
+  "tests/test_risk_profile.py": {
+   "first": 2.8,
+   "name_order": 1124.3,
+   "seconds": 2.8
+  },
+  "tests/test_risk_w6_extension.py": {
+   "first": 2.2,
+   "name_order": 1126.5,
+   "seconds": 2.2
+  },
+  "tests/test_route_parity.py": {
+   "first": 1.3,
+   "name_order": 1127.3,
+   "seconds": 1.3
+  },
+  "tests/test_route_row_schemas.py": {
+   "first": 273.7,
+   "name_order": 1400.2,
+   "seconds": 273.7
+  },
+  "tests/test_route_transport.py": {
+   "first": 3.0,
+   "name_order": 1130.3,
+   "seconds": 3.0
+  },
+  "tests/test_runner.py": {
+   "first": 2.1,
+   "name_order": 1132.4,
+   "seconds": 2.1
+  },
+  "tests/test_rust_conformance.py": {
+   "first": 63.4,
+   "name_order": 1195.8,
+   "seconds": 63.4
+  },
+  "tests/test_rust_jsonl_schema.py": {
+   "first": 2.7,
+   "name_order": 1136.3,
+   "seconds": 2.7
+  },
+  "tests/test_rust_reproducible.py": {
+   "first": 55.8,
+   "name_order": 1192.1,
+   "seconds": 55.8
+  },
+  "tests/test_safety_framework.py": {
+   "first": 303.1,
+   "name_order": 1474.3,
+   "seconds": 303.1
+  },
+  "tests/test_search_options.py": {
+   "first": 5.2,
+   "name_order": 1197.3,
+   "seconds": 5.2
+  },
+  "tests/test_select_tests.py": {
+   "first": 223.8,
+   "name_order": 1419.6,
+   "seconds": 223.8
+  },
+  "tests/test_senses_document.py": {
+   "first": 243.4,
+   "name_order": 1440.7,
+   "seconds": 243.4
+  },
+  "tests/test_senses_lean.py": {
+   "first": 6.8,
+   "name_order": 1407.0,
+   "seconds": 6.8
+  },
+  "tests/test_senses_pack.py": {
+   "first": 3.2,
+   "name_order": 1403.6,
+   "seconds": 3.2
+  },
+  "tests/test_senses_route.py": {
+   "first": 34.5,
+   "name_order": 1438.1,
+   "seconds": 34.5
+  },
+  "tests/test_single_owner.py": {
+   "first": 14.6,
+   "name_order": 1421.6,
+   "seconds": 14.6
+  },
+  "tests/test_soft_candidate_economy.py": {
+   "first": 11.2,
+   "name_order": 1430.8,
+   "seconds": 11.2
+  },
+  "tests/test_soft_norms_conformance.py": {
+   "first": 6.8,
+   "name_order": 1428.4,
+   "seconds": 6.8
+  },
+  "tests/test_soft_norms_lean.py": {
+   "first": 3.5,
+   "name_order": 1431.9,
+   "seconds": 3.5
+  },
+  "tests/test_soft_request_economy.py": {
+   "first": 4.6,
+   "name_order": 1435.4,
+   "seconds": 4.6
+  },
+  "tests/test_soft_review_regressions.py": {
+   "first": 982.1,
+   "name_order": 2414.0,
+   "seconds": 982.1
+  },
+  "tests/test_softnorms_contract.py": {
+   "first": 13.3,
+   "name_order": 1447.1,
+   "seconds": 13.3
+  },
+  "tests/test_softnorms_public_contract.py": {
+   "first": 7.5,
+   "name_order": 1442.9,
+   "seconds": 7.5
+  },
+  "tests/test_speech_acts.py": {
+   "first": 8.5,
+   "name_order": 1446.6,
+   "seconds": 8.5
+  },
+  "tests/test_speech_acts_conformance.py": {
+   "first": 114.8,
+   "name_order": 1555.5,
+   "seconds": 114.8
+  },
+  "tests/test_speech_acts_lean.py": {
+   "first": 23.2,
+   "name_order": 1466.1,
+   "seconds": 23.2
+  },
+  "tests/test_speech_source_lean.py": {
+   "first": 133.7,
+   "name_order": 1580.3,
+   "seconds": 133.7
+  },
+  "tests/test_speech_source_relay.py": {
+   "first": 22.3,
+   "name_order": 1469.4,
+   "seconds": 22.3
+  },
+  "tests/test_speech_source_switch.py": {
+   "first": 16.0,
+   "name_order": 1482.1,
+   "seconds": 16.0
+  },
+  "tests/test_stage0_inventory.py": {
+   "first": 24.7,
+   "name_order": 1494.1,
+   "seconds": 24.7
+  },
+  "tests/test_stage0_probe_matrix.py": {
+   "first": 15.1,
+   "name_order": 1489.4,
+   "seconds": 15.1
+  },
+  "tests/test_stage2_bundle.py": {
+   "first": 7.0,
+   "name_order": 1489.1,
+   "seconds": 7.0
+  },
+  "tests/test_stage2_dispatch.py": {
+   "first": 8.8,
+   "name_order": 1497.9,
+   "seconds": 8.8
+  },
+  "tests/test_stage2_evaluation.py": {
+   "first": 131.1,
+   "name_order": 1620.5,
+   "seconds": 131.1
+  },
+  "tests/test_stage2_faults.py": {
+   "first": 60.5,
+   "name_order": 1554.6,
+   "seconds": 60.5
+  },
+  "tests/test_stage2_graph.py": {
+   "first": 111.5,
+   "name_order": 1609.4,
+   "seconds": 111.5
+  },
+  "tests/test_stage2_norms.py": {
+   "first": 4.9,
+   "name_order": 1559.5,
+   "seconds": 4.9
+  },
+  "tests/test_stage2_parse.py": {
+   "first": 25.6,
+   "name_order": 1581.1,
+   "seconds": 25.6
+  },
+  "tests/test_stage2_readings.py": {
+   "first": 156.6,
+   "name_order": 1716.1,
+   "seconds": 156.6
+  },
+  "tests/test_stage2_standalone.py": {
+   "first": 61.9,
+   "name_order": 1642.2,
+   "seconds": 61.9
+  },
+  "tests/test_stage2_validation.py": {
+   "first": 57.1,
+   "name_order": 1638.2,
+   "seconds": 57.1
+  },
+  "tests/test_statement_block_environment.py": {
+   "first": 4.6,
+   "name_order": 1614.0,
+   "seconds": 4.6
+  },
+  "tests/test_stats.py": {
+   "first": 7.0,
+   "name_order": 1621.0,
+   "seconds": 7.0
+  },
+  "tests/test_surface_registry.py": {
+   "first": 1.9,
+   "name_order": 1622.4,
+   "seconds": 1.9
+  },
+  "tests/test_t1c.py": {
+   "first": 34.2,
+   "name_order": 1655.2,
+   "seconds": 34.2
+  },
+  "tests/test_testing_profile_doc.py": {
+   "first": 3.5,
+   "name_order": 1625.9,
+   "seconds": 3.5
+  },
+  "tests/test_time_surface_w6a.py": {
+   "first": 3.9,
+   "name_order": 1629.8,
+   "seconds": 3.9
+  },
+  "tests/test_time_w6a.py": {
+   "first": 3.4,
+   "name_order": 1633.2,
+   "seconds": 3.4
+  },
+  "tests/test_units_lean_gate_w6a.py": {
+   "first": 4.8,
+   "name_order": 1638.0,
+   "seconds": 4.8
+  },
+  "tests/test_units_lean_w6a.py": {
+   "first": 19.6,
+   "name_order": 1657.6,
+   "seconds": 19.6
+  },
+  "tests/test_units_relay_w6a.py": {
+   "first": 6.3,
+   "name_order": 1644.5,
+   "seconds": 6.3
+  },
+  "tests/test_units_w6a.py": {
+   "first": 8.4,
+   "name_order": 1650.6,
+   "seconds": 8.4
+  },
+  "tests/test_vacuity.py": {
+   "first": 2.9,
+   "name_order": 1647.4,
+   "seconds": 2.9
+  },
+  "tests/test_ve_iface.py": {
+   "first": 2.6,
+   "name_order": 1650.0,
+   "seconds": 2.6
+  },
+  "tests/test_views.py": {
+   "first": 21.9,
+   "name_order": 1671.9,
+   "seconds": 21.9
+  },
+  "tests/test_views_polish.py": {
+   "first": 6.2,
+   "name_order": 1656.8,
+   "seconds": 6.2
+  },
+  "tests/test_w6a2_looprecheck1.py": {
+   "first": 30.2,
+   "name_order": 1685.4,
+   "seconds": 30.2
+  },
+  "tests/test_w6a2_numeral_characters.py": {
+   "first": 14.1,
+   "name_order": 1670.9,
+   "seconds": 14.1
+  },
+  "tests/test_w6a_certificate_steps.py": {
+   "first": 35.6,
+   "name_order": 1693.2,
+   "seconds": 35.6
+  },
+  "tests/test_w6a_citations.py": {
+   "first": 4.2,
+   "name_order": 1675.1,
+   "seconds": 4.2
+  },
+  "tests/test_w6a_documents.py": {
+   "first": 9.0,
+   "name_order": 1680.9,
+   "seconds": 9.0
+  },
+  "tests/test_w6a_limit_generator.py": {
+   "first": 350.0,
+   "name_order": 2025.1,
+   "seconds": 350.0
+  },
+  "tests/test_w6a_limits.py": {
+   "first": 12.5,
+   "name_order": 1693.4,
+   "seconds": 12.5
+  },
+  "tests/test_w6a_looprecheck1.py": {
+   "first": 99.5,
+   "name_order": 1784.9,
+   "seconds": 99.5
+  },
+  "tests/test_w6a_looprecheck2.py": {
+   "first": 20.3,
+   "name_order": 1713.5,
+   "seconds": 20.3
+  },
+  "tests/test_w6a_review_regressions.py": {
+   "first": 6.7,
+   "name_order": 1700.1,
+   "seconds": 6.7
+  },
+  "tests/test_w6a_route_limits.py": {
+   "first": 314.0,
+   "name_order": 2014.1,
+   "seconds": 314.0
+  },
+  "tests/test_w6b_gates.py": {
+   "first": 3.2,
+   "name_order": 1716.7,
+   "seconds": 3.2
+  },
+  "tests/test_wire_contract_corpus.py": {
+   "first": 2.7,
+   "name_order": 1718.8,
+   "seconds": 2.7
+  },
+  "tests/test_wire_contract_engine.py": {
+   "first": 1.9,
+   "name_order": 1718.6,
+   "seconds": 1.9
+  },
+  "tests/test_wire_contract_faults.py": {
+   "first": 52.1,
+   "name_order": 1770.7,
+   "seconds": 52.1
+  },
+  "tests/test_wire_contract_generator.py": {
+   "first": 2.0,
+   "name_order": 1720.8,
+   "seconds": 2.0
+  },
+  "tests/test_wire_contract_lean.py": {
+   "first": 2.7,
+   "name_order": 1723.5,
+   "seconds": 2.7
+  },
+  "tests/test_wire_contract_lint.py": {
+   "first": 4.8,
+   "name_order": 1728.3,
+   "seconds": 4.8
+  },
+  "tests/test_wire_contract_precondition.py": {
+   "first": 1.7,
+   "name_order": 1730.0,
+   "seconds": 1.7
+  },
+  "tests/test_wire_contract_s4_lean.py": {
+   "first": 3.5,
+   "name_order": 1733.5,
+   "seconds": 3.5
+  },
+  "tests/test_wire_contract_s5_admission.py": {
+   "first": 3.9,
+   "name_order": 1737.4,
+   "seconds": 3.9
+  },
+  "tests/test_wire_contract_s5_lean.py": {
+   "first": 249.0,
+   "name_order": 1986.4,
+   "seconds": 249.0
+  },
+  "tests/test_wire_contract_soft_lean.py": {
+   "first": 201.6,
+   "name_order": 1972.3,
+   "seconds": 201.6
+  },
+  "tests/test_wire_contract_three_way.py": {
+   "first": 11.1,
+   "name_order": 1796.0,
+   "seconds": 11.1
+  },
+  "tests/test_wire_gate_corpus.py": {
+   "first": 1673.5,
+   "name_order": 3469.5,
+   "seconds": 1673.5
+  },
+  "tools/test_layer_policy.py": {
+   "first": 85.6,
+   "name_order": 2057.9,
+   "seconds": 85.6
+  }
+ },
+ "saved_minutes": {
+  "max": 32.9,
+  "mean": 12.4,
+  "median": 11.7,
+  "p90": 27.2
+ },
+ "suite_seconds": 18372.1
+}

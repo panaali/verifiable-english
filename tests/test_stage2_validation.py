@@ -337,18 +337,24 @@ def test_a_definition_cycle_both_checkers_reject_is_named_by_python(monkeypatch)
         compile_definitions(env, entries, version="v")
 
 
-def test_lean_acceptance_of_rejected_definitions_is_unavailable(monkeypatch):
+def test_definitions_are_leans_answer_and_python_does_not_arbitrate(monkeypatch):
+    """Lean-first batch 13b: Lean's Background answer is the definitions under every authority. Python no
+    longer re-decides them (`validation.decided` is deleted): an entry Python once rejected is whatever Lean
+    answers, and a row whose premises and generators do not pair is CheckerUnavailable."""
     from ve.definitions import compile_definitions
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     env = Environment(chained())
     entries = {**env.definition_entries,
                "derived": {"arguments": ["item"], "body": ["unary", "missing", ["var", 0]]}}
     fake_lean(monkeypatch, lambda mode, case: {"id": "definitions", "status": "ok",
                                                "premises": [], "generators": [], "background": []})
     monkeypatch.setenv("VE_AUTHORITY", "python")
-    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "definitions_elaboration=lean")
-    with pytest.raises(CheckerUnavailable, match="Python decoder rejects"):
-        compile_definitions(env, entries, version="v")
+    assert compile_definitions(env, entries, version="v-accepted") == ()
+    fake_lean(monkeypatch, lambda mode, case: {"id": "definitions", "status": "ok",
+                                               "premises": [["top"]], "generators": [], "background": []})
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    with pytest.raises(CheckerUnavailable, match="malformed Lean Background result"):
+        compile_definitions(env, {**entries, "derived": {"arguments": ["item"], "body": ["top"]}},
+                            version="v-malformed")
 
 
 @pytest.mark.parametrize("kind", ["v0", "closure", "order"])

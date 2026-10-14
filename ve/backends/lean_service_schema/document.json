@@ -191,7 +191,17 @@
     "unit": {
       "additionalProperties": false,
       "properties": {
-        "content": {"$ref": "common.json#/$defs/generated_formula"},
+        "content": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/generated_formula"},
+            {
+              "additionalProperties": false,
+              "properties": {"norm": {"$ref": "common.json#/$defs/norm_node"}},
+              "required": ["norm"],
+              "type": "object"
+            }
+          ]
+        },
         "id": {"$ref": "common.json#/$defs/token"},
         "kind": {"$ref": "common.json#/$defs/kind"},
         "meaning": {"$ref": "#/$defs/meaning"},

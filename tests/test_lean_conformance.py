@@ -298,13 +298,16 @@ def test_source_audit_rejects_escape_hatches_everywhere(source_audit, tmp_path, 
         source_audit.scan_sources(tmp_path)
 
 
-def test_source_audit_includes_root_and_dotted_theorems(source_audit, tmp_path):
+def test_source_audit_scans_every_source_and_passes_clean_ones(source_audit, tmp_path):
+    """The word scan passes nested comments and ordinary strings. The theorem names (root and dotted ones)
+    are the compiled environment's, read from lean/declarations.txt: tests/test_lean_audit_record.py."""
     (tmp_path / "Main.lean").write_text(
         '/- comment /- nested -/ comment -/\n-- comment\ndef label := "ordinary"\n'
         'theorem root_result : True := by trivial\nnamespace Demo\n'
         '@[simp] theorem Nested.result : True := by trivial\nend Demo\n')
-    actual, sources = source_audit.scan_sources(tmp_path)
-    assert actual == {"root_result", "Demo.Nested.result"}
+    (tmp_path / ".lake/build").mkdir(parents=True)
+    (tmp_path / ".lake/build/Cached.lean").write_text("sorry\n")
+    sources = source_audit.scan_sources(tmp_path)
     assert [p.name for p in sources] == ["Main.lean"]
 
 

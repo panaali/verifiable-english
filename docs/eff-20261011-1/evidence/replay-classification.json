@@ -1,0 +1,248 @@
+[
+  {
+    "merge": "17573bbb4b988d711166292c0101639f411337bc",
+    "parents": [
+      "67c056c0",
+      "cd546c0d"
+    ],
+    "conflicts": [
+      "docs/trust-baseline.json",
+      "lean/declarations.txt"
+    ],
+    "before": "stopped",
+    "before_reasons": [
+      "docs/trust-baseline.json: $.totals.D: both sides changed it (13781 / 13785)"
+    ],
+    "after": "resolved",
+    "after_reasons": []
+  },
+  {
+    "merge": "6aafef85ff85436bba3128686a4e693f38471c95",
+    "parents": [
+      "d1f90534",
+      "5479466f"
+    ],
+    "conflicts": [
+      "docs/spec/assurance-manifest.md",
+      "docs/trust-baseline.json",
+      "ve/assurance-manifest.json"
+    ],
+    "before": "stopped",
+    "before_reasons": [
+      "docs/trust-baseline.json: $.totals.D: both sides changed it (13875 / 13785)"
+    ],
+    "after": "resolved",
+    "after_reasons": []
+  },
+  {
+    "merge": "ef243d377290eb1b08bbac2d533df5eb27a109cb",
+    "parents": [
+      "8101a733",
+      "5479466f"
+    ],
+    "conflicts": [
+      "tools/gate-collection.json"
+    ],
+    "before": "resolved",
+    "before_reasons": [],
+    "after": "resolved",
+    "after_reasons": []
+  },
+  {
+    "merge": "b8118aa705e9b4c433c8cd83087bc9c8228f333f",
+    "parents": [
+      "4101e6a0",
+      "5479466f"
+    ],
+    "conflicts": [
+      "tools/gate-collection.json"
+    ],
+    "before": "resolved",
+    "before_reasons": [],
+    "after": "resolved",
+    "after_reasons": []
+  },
+  {
+    "merge": "372652cf5d0a5808a202c5b0a429d86f71b579ca",
+    "parents": [
+      "31732870",
+      "8b9927f2"
+    ],
+    "conflicts": [
+      "lean/ResponseShape/Audit.lean",
+      "lean/VE/Audit.lean",
+      "lean/VE/Route/frozen-sources.sha256",
+      "lean/axioms.txt",
+      "lean/declarations.txt",
+      "lean/statements.txt"
+    ],
+    "before": "resolved",
+    "before_reasons": [],
+    "after": "resolved",
+    "after_reasons": []
+  },
+  {
+    "merge": "e41d104f0caff76854bfa3fb20599f7c7df15865",
+    "parents": [
+      "af4d707a",
+      "8b9927f2"
+    ],
+    "conflicts": [
+      "tools/gate-collection.json"
+    ],
+    "before": "resolved",
+    "before_reasons": [],
+    "after": "resolved",
+    "after_reasons": []
+  },
+  {
+    "merge": "1a221d547c6aacb13896ff27acb5788f6243991a",
+    "parents": [
+      "fab4124f",
+      "96887019"
+    ],
+    "conflicts": [
+      ".importlinter",
+      "docs/ARCHITECTURE-LAYERS.md",
+      "docs/spec/assurance-manifest.md",
+      "docs/trust-baseline.json",
+      "ve/assurance-manifest.json",
+      "ve/document.py"
+    ],
+    "before": "stopped",
+    "before_reasons": [
+      "source conflict: docs/ARCHITECTURE-LAYERS.md",
+      "docs/trust-baseline.json: $.totals.S: both sides changed it (9701 / 9791)",
+      "source conflict: ve/document.py"
+    ],
+    "after": "stopped",
+    "after_reasons": [
+      "source conflict: docs/ARCHITECTURE-LAYERS.md",
+      "source conflict: ve/document.py"
+    ]
+  },
+  {
+    "merge": "fc1060627171b0a8831d39445d9258b11dc24cb1",
+    "parents": [
+      "19e57de8",
+      "96887019"
+    ],
+    "conflicts": [
+      ".importlinter",
+      "docs/spec/assurance-manifest.md",
+      "docs/trust-baseline.json",
+      "lean/VE/Route/frozen-sources.sha256",
+      "lean/declarations.txt",
+      "tools/trust-classes.json",
+      "ve/assurance-manifest.json"
+    ],
+    "before": "stopped",
+    "before_reasons": [
+      "docs/trust-baseline.json: $.totals.S: both sides changed it (9887 / 9791)"
+    ],
+    "after": "resolved",
+    "after_reasons": []
+  },
+  {
+    "merge": "099dae2e200f89c1ff4ddc37fb64fd3b43a83fac",
+    "parents": [
+      "f34f7043",
+      "96887019"
+    ],
+    "conflicts": [
+      "docs/trust-baseline.json",
+      "lean/checkers.lock",
+      "lean/declarations.txt",
+      "tools/relay_lint.py"
+    ],
+    "before": "stopped",
+    "before_reasons": [
+      "docs/trust-baseline.json: $.totals.D: both sides changed it (13367 / 13777)",
+      "source conflict: tools/relay_lint.py"
+    ],
+    "after": "stopped",
+    "after_reasons": [
+      "source conflict: tools/relay_lint.py"
+    ]
+  },
+  {
+    "merge": "b4653fc822e613bca509e8bf7ec28a2b92a0b8e6",
+    "parents": [
+      "f24af736",
+      "96887019"
+    ],
+    "conflicts": [
+      "tools/gate-collection.json"
+    ],
+    "before": "resolved",
+    "before_reasons": [],
+    "after": "resolved",
+    "after_reasons": []
+  },
+  {
+    "merge": "68f5bd079cd42e7d1cf4c0c6c7bcec68210a80ac",
+    "parents": [
+      "cb10ebb9",
+      "96887019"
+    ],
+    "conflicts": [
+      "tools/gate-collection.json"
+    ],
+    "before": "resolved",
+    "before_reasons": [],
+    "after": "resolved",
+    "after_reasons": []
+  },
+  {
+    "merge": "b12e7c903a89eafc0acd3d43221479de7c5303c0",
+    "parents": [
+      "77581407",
+      "7478b23d"
+    ],
+    "conflicts": [
+      ".importlinter",
+      "docs/spec/assurance-manifest.md",
+      "docs/trust-baseline.json",
+      "lean/ResponseShape/Audit.lean",
+      "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+      "lean/VE/Audit.lean",
+      "lean/VE/Route/frozen-sources.sha256",
+      "lean/axioms.txt",
+      "lean/checkers.lock",
+      "lean/declarations.txt",
+      "lean/statements.txt",
+      "tests/test_difffuzz.py",
+      "tools/check_readings_defaults_statements.py",
+      "tools/trust-classes.json",
+      "ve/assurance-manifest.json",
+      "ve/backends/lean_service_schema/readings-route.json"
+    ],
+    "before": "stopped",
+    "before_reasons": [
+      "docs/trust-baseline.json: $.totals.D: both sides changed it (13767 / 13777)",
+      "source conflict: lean/ResponseShape/Schemas/ReadingsRoute.lean",
+      "source conflict: tests/test_difffuzz.py",
+      "source conflict: tools/check_readings_defaults_statements.py"
+    ],
+    "after": "stopped",
+    "after_reasons": [
+      "source conflict: lean/ResponseShape/Schemas/ReadingsRoute.lean",
+      "source conflict: tests/test_difffuzz.py",
+      "source conflict: tools/check_readings_defaults_statements.py"
+    ]
+  },
+  {
+    "merge": "27655d64be61f74a5468d58f93437c3073282771",
+    "parents": [
+      "3f78b873",
+      "7478b23d"
+    ],
+    "conflicts": [
+      "tools/gate-collection.json"
+    ],
+    "before": "resolved",
+    "before_reasons": [],
+    "after": "resolved",
+    "after_reasons": []
+  }
+]

@@ -68,6 +68,7 @@
       "T": [
         "ResponseDecode.Check",
         "ResponseDecode.Invariants.admission",
+        "ResponseDecode.Invariants.certificateBackground",
         "ResponseDecode.Invariants.coding",
         "ResponseDecode.Invariants.declarations",
         "ResponseDecode.Invariants.distinct",
@@ -84,29 +85,22 @@
         "ResponseDecode.Invariants.targetSorts",
         "ResponseDecode.array",
         "ResponseDecode.contentCheck",
-        "ResponseDecode.countWhere",
-        "ResponseDecode.definitionsCount",
         "ResponseDecode.field",
-        "ResponseDecode.flagsCount",
         "ResponseDecode.graphShape",
         "ResponseDecode.has",
         "ResponseDecode.invariants",
         "ResponseDecode.isField",
-        "ResponseDecode.isTrue",
         "ResponseDecode.length",
         "ResponseDecode.line",
-        "ResponseDecode.literalsCount",
-        "ResponseDecode.members",
         "ResponseDecode.need",
         "ResponseDecode.noContent",
-        "ResponseDecode.pairsCount",
         "ResponseDecode.path",
         "ResponseDecode.predicates",
         "ResponseDecode.project",
-        "ResponseDecode.regulatedCount",
+        "ResponseDecode.regenerate",
         "ResponseDecode.requestNode",
         "ResponseDecode.response",
-        "ResponseDecode.runs",
+        "ResponseDecode.sameFields",
         "ResponseDecode.unfold",
         "ResponseDecode.unfolds",
         "ResponseDecode.verdict",
@@ -137,10 +131,12 @@
         "ResponseShape.Result",
         "ResponseShape.Shape",
         "ResponseShape.arr",
+        "ResponseShape.backgroundBound",
         "ResponseShape.brokenOn",
         "ResponseShape.bump",
         "ResponseShape.c",
         "ResponseShape.check",
+        "ResponseShape.claimFields",
         "ResponseShape.closed",
         "ResponseShape.constS",
         "ResponseShape.copied",
@@ -587,10 +583,10 @@
         "ResponseShape.Schemas.Norms.kind",
         "ResponseShape.Schemas.Norms.norms_path",
         "ResponseShape.Schemas.Norms.row",
-        "ResponseShape.Schemas.Norms.\u00abnorms-certificate\u00bb",
-        "ResponseShape.Schemas.Norms.\u00abnorms-conflict\u00bb",
-        "ResponseShape.Schemas.Norms.\u00abnorms-elaborate\u00bb",
-        "ResponseShape.Schemas.Norms.\u00abnorms-witness\u00bb"
+        "ResponseShape.Schemas.Norms.«norms-certificate»",
+        "ResponseShape.Schemas.Norms.«norms-conflict»",
+        "ResponseShape.Schemas.Norms.«norms-elaborate»",
+        "ResponseShape.Schemas.Norms.«norms-witness»"
       ]
     },
     "ResponseShape/Schemas/Order.lean": {
@@ -658,20 +654,27 @@
         "ResponseShape.Schemas.ReadingsRoute.choice_answer",
         "ResponseShape.Schemas.ReadingsRoute.components",
         "ResponseShape.Schemas.ReadingsRoute.conflict",
+        "ResponseShape.Schemas.ReadingsRoute.content",
         "ResponseShape.Schemas.ReadingsRoute.dead",
         "ResponseShape.Schemas.ReadingsRoute.elaborate",
         "ResponseShape.Schemas.ReadingsRoute.elaborateChoices",
         "ResponseShape.Schemas.ReadingsRoute.elaborateRoute",
         "ResponseShape.Schemas.ReadingsRoute.elaborateSuperposed",
         "ResponseShape.Schemas.ReadingsRoute.file",
+        "ResponseShape.Schemas.ReadingsRoute.fillField",
         "ResponseShape.Schemas.ReadingsRoute.fill_premises",
         "ResponseShape.Schemas.ReadingsRoute.filled",
+        "ResponseShape.Schemas.ReadingsRoute.filledEnvironment",
         "ResponseShape.Schemas.ReadingsRoute.filledFields",
+        "ResponseShape.Schemas.ReadingsRoute.filledPredicate",
+        "ResponseShape.Schemas.ReadingsRoute.gaps",
         "ResponseShape.Schemas.ReadingsRoute.generatedPredicates",
         "ResponseShape.Schemas.ReadingsRoute.key",
         "ResponseShape.Schemas.ReadingsRoute.keys",
         "ResponseShape.Schemas.ReadingsRoute.kind",
+        "ResponseShape.Schemas.ReadingsRoute.labelledFormulas",
         "ResponseShape.Schemas.ReadingsRoute.model",
+        "ResponseShape.Schemas.ReadingsRoute.names",
         "ResponseShape.Schemas.ReadingsRoute.over",
         "ResponseShape.Schemas.ReadingsRoute.overBudget",
         "ResponseShape.Schemas.ReadingsRoute.pair",
@@ -688,10 +691,13 @@
         "ResponseShape.Schemas.ReadingsRoute.row",
         "ResponseShape.Schemas.ReadingsRoute.separate",
         "ResponseShape.Schemas.ReadingsRoute.shownModel",
+        "ResponseShape.Schemas.ReadingsRoute.softException",
+        "ResponseShape.Schemas.ReadingsRoute.softNode",
+        "ResponseShape.Schemas.ReadingsRoute.unit",
+        "ResponseShape.Schemas.ReadingsRoute.units",
         "ResponseShape.Schemas.ReadingsRoute.validate",
         "ResponseShape.Schemas.ReadingsRoute.verdicts",
         "ResponseShape.Schemas.ReadingsRoute.verdictsFor",
-        "ResponseShape.Schemas.ReadingsRoute.verdictsGap",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_component_status",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_components",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_conflict",
@@ -793,7 +799,7 @@
         "ResponseShape.Schemas.Route.label",
         "ResponseShape.Schemas.Route.ok",
         "ResponseShape.Schemas.Route.row",
-        "ResponseShape.Schemas.Route.\u00abdependency-order\u00bb"
+        "ResponseShape.Schemas.Route.«dependency-order»"
       ],
       "G[R]": [
         "ResponseShape.Schemas.Route.error"
@@ -2034,6 +2040,7 @@
         "VE.Core.Layers.coreEnvironment",
         "VE.Core.Layers.decodeLayered",
         "VE.Core.Layers.decodeLayers",
+        "VE.Core.Layers.folEntry",
         "VE.Core.Layers.folPredicates",
         "VE.Core.Layers.layerFields",
         "VE.Core.Layers.predicatesOf",
@@ -2677,7 +2684,7 @@
       "D[V]": [
         "VE.Discourse.Loader.Front",
         "VE.Discourse.Loader.Split",
-        "VE.Discourse.Loader.Unit\u2080",
+        "VE.Discourse.Loader.Unit₀",
         "VE.Discourse.Loader.activeOf",
         "VE.Discourse.Loader.admissionObject",
         "VE.Discourse.Loader.allowedMetadata",
@@ -4722,7 +4729,8 @@
       ],
       "D[V]": [
         "VE.Norms.Admission.checkQuoted",
-        "VE.Norms.Admission.instDecidableLayerLeaf"
+        "VE.Norms.Admission.instDecidableLayerLeaf",
+        "VE.Norms.Admission.normRole"
       ],
       "G[V]": [
         "VE.Norms.Admission.envelopeGate"
@@ -5958,7 +5966,7 @@
         "VE.Readings.Examples.docK",
         "VE.Readings.Examples.exc",
         "VE.Readings.Examples.exceptX",
-        "VE.Readings.Examples.ex\u2082",
+        "VE.Readings.Examples.ex₂",
         "VE.Readings.Examples.fanCited",
         "VE.Readings.Examples.fanDefault",
         "VE.Readings.Examples.formulaSet",
@@ -5988,7 +5996,7 @@
         "VE.Readings.Examples.ow",
         "VE.Readings.Examples.phiEx",
         "VE.Readings.Examples.q0",
-        "VE.Readings.Examples.quiet\u2082",
+        "VE.Readings.Examples.quiet₂",
         "VE.Readings.Examples.regsK",
         "VE.Readings.Examples.rs1",
         "VE.Readings.Examples.rs15",
@@ -6004,8 +6012,8 @@
         "VE.Readings.Examples.unlabelled",
         "VE.Readings.Examples.users13",
         "VE.Readings.Examples.waiveX",
-        "VE.Readings.Examples.\u03c319",
-        "VE.Readings.Examples.\u03c321c"
+        "VE.Readings.Examples.σ19",
+        "VE.Readings.Examples.σ21c"
       ]
     },
     "VE/Readings/Force.lean": {
@@ -6090,6 +6098,7 @@
         "VE.Readings.supCertificateCheck",
         "VE.Readings.supModelCheck",
         "VE.Readings.supUnits",
+        "VE.Readings.supUnitsFrom",
         "VE.Readings.superposedCheckText",
         "VE.Readings.unsatText",
         "VE.Readings.untakenText",
@@ -6167,15 +6176,15 @@
         "VE.Readings.RunExamples.tickValue",
         "VE.Readings.RunExamples.users12",
         "VE.Readings.RunExamples.users4",
-        "VE.Readings.RunExamples.\u03c3Help",
-        "VE.Readings.RunExamples.\u03c3Help12",
-        "VE.Readings.RunExamples.\u03c3K1",
-        "VE.Readings.RunExamples.\u03c3Wrong",
-        "VE.Readings.RunExamples.\u03c3Wrong12"
+        "VE.Readings.RunExamples.σHelp",
+        "VE.Readings.RunExamples.σHelp12",
+        "VE.Readings.RunExamples.σK1",
+        "VE.Readings.RunExamples.σWrong",
+        "VE.Readings.RunExamples.σWrong12"
       ],
       "G[I]": [
         "VE.Readings.RunExamples.tickValid",
-        "VE.Readings.RunExamples.\u03c3Avoid"
+        "VE.Readings.RunExamples.σAvoid"
       ]
     },
     "VE/Readings/Scan.lean": {
@@ -6322,6 +6331,40 @@
         "VE.Readings.SupExtraExamples.conflictCert",
         "VE.Readings.SupExtraExamples.instDecidableX1Checks",
         "VE.Readings.SupExtraExamples.noAvoid"
+      ]
+    },
+    "VE/Readings/SupFill.lean": {
+      "P": [
+        "VE.Readings.AuthorLite",
+        "VE.Readings.DecidesByD",
+        "VE.Readings.DecidesBySoftD"
+      ]
+    },
+    "VE/Readings/SupFillWire.lean": {
+      "C": [
+        "VE.Readings.Run.firstFailingND",
+        "VE.Readings.Run.runCertificateND",
+        "VE.Readings.Run.runConflictND",
+        "VE.Readings.Run.runModelND",
+        "VE.Readings.Run.runNDKind",
+        "VE.Readings.Wire.CertificateReplayND",
+        "VE.Readings.Wire.ModelReplayND",
+        "VE.Readings.Wire.SupReplayND",
+        "VE.Readings.Wire.replayCertificateND",
+        "VE.Readings.Wire.replayCertificateNDJ",
+        "VE.Readings.Wire.replayModelND",
+        "VE.Readings.Wire.replayModelNDJ",
+        "VE.Readings.Wire.supReplayND"
+      ],
+      "D[V]": [
+        "VE.Readings.Run.ndSlotLabels",
+        "VE.Readings.Wire.decodeAssumedND"
+      ],
+      "G[R]": [
+        "VE.Readings.Wire.ndRefusal"
+      ],
+      "G[V]": [
+        "VE.Readings.Run.ndModelGaps"
       ]
     },
     "VE/Readings/SupRun.lean": {
@@ -6490,16 +6533,20 @@
         "VE.Readings.Wire.fillHoldsOf",
         "VE.Readings.Wire.filledEnvironment",
         "VE.Readings.Wire.filledRV",
+        "VE.Readings.Wire.ndChecked",
+        "VE.Readings.Wire.ndQ",
         "VE.Readings.Wire.ndRest",
+        "VE.Readings.Wire.ndSlotLabelled",
+        "VE.Readings.Wire.ndSuperposable",
         "VE.Readings.Wire.replayChoiceAt",
         "VE.Readings.Wire.replayChoiceU",
         "VE.Readings.Wire.replayPairU",
         "VE.Readings.Wire.replaySeparateU",
+        "VE.Readings.Wire.routeND",
         "VE.Readings.Wire.unsaidDecls"
       ],
       "D[R]": [
         "VE.Readings.Wire.choiceStepText",
-        "VE.Readings.Wire.completionRefusal",
         "VE.Readings.Wire.ndChoiceText",
         "VE.Readings.Wire.ndDocText",
         "VE.Readings.Wire.ndText",
@@ -6514,6 +6561,7 @@
         "VE.Readings.Wire.fillPremisesJson",
         "VE.Readings.Wire.filledJson",
         "VE.Readings.Wire.filledUnitsJson",
+        "VE.Readings.Wire.ndFillJson",
         "VE.Readings.Wire.unspecOf"
       ],
       "G[V]": [
@@ -6521,11 +6569,17 @@
         "VE.Readings.Run.ndChoiceModel",
         "VE.Readings.Run.ndInner",
         "VE.Readings.Run.runChoiceND",
-        "VE.Readings.Run.runElaborateND",
         "VE.Readings.Run.runElaborateNDFilled",
         "VE.Readings.Run.runElaborateNDWith",
+        "VE.Readings.Wire.elaborateFieldsND",
         "VE.Readings.Wire.normDefaultsProfile",
         "VE.Readings.Wire.underCompletion"
+      ],
+      "G[R]": [
+        "VE.Readings.Wire.ndChoiceCheckText",
+        "VE.Readings.Wire.ndNotSuperposable",
+        "VE.Readings.Wire.ndSuperposedCheckText",
+        "VE.Readings.Wire.routeRefusalND"
       ]
     },
     "VE/Readings/UpSlot.lean": {
@@ -8755,6 +8809,8 @@
         "VE.Service.Document.Support.all",
         "VE.Service.Document.Support.name",
         "VE.Service.Document.Support.ofName?",
+        "VE.Service.Document.UnitContent",
+        "VE.Service.Document.UnitContent.json",
         "VE.Service.Document.UnitStatus",
         "VE.Service.Document.UnitStatus.all",
         "VE.Service.Document.UnitStatus.name",
@@ -8766,13 +8822,20 @@
         "VE.Service.Document.documentCase",
         "VE.Service.Document.encode",
         "VE.Service.Document.kindName",
+        "VE.Service.Document.lowerReadings",
+        "VE.Service.Document.readingSetHasStrayNull",
+        "VE.Service.Document.readingsSets",
         "VE.Service.Document.reasons",
         "VE.Service.Document.rowOf",
         "VE.Service.Document.runCaseReported",
-        "VE.Service.Document.unitJson"
+        "VE.Service.Document.unitJson",
+        "VE.Service.Document.freeNorms"
       ],
       "D[I]": [
         "VE.Service.Document.documentId"
+      ],
+      "G[R]": [
+        "VE.Service.Document.checkNormDefaults"
       ]
     },
     "VE/Service/EnglishRun.lean": {
