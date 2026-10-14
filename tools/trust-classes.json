@@ -2054,12 +2054,12 @@
         "VE.Core.Layers.elaborateNary",
         "VE.Core.Layers.firstBad",
         "VE.Core.Layers.folModel",
-        "VE.Core.Layers.levels",
         "VE.Core.Layers.naryCheck",
         "VE.Core.Layers.naryEntries",
         "VE.Core.Layers.premiseWithin",
         "VE.Core.Layers.run",
         "VE.Core.Layers.stepOk",
+        "VE.Core.Layers.stepOkFrom",
         "VE.Core.Layers.usesLayers",
         "VE.Core.Layers.withPredicates"
       ]

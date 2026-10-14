@@ -142,6 +142,67 @@ def test_python_routes_nary_definitions_to_lean(monkeypatch):
     assert FiniteModel.from_dict(built, model).relations["derived"] == {("a", "a", "b")}
 
 
+# ---------------------------------------------------------------- lf-14c loop recheck F3: mixed head/body arities
+
+@pytest.mark.parametrize("head_arity", [1, 2])
+@pytest.mark.parametrize("source_arity", [3, 4, 5, 6])
+@pytest.mark.parametrize("bound", [False, True])
+def test_f3_fol_head_may_depend_on_nary_body(head_arity, source_arity, bound):
+    """Every core head arity can mention an n-ary definition, both in a direct
+    entry and in an identity-bound declaration. The exact F3 probe is the
+    (1, 3, False) case; the other cases cover its arity/reference class."""
+    from ve import definitions
+
+    raw, _ = case()
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["base"]["arguments"] = ["s"] * source_arity
+    predicates["derived"]["arguments"] = ["s"] * source_arity
+    predicates["derived"]["defined"] = {
+        "arguments": ["s"] * source_arity,
+        "body": ["atom", "base", [["var", i] for i in reversed(range(source_arity))]],
+    }
+    predicates["u"] = {"arguments": ["s"] * head_arity, "description": "u"}
+    body = ["atom", "derived", [["var", i % head_arity] for i in range(source_arity)]]
+    entry = {"arguments": ["s"] * head_arity, "body": body}
+    if bound:
+        predicates["u"]["defined"] = entry
+    env = Environment(raw)
+    entries = env.definition_entries if bound else {**env.definition_entries, "u": entry}
+    expected = ["derived", "u"]
+    assert [d.name for d in compile_definitions(env, entries, version=env.environment_id)] == expected
+    assert [d.name for d in definitions._compile_python(env, entries, version=env.environment_id)] == expected
+    if bound:
+        row, = route([{"id": "bg", "kind": "background", "environment": raw}])
+        assert row["status"] == "ok"
+        assert row["generators"] == ["definitions", "definitions"]
+        model = {"complete": True, "domains": {"s": ["a"]}, "constants": {},
+                 "relations": {"base": [["a"] * source_arity]}}
+        formula = ["unary", "u", ["var", 0]] if head_arity == 1 else [
+            "binary", "u", ["var", 0], ["var", 0]]
+        evaluated, = route([{"id": "ev", "kind": "evaluate", "environment": raw,
+                             "model": model, "ast": [["exists", "s", formula]]}])
+        assert evaluated["status"] == "ok" and evaluated["values"] == [True]
+
+
+def test_f3_bound_mixed_arity_environment_agrees_with_rust():
+    """The exact identity-bound F3 shape is accepted by Python, Lean and Rust."""
+    from conformance import three_way
+
+    raw, _ = case()
+    raw["vocabulary"]["predicates"]["u"] = {
+        "arguments": ["s"], "description": "u",
+        "defined": {"arguments": ["s"], "body": ["atom", "derived", [["var", 0]] * 3]},
+    }
+    env = Environment(raw)
+    assert [d.name for d in compile_definitions(env, env.definition_entries,
+                                                version=env.environment_id)] == ["derived", "u"]
+    lean, = route([{"id": "bg", "kind": "background", "environment": raw}])
+    assert lean["status"] == "ok" and lean["generators"] == ["definitions", "definitions"]
+    rust, = three_way.run([str(_rust_binary()), "conformance"],
+                          [{"id": "env", **three_way.rust_envelope(raw)}])
+    assert rust["status"] == "ok", rust
+
+
 # ---------------------------------------------------------------- lf-14c review F1: one definition order
 
 def mixed(definitions):
