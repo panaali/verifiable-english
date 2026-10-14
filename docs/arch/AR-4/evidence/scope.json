@@ -1,7 +1,11 @@
 {
  "base": "9f40783b8fc403a99798d9951615d76aa2088d38",
- "head": "150532217b0ce42d93dd39d15c655b978810070f",
+ "head": "d9196e540444d9e5b081f77cc643fbb6b1b7b072",
  "commits": [
+  {
+   "hash": "d9196e540444d9e5b081f77cc643fbb6b1b7b072",
+   "subject": "AR-4 record F8 and F9 evidence and signed R13 condition"
+  },
   {
    "hash": "150532217b0ce42d93dd39d15c655b978810070f",
    "subject": "AR-4 validate R13 counts and normalize mutant evidence for rendering"
