@@ -1,8 +1,27 @@
 # Presupposition and definite descriptions (`presupposition@0`): item-1 statement specification
 
-> Status: draft 2, 2026-10-14, branch `design/presupposition`. Written from [presupposition-PLAN.md](presupposition-PLAN.md)
-> draft 3. This is PS-S's deliverable. Theorem statements and fixtures are implementation obligations, not claims of
-> completed proofs or tests.
+> Status: draft 3, 2026-10-14, branch `research/presupposition-p1`. Written from
+> [presupposition-PLAN.md](presupposition-PLAN.md) draft 4. This is PS-S's deliverable. Theorem statements and
+> fixtures are implementation obligations, not claims of completed proofs or tests.
+
+## Changes in this draft (draft 3)
+
+Draft 3 applies phase 1 ([docs/research/presupposition-phase1.md](../research/presupposition-phase1.md), cited as
+Ph1) and the DRI's ruling PS-C9. **No Lean definition, body or theorem statement changes**, and no fixture value
+changes: phase 1 changes the English of the pilot's heading units and where the report is carried, not their
+formulas. The scratch stub `lean/SpecStubs_presupposition.lean` is not tracked, so it needs no edit, and the
+elaboration status below is unchanged.
+- **Headings' English** (1.4a, 2.1, 7.4). The formulas of P1–P4 round-trip through VE's renderer (Ph1 2.3), but VE
+  English has no admitted relational-noun wording today ("is a core value of" and every variant tried fall back to
+  the quoted form; Ph1 2.5): P1, P2 and P4's English waits for the plan's PS-6r. P3 is writable now as "Some thing is
+  unsolved." with the sort noun "thing". Uniqueness is written in VE's enumerated form; the one-line form is refused.
+- **The quoted fallback is not VE English** (2.3, 8): "has the recorded relation …" never carries a claim.
+- **The assumed line is the target wording** (2.3): PS-E2 tests what PS-6r's rows render.
+- **The report is a field of the Lean document mode's answer** (4.7; DRI PS-C9): no `presuppositions` service mode.
+- **Fixture wording** (3, 7.3): "Some entity …" becomes "Some thing …"; A25 is stated on formulas.
+- **Choices C19–C22** (10).
+
+> Draft 2's header follows.
 >
 > **Draft 2** applies the statement review of draft 1 (`manage-agents/debates/presupposition-spec/`: `fable.md`,
 > `astra.md`, and the arbiter's `DRI-RULING.md`, verdict FIX). The ruling's points D1 to D6 and corrections 1 to 14
@@ -141,6 +160,15 @@ frame and no `body`; its `pre` is the row's `pre` over the empty context (`build
 may name the obligation's own unit, whose content must then be exactly `pre` (`admit_heading_goal`,
 `admit_assumed_sound`). This is PS-0p's audit rule "exactly the existence, nothing more", checked by Lean.
 
+**The heading unit's English** (Ph1 2.2, 2.5; C19). Lean checks the formula; whether the fenced English says it stays
+the audit's. In the pilot, the existence sentence needs the sort's English noun not to be reserved (the constitution
+pilot declares `entity` as "thing"/"things", a document field), and the restriction needs an admitted wording. Today
+"{0} is unsolved" is admitted (P3: "Some thing is unsolved."), and no relational-noun wording is (P1, P2, P4 wait for
+the plan's PS-6r). A uniqueness `pre` is written in VE's enumerated form, "There is a first thing such that both of
+the following hold: (a) the first thing is a N of t; (b) for every second thing that is a N of t, the second thing is
+the same as the first thing.". With the unary stand-in "unsolved" it parses to exactly the existence-and-uniqueness
+formula (Ph1 2.5); with a relational noun it is measured once PS-6r lands.
+
 ### 1.5 Several obligations in one unit
 
 The unit's recorded content is `carried ms B`, where `ms` lists each obligation's root mode and goal in block order:
@@ -262,6 +290,12 @@ elaborations, the unit `u` itself and every later unit are excluded. A certifica
 | plural | "t’s Ns", "the Ns of t", "its/their N" (mass or plural) | "there is at least one N" / "t has at least one N" |
 | generic | factive complement, earlier state, earlier event (owner's row) | the owner's sentence, e.g. "the action was in progress before that day" |
 
+These are the target sentences. "t has at least one N" and "t has exactly one N" need a relational-noun wording that
+the wording lint admits; none is admitted today (Ph1 2.5), and the plan's PS-6r adds it. Until then a `pre` over a
+relational noun has no VE English, and VE's quoted fallback ("… has the recorded relation "core_value_of" to
+claude") is not a substitute: it is not VE English, and an audit rejects a claim written in it (C20). "There is at
+least one N" with a unary wording parses today once the sort's noun is not reserved ("Some thing is unsolved.").
+
 ### 2.2 One-reading paraphrases
 
 Each line below is the English for exactly one formula. The formula column is what the paraphrase must elaborate
@@ -295,7 +329,9 @@ conditioned reading at a shallow frame (1.4); the two lines of a merged reading 
 
 - **Proved.** No line by default. "Why": "‘<words>’ takes for granted that <pre>; <the earlier sentence, condition or
   declaration> says so."
-- **Assumed.** In the assumptions list: "Assumed (from ‘<words>’): <goal>."
+- **Assumed.** In the assumptions list: "Assumed (from ‘<words>’): <goal>." For a relational noun this is the target
+  wording ("Assumed (from ‘Claude’s core values’): Claude has at least one core value."); VE renders it once PS-6r's
+  rows exist, and PS-E2 tests those rendered lines (C21).
 - **Asserted.** The asserted paraphrase of 2.2.
 - **Conditioned.** "This applies only where <goal>." For a rule: "Where <pre>, <rule>. Where not, this rule contributes
   no decision."
@@ -376,11 +412,13 @@ any model call.
 
 - At `rule_act` and at `heading`, `body` is absent; present, it is `PresuppositionMismatch: <obligation>: body`.
 - The block sits in the front matter, so it is identity-bound through `document_id` like discourse's block.
-- Python never reads the block's meaning: it sends it to Lean and binds the answer (plan PS-2b).
+- Python never reads the block's meaning: it sends the document to Lean and binds the `presuppositions` field of the
+  document mode's answer (plan PS-2b; DRI PS-C9).
 - p1's conditioned carrier is admitted only if the rule's predicate is `unspecified` in the norm-defaults block.
 - p2 is a heading obligation assumed on its own unit (R-10). It is admitted only if u0013.presupposition is an
   asserted unit whose content is exactly `pre`, `∃x:entity core_value_of(x, claude)`; a unit that says more, or
-  less, is `PresuppositionAssumedUnit: p2: u0013.presupposition`.
+  less, is `PresuppositionAssumedUnit: p2: u0013.presupposition`. Its English, "Some thing is a core value of
+  Claude.", is writable once PS-6r admits the wording (1.4a); the formula does not depend on it.
 
 ## 4. Lean: definitions and exact statements
 
@@ -778,6 +816,10 @@ theorem speech_question_top (D : VE.SpeechActs.SpeechDoc) (q : VE.SpeechActs.Que
 (Plan draft 1 wrote `VE.Data.Flag`; the flag type is `VE.Data.Background.Flag`.)
 
 ### 4.7 `lean/VE/Presupposition/{Wire,Admit,Run}.lean` (PS-2a)
+
+**Where the report goes** (DRI PS-C9). `Run.lean` builds the report that the Lean document mode's answer carries as
+its `presuppositions` field (plan PS-4); there is no `presuppositions` service mode, no runner of its own and no
+schema of its own. Nothing below depends on the choice: every statement is over `admit` and `PDoc`.
 
 **Types.**
 
@@ -1289,7 +1331,7 @@ One fixture per accept rule and per diagnostic. The fixture table of the stub st
 | A22 (R-D1) | S12 with a recorded in-place carrier, the negated cell listing in place | admitted; the content is `B` |
 | A23 (R-D1) | a recorded in-place carrier at `not (· and r)`, the negated cell listing in place | `PresuppositionCandidates: p1` |
 | A24 (R-10) | p2 of section 3: a heading assumed on its own unit, whose content is `pre` | admitted; P1's unit is CHECKED as an assumption |
-| A25 (R-10) | A24 with the unit's content "Some entity is a core value of Claude, and it is desired." | `PresuppositionAssumedUnit: p2: u0013.presupposition` (PS-0p's audit rule, checked by Lean) |
+| A25 (R-10) | A24 with the unit's content `pre` conjoined with one more atom, `∃x:entity (core_value_of(x, claude) ∧ desired(x))` (draft 2 wrote it in English as "Some entity is a core value of Claude, and it is desired.", which VE does not parse; the fixture is on formulas) | `PresuppositionAssumedUnit: p2: u0013.presupposition` (PS-0p's audit rule, checked by Lean) |
 | A26 (R-8) | S7 unresolved {assumed, conditioned}, predicate `unspecified`, on the soft chain | readings@1's abstention: `UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented` |
 | A27 (R-8) | A26 on the rights chain | the same abstention |
 | A28 (R-10) | a heading obligation with a `body` | `PresuppositionMismatch: p1: body` |
@@ -1300,9 +1342,16 @@ P1 to P13 are the plan's (5.2), with its draft 2 and draft 3 corrections:
 - **P1 to P4 are heading obligations** (R-10): position `{"heading": {}}`, no `body`, carrier assumed on the
   heading's own unit, whose content must be exactly `pre` (A24, A25). P1: `plural`, `core_value_of(x, claude)`; P2:
   `plural`, `guideline_of(x, anthropic)`; P3: `generic`, `pre` = `∃x open_problem(x)`; P4: `definite`, whose `pre` is
-  the uniqueness `uniqueD` (`buildPre "definite" 0`), admitted only if VE English writes it. Each is admitted, and its
-  unit is CHECKED as an assumption. Draft 1's form (path `[]`, body `⊤`, the obligation's own unit) failed the check:
-  the unit's content had to equal both `strong` and `G`.
+  the uniqueness `uniqueD` (`buildPre "definite" 0`). Each is admitted, and its unit is CHECKED as an assumption.
+  Draft 1's form (path `[]`, body `⊤`, the obligation's own unit) failed the check: the unit's content had to equal
+  both `strong` and `G`.
+- **Their English, measured in phase 1** (Ph1 2.2–2.5; draft 3). The formulas are unchanged, and VE's renderer and
+  parser round-trip all five exactly (Ph1 2.3). In the pilot document: the sort `entity`'s noun is "thing"/"things";
+  P3's `open_problem` is worded "{0} is unsolved" and its unit is "Some thing is unsolved." (loads, CHECKED +29 B, 8
+  of 8 choices conflict-free, probes byte-identical; Ph1 2.5); P1, P2 and P4 have no admitted wording until PS-6r and
+  stay UNFORMALISED with the note "waits for the relational-noun wording (PS-6r)"; P4's English is the enumerated
+  uniqueness form (1.4a), not the plan's one-line shape ("Some thing is a mission of Anthropic, and every thing that
+  is a mission of Anthropic is that thing."), whose unary stand-in phase 1 found refused. The Lean fixtures of PS-1 use the formulas; their English column waits for PS-6r.
 - P2 no longer proves u0073.s05 (strictly earlier units).
 - P6 and P11's conditioned carriers need `unspecified` predicates, and their open sets are therefore on the norms
   chain only (R-8).
@@ -1357,6 +1406,12 @@ Each is a rewrite that PS-6 offers; each must parse to exactly one reading.
 - **Validity of trees** is a computed check (W1's `validate` on both trees), not a theorem about conditioning.
 - **Budgets.** Over 256 obligations, or over W1's AST budget, or over lf-14d's joint budget, the answer is UNKNOWN.
 - **Untrusted certificates.** A certificate may come from any prover; Lean only checks it.
+- **Relational-noun English** (Ph1 2.5). Until the plan's PS-6r, VE English has no admitted wording for "t has at
+  least one N" or "t has exactly one N" over a relational noun, so a `pre` over one cannot be written as a fenced
+  unit. The formulas and every check above are unaffected; only the pilot's English and the reader lines of 2.3 wait.
+- **The quoted fallback** (Ph1 2.3). VE's renderer falls back to quoted identifiers ("has the recorded relation …",
+  "is classified as …") for a predicate without an admitted wording. Such text loads and checks, but it is not VE
+  English; no claim is written in it (C20).
 
 ## 9. Review checklist (PS-S)
 
@@ -1375,6 +1430,8 @@ Each is a rewrite that PS-6 offers; each must parse to exactly one reading.
     S25, S26, S27, A22 and A23; headings (1.4a, 3, 4.7) against S23, A24, A25 and A28; the admission changes (R-D5,
     R-D6, R-6, R-7) against A5u, A18, A20 and A21; separation, chains and coupling semantics (R-8, R-9) against
     A26, A27 and S22; the paraphrases (R-13) against E1 and E2.
+11. Draft 3 (phase 1, PS-C9): every `lean` block is byte-identical to draft 2's, so items 1–10 stand; the re-check
+    reads 1.4a, 2.1, 2.3, 7.4, 8 and C19–C22 only.
 
 ## 10. Choices this draft made, and questions for the review
 
@@ -1430,3 +1487,16 @@ Draft 2's choices in applying the ruling:
   restriction, and a trigger inside its `pre` or `body` is addressed as usual.
 - **C18. The paraphrases** (R-13) use "both of these are so" to bracket a conjunction under "not" and under
   "if … then". PS-E2 and PS-6 test the wording; another bracketing that passes E1 and E2 may replace it.
+
+Draft 3's choices in applying phase 1 and PS-C9:
+
+- **C19. A heading's English is the audit's, its formula Lean's.** `admit_heading_goal` and `admit_assumed_sound`
+  compare formulas; the fence's English is parsed by VE's own parser before Lean sees it. So "Some thing is
+  unsolved." for "open problems" is admitted by Lean as `∃x open_problem(x)`, and whether "unsolved thing" is what
+  "open problems" names is the audit's question (Ph1 2.5). No Lean statement changes.
+- **C20. No claim in the quoted fallback.** It would let PS-0p claim +145 B today (Ph1 2.3), but it violates VE's
+  "plain English, no symbols" rule, so the spec counts it as no English at all.
+- **C21. The assumed line's wording** (2.3) is the target; PS-E2 tests PS-6r's rendered lines, or labels its items
+  as target wording if PS-6r is late (plan PS-E2).
+- **C22. A field, not a mode** (DRI PS-C9). 4.7's statements are over `admit`; where the report is carried changes
+  no statement. `no_block_unchanged` covers the document mode's answer without the block.
