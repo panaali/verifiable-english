@@ -278,7 +278,8 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
                             selected=len(selected),
                             passed=sum(row["outcome"] == "passed" for row in tests.values()),
                             skipped=sum(row["outcome"] == "skipped" for row in tests.values()),
-                            failed=sum(row["outcome"] == "failed" for row in tests.values()),
+                            failed=(sum(row["outcome"] == "failed" for row in tests.values())
+                                    + sum(node not in tests for node in selected)),
                             deselected=len(deselected))
     if len(collected) != len(set(collected)) or len(selected) != len(set(selected)):
         result["failures"].append({"stage": "coverage", "reason": "duplicate test ID in collection"})
