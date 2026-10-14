@@ -3907,6 +3907,26 @@
    "trusted": 2,
    "lines": 4
   },
+  "EnglishRunMain.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 7,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 2,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 7,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 7,
+   "lines": 9
+  },
   "Iceberg.lean": {
    "K": 0,
    "S": 0,
@@ -7391,21 +7411,21 @@
    "K": 0,
    "S": 0,
    "D": 67,
-   "G": 45,
+   "G": 38,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 25,
+   "o": 24,
    "D[V]": 67,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 45,
+   "G[V]": 38,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 112,
-   "lines": 137
+   "trusted": 105,
+   "lines": 129
   },
   "VE/English/Statements.lean": {
    "K": 0,
@@ -12175,7 +12195,7 @@
    "C": 14,
    "P": 0,
    "T": 0,
-   "o": 29,
+   "o": 28,
    "D[V]": 67,
    "D[R]": 0,
    "D[I]": 0,
@@ -12185,7 +12205,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 91,
-   "lines": 134
+   "lines": 133
   },
   "VE/Service/Family.lean": {
    "K": 0,
