@@ -18,6 +18,7 @@ import copy
 import json
 import os
 import re
+import resource
 import subprocess
 import sys
 from pathlib import Path
@@ -64,6 +65,22 @@ EXPLORATORY = ("u0002.presupposition", "Exactly one entity is a mission of Anthr
 FORBIDDEN = re.compile(r"\b(?:desired|relevant|must|should)\b", re.I)
 ID_KEY = re.compile(r"(?:^|_)(?:id|hash)$")
 HEX64 = re.compile(r"\b[0-9a-f]{64}\b")
+AS_CAP = 6442450944  # prlimit --as, bytes (6 GiB); every `ve` child inherits it
+
+
+def require_cap() -> None:
+    soft, _hard = resource.getrlimit(resource.RLIMIT_AS)
+    if soft == resource.RLIM_INFINITY or soft > AS_CAP:
+        sys.exit(f"refused: run under prlimit --as={AS_CAP} (RLIMIT_AS soft limit is {soft})")
+
+
+def limits() -> dict:
+    """The address-space limit this process (and so every `ve` child) runs under, the Rust time limit, and the
+    largest resident set of any waited-for descendant so far (Linux ru_maxrss of RUSAGE_CHILDREN, KiB)."""
+    soft, hard = resource.getrlimit(resource.RLIMIT_AS)
+    return {"rlimit_as_soft": soft, "rlimit_as_hard": hard, "VE_RUST_TIMEOUT": os.environ.get("VE_RUST_TIMEOUT"),
+            "children_peak_rss_kib": resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,
+            "self_peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss}
 
 
 def split(path: Path):
@@ -155,13 +172,14 @@ def rendered_reading(render_text: str, sentence_source: str) -> str | None:
 
 
 def main() -> int:
+    require_cap()
     WORK.mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
     pinned = WORK / "pinned.ve.md"
     pinned.write_bytes((RUN / "translation.ve.md").read_bytes())
     meta, body = split(pinned)
     result = {"run": "20261012T1800Z", "definitions": "docs/research/presupposition-phase1.md 1.3-1.4",
-              "rust_timeout": os.environ.get("VE_RUST_TIMEOUT"), "checks": []}
+              "rust_timeout": os.environ.get("VE_RUST_TIMEOUT"), "limits_at_start": limits(), "checks": []}
 
     # Pinned, under this binary: the control.
     pc = ve("document", "check", pinned, out=WORK / "pinned-check.json")
@@ -278,6 +296,7 @@ def main() -> int:
     result["checks"].append({"id": "F6", "expected": "identical after normalising", "measured": probes,
                              "pass": all(p["identical_normalised"] for p in probes.values())})
 
+    result["limits_at_end"] = limits()
     (OUT / "dryrun.json").write_text(json.dumps(result, ensure_ascii=False, indent=1) + "\n")
     delta = {"vocabulary_added": {k: {"arguments": a, "verbalisation": v} for k, (a, v, _) in PREDICATES.items()},
              "constant_added": dict([CONSTANT]), "units_converted": {u: CLASS_A[u][0] for u in admitted}}

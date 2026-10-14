@@ -73,11 +73,13 @@ def resituate(meta: dict) -> dict:
 
 
 def main() -> int:
+    d.require_cap()
     d.WORK.mkdir(parents=True, exist_ok=True)
     meta, body = d.split(d.RUN / "translation.ve.md")
     pinned = d.WORK / "pinned.ve.md"
     pinned.write_bytes((d.RUN / "translation.ve.md").read_bytes())
-    out = {"never_counted": True, "question": next(l for l in __doc__.split("\n") if l.startswith("Question")), "variants": {}}
+    out = {"never_counted": True, "question": next(l for l in __doc__.split("\n") if l.startswith("Question")),
+           "limits_at_start": d.limits(), "variants": {}}
 
     # Which wordings each vocabulary gives (pinned, plan's verbalisations, bare).
     for label, m in (("pinned", meta), ("plan_verbalisations", d.with_vocabulary(meta)), ("bare", bare_vocabulary(meta))):
@@ -146,6 +148,7 @@ def main() -> int:
         probes[name] = {"pinned_returncode": a["returncode"], "scratch_returncode": z["returncode"],
                         "identical_normalised": same, "byte_identical_raw": a["stdout"] == z["stdout"]}
     out["probes"] = probes
+    out["limits_at_end"] = d.limits()
     (d.OUT / "explore.json").write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
     print(json.dumps({k: out[k] for k in ("variants", "converted")}, ensure_ascii=False, indent=1)[:4000])
     print(json.dumps({u: {k: r.get(k) for k in ("rendered", "exact", "rerendered_same")} for u, r in units.items()},
