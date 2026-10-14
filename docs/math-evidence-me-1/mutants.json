@@ -26,5 +26,54 @@
     "test": "tests/test_numbers_phrases.py::test_comparison_rows_match_generated_table",
     "result": "failed; /tmp/ve-me1-mutant-python.log; restored",
     "observed": "less than: ast.Le differs from generated ast.Lt; 1 failed"
+  },
+  {
+    "file": "lean/VE/Calc/Render.lean",
+    "mutation": "minus takes a term, not an atom, on its left",
+    "test": "lake env lean VE/Calc/Examples.lean (F1 guards and the depth-3 read-back #guard)",
+    "result": "failed; restored",
+    "observed": "2 guards failed; first Examples.lean:124 line (((a).add b).sub c) .isNone"
+  },
+  {
+    "file": "lean/VE/Calc/Render.lean",
+    "mutation": "value words are not checked against 11.2's form",
+    "test": "lake env lean VE/Calc/Examples.lean (F1 guards and the depth-3 read-back #guard)",
+    "result": "failed; restored",
+    "observed": "4 guards failed; first Examples.lean:135 line (Expr.val \"minus\") .isNone"
+  },
+  {
+    "file": "lean/VE/Calc/Render.lean",
+    "mutation": "a negative literal renders with its sign",
+    "test": "lake env lean VE/Calc/Examples.lean (F1 guards and the depth-3 read-back #guard)",
+    "result": "failed; restored",
+    "observed": "2 guards failed; first Examples.lean:133 line (lit (-1)) .isNone"
+  },
+  {
+    "file": "lean/VE/Calc/Render.lean",
+    "mutation": "the nesting limit (depth at most 2) is dropped",
+    "test": "lake env lean VE/Calc/Examples.lean (F1 guards and the depth-3 read-back #guard)",
+    "result": "failed; restored",
+    "observed": "2 guards failed; first Examples.lean:126 line (a.sub (b.add (c.mul a))) .isNone"
+  },
+  {
+    "file": "lean/VE/Calc/Render.lean",
+    "mutation": "a line keeps its lowercase first letter",
+    "test": "lake env lean VE/Calc/Examples.lean (F1 guards and the depth-3 read-back #guard)",
+    "result": "failed; restored",
+    "observed": "7 guards failed; first Examples.lean:95 the rounding line"
+  },
+  {
+    "file": "lean/VE/Calc/Render.lean",
+    "mutation": "a term may hold \"to the power\" for an exponent other than 2 and 3",
+    "test": "lake env lean VE/Calc/Examples.lean (F1 guards and the depth-3 read-back #guard)",
+    "result": "failed; restored",
+    "observed": "2 guards failed; first Examples.lean:123 line (c.mul (a.pow 4)) .isNone"
+  },
+  {
+    "file": "lean/VE/Calc/Render.lean",
+    "mutation": "a filled-in slot in value words is filled again",
+    "test": "lake env lean VE/Calc/Examples.lean (F1 guards and the depth-3 read-back #guard)",
+    "result": "failed; restored",
+    "observed": "2 guards failed; first Examples.lean:138 the slot rate equals the a"
   }
 ]

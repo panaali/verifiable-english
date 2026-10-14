@@ -1,4 +1,4 @@
-DRI signature needed: ME-1 introduces S +183 and V +106 trusted Lean lines; no standing ruling signs new core lines. See DELTA.md. The full release gate is reserved for the chain's committed-HEAD run, as the task explicitly directs.
+DRI signature needed: ME-1 introduces S +183 and V +140 trusted Lean lines; no standing ruling signs new core lines. See DELTA.md. The full release gate is reserved for the chain's committed-HEAD run, as the task explicitly directs.
 
 # ME-1 build report
 
@@ -94,9 +94,34 @@ Final all-route relay mutation run: **PASS**, 39 routes, 109,195 mutants, zero f
 4. N.A. — no calc route exists yet, so no three-way response or new JSON order to compare.
 5. N.A. — no relayed answer exists in ME-1; ME-3 adds R8 binding tests.
 6. N.A. — the task assigns the final-HEAD full gate and its evidence to the chain; the one failure at `7a20d4eda` (a CPU deadline in `check` mode) passed on `--rerun-failed`, see `gate-rerun-7a20d4ed.json`.
-7. PASS — `tools/trust_map.py --check` measures S +183 and V +106; `DELTA.md` lists the required DRI signature in its first lines.
+7. PASS — `tools/trust_map.py --check` measures S +183 and V +140; `DELTA.md` lists the required DRI signature in its first lines.
 8. PASS — `tests/test_numbers_phrases.py` pins every existing comparison row; Calc has no public route.
 9. PASS — `tools/select_tests.py --base $(git merge-base HEAD main)` selects 163/374 units; `--paths .gitattributes --impacted` includes the generator and merge tests; the two selector tests above failed under their respective mutants.
 10. PASS — subtraction mutant broke `Expr.eval_sound`/`Denotes.eval_complete`; `lake build VE.Calc.Examples`, `python3 lean/audit.py --check`.
 11. PASS — V-11 `#guard` and digit-limit mutant; no deadline or public budget operation is added in ME-1.
 12. N.A. — no calc service path or pilot measurement in ME-1; Calc becomes public in ME-2.
+
+## Review fix (ME-1 review F1)
+
+- F1 (B): `renderExpr` let an infix phrase stand inside an operand, so a − (b − c) read as (a − b) − c and
+  (a − b)² got a line 11.2 has no parse for. `lean/VE/Calc/Render.lean` now has one function per production of
+  11.2: `renderAtom`, `renderTerm` (prefix phrases over terms) and `renderExpr` (a term, or one infix phrase at the
+  top with an atom on its left, depth at most 2). The class is closed for atoms too: value words outside 11.2's form
+  (`valueWordsOk`: "the …", no phrase word first, no reserved word) and negative numbers give `none`; phrase
+  templates fill in one pass, so "{1}" in value words stays as written; lines begin with a capital (C2).
+- Regression tests in `lean/VE/Calc/Examples.lean`: a `#guard` for each refused shape of the review's sweep
+  (`.sub`/`.div` right operands, `.pow` bases, `.add`/`.mul` operands) and for the atom cases; and an exhaustive
+  check over 103,376 expressions to depth 3 over four atoms: a line is written exactly when 11.2 accepts the
+  expression (480 accepted to depth 2), and a reader of 11.2 that returns every parse reads the line back as that
+  expression and nothing else.
+- The review's PROBE F1 failed before the fix (both `#guard`s) and passes after it. Its value words ("a", "b")
+  are not in 11.2's form, so after the fix it also passes for that reason; the Examples guards use words in the
+  form ("the a") so that they test the grammar.
+- Seeded bugs: seven mutants of `Render.lean` (in `mutants.json`); each failed the Examples guards and was restored.
+  Only Lean product code changed; Python and Rust have no calc renderer.
+- Checks at the fix commit: `lake build` (891 jobs), `python3 lean/audit.py --check`, the regenerated statements,
+  declarations and frozen inventory; `regen_generated.py --check` fails only `trust-tables`, the unsigned budget
+  above. The selected tests on the Mac runner (`mac-pytest.sh --select`, 163 units at `9183df324`) passed with 0
+  failed.
+- C1–C7 stay FOLLOW-UP, except the parts of C2 the fix closes (negative numbers, "{1}" in value words, lowercase
+  lines).

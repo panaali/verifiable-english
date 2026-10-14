@@ -9,8 +9,9 @@ the operational limit path and the independent overflow and exhaustion causes.
 
 ME-1 does not register a service mode. That belongs to ME-2. Counted values
 already have their final mathematical and operational constructors; ME-4 adds
-the table computation. `VE.Calc.English.renderClaim` is display only; ME-11
-adds reading and the round-trip theorem.
+the table computation. `VE.Calc.English.renderClaim` is display only and writes
+a line only by 11.2's grammar (`none` otherwise); ME-11 adds reading and the
+round-trip theorem.
 
 The `#guard` fixtures in `VE.Calc.Examples` cover the values and verdicts of
 the plan's ME-1 list, including its negative controls. The Lean audit and the
