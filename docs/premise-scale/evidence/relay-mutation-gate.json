@@ -1,8 +1,190 @@
 {
- "failures": [],
- "findings": [],
+ "failures": [
+  "allow-list path matches nothing: B0 service:graph duplicate results/*/result/supporting_edges",
+  "allow-list path matches nothing: B0 service:graph empty results/*/result/supporting_edges",
+  "allow-list path matches nothing: F4 service:graph rebind results/*/result/supporting_edges/*",
+  "allow-list path matches nothing: F4 service:route rebind results/*/result/error",
+  "accepted service:route empty results/*/result/background: empty",
+  "accepted service:route duplicate results/*/result/background: duplicate",
+  "accepted service:route rebind results/*/result/background/*/*/*/*: rebind",
+  "accepted service:route empty results/*/result/generators: empty",
+  "accepted service:route duplicate results/*/result/generators: duplicate",
+  "accepted service:route empty results/*/result/premises: empty",
+  "accepted service:route duplicate results/*/result/premises: duplicate",
+  "accepted service:route rebind results/*/result/premises/*/*/*/*: rebind",
+  "accepted service:parse empty results/*/result/error: empty",
+  "accepted service:parse drop results/*/result/span: drop",
+  "accepted service:graph empty results/*/result/background: empty",
+  "accepted service:graph duplicate results/*/result/background: duplicate",
+  "accepted service:graph duplicate results/*/result/background/*/ast: duplicate",
+  "accepted service:graph empty results/*/result/background/*/ast/*: empty",
+  "accepted service:graph retype results/*/result/background/*/ast/*: retype null",
+  "accepted service:graph duplicate results/*/result/background/*/ast/*: duplicate",
+  "accepted service:graph empty results/*/result/background/*/ast/*/*: empty",
+  "accepted service:graph retype results/*/result/background/*/ast/*/*: retype null",
+  "accepted service:graph duplicate results/*/result/background/*/ast/*/*: duplicate",
+  "accepted service:graph empty results/*/result/background/*/label: empty",
+  "untyped service:graph untyped results/*/result/background/*/ast/*: every retype is accepted",
+  "untyped service:graph untyped results/*/result/background/*/ast/*/*: every retype is accepted"
+ ],
+ "findings": [
+  {
+   "detail": "empty",
+   "mutation": "empty",
+   "outcome": "accepted",
+   "path": "results/*/result/background",
+   "route": "service:route"
+  },
+  {
+   "detail": "duplicate",
+   "mutation": "duplicate",
+   "outcome": "accepted",
+   "path": "results/*/result/background",
+   "route": "service:route"
+  },
+  {
+   "detail": "rebind",
+   "mutation": "rebind",
+   "outcome": "accepted",
+   "path": "results/*/result/background/*/*/*/*",
+   "route": "service:route"
+  },
+  {
+   "detail": "empty",
+   "mutation": "empty",
+   "outcome": "accepted",
+   "path": "results/*/result/generators",
+   "route": "service:route"
+  },
+  {
+   "detail": "duplicate",
+   "mutation": "duplicate",
+   "outcome": "accepted",
+   "path": "results/*/result/generators",
+   "route": "service:route"
+  },
+  {
+   "detail": "empty",
+   "mutation": "empty",
+   "outcome": "accepted",
+   "path": "results/*/result/premises",
+   "route": "service:route"
+  },
+  {
+   "detail": "duplicate",
+   "mutation": "duplicate",
+   "outcome": "accepted",
+   "path": "results/*/result/premises",
+   "route": "service:route"
+  },
+  {
+   "detail": "rebind",
+   "mutation": "rebind",
+   "outcome": "accepted",
+   "path": "results/*/result/premises/*/*/*/*",
+   "route": "service:route"
+  },
+  {
+   "detail": "empty",
+   "mutation": "empty",
+   "outcome": "accepted",
+   "path": "results/*/result/error",
+   "route": "service:parse"
+  },
+  {
+   "detail": "drop",
+   "mutation": "drop",
+   "outcome": "accepted",
+   "path": "results/*/result/span",
+   "route": "service:parse"
+  },
+  {
+   "detail": "empty",
+   "mutation": "empty",
+   "outcome": "accepted",
+   "path": "results/*/result/background",
+   "route": "service:graph"
+  },
+  {
+   "detail": "duplicate",
+   "mutation": "duplicate",
+   "outcome": "accepted",
+   "path": "results/*/result/background",
+   "route": "service:graph"
+  },
+  {
+   "detail": "duplicate",
+   "mutation": "duplicate",
+   "outcome": "accepted",
+   "path": "results/*/result/background/*/ast",
+   "route": "service:graph"
+  },
+  {
+   "detail": "empty",
+   "mutation": "empty",
+   "outcome": "accepted",
+   "path": "results/*/result/background/*/ast/*",
+   "route": "service:graph"
+  },
+  {
+   "detail": "retype null",
+   "mutation": "retype",
+   "outcome": "accepted",
+   "path": "results/*/result/background/*/ast/*",
+   "route": "service:graph"
+  },
+  {
+   "detail": "duplicate",
+   "mutation": "duplicate",
+   "outcome": "accepted",
+   "path": "results/*/result/background/*/ast/*",
+   "route": "service:graph"
+  },
+  {
+   "detail": "empty",
+   "mutation": "empty",
+   "outcome": "accepted",
+   "path": "results/*/result/background/*/ast/*/*",
+   "route": "service:graph"
+  },
+  {
+   "detail": "retype null",
+   "mutation": "retype",
+   "outcome": "accepted",
+   "path": "results/*/result/background/*/ast/*/*",
+   "route": "service:graph"
+  },
+  {
+   "detail": "duplicate",
+   "mutation": "duplicate",
+   "outcome": "accepted",
+   "path": "results/*/result/background/*/ast/*/*",
+   "route": "service:graph"
+  },
+  {
+   "detail": "empty",
+   "mutation": "empty",
+   "outcome": "accepted",
+   "path": "results/*/result/background/*/label",
+   "route": "service:graph"
+  },
+  {
+   "detail": "every retype is accepted",
+   "mutation": "untyped",
+   "outcome": "untyped",
+   "path": "results/*/result/background/*/ast/*",
+   "route": "service:graph"
+  },
+  {
+   "detail": "every retype is accepted",
+   "mutation": "untyped",
+   "outcome": "untyped",
+   "path": "results/*/result/background/*/ast/*/*",
+   "route": "service:graph"
+  }
+ ],
  "inputs": {
-  "tests/data/relay-gate-cases.jsonl": "b03717957551ec7935a2b22ff7522f0d9c04a9d4e184647a10687dd3a1105537",
+  "tests/data/relay-gate-cases.jsonl": "1617407a8fa100bc97c23f8e10e40932c7235f479be5421bd0e8827ea4a282f5",
   "tools/relay-gate-allow.json": "873d7ea325588e03679d2ecd27bd091063f185edeefb8a4f1188f08bf10a3934"
  },
  "routes": {
@@ -17,7 +199,7 @@
    "mutants": 2061,
    "ok_fixtures": 2,
    "refused": 1989,
-   "seconds": 127.2
+   "seconds": 131.8
   },
   "service:alternatives": {
    "accepted": 274,
@@ -31,14 +213,14 @@
    "mutants": 8352,
    "ok_fixtures": 19,
    "refused": 8078,
-   "seconds": 154.4
+   "seconds": 57.3
   },
   "service:bundle": {
    "fixtures": 4,
    "mutants": 622,
    "ok_fixtures": 2,
    "refused": 622,
-   "seconds": 4.2
+   "seconds": 3.0
   },
   "service:check": {
    "accepted": 22,
@@ -50,7 +232,7 @@
    "mutants": 978,
    "ok_fixtures": 4,
    "refused": 956,
-   "seconds": 4.3,
+   "seconds": 2.4,
    "untyped": 1,
    "untyped:F7": 1
   },
@@ -59,7 +241,7 @@
    "mutants": 923,
    "ok_fixtures": 2,
    "refused": 923,
-   "seconds": 4.8
+   "seconds": 1.8
   },
   "service:diagnose": {
    "accepted": 8,
@@ -71,7 +253,7 @@
    "mutants": 1387,
    "ok_fixtures": 5,
    "refused": 1379,
-   "seconds": 5.2
+   "seconds": 3.9
   },
   "service:discourse": {
    "accepted": 105,
@@ -87,7 +269,7 @@
    "mutants": 4237,
    "ok_fixtures": 12,
    "refused": 4132,
-   "seconds": 26.8
+   "seconds": 41.1
   },
   "service:document": {
    "accepted": 30,
@@ -101,7 +283,7 @@
    "mutants": 1225,
    "ok_fixtures": 2,
    "refused": 1195,
-   "seconds": 4.2
+   "seconds": 4.1
   },
   "service:english": {
    "accepted": 20,
@@ -113,7 +295,7 @@
    "mutants": 710,
    "ok_fixtures": 2,
    "refused": 690,
-   "seconds": 5.2
+   "seconds": 5.5
   },
   "service:english.check": {
    "accepted": 120,
@@ -123,7 +305,7 @@
    "mutants": 372,
    "ok_fixtures": 2,
    "refused": 252,
-   "seconds": 1.9,
+   "seconds": 1.4,
    "untyped": 8,
    "untyped:F1": 8
   },
@@ -135,7 +317,7 @@
    "mutants": 1847,
    "ok_fixtures": 2,
    "refused": 540,
-   "seconds": 56.4,
+   "seconds": 31.6,
    "untyped": 49,
    "untyped:F1": 49
   },
@@ -147,7 +329,7 @@
    "mutants": 1166,
    "ok_fixtures": 2,
    "refused": 672,
-   "seconds": 9.1,
+   "seconds": 9.3,
    "untyped": 17,
    "untyped:F1": 17
   },
@@ -159,7 +341,7 @@
    "mutants": 1228,
    "ok_fixtures": 2,
    "refused": 820,
-   "seconds": 4.5,
+   "seconds": 3.5,
    "untyped": 22,
    "untyped:F1": 22
   },
@@ -172,7 +354,7 @@
    "mutants": 1561,
    "ok_fixtures": 4,
    "refused": 1557,
-   "seconds": 5.6
+   "seconds": 4.6
   },
   "service:evaluate": {
    "accepted": 4,
@@ -182,7 +364,7 @@
    "mutants": 1350,
    "ok_fixtures": 4,
    "refused": 1346,
-   "seconds": 5.6
+   "seconds": 3.1
   },
   "service:family-norms": {
    "accepted": 78,
@@ -196,25 +378,26 @@
    "mutants": 2428,
    "ok_fixtures": 9,
    "refused": 2350,
-   "seconds": 20.9
+   "seconds": 11.2
   },
   "service:graph": {
-   "accepted": 28,
-   "allowed": 28,
-   "allowed:B0": 12,
-   "allowed:F4": 16,
+   "accepted": 78,
+   "allowed": 20,
+   "allowed:B0": 8,
+   "allowed:F4": 12,
    "fixtures": 4,
-   "mutants": 706,
+   "mutants": 786,
    "ok_fixtures": 2,
-   "refused": 678,
-   "seconds": 2.9
+   "refused": 708,
+   "seconds": 2.3,
+   "untyped": 2
   },
   "service:identity": {
    "fixtures": 9,
    "mutants": 1342,
    "ok_fixtures": 4,
    "refused": 1342,
-   "seconds": 7.6
+   "seconds": 3.1
   },
   "service:model": {
    "accepted": 4,
@@ -225,7 +408,7 @@
    "mutants": 1205,
    "ok_fixtures": 2,
    "refused": 1201,
-   "seconds": 5.8
+   "seconds": 2.9
   },
   "service:norm-defaults": {
    "accepted": 347,
@@ -240,7 +423,7 @@
    "mutants": 6503,
    "ok_fixtures": 21,
    "refused": 6156,
-   "seconds": 42.7,
+   "seconds": 96.0,
    "untyped": 9,
    "untyped:B2": 9
   },
@@ -256,7 +439,7 @@
    "mutants": 7324,
    "ok_fixtures": 25,
    "refused": 7215,
-   "seconds": 33.2
+   "seconds": 25.1
   },
   "service:order": {
    "accepted": 10,
@@ -267,21 +450,21 @@
    "mutants": 2040,
    "ok_fixtures": 8,
    "refused": 2030,
-   "seconds": 8.1
+   "seconds": 5.2
   },
   "service:parse": {
-   "accepted": 26,
+   "accepted": 30,
    "allowed": 26,
    "allowed:B0": 4,
    "allowed:B4": 4,
    "allowed:F11": 2,
    "allowed:F3": 14,
    "allowed:F5": 2,
-   "fixtures": 2,
-   "mutants": 326,
+   "fixtures": 4,
+   "mutants": 702,
    "ok_fixtures": 2,
-   "refused": 300,
-   "seconds": 3.2,
+   "refused": 672,
+   "seconds": 2.1,
    "untyped": 1,
    "untyped:F7": 1
   },
@@ -295,34 +478,41 @@
    "mutants": 5615,
    "ok_fixtures": 20,
    "refused": 5605,
-   "seconds": 177.6
+   "seconds": 118.2
   },
   "service:readings": {
    "fixtures": 4,
    "mutants": 574,
    "ok_fixtures": 2,
    "refused": 574,
-   "seconds": 4.6
+   "seconds": 1.9
+  },
+  "service:readings-choices": {
+   "fixtures": 10,
+   "mutants": 1617,
+   "ok_fixtures": 6,
+   "refused": 1617,
+   "seconds": 5.8
   },
   "service:readings-route": {
-   "accepted": 2254,
-   "allowed": 2254,
-   "allowed:B0": 151,
+   "accepted": 2247,
+   "allowed": 2247,
+   "allowed:B0": 147,
    "allowed:B1": 1479,
    "allowed:B2": 57,
    "allowed:B3": 6,
    "allowed:F10": 112,
-   "allowed:F11": 57,
+   "allowed:F11": 56,
    "allowed:F2": 106,
    "allowed:F3": 31,
-   "allowed:F4": 213,
+   "allowed:F4": 211,
    "allowed:F5": 36,
    "allowed:F6": 6,
    "fixtures": 46,
-   "mutants": 15768,
-   "ok_fixtures": 32,
-   "refused": 13514,
-   "seconds": 246.4,
+   "mutants": 15728,
+   "ok_fixtures": 31,
+   "refused": 13481,
+   "seconds": 268.1,
    "untyped": 69,
    "untyped:B1": 63,
    "untyped:B2": 6
@@ -342,7 +532,7 @@
    "mutants": 5357,
    "ok_fixtures": 14,
    "refused": 4960,
-   "seconds": 40.0,
+   "seconds": 17.1,
    "untyped": 15,
    "untyped:B2": 11,
    "untyped:F7": 4
@@ -361,7 +551,7 @@
    "mutants": 6451,
    "ok_fixtures": 15,
    "refused": 6103,
-   "seconds": 56.9,
+   "seconds": 24.8,
    "untyped": 12,
    "untyped:B2": 12
   },
@@ -378,7 +568,7 @@
    "mutants": 8240,
    "ok_fixtures": 18,
    "refused": 7827,
-   "seconds": 136.5
+   "seconds": 66.9
   },
   "service:risk-eval": {
    "accepted": 2,
@@ -389,26 +579,26 @@
    "mutants": 789,
    "ok_fixtures": 2,
    "refused": 787,
-   "seconds": 18.5
+   "seconds": 5.2
   },
   "service:route": {
-   "accepted": 26,
-   "allowed": 26,
+   "accepted": 30,
+   "allowed": 20,
    "allowed:B0": 6,
    "allowed:B5": 4,
-   "allowed:F4": 16,
-   "fixtures": 33,
-   "mutants": 5244,
+   "allowed:F4": 10,
+   "fixtures": 34,
+   "mutants": 5473,
    "ok_fixtures": 16,
-   "refused": 5218,
-   "seconds": 17.1
+   "refused": 5443,
+   "seconds": 13.6
   },
   "service:search-budget": {
    "fixtures": 6,
    "mutants": 957,
    "ok_fixtures": 2,
    "refused": 957,
-   "seconds": 3.2
+   "seconds": 3.3
   },
   "service:soft-norms": {
    "accepted": 229,
@@ -423,7 +613,7 @@
    "mutants": 5824,
    "ok_fixtures": 18,
    "refused": 5595,
-   "seconds": 35.8,
+   "seconds": 26.8,
    "untyped": 9,
    "untyped:B2": 9
   },
@@ -440,7 +630,7 @@
    "mutants": 4439,
    "ok_fixtures": 11,
    "refused": 4313,
-   "seconds": 83.2
+   "seconds": 30.0
   },
   "ve_conformance:check-certificate:graph.compose": {
    "fixtures": 1,
@@ -457,7 +647,7 @@
    "mutants": 124,
    "ok_fixtures": 2,
    "refused": 118,
-   "seconds": 4.8
+   "seconds": 5.0
   },
   "ve_conformance:route:graph.compose": {
    "fixtures": 1,
@@ -471,7 +661,7 @@
    "mutants": 110,
    "ok_fixtures": 2,
    "refused": 110,
-   "seconds": 5.2
+   "seconds": 4.8
   },
   "ve_metered::evaluate": {
    "accepted": 62,
@@ -481,7 +671,7 @@
    "mutants": 144,
    "ok_fixtures": 2,
    "refused": 82,
-   "seconds": 6.4,
+   "seconds": 5.4,
    "untyped": 4,
    "untyped:F8": 4
   },
@@ -494,13 +684,13 @@
    "mutants": 535,
    "ok_fixtures": 2,
    "refused": 523,
-   "seconds": 25.8
+   "seconds": 26.9
   }
  },
  "totals": {
-  "accepted": 7355,
-  "allowed": 7355,
-  "allowed:B0": 864,
+  "accepted": 7406,
+  "allowed": 7334,
+  "allowed:B0": 856,
   "allowed:B1": 1479,
   "allowed:B2": 539,
   "allowed:B3": 8,
@@ -509,19 +699,19 @@
   "allowed:B6": 6,
   "allowed:F1": 2329,
   "allowed:F10": 278,
-  "allowed:F11": 257,
+  "allowed:F11": 256,
   "allowed:F2": 106,
   "allowed:F3": 117,
-  "allowed:F4": 1157,
+  "allowed:F4": 1145,
   "allowed:F5": 69,
   "allowed:F6": 37,
   "allowed:F8": 62,
   "allowed:F9": 9,
-  "fixtures": 476,
-  "mutants": 110152,
-  "ok_fixtures": 299,
-  "refused": 102797,
-  "untyped": 216,
+  "fixtures": 489,
+  "mutants": 112414,
+  "ok_fixtures": 304,
+  "refused": 105008,
+  "untyped": 218,
   "untyped:B1": 63,
   "untyped:B2": 47,
   "untyped:F1": 96,

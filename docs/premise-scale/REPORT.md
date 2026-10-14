@@ -1,11 +1,15 @@
 # premise-scale: per-sort domain budget, ground-fact route, measured Rust limit
 
-**DRI signature needed: DELTA rows 1, 2, 4, 5, 6 and 8** (UNKNOWN or unavailable becoming a Lean-checked
+**DRI signature needed: DELTA rows 1, 2, 4, 5, 6 and 8.** **The relay mutation gate fails with 26 failures,
+all pre-existing on main `8594f1d05`** (routes `service:graph`, `service:route`, `service:parse`, which this
+batch does not touch; `evidence/relay-gate-vs-main.txt`), so the pre-review relay check needs the DRI's
+decision or main's fix (follow-up 5). (UNKNOWN or unavailable becoming a Lean-checked
 model, as DRI decisions QT2, ME1 and ME2 direct; a changed Rust limit; a new service mode and search
 options; CPU on documents that now get an answer). Rows 3 and 7 are signed by R3 and R6.
 
 Branch `infra/premise-scale`, built on `infra/oom-rootcause` (merged first, `46213c31f`) and synced with
-main `f98183bf` (`b07a7cfa1`). DRI decisions 2026-10-13 QT2, ME1, ME2 and ET1
+main three times: `f98183bf` (`b07a7cfa1`), `4667e8de` (lf-14d and runner-portability, `e91311b1a`) and
+`8594f1d05` (repo-map-untracked, `3d56a0873`). DRI decisions 2026-10-13 QT2, ME1, ME2 and ET1
 (`debates/plan-synthesis/DRI-DECISIONS-PHASE2.md`). Times are UTC.
 
 ## Summary
@@ -148,9 +152,21 @@ so the times are high, and the limit errs long; it only bounds a wait for an unt
   (`test_premise_scale.py`, `test_stage2_dispatch.py`, `test_lean_document_wrapper.py`,
   `test_readings_defaults_rd6b_report.py`, `test_lean_first_b12_report.py`, `test_regen_generated.py`,
   `test_difffuzz.py`).
-- Relay mutation gate: 40 routes, 110,152 mutants, 0 failures (`evidence/relay-mutation-gate.json`), after
-  pruning 42 stale allow-list paths (`a8d92f06b`). The paths were stale on the base too (`--route
-  service:norms` fails the same way there): the OOM merge's readings relay refuses those mutants.
+- Relay mutation gate. Before the second sync: 40 routes, 110,152 mutants, 0 failures, after pruning 42
+  stale allow-list paths (`a8d92f06b`; stale on the base too, `--route service:norms` fails the same way
+  there: the OOM merge's readings relay refuses those mutants). After syncing with main `4667e8de`: 41
+  routes, 112,414 mutants, **26 failures** (`evidence/relay-mutation-gate.json`), every one on
+  `service:graph`, `service:route` or `service:parse`, and every one also a failure of main `8594f1d05`
+  itself (main has 30 on those routes; the other 4 are stale paths this branch already pruned;
+  `evidence/relay-gate-vs-main.txt`). They came with main's re-recorded relay fixtures (lf-14d): 22
+  accepted mutants (emptied, duplicated or rebound `background`, `premises`, `generators`; parse's
+  `error` and `span`), 2 untyped (`service:graph` `background/*/ast/*`), and 4 stale allow-list paths.
+  `service:search-budget`: 957 mutants, all refused.
+- After the syncs: a curated run of the 12 test files main changed, this batch's tests, and the relay,
+  schema, pin, manifest, trust, document and readings tests (36 files): 2,420 passed; `test_difffuzz.py`:
+  94 passed; `test_repo_map.py`: 29 passed; `regen_generated.py --check`: 23 entries fresh; `lean/audit.py`
+  PASS (489 files, 5,801 theorems). The measurements and seeded faults ran at `524110047`, before the last
+  two syncs; neither sync changed this batch's code.
 - The full release gate was not run by me (the chain runs it on the final HEAD).
 
 ## Seeded bugs
@@ -184,10 +200,14 @@ All 12 caught (`evidence/mutants.json`):
 3. The norm-defaults coverage search (`ve/norm_defaults.py`) times out at 5 s on the constitution under
    load on the base; HEAD's scaled limit covers it, since it is a model search.
 4. "Exactly N" in forms the count does not read (counting quantifiers, cardinalities) stays UNKNOWN.
+5. **Main's relay mutation gate fails on `service:graph`, `service:route` and `service:parse`** (30 at
+   `8594f1d05`, 26 after this branch's prune): accepted list mutants of `background`, `premises` and
+   `generators`, untyped `background` ASTs, and stale paths. Owner: main's relay (the lf-14d fixtures).
+   This batch leaves them alone: widening the allow-list would hide the two untyped fields.
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. PASS. Every field of the `search-budget` row is typed in `search-budget.json` (rendered from
+1. PASS for this batch's route (the relay gate's other 26 failures are main's, follow-up 5). Every field of the `search-budget` row is typed in `search-budget.json` (rendered from
    `ResponseShape/Schemas/SearchBudget.lean`, encoder theorem `runCaseReported_fits`) and retyped,
    dropped, duplicated and reordered one and two faults at a time: `test_search_budget_answer.py`
    (`test_every_field_is_typed`, `test_one_fault_mutants_…`, `test_two_fault_mutants_…`); relay gate 957/957.
@@ -200,8 +220,8 @@ All 12 caught (`evidence/mutants.json`):
    missing or empty entry: `test_an_answer_to_another_request_is_refused`, `test_one_fault_mutants_…`;
    inputs: undeclared sort or bad bounds refused, `test_search_options_are_checked`,
    `test_rust_refuses_malformed_search_options[*]`, `sort_bounds_name_declared_sorts_in_order`.
-6. N.A. for me: the chain runs the full gate on the final HEAD. Synced with main `f98183bf` first; the
-   evidence commit list is `evidence/commits.txt` (`main..HEAD --no-merges`).
+6. N.A. for me: the chain runs the full gate on the final HEAD. Synced with main `8594f1d05`; the evidence
+   commit list is `evidence/commits.txt` (`main..HEAD --no-merges`).
 7. PASS. Every DELTA row is signed by a named ruling or listed as "DRI signature needed" in this report's
    first line; the trust growth (+5 V) is recorded under R6.
 8. PASS. DELTA rows 1 to 8, from the A/B (only the 7 changed documents differ, only in the listed fields).

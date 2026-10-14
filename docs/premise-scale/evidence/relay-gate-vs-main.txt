@@ -1,0 +1,59 @@
+# relay_mutation_gate.py failures on the merged branch (e91311b1a) and on main 8594f1d05 (--route service:graph --route service:route --route service:parse), sorted
+## branch (all 41 routes)
+relay_mutation_gate: accepted service:graph duplicate results/*/result/background/*/ast/*/*: duplicate
+relay_mutation_gate: accepted service:graph duplicate results/*/result/background/*/ast/*: duplicate
+relay_mutation_gate: accepted service:graph duplicate results/*/result/background/*/ast: duplicate
+relay_mutation_gate: accepted service:graph duplicate results/*/result/background: duplicate
+relay_mutation_gate: accepted service:graph empty results/*/result/background/*/ast/*/*: empty
+relay_mutation_gate: accepted service:graph empty results/*/result/background/*/ast/*: empty
+relay_mutation_gate: accepted service:graph empty results/*/result/background/*/label: empty
+relay_mutation_gate: accepted service:graph empty results/*/result/background: empty
+relay_mutation_gate: accepted service:graph retype results/*/result/background/*/ast/*/*: retype null
+relay_mutation_gate: accepted service:graph retype results/*/result/background/*/ast/*: retype null
+relay_mutation_gate: accepted service:parse drop results/*/result/span: drop
+relay_mutation_gate: accepted service:parse empty results/*/result/error: empty
+relay_mutation_gate: accepted service:route duplicate results/*/result/background: duplicate
+relay_mutation_gate: accepted service:route duplicate results/*/result/generators: duplicate
+relay_mutation_gate: accepted service:route duplicate results/*/result/premises: duplicate
+relay_mutation_gate: accepted service:route empty results/*/result/background: empty
+relay_mutation_gate: accepted service:route empty results/*/result/generators: empty
+relay_mutation_gate: accepted service:route empty results/*/result/premises: empty
+relay_mutation_gate: accepted service:route rebind results/*/result/background/*/*/*/*: rebind
+relay_mutation_gate: accepted service:route rebind results/*/result/premises/*/*/*/*: rebind
+relay_mutation_gate: allow-list path matches nothing: B0 service:graph duplicate results/*/result/supporting_edges
+relay_mutation_gate: allow-list path matches nothing: B0 service:graph empty results/*/result/supporting_edges
+relay_mutation_gate: allow-list path matches nothing: F4 service:graph rebind results/*/result/supporting_edges/*
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/error
+relay_mutation_gate: untyped service:graph untyped results/*/result/background/*/ast/*/*: every retype is accepted
+relay_mutation_gate: untyped service:graph untyped results/*/result/background/*/ast/*: every retype is accepted
+## main 8594f1d05 (the three routes)
+relay_mutation_gate: accepted service:graph duplicate results/*/result/background/*/ast/*/*: duplicate
+relay_mutation_gate: accepted service:graph duplicate results/*/result/background/*/ast/*: duplicate
+relay_mutation_gate: accepted service:graph duplicate results/*/result/background/*/ast: duplicate
+relay_mutation_gate: accepted service:graph duplicate results/*/result/background: duplicate
+relay_mutation_gate: accepted service:graph empty results/*/result/background/*/ast/*/*: empty
+relay_mutation_gate: accepted service:graph empty results/*/result/background/*/ast/*: empty
+relay_mutation_gate: accepted service:graph empty results/*/result/background/*/label: empty
+relay_mutation_gate: accepted service:graph empty results/*/result/background: empty
+relay_mutation_gate: accepted service:graph retype results/*/result/background/*/ast/*/*: retype null
+relay_mutation_gate: accepted service:graph retype results/*/result/background/*/ast/*: retype null
+relay_mutation_gate: accepted service:parse drop results/*/result/span: drop
+relay_mutation_gate: accepted service:parse empty results/*/result/error: empty
+relay_mutation_gate: accepted service:route duplicate results/*/result/background: duplicate
+relay_mutation_gate: accepted service:route duplicate results/*/result/generators: duplicate
+relay_mutation_gate: accepted service:route duplicate results/*/result/premises: duplicate
+relay_mutation_gate: accepted service:route empty results/*/result/background: empty
+relay_mutation_gate: accepted service:route empty results/*/result/generators: empty
+relay_mutation_gate: accepted service:route empty results/*/result/premises: empty
+relay_mutation_gate: accepted service:route rebind results/*/result/background/*/*/*/*: rebind
+relay_mutation_gate: accepted service:route rebind results/*/result/premises/*/*/*/*: rebind
+relay_mutation_gate: allow-list path matches nothing: B0 service:graph duplicate results/*/result/supporting_edges
+relay_mutation_gate: allow-list path matches nothing: B0 service:graph empty results/*/result/supporting_edges
+relay_mutation_gate: allow-list path matches nothing: B5 service:route drop results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:graph rebind results/*/result/supporting_edges/*
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/error
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/report/root/ast/*/*
+relay_mutation_gate: untyped service:graph untyped results/*/result/background/*/ast/*/*: every retype is accepted
+relay_mutation_gate: untyped service:graph untyped results/*/result/background/*/ast/*: every retype is accepted
