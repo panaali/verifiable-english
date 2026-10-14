@@ -11,8 +11,9 @@ agree with Lean or the parse is `CheckerUnavailable`.
 * **Deleted:** 39 lines of `ve/parser.py` (8 added): the `definitions@0` branch of `_parse_lean`,
   `_parse_python_marked`, the `_Parser.sugar` mark and the `definitions_sugar` exception tag. Mapped site by site in
   [LEDGER.md](LEDGER.md).
-* **Lean added:** 416 lines (122 deleted) in 9 product files (`Surface`, `Closure/Surface`, `Core/Surface`,
-  `Service/ParseDiagnostic`, `Service/Standalone`, the round-trip and proof files that follow the signatures).
+* **Lean added:** 418 lines (124 deleted) in 10 product files (`Surface`, `Closure/Surface`, `Core/Surface`,
+  `Service/ParseDiagnostic`, `Service/Standalone`, `ResponseShape/Schemas/ReadingsRoute`, the round-trip and proof
+  files that follow the signatures).
   Trusted lines V 37,154 → 37,451 (R6, `docs/trust-baseline.json`); 25 new declarations classified in
   `tools/trust-classes.json`.
 * **Tests:** `tests/test_lean_first_b14a.py` (283 lines, new), `tests/test_stage2_parse.py` (+17/−8). Rust unchanged.
@@ -25,8 +26,7 @@ seeds, 0 head-only signatures, baseline 250 entries on both sides (does not grow
 budgets (C1, R4); relay mutation gate: the `parse` route has no failure, the 133 failures are identical at base
 and head (`main`'s). Every DELTA row is signed by a standing ruling (R1, R4, R6, R7); none needs a DRI signature.
 
-The full release gate runs once, as the last step, on the commit that adds this report; its result is kept as
-`gate-result.json` in the worktree (no later commit, so the gate's commit is HEAD).
+The chain owns the full release gate on the committed final HEAD; this worker does not run `tools/gate.py`.
 
 **First full gate (1e44780b): failed on 3 tests outside the batch.** 14,566 passed, 92 skipped, 36 Rust passed;
 the failures were `tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt|TypeError|AttributeError]`,
@@ -43,6 +43,30 @@ stages), so no full gate has passed or failed on the cherry-picked fix yet. The 
 record; the resumed session (2026-10-14) ran only `lake build` and the three affected test files
 (`tests/test_lean_first_b14a.py`, `tests/test_stage2_parse.py`, `tests/test_gate_integrity.py`) on it, not the
 365-unit selection, which is the whole suite.
+
+## Pre-review continuation (2026-10-14)
+
+The chain's full gate on 577940ed collected 14,663 tests and failed only the two collection-baseline checks:
+the branch's newly added `test_reordered_environment_keys_and_generated_names_get_the_same_answer` was absent
+from `tools/gate-collection.json`. It reported 14,567 passed, 92 skipped and 36 Rust passed; the runner's one
+known question-deadline failure is listed separately in `gate-result.json`. After `lake build`,
+`tools/gate_collection.py --write` added exactly that one ID and removed none. Both failed collection tests then
+passed (2/2). `tools/gate.py --rerun-failed` would reject this local rerun because the prior gate was on aarch64
+and the tree has changed, then run a full gate; the task forbids this worker from running that full gate.
+
+The pre-review relay check timed out on a service startup handshake. A local handshake took 0.31 s, and the
+batch's `service:parse` route refused or allowed all 326 mutants as intended. The saved full relay evidence for
+base and head showed 128 allow-list paths that no longer match any mutation and five unlisted accepted mutations
+on `readings-route`. We removed those stale paths, tightened the Lean-owned generated schema so a fill/slot label
+or conflict target cannot be empty, and listed three Lean-computed list mutations explicitly under B0. The old
+schema made the empty-label and empty-target mutants fail the relay gate; the generated schema refuses them
+(R8). The full relay gate now passes **39 routes, 109,195 mutants, 0 failures**; its structured record is
+`evidence/relay-fix.json`. `tools/response_schemas.py --check`, `tools/wire_contract.py --check`,
+`tools/trust_map.py --check`, and the 119 focused response-schema, readings-route and batch tests pass. The
+schema and declarations inventory were regenerated through `tools/regen_generated.py` (R12).
+
+This continuation changes rejection of malformed Lean responses only (R8); all normal corpus and pilot
+comparisons above remain the batch's user-visible DELTA. The chain will run its full gate on the new final HEAD.
 
 ## Seeded bugs
 
@@ -67,13 +91,15 @@ Deleted fallback: 6d05bf52 (`ve/parser.py`), test `test_the_retained_sugar_readi
 (DELTA.md, `evidence/`). Inventories regenerated with `tools/regen_generated.py` (10f101e1, R12).
 
 1. Lean answers typed and contained: PASS. The `parse` response schema is unchanged (sugar only widens which
-   sources Lean accepts). Relay mutation gate `service:parse`: 326 mutants, 0 failures at head
-   (`evidence/relay-gate-head.txt`). Wire row: `test_lean_answers_sugar_on_the_wire`.
+   sources Lean accepts). Relay mutation gate: 39 routes, 109,195 mutants, 0 failures
+   (`evidence/relay-fix.json`); `service:parse`: 326 mutants, 0 failures. Wire row:
+   `test_lean_answers_sugar_on_the_wire`.
 2. Deliverables built, no rule broken: PASS. See the rows above. There is no new Python copy of a Lean decision:
    Python only constructs the document after Lean accepts and must equal it (`test_metadata_still_comes_from_the_python_constructor`,
    M3). No new permanent report test (D4/R11): `tests/test_lean_first_b14a.py` tests behaviour only.
 3. Tests and gates can fail: PASS. M1–M4 in `evidence/mutants.json`, one per behaviour, in Lean and Python (Rust unchanged).
-   Each mutant fails a behaviour test, not a hash or build step.
+   Each mutant fails a behaviour test, not a hash or build step. The old relay schema accepted empty labels and
+   targets in `service:readings-route`; the full relay check failed on them before the R8 fix and passes afterward.
 4. Python, Lean and Rust agree: PASS. Corpus A/B gives 65,772 records with 0 unlisted, and the sugar corpus 760 records
    with 0 unlisted (`evidence/corpus-ab.json`, `evidence/sugar-ab.json`). Reordered keys and generated names:
    `test_reordered_environment_keys_and_generated_names_get_the_same_answer`. 3-argument predicates:
@@ -82,8 +108,8 @@ Deleted fallback: 6d05bf52 (`ve/parser.py`), test `test_the_retained_sugar_readi
    canonical text for equality with its own document, or the parse is `CheckerUnavailable` (M4 caught by
    `test_sugar_is_read_by_lean_as_python_read_it[family2]`). For undeclared input names:
    `test_sugar_needs_the_definitions_profile`, and the UnknownSymbol fixtures in `REJECTED` (M2).
-6. Gate evidence matches the final HEAD: PASS. The chain runs the full gate on the committed final HEAD
-   (`gate-result.json`). The branch is not synced with `main`: the merge base `f1b719c7` is the A/B base, and
+6. Gate evidence matches the final HEAD: N.A. The chain runs the full gate after the final commit; this worker
+   is expressly forbidden to run it. The branch is not synced with `main`: the merge base `f1b719c7` is the A/B base, and
    `main` has 206 later commits. None of them touches `ve/parser.py` or the five Lean surface files this batch edits.
    Syncing is the merge train's job. The evidence names `f1b719c7` as its base.
 7. No unsigned item: PASS. Every DELTA row is signed (W1 R1, U1/U2 R7, C1 R4, T1 R6). None needs a DRI signature.
