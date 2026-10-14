@@ -525,8 +525,9 @@ theorem supUnchecked_fits (q reason : String) (named : Option Choice) :
 
 set_option maxHeartbeats 1000000 in
 theorem supAnswer_fits (id q : String) (x : SupContext) (A : Choice) (named : Option Choice)
-    (ss : List SupScope) (dead : List Json) (budget : SupBudget) (hq : verdictsQuestions.contains q) :
-    Fits req (skel% "readings-route.json#/$defs/sup_verdicts") (supAnswer id q x A named ss dead budget) := by
+    (ss : List SupScope) (dead : List Json) (budget : SupBudget) (over : Bool)
+    (hq : verdictsQuestions.contains q) :
+    Fits req (skel% "readings-route.json#/$defs/sup_verdicts") (supAnswer id q x A named ss dead budget over) := by
   simp only [verdictsQuestions, List.contains_cons, List.contains_nil, Bool.or_false, Bool.or_eq_true, beq_iff_eq] at hq
   rcases hq with rfl | rfl | rfl
   all_goals
