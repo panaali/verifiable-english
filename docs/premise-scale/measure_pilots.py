@@ -2,7 +2,8 @@
 
 Each pilot runs `check_document` in a fresh process under the pilots' address-space cap
 (`prlimit --as=6442450944`), and the row records the wall time, the premise status and its
-answer, and peak resident memory: the Python process (`python_peak_mb`), the largest process
+answer, the CPU time of the check and every process it waited for (the Lean service included:
+it is closed and waited at exit), and peak resident memory: the Python process (`python_peak_mb`), the largest process
 that ended and was waited for, a Rust or one-shot Lean checker (`children_peak_mb`), and the
 processes still running at the end, the persistent Lean service and Rust checkers (their
 VmHWM: `live_children_peak_mb`, the largest, and `live_children_peak_sum_mb`). The "before"
@@ -73,9 +74,11 @@ def measure(path: Path, env: dict, cap: int, root: Path) -> dict:
                           capture_output=True, text=True, env=env, cwd=root)
     wall = time.monotonic() - start
     import resource
+    children = resource.getrusage(resource.RUSAGE_CHILDREN)
     row = {"pilot": path.name, "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
            "bytes": path.stat().st_size, "exit": proc.returncode, "wall_seconds": round(wall, 2),
-           "children_peak_mb": resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss // 1024}
+           "cpu_seconds": round(children.ru_utime + children.ru_stime, 2),
+           "children_peak_mb": children.ru_maxrss // 1024}
     lines = proc.stdout.strip().splitlines()
     try:
         row.update(json.loads(lines[-1]))
@@ -94,6 +97,7 @@ def main() -> None:
     parser.add_argument("--rust-sha256", help="its SHA-256 (VE_RUST_SHA256)")
     parser.add_argument("--rust-timeout", help="VE_RUST_TIMEOUT for this run (default: unset)")
     parser.add_argument("--cap", type=int, default=6442450944)
+    parser.add_argument("--repeat", type=int, default=1, help="runs of each pilot, one row each")
     parser.add_argument("--root", type=Path, default=ROOT,
                         help="the checkout whose `ve` runs (the before side: a worktree at the merge base)")
     parser.add_argument("--record", help="a directory: each pilot's Rust case lines go to <pilot>.cases.jsonl")
@@ -107,7 +111,7 @@ def main() -> None:
     root = args.root.resolve()
     binary = Path(env.get("VE_RUST_JSONL") or root / "rust/target/release/ve").resolve()
     rows = []
-    for path in args.pilots:
+    for path in [p for p in args.pilots for _ in range(args.repeat)]:
         if args.record:
             # A pass-through wrapper: the case lines are copied to the record, the binary answers them.
             record = Path(args.record).resolve() / f"{path.name}.cases.jsonl"
@@ -125,7 +129,7 @@ def main() -> None:
         row["label"] = args.label
         row["rust_timeout"] = args.rust_timeout or "default"
         row["root"] = str(root)
-        print(json.dumps({k: row[k] for k in ("pilot", "status", "wall_seconds", "children_peak_mb", "error")
+        print(json.dumps({k: row[k] for k in ("pilot", "status", "wall_seconds", "cpu_seconds", "children_peak_mb", "error")
                           if k in row}), flush=True)
         rows.append(row)
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
