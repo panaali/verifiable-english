@@ -2,11 +2,15 @@
 
 > **DF-S (2026-10-14):** the statement spec [defeasible.md](defeasible.md) draft 1 elaborates every statement of
 > section 3 against the build of `rd-9/integrate` (`fbb81599`) and computes every fixture of 4.1. It corrects 19
-> statements and fixtures (its section 2). The largest correction: `basis_needs_sound` as written below is false
-> without RD-9's `localFree` (fixture DF-σ). Where this plan and the spec differ, the spec's section 7 (Lean) and
-> section 8 (fixtures) are authoritative. The design and decisions below are unchanged. Next: the statement review.
+> statements and fixtures (its section 2.1). The largest correction: `basis_needs_sound` as written below is false
+> without RD-9's `localFree` (fixture DF-σ). The statement review (`manage-agents/debates/defeasible-spec/`, Astra and
+> Fable, then the DRI's ruling) returned FIX with the design kept. Spec draft 2 and this plan's draft 3 apply the
+> ruling to both documents (spec section 2.2, R1 to R16). Where this plan and the spec differ, the spec's section 7
+> (Lean) and section 8 (fixtures) are authoritative. Next: the reviewers check the diff only, and DF-1a starts once
+> both accept it.
 >
-> Status: plan, **draft 2** (2026-10-14), branch `design/defeasible` from `main` at `f98183bf`. Draft 2 applies the
+> Status: plan, **draft 3** (2026-10-14), branch `design/defeasible` from `main` at `f98183bf`. Draft 3 changes only
+> what the statement review's ruling requires (change log). Draft 2 applied the
 > converged plan debate (`manage-agents/debates/design-defeasible/`, rounds 1–3, verdict REVISE, candidate A kept: the
 > joint position at the end of `fable.md` and Astra's round 3 in `astra.md`), and checks the plan against
 > `manage-agents/debates/plan-synthesis/SYNTHESIS.md` and `DRI-DECISIONS-PHASE2.md` (section 11). Draft 1 was written
@@ -28,6 +32,7 @@
 | 2026-10-13 | 1 | Plan for candidate A of docs/research/defeasible.md: decisions D1 to D14; `Dflt_T`, the gate, the basis, four layered kinds; the meaning theorem; readings through RD-9's fold; defaults about facts; situations with observations on WG-6; Lean statements (not elaborated); fixtures DF-α to DF-ξ and P-1 to P-5; batches DF-0 to DF-7 with four pre-registered experiments; dependencies, shared files and merge order; shared pieces S1 to S11. Planning only. |
 | 2026-10-14 | 2 | The debate's joint position, item by item. **(1) Default bases** minimise decisions with the unsaid tables varied (circumscription with varied predicates), in `DefaultBase` (3.4) and `DefaultCompletion` (3.6) alike, said in 0, 3.4, 3.6, 8 and S1 (new D15). Draft 1's two definitions of "no exception" (filling fixed in 3.4, varied in 3.6) are gone. **(2)** Draft 1's `hfill` (false whenever a default rule sits on a pair member) is replaced by the computed check `replacementSafe` and the replacement-admissibility lemma `replace_admissible` (3.4). **(3)** Astra's counterexample (one default obligation, its paired permission, both unspecified, fillings no/no) is fixture DF-π, and DF-π′ at one situation. **(4)** Fallback if DF-S cannot confirm the (→) proof: Astra's restriction, no minimality claim anywhere (3.4); no English or doc text claims minimality until DF-2 is proved (0, 2.9, DF-1a). **(5) DF-5** starts on WG-6's full bounded enumeration over every typed open atom, observations and constraints included, UNKNOWN beyond the bound; cone pruning only after `cone_minimal_iff` is proved (D10, 2.7, 3.6, DF-5). **(6) Basis** `strict \| needs \| unsettled`, `needs` only with a checked strict countermodel (`basis_needs_sound`); DE12 for `unsettled`; DF-E1's 12 default items all `needs` (D4, 2.2, 3.2, 3.3). **(7)** Non-vacuity conjunct in `defaults_certificate_sound` (3.3). **(8) DF-3** shows the default fold only when the strict fold is FREE; a default-fold CONFLICT renders as DE7 per choice; fixture DF-ρ with its English (2.4, 3.5, DF-3). **(9) English**: DE5 "whatever <deciders> decide" (DF-ζ gains a default rule so that a decider exists); DE8 in Astra's wording; DE1 and DE6 in a short and a long form chosen by Lean: short DE1 only when every kept assumption is a rule's exception with no stated condition (Astra's round-3 tightening: no switch, no ranking), short DE6 only when no exception holds at the situation; otherwise DE1′ and DE6′ (DE6′'s first sentence is Fable's round-1 long form), with DE11 naming each forced exception, shared with DE10 (D6, 2.8). DF-E1 measures both forms on all-`needs` items including DF-ε and DF-δ shapes, and drops the short form if it reads no better; draft 1's "By default" arm is dropped (D6, DF-E1). **(10)** Review checklist items 2, 5, 8, 10 and 12 extended (9). **(11)** Batch order as agreed (5, "Batch order"); DF-6 also waits for its own reviewed replacement argument. Also: DRI phase-2 decisions SC2, ET1 and ET2 applied to DF-4 and DF-E2; DF-3's pilot claim limited to the enumerated route; section 11 lists seven cross-plan issues. Planning only. |
 | 2026-10-14 | 2 (status) | Status line only: DF-S's statement spec [defeasible.md](defeasible.md) draft 1 is written and supersedes section 3's statements and 4.1's *derived* values with elaborated and computed ones. The debate's edits above are unchanged. |
+| 2026-10-14 | 3 | The statement review's ruling (`manage-agents/debates/defeasible-spec/DRI-RULING.md`, FIX), applied here and in spec draft 2 (its section 2.2, R1 to R16). **Gate**: three outcomes, COHERENT, COLLISION or UNKNOWN, with a status per pair (2.2, 2.3); the `reason` checks the collision first, in 2.6's order. **English**: DE4·u; DE7 names one decider when both rules' deciders agree, otherwise both; DE8 appends DE12 for each `unsettled` reading, and the default fold SOME, NONE or UNKNOWN shows no default sentence (2.4); DE10 in three forms with "avoidable" defined, DE10f only from `forcedAll`, DE13 for each assumed decision (2.7, 2.8). **Statements** (spec 7): `CoherenceReplay`, `forcedAt_sound`, `collisionTuple_some`, `collision_unranked`, `viewOf` through `decodeLayered`, DF-3's wire theorems, DF-5's `notSaid`, `noCompletion` and `forcedAll` soundness; `hsuff` deleted (3.6). **Fixtures**: DF-γ with the empty domain, DF-ω, F-DF1 restricted with F-DF1′ (4.1, 4.3); the sufficient-condition mutation fails DF-β (i) (DF-1a); DF-1b binds `forced` entries to the rule's conditions and sorts; DF-5's seeded bugs. No design change beyond the ruling. |
 
 ## 0. Summary
 
@@ -107,10 +112,10 @@ conditions: the least exception table the text forces.
 
 | Kind | Request | Answer | Evidence and theorem |
 |---|---|---|---|
-| `defaults-elaborate` | the layered source | `default_premises` (label, AST), `coherence_targets` (the two rule names, AST) | regenerated; `dflt_wellFormed` |
-| `defaults-coherence` | the source; per colliding pair an optional certificate, or a `witness` (a finite base and filling, with the pair and tuple) | `verdict` COHERENT, COLLISION or UNKNOWN; `pairs` (rules, status resolved / collision / unknown); on COLLISION the situation, with the effects of both rules | `defaultCoherenceCheck_sound`; `collision_sound` |
+| `defaults-elaborate` | the layered source | `default_premises` (label, AST), `coherence_targets` (the two rule names, AST) | regenerated; `dflt_wellFormed`; the rows are `dfltLabelled D` and `collidingPairs D` (`elaborateRows_eq`, `rfl`) |
+| `defaults-coherence` | the source; per colliding pair an optional certificate, and optionally a `witness` (a finite base and filling, with the pair) | `verdict` COHERENT (every pair certificate checks), COLLISION (the witness checks) or UNKNOWN (neither); `pairs` (rules, status resolved / collision / unknown); on COLLISION the situation, the tuple Lean finds (`collisionTuple`) and the deciders (`giveWayDeciders`), with the effects of both rules | `defaults_coherence_sound` (COHERENT, COLLISION, and each `resolved` pair), from `defaultCoherenceCheck_sound`, `collision_sound`, `pairChecks_sound`; `collisionTuple_some`; `collision_unranked` |
 | `defaults-certificate` | the source, `premises` (facts only, D5), `conclusion`, a `certificate`, the pairs' certificates, a finite `model` of the premises with no exception, and optionally a `strict_model` (a finite model and filling of the document's own premises, without `Dflt_T`, where the conclusion fails) | `verdict` FOLLOWS or UNKNOWN; with FOLLOWS, `basis` (strict, needs, unsettled), `form` (short, long) and `assumptions`; with UNKNOWN, `reason` | `defaults_certificate_sound` (`acceptanceX` with `X ++ Dflt_T`, `assumptions_sound`, the non-vacuity conjunct, `basis_strict_sound`, `basis_needs_sound`); `followsForm_short` |
-| `defaults-model` | the source, `premises`, `conclusion`, a finite `model` and `filling` | `verdict` DOES-NOT-FOLLOW or UNKNOWN; the situation and its gaps; `forced` (each exception that holds at the situation, with the stated condition that forces it) | `defaults_model_sound` (`modelCheckX_sound` with `X ++ Dflt_T`, and `forced = []` means no exception holds there); after DF-2 the situation is a default base (`defaultBase_of_dflt`) |
+| `defaults-model` | the source, `premises`, `conclusion`, a finite `model` and `filling` | `verdict` DOES-NOT-FOLLOW or UNKNOWN; the situation and its gaps; `forced` (each exception that holds at the situation, with the stated condition that forces it) | `defaults_model_sound` (`modelCheckX_sound` with `X ++ Dflt_T`, and `forced = []` means no exception holds there); `forcedAt_sound` (each `forced` entry names a default rule, its condition index is below the rule's number of stated conditions, and that condition and the exception hold at the entry's tuple); after DF-2 the situation is a default base (`defaultBase_of_dflt`) |
 
 FOLLOWS needs all three: the certificate checks against `premisesX U (X ++ Dflt_T) Γ` (bound by `bindCertX`), the gate's
 certificates all check, and the model checks with `modelCheckX U (X ++ Dflt_T)`. Missing any, the answer is UNKNOWN
@@ -128,11 +133,17 @@ certificates, models and witnesses; Lean checks every one.
 
 A colliding pair (soft's `CP(T)`) is **resolved** when its coherence premise follows from the base background,
 `Exc_T`, the other packs' premises `R`, `Dflt_T` and `Fill_T`. Ranked pairs are resolved under either flag (a ranked
-pair's coherence premise is valid on `T′`, soft's `coh_rank_valid_unconditional`; DF-S confirms it on `fill U`, and the
-search is expected to find its certificate quickly, *estimate*); unranked pairs are resolved where the rules' guards,
-carve-outs or stated exception conditions keep them apart. A **collision** is a checked finite base
-where, with `Dflt_T`, both rules of a pair select: the situation in which, with no exception, the text asks for both.
-The English (2.8, DE7) names the two rules, their effects, the absence of a ranking, and the decider.
+pair's coherence premise is valid on `T′`, soft's `coh_rank_valid_unconditional`; DF-S states it on `fill U` as
+`cohU_rank_valid`, with one-element evidence on DF-δ and DF-δ′, and the search is expected to find its certificate
+quickly, *estimate*); unranked pairs are resolved where the rules' guards, carve-outs or stated exception conditions
+keep them apart. A **collision** is a checked finite base where, with `Dflt_T`, both rules of a pair select: the
+situation in which, with no exception, the text asks for both. Lean finds the tuple (`collisionTuple_some`), and a
+checked collision's pair is unranked (`collision_unranked`, from `cohU_rank_valid`).
+
+The gate has three outcomes. Checked coherence excludes collisions; a checked collision refutes coherence; without
+either, the status is UNKNOWN (fixture DF-ω). The English (2.8, DE7) names the two rules, their effects, the absence of
+a ranking, and the decider: one decider when both rules' exceptions have the same one (soft's `exceptionDecider`),
+otherwise both. If DF-1a cannot prove `cohU_rank_valid`, DE7 drops "The text ranks neither above the other".
 
 ### 2.4 Readings (DF-3)
 
@@ -147,6 +158,10 @@ gate fails", and RD-9's `HoldsG .conflict` reads `notFree` alone, so without thi
 leaves a collision open would get RD-9's contradiction wording. With it, a default-fold CONFLICT can only come from the
 gate, and it renders as DE7 for each choice whose gate fails ("Under <reading>: Rules <m> and <n> conflict here unless
 one of them gives way: …"). Where the strict fold is not FREE, RD-9's answer stands alone. Fixture DF-ρ.
+
+What the member shows: a default fold ALL renders as DE8, with each non-strict reading's assumptions and, for a reading
+whose basis is `unsettled`, DE12. With the default fold SOME, NONE or UNKNOWN the member is relayed and no default
+sentence is shown. The wire theorems are stated in spec 7.4 (`readings_wire_default_*`).
 
 ### 2.5 Defaults about facts (DF-4)
 
@@ -173,9 +188,11 @@ beside the new row.
 | 3 | `InvalidInput: a question that assumes no exception may state facts only; it states <what>` with `<what>` one of `what rule <n> decides`, `whether rule <n>'s exception applies`, `whether <party> has turned rule <n> off`, `whether <rank l> outweighs <rank h> on <act phrase>` | a premise of the question names a regulated or decision predicate (D5) |
 | 4 | `ResourceLimit: generated default premise <label>` | a `Dflt_T` premise over `MAX_DEPTH` or `MAX_NODES`, computed before it is built |
 | 5 | `InvalidInput: coherence certificates do not match the colliding pairs` | the request's pair list differs in length or order from `coherence_targets` |
+| 6, 7 | spec section 5 | repeated generated labels; a decoded document whose soft rules or premises are not well formed (`hD`, `hXw` checked as Booleans, never firing on a decoded document) |
 
-Statuses, not errors: `UNKNOWN (with no exception, rules <m> and <n> conflict)`, `UNKNOWN (no-exception coherence
-not checked)`, `UNKNOWN (no checked situation where the premises hold with no exception)`, `UNKNOWN (no certificate)`.
+Statuses, not errors, in the order Lean checks them (the collision first, whether or not a certificate was sent):
+`UNKNOWN (with no exception, rules <m> and <n> conflict)`, `UNKNOWN (no-exception coherence not checked)`,
+`UNKNOWN (no checked situation where the premises hold with no exception)`, `UNKNOWN (no certificate)`.
 
 ### 2.7 At one situation, with observations (DF-5)
 
@@ -188,6 +205,15 @@ are `M`'s (D15, the same definition as `DefaultBase`). The answer: `by default <
 agrees, and one exists), `by default left to <decider>` (two default completions with the same filling differ), `by
 default not said` (they differ only in the filling), `no completion` (the record or the observations are ruled out, with
 Lean's labels), or `unknown` with weighing's reasons.
+
+A completion's **true decisions** are its decision atoms (exceptions, switches, rankings) that hold in it. They are
+**avoidable** when a nonempty subset of them can be removed while the premises, the record and the observations still
+hold, with the unsaid tables free to change. A default completion is one whose true decisions are not avoidable.
+`forcedAll` lists the exceptions true in every default completion. Lean gives it only from a nonempty, completely
+checked enumeration (never from `unknown` or `no completion`), and each exception it lists is then true in every
+admissible completion that agrees with the record and the observations (the finite minimal-subcompletion lemma:
+below every such completion lies a default completion). "The facts here force <e>" is rendered only from `forcedAll`.
+DF-μ′ and DF-μ″, where the default completions take alternative exceptions, report neither as forced.
 
 Enumeration (D10): every assignment of **every typed open atom** of `M` not fixed by the record (decision atoms and
 unsaid atoms), not only the query's cone, each checked against X, `Fill_T` and the observations by evaluation on the
@@ -207,19 +233,25 @@ otherwise `unknown` (weighing edit 6).
 | DE2′ | `This assumes that the exception to rule <n> applies only where the text says it does: <condition>[, or <condition>]*. <Decider> decides any other case.` | the same assumption with stated sufficient conditions | per used assumption |
 | DE3 | `This assumes that <party> has not turned rule <n> off.` | `default:switch:<n>:<party>` | per used assumption |
 | DE4 | `This assumes that, on <act phrase>, the <rank l> consideration does not outweigh the <rank h> consideration. <Decider> decides where it does.` | `default:ranking:<l>:<h>:<act>` | per used assumption |
+| DE4·u | `This assumes that, on <act phrase>, the <rank l> consideration does not outweigh the <rank h> consideration. The text names no one who decides where it does.` | the same, outranking decider `unstated` (soft-norms.md 3.1 allows it) | per used assumption |
 | DE5 | `This holds whatever <deciders> decide.` (`decides` with one decider) | basis strict: the conclusion follows from the document's own premises, whatever any exception, switch or ranking decision is | FOLLOWS, basis strict, asked with no exception assumed, `Dflt_T` not empty; `<deciders>` are the deciders of `Dflt_T`'s premises, each once, in rule order, in soft's decider phrases. With `Dflt_T` empty the question is the strict one (F-DF1) and DE5 is not shown |
 | DE6 | `Even if no exception applies, the conclusion does not follow. It fails here: <situation>.` | a default base where the conclusion fails and no rule's exception holds | DOES-NOT-FOLLOW, `forced` empty; followed by norm-defaults' gap sentences where the text is silent |
 | DE6′ | `Even if no exception applies beyond those the text states, the conclusion does not follow. It fails here: <situation>.` followed by one DE11 per entry of `forced` | a default base where the conclusion fails; every exception that holds there is one the text's own conditions force | DOES-NOT-FOLLOW, `forced` not empty; then the gap sentences as DE6 |
-| DE7 | `Rules <m> and <n> conflict here unless one of them gives way: <effect of m>, and <effect of n>. The text ranks neither above the other, and names no exception that applies here. Which rule gives way is left to <decider>.` | a checked collision with no exception | COLLISION, the gated UNKNOWN of a question, and in DF-3, prefixed `Under <reading>:`, each choice whose gate fails when the strict fold is FREE (2.4) |
-| DE8 | `Under every reading, the conclusion follows under the assumptions listed for that reading.` followed, for each reading whose basis is not strict, by the reading and its DE2 to DE4 sentences | the default fold is ALL; each reading's conclusion follows from its own premises with its listed assumptions | DF-3, the default fold ALL and some choice's basis not strict |
+| DE7 | `Rules <m> and <n> conflict here unless one of them gives way: <effect of m>, and <effect of n>. The text ranks neither above the other, and names no exception that applies here.` followed by one decider sentence: `Which rule gives way is left to <decider>.` (both rules' exceptions have that decider); `Whether rule <m> gives way is left to <decider of m>, and whether rule <n> gives way is left to <decider of n>.` (different deciders); with `unstated`, `The text names no one who decides which rule gives way.` or `Whether rule <k> gives way is left to <decider of k>; the text names no one who decides whether rule <j> gives way.` | a checked collision with no exception, at the tuple Lean finds, between unranked rules | COLLISION, the gated UNKNOWN of a question, and in DF-3, prefixed `Under <reading>:`, each choice whose gate fails when the strict fold is FREE (2.4); the decider sentence by Lean's `giveWayDeciders` |
+| DE8 | `Under every reading, the conclusion follows under the assumptions listed for that reading.` followed, for each reading whose basis is not strict, by the reading and its DE2 to DE4 sentences, and DE12 when that reading's basis is `unsettled` | the default fold is ALL; each reading's conclusion follows from its own premises with its listed assumptions | DF-3, the default fold ALL and some choice's basis not strict; with the default fold SOME, NONE or UNKNOWN no default sentence is shown |
 | DE9 | `Rule n. Every <noun> <verbalisation>, unless an exception applies.` | 2.5 | DF-4, authoring and rendering |
-| DE10 | `Even with no exceptions beyond those the facts here force, the answer depends on which rule gives way: <two completions>.` / `With no exceptions beyond those the facts here force, <result>.` followed by one DE11 per exception a stated condition forces, and `The facts here force <exception>.` per exception only the observations force | 2.7 | DF-5 |
+| DE10 | `With no exceptions here that could be dropped, alone or together, <result>.` / `With no assumptions here that could be dropped, alone or together, <result>.` / `…, the answer depends on which rule gives way: <two completions>.`, each followed by the assumed decisions, one sentence per true exception, switch or ranking decision of the completion shown (DE11, DE10f or DE13). Paraphrase: `None of the assumptions listed here can be dropped, alone or together, while satisfying the text, the recorded choices and the observed facts, even if details the text leaves open change.` | 2.7: the zone over the default completions, whose true decisions are not avoidable | DF-5. The "exceptions" form only when every decision atom the record leaves open is an exception (`zoneForm`), otherwise the "assumptions" form; the third form for `left to`. DF-δ's zone is the regression: its no-decision completion and the strict countermodel `{outweighs}` both have no exceptions, only the former is a default completion, and the ranking reversal changes the result |
+| DE10f | `The facts here force the exception to rule <n> for <tuple>.` | the exception holds in every admissible completion that agrees with the record and the observations | after DE10, per `forcedAll` entry no stated condition forces; never from `unknown` or `no completion` |
 | DE11 | `The text's own exception to rule <n> applies here: <condition>.` | at the situation shown, `<condition>`, a stated sufficient condition of rule n's exception, holds, so `Exc_T` forces the exception | after DE6′ and DE10, once per exception a stated condition forces (Lean lists them); one sentence for both |
-| DE12 | `Whether it also holds without these assumptions was not checked.` | basis `unsettled`: no strict countermodel was checked, so the conclusion may or may not follow from the document's own premises | FOLLOWS, basis `unsettled`, after DE1 or DE1′ and the assumption sentences |
+| DE12 | `Whether it also holds without these assumptions was not checked.` | basis `unsettled`: no strict countermodel was checked, so the conclusion may or may not follow from the document's own premises | FOLLOWS, basis `unsettled`, after DE1 or DE1′ and the assumption sentences; in DE8, per `unsettled` reading |
+| DE13 | `This assumes that the exception to rule <n> applies to <tuple>.` / `This assumes that <party> has turned rule <n> off for <tuple>.` / `This assumes that, on <act phrase>, the <rank l> consideration outweighs the <rank h> consideration.` (soft's phrase for an `outweighs` decision) | in the completion shown, this decision holds | after DE10, per true decision neither DE11 nor DE10f covers |
 
 Non-wordings: any `default:`, `soft__` or `unsaid__` name; "by default" for these answers (D6); "unless an exception
 applies" where a kept assumption is a switch, a ranking or an exception with stated conditions; "even if no exception
-applies" where an exception holds at the situation shown; a label, a formula or a decision name. Every row goes
+applies" where an exception holds at the situation shown; a label, a formula or a decision name; "completion" or "true
+decision" (they belong to 2.7, the spec's section 4 and the Lean docstrings, never to DE10); "The facts here force"
+for anything not in `forcedAll`. "Alone or together" in DE10 gives the subset reading of "avoidable": without it a
+reader takes "could be dropped" one assumption at a time. Every row goes
 through W7's all-derivations gate before it is shown; DE9 is the only one an author writes. Lean selects every row
 (`basis`, `form`, `forced`); Python renders the row it is given and never chooses between DE1 and DE1′ or DE6 and DE6′.
 
@@ -239,6 +271,13 @@ through W7's all-derivations gate before it is shown; DE9 is the only one an aut
   answer is UNKNOWN with DE7, never a choice of which rule gives way.
 
 ## 3. Lean statements
+
+> Superseded by the statement spec's section 7 (draft 2), which elaborates every statement and adds the review's:
+> `CoherenceReplay` and `defaults_coherence_sound`, `elaborateRows_eq`, `forcedAt_sound`, `collisionTuple_some`,
+> `cohU_rank_valid` and `collision_unranked`, `giveWayDeciders`, `viewOf` through `decodeLayered` with
+> `decodeLayered_soften`, DF-3's `readings_wire_default_*`, and DF-5's `defaultZone_notSaid_sound`,
+> `defaultZone_noCompletion_sound`, `forcedAll_sound`, `defaultCompletion_below`, `forced_everywhere` and `zoneForm`.
+> The text below is kept for its proof notes. Draft 3 edits it only where the ruling deletes something (3.6).
 
 ### 3.1 Files
 
@@ -741,17 +780,17 @@ theorem defaultZone_leftTo_sound (L X M valid hb record obs r hr vs typed propos
 /-- Weighing's record "assuming no exception applies": every `excepted` atom of the situation set to false. -/
 def noExceptionRecord (D : SoftDoc) (M : VE.FiniteModel α) : List ((String × List α) × Bool)
 
-/-- No stated sufficient exception condition holds at any typed tuple of the finite base `M` (evaluation on `M`). -/
-def noSufficientHolds (D : SoftDoc) (M : VE.FiniteModel α) : Bool
+/-- With no switch and no `outweighs` decision, the decision atoms are exactly the atoms of weighing's record. -/
+theorem decisionAtoms_none (D M) (hnone : offDecisions D = [] ∧ outweighsTriples D = []) (a) :
+    a ∈ decisionAtoms D M ↔ a ∈ (noExceptionRecord D M).map (·.1)
 
 /-- Weighing's record is the instance with nothing observed, no switch and no `outweighs` decision in the document,
-    no sufficient condition holding at `M`, and an admissible completion agreeing with the record. In general this
-    plan's record also sets every switch off and keeps the ranking (2.1), which weighing's record leaves open. It needs
-    the varied comparison: with the filling fixed, DF-π's excepted completion with fillings no/no would be minimal and
-    the left side would fail where weighing's record gives `settled yes` (DF-π′). -/
+    and an admissible completion agreeing with the record. In general this plan's record also sets every switch off
+    and keeps the ranking (2.1), which weighing's record leaves open. It needs the varied comparison: with the filling
+    fixed, DF-π's excepted completion with fillings no/no would be minimal and the left side would fail where
+    weighing's record gives `settled yes` (DF-π′). -/
 theorem defaultZone_eq_noException (L X M r vs b)
     (hnone : offDecisions L.D = [] ∧ outweighsTriples L.D = [])
-    (hsuff : noSufficientHolds L.D M = true)
     (hadm : ∃ R, AdmissibleCompletion L.U X M (openNames L) (noExceptionRecord L.D M) R) :
     ByDefaultZ L X M [] [] r vs b ↔ SettledZ L.U X M (openNames L) (noExceptionRecord L.D M) r vs b
 ```
@@ -760,9 +799,12 @@ Proof notes. With the full enumeration every assignment sets every open atom, so
 decided by evaluation on the finite situation (no Kleene unknown), and the minimality filter compares exactly the
 admissible completions `DefaultCompletion` quantifies over: `defaultZone_byDefault_sound` and
 `defaultZone_leftTo_sound` need the enumeration's completeness over `openAtomsAll` and no cone lemma. A witness reported
-for `byDefault` is checked with `modelCheckX` as weighing's are. `defaultZone_eq_noException`: by `hadm` some admissible
-completion has no decision at all; it is below every completion, so with no switch and no `outweighs` decision the
-default completions are exactly the admissible completions with every exception false, which are weighing's.
+for `byDefault` is checked with `modelCheckX` as weighing's are. `defaultZone_eq_noException` (draft 2's `hsuff` and
+`noSufficientHolds` are deleted: the proof does not use them): under `hnone` the decision atoms are exactly the atoms
+of `noExceptionRecord` (`decisionAtoms_none`). By `hadm` some admissible completion R₀ has no true decision, and it is
+admissible with the empty record. Every default completion R has `DecLe R₀ R`, so minimality gives `DecLe R R₀`: R has
+no true decision and meets weighing's record. Conversely, every completion meeting that record has no true decision,
+so it is minimal. The two sets coincide. DF-ξ′ shows that `hadm` is needed (spec 8.6).
 
 ### 3.7 DF-6: with `weighing@0`
 
@@ -801,7 +843,9 @@ assistant". Values *derived*; DF-S computes them in the stub.
 | DF-α | r1 "Every assistant should X." (default, `unstated`, no conditions) | `∀a. x_required(a)` | strict: no certificate; the strict countermodel (r1's exception at a, filling no) is sent as `strict_model`; `defaults-coherence` COHERENT (no pair); `defaults-certificate` FOLLOWS, basis `needs`, form short, assumptions `[default:exception:r1]`; DE1 + DE2 |
 | DF-α′ | DF-α, the request without `strict_model` (or with one that does not check) | as DF-α | FOLLOWS, basis `unsettled` (never `needs`), form short; DE1 + DE2 + DE12 |
 | DF-β | DF-α + "Rule 1 is excepted when that assistant is urgent." (`urgent` base) | (i) `∀a. x_required(a)`; (ii) `∀a. ¬urgent(a) → x_required(a)` | (i) `defaults-model` DOES-NOT-FOLLOW at `urgent(a)` (the exception is forced; filling no); `forced` = [rule 1 at a, its condition]; DE6′ + DE11 "The text's own exception to rule 1 applies here: that assistant is urgent.", never DE6; (ii) FOLLOWS, basis `needs` (strict countermodel {urgent: ∅, excepted: {a}}, filling no), form long (the assumption has a stated condition), `[default:exception:r1]`; DE1′ + DE2′ naming the condition. The `#guard`: `Dflt_T`'s premise is false on {urgent: ∅, excepted: {a}} and true on {urgent: {a}, excepted: {a}} |
-| DF-γ | r1 "should X" and r2 "should not X" (`x_permitted`, default), unranked | any | `defaults-coherence` COLLISION at a with no exception; every question UNKNOWN (with no exception, rules r1 and r2 conflict); DE7 |
+| DF-γ | r1 "should X" and r2 "should not X" (`x_permitted`, default), unranked | any | `defaults-coherence` COLLISION at a with no exception; every question UNKNOWN (with no exception, rules r1 and r2 conflict), whether or not a certificate was sent; DE7 with "Which rule gives way is left to the assistant." No one-assistant situation admits `defaultX`, but the empty-domain situation does (spec 8.1): the gate regression sends it as the consistency witness with a bound certificate, so only the gate keeps the answer UNKNOWN |
+| DF-γ′ | DF-γ with r2's exception decided by the operator | as DF-γ | DE7 names both deciders: "Whether rule r1 gives way is left to the assistant, and whether rule r2 gives way is left to the operator." |
+| DF-ω | DF-δ with its pair certificate missing and no collision | `∀a. x_required(a)` | `defaults-coherence` UNKNOWN (pair `unknown`), never COLLISION; `defaults-certificate` UNKNOWN (no-exception coherence not checked) |
 | DF-δ | DF-γ + r1 serves safety, r2 serves helpfulness, safety outranks helpfulness, holistic | `∀a. x_required(a)` | COHERENT (rank-resolved); FOLLOWS, basis `needs` (strict countermodel: r1's exception at a), form long (a ranking assumption), assumptions `[default:exception:r1, default:ranking:helpfulness:safety:x_permitted]`; DE1′ + DE2 + DE4, never DE1 |
 | DF-δ′ | DF-δ with the strict flag | as DF-δ | FOLLOWS, assumptions `[default:exception:r1]` (no `outweighs` decision exists), form short; DE1 + DE2 |
 | DF-ε | r1 "should X (users may turn off)" | `∀a. x_required(a)` | FOLLOWS, basis `needs`, form long (a switch assumption), assumptions `[default:exception:r1, default:switch:r1:user]`; DE1′ + DE2 + DE3, never DE1 |
@@ -811,14 +855,15 @@ assistant". Values *derived*; DF-S computes them in the stub.
 | DF-ι | DF-α | premises that no situation satisfies with the frame's flags | UNKNOWN (no checked situation where the premises hold with no exception), never FOLLOWS |
 | DF-κ | DF-α, the same certificate with a binding that omits a `Dflt_T` premise, or adds one | — | `bindCertX` refuses; UNKNOWN (no certificate) |
 | DF-λ | plain `instructs_via_system_prompt(operator)`, verbalisation "{0} gives its instructions in the system prompt", `unspecified`; g1 "Every operator gives its instructions in the system prompt, unless an exception applies." | `∀o. instructs_via_system_prompt(o)` | DF-4: parses with one derivation; `print(parse(s)) = s`; strict no (a strict countermodel sent); FOLLOWS, basis `needs`, form short, `[default:exception:g1]` |
-| DF-μ | DF-λ at {o1, o2}, observed `instructs_via_system_prompt(o1)` = no | zones at o1 and o2 | DF-5 (full enumeration, 4 open atoms): the one default completion excepts g1 at o1 only (DE10 "The facts here force the exception to rule g1 for o1"); at o2 `byDefault yes` |
-| DF-μ′ | plain `p`, r1 (+, guard `A`), r2 (−, guard `B`), unranked, a with `A(a)`, `B(a)` | zone of p at a | `leftTo` (two default completions: r1 excepted, or r2 excepted) |
-| DF-μ″ | DF-S writes it: r1 on plain `p` and r2 on plain `q`, colliding (incompatible acts), unranked, a with both guards | zone of `p` at a | `leftTo` (*derived*), found only because the enumeration includes r2's exception atom, outside `p`'s cone; the regression for enumerating every open atom before `cone_minimal_iff` (DF-5) |
+| DF-μ | DF-λ at {o1, o2}, observed `instructs_via_system_prompt(o1)` = no | zones at o1 and o2 | DF-5 (full enumeration, 4 open atoms): every default completion excepts g1 at o1 only (spec 8.6: two, differing only in the filling); `forcedAll` = [g1 at o1]: DE10 "With no exceptions here that could be dropped, alone or together, …" and "The facts here force the exception to rule g1 for o1"; at o2 `byDefault yes` |
+| DF-μ′ | plain `p`, r1 (+, guard `A`), r2 (−, guard `B`), unranked, a with `A(a)`, `B(a)` | zone of p at a | `leftTo` (two default completions: r1 excepted, or r2 excepted); `forcedAll` = []: neither exception is reported as forced |
+| DF-μ″ | DF-S writes it (spec 8.6: DF-γ at {a}, zone of `x_permitted`) | zone at a | `leftTo`, found only because the enumeration includes an exception atom outside the query's cone; the regression for enumerating every open atom before `cone_minimal_iff` (DF-5); `forcedAll` = [] |
+| DF-δz | DF-δ at {a}, nothing observed | zone of `x_required` at a | `byDefault yes`, with DE10's "assumptions" form (a ranking atom is open). The strict countermodel `{outweighs}` has no exception and gives no; minimality over exceptions only would keep it (the regression for comparing every decision atom) |
 | DF-ν | readings: RD-9's F-SD1 (K1, set {strict, default} on "avoid deceiving", `avoid_required` unspecified) | `∀ agent ∀ user. avoid_required` | RD-9: SOME; strict fold FREE; DF-3: ALL, the default choice with `[default:exception:no-deception]`; DE8 "Under every reading, the conclusion follows under the assumptions listed for that reading.", then the default reading with its DE2 |
-| DF-ξ | weighing's Z-ε (record "no exception applies", no sufficient condition) | its zone | DF-5's `byDefault` equals weighing's `settled yes` (`defaultZone_eq_noException`) |
+| DF-ξ | weighing's Z-ε (record "no exception applies", no sufficient condition) | its zone | DF-5's `byDefault` equals weighing's `settled yes` (`defaultZone_eq_noException`). DF-ξ′ (spec 8.6): where a stated condition forces the exception, no completion meets weighing's record, and the theorem fails without `hadm` |
 | DF-π | Astra's counterexample: r1 "Every assistant should X." (default, no conditions), with `x_permitted` also `unspecified` (not allow-by-default); `B_π` = {excepted: {a}}, both gap fillings no | `∀a. x_required(a)` | DF-2's two `example`s: draft 1's fixed-filling minimality holds at `B_π`; `¬ DefaultBase U D (softX U D []) B_π` (the competitor: no exception, the permission's gap filled yes); `replacementSafe` true, gate COHERENT (no pair). `defaults-certificate` FOLLOWS, basis `needs`, form short; DE1 + DE2. Regression for D15: the right side of `default_entails_minimal` holds (with draft 1's definition it failed at `B_π`) |
 | DF-π′ | DF-π at the situation {a}, nothing observed, no record | zone of `x_required` at a | DF-5: `byDefault yes` (the only default completions have no exception and the permission filled yes); equal to weighing's `settled yes` under its "no exception applies" record (`defaultZone_eq_noException`). A filter that compares only completions with the same filling keeps the excepted completion with fillings no/no and does not answer `byDefault yes` |
-| DF-ρ | DF-ν plus a second reading set whose default reading collides with K1's default reading, unranked, and whose readings meet K1's strict reading without strict conflict (DF-S writes the set and computes it in the stub) | as DF-ν | RD-9: strict fold FREE; DF-3: default fold CONFLICT, from the gate only; English: RD-9's strict answer, then per choice whose gate fails "Under <reading>: Rules <m> and <n> conflict here unless one of them gives way: <effect of m>, and <effect of n>. The text ranks neither above the other, and names no exception that applies here. Which rule gives way is left to <decider>." (DE7), never RD-9's contradiction wording; with the strict fold not FREE, no default member at all |
+| DF-ρ | DF-ν plus a second reading set whose default reading collides with K1's default reading, unranked, and whose readings meet K1's strict reading without strict conflict (DF-S writes the set and computes it in the stub) | as DF-ν | RD-9: strict fold FREE; DF-3: default fold CONFLICT, from the gate only; English: RD-9's strict answer, then per choice whose gate fails "Under <reading>: Rules <m> and <n> conflict here unless one of them gives way: <effect of m>, and <effect of n>. The text ranks neither above the other, and names no exception that applies here." with DE7's decider sentence (spec 8.3: both deciders `unstated`, so "The text names no one who decides which rule gives way."), never RD-9's contradiction wording; with the strict fold not FREE, no default member at all |
 
 ### 4.2 From the pilots (*derived*; measured by the batch named)
 
@@ -835,7 +880,8 @@ assistant". Values *derived*; DF-S computes them in the stub.
 | # | Case | Expected |
 |---|---|---|
 | F-DF0 | every existing layered kind on soft-norms, norm-defaults and rights fixtures (`tests/test_norm_defaults_layered.py`, RD-9's F-SD0, F-SD0′, F-SD0″) | byte-identical answers (`defaultsCase_other`) |
-| F-DF1 | a document without default rules or switches | `Dflt_T = []`; `defaults-certificate` gives basis strict exactly where `norm-defaults-certificate` gives a certificate |
+| F-DF1 | a document without default rules or switches, on requests that carry an accepted consistency witness (a `model` that `xModelOk` accepts) | `Dflt_T = []`; `defaults-certificate` gives FOLLOWS with basis strict exactly where `norm-defaults-certificate` accepts the certificate. The existing route needs no consistency model and the new one does, so requests without a witness are not compared |
+| F-DF1′ | the same document with contradictory fact premises (spec 8.8: `∃a. urgent(a)` and `∀a. ¬urgent(a)`) | `norm-defaults-certificate` accepts a bound certificate; `defaults-certificate` answers UNKNOWN (no checked situation where the premises hold with no exception) |
 | F-DF2 | DF-3 on S1's K1 to K22 and S2a's M1 to M20 | the strict fold byte-identical; the default fold present only where a choice has a default rule and the strict conflict fold is FREE |
 
 ## 5. Batches
@@ -912,11 +958,17 @@ claim anywhere) and records it in the spec; DF-1a does not wait for DF-2 either 
   RD-9's did. The batch reports the measured growth.
 - **Deleted, not duplicated.** Nothing on `main` computes this today. `assumptionsOf` calls readings' `usedLabels`;
   the certificate check, the binder (`bindCertX`) and the model check are RD-9's.
+- **Statements** (spec 7.1, 7.2): besides the above, `CoherenceReplay` with `defaults_coherence_sound` and per-pair
+  statuses, `elaborateRows`, `forcedAt_sound`, `collisionTuple_some`, `cohU_rank_valid` and `collision_unranked`,
+  `giveWayDeciders`, and `viewOf` through `decodeLayered` with `decodeLayered_soften` and diagnostic 7.
 - **Seeded bugs** (Lean, each shown failing a named test, then restored): `dfltOf` drops the sufficient-condition
-  disjunct (DF-β (ii) fails); `basisOf` always returns `.strict` (DF-α's basis `#guard` fails); `basisOf` returns
+  disjunct (DF-β (i)'s `#guard` fails: the mutation excludes its forced-exception countermodel and the conclusion turns
+  FOLLOWS; DF-β (ii) stays entailed); `basisOf` always returns `.strict` (DF-α's basis `#guard` fails); `basisOf` returns
   `.needs` without a checked strict countermodel (DF-α′'s `#guard` fails); `followsForm` ignores switch labels (DF-ε's
   form `#guard` fails); `forcedAt` returns `[]` (DF-β (i)'s `#guard` fails); `defaultsCase` answers FOLLOWS without the
-  coherence certificates (DF-γ's `#guard` fails).
+  coherence certificates (DF-γ's `#guard` fails, on the request that carries the empty-domain model, an accepted
+  consistency witness, and a bound certificate, so that only the gate keeps it UNKNOWN); `defaults-coherence` answers
+  COHERENT without a checked collision (DF-ω's `#guard` fails).
 - **Done when** every `#guard` passes, `python3 lean/audit.py` passes (no banned words, even in comments),
   `tools/regen_generated.py --check` passes, and the trust growth is signed.
 
@@ -926,23 +978,28 @@ claim anywhere) and records it in the spec; DF-1a does not wait for DF-2 either 
   schema and the binding only (R8): every label in `assumptions` is one of the same case's `default_premises`; `pairs`
   match `coherence_targets` one to one, in order; every entity in a situation is in the request's model; `verdict`,
   `basis` (strict, needs, unsettled) and `form` are their enums; `basis`, `form` and `assumptions` appear exactly with
-  FOLLOWS; `needs` appears only when the request carried a `strict_model`; every rule in `forced` is a rule of the
-  request and every entity is in its model. `ve document readings <path> --conclusion <file> --assume-no-exception`
+  FOLLOWS; `needs` appears only when the request carried a `strict_model`; each `forced` entry is bound to the request:
+  its rule is a default rule of the request's source, its condition index is below that rule's number of stated
+  sufficient conditions, and its tuple has the rule's declared sorts and arity with every entity in the request's
+  model; each pair in `pairs` and the collision's rule names are a pair of `coherence_targets`, and each decider
+  the collision names is the decider of one of its two rules in the request's source (or `unstated`). `ve document readings <path> --conclusion <file> --assume-no-exception`
   (flag in `ve/document.py`) asks the strict question first and the default question only when the strict one has no
   certificate, sending the strict countermodel the strict search found as `strict_model` (none found: none sent, and the
-  basis is `unsettled`); the search reads `defaults-elaborate`. English: DE1 to DE7, DE11 and DE12 rendered from Lean's
-  rows (`basis`, `form`, `forced`) with the existing rule, condition and situation renderers; Python never chooses a
-  form.
+  basis is `unsettled`); the search reads `defaults-elaborate`. English: DE1 to DE7 (with DE4·u and DE7's decider sentences), DE11 and DE12
+  rendered from Lean's rows (`basis`, `form`, `forced`, `giveWayDeciders`) with the existing rule, condition and
+  situation renderers; Python never chooses a form or a decider sentence.
 - **Tests.** `tests/test_defaults_lean.py` (4.1's fixtures through the service), `tests/test_defaults_answer.py` (fuzz:
   each member dropped, emptied, retyped, duplicated or reordered, a label swapped for another case's, a pair moved; one
   and two faults: every mutant is `CheckerUnavailable` or changes nothing shown), genuine cases recorded into
-  `tests/data/route-cases.jsonl` by `tests/route_case_recorder.py`. `tools/relay_lint.py` forbids `default:` literals in
-  `ve/`.
+  `tests/data/route-cases.jsonl` by `tests/route_case_recorder.py`. Mutation fixtures for `forced`: an out-of-range
+  condition index, a tuple of the wrong sort or arity, and a wrong rule name, each `CheckerUnavailable`.
+  `tools/relay_lint.py` forbids `default:` literals in `ve/`.
 - **Pilot.** P-1 and P-3 as a probe script in the next pilot run's directory (`probe_defaults.py`), answers recorded
   verbatim; the pilot's `metrics.json` gains `default_answer_probe` (questions, strict answers, default answers,
   UNKNOWN with reasons).
 - **Seeded bugs** (Python): the relay accepts an assumption label not in `default_premises` (a fuzz test fails); the
-  relay accepts `needs` on a request without `strict_model` (a fuzz test fails); the renderer drops DE1's "Unless an
+  relay accepts `needs` on a request without `strict_model` (a fuzz test fails); the relay accepts a `forced` condition
+  index at or beyond the rule's number of conditions (the mutation fixture fails); the renderer drops DE1's "Unless an
   exception applies" (the English fixture test fails); the renderer prints DE6 for DF-β (i) (its English fixture test
   fails).
 
@@ -968,15 +1025,17 @@ DE1′. DE6's short form is kept or dropped with DE1's. "By default, …" is not
 the corollary for `defaults-model`. No answer, text or shape changes; once it is proved, `lean/DEFAULTS.md` may state
 the minimality reading for documents that pass `replacementSafe`. Under the fallback (3.4) it proves
 `defaultBase_of_dflt` and (←) only, and nothing claims minimality. **Seeded bugs**: `default_entails_minimal` stated
-without `hcoh`: the build fails, and the stub's DF-γ counterexample (the left side holds vacuously at the collision,
-the right side does not) shows that statement false; `DefaultBase` with the filling fixed (draft 1's definition):
+without `hcoh`: the build fails, and the stub's DF-γ counterexample (the left side holds because no one-assistant
+situation admits `defaultX`, and the right side does not) shows that statement false; `DefaultBase` with the filling fixed (draft 1's definition):
 DF-π's second `example` fails (`B_π` becomes a default base).
 
 ### DF-3. Readings (Lean and Python, 5–6 h)
 
-- **Lean.** `Readings/DefaultVerdicts.lean` (3.5); `readings-verdicts` gains, when the request asks for it and the
-  strict conflict fold is FREE, the default fold beside the strict one (`default` member: verdict, per-choice basis and
-  assumptions, the choices whose gate fails with their collisions, English DE8 or DE7 per choice). One dispatch line in
+- **Lean.** `Readings/DefaultVerdicts.lean` (3.5; spec 7.4 states the wire theorems `readings_wire_default_*` over
+  `DVerdicts`); `readings-verdicts` gains, when the request asks for it and the strict conflict fold is FREE, the
+  default fold beside the strict one (`default` member: verdict, per-choice basis and assumptions, the choices whose
+  gate fails with their collisions, English DE8 with DE12 for each `unsettled` reading, or DE7 per choice; with the
+  default fold SOME, NONE or UNKNOWN the member is relayed and no default sentence is shown). One dispatch line in
   RD-9's verdict kind; shapes and encoders for the new member.
 - **Python.** `ve/readings_verdicts.py` relays the new member and binds it (choices exist in the request; labels are the
   choice's `default_premises`; the member is absent when the strict fold is not FREE); `--assume-no-exception` reaches
@@ -1016,18 +1075,21 @@ premise-scale (DRI ET1).
 ### DF-5. At one situation, with observations (Lean and Python, 5–6 h)
 
 `Defaults/Zone.lean` (3.6) on WG-6's `Weighing/Zone.lean`; the kind `defaults-zone` (a row of PK-1's kind table);
-English DE10 and DE11; fixtures DF-μ, DF-μ′, DF-ξ, DF-π′; relay in `ve/defaults.py`. **Deleted, not duplicated**: no
+English DE10 (three forms, chosen by Lean's `zoneForm`), DE10f (only from `forcedAll`), DE11 and DE13; the soundness
+of every zone (`defaultZone_*_sound`, with `notSaid` and `noCompletion`) and of `forcedAll` (`forcedAll_sound`,
+`defaultCompletion_below`, `forced_everywhere`), provisional until WG-6 exposes the enumeration over a given atom list;
+fixtures DF-μ, DF-μ′, DF-μ″, DF-δz, DF-ξ, DF-ξ′, DF-π′; relay in `ve/defaults.py`. **Deleted, not duplicated**: no
 second enumerator. `defaultZoneOf` calls WG-6's bounded enumeration over `openAtomsAll` (every typed open atom of the
 situation, decision and unsaid, not the cone; the atom-list form is WG-6's to expose, section 11, issue 1), keeps the
 full assignments that satisfy X and `Fill_T` and agree with the observations (each evaluated on the finite situation),
 and filters the decision-minimal ones, all in `Defaults/Zone.lean`; `NormDefaults/Evidence.lean` is edited by WG-6
 only (SYNTHESIS O18). Beyond `maxDefaultAtoms` the answer is `unknown (budget)`. **Cone pruning** (`coneValuesO`) is a
 later step of this batch's owner, enabled only after `cone_minimal_iff` is proved and reviewed; until then it is not
-called. **Seeded bugs**: the minimality filter compares unsaid atoms too (DF-μ's filling-only difference turns into
-`leftTo`; the test fails); the filter compares only completions with the same filling (DF-π′ no longer answers
-`byDefault yes`; the test fails); the enumeration is restricted to the query's cone (fixture DF-μ″, which DF-S writes
-and computes: an atom outside the query's cone changes which completions are minimal, for example r1 on `p` and r2 on
-`q` colliding, unranked, where the zone of `p` at a is `leftTo`, *derived*; the test fails).
+called. **Seeded bugs** (spec 8.9 has the computed values): the minimality filter compares unsaid atoms too (DF-μ′b
+turns `byDefault no`; the test fails); the filter compares only completions with the same filling (DF-π′ no longer
+answers `byDefault yes`; the test fails); the enumeration is restricted to the query's cone (DF-μ″ turns `byDefault
+no`; the test fails); the filter compares exception atoms only (DF-δz turns `leftTo`; the test fails); `forcedAll` is
+read from one default completion (DF-μ′ and DF-μ″ report r2's exception as forced; the test fails).
 
 ### DF-6. With `weighing@0` (Lean, 2–3 h)
 
@@ -1149,29 +1211,36 @@ New files carry most of the work; every shared file is listed.
 3. `assumptions_sound`: the split of `premisesX U (defaultX D X) Γ` around `Dflt_T` matches RD-9's `premisesX` order
    (`background ++ X ++ Fill_T ++ elaborate ++ Γ`, with `Dflt_T` at the end of `X`).
 4. `DefaultCoherent` is the gate D3 describes, and `defaultCoherenceCheck_sound` checks against the right list (no
-   `Coh_T` in it).
+   `Coh_T` in it). The gate has three outcomes (DF-γ, DF-δ, DF-ω), with `defaults_coherence_sound` for each verdict
+   and each `resolved` pair; the `reason` checks the collision first.
 5. `DefaultBase` and `DefaultCompletion` both minimise decisions with the unsaid tables varied and the facts, domain
    and constants fixed (D15). `replace_admissible` and `default_entails_minimal`: true under their hypotheses, with
    `replacementSafe` computed, not assumed; the proof route of 3.4 (`fill_extends` after replacing the decisions,
    `Exc_T`'s conditions over the unchanged facts, `Dflt_T` and `Exc_T` free of unsaid names) checks. DF-π's two
    `example`s are in the stub (draft 1's fixed-filling base is minimal, and it is not a default base). The
-   counterexample that shows the gate is needed (DF-γ without `hcoh`: the left side holds vacuously at the collision,
-   the right side does not) is in the stub. If the (→) proof is not confirmed, the fallback of 3.4 is recorded.
+   counterexample that shows the gate is needed (DF-γ without `hcoh`: the left side holds because no one-assistant
+   situation admits `defaultX`, and the right side does not) is in the stub. If the (→) proof is not confirmed, the
+   fallback of 3.4 is recorded.
 6. `defaultBase_of_dflt` needs no gate.
 7. D5's refusal covers every regulated and decision predicate, and its text names the rule, not a generated name.
-8. DE1 to DE12: one reading each; no non-wording; DE2 and DE2′ say who decides and what the text states. The long
+8. DE1 to DE13: one reading each; no non-wording; DE2 and DE2′ say who decides and what the text states. The long
    forms DE1′ and DE6′ and the form choice: `followsForm` is short only when every kept assumption is a bare exception
-   (`followsForm_short`), so DF-ε and DF-δ get DE1′; DE6 only with `forced` empty, so DF-β (i) gets DE6′ with DE11;
-   DE5 names the deciders; DE8 claims each reading's conclusion only under that reading's listed assumptions.
+   (`followsForm_short`), so DF-ε and DF-δ get DE1′; DE6 only with `forced` empty, so DF-β (i) gets DE6′ with DE11
+   (`forcedAt_sound`); DE5 names the deciders; DE7 names one decider or both (`giveWayDeciders`), and its tuple and
+   "ranks neither" have theorems (`collisionTuple_some`, `collision_unranked`); DE8 claims each reading's conclusion
+   only under that reading's listed assumptions, with DE12 for an `unsettled` one; DE10's form follows `zoneForm`
+   (DF-δz), and "The facts here force" comes only from `forcedAll` (DF-μ′, DF-μ″).
 9. The fixtures of 4.1 as computed in the stub; P-1 to P-3 derived from `CE4`.
-10. Conservativity: `defaultsCase_other`; F-DF0 to F-DF2. The non-vacuity conjunct of `defaults_certificate_sound`
+10. Conservativity: `defaultsCase_other`; F-DF0 to F-DF2, with F-DF1 on requests with an accepted consistency witness
+    (F-DF1′). The non-vacuity conjunct of `defaults_certificate_sound`
     (FOLLOWS implies a checked situation where the premises hold with `Dflt_T`). DF-ρ's default-fold CONFLICT, with its
     expected English (DE7 per choice, never RD-9's contradiction wording), and no default member when the strict fold
     is not FREE.
 11. Every batch's deletion list, and that no batch leaves a Python computation of anything section 3 defines.
-12. DF-5's statements against WG-6 as reviewed, and `defaultZone_eq_noException` against weighing's Z-ε. The
-    enumeration is over every typed open atom (`openAtomsAll`), observations and constraints included, `unknown`
-    beyond `maxDefaultAtoms`; `cone_minimal_iff` is stated and no cone pruning is called before it is proved; DF-π′.
+12. DF-5's statements against WG-6 as reviewed, and `defaultZone_eq_noException` against weighing's Z-ε, with no
+    `hsuff`; DF-ξ′ shows that `hadm` is needed. The enumeration is over every typed open atom (`openAtomsAll`),
+    observations and constraints included, `unknown` beyond `maxDefaultAtoms`; `cone_minimal_iff` is stated and no cone
+    pruning is called before it is proved; DF-π′.
 
 ## 10. Shared pieces
 
