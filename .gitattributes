@@ -36,3 +36,4 @@ tools/layer-exceptions.json merge=ve-generated
 tools/lean-layer-exceptions.json merge=ve-generated
 .importlinter merge=ve-generated
 uv.lock merge=ve-generated
+tests/heavy.json merge=ve-generated
