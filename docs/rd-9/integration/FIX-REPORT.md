@@ -379,3 +379,55 @@ pass. The one failure is the known Mac-only
 `test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`,
 which passes on the VM rerun. `lake build` and `python3 lean/audit.py` pass.
 The full gate was not run, as directed.
+
+## F22, F23 and the binding-audit class: a schema-derived field inventory (2026-10-14)
+
+F22 and F23 were fields that the audit had listed as "unused". The class is "a relayed field that no
+binder names". The fix removes the class as well as the two examples.
+`tests/test_relay_binding_inventory.py` walks the generated schemas of every relayed RD-9 answer:
+soft elaborate, pairs, conflict, witness and admission, and rights elaborate, scope, bar, conflict,
+witness and admission. Every field must be classified as bound or as Lean-derived with a reason
+(`test_every_schema_field_is_classified`), so a field a Lean shape adds cannot go unclassified.
+Every bound field is fuzzed with one-fault mutants on genuine answers of sixteen sources: renamed,
+shifted, flipped, emptied, dropped, duplicated, extended and, when ordered, reversed. Each mutant
+that still fits the schema must be `CheckerUnavailable` at the public relay
+(`test_every_bound_field_mutant_is_unavailable[<route>]`). Each bound field must occur in some
+genuine answer, or name the regression that covers it (`UNEXERCISED`, checked by
+`test_unexercised_fields_name_existing_regressions`). `docs/spec/rd-9-relay-binding.md` now names
+this inventory as the checked owner.
+
+| Finding | Fix | Regression | Commit |
+| --- | --- | --- | --- |
+| F22 | Each conflict target's `sorts` must be its layer's declared argument sorts, or the obligation's for a declared `req->perm` pair (Norms/Replay.lean `targets`). The one soft binder serves both the soft and rights relays. | `test_f22_conflict_target_sorts_are_the_declared_argument_sorts[*]`, `test_every_bound_field_mutant_is_unavailable[soft-elaborate]`, `[rights-elaborate]` | f1795fed5 |
+| F23 | A line's `holder_slot` is Tree.lean `holderSlot`: 0 for a liberty half, else the authored slot, else the first object slot of the right's holder sort. A null authored slot is the absent field. | `test_f23_an_authored_holder_slot_stays_the_lines_slot[*]`, inventory source "null optional fields" | f1795fed5, 11c67262a |
+| Audit class: same gap in other fields | The sweep found more unbound fields and binds them. (1) Admission reports on all three admission relays use one binder, `admission.bind_report`: the exact ordered unfolding of the request graph (ClaimGraph.lean `Unfolds`). Before, this was graph membership only. (2) Bar nodes are strict, hard and negative with no carve-out (`barNode`). (3) A line node's carve-outs are the authored ones plus one pack exactly when in scope. (4) Elaboration `in_scope` follows `inScope`, and its licences use the scope's shared form check. (5) Mechanisms `exception M`, `blockedBy M` and `dominatedBy M` are the exact Correlate.lean `narrowings` lists. Before, any subset was accepted. (6) A distinction hit's `cited` is its line's guard citation. (7) The soft-conflict `budget` is the one sent, and its `conditional_on` holds open pairs only. (8) `overlaps`/`override_cycles` rows are refused, since no relay submits a witness. | `test_every_bound_field_mutant_is_unavailable[*]` (11 routes), `test_a_report_is_the_ordered_unfolding_of_the_request_graph`, `test_unrequested_witness_rows_are_unavailable`, `test_a_hit_cited_with_its_finding_dropped_is_unavailable` | ecc295e24, 11c67262a |
+
+R8 applies to every row above as a (b) binding: no Lean answer changes and no user-visible delta
+arises for a genuine answer. No standing ruling needed to be invoked. No Lean or Rust product code
+changed: Rust relays none of these answers, and its only `conflict_targets` use is the evaluate
+accelerator. The witness `target` was already bound by the schema's `x-equals`. A Python duplicate
+of that check was added and then removed, keeping one owner.
+
+PROBE F22 and PROBE F23 (`/tmp/rd9_362b17c_related.py`) each exited 1 before the fix, with
+`unbound conflict-target sorts accepted: [('rights', ['ghost']), ('rights', []), ('rights',
+['person', 'state']), ('soft', ['ghost']), ('soft', [])]` and `unbound holder slots accepted: [99,
+0]`. Both exit 0 after it, and each is now a regression test (rows above).
+
+Seeded bugs (Python only; no other language changed), each restored:
+- Restoring the pre-fix `ve/softnorms.py`, `ve/rights_route.py`, `ve/soft_route.py` and `ve/admission.py` failed 17 of the new tests: all F22/F23 cases, five inventory routes, the witness-row test and the unfolding test.
+- Single seeds:
+  - Dropping the mechanism completeness check fails `[rights-elaborate]`.
+  - Dropping the bar-node constants fails `[rights-elaborate]`.
+  - Dropping elaboration `in_scope` fails `[rights-elaborate]`.
+  - Dropping the `cited` binding fails `test_a_hit_cited_with_its_finding_dropped_is_unavailable`.
+  - Dropping the budget binding fails `[soft-conflict]`.
+  - Dropping the witness-row refusal fails `test_unrequested_witness_rows_are_unavailable`.
+  - Dropping the unfolding comparison fails `test_a_report_is_the_ordered_unfolding_of_the_request_graph`.
+  - Dropping the elaboration licence check fails `[rights-elaborate]`.
+  - Treating a null `holder_slot` as present makes the genuine "null optional fields" source refused at recording.
+
+Checks on HEAD 11c67262a:
+- `lake build` (900 jobs) and `python3 lean/audit.py` (489 files, 5374 theorems) pass on ecc295e24. No Lean source changed after that commit.
+- Selected tests: no Mac slot was free, so they ran on the VM; all 375 units were selected. 372 pass. The other 3 hit the runner's 3600 s per-file cap under the 6-job load: `test_assist.py`, `test_assist_invariants.py` and `test_english_evidence.py`. None of them touches the relays changed here, and on a rerun of just those three on the Mac runner (HEAD 11c67262a, 6 workers) they pass: 195 passed, 1 skipped (P5 materials not available), exit 0.
+- An earlier selected run on ecc295e24 found the genuine-answer refusal fixed in 11c67262a (`test_compose_integration`, `test_norm_defaults_*`).
+- The full gate was not run, as directed.
