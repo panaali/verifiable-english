@@ -157,6 +157,10 @@ def udhr(run):
 def _identity(env, set_id, reading):
     from ve.ast import formula_from_data
     from ve.identity import meaning_id
+    # A companion candidate keeps the identity of its own environment. The
+    # document's profile/vocabulary edit does not edit that embedded source.
+    if reading.get("companion") is not None:
+        return reading["meaning_id"]
     if type(reading.get("content")) is list:
         return meaning_id(env, formula_from_data(env, reading["content"]))
     return s1_content_meaning_id(env, set_id, reading) or reading["meaning_id"]
@@ -196,7 +200,9 @@ def _reidentified(env, item):
 def rebuild_reading_ids(meta):
     """Apply after editing the document's environment; rebuild every set, not only changed units."""
     env = _environment(meta["environment"])
-    return {**meta, "reading_sets": [_reidentified(env, item) for item in meta.get("reading_sets", [])]}
+    return {**meta, "reading_sets": [
+        item if any("companion" in r for r in item["readings"]) else _reidentified(env, item)
+        for item in meta.get("reading_sets", [])]}
 
 
 def find_situations(meta):
