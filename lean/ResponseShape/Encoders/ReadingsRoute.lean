@@ -483,8 +483,8 @@ theorem verdicts_fits (lower : List String → Json → Json) (id : String) (b :
     | skip
 
 /-! RD-7's superposed encoder has a closed shape all the way to each model and evidence note. -/
-theorem supScopeJson_fits (q : String) (s : SupScope) :
-    Fits req (skel% "readings-route.json#/$defs/sup_scope") (supScopeJson q s) := by
+theorem supScopeJson_fits (q : String) (s : SupScope) (proposals : List Choice) :
+    Fits req (skel% "readings-route.json#/$defs/sup_scope") (supScopeJson q s proposals) := by
   unfold supScopeJson
   fits using perChoiceJson_fits
 

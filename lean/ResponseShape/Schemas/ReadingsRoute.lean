@@ -647,11 +647,12 @@ def supResult : Shape := n [obj, .required ["route"], closed [
     .prefixItems [str, str]])]]),
   ("proof", supProof), ("proofs", n [arr, .items supProof]),
   ("countermodel", supModel), ("countermodels", n [arr, .items supModel])]]
-def supScope : Shape := n [obj, .required ["row", "encoded", "used", "mentions"], closed [
+def supScope : Shape := n [obj, .required ["row", "encoded", "used", "mentions", "model_proposals"], closed [
   ("row", ref "#/$defs/verdicts_row"),
   ("encoded", n [obj, .object [] (some (ref "#/$defs/choice"))]),
   ("used", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
-  ("mentions", n [obj, .object [] (some (ref "common.json#/$defs/strings"))])]]
+  ("mentions", n [obj, .object [] (some (ref "common.json#/$defs/strings"))]),
+  ("model_proposals", n [arr, .items (ref "#/$defs/choice")])]]
 def supVerdicts : Shape := n [obj,
   .required ["id", "status", "route", "question", "result", "scopes", "model_proposals", "restrictions", "dead_readings", "untaken", "dead", "english"],
   closed [("id", ref "common.json#/$defs/id_ok"), ("status", constS "ok"), ("route", constS "superposed"),

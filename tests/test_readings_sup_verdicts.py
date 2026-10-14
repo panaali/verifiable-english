@@ -82,6 +82,24 @@ def test_premise_model_short_circuits_proof_search(tmp_path, monkeypatch):
     assert modelled and not modelled & proved
 
 
+def test_premise_scopes_reuse_lean_proposals_without_extra_verdicts(tmp_path, monkeypatch):
+    from ve import readings_route
+
+    _, route, _ = example(tmp_path)
+    original = readings_route.run_lean
+    questions = []
+
+    def counted(cases):
+        if cases[0]["kind"] == "readings-verdicts":
+            questions.append(cases[0]["question"])
+        return original(cases)
+
+    monkeypatch.setattr(readings_route, "run_lean", counted)
+    answer = route.premises_answer()
+    assert len(answer["scopes"]) > 1
+    assert questions == ["premises", "premises", "premises"]
+
+
 def test_sup_zero_budget_is_unknown(tmp_path, monkeypatch):
     from tests.test_readings_s2_document import every
     _, route, _ = example(tmp_path)
@@ -168,6 +186,9 @@ def test_sup_response_retypes_every_field_and_rebinds_references(tmp_path):
                 _check_sup_answer(changed(answer, path, "unknown-label"), request, route)
     for out in (changed(answer, ("model_proposals",), []),
                 changed(answer, ("model_proposals",), answer["model_proposals"] + [answer["model_proposals"][0]]),
+                changed(answer, ("scopes", 0, "model_proposals"), []),
+                changed(answer, ("scopes", 0, "model_proposals"),
+                        answer["scopes"][0]["model_proposals"] + [answer["scopes"][0]["model_proposals"][0]]),
                 changed(answer, ("scopes",), []),
                 changed(answer, ("scopes",), answer["scopes"] + [answer["scopes"][0]]),
                 changed(answer, ("scopes",), answer["scopes"][1:]),
@@ -260,14 +281,17 @@ def test_superposed_scope_count_stays_bounded_above_64_choices():
 
 
 def test_scoped_proposals_reach_checked_choices_after_the_64_choice_prefix():
-    from tests.test_readings_nd_lean import case, run
+    from tests.test_readings_nd_lean import case
     from tests.test_readings_verdicts_lean import QUERY, fnd3
+    from ve.backends.lean_service import LeanService
 
     raw, document = fnd3()
     assumed = [["rs_1", 1], ["rs_2", 1]]
-    [row] = run("ve_readings_route", [case("readings-verdicts", raw, document, question="query",
-                                           assumed=assumed, evidence=[], premises=[], conclusion=QUERY,
-                                           budget=dict(BUDGET))])
+    request = case("readings-verdicts", raw, document, question="query", assumed=assumed,
+                   evidence=[], premises=[], conclusion=QUERY, budget=dict(BUDGET))
+    # The unlisted-build test path lets a seeded Lean mutant reach the assertion.
+    with LeanService(allow_unlisted_build=True) as lean:
+        [row] = lean.run("readings-route", [request])
     assert row["status"] == "ok" and row["route"] == "superposed"
     assert len(row["model_proposals"]) == 16
     assert all(all(candidate in choice for candidate in assumed) for choice in row["model_proposals"])

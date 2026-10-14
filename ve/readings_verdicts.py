@@ -171,6 +171,7 @@ class Superposed(_Route):
         self._answers = {}
         self.requests = {}
         self._taken = {}
+        self._proposals = {}
         self._conflicts = {}
         self._models = {}
 
@@ -405,9 +406,11 @@ class Superposed(_Route):
     def _lifted(self, A, gamma, conclusion):
         from .ast import Bottom, formula_from_data
         from .search import check_countermodel, find_countermodel
-        proposal = self._ask("premises" if conclusion is None else "query", A,
-                             gamma=gamma, conclusion=conclusion)
-        for reading in proposal["model_proposals"]:
+        key = tuple(tuple(x) for x in A)
+        if key not in self._proposals:
+            self._ask("premises" if conclusion is None else "query", A,
+                      gamma=gamma, conclusion=conclusion)
+        for reading in self._proposals[key]:
             choice = dict(reading)
             own = _ChoiceDocument(self, choice)
             premises = own._all(gamma) + own.searched
@@ -517,7 +520,11 @@ class Superposed(_Route):
         # Every listed scope is Lean's accepted choice, already typed and bound
         # above. Reuse that answer while preparing evidence for the same scopes.
         for scope in row["scopes"]:
-            self._taken[tuple(tuple(x) for x in scope["row"]["choice"])] = True
+            key = tuple(tuple(x) for x in scope["row"]["choice"])
+            self._taken[key] = True
+            # Lean returned the bounded compatible choices for this scope.
+            # Reuse them when generating its untrusted model evidence.
+            self._proposals[key] = scope["model_proposals"]
         self.requests[id(row)] = case
         return row
 
@@ -1212,6 +1219,12 @@ def _check_sup_answer(row, case, route):
         for scope in scopes:
             entry = scope["row"]
             choice(entry["choice"])
+            scope_proposals = scope["model_proposals"]
+            _need(scope_proposals or not route.checked)
+            _need(len({json.dumps(c) for c in scope_proposals}) == len(scope_proposals))
+            for c in scope_proposals:
+                choice(c, complete=True)
+                _need(all(x in c for x in entry["choice"]))
             pieces = sent.get(json.dumps(entry["choice"]), {})
             noted = entry["evidence"]
             _need(set(noted) == set(pieces) - {"choice"})
