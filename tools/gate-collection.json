@@ -6992,6 +6992,7 @@
   "tests/test_lean_first_b14a.py::test_perturbed_sugar_gets_the_same_answer[kelvin sign]",
   "tests/test_lean_first_b14a.py::test_perturbed_sugar_gets_the_same_answer[nbsp]",
   "tests/test_lean_first_b14a.py::test_perturbed_sugar_gets_the_same_answer[tab]",
+  "tests/test_lean_first_b14a.py::test_reordered_environment_keys_and_generated_names_get_the_same_answer",
   "tests/test_lean_first_b14a.py::test_sugar_is_read_by_lean_as_python_read_it[family0]",
   "tests/test_lean_first_b14a.py::test_sugar_is_read_by_lean_as_python_read_it[family1]",
   "tests/test_lean_first_b14a.py::test_sugar_is_read_by_lean_as_python_read_it[family2]",
