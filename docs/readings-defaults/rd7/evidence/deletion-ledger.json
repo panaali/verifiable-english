@@ -18,7 +18,7 @@
         "_restrictions",
         "_used"
       ],
-      "head_sha256": "4404bf76b87ef98c2ac3b4b05208071c1c148252477277142548ecfe62ff9592"
+      "head_sha256": "cdf780283b25687d04253993939d42524b8f26bb918bb72f16b650c89fb75eb9"
     },
     {
       "file": "ve/readings_s2_wording.py",
@@ -36,5 +36,5 @@
       "head_sha256": "c97091fb39350d1e0e1d275ac6acff5b699e5a8e6982dfaf20d84e605baa7209"
     }
   ],
-  "code_head": "08d5a077f4ab04fac01044034fe33e08d4f5aaf8"
+  "code_head": "49749eea16ea8b919f52836a79d1f85b87960f7a"
 }

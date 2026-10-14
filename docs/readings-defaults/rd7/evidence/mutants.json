@@ -47,8 +47,8 @@
     {
       "id": "L3",
       "file": "lean/VE/Readings/Run.lean",
-      "find": "if routeND f.r.N == .superposed && (j.getObjVal? \"budget\").isOk then\n        return \u2190 runSupVerdicts id b j",
-      "replace": "if routeND f.r.N == .superposed then\n        return \u2190 runSupVerdicts id b j",
+      "find": "if routeND f.r.N == .superposed && (j.getObjVal? \"budget\").isOk then\n        return ← runSupVerdicts id b j",
+      "replace": "if routeND f.r.N == .superposed then\n        return ← runSupVerdicts id b j",
       "command": [
         "bash",
         "-c",
@@ -71,7 +71,7 @@
     {
       "id": "L5",
       "file": "lean/VE/Readings/SupVerdictsWire.lean",
-      "find": "(if (choices D).length \u2264 maxChoices then cs else [])",
+      "find": "(if (choices D).length ≤ maxChoices then cs else [])",
       "replace": "cs",
       "command": [
         "bash",
@@ -135,12 +135,56 @@
     {
       "id": "P7",
       "file": "ve/readings_verdicts.py",
-      "find": "self._taken[tuple(tuple(x) for x in scope[\"row\"][\"choice\"])] = True",
-      "replace": "pass",
+      "find": "self._taken[key] = True\n            # Lean returned the bounded compatible choices for this scope.",
+      "replace": "pass\n            # Lean returned the bounded compatible choices for this scope.",
       "tests": [
         "tests/test_readings_sup_verdicts.py::test_superposed_scopes_need_only_the_two_answer_roundtrips"
       ],
       "claim": "Lean-confirmed scopes are reused during evidence preparation; the conflict report needs two answer roundtrips, not one extra per scope."
+    },
+    {
+      "id": "P8",
+      "file": "ve/readings_verdicts.py",
+      "find": "found = self.model(A)\n                if found is not None:\n                    self._pieces(A)[\"model\"] = {\"model\": found[\"model\"]}\n                else:\n                    proof = self._generate_certificate(A)\n                    if proof is not None:\n                        self._pieces(A)[\"unsat\"] = proof",
+      "replace": "proof = self._generate_certificate(A)\n                if proof is not None:\n                    self._pieces(A)[\"unsat\"] = proof\n                else:\n                    found = self.model(A)\n                    if found is not None:\n                        self._pieces(A)[\"model\"] = {\"model\": found[\"model\"]}",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_premise_model_short_circuits_proof_search"
+      ],
+      "claim": "A premise model avoids an unnecessary certificate search."
+    },
+    {
+      "id": "P9",
+      "file": "ve/readings_verdicts.py",
+      "find": "self._proposals[key] = scope[\"model_proposals\"]",
+      "replace": "pass",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_premise_scopes_reuse_lean_proposals_without_extra_verdicts"
+      ],
+      "claim": "Each Lean scope carries bounded model proposals so premise evidence does not query each scope again."
+    },
+    {
+      "id": "L7",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "find": "(checked.filter (fun c => assumed.all (c.contains ·))).take maxSupModelProposals",
+      "replace": "((chosenOf x.D assumed).filter (fun c => assumed.all (c.contains ·))).take maxSupModelProposals",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l7-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_scoped_proposals_reach_checked_choices_after_the_64_choice_prefix"
+      ],
+      "claim": "Model proposals can reach all 1024 checked choices after the 64-choice display prefix."
+    },
+    {
+      "id": "L8",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "find": "(\"dead_readings\", if q == \"premises\" && !over then deadReadingsJson ds.1 else .null)",
+      "replace": "(\"dead_readings\", if q == \"premises\" && !over && (choices x.D).length ≤ maxChoices then deadReadingsJson ds.1 else .null)",
+      "command": [
+        "bash",
+        "-c",
+        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l8-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices"
+      ],
+      "claim": "Dead-reading fields remain a checked empty list for 65–1024 choices."
     }
   ]
 }
