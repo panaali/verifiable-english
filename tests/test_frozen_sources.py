@@ -176,13 +176,16 @@ def changes(root: Path, base: str, capsys) -> dict:
 
 def test_a_body_only_edit_of_a_dv_file_is_reported(tmp_path, capsys):
     base = fixture_repo(tmp_path)
-    assert changes(tmp_path, base, capsys) == {"changed": {}, "deleted": [], "by_class": {"D[V]": [], "G[V]": []}}
+    assert changes(tmp_path, base, capsys) == {"changed": {}, "deleted": [], "by_class": {"D[V]": [], "G[V]": []},
+                                               "widened": []}
     # The body changes, the statement (`decodeThing : String → Nat`) does not.
     (tmp_path / "lean/VE/Demo.lean").write_text(DECODER.replace("s.length", "s.length + 1"))
     declarations(tmp_path, {"VE.Demo": "3:0-4:14 def VE.Demo.decodeThing", "VE.Glue": "3:0-3:20 def VE.Glue.glue"})
     out = changes(tmp_path, base, capsys)
     assert out["by_class"] == {"D[V]": ["VE/Demo.lean"], "G[V]": []}
-    assert out["changed"] == {"VE/Demo.lean": {"K": 0, "S": 0, "D[V]": 3, "G[V]": 0}}
+    assert out["changed"] == {"VE/Demo.lean": {"K": 0, "S": 0, "D[V]": 3, "G[V]": 0, "trusted_width": 37,
+                                               "base_width": 37}}
+    assert out["widened"] == []
     (tmp_path / "lean/VE/Glue.lean").unlink()
     declarations(tmp_path, {"VE.Demo": "3:0-4:14 def VE.Demo.decodeThing"})
     table = json.loads((tmp_path / "tools/trust-classes.json").read_text())
@@ -191,6 +194,32 @@ def test_a_body_only_edit_of_a_dv_file_is_reported(tmp_path, capsys):
     deleted_report = changes(tmp_path, base, capsys)
     assert deleted_report["deleted"] == ["VE/Glue.lean"]
     assert deleted_report["by_class"] == {"D[V]": ["VE/Demo.lean"], "G[V]": ["VE/Glue.lean"]}
+
+
+def test_trusted_code_collapsed_onto_a_wider_line_is_reported(tmp_path, capsys):
+    """AR-2 review F3: a trusted case added and an unrelated one collapsed onto one long line keep the line count
+    (+0), so the report also names the file whose trusted lines grew wider than any line it had at the base."""
+    base = fixture_repo(tmp_path)
+    # Three lines become one, and a new branch of the same width class is added in their place: still 3 lines.
+    wide = DECODER.replace("  s.length\n", "  if s.isEmpty then 0 else if s.length > 9 then s.length + s.length "
+                                          "* 2 - 1 else s.length + 1 + (s.toList.filter Char.isDigit).length\n")
+    assert wide.count("\n") == DECODER.count("\n")
+    (tmp_path / "lean/VE/Demo.lean").write_text(wide)
+    width = len(wide.split("\n")[3])
+    declarations(tmp_path, {"VE.Demo": f"3:0-4:{width} def VE.Demo.decodeThing",
+                            "VE.Glue": "3:0-3:20 def VE.Glue.glue"})
+    out = changes(tmp_path, base, capsys)
+    assert out["changed"]["VE/Demo.lean"] == {"K": 0, "S": 0, "D[V]": 3, "G[V]": 0, "trusted_width": width,
+                                              "base_width": 37}
+    assert out["widened"] == ["VE/Demo.lean"]
+    assert trust_changes.main(["--since", base, "--root", str(tmp_path)]) == 0
+    assert (f"widened: 1 changed files hold a trusted line wider than any line they had at base\n"
+            f"  VE/Demo.lean: trusted line of {width} characters, base at most 37\n") in capsys.readouterr().out
+    # The same width in an untrusted (tied or test) declaration, or a new file, is not listed.
+    table = json.loads((tmp_path / "tools/trust-classes.json").read_text())
+    table["modules"]["VE/Demo.lean"] = {"T": ["VE.Demo.decodeThing"]}
+    (tmp_path / "tools/trust-classes.json").write_text(json.dumps(table))
+    assert changes(tmp_path, base, capsys)["widened"] == []
 
 
 def test_the_report_fails_closed(tmp_path, capsys):
