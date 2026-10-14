@@ -354,28 +354,34 @@ def conflict_answers(doc, model):
             "witness": answer(lambda: check_witness(doc, "required->permitted", model, ["a"]))}
 
 
+ROUTE_CASES = (
+    ("closure-urgent", ("closure@0",), Unary("urgent", Var(0))),
+    ("closure-reach", ("closure@0",), Reach("star", Named("before"), Var(0), Var(0))),
+    ("core-reach", ("closure@0", "nary@0"), Reach("star", Named("before"), Var(0), Var(0))),
+    ("order-urgent", ("order@0",), Unary("urgent", Var(0))),
+    ("order-le", ("order@0",), Le(Num(1), Num(2))),
+)
+ROUTE_NAMES = tuple(sorted((name for name, _, _ in ROUTE_CASES))) + ("nary-lower-outcome",)
+
+
 def route_documents():
     """Family documents with a conflict target on the Lean family route, first
     order or not, including corpus document 13's n-ary lower outcome."""
     model = {"complete": True, "domains": {"act": ["a"], "party": ["p"]}, "constants": {},
              "relations": {"owner": [["a", "p"]], "urgent": [["a"]], "before": [["a", "a"]]}}
     docs = {}
-    for name, family, guard in [
-            ("closure-urgent", ("closure@0",), Unary("urgent", Var(0))),
-            ("closure-reach", ("closure@0",), Reach("star", Named("before"), Var(0), Var(0))),
-            ("core-reach", ("closure@0", "nary@0"), Reach("star", Named("before"), Var(0), Var(0))),
-            ("order-urgent", ("order@0",), Unary("urgent", Var(0))),
-            ("order-le", ("order@0",), Le(Num(1), Num(2)))]:
+    for name, family, guard in ROUTE_CASES:
         env = flagged(family=family, relation="order@0" not in family, data="order@0" not in family)
         relations = {k: v for k, v in model["relations"].items() if k in env.predicates}
         docs[name] = (NormDocument(env, [rule("must", "required", True, guard)]),
                       {**model, "relations": relations})
     nary, nary_model = nary_lower_outcome(unused_nary_definition=False)
     docs["nary-lower-outcome"] = (nary, nary_model)
+    assert set(docs) == set(ROUTE_NAMES)
     return docs
 
 
-@pytest.mark.parametrize("name", sorted(route_documents()))
+@pytest.mark.parametrize("name", sorted(ROUTE_NAMES))
 def test_lean_family_route_answers_as_the_retained_python_route(monkeypatch, name):
     """lf-14b review F2/F3, the class: a batch-14b change to a shared Python
     helper must not change an answer on either route. Every conflict operation
@@ -417,6 +423,33 @@ def capture_environment(third):
     return Environment(raw)
 
 
+def capture_permits(third):
+    permits = {
+        "exists": Exists(third, Atom("tri", (Var(1), Var(1), Var(0)))),
+        "nested": Exists(third, Not(Forall("act", Atom("tri", (Var(2), Var(0), Var(1)))))),
+    }
+    if third == "act":
+        permits["open"] = Atom("tri", (Var(0), Var(0), Var(0)))
+        permits["reach-body"] = Reach("star", Body("act", Atom("tri", (Var(0), Var(1), Var(2)))),
+                                      Var(0), Var(0))
+    return permits
+
+
+CAPTURE_PERMITS = {"same": capture_permits("act"), "mixed": capture_permits("party")}
+CAPTURE_CITES = {
+    "depth0": Not(Unary("permitted", Var(0))),
+    "depth1": Forall("act", Implies(Binary("before", Var(1), Var(0)), Unary("permitted", Var(1)))),
+    "depth2": Exists("act", Forall("party", Implies(Binary("owner", Var(1), Var(0)),
+                                             Unary("permitted", Var(2))))),
+}
+CAPTURE_NAMES = tuple(sorted(
+    [f"{kind}-{permit}-{cite}"
+     for kind, permits in CAPTURE_PERMITS.items()
+     for permit in permits for cite in CAPTURE_CITES]
+    + ["same-exists-proved", "same-exists-situation"]
+))
+
+
 def capture_documents():
     """lf-14b review F5's class: Lean-family-route documents whose lower
     regulated outcome holds an n-ary atom over its tuple variable, cited under
@@ -427,17 +460,8 @@ def capture_documents():
     docs = {}
     for kind, third in (("same", "act"), ("mixed", "party")):
         env = capture_environment(third)
-        permits = {"exists": Exists(third, Atom("tri", (Var(1), Var(1), Var(0)))),
-                   "nested": Exists(third, Not(Forall("act", Atom("tri", (Var(2), Var(0), Var(1))))))}
-        if kind == "same":
-            permits["open"] = Atom("tri", (Var(0), Var(0), Var(0)))
-            permits["reach-body"] = Reach("star", Body("act", Atom("tri", (Var(0), Var(1), Var(2)))),
-                                          Var(0), Var(0))
-        cites = {"depth0": Not(Unary("permitted", Var(0))),
-                 "depth1": Forall("act", Implies(Binary("before", Var(1), Var(0)), Unary("permitted", Var(1)))),
-                 "depth2": Exists("act", Forall("party", Implies(Binary("owner", Var(1), Var(0)),
-                                                                 Unary("permitted", Var(2)))))}
-        for (p, permit), (c, cite) in product(permits.items(), cites.items()):
+        permits = CAPTURE_PERMITS[kind]
+        for (p, permit), (c, cite) in product(permits.items(), CAPTURE_CITES.items()):
             docs[f"{kind}-{p}-{c}"] = NormDocument(env, [rule("may", "permitted", True, permit),
                                                          rule("must", "required", True, cite)])
     env = capture_environment("act")
@@ -451,6 +475,7 @@ def capture_documents():
         rule("release", "required", False, Unary("urgent", Var(0))),
         rule("cited", "required", False, Forall("act", Implies(Binary("before", Var(1), Var(0)),
                                                                Unary("permitted", Var(1)))))])
+    assert set(docs) == set(CAPTURE_NAMES)
     return docs
 
 
@@ -471,7 +496,7 @@ def lean_targets(doc):
             for t in doc._lean_regenerated()["conflict_targets"]}
 
 
-@pytest.mark.parametrize("name", sorted(capture_documents()))
+@pytest.mark.parametrize("name", CAPTURE_NAMES)
 def test_lean_route_generators_search_the_targets_lean_regenerates(monkeypatch, name):
     """lf-14b review F5, the class: on the Lean family route Python's untrusted
     witness search and prover work on exactly the conflict targets Lean's
@@ -486,7 +511,7 @@ def test_lean_route_generators_search_the_targets_lean_regenerates(monkeypatch, 
     assert [t[:3] for t in ve.norms._generator_targets(doc, lean=False)] == list(doc.conflict_targets())
 
 
-@pytest.mark.parametrize("name", sorted(capture_documents()))
+@pytest.mark.parametrize("name", CAPTURE_NAMES)
 def test_lean_route_model_check_answers_as_lean_checks_each_candidate(monkeypatch, name):
     """lf-14b review F5: a finite-model conflict check on the Lean family route
     never proposes a witness Lean refutes (which was `CheckerUnavailable`). Its
