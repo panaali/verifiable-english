@@ -170,18 +170,24 @@ class Superposed(_Route):
         self._evidence = {}
         self._answers = {}
         self.requests = {}
+        self._taken = {}
         self._conflicts = {}
         self._models = {}
 
     def taken(self, A):
         if not A:
             return self.checked
+        key = tuple(tuple(x) for x in A)
+        if key in self._taken:
+            return self._taken[key]
         try:
             self._ask("conflict", A)
         except VEError as exc:
             if str(exc).startswith("ReadingsUnsatisfiable:"):
+                self._taken[key] = False
                 return False
             raise
+        self._taken[key] = True
         return True
 
     # -- premise lists in Lean's order (8.4 `supCertificateCheck`, `supModelCheck`, `slotConflictFreeCheck`)
@@ -508,6 +514,10 @@ class Superposed(_Route):
                 raise VEError(error)
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused readings-verdicts: {error}")
         _check_sup_answer(row, case, self)
+        # Every listed scope is Lean's accepted choice, already typed and bound
+        # above. Reuse that answer while preparing evidence for the same scopes.
+        for scope in row["scopes"]:
+            self._taken[tuple(tuple(x) for x in scope["row"]["choice"])] = True
         self.requests[id(row)] = case
         return row
 
