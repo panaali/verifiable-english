@@ -174,6 +174,8 @@ class Superposed(_Route):
         self._proposals = {}
         self._conflicts = {}
         self._models = {}
+        self._choice_docs = {}
+        self._small_search = {}
 
     def taken(self, A):
         if not A:
@@ -411,14 +413,24 @@ class Superposed(_Route):
             self._ask("premises" if conclusion is None else "query", A,
                       gamma=gamma, conclusion=conclusion)
         for reading in self._proposals[key]:
+            reading_key = tuple(tuple(x) for x in reading)
             choice = dict(reading)
-            own = _ChoiceDocument(self, choice)
-            premises = own._all(gamma) + own.searched
-            phi = Bottom() if conclusion is None else formula_from_data(own.env, conclusion, _generated=True)
-            found = find_countermodel(own.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
-                                      max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
-            if found.status != "Found" or not check_countermodel(own.env, premises, phi, found.model,
-                                                                 max_evaluations=BUDGET["max_evaluations"]).valid:
+            own = self._choice_docs.get(reading_key)
+            if own is None:
+                own = _ChoiceDocument(self, choice)
+                self._choice_docs[reading_key] = own
+            search_key = (reading_key, repr(gamma), repr(conclusion))
+            if search_key not in self._small_search:
+                premises = own._all(gamma) + own.searched
+                phi = Bottom() if conclusion is None else formula_from_data(own.env, conclusion, _generated=True)
+                found = find_countermodel(own.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
+                                          max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
+                valid = found.status == "Found" and check_countermodel(
+                    own.env, premises, phi, found.model,
+                    max_evaluations=BUDGET["max_evaluations"]).valid
+                self._small_search[search_key] = (found, valid)
+            found, valid = self._small_search[search_key]
+            if not valid:
                 continue
             data = self._lift(choice, found.model.to_dict(), own)
             row = self.lean("readings-model", assumed=[list(x) for x in A], premises=list(gamma),
@@ -580,15 +592,16 @@ class Superposed(_Route):
 
     def premises_answer(self):
         if "premises" not in self._answers:
-            row = self._prepare("premises", None)
+            row = self._ask("premises", None)
             for scope in row["scopes"]:
                 A = scope["row"]["choice"]
-                # A model settles this evidence slot without a tableau proof
-                # search. Lean still decides the premise status from the row.
+                # A model settles this evidence slot without conflict certificates or a tableau
+                # proof search. Lean checks the model and decides the premise status from the row.
                 found = self.model(A)
                 if found is not None:
                     self._pieces(A)["model"] = {"model": found["model"]}
                 else:
+                    self._prepare_conflict(A)
                     proof = self._generate_certificate(A)
                     if proof is not None:
                         self._pieces(A)["unsat"] = proof

@@ -205,6 +205,7 @@ theorem conflict_fits (id : String) (b : Wire.Admitted2) (j : Json) :
     OkFits req (skel% "readings-route.json#/$defs/conflict") (runConflict id b j) := by
   unfold runConflict
   okfits
+  all_goals (try unfold conflictPackageAnswer)
   all_goals (try simp only [okWith, VE.Route.Wire.ok])
   all_goals fits
 
@@ -217,7 +218,7 @@ theorem certificate_fits (id : String) (b : Wire.Admitted2) (j : Json) :
 
 theorem model_fits (id : String) (b : Wire.Admitted2) (j : Json) :
     OkFits req (skel% "readings-route.json#/$defs/model") (runModel id b j) := by
-  unfold runModel
+  unfold runModel runModelWithReplay
   okfits
   all_goals (try simp only [okWith, VE.Route.Wire.ok])
   all_goals fits
@@ -493,17 +494,20 @@ theorem supWord_fits (r : ChoiceResult) :
       (.str (word r)) := by
   cases r <;> fits
 
-theorem supCandidates_fits (D : Doc) (ss : List SupScope) (dead : List (String × Nat)) :
+theorem supCandidates_fits (D : Doc) (ss : List SupScope) (dead : List (String × Nat))
+    (checked : List Choice) :
     Fits req (.arr [] (skel% "readings-route.json#/$defs/sup_candidate"))
-      (Json.arr (supCandidateJson D ss dead).toArray) := by
+      (Json.arr (supCandidateJson D ss dead checked).toArray) := by
   unfold supCandidateJson
   fits
   all_goals (repeat' split) <;> fits
 
 set_option maxHeartbeats 2000000 in
 theorem supResult_fits (D : Doc) (Q : VE.Compose.Labelled) (nd : Bool) (q : String) (A : Choice) (named : Option Choice)
-    (ss : List SupScope) (dead : List (String × Nat)) (budget : SupBudget) :
-    Fits req (skel% "readings-route.json#/$defs/sup_result") (supResult D Q nd q A named ss dead budget) := by
+    (ss : List SupScope) (dead : List (String × Nat)) (budget : SupBudget)
+    (checked : List Choice) :
+    Fits req (skel% "readings-route.json#/$defs/sup_result")
+      (supResult D Q nd q A named ss dead budget checked) := by
   by_cases hc : (q == "conflict") = true
   all_goals by_cases hp : (q == "premises") = true
   all_goals try (exfalso; simp_all (config := {decide := true}); done)
@@ -526,8 +530,9 @@ theorem supUnchecked_fits (q reason : String) (named : Option Choice) :
 set_option maxHeartbeats 1000000 in
 theorem supAnswer_fits (id q : String) (x : SupContext) (A : Choice) (named : Option Choice)
     (ss : List SupScope) (dead : List Json) (budget : SupBudget) (over : Bool)
+    (allChecked : List Choice)
     (hq : verdictsQuestions.contains q) :
-    Fits req (skel% "readings-route.json#/$defs/sup_verdicts") (supAnswer id q x A named ss dead budget over) := by
+    Fits req (skel% "readings-route.json#/$defs/sup_verdicts") (supAnswer id q x A named ss dead budget over allChecked) := by
   simp only [verdictsQuestions, List.contains_cons, List.contains_nil, Bool.or_false, Bool.or_eq_true, beq_iff_eq] at hq
   rcases hq with rfl | rfl | rfl
   all_goals

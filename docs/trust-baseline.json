@@ -4,26 +4,26 @@
   "K": 997,
   "S": 9788,
   "D": 13887,
-  "G": 27494,
+  "G": 27504,
   "C": 8486,
-  "P": 71959,
+  "P": 71964,
   "T": 14750,
   "o": 12363,
   "D[V]": 12357,
   "D[R]": 1003,
   "D[I]": 527,
-  "G[V]": 25488,
+  "G[V]": 25498,
   "G[R]": 1765,
   "G[I]": 241,
   "tied": 178,
-  "unclassified": 0,
-  "trusted": 48471,
-  "lines": 159724
+  "unclassified": 61,
+  "trusted": 48542,
+  "lines": 159800
  },
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37686
+  "V": 37757
  },
  "signed": [],
  "history": [
@@ -725,6 +725,19 @@
     "K": 997,
     "S": 9788,
     "V": 37686
+   }
+  },
+  {
+   "change": "RD-7 R6: shared Lean conflict and model replay replace deleted Python superposed verdict assembly and dependencies; see docs/readings-defaults/rd7/evidence/deletion-ledger.json",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37686
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37757
    }
   }
  ],
@@ -4320,7 +4333,7 @@
    "D": 0,
    "G": 13,
    "C": 0,
-   "P": 1217,
+   "P": 1222,
    "T": 0,
    "o": 34,
    "D[V]": 0,
@@ -4332,7 +4345,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 29,
-   "lines": 1280
+   "lines": 1285
   },
   "ResponseShape/Encoders/Reports.lean": {
    "K": 0,
@@ -10578,7 +10591,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 282,
+   "G": 270,
    "C": 0,
    "P": 39,
    "T": 0,
@@ -10586,13 +10599,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 275,
+   "G[V]": 263,
    "G[R]": 0,
    "G[I]": 7,
    "tied": 0,
-   "unclassified": 0,
-   "trusted": 275,
-   "lines": 379
+   "unclassified": 30,
+   "trusted": 293,
+   "lines": 397
   },
   "VE/Readings/SupSlot.lean": {
    "K": 0,
@@ -10658,7 +10671,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 418,
+   "G": 450,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -10666,19 +10679,19 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 418,
+   "G[V]": 450,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
-   "unclassified": 0,
-   "trusted": 418,
-   "lines": 435
+   "unclassified": 11,
+   "trusted": 461,
+   "lines": 478
   },
   "VE/Readings/SupWire.lean": {
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 257,
+   "G": 247,
    "C": 0,
    "P": 109,
    "T": 0,
@@ -10686,13 +10699,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 257,
+   "G[V]": 247,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
-   "unclassified": 0,
-   "trusted": 257,
-   "lines": 397
+   "unclassified": 20,
+   "trusted": 267,
+   "lines": 407
   },
   "VE/Readings/SupWireSound.lean": {
    "K": 0,
