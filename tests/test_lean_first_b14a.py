@@ -157,6 +157,39 @@ def test_binary_and_nary_definitions_bind_arguments_in_declared_order():
     assert accepted == {NARY[0], NARY[3], NARY[4], NARY[7]}
 
 
+def reordered(value):
+    """`value` with every JSON object's keys in reverse order (lists keep their order: they are positional)."""
+    if isinstance(value, dict):
+        return {key: reordered(value[key]) for key in reversed(list(value))}
+    if isinstance(value, list):
+        return [reordered(item) for item in value]
+    return value
+
+
+# Author names that look like the printer's generated binders (`x0`, `x1`).
+GENERATED_NAMES = [
+    "every item x0 that is derived, (x0 is base).\n",
+    "for every item x0, (every item x1 that is base, ((x0 is base) iff (x1 is base))).\n",
+    "define derived(x0) as (x0 is base).\n",
+    "define near(x1, x0) as (x1 step x0).\n",
+    "define near(x0, x1) as (x1 step x0).\n",
+]
+
+
+def test_reordered_environment_keys_and_generated_names_get_the_same_answer():
+    """Checklist item 4: reversing every key order of the environment (predicates, the `defined` payload) changes
+    no answer, and author binders named like the printer's generated ones read as the retained reader reads them."""
+    env = nary_environment()
+    turned = Environment(reordered(env.to_dict()))
+    assert list(turned.to_dict()["vocabulary"]["predicates"]) != list(env.to_dict()["vocabulary"]["predicates"])
+    for source in ACCEPTED + REJECTED + NARY + GENERATED_NAMES:
+        expected = python_reading(env, source)
+        assert lean_reading(env, source) == expected, source
+        assert lean_reading(turned, source) == expected, source
+    assert {source for source in GENERATED_NAMES if lean_reading(env, source)[0] == "accepted"} == \
+        set(GENERATED_NAMES[:4])
+
+
 def test_lean_answers_sugar_on_the_wire():
     """The service's own row: a sugared source is accepted with the desugared AST, and a wrong `define` body is
     Lean's diagnostic with its span (not the generic 'not accepted by the Lean surface parser')."""
