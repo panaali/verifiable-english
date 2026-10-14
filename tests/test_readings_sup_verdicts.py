@@ -279,6 +279,11 @@ def test_superposed_scope_count_stays_bounded_above_64_choices():
     assert len(row["model_proposals"]) == 16
     assert row["result"]["verdict"] == "UNKNOWN"
 
+    [premises] = run("ve_readings_route", [case("readings-verdicts", raw, document, question="premises",
+                                                evidence=[], budget=dict(BUDGET))])
+    assert premises["status"] == "ok" and premises["route"] == "superposed"
+    assert premises["dead_readings"] == [] and premises["untaken"] == []
+
 
 def test_scoped_proposals_reach_checked_choices_after_the_64_choice_prefix():
     from tests.test_readings_nd_lean import case

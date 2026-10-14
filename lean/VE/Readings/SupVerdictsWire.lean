@@ -387,18 +387,18 @@ def maxSupModelProposals : Nat := 16
 
 def supAnswer (id q : String) (x : SupContext) (A : Choice) (named : Option Choice)
     (ss : List SupScope) (dead : List Json) (budget : SupBudget) (over : Bool) : Json :=
-  let infos := if (choices x.D).length ≤ maxChoices then (choices x.D).map (fun c => (supFind ss c).info) else []
-  let ds := deadOf x.D infos dead
+  let checked := if over then [] else checkedChoices x.D
+  let infos := if q == "premises" then checked.map (fun c => (supFind ss c).info) else []
+  let ds := if q == "premises" && !over then deadOf x.D infos dead else (none, [])
   let res := if over then supUnchecked q checkBudgetText named
     else supResult x.D x.Q x.nd.isSome q A named ss (ds.1.getD []) budget
-  let checked := if over then [] else checkedChoices x.D
   let proposals := fun assumed => (checked.filter (fun c => assumed.all (c.contains ·))).take maxSupModelProposals
   okWith id [("route", .str "superposed"), ("question", .str q), ("result", res),
     ("scopes", Json.arr (ss.map (fun s => supScopeJson q s (proposals s.info.choice))).toArray),
     ("model_proposals", Json.arr ((proposals A).map choiceJson).toArray),
     ("restrictions", toJson (restrictionsFor x.D A)),
-    ("dead_readings", if q == "premises" && (choices x.D).length ≤ maxChoices then deadReadingsJson ds.1 else .null),
-    ("untaken", untakenJson (if q == "premises" && (choices x.D).length ≤ maxChoices then untakenOf x.D infos else [])),
+    ("dead_readings", if q == "premises" && !over then deadReadingsJson ds.1 else .null),
+    ("untaken", untakenJson (if q == "premises" && !over then untakenOf x.D infos else [])),
     ("dead", Json.arr (if q == "premises" then ds.2 else []).toArray),
     ("english", Json.arr ((supPlan x.D x.Q q A ss (if q == "premises" then ds.1.getD [] else []) res).map Line.json).toArray)]
 
