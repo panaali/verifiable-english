@@ -50,9 +50,17 @@ Each was planted, made the test above fail, and was removed; the outputs are in
 - Before that rerun, the worktree's Lean build failed to link: `VE/Readings/SupRun.c.o.export` was a
   736-byte empty object recorded as built (a compile killed under load). Deleting it and its
   trace let `lake build` finish; no Lean source changed.
-- The full gate is run by the chain on the committed final HEAD (`gate-result.json` in the worktree).
+- The first full gate was run by the chain on the committed HEAD (`gate-result.json` in the worktree).
   The first chain record (2026-10-13 13:33 UTC) was the placeholder a killed gate leaves: no commit,
   no stages, no failures; there was no failed test to rerun.
+- The next chain gate on `49d75ddc3` built Lean and Rust and ran 15,081 selected pytest cases:
+  14,988 passed, 92 skipped, and one failed. The failing historical RD-8 report test compared saved
+  eight-character commit IDs to Git's `%h`, which now abbreviates those IDs to nine characters.
+  It now reads full commit IDs and checks their saved prefixes and subjects. The RD-8 report file's
+  nine tests passed after the fix. The pre-review check requires a passing gate on the final code.
+- After that fix, `select_tests.py --base $(git merge-base HEAD main) --run` chose 22 units. Seventeen
+  completed successfully; the five remaining integration units were still active after more than
+  20 minutes under parallel load, so that selected run was stopped. The final full gate checks them.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -64,7 +72,8 @@ Each was planted, made the test above fail, and was removed; the outputs are in
 3. PASS: three seeded bugs, each failing that test (`evidence/mutants.json`).
 4. N.A.: no Python, Lean or Rust checker output changes.
 5. N.A.: no relayed field is read.
-6. PASS: the chain runs the gate on the committed final HEAD; no gate evidence is committed.
+6. PASS: the full gate runs on the committed final HEAD; `gate-result.json` records its target and
+   result, and no gate evidence is committed.
 7. PASS: no DELTA row (no user-visible change); no trust-budget growth.
 8. PASS: no user-visible output changes; only `tools/` selection changes, so DELTA is none.
 9. PASS: this is the item's own fix; `test_research_tree_is_layer_five_and_selects_its_readers`
