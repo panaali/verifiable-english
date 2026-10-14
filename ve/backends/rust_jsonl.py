@@ -130,6 +130,9 @@ class _Checker:
         del self.buffer[:end + 1]
         if self.buffer:
             raise OSError("the Rust checker wrote more than one record")
+        # The deadline may have passed during the last write or read: no select follows it.
+        if time.monotonic() >= deadline:
+            raise subprocess.TimeoutExpired(self.argv, timeout)
         return line
 
     def close(self) -> None:
