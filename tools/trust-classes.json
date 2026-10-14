@@ -1836,10 +1836,12 @@
         "VE.Closure.OrderChecks.undeclared",
         "VE.Closure.OrderChecks.result",
         "VE.Closure.OrderChecks.pairs",
+        "VE.Closure.OrderChecks.softEnv",
         "VE.Closure.OrderChecks.softAgrees",
         "VE.Closure.OrderChecks.softTrue",
         "VE.Closure.OrderChecks.riskLinks",
         "VE.Closure.OrderChecks.riskOrder",
+        "VE.Closure.OrderChecks.riskDoc",
         "VE.Closure.OrderChecks.riskAgrees",
         "VE.Closure.OrderChecks.riskTrue"
       ]

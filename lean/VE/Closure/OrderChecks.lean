@@ -33,8 +33,18 @@ private def result : Except String Unit → Option String
   some "ResourceLimit: At most 64 order pairs"
 
 private def pairs : List (String × String) := names.flatMap (fun a => names.map (a, ·))
+private def softEnv : VE.SoftNorms.SoftEnv where
+  parties := []
+  ranks := names
+  outranks := links
+  ties := []
+  outranking := .strict
+  outrankingDecider := none
+  exceptionDecider := none
+  instructionOf := []
+  below := VE.SoftNorms.closureOf names links
 private def softAgrees : Bool := pairs.all fun p =>
-  (VE.SoftNorms.belowAt (VE.SoftNorms.closureOf names links) p.1).contains p.2 == order.above p.1 p.2
+  VE.SoftNorms.outranksPlus softEnv p.1 p.2 == order.above p.1 p.2
 private def softTrue : Nat := (pairs.filter fun p => order.above p.1 p.2).length
 #guard pairs.length == 16
 #guard softAgrees
@@ -42,8 +52,16 @@ private def softTrue : Nat := (pairs.filter fun p => order.above p.1 p.2).length
 
 private def riskLinks : List (String × String) := links ++ [("c", "d")]
 private def riskOrder : Order String := ⟨names, riskLinks⟩
+private def riskDoc : VE.Risk.RiskDoc where
+  vocab := ⟨[], [], []⟩
+  units := []
+  lits := []
+  alt := ⟨"", "", "", "", "", .signed, none, none, none, none, none, []⟩
+  risk := ⟨⟨"", names, riskLinks, [], ""⟩, [], .possible, [], none, [], [], [], [], false⟩
+  T := ⟨[], [], []⟩
+  Γ := []
 private def riskAgrees : Bool := pairs.all fun p =>
-  (VE.Risk.closeIter names (names.length + 1) riskLinks).contains p == riskOrder.above p.1 p.2
+  (VE.Risk.closure riskDoc).contains p == riskOrder.above p.1 p.2
 private def riskTrue : Nat := (pairs.filter fun p => riskOrder.above p.1 p.2).length
 #guard riskAgrees
 #guard riskTrue == 6
