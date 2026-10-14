@@ -39,7 +39,7 @@ DEFAULT_EXECUTABLE = ROOT / "rust/target/release/ve"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
 MAX_LINE_BYTES = 16 * 1024 * 1024
 DEFAULT_TIMEOUT = 5.0
-# The default wall-clock limit grows with the case (DRI decision ME1): a search spends its 10,000
+# The default wall-clock limit of a model search grows with the case (DRI decision ME1): a search spends its 10,000
 # candidate models in about SEARCH_SECONDS[0] + per byte of the case line + per constant squared
 # seconds, the least-squares fit over the searches the premise-scale pilots sent and a synthetic
 # series of ground-fact cases (docs/premise-scale/evidence/rust-timeout.json, measured at load
@@ -68,10 +68,13 @@ def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
 
 
 def scaled_timeout(case, size: int) -> float:
-    """The default wall-clock limit of `case`, whose line is `size` bytes: `TIMEOUT_FACTOR` times the
-    measured search time of a case of that size with its number of constants (`SEARCH_SECONDS`), at
-    least `DEFAULT_TIMEOUT`."""
-    environment = case.get("environment") if type(case) is dict else None
+    """The default wall-clock limit of `case`, whose line is `size` bytes. A model search (a case with a
+    `max_models` budget) waits `TIMEOUT_FACTOR` times the measured search time of a case of that size
+    with its number of constants (`SEARCH_SECONDS`), at least `DEFAULT_TIMEOUT`; any other case waits
+    `DEFAULT_TIMEOUT`, which the measurement does not cover."""
+    if type(case) is not dict or "max_models" not in case:
+        return DEFAULT_TIMEOUT
+    environment = case.get("environment")
     vocabulary = environment.get("vocabulary") if isinstance(environment, dict) else None
     constants = vocabulary.get("constants") if isinstance(vocabulary, dict) else None
     n = len(constants) if isinstance(constants, dict) else 0

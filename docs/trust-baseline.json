@@ -3,37 +3,29 @@
  "totals": {
   "K": 997,
   "S": 9788,
-  "D": 13887,
-  "G": 26962,
-  "C": 8486,
-  "P": 71773,
-  "T": 14705,
-  "o": 12299,
-  "D[V]": 12357,
-  "D[R]": 1003,
+  "D": 13917,
+  "G": 27026,
+  "C": 8535,
+  "P": 72017,
+  "T": 14756,
+  "o": 12397,
+  "D[V]": 12358,
+  "D[R]": 1032,
   "D[I]": 527,
-  "G[V]": 24956,
-  "G[R]": 1765,
+  "G[V]": 24960,
+  "G[R]": 1825,
   "G[I]": 241,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 47939,
-  "lines": 158897
+  "trusted": 47944,
+  "lines": 159433
  },
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37154
+  "V": 37159
  },
- "signed": [
-  {
-   "change": "premise-scale: the search-budget service mode (VE.Service.Mode.searchBudget, its name and runMode case, ResponseShape.Skeletons.searchBudget and its row case, the schema list entry): untied [V] +5 in existing verdict-bearing declarations (VE/Service/Protocol.lean +2, ResponseShape/Skeletons.lean +2, ResponseShape/Schemas.lean +1). The mode replaces Python's own premise-check budget (ve/vacuity.py's hard-coded defaults, deleted): Lean owns the budget. The new modules' declarations are classified C (proved: demand_sound, sortBounds_spec, sortBounds_sound) or [R] (a wrong budget only bounds an untrusted search, whose models Lean checks).",
-   "signed": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
-   "allow": {
-    "V": 5
-   }
-  }
- ],
+ "signed": [],
  "history": [
   {
    "change": "Review B3 (consolidate-b1): predicates (lean/predicates.txt) out of C, [R] and [I] into K or S unless tied; kernel data types K; kernel modules reviewed (Paths dedup/pivot/reachEval C, ClosedAt P; reach, embed, erase K in Closure and Core; Time QTerm/QEnv.erase K; Bridge helpers D[V]); Rights.PrefixAdmissibleR S. Reclassification only: no Lean change.",
@@ -677,6 +669,18 @@
     "V": 36969
    },
    "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37154
+   }
+  },
+  {
+   "change": "premise-scale: the search-budget service mode (VE.Service.Mode.searchBudget, its name and runMode case, ResponseShape.Skeletons.searchBudget and its row case, the schema list entry): untied [V] +5 in existing verdict-bearing declarations (VE/Service/Protocol.lean +2, ResponseShape/Skeletons.lean +2, ResponseShape/Schemas.lean +1). The mode replaces Python's own premise-check budget (ve/vacuity.py's hard-coded defaults, deleted): Lean owns the budget. The new modules' declarations are classified C (proved: demand_sound, sortBounds_spec, sortBounds_sound) or [R] (a wrong budget only bounds an untrusted search, whose models Lean checks).",
+   "signed": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "allow": {
+    "V": 5
+   },
+   "rebaselined_from": {
     "K": 997,
     "S": 9788,
     "V": 37154
@@ -3976,8 +3980,8 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 450,
-   "o": 30,
+   "T": 452,
+   "o": 31,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -3987,7 +3991,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 480
+   "lines": 483
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -4389,6 +4393,26 @@
    "trusted": 6,
    "lines": 182
   },
+  "ResponseShape/Encoders/SearchBudget.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 0,
+   "C": 0,
+   "P": 13,
+   "T": 0,
+   "o": 7,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 20
+  },
   "ResponseShape/Encoders/SoftNorms.lean": {
    "K": 0,
    "S": 5,
@@ -4455,9 +4479,9 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 35,
+   "P": 36,
    "T": 0,
-   "o": 38,
+   "o": 39,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -4467,7 +4491,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 73
+   "lines": 75
   },
   "ResponseShape/EnumSites.lean": {
    "K": 0,
@@ -5109,6 +5133,26 @@
    "trusted": 117,
    "lines": 138
   },
+  "ResponseShape/Schemas/SearchBudget.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 28,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 9,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 28,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 37
+  },
   "ResponseShape/Schemas/SoftNorms.lean": {
    "K": 0,
    "S": 0,
@@ -5153,21 +5197,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 44,
+   "G": 45,
    "C": 0,
    "P": 0,
    "T": 4,
-   "o": 41,
+   "o": 42,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 44,
+   "G[V]": 45,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 44,
-   "lines": 89
+   "trusted": 45,
+   "lines": 91
   },
   "ResponseShape/Skeleton.lean": {
    "K": 0,
@@ -5193,7 +5237,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 78,
+   "G": 80,
    "C": 0,
    "P": 0,
    "T": 3,
@@ -5201,13 +5245,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 75,
+   "G[V]": 77,
    "G[R]": 2,
    "G[I]": 1,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 75,
-   "lines": 99
+   "trusted": 77,
+   "lines": 101
   },
   "ResponseShape.lean": {
    "K": 0,
@@ -5816,8 +5860,8 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 5330,
-   "o": 318,
+   "T": 5345,
+   "o": 320,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -5827,7 +5871,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 5648
+   "lines": 5665
   },
   "VE/Bridge.lean": {
    "K": 22,
@@ -11829,6 +11873,86 @@
    "trusted": 144,
    "lines": 1170
   },
+  "VE/SearchBudget/Budget.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 12,
+   "C": 11,
+   "P": 52,
+   "T": 0,
+   "o": 18,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 12,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 93
+  },
+  "VE/SearchBudget/Demand.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 0,
+   "C": 38,
+   "P": 176,
+   "T": 0,
+   "o": 22,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 236
+  },
+  "VE/SearchBudget/Examples.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 0,
+   "C": 0,
+   "P": 0,
+   "T": 34,
+   "o": 9,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 43
+  },
+  "VE/SearchBudget/Run.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 29,
+   "G": 20,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 26,
+   "D[V]": 0,
+   "D[R]": 29,
+   "D[I]": 0,
+   "G[V]": 0,
+   "G[R]": 20,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 0,
+   "lines": 75
+  },
   "VE/Semantics.lean": {
    "K": 62,
    "S": 0,
@@ -12292,22 +12416,22 @@
   "VE/Service/Protocol.lean": {
    "K": 0,
    "S": 0,
-   "D": 326,
-   "G": 230,
+   "D": 327,
+   "G": 231,
    "C": 0,
-   "P": 185,
+   "P": 187,
    "T": 19,
-   "o": 99,
-   "D[V]": 225,
+   "o": 100,
+   "D[V]": 226,
    "D[R]": 0,
    "D[I]": 101,
-   "G[V]": 191,
+   "G[V]": 192,
    "G[R]": 39,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 416,
-   "lines": 859
+   "trusted": 418,
+   "lines": 864
   },
   "VE/Service/Readings.lean": {
    "K": 0,
@@ -13457,7 +13581,7 @@
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 122,
+   "o": 123,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
@@ -13467,7 +13591,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 122
+   "lines": 123
   }
  }
 }
