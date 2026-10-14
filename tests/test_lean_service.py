@@ -736,6 +736,39 @@ def test_a_request_past_its_cpu_deadline_names_its_mode_and_is_not_retried(tmp_p
         assert service.stats["starts"] == 1 and service.stats["retries"] == 0 and service.pid is None
 
 
+@pytest.mark.parametrize("phase", ["write", "response"])
+def test_request_transfer_checks_cpu_after_its_final_system_call(tmp_path, monkeypatch, phase):
+    """F2: CPU exhaustion during the last write or the read containing the newline cannot
+    escape because the transfer loop has no further select after that system call."""
+    from ve.backends import lean_service
+    from ve.backends.lean_service import _Deadline
+
+    clock = SimpleNamespace(seconds=0.0, transferred=False)
+    monkeypatch.setattr(lean_service, "_cpu_seconds", lambda pid: clock.seconds)
+    monkeypatch.setitem(lean_service.DEADLINES, "evaluate", (0.3, 0.0))
+    with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True) as service:
+        native = os.write if phase == "write" else os.read
+        stream = service._proc.stdin if phase == "write" else service._proc.stdout
+
+        def transfer(fd, data):
+            result = native(fd, data)
+            content = bytes(data) if phase == "write" else result
+            if fd == stream.fileno() and b"\n" in content and (
+                    phase == "write" or b'"results"' in bytes(service._buffer) + content):
+                clock.seconds, clock.transferred = 1.0, True
+            return result
+
+        monkeypatch.setattr(lean_service, "os", SimpleNamespace(**vars(os)))
+        setattr(lean_service.os, "write" if phase == "write" else "read", transfer)
+        with pytest.raises(CheckerUnavailable, match="mode evaluate used more than its deadline") as caught:
+            if phase == "write":
+                service._write_all(b"{}\n", _Deadline(time.monotonic() + HANG_TIMEOUT, 0.3, 0.0, "evaluate"))
+            else:
+                service.run("evaluate", [{"id": "a", "ast": [["top"]]}])
+        assert clock.transferred and caught.value.operation == "evaluate"
+        assert service.stats["retries"] == 0 and service.pid is None
+
+
 def _without_cpu(method):
     """`method` (`_write_all` or `_read_line`) of a client that does not check the CPU deadline in that phase."""
     from ve.backends.lean_service import _Deadline
