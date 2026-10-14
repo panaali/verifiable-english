@@ -140,6 +140,16 @@ class Pending(_Route):
 # ---------------------------------------------------------------------------------------------------------------
 # The superposed route (4.5)
 
+def _public_sup_conflict(result):
+    """Keep the service envelope out of the established public conflict display.
+
+    Lean supplies every value.  The limit result has a reason in place of the
+    successful conflict's status text; that text still feeds the report status.
+    """
+    return {key: value for key, value in result.items()
+            if key != "route" and (key != "status_text" or "reason" not in result)}
+
+
 class Superposed(_Route):
     def __init__(self, doc):
         super().__init__(doc)
@@ -529,7 +539,7 @@ class Superposed(_Route):
     def conflict(self, A=()):
         row = self._prepare("conflict", A) if A else self.conflict_answer()
         # Retained solely for callers proposing certificates; the report excludes the traces.
-        result = dict(row["result"])
+        result = _public_sup_conflict(row["result"])
         generated = self._generate_conflict(A)
         if generated.get("status") == "CONFLICT-FREE" and "certificates" in generated:
             result["certificates"] = generated["certificates"]
@@ -618,7 +628,8 @@ class Superposed(_Route):
         conflict = self.conflict_answer()["result"]
         dead = self.dead_readings()
         return {"status": conflict["status_text"],
-                "conflict": {key: value for key, value in conflict.items() if key not in ("model", "gaps", "selected")},
+                "conflict": {key: value for key, value in _public_sup_conflict(conflict).items()
+                             if key not in ("certificates", "model", "gaps", "selected")},
                 "dead_readings": None if dead is None else [d["finding"] for d in dead]}
 
 
