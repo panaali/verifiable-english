@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 import sys
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 import heavy_tests  # noqa: E402
@@ -58,12 +60,26 @@ def test_every_measured_node_is_exactly_light_or_heavy():
         def add_marker(self, mark):
             self.marks.append(mark)
 
+        def get_closest_marker(self, name):
+            return None
+
     items = [Item(nodeid) for nodeid in times]
     pytest_collection_modifyitems(items)
     marked = {item.nodeid for item in items if item.marks}
     assert marked == HEAVY_IDS
     assert len(items) - len(marked) == 15008
     assert all(len(item.marks) <= 1 for item in items)
+
+
+def test_an_unlisted_manual_heavy_mark_is_refused():
+    class Item:
+        nodeid = "tests/test_new.py::test_manual"
+
+        def get_closest_marker(self, name):
+            return pytest.mark.heavy
+
+    with pytest.raises(pytest.UsageError, match="absent from tests/heavy.json"):
+        pytest_collection_modifyitems([Item()])
 
 
 def test_light_tier_runs_every_light_node_and_selected_heavy_function(tmp_path):

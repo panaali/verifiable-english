@@ -25,6 +25,9 @@ def pytest_collection_modifyitems(items):
     for item in items:
         if item.nodeid in HEAVY_IDS:
             item.add_marker(pytest.mark.heavy)
+        elif item.get_closest_marker("heavy"):
+            raise pytest.UsageError(f"{item.nodeid} is marked heavy but absent from tests/heavy.json; "
+                                    "regenerate the measured inventory")
 
 # A virtualenv copied from another checkout keeps that checkout's interpreter in its entry-point
 # shebangs (`.venv/bin/pytest`), and with it that checkout's editable install: `ve` would then be
