@@ -78,11 +78,7 @@ DEF_NAME = r"[\w.]+"
 # Approved Q2 definitions whose implementation differs from the approved text, each with its reason; every entry is
 # a DRI item of docs/spec/question-answering-q2/DELTA.md. A signature-only approved `def` is not listed: Lean checks
 # its type.
-DIFFERENCES = {
-    "Asked": "`hnames` uses `NameReadsBackSame` (canonical JSON text, the relation `UnitBound` uses) for the "
-             "approved `NameReadsBack` (kept as approved): Lean's `Json` has no decidable equality, so `=` on the "
-             "read-back formula cannot be decided",
-}
+DIFFERENCES = {}
 
 
 def types(text: str) -> dict[str, str]:
@@ -113,6 +109,24 @@ def signature(block: str) -> str | None:
         return None
     match = re.match(rf"^def {DEF_NAME} : (.+)$", head.strip())
     return match.group(1).strip() if match else None
+
+
+def theorem_type(statement: str) -> str:
+    """Turn declaration binders into a forall for the compiler-based statement check."""
+    head = re.match(r"^theorem \w+", statement)
+    if head is None:
+        raise ValueError(f"not a theorem: {statement}")
+    depth = 0
+    for index, char in enumerate(statement[head.end():], head.end()):
+        if char in "([{":
+            depth += 1
+        elif char in ")]}":
+            depth -= 1
+        elif char == ":" and depth == 0:
+            binders = statement[head.end():index].strip()
+            result = statement[index + 1:].strip()
+            return f"∀ {binders}, {result}" if binders else result
+    raise ValueError(f"theorem has no outer type: {statement}")
 
 
 def q2(lean: bool) -> int:
@@ -154,7 +168,7 @@ def q2(lean: bool) -> int:
     if absent:
         print("Absent definitions:", ", ".join(absent))
     if lean:
-        checks = [f"example : {stmt.split(':', 1)[1].strip()} := @{name}" for name, stmt in approved.items()
+        checks = [f"example : {theorem_type(stmt)} := @{name}" for name, stmt in approved.items()
                   if name in actual]
         checks += [f"example : {sigs[name]} := {name}" for name in approved_defs if sigs[name] and name in actual_defs]
         with tempfile.TemporaryDirectory() as tmp:
