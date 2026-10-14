@@ -1,7 +1,7 @@
-"""Plant one wrong Lean dependency extraction per service mode and save witnesses.
+"""Plant one wrong Lean dependency extraction per service mode and save proposed witnesses.
 
 The source is restored after every trial, including a failed trial. Selection
-witnesses use the recorded v7 map and the same service_impact routine as runs.
+witnesses use the recorded v7 map and the proposed, unactivated mode rule.
 """
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ def main() -> None:
             raise AssertionError(f"uncaught Lean mutant: {mode}")
         root = roots[mode][0]
         path = "lean/" + root.replace(".", "/") + ".lean"
-        impact = select_tests.service_impact(coverage, graph, path)
+        impact = select_tests.proposed_service_impact(coverage, graph, path)
         witnesses = coverage._names(coverage.modes[mode]) & impact
         if not witnesses:
             raise AssertionError(f"mode {mode} has no selected test witness for {path}")

@@ -454,7 +454,18 @@ def runs_lean(executables: set[str]):
 
 
 def service_impact(coverage: Coverage, graph: source_graph.Graph, path: str) -> set[str]:
-    """Narrow only recorded service users with known modes and a complete Lean root table."""
+    """Select every service user until B2's activation gate has real evidence.
+
+    The saved B2 mode seeds change only the dependency extractor, and its ten
+    shadow rows replay archived gates. They do not prove that selected tests
+    catch Lean behavior mutations or that a live full run agrees with selection.
+    """
+    del graph, path
+    return coverage.service_users()
+
+
+def proposed_service_impact(coverage: Coverage, graph: source_graph.Graph, path: str) -> set[str]:
+    """The unactivated per-mode plan, kept for mutation and dependency tests."""
     if path in ("lean/VE/Service/Protocol.lean", "lean/Serve.lean") or not path.endswith(".lean"):
         return coverage.service_users()
     roots = lean_mode_deps.load()

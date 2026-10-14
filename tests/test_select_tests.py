@@ -478,18 +478,20 @@ def test_service_modes_narrow_only_known_recorded_users(tmp_path, monkeypatch):
         "future": {"x": [service], "v": ["future"]},
         "direct": {"x": ["lake"]},
     }))
-    assert select_tests.service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
+    assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
         "rights", "unknown", "future"}
-    assert select_tests.service_impact(coverage, graph, "lean/VE/Common.lean") == {
+    assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Common.lean") == {
         "rights", "norms", "unknown", "future"}
     for path in ("lean/VE/Service/Protocol.lean", "lean/Serve.lean"):
-        assert select_tests.service_impact(coverage, graph, path) == {
+        assert select_tests.proposed_service_impact(coverage, graph, path) == {
             "rights", "norms", "unknown", "future"}
     selected = set()
     select_tests.file_impact(coverage, graph, set(coverage.tests),
                              lambda names, _: selected.update(names), "lean/VE/Rights/Run.lean", False)
-    assert selected == {"rights", "unknown", "future", "direct"}
+    assert selected == {"rights", "norms", "unknown", "future", "direct"}
     monkeypatch.setattr(select_tests.lean_mode_deps, "load", lambda: None)
+    assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
+        "rights", "norms", "unknown", "future"}
     assert select_tests.service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
         "rights", "norms", "unknown", "future"}
 
@@ -503,9 +505,44 @@ def test_compiled_mode_roots_cover_every_service_mode(monkeypatch):
     assert lean_mode_deps.load() is None
 
 
+def test_unverified_mode_activation_keeps_service_wide_selection(tmp_path, monkeypatch):
+    graph = make_graph(tmp_path, {}, lean={
+        "lean/VE/Rights/Run.lean": "def rights := 1\n",
+        "lean/VE/Norms/Run.lean": "def norms := 1\n",
+    })
+    monkeypatch.setattr(select_tests.lean_mode_deps, "load", lambda: {
+        "rights": ["VE.Rights.Run"], "norms": ["VE.Norms.Run"]})
+    service = "lean/.lake/build/bin/ve_service"
+    coverage = select_tests.Coverage(make_map({
+        "rights": {"x": [service], "v": ["rights"]},
+        "norms": {"x": [service], "v": ["norms"]},
+    }))
+    assert select_tests.proposed_service_impact(
+        coverage, graph, "lean/VE/Rights/Run.lean") == {"rights"}
+    assert select_tests.service_impact(
+        coverage, graph, "lean/VE/Rights/Run.lean") == {"rights", "norms"}
+
+
 def test_compiled_mode_roots_regenerate_from_lean():
     generated = lean_mode_deps.generate()
     assert generated["modes"] == json.loads(lean_mode_deps.OUTPUT.read_text())["modes"]
+
+
+def test_shared_service_response_dependency_selects_every_mode():
+    """`coding` calls Route's generator parser for every service answer."""
+    root = Path(__file__).resolve().parents[1]
+    graph = source_graph.Graph(root, [], {})
+    graph.lean_modules = {"VE.Route.Run": "lean/VE/Route/Run.lean"}
+    graph.lean_imports = {
+        ".".join(file.relative_to(root / "lean").with_suffix("").parts):
+        source_graph.lean_imports(file.read_text())
+        for file in (root / "lean/VE").rglob("*.lean")
+    }
+    coverage = select_tests.Coverage(test_map.load(
+        root / "docs/test-speed-b2/evidence/coverage-map.json.gz"))
+    assert all("VE.Route.Run" in roots for roots in lean_mode_deps.load().values())
+    assert coverage.service_users() <= select_tests.proposed_service_impact(
+        coverage, graph, "lean/VE/Route/Run.lean")
 
 
 def test_checker_pin_reader_still_selects_on_lock_change(tmp_path):
