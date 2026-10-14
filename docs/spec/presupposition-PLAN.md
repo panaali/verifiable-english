@@ -1,12 +1,29 @@
 # Presupposition and definite descriptions (`presupposition@0`): buildable plan
 
-> Status: plan draft 2, 2026-10-14, branch `design/presupposition` from `main` at `f98183bf`. Design only: no product
+> Status: plan draft 3, 2026-10-14, branch `design/presupposition` from `main` at `f98183bf`. Design only: no product
 > code, no tests, no generated file touched, no model calls. Research: [docs/research/presupposition.md](../research/presupposition.md)
 > (cited below as R, with its section numbers). It follows the cross-plan synthesis of the seven wave-1 designs
 > (`manage-agents/debates/plan-synthesis/SYNTHESIS.md`, `DRI-DECISIONS-PHASE2.md`): shared owners, queues and landing
 > rules are theirs and are cited, not restated. Every number is measured (the method is in R 2.1) or marked
-> **estimate**. Lean blocks are statements for the statement review (PS-S), not proved results; the review fixes exact
-> bodies, as it did for the wave-1 plans.
+> **estimate**. Every Lean definition and statement is owned by the spec, [presupposition.md](presupposition.md)
+> section 4; this plan names files and cites the spec's sections, and holds no Lean declaration of its own.
+>
+> Draft 3 applies PS-S's statement review of spec draft 1 (`manage-agents/debates/presupposition-spec/`: `fable.md`,
+> `astra.md` and the arbiter's `DRI-RULING.md`, verdict FIX; the spec's draft 2 carries the full list, tagged R-D1 to
+> R-D6 and R-1 to R-14). The plan-level changes:
+> - **In place** is never a reading of its own: at a shallow frame (`not ·`, or the antecedent of a root "if") it is
+>   the conditioned reading's alias, by a Lean theorem over the whole unit; elsewhere it is not offered (1.4, 1.5,
+>   1.7, 2.2; R-D1, R-D2). An open set needs at least two readings after merging (R-D3).
+> - **Headings** get their own position, so P1 to P4 are admitted as the heading's own assumed unit with content
+>   exactly `pre` (3, 5.2; R-10). PS-0p's audit rule "exactly the existence, nothing more" becomes a Lean check.
+> - **Open sets with a conditioned rule reading** are on the norms chain only, separated under the unspecified
+>   completion; coupling compares picks under it (1.6, 7; R-8, R-9).
+> - **P12** is a projection fixture only; its coupling is deferred (5.2, PS-3; R-11).
+> - **PS-E1** preregisters its mapping, aggregation, ordering, per-item frames and the scoring of option (e) before
+>   any model call (PS-E1; R-12, R-D4).
+> - **Section 4** cites the spec instead of restating Lean blocks (R-11).
+>
+> Draft 2's header follows.
 >
 > Draft 2 applies the converged Fable + Astra review of draft 1 (`manage-agents/debates/design-presupposition/`,
 > `fable.md` and `astra.md`, round 3, CONVERGED: build with mandatory corrections, written here as draft 2):
@@ -33,7 +50,7 @@
 >   applicability. The distinct-goal count moves to PS-0p. Batch order is in 6.
 >
 > PS-S's statement review, with its stubs elaborating, is the bounded re-check of draft 2. Nothing beyond PS-0p starts
-> until that review passes.
+> until that review passes. (Draft 3: the first review ruled FIX; the gate is now the ruling's, in PS-S below.)
 
 ## 0. Summary
 
@@ -52,10 +69,12 @@
     `pre`, and where `pre` fails the rule contributes no decision; this is admitted only for an `unspecified`
     predicate.
   - **asserted**: the content is `goal ∧ clause`, which is false where the goal fails. Not for rule acts.
-  - **unresolved**: a reading set whose readings are exactly the row's measured candidates at that position, or a
-    question in authoring.
-  - Local accommodation (the clause read with the presupposition in place) is a separate candidate, only where PS-E1
-    measures it.
+  - **unresolved**: a reading set whose readings are exactly the row's measured candidates at that position, at
+    least two after merging, or a question in authoring.
+  - Local accommodation (the clause read with the presupposition in place) is measured by PS-E1 but is never a
+    reading of its own: at a shallow frame it has the models of conditioned (a Lean theorem) and is that reading's
+    alias wording; elsewhere it is not offered in presupposition@0.
+  - A trigger in a heading has its own position: the heading's unit is the assumption, with content exactly `pre`.
 - **Coupling.** An optional compression: obligations with equal goals and equal candidate lists, in one reading
   alternative, share one choice only when Lean proves that no admissible joint reading is lost. Otherwise they stay
   separate.
@@ -156,10 +175,18 @@ goal.
 | assumed | an asserted unit whose content is `G` (discourse's frozen `assumed` form, generalised); the unit's content is `B` | the unit exists, has kind `asserted`, and its content is the regenerated `G`; the recorded content equals `B` | the assumed unit: CHECKED as an assumption, listed in the residual |
 | conditioned | the unit's content is `G → B`; for a rule act, the rule with guard `g ∧ pre` | regenerated content equals the recorded content; for a rule, its predicate is `unspecified`, otherwise `PresuppositionDefault` | as the unit's own content |
 | asserted | the unit's content is `G ∧ B`; never for a rule act | regenerated content equals the recorded content | as the unit's own content |
-| unresolved | the unit carries an open reading set | its readings are exactly the row's candidates at the position (PS-E1's table), pairwise separated by Lean-admitted situations | READINGS, or UNFORMALISED; never CHECKED or OPEN on one reading |
+| unresolved | the unit carries an open reading set | its readings are exactly the row's emitted candidates at the position (PS-E1's table, in place excluded), at least two, pairwise separated by Lean-admitted situations | READINGS, or UNFORMALISED; never CHECKED or OPEN on one reading |
 
 **Local accommodation** (the clause read with the presupposition in place: the content is `B` itself, with no goal
-and no assumption) is a separate candidate. It exists only in cells where PS-E1 measures it (option (e)).
+and no assumption) is measured by PS-E1 (option (e)) and used only at a shallow frame in a negated or antecedent
+cell: `not ·`, or the antecedent of a root "if". There it has the models of the conditioned reading for the whole
+unit (`inPlace_iff_conditioned_shallow`), so it is that reading's alias wording, never a reading of its own; a
+recorded in-place carrier is admitted there and nowhere else. At every other frame, in place is not offered in
+presupposition@0 (spec 1.4, 1.8, 8).
+
+**Headings.** A trigger in a heading ("Claude’s core values") has the position `heading`: no frame and no body,
+goal `pre`, carrier proved or assumed, and an assumed heading may name its own unit, whose content must then be
+exactly `pre` (spec 1.4a). Elsewhere a unit never assumes itself.
 
 **Several obligations in one unit** compose by one operator (`carried`, 4.2): the goals of asserted obligations
 become left conjuncts, then the goals of conditioned obligations become antecedents, then `B`, each group in block
@@ -181,8 +208,8 @@ R 4.2 has the full table. In short, where the projected goal fails:
   predicate with an allow or deny default, the default would decide where the text says nothing, so a conditioned
   carrier on its rules is refused with `PresuppositionDefault`.
 - **asserted:** the sentence is false there, at every frame (`asserted_false_off_goal`).
-- **local accommodation** (a candidate only where PS-E1 measures it): the clause as written, with the presupposition
-  read in place; under "not" it is true there.
+- **local accommodation** (only at a shallow frame where PS-E1 measures it): the clause as written, with the
+  presupposition read in place: true where `pre` fails at a shallow negated frame, possibly false at a nested one.
 - **unresolved:** readings@1 verdicts.
 - **Questions:** keep speech acts' PRESUPPOSITION-FAILED.
 
@@ -190,9 +217,14 @@ R 4.2 has the full table. In short, where the projected goal fails:
 
 - **Candidates come from the words only:** the row and the position class (top, negated, antecedent, consequent,
   rule act, rule guard, under a modal, under an attitude, reported). The table is the one PS-E1 measures. A position
-  class with no measured candidates admits no reading set: in translation the unit stays UNFORMALISED; in authoring
-  the sentence is refused with advice.
-- **Rule acts.** A rule's act has no `body` argument, and its candidates are at most assumed and conditioned.
+  class with fewer than two emitted candidates admits no reading set: in translation the unit stays UNFORMALISED; in
+  authoring the sentence is refused with advice.
+- **Rule acts.** A rule's act has no `body` argument, and its candidates are at most assumed and conditioned. An
+  unresolved rule obligation whose cell lists conditioned needs an `unspecified` predicate, like a conditioned one
+  (`PresuppositionDefault` otherwise).
+- **Separation and chains.** An open set with a conditioned rule reading needs `norm-defaults@0`, so it is on the
+  norms chain only, and readings-defaults separates its readings under the unspecified completion; on the soft and
+  rights chains readings@1's `abstention` refuses it. Without `norm-defaults@0`, readings@1's own separation applies.
 - **Coupling is a proved compression, never imposed** (PS-3). Equal goals alone never force one choice. A group of
   obligations shares one choice only when:
   - their goals are equal as formulas, their candidate lists are equal, and they sit in the same reading
@@ -200,7 +232,8 @@ R 4.2 has the full table. In short, where the projected goal fails:
   - every candidate is a root carrier (assumed, conditioned, asserted);
   - Lean checks, over the existing constrained joint set, that every admissible mixed choice has an admissible
     uniform representative with the same models, the same `decides` at typed tuples and the same assumptions
-    (`coupling_complete`).
+    (`coupling_complete`). "The same models" is under the document's semantics: W1's elaboration without a
+    norm-defaults block, the unspecified completion with one, never the placeholder `deny`.
   Otherwise the group stays uncoupled. Local-accommodation and unconditional-goal candidates are excluded from goal
   coupling; they couple only through an explicit shared source-choice identity with its own preservation proof. A
   joint set over budget is `ResourceLimit: joint choices`, UNKNOWN.
@@ -221,8 +254,9 @@ R 4.2 has the full table. In short, where the projected goal fails:
   actively deceive the user about its content." Where the condition fails: "Where there is no system prompt, this
   rule contributes no decision." For a plain claim: "Where Alice has a manager, every manager of Alice is ready."
 - **Asserted.** "There is exactly one owner, and that owner is ready."
-- **Local accommodation** (only where PS-E1 measures it). The sentence with the presupposition read in place: "It is
-  not so that there is exactly one owner and that owner is ready."
+- **Local accommodation** (only at a shallow frame where PS-E1 measures it). The sentence with the presupposition
+  read in place, shown beside the conditioned line as the same reading: "It is not so that both of these are so:
+  there is exactly one owner, and that owner is ready."
 - **Unresolved.** "Two readings: (1) Assumed: every situation this rule covers has operator instructions. (2) This
   rule applies only where the operator has given instructions." Each reading is followed by a situation where they
   differ, in document terms.
@@ -239,8 +273,9 @@ R 4.2 has the full table. In short, where the projected goal fails:
   possessive, plural, factive, change-of-state, iterative, wh-title), `pre` (in English) and `carrier` (proved,
   assumed, conditioned, asserted, unresolved, or `none` for a title). When a carrier is unresolved, `other_blockers`
   gains `presupposition`.
-- **Heading units.** A heading with a trigger carries its presupposition. A heading without one is a title (scope's
-  SC-3a) and has no `presupposed_claim` (PS-0p).
+- **Heading units.** A heading with a trigger carries its presupposition, as the heading's own unit with content
+  exactly `pre` (the `heading` position, 3). A heading without one is a title (scope's SC-3a) and has no
+  `presupposed_claim` (PS-0p).
 - **The block.** Once PS-2a lands, the translation document also carries the `presuppositions` block (3), which Lean
   checks. Before that, the ledger fields are the record and the audit checks them.
 
@@ -251,14 +286,16 @@ R 4.2 has the full table. In short, where the projected goal fails:
   user makes a request, Claude must answer the user’s request." is one sentence with one reading. Admission needs a
   certified collapse or an explicit rewrite; agreement among readers never admits a sentence by itself.
 - **Otherwise refused.** The sentence is refused with `PresuppositionUnresolved: ‘<words>’ takes for granted that
-  <pre>.` and offers exactly the rewrites for the row's candidates at that position:
+  <pre>.` and offers exactly one rewrite per emitted reading at that position:
   - **assumed:** add the sentence "<goal>." to the document;
   - **conditioned:** "Where <goal>, <sentence>.", or "If <pre>, then <sentence>." for a rule (offered only for an
-    `unspecified` predicate);
+    `unspecified` predicate). At a shallow frame whose cell lists local accommodation, the sentence with the
+    presupposition spelled out in place is shown beside it, as the same reading's other wording;
   - **asserted:** "<goal>, and <sentence>."
-  - **local accommodation**, only where PS-E1 measures it: the sentence with the presupposition spelled out in place.
   - A one-reading cell offers exactly one rewrite; the original wording is still refused.
-- **Rewrite discipline.** Each rewrite has exactly one reading (attitudes' `refused_have_rewrites` pattern).
+- **Rewrite discipline.** Each rewrite has exactly one reading (attitudes' `refused_have_rewrites` pattern). The two
+  wordings that bracket a conjunction under "not" and under "if … then" ("both of these are so: …") are fixtures of
+  it (spec 7.6).
 
 ## 3. Wire form (the `presuppositions` block)
 
@@ -271,469 +308,132 @@ R 4.2 has the full table. In short, where the projected goal fails:
      "arguments": {"sort": "entity", "restriction": ["binary", "content_of", ["var", 0], ["var", 1]]},
      "carrier": {"conditioned": {}}},
     {"id": "p2", "unit": "u0013.presupposition", "span": [6120, 6144], "row": "plural",
-     "position": {"path": []},
-     "arguments": {"sort": "entity", "restriction": ["binary", "core_value_of", ["var", 0], ["const", "claude"]],
-                   "body": ["top"]},
+     "position": {"heading": {}},
+     "arguments": {"sort": "entity", "restriction": ["binary", "core_value_of", ["var", 0], ["const", "claude"]]},
      "carrier": {"assumed": {"unit": "u0013.presupposition"}}}
   ]
 }
 ```
 
 - **Position.** `path` is a list of child indices into the unit's base content (1.3); `rule_act` names a W1 rule of
-  the unit.
-- **Rule acts.** At `rule_act`, `body` is absent: a rule's act is an atom, so there is no clause to rebuild. A
-  present `body` is `PresuppositionMismatch: <obligation>: body`. In p1 the conditioned carrier is admitted only
-  because the rule's predicate is `unspecified` in the document's norm-defaults block.
+  the unit; `heading` marks the unit as a heading's presupposition (spec 1.4a).
+- **Rule acts and headings.** At `rule_act` and at `heading`, `body` is absent: a rule's act is an atom, and a
+  heading's unit is `pre` itself, so there is no clause to rebuild. A present `body` is
+  `PresuppositionMismatch: <obligation>: body`. In p1 the conditioned carrier is admitted only because the rule's
+  predicate is `unspecified` in the document's norm-defaults block.
+- **Headings.** p2 is assumed on its own unit, which is admitted only if the unit is asserted and its content is
+  exactly `pre`, "Some entity is a core value of Claude." An obligation at a path or a rule act never assumes its own
+  unit.
 - **Formulas.** Formulas are P0 wire formulas over the hole's context with the described entity at index 0.
 - **Ids and nulls.** Ids are tokens of the existing grammar. Optional fields are absent, never `null`.
 - **Identity.** The block is inside the front matter, so it is identity-bound through `document_id` like discourse's
   block.
 - **Python.** Python never reads the block's meaning; it sends it to Lean.
 
-## 4. Lean: files and exact statements (PS-1 unless marked)
+## 4. Lean: files (PS-1 unless marked; every declaration in the spec)
 
-### 4.1 `lean/VE/Presupposition/Frame.lean`
+The spec, [presupposition.md](presupposition.md) section 4, owns every Lean definition, body and theorem statement
+of this plan, and the stub transcribes them. Draft 2 of this plan restated them here, and they drifted from the spec;
+draft 3 replaces each block with a reference (R-11). Each subsection names the file, its batch, what it holds, and
+the spec section.
 
-```lean
-import VE.Semantics
+### 4.1 `lean/VE/Presupposition/Frame.lean` (spec 4.2)
 
-namespace VE.Presupposition
-universe u
+- **What.** One-hole frames over VE's formula constructors (`Frame`), `plug`, `binders`, the projected goal `goal`
+  (Karttunen 1974, Heim 1983: negation and left sides pass it through; the right side of "and" and "if" gains the
+  left side as a hypothesis, the right side of "or" its negation; every binder closes it universally), the
+  unconditional closure `close`, the incremental local context `Reach` (Schlenker 2009), `locate` (the regeneration
+  step of PS-2a), the position classes and `cls`, and the shallow frames `Frame.shallow` with their `Decidable`
+  instance (R-D1).
+- **Statements.** `goal_denote`, `plug_congr` (local replacement), `reach_typed`, `plug_wellFormed`,
+  `goal_wellFormed`, `close_wellFormed`, `locate_plug`, `Frame.shallowB_iff`.
 
-/-- A formula with one hole: where a trigger stands. -/
-inductive Frame where
-  | hole
-  | notF (f : Frame)
-  | andL (f : Frame) (r : VE.Formula)
-  | andR (l : VE.Formula) (f : Frame)
-  | orL (f : Frame) (r : VE.Formula)
-  | orR (l : VE.Formula) (f : Frame)
-  | impL (f : Frame) (r : VE.Formula)
-  | impR (l : VE.Formula) (f : Frame)
-  | allF (s : String) (f : Frame)
-  | exF (s : String) (f : Frame)
-  deriving DecidableEq, Repr
+### 4.2 `lean/VE/Presupposition/Reading.lean` (spec 4.3)
 
-def Frame.plug : Frame → VE.Formula → VE.Formula
-  | .hole, a => a
-  | .notF f, a => .not (f.plug a)
-  | .andL f r, a => .and (f.plug a) r
-  | .andR l f, a => .and l (f.plug a)
-  | .orL f r, a => .or (f.plug a) r
-  | .orR l f, a => .or l (f.plug a)
-  | .impL f r, a => .implies (f.plug a) r
-  | .impR l f, a => .implies l (f.plug a)
-  | .allF s f, a => .all s (f.plug a)
-  | .exF s f, a => .ex s (f.plug a)
+- **What.** `Reading` (`pre`, `strong`, `weak` over the hole's context) and its definedness `DefinedAt`; the root
+  carriers `assertedAt`, `conditionedAt` and `inPlaceAt`; the one composition operator `carried` (asserted goals
+  above every condition, D2-8) and its inverse shape `peel`.
+- **Statements.** `collapse`, `collapse_certified`, `collapse_assumed`; `asserted_false_off_goal`,
+  `conditioned_vacuous_off_goal`, `carriers_on_goal`; the whole-unit invariants `carried_denote`, `carried_asserted`,
+  `carried_conditioned_off`, `carried_on_goals`, `peel_carried`; and R-D2's `carried_idle` and
+  `inPlace_iff_conditioned_shallow`, which make in place at a shallow frame the conditioned reading's alias. No
+  equivalence of in place with another candidate is stated at any other frame.
 
-/-- Binder sorts between the root and the hole, innermost first: the hole's context is `f.binders ++ Γ`. -/
-def Frame.binders : Frame → List String
-  | .hole => []
-  | .allF s f | .exF s f => f.binders ++ [s]
-  | .notF f | .andL f _ | .andR _ f | .orL f _ | .orR _ f | .impL f _ | .impR _ f => f.binders
-
-/-- The projected goal (Karttunen 1974, Heim 1983): what must hold at the root for `p` to hold wherever the hole
-    is reached. Negation and left sides pass it through; the right side of `and`/`implies` gains the left side as a
-    hypothesis, the right side of `or` its negation; every binder closes it universally. -/
-def Frame.goal : Frame → VE.Formula → VE.Formula
-  | .hole, p => p
-  | .notF f, p | .andL f _, p | .orL f _, p | .impL f _, p => f.goal p
-  | .andR l f, p | .impR l f, p => .implies l (f.goal p)
-  | .orR l f, p => .implies (.not l) (f.goal p)
-  | .allF s f, p | .exF s f, p => .all s (f.goal p)
-
-/-- The valuations at which the hole is evaluated from `ρ`, under what the text to the hole's left guarantees
-    there (the incremental local context, Schlenker 2009). -/
-def Frame.Reach (S : VE.Structure.{u}) : Frame → VE.Valuation S → VE.Valuation S → Prop
-  | .hole, ρ, τ => τ = ρ
-  | .notF f, ρ, τ | .andL f _, ρ, τ | .orL f _, ρ, τ | .impL f _, ρ, τ => f.Reach S ρ τ
-  | .andR l f, ρ, τ | .impR l f, ρ, τ => l.denote S ρ ∧ f.Reach S ρ τ
-  | .orR l f, ρ, τ => ¬ l.denote S ρ ∧ f.Reach S ρ τ
-  | .allF s f, ρ, τ | .exF s f, ρ, τ => ∃ v, S.domain s v ∧ f.Reach S (v :: ρ) τ
-
-theorem goal_denote (f : Frame) (p : VE.Formula) (S : VE.Structure.{u}) (ρ : VE.Valuation S) :
-    (f.goal p).denote S ρ ↔ ∀ τ, f.Reach S ρ τ → p.denote S τ
-
-/-- Local replacement: contents that agree wherever the hole is reached may be exchanged. -/
-theorem plug_congr (f : Frame) (a b : VE.Formula) (S : VE.Structure.{u}) (ρ : VE.Valuation S)
-    (h : ∀ τ, f.Reach S ρ τ → (a.denote S τ ↔ b.denote S τ)) :
-    (f.plug a).denote S ρ ↔ (f.plug b).denote S ρ
-
-theorem reach_typed (f : Frame) (S : VE.Structure.{u}) (Γ : List String) (ρ τ : VE.Valuation S)
-    (hρ : VE.Valuation.Typed S Γ ρ) (h : f.Reach S ρ τ) : VE.Valuation.Typed S (f.binders ++ Γ) τ
-
-theorem plug_wellFormed (E : VE.Environment) (f : Frame) (a : VE.Formula) (Γ : List String)
-    (h : (f.plug a).WellFormed E Γ) : a.WellFormed E (f.binders ++ Γ)
-
-theorem goal_wellFormed (E : VE.Environment) (f : Frame) (a p : VE.Formula) (Γ : List String)
-    (hf : (f.plug a).WellFormed E Γ) (hp : p.WellFormed E (f.binders ++ Γ)) : (f.goal p).WellFormed E Γ
-
-/-- The hole at a recorded path (child indices from the root): the regeneration step of PS-2a. -/
-def Frame.locate : VE.Formula → List Nat → Option (Frame × VE.Formula)
-
-theorem locate_plug (a : VE.Formula) (path : List Nat) (f : Frame) (b : VE.Formula)
-    (h : Frame.locate a path = some (f, b)) : f.plug b = a
-
-end VE.Presupposition
-```
-
-### 4.2 `lean/VE/Presupposition/Reading.lean`
-
-```lean
-import VE.Presupposition.Frame
-import VE.Norms.Prefix      -- VE.Norms.Sat; the module discourse's Descriptions.lean uses for VE.Tableau
-
-namespace VE.Presupposition
-universe u
-
-/-- What a trigger row gives at its hole, all three over the hole's context. -/
-structure Reading where
-  pre    : VE.Formula   -- what the trigger takes for granted
-  strong : VE.Formula   -- the clause with `pre` asserted: false where `pre` fails ("asserted")
-  weak   : VE.Formula   -- the clause where `pre` holds, true where it fails ("conditioned")
-  deriving DecidableEq, Repr
-
-/-- A row's definedness lemma at one valuation. -/
-def Reading.DefinedAt (r : Reading) (S : VE.Structure.{u}) (τ : VE.Valuation S) : Prop :=
-  r.strong.denote S τ ↔ r.pre.denote S τ ∧ r.weak.denote S τ
-
-/-- Where the projected goal holds, the strong and weak readings of the whole sentence agree. -/
-theorem collapse (f : Frame) (r : Reading) (S : VE.Structure.{u}) (ρ : VE.Valuation S)
-    (hdef : ∀ τ, f.Reach S ρ τ → r.DefinedAt S τ) (hgoal : (f.goal r.pre).denote S ρ) :
-    (f.plug r.strong).denote S ρ ↔ (f.plug r.weak).denote S ρ
-
-/-- The proved carrier: a checked certificate for the goal from the premises removes the choice. -/
-theorem collapse_certified (E : VE.Environment) (prem : List VE.Formula) (f : Frame) (r : Reading)
-    (c : VE.Tableau.Certificate) (acc : VE.Tableau.checkCertificate E prem (f.goal r.pre) c = true)
-    (hdef : ∀ S : VE.Structure.{u}, S.Admissible E → ∀ τ, f.Reach S [] τ → r.DefinedAt S τ)
-    (S : VE.Structure.{u}) (hS : S.Admissible E) (hprem : VE.Norms.Sat S prem) :
-    (f.plug r.strong).denote S [] ↔ (f.plug r.weak).denote S []
-
-/-- The assumed carrier: with the goal an explicit premise, the readings agree as well. -/
-theorem collapse_assumed (E : VE.Environment) (prem : List VE.Formula) (f : Frame) (r : Reading)
-    (hdef : ∀ S : VE.Structure.{u}, S.Admissible E → ∀ τ, f.Reach S [] τ → r.DefinedAt S τ)
-    (S : VE.Structure.{u}) (hS : S.Admissible E) (hprem : VE.Norms.Sat S (prem ++ [f.goal r.pre])) :
-    (f.plug r.strong).denote S [] ↔ (f.plug r.weak).denote S []
-
-/-- Root carriers (D2-2): asserted is `goal ∧ clause`, conditioned is `goal → clause`. -/
-def assertedAt (f : Frame) (r : Reading) : VE.Formula := .and (f.goal r.pre) (f.plug r.strong)
-def conditionedAt (f : Frame) (r : Reading) : VE.Formula := .implies (f.goal r.pre) (f.plug r.strong)
-
-theorem asserted_false_off_goal (f : Frame) (r : Reading) (S : VE.Structure.{u}) (ρ : VE.Valuation S)
-    (h : ¬ (f.goal r.pre).denote S ρ) : ¬ (assertedAt f r).denote S ρ
-theorem conditioned_vacuous_off_goal (f : Frame) (r : Reading) (S : VE.Structure.{u}) (ρ : VE.Valuation S)
-    (h : ¬ (f.goal r.pre).denote S ρ) : (conditionedAt f r).denote S ρ
-
-/-- Several obligations in one unit (D2-8): asserted goals above every condition, then the base content. -/
-inductive Root where
-  | none | asserted | conditioned
-def carried (ms : List (Root × VE.Formula)) (B : VE.Formula) : VE.Formula
-
-theorem carried_denote (ms : List (Root × VE.Formula)) (B : VE.Formula) (S : VE.Structure.{u})
-    (ρ : VE.Valuation S) :
-    (carried ms B).denote S ρ ↔
-      (∀ m ∈ ms, m.1 = .asserted → m.2.denote S ρ) ∧ ((∀ m ∈ ms, m.1 = .conditioned → m.2.denote S ρ) → B.denote S ρ)
-
-end VE.Presupposition
-```
-
-The whole-unit invariants (`carried_asserted`, `carried_conditioned_off`, `carried_on_goals`) and the exact bodies
-are in [presupposition.md](presupposition.md) 4.3.
-
-### 4.3 `lean/VE/Discourse/Descriptions.lean` (edited, D2-7) and `lean/VE/Presupposition/Rows.lean`
+### 4.3 `lean/VE/Discourse/Descriptions.lean` (edited, D2-7) and `lean/VE/Presupposition/Rows.lean` (spec 4.1, 4.4)
 
 Discourse's file is the one owner of the description formulas. PS-1 generalises its builders there; today's
 `uniqueD` and `assertive` become wrappers, equal to their current bodies by `rfl`, so every discourse answer (S11) is
 byte-identical. The file is listed in `lean/VE/Route/frozen-sources.sha256`, so PS-1 rehashes it.
 
-```lean
--- lean/VE/Discourse/Descriptions.lean, namespace VE.Discourse
-/-- `U(D)` with the restriction written at each binder: `Dr` at the outer one, `Dr'` (the same restriction
-    weakened past the outer binder) at the inner one. -/
-def uniqueAt (σ : String) (Dr Dr' : VE.Formula) : VE.Formula :=
-  .ex σ (.and Dr (.all σ (.implies Dr' (.eq (.var 0) (.var 1)))))
-def assertiveAt (σ : String) (Dr Dr' P : VE.Formula) : VE.Formula :=
-  .ex σ (.and Dr (.and (.all σ (.implies Dr' (.eq (.var 0) (.var 1)))) P))
-
-/-- A restriction over `σ :: Δ` (`n = Δ.length`) weakened past one new binder at index 1, by W1's `inst`. -/
-def raise1 (n : Nat) (Dr : VE.Formula) : VE.Formula :=
-  VE.Norms.inst (.var 0 :: (List.range n).map (fun i => .var (i + 2))) Dr
-def uniqueOpen (n : Nat) (σ : String) (Dr : VE.Formula) : VE.Formula := uniqueAt σ Dr (raise1 n Dr)
-def assertiveOpen (n : Nat) (σ : String) (Dr P : VE.Formula) : VE.Formula := assertiveAt σ Dr (raise1 n Dr) P
-
-def uniqueD (σ : String) (Dr : VE.Formula) : VE.Formula := uniqueAt σ Dr Dr          -- rfl to today's body
-def assertive (σ : String) (Dr P : VE.Formula) : VE.Formula := assertiveAt σ Dr Dr P -- rfl to today's body
-
-theorem uniqueOpen_zero (σ : String) (Dr : VE.Formula) : uniqueOpen 0 σ Dr = uniqueD σ Dr
-theorem assertiveOpen_zero (σ : String) (Dr P : VE.Formula) : assertiveOpen 0 σ Dr P = assertive σ Dr P
-```
-
-```lean
-import VE.Presupposition.Reading
-import VE.Discourse.Descriptions
-
-namespace VE.Presupposition
-universe u
-
-/-- A singular definite, built by discourse's own builders. On closed restrictions it is discourse@1's. -/
-def definite (n : Nat) (σ : String) (D P : VE.Formula) : Reading :=
-  { pre := VE.Discourse.uniqueOpen n σ D, strong := VE.Discourse.assertiveOpen n σ D P,
-    weak := VE.Discourse.presupposed σ D P }
-
-/-- Generalises `VE.Discourse.description_definedness` (which is the case `Δ = []`, `τ = []`). -/
-theorem definite_defined (E : VE.Environment) (Δ : List String) (σ : String) (hσ : σ ∈ E.sorts)
-    (D P : VE.Formula) (hD : D.WellFormed E (σ :: Δ)) (hP : P.WellFormed E (σ :: Δ))
-    (S : VE.Structure.{u}) (hS : S.Admissible E) (τ : VE.Valuation S) (hτ : VE.Valuation.Typed S Δ τ) :
-    (definite Δ.length σ D P).DefinedAt S τ
-
-/-- A plural or mass description or possessive: existence without uniqueness, distributive predication. -/
-def plural (σ : String) (D P : VE.Formula) : Reading :=
-  { pre := .ex σ D, strong := .and (.ex σ D) (.all σ (.implies D P)), weak := .all σ (.implies D P) }
-
-theorem plural_defined (σ : String) (D P : VE.Formula) (S : VE.Structure.{u}) (τ : VE.Valuation S) :
-    (plural σ D P).DefinedAt S τ
-
-/-- Any trigger whose owner supplies what it takes for granted and the clause. -/
-def generic (pre body : VE.Formula) : Reading :=
-  { pre := pre, strong := .and pre body, weak := .implies pre body }
-
-theorem generic_defined (pre body : VE.Formula) (S : VE.Structure.{u}) (τ : VE.Valuation S) :
-    (generic pre body).DefinedAt S τ
-
-end VE.Presupposition
-```
+- **Discourse's file (spec 4.1).** The builders `uniqueAt` and `assertiveAt` write the restriction at each binder;
+  `raise1` weakens a restriction past the inner binder through W1's `VE.Norms.inst`; `uniqueOpen` and
+  `assertiveOpen` are the open forms; `uniqueD` and `assertive` become their closed wrappers. Statements:
+  `raise1_zero`, `uniqueOpen_zero`, `assertiveOpen_zero`.
+- **Rows.lean (spec 4.4).** The rows `definite` (discourse's builders), `plural` (existence without uniqueness,
+  distributive predication) and `generic` (the owner supplies `pre` and the clause); `buildReading` at a content
+  position and `buildPre` at a rule act and a heading, whose errors name the field. Statements: `definite_defined`
+  (generalising `VE.Discourse.description_definedness`), `plural_defined`, `generic_defined`.
 
 If `VE.Norms.inst`'s list form cannot express the weakening for every `n`, the statement review adds one
 `liftFrom` for `VE.Formula` beside `VE.Norms.inst`, in `Norms/Basic.lean`'s owner's file, as the single owner of
 substitution. This plan defines none of its own, and no description formula outside discourse's file.
 
-### 4.4 `lean/VE/Presupposition/Rules.lean`
+### 4.4 `lean/VE/Presupposition/Rules.lean` (spec 4.5)
 
-```lean
-import VE.Presupposition.Reading
-import VE.Norms.Elaborate
+- **What.** The rule goal `ruleGoal` (a trigger in a rule's act: its local context is the rule's applicability, the
+  binders are the regulated predicate's sorts in declared order, never `N.over`, D2-1); the conditioned carrier for a
+  rule, `conditionNode`; and `conditionRule`, the plan's `replaceNode` pinned, which conditions the named rule in
+  place and keeps every rule's name, predicate, sign, carve-outs and precedence.
+- **Statements.** `condition_applies`, `conditionRule_shape`, `rule_collapse_decides` (at any valuation where the
+  rule's applicability gives the condition, conditioning changes no decision), `rule_collapse_typed` (the same at
+  every typed tuple, from the rule goal), `rule_collapse_certified`, `conditioned_contributes_nothing` (where the
+  condition fails the conditioned rule selects nothing), `unsaid_iff` (norm-defaults' `value3` gives UNDECIDED for an
+  `unspecified` predicate exactly where neither sign decides), `source_identity_entails`.
 
-namespace VE.Presupposition
-universe u
-
-/-- A trigger in a rule's act: its local context is the rule's applicability (guard, no carve-out). The binders are
-    the regulated predicate's argument sorts, in declared order (D2-1), never `N.over`. -/
-def ruleGoal (r : VE.Norms.Regulated) (N : VE.Norms.Node) (pre : VE.Formula) : VE.Formula :=
-  VE.Norms.bindAll r.sorts (.implies (VE.Norms.applies N) pre)
-
-/-- The conditioned carrier for a rule: it applies only where the condition holds. -/
-def conditionNode (N : VE.Norms.Node) (c : VE.Formula) : VE.Norms.Node :=
-  { N with guard := .and N.guard c }
-
-/-- `replaceNode`, pinned: the rule named `n` conditioned in place; names, predicates, signs, carve-outs and
-    precedence of every rule are kept (`conditionRule_shape`). -/
-def conditionRule (T : VE.Norms.Tree) (n : String) (c : VE.Formula) : VE.Norms.Tree :=
-  { T with nodes := T.nodes.map (fun M => if M.name == n then conditionNode M c else M) }
-
-theorem condition_applies (N : VE.Norms.Node) (c : VE.Formula) (S : VE.Structure.{u}) (ρ : VE.Valuation S) :
-    (VE.Norms.applies (conditionNode N c)).denote S ρ ↔ (VE.Norms.applies N).denote S ρ ∧ c.denote S ρ
-
-/-- At any valuation where the rule's applicability gives the condition, conditioning changes no decision. -/
-theorem rule_collapse_decides (T : VE.Norms.Tree) (n : String) (c : VE.Formula) (S : VE.Structure.{u})
-    (ρ : VE.Valuation S) (h : ∀ M ∈ T.nodes, M.name = n → (VE.Norms.applies M).denote S ρ → c.denote S ρ)
-    (p : String) (sign : Bool) :
-    (VE.Norms.decides (conditionRule T n c) p sign).denote S ρ ↔ (VE.Norms.decides T p sign).denote S ρ
-
-/-- The same at every typed tuple of the regulated predicate's sorts, from the rule-level goal. -/
-theorem rule_collapse_typed (T : VE.Norms.Tree) (r : VE.Norms.Regulated) (N : VE.Norms.Node) (pre : VE.Formula)
-    (S : VE.Structure.{u}) (hname : ∀ M ∈ T.nodes, M.name = N.name → M = N) (hgoal : (ruleGoal r N pre).denote S [])
-    (vs : List S.Carrier) (hvs : VE.TupleTyped S r.sorts vs) (p : String) (sign : Bool) :
-    (VE.Norms.decides (conditionRule T N.name pre) p sign).denote S (VE.Norms.tupleVal vs) ↔
-      (VE.Norms.decides T p sign).denote S (VE.Norms.tupleVal vs)
-
-end VE.Presupposition
-```
-
-The certified form (`rule_collapse_certified`), `conditionRule_shape`, `conditioned_contributes_nothing` (where the
-condition fails the conditioned rule selects nothing) and `unsaid_iff` (norm-defaults' `value3` gives UNDECIDED for an
-`unspecified` predicate exactly where neither sign decides) are in [presupposition.md](presupposition.md) 4.5.
 Admission requires a valid tree: the recorded (conditioned) tree passes W1's `validate`, and so does the base tree
 that Lean derives from it by removing the carriers' conditions.
 
-### 4.5 `lean/VE/Presupposition/Agree.lean`: the existing pieces are instances
+### 4.5 `lean/VE/Presupposition/Agree.lean`: the existing pieces are instances (spec 4.6)
 
-```lean
-import VE.Presupposition.Rows
-import VE.Data.Background
-import VE.SpeechActs.Answer
+- `discourse_definite_is_row`: discourse@1's definite is the `definite` row on closed restrictions (one builder, no
+  copy).
+- `data_attribute_proved`: W5 `data@0`'s total and functional flags prove the goal of "the r of c"; the English
+  `data@0` already admits is the proved case, needing no reading choice.
+- `speech_question_top`: a question's presupposition is an obligation at the empty frame; `SupportedGiven` is the
+  assumed carrier and `Supported` the proved one, and their answer texts are unchanged.
 
-namespace VE.Presupposition
-universe u
+### 4.6 `lean/VE/Presupposition/{Wire,Admit,Run}.lean` (PS-2a; spec 4.7)
 
-/-- discourse@1's definite is this plan's `definite` row on closed restrictions (no copy: one builder). -/
-theorem discourse_definite_is_row (σ : String) (D P : VE.Formula) :
-    (definite 0 σ D P).pre = VE.Discourse.uniqueD σ D ∧
-    (definite 0 σ D P).strong = VE.Discourse.assertive σ D P ∧
-    (definite 0 σ D P).weak = VE.Discourse.presupposed σ D P
+- **What.** The wire types (`Carrier`, `Candidate`, `Position` with `path`, `ruleAct` and `heading`, `Args`,
+  `Obligation`), the candidate table and its shape check (`cellOk`, `tableOk`), the decoded document `PDoc` (with
+  `defaults`, whether it carries `norm-defaults@0`), the regenerated obligation `Checked`, the `Report`, the
+  readings of an open set (`RReading` with its `aliases`, `claimReading`, `ruleReading`, `emitted`, `aliasesOf`,
+  `expectedReadings`), `carrierAllowed`, `restrictionPaths` and `entersRestriction`, and `admit`, the check in five
+  steps (spec 4.7) over the decoded W2 document: `ve-document@2`'s units when discourse is present, the Lean document
+  mode's decoded units after lf-16g.
+- **Statements.** `admit_regenerates`, `admit_goals_from_base`, `admit_rule_goal`, `admit_heading_goal`,
+  `admit_outside_restrictions`, `admit_claim_content`, `admit_rule_content`, `admit_proved_sound` (D2-3),
+  `admit_assumed_sound` (the assumed unit is the obligation's own only at a heading), `admit_unconditional_sound`,
+  `admit_conditioned_rule_unspecified` (conditioned, or unresolved with conditioned in the cell),
+  `admit_carrier_candidate` (in the cell, in place only at a shallow frame), `admit_unresolved_readings` (exactly the
+  expected readings, at least two), `admit_empty_table`, `admit_inPlace_alias`, `no_silent_accommodation`,
+  `one_open_per_unit`, `candidates_ruleAct`, `no_block_unchanged`.
+- **Diagnostics.** Spec 5: `PresuppositionUnknownRow`, `PresuppositionPosition`, `PresuppositionMismatch`,
+  `PresuppositionCertificate`, `PresuppositionAssumedUnit`, `PresuppositionDefault`, `PresuppositionUnresolved`,
+  `PresuppositionCandidates`, and `ResourceLimit: presuppositions` (UNKNOWN, never a rejection). Lean writes the
+  text; Python prints it.
 
-/-- W5 `data@0`: total and functional flags prove the goal of "the r of c"; the English `data@0` already admits
-    is the proved case, needing no reading choice. -/
-theorem data_attribute_proved (E : VE.Environment) (f : VE.Data.Background.Flag) (c : String)
-    (S : VE.Structure.{u}) (hS : S.Admissible E) (hc : E.constants c = some f.source)
-    (hfun : (VE.Data.Background.functionalPremise f).denote S [])
-    (htot : (VE.Data.Background.totalPremise f).denote S []) :
-    (Frame.hole.goal (VE.Discourse.uniqueD f.target (.binary f.name (.const c) (.var 0)))).denote S []
+### 4.7 `lean/VE/Presupposition/Couple.lean` (PS-3; spec 4.8)
 
-/-- Speech acts: a question's presupposition is an obligation at an empty frame. `SupportedGiven` is the assumed
-    carrier and `Supported` the proved one; their answer texts are unchanged. -/
-theorem speech_question_top (D : VE.SpeechActs.SpeechDoc) (q : VE.SpeechActs.Question) :
-    Frame.hole.goal (VE.SpeechActs.presupposition D q) = VE.SpeechActs.presupposition D q
-
-end VE.Presupposition
-```
-
-### 4.6 `lean/VE/Presupposition/{Wire,Admit,Run}.lean` (PS-2a)
-
-```lean
-namespace VE.Presupposition
-
-/-- How one obligation is carried. The words are discourse@1's (proved, assumed, unresolved) plus the others. -/
-inductive Carrier where
-  | proved (node : String)
-  | assumed (unit : String)
-  | conditioned
-  | asserted
-  | inPlace                 -- local accommodation, only where PS-E1 measures it
-  | unconditional (unit : String)   -- the proviso's unconditional goal, only where PS-E1 measures it
-  | unresolved
-  deriving DecidableEq, Repr
-
-inductive PositionClass where
-  | top | negated | antecedent | consequent | ruleAct | ruleGuard | modal | attitude | reported
-  deriving DecidableEq, Repr
-
-inductive Candidate where
-  | assumed | conditioned | asserted | inPlace | unconditional
-  deriving DecidableEq, Repr
-
-/-- A trigger row: the reading it builds from recorded arguments, and the candidates readers take at each
-    position class (PS-E1's table; an unmeasured class lists none). -/
-structure Row where
-  name       : String
-  build      : Args → Except String Reading
-  candidates : PositionClass → List Candidate
-
-structure Obligation where
-  id       : String
-  unit     : String
-  span     : Nat × Nat            -- prose bytes of the trigger words (display and audit only)
-  row      : String
-  position : Position             -- a path into the unit's content, or a W1 rule of the unit
-  args     : Args
-  carrier  : Carrier
-
-/-- An obligation as Lean regenerates it: never read from the wire unchecked. -/
-structure Checked where
-  ob      : Obligation
-  frame   : Frame                 -- `Frame.locate` on the content, or the rule frame
-  reading : Reading
-  goal    : VE.Formula            -- `frame.goal reading.pre`, or `ruleGoal`
-  pos     : PositionClass
-
-def regenerate (D : PDoc) (o : Obligation) : Except String Checked
-def admit (D : PDoc) : Except String Report
-
-theorem admit_regenerates (D : PDoc) (R : Report) (h : admit D = .ok R) :
-    R.checked.map (·.ob) = D.block.obligations ∧ ∀ c ∈ R.checked, regenerate D c.ob = .ok c
-
-/-- D2-3: the certificate uses only the units strictly before the obligation's unit and the declared background. -/
-theorem admit_proved_sound (D : PDoc) (R : Report) (h : admit D = .ok R) (c : Checked) (hc : c ∈ R.checked)
-    (n : String) (hp : c.ob.carrier = .proved n) :
-    ∃ cert, nodeCertificate D n = some cert ∧
-      VE.Tableau.checkCertificate (env D) (premisesBefore D c.ob.unit) c.goal cert = true
-
-theorem admit_assumed_sound (D : PDoc) (R : Report) (h : admit D = .ok R) (c : Checked) (hc : c ∈ R.checked)
-    (u : String) (hp : c.ob.carrier = .assumed u) :
-    unitKind D u = some .asserted ∧ unitContent D u = some c.goal
-
-/-- D2-8: every carrier's recorded content is regenerated from the base content, proved and assumed included. -/
-theorem admit_content_sound (D : PDoc) (R : Report) (h : admit D = .ok R) (c : Checked) (hc : c ∈ R.checked) :
-    recordedContent D c.ob.unit = some (regeneratedContent D R c.ob.unit)
-
-/-- D2-2: a conditioned rule is admitted only for an `unspecified` predicate (otherwise `PresuppositionDefault`). -/
-theorem admit_conditioned_rule_unspecified (D : PDoc) (R : Report) (h : admit D = .ok R) (c : Checked)
-    (hc : c ∈ R.checked) (n : String) (hpos : c.ob.position = .ruleAct n) (hcar : c.ob.carrier = .conditioned) :
-    ∃ N ∈ (norms D).nodes, N.name = n ∧ N.pred ∈ unspecified D
-
-/-- D2-4: a rule act has no `body` and offers at most assumed and conditioned. -/
-theorem candidates_ruleAct (row : String) (c : Candidate) (hc : c ∈ candidateTable row .ruleAct) :
-    c = .assumed ∨ c = .conditioned
-
-/-- Readings come from the row: an unresolved obligation's unit has an open set whose readings are exactly the
-    row's candidates at its position class, in the row's order, or the unit is UNFORMALISED. -/
-theorem admit_unresolved_readings (D : PDoc) (R : Report) (h : admit D = .ok R) (c : Checked)
-    (hc : c ∈ R.checked) (hu : c.ob.carrier = .unresolved) :
-    unitReadings D c.ob.unit = ((rowOf D c.ob.row).candidates c.pos).map (candidateContent c) ∨
-      unitUnformalised D c.ob.unit
-
-/-- No silent accommodation: a unit with one content never carries an unresolved obligation. -/
-theorem no_silent_accommodation (D : PDoc) (R : Report) (h : admit D = .ok R) (c : Checked)
-    (hc : c ∈ R.checked) (hu : c.ob.carrier = .unresolved) :
-    unitContent D c.ob.unit = none
-
-/-- A document without the block is admitted exactly as before. -/
-theorem no_block_unchanged (D : PDoc) (h : D.block = none) : admitWrapped D = admitBase D
-
-end VE.Presupposition
-```
-
-`PDoc`, `Args`, `Position`, `Report`, `env`, `premisesBefore`, `unitContent`, `unitKind`, `unitReadings`,
-`recordedContent`, `regeneratedContent`, `unspecified`, `candidateTable` and `candidateContent` are fixed by PS-S
-([presupposition.md](presupposition.md) 4.7) over the decoded W2 document. There, `admit_content_sound` is split into
-`admit_claim_content` and `admit_rule_content`, and the goals' derivation from the base content is
-`admit_goals_from_base` and `admit_rule_goal`. They take `ve-document@2`'s units when
-discourse is present, and the Lean document mode's decoded units after lf-16g.
-
-**Diagnostics** (Lean's text; Python prints it):
-- `PresuppositionUnknownRow: <obligation>: <row>`
-- `PresuppositionPosition: <obligation>`
-- `PresuppositionMismatch: <obligation>: <field>` (a `body` at a rule act included)
-- `PresuppositionCertificate: <obligation>` (a certificate that cites the obligation's own unit or a later one fails here)
-- `PresuppositionAssumedUnit: <obligation>: <unit>`
-- `PresuppositionDefault: <obligation>: <predicate>`: a conditioned rule whose predicate has an allow or deny default
-- `PresuppositionUnresolved: <obligation>`: a unit with one content
-- `PresuppositionCandidates: <obligation>`: readings not exactly the row's candidates, or a carrier that is not one
-- `ResourceLimit: presuppositions`: UNKNOWN, never a rejection
-
-### 4.7 `lean/VE/Presupposition/Couple.lean` (PS-3)
-
-```lean
-namespace VE.Presupposition
-
-/-- A candidate group (D2-5): unresolved obligations with equal goals, equal candidate lists and one reading
-    alternative, whose candidates are all root carriers. Forming a group never couples it. -/
-def groups (D : PDoc) (R : Report) : List Group
-
-/-- The check Lean runs over the existing constrained joint set `J` (lf-14d's enumeration, within its budget):
-    every admissible choice's uniform representative is admissible. -/
-def couplable (J : List Pick) (g : Group) : Bool
-
-/-- `requires` constraints for the couplable groups only, through lf-14d's API (its constraint type is pinned when
-    lf-14d lands; the statements below are over the enumerated joint set and do not depend on it). -/
-def couplings (D : PDoc) (R : Report) : List Constraint
-
-/-- No admissible joint reading is lost: every admissible mixed choice has an admissible uniform representative with
-    the same models, the same `decides` at typed tuples and the same assumptions. -/
-theorem coupling_complete (D : PDoc) (R : Report) (h : admit D = .ok R) (g : Group) (hg : g ∈ groups D R)
-    (hc : couplable (jointSet D R) g = true) (ch : Pick) (hch : ch ∈ jointSet D R) :
-    rep g ch ∈ jointSet D R ∧ Uniform g (rep g ch) ∧ SameModels D ch (rep g ch) ∧ SameDecides D ch (rep g ch) ∧
-      ∀ φ, φ ∈ assumptionsUnder D ch ↔ φ ∈ assumptionsUnder D (rep g ch)
-
-theorem coupled_uniform (D : PDoc) (R : Report) (h : admit D = .ok R) (g : Group) (hg : g ∈ groups D R)
-    (hc : couplable (jointSet D R) g = true) (ch : Pick) (hch : ch ∈ coupledJointSet D R) : Uniform g ch
-
-end VE.Presupposition
-```
-
-Exact bodies (`Group`, `Pick`, `rep`, `Uniform`, `SameModels`, `SameDecides`) are in
-[presupposition.md](presupposition.md) 4.8, where the joint set is a parameter `J`, lf-14d's enumeration. The source-identity choice for a closed `pre` is one explicit candidate
-"assume `pre` once" offered beside the per-rule candidates, with `source_identity_entails`: an assumed closed `pre`
-entails every listed `ruleGoal`.
+- **What.** Picks (one emitted candidate per unresolved obligation, never in place), groups (equal goals and equal
+  cells, root carriers only; forming a group never couples it), the representative `rep`, `Uniform`, `couplable`
+  (the check over the existing constrained joint set `J`, lf-14d's enumeration within its budget), `coupledSet`, and
+  the semantics of a pick: `formulasUnder`, `treeUnder`, `assumptionsUnder`, `pickedU`, `SatUnder` (W1's elaboration
+  without a norm-defaults block, the unspecified completion with one), `PickedWF`, `SameModels`, `SameDecides`. The
+  `requires` constraints for the couplable groups go through lf-14d's API; their type is pinned when lf-14d lands.
+- **Statements.** `coupling_complete` (no admissible joint reading is lost), `coupled_uniform`, `coupled_subset`,
+  and `couplings_spec` once lf-14d lands. The source-identity choice for a closed `pre` is one explicit candidate,
+  "assume `pre` once", offered beside the per-rule candidates, with `source_identity_entails` (4.4).
 
 ## 5. Fixtures
 
@@ -753,7 +453,7 @@ entails every listed `ruleGoal`.
 | S9 | "Her manager is ready, and Alice has exactly one manager." | unresolved: the right conjunct does not filter (incremental local context); pins the choice PS-E1 tests |
 | S10 | "Alice has exactly one manager. Her manager is ready." (two units) | proved from the earlier unit (a premise), one reading |
 | S11 | a discourse@1 document with ξ and η (regression) | byte-identical answers |
-| S12 | "The owner is not ready." (negated `definite`) | goal `U` passes the negation. Where there is no owner: asserted false, conditioned true (says nothing), local accommodation true ("true here"). Where there is exactly one owner, all three agree (`collapse`) |
+| S12 | "The owner is not ready." (negated `definite`, shallow frame) | goal `U` passes the negation. Where there is no owner: asserted false, conditioned true (says nothing), local accommodation true ("true here"). Where there is exactly one owner, all three agree (`collapse`). Local accommodation and conditioned agree in every model, so they are one reading: conditioned, with the in-place wording as its alias |
 | S13 | "The owner is ready." with two owners, one of them unready | `U` fails: asserted false, conditioned true. Draft 1's local weak reading was false here, which is why carriers act at the root |
 | S14 | W1 rule on `answer_required(agent, situation)`, act "answer the user’s request" | `ruleGoal` binds `agent` and `situation` from the predicate's sorts; the conditioned and original rules decide alike at every typed (agent, situation) pair. Mutant M3 takes the binders from `over` (empty): the goal is open, and the fixture fails |
 | S15 | two obligations with one goal in two units, carriers assumed and conditioned | the document has the models of the uniform assumed choice (the assumed goal makes the condition idle) |
@@ -767,22 +467,28 @@ entails every listed `ruleGoal`.
 | M2 | mutant: `admit` accepts `proved` without checking the certificate | P-cert fixture (a wrong certificate) is accepted; its test fails (the seeded Lean bug of PS-2a) |
 | M3 | mutant: `ruleGoal` binds `N.over` instead of the predicate's sorts | S14 fails |
 
+Draft 3 adds, with their exact models and values in spec 7: S22 (coupling under the unspecified completion), S23
+(a heading), S24 (open descriptions: `raise1` is needed), S25 (`not (not ·)`: in place differs from conditioned),
+S26 (two triggers in one unit at `not (not ·)`: in place differs from asserted and assumed), S27 (other negated
+frames that are not shallow); the admission fixtures A5u-allow, A5u-deny and A18 to A28; and the authoring fixtures
+E1 and E2 (the two bracketed paraphrases).
+
 ### 5.2 From the pilots (run `20261012T1800Z`; bytes are ledger spans)
 
 | Id | Unit (bytes, status) | Fixture | Expected |
 |---|---|---|---|
-| P1 | u0013.presupposition (24, U) | "Claude’s core values": `plural`, restriction `core_value_of(x, claude)`, body ⊤, carrier assumed (its own span) | CHECKED as an assumption; "Assumed (from ‘Claude’s core values’): Claude has at least one core value." |
-| P2 | u0095.presupposition (36, U) | "Following Anthropic’s guidelines": `plural`, `guideline_of(x, anthropic)` | as P1. It cannot prove "Anthropic’s guidelines" in u0073.s05, which comes before it: a proved carrier uses only strictly earlier units (D2-3) |
-| P3 | u0286.presupposition (29, U) | "Acknowledging open problems": `generic` (factive with a noun object), `pre` = `∃x open_problem(x)` | as P1 |
-| P4 | u0002 (37), u0235 (19) | singular `definite`: "Anthropic has exactly one mission"; "Claude has exactly one nature" | as P1 if VE English writes the uniqueness; otherwise stays UNFORMALISED with the note "uniqueness not writable (PS-6)" |
+| P1 | u0013.presupposition (24, U) | "Claude’s core values": a heading obligation (position `heading`), `plural`, restriction `core_value_of(x, claude)`, no body, carrier assumed on its own unit, whose content is exactly `pre`, "Some entity is a core value of Claude." | admitted (`admit_heading_goal`, `admit_assumed_sound`); CHECKED as an assumption; "Assumed (from ‘Claude’s core values’): Claude has at least one core value." A unit that says more than `pre` is `PresuppositionAssumedUnit` |
+| P2 | u0095.presupposition (36, U) | "Following Anthropic’s guidelines": a heading obligation, `plural`, `guideline_of(x, anthropic)` | as P1. It cannot prove "Anthropic’s guidelines" in u0073.s05, which comes before it: a proved carrier uses only strictly earlier units (D2-3) |
+| P3 | u0286.presupposition (29, U) | "Acknowledging open problems": a heading obligation, `generic` (factive with a noun object), `pre` = `∃x open_problem(x)` | as P1 |
+| P4 | u0002 (37), u0235 (19) | heading obligations, singular `definite`: `pre` is the uniqueness, "Anthropic has exactly one mission"; "Claude has exactly one nature" | as P1 if VE English writes the uniqueness; otherwise stays UNFORMALISED with the note "uniqueness not writable (PS-6)" |
 | P5 | u0268 (22), u0254 (50) with u0269.s02 | possessive the text withholds | never assumed alone. Optional reading set {assumed: "Claude has wellbeing."; no claim}; claimed only if the audit accepts (PS-5p) |
-| P6 | u0156.s03 (100, READINGS) | "its content" as `plural` in the rule's act, after act phrases split the object | candidates {assumed, conditioned}, separated by a situation without a system prompt. With the conditioned carrier (only if the predicate is `unspecified`), "… and, where there is one, about its content" |
+| P6 | u0156.s03 (100, READINGS) | "its content" as `plural` in the rule's act, after act phrases split the object | candidates {assumed, conditioned}, separated by a situation without a system prompt. With the conditioned carrier (only if the predicate is `unspecified`), "… and, where there is one, about its content". The open set with the conditioned reading is on the norms chain only |
 | P7 | u0073.s05 (234, OPEN) | "the system prompt’s instructions", with scope SC-3b's label condition in the guard and the bridging premise "An operator prompt that addresses a case gives at least one instruction for it." in an earlier unit or the background | proved: one reading. Without the bridging premise: unresolved {assumed, conditioned} |
 | P8 | u0076.s01 (250, U) | "the operator’s system prompt" under "not", inside "if" | goal at rule level; candidates per PS-E1 (expected: conditioned, asserted, assumed). Assumed contradicts the u0073.s01 case "There’s no operator prompt" once that case is formalised (`PresuppositionRefuted` line). Projection fixture only; no unlock |
 | P9 | u0220.s06 (251, U) | "continuing with an ongoing action" (PS-7) | proved within the phrase: one reading |
 | P10 | u0168.s01 (96, OPEN) | "remain firm" (PS-7) | unresolved {assumed: "Claude is firm before such arguments", conditioned} unless the hard-constraint context proves it |
 | P11 | UDHR u055 (108, READINGS) | "deprived of his nationality", "change his nationality" (`plural` in a prohibition, after act phrases) | candidates {assumed: "Everyone has a nationality.", conditioned}, separated by a stateless person |
-| P12 | UDHR u049 (98, READINGS) | "his own", "return to his country", within the existing set (nationality or residence) | the existence carrier is coupled with the existing set (PS-3) only if `coupling_complete`'s check passes over the existing constraints; otherwise it is multiplied out within the joint budget, or UNKNOWN beyond it |
+| P12 | UDHR u049 (98, READINGS) | "his own", "return to his country", within the existing set (nationality or residence) | projection fixture only; coupling deferred (spec 8): the obligations sit inside another profile's open set, which presupposition@0 cannot address, and a pick cannot express that choice |
 | P13 | 14th Amendment (use case L) | as S8 on the use case's own vocabulary | one reading with the flags |
 
 ## 6. Batches
@@ -845,7 +551,9 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 - **Audit additions.**
   - For each heading presupposition claimed: the trigger word is in the title.
   - The content is exactly the existence (for a singular description, existence and uniqueness) of what the trigger
-    names, and nothing more: no "is desired", "is relevant" or "must".
+    names, and nothing more: no "is desired", "is relevant" or "must". Once PS-2a lands, Lean checks this: the unit
+    is a heading obligation assumed on its own unit, and its content must equal `pre` (`admit_heading_goal`,
+    `admit_assumed_sound`; spec fixtures S23, A24, A25). Until then the audit applies the same test by hand.
   - The source does not withhold it elsewhere: search for "whether" or "uncertain" with the noun.
 - **Bar.** The next audit samples every claimed heading unit and accepts each. A rejected unit reverts to
   UNFORMALISED and nothing is claimed for it.
@@ -856,14 +564,22 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 
 ### PS-S. Specification and statement review (planner; 5–6 h)
 
+- **Status (draft 3).** Spec draft 1's review ruled FIX (`manage-agents/debates/presupposition-spec/DRI-RULING.md`).
+  Spec draft 2 and this draft 3 apply it. PS-S passes only when, in order: both documents and the stub carry every
+  edit of the ruling; the stub elaborates in a checkout whose Lean modules are built (draft 1's
+  `unknown module prefix 'VE'` was a missing build, not evidence either way); every `#guard` passes, including S2,
+  S4, S5, S9, the open-description fixtures and the fixtures of the ruling's corrections; and both reviewers do a
+  bounded re-check of the edited sections. PS-1 starts only after that: R-D2's lemmas are Reading.lean's, so no part
+  of PS-1 is released early.
 - **First step.** This draft 2 of the plan.
 - **Deliverable.** `docs/spec/presupposition.md`:
-  - the bodies of section 4's definitions;
+  - every Lean definition, body and statement (the spec's section 4 is their one owner; section 4 here cites it);
   - the types left open (`PDoc`, `Args`, `Position`, `Report`, `replaceNode` as `conditionRule`, the coupling types
     over lf-14d's joint set);
   - the wire block (3) and the diagnostics (4.6);
-  - the candidate-table format (filled by PS-E1) and the English templates (filled after PS-E2).
-- **Stubs.** The statements of 4.1–4.7 elaborate in a scratch file, never committed. `lean/` admits no unproved
+  - the candidate-table format (filled by PS-E1), what PS-E1's preregistration file must fix, and the English
+    templates (filled after PS-E2).
+- **Stubs.** The spec's statements elaborate in a scratch file, never committed. `lean/` admits no unproved
   theorem, and its audit bans the words for one, even in comments; the stubs state each theorem as a `Prop`-valued
   definition, so they need none. Fixture values are computed by `#guard` on finite models, not by hand.
 - **Review.** Sol (standing in for Astra on credits) and Fable converge before PS-1. The review is the bounded
@@ -874,14 +590,16 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   - the root carriers and `carried` against S12, S13 and S16;
   - `rule_collapse_typed`'s binders and `conditionRule`'s use of W1's tree;
   - `premisesBefore` against S17;
-  - `coupling_complete`'s conditions against S18 and S19.
+  - `coupling_complete`'s conditions against S18 and S19;
+  - in the re-check after FIX, the edited sections against the fixtures listed in the spec's checklist item 10.
 - **Bytes.** 0.
 
 ### PS-1. Lean core (6–7 h)
 
 - **New files.** `lean/VE/Presupposition/Frame.lean`, `Reading.lean`, `Rows.lean`, `Rules.lean`, `Agree.lean` and
-  `Examples.lean` (S1–S14, S16, S21 and P1–P4, P13 as `example`s or `#guard`s).
-- **Statements.** 4.1–4.5, all proved, with the standard axiom allowlist unchanged (`python3 lean/audit.py`).
+  `Examples.lean` (S1–S14, S16, S21, S23–S27 and P1–P4, P13 as `example`s or `#guard`s).
+- **Statements.** 4.1–4.5 (spec 4.1 to 4.6), all proved, with the standard axiom allowlist unchanged
+  (`python3 lean/audit.py`); among them R-D2's `inPlace_iff_conditioned_shallow` and `carried_idle`.
 - **Shared files touched.**
   - `lean/VE/Discourse/Descriptions.lean`: the generalised builders, with `uniqueD` and `assertive` as wrappers equal
     to today's bodies by `rfl` (4.3); its hash in `lean/VE/Route/frozen-sources.sha256` is rehashed; S11 shows every
@@ -903,7 +621,12 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 - **What it decides (D2-6).** Candidates and wording only. It never admits a sentence: admission needs a certified
   collapse or an explicit rewrite (2.2). Sonnet is a proxy; every result is labelled "proxy, an upper bound for
   careful readers", and none establishes what untrained human readers understand.
-- **Pre-registered here.**
+- **Pre-registered here, and in a committed file before any model call** (R-12). The file,
+  `docs/research/presupposition-E1-prereg.md`, fixes (spec 6): the mapping of the seven trigger classes to the three
+  row names; the aggregation rule per cell; the rule for classes of one row that disagree; the ordering rule (share
+  highest first, ties in list order); the per-item frame and denotation table computed by the stub; and the
+  equivalent-option rule for (e) below. The generator that writes `candidateTable` reads this file, and `tableOk`
+  must hold on its output.
 - **Items.** 7 trigger classes × 6 position classes × 2 items = 84 items.
   - Trigger classes: singular definite; possessive or plural; role definite in a rule; factive; change of state;
     iteration; heading noun phrase.
@@ -920,6 +643,10 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   - (c) it takes for granted that `pre`, so this situation goes against the text: **assumed**;
   - (d) cannot tell;
   - (e) in the negated and antecedent cells only, it is true here: **local accommodation**.
+  - **Scoring (e)** (R-D4). Every negated and antecedent item uses a shallow frame (`not ·`, or the antecedent of a
+    root "if"). (b) and (e) count as one class only for an item whose stub `#guard` shows that local accommodation
+    and conditioned have the same value in that item's failing situation; otherwise they count apart. "True here" is
+    never identified with local accommodation at a compound or nested frame.
 - **Protocol.** Sonnet 5.5 as human proxy, 40 fresh trials per item (4,320 calls), as attitudes' E1/E2.
 - **Bars, fixed before the run.**
   - A carrier is a **candidate** in a cell iff it gets at least 6/40 on each of the cell's two items.
@@ -934,7 +661,9 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
     handling (R 2.2) is reopened.
   - **Proviso:** reported as the share of unconditional-assumption answers. If at least 6/40 on both items, the
     unconditional goal becomes an extra candidate in the consequent cells.
-- **Output.** `docs/research/presupposition-E1.md`, and the candidate table that PS-2a and PS-6 read.
+- **Output.** `docs/research/presupposition-E1.md`, and the candidate table that PS-2a and PS-6 read. A cell that
+  lists local accommodation must also list conditioned (`cellOk`); local accommodation then licenses only the
+  conditioned reading's alias wording, at shallow frames.
 - **Bytes.** 0.
 
 ### PS-E2. Experiment: the plain-English lines (2 h)
@@ -964,9 +693,9 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   - `id`, `unit`, `carrier`;
   - `goal` (the P0 wire formula and its English line, rendered by Lean);
   - `outcome` (checked, or the diagnostic);
-  - for unresolved obligations, the candidates' contents.
+  - for unresolved obligations, the emitted readings' contents, each with its aliases.
   - Plus `PresuppositionRefuted` lines from the existing inconsistency report.
-- **Statements.** 4.6.
+- **Statements.** 4.6 (spec 4.7).
 - **New files.** `lean/VE/Presupposition/{Wire,Admit,Run}.lean` and the two ResponseShape files.
 - **Shared files touched.** `lean/VE/Service/Protocol.lean` (one dispatch line), `lean/VE/Audit.lean`,
   `lean/ResponseShape/Audit.lean`, `ve/backends/service_schema.py` (one `MODES` entry). Generated: the schema and
@@ -983,7 +712,8 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   else is `CheckerUnavailable`. It checks schema and binding only (DRI ruling R8).
 - **CLI.** `ve document presuppositions <file>` prints Lean's lines (display only).
 - **Tests.**
-  - `tests/test_presuppositions_lean.py`: S1–S21 (S7d included), P1–P13 as documents.
+  - `tests/test_presuppositions_lean.py`: S1–S27 (S7d included), A1–A28 (A5u-allow and A5u-deny included; A26 and
+    A27 on the soft and rights chains), P1–P13 as documents.
   - `tests/test_presuppositions_answer.py`: one-fault and two-fault mutants of genuine answers (each member dropped,
     emptied, retyped, duplicated or reordered; an index pushed out of range); each mutant is `CheckerUnavailable` or
     changes nothing shown.
@@ -1005,8 +735,14 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   "assume `pre` once", which entails each rule's `ruleGoal` (`source_identity_entails`). It is offered, never imposed.
 - **New file.** `lean/VE/Presupposition/Couple.lean` (4.7). It touches no shared file beyond `lean/VE.lean` and the
   audit list.
+- **Semantics.** Picks are compared under the document's semantics: W1's elaboration without a norm-defaults block,
+  the unspecified completion (`IntendedAt3`, each picked document passing `WellFormedU`) with one; never the
+  placeholder `deny` (spec 4.8).
 - **Fixtures.**
-  - P12 (u049): the existence carrier and the existing nationality/residence set, coupled only if the check passes.
+  - P12 (u049): projection fixture only; coupling deferred (spec 8). Its obligations sit inside the nationality or
+    residence reading set, another profile's open set, which presupposition@0 cannot address.
+  - S22: two picks on an `unspecified` predicate with a gap where no rule decides and the regulated atom is true:
+    `SameModels` holds there under the completion.
   - S19: "the user" in 5 rules with identical applicability gives one group and 2 choices, not 2⁵. With different
     guards it gives 5 goals, uncoupled, plus the source-identity choice.
   - S15 (mixed carriers have the models of the uniform choice) and S18 (an external constraint that excludes both
@@ -1038,7 +774,7 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 | u0156.s03 | the fused predicate "existence-or-content" goes; the carrier is recorded | act phrases AP-2/AP-3 |
 | u0073.s05 | proved through the label condition | scope SC-3b |
 | u0168.s01 | "remain" carried | PS-7 |
-| UDHR u045a, u049, u055, u064, u077 | existence carriers explicit; packed descriptions such as "the person's country of nationality" go | AP-2/AP-3, and PS-3 for u049 |
+| UDHR u045a, u049, u055, u064, u077 | existence carriers explicit; packed descriptions such as "the person's country of nationality" go | AP-2/AP-3; u049's carriers are not coupled with its existing set (P12: coupling deferred) |
 | u0254, u0268 | the optional reading set {assumed, no claim}, offered to the audit | PS-2b |
 
 - **Bytes.** Constitution: 0–72 B new READINGS (u0254, u0268), audit-gated; fidelity 430 B. UDHR: fidelity 441 B.
@@ -1056,9 +792,12 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
     templates of 2.2.
   - **Refusal:** `PresuppositionUnresolved` with rewrites.
   - **Statement:** an instance of attitudes' `refused_have_rewrites`. Each rewrite has exactly one reading, and the
-    rewrites' readings are exactly the row's candidates, in the row's order. A one-reading cell gives exactly one
-    rewrite, and the original wording is still refused (D2-6). A rule's conditioned rewrite is offered only for an
-    `unspecified` predicate.
+    rewrites' readings are exactly the row's emitted readings, one rewrite per reading, in the row's order; a merged
+    reading shows its alias wording beside its rewrite. A one-reading cell gives exactly one rewrite, and the
+    original wording is still refused (D2-6). A rule's conditioned rewrite is offered only for an `unspecified`
+    predicate.
+  - **Fixtures:** E1 and E2 (spec 7.6), the bracketed paraphrases "It is not so that both of these are so: …" and
+    "If the shop is open, then both of these are so: …", each with exactly one reading.
 - **Shared files touched.** The catalogue files in the queue. The generated fixed tables are regenerated, never
   edited.
 - **Seeded bug.** A rewrite list missing one candidate; the `refused_have_rewrites` instance fails.
@@ -1102,6 +841,7 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 |---|---|---|---|
 | Lean document mode | lf-16e, lf-16f, lf-16g (`ve-lf-16e`, …) | PS-4 | PS-4 after lf-16g, in the document-mode queue after ME-10; until then only new files and the PS-2a mode |
 | Coupled reading sets in Lean | lf-14d (`lean-first/b14d`, `ve-lf-14d`) | PS-3 | called, never edited; PS-3 after it merges |
+| Readings under norm-defaults | readings-defaults (merged: `lean/VE/Readings/Unspecified.lean`, `UnspecifiedWire.lean`; `abstention` in `lean/VE/Readings/Wire.lean`) | PS-2a (separation of open sets with a conditioned rule reading), PS-3 (`SatUnder` reads norm-defaults' `IntendedAt3` and `WellFormedU`) | called, never edited: `separates (fillDoc N)` with `fillHolds` for separation under the completion; on the soft and rights chains `abstention` refuses such sets before PS-2a's check |
 | Protocol and schema registry | in-flight editors lf-16e, qa-q2 (`ve-qa-q2`), lf-14d; then the protocol queue | PS-2a | one dispatch line and one `MODES` entry, in landing order |
 | Profile-gate table | AR-10 | PS-4 | one row with its composition proof; the table lands first |
 | Generated audit manifests | AR-1 (`arch-20261010-1`) | PS-1 onwards | append by hand before AR-1, regenerate after |
@@ -1145,6 +885,8 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 | Attribute flags | W5 `data@0` | proved by declaration |
 | UNDECIDED where no rule decides | norm-defaults `unspecified` (`value3`) | a conditioned rule contributes no decision where `pre` fails; admitted only for `unspecified` predicates |
 | Reading sets, separating situations | readings@1 | unresolved |
+| Separation under the unspecified completion; readings content beside `norm-defaults@0` off the norms chain | readings-defaults (`separates (fillDoc N)`, `fillHolds`, `SeparatedU`); readings@1's `abstention` | open sets with a conditioned rule reading |
+| The unspecified completion's models and checks | norm-defaults (`IntendedAt3`, `WellFormedU`) | coupling's `SatUnder` with a norm-defaults block |
 | Joint choices | lf-14d | coupling |
 | Question presuppositions | speech acts | an empty frame (`speech_question_top`) |
 | Knowing, thinking, their refusal rows | attitudes | the factive row's attitude part |
