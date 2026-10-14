@@ -122,18 +122,20 @@ GENERATED = (
     Generated("import-contract", (".importlinter",), ((PY, "tools/check_python_layers.py", "--write"),),
               ((PY, "tools/check_python_layers.py"),)),
     Generated("uv-lock", ("uv.lock",), (("uv", "lock"),), (("uv", "lock", "--check"),)),
-    Generated("gate-collection", ("tools/gate-collection.json",),
-              ((PY, "tools/gate_collection.py", "--write", "--prebuilt"),),
-              ((PY, "tools/gate_collection.py", "--check", "--prebuilt"),),
-              note="last: the collection of the tests as merged"),
 )
+
+
+# Generated files that are deleted, each with the change that deleted it: `--resolve` settles a conflict on one
+# (a branch that still edited it) by taking the deletion.
+RETIRED = {
+    "tools/gate-collection.json": "AR-3: the gate takes the expected collection from the merge base",
+}
 
 
 # Scripts with a writing mode whose output this script does not regenerate, each with the reason. Every script
 # of the repository with such a mode is either a writer above or listed here (tests/test_regen_generated.py).
 NOT_REGENERATED = {
     "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
-    "tools/gate.py": "--write-collection is tools/gate_collection.py --write (gate-collection above)",
     "tools/stage2_parity.py": "report: docs/spec/stage2-parity.md, a migration record",
     "tools/lean_service_soak.py": "measurement report of the machine it runs on",
     "tools/lean_decided_share.py": "measurement report",
@@ -548,6 +550,8 @@ def resolve(entries, root: Path = ROOT) -> int:
         print("regen_generated --resolve: no merge in progress (run git merge --no-commit first)", file=sys.stderr)
         return 2
     unmerged = sorted(set(_git(root, "diff", "--name-only", "--diff-filter=U").split()))
+    retired = [path for path in unmerged if path in RETIRED]
+    unmerged = [path for path in unmerged if path not in RETIRED]
     others = [path for path in unmerged if owner(path) is None]
     if others:
         print("regen_generated --resolve: conflicts outside the generated files (agent sync needed):",
@@ -563,6 +567,9 @@ def resolve(entries, root: Path = ROOT) -> int:
     for path, text in merged.items():  # nothing is written unless every conflicted file merged
         (root / path).write_text(text)
         print(f"resolved {path} ({owner(path).merge})")
+    for path in retired:
+        _git(root, "rm", "-q", "-f", "--", path)
+        print(f"resolved {path} (deleted: {RETIRED[path]})")
     failed = write(entries) or check(entries)
     if failed:
         print(f"regen_generated --resolve: failed: {', '.join(failed)}", file=sys.stderr)
