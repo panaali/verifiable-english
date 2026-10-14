@@ -1235,6 +1235,7 @@ _SCHEMA_SEEDS = {
               {"id": "c", "status": "ok", "report": {"root": "r", "assumptions": ["r"]},
                "assumptions": ["r"], "supporting_edges": [], "background": []}),
     "readings": ({"id": "c", "verdict": "ALL"}, {"id": "c", "status": "ok", "verdict": "ALL"}),
+    "readings-choices": ({"id": "c"}, {"id": "c", "status": "ok", "verdict": "ALL"}),
     "bundle": ({"id": "c", "lemmas": [{"meaning_id": "a" * 64}]},
                {"id": "c", "status": "ok", "checked": 1, "lemmas": ["a" * 64]}),
     "family-norms": ({"id": "c", "kind": "norms-certificate"},
@@ -1307,7 +1308,7 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
                  "meaning_id" if mode == "check" else
                  "ast" if mode == "parse" else
                  "supporting_edges" if mode == "graph" else
-                 "verdict" if mode == "readings" else
+                 "verdict" if mode in ("readings", "readings-choices") else
                  "lemmas" if mode == "bundle" else
                  "valid" if mode == "family-norms" else "values")
         answer["results"][0][field] = "true"
