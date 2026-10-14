@@ -599,3 +599,182 @@ def test_binding_audit_scope_findings_and_licences_are_bound(monkeypatch):
     monkeypatch.setattr(rights_route, 'decide_once', forged)
     with pytest.raises(CheckerUnavailable):
         rights_route.report_rights(environment, GAMMA)
+
+
+def _rights_relay(monkeypatch, mutation, kinds=('rights-elaborate', 'rights-scope')):
+    """Mutate Lean's rows of `kinds` consistently, each still fitting its schema."""
+    from ve import rights_route
+    from ve.backends.service_schema import check_row
+    real = rights_route.decide_once
+
+    def forged(mode, case):
+        row = copy.deepcopy(real(mode, case))
+        if case['kind'] in kinds:
+            mutation(row)
+            check_row(mode, row, case, 0)
+        return row
+
+    monkeypatch.setattr(rights_route, 'decide_once', forged)
+
+
+def _default_gamma():
+    from tests.test_rights_lean import GAMMA
+    from tests.test_soft_norms_lean import DECIDER
+    units = copy.deepcopy(GAMMA)
+    units[0]['right']['lines'][0]['norm'].update(mode='default', exception=copy.deepcopy(DECIDER))
+    return units
+
+
+def _decision_declaration(field, value):
+    def mutation(row):
+        name = row['decisions'][0]['name']
+        row['environment_prime']['vocabulary']['predicates'][name][field] = value
+    return mutation
+
+
+PRIME_MUTATIONS = [
+    pytest.param(_decision_declaration('arguments', ['person']), id='F19 decision declared with one argument'),
+    pytest.param(_decision_declaration('arguments', ['person', 'state']), id='decision declared with swapped sorts'),
+    pytest.param(_decision_declaration('description', 'forged'), id='decision declaration description'),
+    pytest.param(lambda row: row['environment_prime']['vocabulary']['sorts'].__setitem__(
+        'ghost', {'description': 'ghost'}), id='prime extra sort'),
+    pytest.param(lambda row: row['environment_prime']['vocabulary']['constants'].__setitem__('ghost', 'person'),
+                 id='prime extra constant'),
+    pytest.param(lambda row: row['environment_prime'].__setitem__('language', 'ghost'), id='prime language'),
+    pytest.param(lambda row: row['environment_prime'].__setitem__('spec_revision', 'ghost'),
+                 id='prime spec revision'),
+]
+
+
+@pytest.mark.parametrize('mutation', PRIME_MUTATIONS + [
+    pytest.param(lambda row: row['environment_prime']['vocabulary']['rights'].__setitem__('protected', ['ghost']),
+                 id='prime rights block'),
+])
+def test_f19_rights_prime_environment_is_the_request_plus_bound_declarations(monkeypatch, mutation):
+    from tests.test_rights_lean import ARREST, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    units = _default_gamma()
+    row = copy.deepcopy(rights_route.run_rights_case(environment, units, 'rights-elaborate'))
+    mutation(row)
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, units, 'rights-elaborate')
+
+
+@pytest.mark.parametrize('mutation', PRIME_MUTATIONS)
+def test_f19_soft_prime_environment_is_the_request_plus_bound_declarations(monkeypatch, genuine, mutation):
+    row = copy.deepcopy(genuine)
+    mutation(row)
+    with pytest.raises(CheckerUnavailable):
+        _document(monkeypatch, row)
+
+
+def _extra_mechanism(mechanism, conclusion=('top',)):
+    def mutation(row):
+        entry = row['narrowings'][0]
+        entry['mechanisms'].append({'mechanism': mechanism, 'target': f"{entry['rule']}:{mechanism}",
+                                    'licence': 'bar' if mechanism == 'bar' else None,
+                                    'conclusion': list(conclusion)})
+        if 'licensed' in row and mechanism != 'bar':
+            row['findings'].append(
+                f"UnlicensedLimitation: {mechanism} of rule {entry['rule']} on right {entry['right']}")
+            row['licensed'] = False
+    return mutation
+
+
+def _reverse_mechanisms(row):
+    row['narrowings'][0]['mechanisms'].reverse()
+    if 'licensed' in row:
+        row['findings'].reverse()
+
+
+@pytest.mark.parametrize('units,mutation', [
+    pytest.param('strict', _extra_mechanism('bar'), id='F20 bar with no bar requested'),
+    pytest.param('strict', _extra_mechanism('exception'), id='F20 exception of a strict line'),
+    pytest.param('carve-out', _extra_mechanism('carve-out 01'), id='F20 duplicate carve-out 01'),
+    pytest.param('carve-out', _extra_mechanism('carve-out +1'), id='signed carve-out index'),
+    pytest.param('carve-out', _extra_mechanism('carve-out 1'), id='repeated carve-out 1'),
+    pytest.param('strict', _extra_mechanism('exception no-arbitrary-arrest'), id='line excepted by itself'),
+    pytest.param('strict', _extra_mechanism('limitation'), id='repeated limitation'),
+    pytest.param('default', _extra_mechanism('blockedBy no-arbitrary-arrest'), id='line blocked by itself'),
+    pytest.param('default', _reverse_mechanisms, id='mechanisms out of Lean order'),
+])
+def test_f20_mechanisms_are_exactly_the_request_implied_slots(monkeypatch, units, mutation):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    kind, units = units, {'strict': copy.deepcopy(GAMMA), 'default': _default_gamma(),
+                          'carve-out': copy.deepcopy(GAMMA)}[units]
+    if kind == 'carve-out':
+        units[0]['right']['lines'][0]['norm']['unless'] = [['top']]
+    rights_route.report_rights(environment, units)
+    _rights_relay(monkeypatch, mutation)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.report_rights(environment, units)
+
+
+def _rename_rule(old, new):
+    """Rename a rule id everywhere a row names it, so only its binding to the request can fail."""
+    def mutation(row):
+        for line in row.get('lines', []):
+            if line['rule'] == old:
+                line['rule'] = line['node']['name'] = new
+        for entry in row.get('bars', []):
+            if entry.get('name') == old:
+                entry['name'] = new
+        for entry in row.get('derived', []):
+            if entry['rule'] == old:
+                entry['rule'] = new
+        for entry in row['narrowings']:
+            if entry['rule'] == old:
+                entry['rule'] = new
+                for mechanism in entry['mechanisms']:
+                    mechanism['target'] = f"{new}:{mechanism['mechanism']}"
+    return mutation
+
+
+def _fan_out_source():
+    from tests.test_norms import permission
+    from tests.test_rights_lean import env as rights_env, line, norm, right
+    predicates = {name: permission('allow', act='{0} torture {1}', args=(bearer, 'person'))
+                  for bearer, name in [('state', 'torture_permitted_state'),
+                                        ('person', 'torture_permitted_person')]}
+    units = [right('r5', [line('claim', norm('no-torture', None, False),
+                               fan_out={'state': 'torture_permitted_state',
+                                        'person': 'torture_permitted_person'})])]
+    return rights_env(predicates), units
+
+
+def _swap_fan_names(row):
+    _rename_rule('rights-fan-1', 'swap')(row)
+    _rename_rule('rights-fan-2', 'rights-fan-1')(row)
+    _rename_rule('swap', 'rights-fan-2')(row)
+
+
+@pytest.mark.parametrize('source,mutation', [
+    pytest.param('fan-out', _rename_rule('rights-fan-1', 'ghost'), id='F21 invented fan-out rule id'),
+    pytest.param('fan-out', _rename_rule('rights-fan-2', 'rights-fan-3'), id='fan-out id out of sequence'),
+    pytest.param('fan-out', _swap_fan_names, id='fan-out ids swapped between bearers'),
+    pytest.param('line', _rename_rule('no-arbitrary-arrest', 'ghost'), id='authored line renamed'),
+    pytest.param('bar', _rename_rule('rights-bar-1', 'rights-bar-9'), id='bar rule id out of sequence'),
+])
+def test_f21_generated_rule_ids_follow_leans_naming(monkeypatch, source, mutation):
+    from tests.test_rights_lean import ARREST, GAMMA, IMPART, env as rights_env, line, norm, right
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    raw, units = {
+        'fan-out': _fan_out_source,
+        'line': lambda: (rights_env(ARREST), copy.deepcopy(GAMMA)),
+        'bar': lambda: (rights_env(IMPART, sorts=('person', 'idea'),
+                                   rights={'holders': ['person'], 'bearers': ['person']}),
+                        [right('r19', [line('liberty', norm('may-impart', 'impart_permitted', True))]),
+                         {'bar': {'name': 'b30', 'reading': 'rule'}}]),
+    }[source]()
+    environment = RightsEnvironment(raw)
+    rights_route.report_rights(environment, units)
+    _rights_relay(monkeypatch, mutation)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.report_rights(environment, units)
