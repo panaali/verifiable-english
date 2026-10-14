@@ -1,8 +1,8 @@
-# AT-0 stub run, 2026-10-13 (docs/research/attitudes-at0-changed.md)
-# stub: research/attitudes/stub/SpecStubs_attitudes.lean, sha256 0c73f88055c387c4418524c3c892b74ed6079760ed917f5cd121b084847b6a17
+# AT-0 stub run, 2026-10-14, with the re-review's RR-1 to RR-3 (docs/research/attitudes-at0-changed.md section 5)
+# stub: research/attitudes/stub/SpecStubs_attitudes.lean, sha256 dea412eb2654d245c12b48cc389c33d6292ad51c57421aa9640bec08d738f113
 # command (from lean/ at this branch's base 49de179e): lake env lean ../research/attitudes/stub/SpecStubs_attitudes.lean
-# exit 0, no error, every #guard holds; wall clock 10:52.71, max RSS 1476632 kB
-# draft 1's stub on the same machine and base: 2:38.59 (210 documents)
+# exit 0, no error, every #guard holds; wall clock 10:45.81, max RSS 1459000 kB
+# before RR-1 to RR-3 (0c73f880…): 10:52.71; draft 1's stub on the same machine and base: 2:38.59 (210 documents)
 # the full #eval output follows, unedited
 ("F-AT1 check", Except.ok ())
 ("F-AT1 names", ["attitudes__knows__1", "attitudes__intends__1", "attitudes__thinks_quite_likely__1"])
@@ -133,6 +133,28 @@
 ("F-AT9's reading is NegatedFactive's first candidate, and P̂ is the category at the rule's situation", true)
 ("F-AT9: cat true none, cat true knows, cat false none, cat false knows", (true, true, true), (true, false, false),
   (true, false, false), false, false, false)
+("AT-5 read fixtures (RR-2)",
+  [("row",
+      "both that situation is classified as \"mass_casualty_weapon_uplift\" and that instance of Claude does not know that that situation is classified as \"mass_casualty_weapon_uplift\""),
+    ("row-closed",
+      "both s1 is classified as \"mass_casualty_weapon_uplift\" and that instance of Claude does not know that s1 is classified as \"mass_casualty_weapon_uplift\""),
+    ("row-nested",
+      "either both that situation is classified as \"mass_casualty_weapon_uplift\" and that instance of Claude does not know that that situation is classified as \"mass_casualty_weapon_uplift\", or that instance of Claude thinks it quite likely that that situation is classified as \"mass_casualty_weapon_uplift\", or both"),
+    ("content-mismatch",
+      "both that situation is classified as \"csam_generation\" and that instance of Claude does not know that that situation is classified as \"mass_casualty_weapon_uplift\""),
+    ("slot-mismatch",
+      "both s1 is classified as \"mass_casualty_weapon_uplift\" and that instance of Claude does not know that that situation is classified as \"mass_casualty_weapon_uplift\""),
+    ("slot-mismatch-closed",
+      "both that situation is classified as \"mass_casualty_weapon_uplift\" and that instance of Claude does not know that s1 is classified as \"mass_casualty_weapon_uplift\""),
+    ("order",
+      "both that instance of Claude does not know that that situation is classified as \"mass_casualty_weapon_uplift\" and that situation is classified as \"mass_casualty_weapon_uplift\""),
+    ("either",
+      "either that situation is classified as \"mass_casualty_weapon_uplift\" or that instance of Claude does not know that that situation is classified as \"mass_casualty_weapon_uplift\", or both"),
+    ("bare",
+      "that instance of Claude does not know that that situation is classified as \"mass_casualty_weapon_uplift\""),
+    ("unless",
+      "Every instance of Claude must not do the weapons uplift in each situation if that situation is classified as \"mass_casualty_weapon_uplift\", unless that instance of Claude knows that that situation is classified as \"mass_casualty_weapon_uplift\".")])
+("RR-2 documents: F-AT9 with s1, the closed row, the nested row: check", Except.ok (), Except.ok (), Except.ok ())
 ("U1 WellFormedU", true)
 ("frame at RM1..RM4",
   [none, some "attitude:factive:attitudes__knows__1",
@@ -178,6 +200,7 @@
 ("search lexicon: Lexicon.failures, lexAgrees", [], true)
 { collapseCases := 768,
   seeds := 88188,
+  seedsChecked := 64177,
   docs := 477,
   wf := 287,
   earlier := 210,

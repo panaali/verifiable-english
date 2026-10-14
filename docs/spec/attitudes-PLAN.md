@@ -548,6 +548,14 @@ the closure review and freezing; through them, AT-0 PASS (SR-8).
   frozen table with the asserted-not-know form in the pool: no counterexample (section 9, AT0C). Only the
   re-review of the changed statements remains
   ([docs/research/attitudes-at0-changed.md](../research/attitudes-at0-changed.md) section 2).
+- **AT-0's re-review (2026-10-14).** The bounded re-review of AT0C section 2
+  (`manage-agents/attitudes-at0-review.final.md`) returned **FIX**: two B findings and one C, corrected as spec
+  section 17's RR-1 to RR-3 (AT0C section 5). The admitted "both P and H does not know that P" is read whole, with one
+  tree `assertedNotKnows c`, and a new AT-5 statement `assertedNotKnows_one_reading` says it has exactly that one
+  derivation (RR-1); spec 7.6 gains AT-5 fixtures read by the English reader for the row and for the refusal's
+  boundary (RR-2); the search's seed count is relabelled and the checked seeds counted (RR-3). The stub carries them,
+  is re-pinned (`dea412eb…`) and elaborates with every `#guard` holding. Left: the reviewers' check of RR-1 to RR-3
+  only.
 - Done when the stub elaborates, the search finds no counterexample, the spec is committed, and the review
   converges on PASS.
 
@@ -1602,7 +1610,8 @@ produced no data, and AT-0p's A4 measures the limit the typed frame removes.
 | E2's negated-"know" and "unless" items | **Run** with E2. Negated "know": item 1 splits (15 yes, 6 no, 19 cannot tell), item 2 agrees on cannot tell (38), item 3 on yes (40): the reading depends on the content, and the refusal stands. "unless": 40 of 40 yes on all three | nothing: both forms stay refused whatever they show (D-A7); evidence for a later admission's own review | — |
 | Closure review and freezing `table` | **Done 2026-10-13** (E1E2 4.3): G4 removes no word; Lean's `Table.reviewed` through the stub pinned by sha256 `2178fb6e…` is `true`; the frozen table is `docs/research/evidence/attitudes/e-table.lean` | the frozen meaning of `attitudes@0`; AT-0 PASS (SR-8) | — |
 | AT-0 stub at the current draft, fixtures and search on the frozen table | **Done 2026-10-13** (AT0C, below): the stub carries spec draft 4's Lean with the frozen `table`, is committed, pinned by sha256 `0c73f880…`, and elaborates with every `#guard` holding; every fixture and the search rerun on `table`, the asserted-not-know form (F-AT9) in the pool; no counterexample | the re-review's input; AT-0 PASS (SR-8) | — |
-| AT-0 PASS | **blocked** on SR-8's last step | AT-1w and every later batch; through AT-3a, SC-2 (synthesis 4.3) | the reviewers' re-review of the changed statements only, listed in [docs/research/attitudes-at0-changed.md](../research/attitudes-at0-changed.md) (AT0C) |
+| AT-0 re-review of the changed statements | **FIX 2026-10-14** (`manage-agents/attitudes-at0-review.final.md`): two B findings (the admitted row's one derivation; its AT-5 fixtures) and one C (the seed count); corrected as spec section 17's RR-1 to RR-3 (AT0C 5), the stub re-pinned `dea412eb…` | AT-0 PASS | — |
+| AT-0 PASS | **blocked** on SR-8's last step | AT-1w and every later batch; through AT-3a, SC-2 (synthesis 4.3) | the reviewers' check of RR-1 to RR-3 only ([docs/research/attitudes-at0-changed.md](../research/attitudes-at0-changed.md) section 5, AT0C) |
 
 Cost, for the DRI's scheduling: E1 1,440 calls, E2 1,040 (920 without G5's three items); 2,480 in all. Hours as
 section 4 (estimates).
@@ -1627,7 +1636,10 @@ unchanged, except D4 and D0, whose words the table now admits (D4 uses "as likel
 exactly where P holds and the knowing does not. The search, with the spec's five new pool members and the admitted
 form: 477 documents (210 of draft 1's, all admitted), 190 refused at their member's row, 287 checked on 9,184
 document-model pairs, no counterexample to T1–T5, T7, T8 or the new T9 (the admitted form's reading). Two seeded bugs
-were caught (AT0C 1). Left: the reviewers' re-review of AT0C section 2 only, then spec draft 5.
+were caught (AT0C 1). The re-review of AT0C section 2 (2026-10-14) returned FIX; its two B findings and one C are
+corrected as spec section 17's RR-1 to RR-3 (AT0C 5): the admitted row read whole, with the statement
+`assertedNotKnows_one_reading`; AT-5 read fixtures for the row and the refusal's boundary; the seed count relabelled.
+Three more seeded bugs were caught (AT0C 1). Left: the reviewers' check of RR-1 to RR-3 only, then spec draft 5.
 
 ## 10. Cross-plan issues for the DRI
 

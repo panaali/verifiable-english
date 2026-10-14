@@ -5,6 +5,8 @@
 > cross-plan synthesis edits as **edit 1–10**). For AT-0's statement review; nothing here is built or proved.
 > Draft 4 applies phase 1 ([docs/research/attitudes-phase1.md](../research/attitudes-phase1.md), cited as **P1 n**;
 > its gaps in the pre-registration as **G1–G6**), listed in section 16; it changes no Lean statement or definition.
+> Section 17 applies AT-0's bounded re-review (`manage-agents/attitudes-at0-review.final.md`, **FIX**), cited as
+> **RR-1 to RR-3**: one statement and its definitions are added (section 6.5), and AT-5 fixtures (section 7.6).
 > Drafts 1 to 3 were written on branch `design/attitudes`.
 > Draft 2 applies the statement review of draft 1 (Astra and Fable, `manage-agents/debates/attitudes-spec/`,
 > converged after round 3 on **FIX; the build may not start**). Its corrections are cited as **SR-1 to SR-8** and
@@ -66,14 +68,15 @@ changes, so the stub needs no edit for this draft (it is untracked, outside this
   AT-1 to AT-5. Section 7 lists the fixtures with their computed values, and section 9 the counterexample search.
   Section 10 answers the integration questions the PLAN left to AT-0. Section 11 lists every place where this spec
   differs from the PLAN's Lean text, with the reason. Section 12 is the review checklist. Section 14 lists draft 2's
-  corrections (SR-1 to SR-8), section 15 draft 3's (RC-1 to RC-4) and section 16 draft 4's (phase 1), each with
-  the places it changes.
+  corrections (SR-1 to SR-8), section 15 draft 3's (RC-1 to RC-4), section 16 draft 4's (phase 1) and section 17
+  the AT-0 re-review's (RR-1 to RR-3), each with the places it changes.
 - Names owned by other plans are used through their reviewed interfaces only. The stub declares stand-ins for them,
   with the bodies the synthesis gives, so that this profile's statements elaborate: QS-1's `VE.Closure.Order`,
   `Caps`, `Order.admit`, `Order.atLeast` (owner: quantities, reviewed in QT-0); PK-1's `PackKind`, `RequestPath`,
   `Pack`, `packOrder` and a pack-premises accessor (owner: the RD-9 composition owner); AR-10's `ProfileRow`,
   `profileTable`, `gateOf` (owner: AR-10). The functions new in AT-3a (`decodeAttDoc`, `encodeElaboration`) and AT-5
-  (`renderCond`, `readCond`, `readGuard`, `readGuardAll`, `readRule`, `readRuleAll`, `refusalOf`) are stand-ins
+  (`renderCond`, `renderAssertedNotKnows`, `readCond`, `readGuard`, `readGuardAll`, `readRule`, `readRuleAll`,
+  `refusalOf`) are stand-ins
   too; their bodies are those batches' work. So is `VE.Attribution.Words.wantsPhrase?`, `reports@0`'s `wants` test
   moved into Lean by AT-1w, the batch before AT-1 (section 2.6, section 10 item 6; SR-3, RC-4). The English
   grammar's lexical data (`VE.EnglishGrammar.Env`, `Overlay`, `Lexicon`, `Lexicon.failures`, `Env.predicate?`) is
@@ -726,7 +729,19 @@ content rendered as a clause, with the slot term in place of variable 0 ("that s
 | `act .intends` | "H intends that P" | `reports@0`'s intends, of a content; never intentional action |
 | `act .wants` | "H wants Y to VP", only when the content is one unary base predicate on the slot term `Y` whose template is a verb phrase (as `reports@0` words it); any other `wants` content has no reviewed wording | `reports@0`'s wants |
 | negation of a whole condition | "it is not the case that …" (VE's external negation) | negation, nothing asserted |
-| "P, and X does not know that P" | written "both P and H does not know that P" | `P ∧ ¬knows(P)`; admitted only if its six E2 items reach 36 of 40: three "Must P?", three "Does X know that P?" (A4, G5) |
+| "P, and X does not know that P" | written "both P and H does not know that P", read whole (below) | `P ∧ ¬knows(P)`, one tree: `assertedNotKnows c = and P̂ (not K)` (section 6.5); admitted only if its six E2 items reach 36 of 40: three "Must P?", three "Does X know that P?" (A4, G5) |
+
+**The last row is read whole (RR-1).** The grammar reads "both P and H does not know that P" as one construction,
+only when its first conjunct is the clause P of the complement: the same content with the same slot term (so the
+same `P̂`, section 3.4), the holder written once. Its one derivation is the tree `assertedNotKnows c`, `and P̂ (not
+K)` with `K := att c` for the `knows` condition `c` (section 6.5); `assertedNotKnows_one_reading` states it. The
+second conjunct is not read as an occurrence of section 3.4's refused "H does not know that P": composing that row's
+two candidates under "both P and …" would give `and P̂ (and P̂ (not K))` and `and P̂ (not K)`, equivalent formulas
+but two trees, so two derivations under the all-derivations gate. Every other occurrence of "H does not know that P"
+is refused as `NegatedFactive` (section 3.4's first row): a first conjunct with another content or another slot term,
+the conjuncts in the other order, the row's shape under "either … or", and the bare form; "unless H knows that P"
+stays refused by that table's second row. Section 7.6's AT-5 fixtures check each (RR-2). The row may stand anywhere a
+guard formula may, for example as a disjunct.
 
 "Intends to VP" and "wants Y to VP" with an act phrase are not admitted; intentional action stays residual until a
 reviewed act-performance bridge (ET-D2) fits this profile's contract, and act-phrases landing does not admit them
@@ -785,12 +800,14 @@ one reading; the rewrites' readings are exactly the candidates, in the row's ord
 distinct. A guard row is read in its enclosing rule's context `Γ = ruleContext A r`, so "that instance of Claude"
 resolves to the rule's variable; a rule row is read as a whole rule, whose context is its own. In the candidates,
 `σ` is the slot, `K := att ⟨H, knows, σ, P⟩`, `T w := att ⟨H, thinks w, σ, P⟩`, `B := att ⟨H, act believes, σ, P⟩`,
-`P̂ := base (P with the slot term for variable 0)` (`Formula.subst`, `lean/VE/Core/Substitution.lean`; `P` itself
-when closed), and `r` is the enclosing rule with guard `g` and carve-outs `cs` (the refused carve-out removed).
+`P̂ := base (assertedOf c)`, the content with the slot term for variable 0 (`P` itself when closed; section 6.5: a
+content is quantifier-free, D12, so variable 0 is replaced directly, not by `Formula.subst` of
+`lean/VE/Core/Substitution.lean`, which is over `VE.Core.Formula`), and `r` is the enclosing rule with guard `g` and
+carve-outs `cs` (the refused carve-out removed).
 
 | Refused form | Why | Code | Category | Candidate readings | Rewrites |
 |---|---|---|---|---|---|
-| "H does not know that P" (anywhere but section 3.1's admitted row) | with and without `P` | `NegatedFactive` | guard (`AFormula`) | `and P̂ (not K)`; `not K` | "both P and it is not the case that H knows that P"; "it is not the case that H knows that P" |
+| "H does not know that P" (anywhere but section 3.1's admitted row, read whole: the second conjunct of "both P and …" with the same `P̂`) | with and without `P` | `NegatedFactive` | guard (`AFormula`) | `and P̂ (not K)`; `not K` | "both P and it is not the case that H knows that P"; "it is not the case that H knows that P" |
 | "unless H knows that P" (a carve-out) | its presupposition is unresolved (debate round 3) | `NegatedFactive` | rule (`ARule`): the readings move the condition from a carve-out into the guard, which a guard formula cannot represent | `{ r with guard := and g (not K), carveOuts := cs }`; `{ r with guard := and g (and P̂ (not K)), carveOuts := cs }` | "if it is not the case that H knows that P" (in the guard); "if both P and it is not the case that H knows that P" |
 | "H does not think it w that P" | neg-raising: two readings | `NegRaising` | guard (`AFormula`) | `not (T w)`; `att ⟨H, thinks w, σ, not P⟩` | "it is not the case that H thinks it w that P"; "H thinks it w that it is not the case that P" |
 | "H thinks that P" | belief or opinion (as `reports@0`) | `BareThinks` | guard (`AFormula`) | `B`; then `T w` for each admitted `w`, in `table`'s order | "H believes that P"; "H thinks it w that P" for each admitted `w` |
@@ -1200,10 +1217,38 @@ theorem refused_have_rewrites (A : AttDoc) (h : WellFormedAtt A = true) (site : 
           readRule A s = .error r.code ∧ (∀ s2 ∈ r.rewrites, (readRuleAll A s2).length = 1) ∧
             r.rewrites.flatMap (readRuleAll A) = cs ∧ cs.Nodup
       | _, _ => False
+
+/-- `P̂` (section 3.4): the content with the slot term for variable 0; the content itself when closed. A content is
+    quantifier-free (D12), so variable 0 is replaced directly. -/
+def slotTermIn (t : VE.Term) : VE.Term → VE.Term
+  | .var 0 => t
+  | u => u
+def slotIn (t : VE.Term) : VE.Formula → VE.Formula
+  | .unary p u => .unary p (slotTermIn t u)
+  | .binary p u v => .binary p (slotTermIn t u) (slotTermIn t v)
+  | .eq u v => .eq (slotTermIn t u) (slotTermIn t v)
+  | .not a => .not (slotIn t a)
+  | .and a b => .and (slotIn t a) (slotIn t b)
+  | .or a b => .or (slotIn t a) (slotIn t b)
+  | .implies a b => .implies (slotIn t a) (slotIn t b)
+  | φ => φ
+def assertedOf (c : Cond) : VE.Formula :=
+  match c.slot with
+  | none => c.content
+  | some (_, t) => slotIn t c.content
+/-- The one reading of section 3.1's admitted row, read whole (RR-1): `and P̂ (not K)`. -/
+def assertedNotKnows (c : Cond) : AFormula := .and (.base (assertedOf c)) (.not (.att c))
+/-- Section 3.1's admitted row has exactly one reading, its own (RR-1): for each admitted `knows` occurrence, the
+    row's text in that context is admitted and its every derivation is `assertedNotKnows c`. -/
+theorem assertedNotKnows_one_reading (A : AttDoc) (h : WellFormedAtt A = true) (Γ : List String) (c : Cond)
+    (hc : (Γ, c) ∈ condsOf A) (hk : c.mode = .knows) :
+    readGuard A Γ (renderAssertedNotKnows A Γ c) = .ok (assertedNotKnows c) ∧
+      readGuardAll A Γ (renderAssertedNotKnows A Γ c) = [assertedNotKnows c]
 end VE.Attitudes
 ```
 
-`renderCond` and `readCond` (atomic conditions only), `readGuard` and `readGuardAll` (a guard or carve-out, in the
+`renderAssertedNotKnows A Γ c` (section 3.1's last row for the `knows` condition `c`, in context `Γ`) is AT-5's, as
+the other readers and renderers are. `renderCond` and `readCond` (atomic conditions only), `readGuard` and `readGuardAll` (a guard or carve-out, in the
 context given), `readRule` and `readRuleAll` (a whole rule) and `refusalOf` (a lookup in english-lean's catalogue,
 which instantiates a row's candidates for the text and its site) are AT-5's; each `…All` lists every derivation, as
 the all-derivations gate does. All of them read `A.lex` and call the English grammar's lexicon functions and
@@ -1247,6 +1292,8 @@ in `E` only (RC-1).
 | C-a (SR-2) | two documents: F-AT1 with the `knows` content the closed `⊤` (no slot); and with the content `⊤`, slot kept | *expected*: draft 1 admitted both, as two keys differing only in `slotSort`, with one sentence (section 3's rendering does not show an unused slot); draft 2 admits the first and refuses the second at D14a |
 | C-b (SR-2) | two documents: F-AT1 with the `knows` content the closed `mass_casualty_weapon_uplift(s1)`; and with the content `mass_casualty_weapon_uplift(var 0)`, slot `(situation, s1)` | *expected*: draft 1 admitted both (two keys, unrelated relations) with one sentence "… knows that s1 is classified as "mass_casualty_weapon_uplift""; draft 2 admits the first and refuses the second at D14b |
 | C-c (SR-2) | F-AT1 with the `intends` condition made `wants`: content `mass_casualty_weapon_uplift(var 0)`; and content `and mass_casualty_weapon_uplift(var 0) csam_generation(var 0)` | *expected*: the first is admitted ("that instance of Claude wants that situation to be classified as …", `wantsPhrase?` of `is classified as …` is `be classified as …`); the second is refused at D14c |
+| F-AT9 (RR-1) | F-AT1's rule with the guard section 3.1's last row reads, `assertedNotKnows (cond knows C)` = `and C(var 0) (not knows C)`; on `table` | check ok; one key, `attitudes__knows__1`; one frame premise, `attitude:factive:attitudes__knows__1`; elaborated guard `and C(v0) (not knows__1(v1, v0))`. At (category, knows) = (true, absent), (true, present), (false, absent), (false, present): intended true, true, true, false; guard true, false, false, false under the attitude semantics and on `interp` |
+| RR-2's documents | F-AT9 with `s1` declared and spelled; F-AT1's rule with the row on C-b's closed content `C(s1)`; F-AT1's rule with the guard `or (assertedNotKnows (cond knows C)) (thinks quite likely C)` | check ok, each (the documents section 7.6's AT-5 read fixtures are read in) |
 | C-d (RC-1) | two documents: C-b's first document (the closed `knows` content `mass_casualty_weapon_uplift(s1)`) with `s1` declared in `E` but in neither the lexical view nor the lexicon; and F-AT1 with a base predicate `extra_case` on `situation`, declared in `E` but in none of `authorPredicates`, the lexical view and the lexicon, and the `knows` content `extra_case(var 0)` | *expected*: draft 2 admitted both (D6a and D6b pass, since `lexAgrees` checks only the lexicon's symbols against `A.E`), so `renderCond` had no spelling for `s1` and no wording for `extra_case`, and `att_english_roundtrip` failed on them (the re-check's counterexample); draft 3 refuses both at D14d |
 
 ### 7.2 F-AT1's points (one instance `0`, one situation `1`)
@@ -1304,7 +1351,10 @@ on both of RM4's filled situations.
 (F-AT1); the diagnostics D1–D18 all fail. Every `#guard` of draft 1 holds. Draft 2 adds, to be written and run when
 the stub is updated: `frame_unsaidFree` on F-AT1 (with `hw`) and F-AT8 (without it); the diagnostics D6a, D6b and
 D14a–D14c; the collision pairs C-a, C-b and the `wants` pair C-c. Draft 3 adds D14d and C-d (RC-1), and reruns D15
-with its extended lexicon (RC-3). The statements about wire, route kinds, readings
+with its extended lexicon (RC-3). Section 17 adds F-AT9's (one key, the factive premise, its four points), RR-1's
+(the row's tree is `and P̂ (not K)`, not the composed `and P̂ (and P̂ (not K))`; `P̂` at a constant slot term and
+on a closed content; F-AT9's and the closed row's `knows` occurrences meet `assertedNotKnows_one_reading`'s
+hypotheses) and RR-2's (its documents admitted, its texts distinct, exactly the three row texts with one reading). The statements about wire, route kinds, readings
 and English (sections 6.3 to 6.5) have no finite instance before their batches; section 7.6 lists their acceptance
 fixtures.
 
@@ -1329,11 +1379,32 @@ fixtures.
   the hook lands, then compared byte for byte after it.
 - AT-3b: fuzz mutants as PLAN AT-3b, including swaps of two keys' holders, request paths and labels.
 - AT-4: every existing readings fixture byte-identical; the main translation's eight choices with the frame.
-- AT-5: `att_english_roundtrip` on every condition of F-AT1 to F-AT8 and of C-c's admitted document;
+- AT-5: `att_english_roundtrip` on every condition of F-AT1 to F-AT9 and of C-c's admitted document;
   `renderCond_injective` on F-AT2's six conditions in their context; `refused_have_rewrites` on each row of section
   3.4's first table, at its site (the guard rows in F-AT1's rule context, the "unless" row as a whole rule of
   F-AT1), against the row's candidates; `readRuleAll` of the section 3.3 sentence and of the seven pilot guards has
   length 1.
+- AT-5, the admitted row and its boundary (RR-2; the stub's `readFixtures`, each read in F-AT1's rule context
+  `[situation, claude_instance]`, with `P(t, C)` = "t is classified as "C"" and `C`, `C'` the first and the last
+  category). `assertedNotKnows_one_reading` on F-AT9's `knows` occurrence and on the closed row's. Each text below
+  read by the English reader, not a constructed guard: an admitted text answers `readGuard = .ok a` and
+  `readGuardAll = [a]`; a refused one `readGuard = .error "NegatedFactive"` (`readRule` for the rule):
+
+  | Fixture | Text | Answer |
+  |---|---|---|
+  | row | "both P(that situation, C) and that instance of Claude does not know that P(that situation, C)" | `[assertedNotKnows (cond knows C)]` (F-AT9's guard) |
+  | row-closed | "both P(s1, C) and that instance of Claude does not know that P(s1, C)" | `[and C(s1) (not knows C(s1)), closed]` |
+  | row-nested | "either both P(that situation, C) and that instance of Claude does not know that P(that situation, C), or that instance of Claude thinks it quite likely that P(that situation, C), or both" | `[or (assertedNotKnows …) (thinks quite likely C)]` |
+  | content-mismatch | "both P(that situation, C') and … does not know that P(that situation, C)" | refused |
+  | slot-mismatch | "both P(s1, C) and … does not know that P(that situation, C)" | refused |
+  | slot-mismatch-closed | "both P(that situation, C) and … does not know that P(s1, C)" | refused |
+  | order | "both that instance of Claude does not know that P(that situation, C) and P(that situation, C)" | refused |
+  | either | "either P(that situation, C) or that instance of Claude does not know that P(that situation, C), or both" | refused |
+  | bare | "that instance of Claude does not know that P(that situation, C)" | refused |
+  | unless | "Every instance of Claude must not do the weapons uplift in each situation if P(that situation, C), unless that instance of Claude knows that P(that situation, C)." (a whole rule) | refused |
+
+  F-AT9 and the search's T9 evaluate a constructed guard and do not call the reader, so they cover the row's
+  meaning, not this boundary.
 
 ## 8. Limits
 
@@ -1371,7 +1442,7 @@ Result (computed; the stub's final `#guard` asserts it):
 | documents, all well formed, each with at most two keys | 210 |
 | document-model pairs | 6,720 |
 | collapse instances tried (a frame pair links the two conditions) | 480 |
-| seeds tried | 63,188 |
+| candidate seeds enumerated (every sublist of the atoms; T4 checks those with no nonfactive knowing, RR-3) | 63,188 |
 | counterexamples to T1, T2, T3, T4, T5, T7, T8 | 0 each |
 | counterexample valuations to PLAN draft 1's `guard_collapse` (the control) | 17,096 |
 
@@ -1485,6 +1556,7 @@ Each is a statement-level decision for the review; none changes the PLAN's desig
 | one `#guard` per theorem; the search finds no counterexample | draft 1: section 7.5, section 9. **Open** for drafts 2 and 3: the stub updated and elaborated, the new `#guard`s of section 7.5 and the search rerun with the new pool members (section 9) |
 | contents over the base vocabulary; the frame's typing proved on every route (A2) | D13; `frame_wellFormed`, `frame_typed_fill`, `frame_shared` |
 | every refused form has two or more one-reading rewrites | section 3.4's first table; advice rows for two forms (section 11, item 14); `BareThinks` needs an admitted word |
+| the admitted "both P and H does not know that P" has one derivation, and the refusal's exception is exactly that row (RR-1, RR-2) | section 3.1's whole-row reading; `assertedNotKnows_one_reading`; section 7.6's AT-5 read fixtures (row, closed, nested; content, slot term, order, "either", bare, "unless" refused) |
 | the rewrites are the refused form's readings, at its category and in its context (SR-4, SR-5) | section 3.4's candidate readings; `refused_have_rewrites` with `Site` and `Candidates` |
 | every admitted condition has its one sentence, and no sentence two admitted conditions (SR-2) | `renderable` in `checkCond` (D14a–D14d); `att_english_roundtrip` on `(Γ, c) ∈ condsOf A`; `renderCond_injective`; C-a, C-b, C-c, C-d |
 | admission, rendering and reading share one validated lexicon from its owner (SR-3) | `AttDoc.lex`; D6a (`Lexicon.failures`), D6b (`lexAgrees`), and per condition D14d (`lexCovers`: every predicate and constant the condition names has its entry, RC-1); decoded at AT-3a (section 4) |
@@ -1575,3 +1647,20 @@ refuses it with the pack's first failing label (PLAN AT-2). So the gap F-AT1's M
 pilot, not only argued.
 
 Statements changed or added, for the re-review: none. Definitions: none. Diagnostics: none. Fixtures: none.
+
+## 17. AT-0's re-review: corrections RR-1 to RR-3
+
+The bounded re-review of AT-0's changed statements (`manage-agents/attitudes-at0-review.final.md`, on
+[docs/research/attitudes-at0-changed.md](../research/attitudes-at0-changed.md)) returned **FIX** with two B findings
+and one C. Each is corrected as a class; nothing else changes. The stub carries every change and elaborates with
+every `#guard` holding (that document's section 1).
+
+| # | Finding | Correction | Where |
+|---|---|---|---|
+| RR-1 | (B) "Give the same guard" overstated the argument: composing `NegatedFactive`'s two candidates under "both P and …" gives `and P̂ (and P̂ (not K))` and `and P̂ (not K)`, equivalent formulas but two trees, so equivalence does not give one derivation under the all-derivations rule | The row is read whole: one construction, only when the first conjunct is the complement's clause with the same content and slot term, whose one tree is `assertedNotKnows c = and P̂ (not K)`. New: `assertedNotKnows_one_reading` (each admitted `knows` occurrence's row text answers `readGuard = .ok (assertedNotKnows c)` and `readGuardAll = [assertedNotKnows c]`), the definitions `slotTermIn`, `slotIn`, `assertedOf`, `assertedNotKnows`, and AT-5's renderer `renderAssertedNotKnows`. `P̂` is now `assertedOf` (a content is quantifier-free, so variable 0 is replaced directly; the old citation of `Formula.subst` was over `VE.Core.Formula`) | 0; 3.1; 3.4; 6.5; 7.1 (F-AT9); 7.5; 12 |
+| RR-2 | (B) The admitted row's one reading was claimed to be carried by AT-5's acceptance fixtures, but section 7.6 had none for it, and F-AT9 and T9 evaluate a constructed guard without the reader | Section 7.6 gains the row's AT-5 fixtures, read by the English reader: the row's exact one reading alone, on a closed content and nested in "either … or"; and the refusal's boundary: another content, another slot term (either side), the conjuncts reversed, the row's shape under "either … or", the bare form and "unless". The stub records them (`readFixtures`, `readFixtures_hold`), with their documents and the computable checks | 3.1; 7.1; 7.5; 7.6; 12 |
+| RR-3 | (C) "Seeds tried" counted every sublist of the atoms, while T4 checks only the seeds with no nonfactive knowing | Relabelled "candidate seeds enumerated"; the search also counts the seeds T4 checks (`seedsChecked`) | 9 |
+
+Statements changed or added, for the re-review: `assertedNotKnows_one_reading` (new). Definitions: `slotTermIn`,
+`slotIn`, `assertedOf`, `assertedNotKnows` (new); `renderAssertedNotKnows` (AT-5's, a stand-in in the stub).
+Diagnostics: none. Fixtures: F-AT9 (now in section 7.1), RR-2's three documents and the ten AT-5 read fixtures.

@@ -7,8 +7,9 @@ import VE.Closure.Paths
 import VE.Readings.SupExtra
 import VE.EnglishGrammar.Lexicon
 
-/-! Statement stub for docs/spec/attitudes.md (AT-0): spec draft 4's Lean (draft 3's, which draft 4 keeps), with
-E1's and E2's frozen table written into `table` (docs/research/attitudes-e1e2.md 4.3). Not product code: it is
+/-! Statement stub for docs/spec/attitudes.md (AT-0): spec draft 4's Lean (draft 3's, which draft 4 keeps) with the
+re-review's RR-1 and RR-2 (spec section 17), and E1's and E2's frozen table written into `table`
+(docs/research/attitudes-e1e2.md 4.3). Not product code: it is
 elaborated with `lake env lean` against `lean/` at this branch's base, and `research/attitudes/experiments.py`
 pins it by sha256. Sections: S0 stand-ins for other owners' interfaces (QS-1, AT-1w's `wants` test), S1 AT-1
 definitions, S2 AT-1 statements, S3 AT-2 to AT-5 statements, S4 executable evaluators, S5 fixtures, S6
@@ -879,6 +880,32 @@ opaque readGuardAll : AttDoc → List String → String → List AFormula
 opaque readRule : AttDoc → String → Except String ARule
 opaque readRuleAll : AttDoc → String → List ARule
 opaque refusalOf : AttDoc → Site → String → Option Refusal
+/-- Section 3.1's admitted row "both P and H does not know that P", rendered for the `knows` condition `c`. -/
+opaque renderAssertedNotKnows : AttDoc → List String → Cond → String
+
+/-- `P̂` (section 3.4): the content with the slot term for variable 0; the content itself when closed. A content is
+    quantifier-free (D12), so variable 0 is replaced directly (`Formula.subst` of `lean/VE/Core/Substitution.lean`
+    is over `VE.Core.Formula`, not `VE.Formula`). -/
+def slotTermIn (t : VE.Term) : VE.Term → VE.Term
+  | .var 0 => t
+  | u => u
+def slotIn (t : VE.Term) : VE.Formula → VE.Formula
+  | .unary p u => .unary p (slotTermIn t u)
+  | .binary p u v => .binary p (slotTermIn t u) (slotTermIn t v)
+  | .eq u v => .eq (slotTermIn t u) (slotTermIn t v)
+  | .not a => .not (slotIn t a)
+  | .and a b => .and (slotIn t a) (slotIn t b)
+  | .or a b => .or (slotIn t a) (slotIn t b)
+  | .implies a b => .implies (slotIn t a) (slotIn t b)
+  | φ => φ
+def assertedOf (c : Cond) : VE.Formula :=
+  match c.slot with
+  | none => c.content
+  | some (_, t) => slotIn t c.content
+/-- The one reading of section 3.1's admitted row (E2, six items), read whole (RR-1): `and P̂ (not K)`. It is not a
+    composition of `NegatedFactive`'s candidates under "both P and …", which would give two trees,
+    `and P̂ (and P̂ (not K))` and `and P̂ (not K)`: equivalent, but two derivations. -/
+def assertedNotKnows (c : Cond) : AFormula := .and (.base (assertedOf c)) (.not (.att c))
 
 /-- Rendering then reading an admitted attitude condition gives it back, under the document's own lexicon `A.lex`,
     which `WellFormedAtt` validates and ties to `A.E` (D6a, D6b), with an entry for every symbol the condition
@@ -905,6 +932,12 @@ def refused_have_rewrites (A : AttDoc) (_h : WellFormedAtt A = true) (site : Sit
         readRule A s = .error r.code ∧ (∀ s2 ∈ r.rewrites, (readRuleAll A s2).length = 1) ∧
           r.rewrites.flatMap (readRuleAll A) = cs ∧ cs.Nodup
     | _, _ => False
+/-- Section 3.1's admitted row has exactly one reading, its own (RR-1): for each admitted `knows` occurrence, the
+    row's text in that context is admitted and its every derivation is `assertedNotKnows c`. -/
+def assertedNotKnows_one_reading (A : AttDoc) (_h : WellFormedAtt A = true) (Γ : List String) (c : Cond)
+    (_hc : (Γ, c) ∈ condsOf A) (_hk : c.mode = .knows) : Prop :=
+  readGuard A Γ (renderAssertedNotKnows A Γ c) = .ok (assertedNotKnows c) ∧
+    readGuardAll A Γ (renderAssertedNotKnows A Γ c) = [assertedNotKnows c]
 
 end VE.Attitudes
 
@@ -1160,29 +1193,6 @@ def cd2 : AttDoc :=
   withKnows { cond .knows categories[0]! with content := .unary "extra_case" (.var 0) } [("extra_case", [sortS])]
     [] [] [] []
 
-/-- The reading of section 3.1's admitted row "both P and H does not know that P" (E2, six items): `P ∧ ¬knows(P)`,
-    with `P̂` the content with the slot term for variable 0 (the content itself when closed). Spec 3.4 cites
-    `Formula.subst` of `lean/VE/Core/Substitution.lean`, which is over `VE.Core.Formula`, not `VE.Formula`; a content
-    is quantifier-free, so the stub replaces variable 0 directly. The same guard is `NegatedFactive`'s first
-    candidate (section 3.4). Fixture only: the row adds no Lean definition. -/
-def slotTermIn (t : VE.Term) : VE.Term → VE.Term
-  | .var 0 => t
-  | u => u
-def slotIn (t : VE.Term) : VE.Formula → VE.Formula
-  | .unary p u => .unary p (slotTermIn t u)
-  | .binary p u v => .binary p (slotTermIn t u) (slotTermIn t v)
-  | .eq u v => .eq (slotTermIn t u) (slotTermIn t v)
-  | .not a => .not (slotIn t a)
-  | .and a b => .and (slotIn t a) (slotIn t b)
-  | .or a b => .or (slotIn t a) (slotIn t b)
-  | .implies a b => .implies (slotIn t a) (slotIn t b)
-  | φ => φ
-def assertedOf (c : Cond) : VE.Formula :=
-  match c.slot with
-  | none => c.content
-  | some (_, t) => slotIn t c.content
-def assertedNotKnows (c : Cond) : AFormula := .and (.base (assertedOf c)) (.not (.att c))
-
 /-- F-AT9 (new, E2's admission): F-AT1's rule with the guard "both that situation is classified as … and that
     instance of Claude does not know that that situation is classified as …". -/
 def guard9 : AFormula := assertedNotKnows (cond .knows categories[0]!)
@@ -1384,6 +1394,81 @@ def K9 : Rel := [(kOf fat9 .knows, [0, 1])]
 #eval ("F-AT9: cat true none, cat true knows, cat false none, cat false knows",
   row9 [] true, row9 K9 true, row9 [] false, row9 K9 false)
 
+/-! ### AT-5's acceptance fixtures for the admitted row and its boundary (RR-2; spec 7.6). The readers are AT-5's,
+so these are recorded here, elaborated, and computed at AT-5; the `#guard`s below check what is computable now. -/
+
+/-- What AT-5's reader must answer for a text: its one reading (`readGuard` gives it and `readGuardAll` gives it
+    alone), or a refusal with the catalogue row's code. -/
+inductive Expect where
+  | one (a : AFormula)
+  | refused (code : String)
+
+structure ReadFixture where
+  id : String
+  doc : AttDoc
+  site : Site
+  text : String
+  expect : Expect
+
+def ReadFixture.holds (f : ReadFixture) : Prop :=
+  match f.site, f.expect with
+  | .guard Γ, .one a => readGuard f.doc Γ f.text = .ok a ∧ readGuardAll f.doc Γ f.text = [a]
+  | .guard Γ, .refused code => readGuard f.doc Γ f.text = .error code
+  | .rule, .refused code => readRule f.doc f.text = .error code
+  | .rule, .one _ => False
+
+/-- The texts, in F-AT1's rule context (spec 3.3's rendering): `H` "that instance of Claude", `P` the category on a
+    situation term. -/
+def H9 : String := "that instance of Claude"
+def P9 (t cat : String) : String := t ++ " is classified as \"" ++ cat ++ "\""
+def notKnows9 (t cat : String) : String := H9 ++ " does not know that " ++ P9 t cat
+def x9 : String := "that situation"
+def C0 : String := categories[0]!
+def C6 : String := categories[6]!
+
+/-- The closed `knows` content `C(s1)`, as C-b's first document. -/
+def cond9c : Cond := { cond .knows C0 with slot := none, content := .unary C0 (.const "s1") }
+/-- F-AT9 with `s1` declared and spelled; with the row on the closed content; and with the row nested in a frame. -/
+def fat9s1 : AttDoc := docWith [ruleOf "u0165-s01" guard9] [] [] [] ["s1"] ["s1"]
+def fat9c : AttDoc := docWith [ruleOf "u0165-s01" (assertedNotKnows cond9c)] [] [] [] ["s1"] ["s1"]
+def guard9n : AFormula := .or guard9 (.att (cond ql C0))
+def fat9n : AttDoc := docOf table [] [ruleOf "u0165-s01" guard9n]
+
+def negatedFactive : String := "NegatedFactive"
+
+/-- The admitted row's exact one reading, alone, closed and nested; then the boundary of `NegatedFactive`'s
+    exception: content, slot term (both ways) and conjunct order mismatched, the row's shape under "either … or",
+    bare negated knowledge, and "unless" (a whole rule). -/
+def readFixtures : List ReadFixture :=
+  [⟨"row", fat9, .guard Γ1, "both " ++ P9 x9 C0 ++ " and " ++ notKnows9 x9 C0, .one guard9⟩,
+   ⟨"row-closed", fat9c, .guard Γ1, "both " ++ P9 "s1" C0 ++ " and " ++ notKnows9 "s1" C0,
+     .one (assertedNotKnows cond9c)⟩,
+   ⟨"row-nested", fat9n, .guard Γ1,
+     "either both " ++ P9 x9 C0 ++ " and " ++ notKnows9 x9 C0 ++ ", or " ++ H9 ++ " thinks it quite likely that " ++
+       P9 x9 C0 ++ ", or both", .one guard9n⟩,
+   ⟨"content-mismatch", fat9, .guard Γ1, "both " ++ P9 x9 C6 ++ " and " ++ notKnows9 x9 C0, .refused negatedFactive⟩,
+   ⟨"slot-mismatch", fat9s1, .guard Γ1, "both " ++ P9 "s1" C0 ++ " and " ++ notKnows9 x9 C0,
+     .refused negatedFactive⟩,
+   ⟨"slot-mismatch-closed", fat9s1, .guard Γ1, "both " ++ P9 x9 C0 ++ " and " ++ notKnows9 "s1" C0,
+     .refused negatedFactive⟩,
+   ⟨"order", fat9, .guard Γ1, "both " ++ notKnows9 x9 C0 ++ " and " ++ P9 x9 C0, .refused negatedFactive⟩,
+   ⟨"either", fat9, .guard Γ1, "either " ++ P9 x9 C0 ++ " or " ++ notKnows9 x9 C0 ++ ", or both",
+     .refused negatedFactive⟩,
+   ⟨"bare", fat9, .guard Γ1, notKnows9 x9 C0, .refused negatedFactive⟩,
+   ⟨"unless", fat1, .rule,
+     "Every instance of Claude must not do the weapons uplift in each situation if " ++ P9 x9 C0 ++ ", unless " ++
+       H9 ++ " knows that " ++ P9 x9 C0 ++ ".", .refused negatedFactive⟩]
+
+/-- AT-5's acceptance (RR-2): every fixture holds. -/
+def readFixtures_hold : Prop := ∀ f ∈ readFixtures, f.holds
+/-- `assertedNotKnows_one_reading`'s instance on F-AT9 (computed at AT-5). -/
+def fat9_one_reading (h : WellFormedAtt fat9 = true) (hc : (Γ1, cond .knows C0) ∈ condsOf fat9) : Prop :=
+  assertedNotKnows_one_reading fat9 h Γ1 (cond .knows C0) hc rfl
+
+#eval ("AT-5 read fixtures (RR-2)", readFixtures.map (fun f => (f.id, f.text)))
+#eval ("RR-2 documents: F-AT9 with s1, the closed row, the nested row: check",
+  checkAtt fat9s1, checkAtt fat9c, checkAtt fat9n)
+
 /-! ### AT-2: the route at F-AT1's points (unspecified completion) -/
 def U1 : VE.NormDefaults.UDoc :=
   match toU fat1 ["weapons_uplift_permitted"] with
@@ -1544,6 +1629,18 @@ def M1pk : Rel := [(kOf fat1 .knows, [0, 1]), (kOf fat1 (.act .intends), [0, 1])
 #guard (checkAtt fat9).toBool && (keys fat9).length == 1 && (framePremises fat9).length == 1
 #guard row9 [] true == (true, true, true) && row9 K9 true == (true, false, false) &&
   row9 [] false == (true, false, false) && row9 K9 false == (false, false, false)
+-- RR-1: the row's one reading is its own tree `and P̂ (not K)` (P̂ the content at the slot term, the content itself
+-- when closed), not the composed `and P̂ (and P̂ (not K))`; F-AT9's and the closed row's `knows` occurrences meet
+-- `assertedNotKnows_one_reading`'s hypotheses
+#guard guard9 == .and (.base (contentOf C0)) (.not (.att (cond .knows C0))) &&
+  assertedNotKnows cond9c == .and (.base (.unary C0 (.const "s1"))) (.not (.att cond9c)) &&
+  assertedOf { cond .knows C0 with slot := some (sortS, .const "s1") } == .unary C0 (.const "s1") &&
+  (condsOf fat9).contains (Γ1, cond .knows C0) && (condsOf fat9c).contains (Γ1, cond9c)
+-- RR-2: the fixtures' documents are admitted, their texts distinct, and exactly the three row texts have one reading
+#guard (checkAtt fat9s1).toBool && (checkAtt fat9c).toBool && (checkAtt fat9n).toBool &&
+  (readFixtures.map (·.text)).eraseDups.length == readFixtures.length && readFixtures.length == 10 &&
+  (readFixtures.filter (fun f => match f.expect with | .one _ => true | _ => false)).map (·.id) ==
+    ["row", "row-closed", "row-nested"]
 
 end VE.Attitudes.Fixtures
 
@@ -1596,7 +1693,7 @@ def pool : List AFormula :=
    .att (onS (.act .wants) (.and Px Qx)),
    .att (closed .knows (.unary pP (.const "c1"))),
    .att (onS (.act .wants) Px),
-   VE.Attitudes.Fixtures.assertedNotKnows (onS .knows Px)]
+   assertedNotKnows (onS .knows Px)]
 
 /-- The admitted form's member. -/
 def ank : AFormula := pool[17]!
@@ -1716,12 +1813,16 @@ def t3 (d : CDoc) (M : FM) : Nat × Nat :=
       | _, _ => n2) 0) 0
   (repaired, draft1)
 
+/-- The seeds T4 checks: the sublists of the atoms with no nonfactive knowing. -/
+def seedsOf (M : FM) (atoms : List (Key × List Nat)) : List (List (Key × List Nat)) :=
+  (sublists atoms).filter (fun s => s.all (fun p => p.1.mode != .knows || contentB M p.1 p.2))
+
 /-- T4 seed_intended and forced_iff_reachable, T5 mistaken_belief_admissible. -/
 def t45 (d : CDoc) (M : FM) : Nat × Nat :=
   let Js := allJC d M
   let intendedJs := Js.filter (intendedC d M)
   let atoms := d.ks.flatMap (fun k => (tuplesC M k).map (k, ·))
-  let seeds := (sublists atoms).filter (fun s => s.all (fun p => p.1.mode != .knows || contentB M p.1 p.2))
+  let seeds := seedsOf M atoms
   let t4 := seeds.foldl (fun n seed =>
     let cl := VE.Reports.dedup (seed.flatMap (fun p =>
       (d.ks.filter (fun k => VE.Closure.reachEval .star d.fps p.1 k)).map (·, p.2) ++ [p]))
@@ -1747,15 +1848,16 @@ def t8 (d : CDoc) (M : FM) : Nat :=
   (if frameC d M [] then 0 else 1) +
   oldFormulas.countP (fun φ => φ.eval M [] != φ.eval (interpC d M []) [])
 
-/-- Non-vacuity: how many collapse instances (pairs linked by a frame pair) and seeds the search tried. -/
-def instancesOf (d : CDoc) (M : FM) : Nat × Nat :=
+/-- Non-vacuity: how many collapse instances (pairs linked by a frame pair) the search tried, how many candidate
+    seeds it enumerated, and how many of them T4 checked (`seedsOf`). -/
+def instancesOf (d : CDoc) (M : FM) : Nat × Nat × Nat :=
   let cs := condsG d.g
   let pairs := cs.foldl (fun n p => n + cs.countP (fun q =>
     match p.2.key d.A p.1, q.2.key d.A q.1 with
     | some k, some kt => p.1 == [sS, sC] && q.1 == [sS, sC] && d.fps.contains (k, kt) && p.2.holder == q.2.holder
     | _, _ => false)) 0
   let atoms := d.ks.flatMap (fun k => (tuplesC M k).map (k, ·))
-  (pairs, (sublists atoms).length)
+  (pairs, (sublists atoms).length, (seedsOf M atoms).length)
 
 /-- T9, the admitted form's reading `P ∧ ¬knows(P)` (E2): at each valuation where P holds, some intended relation
     makes the member true and some makes it false (the frame neither refutes nor forces it); where P fails, no
@@ -1770,7 +1872,9 @@ def t9 (d : CDoc) (M : FM) : Nat × Nat :=
 
 structure Tally where
   collapseCases : Nat := 0
+  /-- candidate seeds enumerated, and those T4 checked (no nonfactive knowing) -/
   seeds : Nat := 0
+  seedsChecked : Nat := 0
   docs : Nat := 0
   wf : Nat := 0
   /-- documents of draft 1's twelve members only, and how many of them `checkAtt` admits -/
@@ -1814,12 +1918,12 @@ def runSearch (cs : List Case) (cfgs : List (List (String × List Nat))) : Tally
       let (a, b) := t12 d M
       let (c3, c1) := t3 d M
       let (e, f) := t45 d M
-      let (g1, g2) := instancesOf d M
+      let (g1, g2, g3) := instancesOf d M
       let (n9, v9) := if c.hasAnk then t9 d M else (0, 0)
       { t with
         models := t.models + 1, t1 := t.t1 + a, t2 := t.t2 + b, t3 := t.t3 + c3, t3draft1 := t.t3draft1 + c1,
         t4 := t.t4 + e, t5 := t.t5 + f, t8 := t.t8 + t8 d M, t9 := t.t9 + n9, ankTried := t.ankTried + v9,
-        collapseCases := t.collapseCases + g1, seeds := t.seeds + g2 }) t) {}
+        collapseCases := t.collapseCases + g1, seeds := t.seeds + g2, seedsChecked := t.seedsChecked + g3 }) t) {}
 
 #eval ("guards", guards.length)
 #eval ("search lexicon: Lexicon.failures, lexAgrees", VE.EnglishGrammar.Lexicon.failures lexS.env lexS.overlay lexS.lexicon,
@@ -1830,6 +1934,7 @@ def result : Tally := runSearch cases configs
 #guard result.t1 + result.t2 + result.t3 + result.t4 + result.t5 + result.t7 + result.t8 + result.t9 == 0 &&
   result.t3draft1 > 0
 #guard result.refusalMiss == 0 && result.unexpected == 0 && result.earlier == 210 && result.earlierWf == 210 &&
-  result.wf + result.refused == result.docs && result.ankDocs > 0 && result.ankTried > 0
+  result.wf + result.refused == result.docs && result.ankDocs > 0 && result.ankTried > 0 &&
+  0 < result.seedsChecked && result.seedsChecked ≤ result.seeds
 
 end VE.Attitudes.Search

@@ -34,9 +34,10 @@ ROOT = HERE.parents[1]
 EVIDENCE = ROOT / "docs/research/evidence/attitudes"
 STUB = HERE / "stub/SpecStubs_attitudes.lean"
 # The AT-0 stub, updated to spec draft 4's Lean with the frozen table written in (committed here; draft 1's copy was
-# untracked in ve-design-attitudes, sha256 2178fb6e…). Its `Table` and `Table.reviewed` are unchanged from draft 1.
+# untracked in ve-design-attitudes, sha256 2178fb6e…), then with AT-0's re-review fixes RR-1 to RR-3 (was 0c73f880…).
+# Its `Table` and `Table.reviewed` are unchanged from draft 1.
 # Pinned so that a later edit to it cannot silently change the review: a stub with another hash is refused.
-STUB_SHA256 = "0c73f88055c387c4418524c3c892b74ed6079760ed917f5cd121b084847b6a17"
+STUB_SHA256 = "dea412eb2654d245c12b48cc389c33d6292ad51c57421aa9640bec08d738f113"
 
 # ---- quoted from the PLAN (E1, E2); the order is E1's list order, strongest first ----
 WORDS = ["almost certain", "very likely", "quite likely", "likely", "more likely than not", "as likely as not",
