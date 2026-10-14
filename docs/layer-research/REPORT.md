@@ -36,7 +36,20 @@ Each was planted, made the test above fail, and was removed; the outputs are in
 ## Tests run
 
 - `tools/test_layer_policy.py` `LayerSelectionTests`: 36 passed.
-- `tools/select_tests.py --base $(git merge-base HEAD main) --run`: 86 units, 0 failed.
+- `tools/select_tests.py --base $(git merge-base HEAD main) --run`: 86 units, 0 failed (before the
+  evidence commit).
+- After the evidence commit the same selection is all 373 units. The cause predates this item: a
+  module every test reaches through conftest holds the bare string `evidence`, which the static
+  graph matches by name to every `docs/*/evidence/` directory, and this tree has no coverage map.
+  The rerun (load average 100–250) stopped at `--maxfail` with 127 units passed and 3 load failures:
+  `tests/test_agent_policy_rerun.py` (Lean `norms` CPU deadline of 5.56 s exceeded) and
+  `tests/test_assist.py`, `tests/test_assist_invariants.py` (1 h unit timeout). Rerun alone, all
+  pass: `test_agent_policy_rerun.py` + `tools/test_layer_policy.py` 43 passed; the two assist files
+  128 passed, 1 skipped (P5 materials not available). The remaining 243 units are left to the
+  chain's gate.
+- Before that rerun, the worktree's Lean build failed to link: `VE/Readings/SupRun.c.o.export` was a
+  736-byte empty object recorded as built (a compile killed under load). Deleting it and its
+  trace let `lake build` finish; no Lean source changed.
 - The full gate is run by the chain on the committed final HEAD (`gate-result.json` in the worktree).
   The first chain record (2026-10-13 13:33 UTC) was the placeholder a killed gate leaves: no commit,
   no stages, no failures; there was no failed test to rerun.
