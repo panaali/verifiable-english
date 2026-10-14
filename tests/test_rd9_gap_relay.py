@@ -61,3 +61,69 @@ def test_pair_gaps_are_typed_and_bound_to_the_request(monkeypatch):
         monkeypatch.setattr(readings_route, "run_lean", lambda *a, **k: [forged])
         with pytest.raises(CheckerUnavailable):
             readings_route.validate(*args)
+
+
+@pytest.mark.parametrize('fixture,predicate,values', [
+    ('F-ND1', 'help_required', ['b', 'u']),
+    ('F-ND2', 'x_permitted', ['a']),
+])
+def test_unlisted_fnd_gap_flip_keeps_leans_witness_value(fixture, predicate, values):
+    """B6: the pair value is stable when an admissible, unlisted gap flips."""
+    from tests.test_readings_nd_lean import doc2, env2, one
+    from tests.test_readings_s1_lean import situation_id
+    raw = env1() if fixture == 'F-ND1' else env2()
+    document, sid = (doc1(raw) if fixture == 'F-ND1' else doc2(raw))
+    observed = []
+    for present in (False, True):
+        source = copy.deepcopy(document)
+        reading_set = source['reading_sets'][0]
+        situation = reading_set['situations'][sid]
+        if fixture == 'F-ND1':
+            situation['base']['domains']['agent'].append('b')
+            situation['base']['relations']['unsaid__help_permitted'].append(['b', 'u'])
+        situation['base']['relations']['unsaid__' + predicate] = [values] if present else []
+        new_id = situation_id(raw, situation)
+        reading_set['situations'] = {new_id: situation}
+        for reading in reading_set['readings']:
+            reading['admission']['distinguishing_models'] = {
+                other: new_id for other in reading['admission']['distinguishing_models']}
+        row = one('ve_readings_route', 'readings-validate', raw, source)
+        assert row['status'] == 'ok', row
+        pair = row['sets'][0]['pairs'][0]['pair']
+        assert all((gap[0], gap[1]) != (predicate, values) for gap in pair['gaps'])
+        observed.append((pair['witness_value'], pair['other_value'], pair['gaps']))
+    assert observed[0] == observed[1]
+
+
+@pytest.mark.parametrize('fixture', ['C2', 'C4'])
+def test_unlisted_ce4_gap_flips_keep_leans_witness_value(fixture):
+    """B6: every other CE4 completion table can flip without changing the shown pair value."""
+    from tests import ce4
+    from tests.test_readings_s1_lean import run, situation_id
+    from tests.test_readings_sd_ce4 import PAIRS
+    raw = ce4.environment()
+    set_id, _, _, listed, _ = PAIRS[fixture]
+    observed = []
+    for predicate in ce4.REGULATED:
+        if predicate == listed[0]:
+            continue
+        values = [{'claude_instance': 'c', 'situation': 's', 'user': 'u'}[sort]
+                  for sort in raw['vocabulary']['predicates'][predicate]['arguments']]
+        answers = []
+        for present in (False, True):
+            situation = ce4.sigma(set_id)
+            situation['base']['relations']['unsaid__' + predicate] = [values] if present else []
+            sets = ce4.with_situations(raw, ce4.reading_sets(), situation_id, {set_id: situation})
+            for reading_set in sets:
+                for reading in reading_set['readings']:
+                    reading['meaning_id'] = 'm'
+            [row] = run('ve_readings_route', [{
+                'id': 'v', 'kind': 'readings-validate', 'environment': raw,
+                'document': ce4.wire_document(sets)}])
+            assert row['status'] == 'ok', row
+            entry = next(item for item in row['sets'] if item['set'] == set_id)
+            pair = entry['pairs'][0]['pair']
+            assert all(gap[0] != predicate for gap in pair['gaps'])
+            answers.append((pair['witness_value'], pair['other_value'], pair['gaps']))
+        observed.append(answers)
+    assert observed and all(left == right for left, right in observed)
