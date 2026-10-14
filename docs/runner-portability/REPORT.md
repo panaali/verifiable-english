@@ -219,3 +219,6 @@ in-place plant (removed with `git reset --keep`).
   selects 370/370 files and its map-free plan selects 369/369. Running either would be the full
   suite, which this task explicitly leaves to the merge train and nightly run. The generated test
   collection was updated with all five new IDs.
+  After the code commit, `test_lean_handles.py` and `test_lean_service.py` passed together on the
+  committed HEAD: 234 passed. Selecting by that implementation commit also yielded 370/370 files,
+  confirming the broad selection comes from the stale map rather than the report changes.
