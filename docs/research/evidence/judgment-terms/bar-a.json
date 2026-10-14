@@ -1,0 +1,268 @@
+{
+ "A1": {
+  "pass": true,
+  "parts": {
+   "translation-part01.ve.md": true,
+   "translation-part02.ve.md": true,
+   "translation-part03.ve.md": true,
+   "translation-part04.ve.md": true
+  }
+ },
+ "A2": {
+  "pass": true,
+  "units": {
+   "u010": {
+    "part": "translation-part01.ve.md",
+    "baseline": "UNFORMALISED",
+    "jt0p": "OPEN",
+    "pass": true
+   },
+   "u060": {
+    "part": "translation-part02.ve.md",
+    "baseline": "UNFORMALISED",
+    "jt0p": "OPEN",
+    "pass": true
+   }
+  }
+ },
+ "A3": {
+  "pass": true,
+  "parts": {
+   "translation-part01.ve.md": {
+    "pass": true,
+    "differences": {}
+   },
+   "translation-part02.ve.md": {
+    "pass": true,
+    "differences": {}
+   },
+   "translation-part03.ve.md": {
+    "pass": true,
+    "differences": {}
+   },
+   "translation-part04.ve.md": {
+    "pass": true,
+    "differences": {}
+   }
+  }
+ },
+ "A4": {
+  "pass": true,
+  "parts": {
+   "translation-part01.ve.md": {
+    "pass": true,
+    "equal": {
+     "premises": true,
+     "readings_status": true,
+     "conflict": true
+    },
+    "baseline": {
+     "premises": {
+      "status": "model",
+      "route": "superposed",
+      "evidence": "model",
+      "choice": [
+       [
+        "rs_u025",
+        0
+       ]
+      ],
+      "gaps": []
+     },
+     "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+     "conflict": "CONFLICT-FREE"
+    },
+    "jt0p": {
+     "premises": {
+      "status": "model",
+      "route": "superposed",
+      "evidence": "model",
+      "choice": [
+       [
+        "rs_u025",
+        0
+       ]
+      ],
+      "gaps": []
+     },
+     "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+     "conflict": "CONFLICT-FREE"
+    }
+   },
+   "translation-part02.ve.md": {
+    "pass": true,
+    "equal": {
+     "premises": true,
+     "readings_status": true,
+     "conflict": true
+    },
+    "baseline": {
+     "premises": {
+      "status": "model",
+      "route": "superposed",
+      "evidence": "model",
+      "choice": [
+       [
+        "rs_u049",
+        0
+       ],
+       [
+        "rs_u052",
+        0
+       ],
+       [
+        "rs_u055",
+        0
+       ]
+      ],
+      "gaps": []
+     },
+     "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+     "conflict": "CONFLICT-FREE"
+    },
+    "jt0p": {
+     "premises": {
+      "status": "model",
+      "route": "superposed",
+      "evidence": "model",
+      "choice": [
+       [
+        "rs_u049",
+        0
+       ],
+       [
+        "rs_u052",
+        0
+       ],
+       [
+        "rs_u055",
+        0
+       ]
+      ],
+      "gaps": []
+     },
+     "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+     "conflict": "CONFLICT-FREE"
+    }
+   },
+   "translation-part03.ve.md": {
+    "pass": true,
+    "equal": {
+     "premises": true,
+     "readings_status": true,
+     "conflict": true
+    },
+    "baseline": {
+     "premises": {
+      "status": "model",
+      "model_id": "796becb15ff2470c008e820b087af36ab80f0ec8d71dbd3e3e8ba8bbfc2f85a8"
+     },
+     "readings_status": null,
+     "conflict": null
+    },
+    "jt0p": {
+     "premises": {
+      "status": "model",
+      "model_id": "796becb15ff2470c008e820b087af36ab80f0ec8d71dbd3e3e8ba8bbfc2f85a8"
+     },
+     "readings_status": null,
+     "conflict": null
+    }
+   },
+   "translation-part04.ve.md": {
+    "pass": true,
+    "equal": {
+     "premises": true,
+     "readings_status": true,
+     "conflict": true
+    },
+    "baseline": {
+     "premises": {
+      "status": "model",
+      "route": "superposed",
+      "evidence": "model",
+      "choice": [
+       [
+        "rs_u105b",
+        0
+       ],
+       [
+        "rs_u105c",
+        0
+       ],
+       [
+        "rs_u110",
+        0
+       ],
+       [
+        "rs_u111",
+        0
+       ],
+       [
+        "rs_u114",
+        0
+       ]
+      ],
+      "gaps": []
+     },
+     "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+     "conflict": "CONFLICT-FREE"
+    },
+    "jt0p": {
+     "premises": {
+      "status": "model",
+      "route": "superposed",
+      "evidence": "model",
+      "choice": [
+       [
+        "rs_u105b",
+        0
+       ],
+       [
+        "rs_u105c",
+        0
+       ],
+       [
+        "rs_u110",
+        0
+       ],
+       [
+        "rs_u111",
+        0
+       ],
+       [
+        "rs_u114",
+        0
+       ]
+      ],
+      "gaps": []
+     },
+     "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+     "conflict": "CONFLICT-FREE"
+    }
+   }
+  }
+ },
+ "A5": {
+  "pass": true,
+  "parts": {
+   "translation-part01.ve.md": {
+    "pass": true,
+    "differences_from_expected": []
+   },
+   "translation-part02.ve.md": {
+    "pass": true,
+    "differences_from_expected": []
+   },
+   "translation-part03.ve.md": {
+    "pass": true,
+    "differences_from_expected": []
+   },
+   "translation-part04.ve.md": {
+    "pass": true,
+    "differences_from_expected": []
+   }
+  }
+ },
+ "bar_part_A": "PASS"
+}

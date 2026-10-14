@@ -1,0 +1,39 @@
+{
+ "P1": {
+  "pass": true,
+  "parts": {
+   "translation-part01.ve.md": {
+    "pass": true,
+    "unit_status_differences": {},
+    "coverage_differences": [],
+    "premises_equal": true,
+    "readings_status_equal": true,
+    "conflict_equal": true
+   },
+   "translation-part02.ve.md": {
+    "pass": true,
+    "unit_status_differences": {},
+    "coverage_differences": [],
+    "premises_equal": true,
+    "readings_status_equal": true,
+    "conflict_equal": true
+   },
+   "translation-part03.ve.md": {
+    "pass": true,
+    "unit_status_differences": {},
+    "coverage_differences": [],
+    "premises_equal": true,
+    "readings_status_equal": true,
+    "conflict_equal": true
+   },
+   "translation-part04.ve.md": {
+    "pass": true,
+    "unit_status_differences": {},
+    "coverage_differences": [],
+    "premises_equal": true,
+    "readings_status_equal": true,
+    "conflict_equal": true
+   }
+  }
+ }
+}

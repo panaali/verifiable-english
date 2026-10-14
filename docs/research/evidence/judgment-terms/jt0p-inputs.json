@@ -1,0 +1,20 @@
+{
+ "pilot": "/home/seyran/code/manage-agents/pilots/udhr/run-20261012T1800Z",
+ "pilot_sha256": {
+  "translation-part01.ve.md": "a32f0019717f757b5d67f133329a50451636e087d662b7dfdec200173c4ec639",
+  "translation-part02.ve.md": "0187214619e898569ed89c54fe60a3aebcd26ec85fb63e803b29878255705c19",
+  "translation-part03.ve.md": "20437df2b63fa28cc0449c2a604a266abbe6b494aca154d8e38efa9d9df4bd1e",
+  "translation-part04.ve.md": "ae3302301c81dc2eb56184928d79c7064ea1886ef65c4434ab3b6bc31e66ae0e",
+  "units.json": "0a43de590810bb70761dcce88e55eaf5777a9503dfeef0f1aba388905f296686",
+  "parts-check.json": "e7f923cebf01488107e66b5c18c8c7dbfd976e8d2290eed5707b26520b9ad6c8"
+ },
+ "jt0p_sha256": {
+  "translation-part01.ve.md": "68f443a7952a9f4b0245e92ae4c6b295fb855c6b2d86ff799ef5f6090a15cf67",
+  "translation-part02.ve.md": "591f92498c2d1a1cf644db616ffc747e9fb473be7725c8ee276ffa8fd950dc07",
+  "translation-part03.ve.md": "8d1423b96e355fffebba3938f57c15ce0018a676a95e399ae90e02cf4f81aecb",
+  "translation-part04.ve.md": "3d5dc4553aa6516f000a100f19d7b9556354fb0604c3393b78039e2fd98b7dd1",
+  "units.json": "4fda7dd5d3e046a344b390308d96b709630717344df084badc38b9e0248741be"
+ },
+ "ve_service_sha256": "05cc6b90c424032aa5ab1439cccf55ad54e209b110933bacb7e8744c7523973d",
+ "rust_sha256": "3ec83dee23e692b412f7a79b4af70066fc09c3298d82838bea7f4e5fb0e8eac8"
+}
