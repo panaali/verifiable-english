@@ -52,7 +52,7 @@ def test_pending_reading_metadata_is_checked_by_lean(tmp_path):
 
 
 def test_coupled_pilot_reading_plan_matches_prior_path(tmp_path):
-    raw = pilot("nd-op.ve.md", "77a7f103a063f57ff1c22fef1feb3d911d00b040dc8f188a119c5ffa925f6824")
+    raw = pilot("nd-op.ve.txt", "77a7f103a063f57ff1c22fef1feb3d911d00b040dc8f188a119c5ffa925f6824")
     path = tmp_path / "nd-op.ve.md"
     path.write_bytes(raw)
     expected = D._report(D._load_document(raw, path, None))["reading_plan"]
@@ -60,7 +60,7 @@ def test_coupled_pilot_reading_plan_matches_prior_path(tmp_path):
 
 
 def test_labeled_pending_pilot_is_lean_decided(tmp_path, monkeypatch):
-    raw = pilot("translation-without-content.ve.md", "4c10dfcb2deac28417836f1367bba340847e0dc723b2ab9b97f29fa421105199")
+    raw = pilot("translation-without-content.ve.txt", "4c10dfcb2deac28417836f1367bba340847e0dc723b2ab9b97f29fa421105199")
     path = tmp_path / "without-content.ve.md"
     path.write_bytes(raw)
     expected = D._report(D._load_document(raw, path, None))
