@@ -35,6 +35,11 @@
         "main"
       ]
     },
+    "EnglishRunMain.lean": {
+      "G[V]": [
+        "main"
+      ]
+    },
     "Iceberg.lean": {
       "P": [
         "Iceberg.Process",
@@ -3123,8 +3128,7 @@
       "G[V]": [
         "VE.English.Run.covers",
         "VE.English.Run.run",
-        "VE.English.Run.runCase",
-        "main"
+        "VE.English.Run.runCase"
       ]
     },
     "VE/English/Statements.lean": {
