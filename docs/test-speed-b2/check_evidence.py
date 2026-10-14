@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from collections import Counter
 from pathlib import Path
 import subprocess
 import sys
@@ -49,6 +50,21 @@ def main() -> None:
                                      f'{summary["base"]}..{summary["code_evidence_head"]}',
                                      "--no-merges"), cwd=ROOT, text=True).splitlines()
     assert fixed == summary["commits_no_merges"]
+    selected = json.loads((EVIDENCE / "selected-synced.json").read_text())
+    assert selected["schema"] == 1 and selected["selected_units"] == 373
+    assert all(type(selected[key]) is int for key in ("selected_units", "recorded_units", "exit"))
+    assert all(type(value) is int and value >= 0 for value in selected["counts"].values())
+    assert selected["recorded_units"] == sum(selected["counts"].values())
+    assert selected["selected_units"] == selected["recorded_units"] + len(selected["not_recorded"])
+    assert Counter(str(row["exit"]) for row in selected["failures"]) == {
+        status: count for status, count in selected["counts"].items() if status not in ("0", "5")}
+    assert len({row["unit"] for row in selected["failures"]}) == len(selected["failures"])
+    assert all(str(row["exit"]) in selected["counts"] and row["exit"] not in (0, 5)
+               for row in selected["failures"])
+    selected_commits = subprocess.check_output(("git", "log", "--reverse", "--format=%H",
+                                                f'{selected["base"]}..{selected["selected_head"]}',
+                                                "--no-merges"), cwd=ROOT, text=True).splitlines()
+    assert selected_commits == selected["commits_no_merges"]
     print(f"B2 evidence: {len(coverage['tests'])} mapped units, {len(mode_rows['mutants'])} mode mutants, "
           f"{len(mutants)} behavior mutants, 10 fixed-merge shadow comparisons")
 
