@@ -5,6 +5,10 @@ from pathlib import Path
 import pytest
 
 from tools import readings_s1_pilot as pilot
+from ve.ast import formula_from_data
+from ve.identity import meaning_id
+from ve.model import FiniteModel
+from ve.readings import _reading_evaluation
 from ve.readings_s1 import S1Environment
 
 
@@ -37,7 +41,23 @@ def test_rebuild_command_updates_every_set_after_environment_edit(tmp_path):
     refreshed, rest = pilot.read(rebuilt)
     assert rest == source
     assert refreshed["reading_sets"] != meta["reading_sets"]
+    env = pilot._environment(refreshed["environment"])
+    model_env, _ = _reading_evaluation(env)
+    for item in refreshed["reading_sets"]:
+        assert all(key == FiniteModel.from_dict(model_env, data).model_id
+                   for key, data in item.get("models", {}).items())
     assert pilot.main(["--rebuild-reading-ids", str(rebuilt), "--check-noop"]) == 0
+
+
+def test_rebuild_updates_formula_candidate_meanings():
+    meta, _ = pilot.read(FIXTURE)
+    item = meta["reading_sets"][0]
+    item["readings"][0]["content"] = ["top"]
+    item["readings"][1]["content"] = ["not", ["top"]]
+    env = pilot._environment(meta["environment"])
+    changed = pilot._reidentified(env, item)
+    for reading in changed["readings"]:
+        assert reading["meaning_id"] == meaning_id(env, formula_from_data(env, reading["content"]))
 
 
 def test_rebuild_updates_situation_keys_and_admission_references():
