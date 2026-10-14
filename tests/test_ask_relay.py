@@ -12,11 +12,14 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import itertools
 import json
+import os
 from pathlib import Path
 
 import pytest
 
+from subprocesses import busy_cpu
 from ve import ask
 from ve.backends import service_schema
 
@@ -336,11 +339,17 @@ def test_the_deadline_bounds_the_whole_answer(monkeypatch):
     from ve.backends import lean_service, relay
     from ve.errors import CheckerUnavailable, ResourceLimit
     monkeypatch.setitem(lean_service.DEADLINES, "ask", (1e-6, 1e-6))
+    clock = busy_cpu(monkeypatch, lean_service)
+    if lean_service._cpu_seconds(os.getpid()) is None:
+        cpu_reads = itertools.count()
+        monkeypatch.setattr(lean_service, "_cpu_seconds", lambda _pid: float(next(cpu_reads)))
     request = _request("U3")
     request["id"] = "ask-deadline"   # not a request the relay's memo holds
     with pytest.raises(CheckerUnavailable, match="mode ask used more than its deadline") as caught:
         relay.decide_once("ask", request)
-    assert not isinstance(caught.value, ResourceLimit)
+    assert not isinstance(caught.value, ResourceLimit) and caught.value.operation == "ask"
+    if clock.readings:
+        assert clock.fired == ["response"] and any(len(seen) >= 2 for seen in clock.readings.values())
 
 
 def _refused(question):

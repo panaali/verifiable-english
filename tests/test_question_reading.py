@@ -21,7 +21,7 @@ import sys
 import pytest
 
 import question_fixtures as F
-from subprocesses import HANG_TIMEOUT
+from subprocesses import HANG_TIMEOUT, busy_cpu
 from ve import ask
 from ve.backends import english_lean, relay
 from ve.english import EnglishVocabulary
@@ -523,17 +523,21 @@ def test_text_variants_get_well_formed_answers(name):
 # ------------------------------------------------------------------ the whole operation's deadline
 
 def test_the_whole_question_is_bounded_by_the_modes_deadline(monkeypatch):
-    """A crossed CPU deadline bounds the whole service operation on every host, including
-    hosts without /proc CPU accounting."""
+    """A crossed CPU deadline bounds the whole service operation, including on hosts without /proc.
+    On /proc hosts the injected clock advances only after the whole request has been sent."""
     from ve.backends import lean_service
     monkeypatch.setitem(lean_service.DEADLINES, MODE, (1e-6, 1e-6))
+    clock = busy_cpu(monkeypatch, lean_service)
+    if lean_service._cpu_seconds(os.getpid()) is None:
+        cpu_reads = itertools.count()
+        monkeypatch.setattr(lean_service, "_cpu_seconds", lambda _pid: float(next(cpu_reads)))
     _, frame, question, _ = next(row for row in F.FIXTURES if row[0] == "U2")
     # A question no earlier request asked, so the relay's answer memo cannot hold it.
     question = question[:-1] + " " * 37 + "?"
     case = F.request(frame, question)
     case["question"] = case["source"] = question
-    cpu_reads = itertools.count()
-    monkeypatch.setattr(lean_service, "_cpu_seconds", lambda _pid: float(next(cpu_reads)))
     with pytest.raises(CheckerUnavailable, match=f"mode {MODE} used more than its deadline") as caught:
         relay.decide(MODE, [case])
-    assert not isinstance(caught.value, ResourceLimit)
+    assert not isinstance(caught.value, ResourceLimit) and caught.value.operation == MODE
+    if clock.readings:
+        assert clock.fired == ["response"] and any(len(seen) >= 2 for seen in clock.readings.values())

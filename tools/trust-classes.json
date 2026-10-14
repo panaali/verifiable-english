@@ -35,6 +35,11 @@
         "main"
       ]
     },
+    "EnglishRunMain.lean": {
+      "G[V]": [
+        "main"
+      ]
+    },
     "Iceberg.lean": {
       "P": [
         "Iceberg.Process",
@@ -160,6 +165,7 @@
         "ResponseShape.pointerString",
         "ResponseShape.props",
         "ResponseShape.qualify",
+        "ResponseShape.readingPlanBound",
         "ResponseShape.ref",
         "ResponseShape.render",
         "ResponseShape.resolve",
@@ -646,6 +652,16 @@
         "ResponseShape.Schemas.Readings.row"
       ]
     },
+    "ResponseShape/Schemas/ReadingsChoices.lean": {
+      "G[V]": [
+        "ResponseShape.Schemas.ReadingsChoices.enumerate",
+        "ResponseShape.Schemas.ReadingsChoices.file",
+        "ResponseShape.Schemas.ReadingsChoices.plan",
+        "ResponseShape.Schemas.ReadingsChoices.row",
+        "ResponseShape.Schemas.ReadingsChoices.unknown",
+        "ResponseShape.Schemas.ReadingsChoices.verdict"
+      ]
+    },
     "ResponseShape/Schemas/ReadingsRoute.lean": {
       "G[V]": [
         "ResponseShape.Schemas.ReadingsRoute.candidate",
@@ -908,6 +924,7 @@
         "ResponseShape.Skeletons.parse",
         "ResponseShape.Skeletons.quantity",
         "ResponseShape.Skeletons.readings",
+        "ResponseShape.Skeletons.readingsChoices",
         "ResponseShape.Skeletons.readingsRoute",
         "ResponseShape.Skeletons.reports",
         "ResponseShape.Skeletons.rights",
@@ -3113,8 +3130,7 @@
       "G[V]": [
         "VE.English.Run.covers",
         "VE.English.Run.run",
-        "VE.English.Run.runCase",
-        "main"
+        "VE.English.Run.runCase"
       ]
     },
     "VE/English/Statements.lean": {
@@ -9148,6 +9164,24 @@
       ],
       "G[V]": [
         "VE.Service.Readings.readingsCase"
+      ]
+    },
+    "VE/Service/ReadingsChoices.lean": {
+      "G[V]": [
+        "VE.Service.ReadingsChoices.arr",
+        "VE.Service.ReadingsChoices.check",
+        "VE.Service.ReadingsChoices.compatible",
+        "VE.Service.ReadingsChoices.enumerate",
+        "VE.Service.ReadingsChoices.expected",
+        "VE.Service.ReadingsChoices.index",
+        "VE.Service.ReadingsChoices.indices",
+        "VE.Service.ReadingsChoices.label",
+        "VE.Service.ReadingsChoices.metadata",
+        "VE.Service.ReadingsChoices.openUnit",
+        "VE.Service.ReadingsChoices.plan",
+        "VE.Service.ReadingsChoices.run",
+        "VE.Service.ReadingsChoices.selectedAxes",
+        "VE.Service.ReadingsChoices.validateCouplings"
       ]
     },
     "VE/Service/Standalone.lean": {

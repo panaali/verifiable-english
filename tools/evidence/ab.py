@@ -6,13 +6,15 @@ commit and the recordings' digests (gate item 2 of every batch that touches `ve/
 
 Recording stays `lean_first_diff.py record` (one run per checkout). This command refuses an empty or missing
 recording before comparing (the lf-0 class: the A/B tool accepted empty evidence), runs the comparison in a
-child process, and fails unless it compared every required corpus with no unlisted difference and no record
-unavailable on both sides.
+child process, and fails unless it compared every required corpus with no unlisted difference. An unavailable
+pair counts only when both results are identical and the delta lists a reason (standing ruling R7).
 """
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import hashlib
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -64,8 +66,28 @@ def problems(comparison: dict, head: str, corpora=REQUIRED_CORPORA, base: str | 
     errors = base_problems(comparison, "corpus comparison", base)
     if comparison.get("head_commit") != head:
         errors.append("corpus comparison did not run on HEAD")
-    if comparison.get("unlisted") != 0 or comparison.get("unavailable_both") != {}:
-        errors.append("corpus comparison has an unlisted or unavailable result")
+    if comparison.get("unlisted") != 0:
+        errors.append("corpus comparison has an unlisted result")
+    unavailable = comparison.get("unavailable_both")
+    if not isinstance(unavailable, dict) or any(type(n) is not int or n < 1 for n in unavailable.values()):
+        errors.append("corpus comparison has malformed unavailable counts")
+    elif unavailable:
+        counted = Counter()
+        rows = comparison.get("differences")
+        if not isinstance(rows, list):
+            errors.append("corpus comparison omitted signed unavailable rows")
+        else:
+            for row in rows:
+                if not isinstance(row, dict) or row.get("class") != "unavailable":
+                    continue
+                key = f"{row.get('corpus')}/{row.get('authority')}"
+                counted[key] += 1
+                if (row.get("listed") is not True or
+                        json.dumps(row.get("base"), sort_keys=True) !=
+                        json.dumps(row.get("head"), sort_keys=True)):
+                    errors.append("unavailable result lacks an identical, listed R7 pair")
+            if dict(counted) != unavailable:
+                errors.append("signed unavailable rows do not match corpus counts")
     records = comparison.get("records")
     compared = {key.split("/", 1)[0] for key, count in records.items() if type(count) is int and count > 0} \
         if isinstance(records, dict) else set()

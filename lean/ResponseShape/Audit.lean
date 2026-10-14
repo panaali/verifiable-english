@@ -170,6 +170,9 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Family.familyNorms_reported
 #print axioms ResponseShape.Encoders.Family.graph_fits
 #print axioms ResponseShape.Encoders.Family.graph_reported
+#print axioms ResponseShape.Encoders.Family.readingsChoices_check_fits
+#print axioms ResponseShape.Encoders.Family.readingsChoices_fits
+#print axioms ResponseShape.Encoders.Family.readingsChoices_reported
 #print axioms ResponseShape.Encoders.Family.readings_fits
 #print axioms ResponseShape.Encoders.Family.readings_reported
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocument_kinds
