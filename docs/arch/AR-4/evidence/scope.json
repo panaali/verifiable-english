@@ -1,7 +1,47 @@
 {
- "base": "968870193193b9e8138183ed77c41e376a6e376c",
- "head": "81760f3a7f796ce5f8ece9e817be4028f15655d6",
+ "base": "8594f1d050e0479768fafdd86d1cf9e79d55ce9c",
+ "head": "101f95713b883d6638655435b0ec41702ef87f78",
  "commits": [
+  {
+   "hash": "101f95713b883d6638655435b0ec41702ef87f78",
+   "subject": "AR-4 seeded bugs rerun on the final tools: 22/22 killed (M18-M22 guard F7, the merge driver and the map)"
+  },
+  {
+   "hash": "a21c2ab9315fccf6bab50d38180d9a0447dbac2f",
+   "subject": "AR-4 F7: the R13 check takes the gate's own table of rerunnable failures; a non-string stage or a boolean count is refused"
+  },
+  {
+   "hash": "aadb022870188bb030f1112fe92205e8c07c50e2",
+   "subject": "AR-4 F1: DELTA row 1 signed by standing ruling R15 at the synced merge base (K 997, S 9,788, V 37,495)"
+  },
+  {
+   "hash": "0338c877bb9771107e3d0b7761ec2a4214f3ccd9",
+   "subject": "AR-4: seeded bugs M18-M22 for the shared gate checks, the merge driver and the map's trust classes"
+  },
+  {
+   "hash": "d3d2f13f5d9ecf0e5e9e94ba87aa09c098b70ef5",
+   "subject": "AR-4 F7, F2, D4: report.py checks each evidence file by its writer's schema; no gate record in the tree"
+  },
+  {
+   "hash": "e25e88a0836614a736dc0a6a6e5047ad2896260f",
+   "subject": "AR-4 F7: shared gate-record checks refuse any malformed record"
+  },
+  {
+   "hash": "13daca12b1a2f778f3936b401deadd36da8a3f05",
+   "subject": "AR-4: record recheck regressions and refresh test inventory"
+  },
+  {
+   "hash": "9f5246b359e419861c4a42ba245efa0069df1833",
+   "subject": "AR-4 F6: type-check aggregate trust counts"
+  },
+  {
+   "hash": "9d2c471b84ade2e9fd3338439baa76d2e2888c76",
+   "subject": "AR-4 F5: reject malformed scope before evidence checks render"
+  },
+  {
+   "hash": "a7107dfe5a5203dd6a1502fd45bcfe20dd82b663",
+   "subject": "AR-4 evidence re-collected after the review fixes; REPORT: the fixes, tests run, and what stays open (DRI signature, full gate on the final HEAD)"
+  },
   {
    "hash": "81760f3a7f796ce5f8ece9e817be4028f15655d6",
    "subject": "AR-4 seeded bugs rerun on the final tools: 17/17 killed (M11-M17 guard the F2-F4 fixes)"
@@ -111,26 +151,26 @@
   "docs/arch/AR-4/DELTA.md",
   "docs/arch/AR-4/REPORT.md",
   "docs/arch/AR-4/evidence/budget.json",
-  "docs/arch/AR-4/evidence/gate-full-failed.json",
-  "docs/arch/AR-4/evidence/gate-result.json",
-  "docs/arch/AR-4/evidence/gate-stages.log",
   "docs/arch/AR-4/evidence/migration.json",
   "docs/arch/AR-4/evidence/mutants.json",
   "docs/arch/AR-4/evidence/scope.json",
-  "docs/arch/AR-4/evidence/suite-chunks.json",
   "docs/arch/AR-4/migrate_baseline.py",
   "docs/arch/AR-4/mutants.json",
   "docs/arch/AR-4/report.py",
   "docs/merge-tooling.md",
   "docs/trust-baseline.json",
+  "tests/test_architecture_docs.py",
   "tests/test_batch_scope.py",
   "tests/test_consolidation_tools.py",
   "tests/test_gate_integrity.py",
   "tests/test_gate_rerun.py",
   "tests/test_gate_trust.py",
+  "tests/test_readings_defaults_rd6b_report.py",
+  "tests/test_regen_generated.py",
   "tests/test_trust_ratchet.py",
+  "tools/architecture_numbers.py",
+  "tools/batch_evidence.py",
   "tools/batch_scope.py",
-  "tools/gate-collection.json",
   "tools/gate.py",
   "tools/regen_generated.py",
   "tools/trust_map.py"

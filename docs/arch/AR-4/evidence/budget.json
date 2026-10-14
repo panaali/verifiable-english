@@ -1,33 +1,33 @@
 {
- "head": "81760f3a7f796ce5f8ece9e817be4028f15655d6",
- "base": "968870193193b9e8138183ed77c41e376a6e376c",
+ "head": "101f95713b883d6638655435b0ec41702ef87f78",
+ "base": "8594f1d050e0479768fafdd86d1cf9e79d55ce9c",
  "measured_head": {
   "K": 997,
-  "S": 9791,
-  "V": 36765
+  "S": 9788,
+  "V": 37495
  },
  "measured_base": {
   "K": 997,
-  "S": 9791,
-  "V": 36765
+  "S": 9788,
+  "V": 37495
  },
  "recorded_base": {
   "K": 997,
-  "S": 9791,
-  "V": 36765
+  "S": 9788,
+  "V": 37495
  },
  "recorded_head": {
   "K": 997,
-  "S": 9791,
-  "V": 36765
+  "S": 9788,
+  "V": 37495
  },
- "allowances": 51,
- "unsigned_allowances": 45,
+ "allowances": 70,
+ "unsigned_allowances": 64,
  "introduced": [],
  "removed": [],
  "file_lines": {
-  "base": 13230,
-  "head": 367
+  "base": 13531,
+  "head": 500
  },
  "check_exit": 0
 }
