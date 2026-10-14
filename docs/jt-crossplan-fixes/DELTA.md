@@ -1,0 +1,10 @@
+# User-visible deltas
+
+| Item | Change | Signature and evidence |
+|---|---|---|
+| X2 | A template rejected by the author lint no longer reserves a predicate head. Accepted one-word templates retain their wording. The FA/FR `safe` wording now passes the lexicon; Asimov's checked-in English sources use the accepted `is protective` and `is ordered` wordings. The grammar lock's `actions_version` rises from 28 to 29 with the changed policy source. | SIGNED by DRI decision X2 (DRI-DECISIONS-PHASE2.md). `tests/test_english.py::test_rejected_binary_template_does_not_take_accepted_unary_wordings`; `tests/test_english_lean_s3_compare.py`; `tests/test_asimov_extended.py`; `tests/test_english_lean_s3.py::test_copy_passes`. |
+| X3 | In a `readings@1` environment, a constant's `verbalisation` is refused with `fields do not match: expected [sort, description], got [description, sort, verbalisation]`. The explicitly extended soft profile keeps its display field. | SIGNED by DRI decision X3 (DRI-DECISIONS-PHASE2.md), scoped to the pilot profile where the mismatch was observed. `tests/test_readings_constant_display.py`. |
+| X4 | Pilots have one command to rebuild reading-set identities after an environment edit. Sets owned by a companion environment keep those identities. | SIGNED by DRI decision X4 (DRI-DECISIONS-PHASE2.md). `tests/test_readings_s1_pilot_rebuild.py`. |
+| Trust budget | Classified Lean V lines rise by 17: English policy +10 and readings decoder +7; K and S do not rise. | DRI signature needed. `tools/trust_map.py --check` measures the increase; standing R6 does not cover it because no Python or Rust decision path was deleted. |
+
+The S3 evidence now records 158/163 agreement on exact spec texts (previously 147/163) and 168/170 agreement in the integrated comparison (previously 198/200); the two existing dispositioned differences remain. The changed case count is the removal of selected-wording variants made redundant by the new `safe` selection. The conformance scripts regenerated both saved reports, and `tests/test_english_lean_s3_compare.py` checks their counts against their rows.
