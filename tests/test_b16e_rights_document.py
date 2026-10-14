@@ -308,6 +308,21 @@ def test_f6_closed_rights_content_rejects_forbidden_null_members(tmp_path, locat
         assert all(item.get("raised", {}).get("code") == "InvalidInput" for item in outcomes), outcomes
 
 
+@pytest.mark.parametrize("headed", [False, True])
+@pytest.mark.parametrize("slot", ["liberty", "recognition"])
+@pytest.mark.parametrize("field", ["mode", "rank", "alterable", "exception", "hard"])
+def test_f7_optional_power_line_rule_nulls_use_norm_context(tmp_path, headed, slot, field):
+    """PROBE F7: every optional soft-rule field in either power line is absent when null."""
+    meta, body = _split(_text(0, headed=headed))
+    line = next(line for unit in meta["units"] if unit["kind"] == "right"
+                for line in unit["content"]["right"]["lines"] if slot in line)
+    line[slot][field] = None
+    path = tmp_path / "power-null.ve.md"
+    path.write_text(_join(meta, body))
+    lean, new, old = _both(path)
+    assert lean and new == old and all("returned" in result for result in new), (headed, slot, field, new, old)
+
+
 def test_a_right_without_a_holder_guard_is_built_on_both_paths(tmp_path):
     """The rights route reads an absent holder guard as `top`; the retained path's container read `body["guard"]`."""
     meta, body = _split(_text(0))
