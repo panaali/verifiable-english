@@ -580,6 +580,7 @@ class LeanService:
                 except (BrokenPipeError, OSError) as exc:
                     raise _Failure(f"service input closed: {exc}") from None
                 view = view[written:]
+            self._wait(deadline, "writing the request")
 
     def _read_line(self, deadline: _Deadline) -> bytes:
         fd = self._proc.stdout.fileno()
@@ -590,6 +591,7 @@ class LeanService:
                 if end >= 0:
                     line = bytes(self._buffer[:end])
                     del self._buffer[:end + 1]
+                    self._wait(deadline, "waiting for the response")
                     return line
                 if len(self._buffer) > MAX_RESPONSE_BYTES:
                     raise _Failure("response line exceeds the size limit")

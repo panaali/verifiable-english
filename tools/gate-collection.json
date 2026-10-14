@@ -7527,6 +7527,8 @@
   "tests/test_lean_service.py::test_request_errors_without_their_binding_fail_closed[unbound-case-error-change1]",
   "tests/test_lean_service.py::test_request_errors_without_their_binding_fail_closed[unbound-change0]",
   "tests/test_lean_service.py::test_request_errors_without_their_binding_fail_closed[wrong-mode-change4]",
+  "tests/test_lean_service.py::test_request_transfer_checks_cpu_after_its_final_system_call[response]",
+  "tests/test_lean_service.py::test_request_transfer_checks_cpu_after_its_final_system_call[write]",
   "tests/test_lean_service.py::test_response_schemas_follow_lean_sources",
   "tests/test_lean_service.py::test_results_are_bound_to_the_case_texts_as_sent",
   "tests/test_lean_service.py::test_results_are_the_one_shot_bytes",
