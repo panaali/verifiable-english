@@ -29,9 +29,9 @@ def g : SupScope := { info := ⟨[], .free, .unknown, .unknown, []⟩ }
 def p : SupScope := { info := ⟨[("rs1", 0)], .free, .proved, .unknown, []⟩ }
 def m : SupScope := { info := ⟨[("rs1", 1)], .free, .refuted, .unknown, []⟩ }
 def budget : SupBudget := {}
-#guard strOf ((supResult Examples.K1 [] false "query" [] none [g, p, m] [] budget).getObjValD "verdict") == "SOME"
+#guard strOf ((supResult Examples.K1 [] false "query" [] none [g, p, m] [] budget [c, d]).getObjValD "verdict") == "SOME"
 #guard strOf ((supResult Examples.K1 [] false "query" [] none [g, m, { m with info := { m.info with choice := [("rs1", 0)] } }]
-    [] budget).getObjValD "verdict") == "NONE"
+    [] budget [c, d]).getObjValD "verdict") == "NONE"
 #guard (supIndependent Examples.K1 [] ["unsaid:pair:x,y"]).length == Examples.K1.sets.length
 
 end VE.Readings.SupVerdictsExamples

@@ -70,8 +70,9 @@ def test_superposed_scopes_need_only_the_two_answer_roundtrips(tmp_path, monkeyp
 
 def test_premise_model_short_circuits_proof_search(tmp_path, monkeypatch):
     _, route, _ = example(tmp_path)
-    modelled, proved = set(), set()
+    modelled, proved, conflicted = set(), set(), set()
     original_model, original_proof = route.model, route._generate_certificate
+    original_conflict = route._prepare_conflict
 
     def model(A=(), gamma=(), conclusion=None):
         result = original_model(A, gamma, conclusion)
@@ -83,10 +84,16 @@ def test_premise_model_short_circuits_proof_search(tmp_path, monkeypatch):
         proved.add(tuple(tuple(x) for x in A))
         return original_proof(A, gamma, conclusion)
 
+    def conflict(A=()):
+        conflicted.add(tuple(tuple(x) for x in A))
+        return original_conflict(A)
+
     monkeypatch.setattr(route, "model", model)
     monkeypatch.setattr(route, "_generate_certificate", proof)
+    monkeypatch.setattr(route, "_prepare_conflict", conflict)
     route.premises_answer()
     assert modelled and not modelled & proved
+    assert not modelled & conflicted
 
 
 def test_premise_scopes_reuse_lean_proposals_without_extra_verdicts(tmp_path, monkeypatch):
@@ -104,7 +111,41 @@ def test_premise_scopes_reuse_lean_proposals_without_extra_verdicts(tmp_path, mo
     monkeypatch.setattr(readings_route, "run_lean", counted)
     answer = route.premises_answer()
     assert len(answer["scopes"]) > 1
-    assert questions == ["premises", "premises", "premises"]
+    assert questions == ["premises", "premises"]
+
+
+def test_repeated_premise_proposals_search_each_small_choice_once(tmp_path, monkeypatch):
+    from collections import Counter
+    from ve import readings_verdicts, search
+
+    _, route, _ = example(tmp_path)
+    original_doc = readings_verdicts._ChoiceDocument
+    original_search = search.find_countermodel
+    built = Counter()
+    searched = Counter()
+    small_envs = {}
+
+    def choice_doc(owner, choice):
+        key = tuple(sorted(choice.items()))
+        built[key] += 1
+        own = original_doc(owner, choice)
+        small_envs[id(own.env)] = key
+        return own
+
+    def find(env, premises, conclusion, **kwargs):
+        if id(env) in small_envs:
+            searched[(small_envs[id(env)], repr(premises), repr(conclusion))] += 1
+        return original_search(env, premises, conclusion, **kwargs)
+
+    monkeypatch.setattr(readings_verdicts, "_ChoiceDocument", choice_doc)
+    monkeypatch.setattr(search, "find_countermodel", find)
+    answer = route.premises_answer()
+    proposals = [tuple(tuple(x) for x in choice) for scope in answer["scopes"]
+                 for choice in scope["model_proposals"]]
+    assert len(proposals) > len(set(proposals))
+    assert built and searched
+    assert max(built.values()) == 1
+    assert max(searched.values()) == 1
 
 
 def test_sup_zero_budget_is_unknown(tmp_path, monkeypatch):

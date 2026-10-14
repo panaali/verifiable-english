@@ -30,6 +30,8 @@ def SupBudget.json (b : SupBudget) : Json := Json.mkObj [
 structure SupContext where
   b : Admitted2
   nd : Option AdmittedNDFull
+  modelReplay : Option (Json → Except String ModelReplay) := none
+  conflictReplay : Option SupReplay := none
 
 def SupContext.D (x : SupContext) : Doc :=
   match x.nd with | some f => fillDoc f.r.N | none => x.b.D
@@ -41,7 +43,9 @@ def SupContext.run (x : SupContext) (kind : String) (j : Json) : Except String J
   | none =>
     if kind == "readings-conflict" then runConflict "readings-verdicts" x.b j
     else if kind == "readings-certificate" then runCertificate "readings-verdicts" x.b j
-    else runModel "readings-verdicts" x.b j
+    else match x.modelReplay with
+      | some replay => runModelWithReplay "readings-verdicts" j replay
+      | none => runModel "readings-verdicts" x.b j
 
 def supRuleName (D : Doc) (name : String) : String :=
   (((List.range D.sets.length).flatMap (fun m => (D.sets[m]?).toList.flatMap (fun R =>
@@ -51,16 +55,18 @@ def supRuleName (D : Doc) (name : String) : String :=
 
 /-- A reported model must be locally conflict-free as well as satisfy the slot and assertions.
 The finite conflict check is the same owner used by the enumerated route. -/
-def supModelFree (D : Doc) (M : VE.FiniteModel VE.Bridge.Entity) : Bool :=
-  VE.Readings.Wire.localFree ⟨soften (correlate (sup D).1), []⟩ M (fun _ => [])
+def supModelFree (Y : VE.Norms.Doc) (M : VE.FiniteModel VE.Bridge.Entity) : Bool :=
+  VE.Readings.Wire.localFree ⟨Y, []⟩ M (fun _ => [])
 
-def SupContext.modelFree (x : SupContext) (j : Json) : Bool :=
+def SupContext.modelFree (x : SupContext) (Y : VE.Norms.Doc) (j : Json) : Bool :=
   match x.nd with
   | some f => match replayModelND f j with
-    | .ok r => supModelFree (fillDoc r.f.r.N) r.M
+    | .ok r => supModelFree Y r.M
     | .error _ => false
-  | none => match replayModelOf x.b j with
-    | .ok r => supModelFree r.D r.M
+  | none => match (match x.modelReplay with
+      | some replay => replay j
+      | none => replayModelOf x.b j) with
+    | .ok r => supModelFree Y r.M
     | .error _ => false
 
 structure SupWitnessNote where
@@ -115,6 +121,9 @@ structure SupScope where
   missing : Option String := none
   coherence : List (String × List String) := []
 
+def emptySupScope (A : Choice) : SupScope :=
+  { info := ⟨A, .unknown, .unknown, .unknown, []⟩ }
+
 def SupScope.choice (s : SupScope) (piece : String) : Choice :=
   ((s.encoded.find? (·.1 == piece)).map (·.2)).getD s.info.choice
 def SupScope.coh (s : SupScope) (piece : String) : List String :=
@@ -126,7 +135,10 @@ def supPieceCase (A : Choice) (Γ φ : Json) (e : Json) : Json :=
   e.setObjVal! "assumed" (choiceJson A) |>.setObjVal! "premises" Γ |>.setObjVal! "conclusion" φ
 
 /-- Refused evidence is noted as refused, never turned into a negative verdict. -/
-def supScope (x : SupContext) (A : Choice) (Γ φ : Json) (e : Json) : SupScope := Id.run do
+def supScope (x : SupContext) (A : Choice) (Γ φ : Json) (e : Json)
+    (X : VE.SoftNorms.SoftDoc) (Y : VE.Norms.Doc)
+    (ts : List (String × List String × VE.Formula))
+    (checked : List Choice) : SupScope := Id.run do
   let mut notes : List PieceNote := []
   let mut encoded := []
   let mut used := []
@@ -140,7 +152,7 @@ def supScope (x : SupContext) (A : Choice) (Γ φ : Json) (e : Json) : SupScope 
   let mut model := false
   let mut witnessSummary := none
   let packages := (pieceOf e "conflict").getD (Json.mkObj [])
-  let certs := decodeConflictCerts x.D (packages.getObjValD "conflict_certificates")
+  let certs := decodeConflictCertsFor ts (packages.getObjValD "conflict_certificates")
   for name in ["conflict", "witness", "certificate", "countermodel", "unsat", "model"] do
     if let some p := pieceOf e name then
       let kind := if name == "conflict" || name == "witness" then "readings-conflict"
@@ -149,14 +161,19 @@ def supScope (x : SupContext) (A : Choice) (Γ φ : Json) (e : Json) : SupScope 
         p.setObjVal! "conflict_certificates" (packages.getObjValD "conflict_certificates") else p
       let body := supPieceCase A (if name == "model" || name == "unsat" then .arr #[] else Γ)
         (if name == "model" || name == "unsat" then .null else φ) body
-      match x.run kind body with
+      let answerResult := if name == "conflict" then
+        match x.nd, x.conflictReplay with
+        | none, some r => runConflictPrepared "readings-verdicts" x.b r checked X ts body
+        | _, _ => x.run kind body
+        else x.run kind body
+      match answerResult with
       | .error error => notes := notes ++ [{ name := name, accepted := false, error := some error }]
       | .ok answer =>
         let ok := if name == "conflict" then answer.getObjValD "verdict" == .str "CONFLICT-FREE"
           else if name == "witness" then answer.getObjValD "verdict" == .str "CONFLICT"
           else if name == "certificate" || name == "unsat" then answer.getObjValD "accepted" == .bool true
           else answer.getObjValD "valid" == .bool true && answer.getObjValD "conclusion_value" == .bool false &&
-            x.modelFree body
+            x.modelFree Y body
         let shown := if ok && (name == "witness" || name == "countermodel" || name == "model") then
           some (if name == "witness" then (p.getObjValD "witness").getObjValD "model" else p.getObjValD "model")
           else none
@@ -168,7 +185,8 @@ def supScope (x : SupContext) (A : Choice) (Γ φ : Json) (e : Json) : SupScope 
         let labels := if ok && (name == "conflict" || name == "certificate" || name == "unsat") then
           supDependencies x.D A x.Q certs proof
           else []
-        let coh := if ok then supCoherence x.D (supProofs x.D certs proof) else []
+        let coh := if ok && (certs.any Option.isSome || proof.isSome) then
+          supCoherence x.D (supProofs x.D certs proof) else []
         coherence := coherence ++ [(name, coh)]
         used := used ++ [(name, labels)]
         mentions := mentions ++ [(name, supMentions x.D A x.Q labels)]
@@ -182,11 +200,11 @@ def supScope (x : SupContext) (A : Choice) (Γ φ : Json) (e : Json) : SupScope 
         if name == "countermodel" then refuted := ok
         if name == "unsat" then unsat := ok
         if name == "model" then model := ok
-  let X := correlate (sup x.D).1
-  let missing := ((targets (soften X)).zip certs).find? (fun (t, c) =>
-    !(c.map (VE.Tableau.checkCertificate (envAt (soften X) 0)
-      (VE.Compose.backgroundBaseP X (slotUnder x.D A ++ x.Q.formulas))
-      (VE.Norms.targetConclusion t))).getD false)
+  let missing := if certs.isEmpty then none else Id.run do
+    return (ts.zip certs).find? (fun (t, c) =>
+      !(c.map (VE.Tableau.checkCertificate (envAt Y 0)
+        (VE.Compose.backgroundBaseP X (slotUnder x.D A ++ x.Q.formulas))
+        (VE.Norms.targetConclusion t))).getD false)
   return ⟨⟨A, if free then .free else if conflict then .conflict else .unknown,
     if proved then .proved else if refuted then .refuted else .unknown,
     if unsat then .inconsistent else if model then .model else .unknown, notes⟩, encoded, used, mentions, witnessSummary, missing.map (·.1.1), coherence⟩
@@ -196,11 +214,12 @@ def supEvidence (j : Json) (A : Choice) : Json :=
 
 /-- Global scope first, then complete choices (at most 64), then live candidates for premise checks.
 Lean alone enumerates and applies the budget. -/
-def supScopes (D : Doc) (question : String) (A : Choice) : List Choice :=
+def supScopes (D : Doc) (question : String) (A : Choice) (checked : List Choice) : List Choice :=
   let cs := chosenOf D A
   VE.Readings.Wire.dedupChoices ([A] ++ (if (choices D).length ≤ maxChoices then cs else []) ++
     (if question == "premises" then (candidatesOf D).filterMap (fun (R, i) =>
-      if (droppedBy D R i).isNone && takenBy D [(R.id, i)] then some [(R.id, i)] else none) else []))
+      if (droppedBy D R i).isNone && checked.any (fun c => c.contains (R.id, i)) then
+        some [(R.id, i)] else none) else []))
 
 def supScopeJson (q : String) (s : SupScope) (proposals : List Choice) : Json :=
   Json.mkObj [("row", perChoiceJson q s.info),
@@ -218,20 +237,23 @@ def supModelJson (s : SupScope) (p : String) : Json := Json.mkObj [
   ("choice", choiceJson (s.choice p)), ("model", s.info.shown p),
   ("gaps", gapsJson (((s.info.note p).map (·.gaps)).getD []))]
 
-def supCandidateJson (D : Doc) (ss : List SupScope) (dead : List (String × Nat)) : List Json :=
+def supCandidateJson (D : Doc) (ss : List SupScope) (dead : List (String × Nat))
+    (checked : List Choice) : List Json :=
   (candidatesOf D).map (fun (R, i) => Json.mkObj ([("set", .str R.id), ("index", toJson i)] ++
     match droppedBy D R i with
     | some n => [("status", .str "narrowed"), ("narrowing", .str n)]
     | none =>
       if dead.contains (R.id, i) then [("status", .str "dead")]
-      else if !takenBy D [(R.id, i)] then [("status", .str "UNKNOWN"), ("reason", .str (untakenText D [(R.id, i)]))]
+      else if !checked.any (fun c => c.contains (R.id, i)) then
+        [("status", .str "UNKNOWN"), ("reason", .str (untakenText D [(R.id, i)]))]
       else
         let s := supFind ss [(R.id, i)]
         if s.info.premise == .model then [("status", .str "model"), ("choice", choiceJson (s.choice "model"))]
         else [("status", .str (if s.info.premise == .inconsistent then "INCONSISTENT" else "UNKNOWN"))]))
 
 def supResult (D : Doc) (Q : VE.Compose.Labelled) (nd : Bool) (q : String) (A : Choice) (named : Option Choice)
-    (ss : List SupScope) (dead : List (String × Nat)) (budget : SupBudget) : Json := Id.run do
+    (ss : List SupScope) (dead : List (String × Nat)) (budget : SupBudget)
+    (checked : List Choice) : Json := Id.run do
   let s := supFind ss A
   let mut fs : List (String × Json) := [("route", .str "superposed")]
   if q == "conflict" then
@@ -260,7 +282,7 @@ def supResult (D : Doc) (Q : VE.Compose.Labelled) (nd : Bool) (q : String) (A : 
         ("choice", choiceJson c), ("status", .str (word (if s.info.conflict == .free then ChoiceResult.free else (supFind ss c).info.conflict)))])).toArray)]
   else if q == "premises" then
     fs := fs ++ [("status", .str (word s.info.premise)),
-      ("candidates", Json.arr (supCandidateJson D ss dead).toArray)]
+      ("candidates", Json.arr (supCandidateJson D ss dead checked).toArray)]
     if s.info.premise == .model then fs := fs ++ [("evidence", .str "model"),
       ("choice", choiceJson (s.choice "model")), ("model", s.info.shown "model"),
       ("gaps", gapsJson (((s.info.note "model").map (·.gaps)).getD []))]
@@ -385,14 +407,23 @@ def supUnchecked (q reason : String) (named : Option Choice) : Json :=
 /-- Bounded, native choices for the untrusted smaller-vocabulary model generator. -/
 def maxSupModelProposals : Nat := 16
 
+/-- The first bounded proposals, without scanning choices after the limit is reached. -/
+def firstSupProposals (assumed : Choice) (limit : Nat) : List Choice → List Choice
+  | [] => []
+  | c :: cs =>
+    if limit == 0 then []
+    else if assumed.all (c.contains ·) then c :: firstSupProposals assumed (limit - 1) cs
+    else firstSupProposals assumed limit cs
+
 def supAnswer (id q : String) (x : SupContext) (A : Choice) (named : Option Choice)
-    (ss : List SupScope) (dead : List Json) (budget : SupBudget) (over : Bool) : Json :=
-  let checked := if over then [] else checkedChoices x.D
+    (ss : List SupScope) (dead : List Json) (budget : SupBudget) (over : Bool)
+    (allChecked : List Choice) : Json :=
+  let checked := if over then [] else allChecked
   let infos := if q == "premises" then checked.map (fun c => (supFind ss c).info) else []
   let ds := if q == "premises" && !over then deadOf x.D infos dead else (none, [])
   let res := if over then supUnchecked q checkBudgetText named
-    else supResult x.D x.Q x.nd.isSome q A named ss (ds.1.getD []) budget
-  let proposals := fun assumed => (checked.filter (fun c => assumed.all (c.contains ·))).take maxSupModelProposals
+    else supResult x.D x.Q x.nd.isSome q A named ss (ds.1.getD []) budget checked
+  let proposals := fun assumed => firstSupProposals assumed maxSupModelProposals checked
   okWith id [("route", .str "superposed"), ("question", .str q), ("result", res),
     ("scopes", Json.arr (ss.map (fun s => supScopeJson q s (proposals s.info.choice))).toArray),
     ("model_proposals", Json.arr ((proposals A).map choiceJson).toArray),
@@ -407,20 +438,32 @@ def runSupVerdicts (id : String) (b : Admitted2) (j : Json) : Except String Json
   unless verdictsQuestions.contains q do throw s!"InvalidInput: unknown readings-verdicts question {q}"
   let nd ← if underCompletion b.a.re b.D then do
     pure (some (← admitNDFull b)) else pure none
-  let x : SupContext := ⟨b, nd⟩
+  let x : SupContext := { b := b, nd := nd }
   let refusal := match nd with
     | some f => routeRefusalND f.r.b.a.re f.r.N
     | none => routeRefusal false b.D
   if let some e := refusal then
     unless (choices x.D).length > maxChoiceChecks do throw e
   let ⟨A, _⟩ ← decodeAssumed x.D (j.getObjValD "assumed")
-  unless takenBy x.D A do throw (untakenText x.D A)
+  let checked := checkedChoices x.D
+  unless checked.any (fun c => A.all (c.contains ·)) do throw (untakenText x.D A)
   let named := if (j.getObjVal? "assumed").toBool && !isNull (j.getObjValD "assumed") then some A else none
   let Γ := if q == "query" then j.getObjValD "premises" else .arr #[]
   let φ := if q == "query" then j.getObjValD "conclusion" else .null
   let _ ← decodeShared x.D Γ φ
-  let scopes := supScopes x.D q A
-  let ss := scopes.map (fun c => supScope x c Γ φ (supEvidence j c))
+  let prepared := if nd.isNone && (evidenceList j).any (fun e =>
+      (pieceOf e "model").isSome || (pieceOf e "countermodel").isSome) then
+      (prepareModelReplay b).toOption else none
+  let preparedConflict := if nd.isNone && (evidenceList j).any (fun e =>
+      (pieceOf e "conflict").isSome) then (supReplayOf b).toOption else none
+  let x := { x with modelReplay := prepared, conflictReplay := preparedConflict }
+  let scopes := supScopes x.D q A checked
+  let X := correlate (sup x.D).1
+  let Y := soften X
+  let ts := targets Y
+  let ss := scopes.map (fun c =>
+    let e := supEvidence j c
+    if c != A && e == Json.mkObj [] then emptySupScope c else supScope x c Γ φ e X Y ts checked)
   let dead := match j.getObjValD "dead" with | .arr xs => xs.toList | _ => []
   let budget ← match j.getObjValD "budget" with
     | .null => pure (SupBudget.mk 10000 2 10000 100000)
@@ -429,7 +472,7 @@ def runSupVerdicts (id : String) (b : Admitted2) (j : Json) : Except String Json
         | .ok n => pure n | .error _ => throw s!"InvalidInput: invalid search budget {key}"
       pure (SupBudget.mk (← read "max_steps") (← read "max_domain_size")
         (← read "max_models") (← read "max_evaluations"))
-  let over := (checkedChoices x.D).length > maxChoiceChecks
-  pure (supAnswer id q x A named ss dead budget over)
+  let over := checked.length > maxChoiceChecks
+  pure (supAnswer id q x A named ss dead budget over checked)
 
 end VE.Readings.Run
