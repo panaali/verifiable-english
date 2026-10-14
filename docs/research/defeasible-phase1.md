@@ -237,8 +237,8 @@ What it means:
   `ve/norm_english.py:398`'s text. The deontic control renders. So the line DF-4 plans to delete is the only English
   obstacle once SC-8 lands.
 - **Side finding (product code, not changed here).** `ve document` lets a `VEError` escape as a Python traceback
-  (exit 1). Every other subcommand prints a JSON `InvalidInput` status with exit 2. The cause is that
-  `ve/__main__.py:119-121` calls `document_main` outside the `except VEError` handler. Reported for the DRI; it is not
+  (exit 1). The other subcommands catch it and print a JSON status (`InvalidInput`, exit 2). The cause is that
+  `ve/__main__.py:119-121` calls `document_main` outside the `except VEError` handlers. Reported for the DRI; it is not
   DF's to fix.
 
 ### 2.5 DF-E3: specificity — pre-registered verdict UNKNOWN; post hoc 0 pairs, bar not met
