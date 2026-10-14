@@ -1,6 +1,6 @@
 {
- "base": "11676c2c01d05e8584da0bb8b344dab232938366",
- "head": "f658025a09d8fe0213e1b8944ff3b1922d298c41",
+ "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+ "head": "ee31b0156ce78c95a6f5d3587d332d7bab552587",
  "checks": {
   "frozen": {
    "command": "python VE/Route/frozen.py",
@@ -17,14 +17,14 @@
    ]
   },
   "trust-since": {
-   "command": "python tools/trust_map.py --since 11676c2c01d05e8584da0bb8b344dab232938366",
+   "command": "python tools/trust_map.py --since f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
    "exit": 0,
    "tail": [
     "class lines: K 997, S 9788, D 13887, G 26962, C 8486, P 71773, T 14705, o 12299",
     "D/G groups: D[V] 12357, D[R] 1003, D[I] 527, G[V] 24956, G[R] 1765, G[I] 241",
     "tied 178, unclassified 0, trusted 47939 (K + S + untied [V] + unclassified), 158897 lines in 481 files",
     "against the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0",
-    "PASS: K, S and untied [V] within 11676c2c01d05e8584da0bb8b344dab232938366 and the allowances signed since"
+    "PASS: K, S and untied [V] within f98183bf5ff518c14e0cbdcf2950cdaf7736deeb and the allowances signed since"
    ]
   },
   "trust-check": {
@@ -70,25 +70,25 @@
    "command": "python tools/regen_generated.py --check",
    "exit": 0,
    "tail": [
+    "      \u255a\u255d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518",
     "---------",
     "Contracts",
     "---------",
-    "Analyzed 158 files, 832 dependencies.",
+    "Analyzed 164 files, 860 dependencies.",
     "-------------------------------------",
     "VE inward-only imports (reviewed legacy edges) KEPT (41 ignored imports)",
     "Contracts: 1 kept, 0 broken.",
     "== check uv-lock",
-    "== check gate-collection",
-    "regen_generated: checked 24 entries",
-    "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-awqz8wn7)",
-    "Resolved 59 packages in 4ms"
+    "regen_generated: checked 23 entries",
+    "ve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-110pdtpd)",
+    "Resolved 59 packages in 12ms"
    ]
   },
   "trust-changes": {
-   "command": "python tools/trust_changes.py --since 11676c2c01d05e8584da0bb8b344dab232938366",
+   "command": "python tools/trust_changes.py --since f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
    "exit": 0,
    "tail": [
-    "0 Lean files changed and 0 deleted since 11676c2c01d05e8584da0bb8b344dab232938366",
+    "0 Lean files changed and 0 deleted since f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
     "D[V]: 0 changed files",
     "G[V]: 0 changed files"
    ]
