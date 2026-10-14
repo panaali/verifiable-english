@@ -230,15 +230,15 @@ Decision section and its pin are unchanged.
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. **PASS.** `test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over` checks the changed Lean response decoder against the generated Python schema.
+1. **PASS.** `evidence/relay-gate-final.json` covers 109,195 answer mutations with zero failures; `test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over` checks the changed Lean decoder against the generated Python schema.
 2. **PASS.** The freeze tests and the three relay tests above trace each changed rule to its owner; the overlap section names every new shared hand-written file.
 3. **PASS.** `evidence/mutants.json` records fifteen killed mutants in changed Python and Lean files, including constant-pass checks caught by `test_an_unhashed_edit_of_a_k_file_fails` and `test_unique_string_lists_refuse_duplicate_rule_names`.
-4. **N.A.** No VE input, verdict, diagnostic or renderer changed.
+4. **PASS.** `test_genuine_responses_are_accepted_by_schema_and_lean` and `test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over` passed in the selected `test_lean_service_schema.py` unit; valid runner answers still agree across both decoders.
 5. **PASS.** `test_readings_route_refuses_empty_labels_targets_and_repeated_over_names` and `evidence/relay-gate-final.json` show that the repaired relayed fields are typed and malformed rows refused.
-6. **PASS.** The chain's gate passed on `924c71dc`; the user directs the chain to gate the final committed HEAD again. `response_schemas.py --check`, `regen_generated.py --check` and the full relay mutation gate passed locally.
+6. **N.A.** The user assigns the full release gate on final HEAD to the chain and forbids a local run; its earlier gate passed on `924c71dc`, and the chain will gate this final commit. Local `response_schemas.py --check`, `regen_generated.py --check` and the relay mutation gate passed.
 7. **PASS.** `DELTA.md` records the D2/R11 tooling deltas and the R8 response check; `test_frozen_sources.py`, `test_precommit_hook.py` and the three relay tests cover them.
-8. **PASS.** `tools/lean_statements.py` regenerated the declaration inventory with zero statements added, removed or changed; `test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over` tests the new shape acceptance rule.
-9. **PASS.** The freeze-only attempt and the code-HEAD selected run are saved in `evidence/selected-tests.json` and `evidence/selected-final.json`; the latter completed 80 units, with its architecture failure fixed by the 32-test rerun and four unrelated load timeouts recorded. The three new focused tests and the all-route mutation sweep passed.
+8. **PASS.** `DELTA.md` records the malformed-answer availability change; `test_readings_route_refuses_empty_labels_targets_and_repeated_over_names` checks its three cases, and `tools/lean_statements.py` found zero statement changes.
+9. **PASS.** `evidence/selected-final.json` records all 374 units selected because the shared response shape changed; it includes the new relay tests, whose full units passed. Four unrelated units timed out under host load, and the architecture inventory failure passed its 32-test rerun.
 10. **PASS.** The readings response shape changed; `response_schemas.py --check`, `regen_generated.py --check` and the Lean/Python decoder agreement test passed.
 11. **N.A.** No budget, deadline or public operation changed.
 12. **N.A.** The schema checks run only when relaying an answer; this batch has no runtime performance claim.
