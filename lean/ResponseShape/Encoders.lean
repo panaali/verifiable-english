@@ -53,6 +53,7 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact Standalone.parse_reported j
   · exact Family.graph_reported j
   · exact Family.readings_reported j
+  · exact Family.readingsChoices_reported j
   · exact Family.bundle_reported j
   · exact Family.familyNorms_reported j
   · exact SoftNorms.runCaseReported_fits j hj

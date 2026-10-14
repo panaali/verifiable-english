@@ -1,0 +1,51 @@
+{
+  "case": "two coupled asserted reading sets, contradictory strict readings, bottom query",
+  "environment": "ve.core@0.2 FOL; VE_AUTHORITY=lean; VE_RUST_TIMEOUT=60; VE_NATIVE_PREBUILT=1",
+  "base_commit": "f1b719c7acc0246a2f6b67f039164916ca21aaf1",
+  "base_runs": [
+    {
+      "run": 0,
+      "cpu_ms": 680.824,
+      "wall_ms": 6821.975,
+      "verdict": "SOME"
+    },
+    {
+      "run": 1,
+      "cpu_ms": 648.875,
+      "wall_ms": 5738.316,
+      "verdict": "SOME"
+    },
+    {
+      "run": 2,
+      "cpu_ms": 660.831,
+      "wall_ms": 10054.441,
+      "verdict": "SOME"
+    }
+  ],
+  "head_runs": [
+    {
+      "run": 0,
+      "cpu_ms": 659.449,
+      "wall_ms": 13929.869,
+      "verdict": "SOME"
+    },
+    {
+      "run": 1,
+      "cpu_ms": 622.186,
+      "wall_ms": 14251.612,
+      "verdict": "SOME"
+    },
+    {
+      "run": 2,
+      "cpu_ms": 673.519,
+      "wall_ms": 4138.342,
+      "verdict": "SOME"
+    }
+  ],
+  "base_cpu_ms": 660.831,
+  "head_cpu_ms": 659.449,
+  "cpu_ratio": 0.9979,
+  "within_relative_budget": true,
+  "same_answer": true,
+  "note": "CPU is Python plus direct checker children; wall is recorded but host load was above 150."
+}
