@@ -1,5 +1,5 @@
 {
-  "method": "Two cold runs per case: check_document for the readings fixture and pilot document; the norm-defaults generator report for seed 0. GNU time wall and user+system CPU, including reaped Lean service children. One Rust executable was used for both revisions.",
+  "method": "cold check_document (readings and pilot) or generator report (norm-defaults); GNU time wall and user+system CPU, including reaped Lean service children; 2 runs per case",
   "before": "4edf751ef^",
   "after": "qa-q2 final candidate",
   "rust_sha256": "3ec83dee23e692b412f7a79b4af70066fc09c3298d82838bea7f4e5fb0e8eac8",
@@ -9,96 +9,96 @@
       "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
       "revision": "before",
       "run": 1,
-      "wall_s": 1.08,
-      "cpu_s": 0.74
+      "wall_s": 1.86,
+      "cpu_s": 0.83
     },
     {
       "document": "qa-q2-readings-bench.ve.md",
       "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
       "revision": "before",
       "run": 2,
-      "wall_s": 0.95,
+      "wall_s": 1.23,
+      "cpu_s": 0.76
+    },
+    {
+      "document": "qa-q2-readings-bench.ve.md",
+      "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
+      "revision": "after",
+      "run": 1,
+      "wall_s": 1.26,
+      "cpu_s": 0.72
+    },
+    {
+      "document": "qa-q2-readings-bench.ve.md",
+      "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
+      "revision": "after",
+      "run": 2,
+      "wall_s": 1.21,
       "cpu_s": 0.75
     },
     {
-      "document": "qa-q2-readings-bench.ve.md",
-      "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
-      "revision": "after",
-      "run": 1,
-      "wall_s": 0.98,
-      "cpu_s": 0.78
-    },
-    {
-      "document": "qa-q2-readings-bench.ve.md",
-      "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
-      "revision": "after",
-      "run": 2,
-      "wall_s": 1.12,
-      "cpu_s": 0.79
-    },
-    {
       "document": "qa-q2-pilot-readings.ve.md",
       "sha256": "4f427dc858ad5a1328325f9b8fe018f74374792b582908492d97896da0ad525f",
       "revision": "before",
       "run": 1,
-      "wall_s": 1.92,
-      "cpu_s": 1.54
+      "wall_s": 2.44,
+      "cpu_s": 1.55
     },
     {
       "document": "qa-q2-pilot-readings.ve.md",
       "sha256": "4f427dc858ad5a1328325f9b8fe018f74374792b582908492d97896da0ad525f",
       "revision": "before",
       "run": 2,
-      "wall_s": 1.96,
+      "wall_s": 2.19,
+      "cpu_s": 1.53
+    },
+    {
+      "document": "qa-q2-pilot-readings.ve.md",
+      "sha256": "4f427dc858ad5a1328325f9b8fe018f74374792b582908492d97896da0ad525f",
+      "revision": "after",
+      "run": 1,
+      "wall_s": 2.43,
       "cpu_s": 1.57
     },
     {
       "document": "qa-q2-pilot-readings.ve.md",
       "sha256": "4f427dc858ad5a1328325f9b8fe018f74374792b582908492d97896da0ad525f",
       "revision": "after",
-      "run": 1,
-      "wall_s": 1.96,
-      "cpu_s": 1.64
-    },
-    {
-      "document": "qa-q2-pilot-readings.ve.md",
-      "sha256": "4f427dc858ad5a1328325f9b8fe018f74374792b582908492d97896da0ad525f",
-      "revision": "after",
       "run": 2,
-      "wall_s": 2.15,
-      "cpu_s": 1.65
+      "wall_s": 1.94,
+      "cpu_s": 1.58
     },
     {
       "document": "norm-defaults-seed-0",
       "sha256": null,
       "revision": "before",
       "run": 1,
-      "wall_s": 0.82,
-      "cpu_s": 0.58
+      "wall_s": 1.02,
+      "cpu_s": 0.59
     },
     {
       "document": "norm-defaults-seed-0",
       "sha256": null,
       "revision": "before",
       "run": 2,
-      "wall_s": 0.9,
-      "cpu_s": 0.58
+      "wall_s": 0.71,
+      "cpu_s": 0.53
     },
     {
       "document": "norm-defaults-seed-0",
       "sha256": null,
       "revision": "after",
       "run": 1,
-      "wall_s": 0.85,
-      "cpu_s": 0.61
+      "wall_s": 0.79,
+      "cpu_s": 0.59
     },
     {
       "document": "norm-defaults-seed-0",
       "sha256": null,
       "revision": "after",
       "run": 2,
-      "wall_s": 0.93,
-      "cpu_s": 0.61
+      "wall_s": 0.89,
+      "cpu_s": 0.62
     }
   ],
   "sources": {
