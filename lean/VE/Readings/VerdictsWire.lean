@@ -319,20 +319,25 @@ theorem XVerdicts.covers (x : XVerdicts) {rs : List (Choice × ChoiceResult)} (h
   show (Compatible x.N.D c ∧ _) ↔ _
   rw [h, x.hevs, mem_chosenOf _ x.ready x.hle]
 
-theorem mem_rows {E : Choice → Type} {evs : List ((c : Choice) × E c)} {f : (c : Choice) → E c → ChoiceResult}
+theorem mem_rowsG {E : Choice → Type} {evs : List ((c : Choice) × E c)} {f : (c : Choice) → E c → ChoiceResult}
     {y : Choice × ChoiceResult} (hy : y ∈ evs.map (fun e => (e.1, f e.1 e.2))) : ∃ e ∈ evs, y = (e.1, f e.1 e.2) := by
   obtain ⟨e, he, rfl⟩ := List.mem_map.mp hy
   exact ⟨e, he, rfl⟩
+
+theorem mem_rows {N : NDoc} {evs : List ((c : Choice) × NDEvidence N c)}
+    {f : (c : Choice) → NDEvidence N c → ChoiceResult}
+    {y : Choice × ChoiceResult} (hy : y ∈ evs.map (fun e => (e.1, f e.1 e.2))) :
+    ∃ e ∈ evs, y = (e.1, f e.1 e.2) := mem_rowsG hy
 
 /-- Every row of a replayed case holds of its choice, and both row lists are exactly the compatible choices taking
     `A`: the hypotheses of every generic fold theorem (`foldG_*_sound`). -/
 theorem x_rowsHold (x : XVerdicts) : RowsHoldG (xSem.{u} x.N x.Xf) x.A x.Γ x.φ x.conflictRows x.queryRows := by
   refine ⟨x.covers (by simp [XVerdicts.conflictRows]), x.covers (by simp [XVerdicts.queryRows]), ?_, ?_⟩
   · intro y hy
-    obtain ⟨e, _, rfl⟩ := mem_rows (f := fun _ e => xConflictRow e) hy
+    obtain ⟨e, _, rfl⟩ := mem_rowsG (f := fun _ e => xConflictRow e) hy
     exact xConflictRow_holds e.2
   · intro y hy
-    obtain ⟨e, _, rfl⟩ := mem_rows (f := fun c e => xQueryRow e (choiceDoc x.N.D c).2 x.Γ x.φ) hy
+    obtain ⟨e, _, rfl⟩ := mem_rowsG (f := fun c e => xQueryRow e (choiceDoc x.N.D c).2 x.Γ x.φ) hy
     exact xQueryRow_holds e.2 x.Γ x.φ
 
 /-- The premise rows: exactly the compatible choices taking `A`, each holding. -/
@@ -340,7 +345,7 @@ theorem x_premiseRowsHold (x : XVerdicts) :
     CoversG (xSem.{u} x.N x.Xf) x.A x.premiseRows ∧
       ∀ y ∈ x.premiseRows, HoldsG (xSem.{u} x.N x.Xf) [] .bottom y.1 y.2 := by
   refine ⟨x.covers (by simp [XVerdicts.premiseRows]), fun y hy => ?_⟩
-  obtain ⟨e, _, rfl⟩ := mem_rows (f := fun c e => xPremiseRow e (choiceDoc x.N.D c).2) hy
+  obtain ⟨e, _, rfl⟩ := mem_rowsG (f := fun c e => xPremiseRow e (choiceDoc x.N.D c).2) hy
   exact xPremiseRow_holds e.2
 
 /-- A replayed `readings-verdicts` case under the completion: the admitted document, `assumed`, the query's

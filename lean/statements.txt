@@ -16304,6 +16304,13 @@ theorem VE.Readings.Wire.mem_chosenOf
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.chosenOf@VE.Readings.VerdictsWire VE.Readings.choices@VE.Readings.Choice VE.Readings.maxChoices@VE.Readings.Choice VE.Readings.supReady@VE.Readings.Choice
   -- expr 715166518
 theorem VE.Readings.Wire.mem_rows
+  ∀ {N : VE.Readings.NDoc} {evs : List ((c : VE.Readings.Choice) × VE.Readings.Wire.NDEvidence N c)}
+    {f : (c : VE.Readings.Choice) → VE.Readings.Wire.NDEvidence N c → VE.Readings.ChoiceResult}
+    {y : VE.Readings.Choice × VE.Readings.ChoiceResult},
+    y ∈ List.map (fun e => (e.fst, f e.fst e.snd)) evs → ∃ e, e ∈ evs ∧ y = (e.fst, f e.fst e.snd)
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire
+  -- expr 2759084588
+theorem VE.Readings.Wire.mem_rowsG
   ∀ {E : VE.Readings.Choice → Type} {evs : List ((c : VE.Readings.Choice) × E c)}
     {f : (c : VE.Readings.Choice) → E c → VE.Readings.ChoiceResult} {y : VE.Readings.Choice × VE.Readings.ChoiceResult},
     y ∈ List.map (fun e => (e.fst, f e.fst e.snd)) evs → ∃ e, e ∈ evs ∧ y = (e.fst, f e.fst e.snd)
