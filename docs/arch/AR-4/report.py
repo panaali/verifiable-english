@@ -193,7 +193,7 @@ def _problems(gates: list[Path]) -> list[str]:
         except (ValueError, subprocess.CalledProcessError) as exc:
             out.append(f"the evidence is not bound to HEAD: {exc}")
     product = {path for path in scope["files"] if path.startswith("tools/") and path.endswith(".py")}
-    if any(m.get("killed") is not True for m in mutants) or {m["file"] for m in mutants} != product - set(NO_MUTANT):
+    if any(m.get("killed") is not True for m in mutants) or not (product - set(NO_MUTANT)) <= {m["file"] for m in mutants}:
         out.append(f"a seeded bug survived, or the seeded bugs do not cover {', '.join(sorted(product - set(NO_MUTANT)))}")
     out += batch_evidence.mutant_source_problems(mutants, budget["head"], ROOT)
     return list(dict.fromkeys(out))
