@@ -28,7 +28,7 @@ all 23 entries.
 | Harness and docs use the new root | AGENT | `8133a1886` | `test_differential_harness_uses_executable_root`; `tests/test_english_lean_route.py` |
 | Generated copy, frozen inventory, declarations, audit, trust table, pins | AGENT | `8133a1886` plus follow-up baseline commit | `regen_generated.py --check` (23 entries); `trust_map.py --check`; `test_committed_ledger_names_real_declarations` |
 | No behavior change | AGENT | `8133a1886` | `test_english_runner_bytes_match_base` (4 cases); six corpus payloads byte-identical in `evidence/english-output-diff.json`; `tests/test_lean_service.py` |
-| Full release gate on committed final HEAD | AGENT | This pre-review round runs it once after the final commit | `gate-result.json` records its result; the chain also checks the new HEAD |
+| Full release gate on committed final HEAD | EXTERNAL: chain test runner | Deferred by the task's explicit full-gate override | The chain writes `gate-result.json` after this report is committed |
 
 `DELTA.md` records no user-visible delta. No R1–R15 signature is claimed.
 The saved six-case comparison records hashes of inputs, stdout, and stderr;
@@ -40,7 +40,7 @@ there is no permanent test of moving `git diff` or report commit counts (D4).
 - `uv run python tools/regen_generated.py --check`: passed, 23 entries.
 - `uv run pytest tests/test_english_runner_root.py -q`: passed; six tests after the harness guard was added.
 - Mac selected run from merge base: 374 units, with three failing files. The trust baseline and plan-row failures were fixed. The known Mac-only `test_the_whole_question_is_bounded_by_the_modes_deadline` passed on a serial VM rerun; all three exact failed tests passed together (3 passed).
-- Mac selection for the two fix paths: 71 units, zero failures. The chain's first full gate of `049bb55a` built Lean and Rust and audited Lean, then failed one historical report test. This pre-review round corrects that test and runs the full gate on its final commit.
+- Mac selection for the two fix paths: 71 units, zero failures. The chain's first full gate of `049bb55a` built Lean and Rust and audited Lean, then failed one historical report test. This pre-review round corrects that test. The chain owns the next final-HEAD gate.
 
 Seeded failures, each restored before the final build:
 
@@ -73,6 +73,10 @@ The selected Mac run reported the known Mac-only deadline failure in
 passed on the VM. Its other 287 test files passed. The generated-file check
 passed all 23 entries, including the Lean statement, audit, frozen-source,
 trust, and response-schema checks.
+The full relay mutation gate passed: 39 routes, 109,195 mutants, zero failures.
+A local full-gate attempt reached Python tests after Lean audit and Rust passed;
+it was stopped under the task's instruction that the chain owns the full gate.
+The chain's final-HEAD result is pending.
 
 ## Build checklist applicability
 
@@ -85,8 +89,8 @@ lakefile-wide root test and `regen_generated.py --check`. Item 17 is covered
 by the zero-change statement dump and Lean audit. Items 18–19 have no new
 theorem or use-case formalisation. Item 20 uses the saved byte comparison and
 names all checks above; no live commit-list test was added. Item 21 is the
-owner table above. Item 22 uses selected tests while iterating and one full
-gate on the final committed HEAD; disk had 36 GiB available before it. Item 23 is
+owner table above. Item 22 follows the task's override: selected tests here,
+full gate externally on final HEAD; disk had 35 GiB available. Item 23 is
 `DELTA.md` and the trust measurement, with no signature needed.
 
 ## Self-review against BUILDER-CHECKLIST
@@ -96,7 +100,7 @@ gate on the final committed HEAD; disk had 36 GiB available before it. Item 23 i
 3. PASS — Five seeded failures in the table above; each named test failed before restoration.
 4. PASS — `test_english_runner_bytes_match_base` and `evidence/english-output-diff.json` compare the base and head bytes on valid and invalid English payloads; `tests/test_lean_service.py` passed.
 5. N.A. — No relayed field, request binding, or input decoder changed.
-6. PASS — `gate-result.json` records the clean committed HEAD's full release gate; `regen_generated.py --check` passed locally.
+6. N.A. — The task assigns the final-HEAD full gate to the external chain; `regen_generated.py --check` passed locally.
 7. PASS — `DELTA.md` records no changed output; `tools/trust_map.py --check` reports zero net growth.
 8. PASS — `evidence/english-output-diff.json` shows six identical output triples; `test_english_runner_bytes_match_base` pins four.
 9. PASS — `select_tests.py --base f98183bf5f` selected 374/374 because the lakefile is project-wide; `test_english_runner_root.py` was selected and passed.
