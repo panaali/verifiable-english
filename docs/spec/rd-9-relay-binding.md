@@ -13,7 +13,7 @@ generated schemas of every relayed RD-9 answer: `soft-elaborate`, `soft-pairs`,
 `rights-elaborate`, `rights-scope`, `rights-bar` and `rights-conflict`. A field
 the Lean shape adds fails `test_every_schema_field_is_classified` until it is
 classified as bound or as Lean-derived, with a reason. Every bound field is
-fuzzed on genuine answers of fifteen sources: renamed, shifted, flipped,
+fuzzed on genuine answers of sixteen sources: renamed, shifted, flipped,
 dropped, duplicated, extended and, when ordered, reversed. Each mutant that still
 fits the schema must be `CheckerUnavailable`
 (`test_every_bound_field_mutant_is_unavailable`). The table below explains the
@@ -43,7 +43,7 @@ relations; the inventory is what is checked.
 | `bars[].predicate`, `.name`, `.over`, `.sign`, `.hard`, `.mode`, `.unless` (rights) | Bar nodes occur only for an authored rule reading. Each is named `rights-bar-<i>` for its aimed predicate's index, and its over rules are the positive lines on the same predicate. Each is strict, hard and negative, with no carve-out (Correlate.lean `barNode`). | `test_rights_bar_nodes_are_bound_to_generated_aimed_predicates`, `test_f21_generated_rule_ids_follow_leans_naming` |
 | `limitations`, `rights_background` (rights) | Every in-scope limitation/act/condition key has one label; the background rows match those labels and formulas exactly. | `test_binding_audit_rights_fields_reject_forgery` |
 | `narrowings[].in_scope`, `.mechanisms[].licence` (rights) | `in_scope` is whether an authored limitation covers the line's right and kind (Tree.lean `inScope`). A licence has the form Run.lean `licence` gives its mechanism, and the elaboration sends no certificates, so it never says `certified`. | `test_every_bound_field_mutant_is_unavailable[rights-elaborate]` |
-| `narrowings[].mechanisms[].mechanism`, `.target` (rights) | The texts are exactly the slots of Correlate.lean `narrowings`, in its order: each authored carve-out `carve-out <i>` (canonical decimal); `exception <M>`; `limitation` iff a limitation is in scope; `exception` iff the rule is default; each authored switch; `blockedBy <M>` (strict `M`) and `dominatedBy <M>` (default `M`) only on a default line; `bar` iff a rule-reading bar reaches the line. Each `M` is another line instance or norm unit. The target is exactly `rule:mechanism`. | `test_f18_narrowing_mechanism_and_target_bind_to_authored_line`, `test_f20_mechanisms_are_exactly_the_request_implied_slots` |
+| `narrowings[].mechanisms[].mechanism`, `.target` (rights) | The texts are exactly the slots of Correlate.lean `narrowings`, in its order: each authored carve-out `carve-out <i>` (canonical decimal); `exception <M>` for each direct rule on the same predicate whose `over` names the line, sorted by name; `limitation` iff a limitation is in scope; `exception` iff the rule is default; each authored switch; on a default line only, `blockedBy <M>` for each strict direct rule that blocks it (same predicate, or the opposite effect across the declared pair) and `dominatedBy <M>` for each incompatible default direct rule that outranks it, or that it outranks under holistic outranking; and `bar` iff a rule-reading bar reaches the line. Each list is complete: every slot is a function of the request (`childrenIn`, `blocksOn`, `Incompatible`, `dominable`). The direct rules are the line instances, then the norm units. The target is exactly `rule:mechanism`. | `test_f18_narrowing_mechanism_and_target_bind_to_authored_line`, `test_f20_mechanisms_are_exactly_the_request_implied_slots`, `test_every_bound_field_mutant_is_unavailable[rights-elaborate]` |
 | `findings`, `unit_open` (rights) | ProtectedInCone text is tied to the distinction hits; each open flag is typed and positioned for a submitted unit. | `test_binding_audit_rights_fields_reject_forgery`, `test_route_row_schemas` |
 | `distinction`, `wordings` (rights) | One distinction row per right-derived predicate. Each hit names an elaborated right/rule and a protected predicate, and is `cited` exactly when its line cites a guard source (Distinction.lean `distinctionHits`). Wording keys equal generated names, and placeholders are positional within the declaration's arity. | `test_binding_audit_rights_fields_reject_forgery`, `test_f17_distinction_rows_and_hits_are_bound` |
 
@@ -62,8 +62,9 @@ missing rows and extra rows.
 The displayed `rights-conflict` response also binds `targets` to the complete
 `conflict_targets` list of the same elaboration and `conditional_on` to its
 coherence and limitation labels. A conflict-free status line states the exact
-two counts; its verdict and optional detail are Lean-derived. A witness answer
-(on either route) names the submitted witness's target. The `soft-conflict`
+two counts; its verdict and optional detail are Lean-derived. A witness answer's
+`targets` are bound on both routes; its `target` is the submitted witness's
+target by the schema (`x-equals`). The `soft-conflict`
 answer's `conditional_on` is a subset of the open (incomparable) coherence
 labels, and its `budget` is the one sent.
 

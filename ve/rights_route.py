@@ -8,7 +8,7 @@ from .backends.relay import decide, decide_once
 from .backends.service_schema import same_json
 from .ast import decimal_value
 from .errors import CheckerUnavailable
-from .softnorms import _act_key, bind_prime_environment, bind_soft_elaboration
+from .softnorms import _act_key, _incompatible, _rank_above, bind_prime_environment, bind_soft_elaboration
 from .rights import LINE_RULE_FIELDS
 
 def _wire(value):
@@ -20,40 +20,46 @@ def _wire(value):
     return value
 
 
-def _narrowing_slots(own, rule, direct_modes, *, limited, barred):
-    """The mechanisms of one line instance, in the order of Correlate.lean `narrowings`.
+def _narrowing_texts(own, rule, direct, predicates, soft, *, limited, barred):
+    """The mechanism texts of one line instance, exactly as Correlate.lean `narrowings` lists them.
 
-    A slot fixed by the request is the exact list of its texts; a slot that Lean fills from
-    the rule structure is `(prefix, names)`: any distinct `prefix + name` with `name` a direct
-    rule (never the line itself) of the mode Lean filters on.
+    Every slot is a function of the request: `direct` is `directNodes`, each line instance then
+    each norm unit as `(name, rule)`; a rule-named slot is filtered by the rule structure alone
+    (`childrenIn`, `blocksOn`, `Incompatible`, `dominable`), never by a proof.
     """
     default = rule.get('mode', 'strict') == 'default'
-    others = {name: mode for name, mode in direct_modes.items() if name != own}
+    predicate, sign = rule['predicate'], rule['sign']
+    dual_permission = _act_key(predicate, predicates)
+    dual_obligation = next((name for name, declaration in sorted(predicates.items())
+                            if declaration.get('regulated', {}).get('role') == 'obligation' and
+                            declaration['regulated'].get('permission') == predicate), None)
+    above = _rank_above(soft)
+    holistic = soft.get('outranking', {}).get('mode') == 'holistic'
+
+    def higher(first, second):
+        return (first.get('rank') is not None and second.get('rank') is not None and
+                first['rank'] in above.get(second['rank'], ()))
+
+    def blocks(other):
+        return (other['predicate'] == predicate or
+                (sign and dual_permission == other['predicate'] and not other['sign']) or
+                (not sign and dual_obligation == other['predicate'] and other['sign']))
+
+    children = sorted(name for name, other in direct if other['predicate'] == predicate
+                      for over in other.get('over') or [] if over == own)
     return [
-        [f'carve-out {index}' for index in range(1, len(rule.get('unless', [])) + 1)],
-        ('exception ', set(others)),
-        ['limitation'] if limited else [],
-        ['exception'] if default else [],
-        [f'switch {party}' for party in rule.get('alterable', [])],
-        ('blockedBy ', {name for name, mode in others.items() if default and mode == 'strict'}),
-        ('dominatedBy ', {name for name, mode in others.items() if default and mode == 'default'}),
-        ['bar'] if barred else [],
+        *(f'carve-out {index}' for index in range(1, len(rule.get('unless') or []) + 1)),
+        *(f'exception {name}' for name in children),
+        *(['limitation'] if limited else []),
+        *(['exception'] if default else []),
+        *(f'switch {party}' for party in rule.get('alterable') or []),
+        *(f'blockedBy {name}' for name, other in direct
+          if default and other.get('mode', 'strict') == 'strict' and blocks(other)),
+        *(f'dominatedBy {name}' for name, other in direct
+          if default and other.get('mode', 'strict') == 'default' and _incompatible(other, rule, predicates) and
+          (higher(other, rule) or (holistic and higher(rule, other)))),
+        *(['bar'] if barred else []),
     ]
-
-
-def _narrowing_texts_bound(texts, slots):
-    """Whether `texts` is exactly the slots' texts, in slot order."""
-    at = 0
-    for slot in slots:
-        if type(slot) is list:
-            if texts[at:at + len(slot)] != slot:
-                return False
-            at += len(slot)
-            continue
-        prefix, names = slot
-        while at < len(texts) and texts[at].startswith(prefix) and texts[at].removeprefix(prefix) in names:
-            at += 1
-    return at == len(texts)
 
 
 def _in_scope(limits, right, kind):
@@ -147,7 +153,7 @@ def _bind_elaboration(row, units, environment):
             # `holder_slot`, else the first object slot of the right's holder sort.
             objects = predicates[predicate]['arguments'][1:]
             holder_slot = (0 if instance in ('liberty', 'powerLiberty') else
-                           source_line['holder_slot'] if 'holder_slot' in source_line else
+                           source_line['holder_slot'] if source_line.get('holder_slot') is not None else
                            1 if right not in holders else
                            (objects.index(holders[right]) if holders[right] in objects else len(objects)) + 1)
             node = entry['node']
@@ -162,8 +168,8 @@ def _bind_elaboration(row, units, environment):
                     any(node[field] != rule.get(field, default) for field, default in
                         (('sign', None), ('hard', False), ('mode', 'strict'), ('over', []))) or
                     # Correlate.lean `nodeOf`: the authored carve-outs, then the limitation pack when in scope.
-                    len(node['unless']) != len(rule.get('unless', [])) + _in_scope(limit_units, right, kind) or
-                    not same_json(node['unless'][:len(rule.get('unless', []))], rule.get('unless', []))):
+                    len(node['unless']) != len(rule.get('unless') or []) + _in_scope(limit_units, right, kind) or
+                    not same_json(node['unless'][:len(rule.get('unless') or [])], rule.get('unless') or [])):
                 raise ValueError('unbound rights source line')
         for bar in row['bars']:
             if (bar['name'] in correlated or bar['predicate'] not in environment['vocabulary']['predicates'] or
@@ -269,8 +275,8 @@ def _bind_elaboration(row, units, environment):
         if narrowing_pairs != line_pairs:
             raise ValueError('unbound narrowing line')
         # `directNodes` (Correlate.lean): the line instances and the norm units, without bars.
-        direct_modes = {line['rule']: correlated[line['rule']].get('mode', 'strict') for line in row['lines']}
-        direct_modes.update((unit['norm']['name'], unit['norm'].get('mode', 'strict')) for unit in norms)
+        direct = ([(line['rule'], correlated[line['rule']]) for line in row['lines']] +
+                  [(unit['norm']['name'], unit['norm']) for unit in norms])
         for entry in row['narrowings']:
             targets = [mechanism['target'] for mechanism in entry['mechanisms']]
             line = next(line for line in row['lines'] if line['rule'] == entry['rule'])
@@ -287,10 +293,9 @@ def _bind_elaboration(row, units, environment):
                     any(mechanism['target'] != f"{entry['rule']}:{mechanism['mechanism']}" or
                         not _licence_bound(mechanism, certificates=False)
                         for mechanism in entry['mechanisms']) or
-                    not _narrowing_texts_bound(
-                        [mechanism['mechanism'] for mechanism in entry['mechanisms']],
-                        _narrowing_slots(entry['rule'], rule, direct_modes, limited=limited,
-                                         barred=rule_bar and reach))):
+                    [mechanism['mechanism'] for mechanism in entry['mechanisms']] != _narrowing_texts(
+                        entry['rule'], rule, direct, predicates, environment['vocabulary'].get('soft', {}),
+                        limited=limited, barred=rule_bar and reach)):
                 raise ValueError('unbound narrowing target or mechanism')
         distinction_predicates = {line['predicate'] for line in row['lines']}
         reported_predicates = [entry['predicate'] for entry in row['distinction']]
@@ -321,13 +326,13 @@ def _bind_elaboration(row, units, environment):
 
 
 def _bind_conflict(row, elaborated, witness=None):
-    """Bind the conflict's displayed identities to the elaborated source, and a witness answer's
-    target to the submitted witness."""
+    """Bind the conflict's displayed identities to the elaborated source."""
     try:
         targets = [entry['target'] for entry in elaborated['conflict_targets']]
         if witness is not None:
-            if row['targets'] != targets or row['target'] != witness['target']:
-                raise ValueError('unbound conflict witness target')
+            # The schema binds `target` to the submitted witness (`x-equals: /witness/target`).
+            if row['targets'] != targets:
+                raise ValueError('unbound conflict witness targets')
             return
         labels = {entry['label'] for entry in elaborated['colliding_pairs']}
         labels.update(entry['label'] for entry in elaborated['limitations'])

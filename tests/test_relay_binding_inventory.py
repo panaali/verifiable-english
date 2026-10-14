@@ -42,6 +42,7 @@ ROUTES = {
     "rights-scope": ("rights", "rights.json", "scope"),
     "rights-bar": ("rights", "rights.json", "bar"),
     "rights-conflict": ("rights", "rights.json", "packages"),
+    "rights-conflict-witness": ("rights", "soft-norms.json", "witness"),
     "rights-admission": ("rights", "rights.json", "admission"),
 }
 
@@ -249,6 +250,11 @@ INVENTORY = {
         "status_text": lean("Lean's verdict line"), "verdict": lean("Lean's verdict"),
         "witness_kind": lean("the witness kind Lean replayed"),
     },
+    "rights-conflict-witness": {
+        "id": BOUND, "status": BOUND, "targets": BOUND, "targets[]": BOUND, "target": BOUND,
+        "status_text": lean("Lean's verdict line"), "verdict": lean("Lean's verdict"),
+        "witness_kind": lean("the witness kind Lean replayed"),
+    },
     "soft-admission": {**_ADMISSION, "kinds": BOUND, "kinds[]": BOUND},
     "rights-admission": _ADMISSION,
 }
@@ -395,6 +401,10 @@ def _rights_sources():
     impart = env(IMPART, sorts=("person", "idea"), rights={"holders": ["person"], "bearers": ["person"]})
     carve = copy.deepcopy(GAMMA)
     carve[0]["right"]["lines"][0]["norm"]["unless"] = [["top"]]
+    # The wire spells an absent optional field as null too (`rights_route._wire`); a genuine answer
+    # to such a source must be accepted (the class of a refused genuine answer, N9).
+    nulls = copy.deepcopy(GAMMA)
+    nulls[0]["right"]["lines"][0].update(holder_slot=None, cites={})
     slot = copy.deepcopy(GAMMA)
     slot[0]["right"]["guard"] = ["top"]
     slot[0]["right"]["lines"][0]["holder_slot"] = 1
@@ -413,6 +423,7 @@ def _rights_sources():
         "default gamma": (env(ARREST), _default_gamma()),
         "carve-out": (env(ARREST), carve),
         "authored holder slot": (env(ARREST), slot),
+        "null optional fields": (env(ARREST), nulls),
         "fan-out": _fan_out_source(),
         "bar": (impart, [right("r19", [line("liberty", norm("may-impart", "impart_permitted", True))]),
                          {"bar": {"name": "b30", "reading": "rule"}}]),
@@ -436,21 +447,32 @@ def _rights_sources():
     }
 
 
-def _rights_calls(environment, units):
+def _rights_calls(name, environment, units):
     elaborated = rights_route.run_rights_case(environment, units, "rights-elaborate")
     leaf = (elaborated["limitations"] or elaborated["premises"])[0]
     admission = {"units": [{"id": f"u{i}", "span": [i, i + 1], "kind": next(iter(content)), "content": content}
                            for i, content in enumerate(units)],
                  "graph": {"root": "leaf", "nodes": [{"name": "leaf", "ast": leaf["ast"], "label": leaf["label"]}]}}
+    # A base model of GAMMA's environment: every non-regulated predicate of E' is empty.
+    relations = {predicate: [] for predicate, declaration in
+                 elaborated["environment_prime"]["vocabulary"]["predicates"].items()
+                 if "regulated" not in declaration and not predicate.startswith("soft__")}
+    witness = {"target": "arrest_permitted", "tuple": ["s", "p"], "model": {
+        "complete": True, "domains": {"state": ["s"], "person": ["p"]}, "constants": {}, "relations": relations}}
     return {
+        # The elaboration's own binder, so a forgery that only a later answer would expose still fails here.
+        "rights-elaborate": lambda: rights_route.run_rights_case(environment, units, "rights-elaborate"),
         **{route: (lambda: rights_route.report_rights(environment, units))
-           for route in ("rights-elaborate", "rights-scope", "rights-bar", "rights-conflict")},
+           for route in ("rights-scope", "rights-bar", "rights-conflict")},
         "rights-admission": lambda: rights_route.admit_rights_document(environment, admission),
+        **({"rights-conflict-witness": lambda: rights_route.run_rights_case(
+            environment, units, "rights-conflict", witness=witness)} if name == "gamma" else {}),
     }
 
 
 def _rights_route_of(case):
-    return "rights-admission" if case["kind"] == "admission" else case["kind"]
+    return ("rights-admission" if case["kind"] == "admission" else
+            "rights-conflict-witness" if case["kind"] == "rights-conflict" and "witness" in case else case["kind"])
 
 
 class Relay:
@@ -507,7 +529,7 @@ def _rights_relays(monkeypatch):
     relays = {}
     for name, (raw, units) in _rights_sources().items():
         environment = RightsEnvironment(raw)
-        relay = Relay("rights", _rights_calls(environment, units), _rights_route_of,
+        relay = Relay("rights", _rights_calls(name, environment, units), _rights_route_of,
                       [(rights_route, "decide_once"), (rights_route, "decide")])
         with monkeypatch.context() as patch:
             relay.record(patch)
