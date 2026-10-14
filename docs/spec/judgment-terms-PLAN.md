@@ -1,6 +1,34 @@
 # Judgment terms: plan
 
-> **Status.** Draft 3, 2026-10-14, branch `design/judgment-terms` from `main` at `f98183bf`. Docs only: no product
+> **Status.** Draft 4, 2026-10-14, branch `research/judgment-terms-p1` from `main` at `f98183bf`. Docs only. It applies
+> phase 1's results ([docs/research/judgment-terms-phase1.md](../research/judgment-terms-phase1.md), cited as P1 and a
+> section number; its review `manage-agents/judgment-terms-ph1-review.final.md`: ACCEPT, six minor findings, no fix
+> round). Every number from phase 1 is measured and cites its evidence file under
+> [docs/research/evidence/judgment-terms/](../research/evidence/judgment-terms/); no bar is moved. The statement spec
+> is at draft 3, which adds one fixture and changes no statement.
+>
+> **Changes in this draft (4).**
+> - New 0.1 and 0.2: each phase-1 result with PASS, FAIL or no bar and what it gates; each DEFERRED item with its
+>   trigger.
+> - JT-0p: bar part A **PASS**; bar part B (the blind audit, and with it the +132 B) **DEFERRED**. The prompt text
+>   gains what the run needed: the sort `thing`, the two placeholder records replaced, the reading sets rebuilt, no
+>   constant `verbalisation`, no template for u010's predicate, the ledger's `claimed: false` read by the claim, and the
+>   metrics key `open_term_class_borderline`.
+> - JT-5 is split. **JT-5a** switches the constitution (31 of 33 records already bind). The UDHR's records bind none
+>   (52 of 52 refused), so **JT-5r**, a new re-translation step, comes first, and **JT-5b** switches the UDHR after it.
+>   JT-5's bar is unchanged. It now says that a record no unit uses may be removed with its reason, because the removal
+>   cannot change any status.
+> - D2: one word over several sorts is one bound term per sort, the terms sharing their words. This adds fixture J-ω,
+>   computed in the stub, and corrects 4.2's `arbitrary` row: one usage row per sort and per part.
+> - Bytes (8): JT-5's figures are measured (UDHR 18 units, 1,945 B; constitution 13 units, 2,150 B). The JT-0p
+>   claim stays an estimate.
+> - D7: the measured decider spellings. JT-3: what is shown when the wording lint rejects a judgment's template.
+>   Risks (9) updated.
+> - 11 keeps R1 to R5 word for word, with the DRI's decisions. The new 11.2 lists phase 1's issues for other owners.
+> - No batch is dropped.
+>
+> **Earlier drafts.** Drafts 1 to 3 (2026-10-13 and 2026-10-14) were written on branch `design/judgment-terms`, from
+> `main` at `f98183bf`. Docs only: no product
 > code, no tests, no generated file touched, no model calls. It builds the recommendation of
 > [docs/research/judgment-terms.md](../research/judgment-terms.md) (cited as R and a section number): design B, "bound
 > judgments". Every number is measured (R2 gives the method) or marked **estimate**. Draft 1 (2026-10-13) was
@@ -21,21 +49,24 @@
 
 ## 0. Summary
 
-| # | Batch | Hours | Owner | Moves a pilot number? |
-|---|---|---:|---|---|
-| JT-0p | Pilot: measure judgment terms in both ledgers; write UDHR u010 and u060 as asserted judgments (u010 claimed, u060 unclaimed) | 2 | pilot runner (prompt text from this plan, merged by the DRI) | **yes**: UDHR +132 B claimed (**estimate**), until audited |
-| JT-0 | Statement spec, Lean stub against `main`, statement review | 3–4 | planner, then reviewers | no |
-| JT-1 | Lean core in a new directory: W2 records (repeated sorts under the profile), binding to base predicates, admission, computed status over one candidate list, dependence through definitions, legacy proofs; the shared scan `opensIn`, with rights' `nodeOpen` switched to it | 5–6 | Lean | no (integrity) |
-| JT-2 | `judgments@0` in Lean's document mode: status hook, the usage map, AR-10 row, response shape, Python relay and fuzz tests; Python's W2 schema twin leaves the live path | 5–6 | Lean, Python | no (statuses become Lean-computed) |
-| JT-E1 | Experiment: do readers see which answers turn on which judgment? (proxy readability) | 3 | experiment runner | gate for JT-3's wording |
-| JT-3 | English: declaration line, legend line, sense-tied catalogue rows for evaluative words, refusals; the Lean-computed `undeclared_evaluative` report, its schema, binding check and fuzz tests | 5–6 | english-lean owner (texts from this plan), Lean, Python | no (readability) |
-| JT-4 | Judgment atoms in WG-6's zone answers and records; deciders named; criteria as labelled premises ("conflict-free, given …"); English through WG-7 | 4–5 | Lean, Python | no (answers at situations) |
-| JT-5 | Pilots switch `judgments@0` on (UDHR's four parts, the constitution's main document) | 2–3 | pilot runner | statuses computed by Lean; 0 B |
-| JT-E2 | Experiment (research JT-R1): judgments over propositions ("it is essential that …") | 4 | experiment runner | possible later bytes (upper bound 3,238 B, co-blocked) |
-| JT-E3 | Experiment: can raters agree which open terms are judgments? | 2 | experiment runner | validates JT-0p's instrument |
+| # | Batch | Hours | Owner | Moves a pilot number? | After phase 1 |
+|---|---|---:|---|---|---|
+| JT-0p | Pilot: measure judgment terms in both ledgers; write UDHR u010 and u060 as asserted judgments (u010 claimed, u060 unclaimed) | 2 | pilot runner (prompt text from this plan, merged by the DRI) | **yes**: UDHR +132 B claimed (**estimate**), until audited | **kept**, run in part. Bar A PASS; bar B DEFERRED (0.2); prompt text completed (5) |
+| JT-0 | Statement spec, Lean stub against `main`, statement review | 3–4 | planner, then reviewers | no | done (spec draft 2; draft 3 adds J-ω) |
+| JT-1 | Lean core in a new directory: W2 records (repeated sorts under the profile), binding to base predicates, admission, computed status over one candidate list, dependence through definitions, legacy proofs; the shared scan `opensIn`, with rights' `nodeOpen` switched to it | 5–6 | Lean | no (integrity) | kept; fixture J-ω added |
+| JT-2 | `judgments@0` in Lean's document mode: status hook, the usage map, AR-10 row, response shape, Python relay and fuzz tests; Python's W2 schema twin leaves the live path | 5–6 | Lean, Python | no (statuses become Lean-computed) | kept unchanged |
+| JT-E1 | Experiment: do readers see which answers turn on which judgment? (proxy readability) | 3 | experiment runner | gate for JT-3's wording | kept; not run (DEFERRED). Today's arm confirmed: the asserted judgments render with identifiers (P1 2.2) |
+| JT-3 | English: declaration line, legend line, sense-tied catalogue rows for evaluative words, refusals; the Lean-computed `undeclared_evaluative` report, its schema, binding check and fuzz tests | 5–6 | english-lean owner (texts from this plan), Lean, Python | no (readability) | kept; lint-rejected templates named (5) |
+| JT-4 | Judgment atoms in WG-6's zone answers and records; deciders named; criteria as labelled premises ("conflict-free, given …"); English through WG-7 | 4–5 | Lean, Python | no (answers at situations) | kept unchanged |
+| JT-5a | The constitution's main document switches `judgments@0` on | 2–3 | pilot runner | statuses computed by Lean on 13 units, 2,150 B (measured); 0 B | **changed**: JT-5's constitution half, first |
+| JT-5r | UDHR re-translation: every used open term gets a predicate of its own, the changed units re-audited | 4–6 (**estimate**) | pilot runner, under act-phrases' attachment rules (owner: 11.2, X1) | 0 B gained; the changed units keep their claim only if re-audited FAITHFUL | **new**: the forecast refuses all 52 UDHR records (P1 2.6) |
+| JT-5b | The UDHR's four parts switch `judgments@0` on | 2 | pilot runner | statuses computed by Lean on 18 units, 1,945 B (measured); 0 B | **changed**: JT-5's UDHR half, after JT-5r |
+| JT-E2 | Experiment (research JT-R1): judgments over propositions ("it is essential that …") | 4 | experiment runner | possible later bytes (upper bound 3,238 B, co-blocked) | kept; not run (DEFERRED) |
+| JT-E3 | Experiment: can raters agree which open terms are judgments? | 2 | experiment runner | validates JT-0p's instrument | kept; not run (DEFERRED); its frame exists (89 terms) |
 
 **Order.**
-1. **JT-0p now.** It changes only prompt text, adds no profile and claims u010 only.
+1. **JT-0p now.** It changes only prompt text, adds no profile and claims u010 only. Phase 1 ran it on copies of the
+   pinned run (bar part A PASS). The live prompt text and the blind audit wait for the DRI's merge (0.2).
 2. **Draft 2, then JT-0.** The stub elaborates admission through `hide`, repeated sorts under the profile, the single
    candidate traversal, the compiled definitions interface, the `ConflictFreeX` claim and the `opensIn` equation. The
    statement review passes before any product code is written.
@@ -44,9 +75,45 @@
 5. **JT-E1, then JT-3**, which adds the catalogue rows and the `undeclared_evaluative` report with its schema, binding
    check and fuzz tests.
 6. **JT-4**, once WG-6, WG-7, R1 and R2 are on `main`, with J-ι checked under its premise.
-7. **JT-5**, under the "no declaration removed" bar.
+7. **JT-5a** (the constitution), under the "no declaration removed" bar. **JT-5r** (the UDHR's re-translation) may run
+   any time after the DRI names its owner (11.2, X1), and needs no product code. **JT-5b** (the UDHR) runs after
+   JT-5r's re-audit, under the same bar.
 
 JT-E2 runs after attitudes' AT-3a and JT-E3 any time after JT-0p; each is authorised separately.
+
+### 0.1 Phase-1 results and what they gate
+
+Phase 1 ran JT-0p on copies of the pinned run 20261012T1800Z, plus three descriptive measurements with no bar
+(P1 1.2). The checker's builds were the ones pinned in `lean/checkers.lock`.
+
+| Item | Bar | Result | Verdict | What it gates |
+|---|---|---|---|---|
+| JT-0p bar part A | "The four UDHR parts load and check as before, with u010 and u060 OPEN" | u010 and u060 UNFORMALISED → OPEN. The other 128 units keep their status. Premises, readings and conflict are equal to the baseline. Coverage moves only the units' 132 B and 66 B (`bar-a.json`) | **PASS** | the u010/u060 encoding and the prompt text of JT-0p (5) may be merged by the DRI |
+| JT-0p bar part B | "PASS if the targeted audit finds u010 FAITHFUL: claimed bytes +132 … FAIL otherwise" | not run: a model call by an auditor who did not write the units | **DEFERRED** (0.2) | the +132 B claim; until then the UDHR's claimed bytes stay 4,792 B (43.90%) |
+| u060's audit verdict | recorded, no bytes either way | not run (same audit) | **DEFERRED** | nothing |
+| Reproduction P1–P8 | exact equality with the figures the plan and R cite | all equal (`reproduction.json`, `reproduction-p1.json`) | **PASS** | the plan's inputs: 4,792 B; u010 132 B, u060 66 B; 4,924 B, 45.11%; 52 and 33 declared terms; 11 units, 1,333 B and 18 units, 1,945 B; 203 of 454 lines |
+| Reproduction P9 | R2.3's 12 UNFORMALISED units, 1,942 B | 17 units, 2,792 B by the bare lexicon. R2.3's 12 are a hand selection among them; 13 units, 2,183 B with u013bb | **FAIL** | nothing in this plan: no batch, bar or byte row uses the figure. The research note relabels R2.3's table (0.2) |
+| Instrument (JT-0p item 1) | none: "its numbers start a series" | UDHR 52 terms: 32 judgment (10 borderline), 18 classification, 1 attitude, 1 proportion. Constitution 37 terms: 18 judgment (4 borderline), 13 classification, 4 exception, 1 attitude, 1 proportion. Judgment-term units: UDHR 18 (1,945 B); constitution 507 (88,989 B), of which 13 are covered units with content (2,150 B) (`instrument-*.json`) | no bar; one rater | JT-E3's frame. The counts are not published as measured until JT-E3 passes |
+| Integrity check by hand (JT-0p item 3, without the model audit) | none | 0 hits in the 20 CHECKED units of both pilots. The control finds 35 of the 49 OPEN and READINGS units (`integrity.json`) | no bar | JT-5a and JT-5b expect no unit to move to OPEN. D3 and D15 are preventive: neither pilot shows a judgment as checked today |
+| Admission forecast (2.1, checks 1–5, read from the records) | none; a forecast, since Lean owns admission | UDHR: 52 of 52 records `JudgmentUnbound`, all 52 `unstated`. Constitution: 31 of 33 admitted, `good_judgment` unbound, `child_sexual_abuse_material` `JudgmentArguments` (`admission-forecast.json`) | no bar | JT-5's split (JT-5a, JT-5r, JT-5b) |
+| JT-E1, JT-E2, JT-E3 | section 6 | not run | **DEFERRED** (0.2) | as section 6 says, unchanged |
+
+Phase 1 also has three findings for other owners (P1 2.6: F1 renderer, F2 environment decoder, F3 reading-set ids).
+They are listed in 11.2.
+
+### 0.2 Deferred items and their triggers
+
+| Item | Trigger | Then |
+|---|---|---|
+| JT-0p bar part B: the targeted blind audit of u010 (+132 B) and u060 | The DRI merges P1's `prompt-additions.md` into `manage-agents/prompts/` (one file per pilot, SC2). The next UDHR run (06:00 or 18:00 UTC) then audits u010 and u060, with an auditor that did not write them | PASS: claimed 4,924 B (45.11%). FAIL: u010 reverts, with the reason recorded |
+| The instrument in the live pilot runs | The same merge | The first live run should reproduce `instrument-udhr.json` and `instrument-constitution.json` for unchanged units |
+| JT-E1 | The DRI's authorisation and model budget. It runs before JT-3, which it gates (Order, step 5) | section 6 |
+| JT-E2 | AT-3a on `main`, and the DRI's authorisation | section 6 |
+| JT-E3 | The DRI's authorisation. It can run any time: its frame is P1's `open_term_class.tsv` (89 distinct terms; 91 rows, because the UDHR's two placeholders and their JT-0p renames each have a row) | section 6; PASS lets the instrument's counts be published as measured |
+| JT-5r | The DRI names its owner (11.2, X1) | 5 |
+| JT-5b | JT-5r re-audited, and JT-2 on `main` | 5 |
+| Research note R: fill R2.2's constitution placeholders from P1 2.4; relabel R2.3's UNFORMALISED table as a hand selection (P9) and weigh u013bb; state the covered-unit rule (units with content, so not the LABELLED heading u0126, 19 B) | The note's next edit (outside this draft, which changes the plan and the spec only) | the note matches 0.1 |
+| Two phase-1 claims that no committed script repeats (review finding 1): D1's no-op self-test, and F1's "13 accepted before" | JT-5a's reading-set rebuild, which commits the rebuild with its self-test (5) | the rebuild's self-test is a script command |
 
 **What this plan does not build** (each has an owner, R1.3):
 - degrees, comparatives and thresholds (quantities' `scales@0`);
@@ -61,12 +128,12 @@ JT-E2 runs after attitudes' AT-3a and JT-E3 any time after JT-0p; each is author
 | # | Decision | Why | Rejected |
 |---|---|---|---|
 | D1 | A judgment term is a W2 open term under the profile `judgments@0`. The nine-key record does not change | one record, one owner (W2, `docs/spec/document.md:79-83`); quantities' grades and attitudes' generated terms are already W2 open terms | a new `judgment` record or kind field (design C); a `class` field in the language (the class is a ledger annotation, D5) |
-| D2 | **Binding.** Under the profile, every open term's `name` is a declared **base** predicate (declared in `hide E (names defs)`, so a W3-defined name is unbound), whose sorts are its `arguments`, and no rule regulates it. Under the profile `arguments` are sorts and may repeat (`[person, person]`): W2's validator (`Loader.openTermNames`) relaxes its distinctness check only under the profile, so the rule keeps one owner. A regulated predicate is refused because one atom has one role: its value is what the rules compute (a layer symbol, which WG-6 reads from the tables), while a judgment is a base atom its decider supplies. The predicate's template and description are the term's words | Lean can then compute everything else from content; rights already reads open names as predicate names (`lean/VE/Rights/Run.lean:159-162`) | a binding field (changes the nine-key schema); leaving the term unbound (design A); a second validator for judgment records |
+| D2 | **Binding.** Under the profile, every open term's `name` is a declared **base** predicate (declared in `hide E (names defs)`, so a W3-defined name is unbound), whose sorts are its `arguments`, and no rule regulates it. Under the profile `arguments` are sorts and may repeat (`[person, person]`): W2's validator (`Loader.openTermNames`) relaxes its distinctness check only under the profile, so the rule keeps one owner. A regulated predicate is refused because one atom has one role: its value is what the rules compute (a layer symbol, which WG-6 reads from the tables), while a judgment is a base atom its decider supplies. The predicate's template and description are the term's words. **One word over several sorts** is one bound term per sort, the terms sharing their words. Phase 1 found the UDHR's `arbitrary` applied to measures, interferences, intrusions and deprivations (P1 2.6). Each such term has its own usage-map row, and english-lean's legend may group them (fixture J-ω) | Lean can then compute everything else from content; rights already reads open names as predicate names (`lean/VE/Rights/Run.lean:159-162`) | a binding field (changes the nine-key schema); leaving the term unbound (design A); a second validator for judgment records; for one word over several sorts, a sort-polymorphic term or a shared supersort (a language change) |
 | D3 | **Integrity.** Lean computes the status. Content that depends on a bound judgment is OPEN, never CHECKED: judgment dependence forces OPEN; otherwise the legacy status applies. Dependence is **syntactic use, directly or through W3 definitions** (D4); it does not follow one rule's outcome into another rule's guard, so an outcome downstream can still vary with a judgment (spec F3, fixture J-χ; the zone answers that, JT-4). `"meaning": "specified"` on such content is refused (`JudgmentNotChecked: <unit> <term>`); an `open` list must name every judgment the content depends on (`JudgmentNotListed`) and, when the unit's content is complete (no pending reading), no bound judgment it does not (`JudgmentListedUnused`). The content is one list per unit: its own content, or the candidates of its active reading set (2.2); the status, the set status and the usage map all read that list. The guarantee covers **declared** terms only (D15) | "never present a judgment as checked" becomes a theorem (`status_never_checked`) instead of a translator's promise; today OPEN is author-declared (`Loader.lean:210-213`) | downgrading silently (hides a translator error) |
 | D4 | **Dependence goes through definitions.** A unit depends on a judgment if its content uses it, or uses a W3-defined predicate whose definition reaches it. The definitions are the route vocabulary's compiled W3 list, `rv.definitions` (dependency order; the list the norms tree copies, `Norms/Wire.lean:304`) | otherwise `wrongful_detention :↔ detention ∧ arbitrary` would let a judgment pass as CHECKED (fixture J-γ, and its rule-unit twin J-γ′) | direct use only |
 | D5 | **One construct for classification and judgment words.** "Slavery" and "arbitrary" are both bound open terms; for the checker they are the same. The judgment / classification / exception / attitude class is recorded by the pilots' ledgers (JT-0p) for measurement only | the class changes no check; JT-E3 tests whether it can be measured reliably | a language-level class with different semantics |
 | D6 | **Criteria are sentences.** Under the profile, `necessary` and `sufficient` are empty (`JudgmentCriterionAsUnit: <term>`). A criterion the source states ("no arrest ordered by a court is arbitrary") is a unit with its span, so it binds and is audited. On the layered route (JT-4) such a unit is a labelled premise in X, and the answer it supports is `ConflictFreeX`, "conflict-free, given <sentence>", kept apart from the answer without additional judgment criteria, which an assertion unit never changes. That answer is unconditional only on the plain route (`conflictFreeU_consistent`); on the layered route it is `ConflictFreeX L.U L.X`, which assumes the route's own premises (soft coherence, rights limitations), and its line names them | attribution's rule (`attribution.md:2512-2515`), one place for criteria; today the lists are typed and then dropped (`Loader.lean:387-398`), so a reader cannot tell whether they bind; `ConflictFreeU` quantifies over base situations, which an assertion does not constrain (`backgroundBase` holds only literal distinctness, `Norms/Prefix.lean:35`) | making the record's lists premises (a second, span-less place for criteria); claiming unconditional conflict freedom from a criterion unit. Soft norms' and rights' own condition premises are unchanged |
-| D7 | **One spelling for "no one named".** Under the profile `decided_by` is a token; when the source names no decider it is `unresolved_decider` (attribution's and attitudes' value). `unstated` is refused with that rewrite (`JudgmentDecider: <term>`) | the pilots use both spellings for one meaning | accepting both (two spellings, one meaning) |
+| D7 | **One spelling for "no one named".** Under the profile `decided_by` is a token; when the source names no decider it is `unresolved_decider` (attribution's and attitudes' value). `unstated` is refused with that rewrite (`JudgmentDecider: <term>`) | the pilots use both spellings for one meaning. Measured (P1 2.6): all 52 UDHR records say `unstated`, and none of the constitution's 33 does | accepting both (two spellings, one meaning) |
 | D8 | **Answers at situations reuse WG-6.** The bound judgment names are added to WG-6's open names. "Settled whatever the judgment", "left to <decider>: these two admissible completions give different answers and differ on …", "not said", "inconsistent", "unknown" and judgment records are WG-6's answers and records | one owner of three-valued completion (SYNTHESIS O18); WG-6 already takes an explicit `opens` list | a judgment table of its own (design C) |
 | D9 | **Graded words are quantities'.** A `scales@0` grade must be a W2 open term, so under `judgments@0` it is bound too, and its atoms are judgment atoms in zone answers. Nothing else is added for degrees | one owner (SYNTHESIS O4, quantities §10 item 3) | penumbral premises written by this plan |
 | D10 | **Subsective phrases are conjunctions.** "Arbitrary arrest" is written `arrest(x) ∧ arbitrary(x)`. No generated premise "every arbitrary arrest is an arrest" | it follows from the conjunction; act-phrases owns restrictive-modifier specialisation (AP-5b) | a generated subsection premise |
@@ -165,7 +232,7 @@ measures proxy readability (a model standing in for a reader), not human compreh
 
 | Row | Text | When |
 |---|---|---|
-| declaration | "Whether <the template with 'something' or the sort noun> is a judgment; the text does not say who makes it." / "… is a judgment for <decider>." | the legend of every bound judgment; also the authoring line that declares one |
+| declaration | "Whether <the template with 'something' or the sort noun> is a judgment; the text does not say who makes it." / "… is a judgment for <decider>." | the legend of every bound judgment, one line per bound term (english-lean may group terms that share their words, D2; JT-E1 measures the grouped line if it does); also the authoring line that declares one. A template the wording lint rejects gives no wording to fill: the line falls back to today's identifier wording (JT-3) |
 | legend, factors | "The text mentions these points: <factor>; <factor>." | when `factors` is not empty |
 | unit status | "Open: this uses the judgment whether <atom>." | an OPEN unit's line, beside the source. Neutral on purpose: a criterion unit ("No arrest ordered by a court is arbitrary.") uses the judgment to limit it and does not depend on it |
 | zone, settled | "Settled: whatever is judged here, the text requires …" | WG-7's settled answer when the cone has judgment atoms |
@@ -199,7 +266,8 @@ measures proxy readability (a model standing in for a reader), not human compreh
 
 Draft 2's statements are written out in full, elaborated against `main`, in [judgment-terms.md](judgment-terms.md)
 (sections 1 to 7, with the stub's findings in its section 0); this section lists what each batch builds and what
-changed from draft 1. New files, in a new directory: `lean/VE/Judgments/Decl.lean`, `Scan.lean`, `Status.lean`,
+changed from draft 1. Phase 1 changes no statement. The spec's draft 3 adds fixture J-ω, computed in the re-elaborated
+stub. New files, in a new directory: `lean/VE/Judgments/Decl.lean`, `Scan.lean`, `Status.lean`,
 `Examples.lean` (JT-1); `Zone.lean` and `ZoneExamples.lean` (JT-4). Plain-words companion: `lean/JUDGMENTS.md`. Names
 have the prefix `VE.Judgments.`; `Loader` is `VE.Discourse.Loader`; `UnitContent` is `VE.Service.Document.UnitContent`;
 `LayeredU`, `ConflictFreeX` and `conflictFreeX` are `VE.NormDefaults.Wire`'s.
@@ -321,19 +389,20 @@ On the plain norm-defaults route (the UDHR's companions), `zone` and the criteri
 | J-ρ | a regulated predicate (`subjects`) declared as a judgment | `JudgmentRegulated: subjects` |
 | J-σ | two bound judgments used in one guard, meaning `{"open": ["arbitrary"]}` | `JudgmentNotListed: u1 <the other>` |
 | J-τ | J-α's guard, meaning `{"open": ["arbitrary", <another bound judgment>]}` | `JudgmentListedUnused: u1 <the other>` |
+| J-ω | one word over two sorts (D2, phase 1): sorts `measure`, `interference`; bound `arbitrary_measure(measure)` and `arbitrary_interference(interference)`, both with the template "{0} is arbitrary"; u037's rule uses the first, u045a's the second | both admitted; each unit OPEN; usage map `[(arbitrary_measure, [u037]), (arbitrary_interference, [u045a])]`, one row per term. The record `arbitrary_measure` with `arguments: ["interference"]` is `JudgmentArguments: arbitrary_measure` (one record cannot stand for the other sort) |
 
 ### 4.2 From the pilots (each sentence is the source text; ids from the run-20261012T1800Z ledgers)
 
 | Unit | Sentence | Fixture use |
 |---|---|---|
-| U u037 | "No one shall be subjected to arbitrary arrest, detention or exile." | J-α's shape on the real translation once JT-5 runs; zone wording checked in JT-E1 |
-| U u045a | "No one shall be subjected to arbitrary interference with his privacy, family, home or correspondence" | `arbitrary` reused across units; the usage map lists u037, u045a, u046, u055, u064 under one term |
+| U u037 | "No one shall be subjected to arbitrary arrest, detention or exile." | J-α's shape on the real translation once JT-5b runs; zone wording checked in JT-E1 |
+| U u045a | "No one shall be subjected to arbitrary interference with his privacy, family, home or correspondence" | `arbitrary` reused across units and sorts. Corrected after phase 1 (P1 2.6): the run writes four predicates over four sorts in two parts. Part 1 has `is_arbitrary(measure)` (u037), `is_arbitrary_u045a(interference)` (u045a) and `is_arbitrary_u046(intrusion)` (u046). Part 2 has `is_arbitrary(measure)` (u055's two readings) and `is_arbitrary_u064(deprivation)` (u064). A usage map is per document, and D2 gives one bound term per sort, so there is one row per sort and per part: three in part 1, two in part 2 (J-ω's shape), never one row for all five units |
 | U u055 | "No one shall be arbitrarily deprived of his nationality nor denied the right to change his nationality." | J-ξ′: an open reading set over the adverb's scope (act-phrases' D9), two readings that differ, with a separating model; the unit OPEN |
 | U u111 | "… meeting the just requirements of morality, public order and the general welfare in a democratic society." | five bound judgments in one unit; the budget is not reached at one tuple each |
 | U u089 | "Everyone has the right to rest and leisure, including reasonable limitation of working hours and periodic holidays with pay." | the catalogue row for "reasonable" (JT-3); not unlocked (time, R2.3) |
-| U u010 | "Whereas a common understanding of these rights and freedoms is of the greatest importance for the full realization of this pledge," | JT-0p (two distinct legacy argument labels until JT-5) and J-θ's binary form |
-| U u060 | "The family is the natural and fundamental group unit of society" | JT-0p: written and audited, bytes unclaimed (`missing_feature: presupposition`); "the … unit" stays presupposition's |
-| C u0052.s01 | "Claude should always use good judgment when evaluating conversational inputs." | OPEN on `good_judgment`, a holistic judgment that is never decomposed. JT-5 confirms that `good_judgment(action, context)` sits in a guard, not as the regulated act (`JudgmentRegulated` otherwise); if it cannot sit in an admitted role, the limit is recorded, not worked around |
+| U u010 | "Whereas a common understanding of these rights and freedoms is of the greatest importance for the full realization of this pledge," | JT-0p (two distinct legacy argument labels until JT-5b) and J-θ's binary form. Phase 1: OPEN in the checker (bar part A); renders with identifiers, since the wording lint rejects its template |
+| U u060 | "The family is the natural and fundamental group unit of society" | JT-0p: written and audited, bytes unclaimed (`missing_feature: presupposition`, `claimed: false`); "the … unit" stays presupposition's. Phase 1: OPEN in the checker; its record is the only UDHR record the forecast admits (part 2) |
+| C u0052.s01 | "Claude should always use good judgment when evaluating conversational inputs." | OPEN on `good_judgment`, a holistic judgment that is never decomposed. JT-5a confirms that `good_judgment(action, context)` sits in a guard, not as the regulated act (`JudgmentRegulated` otherwise); if it cannot sit in an admitted role, the limit is recorded, not worked around. Phase 1: no predicate `good_judgment` exists; the judgment sits inside the regulated `judgment_use_required` (P1 2.6) |
 | C u0168.s01 | "When faced with seemingly compelling arguments to cross these lines, Claude should remain firm." | OPEN on `seemingly_compelling_argument_to_cross_line`; zone at the 49 probe points after JT-4 |
 | C u0031.s03 | "The risks of Claude being too unhelpful or overly cautious are just as real to us as the risk of Claude being too harmful or dishonest." | catalogue row for "overly": one judgment term; the comparison of risks stays quantities' and weighing's. "Just as real" is the "just" of "equally", not the evaluative row: the reason catalogue rows are tied to a sense (2.4) |
 | Safety framework F18 | "It is reviewed more often when there are reasonable grounds." | a bound judgment with a named decider ("we"), `left to` names it |
@@ -354,17 +423,32 @@ changes, shows a failing test, and restores it (CLAUDE.md).
        `judgment`, `classification`, `exception`, `attitude` or `proportion`.
      - Each unit gets `judgment_terms` (its open terms of class `judgment`).
      - `metrics.json` gets `judgment_term_units` and `judgment_term_bytes`, by status and by `missing_feature`.
+     - Added in draft 4 (review finding 6): `metrics.json` also gets `open_term_class_borderline`. It lists the terms
+       of class `judgment` that mix a classification with a judgment (R2.3's "borderline"), so the counts can be given
+       with and without them (P1 1.3.4).
   2. **UDHR u010 and u060 as asserted judgments.** This batch adds no profile, so W2's profile-off validator applies.
      - u010: binary `of_greatest_importance_for` between two named things. W2 refuses repeated `arguments` without
        the profile, so the record lists two distinct legacy argument labels, never `["thing", "thing"]`; the
-       predicate keeps its sorts `(thing, thing)`. JT-5 replaces the labels by the sorts when the profile is switched
-       on. No sort is invented and the arity does not change.
+       predicate keeps its sorts `(thing, thing)`. JT-5b replaces the labels by the sorts when the profile is switched
+       on. No sort is invented beyond `thing`, which parts 1 and 2 did not declare and which the sorts `(thing, thing)`
+       need (P1 1.3.2). The arity does not change.
      - u060: unary `natural_and_fundamental_group_unit_of_society` on `the_family`.
      - Both have `decided_by: "unresolved_decider"` and factors from the words. Each is a ground assertion with the
        meaning `{"open": [...]}`, so its status is OPEN.
      - u060's note says that "the" (uniqueness) is not represented and is presupposition's. u060 is written and
        audited, but its bytes stay unclaimed, recorded as `missing_feature: presupposition`: a unit whose meaning is
        admittedly partly missing contributes no whole-unit FAITHFUL bytes.
+     - **What phase 1 needed** (P1 2.1, D1 to D3; the text is P1's `prompt-additions.md`):
+       - the two new records replace the unused placeholders `greatest_importance` and `natural_group_unit` in the one
+         record list all four parts share, so no second record holds the same words;
+       - the reading sets of parts 1 and 2 are rebuilt as the pilot's build does: every meaning, model and situation
+         id is a digest over the environment, and the new sort, constants and predicates change it;
+       - constants carry `sort` and `description` only (the Rust checker and `v0-language.md:23` refuse a
+         `verbalisation`);
+       - `of_greatest_importance_for` gets no template: the lint rejects it, and its head word "is" would take 13
+         other part-1 predicates' wording away (P1 F1);
+       - the ledger marks u060 `claimed: false`, and the pilot's claimed bytes leave out every unit so marked. The
+         checker counts u060 OPEN, so without this its 66 B would be claimed.
   3. **Audit addition.** A targeted blind audit of u010 and u060. On the sampled units, auditors also check that no
      CHECKED unit's content uses an open-term predicate, or an evaluative word of 2.4's catalogue written as an
      undeclared predicate (by hand, until JT-3's `undeclared_evaluative` lands; D15).
@@ -373,6 +457,10 @@ changes, shows a failing test, and restores it (CLAUDE.md).
   - **FAIL** otherwise: u010 reverts and the reason is recorded.
   - u060's audit verdict is recorded; it claims no bytes either way.
   - The instrument has no bar; its numbers start a series. JT-E3 tests its reliability.
+- **Phase 1 (P1 2.2).** The bar is unchanged and its two parts are reported apart. **Part A** ("load and check as
+  before, with u010 and u060 OPEN") is **PASS** on copies of the pinned run. **Part B** (the targeted audit, and with
+  it the +132 B) is **DEFERRED** until the DRI merges the prompt text and a UDHR run audits blind (0.2). The
+  instrument's first point is in 0.1. The by-hand integrity check found no hidden judgment in the 20 CHECKED units.
 - **Bytes.** UDHR +132 B (**estimate**, until the audit). Constitution 0 B.
 - **Dependencies.** None in the repository; the next UDHR and constitution runs (06:00/18:00 UTC).
 - **Conflicts.** None: prompts are merged by the DRI into one file per pilot (DRI SC2), and pilot runs are
@@ -392,11 +480,13 @@ changes, shows a failing test, and restores it (CLAUDE.md).
 - **Gate.** The review passes, or each FIX is applied and re-checked once. No product code is written before it
   passes.
 - **Files.** New: `docs/spec/judgment-terms.md`. Nothing shared.
+- **Status.** Done: spec draft 2 (`85d6372d`). Draft 3 adds J-ω (D2's several sorts), computed in the re-elaborated
+  stub; no statement changed.
 
 ### JT-1. Lean core (5–6 h; Lean)
 
 - **What.** Sections 3.1 to 3.3 in `lean/VE/Judgments/{Decl,Scan,Status,Examples}.lean`, with fixtures J-α to J-θ,
-  J-γ′, J-λ, J-μ, J-ξ, J-ξ′, J-ο to J-τ, J-τ′, J-υ and J-χ as `#guard`s (and the spec's *internal* rows, which W2
+  J-γ′, J-λ, J-μ, J-ξ, J-ξ′, J-ο to J-τ, J-τ′, J-υ, J-χ and J-ω as `#guard`s (and the spec's *internal* rows, which W2
   refuses on the wire), and `lean/JUDGMENTS.md`, every definition and theorem in plain words. No route, no service
   change.
   - W2's profile flag in `Loader.openTermNames` (one hunk; every existing caller unchanged, J-λ guards the text with
@@ -489,6 +579,13 @@ Pre-registered in section 6.
   - The Python relay checks the schema and binds it: each listed name is a base predicate of the request (a regulated
     one included, spec 8.4) and is not bound. A genuine answer naming a regulated predicate is accepted. Fuzz tests
     retype and rebind it.
+- **Templates the lint rejects** (phase 1). The declaration and status lines fill the predicate's template. The
+  wording lint rejects both of JT-0p's templates: u010's for `BINARY_AUXILIARY`, `BINARY_CONVERSE`, `LOGICAL_WORD`
+  and `SYMBOL_COLLISION`, u060's for `LOGICAL_WORD`, `TEMPLATE_LENGTH` and `UNARY_MODIFIER` (P1 2.2). For such a term
+  the lines fall back to today's identifier wording, and JT-3 adds no second source of templates (one owner). JT-E1's
+  report counts its items whose judgment had no accepted template. Finding F1 (a rejected template still claims its
+  head word) is english-lean's (11.2, X2). JT-3's lines read templates but declare none of their own, so F1 does not
+  block JT-3.
 - **Not this batch.** The zone, record and conflict wordings (2.4) are WG-7's display rows, extended in JT-4.
 - **Queue.** english-lean's single queue on `lean/VE/EnglishGrammar/*` (SYNTHESIS 4.1 item 7: AT-5 → QT-A6 → ME-11 →
   QT-B3 → SC-7). JT-3 joins in landing order; it depends on none of them. The report's hunk joins the
@@ -530,29 +627,101 @@ Pre-registered in section 6.
   - WG-7's ResponseShape file: a `deciders` member, if WG-7's shape lacks one;
   - `lean/VE.lean`, `lean/VE/Audit.lean`.
 
-### JT-5. Pilots switch on (2–3 h; pilot)
+### JT-5. Pilots switch on: JT-5a (constitution), JT-5r (UDHR re-translation), JT-5b (UDHR)
 
-- **What.** Prompt additions: both pilots add `judgments@0`, and each open term is bound to its predicate.
-  - UDHR: rename either the predicate or the term where the two differ (for example `is_arbitrary` against
-    `arbitrary`; act-phrases' digest), re-check the four parts and their companions, and record the usage map.
-    u010's legacy argument labels become the predicate's sorts.
-  - Constitution: the main document. The u0165.s01–s07 rules keep queue 4.4's text; only the profile and the binding
-    change, at a run after the queue's current step. The runner first confirms that u0052.s01's
-    `good_judgment(action, context)` sits in a guard, not as the regulated act; if it cannot sit in an admitted role,
-    the limit is recorded, not worked around.
+Draft 3 had one batch. Phase 1's admission forecast (P1 2.6) splits it. 31 of the constitution's 33 records already
+name a predicate with their sorts. **None** of the UDHR's 52 does: every record would be refused, first as
+`JudgmentUnbound`. So the constitution switches first, and the UDHR switches after a re-translation step.
+
+**Common to JT-5a and JT-5b.**
+- **What.** Prompt additions: the pilot adds `judgments@0`, and each open term is bound to its predicate.
   - Until JT-3's `undeclared_evaluative` lands, the audit checks by hand for evaluative words written as undeclared
     predicates (D15).
   - Each unit whose rule guard reads a regulated predicate that another unit's rule decides on a bound judgment
     (J-χ's shape) is recorded unit by unit: its status stays as computed, and its outcome can still vary with the
     judgment (2.2).
-- **Bar.** Every claimed unit keeps its status or moves to OPEN; no unit moves to CHECKED. A move to OPEN can come from
-  CHECKED, or from LABELLED or UNFORMALISED when a `contextual` or `unformalised` unit's content uses a judgment (J-υ).
-  Any move to OPEN is a finding: a judgment that was shown as checked or labelled, recorded unit by unit. No
-  declaration is removed (no open term dropped from `open_terms`) to reach CHECKED.
-- **Bytes.** 0 claimed. Statuses are Lean-computed on the UDHR's 18 judgment-carrying units (1,945 B) and the
-  constitution's CONSTITUTION-OPEN-JUDGMENT.
-- **Dependencies.** JT-2 on `main` and in the pilots' green tag; JT-4 for the zone probes.
+  - **Rebuild** (P1 F3). Switching the profile on changes the environment id, and every reading-set id is a digest
+    over it. So every reading set of the document is rebuilt with the pilot's own build (`_reidentified` in
+    `tools/readings_s1_pilot.py`), not only the sets of units that change. The rebuild is committed as a script command
+    with its self-test: with no added vocabulary, it reproduces every reading set byte for byte (review finding 1).
+  - `decided_by: "unstated"` becomes `unresolved_decider` (D7).
+- **Bar** (unchanged from draft 3). Every claimed unit keeps its status or moves to OPEN; no unit moves to CHECKED. A
+  move to OPEN can come from CHECKED, or from LABELLED or UNFORMALISED when a `contextual` or `unformalised` unit's
+  content uses a judgment (J-υ). Any move to OPEN is a finding: a judgment that was shown as checked or labelled,
+  recorded unit by unit. No declaration is removed (no open term dropped from `open_terms`) to reach CHECKED.
+- **What the bar means for unused records** (draft 4; P1 2.6, item 2 of its section 3). A record that no unit of the
+  document uses may be removed to pass admission, with its reason recorded. "Uses" means that the unit lists the record
+  in its meaning or in its ledger `open_terms`, and the usage map then lists the record as used. Removing such a record
+  cannot change any unit's status, so it cannot reach CHECKED: a unit's status and refusals read only the judgments
+  its list depends on and those its meaning lists (`status_eq`, `status_ok_iff`), and an unused record is neither. A
+  used term is never removed. Usage is per document: a record that a shared list carries into a part where no unit
+  uses it is unused there.
+- **Expected moves: none.** No CHECKED or LABELLED unit with content in either pilot uses a judgment (0.1: no hit in
+  20 units, and the control finds 35 of 49). A move to OPEN would be a finding, as the bar says.
 - **Conflicts.** None in the repository.
+
+#### JT-5a. The constitution switches on (2–3 h; pilot)
+
+- **What.** The main document adds the profile. The u0165.s01–s07 rules keep queue 4.4's text; only the profile and
+  the binding change, at a run after the queue's current step. Two of the 33 records need work (P1 2.6):
+  - `good_judgment` has no predicate. u0052.s01's judgment sits inside the regulated `judgment_use_required` ("use
+    good judgment" is the act). The runner first tries to write `good_judgment(action, context)` as a base predicate
+    in a guard, not as the regulated act (D2). If it cannot sit in an admitted role, the constitution is **not**
+    switched on. The refusal is recorded verbatim and goes to the DRI. No declaration is removed and no unit is
+    reverted to pass admission.
+  - `child_sexual_abuse_material`: the record's arguments `[material, context]` become the predicate's sorts
+    `[situation]`, as u010's legacy labels do in JT-5b. The record's labels predate the profile, and the units use the
+    predicate.
+  - No constitution record says `unstated`.
+- **Bytes.** 0 claimed. Statuses are Lean-computed on 13 units, 2,150 B: OPEN 12 (2,082 B) and READINGS 1 (68 B)
+  (measured, `instrument-constitution.json`; one rater). Without the units whose only judgment terms are borderline
+  (u0062.s01, u0123.s01.p1, u0123.s02.p1, u0123.s03), they are 9 units, 1,186 B. Only units with content count. The
+  LABELLED heading u0126 (19 B, annotated `ethical_harm`) has none, so its status cannot change. These figures fill
+  draft 3's placeholder CONSTITUTION-OPEN-JUDGMENT.
+- **Dependencies.** JT-2 on `main` and in the pilots' green tag; JT-4 for the zone probes.
+
+#### JT-5r. The UDHR's re-translation (4–6 h, **estimate**; pilot runner under act-phrases' rules; new)
+
+- **Why** (P1 2.6, the forecast and the ledger). No UDHR predicate has an open term's exact name. 36 of the 52
+  terms are used: 18 judgment, 16 classification, 1 attitude and 1 proportion. Under D5 all of them are bound alike.
+  - Five used terms have a predicate of their own under another name, and need only a rename: `is_arbitrary*`,
+    `is_slavery*`, `is_servitude`, `is_slave_trade` and `is_determined_by_law`. `arbitrary` becomes four bound terms
+    (D2, J-ω).
+  - The other 31 sit inside a larger predicate (a right, a regulated act or a relation), or in no predicate. For
+    example, `effective` is inside `has_the_right_to_an_effective_remedy`, and `persecution` inside
+    `has_the_right_to_seek_and_enjoy_asylum`.
+  - Binding these 31 changes audited units. Draft 3's "rename either the predicate or the term" holds only for the
+    five.
+- **What.** Prompt text for the UDHR. No profile is switched on, and no product code changes.
+  1. Each used term gets a base predicate of its own, with its sorts, one per sort (D2). Where one exists, it is
+     renamed. Otherwise the judgment is split out of the larger predicate as a conjunct (D10: "an effective remedy"
+     is `remedy(x) ∧ effective(x)`), or a predicate is added where the term is in none.
+  2. A record with `arguments: []` gets its predicate's sorts.
+  3. Each part keeps the records its units use. Unused records are removed with their reason, as JT-5's bar allows
+     (16 terms are used by no unit in any part).
+  4. Every changed unit is re-audited blind, by an auditor that did not write it.
+- **Bar.** Every changed unit is re-audited FAITHFUL and keeps its status, and the claimed bytes do not change (4,792 B,
+  or 4,924 B after JT-0p's PASS). A unit that fails reverts to its previous text, with the reason recorded. Its part
+  then waits in JT-5b until it passes; the other parts go ahead.
+- **Size.** At most 32 units and 3,939 B are touched. This sums the class rows of `instrument-udhr.json`: 18 units
+  carry a judgment term (1,945 B), 12 a classification term (1,699 B), 1 an attitude term (225 B) and 1 a proportion
+  term (70 B). The overlap was not measured, so a unit with terms of two classes is counted twice.
+- **Owner.** Proposed: the pilot runner, under act-phrases' attachment rules (AP-5b, D10), with act-phrases reviewing
+  the splits. The DRI decides (11.2, X1). No act-phrases file changes.
+- **Dependencies.** The DRI's decision on the owner. JT-0p's audit first, so that u010's record is final and two prompt
+  changes never touch part 1 at once.
+- **Bytes.** 0 gained.
+
+#### JT-5b. The UDHR switches on (2 h; pilot)
+
+- **What.** The four parts add the profile; u010's legacy argument labels become the predicate's sorts
+  `["thing", "thing"]`. The runner re-checks the four parts and their companions and records the usage map: one row
+  per sort and per part (4.2, J-ω).
+- **Bytes.** 0 claimed. Statuses are Lean-computed on 18 units, 1,945 B (OPEN 14 with 1,200 B, READINGS 4 with 745 B;
+  measured, `instrument-udhr.json`, equal to P7). With JT-0p's u010 and u060 the figures are 20 units, 2,143 B (OPEN
+  16 with 1,398 B, READINGS 4 with 745 B; `instrument-udhr-jt0p.json`).
+- **Dependencies.** JT-5r re-audited (per part); JT-2 on `main` and in the pilots' green tag; JT-4 for the zone probes,
+  with R2 for the UDHR's plain route.
 
 ### JT-E2 and JT-E3 (experiments)
 
@@ -575,6 +744,9 @@ Pre-registered in section 6.
   the report says so.
 - **Then.** If either bar fails, JT-3's wording is revised once and re-run on fresh items. If it fails again, JT-3
   lands with the legend line only and the zone rows wait.
+- **Status.** Not run: **DEFERRED** (0.2). Phase 1 confirms the identifier arm as written: JT-0p's asserted judgments
+  render as 'Open reading: "the_family" is classified as "natural_and_fundamental_group_unit_of_society"' (P1 2.2).
+  The report also counts the items whose judgment has no template the lint accepts (JT-3). The bars are unchanged.
 
 ### JT-E2. Judgments over propositions (research JT-R1)
 
@@ -589,6 +761,8 @@ Pre-registered in section 6.
 - **Bar.** At least 13 of 17 FAITHFUL, and none with invented content. AT-3a must be on `main`.
 - **Then.** On PASS, a build batch is planned for the content-node reuse (shared piece S9). On FAIL, the units stay
   UNFORMALISED and the failure classes are recorded.
+- **Status.** Not run: **DEFERRED** until AT-3a is on `main` and the DRI authorises it (0.2). Phase 1 measured nothing
+  that bears on it.
 
 ### JT-E3. Can the judgment class be measured?
 
@@ -597,6 +771,13 @@ Pre-registered in section 6.
 - **Bar.** Cohen's κ at least 0.7.
 - **Then.** If the bar fails, the instrument reports only "open term", and judgment-term counts are not published as
   measured.
+- **Status.** Not run: **DEFERRED** until the DRI authorises it (0.2). Its input exists: the frame is P1's
+  `open_term_class.tsv`, one rater's classes for 89 distinct terms (UDHR 52, constitution 37).
+- **Reporting** (added in draft 4; the bar is unchanged). The constitution's counts turn on five heavily annotated
+  terms: `ethical_harm` (275 units), `broad_safety` (222), `genuine_helpfulness` (88), `appropriate_oversight` (60)
+  and `good_judgment` (42) (P1 2.4). The sample therefore includes all five. The report gives the judgment-term counts
+  with and without the terms the raters disagree on, and with and without the borderline flag
+  (`open_term_class_borderline`).
 
 ## 7. Dependencies and merge safety
 
@@ -610,7 +791,8 @@ Pre-registered in section 6.
 | english-lean's queue | JT-3 | joins the queue in landing order; touches no other file |
 | `qa-q2`, `lean-first/b14b`–`b14d`, `lf-16e/f` (editors of `Protocol.lean` and `service_schema.py`) | none | JT adds no service mode (SYNTHESIS C9) |
 | quantities (`scales@0`) | J-ν only | no shared file: a grade's binding is checked by JT's admission over the same W2 records |
-| queue 4.4 (u0165.s01–s07) | JT-5 | JT changes none of those units' text; the profile switch runs at a pilot run after the queue's current step |
+| queue 4.4 (u0165.s01–s07) | JT-5 (now JT-5a) | JT changes none of those units' text; the profile switch runs at a pilot run after the queue's current step |
+| act-phrases' attachment rules (AP-5b; D10) | JT-5r (added in draft 4) | JT-5r is prompt text only and edits no act-phrases file; who owns it is 11.2's X1 |
 
 **Shared files, all batches:**
 - `lean/VE.lean`, `lean/VE/Audit.lean`;
@@ -629,12 +811,19 @@ Pre-registered in section 6.
 
 | Batch | Constitution (184,893 B) | UDHR (10,916 B) | Kind |
 |---|---|---|---|
-| JT-0p | 0 | +132 B claimed (u010; u060 written and audited, 66 B unclaimed: `missing_feature: presupposition`) | **estimate**, until the targeted audit |
+| JT-0p | 0 | +132 B claimed (u010; u060 written and audited, 66 B unclaimed: `missing_feature: presupposition`): 4,792 → 4,924 B, 43.90% → 45.11%. Measured so far: the checker's OPEN bytes rise by 198 B (bar part A); the claim waits for part B | **estimate**, until the targeted audit (DEFERRED, 0.2) |
 | JT-1 to JT-4 | 0 | 0 | integrity, answers, English |
-| JT-5 | 0 claimed; Lean-computed status on CONSTITUTION-OPEN-JUDGMENT | 0 claimed; Lean-computed status on 18 units, 1,945 B (measured, R2.3) | integrity |
+| JT-5a | 0 claimed; Lean-computed status on 13 units, 2,150 B (9 units, 1,186 B without borderline-only units) | — | integrity; **measured** (P1 2.4, one rater) |
+| JT-5r | — | 0 gained; at most 32 units, 3,939 B re-translated, each keeping its claim only if re-audited FAITHFUL | at risk, not gained |
+| JT-5b | — | 0 claimed; Lean-computed status on 18 units, 1,945 B (20 units, 2,143 B with JT-0p) | integrity; **measured** (P1 2.4, equal to P7) |
 | JT-E2 (if PASS, then a build) | up to 2,952 B, co-blocked by norms, quantities, attribution, causation or modality | up to 286 B (u006, u007), co-blocked by modality | **estimate**, upper bound |
 
 No sum across rows: the bytes overlap with other plans' claims, and NORTH-STAR's rule forbids summing.
+
+**Where D15's report will first matter** (measured, P1 2.4; no bytes). Some units contain a word of 2.4's catalogue
+but carry no judgment term. Every one of them is UNFORMALISED today: UDHR 8 units (1,433 B), constitution 80 units
+(16,755 B). Every covered unit with a catalogue word already carries a judgment term (UDHR 8 of 8, constitution 4 of
+4). Once the 88 units are formalised, `undeclared_evaluative` is what flags an evaluative word left undeclared.
 
 ## 9. Risks and limits
 
@@ -643,11 +832,19 @@ No sum across rows: the bytes overlap with other plans' claims, and NORTH-STAR's
 - **JT-4 waits on a chain:** RD-9 SC-A, PK-1, WG-6 and WG-7. If the chain slips, JT-1, JT-2 and JT-3 still land and
   are useful alone.
 - **Binding may break pilots** whose terms and predicates have different names. JT-5's bar makes every move a recorded
-  finding, not a silent change.
+  finding, not a silent change. Measured (P1 2.6): this risk is real for the UDHR, where no record binds, and small
+  for the constitution, where 31 of 33 bind. Hence JT-5r, which changes audited units and can lose claimed bytes if a
+  re-audit fails.
+- **The integrity gain is preventive.** The hand check found no CHECKED unit in either pilot that uses a judgment
+  (0.1). The translators already route every judgment to OPEN by hand. D3 and D15 protect new translations and
+  authoring; they move no status on the current pilots.
 - **The status and the usage map track syntactic use, directly or through definitions,** not rule chains (spec F3,
   settled by the statement review): a rule whose outcome feeds another rule's guard does not propagate, so the second
   unit can be CHECKED while its outcome still varies with the judgment (J-χ). The zone answer at a situation is the
-  full answer, and JT-5 records each such unit.
+  full answer, and JT-5a and JT-5b record each such unit.
+- **Every reading set is rebuilt** at each profile switch (P1 F3), which touches every unit with a reading set, not
+  only the units that change. The checker recomputes every id, and Lean replays every situation at load, so a wrong
+  rebuild is refused rather than passed.
 - **JT-E3 may fail.** Then the published judgment-term counts are "open-term" counts, as before.
 - **Budgets.** Five judgments in one unit (u111) at many tuples can exceed WG-6's 16 open atoms: the answer is then
   UNKNOWN with that reason.
@@ -672,6 +869,20 @@ Abstractions several topics could share. Each has a proposed owner and the inter
 
 ## 11. Cross-plan issues for the DRI
 
+### 11.1 Requests R1 to R5 (text unchanged from draft 3)
+
+The DRI decided these on 2026-10-14 (`manage-agents/debates/plan-synthesis/DRI-DECISIONS-PHASE2.md`, "Judgment terms
+(wave 2)"):
+- JT-R1 adopted, merged with defeasible's DF1;
+- JT-R2 adopted (owner PK-1);
+- JT-R3 adopted as a W2/english-lean catalogue item;
+- JT-R4 adopted;
+- JT-R5 noted.
+
+The plan-synthesis directory has no `edits-judgment-terms.md`: SYNTHESIS predates this research-wave-2 plan and lists
+no judgment-terms item (P1, status note). These decisions are therefore the cross-plan edits this plan keeps. Phase 1
+conflicts with none of them; 11.2 says where it adds evidence.
+
 - **R1 (to weighing, WG-6).** Please state `zoneOf` with an explicit `opens : List String`, so that WG-6's answers are
   the instance `opens = openNames L`, and state `zone_leftTo_sound`'s last conjunct as "every differing atom is in
   `opens` and not unsaid". Please also let `zone_leftTo_sound` certify the pair it returns (amended by the statement
@@ -689,6 +900,44 @@ Abstractions several topics could share. Each has a proposed owner and the inter
   presupposition. R2's measurement does not support listing judgment terms as a
   large coverage blocker on the constitution. Their value is integrity and answers, which NORTH-STAR does not score.
 
+### 11.2 Raised by phase 1 (draft 4)
+
+Phase 1's results that touch another owner's part. None changes R1 to R5, the shared pieces (10), any owner, or the
+build order. Each is a question or a request for the DRI.
+
+- **X1 (act-phrases, pilot runner): who owns JT-5r?** The UDHR's binding needs 31 used terms split out of larger
+  predicates in audited units (5, JT-5r). That is act-phrases' attachment work (AP-5b; D10), done as pilot prompt
+  text. Proposed: the pilot runner writes it under act-phrases' rules, and act-phrases reviews the splits. No
+  act-phrases file changes, and act-phrases' queue does not move. The DRI names the owner and the slot. Until then
+  JT-5b waits and JT-5a goes ahead.
+- **X2 (english-lean): may a rejected template take another predicate's wording?** In `ve/printer.py:201-204`, a
+  template the lint rejects still registers its head word. So u010's rejected "{0} is of the greatest importance for
+  {1}" made 13 accepted one-word "{0} is X" templates of part 1 render as 'classified as "…"' (P1 F1). The class at
+  `ve/printer.py:186-187` says that it inspects "all declarations, including unusable templates", so this is a policy
+  and not a bug (review finding 2). JT-0p avoids the case by giving u010's predicate no template. Question for
+  english-lean, which owns the renderer: should only accepted templates claim a head word? It does not block JT-3.
+  (The count of 13 comes from a run whose output was not saved; 0.2 has it re-run by a committed command.)
+- **X3 (environment decoder): Python and Rust disagree on a constant's `verbalisation`.** The spec rejects the field
+  (`docs/spec/v0-language.md:23`), and Rust refuses it. Python's loader accepts it, so the mismatch surfaced only as
+  `CheckerUnavailable` on the readings conformance path (P1 F2). Request: the decoder's owner makes Python refuse it
+  with the spec's text. JT-0p's prompt text already forbids the field.
+- **X4 (pilot tooling; every plan that switches a profile on in a pilot): every reading set is rebuilt.** Every
+  reading-set id is a digest over the environment id, so any change to the profile list or the vocabulary changes
+  every set's ids (P1 F3; D1 shows the refusal). JT-5a and JT-5b do this. So will any other plan that switches a
+  profile on in the pilots (attitudes, quantities' `scales@0`). Request: one committed rebuild command in the pilot
+  tooling (`_reidentified` in `tools/readings_s1_pilot.py`), with its no-op self-test, for all plans to use (one
+  owner).
+- **X5 (the DRI's pilot prompts, SC2): the ledger's `claimed: false`.** The checker counts u060 OPEN. Its bytes stay
+  unclaimed only if the pilots' claimed-bytes rule leaves out units marked `claimed: false` (P1 2.2). The same holds for
+  any plan that writes a unit OPEN with a part of its meaning missing (presupposition's units first). Request: the
+  rule goes into the merged prompt text once, for every plan.
+- **X6 (R3, evidence only).** All 52 UDHR records say `unstated`, and none of the constitution's 33 does (P1 2.6).
+  JT-R3 stands: `unstated` is refused only under `judgments@0`, and JT-5b's prompt rewrites the 52. No change is
+  asked.
+- **X7 (R5 and NORTH-STAR row 10, evidence only).** Row 10 stays 0–198 B. The 132 B remain an estimate until JT-0p's
+  audit (0.2). No CHECKED unit in either pilot hides a judgment today (0.1), which supports R5's "their value is
+  integrity and answers" as a preventive value. No change is asked.
+
 ## Change log
 
 | Date | Draft | Change |
@@ -696,3 +945,4 @@ Abstractions several topics could share. Each has a proposed owner and the inter
 | 2026-10-13 | 1 | First draft: design B of the research note; decisions D1–D14; Lean statements for records, admission, status, dependence through definitions, the usage map, "conflict-free whatever is judged", and zone answers on WG-6; fixtures J-α to J-ξ and eleven pilot sentences; batches JT-0p to JT-5 with three pre-registered experiments; eleven shared pieces; five cross-plan requests. Planning only. |
 | 2026-10-14 | 2 | The converged debate's joint position (REVISE to draft 2, then BUILD). Fix 1: arguments are sorts and may repeat under the profile (W2's own validator, one flag), admission reads `hide E (names defs)`, `Loader.lean` shared; fixtures J-ο, J-π. Fix 2: one candidate traversal per unit for status, set status and usage; J-ξ without unit content. Fix 3: J-ι's criterion as a labelled premise, `ConflictFreeX` "given …" apart from unconditional; `conflictFree_every_judgment` dropped. Fix 4: witnessed-pair zone wording with deciders, neutral unit line, sense-tied catalogue rows, JT-E1 as proxy readability. Fix 5: `opensIn` shared, rights switched in JT-1 with an equation theorem and the frozen-sources rehash. Edits A–D: `undeclared_evaluative` report (D15, JT-3) and "declared terms only"; `rv.definitions` named and J-γ′; fixtures J-ρ, J-σ, J-τ and D2's reason for `JudgmentRegulated`; JT-E1 bar (b) "no critical misreading in 40". u060's bytes unclaimed: JT-0p claims u010 only (+132 B); u010 keeps distinct legacy argument labels until JT-5; JT-5's "no declaration removed" bar and `good_judgment` role check. Section 3 now summarises the statements, which are written out and elaborated in [judgment-terms.md](judgment-terms.md). |
 | 2026-10-14 | 3 | The statement review's joint position (FIX; spec section 0.1). A1: J-ξ an authored set with one reading, J-ξ′ an open set of u055's two scopes with a separating model (4.1, 4.2). A2: R1 also asks WG-6 for the certified pair `LeftToPair`; `zone_leftTo` concludes it; JT-4's wrong-witness and empty-`differ` mutations and seeded bugs. A3: "unconditional" and "whatever is judged" only for the plain route's `conflictFreeU_consistent`; the layered lines name `L.X` and say "without additional judgment criteria" (D6, 2.3, 2.4, 2.5, 3.4, 3.6, 4.1, JT-4); `conflictFree_unconditional_given` renamed `conflictFree_given_mono`. A4: "judgment dependence forces OPEN; otherwise the legacy status applies" (D3, 2.2, 3.3). A5: the `judgments` relay checks declaration and unit order (JT-2). F2: JT-5's bar is "keeps its status or moves to OPEN; none moves to CHECKED"; fixture J-υ. F3: dependence is syntactic use, directly or through W3 definitions; outcomes downstream can still vary (D3, 2.2, 3.6, 9); J-χ in 4.1; JT-5 records each such unit. F3′: `undeclared_evaluative` includes regulated predicates, and its relay accepts them (D15, 3.5, JT-3). F4: `JudgmentListedUnused` only on a complete unit, pending readings kept in the traversal (2.1, 2.2, 3.3, JT-2); fixture J-τ′. Seeded bugs for the new behaviours (JT-1 to JT-4). |
+| 2026-10-14 | 4 | Phase 1's results (`docs/research/judgment-terms-phase1.md`; review ACCEPT, no fix round). New 0.1 (each result's verdict and what it gates) and 0.2 (DEFERRED items and their triggers). JT-0p: bar A PASS, bar B DEFERRED; prompt text completed (`thing`, placeholders replaced, reading-set rebuild, no constant `verbalisation`, no template for u010's predicate, `claimed: false`, `open_term_class_borderline`). JT-5 split into JT-5a (constitution, 13 units, 2,150 B measured), JT-5r (new: UDHR re-translation; 52 of 52 records unbound, 31 used terms to split out) and JT-5b (UDHR, 18 units, 1,945 B measured). JT-5's bar unchanged, and its meaning for unused records stated. D2: one bound term per sort, fixture J-ω; 4.2's `arbitrary` row corrected. D7's measured spellings. JT-3: templates the lint rejects. JT-E1 and JT-E3: status, and JT-E3's reporting. Bytes (8) and risks (9) updated. 11.1 keeps R1–R5 with the DRI's decisions; 11.2 adds X1–X7. No batch dropped; no bar moved. |

@@ -1,6 +1,21 @@
 # Judgment terms (`judgments@0`), item 1: statement specification
 
-> **Status.** Draft 2 (2026-10-14), written by JT-0 from [judgment-terms-PLAN.md](judgment-terms-PLAN.md) draft 3,
+> **Status.** Draft 3 (2026-10-14), branch `research/judgment-terms-p1`, with
+> [judgment-terms-PLAN.md](judgment-terms-PLAN.md) draft 4. It applies phase 1's results
+> ([docs/research/judgment-terms-phase1.md](../research/judgment-terms-phase1.md)) to this spec. **No definition,
+> theorem statement, diagnostic or existing fixture value changes.**
+>
+> **Changes in this draft (3).**
+> - New 0.2: what phase 1 found that bears on the statements, and why none of them changes.
+> - New fixture J-ω (11.2, 11.3, 11.8). One word over two sorts is two bound terms that share their words (plan D2).
+>   Each term has its own usage row, and one record cannot stand for the other sort. Its values were computed by
+>   `#eval` in the re-elaborated stub.
+> - 9: the declaration line is one line per bound term, and a template the lint rejects falls back to today's wording.
+> - 10: the pilot points updated with phase 1's measurements. JT-5 is now JT-5a, JT-5r and JT-5b (plan section 5).
+> - Stub: J-ω added at the end of its fixture section, and the whole stub re-elaborated with no error (see "Checked,
+>   not proved").
+>
+> **Draft 2** (2026-10-14), written by JT-0 from [judgment-terms-PLAN.md](judgment-terms-PLAN.md) draft 3,
 > which carries the converged Astra/Fable debate (`manage-agents/debates/design-judgment-terms/`, rounds 1 to 3:
 > REVISE to draft 2, then BUILD). Draft 2 applies the statement review's converged joint position
 > (`manage-agents/debates/judgment-terms-spec/`, rounds 1 to 3: **FIX**, then PASS once the corrected statements
@@ -14,7 +29,12 @@
 > (`lean/SpecStubs_judgment-terms.lean`, never committed) with `lake env lean`, against this branch at `eb3d6bf1`,
 > whose `lean/` tree equals `main` at `f98183bf` (`git diff` empty). Draft 2 re-elaborated the whole stub with
 > `lake --dir <ve-nightly>/lean env lean`, a build at `f98183bf` (this branch's `lean/` tree still equals it), with no
-> error. In the stub, `Loader.openTermNames` with JT-1's one hunk is a copy of today's function with the hunk applied
+> error. Draft 3 added J-ω and re-elaborated the whole stub the same way: `lake --dir <ve-nightly>/lean env lean`, from
+this branch's `lean/`, whose tree still equals `f98183bf`. The run had no error, and every earlier `#eval` output was
+unchanged; the only new output was J-ω's four lines. The stub stays untracked. Draft 3's copy is kept outside the
+repository, at `manage-agents/judgment-terms-SpecStubs-draft3.lean`, because `lean/audit.py` scans every `.lean` file
+under `lean/`. In the stub, `Loader.openTermNames`
+with JT-1's one hunk is a copy of today's function with the hunk applied
 > (section 1); everything else is written as below. Fourteen statements were proved outright in the stub, and two more from the stated `status_eq` (section 12
 > lists them; among them `nodeOpen_eq`, `faultOf_none_iff`, `status_legacy`, `viewOf_legacy`, `usageMap_unused`,
 > `conflictFree_given` and `leftToPair_differ_ne_nil`); the others are the batches' obligations. Every fixture value in
@@ -57,6 +77,19 @@ re-elaborated, and each changed fixture recomputed by `#eval`, in the stub; the 
 | F3 | Dependence stays definition-only, with the narrower guarantee (row F3 above) | 0, 4.3, 13; plan D3, 2.2, 3.6, 9, JT-5 |
 | F3′ | Lean's `preds` (section 7) kept regulated predicates while the relay (8.4) refused them, so a genuine answer naming one was `CheckerUnavailable`. Both now include them: an evaluative word inside a regulated act is the hidden case D15 targets (C u0052.s01). The report never makes a regulated predicate admissible as a judgment | 7, 8.4, 11.7; plan D15, JT-3 |
 | F4 | `JudgmentListedUnused` refused units whose list cannot show a judgment unused: no own content, or an active set with a pending reading. The check, and its conjunct of `status_ok_iff`, now apply only to a complete unit (`UnitView.complete`). Completeness follows `reads`' precedence: with an active set, the set has a reading and none is pending, whatever the unit's own content; without one, the unit has its own content. The pending readings are kept in the traversal (`none`) and omitted by `reads`. The other two unit checks, and today's checks on asserted content, are unchanged. Fixture J-τ′ | 4.2, 4.3, 8.1, 8.2, 11.3, 11.8; plan 2.1, 2.2, 3.3, 4.1 |
+
+### 0.2 Phase 1 (draft 3)
+
+Phase 1 ran JT-0p on copies of the pinned pilot run, and measured the pilots' records against the admission checks of
+2.2. It changed no code. Its results that bear on this spec:
+
+| # | Phase-1 result | Evidence | Consequence here |
+|---|---|---|---|
+| P-a | The UDHR's `arbitrary` is four predicates over four sorts in two parts: `is_arbitrary(measure)`, `is_arbitrary_u045a(interference)`, `is_arbitrary_u046(intrusion)`, and in part 2 `is_arbitrary_u064(deprivation)` | phase 1, 2.6 | No statement changes. `Judgment.arguments` is one sort list, W2 refuses a repeated name, and `faultOf` compares the sorts exactly, so one word over n sorts is n records (plan D2). Fixture J-ω shows it: two terms admitted, one usage row each, and the other sort refused as `JudgmentArguments` |
+| P-b | Admission forecast. The UDHR: 52 of 52 records unbound (no predicate has a term's exact name), all `unstated`. The constitution: 31 of 33 admitted; `good_judgment` unbound and `child_sexual_abuse_material` `JudgmentArguments` | `admission-forecast.json` | No statement changes: `faultOf`'s checks and their order are what the forecast applied. The pilots' work goes to the plan's JT-5a, JT-5r and JT-5b |
+| P-c | No CHECKED unit with content, in either pilot, uses an open-term predicate or a catalogue word (0 hits in 20; control 35 of 49) | `integrity.json` | No statement changes. `status_eq` is expected to move no pilot unit (plan JT-5) |
+| P-d | JT-0p's two templates are rejected by the wording lint, and the units render with identifiers | phase 1, 2.2 | 9: the lines fall back to today's wording when a template is rejected |
+| P-e | Any change to the environment changes every reading-set id | phase 1, F3 | No statement changes. The pilots rebuild their sets at each profile switch (plan JT-5) |
 
 ## 1. W2 under the profile (JT-1: one hunk in `lean/VE/Discourse/Loader.lean`)
 
@@ -729,7 +762,9 @@ retype and rebind it as above.
 Every text below is a row for english-lean (JT-3) or WG-7's display (JT-4); JT-E1 gates them, and measures proxy
 readability only (a model standing in for a reader), not human comprehension. `<atom>` is the predicate's template
 filled with the sort nouns ("an act is arbitrary"); when two arguments share a sort, the second is written "a person
-(the same or another)", so that the line does not say they differ.
+(the same or another)", so that the line does not say they differ. When the wording lint rejects the predicate's
+template, there is no wording to fill. The line then shows today's fallback wording with identifiers, and no second
+source of templates is added (phase 1: both of JT-0p's templates are rejected, 0.2 P-d).
 
 ### 9.1 Declarations (legend; also the authoring line that declares one)
 
@@ -739,6 +774,7 @@ filled with the sort nouns ("an act is arbitrary"); when two arguments share a s
 | "Whether an act is arbitrary is a judgment for the governance function." | the same, with `decided_by: governance_function` |
 | "Whether a person treats a person (the same or another) unfairly is a judgment; the text does not say who makes it." | `treats_unfairly(person, person)`, repeated sorts allowed under the profile (J-ο) |
 | "The text mentions these points: the Declaration gives no test for arbitrariness." | the record's `factors`, shown and never used as premises |
+| "Whether a measure is arbitrary is a judgment; the text does not say who makes it." and "Whether an interference is arbitrary is a judgment; the text does not say who makes it." | J-ω: two bound terms, `arbitrary_measure(measure)` and `arbitrary_interference(interference)`, which share the template "{0} is arbitrary"; one line per term. english-lean may group the two lines when the terms share their words and their decider. The grouped line is then a JT-E1 item, and its reading is still two records |
 
 ### 9.2 Unit lines
 
@@ -784,12 +820,21 @@ reported (8.4).
 The pilot fixtures are plan 4.2's. Two points the statements fix:
 
 - **JT-0p, u010.** Without the profile W2 refuses repeated arguments, so u010's record lists two distinct argument
-  labels, never `["thing", "thing"]`; the predicate keeps its sorts `(thing, thing)`. JT-5 replaces the labels by the
-  sorts when the profile is switched on. No sort is invented and the arity does not change.
+  labels, never `["thing", "thing"]` (phase 1 used `["understanding", "realization"]`); the predicate keeps its sorts
+  `(thing, thing)`. JT-5b replaces the labels by the sorts when the profile is switched on. No sort is invented beyond
+  `thing`, which the UDHR's parts did not declare. The arity does not change. Phase 1's forecast confirms the labels'
+  effect: without the profile the record would be `JudgmentArguments` (part 1), and u060's record is admitted (part 2).
 - **JT-0p bytes, computed.** u010 alone: 4,792 + 132 = 4,924 B of 10,916 B, 43.90% → 45.11%. u060 is written and
-  audited but its 66 B stay unclaimed (`missing_feature: presupposition`); draft 1's 45.71% is withdrawn.
-- **JT-5, C u0052.s01.** `good_judgment` must sit in a guard, not be the regulated act (`JudgmentRegulated` otherwise).
-  If it cannot sit in an admitted role, the limit is recorded; no declaration is removed to reach CHECKED.
+  audited but its 66 B stay unclaimed (`missing_feature: presupposition`, `claimed: false`); draft 1's 45.71% is
+  withdrawn. Phase 1 measured bar part A as PASS. The checker's OPEN bytes rise by 198 B, since u060 is OPEN in the
+  document. The claim waits for the blind audit (bar part B, DEFERRED).
+- **JT-5a, C u0052.s01.** `good_judgment` must sit in a guard, not be the regulated act (`JudgmentRegulated` otherwise).
+  If it cannot sit in an admitted role, the limit is recorded; no declaration is removed to reach CHECKED. Phase 1:
+  the run has no predicate `good_judgment`, so today the record is `JudgmentUnbound`; the judgment sits inside the
+  regulated `judgment_use_required`.
+- **JT-5r and JT-5b, the UDHR's `arbitrary`.** Four bound terms, one per sort (J-ω's shape), with usage rows per
+  sort and per part. Part 1 has three: measure (u037), interference (u045a) and intrusion (u046). Part 2 has two:
+  measure (u055's two readings) and deprivation (u064).
 
 ## 11. Fixtures, with the values the stub computed
 
@@ -802,6 +847,10 @@ Records have `decided_by: unresolved_decider`, empty lists, unless a row says ot
 `[act, person]`, so the act is `.var 0`. JT-1's `Examples.lean` reproduces each row as a `#guard`; JT-2 reproduces the
 rows through the service, except the rows marked *internal*: inputs to one Lean function that W2 refuses on the wire
 before that function runs (A1). They stay `#guard`s and are never replayed through the service.
+
+J-ω (draft 3) has its own environment: sorts `measure`, `interference`; base predicates `measure_taken(measure)`,
+`interference_with_privacy(interference)`, `arbitrary_measure(measure)` and `arbitrary_interference(interference)`.
+It has no W3 definitions, and admission is given an empty regulated list.
 
 ### 11.1 W2 under the profile (on the wire, decoded by Lean's own readers)
 
@@ -827,6 +876,8 @@ before that function runs (A1). They stay `#guard`s and are never replayed throu
 | J-θ | `natural_and_fundamental_group_unit [thing]` | ok |
 | order 1 | `arbitrary [act]`, `reasonable_limitation [act]`, `unreasonable [person]` | `JudgmentUnbound: reasonable_limitation` (the first faulty record; the third, `JudgmentArguments`, is not reached) |
 | order 2 | `arbitrary [person]`, `unstated`, one `necessary` | `JudgmentArguments: arbitrary` (the first failing check) |
+| J-ω | `arbitrary_measure [measure]`, `arbitrary_interference [interference]` (J-ω's environment) | ok `[arbitrary_measure, arbitrary_interference]` |
+| J-ω′ | `arbitrary_measure [interference]` (J-ω's environment) | `JudgmentArguments: arbitrary_measure` |
 
 ### 11.3 Status and usage
 
@@ -854,6 +905,7 @@ before that function runs (A1). They stay `#guard`s and are never replayed throu
 | J-τ′ (e) | the same list; no own content; an authored set of J-υ's formula, asserted (complete) | `complete` true; `JudgmentListedUnused: u1 unreasonable` (legacy `CHECKED`) | — |
 | J-λ | each of J-α, J-β, J-γ, J-θ, J-μ, J-ξ, J-ξ′, J-υ with `J = []` | `OPEN`, `CHECKED`, `CHECKED`, `OPEN`, `CHECKED`, `CHECKED`, `OPEN`, `LABELLED`: each equal to `legacy` | — |
 | J-χ (F3) | J-α's `u1`, and `u2`: a rule on `reports` guarded by `subjects(p, a)`, `specified` | `u2`: ok `CHECKED` | `([(arbitrary, [u1])], [])` |
+| J-ω | `J = [arbitrary_measure, arbitrary_interference]`, no definitions; `u037`: rule guarded by `measure_taken ∧ arbitrary_measure`, `open [arbitrary_measure]`; `u045a`: rule guarded by `interference_with_privacy ∧ arbitrary_interference`, `open [arbitrary_interference]` | each ok `OPEN` | `([(arbitrary_measure, [u037]), (arbitrary_interference, [u045a])], [])`: one row per term |
 
 Dependence directly: `opensIn J₁ [arrest ∧ arbitrary] = [arbitrary]`, `opensIn J₁ [arrest] = []`,
 `opensIn J₁ [J-γ's formula] = []`. Through definitions: `dependsOn defs J₁ [J-γ's formula] = [arbitrary]`,
@@ -917,13 +969,13 @@ produce that certificate.
 | Claim | Holds (→) | Fails (←) |
 |---|---|---|
 | `openTermNames_sorts` (only relaxes) | J-ο wire: off refuses, on admits | J-α wire: all three agree |
-| `faultOf_none_iff` / `admit_ok_iff` | J-α, J-ο, J-ν, J-θ admitted | one fixture per conjunct: J-δ and J-π (base predicate), J-ε (sorts), J-ρ (regulated), J-ζ (`necessary`), J-ζ′ (`sufficient`), J-η (decider) |
+| `faultOf_none_iff` / `admit_ok_iff` | J-α, J-ο, J-ν, J-θ, J-ω admitted | one fixture per conjunct: J-δ and J-π (base predicate), J-ε and J-ω′ (sorts), J-ρ (regulated), J-ζ (`necessary`), J-ζ′ (`sufficient`), J-η (decider) |
 | `opensIn_iff` | `arrest ∧ arbitrary` gives `[arbitrary]` | `arrest` gives `[]` |
 | `dependsOn_iff` | J-α (direct), J-γ and J-γ′ (through a definition) | J-γ″ (a definition that does not reach), `dependsOn []` on J-γ's formula |
 | `status_eq` (judgment dependence forces OPEN; otherwise the legacy status applies) | dependence: J-α, J-θ, J-ξ (legacy `CHECKED`), J-ξ′, J-υ (legacy `LABELLED`), u2 of 11.4: OPEN | no dependence: J-μ, J-γ″ (legacy `CHECKED`), J-τ′ (a), (b), (d) (legacy `OPEN`, with no judgment): the legacy value |
 | `status_ok_iff` (refused exactly when) | J-α, J-θ, J-μ, J-ξ, J-ξ′, J-υ accepted; J-τ′ (a) to (d) accepted (not complete, so a listed judgment they do not use is no refusal) | J-β, J-γ, J-γ′ (`specified`), J-σ (not listed), J-τ and J-τ′ (e) (complete, listed, unused) |
 | `usageMap_unused` | J-μ: `arbitrary` unused | J-α: `arbitrary` used |
-| `usageMap_sound` / `_complete` | J-α, J-θ, J-ξ, J-ξ′ (a set-only unit is listed) | J-χ's `u2` (no dependence) is not listed |
+| `usageMap_sound` / `_complete` | J-α, J-θ, J-ξ, J-ξ′ (a set-only unit is listed), J-ω (one row per term) | J-χ's `u2` (no dependence) is not listed; in J-ω, `u045a` is not in `arbitrary_measure`'s row |
 | `criteria_iff` | `u2` and J-θ's unit | a rule unit, a set unit, a CHECKED unit, a non-asserted unit, a unit over a defined name |
 | `deciders_sound` / `_complete` | `[unresolved_decider]`, `[we]` | a decision atom only: `[]` |
 | `undeclaredEvaluative_iff` | `reasonable_grounds`, `just_requirement`, the regulated `make_reasonable_efforts` (and `arbitrary` when unbound) | `due_date`, `just_as_real`, `necessary_condition` (other sense), `arrest` (no row), `arbitrary` (bound) |
@@ -970,3 +1022,4 @@ no product file may declare `zoneOfOpens` or `completionOf` as the stub did (`op
 |---|---|---|
 | 2026-10-14 | 1 | First statement spec, from plan draft 2: W2's profile flag, records and base-predicate admission, the shared scan with rights' switch, one traversal per unit, status, usage map, criteria and the conditional conflict answer, zone answers on WG-6's planned names, deciders, the undeclared-word report; diagnostics, English wordings, fixture values computed in the stub; findings F1 to F8 (F3 open). |
 | 2026-10-14 | 2 | The statement review's joint position (FIX; `manage-agents/debates/judgment-terms-spec/`, section 0.1). A1: J-ξ an authored set with one reading, J-ξ′ an open set of u055's two scopes with a separating model, "order 1" ends with `unreasonable [person]`, *internal* rows marked. A2: `zone_leftTo` concludes R1's certified pair `LeftToPair` (with `leftToPair_leftTo` and `leftToPair_differ_ne_nil`, proved), wrong-witness and empty-`differ` mutations. A3: unconditional wording only for `conflictFreeU_consistent`; layered lines name `L.X` and say "without additional judgment criteria"; `conflictFree_unconditional_given` renamed `conflictFree_given_mono`. A4: `status_eq` worded "judgment dependence forces OPEN; otherwise the legacy status applies". A5: the relay checks declaration and unit order. F2: J-υ (LABELLED → OPEN). F3: settled, definition-only with the narrower guarantee. F3′: regulated predicates scanned and accepted by the relay, fixture rows. F4: `UnitView.complete` guards `JudgmentListedUnused`, pending readings kept as `none`; J-τ′ (a) to (e). Stub re-elaborated with no error; every changed fixture recomputed by `#eval`. |
+| 2026-10-14 | 3 | Phase 1 (`docs/research/judgment-terms-phase1.md`), with plan draft 4. New 0.2 (P-a to P-e: phase 1's results and why no statement changes). Fixture J-ω (and J-ω′): one word over two sorts is two bound terms, one usage row each, and the other sort is refused as `JudgmentArguments` (11.2, 11.3, 11.8; 9.1's declaration rows). 9: the fallback when the lint rejects a template. 10: the pilot points with phase 1's measurements, and JT-5 split into JT-5a, JT-5r and JT-5b. Stub re-elaborated with no error; earlier outputs unchanged; J-ω's values by `#eval`. |
