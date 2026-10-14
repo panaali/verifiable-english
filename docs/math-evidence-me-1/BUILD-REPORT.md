@@ -79,6 +79,13 @@ All mutants were restored before the final build.
 
 Final all-route relay mutation run: **PASS**, 39 routes, 109,195 mutants, zero findings and zero failures (`uv run python tools/relay_mutation_gate.py --json /tmp/me1-relay-full-final.json`).
 
+## Second pre-review continuation
+
+- The chain's full gate at `7a20d4eda` (tree `b21bf174`) passed its Lean, audit, Rust and cargo stages and 14,991 pytest cases; one case failed: `tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[4]`. The Lean `check` mode exceeded its 5.115 s CPU deadline and the relay raised `CheckerUnavailable`, as designed.
+- ME-1 does not cause it: no module under `lean/VE/Service/` imports `VE.Calc` or `VE.Numbers`, so the `check` route runs the same code as on main. Only `lean/VE.lean` and `lean/VE/Audit.lean` import the new modules.
+- `python3 tools/gate.py --rerun-failed` on the same commit and tree reran the failed file: **rerun-passed**, 11 passed, 0 failed, at load 84 on 32 CPUs. Saved as `docs/math-evidence-me-1/gate-rerun-7a20d4ed.json`. A rerun is not full-gate evidence; the chain gates this commit again.
+- No product code changed in this continuation.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A. — ME-1 has no Lean service answer or request decoder; ME-2/3 add those.
@@ -86,7 +93,7 @@ Final all-route relay mutation run: **PASS**, 39 routes, 109,195 mutants, zero f
 3. PASS — `VE.Calc.Examples` guards and `tests/test_numbers_phrases.py` failed under the seeded mutations listed above and in `mutants.json`.
 4. N.A. — no calc route exists yet, so no three-way response or new JSON order to compare.
 5. N.A. — no relayed answer exists in ME-1; ME-3 adds R8 binding tests.
-6. N.A. — the task assigns the final-HEAD full gate and its evidence to the chain.
+6. N.A. — the task assigns the final-HEAD full gate and its evidence to the chain; the one failure at `7a20d4eda` (a CPU deadline in `check` mode) passed on `--rerun-failed`, see `gate-rerun-7a20d4ed.json`.
 7. PASS — `tools/trust_map.py --check` measures S +183 and V +106; `DELTA.md` lists the required DRI signature in its first lines.
 8. PASS — `tests/test_numbers_phrases.py` pins every existing comparison row; Calc has no public route.
 9. PASS — `tools/select_tests.py --base $(git merge-base HEAD main)` selects 163/374 units; `--paths .gitattributes --impacted` includes the generator and merge tests; the two selector tests above failed under their respective mutants.
