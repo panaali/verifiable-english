@@ -2,8 +2,8 @@
  "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here.",
  "budget": {
   "K": 997,
-  "S": 9791,
-  "V": 36765
+  "S": 9788,
+  "V": 37495
  },
  "allowances": [
   {
@@ -362,6 +362,139 @@
    "reason": "readings-defaults RD-4b (merged with ve-integration f0547468): the component product and its proved response — VE.Readings.Components (foldK, productQuery/productConflict/productPremises; S +48) and VE.Readings.ComponentsWire (S +39, V +300), the readings-route response schema (ResponseShape/Schemas/ReadingsRoute.lean, V +116), Run.lean's ProductReplay glue (V +33) and VerdictsWire (V +27); approved by the RD-4b review",
    "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
    "commit": "f31488b8bbf75dbc5ea6aff16bf3a52d092c237d"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "lean-first batch 13b: Standalone.typingReduced sets readings@1, norm-defaults@0 and risk@0 aside for typing, as modelEnvironment does (VE/Service/Standalone.lean +8 trusted lines); the allowance awaits the DRI's signature (docs/lean-first/b13b/DELTA.md)",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "a24eff0994fe5cb11686206d0f509f1877d4513f"
+  },
+  {
+   "class": "V",
+   "lines": 60,
+   "reason": "Bind response claims and certificate counts to request contracts",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "06340771a6a1f1cb0700ca091a3411fb2d364728"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "Count norm profile and supplied premises in bound certificate responses",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "a0302096d6ee4842269128800063737cce5f4c68"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "Background count over the FOL projection: one shared VE.Core.Layers.folEntry filter for every regenerated Background and ResponseShape.backgroundCount (VE/Core/Layers.lean +5, ResponseShape.lean +2 trusted lines); the allowance awaits the DRI's signature",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "2e7bcf5c0388f2b6f6a24816159a622be4dd91c9"
+  },
+  {
+   "class": "V",
+   "lines": 67,
+   "reason": "Merge ve-integration (96887019: RD-3, RD-4b, lf-16c, question answering Q1, eff-tests, eff-merge, AR-6) into lean-first/b13b: b13b's reviewed trusted additions (ResponseShape bound counts, Standalone.typingReduced, Layers.folEntry; V +67) over the merged base",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "099dae2e200f89c1ff4ddc37fb64fd3b43a83fac"
+  },
+  {
+   "class": "V",
+   "lines": 142,
+   "reason": "readings-defaults RD-6b: the superposed route under the unspecified completion (elaborateFieldsND, supUnitsFrom, ndFillJson, decodeAssumedND, ndSlotLabels), the typed superposed answer and filled environment (review B4) and Lean's filled gaps of a superposed model (review B3: ndModelGaps, the gaps shape and its three uses). S +0: AuthorLite, DecidesByD and DecidesBySoftD are proof helpers (P). V +142: +16 replace Python's choice of the gaps a superposed model shows, deleted in the same change (R6); +126 await the DRI's signature (docs/readings-defaults/rd6b/DELTA.md).",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "bd6046f9ea0e4ca3d156d636a812f66f754764e3"
+  },
+  {
+   "class": "V",
+   "lines": 142,
+   "reason": "Merge ve-integration f0547468 (question answering Q1, lean-first b16c) into readings-defaults/rd6b: RD-6b's trusted lines as recorded on the branch (V +142: ResponseShape/Schemas/ReadingsRoute.lean, VE/Readings/UnspecifiedWire.lean, SupFillWire.lean, Route.lean, Run.lean; +16 under R6, +126 awaiting the DRI's signature) over the merged base",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "775814072d5e492818c6be80f99dbf749d762e22"
+  },
+  {
+   "class": "S",
+   "lines": 87,
+   "reason": "Merge ve-integration 7478b23d (readings-defaults RD-4b and merge tooling) into readings-defaults/rd6b: retain RD-6b superposed filling and RD-4b component product, with the merged response schema; approved additions from both branches",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "b12e7c903a89eafc0acd3d43221479de7c5303c0"
+  },
+  {
+   "class": "V",
+   "lines": 471,
+   "reason": "Merge ve-integration 7478b23d (readings-defaults RD-4b and merge tooling) into readings-defaults/rd6b: retain RD-6b superposed filling and RD-4b component product, with the merged response schema; approved additions from both branches",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "b12e7c903a89eafc0acd3d43221479de7c5303c0"
+  },
+  {
+   "class": "V",
+   "lines": 137,
+   "reason": "Merge ve-integration cd546c0d (RD-6b and architecture changes) into lean-first/b13b; preserve both approved trust additions and ledger histories",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "17573bbb4b988d711166292c0101639f411337bc"
+  },
+  {
+   "class": "V",
+   "lines": 158,
+   "reason": "Batch 16d: Lean document wrapper and typed-response code added trusted lines; no K or S growth. DRI review of the wrapper delta is deferred.",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "2bdbd8b54017574c1e692805b66196b80aa5ab40"
+  },
+  {
+   "class": "V",
+   "lines": 27,
+   "reason": "Batch 16d review B1/B2: one norm-role table (Norms.Admission.normRole, shared by W1 admission and the document mode) and the document mode's free norm-defaults selection (freeNorms, attached units via Readings.attached, single-rule checks); not covered by R6 (Python keeps its own selection to build the coverage document), so it needs a DRI signature.",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "9e50974a45231279ed6a591d41947505125ea1c5"
+  },
+  {
+   "class": "S",
+   "lines": 30,
+   "reason": "Merge lean-first/b16d with ve-integration question answering: retain both norm-defaults document routing and question reader classifications on the combined tree.",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "9eec2f3d7215239f410c5eead2f8fe39ab892bac"
+  },
+  {
+   "class": "V",
+   "lines": 397,
+   "reason": "Merge lean-first/b16d with ve-integration question answering: retain both norm-defaults document routing and question reader classifications on the combined tree.",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "9eec2f3d7215239f410c5eead2f8fe39ab892bac"
+  },
+  {
+   "class": "V",
+   "lines": 185,
+   "reason": "Merge ve-integration 96887019 (RD-4b component product, AR-6) into lean-first/b16d: retain the reviewed b16d norm-defaults document routing (VE/Service/Document.lean, Discourse/Loader, Norms/Admission, Document schema) on top of ve-integration's budget; no new trusted logic from the merge itself",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "1a221d547c6aacb13896ff27acb5788f6243991a"
+  },
+  {
+   "class": "V",
+   "lines": 185,
+   "reason": "Merge ve-integration 5479466f (RD-6b superposed route, AR-8 Rust crate boundary) into lean-first/b16d: both sides' trusted lines kept; no K or S growth from the merge itself.",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "6aafef85ff85436bba3128686a4e693f38471c95"
+  },
+  {
+   "class": "V",
+   "lines": 185,
+   "reason": "Merge ve-integration 8cec935a into lean-first/b13b: retain B16d trusted document and norm-role changes together with B13b response checks; DRI review remains pending for the recorded unsigned additions.",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "a1feab72e048fefc6cf9e23be413764d49e6f640"
+  },
+  {
+   "class": "V",
+   "lines": 338,
+   "reason": "batch 14d: Lean coupled-choice enumeration, evidence coverage and verdict replace the deleted Python decision sites",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "5a5860902b1f0bd83bac2d961f7f13a8214c03a7"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "lean-first batch 14d: +3 trusted lines in ReadingsChoices reject duplicate set-version identity before Lean choice planning (R6: replaces coupled Python choice identity decision)",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "321a92138a8c852a1aca4d6657152ddb169101fc"
   }
  ]
 }

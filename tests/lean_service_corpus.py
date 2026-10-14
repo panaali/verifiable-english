@@ -113,6 +113,7 @@ def route_cases():
               for c in by_kind["certificate"]]
     cases.append(shared_admission())
     cases.append(deep_definition_background(route))
+    cases += fol_projection_cases()
     return cases + ADVERSARIAL
 
 
@@ -132,6 +133,131 @@ def deep_definition_background(route, depth=64):
         "defined": {"arguments": ["person", "person"],
                     "body": negations(depth, ["binary", "supervises", ["var", 1], ["var", 0]])}}
     return case
+
+
+FOL_FAMILIES = ("defined", "functional", "total")
+
+
+def fol_projection_environment(family, arity, norms=False):
+    """A `nary@0` environment whose predicate `p` has `arity` arguments and carries the
+    Background family `family`; with `norms`, also a regulated obligation/permission pair."""
+    from ve.profiles import SPEC_REVISION
+    point = {"description": "point"}
+
+    def declared(n, description):
+        return {"arguments": ["point"] * n, "description": description}
+    predicates = {"upper": declared(1, "upper"), "base1": declared(1, "base"),
+                  "base2": declared(2, "base"), "base3": declared(3, "base")}
+    bodies = {1: ["unary", "base1", ["var", 0]], 2: ["binary", "base2", ["var", 1], ["var", 0]],
+              3: ["atom", "base3", [["var", 2], ["var", 1], ["var", 0]]]}
+    extra = {"defined": {"arguments": ["point"] * arity, "body": bodies[arity]}} if family == "defined" else {
+        family: True}
+    predicates["p"] = {**declared(arity, "p"), **extra}
+    profiles = ["closure@0", "data@0", "definitions@0", "nary@0", "relational-fol@0"]
+    if norms:
+        profiles.append("norms@0")
+        predicates["permitted"] = {**declared(1, "permission"), "regulated": {
+            "role": "permission", "default": "deny", "act": "{0} be done"}}
+        predicates["required"] = {**declared(1, "obligation"), "regulated": {
+            "role": "obligation", "default": "deny", "act": "{0} be done", "permission": "permitted"}}
+    return {"language": "ve.core@0.2", "profiles": sorted(profiles), "spec_revision": SPEC_REVISION,
+            "vocabulary": {"sorts": {"point": point}, "predicates": predicates, "constants": {}}}
+
+
+def fol_projection_cases(norms=False):
+    """Certificates and Background cases over each Background family (`FOL_FAMILIES`) on a predicate of every
+    arity 1-3 the environment admits. Every regenerated Background is built from the FOL
+    projection (`VE.Core.Layers.folEntry`: at most two arguments), so a three-argument
+    declaration adds no premise and the response's `background` count must not count it
+    (lf-13b looprecheck1: a valid certificate was refused over a three-argument definition).
+    With `norms`, the environments also declare a norm pair (the norms route refuses its
+    `norms-certificate` over `nary@0`, so these are plain certificates)."""
+    from ve import ast
+    from ve.ast import formula_to_data
+    from ve.entailment import prove_entailment
+    from ve.environment import Environment
+    from ve.errors import VEError
+    cases = []
+    for family in FOL_FAMILIES:
+        for arity in (1, 2, 3):
+            raw = fol_projection_environment(family, arity, norms)
+            try:
+                env = Environment(raw)
+            except VEError:  # data flags on a unary predicate
+                continue
+            goal = ast.Forall("point", ast.Unary("upper", ast.Var(0)))
+            proof = prove_entailment(env, [goal], goal)
+            data = formula_to_data(env, goal)
+            name = f"fol-{'norms-' if norms else ''}{family}-{arity}"
+            cases.append({"id": name, "kind": "certificate", "environment": raw, "premises": [data],
+                          "conclusion": data, "certificate": proof.certificate})
+            cases.append({"id": name + "-bg", "kind": "background", "environment": raw})
+    return cases
+
+
+NORM_PAIR_ARITIES = (1, 2, 3, 4)
+
+
+def norm_pair_environment(arity):
+    """lf-13b looprecheck2: a `nary@0` environment whose obligation `required` and its
+    permission dual `permitted` take `arity` arguments, beside a unary `upper`."""
+    from ve.profiles import SPEC_REVISION
+    act = " ".join(f"{{{i}}}" for i in range(arity)) + " be done"
+
+    def regulated(description, **fields):
+        return {"arguments": ["point"] * arity, "description": description,
+                "regulated": {"default": "deny", "act": act, **fields}}
+    return {"language": "ve.core@0.2", "spec_revision": SPEC_REVISION,
+            "profiles": sorted(["closure@0", "nary@0", "norms@0", "relational-fol@0"]),
+            "vocabulary": {"sorts": {"point": {"description": "point"}}, "constants": {}, "predicates": {
+                "upper": {"arguments": ["point"], "description": "upper"},
+                "permitted": regulated("permission", role="permission"),
+                "required": regulated("obligation", role="obligation", permission="permitted")}}}
+
+
+def norm_pair_cases():
+    """A plain certificate proving `∀x upper(x) ⊢ ∀x upper(x)`, and a Background case, over a
+    norm pair of each arity in `NORM_PAIR_ARITIES`. Lean's Background holds the pair's profile
+    premise at every arity (`Norms.Plain.pairPremises`), so the certificate's `background` is 1;
+    the client must not predict it (architecture decision D1)."""
+    from ve import ast
+    from ve.ast import formula_to_data
+    from ve.entailment import prove_entailment
+    from ve.environment import Environment
+    cases = []
+    for arity in NORM_PAIR_ARITIES:
+        raw = norm_pair_environment(arity)
+        env = Environment(raw)
+        goal = ast.Forall("point", ast.Unary("upper", ast.Var(0)))
+        proof = prove_entailment(env, [goal], goal)
+        data = formula_to_data(env, goal)
+        cases.append({"id": f"pair-{arity}", "kind": "certificate", "environment": raw, "premises": [data],
+                      "conclusion": data, "certificate": proof.certificate})
+        cases.append({"id": f"pair-{arity}-bg", "kind": "background", "environment": raw})
+    return cases
+
+
+def soft_premise_certificate():
+    """A plain certificate on a `soft-norms@0` environment carrying two soft premises
+    (`Norms.Plain.softPremises`): Lean's Background is the (empty) route Background followed
+    by them, so its `background` is 2 though the vocabulary generates nothing."""
+    from ve import ast
+    from ve.ast import formula_to_data
+    from ve.entailment import prove_entailment
+    from ve.environment import Environment
+    from ve.profiles import SPEC_REVISION
+    raw = {"language": "ve.core@0.2", "spec_revision": SPEC_REVISION,
+           "profiles": ["norms@0", "relational-fol@0", "soft-norms@0"],
+           "vocabulary": {"sorts": {"point": {"description": "point"}}, "constants": {}, "predicates": {
+               "upper": {"arguments": ["point"], "description": "upper"}}}}
+    env = Environment(raw)
+    goal = ast.Forall("point", ast.Unary("upper", ast.Var(0)))
+    soft = [ast.Top(), ast.Top()]
+    proof = prove_entailment(env, [*soft, goal], goal)
+    data = formula_to_data(env, goal)
+    return {"id": "soft-certificate", "kind": "certificate", "environment": raw, "premises": [data],
+            "conclusion": data, "certificate": proof.certificate,
+            "soft_premises": [formula_to_data(env, f) for f in soft]}
 
 
 def deep_norms_elaboration():
@@ -171,6 +297,7 @@ def norms_cases():
     from tests.test_norm_admission import source
     from ve.ast import Not, Top, formula_to_data
     from ve.entailment import prove_entailment
+    from ve.environment import Environment
     from ve.norms import NormDocument, _bind, check_conflict, prove_norm_entailment
     cases = [lean_case(i, d) for i, d in zip(range(8), corpus())]
     env = environment({"permitted": permission()},
@@ -205,6 +332,16 @@ def norms_cases():
     cases.append({"id": "certificate", "kind": "norms-certificate", "environment": doc.env.to_dict(),
                   "norms": [r.to_dict() for r in doc.rules], "premises": [["top"]],
                   "conclusion": formula_to_data(doc.env, conclusion), "certificate": proof.certificate})
+    # A norms certificate with a non-empty Background (one literal pair), so its count has a
+    # natural neighbour on both sides.
+    with_literals = doc.env.to_dict()
+    with_literals["vocabulary"]["constants"].update({c: {"sort": "$string"} for c in ("alpha", "beta")})
+    doc = NormDocument(Environment(with_literals), doc.rules)
+    conclusion = doc.elaborate("permitted")
+    proof = prove_norm_entailment(doc, (Top(),), conclusion)
+    cases.append({"id": "certificate-literals", "kind": "norms-certificate", "environment": with_literals,
+                  "norms": [r.to_dict() for r in doc.rules], "premises": [["top"]],
+                  "conclusion": formula_to_data(doc.env, conclusion), "certificate": proof.certificate})
     raw, document = source()
     cases.append({"id": "admission", "kind": "admission", "environment": raw.to_dict(),
                   "document": document})
@@ -215,6 +352,9 @@ def norms_cases():
     cases.append({"id": "quoted", "kind": "admission", "environment": raw.to_dict(), "document": quoted})
     cases.append({"id": "unsupported", "kind": "evaluate", "norms": []})
     cases.append(deep_norms_elaboration())
+    cases += fol_projection_cases(norms=True)
+    cases += norm_pair_cases()
+    cases.append(soft_premise_certificate())
     return cases + route_cases()
 
 
@@ -277,10 +417,26 @@ def corpus():
                   {"id": "model", "kind": "model", "environment": env.to_dict(),
                    "model": model.to_dict()},
                   {"id": "bad", "kind": "unknown"}, *ADVERSARIAL]
+    choice_sets = [{"id": name, "version": 1, "unit": name,
+                    "readings": [{"labels": {"force": value}}
+                                 for value in ("strict", "default")]}
+                   for name in ("a", "b")]
+    choice_couplings = [{"id": "same-force", "axis": "force", "sets": [
+        {"set": name, "version": 1} for name in ("a", "b")]}]
+    choice_plan = {"id": "choices", "kind": "plan", "set_meta": choice_sets,
+                   "couplings": choice_couplings}
+    choice_verdict = {"id": "choices", "environment": env.to_dict(), "fixed": [],
+                      "sets": [[["top"], ["top"]], [["top"], ["top"]]],
+                      "set_meta": choice_sets, "conclusion": ["top"],
+                      "route": "coupled-choices", "couplings": choice_couplings,
+                      "choice_evidence": [{"choice": [index, index], "status": "UNKNOWN"}
+                                          for index in (0, 1)]}
     return {"evaluate": evaluate_cases(), "check-certificate": certificate_cases(),
             "order": order_cases(), "route": route_cases(), "norms": norms_cases(),
             "english": english_cases(), "environment": standalone_env,
-            "model": standalone_model, "identity": identities, "document": document_cases()}
+            "model": standalone_model, "identity": identities, "document": document_cases(),
+            "readings-choices": [{**choice_plan, "limit": 64},
+                                 {**choice_plan, "limit": 1}, choice_verdict]}
 
 
 def document_cases():

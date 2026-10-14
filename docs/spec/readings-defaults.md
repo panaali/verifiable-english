@@ -231,6 +231,10 @@ Composition-s2 2.3, items 1 to 7, unchanged, on the enumerated route, with these
 4. The product answer lists, under each component, that component's `restrictions` and `conditional_on` (A3); an E3
    line never cites a label of another component.
 
+RD-6b's filled superposed query route preserves the gated UNKNOWN verdict, status, and choice, but currently emits no
+English plan for that result. Item 3's E12 wording applies to the enumerated route. Extending the Lean superposed
+planner with E12 for gated UNKNOWN remains follow-up work.
+
 `englishPlan D route question answer` is Lean's list of `Line`s, computed from the case's decoded document `D` and the
 checked answer (review E5: `D` is the case's, not any document).
 

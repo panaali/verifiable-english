@@ -15,8 +15,8 @@ import sys
 
 import pytest
 
-from test_gate_integrity import pin_rust_binary
-from tools import gate
+from test_gate_integrity import pin_base_collection, pin_rust_binary
+from tools import gate, gate_collection
 
 BASELINE = ["tests/a.py::test_a", "tests/a.py::test_a2", "tests/b.py::test_b", "tests/c.py::test_c"]
 FAILED = "tests/a.py::test_a"
@@ -37,8 +37,6 @@ class FakeGate:
         (root / "rust/Cargo.lock").write_text("version = 4\n")
         policy = tmp_path / "policy.json"
         policy.write_text(json.dumps({"version": 1, "optional_tests": [], "deselected_tests": []}))
-        collection = tmp_path / "collection.json"
-        collection.write_text(json.dumps(BASELINE))
         self.output = tmp_path / "record.json"
         self.root, self.tree, self.failing, self.seen = root, "tree-1", {FAILED}, []
         self.trust = None  # the counts `trust_map.py --files` writes (None: trust_counts())
@@ -46,7 +44,8 @@ class FakeGate:
         scratches = itertools.count()
         monkeypatch.setattr(gate, "ROOT", root)
         monkeypatch.setattr(gate, "POLICY", policy)
-        monkeypatch.setattr(gate, "COLLECTION", collection)
+        self.records = []
+        pin_base_collection(monkeypatch, BASELINE, self.records)
         monkeypatch.setattr(gate, "REQUIRED_FAMILIES", ())
         # uv is linked from each gate's own scratch directory: its path differs on every run.
         monkeypatch.setattr(gate, "check_toolchains", lambda result, env: result["toolchains"].update(
@@ -185,3 +184,16 @@ def test_a_full_gate_records_its_tree_and_mode(fake):
     code, record = fake.run()
     assert (code, record["status"], record["mode"], record["tree_sha"]) == (0, "passed", "full", "tree-1")
     assert "rerun_failed" not in record
+    # Its whole collection is its commit's record; the base's came from the base's record.
+    assert fake.records == [("commit-1", BASELINE)] and record["collection"]["head_record"] == "written"
+    assert gate_collection.decode_ids(record["collection"]["collected_zlib"]) == sorted(BASELINE)
+    assert record["collection"]["base_source"] == "record of base-commit"
+
+
+def test_a_rerun_collects_part_of_the_tree_and_records_nothing(fake):
+    fake.run()
+    assert fake.records == [("commit-1", BASELINE)]
+    fake.failing = set()
+    code, record = fake.run("--rerun-failed")
+    assert (code, record["status"]) == (0, "rerun-passed")
+    assert fake.records == [("commit-1", BASELINE)] and "head_record" not in record["collection"]

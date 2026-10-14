@@ -1,4 +1,5 @@
 import Lean.Data.Json
+import VE.CertificateWire
 
 /-! # Response shapes: the one source of the client's response schemas
 
@@ -153,6 +154,14 @@ inductive Shape where
   | count (pointer : String)
   /-- Every object's `field` in the response array is a request ID selected by `target`. -/
   | references (array field target : String)
+  /-- Every selected claim has the name, AST and optional label of a request graph node. -/
+  | claimNodes (sources : List String)
+  /-- The replay count respects CertificateWire.limit, including its default and cap. -/
+  | maxSteps
+  /-- A certificate's Background count is at most what the request could generate (`backgroundBound`). -/
+  | backgroundBound
+  /-- A readings plan's indices, names and budget are bounded by its request. -/
+  | readingPlan
   | index
   | digest
   | zip (pointer : String) (s : Shape)
@@ -273,6 +282,11 @@ def render (file : String) : Nat → Shape → Except String Json
     | .count p => pure (Json.mkObj [("x-count", .str p)])
     | .references a f p => pure (Json.mkObj [("x-references", Json.mkObj [
         ("array", .str a), ("field", .str f), ("in", .str p)])])
+    | .claimNodes ps => pure (Json.mkObj [("x-claim-nodes", toJson ps)])
+    | .maxSteps => pure (Json.mkObj [("x-max-steps", Json.mkObj [
+        ("default", toJson VE.CertificateWire.maxSteps), ("cap", toJson VE.CertificateWire.caseCap)])])
+    | .backgroundBound => pure (Json.mkObj [("x-background-bound", .bool true)])
+    | .readingPlan => pure (Json.mkObj [("x-reading-plan", .bool true)])
     | .index => pure (Json.mkObj [("x-index", .bool true)])
     | .digest => pure (Json.mkObj [("x-digest", .bool true)])
     | .zip p x => pure (Json.mkObj [("x-zip", Json.mkObj [("of", .str p), ("items", ← go x)])])
@@ -371,6 +385,63 @@ def same : Nat → Json → Json → Bool
     | _, _ => false
 
 def sameJson (a b : Json) : Bool := same depth a b
+
+def claimFields (j : Json) : List (Option Json) :=
+  ["name", "ast", "label"].map fun k => (j.getObjVal? k).toOption
+
+/-- The most Background premises a certificate case could generate, a relation to the request
+only (arch decision D1: the count itself is Lean's, never predicted): per predicate declaration
+at most two flags, one definition and one norm pair; one premise per pair of constants; one
+per supplied soft premise. -/
+def backgroundBound (case : Json) : Option Nat := do
+  let vocab ← ((case.getObjValD "environment").getObjVal? "vocabulary").toOption
+  let predicates ← (vocab.getObjVal? "predicates").toOption
+  let constants ← (vocab.getObjVal? "constants").toOption
+  if kind predicates != "object" || kind constants != "object" then none else pure ()
+  let c := (members constants).size
+  let soft := match case.getObjValD "soft_premises" with
+    | .arr ps => ps.size
+    | _ => 0
+  pure (4 * (members predicates).size + c * (c - 1) / 2 + soft)
+
+/-- Binding only: Lean's readings planner decides which indices are compatible;
+this relation ensures that every reported choice, count, coupling and unit
+refers to the submitted sets. -/
+def readingPlanBound (request answer : Json) : Bool := Id.run do
+  let some sets := (request.getObjValD "set_meta").getArr?.toOption | return false
+  let some couplings := (request.getObjValD "couplings").getArr?.toOption | return false
+  let some limit := (request.getObjValD "limit").getNat?.toOption | return false
+  let mut sizes : List Nat := []
+  let mut units : List Json := []
+  for s in sets do
+    let some rs := (s.getObjValD "readings").getArr?.toOption | return false
+    let some sid := (s.getObjValD "id").getStr?.toOption | return false
+    let unit := (s.getObjValD "unit").getStr?.toOption.getD sid
+    sizes := sizes ++ [rs.size]
+    units := units ++ [.str unit]
+  let mut labels : List Json := []
+  for c in couplings do
+    let some cid := (c.getObjValD "id").getStr?.toOption | return false
+    labels := labels ++ [.str ("coupling:" ++ cid)]
+  if answer.getObjValD "route" == .str "enumerate" then
+    let some choices := (answer.getObjValD "choices").getArr?.toOption | return false
+    if choices.isEmpty || choices.size > limit then return false
+    let mut seen : List (List Nat) := []
+    for choice in choices do
+      let some items := choice.getArr?.toOption | return false
+      if items.size != sizes.length then return false
+      let some is := items.toList.mapM (·.getNat?.toOption) | return false
+      if seen.contains is || !(is.zip sizes).all (fun (i, n) => i < n) then return false
+      seen := is :: seen
+    return answer.getObjValD "conditional_on" == toJson labels
+  else if answer.getObjValD "route" == .str "UNKNOWN" then
+    let some budget := ((answer.getObjValD "budget").getObjValD "max_choices").getNat?.toOption |
+      return false
+    let some count := (answer.getObjValD "choice_count").getNat?.toOption | return false
+    let some named := (answer.getObjValD "units").getArr?.toOption | return false
+    return budget == limit && limit < count && count ≤ sizes.foldl (· * ·) 1 &&
+      named.toList.all units.contains
+  else return false
 
 def tokens (pointer : String) : List String :=
   if pointer.isEmpty then [] else
@@ -569,6 +640,32 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
           | .error _ => false) then pure ()
         else fail s!"{a} contains an unbound {f} outside the request's {p}"
       | _, _ => fail s!"{a} contains an unbound {f} outside the request's {p}"
+    | .claimNodes sources =>
+      for source in sources do
+        match resolve value source, resolve ctx.value "/document/graph/nodes" with
+        | some claims, some (.arr nodes) =>
+          let claims := match claims with
+            | .arr xs => xs.toList
+            | .obj _ => [claims]
+            | _ => []
+          if (kind (resolve value source |>.getD .null) == "array" || !claims.isEmpty) && claims.all (fun c =>
+              kind c == "object" && nodes.any (fun n => kind n == "object" &&
+                claimFields c == claimFields n)) then pure ()
+          else fail s!"{source} contains a claim outside the request graph"
+        | _, _ => fail s!"{source} contains a claim outside the request graph"
+    | .maxSteps => match value, VE.CertificateWire.limit ctx.value with
+      | .num n, .ok limit =>
+        if kind value == "integer" && numLe n ⟨(limit : Int), 0⟩ then pure ()
+        else fail "steps exceed the request's max_steps"
+      | _, _ => fail "steps exceed the request's max_steps"
+    | .backgroundBound => match value, backgroundBound ctx.value with
+      | .num n, some limit =>
+        if kind value == "integer" && numLe n ⟨(limit : Int), 0⟩ then pure ()
+        else fail "background exceeds what the request vocabulary generates"
+      | _, _ => fail "background exceeds what the request vocabulary generates"
+    | .readingPlan =>
+      if readingPlanBound ctx.value value then pure ()
+      else fail "readings plan names choices outside the request"
     | .index => match value, ctx.index with
       | .num x, some i => if kind value == "integer" && numEq x ⟨(i : Int), 0⟩ then pure () else fail "is not the result's position"
       | _, _ => fail "is not the result's position"

@@ -14,6 +14,8 @@ code under the root or of infrastructure (import system, site, pytest).
                           when under the root, else its base name
   ["c", pid, python]      a child process id, and whether it runs Python
   ["o", reason]           something the recorder could not see into
+  ["m", operation]        an assurance manifest operation entry was read
+  ["p", operation]        only its presence was checked during registration
 
 Paths are relative to $VE_TESTMAP_ROOT. tools/test_map.py installs a `.pth`
 hook in the project environment that calls `start()` whenever VE_TESTMAP_OUT
@@ -85,10 +87,18 @@ def _python(program: str) -> bool:
 
 def _audit(event, args):
     try:
-        if event == "open":
+        if event == "ve.manifest.operation":
+            _emit(["m", args[0]])
+        elif event == "ve.manifest.presence":
+            _emit(["p", args[0]])
+        elif event == "ve.manifest.all":
+            _emit(["m", "*"])
+        elif event == "open":
             relative = _relative(args[0])
             # Imports, pytest's assertion rewriting, tracebacks and warnings read
             # Python sources to run or show them; a test's own read is data.
+            if relative == "ve/assurance-manifest.json" and _loading_manifest():
+                return
             if relative is not None and not (relative.endswith(".py") and _origin() != TEST):
                 _emit(["r", relative])
         elif event in ("os.listdir", "os.scandir"):
@@ -111,6 +121,17 @@ def _audit(event, args):
                 _emit(["o", f"python child without site, so without the recorder: {argv!r}"])
     except Exception:  # an audit hook must never break the audited call
         pass
+
+
+def _loading_manifest() -> bool:
+    """The import-time shared load is superseded by operation audit events."""
+    frame = sys._getframe(1)
+    while frame is not None:
+        if frame.f_code.co_name == "_load" and frame.f_code.co_filename == os.path.join(
+                _state["root"], "ve/assurance.py"):
+            return True
+        frame = frame.f_back
+    return False
 
 
 TEST, DISPLAY, INFRASTRUCTURE = "test", "display", "infrastructure"

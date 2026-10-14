@@ -35,20 +35,16 @@ def test_exact_parameterized_skip_and_live_deselection_are_accounted_for():
     assert {row["nodeid"] for row in result["skips"]} == {admission, live}
 
 
-def test_the_collection_baseline_is_what_the_gate_collects(tmp_path):
-    """Review: the baseline lacked the deselected tests/test_llm.py::test_live_smoke, which
+def test_the_gate_collects_the_whole_suite_cleanly(tmp_path):
+    """Review: the collection lacked the deselected tests/test_llm.py::test_live_smoke, which
     the gate's recorder collects, and the gate's pytest (plugin autoload off) stopped with
     an internal error on an xdist-only conftest hook. The gate's own collection command,
-    in this environment, must succeed and collect exactly the committed baseline;
-    `python tools/gate.py --write-collection` regenerates it."""
+    in this environment, must succeed with no collection report or duplicate ID, and
+    record the deselected live test: the merge base's collection is compared with it."""
     events = gate.collect({**os.environ, "VE_NATIVE_PREBUILT": "1"}, tmp_path / "collection.json")
-    baseline = json.loads(gate.COLLECTION.read_text())
     assert events["collection_reports"] == []
     assert len(events["collected"]) == len(set(events["collected"]))
-    missing = sorted(set(baseline) - set(events["collected"]))
-    unexpected = sorted(set(events["collected"]) - set(baseline))
-    assert (missing, unexpected) == ([], []), "run python tools/gate.py --write-collection"
-    assert baseline == sorted(baseline)
+    assert set(REQUIRED_FAMILIES) <= {nodeid.split("::")[0].removeprefix("tests/") for nodeid in events["selected"]}
     assert "tests/test_llm.py::test_live_smoke" in events["deselected"]
 
 
