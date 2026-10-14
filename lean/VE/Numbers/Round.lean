@@ -69,7 +69,7 @@ def Rounding.round (r : Rounding) (k : Int) (x : Rat) : Int :=
   | .down => Rat.floor (x * tenPow k)
   | .up => Rat.ceil (x * tenPow k)
 
-private theorem floor_eq_iff (z : Rat) (d : Int) :
+theorem floor_eq_iff (z : Rat) (d : Int) :
     z.floor = d ↔ (d : Rat) ≤ z ∧ z < (d + 1 : Int) := by
   constructor
   · intro h
@@ -81,17 +81,17 @@ private theorem floor_eq_iff (z : Rat) (d : Int) :
       omega
     · exact Rat.le_floor_iff.mpr hlo
 
-private theorem tiesUp_iff (p : Printed) (x : Rat) :
+theorem tiesUp_iff (p : Printed) (x : Rat) :
     RoundsTo .tiesUp p x ↔ Rounding.round .tiesUp p.places x = p.digits := by
   simp only [RoundsTo, Rounding.round, floor_eq_iff]
   grind
 
-private theorem down_iff (p : Printed) (x : Rat) :
+theorem down_iff (p : Printed) (x : Rat) :
     RoundsTo .down p x ↔ Rounding.round .down p.places x = p.digits := by
   simp only [RoundsTo, Rounding.round, floor_eq_iff, Rat.intCast_add]
   simp
 
-private theorem up_iff (p : Printed) (x : Rat) :
+theorem up_iff (p : Printed) (x : Rat) :
     RoundsTo .up p x ↔ Rounding.round .up p.places x = p.digits := by
   simp only [RoundsTo, Rounding.round, Rat.ceil_eq_neg_floor_neg]
   have hneg : -(-(x * tenPow p.places)).floor = p.digits ↔
@@ -101,7 +101,7 @@ private theorem up_iff (p : Printed) (x : Rat) :
   simp only [Rat.intCast_neg, Rat.intCast_add]
   grind
 
-private theorem halfEven_interval (p : Printed) (x : Rat) :
+theorem halfEven_interval (p : Printed) (x : Rat) :
     RoundsTo .halfEven p x ↔
       (((p.digits : Rat) < x * tenPow p.places + 1 / 2 ∧
           x * tenPow p.places + 1 / 2 < (p.digits + 1 : Int)) ∨
@@ -111,7 +111,7 @@ private theorem halfEven_interval (p : Printed) (x : Rat) :
   simp only [RoundsTo, Rat.intCast_add]
   grind
 
-private theorem interval_off_tie (z : Rat) (d : Int)
+theorem interval_off_tie (z : Rat) (d : Int)
     (hz : (z.floor : Rat) ≠ z) :
     (((d : Rat) < z ∧ z < (d + 1 : Int)) ∨
       ((z = (d : Rat) ∨ z = (d + 1 : Int)) ∧ d % 2 = 0)) ↔ z.floor = d := by
@@ -131,7 +131,7 @@ private theorem interval_off_tie (z : Rat) (d : Int)
     · grind
     · exact hb.2
 
-private theorem interval_on_tie (z : Rat) (d : Int)
+theorem interval_on_tie (z : Rat) (d : Int)
     (hz : (z.floor : Rat) = z) :
     (((d : Rat) < z ∧ z < (d + 1 : Int)) ∨
       ((z = (d : Rat) ∨ z = (d + 1 : Int)) ∧ d % 2 = 0)) ↔
@@ -155,7 +155,7 @@ private theorem interval_on_tie (z : Rat) (d : Int)
   · simp only [if_neg ho]
     omega
 
-private theorem halfEven_iff (p : Printed) (x : Rat) :
+theorem halfEven_iff (p : Printed) (x : Rat) :
     RoundsTo .halfEven p x ↔ Rounding.round .halfEven p.places x = p.digits := by
   let z := x * tenPow p.places + 1 / 2
   rw [halfEven_interval]
@@ -203,7 +203,7 @@ def tieAt (k : Int) (x : Rat) : Bool :=
   let z := 2 * (x * tenPow k)
   z.den == 1 && z.num % 2 != 0
 
-private theorem tieAt_iff (k : Int) (x : Rat) :
+theorem tieAt_iff (k : Int) (x : Rat) :
     tieAt k x = true ↔
       ∃ d : Int, 2 * (x * tenPow k) = ((2 * d - 1 : Int) : Rat) := by
   let z : Rat := 2 * (x * tenPow k)
@@ -230,7 +230,7 @@ private theorem tieAt_iff (k : Int) (x : Rat) :
     · exact Rat.den_intCast _
     · simpa only [Rat.num_intCast] using (by omega : (2 * d - 1 : Int) % 2 ≠ 0)
 
-private theorem tieAt_iff_floor_tie (k : Int) (x : Rat) :
+theorem tieAt_iff_floor_tie (k : Int) (x : Rat) :
     tieAt k x = true ↔
       ((Rat.floor (x * tenPow k + 1 / 2) : Int) : Rat) =
         x * tenPow k + 1 / 2 := by
@@ -300,5 +300,22 @@ inductive Outcome where
   | decided (v : Verdict)
   | unknown (r : UnknownReason)
   deriving Repr, DecidableEq
+
+/-- The fixed user-facing explanation of an operational unknown. -/
+def UnknownReason.text (budget : Nat) : UnknownReason → String
+  | .limit .digits => "unknown: an exact value would have more than 4,096 digits"
+  | .limit .evaluations =>
+      "unknown: the budget of " ++ toString budget ++ " evaluation steps ran out"
+  | .limit .derivationSteps =>
+      "unknown: the derivation search ran out of its 10,000 combination steps"
+  | .limit .witnessPoints =>
+      "unknown: the consistency search tried its 4,096 candidate points"
+  | .limit .polyTerms => "unknown: a normal form would have more than 10,000 terms"
+  | .floatingPointNotModelled => "unknown: floating-point computation not modelled"
+  | .derivationInconclusive => "unknown: no certificate and no counterexample was found"
+  | .consistencyInconclusive => "unknown: neither a witness nor an enclosure decides it"
+  | .identityNotShown =>
+      "unknown: the normal forms differ and no point where the sides differ was found"
+  | .unboundedStatement => "stated, not decided: a quantifier has no bound"
 
 end VE.Numbers

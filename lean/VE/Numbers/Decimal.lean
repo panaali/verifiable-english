@@ -27,7 +27,7 @@ def tenPow : Int → Rat
   | .ofNat n => (10 : Rat) ^ n
   | .negSucc n => 1 / (10 : Rat) ^ (n + 1)
 
-private theorem tenPow_eq_zpow (k : Int) : tenPow k = (10 : Rat) ^ k := by
+theorem tenPow_eq_zpow (k : Int) : tenPow k = (10 : Rat) ^ k := by
   cases k with
   | ofNat n => rfl
   | negSucc n =>

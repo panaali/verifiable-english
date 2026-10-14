@@ -1303,6 +1303,250 @@ theorem VE.Bridge.vocabulary_namesValid
   ∀ (v : VE.Bridge.Vocabulary), v.namesValid = Bool.true → VE.Surface.NamesValid v.environment
   -- uses VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary.namesValid@VE.Bridge VE.Bridge.Vocabulary@VE.Bridge VE.Surface.NamesValid@VE.Surface
   -- expr 1495699119
+theorem VE.Calc.Claim.decide_fails
+  ∀ (σ : VE.Calc.Values) (c : VE.Calc.Claim),
+    VE.Calc.Claim.decide σ c = VE.Numbers.Verdict.fails ↔ VE.Calc.Claim.Defined σ c ∧ ¬VE.Calc.Claim.Holds σ c
+  -- uses VE.Calc.Claim.Defined@VE.Calc.Syntax VE.Calc.Claim.Holds@VE.Calc.Syntax VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Verdict.fails@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
+  -- expr 2385764829
+theorem VE.Calc.Claim.decide_holds
+  ∀ (σ : VE.Calc.Values) (c : VE.Calc.Claim),
+    VE.Calc.Claim.decide σ c = VE.Numbers.Verdict.holds ↔ VE.Calc.Claim.Holds σ c
+  -- uses VE.Calc.Claim.Holds@VE.Calc.Syntax VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Verdict.holds@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
+  -- expr 586331153
+theorem VE.Calc.Claim.decide_undefined
+  ∀ (σ : VE.Calc.Values) (c : VE.Calc.Claim),
+    VE.Calc.Claim.decide σ c = VE.Numbers.Verdict.undefined ↔ ¬VE.Calc.Claim.Defined σ c
+  -- uses VE.Calc.Claim.Defined@VE.Calc.Syntax VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Verdict.undefined@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
+  -- expr 1310136358
+theorem VE.Calc.Claim.run_complete
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (c : VE.Calc.Claim),
+        ¬VE.Calc.Claim.Overflows ds c →
+          ¬VE.Calc.Claim.ReadsExhausted ds c →
+            VE.Calc.Claim.run ds c = VE.Numbers.Outcome.decided (VE.Calc.Claim.decide (VE.Calc.values ds) c)
+  -- uses VE.Calc.Claim.Overflows@VE.Calc.Decls VE.Calc.Claim.ReadsExhausted@VE.Calc.Decls VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 4006485524
+theorem VE.Calc.Claim.run_decided
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (c : VE.Calc.Claim) (v : VE.Numbers.Verdict),
+        VE.Calc.Claim.run ds c = VE.Numbers.Outcome.decided v → v = VE.Calc.Claim.decide (VE.Calc.values ds) c
+  -- uses VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
+  -- expr 3624974664
+theorem VE.Calc.Claim.run_unknown
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (c : VE.Calc.Claim) (u : VE.Numbers.UnknownReason),
+        VE.Calc.Claim.run ds c = VE.Numbers.Outcome.unknown u →
+          u = VE.Numbers.UnknownReason.limit VE.Numbers.Limit.digits ∧ VE.Calc.Claim.Overflows ds c ∨
+            u = VE.Numbers.UnknownReason.limit VE.Numbers.Limit.evaluations ∧ VE.Calc.Claim.ReadsExhausted ds c
+  -- uses VE.Calc.Claim.Overflows@VE.Calc.Decls VE.Calc.Claim.ReadsExhausted@VE.Calc.Decls VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Numbers.Limit.digits@VE.Numbers.Round VE.Numbers.Limit.evaluations@VE.Numbers.Round VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.limit@VE.Numbers.Round VE.Numbers.UnknownReason@VE.Numbers.Round
+  -- expr 3624850836
+theorem VE.Calc.Decl.valL_agrees
+  ∀ (d : VE.Calc.Decl) (τ : String → VE.Calc.Val) (σ : VE.Calc.Values),
+    (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (σ n)) →
+      (∀ (q : Thunk (Option Rat)) (v : Option Rat),
+          d.source = VE.Calc.Source.counted q (VE.Calc.Counted.ok v) → q.get = v) →
+        VE.Calc.Val.Agrees✝¹ (d.valL τ) (d.valueUnder σ)
+  -- uses VE.Calc.Counted.ok@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl.valL@VE.Calc.Decls VE.Calc.Decl.valueUnder@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.counted@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
+  -- expr 1577619110
+theorem VE.Calc.Denotes.eval_complete
+  ∀ {σ : VE.Calc.Values} {e : VE.Calc.Expr} {q : Rat}, VE.Calc.Denotes σ e q → VE.Calc.Expr.eval σ e = Option.some q
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
+  -- expr 4093109492
+theorem VE.Calc.Denotes.unique
+  ∀ {σ : VE.Calc.Values} {e : VE.Calc.Expr} {x y : Rat}, VE.Calc.Denotes σ e x → VE.Calc.Denotes σ e y → x = y
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
+  -- expr 1800011211
+theorem VE.Calc.Expr.evalL_agrees
+  ∀ (e : VE.Calc.Expr) (τ : String → VE.Calc.Val) (σ : VE.Calc.Values),
+    (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (σ n)) →
+      VE.Calc.Val.Agrees✝¹ (VE.Calc.Expr.evalL τ e) (VE.Calc.Expr.eval σ e)
+  -- uses VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr.evalL@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
+  -- expr 1879806163
+theorem VE.Calc.Expr.evalL_causes
+  ∀ (ds : List VE.Calc.Decl) (e : VE.Calc.Expr) (τ : String → VE.Calc.Val),
+    (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (VE.Calc.values ds n)) →
+      (∀ (n : String),
+          τ n = VE.Calc.Val.tooLarge →
+            (∃ q, VE.Calc.values ds n = Option.some q ∧ ¬VE.Calc.Small q) ∨ VE.Calc.NameOverflows ds n) →
+        (∀ (n : String), τ n = VE.Calc.Val.exhausted → VE.Calc.NameExhausted ds n) →
+          (VE.Calc.Expr.evalL τ e = VE.Calc.Val.tooLarge → VE.Calc.Expr.Overflows ds e) ∧
+            (VE.Calc.Expr.evalL τ e = VE.Calc.Val.exhausted → VE.Calc.Expr.ReadsExhausted ds e)
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.Overflows@VE.Calc.Decls VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls VE.Calc.Expr.evalL@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.NameExhausted@VE.Calc.Decls VE.Calc.NameOverflows@VE.Calc.Decls VE.Calc.Small@VE.Calc.Decls VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val.exhausted@VE.Calc.Decls VE.Calc.Val.tooLarge@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
+  -- expr 1916425663
+theorem VE.Calc.Expr.evalL_causes_on_names
+  ∀ (ds : List VE.Calc.Decl) (e : VE.Calc.Expr) (τ : String → VE.Calc.Val),
+    (∀ (n : String), n ∈ e.names → VE.Calc.Val.Agrees✝ (τ n) (VE.Calc.values ds n)) →
+      (∀ (n : String),
+          n ∈ e.names →
+            τ n = VE.Calc.Val.tooLarge →
+              (∃ q, VE.Calc.values ds n = Option.some q ∧ ¬VE.Calc.Small q) ∨ VE.Calc.NameOverflows ds n) →
+        (∀ (n : String), n ∈ e.names → τ n = VE.Calc.Val.exhausted → VE.Calc.NameExhausted ds n) →
+          (VE.Calc.Expr.evalL τ e = VE.Calc.Val.tooLarge → VE.Calc.Expr.Overflows ds e) ∧
+            (VE.Calc.Expr.evalL τ e = VE.Calc.Val.exhausted → VE.Calc.Expr.ReadsExhausted ds e)
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.Overflows@VE.Calc.Decls VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls VE.Calc.Expr.evalL@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.NameExhausted@VE.Calc.Decls VE.Calc.NameOverflows@VE.Calc.Decls VE.Calc.Small@VE.Calc.Decls VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val.exhausted@VE.Calc.Decls VE.Calc.Val.tooLarge@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
+  -- expr 1850204089
+theorem VE.Calc.Expr.evalL_congr_on
+  ∀ (e : VE.Calc.Expr) (τ υ : String → VE.Calc.Val),
+    (∀ (n : String), n ∈ e.names → τ n = υ n) → VE.Calc.Expr.evalL τ e = VE.Calc.Expr.evalL υ e
+  -- uses VE.Calc.Expr.evalL@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls
+  -- expr 1410557281
+theorem VE.Calc.Expr.eval_congr_on
+  ∀ (e : VE.Calc.Expr) (σ τ : VE.Calc.Values),
+    (∀ (n : String), n ∈ e.names → σ n = τ n) → VE.Calc.Expr.eval σ e = VE.Calc.Expr.eval τ e
+  -- uses VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
+  -- expr 909568491
+theorem VE.Calc.Expr.eval_iff
+  ∀ (σ : VE.Calc.Values) (e : VE.Calc.Expr) (q : Rat), VE.Calc.Expr.eval σ e = Option.some q ↔ VE.Calc.Denotes σ e q
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
+  -- expr 211348137
+theorem VE.Calc.Expr.eval_sound
+  ∀ (σ : VE.Calc.Values) (e : VE.Calc.Expr) (q : Rat), VE.Calc.Expr.eval σ e = Option.some q → VE.Calc.Denotes σ e q
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
+  -- expr 325859211
+theorem VE.Calc.Expr.exhausted_lift
+  ∀ (ds : List VE.Calc.Decl) (parent child : VE.Calc.Expr),
+    (∀ (n : String), n ∈ child.names → n ∈ parent.names) →
+      VE.Calc.Expr.ReadsExhausted ds child → VE.Calc.Expr.ReadsExhausted ds parent
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax
+  -- expr 2941271151
+theorem VE.Calc.Expr.overflow_lift
+  ∀ (ds : List VE.Calc.Decl) (parent child : VE.Calc.Expr),
+    (∀ (e : VE.Calc.Expr), e ∈ child.subexprs → e ∈ parent.subexprs) →
+      (∀ (n : String), n ∈ child.names → n ∈ parent.names) →
+        VE.Calc.Expr.Overflows ds child → VE.Calc.Expr.Overflows ds parent
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.Overflows@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr.subexprs@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax
+  -- expr 1123596397
+theorem VE.Calc.Val.bin_exhausted
+  ∀ (f : Rat → Rat → VE.Calc.Val) (a b : VE.Calc.Val),
+    (∀ (x y : Rat), f x y ≠ VE.Calc.Val.exhausted) →
+      VE.Calc.Val.bin f a b = VE.Calc.Val.exhausted →
+        a = VE.Calc.Val.exhausted ∨ ∃ x, a = VE.Calc.Val.ok x ∧ b = VE.Calc.Val.exhausted
+  -- uses VE.Calc.Val.bin@VE.Calc.Decls VE.Calc.Val.exhausted@VE.Calc.Decls VE.Calc.Val.ok@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls
+  -- expr 332365846
+theorem VE.Calc.Val.bin_tooLarge
+  ∀ (f : Rat → Rat → VE.Calc.Val) (a b : VE.Calc.Val),
+    VE.Calc.Val.bin f a b = VE.Calc.Val.tooLarge →
+      a = VE.Calc.Val.tooLarge ∨
+        ∃ x, a = VE.Calc.Val.ok x ∧ (b = VE.Calc.Val.tooLarge ∨ ∃ y, b = VE.Calc.Val.ok y ∧ f x y = VE.Calc.Val.tooLarge)
+  -- uses VE.Calc.Val.bin@VE.Calc.Decls VE.Calc.Val.ok@VE.Calc.Decls VE.Calc.Val.tooLarge@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls
+  -- expr 1064434216
+theorem VE.Calc.Val.div_agrees
+  ∀ (x y : Rat),
+    VE.Calc.Val.Agrees✝ (if y = 0 then VE.Calc.Val.undefined else VE.Calc.Val.guard (x / y))
+      (if y = 0 then Option.none else Option.some (x / y))
+  -- uses VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val.guard@VE.Calc.Decls VE.Calc.Val.undefined@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls
+  -- expr 3124814238
+theorem VE.Calc.Val.guard_agrees
+  ∀ (q : Rat), VE.Calc.Val.Agrees✝ (VE.Calc.Val.guard q) (Option.some q)
+  -- uses VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val.guard@VE.Calc.Decls
+  -- expr 724329628
+theorem VE.Calc.causes_accumulate
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (pre rest : List VE.Calc.Decl),
+        ds = pre ++ rest →
+          VE.Calc.CausesAt✝ ds (VE.Calc.valuesL pre) → VE.Calc.CausesAt✝¹ ds (VE.Calc.valuesL (pre ++ rest))
+  -- uses VE.Calc.CausesAt@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls
+  -- expr 1406295062
+theorem VE.Calc.causes_step
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (pre : List VE.Calc.Decl) (d : VE.Calc.Decl) (tail : List VE.Calc.Decl),
+        ds = pre ++ d :: tail →
+          VE.Calc.CausesAt✝ ds (VE.Calc.valuesL pre) → VE.Calc.CausesAt✝¹ ds (VE.Calc.valuesL (pre ++ [d]))
+  -- uses VE.Calc.CausesAt@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls
+  -- expr 667908898
+theorem VE.Calc.findingKind_source_iff
+  ∀ (software : Option String) (checks : List Bool),
+    VE.Calc.findingKind software checks = VE.Calc.FindingKind.source ↔
+      software = Option.none ∧ checks ≠ [] ∧ ∀ (b : Bool), b ∈ checks → b = Bool.true
+  -- uses VE.Calc.FindingKind.source@VE.Calc.Decls VE.Calc.FindingKind@VE.Calc.Decls VE.Calc.findingKind@VE.Calc.Decls
+  -- expr 3164982574
+theorem VE.Calc.firstFault_mem
+  ∀ (vs : List VE.Calc.Val) (v : VE.Calc.Val), VE.Calc.firstFault vs = Option.some v → v ∈ vs
+  -- uses VE.Calc.Val@VE.Calc.Decls VE.Calc.firstFault@VE.Calc.Decls
+  -- expr 1996522781
+theorem VE.Calc.firstFault_not_ok
+  ∀ (vs : List VE.Calc.Val) (q : Rat), VE.Calc.firstFault vs ≠ Option.some (VE.Calc.Val.ok q)
+  -- uses VE.Calc.Val.ok@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.firstFault@VE.Calc.Decls
+  -- expr 3347577045
+theorem VE.Calc.fold_valuesL_agrees
+  ∀ (ds : List VE.Calc.Decl) (τ : String → VE.Calc.Val) (σ : VE.Calc.Values),
+    (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (σ n)) →
+      (∀ (d : VE.Calc.Decl),
+          d ∈ ds →
+            ∀ (q : Thunk (Option Rat)) (v : Option Rat),
+              d.source = VE.Calc.Source.counted q (VE.Calc.Counted.ok v) → q.get = v) →
+        ∀ (n : String),
+          VE.Calc.Val.Agrees✝¹ (List.foldl (fun τ d n => if n = d.name then d.valL τ else τ n) τ ds n)
+            (List.foldl (fun σ d n => if n = d.name then d.valueUnder σ else σ n) σ ds n)
+  -- uses VE.Calc.Counted.ok@VE.Calc.Decls VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl.valL@VE.Calc.Decls VE.Calc.Decl.valueUnder@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.counted@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
+  -- expr 2994247141
+theorem VE.Calc.fold_values_other
+  ∀ (ds : List VE.Calc.Decl) (σ : VE.Calc.Values) (n : String),
+    ¬n ∈ List.map VE.Calc.Decl.name ds → List.foldl (fun τ d m => if m = d.name then d.valueUnder τ else τ m) σ ds n = σ n
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.valueUnder@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
+  -- expr 2916287160
+theorem VE.Calc.valuesL_agrees
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds → ∀ (n : String), VE.Calc.Val.Agrees✝ (VE.Calc.valuesL ds n) (VE.Calc.values ds n)
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls
+  -- expr 3234257829
+theorem VE.Calc.valuesL_causes
+  ∀ (ds : List VE.Calc.Decl), VE.Calc.WellFormed ds → VE.Calc.CausesAt✝ ds (VE.Calc.valuesL ds)
+  -- uses VE.Calc.CausesAt@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls
+  -- expr 1979565795
+theorem VE.Calc.values_append_prefix
+  ∀ (pre rest : List VE.Calc.Decl) (n : String),
+    ¬n ∈ List.map VE.Calc.Decl.name rest → VE.Calc.values (pre ++ rest) n = VE.Calc.values pre n
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
+  -- expr 2516489823
+theorem VE.Calc.values_at
+  ∀ (ds : List VE.Calc.Decl),
+    (List.map VE.Calc.Decl.name ds).Nodup →
+      ∀ (d : VE.Calc.Decl),
+        d ∈ ds → ∃ pre post, ds = pre ++ d :: post ∧ VE.Calc.values ds d.name = d.valueUnder (VE.Calc.values pre)
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.valueUnder@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
+  -- expr 4077756005
+theorem VE.Calc.values_counted
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (d : VE.Calc.Decl),
+        d ∈ ds →
+          ∀ (q : Thunk (Option Rat)) (r : VE.Calc.Counted),
+            d.source = VE.Calc.Source.counted q r → VE.Calc.values ds d.name = q.get
+  -- uses VE.Calc.Counted@VE.Calc.Decls VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.counted@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
+  -- expr 1210713525
+theorem VE.Calc.values_defined
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (d : VE.Calc.Decl),
+        d ∈ ds →
+          ∀ (e : VE.Calc.Expr),
+            d.source = VE.Calc.Source.defined e →
+              ∀ (q : Rat), VE.Calc.values ds d.name = Option.some q ↔ VE.Calc.Denotes (VE.Calc.values ds) e q
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Source.defined@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
+  -- expr 520583763
+theorem VE.Calc.values_free
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (d : VE.Calc.Decl), d ∈ ds → d.source = VE.Calc.Source.free → VE.Calc.values ds d.name = Option.none
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.free@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
+  -- expr 3727569969
+theorem VE.Calc.values_missing
+  ∀ (ds : List VE.Calc.Decl) (n : String), ¬n ∈ List.map VE.Calc.Decl.name ds → VE.Calc.values ds n = Option.none
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
+  -- expr 545680518
+theorem VE.Calc.values_stated
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (d : VE.Calc.Decl),
+        d ∈ ds → ∀ (q : Rat), d.source = VE.Calc.Source.stated q → VE.Calc.values ds d.name = Option.some q
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.stated@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
+  -- expr 3273210734
 theorem VE.CertificateWire.ClosureQuery.accepts_sound
   ∀ {E : VE.Environment} (q : VE.CertificateWire.ClosureQuery E),
     q.accepts = Bool.true → VE.Closure.Entails E q.premises q.conclusion
@@ -14259,6 +14503,114 @@ theorem VE.Norms.yields_wellFormed
       ∀ (f : Nat) (N : VE.Norms.Node), N ∈ T.nodes → N.pred = p → VE.Formula.WellFormed E Γ (VE.Norms.yields T f N)
   -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.RulesTyped@VE.Norms.Elaborate VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.yields@VE.Norms.Elaborate
   -- expr 1018618366
+theorem VE.Numbers.Printed.value_ofDec
+  ∀ (d : VE.Time.Dec), (VE.Numbers.Printed.ofDec d).value = VE.Numbers.decValue d
+  -- uses VE.Numbers.Printed.ofDec@VE.Numbers.Round VE.Numbers.Printed.value@VE.Numbers.Round VE.Numbers.decValue@VE.Numbers.Decimal VE.Time.Dec@VE.Time.Decimal
+  -- expr 3650989879
+theorem VE.Numbers.Printed.value_sci
+  ∀ (d : VE.Time.Dec) (e : Int), (VE.Numbers.Printed.sci d e).value = VE.Numbers.decValue d * VE.Numbers.tenPow e
+  -- uses VE.Numbers.Printed.sci@VE.Numbers.Round VE.Numbers.Printed.value@VE.Numbers.Round VE.Numbers.decValue@VE.Numbers.Decimal VE.Numbers.tenPow@VE.Numbers.Decimal VE.Time.Dec@VE.Time.Decimal
+  -- expr 4118751620
+theorem VE.Numbers.decValue_lower
+  ∀ (d : VE.Time.Dec) (k : Nat) (q : Int), VE.Time.lower d k = Option.some q → VE.Numbers.decValue d = ↑q / 10 ^ k
+  -- uses VE.Numbers.decValue@VE.Numbers.Decimal VE.Time.Dec@VE.Time.Decimal VE.Time.lower@VE.Time.Decimal
+  -- expr 3615097640
+theorem VE.Numbers.down_iff
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.down p x ↔ VE.Numbers.Rounding.down.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.down@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 3059658347
+theorem VE.Numbers.floor_eq_iff
+  ∀ (z : Rat) (d : Int), z.floor = d ↔ ↑d ≤ z ∧ z < ↑(d + 1)
+  -- uses
+  -- expr 383376331
+theorem VE.Numbers.halfEven_iff
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.halfEven p x ↔ VE.Numbers.Rounding.halfEven.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 2155798866
+theorem VE.Numbers.halfEven_interval
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.halfEven p x ↔
+      ↑p.digits < x * VE.Numbers.tenPow p.places + 1 / 2 ∧ x * VE.Numbers.tenPow p.places + 1 / 2 < ↑(p.digits + 1) ∨
+        (x * VE.Numbers.tenPow p.places + 1 / 2 = ↑p.digits ∨ x * VE.Numbers.tenPow p.places + 1 / 2 = ↑(p.digits + 1)) ∧
+          p.digits % 2 = 0
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 3108751074
+theorem VE.Numbers.interval_off_tie
+  ∀ (z : Rat) (d : Int), ↑z.floor ≠ z → (↑d < z ∧ z < ↑(d + 1) ∨ (z = ↑d ∨ z = ↑(d + 1)) ∧ d % 2 = 0 ↔ z.floor = d)
+  -- uses
+  -- expr 2204359387
+theorem VE.Numbers.interval_on_tie
+  ∀ (z : Rat) (d : Int),
+    ↑z.floor = z →
+      (↑d < z ∧ z < ↑(d + 1) ∨ (z = ↑d ∨ z = ↑(d + 1)) ∧ d % 2 = 0 ↔
+        (if z.floor % 2 ≠ 0 then z.floor - 1 else z.floor) = d)
+  -- uses
+  -- expr 3231253976
+theorem VE.Numbers.roundsTo_close
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.tiesUp p x →
+      -(1 / 2) ≤ x * VE.Numbers.tenPow p.places - ↑p.digits ∧ x * VE.Numbers.tenPow p.places - ↑p.digits < 1 / 2
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 3602410566
+theorem VE.Numbers.roundsTo_iff_round
+  ∀ (r : VE.Numbers.Rounding) (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo r p x ↔ r.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 1646360886
+theorem VE.Numbers.roundsTo_round
+  ∀ (r : VE.Numbers.Rounding) (k : Int) (x : Rat), VE.Numbers.RoundsTo r { digits := r.round k x, places := k } x
+  -- uses VE.Numbers.Printed.mk@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 1679147506
+theorem VE.Numbers.roundsTo_unique
+  ∀ (r : VE.Numbers.Rounding) (x : Rat) (p q : VE.Numbers.Printed),
+    p.places = q.places → VE.Numbers.RoundsTo r p x → VE.Numbers.RoundsTo r q x → p = q
+  -- uses VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 215544591
+theorem VE.Numbers.rules_agree_off_tie
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.tieAt p.places x = Bool.false →
+      (VE.Numbers.RoundsTo VE.Numbers.Rounding.tiesUp p x ↔ VE.Numbers.RoundsTo VE.Numbers.Rounding.halfEven p x)
+  -- uses VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round VE.Numbers.tieAt@VE.Numbers.Round
+  -- expr 1574880746
+theorem VE.Numbers.rules_differ_iff
+  ∀ (k : Int) (x : Rat),
+    VE.Numbers.Rounding.tiesUp.round k x ≠ VE.Numbers.Rounding.halfEven.round k x ↔
+      VE.Numbers.tieAt k x = Bool.true ∧ VE.Numbers.Rounding.tiesUp.round k x % 2 ≠ 0
+  -- uses VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.tieAt@VE.Numbers.Round
+  -- expr 510166729
+theorem VE.Numbers.tenPow_add
+  ∀ (a b : Int), VE.Numbers.tenPow (a + b) = VE.Numbers.tenPow a * VE.Numbers.tenPow b
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 2017014382
+theorem VE.Numbers.tenPow_eq_zpow
+  ∀ (k : Int), VE.Numbers.tenPow k = 10 ^ k
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 1810063078
+theorem VE.Numbers.tenPow_pos
+  ∀ (k : Int), 0 < VE.Numbers.tenPow k
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 866807559
+theorem VE.Numbers.tieAt_iff
+  ∀ (k : Int) (x : Rat), VE.Numbers.tieAt k x = Bool.true ↔ ∃ d, 2 * (x * VE.Numbers.tenPow k) = ↑(2 * d - 1)
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal VE.Numbers.tieAt@VE.Numbers.Round
+  -- expr 3057435939
+theorem VE.Numbers.tieAt_iff_floor_tie
+  ∀ (k : Int) (x : Rat),
+    VE.Numbers.tieAt k x = Bool.true ↔ ↑(x * VE.Numbers.tenPow k + 1 / 2).floor = x * VE.Numbers.tenPow k + 1 / 2
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal VE.Numbers.tieAt@VE.Numbers.Round
+  -- expr 2803417522
+theorem VE.Numbers.tiesUp_iff
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.tiesUp p x ↔ VE.Numbers.Rounding.tiesUp.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 3974865933
+theorem VE.Numbers.up_iff
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.up p x ↔ VE.Numbers.Rounding.up.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding.up@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 3663241666
 theorem VE.Order.Document.nonempty
   ∀ {E : VE.Order.Environment} (self : VE.Order.Document E), self.formulas ≠ []
   -- uses VE.Order.Document.formulas@VE.Order.Syntax VE.Order.Document@VE.Order.Syntax VE.Order.Environment@VE.Order.Syntax VE.Order.Formula@VE.Order.Syntax

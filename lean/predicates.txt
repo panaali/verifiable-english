@@ -101,6 +101,11 @@ module VE.Attribution.Structure
 module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
+module VE.Calc.Decls
+module VE.Calc.Eval
+module VE.Calc.Examples
+module VE.Calc.Render
+module VE.Calc.Syntax
 module VE.CertificateWire
 module VE.Checks
 module VE.ClaimGraph
@@ -263,6 +268,10 @@ module VE.Norms.Subst
 module VE.Norms.Tree
 module VE.Norms.Valid
 module VE.Norms.Wire
+module VE.Numbers.Decimal
+module VE.Numbers.Phrases
+module VE.Numbers.PhrasesMain
+module VE.Numbers.Round
 module VE.Order.Checks
 module VE.Order.Consequence
 module VE.Order.Conservativity
@@ -513,6 +522,22 @@ VE.Alternatives.RowsConsistent@VE.Alternatives.Validate
 VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
 VE.Bridge.JsonEntails@VE.Bridge
+VE.Calc.CausesAt@VE.Calc.Decls
+VE.Calc.Claim.Defined@VE.Calc.Syntax
+VE.Calc.Claim.Holds@VE.Calc.Syntax
+VE.Calc.Claim.Overflows@VE.Calc.Decls
+VE.Calc.Claim.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Denotes.below@VE.Calc.Syntax
+VE.Calc.Denotes@VE.Calc.Syntax
+VE.Calc.Expr.Overflows@VE.Calc.Decls
+VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.NameExhausted.below@VE.Calc.Decls
+VE.Calc.NameExhausted@VE.Calc.Decls
+VE.Calc.NameOverflows.below@VE.Calc.Decls
+VE.Calc.NameOverflows@VE.Calc.Decls
+VE.Calc.Small@VE.Calc.Decls
+VE.Calc.Val.Agrees@VE.Calc.Decls
+VE.Calc.WellFormed@VE.Calc.Decls
 VE.Closure.ClosedAt@VE.Closure.Paths
 VE.Closure.Edge.Typed@VE.Closure.Substitution
 VE.Closure.Edge.denote@VE.Closure.Substitution
@@ -725,6 +750,9 @@ VE.Norms.YieldsD@VE.Norms.Elaborate
 VE.Norms.definitionsHold@VE.Norms.Layer
 VE.Norms.holdsCatala@VE.Norms.Elaborate
 VE.Norms.profileHold@VE.Norms.Layer
+VE.Numbers.Comparison.Holds@VE.Numbers.Phrases
+VE.Numbers.Rel.Holds@VE.Numbers.Phrases
+VE.Numbers.RoundsTo@VE.Numbers.Round
 VE.Order.Compare@VE.Order.Semantics
 VE.Order.Entails@VE.Order.Consequence
 VE.Order.FiniteModel.Valid@VE.Order.Finite

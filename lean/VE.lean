@@ -98,6 +98,8 @@ import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
 import VE.Time.Wire
 import VE.Time.Document
+import VE.Calc.Examples
+import VE.Calc.Render
 import VE.Risk.Cond
 import VE.Risk.Derive
 import VE.Risk.Background
