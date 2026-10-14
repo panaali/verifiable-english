@@ -1,0 +1,53 @@
+[
+  {
+    "merge": "17573bbb",
+    "parents": [
+      "67c056c0",
+      "cd546c0d"
+    ],
+    "conflicts": [
+      "docs/trust-baseline.json",
+      "lean/declarations.txt"
+    ],
+    "exit": 1,
+    "budget": null,
+    "stdout": "resolved docs/trust-baseline.json (json)\nresolved lean/declarations.txt (regenerate)\n== check trust-tables\nclass lines: K 997, S 9768, D 13583, G 25278, C 8153, P 69420, T 14220, o 12196\nD/G groups: D[V] 12104, D[R] 952, D[I] 527, G[V] 23331, G[R] 1714, G[I] 233\ntied 178, unclassified 4455, trusted 50496 (K + S + untied [V] + unclassified), 158070 lines in 481 files\nagainst the baseline: K +0, S -23, D -206, G -1582, tied +0, unclassified +4455, trusted +2739\n  ResponseShape/Encoders/ReadingsRoute.lean: trusted +1153\n  VE/Readings/UnspecifiedWire.lean: trusted +477\n  VE/Readings/SupFill.lean: trusted +462\n  VE/Readings/SupExtra.lean: trusted +310\n  VE/Readings/SupFillWire.lean: trusted +238\n  VE/Readings/Run.lean: trusted +70\n  VE/Readings/Route.lean: trusted +29\n",
+    "stderr": "ResponseShape/Audit.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nResponseShape/Encoders/ReadingsRoute.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nResponseShape/Schemas/ReadingsRoute.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nVE/Audit.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nVE/Readings/Route.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nVE/Readings/Run.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nVE/Readings/SupExtra.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nVE/Readings/SupFill.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nVE/Readings/SupFillWire.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nVE/Readings/UnspecifiedWire.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py\nregen_generated --resolve: failed: trust-tables\n"
+  },
+  {
+    "merge": "6aafef85",
+    "parents": [
+      "d1f90534",
+      "5479466f"
+    ],
+    "conflicts": [
+      "docs/spec/assurance-manifest.md",
+      "docs/trust-baseline.json",
+      "ve/assurance-manifest.json"
+    ],
+    "exit": 1,
+    "budget": null,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/tools/regen_generated.py\", line 612, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/tools/regen_generated.py\", line 602, in main\n    return resolve(entries)\n           ^^^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/tools/regen_generated.py\", line 537, in resolve\n    text, clean = merge_text(path, _stage(root, path, 1), _stage(root, path, 2), _stage(root, path, 3))\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/tools/regen_generated.py\", line 417, in merge_text\n    merged = _derived(path, merge_json(*sides, trust_files=path == \"docs/trust-baseline.json\"))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/tools/regen_generated.py\", line 397, in _derived\n    node[keys[-1]] = compute(value) if new is None else new\n                     ^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/tools/regen_generated.py\", line 366, in _decoder_total\n    from assurance_manifest import decoder_total_lines\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/tools/assurance_manifest.py\", line 9, in <module>\n    from ve.assurance import render_decoders_markdown, render_markdown  # noqa: E402\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/ve/__init__.py\", line 2, in <module>\n    from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/ve/ast.py\", line 11, in <module>\n    from .assurance import semantic_entry\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/ve/assurance.py\", line 43, in <module>\n    _MANIFEST = _load()\n                ^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/6aafef85/ve/assurance.py\", line 37, in _load\n    data = json.loads(MANIFEST_PATH.read_text(encoding=\"utf-8\"))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 337, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 353, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ^^^^^^^^^^^^^^^^^^^^^^\njson.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 70 column 1 (char 9580)\n"
+  },
+  {
+    "merge": "fc106062",
+    "parents": [
+      "19e57de8",
+      "96887019"
+    ],
+    "conflicts": [
+      ".importlinter",
+      "docs/spec/assurance-manifest.md",
+      "docs/trust-baseline.json",
+      "lean/VE/Route/frozen-sources.sha256",
+      "lean/declarations.txt",
+      "tools/trust-classes.json",
+      "ve/assurance-manifest.json"
+    ],
+    "exit": 1,
+    "budget": null,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/ve-eff-20261011-1-/fc106062/tools/regen_generated.py\", line 612, in <module>\n    sys.exit(main())\n             ^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/fc106062/tools/regen_generated.py\", line 602, in main\n    return resolve(entries)\n           ^^^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/fc106062/tools/regen_generated.py\", line 537, in resolve\n    text, clean = merge_text(path, _stage(root, path, 1), _stage(root, path, 2), _stage(root, path, 3))\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/fc106062/tools/regen_generated.py\", line 417, in merge_text\n    merged = _derived(path, merge_json(*sides, trust_files=path == \"docs/trust-baseline.json\"))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/fc106062/tools/regen_generated.py\", line 397, in _derived\n    node[keys[-1]] = compute(value) if new is None else new\n                     ^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/fc106062/tools/regen_generated.py\", line 366, in _decoder_total\n    from assurance_manifest import decoder_total_lines\n  File \"/tmp/ve-eff-20261011-1-/fc106062/tools/assurance_manifest.py\", line 9, in <module>\n    from ve.assurance import render_decoders_markdown, render_markdown  # noqa: E402\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/fc106062/ve/__init__.py\", line 2, in <module>\n    from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,\n  File \"/tmp/ve-eff-20261011-1-/fc106062/ve/ast.py\", line 11, in <module>\n    from .assurance import semantic_entry\n  File \"/tmp/ve-eff-20261011-1-/fc106062/ve/assurance.py\", line 43, in <module>\n    _MANIFEST = _load()\n                ^^^^^^^\n  File \"/tmp/ve-eff-20261011-1-/fc106062/ve/assurance.py\", line 37, in _load\n    data = json.loads(MANIFEST_PATH.read_text(encoding=\"utf-8\"))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 337, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 353, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ^^^^^^^^^^^^^^^^^^^^^^\njson.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 70 column 1 (char 9580)\n"
+  }
+]
