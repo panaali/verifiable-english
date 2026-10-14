@@ -172,6 +172,29 @@ def _genuine(mode):
     return text, answer
 
 
+def test_readings_route_refuses_empty_labels_targets_and_repeated_over_names(built):
+    cases = [row[2] for row in G.load_cases() if row[:2] == ["service", "readings-route"]]
+    texts = [json.dumps(case, separators=(",", ":")) for case in cases]
+    answers = G._service_answers(G.DEFAULT_EXECUTABLE, "readings-route", texts)
+    wanted = {
+        ("empty", "results/*/result/fill/*/label"),
+        ("empty", "results/*/result/targets/*"),
+        ("duplicate", "results/*/result/units/*/content/norm/over"),
+    }
+    found = set()
+    replay = G._Replay()
+    for case, line, answer in zip(cases, texts, answers):
+        for mutant, changed in G.mutants(answer, G._strings(case), G._service_rebind_ints(answer)):
+            key = (mutant.kind, mutant.pattern())
+            if key not in wanted or key in found:
+                continue
+            replay.answer, replay.mutant = changed, mutant
+            outcome, detail = G._exchange_outcome(replay, "readings-route", "[" + line + "]")
+            assert outcome == "refused", (key, detail)
+            found.add(key)
+    assert found == wanted
+
+
 def test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one(built):
     text, answer = _genuine("identity")
     replay = G._Replay()
