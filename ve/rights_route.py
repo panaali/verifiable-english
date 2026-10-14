@@ -26,11 +26,13 @@ def _bind_elaboration(row, units, environment):
         source_lines = []
         norms = []
         bars = 0
+        rule_bar = False
         for unit in units:
             if 'norm' in unit:
                 norms.append(unit)
             if 'bar' in unit:
                 bars += 1
+                rule_bar = rule_bar or unit['bar']['reading'] == 'rule'
             body = unit.get('right', unit.get('right_lines'))
             if body is None:
                 continue
@@ -118,6 +120,14 @@ def _bind_elaboration(row, units, environment):
             generated_keys.add(key)
         if set(row['wordings']) != generated_names:
             raise ValueError('unbound generated wording')
+        aimed = Counter(entry['predicate'] for entry in row['generated']
+                        if entry['kind'] == 'aimed')
+        bar_nodes = Counter(entry['predicate'] for entry in row['bars'])
+        if bar_nodes != (aimed if rule_bar else Counter()):
+            raise ValueError('unbound bar nodes')
+        if any(len(entry['over']) != len(set(entry['over'])) or
+               not set(entry['over']) <= set(correlated) for entry in row['bars']):
+            raise ValueError('unbound bar over rule')
         line_pairs = Counter((line['right'], line['rule']) for line in row['lines'])
         narrowing_pairs = Counter((entry['right'], entry['rule']) for entry in row['narrowings'])
         if narrowing_pairs != line_pairs:
