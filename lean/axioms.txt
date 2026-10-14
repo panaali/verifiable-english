@@ -4807,6 +4807,7 @@
 'VE.Core.Layers.naryCheck_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Core.Layers.stepOk_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Core.Wire.encodeFormula_embed' depends on axioms: [propext]
+'VE.Core.Layers.stepOkFrom_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.CaseCond.all_false_head' depends on axioms: [propext]
 'ResponseShape.CaseCond.all_false_tail' depends on axioms: [propext]
 'ResponseShape.CaseCond.all_true' depends on axioms: [propext]

@@ -2458,6 +2458,17 @@ theorem VE.Core.Layers.naryCheck_ok
         VE.Core.Layers.naryCheck mem M as = Except.ok () → (as.all fun a => VE.Core.Formula.eval M [] a) = Bool.true
   -- uses VE.Bridge.Entity@VE.Bridge VE.Core.Formula.eval@VE.Core.Finite VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.naryCheck@VE.Core.Layers VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite
   -- expr 3543125521
+theorem VE.Core.Layers.stepOkFrom_sound
+  ∀ (minArity : Nat) (E : VE.Environment) (later : List String) (d : VE.Core.Layers.NaryDef),
+    VE.Core.Layers.stepOkFrom minArity E later d = Bool.true →
+      ¬d.name ∈ later ∧
+        E.predicates d.name = Option.some d.args ∧
+          minArity ≤ d.args.length ∧
+            d.args.length ≤ 6 ∧
+              (∀ (s : String), s ∈ d.args → s ∈ E.sorts) ∧
+                VE.Core.Formula.WellFormed (VE.Definitions.hide E (d.name :: later)) d.args.reverse d.body
+  -- uses VE.Core.Formula.WellFormed@VE.Core.Syntax VE.Core.Layers.NaryDef.args@VE.Core.Layers VE.Core.Layers.NaryDef.body@VE.Core.Layers VE.Core.Layers.NaryDef.name@VE.Core.Layers VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.stepOkFrom@VE.Core.Layers VE.Definitions.hide@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax
+  -- expr 1263086525
 theorem VE.Core.Layers.stepOk_sound
   ∀ (E : VE.Environment) (later : List String) (d : VE.Core.Layers.NaryDef),
     VE.Core.Layers.stepOk E later d = Bool.true →
