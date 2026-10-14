@@ -783,16 +783,18 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
             "seconds": round(time.monotonic() - started, 2)}
 
 
-def light_tier(plan: dict, inventory_path: Path = ROOT / "tests/heavy.json") -> dict:
+def light_tier(plan: dict, inventory_path: Path = ROOT / "tests/heavy.json", jobs: int = 8) -> dict:
     """Run every light node, then only heavy nodes in the ordinary selection."""
     inventory = json.loads(inventory_path.read_text())
     heavy = [row["nodeid"] for row in inventory["heavy"]]
     selected_files = {unit for unit in plan["selected"] if unit.startswith("tests/")}
     selected_heavy = [nodeid for nodeid in heavy if nodeid.split("::", 1)[0] in selected_files]
     commands = [command for command in plan["commands"] if command[:len(PYTEST)] != list(PYTEST)]
-    commands.append(nested_pytest.command(["-q", "-m", "not live and not nightly and not heavy", "tests"], python=UV_PYTHON))
+    commands.append(nested_pytest.command(["-q", "-m", "not live and not nightly and not heavy", "tests"],
+                                          workers=jobs, python=UV_PYTHON))
     if selected_heavy:
-        commands.append(nested_pytest.command(["-q", "-m", "not live and not nightly and heavy", *selected_heavy], python=UV_PYTHON))
+        commands.append(nested_pytest.command(["-q", "-m", "not live and not nightly and heavy", *selected_heavy],
+                                              workers=jobs, python=UV_PYTHON))
     return {**plan, "commands": commands,
             "tier": {"name": "light", "light_count": inventory["collected_count"] - len(heavy),
                      "heavy_count": len(heavy), "selected_heavy_count": len(selected_heavy),
@@ -1270,7 +1272,7 @@ def main() -> int:
     if args.impacted:
         plan = impacted(paths, full=args.full)
         if args.tier == "light":
-            plan = light_tier(plan)
+            plan = light_tier(plan, jobs=args.jobs)
         if args.json:
             print(json.dumps(plan, indent=2))
             return run(plan, record=False, maxfail=args.maxfail, full=args.full) if args.run else 0
@@ -1298,7 +1300,7 @@ def main() -> int:
     plan = select(paths, full=args.full, base=base, after=after, coverage=coverage,
                   assume_fresh=args.assume_fresh)
     if args.tier == "light":
-        plan = light_tier(plan)
+        plan = light_tier(plan, jobs=args.jobs)
     if args.json:
         print(json.dumps(plan, indent=2))
     else:
