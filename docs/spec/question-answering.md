@@ -1159,6 +1159,18 @@ RD-3's admission currently takes about 73 s to replay this case, so the adapter
 uses the norm-defaults route's checkers. The wire theorem binds the request,
 document, question, replayed row and its lead and reason. -/
 
+def HoldsU (U : UDoc) (Γ : List VE.Formula) (φ : VE.Formula) : ChoiceResult → Prop
+  | .proved => ConflictFreeU.{u} U ∧ EntailsU.{u} U Γ φ
+  | .refuted => CounterU U Γ φ
+  | .free => ConflictFreeU.{u} U
+  | .conflict => ¬ ConflictFreeU.{0} U
+  | .model => ConsistentU U Γ
+  | .inconsistent => ConflictFreeU.{u} U ∧ EntailsU.{u} U Γ .bottom
+  | .unknown => True
+
+theorem holds_iff (N : NDoc) (φ : VE.Formula) (c : Choice) (x : ChoiceResult) :
+    Holds.{u} N [] φ c x ↔ HoldsU.{u} (choiceU N c) (choiceDoc N.D c).2 φ x
+
 def LeadHoldsU (U : UDoc) (Γ : List VE.Formula) (ψ : VE.Formula) (r : Row) : Prop :=
   match r.lead with
   | .yes => ConflictFreeU.{u} U ∧ ConsistentU U Γ ∧ EntailsU.{u} U Γ ψ
