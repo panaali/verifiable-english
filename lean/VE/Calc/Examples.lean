@@ -93,8 +93,131 @@ private def words (n : String) : Option String :=
   if n = "baseline" then some "the baseline" else none
 
 #guard VE.Calc.English.renderClaim words (.rounds .tiesUp (.val "baseline") ⟨296, 3⟩) =
-  some "the baseline is 0.296 when rounded to three decimal places, with exact ties going up."
+  some "The baseline is 0.296 when rounded to three decimal places, with exact ties going up."
 #guard VE.Calc.English.renderClaim words (.rounds .halfEven (.val "baseline") ⟨296, 3⟩) =
-  some "the baseline is 0.296 when rounded to three decimal places, with exact ties going to the even digit."
+  some "The baseline is 0.296 when rounded to three decimal places, with exact ties going to the even digit."
+
+/-! Rendering follows 11.2 (ME-1 review F1): an infix phrase stands only at the top, with an atom on
+its left; anything else is `none`. -/
+
+private def letters (n : String) : Option String :=
+  if n = "a" ∨ n = "b" ∨ n = "c" then some ("the " ++ n)
+  else if n = "minus" then some "the a minus the b"
+  else if n = "phrase" then some "the sum of the a and the b"
+  else if n = "spaced" then some "the  a"
+  else if n = "slot" then some "the {1} rate"
+  else none
+
+private def line (e : Expr) : Option String :=
+  VE.Calc.English.renderClaim letters (eq e (lit 1))
+
+#guard (line (.sub (.val "a") (.sub (.val "b") (.val "c")))).isNone
+#guard (line (.div (.val "a") (.div (.val "b") (.val "c")))).isNone
+#guard (line (.sub (.val "a") (.div (.val "b") (.val "c")))).isNone
+#guard (line (.pow (.sub (.val "a") (.val "b")) 2)).isNone
+#guard (line (.pow (.div (.val "a") (.val "b")) 3)).isNone
+#guard (line (.pow (.add (.val "a") (.val "b")) 4)).isNone
+#guard (line (.add (.sub (.val "a") (.val "b")) (.val "c"))).isNone
+#guard (line (.add (.val "c") (.div (.val "a") (.val "b")))).isNone
+#guard (line (.mul (.div (.val "a") (.val "b")) (.val "c"))).isNone
+#guard (line (.mul (.val "c") (.pow (.val "a") 4))).isNone
+#guard (line (.sub (.add (.val "a") (.val "b")) (.val "c"))).isNone
+#guard (line (.div (.pow (.val "a") 2) (.val "c"))).isNone
+#guard (line (.sub (.val "a") (.add (.val "b") (.mul (.val "c") (.val "a"))))).isNone
+#guard line (.sub (.val "a") (.add (.val "b") (.val "c"))) =
+  some "The a minus the sum of the b and the c equals 1."
+#guard line (.div (lit 1) (lit 4)) = some "1 divided by 4 equals 1."
+#guard line (.pow (.add (.val "a") (.val "b")) 2) = some "The square of the sum of the a and the b equals 1."
+#guard line (.pow (.val "a") 4) = some "The a to the power 4 equals 1."
+-- A negative number, value words that read as a phrase, and a template slot in value words.
+#guard (line (lit (-1))).isNone
+#guard (VE.Calc.English.renderClaim letters (.rounds .down (.val "a") ⟨-5, 1⟩)).isNone
+#guard (line (.val "minus")).isNone
+#guard (line (.val "phrase")).isNone
+#guard (line (.val "spaced")).isNone
+#guard VE.Calc.English.renderClaim letters (eq (.val "slot") (.val "a")) =
+  some "The {1} rate equals the a."
+#guard VE.Calc.English.renderClaim letters (.within (.val "a") (.val "slot") (.val "b")) =
+  some "The a is from the {1} rate through the b."
+
+/-! The same for every expression to depth 3 over a few atoms: a line is written exactly when 11.2
+accepts the expression, and a reader of 11.2's grammar, which returns every parse, reads it back as
+that expression and nothing else. -/
+
+private def numerals : List (String × Rat) := [("1", 1), ("0.5", 1 / 2)]
+
+private def readAtom : List String → List (Expr × List String)
+  | "the" :: n :: rest => if n = "a" ∨ n = "b" then [(.val n, rest)] else []
+  | t :: rest => (numerals.filter (·.1 = t)).map fun row => (lit row.2, rest)
+  | [] => []
+
+private def readTerm : Nat → List String → List (Expr × List String)
+  | 0, _ => []
+  | fuel + 1, ts =>
+    let two (mk : Expr → Expr → Expr) (rest : List String) :=
+      (readTerm fuel rest).flatMap fun (a, r) => match r with
+        | "and" :: r' => (readTerm fuel r').map fun (b, r'') => (mk a b, r'')
+        | _ => []
+    let one (k : Nat) (rest : List String) :=
+      (readTerm fuel rest).map fun (a, r) => (.pow a k, r)
+    readAtom ts ++ match ts with
+      | "the" :: "sum" :: "of" :: rest => two .add rest
+      | "the" :: "product" :: "of" :: rest => two .mul rest
+      | "the" :: "square" :: "of" :: rest => one 2 rest
+      | "the" :: "cube" :: "of" :: rest => one 3 rest
+      | _ => []
+
+private def readExpr (ts : List String) : List Expr :=
+  let whole (l : List (Expr × List String)) := l.filterMap fun (e, r) => if r.isEmpty then some e else none
+  let atTop (mk : Expr → Expr → Expr) (a : Expr) (r : List String) :=
+    whole ((readTerm (r.length + 1) r).map fun (b, r') => (mk a b, r'))
+  whole (readTerm (ts.length + 1) ts) ++ (readAtom ts).flatMap fun (a, r) => match r with
+    | "minus" :: r' => atTop .sub a r'
+    | "divided" :: "by" :: r' => atTop .div a r'
+    | ["to", "the", "power", k] => (k.toNat?.map fun k => Expr.pow a k).toList
+    | _ => []
+
+private def readLine (s : String) : List Expr :=
+  match ((s.dropRight 1).decapitalize.splitOn " ").reverse with
+  | "1" :: "equals" :: ts => readExpr ts.reverse
+  | _ => []
+
+private def okAtom : Expr → Bool
+  | .lit q => 0 ≤ q
+  | .val n => n = "a" ∨ n = "b"
+  | _ => false
+
+private def okTerm : Expr → Bool
+  | .add a b | .mul a b => okTerm a && okTerm b
+  | .pow a k => (k = 2 ∨ k = 3) && okTerm a
+  | e => okAtom e
+
+private def depth : Expr → Nat
+  | .lit _ | .val _ => 0
+  | .add a b | .sub a b | .mul a b | .div a b => 1 + max (depth a) (depth b)
+  | .pow a _ => 1 + depth a
+
+private def okExpr (e : Expr) : Bool :=
+  depth e ≤ 2 && match e with
+    | .sub a b | .div a b => okAtom a && okTerm b
+    | .pow a k => if k = 2 ∨ k = 3 then okTerm a else okAtom a
+    | _ => okTerm e
+
+private def grow (es : List Expr) : List Expr :=
+  es.flatMap fun a => [.pow a 2, .pow a 3, .pow a 4] ++
+    es.flatMap fun b => [.add a b, .sub a b, .mul a b, .div a b]
+
+private def atoms : List Expr := [.val "a", lit (1 / 2), lit (-1), .val "minus"]
+private def upTo2 : List Expr := atoms ++ grow atoms ++ (grow (atoms ++ grow atoms)).filter (depth · = 2)
+private def depth3 : List Expr :=
+  upTo2.flatMap fun e => [.pow e 2, .sub (.val "a") e, .add e (lit 1)]
+
+private def readsBack (e : Expr) : Bool :=
+  match line e with
+  | some s => okExpr e && readLine s == [e]
+  | none => !okExpr e
+
+#guard (upTo2 ++ depth3).all readsBack
+#guard (upTo2.filter okExpr).length = 480
 
 end VE.Calc.Examples

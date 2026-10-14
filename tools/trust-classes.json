@@ -10853,35 +10853,55 @@
     },
     "VE/Calc/Examples.lean": {
       "T": [
+        "VE.Calc.Examples.atoms",
         "VE.Calc.Examples.baseline",
         "VE.Calc.Examples.baselineDecls",
+        "VE.Calc.Examples.depth",
+        "VE.Calc.Examples.depth3",
         "VE.Calc.Examples.empty",
         "VE.Calc.Examples.eq",
+        "VE.Calc.Examples.grow",
         "VE.Calc.Examples.increase",
         "VE.Calc.Examples.largeDecls",
+        "VE.Calc.Examples.letters",
+        "VE.Calc.Examples.line",
         "VE.Calc.Examples.lit",
         "VE.Calc.Examples.lt",
         "VE.Calc.Examples.noonMean",
+        "VE.Calc.Examples.numerals",
+        "VE.Calc.Examples.okAtom",
+        "VE.Calc.Examples.okExpr",
+        "VE.Calc.Examples.okTerm",
         "VE.Calc.Examples.physicsDecls",
         "VE.Calc.Examples.physicsDisplacement",
+        "VE.Calc.Examples.readAtom",
+        "VE.Calc.Examples.readExpr",
+        "VE.Calc.Examples.readLine",
+        "VE.Calc.Examples.readTerm",
+        "VE.Calc.Examples.readsBack",
         "VE.Calc.Examples.round",
         "VE.Calc.Examples.sq",
         "VE.Calc.Examples.strictRate",
         "VE.Calc.Examples.symbolsRate",
+        "VE.Calc.Examples.upTo2",
         "VE.Calc.Examples.words"
       ]
     },
     "VE/Calc/Render.lean": {
       "G[V]": [
         "VE.Calc.English.exactWords",
-        "VE.Calc.English.exprAtom",
         "VE.Calc.English.exprDepth",
-        "VE.Calc.English.fill2",
+        "VE.Calc.English.fill",
         "VE.Calc.English.natWords",
+        "VE.Calc.English.phraseWords",
         "VE.Calc.English.placesPhrase",
         "VE.Calc.English.printedWords",
+        "VE.Calc.English.renderAtom",
         "VE.Calc.English.renderClaim",
-        "VE.Calc.English.renderExpr"
+        "VE.Calc.English.renderExpr",
+        "VE.Calc.English.renderTerm",
+        "VE.Calc.English.reservedWords",
+        "VE.Calc.English.valueWordsOk"
       ]
     },
     "VE/Calc/Syntax.lean": {
