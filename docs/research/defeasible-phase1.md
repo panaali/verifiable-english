@@ -152,7 +152,9 @@ Operational definition, `research/defeasible/specificity_pairs.py`, fixed here:
 
 ## 2. Results (added after the runs; section 1 unchanged)
 
-Commits: pre-registration `e6345192`; item 1 `770823a5`; item 2 `01dfd617`; item 4 `ab6dbb1d`; DF-E3 `268d5e38`.
+Commits: pre-registration `e6345192`; item 1 `770823a5`; item 2 `01dfd617`; item 4 `ab6dbb1d`; DF-E3 `268d5e38`;
+blind-packet pre-run edit (2.1) `357670a6`. The scripts were committed with their results, not with the
+pre-registration; section 1 states each method in full.
 
 **Binaries.** This worktree had no Lean build. `ve_service` was copied from `ve-integration`, whose `lean/` tree is the
 same as this branch's (`e48a0277`, clean). Its SHA-256, `05cc6b90…`, is pinned in `lean/checkers.lock`. The other
@@ -166,10 +168,22 @@ binary was rebuilt by `tools/rust_build.py --check` to the pinned `3ec83dee…`.
 - **Not run.** The bar needs a blind reader. This session has read research 2.3's assignments and calls no model.
 - **Reproduction (no bar).** Research 2.3's hand count holds exactly: the screen matches **99 units, 19,857 B**. All
   18 of research 2.3's screened G units are among them (`marker-screen.json`).
-- **Ready to run.** `second-reader-packet.json` holds the 99 units with their full text and the nine class
-  definitions, and no assignment. `second-reader-key.json` holds the 18 G units and is kept apart from the reader. When
-  the reader has answered, `research/defeasible/score_second_reader.py ANSWERS.json` applies the bar exactly as quoted
-  (90 of 99).
+- **Ready to run.** `second-reader-packet.json` holds the 99 units with their id, bytes and full text, and the nine
+  class definitions, and no assignment. `second-reader-key.json` holds the 18 G units and is kept apart from the
+  reader. When the reader has answered, `research/defeasible/score_second_reader.py ANSWERS.json` applies the bar
+  exactly as quoted (90 of 99).
+- **Pre-run edit to the packet** (`357670a6`, before any reader has run; the bar and the 99 units are unchanged).
+  Review found that the first packet was not blind. Its class definitions used research 2.3's own examples, which
+  are phrases and sentences from the constitution. 29 of the 99 packet units contained one of them: 28 verbatim and
+  u0135.s04 near-verbatim. 14 of the 29 carried a whole example sentence or clause; these are the reviewer's list,
+  and they include the G unit u0044.s04. The other 15 carried a short pattern phrase such as "should generally". That
+  labelled more units than the bar allows disagreements on (9). Every example is now invented. None of them occurs in the
+  constitution, and none shares a run of four words with any packet unit (checked over both packets). The class
+  meanings are unchanged. The packets also lacked the per-unit bytes that 1.1 lists; each unit now has them. The
+  bare-generics packet received the same class text.
+- **Conditions for the reader.** The key file and research 2.3's assignments (`docs/research/defeasible.md`) are
+  both in this repository. The reader therefore gets the packet files only and no repository access. The scorer's
+  docstring says so too.
 
 ### 2.2 DF-0 item 2: bare generics — counted; classification DEFERRED
 
@@ -241,7 +255,7 @@ What it means:
   `ve/__main__.py:119-121` calls `document_main` outside the `except VEError` handlers. Reported for the DRI; it is not
   DF's to fix.
 
-### 2.5 DF-E3: specificity — pre-registered verdict UNKNOWN; post hoc 0 pairs, bar not met
+### 2.5 DF-E3: specificity — UNKNOWN (pre-registered rule 1.5.7); post hoc note: 0 pairs
 
 **Bar** (quoted in 1.5): build the IDE check only if at least 5 colliding pairs, with no written precedence or rank,
 have one guard implying the other. Results are in `specificity-pairs.json`.
@@ -256,26 +270,42 @@ have one guard implying the other. Results are in `specificity-pairs.json`.
 | Asimov (v2 and extended, de-duplicated) | 42 | 16 | 5: neither implies (truth table) | 0 |
 | **Total** | 157 | 172 | 17 | **0 certain, 9 undecided** |
 
-- **Pre-registered verdict: UNKNOWN.** There are 0 certain pairs. With the 9 undecided pairs the total could reach
-  9 ≥ 5. The pre-registered method can refute an implication only by truth table, and those 9 pairs have quantified
-  guards.
-- **Post hoc (`resolve_unknown_directions.py`, `specificity-unknown-resolved.json`).** Every undecided direction was
-  refuted by a finite countermodel. Each countermodel passed VE's model check (background premises included) and VE's
-  evaluator found the closed implication false. All 9 pairs are "neither", so **0 pairs qualify and the bar is not
-  met**. Under either verdict the IDE check is not built: the bar opens the build only when at least 5 pairs are shown.
-- **No default–default pair exists anywhere.** Every colliding pair is a W1 or strict pair. The pinned translations
-  contain no soft default rules, because RD-9 SC-9 has not merged. The safety framework's default readings (f16-ds,
-  f19, f20) collide with nothing.
-- **Where one guard does imply another, the authors already wrote the precedence**, and not always in the specific
-  rule's favour. In agent-policy, rule 20 ("must not … if the tool is purchase, unless that action is confirmed") is
-  written as the exception *over* rule 10 ("may … if the tool is purchase and that action is confirmed"). Rule 10's
-  guard is the more specific one. Taken with its carve-out, rule 20 applies only where rule 10 does not. Rules
-  credential-read and credential-read-confirmed have equivalent guards and a written exception. Like u0100.s04, this is
-  evidence that a derived "more specific wins" would be a reading the text does not give.
+- **Verdict: UNKNOWN**, by the pre-registered rule 1.5.7. There are 0 certain pairs. With the 9 undecided pairs the
+  total could reach 9 ≥ 5. The pre-registered method can refute an implication only by truth table, and those 9 pairs
+  have quantified guards. So the result is neither PASS nor FAIL. Nothing is built: the bar opens the IDE check's
+  build only when at least 5 pairs are shown, and none is shown.
+- **Post hoc note (not the verdict; `resolve_unknown_directions.py`, `specificity-unknown-resolved.json`).** Every
+  undecided direction was refuted by a finite countermodel. Each countermodel passed VE's model check (background
+  premises included), and VE's evaluator found the closed implication false. By that method, which was not
+  pre-registered, all 9 pairs are "neither" and 0 pairs qualify. This note does not change the verdict.
+- **No default–default pair exists anywhere.** Every colliding pair is a W1 pair, a strict pair or a strict–default
+  pair. The pinned translations contain no soft default rules, because RD-9 SC-9 has not merged. In the safety
+  framework, one default reading collides: `f16-ds` (default) against `f15-same` (strict), with both directions
+  unknown. The use case lists this cluster itself as `CONFLICT:f15:f16` (`usecases/safety-framework/run.py:614`). The
+  other default readings, `f19` and `f20`, collide with nothing.
+- **Where one guard does imply another, the authors already wrote the precedence.** In agent-policy, rule 20 ("must
+  not … if the tool is purchase, unless that action is confirmed") is written as the exception *over* rule 10 ("may …
+  if the tool is purchase and that action is confirmed"). Rule 10's guard is the more specific one. But rule 20's
+  carve-out makes the two rules disjoint, so the precedence written there changes no outcome. The text's outcome is
+  the one "more specific wins" would also give, and the pair is evidence neither for nor against it. Rules
+  credential-read and credential-read-confirmed have equivalent guards and a written exception.
 - **Method note.** The first DF-E3 run had a bug in my script: it decoded each open guard before closing it, so the
   tableau reported scope errors. Those were not tableau answers. The script was fixed to close the wire form first, as
   1.5 states ("the closed implication"), and only the fixed run's evidence is committed. The agent-policy tableau ran
   at VE's default budget (10,000 steps); 1.5 named no budget.
+
+### 2.6 Where the scripts differ from section 1 (found in review; no number changes)
+
+The scripts were not corrected after the runs: the counts above are the committed scripts' counts. Each gap and why
+it changes no number:
+
+| Gap | Section 1 says | The script does | Effect on the counts |
+|---|---|---|---|
+| UNKNOWN upper bound | 1.5.7: certain pairs plus pairs with an unknown direction | `classify()` leaves out a pair with one direction refuted and the other unknown | none: no pair has that mix. Every class in `specificity-pairs.json` `summary.by_class` is "neither", "both unknown" or a written class |
+| Proper-name exclusion | 1.2 step 6: applied to `w0` only | applied to every subject word | none: re-run with the test on `w0` only (not committed), the screen gives the same counts and the same 16 units, and still 0 for the UDHR. The reviewer found the same |
+| Curly-apostrophe modals | 1.2 step 5 lists `can't`, `won't`, … | matches the straight apostrophe only, so `can’t` and `won’t` are not caught | none: the gap can only exclude units, never add them, and none of the 16 matches' first clauses contains a curly-apostrophe modal (checked over `bare-generics.json`) |
+| Safety-framework rule sets | 1.5.1: `translation.document(choice)` | `rule_blocks()` filtered by each block's `when` | none: the two give the same rule sets (reviewer's check) |
+| "Exact" truth table | 1.5.4: exact over the guards' atoms | ignores rules that derive guard predicates (Asimov's guard predicates are derived) | none: the reviewer checked the 8 truth-table pairs (3 constitution, 5 Asimov) by hand against the derivation rules; all are still "neither". For a re-run, "exact" should read "exact over the atoms, derivation rules not used" |
 
 ## 3. Consequences for draft 2
 
@@ -283,11 +313,11 @@ These are for the plan's next draft. The DRI decides which to adopt; no bar was 
 
 | Result | Batches it confirms | Batches it changes | Batches it cancels |
 |---|---|---|---|
-| Item 1 reproduced the screen exactly; the second reader is deferred | none yet | research 2.3's G figures (18 units, 3,631 B) and DF-4's 98–572 B estimate stay *unconfirmed* until the reader runs. DF-S does not use them, so the plan could say that DF-S needs only DF-0 items 3 and 4, and item 1 gates DF-E2 and DF-4's byte claims. As written, "DF-S needs DF-0" would block the statement review on a model call | — |
+| Item 1 reproduced the screen exactly; the second reader is deferred | none yet | research 2.3's G figures (18 units, 3,631 B) and DF-4's 98–572 B estimate stay *unconfirmed* until the reader runs. The plan's gates should say what each part of DF-0 actually gates. DF-S needs nothing from DF-0: it uses none of these figures, item 4 is done, and the plan's status line (2026-10-14) shows DF-S already under way. The baseline (item 3) is needed before DF-1a or DF-1b changes an answer (row 3). Item 1 gates DF-E2 and DF-4's byte claims. The reader must get the packet only, without repository access (2.1) | — |
 | Item 2: 16 constitution units (2,433 B), 0 UDHR | — | DF-E2's population becomes the 19 G units plus up to 16 bare generics (at most 35 units), after the reader classifies them. The screen's recall gap (subjects with post-modifiers) should be stated in DF-E2 | — |
 | Item 3 deferred | — | the baseline must be recorded on `main` after RD-9 merges and **before** DF-1a or DF-1b changes any answer, or P-1's "0 → 3" has no measured "0". Add that ordering to the batch order | — |
 | Item 4: DF-λ is refused at load on `main`; with `deny`, render stops at `norm_english.py:398` | DF-4's deletion target (`ve/norm_english.py:397-398`) is the right line, and it is the only English obstacle seen | DF-4 gains an explicit need: **RD-9 SC-8** (`norm-defaults@0` beside `soft-norms@0` in `ve document`). Today it inherits SC-8 only through DF-1b. DF-0 item 4's expected outcome in the plan ("check passes") should be corrected | — |
-| DF-E3: no qualifying pair; no default–default pair at all | D8: no automatic specificity | DF-E3 should be re-run, under the same bar, once RD-9 SC-9's default rules are in a pinned translation: today's count covers W1 pairs only. The re-run's pre-registration should add a refutation step (a finite countermodel confirmed by VE's evaluator), because the tableau cannot refute and quantified guards otherwise stay UNKNOWN | the IDE check "Rule m (exception to rule n)." (D8's suggestion) is **not built**. DF's need for shared piece **S8** (the "more specific than" helper) is withdrawn. Weighing and scope may still ask for S8, on their own evidence |
+| DF-E3: UNKNOWN (0 certain, 9 undecided; post hoc note: 0); no default–default pair at all | D8: no automatic specificity (D8 holds whatever the count) | DF-E3 should be re-run, under the same bar, once RD-9 SC-9's default rules are in a pinned translation: today's corpora hold no default–default pair, so today's count covers W1, strict and strict–default pairs only. The re-run's pre-registration should add a refutation step (a finite countermodel confirmed by VE's evaluator), because the tableau cannot refute and quantified guards otherwise stay UNKNOWN; and it should say that the truth table does not use derivation rules (2.6). **Deferred until the re-run:** the IDE check "Rule m (exception to rule n)." (D8's suggestion) and DF's need for shared piece **S8** (the "more specific than" helper). Neither is built now, because the bar opens the build only at 5 pairs shown. Neither is cancelled, because the verdict is UNKNOWN and the corpora that matter do not exist yet. Weighing and scope may still ask for S8, on their own evidence | none |
 
 Also for the DRI, outside this plan: the `ve document` traceback (2.4) is a small product fix for its own branch.
 
@@ -299,7 +329,7 @@ Also for the DRI, outside this plan: the `ve document` traceback (2.4) is a smal
 | DF-0.2 bare generics | none (count) | 16 constitution units, 2,433 B; 0 UDHR; classification pending | **done (count)**; classification **DEFERRED** (model call) |
 | DF-0.3 baseline | none (record) | — | **DEFERRED** (RD-9 SC-9 `CE4` not on `main`) |
 | DF-0.4 plain-default probe | none (expected: check passes, render refuses at `norm_english.py:398`) | check and render refused at load (`document.py:633`); post hoc with `deny`: check passes, render refuses at `:398` | **done; expectation not met** |
-| DF-E3 specificity | IDE check only if ≥ 5 pairs | pre-registered: UNKNOWN (0 certain, 9 undecided); post hoc: 0 | **FAIL** (bar not met; IDE check not built) |
+| DF-E3 specificity | IDE check only if ≥ 5 pairs | 0 certain, 9 undecided (rule 1.5.7); post hoc note: 0 | **UNKNOWN** (nothing built; IDE check and S8 deferred until a re-run with SC-9's default rules) |
 | DF-E1, DF-E2 | — | later batches | not in phase 1 |
 
 ## 5. Reproduce
