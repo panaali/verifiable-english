@@ -68,6 +68,29 @@ so every user of the clock tests the check while the service works, and cannot f
 Probe F1: before the fix its assertion failed (2 passed under the mutant); after it, it passes
 (2 failed, both `DID NOT RAISE CheckerUnavailable`). Seeded bugs S7 to S9 below.
 
+## Recheck fix F2: a response completed after its CPU deadline was accepted
+
+Recheck (`runner-portability-looprecheck1.final.md`, F2, B, pre-existing): `_read_line` returned a
+complete line without checking the deadline after its last `os.read`, so CPU exhaustion during that
+read (1.0 s against 0.3 s in the probe) answered OK. The class: a transfer loop whose final system call
+is followed by no deadline check (no `select` follows it). No standing ruling covers a missed limit.
+
+Fix: `LeanService._write_all` and `_read_line` call `_wait` once more after their final system call
+(47a3a39b), and the Rust JSONL client, the only other hand-written transfer loop
+(`ve/backends/rust_jsonl.py`, `_Checker.exchange`), checks its deadline after the read that completes
+the record (d2497b5e). The other transports are `subprocess.run` one-shots whose timeout is a hang guard
+only. A late record is `CheckerUnavailable`, never an answer; the process is killed, not reused.
+
+- `tests/test_lean_service.py::test_request_transfer_checks_cpu_after_its_final_system_call`
+  (`write`, `response`): the CPU reading jumps past the deadline during the last write or the read that
+  completes the response; `CheckerUnavailable` naming the mode, not retried. The `response` case is
+  probe F2 (the probe file was gone; this test reproduces its injection).
+- `tests/test_lean_handles.py::test_a_rust_record_completed_past_its_deadline_is_no_answer` (`write`,
+  `response`): the same for the Rust client's wall-clock deadline.
+
+Probe F2: before the fix (S10, planted in a scratch worktree) `[response]` failed with `DID NOT RAISE
+CheckerUnavailable`; after it, both cases pass. Seeded bugs S10 to S12 below.
+
 ## The search for other tests of this kind
 
 For F1's class (a deadline found passed in another phase than the claimed one): the only users of an
@@ -93,7 +116,8 @@ one tick and expect it to trip. The others do not depend on machine speed or tic
 ## DRI rulings
 
 No user-visible delta: no verdict, wording, field, fault order, CPU or trust budget changes. Nothing
-needs a standing ruling or a DRI signature.
+needs a standing ruling or a DRI signature. F2 enforces the existing deadlines where they were missed (a
+late answer is `CheckerUnavailable`, as one a moment later already was); it adds no new limit.
 
 ## Seeded bugs
 
@@ -114,8 +138,17 @@ shown to fail its test, and removed:
 9. S9 `ve/backends/lean_service.py`: `_wait` skips the CPU check while writing the request -> the two write
    phase cases fail.
 
-Only Python test code changed (no Lean, no Rust, no product code); S5 and S6 seed the product code
-whose behaviour the two fixed tests claim.
+10. S10 `ve/backends/lean_service.py` (F2): `_read_line` returns without the final deadline check ->
+    the `[response]` transfer case fails (`DID NOT RAISE`).
+11. S11 `ve/backends/lean_service.py` (F2): `_write_all` returns without the final deadline check -> the
+    `[write]` transfer case fails.
+12. S12 `ve/backends/rust_jsonl.py` (F2): `_Checker.exchange` returns without the deadline check after
+    its last read -> the Rust `[response]` case fails (`[write]` passes: the read loop checks first).
+
+Until F1, only Python test code changed; S5 and S6 seed the product code whose behaviour the two fixed
+tests claim. F2 changed Python product code only (no Lean, no Rust): S10 to S12 seed it. S10 to S12 were
+planted in a scratch worktree, since an unattended commit job on this branch committed an earlier
+in-place plant (removed with `git reset --keep`).
 
 ## Tests run
 
@@ -143,3 +176,15 @@ whose behaviour the two fixed tests claim.
   this report and that file were committed after it. An earlier start of the gate on the same commit
   was stopped unfinished: under a machine load of about 86 on 32 CPUs, `-n auto` gave the suite one
   worker, and after 2.4 hours it was about 16% through. It produced no result, so this is not a rerun.
+- F2 fix (47a3a39b, d2497b5e): `select_tests.py --base 41dea64a` selects all 370 units (both changed
+  transports are imported by every Lean or Rust test), so the full set was not run. Run at `-n 8`: the 19
+  transport, deadline and Rust-client files (`test_lean_service`, `test_lean_handles`, `test_hang_guards`,
+  `test_stage2_faults`, `test_p1_infrastructure`, `test_assurance_manifest`, `test_question_reading`,
+  `test_lean_document_wrapper`, `test_stage2_dispatch`, `test_rust_jsonl_schema`, `test_route_transport`,
+  `test_relay`, `test_gate_collection`, `test_assist_deadline`, `test_cpu_bounds`,
+  `test_soft_request_economy`, `test_rust_conformance`, `test_single_owner`, `test_regen_generated`):
+  1,688 passed; 11 route and Rust-path files (`test_question_differential`, `test_evaluate_search`,
+  `test_readings_s2_document`, `test_search_options`, `test_discourse_answer`, `test_readings_route_relay`,
+  `test_relay_wire_check`, `test_route_row_schemas`, `test_rust_reproducible`, `test_lean_layers_once`,
+  `test_entailment`): 482 passed; `tools/test_layer_policy.py` OK; `lake build` and `lean/audit.py`
+  passed. Full gate left to the merge train's branch verify.

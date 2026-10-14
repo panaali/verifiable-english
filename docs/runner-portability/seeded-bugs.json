@@ -25,5 +25,14 @@
    "result": "4 failed (response-checked, response-write unchecked, both deadline tests), 4 passed"},
   {"id": "S9", "file": "ve/backends/lean_service.py", "change": "_wait skips the CPU check while writing the request",
    "test": "tests/test_lean_service.py::test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline tests/test_lean_document_wrapper.py::test_a_document_past_its_cpu_deadline_is_unavailable_never_ok",
-   "result": "2 failed (write-checked, write-response unchecked), 6 passed"}
+   "result": "2 failed (write-checked, write-response unchecked), 6 passed"},
+  {"id": "S10", "file": "ve/backends/lean_service.py", "change": "recheck F2: _read_line returns a complete line without the final deadline check (probe F2's before state)",
+   "test": "tests/test_lean_service.py::test_request_transfer_checks_cpu_after_its_final_system_call",
+   "result": "1 failed ([response], DID NOT RAISE CheckerUnavailable), 1 passed"},
+  {"id": "S11", "file": "ve/backends/lean_service.py", "change": "_write_all returns after its last write without the final deadline check",
+   "test": "tests/test_lean_service.py::test_request_transfer_checks_cpu_after_its_final_system_call",
+   "result": "1 failed ([write], DID NOT RAISE CheckerUnavailable), 1 passed"},
+  {"id": "S12", "file": "ve/backends/rust_jsonl.py", "change": "_Checker.exchange returns the record without the deadline check after the last read",
+   "test": "tests/test_lean_handles.py::test_a_rust_record_completed_past_its_deadline_is_no_answer",
+   "result": "1 failed ([response], DID NOT RAISE CheckerUnavailable), 1 passed ([write]: the read loop's first check)"}
 ]
