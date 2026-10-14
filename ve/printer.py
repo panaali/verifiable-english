@@ -184,9 +184,33 @@ class _NaturalVocabulary:
     """One conservative lexical policy shared by rendering and public linting.
 
     This is a heuristic over trusted declarations, not an English meaning proof.
-    Inspect all declarations, including unusable templates and unused symbols.
+    Inspect all declarations, including unused symbols. A rejected template does
+    not reserve its head word for another declaration's lint or rendering.
     """
-    def __init__(self, env):
+    def __init__(self, env, *, _head_owners=None):
+        if _head_owners is None:
+            # First check templates against declared names and nouns. Only
+            # candidates that pass may contribute heads to the full lint.
+            preliminary = _NaturalVocabulary(env, _head_owners={})
+            eligible = set(preliminary._accepted)
+            blocked_issues = set()
+            while True:
+                heads = {name: _template_head(env.predicates[name].verbalisation,
+                                              len(env.predicates[name].arguments))
+                         for name in eligible}
+                checked = _NaturalVocabulary(env, _head_owners=heads)
+                rejected = eligible - checked._accepted
+                if not rejected:
+                    for name in env.predicates.keys() - eligible:
+                        checked.predicates[name] = checked._strict[name]
+                        checked.negatives.pop(name, None)
+                    checked.issues = tuple(sorted(set(checked.issues) | blocked_issues,
+                                                  key=lambda issue: (issue.path, issue.code)))
+                    self.__dict__.update(checked.__dict__)
+                    return
+                blocked_issues.update(issue for issue in checked.issues
+                                      if issue.path.split('/')[3] in rejected)
+                eligible -= rejected
         strict = {name: ("{0} is " + name if len(p.arguments) == 1 else
                          "{0} " + name + " {1}" if len(p.arguments) == 2 else
                          "{0} has recorded relation " + name + " with " +
@@ -199,7 +223,7 @@ class _NaturalVocabulary:
             for name in declarations:
                 owners[name].add(name)
         for name, p in env.predicates.items():
-            head = _template_head(p.verbalisation or strict[name], len(p.arguments))
+            head = _head_owners.get(name)
             if head:
                 owners[head].add(name)
                 predicate_heads.add(head)
@@ -336,6 +360,8 @@ class _NaturalVocabulary:
             if len(issues) == before:
                 self.sorts[name] = s.verbalisation.singular
         self.issues = tuple(sorted(issues, key=lambda issue: (issue.path, issue.code)))
+        self._accepted = accepted
+        self._strict = strict
 
     def atom(self, predicate, terms, *, negative=False):
         # Literal replacement only. Terms cannot contain braces, and every safe

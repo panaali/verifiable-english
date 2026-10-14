@@ -268,6 +268,24 @@ def test_rejected_template_equal_to_old_strict_fallback_stays_rejected():
     roundtrip(Unary('either', Const('api')), env)
 
 
+def test_rejected_binary_template_does_not_take_accepted_unary_wordings():
+    from ve import lint_vocabulary
+    data = vocabulary()
+    base = Environment(data)
+    original = {name: render(Unary(name, Const('api')), base, 've_explicit')
+                for name in ('active', 'reviewed', 'exempt')}
+    data['vocabulary']['predicates']['importance'] = {
+        'arguments': ['item', 'agent'], 'description': 'Importance',
+        'verbalisation': '{0} is of the greatest importance for {1}'}
+    env = Environment(data)
+    assert any(issue.path.endswith('/importance/verbalisation')
+               for issue in lint_vocabulary(env))
+    assert {name: render(Unary(name, Const('api')), env, 've_explicit')
+            for name in original} == original
+    assert all('SYMBOL_COLLISION' != issue.code or '/importance/' in issue.path
+               for issue in lint_vocabulary(env))
+
+
 def test_all_existing_negative_attack_templates_also_reject_in_english():
     from test_fluent import negative_vocabulary, test_attacker_negative_templates_rejected_with_explicit_fallback
     mark, = test_attacker_negative_templates_rejected_with_explicit_fallback.pytestmark
