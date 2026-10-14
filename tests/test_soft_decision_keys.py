@@ -178,3 +178,19 @@ def test_f12_public_soft_route_rejects_unbound_output(monkeypatch, genuine, muta
     monkeypatch.setattr(soft_route, '_run', lambda case: row)
     with pytest.raises(CheckerUnavailable):
         soft_route.elaborate_soft_document(document)
+
+
+def test_f12_decider_counts_are_bound_per_decider(monkeypatch, lean):
+    """A valid decider cannot claim the default rule assigned to another decider."""
+    from ve import soft_route
+    raw, norms = _source()
+    norms[1]['norm']['exception']['decided_by'] = 'user'
+    row = elaborate(lean, raw, norms)
+    assert row['default_exceptions_by_decider'] == {'assistant': 1, 'user': 1}
+    monkeypatch.setattr(softnorms, 'check_soft_source', lambda *args, **kwargs: row)
+    document = softnorms.SoftNormDocument(softnorms.SoftEnvironment(raw), norms)
+    forged = copy.deepcopy(row)
+    forged['default_exceptions_by_decider'] = {'assistant': 2}
+    monkeypatch.setattr(soft_route, '_run', lambda case: forged)
+    with pytest.raises(CheckerUnavailable):
+        soft_route.elaborate_soft_document(document)

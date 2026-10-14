@@ -301,13 +301,12 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None)
                       'holistic_overrides': overrides, 'weighing_points': len(pair_labels)}
             if any(row['soft_residual'][field] > maximum for field, maximum in bounds.items()):
                 raise ValueError('soft residual count exceeds request')
-            deciders = {
-                (rule.get('exception') or {}).get('decided_by') or soft.get('exception_decider') or 'unstated'
-                for rule in defaults
-            }
+            decider_limits = {}
+            for rule in defaults:
+                decider = (rule.get('exception') or {}).get('decided_by') or soft.get('exception_decider') or 'unstated'
+                decider_limits[decider] = decider_limits.get(decider, 0) + 1
             counts = row['default_exceptions_by_decider']
-            if (any(name not in deciders or count == 0 for name, count in counts.items()) or
-                    sum(counts.values()) > len(defaults)):
+            if any(count == 0 or count > decider_limits.get(name, 0) for name, count in counts.items()):
                 raise ValueError('unbound default exception decider or count')
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(f'CheckerUnavailable: Lean soft elaboration is not bound to the request: {error}') from error

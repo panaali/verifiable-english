@@ -12719,6 +12719,7 @@
   "tests/test_soft_decision_keys.py::test_f11_unbound_or_missing_decision_rows_are_unavailable[<lambda>4]",
   "tests/test_soft_decision_keys.py::test_f11_unbound_or_missing_decision_rows_are_unavailable[<lambda>5]",
   "tests/test_soft_decision_keys.py::test_f11_unbound_or_missing_decision_rows_are_unavailable[<lambda>6]",
+  "tests/test_soft_decision_keys.py::test_f12_decider_counts_are_bound_per_decider",
   "tests/test_soft_decision_keys.py::test_f12_public_soft_route_rejects_unbound_output[decider count exceeds defaults]",
   "tests/test_soft_decision_keys.py::test_f12_public_soft_route_rejects_unbound_output[default count exceeds rules]",
   "tests/test_soft_decision_keys.py::test_f12_public_soft_route_rejects_unbound_output[duplicate conditional label]",
