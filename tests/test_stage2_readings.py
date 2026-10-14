@@ -102,6 +102,31 @@ def test_joint_choices_ignore_authored_sets_in_every_wire_vector(
     assert captured[0]["choice_evidence"][0]["choice"] == [0]
 
 
+@pytest.mark.parametrize("authored_first", [False, True])
+@pytest.mark.parametrize("signed,verdict", [(ATOM, "ALL"), (NEGATED, "NONE")])
+def test_joint_authored_assertion_is_fixed_in_search_and_lean(
+        monkeypatch, authored_first, signed, verdict):
+    authored = {"id": "a", "version": 1, "status": "authored",
+                "readings": [{"kind": "asserted", "content": signed}]}
+    open_set = {"id": "o", "version": 1, "status": "open",
+                "readings": [{"kind": "asserted", "content": ["top"]}]}
+    sets = [authored, open_set] if authored_first else [open_set, authored]
+    captured = []
+    real = relay.decide
+
+    def spy(mode, batch, **kw):
+        if mode == "readings-choices":
+            captured.extend(copy.deepcopy(batch))
+        return real(mode, batch, **kw)
+
+    monkeypatch.setattr(relay, "decide", spy)
+    result = check_readings(env(), sets, ATOM, fixed=[["top"]],
+                            joint_choices={"status": "complete", "choices": [{"o@1": 0}]})
+    assert result["verdict"] == verdict
+    assert captured[0]["fixed"] == [["top"], signed]
+    assert [item["id"] for item in captured[0]["set_meta"]] == ["o"]
+
+
 @pytest.mark.parametrize("reverse_keys", [False, True])
 def test_joint_proof_premises_follow_set_order_not_mapping_order(monkeypatch, reverse_keys):
     sets = [{"id": key, "version": 1, "readings": [{"kind": "asserted", "content": formula}]}

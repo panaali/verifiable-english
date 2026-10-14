@@ -72,6 +72,33 @@ def _sample(tmp_path):
     return source, front
 
 
+def test_joint_query_uses_signed_authored_assertion(tmp_path):
+    from tests.test_document import query, reading
+
+    source, front = _sample(tmp_path)
+    conclusion = front["units"][1]["content"]["ast"]
+    env = Environment({**front["environment"], "profiles": ["relational-fol@0"]})
+    front["reading_sets"] = [{"id": "s", "unit": "u2", "version": 1,
+                              "status": "authored", "signature": "author",
+                              "readings": [reading(env, "r", conclusion)]}]
+    assert query(_write(tmp_path, front, source), tmp_path, conclusion)["verdict"] == "ALL"
+
+
+def test_joint_document_premises_keep_signed_authored_assertion(tmp_path):
+    from tests.test_document import reading
+
+    constraints = [{"kind": "requires", "a": ["rs5", 1, "a"], "b": ["rs6", 1, "a"]},
+                   {"kind": "requires", "a": ["rs5", 1, "b"], "b": ["rs6", 1, "b"]},
+                   {"kind": "excludes", "a": ["rs5", 1, "a"], "b": ["rs6", 1, "a"]}]
+    q = ["unary", "deployed", ["const", "api"]]
+    source, front = _correlated(tmp_path, constraints, label=1, readings=(q, ["not", q]))
+    env = Environment({**front["environment"], "profiles": ["relational-fol@0"]})
+    front["reading_sets"].append({"id": "signed", "unit": "u2", "version": 1,
+                                   "status": "authored", "signature": "author",
+                                   "readings": [reading(env, "q", q)]})
+    assert check_document(_write(tmp_path, front, source))["premises"]["status"] == "INCONSISTENT"
+
+
 def test_profile_adapter_and_explicit_expansion(tmp_path):
     source, front = _sample(tmp_path)
     path = _write(tmp_path, front, source)
