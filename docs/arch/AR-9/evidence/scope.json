@@ -1,0 +1,84 @@
+{
+ "base": "5479466f9faada4cb500bb52bca2436f03662e54",
+ "head": "eb433e5b4d6f5350a59424fb6e49b96e1cae8ce6",
+ "commits": [
+  {
+   "hash": "eb433e5b4d6f5350a59424fb6e49b96e1cae8ce6",
+   "subject": "docs: record AR-9 selected tests and gate failure analysis"
+  },
+  {
+   "hash": "f1ab817752407de44f0d1ba41c68afc00ab9672c",
+   "subject": "test: avoid broad static import from gate fixture"
+  },
+  {
+   "hash": "6ddfe8b26a9cce21fd355346278ec2f1bd6e9223",
+   "subject": "test: let nested gate interruption tests reach the build stage"
+  },
+  {
+   "hash": "7b44a23434089e1475d6241c9380297f248c5c9d",
+   "subject": "docs: record AR-9 gate preflight attempt"
+  },
+  {
+   "hash": "9d82676d23f0be4386ac20fcf38e3cd371cd65b8",
+   "subject": "docs: align AR-9 split evidence with current merge base"
+  },
+  {
+   "hash": "e0cbab248448da9a0d01b857d2a5f1a49db63187",
+   "subject": "docs: check AR-9 saved evidence outside permanent suite"
+  },
+  {
+   "hash": "727f7fa4647e724dabe2d5180501fe8ab38f9905",
+   "subject": "docs: AR-9 seeded faults name the file each one changes"
+  },
+  {
+   "hash": "7759894ae100d6347ed45e7cbd7f84b6af69e767",
+   "subject": "docs: AR-9 scope measured from the merge-base after syncing with main (5479466f)"
+  },
+  {
+   "hash": "8101a733bb7ecef3f9f9e95cc069dfb711d9d603",
+   "subject": "docs: AR-9 seeded faults re-run through the builder after syncing with main"
+  },
+  {
+   "hash": "16383a2f8a49df20e93f5f564305b56843d93be2",
+   "subject": "docs: AR-9 seeded faults run pytest through tools/nested_pytest.py, the one builder"
+  },
+  {
+   "hash": "7f137b6319e1c474f3d212417385d2ef29000b7f",
+   "subject": "docs: AR-9 report names the R12 merge rule, the D4 move and the overlap recheck after syncing"
+  },
+  {
+   "hash": "cb10ebb91d8e02b9c3aeeae6f98196286b6a4227",
+   "subject": "docs: AR-9 report, delta, split measurement and seeded faults"
+  },
+  {
+   "hash": "273392667d50f91cc4ae784063e5df70e28e1186",
+   "subject": "tests: pin what the assist split keeps: names, seams, one owner per member"
+  },
+  {
+   "hash": "9ab9127d78ca292ad5c425073c0786972dfa1c14",
+   "subject": "refactor: split the assist recovery and session modules (AR-9)"
+  }
+ ],
+ "files": [
+  "docs/arch/AR-9/DELTA.md",
+  "docs/arch/AR-9/REPORT.md",
+  "docs/arch/AR-9/check_evidence.py",
+  "docs/arch/AR-9/evidence/mutants.json",
+  "docs/arch/AR-9/evidence/selected.json",
+  "docs/arch/AR-9/evidence/split.json",
+  "docs/arch/AR-9/measure.py",
+  "docs/arch/AR-9/report.py",
+  "docs/arch/AR-9/seed_faults.py",
+  "tests/conftest.py",
+  "tests/test_assist_split.py",
+  "tools/gate-collection.json",
+  "ve/assist/recovery.py",
+  "ve/assist/recovery_commands.py",
+  "ve/assist/recovery_journal.py",
+  "ve/assist/recovery_replay.py",
+  "ve/assist/session.py",
+  "ve/assist/session_proposals.py",
+  "ve/assist/session_state.py",
+  "ve/assist/session_views.py"
+ ]
+}

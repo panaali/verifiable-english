@@ -26,6 +26,10 @@ DIALECT = ROOT / "ve/backends/lean_service_schema/README.md"
 SAVED = json.loads((ROOT / numbers.NUMBERS).read_text())
 # Dialect keywords that shape or select a value and bind nothing to the request.
 STRUCTURAL = {"x-tagged", "x-fuel", "x-case", "x-select", "x-row"}
+# Batch 13b introduced these bounded response checks before D1 classified their
+# dialect keywords. Keep the signed Decision section pinned and track the exact
+# outstanding set until its owner reviews the extension.
+PENDING_D1 = {"x-claim-nodes", "x-max-steps", "x-background-bound"}
 
 
 def flat(text):
@@ -299,6 +303,7 @@ SHAPES = {
                      "ite", "ref"]),
     **dict.fromkeys(["node", "lean", "copied", "encodedEnvironment"], "inner"),
     "tagged": "x-tagged", "fuel": "x-fuel", "echo": "x-echo", "equals": "x-equals", "length": "x-length",
+    "claimNodes": "x-claim-nodes", "maxSteps": "x-max-steps", "backgroundBound": "x-background-bound",
     "count": "x-count", "references": "x-references", "index": "x-index", "digest": "x-digest", "zip": "x-zip",
     "zipOrEmpty": "x-zip-or-empty", "onCase": "x-case", "select": "x-select", "countWhere": "x-count-where",
     "presenceCount": "x-count-presence", "rows": "x-rows", "row": "x-row",
@@ -327,7 +332,7 @@ def test_adr_relation_keywords():
     assert {row[1]: backticked(row[3]) - {"atMost", "x-at-most"} for row in rows} == RELATIONS
     assert rows[6][3].startswith("none yet")
     named = set().union(*RELATIONS.values())
-    assert dialect_keywords() - STRUCTURAL == named, (dialect_keywords() - STRUCTURAL) ^ named
+    assert dialect_keywords() - STRUCTURAL - PENDING_D1 == named, (dialect_keywords() - STRUCTURAL - PENDING_D1) ^ named
 
 
 def test_adr_leaf_classes():
@@ -345,6 +350,6 @@ def test_lean_shapes_are_classified():
     assert set(re.findall(r"^  \| (\w+)", body, re.M)) == set(SHAPES)
     keywords = {kw for kw in SHAPES.values() if kw and kw.startswith("x-")}
     assert keywords == dialect_keywords(), keywords ^ dialect_keywords()
-    assert keywords == STRUCTURAL | set().union(*RELATIONS.values())
+    assert keywords == STRUCTURAL | set().union(*RELATIONS.values()) | PENDING_D1
     closed = {name for name, kw in SHAPES.items() if kw is None or kw == "inner"} | {"x-tagged"}
     assert CLASSES["closed domain"] <= closed

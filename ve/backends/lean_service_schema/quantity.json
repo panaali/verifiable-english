@@ -210,7 +210,8 @@
         "status": {"const": "ok"}
       },
       "required": ["id", "status", "admitted", "assurance", "report", "report_id", "environment_id", "kinds"],
-      "type": "object"
+      "type": "object",
+      "x-references": {"array": "/report/assumptions", "field": "name", "in": "/document/graph/nodes/*/name"}
     },
     "error": {
       "$comment": "Time.Wire.runCaseReported: the request's id (null if absent) and the message, with valid: false exactly for a certificate case.",

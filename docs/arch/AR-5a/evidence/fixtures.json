@@ -1,0 +1,103 @@
+{
+ "controls_pass": 3,
+ "fail": 9,
+ "fixtures": [
+  {
+   "errors": [
+    "corpus comparison has an unlisted or unavailable result"
+   ],
+   "name": "ab: a record unavailable on both sides",
+   "verdict": "FAIL"
+  },
+  {
+   "errors": [
+    "latency sample '<tmp>/a/s1.ve.md': head 15.0 ms is above 1.2 x base 10.0 ms"
+   ],
+   "name": "b1 latency: two documents named s1.ve.md in a/ and b/, a/ 50% slower on head",
+   "rows": 2,
+   "verdict": "FAIL"
+  },
+  {
+   "errors": [
+    "fuzz A/B run --ci has 2 unexplained difference(s)"
+   ],
+   "name": "b10a trace fuzzer: replay verdicts swapped, counts equal",
+   "verdict": "FAIL"
+  },
+  {
+   "errors": [
+    "fuzz A/B run --ci has 1 unexplained difference(s)"
+   ],
+   "name": "b10b fuzzer gate: new Lean ResourceLimit answer after the known DF-19 rejection",
+   "verdict": "FAIL"
+  },
+  {
+   "errors": [],
+   "name": "control: complete A/B record",
+   "verdict": "PASS"
+  },
+  {
+   "errors": [],
+   "name": "control: complete latency record",
+   "verdict": "PASS"
+  },
+  {
+   "errors": [],
+   "name": "control: identical fuzz reports",
+   "verdict": "PASS"
+  },
+  {
+   "errors": [
+    "latency.json: the key 'k' occurs twice in one object"
+   ],
+   "name": "latency: duplicated key",
+   "verdict": "FAIL"
+  },
+  {
+   "errors": [
+    "latency evidence is empty, malformed or above the 20% Lean CPU budget",
+    "latency evidence has an empty key ''"
+   ],
+   "name": "latency: empty key",
+   "verdict": "FAIL"
+  },
+  {
+   "errors": [
+    "latency evidence is empty, malformed or above the 20% Lean CPU budget",
+    "latency evidence has no sample for 'docs/b/s1.ve.md'"
+   ],
+   "name": "latency: missing key",
+   "verdict": "FAIL"
+  },
+  {
+   "errors": [
+    "latency evidence is empty, malformed or above the 20% Lean CPU budget",
+    "latency sample 'x' is not measured on both sides"
+   ],
+   "name": "latency: unavailable on both sides",
+   "verdict": "FAIL"
+  },
+  {
+   "errors": [
+    "<tmp>/e1.jsonl: the recording is empty",
+    "<tmp>/e2.jsonl: the recording is empty"
+   ],
+   "name": "lf-0: empty A/B recordings",
+   "verdict": "FAIL"
+  }
+ ],
+ "summary": [
+  "ab: a record unavailable on both sides: FAIL",
+  "b1 latency: two documents named s1.ve.md in a/ and b/, a/ 50% slower on head: FAIL",
+  "b10a trace fuzzer: replay verdicts swapped, counts equal: FAIL",
+  "b10b fuzzer gate: new Lean ResourceLimit answer after the known DF-19 rejection: FAIL",
+  "control: complete A/B record: PASS",
+  "control: complete latency record: PASS",
+  "control: identical fuzz reports: PASS",
+  "latency: duplicated key: FAIL",
+  "latency: empty key: FAIL",
+  "latency: missing key: FAIL",
+  "latency: unavailable on both sides: FAIL",
+  "lf-0: empty A/B recordings: FAIL"
+ ]
+}

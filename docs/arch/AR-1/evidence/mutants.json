@@ -1,0 +1,165 @@
+[
+ {
+  "id": "P1",
+  "language": "Python",
+  "file": "tools/lean_statements.py",
+  "behaviour": "the dump records each manifest's generated hash",
+  "mutation": {
+   "from": "hashes[module_name(manifest)] = hashlib.sha256(text.encode()).hexdigest()",
+   "to": "pass"
+  },
+  "test": "tests/test_lean_audit_record.py::test_scratch_theorem_needs_write_and_check_passes_after",
+  "killed": true,
+  "pytest_summary": "1 failed in 25.74s"
+ },
+ {
+  "id": "P2",
+  "language": "Python",
+  "file": "tools/lean_statements.py",
+  "behaviour": "statement names come from the generated manifest of this dump, not the manifest file",
+  "mutation": {
+   "from": "names = sorted(manifests[audit.MANIFESTS[0]])",
+   "to": "names = audited_names(root)"
+  },
+  "test": "tests/test_lean_audit_record.py::test_scratch_theorem_needs_write_and_check_passes_after",
+  "killed": true,
+  "pytest_summary": "1 failed in 21.20s"
+ },
+ {
+  "id": "P3",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "every theorem of declarations.txt is in a manifest (Prop-class instances included)",
+  "mutation": {
+   "from": "if constant.kind != \"theorem\" or constant.start is None:",
+   "to": "if constant.kind != \"theorem\" or constant.start is None or \".inst\" in constant.name:"
+  },
+  "test": "tests/test_lean_audit_record.py::test_committed_manifests_are_the_generated_ones",
+  "killed": true,
+  "pytest_summary": "1 failed in 5.01s"
+ },
+ {
+  "id": "P4",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "a module whose SHA-256 differs from declarations.txt fails --check and --write",
+  "mutation": {
+   "from": "or tools.source_hash(current[m]) != hashes[m])",
+   "to": ")"
+  },
+  "test": "tests/test_lean_audit_record.py::test_scratch_stale_declarations_fail_check_and_write",
+  "killed": true,
+  "pytest_summary": "1 failed in 24.54s"
+ },
+ {
+  "id": "P5",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "--check fails on a manifest that differs from the generated one",
+  "mutation": {
+   "from": "elif not path.is_file() or path.read_text(encoding=\"utf-8\") != text:",
+   "to": "elif not path.is_file():"
+  },
+  "test": "tests/test_lean_audit_record.py::test_scratch_theorem_needs_write_and_check_passes_after",
+  "killed": true,
+  "pytest_summary": "1 failed in 16.23s"
+ },
+ {
+  "id": "L1",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Status.lean",
+  "behaviour": "the approved statement of coh_rank_valid (the example moved from VE/Audit.lean) still binds the theorem",
+  "mutation": {
+   "from": "theorem coh_rank_valid (D : SoftDoc) (h : WellFormedSoft D = true) (M N : SoftNode)",
+   "to": "theorem coh_rank_valid (D : SoftDoc) (h : WellFormedSoft D = true) (_hadm : True) (M N : SoftNode)"
+  },
+  "test": "lake build (gate stage lean_build): `lake env lean VE/SoftNorms/Status.lean`",
+  "killed": true,
+  "lean_output": "VE/SoftNorms/Status.lean:41:34: error: Application type mismatch: The argument",
+  "note": "the example at Status.lean:37-41 no longer elaborates; restored source elaborates (rc 0). Through pytest, tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist also fails (stale declarations.txt)."
+ },
+ {
+  "id": "L2",
+  "language": "Lean",
+  "file": "lean/VE/Audit.lean",
+  "behaviour": "the committed manifest is exactly the generated one",
+  "mutation": {
+   "from": "#print axioms VE.Discourse.instLawfulBEqFormula",
+   "to": ""
+  },
+  "test": "tests/test_lean_audit_record.py::test_committed_manifests_are_the_generated_ones",
+  "killed": true,
+  "pytest_summary": "1 failed in 4.02s"
+ },
+ {
+  "id": "R1",
+  "language": "Python",
+  "file": "tools/regen_generated.py",
+  "behaviour": "the merge train regenerates the audit manifests (regenerate, not union)",
+  "mutation": {
+   "from": "note=\"generated from lean/declarations.txt, then the axiom audit record\"),",
+   "to": "merge=\"union\", note=\"generated from lean/declarations.txt, then the axiom audit record\"),"
+  },
+  "test": "tests/test_regen_generated.py::test_audit_manifests_are_generated_from_the_declaration_list",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.67s"
+ },
+ {
+  "id": "R2",
+  "language": "Python",
+  "file": "tools/regen_generated.py",
+  "behaviour": "audit.py --write runs after lean_statements.py writes the declaration list",
+  "mutation": {
+   "from": "Generated(\"lean-statements\", (\"lean/statements.txt\", \"lean/predicates.txt\", \"lean/declarations.txt\"),",
+   "to": "Generated(\"lean-audit-manifests\", (\"lean/VE/Audit.lean\", \"lean/ResponseShape/Audit.lean\", \"lean/axioms.txt\"),"
+  },
+  "test": "tests/test_regen_generated.py::test_entries_run_in_dependency_order",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.66s"
+ },
+ {
+  "id": "S1",
+  "language": "Python",
+  "file": "tools/lake_outputs.py",
+  "behaviour": "lean_executable falls back to the account's elan (password database), not the ambient HOME the gate replaces",
+  "mutation": {
+   "from": "path=str(account / \".elan/bin\"))",
+   "to": "path=str(Path.home() / \".elan/bin\"))"
+  },
+  "test": "tests/test_lake_outputs.py::test_lean_is_found_in_the_accounts_elan_when_home_is_replaced",
+  "also_failed": [
+   "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt]",
+   "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[TypeError]",
+   "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[AttributeError]"
+  ],
+  "run": "HOME=/tmp/ar1-home PATH=/usr/bin:/bin .venv/bin/python -m pytest tests/test_lake_outputs.py tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass",
+  "killed": true,
+  "pytest_summary": "13 failed, 1 passed in 2.30s (unmutated: 14 passed)"
+ },
+ {
+  "id": "A1",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "the audit's parts, read in order, are the manifests: every theorem audited, the record unchanged",
+  "mutation": {
+   "from": "    for result in results:",
+   "to": "    for result in results[::-1]:"
+  },
+  "test": "tests/test_lean_audit_record.py::test_audit_parts_in_order_are_the_manifests",
+  "killed": true,
+  "pytest_summary": "1 failed, 17 deselected in 65.60s"
+ },
+ {
+  "id": "A2",
+  "language": "Python",
+  "file": "lean/audit.py",
+  "behaviour": "the audit's parts, read in order, are the manifests: every theorem audited, the record unchanged",
+  "mutation": {
+   "from": "for start in range(0, len(names), PART)]",
+   "to": "for start in range(0, len(names), PART)][:-1]"
+  },
+  "test": "tests/test_lean_audit_record.py::test_audit_parts_in_order_are_the_manifests",
+  "killed": true,
+  "pytest_summary": "1 failed, 17 deselected in 39.95s"
+ }
+]
