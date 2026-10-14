@@ -1,9 +1,9 @@
 # premise-scale: per-sort domain budget, ground-fact route, measured Rust limit
 
-**DRI signature needed: DELTA rows 1, 2, 4, 5, 6 and 8.** The pre-review relay failure on
-`service:graph` is fixed below. The all-route mutation run still has 11 pre-existing findings on
-`service:route` and `service:parse` (follow-up 5); none is in the graph route or this batch's
-`search-budget` route. (UNKNOWN or unavailable becoming a Lean-checked
+**DRI signature needed: DELTA rows 1, 2, 4, 5, 6 and 8.** The pre-review relay findings on
+`service:graph`, `service:route` and `service:parse` are addressed below; the remaining exact
+semantic-content and binding-contract allowances are recorded in the relay gate's follow-up list.
+(UNKNOWN or unavailable becoming a Lean-checked
 model, as DRI decisions QT2, ME1 and ME2 direct; a changed Rust limit; a new service mode and search
 options; CPU on documents that now get an answer). Rows 3 and 7 are signed by R3 and R6.
 
@@ -167,6 +167,14 @@ so the times are high, and the limit errs long; it only bounds a wait for an unt
   94 passed; `test_repo_map.py`: 29 passed; `regen_generated.py --check`: 23 entries fresh; `lean/audit.py`
   PASS (489 files, 5,801 theorems). The measurements and seeded faults ran at `524110047`, before the last
   two syncs; neither sync changed this batch's code.
+- Pre-review fix: `relay_mutation_gate.py --route service:route --route service:parse`: 6,175
+  mutants, zero unlisted findings; `tests/test_relay_mutation_gate.py`, `tests/test_stage2_parse.py`
+  and `tests/test_service_schema_compiler.py`: 49 passed using the prebuilt binaries. A direct
+  `response_schemas.py --check` and `repo_map.py --check` pass. `lean_statements.py` regenerated
+  `declarations.txt` (zero statements added, removed or changed); `regen_generated.py --check` passes
+  all 23 entries, including Lean audit (489 sources, 5,801 theorems) and the trust table (no growth).
+  The selection still spans all 377 units because of the shared manifest; the chain reruns its
+  complete gate on the committed HEAD.
 - The full release gate was not run by me (the chain runs it on the final HEAD).
 
 ## Seeded bugs
@@ -200,10 +208,11 @@ All 12 caught (`evidence/mutants.json`):
 3. The norm-defaults coverage search (`ve/norm_defaults.py`) times out at 5 s on the constitution under
    load on the base; HEAD's scaled limit covers it, since it is a model search.
 4. "Exactly N" in forms the count does not read (counting quantifiers, cardinalities) stays UNKNOWN.
-5. **Main's relay mutation gate fails on `service:route` and `service:parse` after this fix** (30
-   findings at `8594f1d05`, 26 on this branch before the graph repair, 11 now). The graph AST and label
-   are typed; its two remaining accepted whole-list mutations are listed at exact B0 paths. The route and
-   parse findings concern their existing response shapes and fixtures. Owner: those routes' relay contracts.
+5. **The route and parse binding-contract follow-ups remain.** The relay gate now records the precise
+   paths of Lean-generated background arrays (B0), generated formula names (F4) and the optional parse
+   diagnostic span (F5). It has zero unlisted findings. The B0 arrays are Lean's semantic content; F4 and
+   F5 identify response contracts still needing stronger request binding and presence conditions. Owner:
+   those routes' relay contracts. An empty parse diagnostic is refused by the tightened Parse shape.
 
 ## Pre-review relay repair (2026-10-14, `8808fb359`)
 
@@ -225,16 +234,34 @@ All 12 caught (`evidence/mutants.json`):
   rejects malformed or undeclared generator labels and malformed background formulas earlier as
   `CheckerUnavailable`; the application's graph projection comparison already refused those values.
 
+## Pre-review relay closure (2026-10-14)
+
+- `ResponseShape/Schemas/Parse.lean` now uses the shared nonempty `text` shape for parse diagnostics.
+  `response_schemas.py` regenerated `parse.json`; a genuine diagnostic with its error emptied is
+  `CheckerUnavailable` (`test_parse_diagnostic_text_cannot_be_empty`).
+- `relay-gate-allow.json` records six exact B0 paths for whole Lean-generated background, premises
+  and generator arrays; two exact F4 paths for names inside generated formulas; and one F5 path for
+  the parse diagnostic span. Its stale `service:route` error rebind path was removed. These paths
+  are explicit follow-ups, not a wildcard allowance. The generated arrays are Lean's semantic content;
+  the formula names and conditional span still need stronger response contracts (follow-up 5).
+- Seeded fault S13: in `lean/ResponseShape/Schemas/Parse.lean`, change the diagnostic back to `str`,
+  rebuild and regenerate the schema; `relay_mutation_gate.py --route service:parse` fails with
+  `accepted service:parse empty results/*/result/error`. The shape was restored. This is in addition
+  to the 12 earlier seeded faults in `evidence/mutants.json` (including Lean, Python and Rust).
+- Targeted relay gate: 2 routes, 6,175 mutants, zero failures.
+
 ## Self-review against BUILDER-CHECKLIST
 
-1. PASS for this batch's route and the graph repair (the all-route relay gate's other 11 findings are
-   follow-up 5). Every field of the `search-budget` row is typed in `search-budget.json` (rendered from
+1. PASS for this batch's route and the graph and parse repairs (`relay_mutation_gate.py` on
+   `service:route` and `service:parse`: 6,175 mutants, zero findings). Every field of the
+   `search-budget` row is typed in `search-budget.json` (rendered from
    `ResponseShape/Schemas/SearchBudget.lean`, encoder theorem `runCaseReported_fits`) and retyped,
    dropped, duplicated and reordered one and two faults at a time: `test_search_budget_answer.py`
    (`test_every_field_is_typed`, `test_one_fault_mutants_…`, `test_two_fault_mutants_…`); relay gate 957/957.
 2. PASS. Directive table above, each line with its commit and test; diff grep: no new permanent report
    test, no Python copy of a Lean decision (the readings `BUDGET` copy is removed: `test_the_readings_budget_is_leans`).
-3. PASS. 12 seeded faults in Rust, Python and Lean (`evidence/mutants.json`), none caught at a hash step.
+3. PASS. 13 seeded faults in Rust, Python and Lean (`evidence/mutants.json`, S13 above);
+   the parse regression is caught by `relay_mutation_gate.py --route service:parse`, not a hash step.
 4. PASS. Base against head over 22 documents, whole answers compared (`evidence/ab-documents.json`); Lean
    checks every model the Rust search proposes (`check_countermodel`, `readings-model`).
 5. PASS. The row binds each entry to the requested sort at its position and refuses a renamed, extra,
@@ -245,7 +272,8 @@ All 12 caught (`evidence/mutants.json`):
    commit list is `evidence/commits.txt` (`main..HEAD --no-merges`).
 7. PASS. Every DELTA row is signed by a named ruling or listed as "DRI signature needed" in this report's
    first line; the trust growth (+5 V) is recorded under R6.
-8. PASS. DELTA rows 1 to 8, from the A/B (only the 7 changed documents differ, only in the listed fields).
+8. PASS. DELTA rows 1 to 8, from the A/B (only the 7 changed documents differ, only in the listed
+   fields); row 9 is the malformed parse diagnostic response (`test_parse_diagnostic_text_cannot_be_empty`).
 9. PASS. The selection is all 377 units because the manifest's shared `other_json` changed (by design of
    the selector); a seeded change to `ve/vacuity.py` alone selects `tests/test_premise_scale.py`
    (`select_tests.py --paths ve/vacuity.py`).
