@@ -21,7 +21,6 @@ def _bind_elaboration(row, units, environment):
     """Bind correlated soft rule IDs to the authored rights lines and norm units."""
     try:
         authored = {}
-        right_names = set()
         counts = Counter()
         source_lines = []
         norms = []
@@ -36,7 +35,6 @@ def _bind_elaboration(row, units, environment):
             body = unit.get('right', unit.get('right_lines'))
             if body is None:
                 continue
-            right_names.add(body.get('name', body.get('right')))
             for line in body['lines']:
                 for field in LINE_RULE_FIELDS[line['kind']]:
                     rule = line[field]
@@ -137,11 +135,17 @@ def _bind_elaboration(row, units, environment):
             if (len(targets) != len(set(targets)) or
                     any(not target.startswith(entry['rule'] + ':') for target in targets)):
                 raise ValueError('unbound narrowing target')
+        distinction_predicates = {line['predicate'] for line in row['lines']}
+        reported_predicates = [entry['predicate'] for entry in row['distinction']]
+        if (len(reported_predicates) != len(set(reported_predicates)) or
+                set(reported_predicates) != distinction_predicates):
+            raise ValueError('missing or extra distinction row')
+        protected = set(environment['vocabulary']['rights'].get('protected', []))
         for entry in row['distinction']:
-            if entry['predicate'] not in environment['vocabulary']['predicates']:
-                raise ValueError('unbound distinction predicate')
-            if any((hit['right'], hit['rule']) not in line_pairs
-                   for hit in entry['hits']):
+            hits = [(hit['right'], hit['rule'], hit['protected']) for hit in entry['hits']]
+            if (len(hits) != len(set(hits)) or
+                    any((right, rule) not in line_pairs or name not in protected
+                        for right, rule, name in hits)):
                 raise ValueError('unbound distinction hit')
         conditional = row['conditional_on']
         pair_labels = {entry['label'] for entry in row['colliding_pairs']}
@@ -166,7 +170,48 @@ def _bind_conflict(row, elaborated):
             f'CheckerUnavailable: Lean rights conflict is not bound to the request: {error}') from error
 
 
-def run_rights_case(environment, units, kind, **extra):
+def _bind_narrowings(row, elaborated):
+    """Bind each reported line and mechanism to the checked elaboration."""
+    try:
+        def identities(rows):
+            return [(entry['right'], entry['rule'],
+                     [(mechanism['mechanism'], mechanism['target'])
+                      for mechanism in entry['mechanisms']]) for entry in rows]
+
+        if identities(row['narrowings']) != identities(elaborated['narrowings']):
+            raise ValueError('missing or extra narrowing line or mechanism')
+    except (KeyError, TypeError, ValueError) as error:
+        raise CheckerUnavailable(
+            f'CheckerUnavailable: Lean rights narrowings are not bound to the request: {error}') from error
+
+
+def _bind_bar(row, elaborated, units):
+    """Bind bar identities and references to the authored source."""
+    try:
+        readings = {unit['bar']['reading'] for unit in units if 'bar' in unit}
+        aimed = [(entry['predicate'], entry['name']) for entry in elaborated['generated']
+                 if entry['kind'] == 'aimed']
+        rows = row['bars']
+        if (len(readings) > 1 or
+                [(entry['predicate'], entry['aimed']) for entry in rows] != aimed or
+                any(entry['reading'] not in readings for entry in rows)):
+            raise ValueError('missing or extra bar row')
+        line_rules = {entry['rule'] for entry in elaborated['lines']}
+        derived_rules = {entry['rule'] for entry in elaborated['derived']}
+        for entry in rows:
+            if entry['reading'] == 'rule':
+                for field, allowed in (('barred', line_rules),
+                                       ('blocked_defaults', derived_rules),
+                                       ('composition_candidates', derived_rules)):
+                    names = entry[field]
+                    if len(names) != len(set(names)) or not set(names) <= allowed:
+                        raise ValueError(f'unbound bar {field}')
+    except (KeyError, TypeError, ValueError) as error:
+        raise CheckerUnavailable(
+            f'CheckerUnavailable: Lean rights bar is not bound to the request: {error}') from error
+
+
+def _run_rights_case(environment, units, kind, extra, elaborated=None):
     raw = environment.to_dict()
     # readings@1 is a head profile. Its lower rights chain is checked with
     # that profile removed, as the readings route does for each choice.
@@ -176,10 +221,20 @@ def run_rights_case(environment, units, kind, **extra):
     row = decide_once("rights", case)
     if kind == 'rights-elaborate':
         _bind_elaboration(row, units, raw)
+    elif kind in ('rights-scope', 'rights-bar'):
+        elaborated = elaborated or run_rights_case(environment, units, 'rights-elaborate')
+        if kind == 'rights-scope':
+            _bind_narrowings(row, elaborated)
+        else:
+            _bind_bar(row, elaborated, units)
     elif kind == 'rights-conflict' and 'witness' not in extra:
         elaborated = run_rights_case(environment, units, 'rights-elaborate')
         _bind_conflict(row, elaborated)
     return row
+
+
+def run_rights_case(environment, units, kind, **extra):
+    return _run_rights_case(environment, units, kind, extra)
 
 
 def expected_environment_prime(rights):
@@ -190,8 +245,8 @@ def expected_environment_prime(rights):
 def report_rights(environment, units, rights=None):
     """Return the five-question rows available without submitted certificates."""
     elaborated = run_rights_case(environment, units, "rights-elaborate")
-    scope = run_rights_case(environment, units, "rights-scope", certificates={})
-    bar = run_rights_case(environment, units, "rights-bar", certificates={})
+    scope = _run_rights_case(environment, units, "rights-scope", {"certificates": {}}, elaborated)
+    bar = _run_rights_case(environment, units, "rights-bar", {"certificates": {}}, elaborated)
     conflict = run_rights_case(environment, units, "rights-conflict", packages={})
     return {
         "conflict": {key: conflict[key] for key in ("verdict", "status_text", "targets", "conditional_on")},
