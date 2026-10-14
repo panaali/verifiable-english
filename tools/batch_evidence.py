@@ -153,6 +153,7 @@ def rerun_pair_problems(full, rerun) -> list[str]:
     """Standing ruling R13: a complete full gate whose only failures are tests counts as passed with the serial
     rerun (`tools/gate.py --rerun-failed`) of the same clean commit and tree that passed exactly those tests. Any
     value is checked; a malformed record is an error, never an exception."""
+    from tools.gate import RERUNNABLE  # the failures a rerun may clear: the gate's own table
     if not isinstance(full, dict) or not isinstance(rerun, dict):
         return ["the full gate or its rerun is not a record"]
     errors = []
@@ -163,7 +164,8 @@ def rerun_pair_problems(full, rerun) -> list[str]:
     if (full.get("status") != "failed" or full.get("dirty") is not False or not SHA.fullmatch(
             str(full.get("commit_sha"))) or full.get("stages") != list(REQUIRED_STAGES)
             or not tests or len(tests) != len(set(map(str, nodeids)))
-            or not all(isinstance(f, dict) and f.get("stage") in ("pytest", "pytest command") for f in failures)
+            or not all(isinstance(f, dict) and isinstance(f.get("stage"), str) and f["stage"] in RERUNNABLE
+                       for f in failures)
             or not isinstance(counts, dict) or type(counts.get("failed")) is not int
             or counts["failed"] != len(tests)):
         errors.append("the full gate is not a complete gate on a clean commit whose only failures are tests")
@@ -174,8 +176,9 @@ def rerun_pair_problems(full, rerun) -> list[str]:
             or any(rerun.get(k) != full.get(k) for k in same) or not isinstance(previous, dict)
             or any(previous.get(k) != full.get(k) for k in same) or rerun_failed.get("tests") != tests
             or rerun_failed.get("outcomes") != {test: "passed" for test in tests if isinstance(test, str)}
-            or not isinstance(rerun_counts, dict) or type(rerun_counts.get("passed")) is not int
-            or rerun_counts.get("selected") != rerun_counts["passed"]):
+            or not isinstance(rerun_counts, dict)
+            or not all(type(rerun_counts.get(k)) is int for k in ("passed", "selected"))
+            or rerun_counts["selected"] != rerun_counts["passed"]):
         errors.append("the serial rerun did not pass every failed test on the full gate's clean commit (R13)")
     return errors
 
