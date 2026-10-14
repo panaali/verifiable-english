@@ -335,3 +335,115 @@ def test_rights_bar_nodes_are_bound_to_generated_aimed_predicates(monkeypatch, m
     monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: row)
     with pytest.raises(CheckerUnavailable):
         rights_route.run_rights_case(environment, source, 'rights-elaborate')
+
+
+@pytest.mark.parametrize('mutation', [
+    pytest.param(lambda row: row['narrowings'][0].__setitem__('right', 'absent'),
+                 id='F16 forged scope right'),
+    pytest.param(lambda row: row['narrowings'][0].__setitem__('rule', 'absent'),
+                 id='forged scope rule'),
+    pytest.param(lambda row: row['narrowings'].clear(), id='missing scope line'),
+    pytest.param(lambda row: row['narrowings'].append(copy.deepcopy(row['narrowings'][0])),
+                 id='extra scope line'),
+    pytest.param(lambda row: row['narrowings'][0]['mechanisms'][0].__setitem__('target', 'absent:limitation'),
+                 id='forged scope target'),
+    pytest.param(lambda row: row['narrowings'][0]['mechanisms'].clear(),
+                 id='missing scope mechanism'),
+])
+def test_f16_scope_rows_are_bound_to_elaboration(monkeypatch, mutation):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    real = rights_route.decide_once
+
+    def forged(mode, case):
+        row = copy.deepcopy(real(mode, case))
+        if case['kind'] == 'rights-scope':
+            mutation(row)
+        return row
+
+    monkeypatch.setattr(rights_route, 'decide_once', forged)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.report_rights(environment, GAMMA)
+
+
+@pytest.mark.parametrize('mutation', [
+    pytest.param(lambda row: row['bars'][0].__setitem__('predicate', 'absent'),
+                 id='forged bar predicate'),
+    pytest.param(lambda row: row['bars'][0].__setitem__('aimed', 'rights__bar__9'),
+                 id='forged bar aimed'),
+    pytest.param(lambda row: row['bars'].clear(), id='missing bar row'),
+    pytest.param(lambda row: row['bars'].append(copy.deepcopy(row['bars'][0])),
+                 id='extra bar row'),
+    pytest.param(lambda row: row['bars'][0]['barred'].append('absent'),
+                 id='forged barred rule'),
+    pytest.param(lambda row: row['bars'][0]['blocked_defaults'].append('absent'),
+                 id='forged blocked default'),
+    pytest.param(lambda row: row['bars'][0]['composition_candidates'].append('absent'),
+                 id='forged composition candidate'),
+])
+def test_f16_bar_rows_are_bound_to_elaboration(monkeypatch, mutation):
+    from tests.test_rights_lean import IMPART, env as rights_env, line, norm, right
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(
+        IMPART, sorts=('person', 'idea'), rights={'holders': ['person'], 'bearers': ['person']}))
+    source = [right('r19', [line('liberty', norm('may-impart', 'impart_permitted', True))]),
+              {'bar': {'name': 'b30', 'reading': 'rule'}}]
+    real = rights_route.decide_once
+
+    def forged(mode, case):
+        row = copy.deepcopy(real(mode, case))
+        if case['kind'] == 'rights-bar':
+            mutation(row)
+        return row
+
+    monkeypatch.setattr(rights_route, 'decide_once', forged)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.report_rights(environment, source)
+
+
+@pytest.mark.parametrize('mutation', [
+    pytest.param(lambda row: row['distinction'][0]['hits'].__setitem__(slice(None), [{
+        'right': 'r9', 'rule': 'no-arbitrary-arrest', 'protected': 'absent', 'cited': False}]),
+                 id='F17 forged protected name'),
+    pytest.param(lambda row: row['distinction'].clear(), id='missing distinction row'),
+    pytest.param(lambda row: row['distinction'].append(copy.deepcopy(row['distinction'][0])),
+                 id='extra distinction row'),
+    pytest.param(lambda row: row['distinction'][0].__setitem__('predicate', 'absent'),
+                 id='forged distinction predicate'),
+])
+def test_f17_distinction_rows_and_hits_are_bound(monkeypatch, mutation):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    environment = RightsEnvironment(rights_env(ARREST))
+    real = rights_route.decide_once
+
+    def forged(mode, case):
+        row = copy.deepcopy(real(mode, case))
+        if case['kind'] == 'rights-elaborate':
+            mutation(row)
+        return row
+
+    monkeypatch.setattr(rights_route, 'decide_once', forged)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.report_rights(environment, GAMMA)
+
+
+def test_f17_authored_protected_hit_is_accepted_and_duplicate_is_unavailable(monkeypatch):
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    raw = rights_env(ARREST, rights={
+        'holders': ['person'], 'bearers': ['state', 'person'],
+        'protected': ['arbitrary_arrest']})
+    environment = RightsEnvironment(raw)
+    row = rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')
+    assert row['distinction'][0]['hits'][0]['protected'] == 'arbitrary_arrest'
+    forged = copy.deepcopy(row)
+    forged['distinction'][0]['hits'].append(copy.deepcopy(forged['distinction'][0]['hits'][0]))
+    monkeypatch.setattr(rights_route, 'decide_once', lambda mode, case: forged)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, GAMMA, 'rights-elaborate')

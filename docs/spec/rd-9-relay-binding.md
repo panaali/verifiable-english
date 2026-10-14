@@ -30,7 +30,16 @@ only result of a failed relay check. The following inventory is the complete
 | `limitations`, `rights_background` (rights) | Every limitation label names a submitted limitation, condition, role and declared act, once; the background rows match those labels and formulas exactly | `test_rights_elaboration_premise_identities_are_bound` |
 | `narrowings` (rights) | Right and rule pairs equal the elaborated lines; each distinct mechanism target names its rule; scope, conclusion and licence are Lean-derived | `test_rights_elaboration_premise_identities_are_bound` |
 | `findings`, `unit_open` (rights) | Lean-derived diagnostics and one open flag per submitted unit, typed by schema and covered by encoder theorem | `test_route_row_schemas` |
-| `distinction`, `wordings` (rights) | Distinction predicates and hit right/rule pairs refer to submitted acts and elaborated lines; wording keys equal generated names; text and flags are Lean-derived | `test_rights_elaboration_premise_identities_are_bound` |
+| `distinction`, `wordings` (rights) | Exactly one distinction row per right-derived predicate; each hit names an elaborated right/rule pair and an authored protected predicate, with no duplicate hit; wording keys equal generated names; text and flags are Lean-derived | `test_rights_elaboration_premise_identities_are_bound`, `test_f17_distinction_rows_and_hits_are_bound`, `test_f17_authored_protected_hit_is_accepted_and_duplicate_is_unavailable` |
+
+The displayed `rights-scope` response binds every line and mechanism identity
+to the checked elaboration of the same source. Its scope flags, conclusions,
+licences and findings remain Lean-derived. The displayed `rights-bar` response
+has exactly the elaborated aimed predicate rows under the authored reading;
+each reported barred, blocked or composition rule names an elaborated rule.
+`test_f16_scope_rows_are_bound_to_elaboration` and
+`test_f16_bar_rows_are_bound_to_elaboration` mutate the displayed identities,
+missing rows and extra rows.
 
 The displayed `rights-conflict` response also binds `targets` to the complete
 `conflict_targets` list of the same elaboration and `conditional_on` to its
