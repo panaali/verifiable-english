@@ -195,8 +195,8 @@ restored:
   - Selected tests (`select_tests --base 8594f1d0 --run`, before the second sync, 376 units; the Mac runner's setup failed, so it ran on
     the VM): 288 units ran before the one-hour limit. 285 passed. `tests/test_nested_pytest.py` failed on a
     fault of this round's first code (a hand-copied stage tuple, now the gate's `RERUNNABLE`) and passed after the
-    fix. `tests/test_architecture_docs.py::test_stale_statement[9]` fails on `main` too (the map names
-    `NormsMain.lean`, `RightsMain.lean` and `RiskMain.lean`, which `main` does not have).
+    fix. `tests/test_architecture_docs.py::test_stale_statement[9]` failed because the architecture table
+    still said the obsolete `section11` row was waiting for AR-4; the row now says `corrected`.
     `tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target` compares
     8-character `%h` hashes, and `c3d86995` now needs 9 characters in the shared object store, so it fails on any
     checkout of this repository. The other 86 units, minus `tests/test_wire_gate_corpus.py`, ran next: 3,041
