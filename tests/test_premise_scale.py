@@ -68,6 +68,8 @@ def test_the_readings_budget_is_leans(monkeypatch):
     a key a test sets stands in for Lean's only until it is deleted."""
     from ve import readings_verdicts, search
     from ve.backends import relay
+    # monkeypatch.setitem in another test restores a key by setting Lean's value back: start with none set.
+    monkeypatch.setattr(readings_verdicts.BUDGET, "_set", {})
     lean = search.lean_budget()
     assert dict(readings_verdicts.BUDGET) == {"max_steps": lean.max_proof_steps, "max_domain_size": lean.max_domain_size,
                                               "max_models": lean.max_models, "max_evaluations": lean.max_evaluations}
