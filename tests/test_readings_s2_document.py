@@ -316,11 +316,11 @@ def test_m6_dead_reading_certified_by_lean(tmp_path):
 
 def test_dead_readings_null_when_not_enumerated(tmp_path, monkeypatch):
     from ve.readings_verdicts import BUDGET, context
-    # A real request beyond Lean's 64-choice enumeration budget; Python no longer owns that limit.
+    # A real request beyond Lean's 1024 checked-choice budget; Python no longer owns that limit.
     path = s2_document(tmp_path, [("set", f"rs{i}", f"u{i}",
                                   [("strict", norm(f"rule-{i}", "avoid_required", True), "norm", None),
                                    ("default", norm(f"rule-{i}", "avoid_required", True, "default"), "norm", None)])
-                                 for i in range(7)])
+                                     for i in range(11)])
     doc = load_document(path)
     monkeypatch.setitem(BUDGET, "max_steps", 0)
     monkeypatch.setitem(BUDGET, "max_models", 0)
