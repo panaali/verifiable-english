@@ -1,0 +1,5 @@
+class lines: K 997, S 9788, D 13887, G 26962, C 8486, P 71773, T 14705, o 12299
+D/G groups: D[V] 12357, D[R] 1003, D[I] 527, G[V] 24956, G[R] 1765, G[I] 241
+tied 178, unclassified 0, trusted 47939 (K + S + untied [V] + unclassified), 158897 lines in 481 files
+against the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0
+PASS: K, S and untied [V] within f98183bf and the allowances signed since

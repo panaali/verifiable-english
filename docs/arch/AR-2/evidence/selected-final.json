@@ -1,0 +1,427 @@
+{
+ "code_commit": "dfb53762e9f62b2654462642888224d764eec79d",
+ "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+ "selected": 374,
+ "completed": 80,
+ "passed": 75,
+ "failed_unit": "tests/test_architecture_docs.py",
+ "failed_tests": [
+  "test_adr_relation_keywords",
+  "test_lean_shapes_are_classified"
+ ],
+ "timeout_units": [
+  "tests/test_readings_rd6b_differential.py",
+  "tests/test_assist_invariants.py",
+  "tests/test_english_evidence.py",
+  "tests/test_assist.py"
+ ],
+ "not_run": 294,
+ "selector": "tools/select_tests.py --base $(git merge-base HEAD main) --run --jobs 8",
+ "maxfail": 5,
+ "focused_rerun": {
+  "command": "VE_NATIVE_PREBUILT=1 .venv/bin/python -m pytest -q tests/test_architecture_docs.py",
+  "passed": 32
+ },
+ "units": [
+  {
+   "unit": "tests/test_frozen_sources.py",
+   "exit": "0",
+   "seconds": 6.5
+  },
+  {
+   "unit": "tests/test_readings_defaults_rd8_report.py",
+   "exit": "0",
+   "seconds": 9.5
+  },
+  {
+   "unit": "tests/test_lean_audit_record.py",
+   "exit": "0",
+   "seconds": 642.0
+  },
+  {
+   "unit": "tests/test_precommit_hook.py",
+   "exit": "0",
+   "seconds": 660.0
+  },
+  {
+   "unit": "tests/test_relay_mutation_gate.py",
+   "exit": "0",
+   "seconds": 648.3
+  },
+  {
+   "unit": "tests/test_wire_contract_lint.py",
+   "exit": "0",
+   "seconds": 22.4
+  },
+  {
+   "unit": "tests/test_wire_contract_s4_lean.py",
+   "exit": "0",
+   "seconds": 14.9
+  },
+  {
+   "unit": "tests/test_agent_policy.py",
+   "exit": "0",
+   "seconds": 106.4
+  },
+  {
+   "unit": "tests/test_alternatives_profile.py",
+   "exit": "0",
+   "seconds": 20.7
+  },
+  {
+   "unit": "tests/test_alternatives_three_way.py",
+   "exit": "0",
+   "seconds": 21.8
+  },
+  {
+   "unit": "tests/test_ar3_report.py",
+   "exit": "0",
+   "seconds": 5.6
+  },
+  {
+   "unit": "tests/test_ar6_report.py",
+   "exit": "0",
+   "seconds": 2.1
+  },
+  {
+   "unit": "tests/test_ar8_evidence.py",
+   "exit": "0",
+   "seconds": 2.7
+  },
+  {
+   "unit": "tests/test_architecture_docs.py",
+   "exit": "1",
+   "seconds": 6.5
+  },
+  {
+   "unit": "tests/test_argument.py",
+   "exit": "0",
+   "seconds": 53.1
+  },
+  {
+   "unit": "tests/test_argument_adversarial.py",
+   "exit": "0",
+   "seconds": 57.3
+  },
+  {
+   "unit": "tests/test_argument_fixtures.py",
+   "exit": "0",
+   "seconds": 56.8
+  },
+  {
+   "unit": "tests/test_agent_policy_unspecified.py",
+   "exit": "0",
+   "seconds": 330.7
+  },
+  {
+   "unit": "tests/test_asimov_laws.py",
+   "exit": "0",
+   "seconds": 299.4
+  },
+  {
+   "unit": "tests/test_asimov_extended.py",
+   "exit": "0",
+   "seconds": 359.1
+  },
+  {
+   "unit": "tests/test_assist_deadline.py",
+   "exit": "0",
+   "seconds": 66.0
+  },
+  {
+   "unit": "tests/test_lean_service_schema.py",
+   "exit": "0",
+   "seconds": 1390.3
+  },
+  {
+   "unit": "tests/test_assist_split.py",
+   "exit": "0",
+   "seconds": 6.2
+  },
+  {
+   "unit": "tests/test_agent_policy_rerun.py",
+   "exit": "0",
+   "seconds": 748.0
+  },
+  {
+   "unit": "tests/test_assist_recovery.py",
+   "exit": "0",
+   "seconds": 63.6
+  },
+  {
+   "unit": "tests/test_authoring.py",
+   "exit": "0",
+   "seconds": 5.1
+  },
+  {
+   "unit": "tests/test_b11b_report.py",
+   "exit": "0",
+   "seconds": 3.6
+  },
+  {
+   "unit": "tests/test_attacks.py",
+   "exit": "0",
+   "seconds": 23.9
+  },
+  {
+   "unit": "tests/test_b15a_evidence.py",
+   "exit": "0",
+   "seconds": 16.5
+  },
+  {
+   "unit": "tests/test_b16a_evidence.py",
+   "exit": "0",
+   "seconds": 2.0
+  },
+  {
+   "unit": "tests/test_b16b_evidence.py",
+   "exit": "0",
+   "seconds": 3.3
+  },
+  {
+   "unit": "tests/test_b15b_evidence.py",
+   "exit": "0",
+   "seconds": 16.4
+  },
+  {
+   "unit": "tests/test_b16c_evidence.py",
+   "exit": "0",
+   "seconds": 3.6
+  },
+  {
+   "unit": "tests/test_b16d_evidence.py",
+   "exit": "0",
+   "seconds": 3.6
+  },
+  {
+   "unit": "tests/test_b16d_norm_roles.py",
+   "exit": "0",
+   "seconds": 130.8
+  },
+  {
+   "unit": "tests/test_b17_evidence.py",
+   "exit": "0",
+   "seconds": 32.5
+  },
+  {
+   "unit": "tests/test_b17_owner.py",
+   "exit": "0",
+   "seconds": 5.3
+  },
+  {
+   "unit": "tests/test_background.py",
+   "exit": "0",
+   "seconds": 5.2
+  },
+  {
+   "unit": "tests/test_batch_evidence.py",
+   "exit": "0",
+   "seconds": 16.2
+  },
+  {
+   "unit": "tests/test_bench_baselines.py",
+   "exit": "0",
+   "seconds": 3.5
+  },
+  {
+   "unit": "tests/test_bench_timing.py",
+   "exit": "0",
+   "seconds": 6.8
+  },
+  {
+   "unit": "tests/test_b16d_document.py",
+   "exit": "0",
+   "seconds": 241.0
+  },
+  {
+   "unit": "tests/test_bluedot_grant.py",
+   "exit": "0",
+   "seconds": 41.1
+  },
+  {
+   "unit": "tests/test_calendar_regression_w6b.py",
+   "exit": "0",
+   "seconds": 8.3
+  },
+  {
+   "unit": "tests/test_assist_recovery_replay.py",
+   "exit": "0",
+   "seconds": 337.3
+  },
+  {
+   "unit": "tests/test_cedar_attributes.py",
+   "exit": "0",
+   "seconds": 4.3
+  },
+  {
+   "unit": "tests/test_bundle.py",
+   "exit": "0",
+   "seconds": 27.3
+  },
+  {
+   "unit": "tests/test_closure.py",
+   "exit": "0",
+   "seconds": 64.4
+  },
+  {
+   "unit": "tests/test_assurance_manifest.py",
+   "exit": "0",
+   "seconds": 404.0
+  },
+  {
+   "unit": "tests/test_cedar_norms.py",
+   "exit": "0",
+   "seconds": 95.3
+  },
+  {
+   "unit": "tests/test_closure_witnesses.py",
+   "exit": "0",
+   "seconds": 4.8
+  },
+  {
+   "unit": "tests/test_closure_certificates.py",
+   "exit": "0",
+   "seconds": 23.1
+  },
+  {
+   "unit": "tests/test_colab.py",
+   "exit": "0",
+   "seconds": 6.1
+  },
+  {
+   "unit": "tests/test_compose_dispatch.py",
+   "exit": "0",
+   "seconds": 7.9
+  },
+  {
+   "unit": "tests/test_closure_induction.py",
+   "exit": "0",
+   "seconds": 18.1
+  },
+  {
+   "unit": "tests/test_conformance.py",
+   "exit": "0",
+   "seconds": 5.0
+  },
+  {
+   "unit": "tests/test_compose_integration.py",
+   "exit": "0",
+   "seconds": 7.3
+  },
+  {
+   "unit": "tests/test_constitution_w6a_controls.py",
+   "exit": "0",
+   "seconds": 2.3
+  },
+  {
+   "unit": "tests/test_coverage_dashboard.py",
+   "exit": "0",
+   "seconds": 2.9
+  },
+  {
+   "unit": "tests/test_cpu_bounds.py",
+   "exit": "0",
+   "seconds": 10.1
+  },
+  {
+   "unit": "tests/test_count_w6a.py",
+   "exit": "0",
+   "seconds": 16.1
+  },
+  {
+   "unit": "tests/test_data_adapters.py",
+   "exit": "0",
+   "seconds": 4.5
+  },
+  {
+   "unit": "tests/test_data_flags.py",
+   "exit": "0",
+   "seconds": 4.9
+  },
+  {
+   "unit": "tests/test_data_three_way.py",
+   "exit": "0",
+   "seconds": 10.8
+  },
+  {
+   "unit": "tests/test_definitions.py",
+   "exit": "0",
+   "seconds": 21.4
+  },
+  {
+   "unit": "tests/test_definitions_differential.py",
+   "exit": "0",
+   "seconds": 101.6
+  },
+  {
+   "unit": "tests/test_definitions_english.py",
+   "exit": "0",
+   "seconds": 10.5
+  },
+  {
+   "unit": "tests/test_data_surface.py",
+   "exit": "0",
+   "seconds": 198.9
+  },
+  {
+   "unit": "tests/test_discourse.py",
+   "exit": "0",
+   "seconds": 64.2
+  },
+  {
+   "unit": "tests/test_cli.py",
+   "exit": "0",
+   "seconds": 1545.4
+  },
+  {
+   "unit": "tests/test_discourse_constitution.py",
+   "exit": "0",
+   "seconds": 12.7
+  },
+  {
+   "unit": "tests/test_consolidation_tools.py",
+   "exit": "0",
+   "seconds": 1469.9
+  },
+  {
+   "unit": "tests/test_discourse_three_way.py",
+   "exit": "0",
+   "seconds": 18.6
+  },
+  {
+   "unit": "tests/test_document.py",
+   "exit": "0",
+   "seconds": 88.4
+  },
+  {
+   "unit": "tests/test_document_lean_switch.py",
+   "exit": "0",
+   "seconds": 77.0
+  },
+  {
+   "unit": "tests/test_e1_core.py",
+   "exit": "0",
+   "seconds": 17.2
+  },
+  {
+   "unit": "tests/test_readings_rd6b_differential.py",
+   "exit": "timeout",
+   "seconds": 3600.0
+  },
+  {
+   "unit": "tests/test_assist_invariants.py",
+   "exit": "timeout",
+   "seconds": 3600.1
+  },
+  {
+   "unit": "tests/test_english_evidence.py",
+   "exit": "timeout",
+   "seconds": 3600.2
+  },
+  {
+   "unit": "tests/test_assist.py",
+   "exit": "timeout",
+   "seconds": 3600.3
+  }
+ ]
+}
