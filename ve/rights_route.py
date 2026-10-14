@@ -181,11 +181,9 @@ def _bind_elaboration(row, units, environment):
         bar_nodes = Counter(entry['predicate'] for entry in row['bars'])
         if bar_nodes != (aimed if rule_bar else Counter()):
             raise ValueError('unbound bar nodes')
-        positive_lines = {entry['rule'] for entry in row['lines'] if entry['node']['sign']}
-        if any(len(entry['over']) != len(set(entry['over'])) or
-               not set(entry['over']) <= positive_lines or
-               any(line['predicate'] != entry['predicate'] for line in row['lines']
-                   if line['rule'] in entry['over']) for entry in row['bars']):
+        if any(entry['over'] != [line['rule'] for line in row['lines']
+                                 if line['predicate'] == entry['predicate'] and line['node']['sign']]
+               for entry in row['bars']):
             raise ValueError('unbound bar over rule')
         line_pairs = Counter((line['right'], line['rule']) for line in row['lines'])
         narrowing_pairs = Counter((entry['right'], entry['rule']) for entry in row['narrowings'])
@@ -317,22 +315,28 @@ def _bind_bar(row, elaborated, units):
                 [(entry['predicate'], entry['aimed']) for entry in rows] != aimed or
                 any(entry['reading'] not in readings for entry in rows)):
             raise ValueError('missing or extra bar row')
-        line_rules = {entry['rule']: entry['node'] for entry in elaborated['lines']}
-        derived_rules = {entry['rule'] for entry in elaborated['derived']}
-        all_rules = dict(line_rules)
-        all_rules.update({unit['norm']['name']: unit['norm'] for unit in units if 'norm' in unit})
+        line_rules = [entry['node'] for entry in elaborated['lines']]
+        outside_rules = [unit['norm'] for unit in units if 'norm' in unit]
+        predicates = elaborated['environment_prime']['vocabulary']['predicates']
         for entry in rows:
             if entry['reading'] == 'rule':
                 predicate = entry['predicate']
-                for field, allowed in (
-                        ('barred', {name for name, rule in line_rules.items()
-                                    if rule['predicate'] == predicate and rule['sign']}),
-                        ('blocked_defaults', {name for name, rule in all_rules.items()
-                                              if rule.get('mode', 'strict') == 'default'}),
-                        ('composition_candidates', {name for name, rule in all_rules.items()
-                                                    if rule.get('mode', 'strict') == 'strict' and rule['sign']})):
-                    names = entry[field]
-                    if len(names) != len(set(names)) or not set(names) <= allowed:
+                def dual(rule):
+                    return _act_key(rule['predicate'], predicates) == predicate and rule['predicate'] != predicate
+                expected = {
+                    'barred': [rule['name'] for rule in line_rules
+                               if rule['predicate'] == predicate and rule['sign']],
+                    'blocked_defaults': [rule['name'] for rule in line_rules + outside_rules
+                                         if rule.get('mode', 'strict') == 'default' and
+                                         (rule['predicate'] == predicate or (rule['sign'] and dual(rule)))],
+                    'composition_candidates':
+                        [rule['name'] for rule in outside_rules if rule.get('mode', 'strict') == 'strict' and
+                         rule['sign'] and (rule['predicate'] == predicate or dual(rule))] +
+                        [rule['name'] for rule in line_rules if rule.get('mode', 'strict') == 'strict' and
+                         rule['sign'] and dual(rule)],
+                }
+                for field, names in expected.items():
+                    if entry[field] != names:
                         raise ValueError(f'unbound bar {field}')
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(
