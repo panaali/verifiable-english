@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import math
 from pathlib import Path
 import sys
 
@@ -57,6 +58,7 @@ ANSWERED_FIELDS = set(_DEFS["answered"]["properties"])
 LINE_FIELDS = set(_DEFS["line"]["properties"])
 ROW_FIELDS = set(_DEFS["row"]["properties"])
 NAME_FIELDS = set(_DEFS["name"]["properties"])
+MAX_RECORDED_DEPTH = 128
 
 
 def environment(raw: bytes):
@@ -330,6 +332,37 @@ def _builder(doc):
     return _Plain(doc)
 
 
+def _recorded_evidence(route: str, evidence):
+    """Check only the container fields the Python generators read; Lean checks the pieces themselves.
+
+    Recorded JSON is untrusted. Keep its route-specific outer shape separate from generated evidence so
+    malformed containers cannot crash a generator before the request reaches Lean.
+    """
+    if evidence is None:
+        return
+    if route == "readings":
+        if type(evidence) is not list or any(type(entry) is not dict or "choice" not in entry
+                                                   for entry in evidence):
+            raise VEError("InvalidInput: recorded readings evidence must be a list of entries with a choice")
+    elif type(evidence) is not dict:
+        raise VEError("InvalidInput: recorded evidence must be an object")
+    if route == "norm-defaults" and "conflict" in evidence:
+        conflict = evidence["conflict"]
+        if type(conflict) is not dict or type(conflict.get("packages")) is not list:
+            raise VEError("InvalidInput: recorded conflict evidence needs a packages list")
+    pending = [(evidence, 0)]
+    while pending:
+        value, depth = pending.pop()
+        if depth > MAX_RECORDED_DEPTH:
+            raise VEError("InvalidInput: recorded evidence is too deeply nested")
+        if type(value) is float and not math.isfinite(value):
+            raise VEError("InvalidInput: recorded evidence contains a non-finite number")
+        if type(value) is dict:
+            pending.extend((child, depth + 1) for child in value.values())
+        elif type(value) is list:
+            pending.extend((child, depth + 1) for child in value)
+
+
 # ---------------------------------------------------------------------------------------------------------------
 # The relay: Lean's answer, typed by its schema and bound to the request
 
@@ -491,15 +524,16 @@ def _context(request: dict, doc, raw: bytes, reading: dict, route: str) -> dict:
 
 def _elements(evidence, out: set) -> set:
     """The elements of every model in `evidence` (each `domains` map's lists): the ids a row's gaps may name."""
-    if type(evidence) is dict:
-        if type(evidence.get("domains")) is dict:
-            out.update(e for elements in evidence["domains"].values() if type(elements) is list
-                       for e in elements if type(e) is str)
-        for value in evidence.values():
-            _elements(value, out)
-    elif type(evidence) is list:
-        for value in evidence:
-            _elements(value, out)
+    pending = [evidence]
+    while pending:
+        value = pending.pop()
+        if type(value) is dict:
+            if type(value.get("domains")) is dict:
+                out.update(e for elements in value["domains"].values() if type(elements) is list
+                           for e in elements if type(e) is str)
+            pending.extend(value.values())
+        elif type(value) is list:
+            pending.extend(value)
     return out
 
 
@@ -572,6 +606,7 @@ def prepare(path, raw: bytes, question: str, evidence=None, generate: bool = Tru
     reading = read(raw, question)
     doc = load_document(path)
     builder = _builder(doc)
+    _recorded_evidence(builder.route, evidence)
     case = builder.case(reading["ast"], evidence) if generate else builder.case(reading["ast"], evidence, False)
     lexicon, expected = _identities(raw, question, doc)
     request = {"id": MODE, "document": raw.decode("utf-8"), "question": question, "lexicon": lexicon,
@@ -643,7 +678,12 @@ def main(argv=None) -> int:
         else:
             evidence = None
             if options.evidence:
-                evidence = json.loads(Path(options.evidence).read_text(encoding="utf-8"))
+                try:
+                    evidence = json.loads(Path(options.evidence).read_text(encoding="utf-8"))
+                except RecursionError as exc:
+                    raise VEError("InvalidInput: recorded evidence is too deeply nested") from exc
+                if evidence is None:
+                    raise VEError("InvalidInput: recorded evidence cannot be null")
             result = answer(path, raw, options.question, evidence)
     except CheckerUnavailable as exc:
         emit(_answer(exc), {"class": "CheckerUnavailable", "message": str(exc)})
