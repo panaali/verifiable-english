@@ -6,7 +6,7 @@ DRI signature needed: ME-1 introduces S +183 and V +106 trusted Lean lines; no s
 
 - Base: `main` at merge base `f98183bf5`; branch `foundation/me-1`.
 - The reviewed plan and spec were copied verbatim from `research/math-evidence-p1` in `92bfcc54c`.
-- `fafaf7e5e` owns exact numbers, rounding and one Lean comparison phrase table; Python reads only its generated JSON. `0aeb5248f` implements the Calc meaning, checker, limits, rendering, fixtures, and generated inventories. `2a25e5620` adds tie guards and classifies the new Lean declarations. `bb7269293` records the generator's assurance/merge ownership, narrows the consolidation ledger to top-level mains, refreshes the frozen hash, and scopes test selection.
+- `fafaf7e5e` owns exact numbers, rounding and one Lean comparison phrase table; Python reads only its generated JSON. `0aeb5248f` implements the Calc meaning, checker, limits, rendering, fixtures, and generated inventories. `2a25e5620` adds tie guards and classifies the new Lean declarations. `bb7269293` records the generator's assurance/merge ownership, narrows the consolidation ledger to top-level mains, refreshes the frozen hash, and scopes test selection. `3eb40824b` scopes `other_json` selection. `3dc31cb97` makes two existing tests stable across this batch.
 - Acceptance: **AGENT** for all ME-1 code, proofs, fixtures and generated files; **HUMAN** for the trust allowance signature; **EXTERNAL** for the final full gate on the chain's test runner. No pilot bytes are in ME-1.
 
 ## ME-1 plan ledger
@@ -60,14 +60,14 @@ All mutants were restored before the final build.
 | 19 use-case formalisation | N.A.: ME-1 only installs core and arithmetic guards, with no source claims presented as findings. |
 | 20 reports from gate JSON | N.A.: no pilot numbers or permanent report test; final gate is external. |
 | 21 AGENT/HUMAN/EXTERNAL | PASS: scope and evidence section above. |
-| 22 selected tests and final gate | Selected tests on Mac; chain runs full gate after final commit per user override. Initial 374-unit selected run exposed five inventory tests and was fixed; final scoped run follows. |
+| 22 selected tests and final gate | Selected tests on Mac; chain runs full gate after final commit per user override. Initial 374-unit selected run exposed five inventory tests and was fixed. The scoped 163-unit run passed 161 units; the two failing tests were repaired and passed on the Mac. |
 | 23 standing rulings and DELTA | `DELTA.md`; trust signature pending. |
 
 ## Verification and fixes from selected tests
 
 - `mac-pytest.sh --select -- --base f98183bf5 --run` selected 163 units at `3eb40824b`: 161 passed. The RD-6b report test still compared its historical ledger to the moving current tree; it now compares the RD-6b baseline with its pinned commit. `tests/test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature` passed locally and on the Mac after the fix.
 - `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline` had a one-microsecond CPU limit that missed the Mac's CPU tick. The test now advances an injected CPU clock after the request write. It passed locally and on the Mac after the fix. `tests/test_hang_guards.py`: 61 passed locally.
-- `python3 lean/audit.py --check`: 490 Lean source files and 5,840 named theorem declarations audited, standard axiom allowlist only. `tools/repo_map.py --check`: 32 modes have schemas. The approved plan and spec copies match `research/math-evidence-p1` byte-for-byte. `git diff --check main...HEAD` passed.
+- `python3 lean/audit.py --check`: 490 Lean source files and 5,840 named theorem declarations audited, standard axiom allowlist only. `tools/regen_generated.py --check --only lean-statements`: 5,390 statements unchanged; its checks of `gitattributes`, `numbers-phrases`, `frozen-inventory`, `checker-pins` and `assurance-doc` also passed. `tools/repo_map.py --check`: 32 modes have schemas. The approved plan and spec copies match `research/math-evidence-p1` byte-for-byte. `git diff --check main...HEAD` passed.
 - The task reserves `tools/gate.py` for the chain's clean, committed final HEAD. No full release gate was run here.
 
 ## Self-review against BUILDER-CHECKLIST
