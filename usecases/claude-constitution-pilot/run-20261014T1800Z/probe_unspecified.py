@@ -33,6 +33,7 @@ from ve import norm_defaults as nd  # noqa: E402
 from ve.norm_defaults_route import run_case, source_case  # noqa: E402
 from ve.document import load_document  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
+import s03_scope as sc  # noqa: E402
 import spec_nd  # noqa: E402
 
 # run 20261014T1800Z (AT-0p): the guard of hard constraint i is ( C_i(s) and knowingly_engages_i(c, s) ) or thinks_quite_likely_i(c, s),
@@ -49,16 +50,27 @@ def situation(document, true_atoms=()):
     return FiniteModel.from_dict(env, {"complete": True, "domains": domains, "constants": consts, "relations": relations})
 
 
+def situation2(document, true_tuples, sizes):
+    """A situation with `sizes[sort]` elements (sort0, sort1, ...) and the given true tuples {atom: [[element, ...], ...]}."""
+    env = document.situation_environment()
+    domains = {s: [f"{s}{k}" for k in range(sizes.get(s, 1))] for s in env.model_sorts}
+    consts = {c: env.constants[c].sort + "0" for c in env.constants}
+    relations = {p: [] for p in env.predicates}
+    for atom, tuples in true_tuples.items():
+        relations[atom] = [list(t) for t in tuples]
+    return FiniteModel.from_dict(env, {"complete": True, "domains": domains, "constants": consts, "relations": relations})
+
+
 def main():
     doc = load_document(RUN / "readings/all-strict.ve.md")["norm_defaults"]
     env = doc.env
     fdoc = fnd.UnspecifiedDocument(doc.env, doc.author.rules)
     out = {"document": "readings/all-strict.ve.md", "points": [], "conflict": {}, "gaps": {}}
 
-    def point(label, predicate, atoms):
-        model = situation(doc, atoms)
+    def point(label, predicate, atoms, model=None, values=None, doc=doc, env=env, fdoc=fdoc, key="points"):
+        model = model or situation(doc, atoms)
         sorts = env.predicates[predicate].arguments
-        values = [x + "0" for x in sorts]
+        values = values or [x + "0" for x in sorts]
         case = source_case(doc, "norm-defaults-status", model=model.to_dict(), predicate=predicate, tuple=values, method="enumerate")
         row = run_case(case)
         if row["point_status"] == "UNKNOWN":  # the tables of "the text does not say": every unsaid atom true, then every one false
@@ -71,16 +83,18 @@ def main():
             report = fnd.check_conflict(fdoc, model=model.to_dict())
             if report.status == "CONFLICT" and report.target == predicate:
                 text = f"CONFLICT ({report.kind}: permitted by one rule, forbidden by another)"
-        out["points"].append({"label": label, "predicate": predicate, "true_atoms": sorted(atoms), "status": text,
-                              "rules": row.get("rules"), "differs": row.get("differs")})
+        out.setdefault(key, []).append({"label": label, "predicate": predicate, "true_atoms": sorted(atoms), "status": text,
+                                        "rules": row.get("rules"), "differs": row.get("differs")})
         return row
 
     for n, (unit, rule, pred, term, _act, _words) in enumerate(spec_nd.HARD):
         # four points per rule (AT-0p; the atoms are one-element situations, so c and s are the only instance and situation)
         i = n + 1
         c, k, t = term, f"knowingly_engages_{i}", f"thinks_quite_likely_{i}"
+        if unit == sc.UNIT:  # the category is three atoms; the wide companion (readings/all-strict.ve.md) carries the wide reading
+            c = [sc.CYBERWEAPON, sc.DAMAGE]  # a case under both readings
         point(f"{unit}: the case does not hold, Claude thinks it quite likely that the action falls into the category", pred, [t])
-        point(f"{unit}: the case holds, Claude knowingly and intentionally engages in it", pred, [c, k])
+        point(f"{unit}: the case holds, Claude knowingly and intentionally engages in it", pred, [*([c] if isinstance(c, str) else c), k])
         point(f"{unit}: neither (an unclear, uncertain or unknowing case)", pred, [])
         point(f"{unit}: the case does not hold, Claude knowingly and intentionally engages in it", pred, [k])
     for label, pred, atoms in [
@@ -115,6 +129,25 @@ def main():
     ]:
         point(label, pred, atoms)
 
+    # u0165.s03: the two attachments of “that could cause significant damage if deployed”, each on its own companion (wide: readings/all-strict.ve.md)
+    k3, t3 = sc.KNOWING, sc.THINKING
+    for reading, path in (("wide", "readings/all-strict.ve.md"), ("narrow", "readings/all-strict-narrow.ve.md")):
+        d2 = load_document(RUN / path)["norm_defaults"]
+        f2 = fnd.UnspecifiedDocument(d2.env, d2.author.rules)
+        for label, atoms in [("a cyberweapon that could not cause significant damage, knowingly created", [sc.CYBERWEAPON, k3]),
+                             ("malicious code that could not cause significant damage, knowingly created", [sc.MALICIOUS_CODE, k3]),
+                             ("malicious code that could cause significant damage, knowingly created", [sc.MALICIOUS_CODE, sc.DAMAGE, k3]),
+                             ("a cyberweapon that could cause significant damage, knowingly created", [sc.CYBERWEAPON, sc.DAMAGE, k3]),
+                             ("nothing holds", [])]:
+            point(f"u0165.s03, {reading} reading: {label}", "cyberweapon_creation_permitted", atoms, doc=d2, env=d2.env, fdoc=f2, key="scope_points")
+    # u0123.s02.p1: the operator's own products. Two operators; operator0 gave the input, which promotes its own products.
+    sizes = {"operator": 2}
+    for label, who in [("the operator who gave the instruction to promote its own products", "operator0"),
+                       ("another operator, for the same input", "operator1")]:
+        m = situation2(doc, {"instruction_promote_own_products": [["operator0", "operator_input0"]]}, sizes)
+        point(f"u0123.s02.p1: {label}", "operator_input_permitted", ["instruction_promote_own_products(operator0, operator_input0)"],
+              model=m, values=[who, "operator_input0"], key="binding_points")
+
     # conflicts: a witness situation for the operator rules, then the whole document
     for label, atoms in [("a role-play instruction that also claims to be human",
                           ["instruction_role_play_custom_persona", "instruction_claim_human_when_asked"]),
@@ -136,6 +169,9 @@ def main():
     (RUN / "probes/unspecified-probe.json").write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
     for p in out["points"]:
         print(f"{p['status']:60} {p['label']}")
+    for key in ("scope_points", "binding_points"):
+        for p in out[key]:
+            print(f"{p['status']:60} {p['label']}")
     print(json.dumps(out["conflict"], indent=1))
     print({k: v["reached"] for k, v in out["gaps"].items()})
 

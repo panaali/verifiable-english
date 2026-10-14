@@ -1,45 +1,31 @@
-SETTLED no                                                   u0165.s01: Claude would be knowingly and intentionally doing it
-SETTLED no                                                   u0165.s01: Claude thinks it quite likely that the action falls into the category
-SETTLED no                                                   u0165.s01: both
-UNDECIDED                                                    u0165.s01: only another category's knowing atom holds
-UNDECIDED                                                    u0165.s01: only another category's belief atom holds
+SETTLED no                                                   u0165.s01: the case does not hold, Claude thinks it quite likely that the action falls into the category
+SETTLED no                                                   u0165.s01: the case holds, Claude knowingly and intentionally engages in it
 UNDECIDED                                                    u0165.s01: neither (an unclear, uncertain or unknowing case)
-SETTLED no                                                   u0165.s02: Claude would be knowingly and intentionally doing it
-SETTLED no                                                   u0165.s02: Claude thinks it quite likely that the action falls into the category
-SETTLED no                                                   u0165.s02: both
-UNDECIDED                                                    u0165.s02: only another category's knowing atom holds
-UNDECIDED                                                    u0165.s02: only another category's belief atom holds
+UNDECIDED                                                    u0165.s01: the case does not hold, Claude knowingly and intentionally engages in it
+SETTLED no                                                   u0165.s02: the case does not hold, Claude thinks it quite likely that the action falls into the category
+SETTLED no                                                   u0165.s02: the case holds, Claude knowingly and intentionally engages in it
 UNDECIDED                                                    u0165.s02: neither (an unclear, uncertain or unknowing case)
-SETTLED no                                                   u0165.s03: Claude would be knowingly and intentionally doing it
-SETTLED no                                                   u0165.s03: Claude thinks it quite likely that the action falls into the category
-SETTLED no                                                   u0165.s03: both
-UNDECIDED                                                    u0165.s03: only another category's knowing atom holds
-UNDECIDED                                                    u0165.s03: only another category's belief atom holds
+UNDECIDED                                                    u0165.s02: the case does not hold, Claude knowingly and intentionally engages in it
+SETTLED no                                                   u0165.s03: the case does not hold, Claude thinks it quite likely that the action falls into the category
+SETTLED no                                                   u0165.s03: the case holds, Claude knowingly and intentionally engages in it
 UNDECIDED                                                    u0165.s03: neither (an unclear, uncertain or unknowing case)
-SETTLED no                                                   u0165.s04: Claude would be knowingly and intentionally doing it
-SETTLED no                                                   u0165.s04: Claude thinks it quite likely that the action falls into the category
-SETTLED no                                                   u0165.s04: both
-UNDECIDED                                                    u0165.s04: only another category's knowing atom holds
-UNDECIDED                                                    u0165.s04: only another category's belief atom holds
+UNDECIDED                                                    u0165.s03: the case does not hold, Claude knowingly and intentionally engages in it
+SETTLED no                                                   u0165.s04: the case does not hold, Claude thinks it quite likely that the action falls into the category
+SETTLED no                                                   u0165.s04: the case holds, Claude knowingly and intentionally engages in it
 UNDECIDED                                                    u0165.s04: neither (an unclear, uncertain or unknowing case)
-SETTLED no                                                   u0165.s05: Claude would be knowingly and intentionally doing it
-SETTLED no                                                   u0165.s05: Claude thinks it quite likely that the action falls into the category
-SETTLED no                                                   u0165.s05: both
-UNDECIDED                                                    u0165.s05: only another category's knowing atom holds
-UNDECIDED                                                    u0165.s05: only another category's belief atom holds
+UNDECIDED                                                    u0165.s04: the case does not hold, Claude knowingly and intentionally engages in it
+SETTLED no                                                   u0165.s05: the case does not hold, Claude thinks it quite likely that the action falls into the category
+SETTLED no                                                   u0165.s05: the case holds, Claude knowingly and intentionally engages in it
 UNDECIDED                                                    u0165.s05: neither (an unclear, uncertain or unknowing case)
-SETTLED no                                                   u0165.s06: Claude would be knowingly and intentionally doing it
-SETTLED no                                                   u0165.s06: Claude thinks it quite likely that the action falls into the category
-SETTLED no                                                   u0165.s06: both
-UNDECIDED                                                    u0165.s06: only another category's knowing atom holds
-UNDECIDED                                                    u0165.s06: only another category's belief atom holds
+UNDECIDED                                                    u0165.s05: the case does not hold, Claude knowingly and intentionally engages in it
+SETTLED no                                                   u0165.s06: the case does not hold, Claude thinks it quite likely that the action falls into the category
+SETTLED no                                                   u0165.s06: the case holds, Claude knowingly and intentionally engages in it
 UNDECIDED                                                    u0165.s06: neither (an unclear, uncertain or unknowing case)
-SETTLED no                                                   u0165.s07: Claude would be knowingly and intentionally doing it
-SETTLED no                                                   u0165.s07: Claude thinks it quite likely that the action falls into the category
-SETTLED no                                                   u0165.s07: both
-UNDECIDED                                                    u0165.s07: only another category's knowing atom holds
-UNDECIDED                                                    u0165.s07: only another category's belief atom holds
+UNDECIDED                                                    u0165.s06: the case does not hold, Claude knowingly and intentionally engages in it
+SETTLED no                                                   u0165.s07: the case does not hold, Claude thinks it quite likely that the action falls into the category
+SETTLED no                                                   u0165.s07: the case holds, Claude knowingly and intentionally engages in it
 UNDECIDED                                                    u0165.s07: neither (an unclear, uncertain or unknowing case)
+UNDECIDED                                                    u0165.s07: the case does not hold, Claude knowingly and intentionally engages in it
 SETTLED no                                                   u0156.s03: any situation
 SETTLED no                                                   u0125.s04.p2: any situation
 SETTLED yes                                                  u0052.s01: any situation (added in run 20261008T0600Z: the unit is now one strict reading)
@@ -61,6 +47,18 @@ UNDECIDED                                                    u0073.s05: the case
 UNDECIDED                                                    u0073.s05: the case holds and the “generally” exception applies
 SETTLED yes                                                  u0168.s01: the case holds
 UNDECIDED                                                    u0168.s01: the case does not hold
+UNDECIDED                                                    u0165.s03, wide reading: a cyberweapon that could not cause significant damage, knowingly created
+UNDECIDED                                                    u0165.s03, wide reading: malicious code that could not cause significant damage, knowingly created
+SETTLED no                                                   u0165.s03, wide reading: malicious code that could cause significant damage, knowingly created
+SETTLED no                                                   u0165.s03, wide reading: a cyberweapon that could cause significant damage, knowingly created
+UNDECIDED                                                    u0165.s03, wide reading: nothing holds
+SETTLED no                                                   u0165.s03, narrow reading: a cyberweapon that could not cause significant damage, knowingly created
+UNDECIDED                                                    u0165.s03, narrow reading: malicious code that could not cause significant damage, knowingly created
+SETTLED no                                                   u0165.s03, narrow reading: malicious code that could cause significant damage, knowingly created
+SETTLED no                                                   u0165.s03, narrow reading: a cyberweapon that could cause significant damage, knowingly created
+UNDECIDED                                                    u0165.s03, narrow reading: nothing holds
+SETTLED yes                                                  u0123.s02.p1: the operator who gave the instruction to promote its own products
+UNDECIDED                                                    u0123.s02.p1: another operator, for the same input
 {
  "a role-play instruction that also claims to be human": {
   "status": "UNKNOWN",

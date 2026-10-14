@@ -1,15 +1,365 @@
 {
   "verdict": "ALL",
   "route": "superposed",
-  "evidence": "certificate",
-  "assumed": [],
+  "evidence": "certificates",
+  "proofs": [
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    }
+  ],
   "conditional_on": [],
+  "restrictions": [],
   "reading_premises_used": [],
-  "mentions": [],
   "english": [
-    "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"knowingly_damaging_cyberweapon_or_malicious_code\", it is not the case that that instance of Claude may do the creation in that situation.*",
-    "This does not depend on how sentence 132 is read.",
-    "This does not depend on how sentence 589 is read.",
-    "This does not depend on how sentence 1000 is read."
+    "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"creating_a_cyberweapon\" and is classified as \"could_cause_significant_damage_if_deployed\", and that instance of Claude has the recorded relation \"knowingly_engages_3\" to, it is not the case that that instance of Claude may do the creation in that situation.*"
   ]
 }

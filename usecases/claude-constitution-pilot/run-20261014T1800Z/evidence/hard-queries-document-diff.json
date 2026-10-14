@@ -1,0 +1,14 @@
+{
+  "what": "the 18 hard-constraint conclusion queries of u0165.s01, s02, s04 to s07 were asked on the translation before a one-sentence edit of the description of the predicate knowingly_engages_3 (it still named the single case atom of the old u0165.s03 design); the three u0165.s03 queries were asked again on the final document",
+  "before_sha256": "0bdfcc9bc5475134d84a846bed61596e8f25871b2cc566cf272a1b28e3f41ff0",
+  "after_sha256": "a37a9036784b0f0740cc18cfa059928577174aab07333ba8bd7daaf009368cb3",
+  "source_text_identical": true,
+  "logic_identical_apart_from_the_description_and_content_hashes": true,
+  "the_only_text_difference": {
+    "predicate": "knowingly_engages_3",
+    "field": "description",
+    "before_tail": "situation is a case of the category, so the guard states the case atom damaging_cyberweapon_or_malicious_code beside it.",
+    "after_tail": "y, so the guard states the case atoms creating_a_cyberweapon, creating_malicious_code, could_cause_significant_damage_if_deployed beside it."
+  },
+  "content_hashes": "meaning ids and model ids of the four reading sets differ because the environment text is part of their identity; the rules, guards, sorts, constants and open terms are equal"
+}

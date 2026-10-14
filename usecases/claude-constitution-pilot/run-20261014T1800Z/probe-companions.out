@@ -1,10 +1,10 @@
 with_source_word {'check': (5, {'code': 'CheckerUnavailable', 'message': 'ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError'}), 'coverage': (5, {'code': 'CheckerUnavailable', 'message': 'ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError'})}
 {
- "document": "usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md"
+ "document": "usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md"
 }
 without_source_word {'check': (0, None), 'coverage': (0, None)}
 {
- "document": "usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-without_source_word.ve.md",
+ "document": "usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-without_source_word.ve.md",
  "summary": {
   "route": "components",
   "components": [
@@ -21,7 +21,6 @@ without_source_word {'check': (0, None), 'coverage': (0, None)}
      "u0125.s04.p2",
      "u0165.s01",
      "u0165.s02",
-     "u0165.s03",
      "u0165.s04",
      "u0165.s05",
      "u0165.s06",
@@ -50,6 +49,13 @@ without_source_word {'check': (0, None), 'coverage': (0, None)}
     [
      "u0263.s04.p2"
     ]
+   ],
+   [
+    "scope-u0165-s03",
+    "enumerated",
+    [
+     "u0165.s03"
+    ]
    ]
   ],
   "conflict": "CONFLICT-FREE",
@@ -70,11 +76,15 @@ without_source_word {'check': (0, None), 'coverage': (0, None)}
    [
     "force-u0263-s04-p2",
     "model"
+   ],
+   [
+    "scope-u0165-s03",
+    "model"
    ]
   ],
   "separations": {
    "outcome": 2,
-   "selects": 1,
+   "selects": 2,
    "holds": 0
   },
   "decided_units": [
@@ -112,13 +122,13 @@ without_source_word {'check': (0, None), 'coverage': (0, None)}
    "The readings of sentence 1000 were checked one way at a time, not together.",
    "Under every reading of sentence 1000, no two rules on the same act contradict each other.",
    "This does not depend on how sentence 1000 is read.",
+   "Sentence 629 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 629 were checked one way at a time, not together.",
+   "Under every reading of sentence 629, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 629 is read.",
    "Each open sentence below was checked by itself, under each of its readings.",
    "Sentence 132 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
    "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\".",
    "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
    "Read sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\".",
-   "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-   "Read sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is an entity of sort \"entity\"."
-  ]
- },
- "lean_decid
+   "Sentence 1000 was checked 

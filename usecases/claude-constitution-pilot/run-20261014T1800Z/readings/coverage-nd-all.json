@@ -17,16 +17,16 @@
   "residual": {
     "assumptions": 19,
     "bridge_leaves": 0,
-    "open_terms": 46,
-    "unresolved_reading_sets": 3,
-    "separations": 3,
+    "open_terms": 48,
+    "unresolved_reading_sets": 4,
+    "separations": 4,
     "readings_findings": 0,
     "pending_candidates": 0,
     "couplings": 0,
     "gaps": 12,
     "ungrounded_defaults": 0
   },
-  "residual_total": 83,
+  "residual_total": 87,
   "source_bytes": 184893,
   "unformalised_reasons": {
     "attribution": 12,

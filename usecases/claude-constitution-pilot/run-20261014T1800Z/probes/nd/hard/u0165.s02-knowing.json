@@ -1,1 +1,1 @@
-["forall", "claude_instance", ["forall", "situation", ["implies", ["unary", "knowingly_critical_infrastructure_uplift", ["var", 0]], ["not", ["binary", "infrastructure_uplift_permitted", ["var", 1], ["var", 0]]]]]]
+["forall", "claude_instance", ["forall", "situation", ["implies", ["and", ["unary", "critical_infrastructure_uplift", ["var", 0]], ["binary", "knowingly_engages_2", ["var", 1], ["var", 0]]], ["not", ["binary", "infrastructure_uplift_permitted", ["var", 1], ["var", 0]]]]]]

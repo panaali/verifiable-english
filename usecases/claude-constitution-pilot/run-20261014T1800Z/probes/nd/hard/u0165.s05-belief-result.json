@@ -7,9 +7,10 @@
   "reading_premises_used": [],
   "mentions": [],
   "english": [
-    "Under every reading of the 3 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"thought_likely_attempt_to_kill_or_disempower_most_of_humanity\", it is not the case that that instance of Claude may do the participation in that situation.*",
+    "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_5\" to, it is not the case that that instance of Claude may do the participation in that situation.*",
     "This does not depend on how sentence 132 is read.",
     "This does not depend on how sentence 589 is read.",
+    "This does not depend on how sentence 629 is read.",
     "This does not depend on how sentence 1000 is read."
   ]
 }

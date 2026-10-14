@@ -1,1 +1,1 @@
-["forall", "claude_instance", ["forall", "situation", ["implies", ["unary", "knowingly_child_sexual_abuse_material", ["var", 0]], ["not", ["binary", "csam_generation_permitted_for_claude", ["var", 1], ["var", 0]]]]]]
+["forall", "claude_instance", ["forall", "situation", ["implies", ["and", ["unary", "child_sexual_abuse_material", ["var", 0]], ["binary", "knowingly_engages_7", ["var", 1], ["var", 0]]], ["not", ["binary", "csam_generation_permitted_for_claude", ["var", 1], ["var", 0]]]]]]

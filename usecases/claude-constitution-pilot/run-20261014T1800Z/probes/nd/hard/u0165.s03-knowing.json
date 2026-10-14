@@ -1,1 +1,1 @@
-["forall", "claude_instance", ["forall", "situation", ["implies", ["unary", "knowingly_damaging_cyberweapon_or_malicious_code", ["var", 0]], ["not", ["binary", "cyberweapon_creation_permitted", ["var", 1], ["var", 0]]]]]]
+["forall", "claude_instance", ["forall", "situation", ["implies", ["and", ["and", ["unary", "creating_a_cyberweapon", ["var", 0]], ["unary", "could_cause_significant_damage_if_deployed", ["var", 0]]], ["binary", "knowingly_engages_3", ["var", 1], ["var", 0]]], ["not", ["binary", "cyberweapon_creation_permitted", ["var", 1], ["var", 0]]]]]]

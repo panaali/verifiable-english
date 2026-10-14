@@ -3,6 +3,8 @@
 
     uv run python usecases/claude-constitution-pilot/run-20261010T0600Z/nd.py [force|all]
 
+Run 20261014T1800Z: a fourth set, `scope-u0165-s03` (wide and narrow attachment of “that could cause significant damage if deployed”; s03_scope.py owns both
+guards), so four sets and 16 choices; `all` is the three "should" sets plus it, `force` stays the three "should" sets.
 Run 20261012T1800Z: u0125.s04.p2 is no longer a reading set (audit 20261012T0600Z), so three "should" sets remain (8 choices).
 Run 20261010T0600Z (from 20261009T1800Z). The four operator units (u0062.s01, u0123.s01.p1, u0123.s02.p1, u0123.s03) are no longer reading sets:
 the audit of 20261009T1800Z rejected the "wide" scope of "while role-playing as a custom AI persona", and what is left is one reading each,
@@ -33,6 +35,7 @@ _spec = importlib.util.spec_from_file_location("readings_s1_pilot", ROOT / "tool
 pilot = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(pilot)
 
+import s03_scope as scope03  # noqa: E402
 import spec_nd as nd  # noqa: E402
 from ve.document import _environment, check_document, load_document  # noqa: E402
 from ve.errors import VEError  # noqa: E402
@@ -40,7 +43,8 @@ from ve.readings import s1_content_meaning_id  # noqa: E402
 
 OUT = RUN / "readings"
 FORCE = ["force-u0036-s05", "force-u0156-s03", "force-u0263-s04-p2"]
-GROUPS = {"force": FORCE, "all": FORCE}
+SCOPE = [scope03.SET_ID]  # run 20261014T1800Z: u0165.s03, the two attachments of “that could cause significant damage if deployed”
+GROUPS = {"force": FORCE, "all": FORCE + SCOPE}
 
 
 # The defeasible candidate of a "should" set, on the main chain: the strict rule with ONE exception the text does not
@@ -102,6 +106,9 @@ def build(group, main_meta, source, strict_meta):
             if item["id"] in FORCE and r["id"] == "strict":
                 content = strict_units[item["unit"]]["content"]
                 r = {**r, "content": content}
+                r["meaning_id"] = s1_content_meaning_id(env, item["id"], r)
+            elif item["id"] in SCOPE:
+                r = {**r, "content": scope03.with_reading(strict_units[item["unit"]]["content"], r["id"])}
                 r["meaning_id"] = s1_content_meaning_id(env, item["id"], r)
             elif item["id"] in FORCE and r["id"] == "default":
                 r = {**r, "content": with_exception(strict_units[item["unit"]]["content"], item["id"])}

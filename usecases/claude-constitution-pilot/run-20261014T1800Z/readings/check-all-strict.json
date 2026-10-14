@@ -1,7 +1,7 @@
 {
   "format": "ve-document@1",
   "source_id": "b92ba569c232d38931464d455eaf4d5db971dff1b0438ff9b8d1f6067d4d7148",
-  "document_id": "c0dafb9561459c107c536ac9b280cb7ad29de2b558fdd0bc201edd2a4c49c059",
+  "document_id": "67869742feb06c3ea3d3794f6f29dd9e5501383d123d7d3a6be2df88a0f0f57e",
   "coverage": {
     "accounted_bytes": 184893,
     "bytes_by_kind": {
@@ -21,12 +21,12 @@
     "residual": {
       "assumptions": 30,
       "bridge_leaves": 0,
-      "open_terms": 37,
+      "open_terms": 46,
       "unresolved_reading_sets": 0,
       "gaps": 11,
       "ungrounded_defaults": 0
     },
-    "residual_total": 78,
+    "residual_total": 87,
     "source_bytes": 184893,
     "unformalised_reasons": {
       "attribution": 12,
@@ -65,9 +65,9 @@
     ]
   },
   "norm_defaults": {
-    "environment_id": "1d44dcb36d292d206f95dbc609df29436bc9fd4da4082c8234f71364609c26ba",
-    "filled_environment_id": "6673f3afddeaf983e0f7ded2e1785005cb5c73bf9b6be89121dd602039053049",
-    "fill_hash": "3c38b31c8645369e6ed438147a959c0bc3a75149f59a7880aa00d2c6a5b9fc91",
+    "environment_id": "ca8becdbdd4e73c4c850ee68bf347f46e0d4f038bfc60ff8b87650d6e4be0d64",
+    "filled_environment_id": "5ffb37d25fdf2b7f67eff253f38f1bca7d22b4e347fc5e27ce7e673f5ca1ba76",
+    "fill_hash": "8bd3f78b5b37d9d39d28090d6c2793374c90dcfd269e7b7b9291f3e942c82eab",
     "unsaid_predicates": [
       "unsaid__clarification_required",
       "unsaid__csam_generation_permitted_for_claude",
@@ -4570,13 +4570,13 @@
         "name": "claim"
       }
     },
-    "report_id": "786474b191a2a1dce6e24d03fa163ad0c41189ede19b1d894797b11fb9965f6a",
-    "core_report_id": "c97f3211d8fe5afaad06d4f2bbb3b2523ffbd5495abbcbdc7291861d87b55f57",
+    "report_id": "f02ed3b431922ce7ac5f45ff9caafc1a740e1e73215137b1f6ab46db8d1daa45",
+    "core_report_id": "7c61396174c6b156c31ddc46ebf3d92b01b8af8d7371f0d4533f62c81c58939e",
     "vacuous": false
   },
   "stale_reading_labels": [],
   "premises": {
     "status": "model",
-    "model_id": "c70d87c5d0bf562bb69c47d192d79f04c92d95ff5c8130a1e0ee5b5794d764b9"
+    "model_id": "265f82f1b477576cbf6adc721116fb2e9e1664ae2596c38a494b9ef1689488bc"
   }
 }
