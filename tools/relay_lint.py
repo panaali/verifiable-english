@@ -53,12 +53,13 @@ sys.path.insert(0, str(ROOT))
 
 # The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 3: the readings route;
 # batch 4: discourse; batch 7: rights; batch 8: reports; batch 10b: norm defaults;
-# batch 11b: speech source; question answering Q1.2: `ve ask`; Q2.4: situation and point wording).
+# batch 11b: speech source; batch 13b: norms admission; question answering Q1.2: `ve ask`;
+# Q2.4: situation and point wording).
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
            "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py",
            "ve/norm_defaults.py", "ve/norm_defaults_route.py",
            "ve/backends/speech_source.py", "ve/speech_document.py", "ve/backends/english_lean.py",
-           "ve/ask.py", "ve/words.py")
+           "ve/norm_admission.py", "ve/ask.py", "ve/words.py")
 # Relayed functions of a module that also holds Python's own code (English E2, spec 2.9: the admission path of
 # `ve/english.py`; the producer, the renderer, the statement reader and the comparator in the same module write
 # their own diagnostics and are outside it).

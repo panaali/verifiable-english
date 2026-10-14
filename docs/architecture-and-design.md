@@ -1,6 +1,8 @@
 # Verifiable English: Architecture and Design
 
-**Status:** First draft. Implementation, proofs, and usability results are pending.
+**Status:** the design rationale, written before the implementation. **Superseded in part (2026-10-10):** the
+checker, its Lean proofs and the readability evaluations now exist; for the current system see
+[the architecture map](ARCHITECTURE.md). The research target and the design choices below stand.
 
 Verifiable English (VE) is an English-like language with precise, machine-checkable semantics for humans and AI agents. Its goal is to support **AI alignment and scalable oversight**, especially debate between agents before a human or weaker model judge.
 

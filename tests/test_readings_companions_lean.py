@@ -162,7 +162,7 @@ def test_fc1_three_components_each_answered_as_a_document_of_its_own(lean):
     # F-C5 on the wire: the two readings' identical `agent` and `user` sorts are one sort each in the merged frame
     assert sorted(answers["rs_a"]["filled"]["environment"]["vocabulary"]["sorts"]) == ["agent", "user"]
     elaborate, _ = components(one(lean, "readings-elaborate", env_main(), document))
-    assert elaborate["rs_a"]["finding"] == {"text": "ReadingsNotSuperposable: rs_a", "cause": "the unspecified completion"}
+    assert elaborate["rs_a"]["route"] == "superposed" and elaborate["rs_a"]["finding"] is None
     assert elaborate["rs_b"]["choices"] == [[["rs_b", 0]], [["rs_b", 1]]]
     for name in ("rs_a", "rs_b"):
         assert "fill_premises" in elaborate[name]

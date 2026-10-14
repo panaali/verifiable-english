@@ -289,12 +289,15 @@ def test_the_recorder_writes_every_relayed_case(built, tmp_path):
 
 @pytest.fixture
 def without_length_check(monkeypatch):
-    """The service client with its per-request length check (`x-length`) switched off."""
+    """The service client with its per-request length check (`x-length`) switched off. Every validator
+    the client applies, the rows (`ROWS`) and the response envelope (`check_response`), is compiled
+    lazily by the module's one `_compiler`, so a fresh compiler without the check replaces it.
+    (The envelope's own `x-length` on `results` repeats its `x-rows` count, so the rows' checks decide
+    the outcome.) ts-B1's merge verify ran the whole suite, but on a worktree holding this fix
+    uncommitted, so main got the old fixture; test selection did pick this file."""
     from ve.backends import service_schema as S
     monkeypatch.setattr(S.Compiler, "_x_length", lambda self, pointer, schema, base: None)
-    compiler = S.Compiler()
-    monkeypatch.setattr(S, "ROWS", {mode: compiler.ref(f"{mode}.json", "#/row") for mode in MODES})
-    monkeypatch.setattr(S, "RESPONSE", compiler.ref("envelope.json", "#/response"))
+    monkeypatch.setattr(S, "_compiler", S.Compiler())
 
 
 def test_a_client_without_its_length_check_fails_the_gate(built, without_length_check):

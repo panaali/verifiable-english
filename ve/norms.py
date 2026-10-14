@@ -350,8 +350,8 @@ class NormDocument:
     def elaborate(self, predicate):
         """The generated layer premise of `predicate`, from the selected authority."""
         self._require_completion()
-        from .backends.dispatch import authority_for, execute
-        if authority_for("norms_elaborate") == "python" or not _lean_route(self):
+        from .backends.dispatch import owned
+        if not _lean_route(self):
             return self._elaborate_python(predicate)
 
         def lean():
@@ -361,8 +361,7 @@ class NormDocument:
                     return _lean_formula(item["ast"])
             raise VEError(f"UnknownSymbol: regulated predicate {predicate}")
 
-        return execute("norms_elaborate", {"document_hash": self.document_hash, "predicate": predicate},
-                       lambda: self._elaborate_python(predicate), lean=lean)
+        return owned("norms_elaborate", lean)
 
     def _elaborate_python(self, predicate):
         positive, negative, _ = self.selection(predicate)
@@ -377,16 +376,15 @@ class NormDocument:
     def premises(self):
         """The labelled layer premises in layer order, from the selected authority."""
         self._require_completion()
-        from .backends.dispatch import authority_for, execute
-        if authority_for("norms_elaborate") == "python" or not _lean_route(self):
+        from .backends.dispatch import owned
+        if not _lean_route(self):
             return self._premises_python()
 
         def lean():
             return tuple((item["label"], _lean_formula(item["ast"]))
                          for item in self._lean_regenerated()["premises"])
 
-        return execute("norms_elaborate", {"document_hash": self.document_hash},
-                       self._premises_python, lean=lean)
+        return owned("norms_elaborate", lean)
 
     def _premises_python(self):
         return tuple((f"layer:norms:{p}", self._elaborate_python(p)) for p in self.order)
@@ -517,14 +515,10 @@ def check_norm_entailment_certificate(document: NormDocument, premises, conclusi
     """Replay the same ordered premise list used by `norms-certificate`."""
     if not isinstance(document, NormDocument):
         raise VEError("UnsupportedProfile: soft rules require the soft route")
-    from .backends.dispatch import authority_for, execute
-    if authority_for("norms_certificate") == "python" or not _lean_route(document):
+    from .backends.dispatch import owned
+    if not _lean_route(document):
         return _norm_certificate_python(document, premises, conclusion, certificate)
-    payload = {"document_hash": document.document_hash,
-               "certificate": certificate if type(certificate) is dict else None}
-    return execute("norms_certificate", payload,
-                   lambda: _norm_certificate_python(document, premises, conclusion, certificate),
-                   lean=lambda: _norm_certificate_lean(document, premises, conclusion, certificate))
+    return owned("norms_certificate", lambda: _norm_certificate_lean(document, premises, conclusion, certificate))
 
 
 def _norm_certificate_python(document, premises, conclusion, certificate):
@@ -616,14 +610,12 @@ def check_conflict(document: NormDocument, *, model=None, certificates=None,
         raise VEError("UnsupportedProfile: soft rules require the soft route")
     document._require_completion()
     _reject_filling(document, model)
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import owned
     options = {"model": model, "certificates": certificates, "max_evaluations": max_evaluations,
                "prove": prove, "tableau_steps": tableau_steps}
-    if authority_for("norms_conflict") == "python" or not _lean_route(document):
+    if not _lean_route(document):
         return _check_conflict_python(document, **options)
-    return execute("norms_conflict", {"document_hash": document.document_hash, "prove": prove},
-                   lambda: _check_conflict_python(document, **options),
-                   lean=lambda: _check_conflict_lean(document, **options))
+    return owned("norms_conflict", lambda: _check_conflict_lean(document, **options))
 
 
 def _check_conflict_python(document, *, model, certificates, max_evaluations, prove, tableau_steps):

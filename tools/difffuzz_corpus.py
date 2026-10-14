@@ -76,6 +76,10 @@ EXCLUDED = {
     "usecases/eligibility/rules.json": ("no-input", "rule records the use case's script turns into documents"),
     "usecases/safety-framework/cases.json": ("no-input", "case facts the use case's script turns into documents"),
     "usecases/gatekeeper-exemption/*.json": ("no-input", "a glob@1 policy request, outside the VE checker"),
+    "usecases/udhr-pilot/*/answers/*.json": ("artifact", "a UDHR pilot run's recorded query answers"),
+    "usecases/udhr-pilot/*/reports/*.check.json": ("artifact", "a UDHR pilot run's recorded check report"),
+    "usecases/udhr-pilot/*/metrics.json": ("artifact", "a UDHR pilot run's measurements"),
+    "usecases/udhr-pilot/*/unmigrated.json": ("artifact", "a UDHR pilot run's record of sets not migrated"),
 }
 
 def _generated(module, name, convert=lambda value: value):

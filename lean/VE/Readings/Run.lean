@@ -2,6 +2,7 @@ import VE.Readings.Wire
 import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
+import VE.Readings.SupFillWire
 import VE.Readings.VerdictsWire
 import VE.Readings.Companions
 import VE.Readings.ComponentsWire
@@ -341,17 +342,14 @@ def runSeparateND (id : String) (f : AdmittedNDFull) (j : Json) : Except String 
   let p ← pairFactsIn f.fa.a (sideIn f.fa.a s) s sid (← stringField j "other")
   pure (VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson (ndPairFacts f p) sid)])
 
-/-- The S2a kinds under the completion: elaborate and choice as `UnspecifiedWire.lean` answers them, dead as today
-    (it reads no rule), and the superposed kinds refused until RD-6. A document of such an environment without a
-    content-bearing set, or of any other environment, is today's (S1 4.9). `b` is the case's one admission. -/
+/-- The S2a kinds under the completion (`runNDKind`): elaborate and choice as `UnspecifiedWire.lean` answers them,
+    dead as today (it reads no rule), and the superposed kinds on the filled document (`SupFillWire.lean`, plan
+    RD-6b). A document of such an environment without a content-bearing set, or of any other environment, is today's
+    (S1 4.9). `b` is the case's one admission. -/
 def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
   if kind == "readings-verdicts" then return ← runVerdicts lower id b j
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
-  let f ← admitNDFull b
-  if kind == "readings-elaborate" then return ← runElaborateNDFilled id f
-  if kind == "readings-choice" then return ← runChoiceND id f.r j
-  if kind == "readings-dead" then return ← deadAnswer id f.r.N.D j
-  throw (completionRefusal f.r.N.D)
+  runNDKind id kind (← admitNDFull b) j
 
 /-! ## Dispatch -/
 
@@ -461,11 +459,7 @@ def runAdmitted (j : Json) (id kind : String) (ready : ComponentAdmission) : Exc
     | .s1 _ => throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
   match ready with
   | .s2 b => runS2 runLowerWith id kind b j
-  | .nd f =>
-    if kind == "readings-elaborate" then return ← runElaborateNDFilled id f
-    if kind == "readings-choice" then return ← runChoiceND id f.r j
-    if kind == "readings-dead" then return ← deadAnswer id f.r.N.D j
-    throw (completionRefusal f.r.N.D)
+  | .nd f => runNDKind id kind f j
   | .s1 _ => throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
 
 /-- In a split, the kinds that read a case's choices (`readings-elaborate`, `readings-choice`) read the main case's

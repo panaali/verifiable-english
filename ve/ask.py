@@ -114,9 +114,14 @@ class _Readings:
     route = "readings"
 
     def __init__(self, doc):
-        from .readings_verdicts import Enumerated, context
+        from .readings_verdicts import Enumerated, Superposed, context
         self.doc = doc
         self.context = context(doc)
+        if isinstance(self.context, Superposed) and self.context.completion:
+            # RD-6b can superpose a completed document that RD-3 enumerated. Ask's checked replay still
+            # uses each choiceU document; Enumerated supplies those existing evidence generators here,
+            # without asking the lower route to decide the document's verdict.
+            self.context = Enumerated(doc)
         if not isinstance(self.context, Enumerated):
             raise CheckerUnavailable("CheckerUnavailable: ask answers a readings document on the enumerated route "
                                      "with at most 64 compatible readings")
@@ -128,6 +133,8 @@ class _Readings:
             # Lean owns the X5 ResourceLimit and its wording, as it does for every other replay refusal.
             return {"id": "readings-verdicts", "kind": "readings-verdicts", "environment": route.environment,
                     "document": route.document, "question": "query", "conclusion": ast, "evidence": []}
+        if route.route == "superposed":
+            return self._completed_case(ast, extra, generate)
         route.premises()
         row = route.query_answer(ast)
         case = copy.deepcopy(route.requests[id(row)])
@@ -143,6 +150,49 @@ class _Readings:
                 {k: v for k, v in entry.items() if k != "choice"})
         case["evidence"] = list(entries.values())
         return case
+
+    def _completed_case(self, ast, extra, generate):
+        """The RD-3 choice evidence for a completion that RD-6b now superposes. Each piece comes from the
+        original choiceU generator; Lean's ask replay checks every piece and owns every answer."""
+        from .readings_verdicts import BUDGET
+        route = self.context
+        entries = {}
+        if generate:
+            for choice in route.choices:
+                own = route._choice(choice)
+                conflict = own.conflict_case()
+                entry = {"choice": route.choice_json(choice), "conflict": conflict}
+                if len(conflict["packages"]) < len(own.targets):
+                    witness = own.witness_case()
+                    if witness is not None:
+                        entry["witness"] = witness
+                unsat = own.certificate_case(None, max_steps=min(BUDGET["max_steps"], 128))
+                if unsat is not None:
+                    entry["unsat"] = unsat
+                else:
+                    model = own.model_case(None)
+                    if model is not None:
+                        entry["model"] = model
+                    elif BUDGET["max_steps"] > 128:
+                        unsat = own.certificate_case(None)
+                        if unsat is not None:
+                            entry["unsat"] = unsat
+                proof = own.certificate_case(ast)
+                if proof is not None:
+                    entry["certificate"] = proof
+                else:
+                    countermodel = own.model_case(ast)
+                    if countermodel is not None:
+                        entry["countermodel"] = countermodel
+                negation = own.certificate_case(["not", ast])
+                if negation is not None:
+                    entry["negation"] = negation
+                entries[json.dumps(entry["choice"])] = entry
+        for entry in extra or ():
+            entries.setdefault(json.dumps(entry["choice"]), {"choice": entry["choice"]}).update(
+                {k: v for k, v in entry.items() if k != "choice"})
+        return {"id": "readings-verdicts", "kind": "readings-verdicts", "environment": route.environment,
+                "document": route.document, "question": "query", "conclusion": ast, "evidence": list(entries.values())}
 
     def splits(self, case, rows):
         """A split per refuted row whose countermodel's failure turns on gaps; True when one was added."""
@@ -289,15 +339,23 @@ class _NormDefaults:
                     "conclusion": ast, "evidence": extra}
         conflict = extra.pop("conflict") if "conflict" in extra else {"packages": gen._packages()}
         evidence = self.conflict_evidence(conflict)
-        for key, conclusion in (("certificate", ast), ("negation", ["not", ast]), ("unsat", None)):
-            piece = gen.certificate_case(conclusion)
+        if "certificate" not in extra and "countermodel" not in extra:
+            piece = gen.certificate_case(ast)
             if piece is not None:
-                evidence[key] = piece
-        if "unsat" not in evidence:
+                evidence["certificate"] = piece
+        if "negation" not in extra and "split" not in extra and "certificate" not in extra:
+            piece = gen.certificate_case(["not", ast])
+            if piece is not None:
+                evidence["negation"] = piece
+        if not {"unsat", "model", "countermodel"} & extra.keys():
+            piece = gen.certificate_case(None)
+            if piece is not None:
+                evidence["unsat"] = piece
+        if "unsat" not in evidence and not {"model", "countermodel"} & extra.keys():
             model = gen.model_case(None)
             if model is not None:
                 evidence["model"] = model
-        if "certificate" not in evidence:
+        if "certificate" not in evidence and not {"certificate", "countermodel"} & extra.keys():
             model = gen.model_case(ast)
             if model is not None:
                 evidence["countermodel"] = model

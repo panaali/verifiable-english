@@ -212,6 +212,10 @@ class Superposed(_Route):
         self.ext = soft.extended_env
         self.base = soft.elaborated.base_environment()
         self.slot = [(entry["label"], entry["ast"]) for entry in self.row.get("slot", [])]
+        # Under the completion `Fill_T` of the superposed filled document follows the assumed atoms (Lean's
+        # `slotUnder D A ++ Fill_T`, `supCertificateCheckExtra`, plan RD-6b); Lean's row carries it apart (`fill`).
+        self.fill = [(entry["label"], entry["ast"]) for entry in self.row.get("fill", [])]
+        self.labelled = self.slot + self.fill
         self.layers = [formula for _, formula in soft.elaborated.premises()]
         self.assertions = [content.body for content in contents if content.kind == "assertion"]
         # DRI ruling 5: past the checked choices no superposed verdict is claimed.
@@ -235,23 +239,33 @@ class Superposed(_Route):
         from .readings_sup import choice_atom
         return [choice_atom(self.sets, s, i) for s, i in A]
 
+    def _labelled(self, env, A):
+        """slot ++ atoms ++ `Fill_T` over `env` in Lean's order, each slot and `Fill_T` premise with its label (an
+        atom has none). Outside the completion `Fill_T` is empty."""
+        slot = list(zip((label for label, _ in self.slot), self._formulas(env, [ast for _, ast in self.slot])))
+        atoms = [(None, f) for f in self._formulas(env, self._atoms(A))]
+        fill = list(zip((label for label, _ in self.fill), self._formulas(env, [ast for _, ast in self.fill])))
+        return slot + atoms + fill
+
     def _full(self, A, gamma=()):
-        """slot ++ atoms ++ layers ++ assertions ++ Γ over E′ (the prover prepends background′)."""
-        return (self._formulas(self.ext, [ast for _, ast in self.slot] + self._atoms(A)) + self.layers +
+        """slot ++ atoms ++ `Fill_T` ++ layers ++ assertions ++ Γ over E′ (the prover prepends background′)."""
+        return ([f for _, f in self._labelled(self.ext, A)] + self.layers +
                 self._formulas(self.ext, self.assertions + list(gamma)))
 
-    def _prove(self, env, slot, rest, conclusion):
-        """A certificate of `conclusion` from slot ++ rest (the prover prepends the Background) that needs as few
-        slot premises as the prover finds: each slot premise is replaced by ⊤ in turn and stays replaced when a
+    def _prove(self, env, labelled, rest, conclusion):
+        """A certificate of `conclusion` from the labelled premises ++ rest (the prover prepends the Background) that
+        needs as few labelled premises as the prover finds: each is replaced by ⊤ in turn and stays replaced when a
         proof remains. The certificate returned never expands a replaced premise, so it checks against the full
         list as well; what it depends on is `_dependencies`'."""
         from .ast import Top
         from .entailment import prove_entailment
-        proof = prove_entailment(env, slot + rest, conclusion, max_steps=BUDGET["max_steps"])
+        current = [f for _, f in labelled]
+        proof = prove_entailment(env, current + rest, conclusion, max_steps=BUDGET["max_steps"])
         if proof.status != "Found":
             return None
-        current = list(slot)
-        for k in range(len(slot)):
+        for k, (label, _) in enumerate(labelled):
+            if label is None:
+                continue
             trial = current[:k] + [Top()] + current[k + 1:]
             again = prove_entailment(env, trial + rest, conclusion, max_steps=BUDGET["max_steps"])
             if again.status == "Found":
@@ -260,29 +274,31 @@ class Superposed(_Route):
 
     def _dependencies(self, proofs):
         """The one dependency set of an answer (compose-s2 fix4 A1): the slot labels its certificates rely on, the
-        conflict certificates it is accepted under included, in slot order. `proofs` are (environment, slot
-        formulas, rest, conclusion, certificate), each certificate over the Background ++ slot ++ rest. Every
-        certificate is replayed with slot premises replaced by ⊤, one label at a time in slot order, and a label
-        stays out when every certificate still closes: each certificate closes without the labels left out, and
-        none of them closes once any label kept is left out too. Both the English conditions (E3) and the
-        independence statement (E13) are worded from this set, never from a separate computation."""
+        conflict certificates it is accepted under included, in label order (the slot's, then `Fill_T`'s). `proofs`
+        are (environment, labelled premises, rest, conclusion, certificate), each certificate over the Background ++
+        the labelled premises ++ rest. Every certificate is replayed with premises replaced by ⊤, one label at a time
+        in label order, and a label stays out when every certificate still closes: each certificate closes without
+        the labels left out, and none of them closes once any label kept is left out too. Both the English
+        conditions (E3) and the independence statement (E13) are worded from this set, never from a separate
+        computation."""
         from .ast import Top
-        kept = [True] * len(self.slot)
-        for k in range(len(self.slot)):
-            trial = kept[:k] + [False] + kept[k + 1:]
-            if all(_replays(env, [f if trial[j] else Top() for j, f in enumerate(slot)] + list(rest), phi, cert)
-                   for env, slot, rest, phi, cert in proofs):
+        labels = [label for label, _ in self.labelled]
+        kept = {label: True for label in labels}
+        for label in labels:
+            trial = {**kept, label: False}
+            if all(_replays(env, [f if name is None or trial[name] else Top() for name, f in labelled] + list(rest),
+                            phi, cert)
+                   for env, labelled, rest, phi, cert in proofs):
                 kept = trial
-        return [label for k, (label, _) in enumerate(self.slot) if kept[k]]
+        return [label for label in labels if kept[label]]
 
     def _conflict_proofs(self, A, certificates):
         """The conflict certificates under `A` as `_dependencies` replays them: over Background_base′ ++ slot ++
-        atoms, each of its target's closed negation."""
+        atoms ++ `Fill_T`, each of its target's closed negation."""
         from .ast import Not
         from .norms import _bind
-        slot = self._formulas(self.base, [ast for _, ast in self.slot])
-        atoms = self._formulas(self.base, self._atoms(A))
-        return [(self.base, slot, atoms, _bind(Not(formula), sorts), certificates[target])
+        labelled = self._labelled(self.base, A)
+        return [(self.base, labelled, [], _bind(Not(formula), sorts), certificates[target])
                 for target, sorts, formula in self.soft.elaborated.conflict_targets() if target in certificates]
 
     def _coherence(self, certificate, env):
@@ -309,12 +325,11 @@ class Superposed(_Route):
             result = {"status": "UNKNOWN", "reason": CHECK_BUDGET_TEXT if not self.checked else self.untaken_text(A)}
             self._conflicts[key] = result
             return result
-        slot = self._formulas(self.base, [ast for _, ast in self.slot])
-        atoms = self._formulas(self.base, self._atoms(A))
-        premises = slot + atoms
+        labelled = self._labelled(self.base, A)
+        premises = [f for _, f in labelled]
         certificates, missing = {}, None
         for target, sorts, formula in self.soft.elaborated.conflict_targets():
-            certificate = self._prove(self.base, slot, atoms, _bind(Not(formula), sorts))
+            certificate = self._prove(self.base, labelled, [], _bind(Not(formula), sorts))
             if certificate is not None:
                 certificates[target] = certificate
             elif missing is None:
@@ -336,8 +351,19 @@ class Superposed(_Route):
                                      f"coherence premises" + (f" and {len(used)} reading premises" if used else "")}
         else:
             result = self._witness(A, premises, missing)
+        if not A and self.completion and self.choices is not None:
+            result["choices"] = self._choice_conflicts(result)
         self._conflicts[key] = result
         return result
+
+    def _choice_conflicts(self, result):
+        """Under the completion, each compatible choice's conflict status, as RD-3's enumerated answer lists them
+        (review B3 of rd-6b). CONFLICT-FREE certified under no assumed reading is every compatible choice's
+        (`readings_wire_nd_conflict_sound`); otherwise each choice's status is its own, under its atoms."""
+        if result["status"] == "CONFLICT-FREE":
+            return [{"choice": self.choice_json(c), "status": "CONFLICT-FREE"} for c in self.choices]
+        return [{"choice": self.choice_json(c),
+                 "status": self.conflict([(R.id, c[R.id]) for R in self.sets])["status"]} for c in self.choices]
 
     def _witness(self, A, premises, missing):
         from .ast import Not
@@ -367,6 +393,7 @@ class Superposed(_Route):
                 raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict witness Python's "
                                          "search found on the superposed document")
             self._shadow(data, A, target=(target, sorts, formula))
+            gaps = self._lean_gaps(row, data)
             kind = f"pair conflict on {target}" if "->" in target else f"strict collision on {target}"
             selected = None
             if target in self.soft.elaborated.order:
@@ -377,7 +404,7 @@ class Superposed(_Route):
                             for rule in self.soft.elaborated.selected_rules(target, model, values)]
             return {"status": "CONFLICT", "evidence": "witness", "assumed": [list(x) for x in A],
                     "target": target, "sorts": list(sorts), "tuple": list(values), "choice": row["choice"],
-                    "model": data, "selected": selected,
+                    "model": data, "gaps": gaps, "selected": selected,
                     "status_text": f"CONFLICT: {kind} at {', '.join(values)} under "
                                    f"{self.choice_text(row['choice'])}"}
         return {"status": "UNKNOWN", "assumed": [list(x) for x in A],
@@ -404,7 +431,9 @@ class Superposed(_Route):
         if key in self._models:
             return self._models[key]
         usable = self.checked and (not A or self.taken(A))
-        result = self._lifted(A, gamma, conclusion) if usable else None
+        # Under the completion a choice's own document is Lean's `choiceU N c`, whose models carry a separate filling;
+        # the search runs on `sup (fillDoc N)` itself, `Fill_T` in its slot (plan RD-6b).
+        result = self._lifted(A, gamma, conclusion) if usable and not self.completion else None
         if result is None and usable:
             phi = Bottom() if conclusion is None else formula_from_data(self.ext, conclusion, _generated=True)
             found = find_countermodel(self.ext, self._full(A, gamma), phi,
@@ -418,9 +447,27 @@ class Superposed(_Route):
                     raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the model Python's search "
                                              f"found on the superposed document ({row.get('first_failing')})")
                 self._shadow(data, A, gamma, conclusion)
-                result = {"choice": row["choice"], "model": data}
+                result = {"choice": row["choice"], "model": data, "gaps": self._lean_gaps(row, data)}
         self._models[key] = result
         return result
+
+    def _lean_gaps(self, row, model):
+        """The filled gaps a checked model's result depends on, Lean's (`ndModelGaps`, `gapsOf`; readings-defaults
+        2.2), bound to the request: each names an unspecified predicate of the request and elements of the model, as
+        many as the predicate's arguments. None outside the completion. Python never chooses them (review B3 of
+        rd-6b: listing every point of every filled table showed gaps the result does not depend on)."""
+        if not self.completion:
+            return []
+        gaps = row.get("gaps")
+        elements = {element for values in model["domains"].values() for element in values}
+        unspecified = {name: decl for name, decl in self.doc["environment"].predicates.items()
+                       if decl.regulated is not None and decl.regulated.default == "unspecified"}
+        if type(gaps) is not list or not all(
+                type(gap) is list and len(gap) == 3 and gap[0] in unspecified and type(gap[1]) is list and len(gap[1]) == len(unspecified[gap[0]].arguments)
+                and all(type(e) is str and e in elements for e in gap[1]) and type(gap[2]) is bool for gap in gaps):
+            raise CheckerUnavailable("ReadingsConformance: Lean's filled gaps of a superposed model are not bound to "
+                                     "the request")
+        return gaps
 
     MAX_LIFTS = 16
 
@@ -443,7 +490,7 @@ class Superposed(_Route):
 
         case = {"id": "readings-s2-shadow", "kind": "readings-superposed-evaluate", "untrusted": True,
                 "environment": environment, "model": data,
-                "slot": [ast for _, ast in self.slot] + self._atoms(A),
+                "slot": [ast for _, ast in self.slot] + self._atoms(A) + [ast for _, ast in self.fill],
                 "assertions": base(self.assertions + list(gamma)),
                 "conflict_targets": [], "conclusions": base([conclusion]) if conclusion is not None else []}
         if target is not None:
@@ -485,7 +532,7 @@ class Superposed(_Route):
                             conclusion=conclusion, model=data)
             if row["valid"] is True and row["conclusion_value"] is False:
                 self._shadow(data, A, gamma, conclusion)
-                return {"choice": row["choice"], "model": data}
+                return {"choice": row["choice"], "model": data, "gaps": self._lean_gaps(row, data)}
         return None
 
     def _lift(self, choice, data, own):
@@ -522,8 +569,9 @@ class Superposed(_Route):
             return None
         phi = Bottom() if conclusion is None else formula_from_data(self.ext, conclusion, _generated=True)
         full = self._full(A, gamma)
-        slot, rest = full[:len(self.slot)], full[len(self.slot):]
-        certificate = self._prove(self.ext, slot, rest, phi)
+        labelled = self._labelled(self.ext, A)
+        rest = full[len(labelled):]
+        certificate = self._prove(self.ext, labelled, rest, phi)
         if certificate is None:
             return None
         row = self.lean("readings-certificate", assumed=[list(x) for x in A], premises=list(gamma),
@@ -535,8 +583,8 @@ class Superposed(_Route):
         # Review A1 of compose-s2 fix4: Lean accepts the certificate only under the conflict certificates, so the
         # answer depends on their slot labels too (a narrowing that removes a collision proves nothing itself).
         used = self._dependencies(self._conflict_proofs(A, conflict["certificates"]) +
-                                  [(self.ext, slot, rest, phi, certificate)])
-        labels = {label for label, _ in self.slot}
+                                  [(self.ext, labelled, rest, phi, certificate)])
+        labels = {label for label, _ in self.labelled}
         coherence = [label for label in conflict["conditional_on"] if label not in labels]
         return {"certificate": certificate, "assumed": [list(x) for x in A],
                 "reading_premises_used": used, "mentions": self._mentions(A, used),
@@ -546,7 +594,7 @@ class Superposed(_Route):
         """The open sets a used leaf mentions (2.3: a leaf mentions a set when its formula contains a bit
         predicate of that set), with whether an atom of it was assumed."""
         from .readings_sup import bit_name, bits_of
-        asts = dict(self.slot)
+        asts = dict(self.labelled)
         mentioned = []
         for position, R in enumerate(self.sets, 1):
             bits = {bit_name(position, j) for j in range(bits_of(len(R.candidates)))}
@@ -563,7 +611,7 @@ class Superposed(_Route):
         found = self.model(())
         if found is not None:
             result = {"status": "model", "route": "superposed", "evidence": "model", "choice": found["choice"],
-                      "model": found["model"]}
+                      "model": found["model"], "gaps": found["gaps"]}
         else:
             proof = self.certificate((), (), None)
             if proof is not None:
@@ -648,12 +696,18 @@ class Superposed(_Route):
             if conflict["status"] != "CONFLICT-FREE":
                 return {"verdict": "UNKNOWN", "route": "superposed", "assumed": [list(x) for x in A],
                         "status": f"UNKNOWN (conflict status: {conflict['status']})",
-                        "conflict_status": conflict["status"]}
+                        "conflict_status": conflict["status"], **self._gated_choice(conflict)}
             proof = self.certificate(A, premises, conclusion_ast)
             if proof is not None:
                 return {"verdict": "ALL", "route": "superposed", "evidence": "certificate",
                         "assumed": [list(x) for x in A], "conditional_on": proof["conditional_on"],
                         "reading_premises_used": proof["reading_premises_used"], "mentions": proof["mentions"]}
+            if self.completion and self.choices is not None:
+                # Under the completion the named readings are answered as RD-3's enumerated route answers them: the
+                # fold over the compatible choices taking them (review B3 of rd-6b: a countermodel under the only
+                # such choice is NONE, never a weaker NOT ALL).
+                taking = [c for c in self.choices if all(c.get(s) == i for s, i in A)]
+                return {**self._fold(taking, premises, conclusion_ast, A), "assumed": [list(x) for x in A]}
             found = self.model(A, premises, conclusion_ast)
             if found is not None:
                 return {"verdict": "NOT ALL", "route": "superposed", "assumed": [list(x) for x in A],
@@ -664,7 +718,7 @@ class Superposed(_Route):
         if conflict["status"] != "CONFLICT-FREE":
             return {"verdict": "UNKNOWN", "route": "superposed",
                     "status": f"UNKNOWN (conflict status: {conflict['status']})",
-                    "conflict_status": conflict["status"]}
+                    "conflict_status": conflict["status"], **self._gated_choice(conflict)}
         proof = self.certificate((), premises, conclusion_ast)
         if proof is not None:
             return {"verdict": "ALL", "route": "superposed", "evidence": "certificate", "assumed": [],
@@ -677,8 +731,19 @@ class Superposed(_Route):
                         "status": f"UNKNOWN (not ALL: countermodel under {self.choice_text(found['choice'])})",
                         "countermodel": found}
             return {"verdict": "UNKNOWN", "route": "superposed", "budget": {"max_choices": 64}}
+        return self._fold(self.choices, premises, conclusion_ast)
+
+    def _gated_choice(self, conflict):
+        """Under the completion a query gated by a CONFLICT names the choice Lean's witness encodes, as RD-3's
+        enumerated answer does (review B3 of rd-6b)."""
+        return {"choice": conflict["choice"]} if self.completion and "choice" in conflict else {}
+
+    def _fold(self, choices, premises, conclusion_ast, assumed=()):
+        """ALL, SOME, NONE or UNKNOWN for `conclusion_ast` over `choices` (compatible, complete, each taking
+        `assumed`): per choice a checked countermodel or certificate under its atoms, then combined with the
+        restrictions that selected them."""
         proofs, counters, unknown = [], [], []
-        for choice in self.choices:
+        for choice in choices:
             A = [(R.id, choice[R.id]) for R in self.sets]
             found = self.model(A, premises, conclusion_ast)
             if found is not None:
@@ -697,13 +762,13 @@ class Superposed(_Route):
                     "budget": dict(BUDGET)}
         # Combined over the compatible choices: the couplings and narrowings that excluded the others are kept
         # (review A of compose-s2 looprecheck2), as a certificate on `sup D` keeps the slot labels it uses.
-        restrictions = self.restrictions(())
+        restrictions = self.restrictions(assumed)
         if proofs:
             conditional = list(dict.fromkeys([label for p in proofs for label in p["conditional_on"]] + restrictions))
             # Review A1 of compose-s2 fix4: the combined answer depends on what each choice's certificates rely on
             # as well as on the restrictions that selected the choices.
             used = {label for p in proofs for label in p["reading_premises_used"]} | set(restrictions)
-            labels = [label for label, _ in self.slot]
+            labels = [label for label, _ in self.labelled]
             return {"verdict": "ALL", "route": "superposed", "evidence": "certificates", "proofs": proofs,
                     "conditional_on": conditional, "restrictions": restrictions,
                     "reading_premises_used": [label for label in labels if label in used] +
@@ -716,7 +781,7 @@ class Superposed(_Route):
         return {"status": conflict["status_text"] if "status_text" in conflict else
                 f"UNKNOWN: {conflict.get('reason', '')}",
                 "conflict": {key: value for key, value in conflict.items()
-                             if key not in ("certificates", "model", "selected")},
+                             if key not in ("certificates", "model", "gaps", "selected")},
                 "dead_readings": None if dead is None else [d["finding"] for d in dead]}
 
 

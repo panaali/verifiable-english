@@ -1,0 +1,137 @@
+{
+  "commit_sha": "fd68fa27eb29a02bc043e04827d6b15aab9c5c1b",
+  "counts": {
+    "collected": 87,
+    "deselected": 0,
+    "failed": 0,
+    "passed": 87,
+    "selected": 87,
+    "skipped": 0
+  },
+  "dirty": false,
+  "environment": {
+    "base": {
+      "CARGO_HOME": "/tmp/ve-gate-ltbn3pet/cargo-home",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-ltbn3pet/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-ltbn3pet/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-ltbn3pet/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-ltbn3pet/pycache",
+      "TMPDIR": "/tmp/ve-gate-ltbn3pet/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-ltbn3pet/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-ltbn3pet/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-ltbn3pet/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-ltbn3pet/home/.local/share"
+    },
+    "cargo": {
+      "CARGO_ENCODED_RUSTFLAGS": "--remap-path-prefix=/home/seyran/code/ve-ts-B5=/ve\u001f--remap-path-prefix=/tmp/ve-gate-ltbn3pet/cargo-home=/cargo-home\u001f--remap-path-prefix=/home/seyran/code/ve-ts-B5/rust/target=/ve-target",
+      "CARGO_HOME": "/tmp/ve-gate-ltbn3pet/cargo-home",
+      "CARGO_NET_OFFLINE": "true",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-ltbn3pet/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-ltbn3pet/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-ltbn3pet/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-ltbn3pet/pycache",
+      "TMPDIR": "/tmp/ve-gate-ltbn3pet/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-ltbn3pet/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-ltbn3pet/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-ltbn3pet/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-ltbn3pet/home/.local/share"
+    },
+    "pytest": {
+      "CARGO_HOME": "/tmp/ve-gate-ltbn3pet/cargo-home",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-ltbn3pet/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-ltbn3pet/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-ltbn3pet/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-ltbn3pet/pycache",
+      "TMPDIR": "/tmp/ve-gate-ltbn3pet/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-ltbn3pet/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "VE_GATE_PYTEST_PROGRESS": "/tmp/ve-gate-ltbn3pet/current-test.txt",
+      "VE_GATE_PYTEST_RESULT": "/tmp/ve-gate-ltbn3pet/pytest-collection.json",
+      "VE_LEAN_PREBUILT": "1",
+      "VE_NATIVE_PREBUILT": "1",
+      "VE_RUST_BINARY": "/home/seyran/code/ve-ts-B5/rust/target/release/ve",
+      "VE_RUST_PREBUILT": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-ltbn3pet/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-ltbn3pet/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-ltbn3pet/home/.local/share"
+    }
+  },
+  "failures": [],
+  "mode": "rerun-failed",
+  "quarantine": {
+    "active": [
+      "tests/test_difffuzz.py::test_ci_run"
+    ],
+    "day": "2026-10-10",
+    "enabled": true,
+    "expired": [],
+    "retried": {}
+  },
+  "rerun_failed": {
+    "files": [
+      "tests/test_lean_conformance.py"
+    ],
+    "outcomes": {
+      "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist": "passed"
+    },
+    "previous": {
+      "commit_sha": "fd68fa27eb29a02bc043e04827d6b15aab9c5c1b",
+      "mode": "full",
+      "status": "failed",
+      "tree_sha": "dd9fcd47d3cb245b1bb41a382117dc5f676813a7"
+    },
+    "reused_stages": [
+      "lean_audit",
+      "cargo_test"
+    ],
+    "tests": [
+      "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist"
+    ]
+  },
+  "schema_version": 1,
+  "skips": [],
+  "stages": [
+    "toolchains",
+    "lean_build",
+    "rust_build",
+    "pytest"
+  ],
+  "status": "rerun-passed",
+  "toolchains": {
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "lake": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)",
+    "lean": "Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+    "lean_pin": "4.24.0",
+    "paths": {
+      "cargo": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/cargo",
+      "lake": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lake",
+      "lean": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean",
+      "rustc": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/rustc",
+      "uv": "/tmp/ve-gate-ltbn3pet/bin/uv"
+    },
+    "python": "Python 3.14.7",
+    "rust_pin": "1.98.1",
+    "rust_toolchain": "1.98.1-x86_64-unknown-linux-gnu",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "uv": "uv 0.12.19 (x86_64-unknown-linux-gnu)",
+    "uv_lock_sha256": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "tree_sha": "dd9fcd47d3cb245b1bb41a382117dc5f676813a7"
+}

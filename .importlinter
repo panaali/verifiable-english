@@ -18,7 +18,6 @@ ignore_imports =
     ve.assist.cli -> ve_experiments.assist_haiku
     ve.ast -> ve.backends.dispatch
     ve.ast -> ve.backends.relay
-    ve.ast -> ve.backends.rust_jsonl
     ve.ast -> ve.surface.nary
     ve.background -> ve.backends.dispatch
     ve.background -> ve.backends.lean_runner

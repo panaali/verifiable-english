@@ -42,6 +42,10 @@ def arity (entry : Json) : Nat :=
   | .arr a => a.size
   | _ => 0
 
+/-- Whether a predicate declaration is in the FOL projection: at most two arguments. The one
+filter of every regenerated Background (`folPredicates`, the norms route's view). -/
+def folEntry (entry : Json) : Bool := arity entry ≤ 2
+
 def withPredicates (environment : Json) (predicates : List (String × Json)) : Except String Json := do
   let vocabulary ← environment.getObjVal? "vocabulary"
   pure (environment.setObjVal! "vocabulary" (vocabulary.setObjVal! "predicates" (Json.mkObj predicates)))
@@ -55,7 +59,7 @@ def coreEnvironment (environment : Json) : Except String Json := do
 /-- The FOL projection: the unary and binary predicates, with their layer fields. -/
 def folPredicates (environment : Json) : Except String (List (String × Json)) := do
   let predicates ← fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
-  pure (predicates.filter fun (_, entry) => arity entry ≤ 2)
+  pure (predicates.filter fun (_, entry) => folEntry entry)
 
 def decodeLayers (profiles : List String) (environment : Json) :
     Except String VE.Route.Wire.RouteVocabulary := do
