@@ -1,21 +1,38 @@
 # Answers that hold unless an exception applies: statement spec (DF-S)
 
-> Status: **draft 2** (2026-10-14), branch `design/defeasible`, the item-1 statement spec of
-> [defeasible-PLAN.md](defeasible-PLAN.md) draft 3 (batch DF-S). It gives the plan's 2.1 to 2.9 and section 3 as
-> definitions, English with one reading each, diagnostics, exact Lean statements and acceptance fixtures. Draft 2
-> applies the statement review's ruling (`manage-agents/debates/defeasible-spec/DRI-RULING.md`: verdict FIX, design
-> kept; 13 agreed corrections and 3 disputed points ruled). Section 2.2 maps each ruling item to the places it changed
+> Status: **draft 3** (2026-10-14), branch `research/defeasible-p1`, the item-1 statement spec of
+> [defeasible-PLAN.md](defeasible-PLAN.md) draft 4 (batch DF-S, done: the diff-only re-check of draft 2 returned PASS,
+> `manage-agents/defeasible-p3ver1.final.md`). Draft 3 applies phase 1's results
+> ([docs/research/defeasible-phase1.md](../research/defeasible-phase1.md)) to the text around the statements. **No
+> Lean statement, definition, English row, diagnostic or computed fixture value changed**, so the stub
+> `lean/SpecStubs_defeasible.lean` (untracked, never committed; it is in the `design/defeasible` worktree,
+> `ve-design-defeasible`, not in this one) was not edited or re-run. The elaboration and computation records below are
+> draft 2's and still hold.
+>
+> **Changes in this draft (3).**
+> 1. 8.1 DF-λ: through `ve document` on `main` the fixture is refused at load until RD-9 SC-8 (phase 1, DF-0.4); the
+>    computed value is on the decoders and unchanged. The plan's spelling `instructs_via_system_prompt` is the same
+>    rule.
+> 2. 8.7 P-1: the pilot number's "0" is DF-0.3's baseline, deferred until `rd-9/integrate` is on `main` and recorded
+>    before DF-1b merges.
+> 3. 6: no specificity suggestion either, until DF-E3's re-run meets its bar (phase 1: UNKNOWN).
+> 4. 10: plan section 11's seven issues are decided (DRI DF1 to DF7); new item 4 lists phase 1's deferred items that
+>    touch this spec.
+>
+> Draft 2 (`632bc4ed`, branch `design/defeasible`, for plan draft 3) applied the statement review's ruling
+> (`manage-agents/debates/defeasible-spec/DRI-RULING.md`: verdict FIX, design kept; 13 agreed corrections and 3
+> disputed points ruled). Section 2.2 maps each ruling item to the places it changed
 > (R1 to R16). Nothing else changed.
 >
 > **Elaborated.** Every Lean block in section 7 was type-checked in an untracked stub,
-> `lean/SpecStubs_defeasible.lean`, run from this worktree as
+> `lean/SpecStubs_defeasible.lean`, run from the `design/defeasible` worktree as
 > `lake -d /home/seyran/code/ve-rd-9-int/lean env lean lean/SpecStubs_defeasible.lean`, against the build of
 > `rd-9/integrate`, because RD-9's names (`EntailsX`, `LayeredU`, `xModelOk`, `CounterX`, `sdSem`, the fold) are not
 > on `main` (`f98183bf`). That checkout is at `ecb81c32`, whose `lean/` is identical to `fbb81599`'s (the commit draft
-> 1 used; `git diff fbb81599 ecb81c32 -- lean` is empty). This worktree has no Lean build of its own, and
+> 1 used; `git diff fbb81599 ecb81c32 -- lean` is empty). The `design/defeasible` worktree has no Lean build of its own, and
 > `lake env lean` does not build. Draft 2's run reported no error. Its only warnings were `declaration uses 'sorry'`,
 > for bodies and proofs that a build batch writes. The stub is not committed and no `sorry` is committed. It stays
-> untracked in the worktree for the reviewers to re-run. WG-6's zone names and WG-1's `WeighDoc` are not on any built
+> untracked in that worktree for the reviewers to re-run. WG-6's zone names and WG-1's `WeighDoc` are not on any built
 > branch. Their reviewed signatures (weighing-PLAN 3.4, draft 5) were copied into the stub so that DF-5's and DF-6's
 > statements elaborate against them. Section 7 marks those blocks.
 >
@@ -24,8 +41,8 @@
 > `foldEntailment`, `foldConflict`). None was worked out by hand. Draft 2 re-ran every fixture, and recomputed the
 > claims that rest on a model of `⊥` with the empty domain allowed (R1). Two kinds of value remain *derived*, and
 > section 8 marks them: the certificate-dependent values (no prover runs in Lean), and the pilot rows on `CE4`, which
-> DF-1b measures. No model was called. Next: the reviewers check the diff from draft 1 only, and DF-1a starts once
-> both accept it.
+> DF-1b measures. No model was called. The diff-only re-check of draft 2 returned PASS. Next: DF-1a, once
+> `rd-9/integrate` merges and PK-1 lands (plan draft 4, batch order).
 
 ## Change log
 
@@ -33,6 +50,7 @@
 |---|---|---|
 | 2026-10-14 | 1 | First statement spec. Plan draft 2's statements were elaborated, and the 19 corrections in section 2 come from that run (the main one: `basis_needs_sound` as drafted is false, DF-σ). Every fixture of plan 4.1 was computed, with one added for each direction of every "exactly when" claim. New statements: `cone_minimal_iff` (until now a placeholder), `defaultZone_budget`, `default_conflict_is_gate`, `questionDiag_none`, `viewOf_layered` and the fallback `default_entails_minimal_of`. The stub proves 9 statements outright, and 3 more modulo `dflt_wellFormed` and `defaultCoherenceCheck_sound` (section 7.8). |
 | 2026-10-14 | 2 | The statement review's ruling (FIX), item by item in section 2.2 (R1 to R16). New: `CoherenceReplay` and `defaults_coherence_sound`, `elaborateRows`, `forcedAt_sound`, `collisionTuple_some`, `cohU_rank_valid` and `collision_unranked`, `giveWayDeciders`, `viewOf` through `decodeLayered` with `decodeLayered_soften`, DF-3's wire theorems (`DVerdicts`), DF-5's `notSaid` and `noCompletion` soundness, `forcedAllOf` with `forcedAll_sound`, `defaultCompletion_below` and `forced_everywhere`, `zoneForm`, `decisionAtoms_none`. Deleted: `hsuff` and `noSufficientHolds`. English: DE4·u, DE7's decider sentences, DE8 with DE12, DE10 in three forms, DE13; "avoidable" defined. Fixtures: DF-γ recomputed with the empty domain, DF-γ′, DF-ω, F-DF1′, DF-δ's zone; seeded bugs corrected (sufficient condition: DF-β (i)). The stub now proves 12 statements outright (section 7.8). |
+| 2026-10-14 | 3 | Phase 1's results, text only: DF-λ's CLI status (refused at load until RD-9 SC-8), P-1's baseline (DF-0.3, deferred), no specificity suggestion until DF-E3's re-run, plan section 11 decided (DF1 to DF7), section 10 item 4. No statement or computed value changed; the stub was not edited. |
 
 ## 1. Scope
 
@@ -307,7 +325,8 @@ order; the collision first, whether or not a certificate was sent):
 
 - No claim that an exception does not apply in fact. A default answer says what holds if none applies.
 - No answer over all situations to a question that states an outcome or a decision (D5).
-- No automatic priority by specificity, recency or authority (D8).
+- No automatic priority by specificity, recency or authority (D8). No specificity suggestion either: the IDE check
+  "Rule m (exception to rule n)." is built only if DF-E3's re-run meets its bar (phase 1: UNKNOWN, 0 certain pairs).
 - No minimality of the listed assumptions: they are sufficient for the certificate checked.
 - No claim that the conclusion needs its assumptions unless the basis is `needs` (a checked strict countermodel).
 - Minimality of the situations only once DF-2 is proved, only under the gate and `replacementSafe`, and never under
@@ -1328,7 +1347,7 @@ Named situations are also checked on the wire: `situationX`, `decodeFilling` and
 | DF-θ | DF-α with `weighing@0` | any | diagnostic 1 (a profile check; the stub computes no weighing document) |
 | DF-ι | DF-β, premises `∃a. urgent(a)` and `∀a. ¬urgent(a)` | `∀a. x_required(a)` | entailment from `defaultX` holds vacuously, and no model exists, the empty domain included (`∃a. urgent(a)` fails there; computed on the wire, R1: unaffected). UNKNOWN (no checked situation where the premises hold with no exception), never FOLLOWS |
 | DF-κ | DF-α | — | the default kind binds 5 premises (`premisesX U (defaultX D X) []`) against the strict kind's 4: exactly the one `Dflt_T` premise more. A certificate bound to the strict list, or to a list with one premise added, is refused by `bindCertX`, so the certificate is absent. DF-α has no colliding pair (the gate passes with `[]`, computed) and its default model checks, so the status is UNKNOWN (no certificate). The certificate itself is *derived* (recorded by DF-1a) |
-| DF-λ | plain `instructs(operator)`, `unspecified`; g1 "Every operator instructs, unless an exception applies." (default, decided by the operator) | `∀o. instructs(o)` | strict countermodel {excepted_g1}. FOLLOWS, needs, form short, assumptions `[default:exception:g1]`. DF-4's parse and print are DF-4's fixtures |
+| DF-λ | plain `instructs(operator)`, `unspecified`; g1 "Every operator instructs, unless an exception applies." (default, decided by the operator) | `∀o. instructs(o)` | strict countermodel {excepted_g1}. FOLLOWS, needs, form short, assumptions `[default:exception:g1]`. DF-4's parse and print are DF-4's fixtures. The value is computed on the decoders; through `ve document` on `main` this document (and the plan's spelling `instructs_via_system_prompt`, the same rule) is refused at load until RD-9 SC-8 (phase 1, DF-0.4), and DF-4 runs those probe documents as its regression fixtures |
 | DF-π | Astra's counterexample: DF-α with `x_permitted` also `unspecified` | `∀a. x_required(a)` | `Dflt_T` labels `[default:exception:r1]`, pair members `[x_required, x_permitted]`, `replacementSafe` true, no pair. FOLLOWS, needs, form short. The default model is {}, with the permission's gap filled **yes** (the filling no/no is not admissible with no exception). See 8.5 for the meaning theorem |
 | DF-σ | (new; C1) two strict rules: "must X" and "must not X", `x_required` deny | `∀a. ⊥` | on the one-assistant situation `modelCheckX` gives `(true, false)`, but `localFree` is false and `xModelOk` is false. `EntailsX U X [] (∀a. ⊥)` holds, because every conflict-free situation has no assistant. Plan draft 2's `basis_needs_sound` would have concluded the opposite. With the empty domain checked on the wire (R1): `X` is consistent there, and `∀a. ⊥` holds there; the claim is unaffected |
 | DF-ω | (new; R2) DF-δ, the request with its pair certificate missing (`[]` or `[none]`) and no collision | `∀a. x_required(a)` | `defaultCoherenceCheck` is false for both, and no collision exists on any one-element situation. `defaults-coherence`: UNKNOWN, pair (r1, r2) `unknown`, never COLLISION. `defaults-certificate`: UNKNOWN (no-exception coherence not checked), never FOLLOWS |
@@ -1423,7 +1442,7 @@ rows show why the hypotheses are needed:
 | P-1a | u0036.s05 "Claude should ask for clarification in cases of genuine ambiguity." | `∀a. genuine_ambiguity(a) → clarification_required(a)`: strict does not follow; FOLLOWS, needs, short, `[default:exception:ask-clarification]` | *derived*, DF-1b |
 | P-1b | u0156.s03 "Claude shouldn't actively deceive the user about the existence of a system prompt or its content." | `∀a. ¬prompt_deception_permitted(a)`: FOLLOWS, needs, short, `[default:exception:no-prompt-deception]` | *derived*, DF-1b |
 | P-1c | u0263.s04.p2 "… in situations where Claude has explicitly been instructed not to engage in unintended exploits, it should comply." | `∀a. told_no_exploits(a) → exploit_compliance_required(a)`: FOLLOWS, needs, short, `[default:exception:comply-no-exploits]`, decider `unstated`: DE1 + DE2·u | *derived*, DF-1b |
-| P-1 | the pilot number | the standalone analogues go from no answer to "unless an exception applies, the conclusion follows" for **3 of 3** | measured by DF-1b's probe |
+| P-1 | the pilot number | the standalone analogues go from no answer to "unless an exception applies, the conclusion follows" for **3 of 3** | measured by DF-1b's probe; the "no answer" side is DF-0.3's baseline on `CE4` (deferred in phase 1 until `rd-9/integrate` is on `main`, recorded before DF-1b merges) |
 | P-3 | u0073.s05 (one default rule, three sufficient conditions: unsafe, unethical, against guidelines) | `∀a. ¬unsafe ∧ ¬unethical ∧ ¬against_guidelines → x_required`: FOLLOWS, needs, **long**, DE1′ + DE2′ listing the three. `∀a. x_required(a)`: DOES-NOT-FOLLOW; the countermodel {unethical, excepted_comply} has `forced = [(comply, 1, a)]` (condition 1, "unethical"): DE6′ + DE11 | *derived*, DF-1b |
 | P-2, P-4, P-5 | as plan 4.2 | — | *derived*, DF-3, DF-4 |
 
@@ -1503,5 +1522,11 @@ does (R6), so without the restriction the equivalence is false:
 2. **`cohU_rank_valid` is stated, not proved.** DE7's "The text ranks neither above the other" rests on it through
    `collision_unranked`. The stub's evidence is the one-element evaluation in 8.2. If DF-1a cannot prove it on
    `fill U`, DE7 drops that clause (the ruling's alternative), and DF-1a records it.
-3. Plan section 11's seven issues stand. Issue 1 (WG-6 must expose an enumeration over a given atom list) now has a
-   statement to check against: `defaultZoneOf` as typed in 7.5. `forcedAllOf` reads the same enumeration.
+3. **Plan section 11's seven issues: decided** (DRI DF1 to DF7, plan 11.1). Issue 1 became DF1, merged with
+   judgment-terms' JT-R1: WG-6's statement review states `zoneOf` over an explicit atom list `opens`. `defaultZoneOf`
+   as typed in 7.5 is the statement to check that interface against, and `forcedAllOf` reads the same enumeration.
+   7.5's copied WG-6 signatures are updated when WG-6's reviewed statement lands, not before.
+4. **Phase 1's deferred items that touch this spec** (plan 0.1, 0.2). None changes a statement. DF-0.3 (the baseline)
+   supplies P-1's and P-2's "before" values in 8.7. DF-0.1 (the blind reader) bears only on DF-4's byte estimate and
+   DF-E2, neither of which this spec states. DF-E3's re-run decides whether a specificity suggestion exists at all (6);
+   if it does, its statement is a later draft's.
