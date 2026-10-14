@@ -1,7 +1,19 @@
 {
- "base": "8594f1d050e0479768fafdd86d1cf9e79d55ce9c",
- "head": "101f95713b883d6638655435b0ec41702ef87f78",
+ "base": "9f40783b8fc403a99798d9951615d76aa2088d38",
+ "head": "6b3e1879a34a544c4c4b7a181d4b33dcaa559072",
  "commits": [
+  {
+   "hash": "6b3e1879a34a544c4c4b7a181d4b33dcaa559072",
+   "subject": "AR-4 DELTA, REPORT: the merge base is 9f40783b after the second sync (value unchanged); the sync recipe for the merge train"
+  },
+  {
+   "hash": "d8f47bab4fd01d939ff8c536491d08c81f7baf4f",
+   "subject": "AR-4 REPORT: tests/test_wire_gate_corpus.py passed (8 tests)"
+  },
+  {
+   "hash": "c1e3e252aa1e6a974f854bba4ef1acfc64ba5fff",
+   "subject": "AR-4 evidence collected at 101f9571 after the sync; REPORT: R15 signature, gate records via --gate, recheck-2 fixes and tests run"
+  },
   {
    "hash": "101f95713b883d6638655435b0ec41702ef87f78",
    "subject": "AR-4 seeded bugs rerun on the final tools: 22/22 killed (M18-M22 guard F7, the merge driver and the map)"
