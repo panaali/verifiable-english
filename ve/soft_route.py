@@ -60,14 +60,17 @@ def check_soft_conflict(soft_document: SoftNormDocument, *, packages=None, witne
     row = _run(case)
     try:
         targets = [entry['target'] for entry in elaborated['conflict_targets']]
-        labels = {entry['label'] for entry in elaborated['colliding_pairs']}
+        # Run.lean: a conflict-free verdict is conditional on open coherence premises only.
+        labels = {entry['label'] for entry in elaborated['colliding_pairs'] if not entry['comparable']}
         if row['targets'] != targets:
             raise ValueError('unbound conflict targets')
         if 'conditional_on' in row and (len(row['conditional_on']) != len(set(row['conditional_on'])) or
                                          not set(row['conditional_on']) <= labels):
             raise ValueError('unbound conflict conditional labels')
-        if 'target' in row and row['target'] not in targets:
+        if witness is not None and row['target'] != witness['target']:
             raise ValueError('unbound conflict witness target')
+        if budget is not None and row['budget'] != budget:
+            raise ValueError('unbound conflict budget')
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(f'CheckerUnavailable: Lean soft conflict is not bound to the request: {error}') from error
     return row
@@ -93,6 +96,8 @@ def admit_soft_document(environment, document, *, soft_document=None):
     row = _run({"id": "admission", "kind": "admission", "environment": env.to_dict(),
                 "document": _wire(document)})
     try:
+        from .admission import bind_report
+        bind_report(document, row['report'])
         open_labels = {entry['label'] for entry in elaborated['colliding_pairs']
                        if not entry['comparable']}
         reported = {assumption.get('label') for assumption in row['report']['assumptions']}

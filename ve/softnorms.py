@@ -301,6 +301,9 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None,
         acts = set(predicates)
         if environment is not None:
             bind_prime_environment(row, environment)
+        # Run.lean answers `overlaps` and `override_cycles` only for submitted witnesses; no relay submits one.
+        if 'overlaps' in row or 'override_cycles' in row:
+            raise ValueError('unrequested witness rows')
         rule_acts = row.get('rule_acts')
         if rule_acts is not None and (set(rule_acts) != set(rules) or
                                       any(act != _act_key(rule['predicate'], predicates)
