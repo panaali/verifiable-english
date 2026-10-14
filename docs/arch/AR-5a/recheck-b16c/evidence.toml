@@ -1,0 +1,38 @@
+# AR-5a gate item: lean-first batch 16c, finished, re-checked with the toolkit from its saved evidence alone.
+# Its own files are not touched; tests/test_b16c_evidence.py stays until AR-5b migrates it.
+batch = "lean-first/b16c"
+evidence = "../../../lean-first/b16c/evidence"
+
+[scope]
+file = "scope.json"
+
+[gate]
+file = "gate.json"
+
+[mutants]
+file = "mutants.json"
+
+[report]
+file = "../../../lean-first/b16c/DELTA.md"
+marker = "B16C METRICS"
+lines = [
+  "- Saved scope: `{scope.base|short}..{scope.head|short} --no-merges`, {scope.commits|len} commit(s): {scope.commits|map:hash|short|code|join:, }.",
+  "- pilots: Lean decides {share.pilots.lean}/{share.pilots.documents}; {share.pilots.documents|minus:share.pilots.lean} listed residues.",
+  "- rights: Lean decides {share.rights.lean}/{share.rights.documents}; {share.rights.documents|minus:share.rights.lean} listed residues.",
+  "- norm_defaults: Lean decides {share.norm_defaults.lean}/{share.norm_defaults.documents}; {share.norm_defaults.documents|minus:share.norm_defaults.lean} listed residues.",
+  "- document: Lean decides {share.document.lean}/{share.document.documents}; {share.document.documents|minus:share.document.lean} listed residues.",
+  "- Per-case residue rows: {residues|len}. Seeded faults caught: {mutants|killed}/{mutants|len}.",
+  "- Clean gate at `{gate.commit_sha|short}`: {gate.status}; {gate.counts.passed} passed, {gate.counts.skipped} skipped, {gate.counts.failed} failed; {gate.counts.rust_passed} Rust tests passed.",
+]
+
+[[claims]]
+kind = "tally"
+rows = "residues"
+keys = ["corpus", "case", "cause", "source_sha256"]
+unique = ["corpus", "case"]
+group = "corpus"
+field = "cause"
+table = "share"
+counts = "other"
+total = "documents"
+rest = "lean"

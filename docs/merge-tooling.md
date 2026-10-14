@@ -22,13 +22,12 @@ its merge strategy:
 | question-fixtures | `lean/VE/Question/Fixtures.lean` | regenerate |
 | english-run-copy | `lean/VE/Service/EnglishRun.lean` | regenerate |
 | route-cases | `lean/VE/Route/examples/route-cases.json` | regenerate |
-| lean-audit-manifests | `lean/VE/Audit.lean`, `lean/ResponseShape/Audit.lean` | union |
 | lean-roots | `lean/VE.lean`, `lean/ResponseShape.lean` | union |
-| frozen-inventory | `lean/VE/Route/frozen-sources.sha256` (`frozen.py --write`, new) | regenerate |
 | lake-build | (the build every later entry reads) | - |
 | lean-mode-deps | `tools/lean-mode-deps.json` | regenerate |
-| lean-axioms | `lean/axioms.txt` | regenerate |
 | lean-statements | `lean/statements.txt`, `predicates.txt`, `declarations.txt` | regenerate |
+| lean-audit-manifests | `lean/VE/Audit.lean`, `lean/ResponseShape/Audit.lean`, `lean/axioms.txt` (`audit.py --write`, from `declarations.txt`; AR-1) | regenerate |
+| frozen-inventory | `lean/VE/Route/frozen-sources.sha256` (`frozen.py --write`, new) | regenerate |
 | trust-tables | `tools/trust-classes.json`, `docs/trust-baseline.json` | json (check only) |
 | checker-pins | `lean/checkers.lock` (pins the built `ve_service` and the Rust release binary) | json |
 | response-schemas | `ve/backends/lean_service_schema/*.json` | regenerate |
@@ -40,7 +39,6 @@ its merge strategy:
 | layer-ledgers | `tools/layer-exceptions.json`, `lean-layer-exceptions.json` | json (check only) |
 | import-contract | `.importlinter` | regenerate |
 | uv-lock | `uv.lock` | regenerate |
-| gate-collection | `tools/gate-collection.json` (last) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);
@@ -49,7 +47,7 @@ its merge strategy:
 `--write` changes nothing.
 
 Strategies: *regenerate* takes either side and lets the writer rebuild the file; *union* takes the line union
-of both sides (the checks that follow, `lean/audit.py` and `lake build`, catch a wrong one); *json* is a
+of both sides (the build that follows, `lake build`, catches a wrong one); *json* is a
 structural three-way merge (`merge_json`): objects per key, records per key field (`id`, `file`, `name`,
 `path`), other lists keep both sides' additions and drop either side's removals, a value derived from the
 rest (the decoder `total_lines`) is recomputed, and a value both sides changed differently is a conflict left

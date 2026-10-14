@@ -1,0 +1,4694 @@
+{
+ "format": "ve-document@1",
+ "source_id": "92edf7c3f6d1f8a297288d400f712ae2664b57f0549a26b780f3d2fab2d7b111",
+ "document_id": "470de6de9113355ea8b4ee2158bd096bd199d12c399bb950a2bb983890b08155",
+ "coverage": {
+  "source_bytes": 10916,
+  "accounted_bytes": 10916,
+  "coverage_percent": 100,
+  "bytes_by_kind": {
+   "meta": 535,
+   "unformalised": 4843,
+   "attributed": 801,
+   "norm": 4737
+  },
+  "bytes_by_status": {
+   "LABELLED": 535,
+   "UNFORMALISED": 6124,
+   "OPEN": 4200,
+   "CHECKED": 57
+  },
+  "unformalised_reasons": {
+   "causation": 4,
+   "attribution": 4,
+   "modality_belief": 2,
+   "other_evaluative_open_claim": 2,
+   "norms": 7,
+   "time": 5,
+   "other_metaphorical_endowment": 1,
+   "defaults": 1,
+   "other_act_phrase_grammar": 11,
+   "other_right_lines_across_open_sets": 4,
+   "other_grounding_of_authority": 1,
+   "other_comparison": 2,
+   "quantities": 1,
+   "other_priority_of_rights": 1
+  },
+  "residual": {
+   "open_terms": 53,
+   "assumptions": 0,
+   "bridge_leaves": 0,
+   "unresolved_reading_sets": 49,
+   "separations": 34,
+   "readings_findings": 23,
+   "pending_candidates": 0,
+   "couplings": 0,
+   "gaps": 0,
+   "ungrounded_defaults": 0
+  },
+  "residual_total": 159,
+  "norm_defaults": {
+   "gaps": [],
+   "findings": []
+  }
+ },
+ "reading_plan": {
+  "route": "UNKNOWN",
+  "budget": {
+   "max_choices": 64
+  },
+  "choice_count": 250,
+  "units": [
+   "u020",
+   "u022a",
+   "u022b",
+   "u022c",
+   "u024",
+   "u025",
+   "u027",
+   "u029",
+   "u032",
+   "u033a",
+   "u033b",
+   "u035",
+   "u037",
+   "u045a",
+   "u045b",
+   "u046",
+   "u048",
+   "u049",
+   "u051",
+   "u052",
+   "u055",
+   "u059",
+   "u063",
+   "u064",
+   "u066",
+   "u070",
+   "u073",
+   "u077",
+   "u081",
+   "u084a",
+   "u084b",
+   "u084c",
+   "u084d",
+   "u087",
+   "u096",
+   "u098",
+   "u100a",
+   "u100b",
+   "u105a",
+   "u105b",
+   "u105c",
+   "u110",
+   "u111",
+   "u112",
+   "u114"
+  ]
+ },
+ "norm_defaults": {
+  "environment_id": "36c82c002415470063de3a3c390bac820e69c2fdd647f513922ef10f63df0e26",
+  "filled_environment_id": "7d313ecb8897900929caeb37b42889d28c3e284afe9f75257833749ecd1e56a1",
+  "fill_hash": "96cc8a9c28bb0d60949aed6a4eebc676c90550ba436535b0ec6f3580ddbe028d",
+  "unsaid_predicates": [],
+  "background_labels": [],
+  "report": {
+   "compel_association_membership_permitted": [
+    "completion: allow",
+    "default reached: none"
+   ]
+  }
+ },
+ "premises": {
+  "components": [
+   {
+    "component": "main",
+    "status": "model"
+   },
+   {
+    "component": "rs_u025",
+    "status": "model"
+   },
+   {
+    "component": "rs_u029",
+    "status": "model"
+   },
+   {
+    "component": "rs_u032",
+    "status": "model"
+   },
+   {
+    "component": "rs_u033a",
+    "status": "model"
+   },
+   {
+    "component": "rs_u033b",
+    "status": "model"
+   },
+   {
+    "component": "rs_u035",
+    "status": "model"
+   },
+   {
+    "component": "rs_u046",
+    "status": "model"
+   },
+   {
+    "component": "rs_u054",
+    "status": "model"
+   },
+   {
+    "component": "rs_u061",
+    "status": "model"
+   },
+   {
+    "component": "rs_u077",
+    "status": "model"
+   },
+   {
+    "component": "rs_u081",
+    "status": "model"
+   },
+   {
+    "component": "rs_u084c",
+    "status": "model"
+   },
+   {
+    "component": "rs_u084d",
+    "status": "model"
+   },
+   {
+    "component": "rs_u098",
+    "status": "model"
+   },
+   {
+    "component": "rs_u099a",
+    "status": "model"
+   },
+   {
+    "component": "rs_u099b",
+    "status": "model"
+   },
+   {
+    "component": "rs_u100a",
+    "status": "model"
+   },
+   {
+    "component": "rs_u100b",
+    "status": "model"
+   },
+   {
+    "component": "rs_u105c",
+    "status": "model"
+   },
+   {
+    "component": "rs_u110",
+    "status": "model"
+   },
+   {
+    "component": "rs_u111",
+    "status": "model"
+   },
+   {
+    "component": "rs_u114",
+    "status": "model"
+   }
+  ],
+  "route": "components",
+  "status": "model"
+ },
+ "readings": {
+  "checked_by": {
+   "lean": "readings-defaults RD-4b: Readings.Wire.splitCase splits the document; each case's readings@1 admission, separations and findings (readings-validate), its route and choices (readings-elaborate), every verdict, the product fold, the Lean-decided units and the English plan (readings-verdicts)",
+   "python": "W2 structure of the reading sets (companion passed through unread); evidence proposed by Python's generators, every piece checked by Lean"
+  },
+  "route": "components",
+  "components": [
+   {
+    "component": "main",
+    "route": "w2",
+    "units": [
+     "u074"
+    ],
+    "unchecked": [
+     {
+      "set": "rs_u020",
+      "status": "UNKNOWN",
+      "unit": "u020"
+     },
+     {
+      "set": "rs_u022a",
+      "status": "UNKNOWN",
+      "unit": "u022a"
+     },
+     {
+      "set": "rs_u022b",
+      "status": "UNKNOWN",
+      "unit": "u022b"
+     },
+     {
+      "set": "rs_u022c",
+      "status": "UNKNOWN",
+      "unit": "u022c"
+     },
+     {
+      "set": "rs_u024",
+      "status": "UNKNOWN",
+      "unit": "u024"
+     },
+     {
+      "set": "rs_u027",
+      "status": "UNKNOWN",
+      "unit": "u027"
+     },
+     {
+      "set": "rs_u037",
+      "status": "UNKNOWN",
+      "unit": "u037"
+     },
+     {
+      "set": "rs_u045a",
+      "status": "UNKNOWN",
+      "unit": "u045a"
+     },
+     {
+      "set": "rs_u045b",
+      "status": "UNKNOWN",
+      "unit": "u045b"
+     },
+     {
+      "set": "rs_u048",
+      "status": "UNKNOWN",
+      "unit": "u048"
+     },
+     {
+      "set": "rs_u049",
+      "status": "UNKNOWN",
+      "unit": "u049"
+     },
+     {
+      "set": "rs_u051",
+      "status": "UNKNOWN",
+      "unit": "u051"
+     },
+     {
+      "set": "rs_u052",
+      "status": "UNKNOWN",
+      "unit": "u052"
+     },
+     {
+      "set": "rs_u055",
+      "status": "UNKNOWN",
+      "unit": "u055"
+     },
+     {
+      "set": "rs_u059",
+      "status": "UNKNOWN",
+      "unit": "u059"
+     },
+     {
+      "set": "rs_u063",
+      "status": "UNKNOWN",
+      "unit": "u063"
+     },
+     {
+      "set": "rs_u064",
+      "status": "UNKNOWN",
+      "unit": "u064"
+     },
+     {
+      "set": "rs_u066",
+      "status": "UNKNOWN",
+      "unit": "u066"
+     },
+     {
+      "set": "rs_u070",
+      "status": "UNKNOWN",
+      "unit": "u070"
+     },
+     {
+      "set": "rs_u073",
+      "status": "UNKNOWN",
+      "unit": "u073"
+     },
+     {
+      "set": "rs_u084a",
+      "status": "UNKNOWN",
+      "unit": "u084a"
+     },
+     {
+      "set": "rs_u084b",
+      "status": "UNKNOWN",
+      "unit": "u084b"
+     },
+     {
+      "set": "rs_u087",
+      "status": "UNKNOWN",
+      "unit": "u087"
+     },
+     {
+      "set": "rs_u096",
+      "status": "UNKNOWN",
+      "unit": "u096"
+     },
+     {
+      "set": "rs_u105a",
+      "status": "UNKNOWN",
+      "unit": "u105a"
+     },
+     {
+      "set": "rs_u105b",
+      "status": "UNKNOWN",
+      "unit": "u105b"
+     },
+     {
+      "set": "rs_u112",
+      "status": "UNKNOWN",
+      "unit": "u112"
+     }
+    ],
+    "sets": [],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (1 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [],
+     "choice": [],
+     "choices": [
+      {
+       "choice": [],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "actor": [],
+       "bearer": [],
+       "exercise": [],
+       "person": [],
+       "prosecution": []
+      },
+      "relations": {
+       "arises_from_acts_contrary_to_un": [],
+       "arises_from_non_political_crime": [],
+       "asylum_right_covers_case": [],
+       "compel_association_membership_permitted": [],
+       "declaration_implies_destructive_right": [],
+       "exercise_contrary_to_un": [],
+       "exercise_of_declared_right": [],
+       "right_protects_exercise": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u025",
+    "route": "enumerated",
+    "units": [
+     "u025"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u025",
+      "version": 2,
+      "unit": "u025",
+      "candidates": [
+       {
+        "id": "state_prohibits",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "practice_prohibited",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "state_prohibits",
+         "practice_prohibited"
+        ],
+        "situation": "e0013dc6a92a67b80be3033911e31d4a1a5df39639fb8ed5e604a37653b750e2",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: p is a practice; s is a State; p is classified as \"is_slave_trade\". Here the text does not say whether s must prohibit p; this situation answers 'no'. Here the text does not say whether p may be carried out; this situation answers 'no'. Under *Every State must prohibit each practice, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*, s still must. Under *Every practice must not be carried out, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*, s is not required to."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u025: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u025",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u025",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u025",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u025",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u025",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u025",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u025",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "practice": [],
+       "state": []
+      },
+      "relations": {
+       "is_slave_trade": [],
+       "is_slavery": [],
+       "prohibit_slavery_and_slave_trade_required": [],
+       "slavery_or_slave_trade_practice_permitted": [],
+       "unsaid__prohibit_slavery_and_slave_trade_required": [],
+       "unsaid__slavery_or_slave_trade_practice_permitted": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u029",
+    "route": "enumerated",
+    "units": [
+     "u029"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u029",
+      "version": 3,
+      "unit": "u029",
+      "candidates": [
+       {
+        "id": "entitlement",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "entitlement",
+         "state_claim"
+        ],
+        "situation": "f58af309900e877c18fd71a76f54837ea806fffbc99b912d4d2a1e5867d317af",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u029: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u029",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u029",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u029",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u029",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u029",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u029",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u029",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "person": [],
+       "state": []
+      },
+      "relations": {
+       "has_the_right_to_recognition_as_a_person": [],
+       "secure_recognition_as_person_required": [],
+       "unsaid__has_the_right_to_recognition_as_a_person": [],
+       "unsaid__secure_recognition_as_person_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u032",
+    "route": "enumerated",
+    "units": [
+     "u032"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u032",
+      "version": 3,
+      "unit": "u032",
+      "candidates": [
+       {
+        "id": "entitlement",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "entitlement",
+         "state_claim"
+        ],
+        "situation": "e42533e57c160fe1c7635ef730570ef5fd170d35adfe5d38ee3d32b2b5956eaa",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u032: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u032",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u032",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u032",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u032",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u032",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u032",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u032",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "person": [],
+       "state": []
+      },
+      "relations": {
+       "is_entitled_to_equal_protection_of_the_law": [],
+       "secure_equal_protection_required": [],
+       "unsaid__is_entitled_to_equal_protection_of_the_law": [],
+       "unsaid__secure_equal_protection_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u033a",
+    "route": "enumerated",
+    "units": [
+     "u033a"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u033a",
+      "version": 3,
+      "unit": "u033a",
+      "candidates": [
+       {
+        "id": "entitlement",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "entitlement",
+         "state_claim"
+        ],
+        "situation": "4e6f4f2e2fd4b9bd24a35a1b5fa4d52970aaa0f43539687ccbc9b114fffa94ba",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u033a: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u033a",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u033a",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u033a",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u033a",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u033a",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u033a",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u033a",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "person": [],
+       "state": []
+      },
+      "relations": {
+       "is_entitled_to_protection_against_discrimination": [],
+       "secure_protection_against_discrimination_required": [],
+       "unsaid__is_entitled_to_protection_against_discrimination": [],
+       "unsaid__secure_protection_against_discrimination_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u033b",
+    "route": "enumerated",
+    "units": [
+     "u033b"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u033b",
+      "version": 3,
+      "unit": "u033b",
+      "candidates": [
+       {
+        "id": "entitlement",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "entitlement",
+         "state_claim"
+        ],
+        "situation": "5c698cbc149fc60f459c3c3ec31ff74bd4e7b319606c2aa2d054072cfb0330a8",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u033b: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u033b",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u033b",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u033b",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u033b",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u033b",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u033b",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u033b",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "person": [],
+       "state": []
+      },
+      "relations": {
+       "is_entitled_to_protection_against_incitement": [],
+       "secure_protection_against_incitement_required": [],
+       "unsaid__is_entitled_to_protection_against_incitement": [],
+       "unsaid__secure_protection_against_incitement_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u035",
+    "route": "enumerated",
+    "units": [
+     "u035"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u035",
+      "version": 4,
+      "unit": "u035",
+      "candidates": [
+       {
+        "id": "tribunal_claim",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "tribunal_claim",
+         "state_claim"
+        ],
+        "situation": "e5f9e17b89f2caa32011344deb47b5aecf6fbe18ad8489082cd089d936b85b0a",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: s is a state; t is a tribunal; v is a violation; t has the recorded relation \"is_competent_for\" to v; t is classified as \"is_national\"; v is classified as \"violates_granted_fundamental_right\". Here the text does not say whether s must ensure competent national tribunals give v's victim an effective remedy; this situation answers 'no'. Here the text does not say whether t must provide the victim of v with an effective remedy; this situation answers 'no'. Under *Every tribunal must provide the victim of each violation with an effective remedy, if all of the following hold:\n  (a) both that tribunal is classified as \"is_national\" and that tribunal has the recorded relation \"is_competent_for\" to that violation;\n  (b) that violation is classified as \"violates_granted_fundamental_right\"*, s is not required to. Under *Every state must ensure competent national tribunals give each violation's victim an effective remedy, if that violation is classified as \"violates_granted_fundamental_right\"*, s still must."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u035: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u035",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u035",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u035",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u035",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u035",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u035",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u035",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "state": [],
+       "tribunal": [],
+       "violation": []
+      },
+      "relations": {
+       "ensure_remedy_by_tribunals_required": [],
+       "is_competent_for": [],
+       "is_national": [],
+       "provide_effective_remedy_required": [],
+       "unsaid__ensure_remedy_by_tribunals_required": [],
+       "unsaid__provide_effective_remedy_required": [],
+       "violates_granted_fundamental_right": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u046",
+    "route": "enumerated",
+    "units": [
+     "u046"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u046",
+      "version": 3,
+      "unit": "u046",
+      "candidates": [
+       {
+        "id": "state_arbitrary",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "entitlement_arbitrary",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_any",
+        "index": 2,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "entitlement_any",
+        "index": 3,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "state_arbitrary",
+         "entitlement_arbitrary"
+        ],
+        "situation": "66d334c65913ce39452508b07aa37708c3729e49a0086165468ad2615305f742",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       },
+       {
+        "readings": [
+         "state_arbitrary",
+         "state_any"
+        ],
+        "situation": "0af849ec94982925d00867522253bc90d8e19af4985729efd06ce30058479889",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: i is an intrusion; s is a State; i is classified as \"concerns_correspondence\". Here the text does not say whether i is classified as \"is_protected_by_law\"; this situation answers 'no'. Here the text does not say whether s must protect by law against i; this situation answers 'no'. Under *Every State must protect by law against each intrusion, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) either that intrusion is classified as \"concerns_privacy\" or that intrusion is classified as \"concerns_family\", or both;\n        (ii) that intrusion is classified as \"concerns_home\";\n      (b) that intrusion is classified as \"concerns_correspondence\";\n    (ii) that intrusion is arbitrary;\n  (b) either that intrusion is classified as \"is_attack_upon_honour\" or that intrusion is classified as \"is_attack_upon_reputation\", or both*, s is not required to. Under *Every State must protect by law against each intrusion, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) either that intrusion is classified as \"concerns_privacy\" or that intrusion is classified as \"concerns_family\", or both;\n      (b) that intrusion is classified as \"concerns_home\";\n    (ii) that intrusion is classified as \"concerns_correspondence\";\n  (b) either that intrusion is classified as \"is_attack_upon_honour\" or that intrusion is classified as \"is_attack_upon_reputation\", or both*, s still must."
+       },
+       {
+        "readings": [
+         "state_arbitrary",
+         "entitlement_any"
+        ],
+        "situation": "38c79476a3165127a4f6dc9f5bb27aa9f57b204609255b7a8c590c469696612e",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       },
+       {
+        "readings": [
+         "entitlement_arbitrary",
+         "state_any"
+        ],
+        "situation": "2cae5662f109ed601a35f5654fe27c9200e82ea55e5cda252a98e2e9fade474d",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: i is an intrusion; s is a State; i is classified as \"concerns_correspondence\". Here the text does not say whether i is classified as \"is_protected_by_law\"; this situation answers 'no'. Here the text does not say whether s must protect by law against i; this situation answers 'no'. Under *Every intrusion is classified as \"is_protected_by_law\", if at least one of the following holds:\n  (a) all of the following hold:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) either that intrusion is classified as \"concerns_privacy\" or that intrusion is classified as \"concerns_family\", or both;\n        (ii) that intrusion is classified as \"concerns_home\";\n      (b) that intrusion is classified as \"concerns_correspondence\";\n    (ii) that intrusion is arbitrary;\n  (b) either that intrusion is classified as \"is_attack_upon_honour\" or that intrusion is classified as \"is_attack_upon_reputation\", or both*, s is not required to. Under *Every State must protect by law against each intrusion, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) either that intrusion is classified as \"concerns_privacy\" or that intrusion is classified as \"concerns_family\", or both;\n      (b) that intrusion is classified as \"concerns_home\";\n    (ii) that intrusion is classified as \"concerns_correspondence\";\n  (b) either that intrusion is classified as \"is_attack_upon_honour\" or that intrusion is classified as \"is_attack_upon_reputation\", or both*, s still must."
+       },
+       {
+        "readings": [
+         "entitlement_arbitrary",
+         "entitlement_any"
+        ],
+        "situation": "a251445ed3836d4c5cd451995066f16584a8ae269d379f3b7bddbecf2000f261",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       },
+       {
+        "readings": [
+         "state_any",
+         "entitlement_any"
+        ],
+        "situation": "b1572e74bddb4b14a5423ffe7042cd0517c3dffa5c8c4910db9bf40c0bc16aed",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u046: 0, 1",
+       "SeparatedByActOnly: rs_u046: 0, 3",
+       "SeparatedByActOnly: rs_u046: 1, 2",
+       "SeparatedByActOnly: rs_u046: 2, 3"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u046",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u046",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u046",
+         2
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u046",
+         3
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (4 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u046",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u046",
+       "status": "model"
+      },
+      {
+       "index": 2,
+       "set": "rs_u046",
+       "status": "model"
+      },
+      {
+       "index": 3,
+       "set": "rs_u046",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u046",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u046",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u046",
+         1
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u046",
+         2
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u046",
+         3
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "intrusion": [],
+       "state": []
+      },
+      "relations": {
+       "concerns_correspondence": [],
+       "concerns_family": [],
+       "concerns_home": [],
+       "concerns_privacy": [],
+       "is_arbitrary": [],
+       "is_attack_upon_honour": [],
+       "is_attack_upon_reputation": [],
+       "is_protected_by_law": [],
+       "protect_by_law_against_intrusion_required": [],
+       "unsaid__is_protected_by_law": [],
+       "unsaid__protect_by_law_against_intrusion_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u054",
+    "route": "enumerated",
+    "units": [
+     "u054"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u054",
+      "version": 4,
+      "unit": "u054",
+      "candidates": [
+       {
+        "id": "entitlement",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [],
+      "findings": [],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u054",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (1 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u054",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u054",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u054",
+         0
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "person": []
+      },
+      "relations": {
+       "is_entitled_to_a_nationality": [],
+       "unsaid__is_entitled_to_a_nationality": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u061",
+    "route": "enumerated",
+    "units": [
+     "u061"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u061",
+      "version": 1,
+      "unit": "u061",
+      "candidates": [
+       {
+        "id": "claim",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [],
+      "findings": [],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u061",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (1 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u061",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u061",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u061",
+         0
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "bearer": [],
+       "family": []
+      },
+      "relations": {
+       "is_society": [],
+       "is_state": [],
+       "protect_required": [],
+       "unsaid__protect_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u077",
+    "route": "enumerated",
+    "units": [
+     "u077"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u077",
+      "version": 2,
+      "unit": "u077",
+      "candidates": [
+       {
+        "id": "nationality_country_claim",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "residence_country_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "nationality_country_claim",
+         "residence_country_claim"
+        ],
+        "situation": "26450b6d91de3edada3a6361e9f15c0f97cf4fd5cdd15382d7b921eb7b6da7ce",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: c is a country; p is a person; c has the recorded relation \"has_as_national\" to p. Here the text does not say whether c must give p equal access to public service in their country; this situation answers 'no'. Under *Every country must give each person equal access to public service in their country, if that country has the recorded relation \"has_as_national\" to that person*, c still must. Under *Every country must give each person equal access to public service in their country, if that country has the recorded relation \"has_as_resident\" to that person*, c is not required to."
+       }
+      ],
+      "findings": [],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u077",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u077",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u077",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u077",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u077",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u077",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u077",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "country": [],
+       "person": []
+      },
+      "relations": {
+       "give_equal_access_to_public_service_required": [],
+       "has_as_national": [],
+       "has_as_resident": [],
+       "unsaid__give_equal_access_to_public_service_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u081",
+    "route": "enumerated",
+    "units": [
+     "u081"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u081",
+      "version": 3,
+      "unit": "u081",
+      "candidates": [
+       {
+        "id": "entitlement",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim_within_resources",
+        "index": 2,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "entitlement",
+         "state_claim"
+        ],
+        "situation": "5e30d8cc23d13b8d97eff10dd8d3025218cdf8f5510315c1a99fcd994576cb60",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       },
+       {
+        "readings": [
+         "entitlement",
+         "state_claim_within_resources"
+        ],
+        "situation": "5e30d8cc23d13b8d97eff10dd8d3025218cdf8f5510315c1a99fcd994576cb60",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       },
+       {
+        "readings": [
+         "state_claim",
+         "state_claim_within_resources"
+        ],
+        "situation": "81dc24954301aca2f47466c557420fe0ae469a48882333b4d3bf35eab24e2779",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: p is a person; s is a State. Here the text does not say whether p is classified as \"has_the_right_to_social_security\"; this situation answers 'no'. Here the text does not say whether s must secure p social security; this situation answers 'no'. Under *Every State must secure each person social security*, s still must. Under *Every State must secure each person social security, if that State is classified as \"resources_allow\"*, s is not required to."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u081: 0, 1",
+       "SeparatedByActOnly: rs_u081: 0, 2"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u081",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u081",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u081",
+         2
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (3 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u081",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u081",
+       "status": "model"
+      },
+      {
+       "index": 2,
+       "set": "rs_u081",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u081",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u081",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u081",
+         1
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u081",
+         2
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "person": [],
+       "state": []
+      },
+      "relations": {
+       "has_the_right_to_social_security": [],
+       "resources_allow": [],
+       "secure_social_security_required": [],
+       "unsaid__has_the_right_to_social_security": [],
+       "unsaid__secure_social_security_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u084c",
+    "route": "enumerated",
+    "units": [
+     "u084c"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u084c",
+      "version": 3,
+      "unit": "u084c",
+      "candidates": [
+       {
+        "id": "entitlement",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "entitlement",
+         "state_claim"
+        ],
+        "situation": "ec295def083f46ef4b1d8847a07492a2d1fcb67672a3a8e3a52d87255ea20997",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u084c: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u084c",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u084c",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u084c",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u084c",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u084c",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u084c",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u084c",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "person": [],
+       "state": []
+      },
+      "relations": {
+       "has_the_right_to_just_and_favourable_conditions_of_work": [],
+       "secure_just_and_favourable_conditions_of_work_required": [],
+       "unsaid__has_the_right_to_just_and_favourable_conditions_of_work": [],
+       "unsaid__secure_just_and_favourable_conditions_of_work_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u084d",
+    "route": "enumerated",
+    "units": [
+     "u084d"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u084d",
+      "version": 3,
+      "unit": "u084d",
+      "candidates": [
+       {
+        "id": "entitlement",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "entitlement",
+         "state_claim"
+        ],
+        "situation": "f31144658a86d8f77cddc262095c5377def56ea8bf6c2d2ff0dbd3a4826d5d89",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u084d: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u084d",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u084d",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u084d",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u084d",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u084d",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u084d",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u084d",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "person": [],
+       "state": []
+      },
+      "relations": {
+       "has_the_right_to_protection_against_unemployment": [],
+       "secure_protection_against_unemployment_required": [],
+       "unsaid__has_the_right_to_protection_against_unemployment": [],
+       "unsaid__secure_protection_against_unemployment_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u098",
+    "route": "enumerated",
+    "units": [
+     "u098"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u098",
+      "version": 5,
+      "unit": "u098",
+      "candidates": [
+       {
+        "id": "state_requires",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "person_attends",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "guardian_ensures",
+        "index": 2,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "state_requires",
+         "person_attends"
+        ],
+        "situation": "7c208d05d4fa5d578e6aa1f9ed3264bb1cea66923353d2b08b48a82f33e4dde7",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: g is a guardian; p is a person; s is a State. Here the text does not say whether p must attend compulsory elementary education; this situation answers 'no'. Here the text does not say whether s must make elementary education compulsory; this situation answers 'no'. Here the text does not say whether g must see that p attends compulsory elementary education; this situation answers 'no'. Under *Every State must make elementary education compulsory*, s still must. Under *Every person must attend compulsory elementary education, if that person is classified as \"elementary_education_is_compulsory_for\"*, s is not required to."
+       },
+       {
+        "readings": [
+         "state_requires",
+         "guardian_ensures"
+        ],
+        "situation": "7c208d05d4fa5d578e6aa1f9ed3264bb1cea66923353d2b08b48a82f33e4dde7",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: g is a guardian; p is a person; s is a State. Here the text does not say whether p must attend compulsory elementary education; this situation answers 'no'. Here the text does not say whether s must make elementary education compulsory; this situation answers 'no'. Here the text does not say whether g must see that p attends compulsory elementary education; this situation answers 'no'. Under *Every State must make elementary education compulsory*, s still must. Under *Every guardian must see that each person attends compulsory elementary education, if both that guardian has the recorded relation \"is_parent_or_guardian_of\" to that person and that person is classified as \"elementary_education_is_compulsory_for\"*, s is not required to."
+       },
+       {
+        "readings": [
+         "person_attends",
+         "guardian_ensures"
+        ],
+        "situation": "fe00afdc7a3c19f4c1a3b6923dc81be92753a8a5e5a5df780979caa7f74778f5",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: g is a guardian; p is a person; s is a State; p is classified as \"elementary_education_is_compulsory_for\". Here the text does not say whether p must attend compulsory elementary education; this situation answers 'no'. Here the text does not say whether s must make elementary education compulsory; this situation answers 'no'. Here the text does not say whether g must see that p attends compulsory elementary education; this situation answers 'no'. Under *Every person must attend compulsory elementary education, if that person is classified as \"elementary_education_is_compulsory_for\"*, p still must. Under *Every guardian must see that each person attends compulsory elementary education, if both that guardian has the recorded relation \"is_parent_or_guardian_of\" to that person and that person is classified as \"elementary_education_is_compulsory_for\"*, p is not required to."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u098: 0, 1",
+       "SeparatedByActOnly: rs_u098: 0, 2",
+       "SeparatedByActOnly: rs_u098: 1, 2"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u098",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u098",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u098",
+         2
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (3 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u098",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u098",
+       "status": "model"
+      },
+      {
+       "index": 2,
+       "set": "rs_u098",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u098",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u098",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u098",
+         1
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u098",
+         2
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "guardian": [],
+       "person": [],
+       "state": []
+      },
+      "relations": {
+       "attend_compulsory_elementary_education_required": [],
+       "elementary_education_is_compulsory_for": [],
+       "is_parent_or_guardian_of": [],
+       "make_elementary_education_compulsory_required": [],
+       "see_to_compulsory_elementary_education_required": [],
+       "unsaid__attend_compulsory_elementary_education_required": [],
+       "unsaid__make_elementary_education_compulsory_required": [],
+       "unsaid__see_to_compulsory_elementary_education_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u099a",
+    "route": "enumerated",
+    "units": [
+     "u099a"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u099a",
+      "version": 3,
+      "unit": "u099a",
+      "candidates": [
+       {
+        "id": "state",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [],
+      "findings": [],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u099a",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (1 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u099a",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u099a",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u099a",
+         0
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "education_kind": [],
+       "state": []
+      },
+      "relations": {
+       "is_professional": [],
+       "is_technical": [],
+       "make_education_generally_available_required": [],
+       "unsaid__make_education_generally_available_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u099b",
+    "route": "enumerated",
+    "units": [
+     "u099b"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u099b",
+      "version": 3,
+      "unit": "u099b",
+      "candidates": [
+       {
+        "id": "state",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [],
+      "findings": [],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u099b",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (1 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u099b",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u099b",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u099b",
+         0
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "state": []
+      },
+      "relations": {
+       "make_higher_education_accessible_required": [],
+       "unsaid__make_higher_education_accessible_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u100a",
+    "route": "enumerated",
+    "units": [
+     "u100a"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u100a",
+      "version": 3,
+      "unit": "u100a",
+      "candidates": [
+       {
+        "id": "state",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "education",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "state",
+         "education"
+        ],
+        "situation": "4d7cad8829d8327256f0d86698bb81495d6cb11ea1f8850b1658eb0ae57b9c8b",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: e is an education; s is a State. Here the text does not say whether s must direct education to the full development of the human personality; this situation answers 'no'. Here the text does not say whether e is classified as \"is_directed_to_full_development_of_the_personality\"; this situation answers 'no'. Under *Every State must direct education to the full development of the human personality*, s still must. Under *Every education is classified as \"is_directed_to_full_development_of_the_personality\"*, s is not required to."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u100a: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u100a",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u100a",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u100a",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u100a",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u100a",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u100a",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u100a",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "education": [],
+       "state": []
+      },
+      "relations": {
+       "direct_education_to_personality_required": [],
+       "is_directed_to_full_development_of_the_personality": [],
+       "unsaid__direct_education_to_personality_required": [],
+       "unsaid__is_directed_to_full_development_of_the_personality": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u100b",
+    "route": "enumerated",
+    "units": [
+     "u100b"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u100b",
+      "version": 3,
+      "unit": "u100b",
+      "candidates": [
+       {
+        "id": "state",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "education",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "state",
+         "education"
+        ],
+        "situation": "bacfa613ce5d728300f648972145d9f60544941ea75704963baf75ff453dee3b",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: o is an object of respect; s is a State; o is classified as \"is_fundamental_freedoms\". Here the text does not say whether s must direct education to strengthen respect of o; this situation answers 'no'. Here the text does not say whether o is classified as \"education_strengthens_respect_of\"; this situation answers 'no'. Under *Every State must direct education to strengthen respect of each object of respect, if either that object of respect is classified as \"is_human_rights\" or that object of respect is classified as \"is_fundamental_freedoms\", or both*, s still must. Under *Every object of respect is classified as \"education_strengthens_respect_of\", if either that object of respect is classified as \"is_human_rights\" or that object of respect is classified as \"is_fundamental_freedoms\", or both*, s is not required to."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u100b: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u100b",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u100b",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u100b",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u100b",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u100b",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u100b",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u100b",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "object_of_respect": [],
+       "state": []
+      },
+      "relations": {
+       "direct_education_to_strengthen_respect_required": [],
+       "education_strengthens_respect_of": [],
+       "is_fundamental_freedoms": [],
+       "is_human_rights": [],
+       "unsaid__direct_education_to_strengthen_respect_required": [],
+       "unsaid__education_strengthens_respect_of": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u105c",
+    "route": "enumerated",
+    "units": [
+     "u105c"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u105c",
+      "version": 3,
+      "unit": "u105c",
+      "candidates": [
+       {
+        "id": "entitlement",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "state_claim",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "liberty",
+        "index": 2,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "entitlement",
+         "state_claim"
+        ],
+        "situation": "0b79b488f44b0b4c33146fdc33e90416fbbb0239202c8ce5f69cb2877f27d71d",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       },
+       {
+        "readings": [
+         "entitlement",
+         "liberty"
+        ],
+        "situation": "0b79b488f44b0b4c33146fdc33e90416fbbb0239202c8ce5f69cb2877f27d71d",
+        "probe": "outcome",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       },
+       {
+        "readings": [
+         "state_claim",
+         "liberty"
+        ],
+        "situation": "a365a981b406886e3daee040e12aed8e8f71fa58d49bac507992afc0675bf53d",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: p is a person; s is a State. Here the text does not say whether p is classified as \"has_the_right_to_share_in_scientific_advancement\"; this situation answers 'no'. Here the text does not say whether p may freely share in scientific advancement as well as its benefits; this situation answers 'no'. Here the text does not say whether s must secure p a share in scientific advancement as well as its benefits; this situation answers 'no'. Under *Every State must secure each person a share in scientific advancement as well as its benefits*, p is not permitted to. Under *Every person may freely share in scientific advancement as well as its benefits*, p is permitted to."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u105c: 0, 1",
+       "SeparatedByActOnly: rs_u105c: 0, 2",
+       "SeparatedByActOnly: rs_u105c: 1, 2"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u105c",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u105c",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u105c",
+         2
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (3 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u105c",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u105c",
+       "status": "model"
+      },
+      {
+       "index": 2,
+       "set": "rs_u105c",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u105c",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u105c",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u105c",
+         1
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u105c",
+         2
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "person": [],
+       "state": []
+      },
+      "relations": {
+       "has_the_right_to_share_in_scientific_advancement": [],
+       "person_may_share_in_scientific_advancement": [],
+       "secure_scientific_advancement_required": [],
+       "unsaid__has_the_right_to_share_in_scientific_advancement": [],
+       "unsaid__person_may_share_in_scientific_advancement": [],
+       "unsaid__secure_scientific_advancement_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u110",
+    "route": "enumerated",
+    "units": [
+     "u110"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u110",
+      "version": 2,
+      "unit": "u110",
+      "candidates": [
+       {
+        "id": "restrictive",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "describing",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "restrictive",
+         "describing"
+        ],
+        "situation": "cb3bedc704d19385901bee7b905e42e6b3921d3a772a79213dbdd436b614fc0b",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: c is a community; p is a person; c has the recorded relation \"is_sole_setting_of_full_development\" to p. Here the text does not say whether p must perform duties to c; this situation answers 'no'. Here the text does not say whether p must perform duties to the community of their free as well as full development; this situation answers 'no'. Under *Every person must perform duties to each community, if that community has the recorded relation \"is_sole_setting_of_full_development\" to that person*, p still must. Under *Every person must perform duties to the community of their free as well as full development*, p is not required to."
+       }
+      ],
+      "findings": [
+       "SeparatedByActOnly: rs_u110: 0, 1"
+      ],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u110",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u110",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u110",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u110",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u110",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u110",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u110",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "community": [],
+       "person": []
+      },
+      "relations": {
+       "is_sole_setting_of_full_development": [],
+       "perform_duties_required": [],
+       "perform_duties_to_the_community_required": [],
+       "unsaid__perform_duties_required": [],
+       "unsaid__perform_duties_to_the_community_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u111",
+    "route": "enumerated",
+    "units": [
+     "u111"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u111",
+      "version": 4,
+      "unit": "u111",
+      "candidates": [
+       {
+        "id": "strict_listed_aims_state",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "strict_listed_aims_anyone",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "strict_both_aims_state",
+        "index": 2,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "strict_both_aims_anyone",
+        "index": 3,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "strict_listed_aims_state",
+         "strict_listed_aims_anyone"
+        ],
+        "situation": "b1c842a5cce36058ff4e7ca49766902a703a1f88b079d0d3533053a3182f516e",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: b is a bearer; l is a limitation. Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b still must."
+       },
+       {
+        "readings": [
+         "strict_listed_aims_state",
+         "strict_both_aims_state"
+        ],
+        "situation": "c3e9f213237e0d9e2c58d9725ade6ca103d4a46394926cb626c43735219a767e",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: b is a bearer; l is a limitation; l is classified as \"is_determined_by_law\"; b is classified as \"is_state\"; l is classified as \"serves_just_requirements\". Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b still must."
+       },
+       {
+        "readings": [
+         "strict_listed_aims_state",
+         "strict_both_aims_anyone"
+        ],
+        "situation": "b1c842a5cce36058ff4e7ca49766902a703a1f88b079d0d3533053a3182f516e",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: b is a bearer; l is a limitation. Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b still must."
+       },
+       {
+        "readings": [
+         "strict_listed_aims_anyone",
+         "strict_both_aims_state"
+        ],
+        "situation": "e55502d2490328281f820fe40f57d44e1a1da4ac8fc54faf230212aec14375fa",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: b is a bearer; l is a limitation. Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b still must. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b is not required to."
+       },
+       {
+        "readings": [
+         "strict_listed_aims_anyone",
+         "strict_both_aims_anyone"
+        ],
+        "situation": "946cdf7b4bad1aac88702adc2b614a98aed9780e0d188ef5992cc5b68b886f35",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: b is a bearer; l is a limitation; l is classified as \"is_determined_by_law\"; l is classified as \"serves_just_requirements\". Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b still must."
+       },
+       {
+        "readings": [
+         "strict_both_aims_state",
+         "strict_both_aims_anyone"
+        ],
+        "situation": "e182a9e8ea9dc677630eb93526e0b99df33a4b23b6f5cec2b418332776f54dab",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: b is a bearer; l is a limitation. Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b still must."
+       }
+      ],
+      "findings": [],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u111",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u111",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u111",
+         2
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u111",
+         3
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (4 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u111",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u111",
+       "status": "model"
+      },
+      {
+       "index": 2,
+       "set": "rs_u111",
+       "status": "model"
+      },
+      {
+       "index": 3,
+       "set": "rs_u111",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u111",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u111",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u111",
+         1
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u111",
+         2
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u111",
+         3
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "bearer": [],
+       "limitation": []
+      },
+      "relations": {
+       "avoid_imposing_limitation_required": [],
+       "is_determined_by_law": [],
+       "is_state": [],
+       "serves_any_other_purpose": [],
+       "serves_just_requirements": [],
+       "serves_recognition_of_rights_of_others": [],
+       "unsaid__avoid_imposing_limitation_required": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   },
+   {
+    "component": "rs_u114",
+    "route": "enumerated",
+    "units": [
+     "u114"
+    ],
+    "unchecked": [],
+    "sets": [
+     {
+      "set": "rs_u114",
+      "version": 3,
+      "unit": "u114",
+      "candidates": [
+       {
+        "id": "interpretive_ban",
+        "index": 0,
+        "pending": false,
+        "chain_findings": []
+       },
+       {
+        "id": "no_implied_right",
+        "index": 1,
+        "pending": false,
+        "chain_findings": []
+       }
+      ],
+      "pairs": [
+       {
+        "readings": [
+         "interpretive_ban",
+         "no_implied_right"
+        ],
+        "situation": "6d0b60834438b12bb320bc63840c2a1c7936194a615445914c429f6427a1b95a",
+        "probe": "selects",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+       }
+      ],
+      "findings": [],
+      "not_certified": []
+     }
+    ],
+    "conflict": {
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u114",
+         0
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      },
+      {
+       "choice": [
+        [
+         "rs_u114",
+         1
+        ]
+       ],
+       "status": "CONFLICT-FREE"
+      }
+     ],
+     "conditional_on": [],
+     "reading_premises_used": [],
+     "restrictions": [],
+     "route": "enumerated",
+     "status": "CONFLICT-FREE",
+     "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+    },
+    "premises": {
+     "candidates": [
+      {
+       "index": 0,
+       "set": "rs_u114",
+       "status": "model"
+      },
+      {
+       "index": 1,
+       "set": "rs_u114",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u114",
+       0
+      ]
+     ],
+     "choices": [
+      {
+       "choice": [
+        [
+         "rs_u114",
+         0
+        ]
+       ],
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u114",
+         1
+        ]
+       ],
+       "status": "model"
+      }
+     ],
+     "evidence": "per choice",
+     "model": {
+      "complete": true,
+      "constants": {},
+      "domains": {
+       "bearer": [],
+       "interpretation": []
+      },
+      "relations": {
+       "declaration_implies_destructive_right": [],
+       "implies_right_to_destroy_declared_rights": [],
+       "interpretation_permitted": [],
+       "unsaid__interpretation_permitted": []
+      }
+     },
+     "route": "enumerated",
+     "status": "model"
+    },
+    "dead_readings": []
+   }
+  ],
+  "sets": [
+   {
+    "set": "rs_u025",
+    "version": 2,
+    "unit": "u025",
+    "candidates": [
+     {
+      "id": "state_prohibits",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "practice_prohibited",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "state_prohibits",
+       "practice_prohibited"
+      ],
+      "situation": "e0013dc6a92a67b80be3033911e31d4a1a5df39639fb8ed5e604a37653b750e2",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: p is a practice; s is a State; p is classified as \"is_slave_trade\". Here the text does not say whether s must prohibit p; this situation answers 'no'. Here the text does not say whether p may be carried out; this situation answers 'no'. Under *Every State must prohibit each practice, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*, s still must. Under *Every practice must not be carried out, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*, s is not required to."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u025: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u029",
+    "version": 3,
+    "unit": "u029",
+    "candidates": [
+     {
+      "id": "entitlement",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "entitlement",
+       "state_claim"
+      ],
+      "situation": "f58af309900e877c18fd71a76f54837ea806fffbc99b912d4d2a1e5867d317af",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u029: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u032",
+    "version": 3,
+    "unit": "u032",
+    "candidates": [
+     {
+      "id": "entitlement",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "entitlement",
+       "state_claim"
+      ],
+      "situation": "e42533e57c160fe1c7635ef730570ef5fd170d35adfe5d38ee3d32b2b5956eaa",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u032: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u033a",
+    "version": 3,
+    "unit": "u033a",
+    "candidates": [
+     {
+      "id": "entitlement",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "entitlement",
+       "state_claim"
+      ],
+      "situation": "4e6f4f2e2fd4b9bd24a35a1b5fa4d52970aaa0f43539687ccbc9b114fffa94ba",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u033a: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u033b",
+    "version": 3,
+    "unit": "u033b",
+    "candidates": [
+     {
+      "id": "entitlement",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "entitlement",
+       "state_claim"
+      ],
+      "situation": "5c698cbc149fc60f459c3c3ec31ff74bd4e7b319606c2aa2d054072cfb0330a8",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u033b: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u035",
+    "version": 4,
+    "unit": "u035",
+    "candidates": [
+     {
+      "id": "tribunal_claim",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "tribunal_claim",
+       "state_claim"
+      ],
+      "situation": "e5f9e17b89f2caa32011344deb47b5aecf6fbe18ad8489082cd089d936b85b0a",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: s is a state; t is a tribunal; v is a violation; t has the recorded relation \"is_competent_for\" to v; t is classified as \"is_national\"; v is classified as \"violates_granted_fundamental_right\". Here the text does not say whether s must ensure competent national tribunals give v's victim an effective remedy; this situation answers 'no'. Here the text does not say whether t must provide the victim of v with an effective remedy; this situation answers 'no'. Under *Every tribunal must provide the victim of each violation with an effective remedy, if all of the following hold:\n  (a) both that tribunal is classified as \"is_national\" and that tribunal has the recorded relation \"is_competent_for\" to that violation;\n  (b) that violation is classified as \"violates_granted_fundamental_right\"*, s is not required to. Under *Every state must ensure competent national tribunals give each violation's victim an effective remedy, if that violation is classified as \"violates_granted_fundamental_right\"*, s still must."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u035: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u046",
+    "version": 3,
+    "unit": "u046",
+    "candidates": [
+     {
+      "id": "state_arbitrary",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "entitlement_arbitrary",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_any",
+      "index": 2,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "entitlement_any",
+      "index": 3,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "state_arbitrary",
+       "entitlement_arbitrary"
+      ],
+      "situation": "66d334c65913ce39452508b07aa37708c3729e49a0086165468ad2615305f742",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     },
+     {
+      "readings": [
+       "state_arbitrary",
+       "state_any"
+      ],
+      "situation": "0af849ec94982925d00867522253bc90d8e19af4985729efd06ce30058479889",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: i is an intrusion; s is a State; i is classified as \"concerns_correspondence\". Here the text does not say whether i is classified as \"is_protected_by_law\"; this situation answers 'no'. Here the text does not say whether s must protect by law against i; this situation answers 'no'. Under *Every State must protect by law against each intrusion, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) either that intrusion is classified as \"concerns_privacy\" or that intrusion is classified as \"concerns_family\", or both;\n        (ii) that intrusion is classified as \"concerns_home\";\n      (b) that intrusion is classified as \"concerns_correspondence\";\n    (ii) that intrusion is arbitrary;\n  (b) either that intrusion is classified as \"is_attack_upon_honour\" or that intrusion is classified as \"is_attack_upon_reputation\", or both*, s is not required to. Under *Every State must protect by law against each intrusion, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) either that intrusion is classified as \"concerns_privacy\" or that intrusion is classified as \"concerns_family\", or both;\n      (b) that intrusion is classified as \"concerns_home\";\n    (ii) that intrusion is classified as \"concerns_correspondence\";\n  (b) either that intrusion is classified as \"is_attack_upon_honour\" or that intrusion is classified as \"is_attack_upon_reputation\", or both*, s still must."
+     },
+     {
+      "readings": [
+       "state_arbitrary",
+       "entitlement_any"
+      ],
+      "situation": "38c79476a3165127a4f6dc9f5bb27aa9f57b204609255b7a8c590c469696612e",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     },
+     {
+      "readings": [
+       "entitlement_arbitrary",
+       "state_any"
+      ],
+      "situation": "2cae5662f109ed601a35f5654fe27c9200e82ea55e5cda252a98e2e9fade474d",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: i is an intrusion; s is a State; i is classified as \"concerns_correspondence\". Here the text does not say whether i is classified as \"is_protected_by_law\"; this situation answers 'no'. Here the text does not say whether s must protect by law against i; this situation answers 'no'. Under *Every intrusion is classified as \"is_protected_by_law\", if at least one of the following holds:\n  (a) all of the following hold:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) either that intrusion is classified as \"concerns_privacy\" or that intrusion is classified as \"concerns_family\", or both;\n        (ii) that intrusion is classified as \"concerns_home\";\n      (b) that intrusion is classified as \"concerns_correspondence\";\n    (ii) that intrusion is arbitrary;\n  (b) either that intrusion is classified as \"is_attack_upon_honour\" or that intrusion is classified as \"is_attack_upon_reputation\", or both*, s is not required to. Under *Every State must protect by law against each intrusion, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) either that intrusion is classified as \"concerns_privacy\" or that intrusion is classified as \"concerns_family\", or both;\n      (b) that intrusion is classified as \"concerns_home\";\n    (ii) that intrusion is classified as \"concerns_correspondence\";\n  (b) either that intrusion is classified as \"is_attack_upon_honour\" or that intrusion is classified as \"is_attack_upon_reputation\", or both*, s still must."
+     },
+     {
+      "readings": [
+       "entitlement_arbitrary",
+       "entitlement_any"
+      ],
+      "situation": "a251445ed3836d4c5cd451995066f16584a8ae269d379f3b7bddbecf2000f261",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     },
+     {
+      "readings": [
+       "state_any",
+       "entitlement_any"
+      ],
+      "situation": "b1572e74bddb4b14a5423ffe7042cd0517c3dffa5c8c4910db9bf40c0bc16aed",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u046: 0, 1",
+     "SeparatedByActOnly: rs_u046: 0, 3",
+     "SeparatedByActOnly: rs_u046: 1, 2",
+     "SeparatedByActOnly: rs_u046: 2, 3"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u054",
+    "version": 4,
+    "unit": "u054",
+    "candidates": [
+     {
+      "id": "entitlement",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [],
+    "findings": [],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u061",
+    "version": 1,
+    "unit": "u061",
+    "candidates": [
+     {
+      "id": "claim",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [],
+    "findings": [],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u077",
+    "version": 2,
+    "unit": "u077",
+    "candidates": [
+     {
+      "id": "nationality_country_claim",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "residence_country_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "nationality_country_claim",
+       "residence_country_claim"
+      ],
+      "situation": "26450b6d91de3edada3a6361e9f15c0f97cf4fd5cdd15382d7b921eb7b6da7ce",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: c is a country; p is a person; c has the recorded relation \"has_as_national\" to p. Here the text does not say whether c must give p equal access to public service in their country; this situation answers 'no'. Under *Every country must give each person equal access to public service in their country, if that country has the recorded relation \"has_as_national\" to that person*, c still must. Under *Every country must give each person equal access to public service in their country, if that country has the recorded relation \"has_as_resident\" to that person*, c is not required to."
+     }
+    ],
+    "findings": [],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u081",
+    "version": 3,
+    "unit": "u081",
+    "candidates": [
+     {
+      "id": "entitlement",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim_within_resources",
+      "index": 2,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "entitlement",
+       "state_claim"
+      ],
+      "situation": "5e30d8cc23d13b8d97eff10dd8d3025218cdf8f5510315c1a99fcd994576cb60",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     },
+     {
+      "readings": [
+       "entitlement",
+       "state_claim_within_resources"
+      ],
+      "situation": "5e30d8cc23d13b8d97eff10dd8d3025218cdf8f5510315c1a99fcd994576cb60",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     },
+     {
+      "readings": [
+       "state_claim",
+       "state_claim_within_resources"
+      ],
+      "situation": "81dc24954301aca2f47466c557420fe0ae469a48882333b4d3bf35eab24e2779",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: p is a person; s is a State. Here the text does not say whether p is classified as \"has_the_right_to_social_security\"; this situation answers 'no'. Here the text does not say whether s must secure p social security; this situation answers 'no'. Under *Every State must secure each person social security*, s still must. Under *Every State must secure each person social security, if that State is classified as \"resources_allow\"*, s is not required to."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u081: 0, 1",
+     "SeparatedByActOnly: rs_u081: 0, 2"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u084c",
+    "version": 3,
+    "unit": "u084c",
+    "candidates": [
+     {
+      "id": "entitlement",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "entitlement",
+       "state_claim"
+      ],
+      "situation": "ec295def083f46ef4b1d8847a07492a2d1fcb67672a3a8e3a52d87255ea20997",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u084c: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u084d",
+    "version": 3,
+    "unit": "u084d",
+    "candidates": [
+     {
+      "id": "entitlement",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "entitlement",
+       "state_claim"
+      ],
+      "situation": "f31144658a86d8f77cddc262095c5377def56ea8bf6c2d2ff0dbd3a4826d5d89",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u084d: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u098",
+    "version": 5,
+    "unit": "u098",
+    "candidates": [
+     {
+      "id": "state_requires",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "person_attends",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "guardian_ensures",
+      "index": 2,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "state_requires",
+       "person_attends"
+      ],
+      "situation": "7c208d05d4fa5d578e6aa1f9ed3264bb1cea66923353d2b08b48a82f33e4dde7",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: g is a guardian; p is a person; s is a State. Here the text does not say whether p must attend compulsory elementary education; this situation answers 'no'. Here the text does not say whether s must make elementary education compulsory; this situation answers 'no'. Here the text does not say whether g must see that p attends compulsory elementary education; this situation answers 'no'. Under *Every State must make elementary education compulsory*, s still must. Under *Every person must attend compulsory elementary education, if that person is classified as \"elementary_education_is_compulsory_for\"*, s is not required to."
+     },
+     {
+      "readings": [
+       "state_requires",
+       "guardian_ensures"
+      ],
+      "situation": "7c208d05d4fa5d578e6aa1f9ed3264bb1cea66923353d2b08b48a82f33e4dde7",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: g is a guardian; p is a person; s is a State. Here the text does not say whether p must attend compulsory elementary education; this situation answers 'no'. Here the text does not say whether s must make elementary education compulsory; this situation answers 'no'. Here the text does not say whether g must see that p attends compulsory elementary education; this situation answers 'no'. Under *Every State must make elementary education compulsory*, s still must. Under *Every guardian must see that each person attends compulsory elementary education, if both that guardian has the recorded relation \"is_parent_or_guardian_of\" to that person and that person is classified as \"elementary_education_is_compulsory_for\"*, s is not required to."
+     },
+     {
+      "readings": [
+       "person_attends",
+       "guardian_ensures"
+      ],
+      "situation": "fe00afdc7a3c19f4c1a3b6923dc81be92753a8a5e5a5df780979caa7f74778f5",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: g is a guardian; p is a person; s is a State; p is classified as \"elementary_education_is_compulsory_for\". Here the text does not say whether p must attend compulsory elementary education; this situation answers 'no'. Here the text does not say whether s must make elementary education compulsory; this situation answers 'no'. Here the text does not say whether g must see that p attends compulsory elementary education; this situation answers 'no'. Under *Every person must attend compulsory elementary education, if that person is classified as \"elementary_education_is_compulsory_for\"*, p still must. Under *Every guardian must see that each person attends compulsory elementary education, if both that guardian has the recorded relation \"is_parent_or_guardian_of\" to that person and that person is classified as \"elementary_education_is_compulsory_for\"*, p is not required to."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u098: 0, 1",
+     "SeparatedByActOnly: rs_u098: 0, 2",
+     "SeparatedByActOnly: rs_u098: 1, 2"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u099a",
+    "version": 3,
+    "unit": "u099a",
+    "candidates": [
+     {
+      "id": "state",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [],
+    "findings": [],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u099b",
+    "version": 3,
+    "unit": "u099b",
+    "candidates": [
+     {
+      "id": "state",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [],
+    "findings": [],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u100a",
+    "version": 3,
+    "unit": "u100a",
+    "candidates": [
+     {
+      "id": "state",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "education",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "state",
+       "education"
+      ],
+      "situation": "4d7cad8829d8327256f0d86698bb81495d6cb11ea1f8850b1658eb0ae57b9c8b",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: e is an education; s is a State. Here the text does not say whether s must direct education to the full development of the human personality; this situation answers 'no'. Here the text does not say whether e is classified as \"is_directed_to_full_development_of_the_personality\"; this situation answers 'no'. Under *Every State must direct education to the full development of the human personality*, s still must. Under *Every education is classified as \"is_directed_to_full_development_of_the_personality\"*, s is not required to."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u100a: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u100b",
+    "version": 3,
+    "unit": "u100b",
+    "candidates": [
+     {
+      "id": "state",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "education",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "state",
+       "education"
+      ],
+      "situation": "bacfa613ce5d728300f648972145d9f60544941ea75704963baf75ff453dee3b",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: o is an object of respect; s is a State; o is classified as \"is_fundamental_freedoms\". Here the text does not say whether s must direct education to strengthen respect of o; this situation answers 'no'. Here the text does not say whether o is classified as \"education_strengthens_respect_of\"; this situation answers 'no'. Under *Every State must direct education to strengthen respect of each object of respect, if either that object of respect is classified as \"is_human_rights\" or that object of respect is classified as \"is_fundamental_freedoms\", or both*, s still must. Under *Every object of respect is classified as \"education_strengthens_respect_of\", if either that object of respect is classified as \"is_human_rights\" or that object of respect is classified as \"is_fundamental_freedoms\", or both*, s is not required to."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u100b: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u105c",
+    "version": 3,
+    "unit": "u105c",
+    "candidates": [
+     {
+      "id": "entitlement",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "state_claim",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "liberty",
+      "index": 2,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "entitlement",
+       "state_claim"
+      ],
+      "situation": "0b79b488f44b0b4c33146fdc33e90416fbbb0239202c8ce5f69cb2877f27d71d",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     },
+     {
+      "readings": [
+       "entitlement",
+       "liberty"
+      ],
+      "situation": "0b79b488f44b0b4c33146fdc33e90416fbbb0239202c8ce5f69cb2877f27d71d",
+      "probe": "outcome",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     },
+     {
+      "readings": [
+       "state_claim",
+       "liberty"
+      ],
+      "situation": "a365a981b406886e3daee040e12aed8e8f71fa58d49bac507992afc0675bf53d",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: p is a person; s is a State. Here the text does not say whether p is classified as \"has_the_right_to_share_in_scientific_advancement\"; this situation answers 'no'. Here the text does not say whether p may freely share in scientific advancement as well as its benefits; this situation answers 'no'. Here the text does not say whether s must secure p a share in scientific advancement as well as its benefits; this situation answers 'no'. Under *Every State must secure each person a share in scientific advancement as well as its benefits*, p is not permitted to. Under *Every person may freely share in scientific advancement as well as its benefits*, p is permitted to."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u105c: 0, 1",
+     "SeparatedByActOnly: rs_u105c: 0, 2",
+     "SeparatedByActOnly: rs_u105c: 1, 2"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u110",
+    "version": 2,
+    "unit": "u110",
+    "candidates": [
+     {
+      "id": "restrictive",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "describing",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "restrictive",
+       "describing"
+      ],
+      "situation": "cb3bedc704d19385901bee7b905e42e6b3921d3a772a79213dbdd436b614fc0b",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: c is a community; p is a person; c has the recorded relation \"is_sole_setting_of_full_development\" to p. Here the text does not say whether p must perform duties to c; this situation answers 'no'. Here the text does not say whether p must perform duties to the community of their free as well as full development; this situation answers 'no'. Under *Every person must perform duties to each community, if that community has the recorded relation \"is_sole_setting_of_full_development\" to that person*, p still must. Under *Every person must perform duties to the community of their free as well as full development*, p is not required to."
+     }
+    ],
+    "findings": [
+     "SeparatedByActOnly: rs_u110: 0, 1"
+    ],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u111",
+    "version": 4,
+    "unit": "u111",
+    "candidates": [
+     {
+      "id": "strict_listed_aims_state",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "strict_listed_aims_anyone",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "strict_both_aims_state",
+      "index": 2,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "strict_both_aims_anyone",
+      "index": 3,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "strict_listed_aims_state",
+       "strict_listed_aims_anyone"
+      ],
+      "situation": "b1c842a5cce36058ff4e7ca49766902a703a1f88b079d0d3533053a3182f516e",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: b is a bearer; l is a limitation. Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b still must."
+     },
+     {
+      "readings": [
+       "strict_listed_aims_state",
+       "strict_both_aims_state"
+      ],
+      "situation": "c3e9f213237e0d9e2c58d9725ade6ca103d4a46394926cb626c43735219a767e",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: b is a bearer; l is a limitation; l is classified as \"is_determined_by_law\"; b is classified as \"is_state\"; l is classified as \"serves_just_requirements\". Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b still must."
+     },
+     {
+      "readings": [
+       "strict_listed_aims_state",
+       "strict_both_aims_anyone"
+      ],
+      "situation": "b1c842a5cce36058ff4e7ca49766902a703a1f88b079d0d3533053a3182f516e",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: b is a bearer; l is a limitation. Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b still must."
+     },
+     {
+      "readings": [
+       "strict_listed_aims_anyone",
+       "strict_both_aims_state"
+      ],
+      "situation": "e55502d2490328281f820fe40f57d44e1a1da4ac8fc54faf230212aec14375fa",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: b is a bearer; l is a limitation. Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b still must. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b is not required to."
+     },
+     {
+      "readings": [
+       "strict_listed_aims_anyone",
+       "strict_both_aims_anyone"
+      ],
+      "situation": "946cdf7b4bad1aac88702adc2b614a98aed9780e0d188ef5992cc5b68b886f35",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: b is a bearer; l is a limitation; l is classified as \"is_determined_by_law\"; l is classified as \"serves_just_requirements\". Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b still must."
+     },
+     {
+      "readings": [
+       "strict_both_aims_state",
+       "strict_both_aims_anyone"
+      ],
+      "situation": "e182a9e8ea9dc677630eb93526e0b99df33a4b23b6f5cec2b418332776f54dab",
+      "probe": "outcome",
+      "wording": "E19",
+      "text": "These two readings differ here: b is a bearer; l is a limitation. Here the text does not say whether b must avoid imposing l on anyone; this situation answers 'no'. Under *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b is not required to. Under *Every bearer must avoid imposing each limitation on anyone, if it is not the case that all of the following hold:\n  (a) that limitation is classified as \"is_determined_by_law\";\n  (b) all of the following hold:\n    (i) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n    (ii) both that limitation is classified as \"serves_recognition_of_rights_of_others\" and that limitation is classified as \"serves_just_requirements\"*, b still must."
+     }
+    ],
+    "findings": [],
+    "not_certified": []
+   },
+   {
+    "set": "rs_u114",
+    "version": 3,
+    "unit": "u114",
+    "candidates": [
+     {
+      "id": "interpretive_ban",
+      "index": 0,
+      "pending": false,
+      "chain_findings": []
+     },
+     {
+      "id": "no_implied_right",
+      "index": 1,
+      "pending": false,
+      "chain_findings": []
+     }
+    ],
+    "pairs": [
+     {
+      "readings": [
+       "interpretive_ban",
+       "no_implied_right"
+      ],
+      "situation": "6d0b60834438b12bb320bc63840c2a1c7936194a615445914c429f6427a1b95a",
+      "probe": "selects",
+      "wording": "E24",
+      "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+     }
+    ],
+    "findings": [],
+    "not_certified": []
+   }
+  ],
+  "separations": {
+   "outcome": 33,
+   "selects": 1,
+   "holds": 0
+  },
+  "findings": {
+   "SeparatedByDecisionOnly": 0,
+   "SeparatedByActOnly": 23
+  },
+  "pending_candidates": 0,
+  "couplings": 0,
+  "status": "CONFLICT-FREE",
+  "conflict": {
+   "components": [
+    {
+     "component": "main",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u025",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u029",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u032",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u033a",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u033b",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u035",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u046",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u054",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u061",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u077",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u081",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u084c",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u084d",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u098",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u099a",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u099b",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u100a",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u100b",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u105c",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u110",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u111",
+     "status": "CONFLICT-FREE"
+    },
+    {
+     "component": "rs_u114",
+     "status": "CONFLICT-FREE"
+    }
+   ],
+   "route": "components",
+   "status": "CONFLICT-FREE"
+  },
+  "decided_units": [
+   "u025",
+   "u029",
+   "u032",
+   "u033a",
+   "u033b",
+   "u035",
+   "u046",
+   "u054",
+   "u061",
+   "u074",
+   "u077",
+   "u081",
+   "u084c",
+   "u084d",
+   "u098",
+   "u099a",
+   "u099b",
+   "u100a",
+   "u100b",
+   "u105c",
+   "u110",
+   "u111",
+   "u114"
+  ],
+  "english": [
+   "Each open sentence below was checked by itself, under each of its readings.",
+   "Sentence 30 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 30 were checked one way at a time, not together.",
+   "Under every reading of sentence 30, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 30 is read.",
+   "Sentence 34 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 34 were checked one way at a time, not together.",
+   "Under every reading of sentence 34, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 34 is read.",
+   "Sentence 37 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 37 were checked one way at a time, not together.",
+   "Under every reading of sentence 37, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 37 is read.",
+   "Sentence 38 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 38 were checked one way at a time, not together.",
+   "Under every reading of sentence 38, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 38 is read.",
+   "Sentence 39 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 39 were checked one way at a time, not together.",
+   "Under every reading of sentence 39, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 39 is read.",
+   "Sentence 41 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 41 were checked one way at a time, not together.",
+   "Under every reading of sentence 41, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 41 is read.",
+   "Sentence 53 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 53 were checked one way at a time, not together.",
+   "Under every reading of sentence 53, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 53 is read.",
+   "Sentence 61 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 61 were checked one way at a time, not together.",
+   "Under every reading of sentence 61, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 61 is read.",
+   "Sentence 68 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 68 were checked one way at a time, not together.",
+   "Under every reading of sentence 68, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 68 is read.",
+   "Sentence 85 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 85 were checked one way at a time, not together.",
+   "Under every reading of sentence 85, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 85 is read.",
+   "Sentence 90 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 90 were checked one way at a time, not together.",
+   "Under every reading of sentence 90, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 90 is read.",
+   "Sentence 95 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 95 were checked one way at a time, not together.",
+   "Under every reading of sentence 95, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 95 is read.",
+   "Sentence 96 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 96 were checked one way at a time, not together.",
+   "Under every reading of sentence 96, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 96 is read.",
+   "Sentence 110 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 110 were checked one way at a time, not together.",
+   "Under every reading of sentence 110, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 110 is read.",
+   "Sentence 111 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 111 were checked one way at a time, not together.",
+   "Under every reading of sentence 111, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 111 is read.",
+   "Sentence 112 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 112 were checked one way at a time, not together.",
+   "Under every reading of sentence 112, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 112 is read.",
+   "Sentence 113 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 113 were checked one way at a time, not together.",
+   "Under every reading of sentence 113, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 113 is read.",
+   "Sentence 114 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 114 were checked one way at a time, not together.",
+   "Under every reading of sentence 114, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 114 is read.",
+   "Sentence 121 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 121 were checked one way at a time, not together.",
+   "Under every reading of sentence 121, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 121 is read.",
+   "Sentence 126 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 126 were checked one way at a time, not together.",
+   "Under every reading of sentence 126, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 126 is read.",
+   "Sentence 127 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 127 were checked one way at a time, not together.",
+   "Under every reading of sentence 127, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 127 is read.",
+   "Sentence 130 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 130 were checked one way at a time, not together.",
+   "Under every reading of sentence 130, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 130 is read.",
+   "Each open sentence below was checked by itself, under each of its readings.",
+   "Sentence 30 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 30 as *Every State must prohibit each practice, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 34 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 34 as *Every person is classified as \"has_the_right_to_recognition_as_a_person\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 37 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 37 as *Every person is classified as \"is_entitled_to_equal_protection_of_the_law\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 38 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 38 as *Every person is classified as \"is_entitled_to_protection_against_discrimination\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 39 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 39 as *Every person is classified as \"is_entitled_to_protection_against_incitement\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 41 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 41 as *Every tribunal must provide the victim of each violation with an effective remedy, if all of the following hold:\n  (a) both that tribunal is classified as \"is_national\" and that tribunal has the recorded relation \"is_competent_for\" to that violation;\n  (b) that violation is classified as \"violates_granted_fundamental_right\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 53 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 53 as *Every State must protect by law against each intrusion, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) either that intrusion is classified as \"concerns_privacy\" or that intrusion is classified as \"concerns_family\", or both;\n        (ii) that intrusion is classified as \"concerns_home\";\n      (b) that intrusion is classified as \"concerns_correspondence\";\n    (ii) that intrusion is arbitrary;\n  (b) either that intrusion is classified as \"is_attack_upon_honour\" or that intrusion is classified as \"is_attack_upon_reputation\", or both*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 61 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 61 as *Every person is classified as \"is_entitled_to_a_nationality\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 68 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 68 as *must*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 85 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 85 as *Every country must give each person equal access to public service in their country, if that country has the recorded relation \"has_as_national\" to that person*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 90 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 90 as *Every person is classified as \"has_the_right_to_social_security\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 95 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 95 as *Every person is classified as \"has_the_right_to_just_and_favourable_conditions_of_work\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 96 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 96 as *Every person is classified as \"has_the_right_to_protection_against_unemployment\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 110 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 110 as *Every State must make elementary education compulsory*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 111 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 111 as *must*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 112 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 112 as *must*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 113 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 113 as *Every State must direct education to the full development of the human personality*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 114 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 114 as *Every State must direct education to strengthen respect of each object of respect, if either that object of respect is classified as \"is_human_rights\" or that object of respect is classified as \"is_fundamental_freedoms\", or both*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 121 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 121 as *Every person is classified as \"has_the_right_to_share_in_scientific_advancement\"*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 126 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 126 as *Every person must perform duties to each community, if that community has the recorded relation \"is_sole_setting_of_full_development\" to that person*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 127 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 127 as *Every bearer must avoid imposing each limitation on anyone, if both of the following hold:\n  (a) that bearer is classified as \"is_state\";\n  (b) it is not the case that all of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) all of the following hold:\n      (a) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n      (b) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*: the sentences of this document can all be true together, as here: nothing exists.",
+   "Sentence 130 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 130 as *Every interpretation must not be adopted, if that interpretation is classified as \"implies_right_to_destroy_declared_rights\"*: the sentences of this document can all be true together, as here: nothing exists."
+  ]
+ }
+}
