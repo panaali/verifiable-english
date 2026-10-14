@@ -9,7 +9,7 @@ import sys
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 
 from conformance.wire_contract_faults import catalogue, expected_record
 from conformance.wire_contract_faults_norm_defaults import LONG, base
