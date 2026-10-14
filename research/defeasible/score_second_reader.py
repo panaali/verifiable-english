@@ -5,6 +5,9 @@
 ANSWERS.json maps unit id to class code for every unit of `second-reader-packet.json`. Bar (plan DF-0 item 1, fixed
 before any reading): agreement on "G or not G" on at least 90 of 99 units; if not, research 2.3's G-class figures are
 withdrawn and replaced by the second reader's.
+
+Give the reader `second-reader-packet.json` (and `-bare.json`) only, never repository access: the key file and
+research 2.3's assignments (`docs/research/defeasible.md`) are both in this repository.
 """
 from __future__ import annotations
 

@@ -167,7 +167,8 @@ def main():
     by_id = {u["id"]: u for u in units(CONSTITUTION_RUN)}
     write_json("second-reader-packet-bare.json", {
         "instructions": INSTRUCTIONS, "classes": CLASSES,
-        "units": [{"id": r["id"], "text": unit_text(source, by_id[r["id"]])} for r in constitution["rows"]]})
+        "units": [{"id": r["id"], "bytes": r["bytes"], "text": unit_text(source, by_id[r["id"]])}
+                  for r in constitution["rows"]]})
     for name, result in (("constitution", constitution), ("udhr", udhr)):
         print(name, result["counts"], result["bytes"], "B")
 

@@ -10,25 +10,31 @@ from __future__ import annotations
 
 from common import (CONSTITUTION, CONSTITUTION_RUN, MARKER_RE, sha256, unit_bytes, unit_text, units, write_json)
 
-# Research 2.3's class table: the "What the sentence does" column, without examples' owners.
+# Research 2.3's class table: the "What the sentence does" column. Pre-run edit (before any reader, recorded in
+# docs/research/defeasible-phase1.md 2.1): research 2.3 illustrates each class with phrases and sentences from the
+# constitution, and 29 of the 99 packet units contain one of them (28 verbatim, u0135.s04 near-verbatim), which labels
+# those units for the reader. Every
+# example below is invented and quotes nothing from the constitution; the class meanings are unchanged.
 CLASSES = {
-    "D1": "deontic default: a default rule on an act (\"should generally\", \"by default ... should\", "
-          "\"absent ... should\", \"unless ... should\")",
-    "G": "generic about facts: a defeasible generalisation over a non-deontic predicate (\"Operators typically "
-         "interact with Claude in the system prompt\")",
-    "SW": "instructable defaults: switches and who may set them (\"Default behaviors that operators can turn off\", "
-          "\"Absent operator instructions, Claude should fall back on ...\")",
-    "R": "presumption: a default about what to believe (\"Claude should assume that the user could be a human ... "
-         "unless the operator's system prompt specifies otherwise\")",
-    "P": "priority between defaults (\"prioritize these properties in the order ...\", \"holistic rather than "
-         "strict\", \"generally preferable to unilateral intervention\")",
-    "W": "weighing factors (\"wide-scale societal harms are generally worse than local ones\" inside a list of "
-         "harm factors)",
-    "S": "default sense of a word (\"When we talk about helpfulness, we are typically referring to helpfulness "
-         "towards principals\")",
-    "M": "marker without a default (\"collapsed this section by default\", \"more generally\", \"would otherwise "
-         "occur\")",
-    "O": "other (for example a desire: \"In most cases, we want Claude to have such a thorough understanding ...\")",
+    "D1": "deontic default: a default rule on an act, which holds unless something defeats it (invented example: "
+          "\"Visitors should generally sign in at the front desk\")",
+    "G": "generic about facts: a defeasible generalisation over a non-deontic predicate (invented example: "
+         "\"Trains on this line usually arrive on time\")",
+    "SW": "instructable defaults: a default behaviour with who may switch it on or off, or what applies when nobody "
+          "has (invented example: \"Notifications are on by default, and an administrator can turn them off\")",
+    "R": "presumption: a default about what to believe or assume until told otherwise (invented example: \"Staff "
+         "should assume that a caller is a customer unless the caller says otherwise\")",
+    "P": "priority between defaults: an order or preference among defaults or considerations, strict or holistic "
+         "(invented example: \"Put safety first, cost second and speed third\")",
+    "W": "weighing factors: a consideration that counts for more or less when options are weighed, usually inside a "
+         "list of factors (invented example: \"A delay that strands many passengers usually counts for more than "
+         "one that strands a few\")",
+    "S": "default sense of a word: what a word is normally taken to mean in the text (invented example: \"By the "
+         "library we usually mean the main branch\")",
+    "M": "marker without a default: a marker word such as \"generally\", \"by default\" or \"otherwise\" is present "
+         "but no default is stated (invented example: \"More generally, the report has three parts\")",
+    "O": "other: a default pattern that fits none of the classes above, for example a desire (invented example: "
+         "\"In most cases we want visitors to feel welcome\")",
 }
 
 # Research 2.3, "The G class in detail": the 18 screened units (u0039.s02 was missed by the screen).
@@ -62,7 +68,7 @@ def main():
     by_id = {u["id"]: u for u in units(CONSTITUTION_RUN)}
     write_json("second-reader-packet.json", {
         "instructions": INSTRUCTIONS, "classes": CLASSES,
-        "units": [{"id": r["id"], "text": unit_text(source, by_id[r["id"]])} for r in rows]})
+        "units": [{"id": r["id"], "bytes": r["bytes"], "text": unit_text(source, by_id[r["id"]])} for r in rows]})
     write_json("second-reader-key.json", {
         "note": "Research 2.3's G assignments for the screened units. Scoring only; never shown to the reader.",
         "g_units": list(RESEARCH_G)})
