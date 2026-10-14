@@ -326,8 +326,10 @@ def supProvided (D : Doc) (Q : VE.Compose.Labelled) (ls : List String) : List Pl
   let lines := lines ++ if quiet then [.text "E9" none [] none] else []
   if lines.isEmpty then [] else .text "E3" none [] none :: lines
 
-def supIndependent (D : Doc) (A : Choice) (Q : VE.Compose.Labelled) (ls : List String) : List PlanItem :=
-  (D.sets.filter (fun R => !(supMentions D A Q ls).contains R.id)).map
+def supIndependent (D : Doc) (A : Choice) (ls : List String) : List PlanItem :=
+  -- E13 is about the named conditions, as on the enumerated route. The
+  -- certificate's slot bits are internal evidence, not a named condition.
+  (D.sets.filter (fun R => !A.any (·.1 == R.id) && !(mentioned D ls).contains R.id)).map
     (fun R => .text "E13" none [(R.id, 0)] none)
 
 def supShown (ss : List SupScope) (A : Choice) (p r : String) : List PlanItem :=
@@ -346,19 +348,19 @@ def supPlan (D : Doc) (Q : VE.Compose.Labelled) (q : String) (A : Choice) (ss : 
   let provided := supProvided D Q
   let items := if q == "conflict" then
       if s.info.conflict == .free then [.text every (some "R1") [] none] ++ provided (s.labels "conflict") ++
-        supIndependent D A Q (s.labels "conflict")
+        supIndependent D A (s.labels "conflict")
       else supShown ss A "witness" "R4"
     else if q == "premises" then
       (if s.info.premise == .model then supShown ss A "model" "R5"
        else if s.info.premise == .inconsistent then [.text every (some "R6") [] none] ++
-         provided (s.labels "unsat") ++ supIndependent D A Q (s.labels "unsat") else []) ++
+         provided (s.labels "unsat") ++ supIndependent D A (s.labels "unsat") else []) ++
       dead.map (fun (id, i) => .text "E17" none [(id, i)] none)
     else
       let v := strOf (res.getObjValD "verdict")
       if v == "ALL" then
         (if A.isEmpty then [.text every (some "R2") [] none] else [.text "E12" (some "R2") A none]) ++
         provided (jstrings (res.getObjValD "reading_premises_used")) ++
-        (if strOf (res.getObjValD "evidence") == "certificate" then supIndependent D A Q (s.labels "certificate") else [])
+        (if strOf (res.getObjValD "evidence") == "certificate" then supIndependent D A (s.labels "certificate") else [])
       else if v == "SOME" then
         let p := jchoice ((res.getObjValD "proof").getObjValD "choice")
         let c := jchoice ((res.getObjValD "countermodel").getObjValD "choice")
