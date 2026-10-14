@@ -33,6 +33,13 @@ theorem coh_rank_valid (D : SoftDoc) (h : WellFormedSoft D = true) (M N : SoftNo
     (cohPremise D M N).denote B [] :=
   coh_rank_valid_unconditional D h M N hc hcmp B
 
+-- Exact approved statement: no admissibility premise may be reintroduced.
+example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
+    (M N : VE.SoftNorms.SoftNode) (hc : (M, N) ∈ VE.SoftNorms.collidingPairs D)
+    (hcmp : VE.SoftNorms.Comparable D M N = true) (B : VE.Structure.{0}) :
+    (VE.SoftNorms.cohPremise D M N).denote B [] :=
+  VE.SoftNorms.coh_rank_valid D h M N hc hcmp B
+
 /-- 6.2: a DISJOINT certificate proves the conjunct in every base-admissible structure
 satisfying `Exc_T`. -/
 theorem disjoint_sound (D : SoftDoc) (_h : WellFormedSoft D = true) (M N : SoftNode)
