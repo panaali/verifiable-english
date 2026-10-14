@@ -455,7 +455,7 @@ def test_frozen_guard_needs_no_line_for_a_module_without_k_declarations(staging)
     assert path.removeprefix("lean/") not in staging.head(INVENTORY).decode()
 
 
-def test_frozen_guard_rejects_an_unlisted_k_module_bad_inventory_and_main(staging):
+def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
     table = json.loads(staging.head("tools/trust-classes.json"))
     table["modules"]["VE/Core/Planted.lean"] = {"K": ["VE.Planted"]}
     staging.stage("lean/VE/Core/Planted.lean", "namespace VE\nend VE\n")
