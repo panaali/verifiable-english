@@ -42,6 +42,7 @@ abbrev identity : Skel := skel% "identity.json#/row"
 abbrev parse : Skel := skel% "parse.json#/row"
 abbrev graph : Skel := skel% "graph.json#/row"
 abbrev readings : Skel := skel% "readings.json#/row"
+abbrev readingsChoices : Skel := skel% "readings-choices.json#/row"
 abbrev bundle : Skel := skel% "bundle.json#/row"
 abbrev familyNorms : Skel := skel% "family-norms.json#/row"
 abbrev softNorms : Skel := skel% "soft-norms.json#/row"
@@ -78,6 +79,7 @@ def row : VE.Service.Mode → Skel
   | .parse => parse
   | .graph => graph
   | .readings => readings
+  | .readingsChoices => readingsChoices
   | .bundle => bundle
   | .familyNorms => familyNorms
   | .softNorms => softNorms

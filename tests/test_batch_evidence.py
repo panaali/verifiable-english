@@ -31,6 +31,22 @@ def test_complete_head_evidence_passes():
     assert errors == []
 
 
+def test_identical_listed_unavailability_is_signed_by_r7():
+    comparison = deepcopy(AB)
+    comparison["unavailable_both"] = {"pilots/default": 1}
+    comparison["differences"] = [{"corpus": "pilots", "authority": "default", "class": "unavailable",
+                                  "listed": True, "base": {"timeout": 600}, "head": {"timeout": 600}}]
+    errors = problems(HEAD, GATE, comparison, LATENCY)
+    assert errors == []
+    comparison["differences"][0]["head"] = {"timeout": 601}
+    errors = problems(HEAD, GATE, comparison, LATENCY)
+    assert errors
+    comparison["differences"][0]["head"] = {"timeout": 600}
+    comparison["differences"][0]["listed"] = False
+    errors = problems(HEAD, GATE, comparison, LATENCY)
+    assert errors
+
+
 def test_latency_request_uses_the_public_readings_normalizer():
     # The raw corpus can carry explicit nulls; the public validator omits them
     # before Lean parses the request.

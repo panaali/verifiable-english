@@ -794,6 +794,27 @@ def same(a, b) -> bool:
     return same_json(a, b)
 
 
+def stable_pilot_outcome(outcome, recording: str):
+    """Erase only the recorder's own temporary pilot directory from a result.
+
+    The two checkouts write the same historical source bytes beside different
+    recording files. A file-open diagnostic may quote that scratch directory;
+    its suffix and every other part of the diagnostic remain compared.
+    """
+    scratch = str(Path(recording).resolve().with_suffix(".pilots")) + "/"
+
+    def visit(value):
+        if isinstance(value, str):
+            return value.replace(scratch, "<pilot-scratch>/")
+        if isinstance(value, list):
+            return [visit(item) for item in value]
+        if isinstance(value, dict):
+            return {key: visit(item) for key, item in value.items()}
+        return value
+
+    return visit(outcome)
+
+
 def json_text(value) -> str:
     """A leaf's identity in the wording pairs: its JSON text, so the pairs are type-strict too."""
     return json.dumps(value, sort_keys=True, ensure_ascii=False)
@@ -940,6 +961,9 @@ def compare(base_path: str, head_path: str, delta: dict | None, *, expected: dic
     for key in sorted(base.keys() | head.keys()):
         old = base.get(key, {}).get("outcome")
         new = head.get(key, {}).get("outcome")
+        if key[0] == "pilots":
+            old = stable_pilot_outcome(old, base_path)
+            new = stable_pilot_outcome(new, head_path)
         klass = change_class(old, new)
         if klass != "availability" and old is not None and new is not None and _unavailable(old):
             klass = "unavailable"   # on both sides: no evidence of preservation

@@ -3,27 +3,27 @@
  "totals": {
   "K": 997,
   "S": 9971,
-  "D": 13991,
-  "G": 28018,
+  "D": 13992,
+  "G": 28358,
   "C": 9388,
-  "P": 73619,
-  "T": 14980,
-  "o": 12765,
-  "D[V]": 12415,
+  "P": 73644,
+  "T": 14984,
+  "o": 12785,
+  "D[V]": 12416,
   "D[R]": 1049,
   "D[I]": 527,
-  "G[V]": 25529,
+  "G[V]": 25869,
   "G[R]": 2231,
   "G[I]": 258,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 48753,
-  "lines": 163729
+  "trusted": 49094,
+  "lines": 164119
  },
  "budget": {
   "K": 997,
   "S": 9971,
-  "V": 37785
+  "V": 38126
  },
  "signed": [],
  "history": [
@@ -713,6 +713,32 @@
     "K": 997,
     "S": 9788,
     "V": 37154
+   }
+  },
+  {
+   "change": "batch 14d: Lean coupled-choice enumeration, evidence coverage and verdict replace the deleted Python decision sites",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37154
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37492
+   }
+  },
+  {
+   "change": "lean-first batch 14d: +3 trusted lines in ReadingsChoices reject duplicate set-version identity before Lean choice planning (R6: replaces coupled Python choice identity decision)",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37492
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37495
    }
   }
  ],
@@ -4009,7 +4035,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 466,
+   "T": 469,
    "o": 30,
    "D[V]": 0,
    "D[R]": 0,
@@ -4020,7 +4046,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 496
+   "lines": 499
   },
   "ResponseShape/CaseDeciders.lean": {
    "K": 0,
@@ -4228,7 +4254,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 51,
+   "P": 73,
    "T": 0,
    "o": 12,
    "D[V]": 0,
@@ -4240,7 +4266,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 63
+   "lines": 85
   },
   "ResponseShape/Encoders/NormDefaults.lean": {
    "K": 0,
@@ -4528,7 +4554,7 @@
    "D": 0,
    "G": 0,
    "C": 0,
-   "P": 37,
+   "P": 38,
    "T": 0,
    "o": 40,
    "D[V]": 0,
@@ -4540,7 +4566,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 77
+   "lines": 78
   },
   "ResponseShape/EnumSites.lean": {
    "K": 0,
@@ -5266,21 +5292,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 46,
+   "G": 47,
    "C": 0,
    "P": 0,
    "T": 4,
-   "o": 43,
+   "o": 44,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 46,
+   "G[V]": 47,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 46,
-   "lines": 93
+   "trusted": 47,
+   "lines": 95
   },
   "ResponseShape/Skeleton.lean": {
    "K": 0,
@@ -5306,7 +5332,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 82,
+   "G": 84,
    "C": 0,
    "P": 0,
    "T": 3,
@@ -5314,19 +5340,19 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 77,
+   "G[V]": 79,
    "G[R]": 4,
    "G[I]": 1,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 77,
-   "lines": 103
+   "trusted": 79,
+   "lines": 105
   },
   "ResponseShape.lean": {
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 673,
+   "G": 718,
    "C": 0,
    "P": 0,
    "T": 13,
@@ -5334,13 +5360,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 667,
+   "G[V]": 712,
    "G[R]": 6,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 667,
-   "lines": 730
+   "trusted": 712,
+   "lines": 775
   },
   "SensesMain.lean": {
    "K": 0,
@@ -6229,7 +6255,7 @@
    "G": 0,
    "C": 0,
    "P": 0,
-   "T": 5475,
+   "T": 5476,
    "o": 333,
    "D[V]": 0,
    "D[R]": 0,
@@ -6240,7 +6266,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 0,
-   "lines": 5808
+   "lines": 5809
   },
   "VE/Bridge.lean": {
    "K": 22,
@@ -7766,21 +7792,21 @@
    "K": 0,
    "S": 0,
    "D": 67,
-   "G": 45,
+   "G": 38,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 25,
+   "o": 24,
    "D[V]": 67,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 45,
+   "G[V]": 38,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 112,
-   "lines": 137
+   "trusted": 105,
+   "lines": 129
   },
   "VE/English/Statements.lean": {
    "K": 0,
@@ -12510,7 +12536,7 @@
    "C": 14,
    "P": 0,
    "T": 0,
-   "o": 29,
+   "o": 28,
    "D[V]": 67,
    "D[R]": 0,
    "D[I]": 0,
@@ -12520,7 +12546,7 @@
    "tied": 0,
    "unclassified": 0,
    "trusted": 91,
-   "lines": 134
+   "lines": 133
   },
   "VE/Service/Family.lean": {
    "K": 0,
@@ -12665,22 +12691,22 @@
   "VE/Service/Protocol.lean": {
    "K": 0,
    "S": 0,
-   "D": 328,
-   "G": 232,
+   "D": 329,
+   "G": 233,
    "C": 0,
-   "P": 191,
+   "P": 193,
    "T": 19,
-   "o": 101,
-   "D[V]": 227,
+   "o": 102,
+   "D[V]": 228,
    "D[R]": 0,
    "D[I]": 101,
-   "G[V]": 193,
+   "G[V]": 194,
    "G[R]": 39,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 420,
-   "lines": 871
+   "trusted": 422,
+   "lines": 876
   },
   "VE/Service/Readings.lean": {
    "K": 0,
@@ -13921,6 +13947,66 @@
    "unclassified": 0,
    "trusted": 14,
    "lines": 302
+  },
+  "EnglishRunMain.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 7,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 2,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 7,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 7,
+   "lines": 9
+  },
+  "ResponseShape/Schemas/ReadingsChoices.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 45,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 7,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 45,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 45,
+   "lines": 52
+  },
+  "VE/Service/ReadingsChoices.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 246,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 11,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 246,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 246,
+   "lines": 257
   }
  }
 }
