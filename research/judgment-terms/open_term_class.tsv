@@ -1,0 +1,92 @@
+pilot	term	class	borderline	reason
+udhr	equal_before_law	judgment	yes	"equal before the law": whether standing is equal turns on which comparators count, a standard the text does not state
+udhr	inherent_dignity	judgment	no	"inherent dignity": a thick evaluative concept; no fact settles it
+udhr	inalienable_rights	classification	no	"inalienable rights": which rights cannot be transferred or lost is a legal status, settled by the rules that govern them
+udhr	essential	judgment	no	"essential": evaluative necessity for an end the text does not measure
+udhr	greatest_importance	judgment	no	"of the greatest importance": an evaluative ranking with no stated measure
+udhr	natural_group_unit	judgment	no	"natural and fundamental group unit": evaluative; no fact settles what is natural or fundamental
+udhr	of_greatest_importance_for	judgment	no	JT-0p's name for greatest_importance (u010): same words, same class
+udhr	natural_and_fundamental_group_unit_of_society	judgment	no	JT-0p's name for natural_group_unit (u060): same words, same class
+udhr	arbitrary	judgment	no	"arbitrary": catalogue row; the Declaration gives no test
+udhr	fair	judgment	no	"fair": catalogue row
+udhr	adequate	judgment	no	"adequate": catalogue row; a threshold the text does not state
+udhr	just	judgment	no	"just": catalogue row, evaluative sense
+udhr	reasonable	judgment	no	"reasonable": catalogue row
+udhr	genuine	judgment	no	"genuinely arising": catalogue row (R2.3 lists u052 as a judgment unit)
+udhr	spirit_of_brotherhood	judgment	no	"in a spirit of brotherhood": an evaluative manner of conduct
+udhr	justice	judgment	no	"justice": evaluative concept
+udhr	contrary_to_un_purposes_and_principles	classification	no	the purposes and principles are stated in the Charter; whether an act is contrary to them is read against a stated text
+udhr	non_political_crime	classification	no	"non-political crime": a legal category (R2.3: a classification term of u052)
+udhr	rights_and_freedoms_set_forth	classification	no	which items of the Declaration are rights and freedoms: read from the text itself
+udhr	aimed_at_destruction_of_rights	attitude	no	"aimed at the destruction": the aim (intention) of an activity or act, rule 1
+udhr	discrimination	judgment	yes	"discrimination": which distinctions are discriminatory needs a standard the text does not state (R2.3 borderline)
+udhr	equal_protection_of_the_law	judgment	yes	"equal protection": like equal_before_law, equality turns on unstated comparators
+udhr	effective	judgment	no	"effective remedy": catalogue row, evaluative sense
+udhr	competent	classification	no	"competent national tribunals": jurisdiction, settled by law (R2.3 lists it beside the judgment term)
+udhr	fundamental_rights_granted	classification	no	the rights a constitution or law grants: read from those texts
+udhr	independent_and_impartial	judgment	yes	"independent and impartial tribunal": independence is partly structural fact; impartiality is a judgment
+udhr	guarantees_necessary_for_defence	judgment	no	"necessary for his defence": catalogue row "necessary", evaluative sense
+udhr	persecution	judgment	yes	"persecution": a classification whose threshold (how severe) is a judgment (R2.3 borderline)
+udhr	full_equality	judgment	yes	"in full equality": what full equality of a hearing requires turns on unstated comparators
+udhr	determined_by_law	classification	no	"determined by law": whether a limitation is in law is a fact about the law
+udhr	due_recognition_and_respect	judgment	no	"due recognition": catalogue row "due", evaluative sense
+udhr	just_requirements	judgment	no	"just requirements": catalogue row "just"
+udhr	morality	judgment	no	"requirements of morality": whose morality and which requirements, a standard the text does not state
+udhr	public_order	judgment	yes	"requirements of public order": partly a legal notion, but what it requires in a case is a judgment
+udhr	general_welfare	judgment	no	"the general welfare": evaluative aggregate with no stated measure
+udhr	democratic_society	judgment	no	"a democratic society": what makes a society democratic is contested (R2.3 lists it)
+udhr	protection_of_the_family	classification	no	"entitled to protection": whether a measure protects the family is settled by the facts of the measure
+udhr	duties_to_the_community	classification	no	"duties to the community": which duties; a category the text leaves open, not an evaluation
+udhr	free_and_full_development	judgment	yes	"free and full development": a classification with an evaluative core (R2.3 borderline)
+udhr	status_of_country_or_territory	classification	no	the political, jurisdictional or international status of a territory is a fact
+udhr	slavery	classification	no	R2.1's own example of a classification word
+udhr	servitude	classification	no	like slavery: facts settle it
+udhr	slave_trade	classification	no	like slavery: facts settle it
+udhr	ill_treatment	judgment	no	"cruel, inhuman or degrading": thick evaluative words (R2.3 lists u027)
+udhr	private_life	classification	no	the domains privacy, family, home, correspondence; unused, its arbitrariness is the term arbitrary
+udhr	free_and_full_consent	judgment	yes	"free and full consent": when consent is free and full is a judgment (R2.3 borderline)
+udhr	generally_available	proportion	no	"generally available": available to people at large, a share of a population (rule 3, quantities')
+udhr	merit	judgment	no	"on the basis of merit": evaluative (R2.3 lists u099b)
+udhr	full_development_of_the_human_personality	judgment	yes	"full development of the human personality": evaluative core (R2.3 borderline)
+udhr	social_security	classification	no	"social security": a category of provision; facts settle what a scheme covers
+udhr	just_and_favourable_conditions_of_work	judgment	no	"just and favourable": catalogue row "just" and an evaluation (R2.3 lists u084c)
+udhr	community_of_full_development	classification	no	which community is meant: identification, not evaluation (the evaluation is free_and_full_development)
+udhr	compulsory	classification	no	"compulsory": whether attendance is legally required is a fact
+udhr	member_of_society	classification	no	R2.1's own example of a classification word
+constitution	good_judgment	judgment	no	"good judgment": catalogue row; holistic judgment
+constitution	child_sexual_abuse_material	classification	no	whether material is CSAM is settled by the facts of the material
+constitution	mass_casualty_weapon_uplift	judgment	no	"serious uplift": graded judgment word (order is quantities')
+constitution	critical_infrastructure_uplift	judgment	no	"serious uplift": graded judgment word
+constitution	damaging_cyberweapon_or_malicious_code	judgment	no	"significant damage": graded judgment word
+constitution	clear_and_substantial_undermining_of_oversight	judgment	no	"clearly and substantially undermine": graded judgment words
+constitution	attempt_to_kill_or_disempower_most_of_humanity	proportion	no	"the vast majority of humanity": R2.1's own proportion example (rule 3 before rule 4)
+constitution	illegitimate_absolute_control	judgment	no	"unprecedented and illegitimate degrees": catalogue row "legitimate" and a graded word
+constitution	genuine_ambiguity	judgment	no	"genuine ambiguity": catalogue row "genuine"
+constitution	seemingly_compelling_argument_to_cross_line	judgment	no	"seemingly compelling": how compelling an argument seems, an appraisal with no stated standard
+constitution	compliance_unsafe	judgment	no	"unsafe": evaluative, no stated standard
+constitution	compliance_unethical	judgment	no	"unethical": evaluative
+constitution	compliance_against_guidelines	classification	no	"against Anthropic's guidelines": read against stated guidelines
+constitution	general_exception_to_complying	exception	no	the exceptions "generally" allows; an exception placeholder (rule 2)
+constitution	input_is_specific_instructions	classification	no	what the operator input is: facts settle it
+constitution	input_is_persona	classification	no	"persona": R2.1's own example of a classification word
+constitution	input_is_information	classification	no	what the operator input is: facts settle it
+constitution	instruction_role_play_custom_persona	classification	no	what the instruction asks: facts settle it
+constitution	instruction_decline_or_withhold	classification	no	what the instruction asks: facts settle it
+constitution	instruction_promote_own_products	classification	no	what the instruction asks: facts settle it
+constitution	instruction_focus_on_tasks	classification	no	what the instruction asks: facts settle it
+constitution	instruction_respond_differently	classification	no	what the instruction asks: facts settle it
+constitution	instruction_dishonest_looking_within_honesty	judgment	yes	"could seem dishonest … within Claude's honesty principles": an appraisal against principles read in context
+constitution	instruction_abandon_identity_in_persona	judgment	yes	"abandon its core identity or principles": what counts as abandoning them is an appraisal
+constitution	instruction_claim_human_when_asked	classification	no	what the instruction asks: facts settle it
+constitution	instruction_deceptive_tactics_harming_users	judgment	yes	"genuinely deceptive tactics that could harm": catalogue row "genuine" and a harm appraisal
+constitution	instruction_false_information_deceiving_user	classification	no	whether information is false is a fact
+constitution	instruction_endanger_health_or_safety	judgment	yes	"endanger health or safety": a threshold of risk the text does not state
+constitution	instruction_act_against_guidelines	classification	no	"against Anthropic's guidelines": read against stated guidelines
+constitution	restricted_action_knowing_or_quite_likely	attitude	no	"knowingly … thinks it quite likely": R2.1's own attitude example (rule 1)
+constitution	exception_to_asking_for_clarification	exception	no	exception_to_… (rule 2)
+constitution	exception_to_not_deceiving_about_system_prompt	exception	no	exception_to_… (rule 2)
+constitution	exception_to_complying_with_exploit_instruction	exception	no	exception_to_… (rule 2)
+constitution	broad_safety	judgment	no	"broadly safe": not undermining appropriate human mechanisms; catalogue row "appropriate"
+constitution	ethical_harm	judgment	no	"unethical", "harmful": evaluative
+constitution	genuine_helpfulness	judgment	no	"genuinely helpful": catalogue row "genuine"
+constitution	appropriate_oversight	judgment	no	"appropriate human oversight": catalogue row "appropriate"
