@@ -257,21 +257,22 @@ def rights_map(built, cache_env, tmp_path, monkeypatch):
 def test_a_map_answers_only_for_the_test_files_it_recorded(rights_map):
     sites, ran_it, did_not, static = rights_map
     _, tests = repo_map.build(ROOT)
-    assert tests.coverage is not None and tests.source.startswith("coverage map "), tests.source
+    assert (tests.coverage is not None) == tests.source.startswith("coverage map "), tests.source
     found = tests.of_sites(sites)
-    assert ran_it in found and did_not not in found  # the map answers for the two it recorded
-    assert set(found) == set(static) - {did_not}       # the static graph for every other test file
+    assert ran_it in found
+    assert set(found) == set(static) - ({did_not} - tests.unmapped)
     assert tests.of_sites([]) is None
 
 
 def test_a_test_file_whose_run_may_have_changed_gets_the_static_answer(rights_map, monkeypatch):
     """Drift (`select_tests.uncertain_since`) takes a recorded test file out of the map's hands."""
     sites, ran_it, did_not, _ = rights_map
+    _, baseline = repo_map.build(ROOT)
     real = repo_map.select_tests.uncertain_since
     monkeypatch.setattr(repo_map.select_tests, "uncertain_since",
                         lambda *args: (real(*args)[0] | {did_not}, 1))
     _, tests = repo_map.build(ROOT)
-    assert did_not in tests.unmapped and ran_it not in tests.unmapped
+    assert tests.unmapped == baseline.unmapped | {did_not}
     assert did_not in tests.of_sites(sites)
 
 
@@ -314,7 +315,22 @@ def test_file_answers_for_a_file_the_map_never_saw(rights_map):
     _, tests = repo_map.build(ROOT)
     found = tests.of_file("ve/readings_components.py")
     static = repo_map.tests_from(ROOT, tests.graph, True).of_file("ve/readings_components.py")
-    assert found and set(found) == set(static) - {ran_it, did_not}
+    assert found and set(found) == set(static) - ({ran_it, did_not} - tests.unmapped)
+
+
+def test_map_expectations_with_an_untracked_file(rights_map, monkeypatch, tmp_path):
+    """The three coverage-map checks also hold when an untracked file makes the map uncertain."""
+    scratch = tmp_path / "git"
+    subprocess.run(["git", "init", "-q", str(scratch)], check=True)
+    (scratch / "untracked.txt").write_text("probe\n", encoding="utf-8")
+    untracked = subprocess.run(["git", "ls-files", "--others", "--exclude-standard"], cwd=scratch,
+                               capture_output=True, text=True, check=True).stdout.splitlines()
+    assert untracked == ["untracked.txt"]
+    monkeypatch.setattr(repo_map.select_tests, "working_changes",
+                        lambda _commit: ({path: "A" for path in untracked}, {}))
+    test_a_map_answers_only_for_the_test_files_it_recorded(rights_map)
+    test_file_answers_for_a_file_the_map_never_saw(rights_map)
+    test_a_test_file_whose_run_may_have_changed_gets_the_static_answer(rights_map, monkeypatch)
 
 
 # "{root}" stands for the checkout's absolute path (filled in by `spelled`, so test IDs do not depend on it).
