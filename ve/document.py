@@ -1490,7 +1490,10 @@ def _report(doc):
              "report": result["admission"]["report"]})
     if joint is not None and joint["constraints"]:
         # the joint disjunction is Lean's (`Joint(K)`, docs/spec/discourse.md 4.8); a premise only
-        # when every reading of an open set is an assertion with content
+        # when every reading of an open set is an assertion with content.
+        # It covers only open sets; signed authored assertions stay fixed.
+        assertions.extend(_assertion_disjunctions(
+            env, [r for r in active if r["status"] == "authored"]))
         joint_formula = None
         if joint["status"] == "complete" and all(c["kind"] == "asserted" and c["content"] is not None
                                                  for r in active if r["status"] == "open"

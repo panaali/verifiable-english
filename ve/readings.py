@@ -525,9 +525,14 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
         if joint_choices.get("status") == "UNKNOWN":
             return {"verdict": "UNKNOWN", "route": "joint-choices",
                     "budget": {"max_choices": joint_choices["budget"]}}
-        # Joint choices name active open sets. Authored readings are outside
-        # both the assertion check and every proof/Lean choice vector.
+        # Joint choices name active open sets. An authored singleton assertion
+        # is fixed in every choice, while a non-assertion authored reading
+        # contributes no formula. Use the same premises for search and Lean.
         choice_sets = [s for s in sets if s.get("status") != "authored"]
+        fixed = [*fixed, *(s["readings"][0]["content"] for s in sets
+                           if s.get("status") == "authored"
+                           and s["readings"][0]["kind"] == "asserted"
+                           and s["readings"][0]["content"] is not None)]
         if not all(all(r["kind"] == "asserted" and r["content"] is not None
                        for r in s["readings"]) for s in choice_sets):
             return {"verdict": "UNKNOWN", "route": "joint-choices",
