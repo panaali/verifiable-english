@@ -1,4 +1,4 @@
-# git log --reverse --format='%h %s' main..HEAD --no-merges at the report commit (that commit itself excluded); main = 9f40783b8. Commits before ae074090f are infra/oom-rootcause's (merged into this branch first); this batch's are 'premise-scale:' and 'relay gate:'.
+# git log --reverse --format='%h %s' main..HEAD --no-merges at the report commit (that commit itself excluded); main = f187e4e9a5. Commits before ae074090f are infra/oom-rootcause's (merged into this branch first); this batch's are 'premise-scale:', 'relay gate:' and 'graph relay:'.
 b0ac5ba1d rust: enumerate search domain sizes lazily
 17e868d77 Memory budgets: Rust counting allocator, RLIMIT_AS on checker children
 62c5f674d OOM batch: incident regression case, A/B evidence and seeded-fault script
@@ -36,3 +36,5 @@ f1b322ac2 premise-scale: the fuzzer compares the premise-scale seeds as they are
 a8d92f06b relay gate: prune 42 allow-list paths that match no mutant on the merged tree
 524110047 premise-scale: measurement evidence (pilots before/after, CPU and memory; base/head document A/B; relay mutation gate)
 c56c059b8 premise-scale: report, DELTA, commit list; the Lean-budget test starts with no override set
+296b5566f premise-scale: report after the syncs with main; relay gate failures compared with main's
+8808fb359 graph relay: type generated background formulas and labels
