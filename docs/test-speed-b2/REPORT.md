@@ -47,11 +47,13 @@ Applicable build-checklist items: the Lean extractor uses the compiler environme
 
 The sibling B5 findings concern quarantine `--maxfail` and child-process termination. B2 changes neither run path nor process-group management. The selector tests cover the B2 addition to file impact and the full-service fallbacks.
 
+The in-flight branch scan at resumption found pre-existing handwritten overlaps with `infra/layer-research` (`tools/select_tests.py`), `infra/arch-AR-4` (`tools/gate.py`, `tests/test_gate_integrity.py`), and branches editing `ve/backends/lean_service.py`. B2 made no further edits to those shared source files after the scan. Generated-file overlaps are covered by standing ruling R12; the merge with main regenerated `.gitattributes` and kept the Lean mode table under its declared generator.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A. — No Lean answer or request decoder changed.
 2. PASS — B2 plan rows and deliverables are mapped to `test_service_modes_narrow_only_known_recorded_users`, `mode-mutants.json`, and `shadow.json`; generated inventory checked by `regen_generated.py --check --only lean-mode-deps`.
-3. PASS — `mode-mutants.json` and `mutants.json` record failing mutants in the changed Lean and Python files; `check_evidence.py` checks each failure and restored pass.
+3. PASS — `mode-mutants.json` and `mutants.json` record failing mutants in the changed Lean and Python files; `check_evidence.py` checks each failure and restored pass, and rejected bool-count, missing-failure and empty-commit evidence mutations.
 4. N.A. — No VE verdict, diagnostic, or parser changed.
 5. N.A. — No relayed answer field or binding changed.
 6. N.A. — The explicit task override assigns the final-HEAD full gate to the external runner; `check_evidence.py` fixes the batch evidence base and commit list.
