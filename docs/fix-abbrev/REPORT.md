@@ -59,8 +59,8 @@ replaced with the original code, which fails.
   `tests/test_b15a_evidence.py`, `tests/test_b15b_evidence.py`, `tests/test_lean_first_b13b.py`: 63 passed.
 - The chain's first full gate on `3329bd415` failed in the agent-policy rerun fixture: the Lean `norms`
   service exceeded its 5.53893 s CPU deadline under a host load near 100. The three failures all came
-  from that one fixture; they did not exercise the changed RD-8 test. The failed gate is recorded in
-  `gate-result.json` with that commit SHA.
+  from that one fixture; they did not exercise the changed RD-8 test. The failed gate result named
+  that commit SHA before subsequent gate runs replaced it.
 - Retried the failed file directly with a writable uv cache:
   `UV_CACHE_DIR=/tmp/ve-fix-abbrev-uvcache uv run --frozen --no-sync pytest -q tests/test_agent_policy_rerun.py`;
   3 passed in 12m48s, including Lean certificate replay. No product or test code was changed for this
@@ -72,6 +72,12 @@ replaced with the original code, which fails.
   disappeared while `gate-result.json` still held only the startup placeholder (empty commit and
   stages). The attached process was stopped with Ctrl-C (exit 130); this is not passing gate evidence.
   The final-HEAD gate uses four pytest workers to reduce suite wall time.
+- The full gate on `082304d5f` completed with one failure:
+  `tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[2]`
+  exceeded the Lean `check` service's 5.13438 s CPU deadline under heavy host load. Its other stages
+  passed (Lean build and audit, Rust build and 36 Rust tests); pytest recorded 14,988 passed, 92 skipped,
+  and one failed. The foreground `tools/gate.py --rerun-failed --workers 1` then selected that file and
+  passed all 11 tests in 22m01s, including case `[2]`. No code was changed for this intermittent deadline.
 
 ## Self-review against BUILDER-CHECKLIST
 
