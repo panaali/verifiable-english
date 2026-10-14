@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import importlib.util
 import re
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -109,3 +110,20 @@ def test_q2_f6_historical_gate_cannot_claim_the_current_head():
             assert f"on `{archived['commit_sha'][:8]}`" not in rendered
     else:
         assert "Full gate: not yet saved" in rendered
+
+
+def test_q2_f10_saved_gate_rendering_never_reads_live_git(tmp_path, monkeypatch):
+    """A committed gate result remains renderable after HEAD moves or a merge."""
+    shutil.copytree(report.EVIDENCE, tmp_path, dirs_exist_ok=True)
+    archived = json.loads((tmp_path / "gate-previous-passed.json").read_text())
+    saved = {**archived, "commit_sha": "a" * 40}
+    (tmp_path / "gate-result.json").write_text(json.dumps(saved))
+    monkeypatch.setattr(report, "EVIDENCE", tmp_path)
+
+    def unexpected_git(*args, **kwargs):
+        raise AssertionError("report rendering must use saved evidence, never live git")
+
+    monkeypatch.setattr(report.subprocess, "run", unexpected_git)
+    rendered = report.block()
+    assert "Full gate (`tools/gate.py`, `evidence/gate-result.json`): passed on `aaaaaaaa`" in rendered
+    assert f"on `{archived['commit_sha'][:8]}`" not in rendered
