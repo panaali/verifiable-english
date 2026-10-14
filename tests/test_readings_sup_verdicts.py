@@ -93,6 +93,9 @@ def test_sup_response_retypes_every_field_and_rebinds_references(tmp_path):
                     # A typed nullable slot cannot be shown in a frame that needs a result.
                     with pytest.raises(CheckerUnavailable):
                         wording.plan(out, slot)
+                elif path[-1:] == ("status_text",) and type(replacement) is str:
+                    # A well-typed Lean diagnostic unused by this English plan is not a request identity.
+                    assert wording.plan(out, slot) == wording.plan(answer, slot)
                 else:
                     pytest.fail(f"accepted retype {path}: {replacement!r}")
     # Two independent leaf faults, retaining both changes in the forged answer.
@@ -124,6 +127,19 @@ def test_sup_response_retypes_every_field_and_rebinds_references(tmp_path):
                 changed(answer, ("scopes",), list(reversed(answer["scopes"])) )):
         with pytest.raises(CheckerUnavailable):
             _check_sup_answer(out, request, route)
+
+
+def test_sup_relay_leaves_status_consistency_to_lean(tmp_path):
+    from tests.test_readings_s2_document import every
+    _, route, _ = example(tmp_path)
+    answer = route.query_answer(every("avoid_required"))
+    request = route.requests[id(answer)]
+    changed_answer = deepcopy(answer)
+    proved = next(scope for scope in changed_answer["scopes"] if scope["row"]["query"] == "proved")
+    proved["row"]["query"] = "UNKNOWN"
+    proved["row"]["evidence"]["certificate"] = False
+    # These are well-typed, request-bound semantic claims. The encoder theorem and Lean own their consistency.
+    _check_sup_answer(changed_answer, request, route)
 
 
 def test_python_sup_has_no_fold_or_dependency_replay():
