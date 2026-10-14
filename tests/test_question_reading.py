@@ -249,7 +249,7 @@ def test_the_cli_json_is_leans_result_with_the_honesty_fields(fixture):
     record = json.loads(done.stdout)
     assert {k: record[k] for k in ("operation", "assurance", "intent", "proof", "answer")} == {
         "operation": "question.read", "assurance": "experimental", "intent": "unconfirmed",
-        "proof": "not_checked", "answer": "not_asked"}
+        "proof": "not_checked", "answer": "not_asked" if answer["status"] == "one" else "no_answer"}
     assert F.answer_of(record["result"]) == answer
     assert record["result"]["identities"]["question_version"] == english_lean.QUESTION_VERSION
 
