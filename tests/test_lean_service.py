@@ -833,6 +833,8 @@ def test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_respons
     from test_lean_document_wrapper import test_a_document_past_its_cpu_deadline_is_unavailable_never_ok
     from ve.backends import lean_service
 
+    expected_names = [test_the_whole_question_is_bounded_by_the_modes_deadline.__name__,
+                      test_a_document_past_its_cpu_deadline_is_unavailable_never_ok.__name__]
     failures = []
     for test in (test_the_whole_question_is_bounded_by_the_modes_deadline,
                  test_a_document_past_its_cpu_deadline_is_unavailable_never_ok):
@@ -847,8 +849,7 @@ def test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_respons
             except pytest.fail.Exception as exc:
                 failures.append((test.__name__, str(exc)))
     assert [name for name, message in failures if "DID NOT RAISE CheckerUnavailable" in message] == (
-        [test_the_whole_question_is_bounded_by_the_modes_deadline.__name__,
-         test_a_document_past_its_cpu_deadline_is_unavailable_never_ok.__name__] if unchecked else []), failures
+        expected_names if unchecked else []), failures
     assert len(failures) == (2 if unchecked else 0), failures
 
 
