@@ -1,0 +1,32 @@
+{
+  "mutants": [
+    {
+      "id": "element-cap-off-by-one",
+      "file": "lean/VE/Closure/Order.lean",
+      "test": "VE.Closure.OrderChecks: 17 grades over the 16-grade cap",
+      "mutation": "Change the element comparison to > c.elems + 1",
+      "result": "lake build VE.Closure.OrderChecks exited 1 at OrderChecks.lean:19"
+    },
+    {
+      "id": "edge-cap-off-by-one",
+      "file": "lean/VE/Closure/Order.lean",
+      "test": "VE.Closure.OrderChecks: two edges over the one-edge cap",
+      "mutation": "Change the edge comparison to > c.edges + 1",
+      "result": "lake build VE.Closure.OrderChecks exited 1 at OrderChecks.lean:23"
+    },
+    {
+      "id": "undeclared-endpoint-accepted",
+      "file": "lean/VE/Closure/Order.lean",
+      "test": "VE.Closure.OrderChecks: undeclared endpoint",
+      "mutation": "Bypass endpoint validation",
+      "result": "lake build VE.Closure.OrderChecks exited 1 at OrderChecks.lean:21"
+    },
+    {
+      "id": "strict-reachability-reflexive",
+      "file": "lean/VE/Closure/Order.lean",
+      "test": "VE.Closure.above_iff and VE.Closure.OrderChecks",
+      "mutation": "Use .star instead of .plus in above",
+      "result": "lake build VE.Closure.OrderChecks exited 1; above_iff and legacy agreement proofs failed"
+    }
+  ]
+}
