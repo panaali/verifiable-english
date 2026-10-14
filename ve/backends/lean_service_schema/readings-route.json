@@ -1587,10 +1587,11 @@
       "properties": {
         "encoded": {"additionalProperties": {"$ref": "#/$defs/choice"}, "type": "object"},
         "mentions": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"},
+        "model_proposals": {"items": {"$ref": "#/$defs/choice"}, "type": "array"},
         "row": {"$ref": "#/$defs/verdicts_row"},
         "used": {"additionalProperties": {"$ref": "common.json#/$defs/strings"}, "type": "object"}
       },
-      "required": ["row", "encoded", "used", "mentions"],
+      "required": ["row", "encoded", "used", "mentions", "model_proposals"],
       "type": "object"
     },
     "sup_verdicts": {

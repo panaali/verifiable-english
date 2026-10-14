@@ -202,11 +202,12 @@ def supScopes (D : Doc) (question : String) (A : Choice) : List Choice :=
     (if question == "premises" then (candidatesOf D).filterMap (fun (R, i) =>
       if (droppedBy D R i).isNone && takenBy D [(R.id, i)] then some [(R.id, i)] else none) else []))
 
-def supScopeJson (q : String) (s : SupScope) : Json :=
+def supScopeJson (q : String) (s : SupScope) (proposals : List Choice) : Json :=
   Json.mkObj [("row", perChoiceJson q s.info),
     ("encoded", Json.mkObj (s.encoded.map (fun (k, c) => (k, choiceJson c)))),
     ("used", Json.mkObj (s.used.map (fun (k, ls) => (k, toJson ls)))),
-    ("mentions", Json.mkObj (s.mentions.map (fun (k, ls) => (k, toJson ls))))]
+    ("mentions", Json.mkObj (s.mentions.map (fun (k, ls) => (k, toJson ls)))),
+    ("model_proposals", Json.arr (proposals.map choiceJson).toArray)]
 
 def supFind (ss : List SupScope) (A : Choice) : SupScope :=
   (ss.find? (·.info.choice == A)).getD { info := ⟨A, .unknown, .unknown, .unknown, []⟩ }
@@ -390,10 +391,11 @@ def supAnswer (id q : String) (x : SupContext) (A : Choice) (named : Option Choi
   let ds := deadOf x.D infos dead
   let res := if over then supUnchecked q checkBudgetText named
     else supResult x.D x.Q x.nd.isSome q A named ss (ds.1.getD []) budget
+  let checked := if over then [] else checkedChoices x.D
+  let proposals := fun assumed => (checked.filter (fun c => assumed.all (c.contains ·))).take maxSupModelProposals
   okWith id [("route", .str "superposed"), ("question", .str q), ("result", res),
-    ("scopes", Json.arr (ss.map (supScopeJson q)).toArray),
-    ("model_proposals", Json.arr ((if over then [] else
-      ((checkedChoices x.D).filter (fun c => A.all (c.contains ·))).take maxSupModelProposals).map choiceJson).toArray),
+    ("scopes", Json.arr (ss.map (fun s => supScopeJson q s (proposals s.info.choice))).toArray),
+    ("model_proposals", Json.arr ((proposals A).map choiceJson).toArray),
     ("restrictions", toJson (restrictionsFor x.D A)),
     ("dead_readings", if q == "premises" && (choices x.D).length ≤ maxChoices then deadReadingsJson ds.1 else .null),
     ("untaken", untakenJson (if q == "premises" && (choices x.D).length ≤ maxChoices then untakenOf x.D infos else [])),
