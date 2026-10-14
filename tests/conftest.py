@@ -18,6 +18,14 @@ from tools import rust_build
 from ve.surface import unambiguity
 
 ROOT = Path(__file__).resolve().parents[1]
+HEAVY_IDS = frozenset(row["nodeid"] for row in json.loads((ROOT / "tests/heavy.json").read_text())["heavy"])
+
+
+def pytest_collection_modifyitems(items):
+    for item in items:
+        if item.nodeid in HEAVY_IDS:
+            item.add_marker(pytest.mark.heavy)
+
 # A virtualenv copied from another checkout keeps that checkout's interpreter in its entry-point
 # shebangs (`.venv/bin/pytest`), and with it that checkout's editable install: `ve` would then be
 # the other checkout's, and so would the Lean service and Rust binaries it starts.

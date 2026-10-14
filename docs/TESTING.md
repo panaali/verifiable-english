@@ -2,14 +2,16 @@
 
 ## The fast path: only the tests a change can affect
 
-While you work, run the tests your change can affect, not the whole suite:
+While you work, run the light tier and the heavy tests your change can affect:
 
 ```sh
-PATH="$HOME/.elan/bin:$PATH" UV_CACHE_DIR=/tmp/ve-xdist-uv-cache \
-    uv run --frozen python tools/select_tests.py --impacted --run
+zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- \
+    --tier light --base "$(git merge-base HEAD main)" --run
 ```
 
-This takes the changed files from the working tree (tracked changes and new files). Use `--base origin/main` for a branch, `--commit REV` for one commit, or `--paths FILE...` to name the files yourself. Leave out `--run` to see the plan, or add `--json` for the full selection. `--run` runs the checks, the native builds the selection needs, and pytest on the selected files, one after another and in the foreground.
+This takes the changed files from the working tree (tracked changes and new files). Use `--base origin/main` for a branch, `--commit REV` for one commit, or `--paths FILE...` to name the files yourself. Leave out `--run` to see the plan, or add `--json` for the full selection. `--tier light` runs every test outside the measured heavy list, then only the heavy node IDs in selected files. It prints both counts. The builds and checks chosen by ordinary selection still run. Without `--tier`, selection works as before. A plain pytest run still runs every default test.
+
+`tests/heavy-durations.json` holds the full measured Mac duration report; `tools/heavy_tests.py --write` generates `tests/heavy.json` from it and `--check` refuses a stale inventory. After a nightly `pytest --durations=0` run, `tools/heavy_tests.py --write --report /path/to/pytest-output.txt` updates both files. A test over 10 seconds enters the heavy list; `--check --report /path/to/pytest-output.txt` fails if a test over 20 seconds is not marked. The nightly full, live, no-reuse run and branch verify still run all tests.
 
 A test file is selected when one of these changed:
 

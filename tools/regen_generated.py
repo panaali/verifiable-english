@@ -122,6 +122,9 @@ GENERATED = (
     Generated("import-contract", (".importlinter",), ((PY, "tools/check_python_layers.py", "--write"),),
               ((PY, "tools/check_python_layers.py"),)),
     Generated("uv-lock", ("uv.lock",), (("uv", "lock"),), (("uv", "lock", "--check"),)),
+    Generated("heavy-tests", ("tests/heavy.json",),
+              ((PY, "tools/heavy_tests.py", "--write"),),
+              ((PY, "tools/heavy_tests.py", "--check"),)),
 )
 
 
