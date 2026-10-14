@@ -100,6 +100,11 @@
       "VE.Service.Family",
       "VE.Route.Run"
     ],
+    "readings-choices": [
+      "VE.Service.Standalone",
+      "VE.Service.ReadingsChoices",
+      "VE.Route.Run"
+    ],
     "readings-route": [
       "VE.Readings.Run",
       "VE.Route.Run"
@@ -133,7 +138,7 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "3173f57d94c501f2788b9253cc3f36fcb1d2ddd1ab249a9ed41324c09ea65ece",
+    "lean/VE/Service/Protocol.lean": "1c2abff4d2ce012c9e722ddf2083943ee9499f4605426dfde249412c182dd0c8",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }
