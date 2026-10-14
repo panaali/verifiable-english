@@ -571,6 +571,24 @@ class _Grammar:
 _compiler = Compiler()
 ROWS = {mode: _compiler.ref(f"{mode}.json", "#/row") for mode in MODES}
 RIGHTS_BLOCK = _compiler.ref("document.json", "#/$defs/rights_block")
+
+
+def validate_copied_rights_source(units, wire):
+    """Keep the Lean-owned copied-content shape closed before nullable wire conversion."""
+    from ..errors import VEError
+
+    for unit in units:
+        if type(unit) is dict and set(unit) & {"right", "right_lines", "limitation", "bar"}:
+            try:
+                RIGHTS_BLOCK[0](unit, Context({}), {})
+            except Invalid as exc:
+                # Preserve the route's diagnostic when the fault remains after
+                # wire conversion. Reject only a null member it would erase.
+                try:
+                    RIGHTS_BLOCK[0](wire(unit), Context({}), {})
+                except Invalid:
+                    continue
+                raise VEError(f"InvalidInput: invalid rights block: {exc}") from exc
 RESPONSE = _compiler.ref("envelope.json", "#/response")
 HANDSHAKE = _compiler.ref("envelope.json", "#/handshake")
 

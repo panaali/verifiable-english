@@ -117,15 +117,19 @@ def rightsWireJson : Nat → String → Json → Json
       let child := if context == "lines" then "line" else if context == "conditions" then "condition" else context
       .arr (xs.map (rightsWireJson fuel child))
   | fuel + 1, context, .obj kvs =>
-      let absent := match context with
-        | "right" => ["guard"]
-        | "line" => ["norm", "liberty", "recognition", "fan_out", "holder_slot", "cites"]
-        | "limitation" | "bar" | "condition" | "exception" => ["decided_by"]
-        | "norm" => ["predicate", "mode", "rank", "alterable", "exception", "hard"]
-        | "source" => ["cites"]
+      let known := match context with
+        | "source" => ["right", "right_lines", "limitation", "bar", "norm", "cites", "source_units"]
+        | "right" => ["name", "holder", "lines", "guard"]
+        | "right_lines" => ["right", "lines"]
+        | "line" => ["kind", "norm", "liberty", "recognition", "fan_out", "holder_slot", "cites"]
+        | "limitation" => ["name", "scope", "kinds", "decided_by", "conditions", "factors"]
+        | "bar" => ["name", "reading", "decided_by"]
+        | "condition" => ["name", "role", "verbalisation", "decided_by", "purposes"]
+        | "norm" => ["name", "predicate", "sign", "guard", "unless", "over", "mode", "rank", "alterable", "exception", "hard"]
+        | "exception" => ["decided_by", "sufficient", "necessary", "factors"]
         | _ => []
       Json.mkObj (kvs.toList.filterMap fun (k, v) =>
-        if v == .null && (absent.contains k || context == "cites" || context == "fan_out") then none
+        if v == .null && (known.contains k || context == "cites" || context == "fan_out") then none
         else some (k, rightsWireJson fuel k v))
   | _, _, j => j
 
