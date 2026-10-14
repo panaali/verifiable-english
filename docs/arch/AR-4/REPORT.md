@@ -56,7 +56,7 @@ R11). Its starting budget is signed by standing ruling R15 (DELTA row 1).
 ## Measured outcome
 
 <!-- BEGIN GENERATED AR-4 METRICS -->
-Measured with `tools/trust_map.py` at `15053221` against the merge base `9f40783b`:
+Measured with `tools/trust_map.py` at `d9196e54` against the merge base `9f40783b`:
 
 | Class | Recorded at the base | Measured at the base | Measured at the head | Starting budget |
 |---|---:|---:|---:|---:|
@@ -67,7 +67,7 @@ Measured with `tools/trust_map.py` at `15053221` against the merge base `9f40783
 `docs/trust-baseline.json`: 13,551 lines at the base, 500 at the head (keys before: comment, totals, budget, signed, history, section11, files; 484 per-file rows and 286 `section11` rows left the tree).
 History: 52 entries, 51 distinct, became 70 allowances (one per class that grew); 6 carry a DRI signature, 64 were rebaselines with a reason before AR-4.
 `trust_map.py --check` at the head: exit 0; allowances introduced: 0, removed: 0.
-Commits (`9f40783b..15053221 --no-merges`): 41; files changed: 26, none under `ve/`, `lean/` or `rust/`: yes.
+Commits (`9f40783b..d9196e54 --no-merges`): 42; files changed: 26, none under `ve/`, `lean/` or `rust/`: yes.
 Seeded bugs: 24, each killed by its named test: yes.
 <!-- END GENERATED AR-4 METRICS -->
 
