@@ -50,9 +50,10 @@ def test_review_fix_commit_chain_and_final_gate_target():
         ["git", "log", "--reverse", "--format=%H%x09%s", f"{EVIDENCE['base']}..{report_commit}"],
         cwd=ROOT, text=True).splitlines()
     saved = EVIDENCE["commits"] + EVIDENCE["review_fix_commits"]
-    assert len(rows[:-1]) == len(saved)
-    assert all(row.split("\t", 1)[0].startswith(entry["hash"]) and row.split("\t", 1)[1] == entry["subject"]
-               for row, entry in zip(rows[:-1], saved))
+    assert len(rows) == len(saved) + 1
+    for row, entry in zip(rows[:-1], saved, strict=True):
+        full_hash, subject = row.split("\t", 1)
+        assert full_hash.startswith(entry["hash"]) and subject == entry["subject"]
     assert rows[-1].endswith("\tdocs: RD-8 review fixes and final gate evidence")
 
 
