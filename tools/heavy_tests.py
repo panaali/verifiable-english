@@ -16,7 +16,7 @@ REPORT = ROOT / "tests/heavy-durations.json"
 INVENTORY = ROOT / "tests/heavy.json"
 THRESHOLD = 10.0
 BUDGET = 20.0
-DURATION = re.compile(r"^\s*([\d.]+)s\s+(?:call|setup|teardown)\s+(tests/\S+::\S+)")
+DURATION = re.compile(r"^\s*([\d.]+)s\s+(?:call|setup|teardown)\s+(tests/.+::.+?)\s*$")
 
 
 def read_report(path: Path) -> tuple[str, dict[str, float]]:

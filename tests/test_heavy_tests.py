@@ -28,11 +28,13 @@ def test_pytest_duration_report_includes_setup_call_and_teardown(tmp_path):
     report.write_text("10.00s call tests/test_a.py::test_one\n"
                       "11.00s setup tests/test_a.py::test_one\n"
                       "0.25s teardown tests/test_a.py::test_one\n"
-                      "0.01s call tests/test_a.py::test_two\n")
+                      "0.01s call tests/test_a.py::test_two\n"
+                      "0.02s call tests/test_a.py::test_with_space[plain words]\n")
     run, times = heavy_tests.read_report(report)
     assert run == "durations.txt"
     assert times == {"tests/test_a.py::test_one": 21.25,
-                     "tests/test_a.py::test_two": 0.01}
+                     "tests/test_a.py::test_two": 0.01,
+                     "tests/test_a.py::test_with_space[plain words]": 0.02}
 
 
 def test_a_new_unmarked_slow_test_fails_the_budget_check(tmp_path, monkeypatch):
