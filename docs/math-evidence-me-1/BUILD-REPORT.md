@@ -70,11 +70,20 @@ All mutants were restored before the final build.
 - `python3 lean/audit.py --check`: 490 Lean source files and 5,840 named theorem declarations audited, standard axiom allowlist only. `tools/regen_generated.py --check --only lean-statements`: 5,390 statements unchanged; its checks of `gitattributes`, `numbers-phrases`, `frozen-inventory`, `checker-pins` and `assurance-doc` also passed. `tools/repo_map.py --check`: 32 modes have schemas. The approved plan and spec copies match `research/math-evidence-p1` byte-for-byte. `git diff --check main...HEAD` passed.
 - The task reserves `tools/gate.py` for the chain's clean, committed final HEAD. No full release gate was run here.
 
+## Pre-review continuation
+
+- The chain's gate at `257ea1b28` completed its Lean, audit and Rust stages and failed one pytest case: `tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target`. Git now chooses a nine-character `%h` in this repository, while RD-8 saved eight-character IDs. Commit `77656c29d` compares each saved ID with the prefix of the full hash. The targeted pytest case passed locally; the 163-unit selected run on the Mac runner passed with zero failed units. `tools/gate.py --rerun-failed` would run the full gate because the repaired tree differs from the failed gate's tree; the task assigns that full run to the chain.
+- The pre-review mutant scanner reads committed mutant JSON. Commit `77656c29d` records the previously planted and restored Lean and Python bugs in `mutants.json`, including each changed product file and its failing test. The scanner now finds `lean/VE/Calc/{Decls,Eval,Render}.lean` and `ve/english.py`.
+- The readings relay schema already refuses seven paths the allow-list called untyped. The first all-route mutation run tested 109,195 mutants across 39 routes and found no unlisted accepted mutant. It found 121 unused allow-list paths, including the seven in the pre-review summary; the remaining findings were hidden by its 12-line tail. The five accepted mutations in that summary now have exact F10/F11 follow-up paths. Commit `4f3f3b2c9` removed exactly the 121 unused paths from `tools/relay-gate-allow.json` and dropped five entries left empty. `tests/test_relay_mutation_gate.py` passed (18 tests) after the prune; the final all-route run is recorded below.
+- No ME-1 public output changed in this continuation. `DELTA.md` remains the public delta record. The chain will run the full release gate on the new committed HEAD, as the task directs.
+
+Final all-route relay mutation run: **PASS**, 39 routes, 109,195 mutants, zero findings and zero failures (`uv run python tools/relay_mutation_gate.py --json /tmp/me1-relay-full-final.json`).
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A. — ME-1 has no Lean service answer or request decoder; ME-2/3 add those.
 2. PASS — this report's ME-1 plan ledger and build checklist directives; `git diff main...HEAD --check`.
-3. PASS — `VE.Calc.Examples` guards and `tests/test_numbers_phrases.py` failed under the seeded mutations listed above.
+3. PASS — `VE.Calc.Examples` guards and `tests/test_numbers_phrases.py` failed under the seeded mutations listed above and in `mutants.json`.
 4. N.A. — no calc route exists yet, so no three-way response or new JSON order to compare.
 5. N.A. — no relayed answer exists in ME-1; ME-3 adds R8 binding tests.
 6. N.A. — the task assigns the final-HEAD full gate and its evidence to the chain.
