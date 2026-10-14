@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 30408,
+    "total_lines": 30413,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -709,12 +709,12 @@
       },
       {
         "file": "lean/VE/Readings/VerdictsWire.lean",
-        "lines": 1842,
-        "sha256": "675e5ae97da33ddd35e3ade9a95a39e304fb9dd3c796bf42020ecb60a2e94d21",
+        "lines": 1847,
+        "sha256": "69e2aeff2ef9388146f4c0d199fdbe472d4889a416712add3d5ec426d718bf86",
         "ranges": [
           [
             1,
-            1842
+            1847
           ]
         ],
         "declarations": [
