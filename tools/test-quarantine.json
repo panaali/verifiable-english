@@ -11,7 +11,7 @@
     },
     {
       "test": "tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check[checked]",
-      "evidence": "docs/test-quarantine/evidence/quarantine-subtick-checked.json",
+      "evidence": "docs/test-speed-b5/evidence/quarantine-subtick-checked.json",
       "owner": "fix-subtick",
       "added": "2026-10-14",
       "expires": "2026-10-21",
@@ -19,7 +19,7 @@
     },
     {
       "test": "tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check[response unchecked]",
-      "evidence": "docs/test-quarantine/evidence/quarantine-subtick-response-unchecked.json",
+      "evidence": "docs/test-speed-b5/evidence/quarantine-subtick-response-unchecked.json",
       "owner": "fix-subtick",
       "added": "2026-10-14",
       "expires": "2026-10-21",
