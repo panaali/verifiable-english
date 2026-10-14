@@ -238,6 +238,21 @@ def test_superposed_scope_count_stays_bounded_above_64_choices():
     assert row["result"]["verdict"] == "UNKNOWN"
 
 
+def test_scoped_proposals_reach_checked_choices_after_the_64_choice_prefix():
+    from tests.test_readings_nd_lean import case, run
+    from tests.test_readings_verdicts_lean import QUERY, fnd3
+
+    raw, document = fnd3()
+    assumed = [["rs_1", 1], ["rs_2", 1]]
+    [row] = run("ve_readings_route", [case("readings-verdicts", raw, document, question="query",
+                                           assumed=assumed, evidence=[], premises=[], conclusion=QUERY,
+                                           budget=dict(BUDGET))])
+    assert row["status"] == "ok" and row["route"] == "superposed"
+    assert len(row["model_proposals"]) == 16
+    assert all(all(candidate in choice for candidate in assumed) for choice in row["model_proposals"])
+    assert row["model_proposals"][0] == assumed + [[f"rs_{k}", 0] for k in range(3, 8)]
+
+
 def test_superposed_verdicts_keep_the_1024_choice_budget():
     from tests.test_readings_nd_lean import case, run
     from tests.test_readings_verdicts_lean import QUERY

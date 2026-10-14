@@ -393,7 +393,7 @@ def supAnswer (id q : String) (x : SupContext) (A : Choice) (named : Option Choi
   okWith id [("route", .str "superposed"), ("question", .str q), ("result", res),
     ("scopes", Json.arr (ss.map (supScopeJson q)).toArray),
     ("model_proposals", Json.arr ((if over then [] else
-      (chosenOf x.D A).take maxSupModelProposals).map choiceJson).toArray),
+      ((checkedChoices x.D).filter (fun c => A.all (c.contains ·))).take maxSupModelProposals).map choiceJson).toArray),
     ("restrictions", toJson (restrictionsFor x.D A)),
     ("dead_readings", if q == "premises" && (choices x.D).length ≤ maxChoices then deadReadingsJson ds.1 else .null),
     ("untaken", untakenJson (if q == "premises" && (choices x.D).length ≤ maxChoices then untakenOf x.D infos else [])),
