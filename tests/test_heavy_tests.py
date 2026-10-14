@@ -73,7 +73,7 @@ def test_light_tier_runs_every_light_node_and_selected_heavy_function(tmp_path):
     path = tmp_path / "heavy.json"
     path.write_text(json.dumps(inventory))
     plan = {"selected": ["tests/test_a.py"], "commands": [[*select_tests.PYTEST, "-q", "tests/test_a.py"]]}
-    tier = select_tests.light_tier(plan, path)
+    tier = select_tests.light_tier(plan, path, jobs=6)
     assert tier["tier"]["light_count"] == 1
     assert tier["tier"]["selected_heavy"] == ["tests/test_a.py::test_changed"]
     light, heavy = tier["commands"]
@@ -81,3 +81,4 @@ def test_light_tier_runs_every_light_node_and_selected_heavy_function(tmp_path):
     assert heavy[-1] == "tests/test_a.py::test_changed"
     assert "tests/test_b.py::test_other" not in heavy
     assert all("not live and not nightly" in command[-2] for command in (light, heavy))
+    assert all(command[command.index("-n") + 1] == "6" for command in (light, heavy))
