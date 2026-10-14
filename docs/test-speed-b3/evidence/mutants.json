@@ -113,6 +113,22 @@
    "caught": true
   },
   {
+   "id": "labels_are_items",
+   "behaviour": "an item is its branch: one branch under many labels counts once",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_one_branch_under_ten_labels_is_one_item",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "detached_rows_count",
+   "behaviour": "a row of a detached HEAD is not evidence",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_detached_head_row_is_not_evidence",
+   "exit": 1,
+   "caught": true
+  },
+  {
    "id": "shadow_rule_used",
    "behaviour": "base prints today's merge base while the rule is in shadow",
    "file": "tools/since_pass.py",
@@ -130,6 +146,7 @@
   }
  ],
  "clean": {
+  "tests/test_since_pass.py::test_a_detached_head_row_is_not_evidence": 0,
   "tests/test_since_pass.py::test_a_failure_is_outside_a_selection_unless_its_file_is_selected": 0,
   "tests/test_since_pass.py::test_a_pass_of_main_before_the_merge_base_is_not_a_base": 0,
   "tests/test_since_pass.py::test_a_pass_older_than_a_day_or_in_the_future_forces_todays_base": 0,
@@ -140,6 +157,7 @@
   "tests/test_since_pass.py::test_check_refuses_every_retyped_rebound_or_dropped_field": 0,
   "tests/test_since_pass.py::test_fewer_items_or_a_miss_keeps_todays_base": 0,
   "tests/test_since_pass.py::test_more_than_max_steps_since_the_pass_forces_todays_base": 0,
+  "tests/test_since_pass.py::test_one_branch_under_ten_labels_is_one_item": 0,
   "tests/test_since_pass.py::test_plan_between_is_the_select_tests_base_plan": 0,
   "tests/test_since_pass.py::test_rows_whose_rule_selected_everything_do_not_count": 0,
   "tests/test_since_pass.py::test_the_pass_closest_to_head_is_the_base": 0
