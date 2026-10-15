@@ -10,14 +10,14 @@ case, the Lean core parse of its tokens, the Lean core rendering of its
 formulas, and whether that rendering parses back, together with the result of
 the finite lexical check `admissible` (when it holds, `checked_parse_render`
 proves every such rendering parses back). Run from `lean/` after
-`lake build`:
+`lake build ve_english_run`:
 
-    lake env lean --run VE/English/Run.lean cases.json
+    .lake/build/bin/ve_english_run cases.json
 
 Tokens are JSON strings (words) or `[letter, index]` pairs (labels); template
 slots are strings (words) or natural numbers (placeholders); formulas use the
-indexed wire form decoded by `VE.Bridge.decodeFormula`. This file is a harness
-entry point only; no theorem depends on it. -/
+indexed wire form decoded by `VE.Bridge.decodeFormula`. `EnglishRunMain` is the
+executable entry point; no theorem depends on this runner. -/
 namespace VE.English.Run
 open Lean
 
@@ -127,11 +127,3 @@ def run (input : String) : Except String Json := do
                      ("covers", .bool (← covers L envJson)), ("results", .arr results)]
 
 end VE.English.Run
-
-def main (args : List String) : IO UInt32 := do
-  let input ← match args with
-    | [path] => IO.FS.readFile path
-    | _ => (← IO.getStdin).readToEnd
-  match VE.English.Run.run input with
-  | .ok j => IO.println j.compress; return 0
-  | .error e => IO.eprintln e; return 2

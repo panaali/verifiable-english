@@ -42,8 +42,9 @@ import nested_pytest
 # 4: listings of directories that hold no tracked file (or do not exist yet) are kept.
 # 5: the assurance-manifest operations each test reads are recorded (`operations`).
 # 6: an operation only checked for presence (`presence`) is recorded apart from an entry read.
-VERSION = 6
-EDGE_KEYS = ("f", "r", "d", "x", "m", "p")
+# 7: each request's Lean service mode is recorded separately from its executable.
+VERSION = 7
+EDGE_KEYS = ("f", "r", "d", "x", "m", "p", "v")
 UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",
@@ -160,6 +161,8 @@ def read_unit(directory: Path, files: set[str]) -> dict:
                 seen["m"].add(record[1])
             elif kind == "p":
                 seen["p"].add(record[1])
+            elif kind == "v":
+                seen["v"].add(record[1])
             elif kind == "c" and record[2]:
                 children.append(record[1])
             elif kind == "o":
@@ -288,6 +291,7 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
     programs: dict[str, set[int]] = {}
     operations: dict[str, set[int]] = {}
     presence: dict[str, set[int]] = {}
+    modes: dict[str, set[int]] = {}
     for test, result in results.items():
         i = index[test]
         for file, qualname in result["f"]:
@@ -299,6 +303,8 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
             operations.setdefault(op_id, set()).add(i)
         for op_id in result.get("p", ()):
             presence.setdefault(op_id, set()).add(i)
+        for mode in result.get("v", ()):
+            modes.setdefault(mode, set()).add(i)
     return {
         "version": VERSION, "commit": commit,
         "created": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
@@ -311,13 +317,14 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
         "programs": {k: sorted(v) for k, v in sorted(programs.items())},
         "operations": {k: sorted(v) for k, v in sorted(operations.items())},
         "presence": {k: sorted(v) for k, v in sorted(presence.items())},
+        "modes": {k: sorted(v) for k, v in sorted(modes.items())},
     }
 
 
 def unit_edges(data: dict) -> dict[str, dict]:
     """Invert a map back to per-test sets (the form `merge` and tests use)."""
     tests = data["tests"]
-    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set(), "m": set(), "p": set()}
+    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set(), "m": set(), "p": set(), "v": set()}
              for test in tests}
     for file, qualnames in data["functions"].items():
         for qualname, indices in qualnames.items():
@@ -333,6 +340,9 @@ def unit_edges(data: dict) -> dict[str, dict]:
     for item, indices in data["presence"].items():
         for i in indices:
             edges[tests[i]]["p"].add(item)
+    for item, indices in data["modes"].items():
+        for i in indices:
+            edges[tests[i]]["v"].add(item)
     return edges
 
 
@@ -363,9 +373,12 @@ def working_tree_id(root: Path = ROOT) -> str:
                               capture_output=True, text=True).stdout.strip()
 
 
-def find_map(base: str, root: Path = ROOT) -> Path | None:
+def find_map(base: str, root: Path = ROOT, other_versions: list[Path] | None = None) -> Path | None:
     """The cached map nearest below `base`: of the maps recorded at its ancestors,
-    the one with the fewest commits between it and `base`. $VE_TESTMAP overrides."""
+    the one with the fewest commits between it and `base`. $VE_TESTMAP overrides.
+
+    A nearer ancestor map that does not load is skipped with a line on stderr;
+    one recorded by another map format version is also appended to `other_versions`."""
     if os.environ.get("VE_TESTMAP"):
         return Path(os.environ["VE_TESTMAP"])
     directory = cache_dir()
@@ -383,8 +396,16 @@ def find_map(base: str, root: Path = ROOT) -> Path | None:
         if best is None or int(distance.stdout) < best[0]:
             try:
                 load(path)
-            except (OSError, ValueError, EOFError):
-                continue  # unreadable, or recorded by another version of the recorder
+            except MapVersionError as error:
+                print(f"test_map: skipped map {path} for {base[:10]}: recorded by map format version "
+                      f"{error.found}, this checkout reads version {VERSION} "
+                      "(record a new map: tools/test_map.py record)", file=sys.stderr)
+                if other_versions is not None:
+                    other_versions.append(path)
+                continue
+            except (OSError, ValueError, EOFError) as error:
+                print(f"test_map: skipped map {path}: unreadable ({error})", file=sys.stderr)
+                continue
             best = (int(distance.stdout), path)
     return best[1] if best else None
 
@@ -394,6 +415,13 @@ def load(path: Path) -> dict:
         data = json.load(handle)
     validate(data, str(path))
     return data
+
+
+class MapVersionError(ValueError):
+    """A well-formed map header recorded by another map format version."""
+    def __init__(self, message: str, found: int):
+        super().__init__(message)
+        self.found = found
 
 
 def validate(data, where: str = "map") -> None:
@@ -410,6 +438,8 @@ def validate(data, where: str = "map") -> None:
                 type(i) is int and 0 <= i < len(tests) for i in value):
             fail(f"{what} is not a non-empty list of test indices")
 
+    if isinstance(data, dict) and type(data.get("version")) is int and data["version"] != VERSION:
+        raise MapVersionError(f"{where}: version {data['version']!r}, expected {VERSION}", data["version"])
     if not isinstance(data, dict) or data.get("version") != VERSION:
         fail(f"version {data.get('version') if isinstance(data, dict) else None!r}, expected {VERSION}")
     if not isinstance(data.get("commit"), str):
@@ -433,7 +463,7 @@ def validate(data, where: str = "map") -> None:
             fail(f"functions of {file} is not an object")
         for qualname, value in qualnames.items():
             indices(value, f"{file}:{qualname}")
-    for table in ("reads", "dirs", "programs", "operations", "presence"):
+    for table in ("reads", "dirs", "programs", "operations", "presence", "modes"):
         if not isinstance(data.get(table), dict):
             fail(f"{table} is not an object")
         for key, value in data[table].items():

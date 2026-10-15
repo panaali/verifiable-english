@@ -71,6 +71,7 @@ import re
 import secrets
 import selectors
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -117,14 +118,15 @@ UNHANDLED_MODES = frozenset({"english", "risk-eval"})
 _CORE = (5.0, 30.0)
 DEADLINES: dict[str, tuple[float, float]] = {
     **{mode: _CORE for mode in ("evaluate", "check-certificate", "order", "route", "norms", "english",
-                                "english.read", "english.grammar", "english.check", "english.question",
+                                "english.read", "english.grammar", "english.check", "english.question", "words",
                                 "environment", "model", "check", "identity", "parse", "graph", "readings",
+                                "readings-choices",
                                 "bundle", "family-norms")},
     "soft-norms": (120.0, 120.0), "rights": (120.0, 1000.0), "speech-acts": (120.0, 120.0),
     "reports": (60.0, 60.0), "alternatives": (180.0, 180.0), "risk": (180.0, 180.0),
     "risk-eval": (60.0, 60.0), "quantity": (60.0, 60.0), "norm-defaults": (120.0, 120.0),
     "discourse": (300.0, 300.0), "readings-route": (120.0, 240.0), "diagnose": (120.0, 120.0),
-    "document": (120.0, 120.0),
+    "document": (120.0, 120.0), "ask": (120.0, 240.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20
@@ -580,6 +582,7 @@ class LeanService:
                 except (BrokenPipeError, OSError) as exc:
                     raise _Failure(f"service input closed: {exc}") from None
                 view = view[written:]
+            self._wait(deadline, "writing the request")
 
     def _read_line(self, deadline: _Deadline) -> bytes:
         fd = self._proc.stdout.fileno()
@@ -588,8 +591,11 @@ class LeanService:
             while True:
                 end = self._buffer.find(b"\n")
                 if end >= 0:
+                    if end > MAX_RESPONSE_BYTES:
+                        raise _Failure("response line exceeds the size limit")
                     line = bytes(self._buffer[:end])
                     del self._buffer[:end + 1]
+                    self._wait(deadline, "waiting for the response")
                     return line
                 if len(self._buffer) > MAX_RESPONSE_BYTES:
                     raise _Failure("response line exceeds the size limit")
@@ -690,6 +696,7 @@ class LeanService:
         """
         if mode not in MODES:
             raise VEError(f"unknown Lean service mode {mode!r}")
+        sys.audit("ve.service.mode", mode)
         timeout = self.timeout if timeout is None else timeout
         if timeout is None:
             # The wall-clock cap's setting is refused before any process starts when it is not seconds.

@@ -23,11 +23,13 @@ PYTHON = {
         "readings_s2_english senses").split(),
     4: ("__main__ adapters admission argument ask attacks authoring backends bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
-        "openterms propose readings search stream_audit vacuity assist discourse "
+        "filling_search openterms propose readings search stream_audit vacuity assist discourse words "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document").split(),
     5: ["argument_fixtures"],
 }
+# Top-level trees of apps, experiments, research and the paper: every path in them is layer 5.
+APP_AREAS = frozenset({"ve_experiments", "experiments", "usecases", "paper", "research"})
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
 
 
@@ -126,6 +128,10 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
+    if module.startswith("VE.Ask."):
+        return 4  # question answering Q2: binds a request to Service.Document's split and reads EnglishGrammar.Run
+    if module.startswith("VE.Words."):
+        return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
@@ -172,7 +178,7 @@ def source_layer(path: str) -> int | None:
         if p.suffix in {".py", ".json"} and p.name not in {"Cargo.lock"}:
             return 5  # benchmarks and generated measurement reports
         return 1 if p.name in {"Cargo.toml", "Cargo.lock"} else None
-    if parts[0] in {"ve_experiments", "experiments", "usecases", "paper"}:
+    if parts[0] in APP_AREAS:
         return 5
     if parts[0] == "tools":
         if p.name in {"layer_policy.py", "select_tests.py", "mutation_check.py", "nested_pytest.py",
