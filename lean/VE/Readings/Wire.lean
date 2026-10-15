@@ -75,13 +75,9 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
   | .ok .readings => pure ()
   | .ok _ => throw "UnsupportedProfile: readings@1 is not the head of this profile list"
   | .error e => throw e
-  -- The S1 pilot uses the v0 constant shape. Reject display words here so
-  -- environment loading and the readings routes make the same decision.
-  let vocabulary ← environment.getObjVal? "vocabulary"
-  let constants ← VE.Bridge.fields (← vocabulary.getObjVal? "constants")
-  for (_, entry) in constants do
-    if (entry.getObjVal? "verbalisation").isOk then
-      VE.Bridge.displayFields entry ["sort", "description"] []
+  -- A v0 constant has no display words (docs/spec/v0-language.md:23): loading and the routes refuse them alike.
+  for (_, entry) in ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "constants") do
+    if (entry.getObjVal? "verbalisation").isOk then VE.Bridge.displayFields entry ["sort", "description"] []
   let lowerJson ← stripReadings environment
   let lower := profiles.filter (· != readingsProfile)
   -- The frame is decoded without `norm-defaults@0`, its `unspecified` completions read as the placeholder `deny`
