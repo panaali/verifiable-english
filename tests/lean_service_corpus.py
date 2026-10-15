@@ -434,11 +434,41 @@ def corpus():
                                           for index in (0, 1)]}
     return {"evaluate": evaluate_cases(), "check-certificate": certificate_cases(),
             "order": order_cases(), "route": route_cases(), "norms": norms_cases(),
+            "family-norms": family_norms_cases(),
             "english": english_cases(), "environment": standalone_env,
             "model": standalone_model, "identity": identities, "document": document_cases(),
             "readings-choices": [{**choice_plan, "limit": 64},
                                  {**choice_plan, "limit": 1}, choice_verdict],
             "search-budget": [*search_budget_cases(), *ADVERSARIAL]}
+
+
+def family_norms_cases():
+    """Genuine generated formulas for every non-first-order family. The schema
+    differential fuzz retypes and rebinds every field of these responses."""
+    from tests.test_stage2_norms import flagged
+    from tests.test_norms import rule
+    from ve.ast import Atom, Exists, Le, Named, Num, Reach, Var
+    from ve.environment import Environment
+    from ve.norms import NormDocument
+
+    cases = []
+    for family, guard in (
+            (("closure@0",), Reach("star", Named("before"), Var(0), Var(0))),
+            (("closure@0", "nary@0"), Exists("party", Atom("tri", (Var(1), Var(1), Var(0))))),
+            (("order@0",), Le(Num(1), Num(2)))):
+        env = flagged(family=family, relation="order@0" not in family,
+                      data="order@0" not in family)
+        if "nary@0" in family:
+            raw = env.to_dict()
+            raw["vocabulary"]["predicates"]["tri"] = {
+                "arguments": ["act", "act", "party"], "description": "tri"}
+            env = Environment(raw)
+        doc = NormDocument(env, [rule("may", "permitted", True, guard)])
+        stem = {"id": "family-" + family[-1], "environment": env.to_dict(),
+                "norms": [r.to_dict() for r in doc.rules]}
+        cases.extend(({**stem, "kind": "norms-elaborate"},
+                      {**stem, "kind": "norms-conflict", "packages": {}}))
+    return cases + ADVERSARIAL
 
 
 def document_cases():
