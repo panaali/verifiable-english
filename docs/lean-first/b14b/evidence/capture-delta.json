@@ -1,0 +1,271 @@
+{
+  "differences": [
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "mixed-exists-depth1",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-model-0"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "mixed-exists-depth1",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-model-3"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "mixed-nested-depth1",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-model-1"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "same-exists-depth1",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-model-0"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "same-exists-depth1",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-model-3"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "tableau budget or open branch: required->permitted",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "document": "same-exists-proved",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "",
+          "status": "CONFLICT-FREE",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-prove"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "same-exists-proved",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-model-0"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "same-exists-proved",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-model-3"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: rule must requires; rule release releases; rule cited releases",
+          "status": "CONFLICT",
+          "target": "required",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "same-exists-situation",
+      "head": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: rule must requires; rule release releases",
+          "status": "CONFLICT",
+          "target": "required",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "op": "conflict-model-3"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "same-open-depth1",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-model-0"
+    },
+    {
+      "base": {
+        "ok": {
+          "detail": "",
+          "situation": "act a: required is required, but permitted is not permitted",
+          "status": "CONFLICT",
+          "target": "required->permitted",
+          "tuple": [
+            "a"
+          ]
+        }
+      },
+      "document": "same-open-depth1",
+      "head": {
+        "ok": {
+          "detail": "tableau budget or search bound",
+          "situation": "",
+          "status": "UNKNOWN",
+          "target": null,
+          "tuple": []
+        }
+      },
+      "op": "conflict-model-3"
+    }
+  ],
+  "documents": 20,
+  "records": 280,
+  "route": "head Lean family route vs head retained Python (the base's answers)"
+}
