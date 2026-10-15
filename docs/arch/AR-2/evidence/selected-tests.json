@@ -1,0 +1,48 @@
+{
+  "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+  "head": "ee31b0156ce78c95a6f5d3587d332d7bab552587",
+  "selected_units": 374,
+  "completed_units": 372,
+  "passed_units": 367,
+  "failed_units": [
+    {
+      "unit": "tests/test_assist.py",
+      "result": "timeout",
+      "seconds": 3600.4
+    },
+    {
+      "unit": "tests/test_assist_invariants.py",
+      "result": "timeout",
+      "seconds": 3600.1
+    },
+    {
+      "unit": "tests/test_english_evidence.py",
+      "result": "timeout",
+      "seconds": 3600.0
+    },
+    {
+      "unit": "tests/test_readings_defaults_rd8_report.py",
+      "result": "1",
+      "seconds": 3.7
+    },
+    {
+      "unit": "tests/test_readings_rd6b_differential.py",
+      "result": "timeout",
+      "seconds": 3600.1
+    }
+  ],
+  "not_run": [
+    "tests/test_soft_review_regressions.py",
+    "tests/test_wire_gate_corpus.py"
+  ],
+  "selector_exit": 1,
+  "selector_cache_error": "read-only /home/seyran/.cache/ve-testmap/tree-5a69dd90cfb8252c46559acc292f523d9a627c38.json.gz.tmp",
+  "separate_retry": {
+    "files": [
+      "tests/test_soft_review_regressions.py",
+      "tests/test_wire_gate_corpus.py"
+    ],
+    "exit": 130,
+    "result": "interrupted during slow wire corpus under host load; no final pass result"
+  }
+}
