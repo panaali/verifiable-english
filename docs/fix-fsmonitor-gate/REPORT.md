@@ -4,8 +4,10 @@
 `mac-gate-job.sh` (and `mac-run-full.sh`) rewrites `lean/checkers.lock` with its aarch64 pins and hides it with
 `git update-index --assume-unchanged`. With this branch, `tools/gate.py` sees that edit, so **every Mac gate would fail
 "worktree is dirty at gate start"**, including this branch's own Mac candidate leg (it is a native change: it touches
-`tools/gate.py`). A runner-side change is proposed below ("Mac runner"). I did not apply it: those scripts live in
-`manage-agents`, outside this branch, and other jobs use them now.
+`tools/gate.py`). The runner-side fix (review F1) is ready and tested, but it is not live: the wrapper
+`manage-agents/mac-gate-wrap.fix-fsmonitor-gate.py` and its test `manage-agents/mac-gate-wrap-test.py` (see "Mac runner").
+The DRI lands it by moving the candidate over `mac-gate-wrap.py`. Those scripts live outside this branch, and other
+jobs use them now.
 
 Item: infra item fix-fsmonitor-gate (acting DRI 2026-10-15 12:40Z; FAST LANE). Branch `fix/fsmonitor-gate`, synced with
 `main` at 1cbd5ed1e. Changes are in Python only: `tools/gate.py`, plus tests and a benchmark.
@@ -121,22 +123,72 @@ fresh-index status:      ' M lean/checkers.lock\n?? docs/fix-fsmonitor-gate/muta
 The repository-index status never shows `lean/checkers.lock` because of the `assume-unchanged` bit. The fresh index does.
 In a gate job checkout everything else is clean, so `tools/gate.py` would stop with "worktree is dirty at gate start".
 
-Proposed runner-side change (not applied). The gate already runs through `~/gate-wrap.py` (`mac-gate-wrap.py`), which
-holds the runner's local overrides. It can teach the fresh index the runner's own pin file, and nothing else:
+The design first proposed here does not work, and the review (F1) did not catch that. It added the pin file's blob to
+the fresh index (`git update-index --cacheinfo`) after the read-tree. Status then reports the file as staged against
+`HEAD`, so the gate still stops. Scratch repository, 2026-10-15 (also the runner test `test_cacheinfo_of_the_pins_is_not_enough`):
 
-- Import `tools.gate` as a module, as the wrapper's nightly path already does.
-- Wrap `gate.command`. After the stage `worktree index` (the read-tree), run
-  `git update-index --cacheinfo 100644,$(git hash-object -w lean/checkers.lock),lean/checkers.lock` with the same
-  `GIT_INDEX_FILE`.
-- The gate then accepts exactly the pin file the runner wrote, which is already declared in the record's
-  `runner.local_overrides`. Any other edit is still caught, and so is any later change to `lean/checkers.lock` itself.
-  Plain `assume-unchanged` hides any content of that file.
+```
+repository status (assume-unchanged): []
+fresh index:                          [ M lean/checkers.lock]
+fresh index + cacheinfo of the pins:  [M  lean/checkers.lock]
+```
 
-The alternatives are worse. Committing the pins changes the gated commit. Not writing them fails the pin check.
+Runner-side fix (review F1), ready and tested but not live: `manage-agents/mac-gate-wrap.fix-fsmonitor-gate.py`. To land
+it, the DRI signs DELTA row 2 and moves the file over `manage-agents/mac-gate-wrap.py`, which `mac-gate.sh` copies to the
+runner for each gate. Nothing in this branch changes for it.
 
-Until the runner changes, this branch's merge-train Mac leg will fail, and so would every Mac gate after the merge. The
-x86 leg is unaffected: no VM gate flow uses `assume-unchanged`, `skip-worktree` or an fsmonitor hook (checked by grep of
-`manage-agents/*.sh`).
+- The wrapper imports `tools.gate` as a module in every mode. The nightlies already do (`VE_GATE_RUN_CACHE_OFF=1`, on the
+  Mac and the VM). If the import fails, it runs the gate by runpy as before.
+- The hook is installed only when the job checkout marks `lean/checkers.lock` assume-unchanged (`git ls-files -v` tag
+  `h`), as `mac-gate-job.sh` does after writing the pins. It is not installed with `VE_GATE_NO_RUNNER_PINS=1` (the VM
+  nightlies). The wrapper hashes the file once, at its start.
+- The hook wraps `gate.command` for the stage `worktree content` only (the fresh-index status). It drops exactly the line
+  ` M lean/checkers.lock`, and only while the file still hashes to the blob taken at the start. Any other line still
+  makes the tree dirty: an edit hidden by an index bit, an untracked file, a staged change or a deletion. So does any
+  later change to the pin file, even back to the commit's content. The gate checks at its start and at its end.
+- A gate.py without that stage never calls the hook. A hook that drifts from gate.py fails closed: the gate stops
+  "worktree is dirty at gate start", and `mac-gate.sh` falls back to the VM gate (exit 3).
+- The stage names and the fresh index the hook relies on are pinned in this branch by
+  `tests/test_gate_integrity.py::test_clean_status_is_checked_again_on_a_fresh_index_of_the_commit`.
+
+Runner test: `manage-agents/mac-gate-wrap-test.py`, run from this worktree. It tests the wrapper's hook against this
+worktree's own `tools.gate.source_identity`, on a small repository shaped like a Mac gate job checkout:
+
+```
+cd <VE worktree> && GATE_WRAP=$M/mac-gate-wrap.fix-fsmonitor-gate.py \
+  uv run pytest -q -p no:cacheprovider -p no:randomly --rootdir=$M $M/mac-gate-wrap-test.py
+```
+
+Results on the VM, 2026-10-15:
+
+- Before, against the live `mac-gate-wrap.py`: 9 failed, 2 passed. The two that pass show the defect itself:
+  `test_runner_pins_alone_make_the_gate_refuse_without_the_hook` and `test_cacheinfo_of_the_pins_is_not_enough`.
+- After, against the candidate: 11 passed.
+- `uv run python <candidate> --help` in this worktree prints gate.py's usage and exits 0 (import mode and argv).
+
+Seeded bugs in the candidate hook (Python). Each was planted alone in a scratch copy, which was then deleted:
+
+| Id | Behaviour | Mutation | Failing tests |
+|---|---|---|---|
+| W1 | a pin file changed after the start is dirty | hash check disabled | `test_hook_refuses_a_pin_file_changed_after_the_wrapper_started` (both) |
+| W2 | only the pin line is dropped | every line dropped | `test_hook_still_refuses_any_other_change[hidden edit]`, `[deleted]` |
+| W3 | gate.command strips its output, so a first line ` M` arrives as `M` | raw ` M <pin>` match | `test_hook_accepts_exactly_the_runner_pins`, `test_hook_passes_other_stages_through`, two more |
+| W4 | no hook unless the checkout hides the pins | bit check disabled | `test_hook_is_not_installed_when_the_checkout_does_not_hide_the_pins` |
+
+The untracked and staged cases are refused before the hook runs, by the repository-index status, so W2 cannot reach them.
+
+The alternatives are worse. Committing the pins changes the gated commit. Not writing them fails the pin check. A git
+clean filter for the pin file would hide content from status, which is the kind of hiding this branch closes.
+
+Same class, every runner flow that runs `tools/gate.py` or uses `assume-unchanged` (grep of `manage-agents/*.sh`):
+
+- `mac-gate-job.sh` `work` runs the gate after `assume-unchanged`. It is fixed by the candidate wrapper.
+- `mac-gate-job.sh` `vwork`, `mac-run-full.sh` and `mac-pytest-job.sh` use `assume-unchanged` but run pytest only. They
+  are not affected, as the review found.
+- `chain-gate.sh`, `merge-train.sh` (x86 leg), `nightly-verify.sh` and `nightly-vm-verify.sh` run the gate on the VM.
+  None of them uses `assume-unchanged`, `skip-worktree` or an fsmonitor hook.
+
+Until the candidate is live, this branch's merge-train Mac leg will fail, and so would every Mac gate after the merge.
 
 ## Tests
 
@@ -209,8 +261,8 @@ Line 17 to 19 and 21 do not apply either: no spec, theorem or use case is involv
 3. PASS: seeded bugs P1 to P6 (`docs/fix-fsmonitor-gate/mutants.json`). All six are assertion failures, none a build or
    hash step.
 4. PASS: valid inputs still pass. A clean tree is clean (`test_source_identity_reports_clean_tree_and_leaves_index_alone`),
-   all 43 gate-integrity tests pass, and the Mac selected run is green. A clean Mac runner checkout is dirty by design;
-   see "Mac runner".
+   all 43 gate-integrity tests pass, and the Mac selected run is green. A clean Mac runner checkout is dirty by design.
+   The runner fix that accepts exactly its pins is in "Mac runner" (review F1).
 5. N.A.: no relayed field.
 6. PASS: synced with main at 1cbd5ed1e. Selected tests ran on the Mac. The full gate is left to the chain and merge train
    (FAST LANE).
