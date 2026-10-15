@@ -445,8 +445,9 @@ value to "ghost", never to another valid value.
 | F24 | The rights elaboration binder now checks each `(mechanism, licence)` pair against Run.lean `licence`: the first relation of Scope.lean that the request holds. In order: a citation (`cited`, over `citesOf` and `lineKeys`), a right line of the opposite effect (`rightCollision`, which for dominance also needs a cited rank), a same-effect strict rule (`sameEffectStrict`), else none. A scope licence must equal the elaboration's licence. The one exception is `certified`, accepted only where the elaboration left the mechanism unlicensed and certificates were sent. This also closes the follow-up "`certified` passes on any mechanism". The form-only `_licence_bound` is deleted. For the class: the inventory fuzz now also sets each bound scalar to every value the same field takes in another genuine answer. A new test replays each source's genuine answer as the answer to every other source of its family. That is a whole, self-consistent forgery, the shape F24 took. Twelve sources were added, one for each licence and its uncited twin, including a fan-out line cited through its source norm. | `test_f24_a_licence_names_a_relation_the_request_holds[*]` (14 cases), `test_another_requests_genuine_answer_is_unavailable[*]` (11 routes), `test_every_bound_field_mutant_is_unavailable[rights-elaborate]`, `[rights-scope]` | 0b8015d14 |
 
 R8(b) covers this: a licence is a choice that names a relation of the request. No Lean answer changes,
-and no genuine answer is refused. All 28 genuine rights sources still pass at recording. The 12 new
-sources are the ones whose licences are `cited`, `collision` or `effect delivered by strict rule M`.
+and no genuine answer is refused. All 25 genuine rights sources still pass at recording: the 13 earlier ones and
+the 12 new ones, which between them carry every licence (`cited`, `collision`,
+`effect delivered by strict rule M`, `limitation`, `bar` and none).
 No Lean or Rust product code changed, and Rust relays no licence. DRI note under the deferred D1 item: the
 licence is now one more Lean derivation that Python follows, the same as the mechanism list (F20). It
 reads only request relations, and its source is named in `_narrowings`.
