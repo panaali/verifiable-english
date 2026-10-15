@@ -96,6 +96,7 @@ element of an array (every element must resolve).
 | `x-claim-nodes: [p, ...]` | every claim at each response pointer (one claim or an array) matches a request graph node by name, AST and presence and value of the optional label |
 | `x-max-steps: {default, cap}` | a certificate step count is at most the request's `max_steps`, or the generated default, capped at the generated maximum |
 | `x-background-bound: true` | a certificate background count is an integer at most what the request could generate: four per predicate declaration (two flags, a definition, a norm pair), one per pair of constants, one per `soft_premises` element; the exact count is the service's (`ResponseShape.backgroundBound`) |
+| `x-source-span: p` | a diagnostic object's start and end lie within the request source string at `p`, with line and column equal to its start position (Unicode code points, one-based line and column) |
 | `x-index: true` | the position of the result in the response |
 | `x-digest: true` | the digest of the result's case (`digests[i]` of the request) |
 | `x-zip: {of: p, items: s}` | an array with element `i` valid under `s` with context element `i` of the context array at `p` |

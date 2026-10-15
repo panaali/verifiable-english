@@ -1,0 +1,173 @@
+relay_mutation_gate: allow-list path matches nothing: B0 service:readings-route duplicate results/*/result/units/*/content/norm/guard
+relay_mutation_gate: allow-list path matches nothing: B0 service:readings-route empty results/*/result/names/*
+relay_mutation_gate: allow-list path matches nothing: B0 service:readings-route empty results/*/result/names/*/candidates/*
+relay_mutation_gate: allow-list path matches nothing: B0 service:readings-route empty results/*/result/units/*/content
+relay_mutation_gate: allow-list path matches nothing: B0 service:readings-route empty results/*/result/units/*/content/norm
+relay_mutation_gate: allow-list path matches nothing: B0 service:readings-route empty results/*/result/units/*/content/norm/exception
+relay_mutation_gate: allow-list path matches nothing: B0 service:readings-route empty results/*/result/units/*/content/norm/guard
+relay_mutation_gate: allow-list path matches nothing: B5 service:alternatives drop results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:alternatives drop results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:norm-defaults drop results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:norms drop results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:norms drop results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:reports drop results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:reports drop results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:rights drop results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:rights drop results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:risk drop results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:risk drop results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:route drop results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:soft-norms drop results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: B5 service:soft-norms drop results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/choices_checked
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names/*
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names/*/candidates
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names/*/candidates/*
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names/*/candidates/*/id
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names/*/candidates/*/index
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names/*/candidates/*/names
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names/*/candidates/*/position
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names/*/set
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/names/*/version
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm/alterable
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm/guard
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm/hard
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm/mode
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm/name
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm/over
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm/predicate
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm/sign
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/content/norm/unless
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/index
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/position
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/set
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/unit
+relay_mutation_gate: allow-list path matches nothing: F3 service:readings-route retype results/*/result/units/*/version
+relay_mutation_gate: allow-list path matches nothing: F4 service:alternatives rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:alternatives rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:alternatives rebind results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:discourse rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:discourse rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:discourse rebind results/*/result/report/root/ast/*/*
+relay_mutation_gate: allow-list path matches nothing: F4 service:norm-defaults rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:norm-defaults rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:norms rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:norms rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:norms rebind results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:quantity rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:readings-route rebind results/*/result/units/*/content/norm/mode
+relay_mutation_gate: allow-list path matches nothing: F4 service:reports rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:reports rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:reports rebind results/*/result/report/root/ast/*/*
+relay_mutation_gate: allow-list path matches nothing: F4 service:reports rebind results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:rights rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:rights rebind results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:risk rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:risk rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:risk rebind results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/report/root/ast/*/*
+relay_mutation_gate: allow-list path matches nothing: F4 service:soft-norms rebind results/*/result/report/assumptions/*/label
+relay_mutation_gate: allow-list path matches nothing: F4 service:soft-norms rebind results/*/result/report/assumptions/*/name
+relay_mutation_gate: allow-list path matches nothing: F4 service:soft-norms rebind results/*/result/report/root/label
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/names/*/candidates
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/names/*/candidates/*/id
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/names/*/candidates/*/index
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/names/*/candidates/*/names
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/names/*/candidates/*/position
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/names/*/set
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/names/*/version
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/alterable
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/exception
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/guard
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/hard
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/mode
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/name
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/over
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/predicate
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/rank
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/sign
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/content/norm/unless
+relay_mutation_gate: allow-list path matches nothing: F5 service:readings-route drop results/*/result/units/*/unit
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/names/*
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/names/*/candidates
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/names/*/candidates/*
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/names/*/candidates/*/id
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/names/*/candidates/*/index
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/names/*/candidates/*/names
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/names/*/candidates/*/position
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/names/*/set
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/names/*/version
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/alterable
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/exception
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/guard
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/hard
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/mode
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/name
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/over
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/predicate
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/rank
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/sign
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/content/norm/unless
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/index
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/position
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/set
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/unit
+relay_mutation_gate: allow-list path matches nothing: F7 service:readings-route untyped results/*/result/units/*/version
+relay_mutation_gate: accepted service:readings-route empty results/*/result/fill: empty
+relay_mutation_gate: accepted service:readings-route duplicate results/*/result/fill: duplicate
+relay_mutation_gate: accepted service:readings-route empty results/*/result/fill/*/label: empty
+relay_mutation_gate: accepted service:readings-route duplicate results/*/result/units/*/content/norm/over: duplicate
+relay_mutation_gate: accepted service:readings-route empty results/*/result/targets/*: empty
+service:evaluate: 9 fixtures, 1350 mutants, 1346 refused, 4 allowed, 2.9 s
+service:check-certificate: 6 fixtures, 923 mutants, 923 refused, 0 allowed, 1.8 s
+service:order: 13 fixtures, 2040 mutants, 2030 refused, 10 allowed, 4.0 s
+service:route: 33 fixtures, 5244 mutants, 5218 refused, 26 allowed, 14.0 s
+service:norms: 43 fixtures, 7324 mutants, 7215 refused, 109 allowed, 19.1 s
+service:english: 4 fixtures, 710 mutants, 690 refused, 20 allowed, 3.2 s
+service:english.read: 6 fixtures, 1228 mutants, 820 refused, 408 allowed, 2.7 s
+service:english.grammar: 4 fixtures, 1847 mutants, 540 refused, 1307 allowed, 23.4 s
+service:english.check: 2 fixtures, 372 mutants, 252 refused, 120 allowed, 1.0 s
+service:environment: 10 fixtures, 1561 mutants, 1557 refused, 4 allowed, 2.4 s
+service:model: 8 fixtures, 1205 mutants, 1201 refused, 4 allowed, 30.8 s
+service:check: 6 fixtures, 978 mutants, 956 refused, 22 allowed, 2.0 s
+service:identity: 9 fixtures, 1342 mutants, 1342 refused, 0 allowed, 2.5 s
+service:parse: 2 fixtures, 326 mutants, 300 refused, 26 allowed, 7.1 s
+service:graph: 4 fixtures, 706 mutants, 678 refused, 28 allowed, 1.6 s
+service:readings: 4 fixtures, 574 mutants, 574 refused, 0 allowed, 1.3 s
+service:bundle: 4 fixtures, 622 mutants, 622 refused, 0 allowed, 1.7 s
+service:family-norms: 11 fixtures, 2428 mutants, 2350 refused, 78 allowed, 8.0 s
+service:soft-norms: 24 fixtures, 5824 mutants, 5595 refused, 229 allowed, 12.4 s
+service:rights: 23 fixtures, 6451 mutants, 6103 refused, 348 allowed, 16.2 s
+service:speech-acts: 20 fixtures, 4439 mutants, 4313 refused, 126 allowed, 21.7 s
+service:reports: 24 fixtures, 5357 mutants, 4960 refused, 397 allowed, 10.3 s
+service:alternatives: 23 fixtures, 8352 mutants, 8078 refused, 274 allowed, 40.0 s
+service:risk: 24 fixtures, 8240 mutants, 7827 refused, 413 allowed, 39.5 s
+service:risk-eval: 5 fixtures, 789 mutants, 787 refused, 2 allowed, 3.4 s
+service:quantity: 31 fixtures, 5615 mutants, 5605 refused, 10 allowed, 64.4 s
+service:norm-defaults: 25 fixtures, 6503 mutants, 6156 refused, 347 allowed, 18.6 s
+service:discourse: 17 fixtures, 4237 mutants, 4132 refused, 105 allowed, 10.5 s
+service:readings-route: 46 fixtures, 15768 mutants, 13502 refused, 2257 allowed, 123.9 s
+service:diagnose: 8 fixtures, 1387 mutants, 1379 refused, 8 allowed, 2.5 s
+service:document: 5 fixtures, 1225 mutants, 1195 refused, 30 allowed, 3.5 s
+service:english.question: 5 fixtures, 1166 mutants, 672 refused, 494 allowed, 7.2 s
+ve_metered::evaluate: 2 fixtures, 144 mutants, 82 refused, 62 allowed, 3.1 s
+ve_metered::countermodel.search: 2 fixtures, 110 mutants, 110 refused, 0 allowed, 2.5 s
+ve_conformance:route:graph.compose: 1 fixtures, 48 mutants, 48 refused, 0 allowed, 2.2 s
+ve_conformance:check-certificate:graph.compose: 1 fixtures, 40 mutants, 40 refused, 0 allowed, 1.1 s
+ve_conformance:route:bundle.check: 2 fixtures, 124 mutants, 118 refused, 6 allowed, 3.1 s
+ve_senses_route::senses.read: 2 fixtures, 535 mutants, 523 refused, 12 allowed, 18.5 s
+call:ve.backends.speech_source:decide_source: 2 fixtures, 2061 mutants, 1989 refused, 72 allowed, 84.1 s
+relay_mutation_gate: 39 routes, 109195 mutants, 133 failures
