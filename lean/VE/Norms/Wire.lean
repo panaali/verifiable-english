@@ -243,10 +243,9 @@ def budgetFormula : Nat → Nat → Json → Except String (VE.Formula × Nat)
 /-- One formula under a fresh decoder (Python `_Decoder().decode`). -/
 def decodeBudgeted (j : Json) : Except String VE.Formula := (·.1) <$> budgetFormula 64 0 j
 
-/-- One norm object `{"norm": {...}}` (3.2). As Python `NormDocument._decode`,
-one decoder (one node budget) reads the guard and then the carve-outs; with
-`shared := false` each formula has its own, as the soft route's `_fol`. -/
-def decodeNorm (j : Json) (shared : Bool := true) : Except String Node := do
+/-- The one decoder of a norm's JSON envelope and scalar fields. The FOL and
+family readers decode the returned guard and carve-outs in their own syntax. -/
+def normFields (j : Json) : Except String (String × String × Bool × Json × List Json × List String) := do
   exactFields j ["norm"]
   let raw ← j.getObjVal? "norm"
   exactFields raw ["name", "predicate", "sign", "guard", "unless", "over"]
@@ -263,7 +262,14 @@ def decodeNorm (j : Json) (shared : Bool := true) : Except String Node := do
   let over ← match raw.getObjValD "over" with
     | .arr _ => strings (raw.getObjValD "over")
     | _ => throw "InvalidInput: unless and over must be arrays"
-  let (guard, count) ← budgetFormula 64 0 (raw.getObjValD "guard")
+  pure (name, predicate, sign, raw.getObjValD "guard", unlessJ, over)
+
+/-- One norm object `{"norm": {...}}` (3.2). As Python `NormDocument._decode`,
+one decoder (one node budget) reads the guard and then the carve-outs; with
+`shared := false` each formula has its own, as the soft route's `_fol`. -/
+def decodeNorm (j : Json) (shared : Bool := true) : Except String Node := do
+  let (name, predicate, sign, guardJ, unlessJ, over) ← normFields j
+  let (guard, count) ← budgetFormula 64 0 guardJ
   let mut count := count
   let mut carve := []
   for x in unlessJ do
