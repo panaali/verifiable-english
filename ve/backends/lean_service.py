@@ -71,6 +71,7 @@ import re
 import secrets
 import selectors
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -695,6 +696,7 @@ class LeanService:
         """
         if mode not in MODES:
             raise VEError(f"unknown Lean service mode {mode!r}")
+        sys.audit("ve.service.mode", mode)
         timeout = self.timeout if timeout is None else timeout
         if timeout is None:
             # The wall-clock cap's setting is refused before any process starts when it is not seconds.

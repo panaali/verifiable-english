@@ -1,0 +1,148 @@
+{
+  "modes": {
+    "alternatives": [
+      "VE.Alternatives.Run",
+      "VE.Route.Run"
+    ],
+    "bundle": [
+      "VE.Service.Standalone",
+      "VE.Service.FamilyBundle",
+      "VE.Route.Run"
+    ],
+    "check": [
+      "VE.Service.Standalone",
+      "VE.Route.Run"
+    ],
+    "check-certificate": [
+      "VE.CertificateWire",
+      "VE.Route.Run"
+    ],
+    "diagnose": [
+      "VE.Service.Diagnose",
+      "VE.Route.Run"
+    ],
+    "discourse": [
+      "VE.Discourse.Run",
+      "VE.Route.Run"
+    ],
+    "document": [
+      "VE.Service.Document",
+      "VE.Route.Run"
+    ],
+    "english": [
+      "VE.Service.EnglishRun",
+      "VE.Route.Run"
+    ],
+    "english.check": [
+      "VE.EnglishGrammar.Run",
+      "VE.Route.Run"
+    ],
+    "english.grammar": [
+      "VE.EnglishGrammar.Run",
+      "VE.Route.Run"
+    ],
+    "english.question": [
+      "VE.Question.Run",
+      "VE.Route.Run"
+    ],
+    "english.read": [
+      "VE.EnglishGrammar.Run",
+      "VE.Route.Run"
+    ],
+    "environment": [
+      "VE.Service.Standalone",
+      "VE.Route.Run"
+    ],
+    "evaluate": [
+      "VE.Order.ProfileGate",
+      "VE.Route.Run"
+    ],
+    "family-norms": [
+      "VE.Service.FamilyNorms",
+      "VE.Route.Run"
+    ],
+    "graph": [
+      "VE.Service.Standalone",
+      "VE.Service.Family",
+      "VE.Route.Run"
+    ],
+    "identity": [
+      "VE.Service.Standalone",
+      "VE.Route.Run"
+    ],
+    "model": [
+      "VE.Service.Standalone",
+      "VE.Route.Run"
+    ],
+    "norm-defaults": [
+      "VE.NormDefaults.Run",
+      "VE.Route.Run"
+    ],
+    "norms": [
+      "VE.Norms.Run",
+      "VE.Route.Run"
+    ],
+    "order": [
+      "VE.Order.Surface",
+      "VE.Route.Run"
+    ],
+    "parse": [
+      "VE.Service.Standalone",
+      "VE.Route.Run"
+    ],
+    "quantity": [
+      "VE.Time.Wire",
+      "VE.Time.Document",
+      "VE.Route.Run"
+    ],
+    "readings": [
+      "VE.Service.Standalone",
+      "VE.Service.Family",
+      "VE.Route.Run"
+    ],
+    "readings-choices": [
+      "VE.Service.Standalone",
+      "VE.Service.ReadingsChoices",
+      "VE.Route.Run"
+    ],
+    "readings-route": [
+      "VE.Readings.Run",
+      "VE.Route.Run"
+    ],
+    "reports": [
+      "VE.Attribution.Run",
+      "VE.Route.Run"
+    ],
+    "rights": [
+      "VE.Rights.Run",
+      "VE.Route.Run"
+    ],
+    "risk": [
+      "VE.Risk.Run",
+      "VE.Route.Run"
+    ],
+    "risk-eval": [
+      "VE.Risk.Eval",
+      "VE.Route.Run"
+    ],
+    "route": [
+      "VE.Route.Run"
+    ],
+    "search-budget": [
+      "VE.SearchBudget.Run",
+      "VE.Route.Run"
+    ],
+    "soft-norms": [
+      "VE.SoftNorms.Run",
+      "VE.Route.Run"
+    ],
+    "speech-acts": [
+      "VE.SpeechActs.Run",
+      "VE.Route.Run"
+    ]
+  },
+  "sources": {
+    "lean/VE/Service/Protocol.lean": "72ce5decda48d65fca514ad6a337bb8133da6657b5a75876567e6173f316b54b",
+    "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
+  }
+}
