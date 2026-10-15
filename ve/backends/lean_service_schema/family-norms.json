@@ -1,16 +1,13 @@
 {
   "$id": "family-norms.json",
-  "$comment": "Mode family-norms: Service.FamilyNorms.runCase, the norms route's regenerating cases on the closure, core and order families (regeneration over the FOL view, certificates checked by the family checker); the rows are the norms route's.",
+  "$comment": "Mode family-norms: Service.FamilyNorms.runCase, with typed generated core and order formulas.",
   "row": {
     "anyOf": [
       {"$ref": "common.json#/$defs/case_error"},
       {"$ref": "common.json#/$defs/error"},
       {
         "x-select": [
-          {
-            "then": {"$ref": "norms.json#/$defs/norms-elaborate"},
-            "when": {"$ref": "norms.json#/$defs/kind/norms-elaborate"}
-          },
+          {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "norms.json#/$defs/kind/norms-elaborate"}},
           {
             "then": {"$ref": "norms.json#/$defs/norms-certificate"},
             "when": {"$ref": "norms.json#/$defs/kind/norms-certificate"}
@@ -27,5 +24,89 @@
         ]
       }
     ]
+  },
+  "$defs": {
+    "elaborate": {
+      "$comment": "Norms.Wire.regenerated: one layer (order entry, premise) per regulated predicate; Background in generator order; one conflict target per layer, then per profile pair. These lists are the service's (Lean invariants and Python parity in tests/test_lean_service_schema.py).",
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "generator": {"enum": ["flags", "definitions", "literals", "profile"]}
+            },
+            "required": ["generator", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "conflict_targets": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "#/$defs/familyFormula"},
+              "sorts": {"$ref": "common.json#/$defs/strings"},
+              "target": {"type": "string"}
+            },
+            "required": ["target", "sorts", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "fragment": {"type": "boolean"},
+        "id": {"type": "string", "x-equals": "/id"},
+        "order": {"$ref": "common.json#/$defs/strings"},
+        "premises": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"ast": {"$ref": "#/$defs/familyFormula"}, "label": {"pattern": "layer:norms:.*", "type": "string"}},
+            "required": ["label", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "order", "background", "premises", "conflict_targets", "fragment"],
+      "type": "object"
+    },
+    "familyEdge": {
+      "x-tagged": {"body": [{"type": "string"}, {"$ref": "#/$defs/familyFormula"}], "named": [{"type": "string"}]}
+    },
+    "familyFormula": {
+      "x-tagged": {
+        "and": [{"$ref": "#/$defs/familyFormula"}, {"$ref": "#/$defs/familyFormula"}],
+        "atom": [{"type": "string"}, {"items": {"$ref": "#/$defs/familyTerm"}, "type": "array"}],
+        "binary": [{"type": "string"}, {"$ref": "#/$defs/familyTerm"}, {"$ref": "#/$defs/familyTerm"}],
+        "bottom": [],
+        "eq": [{"$ref": "#/$defs/familyTerm"}, {"$ref": "#/$defs/familyTerm"}],
+        "exists": [{"type": "string"}, {"$ref": "#/$defs/familyFormula"}],
+        "forall": [{"type": "string"}, {"$ref": "#/$defs/familyFormula"}],
+        "implies": [{"$ref": "#/$defs/familyFormula"}, {"$ref": "#/$defs/familyFormula"}],
+        "le": [{"$ref": "#/$defs/familyTerm"}, {"$ref": "#/$defs/familyTerm"}],
+        "lt": [{"$ref": "#/$defs/familyTerm"}, {"$ref": "#/$defs/familyTerm"}],
+        "not": [{"$ref": "#/$defs/familyFormula"}],
+        "or": [{"$ref": "#/$defs/familyFormula"}, {"$ref": "#/$defs/familyFormula"}],
+        "reach": [
+          {"enum": ["star", "plus"]},
+          {"$ref": "#/$defs/familyEdge"},
+          {"$ref": "#/$defs/familyTerm"},
+          {"$ref": "#/$defs/familyTerm"}
+        ],
+        "top": [],
+        "unary": [{"type": "string"}, {"$ref": "#/$defs/familyTerm"}]
+      }
+    },
+    "familyTerm": {
+      "x-tagged": {
+        "add": [{"$ref": "#/$defs/familyTerm"}, {"$ref": "#/$defs/familyTerm"}],
+        "const": [{"type": "string"}],
+        "num": [{"$ref": "common.json#/$defs/integer_text"}],
+        "scale": [{"$ref": "common.json#/$defs/integer_text"}, {"$ref": "#/$defs/familyTerm"}],
+        "var": [{"$ref": "common.json#/$defs/nat"}]
+      }
+    }
   }
 }
