@@ -500,3 +500,39 @@ signatures as decided (not re-decided). F28 is a C note. No model calls or push 
 | B8 (gap selection) | **SIGNED** (item 3): "Not claimed" stated (B6 row above, spec 8) with the flip tests `tests/test_rd9_gap_relay.py::test_unlisted_fnd_gap_flip_keeps_leans_witness_value`, `::test_unlisted_ce4_gap_flips_keep_leans_witness_value` | — |
 | SC-9 external and comprehension checks | FOLLOW-UP (DRI), not blocking | — |
 
+
+### Probes
+
+- PROBE F25 (`! grep -n 'def soft_chain' ve/readings_route.py`): failed on 67d0cb317 (`def soft_chain` at line 37),
+  passes from 35204a970; test `test_rd9_chain_relay.py::test_probe_f25_python_holds_no_copy_of_the_chain_derivation`.
+- PROBE F26 (`grep -rn -i 'R14' docs/rd-9 docs/readings-defaults/rd9-lean | grep -q -i candidate`): failed on
+  67d0cb317 (no R14 line), passes from 1b650d615; test `test_rd9_r14_candidates.py::test_probe_f26_the_rd9_reports_record_r14`.
+- PROBE F27 (`regen_generated.py --check && ! check_rd9_sc1_statements.py | grep -q 'PENDING re-review'`): failed on
+  67d0cb317 (`trust-tables`: S +171, V +363 unsigned; two `PENDING re-review` lines), passes on 98f97159e with the
+  virtual environment's `python3` first on `PATH` (the system `python3` has no pytest, which the
+  `assurance-manifest` check runs); tests `test_rd9_statements.py::test_probe_f27_the_signed_declarations_are_no_longer_pending`
+  and `test_rd9_dri_signatures.py`.
+
+### Seeded bugs (each restored)
+
+| Seed | Language | Temporary change | Failing check |
+| --- | --- | --- | --- |
+| F25-M1 | Python | the relay ignores the chain: soft fields required iff `soft_premises` is present | `test_rd9_chain_relay.py::test_a_forged_chain_is_refused[soft-named norms]`, `[soft-soft fields dropped]` |
+| F25-M2 | Python | the soft chain derived again from the request's profiles (`soft_chain`'s body) | `test_rd9_chain_relay.py::test_probe_f25_python_holds_no_copy_of_the_chain_derivation` |
+| F25-M3 | Lean | `Run.filledJsonS` names the norms chain (`Chain.norms.text`); `ve_service` rebuilt and pinned for the run, then restored | `test_rd9_chain_relay.py::test_field_presence_and_route_are_leans_on_every_chain[soft]`, `::test_a_forged_chain_is_refused[soft-soft fields dropped]`, `test_readings_sd_relay.py::test_genuine_soft_rows_pass_the_relay` and two mutation tests (the relay refuses Lean's genuine soft rows) |
+| F26-M1 | report | the C5 row of this report says "CONFLICT on the constitution" without the label | `test_rd9_r14_candidates.py::test_the_reports_and_specs_label_every_constitution_conflict` |
+| F27-M1 | Python | `signed_edits` skips an edit that no longer applies instead of failing | `test_rd9_statements.py::test_a_signed_edit_that_no_longer_applies_fails` |
+| F27-M2 | Python | a line inserted above `_narrowings` (the cited range goes stale) | `test_rd9_dri_signatures.py::test_the_d1_exception_cites_narrowings_lines` |
+
+No Rust product code changed, so no Rust seed.
+
+### Evidence on 98f97159e
+
+- `lake build`: PASS (900 jobs). `python3 lean/audit.py`: PASS, 489 source files, 5,375 named theorems, standard
+  axioms only.
+- `tools/regen_generated.py --check`: PASS, 25 entries (trust-tables: K +0, S +0, V +0 against the new baseline).
+- Selected tests on the Mac runner (ve-mac-1, `mac-pytest.sh --select`, base `git merge-base HEAD main`): all 378
+  units selected; 377 passed. One test failed: `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`,
+  the F28 test, which fails the same way on the unchanged base a264e8893 (F24 section above) and which main fixes at
+  dccd9cf5; not edited here (F28).
+- The full gate was not run (task instruction). B1's signature waits on it.
