@@ -520,7 +520,7 @@ signatures as decided (not re-decided). F28 is a C note. No model calls or push 
 | F25-M1 | Python | the relay ignores the chain: soft fields required iff `soft_premises` is present | `test_rd9_chain_relay.py::test_a_forged_chain_is_refused[soft-named norms]`, `[soft-soft fields dropped]` |
 | F25-M2 | Python | the soft chain derived again from the request's profiles (`soft_chain`'s body) | `test_rd9_chain_relay.py::test_probe_f25_python_holds_no_copy_of_the_chain_derivation` |
 | F25-M3 | Lean | `Run.filledJsonS` names the norms chain (`Chain.norms.text`); `ve_service` rebuilt and pinned for the run, then restored | `test_rd9_chain_relay.py::test_field_presence_and_route_are_leans_on_every_chain[soft]`, `::test_a_forged_chain_is_refused[soft-soft fields dropped]`, `test_readings_sd_relay.py::test_genuine_soft_rows_pass_the_relay` and two mutation tests (the relay refuses Lean's genuine soft rows) |
-| F26-M1 | report | the C5 row of this report says "CONFLICT on the constitution" without the label | `test_rd9_r14_candidates.py::test_the_reports_and_specs_label_every_constitution_conflict` |
+| F26-M1 | report | the C5 row of this report states the conflict verdict on the constitution, without the label | `test_rd9_r14_candidates.py::test_the_reports_and_specs_label_every_constitution_conflict` |
 | F27-M1 | Python | `signed_edits` skips an edit that no longer applies instead of failing | `test_rd9_statements.py::test_a_signed_edit_that_no_longer_applies_fails` |
 | F27-M2 | Python | a line inserted above `_narrowings` (the cited range goes stale) | `test_rd9_dri_signatures.py::test_the_d1_exception_cites_narrowings_lines` |
 
