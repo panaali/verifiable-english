@@ -1,6 +1,6 @@
 # AR-2: a narrow freeze (decision D2)
 
-Branch `infra/arch-AR-2`, merge base `4ce477e1` (main, after the review-fix sync; `f98183bf` before it). Plan:
+Branch `infra/arch-AR-2`, merge base `b96f04a5` (main, after the review-fix sync; `f98183bf` before it). Plan:
 `docs/ARCHITECTURE-REVIEW-2026-10.md` 4.3 AR-2 on
 `design/arch-review`; DRI decision D2 (`manage-agents/arch-dri-decisions.md`). Deltas: [DELTA.md](DELTA.md).
 Measured numbers: `evidence/freeze.json` (from `measure.py`); tool checks: `evidence/checks.json`; selected tests:
@@ -153,9 +153,9 @@ lock and the trust table) are unchanged after that measurement.
   `test_readings_defaults_rd8_report.py`), which passed on that runner; they are pre-existing on main and not
   edited here. `lake build` also passed on the VM after the sync.
 - `tools/regen_generated.py --check` passed all 24 entries; `tools/gate_collection.py --check` collected
-  15,218 tests, with 12 added and none removed since the merge base `4ce477e1` (`evidence/generated-final.txt`).
-  `tools/trust_map.py --since 4ce477e1` reports K, S, D, G, tied and trusted all +0, and
-  `tools/trust_changes.py --since 4ce477e1` lists no changed Lean file and nothing widened
+  15,281 tests, with 12 added and none removed since the merge base `b96f04a5` (`evidence/generated-final.txt`).
+  `tools/trust_map.py --since b96f04a5` reports K, S, D, G, tied and trusted all +0, and
+  `tools/trust_changes.py --since b96f04a5` lists no changed Lean file and nothing widened
   (`evidence/trust-final.txt`).
 
 ## Seeded bugs (`evidence/mutants.json`; all killed, all removed)
@@ -188,7 +188,7 @@ allow list. A repair of those failures inside AR-2 (`dfb53762e`) was reverted on
 
 ## Review fixes (`arch-AR-2-review.final.md`)
 
-- **F1** (pre-review gate failed `tests/test_question_reading.py`): the branch is synced with main `4ce477e1`, which
+- **F1** (pre-review gate failed `tests/test_question_reading.py`): the branch is synced with main `b96f04a5`, which
   holds runner-portability's fix (`dccd9cf5a`). `test_the_whole_question_is_bounded_by_the_modes_deadline` passes
   at the synced head. The full gate on the final HEAD is the merge train's (the user's instruction for this round
   forbids a local gate run), so PROBE F1 (a passed `gate-result.json` for HEAD) is left for that run.
@@ -235,7 +235,7 @@ allow list. A repair of those failures inside AR-2 (`dfb53762e`) was reverted on
 5. **N.A.** No relayed field changes.
 6. **DEFERRED to the merge train.** The full release gate on the final HEAD is the merge train's; this round's instructions forbid a local gate run. The selected tests, `lake build`, `lean/audit.py` and `regen_generated.py --check` ran on the final code (Tests).
 7. **PASS.** `DELTA.md` records the D2/R11 tooling deltas; `test_frozen_sources.py` and `test_precommit_hook.py` cover them.
-8. **PASS.** No user-visible checker delta; `tools/trust_map.py --since 4ce477e1` is +0 everywhere.
+8. **PASS.** No user-visible checker delta; `tools/trust_map.py --since b96f04a5` is +0 everywhere.
 9. **PASS.** The selected run on the final code is recorded under Tests.
 10. **N.A.** No response shape changes.
 11. **N.A.** No budget, deadline or public operation changed.

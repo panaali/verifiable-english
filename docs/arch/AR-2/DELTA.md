@@ -3,7 +3,7 @@
 AR-2 changes how Lean sources are pinned, nothing they compute. No Lean source (`.lean`) and no `ve/**/*.py` file
 changes, so no verdict, diagnostic, wire field, document-check CPU or trust count changes: `tools/trust_map.py
 --since f98183bf` reports K +0, S +0, D +0, G +0, tied +0, trusted +0 (`evidence/checks.json`), and so does
-`--since 4ce477e1`, the merge base after the review fixes (`evidence/trust-final.txt`). The readings relay repair
+`--since b96f04a5`, the merge base after the review fixes (`evidence/trust-final.txt`). The readings relay repair
 of `dfb53762e` is reverted (review F2); main's lf-14d closes those mutations. The rows below are
 changes to repository tooling. None is a user-visible delta of the checker. The removed checks are the ones
 decision D2 removes; the DRI adopted D2 on 2026-10-10 (`arch-dri-decisions.md`, standing ruling R11).
