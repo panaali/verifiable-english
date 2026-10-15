@@ -219,7 +219,10 @@ test names the pilot commit; 12 literals), exits 0 on 5019007c.
 
 The recorded wire-gate input is committed after 5019007c, with this report. PROBE B3: as in the table.
 
-The plan's C1 to C8 against what Lean answers (all *derived* expectations hold):
+The plan's C1 to C8 against what Lean answers (all *derived* expectations hold). R14: every row is a result about the
+pilot's translation (`CE4`), not about the constitution's text. C5 reports no conflict; any conflict this route reports
+about the constitution is a CANDIDATE (R14 source check pending: SC-9 external check, FOLLOW-UP) until an independent source check has run, and is never presented as a conflict in
+the source (`tests/test_rd9_r14_candidates.py`).
 
 | # | Plan | Observed |
 | --- | --- | --- |
