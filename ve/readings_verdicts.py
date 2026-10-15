@@ -1622,10 +1622,11 @@ class _FilledChoiceDocument:
         return {"kind": "norm-defaults-conflict", "packages": self._packages()}
 
     def _packages(self):
-        """A certificate of each target's closed negation from `Fill_T` over `E‴_base` (norm-defaults 3.1: on the norms
-        chain the base Background is `Fill_T`, Lean's `baseBackgroundU`), bound as Lean binds a package
-        (`decodePackageX`): to the choice's environment id and document hash (the row's), and its certificate to
-        `E‴_base` and the ASTs of `Fill_T`."""
+        """A certificate of each target's closed negation from `Background_base ++ Fill_T` over `E‴_base` (norm-defaults
+        3.1: on the norms chain the base Background is the literals' distinctness and `Fill_T`, Lean's
+        `baseBackgroundU` and `LayeredU.background`), bound as Lean binds a package (`decodePackageX`,
+        `decodePackageU`): to the choice's environment id and document hash (the row's), and its certificate to
+        `E‴_base` and the ASTs of the row's literal premises and `Fill_T`."""
         from .ast import Not, formula_to_data
         from .entailment import prove_entailment
         from .norms import _bind
@@ -1635,7 +1636,8 @@ class _FilledChoiceDocument:
         def meaning(ast):
             return digest(f"ve-meaning-{self.base.identity_version}\n",
                           {"environment_id": self.base.environment_id, "ast": ast})
-        fill = self._base_fill()
+        literals = self._base_literals()
+        fill = [formula for _, formula in literals] + self._base_fill()
         packages = {}
         for target, sorts, formula in self.targets:
             conclusion = _bind(Not(formula), sorts)
@@ -1643,7 +1645,8 @@ class _FilledChoiceDocument:
             if proof.status != "Found":
                 continue
             certificate = {**proof.certificate, "environment_id": self.base.environment_id,
-                           "premise_meaning_ids": [meaning(item["ast"]) for item in row["fill"]],
+                           "premise_meaning_ids": [meaning(ast) for ast, _ in literals] +
+                                                  [meaning(item["ast"]) for item in row["fill"]],
                            "conclusion_meaning_id": meaning(formula_to_data(self.base, conclusion, _generated=True))}
             packages[target] = {"environment_id": row["environment_id"], "document_hash": row["document_hash"],
                                 "target": target, "certificate": certificate}
@@ -1658,6 +1661,13 @@ class _FilledChoiceDocument:
         return {"kind": "norm-defaults-conflict", "witness": {"target": witness["target"], "model": model,
                                                               "filling": filling, "tuple": witness["tuple"]},
                 "shown": witness["model"]}
+
+    def _base_literals(self):
+        """`Background_base` of the filled document, as Lean's elaboration row lists it: the literals' distinctness
+        (their ASTs and formulas over `E‴_base`)."""
+        from .ast import formula_from_data
+        return [(item["ast"], formula_from_data(self.base, item["ast"], _generated=True))
+                for item in self.elaboration.get("background", []) if item.get("generator") == "literals"]
 
     def _base_fill(self):
         """`Fill_T` over `E‴_base`: it reads base predicates and the filled tables only."""

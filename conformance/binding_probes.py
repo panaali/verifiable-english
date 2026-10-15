@@ -192,12 +192,25 @@ def _english_case(mode):
     return base
 
 
+def _ask():
+    """G1's recorded request (tests/fixtures/ask/G1.json, tools/ask_fixtures.py)."""
+    from ve.ask import environment
+    from ve.english import EnglishVocabulary
+    from ve.english_grammar import export
+    entry = json.loads((ROOT / "tests/fixtures/ask/G1.json").read_text())
+    raw = (ROOT / entry["path"]).read_bytes()
+    lexicon = export(EnglishVocabulary(environment(raw), _defer_overlay_refusals=True))
+    return {"id": "ask", "document": raw.decode("utf-8"), "question": entry["question"], "lexicon": lexicon,
+            "case": entry["case"], "names": entry["names"]}
+
+
 C, S, M = "ve_conformance", "ve_service", "ve_metered"
 BUILDERS = {
     ("english.admission", S, "english.read", None): lambda: _english_case("english.read"),
     ("english.admission", S, "english.grammar", None): lambda: _english_case("english.grammar"),
     ("english.admission", S, "english.check", None): lambda: _english_case("english.check"),
     ("question.read", S, "english.question", None): lambda: _english_case("english.question"),
+    ("question.answer", S, "ask", None): _ask,
     ("wire.diagnose", S, "diagnose", "soft-elaborate"):
         lambda: {"id": "wire-soft", "kind": "soft-elaborate", "unit": "soft-norms@0",
                  "environment": _soft_wire_root()["environment"], "norms": []},
