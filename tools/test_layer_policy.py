@@ -114,6 +114,18 @@ class LayerSelectionTests(unittest.TestCase):
         self.assertIn([*select_tests.CARGO, "build", "--locked", "--manifest-path",
                        "rust/Cargo.toml", "-p", "ve"], plan["commands"])
 
+    def test_research_tree_is_layer_five_and_selects_its_readers(self):
+        for path in ("research/layering/notes.md", "research/layering/probe.py",
+                     "research/layering/results.json"):
+            with self.subTest(path=path):
+                self.assertEqual(layer_policy.source_layer(path), 5)
+                plan = select([path])
+                self.assertFalse(plan["full"], plan["full_reasons"])
+                self.assertLess(plan["selected_count"], plan["full_count"])
+                # Beyond the smoke tests, only the tests that name the path or a directory above it.
+                for test in set(plan["selected"]) - set(plan["smoke"]):
+                    self.assertEqual(plan["reasons"][test], [f"names {path} (static)"], test)
+
     def test_unknown_input_falls_back_to_full_native_and_python_suite(self):
         plan = select(["new-unmapped-format.xyz"])
         self.assertEqual(plan["selected_count"], plan["full_count"])

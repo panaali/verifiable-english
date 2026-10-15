@@ -59,7 +59,8 @@ import tempfile
 import time
 
 from change_units import Summary, delta
-from layer_policy import ROOT, lean_default_targets, lean_executables, python_exports
+from layer_policy import APP_AREAS, ROOT, lean_default_targets, lean_executables, python_exports
+import lean_mode_deps
 import nested_pytest
 import quarantine
 import source_graph
@@ -90,8 +91,8 @@ PYTHON_LAYER_INPUTS = {".importlinter", "tools/layer-exceptions.json", "tools/ch
 LEAN_LAYER_INPUTS = {"tools/lean-layer-exceptions.json", "tools/check_lean_imports.py",
                      "tools/lean_header_imports.lean", "tools/layer_policy.py"}
 RUST_LAYER_INPUTS = {"tools/check_rust_deps.py", "tools/layer_policy.py"}
-KNOWN_AREAS = {"ve", "ve_experiments", "experiments", "tests", "tools", "conformance", "lean", "rust",
-               "usecases", "docs", "paper", "examples", "data", "bench", "design"}
+KNOWN_AREAS = {"ve", "tests", "tools", "conformance", "lean", "rust", "docs", "examples", "data", "bench",
+               "design", *APP_AREAS}
 # Cached drift results depend on this file's rules as well as the graph's.
 SELECTOR_VERSION = hashlib.sha256(source_graph.CODE_VERSION.encode()
                                   + Path(__file__).read_bytes()).hexdigest()[:16]
@@ -180,6 +181,7 @@ class Coverage:
         self.programs = data["programs"]
         self.operations = data["operations"]
         self.presence = data["presence"]
+        self.modes = data["modes"]
         self.status = data["status"]
         self.recorded = {test for test, status in data["status"].items()
                          if status["exit"] in (0, 5) and not status["opaque"]}
@@ -221,6 +223,15 @@ class Coverage:
     def runners(self, predicate) -> set[str]:
         return self._names(i for name, indices in self.programs.items() if predicate(name)
                            for i in indices)
+
+    def service_users(self, modes: set[str] | None = None) -> set[str]:
+        """Recorded service users of these modes; users with no known mode stay in every selection."""
+        users = self.runners(lambda name: name == "lean/.lake/build/bin/ve_service")
+        if modes is None:
+            return users
+        known = self._names(i for indices in self.modes.values() for i in indices)
+        matched = self._names(i for mode in modes for i in self.modes.get(mode, ()))
+        return matched | (users - known)
 
 
 class Selection:
@@ -351,7 +362,12 @@ def file_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[st
         if d is None or not d.empty or presence_changed:
             python_impact(coverage, graph, all_units, add, path, old, new, d, called or {})
     elif kind == LEAN:
-        add(coverage.runners(runs_lean(lean_programs(graph, path))), f"runs Lean via {path}")
+        executables = lean_programs(graph, path)
+        runs = runs_lean(executables)
+        add(coverage.runners(lambda name: name != "lean/.lake/build/bin/ve_service"
+                             and runs(name)), f"runs Lean via {path}")
+        if "ve_service" in executables:
+            add(service_impact(coverage, graph, path), f"runs service mode via {path}")
     elif kind == RUST:
         add(coverage.runners(runs_rust), f"runs Rust via {path}")
 
@@ -435,6 +451,34 @@ def lean_programs(graph: source_graph.Graph, path: str) -> set[str]:
 def runs_lean(executables: set[str]):
     programs = {f"lean/.lake/build/bin/{name}" for name in executables} | {"lake", "lean"}
     return lambda name: name in programs
+
+
+def service_impact(coverage: Coverage, graph: source_graph.Graph, path: str) -> set[str]:
+    """Select every service user until B2's activation gate has real evidence.
+
+    The saved B2 mode seeds change only the dependency extractor, and its ten
+    shadow rows replay archived gates. They do not prove that selected tests
+    catch Lean behavior mutations or that a live full run agrees with selection.
+    """
+    del graph, path
+    return coverage.service_users()
+
+
+def proposed_service_impact(coverage: Coverage, graph: source_graph.Graph, path: str) -> set[str]:
+    """The unactivated per-mode plan, kept for mutation and dependency tests."""
+    if path in ("lean/VE/Service/Protocol.lean", "lean/Serve.lean") or not path.endswith(".lean"):
+        return coverage.service_users()
+    roots = lean_mode_deps.load()
+    if roots is None or graph.lean_unreadable:
+        return coverage.service_users()
+    module = ".".join(Path(path).with_suffix("").parts[1:])
+    if module not in graph.lean_modules:
+        return coverage.service_users()
+    modes = {mode for mode, entry in roots.items()
+             if any(module in graph.lean_closure(root) for root in entry)}
+    # A mode recorded by a newer service but absent from this table is unknown.
+    unknown = set(coverage.modes) - set(roots)
+    return coverage.service_users(modes | unknown)
 
 
 def runs_rust(name: str) -> bool:
@@ -635,7 +679,12 @@ def resolve_map(base: str, coverage) -> Coverage | None:
             return Coverage(data, tree)
         except (OSError, ValueError, EOFError):
             pass
-    path = Path(coverage) if coverage != "auto" else test_map.find_map(base)
+    other_versions: list[Path] = []
+    path = Path(coverage) if coverage != "auto" else test_map.find_map(base, other_versions=other_versions)
+    if path is None and other_versions:
+        print(f"select_tests: no map of format version {test_map.VERSION} for {base[:10]}; skipped "
+              f"{len(other_versions)} ancestor map(s) of other versions, so selection has no map "
+              "(record a new map: tools/test_map.py record)", file=sys.stderr)
     if path is None or not path.exists():
         return None
     return Coverage(test_map.load(path), path)
@@ -1129,7 +1178,8 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None 
         stale = uncertain_units(base, source_graph.load(ROOT), every, status, versions) - set(selected)
         edges = test_map.unit_edges({"tests": base.tests, "functions": base.functions, "reads": base.reads,
                                      "dirs": base.dirs, "programs": base.programs,
-                                     "operations": base.operations, "presence": base.presence})
+                                     "operations": base.operations, "presence": base.presence,
+                                     "modes": base.modes})
         for unit in sorted(every - set(selected)):
             if unit in edges and unit in base.status:
                 results[unit] = {**edges[unit], **base.status[unit]}
