@@ -27,7 +27,7 @@ Two existing tests asserted the old behaviour that X2 reverses: a rejected templ
 
 - `lake build`: passed, 887 jobs, on the final Lean sources. `python3 lean/audit.py`: PASS, 483 files, 5784 theorem declarations. `Read.lean`'s `overlayCheck_constants` stays a `rfl` (`PolicyCtx.of` drops the overlay's constant entries, which no table reads).
 - `tools/regen_generated.py --check`: every entry passes except `trust-tables` (the unsigned allowance above). The grammar lock's `actions_version` is 30 (main 28).
-- Selected test plan (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): **exit 0, 375 units, 0 failed**, on the Mac runner at `03367e896`. The plan for `8f000e4e5`'s inventory refresh (`--base HEAD~1`, 43 units) is recorded below.
+- Selected test plan (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): **exit 0, 375 units, 0 failed**, on the Mac runner at `03367e896`. The plan for `8f000e4e5`'s guard wrap and inventory refresh (`--base HEAD~1`, 43 units) ran on the loaded VM (load ~80): 42 passed and `tests/test_english_evidence.py` hit the per-file timeout; rerun alone on the Mac runner at `5ae5c9cc5`: 67 passed.
 - Focused: `tests/test_english.py`, `tests/test_views.py`, X3/X4 tests, E2 responses and statements, S3 compare and copy, assurance manifest and Asimov: 479 passed.
 - S3 comparison regenerated: 170 cases, 168 agreements, 2 dispositioned differences; exact-text 158/163.
 - `git diff --check` and `tools/repo_map.py --check` passed.
