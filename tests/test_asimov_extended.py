@@ -91,7 +91,7 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_v2_artifact_pins():
+def test_v2_files_are_unchanged():
     assert {name: sha256(V2 / name) for name in V2_PINS} == V2_PINS
 
 
