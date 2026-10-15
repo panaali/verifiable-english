@@ -7,6 +7,8 @@ import ResponseShape.Schemas.CheckCertificate
 import ResponseShape.Schemas.Diagnose
 import ResponseShape.Schemas.Document
 import ResponseShape.Schemas.Question
+import ResponseShape.Schemas.Ask
+import ResponseShape.Schemas.Words
 import ResponseShape.Schemas.Discourse
 import ResponseShape.Schemas.English
 import ResponseShape.Schemas.EnglishLean
@@ -53,6 +55,8 @@ def files : List File := [
   EnglishLean.grammarFile,
   EnglishLean.checkFile,
   Question.file,
+  Ask.file,
+  Words.file,
   Environment.file,
   Evaluate.file,
   FamilyNorms.file,
