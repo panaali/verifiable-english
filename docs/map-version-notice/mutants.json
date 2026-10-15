@@ -1,0 +1,67 @@
+[
+ {
+  "id": "P1",
+  "language": "Python",
+  "file": "tools/test_map.py",
+  "behaviour": "find_map names a nearer ancestor map of another format version on stderr",
+  "mutation": {
+   "from": "print(f\"test_map: skipped map {path} for",
+   "to": "(lambda *a, **k: None)(f\"test_map: skipped map {path} for"
+  },
+  "test": "tests/test_select_tests.py::test_find_map_names_each_nearer_map_it_skips",
+  "killed": true,
+  "pytest_summary": "1 failed, 1 passed, 166 deselected in 33.62s"
+ },
+ {
+  "id": "P2",
+  "language": "Python",
+  "file": "tools/test_map.py",
+  "behaviour": "find_map names an unreadable nearer ancestor map on stderr",
+  "mutation": {
+   "from": "print(f\"test_map: skipped map {path}: unreadable",
+   "to": "(lambda *a, **k: None)(f\"test_map: skipped map {path}: unreadable"
+  },
+  "test": "tests/test_select_tests.py::test_find_map_names_each_nearer_map_it_skips",
+  "killed": true,
+  "pytest_summary": "1 failed, 1 passed, 166 deselected in 40.91s"
+ },
+ {
+  "id": "P3",
+  "language": "Python",
+  "file": "tools/select_tests.py",
+  "behaviour": "select_tests prints the summary line when only maps of other versions exist",
+  "mutation": {
+   "from": "print(f\"select_tests: no map",
+   "to": "(lambda *a, **k: None)(f\"select_tests: no map"
+  },
+  "test": "tests/test_select_tests.py::test_select_tests_says_why_old_maps_left_it_without_one",
+  "killed": true,
+  "pytest_summary": "1 failed, 1 passed, 166 deselected in 47.85s"
+ },
+ {
+  "id": "P4",
+  "language": "Python",
+  "file": "tools/select_tests.py",
+  "behaviour": "the summary goes to stderr; stdout stays byte-identical",
+  "mutation": {
+   "from": "(record a new map: tools/test_map.py record)\", file=sys.stderr)",
+   "to": "(record a new map: tools/test_map.py record)\", file=sys.stdout)"
+  },
+  "test": "tests/test_select_tests.py::test_select_tests_says_why_old_maps_left_it_without_one",
+  "killed": true,
+  "pytest_summary": "1 failed, 1 passed, 166 deselected in 29.79s"
+ },
+ {
+  "id": "P5",
+  "language": "Python",
+  "file": "tools/test_map.py",
+  "behaviour": "find_map hands each skipped map of another version to its caller (other_versions)",
+  "mutation": {
+   "from": "other_versions.append(path)",
+   "to": "pass"
+  },
+  "test": "tests/test_select_tests.py::test_find_map_names_each_nearer_map_it_skips",
+  "killed": true,
+  "pytest_summary": "2 failed, 166 deselected in 45.87s"
+ }
+]
