@@ -75,7 +75,10 @@ the whole canonical text internally without imposing the public printer's
 formula, term and edge constructor; this is R8's schema condition. F3 binds
 diagnostic offsets and line/column to the request source through the shared
 `x-source-span` shape rule; this is R8's request-binding condition. Neither
-schema correction changes a genuine service answer. The existing W1, U1,
+schema correction changes a genuine service answer. Like b14d's
+`x-reading-plan`, the new `x-source-span` keyword awaits D1 classification in
+ADR 0001; `tests/test_architecture_docs.py` tracks it in the pending D1 set,
+and `docs/INTEGRATION-GAPS.md` names it. The existing W1, U1,
 U2, C1 and T1 deltas retain their standing signatures R1, R7, R7, R4 and R6,
 respectively, with the evidence and tests listed above.
 
