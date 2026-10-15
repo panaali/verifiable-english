@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,8 +18,16 @@ NARROWINGS = "ve/rights_route.py:23-89"
 
 
 def _entry():
-    history = json.loads((ROOT / "docs/trust-baseline.json").read_text())["history"]
-    [entry] = [e for e in history if e.get("signed", "").startswith(SIGNED)]
+    """The signed entry. Since AR-4 the budget file keeps it as allowances, one per class that grew, the entry's text
+    as their reason and the commit that recorded it; the entry itself (its `rebaselined_from`) is read there."""
+    allowances = [a for a in json.loads((ROOT / "docs/trust-baseline.json").read_text())["allowances"]
+                  if a["signature"].startswith(SIGNED)]
+    [reason] = {a["reason"] for a in allowances}
+    [commit] = {a["commit"] for a in allowances}
+    recorded = json.loads(subprocess.check_output(["git", "show", f"{commit}:docs/trust-baseline.json"], cwd=ROOT))
+    [entry] = [e for e in recorded["history"] if e.get("signed", "").startswith(SIGNED)]
+    assert entry["change"] == reason
+    assert {a["class"]: a["lines"] for a in allowances} == {c: n for c, n in entry["allow"].items() if n}
     return entry
 
 
