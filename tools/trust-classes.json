@@ -615,8 +615,11 @@
     },
     "ResponseShape/Schemas/Parse.lean": {
       "G[V]": [
+        "ResponseShape.Schemas.Parse.edge",
         "ResponseShape.Schemas.Parse.file",
-        "ResponseShape.Schemas.Parse.row"
+        "ResponseShape.Schemas.Parse.formula",
+        "ResponseShape.Schemas.Parse.row",
+        "ResponseShape.Schemas.Parse.term"
       ],
       "G[R]": [
         "ResponseShape.Schemas.Parse.parse_error"
@@ -1877,8 +1880,12 @@
         "VE.Closure.Surface.parse",
         "VE.Closure.Surface.parseAtom",
         "VE.Closure.Surface.parseRaw",
+        "VE.Closure.Surface.parseRawWith",
         "VE.Closure.Surface.parseReach",
         "VE.Closure.Surface.parseStatements",
+        "VE.Closure.Surface.parseStatementsWith",
+        "VE.Closure.Surface.parseWith",
+        "VE.Closure.Surface.premiseOf",
         "VE.Closure.Surface.print",
         "VE.Closure.Surface.printAux",
         "VE.Closure.Surface.statementChars"
@@ -2143,9 +2150,13 @@
         "VE.Core.Surface.parseAtom",
         "VE.Core.Surface.parseNary",
         "VE.Core.Surface.parseRaw",
+        "VE.Core.Surface.parseRawWith",
         "VE.Core.Surface.parseReach",
         "VE.Core.Surface.parseStatements",
+        "VE.Core.Surface.parseStatementsWith",
         "VE.Core.Surface.parseTermTail",
+        "VE.Core.Surface.parseWith",
+        "VE.Core.Surface.premiseOf",
         "VE.Core.Surface.print",
         "VE.Core.Surface.printAux",
         "VE.Core.Surface.statementChars"
@@ -9093,12 +9104,14 @@
     "VE/Service/ParseDiagnostic.lean": {
       "G[V]": [
         "VE.Service.ParseDiagnostic.Cursor",
+        "VE.Service.ParseDiagnostic.Definitions",
         "VE.Service.ParseDiagnostic.Error",
         "VE.Service.ParseDiagnostic.Scan",
         "VE.Service.ParseDiagnostic.advance",
         "VE.Service.ParseDiagnostic.binder",
         "VE.Service.ParseDiagnostic.complete",
         "VE.Service.ParseDiagnostic.current",
+        "VE.Service.ParseDiagnostic.define",
         "VE.Service.ParseDiagnostic.fails",
         "VE.Service.ParseDiagnostic.formula",
         "VE.Service.ParseDiagnostic.hasPrefix",
@@ -9245,6 +9258,8 @@
         "VE.Service.Standalone.Legacy.checker",
         "VE.Service.Standalone.Legacy.profiles",
         "VE.Service.Standalone.Legacy.version",
+        "VE.Service.Standalone.SurfaceReader",
+        "VE.Service.Standalone.SurfaceReader.of",
         "VE.Service.Standalone.checkClaimed",
         "VE.Service.Standalone.checkRegulated",
         "VE.Service.Standalone.decodeLegacy",
@@ -9265,6 +9280,8 @@
         "VE.Service.Standalone.riskReduced",
         "VE.Service.Standalone.rowLE",
         "VE.Service.Standalone.stripPredicates",
+        "VE.Service.Standalone.sugarOf",
+        "VE.Service.Standalone.surfaceReader",
         "VE.Service.Standalone.tableFields"
       ],
       "D[I]": [
@@ -10085,10 +10102,12 @@
     "VE/Surface.lean": {
       "D[V]": [
         "VE.Surface.NamesValid",
+        "VE.Surface.Sugar",
         "VE.Surface.binderAllowed",
         "VE.Surface.boundary",
         "VE.Surface.consume",
         "VE.Surface.declarationName",
+        "VE.Surface.definitionPremise",
         "VE.Surface.generatedName",
         "VE.Surface.identChar",
         "VE.Surface.identifier",
@@ -10096,12 +10115,21 @@
         "VE.Surface.parse",
         "VE.Surface.parseAtom",
         "VE.Surface.parseRaw",
+        "VE.Surface.parseRawWith",
         "VE.Surface.parseStatements",
+        "VE.Surface.parseStatementsWith",
         "VE.Surface.parseTerm",
+        "VE.Surface.parseWith",
+        "VE.Surface.premiseOf",
         "VE.Surface.print",
         "VE.Surface.printAux",
         "VE.Surface.printTerm",
+        "VE.Surface.readArguments",
+        "VE.Surface.readDefine",
+        "VE.Surface.readEvery",
         "VE.Surface.readIdent",
+        "VE.Surface.readNo",
+        "VE.Surface.readStatement",
         "VE.Surface.reserved",
         "VE.Surface.statementChars"
       ]

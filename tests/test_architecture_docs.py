@@ -26,10 +26,10 @@ DIALECT = ROOT / "ve/backends/lean_service_schema/README.md"
 SAVED = json.loads((ROOT / numbers.NUMBERS).read_text())
 # Dialect keywords that shape or select a value and bind nothing to the request.
 STRUCTURAL = {"x-tagged", "x-fuel", "x-case", "x-select", "x-row", "x-same-length", "x-equal-fields"}
-# Batch 13b introduced these bounded response checks before D1 classified their
-# dialect keywords. Keep the signed Decision section pinned and track the exact
+# Batches 13b, 14d and 14a introduced these bounded response checks before D1 classified
+# their dialect keywords. Keep the signed Decision section pinned and track the exact
 # outstanding set until its owner reviews the extension.
-PENDING_D1 = {"x-claim-nodes", "x-max-steps", "x-background-bound", "x-reading-plan"}
+PENDING_D1 = {"x-claim-nodes", "x-max-steps", "x-background-bound", "x-reading-plan", "x-source-span"}
 
 
 def flat(text):
@@ -304,7 +304,7 @@ SHAPES = {
     **dict.fromkeys(["node", "lean", "copied", "encodedEnvironment"], "inner"),
     "tagged": "x-tagged", "fuel": "x-fuel", "echo": "x-echo", "equals": "x-equals", "length": "x-length",
     "claimNodes": "x-claim-nodes", "maxSteps": "x-max-steps", "backgroundBound": "x-background-bound",
-    "readingPlan": "x-reading-plan",
+    "readingPlan": "x-reading-plan", "sourceSpan": "x-source-span",
     "count": "x-count", "references": "x-references", "index": "x-index", "digest": "x-digest", "zip": "x-zip",
     "sameLength": "x-same-length", "equalFields": "x-equal-fields",
     "zipOrEmpty": "x-zip-or-empty", "onCase": "x-case", "select": "x-select", "countWhere": "x-count-where",

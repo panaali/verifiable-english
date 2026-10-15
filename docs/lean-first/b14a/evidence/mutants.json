@@ -1,0 +1,54 @@
+[
+ {
+  "id": "M1",
+  "language": "Lean",
+  "file": "lean/VE/Service/Standalone.lean",
+  "bug": "sugarOf: a `define` body is accepted whatever it is (`(· == expected)` replaced by a constant true)",
+  "behaviour": "a `define` statement is accepted only with its identity-bound body",
+  "test": "tests/test_lean_first_b14a.py::test_a_definition_body_is_compared_with_the_identity_bound_one",
+  "run": "tests/test_lean_first_b14a.py (whole file)",
+  "caught": true,
+  "failed_tests": 8,
+  "failure_excerpt": "E       ve.errors.SyntaxError: definition body differs from identity-bound declaration\nE           ve.errors.CheckerUnavailable: CheckerUnavailable: Lean accepts a source that Python cannot construct (SyntaxError: definition body differs from identity-bound declaration)\nE       ve.errors.SyntaxError: definition body differs from identity-bound declaration\nE           ve.errors.CheckerUnavailable: CheckerUnavailable: Lean accepts a source that Python cannot construct (SyntaxError: definition body differs from identity-bound declaration)\nE       ve.errors.SyntaxError: definition body differs from identity-bound declaration\nE           ve.errors.CheckerUnavailable: CheckerUnavailable: Lean accepts a source that Python cannot construct (SyntaxError: definition body differs from identity-bound declaration)\nE       ve.errors.SyntaxError: definition body differs from identity-bound declaration\nE           ve.errors.CheckerUnavailable: CheckerUnavailable: Lean accepts a source that Python cannot construct (SyntaxError: definition body differs from identity-bound declaration)\nE       ve.errors.SyntaxError: definition body differs from identity-bound declaration\nE           ve.errors.CheckerUnavailable: CheckerUnavailable: Lean accepts a source that Python cannot construct (SyntaxError: definition body differs from identity-bound declaration)\nE       ve.errors.SyntaxError: definition body differs from identity-bound declaration\nE           ve.errors.CheckerUnavailable: CheckerUnavailable: Lean accepts a source that Python cannot construct (SyntaxError: definition body differs from identity-bound declaration)\nE       Failed: DID NOT RAISE VEError\nE       ve.errors.SyntaxError: definition body differs from identity-bound declaration\nE           ve.errors.CheckerUnavailable: Checker",
+  "restored": true
+ },
+ {
+  "id": "M2",
+  "language": "Lean",
+  "file": "lean/VE/Service/ParseDiagnostic.lean",
+  "bug": "scan: the `no S is P` production no longer checks that P is a unary predicate on S",
+  "behaviour": "a rejection inside a sugar production gets the retained reader's code, message and span from Lean",
+  "test": "tests/test_lean_first_b14a.py::test_sugar_is_read_by_lean_as_python_read_it",
+  "run": "-k sugar_is_read_by_lean",
+  "caught": true,
+  "failed_tests": 5,
+  "failure_excerpt": "E           AssertionError: (('definitions@0',), 'no item is nothing.\nE             ')\nE           assert ('rejected', ...'column': 1}}) == ('rejected', ...column': 12}})\nE             \nE             At index 1 diff: {'code': 'UnknownSymbol', 'message': \"Unknown predicate 'nothing'\", 'span': {'start': 0, 'end': 20, 'line': 1, 'column': 1}} != {'code': 'UnknownSymbol', 'message': \"unknown unary predicate 'nothing'\", 'span': {'start': 11, 'end': 18, 'line': 1, 'column': 12}}\nE             Use -v to get more diff\nE           AssertionError: (('closure@0', 'definitions@0'), 'no item is nothing.\nE             ')\nE           assert ('rejected', ...'column': 1}}) == ('rejected', ...column': 12}})\nE             \nE             At index 1 diff: {'code': 'UnknownSymbol', 'message': \"Unknown predicate 'nothing'\", 'span': {'start': 0, 'end': 20, 'line': 1, 'column': 1}} != {'code': 'UnknownSymbol', 'message': \"unknown unary predicate 'nothing'\", 'span': {'start': 11, 'end': 18, 'line': 1, 'column': 12}}\nE             Use -v to get more diff\nE           AssertionError: (('closure@0', 'nary@0', 'definitions@0'), 'no item is nothing.\nE             ')\nE           assert ('rejected', ...'column': 1}}) == ('rejected', ...column': 12}})\nE             \nE             At index 1 diff: {'code': 'UnknownSymbol', 'message': \"Unknown predicate 'nothing'\", 'span': {'start': 0, 'end': 20, 'line': 1, 'column': 1}} != {'code': 'UnknownSymbol', 'message': \"unknown unary predicate 'nothing'\", 'span': {'start': 11, 'end': 18, 'line': 1, 'column': 12}}\nE             Use -v to get more diff\nE           AssertionError: (('definitions@0', 'norms@0'), 'no item is nothing.\nE             ')\nE           assert ('rejected', ...'column': 1}}) == ('rejected', ...column': 12}})\nE             \nE             At index",
+  "restored": true
+ },
+ {
+  "id": "M3",
+  "language": "Python",
+  "file": "ve/parser.py",
+  "bug": "_parse_lean keeps the Python reading for a definitions@0 source containing a sugar word (the deleted fallback, restored)",
+  "behaviour": "Lean, not Python, is asked about every sugared source (the fallback is deleted)",
+  "test": "tests/test_stage2_parse.py::test_definitions_sugar_is_leans",
+  "run": "tests/test_lean_first_b14a.py tests/test_stage2_parse.py -k sugar",
+  "caught": true,
+  "failed_tests": 9,
+  "failure_excerpt": "E       AssertionError: assert {'(true) xor (true).\\n'} == {'((true) iff...true.\\n', ...}\nE         \nE         Extra items in the right set:\nE         'every item x that is base, (x is base).\\n'\nE         'every item no that is base, (true).\\n'\nE         'define  derived(a) as (a is base).\\n'\nE         'define derived(a) as (true).\\nbroken.\\n'\nE         'for every item b, (every item a that is base, ((a is base) iff (b is base))).\\n'...\nE         \nE         ...Full output truncated (39 lines hidden), use '-vv' to show\nE       AssertionError: assert {'(true) xor (true).\\n'} == {'((true) iff...true.\\n', ...}\nE         \nE         Extra items in the right set:\nE         'every item x that is base, (x is base).\\n'\nE         'every item no that is base, (true).\\n'\nE         'define  derived(a) as (a is base).\\n'\nE         'define derived(a) as (true).\\nbroken.\\n'\nE         'for every item b, (every item a that is base, ((a is base) iff (b is base))).\\n'...\nE         \nE         ...Full output truncated (39 lines hidden), use '-vv' to show\nE       AssertionError: assert {'(true) xor (true).\\n'} == {'((true) iff...true.\\n', ...}\nE         \nE         Extra items in the right set:\nE         'every item x that is base, (x is base).\\n'\nE         'every item no that is base, (true).\\n'\nE         'define  derived(a) as (a is base).\\n'\nE         'define derived(a) as (true).\\nbroken.\\n'\nE         'for every item b, (every item a that is base, ((a is base) iff (b is base))).\\n'...\nE         \nE         ...Full output truncated (39 lines hidden), use '-vv' to show\nE       AssertionError: assert {'(true) xor (true).\\n'} == {'((true) iff...true.\\n', ...}\nE         \nE         Extra items in the right set:\nE         'every item x that is base, (x is base).\\n'\nE         'every item no that is ",
+  "restored": true
+ },
+ {
+  "id": "M4",
+  "language": "Lean",
+  "file": "lean/VE/Core/Surface.lean",
+  "bug": "parseRawWith: `(A) iff (B)` reads as (A -> B) and (A -> B)",
+  "behaviour": "the family parsers read the sugar as the core formula it abbreviates (the same document as the retained reader)",
+  "test": "tests/test_lean_first_b14a.py::test_sugar_is_read_by_lean_as_python_read_it[family2]",
+  "run": "-k sugar_is_read_by_lean",
+  "caught": true,
+  "failed_tests": 1,
+  "failure_excerpt": "E           ve.errors.CheckerUnavailable: CheckerUnavailable: Lean and Python parse outputs differ\nFAILED tests/test_lean_first_b14a.py::test_sugar_is_read_by_lean_as_python_read_it[family2]\n1 failed, 4 passed, 5 deselected in 13.43s",
+  "restored": true
+ }
+]
