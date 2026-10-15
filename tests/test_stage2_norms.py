@@ -319,8 +319,8 @@ def test_non_first_order_conflict_witness_is_checked_by_lean(monkeypatch):
 
 def nary_lower_outcome(*, unused_nary_definition):
     """A core-family document whose lower regulated outcome holds an n-ary atom
-    under a binder (corpus document 13's shape). An unused n-ary core definition
-    keeps it on the retained Python route (`family_in_scope`, batch 14c)."""
+    under a binder (corpus document 13's shape), optionally with an unused n-ary
+    core definition, which batch 14c brings into the Lean family scope."""
     raw = flagged(family=("closure@0", "nary@0"), relation=True).to_dict()
     raw["vocabulary"]["predicates"]["tri"] = {
         "arguments": ["act", "act", "party"], "description": "tri"}
@@ -401,19 +401,25 @@ def test_lean_family_route_answers_as_the_retained_python_route(monkeypatch, nam
 def test_retained_python_route_keeps_the_base_nary_expansion(monkeypatch):
     """lf-14b review F2/F3: the n-ary lower outcome answers as the base did
     (`TypeMismatch` from the unsubstituted atom) on the retained route and on
-    the Lean family route alike."""
-    from ve.norms import _lean_route, check_witness
+    the Lean family route alike. Batch 14c brings an n-ary core definition into
+    the Lean family scope, so both documents take the Lean route."""
+    import ve.norms
+    from ve.norms import check_witness
     mismatch = "TypeMismatch: Predicate 'tri'"
     for unused_nary_definition in (True, False):
+        monkeypatch.undo()
         doc, model = nary_lower_outcome(unused_nary_definition=unused_nary_definition)
-        assert _lean_route(doc) is not unused_nary_definition
+        assert ve.norms._lean_route(doc)
         routed(monkeypatch, "lean")
-        with pytest.raises(VEError, match=mismatch):
-            check_conflict(doc, model=model)
-        with pytest.raises(VEError, match=mismatch):
-            check_conflict(doc, prove=True, tableau_steps=300)
-        with pytest.raises(VEError, match=mismatch):
-            check_witness(doc, "required->permitted", model, ["a"])
+        for retained in (False, True):
+            if retained:
+                monkeypatch.setattr(ve.norms, "_lean_route", lambda document: False)
+            with pytest.raises(VEError, match=mismatch):
+                check_conflict(doc, model=model)
+            with pytest.raises(VEError, match=mismatch):
+                check_conflict(doc, prove=True, tableau_steps=300)
+            with pytest.raises(VEError, match=mismatch):
+                check_witness(doc, "required->permitted", model, ["a"])
 
 
 def capture_environment(third):
