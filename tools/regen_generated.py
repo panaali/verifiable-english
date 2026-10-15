@@ -105,7 +105,8 @@ GENERATED = (
               ((PY, "VE/Route/frozen.py", "--write"),), ((PY, "VE/Route/frozen.py"),), cwd="lean"),
     Generated("trust-tables", ("tools/trust-classes.json", "docs/trust-baseline.json"), None,
               ((PY, "tools/trust_map.py", "--check"),), merge="json",
-              note="ledgers: growth beyond the signed budget needs `trust_map.py --write --reason` (a person)"),
+              note="ledgers: growth over the base needs `trust_map.py --allow --reason ... --signed ...` "
+                   "(the DRI's signature); `--write` is the merge train's, on main"),
     Generated("checker-pins", ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",), merge="json",
               note="both sides' pins, plus the merged ve_service build and Rust release binary"),
     Generated("response-schemas", ("ve/backends/lean_service_schema/*.json",),
@@ -420,9 +421,15 @@ DERIVED = {
 }
 
 
+# The key a ledger's derived values are computed from. AR-4's budget file has no per-file counts: its budget is
+# the merge train's measurement (`trust_map.py --write`), merged as a value, not derived from the file.
+DERIVED_FROM = {"docs/trust-baseline.json": "files"}
+
+
 def _derived(path: str, value, new=None):
     """Set the derived value of `value` (a ledger) to `new`, or, with `new` None, to its recomputation."""
-    if path not in DERIVED or not isinstance(value, dict):
+    source = DERIVED_FROM.get(path)
+    if path not in DERIVED or not isinstance(value, dict) or (source is not None and source not in value):
         return value
     for keys, compute in DERIVED[path]:
         node = value

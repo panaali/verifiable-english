@@ -134,9 +134,7 @@ def fixture_tree():
         "tools/layer-exceptions.json": '{"a -> b": 1}', "tools/lean-layer-exceptions.json": "{}",
         "tools/gate-collection.json": '["t1", "t2", "t3", "t4"]',
         "ve/assurance-manifest.json": '{"lean_decoders": {"total_lines": 77}}',
-        "docs/trust-baseline.json": json.dumps({
-            "totals": {key: index for index, key in enumerate(numbers.TRUST_TOTALS)} | {"tied": 9},
-            "budget": {"K": 1, "S": 2, "V": 3}}),
+        "docs/trust-baseline.json": json.dumps({"budget": {"K": 1, "S": 2, "V": 3}, "allowances": []}),
         "docs/lean-first/big.bin": "", "docs/x.md": "",
     }
     data = {path: text.encode() for path, text in files.items()}
@@ -146,9 +144,13 @@ def fixture_tree():
     return data, sizes
 
 
+# The trust classes `trust_map.totals` gives, plus one the map does not show.
+TRUST = {key: index for index, key in enumerate(numbers.TRUST_TOTALS)} | {"tied": 9}
+
+
 def test_measure_on_a_small_tree():
     data, sizes = fixture_tree()
-    got = numbers.measure(data.__getitem__, sizes)
+    got = numbers.measure(data.__getitem__, sizes, TRUST)
     assert got["lines"] == {"ve_python": 8, "ve_backends_python": 6, "ve_backends_schema_json": 1, "lean": 9,
                             "tools_python": 1, "tests_python": 3, "conformance_python": 1}
     assert got["largest_ve_python"][0] == {"path": "ve/backends/lean_service.py", "lines": 3}
@@ -168,11 +170,11 @@ def test_measure_fails_closed():
     data, sizes = fixture_tree()
     del sizes["conformance/c.py"]
     with pytest.raises(ValueError, match="conformance"):
-        numbers.measure(data.__getitem__, sizes)
+        numbers.measure(data.__getitem__, sizes, TRUST)
     data, sizes = fixture_tree()
     data["ve/backends/service_schema.py"] = b"MODES = tuple(['a'])\n"
     with pytest.raises(ValueError, match="MODES"):
-        numbers.measure(data.__getitem__, sizes)
+        numbers.measure(data.__getitem__, sizes, TRUST)
 
 
 def stale_rows():
