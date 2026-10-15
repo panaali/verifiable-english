@@ -1479,6 +1479,9 @@ C1 to C8 as plan 5.2, with C1′ and C2′ above as their *computed* miniatures,
   holds, the empty exception table is inadmissible and the default reading leaves compliance unsaid; no force-twin
   finding.
 - **C10** (required): the comprehension check of 2.6 on C1 to C4, expected "no" four times.
+- **R14.** C1 to C10 are results about the pilot's translation, not the constitution's text. A conflict the route
+  reports about the constitution is a CANDIDATE (R14 source check pending: SC-9 external check, FOLLOW-UP) until SC-9's independent source check has run, and is never presented
+  as a conflict in the source (`tests/test_rd9_r14_candidates.py`).
 
 ### 8.5 Conservativity
 

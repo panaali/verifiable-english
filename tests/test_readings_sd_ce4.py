@@ -7,6 +7,10 @@ retyped. C1 to C4 and C1.4 go through Lean's readings route (`readings-validate`
 generators propose the evidence and Lean decides every verdict. Every expected value is the plan's (*derived*); the
 generators' search on `CE4` (the plan's "found or not found") is recorded by
 `test_the_generator_on_ce4_records_what_it_finds`.
+
+R14: every answer here is about the pilot's translation, not the constitution's text. C5 reports no conflict; a conflict
+the route reported about the constitution would be a CANDIDATE (R14 source check pending: SC-9 external check, FOLLOW-UP), never a conflict in the source
+(`tests/test_rd9_r14_candidates.py`).
 """
 from __future__ import annotations
 

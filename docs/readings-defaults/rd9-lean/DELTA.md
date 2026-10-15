@@ -18,6 +18,14 @@ Status: **in progress; not an RD-9 acceptance report**. This increment builds a 
 - `tools/trust_map.py --check` classifies every new declaration and reports `S +56` and untied verdict-bearing `V +13`, for 69 added trusted lines. **Needs a DRI signature.** Standing ruling R6 does not cover this change because no Python or Rust decision path was deleted. No allowance was added to `docs/trust-baseline.json`.
 - No user-visible wording, field, fault-order, verdict, or availability delta is enabled by this increment. Thus no standing ruling signs a user-visible delta yet. Future batches must record each delta and its ruling/test in this file.
 
+## R14 (DRI condition B1(c), review F26)
+
+Any conflict the readings route reports about the constitution (`CE4`, SC-8 and SC-9) is a result about the pilot's
+translation: a CANDIDATE (R14 source check pending: SC-9 external check, FOLLOW-UP) until SC-9's independent source check has run. No report of this batch presents one as a
+conflict in the source; `CE4`'s conflict question (C5) answers CONFLICT-FREE on all 16 choices.
+`tests/test_rd9_r14_candidates.py` fails if an rd-9 report, spec, docstring or `CE4` golden states a constitution
+conflict without this label.
+
 ## Verification to date
 
 - `PATH=~/.elan/bin:$PATH lake build`: PASS, 890 jobs.
