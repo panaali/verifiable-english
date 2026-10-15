@@ -1,0 +1,254 @@
+{
+  "schema": 1,
+  "map_commit": "9eed6cbfe5a64438ff1de4433e4b10d6311478d7",
+  "mutants": [
+    {
+      "mode": "alternatives",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Alternatives/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_alternatives_profile.py"
+    },
+    {
+      "mode": "bundle",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/Standalone.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_environment_field_types.py"
+    },
+    {
+      "mode": "check",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/Standalone.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_agent_policy.py"
+    },
+    {
+      "mode": "check-certificate",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/CertificateWire.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_argument.py"
+    },
+    {
+      "mode": "diagnose",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/Diagnose.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_assurance_manifest.py"
+    },
+    {
+      "mode": "discourse",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Discourse/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_discourse.py"
+    },
+    {
+      "mode": "english",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/EnglishRun.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_lean_service.py"
+    },
+    {
+      "mode": "english.check",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/EnglishGrammar/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_alternatives_profile.py"
+    },
+    {
+      "mode": "english.grammar",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/EnglishGrammar/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_assurance_manifest.py"
+    },
+    {
+      "mode": "english.question",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Question/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_assurance_manifest.py"
+    },
+    {
+      "mode": "english.read",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/EnglishGrammar/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_agent_policy.py"
+    },
+    {
+      "mode": "environment",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/Standalone.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_agent_policy.py"
+    },
+    {
+      "mode": "evaluate",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Order/ProfileGate.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_argument.py"
+    },
+    {
+      "mode": "family-norms",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/FamilyNorms.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_cedar_norms.py"
+    },
+    {
+      "mode": "graph",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/Standalone.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_argument.py"
+    },
+    {
+      "mode": "identity",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/Standalone.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_lean_service.py"
+    },
+    {
+      "mode": "model",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/Standalone.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_agent_policy.py"
+    },
+    {
+      "mode": "norm-defaults",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/NormDefaults/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_agent_policy_unspecified.py"
+    },
+    {
+      "mode": "norms",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Norms/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_agent_policy_rerun.py"
+    },
+    {
+      "mode": "order",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Order/Surface.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_lean_service.py"
+    },
+    {
+      "mode": "parse",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/Standalone.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_argument.py"
+    },
+    {
+      "mode": "quantity",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Time/Wire.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_assurance_manifest.py"
+    },
+    {
+      "mode": "readings",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Service/Standalone.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_assurance_manifest.py"
+    },
+    {
+      "mode": "readings-route",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Readings/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_b16d_document.py"
+    },
+    {
+      "mode": "reports",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Attribution/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_difffuzz.py"
+    },
+    {
+      "mode": "rights",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Rights/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_compose_integration.py"
+    },
+    {
+      "mode": "risk",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Risk/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_asimov_extended.py"
+    },
+    {
+      "mode": "risk-eval",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Risk/Eval.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_lean_handles.py"
+    },
+    {
+      "mode": "route",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/Route/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_agent_policy.py"
+    },
+    {
+      "mode": "soft-norms",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/SoftNorms/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_b16d_document.py"
+    },
+    {
+      "mode": "speech-acts",
+      "file": "tools/lean_mode_deps.lean",
+      "root_change": "lean/VE/SpeechActs/Run.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "mutant_exit": 1,
+      "selected_witness": "tests/test_difffuzz.py"
+    }
+  ]
+}
