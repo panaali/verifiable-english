@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 29450,
+    "total_lines": 30342,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -568,17 +568,18 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 333,
-        "sha256": "12156c5ab7ccc4c40051b398b8b32f1c47c779457d83b004e7981039c9a27715",
+        "lines": 339,
+        "sha256": "819ee135aea8e1d0b4cb4a5b36111fe95a2464bb0a2a4a1a07508e6536535ba4",
         "ranges": [
           [
             25,
-            332
+            337
           ]
         ],
         "declarations": [
           "decodeRegulated",
           "decodeNormsEnvironment",
+          "normFields",
           "decodeNorm",
           "decodeSource",
           "regenerated"
@@ -1143,12 +1144,12 @@
       },
       {
         "file": "lean/VE/Service/FamilyNorms.lean",
-        "lines": 250,
-        "sha256": "a948acda657db3e648f639402c13135a684f27603b57022affdb72c171e29380",
+        "lines": 387,
+        "sha256": "c4c61e5e73a0a43e5e2adc0afe475dd5f1a818a86ad2d286eaeb14998b32ec3a",
         "ranges": [
           [
             1,
-            250
+            387
           ]
         ],
         "declarations": [
@@ -1158,9 +1159,12 @@
           "certificateCase",
           "targetPackage",
           "conflictCase",
+          "genericCase",
+          "genericRun",
+          "folCase",
           "runCase"
         ],
-        "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"
+        "reason": "family-norms decoder: the FOL view, the generic closure, core and order route, and certificate and witness bindings to the submitted environment; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Graph.lean",
@@ -1367,6 +1371,45 @@
           "documentOrder"
         ],
         "reason": "readings-defaults RD-4b: the document product decoder, per-component evidence replay on each regenerated case, conclusion typing, --under binding, product verdict, decided units and English plan; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Norms/Family.lean",
+        "lines": 493,
+        "sha256": "2939728bdcabe3a2259411f555e87a13d103508007fd2f5d8ed36d85e89fde2b",
+        "ranges": [
+          [
+            1,
+            493
+          ]
+        ],
+        "declarations": [
+          "encodeCore",
+          "encodeOrder",
+          "decodeDoc",
+          "regulatedOf",
+          "firstOrder"
+        ],
+        "reason": "family norm guard decoding, regeneration, formula encoding and route selection for closure, core and order; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Service/ReadingsChoices.lean",
+        "lines": 257,
+        "sha256": "9881463bf7607b77d6a448d01d81e24452dc5adfa467673a91a7b1a13c86b4a5",
+        "ranges": [
+          [
+            1,
+            257
+          ]
+        ],
+        "declarations": [
+          "metadata",
+          "validateCouplings",
+          "expected",
+          "plan",
+          "check",
+          "run"
+        ],
+        "reason": "coupled and joint readings choice decoder: set metadata, compatibility, bounded plan, complete evidence and checked verdict; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1405,7 +1448,7 @@
       "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
       "lean/ResponseShape.lean": "the service's response shapes (lib ResponseShape, outside the trusted VE tree): renders the client's schema files and checks responses for ve_response_decode; no runner, executable production path or theorem imports it",
       "lean/ResponseShape/Schemas/Common.lean": "the response shapes' shared value domains (common.json) and their predicates over a JSON value; test tooling beside lean/ResponseShape.lean, not on any runner path",
-      "lean/ResponseShape/Schemas.lean":"collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
+      "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/CaseDeciders.lean": "the runners' tests of the request case that the response shapes select on (CaseDecider.fn calls each runner's own test; the norms one reads the case environment for Norms.Plain.layered); test tooling, not on any runner path",
       "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
       "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
@@ -1425,6 +1468,7 @@
       "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/RiskEval.lean": "theorems that the risk-eval mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/SpeechActs.lean": "theorems that the speech-acts mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Family.lean": "theorems that the graph, readings, bundle and family-norms modes' rows fit their shapes; its one Json-taking def is a proof (familyNormsFolFits), not on any runner path",
       "lean/ResponseShape/EnumSites.lean": "lists every enum and const of the response shapes and the fields that resolve to one, for tests/test_enum_domains.py (test tooling; JSON only to print the list and in proof helpers; not on any runner path)",
       "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",

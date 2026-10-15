@@ -15,16 +15,14 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import lake_outputs, nested_pytest, rust_build  # noqa: E402
+from tools import lake_outputs, nested_pytest, quarantine, rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
-COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
-# The documented refresh of COLLECTION after intended test changes.
-REFRESH = "uv run python tools/gate_collection.py --write"
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
                    "cargo_test", "pytest")
 REQUIRED_FAMILIES = (
@@ -63,9 +61,9 @@ STAGE_ENVIRONMENT = {
                "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
 }
 # The gate's pytest invocation, shared by its collection run, its suite run and the
-# baseline writer (tools/gate_collection.py, also `--write-collection`), so the baseline
-# is what the gate collects. Plugin autoload is off in the gate, so every plugin is
-# named here or by tools/nested_pytest.py.
+# collection of the merge base (tools/gate_collection.py), so both sides are collected
+# alike. Plugin autoload is off in the gate, so every plugin is named here or by
+# tools/nested_pytest.py.
 PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not live", "tests")
 # The stages a rerun of failed tests (`--rerun-failed`) takes from the failed gate it reruns: on the same
 # tree and toolchains they are the same, and the failed gate passed them before its suite ran.
@@ -110,6 +108,15 @@ def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None 
     return json.loads(result_file.read_text())
 
 
+def retry_command(python: list[str], tests: list[str]) -> list[str]:
+    """PYTEST_ARGS over the node IDs `tests`, serially: a quarantined failure's run alone."""
+    return nested_pytest.command((*PYTEST_ARGS[:-1], *tests), python=python)
+
+
+def exit_reason(stage: str, code: int) -> str:
+    return f"{stage}: exit {code}"
+
+
 def command(args: list[str], *, cwd: Path = ROOT, env: dict[str, str], stage: str) -> str:
     print(f"[gate] {stage}: {' '.join(args)}", flush=True)
     try:
@@ -119,7 +126,7 @@ def command(args: list[str], *, cwd: Path = ROOT, env: dict[str, str], stage: st
         raise RuntimeError(f"{stage}: {exc}") from exc
     print(done.stdout, end="" if done.stdout.endswith("\n") else "\n", flush=True)
     if done.returncode:
-        raise RuntimeError(f"{stage}: exit {done.returncode}")
+        raise RuntimeError(exit_reason(stage, done.returncode))
     return done.stdout.strip()
 
 
@@ -241,22 +248,12 @@ def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
                and entry["reason"] in reason for entry in entries)
 
 
-def collection_difference(added: list[str], removed: list[str]) -> str:
-    """Every ID collected but not pinned and pinned but not collected, and the refresh."""
-    lines = [f"The pinned baseline {COLLECTION.relative_to(ROOT)} differs from the collected tests: "
-             f"{len(added)} collected but not pinned, {len(removed)} pinned but not collected."]
-    for title, ids in (("Collected but not pinned", added), ("Pinned but not collected", removed)):
-        if ids:
-            lines.append(f"{title}:")
-            lines.extend(f"  {nodeid}" for nodeid in ids)
-    lines.append(f"If these test changes are intended, run `{REFRESH}` after `(cd lean && lake build)`, check "
-                 "every removed ID is meant to go, and commit the file with the change.")
-    return "\n".join(lines)
-
-
 def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str],
-                     families: tuple[str, ...] | None = None) -> None:
-    """Record the suite's counts, skips and failures; `families` (default REQUIRED_FAMILIES) must be collected."""
+                     families: tuple[str, ...] | None = None, *, diff=None, base: str = "") -> None:
+    """Record the suite's counts, skips and failures; `families` (default REQUIRED_FAMILIES) must be collected.
+    Every `expected` ID (the merge base's collection) must be collected unless a `Test-removed:` trailer of
+    `diff` (tools/gate_collection.py, `Changes`) records its removal; no trailer may be stale or malformed."""
+    from tools import gate_collection
     tests = events["tests"]
     collected = events["collected"]
     selected = events["selected"]
@@ -269,11 +266,12 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
                             deselected=len(deselected))
     if len(collected) != len(set(collected)) or len(selected) != len(set(selected)):
         result["failures"].append({"stage": "coverage", "reason": "duplicate test ID in collection"})
-    missing = sorted(set(expected) - set(collected))
-    unexpected = sorted(set(collected) - set(expected))
-    if missing or unexpected:
+    verdict = gate_collection.missing(expected, collected, diff)
+    result.setdefault("collection", {}).update(head_ids=len(collected), added=len(set(collected) - set(expected)),
+                                               **verdict.record())
+    if verdict.failed():
         result["failures"].append({"stage": "coverage",
-                                   "reason": collection_difference(unexpected, missing)})
+                                   "reason": gate_collection.difference_text(base, verdict)})
     if set(selected) | set(deselected) != set(collected) or set(selected) & set(deselected):
         result["failures"].append({"stage": "coverage",
                                    "reason": "tests removed from final collection without a deselection report"})
@@ -308,6 +306,49 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
         if not allowed:
             result["failures"].append({"stage": "deselection policy", "nodeid": node,
                                        "reason": "unlisted deselected test"})
+
+
+def retry_quarantined(result: dict, events: dict, env: dict[str, str], python: list[str], scratch: Path, *,
+                      enabled: bool, day=None) -> None:
+    """Run each failed test of the active quarantine (tools/quarantine.py) once more, alone and serially. One
+    that passes there no longer fails the gate, and `result["quarantine"]` keeps both outcomes; one that fails
+    again, or has no result, still fails it. With `enabled` false (`--no-quarantine`, the nightly) nothing is
+    retried and every failure blocks. A malformed quarantine file fails the gate (ValueError)."""
+    record = result["quarantine"] = {"enabled": enabled, "active": [], "expired": [], "retried": {}}
+    if not enabled:
+        return
+    entries = quarantine.load()
+    day = day or quarantine.today()
+    active = quarantine.active(entries, day)
+    record.update(day=day.isoformat(), active=sorted(active), expired=quarantine.expired(entries, day))
+    failed = sorted(nodeid for nodeid, row in events["tests"].items()
+                    if row.get("outcome") == "failed" and nodeid in active)
+    if not failed:
+        return
+    retry_file = scratch / "pytest-quarantine.json"
+    try:
+        command(retry_command(python, failed), env={**env, "VE_GATE_PYTEST_RESULT": str(retry_file)},
+                stage="Quarantine retry")
+    except RuntimeError:
+        pass  # a retry that fails exits 1: its events say which test failed again
+    try:
+        retried = json.loads(retry_file.read_text())["tests"]
+    except (OSError, ValueError, KeyError, TypeError):
+        retried = {}
+    for nodeid in failed:
+        row = retried.get(nodeid) if isinstance(retried, dict) else None
+        outcome = row.get("outcome", "no result") if isinstance(row, dict) else "no result"
+        entry = active[nodeid]
+        record["retried"][nodeid] = {"suite": "failed", "alone": outcome, "owner": entry["owner"],
+                                     "expires": entry["expires"], "evidence": entry["evidence"]}
+        if outcome == "passed":
+            result["failures"] = [failure for failure in result["failures"]
+                                  if not (failure["stage"] == "pytest" and failure.get("nodeid") == nodeid)]
+            result["counts"].update(failed=result["counts"]["failed"] - 1, passed=result["counts"]["passed"] + 1)
+    # The suite exited 1 for its failed tests; when each of them passed alone, that exit is theirs alone.
+    if not any(failure["stage"] == "pytest" for failure in result["failures"]):
+        result["failures"] = [failure for failure in result["failures"] if failure != {
+            "stage": "pytest command", "reason": exit_reason("Python suite", 1)}]
 
 
 def write_result(path: Path, result: dict) -> None:
@@ -471,11 +512,43 @@ def isolated_cargo(env: dict[str, str], target_dir: Path | None = None):
     yield {**env, "CARGO_NET_OFFLINE": "true", "CARGO_ENCODED_RUSTFLAGS": flags}, workdir
 
 
-def write_collection() -> int:
-    """Regenerate the baseline after intentional test changes: the documented refresh,
-    REFRESH (tools/gate_collection.py --write), with the suite's native build prebuilt."""
+def base_collection(result: dict, base: str | None, env: dict[str, str], pytest_env: dict[str, str],
+                    scratch: Path):
+    """(the merge base's collection, base..HEAD's changes and removal records): the base's record, or the base
+    collected in a scratch worktree with this gate's Lean build, toolchains and Python environment and
+    recorded for the next gate on that base (tools/gate_collection.py)."""
     from tools import gate_collection
-    return gate_collection.write(prebuilt=True)
+    base = (gate_collection.rev(f"{base}^{{commit}}", env=env) if base
+            else gate_collection.merge_base(env=env))
+    found = gate_collection.recorded(base, env=env)
+    collection = result["collection"] = {"base": base}
+    if found is not None:
+        collection["base_source"], ids = f"record of {found[0]}", found[1]
+    else:
+        started = time.monotonic()
+        # Its own sources first on the import path (PYTHONPATH, set by `collect`), not the checkout's.
+        ids = gate_collection.collect_commit(base, scratch, build_env=env, env=pytest_env,
+                                             python=[str(ROOT / ".venv/bin/python")])
+        collection.update(base_source="collected", base_seconds=round(time.monotonic() - started, 1))
+        collection["base_record"] = record_collection(base, ids, env)
+    collection["base_ids"] = len(ids)
+    return ids, gate_collection.changes(base, "HEAD", env=env)
+
+
+def record_collection(commit: str, ids: list[str], env: dict[str, str], result: dict | None = None) -> str:
+    """Attach the gate result and its IDs to `commit`; a record is a later gate's shortcut, so a failure to
+    write it is reported, not a gate failure."""
+    from tools import gate_collection
+    try:
+        gate_collection.write_record(commit, ids, result=result, env=env)
+    except RuntimeError as exc:
+        return f"not written: {exc}"
+    return "written"
+
+
+def gate_scratch_root() -> Path:
+    """Allow a durable scratch root when system /tmp is cleaned during a long gate."""
+    return Path(os.environ.get("VE_GATE_SCRATCH_ROOT", "/tmp")).resolve()
 
 
 def main() -> int:
@@ -484,17 +557,18 @@ def main() -> int:
     parser.add_argument("--workers", default="auto",
                         help="xdist workers for the suite (default auto: the CPUs the load leaves, "
                              "tests/conftest.py)")
-    parser.add_argument("--write-collection", action="store_true",
-                        help="write the gate's collection to the baseline, tools/gate-collection.json, and exit")
+    parser.add_argument("--base", help="the commit whose collection the head's is checked against (default: the "
+                                           "merge base with main, or on main the first parent)")
     parser.add_argument("--rerun-failed", nargs="?", const="", type=str, metavar="RECORD",
                         help="when the gate RECORD (default: --output) failed only on tests, on this tree and these "
                              "toolchains, rerun only the files of its failed tests (status rerun-passed or failed); "
                              "otherwise run the full gate. A rerun is never a full gate's evidence (status passed)")
+    parser.add_argument("--no-quarantine", action="store_true",
+                        help="the nightly: no quarantined test (tools/test-quarantine.json) is retried alone, so "
+                             "every failure blocks")
     args = parser.parse_args()
     if not (args.workers == "auto" or args.workers.isdecimal() and int(args.workers) > 0):
         parser.error("--workers is a positive count or auto")
-    if args.write_collection:
-        return write_collection()
     output = args.output.resolve()
     # Read before the record is reset: it is the failed gate a rerun repeats.
     previous = None if args.rerun_failed is None else read_previous(
@@ -503,11 +577,12 @@ def main() -> int:
               "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
               "failures": [], "status": "failed"}
     rerun = None  # the failed tests' files, when this gate reruns them alone
+    head_ids = None  # the head's full collection, recorded for its commit at the end
     # A killed process must never leave the previous run's passing record intact.
     write_result(output, result)
     started_clean = False
     completed = False
-    with tempfile.TemporaryDirectory(prefix="ve-gate-", dir="/tmp") as directory:
+    with tempfile.TemporaryDirectory(prefix="ve-gate-", dir=gate_scratch_root()) as directory:
         scratch = Path(directory)
         try:
             env = record_environment(result, "base", gate_environment(scratch))
@@ -519,9 +594,6 @@ def main() -> int:
             policy = json.loads(POLICY.read_text())
             if policy["version"] != 1:
                 raise RuntimeError("unsupported optional-test policy version")
-            expected = json.loads(COLLECTION.read_text())
-            if not isinstance(expected, list) or not expected or not all(isinstance(x, str) for x in expected):
-                raise RuntimeError("invalid test collection baseline")
             check_toolchains(result, env)
             check_python_project(result, env)
             if args.rerun_failed is not None:
@@ -601,6 +673,10 @@ def main() -> int:
             # The collection, serially (xdist workers report no deselection), then the
             # suite on `--workers` xdist workers; a worker must collect that selection.
             collection = collect(pytest_env, collection_file, python=python, files=rerun)
+            if rerun is None and not collection["collection_reports"] and \
+                    len(collection["collected"]) == len(set(collection["collected"])):
+                head_ids = collection["collected"]
+            expected, diff = base_collection(result, args.base, env, pytest_env, scratch)
             try:
                 command(suite_command(python, args.workers, rerun),
                         env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
@@ -609,15 +685,18 @@ def main() -> int:
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
             events = merge_pytest_events(collection, json.loads(events_file.read_text()))
+            base = result["collection"]["base"]
             if rerun is None:
-                interpret_pytest(result, events, policy, expected)
+                interpret_pytest(result, events, policy, expected, diff=diff, base=base)
             else:
-                # The baseline's tests of the rerun files, each of the failed tests among them.
+                # The base's tests of the rerun files, each of the failed tests among them.
                 interpret_pytest(result, events, policy,
-                                 [nodeid for nodeid in expected if nodeid.split("::", 1)[0] in rerun], families=())
+                                 [nodeid for nodeid in expected if nodeid.split("::", 1)[0] in rerun], families=(),
+                                 diff=diff, base=base)
                 outcomes = {nodeid: events["tests"].get(nodeid, {}).get("outcome", "no result")
                             for nodeid in result["rerun_failed"]["tests"]}
                 result["rerun_failed"]["outcomes"] = outcomes
+            retry_quarantined(result, events, pytest_env, python, scratch, enabled=not args.no_quarantine)
             result["stages"].append("pytest")
             completed = True
         except (OSError, ValueError, KeyError, RuntimeError) as exc:
@@ -632,12 +711,23 @@ def main() -> int:
                                                    "reason": "HEAD or worktree changed during gate"})
                 except (OSError, RuntimeError) as exc:
                     result["failures"].append({"stage": "source identity", "reason": str(exc)})
+            # Store the complete clean collection in the gate result, including
+            # the result's git note, without making every evidence copy 1.8 MB.
+            record_head = head_ids is not None and not any(failure["stage"] == "source identity"
+                                                         for failure in result["failures"])
+            if record_head:
+                from tools import gate_collection
+                result.setdefault("collection", {})["collected_zlib"] = gate_collection.encode_ids(head_ids)
             if completed and result["stages"] == list(REQUIRED_STAGES) and not result["failures"]:
                 result["status"] = "passed"
             # A rerun of failed tests is never a full gate: its own status, which no evidence check accepts.
             elif completed and rerun is not None and not result["failures"] and result["stages"] == [
                     stage for stage in REQUIRED_STAGES if stage not in REUSED_STAGES]:
                 result["status"] = "rerun-passed"
+            if record_head:
+                result["collection"]["head_record"] = "written"
+                result["collection"]["head_record"] = record_collection(
+                    result["commit_sha"], head_ids, env, result=result)
             write_result(output, result)
             print(f"[gate] {result['status']}: {output}; "
                   f"{result['counts'].get('passed', 0)} passed, "
@@ -646,6 +736,9 @@ def main() -> int:
             for skip in result["skips"]:
                 print(f"[gate] skip {'allowed' if skip['allowed'] else 'FAILED'}: "
                       f"{skip['nodeid']}: {skip['reason']}", flush=True)
+            for nodeid, retry in result.get("quarantine", {}).get("retried", {}).items():
+                print(f"[gate] quarantined: {nodeid} failed in the suite and {retry['alone']} alone "
+                      f"(owner {retry['owner']}, expires {retry['expires']})", flush=True)
             for failure in result["failures"]:
                 print(f"[gate] FAILURE: {failure['stage']}: "
                       f"{failure.get('nodeid', '')} {failure['reason']}", file=sys.stderr, flush=True)
