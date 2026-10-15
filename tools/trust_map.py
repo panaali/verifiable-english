@@ -43,30 +43,38 @@ and a declaration whose class or tie fails validation is trusted too (and fails 
 default report, `--check`, `--write` and `--ledger` all read the tree through one validating pass
 (`walk`) and one trust rule (`is_trusted`); none of them exits 0 while a problem stands.
 
-    python3 tools/trust_map.py            # per-file counts against docs/trust-baseline.json
-    python3 tools/trust_map.py --check    # exit 1 if K, S or untied [V] grew without a signed entry
-    python3 tools/trust_map.py --since main   # the same, against the tree of `main` measured now
-    python3 tools/trust_map.py --write    # rewrite the baseline from the current tree
+    python3 tools/trust_map.py            # class counts of the tree
+    python3 tools/trust_map.py --check    # exit 1 if K, S or untied [V] grew over the base without an allowance
+    python3 tools/trust_map.py --since REV    # the same, with commit REV as the base
+    python3 tools/trust_map.py --allow --reason TEXT --signed SIGNATURE   # record the growth as allowances
+    python3 tools/trust_map.py --write    # the merge train, on main: budget := the measured tree
+    python3 tools/trust_map.py --files PATH   # the per-file counts, for the gate record
     python3 tools/trust_map.py --ledger   # measured lines per plan step (E9, tools/consolidation-ledger.json)
 
-Growth of K, S or untied [V] (unclassified included) over the baseline fails `--check` unless the
-baseline's `signed` list allows it: each entry is `{"change", "signed", "allow": {"K": n, "S": n,
-"V": n}}`, a note signed by the DRI. `--write` moves the signed entries into `history`; growth
-beyond them (a reclassification, not new code) needs `--reason`, which `history` keeps.
+The budget is a ratchet (architecture plan AR-4, DRI decision D3). docs/trust-baseline.json keeps
+only `budget` (the K, S and untied [V] lines the merge train last measured on main) and
+`allowances`, each `{"class": "K"|"S"|"V", "lines": n, "reason", "signature", "commit"}`: growth the
+DRI signed, with the commit its lines were counted over. The list is the history: an allowance is
+never removed, and one introduced on a branch is merged with the others by the `ve-generated` merge
+driver (tools/regen_generated.py), so two branches that each add one merge without a conflict.
 
-The baseline is only rewritten on request, so growth that other changes merged without a signed
-entry makes `--check` fail for every later change too, and hides a change's own growth behind it.
-`--since REV` gates one change on its own: it measures the tree of commit `REV` (its `lean/` and its
-side table, read from git into a scratch directory, with this tool's rules) and checks the current
-tree against that measurement, allowing only the signed entries the current baseline adds to
-`REV`'s; an entry `REV` already had is inherited, not this change's.
+`--check` measures the tree against a base commit: `--since REV`, else `git merge-base HEAD main`, or
+the first parent when HEAD is main's tip (the merge train after a merge; HEAD itself while the merge
+is uncommitted, as in `tools/regen_generated.py --resolve`). The cap of each class is
+the base's lines, measured now from the base's committed `lean/` and side table (`measure_rev`),
+plus the allowances the tree's file adds to the base's (`introduced`). So the budget falls with
+every merge that deletes trusted lines, whether or not the recorded number has caught up, and rises
+only by an allowance in the same change. Outside a git work tree the cap is the recorded budget.
+`--allow` appends one allowance per class for the growth over that cap; `--signed` is the DRI's
+signature, required (`signature_problems`). An allowance a change introduces must carry one too:
+the migration's `UNSIGNED` marker, or any text marked unsigned or pending, fails the check. `--write` sets `budget` to the measured lines after the same check; it is the
+merge train's step on main (a branch only adds allowances), so it refuses on any other branch.
 
 `--seed TRUST-MAP.md` updates the side table: current entries and ties stay, except that a
 predicate (`lean/predicates.txt`, a declaration whose type ends in `Prop`) outside K, S, P and T takes
 its meaning class and a kernel data type takes K; new declarations are classified by the rules in
 `seed_module`, constrained to the classes that the trust map's section 11 row for its module
-records (`--fresh` reclassifies everything). It does not touch the baseline; `--seed --write`
-also keeps the section 11 counts in the baseline next to the measured ones.
+records (`--fresh` reclassifies everything). It does not touch the baseline.
 
 A predicate is meaning a reviewer reads: classed C, [R] or [I] without a tie it fails every run.
 So does a declaration holding a predicate among its parts (a `where` helper or a field inside its
@@ -580,39 +588,178 @@ def budget(counts: dict[str, int]) -> dict[str, int]:
     return {"K": counts["K"], "S": counts["S"], "V": counts["trusted"] - counts["K"] - counts["S"]}
 
 
-def check(files: dict[str, dict[str, int]], baseline: dict) -> list[str]:
+# The budget file ---------------------------------------------------------------------------------
+
+BUDGET = ("K", "S", "V")
+
+
+def nonnegative_int_record(value: object, keys: set[str]) -> bool:
+    """The JSON shape shared by the budget and every aggregate trust count."""
+    return (isinstance(value, dict) and set(value) == keys
+            and all(type(item) is int and item >= 0 for item in value.values()))
+
+
+ALLOWANCE = ("class", "lines", "reason", "signature", "commit")
+COMMIT = re.compile(r"[0-9a-f]{7,40}")
+COMMENT = ("The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] "
+           "lines as the merge train last measured them on main (`--write`), and every signed allowance that "
+           "raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record "
+           "(`--files`), not here.")
+# Entries of the baseline before AR-4 that a person rebaselined with `--write --reason` carry no signature.
+# Only an allowance inherited from the base may carry this marker; it grants no new growth.
+UNSIGNED = "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4"
+# A signature names the DRI: the DRI's own (`DRI, <directive>, <date>`) or a standing ruling's
+# (`R6 (DRI-RULINGS.md)`). A word saying it is not, or not yet, signed makes it no signature.
+SIGNER = re.compile(r"\bDRI\b")
+PLACEHOLDER = re.compile(r"(?i)\b(?:unsigned|not\s+(?:yet\s+)?signed|pending|awaiting|tbd|todo|placeholder)\b")
+
+
+def signature_problems(signature: object, inherited: bool = False) -> list[str]:
+    """Why `signature` signs no growth. The one rule for `--allow --signed`, the budget file and the
+    allowances a change introduces: not blank, names the DRI (`SIGNER`), says nothing like
+    "unsigned" or "pending" (`PLACEHOLDER`). `inherited` (an allowance of the base's file, or one
+    read before the base is known) also takes the migration's `UNSIGNED` marker."""
+    if not isinstance(signature, str) or not signature.strip():
+        return [f"signature {signature!r} is blank"]
+    if signature == UNSIGNED:
+        return [] if inherited else [f"signature {UNSIGNED!r} marks a rebaseline before AR-4; a new allowance "
+                                     "needs the DRI's signature"]
+    if not SIGNER.search(signature) or PLACEHOLDER.search(signature):
+        return [f"signature {signature!r} is not the DRI's (it names the DRI, or a standing ruling of "
+                "DRI-RULINGS.md, and is not marked unsigned or pending)"]
+    return []
+
+
+def allowance_problems(entry: object, inherited: bool = True) -> list[str]:
+    """Why `entry` is not an allowance: exactly the fields of `ALLOWANCE`, a budget class, a positive
+    number of lines (an integer, not a boolean), a reason that is not blank, a signature
+    (`signature_problems`; `inherited` takes the `UNSIGNED` marker), and the commit (hexadecimal)
+    the lines were counted over."""
+    if not isinstance(entry, dict) or set(entry) != set(ALLOWANCE):
+        return [f"an allowance has exactly the fields {', '.join(ALLOWANCE)}: {entry!r}"]
+    problems = []
+    if entry["class"] not in BUDGET:
+        problems.append(f"class {entry['class']!r} is not one of {', '.join(BUDGET)}")
+    if type(entry["lines"]) is not int or entry["lines"] <= 0:
+        problems.append(f"lines {entry['lines']!r} is not a positive integer")
+    if not isinstance(entry["reason"], str) or not entry["reason"].strip():
+        problems.append(f"reason {entry['reason']!r} is blank")
+    problems += signature_problems(entry["signature"], inherited)
+    if not isinstance(entry["commit"], str) or not COMMIT.fullmatch(entry["commit"]):
+        problems.append(f"commit {entry['commit']!r} is not a commit id")
+    return problems
+
+
+def from_history(old: dict) -> list[dict]:
+    """The allowances of a baseline written before AR-4 (`history` and `signed`), without their
+    commit: a signed entry's `allow`, a rebaseline's growth from `rebaselined_from` to `to` (a fall is
+    no allowance). An entry recorded twice is one allowance."""
+    out: list[dict] = []
+    for entry in [*old.get("history", []), *old.get("signed", [])]:
+        if "allow" in entry:
+            grown = entry["allow"]
+        elif entry.get("rebaselined_from") and entry.get("to"):
+            grown = {c: entry["to"][c] - entry["rebaselined_from"][c] for c in BUDGET}
+        else:
+            grown = {}
+        for cls in BUDGET:
+            item = {"class": cls, "lines": grown.get(cls, 0), "reason": entry["change"],
+                    "signature": entry.get("signed") or UNSIGNED}
+            if item["lines"] > 0 and item not in out:
+                out.append(item)
+    return out
+
+
+def parse_baseline(data: object, legacy: bool = False) -> tuple[dict, list[str]]:
+    """The budget file's `budget` and `allowances`, and the problems found. `legacy` reads a base
+    commit's file written before AR-4 too (its recorded budget and `from_history`)."""
+    if legacy and isinstance(data, dict) and ("history" in data or "totals" in data):
+        try:
+            return {"budget": budget(data["totals"]), "allowances": from_history(data)}, []
+        except (KeyError, TypeError) as error:
+            return {}, [f"{BASELINE.name} (before AR-4) is malformed: {error!r}"]
+    if not isinstance(data, dict) or not {"budget", "allowances"} <= set(data) <= {"comment", "budget", "allowances"}:
+        return {}, [f"{BASELINE.name} holds exactly `budget` and `allowances` (and a `comment`)"]
+    problems = []
+    recorded = data["budget"]
+    if not nonnegative_int_record(recorded, set(BUDGET)):
+        problems.append(f"{BASELINE.name}: `budget` gives K, S and V as non-negative integers: {recorded!r}")
+    if not isinstance(data["allowances"], list):
+        problems.append(f"{BASELINE.name}: `allowances` is a list")
+    else:
+        problems += [f"{BASELINE.name}: allowance {i}: {p}" for i, entry in enumerate(data["allowances"])
+                     for p in allowance_problems(entry)]
+        if not problems:  # a copy of an allowance grants its lines again: each signed growth is recorded once
+            seen = Counter(allowance_key(entry) for entry in data["allowances"])
+            problems += [f"{BASELINE.name}: the allowance {key!r} is recorded {n} times"
+                         for key, n in seen.items() if n > 1]
+    return data, problems
+
+
+def allowance_key(entry: dict) -> tuple:
+    """What makes two allowances the same signed growth: the commit is where it was counted, not what."""
+    return entry["class"], entry["lines"], entry["reason"], entry["signature"]
+
+
+def introduced(allowances: list[dict], base: list[dict]) -> list[dict]:
+    """The allowances of `allowances` that `base` does not have (each of `base` inherits one copy)."""
+    inherited = Counter(allowance_key(entry) for entry in base)
+    out = []
+    for entry in allowances:
+        if inherited[allowance_key(entry)]:
+            inherited[allowance_key(entry)] -= 1
+        else:
+            out.append(entry)
+    return out
+
+
+def check(files: dict[str, dict[str, int]], cap: dict[str, int], allowances: list[dict],
+          base: dict[str, dict[str, int]] | None = None) -> list[str]:
+    """The classes whose measured lines exceed `cap` (the base's) plus the `allowances` introduced
+    since, each naming the files that grew over `base`'s per-file counts when they are known."""
     now = budget(totals(files))
-    before = budget(baseline["totals"])
     allowed = Counter()
-    for entry in baseline.get("signed", []):
-        if not entry.get("signed"):
-            return [f"signed entry {entry.get('change')!r} has no signature"]
-        allowed.update(entry.get("allow", {}))
+    for entry in allowances:
+        allowed[entry["class"]] += entry["lines"]
     failures = []
-    for key in ("K", "S", "V"):
-        if now[key] > before[key] + allowed[key]:
-            grown = sorted(((counts_v - budget(baseline["files"].get(m, empty_counts()))[key], m)
-                            for m, c in files.items()
-                            if (counts_v := budget(c)[key]) > budget(baseline["files"].get(m, empty_counts()))[key]),
-                           reverse=True)
-            where = ", ".join(f"{m} +{d}" for d, m in grown[:8])
-            failures.append(f"{key} grew from {before[key]} to {now[key]} (signed allowance {allowed[key]}): {where}")
+    for key in BUDGET:
+        if now[key] > cap[key] + allowed[key]:
+            where = ""
+            if base is not None:
+                grown = sorted(((budget(c)[key] - budget(base.get(m, empty_counts()))[key], m)
+                                for m, c in files.items()), reverse=True)
+                where = ": " + ", ".join(f"{m} +{d}" for d, m in grown[:8] if d > 0)
+            failures.append(f"{key} grew from {cap[key]} to {now[key]} (signed allowance {allowed[key]}){where}")
     return failures
 
 
-def since(files: dict[str, dict[str, int]], parent: dict[str, dict[str, int]], baseline: dict | None,
-          parent_baseline: dict | None) -> list[str]:
-    """`check` against a parent commit's measured tree: the parent's counts are the baseline and the
-    allowances are the signed entries `baseline` adds to `parent_baseline`'s."""
-    inherited = [json.dumps(e, sort_keys=True) for e in (parent_baseline or {}).get("signed", [])]
-    added = []
-    for entry in (baseline or {}).get("signed", []):
-        key = json.dumps(entry, sort_keys=True)
-        if key in inherited:
-            inherited.remove(key)
-        else:
-            added.append(entry)
-    return check(files, {"totals": totals(parent), "files": parent, "signed": added})
+def run_git(root: Path, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True)
+
+
+def resolve_base(root: Path, since: str | None) -> tuple[str | None, str | None]:
+    """The base commit of the check and a problem. `since` names it; otherwise it is the merge base
+    of HEAD and `main`, or HEAD's first parent when HEAD is main's tip, unless a merge is in progress
+    (`MERGE_HEAD`: the merge train before its commit, `regen_generated.py --resolve`), whose first
+    parent will be HEAD itself. Outside a git work tree whose top is `root` there is none (None,
+    None); a work tree without `main` or a merge base is a problem."""
+    if since is not None:
+        named = run_git(root, "rev-parse", "--verify", "-q", f"{since}^{{commit}}")
+        return (named.stdout.strip(), None) if named.returncode == 0 else (None, f"{since} names no commit")
+    top = run_git(root, "rev-parse", "--show-toplevel")
+    if top.returncode or Path(top.stdout.strip()).resolve() != root.resolve():
+        return None, None
+    head = run_git(root, "rev-parse", "HEAD").stdout.strip()
+    merged = run_git(root, "merge-base", "HEAD", "main")
+    if merged.returncode:
+        return None, "no merge base of HEAD and `main`; name the base with --since REV"
+    base = merged.stdout.strip()
+    if base == head and run_git(root, "rev-parse", "-q", "--verify", "MERGE_HEAD").returncode:
+        parent = run_git(root, "rev-parse", "--verify", "-q", "HEAD^1")
+        if parent.returncode:
+            return None, "HEAD is main's tip and has no parent; name the base with --since REV"
+        base = parent.stdout.strip()
+    return base, None
 
 
 def measure_rev(rev: str, root: Path = ROOT) -> tuple[dict[str, dict[str, int]], list[str], dict | None]:
@@ -626,7 +773,10 @@ def measure_rev(rev: str, root: Path = ROOT) -> tuple[dict[str, dict[str, int]],
         return {}, [f"git archive {rev}: {archive.stderr.decode(errors='replace').strip()}"], None
     shown = subprocess.run(["git", "-C", str(root), "show", f"{rev}:{BASELINE.relative_to(ROOT).as_posix()}"],
                            capture_output=True)
-    parent_baseline = json.loads(shown.stdout) if shown.returncode == 0 else None
+    try:
+        parent_baseline = json.loads(shown.stdout) if shown.returncode == 0 else None
+    except ValueError as error:
+        return {}, [f"{rev}: {BASELINE.name} is not JSON: {error}"], None
     with tempfile.TemporaryDirectory() as scratch:
         tree = Path(scratch)
         with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
@@ -635,31 +785,47 @@ def measure_rev(rev: str, root: Path = ROOT) -> tuple[dict[str, dict[str, int]],
     return files, [f"{rev}: {p}" for p in problems], parent_baseline
 
 
-def write_baseline(files: dict[str, dict[str, int]], path: Path = BASELINE, section11: dict | None = None,
-                   reason: str | None = None) -> None:
-    """Rewrite the baseline. Growth beyond the signed allowances (`check`) is absorbed only with
-    a `reason`, kept in `history` with the budget before and after."""
-    old = json.loads(path.read_text()) if path.is_file() else {}
-    unexplained = check(files, old) if old else []
-    if unexplained and not reason:
-        raise ValueError("the budget grew beyond the signed allowances; rebaseline with a reason: "
-                         + "; ".join(unexplained))
-    history = old.get("history", [])
-    for entry in old.get("signed", []):
-        history.append({**entry, "rebaselined_from": budget(old["totals"])})
-    if reason:
-        history.append({"change": reason, "rebaselined_from": budget(old["totals"]) if old else None,
-                        "to": budget(totals(files))})
-    data = {
-        "comment": "Generated by tools/trust_map.py --write; see docs/CONSOLIDATION-PLAN.md step 0.",
-        "totals": totals(files),
-        "budget": budget(totals(files)),
-        "signed": [],
-        "history": history,
-        "section11": section11 if section11 is not None else old.get("section11", {}),
-        "files": files,
-    }
-    path.write_text(json.dumps(data, indent=1, sort_keys=False, ensure_ascii=False) + "\n")
+def write_baseline(path: Path, recorded: dict[str, int], allowances: list[dict]) -> None:
+    """Write the budget file: the recorded budget and the allowances, in the one format the merge
+    driver reproduces (indent 1, keys in this order)."""
+    data = {"comment": COMMENT, "budget": {c: recorded[c] for c in BUDGET},
+            "allowances": [{field: entry[field] for field in ALLOWANCE} for entry in allowances]}
+    path.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
+
+
+FILES_RECORD = ("budget", "totals", "files")
+
+
+def write_files(path: Path, files: dict[str, dict[str, int]]) -> None:
+    """The per-file counts (`--files`): for the gate record, never committed beside the budget."""
+    now = totals(files)
+    path.write_text(json.dumps({"budget": budget(now), "totals": now, "files": files}, indent=1,
+                               ensure_ascii=False) + "\n")
+
+
+def files_problems(data: object) -> list[str]:
+    """Why `data` is not what `write_files` writes: exactly `FILES_RECORD`; at least one file (a
+    path under lean/), each with every count of `empty_counts` as a non-negative integer; `totals`
+    their sum and `budget` its budget. The gate (tools/gate.py) and every reader of its record
+    check the per-file counts here, so a record without them, or with counts that do not add up,
+    is never evidence."""
+    if not isinstance(data, dict) or set(data) != set(FILES_RECORD):
+        return [f"the per-file trust counts hold exactly {', '.join(FILES_RECORD)}"]
+    files = data["files"]
+    if not isinstance(files, dict) or not files:
+        return ["the per-file trust counts name no file"]
+    keys = set(empty_counts())
+    bad = [module for module, counts in files.items()
+           if not isinstance(module, str) or not module.endswith(".lean") or not isinstance(counts, dict)
+           or not nonnegative_int_record(counts, keys)]
+    if bad:
+        return [f"the per-file trust counts of {', '.join(map(repr, bad[:5]))} are not the counts of a file"]
+    if not nonnegative_int_record(data["totals"], keys) \
+            or not nonnegative_int_record(data["budget"], set(BUDGET)):
+        return ["the trust totals and budget have exactly their integer count fields"]
+    if data["totals"] != totals(files) or data["budget"] != budget(totals(files)):
+        return ["the trust totals or budget are not the sum of the per-file counts"]
+    return []
 
 
 # Seeding the side table from the trust map ------------------------------------------------------
@@ -951,40 +1117,52 @@ def print_ledger(rows: list[dict]) -> None:
               f"{r['net']} | {r['days']} | {r['risk']} | {r['score']} |")
 
 
-def report(files: dict[str, dict[str, int]], baseline: dict | None) -> None:
+def report(files: dict[str, dict[str, int]], base: dict[str, dict[str, int]] | None = None,
+           label: str = "") -> None:
+    """The class counts of the tree and, against a measured `base`, the change per class and the
+    files whose trusted lines changed most."""
     now = totals(files)
     print("class lines: " + ", ".join(f"{c} {now[c]}" for c in COLUMNS))
     print("D/G groups: " + ", ".join(f"{k} {now[k]}" for k in now if "[" in k))
     print(f"tied {now['tied']}, unclassified {now['unclassified']}, trusted {now['trusted']} "
           f"(K + S + untied [V] + unclassified), {now['lines']} lines in {len(files)} files")
-    if baseline:
-        before = baseline["totals"]
-        print("against the baseline: " + ", ".join(
-            f"{k} {now[k] - before.get(k, 0):+d}" for k in ("K", "S", "D", "G", "tied", "unclassified", "trusted")))
-        changed = [(m, now_c["trusted"] - baseline["files"].get(m, empty_counts())["trusted"])
-                   for m, now_c in files.items()]
-        changed += [(m, -c["trusted"]) for m, c in baseline["files"].items() if m not in files]
+    if base is not None:
+        before = totals(base)
+        print(f"against {label}: " + ", ".join(
+            f"{k} {now[k] - before[k]:+d}" for k in ("K", "S", "D", "G", "tied", "unclassified", "trusted")))
+        changed = [(m, c["trusted"] - base.get(m, empty_counts())["trusted"]) for m, c in files.items()]
+        changed += [(m, -c["trusted"]) for m, c in base.items() if m not in files]
         for module, delta in sorted((x for x in changed if x[1]), key=lambda x: -abs(x[1]))[:20]:
             print(f"  {module}: trusted {delta:+d}")
 
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--check", action="store_true", help="fail if K, S or untied [V] grew without a signed entry")
-    parser.add_argument("--write", action="store_true", help="rewrite docs/trust-baseline.json")
+    parser.add_argument("--check", action="store_true",
+                        help="fail if K, S or untied [V] grew over the base without an allowance introduced since")
+    parser.add_argument("--since", metavar="REV", help="--check with commit REV as the base")
+    parser.add_argument("--allow", action="store_true",
+                        help="append an allowance per class for the growth over the base (with --reason, --signed)")
+    parser.add_argument("--reason", help="with --allow, what the growth is")
+    parser.add_argument("--signed", metavar="SIGNATURE", help="with --allow, the DRI's signature")
+    parser.add_argument("--write", action="store_true",
+                        help="the merge train, on main: set the budget to the measured tree after the check")
+    parser.add_argument("--files", type=Path, metavar="PATH", help="write the per-file counts to PATH")
     parser.add_argument("--seed", type=Path, metavar="TRUST-MAP.md",
-                        help="classify new declarations in tools/trust-classes.json (with --write, also "
-                             "keep the section 11 counts in the baseline)")
+                        help="classify new declarations in tools/trust-classes.json")
     parser.add_argument("--fresh", action="store_true", help="with --seed, ignore the current table")
-    parser.add_argument("--reason", help="with --write, why the budget grew beyond the signed allowances "
-                                         "(a reclassification); kept in the baseline's history")
-    parser.add_argument("--since", metavar="REV",
-                        help="fail if K, S or untied [V] grew over the tree of commit REV, measured now, "
-                             "beyond the signed entries this tree's baseline adds to REV's")
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--ledger", action="store_true",
                         help="print the measured E9 ledger of tools/consolidation-ledger.json")
     args = parser.parse_args(argv)
+    if (args.reason is not None or args.signed is not None) and not args.allow:
+        parser.error("--reason and --signed go with --allow")
+    if args.allow and not ((args.reason or "").strip() and (args.signed or "").strip()):
+        parser.error("--allow needs a --reason and the DRI's --signed signature")
+    if args.allow and signature_problems(args.signed.strip()):
+        parser.error("--signed: " + "; ".join(signature_problems(args.signed.strip())))
+    if args.allow and args.write:
+        parser.error("--allow is a branch's step and --write the merge train's; run one")
     root = args.root.resolve()
     table_path = root / TABLE.relative_to(ROOT)
     baseline_path = root / BASELINE.relative_to(ROOT)
@@ -998,45 +1176,108 @@ def main(argv: list[str]) -> int:
             return 1
         print_ledger(rows)
         return 0
-    section11 = seed(args.seed, root, table_path, fresh=args.fresh) if args.seed else None
+    if args.seed:
+        seed(args.seed, root, table_path, fresh=args.fresh)
     files, problems = measure(root, table_path, statements_path)
     for problem in problems:
         print(problem, file=sys.stderr)
-    baseline = json.loads(baseline_path.read_text()) if baseline_path.is_file() else None
-    report(files, None if args.write else baseline)
     if problems:
+        report(files)
+        return 1
+    if args.files:
+        write_files(args.files, files)
+    if not (args.check or args.since or args.allow or args.write):
+        report(files)
+        return 0
+    return gate(args, root, files, baseline_path)
+
+
+def fail(message: str, code: int = 1) -> int:
+    print(message, file=sys.stderr)
+    return code
+
+
+def gate(args: argparse.Namespace, root: Path, files: dict[str, dict[str, int]], baseline_path: Path) -> int:
+    """`--check`, `--since`, `--allow` and `--write` over the measured tree (`main`)."""
+    baseline = None
+    if baseline_path.is_file():
+        try:
+            baseline, bad = parse_baseline(json.loads(baseline_path.read_text()))
+        except ValueError as error:
+            baseline, bad = None, [f"{baseline_path.name} is not JSON: {error}"]
+        if bad:
+            report(files)
+            return fail("\n".join(bad))
+    base, problem = resolve_base(root, args.since)
+    if problem:
+        report(files)
+        return fail(f"FAIL: {problem}")
+    allowances = baseline["allowances"] if baseline else []
+    if base is None:  # outside a git work tree: the recorded budget, and no allowance is new
+        report(files)
+        if baseline is None:
+            if args.write:  # the starting budget of a new tree
+                write_baseline(baseline_path, budget(totals(files)), [])
+                print(f"wrote {baseline_path.relative_to(root)}")
+                return 0
+            return fail(f"no baseline at {baseline_path}; run --write first", 2)
+        if args.allow:
+            return fail("FAIL: --allow counts growth over a base commit; run it in a git work tree")
+        cap, new, measured_base, label = baseline["budget"], [], None, "the recorded budget"
+    else:
+        measured_base, base_problems, base_data = measure_rev(base, root)
+        if base_problems:
+            report(files)
+            return fail("\n".join(base_problems) + f"\nFAIL: the tree of {base} does not measure cleanly")
+        base_baseline, bad = parse_baseline(base_data, legacy=True) if base_data is not None \
+            else ({"allowances": []}, [])
+        if bad:
+            report(files)
+            return fail("\n".join(f"{base}: {p}" for p in bad))
+        cap, label = budget(totals(measured_base)), base[:12]
+        new = introduced(allowances, base_baseline["allowances"])
+        gone = introduced(base_baseline["allowances"], allowances)  # the history only grows
+        if gone:
+            report(files)
+            return fail("\n".join(f"FAIL: the allowance {allowance_key(entry)!r} of {base[:12]} was removed; "
+                                  "the allowances are the history and are never removed" for entry in gone))
+        unsigned = [f"FAIL: the allowance {allowance_key(entry)!r} introduced since {base[:12]}: {problem}"
+                    for entry in new for problem in signature_problems(entry["signature"])]
+        if unsigned:  # growth is granted only by the DRI's signature, never by the migration's marker
+            report(files)
+            return fail("\n".join(unsigned))
+        report(files, measured_base, label)
+        recorded = base_baseline.get("budget")
+        if recorded is not None and {c: recorded[c] for c in BUDGET} != cap:
+            print(f"note: {base[:12]} records the budget {recorded}; measured there {cap} (the merge train's "
+                  "--write has not run since)")
+    if args.allow:
+        now, granted = budget(totals(files)), Counter()
+        for entry in new:
+            granted[entry["class"]] += entry["lines"]
+        added = [{"class": c, "lines": now[c] - cap[c] - granted[c], "reason": args.reason.strip(),
+                  "signature": args.signed.strip(), "commit": base} for c in BUDGET if now[c] > cap[c] + granted[c]]
+        if not added:
+            print(f"no growth over {label} beyond the allowances introduced since; nothing to allow")
+            return 0
+        write_baseline(baseline_path, baseline["budget"] if baseline else cap, [*allowances, *added])
+        for entry in added:
+            print(f"allowed {entry['class']} +{entry['lines']} over {label}")
+        return 0
+    failures = check(files, cap, new, measured_base)
+    for failure in failures:
+        print(f"BUDGET against {label}: {failure}", file=sys.stderr)
+    if failures:
         return 1
     if args.write:
-        try:
-            write_baseline(files, baseline_path, section11, args.reason)
-        except ValueError as error:
-            print(f"BUDGET: {error}", file=sys.stderr)
-            return 1
-        print(f"wrote {baseline_path.relative_to(root)}")
+        branch = run_git(root, "symbolic-ref", "--short", "-q", "HEAD")
+        if base is not None and branch.stdout.strip() != "main":
+            return fail("FAIL: the budget is written by the merge train on main; on a branch, record growth "
+                        "with --allow --reason ... --signed ...")
+        write_baseline(baseline_path, budget(totals(files)), allowances)
+        print(f"wrote {baseline_path.relative_to(root)}: budget {budget(totals(files))}")
         return 0
-    if args.since:
-        parent, parent_problems, parent_baseline = measure_rev(args.since, root)
-        for problem in parent_problems:
-            print(problem, file=sys.stderr)
-        if parent_problems:
-            print(f"FAIL: the tree of {args.since} does not measure cleanly", file=sys.stderr)
-            return 1
-        failures = since(files, parent, baseline, parent_baseline)
-        for failure in failures:
-            print(f"BUDGET since {args.since}: {failure}", file=sys.stderr)
-        if failures:
-            return 1
-        print(f"PASS: K, S and untied [V] within {args.since} and the allowances signed since")
-    if args.check:
-        if baseline is None:
-            print(f"no baseline at {baseline_path}; run --write first", file=sys.stderr)
-            return 2
-        failures = check(files, baseline)
-        for failure in failures:
-            print(f"BUDGET: {failure}", file=sys.stderr)
-        if failures:
-            return 1
-        print("PASS: K, S and untied [V] within the baseline and its signed allowances")
+    print(f"PASS: K, S and untied [V] within {label} and the allowances introduced since")
     return 0
 
 
