@@ -1249,6 +1249,1097 @@ theorem VE.Alternatives.withDefinitions_relation_some
           VE.TupleTyped S ss vs ∧ VE.Formula.denote S (VE.Norms.tupleVal vs) F
   -- uses VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.profileDef@VE.Alternatives.Decl VE.Alternatives.withDefinitions@VE.Alternatives.Decl VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2520055024
+theorem VE.Ask.Answer.groups_view
+  ∀ (a : VE.Ask.Answer), a.groups = a.view.groups
+  -- uses VE.Ask.Answer.groups@VE.Ask.Render VE.Ask.Answer.view@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Group@VE.Ask.Groups VE.Ask.View.groups@VE.Ask.Lines
+  -- expr 899068552
+theorem VE.Ask.Asked.hbind
+  ∀ (self : VE.Ask.Asked), VE.Ask.CaseBinding self.text self.case self.E self.L
+  -- uses VE.Ask.Asked.E@VE.Ask.Wire VE.Ask.Asked.L@VE.Ask.Wire VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.text@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.CaseBinding@VE.Ask.Binding
+  -- expr 946362931
+theorem VE.Ask.Asked.hnames
+  ∀ (self : VE.Ask.Asked) (n : VE.Ask.Name),
+    n ∈ self.names → n.checked = Bool.true → VE.Ask.NameReadsBackSame self.case self.E self.L n
+  -- uses VE.Ask.Asked.E@VE.Ask.Wire VE.Ask.Asked.L@VE.Ask.Wire VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.names@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.Name.checked@VE.Ask.Wire VE.Ask.Name@VE.Ask.Wire VE.Ask.NameReadsBackSame@VE.Ask.Wire
+  -- expr 1984198324
+theorem VE.Ask.Asked.hok
+  ∀ (self : VE.Ask.Asked) (r : VE.Ask.Row), r ∈ self.rows → VE.Ask.RowOk self.x.r.N self.x.φ r
+  -- uses VE.Ask.Asked.rows@VE.Ask.Wire VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.Row@VE.Ask.Basic VE.Ask.RowOk@VE.Ask.Basic VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.φ@VE.Readings.VerdictsWire
+  -- expr 1179144580
+theorem VE.Ask.Asked.hread
+  ∀ (self : VE.Ask.Asked), VE.Question.QuestionOneReading VE.Question.auxiliaries self.E { } self.L self.q self.c self.φ
+  -- uses VE.Ask.Asked.E@VE.Ask.Wire VE.Ask.Asked.L@VE.Ask.Wire VE.Ask.Asked.c@VE.Ask.Wire VE.Ask.Asked.q@VE.Ask.Wire VE.Ask.Asked.φ@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.Question.QuestionOneReading@VE.Question.Properties VE.Question.auxiliaries@VE.Question.Basic
+  -- expr 3982689578
+theorem VE.Ask.Asked.hreplay
+  ∀ (self : VE.Ask.Asked), VE.Readings.Run.replayVerdictsND self.case = Except.ok self.x
+  -- uses VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Readings.Run.replayVerdictsND@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
+  -- expr 2575771446
+theorem VE.Ask.Asked.hrequest
+  ∀ (self : VE.Ask.Asked),
+    self.request.getObjValD "document" = Lean.Json.str self.text ∧
+      self.request.getObjValD "question" = Lean.Json.str self.q ∧ self.request.getObjValD "case" = self.case
+  -- uses VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.q@VE.Ask.Wire VE.Ask.Asked.request@VE.Ask.Wire VE.Ask.Asked.text@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire
+  -- expr 2848799839
+theorem VE.Ask.Asked.hrows
+  ∀ (self : VE.Ask.Asked), List.map (fun x => x.choice) self.rows = List.map (fun x => x.fst) self.x.evs
+  -- uses VE.Ask.Asked.rows@VE.Ask.Wire VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.evs@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire
+  -- expr 3608236615
+theorem VE.Ask.Asked.hx
+  ∀ (self : VE.Ask.Asked), self.x.Γ = [] ∧ self.x.A = []
+  -- uses VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.NDVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.Γ@VE.Readings.VerdictsWire
+  -- expr 1606060818
+theorem VE.Ask.Asked.hψ
+  ∀ (self : VE.Ask.Asked),
+    self.case.getObjValD "question" = Lean.Json.str "query" ∧
+      VE.Ask.Same (self.case.getObjValD "conclusion") self.φ.encode ∧
+        VE.Route.Wire.decodeClosed (VE.Readings.Wire.fullEnv self.x.r.N ((List.map (fun x => x.fst) self.x.evs).headD []))
+            (self.case.getObjValD "conclusion") =
+          Except.ok self.x.φ
+  -- uses VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked.φ@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.Same@VE.Ask.Binding VE.EnglishGrammar.EFormula.encode@VE.EnglishGrammar.Encode VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.evs@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.fullEnv@VE.Readings.VerdictsWire VE.Route.Wire.decodeClosed@VE.Route.Wire
+  -- expr 3447535223
+theorem VE.Ask.Inv.covered
+  ∀ {sets : List String} {key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source} {seen : List VE.Ask.Row}
+    {gs : List VE.Ask.Group}, VE.Ask.Inv sets key seen gs → ∀ (r : VE.Ask.Row), r ∈ seen → ∃ g, g ∈ gs ∧ r ∈ g.rows
+  -- uses VE.Ask.Group.rows@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Inv@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources
+  -- expr 39113465
+theorem VE.Ask.Inv.distinct
+  ∀ {sets : List String} {key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source} {seen : List VE.Ask.Row}
+    {gs : List VE.Ask.Group}, VE.Ask.Inv sets key seen gs → List.Pairwise (fun g h => g.tag ≠ h.tag) gs
+  -- uses VE.Ask.Group.tag@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Inv@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources
+  -- expr 3267495813
+theorem VE.Ask.Inv.nonempty
+  ∀ {sets : List String} {key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source} {seen : List VE.Ask.Row}
+    {gs : List VE.Ask.Group}, VE.Ask.Inv sets key seen gs → ∀ (g : VE.Ask.Group), g ∈ gs → g.rows ≠ []
+  -- uses VE.Ask.Group.rows@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Inv@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources
+  -- expr 1302026582
+theorem VE.Ask.Inv.only
+  ∀ {sets : List String} {key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source} {seen : List VE.Ask.Row}
+    {gs : List VE.Ask.Group},
+    VE.Ask.Inv sets key seen gs → ∀ (g : VE.Ask.Group), g ∈ gs → ∀ (r : VE.Ask.Row), r ∈ g.rows → r ∈ seen
+  -- uses VE.Ask.Group.rows@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Inv@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources
+  -- expr 3625591271
+theorem VE.Ask.Inv.tagged
+  ∀ {sets : List String} {key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source} {seen : List VE.Ask.Row}
+    {gs : List VE.Ask.Group},
+    VE.Ask.Inv sets key seen gs →
+      ∀ (g : VE.Ask.Group), g ∈ gs → ∀ (r : VE.Ask.Row), r ∈ g.rows → (key r, VE.Ask.assignment sets r) = g.tag
+  -- uses VE.Ask.Group.rows@VE.Ask.Groups VE.Ask.Group.tag@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Inv@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.assignment@VE.Ask.Groups
+  -- expr 2593095384
+theorem VE.Ask.PlainAsked.hbind
+  ∀ (self : VE.Ask.PlainAsked), VE.Ask.PlainCaseBinding self.text self.case self.E self.L self.x.V
+  -- uses VE.Ask.PlainAsked.E@VE.Ask.PlainWire VE.Ask.PlainAsked.L@VE.Ask.PlainWire VE.Ask.PlainAsked.case@VE.Ask.PlainWire VE.Ask.PlainAsked.text@VE.Ask.PlainWire VE.Ask.PlainAsked.x@VE.Ask.PlainWire VE.Ask.PlainAsked@VE.Ask.PlainWire VE.Ask.PlainCaseBinding@VE.Ask.PlainWire VE.Ask.PlainVerdict.V@VE.Ask.PlainWire
+  -- expr 2415538264
+theorem VE.Ask.PlainAsked.hread
+  ∀ (self : VE.Ask.PlainAsked),
+    VE.Question.QuestionOneReading VE.Question.auxiliaries self.E { } self.L self.q self.c self.φ
+  -- uses VE.Ask.PlainAsked.E@VE.Ask.PlainWire VE.Ask.PlainAsked.L@VE.Ask.PlainWire VE.Ask.PlainAsked.c@VE.Ask.PlainWire VE.Ask.PlainAsked.q@VE.Ask.PlainWire VE.Ask.PlainAsked.φ@VE.Ask.PlainWire VE.Ask.PlainAsked@VE.Ask.PlainWire VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.Question.QuestionOneReading@VE.Question.Properties VE.Question.auxiliaries@VE.Question.Basic
+  -- expr 898176367
+theorem VE.Ask.PlainAsked.hreplay
+  ∀ (self : VE.Ask.PlainAsked), VE.Ask.replayPlain self.case = Except.ok self.x
+  -- uses VE.Ask.PlainAsked.case@VE.Ask.PlainWire VE.Ask.PlainAsked.x@VE.Ask.PlainWire VE.Ask.PlainAsked@VE.Ask.PlainWire VE.Ask.PlainVerdict@VE.Ask.PlainWire VE.Ask.replayPlain@VE.Ask.PlainWire
+  -- expr 4112442546
+theorem VE.Ask.PlainAsked.hrequest
+  ∀ (self : VE.Ask.PlainAsked),
+    self.request.getObjValD "document" = Lean.Json.str self.text ∧
+      self.request.getObjValD "question" = Lean.Json.str self.q ∧ self.request.getObjValD "case" = self.case
+  -- uses VE.Ask.PlainAsked.case@VE.Ask.PlainWire VE.Ask.PlainAsked.q@VE.Ask.PlainWire VE.Ask.PlainAsked.request@VE.Ask.PlainWire VE.Ask.PlainAsked.text@VE.Ask.PlainWire VE.Ask.PlainAsked@VE.Ask.PlainWire
+  -- expr 953574707
+theorem VE.Ask.PlainAsked.hψ
+  ∀ (self : VE.Ask.PlainAsked),
+    VE.Ask.Same (self.case.getObjValD "conclusion") self.φ.encode ∧
+      VE.Route.Wire.decodeClosed self.x.V (self.case.getObjValD "conclusion") = Except.ok self.x.ψ
+  -- uses VE.Ask.PlainAsked.case@VE.Ask.PlainWire VE.Ask.PlainAsked.x@VE.Ask.PlainWire VE.Ask.PlainAsked.φ@VE.Ask.PlainWire VE.Ask.PlainAsked@VE.Ask.PlainWire VE.Ask.PlainVerdict.V@VE.Ask.PlainWire VE.Ask.PlainVerdict.ψ@VE.Ask.PlainWire VE.Ask.Same@VE.Ask.Binding VE.EnglishGrammar.EFormula.encode@VE.EnglishGrammar.Encode VE.Formula@VE.Syntax VE.Route.Wire.decodeClosed@VE.Route.Wire
+  -- expr 2101904619
+theorem VE.Ask.PlainParts.hψ
+  ∀ (self : VE.Ask.PlainParts), VE.Route.Wire.decodeClosed self.rv.environment self.conclusion = Except.ok self.ψ
+  -- uses VE.Ask.PlainParts.conclusion@VE.Ask.PlainWire VE.Ask.PlainParts.rv@VE.Ask.PlainWire VE.Ask.PlainParts.ψ@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Formula@VE.Syntax VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.decodeClosed@VE.Route.Wire
+  -- expr 49308722
+theorem VE.Ask.PlainParts.sourced_premises
+  ∀ (p : VE.Ask.PlainParts), List.map (fun x => x.snd) p.sourced = p.Γ
+  -- uses VE.Ask.PlainParts.sourced@VE.Ask.PlainAnswer VE.Ask.PlainParts.Γ@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.Source@VE.Ask.Sources VE.Formula@VE.Syntax
+  -- expr 1201266539
+theorem VE.Ask.PlainParts.sourced_sources
+  ∀ (p : VE.Ask.PlainParts), List.map (fun x => x.fst) p.sourced = p.sources
+  -- uses VE.Ask.PlainParts.sourced@VE.Ask.PlainAnswer VE.Ask.PlainParts.sources@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.Source@VE.Ask.Sources VE.Formula@VE.Syntax
+  -- expr 3250119131
+theorem VE.Ask.PlainParts.sources_length
+  ∀ (p : VE.Ask.PlainParts), p.sources.length = p.Γ.length
+  -- uses VE.Ask.PlainParts.sources@VE.Ask.PlainWire VE.Ask.PlainParts.Γ@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.Source@VE.Ask.Sources VE.Formula@VE.Syntax
+  -- expr 1463297914
+theorem VE.Ask.PlainRow.toRow_lead
+  ∀ (r : VE.Ask.PlainRow), r.toRow.lead = r.lead
+  -- uses VE.Ask.Lead@VE.Ask.Basic VE.Ask.PlainRow.lead@VE.Ask.Plain VE.Ask.PlainRow.toRow@VE.Ask.PlainAnswer VE.Ask.PlainRow@VE.Ask.Plain VE.Ask.Row.lead@VE.Ask.Basic
+  -- expr 1672163490
+theorem VE.Ask.PlainVerdict.hok
+  ∀ (self : VE.Ask.PlainVerdict), VE.Ask.PlainRowOk self.V self.Γ self.ψ self.row
+  -- uses VE.Ask.PlainRowOk@VE.Ask.Plain VE.Ask.PlainVerdict.V@VE.Ask.PlainWire VE.Ask.PlainVerdict.row@VE.Ask.PlainWire VE.Ask.PlainVerdict.Γ@VE.Ask.PlainWire VE.Ask.PlainVerdict.ψ@VE.Ask.PlainWire VE.Ask.PlainVerdict@VE.Ask.PlainWire
+  -- expr 3566753148
+theorem VE.Ask.ZeroAsked.hbind
+  ∀ (self : VE.Ask.ZeroAsked), VE.Ask.PlainCaseBinding self.text self.case self.E self.L self.x.E
+  -- uses VE.Ask.PlainCaseBinding@VE.Ask.PlainWire VE.Ask.ZeroAsked.E@VE.Ask.ZeroWire VE.Ask.ZeroAsked.L@VE.Ask.ZeroWire VE.Ask.ZeroAsked.case@VE.Ask.ZeroWire VE.Ask.ZeroAsked.text@VE.Ask.ZeroWire VE.Ask.ZeroAsked.x@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.E@VE.Ask.ZeroWire
+  -- expr 3553327433
+theorem VE.Ask.ZeroAsked.hread
+  ∀ (self : VE.Ask.ZeroAsked),
+    VE.Question.QuestionOneReading VE.Question.auxiliaries self.E { } self.L self.q self.c self.φ
+  -- uses VE.Ask.ZeroAsked.E@VE.Ask.ZeroWire VE.Ask.ZeroAsked.L@VE.Ask.ZeroWire VE.Ask.ZeroAsked.c@VE.Ask.ZeroWire VE.Ask.ZeroAsked.q@VE.Ask.ZeroWire VE.Ask.ZeroAsked.φ@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.Question.QuestionOneReading@VE.Question.Properties VE.Question.auxiliaries@VE.Question.Basic
+  -- expr 2164574794
+theorem VE.Ask.ZeroAsked.hreplay
+  ∀ (self : VE.Ask.ZeroAsked), VE.Ask.replayZero self.case = Except.ok self.x
+  -- uses VE.Ask.ZeroAsked.case@VE.Ask.ZeroWire VE.Ask.ZeroAsked.x@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.Ask.ZeroVerdict@VE.Ask.ZeroWire VE.Ask.replayZero@VE.Ask.ZeroWire
+  -- expr 1483741019
+theorem VE.Ask.ZeroAsked.hrequest
+  ∀ (self : VE.Ask.ZeroAsked),
+    self.request.getObjValD "document" = Lean.Json.str self.text ∧
+      self.request.getObjValD "question" = Lean.Json.str self.q ∧ self.request.getObjValD "case" = self.case
+  -- uses VE.Ask.ZeroAsked.case@VE.Ask.ZeroWire VE.Ask.ZeroAsked.q@VE.Ask.ZeroWire VE.Ask.ZeroAsked.request@VE.Ask.ZeroWire VE.Ask.ZeroAsked.text@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire
+  -- expr 3982496549
+theorem VE.Ask.ZeroAsked.hψ
+  ∀ (self : VE.Ask.ZeroAsked), VE.Ask.Same (self.case.getObjValD "conclusion") self.φ.encode
+  -- uses VE.Ask.Same@VE.Ask.Binding VE.Ask.ZeroAsked.case@VE.Ask.ZeroWire VE.Ask.ZeroAsked.φ@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.EnglishGrammar.EFormula.encode@VE.EnglishGrammar.Encode
+  -- expr 1948677315
+theorem VE.Ask.ZeroParts.profiled
+  ∀ (self : VE.Ask.ZeroParts), self.s.profiled = Bool.true
+  -- uses VE.Ask.ZeroParts.s@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.NormDefaults.Wire.SourceU.profiled@VE.NormDefaults.Wire
+  -- expr 408216926
+theorem VE.Ask.ZeroParts.sourced_premises
+  ∀ (p : VE.Ask.ZeroParts), List.map (fun x => x.snd) p.sourced = p.premises
+  -- uses VE.Ask.Source@VE.Ask.Sources VE.Ask.ZeroParts.premises@VE.Ask.ZeroAnswer VE.Ask.ZeroParts.sourced@VE.Ask.ZeroAnswer VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Formula@VE.Syntax
+  -- expr 2955336156
+theorem VE.Ask.ZeroParts.wfU
+  ∀ (p : VE.Ask.ZeroParts), VE.NormDefaults.WellFormedU p.s.U = Bool.true
+  -- uses VE.Ask.ZeroParts.s@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire
+  -- expr 1950718519
+theorem VE.Ask.ZeroVerdict.hok
+  ∀ (self : VE.Ask.ZeroVerdict), VE.Ask.RowOkU self.U self.Γ self.ψ self.row
+  -- uses VE.Ask.RowOkU@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.U@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.row@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.Γ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.ψ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict@VE.Ask.ZeroWire
+  -- expr 3017703320
+theorem VE.Ask.all_yes_iff_fold
+  ∀ (rs : List VE.Ask.Row),
+    rs ≠ [] →
+      (∀ (r : VE.Ask.Row), r ∈ rs → r.premise = VE.Readings.ChoiceResult.model) →
+        ((∀ (r : VE.Ask.Row), r ∈ rs → r.lead = VE.Ask.Lead.yes) ↔
+          VE.Readings.foldEntailment (VE.Ask.conflictRows rs) (VE.Ask.queryRows rs) = VE.Readings.ReadingVerdict.all)
+  -- uses VE.Ask.Lead.yes@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row.premise@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.conflictRows@VE.Ask.Basic VE.Ask.queryRows@VE.Ask.Basic VE.Readings.ChoiceResult.model@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.ReadingVerdict.all@VE.Readings.Verdicts VE.Readings.ReadingVerdict@VE.Readings.Verdicts VE.Readings.foldEntailment@VE.Readings.Verdicts
+  -- expr 2722514681
+theorem VE.Ask.answerForPlain_gated
+  ∀ (s : VE.Ask.PlainAsked) (ctx : VE.Ask.Context) (p : VE.Ask.PlainParts) (v : VE.Ask.View),
+    VE.Ask.answerForPlain s = Except.ok (ctx, p, v) →
+      ∀ (l : VE.Ask.Line),
+        l ∈ VE.Ask.renderV ctx v → ∃ slots, VE.Question.frameReadings l.text = [(VE.Ask.gateName l.frame, slots)]
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.frame@VE.Ask.Lines VE.Ask.Line.text@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.PlainAsked@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.View@VE.Ask.Lines VE.Ask.answerForPlain@VE.Ask.PlainAnswer VE.Ask.gateName@VE.Ask.Lines VE.Ask.renderV@VE.Ask.Lines VE.Question.frameReadings@VE.Question.Frames
+  -- expr 2064120535
+theorem VE.Ask.answerForPlain_ok
+  ∀ {s : VE.Ask.PlainAsked} {ctx : VE.Ask.Context} {p : VE.Ask.PlainParts} {v : VE.Ask.View},
+    VE.Ask.answerForPlain s = Except.ok (ctx, p, v) →
+      VE.Ask.contextOf s.text = Except.ok ctx ∧
+        v = VE.Ask.plainView s p (VE.Ask.documentUnused s.text) ∧
+          (List.mapM ctx.displayOf v.unused).isSome = Bool.true ∧
+            VE.Ask.plainCertReplays p s.case s.x.row = Bool.true ∧ VE.Ask.linesGated (VE.Ask.renderV ctx v) = Bool.true
+  -- uses VE.Ask.Context.displayOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.PlainAsked.case@VE.Ask.PlainWire VE.Ask.PlainAsked.text@VE.Ask.PlainWire VE.Ask.PlainAsked.x@VE.Ask.PlainWire VE.Ask.PlainAsked@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.PlainVerdict.row@VE.Ask.PlainWire VE.Ask.View.unused@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.answerForPlain@VE.Ask.PlainAnswer VE.Ask.contextOf@VE.Ask.Lines VE.Ask.documentUnused@VE.Ask.Lines VE.Ask.linesGated@VE.Ask.Render VE.Ask.plainCertReplays@VE.Ask.PlainAnswer VE.Ask.plainView@VE.Ask.PlainAnswer VE.Ask.renderV@VE.Ask.Lines
+  -- expr 1032681626
+theorem VE.Ask.answerForZero_gated
+  ∀ (s : VE.Ask.ZeroAsked) (ctx : VE.Ask.Context) (p : VE.Ask.ZeroParts) (v : VE.Ask.View),
+    VE.Ask.answerForZero s = Except.ok (ctx, p, v) →
+      ∀ (l : VE.Ask.Line),
+        l ∈ VE.Ask.renderV ctx v → ∃ slots, VE.Question.frameReadings l.text = [(VE.Ask.gateName l.frame, slots)]
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.frame@VE.Ask.Lines VE.Ask.Line.text@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.answerForZero@VE.Ask.ZeroAnswer VE.Ask.gateName@VE.Ask.Lines VE.Ask.renderV@VE.Ask.Lines VE.Question.frameReadings@VE.Question.Frames
+  -- expr 4185937945
+theorem VE.Ask.answerForZero_ok
+  ∀ {s : VE.Ask.ZeroAsked} {ctx : VE.Ask.Context} {p : VE.Ask.ZeroParts} {v : VE.Ask.View},
+    VE.Ask.answerForZero s = Except.ok (ctx, p, v) →
+      VE.Ask.contextOf s.text = Except.ok ctx ∧
+        v = VE.Ask.zeroView s p (VE.Ask.documentUnused s.text) ∧
+          (List.mapM ctx.displayOf v.unused).isSome = Bool.true ∧
+            VE.Ask.zeroCertReplays p s.case s.x.row = Bool.true ∧ VE.Ask.linesGated (VE.Ask.renderV ctx v) = Bool.true
+  -- uses VE.Ask.Context.displayOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.View.unused@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.ZeroAsked.case@VE.Ask.ZeroWire VE.Ask.ZeroAsked.text@VE.Ask.ZeroWire VE.Ask.ZeroAsked.x@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.row@VE.Ask.ZeroWire VE.Ask.answerForZero@VE.Ask.ZeroAnswer VE.Ask.contextOf@VE.Ask.Lines VE.Ask.documentUnused@VE.Ask.Lines VE.Ask.linesGated@VE.Ask.Render VE.Ask.renderV@VE.Ask.Lines VE.Ask.zeroCertReplays@VE.Ask.ZeroAnswer VE.Ask.zeroView@VE.Ask.ZeroAnswer
+  -- expr 2994736929
+theorem VE.Ask.answerFor_bound
+  ∀ (asked : VE.Ask.Asked) (ctx : VE.Ask.Context) (a : VE.Ask.Answer),
+    VE.Ask.answerFor asked = Except.ok (ctx, a) →
+      VE.Ask.RenderInputBound ctx a ∧
+        a.request = asked.request ∧
+          a.text = asked.text ∧
+            a.case = asked.case ∧ a.x = asked.x ∧ a.asked = asked.c ∧ a.rows = asked.rows ∧ a.names = asked.names
+  -- uses VE.Ask.Answer.asked@VE.Ask.Render VE.Ask.Answer.case@VE.Ask.Render VE.Ask.Answer.names@VE.Ask.Render VE.Ask.Answer.request@VE.Ask.Render VE.Ask.Answer.rows@VE.Ask.Render VE.Ask.Answer.text@VE.Ask.Render VE.Ask.Answer.x@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Asked.c@VE.Ask.Wire VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.names@VE.Ask.Wire VE.Ask.Asked.request@VE.Ask.Wire VE.Ask.Asked.rows@VE.Ask.Wire VE.Ask.Asked.text@VE.Ask.Wire VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.Context@VE.Ask.Lines VE.Ask.Name@VE.Ask.Wire VE.Ask.RenderInputBound@VE.Ask.Render VE.Ask.Row@VE.Ask.Basic VE.Ask.answerFor@VE.Ask.Render VE.Question.Candidate@VE.Question.Basic VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
+  -- expr 1218040059
+theorem VE.Ask.answerFor_cites
+  ∀ (asked : VE.Ask.Asked) (ctx : VE.Ask.Context) (a : VE.Ask.Answer),
+    VE.Ask.answerFor asked = Except.ok (ctx, a) →
+      ∀ (r : VE.Ask.Row),
+        r ∈ a.rows →
+          r.lead = VE.Ask.Lead.yes ∨ r.lead = VE.Ask.Lead.no →
+            ∃ ψ k,
+              VE.Ask.certPiece a.x a.case r = Option.some (ψ, k) ∧
+                (r.lead = VE.Ask.Lead.yes ∧ ψ = a.x.φ ∨ r.lead = VE.Ask.Lead.no ∧ ψ = a.x.φ.not) ∧
+                  (∀ (s : VE.Ask.Source),
+                      s ∈ a.cites r ↔
+                        ∃ i,
+                          i ∈ VE.Ask.rowUsed a.x r ψ k ∧
+                            Option.map (fun x => x.fst) (VE.Ask.rowSourced a.x r)[i]? = Option.some s) ∧
+                    VE.Entails (VE.Readings.Wire.fullEnv a.x.r.N r.choice)
+                      (List.filterMap (fun x => (VE.Ask.rowPremises a.x r)[x]?) (VE.Ask.rowUsed a.x r ψ k)) ψ
+  -- uses VE.Ask.Answer.case@VE.Ask.Render VE.Ask.Answer.cites@VE.Ask.Render VE.Ask.Answer.rows@VE.Ask.Render VE.Ask.Answer.x@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Asked@VE.Ask.Wire VE.Ask.Context@VE.Ask.Lines VE.Ask.Lead.no@VE.Ask.Basic VE.Ask.Lead.yes@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.answerFor@VE.Ask.Render VE.Ask.certPiece@VE.Ask.Render VE.Ask.rowPremises@VE.Ask.Render VE.Ask.rowSourced@VE.Ask.Render VE.Ask.rowUsed@VE.Ask.Render VE.Entails@VE.Semantics VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.fullEnv@VE.Readings.VerdictsWire VE.Tableau.Certificate@VE.Tableau
+  -- expr 3690121051
+theorem VE.Ask.answerFor_gated
+  ∀ (asked : VE.Ask.Asked) (ctx : VE.Ask.Context) (a : VE.Ask.Answer),
+    VE.Ask.answerFor asked = Except.ok (ctx, a) →
+      ∀ (l : VE.Ask.Line),
+        l ∈ VE.Ask.render ctx a → ∃ slots, VE.Question.frameReadings l.text = [(VE.Ask.gateName l.frame, slots)]
+  -- uses VE.Ask.Answer@VE.Ask.Render VE.Ask.Asked@VE.Ask.Wire VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.frame@VE.Ask.Lines VE.Ask.Line.text@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.answerFor@VE.Ask.Render VE.Ask.gateName@VE.Ask.Lines VE.Ask.render@VE.Ask.Render VE.Question.frameReadings@VE.Question.Frames
+  -- expr 1747140886
+theorem VE.Ask.answerFor_ok
+  ∀ {s : VE.Ask.Asked} {ctx : VE.Ask.Context} {a : VE.Ask.Answer},
+    VE.Ask.answerFor s = Except.ok (ctx, a) →
+      VE.Ask.contextOf s.text = Except.ok ctx ∧
+        a =
+            { request := s.request, text := s.text, case := s.case, x := s.x, asked := s.c,
+              ids := List.map (fun x => x.id) s.x.r.N.D.sets, rows := s.rows,
+              cites :=
+                VE.Ask.memoRead (VE.Ask.memoTable s.rows (VE.Ask.checkedCites s.request s.x))
+                  (VE.Ask.checkedCites s.request s.x),
+              names := s.names, unused := VE.Ask.documentUnused s.text } ∧
+          (List.mapM ctx.displayOf a.unused).isSome = Bool.true ∧
+            a.rows.all (VE.Ask.certReplays a) = Bool.true ∧ VE.Ask.linesGated (VE.Ask.render ctx a) = Bool.true
+  -- uses VE.Ask.Answer.mk@VE.Ask.Render VE.Ask.Answer.rows@VE.Ask.Render VE.Ask.Answer.unused@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Asked.c@VE.Ask.Wire VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.names@VE.Ask.Wire VE.Ask.Asked.request@VE.Ask.Wire VE.Ask.Asked.rows@VE.Ask.Wire VE.Ask.Asked.text@VE.Ask.Wire VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.Context.displayOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.answerFor@VE.Ask.Render VE.Ask.certReplays@VE.Ask.Render VE.Ask.checkedCites@VE.Ask.Render VE.Ask.contextOf@VE.Ask.Lines VE.Ask.documentUnused@VE.Ask.Lines VE.Ask.linesGated@VE.Ask.Render VE.Ask.memoRead@VE.Ask.Render VE.Ask.memoTable@VE.Ask.Render VE.Ask.render@VE.Ask.Render VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire
+  -- expr 1945405913
+theorem VE.Ask.any_some
+  ∀ {α : Type} {o : Option α} {f : α → Bool}, Option.any f o = Bool.true → ∃ a, o = Option.some a ∧ f a = Bool.true
+  -- uses
+  -- expr 640862916
+theorem VE.Ask.append_eq
+  ∀ {α : Type} {l₁ l₂ l₃ l₄ : List α}, l₁ = l₃ → l₂ = l₄ → l₁ ++ l₂ = l₃ ++ l₄
+  -- uses
+  -- expr 1326639864
+theorem VE.Ask.ask_wire_sound
+  ∀ (j : Lean.Json) (a : VE.Ask.Asked),
+    VE.Ask.replayAsk j = Except.ok a →
+      a.request = j ∧
+        a.text = (j.getObjValD "document").getStr?.toOption.getD "" ∧
+          a.q = (j.getObjValD "question").getStr?.toOption.getD "" ∧
+            a.case = j.getObjValD "case" ∧
+              VE.Readings.Run.replayVerdictsND a.case = Except.ok a.x ∧
+                (∀ (r : VE.Ask.Row), r ∈ a.rows → VE.Ask.LeadHolds a.x.r.N a.x.φ r) ∧
+                  (∀ (r : VE.Ask.Row),
+                      r ∈ a.rows →
+                        ∀ (x : VE.Ask.Reason), r.reason = Option.some x → VE.Ask.ReasonHolds a.x.r.N a.x.φ r x) ∧
+                    (∀ (c : VE.Readings.Choice),
+                        VE.Readings.Compatible a.x.r.N.D c ↔ c ∈ List.map (fun x => x.choice) a.rows) ∧
+                      VE.Ask.CaseBinding a.text a.case a.E a.L ∧
+                        VE.Question.QuestionOneReading VE.Question.auxiliaries a.E { } a.L a.q a.c a.φ
+  -- uses VE.Ask.Asked.E@VE.Ask.Wire VE.Ask.Asked.L@VE.Ask.Wire VE.Ask.Asked.c@VE.Ask.Wire VE.Ask.Asked.case@VE.Ask.Wire VE.Ask.Asked.q@VE.Ask.Wire VE.Ask.Asked.request@VE.Ask.Wire VE.Ask.Asked.rows@VE.Ask.Wire VE.Ask.Asked.text@VE.Ask.Wire VE.Ask.Asked.x@VE.Ask.Wire VE.Ask.Asked.φ@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.CaseBinding@VE.Ask.Binding VE.Ask.LeadHolds@VE.Ask.Basic VE.Ask.Reason@VE.Ask.Basic VE.Ask.ReasonHolds@VE.Ask.Basic VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row.reason@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.replayAsk@VE.Ask.Wire VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.Question.QuestionOneReading@VE.Question.Properties VE.Question.auxiliaries@VE.Question.Basic VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.replayVerdictsND@VE.Readings.VerdictsWire VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
+  -- expr 2551787977
+theorem VE.Ask.assignment_eq
+  ∀ {sets : List String} {r r' : VE.Ask.Row},
+    (∀ (s : String), s ∈ sets → r.choice.index s = r'.choice.index s) →
+      VE.Ask.assignment sets r = VE.Ask.assignment sets r'
+  -- uses VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.assignment@VE.Ask.Groups VE.Readings.Choice.index@VE.Readings.Choice
+  -- expr 3615930801
+theorem VE.Ask.blank_entails
+  ∀ (E : VE.Environment) (P : List VE.Formula) (keep : List String) (ψ : VE.Formula),
+    VE.Entails E (VE.Readings.blank (VE.Ask.positions P) keep) ψ →
+      VE.Entails E (List.filterMap (fun x => P[x]?) (List.filterMap String.toNat? keep)) ψ
+  -- uses VE.Ask.positions@VE.Ask.Sources VE.Entails@VE.Semantics VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Readings.blank@VE.Readings.Verdicts
+  -- expr 568395188
+theorem VE.Ask.castFM_M
+  ∀ {U U' : VE.NormDefaults.UDoc} (h : U = U') (m : VE.Readings.Wire.FilledModel U), (VE.Readings.Wire.castFM h m).M = m.M
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Readings.Wire.castFM@VE.Readings.VerdictsWire
+  -- expr 1992423320
+theorem VE.Ask.certPiece_formula
+  ∀ {x : VE.Readings.Wire.NDVerdicts} {case : Lean.Json} {r : VE.Ask.Row} {ψ : VE.Formula} {k : VE.Tableau.Certificate},
+    VE.Ask.certPiece x case r = Option.some (ψ, k) →
+      r.lead = VE.Ask.Lead.yes ∧ ψ = x.φ ∨ r.lead = VE.Ask.Lead.no ∧ ψ = x.φ.not
+  -- uses VE.Ask.Lead.no@VE.Ask.Basic VE.Ask.Lead.yes@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.certPiece@VE.Ask.Render VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Wire.NDVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire VE.Tableau.Certificate@VE.Tableau
+  -- expr 3237849888
+theorem VE.Ask.checkUnit_sound
+  ∀ {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon} {V : VE.Environment} {fences : List (String × String)}
+    {cu fu : Lean.Json}, VE.Ask.checkUnit E L V fences cu fu = Bool.true → VE.Ask.UnitBound E L V fences cu fu
+  -- uses VE.Ask.UnitBound@VE.Ask.Binding VE.Ask.checkUnit@VE.Ask.Binding VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Environment@VE.Syntax
+  -- expr 3269284011
+theorem VE.Ask.checkUnits_sound
+  ∀ {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon} {V : VE.Environment} {fences : List (String × String)}
+    {cus fus : Array Lean.Json},
+    VE.Ask.checkUnits E L V fences cus fus = Bool.true →
+      cus.size = fus.size ∧
+        ∀ (i : Nat) (h₁ : i < cus.size) (h₂ : i < fus.size), VE.Ask.UnitBound E L V fences cus[i] fus[i]
+  -- uses VE.Ask.UnitBound@VE.Ask.Binding VE.Ask.checkUnits@VE.Ask.Binding VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Environment@VE.Syntax
+  -- expr 1302503324
+theorem VE.Ask.checkedCites_spec
+  ∀ (j : Lean.Json) (x : VE.Readings.Wire.NDVerdicts) (r : VE.Ask.Row) (ψ : VE.Formula) (k : VE.Tableau.Certificate),
+    VE.Ask.certPiece x (j.getObjValD "case") r = Option.some (ψ, k) →
+      (∀ (s : VE.Ask.Source),
+          s ∈ VE.Ask.checkedCites j x r ↔
+            ∃ i, i ∈ VE.Ask.rowUsed x r ψ k ∧ Option.map (fun x => x.fst) (VE.Ask.rowSourced x r)[i]? = Option.some s) ∧
+        (∀ (i : Nat) (s : VE.Ask.Source) (f : VE.Formula),
+            (VE.Ask.rowSourced x r)[i]? = Option.some (s, f) → (VE.Ask.rowPremises x r)[i]? = Option.some f) ∧
+          (VE.Ask.replayOk (VE.Readings.Wire.fullEnv x.r.N r.choice) (VE.Ask.rowPremises x r) ψ k = Bool.true →
+            VE.Entails (VE.Readings.Wire.fullEnv x.r.N r.choice)
+              (List.filterMap (fun x_1 => (VE.Ask.rowPremises x r)[x_1]?) (VE.Ask.rowUsed x r ψ k)) ψ)
+  -- uses VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.certPiece@VE.Ask.Render VE.Ask.checkedCites@VE.Ask.Render VE.Ask.replayOk@VE.Ask.Sources VE.Ask.rowPremises@VE.Ask.Render VE.Ask.rowSourced@VE.Ask.Render VE.Ask.rowUsed@VE.Ask.Render VE.Entails@VE.Semantics VE.Formula@VE.Syntax VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire VE.Readings.Wire.fullEnv@VE.Readings.VerdictsWire VE.Tableau.Certificate@VE.Tableau
+  -- expr 456097320
+theorem VE.Ask.choice_eq_of_index
+  ∀ (ids : List String) (c c' : VE.Readings.Choice),
+    ids.Nodup →
+      List.map (fun x => x.fst) c = ids →
+        List.map (fun x => x.fst) c' = ids → (∀ (s : String), s ∈ ids → c.index s = c'.index s) → c = c'
+  -- uses VE.Readings.Choice.index@VE.Readings.Choice VE.Readings.Choice@VE.Readings.Choice
+  -- expr 1856642450
+theorem VE.Ask.citeLine_fields
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (c : VE.Readings.Choice) (s : VE.Ask.Source),
+    (VE.Ask.citeLine ctx v c s).readings = [] ∧ (VE.Ask.citeLine ctx v c s).frame ∈ ["C1", "C2", "C3", "C4"]
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.frame@VE.Ask.Lines VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Source@VE.Ask.Sources VE.Ask.View@VE.Ask.Lines VE.Ask.citeLine@VE.Ask.Lines VE.Readings.Choice@VE.Readings.Choice
+  -- expr 2631298820
+theorem VE.Ask.citeLine_quote
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (c : VE.Readings.Choice) (s : VE.Ask.Source) (u t : String),
+    (VE.Ask.citeLine ctx v c s).quote = Option.some (u, t) → ctx.textOf u = Option.some t
+  -- uses VE.Ask.Context.textOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.quote@VE.Ask.Lines VE.Ask.Source@VE.Ask.Sources VE.Ask.View@VE.Ask.Lines VE.Ask.citeLine@VE.Ask.Lines VE.Readings.Choice@VE.Readings.Choice
+  -- expr 2019221887
+theorem VE.Ask.citeLine_source
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (c : VE.Readings.Choice) (s : VE.Ask.Source),
+    (VE.Ask.citeLine ctx v c s).source = Option.some s
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.source@VE.Ask.Lines VE.Ask.Source@VE.Ask.Sources VE.Ask.View@VE.Ask.Lines VE.Ask.citeLine@VE.Ask.Lines VE.Readings.Choice@VE.Readings.Choice
+  -- expr 2304721839
+theorem VE.Ask.cited_nodup
+  ∀ (srcs : List VE.Ask.Source) (used : List Nat), (VE.Ask.cited srcs used).Nodup
+  -- uses VE.Ask.Source@VE.Ask.Sources VE.Ask.cited@VE.Ask.Sources
+  -- expr 738856285
+theorem VE.Ask.eq_of_strOf
+  ∀ {j : Lean.Json} {s : String}, VE.Ask.strOf? j = Option.some s → j = Lean.Json.str s
+  -- uses VE.Ask.strOf?@VE.Ask.Binding
+  -- expr 3639968888
+theorem VE.Ask.eraseDups_spec
+  ∀ {α : Type} [inst : BEq α] [LawfulBEq α] (n : Nat) (l : List α),
+    l.length ≤ n → (∀ (a : α), a ∈ l.eraseDups ↔ a ∈ l) ∧ l.eraseDups.Nodup
+  -- uses
+  -- expr 1448235897
+theorem VE.Ask.expansion_of_modelCheck_base
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt U.D 0) →
+          ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (Γ : List VE.Formula) (φ : VE.Formula),
+            (∀ (a : VE.Formula),
+                a ∈ Γ →
+                  VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) (VE.Norms.size (VE.NormDefaults.fill U)))
+                    [] a) →
+              VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) (VE.Norms.size (VE.NormDefaults.fill U))) []
+                  φ →
+                (VE.NormDefaults.modelCheckU U M F Γ φ).fst = Bool.true →
+                  VE.Readings.Wire.localFree U M F = Bool.true →
+                    ∃ S,
+                      VE.Norms.restrictAll (VE.NormDefaults.fill U).T S =
+                          VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F) ∧
+                        VE.NormDefaults.BaseAdmissibleU U
+                            (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F)) ∧
+                          VE.Norms.DocumentExpansion (VE.NormDefaults.fill U)
+                              (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F)) S ∧
+                            VE.Norms.Sat S Γ ∧
+                              (VE.Formula.denote S [] φ ↔ (VE.NormDefaults.modelCheckU U M F Γ φ).snd = Bool.true)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.modelCheckU@VE.NormDefaults.Report VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.envAt@VE.Norms.Tree VE.Norms.restrictAll@VE.Norms.Subst VE.Norms.size@VE.Norms.Tree VE.Readings.Wire.localFree@VE.Readings.VerdictsWire VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3855776424
+theorem VE.Ask.fenceOk_sound
+  ∀ {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon} {V : VE.Environment} {fu : Lean.Json} {f : String}
+    {compiled : Lean.Json},
+    VE.Ask.fenceOk E L V (VE.Ask.strOf? (fu.getObjValD "surface")) f compiled = Bool.true →
+      (fu.getObjValD "surface" = Lean.Json.str "english" ∧
+          ∃ φ,
+            VE.EnglishGrammar.read E { } L VE.EnglishGrammar.workBudget f =
+                VE.EnglishGrammar.ReadOutcome.ok [(φ, Bool.false)] ∧
+              VE.Ask.Same compiled φ.encode) ∨
+        fu.getObjValD "surface" = Lean.Json.str "strict" ∧
+          ∃ ψ, VE.Surface.parse V f = Option.some [ψ] ∧ VE.Ask.Same compiled (VE.Route.Wire.encodeFormula ψ)
+  -- uses VE.Ask.Same@VE.Ask.Binding VE.Ask.fenceOk@VE.Ask.Binding VE.Ask.strOf?@VE.Ask.Binding VE.EnglishGrammar.EFormula.encode@VE.EnglishGrammar.Encode VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.ReadOutcome.ok@VE.EnglishGrammar.Read VE.EnglishGrammar.ReadOutcome@VE.EnglishGrammar.Read VE.EnglishGrammar.read@VE.EnglishGrammar.Read VE.EnglishGrammar.workBudget@VE.EnglishGrammar.Lexicon VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Surface.parse@VE.Surface
+  -- expr 2569816157
+theorem VE.Ask.filterMap_ext
+  ∀ {α β : Type} (l : List α) {f g : α → Option β}, (∀ (a : α), f a = g a) → List.filterMap f l = List.filterMap g l
+  -- uses
+  -- expr 3796985057
+theorem VE.Ask.find_mem
+  ∀ {p : VE.Ask.Row → Bool} {rows : List VE.Ask.Row} {r : VE.Ask.Row},
+    List.find? p rows = Option.some r → r ∈ rows ∧ p r = Bool.true
+  -- uses VE.Ask.Row@VE.Ask.Basic
+  -- expr 2951010704
+theorem VE.Ask.foldConflict_of_free
+  ∀ {rs : List (VE.Readings.Choice × VE.Readings.ChoiceResult)},
+    rs ≠ [] →
+      (∀ (x : VE.Readings.Choice × VE.Readings.ChoiceResult), x ∈ rs → x.snd = VE.Readings.ChoiceResult.free) →
+        VE.Readings.foldConflict rs = VE.Readings.ChoiceResult.free
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult.free@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.foldConflict@VE.Readings.Verdicts
+  -- expr 31525105
+theorem VE.Ask.frame_param_length
+  ∀ (kind : String) (i : Nat), 2 ≤ kind.length → (kind ++ ":" ++ ToString.toString i).length ≥ 3
+  -- uses
+  -- expr 2877436814
+theorem VE.Ask.gated_some
+  ∀ {f line : String},
+    (VE.Question.gated f line).isSome = Bool.true → ∃ slots, VE.Question.frameReadings line = [(f, slots)]
+  -- uses VE.Question.frameReadings@VE.Question.Frames VE.Question.gated@VE.Question.Frames
+  -- expr 860670874
+theorem VE.Ask.groupReasons_block
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (g : VE.Ask.Group) (l : VE.Ask.Line),
+    l ∈ VE.Ask.groupReasons ctx v g → VE.Ask.BlockLine ctx v g l
+  -- uses VE.Ask.BlockLine@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Group@VE.Ask.Groups VE.Ask.Line@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.groupReasons@VE.Ask.Lines
+  -- expr 4237958244
+theorem VE.Ask.group_claim
+  ∀ (ids : List String) (rows : List VE.Ask.Row) (key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source),
+    ids.Nodup →
+      (∀ (r : VE.Ask.Row), r ∈ rows → List.map (fun x => x.fst) r.choice = ids) →
+        (∀ (r : VE.Ask.Row), r ∈ rows → ∀ (r' : VE.Ask.Row), r' ∈ rows → r.choice = r'.choice → key r = key r') →
+          ∀ (g : VE.Ask.Group),
+            g ∈ VE.Ask.groups ids rows key →
+              ∀ (r : VE.Ask.Row),
+                r ∈ rows → VE.Ask.assignment (VE.Ask.relevantSets ids rows key) r = g.on → key r = (g.lead, g.cited)
+  -- uses VE.Ask.Group.cited@VE.Ask.Groups VE.Ask.Group.lead@VE.Ask.Groups VE.Ask.Group.on@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.assignment@VE.Ask.Groups VE.Ask.groups@VE.Ask.Groups VE.Ask.relevantSets@VE.Ask.Groups VE.Readings.Choice@VE.Readings.Choice
+  -- expr 1044294893
+theorem VE.Ask.group_rows
+  ∀ (ids : List String) (rows : List VE.Ask.Row) (key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source) (g : VE.Ask.Group),
+    g ∈ VE.Ask.groups ids rows key →
+      ∀ (r : VE.Ask.Row),
+        r ∈ g.rows → r ∈ rows ∧ key r = (g.lead, g.cited) ∧ g.on = VE.Ask.assignment (VE.Ask.relevantSets ids rows key) r
+  -- uses VE.Ask.Group.cited@VE.Ask.Groups VE.Ask.Group.lead@VE.Ask.Groups VE.Ask.Group.on@VE.Ask.Groups VE.Ask.Group.rows@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.assignment@VE.Ask.Groups VE.Ask.groups@VE.Ask.Groups VE.Ask.relevantSets@VE.Ask.Groups
+  -- expr 2640624531
+theorem VE.Ask.groups_cover
+  ∀ (ids : List String) (rows : List VE.Ask.Row) (key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source) (r : VE.Ask.Row),
+    r ∈ rows →
+      ∃ g,
+        g ∈ VE.Ask.groups ids rows key ∧
+          r ∈ g.rows ∧ ∀ (g' : VE.Ask.Group), g' ∈ VE.Ask.groups ids rows key → r ∈ g'.rows → g' = g
+  -- uses VE.Ask.Group.rows@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.groups@VE.Ask.Groups
+  -- expr 3338025283
+theorem VE.Ask.groups_eq
+  ∀ (ids : List String) (rows : List VE.Ask.Row) (key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source),
+    VE.Ask.groups ids rows key = List.foldl (VE.Ask.addRow (VE.Ask.relevantSets ids rows key) key) [] rows
+  -- uses VE.Ask.Group@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.addRow@VE.Ask.Groups VE.Ask.groups@VE.Ask.Groups VE.Ask.relevantSets@VE.Ask.Groups
+  -- expr 4240686352
+theorem VE.Ask.holds_iff
+  ∀ (N : VE.Readings.NDoc) (φ : VE.Formula) (c : VE.Readings.Choice) (x : VE.Readings.ChoiceResult),
+    VE.Readings.Holds N [] φ c x ↔ VE.Ask.HoldsU (VE.Readings.choiceU N c) (VE.Readings.choiceDoc N.D c).snd φ x
+  -- uses VE.Ask.HoldsU@VE.Ask.ZeroWire VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.Holds@VE.Readings.Verdicts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 133840159
+theorem VE.Ask.index_of_assignment
+  ∀ {sets : List String} {r r' : VE.Ask.Row},
+    VE.Ask.assignment sets r = VE.Ask.assignment sets r' → ∀ (s : String), s ∈ sets → r.choice.index s = r'.choice.index s
+  -- uses VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.assignment@VE.Ask.Groups VE.Readings.Choice.index@VE.Readings.Choice
+  -- expr 294422327
+theorem VE.Ask.inv_addRow
+  ∀ {sets : List String} {key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source} {seen : List VE.Ask.Row}
+    {gs : List VE.Ask.Group},
+    VE.Ask.Inv sets key seen gs → ∀ (r : VE.Ask.Row), VE.Ask.Inv sets key (seen ++ [r]) (VE.Ask.addRow sets key gs r)
+  -- uses VE.Ask.Group@VE.Ask.Groups VE.Ask.Inv@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.addRow@VE.Ask.Groups
+  -- expr 3477173165
+theorem VE.Ask.inv_foldl
+  ∀ (sets : List String) (key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source) (rows seen : List VE.Ask.Row)
+    (gs : List VE.Ask.Group),
+    VE.Ask.Inv sets key seen gs → VE.Ask.Inv sets key (seen ++ rows) (List.foldl (VE.Ask.addRow sets key) gs rows)
+  -- uses VE.Ask.Group@VE.Ask.Groups VE.Ask.Inv@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.addRow@VE.Ask.Groups
+  -- expr 422796769
+theorem VE.Ask.inv_groups
+  ∀ (ids : List String) (rows : List VE.Ask.Row) (key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source),
+    VE.Ask.Inv (VE.Ask.relevantSets ids rows key) key rows (VE.Ask.groups ids rows key)
+  -- uses VE.Ask.Inv@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.groups@VE.Ask.Groups VE.Ask.relevantSets@VE.Ask.Groups
+  -- expr 23556050
+theorem VE.Ask.leadFrame_ok
+  ∀ (d : VE.Ask.Lead), ¬VE.Ask.leadFrame d ∈ VE.Ask.witnessFrames ∧ VE.Ask.leadFrame d ≠ "U1"
+  -- uses VE.Ask.Lead@VE.Ask.Basic VE.Ask.leadFrame@VE.Ask.Lines VE.Ask.witnessFrames@VE.Ask.Lines
+  -- expr 1779083378
+theorem VE.Ask.leadHolds_eq
+  ∀ (N : VE.Readings.NDoc) (ψ : VE.Formula) (r : VE.Ask.Row),
+    VE.Ask.LeadHolds N ψ r =
+      VE.Ask.LeadHoldsU (VE.Readings.choiceU N r.choice) (VE.Readings.choiceDoc N.D r.choice).snd ψ r
+  -- uses VE.Ask.LeadHolds@VE.Ask.Basic VE.Ask.LeadHoldsU@VE.Ask.ZeroWire VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Formula@VE.Syntax VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 2426863158
+theorem VE.Ask.leadU_sound
+  ∀ (U : VE.NormDefaults.UDoc) (Γ : List VE.Formula) (ψ : VE.Formula) (r : VE.Ask.Row),
+    VE.Ask.RowOkU U Γ ψ r → VE.Ask.LeadHoldsU U Γ ψ r
+  -- uses VE.Ask.LeadHoldsU@VE.Ask.ZeroWire VE.Ask.Row@VE.Ask.Basic VE.Ask.RowOkU@VE.Ask.ZeroWire VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 2015835036
+theorem VE.Ask.lead_agrees
+  ∀ (r : VE.Ask.Row),
+    (r.lead = VE.Ask.Lead.yes → r.query = VE.Readings.ChoiceResult.proved) ∧
+      (r.lead = VE.Ask.Lead.no ∨ r.lead = VE.Ask.Lead.notSettled ∨ r.lead = VE.Ask.Lead.notNecessarily →
+        r.query ≠ VE.Readings.ChoiceResult.proved)
+  -- uses VE.Ask.Lead.no@VE.Ask.Basic VE.Ask.Lead.notNecessarily@VE.Ask.Basic VE.Ask.Lead.notSettled@VE.Ask.Basic VE.Ask.Lead.yes@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row.query@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Readings.ChoiceResult.proved@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts
+  -- expr 3320456458
+theorem VE.Ask.lead_no
+  ∀ {r : VE.Ask.Row},
+    r.lead = VE.Ask.Lead.no →
+      r.conflict = VE.Readings.ChoiceResult.free ∧
+        r.query ≠ VE.Readings.ChoiceResult.proved ∧
+          r.negation = VE.Readings.ChoiceResult.proved ∧ r.premise = VE.Readings.ChoiceResult.model
+  -- uses VE.Ask.Lead.no@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.conflict@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row.negation@VE.Ask.Basic VE.Ask.Row.premise@VE.Ask.Basic VE.Ask.Row.query@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Readings.ChoiceResult.free@VE.Readings.Verdicts VE.Readings.ChoiceResult.model@VE.Readings.Verdicts VE.Readings.ChoiceResult.proved@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts
+  -- expr 2340681335
+theorem VE.Ask.lead_notNecessarily
+  ∀ {r : VE.Ask.Row},
+    r.lead = VE.Ask.Lead.notNecessarily →
+      r.conflict = VE.Readings.ChoiceResult.free ∧
+        r.query = VE.Readings.ChoiceResult.refuted ∧ r.negation ≠ VE.Readings.ChoiceResult.proved ∧ r.split = Bool.false
+  -- uses VE.Ask.Lead.notNecessarily@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.conflict@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row.negation@VE.Ask.Basic VE.Ask.Row.query@VE.Ask.Basic VE.Ask.Row.split@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Readings.ChoiceResult.free@VE.Readings.Verdicts VE.Readings.ChoiceResult.proved@VE.Readings.Verdicts VE.Readings.ChoiceResult.refuted@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts
+  -- expr 1958262361
+theorem VE.Ask.lead_notSettled
+  ∀ {r : VE.Ask.Row},
+    r.lead = VE.Ask.Lead.notSettled →
+      r.conflict = VE.Readings.ChoiceResult.free ∧
+        r.query ≠ VE.Readings.ChoiceResult.proved ∧ r.negation ≠ VE.Readings.ChoiceResult.proved ∧ r.split = Bool.true
+  -- uses VE.Ask.Lead.notSettled@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.conflict@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row.negation@VE.Ask.Basic VE.Ask.Row.query@VE.Ask.Basic VE.Ask.Row.split@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Readings.ChoiceResult.free@VE.Readings.Verdicts VE.Readings.ChoiceResult.proved@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts
+  -- expr 136744140
+theorem VE.Ask.lead_sound
+  ∀ (N : VE.Readings.NDoc) (ψ : VE.Formula) (r : VE.Ask.Row), VE.Ask.RowOk N ψ r → VE.Ask.LeadHolds N ψ r
+  -- uses VE.Ask.LeadHolds@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.RowOk@VE.Ask.Basic VE.Formula@VE.Syntax VE.Readings.NDoc@VE.Readings.Unspecified
+  -- expr 1961160475
+theorem VE.Ask.lead_unknown
+  ∀ {r : VE.Ask.Row},
+    r.lead = VE.Ask.Lead.unknown →
+      r.conflict ≠ VE.Readings.ChoiceResult.free ∨
+        (r.query = VE.Readings.ChoiceResult.proved ∨ r.negation = VE.Readings.ChoiceResult.proved) ∧
+            r.premise ≠ VE.Readings.ChoiceResult.model ∨
+          r.query ≠ VE.Readings.ChoiceResult.proved ∧
+            r.negation ≠ VE.Readings.ChoiceResult.proved ∧
+              r.split = Bool.false ∧ r.query ≠ VE.Readings.ChoiceResult.refuted
+  -- uses VE.Ask.Lead.unknown@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.conflict@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row.negation@VE.Ask.Basic VE.Ask.Row.premise@VE.Ask.Basic VE.Ask.Row.query@VE.Ask.Basic VE.Ask.Row.split@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Readings.ChoiceResult.free@VE.Readings.Verdicts VE.Readings.ChoiceResult.model@VE.Readings.Verdicts VE.Readings.ChoiceResult.proved@VE.Readings.Verdicts VE.Readings.ChoiceResult.refuted@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts
+  -- expr 1499367451
+theorem VE.Ask.lead_yes
+  ∀ {r : VE.Ask.Row},
+    r.lead = VE.Ask.Lead.yes →
+      r.conflict = VE.Readings.ChoiceResult.free ∧
+        r.query = VE.Readings.ChoiceResult.proved ∧ r.premise = VE.Readings.ChoiceResult.model
+  -- uses VE.Ask.Lead.yes@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.conflict@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row.premise@VE.Ask.Basic VE.Ask.Row.query@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Readings.ChoiceResult.free@VE.Readings.Verdicts VE.Readings.ChoiceResult.model@VE.Readings.Verdicts VE.Readings.ChoiceResult.proved@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts
+  -- expr 2298447095
+theorem VE.Ask.lineText_text
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (l : VE.Ask.Line) (t : String),
+    VE.Ask.lineTextV ctx v
+        { frame := l.frame, text := t, source := l.source, quote := l.quote, readings := l.readings, witness := l.witness,
+          unchecked := l.unchecked } =
+      VE.Ask.lineTextV ctx v l
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.frame@VE.Ask.Lines VE.Ask.Line.mk@VE.Ask.Lines VE.Ask.Line.quote@VE.Ask.Lines VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Line.source@VE.Ask.Lines VE.Ask.Line.unchecked@VE.Ask.Lines VE.Ask.Line.witness@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.lineTextV@VE.Ask.Lines
+  -- expr 2161137934
+theorem VE.Ask.lookup_assignment
+  ∀ (c : VE.Readings.Choice) (s : String) (sets : List String),
+    s ∈ sets → List.lookup s (List.map (fun t => (t, c.index t)) sets) = Option.some (c.index s)
+  -- uses VE.Readings.Choice.index@VE.Readings.Choice VE.Readings.Choice@VE.Readings.Choice
+  -- expr 2214274780
+theorem VE.Ask.match_iff
+  ∀ (sets : List String) (key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source) (r : VE.Ask.Row) (g : VE.Ask.Group),
+    ((g.lead, g.cited) == key r && g.on == VE.Ask.assignment sets r) = Bool.true ↔
+      g.tag = (key r, VE.Ask.assignment sets r)
+  -- uses VE.Ask.Group.cited@VE.Ask.Groups VE.Ask.Group.lead@VE.Ask.Groups VE.Ask.Group.on@VE.Ask.Groups VE.Ask.Group.tag@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.assignment@VE.Ask.Groups VE.Ask.instDecidableEqLead@VE.Ask.Basic VE.Ask.instDecidableEqSource@VE.Ask.Sources
+  -- expr 837334893
+theorem VE.Ask.mem_cited
+  ∀ (srcs : List VE.Ask.Source) (used : List Nat) (s : VE.Ask.Source),
+    s ∈ VE.Ask.cited srcs used ↔ ∃ i, i ∈ used ∧ srcs[i]? = Option.some s
+  -- uses VE.Ask.Source@VE.Ask.Sources VE.Ask.cited@VE.Ask.Sources
+  -- expr 2375511432
+theorem VE.Ask.memoRead_eq
+  ∀ {β : Type} (rows : List VE.Ask.Row) (f : VE.Ask.Row → β) (r : VE.Ask.Row),
+    VE.Ask.memoRead (VE.Ask.memoTable rows f) f r = f r
+  -- uses VE.Ask.Row@VE.Ask.Basic VE.Ask.memoRead@VE.Ask.Render VE.Ask.memoTable@VE.Ask.Render
+  -- expr 1994579645
+theorem VE.Ask.mk_text
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (l : VE.Ask.Line),
+    (VE.Ask.mk ctx v l).text = VE.Ask.lineTextV ctx v (VE.Ask.mk ctx v l)
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.text@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.lineTextV@VE.Ask.Lines VE.Ask.mk@VE.Ask.Lines
+  -- expr 1882390286
+theorem VE.Ask.nameReadsBack_sound
+  ∀ {case : Lean.Json} {E : VE.EnglishGrammar.Env} {L : VE.EnglishGrammar.Lexicon} {n : VE.Ask.Name},
+    VE.Ask.nameReadsBack case E L n = Bool.true → VE.Ask.NameReadsBackSame case E L n
+  -- uses VE.Ask.Name@VE.Ask.Wire VE.Ask.NameReadsBackSame@VE.Ask.Wire VE.Ask.nameReadsBack@VE.Ask.Wire VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon
+  -- expr 464305393
+theorem VE.Ask.ndModelOk_base
+  ∀ {N : VE.Readings.NDoc} {c : VE.Readings.Choice} (e : VE.Readings.Wire.NDEvidence N c) (ψ : VE.Formula)
+    (m : VE.Readings.Wire.FilledModel (VE.Readings.choiceU N c)) (v : Bool),
+    VE.Readings.Wire.ndModelOk N c [] ψ m v = Bool.true →
+      ∃ S,
+        VE.Norms.restrictAll (VE.NormDefaults.fill (VE.Readings.choiceU N c)).T S =
+            VE.NormDefaults.withFill (VE.Readings.choiceU N c) m.M.asStructure (VE.NormDefaults.finFill m.M m.F) ∧
+          VE.NormDefaults.BaseAdmissibleU (VE.Readings.choiceU N c)
+              (VE.NormDefaults.withFill (VE.Readings.choiceU N c) m.M.asStructure (VE.NormDefaults.finFill m.M m.F)) ∧
+            VE.Norms.DocumentExpansion (VE.NormDefaults.fill (VE.Readings.choiceU N c))
+                (VE.NormDefaults.withFill (VE.Readings.choiceU N c) m.M.asStructure (VE.NormDefaults.finFill m.M m.F)) S ∧
+              VE.Norms.Sat S (VE.Readings.choiceDoc N.D c).snd ∧ (VE.Formula.denote S [] ψ ↔ v = Bool.true)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.restrictAll@VE.Norms.Subst VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.FilledModel.F@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.ndModelOk@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4144231766
+theorem VE.Ask.negRow_holds
+  ∀ {N : VE.Readings.NDoc} {c : VE.Readings.Choice} (e : VE.Readings.Wire.NDEvidence N c) (ψ : VE.Formula)
+    (k : Option VE.Tableau.Certificate), VE.Readings.Holds N [] ψ.not c (VE.Ask.negRow e ψ k)
+  -- uses VE.Ask.negRow@VE.Ask.Wire VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Holds@VE.Readings.Verdicts VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Tableau.Certificate@VE.Tableau
+  -- expr 3895516501
+theorem VE.Ask.param_not_short
+  ∀ {f : String}, f.length ≥ 3 → ¬f ∈ VE.Ask.witnessFrames ∧ f ≠ "U1"
+  -- uses VE.Ask.witnessFrames@VE.Ask.Lines
+  -- expr 2454450247
+theorem VE.Ask.plainCites_spec
+  ∀ (p : VE.Ask.PlainParts) (case : Lean.Json) (r : VE.Ask.PlainRow) (ψ : VE.Formula) (k : VE.Tableau.Certificate),
+    VE.Ask.plainCertPiece p case r = Option.some (ψ, k) →
+      (∀ (s : VE.Ask.Source),
+          s ∈ VE.Ask.plainCites p case r ↔
+            ∃ i, i ∈ VE.Ask.plainUsed p ψ k ∧ Option.map (fun x => x.fst) p.sourced[i]? = Option.some s) ∧
+        (∀ (i : Nat) (s : VE.Ask.Source) (f : VE.Formula), p.sourced[i]? = Option.some (s, f) → p.Γ[i]? = Option.some f) ∧
+          (VE.Ask.replayOk p.V p.Γ ψ k = Bool.true →
+            VE.Entails p.V (List.filterMap (fun x => p.Γ[x]?) (VE.Ask.plainUsed p ψ k)) ψ)
+  -- uses VE.Ask.PlainParts.V@VE.Ask.PlainWire VE.Ask.PlainParts.sourced@VE.Ask.PlainAnswer VE.Ask.PlainParts.Γ@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.PlainRow@VE.Ask.Plain VE.Ask.Source@VE.Ask.Sources VE.Ask.plainCertPiece@VE.Ask.PlainAnswer VE.Ask.plainCites@VE.Ask.PlainAnswer VE.Ask.plainUsed@VE.Ask.PlainAnswer VE.Ask.replayOk@VE.Ask.Sources VE.Entails@VE.Semantics VE.Formula@VE.Syntax VE.Tableau.Certificate@VE.Tableau
+  -- expr 552166233
+theorem VE.Ask.plainConsistent_sound
+  ∀ {p : VE.Ask.PlainParts} {case : Lean.Json}, VE.Ask.plainConsistent p case = Bool.true → VE.Ask.Consistent p.V p.Γ
+  -- uses VE.Ask.Consistent@VE.Ask.Plain VE.Ask.PlainParts.V@VE.Ask.PlainWire VE.Ask.PlainParts.Γ@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.plainConsistent@VE.Ask.PlainWire
+  -- expr 995474686
+theorem VE.Ask.plainModel_admissible
+  ∀ {p : VE.Ask.PlainParts} {piece : Option Lean.Json} {M : VE.FiniteModel VE.Bridge.Entity},
+    VE.Ask.plainModel p piece = Option.some M → M.asStructure.Admissible p.V
+  -- uses VE.Ask.PlainParts.V@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.plainModel@VE.Ask.PlainWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Admissible@VE.Semantics
+  -- expr 1037222711
+theorem VE.Ask.plainProved_sound
+  ∀ {p : VE.Ask.PlainParts} {φ : VE.Formula} {k : Option VE.Tableau.Certificate},
+    VE.Ask.plainProved p φ k = Bool.true → VE.Entails p.V p.Γ φ
+  -- uses VE.Ask.PlainParts.V@VE.Ask.PlainWire VE.Ask.PlainParts.Γ@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.plainProved@VE.Ask.PlainWire VE.Entails@VE.Semantics VE.Formula@VE.Syntax VE.Tableau.Certificate@VE.Tableau
+  -- expr 3693534377
+theorem VE.Ask.plainRefutes_sound
+  ∀ {p : VE.Ask.PlainParts} {case : Lean.Json}, VE.Ask.plainRefutes p case = Bool.true → ¬VE.Entails p.V p.Γ p.ψ
+  -- uses VE.Ask.PlainParts.V@VE.Ask.PlainWire VE.Ask.PlainParts.Γ@VE.Ask.PlainWire VE.Ask.PlainParts.ψ@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.plainRefutes@VE.Ask.PlainWire VE.Entails@VE.Semantics
+  -- expr 3596587990
+theorem VE.Ask.plainRow_ok
+  ∀ (p : VE.Ask.PlainParts) (case : Lean.Json), VE.Ask.PlainRowOk p.V p.Γ p.ψ (VE.Ask.plainRow p case)
+  -- uses VE.Ask.PlainParts.V@VE.Ask.PlainWire VE.Ask.PlainParts.Γ@VE.Ask.PlainWire VE.Ask.PlainParts.ψ@VE.Ask.PlainWire VE.Ask.PlainParts@VE.Ask.PlainWire VE.Ask.PlainRowOk@VE.Ask.Plain VE.Ask.plainRow@VE.Ask.PlainWire
+  -- expr 1531841136
+theorem VE.Ask.plain_ask_wire_sound
+  ∀ (j : Lean.Json) (a : VE.Ask.PlainAsked),
+    VE.Ask.replayPlainAsk j = Except.ok a →
+      a.request = j ∧
+        a.text = (j.getObjValD "document").getStr?.toOption.getD "" ∧
+          a.q = (j.getObjValD "question").getStr?.toOption.getD "" ∧
+            a.case = j.getObjValD "case" ∧
+              VE.Ask.replayPlain a.case = Except.ok a.x ∧
+                VE.Ask.PlainCaseBinding a.text a.case a.E a.L a.x.V ∧
+                  VE.Question.QuestionOneReading VE.Question.auxiliaries a.E { } a.L a.q a.c a.φ ∧
+                    VE.Ask.LeadHoldsPlain a.x.V a.x.Γ a.x.ψ a.x.row
+  -- uses VE.Ask.LeadHoldsPlain@VE.Ask.Plain VE.Ask.PlainAsked.E@VE.Ask.PlainWire VE.Ask.PlainAsked.L@VE.Ask.PlainWire VE.Ask.PlainAsked.c@VE.Ask.PlainWire VE.Ask.PlainAsked.case@VE.Ask.PlainWire VE.Ask.PlainAsked.q@VE.Ask.PlainWire VE.Ask.PlainAsked.request@VE.Ask.PlainWire VE.Ask.PlainAsked.text@VE.Ask.PlainWire VE.Ask.PlainAsked.x@VE.Ask.PlainWire VE.Ask.PlainAsked.φ@VE.Ask.PlainWire VE.Ask.PlainAsked@VE.Ask.PlainWire VE.Ask.PlainCaseBinding@VE.Ask.PlainWire VE.Ask.PlainVerdict.V@VE.Ask.PlainWire VE.Ask.PlainVerdict.row@VE.Ask.PlainWire VE.Ask.PlainVerdict.Γ@VE.Ask.PlainWire VE.Ask.PlainVerdict.ψ@VE.Ask.PlainWire VE.Ask.PlainVerdict@VE.Ask.PlainWire VE.Ask.replayPlain@VE.Ask.PlainWire VE.Ask.replayPlainAsk@VE.Ask.PlainWire VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.Question.QuestionOneReading@VE.Question.Properties VE.Question.auxiliaries@VE.Question.Basic
+  -- expr 750583151
+theorem VE.Ask.plain_block
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (g : VE.Ask.Group) (f : String),
+    ¬f ∈ VE.Ask.witnessFrames → f ≠ "U1" → VE.Ask.BlockLine ctx v g (VE.Ask.mk ctx v { frame := f, text := "" })
+  -- uses VE.Ask.BlockLine@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Group@VE.Ask.Groups VE.Ask.Line.mk@VE.Ask.Lines VE.Ask.Source@VE.Ask.Sources VE.Ask.View@VE.Ask.Lines VE.Ask.mk@VE.Ask.Lines VE.Ask.witnessFrames@VE.Ask.Lines VE.Readings.Choice@VE.Readings.Choice
+  -- expr 124122938
+theorem VE.Ask.plain_lead_sound
+  ∀ (E : VE.Environment) (Γ : List VE.Formula) (ψ : VE.Formula) (r : VE.Ask.PlainRow),
+    VE.Ask.PlainRowOk E Γ ψ r → VE.Ask.LeadHoldsPlain E Γ ψ r
+  -- uses VE.Ask.LeadHoldsPlain@VE.Ask.Plain VE.Ask.PlainRow@VE.Ask.Plain VE.Ask.PlainRowOk@VE.Ask.Plain VE.Environment@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 2618656714
+theorem VE.Ask.plain_never_split
+  ∀ (r : VE.Ask.PlainRow), r.lead ≠ VE.Ask.Lead.notSettled
+  -- uses VE.Ask.Lead.notSettled@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.PlainRow.lead@VE.Ask.Plain VE.Ask.PlainRow@VE.Ask.Plain
+  -- expr 1485393913
+theorem VE.Ask.pointLines_block
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (g : VE.Ask.Group) (kind : String) (r : VE.Ask.Row) (n : Nat),
+    2 ≤ kind.length → ∀ (l : VE.Ask.Line), l ∈ VE.Ask.pointLines ctx v kind r n → VE.Ask.BlockLine ctx v g l
+  -- uses VE.Ask.BlockLine@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Group@VE.Ask.Groups VE.Ask.Line@VE.Ask.Lines VE.Ask.Row@VE.Ask.Basic VE.Ask.View@VE.Ask.Lines VE.Ask.pointLines@VE.Ask.Lines
+  -- expr 1319067415
+theorem VE.Ask.positions_get
+  ∀ (P : List VE.Formula) (x : String × VE.Formula),
+    x ∈ VE.Ask.positions P → ∃ i, x.fst = ToString.toString i ∧ P[i]? = Option.some x.snd
+  -- uses VE.Ask.positions@VE.Ask.Sources VE.Compose.Labelled@VE.Compose.Slot VE.Formula@VE.Syntax
+  -- expr 2487564135
+theorem VE.Ask.positions_labels
+  ∀ (P : List VE.Formula),
+    List.map (fun x => x.fst) (VE.Ask.positions P) = List.map ToString.toString (List.range P.length)
+  -- uses VE.Ask.positions@VE.Ask.Sources VE.Formula@VE.Syntax
+  -- expr 1682199920
+theorem VE.Ask.positions_wellLabelled
+  ∀ (P : List VE.Formula), (VE.Ask.positions P).wellLabelled = Bool.true
+  -- uses VE.Ask.positions@VE.Ask.Sources VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Formula@VE.Syntax
+  -- expr 1863931221
+theorem VE.Ask.r1Frame_ok
+  ∀ (d : VE.Ask.Lead), ¬"R1:" ++ VE.Ask.leadKey d ∈ VE.Ask.witnessFrames ∧ "R1:" ++ VE.Ask.leadKey d ≠ "U1"
+  -- uses VE.Ask.Lead@VE.Ask.Basic VE.Ask.leadKey@VE.Ask.Lines VE.Ask.witnessFrames@VE.Ask.Lines
+  -- expr 2988727751
+theorem VE.Ask.reasonLines_block
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (g : VE.Ask.Group) (l : VE.Ask.Line),
+    l ∈ VE.Ask.reasonLines ctx v g → VE.Ask.BlockLine ctx v g l
+  -- uses VE.Ask.BlockLine@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Group@VE.Ask.Groups VE.Ask.Line@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.reasonLines@VE.Ask.Lines
+  -- expr 225012135
+theorem VE.Ask.reasonU_sound
+  ∀ (U : VE.NormDefaults.UDoc) (Γ : List VE.Formula) (ψ : VE.Formula) (r : VE.Ask.Row) (x : VE.Ask.Reason),
+    VE.Ask.RowOkU U Γ ψ r → r.reason = Option.some x → VE.Ask.ReasonHoldsU U Γ ψ x
+  -- uses VE.Ask.Reason@VE.Ask.Basic VE.Ask.ReasonHoldsU@VE.Ask.ZeroWire VE.Ask.Row.reason@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.RowOkU@VE.Ask.ZeroWire VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 1803078684
+theorem VE.Ask.reason_exact
+  ∀ (r : VE.Ask.Row), r.lead = VE.Ask.Lead.unknown ↔ r.reason.isSome = Bool.true
+  -- uses VE.Ask.Lead.unknown@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Reason@VE.Ask.Basic VE.Ask.Row.lead@VE.Ask.Basic VE.Ask.Row.reason@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic
+  -- expr 1189601958
+theorem VE.Ask.reason_fields
+  ∀ {r : VE.Ask.Row} {x : VE.Ask.Reason},
+    r.reason = Option.some x →
+      (x = VE.Ask.Reason.conflict → r.conflict = VE.Readings.ChoiceResult.conflict) ∧
+        (x = VE.Ask.Reason.inconsistent →
+            r.conflict = VE.Readings.ChoiceResult.free ∧ r.premise = VE.Readings.ChoiceResult.inconsistent) ∧
+          (x = VE.Ask.Reason.unchecked →
+            r.conflict = VE.Readings.ChoiceResult.free ∧
+              (r.query = VE.Readings.ChoiceResult.proved ∨ r.negation = VE.Readings.ChoiceResult.proved))
+  -- uses VE.Ask.Reason.conflict@VE.Ask.Basic VE.Ask.Reason.inconsistent@VE.Ask.Basic VE.Ask.Reason.unchecked@VE.Ask.Basic VE.Ask.Reason@VE.Ask.Basic VE.Ask.Row.conflict@VE.Ask.Basic VE.Ask.Row.negation@VE.Ask.Basic VE.Ask.Row.premise@VE.Ask.Basic VE.Ask.Row.query@VE.Ask.Basic VE.Ask.Row.reason@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Readings.ChoiceResult.conflict@VE.Readings.Verdicts VE.Readings.ChoiceResult.free@VE.Readings.Verdicts VE.Readings.ChoiceResult.inconsistent@VE.Readings.Verdicts VE.Readings.ChoiceResult.proved@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts
+  -- expr 678785670
+theorem VE.Ask.reason_sound
+  ∀ (N : VE.Readings.NDoc) (ψ : VE.Formula) (r : VE.Ask.Row) (x : VE.Ask.Reason),
+    VE.Ask.RowOk N ψ r → r.reason = Option.some x → VE.Ask.ReasonHolds N ψ r x
+  -- uses VE.Ask.Reason@VE.Ask.Basic VE.Ask.ReasonHolds@VE.Ask.Basic VE.Ask.Row.reason@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.RowOk@VE.Ask.Basic VE.Formula@VE.Syntax VE.Readings.NDoc@VE.Readings.Unspecified
+  -- expr 1836570311
+theorem VE.Ask.relevantSets_sound
+  ∀ (ids : List String) (rows : List VE.Ask.Row) (key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source),
+    ids.Nodup →
+      (∀ (r : VE.Ask.Row), r ∈ rows → List.map (fun x => x.fst) r.choice = ids) →
+        (∀ (r : VE.Ask.Row), r ∈ rows → ∀ (r' : VE.Ask.Row), r' ∈ rows → r.choice = r'.choice → key r = key r') →
+          ∀ (r : VE.Ask.Row),
+            r ∈ rows →
+              ∀ (r' : VE.Ask.Row),
+                r' ∈ rows →
+                  (∀ (s : String), s ∈ VE.Ask.relevantSets ids rows key → r.choice.index s = r'.choice.index s) →
+                    key r = key r'
+  -- uses VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.relevantSets@VE.Ask.Groups VE.Readings.Choice.index@VE.Readings.Choice VE.Readings.Choice@VE.Readings.Choice
+  -- expr 725102169
+theorem VE.Ask.renderGroup_block
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (g : VE.Ask.Group) (l : VE.Ask.Line),
+    l ∈ VE.Ask.renderGroupV ctx v g → VE.Ask.BlockLine ctx v g l
+  -- uses VE.Ask.BlockLine@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Group@VE.Ask.Groups VE.Ask.Line@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.renderGroupV@VE.Ask.Lines
+  -- expr 308759628
+theorem VE.Ask.render_asked
+  ∀ (ctx : VE.Ask.Context) (a : VE.Ask.Answer),
+    (VE.Ask.render ctx a).head? = Option.some (VE.Ask.askedLine a.asked.sentence)
+  -- uses VE.Ask.Answer.asked@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Context@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.askedLine@VE.Ask.Lines VE.Ask.render@VE.Ask.Render VE.Question.Candidate.sentence@VE.Question.Basic
+  -- expr 3849716244
+theorem VE.Ask.render_askedV
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View),
+    (VE.Ask.renderV ctx v).head? = Option.some (VE.Ask.askedLine v.asked.sentence)
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.View.asked@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.askedLine@VE.Ask.Lines VE.Ask.renderV@VE.Ask.Lines VE.Question.Candidate.sentence@VE.Question.Basic
+  -- expr 2480508311
+theorem VE.Ask.render_cites_exact
+  ∀ (ctx : VE.Ask.Context) (a : VE.Ask.Answer) (g : VE.Ask.Group),
+    VE.Ask.RenderInputBound ctx a →
+      g ∈ a.groups →
+        g.lead = VE.Ask.Lead.yes ∨ g.lead = VE.Ask.Lead.no →
+          List.filterMap (fun x => x.source) (VE.Ask.renderGroup ctx a g) = g.cited
+  -- uses VE.Ask.Answer.groups@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Context@VE.Ask.Lines VE.Ask.Group.cited@VE.Ask.Groups VE.Ask.Group.lead@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Lead.no@VE.Ask.Basic VE.Ask.Lead.yes@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Line.source@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.RenderInputBound@VE.Ask.Render VE.Ask.Source@VE.Ask.Sources VE.Ask.renderGroup@VE.Ask.Render
+  -- expr 982225474
+theorem VE.Ask.render_cites_exactV
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (g : VE.Ask.Group),
+    g ∈ v.groups →
+      g.lead = VE.Ask.Lead.yes ∨ g.lead = VE.Ask.Lead.no →
+        List.filterMap (fun x => x.source) (VE.Ask.renderGroupV ctx v g) = g.cited
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Group.cited@VE.Ask.Groups VE.Ask.Group.lead@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Lead.no@VE.Ask.Basic VE.Ask.Lead.yes@VE.Ask.Basic VE.Ask.Lead@VE.Ask.Basic VE.Ask.Line.source@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.Source@VE.Ask.Sources VE.Ask.View.groups@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.renderGroupV@VE.Ask.Lines
+  -- expr 2998167760
+theorem VE.Ask.render_covers_rows
+  ∀ (ctx : VE.Ask.Context) (a : VE.Ask.Answer) (g : VE.Ask.Group),
+    g ∈ a.groups →
+      2 ≤ a.groups.length →
+        Option.map (fun x => x.readings) (VE.Ask.renderGroup ctx a g).head? = Option.some (VE.Ask.named g.on)
+  -- uses VE.Ask.Answer.groups@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Context@VE.Ask.Lines VE.Ask.Group.on@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.named@VE.Ask.Lines VE.Ask.renderGroup@VE.Ask.Render
+  -- expr 1460082605
+theorem VE.Ask.render_covers_rowsV
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (g : VE.Ask.Group),
+    g ∈ v.groups →
+      2 ≤ v.groups.length →
+        Option.map (fun x => x.readings) (VE.Ask.renderGroupV ctx v g).head? = Option.some (VE.Ask.named g.on)
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Group.on@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.View.groups@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.named@VE.Ask.Lines VE.Ask.renderGroupV@VE.Ask.Lines
+  -- expr 326788997
+theorem VE.Ask.render_lead
+  ∀ (ctx : VE.Ask.Context) (a : VE.Ask.Answer) (g : VE.Ask.Group),
+    g ∈ a.groups → VE.Ask.leadOfLine (VE.Ask.renderGroup ctx a g).head? = Option.some g.lead
+  -- uses VE.Ask.Answer.groups@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Context@VE.Ask.Lines VE.Ask.Group.lead@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Line@VE.Ask.Lines VE.Ask.leadOfLine@VE.Ask.Lines VE.Ask.renderGroup@VE.Ask.Render
+  -- expr 3537596685
+theorem VE.Ask.render_leadV
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (g : VE.Ask.Group),
+    g ∈ v.groups → VE.Ask.leadOfLine (VE.Ask.renderGroupV ctx v g).head? = Option.some g.lead
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Group.lead@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Lead@VE.Ask.Basic VE.Ask.Line@VE.Ask.Lines VE.Ask.View.groups@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.leadOfLine@VE.Ask.Lines VE.Ask.renderGroupV@VE.Ask.Lines
+  -- expr 1101654307
+theorem VE.Ask.render_marks_unchecked
+  ∀ (ctx : VE.Ask.Context) (a : VE.Ask.Answer) (l : VE.Ask.Line),
+    l ∈ VE.Ask.render ctx a →
+      (∃ n, n ∈ a.names ∧ n.checked = Bool.false ∧ (n.set, n.index) ∈ l.readings) → l.unchecked = Bool.true
+  -- uses VE.Ask.Answer.names@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Line.unchecked@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.Name.checked@VE.Ask.Wire VE.Ask.Name.index@VE.Ask.Wire VE.Ask.Name.set@VE.Ask.Wire VE.Ask.Name@VE.Ask.Wire VE.Ask.render@VE.Ask.Render
+  -- expr 2033090597
+theorem VE.Ask.render_marks_uncheckedV
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (l : VE.Ask.Line),
+    l ∈ VE.Ask.renderV ctx v →
+      (∃ n, n ∈ v.names ∧ n.checked = Bool.false ∧ (n.set, n.index) ∈ l.readings) → l.unchecked = Bool.true
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Line.unchecked@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.Name.checked@VE.Ask.Wire VE.Ask.Name.index@VE.Ask.Wire VE.Ask.Name.set@VE.Ask.Wire VE.Ask.Name@VE.Ask.Wire VE.Ask.View.names@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.renderV@VE.Ask.Lines
+  -- expr 3665799880
+theorem VE.Ask.render_mem
+  ∀ {ctx : VE.Ask.Context} {v : VE.Ask.View} {l : VE.Ask.Line},
+    l ∈ VE.Ask.renderV ctx v →
+      l = VE.Ask.askedLine v.asked.sentence ∨
+        (∃ g, g ∈ v.groups ∧ VE.Ask.BlockLine ctx v g l) ∨ l = VE.Ask.mk ctx v { frame := "U1", text := "" }
+  -- uses VE.Ask.BlockLine@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Group@VE.Ask.Groups VE.Ask.Line.mk@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.Source@VE.Ask.Sources VE.Ask.View.asked@VE.Ask.Lines VE.Ask.View.groups@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.askedLine@VE.Ask.Lines VE.Ask.mk@VE.Ask.Lines VE.Ask.renderV@VE.Ask.Lines VE.Question.Candidate.sentence@VE.Question.Basic VE.Readings.Choice@VE.Readings.Choice
+  -- expr 565370834
+theorem VE.Ask.render_model_names_choice
+  ∀ (ctx : VE.Ask.Context) (a : VE.Ask.Answer),
+    VE.Ask.RenderInputBound ctx a →
+      ∀ (l : VE.Ask.Line),
+        l ∈ VE.Ask.render ctx a →
+          l.frame ∈ ["S1", "S2", "X1"] →
+            ∃ r,
+              r ∈ a.rows ∧
+                l.witness = Option.some r.choice ∧
+                  VE.Ask.checkedWitness a.request a.x r l.frame ∧ l.readings = VE.Ask.named (VE.Ask.assignment a.ids r)
+  -- uses VE.Ask.Answer.ids@VE.Ask.Render VE.Ask.Answer.request@VE.Ask.Render VE.Ask.Answer.rows@VE.Ask.Render VE.Ask.Answer.x@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.frame@VE.Ask.Lines VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Line.witness@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.RenderInputBound@VE.Ask.Render VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.assignment@VE.Ask.Groups VE.Ask.checkedWitness@VE.Ask.Render VE.Ask.named@VE.Ask.Lines VE.Ask.render@VE.Ask.Render VE.Readings.Choice@VE.Readings.Choice
+  -- expr 3010442829
+theorem VE.Ask.render_model_names_choiceV
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (l : VE.Ask.Line),
+    l ∈ VE.Ask.renderV ctx v →
+      l.frame ∈ ["S1", "S2", "X1"] →
+        ∃ r,
+          r ∈ v.rows ∧
+            l.witness = Option.some r.choice ∧
+              VE.Ask.checkedWitnessRow r l.frame ∧ l.readings = VE.Ask.named (VE.Ask.assignment v.ids r)
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.frame@VE.Ask.Lines VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Line.witness@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.View.ids@VE.Ask.Lines VE.Ask.View.rows@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.assignment@VE.Ask.Groups VE.Ask.checkedWitnessRow@VE.Ask.Lines VE.Ask.named@VE.Ask.Lines VE.Ask.renderV@VE.Ask.Lines VE.Readings.Choice@VE.Readings.Choice
+  -- expr 2988239458
+theorem VE.Ask.render_quotes_bytes
+  ∀ (ctx : VE.Ask.Context) (a : VE.Ask.Answer),
+    VE.Ask.RenderInputBound ctx a →
+      ∀ (l : VE.Ask.Line),
+        l ∈ VE.Ask.render ctx a → ∀ (u t : String), l.quote = Option.some (u, t) → ctx.textOf u = Option.some t
+  -- uses VE.Ask.Answer@VE.Ask.Render VE.Ask.Context.textOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.quote@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.RenderInputBound@VE.Ask.Render VE.Ask.render@VE.Ask.Render
+  -- expr 2116641829
+theorem VE.Ask.render_quotes_bytesV
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (l : VE.Ask.Line),
+    l ∈ VE.Ask.renderV ctx v → ∀ (u t : String), l.quote = Option.some (u, t) → ctx.textOf u = Option.some t
+  -- uses VE.Ask.Context.textOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.quote@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.renderV@VE.Ask.Lines
+  -- expr 825068434
+theorem VE.Ask.render_text_matches_metadata
+  ∀ (ctx : VE.Ask.Context) (a : VE.Ask.Answer),
+    VE.Ask.RenderInputBound ctx a → ∀ (l : VE.Ask.Line), l ∈ VE.Ask.render ctx a → l.text = VE.Ask.lineText ctx a l
+  -- uses VE.Ask.Answer@VE.Ask.Render VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.text@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.RenderInputBound@VE.Ask.Render VE.Ask.lineText@VE.Ask.Render VE.Ask.render@VE.Ask.Render
+  -- expr 938205949
+theorem VE.Ask.render_text_matches_metadataV
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (l : VE.Ask.Line),
+    l ∈ VE.Ask.renderV ctx v → l.text = VE.Ask.lineTextV ctx v l
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.text@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.lineTextV@VE.Ask.Lines VE.Ask.renderV@VE.Ask.Lines
+  -- expr 1323927848
+theorem VE.Ask.render_unused_once
+  ∀ (ctx : VE.Ask.Context) (a : VE.Ask.Answer),
+    VE.Ask.RenderInputBound ctx a →
+      (a.unused = [] → ∀ (l : VE.Ask.Line), l ∈ VE.Ask.render ctx a → l.frame ≠ "U1") ∧
+        (a.unused ≠ [] →
+          ∃ pre u displays,
+            VE.Ask.render ctx a = pre ++ [u] ∧
+              (∀ (l : VE.Ask.Line), l ∈ pre → l.frame ≠ "U1") ∧
+                u.frame = "U1" ∧
+                  u.text = VE.Ask.lineText ctx a u ∧
+                    u.quote = Option.none ∧
+                      u.source = Option.none ∧
+                        u.readings = [] ∧
+                          u.witness = Option.none ∧
+                            List.mapM ctx.displayOf a.unused = Option.some displays ∧
+                              u.text =
+                                ToString.toString "VE did not use " ++ ToString.toString a.unused.length ++
+                                      ToString.toString " sentences of this document that it could not read formally: " ++
+                                    VE.Ask.citationText displays ++
+                                  ".")
+  -- uses VE.Ask.Answer.unused@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Context.displayOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.frame@VE.Ask.Lines VE.Ask.Line.quote@VE.Ask.Lines VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Line.source@VE.Ask.Lines VE.Ask.Line.text@VE.Ask.Lines VE.Ask.Line.witness@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.RenderInputBound@VE.Ask.Render VE.Ask.Source@VE.Ask.Sources VE.Ask.citationText@VE.Ask.Lines VE.Ask.lineText@VE.Ask.Render VE.Ask.render@VE.Ask.Render VE.Readings.Choice@VE.Readings.Choice
+  -- expr 712152873
+theorem VE.Ask.render_unused_onceV
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (displays : List Nat),
+    List.mapM ctx.displayOf v.unused = Option.some displays →
+      (v.unused = [] → ∀ (l : VE.Ask.Line), l ∈ VE.Ask.renderV ctx v → l.frame ≠ "U1") ∧
+        (v.unused ≠ [] →
+          ∃ pre u,
+            VE.Ask.renderV ctx v = pre ++ [u] ∧
+              (∀ (l : VE.Ask.Line), l ∈ pre → l.frame ≠ "U1") ∧
+                u.frame = "U1" ∧
+                  u.text = VE.Ask.lineTextV ctx v u ∧
+                    u.quote = Option.none ∧
+                      u.source = Option.none ∧
+                        u.readings = [] ∧
+                          u.witness = Option.none ∧
+                            u.text =
+                              ToString.toString "VE did not use " ++ ToString.toString v.unused.length ++
+                                    ToString.toString " sentences of this document that it could not read formally: " ++
+                                  VE.Ask.citationText displays ++
+                                ".")
+  -- uses VE.Ask.Context.displayOf@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.frame@VE.Ask.Lines VE.Ask.Line.quote@VE.Ask.Lines VE.Ask.Line.readings@VE.Ask.Lines VE.Ask.Line.source@VE.Ask.Lines VE.Ask.Line.text@VE.Ask.Lines VE.Ask.Line.witness@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.Source@VE.Ask.Sources VE.Ask.View.unused@VE.Ask.Lines VE.Ask.View@VE.Ask.Lines VE.Ask.citationText@VE.Ask.Lines VE.Ask.lineTextV@VE.Ask.Lines VE.Ask.renderV@VE.Ask.Lines VE.Readings.Choice@VE.Readings.Choice
+  -- expr 754357574
+theorem VE.Ask.replayAsk_request
+  ∀ {j : Lean.Json} {a : VE.Ask.Asked}, VE.Ask.replayAsk j = Except.ok a → a.request = j
+  -- uses VE.Ask.Asked.request@VE.Ask.Wire VE.Ask.Asked@VE.Ask.Wire VE.Ask.replayAsk@VE.Ask.Wire
+  -- expr 2477972196
+theorem VE.Ask.replayPlainAsk_request
+  ∀ {j : Lean.Json} {a : VE.Ask.PlainAsked}, VE.Ask.replayPlainAsk j = Except.ok a → a.request = j
+  -- uses VE.Ask.PlainAsked.request@VE.Ask.PlainWire VE.Ask.PlainAsked@VE.Ask.PlainWire VE.Ask.replayPlainAsk@VE.Ask.PlainWire
+  -- expr 2958363148
+theorem VE.Ask.replayZeroAsk_request
+  ∀ {j : Lean.Json} {a : VE.Ask.ZeroAsked}, VE.Ask.replayZeroAsk j = Except.ok a → a.request = j
+  -- uses VE.Ask.ZeroAsked.request@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.Ask.replayZeroAsk@VE.Ask.ZeroWire
+  -- expr 2911644409
+theorem VE.Ask.rowOf_ok
+  ∀ (x : VE.Readings.Wire.NDVerdicts) (j : Lean.Json),
+    x.Γ = [] →
+      ∀ (e : (c : VE.Readings.Choice) × VE.Readings.Wire.NDEvidence x.r.N c), VE.Ask.RowOk x.r.N x.φ (VE.Ask.rowOf x j e)
+  -- uses VE.Ask.RowOk@VE.Ask.Basic VE.Ask.rowOf@VE.Ask.Wire VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.Γ@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
+  -- expr 3151950179
+theorem VE.Ask.rowSourced_premises
+  ∀ (x : VE.Readings.Wire.NDVerdicts) (r : VE.Ask.Row),
+    List.map (fun x => x.snd) (VE.Ask.rowSourced x r) = VE.Ask.rowPremises x r
+  -- uses VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.rowPremises@VE.Ask.Render VE.Ask.rowSourced@VE.Ask.Render VE.Formula@VE.Syntax VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
+  -- expr 2835451554
+theorem VE.Ask.rowsOf_choices
+  ∀ (x : VE.Readings.Wire.NDVerdicts) (j : Lean.Json),
+    List.map (fun x => x.choice) (VE.Ask.rowsOf x j) = List.map (fun x_1 => x_1.fst) x.evs
+  -- uses VE.Ask.Row.choice@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.rowsOf@VE.Ask.Wire VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.evs@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
+  -- expr 1114150711
+theorem VE.Ask.rowsOf_ok
+  ∀ (x : VE.Readings.Wire.NDVerdicts) (j : Lean.Json),
+    x.Γ = [] → ∀ (r : VE.Ask.Row), r ∈ VE.Ask.rowsOf x j → VE.Ask.RowOk x.r.N x.φ r
+  -- uses VE.Ask.Row@VE.Ask.Basic VE.Ask.RowOk@VE.Ask.Basic VE.Ask.rowsOf@VE.Ask.Wire VE.Formula@VE.Syntax VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDVerdicts.r@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.Γ@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.NDVerdicts@VE.Readings.VerdictsWire
+  -- expr 669889022
+theorem VE.Ask.separates_sound
+  ∀ {rows : List VE.Ask.Row} {key : VE.Ask.Row → VE.Ask.Lead × List VE.Ask.Source} {sets : List String},
+    VE.Ask.separates rows key sets = Bool.true →
+      ∀ (r : VE.Ask.Row),
+        r ∈ rows → ∀ (r' : VE.Ask.Row), r' ∈ rows → VE.Ask.assignment sets r = VE.Ask.assignment sets r' → key r = key r'
+  -- uses VE.Ask.Lead@VE.Ask.Basic VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.assignment@VE.Ask.Groups VE.Ask.separates@VE.Ask.Groups
+  -- expr 2362074190
+theorem VE.Ask.situationLine_block
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (g : VE.Ask.Group) (frame : String) (r : VE.Ask.Row),
+    r ∈ g.rows →
+      VE.Ask.checkedWitnessRow r frame → frame ≠ "U1" → VE.Ask.BlockLine ctx v g (VE.Ask.situationLine ctx v frame r)
+  -- uses VE.Ask.BlockLine@VE.Ask.Lines VE.Ask.Context@VE.Ask.Lines VE.Ask.Group.rows@VE.Ask.Groups VE.Ask.Group@VE.Ask.Groups VE.Ask.Row@VE.Ask.Basic VE.Ask.View@VE.Ask.Lines VE.Ask.checkedWitnessRow@VE.Ask.Lines VE.Ask.situationLine@VE.Ask.Lines
+  -- expr 3967062803
+theorem VE.Ask.sourcedAssertions_formulas
+  ∀ (D : VE.Readings.Doc) (c : VE.Readings.Choice),
+    List.map (fun x => x.snd) (VE.Ask.sourcedAssertions D c) = (VE.Readings.choiceDoc D c).snd
+  -- uses VE.Ask.Source@VE.Ask.Sources VE.Ask.sourcedAssertions@VE.Ask.Render VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1601791424
+theorem VE.Ask.sourced_premises
+  ∀ (U : VE.NormDefaults.UDoc) (as : List (VE.Ask.Source × VE.Formula)),
+    List.map (fun x => x.snd) (VE.Ask.sourced U as) = VE.NormDefaults.Wire.premisesU U (List.map (fun x => x.snd) as)
+  -- uses VE.Ask.Source@VE.Ask.Sources VE.Ask.sourced@VE.Ask.Sources VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesU@VE.NormDefaults.Wire
+  -- expr 3648568590
+theorem VE.Ask.sourced_sources
+  ∀ (U : VE.NormDefaults.UDoc) (as : List (VE.Ask.Source × VE.Formula)),
+    List.map (fun x => x.fst) (VE.Ask.sourced U as) = VE.Ask.sourcesU U (List.map (fun x => x.fst) as)
+  -- uses VE.Ask.Source@VE.Ask.Sources VE.Ask.sourced@VE.Ask.Sources VE.Ask.sourcesU@VE.Ask.Sources VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 3891030177
+theorem VE.Ask.sourcesU_length
+  ∀ (U : VE.NormDefaults.UDoc) (as : List VE.Ask.Source) (Γ : List VE.Formula),
+    as.length = Γ.length → (VE.Ask.sourcesU U as).length = (VE.NormDefaults.Wire.premisesU U Γ).length
+  -- uses VE.Ask.Source@VE.Ask.Sources VE.Ask.sourcesU@VE.Ask.Sources VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesU@VE.NormDefaults.Wire
+  -- expr 2990020743
+theorem VE.Ask.sourcesU_zip_premisesU
+  ∀ (U : VE.NormDefaults.UDoc) (as : List (VE.Ask.Source × VE.Formula)),
+    (VE.Ask.sourcesU U (List.map (fun x => x.fst) as)).zip
+        (VE.NormDefaults.Wire.premisesU U (List.map (fun x => x.snd) as)) =
+      VE.Ask.sourced U as
+  -- uses VE.Ask.Source@VE.Ask.Sources VE.Ask.sourced@VE.Ask.Sources VE.Ask.sourcesU@VE.Ask.Sources VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesU@VE.NormDefaults.Wire
+  -- expr 2288471543
+theorem VE.Ask.splitModels_base
+  ∀ {r : VE.Readings.Wire.AdmittedND} {c : VE.Readings.Choice}
+    {hw : VE.NormDefaults.WellFormedU (VE.Readings.choiceU r.N c) = Bool.true} {p : Lean.Json}
+    {m₁ m₂ : VE.Readings.Wire.FilledModel (VE.Readings.choiceU r.N c)},
+    VE.Ask.splitModels r c hw p = Option.some (m₁, m₂) → m₁.M = m₂.M
+  -- uses VE.Ask.splitModels@VE.Ask.Wire VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Readings.choiceU@VE.Readings.Unspecified
+  -- expr 916746603
+theorem VE.Ask.splitOk_sound
+  ∀ (N : VE.Readings.NDoc) (c : VE.Readings.Choice) (e : VE.Readings.Wire.NDEvidence N c) (ψ : VE.Formula)
+    (m₁ m₂ : VE.Readings.Wire.FilledModel (VE.Readings.choiceU N c)),
+    m₁.M = m₂.M →
+      VE.Readings.Wire.ndModelOk N c [] ψ m₁ Bool.true = Bool.true →
+        VE.Readings.Wire.ndModelOk N c [] ψ m₂ Bool.false = Bool.true →
+          VE.Ask.SplitU (VE.Readings.choiceU N c) (VE.Readings.choiceDoc N.D c).snd ψ
+  -- uses VE.Ask.SplitU@VE.Ask.Basic VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.Wire.ndModelOk@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 3923103660
+theorem VE.Ask.splitRow_sound
+  ∀ {r : VE.Readings.Wire.AdmittedND} {c : VE.Readings.Choice} (e : VE.Readings.Wire.NDEvidence r.N c) (ψ : VE.Formula)
+    (entry : Lean.Json),
+    VE.Ask.splitRow r c e ψ entry = Bool.true →
+      VE.Ask.SplitU (VE.Readings.choiceU r.N c) (VE.Readings.choiceDoc r.N.D c).snd ψ
+  -- uses VE.Ask.SplitU@VE.Ask.Basic VE.Ask.splitRow@VE.Ask.Wire VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.NDEvidence@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 3601193127
+theorem VE.Ask.split_counter
+  ∀ (U : VE.NormDefaults.UDoc) (Γ : List VE.Formula) (ψ : VE.Formula), VE.Ask.SplitU U Γ ψ → VE.Readings.CounterU U Γ ψ
+  -- uses VE.Ask.SplitU@VE.Ask.Basic VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Readings.CounterU@VE.Readings.Verdicts
+  -- expr 630545406
+theorem VE.Ask.toString_inj
+  ∀ {i j : Nat}, ToString.toString i = ToString.toString j → i = j
+  -- uses
+  -- expr 3577096547
+theorem VE.Ask.unusedLines_eq
+  ∀ (ctx : VE.Ask.Context) (v : VE.Ask.View) (l : VE.Ask.Line),
+    l ∈ VE.Ask.unusedLines ctx v → l = VE.Ask.mk ctx v { frame := "U1", text := "" }
+  -- uses VE.Ask.Context@VE.Ask.Lines VE.Ask.Line.mk@VE.Ask.Lines VE.Ask.Line@VE.Ask.Lines VE.Ask.Source@VE.Ask.Sources VE.Ask.View@VE.Ask.Lines VE.Ask.mk@VE.Ask.Lines VE.Ask.unusedLines@VE.Ask.Lines VE.Readings.Choice@VE.Readings.Choice
+  -- expr 624257354
+theorem VE.Ask.usedPositions_sufficient
+  ∀ (E : VE.Environment) (P : List VE.Formula) (ψ : VE.Formula) (k : VE.Tableau.Certificate),
+    VE.Ask.replayOk E P ψ k = Bool.true → VE.Entails E (List.filterMap (fun x => P[x]?) (VE.Ask.usedPositions E P ψ k)) ψ
+  -- uses VE.Ask.replayOk@VE.Ask.Sources VE.Ask.usedPositions@VE.Ask.Sources VE.Entails@VE.Semantics VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Tableau.Certificate@VE.Tableau
+  -- expr 2290242223
+theorem VE.Ask.zeroCites_spec
+  ∀ (p : VE.Ask.ZeroParts) (case : Lean.Json) (r : VE.Ask.Row) (ψ : VE.Formula) (k : VE.Tableau.Certificate),
+    VE.Ask.zeroCertPiece p case r = Option.some (ψ, k) →
+      (∀ (s : VE.Ask.Source),
+          s ∈ VE.Ask.zeroCites p case r ↔
+            ∃ i, i ∈ VE.Ask.zeroUsed p ψ k ∧ Option.map (fun x => x.fst) p.sourced[i]? = Option.some s) ∧
+        (∀ (i : Nat) (s : VE.Ask.Source) (f : VE.Formula),
+            p.sourced[i]? = Option.some (s, f) → p.premises[i]? = Option.some f) ∧
+          (VE.Ask.replayOk p.E p.premises ψ k = Bool.true →
+            VE.Entails p.E (List.filterMap (fun x => p.premises[x]?) (VE.Ask.zeroUsed p ψ k)) ψ)
+  -- uses VE.Ask.Row@VE.Ask.Basic VE.Ask.Source@VE.Ask.Sources VE.Ask.ZeroParts.E@VE.Ask.ZeroWire VE.Ask.ZeroParts.premises@VE.Ask.ZeroAnswer VE.Ask.ZeroParts.sourced@VE.Ask.ZeroAnswer VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.replayOk@VE.Ask.Sources VE.Ask.zeroCertPiece@VE.Ask.ZeroAnswer VE.Ask.zeroCites@VE.Ask.ZeroAnswer VE.Ask.zeroUsed@VE.Ask.ZeroAnswer VE.Entails@VE.Semantics VE.Formula@VE.Syntax VE.Tableau.Certificate@VE.Tableau
+  -- expr 1992041186
+theorem VE.Ask.zeroConflict_sound
+  ∀ {p : VE.Ask.ZeroParts} {case : Lean.Json}, VE.Ask.zeroConflict p case = Bool.true → ¬VE.NormDefaults.ConflictFreeU p.U
+  -- uses VE.Ask.ZeroParts.U@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.zeroConflict@VE.Ask.ZeroWire VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises
+  -- expr 1127459749
+theorem VE.Ask.zeroFree_sound
+  ∀ {p : VE.Ask.ZeroParts} {case : Lean.Json}, VE.Ask.zeroFree p case = Bool.true → VE.NormDefaults.ConflictFreeU p.U
+  -- uses VE.Ask.ZeroParts.U@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.zeroFree@VE.Ask.ZeroWire VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises
+  -- expr 2761896404
+theorem VE.Ask.zeroModelOk_base
+  ∀ {p : VE.Ask.ZeroParts} {φ : VE.Formula} {m : VE.Readings.Wire.FilledModel p.U} {v : Bool},
+    VE.Ask.zeroModelOk p φ m v = Bool.true →
+      ∃ S,
+        VE.Norms.restrictAll (VE.NormDefaults.fill p.U).T S =
+            VE.NormDefaults.withFill p.U m.M.asStructure (VE.NormDefaults.finFill m.M m.F) ∧
+          VE.NormDefaults.BaseAdmissibleU p.U
+              (VE.NormDefaults.withFill p.U m.M.asStructure (VE.NormDefaults.finFill m.M m.F)) ∧
+            VE.Norms.DocumentExpansion (VE.NormDefaults.fill p.U)
+                (VE.NormDefaults.withFill p.U m.M.asStructure (VE.NormDefaults.finFill m.M m.F)) S ∧
+              VE.Norms.Sat S p.Γ ∧ (VE.Formula.denote S [] φ ↔ v = Bool.true)
+  -- uses VE.Ask.ZeroParts.U@VE.Ask.ZeroWire VE.Ask.ZeroParts.Γ@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.zeroModelOk@VE.Ask.ZeroWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.restrictAll@VE.Norms.Subst VE.Readings.Wire.FilledModel.F@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3887489009
+theorem VE.Ask.zeroModelOk_consistent
+  ∀ {p : VE.Ask.ZeroParts} {m : VE.Readings.Wire.FilledModel p.U},
+    VE.Ask.zeroModelOk p VE.Formula.bottom m Bool.false = Bool.true → VE.Readings.ConsistentU p.U p.Γ
+  -- uses VE.Ask.ZeroParts.U@VE.Ask.ZeroWire VE.Ask.ZeroParts.Γ@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.zeroModelOk@VE.Ask.ZeroWire VE.Formula.bottom@VE.Syntax VE.Readings.ConsistentU@VE.Readings.Verdicts VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire
+  -- expr 1256729914
+theorem VE.Ask.zeroModelOk_counter
+  ∀ {p : VE.Ask.ZeroParts} {φ : VE.Formula} {m : VE.Readings.Wire.FilledModel p.U},
+    VE.Ask.zeroModelOk p φ m Bool.false = Bool.true → VE.Readings.CounterU p.U p.Γ φ
+  -- uses VE.Ask.ZeroParts.U@VE.Ask.ZeroWire VE.Ask.ZeroParts.Γ@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.zeroModelOk@VE.Ask.ZeroWire VE.Formula@VE.Syntax VE.Readings.CounterU@VE.Readings.Verdicts VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire
+  -- expr 665133973
+theorem VE.Ask.zeroProved_sound
+  ∀ {p : VE.Ask.ZeroParts} {φ : VE.Formula} {k : Option VE.Tableau.Certificate},
+    VE.Ask.zeroProved p φ k = Bool.true → VE.NormDefaults.EntailsU p.U p.Γ φ
+  -- uses VE.Ask.ZeroParts.U@VE.Ask.ZeroWire VE.Ask.ZeroParts.Γ@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.zeroProved@VE.Ask.ZeroWire VE.Formula@VE.Syntax VE.NormDefaults.EntailsU@VE.NormDefaults.Wire VE.Tableau.Certificate@VE.Tableau
+  -- expr 2164085117
+theorem VE.Ask.zeroRow_ok
+  ∀ (p : VE.Ask.ZeroParts) (case : Lean.Json), VE.Ask.RowOkU p.U p.Γ p.ψ (VE.Ask.zeroRow p case)
+  -- uses VE.Ask.RowOkU@VE.Ask.ZeroWire VE.Ask.ZeroParts.U@VE.Ask.ZeroWire VE.Ask.ZeroParts.Γ@VE.Ask.ZeroWire VE.Ask.ZeroParts.ψ@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.zeroRow@VE.Ask.ZeroWire
+  -- expr 1808096521
+theorem VE.Ask.zeroSplitModels_base
+  ∀ {p : VE.Ask.ZeroParts} {piece : Option Lean.Json} {m₁ m₂ : VE.Readings.Wire.FilledModel p.U},
+    VE.Ask.zeroSplitModels p piece = Option.some (m₁, m₂) → m₁.M = m₂.M
+  -- uses VE.Ask.ZeroParts.U@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.zeroSplitModels@VE.Ask.ZeroWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire
+  -- expr 3048665017
+theorem VE.Ask.zeroSplit_sound
+  ∀ {p : VE.Ask.ZeroParts} {case : Lean.Json}, VE.Ask.zeroSplit p case = Bool.true → VE.Ask.SplitU p.U p.Γ p.ψ
+  -- uses VE.Ask.SplitU@VE.Ask.Basic VE.Ask.ZeroParts.U@VE.Ask.ZeroWire VE.Ask.ZeroParts.Γ@VE.Ask.ZeroWire VE.Ask.ZeroParts.ψ@VE.Ask.ZeroWire VE.Ask.ZeroParts@VE.Ask.ZeroWire VE.Ask.zeroSplit@VE.Ask.ZeroWire
+  -- expr 2453982268
+theorem VE.Ask.zero_ask_wire_sound
+  ∀ (j : Lean.Json) (a : VE.Ask.ZeroAsked),
+    VE.Ask.replayZeroAsk j = Except.ok a →
+      a.request = j ∧
+        a.text = (j.getObjValD "document").getStr?.toOption.getD "" ∧
+          a.q = (j.getObjValD "question").getStr?.toOption.getD "" ∧
+            a.case = j.getObjValD "case" ∧
+              VE.Ask.replayZero a.case = Except.ok a.x ∧
+                VE.Ask.PlainCaseBinding a.text a.case a.E a.L a.x.E ∧
+                  VE.Question.QuestionOneReading VE.Question.auxiliaries a.E { } a.L a.q a.c a.φ ∧
+                    VE.Ask.LeadHoldsU a.x.U a.x.Γ a.x.ψ a.x.row ∧
+                      ∀ (x : VE.Ask.Reason), a.x.row.reason = Option.some x → VE.Ask.ReasonHoldsU a.x.U a.x.Γ a.x.ψ x
+  -- uses VE.Ask.LeadHoldsU@VE.Ask.ZeroWire VE.Ask.PlainCaseBinding@VE.Ask.PlainWire VE.Ask.Reason@VE.Ask.Basic VE.Ask.ReasonHoldsU@VE.Ask.ZeroWire VE.Ask.Row.reason@VE.Ask.Basic VE.Ask.ZeroAsked.E@VE.Ask.ZeroWire VE.Ask.ZeroAsked.L@VE.Ask.ZeroWire VE.Ask.ZeroAsked.c@VE.Ask.ZeroWire VE.Ask.ZeroAsked.case@VE.Ask.ZeroWire VE.Ask.ZeroAsked.q@VE.Ask.ZeroWire VE.Ask.ZeroAsked.request@VE.Ask.ZeroWire VE.Ask.ZeroAsked.text@VE.Ask.ZeroWire VE.Ask.ZeroAsked.x@VE.Ask.ZeroWire VE.Ask.ZeroAsked.φ@VE.Ask.ZeroWire VE.Ask.ZeroAsked@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.E@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.U@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.row@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.Γ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict.ψ@VE.Ask.ZeroWire VE.Ask.ZeroVerdict@VE.Ask.ZeroWire VE.Ask.replayZero@VE.Ask.ZeroWire VE.Ask.replayZeroAsk@VE.Ask.ZeroWire VE.EnglishGrammar.Overlay.mk@VE.EnglishGrammar.Lexicon VE.Question.QuestionOneReading@VE.Question.Properties VE.Question.auxiliaries@VE.Question.Basic
+  -- expr 3996193774
 theorem VE.Bridge.CountermodelQuery.conclusion_typed
   ∀ {E : VE.Environment} (self : VE.Bridge.CountermodelQuery E), VE.Formula.WellFormed E [] self.conclusion
   -- uses VE.Bridge.CountermodelQuery.conclusion@VE.Bridge VE.Bridge.CountermodelQuery@VE.Bridge VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax
@@ -34666,6 +35757,10 @@ theorem VE.Service.runMode_alternatives
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.alternatives j = VE.Alternatives.Run.runCaseReported j
   -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 2981243245
+theorem VE.Service.runMode_ask
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.ask j = VE.Ask.Run.caseReported j
+  -- uses VE.Ask.Run.caseReported@VE.Ask.Run VE.Service.Mode.ask@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 3326383300
 theorem VE.Service.runMode_bundle
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.bundle j = VE.Service.Standalone.reported VE.Service.FamilyBundle.bundleCase j
@@ -34805,6 +35900,10 @@ theorem VE.Service.runMode_speechActs
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.speechActs j = VE.SpeechActs.Run.runCaseReported j
   -- uses VE.Service.Mode.speechActs@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.SpeechActs.Run.runCaseReported@VE.SpeechActs.Run
   -- expr 4195833241
+theorem VE.Service.runMode_words
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.words j = VE.Words.Run.caseReported j
+  -- uses VE.Service.Mode.words@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.Words.Run.caseReported@VE.Words.Run
+  -- expr 2580582220
 theorem VE.Service.runRequest_ok
   ∀ (h : VE.Service.Handles) (r : VE.Service.Request) (budget : VE.Service.Budget)
     (cases expanded : Array (Except String Lean.Json)) (digests : Array String),

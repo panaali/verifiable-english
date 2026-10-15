@@ -2226,6 +2226,41 @@
    "kind": "by-design",
    "id": "B7",
    "reason": "A rights document's copied unit content (document.json `rights_block` and `soft_content`, Shape.copied): each member is the request's own authored value, the holder guard optional and every line and `over` name as written, so a dropped optional guard or a repeated line or name is still a valid shape. The client binds the content to the unit's authored content (`ve/document.py` `_bind_document_answer`, `_soft_bound`), which refuses each such mutant (tests/test_b16e_rights_document.py::test_every_rights_and_soft_field_is_typed_and_every_row_bound)."
+   },
+   {
+   "route": "service:ask",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/result/rows/*/cited",
+    "results/*/result/result/rows/*/gaps",
+    "results/*/result/result/unchecked_names",
+    "results/*/result/result/unused"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:ask",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/result/rows/*/gaps"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:ask",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/result/lines/*/quote",
+    "results/*/result/result/lines/*/source",
+    "results/*/result/result/lines/*/witness"
+   ],
+   "kind": "by-design",
+   "id": "B3",
+   "reason": "A field whose domain is a union across JSON types: a line's `source`, `quote` and `witness` are null or a value (ask.json `line`), so the retype to null is a valid answer, and so is a witness retyped to `[]`, the one choice of a one-choice route; a value that is not null is bound to the request by `ve.ask.read_answer`."
   }
  ]
 }

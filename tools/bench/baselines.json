@@ -2,6 +2,8 @@
   "tolerance": 1.0,
   "slack_seconds": 0.5,
   "baselines": {
+    "test_ask_lean_cpu[A1]::lean": 0.6,
+    "test_ask_lean_cpu[U3]::lean": 0.7,
     "test_kernel_bounded_batches[w6a-generator]::test_every_backend_reports_resource_limit_in_bounded_time[0]:ve": 9.114,
     "test_kernel_bounded_batches[w6a-generator]::test_every_backend_reports_resource_limit_in_bounded_time[0]:ve_conformance": 6.375,
     "test_kernel_bounded_batches[w6a-generator]::test_every_backend_reports_resource_limit_in_bounded_time[0]:ve_quantity": 1.572,

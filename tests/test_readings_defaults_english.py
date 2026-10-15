@@ -9,8 +9,9 @@ import pytest
 
 from ve.errors import VEError
 from ve.readings_s2_english import (DEFAULTS, PROVIDED, S2A, TEMPLATES, Slots, checked_alone, derivations,
-                                    each_alone, every_result, every_result_of_sentence, gap_sentences, gated,
-                                    named_result, pair_line, result_sentence, sentence_slots, shown)
+                                    each_alone, every_result, every_result_of_sentence, gated,
+                                    named_result, pair_line, result_sentence, sentence_slots, shown,
+                                    shown_gaps)
 
 EVERY = "*Every agent must help each user*"
 ASKING = "*Every agent must help each user, if that user asks that agent*"
@@ -18,6 +19,12 @@ CONCLUSION = "*For every agent, for every user, that agent must help that user.*
 SITUATION = "a is an agent; u is a user"
 CLAUSE = "a must help u"
 PAIR = "Whenever an agent must help a user, it may help that user."
+
+
+def _gap(clause, value):
+    """A filled gap as the readings English receives it: the clause and Lean's filled-gap sentence
+    (`VE.Words.fillingSentence`)."""
+    return (clause, f"Here the text does not say whether {clause}; this situation answers '{'yes' if value else 'no'}'.")
 SLOTS = Slots(numbers={"1", "2", "3"}, readings={EVERY, ASKING, "*must*", "*should*"}, conclusions={CONCLUSION},
               situations={SITUATION}, clauses={CLAUSE, "u must help a"})
 CERTIFIED = ("conflict_free", "follows", "inconsistent")
@@ -32,7 +39,7 @@ def test_the_new_wordings_pass_the_gate_with_their_exact_text():
     assert each_alone(SLOTS) == "Each open sentence below was checked by itself, under each of its readings."
     assert named_result([(1, ASKING)], "undecided", SLOTS, clause=CLAUSE) == (
         f"Read sentence 1 as {ASKING}: the text does not say whether a must help u: no rule decides this situation.")
-    assert named_result([(1, ASKING)], "countermodel", SLOTS, situation=SITUATION, gaps=[(CLAUSE, False)]) == (
+    assert named_result([(1, ASKING)], "countermodel", SLOTS, situation=SITUATION, gaps=[_gap(CLAUSE, False)]) == (
         f"Read sentence 1 as {ASKING}: the conclusion does not follow. It fails here: a is an agent; u is a user. "
         "Here the text does not say whether a must help u; this situation answers 'no'.")
     assert pair_line(PAIR, SLOTS) == PAIR
@@ -48,7 +55,7 @@ def test_every_instance_has_exactly_one_derivation_its_own():
         built.append((every_result(1, kind, SLOTS, conclusion=CONCLUSION), "E26"))
         built.append((every_result(2, kind, SLOTS, conclusion=CONCLUSION), "E10"))
     for kind in SITUATED:
-        for gaps in ((), ((CLAUSE, True),), ((CLAUSE, False), ("u must help a", True))):
+        for gaps in ((), (_gap(CLAUSE, True),), (_gap(CLAUSE, False), _gap("u must help a", True))):
             built.append((named_result([(1, EVERY), (2, "*must*")], kind, SLOTS, situation=SITUATION, gaps=gaps),
                           "E12"))
     built.append((named_result([(1, ASKING)], "undecided", SLOTS, clause=CLAUSE), "E12"))
@@ -63,12 +70,12 @@ def test_the_new_templates_are_registered_beside_s2a():
 
 @pytest.mark.parametrize("build", [
     lambda: every_result_of_sentence(1, "countermodel", SLOTS),             # E30 claims every reading: certificates
-    lambda: result_sentence("follows", conclusion=CONCLUSION, gaps=[(CLAUSE, True)]),  # gaps follow a situation
-    lambda: result_sentence("undecided", clause=CLAUSE, gaps=[(CLAUSE, True)]),
-    lambda: gap_sentences([(CLAUSE, 1)]),                                   # bool, never an int
-    lambda: gap_sentences([("", True)]),
+    lambda: result_sentence("follows", conclusion=CONCLUSION, gaps=[_gap(CLAUSE, True)]),  # gaps follow a situation
+    lambda: result_sentence("undecided", clause=CLAUSE, gaps=[_gap(CLAUSE, True)]),
+    lambda: shown_gaps([(CLAUSE, 1)]),                                      # Lean's sentence, never another value
+    lambda: shown_gaps([("", _gap(CLAUSE, True)[1])]),
     lambda: named_result([(1, ASKING)], "undecided", SLOTS, clause="b must help v"),  # not a clause shown
-    lambda: named_result([(1, ASKING)], "countermodel", SLOTS, situation=SITUATION, gaps=[("b must help v", True)]),
+    lambda: named_result([(1, ASKING)], "countermodel", SLOTS, situation=SITUATION, gaps=[_gap("b must help v", True)]),
     lambda: checked_alone(9, SLOTS),                                        # not a sentence number
     lambda: named_result([(1, "reading 1")], "conflict_free", SLOTS),       # "reading <i>" is no slot value
     lambda: pair_line("Wherever an agent must help a user, it may help that user.", SLOTS),
@@ -124,12 +131,12 @@ def _wording(frame):
 def test_a_used_pair_label_gets_norm_defaults_pair_sentence_as_its_e3_line():
     """F-ND1's conflict answer: `conditional_on: ["unsaid:pair:help_required,help_permitted"]` is worded as E3 with
     norm-defaults 4.1's pair sentence (readings-defaults 2.2, 2.6)."""
-    from ve.norm_english import pair_sentence
+    from ve.words import pair
     frame = _pair_frame()
     wording = _wording(frame)
-    # Reused verbatim: norm-defaults' own sentence. (It reads "an user" today: its article rule looks at the first
-    # letter only; that is norm-defaults' wording, reported to its owner, not changed here.)
-    reused = pair_sentence(frame, "help_required")
+    # Reused verbatim: norm-defaults' own sentence, Lean's (`VE.Words.pairSentence`). (It reads "an user" today: its
+    # article rule looks at the first letter only; that is norm-defaults' wording, kept byte for byte by Q2.4.)
+    reused = pair(frame, "help_required")
     assert reused.startswith("Whenever an agent must help a") and reused.endswith(" user, it may help that user.")
     assert wording.provided(["unsaid:pair:help_required,help_permitted"]) == [PROVIDED, reused]
     assert wording.provided([]) == []

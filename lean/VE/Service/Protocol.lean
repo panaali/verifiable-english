@@ -7,6 +7,8 @@ import VE.Norms.Run
 import VE.Service.EnglishRun
 import VE.EnglishGrammar.Run
 import VE.Question.Run
+import VE.Ask.Run
+import VE.Words.Run
 import VE.Service.Standalone
 import VE.Service.Graph
 import VE.Service.Readings
@@ -73,7 +75,7 @@ inductive Mode where
   | environment | model | check | identity
   | parse | graph | readings | readingsChoices | bundle | familyNorms
   | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
-  | discourse | readingsRoute | diagnose | document | englishQuestion
+  | discourse | readingsRoute | diagnose | document | englishQuestion | ask | words
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -110,12 +112,14 @@ def Mode.name : Mode → String
   | .diagnose => "diagnose"
   | .document => "document"
   | .englishQuestion => "english.question"
+  | .ask => "ask"
+  | .words => "words"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
   .englishRead, .englishGrammar, .englishCheck,
   .environment, .model, .check, .identity, .parse, .graph, .readings, .readingsChoices, .bundle, .familyNorms,
   .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
-  .discourse, .readingsRoute, .diagnose, .document, .englishQuestion]
+  .discourse, .readingsRoute, .diagnose, .document, .englishQuestion, .ask, .words]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -167,6 +171,8 @@ def runMode : Mode → Json → Json
   | .diagnose, j => Diagnose.diagnoseCase j
   | .document, j => Document.runCaseReported j
   | .englishQuestion, j => VE.Question.Run.caseReported j
+  | .ask, j => VE.Ask.Run.caseReported j
+  | .words, j => VE.Words.Run.caseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -729,6 +735,12 @@ theorem runMode_readingsRoute (j : Json) :
 theorem runMode_diagnose (j : Json) : runMode .diagnose j = Diagnose.diagnoseCase j := rfl
 theorem runMode_englishQuestion (j : Json) :
     runMode .englishQuestion j = VE.Question.Run.caseReported j := rfl
+
+theorem runMode_ask (j : Json) :
+    runMode .ask j = VE.Ask.Run.caseReported j := rfl
+
+theorem runMode_words (j : Json) :
+    runMode .words j = VE.Words.Run.caseReported j := rfl
 
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
