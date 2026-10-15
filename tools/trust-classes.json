@@ -5912,6 +5912,7 @@
         "VE.Readings.usesOfUnit"
       ],
       "G[V]": [
+        "VE.Readings.Chain.text",
         "VE.Readings.free",
         "VE.Readings.interfaceOf",
         "VE.Readings.namesFit",

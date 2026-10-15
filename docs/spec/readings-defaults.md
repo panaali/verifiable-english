@@ -263,7 +263,8 @@ meet the zero-training rule is for norm-defaults' reader test (its 4.3); no new 
 - **`readings-validate`, `readings-separate`** under the completion answer S1's rows computed on `fillDoc N`, adding
   per reading `fill_premises` (label `unsaid:pair:<r>,<m>`, AST) and once `filled` (`environment`: the lower
   environment with each `unspecified` read as `deny`, `norm-defaults@0` removed and every `unsaid__p` added, as 10a's
-  `withUnsaid`; `units`: the filled contents and the `F_p` units). Python's search and English read `filled`.
+  `withUnsaid`; `units`: the filled contents and the `F_p` units; `chain`: `norms`, the chain the completion took,
+  which the client reads and never derives, rd-9 review F25). Python's search and English read `filled`.
 - **`readings-elaborate`**: the enumerated row with `finding` `{"text": "ReadingsNotSuperposable: <every open set>",
   "cause": "the unspecified completion"}`; `enumeratedCheckText` runs on `fillDoc N` and, for each of the at most 64
   compatible choices, also runs `ndChoiceText` (4.1 step 5; SR1).

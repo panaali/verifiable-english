@@ -34,11 +34,13 @@ COMPLETION_CAUSE = "the unspecified completion"
 NORM_DEFAULTS = "norm-defaults@0"
 
 
-def soft_chain(environment):
-    """The soft chain (rd-9-soft-chain.md 1.1): `soft-norms@0` among the profiles without `rights@0`, as Lean's
-    `Compose.dispatch` reads it."""
-    profiles = environment.get("profiles", ())
-    return "soft-norms@0" in profiles and "rights@0" not in profiles
+# The chain a completion took, as Lean relays it (`filled.chain`, `Readings.Chain.text`), and the profile the request
+# must declare for it. Python reads the chain and derives none (review F25 of rd-9): which completion fields a row
+# carries follows the chain Lean names.
+CHAIN_PROFILES = {"norms": "norms@0", "soft": "soft-norms@0", "rights": "rights@0"}
+# The completion's fields per chain, besides each pair's `gaps`.
+COMPLETION_FIELDS = {"norms": frozenset({"fill_premises", "filled"}),
+                     "soft": frozenset({"fill_premises", "soft_premises", "filled"})}
 
 def document_wire(units, reading_sets, *, couplings=(), narrowings=()):
     """The document as the readings route reads it: every unit with its kind (1.2), content when it has one."""
@@ -403,7 +405,7 @@ _SET = _obj({"set": _str, "version": _nat, "candidates": _arr(_CANDIDATE, nonemp
 # the English read them (`readings_s1.Decoded`).
 FILL_PREMISES = _arr(_obj({"set": _str, "index": _nat,
                            "premises": _arr(_obj({"label": _str, "ast": lambda v: v is not None}))}))
-FILLED = _obj({"environment": lambda v: type(v) is dict,
+FILLED = _obj({"chain": lambda v: type(v) is str and v in COMPLETION_FIELDS, "environment": lambda v: type(v) is dict,
                "units": _arr(_obj({"unit": _name, "content": lambda v: type(v) is dict},
                                   {"set": _str, "version": _nat, "index": _nat}))})
 # Under the soft completion (rd-9-soft-chain.md 3) Lean also adds, per reading, soft's premises regenerated on its
@@ -501,19 +503,24 @@ def _bind_completion(row, case, *, checked_part=False):
     from .environment import Environment
     document = Document(None, case["document"])
     sets = document.sets
-    # A component's checked part (readings-defaults RD-4b: the main case without a content-bearing set, its fixed
-    # units) is under the completion with its environment alone.
-    completion = (NORM_DEFAULTS in case["environment"].get("profiles", ())
-                  and (checked_part or any(content_bearing(R) for R in sets)))
-    soft = completion and soft_chain(case["environment"])
-    _need(("fill_premises" in row) is completion and ("filled" in row) is completion
-          and ("soft_premises" in row) is soft)
+    profiles = case["environment"].get("profiles", ())
+    # Whether the completion ran and on which chain is Lean's (`filled.chain`); Python checks only that the fields
+    # present are that chain's, and that the request declares the profiles the chain names. A component's checked
+    # part (readings-defaults RD-4b: the main case without a content-bearing set, its fixed units) is asked under
+    # the completion, so its row carries it.
+    completion = "filled" in row
+    _need(completion or not checked_part)
+    chain = row["filled"]["chain"] if completion else None
+    _need(not completion or (FILLED(row["filled"]) and NORM_DEFAULTS in profiles and CHAIN_PROFILES[chain] in profiles
+                             and (checked_part or any(content_bearing(R) for R in sets))))
+    _need(set(_COMPLETION) & set(row) == COMPLETION_FIELDS.get(chain, frozenset()))
+    soft = chain == "soft"
     for entry in row.get("sets", ()):
         for pair in entry["pairs"]:
             _need(("gaps" in pair["pair"]) is completion)
     if not completion:
         return
-    _need(FILL_PREMISES(row["fill_premises"]) and FILLED(row["filled"]))
+    _need(FILL_PREMISES(row["fill_premises"]))
     if soft:
         _bind_soft_premises(row["soft_premises"], document)
     request = Environment(case["environment"])

@@ -434,12 +434,14 @@ def unitsJsonOf (items : List Item) : List Json :=
 def filledUnitsJson (N : NDoc) : List Json := unitsJsonOf (fillDoc N).items
 
 /-- `filled`: the lower environment with each `unspecified` read as `deny`, `norm-defaults@0` removed and every
-    `unsaid__p` added (10a's `withUnsaid`, which reads only the frame's regulated predicates), and the filled units.
-    Python's search and English read it. -/
+    `unsaid__p` added (10a's `withUnsaid`, which reads only the frame's regulated predicates), and the filled units,
+    beside the chain the completion took (the client reads it, never derives it). Python's search and English read
+    it. -/
 def filledJson (r : AdmittedND) : Except String Json := do
   let env ← VE.NormDefaults.Wire.withUnsaid (asU r.N r.N.D.frame)
     (← VE.NormDefaults.Wire.placeholderJson r.b.a.re.lowerJson)
-  pure (Json.mkObj [("environment", env), ("units", Json.arr (filledUnitsJson r.N).toArray)])
+  pure (Json.mkObj [("chain", .str r.b.a.re.chain.text), ("environment", env),
+    ("units", Json.arr (filledUnitsJson r.N).toArray)])
 
 /-! ## Each choice (4.3) -/
 

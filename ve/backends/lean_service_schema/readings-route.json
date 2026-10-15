@@ -986,9 +986,10 @@
       "type": "array"
     },
     "filled": {
-      "$comment": "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last.",
+      "$comment": "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the chain the completion took (Readings.Chain.text; the client reads it and derives no chain), the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last.",
       "additionalProperties": false,
       "properties": {
+        "chain": {"enum": ["norms", "soft", "rights"]},
         "environment": {"$ref": "#/$defs/filled_environment"},
         "units": {
           "items": {
@@ -1074,7 +1075,7 @@
           "type": "array"
         }
       },
-      "required": ["environment", "units"],
+      "required": ["chain", "environment", "units"],
       "type": "object"
     },
     "filled_environment": {
