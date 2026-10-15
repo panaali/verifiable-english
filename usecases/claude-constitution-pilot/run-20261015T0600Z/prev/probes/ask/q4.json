@@ -1,0 +1,29 @@
+{
+  "operation": "question.read",
+  "assurance": "experimental",
+  "intent": "unconfirmed",
+  "proof": "not_checked",
+  "answer": "not_built",
+  "result": {
+    "class": "SyntaxError",
+    "code": "NoDerivation",
+    "identities": {
+      "actions_version": "28",
+      "environment_id": "5f2734ce39e05c76ee414a64adb332e320e20f094f5c93e70891104e2eab1f0c",
+      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
+      "lexicon_id": "ec993d1d8fe34811e5cedb056aae88f95c1ad879d922a766d734948550271300",
+      "question_version": "question@1",
+      "source_sha256": "43edb8b7212822b25c08d76bdf8f847a1eed8282af8497e1b76d5287078ab852"
+    },
+    "span": [
+      3,
+      7
+    ],
+    "status": "none",
+    "text": "The question has no reading with the current vocabulary. Closest sentence tried: \"each is situation that is classified as \"genuine_ambiguity\" a situation in which every instance of Claude must seek clarification.\". Unknown English phrase 'each'. Nearest declared wordings: 'user'; 'claude'; 'entity of sort \"entity\"'."
+  },
+  "error": {
+    "class": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"each is situation that is classified as \"genuine_ambiguity\" a situation in which every instance of Claude must seek clarification.\". Unknown English phrase 'each'. Nearest declared wordings: 'user'; 'claude'; 'entity of sort \"entity\"'."
+  }
+}
