@@ -362,6 +362,7 @@ class _NaturalVocabulary:
         self.issues = tuple(sorted(issues, key=lambda issue: (issue.path, issue.code)))
         self._accepted = accepted
         self._strict = strict
+        self._heads = _head_owners
 
     def atom(self, predicate, terms, *, negative=False):
         # Literal replacement only. Terms cannot contain braces, and every safe
