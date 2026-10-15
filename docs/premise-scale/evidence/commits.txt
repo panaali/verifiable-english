@@ -39,3 +39,6 @@ c56c059b8 premise-scale: report, DELTA, commit list; the Lean-budget test starts
 296b5566f premise-scale: report after the syncs with main; relay gate failures compared with main's
 8808fb359 graph relay: type generated background formulas and labels
 7ef664924 premise-scale: report graph relay pre-review repair
+b961596b5 premise-scale: close pre-review relay mutation findings
+# review fixes (premise-scale-review.final.md F1, F2); the report commit that adds these lines is excluded
+2287cc9ab premise-scale: the scaled search and the timeout rule serve the readings premise check only (review F1, F2)
