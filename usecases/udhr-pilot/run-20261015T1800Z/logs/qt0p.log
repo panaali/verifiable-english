@@ -1,0 +1,8 @@
+ "expected": "part03 OPEN +76 B, premise check stays `model`",
+ "open_delta": 76,
+ "as_expected": true
+}
+
+real	0m5.284s
+user	0m4.535s
+sys	0m0.692s

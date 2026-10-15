@@ -1,0 +1,28 @@
+Q: Must every education kind be free?
+You asked whether every education kind must be free.
+The text does not settle this.
+Here is a situation where the answer depends on what the text leaves unsaid: e0 is an education kind.
+The text does not say whether e0 must be free.
+
+real	0m0.576s
+user	0m0.452s
+sys	0m0.099s
+Q: Must every education kind that is elementary be free?
+You asked whether every education kind that is elementary must be free.
+Yes.
+Sentence 1 says: "Education shall be free, at least in the elementary and fundamental stages."
+
+real	0m0.591s
+user	0m0.487s
+sys	0m0.088s
+Q: Must every education kind that is neither elementary nor fundamental be free?
+The question has no reading with the current vocabulary. Closest sentence tried: "every education kind that must is neither elementary nor fundamental be free.". Unknown English phrase 'must is'. Nearest declared wordings: 'must be free'; 'is elementary'; 'is fundamental'.
+
+real	0m0.354s
+user	0m0.277s
+sys	0m0.074s
+CheckerUnavailable: ask answers a readings document on the enumerated route with at most 64 compatible readings
+
+real	0m0.656s
+user	0m0.519s
+sys	0m0.081s

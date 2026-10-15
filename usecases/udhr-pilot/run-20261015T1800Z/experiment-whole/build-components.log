@@ -1,0 +1,12 @@
+main: regulated predicates 19 sorts 20
+whole-main elaborate: ok superposed None 10.1 s
+main missing [] limits []
+u025 elaborate: ok superposed None 0.0 s
+u025 component: ok missing [] limits []
+u055 elaborate: ok superposed None 0.0 s
+u055 component: ok missing [] limits []
+u073 elaborate: ok superposed None 0.0 s
+u073 component: ok missing [] limits []
+u111 elaborate: ok superposed None 0.1 s
+u111 component: ok missing [] limits []
+wrote translation-whole.ve.md
