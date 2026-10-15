@@ -302,18 +302,18 @@ The DRI's Task B conditions stand as follows:
 
 | Item | Current evidence and disposition |
 | --- | --- |
-| B1 availability | Binding condition met by F11 to F15 regressions. The full gate and SC-9 external source check remain outside this requested test run. `soft_chain`/`chainOf` consolidation is scheduled for the next readings relay batch before merge; its acceptance test will compare all three chains' field presence and route against Lean. Do not mark B1 signed before those conditions. |
+| B1 availability | Binding condition met by F11 to F15 regressions. The full gate and SC-9 external source check remain outside this requested test run. The `soft_chain`/`chainOf` consolidation was done by F25 (35204a970), with the acceptance test comparing all three chains' field presence and route against Lean. Signed by the DRI on 2026-10-15 once the full gate passes on the final HEAD (decision table below). |
 | B2 certificate kind | Soft source, not rights source; `test_missing_certificate_premises_has_the_norms_branch_text` pins the norms decoder's byte-identical refusal. Follow-up: AR-13 typed `InvalidInput` with path in Lean. |
 | B3 admission theorem | `Run.lean` has a computed soft-source `#guard` whose `runCase` and `softCase` both succeed on a branch with `layeredRoute = soft-norms@0`. `normDefaults_wire_admissionX` remains a proved theorem. `python3 tools/lean_statements.py --diff` against merge base c9b8cba6 reports exactly one changed statement, `VE.NormDefaults.Run.normDefaults_wire_admission` (107 added and five removed declarations are separate). `mem_rows` retains its original statement via a generic helper. |
-| B4 `choiceLayeredG hN` | Bounded independent statement recheck remains pending; this task forbids model calls. Do not sign before that review. |
+| B4 `choiceLayeredG hN` | The bounded independent statement re-check passed (`manage-agents/reviews/rd-9-b4-recheck.md`); signed by the DRI on 2026-10-15 (decision table below). |
 | B5 `decided_units` | Signed by the item-specific DRI decision. `test_completion_decided_units_come_from_leans_folds` and the existing mutation tests bind the added field. |
 | B6 gap selection | **Not claimed: the gap selection is not proved sound.** `coneEval_sound` and `coneEval_definite` are not in the audit. The new `test_unlisted_fnd_gap_flip_keeps_leans_witness_value` and `test_unlisted_ce4_gap_flips_keep_leans_witness_value` flip admissible unlisted completion atoms and compare Lean's displayed witness value for F-ND1, F-ND2, C2 and C4. F-ND1/F-ND2 goldens already retain each removed sentence. |
 | B7 soft coherence wording | Keep unavailable. `test_a_verdict_on_a_soft_label_is_unavailable_until_its_sentence_exists` pins it. Wording follow-up: add one Lean-owned `VE.Words` sentence, W7 derivation gate and external comprehension check. |
-| B8 trust | The regenerated inventory measures K +0, S +171, V +363, trusted +534 against the signed baseline, with unclassified 0. The per-file figures and ties pass below are saved here; a signed baseline allowance remains pending the bounded B4 review and final HEAD. No R6 claim. |
+| B8 trust | The regenerated inventory measures K +0, S +171, V +363, trusted +534 against the signed baseline, with unclassified 0. The per-file figures and ties pass below are saved here. The DRI signed the growth with a condition on 2026-10-15, re-measured with F25's V +9 (decision table below). No R6 claim. |
 | B9 CPU | Final HEAD document and CE4 measurements remain due from the merge train's gate, which this task expressly forbids. No R4 claim without them. |
 
-The B1, B4 and B8 rows above are superseded by the DRI's signatures recorded in "DRI signatures and conditions"
-(2026-10-15) below.
+The B1, B4 and B8 rows above give the DRI's signatures recorded in "DRI signatures and conditions"
+(2026-10-15) below (review F30 of rd-9: they no longer say pending).
 
 The B8 trusted-line changes by file (including a negative move) are: `VE/Readings/Run.lean` +145,
 `VE/Readings/VerdictsWire.lean` +69, `VE/NormDefaults/LayeredAdmission.lean` +54,
