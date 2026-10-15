@@ -1,0 +1,80 @@
+[
+ {
+  "id": "P1",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the content status runs on the fresh index, not the repository's",
+  "mutation": {
+   "from": "env=fresh, stage=\"worktree content\"",
+   "to": "env=env, stage=\"worktree content\""
+  },
+  "test": "tests/test_gate_integrity.py::test_index_bits_cannot_hide_edited_source",
+  "killed": true,
+  "pytest_summary": "2 failed in 0.49s"
+ },
+ {
+  "id": "P2",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the fresh index is read from the recorded commit",
+  "mutation": {
+   "from": "\"read-tree\", sha]",
+   "to": "\"read-tree\", \"HEAD\"]"
+  },
+  "test": "tests/test_gate_integrity.py::test_clean_status_is_checked_again_on_a_fresh_index_of_the_commit",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.39s"
+ },
+ {
+  "id": "P3",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the fresh index is removed from scratch afterwards",
+  "mutation": {
+   "from": "    finally:\n        index.unlink(missing_ok=True)\n    return sha, dirty",
+   "to": "    finally:\n        pass\n    return sha, dirty"
+  },
+  "test": "tests/test_gate_integrity.py::test_source_identity_reports_clean_tree_and_leaves_index_alone",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.34s"
+ },
+ {
+  "id": "P4",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the repository's own index is never written",
+  "mutation": {
+   "from": "fresh = {**env, \"GIT_INDEX_FILE\": str(index)}",
+   "to": "fresh = {**env, \"GIT_INDEX_FILE\": str(ROOT / \".git/index\")}"
+  },
+  "test": "tests/test_gate_integrity.py::test_source_identity_reports_clean_tree_and_leaves_index_alone",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.34s"
+ },
+ {
+  "id": "P5",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "GIT_INDEX_FILE is listed for the source identity stage",
+  "mutation": {
+   "from": "    \"source identity\": (\"GIT_INDEX_FILE\",),",
+   "to": ""
+  },
+  "test": "tests/test_gate_integrity.py::test_poisoned_ambient_environment_leaves_gate_result_unchanged",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.31s"
+ },
+ {
+  "id": "P6",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "a change in the repository index stays dirty (no widening)",
+  "mutation": {
+   "from": "    if command(status, cwd=ROOT, env=env, stage=\"worktree status\"):\n        return sha, True\n",
+   "to": ""
+  },
+  "test": "tests/test_gate_integrity.py::test_staged_change_stays_dirty_when_the_file_matches_the_commit",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.41s"
+ }
+]
