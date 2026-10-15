@@ -1,0 +1,902 @@
+{
+  "document": "usecases/claude-constitution-pilot/run-20261015T1800Z/readings/nd-all.ve.md",
+  "group": "all",
+  "search_seconds": 72.1,
+  "sets": [
+    {
+      "set": "force-u0036-s05",
+      "unit": "u0036.s05",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "force-u0156-s03",
+      "unit": "u0156.s03",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "force-u0263-s04-p2",
+      "unit": "u0263.s04.p2",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "scope-u0165-s03",
+      "unit": "u0165.s03",
+      "candidates": [
+        {
+          "id": "wide",
+          "content": "norm"
+        },
+        {
+          "id": "narrow",
+          "content": "norm"
+        }
+      ]
+    }
+  ],
+  "pairs_without_situation": [],
+  "search_limits": [],
+  "load_seconds": 8.4,
+  "admitted": true,
+  "check_seconds": 44.8,
+  "readings": {
+    "checked_by": {
+      "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+      "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+      "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+    },
+    "sets": [
+      {
+        "set": "force-u0036-s05",
+        "version": 1,
+        "unit": "u0036.s05",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "1670ee039f055d075fadbbd82d813fc64e4be3565c95f4131755f56117b09d31",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0156-s03",
+        "version": 1,
+        "unit": "u0156.s03",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "d9d05358f42446bb3813d7dac3276bc689099fb477d655df06a5bb9075f331a9",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "scope-u0165-s03",
+        "version": 1,
+        "unit": "u0165.s03",
+        "candidates": [
+          {
+            "id": "wide",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "narrow",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "wide",
+              "narrow"
+            ],
+            "situation": "8ea6e91ff82cb21a50ac80d427d32eeb6520dacaa26760a8a01c52eea258f94f",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0263-s04-p2",
+        "version": 1,
+        "unit": "u0263.s04.p2",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "049e349ecd80b86cc95ad920d57382cbf04721a5b3d39da118d206f4ff8d18a0",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Here the text does not say whether c may do the generation in s; this situation answers 'no'. Here the text does not say whether c may do the creation in s; this situation answers 'no'. Here the text does not say whether c may directly deny being Claude; this situation answers 'no'. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Here the text does not say whether c must remain firm in s; this situation answers 'no'. Here the text does not say whether c may do the participation in s; this situation answers 'no'. Here the text does not say whether c may do the involvement in s; this situation answers 'no'. Here the text does not say whether c may do the infrastructure uplift in s; this situation answers 'no'. Here the text does not say whether c must use good judgment when evaluating conversational inputs; this situation answers 'no'. Here the text does not say whether operator may give Claude operator_input; this situation answers 'no'. Here the text does not say whether c may do the undermining in s; this situation answers 'no'. Here the text does not say whether c must comply with the system prompt instructions in s; this situation answers 'no'. Here the text does not say whether c may actively deceive u about system prompt existence-or-content; this situation answers 'no'. Here the text does not say whether c may do the weapons uplift in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      }
+    ],
+    "separations": {
+      "outcome": 2,
+      "selects": 2,
+      "holds": 0
+    },
+    "findings": {
+      "SeparatedByDecisionOnly": 0,
+      "SeparatedByActOnly": 0
+    },
+    "pending_candidates": 0,
+    "couplings": 0,
+    "route": "superposed",
+    "choice_count": 16,
+    "choices_checked": 16,
+    "narrowings_stale": [],
+    "reading_premises": [],
+    "not_superposable": null,
+    "sizes": {
+      "limits": {
+        "nodes": 10000,
+        "predicates": 256,
+        "sorts": 32
+      },
+      "nodes": 275,
+      "predicates": 86,
+      "sorts": 8
+    },
+    "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+    "conflict": {
+      "status": "CONFLICT-FREE",
+      "evidence": "certificates",
+      "assumed": [],
+      "conditional_on": [],
+      "reading_premises_used": [],
+      "status_text": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+      "choices": [
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        }
+      ]
+    },
+    "dead_readings": [],
+    "english": [
+      "Under every reading of the 4 open sentences, no two rules on the same act contradict each other.",
+      "This does not depend on how sentence 132 is read.",
+      "This does not depend on how sentence 589 is read.",
+      "This does not depend on how sentence 629 is read.",
+      "This does not depend on how sentence 1000 is read.",
+      "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"* and sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content* and sentence 629 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation* and sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing."
+    ]
+  },
+  "premises": {
+    "status": "model",
+    "route": "superposed",
+    "evidence": "model",
+    "choice": [
+      [
+        "force-u0036-s05",
+        0
+      ],
+      [
+        "force-u0156-s03",
+        0
+      ],
+      [
+        "scope-u0165-s03",
+        0
+      ],
+      [
+        "force-u0263-s04-p2",
+        0
+      ]
+    ],
+    "model": {
+      "complete": true,
+      "domains": {
+        "claude_instance": [],
+        "entity": [
+          "e0"
+        ],
+        "hard_constraint": [],
+        "operator": [],
+        "operator_input": [],
+        "situation": [],
+        "user": [],
+        "ve__reading": [
+          "e0"
+        ]
+      },
+      "constants": {
+        "claude": "e0",
+        "ve__here": "e0"
+      },
+      "relations": {
+        "attempt_to_kill_or_disempower_most_of_humanity": [],
+        "child_sexual_abuse_material": [],
+        "clear_and_substantial_undermining_of_oversight": [],
+        "compliance_against_guidelines": [],
+        "compliance_unethical": [],
+        "compliance_unsafe": [],
+        "could_cause_significant_damage_if_deployed": [],
+        "creating_a_cyberweapon": [],
+        "creating_malicious_code": [],
+        "critical_infrastructure_uplift": [],
+        "exception_to_asking_for_clarification": [],
+        "exception_to_complying_with_exploit_instruction": [],
+        "exception_to_not_deceiving_about_system_prompt": [],
+        "explicit_instruction_against_exploits": [],
+        "general_exception_to_complying": [],
+        "genuine_ambiguity": [],
+        "human": [],
+        "illegitimate_absolute_control": [],
+        "input_is_information": [],
+        "input_is_persona": [],
+        "input_is_specific_instructions": [],
+        "instruction_abandon_identity_in_persona": [],
+        "instruction_act_against_guidelines": [],
+        "instruction_claim_human_when_asked": [],
+        "instruction_deceptive_tactics_harming_users": [],
+        "instruction_decline_or_withhold": [],
+        "instruction_dishonest_looking_within_honesty": [],
+        "instruction_endanger_health_or_safety": [],
+        "instruction_false_information_deceiving_user": [],
+        "instruction_focus_on_tasks": [],
+        "instruction_promote_own_products": [],
+        "instruction_respond_differently": [],
+        "instruction_role_play_custom_persona": [],
+        "knowingly_engages_1": [],
+        "knowingly_engages_2": [],
+        "knowingly_engages_3_narrow": [],
+        "knowingly_engages_3_wide": [],
+        "knowingly_engages_4": [],
+        "knowingly_engages_5": [],
+        "knowingly_engages_6": [],
+        "knowingly_engages_7": [],
+        "mass_casualty_weapon_uplift": [],
+        "operator_prompt_addresses_case": [],
+        "seemingly_compelling_argument_to_cross_line": [],
+        "thinks_quite_likely_1": [],
+        "thinks_quite_likely_2": [],
+        "thinks_quite_likely_3_narrow": [],
+        "thinks_quite_likely_3_wide": [],
+        "thinks_quite_likely_4": [],
+        "thinks_quite_likely_5": [],
+        "thinks_quite_likely_6": [],
+        "thinks_quite_likely_7": [],
+        "unsaid__clarification_required": [],
+        "unsaid__csam_generation_permitted_for_claude": [],
+        "unsaid__cyberweapon_creation_permitted": [],
+        "unsaid__denial_of_being_claude_permitted": [],
+        "unsaid__exploit_instruction_compliance_required": [],
+        "unsaid__firmness_required": [],
+        "unsaid__humanity_attack_participation_permitted": [],
+        "unsaid__illegitimate_control_involvement_permitted": [],
+        "unsaid__infrastructure_uplift_permitted": [],
+        "unsaid__judgment_use_required": [],
+        "unsaid__operator_input_permitted": [],
+        "unsaid__oversight_undermining_permitted": [],
+        "unsaid__system_prompt_compliance_required": [],
+        "unsaid__system_prompt_deception_permitted": [],
+        "unsaid__weapons_uplift_permitted": [],
+        "ve__bit__1__0": [],
+        "ve__bit__2__0": [],
+        "ve__bit__3__0": [],
+        "ve__bit__4__0": []
+      }
+    },
+    "gaps": [],
+    "candidates": [
+      {
+        "set": "force-u0036-s05",
+        "index": 0,
+        "status": "model",
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "scope-u0165-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ]
+      },
+      {
+        "set": "force-u0036-s05",
+        "index": 1,
+        "status": "model",
+        "choice": [
+          [
+            "force-u0036-s05",
+            1
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "scope-u0165-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ]
+      },
+      {
+        "set": "force-u0156-s03",
+        "index": 0,
+        "status": "model",
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "scope-u0165-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ]
+      },
+      {
+        "set": "force-u0156-s03",
+        "index": 1,
+        "status": "model",
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            1
+          ],
+          [
+            "scope-u0165-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ]
+      },
+      {
+        "set": "scope-u0165-s03",
+        "index": 0,
+        "status": "model",
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "scope-u0165-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ]
+      },
+      {
+        "set": "scope-u0165-s03",
+        "index": 1,
+        "status": "model",
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "scope-u0165-s03",
+            1
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ]
+      },
+      {
+        "set": "force-u0263-s04-p2",
+        "index": 0,
+        "status": "model",
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "scope-u0165-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            0
+          ]
+        ]
+      },
+      {
+        "set": "force-u0263-s04-p2",
+        "index": 1,
+        "status": "model",
+        "choice": [
+          [
+            "force-u0036-s05",
+            0
+          ],
+          [
+            "force-u0156-s03",
+            0
+          ],
+          [
+            "scope-u0165-s03",
+            0
+          ],
+          [
+            "force-u0263-s04-p2",
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  "bytes_by_status": {
+    "CHECKED": 73,
+    "LABELLED": 349,
+    "OPEN": 2529,
+    "UNFORMALISED": 181942
+  }
+}

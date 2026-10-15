@@ -1,0 +1,293 @@
+{
+  "document": "translation.ve.md",
+  "queries": [
+    {
+      "unit": "u0165.s01",
+      "kind": "knowing",
+      "predicate": "weapons_uplift_permitted",
+      "returncode": 0,
+      "cap": "prlimit --as=6442450944 (6 GB address space), VE_RUST_TIMEOUT=600",
+      "peak_resident_set_kb": 121008,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": [],
+      "rerun_alone": "the default-limit re-run was also CheckerUnavailable; this row is a single re-run under the cap in `cap`"
+    },
+    {
+      "unit": "u0165.s01",
+      "kind": "belief",
+      "predicate": "weapons_uplift_permitted",
+      "returncode": 0,
+      "cap": "prlimit --as=6442450944 (6 GB address space), VE_RUST_TIMEOUT=600",
+      "peak_resident_set_kb": 116340,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": [],
+      "rerun_alone": "the default-limit re-run was also CheckerUnavailable; this row is a single re-run under the cap in `cap`"
+    },
+    {
+      "unit": "u0165.s01",
+      "kind": "neither",
+      "predicate": "weapons_uplift_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": [],
+      "rerun_alone": "first run (3 queries in parallel on a loaded machine) was CheckerUnavailable: the Rust checker's default 5 s limit; this row is a single re-run at the default limit"
+    },
+    {
+      "unit": "u0165.s02",
+      "kind": "knowing",
+      "predicate": "infrastructure_uplift_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"critical_infrastructure_uplift\" and that instance of Claude has the recorded relation \"knowingly_engages_2\" to, it is not the case that that instance of Claude may do the infrastructure uplift in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s02",
+      "kind": "belief",
+      "predicate": "infrastructure_uplift_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_2\" to, it is not the case that that instance of Claude may do the infrastructure uplift in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s02",
+      "kind": "neither",
+      "predicate": "infrastructure_uplift_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": [],
+      "rerun_alone": "first run (3 queries in parallel on a loaded machine) was CheckerUnavailable: the Rust checker's default 5 s limit; this row is a single re-run at the default limit"
+    },
+    {
+      "unit": "u0165.s03",
+      "kind": "knowing",
+      "predicate": "cyberweapon_creation_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificates",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation, if all of the following hold:\n  (a) both that situation is classified as \"creating_a_cyberweapon\" and that situation is classified as \"could_cause_significant_damage_if_deployed\";\n  (b) both that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation and that instance of Claude has the recorded relation \"knowingly_engages_3_narrow\" to that situation, then it is not the case that that instance of Claude may do the creation in that situation.*"
+      ],
+      "rerun_alone": "first run (3 queries in parallel on a loaded machine) was CheckerUnavailable: the Rust checker's default 5 s limit; this row is a single re-run at the default limit"
+    },
+    {
+      "unit": "u0165.s03",
+      "kind": "belief",
+      "predicate": "cyberweapon_creation_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificates",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to and that instance of Claude has the recorded relation \"thinks_quite_likely_3_narrow\" to, it is not the case that that instance of Claude may do the creation in that situation.*"
+      ],
+      "rerun_alone": "first run (3 queries in parallel on a loaded machine) was CheckerUnavailable: the Rust checker's default 5 s limit; this row is a single re-run at the default limit"
+    },
+    {
+      "unit": "u0165.s03",
+      "kind": "neither",
+      "predicate": "cyberweapon_creation_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": [],
+      "rerun_alone": "first run (3 queries in parallel on a loaded machine) was CheckerUnavailable: the Rust checker's default 5 s limit; this row is a single re-run at the default limit"
+    },
+    {
+      "unit": "u0165.s04",
+      "kind": "knowing",
+      "predicate": "oversight_undermining_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"clear_and_substantial_undermining_of_oversight\" and that instance of Claude has the recorded relation \"knowingly_engages_4\" to, it is not the case that that instance of Claude may do the undermining in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s04",
+      "kind": "belief",
+      "predicate": "oversight_undermining_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_4\" to, it is not the case that that instance of Claude may do the undermining in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s04",
+      "kind": "neither",
+      "predicate": "oversight_undermining_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": [],
+      "rerun_alone": "first run (3 queries in parallel on a loaded machine) was CheckerUnavailable: the Rust checker's default 5 s limit; this row is a single re-run at the default limit"
+    },
+    {
+      "unit": "u0165.s05",
+      "kind": "knowing",
+      "predicate": "humanity_attack_participation_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"attempt_to_kill_or_disempower_most_of_humanity\" and that instance of Claude has the recorded relation \"knowingly_engages_5\" to, it is not the case that that instance of Claude may do the participation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s05",
+      "kind": "belief",
+      "predicate": "humanity_attack_participation_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_5\" to, it is not the case that that instance of Claude may do the participation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s05",
+      "kind": "neither",
+      "predicate": "humanity_attack_participation_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": [],
+      "rerun_alone": "first run (3 queries in parallel on a loaded machine) was CheckerUnavailable: the Rust checker's default 5 s limit; this row is a single re-run at the default limit"
+    },
+    {
+      "unit": "u0165.s06",
+      "kind": "knowing",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"illegitimate_absolute_control\" and that instance of Claude has the recorded relation \"knowingly_engages_6\" to, it is not the case that that instance of Claude may do the involvement in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s06",
+      "kind": "belief",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_6\" to, it is not the case that that instance of Claude may do the involvement in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s06",
+      "kind": "neither",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": [],
+      "rerun_alone": "first run (3 queries in parallel on a loaded machine) was CheckerUnavailable: the Rust checker's default 5 s limit; this row is a single re-run at the default limit"
+    },
+    {
+      "unit": "u0165.s07",
+      "kind": "knowing",
+      "predicate": "csam_generation_permitted_for_claude",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"child_sexual_abuse_material\" and that instance of Claude has the recorded relation \"knowingly_engages_7\" to, it is not the case that that instance of Claude may do the generation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s07",
+      "kind": "belief",
+      "predicate": "csam_generation_permitted_for_claude",
+      "returncode": 0,
+      "verdict": "ALL",
+      "route": "superposed",
+      "evidence": "certificate",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_7\" to, it is not the case that that instance of Claude may do the generation in that situation.*",
+        "This does not depend on how sentence 132 is read.",
+        "This does not depend on how sentence 589 is read.",
+        "This does not depend on how sentence 629 is read.",
+        "This does not depend on how sentence 1000 is read."
+      ]
+    },
+    {
+      "unit": "u0165.s07",
+      "kind": "neither",
+      "predicate": "csam_generation_permitted_for_claude",
+      "returncode": 0,
+      "verdict": "UNKNOWN",
+      "route": "superposed",
+      "evidence": null,
+      "english": []
+    }
+  ]
+}
