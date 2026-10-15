@@ -161,6 +161,8 @@ inductive Shape where
   | maxSteps
   /-- A certificate's Background count is at most what the request could generate (`backgroundBound`). -/
   | backgroundBound
+  /-- A diagnostic's offsets and line/column locate its start in the request source. -/
+  | sourceSpan (pointer : String)
   /-- A readings plan's indices, names and budget are bounded by its request. -/
   | readingPlan
   | index
@@ -288,6 +290,7 @@ def render (file : String) : Nat → Shape → Except String Json
     | .maxSteps => pure (Json.mkObj [("x-max-steps", Json.mkObj [
         ("default", toJson VE.CertificateWire.maxSteps), ("cap", toJson VE.CertificateWire.caseCap)])])
     | .backgroundBound => pure (Json.mkObj [("x-background-bound", .bool true)])
+    | .sourceSpan p => pure (Json.mkObj [("x-source-span", .str p)])
     | .readingPlan => pure (Json.mkObj [("x-reading-plan", .bool true)])
     | .index => pure (Json.mkObj [("x-index", .bool true)])
     | .digest => pure (Json.mkObj [("x-digest", .bool true)])
@@ -663,6 +666,21 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
         if kind value == "integer" && numLe n ⟨(limit : Int), 0⟩ then pure ()
         else fail "background exceeds what the request vocabulary generates"
       | _, _ => fail "background exceeds what the request vocabulary generates"
+    | .sourceSpan p => match resolve ctx.value p with
+      | some (.str source) =>
+        let start := (value.getObjVal? "start" >>= Json.getNat?).toOption
+        let stop := (value.getObjVal? "end" >>= Json.getNat?).toOption
+        let line := (value.getObjVal? "line" >>= Json.getNat?).toOption
+        let column := (value.getObjVal? "column" >>= Json.getNat?).toOption
+        match start, stop, line, column with
+        | some a, some b, some l, some c =>
+          let before := source.toList.take a
+          let expectedLine := 1 + (before.filter (· == '\n')).length
+          let expectedColumn := 1 + (before.reverse.takeWhile (· != '\n')).length
+          if a ≤ b && b ≤ source.length && l == expectedLine && c == expectedColumn then pure ()
+          else fail "span is outside the request source or has the wrong line and column"
+        | _, _, _, _ => fail "span is outside the request source or has the wrong line and column"
+      | _ => fail "span is outside the request source or has the wrong line and column"
     | .readingPlan =>
       if readingPlanBound ctx.value value then pure ()
       else fail "readings plan names choices outside the request"

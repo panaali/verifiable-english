@@ -63,18 +63,18 @@ theorem parseRaw_propositional (E : Environment) (p : Propositional)
   | top =>
     cases fuel with
     | zero => simp [Propositional.depth] at hf
-    | succ n => simp [Propositional.code, Propositional.embed, parseRaw, hd]
+    | succ n => simp [Propositional.code, Propositional.embed, parseRaw, parseRawWith, hd]
   | bottom =>
     cases fuel with
     | zero => simp [Propositional.depth] at hf
-    | succ n => simp [Propositional.code, Propositional.embed, parseRaw, hd]
+    | succ n => simp [Propositional.code, Propositional.embed, parseRaw, parseRawWith, hd]
   | not a ih =>
     cases fuel with
     | zero => omega
     | succ n =>
       have ha : a.depth < n := by simp only [Propositional.depth] at hf; omega
       have h := ih n names (')' :: tail) (by rfl) ha
-      simp [Propositional.code, Propositional.embed, List.append_assoc, parseRaw,
+      simp [Propositional.code, Propositional.embed, List.append_assoc, parseRaw, parseRawWith,
         h, consume]
   | and a b ia ib =>
     cases fuel with
@@ -85,7 +85,7 @@ theorem parseRaw_propositional (E : Environment) (p : Propositional)
       have hia := ia n names (") and (".toList ++ b.code ++ ')' :: tail) (by rfl) ha
       have hib := ib n names (')' :: tail) (by rfl) hb
       simp only [String.toList, List.cons_append, List.nil_append] at hia
-      simp [Propositional.code, Propositional.embed, List.append_assoc, parseRaw,
+      simp [Propositional.code, Propositional.embed, List.append_assoc, parseRaw, parseRawWith,
         hia, hib, consume]
   | or a b ia ib =>
     cases fuel with
@@ -96,7 +96,7 @@ theorem parseRaw_propositional (E : Environment) (p : Propositional)
       have hia := ia n names (") or (".toList ++ b.code ++ ')' :: tail) (by rfl) ha
       have hib := ib n names (')' :: tail) (by rfl) hb
       simp only [String.toList, List.cons_append, List.nil_append] at hia
-      simp [Propositional.code, Propositional.embed, List.append_assoc, parseRaw,
+      simp [Propositional.code, Propositional.embed, List.append_assoc, parseRaw, parseRawWith,
         hia, hib, consume]
   | implies a b ia ib =>
     cases fuel with
@@ -107,7 +107,7 @@ theorem parseRaw_propositional (E : Environment) (p : Propositional)
       have hia := ia n names ("), then (".toList ++ b.code ++ ')' :: tail) (by rfl) ha
       have hib := ib n names (')' :: tail) (by rfl) hb
       simp only [String.toList, List.cons_append, List.nil_append] at hia
-      simp [Propositional.code, Propositional.embed, List.append_assoc, parseRaw,
+      simp [Propositional.code, Propositional.embed, List.append_assoc, parseRaw, parseRawWith,
         hia, hib, consume]
 
 def propositionalDocumentChars (ps : List Propositional) : List Char :=
@@ -175,7 +175,7 @@ theorem parse_print_propositional (E : Environment) (ps : List Propositional)
     simp [print, statementChars, propositional_printAux, propositionalDocumentChars,
       List.flatMap_map]
   rw [hp]
-  unfold parse
+  unfold parse parseWith
   change (do
     let fs ← parseStatements E ((propositionalDocumentChars ps).length + 1) (propositionalDocumentChars ps)
     if !fs.isEmpty && fs.all (fun a => a.check E []) then some fs else none) = _
