@@ -99,13 +99,14 @@ def test_ask_lean_cpu(record, ident):
 
 
 def test_gate_source_identity(record, tmp_path):
-    """The gate's worktree check, run at its start and at its end (tools/gate.py: source_identity). Its status
-    against a fresh index read from HEAD hashes every tracked file; `repository index` is the status that trusts
-    the repository index's stat data, which an fsmonitor hook could leave stale (fix-fsmonitor-gate)."""
+    """The gate's worktree check, run at its start and at its end (tools/gate.py: source_identity), on a clean
+    checkout: its second status, against a fresh index read from HEAD, hashes every tracked file. `repository
+    index` is its first status alone, which trusts the repository index's stat data (fix-fsmonitor-gate)."""
     from tools import gate
     env = gate.gate_environment(tmp_path / "scratch")
     with ChildCPU() as fresh:
-        gate.source_identity(env)
+        _, dirty = gate.source_identity(env)
+    assert dirty is False, "a dirty checkout stops at the first status: measure on a clean one"
     record("fresh index", fresh.seconds)
     git = ["git", "--no-optional-locks", "-c", "core.fsmonitor=false", "-c", "core.untrackedCache=false"]
     with ChildCPU() as stat:

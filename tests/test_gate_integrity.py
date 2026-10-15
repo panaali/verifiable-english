@@ -523,6 +523,32 @@ def test_source_identity_reports_clean_tree_and_leaves_index_alone(tmp_path, mon
     assert not (tmp_path / "scratch/source-index").exists()
 
 
+def test_staged_change_stays_dirty_when_the_file_matches_the_commit(tmp_path, monkeypatch):
+    repo, env = committed_source(tmp_path)
+    (repo / "source.py").write_text("two\n")
+    subprocess.run(["git", "add", "source.py"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("one\n")
+    monkeypatch.setattr(gate, "ROOT", repo)
+    assert gate.source_identity(env)[1] is True
+
+
+def test_clean_status_is_checked_again_on_a_fresh_index_of_the_commit(tmp_path, monkeypatch):
+    env = gate.gate_environment(tmp_path / "scratch")
+    seen = []
+
+    def fake_command(args, *, env, stage, cwd=None):
+        seen.append((stage, args, env.get("GIT_INDEX_FILE")))
+        return {"commit": "recorded", "worktree content": " M source.py"}.get(stage, "")
+
+    monkeypatch.setattr(gate, "command", fake_command)
+    assert gate.source_identity(env) == ("recorded", True)
+    index = str(tmp_path / "scratch/source-index")
+    assert [(stage, name) for stage, _, name in seen] == [
+        ("commit", None), ("worktree status", None), ("worktree index", index), ("worktree content", index)]
+    assert seen[2][1][-2:] == ["read-tree", "recorded"]
+    assert seen[3][1] == seen[1][1] and "--untracked-files=all" in seen[3][1]
+
+
 def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
     output = tmp_path / "record.json"
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
@@ -532,16 +558,13 @@ def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
         seen.append(stage)
         if stage == "commit":
             return "old"
-        if stage == "worktree index":
-            assert args[-2:] == ["read-tree", "old"] and env["GIT_INDEX_FILE"]
-            return ""
         assert stage == "worktree status"
         assert "--untracked-files=all" in args
         return "?? tests/conftest.py"
 
     monkeypatch.setattr(gate, "command", fake_command)
     assert gate.main() == 1
-    assert seen == ["commit", "worktree index", "worktree status"]
+    assert seen == ["commit", "worktree status"]
     assert json.loads(output.read_text())["dirty"] is True
 
 
