@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 30247,
+    "total_lines": 30244,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -751,12 +751,12 @@
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
-        "lines": 1009,
-        "sha256": "13702f2869b246a90155ff2c6ee5eff5f44dca30f8ffabbbf7931ffbc5714342",
+        "lines": 1006,
+        "sha256": "a89f31e7005791caff1cd06622f1d21b2c78d82c78832ecbaa2d1df7e9d806c7",
         "ranges": [
           [
             1,
-            1009
+            1006
           ]
         ],
         "declarations": [
@@ -776,7 +776,7 @@
           "replayPair",
           "replaySeparate"
         ],
-        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively; readings-defaults RD-2a: the abstention only off the norms chain, and S1's admission after decoding (`admitDecoded`), which the filled document's admission also runs; jt-crossplan-fixes X3: the readings environment rejects a constant display field with the v0 field diagnostic"
+        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively; readings-defaults RD-2a: the abstention only off the norms chain, and S1's admission after decoding (`admitDecoded`), which the filled document's admission also runs; jt-crossplan-fixes X3: on the norms chain the readings environment decodes its frame with the v0 constant fields (no `verbalisation` on a nonliteral constant)"
       },
       {
         "file": "lean/VE/Rights/Admission.lean",
