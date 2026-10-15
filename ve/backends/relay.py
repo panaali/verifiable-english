@@ -132,7 +132,12 @@ def rows(mode: str, cases: list[dict], *, timeout: float | None = None,
 def decide(mode: str, cases: list[dict], *, timeout: float | None = None,
            executable: str | os.PathLike | None = None) -> list[dict]:
     """Lean's rows for `cases`, in order; the first rejection row raises its diagnostic."""
-    entries = _pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout)
+    return decided(_pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout))
+
+
+def decided(entries: list[dict]) -> list[dict]:
+    """The rows of the service's bound entries, in order; the first rejection row raises its diagnostic (how
+    `decide` reads them; the relay mutation gate reads a mutated answer the same way)."""
     for entry in entries:
         if entry["result"].get("status") == "error":
             raise _raised(entry)

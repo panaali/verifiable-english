@@ -608,9 +608,6 @@ def main() -> int:
                 else:
                     result["rerun_failed"] = {"refused": refusal}
                     print(f"[gate] --rerun-failed: {refusal}; running the full gate", flush=True)
-            command(["uv", "run", "--frozen", "--no-sync", "python",
-                     "tools/wire_contract.py", "--check"], env=env,
-                    stage="Wire contract check")
             result["stages"].append("toolchains")
 
             # Lake trusts an executable's trace; a trace that does not record the binary beside it (copied from
@@ -624,6 +621,11 @@ def main() -> int:
                 if not binary.is_file() or not os.access(binary, os.X_OK):
                     raise RuntimeError(f"Lean build did not produce {binary}")
             result["stages"].append("lean_build")
+            # The examples are admitted by this commit's ve_service, so the check follows the build: before it, a
+            # binary left by an earlier build would answer with another commit's modes.
+            command(["uv", "run", "--frozen", "--no-sync", "python",
+                     "tools/wire_contract.py", "--check"], env=env,
+                    stage="Wire contract check")
 
             if rerun is None:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],

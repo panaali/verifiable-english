@@ -1,0 +1,95 @@
+{
+ "method": "readings-suite conclusions, pre-D9 Fill_T-only packages versus current generator",
+ "queries": 8,
+ "changes": [],
+ "rows": [
+  {
+   "key": "6362da7df02a8347142c2bb02bcebf419a7517ec3c42e54cad3a1a739080cfe7",
+   "before": {
+    "verdict": "SOME",
+    "reason": null
+   },
+   "after": {
+    "verdict": "SOME",
+    "reason": null
+   }
+  },
+  {
+   "key": "79a5f4edca20db3ccb55280b6ab62a743a25fa6192f279d7d540db8548274ba4",
+   "before": {
+    "verdict": "ALL",
+    "reason": null
+   },
+   "after": {
+    "verdict": "ALL",
+    "reason": null
+   }
+  },
+  {
+   "key": "885b2be39615ed33348982ac8e928b02de93732d50d60fcbfe99f87e5b8e6e08",
+   "before": {
+    "verdict": "SOME",
+    "reason": null
+   },
+   "after": {
+    "verdict": "SOME",
+    "reason": null
+   }
+  },
+  {
+   "key": "893b0570465a4d776e5cf481674a2d23307be63f413cfd4800c930bc0d2bebbd",
+   "before": {
+    "verdict": "UNKNOWN",
+    "reason": null
+   },
+   "after": {
+    "verdict": "UNKNOWN",
+    "reason": null
+   }
+  },
+  {
+   "key": "97781b6bd5b4f8fc61434bdd91e5e9da044ce47c757a2850913bb98c1e6b862d",
+   "before": {
+    "verdict": "ALL",
+    "reason": null
+   },
+   "after": {
+    "verdict": "ALL",
+    "reason": null
+   }
+  },
+  {
+   "key": "9bedd278f730b569ec13eed2057ae0a7fb68a4beed59f1cf8cd8d09874caa4d4",
+   "before": {
+    "verdict": "SOME",
+    "reason": null
+   },
+   "after": {
+    "verdict": "SOME",
+    "reason": null
+   }
+  },
+  {
+   "key": "cba57f4f9f8cab19c66c9734012140fd9f78dd672e6ef708d32009bea7000f0a",
+   "before": {
+    "verdict": "ALL",
+    "reason": null
+   },
+   "after": {
+    "verdict": "ALL",
+    "reason": null
+   }
+  },
+  {
+   "key": "d9ea1e7382e00803b65c94269be4f206f6db92175c2709e0d5523309684269d7",
+   "before": {
+    "verdict": "SOME",
+    "reason": null
+   },
+   "after": {
+    "verdict": "SOME",
+    "reason": null
+   }
+  }
+ ]
+}
