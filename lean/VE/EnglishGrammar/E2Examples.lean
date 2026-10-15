@@ -187,7 +187,8 @@ def jFOsame : Json := ProfileExamples.routeEnv ["order@0", "relational-fol@0"] [
 -- DRI X2: `allow` and `consent` reject each other through the head `permits`, so neither claims it for `open`
 def Fpermits : Env :=
   Fp [bin "allow" "{0} permits {1}", bin "consent" "{0} permits visits {1}", un "open" "{0} is fully permits"]
-#guard row Fpermits "open" "{0} is fully permits" true [] [] && row Fpermits "allow" "{0} permits {1}" false [] (V6 "allow")
+#guard row Fpermits "open" "{0} is fully permits" true [] [] &&
+  row Fpermits "allow" "{0} permits {1}" false [] (V6 "allow")
 #guard !(PolicyCtx.of Fpermits {}).lintHeads.any (·.1 == "permits") &&
   ["allow", "consent"].all fun p => ((PolicyCtx.of Fpermits {}).settled.lookup p).any (·.contains "SYMBOL_COLLISION")
 #guard row (Fp [(("undocumented_parent", ["person"], wording "{0} has an undocumented noncitizen parent")),
