@@ -765,13 +765,74 @@ def encodeCore : VE.Core.Formula → Json
 /-- Python's source cap (`MAX_SOURCE_BYTES`). -/
 def maxSourceBytes : Nat := 65536
 
+/-- The `definitions@0` sugar over `environment` (none without the profile): a
+defined predicate's declared argument sorts, and whether a parsed body is its
+identity-bound body as the family's decoder reads it (Python's `define` check). -/
+def sugarOf {F : Type} [BEq F] (profiles : List String) (environment : Json)
+    (decode : Json → Except String F) : Option (VE.Surface.Sugar F) :=
+  if !profiles.contains "definitions@0" then none else
+  some ⟨fun p => do
+    let entry ← (((environment.getObjValD "vocabulary").getObjValD "predicates").getObjVal? p).toOption
+    let payload ← (entry.getObjVal? "defined").toOption
+    let sorts ← (entry.getObjVal? "arguments" >>= VE.Bridge.strings).toOption
+    let expected ← (payload.getObjVal? "body" >>= decode).toOption
+    some (sorts, (· == expected))⟩
+
+/-- A family's surface parser over one validated environment, with the
+`definitions@0` sugar when the environment has the profile (lean-first batch
+14a): the typed parse with its wire AST and canonical text, the raw parse the
+typing diagnostic reads, and the diagnostic scanner's view of the definitions. -/
+structure SurfaceReader where
+  parse : String → Option (List Json × String)
+  raw : List Char → Option (List Json)
+  definitions : Option ParseDiagnostic.Definitions
+
+def SurfaceReader.of {F : Type} [BEq F] (sugar : Option (VE.Surface.Sugar F))
+    (parseWith : Option (VE.Surface.Sugar F) → String → Option (List F))
+    (statements : Option (VE.Surface.Sugar F) → Nat → List Char → Option (List F))
+    (formula : Option (VE.Surface.Sugar F) → Nat → List String → List Char → Option (F × List Char))
+    (encode : F → Json) (print : List F → String) : SurfaceReader where
+  parse source := (parseWith sugar source).map fun fs => (fs.map encode, print fs)
+  raw chars := (statements sugar (chars.length + 1) chars).map (·.map encode)
+  definitions := sugar.map fun s =>
+    { defined := fun p => (s.defined p).isSome
+      differs := fun p names text =>
+        match s.defined p, formula sugar (text.length + 1) names.reverse text.toList with
+        | some (_, declared), some (a, []) => !declared a
+        | _, _ => true }
+
+/-- The surface reader of a validated `ve.core@0.2` environment's family. -/
+def surfaceReader (environment : Json) (checked : Validated) : Except String SurfaceReader := do
+  let e := checked.envelope
+  match e.family with
+  | .fol => do
+    let E := (← VE.Route.Run.decodeRouteVocabulary e).environment
+    pure (.of (sugarOf e.profiles environment (VE.Bridge.decodeFormula 64)) (VE.Surface.parseWith E)
+      (VE.Surface.parseStatementsWith E) (VE.Surface.parseRawWith E) VE.Route.Wire.encodeFormula VE.Surface.print)
+  | .closure => do
+    let E := (← VE.Route.Run.decodeRouteVocabulary e).environment
+    pure (.of (sugarOf e.profiles environment (VE.Closure.Bridge.decodeFormula 64))
+      (VE.Closure.Surface.parseWith E) (VE.Closure.Surface.parseStatementsWith E)
+      (VE.Closure.Surface.parseRawWith E) encodeClosure VE.Closure.Surface.print)
+  | .closureNary => do
+    let E := (← VE.Core.Bridge.decodeEnvironment checked.decodable).environment
+    pure (.of (sugarOf e.profiles environment (VE.Core.Bridge.decodeFormula 64))
+      (VE.Core.Surface.parseWith E) (VE.Core.Surface.parseStatementsWith E)
+      (VE.Core.Surface.parseRawWith E) encodeCore VE.Core.Surface.print)
+  | .order => do
+    -- The gate refuses `definitions@0` on the order family, so its parser has no sugar.
+    let E := (← VE.Route.Wire.decodeOrderVocabulary e.vocabulary).vocabulary.environment
+    pure (.of (none : Option (VE.Surface.Sugar VE.Order.Formula)) (fun _ => VE.Order.Surface.parse E)
+      (fun _ => VE.Order.Surface.parseStatements E) (fun _ => VE.Order.Surface.parseRaw E)
+      VE.Order.Surface.formulaJson VE.Order.Surface.print)
+
 /-- A standalone parse (the plan's `parse` and `normalize` modes as one case).
 The family's surface parser, which also types every statement, decides whether
 `source` is accepted. The answer carries the parsed document on the wire (within
 Python's AST limits) and, where the family has a printer, its canonical text.
 Over a `definitions@0` environment defined predicates read as declared
-predicates; the definitions surface sugar (`no`, `every … that is`, `iff`,
-`define`) is in no Lean surface parser, so a source using it is rejected. -/
+predicates, and the definitions surface sugar (`no`, `every … that is`, `iff`,
+`define`) reads as the formulas it abbreviates (`SurfaceReader`). -/
 def parseCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
@@ -804,30 +865,11 @@ def parseCase (j : Json) : Except String Json := do
       | some text => [("canonical", .str text)]
       | none => [])
   let checked ← validated environment
-  let e := checked.envelope
-  limits (e.family == .order)
-  let (asts, canonical) ← match e.family with
-    | .fol => do
-      let rv ← VE.Route.Run.decodeRouteVocabulary e
-      let some fs := VE.Surface.parse rv.environment source | throw rejected
-      pure (fs.map VE.Route.Wire.encodeFormula, some (VE.Surface.print fs))
-    | .closure => do
-      let rv ← VE.Route.Run.decodeRouteVocabulary e
-      let some fs := VE.Closure.Surface.parse rv.environment source | throw rejected
-      pure (fs.map encodeClosure, some (VE.Closure.Surface.print fs))
-    | .closureNary => do
-      let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
-      let some fs := VE.Core.Surface.parse v.environment source | throw rejected
-      pure (fs.map encodeCore, some (VE.Core.Surface.print fs))
-    | .order => do
-      let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
-      let some fs := VE.Order.Surface.parse v.vocabulary.environment source | throw rejected
-      pure (fs.map VE.Order.Surface.formulaJson, some (VE.Order.Surface.print fs))
+  limits (checked.envelope.family == .order)
+  let reader ← surfaceReader environment checked
+  let some (asts, canonical) := reader.parse source | throw rejected
   VE.Route.AstLimit.check asts
-  pure (VE.Route.Wire.ok id ([("ast", Json.arr asts.toArray)] ++
-    match canonical with
-    | some text => [("canonical", .str text)]
-    | none => []))
+  pure (VE.Route.Wire.ok id [("ast", Json.arr asts.toArray), ("canonical", .str canonical)])
 
 /-! Model diagnostics are emitted by a pointer-carrying decoder. The model
 tables are validated here in the frozen Python order; the family decoder still
@@ -1246,21 +1288,8 @@ def rawParseAst (environment : Json) (source : String) : Option (List Json) := I
       | .order v => (VE.Order.Surface.parseStatements v.environment fuel chars).map
           (·.map VE.Order.Surface.formulaJson)
   let .ok checked := validated environment | return none
-  let e := checked.envelope
-  return match e.family with
-    | .fol => do
-      let rv ← (VE.Route.Run.decodeRouteVocabulary e).toOption
-      (VE.Surface.parseStatements rv.environment fuel chars).map (·.map VE.Route.Wire.encodeFormula)
-    | .closure => do
-      let rv ← (VE.Route.Run.decodeRouteVocabulary e).toOption
-      (VE.Closure.Surface.parseStatements rv.environment fuel chars).map (·.map encodeClosure)
-    | .closureNary => do
-      let v ← (VE.Core.Bridge.decodeEnvironment checked.decodable).toOption
-      (VE.Core.Surface.parseStatements v.environment fuel chars).map (·.map encodeCore)
-    | .order => do
-      let v ← (VE.Route.Wire.decodeOrderVocabulary e.vocabulary).toOption
-      (VE.Order.Surface.parseStatements v.vocabulary.environment fuel chars).map
-        (·.map VE.Order.Surface.formulaJson)
+  let .ok reader := surfaceReader environment checked | return none
+  return reader.raw chars
 
 /-- A diagnostic and span for a source the checked family parser rejected. -/
 def parseRejection (j : Json) (message : String) : Option (String × String × ParseDiagnostic.Error) := do
@@ -1279,6 +1308,7 @@ def parseRejection (j : Json) (message : String) : Option (String × String × P
     | some pos => some (⟨"SyntaxError", "VE semantic syntax must be ASCII", pos, pos + 1⟩ : ParseDiagnostic.Error)
     | none => ParseDiagnostic.scan signature source (profiles.contains "order@0")
         (profiles.contains "closure@0") (profiles.contains "nary@0")
+        ((validated environment >>= surfaceReader environment).toOption.bind (·.definitions))
   if let some error := diagnostic then
     return (error.code ++ ": " ++ error.message, source, error)
   let asts ← rawParseAst environment source

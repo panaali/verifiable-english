@@ -3,6 +3,7 @@
 -- out of the executable classes C, D, G.
 module EnglishLeanBenchMain
 module EnglishMain
+module EnglishRunMain
 module Iceberg
 module Main
 module MeteredMain
@@ -10,6 +11,7 @@ module ResponseDecode
 module ResponseShape.Audit
 module ResponseShape.CaseDeciders
 module ResponseShape.Encoders.Alternatives
+module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
@@ -31,10 +33,12 @@ module ResponseShape.Encoders.Route
 module ResponseShape.Encoders.SoftNorms
 module ResponseShape.Encoders.SpeechActs
 module ResponseShape.Encoders.Standalone
+module ResponseShape.Encoders.Words
 module ResponseShape.Encoders
 module ResponseShape.EnumSites
 module ResponseShape.FitsTactic
 module ResponseShape.Schemas.Alternatives
+module ResponseShape.Schemas.Ask
 module ResponseShape.Schemas.Bundle
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
@@ -58,6 +62,7 @@ module ResponseShape.Schemas.Parse
 module ResponseShape.Schemas.Quantity
 module ResponseShape.Schemas.Question
 module ResponseShape.Schemas.Readings
+module ResponseShape.Schemas.ReadingsChoices
 module ResponseShape.Schemas.ReadingsRoute
 module ResponseShape.Schemas.Reports
 module ResponseShape.Schemas.Rights
@@ -66,6 +71,7 @@ module ResponseShape.Schemas.RiskEval
 module ResponseShape.Schemas.Route
 module ResponseShape.Schemas.SoftNorms
 module ResponseShape.Schemas.SpeechActs
+module ResponseShape.Schemas.Words
 module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
@@ -84,6 +90,21 @@ module VE.Alternatives.Route
 module VE.Alternatives.Run
 module VE.Alternatives.Validate
 module VE.Alternatives.Wire
+module VE.Ask.Basic
+module VE.Ask.Binding
+module VE.Ask.Examples
+module VE.Ask.Groups
+module VE.Ask.Lines
+module VE.Ask.Plain
+module VE.Ask.PlainAnswer
+module VE.Ask.PlainWire
+module VE.Ask.Render
+module VE.Ask.Run
+module VE.Ask.Sound
+module VE.Ask.Sources
+module VE.Ask.Wire
+module VE.Ask.ZeroAnswer
+module VE.Ask.ZeroWire
 module VE.Attribution.Admission
 module VE.Attribution.Assess
 module VE.Attribution.Bridge
@@ -248,6 +269,7 @@ module VE.Norms.Checks
 module VE.Norms.Conflict
 module VE.Norms.Elaborate
 module VE.Norms.Examples
+module VE.Norms.Family
 module VE.Norms.Flagged
 module VE.Norms.FlaggedSpec
 module VE.Norms.Layer
@@ -425,6 +447,7 @@ module VE.Service.Graph
 module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
+module VE.Service.ReadingsChoices
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission
@@ -481,6 +504,8 @@ module VE.WireContract.Tables.Corpus
 module VE.WireContract.Tables.NormDefaults
 module VE.WireContract.Tables.Norms
 module VE.WireContract.Tables.SoftNorms
+module VE.Words.Run
+module VE.Words.Situation
 module VE
 Iceberg.Within@Iceberg
 ResponseShape.CaseWF@ResponseShape.Skeleton
@@ -512,6 +537,28 @@ VE.Alternatives.PrefixAdmissibleAlt@VE.Alternatives.Background
 VE.Alternatives.RowsConsistent@VE.Alternatives.Validate
 VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
+VE.Ask.BlockLine@VE.Ask.Lines
+VE.Ask.CaseBinding@VE.Ask.Binding
+VE.Ask.Consistent@VE.Ask.Plain
+VE.Ask.HoldsU@VE.Ask.ZeroWire
+VE.Ask.Inv@VE.Ask.Groups
+VE.Ask.LeadHolds@VE.Ask.Basic
+VE.Ask.LeadHoldsPlain@VE.Ask.Plain
+VE.Ask.LeadHoldsU@VE.Ask.ZeroWire
+VE.Ask.NameReadsBack@VE.Ask.Wire
+VE.Ask.NameReadsBackSame@VE.Ask.Wire
+VE.Ask.PlainCaseBinding@VE.Ask.PlainWire
+VE.Ask.PlainRowOk@VE.Ask.Plain
+VE.Ask.ReasonHolds@VE.Ask.Basic
+VE.Ask.ReasonHoldsU@VE.Ask.ZeroWire
+VE.Ask.RenderInputBound@VE.Ask.Render
+VE.Ask.RowOk@VE.Ask.Basic
+VE.Ask.RowOkU@VE.Ask.ZeroWire
+VE.Ask.Same@VE.Ask.Binding
+VE.Ask.SplitU@VE.Ask.Basic
+VE.Ask.UnitBound@VE.Ask.Binding
+VE.Ask.checkedWitness@VE.Ask.Render
+VE.Ask.checkedWitnessRow@VE.Ask.Lines
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Closure.ClosedAt@VE.Closure.Paths
 VE.Closure.Edge.Typed@VE.Closure.Substitution

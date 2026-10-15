@@ -1,0 +1,104 @@
+{
+  "$id": "readings-choices.json",
+  "$comment": "Lean checks every proposed choice and returns the verdict or compatible choice plan.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {
+        "anyOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "choices": {"items": {"items": {"$ref": "common.json#/$defs/nat"}, "type": "array"}, "type": "array"},
+              "conditional_on": {"items": {"type": "string"}, "type": "array"},
+              "id": {"type": "string", "x-equals": "/id"},
+              "route": {"const": "enumerate"},
+              "status": {"const": "ok"}
+            },
+            "required": ["id", "status", "route", "choices", "conditional_on"],
+            "type": "object",
+            "x-reading-plan": true
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "budget": {
+                "additionalProperties": false,
+                "properties": {"max_choices": {"$ref": "common.json#/$defs/nat"}},
+                "required": ["max_choices"],
+                "type": "object"
+              },
+              "choice_count": {"$ref": "common.json#/$defs/nat"},
+              "id": {"type": "string", "x-equals": "/id"},
+              "route": {"const": "UNKNOWN"},
+              "status": {"const": "ok"},
+              "units": {"items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["id", "status", "route", "budget", "choice_count", "units"],
+            "type": "object",
+            "x-reading-plan": true
+          }
+        ]
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "status": {"const": "ok"},
+          "verdict": {"enum": ["ALL", "NONE", "SOME", "UNKNOWN"]}
+        },
+        "required": ["id", "status", "verdict"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "plan": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "choices": {"items": {"items": {"$ref": "common.json#/$defs/nat"}, "type": "array"}, "type": "array"},
+            "conditional_on": {"items": {"type": "string"}, "type": "array"},
+            "id": {"type": "string", "x-equals": "/id"},
+            "route": {"const": "enumerate"},
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "route", "choices", "conditional_on"],
+          "type": "object",
+          "x-reading-plan": true
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "budget": {
+              "additionalProperties": false,
+              "properties": {"max_choices": {"$ref": "common.json#/$defs/nat"}},
+              "required": ["max_choices"],
+              "type": "object"
+            },
+            "choice_count": {"$ref": "common.json#/$defs/nat"},
+            "id": {"type": "string", "x-equals": "/id"},
+            "route": {"const": "UNKNOWN"},
+            "status": {"const": "ok"},
+            "units": {"items": {"type": "string"}, "type": "array"}
+          },
+          "required": ["id", "status", "route", "budget", "choice_count", "units"],
+          "type": "object",
+          "x-reading-plan": true
+        }
+      ]
+    },
+    "verdict": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "verdict": {"enum": ["ALL", "NONE", "SOME", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict"],
+      "type": "object"
+    }
+  }
+}

@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 29352,
+    "total_lines": 33292,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -388,7 +388,7 @@
       {
         "file": "lean/VE/NormDefaults/Admission.lean",
         "lines": 350,
-        "sha256": "b60054268019832d7de8374fb800954933526f31d93ad86a42958b72da4895a5",
+        "sha256": "038a4536b962a12c31826e51f84e4c783d3df14b68ebff4397b9e0f296b4bc3e",
         "ranges": [
           [
             1,
@@ -406,7 +406,7 @@
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
         "lines": 445,
-        "sha256": "7e9484be44f96cdd53a72f62943e918e47a4d98a4124b20f00727fc215b3d212",
+        "sha256": "a8e5bdb9d1c30bbc287af46ca64a9ff5ad91fe73efe64aae73438370af6b853d",
         "ranges": [
           [
             1,
@@ -473,12 +473,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 440,
-        "sha256": "3d555723f812f18139f8f7f4fb9e5a02c4780f89ddf4d17d6df652fea05e8d68",
+        "lines": 441,
+        "sha256": "a065b15d37f737b136d72fa0bf502034335da238348711e45330e21eb2552b67",
         "ranges": [
           [
             1,
-            440
+            441
           ]
         ],
         "declarations": [
@@ -552,17 +552,18 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 333,
-        "sha256": "12156c5ab7ccc4c40051b398b8b32f1c47c779457d83b004e7981039c9a27715",
+        "lines": 339,
+        "sha256": "819ee135aea8e1d0b4cb4a5b36111fe95a2464bb0a2a4a1a07508e6536535ba4",
         "ranges": [
           [
             25,
-            332
+            337
           ]
         ],
         "declarations": [
           "decodeRegulated",
           "decodeNormsEnvironment",
+          "normFields",
           "decodeNorm",
           "decodeSource",
           "regenerated"
@@ -621,33 +622,6 @@
           "splitCase"
         ],
         "reason": "readings-defaults RD-4a: a candidate's `companion` (its environment and open terms) read, merged per companion set and validated through the pinned Readings.Wire and Route decoders (`decodeEnvironment`, `openTermNames`), each recorded `meaning_id` checked against W1's identity over the companion's own environment, and the document split into its cases; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Readings/SupFillWire.lean",
-        "lines": 302,
-        "sha256": "e8d7e1dc22625bfaebeb81dcc237e84c72b3bd9690f6f508848be7ab7e327f3d",
-        "ranges": [
-          [
-            1,
-            302
-          ]
-        ],
-        "declarations": [
-          "SupReplayND",
-          "supReplayND",
-          "decodeAssumedND",
-          "CertificateReplayND",
-          "replayCertificateND",
-          "replayCertificateNDJ",
-          "ModelReplayND",
-          "replayModelND",
-          "replayModelNDJ",
-          "runConflictND",
-          "runCertificateND",
-          "runModelND",
-          "runNDKind"
-        ],
-        "reason": "RD-6b: the superposed completion replay, certificate, model and conflict wire are pinned in full; the proof checks use the admitted filled document and Fill_T."
       },
       {
         "file": "lean/VE/Readings/SupWire.lean",
@@ -1127,12 +1101,12 @@
       },
       {
         "file": "lean/VE/Service/FamilyNorms.lean",
-        "lines": 250,
-        "sha256": "a948acda657db3e648f639402c13135a684f27603b57022affdb72c171e29380",
+        "lines": 387,
+        "sha256": "c4c61e5e73a0a43e5e2adc0afe475dd5f1a818a86ad2d286eaeb14998b32ec3a",
         "ranges": [
           [
             1,
-            250
+            387
           ]
         ],
         "declarations": [
@@ -1142,9 +1116,12 @@
           "certificateCase",
           "targetPackage",
           "conflictCase",
+          "genericCase",
+          "genericRun",
+          "folCase",
           "runCase"
         ],
-        "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"
+        "reason": "family-norms decoder: the FOL view, the generic closure, core and order route, and certificate and witness bindings to the submitted environment; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Graph.lean",
@@ -1330,6 +1307,188 @@
         "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
       },
       {
+        "file": "lean/VE/Ask/Wire.lean",
+        "lines": 353,
+        "sha256": "c8764fde3713a97cf1322b8127f7d6eb88400c500b4a934af335afffc2484db4",
+        "ranges": [
+          [
+            1,
+            353
+          ]
+        ],
+        "declarations": [
+          "candidateContent",
+          "negCert",
+          "splitModels",
+          "Asked",
+          "strField",
+          "displayNumbers",
+          "assertedCandidate",
+          "decodeNames",
+          "evidenceBound",
+          "englishOf",
+          "replayAskCore"
+        ],
+        "reason": "question answering Q2.2 (docs/spec/question-answering.md 5.2, 8): the readings route of `ask` reads the request's document, question, lexicon, case and names (decodeNames: one name per candidate, in source order; an asserted name read back), binds the evidence to the compatible choices (evidenceBound) and replays RD-3's verdicts"
+      },
+      {
+        "file": "lean/VE/Ask/PlainWire.lean",
+        "lines": 320,
+        "sha256": "f74464e3946f4c0c8e94b25a8876dddb3010c8b274047c8f75566bc7fed5a774",
+        "ranges": [
+          [
+            1,
+            320
+          ]
+        ],
+        "declarations": [
+          "PlainCaseBinding",
+          "plainUnit",
+          "plainParts",
+          "plainCert",
+          "plainModel",
+          "PlainParts.piece",
+          "replayPlainParts",
+          "sameEnvironment",
+          "checkPlainCase",
+          "PlainAsked",
+          "replayPlainAskCore"
+        ],
+        "reason": "question answering Q2.2: the plain route (relational-fol@0) reads the case's profiles, environment, units, conclusion and evidence, bound to the document (checkPlainCase, sameEnvironment) before the replay"
+      },
+      {
+        "file": "lean/VE/Ask/ZeroWire.lean",
+        "lines": 461,
+        "sha256": "9a62220daa1f04ca7f9e6853e4e3954fdcf9edb10ac0be0d1c7f2fdcfc3cef95",
+        "ranges": [
+          [
+            1,
+            461
+          ]
+        ],
+        "declarations": [
+          "zeroUnit",
+          "zeroParts",
+          "ZeroParts.piece",
+          "zeroCert",
+          "zeroCerts",
+          "zeroWitness",
+          "zeroModel",
+          "zeroSplitModels",
+          "replayZeroParts",
+          "ZeroAsked",
+          "replayZeroAskCore"
+        ],
+        "reason": "question answering Q2.2: the zero-set norm-defaults route reads the case's profiles, environment, units, conclusion and evidence, bound to the document (sameEnvironment) before the replay"
+      },
+      {
+        "file": "lean/VE/Ask/Binding.lean",
+        "lines": 205,
+        "sha256": "d681c27217defc4cd6fcb9bea9203f033318fd1961bb860f8aca99ab9e2dfb19",
+        "ranges": [
+          [
+            1,
+            205
+          ]
+        ],
+        "declarations": [
+          "UnitBound",
+          "CaseBinding",
+          "checkUnit",
+          "checkCase"
+        ],
+        "reason": "question answering Q2.2 (spec 5.2 CaseBinding): checkCase compares the case's environment, listed inputs and units with the document's front matter and compiles each fence"
+      },
+      {
+        "file": "lean/VE/Ask/Run.lean",
+        "lines": 152,
+        "sha256": "fcc0c0d47f687e02d40501847815c56bc77cac9997bdafa2395d92b1383c1759",
+        "ranges": [
+          [
+            1,
+            152
+          ]
+        ],
+        "declarations": [
+          "sourceJson",
+          "lineJson",
+          "rowJson",
+          "nameJson",
+          "routeOfDocument",
+          "identitiesOf",
+          "askCase",
+          "caseReported"
+        ],
+        "reason": "question answering Q2.2: the ask mode's case (exact fields id, document, question, lexicon, case, names) and its answered and refused rows"
+      },
+      {
+        "file": "lean/VE/Ask/Lines.lean",
+        "lines": 651,
+        "sha256": "d3f48533dbce6834887b854db080f121a583989d7e707c17a4d195046875c94d",
+        "ranges": [
+          [
+            1,
+            651
+          ]
+        ],
+        "declarations": [
+          "contextOf",
+          "unusedUnit",
+          "documentUnused"
+        ],
+        "reason": "question answering Q2.3: the rendered lines read the document's units, their displays and contents (contextOf, unusedUnit) from the front matter"
+      },
+      {
+        "file": "lean/VE/Ask/Render.lean",
+        "lines": 482,
+        "sha256": "2c61326d01c9074e1e55d2ef8ef949043dcd8da94a8edad973cbc2cc279b5408",
+        "ranges": [
+          [
+            1,
+            482
+          ]
+        ],
+        "declarations": [
+          "certPiece",
+          "checkedCites",
+          "wordsOf",
+          "witnessOf",
+          "RenderInputBound"
+        ],
+        "reason": "question answering Q2.3: the readings route's view reads the case's evidence entries (counterOf, splitOf, witnessOf) and reading sets"
+      },
+      {
+        "file": "lean/VE/Ask/PlainAnswer.lean",
+        "lines": 118,
+        "sha256": "2c2a2a2537783bb65dbfcb701b5922dbd18fb4f657a4cae935a77605f786a40f",
+        "ranges": [
+          [
+            1,
+            118
+          ]
+        ],
+        "declarations": [
+          "plainView"
+        ],
+        "reason": "question answering Q2.3: the plain route's view reads the case's evidence"
+      },
+      {
+        "file": "lean/VE/Ask/ZeroAnswer.lean",
+        "lines": 144,
+        "sha256": "327fc754a2b969de92880c823ed74722b640830eee1928988a83463ab27bbc6f",
+        "ranges": [
+          [
+            1,
+            144
+          ]
+        ],
+        "declarations": [
+          "zeroRuleUnits",
+          "zeroView"
+        ],
+        "reason": "question answering Q2.3: the zero-set route's view reads the case's evidence and rule units"
+      },
+      {
         "file": "lean/VE/Readings/ComponentsWire.lean",
         "lines": 636,
         "sha256": "b633797b5624eb406f47bbbc6406156e7217b1aff9a0c5e06b515432ce36fb99",
@@ -1351,6 +1510,93 @@
           "documentOrder"
         ],
         "reason": "readings-defaults RD-4b: the document product decoder, per-component evidence replay on each regenerated case, conclusion typing, --under binding, product verdict, decided units and English plan; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Words/Run.lean",
+        "lines": 161,
+        "sha256": "0678825160c8b5471187af415e2e0c79f3f5b1d13572da2fd87ff9b9ba5c6d3e",
+        "ranges": [
+          [
+            1,
+            161
+          ]
+        ],
+        "declarations": [
+          "exactKeys",
+          "decodeShown",
+          "situationLine",
+          "pointLine",
+          "pairLine",
+          "line",
+          "wordsCase"
+        ],
+        "reason": "question answering Q2.4: the words mode decodes the environment, the lexicon (bound to the environment's id, policy-checked) and each item, and words its line"
+      },
+      {
+        "file": "lean/VE/Readings/SupFillWire.lean",
+        "lines": 302,
+        "sha256": "e8d7e1dc22625bfaebeb81dcc237e84c72b3bd9690f6f508848be7ab7e327f3d",
+        "ranges": [
+          [
+            1,
+            302
+          ]
+        ],
+        "declarations": [
+          "SupReplayND",
+          "supReplayND",
+          "decodeAssumedND",
+          "CertificateReplayND",
+          "replayCertificateND",
+          "replayCertificateNDJ",
+          "ModelReplayND",
+          "replayModelND",
+          "replayModelNDJ",
+          "runConflictND",
+          "runCertificateND",
+          "runModelND",
+          "runNDKind"
+        ],
+        "reason": "RD-6b: the superposed completion replay, certificate, model and conflict wire are pinned in full; the proof checks use the admitted filled document and Fill_T."
+      },
+      {
+        "file": "lean/VE/Service/ReadingsChoices.lean",
+        "lines": 257,
+        "sha256": "9881463bf7607b77d6a448d01d81e24452dc5adfa467673a91a7b1a13c86b4a5",
+        "ranges": [
+          [
+            1,
+            257
+          ]
+        ],
+        "declarations": [
+          "metadata",
+          "validateCouplings",
+          "expected",
+          "plan",
+          "check",
+          "run"
+        ],
+        "reason": "coupled and joint readings choice decoder: set metadata, compatibility, bounded plan, complete evidence and checked verdict; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Norms/Family.lean",
+        "lines": 493,
+        "sha256": "2939728bdcabe3a2259411f555e87a13d103508007fd2f5d8ed36d85e89fde2b",
+        "ranges": [
+          [
+            1,
+            493
+          ]
+        ],
+        "declarations": [
+          "encodeCore",
+          "encodeOrder",
+          "decodeDoc",
+          "regulatedOf",
+          "firstOrder"
+        ],
+        "reason": "family norm guard decoding, regeneration, formula encoding and route selection for closure, core and order; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1434,8 +1680,10 @@
       "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
       "lean/VE/Readings/CompanionsExamples.lean": "readings-defaults RD-4a: #guard fixtures that build JSON documents and environments for the merge and the split; no decoder",
       "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean.",
+      "lean/VE/Question/Fixtures.lean": "fixtures only: generated #guard checks of the Q1 fixture table (tools/question_fixtures.py) parse each frame's case JSON and compare english.question's result; no runner path",
+      "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Readings/ComponentsExamples.lean": "readings-defaults RD-4b: #guard fixtures of 1.10's rule and of the document order of decided units, building a JSON document of unit ids; no decoder",
-      "lean/VE/Question/Fixtures.lean": "fixtures only: generated #guard checks of the Q1 fixture table (tools/question_fixtures.py) parse each frame's case JSON and compare english.question's result; no runner path"
+      "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing"
     }
   },
   "plan_operations": {
@@ -3753,7 +4001,7 @@
       "assurance": {
         "current": "experimental",
         "at_switch": "experimental",
-        "reason": "Lean decides every outcome (VE.Question.readQuestion over E2's unchanged read; all fifteen statements of spec 5.1 proved); the case decoder is E2's and the response encoder is trusted; a reading whose fronted word was put back inside a clause is refused (VE.Question.ask), and the A0 line passes the answer frames' all-derivations gate before it is shown; no answer to the question is given (Q2)"
+        "reason": "Lean decides every outcome (VE.Question.readQuestion over E2's unchanged read; all fifteen statements of spec 5.1 proved); the case decoder is E2's and the response encoder is trusted; a reading whose fronted word was put back inside a clause is refused (VE.Question.ask), and the A0 line passes the answer frames' all-derivations gate before it is shown; the answer is question.answer's (Q2)"
       },
       "python": [],
       "outcomes": {
@@ -3834,7 +4082,7 @@
         "tests/test_question_lean_relay.py::test_question_response_must_bind_the_request",
         "tests/test_question_lean_relay.py::test_question_refusal_text_is_preserved",
         "tests/test_question_reading.py::test_a_gated_environment_never_returns_a_reading",
-        "tests/test_question_reading.py::test_the_cli_does_not_answer_without_reading",
+        "tests/test_question_reading.py::test_the_cli_answers_without_reading",
         "tests/test_question_differential.py::test_lean_and_the_reference_reader_agree",
         "tests/test_question_differential.py::test_the_comparison_can_fail",
         "tests/test_question_differential.py::test_python_lean_and_rust_evaluate_each_reading_alike",
@@ -3851,6 +4099,153 @@
         "The relay ve.backends.english_lean:read_question asks the service through ve.backends.relay (not ve.backends.lean.run, so it has no lean_call_sites entry); it validates the answer's fields per status against Lean's exported contract (ve/question/codes.json, tools/question_codes.py) and the request identities, and raises the class Lean names with Lean's text.",
         "Two readers and three evaluators (tests/test_question_differential.py): Lean's reader against an independent Python reader written from the spec over Python's own English reader (tests/question_reference.py; test code, not a product path) on every fixture and its seeded 1- and 2-fault mutants; every formula Lean reads is checked by Rust's kernel and evaluated alike by Python's evaluator, Lean's metered evaluator and Rust on seeded models. Rust has no question reader.",
         "The budget class is the status `budget`, with the code QuestionTooLong (a size limit) or Budget (a candidate's work limit)."
+      ]
+    },
+    {
+      "id": "question.answer",
+      "summary": "The answer to a yes-or-no question about a document, with its reasons (docs/spec/question-answering.md, Q2): Lean reads the question, binds the case to the document, checks every piece of evidence, decides each reading's lead and renders every line",
+      "class": "surface",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "Lean decides every lead from its own checks of the evidence (VE.Ask: lead_sound, reason_sound, ask_wire_sound, plain_ask_wire_sound, zero_ask_wire_sound), cites exactly the sources of the certificate's used positions (checkedCites_spec, answerFor_cites) and renders every line, each through W7's all-derivations gate (answerFor_gated); the evidence comes from untrusted generators; the zero-set route's statements and NameReadsBackSame await DRI review"
+      },
+      "python": [],
+      "outcomes": {
+        "verdict": [
+          "yes",
+          "no",
+          "notSettled",
+          "notNecessarily",
+          "by_reading"
+        ],
+        "unknown": [
+          "unknown"
+        ],
+        "rejection": [
+          "NotOneQuestion",
+          "QuestionForm",
+          "AmbiguousQuestion",
+          "Ambiguous",
+          "IndefiniteQuestion",
+          "QuestionWordMoved",
+          "NoDerivation",
+          "QuestionWithMarker",
+          "IllTyped",
+          "SyntaxError"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "ask",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/VE/Service/Protocol.lean",
+              "lean/VE/Ask/Run.lean",
+              "lean/VE/Ask/Wire.lean",
+              "lean/VE/Ask/PlainWire.lean",
+              "lean/VE/Ask/ZeroWire.lean",
+              "lean/VE/Ask/Render.lean",
+              "lean/VE/Ask/Lines.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [
+          "VE.Service.runMode_ask",
+          "VE.Ask.lead_sound",
+          "VE.Ask.reason_sound",
+          "VE.Ask.reason_exact",
+          "VE.Ask.split_counter",
+          "VE.Ask.splitOk_sound",
+          "VE.Ask.lead_agrees",
+          "VE.Ask.all_yes_iff_fold",
+          "VE.Ask.sourcesU_length",
+          "VE.Ask.sourcesU_zip_premisesU",
+          "VE.Ask.usedPositions_sufficient",
+          "VE.Ask.mem_cited",
+          "VE.Ask.relevantSets_sound",
+          "VE.Ask.groups_cover",
+          "VE.Ask.group_rows",
+          "VE.Ask.group_claim",
+          "VE.Ask.ask_wire_sound",
+          "VE.Ask.plain_ask_wire_sound",
+          "VE.Ask.plain_lead_sound",
+          "VE.Ask.plain_never_split",
+          "VE.Ask.zero_ask_wire_sound",
+          "VE.Ask.render_quotes_bytes",
+          "VE.Ask.render_text_matches_metadata",
+          "VE.Ask.render_asked",
+          "VE.Ask.render_cites_exact",
+          "VE.Ask.render_lead",
+          "VE.Ask.render_covers_rows",
+          "VE.Ask.render_marks_unchecked",
+          "VE.Ask.render_model_names_choice",
+          "VE.Ask.render_unused_once",
+          "VE.Ask.answerFor_bound",
+          "VE.Ask.answerFor_gated",
+          "VE.Ask.answerFor_cites",
+          "VE.Ask.checkedCites_spec"
+        ],
+        "planned_theorems": [],
+        "decoders": [
+          "lean/VE/Ask/Wire.lean",
+          "lean/VE/Ask/PlainWire.lean",
+          "lean/VE/Ask/ZeroWire.lean",
+          "lean/VE/Ask/Binding.lean",
+          "lean/VE/Ask/Run.lean"
+        ]
+      },
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": [
+        "tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says",
+        "tests/test_ask_fixtures.py::test_the_agent_policy_answers_replay",
+        "tests/test_ask_fixtures.py::test_the_deny_document_is_refused_with_leans_reason",
+        "tests/test_ask_fixtures.py::test_a_replay_can_fail",
+        "tests/test_ask_fixtures.py::test_a_case_of_another_document_is_not_this_documents",
+        "tests/test_ask_relay.py::test_a_genuine_answer_is_accepted",
+        "tests/test_ask_relay.py::test_every_field_retyped_is_refused",
+        "tests/test_ask_relay.py::test_every_field_dropped_is_refused",
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused",
+        "tests/test_ask_relay.py::test_the_relay_refuses_a_malformed_answer_from_the_service",
+        "tests/test_ask_relay.py::test_lean_refuses_a_request_not_bound_to_its_document",
+        "tests/test_ask_relay.py::test_a_broken_split_is_not_a_split",
+        "tests/test_ask_relay.py::test_the_schema_is_generated_and_types_every_field",
+        "tests/test_ask_cli.py::test_ve_ask_prints_leans_lines",
+        "tests/test_ask_cli.py::test_the_leads_are_the_specs",
+        "tests/test_ask_cli.py::test_a_question_not_read_is_refused_with_leans_words",
+        "tests/test_ask_cli.py::test_the_json_is_leans_result_with_the_honesty_fields",
+        "tests/test_ask_relay.py::test_a_malformed_request_is_refused_never_answered",
+        "tests/test_ask_relay.py::test_the_deadline_bounds_the_whole_answer",
+        "tests/test_ask_relay.py::test_leans_refusal_is_raised_with_its_class_and_text",
+        "tests/test_ask_relay.py::test_a_split_whose_fillings_differ_in_a_base_atom_is_not_a_split",
+        "tests/test_ask_relay.py::test_a_fence_that_reads_as_two_formulas_is_not_the_cases_unit",
+        "tests/test_ask_cli.py::test_ask_reads_the_question_as_the_reader_does",
+        "tests/test_question_statements.py::test_q2_statements_match_the_approved_text"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:runner-glue",
+        "python:wire",
+        "python:backend-adapter"
+      ],
+      "notes": [
+        "The relay ve.ask:answer asks the service through ve.backends.relay; it checks the answer against the generated schema and binds every row, line, citation, reading, quote and unused unit to the request (answer_problem), and prints Lean's lines. The evidence generators (the prover, the countermodel search, RD-3's choice generators, the flip of a countermodel's gaps) are untrusted; Lean checks every piece."
       ]
     },
     {

@@ -546,6 +546,11 @@ def record_collection(commit: str, ids: list[str], env: dict[str, str], result: 
     return "written"
 
 
+def gate_scratch_root() -> Path:
+    """Allow a durable scratch root when system /tmp is cleaned during a long gate."""
+    return Path(os.environ.get("VE_GATE_SCRATCH_ROOT", "/tmp")).resolve()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
@@ -577,7 +582,7 @@ def main() -> int:
     write_result(output, result)
     started_clean = False
     completed = False
-    with tempfile.TemporaryDirectory(prefix="ve-gate-", dir="/tmp") as directory:
+    with tempfile.TemporaryDirectory(prefix="ve-gate-", dir=gate_scratch_root()) as directory:
         scratch = Path(directory)
         try:
             env = record_environment(result, "base", gate_environment(scratch))
@@ -603,9 +608,6 @@ def main() -> int:
                 else:
                     result["rerun_failed"] = {"refused": refusal}
                     print(f"[gate] --rerun-failed: {refusal}; running the full gate", flush=True)
-            command(["uv", "run", "--frozen", "--no-sync", "python",
-                     "tools/wire_contract.py", "--check"], env=env,
-                    stage="Wire contract check")
             result["stages"].append("toolchains")
 
             # Lake trusts an executable's trace; a trace that does not record the binary beside it (copied from
@@ -619,6 +621,11 @@ def main() -> int:
                 if not binary.is_file() or not os.access(binary, os.X_OK):
                     raise RuntimeError(f"Lean build did not produce {binary}")
             result["stages"].append("lean_build")
+            # The examples are admitted by this commit's ve_service, so the check follows the build: before it, a
+            # binary left by an earlier build would answer with another commit's modes.
+            command(["uv", "run", "--frozen", "--no-sync", "python",
+                     "tools/wire_contract.py", "--check"], env=env,
+                    stage="Wire contract check")
 
             if rerun is None:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],

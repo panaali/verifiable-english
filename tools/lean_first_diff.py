@@ -427,11 +427,17 @@ def norm_defaults_cases() -> list[str]:
     return [f"s{seed}" for seed in range(1000)] + [f"invalid/{seed}" for seed in range(10)]
 
 
-def norm_defaults_corpus(out: Path) -> None:
-    """Freeze the profile generator's documents once for both revisions."""
+def norm_defaults_corpus(out: Path, *, trees: int = 1000, include_invalid: bool = True) -> None:
+    """Freeze the profile generator's documents once for both revisions.
+
+    A caller measuring a bounded prefix may request only that prefix; the
+    default remains the full conformance corpus and its invalid cases.
+    """
+    if not 0 <= trees <= 1000:
+        raise ValueError("norm-defaults trees must be between 0 and 1000")
     from conformance import norm_defaults_differential as generator
     rows, invalid = [], []
-    for seed in range(1000):
+    for seed in range(trees):
         env, rules, _ = generator.case(seed, profiled=True)
         phrases = [f"Rule {index}.\n" for index in range(len(rules))] or ["No rule.\n"]
         cursor, units = 0, []
@@ -447,11 +453,12 @@ def norm_defaults_corpus(out: Path) -> None:
         def encode(metadata):
             return "---\n" + json.dumps(metadata, ensure_ascii=False) + "\n---\n" + "".join(phrases)
         rows.append({"case": f"s{seed}", "text": encode(front)})
-        if rules and len(invalid) < 10:
+        if include_invalid and rules and len(invalid) < 10:
             damaged = json.loads(json.dumps(front))
             damaged["units"][0]["content"]["norm"]["predicate"] = "not_declared"
             invalid.append({"case": f"invalid/{len(invalid)}", "text": encode(damaged)})
-    assert [row["case"] for row in rows + invalid] == norm_defaults_cases()
+    assert [row["case"] for row in rows + invalid] == (
+        [f"s{seed}" for seed in range(trees)] + [f"invalid/{seed}" for seed in range(len(invalid))])
     out.write_text(json.dumps(rows + invalid, ensure_ascii=False))
 
 
@@ -787,6 +794,27 @@ def same(a, b) -> bool:
     return same_json(a, b)
 
 
+def stable_pilot_outcome(outcome, recording: str):
+    """Erase only the recorder's own temporary pilot directory from a result.
+
+    The two checkouts write the same historical source bytes beside different
+    recording files. A file-open diagnostic may quote that scratch directory;
+    its suffix and every other part of the diagnostic remain compared.
+    """
+    scratch = str(Path(recording).resolve().with_suffix(".pilots")) + "/"
+
+    def visit(value):
+        if isinstance(value, str):
+            return value.replace(scratch, "<pilot-scratch>/")
+        if isinstance(value, list):
+            return [visit(item) for item in value]
+        if isinstance(value, dict):
+            return {key: visit(item) for key, item in value.items()}
+        return value
+
+    return visit(outcome)
+
+
 def json_text(value) -> str:
     """A leaf's identity in the wording pairs: its JSON text, so the pairs are type-strict too."""
     return json.dumps(value, sort_keys=True, ensure_ascii=False)
@@ -933,6 +961,9 @@ def compare(base_path: str, head_path: str, delta: dict | None, *, expected: dic
     for key in sorted(base.keys() | head.keys()):
         old = base.get(key, {}).get("outcome")
         new = head.get(key, {}).get("outcome")
+        if key[0] == "pilots":
+            old = stable_pilot_outcome(old, base_path)
+            new = stable_pilot_outcome(new, head_path)
         klass = change_class(old, new)
         if klass != "availability" and old is not None and new is not None and _unavailable(old):
             klass = "unavailable"   # on both sides: no evidence of preservation

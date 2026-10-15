@@ -92,6 +92,10 @@ GENERATED = (
               note="import lists; `lake build` checks the union"),
     Generated("lake-build", (), (("lake", "build"),), (("lake", "build"),), cwd="lean",
               note="no file of its own: the build every later entry reads"),
+    Generated("lean-mode-deps", ("tools/lean-mode-deps.json",),
+              ((PY, "tools/lean_mode_deps.py", "--write"),),
+              ((PY, "tools/lean_mode_deps.py", "--check"),),
+              note="mode roots from the compiled runMode dispatch pins"),
     Generated("lean-statements", ("lean/statements.txt", "lean/predicates.txt", "lean/declarations.txt"),
               ((PY, "tools/lean_statements.py"),), ((PY, "tools/lean_statements.py", "--check"),)),
     Generated("lean-audit-manifests", ("lean/VE/Audit.lean", "lean/ResponseShape/Audit.lean", "lean/axioms.txt"),
@@ -122,6 +126,9 @@ GENERATED = (
     Generated("import-contract", (".importlinter",), ((PY, "tools/check_python_layers.py", "--write"),),
               ((PY, "tools/check_python_layers.py"),)),
     Generated("uv-lock", ("uv.lock",), (("uv", "lock"),), (("uv", "lock", "--check"),)),
+    Generated("heavy-tests", ("tests/heavy.json",),
+              ((PY, "tools/heavy_tests.py", "--write"),),
+              ((PY, "tools/heavy_tests.py", "--check"),)),
 )
 
 
@@ -135,6 +142,11 @@ RETIRED = {
 # Scripts with a writing mode whose output this script does not regenerate, each with the reason. Every script
 # of the repository with such a mode is either a writer above or listed here (tests/test_regen_generated.py).
 NOT_REGENERATED = {
+    "tools/ask_fixtures.py": "Q2 use-case fixtures: replayed and reviewed with their source documents",
+    "tools/question_answering_report.py": "Q2 batch report from saved measurement and comparison evidence",
+    "tools/question_answering_agreement.py": "Q2.6 evidence: the agreement of ask with the existing route, run on corpora and saved",
+    "tools/words_ab.py": "Q2.4 evidence: the A/B of Lean's wording against the pre-Q2.4 producers, run on corpora and saved",
+    "docs/spec/question-answering-q2/mutants.py": "Q2 seeded-bug evidence: each mutant is run and restored, then its result is saved",
     "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
     "tools/stage2_parity.py": "report: docs/spec/stage2-parity.md, a migration record",
     "tools/lean_service_soak.py": "measurement report of the machine it runs on",
@@ -158,6 +170,7 @@ NOT_REGENERATED = {
     "conformance/english_lean_e2_ab.py": "batch report",
     "conformance/english_lean_e2_readability_report.py": "batch report",
     "docs/lean-first/*/*.py": "batch evidence pinned at a commit",
+    "docs/test-speed-b2/shadow.py": "fixed-merge shadow evidence, recorded once and checked at the batch gate",
     "docs/merge-tooling/*.py": "this tooling's evidence, recorded once (git merge-tree --write-tree is no writer)",
     "conformance/soft_norms.py": "--write-rust-fixtures: the Rust tests' fixture, rewritten with the soft-norms unit",
     "usecases/*/*.py": "use-case results, rerun by their harness",

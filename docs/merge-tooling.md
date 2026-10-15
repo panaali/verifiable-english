@@ -24,6 +24,7 @@ its merge strategy:
 | route-cases | `lean/VE/Route/examples/route-cases.json` | regenerate |
 | lean-roots | `lean/VE.lean`, `lean/ResponseShape.lean` | union |
 | lake-build | (the build every later entry reads) | - |
+| lean-mode-deps | `tools/lean-mode-deps.json` | regenerate |
 | lean-statements | `lean/statements.txt`, `predicates.txt`, `declarations.txt` | regenerate |
 | lean-audit-manifests | `lean/VE/Audit.lean`, `lean/ResponseShape/Audit.lean`, `lean/axioms.txt` (`audit.py --write`, from `declarations.txt`; AR-1) | regenerate |
 | frozen-inventory | `lean/VE/Route/frozen-sources.sha256` (`frozen.py --write`, new) | regenerate |
@@ -38,6 +39,7 @@ its merge strategy:
 | layer-ledgers | `tools/layer-exceptions.json`, `lean-layer-exceptions.json` | json (check only) |
 | import-contract | `.importlinter` | regenerate |
 | uv-lock | `uv.lock` | regenerate |
+| heavy-tests | `tests/heavy.json` (from the saved Mac duration report) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);

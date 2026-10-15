@@ -23,9 +23,9 @@ import threading
 DIRECTORY = Path(__file__).resolve().parent / "lean_service_schema"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
          "english.read", "english.grammar", "english.check",
-         "environment", "model", "check", "identity", "parse", "graph", "readings", "bundle", "family-norms",
+         "environment", "model", "check", "identity", "parse", "graph", "readings", "readings-choices", "bundle", "family-norms",
          "soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval", "quantity",
-         "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question")
+         "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question", "ask", "words")
 
 
 class Invalid(Exception):
@@ -471,6 +471,21 @@ class Compiler:
                 _fail("background exceeds what the request vocabulary generates")
         return check
 
+    def _x_source_span(self, pointer, schema, base):
+        def check(value, ctx, fuel):
+            source = _resolve(ctx.value, pointer)
+            if type(source) is not str or type(value) is not dict:
+                _fail("span is outside the request source or has the wrong line and column")
+            start, end = value.get("start"), value.get("end")
+            line, column = value.get("line"), value.get("column")
+            if (type(start) is not int or type(end) is not int or
+                    type(line) is not int or type(column) is not int or
+                    not 0 <= start <= end <= len(source) or
+                    line != source.count("\n", 0, start) + 1 or
+                    column != start - source.rfind("\n", 0, start)):
+                _fail("span is outside the request source or has the wrong line and column")
+        return check
+
     def _x_index(self, flag, schema, base):
         def check(value, ctx, fuel):
             if _kind(value) != "integer" or value != ctx.index:
@@ -539,6 +554,48 @@ class Compiler:
                 _fail(f"{rule['equals']} does not count the presence of {rule['value']}")
         return check
 
+    def _x_reading_plan(self, flag, schema, base):
+        """Bind a Lean choice plan to the submitted set sizes and coupling IDs.
+
+        Completeness and compatibility are Lean decisions. This checks only
+        that every returned index, label and count can name request data.
+        """
+        def check(value, ctx, fuel):
+            case = ctx.value
+            sets, couplings, limit = case.get("set_meta"), case.get("couplings"), case.get("limit")
+            if (not isinstance(sets, list) or not isinstance(couplings, list)
+                    or _kind(limit) != "integer" or limit < 0):
+                _fail("invalid readings plan request")
+            sizes = []
+            for reading_set in sets:
+                if (not isinstance(reading_set, dict) or type(reading_set.get("id")) is not str
+                        or not isinstance(reading_set.get("readings"), list)):
+                    _fail("invalid reading set in the request")
+                sizes.append(len(reading_set["readings"]))
+            if any(not isinstance(c, dict) or type(c.get("id")) is not str for c in couplings):
+                _fail("invalid coupling in the request")
+            if value["route"] == "enumerate":
+                choices = value["choices"]
+                if not choices or len(choices) > limit or len({tuple(choice) for choice in choices}) != len(choices):
+                    _fail("extra or repeated choice")
+                for choice in choices:
+                    if (len(choice) != len(sizes) or any(_kind(index) != "integer" or index < 0
+                            or index >= size for index, size in zip(choice, sizes))):
+                        _fail("choice index is not in the request")
+                if value["conditional_on"] != ["coupling:" + c["id"] for c in couplings]:
+                    _fail("coupling labels are not in the request")
+            else:
+                product = 1
+                for size in sizes:
+                    product *= size
+                if (value["budget"]["max_choices"] != limit or
+                        not limit < value["choice_count"] <= product):
+                    _fail("choice count is not bound to the request")
+                units = {s["unit"] if type(s.get("unit")) is str else s["id"] for s in sets}
+                if any(unit not in units for unit in value["units"]):
+                    _fail("open unit is not in the request")
+        return check
+
     def _x_rows(self, bound, schema, base):
         sub = self.compile(bound, base)
 
@@ -569,9 +626,9 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-bound",
+          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-bound", "x-source-span",
           "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
-          "x-select", "x-count-where", "x-count-presence", "x-rows",
+          "x-select", "x-count-where", "x-count-presence", "x-reading-plan", "x-rows",
           "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
