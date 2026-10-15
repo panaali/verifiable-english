@@ -686,16 +686,16 @@ the current source classification alongside the previously measured steps.
 | 4 | 737 | 0 | 0 | 420 | 317 | 14 | 2 | 11.3 |
 | 5 | 0 | 480 | 0 | 0 | 480 | 14 | 1 | 34.3 |
 | 6 | 35 | 0 | 1748 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 674 | 0 | 0 | 60 | 614 | 6 | 2 | 51.2 |
+| 7 | 681 | 0 | 0 | 60 | 621 | 6 | 2 | 51.8 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
-| 8b | 0 | 3631 | 0 | 0 | 3631 | 30 | 3 | 40.3 |
+| 8b | 0 | 3637 | 0 | 0 | 3637 | 30 | 3 | 40.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 
 What the measurement changes:
 
 * **Re-ranking of steps 5 to 10 by measured score:** 7 (50.4), 5 (35.6), 8a (18.1), 6 (11.7),
-  9 (2.4), 10. Step 8b's 3,631 is an upper bound (every untied line of the eight units' `Wire.lean`
+  9 (2.4), 10. Step 8b's 3,637 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
   dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`; 587 after batch 11a added the W2 `ve_speech_acts_route`; 613 with `ve_senses_route`; 627 after the reports batch with its fault-order preflight; 628 with the alternatives route's `alt-environment` case; 634 after batch 13a's one-shot projection; 637 with English Lean E2's modes; 638 with batch 10b's merge; 638 again at the merge of ve-integration into lean-first/b15a, with batch 15a's `ve_metered`; 645 at the merge of ve-integration into readings-defaults/rd2a, with RD-2a's dispatch under the unspecified completion and each readings case admitting its document once; 659 after RD-4a: `runCase` splits a readings case into its components and `runOne`, now named by the step, dispatches each; 665 after the RD-4a admission fix, which admits every component before answering one) and 5 is smaller than estimated (476 measured against 1,500 to

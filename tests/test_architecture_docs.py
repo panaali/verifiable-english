@@ -26,10 +26,10 @@ DIALECT = ROOT / "ve/backends/lean_service_schema/README.md"
 SAVED = json.loads((ROOT / numbers.NUMBERS).read_text())
 # Dialect keywords that shape or select a value and bind nothing to the request.
 STRUCTURAL = {"x-tagged", "x-fuel", "x-case", "x-select", "x-row"}
-# Batch 13b introduced these bounded response checks before D1 classified their
-# dialect keywords. Keep the signed Decision section pinned and track the exact
+# Batches 13b, 14d and 14a introduced these bounded response checks before D1 classified
+# their dialect keywords. Keep the signed Decision section pinned and track the exact
 # outstanding set until its owner reviews the extension.
-PENDING_D1 = {"x-claim-nodes", "x-max-steps", "x-background-bound"}
+PENDING_D1 = {"x-claim-nodes", "x-max-steps", "x-background-bound", "x-reading-plan", "x-source-span"}
 
 
 def flat(text):
@@ -132,9 +132,7 @@ def fixture_tree():
         "tools/layer-exceptions.json": '{"a -> b": 1}', "tools/lean-layer-exceptions.json": "{}",
         "tools/gate-collection.json": '["t1", "t2", "t3", "t4"]',
         "ve/assurance-manifest.json": '{"lean_decoders": {"total_lines": 77}}',
-        "docs/trust-baseline.json": json.dumps({
-            "totals": {key: index for index, key in enumerate(numbers.TRUST_TOTALS)} | {"tied": 9},
-            "budget": {"K": 1, "S": 2, "V": 3}}),
+        "docs/trust-baseline.json": json.dumps({"budget": {"K": 1, "S": 2, "V": 3}, "allowances": []}),
         "docs/lean-first/big.bin": "", "docs/x.md": "",
     }
     data = {path: text.encode() for path, text in files.items()}
@@ -144,9 +142,13 @@ def fixture_tree():
     return data, sizes
 
 
+# The trust classes `trust_map.totals` gives, plus one the map does not show.
+TRUST = {key: index for index, key in enumerate(numbers.TRUST_TOTALS)} | {"tied": 9}
+
+
 def test_measure_on_a_small_tree():
     data, sizes = fixture_tree()
-    got = numbers.measure(data.__getitem__, sizes)
+    got = numbers.measure(data.__getitem__, sizes, TRUST)
     assert got["lines"] == {"ve_python": 8, "ve_backends_python": 6, "ve_backends_schema_json": 1, "lean": 9,
                             "tools_python": 1, "tests_python": 3, "conformance_python": 1}
     assert got["largest_ve_python"][0] == {"path": "ve/backends/lean_service.py", "lines": 3}
@@ -166,11 +168,11 @@ def test_measure_fails_closed():
     data, sizes = fixture_tree()
     del sizes["conformance/c.py"]
     with pytest.raises(ValueError, match="conformance"):
-        numbers.measure(data.__getitem__, sizes)
+        numbers.measure(data.__getitem__, sizes, TRUST)
     data, sizes = fixture_tree()
     data["ve/backends/service_schema.py"] = b"MODES = tuple(['a'])\n"
     with pytest.raises(ValueError, match="MODES"):
-        numbers.measure(data.__getitem__, sizes)
+        numbers.measure(data.__getitem__, sizes, TRUST)
 
 
 def stale_rows():
@@ -304,6 +306,7 @@ SHAPES = {
     **dict.fromkeys(["node", "lean", "copied", "encodedEnvironment"], "inner"),
     "tagged": "x-tagged", "fuel": "x-fuel", "echo": "x-echo", "equals": "x-equals", "length": "x-length",
     "claimNodes": "x-claim-nodes", "maxSteps": "x-max-steps", "backgroundBound": "x-background-bound",
+    "readingPlan": "x-reading-plan", "sourceSpan": "x-source-span",
     "count": "x-count", "references": "x-references", "index": "x-index", "digest": "x-digest", "zip": "x-zip",
     "zipOrEmpty": "x-zip-or-empty", "onCase": "x-case", "select": "x-select", "countWhere": "x-count-where",
     "presenceCount": "x-count-presence", "rows": "x-rows", "row": "x-row",

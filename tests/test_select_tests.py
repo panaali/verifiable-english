@@ -30,6 +30,8 @@ import select_tests  # noqa: E402
 import source_graph  # noqa: E402
 import test_map  # noqa: E402
 import test_map_recorder  # noqa: E402
+import lean_mode_deps  # noqa: E402
+import select_tests_seeds  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
@@ -312,7 +314,9 @@ def make_graph(root: Path, files: dict[str, str], lean: dict[str, str] | None = 
 def make_map(edges: dict[str, dict], commit: str = "0" * 40, failed: tuple[str, ...] = ()) -> dict:
     """A map as the recorder would write it; each unit ran at least its own module."""
     results = {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
-                      "d": set(e.get("d", ())), "x": set(e.get("x", ())), "opaque": [],
+                      "d": set(e.get("d", ())), "x": set(e.get("x", ())), "m": set(e.get("m", ())),
+                      "p": set(e.get("p", ())), "v": set(e.get("v", ())),
+                      "opaque": [],
                       "exit": 1 if test in failed else 0, "seconds": 1.0}
                for test, e in edges.items()}
     return test_map.build_map(results, commit)
@@ -377,6 +381,19 @@ def test_a_changed_function_selects_the_tests_that_ran_it(tmp_path):
     assert set(impact(tmp_path, "pkg/core.py", new)) == {"tests/test_bounded.py"}
 
 
+def test_light_tier_keeps_the_heavy_test_of_a_changed_function(tmp_path):
+    new = LIBRARY["pkg/core.py"].replace("min(x, LIMIT)", "max(x, LIMIT)")
+    selected = sorted(impact(tmp_path, "pkg/core.py", new))
+    inventory = tmp_path / "heavy.json"
+    inventory.write_text(json.dumps({"run": "fixture", "collected_count": 2,
+                                     "heavy": [{"nodeid": "tests/test_bounded.py::test_bounded",
+                                                "seconds": 30, "run": "fixture"},
+                                               {"nodeid": "tests/test_unrelated.py::test_unrelated",
+                                                "seconds": 30, "run": "fixture"}]}))
+    plan = select_tests.light_tier({"selected": selected, "commands": []}, inventory, jobs=2)
+    assert plan["tier"]["selected_heavy"] == ["tests/test_bounded.py::test_bounded"]
+
+
 def test_a_changed_constant_selects_its_readers_here_and_in_importers(tmp_path):
     new = LIBRARY["pkg/core.py"].replace("LIMIT = 3", "LIMIT = 4")
     # bounded reads LIMIT, doubled reads DERIVED (computed from LIMIT), user imports LIMIT,
@@ -411,13 +428,403 @@ def test_lookups_match_nested_code_but_not_name_prefixes():
 
 
 def test_map_round_trips_through_its_edges():
-    edges = {"t1": {"f": [("a.py", "f")], "r": ["d.json"], "d": ["data"], "x": ["lake"]},
+    edges = {"t1": {"f": [("a.py", "f")], "r": ["d.json"], "d": ["data"], "x": ["lake"],
+                    "m": ["parse"], "p": ["typing"], "v": ["rights"]},
              "t2": {"f": [("a.py", "g"), ("b.py", "<module>")]}}
     data = make_map(edges)
     back = test_map.unit_edges(json.loads(json.dumps(data)))
     assert back == {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
-                           "d": set(e.get("d", ())), "x": set(e.get("x", ()))}
+                           "d": set(e.get("d", ())), "x": set(e.get("x", ())),
+                           "m": set(e.get("m", ())), "p": set(e.get("p", ())), "v": set(e.get("v", ()))}
                     for test, e in edges.items()}
+
+
+def test_resumed_unit_merges_every_edge_kind(tmp_path):
+    """A checkpoint has JSON lists, but a live recording and merge use sets."""
+    unit = "tests/test_example.py"
+    name = unit.replace("/", "__")
+    recorded = {"f": [["a.py", "new"]], "r": ["new.json"], "d": ["new-dir"],
+                "x": ["new-program"], "m": ["new.operation"], "p": ["new.presence"], "v": ["rights"],
+                "exit": 0, "opaque": [], "seconds": 1.0}
+    (tmp_path / f"{name}.result.json").write_text(json.dumps(recorded))
+    resumed = test_map.run_unit(unit, tmp_path, 1, set())
+    assert all(isinstance(resumed[key], set) for key in test_map.EDGE_KEYS)
+    earlier = {"f": {("a.py", "old")}, "r": {"old.json"}, "d": {"old-dir"},
+               "x": {"old-program"}, "m": {"old.operation"}, "p": {"old.presence"}, "v": {"norms"},
+               "exit": 0, "opaque": [], "seconds": 1.0}
+    test_map.merge({unit: resumed}, test_map.build_map({unit: earlier}, "0" * 40))
+    for key in test_map.EDGE_KEYS:
+        assert resumed[key] == ({tuple(v) if key == "f" else v for v in recorded[key]}
+                                | earlier[key]), key
+
+
+def test_operation_map_rejects_missing_and_bool_indices():
+    data = make_map({"t1": {"m": ["parse"], "p": ["typing"], "v": ["rights"]}})
+    test_map.validate(data)
+    for field in ("operations", "presence", "modes"):
+        missing = json.loads(json.dumps(data))
+        del missing[field]
+        with pytest.raises(ValueError):
+            test_map.validate(missing)
+        retyped = json.loads(json.dumps(data))
+        retyped[field][next(iter(retyped[field]))] = [True]
+        with pytest.raises(ValueError):
+            test_map.validate(retyped)
+
+
+def test_service_modes_narrow_only_known_recorded_users(tmp_path, monkeypatch):
+    graph = make_graph(tmp_path, {}, lean={
+        "lean/VE/Common.lean": "def common := 1\n",
+        "lean/VE/Rights/Run.lean": "import VE.Common\ndef rights := 1\n",
+        "lean/VE/Norms/Run.lean": "import VE.Common\ndef norms := 1\n",
+        "lean/VE/Service/Protocol.lean": "import VE.Rights.Run\nimport VE.Norms.Run\ndef protocol := 1\n",
+        "lean/Serve.lean": "import VE.Service.Protocol\ndef serve := 1\n",
+    })
+    monkeypatch.setattr(select_tests.lean_mode_deps, "load", lambda: {
+        "rights": ["VE.Rights.Run"], "norms": ["VE.Norms.Run"]})
+    monkeypatch.setattr(source_graph, "lean_executables", lambda root: {"ve_service": "Serve"})
+    service = "lean/.lake/build/bin/ve_service"
+    coverage = select_tests.Coverage(make_map({
+        "rights": {"x": [service], "v": ["rights"]},
+        "norms": {"x": [service], "v": ["norms"]},
+        "unknown": {"x": [service]},
+        "future": {"x": [service], "v": ["future"]},
+        "direct": {"x": ["lake"]},
+    }))
+    assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
+        "rights", "unknown", "future"}
+    assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Common.lean") == {
+        "rights", "norms", "unknown", "future"}
+    for path in ("lean/VE/Service/Protocol.lean", "lean/Serve.lean"):
+        assert select_tests.proposed_service_impact(coverage, graph, path) == {
+            "rights", "norms", "unknown", "future"}
+    selected = set()
+    select_tests.file_impact(coverage, graph, set(coverage.tests),
+                             lambda names, _: selected.update(names), "lean/VE/Rights/Run.lean", False)
+    assert selected == {"rights", "norms", "unknown", "future", "direct"}
+    monkeypatch.setattr(select_tests.lean_mode_deps, "load", lambda: None)
+    assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
+        "rights", "norms", "unknown", "future"}
+    assert select_tests.service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
+        "rights", "norms", "unknown", "future"}
+
+
+def test_compiled_mode_roots_cover_every_service_mode(monkeypatch):
+    from ve.backends.service_schema import MODES
+    roots = lean_mode_deps.load()
+    assert roots is not None and set(roots) == set(MODES)
+    assert all(root != "VE.Service.Protocol" for values in roots.values() for root in values)
+    monkeypatch.setattr(lean_mode_deps, "digests", lambda: {"changed": "source"})
+    assert lean_mode_deps.load() is None
+
+
+def test_unverified_mode_activation_keeps_service_wide_selection(tmp_path, monkeypatch):
+    graph = make_graph(tmp_path, {}, lean={
+        "lean/VE/Rights/Run.lean": "def rights := 1\n",
+        "lean/VE/Norms/Run.lean": "def norms := 1\n",
+    })
+    monkeypatch.setattr(select_tests.lean_mode_deps, "load", lambda: {
+        "rights": ["VE.Rights.Run"], "norms": ["VE.Norms.Run"]})
+    service = "lean/.lake/build/bin/ve_service"
+    coverage = select_tests.Coverage(make_map({
+        "rights": {"x": [service], "v": ["rights"]},
+        "norms": {"x": [service], "v": ["norms"]},
+    }))
+    assert select_tests.proposed_service_impact(
+        coverage, graph, "lean/VE/Rights/Run.lean") == {"rights"}
+    assert select_tests.service_impact(
+        coverage, graph, "lean/VE/Rights/Run.lean") == {"rights", "norms"}
+
+
+def test_compiled_mode_roots_regenerate_from_lean():
+    generated = lean_mode_deps.generate()
+    assert generated["modes"] == json.loads(lean_mode_deps.OUTPUT.read_text())["modes"]
+
+
+def test_shared_service_response_dependency_selects_every_mode():
+    """`coding` calls Route's generator parser for every service answer."""
+    root = Path(__file__).resolve().parents[1]
+    graph = source_graph.Graph(root, [], {})
+    graph.lean_modules = {"VE.Route.Run": "lean/VE/Route/Run.lean"}
+    graph.lean_imports = {
+        ".".join(file.relative_to(root / "lean").with_suffix("").parts):
+        source_graph.lean_imports(file.read_text())
+        for file in (root / "lean/VE").rglob("*.lean")
+    }
+    coverage = select_tests.Coverage(test_map.load(
+        root / "docs/test-speed-b2/evidence/coverage-map.json.gz"))
+    assert all("VE.Route.Run" in roots for roots in lean_mode_deps.load().values())
+    assert coverage.service_users() <= select_tests.proposed_service_impact(
+        coverage, graph, "lean/VE/Route/Run.lean")
+
+
+def test_checker_pin_reader_still_selects_on_lock_change(tmp_path):
+    graph = make_graph(tmp_path, {})
+    coverage = select_tests.Coverage(make_map({
+        "pin-test": {"r": ["lean/checkers.lock"]}, "other": {}}))
+    selected = set()
+    select_tests.file_impact(coverage, graph, set(coverage.tests),
+                             lambda names, _: selected.update(names), "lean/checkers.lock", False)
+    assert "pin-test" in selected
+
+
+def test_recorder_tracks_each_service_request_mode(tmp_path):
+    result = recorder_run(tmp_path, "import sys\nsys.audit('ve.service.mode', 'rights')\n"
+                                    "sys.audit('ve.service.mode', 'norms')\n")
+    assert result["v"] == {"rights", "norms"}
+
+
+def test_lean_service_emits_mode_before_dispatch(monkeypatch):
+    from ve.backends import lean_service
+    events = []
+    monkeypatch.setattr(lean_service.sys, "audit", lambda *event: events.append(event))
+    monkeypatch.setattr(lean_service, "configured_seconds", lambda *args: (_ for _ in ()).throw(
+        RuntimeError("dispatch stopped")))
+    with pytest.raises(RuntimeError, match="dispatch stopped"):
+        lean_service.LeanService().exchange("rights", "[]", 0)
+    assert events == [("ve.service.mode", "rights")]
+
+
+def _read_fields(op: dict) -> tuple:
+    """What `ve` reads of an operation at run time: its authority (the guard), each Lean binding's
+    executable, mode, kinds, response and counts (`require_lean_binding`, `row_problem`) and its
+    Lean call sites (`require_lean_call_site`)."""
+    bindings = sorted(json.dumps({key: binding.get(key) for key in ("executable", "mode", "kinds", "response",
+                                                                     "counts")}, sort_keys=True)
+                      for binding in (op.get("lean") or {}).get("bindings", ()))
+    return op["authority"], bindings, sorted(op.get("lean_call_sites", ()))
+
+
+MANIFEST_SEEDS = [row for row in select_tests_seeds.seeds() if row["kind"] == "manifest"]
+
+
+@pytest.mark.parametrize("seed", MANIFEST_SEEDS, ids=[row["operation"] for row in MANIFEST_SEEDS])
+def test_seeded_manifest_edits_change_a_field_ve_reads(seed):
+    """The gate's seeds (tools/select_tests_seeds.py) must be edits a test can observe, not a field nobody reads."""
+    old = (ROOT / select_tests.MANIFEST).read_text()
+    new = seed["files"][select_tests.MANIFEST]
+    assert select_tests_seeds.manifest_text(json.loads(old)) == old  # the seed keeps the file's layout
+    assert select_tests.changed_manifest_operations(old, new) == {seed["operation"]}
+    before = next(op for op in json.loads(old)["operations"] if op["id"] == seed["operation"])
+    after = next(op for op in json.loads(new)["operations"] if op["id"] == seed["operation"])
+    assert _read_fields(before) != _read_fields(after)
+
+
+def test_the_lean_seed_adds_a_module_to_one_executable():
+    (seed,) = [row for row in select_tests_seeds.seeds() if row["kind"] == "lean"]
+    assert not (ROOT / select_tests_seeds.SEED_MODULE).exists()
+    assert set(seed["files"]) == {select_tests_seeds.SEED_MODULE, select_tests_seeds.SEED_ROOT}
+    assert "import VE.SeedProbe" in seed["files"][select_tests_seeds.SEED_ROOT]
+
+
+@pytest.mark.parametrize("seed", MANIFEST_SEEDS, ids=[row["operation"] for row in MANIFEST_SEEDS])
+def test_seeded_manifest_edits_select_their_readers(seed, tmp_path):
+    op_id = seed["operation"]
+    old, new = (ROOT / select_tests.MANIFEST).read_text(), seed["files"][select_tests.MANIFEST]
+    reader, other = "tests/test_reader.py", "tests/test_other.py"
+    edges = {reader: {"m": [op_id]}, other: {"p": [op_id]},
+             select_tests.MANIFEST_TEST: {"m": ["*"]}}
+    coverage = select_tests.Coverage(make_map(edges))
+    graph = make_graph(tmp_path, {"tests/test_reader.py": "", "tests/test_other.py": ""})
+    selection = select_tests.Selection(graph, coverage, set(), list(edges))
+    select_tests.manifest_change(selection, select_tests.Change(select_tests.MANIFEST, old, new))
+    assert reader in selection.reasons
+    assert select_tests.MANIFEST_TEST in selection.reasons
+    assert other not in selection.reasons
+    assert not selection.full
+
+
+def test_removed_manifest_operation_selects_registration(tmp_path):
+    manifest = json.loads((ROOT / select_tests.MANIFEST).read_text())
+    changed = json.loads(json.dumps(manifest))
+    changed["operations"] = [row for row in changed["operations"] if row["id"] != "parse"]
+    old, new = json.dumps(manifest), json.dumps(changed)
+    reader = "tests/test_register.py"
+    edges = {reader: {"p": ["parse"]}, select_tests.MANIFEST_TEST: {"m": ["*"]}}
+    selection = select_tests.Selection(make_graph(tmp_path, {}), select_tests.Coverage(make_map(edges)),
+                                       set(), list(edges))
+    select_tests.manifest_change(selection, select_tests.Change(select_tests.MANIFEST, old, new))
+    assert reader in selection.reasons
+
+
+def test_semantic_registration_reads_only_presence(monkeypatch):
+    from ve import assurance
+    events = []
+    monkeypatch.setattr(assurance.sys, "audit", lambda *args: events.append(args))
+    assurance.semantic_entry("parse")
+    assert events == [("ve.manifest.presence", "parse")]
+
+
+MANIFEST_EVENTS = {"ve.manifest.all", "ve.manifest.operation", "ve.manifest.presence"}
+
+
+def _mapping_reads() -> list[str]:
+    """Every way to read a Mapping: its public methods and the dunders `in`, `[]`, `len`, `==`, iteration."""
+    from collections.abc import Mapping
+    return sorted({name for name in dir(Mapping) if not name.startswith("_")}
+                  | {"__contains__", "__eq__", "__getitem__", "__iter__", "__len__", "__ne__"})
+
+
+@pytest.mark.parametrize("method", _mapping_reads())
+def test_every_read_of_the_operation_table_is_an_audit_event(method, monkeypatch):
+    """However code reads `ve.assurance.OPERATIONS`, the recorder sees an operation, presence or whole-table event."""
+    from ve import assurance
+    events = []
+    monkeypatch.setattr(assurance.sys, "audit", lambda *args: events.append(args))
+    table = assurance.OPERATIONS
+    call = {"get": lambda: table.get("parse"), "__getitem__": lambda: table["parse"],
+            "__contains__": lambda: "parse" in table, "__eq__": lambda: table == {},
+            "__ne__": lambda: table != {}, "__iter__": lambda: list(table), "__len__": lambda: len(table),
+            "keys": lambda: list(table.keys()), "values": lambda: list(table.values()),
+            "items": lambda: list(table.items())}[method]
+    call()
+    assert events and {event[0] for event in events} <= MANIFEST_EVENTS
+    if method in ("get", "__getitem__"):
+        assert events == [("ve.manifest.operation", "parse")]
+    elif method == "__contains__":
+        assert events == [("ve.manifest.presence", "parse")]
+    else:
+        assert ("ve.manifest.all",) in events
+
+
+def test_difffuzz_binding_lookup_is_a_recorded_manifest_read():
+    """The review's bypass: `tools/difffuzz.py` scanned every binding without an audit event."""
+    import difffuzz
+    from ve import assurance
+    events = []
+    original = assurance.sys.audit
+
+    def hook(*args):
+        if args[0] in MANIFEST_EVENTS:
+            events.append(args)
+        return original(*args)
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(assurance.sys, "audit", hook)
+        difffuzz.manifest_bindings("ve_conformance", "check-certificate", [])
+    assert ("ve.manifest.all",) in events
+
+
+def test_no_module_reads_assurance_state_around_the_audited_api():
+    """`ve.assurance`'s private state (the raw manifest, the id table, the migrated set) is read only
+    inside the module, so every read elsewhere goes through an audited accessor. Checked on the
+    parsed source of every tracked Python file."""
+    offenders = []
+    for path in subprocess.run(["git", "ls-files", "*.py"], cwd=ROOT, capture_output=True, text=True,
+                               check=True).stdout.split():
+        if path == "ve/assurance.py":
+            continue
+        source = (ROOT / path).read_text(encoding="utf-8", errors="replace")
+        if "assurance" not in source:
+            continue
+        for node in ast.walk(ast.parse(source, path)):
+            if isinstance(node, ast.ImportFrom) and (node.module or "").split(".")[-1] == "assurance":
+                offenders += [f"{path}:{node.lineno} imports {alias.name}" for alias in node.names
+                              if alias.name.startswith("_")]
+            elif isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name) \
+                    and node.value.id == "assurance" and node.attr.startswith("_") \
+                    and not node.attr.startswith("__"):
+                offenders.append(f"{path}:{node.lineno} reads assurance.{node.attr}")
+    assert offenders == []
+
+
+def test_manifest_shared_field_or_missing_map_selects_full(tmp_path):
+    old = (ROOT / select_tests.MANIFEST).read_text()
+    changed = json.loads(old)
+    changed["version"] = "seeded"
+    graph = make_graph(tmp_path, {})
+    selection = select_tests.Selection(graph, None, set(), [])
+    select_tests.manifest_change(selection, select_tests.Change(select_tests.MANIFEST, old, json.dumps(changed)))
+    assert selection.full
+
+
+def test_automatic_selection_without_a_map_runs_full_suite(monkeypatch):
+    monkeypatch.setattr(select_tests, "resolve_map", lambda base, coverage: None)
+    plan = select_tests.select(changes=[select_tests.Change("docs/example.md", "before", "after")],
+                               coverage="auto")
+    assert plan["full"] and plan["full_reasons"] == ["missing coverage map"]
+    assert set(plan["selected"]) == set(select_tests.units())
+
+
+def git_line(rev: str) -> str:
+    return subprocess.run(["git", "rev-parse", rev], cwd=ROOT, capture_output=True, text=True,
+                          check=True).stdout.strip()
+
+
+def cached_map(directory: Path, commit: str, version: int | None = test_map.VERSION, mtime: int = 0) -> Path:
+    """A map recorded at `commit` in the cache `directory`, written by map format `version`
+    (None writes bytes that are not a gzip file)."""
+    import gzip
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / f"{commit}.json.gz"
+    if version is None:
+        path.write_bytes(b"not a map")
+    else:
+        with gzip.open(path, "wt", encoding="utf-8") as handle:
+            json.dump({**make_map({"t1": {"x": ["lake"]}}, commit), "version": version}, handle)
+    os.utime(path, (mtime, mtime))
+    return path
+
+
+def test_find_map_names_each_nearer_map_it_skips(tmp_path, monkeypatch, capsys):
+    monkeypatch.setenv("VE_TESTMAP_CACHE", str(tmp_path / "maps"))
+    head, parent = (git_line(rev) for rev in ("HEAD", "HEAD~1"))
+    old = cached_map(tmp_path / "maps", head, test_map.VERSION - 1)
+    other_versions: list[Path] = []
+    assert test_map.find_map(head, other_versions=other_versions) is None
+    err = capsys.readouterr().err
+    assert err == (f"test_map: skipped map {old} for {head[:10]}: recorded by map format version "
+                   f"{test_map.VERSION - 1}, this checkout reads version {test_map.VERSION} "
+                   "(record a new map: tools/test_map.py record)\n")
+    assert other_versions == [old]
+    # A current map farther down is returned; the nearer old one is still named, the current one not.
+    current = cached_map(tmp_path / "maps", parent, mtime=1)
+    assert test_map.find_map(head) == current
+    captured = capsys.readouterr()
+    assert str(old) in captured.err and str(current) not in captured.err and captured.out == ""
+    # An old map farther than the chosen one would not have been used: nothing to say.
+    old.unlink()
+    farther = cached_map(tmp_path / "maps", parent, test_map.VERSION - 1)
+    current = cached_map(tmp_path / "maps", head, mtime=1)
+    assert test_map.find_map(head) == current and capsys.readouterr().err == ""
+    farther.unlink()
+    corrupt = cached_map(tmp_path / "maps", git_line("HEAD~2"), None, mtime=2)
+    current.unlink()
+    other_versions = []
+    assert test_map.find_map(head, other_versions=other_versions) is None and other_versions == []
+    err = capsys.readouterr().err
+    assert err.startswith(f"test_map: skipped map {corrupt}: unreadable (") and err.count("\n") == 1
+
+
+def test_select_tests_says_why_old_maps_left_it_without_one(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(select_tests, "time", types.SimpleNamespace(monotonic=lambda: 0.0))
+
+    def main_output(cache: Path) -> tuple[str, str]:
+        monkeypatch.setenv("VE_TESTMAP_CACHE", str(cache))
+        monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "docs/TESTING.md"])
+        assert select_tests.main() == 0
+        captured = capsys.readouterr()
+        return captured.out, captured.err
+
+    cached_map(tmp_path / "old", git_line("HEAD"), test_map.VERSION - 1)
+    cached_map(tmp_path / "old", git_line("HEAD~1"), test_map.VERSION - 1, mtime=1)
+    out_without, err_without = main_output(tmp_path / "none")
+    out_old, err_old = main_output(tmp_path / "old")
+    assert out_old == out_without and "missing coverage map" in out_old.splitlines()[0]
+    assert err_without == ""
+    summary = [line for line in err_old.splitlines() if line.startswith("select_tests:")]
+    assert summary == [f"select_tests: no map of format version {test_map.VERSION} for HEAD; skipped 2 "
+                       "ancestor map(s) of other versions, so selection has no map "
+                       "(record a new map: tools/test_map.py record)"]
+
+
+def test_added_and_removed_lean_modules_select_only_importing_executables(tmp_path):
+    graph = make_graph(tmp_path, {}, lean={"lean/Shared.lean": "import Lean\n",
+                                            "lean/Used.lean": "import Shared\n"})
+    graph.lean_imports["Main"] = ["Used"]
+    graph.lean_imports["OtherMain"] = []
+    from unittest.mock import patch
+    with patch.object(source_graph, "lean_executables", return_value={"first": "Main", "second": "OtherMain"}):
+        assert select_tests.lean_programs(graph, "lean/Shared.lean") == {"first"}
 
 
 def test_tests_that_ran_no_drifted_code_keep_their_map_entry(tmp_path):
@@ -607,6 +1014,31 @@ def test_recorder_sees_functions_reads_and_children(tmp_path):
     assert "lib.py" not in result["r"]  # imports, tracebacks and warnings read source, not data
     assert result["d"] == {"fixtures"}  # the import system's listing of "." is not the test's
     assert result["opaque"] == []
+
+
+def test_recorder_tracks_manifest_operations_without_import_read(tmp_path):
+    assurance = textwrap.dedent('''
+        import json, pathlib, sys
+        def _load():
+            return json.loads(pathlib.Path(__file__).with_name("assurance-manifest.json").read_text())
+        DATA = _load()
+        sys.audit("ve.manifest.presence", "typing")
+        def operation(name):
+            sys.audit("ve.manifest.operation", name)
+            return DATA[name]
+    ''')
+    result = recorder_run(tmp_path, "from ve import assurance\nassurance.operation('parse')\n",
+                          files={"ve/__init__.py": "", "ve/assurance.py": assurance,
+                                 "ve/assurance-manifest.json": '{"parse": 1}'})
+    assert result["m"] == {"parse"}
+    assert result["p"] == {"typing"}
+    assert "ve/assurance-manifest.json" not in result["r"]
+
+
+def test_direct_manifest_read_remains_a_whole_file_edge(tmp_path):
+    result = recorder_run(tmp_path, "from pathlib import Path\nPath('ve/assurance-manifest.json').read_text()\n",
+                          files={"ve/assurance-manifest.json": "{}"})
+    assert "ve/assurance-manifest.json" in result["r"]
 
 
 def test_a_python_child_that_leaves_no_record_makes_the_unit_opaque(tmp_path):
@@ -1014,7 +1446,7 @@ def test_the_plan_and_the_drift_check_treat_presence_alike(kind, path, letter, c
         expected = every
     else:
         expected = {PRESENCE_UNITS["reader"], *listers}
-        expected |= {"python": {PRESENCE_UNITS["importer"]}, "lean": {PRESENCE_UNITS["runner"]},
+        expected |= {"python": {PRESENCE_UNITS["importer"]}, "lean": set(),
                      "rust": {PRESENCE_UNITS["runner"]}, "data": set()}[kind]
         mapped = {test for test, reasons in plan["reasons"].items()
                   if any(r != "smoke" and not r.endswith("(static)") for r in reasons)}

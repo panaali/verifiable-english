@@ -1,0 +1,211 @@
+{
+ "base": "9f40783b8fc403a99798d9951615d76aa2088d38",
+ "head": "2a231176a6ddf85ccf03592ac1122a78a1534650",
+ "commits": [
+  {
+   "hash": "2a231176a6ddf85ccf03592ac1122a78a1534650",
+   "subject": "AR-4 mark removed section11 architecture statement corrected"
+  },
+  {
+   "hash": "f58dbda9e75c5ce6b2aa8d05f6685397cc9bc2a5",
+   "subject": "AR-4 bind refreshed scope and metrics to F8 F9 fixes"
+  },
+  {
+   "hash": "d9196e540444d9e5b081f77cc643fbb6b1b7b072",
+   "subject": "AR-4 record F8 and F9 evidence and signed R13 condition"
+  },
+  {
+   "hash": "150532217b0ce42d93dd39d15c655b978810070f",
+   "subject": "AR-4 validate R13 counts and normalize mutant evidence for rendering"
+  },
+  {
+   "hash": "482c780451f0a4aeefc1b19b3f24c24e305d3113",
+   "subject": "AR-4 evidence re-collected at the second sync (base 9f40783b); REPORT numbers and tests of the sync"
+  },
+  {
+   "hash": "6b3e1879a34a544c4c4b7a181d4b33dcaa559072",
+   "subject": "AR-4 DELTA, REPORT: the merge base is 9f40783b after the second sync (value unchanged); the sync recipe for the merge train"
+  },
+  {
+   "hash": "d8f47bab4fd01d939ff8c536491d08c81f7baf4f",
+   "subject": "AR-4 REPORT: tests/test_wire_gate_corpus.py passed (8 tests)"
+  },
+  {
+   "hash": "c1e3e252aa1e6a974f854bba4ef1acfc64ba5fff",
+   "subject": "AR-4 evidence collected at 101f9571 after the sync; REPORT: R15 signature, gate records via --gate, recheck-2 fixes and tests run"
+  },
+  {
+   "hash": "101f95713b883d6638655435b0ec41702ef87f78",
+   "subject": "AR-4 seeded bugs rerun on the final tools: 22/22 killed (M18-M22 guard F7, the merge driver and the map)"
+  },
+  {
+   "hash": "a21c2ab9315fccf6bab50d38180d9a0447dbac2f",
+   "subject": "AR-4 F7: the R13 check takes the gate's own table of rerunnable failures; a non-string stage or a boolean count is refused"
+  },
+  {
+   "hash": "aadb022870188bb030f1112fe92205e8c07c50e2",
+   "subject": "AR-4 F1: DELTA row 1 signed by standing ruling R15 at the synced merge base (K 997, S 9,788, V 37,495)"
+  },
+  {
+   "hash": "0338c877bb9771107e3d0b7761ec2a4214f3ccd9",
+   "subject": "AR-4: seeded bugs M18-M22 for the shared gate checks, the merge driver and the map's trust classes"
+  },
+  {
+   "hash": "d3d2f13f5d9ecf0e5e9e94ba87aa09c098b70ef5",
+   "subject": "AR-4 F7, F2, D4: report.py checks each evidence file by its writer's schema; no gate record in the tree"
+  },
+  {
+   "hash": "e25e88a0836614a736dc0a6a6e5047ad2896260f",
+   "subject": "AR-4 F7: shared gate-record checks refuse any malformed record"
+  },
+  {
+   "hash": "13daca12b1a2f778f3936b401deadd36da8a3f05",
+   "subject": "AR-4: record recheck regressions and refresh test inventory"
+  },
+  {
+   "hash": "9f5246b359e419861c4a42ba245efa0069df1833",
+   "subject": "AR-4 F6: type-check aggregate trust counts"
+  },
+  {
+   "hash": "9d2c471b84ade2e9fd3338439baa76d2e2888c76",
+   "subject": "AR-4 F5: reject malformed scope before evidence checks render"
+  },
+  {
+   "hash": "a7107dfe5a5203dd6a1502fd45bcfe20dd82b663",
+   "subject": "AR-4 evidence re-collected after the review fixes; REPORT: the fixes, tests run, and what stays open (DRI signature, full gate on the final HEAD)"
+  },
+  {
+   "hash": "81760f3a7f796ce5f8ece9e817be4028f15655d6",
+   "subject": "AR-4 seeded bugs rerun on the final tools: 17/17 killed (M11-M17 guard the F2-F4 fixes)"
+  },
+  {
+   "hash": "6395f6bb75b7e509a21dc508a12b0e734ed3b605",
+   "subject": "AR-4: trust-count test ids without spaces (the mutant harness reads them); M7 targets the blank-signature rule as now written"
+  },
+  {
+   "hash": "b8ae9cc5664a4b70444650449568156468886d43",
+   "subject": "AR-4: seeded bugs for the F2-F4 checks (M11-M17); report.py requires a mutant in every changed tools/ product file; gate collection regenerated"
+  },
+  {
+   "hash": "5d83983c1d509b9c2696ed8fe9c9b42ebcb54f94",
+   "subject": "AR-4 F1: the starting budget is a HUMAN item the evidence check holds open until the DRI signs its value"
+  },
+  {
+   "hash": "2d1a41ffd7a5091d1cf786397c2fb70e793df072",
+   "subject": "AR-4: test_gate_rerun's fake writes the trust counts without a new top-level import"
+  },
+  {
+   "hash": "f3a05416a111488ec9898614f46c19a70d586837",
+   "subject": "AR-4: the scope and trust-count tests in their own files (no overlap with AR-3 and AR-5a)"
+  },
+  {
+   "hash": "9bf3efd5aa9925b587191e13c999a459f807017e",
+   "subject": "AR-4 fix F3: a batch's scope is recomputed from git; the gate and the evidence are bound to HEAD"
+  },
+  {
+   "hash": "05b53737a936708d20f5c4abbcf31334c55d8cea",
+   "subject": "AR-4 fix F2: every gate records the per-file trust counts, checked by their writer's schema"
+  },
+  {
+   "hash": "f199e45d523929e1cf2c86ec24b063db18b19b30",
+   "subject": "AR-4 fix F4: a new allowance needs the DRI's signature; the UNSIGNED marker and placeholder text grant nothing"
+  },
+  {
+   "hash": "14c6a56cfb1de32105ee90f143ba9901e83f8fe2",
+   "subject": "AR-4 derive gate report figures from saved records"
+  },
+  {
+   "hash": "9ce93e54b98b131de37f3eb660009a77abde745c",
+   "subject": "AR-4 save full gate and passing same-commit rerun evidence"
+  },
+  {
+   "hash": "5ac95cc3859840fae9bd5d7d101e7a5cd22e40f8",
+   "subject": "AR-4 report interrupted one-hour gate attempt"
+  },
+  {
+   "hash": "75b25445e7a8fb5ce6c2a1cd0497d3db87c3e58a",
+   "subject": "AR-4 suite evidence at e25a7773: gate stages up to the suite passed, suite in 16 chunks 14,355 passed / 0 failed (gate stopped by the 2 h tool limit)"
+  },
+  {
+   "hash": "e25a7773b8b7769cfeae3c06be03350a1201ccca",
+   "subject": "AR-4 report: sync recipe for AR-4 itself (tried on main 5479466f), overlaps rechecked, regen_generated merge_json crash as follow-up; the starting budget needs the DRI's signature (D3's bound is 35,892 V)"
+  },
+  {
+   "hash": "699a18a5931a19feb8d384155ca46b384110a08a",
+   "subject": "AR-4 saved evidence re-collected at c41af506"
+  },
+  {
+   "hash": "c41af50636cbb446a14bce03edbda93474f31a95",
+   "subject": "AR-4: gate collection regenerated; report.py renders with --render (not a registered writer)"
+  },
+  {
+   "hash": "b9bee67f464fd51624b62a64cc3e21dabc20bb35",
+   "subject": "AR-4 seeded bugs rerun on the final tools/trust_map.py: 10/10 killed"
+  },
+  {
+   "hash": "2a2f4ab5fac1266c8c6cc1142e1179db3938de88",
+   "subject": "trust_map: a malformed base file written before AR-4 is a problem, never a crash"
+  },
+  {
+   "hash": "78003e53f8e5ebc53f7814b8e7e81958c2b704ea",
+   "subject": "AR-4 saved evidence and report (report.py --collect at 21d20d83)"
+  },
+  {
+   "hash": "21d20d83ab954d74902b31b81983fbbb58c15221",
+   "subject": "AR-4 report: the file's layout check, and the plan's line estimate missed (367, 7 per allowance)"
+  },
+  {
+   "hash": "f13e0bfc991a985d3b0128095e1c2dcfb3e64a74",
+   "subject": "AR-4 report, DELTA and evidence tool (report.py --collect/--write/--check, D4)"
+  },
+  {
+   "hash": "b7ecaee831ea952e9212def84daea5949c51fb79",
+   "subject": "AR-4 seeded bugs: ten mutants of tools/trust_map.py, each killed by its named test (tools/mutants.py)"
+  },
+  {
+   "hash": "15907fc273cb25a3bb1b17da88783c3f2c0a3b20",
+   "subject": "trust_map: --check fails when a change drops one of its base's allowances (the history only grows)"
+  },
+  {
+   "hash": "cf0aa59c59b6fa15e2aa03bca04e3a86564caee5",
+   "subject": "trust_map: an uncommitted merge on main is checked against HEAD, its first parent"
+  },
+  {
+   "hash": "cd30ea12e1928c064771f9a068d7745b686a41e2",
+   "subject": "AR-4 fixtures: ten untied V lines, inherited allowances, the merge-train write, two branches' allowances merging"
+  },
+  {
+   "hash": "341d5e50779113c4f46656c88f5310f1065f8d16",
+   "subject": "trust_map: the budget as a ratchet (AR-4, D3)"
+  }
+ ],
+ "files": [
+  "docs/ARCHITECTURE.md",
+  "docs/arch/AR-4/DELTA.md",
+  "docs/arch/AR-4/REPORT.md",
+  "docs/arch/AR-4/evidence/budget.json",
+  "docs/arch/AR-4/evidence/migration.json",
+  "docs/arch/AR-4/evidence/mutants.json",
+  "docs/arch/AR-4/evidence/scope.json",
+  "docs/arch/AR-4/migrate_baseline.py",
+  "docs/arch/AR-4/mutants.json",
+  "docs/arch/AR-4/report.py",
+  "docs/merge-tooling.md",
+  "docs/trust-baseline.json",
+  "tests/test_architecture_docs.py",
+  "tests/test_batch_scope.py",
+  "tests/test_consolidation_tools.py",
+  "tests/test_gate_integrity.py",
+  "tests/test_gate_rerun.py",
+  "tests/test_gate_trust.py",
+  "tests/test_readings_defaults_rd6b_report.py",
+  "tests/test_regen_generated.py",
+  "tests/test_trust_ratchet.py",
+  "tools/architecture_numbers.py",
+  "tools/batch_evidence.py",
+  "tools/batch_scope.py",
+  "tools/gate.py",
+  "tools/regen_generated.py",
+  "tools/trust_map.py"
+ ]
+}

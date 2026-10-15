@@ -449,7 +449,7 @@ def test_generated_looking_author_tables_are_not_decisions(tmp_path, predicate):
                                           (*doc["environment"].profiles, profile))
     wording.slots.reserved = (prefix,)
     found = route.premises()
-    situation = wording.situation(found["model"], found["choice"])
+    situation = wording.shown_situation(found["model"], found["choice"])
     assert predicate in situation and "suppose" not in situation
     assert predicate in wording.E.named_result(wording.readings(found["choice"]), "premise_model",
                                                wording.slots, situation=situation)
@@ -478,12 +478,12 @@ def test_wording_requires_active_producer_for_a_generated_table(tmp_path, layer,
     assert predicate in _active_generated(route.row["generated_predicates"], (*doc["environment"].profiles, profile))
     model = {"domains": {"agent": ["a"], "user": ["u"]}, "relations": {predicate: [["a", "u"]]}}
     wording = S2Wording(doc, route)
-    assert "suppose" not in wording.situation(model, [["rs1", 0]])
+    assert "suppose" not in wording.shown_situation(model, [["rs1", 0]])
     # Activating the producer makes the same unworded decision a detectable error.
     wording.generated = _active_generated(route.row["generated_predicates"],
                                           (*doc["environment"].profiles, profile))
     with pytest.raises(VEError, match="decision table"):
-        wording.situation(model, [["rs1", 0]])
+        wording.shown_situation(model, [["rs1", 0]])
 
 
 def test_no_report_or_wording_module_classifies_decisions_by_prefix():

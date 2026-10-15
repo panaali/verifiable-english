@@ -1,0 +1,133 @@
+{
+ "mutants": [
+  {
+   "id": "changed_before_failed",
+   "behaviour": "the tests that failed last time start first",
+   "file": "tools/run_order.py",
+   "test": "tests/test_run_order.py::test_the_last_failed_then_the_changed_then_the_rest",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "passed_units_stay_failed",
+   "behaviour": "a unit that runs to the end leaves the last failures",
+   "file": "tools/run_order.py",
+   "test": "tests/test_run_order.py::test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "recorded_run_never_stops",
+   "behaviour": "a recorded run stops after --maxfail failed tests",
+   "file": "tools/test_map.py",
+   "test": "tests/test_run_order.py::test_a_recorded_run_stops_after_maxfail_failures",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "plain_run_ignores_maxfail",
+   "behaviour": "a one-process run stops after --maxfail failed tests",
+   "file": "tools/select_tests.py",
+   "test": "tests/test_run_order.py::test_a_plain_run_stops_after_maxfail_and_keeps_what_it_did_not_run",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "stop_counts_quarantined",
+   "behaviour": "a quarantined failure never stops a run (review F1)",
+   "file": "tools/maxfail_pytest.py",
+   "test": "tests/test_run_order.py::test_a_quarantined_failure_never_stops_a_plain_run",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "units_take_pytests_maxfail",
+   "behaviour": "a recorded unit runs past its quarantined failure (review F1)",
+   "file": "tools/select_tests.py",
+   "test": "tests/test_run_order.py::test_a_recorded_unit_runs_past_its_quarantined_failure",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "signals_leave_units_running",
+   "behaviour": "killing a recorded run kills its units (review F2)",
+   "file": "tools/test_map.py",
+   "test": "tests/test_run_order.py::test_killing_a_recorded_run_kills_its_units",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "full_run_uses_quarantine",
+   "behaviour": "a full run counts quarantined failures (review F5)",
+   "file": "tools/select_tests.py",
+   "test": "tests/test_run_order.py::test_a_full_run_counts_quarantined_failures_and_never_stops",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "plain_run_counts_quarantined",
+   "behaviour": "a quarantined failure does not fail an agent's run",
+   "file": "tools/select_tests.py",
+   "test": "tests/test_run_order.py::test_a_plain_run_whose_only_failures_are_quarantined_passes",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "gate_plugin_allows_maxfail",
+   "behaviour": "the gate never stops early",
+   "file": "tools/gate_pytest.py",
+   "test": "tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "retry_failure_ignored",
+   "behaviour": "a quarantined test that fails alone still fails the gate",
+   "file": "tools/gate.py",
+   "test": "tests/test_gate_quarantine.py::test_a_quarantined_failure_that_fails_alone_fails_the_gate",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "nightly_retries",
+   "behaviour": "the nightly (--no-quarantine) retries nothing",
+   "file": "tools/gate.py",
+   "test": "tests/test_gate_quarantine.py::test_the_nightly_retries_nothing",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "expired_entry_applies",
+   "behaviour": "an expired entry no longer applies",
+   "file": "tools/quarantine.py",
+   "test": "tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "eight_day_entry",
+   "behaviour": "an entry lives at most seven days",
+   "file": "tools/quarantine.py",
+   "test": "tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused",
+   "exit": 1,
+   "caught": true
+  }
+ ],
+ "clean": {
+  "tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused": 0,
+  "tests/test_gate_quarantine.py::test_a_quarantined_failure_that_fails_alone_fails_the_gate": 0,
+  "tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry": 0,
+  "tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early": 0,
+  "tests/test_gate_quarantine.py::test_the_nightly_retries_nothing": 0,
+  "tests/test_run_order.py::test_a_full_run_counts_quarantined_failures_and_never_stops": 0,
+  "tests/test_run_order.py::test_a_plain_run_stops_after_maxfail_and_keeps_what_it_did_not_run": 0,
+  "tests/test_run_order.py::test_a_plain_run_whose_only_failures_are_quarantined_passes": 0,
+  "tests/test_run_order.py::test_a_quarantined_failure_never_stops_a_plain_run": 0,
+  "tests/test_run_order.py::test_a_recorded_run_stops_after_maxfail_failures": 0,
+  "tests/test_run_order.py::test_a_recorded_unit_runs_past_its_quarantined_failure": 0,
+  "tests/test_run_order.py::test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end": 0,
+  "tests/test_run_order.py::test_killing_a_recorded_run_kills_its_units": 0,
+  "tests/test_run_order.py::test_the_last_failed_then_the_changed_then_the_rest": 0
+ },
+ "language": "Python"
+}

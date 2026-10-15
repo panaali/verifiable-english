@@ -18,7 +18,6 @@ import copy
 import json
 import re
 import subprocess
-from types import SimpleNamespace
 
 import pytest
 
@@ -166,7 +165,7 @@ def _model(relations=None):
 def test_c1_4_status_undecided_under_default_settled_no_under_strict(lean_document, validated):
     """C1.4: with `excepted` {c} the default reading's two admissible fillings (yes {c}, no {}) give opposite values,
     so the point is UNDECIDED, worded by R7; under the strict reading it is SETTLED no."""
-    from ve.norm_defaults_english import point_clause
+    from ve.words import clause as lean_clause
     from ve.readings_s2_english import result_sentence
     raw, document = lean_document
     default = [(s, 1 if s == DENIAL else 0) for s in ce4.SETS]
@@ -180,7 +179,7 @@ def test_c1_4_status_undecided_under_default_settled_no_under_strict(lean_docume
     assert rows[0]["inner"]["point_status"] == "UNDECIDED", rows[0]
     assert rows[1]["inner"]["point_status"] == "SETTLED no", rows[1]
     frame = Environment(validated["filled"]["environment"])
-    clause = point_clause(frame, SimpleNamespace(constants={}), point["predicate"], ("c",))
+    clause = lean_clause(frame, {}, point["predicate"], ("c",))
     assert result_sentence("undecided", clause=clause) == (
         "the text does not say whether c may directly deny being Claude: no rule decides this situation.")
 

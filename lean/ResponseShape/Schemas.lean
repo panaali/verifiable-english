@@ -7,6 +7,8 @@ import ResponseShape.Schemas.CheckCertificate
 import ResponseShape.Schemas.Diagnose
 import ResponseShape.Schemas.Document
 import ResponseShape.Schemas.Question
+import ResponseShape.Schemas.Ask
+import ResponseShape.Schemas.Words
 import ResponseShape.Schemas.Discourse
 import ResponseShape.Schemas.English
 import ResponseShape.Schemas.EnglishLean
@@ -22,6 +24,7 @@ import ResponseShape.Schemas.Order
 import ResponseShape.Schemas.Parse
 import ResponseShape.Schemas.Quantity
 import ResponseShape.Schemas.Readings
+import ResponseShape.Schemas.ReadingsChoices
 import ResponseShape.Schemas.ReadingsRoute
 import ResponseShape.Schemas.Reports
 import ResponseShape.Schemas.Rights
@@ -52,6 +55,8 @@ def files : List File := [
   EnglishLean.grammarFile,
   EnglishLean.checkFile,
   Question.file,
+  Ask.file,
+  Words.file,
   Environment.file,
   Evaluate.file,
   FamilyNorms.file,
@@ -64,6 +69,7 @@ def files : List File := [
   Parse.file,
   Quantity.file,
   Readings.file,
+  ReadingsChoices.file,
   ReadingsRoute.file,
   Reports.file,
   Rights.file,

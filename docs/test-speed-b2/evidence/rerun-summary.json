@@ -1,0 +1,29 @@
+{
+  "corrected_rerun": {
+    "errors": 0,
+    "failed": 0,
+    "files": [
+      "tests/test_reports_lean.py",
+      "tests/test_run_order.py",
+      "tests/test_rust_conformance.py",
+      "tests/test_rust_reproducible.py"
+    ],
+    "passed": 90
+  },
+  "failed_file_rerun": {
+    "causes": [
+      "Rust tests lacked VE_RUST_BINARY in the ad hoc environment",
+      "nested run-order test paths were inside the checkout",
+      "one deadline test did not reach its intended deadline under load"
+    ],
+    "errors": 22,
+    "failed": 10,
+    "files": 79,
+    "passed": 3076,
+    "skipped": 1
+  },
+  "isolated_deadline_rerun": {
+    "nodeid": "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
+    "passed": 1
+  }
+}

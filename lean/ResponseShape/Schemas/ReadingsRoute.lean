@@ -279,7 +279,7 @@ def labelledFormulas : Shape :=
     .items (n [
         obj,
         .required ["label", "ast"],
-        closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])]
+        closed [("label", n [str, .minLength 1]), ("ast", ref "common.json#/$defs/generated_formula")]])]
 
 def elaborateSuperposed : List (String × Shape) := [
   ("vocabulary", n [
@@ -382,7 +382,7 @@ def conflict : Shape :=
             ("status", constS "ok"),
             ("verdict", enumS ["CONFLICT-FREE", "UNKNOWN"]),
             ("assumed", ref "#/$defs/choice"),
-            ("targets", ref "common.json#/$defs/strings"),
+            ("targets", n [arr, .items (n [str, .minLength 1])]),
             ("reading_premises", ref "common.json#/$defs/strings")]]]]
 
 def certificate : Shape :=

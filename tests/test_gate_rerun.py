@@ -15,8 +15,8 @@ import sys
 
 import pytest
 
-from test_gate_integrity import pin_rust_binary
-from tools import gate
+from test_gate_integrity import pin_base_collection, pin_rust_binary
+from tools import gate, gate_collection
 
 BASELINE = ["tests/a.py::test_a", "tests/a.py::test_a2", "tests/b.py::test_b", "tests/c.py::test_c"]
 FAILED = "tests/a.py::test_a"
@@ -37,15 +37,15 @@ class FakeGate:
         (root / "rust/Cargo.lock").write_text("version = 4\n")
         policy = tmp_path / "policy.json"
         policy.write_text(json.dumps({"version": 1, "optional_tests": [], "deselected_tests": []}))
-        collection = tmp_path / "collection.json"
-        collection.write_text(json.dumps(BASELINE))
         self.output = tmp_path / "record.json"
-        self.root, self.tree, self.failing, self.seen = root, "tree-1", {FAILED}, []
+        self.root, self.tree, self.failing, self.skipping, self.seen = root, "tree-1", {FAILED}, set(), []
+        self.trust = None  # the counts `trust_map.py --files` writes (None: trust_counts())
         self.toolchains = {"lean": "Lean (version 4.24.0)", "rustc": "rustc 1.90.0"}
         scratches = itertools.count()
         monkeypatch.setattr(gate, "ROOT", root)
         monkeypatch.setattr(gate, "POLICY", policy)
-        monkeypatch.setattr(gate, "COLLECTION", collection)
+        self.records = []
+        pin_base_collection(monkeypatch, BASELINE, self.records)
         monkeypatch.setattr(gate, "REQUIRED_FAMILIES", ())
         # uv is linked from each gate's own scratch directory: its path differs on every run.
         monkeypatch.setattr(gate, "check_toolchains", lambda result, env: result["toolchains"].update(
@@ -55,6 +55,9 @@ class FakeGate:
 
     def command(self, args, *, env, stage, cwd=None):
         self.seen.append((stage, [str(arg) for arg in args]))
+        if self.trust is not False:  # False: trust_map.py wrote nothing
+            from test_gate_integrity import fake_trust
+            fake_trust(args, stage, self.trust)
         if stage == "commit":
             return "commit-1"
         if stage == "tree":
@@ -67,7 +70,8 @@ class FakeGate:
             files = [str(arg) for arg in args if str(arg).startswith("tests/")]
             ids = [nodeid for nodeid in BASELINE if not files or nodeid.split("::")[0] in files]
             outcomes = {nodeid: {"outcome": "failed", "reason": "AssertionError"} if nodeid in self.failing
-                        else {"outcome": "passed"} for nodeid in ids}
+                        else {"outcome": "skipped", "reason": "optional on this host"}
+                        if nodeid in self.skipping else {"outcome": "passed"} for nodeid in ids}
             Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps(
                 {"collected": ids, "selected": ids, "deselected": [], "collection_reports": [],
                  "tests": outcomes if stage == "Python suite" else {}, "workers": {"gw0": ids}}))
@@ -111,6 +115,8 @@ def test_a_rerun_runs_only_the_failed_tests_files_and_is_not_a_full_gate(fake):
     assert record["counts"]["selected"] == 2 and record["failures"] == []
     assert "Lean audit" not in fake.stages() and "native Rust tests" not in fake.stages()
     assert {"Lean build", "Rust build", "Wire contract check"} <= set(fake.stages())
+    # The wire contract's examples are admitted by the binary this gate builds, never one left by an earlier build.
+    assert fake.stages().index("Lean build") < fake.stages().index("Wire contract check")
     assert record["stages"] == ["toolchains", "lean_build", "rust_build", "pytest"]
     # Never a full gate's evidence: the full gate is still required.
     assert record["status"] != "passed"
@@ -181,3 +187,16 @@ def test_a_full_gate_records_its_tree_and_mode(fake):
     code, record = fake.run()
     assert (code, record["status"], record["mode"], record["tree_sha"]) == (0, "passed", "full", "tree-1")
     assert "rerun_failed" not in record
+    # Its whole collection is its commit's record; the base's came from the base's record.
+    assert fake.records == [("commit-1", BASELINE)] and record["collection"]["head_record"] == "written"
+    assert gate_collection.decode_ids(record["collection"]["collected_zlib"]) == sorted(BASELINE)
+    assert record["collection"]["base_source"] == "record of base-commit"
+
+
+def test_a_rerun_collects_part_of_the_tree_and_records_nothing(fake):
+    fake.run()
+    assert fake.records == [("commit-1", BASELINE)]
+    fake.failing = set()
+    code, record = fake.run("--rerun-failed")
+    assert (code, record["status"]) == (0, "rerun-passed")
+    assert fake.records == [("commit-1", BASELINE)] and "head_record" not in record["collection"]

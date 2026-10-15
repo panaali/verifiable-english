@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FOLDER = ROOT / "docs/readings-defaults/rd8"
 EVIDENCE = json.loads((FOLDER / "evidence.json").read_text())
 REPORT = (FOLDER / "DELTA.md").read_text()
+ABBREV = 8  # the evidence saves every hash cut to this many hex digits
 
 
 def section(title: str) -> str:
@@ -23,9 +24,10 @@ def section(title: str) -> str:
 
 
 def test_the_evidence_is_complete():
-    assert EVIDENCE["batch"] == "RD-8" and re.fullmatch(r"[0-9a-f]{8}", EVIDENCE["base"])
-    assert EVIDENCE["commits"] and all(re.fullmatch(r"[0-9a-f]{8}", c["hash"]) and c["subject"]
-                                       for c in EVIDENCE["commits"])
+    short = re.compile(f"[0-9a-f]{{{ABBREV}}}")
+    assert EVIDENCE["batch"] == "RD-8" and short.fullmatch(EVIDENCE["base"])
+    assert EVIDENCE["commits"] and all(short.fullmatch(c["hash"]) and c["subject"]
+                                       for c in EVIDENCE["commits"] + EVIDENCE["review_fix_commits"])
     assert EVIDENCE["gate"]["head"] == EVIDENCE["commits"][-2]["hash"]
     assert EVIDENCE["gate"]["failed"] == 0
     assert all(m["caught_by"] for m in EVIDENCE["mutants"])
@@ -46,13 +48,13 @@ def test_review_fix_commit_chain_and_final_gate_target():
     [report_commit] = subprocess.check_output(
         ["git", "log", "HEAD", "--format=%H", "-n", "1", "--grep=^docs: RD-8 review fixes and final gate evidence$"],
         cwd=ROOT, text=True).splitlines()
-    rows = subprocess.check_output(
+    # Full hashes cut to the evidence's fixed length: git's own %h length grows with the repository.
+    lines = subprocess.check_output(
         ["git", "log", "--reverse", "--format=%H%x09%s", f"{EVIDENCE['base']}..{report_commit}"],
         cwd=ROOT, text=True).splitlines()
+    rows = [f"{sha[:ABBREV]}\t{subject}" for sha, subject in (line.split("\t", 1) for line in lines)]
     saved = EVIDENCE["commits"] + EVIDENCE["review_fix_commits"]
-    assert len(rows) == len(saved) + 1
-    assert all(actual_subject == entry["subject"] and full_hash.startswith(entry["hash"])
-               for (full_hash, actual_subject), entry in zip((row.split("\t", 1) for row in rows[:-1]), saved))
+    assert rows[:-1] == [f"{entry['hash']}\t{entry['subject']}" for entry in saved]
     assert rows[-1].endswith("\tdocs: RD-8 review fixes and final gate evidence")
 
 

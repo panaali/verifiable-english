@@ -19,7 +19,7 @@ from types import SimpleNamespace
 import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
 
-from subprocesses import HANG_TIMEOUT
+from subprocesses import BUSY_PHASES, HANG_TIMEOUT, busy_cpu
 from tests.lean_build import lean_build
 from ve.backends.lean_service import (HANDLE_KEY, MAX_CASES, MAX_HANDLE_BYTES, MAX_HANDLES, MAX_LINE_BYTES,
                                       CheckerUnavailable, LeanService,
@@ -53,6 +53,27 @@ def raw_session(executable, lines: bytes, timeout=HANG_TIMEOUT):
     out = proc.stdout.split(b"\n")
     assert out[-1] == b""
     return [json.loads(line) for line in out[1:-1]], out[1:-1]
+
+
+def test_complete_lean_response_obeys_size_cap(tmp_path, monkeypatch):
+    """F4: a complete, genuine response above the cap is unavailable."""
+    from ve.backends import lean_service
+
+    with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True, retries=0) as service:
+        monkeypatch.setattr(lean_service, "MAX_RESPONSE_BYTES", 64)
+        original = LeanService._write_all
+
+        def send_and_buffer(self, data, deadline):
+            original(self, data, deadline)
+            with monkeypatch.context() as whole:
+                whole.setattr(lean_service, "MAX_RESPONSE_BYTES", 1 << 30)
+                line = LeanService._read_line(self, deadline)
+            assert len(line) > lean_service.MAX_RESPONSE_BYTES
+            self._buffer[:] = line + b"\n"
+
+        monkeypatch.setattr(LeanService, "_write_all", send_and_buffer)
+        with pytest.raises(CheckerUnavailable, match="size limit"):
+            service.run("evaluate", [{"id": "a", "ast": [["top"]]}])
 
 
 def test_english_mode_is_the_generated_copy_of_the_english_runner():
@@ -736,6 +757,102 @@ def test_a_request_past_its_cpu_deadline_names_its_mode_and_is_not_retried(tmp_p
         assert service.stats["starts"] == 1 and service.stats["retries"] == 0 and service.pid is None
 
 
+@pytest.mark.parametrize("phase", ["write", "response"])
+def test_request_transfer_checks_cpu_after_its_final_system_call(tmp_path, monkeypatch, phase):
+    """F2: CPU exhaustion during the last write or the read containing the newline cannot
+    escape because the transfer loop has no further select after that system call."""
+    from ve.backends import lean_service
+    from ve.backends.lean_service import _Deadline
+
+    clock = SimpleNamespace(seconds=0.0, transferred=False)
+    monkeypatch.setattr(lean_service, "_cpu_seconds", lambda pid: clock.seconds)
+    monkeypatch.setitem(lean_service.DEADLINES, "evaluate", (0.3, 0.0))
+    with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True) as service:
+        native = os.write if phase == "write" else os.read
+        stream = service._proc.stdin if phase == "write" else service._proc.stdout
+
+        def transfer(fd, data):
+            result = native(fd, data)
+            content = bytes(data) if phase == "write" else result
+            if fd == stream.fileno() and b"\n" in content and (
+                    phase == "write" or b'"results"' in bytes(service._buffer) + content):
+                clock.seconds, clock.transferred = 1.0, True
+            return result
+
+        monkeypatch.setattr(lean_service, "os", SimpleNamespace(**vars(os)))
+        setattr(lean_service.os, "write" if phase == "write" else "read", transfer)
+        with pytest.raises(CheckerUnavailable, match="mode evaluate used more than its deadline") as caught:
+            if phase == "write":
+                service._write_all(b"{}\n", _Deadline(time.monotonic() + HANG_TIMEOUT, 0.3, 0.0, "evaluate"))
+            else:
+                service.run("evaluate", [{"id": "a", "ast": [["top"]]}])
+        assert clock.transferred and caught.value.operation == "evaluate"
+        assert service.stats["retries"] == 0 and service.pid is None
+
+
+def _without_cpu(method):
+    """`method` (`_write_all` or `_read_line`) of a client that does not check the CPU deadline in that phase."""
+    from ve.backends.lean_service import _Deadline
+    return lambda self, *arguments: method(self, *arguments[:-1],
+                                           _Deadline(arguments[-1].wall, mode=arguments[-1].mode))
+
+
+@pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="process CPU time is read from /proc")
+@pytest.mark.parametrize("unchecked", [None, "write", "response"], ids=["checked", "write unchecked",
+                                                                        "response unchecked"])
+@pytest.mark.parametrize("phase", ["write", "response"])
+def test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline(tmp_path, monkeypatch, phase, unchecked):
+    """Review runner-portability F1: a CPU clock that moved from its first reading found a sub-tick deadline
+    passed while the request was still being written, so the deadline tests passed with a client that never
+    checks the CPU while waiting for the response. With the service busy in one phase only, the deadline is
+    found passed in that phase, naming the mode; a client that drops the check in that phase (the mutant,
+    `unchecked`) answers instead, so each phase's check is one a test needs."""
+    from ve.backends import lean_service
+    if unchecked:
+        name = BUSY_PHASES[unchecked]
+        monkeypatch.setattr(LeanService, name, _without_cpu(getattr(LeanService, name)))
+    monkeypatch.setitem(lean_service.DEADLINES, "evaluate", (1e-6, 0.0))
+    clock = busy_cpu(monkeypatch, lean_service, phases=(phase,))
+    with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True) as service:
+        if unchecked == phase:
+            assert len(service.run("evaluate", [{"id": "a", "ast": [["top"]]}])) == 1
+            assert clock.fired == []
+            return
+        with pytest.raises(CheckerUnavailable, match="mode evaluate used more than its deadline") as caught:
+            service.run("evaluate", [{"id": "a", "ast": [["top"]]}])
+        assert caught.value.operation == "evaluate" and not isinstance(caught.value, ResourceLimit)
+        assert clock.fired == [phase] and service.stats["retries"] == 0
+
+
+@pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="process CPU time is read from /proc")
+@pytest.mark.parametrize("unchecked", [False, True], ids=["checked", "response unchecked"])
+def test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check(monkeypatch, unchecked):
+    """The ARM runner's failure and review runner-portability F1's probe: on a machine that answers within one
+    tick the sub-tick deadline tests pass, and with the response wait's CPU check dropped each of them fails."""
+    from test_question_reading import test_the_whole_question_is_bounded_by_the_modes_deadline
+    from test_lean_document_wrapper import test_a_document_past_its_cpu_deadline_is_unavailable_never_ok
+    from ve.backends import lean_service
+
+    expected_names = [test_the_whole_question_is_bounded_by_the_modes_deadline.__name__,
+                      test_a_document_past_its_cpu_deadline_is_unavailable_never_ok.__name__]
+    failures = []
+    for test in (test_the_whole_question_is_bounded_by_the_modes_deadline,
+                 test_a_document_past_its_cpu_deadline_is_unavailable_never_ok):
+        with monkeypatch.context() as isolated:
+            # The same sub-tick machine as the old pytest plugin, without starting another pytest
+            # session while this session holds the native build lock.
+            isolated.setattr(lean_service, "_cpu_seconds", lambda pid: 0.0)
+            if unchecked:
+                isolated.setattr(LeanService, "_read_line", _without_cpu(LeanService._read_line))
+            try:
+                test(isolated)
+            except pytest.fail.Exception as exc:
+                failures.append((test.__name__, str(exc)))
+    assert [name for name, message in failures if "DID NOT RAISE CheckerUnavailable" in message] == (
+        expected_names if unchecked else []), failures
+    assert len(failures) == (2 if unchecked else 0), failures
+
+
 def test_a_request_that_gets_no_cpu_meets_the_wall_cap(tmp_path, monkeypatch, expired):
     """A process that stops being scheduled (here, sleeping) uses no CPU; the wall-clock cap still
     ends the request, which is retried once. The cap is `WALL_FACTOR` times the CPU deadline
@@ -1091,6 +1208,9 @@ _SCHEMA_SEEDS = {
     "english.grammar": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "english.check": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "english.question": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
+    "ask": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
+    "words": ({"id": "c"}, {"id": "c", "status": "ok",
+                           "result": {"environment_id": "a" * 64, "lexicon_id": "a" * 64, "lines": ["x"]}}),
     "environment": ({"id": "c", "environment": {"profiles": ["relational-fol@0"]}},
                     {"id": "c", "status": "ok", "environment_id": "a" * 64,
                      "profiles": ["relational-fol@0"], "family": "fol"}),
@@ -1106,6 +1226,7 @@ _SCHEMA_SEEDS = {
               {"id": "c", "status": "ok", "report": {"root": "r", "assumptions": ["r"]},
                "assumptions": ["r"], "supporting_edges": [], "background": []}),
     "readings": ({"id": "c", "verdict": "ALL"}, {"id": "c", "status": "ok", "verdict": "ALL"}),
+    "readings-choices": ({"id": "c"}, {"id": "c", "status": "ok", "verdict": "ALL"}),
     "bundle": ({"id": "c", "lemmas": [{"meaning_id": "a" * 64}]},
                {"id": "c", "status": "ok", "checked": 1, "lemmas": ["a" * 64]}),
     "family-norms": ({"id": "c", "kind": "norms-certificate"},
@@ -1167,7 +1288,8 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
     elif mutation == "extra-row-field":
         answer["results"][0]["extra"] = 1
     elif mutation == "wrong-row-type":
-        field = ("status" if mode in ("english.read", "english.grammar", "english.check", "english.question") else
+        field = ("status" if mode in ("english.read", "english.grammar", "english.check", "english.question",
+                                      "ask", "words") else
                  "id" if mode in ROUTE_MODES else
                  "outcome" if mode == "diagnose" else
                  "results" if mode == "risk-eval" else
@@ -1178,7 +1300,7 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
                  "meaning_id" if mode == "check" else
                  "ast" if mode == "parse" else
                  "supporting_edges" if mode == "graph" else
-                 "verdict" if mode == "readings" else
+                 "verdict" if mode in ("readings", "readings-choices") else
                  "lemmas" if mode == "bundle" else
                  "valid" if mode == "family-norms" else "values")
         answer["results"][0][field] = "true"

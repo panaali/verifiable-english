@@ -42,6 +42,7 @@ abbrev identity : Skel := skel% "identity.json#/row"
 abbrev parse : Skel := skel% "parse.json#/row"
 abbrev graph : Skel := skel% "graph.json#/row"
 abbrev readings : Skel := skel% "readings.json#/row"
+abbrev readingsChoices : Skel := skel% "readings-choices.json#/row"
 abbrev bundle : Skel := skel% "bundle.json#/row"
 abbrev familyNorms : Skel := skel% "family-norms.json#/row"
 abbrev softNorms : Skel := skel% "soft-norms.json#/row"
@@ -58,6 +59,8 @@ abbrev readingsRoute : Skel := skel% "readings-route.json#/row"
 abbrev diagnose : Skel := skel% "diagnose.json#/row"
 abbrev document : Skel := skel% "document.json#/row"
 abbrev englishQuestion : Skel := skel% "english.question.json#/row"
+abbrev ask : Skel := skel% "ask.json#/row"
+abbrev words : Skel := skel% "words.json#/row"
 
 def row : VE.Service.Mode → Skel
   | .evaluate => evaluate
@@ -76,6 +79,7 @@ def row : VE.Service.Mode → Skel
   | .parse => parse
   | .graph => graph
   | .readings => readings
+  | .readingsChoices => readingsChoices
   | .bundle => bundle
   | .familyNorms => familyNorms
   | .softNorms => softNorms
@@ -92,6 +96,8 @@ def row : VE.Service.Mode → Skel
   | .diagnose => diagnose
   | .document => document
   | .englishQuestion => englishQuestion
+  | .ask => ask
+  | .words => words
 
 #guard VE.Service.modes.all fun m =>
   (skeleton Schemas.files s!"{m.name}.json#/row").toOption == some (row m, [])

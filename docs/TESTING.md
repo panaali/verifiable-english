@@ -9,7 +9,19 @@ PATH="$HOME/.elan/bin:$PATH" UV_CACHE_DIR=/tmp/ve-xdist-uv-cache \
     uv run --frozen python tools/select_tests.py --impacted --run
 ```
 
-This takes the changed files from the working tree (tracked changes and new files). Use `--base origin/main` for a branch, `--commit REV` for one commit, or `--paths FILE...` to name the files yourself. Leave out `--run` to see the plan, or add `--json` for the full selection. `--run` runs the checks, the native builds the selection needs, and pytest on the selected files, one after another and in the foreground.
+This takes the changed files from the working tree (tracked changes and new files). Use `--base origin/main` for a branch (it compares `base...HEAD`, so it sees committed changes only), `--commit REV` for one commit, or `--paths FILE...` to name the files yourself. Leave out `--run` to see the plan, or add `--json` for the full selection. `--run` runs the checks, the native builds the selection needs, and pytest on the selected files, one after another and in the foreground.
+
+### The light tier
+
+`--tier light` is not a narrower selection: it runs every test outside the measured heavy list, then the heavy tests in the selected files. It prints both counts.
+
+```sh
+uv run --frozen python tools/select_tests.py --tier light --base "$(git merge-base HEAD main)" --run
+```
+
+The heavy stage names the selected files with `-m heavy`, never saved node IDs, so a renamed or split heavy test runs as light; a stage whose heavy tests are all gone is skipped. The builds and checks chosen by ordinary selection still run. Without `--tier`, selection works as before. A plain pytest run still runs every default test.
+
+`tests/heavy-durations.json` holds the full measured Mac duration report; `tools/heavy_tests.py --write` generates `tests/heavy.json` from it, and `--check` refuses an inventory that is stale against that report. A test measured at 10 seconds or more enters the heavy list. After a nightly `pytest --durations=0 --durations-min=0` run (without `--durations-min=0` pytest leaves out tests under 0.005 s), `tools/heavy_tests.py --check --report /path/to/pytest-output.txt` lists the tests that would enter, leave or drop out of the heavy list and exits 0: no test fails because a test became slow. The DRI decides whether to update both files with `--write --report /path/to/pytest-output.txt`. The nightly full, live, no-reuse run and branch verify still run all tests.
 
 A test file is selected when one of these changed:
 
@@ -28,7 +40,7 @@ The fast path is precise for changes to tests, helpers, tools, data and use case
 uv run --frozen python tools/select_tests.py --impacted --paths path/to/source --json
 ```
 
-Without `--impacted`, `tools/select_tests.py` selects by function from a recorded coverage map, with the static graph for whatever the map cannot answer (next section). The two modes are separate rules today: `--impacted` needs no map and runs one plain pytest process; the default is finer for product modules and records coverage as it runs. Both read every `conftest.py` above a test as part of what it imports.
+Without `--impacted`, `tools/select_tests.py` selects by function from a recorded coverage map. A missing map selects the complete suite; the static graph covers only units missing from a usable map (next section). The two modes are separate rules today: `--impacted` needs no map and runs one plain pytest process; the default is finer for product modules and records coverage as it runs. Both read every `conftest.py` above a test as part of what it imports.
 
 ## The complete suite
 
@@ -59,6 +71,24 @@ How the native builds are reused is set by `VE_NATIVE_PREBUILT`:
 - `VE_NATIVE_PREBUILT=0`: always build.
 
 `VE_LEAN_PREBUILT=1` also skips the service tests' redundant target builds.
+
+## Order, early stop and the quarantine
+
+`tools/select_tests.py --run` starts the test files that failed last time first, then the test files the change edits, then the rest in name order (`tools/run_order.py`; the run prints its order). The order never changes which files run. The last failures are this worktree's: the failed tests of its last selected run, kept in the worktree's git directory (`ve-last-failed.json`), and those of `gate-result.json` when the gate ran after that run. A file leaves the list when it runs to the end without a failure.
+
+`--run` stops after `--maxfail` failed tests (default 5; `--maxfail 0` runs everything). A recorded run then starts no more files and kills the running ones; it says `STOPPED EARLY`, lists the files that did not run, exits 1, and leaves those files to the static graph in the map it saves. The count is one rule, `tools/maxfail_pytest.py`: failed tests outside the quarantine, the ones the exit status counts. Each file's pytest (and the one-process `--no-record` and `--impacted` runs) gets it from `select_tests.stop_options`, never pytest's own `--maxfail`, which would count a quarantined failure and skip the tests after it. `--full --run` is the whole suite before a green tag: it never stops early (it refuses `--maxfail`) and counts quarantined failures.
+
+Each file of a recorded run runs in its own session, so a signal to the run's process group does not reach it. The run kills every running file itself when it is interrupted (Ctrl-C), terminated or hung up, or when it fails (`Stop.on_exit` in `tools/test_map.py`); that covers `select_tests.py --run` and the map's `record` and `update`. A `SIGKILL` of the run cannot be caught: its files then run on until their own timeout.
+
+The gate never stops early: `tools/gate_pytest.py` refuses `--maxfail`, `-x` and `--stepwise`, the gate replaces the project's `addopts`, and its environment drops `PYTEST_ADDOPTS`.
+
+`tools/test-quarantine.json` lists tests that fail under machine load. Each entry has the test's node ID, its saved evidence (a JSON file in the repository whose `test` is that node ID), an owner, the day it was added and an expiry at most 7 days later. `python3 tools/quarantine.py` checks the file and lists the active and expired entries. A quarantined test still runs everywhere:
+
+- In the gate, a quarantined test that fails runs once more, alone and serially. If it passes there, it no longer fails the gate, and the record keeps both outcomes under `quarantine.retried`. If it fails again, it fails the gate.
+- In `select_tests.py --run`, its failure is reported as `QUARANTINED` and counts towards neither `--maxfail` nor the exit status. A `--full` run applies no quarantine.
+- `tools/gate.py --no-quarantine` retries nothing, so every failure blocks; the nightly is meant to run it. Today the nightly runs `verify.sh`, which ignores the quarantine but whose serial retry still passes a test that fails under load, such as `test_ci_run` (switching it is the orchestrator's follow-up).
+
+An expired entry no longer applies, so the test blocks again. A malformed file fails the gate. `tests/test_gate_quarantine.py` checks the file and the gate's handling; `tests/test_run_order.py` checks the order and the early stop.
 
 ## Speed is not a correctness criterion
 
@@ -126,8 +156,21 @@ The selector works at the level of functions, not layers:
   deleted module keeps its importers, a deleted fixture the tests that named
   it, and an import the change removed still counts.
 * **Lean.** The executables whose root imports the module (from the Lean
-  import graph), then the tests that ran those executables; plus `lake build`,
-  `lean/audit.py` and the Lean import check.
+  import graph), including when a module is added or removed, then the tests
+  that ran those executables; plus `lake build`, `lean/audit.py` and the Lean
+  import check. For `ve_service`, the map also records each request mode. The
+  mode roots are generated from Lean's proved `runMode` equations in
+  `tools/lean-mode-deps.json`; the Lean import graph expands each root. A
+  changed module selects recorded users of the affected modes. Protocol,
+  Serve, a missing or stale mode table, an unknown mode, and a service test
+  with no recorded mode retain the service-wide selection. Tests that check
+  `lean/checkers.lock` still select when the pin file changes.
+* **Assurance manifest.** The recorder records each operation read through
+  `ve.assurance`, its import-time presence checks, and a whole-manifest read
+  separately. Editing an existing operation selects its entry readers and
+  `test_assurance_manifest`; adding or removing one also selects its presence
+  readers. Editing shared metadata
+  selects the complete suite. A missing map also selects the complete suite.
 * **Rust.** The tests that ran a Rust binary, `cargo test`, and the release
   and debug builds.
 * **Any file.** Whatever its kind (Python, Lean, Rust, data), the tests that
@@ -161,7 +204,10 @@ children started with an explicit `env=` inherit it). It records, per test
 file, the functions under the repository that ran (`sys.monitoring`), the
 files read and directories listed by test code (an audit hook; the import
 system's, pytest's, tracebacks' and warnings' source reads are excluded), and
-the programs started. Who a read or listing is for is decided by the
+the programs started, the Lean service modes requested, and the assurance
+manifest operations read. A schema
+for `ve_service` is compiled only when its mode is first checked. Who a read
+or listing is for is decided by the
 innermost frame that is either code under the repository (the test and the
 project: recorded) or infrastructure (import system, site, pytest: not
 recorded); the standard library and third-party packages in between act for

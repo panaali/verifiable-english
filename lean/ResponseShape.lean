@@ -160,6 +160,10 @@ inductive Shape where
   | maxSteps
   /-- A certificate's Background count is at most what the request could generate (`backgroundBound`). -/
   | backgroundBound
+  /-- A diagnostic's offsets and line/column locate its start in the request source. -/
+  | sourceSpan (pointer : String)
+  /-- A readings plan's indices, names and budget are bounded by its request. -/
+  | readingPlan
   | index
   | digest
   | zip (pointer : String) (s : Shape)
@@ -284,6 +288,8 @@ def render (file : String) : Nat → Shape → Except String Json
     | .maxSteps => pure (Json.mkObj [("x-max-steps", Json.mkObj [
         ("default", toJson VE.CertificateWire.maxSteps), ("cap", toJson VE.CertificateWire.caseCap)])])
     | .backgroundBound => pure (Json.mkObj [("x-background-bound", .bool true)])
+    | .sourceSpan p => pure (Json.mkObj [("x-source-span", .str p)])
+    | .readingPlan => pure (Json.mkObj [("x-reading-plan", .bool true)])
     | .index => pure (Json.mkObj [("x-index", .bool true)])
     | .digest => pure (Json.mkObj [("x-digest", .bool true)])
     | .zip p x => pure (Json.mkObj [("x-zip", Json.mkObj [("of", .str p), ("items", ← go x)])])
@@ -400,6 +406,45 @@ def backgroundBound (case : Json) : Option Nat := do
     | .arr ps => ps.size
     | _ => 0
   pure (4 * (members predicates).size + c * (c - 1) / 2 + soft)
+
+/-- Binding only: Lean's readings planner decides which indices are compatible;
+this relation ensures that every reported choice, count, coupling and unit
+refers to the submitted sets. -/
+def readingPlanBound (request answer : Json) : Bool := Id.run do
+  let some sets := (request.getObjValD "set_meta").getArr?.toOption | return false
+  let some couplings := (request.getObjValD "couplings").getArr?.toOption | return false
+  let some limit := (request.getObjValD "limit").getNat?.toOption | return false
+  let mut sizes : List Nat := []
+  let mut units : List Json := []
+  for s in sets do
+    let some rs := (s.getObjValD "readings").getArr?.toOption | return false
+    let some sid := (s.getObjValD "id").getStr?.toOption | return false
+    let unit := (s.getObjValD "unit").getStr?.toOption.getD sid
+    sizes := sizes ++ [rs.size]
+    units := units ++ [.str unit]
+  let mut labels : List Json := []
+  for c in couplings do
+    let some cid := (c.getObjValD "id").getStr?.toOption | return false
+    labels := labels ++ [.str ("coupling:" ++ cid)]
+  if answer.getObjValD "route" == .str "enumerate" then
+    let some choices := (answer.getObjValD "choices").getArr?.toOption | return false
+    if choices.isEmpty || choices.size > limit then return false
+    let mut seen : List (List Nat) := []
+    for choice in choices do
+      let some items := choice.getArr?.toOption | return false
+      if items.size != sizes.length then return false
+      let some is := items.toList.mapM (·.getNat?.toOption) | return false
+      if seen.contains is || !(is.zip sizes).all (fun (i, n) => i < n) then return false
+      seen := is :: seen
+    return answer.getObjValD "conditional_on" == toJson labels
+  else if answer.getObjValD "route" == .str "UNKNOWN" then
+    let some budget := ((answer.getObjValD "budget").getObjValD "max_choices").getNat?.toOption |
+      return false
+    let some count := (answer.getObjValD "choice_count").getNat?.toOption | return false
+    let some named := (answer.getObjValD "units").getArr?.toOption | return false
+    return budget == limit && limit < count && count ≤ sizes.foldl (· * ·) 1 &&
+      named.toList.all units.contains
+  else return false
 
 def tokens (pointer : String) : List String :=
   if pointer.isEmpty then [] else
@@ -621,6 +666,24 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
         if kind value == "integer" && numLe n ⟨(limit : Int), 0⟩ then pure ()
         else fail "background exceeds what the request vocabulary generates"
       | _, _ => fail "background exceeds what the request vocabulary generates"
+    | .sourceSpan p => match resolve ctx.value p with
+      | some (.str source) =>
+        let start := (value.getObjVal? "start" >>= Json.getNat?).toOption
+        let stop := (value.getObjVal? "end" >>= Json.getNat?).toOption
+        let line := (value.getObjVal? "line" >>= Json.getNat?).toOption
+        let column := (value.getObjVal? "column" >>= Json.getNat?).toOption
+        match start, stop, line, column with
+        | some a, some b, some l, some c =>
+          let before := source.toList.take a
+          let expectedLine := 1 + (before.filter (· == '\n')).length
+          let expectedColumn := 1 + (before.reverse.takeWhile (· != '\n')).length
+          if a ≤ b && b ≤ source.length && l == expectedLine && c == expectedColumn then pure ()
+          else fail "span is outside the request source or has the wrong line and column"
+        | _, _, _, _ => fail "span is outside the request source or has the wrong line and column"
+      | _ => fail "span is outside the request source or has the wrong line and column"
+    | .readingPlan =>
+      if readingPlanBound ctx.value value then pure ()
+      else fail "readings plan names choices outside the request"
     | .index => match value, ctx.index with
       | .num x, some i => if kind value == "integer" && numEq x ⟨(i : Int), 0⟩ then pure () else fail "is not the result's position"
       | _, _ => fail "is not the result's position"
