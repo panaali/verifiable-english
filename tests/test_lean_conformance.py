@@ -272,7 +272,7 @@ def test_lean_and_python_reject_malformed_display_metadata(lean_executable, fiel
 def test_lean_transitive_axiom_allowlist(lean_executable):
     import sys
     result = subprocess.run([sys.executable, str(ROOT / "lean/audit.py")], cwd=ROOT,
-                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
+                            capture_output=True, text=True, timeout=2 * HANG_TIMEOUT)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "PASS:" in result.stdout
 

@@ -15,7 +15,8 @@ Readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 and 2.2)
 to R9 (R8 and R9 name what an UNKNOWN rests on, 2.4 item 3),
 and reuse norm-defaults' filled-gap sentence after a shown situation (one per filled gap the result depends on, read
 here as part of the result, so the gate reads the whole line) and its pair sentence as an E3 line. Their `<clause>`
-slot is a closed class: the point clauses of the situations shown (`ve/norm_defaults_english.py` `point_clause`).
+slot is a closed class: the point clauses of the situations shown, Lean's (`VE.Words.clauseAt`, through
+`ve/words.py`), as are the filled-gap sentences themselves (`VE.Words.fillingSentence`).
 """
 from __future__ import annotations
 
@@ -331,14 +332,15 @@ def citation(numbers):
     return f"sentence {numbers[0]}" if len(numbers) == 1 else f"sentences {_series(numbers)}"
 
 
-def gap_sentences(gaps):
-    """norm-defaults 3.2's filled-gap sentences, one per `(clause, value)`, in the order given: the gaps the result
-    depends on (readings-defaults 2.2; Lean's plan lists them). Each follows the shown situation."""
+def shown_gaps(gaps):
+    """Lean's filled-gap sentences (`VE.Words.fillingSentence`, norm-defaults 3.2), one per `(clause, sentence)`, in
+    the order given: the gaps the result depends on (readings-defaults 2.2; Lean's plan lists them), each after the
+    shown situation and led by a space."""
     out = []
-    for clause, value in gaps:
-        if type(clause) is not str or not clause or type(value) is not bool:
-            raise VEError("InvalidInput: a filled gap needs its clause and a yes or no answer")
-        out.append(f" Here the text does not say whether {clause}; this situation answers '{'yes' if value else 'no'}'.")
+    for clause, sentence in gaps:
+        if type(clause) is not str or not clause or type(sentence) is not str or not sentence:
+            raise VEError("InvalidInput: a filled gap needs its clause and its sentence")
+        out.append(" " + sentence)
     return "".join(out)
 
 
@@ -353,11 +355,11 @@ def result_sentence(kind, *, conclusion=None, situation=None, clause=None, gaps=
     if kind == "follows":
         return f"the conclusion follows: {conclusion}"
     if kind == "countermodel":
-        return f"the conclusion does not follow. It fails here: {situation}.{gap_sentences(gaps)}"
+        return f"the conclusion does not follow. It fails here: {situation}.{shown_gaps(gaps)}"
     if kind == "conflict":
-        return f"two rules contradict each other here: {situation}.{gap_sentences(gaps)}"
+        return f"two rules contradict each other here: {situation}.{shown_gaps(gaps)}"
     if kind == "premise_model":
-        return f"the sentences of this document can all be true together, as here: {situation}.{gap_sentences(gaps)}"
+        return f"the sentences of this document can all be true together, as here: {situation}.{shown_gaps(gaps)}"
     if kind == "inconsistent":
         return "the sentences of this document cannot all be true together."
     if kind == "undecided":
@@ -470,6 +472,6 @@ def excludes(first, second, slots):
 __all__ = ["ANSWERS", "CHECKED_ALONE", "canonical_sentence", "named_pair", "sentence_slots", "shown", "Unnamed",
            "DEFAULTS", "EACH_ALONE", "OVER_BUDGET", "PROVIDED", "QUIET", "S2A", "Slots",
            "TEMPLATES", "checked_alone", "citation", "dead_reading", "derivations", "each_alone", "every_result",
-           "every_result_of_sentence", "excludes", "gap_sentences", "gated", "hidden_in", "independent", "named_result",
+           "every_result_of_sentence", "excludes", "gated", "hidden_in", "independent", "named_result",
            "narrowed", "none_result", "not_superposed", "one_reading", "over_budget", "pair_line", "provided",
-           "quiet", "requires", "result_sentence", "s1_gated"]
+           "quiet", "requires", "result_sentence", "s1_gated", "shown_gaps"]
