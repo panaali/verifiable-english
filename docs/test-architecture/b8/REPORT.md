@@ -41,6 +41,20 @@ Each temporary fault was planted in a changed file, ran against its named test, 
 | M9 | `tests/data/tarch-b8/nd-op.ve.txt` | Restored the `.ve.md` extension, adding the pilot to the global seed scan. | `test_saved_pilots_are_not_global_document_seeds` |
 | M10 | `tests/test_b16d_document.py` | Put one fixture branch under `other/nd` so `pilot_documents` skipped it. | `test_private_pilot_fixture_enumerates_saved_branches` |
 
+## Pre-review repair: relay mutation gate and seeded-bug record
+
+The first pre-review check found two problems. First, the seeded-bug list lived only in this report, which the check does not read; the list is now committed as `docs/test-architecture/b8/mutants.json`. Second, the relay mutation gate is required because the batch changes a file under `ve/`. It reported 26 findings on `service:graph` (Background labels and ASTs untyped, plus stale `supporting_edges` allow paths), `service:parse` (empty diagnostic text, dropped span) and `service:route` (Background, generators, premises). Main has the same findings: main's own `ve_service` gives the same graph answers, including "certificate is stale" for the two certificate fixtures. The fix already exists on the unmerged premise-scale branch. Commit `0ba241d9a` cherry-picks its `8808fb359` (graph schema typing and allow-list paths). Commit `3663dd1b4` copies the relay files of `b961596b5` (the parse schema, the allow list and `test_parse_diagnostic_text_cannot_be_empty`). That branch's docs and its readings-route test stay with it, because the test needs an earlier premise-scale commit. Because the hunks are identical, they merge cleanly when premise-scale lands.
+
+After the repair, `lake build` passes (888 jobs), `tools/regen_generated.py --check` passes, `tools/rust_build.py --check` reports the pinned binary, and the full `tools/relay_mutation_gate.py` reports **40 routes, 111,457 mutants, 0 failures** (before the repair: 26 failures). DELTA rows 1 and 2 are signed by R8.
+
+Bugs seeded for the repair, each restored and rebuilt afterward:
+
+| Bug | File | Fault | Test that failed |
+|---|---|---|---|
+| L1 | `lean/ResponseShape/Schemas/Parse.lean` | Typed `parse_error`'s `error` as a bare string again; rebuilt `ve_response_decode` and regenerated `parse.json`. | `test_parse_diagnostic_text_cannot_be_empty` |
+| L2 | `lean/ResponseShape/Schemas/Graph.lean` | Typed the Background `label` as a bare string again; rebuilt and regenerated `graph.json`. | `tools/relay_mutation_gate.py --route service:graph`: accepted `empty results/*/result/background/*/label` |
+| M3 (re-run) | `ve/norm_defaults_contract.py` | Restored the eager `from conformance import frozen_norm_defaults`. | `test_product_contract_import_does_not_load_git_oracle` (passes again after restore) |
+
 ## Execution and limits
 
 The comparable focused runs and the selected run use `mac-pytest.sh`; the two stronger mutant checks and their clean rerun used the VM. The first VM `lake build` hit a clang frontend crash on the generated `VE.Readings.Run:c.o`; a single-target retry passed, followed by a complete **888/888** `lake build` pass. `python3 tools/rust_build.py` passed and reported a binary pinned in `lean/checkers.lock`. The builder did not run `tools/gate.py`, as the task assigns that full gate to the chain on the final committed HEAD. Of the three entries in `main-known-red.txt`, the two sub-tick tests were fixed on main before this branch's final sync. RD8 is an explicit batch 8 target and is fixed here; no unrelated known-red test was edited.
@@ -49,11 +63,11 @@ The first selected plan chose 374/374 units because the cached map at `f98183bf`
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. N.A. No Lean response or request decoder changes.
+1. PASS — the only Lean change is the response shapes `Graph.lean` and `Parse.lean`, copied from premise-scale; `tools/response_schemas.py --check` and `regen_generated.py --check` pass, and L1/L2 fail when they are weakened.
 2. PASS — `git diff main...HEAD` review and the delivery table above cover each batch 8 row; `test_private_pilot_fixture_enumerates_saved_branches` checks the fixture-repo requirement.
 3. PASS — `test_batch_report_metrics_match_evidence`, `test_review_fix_commit_chain_and_final_gate_target`, `test_product_contract_import_does_not_load_git_oracle`, `test_staging_history_is_private`, `test_coupled_pilot_reading_plan_matches_prior_path`, `test_test_modules_other_code_imports_load_outside_pytest`, `test_saved_pilots_are_not_global_document_seeds`, and `test_private_pilot_fixture_enumerates_saved_branches` failed under M1–M5 and M8–M10.
 4. N.A. No Python, Lean, or Rust verdict implementation changes.
-5. N.A. No relayed answer or request binding changes.
+5. PASS — the pre-review repair types the graph Background and the parse diagnostic in their Lean shapes; `tools/relay_mutation_gate.py` (all 40 routes, 0 failures) and `test_parse_diagnostic_text_cannot_be_empty` retype and empty each field.
 6. N.A. The user assigned the final-HEAD full gate to the chain; `git status --short` verifies the committed handoff.
 7. PASS — `DELTA.md` records no user-visible change; `test_examples_are_clean_and_accepted` and `test_every_catalogue_fault_alone_gives_its_expected_record_in_python` check outcomes.
 8. PASS — `DELTA.md`, `test_examples_are_clean_and_accepted`, and `test_every_catalogue_fault_alone_gives_its_expected_record_in_python` check unchanged public results.
