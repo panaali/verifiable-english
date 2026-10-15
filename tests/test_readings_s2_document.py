@@ -1252,7 +1252,7 @@ def test_review_a3_class_every_generated_decision_is_worded(tmp_path):
     wording.generated["rights__lim__9"] = {"name": "rights__lim__9", "layer": "rights",
                                             "key": {"lim": "missing", "act": "arrest_permitted"}}
     with pytest.raises(VEError, match="decision table rights__lim__9 has no wording"):
-        wording.situation(unknown, strict["choice"])
+        wording.shown_situation(unknown, strict["choice"])
 
 
 # ---------------------------------------------------------------------------------------------------------------

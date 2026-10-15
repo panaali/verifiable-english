@@ -110,6 +110,8 @@ def test_a_rerun_runs_only_the_failed_tests_files_and_is_not_a_full_gate(fake):
     assert record["counts"]["selected"] == 2 and record["failures"] == []
     assert "Lean audit" not in fake.stages() and "native Rust tests" not in fake.stages()
     assert {"Lean build", "Rust build", "Wire contract check"} <= set(fake.stages())
+    # The wire contract's examples are admitted by the binary this gate builds, never one left by an earlier build.
+    assert fake.stages().index("Lean build") < fake.stages().index("Wire contract check")
     assert record["stages"] == ["toolchains", "lean_build", "rust_build", "pytest"]
     # Never a full gate's evidence: the full gate is still required.
     assert record["status"] != "passed"

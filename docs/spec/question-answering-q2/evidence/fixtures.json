@@ -1,0 +1,242 @@
+{
+ "fixtures": [
+  {
+   "id": "A1",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "question": "May \"a27\" be performed?",
+   "route": "norm-defaults",
+   "lead": "notSettled",
+   "rows": 1,
+   "row_leads": [
+    "notSettled"
+   ],
+   "reasons": [],
+   "lean_seconds": 2.9
+  },
+  {
+   "id": "A1d",
+   "document": "usecases/question-answering/agent-policy/a-deny.ve.md",
+   "question": "May \"a27\" be performed?",
+   "error": "UnsupportedProfile"
+  },
+  {
+   "id": "A2",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "question": "May \"a25\" be performed?",
+   "route": "norm-defaults",
+   "lead": "unknown",
+   "rows": 1,
+   "row_leads": [
+    "unknown"
+   ],
+   "reasons": [
+    "X4"
+   ],
+   "lean_seconds": 2.4
+  },
+  {
+   "id": "A3",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "question": "May \"a26\" be performed?",
+   "route": "norm-defaults",
+   "lead": "notNecessarily",
+   "rows": 1,
+   "row_leads": [
+    "notNecessarily"
+   ],
+   "reasons": [],
+   "lean_seconds": 2.4
+  },
+  {
+   "id": "A4",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "question": "Must \"a13\" be reported to the user?",
+   "route": "norm-defaults",
+   "lead": "unknown",
+   "rows": 1,
+   "row_leads": [
+    "unknown"
+   ],
+   "reasons": [
+    "X4"
+   ],
+   "lean_seconds": 2.9
+  },
+  {
+   "id": "A5",
+   "document": "usecases/question-answering/agent-policy/a-conflict.ve.md",
+   "question": "May \"a10\" be performed?",
+   "route": "norm-defaults",
+   "lead": "unknown",
+   "rows": 1,
+   "row_leads": [
+    "unknown"
+   ],
+   "reasons": [
+    "X1"
+   ],
+   "lean_seconds": 2.9
+  },
+  {
+   "id": "A7",
+   "document": "usecases/question-answering/agent-policy/a-rules.ve.md",
+   "question": "May every action be performed?",
+   "route": "norm-defaults",
+   "lead": "notSettled",
+   "rows": 1,
+   "row_leads": [
+    "notSettled"
+   ],
+   "reasons": [],
+   "lean_seconds": 3.7
+  },
+  {
+   "id": "A8",
+   "document": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "question": "Must every action be reported to the user?",
+   "route": "norm-defaults",
+   "lead": "notSettled",
+   "rows": 1,
+   "row_leads": [
+    "notSettled"
+   ],
+   "reasons": [],
+   "lean_seconds": 3.1
+  },
+  {
+   "id": "G1",
+   "document": "usecases/question-answering/group.ve.md",
+   "question": "Is every member eligible?",
+   "route": "plain",
+   "lead": "yes",
+   "rows": 1,
+   "row_leads": [
+    "yes"
+   ],
+   "reasons": [],
+   "lean_seconds": 0.2
+  },
+  {
+   "id": "G10",
+   "document": "usecases/question-answering/group.ve.md",
+   "question": "Is Ann eligible?",
+   "route": "plain",
+   "lead": "yes",
+   "rows": 1,
+   "row_leads": [
+    "yes"
+   ],
+   "reasons": [],
+   "lean_seconds": 0.1
+  },
+  {
+   "id": "G2",
+   "document": "usecases/question-answering/group.ve.md",
+   "question": "Is it the case that every member is eligible?",
+   "route": "plain",
+   "lead": "yes",
+   "rows": 1,
+   "row_leads": [
+    "yes"
+   ],
+   "reasons": [],
+   "lean_seconds": 0.1
+  },
+  {
+   "id": "G3",
+   "document": "usecases/question-answering/group.ve.md",
+   "question": "Is every member verified?",
+   "route": "plain",
+   "lead": "notNecessarily",
+   "rows": 1,
+   "row_leads": [
+    "notNecessarily"
+   ],
+   "reasons": [],
+   "lean_seconds": 0.1
+  },
+  {
+   "id": "G4",
+   "document": "usecases/question-answering/group.ve.md",
+   "question": "Is it the case that no member is eligible?",
+   "route": "plain",
+   "lead": "no",
+   "rows": 1,
+   "row_leads": [
+    "no"
+   ],
+   "reasons": [],
+   "lean_seconds": 0.1
+  },
+  {
+   "id": "U2",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "question": "Must every person be given equal access to higher education on the basis of merit?",
+   "route": "readings",
+   "lead": "yes",
+   "rows": 6,
+   "row_leads": [
+    "yes"
+   ],
+   "reasons": [],
+   "lean_seconds": 10.9
+  },
+  {
+   "id": "U3",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "question": "Must every person be spared exclusion from education?",
+   "route": "readings",
+   "lead": "by_reading",
+   "rows": 6,
+   "row_leads": [
+    "notSettled",
+    "yes"
+   ],
+   "reasons": [],
+   "lean_seconds": 8.6
+  },
+  {
+   "id": "U5",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "question": "May every person form as well as join trade unions to protect their interests?",
+   "route": "readings",
+   "lead": "by_reading",
+   "rows": 6,
+   "row_leads": [
+    "notSettled",
+    "yes"
+   ],
+   "reasons": [],
+   "lean_seconds": 7.4
+  },
+  {
+   "id": "U6",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "question": "Must every person receive elementary education?",
+   "route": "readings",
+   "lead": "yes",
+   "rows": 6,
+   "row_leads": [
+    "yes"
+   ],
+   "reasons": [],
+   "lean_seconds": 10.9
+  },
+  {
+   "id": "U7",
+   "document": "usecases/question-answering/udhr-part07.ve.md",
+   "question": "Must every education kind be made generally available?",
+   "route": "readings",
+   "lead": "by_reading",
+   "rows": 6,
+   "row_leads": [
+    "notSettled",
+    "unknown"
+   ],
+   "reasons": [
+    "X4"
+   ],
+   "lean_seconds": 4.7
+  }
+ ]
+}
