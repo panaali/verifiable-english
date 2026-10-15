@@ -851,6 +851,49 @@ def test_f23_an_authored_holder_slot_stays_the_lines_slot(monkeypatch, slot):
         RightsDocument(environment, units)
 
 
+def _relicense(licence):
+    """Set every carve-out's licence and make the scope findings and `licensed` agree with it."""
+    def mutation(row):
+        for entry in row['narrowings']:
+            for mechanism in entry['mechanisms']:
+                if mechanism['mechanism'].startswith('carve-out '):
+                    mechanism['licence'] = licence
+        if 'licensed' in row:
+            row['findings'] = [] if licence else [
+                f"UnlicensedLimitation: carve-out 1 of rule {entry['rule']} on right {entry['right']}"
+                for entry in row['narrowings'][:1]]
+            row['licensed'] = not row['findings']
+    return mutation
+
+
+@pytest.mark.parametrize('cited,licence,kinds', [
+    pytest.param(False, licence, kinds, id=f"F24 uncited carve-out as {licence!r} in {'+'.join(kinds)}")
+    for licence in ('cited', 'collision', 'certified', 'effect delivered by strict rule no-arbitrary-arrest')
+    for kinds in (('rights-scope',), ('rights-elaborate',), ('rights-elaborate', 'rights-scope'))] + [
+    pytest.param(True, None, kinds, id=f"F24 cited carve-out unlicensed in {'+'.join(kinds)}")
+    for kinds in (('rights-scope',), ('rights-elaborate', 'rights-scope'))])
+def test_f24_a_licence_names_a_relation_the_request_holds(monkeypatch, cited, licence, kinds):
+    """F24 (PROBE F24): a scope licence is the first relation of Scope.lean the request holds (a citation,
+    a colliding right line, a same-effect strict rule), as Run.lean `licence` gives it; a forged
+    licence with its UnlicensedLimitation finding dropped (or added) to match is CheckerUnavailable."""
+    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
+    from ve.rights import RightsEnvironment
+    from ve import rights_route
+    units = copy.deepcopy(GAMMA)
+    units[0]['right']['lines'][0]['norm']['unless'] = [['top']]
+    if cited:
+        units[0]['right']['lines'][0]['cites'] = {'unless:1': ['u0']}
+        units.append({'source_units': ['u0']})
+    environment = RightsEnvironment(rights_env(ARREST))
+    genuine = rights_route.report_rights(environment, units)
+    assert [m['licence'] for m in genuine['narrowings'][0]['mechanisms']] == [
+        'cited' if cited else None, 'limitation']
+    assert bool(genuine['unlicensed_limitations']) is not cited
+    _rights_relay(monkeypatch, _relicense(licence), kinds)
+    with pytest.raises(CheckerUnavailable):
+        rights_route.report_rights(environment, units)
+
+
 def test_a_hit_cited_with_its_finding_dropped_is_unavailable(monkeypatch):
     """Two faults together: a distinction hit marked cited and its ProtectedInCone finding removed. The
     `cited` flag is the line's `guard` citation (Distinction.lean `distinctionHits`), not Lean's to choose."""

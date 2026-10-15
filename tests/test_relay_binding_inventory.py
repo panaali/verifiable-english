@@ -12,8 +12,12 @@ shape adds cannot go unclassified. Each field is either
 * LEAN: a value Lean derives and its encoder theorem covers (a formula, a hash, a verdict, Lean's
   English), with the reason.
 
-The mutants rename a value to an undeclared one, shift a number, flip a flag, drop, duplicate or extend
-a list or map, and reverse an ordered list, at every position the field takes in a genuine answer.
+The mutants rename a value to an undeclared one or to another value the field takes in some genuine
+answer (F24: a licence `cited` for an uncited carve-out), shift a number, flip a flag, drop, duplicate
+or extend a list or map, and reverse an ordered list, at every position the field takes in a genuine
+answer. Beyond one fault, the genuine answer to one source is replayed as the answer to every other
+source: a whole answer, consistent in itself, that is not this request's (F24's forged licence with its
+findings and `licensed` dropped to match).
 """
 from __future__ import annotations
 
@@ -291,8 +295,12 @@ def _locate(value, tokens, parent=None, key=None):
         yield from _locate(value[head], rest, value, head)
 
 
-def _edits(value, ordered):
-    """The one-fault replacements of `value`, with their names."""
+def _edits(value, ordered, alternatives=()):
+    """The one-fault replacements of `value`, with their names: `alternatives` are the scalars the same
+    field takes in other genuine answers, valid values that a check of form alone would accept."""
+    for alternative in alternatives:
+        if not same_json(alternative, value) and type(value) not in (list, dict):
+            yield f"set to {alternative!r}", alternative
     if type(value) is str or value is None:
         yield "renamed", "ghost"
     elif type(value) is bool:
@@ -318,19 +326,42 @@ def _edits(value, ordered):
             yield "key added", {"ghost": "ghost"}
 
 
-def mutants(row, route):
-    """Every one-fault mutant of `row` at a bound field, as (path, edit, mutant)."""
+def mutants(row, route, pool=None):
+    """Every one-fault mutant of `row` at a bound field, as (path, edit, mutant); `pool` maps a path to
+    the scalars it takes in the genuine answers (`scalar_pool`)."""
     for path, kind in sorted(INVENTORY[route].items()):
         if kind not in FUZZED:
             continue
         tokens = _TOKEN.findall(path)
         for index, (parent, key) in enumerate(_locate(row, tokens)):
-            for edit, replacement in _edits(parent[key], ordered=kind == BOUND):
+            for edit, replacement in _edits(parent[key], ordered=kind == BOUND,
+                                            alternatives=(pool or {}).get(path, ())):
                 mutant = copy.deepcopy(row)
                 target_parent, target_key = list(_locate(mutant, tokens))[index]
                 target_parent[target_key] = replacement
                 if not same_json(mutant, row):
                     yield path, f"{edit} at {index}", mutant
+
+
+def scalar_pool(rows, route):
+    """Each bound path's distinct scalar values across `rows`, in a fixed order."""
+    pool = {}
+    for path, kind in INVENTORY[route].items():
+        if kind in FUZZED:
+            values = {json.dumps(parent[key], sort_keys=True) for row in rows
+                      for parent, key in _locate(row, _TOKEN.findall(path))
+                      if type(parent[key]) not in (list, dict)}
+            pool[path] = [json.loads(value) for value in sorted(values)]
+    return pool
+
+
+def bound_values(row, route):
+    """The values of `row` at every bound path outside a field Lean chooses (whose items are bound to
+    exist in the request, not to one choice): what the relay must tie to the request."""
+    chosen = [path for path, kind in INVENTORY[route].items() if kind not in FUZZED]
+    return {path: sorted(json.dumps(parent[key], sort_keys=True) for parent, key in _locate(row, _TOKEN.findall(path)))
+            for path, kind in INVENTORY[route].items()
+            if kind in FUZZED and not any(path.startswith((f"{lean}[", f"{lean}.", f"{lean}{{")) for lean in chosen)}
 
 
 def located(row, route):
@@ -383,7 +414,8 @@ def _soft_route_of(case):
 
 def _rights_sources():
     from tests.test_norms import obligation, permission
-    from tests.test_rights_lean import ARBITRARY, ARREST, GAMMA, IMPART, BLOCK, base, env, line, norm, right
+    from tests.test_rights_lean import ARBITRARY, ARREST, EXCEPTION, GAMMA, IMPART, BLOCK, ONE, PUBLISH, base, \
+        env, limitation, line, mu_document, mu_env, norm, right
     from tests.test_soft_decision_keys import _default_gamma, _fan_out_source
     from tests.test_soft_norms_lean import DECIDER, ranks
 
@@ -416,6 +448,24 @@ def _rights_sources():
                                                  args=("state", "person")),
                 "recognise_permitted": permission("allow", act="{0} recognise {1}", args=("state", "person")),
                 "married": base("person")}
+    # Every licence Run.lean `licence` gives (F24), each beside its uncited twin; a `source_units`
+    # unit comes last, so the admission unit ids `u<i>` are the positions it lists.
+    cited_carve = copy.deepcopy(carve)
+    cited_carve[0]["right"]["lines"][0]["cites"] = {"unless:1": ["u0"]}
+    rule7 = norm("rule-7", "arrest_permitted", True, guard=("unary", "journalist", ["var", 0]),
+                 over=["no-arbitrary-arrest"])
+    switched = copy.deepcopy(weighed)
+    switched[0]["right"]["lines"][0]["cites"] = {"alterable:person": ["u0"]}
+    publish = env(PUBLISH, sorts=("person",), rights=ONE)
+    publishing = right("r19", [line("liberty", norm("may-publish", "publish_about_permitted", True, mode="default",
+                                                    exception=EXCEPTION), cites={"exception": ["u0"]})])
+    rule5 = norm("rule-5", "publish_about_permitted", False)
+    # A fan-out instance is named `rights-fan-<k>`; a `narrows:` citation may name its source norm instead
+    # (Scope.lean `lineKeys`).
+    fan_raw, fan_units = _fan_out_source()
+    fan_units[0]["right"]["lines"][0]["norm"].update(mode="default", exception=dict(DECIDER))
+    fan_cited = [*fan_units, {"norm": norm("may-torture", "torture_permitted_state", True), "cites": {
+        "narrows:no-torture": ["u0"]}}, {"source_units": ["u0"]}]
     power = {"kind": "power", "liberty": norm("may-marry", "marry_permitted", True),
              "recognition": norm("recognise-marriage", "recognise_required", True)}
     return {
@@ -441,6 +491,21 @@ def _rights_sources():
             "holder_slot": 1, "status": "has_nationality"}}}),
                      [right("r15", [line("immunity", norm("no-deprivation", "deprive_of_nationality_permitted",
                                                           False))])]),
+        "cited carve-out": (env(ARREST), [*cited_carve, {"source_units": ["u0", "u1"]}]),
+        "adopter exception": (env(ARREST), [*GAMMA, {"norm": rule7}]),
+        "cited adopter exception": (env(ARREST), [*GAMMA, {"norm": rule7, "cites": {
+            "narrows:no-arbitrary-arrest": ["u0"]}}, {"source_units": ["u0", "u1", "u2"]}]),
+        "fan-out instance cited by its source norm": (fan_raw, fan_cited),
+        "cited switch": (holistic, [*switched, {"source_units": ["u0", "u1"]}]),
+        "uncited rank": (mu_env(), mu_document()),
+        "rank cited on the dominated line": (mu_env(), mu_document({"rank": ["u1"]})),
+        "rank cited on the dominating line": (mu_env(), mu_document(None, {"rank": ["u1"]})),
+        "strict liberty blocks": (mu_env(), mu_document(strict_liberty=True)),
+        "same effect strict": (publish, [publishing, limitation(), {"norm": norm("rule-4", "publish_about_permitted",
+                                                                                  True)}, {"source_units": ["u0"]}]),
+        "opposite effect": (publish, [publishing, limitation(), {"norm": rule5}, {"source_units": ["u0"]}]),
+        "cited opposite effect": (publish, [publishing, limitation(), {"norm": rule5, "cites": {
+            "narrows:may-publish": ["u0"]}}, {"source_units": ["u0"]}]),
         "power": (env(marriage, rights={"holders": ["person"], "bearers": ["state"], "alters": {
             "marry_permitted": {"holder_slot": 0, "status": "married", "recognition": "recognise_required"}}}),
                   [right("r16", [power])]),
@@ -451,7 +516,7 @@ def _rights_calls(name, environment, units):
     elaborated = rights_route.run_rights_case(environment, units, "rights-elaborate")
     leaf = (elaborated["limitations"] or elaborated["premises"])[0]
     admission = {"units": [{"id": f"u{i}", "span": [i, i + 1], "kind": next(iter(content)), "content": content}
-                           for i, content in enumerate(units)],
+                           for i, content in enumerate(units) if "source_units" not in content],
                  "graph": {"root": "leaf", "nodes": [{"name": "leaf", "ast": leaf["ast"], "label": leaf["label"]}]}}
     # A base model of GAMMA's environment: every non-regulated predicate of E' is empty.
     relations = {predicate: [] for predicate, declaration in
@@ -547,11 +612,11 @@ def relays():
                 **{("rights", name): relay for name, relay in _rights_relays(monkeypatch).items()}}
 
 
-def _survivors(relay, route):
+def _survivors(relay, route, pool=None):
     case, genuine = relay.answers[route]
     mode = relay.mode
     survivors = []
-    for path, edit, mutant in mutants(genuine, route):
+    for path, edit, mutant in mutants(genuine, route, pool):
         try:
             check_row(mode, mutant, case, 0)
         except Invalid:
@@ -568,16 +633,45 @@ def _survivors(relay, route):
 @pytest.mark.parametrize("route", sorted(ROUTES))
 def test_every_bound_field_mutant_is_unavailable(relays, route):
     exercised, survivors = set(), {}
+    pool = scalar_pool([relay.answers[route][1] for relay in relays.values() if route in relay.answers], route)
     for (family, name), relay in relays.items():
         if route not in relay.answers:
             continue
         exercised |= located(relay.answers[route][1], route)
-        found = _survivors(relay, route)
+        found = _survivors(relay, route, pool)
         if found:
             survivors[name] = found
     assert not survivors, survivors
     missing = {path for path, kind in INVENTORY[route].items() if kind in FUZZED} - exercised
     assert missing <= set(UNEXERCISED.get(route, {})), sorted(missing - set(UNEXERCISED.get(route, {})))
+
+
+@pytest.mark.parametrize("route", sorted(ROUTES))
+def test_another_requests_genuine_answer_is_unavailable(relays, route):
+    """A genuine answer to one source, replayed as the answer to another, is `CheckerUnavailable` unless
+    it ties the same values to the request at every bound field: many coordinated faults at once."""
+    accepted = []
+    for (family, name), relay in relays.items():
+        if route not in relay.answers:
+            continue
+        case, genuine = relay.answers[route]
+        for (other_family, other), donor in relays.items():
+            if other_family != family or other == name or route not in donor.answers:
+                continue
+            answer = donor.answers[route][1]
+            if bound_values(answer, route) == bound_values(genuine, route):
+                continue
+            try:
+                check_row(relay.mode, answer, case, 0)
+            except Invalid:
+                continue
+            with pytest.MonkeyPatch.context() as patch:
+                try:
+                    relay.replay(patch, route, answer)
+                except CheckerUnavailable:
+                    continue
+            accepted.append(f"{other} answered for {name}")
+    assert not accepted, accepted
 
 
 # Bound fields no genuine answer above carries, each with the regression that covers it.
