@@ -1,6 +1,7 @@
 import VE.Readings.Components
 import VE.Readings.VerdictsWire
 import VE.Readings.Companions
+import VE.Readings.SoftWire
 
 /-! `readings-verdicts` over a document's components (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 3, 4.5, 5 rows
 16 to 18; plan RD-4b).
@@ -319,8 +320,14 @@ structure ProductPart where
   route : Route
   unchecked : List (String × String)
 
+/-- rd-9-soft-chain.md 5 row 7 (RD-4a): the soft completion is read only by a document without companions, so a case
+    of the split under it is refused with RD-4a's text by every admission of the split (`admitComponent`,
+    `requireCompletion`), as the abstention refused it before rd-9 narrowed it to the rights chain. Else `x`. -/
+def splitAdmissible {α : Type} (re : VE.Readings.Wire.ReadingsEnvironment) (D : Doc) (x : α) : Except String α :=
+  if VE.Readings.Wire.underSoftCompletion re D then throw VE.Readings.Wire.unsupportedCompanion else pure x
+
 def requireCompletion (b : VE.Readings.Wire.Admitted2) : Except String Unit :=
-  if b.a.re.lower.contains "norm-defaults@0" && b.a.re.chain == .norms then pure () else throw productProfileText
+  if b.a.re.lower.contains "norm-defaults@0" && b.a.re.chain == .norms then pure () else splitAdmissible b.a.re b.D () *> throw productProfileText
 
 /-- A case's admission for the product (4.1 on the case, then the completion's): on its checked part. -/
 def admitPart (name : String) (environment document : Json) : Except String ProductPart := do
