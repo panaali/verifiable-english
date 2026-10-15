@@ -28,6 +28,8 @@ PYTHON = {
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document").split(),
     5: ["argument_fixtures"],
 }
+# Top-level trees of apps, experiments, research and the paper: every path in them is layer 5.
+APP_AREAS = frozenset({"ve_experiments", "experiments", "usecases", "paper", "research"})
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
 
 
@@ -176,7 +178,7 @@ def source_layer(path: str) -> int | None:
         if p.suffix in {".py", ".json"} and p.name not in {"Cargo.lock"}:
             return 5  # benchmarks and generated measurement reports
         return 1 if p.name in {"Cargo.toml", "Cargo.lock"} else None
-    if parts[0] in {"ve_experiments", "experiments", "usecases", "paper"}:
+    if parts[0] in APP_AREAS:
         return 5
     if parts[0] == "tools":
         if p.name in {"layer_policy.py", "select_tests.py", "mutation_check.py", "nested_pytest.py",
