@@ -1,7 +1,7 @@
 import VE.EnglishGrammar.Policy
 
 /-! Spec 5.2's vocabulary policy as a reference for the optimised `Policy.lean` (`E2Examples.lean` `#guard`s).
-The accepted-head table and the codes of dropped wordings come from `PolicyCtx.of`, so the fixed-point ownership
+The accepted-head table and the codes the fixed point settled come from `PolicyCtx.of`, so the fixed-point ownership
 rule has one implementation.
 Test-only: nothing on an admission path reads this reference. -/
 
@@ -89,7 +89,7 @@ def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool :=
   | some d, some t =>
     let k := d.arity
     let heads := acceptedHeads E O
-    let codes := ((PolicyCtx.of E O).dropped.lookup name).getD (lintCodesWithHeads E O name t k heads)
+    let codes := ((PolicyCtx.of E O).settled.lookup name).getD (lintCodesWithHeads E O name t k heads)
     if k > 2 then codes.isEmpty else
     let idiom := (idioms k).contains t
     let p0 := if t.startsWith "{0} " then t.drop 4 else t
