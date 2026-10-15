@@ -133,10 +133,11 @@
           "items": {
             "additionalProperties": false,
             "properties": {
+              "description": {"type": "string"},
               "name": {"pattern": "unsaid__.*", "type": "string"},
               "sorts": {"$ref": "common.json#/$defs/strings"}
             },
-            "required": ["name", "sorts"],
+            "required": ["name", "sorts", "description"],
             "type": "object"
           },
           "type": "array"
@@ -240,10 +241,11 @@
           "items": {
             "additionalProperties": false,
             "properties": {
+              "description": {"type": "string"},
               "name": {"pattern": "unsaid__.*", "type": "string"},
               "sorts": {"$ref": "common.json#/$defs/strings"}
             },
-            "required": ["name", "sorts"],
+            "required": ["name", "sorts", "description"],
             "type": "object"
           },
           "type": "array"
