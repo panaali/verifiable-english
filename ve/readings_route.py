@@ -179,7 +179,9 @@ def _completion_elaborate(row, case, *, checked_part=False):
             _need(not sets and row["route"] == "w2")
             _bind_completion(row, case, checked_part=True)
         elif not bearing:
-            _need(row["route"] == "w2" and not {"fill_premises", "filled"} & set(row))
+            # No completion: `_bind_completion` refuses every completion field and every pair's `gaps`.
+            _need(row["route"] == "w2")
+            _bind_completion(row, case)
         else:
             _need(row["route"] in (("pending",) if pending else ("enumerated", "superposed")))
             _bind_completion(row, case)
@@ -504,15 +506,15 @@ def _bind_completion(row, case, *, checked_part=False):
     document = Document(None, case["document"])
     sets = document.sets
     profiles = case["environment"].get("profiles", ())
-    # Whether the completion ran and on which chain is Lean's (`filled.chain`); Python checks only that the fields
-    # present are that chain's, and that the request declares the profiles the chain names. A component's checked
-    # part (readings-defaults RD-4b: the main case without a content-bearing set, its fixed units) is asked under
-    # the completion, so its row carries it.
+    # Whether the completion applies is the request's: `norm-defaults@0` beside a content-bearing set, or a
+    # component's checked part (readings-defaults RD-4b: the main case without a content-bearing set, its fixed
+    # units), asked under the completion. The row carries it exactly then, so a row that drops it whole is refused
+    # (review F29 of rd-9). Which chain it took is Lean's (`filled.chain`); Python checks only that the fields
+    # present are that chain's, and that the request declares the profile the chain names.
     completion = "filled" in row
-    _need(completion or not checked_part)
+    _need(completion is (NORM_DEFAULTS in profiles and (checked_part or any(content_bearing(R) for R in sets))))
     chain = row["filled"]["chain"] if completion else None
-    _need(not completion or (FILLED(row["filled"]) and NORM_DEFAULTS in profiles and CHAIN_PROFILES[chain] in profiles
-                             and (checked_part or any(content_bearing(R) for R in sets))))
+    _need(not completion or (FILLED(row["filled"]) and CHAIN_PROFILES[chain] in profiles))
     _need(set(_COMPLETION) & set(row) == COMPLETION_FIELDS.get(chain, frozenset()))
     soft = chain == "soft"
     for entry in row.get("sets", ()):
