@@ -10,15 +10,16 @@ records no VE user-visible change.
 |---|---|---|---|
 | 1. Generated `tests/heavy.json` from a duration report, `--check`, seed from run A | AGENT | `0211be322`, `4887896a7`, `204cb0314`: `tools/heavy_tests.py`, complete 15,179-ID run A report, 171 heavy IDs, generated inventory registered in `tools/regen_generated.py` and its documented table; spaced node IDs preserved | `tests/test_heavy_tests.py::test_heavy_inventory_is_generated_from_complete_measurement`, `test_pytest_duration_report_includes_setup_call_and_teardown`, `tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry`; `python3 tools/heavy_tests.py --check`; `python3 tools/regen_generated.py --check --only gitattributes --only heavy-tests` |
 | 2. Collection mark and pytest marker; leave `addopts` alone | AGENT | `0211be322`, `81a85f530`: `tests/conftest.py`, `pyproject.toml`; unlisted manual marks fail closed | `tests/test_heavy_tests.py::test_every_measured_node_is_exactly_light_or_heavy`, `test_an_unlisted_manual_heavy_mark_is_refused`; plain pytest addopts diff |
-| 3. `--tier light`: all light tests plus selected heavy IDs, print counts, run via Mac | AGENT | `0211be322`, `6246007c0`: `tools/select_tests.py`; two pytest processes use the runner's worker count | `tests/test_heavy_tests.py::test_light_tier_runs_every_light_node_and_selected_heavy_function`; Mac selected run below |
-| 4. Exact split, 30 s budget seed, selected changed heavy function, seeded bugs | AGENT | `0211be322`, `6246007c0`, `b4ed439da`, `81a85f530`, `4887896a7`: `tests/test_heavy_tests.py`, `tests/test_select_tests.py`; seeded bugs below | Seven focused tests and seven observed failures |
+| 3. `--tier light`: all light tests plus selected heavy tests, print counts, run via Mac | AGENT | `0211be322`, `6246007c0`, review fix F2: `tools/select_tests.py`; two pytest processes use the runner's worker count; the heavy stage names selected files with `-m heavy`, never saved node IDs, and is skipped when it selects nothing | `tests/test_heavy_tests.py::test_light_tier_runs_every_light_node_and_selected_heavy_function`, `test_no_light_tier_command_names_a_saved_node_id`, `test_a_renamed_heavy_test_does_not_break_the_heavy_stage`, `test_a_heavy_stage_that_selects_nothing_is_skipped`; Mac selected run below |
+| 4. Exact split, selected changed heavy function, seeded bugs; no timing-threshold test (DRI note, plan §3.5) | AGENT | `0211be322`, `6246007c0`, `b4ed439da`, `81a85f530`, `4887896a7`, review fix F1: `tests/test_heavy_tests.py`, `tests/test_select_tests.py`; the 20 s budget and its seeded 30 s test are removed; `--check --report <nightly>` lists drift and exits 0; seeded bugs below | `tests/test_heavy_tests.py::test_no_test_fails_because_a_test_became_slow`, `test_check_refuses_an_inventory_stale_against_the_committed_report`; seeded bugs below |
 | 5. Fixloop/build checklist use R1 after merge; branch verify stays full | HUMAN (DRI) | Deferred to DRI after merge, as the task assigns | Orchestrator side is outside this worktree |
 | Row 1 shadow on 10 fix rounds | HUMAN (DRI) | Deferred to the DRI's orchestrator rollout after merge | Compare R1 failures with the full branch verify; heavy tests still run in the full verify |
 | Final full release gate on committed HEAD | EXTERNAL (chain) | Scheduled by the chain after this builder finishes, per the task override | `gate-result.json` on this branch |
 
 The nightly full live no-reuse run, branch verify, default pytest options, and every
-existing test remain in place. `--tier light` is opt-in. The duration budget is checked
-against a complete report; it does not wait 30 seconds in a test. A nightly report can
+existing test remain in place. `--tier light` is opt-in. No test fails because a test
+became slow: `python3 tools/heavy_tests.py --check --report /path/to/pytest-durations.txt`
+lists the rows a nightly measurement would add or drop and exits 0, and the DRI can
 update both committed duration input and generated inventory with
 `python3 tools/heavy_tests.py --write --report /path/to/pytest-durations.txt`.
 
@@ -83,12 +84,32 @@ was planted again together at `601100d35`: four tests failed, and after the rest
 | Changed product file | Seeded bug | Test that failed |
 |---|---|---|
 | `tools/heavy_tests.py` | Raise the heavy threshold from 10 to 1,000 s | `test_heavy_inventory_is_generated_from_complete_measurement` (exit 1) |
-| `tools/heavy_tests.py` | Raise the unmarked test budget from 20 to 200 s | `test_a_new_unmarked_slow_test_fails_the_budget_check` (exit 1) |
 | `tools/heavy_tests.py` | Ignore setup and teardown duration rows | `test_pytest_duration_report_includes_setup_call_and_teardown` (exit 1) |
 | `tools/heavy_tests.py` | Truncate node IDs at a space in pytest's duration text | `test_pytest_duration_report_includes_setup_call_and_teardown` (exit 1) |
 | `tests/conftest.py` | Skip every heavy mark | `test_every_measured_node_is_exactly_light_or_heavy` (exit 1) |
 | `tests/conftest.py` | Allow a manual heavy mark absent from the inventory | `test_an_unlisted_manual_heavy_mark_is_refused` (exit 1) |
 | `tools/select_tests.py` | Select no heavy IDs | `test_light_tier_runs_every_light_node_and_selected_heavy_function` and `test_light_tier_keeps_the_heavy_test_of_a_changed_function` (exit 1 each) |
+
+## Review fix round (tarch-b1 review)
+
+| Finding | Fix | Regression test |
+|---|---|---|
+| F1 (B) timing-threshold test | `BUDGET`, `check_budget` and the seeded 30 s test removed; `--check` fails only on an inventory stale against the committed report; `--check --report <nightly>` prints `enters heavy` / `leaves heavy` / `absent from` rows and exits 0. The `heavy_tests.py` docstring and `docs/TESTING.md` say the same. | `tests/test_heavy_tests.py::test_no_test_fails_because_a_test_became_slow` (holds the review's probe), `test_check_refuses_an_inventory_stale_against_the_committed_report` |
+| F2 (B) saved node IDs on the pytest command line | The heavy stage passes the selected files that hold inventory rows with `-m "... and heavy"`; the collection hook marks what is still collected, so a renamed or split heavy test runs in the light stage. `run` accepts exit 5 only from the commands a plan lists in `may_select_none`. | `test_no_light_tier_command_names_a_saved_node_id`, `test_a_renamed_heavy_test_does_not_break_the_heavy_stage` (the review's probe, collecting for real), `test_a_heavy_stage_that_selects_nothing_is_skipped` |
+| F3 (C) hard-coded run A counts | The inventory tests derive counts from the committed report; `docs/TESTING.md` asks for `--durations-min=0` so a nightly text report lists every test. | `test_heavy_inventory_is_generated_from_complete_measurement`, `test_every_measured_node_is_exactly_light_or_heavy` |
+| F4 (C) `docs/TESTING.md` | The fast-path command and heading are main's again; the light tier has its own section with a repository-relative command and says it runs every light test; `--base` is documented as committed changes only. | documentation |
+| F5 (C) all-heavy wall time | Not changed: a measurement, recorded above; the follow-up is the DRI's. | none |
+
+Seeded bugs for the fix round, each planted, observed failing and restored (also in
+`evidence/mutants.json`):
+
+| Changed product file | Seeded bug | Test that failed |
+|---|---|---|
+| `tools/select_tests.py` | Heavy stage names saved node IDs again | `test_no_light_tier_command_names_a_saved_node_id`, `test_a_renamed_heavy_test_does_not_break_the_heavy_stage`, `test_light_tier_runs_every_light_node_and_selected_heavy_function` |
+| `tools/select_tests.py` | Exit 5 of an empty heavy stage not accepted | `test_a_heavy_stage_that_selects_nothing_is_skipped` |
+| `tools/heavy_tests.py` | Drift against a nightly report fails the check | `test_no_test_fails_because_a_test_became_slow` |
+| `tools/heavy_tests.py` | Drift omits tests entering the heavy list | `test_no_test_fails_because_a_test_became_slow` |
+| `tools/heavy_tests.py` | `--check` passes a stale inventory | `test_check_refuses_an_inventory_stale_against_the_committed_report` |
 
 ## Build checklist disposition
 
