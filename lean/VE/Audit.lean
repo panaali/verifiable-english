@@ -12,6 +12,18 @@ import VE.Alternatives.Route
 import VE.Alternatives.Run
 import VE.Alternatives.Validate
 import VE.Alternatives.Wire
+import VE.Ask.Binding
+import VE.Ask.Groups
+import VE.Ask.Lines
+import VE.Ask.Plain
+import VE.Ask.PlainAnswer
+import VE.Ask.PlainWire
+import VE.Ask.Render
+import VE.Ask.Sound
+import VE.Ask.Sources
+import VE.Ask.Wire
+import VE.Ask.ZeroAnswer
+import VE.Ask.ZeroWire
 import VE.Attribution.Admission
 import VE.Attribution.Assess
 import VE.Attribution.Bridge
@@ -485,6 +497,177 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.validate_sound
 #print axioms VE.Alternatives.wf_preds
 #print axioms VE.Alternatives.withDefinitions_relation_some
+#print axioms VE.Ask.Answer.groups_view
+#print axioms VE.Ask.Asked.hbind
+#print axioms VE.Ask.Asked.hnames
+#print axioms VE.Ask.Asked.hok
+#print axioms VE.Ask.Asked.hread
+#print axioms VE.Ask.Asked.hreplay
+#print axioms VE.Ask.Asked.hrequest
+#print axioms VE.Ask.Asked.hrows
+#print axioms VE.Ask.Asked.hx
+#print axioms VE.Ask.Asked.hψ
+#print axioms VE.Ask.Inv.covered
+#print axioms VE.Ask.Inv.distinct
+#print axioms VE.Ask.Inv.nonempty
+#print axioms VE.Ask.Inv.only
+#print axioms VE.Ask.Inv.tagged
+#print axioms VE.Ask.PlainAsked.hbind
+#print axioms VE.Ask.PlainAsked.hread
+#print axioms VE.Ask.PlainAsked.hreplay
+#print axioms VE.Ask.PlainAsked.hrequest
+#print axioms VE.Ask.PlainAsked.hψ
+#print axioms VE.Ask.PlainParts.hψ
+#print axioms VE.Ask.PlainParts.sourced_premises
+#print axioms VE.Ask.PlainParts.sourced_sources
+#print axioms VE.Ask.PlainParts.sources_length
+#print axioms VE.Ask.PlainRow.toRow_lead
+#print axioms VE.Ask.PlainVerdict.hok
+#print axioms VE.Ask.ZeroAsked.hbind
+#print axioms VE.Ask.ZeroAsked.hread
+#print axioms VE.Ask.ZeroAsked.hreplay
+#print axioms VE.Ask.ZeroAsked.hrequest
+#print axioms VE.Ask.ZeroAsked.hψ
+#print axioms VE.Ask.ZeroParts.profiled
+#print axioms VE.Ask.ZeroParts.sourced_premises
+#print axioms VE.Ask.ZeroParts.wfU
+#print axioms VE.Ask.ZeroVerdict.hok
+#print axioms VE.Ask.all_yes_iff_fold
+#print axioms VE.Ask.answerForPlain_gated
+#print axioms VE.Ask.answerForPlain_ok
+#print axioms VE.Ask.answerForZero_gated
+#print axioms VE.Ask.answerForZero_ok
+#print axioms VE.Ask.answerFor_bound
+#print axioms VE.Ask.answerFor_cites
+#print axioms VE.Ask.answerFor_gated
+#print axioms VE.Ask.answerFor_ok
+#print axioms VE.Ask.any_some
+#print axioms VE.Ask.append_eq
+#print axioms VE.Ask.ask_wire_sound
+#print axioms VE.Ask.assignment_eq
+#print axioms VE.Ask.blank_entails
+#print axioms VE.Ask.castFM_M
+#print axioms VE.Ask.certPiece_formula
+#print axioms VE.Ask.checkUnit_sound
+#print axioms VE.Ask.checkUnits_sound
+#print axioms VE.Ask.checkedCites_spec
+#print axioms VE.Ask.choice_eq_of_index
+#print axioms VE.Ask.citeLine_fields
+#print axioms VE.Ask.citeLine_quote
+#print axioms VE.Ask.citeLine_source
+#print axioms VE.Ask.cited_nodup
+#print axioms VE.Ask.eq_of_strOf
+#print axioms VE.Ask.eraseDups_spec
+#print axioms VE.Ask.expansion_of_modelCheck_base
+#print axioms VE.Ask.fenceOk_sound
+#print axioms VE.Ask.filterMap_ext
+#print axioms VE.Ask.find_mem
+#print axioms VE.Ask.foldConflict_of_free
+#print axioms VE.Ask.frame_param_length
+#print axioms VE.Ask.gated_some
+#print axioms VE.Ask.groupReasons_block
+#print axioms VE.Ask.group_claim
+#print axioms VE.Ask.group_rows
+#print axioms VE.Ask.groups_cover
+#print axioms VE.Ask.groups_eq
+#print axioms VE.Ask.holds_iff
+#print axioms VE.Ask.index_of_assignment
+#print axioms VE.Ask.inv_addRow
+#print axioms VE.Ask.inv_foldl
+#print axioms VE.Ask.inv_groups
+#print axioms VE.Ask.leadFrame_ok
+#print axioms VE.Ask.leadHolds_eq
+#print axioms VE.Ask.leadU_sound
+#print axioms VE.Ask.lead_agrees
+#print axioms VE.Ask.lead_no
+#print axioms VE.Ask.lead_notNecessarily
+#print axioms VE.Ask.lead_notSettled
+#print axioms VE.Ask.lead_sound
+#print axioms VE.Ask.lead_unknown
+#print axioms VE.Ask.lead_yes
+#print axioms VE.Ask.lineText_text
+#print axioms VE.Ask.lookup_assignment
+#print axioms VE.Ask.match_iff
+#print axioms VE.Ask.mem_cited
+#print axioms VE.Ask.memoRead_eq
+#print axioms VE.Ask.mk_text
+#print axioms VE.Ask.nameReadsBack_sound
+#print axioms VE.Ask.ndModelOk_base
+#print axioms VE.Ask.negRow_holds
+#print axioms VE.Ask.param_not_short
+#print axioms VE.Ask.plainCites_spec
+#print axioms VE.Ask.plainConsistent_sound
+#print axioms VE.Ask.plainModel_admissible
+#print axioms VE.Ask.plainProved_sound
+#print axioms VE.Ask.plainRefutes_sound
+#print axioms VE.Ask.plainRow_ok
+#print axioms VE.Ask.plain_ask_wire_sound
+#print axioms VE.Ask.plain_block
+#print axioms VE.Ask.plain_lead_sound
+#print axioms VE.Ask.plain_never_split
+#print axioms VE.Ask.pointLines_block
+#print axioms VE.Ask.positions_get
+#print axioms VE.Ask.positions_labels
+#print axioms VE.Ask.positions_wellLabelled
+#print axioms VE.Ask.r1Frame_ok
+#print axioms VE.Ask.reasonLines_block
+#print axioms VE.Ask.reasonU_sound
+#print axioms VE.Ask.reason_exact
+#print axioms VE.Ask.reason_fields
+#print axioms VE.Ask.reason_sound
+#print axioms VE.Ask.relevantSets_sound
+#print axioms VE.Ask.renderGroup_block
+#print axioms VE.Ask.render_asked
+#print axioms VE.Ask.render_askedV
+#print axioms VE.Ask.render_cites_exact
+#print axioms VE.Ask.render_cites_exactV
+#print axioms VE.Ask.render_covers_rows
+#print axioms VE.Ask.render_covers_rowsV
+#print axioms VE.Ask.render_lead
+#print axioms VE.Ask.render_leadV
+#print axioms VE.Ask.render_marks_unchecked
+#print axioms VE.Ask.render_marks_uncheckedV
+#print axioms VE.Ask.render_mem
+#print axioms VE.Ask.render_model_names_choice
+#print axioms VE.Ask.render_model_names_choiceV
+#print axioms VE.Ask.render_quotes_bytes
+#print axioms VE.Ask.render_quotes_bytesV
+#print axioms VE.Ask.render_text_matches_metadata
+#print axioms VE.Ask.render_text_matches_metadataV
+#print axioms VE.Ask.render_unused_once
+#print axioms VE.Ask.render_unused_onceV
+#print axioms VE.Ask.replayAsk_request
+#print axioms VE.Ask.replayPlainAsk_request
+#print axioms VE.Ask.replayZeroAsk_request
+#print axioms VE.Ask.rowOf_ok
+#print axioms VE.Ask.rowSourced_premises
+#print axioms VE.Ask.rowsOf_choices
+#print axioms VE.Ask.rowsOf_ok
+#print axioms VE.Ask.separates_sound
+#print axioms VE.Ask.situationLine_block
+#print axioms VE.Ask.sourcedAssertions_formulas
+#print axioms VE.Ask.sourced_premises
+#print axioms VE.Ask.sourced_sources
+#print axioms VE.Ask.sourcesU_length
+#print axioms VE.Ask.sourcesU_zip_premisesU
+#print axioms VE.Ask.splitModels_base
+#print axioms VE.Ask.splitOk_sound
+#print axioms VE.Ask.splitRow_sound
+#print axioms VE.Ask.split_counter
+#print axioms VE.Ask.toString_inj
+#print axioms VE.Ask.unusedLines_eq
+#print axioms VE.Ask.usedPositions_sufficient
+#print axioms VE.Ask.zeroCites_spec
+#print axioms VE.Ask.zeroConflict_sound
+#print axioms VE.Ask.zeroFree_sound
+#print axioms VE.Ask.zeroModelOk_base
+#print axioms VE.Ask.zeroModelOk_consistent
+#print axioms VE.Ask.zeroModelOk_counter
+#print axioms VE.Ask.zeroProved_sound
+#print axioms VE.Ask.zeroRow_ok
+#print axioms VE.Ask.zeroSplitModels_base
+#print axioms VE.Ask.zeroSplit_sound
+#print axioms VE.Ask.zero_ask_wire_sound
 #print axioms VE.Bridge.CountermodelQuery.conclusion_typed
 #print axioms VE.Bridge.CountermodelQuery.premises_typed
 #print axioms VE.Bridge.CountermodelQuery.refutes_sound
@@ -4970,6 +5153,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.respond_decoded
 #print axioms VE.Service.results_eq
 #print axioms VE.Service.runMode_alternatives
+#print axioms VE.Service.runMode_ask
 #print axioms VE.Service.runMode_bundle
 #print axioms VE.Service.runMode_check
 #print axioms VE.Service.runMode_checkCertificate
@@ -5001,6 +5185,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_route
 #print axioms VE.Service.runMode_softNorms
 #print axioms VE.Service.runMode_speechActs
+#print axioms VE.Service.runMode_words
 #print axioms VE.Service.runRequest_ok
 #print axioms VE.SoftNorms.Admission.admitDocument_spec
 #print axioms VE.SoftNorms.Admission.admitNodes_ok
