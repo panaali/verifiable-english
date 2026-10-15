@@ -536,3 +536,35 @@ No Rust product code changed, so no Rust seed.
   the F28 test, which fails the same way on the unchanged base a264e8893 (F24 section above) and which main fixes at
   dccd9cf5; not edited here (F28).
 - The full gate was not run (task instruction). B1's signature waits on it.
+
+## Recheck of 214da8f36 (rd-9-c150552-looprecheck1): F29
+
+| Finding | Fix | Regression test | Commit |
+| --- | --- | --- | --- |
+| F29 (B) the completion's presence was read from the row, not the request | `_bind_completion` again requires `filled` exactly when the request declares `norm-defaults@0` beside a content-bearing set (or asks a component's checked part); the chain stays Lean's (`filled.chain`), so no chain profile is named and PROBE F25 stays green. Elaborate's W2 branch goes through the same binder instead of its own two-field test. Class: a completion member's presence bound in one direction only; the tests drop every non-empty subset of the completion's members and add each member where none is asked for | `tests/test_rd9_chain_relay.py::test_probe_f29_a_row_without_the_requested_completion_is_refused`, `::test_every_part_of_the_completion_dropped_is_refused`, `::test_a_completion_the_request_does_not_ask_for_is_refused`, `::test_a_completion_beside_no_content_bearing_set_is_refused` | 39e9bb390 |
+
+F30 and F31 are C (follow-up) and not addressed here.
+
+### Probe
+
+- PROBE F29 (`manage-agents/reviews/rd-9-probe-f29.py`): 2 failed on 214da8f36 (`DID NOT RAISE CheckerUnavailable`
+  on norms and soft), 2 passed on 39e9bb390; the same test is
+  `test_rd9_chain_relay.py::test_probe_f29_a_row_without_the_requested_completion_is_refused`.
+
+### Seeded bugs (each restored)
+
+| Seed | Language | Temporary change | Failing check |
+| --- | --- | --- | --- |
+| F29-M1 | Python | `ve/readings_route.py` of 214da8f36 restored (completion read from `"filled" in row`) | `test_rd9_chain_relay.py::test_probe_f29_a_row_without_the_requested_completion_is_refused[norms]`, `[soft]`, `::test_every_part_of_the_completion_dropped_is_refused[norms]`, `[soft]` |
+| F29-M2 | Python | elaborate's W2 branch skips `_bind_completion` | none: the readings-route schema already refuses a completion member on a W2 row, so `::test_a_completion_beside_no_content_bearing_set_is_refused` passes; the binder call is a second guard |
+
+No Lean or Rust product code changed, so no Lean or Rust seed.
+
+### Evidence on 39e9bb390
+
+- `lake build`: PASS (900 jobs). `python3 lean/audit.py`: PASS, 489 source files, 5,375 named theorems, standard
+  axioms only. `tools/regen_generated.py --check`: PASS, 25 entries.
+- Selected tests on the Mac runner (ve-mac-1, `mac-pytest.sh --select`, base `git merge-base HEAD main`): 378 units;
+  one failed, `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline` (F28, fails
+  the same way on the base; not edited here). `tests/test_rd9_chain_relay.py`: 28 passed.
+- The full gate was not run (task instruction).
