@@ -89,6 +89,8 @@ Runs:
   failure, `tests/test_numeral_conversion.py::test_every_int_conversion_in_ve_is_bounded_or_reviewed`.
   It still listed the removed `int(fields[12])` as stale; fixed in b227a89fd, and that file now
   passes (86 passed, VM).
+- Mac, final code: `mac-pytest.sh -- tests/test_lean_service.py tests/test_numeral_conversion.py`:
+  287 passed. The kernel-time test is skipped there (no `/proc`); the parser test runs.
 - `lake build` passes after the sync with main. No Lean or Rust code changed.
 
 ## Pre-existing failures (not this branch's)
