@@ -184,6 +184,12 @@ def jFOsame : Json := ProfileExamples.routeEnv ["order@0", "relational-fol@0"] [
   "undermines" "{0} undermines {1}" true [] []
 #guard row (Fp [bin "undermines" "{0} undermines {1}",
     bin "undermines_check" "{0} undermines the oversight role of {1}"]) "undermines" "{0} undermines {1}" true [] []
+-- DRI X2: `allow` and `consent` reject each other through the head `permits`, so neither claims it for `open`
+def Fpermits : Env :=
+  Fp [bin "allow" "{0} permits {1}", bin "consent" "{0} permits visits {1}", un "open" "{0} is fully permits"]
+#guard row Fpermits "open" "{0} is fully permits" true [] [] && row Fpermits "allow" "{0} permits {1}" false [] (V6 "allow")
+#guard !(PolicyCtx.of Fpermits {}).lintHeads.any (·.1 == "permits") &&
+  ["allow", "consent"].all ((PolicyCtx.of Fpermits {}).dropped.map (·.1)).contains
 #guard row (Fp [(("undocumented_parent", ["person"], wording "{0} has an undocumented noncitizen parent")),
     (("documented", ["person"], wording "{0} is documented"))]) "undocumented_parent"
   "{0} has an undocumented noncitizen parent" false [] (V6 "undocumented_parent")
@@ -554,6 +560,7 @@ def policyEnvs : List (Env × Overlay) :=
    (Fhence, noOverlay), (Fapi, noOverlay), (Fapi2, noOverlay), (envOf jFOsame, noOverlay), (Fassigns, noOverlay), (envOf jFApre, noOverlay),
    (envOf jFRslight, noOverlay), (envOf jFMa, noOverlay), (FRlevel, noOverlay), (crowded, noOverlay),
    (Fp [bin "undermines" "{0} undermines {1}", bin "erodes" "{0} undermines the oversight role of {1}"], noOverlay),
+   (Fpermits, noOverlay),
    (Fp [(("undocumented_parent", ["person"], wording "{0} has an undocumented noncitizen parent")),
      (("documented", ["person"], wording "{0} is documented"))], noOverlay),
    (Fp [bin "ballot" "{0} voted for {1}" ["person", "person"] (described "A member voted for a proposal.")], noOverlay),
@@ -594,7 +601,7 @@ def agreesWithReference (E : Env) (O : Overlay) : Bool :=
   ["owns legacy", "x1 owns", "un-safe owns", "the_a b", "safe-ish", "unclear", "A b", "café au lait",
    "reviewed", "re view", "Kelvin", "own", ""].all fun phrase =>
     wordOccursIn (runs isW phrase) phrase tok == wordOccurs tok phrase)
-#guard policyEnvs.length == 34
+#guard policyEnvs.length == 35
 #guard policyEnvs.all fun (E, O) => agreesWithReference E O
 #guard crowded.predicates.length == 43 &&
   (crowded.predicates.map fun d => (policyPredicate crowded {} d.name).isSome).all id

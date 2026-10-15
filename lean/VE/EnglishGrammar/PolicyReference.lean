@@ -1,7 +1,8 @@
 import VE.EnglishGrammar.Policy
 
 /-! Spec 5.2's vocabulary policy as a reference for the optimised `Policy.lean` (`E2Examples.lean` `#guard`s).
-The accepted-head table comes from `PolicyCtx.of`, so the fixed-point ownership rule has one implementation.
+The accepted-head table and the codes of dropped wordings come from `PolicyCtx.of`, so the fixed-point ownership
+rule has one implementation.
 Test-only: nothing on an admission path reads this reference. -/
 
 namespace VE.EnglishGrammar.PolicyReference
@@ -88,7 +89,7 @@ def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool :=
   | some d, some t =>
     let k := d.arity
     let heads := acceptedHeads E O
-    let codes := lintCodesWithHeads E O name t k heads
+    let codes := ((PolicyCtx.of E O).dropped.lookup name).getD (lintCodesWithHeads E O name t k heads)
     if k > 2 then codes.isEmpty else
     let idiom := (idioms k).contains t
     let p0 := if t.startsWith "{0} " then t.drop 4 else t
@@ -102,8 +103,7 @@ def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool :=
         | some (h, _) => !["is", "was", "a", "an"].contains h && wordOccurs h phrase
         | none => false
     let isHeads := E.declaredPreds.filterMap fun d2 => match E.declaredWording O d2.name with
-      | some v => if heads.any (fun (h, p) => p == d2.name && some h == templateHead v d2.arity) &&
-                    v.startsWith "{0} is " then (splitWs v)[2]? else none
+      | some v => if v.startsWith "{0} is " && heads.any (·.2 == d2.name) then (splitWs v)[2]? else none
       | none => none
     let negated := (splitWs phrase).any fun w =>
       (E.declaredPreds.map (·.name) ++ isHeads).any fun h => w == "un" ++ h || w == "non" ++ h
