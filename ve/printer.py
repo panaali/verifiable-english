@@ -602,6 +602,16 @@ class _Traversal:
 def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
            naming: str = "per_statement", *, vocabulary=None, accept_suggested_vocabulary=False,
            conclusions=(), conclusion_marker="Therefore", paragraph_breaks=()) -> str:
+    return _render(value, env, view, naming, vocabulary=vocabulary,
+                   accept_suggested_vocabulary=accept_suggested_vocabulary,
+                   conclusions=conclusions, conclusion_marker=conclusion_marker,
+                   paragraph_breaks=paragraph_breaks)
+
+
+def _render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
+            naming: str = "per_statement", *, vocabulary=None, accept_suggested_vocabulary=False,
+            conclusions=(), conclusion_marker="Therefore", paragraph_breaks=(),
+            enforce_source_limit=True) -> str:
     """Render a checked AST in the selected display surface.
 
     A formula has no final punctuation. Natural documents join sentences into
@@ -668,7 +678,7 @@ def render(value: ast.Document | ast.Formula, env: Any, view: str = "ve_strict",
         ast.check_formula(env, value)
         text = render_one(value)
     limit = MAX_SOURCE_BYTES
-    if len(text.encode("utf-8")) + (0 if isinstance(value, ast.Document) else 2) > limit:
+    if enforce_source_limit and len(text.encode("utf-8")) + (0 if isinstance(value, ast.Document) else 2) > limit:
         raise ResourceLimit(f"Rendered {view} text exceeds its {limit}-byte limit")
     return text
 

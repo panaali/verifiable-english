@@ -105,7 +105,8 @@ GENERATED = (
               ((PY, "VE/Route/frozen.py", "--write"),), ((PY, "VE/Route/frozen.py"),), cwd="lean"),
     Generated("trust-tables", ("tools/trust-classes.json", "docs/trust-baseline.json"), None,
               ((PY, "tools/trust_map.py", "--check"),), merge="json",
-              note="ledgers: growth beyond the signed budget needs `trust_map.py --write --reason` (a person)"),
+              note="ledgers: growth over the base needs `trust_map.py --allow --reason ... --signed ...` "
+                   "(the DRI's signature); `--write` is the merge train's, on main"),
     Generated("checker-pins", ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",), merge="json",
               note="both sides' pins, plus the merged ve_service build and Rust release binary"),
     Generated("response-schemas", ("ve/backends/lean_service_schema/*.json",),
@@ -126,6 +127,9 @@ GENERATED = (
     Generated("import-contract", (".importlinter",), ((PY, "tools/check_python_layers.py", "--write"),),
               ((PY, "tools/check_python_layers.py"),)),
     Generated("uv-lock", ("uv.lock",), (("uv", "lock"),), (("uv", "lock", "--check"),)),
+    Generated("heavy-tests", ("tests/heavy.json",),
+              ((PY, "tools/heavy_tests.py", "--write"),),
+              ((PY, "tools/heavy_tests.py", "--check"),)),
 )
 
 
@@ -139,6 +143,11 @@ RETIRED = {
 # Scripts with a writing mode whose output this script does not regenerate, each with the reason. Every script
 # of the repository with such a mode is either a writer above or listed here (tests/test_regen_generated.py).
 NOT_REGENERATED = {
+    "tools/ask_fixtures.py": "Q2 use-case fixtures: replayed and reviewed with their source documents",
+    "tools/question_answering_report.py": "Q2 batch report from saved measurement and comparison evidence",
+    "tools/question_answering_agreement.py": "Q2.6 evidence: the agreement of ask with the existing route, run on corpora and saved",
+    "tools/words_ab.py": "Q2.4 evidence: the A/B of Lean's wording against the pre-Q2.4 producers, run on corpora and saved",
+    "docs/spec/question-answering-q2/mutants.py": "Q2 seeded-bug evidence: each mutant is run and restored, then its result is saved",
     "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
     "tools/stage2_parity.py": "report: docs/spec/stage2-parity.md, a migration record",
     "tools/lean_service_soak.py": "measurement report of the machine it runs on",
@@ -411,9 +420,15 @@ DERIVED = {
 }
 
 
+# The key a ledger's derived values are computed from. AR-4's budget file has no per-file counts: its budget is
+# the merge train's measurement (`trust_map.py --write`), merged as a value, not derived from the file.
+DERIVED_FROM = {"docs/trust-baseline.json": "files"}
+
+
 def _derived(path: str, value, new=None):
     """Set the derived value of `value` (a ledger) to `new`, or, with `new` None, to its recomputation."""
-    if path not in DERIVED or not isinstance(value, dict):
+    source = DERIVED_FROM.get(path)
+    if path not in DERIVED or not isinstance(value, dict) or (source is not None and source not in value):
         return value
     for keys, compute in DERIVED[path]:
         node = value
