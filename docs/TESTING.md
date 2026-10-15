@@ -2,16 +2,26 @@
 
 ## The fast path: only the tests a change can affect
 
-While you work, run the light tier and the heavy tests your change can affect:
+While you work, run the tests your change can affect, not the whole suite:
 
 ```sh
-zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- \
-    --tier light --base "$(git merge-base HEAD main)" --run
+PATH="$HOME/.elan/bin:$PATH" UV_CACHE_DIR=/tmp/ve-xdist-uv-cache \
+    uv run --frozen python tools/select_tests.py --impacted --run
 ```
 
-This takes the changed files from the working tree (tracked changes and new files). Use `--base origin/main` for a branch, `--commit REV` for one commit, or `--paths FILE...` to name the files yourself. Leave out `--run` to see the plan, or add `--json` for the full selection. `--tier light` runs every test outside the measured heavy list, then only the heavy node IDs in selected files. It prints both counts. The builds and checks chosen by ordinary selection still run. Without `--tier`, selection works as before. A plain pytest run still runs every default test.
+This takes the changed files from the working tree (tracked changes and new files). Use `--base origin/main` for a branch (it compares `base...HEAD`, so it sees committed changes only), `--commit REV` for one commit, or `--paths FILE...` to name the files yourself. Leave out `--run` to see the plan, or add `--json` for the full selection. `--run` runs the checks, the native builds the selection needs, and pytest on the selected files, one after another and in the foreground.
 
-`tests/heavy-durations.json` holds the full measured Mac duration report; `tools/heavy_tests.py --write` generates `tests/heavy.json` from it and `--check` refuses a stale inventory. After a nightly `pytest --durations=0` run, `tools/heavy_tests.py --write --report /path/to/pytest-output.txt` updates both files. A test over 10 seconds enters the heavy list; `--check --report /path/to/pytest-output.txt` fails if a test over 20 seconds is not marked. The nightly full, live, no-reuse run and branch verify still run all tests.
+### The light tier
+
+`--tier light` is not a narrower selection: it runs every test outside the measured heavy list, then the heavy tests in the selected files. It prints both counts.
+
+```sh
+uv run --frozen python tools/select_tests.py --tier light --base "$(git merge-base HEAD main)" --run
+```
+
+The heavy stage names the selected files with `-m heavy`, never saved node IDs, so a renamed or split heavy test runs as light; a stage whose heavy tests are all gone is skipped. The builds and checks chosen by ordinary selection still run. Without `--tier`, selection works as before. A plain pytest run still runs every default test.
+
+`tests/heavy-durations.json` holds the full measured Mac duration report; `tools/heavy_tests.py --write` generates `tests/heavy.json` from it, and `--check` refuses an inventory that is stale against that report. A test measured at 10 seconds or more enters the heavy list. After a nightly `pytest --durations=0 --durations-min=0` run (without `--durations-min=0` pytest leaves out tests under 0.005 s), `tools/heavy_tests.py --check --report /path/to/pytest-output.txt` lists the tests that would enter, leave or drop out of the heavy list and exits 0: no test fails because a test became slow. The DRI decides whether to update both files with `--write --report /path/to/pytest-output.txt`. The nightly full, live, no-reuse run and branch verify still run all tests.
 
 A test file is selected when one of these changed:
 
