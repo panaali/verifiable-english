@@ -75,6 +75,8 @@ MAXFAIL = 5
 UV_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python")
 # Every pytest run the plan prints starts with this (tools/nested_pytest.py).
 PYTEST = nested_pytest.command([], python=UV_PYTHON)
+# pytest's exit status when it selected no test (pytest.ExitCode.NO_TESTS_COLLECTED).
+NO_TESTS_COLLECTED = 5
 CHECK_PYTHON = (*UV_PYTHON, "tools/check_python_layers.py")
 CHECK_LEAN = ("python3", "tools/check_lean_imports.py")
 CHECK_RUST = ("python3", "tools/check_rust_deps.py")
@@ -784,21 +786,30 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
 
 
 def light_tier(plan: dict, inventory_path: Path = ROOT / "tests/heavy.json", jobs: int = 8) -> dict:
-    """Run every light node, then only heavy nodes in the ordinary selection."""
+    """Run every light node, then only heavy nodes in the ordinary selection.
+
+    The heavy stage names the selected files, never saved node IDs: the collection hook in
+    tests/conftest.py marks what is still collected, so a renamed, re-parametrised or split heavy
+    test runs as light instead of making pytest exit 4. A stage whose heavy tests are all gone
+    selects nothing; `run` accepts its exit 5 (`may_select_none`)."""
     inventory = json.loads(inventory_path.read_text())
     heavy = [row["nodeid"] for row in inventory["heavy"]]
     selected_files = {unit for unit in plan["selected"] if unit.startswith("tests/")}
     selected_heavy = [nodeid for nodeid in heavy if nodeid.split("::", 1)[0] in selected_files]
+    heavy_files = sorted({nodeid.split("::", 1)[0] for nodeid in selected_heavy})
     commands = [command for command in plan["commands"] if command[:len(PYTEST)] != list(PYTEST)]
     commands.append(nested_pytest.command(["-q", "-m", "not live and not nightly and not heavy", "tests"],
                                           workers=jobs, python=UV_PYTHON))
-    if selected_heavy:
-        commands.append(nested_pytest.command(["-q", "-m", "not live and not nightly and heavy", *selected_heavy],
-                                              workers=jobs, python=UV_PYTHON))
-    return {**plan, "commands": commands,
+    may_select_none = []
+    if heavy_files:
+        may_select_none.append(nested_pytest.command(["-q", "-m", "not live and not nightly and heavy",
+                                                      *heavy_files], workers=jobs, python=UV_PYTHON))
+        commands.extend(may_select_none)
+    return {**plan, "commands": commands, "may_select_none": may_select_none,
             "tier": {"name": "light", "light_count": inventory["collected_count"] - len(heavy),
                      "heavy_count": len(heavy), "selected_heavy_count": len(selected_heavy),
-                     "selected_heavy": selected_heavy, "source_run": inventory["run"]}}
+                     "selected_heavy": selected_heavy, "heavy_files": heavy_files,
+                     "source_run": inventory["run"]}}
 
 
 # --- Impacted mode: the fast path for local iteration (docs/TESTING.md) ---
@@ -1216,6 +1227,9 @@ def run(plan: dict, *, record: bool = True, jobs: int = 8, maxfail: int = 0, ful
             continue  # recorded below, one process per unit
         if command[:len(PYTEST)] == PYTEST:
             code = run_plain(command, plan, maxfail, env, held)
+            if code == NO_TESTS_COLLECTED and command in plan.get("may_select_none", ()):
+                print("no selected heavy test is still collected; heavy stage skipped", flush=True)
+                continue
             if code:
                 return code
             continue
