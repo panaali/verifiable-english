@@ -1,0 +1,33 @@
+{
+ "head": "2a231176a6ddf85ccf03592ac1122a78a1534650",
+ "base": "9f40783b8fc403a99798d9951615d76aa2088d38",
+ "measured_head": {
+  "K": 997,
+  "S": 9788,
+  "V": 37495
+ },
+ "measured_base": {
+  "K": 997,
+  "S": 9788,
+  "V": 37495
+ },
+ "recorded_base": {
+  "K": 997,
+  "S": 9788,
+  "V": 37495
+ },
+ "recorded_head": {
+  "K": 997,
+  "S": 9788,
+  "V": 37495
+ },
+ "allowances": 70,
+ "unsigned_allowances": 64,
+ "introduced": [],
+ "removed": [],
+ "file_lines": {
+  "base": 13551,
+  "head": 500
+ },
+ "check_exit": 0
+}
