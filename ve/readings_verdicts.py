@@ -134,6 +134,9 @@ class _Route:
         filled = self.row.get("filled")
         self.completion = filled is not None
         self.source = Document(S1Environment(self.environment, filled), self.document, filled)
+        # The chain a choice's document is checked on: under a completion Lean's (`filled.chain`, bound to the
+        # request by the relay), otherwise the environment's profiles (review F31 of rd-9).
+        self.chain = filled["chain"] if self.completion else self.source.senv.chain
         self.sets = self.source.sets
         if self.route == "enumerated":
             # The compatible choices are Lean's (the route's row, bound to the request by the relay; on the lower
@@ -1380,7 +1383,7 @@ class _ChoiceDocument:
         from .readings_sup import choice_contents
         self.route, self.choice = route, choice
         senv = route.source.senv
-        self.chain = senv.chain
+        self.chain = route.chain
         contents = choice_contents(route.source, choice)
         self.assertions = [c.body for c in contents if isinstance(c, Content) and c.kind == "assertion"]
         lower = senv.lower_data
@@ -1587,7 +1590,7 @@ class _FilledChoiceDocument:
         from .environment import Environment
         self.route, self.choice = route, choice
         senv = route.source.senv
-        self.chain = senv.chain
+        self.chain = route.chain
         row = self._inner({"kind": "norm-defaults-elaborate"})
         self.elaboration = row
         self.base = Environment(row["base_environment"])

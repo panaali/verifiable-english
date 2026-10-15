@@ -217,3 +217,28 @@ def test_a_completion_beside_no_content_bearing_set_is_refused(lean, answers):
             mutant[field] = copy.deepcopy(donor[field])
             with pytest.raises(CheckerUnavailable):
                 _relay(case)(mutant, case)
+
+
+def _reads_senv_chain(function):
+    tree = ast.parse(inspect.getsource(function).lstrip())
+    return any(isinstance(node, ast.Attribute) and node.attr == "chain" and isinstance(node.value, ast.Name)
+               and node.value.id == "senv" for node in ast.walk(tree))
+
+
+def test_f31_a_choice_document_reads_the_routes_chain(lean, tmp_path):
+    """Review F31 of rd-9: a choice's document is checked on the route's chain, which under a completion is Lean's
+    relayed `filled.chain`, never Python's reading of the profiles (`senv.chain`) where Lean's is available."""
+    from tests.test_readings_sd_document import fsd1 as fsd1_file
+    from ve.document import load_document
+    from ve.readings_verdicts import _ChoiceDocument, _FilledChoiceDocument, context
+    assert not _reads_senv_chain(_ChoiceDocument.__init__) and not _reads_senv_chain(_FilledChoiceDocument.__init__)
+    doc = load_document(fsd1_file(tmp_path))
+    route = context(doc)
+    assert route.completion and route.chain == doc["readings_s2"]["filled"]["chain"] == "soft"
+    assert {route._choice(c).chain for c in route.choices} == {"soft"}
+    # Lean's word decides, not the profiles: a row naming another chain is followed (the relay refused it earlier).
+    doc = {key: value for key, value in doc.items() if key != "_readings_s2_context"}
+    doc["readings_s2"] = copy.deepcopy(doc["readings_s2"])
+    doc["readings_s2"]["filled"]["chain"] = "norms"
+    forged = context(doc)
+    assert forged.chain == "norms" and forged.source.senv.chain == "soft"
