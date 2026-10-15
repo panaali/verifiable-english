@@ -69,13 +69,16 @@ class Staging:
                  data="".join(f"100644 {blob}\t{path}\n" for blob, path in zip(blobs, files)).encode())
 
     def rehash(self, *paths: str) -> None:
-        """Update the frozen inventory in the index, as the repository's rules require."""
-        lines = self.git("cat-file", "blob", f":{INVENTORY}").decode().splitlines()
-        recorded = dict(reversed(line.split(maxsplit=1)) for line in lines)
+        """Update the frozen inventory in the index for those of `paths` it lists, as the repository's rules
+        require; a path it does not list (a module without K declarations) needs no line."""
+        lines = self.git("cat-file", "blob", f":{INVENTORY}").decode().splitlines(keepends=True)
+        header = "".join(line for line in lines if line.startswith("#"))
+        recorded = dict(reversed(line.split()) for line in lines if not line.startswith("#"))
         for path in paths:
-            recorded[path.removeprefix("lean/")] = hashlib.sha256(
-                self.git("cat-file", "blob", f":{path}")).hexdigest()
-        self.stage(INVENTORY, "".join(f"{digest}  {name}\n" for name, digest in sorted(recorded.items())))
+            if path.removeprefix("lean/") in recorded:
+                recorded[path.removeprefix("lean/")] = hashlib.sha256(
+                    self.git("cat-file", "blob", f":{path}")).hexdigest()
+        self.stage(INVENTORY, header + "".join(f"{digest}  {name}\n" for name, digest in sorted(recorded.items())))
 
     def run(self, *args: str, **env: str) -> subprocess.CompletedProcess:
         return subprocess.run([str(HOOK), *args], cwd=ROOT, env={**self.env, **env},
@@ -442,16 +445,37 @@ def test_frozen_file_change_requires_an_inventory_update(staging):
     rejects(staging, f"{path}: frozen file deleted but still listed")
 
 
-def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
+def test_frozen_guard_needs_no_line_for_a_module_without_k_declarations(staging):
+    """AR-2 (decision D2): only K files and the ve.core@0.1 decoders are hash-frozen."""
     staging.stage("lean/VE/Core/Planted.lean", "namespace VE\nend VE\n")
-    rejects(staging, "lean/VE/Core/Planted.lean: unlisted trusted module")
+    passes(staging)  # a new module is not required in the list
+    path = "lean/VE/Service/Document.lean"  # D[V] and G[V], no K declaration
+    staging.stage(path, staging.head(path) + b"\n-- Unreviewed edit.\n")
+    passes(staging)
+    assert path.removeprefix("lean/") not in staging.head(INVENTORY).decode()
+
+
+def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
+    table = json.loads(staging.head("tools/trust-classes.json"))
+    table["modules"]["VE/Core/Planted.lean"] = {"K": ["VE.Planted"]}
+    staging.stage("lean/VE/Core/Planted.lean", "namespace VE\nend VE\n")
+    staging.stage("tools/trust-classes.json", json.dumps(table, indent=1) + "\n")
+    rejects(staging, "lean/VE/Core/Planted.lean: frozen file (K declarations or a ve.core@0.1 decoder) is not listed")
+    staging.stage("tools/trust-classes.json", staging.head("tools/trust-classes.json"))
     staging.stage("lean/VE/Core/Planted.lean", None)
-    first, rest = staging.head(INVENTORY).split(b"\n", 1)
-    staging.stage(INVENTORY, b"0" * 64 + first[64:] + b"\n" + rest)  # a wrong rehash
-    rejects(staging, f"lean/{first[66:].decode()}: frozen file changed without an inventory update")
+    lines = staging.head(INVENTORY).decode().splitlines(keepends=True)
+    first = next(i for i, line in enumerate(lines) if not line.startswith("#"))
+    name = lines[first].split()[1]
+    staging.stage(INVENTORY, "".join(lines[:first]) + "0" * 64 + lines[first][64:] + "".join(lines[first + 1:]))
+    rejects(staging, f"lean/{name}: frozen file changed without an inventory update")  # a wrong rehash
+    staging.stage(INVENTORY, "".join(lines) + f"{'0' * 64}  VE/Service/Document.lean\n")
+    rejects(staging, "lean/VE/Service/Document.lean: listed but neither holds a K declaration nor is a ve.core@0.1 "
+                     "decoder")
     staging.stage(INVENTORY, staging.head(INVENTORY))
     staging.stage("lean/Main.lean", staging.head("lean/Main.lean") + b"\n-- edit\n")
     rejects(staging, "lean/Main.lean: existing subcommands changed")
+    staging.stage("lean/Main.lean", None)
+    rejects(staging, "lean/Main.lean missing from the index")
 
 
 def test_english_grammar_checks_the_staged_generated_table(staging):
