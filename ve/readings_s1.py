@@ -72,13 +72,17 @@ class S1Environment:
         self.profiles = list(self.env.profiles)
         self.lower_profiles = [p for p in self.profiles if p != READINGS]
         self.lower_data = {**data, "profiles": self.lower_profiles}
-        self.chain = ("rights" if "rights@0" in self.profiles else
-                      "soft" if "soft-norms@0" in self.profiles else "norms")
         self.completion = NORM_DEFAULTS in self.lower_profiles
+        if self.completion and filled is None:
+            raise CheckerUnavailable("ReadingsConstruction: under norm-defaults@0 the frame is the filled "
+                                     "document Lean's readings route answers, and none was given")
+        # The chain: under the completion Lean's (`filled.chain`, bound to the request by the relay), so every reader
+        # of the frame, the choice documents of each route included, takes Lean's (review F31 of rd-9); otherwise
+        # the profiles'.
+        self.chain = (filled["chain"] if self.completion else
+                      "rights" if "rights@0" in self.profiles else
+                      "soft" if "soft-norms@0" in self.profiles else "norms")
         if self.completion:
-            if filled is None:
-                raise CheckerUnavailable("ReadingsConstruction: under norm-defaults@0 the frame is the filled "
-                                         "document Lean's readings route answers, and none was given")
             self.frame_data = wire(filled["environment"])
         else:
             self.frame_data = {**data, "profiles": self.lower_profiles}

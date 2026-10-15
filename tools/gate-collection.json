@@ -9670,7 +9670,7 @@
   "tests/test_rd9_chain_relay.py::test_a_forged_chain_is_refused[soft-soft fields dropped]",
   "tests/test_rd9_chain_relay.py::test_every_part_of_the_completion_dropped_is_refused[norms]",
   "tests/test_rd9_chain_relay.py::test_every_part_of_the_completion_dropped_is_refused[soft]",
-  "tests/test_rd9_chain_relay.py::test_f31_a_choice_document_reads_the_routes_chain",
+  "tests/test_rd9_chain_relay.py::test_f31_every_choice_document_reads_leans_chain",
   "tests/test_rd9_chain_relay.py::test_field_presence_and_route_are_leans_on_every_chain[norms]",
   "tests/test_rd9_chain_relay.py::test_field_presence_and_route_are_leans_on_every_chain[rights]",
   "tests/test_rd9_chain_relay.py::test_field_presence_and_route_are_leans_on_every_chain[soft]",
