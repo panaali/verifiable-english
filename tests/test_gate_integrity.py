@@ -485,6 +485,44 @@ def test_fsmonitor_hook_cannot_hide_edited_source(tmp_path, monkeypatch):
     assert gate.source_identity(env)[1] is True
 
 
+def committed_source(tmp_path):
+    """A repository whose HEAD commits source.py, and the gate environment it is checked in."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    env = gate.gate_environment(tmp_path / "scratch")
+    identity = ["-c", "user.name=gate", "-c", "user.email=gate@example.invalid"]
+    subprocess.run(["git", "init", "-q"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("one\n")
+    subprocess.run(["git", "add", "source.py"], cwd=repo, env=env, check=True)
+    subprocess.run(["git", *identity, "commit", "-q", "-m", "source"], cwd=repo, env=env, check=True)
+    return repo, env
+
+
+@pytest.mark.parametrize("bit", ["--assume-unchanged", "--skip-worktree"])
+def test_index_bits_cannot_hide_edited_source(tmp_path, monkeypatch, bit):
+    repo, env = committed_source(tmp_path)
+    subprocess.run(["git", "update-index", bit, "source.py"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("a longer edit\n")
+    plain = subprocess.run(["git", "status", "--porcelain"], cwd=repo, env=env,
+                           capture_output=True, text=True, check=True)
+    assert plain.stdout == ""
+    monkeypatch.setattr(gate, "ROOT", repo)
+    assert gate.source_identity(env)[1] is True
+
+
+def test_source_identity_reports_clean_tree_and_leaves_index_alone(tmp_path, monkeypatch):
+    repo, env = committed_source(tmp_path)
+    index = repo / ".git/index"
+    before = index.read_bytes(), index.stat().st_mtime_ns
+    monkeypatch.setattr(gate, "ROOT", repo)
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, env=env, text=True).strip()
+    assert gate.source_identity(env) == (head, False)
+    (repo / "new.py").write_text("")
+    assert gate.source_identity(env) == (head, True)
+    assert (index.read_bytes(), index.stat().st_mtime_ns) == before
+    assert not (tmp_path / "scratch/source-index").exists()
+
+
 def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
     output = tmp_path / "record.json"
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
@@ -494,13 +532,16 @@ def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
         seen.append(stage)
         if stage == "commit":
             return "old"
+        if stage == "worktree index":
+            assert args[-2:] == ["read-tree", "old"] and env["GIT_INDEX_FILE"]
+            return ""
         assert stage == "worktree status"
         assert "--untracked-files=all" in args
         return "?? tests/conftest.py"
 
     monkeypatch.setattr(gate, "command", fake_command)
     assert gate.main() == 1
-    assert seen == ["commit", "worktree status"]
+    assert seen == ["commit", "worktree index", "worktree status"]
     assert json.loads(output.read_text())["dirty"] is True
 
 
