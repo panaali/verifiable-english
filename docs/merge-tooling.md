@@ -39,6 +39,7 @@ its merge strategy:
 | layer-ledgers | `tools/layer-exceptions.json`, `lean-layer-exceptions.json` | json (check only) |
 | import-contract | `.importlinter` | regenerate |
 | uv-lock | `uv.lock` | regenerate |
+| heavy-tests | `tests/heavy.json` (from the saved Mac duration report) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);
