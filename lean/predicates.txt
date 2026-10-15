@@ -3,6 +3,7 @@
 -- out of the executable classes C, D, G.
 module EnglishLeanBenchMain
 module EnglishMain
+module EnglishRunMain
 module Iceberg
 module Main
 module MeteredMain
@@ -249,6 +250,7 @@ module VE.Norms.Checks
 module VE.Norms.Conflict
 module VE.Norms.Elaborate
 module VE.Norms.Examples
+module VE.Norms.Family
 module VE.Norms.Flagged
 module VE.Norms.FlaggedSpec
 module VE.Norms.Layer
