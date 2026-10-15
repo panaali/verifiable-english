@@ -249,6 +249,22 @@ def test_trust_merge_adds_file_deltas_and_recomputes_both_derived_values(merge):
     assert merged["budget"] != case["ours"]["budget"]
 
 
+def test_trust_merge_of_the_ar4_budget_file_keeps_main_budget_and_both_allowances():
+    """AR-4's budget file has no per-file counts: the merge keeps main's measured budget as a value (no
+    recomputation from `files`, which would crash) and both sides' allowances."""
+    def side(budget, allowances):
+        return {"comment": trust_map.COMMENT, "budget": budget, "allowances": allowances}
+
+    old = {"class": "V", "lines": 3, "reason": "old", "signature": "R6 (DRI-RULINGS.md)", "commit": "abc1234"}
+    new = {**old, "lines": 5, "reason": "branch growth", "signature": "DRI, sync note, 2026-10-14"}
+    base = side({"K": 1, "S": 2, "V": 3}, [old])
+    ours = side({"K": 1, "S": 2, "V": 3}, [old, new])
+    theirs = side({"K": 1, "S": 2, "V": 9}, [old])
+    text, clean = R.merge_text("docs/trust-baseline.json", *(json.dumps(s) for s in (base, ours, theirs)))
+    assert clean
+    assert json.loads(text) == side({"K": 1, "S": 2, "V": 9}, [old, new])
+
+
 def test_trust_merge_adds_equal_concurrent_values_and_missing_base_rows():
     row = trust_map.empty_counts()
     ours = {"files": {"New.lean": {**row, "K": 2, "trusted": 2}}}
@@ -523,7 +539,7 @@ def test_resolve_fails_when_measured_tree_exceeds_merged_trust_budget(tmp_path, 
         assert steps == entry.check
         baseline = json.loads((tmp_path / "repo" / path).read_text())
         assert baseline["files"] == case["merged"]["files"]
-        return int(bool(trust_map.check(measured, baseline)))
+        return int(bool(trust_map.check(measured, baseline["budget"], [])))
 
     monkeypatch.setattr(R, "_run", trust_check)
     assert R.resolve(R.selected(["trust-tables"], []), root) == 1
