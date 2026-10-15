@@ -373,9 +373,12 @@ def working_tree_id(root: Path = ROOT) -> str:
                               capture_output=True, text=True).stdout.strip()
 
 
-def find_map(base: str, root: Path = ROOT) -> Path | None:
+def find_map(base: str, root: Path = ROOT, other_versions: list[Path] | None = None) -> Path | None:
     """The cached map nearest below `base`: of the maps recorded at its ancestors,
-    the one with the fewest commits between it and `base`. $VE_TESTMAP overrides."""
+    the one with the fewest commits between it and `base`. $VE_TESTMAP overrides.
+
+    A nearer ancestor map that does not load is skipped with a line on stderr;
+    one recorded by another map format version is also appended to `other_versions`."""
     if os.environ.get("VE_TESTMAP"):
         return Path(os.environ["VE_TESTMAP"])
     directory = cache_dir()
@@ -393,8 +396,16 @@ def find_map(base: str, root: Path = ROOT) -> Path | None:
         if best is None or int(distance.stdout) < best[0]:
             try:
                 load(path)
-            except (OSError, ValueError, EOFError):
-                continue  # unreadable, or recorded by another version of the recorder
+            except MapVersionError as error:
+                print(f"test_map: skipped map {path} for {base[:10]}: recorded by map format version "
+                      f"{error.found}, this checkout reads version {VERSION} "
+                      "(record a new map: tools/test_map.py record)", file=sys.stderr)
+                if other_versions is not None:
+                    other_versions.append(path)
+                continue
+            except (OSError, ValueError, EOFError) as error:
+                print(f"test_map: skipped map {path}: unreadable ({error})", file=sys.stderr)
+                continue
             best = (int(distance.stdout), path)
     return best[1] if best else None
 
@@ -404,6 +415,13 @@ def load(path: Path) -> dict:
         data = json.load(handle)
     validate(data, str(path))
     return data
+
+
+class MapVersionError(ValueError):
+    """A well-formed map header recorded by another map format version."""
+    def __init__(self, message: str, found: int):
+        super().__init__(message)
+        self.found = found
 
 
 def validate(data, where: str = "map") -> None:
@@ -420,6 +438,8 @@ def validate(data, where: str = "map") -> None:
                 type(i) is int and 0 <= i < len(tests) for i in value):
             fail(f"{what} is not a non-empty list of test indices")
 
+    if isinstance(data, dict) and type(data.get("version")) is int and data["version"] != VERSION:
+        raise MapVersionError(f"{where}: version {data['version']!r}, expected {VERSION}", data["version"])
     if not isinstance(data, dict) or data.get("version") != VERSION:
         fail(f"version {data.get('version') if isinstance(data, dict) else None!r}, expected {VERSION}")
     if not isinstance(data.get("commit"), str):

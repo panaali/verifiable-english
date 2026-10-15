@@ -23,7 +23,7 @@ PYTHON = {
         "readings_s2_english senses").split(),
     4: ("__main__ adapters admission argument ask attacks authoring backends bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
-        "openterms propose readings search stream_audit vacuity assist discourse "
+        "filling_search openterms propose readings search stream_audit vacuity assist discourse words "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document").split(),
     5: ["argument_fixtures"],
@@ -128,6 +128,10 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
+    if module.startswith("VE.Ask."):
+        return 4  # question answering Q2: binds a request to Service.Document's split and reads EnglishGrammar.Run
+    if module.startswith("VE.Words."):
+        return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.", "VE.Senses.", "VE.Question.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
