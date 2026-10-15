@@ -235,34 +235,41 @@ def test_round1_pilots_keep_the_base_statuses_and_the_previous_english():
 
 
 def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
-    """Review B1 of rd-6b against its saved revision and pinned merge base, independent of later batches.
-    The reviewed growth was S +0, V +142: +16 under R6 and +126 awaiting the DRI's signature."""
+    """Review B1 of rd-6b: the growth from the pinned merge base is exactly the baseline's RD-6b entry (since AR-4
+    an allowance of the budget file), as DELTA.md states it: S +0, V +142, of which +16 under R6 and +126 awaiting the DRI's signature. The entry is the reviewed
+    measurement at the branch head before the merge of ve-integration f0547468; the merge's entry carries the
+    same growth over the merged base. The history is read from saved revisions, independent of later batches."""
     from tools import trust_map
     summary, *_ = saved()
     reviewed = json.loads(subprocess.check_output(
         ["git", "show", f"{RD6B_HEAD}:docs/trust-baseline.json"], cwd=ROOT))
-    baseline = json.loads((ROOT / "docs/trust-baseline.json").read_text())
+    # AR-4: the history became the allowances of the budget file (one per class that grew, the entry's text as
+    # its reason); the tree's counts are checked against the base by `trust_map.py --check`.
+    allowed = {(a["class"], a["lines"], a["reason"]) for a in json.loads(
+        (ROOT / "docs/trust-baseline.json").read_text())["allowances"]}
     parent, parent_problems, _ = trust_map.measure_rev(summary["base_merge_commit"])
     merged, merged_problems, _ = trust_map.measure_rev(MERGED_BASE)
     assert not parent_problems and not merged_problems
+    approved = json.loads(subprocess.check_output(
+        ["git", "show", f"{RD6B_APPROVED}:docs/trust-baseline.json"], cwd=ROOT))
+    assert approved["signed"] == []
     entry = reviewed["history"][-1]
     assert entry["change"].startswith("readings-defaults RD-6b: ")
     assert entry["rebaselined_from"] == trust_map.budget(trust_map.totals(parent))
     assert entry["to"] == trust_map.budget(reviewed["totals"])
-    assert entry in baseline["history"]
-    merge = next(row for row in baseline["history"]
+    assert entry in approved["history"]
+    merge = next(row for row in approved["history"]
                  if row["change"].startswith(f"Merge ve-integration {MERGED_BASE[:8]} "))
     assert merge["change"].startswith(f"Merge ve-integration {MERGED_BASE[:8]} ")
     assert merge["rebaselined_from"] == trust_map.budget(trust_map.totals(merged))
     for step in (entry, merge):
         growth = {key: step["to"][key] - step["rebaselined_from"][key] for key in ("K", "S", "V")}
         assert growth == {"K": 0, "S": 0, "V": 142}
+        assert ("V", 142, step["change"]) in allowed
     # The approved head's last merge entry; later merges into other branches append their own entries after it.
-    approved = json.loads(subprocess.check_output(
-        ["git", "show", f"{RD6B_APPROVED}:docs/trust-baseline.json"], cwd=ROOT))
     current_merge = approved["history"][-1]
     assert current_merge["change"].startswith("Merge ve-integration 7478b23d ")
-    assert current_merge in baseline["history"]
+    assert {("S", 87, current_merge["change"]), ("V", 471, current_merge["change"])} <= allowed
     assert current_merge["rebaselined_from"] == merge["to"]
     assert current_merge["to"] == trust_map.budget(approved["totals"])
     assert {key: current_merge["to"][key] - current_merge["rebaselined_from"][key]
