@@ -75,3 +75,24 @@ def test_kernel_bounded_batches(record, tmp_path, target):
         totals[key] = totals.get(key, 0.0) + row["cpu"]
     for key, seconds in sorted(totals.items()):
         record(key, seconds)
+
+
+@pytest.mark.parametrize("ident", ["U3", "A1"])
+def test_ask_lean_cpu(record, ident):
+    """Question answering Q2.6's `ask` budget (plan: Lean CPU at most 2 s per request), measured on the recorded
+    U3 (the UDHR readings route, six choices) and A1 (an agent-policy document) on a warm service. The qa-q2 review
+    found 2.67 s on U3: every reader of a row's key replayed its certificate's citations; the answer now builds them
+    once (`VE.Ask.memoTable`)."""
+    import importlib.util
+    from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanService
+    spec = importlib.util.spec_from_file_location("question_answering_measure",
+                                                  ROOT / "tools/question_answering_measure.py")
+    measure = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(measure)
+    _, _, ask = measure.service_case(ident)
+    with LeanService(DEFAULT_EXECUTABLE) as service:
+        found = measure.measure_service(service, "ask", ask)
+    if found["cpu_s"] is None:
+        pytest.skip("the platform does not report the service's CPU time")
+    record("lean", found["cpu_s"])
+    assert found["cpu_s"] <= 2.0, found  # the plan's registered budget, beside the stored baseline
