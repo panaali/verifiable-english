@@ -157,8 +157,14 @@ The selector works at the level of functions, not layers:
   it, and an import the change removed still counts.
 * **Lean.** The executables whose root imports the module (from the Lean
   import graph), including when a module is added or removed, then the tests
-  that ran those executables; plus `lake build`,
-  `lean/audit.py` and the Lean import check.
+  that ran those executables; plus `lake build`, `lean/audit.py` and the Lean
+  import check. For `ve_service`, the map also records each request mode. The
+  mode roots are generated from Lean's proved `runMode` equations in
+  `tools/lean-mode-deps.json`; the Lean import graph expands each root. A
+  changed module selects recorded users of the affected modes. Protocol,
+  Serve, a missing or stale mode table, an unknown mode, and a service test
+  with no recorded mode retain the service-wide selection. Tests that check
+  `lean/checkers.lock` still select when the pin file changes.
 * **Assurance manifest.** The recorder records each operation read through
   `ve.assurance`, its import-time presence checks, and a whole-manifest read
   separately. Editing an existing operation selects its entry readers and
@@ -198,7 +204,8 @@ children started with an explicit `env=` inherit it). It records, per test
 file, the functions under the repository that ran (`sys.monitoring`), the
 files read and directories listed by test code (an audit hook; the import
 system's, pytest's, tracebacks' and warnings' source reads are excluded), and
-the programs started, and the assurance manifest operations read. A schema
+the programs started, the Lean service modes requested, and the assurance
+manifest operations read. A schema
 for `ve_service` is compiled only when its mode is first checked. Who a read
 or listing is for is decided by the
 innermost frame that is either code under the repository (the test and the
