@@ -59,7 +59,7 @@ import tempfile
 import time
 
 from change_units import Summary, delta
-from layer_policy import ROOT, lean_default_targets, lean_executables, python_exports
+from layer_policy import APP_AREAS, ROOT, lean_default_targets, lean_executables, python_exports
 import lean_mode_deps
 import nested_pytest
 import quarantine
@@ -91,8 +91,8 @@ PYTHON_LAYER_INPUTS = {".importlinter", "tools/layer-exceptions.json", "tools/ch
 LEAN_LAYER_INPUTS = {"tools/lean-layer-exceptions.json", "tools/check_lean_imports.py",
                      "tools/lean_header_imports.lean", "tools/layer_policy.py"}
 RUST_LAYER_INPUTS = {"tools/check_rust_deps.py", "tools/layer_policy.py"}
-KNOWN_AREAS = {"ve", "ve_experiments", "experiments", "tests", "tools", "conformance", "lean", "rust",
-               "usecases", "docs", "paper", "examples", "data", "bench", "design"}
+KNOWN_AREAS = {"ve", "tests", "tools", "conformance", "lean", "rust", "docs", "examples", "data", "bench",
+               "design", *APP_AREAS}
 # Cached drift results depend on this file's rules as well as the graph's.
 SELECTOR_VERSION = hashlib.sha256(source_graph.CODE_VERSION.encode()
                                   + Path(__file__).read_bytes()).hexdigest()[:16]
@@ -679,7 +679,12 @@ def resolve_map(base: str, coverage) -> Coverage | None:
             return Coverage(data, tree)
         except (OSError, ValueError, EOFError):
             pass
-    path = Path(coverage) if coverage != "auto" else test_map.find_map(base)
+    other_versions: list[Path] = []
+    path = Path(coverage) if coverage != "auto" else test_map.find_map(base, other_versions=other_versions)
+    if path is None and other_versions:
+        print(f"select_tests: no map of format version {test_map.VERSION} for {base[:10]}; skipped "
+              f"{len(other_versions)} ancestor map(s) of other versions, so selection has no map "
+              "(record a new map: tools/test_map.py record)", file=sys.stderr)
     if path is None or not path.exists():
         return None
     return Coverage(test_map.load(path), path)
