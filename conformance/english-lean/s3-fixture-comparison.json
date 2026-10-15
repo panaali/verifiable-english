@@ -1984,7 +1984,7 @@
     },
     "python": {
      "class": "SyntaxError",
-     "message": "English all-derivations check failed: No terminal matches '5' in the current parser context, at line 1 col 16\n\nlegacy costs --5.\n               ^\nExpected one of: \n\t* LSQB\n\t* BUDGET\n\t* MINUS\n\t* LIMIT\n"
+     "message": "English all-derivations check failed: No terminal matches '5' in the current parser context, at line 1 col 16\n\nlegacy costs --5.\n               ^\nExpected one of: \n\t* MINUS\n\t* LSQB\n\t* LIMIT\n\t* BUDGET\n"
     },
     "lean": {
      "status": "none",
@@ -2022,7 +2022,7 @@
     },
     "python": {
      "class": "SyntaxError",
-     "message": "English all-derivations check failed: No terminal matches 't' in the current parser context, at line 1 col 15\n\nlegacy costs -twice the budget.\n              ^\nExpected one of: \n\t* LSQB\n\t* BUDGET\n\t* MINUS\n\t* LIMIT\n"
+     "message": "English all-derivations check failed: No terminal matches 't' in the current parser context, at line 1 col 15\n\nlegacy costs -twice the budget.\n              ^\nExpected one of: \n\t* MINUS\n\t* LSQB\n\t* LIMIT\n\t* BUDGET\n"
     },
     "lean": {
      "status": "none",

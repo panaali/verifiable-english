@@ -3637,7 +3637,6 @@
         "VE.EnglishGrammar.PolicyCtx",
         "VE.EnglishGrammar.PolicyCtx.of",
         "VE.EnglishGrammar.PolicyCtx.ofHeads",
-        "VE.EnglishGrammar.PolicyCtx.settle",
         "VE.EnglishGrammar.PredFacts",
         "VE.EnglishGrammar.PredFacts.of",
         "VE.EnglishGrammar.acceptsDeclared",
