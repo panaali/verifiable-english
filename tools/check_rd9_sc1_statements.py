@@ -39,17 +39,42 @@ SECTIONS = (
 )
 
 
-# Declarations whose build differs from the approved text, each awaiting the bounded statement re-check (spec 11 item
-# 11, plan SC-0) with its reason; any other difference fails.
-PENDING = {
-    "choiceLayeredG": "gains `(hN : N.D = b.D)`: the soft case types its situation vocabulary by `primeModel_valid`, "
-                      "which needs the choice's `E` to be the request's, and `Environment` holds functions, so the "
-                      "signature `(b) (N)` cannot check it at run time; every caller has the fact (`AdmittedSD.hN`, "
-                      "`AdmittedND.hN`), and no approved theorem states `choiceLayeredG` (spec 12.24)",
-    "ndTextWith": "builds `free N.D` once (`let freeDoc`), as the route builds one document per request "
-                  "(tests/test_readings_lean_sharing.py); the approved body builds it twice, through `decisionCount` "
-                  "and `freeU N`, which is `asU N (free N.D).1` by definition, so the value is the same (spec 12.25)",
+# Declarations whose build differs from the approved text by one exact edit the DRI signed after the bounded statement
+# re-check (spec 11 item 11, plan SC-0; B4 of manage-agents/reviews/dri-signatures-qa-q2-rd-9.md, re-check PASS in
+# manage-agents/reviews/rd-9-b4-recheck.md, signed in manage-agents/reviews/rd-9-dri-signatures-20261015.md item 3).
+# The approved text with the edit applied must equal the Lean text exactly; any other difference fails.
+B4 = "SIGNED by DRI 2026-10-15 (B4, bounded statement re-check PASS)"
+SIGNED = {
+    # Gains `(hN : N.D = b.D)`: the soft case types its situation vocabulary by `primeModel_valid`, which needs the
+    # choice's `E` to be the request's, and `Environment` holds functions, so the signature `(b) (N)` cannot check it
+    # at run time; every caller has the fact (`AdmittedSD.hN`, `AdmittedND.hN`), and no approved theorem states
+    # `choiceLayeredG` (spec 12.24).
+    "choiceLayeredG": (B4, ("(wfc : VE.NormDefaults.WellFormedU (choiceU N c) = true) :",
+                            "(wfc : VE.NormDefaults.WellFormedU (choiceU N c) = true) (hN : N.D = b.D) :")),
+    # Builds `free N.D` once (`let freeDoc`), as the route builds one document per request
+    # (tests/test_readings_lean_sharing.py); the approved body builds it twice, through `decisionCount` and `freeU N`,
+    # which is `asU N (free N.D).1` by definition, so the value is the same (spec 12.25).
+    "ndTextWith": (B4, (":= ((reservedUnsaid N).map (s!\"InvalidInput: reserved name {·}\")).or <| "
+                        "(ndDocTextG re (decisionCount (free N.D).1) (freeU N)).or",
+                        ":= let freeDoc := free N.D ((reservedUnsaid N).map (s!\"InvalidInput: reserved name {·}\")).or "
+                        "<| (ndDocTextG re (decisionCount freeDoc.1) (asU N freeDoc.1)).or")),
 }
+
+
+def signed_edits(approved: dict) -> tuple[list[str], list[str]]:
+    """Apply each signed edit to its approved declaration in place. Returns the report lines and the errors: an edit
+    that does not apply (its text is not in the approved declaration) is an error, so the list can only shrink."""
+    lines, errors = [], []
+    for name, (ruling, (before, after)) in SIGNED.items():
+        for key in [key for key in approved if key[1] == name]:
+            texts = approved[key]
+            edited = [text.replace(before, after, 1) for text in texts]
+            if len(texts) != 1 or edited == texts:
+                errors.append(f"{name}: the signed edit does not apply to the approved text")
+                continue
+            approved[key] = edited
+            lines.append(f"{name}: {ruling}: approved text with its one signed edit")
+    return lines, errors
 
 
 def approved_block(start: str, stop: str) -> dict:
@@ -74,9 +99,12 @@ def main(sections=SECTIONS) -> int:
         counted = dict(expected)
         for kind in counted:
             counted[kind] -= sum(1 for name in later for key in [(kind, name)] if key in approved_block(start, stop))
-        pending = {name: why for name, why in PENDING.items() if any(key[1] == name for key in approved)}
-        e, _ = compare(title, approved, sources, counted, pending, set())
+        signed, e = signed_edits(approved)
         errors.extend(e)
+        e, _ = compare(title, approved, sources, counted, {}, set())
+        errors.extend(e)
+        for line in signed:
+            print(line)
         if later:
             word = "unbuilt" if title.startswith("SC-1") else "not built yet"
             print(f"{title.split()[0]} {word}: {', '.join(sorted(later))}")

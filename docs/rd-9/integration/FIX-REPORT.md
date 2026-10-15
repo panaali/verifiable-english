@@ -312,6 +312,9 @@ The DRI's Task B conditions stand as follows:
 | B8 trust | The regenerated inventory measures K +0, S +171, V +363, trusted +534 against the signed baseline, with unclassified 0. The per-file figures and ties pass below are saved here; a signed baseline allowance remains pending the bounded B4 review and final HEAD. No R6 claim. |
 | B9 CPU | Final HEAD document and CE4 measurements remain due from the merge train's gate, which this task expressly forbids. No R4 claim without them. |
 
+The B1, B4 and B8 rows above are superseded by the DRI's signatures recorded in "DRI signatures and conditions"
+(2026-10-15) below.
+
 The B8 trusted-line changes by file (including a negative move) are: `VE/Readings/Run.lean` +145,
 `VE/Readings/VerdictsWire.lean` +69, `VE/NormDefaults/LayeredAdmission.lean` +54,
 `VE/NormDefaults/Run.lean` +54, `VE/Readings/Verdicts.lean` +52, `VE/Readings/SoftWire.lean` +44,
@@ -472,3 +475,28 @@ Checks on HEAD 0b8015d14:
 - Selected tests ran on the Mac runner (ve-mac-1). All 375 units were selected; 1 test failed: `test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`. That test also fails on this VM, and it fails the same way on the unchanged base a264e8893 with the same built binaries. It exercises `english.question`, not a rights relay, so it is unrelated to F24.
 - `tools/regen_generated.py --check`: `gate-collection` is regenerated. `trust-tables` still fails. That failure was already there: trusted Lean growth in `VE/Readings/*` and `VE/NormDefaults/*` (S +171, V +363) with no signed allowance. This fix changed no Lean.
 - The full gate was not run, as directed.
+
+## DRI signatures and conditions (2026-10-15)
+
+Review `manage-agents/reviews/rd-9-conditions-gap-20261015.md` (F25 to F28) against the DRI's decisions in
+`manage-agents/reviews/rd-9-dri-signatures-20261015.md`. F25 and F26 meet B1's open conditions; F27 records the
+signatures as decided (not re-decided). F28 is a C note. No model calls or push were made.
+
+| Finding | Fix | Regression tests | Commit |
+| --- | --- | --- | --- |
+| F25 (B1(d)): `readings_route.soft_chain` recomputed Lean's `Compose.dispatch`/`chainOf` and decided `soft_premises` presence | Lean names the chain a completion took: `filled.chain` (`Readings.Chain.text`, written by `UnspecifiedWire.filledJson` and `Run.filledJsonS` from the admitted environment's chain; the `filled` shape requires it, `chainText_fits` proves it fits). The relay reads it: the completion fields present must be exactly that chain's (`COMPLETION_FIELDS`), and the request must declare `norm-defaults@0` and the chain's profile (`CHAIN_PROFILES`). `soft_chain` is deleted; no binder of the completion reads a chain profile to decide presence. Class: a relay that decides which fields a Lean row carries from its own copy of a Lean dispatch | `tests/test_rd9_chain_relay.py`: `test_probe_f25_python_holds_no_copy_of_the_chain_derivation`, `test_field_presence_and_route_are_leans_on_every_chain[norms, soft, rights]` (acceptance, against Lean), `test_the_rights_chain_beside_norm_defaults_is_leans_refusal`, `test_a_forged_chain_is_refused[*]` (14 forgeries on validate and elaborate rows), `test_a_chain_the_request_does_not_declare_is_refused` (two faults) | 35204a970 |
+| F26 (B1(c), R14): a constitution conflict must not be presented as a conflict in the source before an independent source check | No rd-9 report, spec, docstring or golden stated a `CE4` conflict as real (C5 answers CONFLICT-FREE on all 16 choices). The reports (this one's C1 to C8 table, `DELTA.md`), spec 8.4 and the `CE4` tests' docstring now say that every `CE4` result is about the pilot's translation and that any conflict reported about the constitution is a CANDIDATE (R14 source check pending: SC-9 external check, FOLLOW-UP). A scan makes the class fail closed. Answers are unchanged | `tests/test_rd9_r14_candidates.py`: `test_the_reports_and_specs_label_every_constitution_conflict`, `test_the_ce4_goldens_and_docstrings_label_every_constitution_conflict`, `test_probe_f26_the_rd9_reports_record_r14`, `test_the_scan_flags_exactly_unlabelled_source_conflicts[*]`, `test_a_golden_that_asserts_a_ce4_conflict_needs_the_label` | 1b650d615 |
+| F27: record the signatures | (a) the trust growth's signed entry in `docs/trust-baseline.json`, itemised per file and class and re-measured on this round's final tree (below); (b) the D1 exception, with `_narrowings`' lines cited and its expiry in its docstring; (c) B4's two declarations moved from `PENDING` to `SIGNED` in `tools/check_rd9_sc1_statements.py`, each as the approved text with exactly its one edit; (d) B1 and B8 | `tests/test_rd9_dri_signatures.py`; `tests/test_rd9_statements.py::test_probe_f27_the_signed_declarations_are_no_longer_pending`, `::test_a_signed_declaration_still_fails_on_any_other_difference[*]`, `::test_a_signed_edit_that_no_longer_applies_fails` | the F27 commit (this section's) |
+| F28 (C) | Not changed: the branch lacks main's dccd9cf5; its Mac gate failure `test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline` is in main-known-red territory and that test is not edited. The merge train's candidate gate on main plus this branch is the authority | — | — |
+
+### Decision table (signed 2026-10-15)
+
+| Item | Signature | Evidence |
+| --- | --- | --- |
+| Trust growth (B8 trust, B9) | **SIGNED WITH CONDITION** by the DRI (item 1): K 997, S 9,959, V 37,526 measured with `tools/trust_map.py` on the final tree of this round; against the signed baseline K +0, S +171, V +372 (V +363 at 67d0cb31, plus F25's V +9). Itemised per file and class in `DELTA.md` and in the signed entry of `docs/trust-baseline.json`. FOLLOW-UP: a ties pass binding these lines to the existing render, wire and encoder theorems | `trust_map.py --check` PASS; `tests/test_rd9_dri_signatures.py::test_the_trust_entry_is_signed_and_itemised` |
+| D1 exception, `ve/rights_route.py:23-89` `_narrowings` (F24's licence derivation at lines 45, 56-63 and 67-88; the binder's call at 313-317) | **GRANTED, time-boxed to 2026-10-22** (item 2). It expires when the FOLLOW-UP infra item **rights-licence-relay** merges: Lean returns the licences and Python relays them | `tests/test_rd9_dri_signatures.py::test_the_d1_exception_cites_narrowings_lines` |
+| B4 (`choiceLayeredG` gains `hN`; `ndTextWith` builds `free N.D` once) | **SIGNED** (item 3; bounded re-check PASS, `manage-agents/reviews/rd-9-b4-recheck.md`) | `tools/check_rd9_sc1_statements.py` prints no `PENDING re-review` |
+| B1 (soft-completion availability) | **SIGNED once the full gate passes on the final HEAD** (item 3): (a) F11 met earlier; (c) F26; (d) F25. (b) the full gate is the merge train's branch verify; it was not run in this round (task instruction) | as F25 and F26 |
+| B8 (gap selection) | **SIGNED** (item 3): "Not claimed" stated (B6 row above, spec 8) with the flip tests `tests/test_rd9_gap_relay.py::test_unlisted_fnd_gap_flip_keeps_leans_witness_value`, `::test_unlisted_ce4_gap_flips_keep_leans_witness_value` | — |
+| SC-9 external and comprehension checks | FOLLOW-UP (DRI), not blocking | — |
+

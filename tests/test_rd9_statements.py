@@ -83,3 +83,64 @@ def test_a_stale_not_built_marker_fails(capsys):
     sections[1] = (title, start, stop, sources, expected, {"softX_wellFormed"})
     assert checker.main(sections) == 1
     assert "softX_wellFormed: not-built marker is stale" in capsys.readouterr().out
+
+
+# B4 (review F27 (c) of rd-9): `choiceLayeredG` and `ndTextWith` are signed after the bounded statement re-check. Each
+# is the approved text with exactly its one signed edit; any other difference still fails.
+
+SC4 = 4
+
+
+def test_probe_f27_the_signed_declarations_are_no_longer_pending(capsys):
+    """PROBE F27 (its checker half): nothing is reported `PENDING re-review`; both B4 declarations are reported
+    signed, with the approved text and its one edit."""
+    checker = _checker()
+    assert checker.main() == 0
+    out = capsys.readouterr().out
+    assert "PENDING re-review" not in out
+    assert not hasattr(checker, "PENDING") and set(checker.SIGNED) == {"choiceLayeredG", "ndTextWith"}
+    for name in checker.SIGNED:
+        assert f"{name}: SIGNED by DRI 2026-10-15 (B4, bounded statement re-check PASS)" in out
+
+
+def _changed_def(checker, tmp_path, name, before, after):
+    """The checker's sections with one definition of SC-4 changed in a copy of its file."""
+    title, start, stop, sources, expected, later = checker.SECTIONS[SC4]
+    for source in sources:
+        text = source.read_text()
+        match = re.search(rf"^def {re.escape(name)}\b", text, re.M)
+        if match:
+            assert before in text[match.start():]
+            copy = tmp_path / source.name
+            copy.write_text(text[:match.start()] + text[match.start():].replace(before, after, 1))
+            sources = [copy if s == source else s for s in sources]
+            break
+    else:
+        raise AssertionError(f"{name} not found in {sources}")
+    sections = list(checker.SECTIONS)
+    sections[SC4] = (title, start, stop, sources, expected, later)
+    return sections
+
+
+@pytest.mark.parametrize("name, before, after", [
+    # A second extra hypothesis beside the signed one.
+    ("choiceLayeredG", "(hN : N.D = b.D)", "(hN : N.D = b.D) (hE : True)"),
+    # The signed hypothesis reversed.
+    ("choiceLayeredG", "(hN : N.D = b.D)", "(hN : b.D = N.D)"),
+    # The signed edit undone: the approved text no longer matches what the DRI signed.
+    ("choiceLayeredG", " (hN : N.D = b.D)", ""),
+    # The one shared document built from another document.
+    ("ndTextWith", "let freeDoc := free N.D", "let freeDoc := free (free N.D).1"),
+])
+def test_a_signed_declaration_still_fails_on_any_other_difference(tmp_path, capsys, name, before, after):
+    checker = _checker()
+    assert checker.main(_changed_def(checker, tmp_path, name, before, after)) == 1
+    assert f"{name}: def differs" in capsys.readouterr().out
+
+
+def test_a_signed_edit_that_no_longer_applies_fails(capsys, monkeypatch):
+    checker = _checker()
+    ruling, (_, after) = checker.SIGNED["ndTextWith"]
+    monkeypatch.setitem(checker.SIGNED, "ndTextWith", (ruling, ("not in the approved text", after)))
+    assert checker.main() == 1
+    assert "ndTextWith: the signed edit does not apply to the approved text" in capsys.readouterr().out

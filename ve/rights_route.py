@@ -30,6 +30,9 @@ def _narrowings(own, rule, direct, predicates, soft, *, limited, barred, keys, c
     first relation of Scope.lean the request holds: a citation (`cited`, over `citesOf` and the
     `lineKeys` in `keys`), a right line of the opposite effect (`rightCollision`; `line_rules` names
     the line instances), a same-effect strict rule (`sameEffectStrict`), else none.
+
+    This mirrors Lean's derivation: a D1 exception the DRI GRANTED on 2026-10-15, time-boxed to 2026-10-22. It
+    expires when the infra item rights-licence-relay merges (Lean returns the licences, Python relays them).
     """
     default = rule.get('mode', 'strict') == 'default'
     predicate, sign = rule['predicate'], rule['sign']
