@@ -1,0 +1,12 @@
+{
+ "differences": [],
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806
+ },
+ "totals": {
+  "same": 39612
+ },
+ "unavailable_both": {},
+ "unlisted": 0
+}

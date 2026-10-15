@@ -30,6 +30,7 @@ import select_tests  # noqa: E402
 import source_graph  # noqa: E402
 import test_map  # noqa: E402
 import test_map_recorder  # noqa: E402
+import lean_mode_deps  # noqa: E402
 import select_tests_seeds  # noqa: E402
 
 
@@ -328,7 +329,7 @@ def make_map(edges: dict[str, dict], commit: str = "0" * 40, failed: tuple[str, 
     """A map as the recorder would write it; each unit ran at least its own module."""
     results = {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
                       "d": set(e.get("d", ())), "x": set(e.get("x", ())), "m": set(e.get("m", ())),
-                      "p": set(e.get("p", ())),
+                      "p": set(e.get("p", ())), "v": set(e.get("v", ())),
                       "opaque": [],
                       "exit": 1 if test in failed else 0, "seconds": 1.0}
                for test, e in edges.items()}
@@ -429,13 +430,13 @@ def test_lookups_match_nested_code_but_not_name_prefixes():
 
 def test_map_round_trips_through_its_edges():
     edges = {"t1": {"f": [("a.py", "f")], "r": ["d.json"], "d": ["data"], "x": ["lake"],
-                    "m": ["parse"], "p": ["typing"]},
+                    "m": ["parse"], "p": ["typing"], "v": ["rights"]},
              "t2": {"f": [("a.py", "g"), ("b.py", "<module>")]}}
     data = make_map(edges)
     back = test_map.unit_edges(json.loads(json.dumps(data)))
     assert back == {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
                            "d": set(e.get("d", ())), "x": set(e.get("x", ())),
-                           "m": set(e.get("m", ())), "p": set(e.get("p", ()))}
+                           "m": set(e.get("m", ())), "p": set(e.get("p", ())), "v": set(e.get("v", ()))}
                     for test, e in edges.items()}
 
 
@@ -444,13 +445,13 @@ def test_resumed_unit_merges_every_edge_kind(tmp_path):
     unit = "tests/test_example.py"
     name = unit.replace("/", "__")
     recorded = {"f": [["a.py", "new"]], "r": ["new.json"], "d": ["new-dir"],
-                "x": ["new-program"], "m": ["new.operation"], "p": ["new.presence"],
+                "x": ["new-program"], "m": ["new.operation"], "p": ["new.presence"], "v": ["rights"],
                 "exit": 0, "opaque": [], "seconds": 1.0}
     (tmp_path / f"{name}.result.json").write_text(json.dumps(recorded))
     resumed = test_map.run_unit(unit, tmp_path, 1, set())
     assert all(isinstance(resumed[key], set) for key in test_map.EDGE_KEYS)
     earlier = {"f": {("a.py", "old")}, "r": {"old.json"}, "d": {"old-dir"},
-               "x": {"old-program"}, "m": {"old.operation"}, "p": {"old.presence"},
+               "x": {"old-program"}, "m": {"old.operation"}, "p": {"old.presence"}, "v": {"norms"},
                "exit": 0, "opaque": [], "seconds": 1.0}
     test_map.merge({unit: resumed}, test_map.build_map({unit: earlier}, "0" * 40))
     for key in test_map.EDGE_KEYS:
@@ -459,9 +460,9 @@ def test_resumed_unit_merges_every_edge_kind(tmp_path):
 
 
 def test_operation_map_rejects_missing_and_bool_indices():
-    data = make_map({"t1": {"m": ["parse"], "p": ["typing"]}})
+    data = make_map({"t1": {"m": ["parse"], "p": ["typing"], "v": ["rights"]}})
     test_map.validate(data)
-    for field in ("operations", "presence"):
+    for field in ("operations", "presence", "modes"):
         missing = json.loads(json.dumps(data))
         del missing[field]
         with pytest.raises(ValueError):
@@ -470,6 +471,119 @@ def test_operation_map_rejects_missing_and_bool_indices():
         retyped[field][next(iter(retyped[field]))] = [True]
         with pytest.raises(ValueError):
             test_map.validate(retyped)
+
+
+def test_service_modes_narrow_only_known_recorded_users(tmp_path, monkeypatch):
+    graph = make_graph(tmp_path, {}, lean={
+        "lean/VE/Common.lean": "def common := 1\n",
+        "lean/VE/Rights/Run.lean": "import VE.Common\ndef rights := 1\n",
+        "lean/VE/Norms/Run.lean": "import VE.Common\ndef norms := 1\n",
+        "lean/VE/Service/Protocol.lean": "import VE.Rights.Run\nimport VE.Norms.Run\ndef protocol := 1\n",
+        "lean/Serve.lean": "import VE.Service.Protocol\ndef serve := 1\n",
+    })
+    monkeypatch.setattr(select_tests.lean_mode_deps, "load", lambda: {
+        "rights": ["VE.Rights.Run"], "norms": ["VE.Norms.Run"]})
+    monkeypatch.setattr(source_graph, "lean_executables", lambda root: {"ve_service": "Serve"})
+    service = "lean/.lake/build/bin/ve_service"
+    coverage = select_tests.Coverage(make_map({
+        "rights": {"x": [service], "v": ["rights"]},
+        "norms": {"x": [service], "v": ["norms"]},
+        "unknown": {"x": [service]},
+        "future": {"x": [service], "v": ["future"]},
+        "direct": {"x": ["lake"]},
+    }))
+    assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
+        "rights", "unknown", "future"}
+    assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Common.lean") == {
+        "rights", "norms", "unknown", "future"}
+    for path in ("lean/VE/Service/Protocol.lean", "lean/Serve.lean"):
+        assert select_tests.proposed_service_impact(coverage, graph, path) == {
+            "rights", "norms", "unknown", "future"}
+    selected = set()
+    select_tests.file_impact(coverage, graph, set(coverage.tests),
+                             lambda names, _: selected.update(names), "lean/VE/Rights/Run.lean", False)
+    assert selected == {"rights", "norms", "unknown", "future", "direct"}
+    monkeypatch.setattr(select_tests.lean_mode_deps, "load", lambda: None)
+    assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
+        "rights", "norms", "unknown", "future"}
+    assert select_tests.service_impact(coverage, graph, "lean/VE/Rights/Run.lean") == {
+        "rights", "norms", "unknown", "future"}
+
+
+def test_compiled_mode_roots_cover_every_service_mode(monkeypatch):
+    from ve.backends.service_schema import MODES
+    roots = lean_mode_deps.load()
+    assert roots is not None and set(roots) == set(MODES)
+    assert all(root != "VE.Service.Protocol" for values in roots.values() for root in values)
+    monkeypatch.setattr(lean_mode_deps, "digests", lambda: {"changed": "source"})
+    assert lean_mode_deps.load() is None
+
+
+def test_unverified_mode_activation_keeps_service_wide_selection(tmp_path, monkeypatch):
+    graph = make_graph(tmp_path, {}, lean={
+        "lean/VE/Rights/Run.lean": "def rights := 1\n",
+        "lean/VE/Norms/Run.lean": "def norms := 1\n",
+    })
+    monkeypatch.setattr(select_tests.lean_mode_deps, "load", lambda: {
+        "rights": ["VE.Rights.Run"], "norms": ["VE.Norms.Run"]})
+    service = "lean/.lake/build/bin/ve_service"
+    coverage = select_tests.Coverage(make_map({
+        "rights": {"x": [service], "v": ["rights"]},
+        "norms": {"x": [service], "v": ["norms"]},
+    }))
+    assert select_tests.proposed_service_impact(
+        coverage, graph, "lean/VE/Rights/Run.lean") == {"rights"}
+    assert select_tests.service_impact(
+        coverage, graph, "lean/VE/Rights/Run.lean") == {"rights", "norms"}
+
+
+def test_compiled_mode_roots_regenerate_from_lean():
+    generated = lean_mode_deps.generate()
+    assert generated["modes"] == json.loads(lean_mode_deps.OUTPUT.read_text())["modes"]
+
+
+def test_shared_service_response_dependency_selects_every_mode():
+    """`coding` calls Route's generator parser for every service answer."""
+    root = Path(__file__).resolve().parents[1]
+    graph = source_graph.Graph(root, [], {})
+    graph.lean_modules = {"VE.Route.Run": "lean/VE/Route/Run.lean"}
+    graph.lean_imports = {
+        ".".join(file.relative_to(root / "lean").with_suffix("").parts):
+        source_graph.lean_imports(file.read_text())
+        for file in (root / "lean/VE").rglob("*.lean")
+    }
+    coverage = select_tests.Coverage(test_map.load(
+        root / "docs/test-speed-b2/evidence/coverage-map.json.gz"))
+    assert all("VE.Route.Run" in roots for roots in lean_mode_deps.load().values())
+    assert coverage.service_users() <= select_tests.proposed_service_impact(
+        coverage, graph, "lean/VE/Route/Run.lean")
+
+
+def test_checker_pin_reader_still_selects_on_lock_change(tmp_path):
+    graph = make_graph(tmp_path, {})
+    coverage = select_tests.Coverage(make_map({
+        "pin-test": {"r": ["lean/checkers.lock"]}, "other": {}}))
+    selected = set()
+    select_tests.file_impact(coverage, graph, set(coverage.tests),
+                             lambda names, _: selected.update(names), "lean/checkers.lock", False)
+    assert "pin-test" in selected
+
+
+def test_recorder_tracks_each_service_request_mode(tmp_path):
+    result = recorder_run(tmp_path, "import sys\nsys.audit('ve.service.mode', 'rights')\n"
+                                    "sys.audit('ve.service.mode', 'norms')\n")
+    assert result["v"] == {"rights", "norms"}
+
+
+def test_lean_service_emits_mode_before_dispatch(monkeypatch):
+    from ve.backends import lean_service
+    events = []
+    monkeypatch.setattr(lean_service.sys, "audit", lambda *event: events.append(event))
+    monkeypatch.setattr(lean_service, "configured_seconds", lambda *args: (_ for _ in ()).throw(
+        RuntimeError("dispatch stopped")))
+    with pytest.raises(RuntimeError, match="dispatch stopped"):
+        lean_service.LeanService().exchange("rights", "[]", 0)
+    assert events == [("ve.service.mode", "rights")]
 
 
 def _read_fields(op: dict) -> tuple:
