@@ -52,8 +52,8 @@ def test_review_fix_commit_chain_and_final_gate_target():
     saved = EVIDENCE["commits"] + EVIDENCE["review_fix_commits"]
     assert len(rows) == len(saved) + 1
     for row, entry in zip(rows[:-1], saved, strict=True):
-        commit_hash, subject = row.split("\t", 1)
-        assert commit_hash.startswith(entry["hash"]) and subject == entry["subject"]
+        full_hash, subject = row.split("\t", 1)
+        assert full_hash.startswith(entry["hash"]) and subject == entry["subject"]
     assert rows[-1].endswith("\tdocs: RD-8 review fixes and final gate evidence")
 
 
