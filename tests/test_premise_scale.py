@@ -277,3 +277,126 @@ def test_the_default_limit_grows_with_the_case(monkeypatch):
     monkeypatch.setenv("VE_RUST_TIMEOUT", "soon")
     with pytest.raises(CheckerUnavailable):
         rust_jsonl.run(case, executable="/nonexistent/ve")  # the setting is refused before the executable
+
+
+# --- the readings route's premise check (review F1, F2) ----------------------------------------------------
+# premise-scale's searches and its timeout rule serve the premise check alone (no Γ, no conclusion): `premises()`
+# and `candidate_premises()`. An entailment's countermodel search is as before premise-scale.
+
+def _readings_document(tmp_path, fixed):
+    """A superposed document: the open set {strict, default} of no-deception, help-x fixed, and `fixed`, over
+    env K with three agent constants."""
+    from tests.test_readings_s1_lean import env_k
+    from tests.test_readings_s2_document import DF, HELP_X, S, s2_document
+    raw = env_k()
+    for name in ("a1", "a2", "a3"):
+        raw["vocabulary"]["constants"][name] = {"sort": "agent", "description": name}
+    return s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X), ("fixed", "u2", fixed)],
+                       raw=raw)
+
+
+@pytest.fixture(scope="module")
+def three_agents(tmp_path_factory):
+    """The premises force three agents, one more than the shared domain bound."""
+    return _readings_document(tmp_path_factory.mktemp("three-agents"), conjunction(distinct(["a1", "a2", "a3"])))
+
+
+@pytest.fixture(scope="module")
+def m4(tmp_path_factory):
+    from tests.test_readings_s2_document import DF, HELP_X, S, s2_document
+    return s2_document(tmp_path_factory.mktemp("m4"), [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X)])
+
+
+def _route(path):
+    from ve.document import load_document
+    from ve.readings_verdicts import context
+    return context(load_document(path))
+
+
+@pytest.fixture
+def searches(monkeypatch):
+    """Every model search and Lean budget request the readings route makes: (ground_only, raised, status)."""
+    import ve.search
+    real_search, real_budget, seen = ve.search.find_countermodel, ve.search.premise_budget, []
+
+    def search(*args, **kwargs):
+        found = real_search(*args, **kwargs)
+        seen.append((kwargs.get("ground_only", False), bool(kwargs.get("sort_bounds")), found.status))
+        return found
+
+    def budget(*args, **kwargs):
+        seen.append("search-budget")
+        return real_budget(*args, **kwargs)
+    monkeypatch.setattr(ve.search, "find_countermodel", search)
+    monkeypatch.setattr(ve.search, "premise_budget", budget)
+    return seen
+
+
+def _timing_out(monkeypatch):
+    import ve.search
+
+    def timed_out(*args, **kwargs):
+        raise rust_jsonl.RustTimeout("CheckerUnavailable: Rust checker failed: timed out")
+    monkeypatch.setattr(ve.search, "find_countermodel", timed_out)
+
+
+def test_readings_premise_check_searches_the_sort_lean_raises(three_agents, searches):
+    """The raised branch: the shared bound finds no model, the search at Lean's raised bound does, and Lean
+    checks it (`readings-model`)."""
+    result = _route(three_agents).premises()
+    assert result["status"] == "model" and result["evidence"] == "model", result
+    assert len(result["model"]["domains"]["agent"]) == 3
+    assert [c["status"] for c in result["candidates"]] == ["model", "model"]
+    assert (False, True, "Found") in searches
+    assert not any(entry[2] == "Found" for entry in searches if entry != "search-budget" and not entry[1])
+
+
+def test_readings_premise_check_takes_the_ground_route(three_agents, searches, monkeypatch):
+    """The ground branch: with one model attempt the raised search finds nothing, and the premises' stated facts
+    are their own model, Lean-checked. With no attempt at all (R5) the answer stays UNKNOWN."""
+    from ve import readings_verdicts
+    monkeypatch.setattr(readings_verdicts.BUDGET, "_set", {"max_models": 1})
+    result = _route(three_agents).premises()
+    assert result["status"] == "model" and len(result["model"]["domains"]["agent"]) == 3, result
+    assert (False, True, "ResourceLimit") in searches and (True, True, "Found") in searches
+    assert not any(entry[2] == "Found" for entry in searches if entry != "search-budget" and not entry[0])
+    monkeypatch.setattr(readings_verdicts.BUDGET, "_set", {"max_models": 0})
+    assert _route(three_agents).premises()["status"] == "UNKNOWN"
+
+
+def test_readings_premise_check_timeout_is_no_witness(three_agents, m4, monkeypatch):
+    """The timeout branch: every Rust search times out, the lifted choices' searches included; the premise check
+    answers without Rust's witness (DELTA row 4), never CheckerUnavailable."""
+    _timing_out(monkeypatch)
+    for path in (three_agents, m4):
+        result = _route(path).premises()
+        assert result["status"] == "UNKNOWN" and result["budget"], result
+        assert [c["status"] for c in result["candidates"]] == ["UNKNOWN", "UNKNOWN"]
+
+
+@pytest.mark.parametrize("assumed", [[("rs1", 1)], None])
+def test_readings_entailment_timeout_is_still_unavailable(m4, monkeypatch, assumed):
+    """Review F1: outside the premise check a Rust timeout is CheckerUnavailable, as before premise-scale, in the
+    lifted choices' searches and in the search on `sup D` alike (named readings, and the fold over the choices)."""
+    from tests.test_readings_s2_document import every
+    from ve.readings_verdicts import Superposed
+    _timing_out(monkeypatch)
+    with pytest.raises(CheckerUnavailable):
+        _route(m4).entailment(every("avoid_required"), assumed=assumed)
+    monkeypatch.setattr(Superposed, "_lifted", lambda *args: None)
+    with pytest.raises(CheckerUnavailable):
+        _route(m4).entailment(every("avoid_required"), assumed=assumed)
+
+
+@pytest.mark.parametrize("assumed", [[("rs1", 1)], None])
+def test_readings_entailment_takes_no_scaled_search(three_agents, searches, assumed):
+    """Review F1: an entailment's countermodel search keeps the shared bound. Its countermodel needs three agents,
+    so it stays UNKNOWN: no raised or ground search runs, and Lean's budget is not asked for."""
+    from tests.test_readings_s2_document import every
+    route = _route(three_agents)
+    assert route.conflict(())["status"] == "CONFLICT-FREE"
+    searches.clear()
+    result = route.entailment(every("avoid_required"), assumed=assumed)
+    assert result["verdict"] == "UNKNOWN", result
+    assert searches and "search-budget" not in searches
+    assert not any(ground or raised for ground, raised, _ in searches), searches
