@@ -172,6 +172,20 @@ def _genuine(mode):
     return text, answer
 
 
+def test_parse_diagnostic_text_cannot_be_empty(built):
+    cases = [row[2] for row in G.load_cases() if row[0] == "service" and row[1] == "parse"]
+    texts = [json.dumps(case, separators=(",", ":")) for case in cases]
+    answers = G._service_answers(G.DEFAULT_EXECUTABLE, "parse", texts)
+    text, answer = next((text, answer) for text, answer in zip(texts, answers)
+                        if "span" in answer["results"][0]["result"])
+    mutant = json.loads(json.dumps(answer))
+    mutant["results"][0]["result"]["error"] = ""
+    replay = G._Replay()
+    replay.answer = mutant
+    replay.mutant = G.Mutant("empty", ("results", 0, "result", "error"))
+    assert G._exchange_outcome(replay, "parse", "[" + text + "]")[0] == "refused"
+
+
 def test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one(built):
     text, answer = _genuine("identity")
     replay = G._Replay()

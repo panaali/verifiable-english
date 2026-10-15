@@ -611,7 +611,10 @@
    "route": "service:route",
    "mutation": "duplicate",
    "path": [
+    "results/*/result/background",
+    "results/*/result/generators",
     "results/*/result/order",
+    "results/*/result/premises",
     "results/*/result/report/assumptions"
    ],
    "kind": "by-design",
@@ -622,7 +625,10 @@
    "route": "service:route",
    "mutation": "empty",
    "path": [
+    "results/*/result/background",
+    "results/*/result/generators",
     "results/*/result/order",
+    "results/*/result/premises",
     "results/*/result/report/assumptions"
    ],
    "kind": "by-design",
@@ -1371,9 +1377,10 @@
    "mutation": "rebind",
    "path": [
     "results/*/generator",
-    "results/*/result/error",
+    "results/*/result/background/*/*/*/*",
     "results/*/result/generator",
-    "results/*/result/order/*"
+    "results/*/result/order/*",
+    "results/*/result/premises/*/*/*/*"
    ],
    "kind": "follow-up",
    "id": "F4",
@@ -1453,7 +1460,8 @@
    "route": "service:parse",
    "mutation": "drop",
    "path": [
-    "results/*/result/canonical"
+    "results/*/result/canonical",
+    "results/*/result/span"
    ],
    "kind": "follow-up",
    "id": "F5",
