@@ -1,0 +1,5 @@
+tools/regen_generated.py --check
+regen_generated: checked 24 entries
+
+tools/gate_collection.py --check
+15281 collected, 15269 at b96f04a5a1c8768c380daf155028773624d9bb9f; 12 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers

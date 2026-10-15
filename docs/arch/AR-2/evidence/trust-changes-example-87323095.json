@@ -1,0 +1,128 @@
+{
+ "changed": {
+  "ResponseDecode.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 0,
+   "G[V]": 0
+  },
+  "ResponseShape.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 0,
+   "G[V]": 667
+  },
+  "ResponseShape/Schemas/CheckCertificate.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 0,
+   "G[V]": 20
+  },
+  "ResponseShape/Schemas/Common.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 0,
+   "G[V]": 413
+  },
+  "ResponseShape/Schemas/Document.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 0,
+   "G[V]": 93
+  },
+  "ResponseShape/Schemas/Norms.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 0,
+   "G[V]": 151
+  },
+  "ResponseShape/Schemas/Order.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 0,
+   "G[V]": 61
+  },
+  "ResponseShape/Schemas/Quantity.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 0,
+   "G[V]": 258
+  },
+  "ResponseShape/Schemas/Route.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 0,
+   "G[V]": 117
+  },
+  "ResponseShape/Skeleton.lean": {
+   "K": 0,
+   "S": 53,
+   "D[V]": 0,
+   "G[V]": 455
+  },
+  "VE/Core/Layers.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 66,
+   "G[V]": 53
+  },
+  "VE/Discourse/Loader.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 617,
+   "G[V]": 8
+  },
+  "VE/Norms/Admission.lean": {
+   "K": 0,
+   "S": 128,
+   "D[V]": 18,
+   "G[V]": 8
+  },
+  "VE/Service/Document.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 485,
+   "G[V]": 231
+  },
+  "VE/Service/FamilyNorms.lean": {
+   "K": 0,
+   "S": 0,
+   "D[V]": 14,
+   "G[V]": 116
+  },
+  "VE/Service/Standalone.lean": {
+   "K": 0,
+   "S": 250,
+   "D[V]": 424,
+   "G[V]": 463
+  }
+ },
+ "deleted": [],
+ "by_class": {
+  "D[V]": [
+   "VE/Core/Layers.lean",
+   "VE/Discourse/Loader.lean",
+   "VE/Norms/Admission.lean",
+   "VE/Service/Document.lean",
+   "VE/Service/FamilyNorms.lean",
+   "VE/Service/Standalone.lean"
+  ],
+  "G[V]": [
+   "ResponseShape.lean",
+   "ResponseShape/Schemas/CheckCertificate.lean",
+   "ResponseShape/Schemas/Common.lean",
+   "ResponseShape/Schemas/Document.lean",
+   "ResponseShape/Schemas/Norms.lean",
+   "ResponseShape/Schemas/Order.lean",
+   "ResponseShape/Schemas/Quantity.lean",
+   "ResponseShape/Schemas/Route.lean",
+   "ResponseShape/Skeleton.lean",
+   "VE/Core/Layers.lean",
+   "VE/Discourse/Loader.lean",
+   "VE/Norms/Admission.lean",
+   "VE/Service/Document.lean",
+   "VE/Service/FamilyNorms.lean",
+   "VE/Service/Standalone.lean"
+  ]
+ }
+}
