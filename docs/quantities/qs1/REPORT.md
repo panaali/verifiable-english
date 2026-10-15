@@ -36,6 +36,11 @@ The new module is imported by the root build, and the theorem audit import and d
 
 Saved measurements and the non-merge commit list through the code head are in `evidence/build.json`; seeded failures are in `evidence/seeded-bugs.txt` and `evidence/mutants.json`. No permanent batch-report test was added.
 
+## Review fix (qs-1-review.final.md)
+
+- **F1 (B), trust check weakened.** Main's version of `test_trust_growth_is_rd6b_entry_and_listed_for_signature` is restored (only its docstring now points at the new test instead of the b12 report test, which compares saved commits only), so the live tree must equal `docs/trust-baseline.json` again; the R11/D4 claim for the earlier edit is withdrawn, since no ruling covers weakening a check. Class fix: the D3 ratchet no longer lives only inside a batch report test. `tests/test_trust_budget.py` checks the live tree on its own: the review's probe (`tools/trust_map.py --check` exits 0), the baseline equals the tree with no pending entry, and one unsigned K, S or V line fails while a signed allowance of exactly that key passes. Before the DRI signs, the probe test, the baseline test and the restored RD-6b test fail (fail closed, intended); a scratch run with a signed `{"allow": {"S": 17}}` entry and `trust_map.py --write`, then reverted, passed all six. Seeded bug: `check()` ignoring S fails `test_one_unsigned_trusted_line_fails_the_live_check[S]`. DELTA.md now carries the S +17 row as `pending DRI signature` in the table form `review-ready.py` reads (F3's example), and ROADMAP has the QS-1 trust-cost line.
+- F2, F3 (the checker's prose blind spot), F4: C, follow-ups, not changed here.
+
 ## Seeded bugs
 
 Every mutant changed product code in `lean/VE/Closure/Order.lean`, made `VE.Closure.OrderChecks` fail, and was removed. Element cap `> c.elems + 1` failed the 17-grade guard; edge cap `> c.edges + 1` failed the two-edge guard; bypassing endpoint validation failed the unknown-symbol guard. A fourth mutant changed `above` from `.plus` to `.star`; `above_iff` and the legacy agreement proofs failed to build. The restored module built successfully. `evidence/mutants.json` names the changed file and failing check for each mutant so the pre-review checker can read them. No Python or Rust product code changed.
