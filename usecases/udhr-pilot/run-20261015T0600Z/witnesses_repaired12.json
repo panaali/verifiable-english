@@ -1,0 +1,21 @@
+{
+  "u081.entitlement": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_the_right_to_social_security_as_a_member_of_society",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u081-entitlement"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ]
+}
