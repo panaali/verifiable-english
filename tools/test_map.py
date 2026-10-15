@@ -42,8 +42,9 @@ import nested_pytest
 # 4: listings of directories that hold no tracked file (or do not exist yet) are kept.
 # 5: the assurance-manifest operations each test reads are recorded (`operations`).
 # 6: an operation only checked for presence (`presence`) is recorded apart from an entry read.
-VERSION = 6
-EDGE_KEYS = ("f", "r", "d", "x", "m", "p")
+# 7: each request's Lean service mode is recorded separately from its executable.
+VERSION = 7
+EDGE_KEYS = ("f", "r", "d", "x", "m", "p", "v")
 UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",
@@ -160,6 +161,8 @@ def read_unit(directory: Path, files: set[str]) -> dict:
                 seen["m"].add(record[1])
             elif kind == "p":
                 seen["p"].add(record[1])
+            elif kind == "v":
+                seen["v"].add(record[1])
             elif kind == "c" and record[2]:
                 children.append(record[1])
             elif kind == "o":
@@ -288,6 +291,7 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
     programs: dict[str, set[int]] = {}
     operations: dict[str, set[int]] = {}
     presence: dict[str, set[int]] = {}
+    modes: dict[str, set[int]] = {}
     for test, result in results.items():
         i = index[test]
         for file, qualname in result["f"]:
@@ -299,6 +303,8 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
             operations.setdefault(op_id, set()).add(i)
         for op_id in result.get("p", ()):
             presence.setdefault(op_id, set()).add(i)
+        for mode in result.get("v", ()):
+            modes.setdefault(mode, set()).add(i)
     return {
         "version": VERSION, "commit": commit,
         "created": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
@@ -311,13 +317,14 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
         "programs": {k: sorted(v) for k, v in sorted(programs.items())},
         "operations": {k: sorted(v) for k, v in sorted(operations.items())},
         "presence": {k: sorted(v) for k, v in sorted(presence.items())},
+        "modes": {k: sorted(v) for k, v in sorted(modes.items())},
     }
 
 
 def unit_edges(data: dict) -> dict[str, dict]:
     """Invert a map back to per-test sets (the form `merge` and tests use)."""
     tests = data["tests"]
-    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set(), "m": set(), "p": set()}
+    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set(), "m": set(), "p": set(), "v": set()}
              for test in tests}
     for file, qualnames in data["functions"].items():
         for qualname, indices in qualnames.items():
@@ -333,6 +340,9 @@ def unit_edges(data: dict) -> dict[str, dict]:
     for item, indices in data["presence"].items():
         for i in indices:
             edges[tests[i]]["p"].add(item)
+    for item, indices in data["modes"].items():
+        for i in indices:
+            edges[tests[i]]["v"].add(item)
     return edges
 
 
@@ -433,7 +443,7 @@ def validate(data, where: str = "map") -> None:
             fail(f"functions of {file} is not an object")
         for qualname, value in qualnames.items():
             indices(value, f"{file}:{qualname}")
-    for table in ("reads", "dirs", "programs", "operations", "presence"):
+    for table in ("reads", "dirs", "programs", "operations", "presence", "modes"):
         if not isinstance(data.get(table), dict):
             fail(f"{table} is not an object")
         for key, value in data[table].items():
