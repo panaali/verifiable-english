@@ -20,7 +20,8 @@ def regeneration(document):
         "fill": [{"generator": "fill", "ast": formula_to_data(base, formula, _generated=True)}
                  for _, formula in document.fill_premises],
         "unspecified": list(document.unspec),
-        "unsaid": [{"name": nd.unsaid_name(p), "sorts": list(document.env.predicates[p].arguments)}
+        "unsaid": [{"name": nd.unsaid_name(p), "sorts": list(document.env.predicates[p].arguments),
+                    "description": nd.fill_description(p)}
                    for p in document.unspec],
         "reached": [{"predicate": p, "sorts": list(document.env.predicates[p].arguments),
                      "ast": _to_data(document.reached(p))} for p in regulated],

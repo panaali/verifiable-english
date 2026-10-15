@@ -6,8 +6,8 @@
 * The routes are complete: the one-shot readers are exactly the `ve` call sites of one-shot runners (manifest
   bindings with call sites, and calls of the route reader), every service mode and one-shot route has
   fixtures, and a route without an `ok` fixture fails the gate.
-* Through the client's own reader (`LeanService.exchange` with the line replaced): a genuine answer is
-  accepted and a mutant of its binding is CheckerUnavailable.
+* Through the client's own reader (`LeanService.exchange` with the line replaced, then `ve.ask.read_answer` for
+  `ask`): a genuine answer is accepted and a mutant of its binding is CheckerUnavailable.
 * On sample routes against the built Lean executables the gate passes with the committed allow-list, and fails
   on an accepted mutant the allow-list does not list, on an allow-list entry that matches nothing, and on a
   route whose fixtures are gone.
@@ -199,6 +199,25 @@ def test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one(bu
     replay.answer, replay.mutant = answer, G.Mutant("rebind", ("id",))
     replay.answer = {**answer, "id": G.FRESH}
     assert G._exchange_outcome(replay, "identity", "[" + text + "]")[0] == "refused"
+
+
+def test_ask_is_read_as_ve_ask_reads_it(built):
+    """`ask`'s one caller binds the answer further than the transport (`SERVICE_READERS`): a genuine answer is
+    accepted, and a mutant the transport accepts (an unused sentence the document lacks) is refused by
+    `ve.ask.read_answer`."""
+    case = next(row[2] for row in G.load_cases()
+                if row[0] == "service" and row[1] == "ask" and type(row[2].get("document")) is str)
+    text = json.dumps(case, separators=(",", ":"))
+    [answer] = G._service_answers(G.DEFAULT_EXECUTABLE, "ask", [text])
+    read = G.SERVICE_READERS["ask"](case)
+    replay = G._Replay()
+    replay.answer, replay.mutant = answer, None
+    assert G._exchange_outcome(replay, "ask", "[" + text + "]", read) == ("accepted", "")
+    path = ("results", 0, "result", "result", "unused")
+    replay.answer, replay.mutant = G._replace(answer, path, ["zz9"]), G.Mutant("rebind", path)
+    assert G._exchange_outcome(replay, "ask", "[" + text + "]") == ("accepted", "")
+    outcome, detail = G._exchange_outcome(replay, "ask", "[" + text + "]", read)
+    assert outcome == "refused" and "unused" in detail, detail
 
 
 SAMPLE = ("service:identity", "service:check", "ve_metered::countermodel.search")
