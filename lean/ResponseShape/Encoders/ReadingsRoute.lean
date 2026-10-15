@@ -270,11 +270,15 @@ theorem fillPremises_fits (N : NDoc) (side : String → Nat → VE.Rights.Rights
   unfold Wire.fillPremisesJson Wire.encF
   fits
 
+theorem chainText_fits (c : Chain) : Fits req (.strIn ["norms", "soft", "rights"]) (.str c.text) := by
+  apply Fits.strIn_lit
+  cases c <;> decide
+
 theorem filled_fits (r : Wire.AdmittedND) :
     OkFits req (skel% "readings-route.json#/$defs/filled") (Wire.filledJson r) := by
   unfold Wire.filledJson
   okfits
-  fits
+  fits using chainText_fits
   exact filledUnits_fits r.N _ ‹_›
 
 set_option maxHeartbeats 1000000 in
@@ -555,7 +559,7 @@ theorem filledS_fits (r : Wire.AdmittedSD) :
     OkFits req (skel% "readings-route.json#/$defs/filled") (filledJsonS r) := by
   unfold filledJsonS
   okfits
-  fits
+  fits using chainText_fits
   exact unitsJsonOf_fits _ _ ‹_›
 
 theorem setPairsS_entries (r : Wire.AdmittedSD) (fa : Wire.UnsaidAdmitted r) (R : ReadingSet) (RJ : Wire.SetJ) :

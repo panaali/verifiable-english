@@ -301,7 +301,9 @@ Each answer is recorded verbatim; a "yes" is reported as a failure of the line, 
   `soft_premises` (`softXL`: label and AST, on the reading's filled tree). Per pair: `gaps`, encoded as `gapsJson`
   (`[[<predicate>, [<id>, …], <value>], …]`). Once: `filled` with `environment` (the lower environment, `unspecified`
   read as `deny`, `norm-defaults@0` removed, each `unsaid__p` added, `withUnsaid`) and `units` (the document's units
-  as decoded; no `F_p` unit on the soft chain, since `F_p` is a rule of each filled tree).
+  as decoded; no `F_p` unit on the soft chain, since `F_p` is a rule of each filled tree), and `chain` (`soft`, the
+  chain the completion took, `Chain.text`; `norms` under 3's norms completion). The client reads `chain` to know which
+  completion fields the row carries and derives no chain itself (review F25, DRI condition B1(d)).
 - **On the norms chain under the completion** (SC-A), per pair: `gaps`, the same encoding, beside today's fields.
 - **`readings-elaborate`**: the enumerated row, with the finding `ReadingsNotSuperposable: <every open set>` and cause
   `the unspecified completion`.

@@ -417,11 +417,12 @@ def softPremisesJson (N : NDoc) (side : String → Nat → VE.Rights.RightsDoc �
 
 /-- `filled` on the soft chain: the lower environment with each `unspecified` read as `deny`, `norm-defaults@0`
     removed and every `unsaid__p` added, and the document's units as decoded (no `F_p` unit: `F_p` is a rule of each
-    filled tree). -/
+    filled tree), beside the chain the completion took. -/
 def filledJsonS (r : AdmittedSD) : Except String Json := do
   let env ← VE.NormDefaults.Wire.withUnsaid (asU r.N r.N.D.frame)
     (← VE.NormDefaults.Wire.placeholderJson r.b.a.re.lowerJson)
-  pure (Json.mkObj [("environment", env), ("units", Json.arr (unitsJsonOf r.N.D.items).toArray)])
+  pure (Json.mkObj [("chain", .str r.b.a.re.chain.text), ("environment", env),
+    ("units", Json.arr (unitsJsonOf r.N.D.items).toArray)])
 
 /-- The completion's fields of `readings-validate` and `readings-elaborate` on the soft chain (3). -/
 def filledFieldsS (r : AdmittedSD) : Except String (List (String × Json)) := do

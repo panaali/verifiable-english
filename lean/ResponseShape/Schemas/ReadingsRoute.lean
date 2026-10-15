@@ -224,10 +224,11 @@ def filledEnvironment : Shape :=
             ("predicates", n [obj, .object [] (some (ref "#/$defs/filled_predicate"))])]])]]
 
 def filled : Shape :=
-  c "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last." [
+  c "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the chain the completion took (Readings.Chain.text; the client reads it and derives no chain), the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last." [
     obj,
-    .required ["environment", "units"],
+    .required ["chain", "environment", "units"],
     closed [
+      ("chain", enumS ["norms", "soft", "rights"]),
       ("environment", ref "#/$defs/filled_environment"),
       ("units", units)]]
 
