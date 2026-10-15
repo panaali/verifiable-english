@@ -1019,6 +1019,8 @@ def seed(trust_map: Path, root: Path = ROOT, table_path: Path = TABLE,
     seeded; `fresh` ignores the current table."""
     section11 = parse_section11(trust_map.read_text())
     modules: dict[str, dict[str, list[str]]] = {}
+    previous_modules = json.loads(table_path.read_text()).get("modules", {}) \
+        if table_path.is_file() else {}
     old = {} if fresh or not table_path.is_file() else load_table(table_path)
     scanned, lines, predicates, unread, problems = read_tree(root)
     placed, placing = place_tree(scanned, lines, predicates, unread)
@@ -1037,15 +1039,19 @@ def seed(trust_map: Path, root: Path = ROOT, table_path: Path = TABLE,
             else:
                 classes[entry].append(name)
         if classes:
+            # Retain the existing class order, so adding a declaration changes
+            # its module's rows without reordering every generated module.
+            previous_order = list(previous_modules.get(module, {})) if not fresh else []
+            class_order = previous_order + [c for c in CLASSES if c not in previous_order]
             modules[module] = {c: sorted(classes[c], key=lambda e: e if isinstance(e, str) else e["name"])
-                               for c in CLASSES if classes.get(c)}
+                               for c in class_order if classes.get(c)}
     table_path.write_text(json.dumps({
         "comment": ("Trust classes of Lean declarations (docs/TRUST-MAP.md section 2), read by "
                     "tools/trust_map.py. Seeded by `tools/trust_map.py --seed` from the trust map's "
                     "section 11 module rows, lean/predicates.txt and name rules; a reseed keeps "
                     "every entry except predicates outside K and S and kernel data types (see "
                     "seed_module). A tie is written {\"name\": ..., \"tied\": [theorem, ...]}."),
-        "modules": modules}, indent=1, ensure_ascii=False) + "\n")
+        "modules": modules}, indent=2, ensure_ascii=False) + "\n")
     return section11
 
 

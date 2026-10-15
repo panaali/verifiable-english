@@ -3,7 +3,7 @@
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37495
+  "V": 38102
  },
  "allowances": [
   {
@@ -495,6 +495,13 @@
    "reason": "lean-first batch 14d: +3 trusted lines in ReadingsChoices reject duplicate set-version identity before Lean choice planning (R6: replaces coupled Python choice identity decision)",
    "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
    "commit": "321a92138a8c852a1aca4d6657152ddb169101fc"
+  },
+  {
+   "class": "V",
+   "lines": 607,
+   "reason": "SIGNED by standing ruling R6: Lean family-norm decisions replace the deleted Python non-first-order fallback selector",
+   "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
+   "commit": "bb8e42764af0c4a6a76f5a293ffaba7393659ed2"
   }
  ]
 }
