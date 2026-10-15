@@ -27,6 +27,13 @@
       "test": "VE.Closure.above_iff and VE.Closure.OrderChecks",
       "mutation": "Use .star instead of .plus in above",
       "result": "lake build VE.Closure.OrderChecks exited 1; above_iff and legacy agreement proofs failed"
+    },
+    {
+      "id": "trust-check-ignores-S",
+      "file": "tools/trust_map.py",
+      "test": "tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[S]",
+      "mutation": "check() loops over (\"K\", \"V\") only, so S growth is never compared",
+      "result": "pytest: test_one_unsigned_trusted_line_fails_the_live_check[S] and test_the_baseline_is_the_live_tree_with_every_signature_recorded failed; restored"
     }
   ]
 }

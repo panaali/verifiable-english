@@ -12,3 +12,5 @@ error: VE/Closure/Order.lean:58:2: Type mismatch
 error: VE/Closure/Order.lean:83:16: Application type mismatch: The argument
 error: VE/Closure/Order.lean:193:6: Tactic `apply` failed: could not unify the conclusion of `(reachEval_iff Kind.plus es a b).mpr`
 error: VE/Closure/Order.lean:197:49: Application type mismatch: The argument
+
+trust check ignores S (review F1 fix): tools/trust_map.py check() skips S -> tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[S]; pytest exit 1, restored
