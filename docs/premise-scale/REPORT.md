@@ -250,6 +250,41 @@ All 12 caught (`evidence/mutants.json`):
   to the 12 earlier seeded faults in `evidence/mutants.json` (including Lean, Python and Rust).
 - Targeted relay gate: 2 routes, 6,175 mutants, zero failures.
 
+## Review fixes (premise-scale-review.final.md, 2026-10-15, `2287cc9ab`)
+
+- **F1 (B): premise-scale's searches and timeout rule leaked into entailments.** `Superposed.model` wrapped
+  every query in `_found` (a Rust timeout is no witness) and `_scaled` (the raised and ground searches), so
+  an entailment's countermodel search took them too. The class is "a premise-check relaxation applied
+  outside the premise check". It is now decided once, in `model`: `premise_check` holds when the query has
+  no Γ and no conclusion (`premises()`, `candidate_premises()`). Only then is a timeout no witness, in the
+  search on each lifted choice's document (`_lifted`, which refused before, the sweep's inconsistency) as in
+  the search on `sup D`, and only then does `_scaled` run (and ask Lean for `search-budget`). Every other
+  query is as on the base: a timeout is CheckerUnavailable, and the search keeps the shared bound. The
+  enumerated route and `_witness` (the conflict search) never took either. `ve.vacuity` is the premise check
+  alone (its conclusion is always ⊥). DELTA rows 1 and 4 now name this scope.
+- **F2 (B): the readings route's raised, ground and timeout branches had no test.** Five tests in
+  `tests/test_premise_scale.py` (the probe's file) run a superposed document whose premises force three
+  agents: `test_readings_premise_check_searches_the_sort_lean_raises` (raised branch: the model has three
+  agents and the search that found it is the raised one), `test_readings_premise_check_takes_the_ground_route`
+  (one model attempt: the raised search runs out, the ground route finds it; no attempt: UNKNOWN, R5),
+  `test_readings_premise_check_timeout_is_no_witness` (timeout branch, lifted searches included),
+  `test_readings_entailment_timeout_is_still_unavailable[*]` and `test_readings_entailment_takes_no_scaled_search[*]`
+  (F1: named readings and the fold).
+- Probes: PROBE F1 failed before the fix (`DID NOT RAISE CheckerUnavailable`) and passes after it. PROBE F2
+  exited 1 before (24 tests passed with `_scaled` a no-op) and exits 0 after
+  (`test_readings_premise_check_searches_the_sort_lean_raises` fails). Both are now regression tests
+  (`test_readings_entailment_timeout_is_still_unavailable`, the five tests above).
+- Seeded faults (Python, `ve/readings_verdicts.py`; restored after each): S14, the fix reverted: five of the
+  new tests fail (`test_readings_premise_check_timeout_is_no_witness`, both
+  `test_readings_entailment_timeout_is_still_unavailable` and both `test_readings_entailment_takes_no_scaled_search`);
+  S15, `_scaled` without its ground search: `test_readings_premise_check_takes_the_ground_route` fails;
+  S16, `_scaled` a no-op (PROBE F2): `test_readings_premise_check_searches_the_sort_lean_raises` fails.
+  No Lean or Rust product code changed in these fixes.
+- Tests run on `2287cc9ab`: the selected tests (`mac-pytest.sh --select`, 377 of 377 units, 0 failed), the new
+  tests, `lake build` (897 jobs) and `lean/audit.py` (PASS, 489 sources, 5,801 theorems). The full gate is
+  left to the merge train.
+- Follow-ups F3 to F8 (C) are not changed here.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. PASS for this batch's route and the graph and parse repairs (`relay_mutation_gate.py` on
