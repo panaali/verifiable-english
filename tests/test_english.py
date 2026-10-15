@@ -286,6 +286,36 @@ def test_rejected_binary_template_does_not_take_accepted_unary_wordings():
                for issue in lint_vocabulary(env))
 
 
+def _binary(verbalisation):
+    return {'arguments': ['agent', 'item'], 'description': 'Relation', 'verbalisation': verbalisation}
+
+
+def test_templates_that_reject_each_other_give_up_their_shared_head():
+    # Lean's guard on `Fpermits` in E2Examples.lean checks the same selection.
+    data = vocabulary()
+    data['vocabulary']['predicates'].update({
+        'allow': _binary('{0} permits {1}'), 'consent': _binary('{0} permits visits {1}'),
+        'open': {'arguments': ['item'], 'description': 'Open', 'verbalisation': '{0} is fully permits'}})
+    words = EnglishVocabulary(Environment(data))
+    assert words.predicates['open'] == '{0} is fully permits'
+    assert words.predicates['allow'] == '{0} has the recorded relation "allow" to {1}'
+    assert words.predicates['consent'] == '{0} has the recorded relation "consent" to {1}'
+    assert {(i.path.split('/')[3], i.code) for i in words.issues} == {
+        ('allow', 'SYMBOL_COLLISION'), ('consent', 'SYMBOL_COLLISION')}
+
+
+def test_rejected_template_head_does_not_block_an_accepted_idiom():
+    # lx22c: `erodes` fails the lint, so its head `undermines` stays free for the idiom.
+    data = vocabulary()
+    data['vocabulary']['predicates'].update({
+        'undermines': _binary('{0} undermines {1}'),
+        'erodes': _binary('{0} undermines the oversight role of {1}')})
+    words = EnglishVocabulary(Environment(data))
+    assert words.predicates['undermines'] == '{0} undermines {1}'
+    assert words.predicates['erodes'] == '{0} has the recorded relation "erodes" to {1}'
+    assert not any('/undermines/' in i.path for i in words.issues)
+
+
 def test_accepted_head_collection_scans_each_candidate_once(monkeypatch):
     import ve.printer as printer
     data = vocabulary()
@@ -494,8 +524,10 @@ def test_idioms_still_check_collisions_and_argument_direction(case):
         predicates['pledge']['verbalisation'] = '{0} promised {1}'
         target = 'pledge'
         if case == 'head':
-            predicates['promises'] = predicates.pop('promised')
-            predicates['promises']['verbalisation'] = '{0} promised carefully {1}'
+            # An accepted wording's head blocks the idiom (DRI X2: a rejected one's does not).
+            predicates.pop('promised')
+            predicates['promises'] = {'arguments': ['item'], 'description': 'Promised.',
+                                      'verbalisation': '{0} is promised'}
     else:
         predicates['appoints'] = {'arguments': ['agent', 'item'], 'description': 'Appointed by.',
                                   'verbalisation': '{0} was appointed by {1}'}
@@ -503,6 +535,11 @@ def test_idioms_still_check_collisions_and_argument_direction(case):
     words = EnglishVocabulary(Environment(data))
     assert words.predicates[target] != predicates[target]['verbalisation']
     assert any(i.path == f'/vocabulary/predicates/{target}/verbalisation' for i in words.issues)
+    if case == 'head':
+        assert words.predicates['promises'] == '{0} is promised'
+        predicates['promises'] = {'arguments': ['agent', 'item'], 'description': 'Promised.',
+                                  'verbalisation': '{0} promised carefully {1}'}
+        assert EnglishVocabulary(Environment(data)).predicates[target] == '{0} promised {1}'
 
 
 def test_review_status_requires_exact_independently_pinned_digest(tmp_path):
