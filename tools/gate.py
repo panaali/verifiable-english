@@ -72,6 +72,22 @@ REUSED_STAGES = ("lean_audit", "cargo_test")
 RERUNNABLE = frozenset({"pytest", "pytest command"})
 
 
+TRUST_STAGE = "Trust counts"
+
+
+def read_trust(path: Path) -> dict:
+    """The per-file trust counts `tools/trust_map.py --files` wrote, checked by their writer's own
+    schema (`trust_map.files_problems`); missing or malformed counts fail the gate."""
+    from tools import trust_map  # its tree-reading imports are only needed here
+    if not path.is_file():
+        raise RuntimeError(f"{TRUST_STAGE}: tools/trust_map.py --files wrote no {path.name}")
+    data = json.loads(path.read_text())
+    problems = trust_map.files_problems(data)
+    if problems:
+        raise RuntimeError(f"{TRUST_STAGE}: " + "; ".join(problems))
+    return data
+
+
 def pytest_args(files: list[str] | None = None) -> tuple[str, ...]:
     """PYTEST_ARGS over `files` (test files under tests/) instead of the whole of tests/."""
     return PYTEST_ARGS if files is None else (*PYTEST_ARGS[:-1], *files)
@@ -262,7 +278,8 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
                             selected=len(selected),
                             passed=sum(row["outcome"] == "passed" for row in tests.values()),
                             skipped=sum(row["outcome"] == "skipped" for row in tests.values()),
-                            failed=sum(row["outcome"] == "failed" for row in tests.values()),
+                            failed=(sum(row["outcome"] == "failed" for row in tests.values())
+                                    + sum(node not in tests for node in selected)),
                             deselected=len(deselected))
     if len(collected) != len(set(collected)) or len(selected) != len(set(selected)):
         result["failures"].append({"stage": "coverage", "reason": "duplicate test ID in collection"})
@@ -626,6 +643,12 @@ def main() -> int:
             command(["uv", "run", "--frozen", "--no-sync", "python",
                      "tools/wire_contract.py", "--check"], env=env,
                     stage="Wire contract check")
+
+            # The per-file trust counts live in the gate record, not the tree (AR-4, D3).
+            trust_file = scratch / "trust-files.json"
+            command(["uv", "run", "--frozen", "--no-sync", "python", "tools/trust_map.py", "--files",
+                     str(trust_file)], env=env, stage=TRUST_STAGE)
+            result["trust"] = read_trust(trust_file)
 
             if rerun is None:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
