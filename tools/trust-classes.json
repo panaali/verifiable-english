@@ -10840,6 +10840,9 @@
         "VE.Readings.Run.productPendingText",
         "VE.Readings.Run.productProfileText"
       ],
+      "G[R]": [
+        "VE.Readings.Run.splitAdmissible"
+      ],
       "G[V]": [
         "VE.Readings.Run.PartRun",
         "VE.Readings.Run.PartRun.answer",

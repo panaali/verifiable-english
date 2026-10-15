@@ -587,11 +587,11 @@ def admitComponent (kind : String) (environment document : Json) : Except String
     let a ← admitReadings environment document
     if underCompletion a.re a.D then
       return .nd (← admitNDFull (← admitS2Of a document))
-    return .s1 a
+    return .s1 (← splitAdmissible a.re a.D a)
   let b ← admitS2 environment document
   if underCompletion b.a.re b.D then
     return .nd (← admitNDFull b)
-  return .s2 b
+  return .s2 (← splitAdmissible b.a.re b.D b)
 
 /-- One answer from its already admitted component. The request fields are read only for the named component. -/
 def runAdmitted (j : Json) (id kind : String) (ready : ComponentAdmission) : Except String Json := do
