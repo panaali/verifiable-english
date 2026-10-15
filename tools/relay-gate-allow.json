@@ -2215,6 +2215,41 @@
    "kind": "follow-up",
    "id": "F11",
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:ask",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/result/rows/*/cited",
+    "results/*/result/result/rows/*/gaps",
+    "results/*/result/result/unchecked_names",
+    "results/*/result/result/unused"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:ask",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/result/rows/*/gaps"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:ask",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/result/lines/*/quote",
+    "results/*/result/result/lines/*/source",
+    "results/*/result/result/lines/*/witness"
+   ],
+   "kind": "by-design",
+   "id": "B3",
+   "reason": "A field whose domain is a union across JSON types: a line's `source`, `quote` and `witness` are null or a value (ask.json `line`), so the retype to null is a valid answer, and so is a witness retyped to `[]`, the one choice of a one-choice route; a value that is not null is bound to the request by `ve.ask.read_answer`."
   }
  ]
 }

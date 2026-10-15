@@ -4,6 +4,10 @@
       "VE.Alternatives.Run",
       "VE.Route.Run"
     ],
+    "ask": [
+      "VE.Ask.Run",
+      "VE.Route.Run"
+    ],
     "bundle": [
       "VE.Service.Standalone",
       "VE.Service.FamilyBundle",
@@ -139,10 +143,14 @@
     "speech-acts": [
       "VE.SpeechActs.Run",
       "VE.Route.Run"
+    ],
+    "words": [
+      "VE.Words.Run",
+      "VE.Route.Run"
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "72ce5decda48d65fca514ad6a337bb8133da6657b5a75876567e6173f316b54b",
+    "lean/VE/Service/Protocol.lean": "3e76071d63a968603af6969bfe25082d19dea872244e78e1d6217549653b649d",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

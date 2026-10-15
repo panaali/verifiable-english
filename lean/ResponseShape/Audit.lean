@@ -3,6 +3,7 @@
 import ResponseShape.CaseDeciders
 import ResponseShape.Encoders
 import ResponseShape.Encoders.Alternatives
+import ResponseShape.Encoders.Ask
 import ResponseShape.Encoders.Common
 import ResponseShape.Encoders.Conformance
 import ResponseShape.Encoders.Discourse
@@ -25,6 +26,7 @@ import ResponseShape.Encoders.SearchBudget
 import ResponseShape.Encoders.SoftNorms
 import ResponseShape.Encoders.SpeechActs
 import ResponseShape.Encoders.Standalone
+import ResponseShape.Encoders.Words
 import ResponseShape.EnumSites
 import ResponseShape.FitsTactic
 import ResponseShape.Skeleton
@@ -70,6 +72,20 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Alternatives.runCase_fits
 #print axioms ResponseShape.Encoders.Alternatives.sourceOf_taken
 #print axioms ResponseShape.Encoders.Alternatives.validate_fits
+#print axioms ResponseShape.Encoders.Ask.answeredFields_fits
+#print axioms ResponseShape.Encoders.Ask.answered_ok
+#print axioms ResponseShape.Encoders.Ask.askCase_fits
+#print axioms ResponseShape.Encoders.Ask.caseReported_fits
+#print axioms ResponseShape.Encoders.Ask.choice_fits
+#print axioms ResponseShape.Encoders.Ask.identities_fits
+#print axioms ResponseShape.Encoders.Ask.line_fits
+#print axioms ResponseShape.Encoders.Ask.line_source_fits
+#print axioms ResponseShape.Encoders.Ask.name_fits
+#print axioms ResponseShape.Encoders.Ask.reason_fits
+#print axioms ResponseShape.Encoders.Ask.refused_fits
+#print axioms ResponseShape.Encoders.Ask.route_mem
+#print axioms ResponseShape.Encoders.Ask.row_fits
+#print axioms ResponseShape.Encoders.Ask.source_fits
 #print axioms ResponseShape.Encoders.Common.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Common.caseKind_read
 #print axioms ResponseShape.Encoders.Common.claimJson_fits
@@ -412,6 +428,8 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Standalone.other_environment_fits
 #print axioms ResponseShape.Encoders.Standalone.parse_fits
 #print axioms ResponseShape.Encoders.Standalone.parse_reported
+#print axioms ResponseShape.Encoders.Words.caseReported_fits
+#print axioms ResponseShape.Encoders.Words.wordsCase_fits
 #print axioms ResponseShape.Encoders.runMode_fits
 #print axioms ResponseShape.ErrP.bind
 #print axioms ResponseShape.ErrP.error
