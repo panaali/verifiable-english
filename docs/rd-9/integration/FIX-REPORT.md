@@ -431,3 +431,40 @@ Checks on HEAD 11c67262a:
 - Selected tests: no Mac slot was free, so they ran on the VM; all 375 units were selected. 372 pass. The other 3 hit the runner's 3600 s per-file cap under the 6-job load: `test_assist.py`, `test_assist_invariants.py` and `test_english_evidence.py`. None of them touches the relays changed here, and on a rerun of just those three on the Mac runner (HEAD 11c67262a, 6 workers) they pass: 195 passed, 1 skipped (P5 materials not available), exit 0.
 - An earlier selected run on ecc295e24 found the genuine-answer refusal fixed in 11c67262a (`test_compose_integration`, `test_norm_defaults_*`).
 - The full gate was not run, as directed.
+
+## F24 and its class: a licence that names no relation of the request (2026-10-15)
+
+F24: a forged scope answer marked an uncited carve-out `cited`, dropped its UnlicensedLimitation finding
+and set `licensed: true`, and Python accepted it. The licence check looked only at the licence's form.
+The class is "a value that names a relation of the request (a citation, a colliding line, a strict rule)
+and is checked only for its form". The fuzz missed it because a one-fault mutant only ever renamed a
+value to "ghost", never to another valid value.
+
+| Finding | Fix | Regression | Commit |
+| --- | --- | --- | --- |
+| F24 | The rights elaboration binder now checks each `(mechanism, licence)` pair against Run.lean `licence`: the first relation of Scope.lean that the request holds. In order: a citation (`cited`, over `citesOf` and `lineKeys`), a right line of the opposite effect (`rightCollision`, which for dominance also needs a cited rank), a same-effect strict rule (`sameEffectStrict`), else none. A scope licence must equal the elaboration's licence. The one exception is `certified`, accepted only where the elaboration left the mechanism unlicensed and certificates were sent. This also closes the follow-up "`certified` passes on any mechanism". The form-only `_licence_bound` is deleted. For the class: the inventory fuzz now also sets each bound scalar to every value the same field takes in another genuine answer. A new test replays each source's genuine answer as the answer to every other source of its family. That is a whole, self-consistent forgery, the shape F24 took. Twelve sources were added, one for each licence and its uncited twin, including a fan-out line cited through its source norm. | `test_f24_a_licence_names_a_relation_the_request_holds[*]` (14 cases), `test_another_requests_genuine_answer_is_unavailable[*]` (11 routes), `test_every_bound_field_mutant_is_unavailable[rights-elaborate]`, `[rights-scope]` | 0b8015d14 |
+
+R8(b) covers this: a licence is a choice that names a relation of the request. No Lean answer changes,
+and no genuine answer is refused. All 28 genuine rights sources still pass at recording. The 12 new
+sources are the ones whose licences are `cited`, `collision` or `effect delivered by strict rule M`.
+No Lean or Rust product code changed, and Rust relays no licence. DRI note under the deferred D1 item: the
+licence is now one more Lean derivation that Python follows, the same as the mechanism list (F20). It
+reads only request relations, and its source is named in `_narrowings`.
+
+PROBE F24 (`/tmp/rd9_a264_probe.py F24`): exit 1 before the fix (`scope: uncited carve-out licensed as
+"cited", finding dropped -> ACCEPTED`), exit 0 after it (`-> REJECTED`). The probe is the
+`F24 uncited carve-out as 'cited' in rights-scope` case of the regression test.
+
+Seeded bugs (Python only), each restored:
+- Restoring the pre-fix `ve/rights_route.py`:
+  - fails 5 of the 14 F24 cases (every `cited` forgery and both "cited carve-out unlicensed" cases);
+  - fails `test_every_bound_field_mutant_is_unavailable[rights-elaborate]` and `[rights-scope]` (licence set to `cited` or `collision`);
+  - fails `test_another_requests_genuine_answer_is_unavailable[rights-elaborate]` and `[rights-scope]` (for example "cited carve-out answered for carve-out").
+- Ignoring the carve-out citation, dropping the cited-rank condition of a dominance collision, dropping the same-effect test, or leaving out the source norm from `lineKeys`: each makes a genuine source refused at recording (`CheckerUnavailable: ... unbound narrowing target or mechanism`), so the inventory tests error.
+- Not tying the scope licence to the elaboration fails `test_every_bound_field_mutant_is_unavailable[rights-scope]`.
+
+Checks on HEAD 0b8015d14:
+- `lake build` passes (900 jobs, no Lean source changed), and so does `python3 lean/audit.py` (489 files, 5374 theorems).
+- Selected tests ran on the Mac runner (ve-mac-1). All 375 units were selected; 1 test failed: `test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`. That test also fails on this VM, and it fails the same way on the unchanged base a264e8893 with the same built binaries. It exercises `english.question`, not a rights relay, so it is unrelated to F24.
+- `tools/regen_generated.py --check`: `gate-collection` is regenerated. `trust-tables` still fails. That failure was already there: trusted Lean growth in `VE/Readings/*` and `VE/NormDefaults/*` (S +171, V +363) with no signed allowance. This fix changed no Lean.
+- The full gate was not run, as directed.
