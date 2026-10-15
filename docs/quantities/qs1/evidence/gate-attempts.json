@@ -67,5 +67,37 @@
     "units": 56,
     "failed": 0,
     "runner": "ve-mac-1"
+  },
+  "full_gate_ab62cb85f": {
+    "commit_sha": "ab62cb85fe0c8dad426154b7b9f87fff218653bc",
+    "tree_sha": "2c4121aeba7a6d6e748ff5dee25d2d5bcdb7dfab",
+    "status": "failed",
+    "runner": "ve-mac-1",
+    "workers": 9,
+    "counts": {
+      "collected": 15269,
+      "deselected": 1,
+      "failed": 0,
+      "passed": 15176,
+      "rust_ignored": 0,
+      "rust_passed": 36,
+      "selected": 15268,
+      "skipped": 92
+    },
+    "failed_nodeids": [],
+    "failed_stage": "coverage",
+    "reason": "stale Test-removed trailer on 5d4b54ce5 for tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target, which main's sync restored",
+    "fix": "commits rebuilt with identical trees, trailer dropped from 5d4b54ce5's message"
+  },
+  "commit_rewrite": {
+    "reason": "drop the stale Test-removed trailer; every tree unchanged",
+    "backup_ref": "refs/backup/qs-1/before-trailer-rewrite",
+    "old_to_new": {
+      "5d4b54ce5de1f9d9231c1d432633f4f679a45bbc": "c3b3a026dd80ea972617df00eba2ea7b01c7ba98",
+      "02cccc1b02b1f7700d7151c507ce1aab91d0a87c": "fb22f2921a3b7608190635af05e3ce7674c45366",
+      "806099579f45bc589679535110182f70ad6c896c": "ed56615dd344d2565ac803af8e31b145d24ccc70",
+      "e997995556499ceba9f741e36e1ca541a627f51b": "430571d5d9cbb10950da1df20692b4456726d6db",
+      "ab62cb85fe0c8dad426154b7b9f87fff218653bc": "5fe3c72127e48de9e4098e6a7b69d538026ca57e"
+    }
   }
 }
