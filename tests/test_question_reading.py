@@ -10,6 +10,7 @@ characters) get well-formed answers.
 from __future__ import annotations
 
 import copy
+import itertools
 import json
 import os
 from pathlib import Path
@@ -20,7 +21,7 @@ import sys
 import pytest
 
 import question_fixtures as F
-from subprocesses import HANG_TIMEOUT
+from subprocesses import HANG_TIMEOUT, busy_cpu
 from ve import ask
 from ve.backends import english_lean, relay
 from ve.english import EnglishVocabulary
@@ -249,24 +250,22 @@ def test_the_cli_json_is_leans_result_with_the_honesty_fields(fixture):
     record = json.loads(done.stdout)
     assert {k: record[k] for k in ("operation", "assurance", "intent", "proof", "answer")} == {
         "operation": "question.read", "assurance": "experimental", "intent": "unconfirmed",
-        "proof": "not_checked", "answer": "not_built"}
+        "proof": "not_checked", "answer": "not_asked" if answer["status"] == "one" else "no_answer"}
     assert F.answer_of(record["result"]) == answer
     assert record["result"]["identities"]["question_version"] == english_lean.QUESTION_VERSION
 
 
-def test_the_cli_does_not_answer_without_reading():
-    """The answer itself is plan Q2: `ve ask` without `--reading` reads the question, prints Lean's A0 line and then
-    Lean's own text that VE does not answer yet (the contract's `unanswered`, exported by the mode), and exits 5:
-    never a verdict, never a silent exit (DRI ruling of 2026-10-09)."""
+def test_the_cli_answers_without_reading():
+    """Plan Q2: `ve ask` without `--reading` prints Lean's answer, opening with the same A0 line (`tests/test_ask_cli.py`
+    covers the answers); the Q1 text that VE does not answer yet (`unanswered`) is still exported, and never printed
+    for a question VE answers. A question that is not read is refused as with --reading: Lean's refusal, its exit
+    code."""
     unanswered = english_lean.QUESTION_TEXTS["unanswered"]
     assert unanswered == live_texts()["unanswered"]
     done = cli(ROOT / F.DOCUMENTS["G"], "Is every member eligible?")
-    assert done.returncode == 5, done
-    assert done.stdout.splitlines() == ["You asked whether every member is eligible.", unanswered], done
-    as_json = json.loads(cli(ROOT / F.DOCUMENTS["G"], "Is every member eligible?", "--json").stdout)
-    assert as_json["error"] == {"class": "CheckerUnavailable", "message": unanswered}
-    assert as_json["result"]["status"] == "one" and as_json["answer"] == "not_built"
-    # A question that is not read is refused as with --reading: Lean's refusal, its exit code.
+    assert done.returncode == 0, done
+    assert done.stdout.splitlines()[:2] == ["You asked whether every member is eligible.", "Yes."], done
+    assert unanswered not in done.stdout
     refused = cli(ROOT / F.DOCUMENTS["G"], "Who is eligible?")
     assert refused.returncode == 2 and unanswered not in refused.stdout
 
@@ -524,18 +523,21 @@ def test_text_variants_get_well_formed_answers(name):
 # ------------------------------------------------------------------ the whole operation's deadline
 
 def test_the_whole_question_is_bounded_by_the_modes_deadline(monkeypatch):
-    """The CPU deadline of `english.question` bounds the whole service operation (decoding, the lexicon's
-    checks, every candidate's reading and the answer): with the deadline injected near zero, a question that
-    needs work is CheckerUnavailable naming the mode, never a verdict, a refusal or ResourceLimit."""
+    """A crossed CPU deadline bounds the whole service operation, including on hosts without /proc.
+    On /proc hosts the injected clock advances only after the whole request has been sent."""
     from ve.backends import lean_service
     monkeypatch.setitem(lean_service.DEADLINES, MODE, (1e-6, 1e-6))
+    clock = busy_cpu(monkeypatch, lean_service)
+    if lean_service._cpu_seconds(os.getpid()) is None:
+        cpu_reads = itertools.count()
+        monkeypatch.setattr(lean_service, "_cpu_seconds", lambda _pid: float(next(cpu_reads)))
     _, frame, question, _ = next(row for row in F.FIXTURES if row[0] == "U2")
-    env = F.environment(frame)
-    words = EnglishVocabulary(env, _defer_overlay_refusals=True)
     # A question no earlier request asked, so the relay's answer memo cannot hold it.
-    question = question.replace("merit?", "merit ?").replace(" ?", "?") + ""
+    question = question[:-1] + " " * 37 + "?"
     case = F.request(frame, question)
-    case["question"] = case["source"] = question[:-1] + " ?"
+    case["question"] = case["source"] = question
     with pytest.raises(CheckerUnavailable, match=f"mode {MODE} used more than its deadline") as caught:
         relay.decide(MODE, [case])
-    assert not isinstance(caught.value, ResourceLimit)
+    assert not isinstance(caught.value, ResourceLimit) and caught.value.operation == MODE
+    if clock.readings:
+        assert clock.fired == ["response"] and any(len(seen) >= 2 for seen in clock.readings.values())

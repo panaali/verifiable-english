@@ -1657,8 +1657,9 @@ class _FilledChoiceDocument:
     def _packages(self):
         """A certificate of each target's closed negation from the layered base background over `E‴_base`
         (`L.background`: `Background_base(E‴)`'s literals, `X`, then `Fill_T`; on the norms chain Lean's
-        `baseBackgroundU`), bound as Lean binds a package (`decodePackageX`): to the choice's environment id and
-        document hash (the row's), and its certificate to `E‴_base` and the ASTs of that background."""
+        `baseBackgroundU` and `LayeredU.background`), bound as Lean binds a package (`decodePackageX`,
+        `decodePackageU`): to the choice's environment id and document hash (the row's), and its certificate to
+        `E‴_base` and the ASTs of that background."""
         from .ast import Not, formula_from_data, formula_to_data
         from .entailment import prove_entailment
         from .norms import _bind
@@ -1693,12 +1694,16 @@ class _FilledChoiceDocument:
                                                               "filling": filling, "tuple": witness["tuple"]},
                 "shown": witness["model"]}
 
+    def _base_literals(self):
+        """`Background_base` of the filled document, as Lean's elaboration row lists it: the literals' distinctness
+        (their ASTs)."""
+        return [item["ast"] for item in self.elaboration["background"] if item["generator"] == "literals"]
+
     def _base_background(self):
-        """The ASTs of the layered base background, Lean's `L.background`: the row's literal Background, `X` (its
-        `soft`), then `Fill_T`; each reads base predicates and the filled tables only."""
+        """The ASTs of the layered base background, Lean's `L.background`: the row's literal Background
+        (`_base_literals`), `X` (its `soft`), then `Fill_T`; each reads base predicates and the filled tables only."""
         row = self.elaboration
-        return ([item["ast"] for item in row["background"] if item["generator"] == "literals"] +
-                [item["ast"] for item in row["soft"]] + [item["ast"] for item in row["fill"]])
+        return self._base_literals() + [item["ast"] for item in row["soft"]] + [item["ast"] for item in row["fill"]]
 
     def _base_fill(self):
         """The layered base background over `E‴_base` (`_base_background`)."""

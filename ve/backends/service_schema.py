@@ -13,17 +13,19 @@ to 64 levels. Arbitrary JSON (echoed ids, `const`) is compared without recursion
 from __future__ import annotations
 
 from decimal import Decimal
+from collections.abc import Mapping
 import json
 from pathlib import Path
 import re
 import reprlib
+import threading
 
 DIRECTORY = Path(__file__).resolve().parent / "lean_service_schema"
 MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
          "english.read", "english.grammar", "english.check",
-         "environment", "model", "check", "identity", "parse", "graph", "readings", "bundle", "family-norms",
+         "environment", "model", "check", "identity", "parse", "graph", "readings", "readings-choices", "bundle", "family-norms",
          "soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval", "quantity",
-         "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question")
+         "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question", "ask", "words")
 
 
 class Invalid(Exception):
@@ -114,30 +116,61 @@ def _fail(message: str):
     raise Invalid(message)
 
 
+_FILE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*\.json")
+
+
 class Compiler:
-    """Loads every schema file and compiles schemas on demand, sharing `$ref` targets."""
+    """Compiles schemas on demand, sharing `$ref` targets. A schema file is read when a
+    `$ref` first names it, so checking one mode reads only the files that mode reaches.
+
+    Compiling publishes a target's cell before filling it (a grammar may refer to itself),
+    so `ref` and `compile` hold one re-entrant lock: another thread never sees an unfilled
+    cell, and a compile that fails leaves no cell or counter behind."""
 
     def __init__(self, directory: Path = DIRECTORY):
-        self.documents = {path.name: json.loads(path.read_text()) for path in sorted(directory.glob("*.json"))}
+        self.directory = directory
         self.counters: dict[str, int] = {}
+        self._documents: dict[str, object] = {}
         self._compiled: dict[tuple[str, str], list] = {}
+        self._lock = threading.RLock()
+
+    def document(self, name: str) -> object:
+        """The parsed schema file `name`; `SchemaError` if there is none."""
+        with self._lock:
+            document = self._documents.get(name, _MISSING)
+            if document is _MISSING:
+                path = self.directory / name
+                if _FILE_NAME.fullmatch(name) is None or not path.is_file():
+                    raise SchemaError(f"unknown schema file {name}")
+                document = self._documents[name] = json.loads(path.read_text())
+            return document
 
     def ref(self, base: str, reference: str):
         name, _, pointer = reference.partition("#")
         name = name or base
-        if name not in self.documents:
-            raise SchemaError(f"unknown schema file {name}")
         key = (name, pointer)
-        cell = self._compiled.get(key)
-        if cell is None:
-            cell = self._compiled[key] = [None]
-            target = _resolve(self.documents[name], pointer)
-            if target is _MISSING:
-                raise SchemaError(f"unresolved $ref {reference} in {base}")
-            cell[0] = self.compile(target, name)
-        return cell
+        with self._lock:
+            cell = self._compiled.get(key)
+            if cell is not None:
+                return cell
+            compiled, counters, done = dict(self._compiled), dict(self.counters), False
+            try:
+                target = _resolve(self.document(name), pointer)
+                if target is _MISSING:
+                    raise SchemaError(f"unresolved $ref {reference} in {base}")
+                cell = self._compiled[key] = [None]
+                cell[0] = self.compile(target, name)
+                done = True
+            finally:
+                if not done:
+                    self._compiled, self.counters = compiled, counters
+            return cell
 
     def compile(self, schema: object, base: str):
+        with self._lock:
+            return self._compile(schema, base)
+
+    def _compile(self, schema: object, base: str):
         if schema is True:
             return lambda value, ctx, fuel: None
         if schema is False:
@@ -438,6 +471,21 @@ class Compiler:
                 _fail("background exceeds what the request vocabulary generates")
         return check
 
+    def _x_source_span(self, pointer, schema, base):
+        def check(value, ctx, fuel):
+            source = _resolve(ctx.value, pointer)
+            if type(source) is not str or type(value) is not dict:
+                _fail("span is outside the request source or has the wrong line and column")
+            start, end = value.get("start"), value.get("end")
+            line, column = value.get("line"), value.get("column")
+            if (type(start) is not int or type(end) is not int or
+                    type(line) is not int or type(column) is not int or
+                    not 0 <= start <= end <= len(source) or
+                    line != source.count("\n", 0, start) + 1 or
+                    column != start - source.rfind("\n", 0, start)):
+                _fail("span is outside the request source or has the wrong line and column")
+        return check
+
     def _x_index(self, flag, schema, base):
         def check(value, ctx, fuel):
             if _kind(value) != "integer" or value != ctx.index:
@@ -506,6 +554,48 @@ class Compiler:
                 _fail(f"{rule['equals']} does not count the presence of {rule['value']}")
         return check
 
+    def _x_reading_plan(self, flag, schema, base):
+        """Bind a Lean choice plan to the submitted set sizes and coupling IDs.
+
+        Completeness and compatibility are Lean decisions. This checks only
+        that every returned index, label and count can name request data.
+        """
+        def check(value, ctx, fuel):
+            case = ctx.value
+            sets, couplings, limit = case.get("set_meta"), case.get("couplings"), case.get("limit")
+            if (not isinstance(sets, list) or not isinstance(couplings, list)
+                    or _kind(limit) != "integer" or limit < 0):
+                _fail("invalid readings plan request")
+            sizes = []
+            for reading_set in sets:
+                if (not isinstance(reading_set, dict) or type(reading_set.get("id")) is not str
+                        or not isinstance(reading_set.get("readings"), list)):
+                    _fail("invalid reading set in the request")
+                sizes.append(len(reading_set["readings"]))
+            if any(not isinstance(c, dict) or type(c.get("id")) is not str for c in couplings):
+                _fail("invalid coupling in the request")
+            if value["route"] == "enumerate":
+                choices = value["choices"]
+                if not choices or len(choices) > limit or len({tuple(choice) for choice in choices}) != len(choices):
+                    _fail("extra or repeated choice")
+                for choice in choices:
+                    if (len(choice) != len(sizes) or any(_kind(index) != "integer" or index < 0
+                            or index >= size for index, size in zip(choice, sizes))):
+                        _fail("choice index is not in the request")
+                if value["conditional_on"] != ["coupling:" + c["id"] for c in couplings]:
+                    _fail("coupling labels are not in the request")
+            else:
+                product = 1
+                for size in sizes:
+                    product *= size
+                if (value["budget"]["max_choices"] != limit or
+                        not limit < value["choice_count"] <= product):
+                    _fail("choice count is not bound to the request")
+                units = {s["unit"] if type(s.get("unit")) is str else s["id"] for s in sets}
+                if any(unit not in units for unit in value["units"]):
+                    _fail("open unit is not in the request")
+        return check
+
     def _x_rows(self, bound, schema, base):
         sub = self.compile(bound, base)
 
@@ -536,9 +626,9 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-bound",
+          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-bound", "x-source-span",
           "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
-          "x-select", "x-count-where", "x-count-presence", "x-rows",
+          "x-select", "x-count-where", "x-count-presence", "x-reading-plan", "x-rows",
           "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
@@ -584,7 +674,11 @@ class _Grammar:
     def _slot(compiler: Compiler, sub: object, base: str):
         if isinstance(sub, dict) and set(sub) - {"$comment"} == {"$ref"}:
             name, _, pointer = sub["$ref"].partition("#")
-            if _is_grammar(_resolve(compiler.documents.get(name or base, {}), pointer)):
+            try:
+                document = compiler.document(name or base)
+            except SchemaError:
+                document = {}  # compiling the `$ref` below reports the unknown file
+            if _is_grammar(_resolve(document, pointer)):
                 return compiler.ref(base, sub["$ref"])  # a cell: its grammar is pushed
         return compiler.compile(sub, base)
 
@@ -612,14 +706,29 @@ class _Grammar:
 
 
 _compiler = Compiler()
-ROWS = {mode: _compiler.ref(f"{mode}.json", "#/row") for mode in MODES}
-RESPONSE = _compiler.ref("envelope.json", "#/response")
-HANDSHAKE = _compiler.ref("envelope.json", "#/handshake")
+
+
+class _Rows(Mapping):
+    """Each mode's row validator, compiled when a response in that mode is first checked."""
+
+    def __getitem__(self, mode):
+        if mode not in MODES:
+            raise KeyError(mode)
+        return _compiler.ref(f"{mode}.json", "#/row")
+
+    def __iter__(self):
+        return iter(MODES)
+
+    def __len__(self):
+        return len(MODES)
+
+
+ROWS = _Rows()
 
 
 def check_handshake(handshake: object) -> None:
     """Raise `Invalid` unless `handshake` is a first line this client can use."""
-    HANDSHAKE[0](handshake, Context(None), {})
+    _compiler.ref("envelope.json", "#/handshake")[0](handshake, Context(None), {})
 
 
 def check_row(mode: str, row: object, case: object, index: int) -> None:
@@ -630,4 +739,4 @@ def check_row(mode: str, row: object, case: object, index: int) -> None:
 def check_response(mode: str, response: object, request: dict) -> None:
     """Raise `Invalid` unless `response` is a possible response line for `request`
     (`{"id", "mode", "cases", "digests", "bytes"}`)."""
-    RESPONSE[0](response, Context(request, rows=ROWS[mode][0]), {})
+    _compiler.ref("envelope.json", "#/response")[0](response, Context(request, rows=ROWS[mode][0]), {})

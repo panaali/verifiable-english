@@ -8,8 +8,9 @@ commit's id in `docs/architecture/numbers.json`. The tables between the `<!-- nu
 Every number comes from a file or a parser, never from a regular expression over source text: line counts are
 newline counts of the committed blobs, the service's modes are the `MODES` tuple of
 `ve/backends/service_schema.py` read with Python's `ast`, the Lean executables and Rust crates come from
-`lean/lakefile.toml` and `rust/Cargo.toml` read with `tomllib`, and the trust classes, decoder total, layer
-exceptions and collected test IDs are read from their JSON files.
+`lean/lakefile.toml` and `rust/Cargo.toml` read with `tomllib`, the trust classes are `tools/trust_map.py`'s
+measurement of the commit, and the budget, decoder total, layer exceptions and collected test IDs are read from
+their JSON files.
 
 Usage:
   ``python tools/architecture_numbers.py --write [--rev REV]``  measure REV (default `HEAD`), save the JSON and
@@ -50,7 +51,7 @@ SERVICE_FILES = ("lean/VE/Service/Protocol.lean", "lean/VE/Service/Standalone.le
 INVENTORIES = tuple(f"lean/{name}.txt" for name in ("statements", "declarations", "axioms", "predicates"))
 LINE_FILES = BACKEND_FILES + SERVICE_FILES + INVENTORIES
 LARGEST_VE = 3
-# The trust classes the map shows (`docs/trust-baseline.json` `totals`); `budget` is kept whole.
+# The trust classes the map shows (`trust_map.totals` of the commit); the budget file's `budget` is kept whole.
 TRUST_TOTALS = ("K", "S", "D", "G", "C", "P", "T", "o", "D[V]", "D[R]", "D[I]", "G[V]", "G[R]", "G[I]", "trusted",
                 "lines")
 BYTE_PREFIXES = {"docs": "docs/", "docs_lean_first": "docs/lean-first/", "tracked": ""}
@@ -86,9 +87,10 @@ def modes(source: bytes) -> list[str]:
     raise ValueError("ve/backends/service_schema.py has no literal MODES tuple")
 
 
-def measure(read, sizes: dict[str, int]) -> dict:
+def measure(read, sizes: dict[str, int], trust_totals: dict[str, int]) -> dict:
     """The map's numbers over one tree: `sizes` maps every committed path to its byte size, `read(path)` gives
-    the committed bytes of one path."""
+    the committed bytes of one path, `trust_totals` are the tree's trust classes (`trust_map.measure_rev`: since
+    AR-4 the budget file holds only the budget and its allowances)."""
     paths = sorted(sizes)
 
     def glob_lines(pattern):
@@ -127,7 +129,7 @@ def measure(read, sizes: dict[str, int]) -> dict:
             "collected_test_ids": len(load("tools/gate-collection.json")),
             "pinned_decoder_lines": load("ve/assurance-manifest.json")["lean_decoders"]["total_lines"],
         },
-        "trust": {"totals": {k: trust["totals"][k] for k in TRUST_TOTALS}, "budget": trust["budget"]},
+        "trust": {"totals": {k: trust_totals[k] for k in TRUST_TOTALS}, "budget": trust["budget"]},
     }
 
 
@@ -260,7 +262,12 @@ def main(argv=None) -> int:
     doc, saved_path = ROOT / DOC, ROOT / NUMBERS
     if args.write:
         commit, sizes, read = read_tree(args.rev)
-        saved = {"commit": commit, "numbers": measure(read, sizes)}
+        sys.path.insert(0, str(ROOT / "tools"))
+        import trust_map
+        files, problems, _ = trust_map.measure_rev(commit, ROOT)
+        if problems:
+            raise SystemExit("\n".join(problems))
+        saved = {"commit": commit, "numbers": measure(read, sizes, trust_map.totals(files))}
         saved_path.parent.mkdir(parents=True, exist_ok=True)
         saved_path.write_text(json.dumps(saved, indent=2, sort_keys=True) + "\n")
         doc.write_text(apply(doc.read_text(), render(saved)))

@@ -1,5 +1,22 @@
 """Check that a batch's saved gate, corpus comparison and latency evidence cover HEAD.
 
+    python tools/batch_evidence.py --check docs/<track>/<batch> [--report-commit SHA]
+    python tools/batch_evidence.py HEAD GATE.json COMPARISON.json LATENCY.json [--report-commit SHA --report-dir DIR]
+
+`--check` reads the batch's `evidence.toml` (tools/evidence/config.py) and every evidence file it names: the
+saved scope, the gate of the scope's head, the seeded mutants, and where named the corpus A/B, latency, fuzz
+A/B, the rendered report block and the claims. It runs at the batch's gate and in the merge train instead of
+a permanent report test (DRI decision D4). The positional form checks the three files alone, as before.
+
+Every piece of evidence is tied to the batch (arch-20261010-2 review F1 to F3): the scope starts at the batch's
+merge base with `--main` (default `main`; `tools.evidence.merge_base`, which a later merge does not move), each
+A/B record compared that base with the scope's head, each seeded mutant ran on its file as committed at the
+head, and every file the check opens is inside the repository and, with `--report-commit`, committed there
+byte for byte (an ignored or uncommitted file is no evidence the merge train can carry).
+
+Identical unavailable pairs count only when the corpus delta lists each with a
+reason (standing ruling R7); a changed unavailable result is not covered.
+
 The gate result lives in a git note so recording it does not move the commit it
 checked. Call this tool with the final commit and the three evidence files before
 attaching the note. No missing or partial measurement counts as a pass.
@@ -13,15 +30,32 @@ still covers every line of code the report commit holds.
 from __future__ import annotations
 
 import argparse
-import json
+from collections import Counter
+import hashlib
+import re
 import subprocess
+import sys
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from tools import gate_collection  # noqa: E402
+from tools.evidence import EvidenceError, killed, load, merge_base, read_bytes, recording, scope_range  # noqa: E402
+from tools.evidence import ab, config as evidence_config, fuzz_ab, latency as evidence_latency, report  # noqa: E402
+
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build", "cargo_test", "pytest")
-REQUIRED_CORPORA = {"probe", "conformance", "readings", "pilots", "discourse", "rights", "quantity"}
+REQUIRED_CORPORA = set(ab.REQUIRED_CORPORA)
+SHA = re.compile(r"[0-9a-f]{40}")
 
 
 def problems(head: str, gate: dict, comparison: dict, latency: dict) -> list[str]:
+    return (gate_problems(head, gate) + ab.problems(comparison, head, REQUIRED_CORPORA)
+            + evidence_latency.problems(latency, head))
+
+
+def gate_problems(head: str, gate: dict) -> list[str]:
+    if not isinstance(gate, dict):
+        return ["full gate result is not a record"]
     errors = []
     if gate.get("commit_sha") != head or gate.get("dirty") is not False:
         errors.append("full gate did not run on a clean HEAD")
@@ -31,24 +65,6 @@ def problems(head: str, gate: dict, comparison: dict, latency: dict) -> list[str
     if not isinstance(counts, dict) or not all(type(counts.get(key)) is int and counts[key] > 0
                                                 for key in ("passed", "rust_passed")):
         errors.append("full gate has no passing Python and Rust tests")
-    if comparison.get("head_commit") != head:
-        errors.append("corpus comparison did not run on HEAD")
-    if comparison.get("unlisted") != 0 or comparison.get("unavailable_both") != {}:
-        errors.append("corpus comparison has an unlisted or unavailable result")
-    records = comparison.get("records")
-    if not isinstance(records, dict) or not REQUIRED_CORPORA <= {k.split("/", 1)[0] for k, v in records.items()
-                                                                 if type(v) is int and v > 0}:
-        errors.append("corpus comparison omitted a required corpus")
-    if latency.get("head_commit") != head or latency.get("pass") is not True:
-        errors.append("latency budget was not measured and passed on HEAD")
-    samples = latency.get("samples")
-    if not isinstance(samples, dict) or not samples or not all(
-        isinstance(row, dict) and type(row.get("base_cpu_ms")) in (int, float)
-        and type(row.get("head_cpu_ms")) in (int, float) and row["base_cpu_ms"] > 0
-        and 0 <= row["head_cpu_ms"] <= 1.2 * row["base_cpu_ms"]
-        for row in samples.values()
-    ):
-        errors.append("latency evidence is empty, malformed or above the 20% Lean CPU budget")
     return errors
 
 
@@ -70,23 +86,302 @@ def changed_since(gated: str, report: str, cwd: Path | None = None) -> list[str]
     return [path for path in out.decode().split("\0") if path]
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("head")
-    parser.add_argument("gate", type=Path)
-    parser.add_argument("comparison", type=Path)
-    parser.add_argument("latency", type=Path)
-    parser.add_argument("--report-commit", help="a later commit that may change only --report-dir")
-    parser.add_argument("--report-dir", help="the batch's report directory, relative to the repository root")
-    args = parser.parse_args()
+def scope_problems(scope: dict) -> list[str]:
+    """The errors of a saved scope (`python -m tools.evidence scope`): the batch's own commits, newest first."""
+    if not isinstance(scope, dict):
+        return ["scope is not a record"]
+    errors = []
+    if not all(isinstance(scope.get(k), str) and SHA.fullmatch(scope[k]) for k in ("base", "head")) \
+            or scope["base"] == scope["head"]:
+        errors.append("scope has no distinct base and head commits")
+    commits = scope.get("commits")
+    if not isinstance(commits, list) or not commits or not all(
+            isinstance(c, dict) and isinstance(c.get("hash"), str) and SHA.fullmatch(c["hash"]) for c in commits):
+        errors.append("scope lists no commits")
+    elif commits[0]["hash"] != scope.get("head") or len({c["hash"] for c in commits}) != len(commits):
+        errors.append("scope's newest commit is not its head, or it lists a commit twice")
+    changes = scope.get("changes")
+    if not isinstance(changes, list) or not changes or not all(
+            isinstance(c, dict) and isinstance(c.get("path"), str) and c["path"] for c in changes):
+        errors.append("scope lists no changed paths")
+    return errors
+
+
+def scope_history_problems(saved: dict, main: str = "main", cwd: Path | None = None) -> list[str]:
+    """Compare the saved scope with the batch's range from its merge base with `main`, replayed from Git: a
+    base inside the batch would drop its earlier commits (and with them the `ve/` and `lean/` paths that
+    require a corpus A/B).
+
+    The merge base does not move when `main` does (`tools.evidence.merge_base`), so a later merge to main
+    cannot change a batch's report. The saved base must be that very commit, even when another base's range
+    holds the same commits and changes (arch-20261010-2 recheck F1): every A/B record is bound to the saved
+    base, and an A/B against a later `main` that adopted the batch's change would show no difference.
+    """
+    if scope_problems(saved):
+        return []  # the shape errors already explain why history cannot be compared
+    cwd = cwd or ROOT
+    try:
+        base = merge_base(saved["head"], main, cwd)
+        actual = scope_range(base, saved["head"], cwd)
+    except (EvidenceError, subprocess.CalledProcessError) as exc:
+        return [f"scope cannot be reproduced from its Git objects: {exc}"]
+    errors = []
+    if saved["base"] != base:
+        errors.append(f"scope base {saved['base'][:8]} is not the batch's merge base {base[:8]} with {main}")
+    for field in ("commits", "changes"):
+        if saved[field] != actual[field]:
+            errors.append(f"scope {field} differ from the batch's {base[:8]}..{saved['head'][:8]} --no-merges "
+                          f"(its merge base with {main})")
+    return errors
+
+
+def gate_record_problems(head: str, gate: dict) -> list[str]:
+    """`gate_problems`, and the counts and failures of the gate's own record must agree."""
+    errors = gate_problems(head, gate)
+    counts = gate.get("counts") if isinstance(gate, dict) else None
+    if not gate_counts_valid(counts, failed=0):
+        errors.append("full gate counts do not add up or show a failure")
+    if not isinstance(gate, dict) or gate.get("failures") != []:
+        errors.append("full gate lists failures")
+    return errors
+
+
+def gate_counts_valid(counts: object, *, failed: int) -> bool:
+    """The complete pytest accounting written by the gate, with an expected number of failures."""
+    keys = ("passed", "skipped", "failed", "selected", "deselected", "collected")
+    return (isinstance(counts, dict)
+            and all(type(counts.get(k)) is int and counts[k] >= 0 for k in keys)
+            and counts["failed"] == failed
+            and counts["passed"] + counts["skipped"] + counts["failed"] == counts["selected"]
+            and counts["selected"] + counts["deselected"] == counts["collected"])
+
+
+def rerun_pair_problems(full, rerun) -> list[str]:
+    """Standing ruling R13: a complete full gate whose only failures are tests counts as passed with the serial
+    rerun (`tools/gate.py --rerun-failed`) of the same clean commit and tree that passed exactly those tests. Any
+    value is checked; a malformed record is an error, never an exception."""
+    from tools.gate import RERUNNABLE  # the failures a rerun may clear: the gate's own table
+    if not isinstance(full, dict) or not isinstance(rerun, dict):
+        return ["the full gate or its rerun is not a record"]
+    errors = []
+    failures, counts = full.get("failures"), full.get("counts")
+    failures = failures if isinstance(failures, list) else [None]
+    nodeids = [f.get("nodeid") for f in failures if isinstance(f, dict) and f.get("stage") == "pytest"]
+    tests = sorted({nodeid for nodeid in nodeids if isinstance(nodeid, str)})
+    if (full.get("status") != "failed" or full.get("dirty") is not False or not SHA.fullmatch(
+            str(full.get("commit_sha"))) or full.get("stages") != list(REQUIRED_STAGES)
+            or not tests or len(tests) != len(set(map(str, nodeids)))
+            or not all(isinstance(f, dict) and isinstance(f.get("stage"), str) and f["stage"] in RERUNNABLE
+                       for f in failures)
+            or not gate_counts_valid(counts, failed=len(tests)) or counts["selected"] == 0
+            or type(counts.get("rust_passed")) is not int or counts["rust_passed"] <= 0):
+        errors.append("the full gate is not a complete gate on a clean commit whose only failures are tests")
+    rerun_failed, rerun_counts = rerun.get("rerun_failed"), rerun.get("counts")
+    previous = rerun_failed.get("previous") if isinstance(rerun_failed, dict) else None
+    same = ("commit_sha", "tree_sha")
+    if (rerun.get("status") != "rerun-passed" or rerun.get("dirty") is not False or rerun.get("failures") != []
+            or any(rerun.get(k) != full.get(k) for k in same) or not isinstance(previous, dict)
+            or any(previous.get(k) != full.get(k) for k in same) or rerun_failed.get("tests") != tests
+            or rerun_failed.get("outcomes") != {test: "passed" for test in tests if isinstance(test, str)}
+            or not gate_counts_valid(rerun_counts, failed=0)
+            or rerun_counts["selected"] == 0 or rerun_counts["passed"] < len(tests)):
+        errors.append("the serial rerun did not pass every failed test on the full gate's clean commit (R13)")
+    return errors
+
+
+def gate_trust_problems(gate, measured: dict | None = None) -> list[str]:
+    """The per-file trust counts every gate keeps as its record's `trust` (AR-4: `tools/trust_map.py --files`),
+    checked by their writer's schema (`trust_map.files_problems`) on any value; with `measured`, their budget
+    must be that one (the K, S and V the evidence measured on the gated tree)."""
+    from tools import trust_map
+    trust = gate.get("trust") if isinstance(gate, dict) else None
+    errors = trust_map.files_problems(trust)
+    if errors:
+        return [f"the gate record has no per-file trust counts: {'; '.join(errors)}"]
+    if measured is not None and trust["budget"] != measured:
+        return [f"the gate record's trust budget {trust['budget']} is not the measured {measured}"]
+    return []
+
+
+def mutant_source_problems(mutants, head: str, cwd: Path | None = None) -> list[str]:
+    """Each `tools/mutants.py` record ran on its file as committed at `head`: its `source_sha256` is that
+    blob's. (The records batches kept before the toolkit hash nothing, `tools.evidence.killed`.)"""
+    rows = mutant_rows(mutants)
+    cwd, errors = cwd or ROOT, []
+    for row in rows if isinstance(rows, list) else ():
+        if not isinstance(row, dict) or "killed" not in row or not isinstance(row.get("file"), str):
+            continue
+        name = row.get("id", row["file"])
+        try:
+            blob = subprocess.run(["git", "cat-file", "blob", f"{head}:{row['file']}"], cwd=cwd, check=True,
+                                  capture_output=True).stdout
+        except subprocess.CalledProcessError:
+            errors.append(f"seeded mutant {name}: {row['file']} is not a file at {head}")
+            continue
+        if row.get("source_sha256") != hashlib.sha256(blob).hexdigest():
+            errors.append(f"seeded mutant {name} ran on another {row['file']} than the one at {head}")
+    return errors
+
+
+def committed_problems(paths: list[Path], commit: str | None, cwd: Path | None = None) -> list[str]:
+    """Every file the check opened is inside the repository and, given a `commit`, committed there with the
+    same bytes."""
+    cwd, errors = cwd or ROOT, []
+    for path in dict.fromkeys(paths):
+        if not evidence_config.in_repository(path):
+            errors.append(f"{path} is outside the repository")
+        elif commit is not None:
+            relative = path.relative_to(cwd.resolve()).as_posix()
+            done = subprocess.run(["git", "cat-file", "blob", f"{commit}:{relative}"], cwd=cwd, capture_output=True)
+            if done.returncode != 0 or done.stdout != path.read_bytes():
+                errors.append(f"{relative} is not committed as read at {commit}")
+    return errors
+
+
+def mutant_rows(mutants):
+    """The toolkit's envelope and its historical bare array have the same rows for every reader."""
+    return mutants.get("mutants") if isinstance(mutants, dict) else mutants
+
+
+def mutant_problems(mutants, minimum: int = 3) -> list[str]:
+    """The errors of seeded-mutant records: at least `minimum`, each named once, each failing its named test."""
+    rows = mutant_rows(mutants)
+    if not isinstance(rows, list) or len(rows) < minimum:
+        return [f"fewer than {minimum} seeded mutants are recorded"]
+    errors = []
+    names = [row.get("id", row.get("bug")) if isinstance(row, dict) else None for row in rows]
+    if None in names or len(set(map(str, names))) != len(names):
+        errors.append("a seeded mutant has no name, or two share one")
+    errors += [f"seeded mutant {name} names no file or no failing test" for name, row in zip(names, rows)
+               if not killed(row)]
+    return errors
+
+
+def tally_problems(claim: dict, evidence: report.Evidence) -> list[str]:
+    """A per-case ledger agrees with a saved summary table: for each `group` value of `table`, the rows of
+    the group counted by `field` equal `table[group][counts]`, and with `rest` they make up `total`."""
+    fields = {"kind", "rows", "group", "field", "table", "counts", "unique", "keys", "total", "rest"}
+    if set(claim) - fields or not {"rows", "group", "field", "table", "counts"} <= set(claim):
+        return [f"tally claim has not the fields {sorted(fields)}: {sorted(claim)}"]
+    rows, table = evidence.lookup(claim["rows"]), evidence.lookup(claim["table"])
+    if not isinstance(rows, list) or not isinstance(table, dict) or not table:
+        return [f"tally {claim['rows']}: no rows or no table"]
+    errors = []
+    if not all(isinstance(row, dict) for row in rows):
+        return [f"tally {claim['rows']}: a row is not a record"]
+    if "keys" in claim and any(set(row) != set(claim["keys"]) for row in rows):
+        errors.append(f"tally {claim['rows']}: a row's fields are not {claim['keys']}")
+    if "unique" in claim and len({tuple(row.get(k) for k in claim["unique"]) for row in rows}) != len(rows):
+        errors.append(f"tally {claim['rows']}: two rows share {claim['unique']}")
+    if {row.get(claim["group"]) for row in rows} - table.keys():
+        errors.append(f"tally {claim['rows']}: a row's {claim['group']} is not in {claim['table']}")
+    for group, saved in table.items():
+        counted = Counter(row.get(claim["field"]) for row in rows if row.get(claim["group"]) == group)
+        if not isinstance(saved, dict) or dict(counted) != saved.get(claim["counts"]):
+            errors.append(f"tally {claim['rows']}: {group} counts differ from {claim['table']}")
+        elif "total" in claim and sum(counted.values()) + saved.get(claim.get("rest"), 0) != saved.get(claim["total"]):
+            errors.append(f"tally {claim['rows']}: {group} rows and {claim.get('rest')} do not make {claim['total']}")
+    return errors
+
+
+CLAIMS = {"tally": tally_problems}
+
+
+def check(directory: Path, main: str = "main", report_commit: str | None = None) -> tuple[str, list[str]]:
+    """(the gated head, the errors) of the batch at `directory`, from its evidence.toml and evidence; the
+    scope is the batch's from its merge base with `main`, and with `report_commit` every file read must be
+    committed there."""
+    with recording() as opened:
+        head, errors = _check(directory, main)
+    return head, errors + committed_problems(opened, report_commit)
+
+
+def _check(directory: Path, main: str) -> tuple[str, list[str]]:
+    config = evidence_config.read(directory)
+    folder = evidence_config.evidence_dir(directory, config)
+
+    def read(section):
+        return load(evidence_config.inside(folder, config[section]["file"]))
+
+    saved = read("scope")
+    errors = scope_problems(saved)
+    errors += scope_history_problems(saved, main)
+    head = saved.get("head") if isinstance(saved, dict) else None
+    base = saved.get("base") if isinstance(saved, dict) else None  # the merge base, or the check above fails
+    gate = read("gate")
+    errors += gate_record_problems(head, gate)
+    note = gate_collection.read_gate_result(head, cwd=ROOT)
+    if note is not None and note != gate:
+        errors.append("gate evidence differs from its git note")
+    mutants = read("mutants")
+    errors += mutant_problems(mutants, config["mutants"].get("min", 3))
+    errors += mutant_source_problems(mutants, head) if isinstance(head, str) and SHA.fullmatch(head) else []
+    product = sorted(c["path"] for c in saved.get("changes") or () if isinstance(c, dict)
+                     and str(c.get("path")).startswith(("ve/", "lean/")))
+    if "ab" in config:
+        errors += ab.problems(read("ab"), head, set(config["ab"].get("corpora", ())) | REQUIRED_CORPORA, base)
+    elif product:
+        errors.append(f"the batch changes {product[0]} (and {len(product) - 1} more ve/ or lean/ paths) "
+                      "but its evidence.toml names no [ab]")
+    if "latency" in config:
+        errors += evidence_latency.problems(read("latency"), head, config["latency"]["workloads"],
+                                            config["latency"].get("allowance", evidence_latency.ALLOWANCE), base)
+    if "fuzz_ab" in config:
+        evidence = read("fuzz_ab")
+        errors += fuzz_ab.problems(evidence, head, base)
+        if isinstance(evidence, dict) and evidence.get("rules") != config["fuzz_ab"].get("explained", []):
+            errors.append("fuzz A/B ran with other rules than evidence.toml names")
+    evidence = report.Evidence(folder)
+    if "report" in config:
+        target = evidence_config.inside(directory, config["report"]["file"])
+        rendered = report.render(folder, config["report"]["lines"])
+        if report.block(read_bytes(target).decode(), config["report"]["marker"]) != rendered:
+            errors.append(f"the {config['report']['marker']} block of {config['report']['file']} is not the "
+                          "rendering of the evidence (python -m tools.evidence report)")
+    for index, claim in enumerate(config.get("claims", [])):
+        kind = claim.get("kind") if isinstance(claim, dict) else None
+        errors += CLAIMS[kind](claim, evidence) if kind in CLAIMS else [f"claim {index} has no known kind"]
+    return head, errors
+
+
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--check", type=Path, metavar="DIR", help="the batch directory holding evidence.toml")
+    parser.add_argument("head", nargs="?")
+    parser.add_argument("gate", nargs="?", type=Path)
+    parser.add_argument("comparison", nargs="?", type=Path)
+    parser.add_argument("latency", nargs="?", type=Path)
+    parser.add_argument("--report-commit", help="a later commit that may change only --report-dir (with --check: "
+                        "every evidence file read is committed there)")
+    parser.add_argument("--main", default="main", help="with --check: the branch the batch merges into, whose "
+                        "merge base with the scope's head the scope must start from (default main)")
+    parser.add_argument("--report-dir", help="the batch's report directory, relative to the repository root "
+                        "(with --check: the batch directory)")
+    args = parser.parse_args(argv)
+    positional = [args.head, args.gate, args.comparison, args.latency]
+    if args.check is not None:
+        if any(positional) or args.report_dir is not None:
+            parser.error("--check takes the batch directory alone (and --report-commit)")
+        args.report_dir = (args.check.resolve().relative_to(ROOT).as_posix() if args.report_commit else None)
+    elif not all(positional):
+        parser.error("give HEAD GATE COMPARISON LATENCY, or --check DIR")
     if (args.report_commit is None) != (args.report_dir is None):
         parser.error("--report-commit and --report-dir go together")
     try:
-        values = [json.loads(p.read_text()) for p in (args.gate, args.comparison, args.latency)]
-        errors = problems(args.head, *values)
+        if args.check is not None:
+            args.head, errors = check(args.check, args.main, args.report_commit)
+        else:
+            values = [load(p) for p in (args.gate, args.comparison, args.latency)]
+            errors = problems(args.head, *values)
+            # A local gate note is authoritative when present. A copy travels
+            # with batch evidence because notes do not travel with a merge.
+            note = gate_collection.read_gate_result(args.head, cwd=Path.cwd())
+            if note is not None and note != values[0]:
+                errors.append("gate evidence differs from its git note")
         if args.report_commit is not None:
             errors += outside_report(changed_since(args.head, args.report_commit), args.report_dir)
-    except (OSError, ValueError, TypeError, subprocess.CalledProcessError) as exc:
+    except (OSError, ValueError, TypeError, KeyError, subprocess.CalledProcessError,
+            gate_collection.CollectionError) as exc:
         errors = [str(exc)]
     if errors:
         print("\n".join(errors))

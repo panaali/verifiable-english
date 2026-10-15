@@ -52,6 +52,9 @@ decision A of 2026-10-08).
 | Committed files | the whole tree | 374 MiB | `docs/` 143 MiB, of which `docs/lean-first/` 125 MiB |
 <!-- /numbers:sizes -->
 
+The Tests row records the measured commit. AR-3 subsequently removed `tools/gate-collection.json`;
+the gate now stores collected IDs with the checked commit and compares them with the merge base.
+
 <!-- numbers:counts -->
 | Count | Source | Value |
 |---|---|---:|
@@ -177,7 +180,7 @@ superseded, with a link here) or waits for the named reason; `tests/test_archite
 | 6 | [ARCHITECTURE-LAYERS.md](ARCHITECTURE-LAYERS.md), "Current exceptions" | "12 Python edges plus the assist CLI app edge" | the Python layer exception count is in section 1 | waits: `ts-B1` and `b16d` edit this file |
 | 7 | [INTEGRATION-GAPS.md](INTEGRATION-GAPS.md) | the service "is not yet called by `ve`"; alternatives, reports and quantity are not service modes: "`alternatives@0` continues through the dedicated `ve_alternatives_route`", "The stage-1 service also has no reports mode", "The stage-1 `ve_service` has no quantity mode" | all three are modes and `ve` calls the service (section 3) | corrected |
 | 8 | [spec/lean-service.md](spec/lean-service.md) | "Nothing in `ve` calls the service yet" | the relay is the main path (section 3) | corrected |
-| 9 | `docs/trust-baseline.json`, `section11` | per-file classes for 12 `*Main.lean` files ("NormsMain.lean", "RightsMain.lean", "RiskMain.lean", …) | those files no longer exist | waits: batch AR-4 drops `section11`; `lean-first/b13b`, `lean-first/b16d`, `question-answering/q2` and `readings-defaults/rd6b` edit this file |
+| 9 | `docs/trust-baseline.json`, `section11` | per-file classes for 12 `*Main.lean` files ("NormsMain.lean", "RightsMain.lean", "RiskMain.lean", …) | those files no longer exist | corrected |
 | 10 | [CONSOLIDATION-PLAN.md](CONSOLIDATION-PLAN.md) | pinned decoder total 16,985, "may shrink but not grow" | the total is in section 1's counts table | corrected |
 | 11 | lean-first plan (`docs/LEAN-FIRST-PLAN.md` on branch `design/lean-first`), section 5 | about 14,000 Python lines deleted by batch 18; batch 16 as 16a/16b | the review measured net −607 `ve/` lines from the lean-first base to `c24aeab2`; 16 is split into 16a–16g (DRI ruling, 2026-10-09) | recorded here: the plan is not on `main` |
 

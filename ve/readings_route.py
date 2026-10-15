@@ -903,31 +903,24 @@ class Wording:
         """`<situation>`: elements by sort then name, true base tuples, then each decision supposed. Under the
         completion a filled table is no fact of the situation: it is shown by `gap_text`."""
         from .ast import formula_from_data  # noqa: F401  (vocabulary is the frame's)
+        from . import words as lean_words
         base = entry["base"]
-        facts = []
-        for sort in sorted(base["domains"]):
-            noun = self.words.sorts[sort]
-            for name in sorted(base["domains"][sort]):
-                facts.append(f"{name} is {_article(noun)} {noun}")
-        for predicate in sorted(base["relations"]):
-            if predicate in self.admission.doc.filled_tables:
-                continue
-            for row in sorted(base["relations"][predicate]):
-                facts.append(self.words.predicates[predicate].format(*row))
-        for table, own in [(t, False) for t in entry["fixed"]] + [(t, True) for t in entry["decisions"]]:
-            for row in table["tuples"]:
-                facts.append("suppose " + self.decision(set_id, witness, table["key"], row, own))
-        return "; ".join(facts) if facts else "nothing exists"
+        facts = [p for p in base["relations"] if p not in self.admission.doc.filled_tables]
+        suppose = ["suppose " + self.decision(set_id, witness, table["key"], row, own)
+                   for table, own in [(t, False) for t in entry["fixed"]] + [(t, True) for t in entry["decisions"]]
+                   for row in table["tuples"]]
+        return lean_words.situation(self.admission.senv.frame, base, facts, suppose)
 
     def gap_text(self, gaps, base):
-        """Render the gap atoms Lean selected for the pair's shown value."""
-        from .readings_s2_english import gap_sentences
-        from .norm_defaults_english import point_clause
-        from types import SimpleNamespace
-        constants = SimpleNamespace(constants=base.get("constants") or {})
+        """Render the gap atoms Lean selected for the pair's shown value: Lean's filled-gap sentences
+        (`VE.Words.fillingSentence`, norm-defaults 3.2) at the situation's constants."""
+        from .readings_s2_english import shown_gaps
+        from . import words as lean_words
         frame = self.admission.senv.frame
-        return gap_sentences([(point_clause(frame, constants, predicate, values), answer)
-                              for predicate, values, answer in gaps])
+        constants = {name: value for name, value in lean_words.constants_of(base).items()
+                     if name in frame.constants}
+        return shown_gaps(lean_words.fillings(frame, constants, [(predicate, values, answer)
+                                                                 for predicate, values, answer in gaps]))
 
     def decision(self, set_id, witness, key_json_value, row, own):
         """`<decision>` of 2.1."""
@@ -993,6 +986,10 @@ class Wording:
             predicate = probe["outcome"]["predicate"]
             row = probe["outcome"]["tuple"]
             role = self.admission.senv.regulated[predicate].regulated.role
+            if role not in ("obligation", "permission"):
+                # E19 words a duty or a permission; a probe on a plain regulated predicate (the UDHR's entitlement
+                # readings, readings-defaults RD-5) has no E19 sentence yet, so the pair gets E24.
+                return "E24", _s1_gated("E24", E.E24)
             if (twins is not None and source_word is not None and facts["witness_admissible"]
                     and facts["other_admissible"] and facts.get("other_value") is not None
                     and facts["witness_value"] is not None and facts["other_value"] != facts["witness_value"]
@@ -1110,16 +1107,6 @@ def _finding_pairs(entry, code):
     """The candidate indices of each of Lean's findings with this code, in Lean's order (`parse_finding`, the
     reader `validate` checked them with)."""
     return [(i, j) for found, _, i, j in map(parse_finding, entry["findings"]) if found == code]
-
-
-def _article(noun):
-    """`a` or `an` by the sound of the noun's first letters (`a user`, `an agent`, `an hour`)."""
-    word = noun.lower()
-    if word.startswith(("uni", "use", "usu", "uti", "eu", "one", "once")):
-        return "a"
-    if word.startswith(("hour", "honest", "honour", "heir")):
-        return "an"
-    return "an" if word[:1] in "aeiou" else "a"
 
 
 def rule_sentence(env, body, *, rule=None):

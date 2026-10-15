@@ -59,6 +59,7 @@
           {"contains": {"const": "parse"}},
           {"contains": {"const": "graph"}},
           {"contains": {"const": "readings"}},
+          {"contains": {"const": "readings-choices"}},
           {"contains": {"const": "bundle"}},
           {"contains": {"const": "family-norms"}},
           {"contains": {"const": "soft-norms"}},
@@ -74,7 +75,9 @@
           {"contains": {"const": "readings-route"}},
           {"contains": {"const": "diagnose"}},
           {"contains": {"const": "document"}},
-          {"contains": {"const": "english.question"}}
+          {"contains": {"const": "english.question"}},
+          {"contains": {"const": "ask"}},
+          {"contains": {"const": "words"}}
         ]
       },
       "protocol": {"const": 2},

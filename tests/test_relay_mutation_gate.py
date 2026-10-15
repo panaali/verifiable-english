@@ -6,8 +6,8 @@
 * The routes are complete: the one-shot readers are exactly the `ve` call sites of one-shot runners (manifest
   bindings with call sites, and calls of the route reader), every service mode and one-shot route has
   fixtures, and a route without an `ok` fixture fails the gate.
-* Through the client's own reader (`LeanService.exchange` with the line replaced): a genuine answer is
-  accepted and a mutant of its binding is CheckerUnavailable.
+* Through the client's own reader (`LeanService.exchange` with the line replaced, then `ve.ask.read_answer` for
+  `ask`): a genuine answer is accepted and a mutant of its binding is CheckerUnavailable.
 * On sample routes against the built Lean executables the gate passes with the committed allow-list, and fails
   on an accepted mutant the allow-list does not list, on an allow-list entry that matches nothing, and on a
   route whose fixtures are gone.
@@ -187,6 +187,25 @@ def test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one(bu
     assert G._exchange_outcome(replay, "identity", "[" + text + "]")[0] == "refused"
 
 
+def test_ask_is_read_as_ve_ask_reads_it(built):
+    """`ask`'s one caller binds the answer further than the transport (`SERVICE_READERS`): a genuine answer is
+    accepted, and a mutant the transport accepts (an unused sentence the document lacks) is refused by
+    `ve.ask.read_answer`."""
+    case = next(row[2] for row in G.load_cases()
+                if row[0] == "service" and row[1] == "ask" and type(row[2].get("document")) is str)
+    text = json.dumps(case, separators=(",", ":"))
+    [answer] = G._service_answers(G.DEFAULT_EXECUTABLE, "ask", [text])
+    read = G.SERVICE_READERS["ask"](case)
+    replay = G._Replay()
+    replay.answer, replay.mutant = answer, None
+    assert G._exchange_outcome(replay, "ask", "[" + text + "]", read) == ("accepted", "")
+    path = ("results", 0, "result", "result", "unused")
+    replay.answer, replay.mutant = G._replace(answer, path, ["zz9"]), G.Mutant("rebind", path)
+    assert G._exchange_outcome(replay, "ask", "[" + text + "]") == ("accepted", "")
+    outcome, detail = G._exchange_outcome(replay, "ask", "[" + text + "]", read)
+    assert outcome == "refused" and "unused" in detail, detail
+
+
 SAMPLE = ("service:identity", "service:check", "ve_metered::countermodel.search")
 
 
@@ -270,12 +289,15 @@ def test_the_recorder_writes_every_relayed_case(built, tmp_path):
 
 @pytest.fixture
 def without_length_check(monkeypatch):
-    """The service client with its per-request length check (`x-length`) switched off."""
+    """The service client with its per-request length check (`x-length`) switched off. Every validator
+    the client applies, the rows (`ROWS`) and the response envelope (`check_response`), is compiled
+    lazily by the module's one `_compiler`, so a fresh compiler without the check replaces it.
+    (The envelope's own `x-length` on `results` repeats its `x-rows` count, so the rows' checks decide
+    the outcome.) ts-B1's merge verify ran the whole suite, but on a worktree holding this fix
+    uncommitted, so main got the old fixture; test selection did pick this file."""
     from ve.backends import service_schema as S
     monkeypatch.setattr(S.Compiler, "_x_length", lambda self, pointer, schema, base: None)
-    compiler = S.Compiler()
-    monkeypatch.setattr(S, "ROWS", {mode: compiler.ref(f"{mode}.json", "#/row") for mode in MODES})
-    monkeypatch.setattr(S, "RESPONSE", compiler.ref("envelope.json", "#/response"))
+    monkeypatch.setattr(S, "_compiler", S.Compiler())
 
 
 def test_a_client_without_its_length_check_fails_the_gate(built, without_length_check):

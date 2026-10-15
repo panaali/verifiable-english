@@ -401,12 +401,24 @@ def _load(path: Path, *, admit: bool):
 def _lean_answer(raw: bytes, admit: bool):
     """Lean's `document` row for a `ve-document@1` text, or None when Python's own path decides it: the mode
     answered `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or the text is not UTF-8,
-    which the mode cannot be sent. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the
-    service itself is raised, never answered by Python."""
+    which the mode cannot be sent. Pending content-bearing readings under norm defaults still need the original
+    Python coverage path. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service
+    itself is raised, never answered by Python."""
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
         return None
+    try:
+        meta, _, _ = _split(raw)
+        profiles = listed_profiles(meta.get("environment"))
+        sets = meta.get("reading_sets", [])
+        if {"readings@1", "norm-defaults@0"} <= set(profiles) and type(sets) is list:
+            contents = [r.get("content") for s in sets if type(s) is dict
+                        for r in s.get("readings", []) if type(r) is dict]
+            if any(c is None for c in contents) and any(c is not None for c in contents):
+                return None
+    except (KeyError, TypeError, VEError):
+        pass  # Let Lean decide malformed front matter and preserve its diagnostic.
     from .backends.relay import answer
     case = {"id": "document", "document": text, "admit": admit}
     if b"```ve " in raw:
@@ -1498,7 +1510,10 @@ def _report(doc):
              "report": result["admission"]["report"]})
     if joint is not None and joint["constraints"]:
         # the joint disjunction is Lean's (`Joint(K)`, docs/spec/discourse.md 4.8); a premise only
-        # when every reading of an open set is an assertion with content
+        # when every reading of an open set is an assertion with content.
+        # It covers only open sets; signed authored assertions stay fixed.
+        assertions.extend(_assertion_disjunctions(
+            env, [r for r in active if r["status"] == "authored"]))
         joint_formula = None
         if joint["status"] == "complete" and all(c["kind"] == "asserted" and c["content"] is not None
                                                  for r in active if r["status"] == "open"
@@ -1805,12 +1820,15 @@ def main(argv=None):
                 if len(matching) != 1:
                     raise VEError("unknown narrowing")
                 narrowing = matching[0]
-                if not any((r["id"], r["version"]) == (narrowing["set"], narrowing["version"])
-                           for r in sets):
+                matching_sets = [r for r in sets if (r["id"], r["version"]) ==
+                                 (narrowing["set"], narrowing["version"])]
+                if not matching_sets:
                     raise VEError("narrowing does not target an active reading set")
-                if joint is not None and joint["status"] == "complete":
-                    rs = next(r for r in sets if (r["id"], r["version"]) ==
-                              (narrowing["set"], narrowing["version"]))
+                rs = matching_sets[0]
+                # Lean's joint vectors enumerate open sets only. The signed
+                # singleton of an authored set is in every choice implicitly.
+                if (joint is not None and joint["status"] == "complete"
+                        and rs["status"] == "open"):
                     kept = {i for i, candidate in enumerate(rs["readings"])
                             if candidate["id"] in narrowing["keeps"]}
                     key = f"{rs['id']}@{rs['version']}"
