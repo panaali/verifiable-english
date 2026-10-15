@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 29885,
+    "total_lines": 30520,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -553,17 +553,18 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 333,
-        "sha256": "12156c5ab7ccc4c40051b398b8b32f1c47c779457d83b004e7981039c9a27715",
+        "lines": 339,
+        "sha256": "819ee135aea8e1d0b4cb4a5b36111fe95a2464bb0a2a4a1a07508e6536535ba4",
         "ranges": [
           [
             25,
-            332
+            337
           ]
         ],
         "declarations": [
           "decodeRegulated",
           "decodeNormsEnvironment",
+          "normFields",
           "decodeNorm",
           "decodeSource",
           "regenerated"
@@ -1134,12 +1135,12 @@
       },
       {
         "file": "lean/VE/Service/FamilyNorms.lean",
-        "lines": 250,
-        "sha256": "a948acda657db3e648f639402c13135a684f27603b57022affdb72c171e29380",
+        "lines": 387,
+        "sha256": "c4c61e5e73a0a43e5e2adc0afe475dd5f1a818a86ad2d286eaeb14998b32ec3a",
         "ranges": [
           [
             1,
-            250
+            387
           ]
         ],
         "declarations": [
@@ -1149,9 +1150,12 @@
           "certificateCase",
           "targetPackage",
           "conflictCase",
+          "genericCase",
+          "genericRun",
+          "folCase",
           "runCase"
         ],
-        "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"
+        "reason": "family-norms decoder: the FOL view, the generic closure, core and order route, and certificate and witness bindings to the submitted environment; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Graph.lean",
@@ -1378,6 +1382,25 @@
           "run"
         ],
         "reason": "coupled and joint readings choice decoder: set metadata, compatibility, bounded plan, complete evidence and checked verdict; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Norms/Family.lean",
+        "lines": 493,
+        "sha256": "2939728bdcabe3a2259411f555e87a13d103508007fd2f5d8ed36d85e89fde2b",
+        "ranges": [
+          [
+            1,
+            493
+          ]
+        ],
+        "declarations": [
+          "encodeCore",
+          "encodeOrder",
+          "decodeDoc",
+          "regulatedOf",
+          "firstOrder"
+        ],
+        "reason": "family norm guard decoding, regeneration, formula encoding and route selection for closure, core and order; the full file is pinned conservatively"
       }
     ],
     "other_json": {
