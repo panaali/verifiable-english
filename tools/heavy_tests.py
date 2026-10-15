@@ -1,8 +1,10 @@
 """Generate the heavy pytest inventory from a complete duration report.
 
 The committed report is the measured Mac run. A nightly can pass its own
-``--durations=0`` output or JSON report with ``--report`` and use ``--write``.
-``--check`` refuses an unmarked test over 20 seconds as well as a stale list.
+``--durations=0 --durations-min=0`` output or JSON report with ``--report`` and
+use ``--write``. ``--check`` refuses an inventory that is stale against the
+committed report. ``--check --report <nightly>`` lists the rows that drifted for
+the DRI and exits 0: no test fails because a test became slow.
 """
 from __future__ import annotations
 
@@ -15,7 +17,6 @@ ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "tests/heavy-durations.json"
 INVENTORY = ROOT / "tests/heavy.json"
 THRESHOLD = 10.0
-BUDGET = 20.0
 DURATION = re.compile(r"^\s*([\d.]+)s\s+(?:call|setup|teardown)\s+(tests/.+::.+?)\s*$")
 
 
@@ -54,9 +55,19 @@ def inventory(run: str, times: dict[str, float]) -> dict:
                       for nodeid, seconds in sorted(times.items()) if seconds >= THRESHOLD]}
 
 
-def check_budget(times: dict[str, float], marked: set[str]) -> list[str]:
-    return [nodeid for nodeid, seconds in sorted(times.items())
-            if seconds > BUDGET and nodeid not in marked]
+def drift(actual: dict, run: str, times: dict[str, float]) -> list[str]:
+    """The rows a new measurement would add to or drop from the committed inventory."""
+    committed = {row["nodeid"]: row["seconds"] for row in actual["heavy"]}
+    rows = []
+    for nodeid in sorted(committed.keys() | {n for n, s in times.items() if s >= THRESHOLD}):
+        if nodeid not in times:
+            rows.append(f"absent from {run}: {nodeid} (heavy at {committed[nodeid]:.2f} s)")
+        elif nodeid not in committed:
+            rows.append(f"enters heavy: {nodeid} ({times[nodeid]:.2f} s in {run})")
+        elif times[nodeid] < THRESHOLD:
+            rows.append(f"leaves heavy: {nodeid} ({times[nodeid]:.2f} s in {run}, "
+                        f"was {committed[nodeid]:.2f} s)")
+    return rows
 
 
 def main() -> int:
@@ -76,12 +87,13 @@ def main() -> int:
         print(f"wrote {len(expected['heavy'])} heavy of {len(times)} tests from {run}")
         return 0
     actual = json.loads(INVENTORY.read_text())
-    unmarked = check_budget(times, {row["nodeid"] for row in actual["heavy"]})
-    if unmarked:
-        print("unmarked tests over 20 s: " + ", ".join(unmarked))
+    if args.report.resolve() != REPORT.resolve():
+        rows = drift(actual, run, times)
+        print("\n".join(rows) if rows else f"no heavy row drifted in {run}")
+        return 0
     if actual != expected:
         print("tests/heavy.json is stale; regenerate from the duration report")
-    return int(bool(unmarked or actual != expected))
+    return int(actual != expected)
 
 
 if __name__ == "__main__":
