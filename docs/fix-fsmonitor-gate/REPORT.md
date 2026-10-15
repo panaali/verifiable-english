@@ -144,6 +144,10 @@ x86 leg is unaffected: no VM gate flow uses `assume-unchanged`, `skip-worktree` 
 - Mac: `mac-pytest.sh -- tests/test_gate_integrity.py`, all passed (plus the cost probe).
 - Mac: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, 101 units, 0 failed, exit 0 (835 s; HEAD
   d44261e9 plus this report's files).
+- VM: `tools/select_tests.py --base $(git merge-base HEAD main) --run --jobs 6` on HEAD 8d0024015 selected 118 units.
+  112 finished, all exit 0, including `tests/test_gate_integrity.py`, `tests/test_gate.py` and
+  `tests/test_bench_baselines.py`. My 3,500 s limit then stopped the run: the VM load was 50 to 68 on 32 CPUs. The 6
+  unfinished units are covered by the Mac run above, and the chain reruns the selection on the final HEAD.
 - VM: `uv run python tools/regen_generated.py --check`, 25 entries fresh. `lake build`, 931 jobs, OK.
   `tools/gate_collection.py --check --prebuilt`: 5 added, 0 removed, 0 refused, 0 stale, 0 malformed.
 - Not run: the full gate (FAST LANE: the chain and the merge train run it). `lean/audit.py` was not run because no Lean
