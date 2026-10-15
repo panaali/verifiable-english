@@ -568,3 +568,46 @@ No Lean or Rust product code changed, so no Lean or Rust seed.
   one failed, `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline` (F28, fails
   the same way on the base; not edited here). `tests/test_rd9_chain_relay.py`: 28 passed.
 - The full gate was not run (task instruction).
+
+## Recheck of b898c6290 (rd-9-c150552-looprecheck2) and DRI note 2026-10-15e: F32, F30, F31
+
+| Finding | Fix | Regression test | Commit |
+| --- | --- | --- | --- |
+| F32 (B) Lean's split path skipped the soft completion | One reject-only check, `VE.Readings.Run.splitAdmissible` (`ComponentsWire.lean`), refuses a case under the soft completion with rd-9-soft-chain 5 row 7's text (RD-4a's) in every admission of the split: `admitComponent` (both branches, so `admitChecked` too) and the product's `requireCompletion`. Class: an admission of the split that knows the norms completion but not the soft one; the test asks every kind of the generated schema (`$defs/kind`), every verdicts question and each component | `tests/test_rd9_soft_split.py::test_f32_every_kind_of_a_soft_split_is_refused_with_row_7[*]` (33 requests), `::test_f32_probe_validate_and_elaborate_through_the_relay`, `::test_fsd1_alone_stays_under_the_soft_completion`, `::test_kinds_come_from_the_generated_schema` | bfe689042 |
+| F31 (C, DRI: fix now) choice documents read Python's `senv.chain` | `S1Environment` decides the chain once: Lean's `filled.chain` under a completion, the profiles' otherwise, so every route (the document's and each component's `_Part`) reads Lean's. da63625b6 first put it on the document route only and broke `_Part`; 828044ff4 moved it to `S1Environment` | `tests/test_rd9_chain_relay.py::test_f31_every_choice_document_reads_leans_chain` | da63625b6, 828044ff4 |
+| F30 (C, DRI: fix now) the Task B table's B1, B4 and B8 rows still said pending | The rows give the DRI's signatures; a test keeps every B1, B4 or B8 row of this report and `DELTA.md` free of pending wording | `tests/test_rd9_dri_signatures.py::test_f30_no_row_of_a_signed_item_still_says_pending` | 66e74175d |
+| F28 | Not changed: fixed on main at dccd9cf5; the merge train's sync brings it | — | — |
+
+Trust: `tools/trust_map.py --check` PASS, K +0, S +0, trusted +0 against the signed baseline. `admitComponent` and
+`requireCompletion` (G[V]) keep their line counts; `splitAdmissible` is classified G[R] (it refuses or passes its
+argument), G +6. The signed itemisation is not moved, so nothing is re-signed. The `ComponentsWire.lean` pin of
+`ve/assurance-manifest.json` was re-reviewed (whole file, 614 lines, `splitAdmissible` listed).
+
+### Probe
+
+- PROBE F32 (`manage-agents/reviews/rd-9-probe-f32.py`): 2 failed on b898c6290 (elaborate answered `main` as
+  `enumerated` without `filled`; validate `InvalidInput: invalid situation`), 2 passed on bfe689042 and on
+  828044ff4; the same cases are `test_rd9_soft_split.py::test_f32_probe_validate_and_elaborate_through_the_relay`.
+
+### Seeded bugs (each restored)
+
+| Seed | Language | Temporary change | Failing check |
+| --- | --- | --- | --- |
+| F32-M1 | Lean | `admitComponent`'s S1 branch returns `.s1 a` unchecked; `ve_service` rebuilt and pinned for the run | `test_rd9_soft_split.py::test_f32_every_kind_of_a_soft_split_is_refused_with_row_7` for validate and separate (6), `::test_f32_probe_validate_and_elaborate_through_the_relay` |
+| F32-M2 | Lean | `admitComponent`'s S2 branch returns `.s2 b` unchecked | the same test for elaborate, choice, conflict, certificate, model, dead and verdicts with a component (24), and the probe test |
+| F32-M3 | Lean | `requireCompletion` throws `productProfileText` without the check | the same test for the three verdicts questions without a component |
+| F31-M1 | Python | `S1Environment.chain` read from the profiles under a completion | `test_rd9_chain_relay.py::test_f31_every_choice_document_reads_leans_chain` |
+| F30-M1 | report | the B1, B4 and B8 rows of b898c6290 | `test_rd9_dri_signatures.py::test_f30_no_row_of_a_signed_item_still_says_pending` (3 rows flagged) |
+
+No Rust product code changed, so no Rust seed. After the Lean seeds `lean/checkers.lock` was restored to the
+pins of the restored build (the seeded builds' hashes are not kept).
+
+### Evidence on 828044ff4
+
+- `lake build`: PASS (900 jobs). `python3 lean/audit.py`: PASS, 489 source files, 5,375 named theorems, standard
+  axioms only. `tools/regen_generated.py --check`: PASS, 25 entries.
+- Selected tests on the Mac runner (ve-mac-1, `mac-pytest.sh --select`, base `git merge-base HEAD main`): 379
+  units; 378 passed. The one failure is `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`
+  (F28, fixed on main at dccd9cf5, not edited here). The run on 66e74175d also failed 22 component tests
+  (`test_readings_components_document.py`, `test_readings_components_lean.py`: `_Part` has no `chain`), fixed by 828044ff4.
+- The full gate was not run (task instruction); B1's signature waits on it.
