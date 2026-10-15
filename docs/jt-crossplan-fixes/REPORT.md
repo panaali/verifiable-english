@@ -68,6 +68,20 @@ The pre-review gate at `1fd825843` failed on two lines.
   After the merge, `tools/relay_mutation_gate.py` reports **29 failures over 40 routes and 111457 mutants**. Plain main `f75082449`, built in a separate worktree, reports **the same 29 lines**. They are on `service:graph` (`background/*/ast` untyped and accepted, `background/*/label` empty), `service:route` (`background`, `generators`, `premises` empty/duplicate/rebind), `service:parse` (`error` empty, `span` drop), and seven allow-list paths that match nothing (B0/F4 `graph supporting_edges`, F4 `route error`, F10 `readings-route fill` and `units/*/content/norm/over`). None of these routes reads code this branch changes. Per the main-known-red rule they belong to their own fix item. They need a main fix or a DRI waiver for this item (`review-ready-allow.txt`). This branch does not edit the allow-list to hide them.
 - Selected tests on the merged HEAD `352880cef` (Mac runner, `--base $(git merge-base HEAD main)`): **exit 0, 377 units, 0 failed**.
 
+### Pre-review continuation (ready2)
+
+The pre-review gate at `cb8636a01` failed only on the relay mutation gate, with the same 29 findings main has. No waiver was filed. This branch now takes the relay-only repair that premise-scale wrote and tarch-b8 copied, with the same hunks, so whichever branch merges second gets a clean merge:
+
+- `a88897564` (cherry-pick of tarch-b8 `0ba241d9a` = premise-scale `8808fb359`): the graph schema types each Background leaf. The label is `background:<generator>` with one of Lean's generators, and the AST is `common.json#/$defs/generated_formula`. The B0/F4 allow-list paths for `supporting_edges` move to `background`. The `lean/declarations.txt` conflict was regenerated with `tools/regen_generated.py --write --only lean-statements`.
+- `00449ff9a` (cherry-pick of tarch-b8 `3663dd1b4`, the relay part of premise-scale `b961596b5`): the parse diagnostic is typed `text` (non-empty). Route Background, generators and premise lists are filed under B0/F4, and the parse `span` drop under F5, with `test_parse_diagnostic_text_cannot_be_empty`.
+- `db239d62c`: prunes the three F10 readings-route paths that match no mutant (`fill` for empty and duplicate, `units/*/content/norm/over` for duplicate), the same paths premise-scale prunes.
+- `fbde7eee0`: `tests/test_relay_mutation_gate.py::test_graph_background_labels_and_formulas_are_typed` covers the graph Background typing in the suite (tarch-b8 review F4). A genuine answer is accepted. Its label emptied or rebound, its AST nulled or emptied, and its first AST node nulled or emptied are each refused.
+- DELTA.md gains the two R8 rows (graph and parse).
+
+Evidence: after `lake build` (890 jobs), `tools/relay_mutation_gate.py` reports **40 routes, 111457 mutants, 0 failures**. `tools/regen_generated.py --check` passes every entry except `trust-tables`, which still shows the same +18 V lines that await the DRI. `tests/test_relay_mutation_gate.py`: 20 passed. Selected tests at `fbde7eee0` (Mac runner, `--base $(git merge-base HEAD main)`): **exit 0, 377 units, 0 failed**.
+
+Seeded bug (Lean, restored): in `lean/ResponseShape/Schemas/Graph.lean`, the Background `ast` shape was reverted to `n [arr, .minItems 1]`, rebuilt and regenerated with `tools/response_schemas.py --write`. `test_graph_background_labels_and_formulas_are_typed` then failed with `AssertionError: ('retype', (..., 'background', 0, 'ast', 0))`, `'accepted' == 'refused'`. Restored, regenerated (no diff), and the test passes.
+
 ## Build-checklist audit
 
 | Line | Disposition and evidence |
@@ -75,7 +89,7 @@ The pre-review gate at `1fd825843` failed on two lines.
 | 1. One contract | X2: Lean's `PolicyCtx.of` and Python's printer compute the same fixed point; the producer reads the printer's table instead of recomputing heads. X3 calls Lean's existing `displayFields`. |
 | 2. Differential fuzz | `test_v0_constant_field_differential_python_rust`; `E2Examples`' `policyEnvs.all agreesWithReference` now includes `Fpermits`; the S3 comparison checks Python against Lean on the spec fixtures. |
 | 3. Normalization | No normalizer changed. |
-| 4. Untrusted output | No response field or relay was added; `tests/test_english_e2_responses.py` passed. |
+| 4. Untrusted output | No response field or relay was added; `tests/test_english_e2_responses.py` passed. ready2: the graph Background leaves and the parse diagnostic are now typed by their Lean shapes; relay mutation gate 0 failures; `test_graph_background_labels_and_formulas_are_typed`. |
 | 5. Malformed input | The readings constant field is rejected at Lean decoding; `tests/test_environment_field_types.py` and the X3 regression exercise field types. |
 | 6. Three-valued verdicts | No budget or verdict logic changed. |
 | 7. Deadlines | No deadline or budget wrapper changed. |
@@ -98,13 +112,13 @@ The pre-review gate at `1fd825843` failed on two lines.
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. N.A. — No new Lean answer shape or relay field; `tests/test_english_e2_responses.py` passed.
+1. PASS — No new relay field. ready2 tightens two existing shapes (graph Background, parse error) in Lean's `ResponseShape` and regenerates their JSON; relay mutation gate 0 failures over 40 routes; `test_graph_background_labels_and_formulas_are_typed`, `test_parse_diagnostic_text_cannot_be_empty`.
 2. PASS — X2–X4 table above; `git diff $(git merge-base HEAD main)...HEAD` reviewed against the task; the known-red test edit was reverted (`6036e2d56`).
 3. PASS — Nine seeds listed above, each with its failing test.
 4. PASS — `E2Examples` `agreesWithReference` over `policyEnvs` incl. `Fpermits`; `test_rejected_template_head_does_not_block_an_accepted_idiom` matches Lean's lx22c guard; S3 comparison 168/170; valid accepted wordings still pass (`test_idioms_still_check_collisions_and_argument_direction`).
 5. N.A. — No new response binding relation or relayed output field.
 6. PASS — Checker pin, inventories and selected tests are from the final Lean sources (`03367e896`, then `8f000e4e5` for the wrapped guard); the chain runs the full gate on final HEAD.
-7. PASS — The only unsigned item, the trust allowance, is the first line of this report and a DELTA row.
+7. PASS — The only unsigned item, the trust allowance, is the first line of this report and a DELTA row; the two ready2 relay rows are signed R8.
 8. PASS — DELTA.md lists the producer, fixed-point, lx22c, sort-noun and CPU deltas.
 9. PASS — `tools/select_tests.py --base $(git merge-base HEAD main)` selected 375/375 units, including the X2 tests and `E2Examples`.
 10. PASS — No statement changed; `overlayCheck_constants` still proves by `rfl`; the one-round claim rests on head-monotone codes and is checked by the `Fpermits` guards.
