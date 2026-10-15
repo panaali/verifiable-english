@@ -145,7 +145,13 @@ lock and the trust table) are unchanged after that measurement.
 - The chain's gate on `88b176656` failed on the RD-8 hash-width assertion and collection loss of a renamed
   pre-commit test; the chain's full release gate passed on `924c71dc`. The chain's gate on `50ff88b3` (the
   reviewed head, with the relay repair) failed `tests/test_question_reading.py` (review F1).
-- Review fixes (below): SELECTED_RUN
+- Review fixes (below): at `e34060d4`, `mac-pytest.sh --select -- --base 4ce477e1 --run` selected all 376 units
+  (no coverage map for the tree), built Lean, passed `lean/audit.py` (484 files, 5,784 theorems, standard axioms
+  only) and ran every unit: **376 exited 0, none failed** (`evidence/selected-review-fix.txt`). That includes
+  `tests/test_frozen_sources.py` with the new regression test, `tests/test_question_reading.py` (F1) and the three
+  tests listed in `main-known-red.txt` (`test_lean_service.py`'s two sub-tick deadline tests and
+  `test_readings_defaults_rd8_report.py`), which passed on that runner; they are pre-existing on main and not
+  edited here. `lake build` also passed on the VM after the sync.
 - `tools/regen_generated.py --check` passed all 24 entries; `tools/gate_collection.py --check` collected
   15,218 tests, with 12 added and none removed since the merge base `4ce477e1` (`evidence/generated-final.txt`).
   `tools/trust_map.py --since 4ce477e1` reports K, S, D, G, tied and trusted all +0, and
