@@ -186,6 +186,27 @@ def test_parse_diagnostic_text_cannot_be_empty(built):
     assert G._exchange_outcome(replay, "parse", "[" + text + "]")[0] == "refused"
 
 
+def test_graph_background_labels_and_formulas_are_typed(built):
+    cases = [row[2] for row in G.load_cases() if row[0] == "service" and row[1] == "graph"]
+    texts = [json.dumps(case, separators=(",", ":")) for case in cases]
+    answers = G._service_answers(G.DEFAULT_EXECUTABLE, "graph", texts)
+    text, answer = next((text, answer) for text, answer in zip(texts, answers)
+                        if answer["results"][0]["result"].get("background"))
+    replay = G._Replay()
+    replay.answer, replay.mutant = answer, None
+    assert G._exchange_outcome(replay, "graph", "[" + text + "]") == ("accepted", "")
+    leaf = ("results", 0, "result", "background", 0)
+    for kind, path, value in (
+            ("empty", leaf + ("label",), ""),
+            ("rebind", leaf + ("label",), "background:" + G.FRESH),
+            ("retype", leaf + ("ast",), None),
+            ("empty", leaf + ("ast",), []),
+            ("retype", leaf + ("ast", 0), None),
+            ("empty", leaf + ("ast", 0), [])):
+        replay.answer, replay.mutant = G._replace(answer, path, value), G.Mutant(kind, path)
+        assert G._exchange_outcome(replay, "graph", "[" + text + "]")[0] == "refused", (kind, path)
+
+
 def test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one(built):
     text, answer = _genuine("identity")
     replay = G._Replay()
