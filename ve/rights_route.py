@@ -20,12 +20,16 @@ def _wire(value):
     return value
 
 
-def _narrowing_texts(own, rule, direct, predicates, soft, *, limited, barred):
-    """The mechanism texts of one line instance, exactly as Correlate.lean `narrowings` lists them.
+def _narrowings(own, rule, direct, predicates, soft, *, limited, barred, keys, cites_of, line_rules):
+    """The `(mechanism, licence)` pairs of one line instance: the mechanisms exactly as Correlate.lean
+    `narrowings` lists them, each with the licence Run.lean `licence` gives it without certificates.
 
     Every slot is a function of the request: `direct` is `directNodes`, each line instance then
     each norm unit as `(name, rule)`; a rule-named slot is filtered by the rule structure alone
-    (`childrenIn`, `blocksOn`, `Incompatible`, `dominable`), never by a proof.
+    (`childrenIn`, `blocksOn`, `Incompatible`, `dominable`), never by a proof. A licence names the
+    first relation of Scope.lean the request holds: a citation (`cited`, over `citesOf` and the
+    `lineKeys` in `keys`), a right line of the opposite effect (`rightCollision`; `line_rules` names
+    the line instances), a same-effect strict rule (`sameEffectStrict`), else none.
     """
     default = rule.get('mode', 'strict') == 'default'
     predicate, sign = rule['predicate'], rule['sign']
@@ -35,6 +39,7 @@ def _narrowing_texts(own, rule, direct, predicates, soft, *, limited, barred):
                             declaration['regulated'].get('permission') == predicate), None)
     above = _rank_above(soft)
     holistic = soft.get('outranking', {}).get('mode') == 'holistic'
+    own_cites = cites_of(own)
 
     def higher(first, second):
         return (first.get('rank') is not None and second.get('rank') is not None and
@@ -45,20 +50,39 @@ def _narrowing_texts(own, rule, direct, predicates, soft, *, limited, barred):
                 (sign and dual_permission == other['predicate'] and not other['sign']) or
                 (not sign and dual_obligation == other['predicate'] and other['sign']))
 
+    def narrows(name):
+        return any(cites_of(name).get(f'narrows:{key}') for key in keys)
+
+    def collides(name, other):
+        return name in line_rules and _incompatible(other, rule, predicates)
+
+    def licence(cited, collision=False, effect=None):
+        return 'cited' if cited else 'collision' if collision else effect
+
     children = sorted(name for name, other in direct if other['predicate'] == predicate
                       for over in other.get('over') or [] if over == own)
     return [
-        *(f'carve-out {index}' for index in range(1, len(rule.get('unless') or []) + 1)),
-        *(f'exception {name}' for name in children),
-        *(['limitation'] if limited else []),
-        *(['exception'] if default else []),
-        *(f'switch {party}' for party in rule.get('alterable') or []),
-        *(f'blockedBy {name}' for name, other in direct
+        *((f'carve-out {index}', licence(own_cites.get(f'unless:{index}')))
+          for index in range(1, len(rule.get('unless') or []) + 1)),
+        *((f'exception {name}', licence(narrows(name) or
+                                        any(cites_of(name).get(f'over:{key}') for key in keys)))
+          for name in children),
+        *([('limitation', 'limitation')] if limited else []),
+        *([('exception', licence(own_cites.get('exception')))] if default else []),
+        *((f'switch {party}', licence(own_cites.get(f'alterable:{party}'))) for party in rule.get('alterable') or []),
+        *((f'blockedBy {name}', licence(
+            narrows(name), collides(name, other),
+            f'effect delivered by strict rule {name}' if (other['predicate'] == predicate and
+                                                         other['sign'] == sign) else None))
+          for name, other in direct
           if default and other.get('mode', 'strict') == 'strict' and blocks(other)),
-        *(f'dominatedBy {name}' for name, other in direct
+        *((f'dominatedBy {name}', licence(
+            own_cites.get('rank') or narrows(name),
+            collides(name, other) and (own_cites.get('rank') or cites_of(name).get('rank'))))
+          for name, other in direct
           if default and other.get('mode', 'strict') == 'default' and _incompatible(other, rule, predicates) and
           (higher(other, rule) or (holistic and higher(rule, other)))),
-        *(['bar'] if barred else []),
+        *([('bar', 'bar')] if barred else []),
     ]
 
 
@@ -66,19 +90,6 @@ def _in_scope(limits, right, kind):
     """Tree.lean `inScope` over the authored limitations: a limitation covers the right and the source kind."""
     return any((limit['scope'] == 'all' or right in limit['scope']) and
                (limit['kinds'] == 'all' or kind in limit['kinds']) for limit in limits)
-
-
-def _licence_bound(mechanism, *, certificates):
-    """A licence has the form Run.lean `licence` gives its mechanism: `limitation` and `bar` their own word;
-    `collision` only beside a blocking or dominating rule; `effect delivered by strict rule M` only for
-    `blockedBy M`; `certified` only when certificates were sent; else `cited` or none."""
-    licence, text = mechanism['licence'], mechanism['mechanism']
-    if text in ('limitation', 'bar'):
-        return licence == text
-    return (licence in (None, 'cited') or (licence == 'certified' and certificates) or
-            (licence == 'collision' and text.startswith(('blockedBy ', 'dominatedBy '))) or
-            (text.startswith('blockedBy ') and
-             licence == 'effect delivered by strict rule ' + text.removeprefix('blockedBy ')))
 
 
 # Correlate.lean `barNode`: every bar rule is strict, hard and negative, with no carve-out.
@@ -142,7 +153,9 @@ def _bind_elaboration(row, units, environment):
         if len(row['lines']) != len(source_lines):
             raise ValueError('rights source line count')
         holders = {unit['right']['name']: unit['right']['holder'] for unit in units if 'right' in unit}
-        cites = {}
+        # Scope.lean `citesOf`: a line instance's source citations, else an outside norm unit's.
+        cites = {unit['norm']['name']: unit.get('cites') or {} for unit in norms}
+        line_keys = {}
         predicates = environment['vocabulary']['predicates']
         for entry, (right, kind, name, bearer, predicate, rule, source_line, rule_id) in zip(
                 row['lines'], source_lines):
@@ -158,6 +171,8 @@ def _bind_elaboration(row, units, environment):
                            (objects.index(holders[right]) if holders[right] in objects else len(objects)) + 1)
             node = entry['node']
             cites[rule_id] = source_line.get('cites') or {}
+            # Scope.lean `lineKeys`: the instance's rule and its source norm.
+            line_keys[rule_id] = [rule_id, *([source_line['norm']['name']] if source_line.get('norm') else [])]
             if (entry['right'] != right or entry['kind'] != kind or
                     entry['instance'] != instance or
                     type(entry['holder_slot']) is not int or entry['holder_slot'] != holder_slot or
@@ -290,12 +305,13 @@ def _bind_elaboration(row, units, environment):
                       _act_key(line['predicate'], predicates) != line['predicate'] and
                       _act_key(line['predicate'], predicates) in permission_lines))
             if (len(targets) != len(set(targets)) or entry['in_scope'] is not limited or
-                    any(mechanism['target'] != f"{entry['rule']}:{mechanism['mechanism']}" or
-                        not _licence_bound(mechanism, certificates=False)
+                    any(mechanism['target'] != f"{entry['rule']}:{mechanism['mechanism']}"
                         for mechanism in entry['mechanisms']) or
-                    [mechanism['mechanism'] for mechanism in entry['mechanisms']] != _narrowing_texts(
+                    [(mechanism['mechanism'], mechanism['licence'])
+                     for mechanism in entry['mechanisms']] != _narrowings(
                         entry['rule'], rule, direct, predicates, environment['vocabulary'].get('soft', {}),
-                        limited=limited, barred=rule_bar and reach)):
+                        limited=limited, barred=rule_bar and reach, keys=line_keys[entry['rule']],
+                        cites_of=lambda name: cites.get(name, {}), line_rules=line_keys)):
                 raise ValueError('unbound narrowing target or mechanism')
         distinction_predicates = {line['predicate'] for line in row['lines']}
         reported_predicates = [entry['predicate'] for entry in row['distinction']]
@@ -366,10 +382,13 @@ def _bind_narrowings(row, elaborated, *, empty_certificates=False):
         for actual, source in zip(row['narrowings'], elaborated['narrowings']):
             if actual['in_scope'] != source['in_scope']:
                 raise ValueError('unbound scope choice')
-            for mechanism in actual['mechanisms']:
+            for mechanism, bound in zip(actual['mechanisms'], source['mechanisms']):
                 licence = mechanism['licence']
                 text = mechanism['mechanism']
-                if not _licence_bound(mechanism, certificates=not empty_certificates):
+                # The elaboration bound each licence to the request; only a sent certificate
+                # can license a mechanism it left unlicensed (Run.lean `narrowingsJson`).
+                if licence != bound['licence'] and not (
+                        bound['licence'] is None and licence == 'certified' and not empty_certificates):
                     raise ValueError('unbound mechanism licence')
                 if actual['in_scope'] and licence is None:
                     expected_findings.append(
