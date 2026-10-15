@@ -1,0 +1,53 @@
+{
+  "scope": "implementation HEAD before the report commit; final range rechecked by the chain gate",
+  "base": "9f40783b8fc403a99798d9951615d76aa2088d38",
+  "implementation_head": "204cb03143d7417cbadca64810dcadbbd299d360",
+  "range": "main..HEAD --no-merges",
+  "commits": [
+    {
+      "sha": "0211be3220a7a026c48ead2d6ed8b0abca4b6356",
+      "subject": "Add measured heavy tier and light selection mode"
+    },
+    {
+      "sha": "6246007c0edbd2b1e76609622e1282cb0bd3dc85",
+      "subject": "Run light tier pytest processes with selected worker count"
+    },
+    {
+      "sha": "b4ed439da738108d2ecfff2f7a3208906e6baa83",
+      "subject": "Cover heavy selection after a changed function"
+    },
+    {
+      "sha": "81a85f530afc315fbe4317e63899360fec5e0443",
+      "subject": "Refuse heavy marks missing from measured inventory"
+    },
+    {
+      "sha": "4887896a7285a264e821882c17fef24798238168",
+      "subject": "Preserve spaced pytest node IDs in duration reports"
+    },
+    {
+      "sha": "204cb03143d7417cbadca64810dcadbbd299d360",
+      "subject": "Document heavy inventory in generated file table"
+    }
+  ],
+  "paths": [
+    ".gitattributes",
+    "docs/TESTING.md",
+    "docs/merge-tooling.md",
+    "pyproject.toml",
+    "tests/conftest.py",
+    "tests/heavy-durations.json",
+    "tests/heavy.json",
+    "tests/test_heavy_tests.py",
+    "tests/test_select_tests.py",
+    "tools/heavy_tests.py",
+    "tools/regen_generated.py",
+    "tools/select_tests.py"
+  ],
+  "measurement": {
+    "source_run": "2026-10-14 run A on ve-mac-1, main 9f40783b8",
+    "collected": 15179,
+    "heavy": 171,
+    "light": 15008,
+    "baseline_mac_wall_seconds": 1648.1
+  }
+}
