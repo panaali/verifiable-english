@@ -1,5 +1,7 @@
 DRI signature needed: the measured trust budget rises by 18 Lean V lines against the merge base (English policy +15, readings decoder +3); the existing R6 allowance does not cover it. `python3 tools/trust_map.py --check` and therefore `tools/regen_generated.py --check` (entry `trust-tables`) fail until the DRI signs the allowance.
 
+DRI waiver or main fix needed: the relay mutation gate's 29 remaining failures (graph, route, parse) are identical on main `f75082449`; see *Pre-review continuation (ready1)*.
+
 # JT cross-plan fixes — build report
 
 ## Delivered items and directives
@@ -56,6 +58,15 @@ Each seed changed product code and failed a behaviour test before restoration. P
 ## Pre-existing failures
 
 `tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target` is in `main-known-red.txt` (lf-14d, 4667e8de). This branch no longer edits it; it fails here as on main and belongs to its own fix item.
+
+### Pre-review continuation (ready1)
+
+The pre-review gate at `1fd825843` failed on two lines.
+
+- **Gate.** The chain's full gate failed only in its coverage stage: `0b4509c58` had renamed `tests/test_asimov_extended.py::test_v2_files_are_unchanged`, so that ID left the collection. `97366773d` restores the name; the test still checks the refreshed X2 pins. `tools/gate_collection.py --check` on the final HEAD reports 12 added and 0 removed IDs against main.
+- **Relay mutation gate.** At the old merge base `4667e8de` the same build reported 106 failures on `service:graph` and `service:readings-route`, identical to the branch (same mutant counts: 786 and 15728). Main has since filed the readings-route mutants (`f06911d83`, `bad2756f2`), so `352880cef` merges main (`f75082449`). Its only conflicts were the assurance manifest and its doc, both generated, and `tools/regen_generated.py --resolve --only assurance-manifest --only assurance-doc` resolved them. The merge also added a `ve_service` pin to `lean/checkers.lock` through its writer. `lake build` passed (890 jobs). Every `regen_generated --check` entry passes except `trust-tables`, which still reports the +18 V lines awaiting the DRI (the first line of this report).
+  After the merge, `tools/relay_mutation_gate.py` reports **29 failures over 40 routes and 111457 mutants**. Plain main `f75082449`, built in a separate worktree, reports **the same 29 lines**. They are on `service:graph` (`background/*/ast` untyped and accepted, `background/*/label` empty), `service:route` (`background`, `generators`, `premises` empty/duplicate/rebind), `service:parse` (`error` empty, `span` drop), and seven allow-list paths that match nothing (B0/F4 `graph supporting_edges`, F4 `route error`, F10 `readings-route fill` and `units/*/content/norm/over`). None of these routes reads code this branch changes. Per the main-known-red rule they belong to their own fix item. They need a main fix or a DRI waiver for this item (`review-ready-allow.txt`). This branch does not edit the allow-list to hide them.
+- Selected tests on the merged HEAD `352880cef` (Mac runner, `--base $(git merge-base HEAD main)`): **exit 0, 377 units, 0 failed**.
 
 ## Build-checklist audit
 
