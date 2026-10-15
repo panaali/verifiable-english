@@ -1,0 +1,34 @@
+{
+ "wording": [],
+ "order": [],
+ "unavailable": [
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "CheckerUnavailable at base and head with the same text (ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError); no definitions@0 source, untouched by this batch. SIGNED by standing ruling R7 (DRI-RULINGS.md)."
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "CheckerUnavailable at base and head with the same text (ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError); no definitions@0 source, untouched by this batch. SIGNED by standing ruling R7 (DRI-RULINGS.md)."
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "op": "document_check",
+   "reason": "base exceeds 8 GB: re-recorded under an 8 GB address-space limit with VE_RUST_TIMEOUT 300, the Rust checker's allocation fails at base and head with the same text (neither has the infra/oom-rootcause budget); no definitions@0 source, untouched by this batch. SIGNED by standing ruling R7 (DRI-RULINGS.md)."
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "op": "document_check",
+   "reason": "the recorder's 600 s per-pilot limit at base and head (the same document class as run-20261012T0600Z's, which exceeds 8 GB); no definitions@0 source, untouched by this batch. SIGNED by standing ruling R7 (DRI-RULINGS.md)."
+  }
+ ]
+}
