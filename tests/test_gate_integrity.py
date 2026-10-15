@@ -14,7 +14,7 @@ import tomllib
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tools import gate, nested_pytest
+from tools import gate, nested_pytest, trust_map
 
 
 def test_gate_scratch_root_can_avoid_system_tmp(tmp_path, monkeypatch):
@@ -39,6 +39,19 @@ def events():
 
 # The gate's two pytest runs: the serial collection, then the suite under xdist.
 PYTEST_STAGES = ("Python collection", "Python suite")
+
+
+def trust_counts() -> dict:
+    """What `tools/trust_map.py --files` writes for a tree of one untrusted file."""
+    files = {"VE/Demo.lean": {**trust_map.empty_counts(), "C": 3, "o": 2, "lines": 5}}
+    now = trust_map.totals(files)
+    return {"budget": trust_map.budget(now), "totals": now, "files": files}
+
+
+def fake_trust(args, stage, counts=None) -> None:
+    """A fake gate's `tools/trust_map.py --files PATH`: writes `counts` (default `trust_counts`)."""
+    if stage == gate.TRUST_STAGE:
+        Path(args[args.index("--files") + 1]).write_text(json.dumps(trust_counts() if counts is None else counts))
 
 
 @pytest.mark.parametrize("change,reason", [
@@ -265,6 +278,7 @@ def test_poisoned_ambient_environment_leaves_gate_result_unchanged(tmp_path, mon
 
         def fake_command(args, *, env, stage, cwd=None):
             seen.append({"args": args, "cwd": str(cwd), "env": dict(env), "stage": stage})
+            fake_trust(args, stage)
             if stage in PYTEST_STAGES:
                 Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps(events()))
             return versions.get(stage, "")
@@ -601,6 +615,7 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
     def fake_command(args, *, env, stage, cwd=None):
         nonlocal sha_calls
         seen.append((args, dict(env), stage))
+        fake_trust(args, stage)
         if stage == "commit":
             sha_calls += 1
             assert json.loads(output.read_text())["status"] == "failed"
@@ -658,6 +673,7 @@ def test_gate_refuses_a_rust_build_checkers_lock_does_not_pin(tmp_path, monkeypa
 
     def fake_command(args, *, env, stage, cwd=None):
         stages.append(stage)
+        fake_trust(args, stage)
         return str(tmp_path / ".venv") if stage == "Python environment" else ""
 
     monkeypatch.setattr(gate, "command", fake_command)
