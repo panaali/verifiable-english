@@ -56,7 +56,7 @@ def kind : Def :=
     ("norms-certificate", kindIs "norms-certificate"),
     ("norms-conflict", kindIs "norms-conflict")]
 
-def «norms-elaborate» : Shape :=
+def elaborateWith (formula : Shape) : Shape :=
   c
     "Norms.Wire.regenerated: one layer (order entry, premise) per regulated predicate; Background in generator order; one conflict target per layer, then per profile pair. These lists are the service's (Lean invariants and Python parity in tests/test_lean_service_schema.py)."
     [
@@ -81,7 +81,7 @@ def «norms-elaborate» : Shape :=
               .required ["label", "ast"],
               closed [
                 ("label", n [str, .pattern (Re.prefixes ["layer:norms:"])]),
-                ("ast", ref "common.json#/$defs/generated_formula")]])]),
+                ("ast", formula)]])]),
         ("conflict_targets", n [
           arr,
           .items (n [
@@ -90,8 +90,10 @@ def «norms-elaborate» : Shape :=
               closed [
                 ("target", str),
                 ("sorts", ref "common.json#/$defs/strings"),
-                ("ast", ref "common.json#/$defs/generated_formula")]])]),
+                ("ast", formula)]])]),
         ("fragment", .type ["boolean"])]]
+
+def «norms-elaborate» : Shape := elaborateWith (ref "common.json#/$defs/generated_formula")
 
 def «norms-certificate» : Shape :=
   n [
