@@ -136,3 +136,84 @@ def test_a_chain_the_request_does_not_declare_is_refused(answers):
         relay = readings_route._check if case["kind"] == "readings-validate" else readings_route._completion_elaborate
         with pytest.raises(CheckerUnavailable):
             relay(mutant, case)
+
+
+# The completion's members as a group: its top-level fields and every pair's `gaps`.
+def _drop(row, members):
+    for key in members - {"gaps"}:
+        row.pop(key, None)
+    if "gaps" in members:
+        for entry in row.get("sets", ()):
+            for pair in entry["pairs"]:
+                pair["pair"].pop("gaps", None)
+
+
+def _members(row):
+    present = set(readings_route._COMPLETION) & set(row)
+    gaps = any("gaps" in p["pair"] for e in row.get("sets", ()) for p in e["pairs"])
+    return sorted(present | ({"gaps"} if gaps else set()))
+
+
+def _relay(case):
+    return readings_route._check if case["kind"] == "readings-validate" else readings_route._completion_elaborate
+
+
+@pytest.mark.parametrize("chain", ["norms", "soft"])
+def test_probe_f29_a_row_without_the_requested_completion_is_refused(answers, chain):
+    """PROBE F29: the request declares `norm-defaults@0` beside a content-bearing set, so a genuine row with its whole
+    completion dropped (`filled`, `fill_premises`, `soft_premises` and every pair's `gaps`) is refused."""
+    for row, case in answers[chain]:
+        assert "norm-defaults@0" in case["environment"]["profiles"] and "filled" in row
+        mutant = copy.deepcopy(row)
+        _drop(mutant, {"filled", "fill_premises", "soft_premises", "gaps"})
+        with pytest.raises(CheckerUnavailable):
+            _relay(case)(mutant, case)
+
+
+@pytest.mark.parametrize("chain", ["norms", "soft"])
+def test_every_part_of_the_completion_dropped_is_refused(answers, chain):
+    """The class of F29: the completion is present exactly when the request asks for it, so dropping any non-empty
+    subset of its members (not only the whole) from a genuine row is refused."""
+    from itertools import combinations
+    assert any("gaps" in _members(row) for row, _ in answers[chain])
+    for row, case in answers[chain]:
+        members = _members(row)
+        assert {"filled", "fill_premises"} <= set(members)
+        for n in range(1, len(members) + 1):
+            for subset in combinations(members, n):
+                mutant = copy.deepcopy(row)
+                _drop(mutant, set(subset))
+                with pytest.raises(CheckerUnavailable):
+                    _relay(case)(mutant, case)
+
+
+@pytest.mark.parametrize("field", sorted(readings_route._COMPLETION))
+def test_a_completion_the_request_does_not_ask_for_is_refused(answers, field):
+    """The converse: the rights chain's request has no `norm-defaults@0`, so any completion member (one taken from a
+    genuine soft row) added to its genuine row is refused."""
+    donor = answers["soft"][0][0]
+    for row, case in answers["rights"]:
+        assert "norm-defaults@0" not in case["environment"]["profiles"]
+        mutant = copy.deepcopy(row)
+        mutant[field] = copy.deepcopy(donor[field])
+        with pytest.raises(CheckerUnavailable):
+            readings_route._check(mutant, case)
+
+
+def test_a_completion_beside_no_content_bearing_set_is_refused(lean, answers):
+    """The converse under `norm-defaults@0`: a document without content keeps W2's route and no completion (on
+    validate and on elaborate's W2 branch alike), so a completion member added to its genuine row is refused."""
+    raw, document = _norms()
+    for r in document["reading_sets"][0]["readings"]:
+        r["content"], r["kind"] = None, "norm"
+    cases = [_case(kind, raw, document) for kind in ("readings-validate", "readings-elaborate")]
+    rows = run(lean, cases)
+    assert rows[1]["route"] == "w2" and not set(readings_route._COMPLETION) & (set(rows[0]) | set(rows[1]))
+    donor = answers["soft"][0][0]
+    for row, case in zip(rows, cases):
+        _relay(case)(copy.deepcopy(row), case)
+        for field in sorted(readings_route._COMPLETION):
+            mutant = copy.deepcopy(row)
+            mutant[field] = copy.deepcopy(donor[field])
+            with pytest.raises(CheckerUnavailable):
+                _relay(case)(mutant, case)
