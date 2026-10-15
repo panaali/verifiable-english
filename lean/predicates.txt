@@ -3,6 +3,7 @@
 -- out of the executable classes C, D, G.
 module EnglishLeanBenchMain
 module EnglishMain
+module EnglishRunMain
 module Iceberg
 module Main
 module MeteredMain
@@ -58,6 +59,7 @@ module ResponseShape.Schemas.Parse
 module ResponseShape.Schemas.Quantity
 module ResponseShape.Schemas.Question
 module ResponseShape.Schemas.Readings
+module ResponseShape.Schemas.ReadingsChoices
 module ResponseShape.Schemas.ReadingsRoute
 module ResponseShape.Schemas.Reports
 module ResponseShape.Schemas.Rights
@@ -248,6 +250,7 @@ module VE.Norms.Checks
 module VE.Norms.Conflict
 module VE.Norms.Elaborate
 module VE.Norms.Examples
+module VE.Norms.Family
 module VE.Norms.Flagged
 module VE.Norms.FlaggedSpec
 module VE.Norms.Layer
@@ -425,6 +428,7 @@ module VE.Service.Graph
 module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
+module VE.Service.ReadingsChoices
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission

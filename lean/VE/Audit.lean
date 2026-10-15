@@ -4992,6 +4992,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_parse
 #print axioms VE.Service.runMode_quantity
 #print axioms VE.Service.runMode_readings
+#print axioms VE.Service.runMode_readingsChoices
 #print axioms VE.Service.runMode_readingsRoute
 #print axioms VE.Service.runMode_reports
 #print axioms VE.Service.runMode_rights

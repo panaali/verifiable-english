@@ -1,0 +1,258 @@
+{
+ "M10": {
+  "certificates": 2488,
+  "focused_calls": 1266,
+  "focused_nodes": 36454,
+  "log_sentences": 501,
+  "model_witnesses": 87,
+  "open_by_models": 14,
+  "policy_seconds": {
+   "conflict": 1.3,
+   "overlaps": 5.5,
+   "pairs": 282.1,
+   "rules": 6.8,
+   "tool_gaps": 94.9
+  },
+  "rules": 26,
+  "seconds": 1143.4,
+  "unknown": 0,
+  "ve_prover_calls": 1237,
+  "ve_prover_steps": 88562,
+  "workers": 4
+ },
+ "M8": {
+  "finite_model_complete_records": [
+   "a01",
+   "a02",
+   "a03",
+   "a04",
+   "a05",
+   "a06",
+   "a07",
+   "a08",
+   "a09",
+   "a10",
+   "a11",
+   "a12",
+   "a13",
+   "a14",
+   "a15",
+   "a16",
+   "a17",
+   "a18",
+   "a19",
+   "a20",
+   "a21",
+   "a22",
+   "a23",
+   "a24",
+   "a25",
+   "a26",
+   "a27",
+   "a28",
+   "a29",
+   "a30",
+   "a31",
+   "a32",
+   "a33",
+   "a34",
+   "a35",
+   "a36",
+   "a37",
+   "a38",
+   "a39"
+  ],
+  "finite_model_disagreements": {},
+  "reference_disagreements": {}
+ },
+ "M9": {
+  "lean_norms_route": {
+   "certified_targets": {
+    "mutant m1": [
+     "permitted",
+     "report_required"
+    ],
+    "obligation rules only": [
+     "permitted",
+     "report_required"
+    ],
+    "policy": [
+     "report_required"
+    ]
+   },
+   "python": {
+    "permitted": {
+     "python_flagged_model": "CONFLICT"
+    }
+   },
+   "rows": [
+    {
+     "detail": null,
+     "error": null,
+     "id": "witness:permitted",
+     "target": "permitted",
+     "verdict": "CONFLICT"
+    },
+    {
+     "detail": "missing certificate for permitted",
+     "error": null,
+     "id": "packages:policy",
+     "target": null,
+     "verdict": "UNKNOWN"
+    },
+    {
+     "detail": null,
+     "error": null,
+     "id": "packages:obligation rules only",
+     "target": null,
+     "verdict": "CONFLICT-FREE"
+    },
+    {
+     "detail": null,
+     "error": null,
+     "id": "packages:mutant m1",
+     "target": null,
+     "verdict": "CONFLICT-FREE"
+    }
+   ]
+  },
+  "lean_p0": {
+   "certificates": {
+    "base": 2325,
+    "norm layers as premises": 163
+   },
+   "valid": {
+    "base": 2325,
+    "norm layers as premises": 163
+   }
+  },
+  "rust_models": {
+   "agree": 87,
+   "models": 87
+  }
+ },
+ "comparison": {
+  "M1": "42/42",
+  "M2": "42/42",
+  "M3_silent_decisions": [],
+  "M4_default_sensitive": [
+   "a27",
+   "a36",
+   "a37",
+   "a38"
+  ],
+  "confusion": {
+   "APPROVED": {
+    "APPROVED": 16
+   },
+   "CONFLICT": {
+    "CONFLICT": 1
+   },
+   "NOT-COVERED": {
+    "NOT-COVERED": 4
+   },
+   "REJECTED": {
+    "REJECTED": 19
+   },
+   "UNDETERMINED": {
+    "UNDETERMINED": 2
+   }
+  },
+  "obligation": {
+   "breach_must": [
+    "a01",
+    "a02",
+    "a04",
+    "a07",
+    "a13",
+    "a15",
+    "a17",
+    "a19",
+    "a21",
+    "a23",
+    "a25",
+    "a29",
+    "a35",
+    "a42"
+   ],
+   "breach_neednot": [
+    "a13"
+   ],
+   "covered": [
+    "a11",
+    "a12",
+    "a13",
+    "a14",
+    "a31",
+    "a32",
+    "a33",
+    "a34"
+   ]
+  },
+  "outcome_disagreements": {},
+  "rule_25_disagreements": {},
+  "rule_disagreements": {},
+  "verdict_disagreements": {}
+ },
+ "policy_summary": {
+  "conflict": {
+   "permitted": "CONFLICT",
+   "report_required": "CONFLICT-FREE"
+  },
+  "covered_tools": [
+   "delete_file",
+   "purchase",
+   "read_file",
+   "shell",
+   "web_fetch",
+   "write_file"
+  ],
+  "dead_guards": [],
+  "gap_tools": [
+   "(an undeclared tool)",
+   "get_secret",
+   "post_message",
+   "schedule_task",
+   "send_email",
+   "spawn_agent"
+  ],
+  "never_deciding": [
+   12
+  ],
+  "overlaps": [
+   [
+    1,
+    2
+   ],
+   [
+    6,
+    7
+   ],
+   [
+    6,
+    8
+   ],
+   [
+    7,
+    8
+   ],
+   [
+    20,
+    21
+   ],
+   [
+    23,
+    24
+   ]
+  ],
+  "pair_queries": 144,
+  "satisfiable_pairs": [
+   [
+    3,
+    14
+   ]
+  ],
+  "unknown": [],
+  "unknown_pairs": []
+ }
+}
