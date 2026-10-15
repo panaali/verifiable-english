@@ -1701,9 +1701,12 @@ class _FilledChoiceDocument:
 
     def _base_background(self):
         """The ASTs of the layered base background, Lean's `L.background`: the row's literal Background
-        (`_base_literals`), `X` (its `soft`), then `Fill_T`; each reads base predicates and the filled tables only."""
+        (`_base_literals`), `X` (its `soft`), then `Fill_T`; each reads base predicates and the filled tables only.
+        The plain `norm-defaults-elaborate` row of the zero-set route (`ask._zero_generator`) has no layered source,
+        so no `soft`: there `X` is empty (Lean's `baseBackgroundU`)."""
         row = self.elaboration
-        return self._base_literals() + [item["ast"] for item in row["soft"]] + [item["ast"] for item in row["fill"]]
+        return (self._base_literals() + [item["ast"] for item in row.get("soft", ())] +
+                [item["ast"] for item in row["fill"]])
 
     def _base_fill(self):
         """The layered base background over `E‴_base` (`_base_background`)."""
