@@ -1,0 +1,126 @@
+{
+ "differences": [
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: the Rust checker ended its output (exit -6; memory allocation of 152 bytes failed\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace)"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: the Rust checker ended its output (exit -6; memory allocation of 152 bytes failed\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace)"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  }
+ ],
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806,
+  "document/default": 3632,
+  "norm_defaults/default": 2020,
+  "pilots/default": 501,
+  "probe/lean": 9435,
+  "probe/python": 9435,
+  "readings/default": 1137
+ },
+ "totals": {
+  "same": 65768,
+  "unavailable": 4
+ },
+ "unavailable_both": {
+  "pilots/default": 4
+ },
+ "unlisted": 0
+}
