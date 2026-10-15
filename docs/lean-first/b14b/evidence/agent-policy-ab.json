@@ -1,0 +1,11 @@
+{
+ "answer_key_base": "42/42",
+ "answer_key_head": "42/42",
+ "base_sha256": "da05fd5f05a5dd30c3b0d0792c114ae85e2b1ceefb95afd09ad07070f66cdef0",
+ "head_sha256": "bc150ac873d2462b72c19a69161de11405c0e3aefa4e93f0793d58bb4067d2e8",
+ "ignored_measurements": [
+  "M10.seconds",
+  "M10.policy_seconds"
+ ],
+ "semantic_equal": true
+}

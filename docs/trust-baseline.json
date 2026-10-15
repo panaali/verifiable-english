@@ -3,27 +3,27 @@
  "totals": {
   "K": 997,
   "S": 9971,
-  "D": 13992,
-  "G": 28358,
-  "C": 9388,
+  "D": 14082,
+  "G": 28875,
+  "C": 9406,
   "P": 73644,
   "T": 15012,
-  "o": 12784,
-  "D[V]": 12416,
+  "o": 12860,
+  "D[V]": 12506,
   "D[R]": 1049,
   "D[I]": 527,
-  "G[V]": 25869,
+  "G[V]": 26386,
   "G[R]": 2231,
   "G[I]": 258,
   "tied": 178,
   "unclassified": 0,
-  "trusted": 49094,
-  "lines": 164146
+  "trusted": 49701,
+  "lines": 164847
  },
  "budget": {
   "K": 997,
   "S": 9971,
-  "V": 38126
+  "V": 38733
  },
  "signed": [],
  "history": [
@@ -739,6 +739,19 @@
     "K": 997,
     "S": 9788,
     "V": 37495
+   }
+  },
+  {
+   "change": "SIGNED by standing ruling R6: Lean family-norm decisions replace the deleted Python non-first-order fallback selector",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37154
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37761
    }
   }
  ],
@@ -4272,7 +4285,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 0,
+   "G": 25,
    "C": 0,
    "P": 73,
    "T": 0,
@@ -4280,13 +4293,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 0,
+   "G[V]": 25,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 0,
-   "lines": 85
+   "trusted": 25,
+   "lines": 110
   },
   "ResponseShape/Encoders/NormDefaults.lean": {
    "K": 0,
@@ -4912,21 +4925,21 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 17,
+   "G": 54,
    "C": 0,
    "P": 0,
    "T": 0,
-   "o": 7,
+   "o": 8,
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 17,
+   "G[V]": 54,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 17,
-   "lines": 24
+   "trusted": 54,
+   "lines": 62
   },
   "ResponseShape/Schemas/Graph.lean": {
    "K": 0,
@@ -5012,7 +5025,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 151,
+   "G": 153,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -5020,13 +5033,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 151,
+   "G[V]": 153,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 151,
-   "lines": 160
+   "trusted": 153,
+   "lines": 162
   },
   "ResponseShape/Schemas/Order.lean": {
    "K": 0,
@@ -9551,13 +9564,13 @@
   "VE/Norms/Wire.lean": {
    "K": 0,
    "S": 0,
-   "D": 293,
+   "D": 299,
    "G": 0,
    "C": 0,
    "P": 9,
    "T": 0,
    "o": 31,
-   "D[V]": 251,
+   "D[V]": 257,
    "D[R]": 3,
    "D[I]": 39,
    "G[V]": 0,
@@ -9565,8 +9578,8 @@
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 251,
-   "lines": 333
+   "trusted": 257,
+   "lines": 339
   },
   "VE/Order/Checks.lean": {
    "K": 0,
@@ -12671,22 +12684,22 @@
   "VE/Service/FamilyNorms.lean": {
    "K": 0,
    "S": 0,
-   "D": 14,
-   "G": 116,
-   "C": 42,
+   "D": 98,
+   "G": 133,
+   "C": 60,
    "P": 41,
    "T": 0,
-   "o": 37,
-   "D[V]": 14,
+   "o": 55,
+   "D[V]": 98,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 116,
+   "G[V]": 133,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
    "unclassified": 0,
-   "trusted": 130,
-   "lines": 250
+   "trusted": 231,
+   "lines": 387
   },
   "VE/Service/GenericGraph.lean": {
    "K": 5,
@@ -14007,6 +14020,26 @@
    "unclassified": 0,
    "trusted": 0,
    "lines": 139
+  },
+  "VE/Norms/Family.lean": {
+   "K": 0,
+   "S": 0,
+   "D": 0,
+   "G": 436,
+   "C": 0,
+   "P": 0,
+   "T": 0,
+   "o": 57,
+   "D[V]": 0,
+   "D[R]": 0,
+   "D[I]": 0,
+   "G[V]": 436,
+   "G[R]": 0,
+   "G[I]": 0,
+   "tied": 0,
+   "unclassified": 0,
+   "trusted": 436,
+   "lines": 493
   }
  }
 }
