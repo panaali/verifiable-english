@@ -34,6 +34,7 @@ packages = ["ve", "ve_experiments"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [
+    "heavy: measured at 10 seconds or more on the Mac; selected by the light tier",
     "live: calls real model CLIs (run with `pytest -m live`)",
     "nightly: corpus-scale rerun whose inputs a faster default test also checks (run with `pytest -m nightly`; tools/gate.py runs it); docs/testing-profile.md lists them",
 ]

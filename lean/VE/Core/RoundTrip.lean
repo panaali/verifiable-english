@@ -23,7 +23,7 @@ theorem parseRaw_print_named (E : Environment) (hv : NamesValid E)
   have hpu := parseTerm_print E hv Γ names next hs hl u s hu (')' :: tail) (by rfl)
   simp only [String.toList, List.append_assoc, List.cons_append, List.nil_append] at hi hpt hpu
   cases k <;>
-    simp [printAux, kindText, List.append_assoc, parseRaw, parseReach, hi, hpt, hpu, consume]
+    simp [printAux, kindText, List.append_assoc, parseRaw, parseRawWith, parseReach, hi, hpt, hpu, consume]
 
 
 theorem parseStatements_nonempty (E : Environment) (fuel : Nat) (input : List Char)
@@ -47,7 +47,7 @@ theorem parse_print_named (E : Environment) (hv : NamesValid E)
   have hp := parseRaw_print_named E hv [] [] 0 ⟨by simp, by simp⟩ rfl k p t u hw
     (statementChars a).length ['.', '\n']
   have hc : a.check E [] = true := (check_iff_wellFormed E [] a).mpr hw
-  unfold parse print
+  unfold parse parseWith print
   simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
   change (do
     let fs ← parseStatements E ((statementChars a).length + 1) (statementChars a)
@@ -55,7 +55,7 @@ theorem parse_print_named (E : Environment) (hv : NamesValid E)
   rw [parseStatements_nonempty E _ _ hn]
   change parseRaw E ((statementChars a).length + 1) [] (statementChars a) = some (a, ['.', '\n']) at hp
   rw [hp]
-  simp [consume, statementChars, List.length_append, parseStatements, hc]
+  simp [consume, statementChars, List.length_append, parseStatements, parseStatementsWith, hc]
 
 /-- Two closed typed Named atoms with identical printed documents are identical. -/
 theorem print_injective_named (E : Environment) (hv : NamesValid E)
