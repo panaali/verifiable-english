@@ -6,24 +6,29 @@ loaded into each Python process of the project environment (through a `.pth`
 hook that exists only while recording), then writes one map for the clean HEAD commit
 to the shared cache (`$VE_TESTMAP_CACHE`, default ~/.cache/ve-testmap). The
 map says, per test unit, which functions under the root it executed, which
-files it read and which directories it listed, and which programs it started.
+files it read and which directories it listed, which programs it started,
+and which assurance manifest entries it read or checked for presence.
 It unions the edges of the newest earlier map, so a function that a randomized
-test reaches only on some runs stays mapped. Run it nightly; selection falls
-back to the static import graph without a usable map.
+test reaches only on some runs stays mapped. Run it nightly; automatic
+selection runs the full suite without a usable map.
 """
 from __future__ import annotations
 
 import argparse
+from collections.abc import Callable, Sequence
 from concurrent.futures import ThreadPoolExecutor
+import contextlib
 import datetime
 import gzip
 import json
 import os
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 
 import lake_outputs
@@ -35,7 +40,11 @@ import nested_pytest
 #    dropped any made with a pytest frame anywhere on the stack), so earlier maps
 #    lack edges and are not used.
 # 4: listings of directories that hold no tracked file (or do not exist yet) are kept.
-VERSION = 4
+# 5: the assurance-manifest operations each test reads are recorded (`operations`).
+# 6: an operation only checked for presence (`presence`) is recorded apart from an entry read.
+# 7: each request's Lean service mode is recorded separately from its executable.
+VERSION = 7
+EDGE_KEYS = ("f", "r", "d", "x", "m", "p", "v")
 UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",
@@ -56,8 +65,8 @@ def units(root: Path = ROOT) -> list[str]:
                   for p in (root / "tests").glob("test_*.py")) + sorted(EXTRA_UNITS)
 
 
-def unit_command(unit: str) -> list[str]:
-    return EXTRA_UNITS.get(unit) or nested_pytest.command(["-q", "-p", "no:cacheprovider", unit],
+def unit_command(unit: str, options: Sequence[str] = ()) -> list[str]:
+    return EXTRA_UNITS.get(unit) or nested_pytest.command(["-q", "-p", "no:cacheprovider", *options, unit],
                                                           python=["uv", "run", "--frozen", "--group", "dev", "python"])
 
 
@@ -129,7 +138,7 @@ def read_unit(directory: Path, files: set[str]) -> dict:
     under the root, including ones that hold no tracked file or do not exist
     yet: adding the first file there changes what the test listed.
     """
-    seen = {"f": set(), "r": set(), "d": set(), "x": set()}
+    seen = {key: set() for key in EDGE_KEYS}
     children, opaque, written = [], [], set()
     for path in directory.glob("*.jsonl"):
         written.add(int(path.stem))
@@ -148,6 +157,12 @@ def read_unit(directory: Path, files: set[str]) -> dict:
                 seen["d"].add(record[1])
             elif kind == "x":
                 seen["x"].add(record[1])
+            elif kind == "m":
+                seen["m"].add(record[1])
+            elif kind == "p":
+                seen["p"].add(record[1])
+            elif kind == "v":
+                seen["v"].add(record[1])
             elif kind == "c" and record[2]:
                 children.append(record[1])
             elif kind == "o":
@@ -156,23 +171,109 @@ def read_unit(directory: Path, files: set[str]) -> dict:
     return {**seen, "opaque": sorted(set(opaque))}
 
 
-def run_unit(unit: str, work: Path, timeout: float, tracked: set[str]) -> dict:
-    """Record one unit, or reuse its finished result from an interrupted run."""
+STOP_SIGNALS = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+
+
+class Stop:
+    """Ends a recorded run early: after `stop()` no unit starts, and each running unit's process group is
+    killed. Each unit runs in its own session, so its group holds every process it started; for the same
+    reason a run must stop its units itself when it ends abnormally (`on_exit`)."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._running: set[subprocess.Popen] = set()
+        self._killed: set[subprocess.Popen] = set()
+        self.stopped = False
+
+    def start(self, command: list[str], **options) -> subprocess.Popen | None:
+        with self._lock:
+            if self.stopped:
+                return None
+            process = subprocess.Popen(command, start_new_session=True, **options)
+            self._running.add(process)
+            return process
+
+    def finished(self, process: subprocess.Popen) -> bool:
+        """Forget `process`; whether `stop()` killed it."""
+        with self._lock:
+            self._running.discard(process)
+            return process in self._killed
+
+    def stop(self) -> None:
+        with self._lock:
+            self.stopped = True
+            for process in self._running:
+                kill_group(process)
+                self._killed.add(process)
+
+    @contextlib.contextmanager
+    def on_exit(self):
+        """Stop when the block raises or the process is interrupted, terminated or hung up. A signal to the
+        run's own process group (a harness timeout, Ctrl-C, a closed terminal) does not reach the units'
+        sessions, so the run kills them itself, before it waits for its workers. Signal handlers go in only
+        on the main thread, where Python runs them; an ignored signal stays ignored."""
+        previous = {}
+
+        def handler(number, frame):
+            self.stop()
+            earlier = previous[number]
+            if callable(earlier):
+                return earlier(number, frame)  # Ctrl-C's KeyboardInterrupt, or the caller's own handler
+            raise SystemExit(128 + number)
+
+        if threading.current_thread() is threading.main_thread():
+            for number in STOP_SIGNALS:
+                earlier = signal.getsignal(number)
+                if earlier is not None and earlier != signal.SIG_IGN:
+                    previous[number] = earlier
+                    signal.signal(number, handler)
+        try:
+            yield self
+        except BaseException:
+            self.stop()
+            raise
+        finally:
+            for number, earlier in previous.items():
+                signal.signal(number, earlier)
+
+
+def kill_group(process: subprocess.Popen) -> None:
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+
+
+def run_unit(unit: str, work: Path, timeout: float, tracked: set[str], *, options: Sequence[str] = (),
+             stop: Stop | None = None) -> dict | None:
+    """Record one unit, or reuse its finished result from an interrupted run. With `stop`: None when the run
+    stopped before the unit started, and exit "stopped" (nothing saved) when it stopped while it ran."""
     name = unit.replace("/", "__")
     out, done, log = work / name, work / f"{name}.result.json", work / f"{name}.log"
     if done.exists():
         result = json.loads(done.read_text())
-        result["f"] = {tuple(item) for item in result["f"]}
-        return {key: set(value) if key in ("r", "d", "x") else value for key, value in result.items()}
+        for key in EDGE_KEYS:
+            result[key] = {tuple(item) for item in result[key]} if key == "f" else set(result[key])
+        return result
     shutil.rmtree(out, ignore_errors=True)
     out.mkdir(parents=True)
     start = time.monotonic()
-    with log.open("w") as handle:
+    stop = stop or Stop()
+    with log.open("w") as handle, stop.on_exit():
+        process = stop.start(unit_command(unit, options), cwd=ROOT, env=environment(out), stdout=handle,
+                             stderr=subprocess.STDOUT)
+        if process is None:
+            shutil.rmtree(out)
+            return None
         try:
-            code = subprocess.run(unit_command(unit), cwd=ROOT, env=environment(out), stdout=handle,
-                                  stderr=subprocess.STDOUT, timeout=timeout, check=False).returncode
+            code = process.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
+            kill_group(process)
+            process.wait()
             code = "timeout"
+        if stop.finished(process):
+            shutil.rmtree(out)
+            return {"exit": "stopped", "seconds": round(time.monotonic() - start, 1)}
     result = read_unit(out, tracked)
     result.update(exit=code, seconds=round(time.monotonic() - start, 1))
     done.write_text(json.dumps({key: sorted(value) if isinstance(value, set) else value
@@ -188,6 +289,9 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
     reads: dict[str, set[int]] = {}
     dirs: dict[str, set[int]] = {}
     programs: dict[str, set[int]] = {}
+    operations: dict[str, set[int]] = {}
+    presence: dict[str, set[int]] = {}
+    modes: dict[str, set[int]] = {}
     for test, result in results.items():
         i = index[test]
         for file, qualname in result["f"]:
@@ -195,6 +299,12 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
         for table, key in ((reads, "r"), (dirs, "d"), (programs, "x")):
             for item in result[key]:
                 table.setdefault(item, set()).add(i)
+        for op_id in result.get("m", ()):
+            operations.setdefault(op_id, set()).add(i)
+        for op_id in result.get("p", ()):
+            presence.setdefault(op_id, set()).add(i)
+        for mode in result.get("v", ()):
+            modes.setdefault(mode, set()).add(i)
     return {
         "version": VERSION, "commit": commit,
         "created": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
@@ -205,13 +315,17 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
         "reads": {k: sorted(v) for k, v in sorted(reads.items())},
         "dirs": {k: sorted(v) for k, v in sorted(dirs.items())},
         "programs": {k: sorted(v) for k, v in sorted(programs.items())},
+        "operations": {k: sorted(v) for k, v in sorted(operations.items())},
+        "presence": {k: sorted(v) for k, v in sorted(presence.items())},
+        "modes": {k: sorted(v) for k, v in sorted(modes.items())},
     }
 
 
 def unit_edges(data: dict) -> dict[str, dict]:
     """Invert a map back to per-test sets (the form `merge` and tests use)."""
     tests = data["tests"]
-    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set()} for test in tests}
+    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set(), "m": set(), "p": set(), "v": set()}
+             for test in tests}
     for file, qualnames in data["functions"].items():
         for qualname, indices in qualnames.items():
             for i in indices:
@@ -220,6 +334,15 @@ def unit_edges(data: dict) -> dict[str, dict]:
         for item, indices in data[table].items():
             for i in indices:
                 edges[tests[i]][key].add(item)
+    for item, indices in data["operations"].items():
+        for i in indices:
+            edges[tests[i]]["m"].add(item)
+    for item, indices in data["presence"].items():
+        for i in indices:
+            edges[tests[i]]["p"].add(item)
+    for item, indices in data["modes"].items():
+        for i in indices:
+            edges[tests[i]]["v"].add(item)
     return edges
 
 
@@ -228,7 +351,7 @@ def merge(results: dict[str, dict], previous: dict) -> None:
     old = unit_edges(previous)
     for test, result in results.items():
         if test in old and result["exit"] in (0, 5) and previous["status"][test]["exit"] in (0, 5):
-            for key in ("f", "r", "d", "x"):
+            for key in EDGE_KEYS:
                 result[key] |= old[test][key]
 
 
@@ -320,7 +443,7 @@ def validate(data, where: str = "map") -> None:
             fail(f"functions of {file} is not an object")
         for qualname, value in qualnames.items():
             indices(value, f"{file}:{qualname}")
-    for table in ("reads", "dirs", "programs"):
+    for table in ("reads", "dirs", "programs", "operations", "presence", "modes"):
         if not isinstance(data.get(table), dict):
             fail(f"{table} is not an object")
         for key, value in data[table].items():
@@ -333,25 +456,48 @@ def validate(data, where: str = "map") -> None:
         fail(f"{len(silent)} passing units ran no recorded code, e.g. {silent[0]}")
 
 
-def record_units(selected: list[str], work: Path, jobs: int, timeout: float) -> dict[str, dict]:
-    """Run each unit in its own recorded process; a rerun resumes from `work`."""
+def failed_unit(unit: str, result: dict) -> int:
+    """The failures a finished unit counts towards `stop_after`: one when it did not pass."""
+    return int(result["exit"] not in (0, 5))
+
+
+def record_units(selected: list[str], work: Path, jobs: int, timeout: float, *,
+                 options: Callable[[str], Sequence[str]] = lambda unit: (), stop_after: int = 0,
+                 failures: Callable[[str, dict], int] = failed_unit) -> dict[str, dict]:
+    """Run each unit in its own recorded process, starting them in the order of `selected`; a rerun resumes
+    from `work`. With `stop_after` N > 0 the run stops once its finished units count N `failures`: no other
+    unit starts and the running ones are killed, as they are when the run is interrupted, terminated or
+    hung up (`Stop.on_exit`). Only the units that ran to the end have a result."""
     work.mkdir(parents=True, exist_ok=True)
     tracked = tracked_paths()
     print(f"recording {len(selected)} units with {jobs} jobs in {work}", flush=True)
+    stop, lock, failed = Stop(), threading.Lock(), 0
 
     def one(unit):
-        result = run_unit(unit, work, timeout, tracked)
+        nonlocal failed
+        result = run_unit(unit, work, timeout, tracked, options=options(unit), stop=stop)
+        if result is None or result["exit"] == "stopped":
+            return unit, None
         print(f"  {unit}: exit {result['exit']} in {result['seconds']} s, "
               f"{len(result['f'])} functions{', OPAQUE' if result['opaque'] else ''}", flush=True)
+        # Counted before this worker takes its next unit, so that unit sees the stop.
+        with lock:
+            failed += failures(unit, result)
+            if stop_after and failed >= stop_after and not stop.stopped:
+                print(f"stopping after {failed} failed tests (--maxfail {stop_after})", flush=True)
+                stop.stop()
         return unit, result
 
     site = site_packages()
     install_hook(site)
+    pool = ThreadPoolExecutor(jobs)
     try:
-        with ThreadPoolExecutor(jobs) as pool:
-            return dict(pool.map(one, selected))
+        with stop.on_exit():
+            results = dict(pool.map(one, selected))
     finally:
+        pool.shutdown(cancel_futures=True)
         remove_hook(site)
+    return {unit: result for unit, result in results.items() if result is not None}
 
 
 def write_map(data: dict, output: Path) -> None:

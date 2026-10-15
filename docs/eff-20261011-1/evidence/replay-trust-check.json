@@ -1,0 +1,37 @@
+[
+  {
+    "merge": "17573bbb",
+    "other_generated_from_committed_merge": [
+      "docs/trust-baseline.json",
+      "lean/declarations.txt"
+    ],
+    "exit": 0,
+    "budget": {
+      "K": 997,
+      "S": 9791,
+      "V": 36969
+    },
+    "stdout": "resolved docs/trust-baseline.json (json)\n== check trust-tables\nclass lines: K 997, S 9791, D 13789, G 26860, C 8486, P 71772, T 14220, o 12155\nD/G groups: D[V] 12260, D[R] 1002, D[I] 527, G[V] 24868, G[R] 1751, G[I] 241\ntied 178, unclassified 0, trusted 47757 (K + S + untied [V] + unclassified), 158070 lines in 481 files\nagainst the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0\nPASS: K, S and untied [V] within the baseline and its signed allowances\nregen_generated --resolve: generated files merged, regenerated and checked; commit with git commit --no-edit\n",
+    "stderr": ""
+  },
+  {
+    "merge": "fc106062",
+    "other_generated_from_committed_merge": [
+      ".importlinter",
+      "docs/spec/assurance-manifest.md",
+      "docs/trust-baseline.json",
+      "lean/VE/Route/frozen-sources.sha256",
+      "lean/declarations.txt",
+      "tools/trust-classes.json",
+      "ve/assurance-manifest.json"
+    ],
+    "exit": 0,
+    "budget": {
+      "K": 997,
+      "S": 9974,
+      "V": 37363
+    },
+    "stdout": "resolved docs/trust-baseline.json (json)\n== check trust-tables\nclass lines: K 997, S 9974, D 13833, G 27473, C 9220, P 72800, T 14441, o 12434\nD/G groups: D[V] 12299, D[R] 1007, D[I] 527, G[V] 25223, G[R] 1996, G[I] 254\ntied 178, unclassified 0, trusted 48334 (K + S + untied [V] + unclassified), 161172 lines in 497 files\nagainst the baseline: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0\nPASS: K, S and untied [V] within the baseline and its signed allowances\nregen_generated --resolve: generated files merged, regenerated and checked; commit with git commit --no-edit\n",
+    "stderr": ""
+  }
+]

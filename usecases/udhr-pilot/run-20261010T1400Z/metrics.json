@@ -1,0 +1,8472 @@
+{
+ "commit": "ae7fa22911fc98c21b49c968bcddea0b16b4f05a",
+ "tree_clean_in_ve_lean_rust_tools": true,
+ "run": "usecases/udhr-pilot/run-20261006T1800Z at bd6c7ab2",
+ "host": {
+  "cpus": 32
+ },
+ "recorded": {
+  "claimed_covered_bytes": 4792,
+  "audit_verified_covered_bytes": 2543,
+  "premises": "UNKNOWN",
+  "source": "usecases/udhr-pilot/run-20261006T1800Z/metrics.json and verdict.json at bd6c7ab2"
+ },
+ "before": {
+  "document_bytes": 287435,
+  "load": {
+   "units": 130,
+   "source_bytes": 10916,
+   "wall_seconds": 1.1,
+   "cpu_seconds": 0.6,
+   "load_before": 52.9,
+   "load_after": 52.9
+  },
+  "check": {
+   "premises": "UNKNOWN",
+   "wall_seconds": 0.9,
+   "cpu_seconds": 0.6,
+   "load_before": 52.9,
+   "load_after": 52.9
+  },
+  "render": {
+   "characters": 31569,
+   "wall_seconds": 1.0,
+   "cpu_seconds": 0.7,
+   "load_before": 52.9,
+   "load_after": 52.9
+  },
+  "premises": "UNKNOWN",
+  "conflict": null,
+  "bytes_by_status": {
+   "LABELLED": 535,
+   "UNFORMALISED": 6124,
+   "OPEN": 4200,
+   "CHECKED": 57
+  },
+  "share": {
+   "basis": "no Lean answer across readings",
+   "decided_bytes": 0,
+   "decided_bytes_checked_outside": 0,
+   "decided_share_percent": "0.00",
+   "decided_units": [],
+   "max_choice_rules": null,
+   "one_rule": null,
+   "source_bytes": 10916
+  }
+ },
+ "after": {
+  "document_bytes": 374535,
+  "load": {
+   "units": 130,
+   "source_bytes": 10916,
+   "wall_seconds": 2.0,
+   "cpu_seconds": 1.9,
+   "load_before": 52.9,
+   "load_after": 52.2
+  },
+  "check": {
+   "premises": "model",
+   "wall_seconds": 22.0,
+   "cpu_seconds": 17.5,
+   "load_before": 52.2,
+   "load_after": 50.4
+  },
+  "render": {
+   "characters": 62985,
+   "wall_seconds": 3.1,
+   "cpu_seconds": 2.5,
+   "load_before": 50.4,
+   "load_after": 49.3
+  },
+  "premises": "model",
+  "conflict": "CONFLICT-FREE",
+  "bytes_by_status": {
+   "LABELLED": 535,
+   "UNFORMALISED": 6124,
+   "OPEN": 4200,
+   "CHECKED": 57
+  },
+  "share": {
+   "basis": "readings-verdicts decided_units",
+   "decided_bytes": 2111,
+   "decided_bytes_checked_outside": 1886,
+   "decided_share_percent": "19.34",
+   "decided_units": [
+    "u025",
+    "u029",
+    "u032",
+    "u033a",
+    "u033b",
+    "u035",
+    "u046",
+    "u054",
+    "u061",
+    "u074",
+    "u077",
+    "u081",
+    "u084c",
+    "u084d",
+    "u098",
+    "u099a",
+    "u099b",
+    "u100a",
+    "u100b",
+    "u105c",
+    "u110",
+    "u111",
+    "u114"
+   ],
+   "max_choice_rules": null,
+   "one_rule": "A rule checked by itself is CONFLICT-FREE by construction: a single rule cannot contradict another. This says nothing of a reading checked with the document's other rules; Lean's answer decides that.",
+   "source_bytes": 10916
+  }
+ },
+ "components": {
+  "count": 23,
+  "companion_cases": 22,
+  "max_regulated_predicates": 3,
+  "max_readings": 4,
+  "max_choices": 4,
+  "max_rules_in_one_choice_document": 4,
+  "max_author_rules_in_one_choice_document": 1,
+  "per_component": {
+   "rs_u025": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u025",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u025",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u029": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u029",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u029",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u032": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u032",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u032",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u033a": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u033a",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u033a",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u033b": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u033b",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u033b",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u035": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u035",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u035",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u046": {
+    "regulated_predicates": 2,
+    "readings": 4,
+    "choices": 4,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u046",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u046",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u046",
+        2
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u046",
+        3
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u054": {
+    "regulated_predicates": 1,
+    "readings": 1,
+    "choices": 1,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u054",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     }
+    ]
+   },
+   "rs_u061": {
+    "regulated_predicates": 1,
+    "readings": 1,
+    "choices": 1,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u061",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     }
+    ]
+   },
+   "rs_u077": {
+    "regulated_predicates": 1,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u077",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     },
+     {
+      "choice": [
+       [
+        "rs_u077",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     }
+    ]
+   },
+   "rs_u081": {
+    "regulated_predicates": 2,
+    "readings": 3,
+    "choices": 3,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u081",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u081",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u081",
+        2
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u084c": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u084c",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u084c",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u084d": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u084d",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u084d",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u098": {
+    "regulated_predicates": 3,
+    "readings": 3,
+    "choices": 3,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u098",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 3,
+      "rules": 4
+     },
+     {
+      "choice": [
+       [
+        "rs_u098",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 3,
+      "rules": 4
+     },
+     {
+      "choice": [
+       [
+        "rs_u098",
+        2
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 3,
+      "rules": 4
+     }
+    ]
+   },
+   "rs_u099a": {
+    "regulated_predicates": 1,
+    "readings": 1,
+    "choices": 1,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u099a",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     }
+    ]
+   },
+   "rs_u099b": {
+    "regulated_predicates": 1,
+    "readings": 1,
+    "choices": 1,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u099b",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     }
+    ]
+   },
+   "rs_u100a": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u100a",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u100a",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u100b": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u100b",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u100b",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u105c": {
+    "regulated_predicates": 3,
+    "readings": 3,
+    "choices": 3,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u105c",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 3,
+      "rules": 4
+     },
+     {
+      "choice": [
+       [
+        "rs_u105c",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 3,
+      "rules": 4
+     },
+     {
+      "choice": [
+       [
+        "rs_u105c",
+        2
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 3,
+      "rules": 4
+     }
+    ]
+   },
+   "rs_u110": {
+    "regulated_predicates": 2,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u110",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     },
+     {
+      "choice": [
+       [
+        "rs_u110",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 2,
+      "rules": 3
+     }
+    ]
+   },
+   "rs_u111": {
+    "regulated_predicates": 1,
+    "readings": 4,
+    "choices": 4,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u111",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     },
+     {
+      "choice": [
+       [
+        "rs_u111",
+        1
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     },
+     {
+      "choice": [
+       [
+        "rs_u111",
+        2
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     },
+     {
+      "choice": [
+       [
+        "rs_u111",
+        3
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     }
+    ]
+   },
+   "rs_u114": {
+    "regulated_predicates": 1,
+    "readings": 2,
+    "choices": 2,
+    "per_choice": [
+     {
+      "choice": [
+       [
+        "rs_u114",
+        0
+       ]
+      ],
+      "author_rules": 1,
+      "generated_rules": 1,
+      "rules": 2
+     },
+     {
+      "choice": [
+       [
+        "rs_u114",
+        1
+       ]
+      ],
+      "author_rules": 0,
+      "generated_rules": 1,
+      "rules": 1
+     }
+    ]
+   }
+  },
+  "main_unchecked_sets": [
+   "rs_u020",
+   "rs_u022a",
+   "rs_u022b",
+   "rs_u022c",
+   "rs_u024",
+   "rs_u027",
+   "rs_u037",
+   "rs_u045a",
+   "rs_u045b",
+   "rs_u048",
+   "rs_u049",
+   "rs_u051",
+   "rs_u052",
+   "rs_u055",
+   "rs_u059",
+   "rs_u063",
+   "rs_u064",
+   "rs_u066",
+   "rs_u070",
+   "rs_u073",
+   "rs_u084a",
+   "rs_u084b",
+   "rs_u087",
+   "rs_u096",
+   "rs_u105a",
+   "rs_u105b",
+   "rs_u112"
+  ]
+ },
+ "migration": {
+  "sets": 49,
+  "migrated": [
+   "rs_u025",
+   "rs_u029",
+   "rs_u032",
+   "rs_u033a",
+   "rs_u033b",
+   "rs_u035",
+   "rs_u046",
+   "rs_u054",
+   "rs_u061",
+   "rs_u077",
+   "rs_u081",
+   "rs_u084c",
+   "rs_u084d",
+   "rs_u098",
+   "rs_u099a",
+   "rs_u099b",
+   "rs_u100a",
+   "rs_u100b",
+   "rs_u105c",
+   "rs_u110",
+   "rs_u111",
+   "rs_u114"
+  ],
+  "sets_admitted_with_every_pair_separated": 22,
+  "situations_recorded": 30,
+  "unseparated_pairs": [],
+  "not_migrated": [
+   {
+    "set": "rs_u020",
+    "reason": "InvalidInput: readings rs_u020@2:0 and rs_u020@2:1 declare avoid_distinction_by_country_status_required differently"
+   },
+   {
+    "set": "rs_u022a",
+    "reason": "InvalidInput: readings rs_u022a@3:1 and rs_u022a@3:2 declare avoid_life_required differently"
+   },
+   {
+    "set": "rs_u022b",
+    "reason": "InvalidInput: readings rs_u022b@3:1 and rs_u022b@3:2 declare avoid_liberty_required differently"
+   },
+   {
+    "set": "rs_u022c",
+    "reason": "InvalidInput: readings rs_u022c@3:1 and rs_u022c@3:2 declare avoid_security_of_person_required differently"
+   },
+   {
+    "set": "rs_u024",
+    "reason": "InvalidInput: readings rs_u024@2:0 and rs_u024@2:1 declare avoid_holding_in_slavery_or_servitude_required differently"
+   },
+   {
+    "set": "rs_u027",
+    "reason": "InvalidInput: readings rs_u027@2:0 and rs_u027@2:1 declare avoid_torture_or_ill_treatment_required differently"
+   },
+   {
+    "set": "rs_u037",
+    "reason": "InvalidInput: readings rs_u037@2:0 and rs_u037@2:1 declare avoid_arbitrary_arrest_detention_exile_required differently"
+   },
+   {
+    "set": "rs_u045a",
+    "reason": "InvalidInput: readings rs_u045a@2:0 and rs_u045a@2:1 declare avoid_arbitrary_interference_required differently"
+   },
+   {
+    "set": "rs_u045b",
+    "reason": "InvalidInput: readings rs_u045b@2:0 and rs_u045b@2:1 declare avoid_attacks_upon_honour_and_reputation_required differently"
+   },
+   {
+    "set": "rs_u048",
+    "reason": "InvalidInput: readings rs_u048@5:1 and rs_u048@5:2 declare avoid_denying_right_u048_required differently"
+   },
+   {
+    "set": "rs_u049",
+    "reason": "InvalidInput: readings rs_u049@3:1 and rs_u049@3:3 declare avoid_leave_and_return_required differently"
+   },
+   {
+    "set": "rs_u051",
+    "reason": "InvalidInput: readings rs_u051@5:2 and rs_u051@5:3 declare avoid_barring_asylum_required differently"
+   },
+   {
+    "set": "rs_u052",
+    "reason": "InvalidInput: readings rs_u052@4:0 and rs_u052@4:1 declare arises_from_acts_contrary_to_un differently"
+   },
+   {
+    "set": "rs_u055",
+    "reason": "InvalidInput: readings rs_u055@2:0 and rs_u055@2:1 declare avoid_loss_of_nationality_required differently"
+   },
+   {
+    "set": "rs_u059",
+    "reason": "InvalidInput: readings rs_u059@2:0 and rs_u059@2:1 declare avoid_marriage_without_free_and_full_consent_required differently"
+   },
+   {
+    "set": "rs_u063",
+    "reason": "InvalidInput: readings rs_u063@5:1 and rs_u063@5:2 declare avoid_denying_right_u063_required differently"
+   },
+   {
+    "set": "rs_u064",
+    "reason": "InvalidInput: readings rs_u064@2:0 and rs_u064@2:1 declare avoid_arbitrary_deprivation_of_property_required differently"
+   },
+   {
+    "set": "rs_u066",
+    "reason": "InvalidInput: readings rs_u066@5:1 and rs_u066@5:2 declare avoid_thought_conscience_religion_required differently"
+   },
+   {
+    "set": "rs_u070",
+    "reason": "InvalidInput: readings rs_u070@3:1 and rs_u070@3:2 declare avoid_opinion_and_expression_required differently"
+   },
+   {
+    "set": "rs_u073",
+    "reason": "InvalidInput: readings rs_u073@5:1 and rs_u073@5:2 declare avoid_assembly_and_association_required differently"
+   },
+   {
+    "set": "rs_u084a",
+    "reason": "InvalidInput: readings rs_u084a@5:1 and rs_u084a@5:2 declare avoid_work_required differently"
+   },
+   {
+    "set": "rs_u084b",
+    "reason": "InvalidInput: readings rs_u084b@3:1 and rs_u084b@3:2 declare avoid_free_choice_of_employment_required differently"
+   },
+   {
+    "set": "rs_u087",
+    "reason": "InvalidInput: readings rs_u087@3:0 and rs_u087@3:1 declare avoid_trade_unions_required differently"
+   },
+   {
+    "set": "rs_u096",
+    "reason": "InvalidInput: readings rs_u096@3:1 and rs_u096@3:2 declare avoid_education_required differently"
+   },
+   {
+    "set": "rs_u105a",
+    "reason": "InvalidInput: readings rs_u105a@5:1 and rs_u105a@5:2 declare avoid_cultural_life_required differently"
+   },
+   {
+    "set": "rs_u105b",
+    "reason": "InvalidInput: readings rs_u105b@3:1 and rs_u105b@3:2 declare avoid_enjoyment_of_the_arts_required differently"
+   },
+   {
+    "set": "rs_u112",
+    "reason": "InvalidInput: readings rs_u112@5:0 and rs_u112@5:1 declare exercise_contrary_to_un differently"
+   }
+  ],
+  "copied_declarations": {
+   "rs_u052:case_excluded": [
+    "sort prosecution",
+    "predicate arises_from_acts_contrary_to_un",
+    "predicate arises_from_non_political_crime",
+    "predicate asylum_right_covers_case"
+   ],
+   "rs_u112:exercise_unprotected": [
+    "sort exercise",
+    "predicate exercise_contrary_to_un",
+    "predicate exercise_of_declared_right",
+    "predicate right_protects_exercise"
+   ],
+   "rs_u114:no_implied_right": [
+    "sort bearer",
+    "predicate declaration_implies_destructive_right"
+   ]
+  }
+ },
+ "witnesses": {
+  "in_components": {
+   "u025.state_prohibits": {
+    "set": "rs_u025",
+    "choice": [
+     [
+      "rs_u025",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u025.practice_prohibited": {
+    "set": "rs_u025",
+    "choice": [
+     [
+      "rs_u025",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "slavery_or_slave_trade_practice_permitted",
+      "row": [
+       "c0"
+      ],
+      "recorded": "SETTLED no",
+      "lean": "SETTLED no",
+      "same": true
+     },
+     {
+      "predicate": "slavery_or_slave_trade_practice_permitted",
+      "row": [
+       "c1"
+      ],
+      "recorded": "SETTLED no",
+      "lean": "SETTLED no",
+      "same": true
+     },
+     {
+      "predicate": "slavery_or_slave_trade_practice_permitted",
+      "row": [
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u029.entitlement": {
+    "set": "rs_u029",
+    "choice": [
+     [
+      "rs_u029",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_recognition_as_a_person",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u029.state_claim": {
+    "set": "rs_u029",
+    "choice": [
+     [
+      "rs_u029",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "secure_recognition_as_person_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_recognition_as_person_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u032.entitlement": {
+    "set": "rs_u032",
+    "choice": [
+     [
+      "rs_u032",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "is_entitled_to_equal_protection_of_the_law",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u032.state_claim": {
+    "set": "rs_u032",
+    "choice": [
+     [
+      "rs_u032",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "secure_equal_protection_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_equal_protection_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u033a.entitlement": {
+    "set": "rs_u033a",
+    "choice": [
+     [
+      "rs_u033a",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "is_entitled_to_protection_against_discrimination",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u033a.state_claim": {
+    "set": "rs_u033a",
+    "choice": [
+     [
+      "rs_u033a",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "secure_protection_against_discrimination_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_protection_against_discrimination_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u033b.entitlement": {
+    "set": "rs_u033b",
+    "choice": [
+     [
+      "rs_u033b",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "is_entitled_to_protection_against_incitement",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u033b.state_claim": {
+    "set": "rs_u033b",
+    "choice": [
+     [
+      "rs_u033b",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "secure_protection_against_incitement_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_protection_against_incitement_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u035.tribunal_claim": {
+    "set": "rs_u035",
+    "choice": [
+     [
+      "rs_u035",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t0",
+       "v0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t1",
+       "v1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t0",
+       "v1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t1",
+       "v0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t2",
+       "v0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u035.state_claim": {
+    "set": "rs_u035",
+    "choice": [
+     [
+      "rs_u035",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "ensure_remedy_by_tribunals_required",
+      "row": [
+       "s0",
+       "v0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "ensure_remedy_by_tribunals_required",
+      "row": [
+       "s0",
+       "v1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u046.state_arbitrary": {
+    "set": "rs_u046",
+    "choice": [
+     [
+      "rs_u046",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u046.entitlement_arbitrary": {
+    "set": "rs_u046",
+    "choice": [
+     [
+      "rs_u046",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u046.state_any": {
+    "set": "rs_u046",
+    "choice": [
+     [
+      "rs_u046",
+      2
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c4"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c4"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u046.entitlement_any": {
+    "set": "rs_u046",
+    "choice": [
+     [
+      "rs_u046",
+      3
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c4"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u054.entitlement": {
+    "set": "rs_u054",
+    "choice": [
+     [
+      "rs_u054",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "is_entitled_to_a_nationality",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u061.claim": {
+    "set": "rs_u061",
+    "choice": [
+     [
+      "rs_u061",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "protect_required",
+      "row": [
+       "b0",
+       "f0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_required",
+      "row": [
+       "b1",
+       "f0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_required",
+      "row": [
+       "b2",
+       "f0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u077.nationality_country_claim": {
+    "set": "rs_u077",
+    "choice": [
+     [
+      "rs_u077",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "give_equal_access_to_public_service_required",
+      "row": [
+       "c0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "give_equal_access_to_public_service_required",
+      "row": [
+       "c1",
+       "p0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u077.residence_country_claim": {
+    "set": "rs_u077",
+    "choice": [
+     [
+      "rs_u077",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "give_equal_access_to_public_service_required",
+      "row": [
+       "c1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "give_equal_access_to_public_service_required",
+      "row": [
+       "c0",
+       "p0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u081.entitlement": {
+    "set": "rs_u081",
+    "choice": [
+     [
+      "rs_u081",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_social_security",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u081.state_claim": {
+    "set": "rs_u081",
+    "choice": [
+     [
+      "rs_u081",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "secure_social_security_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_social_security_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u081.state_claim_within_resources": {
+    "set": "rs_u081",
+    "choice": [
+     [
+      "rs_u081",
+      2
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "secure_social_security_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_social_security_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u084c.entitlement": {
+    "set": "rs_u084c",
+    "choice": [
+     [
+      "rs_u084c",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_just_and_favourable_conditions_of_work",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084c.state_claim": {
+    "set": "rs_u084c",
+    "choice": [
+     [
+      "rs_u084c",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "secure_just_and_favourable_conditions_of_work_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_just_and_favourable_conditions_of_work_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084d.entitlement": {
+    "set": "rs_u084d",
+    "choice": [
+     [
+      "rs_u084d",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_protection_against_unemployment",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084d.state_claim": {
+    "set": "rs_u084d",
+    "choice": [
+     [
+      "rs_u084d",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "secure_protection_against_unemployment_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_protection_against_unemployment_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u098.state_requires": {
+    "set": "rs_u098",
+    "choice": [
+     [
+      "rs_u098",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "make_elementary_education_compulsory_required",
+      "row": [
+       "b0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_elementary_education_compulsory_required",
+      "row": [
+       "b1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u098.person_attends": {
+    "set": "rs_u098",
+    "choice": [
+     [
+      "rs_u098",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "attend_compulsory_elementary_education_required",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "attend_compulsory_elementary_education_required",
+      "row": [
+       "p1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u098.guardian_ensures": {
+    "set": "rs_u098",
+    "choice": [
+     [
+      "rs_u098",
+      2
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+       "g0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+       "g0",
+       "p1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+       "g1",
+       "p0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+       "g1",
+       "p1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u099a.state": {
+    "set": "rs_u099a",
+    "choice": [
+     [
+      "rs_u099a",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u099b.state": {
+    "set": "rs_u099b",
+    "choice": [
+     [
+      "rs_u099b",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "make_higher_education_accessible_required",
+      "row": [
+       "b0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_higher_education_accessible_required",
+      "row": [
+       "b1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u100a.state": {
+    "set": "rs_u100a",
+    "choice": [
+     [
+      "rs_u100a",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "direct_education_to_personality_required",
+      "row": [
+       "b0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_personality_required",
+      "row": [
+       "b1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u100a.education": {
+    "set": "rs_u100a",
+    "choice": [
+     [
+      "rs_u100a",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "is_directed_to_full_development_of_the_personality",
+      "row": [
+       "e0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u100b.state": {
+    "set": "rs_u100b",
+    "choice": [
+     [
+      "rs_u100b",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u100b.education": {
+    "set": "rs_u100b",
+    "choice": [
+     [
+      "rs_u100b",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "education_strengthens_respect_of",
+      "row": [
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "education_strengthens_respect_of",
+      "row": [
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "education_strengthens_respect_of",
+      "row": [
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u105c.entitlement": {
+    "set": "rs_u105c",
+    "choice": [
+     [
+      "rs_u105c",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_share_in_scientific_advancement",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105c.state_claim": {
+    "set": "rs_u105c",
+    "choice": [
+     [
+      "rs_u105c",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "secure_scientific_advancement_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_scientific_advancement_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105c.liberty": {
+    "set": "rs_u105c",
+    "choice": [
+     [
+      "rs_u105c",
+      2
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "person_may_share_in_scientific_advancement",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u110.restrictive": {
+    "set": "rs_u110",
+    "choice": [
+     [
+      "rs_u110",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "perform_duties_required",
+      "row": [
+       "p0",
+       "m0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "perform_duties_required",
+      "row": [
+       "p0",
+       "m1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u110.describing": {
+    "set": "rs_u110",
+    "choice": [
+     [
+      "rs_u110",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "perform_duties_to_the_community_required",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u111.strict_listed_aims_state": {
+    "set": "rs_u111",
+    "choice": [
+     [
+      "rs_u111",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b1",
+       "l1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u111.strict_listed_aims_anyone": {
+    "set": "rs_u111",
+    "choice": [
+     [
+      "rs_u111",
+      1
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b1",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u111.strict_both_aims_state": {
+    "set": "rs_u111",
+    "choice": [
+     [
+      "rs_u111",
+      2
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b1",
+       "l1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u111.strict_both_aims_anyone": {
+    "set": "rs_u111",
+    "choice": [
+     [
+      "rs_u111",
+      3
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b1",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u114.interpretive_ban": {
+    "set": "rs_u114",
+    "choice": [
+     [
+      "rs_u114",
+      0
+     ]
+    ],
+    "witnesses": [
+     {
+      "predicate": "interpretation_permitted",
+      "row": [
+       "i0"
+      ],
+      "recorded": "SETTLED no",
+      "lean": "SETTLED no",
+      "same": true
+     },
+     {
+      "predicate": "interpretation_permitted",
+      "row": [
+       "i1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u114.no_implied_right": {
+    "witnesses": [],
+    "note": "no recorded witnesses (a reading without a companion)"
+   }
+  },
+  "in_components_total": 152,
+  "in_components_same": 152,
+  "alone": {
+   "u020.anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u020.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_distinction_by_country_status_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u022a.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_life_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_life_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022a.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_life",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022a.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_and_secure_life_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_and_secure_life_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022a.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_life_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_life_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022a.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_life_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_life_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022b.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_liberty_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_liberty_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022b.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_liberty",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022b.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_and_secure_liberty_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_and_secure_liberty_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022b.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_liberty_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_liberty_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022b.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_liberty_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_liberty_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022c.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_security_of_person_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_security_of_person_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022c.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_security_of_person",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022c.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_and_secure_security_of_person_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_and_secure_security_of_person_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022c.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_security_of_person_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_security_of_person_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u022c.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_security_of_person_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_security_of_person_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u024.anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u024.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_holding_in_slavery_or_servitude_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u025.practice_prohibited": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "slavery_or_slave_trade_practice_permitted",
+      "row": [
+       "c0"
+      ],
+      "recorded": "SETTLED no",
+      "lean": "SETTLED no",
+      "same": true
+     },
+     {
+      "predicate": "slavery_or_slave_trade_practice_permitted",
+      "row": [
+       "c1"
+      ],
+      "recorded": "SETTLED no",
+      "lean": "SETTLED no",
+      "same": true
+     },
+     {
+      "predicate": "slavery_or_slave_trade_practice_permitted",
+      "row": [
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u025.state_prohibits": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u027.anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u027.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b0",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_torture_or_ill_treatment_required",
+      "row": [
+       "b1",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u029.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_recognition_as_a_person",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u029.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_recognition_as_person_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_recognition_as_person_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u032.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "is_entitled_to_equal_protection_of_the_law",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u032.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_equal_protection_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_equal_protection_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u033a.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "is_entitled_to_protection_against_discrimination",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u033a.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_protection_against_discrimination_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_protection_against_discrimination_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u033b.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "is_entitled_to_protection_against_incitement",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u033b.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_protection_against_incitement_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_protection_against_incitement_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u035.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "ensure_remedy_by_tribunals_required",
+      "row": [
+       "s0",
+       "v0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "ensure_remedy_by_tribunals_required",
+      "row": [
+       "s0",
+       "v1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u035.tribunal_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t0",
+       "v0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t1",
+       "v1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t0",
+       "v1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t1",
+       "v0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "provide_effective_remedy_required",
+      "row": [
+       "t2",
+       "v0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u037.anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u037.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_arrest_detention_exile_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u045a.anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u045a.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b0",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_interference_required",
+      "row": [
+       "b1",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u045b.anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u045b.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_attacks_upon_honour_and_reputation_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u046.entitlement_any": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c4"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u046.entitlement_arbitrary": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "is_protected_by_law",
+      "row": [
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u046.state_any": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c4"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c4"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u046.state_arbitrary": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b0",
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c4"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c5"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c6"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_by_law_against_intrusion_required",
+      "row": [
+       "b1",
+       "c7"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u048.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_right_u048_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_right_u048_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u048.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_movement_and_residence",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u048.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_movement_and_residence",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u048.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_and_secure_right_u048_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_and_secure_right_u048_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u048.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_right_u048_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_right_u048_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u048.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_right_u048_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_right_u048_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u049.anyone_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_leave_and_return_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_leave_and_return_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u049.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_leave_and_return",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u049.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_leave_and_return",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u049.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_leave_and_return_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_leave_and_return_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u051.anyone_avoid": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_barring_asylum_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_barring_asylum_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u051.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_seek_and_enjoy_asylum",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u051.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "seek_asylum_from_persecution_permitted",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u051.state_avoid": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_barring_asylum_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_barring_asylum_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u052.invocation_barred": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "invoke_asylum_right_in_case_permitted",
+      "row": [
+       "p0",
+       "x0"
+      ],
+      "recorded": "SETTLED no",
+      "lean": "SETTLED no",
+      "same": true
+     },
+     {
+      "predicate": "invoke_asylum_right_in_case_permitted",
+      "row": [
+       "p0",
+       "x1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u054.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "is_entitled_to_a_nationality",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u055.both_acts_anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u055.both_acts_state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u055.deprivation_only_anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u055.deprivation_only_state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_loss_of_nationality_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u059.anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u059.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b0",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_marriage_without_free_and_full_consent_required",
+      "row": [
+       "b1",
+       "c3"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u061.claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "protect_required",
+      "row": [
+       "b0",
+       "f0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_required",
+      "row": [
+       "b1",
+       "f0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "protect_required",
+      "row": [
+       "b2",
+       "f0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u063.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_right_u063_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_right_u063_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u063.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_own_property",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u063.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_property",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u063.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_and_secure_right_u063_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_and_secure_right_u063_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u063.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_right_u063_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_right_u063_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u063.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_right_u063_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_right_u063_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u064.anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_arbitrary_deprivation_of_property_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_deprivation_of_property_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_deprivation_of_property_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_deprivation_of_property_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u064.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_arbitrary_deprivation_of_property_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_deprivation_of_property_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_deprivation_of_property_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_arbitrary_deprivation_of_property_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u066.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_thought_conscience_religion_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_thought_conscience_religion_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u066.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_thought_conscience_religion",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u066.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_thought_conscience_religion",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u066.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_and_secure_right_u066_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_and_secure_right_u066_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u066.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_thought_conscience_religion_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_thought_conscience_religion_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u066.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_thought_conscience_religion_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_thought_conscience_religion_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u070.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_opinion_and_expression_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_opinion_and_expression_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u070.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_opinion_and_expression",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u070.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_opinion_and_expression",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u070.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_and_secure_opinion_and_expression_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_and_secure_opinion_and_expression_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u070.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_opinion_and_expression_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_opinion_and_expression_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u070.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_opinion_and_expression_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_opinion_and_expression_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u073.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_assembly_and_association_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_assembly_and_association_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u073.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_assembly_and_association",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u073.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_assembly_and_association",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u073.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_and_secure_right_u073_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_and_secure_right_u073_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u073.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_assembly_and_association_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_assembly_and_association_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u073.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_assembly_and_association_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_assembly_and_association_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u074.prohibition": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "compel_association_membership_permitted",
+      "row": [
+       "a0",
+       "p0"
+      ],
+      "recorded": "SETTLED no",
+      "lean": "SETTLED no",
+      "same": true
+     }
+    ]
+   },
+   "u077.nationality_country_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "give_equal_access_to_public_service_required",
+      "row": [
+       "c0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "give_equal_access_to_public_service_required",
+      "row": [
+       "c1",
+       "p0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u077.residence_country_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "give_equal_access_to_public_service_required",
+      "row": [
+       "c1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "give_equal_access_to_public_service_required",
+      "row": [
+       "c0",
+       "p0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u081.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_social_security",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u081.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_social_security_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_social_security_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u081.state_claim_within_resources": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_social_security_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_social_security_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u084a.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_work_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_work_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084a.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_work",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084a.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_work",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084a.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_and_secure_right_u084a_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_and_secure_right_u084a_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084a.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_work_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_work_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084a.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "enable_work_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "enable_work_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084b.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_free_choice_of_employment_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_free_choice_of_employment_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084b.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_free_choice_of_employment",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084b.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_choose_employment",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084b.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_and_secure_free_choice_of_employment_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_and_secure_free_choice_of_employment_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084b.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_free_choice_of_employment_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_free_choice_of_employment_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084b.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_free_choice_of_employment_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_free_choice_of_employment_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084c.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_just_and_favourable_conditions_of_work",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084c.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_just_and_favourable_conditions_of_work_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_just_and_favourable_conditions_of_work_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084d.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_protection_against_unemployment",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u084d.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_protection_against_unemployment_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_protection_against_unemployment_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u087.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_trade_unions_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_trade_unions_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u087.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_form_and_join_trade_unions",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u087.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_form_and_join_trade_unions",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u087.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_trade_unions_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_trade_unions_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u087.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_trade_unions_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_trade_unions_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u096.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_education_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_education_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u096.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_education",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u096.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_barring_and_secure_education_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_barring_and_secure_education_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u096.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_education_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_education_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u096.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_education_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_education_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u098.guardian_ensures": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+       "g0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+       "g0",
+       "p1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+       "g1",
+       "p0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "row": [
+       "g1",
+       "p1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u098.person_attends": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "attend_compulsory_elementary_education_required",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "attend_compulsory_elementary_education_required",
+      "row": [
+       "p1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u098.state_requires": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "make_elementary_education_compulsory_required",
+      "row": [
+       "b0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_elementary_education_compulsory_required",
+      "row": [
+       "b1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u099a.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_education_generally_available_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u099b.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "make_higher_education_accessible_required",
+      "row": [
+       "b0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "make_higher_education_accessible_required",
+      "row": [
+       "b1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u100a.education": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "is_directed_to_full_development_of_the_personality",
+      "row": [
+       "e0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u100a.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "direct_education_to_personality_required",
+      "row": [
+       "b0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_personality_required",
+      "row": [
+       "b1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u100b.education": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "education_strengthens_respect_of",
+      "row": [
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "education_strengthens_respect_of",
+      "row": [
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "education_strengthens_respect_of",
+      "row": [
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u100b.state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b0",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b0",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b1",
+       "c1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "row": [
+       "b1",
+       "c2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u105a.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_cultural_life_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_cultural_life_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105a.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_take_part_in_cultural_life",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105a.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_take_part_in_cultural_life",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105a.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_denying_and_secure_right_u105a_required",
+      "row": [
+       "b0",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_denying_and_secure_right_u105a_required",
+      "row": [
+       "b1",
+       "c0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105a.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_cultural_life_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_cultural_life_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105a.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_cultural_life_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_cultural_life_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105b.anyone_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_enjoyment_of_the_arts_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_enjoyment_of_the_arts_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105b.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_enjoy_the_arts",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105b.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_enjoy_the_arts",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105b.state_combined": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_barring_and_secure_enjoyment_of_the_arts_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_barring_and_secure_enjoyment_of_the_arts_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105b.state_negative": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_enjoyment_of_the_arts_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_enjoyment_of_the_arts_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105b.state_positive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_enjoyment_of_the_arts_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_enjoyment_of_the_arts_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105c.entitlement": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "has_the_right_to_share_in_scientific_advancement",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105c.liberty": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "person_may_share_in_scientific_advancement",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u105c.state_claim": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "secure_scientific_advancement_required",
+      "row": [
+       "b0",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "secure_scientific_advancement_required",
+      "row": [
+       "b1",
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u110.describing": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "perform_duties_to_the_community_required",
+      "row": [
+       "p0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u110.restrictive": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "perform_duties_required",
+      "row": [
+       "p0",
+       "m0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "perform_duties_required",
+      "row": [
+       "p0",
+       "m1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u111.strict_both_aims_anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b1",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u111.strict_both_aims_state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l0"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b1",
+       "l1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u111.strict_listed_aims_anyone": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b1",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     }
+    ]
+   },
+   "u111.strict_listed_aims_state": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l0"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l1"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l2"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b0",
+       "l3"
+      ],
+      "recorded": "SETTLED yes",
+      "lean": "SETTLED yes",
+      "same": true
+     },
+     {
+      "predicate": "avoid_imposing_limitation_required",
+      "row": [
+       "b1",
+       "l1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u112.exercise_prohibited": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "exercise_permitted",
+      "row": [
+       "e0"
+      ],
+      "recorded": "SETTLED no",
+      "lean": "SETTLED no",
+      "same": true
+     },
+     {
+      "predicate": "exercise_permitted",
+      "row": [
+       "e1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   },
+   "u114.interpretive_ban": {
+    "premises": "model",
+    "witnesses": [
+     {
+      "predicate": "interpretation_permitted",
+      "row": [
+       "i0"
+      ],
+      "recorded": "SETTLED no",
+      "lean": "SETTLED no",
+      "same": true
+     },
+     {
+      "predicate": "interpretation_permitted",
+      "row": [
+       "i1"
+      ],
+      "recorded": "UNDECIDED",
+      "lean": "UNDECIDED",
+      "same": true
+     }
+    ]
+   }
+  },
+  "companions_alone": 156,
+  "companions_alone_model": 156,
+  "alone_total": 459,
+  "alone_same": 459
+ },
+ "queries": [
+  {
+   "name": "u029-recognise",
+   "english_query": "every State must recognise each person everywhere as a person before the law",
+   "sentence": "u029",
+   "under": [],
+   "conclusion": [
+    "forall",
+    "state",
+    [
+     "forall",
+     "person",
+     [
+      "binary",
+      "secure_recognition_as_person_required",
+      [
+       "var",
+       1
+      ],
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   ],
+   "expected": "SOME",
+   "exit": 0,
+   "verdict": "SOME",
+   "stderr": "",
+   "english": [
+    "Each open sentence below was checked by itself, under each of its readings.",
+    "Sentence 34 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+    "Read sentence 34 as *Every State must recognise each person everywhere as a person before the law*: the conclusion follows: *For every State, for every person, that State must recognise that person everywhere as a person before the law.*",
+    "Read sentence 34 as *Every person is classified as \"has_the_right_to_recognition_as_a_person\"*: the conclusion does not follow. It fails here: e0 is a person; e0 is a State. Here the text does not say whether e0 must recognise e0 everywhere as a person before the law; this situation answers 'no'."
+   ],
+   "answer": "answers/u029-recognise.json",
+   "wall_seconds": 43.7,
+   "load_before": 57.4
+  },
+  {
+   "name": "u081-secure",
+   "english_query": "every State whose organization and resources allow it must secure each person social security",
+   "sentence": "u081",
+   "under": [],
+   "conclusion": [
+    "forall",
+    "state",
+    [
+     "implies",
+     [
+      "unary",
+      "resources_allow",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "binary",
+       "secure_social_security_required",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ]
+   ],
+   "expected": "SOME",
+   "exit": 0,
+   "verdict": "SOME",
+   "stderr": "",
+   "english": [
+    "Each open sentence below was checked by itself, under each of its readings.",
+    "Sentence 90 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+    "Read sentence 90 as *Every State must secure each person social security*: the conclusion follows: *For every State that is classified as \"resources_allow\", for every person, that State must secure that person social security.*",
+    "Read sentence 90 as *Every person is classified as \"has_the_right_to_social_security\"*: the conclusion does not follow. It fails here: e0 is a person; e0 is a State; e0 is classified as \"resources_allow\". Here the text does not say whether e0 must secure e0 social security; this situation answers 'no'."
+   ],
+   "answer": "answers/u081-secure.json",
+   "wall_seconds": 74.6,
+   "load_before": 70.2
+  },
+  {
+   "name": "u081-secure-under-2",
+   "english_query": "every State whose organization and resources allow it must secure each person social security",
+   "sentence": "u081",
+   "under": [
+    "rs_u081:2"
+   ],
+   "conclusion": [
+    "forall",
+    "state",
+    [
+     "implies",
+     [
+      "unary",
+      "resources_allow",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "forall",
+      "person",
+      [
+       "binary",
+       "secure_social_security_required",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ]
+   ],
+   "expected": "ALL",
+   "exit": 0,
+   "verdict": "ALL",
+   "stderr": "",
+   "english": [
+    "Each open sentence below was checked by itself, under each of its readings.",
+    "Sentence 90 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+    "Read sentence 90 as *Every State must secure each person social security, if that State is classified as \"resources_allow\"*: the conclusion follows: *For every State that is classified as \"resources_allow\", for every person, that State must secure that person social security.*"
+   ],
+   "answer": "answers/u081-secure-under-2.json",
+   "wall_seconds": 52.4,
+   "load_before": 78.7
+  },
+  {
+   "name": "u081-none",
+   "english_query": "no State must secure any person social security",
+   "sentence": "u081",
+   "under": [],
+   "conclusion": [
+    "forall",
+    "state",
+    [
+     "forall",
+     "person",
+     [
+      "not",
+      [
+       "binary",
+       "secure_social_security_required",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ]
+   ],
+   "expected": "NONE",
+   "exit": 0,
+   "verdict": "NONE",
+   "stderr": "",
+   "english": [
+    "Each open sentence below was checked by itself, under each of its readings.",
+    "Sentence 90 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+    "Read sentence 90 as *Every person is classified as \"has_the_right_to_social_security\"*: the conclusion does not follow. It fails here: e0 is a person; e0 is a State. Here the text does not say whether e0 must secure e0 social security; this situation answers 'yes'.",
+    "Read sentence 90 as *Every State must secure each person social security*: the conclusion does not follow. It fails here: e0 is a person; e0 is a State.",
+    "Read sentence 90 as *Every State must secure each person social security, if that State is classified as \"resources_allow\"*: the conclusion does not follow. It fails here: e0 is a person; e0 is a State; e0 is classified as \"resources_allow\"."
+   ],
+   "answer": "answers/u081-none.json",
+   "wall_seconds": 67.7,
+   "load_before": 86.5
+  }
+ ]
+}

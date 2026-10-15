@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from tools import gate_collection
 from tools.batch_evidence import REQUIRED_STAGES, outside_report, problems
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,6 +45,22 @@ def test_only_identical_listed_unavailable_is_signed():
         bad["differences"][0].update(changed)
         errors = problems(HEAD, GATE, bad, LATENCY)
         assert errors
+
+
+def test_identical_listed_unavailability_is_signed_by_r7():
+    comparison = deepcopy(AB)
+    comparison["unavailable_both"] = {"pilots/default": 1}
+    comparison["differences"] = [{"corpus": "pilots", "authority": "default", "class": "unavailable",
+                                  "listed": True, "base": {"timeout": 600}, "head": {"timeout": 600}}]
+    errors = problems(HEAD, GATE, comparison, LATENCY)
+    assert errors == []
+    comparison["differences"][0]["head"] = {"timeout": 601}
+    errors = problems(HEAD, GATE, comparison, LATENCY)
+    assert errors
+    comparison["differences"][0]["head"] = {"timeout": 600}
+    comparison["differences"][0]["listed"] = False
+    errors = problems(HEAD, GATE, comparison, LATENCY)
+    assert errors
 
 
 def test_latency_request_uses_the_public_readings_normalizer():
@@ -97,8 +114,9 @@ def _commit(repo, files):
     return _git(repo, "rev-parse", "HEAD")
 
 
-def _main(repo, tmp_path, gated, report):
-    for name, value in (("gate", {**GATE, "commit_sha": gated}), ("ab", {**AB, "head_commit": gated}),
+def _main(repo, tmp_path, gated, report, gate_data=None):
+    for name, value in (("gate", {**GATE, "commit_sha": gated, **(gate_data or {})}),
+                        ("ab", {**AB, "head_commit": gated}),
                         ("latency", {**LATENCY, "head_commit": gated})):
         (tmp_path / f"{name}.json").write_text(json.dumps(value))
     return subprocess.run([sys.executable, str(ROOT / "tools/batch_evidence.py"), gated, str(tmp_path / "gate.json"),
@@ -128,3 +146,45 @@ def test_report_commit_check_reads_git(tmp_path):
     # the gated commit must be an ancestor of the report commit
     result = _main(repo, tmp_path, report, gated)
     assert result.returncode == 1 and "is not an ancestor" in result.stdout
+
+
+def test_f2_batch_evidence_checks_the_gate_note_when_present(tmp_path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    gated = _commit(repo, {"code.py": "1"})
+    ids = ["tests/a.py::test_a"]
+    gate_data = {"tree_sha": _git(repo, "rev-parse", f"{gated}^{{tree}}"),
+                 "collection": {"collected_zlib": gate_collection.encode_ids(ids)}}
+    gate_collection.write_record(gated, ids, result={**GATE, "commit_sha": gated, **gate_data}, cwd=repo)
+    assert _main(repo, tmp_path, gated, gated, gate_data).returncode == 0
+    result = _main(repo, tmp_path, gated, gated)
+    assert result.returncode == 1 and "gate evidence differs from its git note" in result.stdout
+
+
+@pytest.mark.parametrize("note_kind", ["unparseable", "wrong commit", "wrong tree",
+                                      "invalid collection", "base only"])
+def test_f3_present_invalid_gate_note_fails_closed(tmp_path, note_kind):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    gated = _commit(repo, {"code.py": "1"})
+    tree = _git(repo, "rev-parse", f"{gated}^{{tree}}")
+    record = json.loads(gate_collection.record_text(gated, tree, ["tests/a.py::test_a"],
+                                                    {"status": "passed"}))
+    if note_kind == "unparseable":
+        note = "malformed gate note"  # The review's executable F3 probe.
+    else:
+        if note_kind == "wrong commit":
+            record["commit_sha"] = "b" * 40
+        elif note_kind == "wrong tree":
+            record["tree_sha"] = "b" * 40
+        elif note_kind == "invalid collection":
+            record["collection"]["collected_zlib"] = "***"
+        elif note_kind == "base only":
+            del record["status"]
+        note = json.dumps(record)
+    _git(repo, "notes", f"--ref={gate_collection.NOTES_REF}", "add", "-m", note, gated)
+    result = _main(repo, tmp_path, gated, gated)
+    assert result.returncode == 1, result.stdout
+    assert "gate note" in result.stdout
