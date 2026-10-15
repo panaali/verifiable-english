@@ -39,5 +39,33 @@
       "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-1]": "passed",
       "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-1]": "passed"
     }
+  },
+  "full_gate_806099579": {
+    "commit_sha": "806099579f45bc589679535110182f70ad6c896c",
+    "tree_sha": "0f8d9901a1158dbe9d2f715f0ae5847949303d41",
+    "status": "failed",
+    "runner": "ve-mac-1",
+    "workers": 9,
+    "counts": {
+      "collected": 15081,
+      "deselected": 1,
+      "failed": 1,
+      "passed": 14987,
+      "rust_ignored": 0,
+      "rust_passed": 36,
+      "selected": 15080,
+      "skipped": 92
+    },
+    "failed_nodeids": [
+      "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline"
+    ],
+    "fix": "main sync e99799555 brings runner-portability dccd9cf5a"
+  },
+  "selected_after_sync": {
+    "commit_sha_prefix": "e99799555",
+    "base": "b96f04a5a",
+    "units": 56,
+    "failed": 0,
+    "runner": "ve-mac-1"
   }
 }
