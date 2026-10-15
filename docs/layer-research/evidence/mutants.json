@@ -1,0 +1,23 @@
+[
+  {
+    "name": "research_not_layer_five",
+    "file": "tools/layer_policy.py",
+    "test": "tools/test_layer_policy.py::LayerSelectionTests::test_research_tree_is_layer_five_and_selects_its_readers",
+    "exit": 1,
+    "output": "FAIL: test_research_tree_is_layer_five_and_selects_its_readers (test_layer_policy.LayerSelectionTests.test_research_tree_is_layer_five_and_selects_its_readers) (path='research/layering/notes.md')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/seyran/code/ve-layer-research/tools/test_layer_policy.py\", line 123, in test_research_tree_is_layer_five_and_selects_its_readers\n    self.assertFalse(plan[\"full\"], plan[\"full_reasons\"])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not false : ['research/layering/notes.md']\n\n======================================================================\nFAIL: test_research_tree_is_layer_five_and_selects_its_readers (test_layer_policy.LayerSelectionTests.test_research_tree_is_layer_five_and_selects_its_readers) (path='research/layering/probe.py')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/seyran/code/ve-layer-research/tools/test_layer_policy.py\", line 121, in test_research_tree_is_layer_five_and_selects_its_readers\n    self.assertEqual(layer_policy.source_layer(path), 5)\n"
+  },
+  {
+    "name": "research_unknown_to_selector",
+    "file": "tools/select_tests.py",
+    "test": "tools/test_layer_policy.py::LayerSelectionTests::test_research_tree_is_layer_five_and_selects_its_readers",
+    "exit": 1,
+    "output": "FAIL: test_research_tree_is_layer_five_and_selects_its_readers (test_layer_policy.LayerSelectionTests.test_research_tree_is_layer_five_and_selects_its_readers) (path='research/layering/notes.md')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/seyran/code/ve-layer-research/tools/test_layer_policy.py\", line 123, in test_research_tree_is_layer_five_and_selects_its_readers\n    self.assertFalse(plan[\"full\"], plan[\"full_reasons\"])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not false : ['research/layering/notes.md']\n\n======================================================================\nFAIL: test_research_tree_is_layer_five_and_selects_its_readers (test_layer_policy.LayerSelectionTests.test_research_tree_is_layer_five_and_selects_its_readers) (path='research/layering/probe.py')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/seyran/code/ve-layer-research/tools/test_layer_policy.py\", line 123, in test_research_tree_is_layer_five_and_selects_its_readers\n    self.assertFalse(plan[\"full\"], plan[\"full_reasons\"])\n"
+  },
+  {
+    "name": "research_selects_unrelated_test",
+    "file": "tools/select_tests.py",
+    "test": "tools/test_layer_policy.py::LayerSelectionTests::test_research_tree_is_layer_five_and_selects_its_readers",
+    "exit": 1,
+    "output": "FAIL: test_research_tree_is_layer_five_and_selects_its_readers (test_layer_policy.LayerSelectionTests.test_research_tree_is_layer_five_and_selects_its_readers) (path='research/layering/notes.md')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/seyran/code/ve-layer-research/tools/test_layer_policy.py\", line 127, in test_research_tree_is_layer_five_and_selects_its_readers\n    self.assertEqual(plan[\"reasons\"][test], [f\"names {path} (static)\"], test)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Lists differ: ['research tree'] != ['names research/layering/notes.md (static)']\n\nFirst differing element 0:\n'research tree'\n'names research/layering/notes.md (static)'\n\n- ['research tree']\n+ ['names research/layering/notes.md (static)'] : tests/test_english.py\n\n======================================================================\nFAIL: test_research_tree_is_layer_five_and_selects_its_readers (test_layer_policy.LayerSelectionTests.test_research_tree_is_layer_five_and_selects_its_readers) (path='research/layering/results.json')\n-------------------------------------------------"
+  }
+]
