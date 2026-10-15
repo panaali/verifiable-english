@@ -1,6 +1,6 @@
-DRI signature needed: the measured trust budget rises by 18 Lean V lines against the merge base (English policy +15, readings decoder +3); the existing R6 allowance does not cover it. `python3 tools/trust_map.py --check` and therefore `tools/regen_generated.py --check` (entry `trust-tables`) fail until the DRI signs the allowance.
+DRI signature needed: the measured trust budget rises by 15 Lean V lines against the merge base, all in the English policy (`Policy.lean`, the X2 head fixed point); the readings decoder is back to +0 (review F3). Standing R6 does not cover it. `python3 tools/trust_map.py --check`, `tools/regen_generated.py --check` (entry `trust-tables`) and the restored `tests/test_consolidation_tools.py::test_live_tree_is_the_trust_baseline` (review F2) fail until the DRI signs the allowance and `trust_map.py --write --reason` records it.
 
-DRI waiver or main fix needed: the relay mutation gate's 29 remaining failures (graph, route, parse) are identical on main `f75082449`; see *Pre-review continuation (ready1)*.
+The relay mutation gate's 29 failures noted at ready1 are repaired on this branch (ready2: 0 failures over 40 routes); no waiver is needed.
 
 # JT cross-plan fixes — build report
 
@@ -23,7 +23,7 @@ The first session's X2 fix left two gaps, both found by probing Python against L
 
 Two existing tests asserted the old behaviour that X2 reverses: a rejected template's head blocking an idiom, and two rejected templates' head taking a word from a sort noun. Each keeps its original setup with the new X2 result asserted. Each also gains a variant where an *accepted* head still blocks (`test_idioms_still_check_collisions_and_argument_direction[head]`, `test_template_head_and_identifier_collisions_across_all_categories`).
 
-`5fbcd6c89` (first session) had edited `tests/test_readings_defaults_rd8_report.py`, whose `test_review_fix_commit_chain_and_final_gate_target` is listed in `main-known-red.txt`; `6036e2d56` reverts that edit (see *Pre-existing failures*). `f9fae7632` (first session) stays: the RD-6b report test compared the live tree with the trust baseline, which fails for any later trust change; it now reads the saved revisions, as the B12 report test does (D4), and `trust_map.py --check` in the gate still compares the live tree.
+`5fbcd6c89` (first session) had edited `tests/test_readings_defaults_rd8_report.py`, whose `test_review_fix_commit_chain_and_final_gate_target` is listed in `main-known-red.txt`; `6036e2d56` reverts that edit (see *Pre-existing failures*). `f9fae7632` (first session) moved the RD-6b report test to saved revisions (D4). Its stated reason was wrong: the gate has no `trust_map.py --check` stage, and that assertion was the suite's only live check. Review F2 restores it as a permanent test (`ee27fdbbe`).
 
 ## Verification
 
@@ -124,3 +124,18 @@ Seeded bug (Lean, restored): in `lean/ResponseShape/Schemas/Graph.lean`, the Bac
 10. PASS — No statement changed; `overlayCheck_constants` still proves by `rfl`; the one-round claim rests on head-monotone codes and is checked by the `Fpermits` guards.
 11. N.A. — No budget, limit or deadline behaviour changed.
 12. PASS — `policy-bench.json`: compiled V6 at 256 predicates 45/69 ms against base 62/60 ms, inside 100 ms and +20%.
+
+## Review fix (jt-crossplan-fixes-review.final.md)
+
+| Finding | Fix | Regression test | Commit |
+|---|---|---|---|
+| F1 B trust budget | The readings decoder's +3 is gone: F3's fix replaces the pre-check with the norms-chain decoder's own `displayConstants := false` (+0). The English policy's +15 (X2's head fixed point) stays. R6 does not cover it, so it is recorded for the DRI's signature (first line above, DELTA). | `tests/test_consolidation_tools.py::test_live_tree_is_the_trust_baseline`, probe `python3 tools/trust_map.py --check`. Both fail only on `Policy.lean +15` until the DRI signs it. | `b9d60e4c3` |
+| F2 B live trust check deleted | The removed assertions return as a permanent non-report test: the tree measures cleanly, `check` finds no growth beyond the signed allowances, the baseline equals the tree's measurement, and `signed` is empty. On the merge base `f75082449` the same assertions hold. | `tests/test_consolidation_tools.py::test_live_tree_is_the_trust_baseline`; probe F2 passes. | `ee27fdbbe` |
+| F3 B readings constant pre-check | The class: a check run before the decoder that owns the field. The pre-check is removed. On the norms chain, `VE.Readings.Wire.decodeEnvironment` decodes the frame with `VE.Norms.Wire.decodeNormsEnvironment (displayConstants := false)`, so `VE.Route.Wire.decodeVocabulary` decides the field at its own place: literals keep `literalEntry`, a missing `constants` keeps the field-list text (R1), and faults keep the decoder's order (R2, DELTA sentence). The soft and rights chains keep DF-19's display field, as DELTA states. Every readings@1 path decodes through this one function. | `tests/test_readings_constant_display.py::test_readings_constant_verbalisation_on_every_chain[norms,soft,rights]`, `::test_readings_literal_constant_keeps_its_display_words[*]`, `::test_readings_missing_constants_keeps_the_chain_diagnostic[*]`, `::test_readings_constant_verbalisation_keeps_the_decoder_fault_order`; probe F3 fails before the fix and passes after. | `b9d60e4c3` |
+| F7 C (part) | DELTA's X2 row now notes that old fallback (`classified as "X"`) sentences are refused once the template is accepted, and the stale relay-failure line above is corrected. The Rust path in the v0 differential test is not changed: the suite has no shared Rust-binary helper to call, only local copies. | — | this commit |
+
+F4, F5 and F6 (C) are left to the DRI or a follow-up, as the review asks.
+
+**Seeded bug (Lean).** `lean/VE/Readings/Wire.lean` was restored to its pre-fix version (the pre-check), `ve_service` was rebuilt and pinned, and the tests were run. Probe F3 failed with `fields do not match: expected [sort, description], got [sort, verbalisation]` on the `$string` literal. Nine of the 13 tests in `tests/test_readings_constant_display.py` failed: the soft and rights chains, all three literal cases, all three missing-`constants` cases, and the fault order. The fix was then restored and rebuilt, and all 13 pass. The F2 test is its own seed: it fails on this tree (unsigned +15), and the same assertions pass on the merge base.
+
+**Verification.** `lake build` passed (890 jobs). `python3 lean/audit.py`: PASS, 485 files, 5784 theorems. `tools/regen_generated.py --check` fails only on `trust-tables` (F1). The selected tests ran on the Mac runner: 377/377 units, a full selection because the assurance manifest changed. One test failed, `tests/test_consolidation_tools.py::test_live_tree_is_the_trust_baseline`, which is the open F1 signature. The tests in `main-known-red.txt` were not edited.
