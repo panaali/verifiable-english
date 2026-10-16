@@ -2,110 +2,6 @@
  "format": "ve-difffuzz-baseline@2",
  "entries": [
   {
-   "id": "environment-097a9092a8b9731d",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/elaborated-document.json/27/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "vocabulary",
-      "predicates",
-      "assigned",
-      "defined",
-      "body"
-     ],
-     "object"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "data@0",
-     "definitions@0",
-     "relational-fol@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "sorts": {
-      "person": {
-       "description": "Person."
-      },
-      "department": {
-       "description": "Department."
-      }
-     },
-     "predicates": {
-      "dept": {
-       "arguments": [
-        "person",
-        "department"
-       ],
-       "description": "Department.",
-       "functional": true,
-       "total": true
-      },
-      "backup": {
-       "arguments": [
-        "person",
-        "department"
-       ],
-       "description": "Backup department.",
-       "total": true
-      },
-      "assigned": {
-       "arguments": [
-        "person"
-       ],
-       "description": "Has an assigned department.",
-       "defined": {
-        "arguments": [
-         "person"
-        ],
-        "body": {}
-       }
-      }
-     },
-     "constants": {
-      "alice": {
-       "sort": "person",
-       "description": "Alice."
-      }
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "array expected"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "array expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "expected tagged AST array"
-    }
-   },
-   "signature": "097a9092a8b9731d",
-   "follow_up": "DF-15",
-   "minimised": false
-  },
-  {
    "id": "environment-0a124c02f6507157",
    "surface": "environment",
    "profile": "envelope",
@@ -2186,6 +2082,208 @@
    "minimised": false
   },
   {
+   "id": "environment-996535acb2977f50",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "conformance/elaborated-document.json/10/environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {
+      "dept": {
+       "arguments": [
+        "$string"
+       ],
+       "description": "d"
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "invalid signature: dept"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "invalid signature: dept"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "unknown predicate argument sort"
+    }
+   },
+   "signature": "996535acb2977f50",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "environment-166b6a5d0308d1be",
+   "surface": "environment",
+   "profile": "soft-norms",
+   "seed": "usecases/safety-framework/environment.d1.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "unicode",
+     [
+      "vocabulary",
+      "constants",
+      "cbrn_uplift_tcl",
+      "sort"
+     ],
+     "upper"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "norms@0",
+     "relational-fol@0",
+     "soft-norms@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {},
+     "constants": {
+      "cyber": {
+       "sort": "d",
+       "description": "C"
+      }
+     }
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "unknown constant sort: cyber"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "unknown constant sort: cyber"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "unknown constant sort"
+    }
+   },
+   "signature": "166b6a5d0308d1be",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "environment-92974c7b159d8163",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "conformance/elaborated-document.json/55/environment",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "above",
+      "defined",
+      "body",
+      2,
+      2,
+      1,
+      3,
+      0
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "person": {
+       "description": "a"
+      }
+     },
+     "predicates": {
+      "above": {
+       "arguments": [
+        "person",
+        "person"
+       ],
+       "description": "s",
+       "defined": {
+        "arguments": [
+         "person",
+         "person"
+        ],
+        "body": []
+       }
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "expected exactly fields [\"arguments\", \"description\"]"
+    }
+   },
+   "signature": "92974c7b159d8163",
+   "follow_up": "DF-20"
+  },
+  {
    "id": "requests-0118b2cc107d0c39",
    "surface": "requests",
    "profile": "dependency-order:dependency-order",
@@ -2725,1117 +2823,6 @@
    },
    "signature": "071a971aae68acb0",
    "follow_up": "DF-10"
-  },
-  {
-   "id": "requests-0788304c31980a85",
-   "surface": "requests",
-   "profile": "usecase:claude-constitution-excerpt:evaluate",
-   "seed": "usecases/claude-constitution-excerpt/model-true.json@definitions-environment.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "guidelines_content",
-      "defined",
-      "body",
-      2,
-      2,
-      3,
-      1
-     ],
-     "string"
-    ]
-   ],
-   "input": {
-    "id": "usecases/claude-constitution-excerpt/model-true.json@definitions-environment.json",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "closure@0",
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "claude_model": {
-        "description": "A Claude model, as referred to by the constitution excerpt (e.g. 'all current Claude models', 'Claude')."
-       },
-       "mechanism": {
-        "description": "A human mechanism for overseeing the dispositions and actions of AI, as referred to by the 'broadly safe' value and the oversight discussion."
-       },
-       "guideline": {
-        "description": "One of Anthropic's specific guidelines that a Claude model might or might not be acting in accordance with."
-       },
-       "principal": {
-        "description": "An operator or user that a Claude model interacts with (the excerpt's 'operators and users' merged into one sort)."
-       },
-       "action": {
-        "description": "An action a Claude model might perform."
-       },
-       "overseer": {
-        "description": "A human or organization who might instruct, check, or be owed obedience by a Claude model, including Anthropic itself and appropriately sanctioned individuals."
-       },
-       "property": {
-        "description": "One of the four core value-properties named in the excerpt's priority ordering: broadly safe, broadly ethical, compliant with Anthropic's guidelines, genuinely helpful."
-       },
-       "situation": {
-        "description": "A case or interaction in which two or more of the four core value-properties might come into apparent conflict."
-       }
-      },
-      "predicates": {
-       "current_claude_model": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "Recorded as one of 'all current Claude models' the excerpt's core-values paragraph addresses."
-       },
-       "ought_have_core_values": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as a model of which the excerpt says 'we believe [it] should be' broadly safe, broadly ethical, compliant, and genuinely helpful. This predicate names, but does not analyse, the deontic force of 'should be' and the fact that it introduces four further properties (see GAPS.md #1 and coverage.md row 1)."
-       },
-       "appropriate": {
-        "arguments": [
-         "mechanism"
-        ],
-        "description": "Recorded as an 'appropriate' human mechanism for overseeing the dispositions and actions of AI, in the sense used by the 'broadly safe' value."
-       },
-       "undermines": {
-        "arguments": [
-         "claude_model",
-         "mechanism"
-        ],
-        "description": "Recorded as the model undermining (acting so as to defeat or subvert) this oversight mechanism."
-       },
-       "honest": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "Recorded as honest, one conjunct of the excerpt's 'broadly ethical' value ('having good personal values, being honest, and avoiding...'). 'Having good personal values' itself has no witness anywhere in this vocabulary; see GAPS.md #2."
-       },
-       "inappropriately_harmful": {
-        "arguments": [
-         "action"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as an action the excerpt would call 'inappropriately dangerous or harmful'. The judgement of what counts as 'inappropriate' is hidden inside this predicate; see GAPS.md #2."
-       },
-       "performs": {
-        "arguments": [
-         "claude_model",
-         "action"
-        ],
-        "description": "Recorded as the model performing this action."
-       },
-       "relevant": {
-        "arguments": [
-         "guideline"
-        ],
-        "description": "Recorded as 'relevant' to the model's present situation, in the sense used by 'compliant with Anthropic's guidelines: ... where they're relevant'."
-       },
-       "follows": {
-        "arguments": [
-         "claude_model",
-         "guideline"
-        ],
-        "description": "Recorded as the model acting in accordance with this guideline."
-       },
-       "interacts": {
-        "arguments": [
-         "claude_model",
-         "principal"
-        ],
-        "description": "Recorded as the model interacting with this operator or user."
-       },
-       "benefits": {
-        "arguments": [
-         "claude_model",
-         "principal"
-        ],
-        "description": "Recorded as the model benefiting this operator or user, in the sense used by 'genuinely helpful'. The intensifier 'genuinely' (sincere vs. superficial benefit) has no separate witness; see GAPS.md #2."
-       },
-       "outranks": {
-        "arguments": [
-         "property",
-         "property"
-        ],
-        "description": "Recorded as the first property immediately outranking (being listed directly above) the second property in the excerpt's stated priority order: broadly safe, broadly ethical, compliant with guidelines, genuinely helpful. Base edges only; use tc[outranks]/rtc[outranks] for the full order."
-       },
-       "contends_for": {
-        "arguments": [
-         "situation",
-         "property"
-        ],
-        "description": "Recorded as this property being one of the (at most two, in every model used here) properties tagged as apparently conflicting in this situation. A reification workaround for the fact that v0 has no ternary relation to say directly which two properties are the ones apparently conflicting in a given situation; see GAPS.md #1."
-       },
-       "violates_hard_constraint": {
-        "arguments": [
-         "situation"
-        ],
-        "description": "Recorded as a situation in which the model would be violating one of Anthropic's hard constraints, in the sense of the excerpt's exception clause 'assuming Claude is not violating any hard constraints'. What a hard constraint is, and what counts as violating one, is not modelled; this is a bare flag."
-       },
-       "ought_follow": {
-        "arguments": [
-         "situation",
-         "property"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as the property the excerpt says Claude 'should generally' follow in this situation. Hides both the deontic force of 'should' and the defeasibility of 'generally'; see GAPS.md #1."
-       },
-       "undermines_check": {
-        "arguments": [
-         "claude_model",
-         "overseer"
-        ],
-        "description": "Recorded as the model undermining this overseer's role as an appropriately sanctioned human check on AI systems, in the sense used by the corrigibility sentence."
-       },
-       "sanctioned_check": {
-        "arguments": [
-         "overseer"
-        ],
-        "description": "Recorded as an 'appropriately sanctioned' human acting as a check on AI systems, in the sense used by the corrigibility sentence."
-       },
-       "bound_to_obey": {
-        "arguments": [
-         "claude_model",
-         "overseer"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as the model being bound to unconditional ('blind') obedience toward this overseer. Hides the deontic modality of 'must obey' and the manner qualifier 'blind'; see GAPS.md #1."
-       },
-       "safety_content": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "The excerpt's recorded safety content condition.",
-        "defined": {
-         "arguments": [
-          "claude_model"
-         ],
-         "body": [
-          "forall",
-          "mechanism",
-          [
-           "implies",
-           [
-            "unary",
-            "appropriate",
-            [
-             "var",
-             0
-            ]
-           ],
-           [
-            "not",
-            [
-             "binary",
-             "undermines",
-             [
-              "var",
-              1
-             ],
-             [
-              "var",
-              0
-             ]
-            ]
-           ]
-          ]
-         ]
-        }
-       },
-       "ethics_content": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "The excerpt's recorded ethics content condition.",
-        "defined": {
-         "arguments": [
-          "claude_model"
-         ],
-         "body": [
-          "and",
-          [
-           "unary",
-           "honest",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "forall",
-           "action",
-           [
-            "implies",
-            [
-             "unary",
-             "inappropriately_harmful",
-             [
-              "var",
-              0
-             ]
-            ],
-            [
-             "not",
-             [
-              "binary",
-              "performs",
-              [
-               "var",
-               1
-              ],
-              [
-               "var",
-               0
-              ]
-             ]
-            ]
-           ]
-          ]
-         ]
-        }
-       },
-       "guidelines_content": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "The excerpt's recorded guidelines content condition.",
-        "defined": {
-         "arguments": [
-          "claude_model"
-         ],
-         "body": [
-          "forall",
-          "guideline",
-          [
-           "implies",
-           [
-            "unary",
-            "relevant",
-            [
-             "var",
-             0
-            ]
-           ],
-           [
-            "binary",
-            "follows",
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             "x"
-            ]
-           ]
-          ]
-         ]
-        }
-       },
-       "helpfulness_content": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "The excerpt's recorded helpfulness content condition.",
-        "defined": {
-         "arguments": [
-          "claude_model"
-         ],
-         "body": [
-          "forall",
-          "principal",
-          [
-           "implies",
-           [
-            "binary",
-            "interacts",
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             0
-            ]
-           ],
-           [
-            "binary",
-            "benefits",
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             0
-            ]
-           ]
-          ]
-         ]
-        }
-       },
-       "holds_property": {
-        "arguments": [
-         "claude_model",
-         "property"
-        ],
-        "description": "Connects each named property constant to its recorded content.",
-        "defined": {
-         "arguments": [
-          "claude_model",
-          "property"
-         ],
-         "body": [
-          "or",
-          [
-           "or",
-           [
-            "or",
-            [
-             "and",
-             [
-              "eq",
-              [
-               "var",
-               0
-              ],
-              [
-               "const",
-               "safety"
-              ]
-             ],
-             [
-              "unary",
-              "safety_content",
-              [
-               "var",
-               1
-              ]
-             ]
-            ],
-            [
-             "and",
-             [
-              "eq",
-              [
-               "var",
-               0
-              ],
-              [
-               "const",
-               "ethics"
-              ]
-             ],
-             [
-              "unary",
-              "ethics_content",
-              [
-               "var",
-               1
-              ]
-             ]
-            ]
-           ],
-           [
-            "and",
-            [
-             "eq",
-             [
-              "var",
-              0
-             ],
-             [
-              "const",
-              "guidelines"
-             ]
-            ],
-            [
-             "unary",
-             "guidelines_content",
-             [
-              "var",
-              1
-             ]
-            ]
-           ]
-          ],
-          [
-           "and",
-           [
-            "eq",
-            [
-             "var",
-             0
-            ],
-            [
-             "const",
-             "helpfulness"
-            ]
-           ],
-           [
-            "unary",
-            "helpfulness_content",
-            [
-             "var",
-             1
-            ]
-           ]
-          ]
-         ]
-        }
-       }
-      },
-      "constants": {
-       "claude": {
-        "sort": "claude_model",
-        "description": "The Claude model this excerpt's claims are about."
-       },
-       "safety": {
-        "sort": "property",
-        "description": "The 'broadly safe' core value."
-       },
-       "ethics": {
-        "sort": "property",
-        "description": "The 'broadly ethical' core value."
-       },
-       "guidelines": {
-        "sort": "property",
-        "description": "The 'compliant with Anthropic's guidelines' core value."
-       },
-       "helpfulness": {
-        "sort": "property",
-        "description": "The 'genuinely helpful' core value."
-       },
-       "anthropic": {
-        "sort": "overseer",
-        "description": "Anthropic, named explicitly in 'not... blind obedience, including towards Anthropic'."
-       }
-      }
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "claude_model": [
-       "claude"
-      ],
-      "mechanism": [
-       "board_oversight",
-       "red_team_review"
-      ],
-      "guideline": [
-       "csam_guideline",
-       "weapons_guideline"
-      ],
-      "principal": [
-       "alice",
-       "acme_corp"
-      ],
-      "action": [
-       "helpful_answer",
-       "harmful_exploit"
-      ],
-      "overseer": [
-       "anthropic",
-       "safety_reviewer"
-      ],
-      "property": [
-       "safety",
-       "ethics",
-       "guidelines",
-       "helpfulness"
-      ],
-      "situation": [
-       "conflict_case"
-      ]
-     },
-     "constants": {
-      "claude": "claude",
-      "safety": "safety",
-      "ethics": "ethics",
-      "guidelines": "guidelines",
-      "helpfulness": "helpfulness",
-      "anthropic": "anthropic"
-     },
-     "relations": {
-      "current_claude_model": [
-       [
-        "claude"
-       ]
-      ],
-      "ought_have_core_values": [
-       [
-        "claude"
-       ]
-      ],
-      "appropriate": [
-       [
-        "board_oversight"
-       ],
-       [
-        "red_team_review"
-       ]
-      ],
-      "undermines": [],
-      "honest": [
-       [
-        "claude"
-       ]
-      ],
-      "inappropriately_harmful": [
-       [
-        "harmful_exploit"
-       ]
-      ],
-      "performs": [
-       [
-        "claude",
-        "helpful_answer"
-       ]
-      ],
-      "relevant": [
-       [
-        "csam_guideline"
-       ],
-       [
-        "weapons_guideline"
-       ]
-      ],
-      "follows": [
-       [
-        "claude",
-        "csam_guideline"
-       ],
-       [
-        "claude",
-        "weapons_guideline"
-       ]
-      ],
-      "interacts": [
-       [
-        "claude",
-        "alice"
-       ],
-       [
-        "claude",
-        "acme_corp"
-       ]
-      ],
-      "benefits": [
-       [
-        "claude",
-        "alice"
-       ],
-       [
-        "claude",
-        "acme_corp"
-       ]
-      ],
-      "outranks": [
-       [
-        "safety",
-        "ethics"
-       ],
-       [
-        "ethics",
-        "guidelines"
-       ],
-       [
-        "guidelines",
-        "helpfulness"
-       ]
-      ],
-      "contends_for": [
-       [
-        "conflict_case",
-        "ethics"
-       ],
-       [
-        "conflict_case",
-        "helpfulness"
-       ]
-      ],
-      "violates_hard_constraint": [],
-      "ought_follow": [
-       [
-        "conflict_case",
-        "ethics"
-       ]
-      ],
-      "undermines_check": [],
-      "sanctioned_check": [
-       [
-        "anthropic"
-       ],
-       [
-        "safety_reviewer"
-       ]
-      ],
-      "bound_to_obey": []
-     }
-    },
-    "ast": [
-     [
-      "forall",
-      "claude_model",
-      [
-       "implies",
-       [
-        "unary",
-        "current_claude_model",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "ought_have_core_values",
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "mechanism",
-      [
-       "implies",
-       [
-        "unary",
-        "appropriate",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "not",
-        [
-         "binary",
-         "undermines",
-         [
-          "const",
-          "claude"
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "and",
-      [
-       "unary",
-       "honest",
-       [
-        "const",
-        "claude"
-       ]
-      ],
-      [
-       "forall",
-       "action",
-       [
-        "implies",
-        [
-         "unary",
-         "inappropriately_harmful",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "not",
-         [
-          "binary",
-          "performs",
-          [
-           "const",
-           "claude"
-          ],
-          [
-           "var",
-           0
-          ]
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "guideline",
-      [
-       "implies",
-       [
-        "unary",
-        "relevant",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "binary",
-        "follows",
-        [
-         "const",
-         "claude"
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "principal",
-      [
-       "implies",
-       [
-        "binary",
-        "interacts",
-        [
-         "const",
-         "claude"
-        ],
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "binary",
-        "benefits",
-        [
-         "const",
-         "claude"
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ],
-     [
-      "and",
-      [
-       "binary",
-       "outranks",
-       [
-        "const",
-        "safety"
-       ],
-       [
-        "const",
-        "ethics"
-       ]
-      ],
-      [
-       "and",
-       [
-        "binary",
-        "outranks",
-        [
-         "const",
-         "ethics"
-        ],
-        [
-         "const",
-         "guidelines"
-        ]
-       ],
-       [
-        "binary",
-        "outranks",
-        [
-         "const",
-         "guidelines"
-        ],
-        [
-         "const",
-         "helpfulness"
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "situation",
-      [
-       "forall",
-       "property",
-       [
-        "forall",
-        "property",
-        [
-         "implies",
-         [
-          "and",
-          [
-           "and",
-           [
-            "binary",
-            "contends_for",
-            [
-             "var",
-             2
-            ],
-            [
-             "var",
-             1
-            ]
-           ],
-           [
-            "binary",
-            "contends_for",
-            [
-             "var",
-             2
-            ],
-            [
-             "var",
-             0
-            ]
-           ]
-          ],
-          [
-           "and",
-           [
-            "reach",
-            "plus",
-            [
-             "named",
-             "outranks"
-            ],
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             0
-            ]
-           ],
-           [
-            "not",
-            [
-             "unary",
-             "violates_hard_constraint",
-             [
-              "var",
-              2
-             ]
-            ]
-           ]
-          ]
-         ],
-         [
-          "and",
-          [
-           "binary",
-           "ought_follow",
-           [
-            "var",
-            2
-           ],
-           [
-            "var",
-            1
-           ]
-          ],
-          [
-           "not",
-           [
-            "binary",
-            "ought_follow",
-            [
-             "var",
-             2
-            ],
-            [
-             "var",
-             0
-            ]
-           ]
-          ]
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "property",
-      [
-       "implies",
-       [
-        "not",
-        [
-         "eq",
-         [
-          "var",
-          0
-         ],
-         [
-          "const",
-          "safety"
-         ]
-        ]
-       ],
-       [
-        "reach",
-        "plus",
-        [
-         "named",
-         "outranks"
-        ],
-        [
-         "const",
-         "safety"
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "mechanism",
-      [
-       "implies",
-       [
-        "unary",
-        "appropriate",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "not",
-        [
-         "binary",
-         "undermines",
-         [
-          "const",
-          "claude"
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "not",
-      [
-       "binary",
-       "bound_to_obey",
-       [
-        "const",
-        "claude"
-       ],
-       [
-        "const",
-        "anthropic"
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "overseer",
-      [
-       "implies",
-       [
-        "unary",
-        "sanctioned_check",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "not",
-        [
-         "binary",
-         "undermines_check",
-         [
-          "const",
-          "claude"
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: Natural number expected"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: Natural number expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnboundVariable",
-     "text": "UnboundVariable: index must be a bounded nonnegative integer"
-    }
-   },
-   "signature": "0788304c31980a85",
-   "follow_up": "DF-15",
-   "minimised": false
   },
   {
    "id": "requests-07cd43b08d4db16f",
@@ -8953,105 +7940,6 @@
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-2fa747576c5e1f33",
-   "surface": "requests",
-   "profile": "elaborated-document:countermodel",
-   "seed": "conformance/elaborated-document.json/43",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "countermodel",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "premises",
-      "conclusion"
-     ],
-     "constants": {},
-     "operation": "countermodel"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "above",
-      "defined",
-      "body"
-     ],
-     "number"
-    ]
-   ],
-   "input": {
-    "id": "conformance/elaborated-document.json/43",
-    "kind": "countermodel",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "a"
-       }
-      },
-      "predicates": {
-       "above": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "s",
-        "defined": {
-         "arguments": [
-          "person",
-          "person"
-         ],
-         "body": 7
-        }
-       }
-      },
-      "constants": {}
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "Definition above: the body is not a typed formula over the symbols below it"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: array expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: expected tagged AST array"
-    }
-   },
-   "signature": "2fa747576c5e1f33",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "requests-3038e4b4ddb30433",
    "surface": "requests",
    "profile": "parser:evaluate",
@@ -13043,144 +11931,6 @@
    "follow_up": "DF-5"
   },
   {
-   "id": "requests-498af113ca5f9abb",
-   "surface": "requests",
-   "profile": "invalid-background-model:evaluate",
-   "seed": "conformance/invalid-background-model.json/6",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "derived",
-      "defined",
-      "body",
-      2,
-      1
-     ],
-     "boolean"
-    ]
-   ],
-   "input": {
-    "id": "conformance/invalid-background-model.json/6",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "Person."
-       }
-      },
-      "predicates": {
-       "base": {
-        "arguments": [
-         "person"
-        ],
-        "description": "Base."
-       },
-       "derived": {
-        "arguments": [
-         "person"
-        ],
-        "description": "Defined from base.",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "unary",
-          "base",
-          [
-           "var",
-           true
-          ]
-         ]
-        }
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "alice"
-      ]
-     },
-     "constants": {},
-     "relations": {
-      "base": [
-       [
-        "alice"
-       ]
-      ],
-      "derived": [
-       [
-        "alice"
-       ]
-      ]
-     }
-    },
-    "ast": [
-     [
-      "top"
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: Natural number expected"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: Natural number expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnboundVariable",
-     "text": "UnboundVariable: index must be a bounded nonnegative integer"
-    }
-   },
-   "signature": "498af113ca5f9abb",
-   "follow_up": "DF-15",
-   "minimised": false
-  },
-  {
    "id": "requests-4b57094453540c32",
    "surface": "requests",
    "profile": "usecase:birthright-citizenship-debate:evaluate",
@@ -16686,137 +15436,6 @@
    "follow_up": "DF-7"
   },
   {
-   "id": "requests-5aac61471bfd0455",
-   "surface": "requests",
-   "profile": "invalid-background-model:evaluate",
-   "seed": "conformance/invalid-background-model.json/6",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {
-      "kind": "evaluate-budgeted"
-     },
-     "operation": "evaluate-budgeted"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "derived",
-      "defined",
-      "body"
-     ],
-     "object"
-    ]
-   ],
-   "input": {
-    "id": "conformance/invalid-background-model.json/6",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "Person."
-       }
-      },
-      "predicates": {
-       "base": {
-        "arguments": [
-         "person"
-        ],
-        "description": "Base."
-       },
-       "derived": {
-        "arguments": [
-         "person"
-        ],
-        "description": "Defined from base.",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": {}
-        }
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "alice"
-      ]
-     },
-     "constants": {},
-     "relations": {
-      "base": [
-       [
-        "alice"
-       ]
-      ],
-      "derived": [
-       [
-        "alice"
-       ]
-      ]
-     }
-    },
-    "ast": [
-     [
-      "top"
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "Definition derived: the body is not a typed formula over the symbols below it"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: array expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: expected tagged AST array"
-    }
-   },
-   "signature": "5aac61471bfd0455",
-   "follow_up": "DF-9",
-   "minimised": false
-  },
-  {
    "id": "requests-5b0b22e7fe77201f",
    "surface": "requests",
    "profile": "elaborated-document:evaluate",
@@ -18931,338 +17550,6 @@
    },
    "signature": "6a625d2359543327",
    "follow_up": "DF-9"
-  },
-  {
-   "id": "requests-6a8e1c264699af98",
-   "surface": "requests",
-   "profile": "elaborated-document:countermodel",
-   "seed": "conformance/elaborated-document.json/43",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "countermodel",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "premises",
-      "conclusion"
-     ],
-     "constants": {},
-     "operation": "countermodel"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "boss",
-      "defined",
-      "body",
-      2,
-      2,
-      1
-     ],
-     "string"
-    ]
-   ],
-   "input": {
-    "id": "conformance/elaborated-document.json/43",
-    "kind": "countermodel",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "a person"
-       }
-      },
-      "predicates": {
-       "in_finance": {
-        "arguments": [
-         "person"
-        ],
-        "description": "works in finance"
-       },
-       "senior": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is senior"
-       },
-       "supervises": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "supervises"
-       },
-       "lead": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is a senior finance boss",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "and",
-          [
-           "unary",
-           "boss",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "unary",
-           "senior_finance",
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        }
-       },
-       "boss": {
-        "arguments": [
-         "person"
-        ],
-        "description": "supervises someone",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "exists",
-          "person",
-          [
-           "binary",
-           "supervises",
-           [
-            "var",
-            "x"
-           ],
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        }
-       },
-       "senior_finance": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is senior and works in finance",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "and",
-          [
-           "unary",
-           "senior",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "unary",
-           "in_finance",
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        }
-       },
-       "above": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "supervises directly or through one person",
-        "defined": {
-         "arguments": [
-          "person",
-          "person"
-         ],
-         "body": [
-          "or",
-          [
-           "binary",
-           "supervises",
-           [
-            "var",
-            1
-           ],
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "exists",
-           "person",
-           [
-            "and",
-            [
-             "binary",
-             "supervises",
-             [
-              "var",
-              2
-             ],
-             [
-              "var",
-              0
-             ]
-            ],
-            [
-             "binary",
-             "supervises",
-             [
-              "var",
-              0
-             ],
-             [
-              "var",
-              1
-             ]
-            ]
-           ]
-          ]
-         ]
-        }
-       }
-      },
-      "constants": {
-       "alice": {
-        "sort": "person",
-        "description": "Alice"
-       },
-       "bob": {
-        "sort": "person",
-        "description": "Bob"
-       },
-       "finance": {
-        "sort": "$string"
-       },
-       "legal": {
-        "sort": "$string"
-       }
-      }
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "a",
-       "b",
-       "c"
-      ],
-      "$string": [
-       "f",
-       "l"
-      ]
-     },
-     "constants": {
-      "alice": "a",
-      "bob": "b",
-      "finance": "f",
-      "legal": "l"
-     },
-     "relations": {
-      "in_finance": [
-       [
-        "a"
-       ]
-      ],
-      "senior": [
-       [
-        "a"
-       ],
-       [
-        "b"
-       ]
-      ],
-      "supervises": [
-       [
-        "a",
-        "b"
-       ],
-       [
-        "b",
-        "c"
-       ]
-      ]
-     }
-    },
-    "premises": [
-     [
-      "unary",
-      "boss",
-      [
-       "const",
-       "alice"
-      ]
-     ]
-    ],
-    "conclusion": [
-     "unary",
-     "lead",
-     [
-      "const",
-      "bob"
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: Natural number expected"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: Natural number expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnboundVariable",
-     "text": "UnboundVariable: index must be a bounded nonnegative integer"
-    }
-   },
-   "signature": "6a8e1c264699af98",
-   "follow_up": "DF-15",
-   "minimised": false
   },
   {
    "id": "requests-6ba391b693e3f9a8",
@@ -23833,450 +22120,6 @@
    },
    "signature": "7db9286e905564e3",
    "follow_up": "DF-9"
-  },
-  {
-   "id": "requests-7dfcb2f71aad6e2c",
-   "surface": "requests",
-   "profile": "elaborated-document:certificate",
-   "seed": "conformance/elaborated-document.json/47",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "certificate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "premises",
-      "conclusion"
-     ],
-     "constants": {
-      "max_domain_size": 2
-     },
-     "operation": "search"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "lead",
-      "defined",
-      "body",
-      0
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/elaborated-document.json/47",
-    "kind": "certificate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "closure@0",
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "a person"
-       }
-      },
-      "predicates": {
-       "in_finance": {
-        "arguments": [
-         "person"
-        ],
-        "description": "works in finance"
-       },
-       "senior": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is senior"
-       },
-       "supervises": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "supervises"
-       },
-       "lead": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is a senior finance boss",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          [],
-          [
-           "unary",
-           "boss",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "unary",
-           "senior_finance",
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        }
-       },
-       "boss": {
-        "arguments": [
-         "person"
-        ],
-        "description": "supervises someone",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "exists",
-          "person",
-          [
-           "binary",
-           "supervises",
-           [
-            "var",
-            1
-           ],
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        }
-       },
-       "senior_finance": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is senior and works in finance",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "and",
-          [
-           "unary",
-           "senior",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "unary",
-           "in_finance",
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        }
-       },
-       "above": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "supervises directly or through one person",
-        "defined": {
-         "arguments": [
-          "person",
-          "person"
-         ],
-         "body": [
-          "or",
-          [
-           "binary",
-           "supervises",
-           [
-            "var",
-            1
-           ],
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "exists",
-           "person",
-           [
-            "and",
-            [
-             "binary",
-             "supervises",
-             [
-              "var",
-              2
-             ],
-             [
-              "var",
-              0
-             ]
-            ],
-            [
-             "binary",
-             "supervises",
-             [
-              "var",
-              0
-             ],
-             [
-              "var",
-              1
-             ]
-            ]
-           ]
-          ]
-         ]
-        }
-       }
-      },
-      "constants": {
-       "alice": {
-        "sort": "person",
-        "description": "Alice"
-       },
-       "bob": {
-        "sort": "person",
-        "description": "Bob"
-       },
-       "finance": {
-        "sort": "$string"
-       },
-       "legal": {
-        "sort": "$string"
-       }
-      }
-     }
-    },
-    "premises": [
-     [
-      "unary",
-      "senior_finance",
-      [
-       "const",
-       "alice"
-      ]
-     ],
-     [
-      "binary",
-      "supervises",
-      [
-       "const",
-       "alice"
-      ],
-      [
-       "const",
-       "bob"
-      ]
-     ]
-    ],
-    "conclusion": [
-     "unary",
-     "lead",
-     [
-      "const",
-      "alice"
-     ]
-    ],
-    "certificate": {
-     "checker_version": "ve-tableau-closure-checker@1",
-     "environment_id": "17753be50bdb0bc4ac51ef5cf911328eef2bd7c9fca23e2fcea61eb8b1c2189a",
-     "premise_meaning_ids": [
-      "e1e56ba86c0ed159e8a9796b4d78c52cd687e19a450eb429d4f64058523e8c5c",
-      "f1c11c5b8322f4cf4199f25ffc267fbdc651350878d0dc61b5eac51105bb9951",
-      "798c2a132a7d395f118edece1cc1b58107ca9ff0157e825fe380148052da3439",
-      "f39bc8dee5d0f1a01764ebb8fea3f406edce5cb5b8b6ceff046f04fc2e540e47",
-      "2a8b85734a662cf951948f591d6e28b4f2ae932152b73a602bf579939df2968e",
-      "ea4ec4a0dc8351b085c30cc3d7f18d5df668949320c3f9c3a1edd51c27e4b163",
-      "0b0af013ca2f6318d5067e34cd8136d27adeac36ce15d13b455d053f9df9caf7"
-     ],
-     "conclusion_meaning_id": "2590adf5dd8ab3d954689f07b4dc4ce1cad0d3b3c9ee6dd54e08f64594aee7e2",
-     "trace": {
-      "rule": "expand",
-      "at": 4,
-      "children": [
-       {
-        "rule": "expand",
-        "at": 0,
-        "children": [
-         {
-          "rule": "expand",
-          "at": 1,
-          "children": [
-           {
-            "rule": "expand",
-            "at": 10,
-            "children": [
-             {
-              "rule": "expand",
-              "at": 2,
-              "children": [
-               {
-                "rule": "expand",
-                "at": 13,
-                "children": [
-                 {
-                  "rule": "expand",
-                  "at": 14,
-                  "children": [
-                   {
-                    "rule": "close"
-                   },
-                   {
-                    "rule": "expand",
-                    "at": 15,
-                    "children": [
-                     {
-                      "rule": "close"
-                     },
-                     {
-                      "rule": "expand",
-                      "at": 16,
-                      "children": [
-                       {
-                        "rule": "expand",
-                        "at": 3,
-                        "children": [
-                         {
-                          "rule": "expand",
-                          "at": 20,
-                          "children": [
-                           {
-                            "rule": "expand",
-                            "at": 22,
-                            "children": [
-                             {
-                              "rule": "expand",
-                              "at": 21,
-                              "children": [
-                               {
-                                "rule": "expand",
-                                "at": 23,
-                                "children": [
-                                 {
-                                  "rule": "expand",
-                                  "at": 12,
-                                  "children": [
-                                   {
-                                    "rule": "expand",
-                                    "at": 11,
-                                    "children": [
-                                     {
-                                      "rule": "expand",
-                                      "at": 26,
-                                      "children": [
-                                       {
-                                        "rule": "close"
-                                       }
-                                      ],
-                                      "parameter": "c:bob"
-                                     },
-                                     {
-                                      "rule": "close"
-                                     }
-                                    ]
-                                   },
-                                   {
-                                    "rule": "close"
-                                   }
-                                  ]
-                                 },
-                                 {
-                                  "rule": "close"
-                                 }
-                                ]
-                               },
-                               {
-                                "rule": "close"
-                               }
-                              ]
-                             },
-                             {
-                              "rule": "close"
-                             }
-                            ]
-                           }
-                          ]
-                         }
-                        ],
-                        "parameter": "c:alice"
-                       }
-                      ]
-                     }
-                    ]
-                   }
-                  ]
-                 }
-                ]
-               }
-              ],
-              "parameter": "c:alice"
-             }
-            ]
-           }
-          ],
-          "parameter": "c:alice"
-         }
-        ],
-        "parameter": "c:alice"
-       }
-      ]
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: invalid indexed formula"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid indexed formula"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: expected tagged AST array"
-    }
-   },
-   "signature": "7dfcb2f71aad6e2c",
-   "follow_up": "DF-15",
-   "minimised": false
   },
   {
    "id": "requests-81763ebf19982998",
@@ -29734,452 +27577,6 @@
    "minimised": false
   },
   {
-   "id": "requests-9fc6cf3a7db9a30a",
-   "surface": "requests",
-   "profile": "elaborated-document:certificate",
-   "seed": "conformance/elaborated-document.json/47",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "certificate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "premises",
-      "conclusion"
-     ],
-     "constants": {
-      "max_domain_size": 2
-     },
-     "operation": "search"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "boss",
-      "defined",
-      "body",
-      2,
-      2,
-      1
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/elaborated-document.json/47",
-    "kind": "certificate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "closure@0",
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "a person"
-       }
-      },
-      "predicates": {
-       "in_finance": {
-        "arguments": [
-         "person"
-        ],
-        "description": "works in finance"
-       },
-       "senior": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is senior"
-       },
-       "supervises": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "supervises"
-       },
-       "lead": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is a senior finance boss",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "and",
-          [
-           "unary",
-           "boss",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "unary",
-           "senior_finance",
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        }
-       },
-       "boss": {
-        "arguments": [
-         "person"
-        ],
-        "description": "supervises someone",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "exists",
-          "person",
-          [
-           "binary",
-           "supervises",
-           [
-            "var",
-            []
-           ],
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        }
-       },
-       "senior_finance": {
-        "arguments": [
-         "person"
-        ],
-        "description": "is senior and works in finance",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "and",
-          [
-           "unary",
-           "senior",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "unary",
-           "in_finance",
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        }
-       },
-       "above": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "supervises directly or through one person",
-        "defined": {
-         "arguments": [
-          "person",
-          "person"
-         ],
-         "body": [
-          "or",
-          [
-           "binary",
-           "supervises",
-           [
-            "var",
-            1
-           ],
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "exists",
-           "person",
-           [
-            "and",
-            [
-             "binary",
-             "supervises",
-             [
-              "var",
-              2
-             ],
-             [
-              "var",
-              0
-             ]
-            ],
-            [
-             "binary",
-             "supervises",
-             [
-              "var",
-              0
-             ],
-             [
-              "var",
-              1
-             ]
-            ]
-           ]
-          ]
-         ]
-        }
-       }
-      },
-      "constants": {
-       "alice": {
-        "sort": "person",
-        "description": "Alice"
-       },
-       "bob": {
-        "sort": "person",
-        "description": "Bob"
-       },
-       "finance": {
-        "sort": "$string"
-       },
-       "legal": {
-        "sort": "$string"
-       }
-      }
-     }
-    },
-    "premises": [
-     [
-      "unary",
-      "senior_finance",
-      [
-       "const",
-       "alice"
-      ]
-     ],
-     [
-      "binary",
-      "supervises",
-      [
-       "const",
-       "alice"
-      ],
-      [
-       "const",
-       "bob"
-      ]
-     ]
-    ],
-    "conclusion": [
-     "unary",
-     "lead",
-     [
-      "const",
-      "alice"
-     ]
-    ],
-    "certificate": {
-     "checker_version": "ve-tableau-closure-checker@1",
-     "environment_id": "17753be50bdb0bc4ac51ef5cf911328eef2bd7c9fca23e2fcea61eb8b1c2189a",
-     "premise_meaning_ids": [
-      "e1e56ba86c0ed159e8a9796b4d78c52cd687e19a450eb429d4f64058523e8c5c",
-      "f1c11c5b8322f4cf4199f25ffc267fbdc651350878d0dc61b5eac51105bb9951",
-      "798c2a132a7d395f118edece1cc1b58107ca9ff0157e825fe380148052da3439",
-      "f39bc8dee5d0f1a01764ebb8fea3f406edce5cb5b8b6ceff046f04fc2e540e47",
-      "2a8b85734a662cf951948f591d6e28b4f2ae932152b73a602bf579939df2968e",
-      "ea4ec4a0dc8351b085c30cc3d7f18d5df668949320c3f9c3a1edd51c27e4b163",
-      "0b0af013ca2f6318d5067e34cd8136d27adeac36ce15d13b455d053f9df9caf7"
-     ],
-     "conclusion_meaning_id": "2590adf5dd8ab3d954689f07b4dc4ce1cad0d3b3c9ee6dd54e08f64594aee7e2",
-     "trace": {
-      "rule": "expand",
-      "at": 4,
-      "children": [
-       {
-        "rule": "expand",
-        "at": 0,
-        "children": [
-         {
-          "rule": "expand",
-          "at": 1,
-          "children": [
-           {
-            "rule": "expand",
-            "at": 10,
-            "children": [
-             {
-              "rule": "expand",
-              "at": 2,
-              "children": [
-               {
-                "rule": "expand",
-                "at": 13,
-                "children": [
-                 {
-                  "rule": "expand",
-                  "at": 14,
-                  "children": [
-                   {
-                    "rule": "close"
-                   },
-                   {
-                    "rule": "expand",
-                    "at": 15,
-                    "children": [
-                     {
-                      "rule": "close"
-                     },
-                     {
-                      "rule": "expand",
-                      "at": 16,
-                      "children": [
-                       {
-                        "rule": "expand",
-                        "at": 3,
-                        "children": [
-                         {
-                          "rule": "expand",
-                          "at": 20,
-                          "children": [
-                           {
-                            "rule": "expand",
-                            "at": 22,
-                            "children": [
-                             {
-                              "rule": "expand",
-                              "at": 21,
-                              "children": [
-                               {
-                                "rule": "expand",
-                                "at": 23,
-                                "children": [
-                                 {
-                                  "rule": "expand",
-                                  "at": 12,
-                                  "children": [
-                                   {
-                                    "rule": "expand",
-                                    "at": 11,
-                                    "children": [
-                                     {
-                                      "rule": "expand",
-                                      "at": 26,
-                                      "children": [
-                                       {
-                                        "rule": "close"
-                                       }
-                                      ],
-                                      "parameter": "c:bob"
-                                     },
-                                     {
-                                      "rule": "close"
-                                     }
-                                    ]
-                                   },
-                                   {
-                                    "rule": "close"
-                                   }
-                                  ]
-                                 },
-                                 {
-                                  "rule": "close"
-                                 }
-                                ]
-                               },
-                               {
-                                "rule": "close"
-                               }
-                              ]
-                             },
-                             {
-                              "rule": "close"
-                             }
-                            ]
-                           }
-                          ]
-                         }
-                        ],
-                        "parameter": "c:alice"
-                       }
-                      ]
-                     }
-                    ]
-                   }
-                  ]
-                 }
-                ]
-               }
-              ],
-              "parameter": "c:alice"
-             }
-            ]
-           }
-          ],
-          "parameter": "c:alice"
-         }
-        ],
-        "parameter": "c:alice"
-       }
-      ]
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: Natural number expected"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: Natural number expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnboundVariable",
-     "text": "UnboundVariable: index must be a bounded nonnegative integer"
-    }
-   },
-   "signature": "9fc6cf3a7db9a30a",
-   "follow_up": "DF-15",
-   "minimised": false
-  },
-  {
    "id": "requests-a2e27dac00577c5b",
    "surface": "requests",
    "profile": "evaluation:evaluate",
@@ -30865,185 +28262,6 @@
    },
    "signature": "abcf82ab8e1139dc",
    "follow_up": "DF-9"
-  },
-  {
-   "id": "requests-ae219c50f8468e1d",
-   "surface": "requests",
-   "profile": "elaborated-document:evaluate",
-   "seed": "conformance/elaborated-document.json/27",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "assigned",
-      "defined",
-      "body",
-      2,
-      3,
-      1
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/elaborated-document.json/27",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "data@0",
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "Person."
-       },
-       "department": {
-        "description": "Department."
-       }
-      },
-      "predicates": {
-       "dept": {
-        "arguments": [
-         "person",
-         "department"
-        ],
-        "description": "Department.",
-        "functional": true,
-        "total": true
-       },
-       "backup": {
-        "arguments": [
-         "person",
-         "department"
-        ],
-        "description": "Backup department.",
-        "total": true
-       },
-       "assigned": {
-        "arguments": [
-         "person"
-        ],
-        "description": "Has an assigned department.",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": [
-          "exists",
-          "department",
-          [
-           "binary",
-           "dept",
-           [
-            "var",
-            1
-           ],
-           [
-            "var",
-            []
-           ]
-          ]
-         ]
-        }
-       }
-      },
-      "constants": {
-       "alice": {
-        "sort": "person",
-        "description": "Alice."
-       }
-      }
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "person": [
-       "a"
-      ],
-      "department": [
-       "d"
-      ]
-     },
-     "constants": {
-      "alice": "a"
-     },
-     "relations": {
-      "dept": [
-       [
-        "a",
-        "d"
-       ]
-      ],
-      "backup": [
-       [
-        "a",
-        "d"
-       ]
-      ]
-     }
-    },
-    "ast": [
-     [
-      "unary",
-      "assigned",
-      [
-       "const",
-       "alice"
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: Natural number expected"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: Natural number expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnboundVariable",
-     "text": "UnboundVariable: index must be a bounded nonnegative integer"
-    }
-   },
-   "signature": "ae219c50f8468e1d",
-   "follow_up": "DF-15",
-   "minimised": false
   },
   {
    "id": "requests-ae2af1a50758d9f7",
@@ -37619,101 +34837,6 @@
    "minimised": false
   },
   {
-   "id": "requests-cf3824bc10a6f5d5",
-   "surface": "requests",
-   "profile": "elaborated-document:search",
-   "seed": "conformance/elaborated-document.json/44",
-   "engines": [
-    "python",
-    "rust"
-   ],
-   "meta": {
-    "kind": "search",
-    "family": "core",
-    "lean": null,
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "premises",
-      "conclusion",
-      "max_domain_size"
-     ],
-     "constants": {},
-     "operation": "search"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "senior_finance",
-      "defined",
-      "body"
-     ],
-     "object"
-    ]
-   ],
-   "input": {
-    "id": "conformance/elaborated-document.json/44",
-    "kind": "search",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "a"
-       }
-      },
-      "predicates": {
-       "senior_finance": {
-        "arguments": [
-         "person"
-        ],
-        "description": "i",
-        "defined": {
-         "arguments": [
-          "person"
-         ],
-         "body": {}
-        }
-       }
-      },
-      "constants": {}
-     }
-    },
-    "max_domain_size": 2
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "Definition senior_finance: the body is not a typed formula over the symbols below it"
-    },
-    "lean": {
-     "outcome": "n/a"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: expected tagged AST array"
-    }
-   },
-   "signature": "cf3824bc10a6f5d5",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "requests-d137efd6556564fb",
    "surface": "requests",
    "profile": "elaborated-document:evaluate",
@@ -42029,1135 +39152,6 @@
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-ee6705356e4f58f5",
-   "surface": "requests",
-   "profile": "usecase:claude-constitution-excerpt:evaluate",
-   "seed": "usecases/claude-constitution-excerpt/model-false.json@definitions-environment.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {
-      "kind": "evaluate-budgeted"
-     },
-     "operation": "evaluate-budgeted"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "holds_property",
-      "defined",
-      "arguments",
-      0
-     ],
-     "number"
-    ],
-    [
-     "unicode",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "guidelines_content",
-      "defined",
-      "body",
-      2,
-      1,
-      0
-     ],
-     "upper"
-    ]
-   ],
-   "input": {
-    "id": "usecases/claude-constitution-excerpt/model-false.json@definitions-environment.json",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "closure@0",
-      "definitions@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "claude_model": {
-        "description": "A Claude model, as referred to by the constitution excerpt (e.g. 'all current Claude models', 'Claude')."
-       },
-       "mechanism": {
-        "description": "A human mechanism for overseeing the dispositions and actions of AI, as referred to by the 'broadly safe' value and the oversight discussion."
-       },
-       "guideline": {
-        "description": "One of Anthropic's specific guidelines that a Claude model might or might not be acting in accordance with."
-       },
-       "principal": {
-        "description": "An operator or user that a Claude model interacts with (the excerpt's 'operators and users' merged into one sort)."
-       },
-       "action": {
-        "description": "An action a Claude model might perform."
-       },
-       "overseer": {
-        "description": "A human or organization who might instruct, check, or be owed obedience by a Claude model, including Anthropic itself and appropriately sanctioned individuals."
-       },
-       "property": {
-        "description": "One of the four core value-properties named in the excerpt's priority ordering: broadly safe, broadly ethical, compliant with Anthropic's guidelines, genuinely helpful."
-       },
-       "situation": {
-        "description": "A case or interaction in which two or more of the four core value-properties might come into apparent conflict."
-       }
-      },
-      "predicates": {
-       "current_claude_model": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "Recorded as one of 'all current Claude models' the excerpt's core-values paragraph addresses."
-       },
-       "ought_have_core_values": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as a model of which the excerpt says 'we believe [it] should be' broadly safe, broadly ethical, compliant, and genuinely helpful. This predicate names, but does not analyse, the deontic force of 'should be' and the fact that it introduces four further properties (see GAPS.md #1 and coverage.md row 1)."
-       },
-       "appropriate": {
-        "arguments": [
-         "mechanism"
-        ],
-        "description": "Recorded as an 'appropriate' human mechanism for overseeing the dispositions and actions of AI, in the sense used by the 'broadly safe' value."
-       },
-       "undermines": {
-        "arguments": [
-         "claude_model",
-         "mechanism"
-        ],
-        "description": "Recorded as the model undermining (acting so as to defeat or subvert) this oversight mechanism."
-       },
-       "honest": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "Recorded as honest, one conjunct of the excerpt's 'broadly ethical' value ('having good personal values, being honest, and avoiding...'). 'Having good personal values' itself has no witness anywhere in this vocabulary; see GAPS.md #2."
-       },
-       "inappropriately_harmful": {
-        "arguments": [
-         "action"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as an action the excerpt would call 'inappropriately dangerous or harmful'. The judgement of what counts as 'inappropriate' is hidden inside this predicate; see GAPS.md #2."
-       },
-       "performs": {
-        "arguments": [
-         "claude_model",
-         "action"
-        ],
-        "description": "Recorded as the model performing this action."
-       },
-       "relevant": {
-        "arguments": [
-         "guideline"
-        ],
-        "description": "Recorded as 'relevant' to the model's present situation, in the sense used by 'compliant with Anthropic's guidelines: ... where they're relevant'."
-       },
-       "follows": {
-        "arguments": [
-         "claude_model",
-         "guideline"
-        ],
-        "description": "Recorded as the model acting in accordance with this guideline."
-       },
-       "interacts": {
-        "arguments": [
-         "claude_model",
-         "principal"
-        ],
-        "description": "Recorded as the model interacting with this operator or user."
-       },
-       "benefits": {
-        "arguments": [
-         "claude_model",
-         "principal"
-        ],
-        "description": "Recorded as the model benefiting this operator or user, in the sense used by 'genuinely helpful'. The intensifier 'genuinely' (sincere vs. superficial benefit) has no separate witness; see GAPS.md #2."
-       },
-       "outranks": {
-        "arguments": [
-         "property",
-         "property"
-        ],
-        "description": "Recorded as the first property immediately outranking (being listed directly above) the second property in the excerpt's stated priority order: broadly safe, broadly ethical, compliant with guidelines, genuinely helpful. Base edges only; use tc[outranks]/rtc[outranks] for the full order."
-       },
-       "contends_for": {
-        "arguments": [
-         "situation",
-         "property"
-        ],
-        "description": "Recorded as this property being one of the (at most two, in every model used here) properties tagged as apparently conflicting in this situation. A reification workaround for the fact that v0 has no ternary relation to say directly which two properties are the ones apparently conflicting in a given situation; see GAPS.md #1."
-       },
-       "violates_hard_constraint": {
-        "arguments": [
-         "situation"
-        ],
-        "description": "Recorded as a situation in which the model would be violating one of Anthropic's hard constraints, in the sense of the excerpt's exception clause 'assuming Claude is not violating any hard constraints'. What a hard constraint is, and what counts as violating one, is not modelled; this is a bare flag."
-       },
-       "ought_follow": {
-        "arguments": [
-         "situation",
-         "property"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as the property the excerpt says Claude 'should generally' follow in this situation. Hides both the deontic force of 'should' and the defeasibility of 'generally'; see GAPS.md #1."
-       },
-       "undermines_check": {
-        "arguments": [
-         "claude_model",
-         "overseer"
-        ],
-        "description": "Recorded as the model undermining this overseer's role as an appropriately sanctioned human check on AI systems, in the sense used by the corrigibility sentence."
-       },
-       "sanctioned_check": {
-        "arguments": [
-         "overseer"
-        ],
-        "description": "Recorded as an 'appropriately sanctioned' human acting as a check on AI systems, in the sense used by the corrigibility sentence."
-       },
-       "bound_to_obey": {
-        "arguments": [
-         "claude_model",
-         "overseer"
-        ],
-        "description": "OPAQUE marker predicate. Recorded as the model being bound to unconditional ('blind') obedience toward this overseer. Hides the deontic modality of 'must obey' and the manner qualifier 'blind'; see GAPS.md #1."
-       },
-       "safety_content": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "The excerpt's recorded safety content condition.",
-        "defined": {
-         "arguments": [
-          "claude_model"
-         ],
-         "body": [
-          "forall",
-          "mechanism",
-          [
-           "implies",
-           [
-            "unary",
-            "appropriate",
-            [
-             "var",
-             0
-            ]
-           ],
-           [
-            "not",
-            [
-             "binary",
-             "undermines",
-             [
-              "var",
-              1
-             ],
-             [
-              "var",
-              0
-             ]
-            ]
-           ]
-          ]
-         ]
-        }
-       },
-       "ethics_content": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "The excerpt's recorded ethics content condition.",
-        "defined": {
-         "arguments": [
-          "claude_model"
-         ],
-         "body": [
-          "and",
-          [
-           "unary",
-           "honest",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "forall",
-           "action",
-           [
-            "implies",
-            [
-             "unary",
-             "inappropriately_harmful",
-             [
-              "var",
-              0
-             ]
-            ],
-            [
-             "not",
-             [
-              "binary",
-              "performs",
-              [
-               "var",
-               1
-              ],
-              [
-               "var",
-               0
-              ]
-             ]
-            ]
-           ]
-          ]
-         ]
-        }
-       },
-       "guidelines_content": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "The excerpt's recorded guidelines content condition.",
-        "defined": {
-         "arguments": [
-          "claude_model"
-         ],
-         "body": [
-          "forall",
-          "guideline",
-          [
-           "implies",
-           [
-            "UNARY",
-            "relevant",
-            [
-             "var",
-             0
-            ]
-           ],
-           [
-            "binary",
-            "follows",
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             0
-            ]
-           ]
-          ]
-         ]
-        }
-       },
-       "helpfulness_content": {
-        "arguments": [
-         "claude_model"
-        ],
-        "description": "The excerpt's recorded helpfulness content condition.",
-        "defined": {
-         "arguments": [
-          "claude_model"
-         ],
-         "body": [
-          "forall",
-          "principal",
-          [
-           "implies",
-           [
-            "binary",
-            "interacts",
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             0
-            ]
-           ],
-           [
-            "binary",
-            "benefits",
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             0
-            ]
-           ]
-          ]
-         ]
-        }
-       },
-       "holds_property": {
-        "arguments": [
-         "claude_model",
-         "property"
-        ],
-        "description": "Connects each named property constant to its recorded content.",
-        "defined": {
-         "arguments": [
-          7,
-          "property"
-         ],
-         "body": [
-          "or",
-          [
-           "or",
-           [
-            "or",
-            [
-             "and",
-             [
-              "eq",
-              [
-               "var",
-               0
-              ],
-              [
-               "const",
-               "safety"
-              ]
-             ],
-             [
-              "unary",
-              "safety_content",
-              [
-               "var",
-               1
-              ]
-             ]
-            ],
-            [
-             "and",
-             [
-              "eq",
-              [
-               "var",
-               0
-              ],
-              [
-               "const",
-               "ethics"
-              ]
-             ],
-             [
-              "unary",
-              "ethics_content",
-              [
-               "var",
-               1
-              ]
-             ]
-            ]
-           ],
-           [
-            "and",
-            [
-             "eq",
-             [
-              "var",
-              0
-             ],
-             [
-              "const",
-              "guidelines"
-             ]
-            ],
-            [
-             "unary",
-             "guidelines_content",
-             [
-              "var",
-              1
-             ]
-            ]
-           ]
-          ],
-          [
-           "and",
-           [
-            "eq",
-            [
-             "var",
-             0
-            ],
-            [
-             "const",
-             "helpfulness"
-            ]
-           ],
-           [
-            "unary",
-            "helpfulness_content",
-            [
-             "var",
-             1
-            ]
-           ]
-          ]
-         ]
-        }
-       }
-      },
-      "constants": {
-       "claude": {
-        "sort": "claude_model",
-        "description": "The Claude model this excerpt's claims are about."
-       },
-       "safety": {
-        "sort": "property",
-        "description": "The 'broadly safe' core value."
-       },
-       "ethics": {
-        "sort": "property",
-        "description": "The 'broadly ethical' core value."
-       },
-       "guidelines": {
-        "sort": "property",
-        "description": "The 'compliant with Anthropic's guidelines' core value."
-       },
-       "helpfulness": {
-        "sort": "property",
-        "description": "The 'genuinely helpful' core value."
-       },
-       "anthropic": {
-        "sort": "overseer",
-        "description": "Anthropic, named explicitly in 'not... blind obedience, including towards Anthropic'."
-       }
-      }
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {
-      "claude_model": [
-       "claude"
-      ],
-      "mechanism": [
-       "board_oversight",
-       "red_team_review"
-      ],
-      "guideline": [
-       "csam_guideline",
-       "weapons_guideline"
-      ],
-      "principal": [
-       "alice",
-       "acme_corp"
-      ],
-      "action": [
-       "helpful_answer",
-       "harmful_exploit"
-      ],
-      "overseer": [
-       "anthropic",
-       "safety_reviewer"
-      ],
-      "property": [
-       "safety",
-       "ethics",
-       "guidelines",
-       "helpfulness"
-      ],
-      "situation": [
-       "conflict_case"
-      ]
-     },
-     "constants": {
-      "claude": "claude",
-      "safety": "safety",
-      "ethics": "ethics",
-      "guidelines": "guidelines",
-      "helpfulness": "helpfulness",
-      "anthropic": "anthropic"
-     },
-     "relations": {
-      "current_claude_model": [
-       [
-        "claude"
-       ]
-      ],
-      "ought_have_core_values": [
-       [
-        "claude"
-       ]
-      ],
-      "appropriate": [
-       [
-        "board_oversight"
-       ],
-       [
-        "red_team_review"
-       ]
-      ],
-      "undermines": [],
-      "honest": [
-       [
-        "claude"
-       ]
-      ],
-      "inappropriately_harmful": [
-       [
-        "harmful_exploit"
-       ]
-      ],
-      "performs": [
-       [
-        "claude",
-        "helpful_answer"
-       ],
-       [
-        "claude",
-        "harmful_exploit"
-       ]
-      ],
-      "relevant": [
-       [
-        "csam_guideline"
-       ],
-       [
-        "weapons_guideline"
-       ]
-      ],
-      "follows": [
-       [
-        "claude",
-        "csam_guideline"
-       ],
-       [
-        "claude",
-        "weapons_guideline"
-       ]
-      ],
-      "interacts": [
-       [
-        "claude",
-        "alice"
-       ],
-       [
-        "claude",
-        "acme_corp"
-       ]
-      ],
-      "benefits": [
-       [
-        "claude",
-        "alice"
-       ],
-       [
-        "claude",
-        "acme_corp"
-       ]
-      ],
-      "outranks": [
-       [
-        "safety",
-        "ethics"
-       ],
-       [
-        "ethics",
-        "guidelines"
-       ],
-       [
-        "guidelines",
-        "helpfulness"
-       ]
-      ],
-      "contends_for": [
-       [
-        "conflict_case",
-        "ethics"
-       ],
-       [
-        "conflict_case",
-        "helpfulness"
-       ]
-      ],
-      "violates_hard_constraint": [],
-      "ought_follow": [
-       [
-        "conflict_case",
-        "ethics"
-       ]
-      ],
-      "undermines_check": [],
-      "sanctioned_check": [
-       [
-        "anthropic"
-       ],
-       [
-        "safety_reviewer"
-       ]
-      ],
-      "bound_to_obey": []
-     }
-    },
-    "ast": [
-     [
-      "forall",
-      "claude_model",
-      [
-       "implies",
-       [
-        "unary",
-        "current_claude_model",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "ought_have_core_values",
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "mechanism",
-      [
-       "implies",
-       [
-        "unary",
-        "appropriate",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "not",
-        [
-         "binary",
-         "undermines",
-         [
-          "const",
-          "claude"
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "and",
-      [
-       "unary",
-       "honest",
-       [
-        "const",
-        "claude"
-       ]
-      ],
-      [
-       "forall",
-       "action",
-       [
-        "implies",
-        [
-         "unary",
-         "inappropriately_harmful",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "not",
-         [
-          "binary",
-          "performs",
-          [
-           "const",
-           "claude"
-          ],
-          [
-           "var",
-           0
-          ]
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "guideline",
-      [
-       "implies",
-       [
-        "unary",
-        "relevant",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "binary",
-        "follows",
-        [
-         "const",
-         "claude"
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "principal",
-      [
-       "implies",
-       [
-        "binary",
-        "interacts",
-        [
-         "const",
-         "claude"
-        ],
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "binary",
-        "benefits",
-        [
-         "const",
-         "claude"
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ],
-     [
-      "and",
-      [
-       "binary",
-       "outranks",
-       [
-        "const",
-        "safety"
-       ],
-       [
-        "const",
-        "ethics"
-       ]
-      ],
-      [
-       "and",
-       [
-        "binary",
-        "outranks",
-        [
-         "const",
-         "ethics"
-        ],
-        [
-         "const",
-         "guidelines"
-        ]
-       ],
-       [
-        "binary",
-        "outranks",
-        [
-         "const",
-         "guidelines"
-        ],
-        [
-         "const",
-         "helpfulness"
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "situation",
-      [
-       "forall",
-       "property",
-       [
-        "forall",
-        "property",
-        [
-         "implies",
-         [
-          "and",
-          [
-           "and",
-           [
-            "binary",
-            "contends_for",
-            [
-             "var",
-             2
-            ],
-            [
-             "var",
-             1
-            ]
-           ],
-           [
-            "binary",
-            "contends_for",
-            [
-             "var",
-             2
-            ],
-            [
-             "var",
-             0
-            ]
-           ]
-          ],
-          [
-           "and",
-           [
-            "reach",
-            "plus",
-            [
-             "named",
-             "outranks"
-            ],
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             0
-            ]
-           ],
-           [
-            "not",
-            [
-             "unary",
-             "violates_hard_constraint",
-             [
-              "var",
-              2
-             ]
-            ]
-           ]
-          ]
-         ],
-         [
-          "and",
-          [
-           "binary",
-           "ought_follow",
-           [
-            "var",
-            2
-           ],
-           [
-            "var",
-            1
-           ]
-          ],
-          [
-           "not",
-           [
-            "binary",
-            "ought_follow",
-            [
-             "var",
-             2
-            ],
-            [
-             "var",
-             0
-            ]
-           ]
-          ]
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "property",
-      [
-       "implies",
-       [
-        "not",
-        [
-         "eq",
-         [
-          "var",
-          0
-         ],
-         [
-          "const",
-          "safety"
-         ]
-        ]
-       ],
-       [
-        "reach",
-        "plus",
-        [
-         "named",
-         "outranks"
-        ],
-        [
-         "const",
-         "safety"
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "mechanism",
-      [
-       "implies",
-       [
-        "unary",
-        "appropriate",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "not",
-        [
-         "binary",
-         "undermines",
-         [
-          "const",
-          "claude"
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ]
-     ],
-     [
-      "not",
-      [
-       "binary",
-       "bound_to_obey",
-       [
-        "const",
-        "claude"
-       ],
-       [
-        "const",
-        "anthropic"
-       ]
-      ]
-     ],
-     [
-      "forall",
-      "overseer",
-      [
-       "implies",
-       [
-        "unary",
-        "sanctioned_check",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "not",
-        [
-         "binary",
-         "undermines_check",
-         [
-          "const",
-          "claude"
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ]
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "Definition 'holds_property' arguments differ from its declaration"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid indexed formula"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: invalid formula tag or arity"
-    }
-   },
-   "signature": "ee6705356e4f58f5",
-   "follow_up": "DF-9",
-   "minimised": false
-  },
-  {
    "id": "requests-eed0dea15a64521b",
    "surface": "requests",
    "profile": "validation:evaluate",
@@ -47307,208 +43301,6 @@
    "minimised": false
   },
   {
-   "id": "wire-93ad2ea4d583e105",
-   "surface": "wire",
-   "profile": "soft-norms@0",
-   "seed": "soft-norms@0/tests/test_soft_norms_conformance.py::test_inherited_null_decider_is_admitted_by_python_route",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {},
-   "mutation": [],
-   "input": {
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "norms@0",
-      "relational-fol@0",
-      "soft-norms@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "constants": {},
-      "predicates": {
-       "x_permitted": {
-        "arguments": [
-         "assistant"
-        ],
-        "description": "p",
-        "regulated": {
-         "act": "{0} do x",
-         "default": "allow",
-         "role": "permission"
-        }
-       },
-       "x_required": {
-        "arguments": [
-         "assistant"
-        ],
-        "description": "o",
-        "regulated": {
-         "act": "{0} do x",
-         "default": "deny",
-         "permission": "x_permitted",
-         "role": "obligation"
-        }
-       }
-      },
-      "soft": {
-       "exception_decider": "a",
-       "outranking": {
-        "mode": "strict"
-       }
-      },
-      "sorts": {
-       "assistant": {
-        "description": "a"
-       }
-      }
-     }
-    },
-    "norms": [
-     {
-      "norm": {
-       "exception": {
-        "decided_by": null,
-        "factors": [],
-        "necessary": [],
-        "sufficient": []
-       },
-       "guard": [
-        "top"
-       ],
-       "mode": "default",
-       "name": "a",
-       "over": [],
-       "predicate": "x_required",
-       "sign": true,
-       "unless": []
-      }
-     }
-    ]
-   },
-   "classes": [
-    "outcome"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "ok",
-     "value": null
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "framing",
-     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "93ad2ea4d583e105",
-   "follow_up": "DF-14"
-  },
-  {
-   "id": "wire-e67971f93c26326a",
-   "surface": "wire",
-   "profile": "demo@0",
-   "seed": "demo@0/E13",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "doc",
-      "part",
-      "ys"
-     ],
-     "null"
-    ]
-   ],
-   "input": {
-    "doc": {
-     "items": [],
-     "mode": "closed",
-     "refs": [],
-     "part": {
-      "ys": null
-     }
-    }
-   },
-   "classes": [
-    "outcome"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "ok",
-     "value": null
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "framing",
-     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "e67971f93c26326a",
-   "follow_up": "DF-14"
-  },
-  {
-   "id": "wire-fcbf283fe5b17271",
-   "surface": "wire",
-   "profile": "forms@0",
-   "seed": "forms@0/F3b absent holds, check holds",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "doc",
-      "plain",
-      "part"
-     ],
-     "null"
-    ]
-   ],
-   "input": {
-    "doc": {
-     "plain": {
-      "part": null
-     },
-     "z": 0
-    }
-   },
-   "classes": [
-    "outcome"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "ok",
-     "value": null
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "framing",
-     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "fcbf283fe5b17271",
-   "follow_up": "DF-14"
-  },
-  {
    "id": "requests-bb16d27f009ba404",
    "surface": "requests",
    "profile": "validation:evaluate",
@@ -50272,98 +46064,90 @@
    "follow_up": "DF-6"
   },
   {
-   "id": "environment-996535acb2977f50",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/elaborated-document.json/10/environment",
+   "id": "requests-8ec65670ef111025",
+   "surface": "requests",
+   "profile": "elaborated-document:evaluate",
+   "seed": "conformance/elaborated-document.json/55",
    "engines": [
     "python",
     "lean",
     "rust"
    ],
-   "meta": {},
-   "mutation": [],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "relational-fol@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "sorts": {},
-     "predicates": {
-      "dept": {
-       "arguments": [
-        "$string"
-       ],
-       "description": "d"
-      }
-     },
-     "constants": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "invalid signature: dept"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "invalid signature: dept"
-    },
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
     "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "unknown predicate argument sort"
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
     }
    },
-   "signature": "996535acb2977f50",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "environment-166b6a5d0308d1be",
-   "surface": "environment",
-   "profile": "soft-norms",
-   "seed": "usecases/safety-framework/environment.d1.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
    "mutation": [
     [
-     "unicode",
+     "absent",
      [
+      "environment",
       "vocabulary",
       "constants",
-      "cbrn_uplift_tcl",
-      "sort"
+      "alice"
      ],
-     "upper"
+     null
+    ],
+    [
+     "type",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "above",
+      "defined",
+      "body",
+      1,
+      2
+     ],
+     "array"
     ]
    ],
    "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "norms@0",
-     "relational-fol@0",
-     "soft-norms@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "sorts": {},
-     "predicates": {},
-     "constants": {
-      "cyber": {
-       "sort": "d",
-       "description": "C"
-      }
+    "id": "conformance/elaborated-document.json/55",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "a"
+       }
+      },
+      "predicates": {
+       "above": {
+        "arguments": [
+         "person",
+         "person"
+        ],
+        "description": "s",
+        "defined": {
+         "arguments": [
+          "person",
+          "person"
+         ],
+         "body": []
+        }
+       }
+      },
+      "constants": {}
      }
     }
    },
@@ -50373,22 +46157,224 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "InvalidInput",
-     "text": "unknown constant sort: cyber"
+     "code": "SyntaxError",
+     "text": "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
     },
     "lean": {
      "outcome": "error",
-     "code": "InvalidInput",
-     "text": "unknown constant sort: cyber"
+     "code": "SyntaxError",
+     "text": "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
     },
     "rust": {
      "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "unknown constant sort"
+     "code": "InvalidInput",
+     "text": "InvalidInput: expected exactly fields [\"arguments\", \"description\"]"
     }
    },
-   "signature": "166b6a5d0308d1be",
-   "follow_up": "DF-9"
+   "signature": "8ec65670ef111025",
+   "follow_up": "DF-20"
+  },
+  {
+   "id": "wire-93ad2ea4d583e105",
+   "surface": "wire",
+   "profile": "soft-norms@0",
+   "seed": "soft-norms@0/tests/test_soft_norms_conformance.py::test_inherited_null_decider_is_admitted_by_python_route",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [],
+   "input": {
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "norms@0",
+      "relational-fol@0",
+      "soft-norms@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "constants": {},
+      "predicates": {
+       "x_permitted": {
+        "arguments": [
+         "assistant"
+        ],
+        "description": "p",
+        "regulated": {
+         "act": "{0} do x",
+         "default": "allow",
+         "role": "permission"
+        }
+       },
+       "x_required": {
+        "arguments": [
+         "assistant"
+        ],
+        "description": "o",
+        "regulated": {
+         "act": "{0} do x",
+         "default": "deny",
+         "permission": "x_permitted",
+         "role": "obligation"
+        }
+       }
+      },
+      "soft": {
+       "exception_decider": "a",
+       "outranking": {
+        "mode": "strict"
+       }
+      },
+      "sorts": {
+       "assistant": {
+        "description": "a"
+       }
+      }
+     }
+    },
+    "norms": [
+     {
+      "norm": {
+       "exception": {
+        "decided_by": null,
+        "factors": [],
+        "necessary": [],
+        "sufficient": []
+       },
+       "guard": [
+        "top"
+       ],
+       "mode": "default",
+       "name": "a",
+       "over": [],
+       "predicate": "x_required",
+       "sign": true,
+       "unless": []
+      }
+     }
+    ]
+   },
+   "classes": [
+    "outcome"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "ok",
+     "value": null
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "framing",
+     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "93ad2ea4d583e105",
+   "follow_up": "DF-14"
+  },
+  {
+   "id": "wire-e67971f93c26326a",
+   "surface": "wire",
+   "profile": "demo@0",
+   "seed": "demo@0/E13",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "doc",
+      "part",
+      "ys"
+     ],
+     "null"
+    ]
+   ],
+   "input": {
+    "doc": {
+     "items": [],
+     "mode": "closed",
+     "refs": [],
+     "part": {
+      "ys": null
+     }
+    }
+   },
+   "classes": [
+    "outcome"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "ok",
+     "value": null
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "framing",
+     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "e67971f93c26326a",
+   "follow_up": "DF-14"
+  },
+  {
+   "id": "wire-fcbf283fe5b17271",
+   "surface": "wire",
+   "profile": "forms@0",
+   "seed": "forms@0/F3b absent holds, check holds",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "doc",
+      "plain",
+      "part"
+     ],
+     "null"
+    ]
+   ],
+   "input": {
+    "doc": {
+     "plain": {
+      "part": null
+     },
+     "z": 0
+    }
+   },
+   "classes": [
+    "outcome"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "ok",
+     "value": null
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "framing",
+     "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "fcbf283fe5b17271",
+   "follow_up": "DF-14"
   },
   {
    "id": "environment-ec2b2bc949a09a26",
