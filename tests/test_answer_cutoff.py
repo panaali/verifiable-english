@@ -420,10 +420,25 @@ def test_a_case_answers_alike_alone_and_in_a_batch(executable):
     deep["ast"] = [nested]
     texts = [lean_service._dumps(case) for case in (EVALUATION[1], deep)]
     with lean_service.LeanService(executable) as service:
-        together = answer_replay.ask(service, "evaluate", texts, {})
-        alone = [answer_replay.ask(service, "evaluate", [text], {})[0] for text in texts]
-        response = answer_replay.send(service, "evaluate", texts, {})
+        together = answer_replay.ask(service, "evaluate", texts)
+        alone = [answer_replay.ask(service, "evaluate", [text])[0] for text in texts]
+        response = answer_replay.send(service, "evaluate", texts)
     assert response["status"] == "ok" and response["results"][1]["result"]["case_index"] == 1
     assert together == alone
     entry = {"digest": "d", "index": 3, "result": {"case_index": 3, "error": "x", "status": "error"}}
     assert answer_replay.unplaced(entry) == {"digest": "d", "result": {"error": "x", "status": "error"}}
+
+
+def test_a_case_named_by_handle_is_replayed_inline_as_the_client_resends_it(tmp_path, executable):
+    """The inline form answers as the handle did, and leaves no state in the process to vary the next answer."""
+    case = EVALUATION[0]
+    [sent] = lean_service._encode([case])
+    assert sent.digest is not None
+    text = answer_replay.inline(sent.text, {sent.digest: sent.environment})
+    assert json.loads(text) == json.loads(lean_service._dumps(case))
+    with lean_service.LeanService(executable, handles=True) as handled, \
+            lean_service.LeanService(executable, handles=False) as plain:
+        answers = [[{k: v for k, v in answer_replay.unplaced(entry).items() if k != "digest"} for entry in entries]
+                   for entries in (handled.run_bound("evaluate", [case]),
+                                   answer_replay.send(plain, "evaluate", [text])["results"])]
+    assert answers[0] == answers[1] and answers[0]
