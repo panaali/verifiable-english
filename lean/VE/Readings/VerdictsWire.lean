@@ -1,4 +1,4 @@
-import VE.Readings.Verdicts
+import VE.Readings.Components
 
 /-! The kind `readings-verdicts` on the enumerated route (docs/spec/readings-defaults.md 3, 4.4, 2.3 to 2.5, 6.4
 and 6.5; plan RD-3).
@@ -48,22 +48,24 @@ theorem conflictFree_of_localFree (U : UDoc) (h : VE.NormDefaults.WellFormedU U 
   refine ⟨fun r hr vs hvs => hno _ (List.mem_append_left _ (List.mem_filterMap.mpr ⟨.reg r, hv.regulated r hr, rfl⟩))
     vs hvs, fun pr hpr vs hvs => hno _ (List.mem_append_right _ (List.mem_map.mpr ⟨pr, hpr, rfl⟩)) vs hvs⟩
 
-/-- A checked finite model and filling, locally conflict-free, is the base of a filled expansion where the premises
-    hold, the conclusion with the value the check reports. -/
-theorem expansion_of_modelCheck (U : UDoc) (h : VE.NormDefaults.WellFormedU U = true) (M : VE.FiniteModel Entity)
-    (valid : M.Valid (envAt U.D 0)) (F : VE.NormDefaults.FiniteFill U Entity) (Γ : List VE.Formula) (φ : VE.Formula)
+/-- A checked finite model and filling, locally conflict-free and making the extra base premises `X` true
+    (`modelCheckX`), is the base of a filled expansion where the premises hold, the conclusion with the value the
+    check reports. -/
+theorem expansionX_of_modelCheck (U : UDoc) (h : VE.NormDefaults.WellFormedU U = true) (X : List VE.Formula)
+    (M : VE.FiniteModel Entity) (valid : M.Valid (envAt U.D 0)) (F : VE.NormDefaults.FiniteFill U Entity)
+    (Γ : List VE.Formula) (φ : VE.Formula)
     (hΓ : ∀ a ∈ Γ, a.WellFormed (envAt (fill U) (size (fill U))) [])
     (hφ : φ.WellFormed (envAt (fill U) (size (fill U))) [])
-    (hm : (VE.NormDefaults.modelCheckU U M F Γ φ).1 = true) (hl : localFree U M F = true) :
-    ∃ S : VE.Structure.{0}, VE.NormDefaults.BaseAdmissibleU U (restrictAll (fill U).T S) ∧
+    (hm : (VE.NormDefaults.modelCheckX U X M F Γ φ).1 = true) (hl : localFree U M F = true) :
+    ∃ S : VE.Structure.{0}, VE.NormDefaults.Wire.BaseAdmissibleX U X (restrictAll (fill U).T S) ∧
       DocumentExpansion (fill U) (restrictAll (fill U).T S) S ∧ Sat S Γ ∧
-      (φ.denote S [] ↔ (VE.NormDefaults.modelCheckU U M F Γ φ).2 = true) := by
-  obtain ⟨hB, hΓs, hφs⟩ := VE.NormDefaults.modelCheckU_sound U h M valid F Γ φ hm
+      (φ.denote S [] ↔ (VE.NormDefaults.modelCheckX U X M F Γ φ).2 = true) := by
+  obtain ⟨hB, hΓs, hφs⟩ := VE.NormDefaults.modelCheckX_sound U h X M valid F Γ φ hm
   have hcf := conflictFree_of_localFree U h M F hl
-  have hE := VE.NormDefaults.canonTyped_expansion h hB hcf
+  have hE := VE.NormDefaults.canonTyped_expansion h hB.1 hcf
   have hr := hE.1
   have hv := VE.Norms.valid_of_wellFormed _ (VE.NormDefaults.fill_wellFormed U h)
-  obtain ⟨_, hpa⟩ := (VE.Norms.documentExpansion_iff hv _ _ hB.1).mp hE
+  obtain ⟨_, hpa⟩ := (VE.Norms.documentExpansion_iff hv _ _ hB.1.1).mp hE
   obtain ⟨hA, _, hM, _⟩ := (VE.Norms.prefix_char hv _ (Nat.le_refl _) _).mp hpa
   have hden : ∀ ψ : VE.Formula, ψ.denote (restrictAll (fill U).T (VE.NormDefaults.canonTyped (fill U)
       (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F)))) [] ↔
@@ -79,6 +81,19 @@ theorem expansion_of_modelCheck (U : UDoc) (h : VE.NormDefaults.WellFormedU U = 
   refine ⟨_, by rw [hr]; exact hB, by rw [hr]; exact hE, fun a ha => (key a (hΓ a ha)).mp (hΓs a ha),
     (key φ hφ).symm.trans hφs⟩
 
+/-- `expansionX_of_modelCheck` at `X = []` (`modelCheckX_nil`, `baseAdmissibleX_nil`). -/
+theorem expansion_of_modelCheck (U : UDoc) (h : VE.NormDefaults.WellFormedU U = true) (M : VE.FiniteModel Entity)
+    (valid : M.Valid (envAt U.D 0)) (F : VE.NormDefaults.FiniteFill U Entity) (Γ : List VE.Formula) (φ : VE.Formula)
+    (hΓ : ∀ a ∈ Γ, a.WellFormed (envAt (fill U) (size (fill U))) [])
+    (hφ : φ.WellFormed (envAt (fill U) (size (fill U))) [])
+    (hm : (VE.NormDefaults.modelCheckU U M F Γ φ).1 = true) (hl : localFree U M F = true) :
+    ∃ S : VE.Structure.{0}, VE.NormDefaults.BaseAdmissibleU U (restrictAll (fill U).T S) ∧
+      DocumentExpansion (fill U) (restrictAll (fill U).T S) S ∧ Sat S Γ ∧
+      (φ.denote S [] ↔ (VE.NormDefaults.modelCheckU U M F Γ φ).2 = true) := by
+  rw [← VE.NormDefaults.modelCheckX_nil] at hm ⊢
+  obtain ⟨S, h1, h2, h3, h4⟩ := expansionX_of_modelCheck U h [] M valid F Γ φ hΓ hφ hm hl
+  exact ⟨S, (VE.NormDefaults.baseAdmissibleX_nil _ _).mp h1, h2, h3, h4⟩
+
 /-! ## A choice's evidence under the completion, and its rows -/
 
 /-- A checked finite model with its filling (a countermodel of the query, or a model of the premises). -/
@@ -87,94 +102,93 @@ structure FilledModel (U : UDoc) where
   valid : M.Valid (envAt U.D 0)
   F : VE.NormDefaults.FiniteFill U Entity
 
-/-- What Lean decoded of one compatible choice's evidence under the completion (4.3): its conflict packages
-    (`certs`, bound to the choice's targets), a checked witness, and the query's and the premises' evidence. -/
-structure NDEvidence (N : NDoc) (c : Choice) where
-  wfc : VE.NormDefaults.WellFormedU (choiceU N c) = true
+/-- What Lean decoded of one compatible choice's evidence on its layered source `U` with the extra base premises `X`
+    (4.3; rd-9-soft-chain.md 4.4): its conflict packages (`certs`, bound to the choice's targets), a checked
+    witness (the layered witness itself), and the query's and the premises' evidence. `X` is closed over the filled
+    base vocabulary (`hX`). -/
+structure XEvidence (U : UDoc) (X : List VE.Formula) where
+  wfc : VE.NormDefaults.WellFormedU U = true
+  hX : ∀ a ∈ X, a.WellFormed (envAt (fill U) 0) []
   certs : List (Option VE.Tableau.Certificate)
-  witness : Option (PLift (¬ VE.NormDefaults.ConflictFreeU.{0} (choiceU N c)))
+  witness : Option (PLift (¬ VE.NormDefaults.Wire.ConflictFreeX.{0} U X))
   cert : Option VE.Tableau.Certificate
-  counter : Option (FilledModel (choiceU N c))
+  counter : Option (FilledModel U)
   unsat : Option VE.Tableau.Certificate
-  model : Option (FilledModel (choiceU N c))
+  model : Option (FilledModel U)
 
-/-- The complete environment of a choice's filled document. -/
-def fullEnv (N : NDoc) (c : Choice) : VE.Environment :=
-  envAt (fill (choiceU N c)) (size (fill (choiceU N c)))
+def xFree {U : UDoc} {X : List VE.Formula} (e : XEvidence U X) : Bool :=
+  VE.NormDefaults.Wire.conflictFreeCheckX U X e.certs
 
-def ndFree {N : NDoc} {c : Choice} (e : NDEvidence N c) : Bool :=
-  VE.NormDefaults.Wire.conflictFreeCheckU (choiceU N c) e.certs
+/-- A certificate of `A ++ Γ ⊢ φ` over the filled premises with `X` (`premisesX`), the assertions `A` first. -/
+def xCertOk (U : UDoc) (X A Γ : List VE.Formula) (φ : VE.Formula) (k : VE.Tableau.Certificate) : Bool :=
+  VE.Tableau.checkCertificate (envAt (fill U) (size (fill U))) (VE.NormDefaults.Wire.premisesX U X (A ++ Γ)) φ k
 
-/-- A certificate of `Γ ⊢ φ` over the choice's filled premises (`premisesU`), its assertions first. -/
-def ndCertOk (N : NDoc) (c : Choice) (Γ : List VE.Formula) (φ : VE.Formula) (k : VE.Tableau.Certificate) : Bool :=
-  VE.Tableau.checkCertificate (fullEnv N c) (VE.NormDefaults.Wire.premisesU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ))
-    φ k
-
-/-- A filled model where the premises (its assertions, then `Γ`) hold, locally conflict-free, typed, with the
-    conclusion's value `v`. -/
-def ndModelOk (N : NDoc) (c : Choice) (Γ : List VE.Formula) (φ : VE.Formula) (m : FilledModel (choiceU N c))
-    (v : Bool) : Bool :=
-  (((choiceDoc N.D c).2 ++ Γ) ++ [φ]).all (·.check (fullEnv N c) []) &&
-    (VE.NormDefaults.modelCheckU (choiceU N c) m.M m.F ((choiceDoc N.D c).2 ++ Γ) φ).1 &&
-    (VE.NormDefaults.modelCheckU (choiceU N c) m.M m.F ((choiceDoc N.D c).2 ++ Γ) φ).2 == v &&
-    localFree (choiceU N c) m.M m.F
+/-- A filled model where `X` and the premises (the assertions `A`, then `Γ`) hold, locally conflict-free, typed,
+    with the conclusion's value `v`. -/
+def xModelOk (U : UDoc) (X A Γ : List VE.Formula) (φ : VE.Formula) (m : FilledModel U) (v : Bool) : Bool :=
+  ((A ++ Γ) ++ [φ]).all (·.check (envAt (fill U) (size (fill U))) []) &&
+    (VE.NormDefaults.modelCheckX U X m.M m.F (A ++ Γ) φ).1 &&
+    (VE.NormDefaults.modelCheckX U X m.M m.F (A ++ Γ) φ).2 == v &&
+    localFree U m.M m.F
 
 /-- The conflict row (4.3): CONFLICT-FREE with the packages accepted, CONFLICT with a checked witness. -/
-def ndConflictRow {N : NDoc} {c : Choice} (e : NDEvidence N c) : ChoiceResult :=
-  if ndFree e then .free else if e.witness.isSome then .conflict else .unknown
+def xConflictRow {U : UDoc} {X : List VE.Formula} (e : XEvidence U X) : ChoiceResult :=
+  if xFree e then .free else if e.witness.isSome then .conflict else .unknown
 
 /-- The query row: `proved` with a certificate and the conflict packages (S2a 14.8), `refuted` with a checked
     countermodel. -/
-def ndQueryRow {N : NDoc} {c : Choice} (e : NDEvidence N c) (Γ : List VE.Formula) (φ : VE.Formula) : ChoiceResult :=
-  if (e.cert.map (ndCertOk N c Γ φ)).getD false && ndFree e then .proved
-  else if (e.counter.map (ndModelOk N c Γ φ · false)).getD false then .refuted
+def xQueryRow {U : UDoc} {X : List VE.Formula} (e : XEvidence U X) (A Γ : List VE.Formula) (φ : VE.Formula) :
+    ChoiceResult :=
+  if (e.cert.map (xCertOk U X A Γ φ)).getD false && xFree e then .proved
+  else if (e.counter.map (xModelOk U X A Γ φ · false)).getD false then .refuted
   else .unknown
 
 /-- The premise row: INCONSISTENT with a certificate of `⊥` and the conflict packages (4.5's table, A2), `model` with
     a checked model. -/
-def ndPremiseRow {N : NDoc} {c : Choice} (e : NDEvidence N c) : ChoiceResult :=
-  if (e.unsat.map (ndCertOk N c [] .bottom)).getD false && ndFree e then .inconsistent
-  else if (e.model.map (ndModelOk N c [] .bottom · false)).getD false then .model
+def xPremiseRow {U : UDoc} {X : List VE.Formula} (e : XEvidence U X) (A : List VE.Formula) : ChoiceResult :=
+  if (e.unsat.map (xCertOk U X A [] .bottom)).getD false && xFree e then .inconsistent
+  else if (e.model.map (xModelOk U X A [] .bottom · false)).getD false then .model
   else .unknown
 
-theorem ndFree_sound {N : NDoc} {c : Choice} (e : NDEvidence N c) (h : ndFree e = true) :
-    VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) :=
-  VE.NormDefaults.Wire.conflictFreeCheckU_sound _ (VE.NormDefaults.fill_wellFormed _ e.wfc) _ h
+theorem xFree_sound {U : UDoc} {X : List VE.Formula} (e : XEvidence U X) (h : xFree e = true) :
+    VE.NormDefaults.Wire.ConflictFreeX.{u} U X :=
+  VE.NormDefaults.Wire.conflictFreeCheckX_sound _ (VE.NormDefaults.fill_wellFormed _ e.wfc) _ _ h
 
-theorem ndCertOk_sound {N : NDoc} {c : Choice} (e : NDEvidence N c) (Γ : List VE.Formula) (φ : VE.Formula)
-    (k : VE.Tableau.Certificate) (h : ndCertOk N c Γ φ k = true) :
-    EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ :=
-  VE.NormDefaults.acceptanceU _ e.wfc _ φ k h
+theorem xCertOk_sound {U : UDoc} {X : List VE.Formula} (e : XEvidence U X) (A Γ : List VE.Formula) (φ : VE.Formula)
+    (k : VE.Tableau.Certificate) (h : xCertOk U X A Γ φ k = true) :
+    VE.NormDefaults.EntailsX.{u} U X (A ++ Γ) φ :=
+  VE.NormDefaults.acceptanceX _ e.wfc _ e.hX _ φ k h
 
-theorem ndModelOk_sound {N : NDoc} {c : Choice} (e : NDEvidence N c) (Γ : List VE.Formula) (φ : VE.Formula)
-    (m : FilledModel (choiceU N c)) (v : Bool) (h : ndModelOk N c Γ φ m v = true) :
+theorem xModelOk_sound {U : UDoc} {X : List VE.Formula} (e : XEvidence U X) (A Γ : List VE.Formula) (φ : VE.Formula)
+    (m : FilledModel U) (v : Bool) (h : xModelOk U X A Γ φ m v = true) :
     ∃ S : VE.Structure.{0},
-      VE.NormDefaults.BaseAdmissibleU (choiceU N c) (restrictAll (fill (choiceU N c)).T S) ∧
-      DocumentExpansion (fill (choiceU N c)) (restrictAll (fill (choiceU N c)).T S) S ∧
-      Sat S ((choiceDoc N.D c).2 ++ Γ) ∧ (φ.denote S [] ↔ v = true) := by
-  simp only [ndModelOk, Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at h
+      VE.NormDefaults.Wire.BaseAdmissibleX U X (restrictAll (fill U).T S) ∧
+      DocumentExpansion (fill U) (restrictAll (fill U).T S) S ∧
+      Sat S (A ++ Γ) ∧ (φ.denote S [] ↔ v = true) := by
+  simp only [xModelOk, Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at h
   obtain ⟨⟨⟨hw, hm⟩, hv⟩, hl⟩ := h
-  have hw' : ∀ a ∈ ((choiceDoc N.D c).2 ++ Γ) ++ [φ], a.WellFormed (fullEnv N c) [] :=
+  have hw' : ∀ a ∈ (A ++ Γ) ++ [φ], a.WellFormed (envAt (fill U) (size (fill U))) [] :=
     fun a ha => (VE.check_iff_wellFormed _ _ a).mp (hw a ha)
-  obtain ⟨S, h1, h2, h3, h4⟩ := expansion_of_modelCheck _ e.wfc m.M m.valid m.F _ φ
+  obtain ⟨S, h1, h2, h3, h4⟩ := expansionX_of_modelCheck _ e.wfc X m.M m.valid m.F _ φ
     (fun a ha => hw' a (List.mem_append_left _ ha)) (hw' φ (List.mem_append_right _ List.mem_cons_self)) hm hl
   exact ⟨S, h1, h2, h3, by rw [h4, hv]⟩
 
-/-- Every conflict row holds of its choice. -/
-theorem ndConflictRow_holds {N : NDoc} {c : Choice} (e : NDEvidence N c) :
-    Holds.{u} N [] .bottom c (ndConflictRow e) := by
-  unfold ndConflictRow
+/-- Every conflict row holds of its choice under `xSem`. -/
+theorem xConflictRow_holds {N : NDoc} {Xf : Choice → List VE.Formula} {c : Choice}
+    (e : XEvidence (choiceU N c) (Xf c)) : HoldsG (xSem.{u} N Xf) [] .bottom c (xConflictRow e) := by
+  unfold xConflictRow
   split
-  · exact ndFree_sound e (by assumption)
+  · exact xFree_sound e (by assumption)
   · split
     · rename_i hw
       obtain ⟨⟨p⟩, _⟩ := Option.isSome_iff_exists.mp hw
       exact p
     · trivial
 
-theorem ndQueryRow_holds {N : NDoc} {c : Choice} (e : NDEvidence N c) (Γ : List VE.Formula) (φ : VE.Formula) :
-    Holds.{u} N Γ φ c (ndQueryRow e Γ φ) := by
-  unfold ndQueryRow
+theorem xQueryRow_holds {N : NDoc} {Xf : Choice → List VE.Formula} {c : Choice}
+    (e : XEvidence (choiceU N c) (Xf c)) (Γ : List VE.Formula) (φ : VE.Formula) :
+    HoldsG (xSem.{u} N Xf) Γ φ c (xQueryRow e (choiceDoc N.D c).2 Γ φ) := by
+  unfold xQueryRow
   split
   · rename_i hp
     simp only [Bool.and_eq_true] at hp
@@ -183,20 +197,20 @@ theorem ndQueryRow_holds {N : NDoc} {c : Choice} (e : NDEvidence N c) (Γ : List
     | none => rw [hc] at hk; cases hk
     | some k =>
       rw [hc] at hk
-      exact ⟨ndFree_sound e hf, ndCertOk_sound e Γ φ k hk⟩
+      exact ⟨xFree_sound e hf, xCertOk_sound e _ Γ φ k hk⟩
   · split
     · rename_i _ hr
       cases hc : e.counter with
       | none => rw [hc] at hr; cases hr
       | some m =>
         rw [hc] at hr
-        obtain ⟨S, h1, h2, h3, h4⟩ := ndModelOk_sound e Γ φ m false hr
+        obtain ⟨S, h1, h2, h3, h4⟩ := xModelOk_sound e _ Γ φ m false hr
         exact ⟨S, h1, h2, h3, fun hd => by simpa using h4.mp hd⟩
     · trivial
 
-theorem ndPremiseRow_holds {N : NDoc} {c : Choice} (e : NDEvidence N c) :
-    Holds.{u} N [] .bottom c (ndPremiseRow e) := by
-  unfold ndPremiseRow
+theorem xPremiseRow_holds {N : NDoc} {Xf : Choice → List VE.Formula} {c : Choice}
+    (e : XEvidence (choiceU N c) (Xf c)) : HoldsG (xSem.{u} N Xf) [] .bottom c (xPremiseRow e (choiceDoc N.D c).2) := by
+  unfold xPremiseRow
   split
   · rename_i hp
     simp only [Bool.and_eq_true] at hp
@@ -205,19 +219,57 @@ theorem ndPremiseRow_holds {N : NDoc} {c : Choice} (e : NDEvidence N c) :
     | none => rw [hc] at hk; cases hk
     | some k =>
       rw [hc] at hk
-      have := ndCertOk_sound.{u} e [] .bottom k hk
-      rw [List.append_nil] at this
-      exact ⟨ndFree_sound e hf, this⟩
+      exact ⟨xFree_sound e hf, xCertOk_sound e _ [] .bottom k hk⟩
   · split
     · rename_i _ hr
       cases hc : e.model with
       | none => rw [hc] at hr; cases hr
       | some m =>
         rw [hc] at hr
-        obtain ⟨S, h1, h2, h3, _⟩ := ndModelOk_sound e [] .bottom m false hr
+        obtain ⟨S, h1, h2, h3, _⟩ := xModelOk_sound e _ [] .bottom m false hr
         rw [List.append_nil] at h3
         exact ⟨S, h1, h2, h3⟩
     · trivial
+
+/-- RD-3's evidence under the completion is `XEvidence` with no extra base premise (D7). -/
+abbrev NDEvidence (N : NDoc) (c : Choice) := XEvidence (choiceU N c) []
+
+/-- The complete environment of a choice's filled document. -/
+def fullEnv (N : NDoc) (c : Choice) : VE.Environment :=
+  envAt (fill (choiceU N c)) (size (fill (choiceU N c)))
+
+def ndFree {N : NDoc} {c : Choice} (e : NDEvidence N c) : Bool := xFree e
+def ndCertOk (N : NDoc) (c : Choice) (Γ : List VE.Formula) (φ : VE.Formula) (k : VE.Tableau.Certificate) : Bool :=
+  xCertOk (choiceU N c) [] (choiceDoc N.D c).2 Γ φ k
+def ndModelOk (N : NDoc) (c : Choice) (Γ : List VE.Formula) (φ : VE.Formula) (m : FilledModel (choiceU N c))
+    (v : Bool) : Bool :=
+  xModelOk (choiceU N c) [] (choiceDoc N.D c).2 Γ φ m v
+def ndConflictRow {N : NDoc} {c : Choice} (e : NDEvidence N c) : ChoiceResult := xConflictRow e
+def ndQueryRow {N : NDoc} {c : Choice} (e : NDEvidence N c) (Γ : List VE.Formula) (φ : VE.Formula) : ChoiceResult :=
+  xQueryRow e (choiceDoc N.D c).2 Γ φ
+def ndPremiseRow {N : NDoc} {c : Choice} (e : NDEvidence N c) : ChoiceResult := xPremiseRow e (choiceDoc N.D c).2
+
+example (N : NDoc) (c : Choice) (Γ : List VE.Formula) (φ : VE.Formula) (k : VE.Tableau.Certificate) :
+    xCertOk (choiceU N c) [] (choiceDoc N.D c).2 Γ φ k = ndCertOk N c Γ φ k := rfl
+example (N : NDoc) (c : Choice) (Γ : List VE.Formula) (φ : VE.Formula) (m : FilledModel (choiceU N c)) (v : Bool) :
+    xModelOk (choiceU N c) [] (choiceDoc N.D c).2 Γ φ m v = ndModelOk N c Γ φ m v := rfl
+
+theorem holds_of_xSem_nil {N : NDoc} {Γ : List VE.Formula} {φ : VE.Formula} {c : Choice} {r : ChoiceResult}
+    (h : HoldsG (xSem.{u} N (fun _ => [])) Γ φ c r) : Holds.{u} N Γ φ c r :=
+  (holds_iff_holdsG N Γ φ c r).mpr ((xSem_nil N Γ φ c r).mp h)
+
+/-- Every conflict row holds of its choice. -/
+theorem ndConflictRow_holds {N : NDoc} {c : Choice} (e : NDEvidence N c) :
+    Holds.{u} N [] .bottom c (ndConflictRow e) :=
+  holds_of_xSem_nil (xConflictRow_holds (Xf := fun _ => []) e)
+
+theorem ndQueryRow_holds {N : NDoc} {c : Choice} (e : NDEvidence N c) (Γ : List VE.Formula) (φ : VE.Formula) :
+    Holds.{u} N Γ φ c (ndQueryRow e Γ φ) :=
+  holds_of_xSem_nil (xQueryRow_holds (Xf := fun _ => []) e Γ φ)
+
+theorem ndPremiseRow_holds {N : NDoc} {c : Choice} (e : NDEvidence N c) :
+    Holds.{u} N [] .bottom c (ndPremiseRow e) :=
+  holds_of_xSem_nil (xPremiseRow_holds (Xf := fun _ => []) e)
 
 /-- What the answer shows of one piece of evidence: whether Lean accepted it, its refusal, the shown model and the
     filled gaps of a shown result. -/
@@ -238,6 +290,63 @@ def chosenOf (D : Doc) (A : Choice) : List Choice := (choices D).filter (fun c =
 theorem mem_chosenOf (D : Doc) (hr : supReady D = true) (hle : (choices D).length ≤ maxChoices) (A c : Choice) :
     c ∈ chosenOf D A ↔ Compatible D c ∧ ∀ x ∈ A, x ∈ c := by
   simp only [chosenOf, List.mem_filter, List.all_eq_true, List.contains_iff_mem, choices_spec D hr hle c]
+
+/-- A replayed `readings-verdicts` case on layered sources (rd-9-soft-chain.md 4.4): the document, each choice's
+    extra base premises `Xf`, `assumed`, the query's formulas, and the decoded evidence of exactly the compatible
+    choices taking `A` (at most 64), with what the answer shows of each choice's evidence (`notes`, in the order of
+    `evs`). -/
+structure XVerdicts where
+  N : NDoc
+  Xf : Choice → List VE.Formula
+  A : Choice
+  Γ : List VE.Formula
+  φ : VE.Formula
+  ready : supReady N.D = true
+  hle : (choices N.D).length ≤ maxChoices
+  evs : List ((c : Choice) × XEvidence (choiceU N c) (Xf c))
+  hevs : evs.map (·.1) = chosenOf N.D A
+  notes : List (List PieceNote)
+
+def XVerdicts.conflictRows (x : XVerdicts) : List (Choice × ChoiceResult) :=
+  x.evs.map (fun e => (e.1, xConflictRow e.2))
+def XVerdicts.queryRows (x : XVerdicts) : List (Choice × ChoiceResult) :=
+  x.evs.map (fun e => (e.1, xQueryRow e.2 (choiceDoc x.N.D e.1).2 x.Γ x.φ))
+def XVerdicts.premiseRows (x : XVerdicts) : List (Choice × ChoiceResult) :=
+  x.evs.map (fun e => (e.1, xPremiseRow e.2 (choiceDoc x.N.D e.1).2))
+
+theorem XVerdicts.covers (x : XVerdicts) {rs : List (Choice × ChoiceResult)} (h : rs.map (·.1) = x.evs.map (·.1)) :
+    CoversG (xSem.{u} x.N x.Xf) x.A rs := fun c => by
+  show (Compatible x.N.D c ∧ _) ↔ _
+  rw [h, x.hevs, mem_chosenOf _ x.ready x.hle]
+
+theorem mem_rowsG {E : Choice → Type} {evs : List ((c : Choice) × E c)} {f : (c : Choice) → E c → ChoiceResult}
+    {y : Choice × ChoiceResult} (hy : y ∈ evs.map (fun e => (e.1, f e.1 e.2))) : ∃ e ∈ evs, y = (e.1, f e.1 e.2) := by
+  obtain ⟨e, he, rfl⟩ := List.mem_map.mp hy
+  exact ⟨e, he, rfl⟩
+
+theorem mem_rows {N : NDoc} {evs : List ((c : Choice) × NDEvidence N c)}
+    {f : (c : Choice) → NDEvidence N c → ChoiceResult}
+    {y : Choice × ChoiceResult} (hy : y ∈ evs.map (fun e => (e.1, f e.1 e.2))) :
+    ∃ e ∈ evs, y = (e.1, f e.1 e.2) := mem_rowsG hy
+
+/-- Every row of a replayed case holds of its choice, and both row lists are exactly the compatible choices taking
+    `A`: the hypotheses of every generic fold theorem (`foldG_*_sound`). -/
+theorem x_rowsHold (x : XVerdicts) : RowsHoldG (xSem.{u} x.N x.Xf) x.A x.Γ x.φ x.conflictRows x.queryRows := by
+  refine ⟨x.covers (by simp [XVerdicts.conflictRows]), x.covers (by simp [XVerdicts.queryRows]), ?_, ?_⟩
+  · intro y hy
+    obtain ⟨e, _, rfl⟩ := mem_rowsG (f := fun _ e => xConflictRow e) hy
+    exact xConflictRow_holds e.2
+  · intro y hy
+    obtain ⟨e, _, rfl⟩ := mem_rowsG (f := fun c e => xQueryRow e (choiceDoc x.N.D c).2 x.Γ x.φ) hy
+    exact xQueryRow_holds e.2 x.Γ x.φ
+
+/-- The premise rows: exactly the compatible choices taking `A`, each holding. -/
+theorem x_premiseRowsHold (x : XVerdicts) :
+    CoversG (xSem.{u} x.N x.Xf) x.A x.premiseRows ∧
+      ∀ y ∈ x.premiseRows, HoldsG (xSem.{u} x.N x.Xf) [] .bottom y.1 y.2 := by
+  refine ⟨x.covers (by simp [XVerdicts.premiseRows]), fun y hy => ?_⟩
+  obtain ⟨e, _, rfl⟩ := mem_rowsG (f := fun c e => xPremiseRow e (choiceDoc x.N.D c).2) hy
+  exact xPremiseRow_holds e.2
 
 /-- A replayed `readings-verdicts` case under the completion: the admitted document, `assumed`, the query's
     formulas, and the decoded evidence of exactly the compatible choices taking `A` (at most 64). -/
@@ -260,41 +369,30 @@ def NDVerdicts.queryRows (x : NDVerdicts) : List (Choice × ChoiceResult) :=
 def NDVerdicts.premiseRows (x : NDVerdicts) : List (Choice × ChoiceResult) :=
   x.evs.map (fun e => (e.1, ndPremiseRow e.2))
 
-theorem NDVerdicts.covers (x : NDVerdicts) {rs : List (Choice × ChoiceResult)} (h : rs.map (·.1) = x.evs.map (·.1)) :
-    Covers x.r.N x.A rs := fun c => by
-  rw [h, x.hevs, mem_chosenOf _ x.ready x.hle]
+/-- An `NDVerdicts` is the `XVerdicts` with no extra base premise, with the same rows. -/
+def NDVerdicts.toX (x : NDVerdicts) : XVerdicts :=
+  ⟨x.r.N, fun _ => [], x.A, x.Γ, x.φ, x.ready, x.hle, x.evs, x.hevs, x.notes⟩
 
-theorem mem_rows {N : NDoc} {evs : List ((c : Choice) × NDEvidence N c)} {f : (c : Choice) → NDEvidence N c → ChoiceResult}
-    {y : Choice × ChoiceResult} (hy : y ∈ evs.map (fun e => (e.1, f e.1 e.2))) : ∃ e ∈ evs, y = (e.1, f e.1 e.2) := by
-  obtain ⟨e, he, rfl⟩ := List.mem_map.mp hy
-  exact ⟨e, he, rfl⟩
-
-/-- Every row of a replayed case holds of its choice, and both row lists are exactly the compatible choices taking
-    `A`: the hypotheses of every fold theorem (`fold_*_sound`). -/
 theorem nd_rowsHold (x : NDVerdicts) : RowsHold.{u} x.r.N x.A x.Γ x.φ x.conflictRows x.queryRows := by
-  refine ⟨x.covers (by simp [NDVerdicts.conflictRows]), x.covers (by simp [NDVerdicts.queryRows]), ?_, ?_⟩
-  · intro y hy
-    obtain ⟨e, _, rfl⟩ := mem_rows (f := fun _ e => ndConflictRow e) hy
-    exact ndConflictRow_holds e.2
-  · intro y hy
-    obtain ⟨e, _, rfl⟩ := mem_rows (f := fun _ e => ndQueryRow e x.Γ x.φ) hy
-    exact ndQueryRow_holds e.2 x.Γ x.φ
+  obtain ⟨hc, hq, hcs, hrs⟩ := x_rowsHold.{u} x.toX
+  exact ⟨hc, hq, fun y hy => holds_of_xSem_nil (hcs y hy), fun y hy => holds_of_xSem_nil (hrs y hy)⟩
 
-/-- The premise rows: exactly the compatible choices taking `A`, each holding. -/
 theorem nd_premiseRowsHold (x : NDVerdicts) :
     Covers x.r.N x.A x.premiseRows ∧ ∀ y ∈ x.premiseRows, Holds.{u} x.r.N [] .bottom y.1 y.2 := by
-  refine ⟨x.covers (by simp [NDVerdicts.premiseRows]), fun y hy => ?_⟩
-  obtain ⟨e, _, rfl⟩ := mem_rows (f := fun _ e => ndPremiseRow e) hy
-  exact ndPremiseRow_holds e.2
+  obtain ⟨hc, hr⟩ := x_premiseRowsHold.{u} x.toX
+  exact ⟨hc, fun y hy => holds_of_xSem_nil (hr y hy)⟩
 
 /-! ## Decoding a choice's evidence -/
 
-theorem notFreeU_of_notFreeX {L : VE.NormDefaults.Wire.LayeredU} {U : UDoc} (hL : L.U = U)
-    (h : ¬ VE.NormDefaults.Wire.ConflictFreeX.{0} L.U L.X) : ¬ VE.NormDefaults.ConflictFreeU.{0} U := by
-  subst hL
-  exact fun hc => h (fun B hB => hc B hB.1)
+/-- Evidence decoded on a layered source, as the evidence of the choice the source is. -/
+def castXE {U U' : UDoc} {X X' : List VE.Formula} (hU : U = U') (hX : X = X') (e : XEvidence U X) :
+    XEvidence U' X' :=
+  hU ▸ hX ▸ e
 
-def castFM {U U' : UDoc} (h : U = U') (m : FilledModel U) : FilledModel U' := h ▸ m
+theorem normsShaped_of_ND (r : AdmittedND) : normsShaped r.N.D = true := by
+  have h := r.wfU
+  simp only [WellFormedND, Bool.and_eq_true] at h
+  exact h.1.1.1.2
 
 /-- An object's members, `[]` for anything else. -/
 def membersOf (j : Json) : List (String × Json) := (VE.Bridge.fields j).toOption.getD []
@@ -332,106 +430,154 @@ def gapsOf (U : UDoc) (Mf : VE.FiniteModel Entity) (ρ : List Entity) (ψ : VE.F
 def gapsJson (gs : List (String × List String × Bool)) : Json :=
   Json.arr (gs.map (fun g => Json.arr #[.str g.1, toJson g.2.1, .bool g.2.2])).toArray
 
+/-- The formula whose value a separation probe shows, with its argument tuple. -/
+def probeFormulaOn {α : Type} (P : Side) : Probe α → VE.Formula × List α
+  | .outcome p vs => (VE.Norms.outcomeBaseIn P.S P.L p, vs)
+  | .selects k p vs => (VE.Norms.anyF ((selectable P.X k p).map (fun N =>
+      VE.Norms.substIn P.L P.L.syms.length (VE.SoftNorms.selectsOn P.S (VE.Rights.correlate P.X) N))), vs)
+  | .holds => (conj (P.A.map (VE.Norms.substIn P.L P.L.syms.length)), [])
+
+/-- Gaps of the witness's shown value under its own completion. -/
+def pairGapsOn (U : UDoc) (P : Side) (M : VE.FiniteModel Entity)
+    (T : List (GenKey × List (List Entity))) (q : Probe Entity) :
+    List (String × List String × Bool) :=
+  gapsOf U (tablesModelOn P M T) (VE.Norms.tupleVal (probeFormulaOn P q).2) (probeFormulaOn P q).1
+
+theorem anyF_eval {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (ρ : List α) (l : List VE.Formula) :
+    (VE.Norms.anyF l).eval M ρ = l.any (·.eval M ρ) := by
+  suffices h : ∀ acc : VE.Formula, (l.foldl .or acc).eval M ρ = (acc.eval M ρ || l.any (·.eval M ρ)) by
+    simpa [VE.Norms.anyF, VE.Formula.eval] using h .bottom
+  induction l with
+  | nil => intro acc; simp
+  | cons a l ih => intro acc; simp only [List.foldl, ih, VE.Formula.eval, List.any_cons, Bool.or_assoc]
+
+theorem conj_eval {α : Type} [DecidableEq α] (M : VE.FiniteModel α) (ρ : List α) :
+    ∀ l : List VE.Formula, (conj l).eval M ρ = l.all (·.eval M ρ)
+  | [] => rfl
+  | [a] => by simp [conj]
+  | a :: b :: l => by
+    show (VE.Formula.and a (conj (b :: l))).eval M ρ = _
+    simp only [VE.Formula.eval, conj_eval M ρ (b :: l), List.all_cons]
+
+theorem probeFormulaOn_eval {α : Type} [DecidableEq α] (P : Side) (M : VE.FiniteModel α) (q : Probe α)
+    (v : Bool) (h : observeOn P M q = some v) :
+    (probeFormulaOn P q).1.eval M (VE.Norms.tupleVal (probeFormulaOn P q).2) = v := by
+  cases q with
+  | outcome p vs =>
+    simp only [observeOn] at h
+    split at h
+    · split at h
+      · cases h
+      · cases h; rfl
+    · cases h
+  | selects k p vs =>
+    simp only [observeOn, Option.some.injEq] at h
+    subst h
+    simp only [probeFormulaOn, anyF_eval, List.any_map]
+    rfl
+  | holds =>
+    simp only [observeOn, Option.some.injEq] at h
+    subst h
+    simp only [probeFormulaOn, conj_eval, List.all_map, VE.Norms.tupleVal, List.reverse_nil]
+    rfl
+
 def acceptedNote (name : String) (accepted : Bool) (on : List String) (shown : Option Json)
     (gaps : List (String × List String × Bool)) : PieceNote :=
   { name := name, accepted := accepted, shown := shown, gaps := gaps, conditionalOn := on }
 
-/-- A certificate bound as the norm-defaults route binds a choice's (`ndCertificate`): the regenerated premises of
-    `fill U` and the choice's assertions, then `own` as written, and the conclusion `conclusion`. -/
-def ndBoundCert (r : AdmittedND) (c : Choice) (own : List Json) (conclusion : Json) (j : Json) :
-    Except String VE.Tableau.Certificate := do
-  let re := r.b.a.re
-  let cert ← VE.CertificateWire.decodeCertificate j
-  VE.Route.Wire.bindingOk (VE.NormDefaults.Wire.profilesOf re.lowerJson)
-    (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU re.lowerJson)
-    ((VE.NormDefaults.Wire.premisesU (choiceU r.N c) (choiceDoc r.N.D c).2).map encF ++ own)
-    conclusion cert.environment_id cert.premise_meaning_ids cert.conclusion_meaning_id
-  pure cert
-
-/-- A base model with a separate filling, on the choice's layered source (`choice-model` under the completion). -/
-def ndFilled (r : AdmittedND) (c : Choice) (L : {L : VE.NormDefaults.Wire.LayeredU // L.U = choiceU r.N c})
-    (piece : Json) : Except String (FilledModel (choiceU r.N c)) := do
-  let S ← VE.NormDefaults.Wire.situationX L.1 (← piece.getObjVal? "model")
-  let F ← VE.NormDefaults.Wire.decodeFilling L.1.U S.M (piece.getObjValD "filling")
+/-- A base model with a separate filling, on a layered source (`choice-model` under the completion). -/
+def xFilled (L : VE.NormDefaults.Wire.LayeredU) (piece : Json) : Except String (FilledModel L.U) := do
+  let S ← VE.NormDefaults.Wire.situationX L (← piece.getObjVal? "model")
+  let F ← VE.NormDefaults.Wire.decodeFilling L.U S.M (piece.getObjValD "filling")
   unless shownOk (shownOf piece (piece.getObjValD "model")) (piece.getObjValD "model") (piece.getObjValD "filling") do
     throw shownText
-  pure (castFM L.2 ⟨S.M, S.valid, F⟩)
+  pure ⟨S.M, S.valid, F⟩
 
 def pieceOf (e : Json) (k : String) : Option Json :=
   match e.getObjVal? k with
   | .ok j => if j == .null then none else some j
   | .error _ => none
 
-/-- One choice's evidence under the completion, decoded on its layered source (4.3), and the notes the answer
-    shows. A piece Lean refuses is absent from the evidence (its row is `unknown`) and noted with its refusal. -/
+/-- One choice's evidence decoded on its layered source `L` (4.3; rd-9-soft-chain.md 4.4), the choice's assertions
+    `A` first, and the notes the answer shows: packages by `decodePackageX L`, the witness by `witnessConflictX L`,
+    certificates by `bindCertX`, models by `situationX L` and `decodeFilling`. A piece Lean refuses is absent from the
+    evidence (its row is `unknown`) and noted with its refusal. The labels a result rests on are read over `L`'s
+    labelled `X`, then `Fill_T` (`usedLabels`), in the premises' order. -/
+def xEvidenceOf (lowerJson : Json) (L : VE.NormDefaults.Wire.LayeredU)
+    (hX : ∀ a ∈ L.X, a.WellFormed (envAt (fill L.U) 0) []) (A : List VE.Formula)
+    (e premisesJ conclusionJ : Json) (Γ : List VE.Formula) (φ : VE.Formula) : XEvidence L.U L.X × List PieceNote :=
+  let U := L.U
+  let packages := (e.getObjValD "conflict").getObjValD "packages"
+  let certs := (targets (fill U)).map (VE.NormDefaults.Wire.decodePackageX L packages)
+  let free := VE.NormDefaults.Wire.conflictFreeCheckX U L.X certs
+  let labelled := L.labelled ++ VE.NormDefaults.Admission.fillLabelled U
+  let pkOk : List VE.Formula → Bool := fun fs => (targets (fill U)).length == certs.length &&
+    ((targets (fill U)).zip certs).all (fun (t, k) => match k with
+      | some k => VE.Tableau.checkCertificate (envAt (fill U) 0) (VE.Norms.backgroundBase (fill U) ++ fs)
+          (VE.Norms.targetConclusion t) k
+      | none => false)
+  let conflictOn := if free then usedLabels pkOk [] labelled [] else []
+  let wit : Option (PLift (¬ VE.NormDefaults.Wire.ConflictFreeX.{0} U L.X)) × List PieceNote :=
+    match pieceOf e "witness" with
+    | none => (none, [])
+    | some w => match VE.NormDefaults.Wire.witnessConflictX L (w.getObjValD "witness") with
+      | .error err => (none, [{ name := "witness", accepted := false, error := some err }])
+      | .ok (_, p, (Mf, ψ, vs)) =>
+        let wj := w.getObjValD "witness"
+        if shownOk (shownOf w (wj.getObjValD "model")) (wj.getObjValD "model") (wj.getObjValD "filling") then
+          (p, [{ name := "witness", accepted := p.isSome, shown := some (shownOf w (wj.getObjValD "model")),
+                 gaps := gapsOf U Mf (VE.Norms.tupleVal vs) ψ }])
+        else (none, [{ name := "witness", accepted := false, error := some shownText }])
+  let own := match premisesJ with | .arr xs => xs.toList | _ => []
+  let certPiece (k : String) (own : List Json) (conclusion : Json) : Option VE.Tableau.Certificate × List PieceNote :=
+    match pieceOf e k with
+    | none => (none, [])
+    | some j => match VE.NormDefaults.Wire.bindCertX lowerJson U L.X A own conclusion (j.getObjValD "certificate") with
+      | .error err => (none, [{ name := k, accepted := false, error := some err }])
+      | .ok cert => (some cert, [])
+  let modelPiece (k : String) : Option (FilledModel U) × Option Json × List PieceNote :=
+    match pieceOf e k with
+    | none => (none, none, [])
+    | some j => match xFilled L j with
+      | .error err => (none, none, [{ name := k, accepted := false, error := some err }])
+      | .ok m => (some m, some (shownOf j (j.getObjValD "model")), [])
+  let (cert, certNotes) := certPiece "certificate" own conclusionJ
+  let (unsat, unsatNotes) := certPiece "unsat" [] (encF .bottom)
+  let (counter, counterShown, counterNotes) := modelPiece "countermodel"
+  let (model, modelShown, modelNotes) := modelPiece "model"
+  let ev : XEvidence U L.X := ⟨L.wfU, hX, certs, wit.1, cert, counter, unsat, model⟩
+  let sub := VE.Norms.subst (fill U).T (size (fill U))
+  let certOn (Γ' : List VE.Formula) (φ' : VE.Formula) (k : VE.Tableau.Certificate) : List String :=
+    usedLabels (fun fs => pkOk fs && VE.Tableau.checkCertificate (envAt (fill U) (size (fill U)))
+      (VE.Norms.background (fill U) ++ fs ++ VE.Norms.elaborate (fill U).T ++ (A ++ Γ')) φ' k)
+      [] labelled []
+  let certOk := xCertOk U L.X A
+  let modelOk := xModelOk U L.X A
+  let notes :=
+    (if (e.getObjValD "conflict") == .null then [] else [acceptedNote "conflict" free conflictOn none []]) ++
+    wit.2 ++ certNotes ++
+    (cert.map (fun k => [acceptedNote "certificate" (certOk Γ φ k && free)
+      (if certOk Γ φ k && free then certOn Γ φ k else []) none []])).getD [] ++
+    counterNotes ++
+    (counter.map (fun m => [acceptedNote "countermodel" (modelOk Γ φ m false) [] counterShown
+      (gapsOf U (m.M.withFill m.F) [] (sub φ))])).getD [] ++
+    unsatNotes ++
+    (unsat.map (fun k => [acceptedNote "unsat" (certOk [] .bottom k && free) [] none []])).getD [] ++
+    modelNotes ++
+    (model.map (fun m => [acceptedNote "model" (modelOk [] .bottom m false) [] modelShown
+      (gapsOf U (m.M.withFill m.F) [] (sub (conj A)))])).getD []
+  (ev, notes)
+
+/-- One choice's evidence under the completion (4.3): `xEvidenceOf` on its `choiceLayeredG` source, whose `X` is
+    empty on the norms chain (`choiceX_normsShaped`). -/
 def ndEvidenceOf (r : AdmittedND) (c : Choice) (hw : VE.NormDefaults.WellFormedU (choiceU r.N c) = true)
     (e premisesJ conclusionJ : Json) (Γ : List VE.Formula) (φ : VE.Formula) : NDEvidence r.N c × List PieceNote :=
-  let empty : NDEvidence r.N c := ⟨hw, [], none, none, none, none, none⟩
-  match choiceLayered r c hw with
-  | .error err => (empty, [{ name := "conflict", accepted := false, error := some err }])
+  match choiceLayeredG r.b r.N c hw r.hN with
+  | .error err => (⟨hw, fun _ h => absurd h List.not_mem_nil, [], none, none, none, none, none⟩,
+      [{ name := "conflict", accepted := false, error := some err }])
   | .ok L =>
-    let U := choiceU r.N c
-    let packages := (e.getObjValD "conflict").getObjValD "packages"
-    let certs := (targets (fill L.1.U)).map (VE.NormDefaults.Wire.decodePackageX L.1 packages)
-    let free := VE.NormDefaults.Wire.conflictFreeCheckU U certs
-    let fillL := VE.NormDefaults.Admission.fillLabelled U
-    let pkOk : List VE.Formula → Bool := fun fs => (targets (fill U)).length == certs.length &&
-      ((targets (fill U)).zip certs).all (fun (t, k) => match k with
-        | some k => VE.Tableau.checkCertificate (envAt (fill U) 0) (VE.Norms.backgroundBase (fill U) ++ fs)
-            (VE.Norms.targetConclusion t) k
-        | none => false)
-    let conflictOn := if free then usedLabels pkOk [] fillL [] else []
-    let wit : Option (PLift (¬ VE.NormDefaults.ConflictFreeU.{0} U)) × List PieceNote :=
-      match pieceOf e "witness" with
-      | none => (none, [])
-      | some w => match VE.NormDefaults.Wire.witnessConflictX L.1 (w.getObjValD "witness") with
-        | .error err => (none, [{ name := "witness", accepted := false, error := some err }])
-        | .ok (_, p, (Mf, ψ, vs)) =>
-          let wj := w.getObjValD "witness"
-          if shownOk (shownOf w (wj.getObjValD "model")) (wj.getObjValD "model") (wj.getObjValD "filling") then
-            (p.map (fun q => ⟨notFreeU_of_notFreeX L.2 q.down⟩),
-              [{ name := "witness", accepted := p.isSome, shown := some (shownOf w (wj.getObjValD "model")),
-                 gaps := gapsOf U Mf (VE.Norms.tupleVal vs) ψ }])
-          else (none, [{ name := "witness", accepted := false, error := some shownText }])
-    let own := match premisesJ with | .arr xs => xs.toList | _ => []
-    let certPiece (k : String) (own : List Json) (conclusion : Json) : Option VE.Tableau.Certificate × List PieceNote :=
-      match pieceOf e k with
-      | none => (none, [])
-      | some j => match ndBoundCert r c own conclusion (j.getObjValD "certificate") with
-        | .error err => (none, [{ name := k, accepted := false, error := some err }])
-        | .ok cert => (some cert, [])
-    let modelPiece (k : String) : Option (FilledModel U) × Option Json × List PieceNote :=
-      match pieceOf e k with
-      | none => (none, none, [])
-      | some j => match ndFilled r c L j with
-        | .error err => (none, none, [{ name := k, accepted := false, error := some err }])
-        | .ok m => (some m, some (shownOf j (j.getObjValD "model")), [])
-    let (cert, certNotes) := certPiece "certificate" own conclusionJ
-    let (unsat, unsatNotes) := certPiece "unsat" [] (encF .bottom)
-    let (counter, counterShown, counterNotes) := modelPiece "countermodel"
-    let (model, modelShown, modelNotes) := modelPiece "model"
-    let ev : NDEvidence r.N c := ⟨hw, certs, wit.1, cert, counter, unsat, model⟩
-    let all := (choiceDoc r.N.D c).2 ++ Γ
-    let sub := VE.Norms.subst (fill U).T (size (fill U))
-    let certOn (Γ' : List VE.Formula) (φ' : VE.Formula) (k : VE.Tableau.Certificate) : List String :=
-      usedLabels (fun fs => pkOk fs && VE.Tableau.checkCertificate (fullEnv r.N c)
-        (VE.Norms.background (fill U) ++ fs ++ VE.Norms.elaborate (fill U).T ++ ((choiceDoc r.N.D c).2 ++ Γ')) φ' k)
-        [] fillL []
-    let notes :=
-      (if (e.getObjValD "conflict") == .null then [] else [acceptedNote "conflict" free conflictOn none []]) ++
-      wit.2 ++ certNotes ++
-      (cert.map (fun k => [acceptedNote "certificate" (ndCertOk r.N c Γ φ k && free)
-        (if ndCertOk r.N c Γ φ k && free then certOn Γ φ k else []) none []])).getD [] ++
-      counterNotes ++
-      (counter.map (fun m => [acceptedNote "countermodel" (ndModelOk r.N c Γ φ m false) [] counterShown
-        (gapsOf U (m.M.withFill m.F) [] (sub φ))])).getD [] ++
-      unsatNotes ++
-      (unsat.map (fun k => [acceptedNote "unsat" (ndCertOk r.N c [] .bottom k && free) [] none []])).getD [] ++
-      modelNotes ++
-      (model.map (fun m => [acceptedNote "model" (ndModelOk r.N c [] .bottom m false) [] modelShown
-        (gapsOf U (m.M.withFill m.F) [] (sub (conj (choiceDoc r.N.D c).2)))])).getD []
-    let _ := all
-    (ev, notes)
+    let (ev, notes) := xEvidenceOf r.b.a.re.lowerJson L.1 L.2.2.2 (choiceDoc r.N.D c).2 e premisesJ conclusionJ Γ φ
+    (castXE L.2.1 (L.2.2.1.trans (choiceX_normsShaped r.N (normsShaped_of_ND r) c)) ev, notes)
 
 end VE.Readings.Wire
 
@@ -928,25 +1074,36 @@ def LowerVerdicts.premiseRows (x : LowerVerdicts) : List (Choice × ChoiceResult
 
 /-! ### Under the completion: Lean's checkers on `choiceU N c` -/
 
-def ndInfo (x : NDVerdicts) (e : (c : Choice) × NDEvidence x.r.N c) (notes : List PieceNote) : RowInfo :=
-  { choice := e.1, conflict := ndConflictRow e.2, query := ndQueryRow e.2 x.Γ x.φ, premise := ndPremiseRow e.2,
+/-- One choice's row on its layered source: its conflict, query and premise rows and the notes. -/
+def rowInfoOf {U : VE.NormDefaults.UDoc} {X : List VE.Formula} (c : Choice) (ev : XEvidence U X) (A Γ : List VE.Formula)
+    (φ : VE.Formula) (notes : List PieceNote) : RowInfo :=
+  { choice := c, conflict := xConflictRow ev, query := xQueryRow ev A Γ φ, premise := xPremiseRow ev A,
     notes := notes }
 
-def ndInfos (x : NDVerdicts) : List RowInfo :=
-  (x.evs.zip (x.notes ++ List.replicate x.evs.length [])).map (fun (e, n) => ndInfo x e n)
+def xInfos (x : XVerdicts) : List RowInfo :=
+  (x.evs.zip (x.notes ++ List.replicate x.evs.length [])).map (fun (e, n) =>
+    rowInfoOf e.1 e.2 (choiceDoc x.N.D e.1).2 x.Γ x.φ n)
 
-theorem ndInfos_rows (x : NDVerdicts) :
-    (ndInfos x).map (fun i => (i.choice, i.conflict)) = x.conflictRows ∧
-    (ndInfos x).map (fun i => (i.choice, i.query)) = x.queryRows ∧
-    (ndInfos x).map (fun i => (i.choice, i.premise)) = x.premiseRows := by
+theorem xInfos_rows (x : XVerdicts) :
+    (xInfos x).map (fun i => (i.choice, i.conflict)) = x.conflictRows ∧
+    (xInfos x).map (fun i => (i.choice, i.query)) = x.queryRows ∧
+    (xInfos x).map (fun i => (i.choice, i.premise)) = x.premiseRows := by
   have hl : (x.notes ++ List.replicate x.evs.length []).length ≥ x.evs.length := by simp
   refine ⟨?_, ?_, ?_⟩ <;>
-  · simp only [ndInfos, NDVerdicts.conflictRows, NDVerdicts.queryRows, NDVerdicts.premiseRows,
+  · simp only [xInfos, XVerdicts.conflictRows, XVerdicts.queryRows, XVerdicts.premiseRows,
       List.map_map]
     apply List.ext_getElem
     · simp only [List.length_map, List.length_zip]; omega
     · intro n h1 h2
-      simp [ndInfo]
+      simp [rowInfoOf]
+
+def ndInfos (x : NDVerdicts) : List RowInfo := xInfos x.toX
+
+theorem ndInfos_rows (x : NDVerdicts) :
+    (ndInfos x).map (fun i => (i.choice, i.conflict)) = x.conflictRows ∧
+    (ndInfos x).map (fun i => (i.choice, i.query)) = x.queryRows ∧
+    (ndInfos x).map (fun i => (i.choice, i.premise)) = x.premiseRows :=
+  xInfos_rows x.toX
 
 /-- The evidence entry of choice `c`: the first entry naming it, else none. -/
 def entryFor (evidence : List Json) (c : Choice) : Json :=
@@ -977,10 +1134,12 @@ def replayND (f : AdmittedNDFull) (question : String) (A : Choice) (j : Json) : 
         let (Γ, φ) ← queryFormulas (fullEnv r.N (chosen.headD [])) question j
         let evidence := evidenceList j
         let premisesJ := match j.getObjValD "premises" with | .null => Json.arr #[] | p => p
-        let pairs : List ((c : Choice) × (NDEvidence r.N c × List PieceNote)) := chosen.attach.map (fun x =>
-          ⟨x.1, ndEvidenceOf r x.1 (wellFormedU_of_ndDocText (by
+        let pairs : List ((c : Choice) × (NDEvidence r.N c × List PieceNote)) := chosen.attach.map (fun (x : {c // c ∈ chosen}) =>
+          have hwx : VE.NormDefaults.WellFormedU (choiceU r.N x.1) = true := wellFormedU_of_ndDocText (by
               have := List.all_eq_true.mp hw x.1 x.2
-              simpa using this)) (entryFor evidence x.1) premisesJ (j.getObjValD "conclusion") Γ φ⟩)
+              simpa using this)
+          Sigma.mk (β := fun c => NDEvidence r.N c × List PieceNote) x.1
+            (ndEvidenceOf r x.1 hwx (entryFor evidence x.1) premisesJ (j.getObjValD "conclusion") Γ φ))
         pure ⟨r, A, Γ, φ, hr, hle, pairs.map (fun p => ⟨p.1, p.2.1⟩), by
           simp only [pairs, List.map_map, Function.comp_def]
           exact List.attach_map_subtype_val _, pairs.map (·.2.2)⟩
@@ -1166,6 +1325,30 @@ def deadOf (D : Doc) (infos : List RowInfo) (dead : List Json) : Option (List (S
          ("accepted", .bool (ok s i && untaken.contains (s, i)))]
      | _, _ => Json.mkObj [("accepted", .bool false)]))
 
+/-- The status of one reading's premises over every compatible choice taking it. -/
+def readingPremise (D : Doc) (infos : List RowInfo) (dead : List (String × Nat)) (R : ReadingSet) (i : Nat) : Premise :=
+  if (droppedBy D R i).isSome then .narrowed
+  else if dead.contains (R.id, i) then .dead
+  else
+    let taking := infos.filter (·.choice.contains (R.id, i))
+    if taking.isEmpty then .unknown
+    else match foldPremises (taking.map (fun t => (t.choice, t.premise))) with
+      | .model => .model
+      | .inconsistent => .inconsistent
+      | _ => .unknown
+
+/-- The case's fixed units and content-bearing sets with decided rows. -/
+def partDecided (D : Doc) (infos : List RowInfo) (dead : List (String × Nat)) : List String :=
+  let cs := infos.map (fun i => (i.choice, i.conflict))
+  let ps := infos.map (fun i => (i.choice, i.premise))
+  D.items.filterMap (fun it => match it with
+    | .fixed u _ _ => if fixedDecided (foldConflict cs) (foldPremises ps) then some u else none
+    | .set R =>
+      if VE.Readings.Wire.contentBearing R &&
+          setDecided cs ((List.range R.candidates.length).map (readingPremise D infos dead R)) then some R.unit
+      else none
+    | .bar _ _ => none)
+
 def premisesResult (D : Doc) (infos : List RowInfo) (dead : Option (List (String × Nat))) : Json :=
   let overall := foldPremises (infos.map (fun i => (i.choice, i.premise)))
   let deadL := dead.getD []
@@ -1328,66 +1511,96 @@ def verdictsAnswer (id question : String) (nd : Bool) (D : Doc) (A : Choice) (as
   okWith id (answerFields question nd D A assumed infos over dead ++
     [("english", Json.arr ((verdictsPlan question nd D A assumed infos over dead).map Line.json).toArray)])
 
+/-- The submitted document's unit order, shared with component verdicts. -/
+def documentOrder (document : Json) (us : List String) : List String :=
+  let units := match document.getObjValD "units" with
+    | .arr xs => xs.toList
+    | _ => []
+  (units.map (fun x => strOf (x.getObjValD "id"))).filter us.contains
+
+/-- Add Lean's decided units on the completion route. -/
+def ndVerdictsAnswer (id question : String) (document : Json) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) : Json :=
+  let decided := match infos with
+    | some rows => if assumed.isNone then documentOrder document (partDecided D rows ((deadOf D rows dead).1.getD [])) else []
+    | none => []
+  (verdictsAnswer id question true D A assumed infos over dead).setObjVal! "decided_units" (toJson decided)
+
 theorem map_row_choice (l : List Choice) (row : Choice → RowInfo) (h : ∀ c, (row c).choice = c) :
     (l.map row).map (·.choice) = l := by
   simp [List.map_map, Function.comp_def, h]
 
 def verdictsQuestions : List String := ["conflict", "premises", "query"]
 
+/-- A `readings-verdicts` request's members (4.4): its question, `assumed` (and whether the request names it), the
+    evidence, the dead readings' certificates, and the query's premises and conclusion. -/
+structure VerdictsRequest where
+  question : String
+  hq : verdictsQuestions.contains question = true
+  A : Choice
+  named : Option Choice
+  evidence : List Json
+  dead : List Json
+  premisesJ : Json
+  conclusionJ : Json
+
+/-- The request read in RD-3's order: the question, the enumerated route, `assumed`. -/
+def verdictsRequest (b : Admitted2) (j : Json) : Except String VerdictsRequest := do
+  let question ← stringField j "question"
+  if hq : verdictsQuestions.contains question = true then
+    let ndProfile := b.a.re.lower.contains "norm-defaults@0"
+    unless routeOf ndProfile b.D == .enumerated do
+      throw "UnsupportedProfile: readings-verdicts answers the enumerated route; use the superposed kinds"
+    let A ← decodeChoice (j.getObjValD "assumed")
+    let named : Option Choice := match j.getObjVal? "assumed" with
+      | .ok v => if v == .null then none else some A
+      | .error _ => none
+    pure ⟨question, hq, A, named, evidenceList j, (match j.getObjValD "dead" with | .arr xs => xs.toList | _ => []),
+      (match j.getObjValD "premises" with | .null => Json.arr #[] | p => p),
+      (if question == "query" then j.getObjValD "conclusion" else .null)⟩
+  else throw s!"InvalidInput: unknown readings-verdicts question {question}"
+
+/-- Beyond 64 compatible choices: the rows of the evidence's own compatible choices taking `A`, each by `row`. -/
+def overInfos (D : Doc) (A : Choice) (evidence : List Json) (row : Choice → Json → Option RowInfo) : List RowInfo :=
+  evidence.filterMap (fun e =>
+    let c := jchoice (e.getObjValD "choice")
+    if compatible D c && A.all (c.contains ·) then row c e else none)
+
 /-- `readings-verdicts` (4.4): on the enumerated route, the question folded over the compatible choices taking
     `assumed`, each piece of evidence checked on the choice's regenerated document (under the completion by Lean's
     checkers, `replayND`; else by the lower route, `lowerInfo`). `b` is the case's one admission. -/
 def runVerdicts (lower : List String → Json → Json) (id : String) (b : Admitted2) (j : Json) :
     Except String Json := do
-  let question ← stringField j "question"
-  unless verdictsQuestions.contains question do throw s!"InvalidInput: unknown readings-verdicts question {question}"
-  let ndProfile := b.a.re.lower.contains "norm-defaults@0"
-  unless routeOf ndProfile b.D == .enumerated do
-    throw "UnsupportedProfile: readings-verdicts answers the enumerated route; use the superposed kinds"
-  let A ← decodeChoice (j.getObjValD "assumed")
-  let named : Option Choice := match j.getObjVal? "assumed" with
-    | .ok v => if v == .null then none else some A
-    | .error _ => none
-  let evidence := evidenceList j
-  let dead := match j.getObjValD "dead" with | .arr xs => xs.toList | _ => []
-  let premisesJ := match j.getObjValD "premises" with | .null => Json.arr #[] | p => p
-  let conclusionJ := if question == "query" then j.getObjValD "conclusion" else .null
-  let takes := fun (c : Choice) => A.all (c.contains ·)
+  let q ← verdictsRequest b j
   if underCompletion b.a.re b.D then
     let f ← admitNDFull b
     let D := f.r.N.D
     if (choices D).isEmpty then throw (unsatText D)
     if (choices D).length ≤ maxChoices then
-      let x ← replayND f question A j
-      return verdictsAnswer id question true D A named (some (ndInfos x)) [] dead
+      let x ← replayND f q.question q.A j
+      return ndVerdictsAnswer id q.question (j.getObjValD "document") D q.A q.named (some (ndInfos x)) [] q.dead
     -- Beyond 64: only a checked countermodel says anything (not ALL).
-    let over := evidence.filterMap (fun e =>
-      let c := jchoice (e.getObjValD "choice")
-      if compatible D c && takes c then
-        match hn : ndDocText f.r.b.a.re (choiceU f.r.N c) with
-        | none =>
-          let E := fullEnv f.r.N c
-          match queryFormulas E question j with
-          | .ok (Γ, φ) =>
-            let (ev, notes) := ndEvidenceOf f.r c (wellFormedU_of_ndDocText hn) e premisesJ conclusionJ Γ φ
-            some { choice := c, conflict := ndConflictRow ev, query := ndQueryRow ev Γ φ, premise := ndPremiseRow ev,
-                   notes := notes }
-          | .error _ => none
-        | some _ => none
-      else none)
-    return verdictsAnswer id question true D A named none over dead
+    let over := overInfos D q.A q.evidence (fun c e =>
+      match hn : ndDocText f.r.b.a.re (choiceU f.r.N c) with
+      | none =>
+        match queryFormulas (fullEnv f.r.N c) q.question j with
+        | .ok (Γ, φ) =>
+          let (ev, notes) := ndEvidenceOf f.r c (wellFormedU_of_ndDocText hn) e q.premisesJ q.conclusionJ Γ φ
+          some (rowInfoOf c ev (choiceDoc D c).2 Γ φ notes)
+        | .error _ => none
+      | some _ => none)
+    return ndVerdictsAnswer id q.question (j.getObjValD "document") D q.A q.named none over q.dead
+  let ndProfile := b.a.re.lower.contains "norm-defaults@0"
   if let some e := routeRefusal ndProfile b.D then throw e
   let D := b.D
-  let row := fun (c : Choice) => lowerInfo lower id b c (entryFor evidence c) premisesJ conclusionJ
+  let row := fun (c : Choice) => lowerInfo lower id b c (entryFor q.evidence c) q.premisesJ q.conclusionJ
   if (choices D).length ≤ maxChoices then
-    let chosen := chosenOf D A
-    if chosen.isEmpty then throw (untakenText D A)
-    let x : LowerVerdicts := ⟨b, A, chosen.map row, map_row_choice chosen row (fun _ => rfl)⟩
-    return verdictsAnswer id question false D A named (some x.rows) [] dead
-  let over := evidence.filterMap (fun e =>
-    let c := jchoice (e.getObjValD "choice")
-    if compatible D c && takes c then some (lowerInfo lower id b c e premisesJ conclusionJ) else none)
-  return verdictsAnswer id question false D A named none over dead
+    let chosen := chosenOf D q.A
+    if chosen.isEmpty then throw (untakenText D q.A)
+    let x : LowerVerdicts := ⟨b, q.A, chosen.map row, map_row_choice chosen row (fun _ => rfl)⟩
+    return verdictsAnswer id q.question false D q.A q.named (some x.rows) [] q.dead
+  let over := overInfos D q.A q.evidence (fun c e => some (lowerInfo lower id b c e q.premisesJ q.conclusionJ))
+  return verdictsAnswer id q.question false D q.A q.named none over q.dead
 
 /-! ### The conditions of an answer (6.4; DRI ruling of rd-3 round 3)
 

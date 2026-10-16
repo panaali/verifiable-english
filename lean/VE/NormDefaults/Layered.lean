@@ -403,9 +403,10 @@ theorem layered_report_sound (L : LayeredU) (packages : Json) (rep : ReportG (la
 
 /-! ## Dispatch -/
 
-/-- The `norm-defaults-*` kinds of a layered document, `none` for any other kind. The one dispatch of this branch
-and of a choice's inner case under the readings completion (`Readings.Run.ndInner`), so both answer each kind
-alike. -/
+/-- The `norm-defaults-*` kinds of a layered document that this branch answers itself, `none` for any other kind;
+the dispatch of a choice's inner case under the readings completion (`Readings.Run.choiceInnerX`) uses it too, so both
+answer each kind alike. The soft branch's `admission` and `norm-defaults-certificate` are dispatched before it, by
+`NormDefaults.Admission.softCase` (`Run.runCase`). -/
 def layeredCase (L : LayeredU) (id kind : String) (j : Json) : Except String (Option Json) := do
   let packages := j.getObjValD "packages"
   if kind == "norm-defaults-elaborate" then

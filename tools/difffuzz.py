@@ -116,9 +116,31 @@ WORK = {}
 WORK_LIMIT = {"inputs": 33000, "python_calls": 33500, "runner_requests": 78, "runner_cases": 23500,
               "service_requests": 42, "service_cases": 19000}
 
+# With `--progress`, the run reports WORK on standard error, one `PROGRESS` line at most every PROGRESS_EVERY
+# seconds, from where the work is counted (`spend`), and once more at its end. Only work advances the count, so
+# a run that hangs falls silent while a slow one keeps reporting: tests/test_difffuzz.py stops the CI run when
+# its progress stops, not after a fixed wall time that machine load can outlast (`run_while_progressing`).
+PROGRESS = "difffuzz-progress "
+PROGRESS_EVERY = 5.0
+_PROGRESS = {"stream": None, "last": None, "clock": time.monotonic}
+
 
 def spend(kind, amount=1):
     WORK[kind] = WORK.get(kind, 0) + amount
+    if _PROGRESS["stream"] is not None and (_PROGRESS["last"] is None or
+                                            _PROGRESS["clock"]() - _PROGRESS["last"] >= PROGRESS_EVERY):
+        report_progress()
+
+
+def report_progress():
+    """Write the work counted so far as one `PROGRESS` line (`read_progress` reads it)."""
+    _PROGRESS["last"] = _PROGRESS["clock"]()
+    print(PROGRESS + json.dumps(dict(sorted(WORK.items()))), file=_PROGRESS["stream"], flush=True)
+
+
+def read_progress(line):
+    """The work a `PROGRESS` line reports, or None for any other line."""
+    return json.loads(line[len(PROGRESS):]) if line.startswith(PROGRESS) else None
 
 
 def rust_binary() -> Path:
@@ -2066,13 +2088,19 @@ def main(argv=None):
     parser.add_argument("--report", type=Path, help="write the JSON report here")
     parser.add_argument("--minimise-limit", type=int, metavar="N",
                         help=f"minimise at most N new signatures (default {MINIMISE_LIMIT})")
+    parser.add_argument("--progress", action="store_true",
+                        help=f"report the work done on standard error while the run works ({PROGRESS.strip()} lines)")
     args = parser.parse_args(argv)
     if args.minimise_limit is not None:
         globals()["MINIMISE_LIMIT"] = args.minimise_limit
+    if args.progress:
+        _PROGRESS["stream"], _PROGRESS["last"] = sys.stderr, None
     seed = args.seed if args.seed is not None else (
         20261004 if args.ci else int(datetime.date.today().strftime("%Y%m%d")))
     report = fuzz(scale=1 if args.ci else args.deep, rng_seed=seed, surfaces=args.surface,
                   update=args.update_baseline, log=lambda message: print(message, file=sys.stderr))
+    if args.progress:
+        report_progress()
     text = json.dumps(report, indent=1, ensure_ascii=False)
     if args.report:
         args.report.write_text(text + "\n")

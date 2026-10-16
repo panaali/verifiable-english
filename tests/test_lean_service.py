@@ -1348,6 +1348,10 @@ _SCHEMA_SEEDS = {
                                "coverage_percent": 100, "bytes_by_kind": {"exposition": 1},
                                "bytes_by_status": {"LABELLED": 1},
                                "unformalised_reasons": {}, "residual": {}, "residual_total": 0}}),
+    "search-budget": ({"id": "c", "environment": {}, "premises": [], "sorts": ["s", "t"]},
+                      {"id": "c", "status": "ok", "max_proof_steps": 10000, "max_domain_size": 2,
+                       "max_models": 10000, "max_evaluations": 100000,
+                       "sorts": [None, {"sort": "t", "least": 3, "most": 3}]}),
 }
 
 

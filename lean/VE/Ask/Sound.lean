@@ -174,7 +174,8 @@ theorem ndModelOk_base {N : NDoc} {c : Choice} (e : VE.Readings.Wire.NDEvidence 
       BaseAdmissibleU (choiceU N c) (withFill (choiceU N c) m.M.asStructure (finFill m.M m.F)) ∧
       DocumentExpansion (fill (choiceU N c)) (withFill (choiceU N c) m.M.asStructure (finFill m.M m.F)) S ∧
       Sat S (choiceDoc N.D c).2 ∧ (ψ.denote S [] ↔ v = true) := by
-  simp only [VE.Readings.Wire.ndModelOk, Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at h
+  simp only [VE.Readings.Wire.ndModelOk, VE.Readings.Wire.xModelOk, VE.NormDefaults.modelCheckX_nil,
+    Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at h
   obtain ⟨⟨⟨hw, hm⟩, hv⟩, hl⟩ := h
   have hw' : ∀ a ∈ ((choiceDoc N.D c).2 ++ []) ++ [ψ], a.WellFormed (VE.Readings.Wire.fullEnv N c) [] :=
     fun a ha => (VE.check_iff_wellFormed _ _ a).mp (hw a ha)

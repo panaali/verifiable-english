@@ -15,7 +15,7 @@ pub use ve_kernel::{
 pub use ve_profile::{EvaluationKernel, order_candidates};
 pub use ve_profile::{
     CandidateIterator, CountermodelCheck, CountermodelProblem, Evaluation, SearchBounds, SearchResult,
-    TracedEvaluation, evaluate, evaluate_formula, evaluate_traced, find_countermodel,
-    find_countermodel_min, find_countermodel_with_nonvacuity, find_distinguishing_model,
+    SortBounds, TracedEvaluation, evaluate, evaluate_formula, evaluate_traced, find_countermodel,
+    find_countermodel_bounded, find_countermodel_min, ground_only, sort_bounds, find_countermodel_with_nonvacuity, find_distinguishing_model,
     find_distinguishing_model_with_nonvacuity, order_case,
 };

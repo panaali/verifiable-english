@@ -558,11 +558,11 @@ def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption
     monkeypatch.setattr(gate, "POLICY", policy)
     pin_base_collection(monkeypatch, ["tests/a.py::test_a"])
     monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
-    # This test exercises interruption after setup, not the ambient Python
-    # environment or the checkout's current Lake traces. Both vary when the
-    # test itself runs inside the full release gate.
+    # Reach the injected interruption without depending on the ambient Python
+    # environment, shared Lean artifacts or the checkout's current Lake traces.
     monkeypatch.setattr(gate, "check_python_project", lambda result, env: None)
     monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda lean, env: [])
+    monkeypatch.setattr(gate.lake_outputs, "stale", lambda lean, env: [])
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
 
     def fake_command(args, *, env, stage, cwd=None):

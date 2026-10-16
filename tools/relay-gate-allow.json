@@ -287,9 +287,7 @@
    "route": "service:norms",
    "mutation": "duplicate",
    "path": [
-    "results/*/result/background",
     "results/*/result/conflict_targets",
-    "results/*/result/generators",
     "results/*/result/order",
     "results/*/result/premises",
     "results/*/result/report/assumptions",
@@ -303,9 +301,7 @@
    "route": "service:norms",
    "mutation": "empty",
    "path": [
-    "results/*/result/background",
     "results/*/result/conflict_targets",
-    "results/*/result/generators",
     "results/*/result/order",
     "results/*/result/premises",
     "results/*/result/report/assumptions",
@@ -393,7 +389,6 @@
     "results/*/result/sets/*/pairs",
     "results/*/result/slot",
     "results/*/result/targets",
-    "results/*/result/units/*/content/norm/over",
     "results/*/result/vocabulary/predicates"
    ],
    "kind": "by-design",
@@ -1209,13 +1204,11 @@
    "mutation": "rebind",
    "path": [
     "results/*/generator",
-    "results/*/result/background/*/*/*/*",
     "results/*/result/conflict_targets/*/sorts/*",
     "results/*/result/conflict_targets/*/target",
     "results/*/result/error",
     "results/*/result/generator",
     "results/*/result/order/*",
-    "results/*/result/premises/*/*/*/*",
     "results/*/result/targets/*"
    ],
    "kind": "follow-up",
@@ -1825,13 +1818,11 @@
     "results/*/result/decisions/*/arguments",
     "results/*/result/english/*/readings",
     "results/*/result/environment_prime/profiles",
-    "results/*/result/fill",
     "results/*/result/per_choice",
     "results/*/result/per_choice/*/choice",
     "results/*/result/result/choices",
     "results/*/result/result/choices/*/choice",
     "results/*/result/units",
-    "results/*/result/units/*/content/norm/over",
     "results/*/result/vocabulary/predicates/*/arguments",
     "results/*/result/vocabulary/sorts"
    ],
@@ -1850,7 +1841,6 @@
     "results/*/result/decisions/*/arguments",
     "results/*/result/english/*/readings",
     "results/*/result/environment_prime/profiles",
-    "results/*/result/fill",
     "results/*/result/per_choice",
     "results/*/result/per_choice/*/choice",
     "results/*/result/result/choices",
@@ -2120,7 +2110,6 @@
    "mutation": "empty",
    "path": [
     "results/*/result/english/*/frame",
-    "results/*/result/fill/*/label",
     "results/*/result/fill_premises/*/premises/*/label",
     "results/*/result/finding/cause",
     "results/*/result/first_failing",
@@ -2129,8 +2118,6 @@
     "results/*/result/labels/*",
     "results/*/result/reading_premises/*",
     "results/*/result/result/conditional_on/*",
-    "results/*/result/slot/*/label",
-    "results/*/result/targets/*",
     "results/*/result/units/*/content/norm/name",
     "results/*/result/vocabulary/constants/ve__here",
     "results/*/result/vocabulary/predicates/*/arguments/*",
@@ -2224,6 +2211,17 @@
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
   },
   {
+   "route": "service:document",
+   "mutation": "*",
+   "path": [
+    "results/*/result/units/*/content/right/*",
+    "results/*/result/units/*/content/norm/over"
+   ],
+   "kind": "by-design",
+   "id": "B7",
+   "reason": "A rights document's copied unit content (document.json `rights_block` and `soft_content`, Shape.copied): each member is the request's own authored value, the holder guard optional and every line and `over` name as written, so a dropped optional guard or a repeated line or name is still a valid shape. The client binds the content to the unit's authored content (`ve/document.py` `_bind_document_answer`, `_soft_bound`), which refuses each such mutant (tests/test_b16e_rights_document.py::test_every_rights_and_soft_field_is_typed_and_every_row_bound)."
+   },
+   {
    "route": "service:ask",
    "mutation": "empty",
    "path": [
