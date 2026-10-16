@@ -14,6 +14,7 @@ from tools.batch_evidence import REQUIRED_STAGES, outside_report, problems
 
 ROOT = Path(__file__).resolve().parents[1]
 from tools.readings_batch_latency import make_case
+from subprocesses import HANG_TIMEOUT
 
 
 HEAD = "a" * 40
@@ -29,6 +30,21 @@ LATENCY = {"head_commit": HEAD, "pass": True,
 def test_complete_head_evidence_passes():
     errors = problems(HEAD, GATE, AB, LATENCY)
     assert errors == []
+
+
+def test_only_identical_listed_unavailable_is_signed():
+    row = {"corpus": "pilots", "authority": "default", "case": "p", "op": "document_check",
+           "class": "unavailable", "base": {"timeout": HANG_TIMEOUT}, "head": {"timeout": HANG_TIMEOUT},
+           "listed": True}
+    ab = {**AB, "unavailable_both": {"pilots/default": 1}, "differences": [row]}
+    errors = problems(HEAD, GATE, ab, LATENCY)
+    assert errors == []
+    for changed in ({"listed": False}, {"head": {"timeout": HANG_TIMEOUT + 1}},
+                    {"base": {"exit": 0}}, {"case": "p2", "class": "verdict"}):
+        bad = deepcopy(ab)
+        bad["differences"][0].update(changed)
+        errors = problems(HEAD, GATE, bad, LATENCY)
+        assert errors
 
 
 def test_identical_listed_unavailability_is_signed_by_r7():

@@ -60,6 +60,7 @@ import VE.Core.Consequence
 import VE.Core.Conservativity
 import VE.Core.Finite
 import VE.Core.Induction
+import VE.Core.Layers
 import VE.Core.PathRules
 import VE.Core.Paths
 import VE.Core.RoundTrip
@@ -866,6 +867,14 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.today_soft
 #print axioms VE.Compose.today_sound
 #print axioms VE.Compose.today_speech
+#print axioms VE.Core.Layers.Layered.chain
+#print axioms VE.Core.Layers.background_fol
+#print axioms VE.Core.Layers.background_generators
+#print axioms VE.Core.Layers.elaborateNary_chain
+#print axioms VE.Core.Layers.firstBad_none
+#print axioms VE.Core.Layers.naryCheck_ok
+#print axioms VE.Core.Layers.stepOkFrom_sound
+#print axioms VE.Core.Layers.stepOk_sound
 #print axioms VE.Core.Path.first
 #print axioms VE.Core.Path.last
 #print axioms VE.Core.Path.least
@@ -916,6 +925,7 @@ import VE.WireContract.Engine
 #print axioms VE.Core.Tableau.two_holds
 #print axioms VE.Core.Tableau.typed_extend
 #print axioms VE.Core.Tableau.unfoldAt_sound
+#print axioms VE.Core.Wire.encodeFormula_embed
 #print axioms VE.Core.Wire.run_certificate_acceptance
 #print axioms VE.Core.Wire.validField
 #print axioms VE.Core.check_iff_wellFormed
