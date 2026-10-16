@@ -130,6 +130,13 @@ GENERATED = (
     Generated("heavy-tests", ("tests/heavy.json",),
               ((PY, "tools/heavy_tests.py", "--write"),),
               ((PY, "tools/heavy_tests.py", "--check"),)),
+    Generated("platform-divergences", ("tests/platform-divergences.json",), None, None, merge="json",
+              note="saved from both runners' gate records by `tools/platform_contract.py divergences --write "
+                   "--records ...`; its shape is checked by platform-contract's check"),
+    Generated("platform-contract", ("tests/platform-contract.json",),
+              ((PY, "tools/platform_contract.py", "contract", "--write"),),
+              ((PY, "tools/platform_contract.py", "contract", "--check"),),
+              note="after platform-divergences, which it reads"),
 )
 
 

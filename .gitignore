@@ -3,6 +3,7 @@
 __pycache__/
 .pytest_cache/
 gate-result.json
+platform-contract-result.json
 .hypothesis/
 .review/
 *.egg-info/
