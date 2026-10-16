@@ -853,8 +853,12 @@ def test_freshness_is_the_map_selection_would_use(tmp_path, monkeypatch, capsys)
     assert test_map.fresh(head, 24, now=created + datetime.timedelta(hours=25)) == 1
     captured = capsys.readouterr()
     assert captured.out == "" and "25.0 h old, more than 24 h" in captured.err
-    assert test_map.fresh(head, 24, max_behind=0, now=created) == 1
-    assert "1 commits behind, more than 0" in capsys.readouterr().err
+    behind = int(subprocess.run(["git", "rev-list", "--count", f"{git_line('HEAD~1')}..{head}"], cwd=ROOT,
+                                capture_output=True, text=True, check=True).stdout)  # 1, or more after a merge
+    assert test_map.fresh(head, 24, max_behind=behind, now=created) == 0
+    capsys.readouterr()
+    assert test_map.fresh(head, 24, max_behind=behind - 1, now=created) == 1
+    assert f"{behind} commits behind, more than {behind - 1}" in capsys.readouterr().err
 
 
 def test_each_map_format_version_ships_with_a_converter_or_a_recorded_map():
