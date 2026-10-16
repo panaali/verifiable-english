@@ -1,0 +1,75 @@
+{
+ "removed": {
+  "u022a": [
+   "claim_negative"
+  ],
+  "u022b": [
+   "claim_negative"
+  ],
+  "u022c": [
+   "claim_negative"
+  ],
+  "u029": [
+   "claim"
+  ],
+  "u048": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u049": [
+   "claim",
+   "liberty"
+  ],
+  "u051": [
+   "liberty",
+   "claim_avoid"
+  ],
+  "u063": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u066": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u070": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u073": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u084a": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u084b": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u087": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u096": [
+   "claim_negative"
+  ],
+  "u105a": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u105b": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u105c": [
+   "claim_negative",
+   "liberty"
+  ],
+  "u112": [
+   "exercise_unprotected"
+  ]
+ },
+ "moved_meaning_ids": []
+}

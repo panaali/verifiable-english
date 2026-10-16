@@ -1,0 +1,15 @@
+{
+ "changed_expected": [
+  "u049",
+  "u077",
+  "u085",
+  "u091",
+  "u097",
+  "u106"
+ ],
+ "units": 130,
+ "differences": [],
+ "environment_changed_in": [],
+ "note": "a unit's meaning id includes its environment's id, so every unit of a part whose vocabulary changed gets a new meaning id; what is compared is the status and the unit's own row (kind, meaning, content, span) in the part file",
+ "unexpected": []
+}
