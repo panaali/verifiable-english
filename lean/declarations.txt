@@ -900,7 +900,7 @@ module ResponseShape.Schemas.Identity 5fdfa9b4d20290cf6c3bbfe639f6bd13d8705ff449
 module ResponseShape.Schemas.Model f7243d7cf2e9c2c8650379e980cbaa2859f9b179496ccf2fd978e9734d73ba5b
 7:0-18:55 def ResponseShape.Schemas.Model.row@ResponseShape.Schemas.Model
 20:0-24:12 def ResponseShape.Schemas.Model.file@ResponseShape.Schemas.Model
-module ResponseShape.Schemas.NormDefaults 528cc703d70b0536abc47150569e9f9a46c65d43ed64b57d9c849abceafcb9c0
+module ResponseShape.Schemas.NormDefaults 770bd7283d09f82937ff18a70bda29258172a5453bd5461d35f89f16c0dfd441
 9:0-44:102 def ResponseShape.Schemas.NormDefaults.norm_defaults_path@ResponseShape.Schemas.NormDefaults
 46:0-54:60 def ResponseShape.Schemas.NormDefaults.kind@ResponseShape.Schemas.NormDefaults
 56:0-90:39 def ResponseShape.Schemas.NormDefaults.elaborateFields@ResponseShape.Schemas.NormDefaults

@@ -77,7 +77,7 @@ def elaborateFields : List (String × Shape) := [
         closed [
           ("name", n [str, .pattern (Re.prefixes ["unsaid__"])]),
           ("sorts", ref "common.json#/$defs/strings"),
-          ("description", str)]])]),
+          ("description", n [str, .minLength 1])]])]),
   ("reached", n [
     arr,
     .items (n [
