@@ -1874,6 +1874,20 @@ SAFETY_CASES = (
     ("the static graph never names the root", test_without_a_map_an_added_file_selects_the_tests_that_name_the_root),
     ("every '.' literal names the root", test_without_a_map_an_added_file_selects_the_tests_that_name_the_root),
     ("product modules name the root too", test_without_a_map_an_added_file_selects_the_tests_that_name_the_root),
+    # tarch-select (draft 2 section 3.5, items 2-6; Astra re-check 6)
+    ("tree maps fill find_map's window", test_tree_maps_do_not_crowd_commit_maps_out_of_the_window),
+    ("a new map format needs no converter or map", test_each_map_format_version_ships_with_a_converter_or_a_recorded_map),
+    ("the version 6 converter drops service users", test_a_version_6_map_converts_and_keeps_every_service_user),
+    ("units record in name order", test_recording_starts_the_longest_units_first),
+    ("a child without the hook counts as recorded", test_a_child_that_records_here_and_left_no_file_ran_nothing),
+    ("a nested recording keeps its records", test_a_recording_inside_a_recorded_test_hands_over_its_records),
+    ("product words name every directory of the name", test_a_product_word_names_only_product_directories),
+    (".gitattributes changes everything", test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users),
+    ("checkout attributes are ignored", test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users),
+    ("shared manifest fields have no readers", test_a_shared_manifest_field_selects_its_whole_manifest_readers),
+    ("an authority change selects only entry readers", test_an_authority_change_selects_the_registrations_of_its_entries),
+    ("the cutoff ignores the digests", test_a_changed_binary_selects_all_its_runners),
+    ("a missing build record counts as identical", test_without_both_build_records_every_runner_is_selected),
 )
 
 
@@ -1922,10 +1936,11 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
     elif name == "an empty delta hides an added or deleted module":
         real_file_impact = select_tests.file_impact
 
-        def empty_hides(coverage, graph, all_units, add, path, presence_changed, python=None, called=None):
+        def empty_hides(coverage, graph, all_units, add, path, presence_changed, python=None, called=None,
+                        rebuilt=None):
             if python is not None and python[2] is not None and python[2].empty:
                 presence_changed = False
-            real_file_impact(coverage, graph, all_units, add, path, presence_changed, python, called)
+            real_file_impact(coverage, graph, all_units, add, path, presence_changed, python, called, rebuilt)
         monkeypatch.setattr(select_tests, "file_impact", empty_hides)
         arguments = ("", head_commit(), monkeypatch)
     elif name == "directory listings count for data files only":
@@ -1969,6 +1984,66 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
             return set()
         monkeypatch.setattr(select_tests.Coverage, "listers", nearest)
         arguments = (tmp_path, head_commit())
+    elif name == "tree maps fill find_map's window":
+        monkeypatch.setattr(test_map, "commit_maps", lambda directory: list(directory.glob("*.json.gz")))
+        arguments = (tmp_path, monkeypatch)
+    elif name == "a new map format needs no converter or map":
+        monkeypatch.setattr(test_map, "VERSION", test_map.VERSION + 1)
+        arguments = ()
+    elif name == "the version 6 converter drops service users":
+        # The converter invents a mode for every unit: the service user seems to need another mode only.
+        monkeypatch.setitem(test_map.CONVERTERS, 7, lambda data: {
+            **data, "modes": {"norms": list(range(len(data["tests"])))}})
+        arguments = (tmp_path, monkeypatch)
+    elif name == "units record in name order":
+        monkeypatch.setattr(test_map, "by_length", lambda selected, previous: sorted(selected))
+        arguments = ()
+    elif name == "a child without the hook counts as recorded":
+        real_read_unit = test_map.read_unit
+
+        def missing_children_ran_nothing(directory, files):
+            result = real_read_unit(directory, files)
+            result["opaque"] = [reason for reason in result["opaque"] if not reason.endswith("left no record")]
+            return result
+        monkeypatch.setattr(test_map, "read_unit", missing_children_ran_nothing)
+        arguments = (tmp_path, *CHILDREN["no hook"])
+    elif name == "a nested recording keeps its records":
+        monkeypatch.setattr(test_map, "share_with_outer", lambda out, env: None)
+        arguments = (tmp_path, monkeypatch)
+    elif name == "product words name every directory of the name":
+        real_mentions = source_graph.Graph._mentions
+        monkeypatch.setattr(source_graph.Graph, "_mentions", lambda self, path, summary: real_mentions(
+            self, "tests/as_if.py" if path.startswith(source_graph.PRODUCT) else path, summary))
+        arguments = (tmp_path, monkeypatch)
+    elif name == ".gitattributes changes everything":
+        monkeypatch.setattr(select_tests, "GIT_ATTRIBUTES", "-")
+        arguments = (head_commit(),)
+    elif name == "checkout attributes are ignored":
+        monkeypatch.setattr(select_tests, "checkout_attributes_changed", lambda old, new: False)
+        arguments = (head_commit(),)
+    elif name == "shared manifest fields have no readers":
+        monkeypatch.setattr(select_tests.Coverage, "whole_manifest_readers", lambda self: set())
+        arguments = (tmp_path,)
+    elif name == "an authority change selects only entry readers":
+        real_delta = select_tests.manifest_delta
+
+        def no_authority(old, new):
+            found = real_delta(old, new)
+            if found is not None:
+                found.authority = set()
+            return found
+        monkeypatch.setattr(select_tests, "manifest_delta", no_authority)
+        arguments = (tmp_path,)
+    elif name == "the cutoff ignores the digests":
+        real_cutoff = select_tests.lean_cutoff
+        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after: {
+            **real_cutoff(base, after), "state": "applied", "rebuilt": []})
+        arguments = (head_commit(), tmp_path, monkeypatch)
+    elif name == "a missing build record counts as identical":
+        real_load = test_map.load_build
+        monkeypatch.setattr(test_map, "load_build", lambda tree: real_load(tree) or {
+            name: "0" * 64 for name in select_tests.lean_executables()})
+        arguments = (head_commit(), tmp_path, monkeypatch, False, True, "no record of the base build")
     else:
         monkeypatch.setattr(select_tests.Coverage, "file_wide", lambda self, file, defs: set())
         arguments = (tmp_path,)

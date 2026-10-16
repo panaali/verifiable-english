@@ -503,6 +503,11 @@ def working_tree_id(root: Path = ROOT) -> str:
                               capture_output=True, text=True).stdout.strip()
 
 
+def commit_maps(directory: Path) -> list[Path]:
+    """The maps in a cache directory recorded at a commit (not `--run`'s maps of a tree)."""
+    return [path for path in directory.glob("*.json.gz") if not path.name.startswith("tree-")]
+
+
 def find_map(base: str, root: Path = ROOT, other_versions: list[Path] | None = None) -> Path | None:
     """The cached map nearest below `base`: of the 30 newest maps recorded at commits, the one at an
     ancestor of `base` with the fewest commits between it and `base`. $VE_TESTMAP overrides. Maps
@@ -517,8 +522,7 @@ def find_map(base: str, root: Path = ROOT, other_versions: list[Path] | None = N
     if not directory.is_dir():
         return None
     best = None
-    commit_maps = [path for path in directory.glob("*.json.gz") if not path.name.startswith("tree-")]
-    for path in sorted(commit_maps, key=lambda p: p.stat().st_mtime, reverse=True)[:30]:
+    for path in sorted(commit_maps(directory), key=lambda p: p.stat().st_mtime, reverse=True)[:30]:
         commit = path.name.split(".", 1)[0]
         distance = subprocess.run(("git", "rev-list", "--count", f"{commit}..{base}"), cwd=root,
                                   capture_output=True, text=True)
