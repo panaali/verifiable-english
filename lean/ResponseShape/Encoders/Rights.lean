@@ -78,7 +78,7 @@ theorem elaborate_fits (id : String) (D : RightsDoc) (env doc : Json) (openNames
   unfold VE.Route.Wire.ok regenerated VE.SoftNorms.Wire.regeneratedCore VE.SoftNorms.Wire.bgEntry generatedKeys
     lineJson nodeJson narrowingsJson distinctionJson
   simp only [List.filter_cons, List.filter_nil, String.reduceBNe, Bool.false_eq_true, ↓reduceIte]
-  fits
+  fits using SoftNorms.decisionKeyJson_fits
   all_goals try first
     | exact Fits.rightsEnvironment D env (generated_entries_fit D)
         (fun p _ => Common.decisionEntry_fits p.2) rfl

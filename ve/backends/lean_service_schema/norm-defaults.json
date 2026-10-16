@@ -10,7 +10,10 @@
             {"$ref": "common.json#/$defs/route_path_error"},
             {
               "x-select": [
-                {"then": {"$ref": "common.json#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {
+                  "then": {"anyOf": [{"$ref": "common.json#/$defs/admission"}, {"$ref": "#/$defs/soft_admission"}]},
+                  "when": {"$ref": "#/$defs/kind/admission"}
+                },
                 {
                   "then": {"anyOf": [{"$ref": "#/$defs/elaborate"}, {"$ref": "#/$defs/layered_elaborate"}]},
                   "when": {"$ref": "#/$defs/kind/norm-defaults-elaborate"}
@@ -375,6 +378,21 @@
         "status": {"const": "ok"}
       },
       "required": ["id", "status", "report", "residual", "findings"],
+      "type": "object"
+    },
+    "soft_admission": {
+      "$comment": "NormDefaults.Admission.encodeAdmittedX (the soft branch's admission, Run.runCase's soft dispatch): W2's admission answer on the filled soft tree and the open coherence premises the report assumes, as the soft route's admission answer lists them.",
+      "additionalProperties": false,
+      "properties": {
+        "admitted": {"const": true},
+        "conditional_on": {"$ref": "soft-norms.json#/$defs/coherence_labels"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array", "x-equals": "/document/units/*/kind"},
+        "report": {"$ref": "common.json#/$defs/bound_report"},
+        "report_id": {"$ref": "common.json#/$defs/hex64"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
       "type": "object"
     },
     "status": {
