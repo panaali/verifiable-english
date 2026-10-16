@@ -145,6 +145,7 @@ REVIEWED = {
     ('ve/backends/lean_service.py', 'int(digits)'): "Lean's JSON integers; the ValueError falls back to Decimal",
     ('ve/backends/lean_service.py', 'int(line.split()[1])'): '/proc status, not input',
     ('ve/backends/lean_service.py', 'int(fields[11])'): '/proc stat CPU ticks (utime), not input',
+    ('ve/backends/process_limits.py', 'int(text)'): 'a byte-count setting after the 19-digit bound',
     ('ve/english.py', 'int(part[1])'): 'a slot {0}..{5} of a template',
     ('ve/english.py', 'int(p[1])'): 'a slot {0}..{5} of a template',
     ('ve/english.py', 'int(listed)'): 'a Boolean',

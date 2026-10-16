@@ -585,14 +585,8 @@ theorem decodeDefined_name {p : String} {ss : List String} {payload : Json}
   unfold VE.Route.Wire.decodeDefined at h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
-  obtain ⟨_, _, h⟩ := bind_ok h
-  split at h
-  · obtain ⟨_, _, h⟩ := bind_ok h
-    obtain ⟨_, _, h⟩ := bind_ok h
-    obtain ⟨_, _, h⟩ := bind_ok h
-    cases h
-    rfl
-  · cases h
+  cases h
+  rfl
 
 /-- Rejection (a): the vocabulary decoder never yields a flag on a defined
 predicate (`UnsupportedProfile: Defined predicates cannot carry functional or

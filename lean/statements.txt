@@ -3761,6 +3761,63 @@ theorem VE.Compose.today_speech
     VE.Compose.today ps = Except.ok VE.Compose.Route.speechActs → VE.SpeechActs.Wire.profileGate ps = Except.ok ()
   -- uses VE.Compose.Route.speechActs@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.today@VE.Compose.Dispatch VE.SpeechActs.Wire.profileGate@VE.SpeechActs.Wire
   -- expr 1577804317
+theorem VE.Core.Layers.Layered.chain
+  ∀ (self : VE.Core.Layers.Layered), VE.Core.Layers.chainOk self.v.environment self.nary = Bool.true
+  -- uses VE.Bridge.Vocabulary.environment@VE.Bridge VE.Core.Layers.Layered.nary@VE.Core.Layers VE.Core.Layers.Layered.v@VE.Core.Layers VE.Core.Layers.Layered@VE.Core.Layers VE.Core.Layers.chainOk@VE.Core.Layers
+  -- expr 1597675704
+theorem VE.Core.Layers.background_fol
+  ∀ (L : VE.Core.Layers.Layered),
+    L.nary = [] →
+      VE.Core.Layers.background L = List.map (fun p => (VE.Core.embed p.fst, p.snd)) (VE.Route.Wire.fullBackground L.rv)
+  -- uses VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.Layered.nary@VE.Core.Layers VE.Core.Layers.Layered.rv@VE.Core.Layers VE.Core.Layers.Layered@VE.Core.Layers VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.background@VE.Core.Layers VE.Core.embed@VE.Core.Syntax VE.Formula@VE.Syntax VE.Route.Wire.fullBackground@VE.Route.Wire
+  -- expr 1708723636
+theorem VE.Core.Layers.background_generators
+  ∀ (L : VE.Core.Layers.Layered) (p : VE.Core.Formula × String),
+    p ∈ VE.Core.Layers.background L → p.snd ∈ VE.Route.Background.generators
+  -- uses VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.Layered@VE.Core.Layers VE.Core.Layers.background@VE.Core.Layers VE.Route.Background.generators@VE.Route.Background
+  -- expr 2848989012
+theorem VE.Core.Layers.elaborateNary_chain
+  ∀ (E : VE.Environment) (fol : List VE.Definitions.Def) (entries : List VE.Core.Layers.NaryDef) (order : List String)
+    (ds : List VE.Core.Layers.NaryDef),
+    VE.Core.Layers.elaborateNary E fol entries = Except.ok (order, ds) →
+      VE.Core.Layers.chainOk E ds = Bool.true ∧
+        VE.Route.dependencyOrder (VE.Core.Layers.definitionNodes fol entries) = Except.ok order
+  -- uses VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.chainOk@VE.Core.Layers VE.Core.Layers.definitionNodes@VE.Core.Layers VE.Core.Layers.elaborateNary@VE.Core.Layers VE.Definitions.Def@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Route.dependencyOrder@VE.Route.Route
+  -- expr 880999423
+theorem VE.Core.Layers.firstBad_none
+  ∀ (E : VE.Environment) (ds : List VE.Core.Layers.NaryDef),
+    VE.Core.Layers.firstBad E ds = Option.none → VE.Core.Layers.chainOk E ds = Bool.true
+  -- uses VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.chainOk@VE.Core.Layers VE.Core.Layers.firstBad@VE.Core.Layers VE.Environment@VE.Syntax
+  -- expr 3141972202
+theorem VE.Core.Layers.naryCheck_ok
+  ∀ (mem : String → List VE.Bridge.Entity → Bool) (M : VE.FiniteModel VE.Bridge.Entity),
+    (∀ (p : String) (row : List VE.Bridge.Entity), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      ∀ (as : List VE.Core.Formula),
+        VE.Core.Layers.naryCheck mem M as = Except.ok () → (as.all fun a => VE.Core.Formula.eval M [] a) = Bool.true
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Core.Formula.eval@VE.Core.Finite VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.naryCheck@VE.Core.Layers VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite
+  -- expr 3543125521
+theorem VE.Core.Layers.stepOkFrom_sound
+  ∀ (minArity : Nat) (E : VE.Environment) (later : List String) (d : VE.Core.Layers.NaryDef),
+    VE.Core.Layers.stepOkFrom minArity E later d = Bool.true →
+      ¬d.name ∈ later ∧
+        E.predicates d.name = Option.some d.args ∧
+          minArity ≤ d.args.length ∧
+            d.args.length ≤ 6 ∧
+              (∀ (s : String), s ∈ d.args → s ∈ E.sorts) ∧
+                VE.Core.Formula.WellFormed (VE.Definitions.hide E (d.name :: later)) d.args.reverse d.body
+  -- uses VE.Core.Formula.WellFormed@VE.Core.Syntax VE.Core.Layers.NaryDef.args@VE.Core.Layers VE.Core.Layers.NaryDef.body@VE.Core.Layers VE.Core.Layers.NaryDef.name@VE.Core.Layers VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.stepOkFrom@VE.Core.Layers VE.Definitions.hide@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax
+  -- expr 1263086525
+theorem VE.Core.Layers.stepOk_sound
+  ∀ (E : VE.Environment) (later : List String) (d : VE.Core.Layers.NaryDef),
+    VE.Core.Layers.stepOk E later d = Bool.true →
+      ¬d.name ∈ later ∧
+        E.predicates d.name = Option.some d.args ∧
+          3 ≤ d.args.length ∧
+            d.args.length ≤ 6 ∧
+              (∀ (s : String), s ∈ d.args → s ∈ E.sorts) ∧
+                VE.Core.Formula.WellFormed (VE.Definitions.hide E (d.name :: later)) d.args.reverse d.body
+  -- uses VE.Core.Formula.WellFormed@VE.Core.Syntax VE.Core.Layers.NaryDef.args@VE.Core.Layers VE.Core.Layers.NaryDef.body@VE.Core.Layers VE.Core.Layers.NaryDef.name@VE.Core.Layers VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.stepOk@VE.Core.Layers VE.Definitions.hide@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax
+  -- expr 4053115128
 theorem VE.Core.Path.first
   ∀ {α : Type u} {R : α → α → Prop} {x y : α}, VE.Core.Path R x y → ∃ z, R x z
   -- uses VE.Core.Path@VE.Core.Paths
@@ -4183,6 +4240,10 @@ theorem VE.Core.Tableau.unfoldAt_sound
                     VE.Core.Formula.denote S (VE.Core.Tableau.bindingsValue S ρ bs) (VE.Core.Formula.reach k e t r))
   -- uses VE.Core.Edge@VE.Core.Syntax VE.Core.Formula.denote@VE.Core.Syntax VE.Core.Formula.reach@VE.Core.Syntax VE.Core.Formula@VE.Core.Syntax VE.Core.Kind@VE.Core.Paths VE.Core.Tableau.Assignment.Typed@VE.Core.TableauExtended VE.Core.Tableau.Assignment@VE.Core.TableauExtended VE.Core.Tableau.Branch@VE.Core.TableauExtended VE.Core.Tableau.Token.denote@VE.Core.TableauExtended VE.Core.Tableau.Token@VE.Core.TableauExtended VE.Core.Tableau.bindingsValue@VE.Core.TableauExtended VE.Core.Tableau.unfoldAt@VE.Core.TableauExtendedRules VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Term@VE.Syntax
   -- expr 2380617290
+theorem VE.Core.Wire.encodeFormula_embed
+  ∀ (a : VE.Formula), VE.Core.Wire.encodeFormula (VE.Core.embed a) = VE.Route.Wire.encodeFormula a
+  -- uses VE.Core.Wire.encodeFormula@VE.Core.Wire VE.Core.embed@VE.Core.Syntax VE.Formula@VE.Syntax VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 1572501717
 theorem VE.Core.Wire.run_certificate_acceptance
   ∀ (profiles : List String) (environment : Lean.Json) (id : String)
     (j result premisesJson conclusionJson certificateJson : Lean.Json) (premiseArray : Array Lean.Json)
@@ -34428,6 +34489,108 @@ theorem VE.Route.verifyOrder_sound
             n ∈ ns → ∀ (m : String), m ∈ VE.Route.deps ns n → List.idxOf m order < List.idxOf n.name order
   -- uses VE.Route.DepNode.name@VE.Route.Route VE.Route.DepNode@VE.Route.Route VE.Route.deps@VE.Route.Route VE.Route.nodeNames@VE.Route.Route VE.Route.verifyOrder@VE.Route.Route
   -- expr 2970290661
+theorem VE.SearchBudget.chain_denote
+  ∀ {S : VE.Structure} {s : String} (a : VE.Formula) (σ : VE.Valuation S),
+    VE.Formula.denote S σ a →
+      ∃ ρ,
+        ρ.length = (VE.SearchBudget.chain s a).fst ∧
+          (∀ (v : S.Carrier), v ∈ ρ → S.domain s v) ∧ VE.Formula.denote S (ρ ++ σ) (VE.SearchBudget.chain s a).snd
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.chain@VE.SearchBudget.Demand VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 581339005
+theorem VE.SearchBudget.conjuncts_denote
+  ∀ {S : VE.Structure} {ρ : VE.Valuation S} {a : VE.Formula},
+    VE.Formula.denote S ρ a → ∀ (c : VE.Formula), c ∈ VE.SearchBudget.conjuncts a → VE.Formula.denote S ρ c
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.conjuncts@VE.SearchBudget.Demand VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3852155322
+theorem VE.SearchBudget.demand_sound
+  ∀ {E : VE.Environment} {S : VE.Structure},
+    S.Admissible E →
+      ∀ {cs : List (String × String)},
+        (∀ (c : String × String), c ∈ cs → E.constants c.fst = Option.some c.snd) →
+          ∀ {premises : List VE.Formula},
+            (∀ (a : VE.Formula), a ∈ premises → VE.Formula.denote S [] a) →
+              ∀ (s : String),
+                ∃ vs,
+                  vs.length = VE.SearchBudget.demand cs premises s ∧ vs.Nodup ∧ ∀ (v : S.Carrier), v ∈ vs → S.domain s v
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.demand@VE.SearchBudget.Demand VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2910154187
+theorem VE.SearchBudget.distinctTerms_spec
+  ∀ (fs : List VE.Formula) (ts : List VE.Term),
+    List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) (VE.SearchBudget.distinctTerms fs ts) ∧
+      ∀ (x : VE.Term), x ∈ VE.SearchBudget.distinctTerms fs ts → x ∈ ts
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.distinctTerms@VE.SearchBudget.Demand VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 1157841702
+theorem VE.SearchBudget.distinct_values
+  ∀ {S : VE.Structure} {ρ : VE.Valuation S} {fs : List VE.Formula} {s : String},
+    (∀ (c : VE.Formula), c ∈ fs → VE.Formula.denote S ρ c) →
+      ∀ (ts : List VE.Term),
+        List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) ts →
+          (∀ (t : VE.Term), t ∈ ts → ∃ v, VE.Term.denote S ρ t = Option.some v ∧ S.domain s v) →
+            ∃ vs,
+              vs.length = ts.length ∧
+                vs.Nodup ∧
+                  (∀ (v : S.Carrier), v ∈ vs → S.domain s v) ∧
+                    ∀ (v : S.Carrier), v ∈ vs → ∃ t, t ∈ ts ∧ VE.Term.denote S ρ t = Option.some v
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics VE.Term.denote@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 316152903
+theorem VE.SearchBudget.facts_denote
+  ∀ {S : VE.Structure} {ρ : VE.Valuation S} {premises : List VE.Formula},
+    (∀ (a : VE.Formula), a ∈ premises → VE.Formula.denote S ρ a) →
+      ∀ (c : VE.Formula), c ∈ VE.SearchBudget.facts premises → VE.Formula.denote S ρ c
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.facts@VE.SearchBudget.Demand VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 4122682982
+theorem VE.SearchBudget.foldl_keep
+  ∀ {fs : List VE.Formula} (ts kept : List VE.Term),
+    List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) kept →
+      List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true)
+          (List.foldl (VE.SearchBudget.keep fs) kept ts) ∧
+        ∀ (x : VE.Term), x ∈ List.foldl (VE.SearchBudget.keep fs) kept ts → x ∈ kept ∨ x ∈ ts
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.keep@VE.SearchBudget.Demand VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 795584863
+theorem VE.SearchBudget.foldl_max_of
+  ∀ {P : Nat → Prop} (ns : List Nat) (n : Nat), P n → (∀ (m : Nat), m ∈ ns → P m) → P (List.foldl Max.max n ns)
+  -- uses
+  -- expr 2825706736
+theorem VE.SearchBudget.keep_pairwise
+  ∀ {fs : List VE.Formula} {kept : List VE.Term} (t : VE.Term),
+    List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) kept →
+      List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) (VE.SearchBudget.keep fs kept t)
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.keep@VE.SearchBudget.Demand VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 3040720910
+theorem VE.SearchBudget.keep_subset
+  ∀ {fs : List VE.Formula} {kept : List VE.Term} {t : VE.Term} (x : VE.Term),
+    x ∈ VE.SearchBudget.keep fs kept t → x ∈ kept ∨ x = t
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.keep@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 3649230421
+theorem VE.SearchBudget.sortBounds_nodup
+  ∀ {b : VE.SearchBudget.Budget} {cs : List (String × String)} {premises : List VE.Formula} {sorts : List String},
+    sorts.Nodup → (List.map Prod.fst (VE.SearchBudget.sortBounds b cs premises sorts)).Nodup
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.Budget@VE.SearchBudget.Budget VE.SearchBudget.sortBounds@VE.SearchBudget.Budget
+  -- expr 2414054383
+theorem VE.SearchBudget.sortBounds_sound
+  ∀ {E : VE.Environment} {S : VE.Structure},
+    S.Admissible E →
+      ∀ {cs : List (String × String)},
+        (∀ (c : String × String), c ∈ cs → E.constants c.fst = Option.some c.snd) →
+          ∀ {premises : List VE.Formula},
+            (∀ (a : VE.Formula), a ∈ premises → VE.Formula.denote S [] a) →
+              ∀ {b : VE.SearchBudget.Budget} {sorts : List String} {s : String} {least most : Nat},
+                (s, least, most) ∈ VE.SearchBudget.sortBounds b cs premises sorts →
+                  ∃ vs, vs.length = least ∧ vs.Nodup ∧ ∀ (v : S.Carrier), v ∈ vs → S.domain s v
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.Budget@VE.SearchBudget.Budget VE.SearchBudget.sortBounds@VE.SearchBudget.Budget VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2737329321
+theorem VE.SearchBudget.sortBounds_spec
+  ∀ {b : VE.SearchBudget.Budget} {cs : List (String × String)} {premises : List VE.Formula} {sorts : List String}
+    {s : String} {least most : Nat},
+    (s, least, most) ∈ VE.SearchBudget.sortBounds b cs premises sorts →
+      s ∈ sorts ∧
+        least = VE.SearchBudget.demand cs premises s ∧ most = least ∧ b.domainSize < most ∧ most ≤ VE.SearchBudget.sortCap
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.Budget.domainSize@VE.SearchBudget.Budget VE.SearchBudget.Budget@VE.SearchBudget.Budget VE.SearchBudget.demand@VE.SearchBudget.Demand VE.SearchBudget.sortBounds@VE.SearchBudget.Budget VE.SearchBudget.sortCap@VE.SearchBudget.Budget
+  -- expr 335065142
+theorem VE.SearchBudget.statesDistinct_comm
+  ∀ (fs : List VE.Formula) (t u : VE.Term), VE.SearchBudget.statesDistinct fs t u = VE.SearchBudget.statesDistinct fs u t
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 1743284098
 theorem VE.Senses.badDefault_none
   ∀ (D : VE.Senses.Dictionary) (A : VE.Senses.Assignment),
     VE.Senses.badDefault D A = Option.none ↔
@@ -35887,6 +36050,10 @@ theorem VE.Service.runMode_route
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.route j = VE.Route.Run.runCaseReported j
   -- uses VE.Route.Run.runCaseReported@VE.Route.Run VE.Service.Mode.route@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 4097467530
+theorem VE.Service.runMode_searchBudget
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.searchBudget j = VE.SearchBudget.Run.runCaseReported j
+  -- uses VE.SearchBudget.Run.runCaseReported@VE.SearchBudget.Run VE.Service.Mode.searchBudget@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 2782331337
 theorem VE.Service.runMode_softNorms
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.softNorms j = VE.SoftNorms.Run.runCaseReported j
   -- uses VE.Service.Mode.softNorms@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.SoftNorms.Run.runCaseReported@VE.SoftNorms.Run
