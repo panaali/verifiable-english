@@ -232,6 +232,12 @@ No standing ruling applies.
   inconclusive (`FileExistsError`, 334 probes).
 - **Attribution names the innermost deciding `ve` line.** That is the exception a binder converted, or the first
   frame that is not an error-building helper. A refusal by a later Lean request is never attributed to a binder.
+- **A cost for other branches.** A branch that changes a response shape must regenerate the census as well as
+  the schemas. `tools/regen_generated.py --write` does both: `binding-census` follows `response-schemas` in the
+  inventory, and the write takes 2–3 s. The merge train regenerates only on a conflict. So a branch that merges a
+  shape change without syncing fails `test_the_census_is_current` in its candidate verify, before main moves, and
+  needs one `--write`. An edit to a hand binder's cited line needs the same `--write` (the line is marked
+  `present: false`), never a re-probe.
 - **Probes before the merge.** The probes were recorded before the sync with main. Paths of the recursive
   `kind` and `q_term` shapes, and main's new `search-budget` mode, have no probe yet (`--record` refreshes them).
   The answers were refreshed on the merged build (`--answers`).
