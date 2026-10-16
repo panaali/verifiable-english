@@ -1,7 +1,44 @@
-#![forbid(unsafe_code)]
+// `memory` holds the binary's one allowed unsafe impl, the counting allocator; all else is safe.
+#![deny(unsafe_code)]
+mod memory;
+
 use serde_json::{Value, json};
 use std::io::{self, BufRead, Read, Write};
+use std::sync::Mutex;
 use ve_core::*;
+
+#[global_allocator]
+static ALLOCATOR: memory::Budget = memory::Budget;
+
+/// The `ve jsonl` case being answered (its `id`, `""` when it has none), so that exhausting the
+/// memory budget still answers it. None outside `ve jsonl`.
+static ANSWERING: Mutex<Option<Value>> = Mutex::new(None);
+static JSONL: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// The memory budget is exhausted (`memory.rs`). `ve jsonl` answers the case it was serving with
+/// ResourceLimit, as any rejected case (exit 1). Every other command reports it as a failed
+/// command (exit 2). Then the process ends: memory is not reclaimed from a case midway.
+fn out_of_memory(limit: usize) -> ! {
+    let error = Error::new("ResourceLimit",
+        format!("memory budget exhausted: {limit} bytes ({})", memory::VARIABLE));
+    if JSONL.load(std::sync::atomic::Ordering::Relaxed) {
+        let record = match ANSWERING.try_lock().ok().and_then(|mut id| id.take()) {
+            Some(id) => json!({"id":id,"status":"error","error":error}),
+            None => {
+                // Before JSON decoding there is no case id. The client has exactly one
+                // outstanding line, but must distinguish this from a lost parsed id.
+                eprintln!("VE_JSONL_OOM_BEFORE_CASE_ID");
+                json!({"status":"error","error":error})
+            },
+        };
+        let mut stdout = io::stdout();
+        let _ = writeln!(stdout, "{record}");
+        let _ = stdout.flush();
+        std::process::exit(1);
+    }
+    eprintln!("{}", json!({"status":"error","error":error}));
+    std::process::exit(2);
+}
 
 fn read(path: &str) -> Result<Vec<u8>> {
     let mut out = Vec::new();
@@ -179,8 +216,8 @@ fn case(v: &Value) -> Result<Value> {
             .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
         let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
         let (guard, semantic) = nonvacuity(&env, v)?;
-        let mut out = find_countermodel_with_nonvacuity(&env, &problem, bounds,
-            minimum.max(usize::from(nonempty)), guard.as_ref(), semantic)?.to_value();
+        let mut out = find_countermodel_bounded(&env, &problem, bounds,
+            minimum.max(usize::from(nonempty)), guard.as_ref(), semantic, &sort_bounds(v)?, ground_only(v)?)?.to_value();
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }
@@ -406,6 +443,7 @@ fn run(args: &[String]) -> Result<i32> {
             Ok(i32::from(failed))
         }
         "jsonl" => {
+            JSONL.store(true, std::sync::atomic::Ordering::Relaxed);
             let input: Box<dyn Read> = if args.get(1).is_none_or(|x| x == "-") {
                 Box::new(io::stdin())
             } else {
@@ -427,7 +465,11 @@ fn run(args: &[String]) -> Result<i32> {
                     break;
                 }
                 let out = match loads_json(&line) {
-                    Ok(v) => case_record(&v),
+                    Ok(v) => {
+                        *ANSWERING.lock().unwrap_or_else(|e| e.into_inner()) =
+                            Some(v.get("id").cloned().unwrap_or(json!("")));
+                        case_record(&v)
+                    }
                     Err(e) => json!({"status":"error","error":e}),
                 };
                 failed |= out["status"] == "error";
@@ -438,6 +480,7 @@ fn run(args: &[String]) -> Result<i32> {
                 stdout
                     .flush()
                     .map_err(|e| Error::new("InvalidInput", e.to_string()))?;
+                ANSWERING.lock().unwrap_or_else(|e| e.into_inner()).take();
                 if count > MAX_PACKAGE_BYTES {
                     // Drop only the rest of this record, using the reader's
                     // fixed-size buffer rather than allocating the whole line.
@@ -473,10 +516,16 @@ fn run(args: &[String]) -> Result<i32> {
 }
 fn help() {
     println!(
-        "VE v0 experimental Rust core: untrusted search and evaluation over wire ASTs\nve conformance [CASES.json|-]\nve jsonl [CASES.jsonl|-]\nve canonical-json [INPUT.json|-]"
+        "VE v0 experimental Rust core: untrusted search and evaluation over wire ASTs\nve conformance [CASES.json|-]\nve jsonl [CASES.jsonl|-]\nve canonical-json [INPUT.json|-]\nmemory budget: {} bytes ({}; default {})",
+        memory::limit(), memory::VARIABLE, memory::DEFAULT_LIMIT
     );
 }
 fn main() {
+    memory::on_exhausted(out_of_memory);
+    if let Err(message) = memory::configure() {
+        eprintln!("{}", json!({"status":"error","error":Error::new("InvalidInput", message)}));
+        std::process::exit(2);
+    }
     let code = match run(&std::env::args().skip(1).collect::<Vec<_>>()) {
         Ok(code) => code,
         Err(e) => {
