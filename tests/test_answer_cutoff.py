@@ -363,3 +363,18 @@ def test_replay_answers_each_case_as_recorded_and_again_alike(tmp_path, executab
         handle.write("")
     with pytest.raises(ValueError, match="no case"):
         answer_replay.replay(directory, executable)
+
+
+def test_the_hook_passes_its_rule_and_is_off_by_default(monkeypatch, capsys):
+    """`select_tests.py --cutoff RULE` plans through answer_cutoff with that rule; without the flag,
+    the plan is select_tests' own and answer_cutoff is not consulted."""
+    calls = []
+    plan = {"selected": [], "selected_count": 0, "full_count": 0, "full": False, "full_reasons": [], "map": None,
+            "seconds": 0, "commands": [], "reasons": {}}
+    monkeypatch.setattr(select_tests, "select", lambda paths, **options: calls.append(("plain", paths)) or plan)
+    monkeypatch.setattr(answer_cutoff, "select", lambda rule, paths, **options: calls.append((rule, paths)) or plan)
+    for argv in (["--paths", "README.md", "--json"], ["--paths", "README.md", "--json", "--cutoff", "answers=d.json"]):
+        monkeypatch.setattr(sys, "argv", ["select_tests.py", *argv])
+        assert select_tests.main() == 0
+    assert calls == [("plain", ["README.md"]), ("answers=d.json", ["README.md"])]
+    capsys.readouterr()
