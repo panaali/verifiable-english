@@ -88,4 +88,3 @@ def test_job():
         else:
             raise ValueError(f"unknown step {kind}")
     send("report.json", json.dumps(report).encode())
-    print(json.dumps(report), file=sys.stderr)

@@ -92,7 +92,7 @@ def test_recorder_records_each_case_the_client_sent(tmp_path, executable):
     stored = {row["k"]: row["c"] for row in answer_replay.read_jsonl(written / "cases.jsonl.gz")}
     # The exact text sent, a U+2028 inside a string included (a line separator only to str.splitlines).
     assert sorted(stored.values()) == sorted(sent_texts())
-    handles = {answer_cutoff.handle_of(text) for text in stored.values()} - {None}
+    handles = {answer_replay.handle_of(text) for text in stored.values()} - {None}
     environments = {row["d"]: row["t"] for row in answer_replay.read_jsonl(written / "environments.jsonl.gz")}
     assert handles and set(environments) == handles
     assert all(hashlib.sha256(text.encode()).hexdigest() == digest for digest, text in environments.items())

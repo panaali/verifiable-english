@@ -15,6 +15,7 @@ import argparse
 import base64
 import gzip
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -72,11 +73,13 @@ def main() -> int:
     prepare(args.worktree, args.commit, None if args.full_suite else json.loads(args.steps), args.overlay)
     pytest = (["-o", "addopts=-ra", "-m", "not live", "-q", "-rfE", "-n", args.workers, "tests"] if args.full_suite
               else ["-p", "no:xdist", "-q", "-s", JOB])
-    log = args.out / "mac.log"
-    with log.open("w") as handle:
+    # Standard output and standard error apart: ssh writes them independently, so one file would
+    # interleave them inside the job's base64 lines.
+    log, errors = args.out / "mac.log", args.out / "mac.err.log"
+    with log.open("w") as handle, errors.open("w") as error_handle:
         code = subprocess.run(["zsh", MAC_PYTEST, "--worktree", str(args.worktree), "--", *pytest],
-                              stdout=handle, stderr=subprocess.STDOUT, env={**__import__("os").environ,
-                                                                             "MAC_PYTEST_NOFALLBACK": "1"}).returncode
+                              stdout=handle, stderr=error_handle,
+                              env={**os.environ, "MAC_PYTEST_NOFALLBACK": "1"}).returncode
     names = decode(log, args.out)
     (args.out / "job.json").write_text(json.dumps({"commit": git(args.worktree, "rev-parse", "HEAD"),
                                                    "exit": code, "decoded": names, "full_suite": args.full_suite,

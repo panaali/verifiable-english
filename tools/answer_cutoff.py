@@ -135,24 +135,13 @@ def write_store(rows: dict[str, dict], output: Path) -> None:
             handle.write(json.dumps(rows[name], ensure_ascii=False) + "\n")
 
 
-def handle_of(text: str) -> str | None:
-    """The environment handle a case text names, if any."""
-    lean_service = answer_replay.lean_service
-    try:
-        case = lean_service._decode_json(text)
-    except ValueError:
-        return None
-    handle = case.get(lean_service.HANDLE_KEY) if type(case) is dict else None
-    return handle if isinstance(handle, str) else None
-
-
 def store_cases(requests: Path, index: dict, output: Path) -> tuple[int, int]:
     """Write the recorded cases and environments; a unit with a case whose text or environment
     was not recorded (a process that ended before writing it) becomes unknown."""
     bodies = read_store(requests, "bodies", "k")
     environments = read_store(requests, "environments", "d")
     cases = {key: bodies[key] for key in index["keys"] if key in bodies}
-    named = {key: handle_of(row["c"]) for key, row in cases.items()}
+    named = {key: answer_replay.handle_of(row["c"]) for key, row in cases.items()}
     missing = {key for key in index["keys"] if key not in cases
                or (named[key] is not None and named[key] not in environments)}
     for entry in index["units"].values():
