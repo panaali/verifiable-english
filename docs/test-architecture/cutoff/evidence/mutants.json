@@ -119,6 +119,24 @@
    "failure": "FAILED tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import random\\n\\ndef test():\\n    random.choice([1, 2])\\n-calls random.choice]"
   },
   {
+   "id": "M15",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit that read an answer the base build changed is not unknown",
+   "test": "tests/test_answer_cutoff.py::test_a_unit_that_read_an_answer_the_base_build_changed_is_unknown",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_unit_that_read_an_answer_the_base_build_changed_is_unknown"
+  },
+  {
+   "id": "M16",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a diff from another base build than the recording's is accepted without its stale answers",
+   "test": "tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust"
+  },
+  {
    "id": "M14",
    "language": "python",
    "file": "tools/select_tests.py",

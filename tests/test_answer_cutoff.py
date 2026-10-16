@@ -218,7 +218,7 @@ def recording(tmp_path: Path, edges: dict[str, dict], units: dict[str, dict], ke
     directory.mkdir()
     test_map.write_map(make_map(edges), directory / "map.json.gz")
     answer_replay.write_json({"version": answer_cutoff.VERSION, "commit": "0" * 40, "keys": keys,
-                              "modes": ["evaluate"] * len(keys), "units": units,
+                              "modes": ["evaluate"] * len(keys), "units": units, "service": "a" * 64,
                               "map": answer_replay.digest_file(directory / "map.json.gz")},
                              directory / "requests.json.gz")
     return directory
@@ -276,6 +276,17 @@ def answers_selection(tmp_path: Path, path: str, *, pinned: bool = True) -> set[
     with answer_cutoff.service_rule(rule):
         select_tests.file_impact(coverage, graph, set(USERS), lambda tests, _: selected.update(tests), path, False)
     return selected
+
+
+def test_a_unit_that_read_an_answer_the_base_build_changed_is_unknown(tmp_path):
+    """On another base build than the recording's, a test may send requests the recording lacks."""
+    index = {"keys": ["k0", "k1"], "units": {"changed": entry(0), "same": entry(1)}}
+    coverage = select_tests.Coverage(make_map({"changed": {"x": [SERVICE]}, "same": {"x": [SERVICE]}}))
+    for unit in ("changed", "same"):
+        (tmp_path / unit).write_text("def test():\n    pass\n")
+    assert answer_cutoff.unknown_units(index, coverage, graph_of(tmp_path, {}), set(), root=tmp_path,
+                                       stale=frozenset({"k0"})) == {
+        "changed": "an answer it read changed between the recording's build and the base's"}
 
 
 def test_answers_rule_selects_changed_and_unknown_users_only(tmp_path, monkeypatch):
@@ -345,6 +356,9 @@ def test_select_answers_refuses_a_diff_it_cannot_trust(tmp_path):
     answer_replay.write_json(diff, path)
     with pytest.raises(ValueError, match="but the tests run"):
         answer_cutoff.select_answers(path, [], base="HEAD", after=None, build="c" * 64)
+    answer_replay.write_json({**diff, "base": "d" * 64}, path)
+    with pytest.raises(ValueError, match="is not the recording's"):
+        answer_cutoff.select_answers(path, [], base="HEAD", after=None, build="b" * 64)
     test_map.write_map(make_map({"v": {}}), directory / "map.json.gz")
     with pytest.raises(ValueError, match="its map was replaced"):
         answer_cutoff.select_answers(path, [], base="HEAD", after=None, build="b" * 64)
