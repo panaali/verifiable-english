@@ -263,8 +263,12 @@ def superposed_units(doc):
     return units
 
 
-def name_map(doc):
-    """The candidate rule and decision names in Lean's S2 elaboration order."""
+def name_map(doc, soft):
+    """The candidate rule and decision names in Lean's S2 elaboration order. A decision's two names are Lean's, found
+    by what it decides: in the candidate's own document (its side's soft document) and in `sup D` (`soft`, the soft
+    document of `superposed_document`)."""
+    from .readings_s1 import Side
+    attached = doc.attached()
     result = []
     for reading_set in doc.sets:
         candidates = []
@@ -275,12 +279,13 @@ def name_map(doc):
                 name = rule["name"]
                 qualified = qualify(position(doc.sets, reading_set.id, index), name)
                 names.append([name, qualified])
-                if rule.get("mode", "strict") == "default":
-                    names.append([f"soft__excepted__{name.replace('-', '_')}",
-                                  f"soft__excepted__{qualified.replace('-', '_')}"])
-                for party in rule.get("alterable", []):
-                    names.append([f"soft__off__{name.replace('-', '_')}__{party}",
-                                  f"soft__off__{qualified.replace('-', '_')}__{party}"])
+                decided = ([("excepted",)] if rule.get("mode", "strict") == "default" else []) + [
+                    ("off", party) for party in rule.get("alterable", [])]
+                if decided:
+                    own = Side(doc.senv, doc.one(attached, reading_set.id, index), doc.unit_ids)
+                    own._elaborate()
+                    names += [[own.soft.decision_name((kind, name, *party)),
+                               soft.decision_name((kind, qualified, *party))] for kind, *party in decided]
             candidates.append({"index": index, "id": candidate.id,
                                "position": position(doc.sets, reading_set.id, index), "names": names})
         result.append({"set": reading_set.id, "version": reading_set.version, "candidates": candidates})
@@ -493,14 +498,16 @@ def superposed_document(doc):
     return frame, contents, soft
 
 
-def superposed_elaboration(doc, couplings=(), narrowings=()):
+def superposed_elaboration(doc, couplings=(), narrowings=(), superposed=None):
     """Regenerate the S2a labelled slot and sizes, including decision-table quiescence.
 
-    Decision names and colliding pairs come from Python's soft elaborator on
-    the transformed document; their ownership comes from the source positions.
+    Decision names and colliding pairs come from Lean's soft elaboration of the transformed document
+    (`superposed`, `superposed_document`'s answer, computed when not given); their ownership comes from the source
+    positions.
     """
     vocabulary = choice_vocabulary(doc.sets)
-    frame, _, soft = superposed_document(doc)
+    frame, _, soft = superposed or superposed_document(doc)
+    key_of = {name: key for key, name in soft.decision_by_key.items()}
     origin = {}
     for m, reading_set in enumerate(doc.sets):
         for i, candidate in enumerate(reading_set.candidates):
@@ -508,14 +515,15 @@ def superposed_elaboration(doc, couplings=(), narrowings=()):
                 origin[qualify(position(doc.sets, reading_set.id, i),
                                candidate.content.body["name"])] = (m, i)
     keys = []
+    # Each decision's name is Lean's, found by what it decides (`SoftNormDocument.decision_name`).
     for rule in soft.rules:
         if rule.mode == "default":
-            name = f"soft__excepted__{rule.core.name.replace('-', '_')}"
+            name = soft.decision_name(("excepted", rule.core.name))
             keys.append((name, soft.decisions[name], [([origin[rule.core.name]]
                                                       if rule.core.name in origin else [])]))
     for rule in soft.rules:
         for party in rule.alterable:
-            name = f"soft__off__{rule.core.name.replace('-', '_')}__{party}"
+            name = soft.decision_name(("off", rule.core.name, party))
             keys.append((name, soft.decisions[name], [([origin[rule.core.name]]
                                                       if rule.core.name in origin else [])]))
     if soft.env.soft["outranking"]["mode"] == "holistic":
@@ -542,7 +550,7 @@ def superposed_elaboration(doc, couplings=(), narrowings=()):
         if [] in owners or (len(owners) == 1 and len(owners[0]) == 1):
             continue
         if [] not in owners:
-            _, _, low, high, act = name.split("__", 4)
+            _, act, low, high = key_of[name]
             labelled.append((SlotLabel("shared", key=f"outweighs:{act}:{low}:{high}").render(),
                              _quiet_formula(doc.sets, name, sorts, owners)))
     labelled += coupling_premises(doc.sets, couplings) + narrowing_premises(doc.sets, narrowings)

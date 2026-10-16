@@ -235,8 +235,9 @@ def test_round1_pilots_keep_the_base_statuses_and_the_previous_english():
 
 
 def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
-    """Review B1 of rd-6b: the growth from the pinned merge base is exactly the baseline's RD-6b entry (since AR-4
-    an allowance of the budget file), as DELTA.md states it: S +0, V +142, of which +16 under R6 and +126 awaiting the DRI's signature. The entry is the reviewed
+    """Review B1 of rd-6b: the reviewed historical tree matches its saved trust baseline, and growth from the
+    pinned merge base is exactly the baseline's RD-6b entry (since AR-4 an allowance of the budget file), as
+    DELTA.md states it: S +0, V +142, of which +16 under R6 and +126 awaiting the DRI's signature. The entry is the reviewed
     measurement at the branch head before the merge of ve-integration f0547468; the merge's entry carries the
     same growth over the merged base."""
     from tools import trust_map
@@ -247,12 +248,13 @@ def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
     # its reason); the tree's counts are checked against the base by `trust_map.py --check`.
     allowed = {(a["class"], a["lines"], a["reason"]) for a in json.loads(
         (ROOT / "docs/trust-baseline.json").read_text())["allowances"]}
-    parent, parent_problems, _ = trust_map.measure_rev(summary["base_merge_commit"])
-    merged, merged_problems, _ = trust_map.measure_rev(MERGED_BASE)
-    assert not parent_problems and not merged_problems
     approved = json.loads(subprocess.check_output(
         ["git", "show", f"{RD6B_APPROVED}:docs/trust-baseline.json"], cwd=ROOT))
-    assert approved["signed"] == []
+    reviewed_files, problems, _ = trust_map.measure_rev(RD6B_HEAD)
+    parent, parent_problems, _ = trust_map.measure_rev(summary["base_merge_commit"])
+    merged, merged_problems, _ = trust_map.measure_rev(MERGED_BASE)
+    assert not problems and not parent_problems and not merged_problems
+    assert reviewed["files"] == reviewed_files and reviewed["signed"] == [] and approved["signed"] == []
     entry = reviewed["history"][-1]
     assert entry["change"].startswith("readings-defaults RD-6b: ")
     assert entry["rebaselined_from"] == trust_map.budget(trust_map.totals(parent))
