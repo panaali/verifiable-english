@@ -1,0 +1,10 @@
+# fix-ci-run-timeout: deltas
+
+No product output changes: nothing under `ve/`, `lean/` or `rust/` is changed, so no verdict, diagnostic,
+availability or wording a user sees differs. The deltas are in the test suite and a developer tool.
+
+| # | Delta | Ruling | Test |
+|---|-------|--------|------|
+| 1 | `tests/test_difffuzz.py::test_ci_run` no longer waits a fixed 1800 s wall time on the CI run. It stops the run when its progress (the work counters) stops for 1800 s (`HANG_TIMEOUT`), or when it has run 7200 s (`PROGRESS_WALL_CAP`) in all, and kills the run's session. Every assertion on the run's report is kept; the last progress line must equal the report's work. | DRI signature needed: the acting DRI's task (2026-10-16) directs it ("bound the child ... by progress ... keeping a generous absolute wall cap"), but no standing ruling covers a changed hang guard | `tests/test_progress_watch.py` (all), `tests/test_difffuzz.py::test_ci_run`, `::test_the_run_reports_its_work_as_it_is_counted` |
+| 2 | `tools/test-quarantine.json`: the entry for `tests/test_difffuzz.py::test_ci_run` (owner orchestrator, expiring 2026-10-17) is removed; the file has no entry. `tests/test_gate_quarantine.py::test_the_tracked_quarantine_is_valid_and_names_collected_tests` no longer asserts that the file has an entry; it still loads and checks the file and each entry. | DRI signature needed: task-directed ("Then REMOVE the quarantine entry in the same branch"); deleting an assertion is never covered by a standing ruling | `tests/test_gate_quarantine.py` |
+| 3 | `python -m tools.difffuzz` has a new option, `--progress`: `difffuzz-progress {...}` lines with the work counted so far on standard error, at most one every 5 s and one at the end. Without the option the tool's output is unchanged. | Additive developer option; no standing ruling names tool options, so DRI signature needed (task-directed: "the report's work counters") | `tests/test_difffuzz.py::test_the_run_reports_its_work_as_it_is_counted` |

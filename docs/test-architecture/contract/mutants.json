@@ -1,0 +1,127 @@
+{
+ "mutants": [
+  {
+   "id": "C1",
+   "file": "tools/platform_contract.py",
+   "claim": "the pins cause lists the assertion on the pinned x86 digest (test_rust_reproducible)",
+   "find": "PINS = (\"tests/test_rust_reproducible.py\", \"tests/test_gate_integrity.py\")",
+   "replace": "PINS = (\"tests/test_gate_integrity.py\",)",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_pinned_x86_digest_assertion_is_in_the_contract_for_its_pin",
+    "tests/test_platform_contract.py::test_the_contract_list_is_generated_from_the_tree"
+   ]
+  },
+  {
+   "id": "C2",
+   "file": "tools/platform_contract.py",
+   "claim": "a test that failed on one runner and passed on the other, same tree, is a divergence",
+   "find": "for nodeid in sorted(set(mac.failed) ^ set(x86.failed)):",
+   "replace": "for nodeid in sorted(set(mac.failed) & set(x86.failed)):",
+   "tests": [
+    "tests/test_platform_contract.py::test_a_planted_divergence_in_a_fake_run_record_appears_in_the_regenerated_list"
+   ]
+  },
+  {
+   "id": "C3",
+   "file": "tools/platform_contract.py",
+   "claim": "only runs of the same tree are compared",
+   "find": "        return one.tree == other.tree\n",
+   "replace": "        return True\n",
+   "tests": [
+    "tests/test_platform_contract.py::test_a_divergence_needs_both_runners_suites_on_the_same_tree_in_the_window"
+   ]
+  },
+  {
+   "id": "C4",
+   "file": "tools/platform_contract.py",
+   "claim": "a divergence outside the 30-day window is dropped",
+   "find": "for run in runs if since <= run.day <= until)",
+   "replace": "for run in runs if since <= until)",
+   "tests": [
+    "tests/test_platform_contract.py::test_a_divergence_needs_both_runners_suites_on_the_same_tree_in_the_window"
+   ]
+  },
+  {
+   "id": "C5",
+   "file": "tools/platform_contract.py",
+   "claim": "misses: a selector covers only its own file, class or function",
+   "find": "return nodeid == selector or nodeid.startswith(selector + \"::\") or nodeid.startswith(selector + \"[\")",
+   "replace": "return nodeid.startswith(selector)",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_run_selectors_run_each_listed_test_once"
+   ]
+  },
+  {
+   "id": "C6",
+   "file": "tools/platform_contract.py",
+   "claim": "misses names an x86 failure the list does not cover (exit 1)",
+   "find": "missed = [row[\"nodeid\"] for row in tests if not row[\"covered\"] and not row[\"also_failed_on_mac\"]]",
+   "replace": "missed = [row[\"nodeid\"] for row in tests if not row[\"covered\"] and not row[\"also_failed_on_mac\"] and False]",
+   "tests": [
+    "tests/test_platform_contract.py::test_misses_names_the_x86_failures_outside_the_list",
+    "tests/test_platform_contract.py::test_misses_exit_status_and_output"
+   ]
+  },
+  {
+   "id": "C7",
+   "file": "tools/platform_contract.py",
+   "claim": "a nightly corpus-scale rerun in a listed file is left out and named",
+   "find": "        if nightly and not function:\n",
+   "replace": "        if False:\n",
+   "tests": [
+    "tests/test_platform_contract.py::test_generation_lists_each_cause_and_leaves_nightly_reruns_to_the_full_gates"
+   ]
+  },
+  {
+   "id": "C8",
+   "file": "tools/platform_contract.py",
+   "claim": "a file importing signal, resource or fcntl is in the process cause",
+   "find": "            found.add(node.module.split(\".\")[0])\n",
+   "replace": "            pass\n",
+   "tests": [
+    "tests/test_platform_contract.py::test_only_imports_of_the_operating_systems_primitives_put_a_file_in_process"
+   ]
+  },
+  {
+   "id": "G1",
+   "file": "tools/gate.py",
+   "claim": "the contract run runs exactly the listed tests",
+   "find": "command(suite_command(python, args.workers, selection),",
+   "replace": "command(suite_command(python, args.workers, rerun),",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages"
+   ]
+  },
+  {
+   "id": "G2",
+   "file": "tools/gate.py",
+   "claim": "a contract run is never a full gate's passed",
+   "find": "                result[\"status\"] = \"contract-passed\"",
+   "replace": "                result[\"status\"] = \"passed\"",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages",
+    "tests/test_platform_contract.py::test_a_contract_run_is_never_a_full_gates_evidence"
+   ]
+  },
+  {
+   "id": "G3",
+   "file": "tools/gate.py",
+   "claim": "a listed test that collects nothing fails the contract run",
+   "find": "                        result[\"failures\"].append({\"stage\": \"coverage\",\n                                                   \"reason\": f\"contract test collected nothing: {selector}\"})",
+   "replace": "                        pass",
+   "tests": [
+    "tests/test_platform_contract.py::test_a_listed_test_that_collects_nothing_fails_the_contract_run"
+   ]
+  },
+  {
+   "id": "G4",
+   "file": "tools/gate.py",
+   "claim": "the contract run's default record is not gate-result.json",
+   "find": "\"platform-contract-result.json\")).resolve()",
+   "replace": "\"gate-result.json\")).resolve()",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_contract_runs_default_record_is_not_the_full_gates"
+   ]
+  }
+ ]
+}
