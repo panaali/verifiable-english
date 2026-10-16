@@ -205,18 +205,28 @@ def test_a_tampered_entry_is_refused_and_withdrawn(built, tmp_path, victim):
     refused(lean, store, "no stored build for this key")
 
 
+def test_the_default_authority_is_the_lock_on_x86_and_the_runners_own_pins_elsewhere(monkeypatch):
+    """Astra re-check 7: the Mac runner's pins are its own, so its builds are keyed and checked under them."""
+    monkeypatch.setattr(lean_share.platform, "machine", lambda: "x86_64")
+    assert lean_share.default_pins() == lean_share.LOCK_PINS
+    monkeypatch.setattr(lean_share.platform, "machine", lambda: "aarch64")
+    monkeypatch.setattr(lean_share.socket, "gethostname", lambda: "ve-mac-1")
+    assert lean_share.default_pins() == "runner-local:ve-mac-1"
+
+
 def test_a_checker_the_authority_does_not_pin_is_refused(built, tmp_path):
-    store, _ = published(built, tmp_path)
+    lock = lean_share.LOCK_PINS
+    store, _ = published(built, tmp_path, pins=lock)
     lean = clone(built, tmp_path)
     (lean / "checkers.lock").write_text(json.dumps({"ve_service": ["0" * 64]}))  # the pins are not in the key
-    refused(lean, store, "ve_service [0-9a-f]{64} is not pinned by lean/checkers.lock")
+    refused(lean, store, "ve_service [0-9a-f]{64} is not pinned by lean/checkers.lock", pins=lock)
     assert not (lean / ".lake").exists()
     # and a build whose checker the lock does not pin is never stored
     unpinned = clone(built, tmp_path, "unpinned")
     shutil.copytree(built / ".lake", unpinned / ".lake")
     (unpinned / "checkers.lock").write_text(json.dumps({"ve_service": []}))
     with pytest.raises(lean_share.Refused, match="is not pinned"):
-        lean_share.publish(unpinned, tmp_path / "other-store")
+        lean_share.publish(unpinned, tmp_path / "other-store", pins=lock)
 
 
 def test_runner_local_pins_are_their_runners_alone(built, tmp_path):
