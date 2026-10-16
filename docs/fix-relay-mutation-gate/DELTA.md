@@ -1,0 +1,7 @@
+# fix-relay-mutation-gate: user-visible deltas
+
+| # | Delta | Scope | Test | Ruling |
+|---|-------|-------|------|--------|
+| 1 | A `norm-defaults` elaboration answer whose `unsaid[].description` is the empty string is `CheckerUnavailable` (the service client accepted it, and `ve/norm_defaults.py` `UnspecifiedDocument` reads `item["description"]` into the filled environment's vocabulary). Every genuine answer is unchanged: Lean writes `unsaidDescription p` = "the text does not say whether p", never empty (all 25 norm-defaults gate fixtures and the recorded route cases still pass the schema). | `lean/ResponseShape/Schemas/NormDefaults.lean` (`description`: `minLength 1`), generated `ve/backends/lean_service_schema/norm-defaults.json` | `tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:norm-defaults]` (seeded: without `minLength 1` it fails with the accepted empty description); `tests/test_route_row_schemas.py` (genuine rows still fit) | SIGNED (R8): a missing type in a relayed Lean answer; the field is now typed non-empty, with the mutation test the ruling asks for. |
+
+The allow-list changes (`tools/relay-gate-allow.json`) remove paths that matched no accepted mutant, and put back B0's `fill` that the merge with main had dropped. Every path still listed is one the gate accepts on HEAD (`docs/fix-relay-mutation-gate/relay-gate-report.json`: 0 failures). None of this changes what `ve` shows.
