@@ -98,11 +98,12 @@
    "id": "S10",
    "file": "tools/test_map_recorder.py",
    "fault": "a child records here without the site hook in this process",
-   "test": "tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing",
+   "test": "tests/test_select_tests.py::test_a_child_records_here_only_if_the_hook_started_this_process",
    "exit": 1,
    "failed": [
-    "tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[no"
-   ]
+    "tests/test_select_tests.py::test_a_child_records_here_only_if_the_hook_started_this_process"
+   ],
+   "note": "rerun after the test moved to a direct check of _records_here (the subprocess form depended on whether the hook was installed)"
   },
   {
    "id": "S11",
@@ -213,6 +214,16 @@
    "exit": 1,
    "failed": [
     "tests/test_select_tests.py::test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users"
+   ]
+  },
+  {
+   "id": "S22",
+   "file": "tools/select_tests.py",
+   "fault": "equal lean/ trees count as an identical build",
+   "test": "tests/test_select_tests.py::test_no_cutoff_when_the_trees_cannot_show_the_change",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_no_cutoff_when_the_trees_cannot_show_the_change"
    ]
   }
  ]
