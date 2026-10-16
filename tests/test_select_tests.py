@@ -38,6 +38,7 @@ import select_tests_seeds  # noqa: E402
 def private_cache(tmp_path_factory, monkeypatch):
     monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path_factory.getbasetemp() / "cache"))
     monkeypatch.setenv("VE_TESTMAP_CACHE", str(tmp_path_factory.getbasetemp() / "maps"))
+    monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path_factory.getbasetemp() / "lean-builds"))
     monkeypatch.delenv("VE_TESTMAP", raising=False)
     # The synthetic library lives in `pkg/`; outside the known areas any file would change everything.
     monkeypatch.setattr(select_tests, "KNOWN_AREAS", select_tests.KNOWN_AREAS | {"pkg"})
@@ -750,6 +751,10 @@ def git_line(rev: str) -> str:
                           check=True).stdout.strip()
 
 
+# A format version no chain of converters reaches (tools/test_map.py CONVERTERS).
+UNCONVERTIBLE = 1
+
+
 def cached_map(directory: Path, commit: str, version: int | None = test_map.VERSION, mtime: int = 0) -> Path:
     """A map recorded at `commit` in the cache `directory`, written by map format `version`
     (None writes bytes that are not a gzip file)."""
@@ -768,12 +773,12 @@ def cached_map(directory: Path, commit: str, version: int | None = test_map.VERS
 def test_find_map_names_each_nearer_map_it_skips(tmp_path, monkeypatch, capsys):
     monkeypatch.setenv("VE_TESTMAP_CACHE", str(tmp_path / "maps"))
     head, parent = (git_line(rev) for rev in ("HEAD", "HEAD~1"))
-    old = cached_map(tmp_path / "maps", head, test_map.VERSION - 1)
+    old = cached_map(tmp_path / "maps", head, UNCONVERTIBLE)
     other_versions: list[Path] = []
     assert test_map.find_map(head, other_versions=other_versions) is None
     err = capsys.readouterr().err
     assert err == (f"test_map: skipped map {old} for {head[:10]}: recorded by map format version "
-                   f"{test_map.VERSION - 1}, this checkout reads version {test_map.VERSION} "
+                   f"{UNCONVERTIBLE}, this checkout reads version {test_map.VERSION} "
                    "(record a new map: tools/test_map.py record)\n")
     assert other_versions == [old]
     # A current map farther down is returned; the nearer old one is still named, the current one not.
@@ -783,7 +788,7 @@ def test_find_map_names_each_nearer_map_it_skips(tmp_path, monkeypatch, capsys):
     assert str(old) in captured.err and str(current) not in captured.err and captured.out == ""
     # An old map farther than the chosen one would not have been used: nothing to say.
     old.unlink()
-    farther = cached_map(tmp_path / "maps", parent, test_map.VERSION - 1)
+    farther = cached_map(tmp_path / "maps", parent, UNCONVERTIBLE)
     current = cached_map(tmp_path / "maps", head, mtime=1)
     assert test_map.find_map(head) == current and capsys.readouterr().err == ""
     farther.unlink()
@@ -805,8 +810,8 @@ def test_select_tests_says_why_old_maps_left_it_without_one(tmp_path, monkeypatc
         captured = capsys.readouterr()
         return captured.out, captured.err
 
-    cached_map(tmp_path / "old", git_line("HEAD"), test_map.VERSION - 1)
-    cached_map(tmp_path / "old", git_line("HEAD~1"), test_map.VERSION - 1, mtime=1)
+    cached_map(tmp_path / "old", git_line("HEAD"), UNCONVERTIBLE)
+    cached_map(tmp_path / "old", git_line("HEAD~1"), UNCONVERTIBLE, mtime=1)
     out_without, err_without = main_output(tmp_path / "none")
     out_old, err_old = main_output(tmp_path / "old")
     assert out_old == out_without and "missing coverage map" in out_old.splitlines()[0]
@@ -815,6 +820,143 @@ def test_select_tests_says_why_old_maps_left_it_without_one(tmp_path, monkeypatc
     assert summary == [f"select_tests: no map of format version {test_map.VERSION} for HEAD; skipped 2 "
                        "ancestor map(s) of other versions, so selection has no map "
                        "(record a new map: tools/test_map.py record)"]
+
+
+def test_tree_maps_do_not_crowd_commit_maps_out_of_the_window(tmp_path, monkeypatch):
+    """Draft 2, 2.3: `--run` saves a map per tree; 30 newer tree maps filled find_map's 30-newest
+    window, so the main map below them was never looked at."""
+    cache = tmp_path / "maps"
+    monkeypatch.setenv("VE_TESTMAP_CACHE", str(cache))
+    commit = cached_map(cache, git_line("HEAD~1"), mtime=1)
+    for i in range(31):
+        tree = cache / f"tree-{i:040x}.json.gz"
+        tree.write_bytes(commit.read_bytes())
+        os.utime(tree, (100 + i, 100 + i))
+    assert test_map.find_map(git_line("HEAD")) == commit
+
+
+def test_freshness_is_the_map_selection_would_use(tmp_path, monkeypatch, capsys):
+    """`test_map.py fresh` (for verify.sh and fixloop.sh) accepts a map only if find_map gives it for the
+    base and it is recent: neither an old-format map nor a tree map nor a stale one counts."""
+    import datetime
+    cache = tmp_path / "maps"
+    monkeypatch.setenv("VE_TESTMAP_CACHE", str(cache))
+    head = git_line("HEAD")
+    assert test_map.fresh(head, 24) == 1 and capsys.readouterr().out == ""
+    cached_map(cache, head, UNCONVERTIBLE)
+    (cache / f"tree-{'0' * 40}.json.gz").write_bytes((cache / f"{head}.json.gz").read_bytes())
+    assert test_map.fresh(head, 24) == 1 and capsys.readouterr().out == ""
+    path = cached_map(cache, git_line("HEAD~1"))
+    created = datetime.datetime.fromisoformat(test_map.load(path)["created"])
+    assert test_map.fresh(head, 24, now=created + datetime.timedelta(hours=23)) == 0
+    assert capsys.readouterr().out == f"{path}\n"
+    assert test_map.fresh(head, 24, now=created + datetime.timedelta(hours=25)) == 1
+    captured = capsys.readouterr()
+    assert captured.out == "" and "25.0 h old, more than 24 h" in captured.err
+    behind = int(subprocess.run(["git", "rev-list", "--count", f"{git_line('HEAD~1')}..{head}"], cwd=ROOT,
+                                capture_output=True, text=True, check=True).stdout)  # 1, or more after a merge
+    assert test_map.fresh(head, 24, max_behind=behind, now=created) == 0
+    capsys.readouterr()
+    assert test_map.fresh(head, 24, max_behind=behind - 1, now=created) == 1
+    assert f"{behind} commits behind, more than {behind - 1}" in capsys.readouterr().err
+
+
+def test_each_map_format_version_ships_with_a_converter_or_a_recorded_map():
+    """Astra re-check 6: ts-B2 raised the format to 7 and every cached map stopped counting, without
+    a word. A new VERSION must name how maps of it exist from the start: a converter from the
+    previous version, or the main commit whose map was recorded and published with the change."""
+    assert test_map.VERSION in test_map.FORMAT_CHANGES, "name a converter or a recorded map in FORMAT_CHANGES"
+    assert max(test_map.FORMAT_CHANGES) == test_map.VERSION
+    for version, (how, what) in test_map.FORMAT_CHANGES.items():
+        if how == "converter":
+            assert what == version - 1 and version in test_map.CONVERTERS, version
+        else:
+            assert how == "recorded" and isinstance(what, str) and len(what) == 40 \
+                and set(what) <= set("0123456789abcdef"), version
+    assert all(test_map.FORMAT_CHANGES.get(version, ("",))[0] == "converter" for version in test_map.CONVERTERS)
+
+
+def test_a_version_6_map_converts_and_keeps_every_service_user(tmp_path, monkeypatch):
+    import gzip
+    monkeypatch.setenv("VE_TESTMAP_CACHE", str(tmp_path / "maps"))
+    data = make_map({"t_service": {"x": ["lean/.lake/build/bin/ve_service"]}, "t_other": {}})
+    old = {key: value for key, value in data.items() if key != "modes"}
+    path = tmp_path / "maps" / f"{git_line('HEAD')}.json.gz"
+    path.parent.mkdir()
+    with gzip.open(path, "wt", encoding="utf-8") as handle:
+        json.dump({**old, "version": 6}, handle)
+    loaded = test_map.load(path)
+    assert loaded["version"] == test_map.VERSION and loaded["converted_from"] == 6 and loaded["modes"] == {}
+    assert select_tests.Coverage(loaded).service_users({"rights"}) == {"t_service"}
+    assert test_map.find_map(git_line("HEAD")) == path
+
+
+def test_recording_starts_the_longest_units_first():
+    previous = make_map({"t_short": {}, "t_long": {}, "t_mid": {}})
+    previous["status"]["t_long"]["seconds"], previous["status"]["t_mid"]["seconds"] = 900.0, 30.0
+    assert test_map.by_length(["t_short", "t_mid", "t_long", "t_new"], previous) == \
+        ["t_new", "t_long", "t_mid", "t_short"]
+    assert test_map.by_length(["b", "a"], None) == ["a", "b"]
+
+
+# Each program runs under the recorder (`recorder_run`) as if the site hook had started it, then starts
+# a Python child that may or may not record. Whether the hook is installed in this environment's
+# site-packages (it is while tools/test_map.py records this very file) changes nothing below.
+HOOKED = "sys.modules['_ve_testmap'] = types.ModuleType('_ve_testmap')\n"
+CHILDREN = {
+    # This environment's interpreter with this recording's variables: if its record file is missing,
+    # it died before any code under the root ran (here, it ran none, and the hook is not installed).
+    "records here": (HOOKED + "subprocess.run([sys.executable, '-c', 'pass'], check=True)\n", False),
+    # Another interpreter: the base one, outside this environment, never has the hook.
+    "another interpreter": (HOOKED + "subprocess.run([sys._base_executable, '-c', 'pass'], check=True)\n", True),
+    "site skipped": (HOOKED + "subprocess.run([sys.executable, '-IS', '-c', 'pass'], check=True)\n", True),
+    "another recording": (HOOKED + "subprocess.run([sys.executable, '-c', 'pass'], check=True,\n"
+                          "               env={**os.environ, 'VE_TESTMAP_OUT': os.getcwd()})\n", True),
+}
+
+
+@pytest.mark.parametrize("program, opaque", CHILDREN.values(), ids=CHILDREN)
+def test_a_child_that_records_here_and_left_no_file_ran_nothing(tmp_path, program, opaque):
+    result = recorder_run(tmp_path, "import os, subprocess, sys, types\n" + program)
+    assert bool(result["opaque"]) is opaque, result["opaque"]
+
+
+def test_a_child_records_here_only_if_the_hook_started_this_process(tmp_path, monkeypatch):
+    """A process whose recorder was started by hand (as `recorder_run` does) has no hook in its
+    interpreter's site-packages to vouch for: its children's missing records stay opaque."""
+    monkeypatch.setitem(test_map_recorder._state, "out", str(tmp_path))
+    monkeypatch.setenv("VE_TESTMAP_OUT", str(tmp_path))
+    monkeypatch.setenv("VE_TESTMAP_ROOT", str(ROOT))
+    child = [sys.executable, "-c", "pass"]
+    monkeypatch.setitem(sys.modules, test_map_recorder.HOOK, types.ModuleType(test_map_recorder.HOOK))
+    assert test_map_recorder._records_here(sys.executable, child, None)
+    assert not test_map_recorder._records_here(sys.executable, child, {"VE_TESTMAP_OUT": "/elsewhere",
+                                                                        "VE_TESTMAP_ROOT": str(ROOT)})
+    monkeypatch.delitem(sys.modules, test_map_recorder.HOOK)
+    assert not test_map_recorder._records_here(sys.executable, child, None)
+
+
+def test_the_hook_test_map_installs_is_the_one_the_recorder_checks():
+    assert test_map.HOOK == test_map_recorder.HOOK
+
+
+def test_a_recording_inside_a_recorded_test_hands_over_its_records(tmp_path, monkeypatch):
+    """The selector's own tests record units; their children wrote to the nested recording only, so
+    test_select_tests and test_run_order were opaque in every map."""
+    outer, inner = tmp_path / "outer", tmp_path / "inner"
+    outer.mkdir()
+    inner.mkdir()
+    (outer / "100.jsonl").write_text(json.dumps(["c", 200, True, False]) + "\n")
+    (inner / "200.jsonl").write_text(json.dumps(["f", "ve/x.py", "f"]) + "\n")
+    root = str(test_map.ROOT.resolve())
+    monkeypatch.setenv("VE_TESTMAP_OUT", str(outer))
+    monkeypatch.setenv("VE_TESTMAP_ROOT", "/elsewhere")
+    test_map.share_with_outer(inner, {"VE_TESTMAP_ROOT": root})
+    assert test_map.read_unit(outer, set())["opaque"]  # another root: its paths mean other files
+    monkeypatch.setenv("VE_TESTMAP_ROOT", root)
+    test_map.share_with_outer(inner, {"VE_TESTMAP_ROOT": root})
+    result = test_map.read_unit(outer, set())
+    assert result["opaque"] == [] and ("ve/x.py", "f") in result["f"]
 
 
 def test_added_and_removed_lean_modules_select_only_importing_executables(tmp_path):
@@ -1181,6 +1323,291 @@ def test_native_changes_schedule_builds_and_their_runners(head):
     assert list(select_tests.AUDIT) not in rust["commands"]
 
 
+def mapped_reasons(plan: dict) -> set[str]:
+    """The units a plan selected through the map (not smoke, not the static graph)."""
+    return {test for test, reasons in plan["reasons"].items()
+            if any(r != "smoke" and not r.endswith("(static)") for r in reasons)}
+
+
+EVIDENCE_FILE = "docs/arch/AR-1/evidence/checks.json"
+
+
+def test_an_evidence_file_selects_its_readers_not_every_unmapped_unit(head):
+    """Draft 2, 2.3: the conftest closure's product modules hold the word "evidence", which named all
+    41 evidence/ directories, so an evidence file selected every unit the map did not cover."""
+    edges = {test: {} for test in select_tests.units()}
+    edges["tests/test_bundle.py"] = {"r": [EVIDENCE_FILE]}
+    data = make_map(edges, commit=head, failed=("tests/test_english.py",))
+    plan = plan_for([select_tests.Change(EVIDENCE_FILE, real(EVIDENCE_FILE), real(EVIDENCE_FILE) + " ")], data)
+    assert not plan["full"]
+    assert mapped_reasons(plan) == {"tests/test_bundle.py"}
+    assert "tests/test_english.py" not in plan["selected"], plan["reasons"].get("tests/test_english.py")
+
+
+PRODUCT_WORDS = {
+    "ve/__init__.py": "",
+    "ve/words.py": "KEY = 'evidence'\nDATA = 'packs'\n",
+    "ve/packs/p.json": "{}",
+    "docs/b/evidence/e.json": "{}",
+    "tests/test_bundle.py": "import ve.words\n",          # a product user only
+    "tests/test_closure.py": "PATH = 'evidence'\n",       # the test side names the directory
+}
+
+
+def test_a_product_word_names_only_product_directories(tmp_path, monkeypatch):
+    graph = make_graph(tmp_path, PRODUCT_WORDS)
+    monkeypatch.setattr(source_graph, "load", lambda root: graph)
+    _, mentions = graph.closure("tests/test_bundle.py")
+    assert "dir:ve/packs" in mentions and "dir:docs/b/evidence" not in mentions
+    assert "dir:docs/b/evidence" in graph.closure("tests/test_closure.py")[1]
+    plan = plan_for([select_tests.Change("docs/b/evidence/e.json", "{}", "[]")], None)
+    named = {test for test, reasons in plan["reasons"].items() if "names docs/b/evidence/e.json (static)" in reasons}
+    assert named == {"tests/test_closure.py"}
+    plan = plan_for([select_tests.Change("ve/packs/p.json", "{}", "[]")], None)
+    assert "names ve/packs/p.json (static)" in plan["reasons"].get("tests/test_bundle.py", [])
+
+
+def swapped_merge_lines(text: str) -> str:
+    """.gitattributes with its last two merge-driver lines swapped (as arch-20261010-1 reordered them)."""
+    lines = text.splitlines(keepends=True)
+    merge = [i for i, line in enumerate(lines) if line.rstrip().endswith("merge=ve-generated")]
+    lines[merge[-1]], lines[merge[-2]] = lines[merge[-2]], lines[merge[-1]]
+    return "".join(lines)
+
+
+def test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users(head):
+    """Draft 2, 2.3 cause C: .gitattributes counted as a root file that changes everything, though the
+    edits of the window only moved merge-driver lines, which only git commands read."""
+    every = select_tests.units()
+    edges = {test: {} for test in every}
+    edges["tests/test_regen_generated.py"] = {"r": [".gitattributes"]}
+    edges["tests/test_precommit_hook.py"] = {"x": ["git"]}
+    data = make_map(edges, commit=head)
+    old = real(".gitattributes")
+    new = swapped_merge_lines(old)
+    assert new != old and select_tests.kind_of(".gitattributes") == select_tests.DATA
+    plan = plan_for([select_tests.Change(".gitattributes", old, new)], data)
+    expected = {"tests/test_regen_generated.py", "tests/test_precommit_hook.py"}
+    assert not plan["full"] and mapped_reasons(plan) == expected
+    coverage, graph = select_tests.Coverage(data), source_graph.load(select_tests.ROOT)
+    assert select_tests.uncertain_units(coverage, graph, set(every), {".gitattributes": "M"},
+                                        {".gitattributes": (old, new)}) == expected
+    # A line that sets a checkout attribute rewrites what a checkout holds: everything, in both.
+    crlf = old + "*.json text eol=crlf\n"
+    plan = plan_for([select_tests.Change(".gitattributes", old, crlf)], data)
+    assert plan["full"] and plan["full_reasons"] == [".gitattributes: checkout attributes changed"]
+    assert select_tests.uncertain_units(coverage, graph, set(every), {".gitattributes": "M"},
+                                        {".gitattributes": (old, crlf)}) == set(every)
+    assert select_tests.uncertain_units(coverage, graph, set(every), {".gitattributes": "M"}, {}) == set(every)
+
+
+GITATTRIBUTES_EDITS = {
+    # (old, new, whether the edit may change checked-out bytes)
+    "merge line moved": ("a merge=x\nb merge=y\n", "b merge=y\na merge=x\n", False),
+    "comment": ("a merge=x\n", "# note\na merge=x\n", False),
+    "export rule": ("a merge=x\n", "a merge=x\ndocs/ export-ignore\n", False),
+    "diff driver": ("", "*.lean diff=lean\n", False),
+    "text set": ("", "*.ve text\n", True),
+    "text unset": ("*.ve text\n", "*.ve -text\n", True),
+    "eol": ("", "*.sh eol=lf\n", True),
+    "filter": ("", "*.bin filter=lfs\n", True),
+    "binary macro": ("", "*.png binary\n", True),
+    "line order of eol": ("*.a eol=lf\n*.a eol=crlf\n", "*.a eol=crlf\n*.a eol=lf\n", True),
+    "macro defined": ("", "[attr]gen merge=x\n", True),
+    "macro used": ("[attr]gen text\n", "[attr]gen text\n*.j gen\n", True),
+    "quoted pattern": ("", '"a b" merge=x\n', True),
+    "unknown token": ("", "a merge=x b@c\n", True),
+}
+
+
+@pytest.mark.parametrize("old, new, changed", GITATTRIBUTES_EDITS.values(), ids=GITATTRIBUTES_EDITS)
+def test_only_checkout_attribute_edits_of_gitattributes_change_everything(old, new, changed):
+    assert select_tests.checkout_attributes_changed(old, new) is changed
+
+
+SHARED_FIELD = "lean_decoders"
+
+
+def manifest_units() -> dict[str, dict]:
+    return {"tests/test_file_reader.py": {"r": [select_tests.MANIFEST]}, "tests/test_whole.py": {"m": ["*"]},
+            "tests/test_entry.py": {"m": ["parse"]}, "tests/test_registrar.py": {"p": ["parse"]},
+            "tests/test_none.py": {}, select_tests.MANIFEST_TEST: {}}
+
+
+def manifest_selection(tmp_path, old: str, new: str) -> tuple[select_tests.Selection, set[str]]:
+    edges = manifest_units()
+    coverage = select_tests.Coverage(make_map(edges))
+    selection = select_tests.Selection(make_graph(tmp_path, {}), coverage, set(), list(edges))
+    select_tests.manifest_change(selection, select_tests.Change(select_tests.MANIFEST, old, new))
+    drift = select_tests.uncertain_units(coverage, make_graph(tmp_path, {}), set(edges),
+                                         {select_tests.MANIFEST: "M"}, {select_tests.MANIFEST: (old, new)})
+    return selection, drift
+
+
+def test_a_shared_manifest_field_selects_its_whole_manifest_readers(tmp_path):
+    """Draft 2, 2.3: a shared field (lean_decoders, in lf-14d and lf-16d) selected everything. `ve`
+    hands shared fields out only with the whole manifest, which the map records."""
+    old = (ROOT / select_tests.MANIFEST).read_text()
+    changed = json.loads(old)
+    assert SHARED_FIELD in changed
+    changed[SHARED_FIELD] = {**changed[SHARED_FIELD], "seeded": 1}
+    selection, drift = manifest_selection(tmp_path, old, json.dumps(changed))
+    expected = {"tests/test_file_reader.py", "tests/test_whole.py", select_tests.MANIFEST_TEST}
+    assert not selection.full and set(selection.reasons) == expected
+    assert drift == expected
+    # The version is checked by every importer of ve.assurance: still everything.
+    changed["version"] = "seeded"
+    selection, drift = manifest_selection(tmp_path, old, json.dumps(changed))
+    assert selection.full and drift == set(manifest_units())
+
+
+def test_an_authority_change_selects_the_registrations_of_its_entries(tmp_path):
+    """`ve.assurance` reads each operation's authority at import (`_migrated`); a call of a guarded
+    entry records nothing while nothing is migrated, but its caller imported the registration."""
+    old = (ROOT / select_tests.MANIFEST).read_text()
+    changed = json.loads(old)
+    entry = next(op for op in changed["operations"] if op["id"] == "parse")
+    entry["authority"] = "migrated" if entry["authority"] != "migrated" else "python"
+    selection, drift = manifest_selection(tmp_path, old, json.dumps(changed))
+    expected = {"tests/test_file_reader.py", "tests/test_whole.py", "tests/test_entry.py",
+                "tests/test_registrar.py", select_tests.MANIFEST_TEST}
+    assert not selection.full and set(selection.reasons) == expected and drift == expected
+
+
+BASE_TREE, HEAD_TREE = "b" * 40, "c" * 40
+LEAN_UNITS = {"service": "tests/test_lean_service.py", "metered": "tests/test_cpu_bounds.py",
+              "lake": "tests/test_lean_conformance.py", "reader": "tests/test_background.py"}
+
+
+def write_build(tree: str, digests: dict[str, str]) -> None:
+    path = test_map.build_record_path(tree)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"lean_tree": tree, "platform": test_map.platform_tag(), "digests": digests}))
+
+
+def cutoff_plan(head, tmp_path, monkeypatch, base: dict | None, now: dict | None) -> dict:
+    """A plan for an edit of a Lean module every executable imports, with these build records of the
+    base and head `lean/` trees (None: not recorded)."""
+    monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path / "builds"))
+    monkeypatch.setattr(test_map, "lean_tree", lambda rev=None, root=None: BASE_TREE if rev == "HEAD" else HEAD_TREE)
+    for tree, digests in ((BASE_TREE, base), (HEAD_TREE, now)):
+        if digests is not None:
+            write_build(tree, digests)
+    edges = {test: {} for test in select_tests.units()}
+    path = "lean/VE/Json.lean"
+    edges[LEAN_UNITS["service"]] = {"x": ["lean/.lake/build/bin/ve_service"]}
+    edges[LEAN_UNITS["metered"]] = {"x": ["lean/.lake/build/bin/ve_metered"]}
+    edges[LEAN_UNITS["lake"]] = {"x": ["lake"]}
+    edges[LEAN_UNITS["reader"]] = {"r": [path]}
+    graph = source_graph.load(select_tests.ROOT)
+    assert {"ve_service", "ve_metered"} <= select_tests.lean_programs(graph, path)
+    return plan_for([select_tests.Change(path, real(path), real(path) + "\n-- c\n")], make_map(edges, commit=head))
+
+
+def every_executable(digest: str = "0" * 64) -> dict[str, str]:
+    return {name: digest for name in select_tests.lean_executables()}
+
+
+def test_an_identical_rebuild_selects_no_runner(head, tmp_path, monkeypatch):
+    """Draft 2, 2.3: in 2 of 5 Lean merges the rebuilt ve_service was byte-identical. A test that only
+    runs an executable built the same is not selected; Lean source readers and lake users still are."""
+    plan = cutoff_plan(head, tmp_path, monkeypatch, every_executable(), every_executable())
+    assert plan["lean_cutoff"]["state"] == "applied" and plan["lean_cutoff"]["rebuilt"] == []
+    assert mapped_reasons(plan) == {LEAN_UNITS["lake"], LEAN_UNITS["reader"]}
+    assert ["lake", "build"] in plan["commands"] and list(select_tests.AUDIT) in plan["commands"]
+
+
+def test_a_changed_binary_selects_all_its_runners(head, tmp_path, monkeypatch):
+    plan = cutoff_plan(head, tmp_path, monkeypatch, every_executable(),
+                       {**every_executable(), "ve_service": "1" * 64})
+    assert plan["lean_cutoff"]["rebuilt"] == ["ve_service"]
+    assert mapped_reasons(plan) == {LEAN_UNITS["service"], LEAN_UNITS["lake"], LEAN_UNITS["reader"]}
+    # An executable the base build lacks counts as rebuilt.
+    plan = cutoff_plan(head, tmp_path, monkeypatch, {k: v for k, v in every_executable().items() if k != "ve_metered"},
+                       every_executable())
+    assert plan["lean_cutoff"]["rebuilt"] == ["ve_metered"]
+    assert LEAN_UNITS["metered"] in mapped_reasons(plan) and LEAN_UNITS["service"] not in mapped_reasons(plan)
+
+
+@pytest.mark.parametrize("base, now, state", [
+    (False, True, "no record of the base build"), (True, False, "no record of the head build"),
+    (False, False, "no record of the base and head build")], ids=["base", "head", "both"])
+def test_without_both_build_records_every_runner_is_selected(head, tmp_path, monkeypatch, base, now, state):
+    plan = cutoff_plan(head, tmp_path, monkeypatch, every_executable() if base else None,
+                       every_executable() if now else None)
+    assert plan["lean_cutoff"]["state"] == state and plan["lean_cutoff"]["rebuilt"] is None
+    assert set(LEAN_UNITS.values()) <= mapped_reasons(plan)
+
+
+def test_no_cutoff_when_the_trees_cannot_show_the_change(head, tmp_path, monkeypatch):
+    """A Lean change named without an edit (`--paths`), or one the working tree does not hold (the
+    plan's base is its head), says nothing a build record could confirm: every runner stays."""
+    monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path / "builds"))
+    write_build(test_map.lean_tree("HEAD"), every_executable())
+    path = "lean/VE/Json.lean"
+    edges = {test: {} for test in select_tests.units()}
+    edges[LEAN_UNITS["service"]] = {"x": ["lean/.lake/build/bin/ve_service"]}
+    data = make_map(edges, commit=head)
+    for change in (select_tests.Change(path, real(path), real(path) + "\n-- c\n"),
+                   select_tests.Change(path, real(path), real(path), known=False)):
+        plan = plan_for([change], data)
+        assert plan["lean_cutoff"]["rebuilt"] is None, plan["lean_cutoff"]
+        assert LEAN_UNITS["service"] in mapped_reasons(plan)
+
+
+def test_a_build_record_needs_a_current_build_of_one_tree(tmp_path, monkeypatch):
+    monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path / "builds"))
+    trees = iter([BASE_TREE, BASE_TREE, BASE_TREE, BASE_TREE, HEAD_TREE])
+    monkeypatch.setattr(test_map, "lean_tree", lambda rev=None, root=None: next(trees))
+    monkeypatch.setattr(test_map, "executable_digests", lambda root=None: {"ve_service": "1" * 64})
+    monkeypatch.setattr(test_map, "current_build", lambda root=None: False)
+    assert test_map.record_build() is None and test_map.load_build(BASE_TREE) is None
+    monkeypatch.setattr(test_map, "current_build", lambda root=None: True)
+    assert test_map.record_build() == test_map.build_record_path(BASE_TREE)
+    assert test_map.load_build(BASE_TREE) == {"ve_service": "1" * 64}
+    test_map.build_record_path(BASE_TREE).unlink()
+    assert test_map.record_build() is None  # the tree changed while the build was hashed
+    for record in ({"lean_tree": HEAD_TREE, "platform": test_map.platform_tag(), "digests": {}},
+                   {"lean_tree": BASE_TREE, "platform": "other-arch", "digests": {}},
+                   {"lean_tree": BASE_TREE, "platform": test_map.platform_tag(), "digests": {"a": 1}}, []):
+        test_map.build_record_path(BASE_TREE).write_text(json.dumps(record))
+        assert test_map.load_build(BASE_TREE) is None, record
+
+
+def test_a_current_build_is_up_to_date_and_traced(tmp_path, monkeypatch):
+    (tmp_path / "lean/.lake/build/bin").mkdir(parents=True)
+    (tmp_path / "lean/lakefile.toml").write_text('[[lean_exe]]\nname = "ve_a"\nroot = "A"\n')
+    monkeypatch.setattr(test_map.lake_outputs, "stale", lambda lean, env=None: [])
+    calls = []
+
+    def lake(command, **options):
+        calls.append(command)
+        return subprocess.CompletedProcess(command, returncode)
+    monkeypatch.setattr(test_map.subprocess, "run", lake)
+    returncode = 0
+    assert not test_map.current_build(tmp_path) and calls == []  # not built
+    (tmp_path / "lean/.lake/build/bin/ve_a").write_bytes(b"binary")
+    assert test_map.current_build(tmp_path) and calls == [["lake", "build", "--no-build", "ve_a"]]
+    returncode = 3
+    assert not test_map.current_build(tmp_path)
+    returncode = 0
+    monkeypatch.setattr(test_map.lake_outputs, "stale", lambda lean, env=None: [lean / ".lake/build/bin/ve_a"])
+    assert not test_map.current_build(tmp_path)
+
+
+def test_a_run_builds_the_head_for_the_cutoff_when_the_base_build_is_recorded(monkeypatch):
+    plans = [{"full": False, "lean_cutoff": {"state": "no record of the head build"}},
+             {"full": False, "lean_cutoff": {"state": "applied"}, "marker": "second"}]
+    events = []
+    monkeypatch.setattr(select_tests, "select", lambda *args, **kwargs: (events.append("select"), plans.pop(0))[1])
+    monkeypatch.setattr(select_tests.test_map, "build_lean", lambda: events.append("build"))
+    monkeypatch.setattr(select_tests, "run", lambda plan, **options: (events.append(plan.get("marker")), 0)[1])
+    monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "lean/VE/Json.lean", "--run", "--json"])
+    monkeypatch.setattr(select_tests, "light_tier", lambda plan, **options: plan)
+    assert select_tests.main() == 0
+    assert events == ["select", "build", "select", "second"]
+
+
 def graph_without(path: str) -> source_graph.Graph:
     """The checkout's graph as if `path` were deleted (the file itself stays on disk here)."""
     tree = source_graph.load(select_tests.ROOT)
@@ -1484,6 +1911,21 @@ SAFETY_CASES = (
     ("the static graph never names the root", test_without_a_map_an_added_file_selects_the_tests_that_name_the_root),
     ("every '.' literal names the root", test_without_a_map_an_added_file_selects_the_tests_that_name_the_root),
     ("product modules name the root too", test_without_a_map_an_added_file_selects_the_tests_that_name_the_root),
+    # tarch-select (draft 2 section 3.5, items 2-6; Astra re-check 6)
+    ("tree maps fill find_map's window", test_tree_maps_do_not_crowd_commit_maps_out_of_the_window),
+    ("a new map format needs no converter or map", test_each_map_format_version_ships_with_a_converter_or_a_recorded_map),
+    ("the version 6 converter drops service users", test_a_version_6_map_converts_and_keeps_every_service_user),
+    ("units record in name order", test_recording_starts_the_longest_units_first),
+    ("a child without the hook counts as recorded", test_a_child_that_records_here_and_left_no_file_ran_nothing),
+    ("a nested recording keeps its records", test_a_recording_inside_a_recorded_test_hands_over_its_records),
+    ("product words name every directory of the name", test_a_product_word_names_only_product_directories),
+    (".gitattributes changes everything", test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users),
+    ("checkout attributes are ignored", test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users),
+    ("shared manifest fields have no readers", test_a_shared_manifest_field_selects_its_whole_manifest_readers),
+    ("an authority change selects only entry readers", test_an_authority_change_selects_the_registrations_of_its_entries),
+    ("the cutoff ignores the digests", test_a_changed_binary_selects_all_its_runners),
+    ("a missing build record counts as identical", test_without_both_build_records_every_runner_is_selected),
+    ("equal trees are an identical build", test_no_cutoff_when_the_trees_cannot_show_the_change),
 )
 
 
@@ -1532,10 +1974,11 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
     elif name == "an empty delta hides an added or deleted module":
         real_file_impact = select_tests.file_impact
 
-        def empty_hides(coverage, graph, all_units, add, path, presence_changed, python=None, called=None):
+        def empty_hides(coverage, graph, all_units, add, path, presence_changed, python=None, called=None,
+                        rebuilt=None):
             if python is not None and python[2] is not None and python[2].empty:
                 presence_changed = False
-            real_file_impact(coverage, graph, all_units, add, path, presence_changed, python, called)
+            real_file_impact(coverage, graph, all_units, add, path, presence_changed, python, called, rebuilt)
         monkeypatch.setattr(select_tests, "file_impact", empty_hides)
         arguments = ("", head_commit(), monkeypatch)
     elif name == "directory listings count for data files only":
@@ -1579,6 +2022,71 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
             return set()
         monkeypatch.setattr(select_tests.Coverage, "listers", nearest)
         arguments = (tmp_path, head_commit())
+    elif name == "tree maps fill find_map's window":
+        monkeypatch.setattr(test_map, "commit_maps", lambda directory: list(directory.glob("*.json.gz")))
+        arguments = (tmp_path, monkeypatch)
+    elif name == "a new map format needs no converter or map":
+        monkeypatch.setattr(test_map, "VERSION", test_map.VERSION + 1)
+        arguments = ()
+    elif name == "the version 6 converter drops service users":
+        # The converter invents a mode for every unit: the service user seems to need another mode only.
+        monkeypatch.setitem(test_map.CONVERTERS, 7, lambda data: {
+            **data, "modes": {"norms": list(range(len(data["tests"])))}})
+        arguments = (tmp_path, monkeypatch)
+    elif name == "units record in name order":
+        monkeypatch.setattr(test_map, "by_length", lambda selected, previous: sorted(selected))
+        arguments = ()
+    elif name == "a child without the hook counts as recorded":
+        real_read_unit = test_map.read_unit
+
+        def missing_children_ran_nothing(directory, files):
+            result = real_read_unit(directory, files)
+            result["opaque"] = [reason for reason in result["opaque"] if not reason.endswith("left no record")]
+            return result
+        monkeypatch.setattr(test_map, "read_unit", missing_children_ran_nothing)
+        arguments = (tmp_path, *CHILDREN["another interpreter"])
+    elif name == "a nested recording keeps its records":
+        monkeypatch.setattr(test_map, "share_with_outer", lambda out, env: None)
+        arguments = (tmp_path, monkeypatch)
+    elif name == "product words name every directory of the name":
+        real_mentions = source_graph.Graph._mentions
+        monkeypatch.setattr(source_graph.Graph, "_mentions", lambda self, path, summary: real_mentions(
+            self, "tests/as_if.py" if path.startswith(source_graph.PRODUCT) else path, summary))
+        arguments = (tmp_path, monkeypatch)
+    elif name == ".gitattributes changes everything":
+        monkeypatch.setattr(select_tests, "GIT_ATTRIBUTES", "-")
+        arguments = (head_commit(),)
+    elif name == "checkout attributes are ignored":
+        monkeypatch.setattr(select_tests, "checkout_attributes_changed", lambda old, new: False)
+        arguments = (head_commit(),)
+    elif name == "shared manifest fields have no readers":
+        monkeypatch.setattr(select_tests.Coverage, "whole_manifest_readers", lambda self: set())
+        arguments = (tmp_path,)
+    elif name == "an authority change selects only entry readers":
+        real_delta = select_tests.manifest_delta
+
+        def no_authority(old, new):
+            found = real_delta(old, new)
+            if found is not None:
+                found.authority = set()
+            return found
+        monkeypatch.setattr(select_tests, "manifest_delta", no_authority)
+        arguments = (tmp_path,)
+    elif name == "the cutoff ignores the digests":
+        real_cutoff = select_tests.lean_cutoff
+        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after, known=True: {
+            **real_cutoff(base, after, known), "state": "applied", "rebuilt": []})
+        arguments = (head_commit(), tmp_path, monkeypatch)
+    elif name == "equal trees are an identical build":
+        real_tree = test_map.lean_tree
+        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after, known=True: {
+            "state": "applied", "rebuilt": [], "same": [], "base_tree": real_tree(base), "head_tree": real_tree(after)})
+        arguments = (head_commit(), tmp_path, monkeypatch)
+    elif name == "a missing build record counts as identical":
+        real_load = test_map.load_build
+        monkeypatch.setattr(test_map, "load_build", lambda tree: real_load(tree) or {
+            name: "0" * 64 for name in select_tests.lean_executables()})
+        arguments = (head_commit(), tmp_path, monkeypatch, False, True, "no record of the base build")
     else:
         monkeypatch.setattr(select_tests.Coverage, "file_wide", lambda self, file, defs: set())
         arguments = (tmp_path,)

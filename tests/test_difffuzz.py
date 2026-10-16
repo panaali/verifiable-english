@@ -81,6 +81,19 @@ def test_ci_run(built, tmp_path, record_property):
     assert work_problems(report) == [], report["work"]
 
 
+def test_f13_duplicate_soft_rank_and_rust_field_error_reproduce(built):
+    """DF-15 covers the fixed-seed soft environment disagreement in the CI sample."""
+    entry = next(e for e in df.load_baseline()['entries'] if e['id'] == 'environment-ec2b2bc949a09a26')
+    surface = df.SURFACES['environment']()
+    try:
+        [(replayed, status, now)] = df.replay([entry], {'environment': surface})
+    finally:
+        surface.close()
+    assert replayed is entry
+    assert status == 'reproduces', now
+    assert now['classes'] == ['code']
+
+
 def work_problems(report):
     """How the run's work (`df.WORK`) differs from the sample's: each input evaluated once (every mutant and
     every baseline entry; nothing is minimised when nothing is new), and no count over `df.WORK_LIMIT`."""

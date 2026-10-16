@@ -672,7 +672,8 @@ batch 10b's norm-defaults decoder changes; the English Lean E2 integration adds 
 steps 5 to 8b remeasured again at the merge of ve-integration into lean-first/b15a (2026-10-08);
 steps 5 and 7 remeasured at the merge of ve-integration into readings-defaults/rd2a (2026-10-08); steps 5, 6
 and 8b remeasured at the merge of ve-integration into lean-first/b12 (2026-10-09), with batch 12's located
-decoders; the current measurements follow:
+decoders; steps 4, 5 and 7 remeasured at the merge of ve-integration into rd-9/integrate (2026-10-16);
+the current measurements follow:
 
 The merged step 2a ledger now identifies no remaining runner lines in that row; the table below records
 the current source classification alongside the previously measured steps.
@@ -683,10 +684,10 @@ the current source classification alongside the previously measured steps.
 | 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 117 | 0 | 0 | 0 | 117 | 2 | 2 | 29.2 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
-| 4 | 720 | 0 | 0 | 420 | 300 | 14 | 2 | 10.7 |
-| 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
+| 4 | 737 | 0 | 0 | 420 | 317 | 14 | 2 | 11.3 |
+| 5 | 0 | 467 | 0 | 0 | 467 | 14 | 1 | 33.4 |
 | 6 | 35 | 0 | 1748 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 673 | 0 | 0 | 60 | 613 | 6 | 2 | 51.1 |
+| 7 | 681 | 0 | 0 | 60 | 621 | 6 | 2 | 51.8 |
 | 8a | 87 | 225 | 0 | 60 | 252 | 10 | 1.5 | 16.8 |
 | 8b | 0 | 3637 | 0 | 0 | 3637 | 30 | 3 | 40.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |

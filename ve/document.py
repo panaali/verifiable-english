@@ -677,18 +677,18 @@ def _load_document(raw: bytes, path: str | Path, lean):
     rights_enabled = "rights@0" in profiles
     soft_enabled = "soft-norms@0" in profiles
     defaults_enabled = "norm-defaults@0" in profiles
-    if defaults_enabled and soft_enabled:
-        # The soft and rights document routes are checked by Lean, whose
-        # norm-defaults route has no admission kind for them yet.
-        raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
-                      "routes await the Lean route")
+    if defaults_enabled and rights_enabled:
+        # The rights document route is checked by Lean, whose norm-defaults
+        # route has no admission kind for it yet (rd-9-soft-chain 3.11 row 7).
+        raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 documents on the rights route await the "
+                                 "Lean route")
     attached = _s1_attached(environment_data, meta)
     if soft_enabled and not rights_enabled:
         from .softnorms import check_soft_source
         if type(meta.get("units")) is list:
             # The environment and the norm units are one soft source (8).
             check_soft_source(environment_data, _soft_contents(meta["units"], attached),
-                              layers=frozenset({"readings@1"} if "readings@1" in profiles else ()))
+                              layers=frozenset(p for p in ("readings@1", "norm-defaults@0") if p in profiles))
     env = _environment(environment_data)
     if "reports@0" not in env.profiles and set(meta) & {"contexts", "assessments", "bridges", "scoped"}:
         raise VEError("unknown document metadata")
@@ -892,8 +892,9 @@ def _load_document(raw: bytes, path: str | Path, lean):
              if not soft_enabled and (selected_norms or any(d.regulated is not None for d in env.predicates.values()))
              else None)
     norm_defaults = None
-    if defaults_enabled:
-        # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T.
+    if defaults_enabled and not soft_enabled:
+        # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T. On the soft chain Lean's
+        # layered route owns them (rd-9-soft-chain 3.8): no W1 container is built over soft units.
         from .norm_defaults import UnspecifiedDocument, validate_completions
         norm_defaults = UnspecifiedDocument(_defaults_environment(env), selected_norms)
         validate_completions(norm_defaults, meta.get("completions", {}), unit_ids)
@@ -1061,6 +1062,11 @@ def _lower_soft_document(doc):
         return soft
     data = doc["environment"].to_dict()
     data["profiles"] = [p for p in data["profiles"] if p != "readings@1"]
+    if "norm-defaults@0" in data["profiles"]:
+        # Under the soft completion the soft route reads the source's placeholder (each unspecified completion read
+        # as deny); `fill`, `Soft_T` on the filled tree and every verdict are Lean's readings route's (rd-9 3.8).
+        from .norms import _norm_defaults_placeholder
+        data = _norm_defaults_placeholder(data)
     lower = _environment(data)
     attached = _s1_attached(doc["environment"].to_dict(), doc["meta"])
     if doc["rights_document"] is not None:
@@ -1436,8 +1442,10 @@ def _report(doc):
                           "soft_document_hash": soft.document_hash,
                           "decision_predicates": sorted(soft.extended_env.decision_names),
                           "background_labels": [label for label, _ in soft.extended_env.soft_premises]}
-        assertions.extend(formula for _, formula in soft.elaborated.premises())
-        assertions.extend(formula for _, formula in soft.extended_env.soft_premises)
+        if "norm-defaults@0" not in doc["environment"].profiles:
+            # Under the soft completion no Python layer or soft premise enters a premise set (rd-9 3.8).
+            assertions.extend(formula for _, formula in soft.elaborated.premises())
+            assertions.extend(formula for _, formula in soft.extended_env.soft_premises)
     rights = doc["rights_document"]
     if rights is not None:
         result["rights"] = {

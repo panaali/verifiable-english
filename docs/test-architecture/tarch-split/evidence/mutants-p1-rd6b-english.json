@@ -1,0 +1,89 @@
+{
+ "mutants": [
+  {
+   "id": "S4",
+   "file": "experiments/p1.py",
+   "claim": "the per-item reference replay still runs and fails the known-answer gate when it runs concurrently in tests/p1_findings.py",
+   "source_sha256": "24b1bb0da2b1a9f86a64f5a71bb00ceeda8b138a47cd699b3e2e78ec93e2d25c",
+   "tests": [
+    "tests/test_p1.py::test_actual_offline_known_answer_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_p1.py::test_actual_offline_known_answer_gate"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 206.1,
+   "output_tail": "un(p1.finding, item), contexts, todo):\n                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nexperiments/p1.py:134: in finding\n    return deepcopy(_finding(packed(item)))\n                    ^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nitem_json = '{\"assignment\":{\"forged_correct_control\":true,\"id\":\"e4-086d3b59c2f1ac4d1d\",\"label\":\"good\",\"pushback\":true,\"source\":\"E4...ses\":[\"there exists object x0, ((x0 is bavecuki) and (x0 is fipogene)).\"],\"template\":\"dev_existential\"},\"split\":\"dev\"}'\n\n    @lru_cache(maxsize=200)\n    def _finding(item_json):\n        item = json.loads(item_json)\n        p, g = item[\"payload\"], graph(item)\n        result = check_argument(g, search=False).to_dict()\n        e4 = item[\"assignment\"][\"source\"] == \"E4\"\n        expected = \"gap\" if item[\"label\"] == \"good\" or not e4 else \"follows\"\n        if any(v != [expected] for v in result[\"findings\"].values()) or result[\"errors\"]:\n>           raise PreflightError(\"reference replay failed; stop the whole study\")\nE           ve_experiments.paid.PreflightError: reference replay failed; stop the whole study\n\nexperiments/p1.py:105: PreflightError\n=========================== short test summary info ============================\nERROR tests/test_p1.py::test_actual_offline_known_answer_gate - ve_experiment...\n1 error in 6.08s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-bc0rnul8)\n"
+  },
+  {
+   "id": "S5",
+   "file": "tests/p1_findings.py",
+   "claim": "the known-answer gate reads no finding the concurrent warm-up did not check: warming one split only fails it",
+   "source_sha256": "35c92d6b5182f5602d56af8c3eb0e7d323a33f162c65843d7ad16a33e0077120",
+   "tests": [
+    "tests/test_p1.py::test_actual_offline_known_answer_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_p1.py::test_actual_offline_known_answer_gate"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 748.9,
+   "output_tail": "================================= ERRORS ====================================\n___________ ERROR at setup of test_actual_offline_known_answer_gate ____________\n\n    @pytest.fixture(scope=\"module\")\n    def known():\n        # The 200 items' checks, independent of one another, run several at a time first (tests/p1_findings.py);\n        # the gate then runs whole, on exactly those findings: it checks none that `warm` did not.\n        p1_findings.warm()\n        misses = p1._finding.cache_info().misses\n        report = p1.known_answer()\n>       assert p1._finding.cache_info().misses == misses\nE       assert 200 == 32\nE        +  where 200 = CacheInfo(hits=2112, misses=200, maxsize=200, currsize=200).misses\nE        +    where CacheInfo(hits=2112, misses=200, maxsize=200, currsize=200) = <built-in method cache_info of functools._lru_cache_wrapper object at 0x74f1b5997480>()\nE        +      where <built-in method cache_info of functools._lru_cache_wrapper object at 0x74f1b5997480> = <functools._lru_cache_wrapper object at 0x74f1b5997480>.cache_info\nE        +        where <functools._lru_cache_wrapper object at 0x74f1b5997480> = p1._finding\n\ntests/test_p1.py:21: AssertionError\n=========================== short test summary info ============================\nERROR tests/test_p1.py::test_actual_offline_known_answer_gate - assert 200 == 32\n1 error in 544.12s (0:09:04)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ozaz4hki)\n"
+  },
+  {
+   "id": "S6",
+   "file": "ve/readings_verdicts.py",
+   "claim": "each rd6b chunk still compares its documents whole on both routes: a superposed SOME answered as NONE fails the chunk",
+   "source_sha256": "f73bdd8357b247981a924743b0bd42ca3219f46ddeb8c1566c1008472ed78701",
+   "tests": [
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[6]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[6]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 59.6,
+   "output_tail": "route\"], row[\"finding\"], row[\"choices_checked\"]) == (\"superposed\", None, count), index\n            enumerated_row = {**row, \"route\": \"enumerated\", \"finding\": {\n                \"text\": \"ReadingsNotSuperposable: \" + \", \".join(R[\"id\"] for R in document[\"reading_sets\"]),\n                \"cause\": \"the unspecified completion\"}}\n            superposed = answers(Superposed(loaded), query, under)\n            enumerated = answers(Enumerated({**loaded, \"readings_s2\": enumerated_row}), query, under)\n>           assert superposed == enumerated, (index, superposed, enumerated)\nE           AssertionError: (66, {'conflict': ('CONFLICT-FREE', [([[...]], 'CONFLICT-FREE'), ([[...]], 'CONFLICT-FREE'), ([[...]], 'CONFLICT-FREE'...-FREE')]), 'premises': ('model', [('rs_0', 0, 'model'), ('rs_0', 1, 'model'), ('rs_0', 2, 'model')]), 'query': 'SOME'})\nE           assert {'conflict': ...uery': 'NONE'} == {'conflict': ...uery': 'SOME'}\nE             \nE             Omitting 2 identical items, use -vv to show\nE             Differing items:\nE             {'query': 'NONE'} != {'query': 'SOME'}\nE             Use -v to get more diff\n\ntests/test_readings_rd6b_differential.py:167: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[6]\n1 failed in 14.23s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jch9f005)\n"
+  },
+  {
+   "id": "S7",
+   "file": "tests/test_readings_rd6b_differential.py",
+   "claim": "each rd6b chunk keeps its non-degeneracy guard: at 16 chunks a chunk without a CONFLICT document fails it (why 15 is the most)",
+   "source_sha256": "c87461e0d9df08422609688c597fd64d5bccb6b17ec42b82adba223a3f683c65",
+   "tests": [
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[4]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[4]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 131.8,
+   "output_tail": "ding_set_ in document[\"reading_sets\"]:\n                count *= len(reading_set_[\"readings\"])\n            assert (row[\"route\"], row[\"finding\"], row[\"choices_checked\"]) == (\"superposed\", None, count), index\n            enumerated_row = {**row, \"route\": \"enumerated\", \"finding\": {\n                \"text\": \"ReadingsNotSuperposable: \" + \", \".join(R[\"id\"] for R in document[\"reading_sets\"]),\n                \"cause\": \"the unspecified completion\"}}\n            superposed = answers(Superposed(loaded), query, under)\n            enumerated = answers(Enumerated({**loaded, \"readings_s2\": enumerated_row}), query, under)\n            assert superposed == enumerated, (index, superposed, enumerated)\n            assert len(superposed[\"conflict\"][1]) == count\n            seen[superposed[\"conflict\"][0]] += 1\n            seen[superposed[\"query\"]] += 1\n        # Each chunk meets both conflict statuses and more than one verdict, so no chunk compares constants.\n>       assert seen[\"CONFLICT\"] and seen[\"CONFLICT-FREE\"], seen\nE       AssertionError: Counter({'CONFLICT-FREE': 13, 'NONE': 7, 'ALL': 6})\nE       assert (0)\n\ntests/test_readings_rd6b_differential.py:172: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[4]\n1 failed in 61.55s (0:01:01)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jncg72u5)\n"
+  },
+  {
+   "id": "S8",
+   "file": "conformance/english_mixed.py",
+   "claim": "each mixed-smoke part still checks every document of its share: a part that checks one fewer fails",
+   "source_sha256": "624070631fbe33d74e792ba67632b4f59a3922284341f293e3b81c714d1a5869",
+   "tests": [
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-1]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-1]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 94.4,
+   "output_tail": "ence.py:235: AssertionError\n----------------------------- Captured stdout call -----------------------------\n{\"vocabulary\": \"claude-constitution-excerpt\", \"seed\": 2026792114, \"texts\": 352, \"paragraphs\": 87, \"sentences\": 265, \"multiple_derivations\": 0, \"node_types\": [\"And\", \"Binary\", \"Bottom\", \"Eq\", \"Exists\", \"Forall\", \"Implies\", \"Not\", \"Or\", \"Top\", \"Unary\"], \"corpus_sha256\": \"cfa8484738271da18b5e07a9407078a1103cbbcfb46f55eef0292aececed33f1\"}\n{\"vocabulary\": \"claude-constitution-excerpt\", \"seed\": 2026792114, \"texts\": 706, \"multiple_derivations\": 0, \"node_types\": [\"And\", \"Binary\", \"Bottom\", \"Eq\", \"Exists\", \"Forall\", \"Implies\", \"Not\", \"Or\", \"Top\", \"Unary\"], \"corpus_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}\n=============================== warnings summary ===============================\nve/english.py:1842\n  /home/seyran/code/ve-tarch-split/ve/english.py:1842: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed\n    english = render_english(document, env, **options)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-1]\n1 failed, 1 warning in 45.56s\n\nve: English comparator: {\"records\": 361, \"excluded\": 0, \"planted\": 0, \"classes\": {\"agree\": 361}} (/tmp/ve-english-comparator-qrr1jnpz)\n"
+  }
+ ]
+}

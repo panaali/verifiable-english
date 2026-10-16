@@ -288,6 +288,7 @@ def _zero_generator(doc):
     class _Zero(_FilledChoiceDocument):
         def __init__(self):  # noqa: D401 - the attributes `_FilledChoiceDocument`'s generators read
             self.route, self.choice, self.side = None, (), None
+            self.chain, self.soft = "norms", []  # the norms chain: no extra base premise `X`
             units = _units(doc)
             nd = UnspecifiedDocument(doc["environment"], [u["content"] for u in units
                                                            if u["kind"] == "norm" and u.get("content") is not None])
