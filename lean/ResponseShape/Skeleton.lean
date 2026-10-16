@@ -1203,7 +1203,7 @@ def skeletonOf (files : List File) : Nat → Shape → StateT Extract (Except St
       pure .any
     | .fuel _ _ | .echo _ | .equals _ | .length _ | .count _ | .sameLength _ | .equalFields _ _ | .references _ _ _
     | .claimNodes _ | .maxSteps | .backgroundBound | .sourceSpan _ | .readingPlan | .index | .digest | .pattern _
-    | .minLength _ | .maxLength _ | .minimum _ | .minItems _ | .maxItems _ | .contains _ | .countWhere _ _ _ | .presenceCount _ _
+    | .minLength _ | .maxLength _ | .uniqueStrings | .minimum _ | .minItems _ | .maxItems _ | .contains _ | .countWhere _ _ _ | .presenceCount _ _
     | .onCase _ | .row => pure .any
     | .zip _ x => do pure (.arr [] (← go x))
     | .zipOrEmpty _ x => do pure (.arr [] (← go x))

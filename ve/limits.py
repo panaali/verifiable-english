@@ -10,6 +10,8 @@ MAX_TUPLES = 100_000
 MAX_IDENTIFIER_BYTES = 64
 MAX_EVALUATIONS = 1_000_000
 MAX_INDEX = 2**53 - 1
+# The Rust binary's memory budget (`VE_RUST_MEMORY_LIMIT`; rust/ve/src/memory.rs DEFAULT_LIMIT).
+MAX_RUST_MEMORY_BYTES = 8 << 30
 
 MAX_JSON_DEPTH = 256
 # Each tableau expansion nests a children array and a node object. Reserve
