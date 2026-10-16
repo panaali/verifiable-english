@@ -8,7 +8,12 @@
   "paths": 21,
   "lean": 2,
   "base_lean_tree": "61890c43e2eed660031a7737f492fb16306bfa31",
-  "head_lean_tree": "536de9242843cee9209567c7a98b86863cddf706"
+  "head_lean_tree": "536de9242843cee9209567c7a98b86863cddf706",
+  "head_build": "e23e465337cf158a6cea284f65237a9aaa6f0340e320fd84fef2935fd0243541",
+  "base_build": "e23e465337cf158a6cea284f65237a9aaa6f0340e320fd84fef2935fd0243541",
+  "changed_answers": 0,
+  "stale_answers": 0,
+  "head_pinned": true
  },
  {
   "label": "lf-14a",
@@ -30,7 +35,12 @@
   "paths": 151,
   "lean": 34,
   "base_lean_tree": "e62ae330a724cd988bcee02b0950b22e4231745d",
-  "head_lean_tree": "9e8b5c55ea00062714b41f6d2f58dc78f40d349e"
+  "head_lean_tree": "9e8b5c55ea00062714b41f6d2f58dc78f40d349e",
+  "head_build": "bd9c5bdfe1b8ba2dd334fb96e83b1e5f7dee9718d395adbee38625ff6af74399",
+  "base_build": "ef1af563abeb366e4738ff8458f3655409670addc194e115a34490a724cae9ed",
+  "changed_answers": 2470,
+  "stale_answers": 3894,
+  "head_pinned": true
  },
  {
   "label": "premise-scale",
