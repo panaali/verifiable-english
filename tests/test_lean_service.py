@@ -21,13 +21,16 @@ from hypothesis import HealthCheck, given, settings, strategies as st
 
 from subprocesses import BUSY_PHASES, HANG_TIMEOUT, busy_cpu
 from tests.lean_build import lean_build
-from ve.backends.lean_service import (HANDLE_KEY, MAX_CASES, MAX_HANDLE_BYTES, MAX_HANDLES, MAX_LINE_BYTES,
-                                      CheckerUnavailable, LeanService,
+from ve.backends.lean_service import (ADDRESS_SPACE, HANDLE_KEY, MAX_CASES, MAX_HANDLE_BYTES, MAX_HANDLES,
+                                      MAX_LINE_BYTES, CheckerUnavailable, LeanService,
                                       LeanServicePool, MODES, case_digest, case_texts,
                                       executable_sha256)
 from ve.backends.service_schema import DIRECTORY as SCHEMAS
 
 from ve.errors import ResourceLimit, VEError
+
+# The client's own behaviours: no test here is ever answered from the answer store (tests/answer_store.py).
+pytestmark = pytest.mark.live_service
 
 # The service's code list, as its handshake states it (envelope.json).
 CODES = json.loads((SCHEMAS / "envelope.json").read_text())["handshake"]["properties"]["codes"]["const"]
@@ -398,6 +401,48 @@ def test_recycling_after_max_requests(service_executable):
             pids.append(service.pid)
         assert pids[0] == pids[1] != pids[2] == pids[3] != pids[4]
         assert service.stats["recycles"] == 2 and service.stats["restarts"] == 0
+
+
+def test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request(service_executable):
+    """Answer-store inventory row 9: a process whose resident set is above `max_rss` after a request is
+    replaced before the next one (every process has more than one resident byte); below it, it stays."""
+    with LeanService(service_executable, max_rss=1) as service:
+        pids = []
+        for _ in range(3):
+            service.run("evaluate", CASES[:1])
+            pids.append(service.pid)
+        assert pids[0] != pids[1] != pids[2] and len(set(pids)) == 3
+        assert service.stats["recycles"] == 2 and service.stats["restarts"] == 0 and service.stats["starts"] == 3
+    for threshold in (1 << 40, None):
+        with LeanService(service_executable, max_rss=threshold) as service:
+            pids = []
+            for _ in range(3):
+                service.run("evaluate", CASES[:1])
+                pids.append(service.pid)
+            assert len(set(pids)) == 1 and service.stats["recycles"] == 0
+
+
+def _address_space_limit(pid: int) -> tuple[str, str]:
+    """The soft and hard RLIMIT_AS of process `pid`, as /proc/<pid>/limits reports them."""
+    [row] = [line for line in Path(f"/proc/{pid}/limits").read_text().splitlines()
+             if line.startswith("Max address space")]
+    soft, hard = row[len("Max address space"):].split()[:2]
+    return soft, hard
+
+
+def test_the_service_runs_under_its_address_space_limit(service_executable):
+    """Answer-store inventory row 6: the process starts under `address_space` (RLIMIT_AS, soft and hard), by
+    default 4 GiB; with None it keeps the client's own limit."""
+    import resource
+    for limit, expected in ((None, ADDRESS_SPACE), (3 << 30, 3 << 30)):
+        options = {} if limit is None else {"address_space": limit}
+        with LeanService(service_executable, **options) as service:
+            assert _address_space_limit(service.pid) == (str(expected), str(expected))
+            assert service.run("evaluate", CASES[:1])[0]["status"] == "ok"
+    inherited = tuple("unlimited" if value == resource.RLIM_INFINITY else str(value)
+                      for value in resource.getrlimit(resource.RLIMIT_AS))
+    with LeanService(service_executable, address_space=None) as service:
+        assert _address_space_limit(service.pid) == inherited
 
 
 def test_chunks_fit_their_byte_budget(service_executable):
