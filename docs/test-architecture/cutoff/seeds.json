@@ -166,5 +166,71 @@
   "file": "lean/VE/Service/Standalone.lean",
   "old": "ResourceLimit: domain exceeds entity limit",
   "new": "ResourceLimit: domain exceeds the entity limit"
+ },
+ {
+  "id": "S29",
+  "file": "lean/VE/Alternatives/Run.lean",
+  "old": "(\"verdict\", .str (if conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S30",
+  "file": "lean/VE/Discourse/Run.lean",
+  "old": "(if e.startsWith \"ResourceLimit\" then \"UNKNOWN\" else \"INVALID\")",
+  "new": "(if e.startsWith \"ResourceLimit\" then \"INVALID\" else \"UNKNOWN\")"
+ },
+ {
+  "id": "S31",
+  "file": "lean/VE/NormDefaults/Run.lean",
+  "old": "(\"verdict\", .str (if w.conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if w.conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S32",
+  "file": "lean/VE/Rights/Run.lean",
+  "old": "(\"verdict\", .str (if w.conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if w.conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S33",
+  "file": "lean/VE/Risk/Run.lean",
+  "old": "(\"verdict\", .str (if conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S34",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "old": "(\"verdict\", .str (if w.conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if w.conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S35",
+  "file": "lean/VE/SpeechActs/Run.lean",
+  "old": "(\"verdict\", .str (if w.conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if w.conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S36",
+  "file": "lean/VE/Service/FamilyNorms.lean",
+  "old": "(\"verdict\", .str (if conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S37",
+  "file": "lean/VE/Attribution/Run.lean",
+  "old": "return Json.mkObj (base ++ [(\"status\", .str \"FOLLOWS\")])",
+  "new": "return Json.mkObj (base ++ [(\"status\", .str \"DOES NOT FOLLOW\")])"
+ },
+ {
+  "id": "S38",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "old": "VE.Route.Wire.ok id [(\"admitted\", .bool true), (\"report\", Norms.Run.reportJson res.report),",
+  "new": "VE.Route.Wire.ok id [(\"admitted\", .bool false), (\"report\", Norms.Run.reportJson res.report),"
+ },
+ {
+  "id": "S39",
+  "file": "lean/VE/Discourse/Run.lean",
+  "old": "if (readingVerdicts res).isEmpty then .bool true else .str \"UNKNOWN\"",
+  "new": "if (readingVerdicts res).isEmpty then .str \"UNKNOWN\" else .bool true"
  }
 ]

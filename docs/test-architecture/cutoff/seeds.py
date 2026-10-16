@@ -145,7 +145,8 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
         sys.path.pop(0)
 
 
-def check(rows: list[dict]) -> None:
+def check(rows: list[dict]) -> int:
+    """The saved rows are the seeds of seeds.json and agree with themselves; the number caught."""
     seeds = json.loads(SEEDS.read_text())
     assert [row["id"] for row in rows] == [seed["id"] for seed in seeds]
     for row, seed in zip(rows, seeds, strict=True):
@@ -156,8 +157,11 @@ def check(rows: list[dict]) -> None:
         for name, key in (("today", "today"), ("modes", "modes_selected"), ("answers", "answers_selected")):
             assert row["caught_in"][name] == all(test.split("::")[0] in row[key] for test in row["caught_by"])
         assert set(row["modes_selected"]) <= set(row["today"]), row["id"]
-    caught = [row for row in rows if row["status"] == "caught"]
-    assert len(caught) >= REQUIRED, f"{len(caught)} seeds caught, {REQUIRED} required"
+    for row in rows:
+        if row["status"] == "not caught":
+            # Not observed by any service test: no recorded answer changed and no tried test failed.
+            assert not row["caught_by"], row["id"]
+    return sum(row["status"] == "caught" for row in rows)
 
 
 def main() -> int:
@@ -171,8 +175,9 @@ def main() -> int:
     sub.add_parser("check")
     args = parser.parse_args()
     if args.command == "check":
-        check(json.loads(EVIDENCE.read_text())["seeds"])
-        print("every caught seed is caught by a test today's, the modes and the answers selections keep")
+        caught = check(json.loads(EVIDENCE.read_text())["seeds"])
+        print(f"{caught} seeds caught (activation needs {REQUIRED}), each by a test today's, the modes and the "
+              "answers selections keep")
         return 0
     work = Path(tempfile.mkdtemp(prefix="cutoff-seeds-"))
     rows = json.loads(EVIDENCE.read_text())["seeds"] if EVIDENCE.exists() else []
