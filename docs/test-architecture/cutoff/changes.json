@@ -139,7 +139,12 @@
   "head_lean_tree": "187f7a358f9f40831328ae798e812050006823ce",
   "r1_map": "aaff776345c5e58ebe10f131316ba1c42663d3b2.json.gz",
   "r1_map_sha256": "45aa7faa685841c7bbe0006e96ee19548b45a3ca1e4a12de61b2ed111b3d3f45",
-  "r1_map_distance": 0
+  "r1_map_distance": 0,
+  "head_build": "188efdfa5425933ae550591f822847c44cf7f21495ea27a4db7db729b3d69ff4",
+  "base_build": "e23e465337cf158a6cea284f65237a9aaa6f0340e320fd84fef2935fd0243541",
+  "changed_answers": 32001,
+  "stale_answers": 0,
+  "head_pinned": true
  },
  {
   "label": "me-1",
@@ -153,7 +158,12 @@
   "head_lean_tree": "4b8878498c4ab425f1dabe88bef75d70931b02b7",
   "r1_map": "aaff776345c5e58ebe10f131316ba1c42663d3b2.json.gz",
   "r1_map_sha256": "45aa7faa685841c7bbe0006e96ee19548b45a3ca1e4a12de61b2ed111b3d3f45",
-  "r1_map_distance": 0
+  "r1_map_distance": 0,
+  "head_build": "e23e465337cf158a6cea284f65237a9aaa6f0340e320fd84fef2935fd0243541",
+  "base_build": "e23e465337cf158a6cea284f65237a9aaa6f0340e320fd84fef2935fd0243541",
+  "changed_answers": 0,
+  "stale_answers": 0,
+  "head_pinned": false
  },
  {
   "label": "qs-1",
@@ -167,6 +177,11 @@
   "head_lean_tree": "4468a9d9b7c88d4cceb20f032f0e5a4a1720d350",
   "r1_map": "f75082449c60387398cf94ed7f25b440edfab8a8.json.gz",
   "r1_map_sha256": "cfe77aff16a911e389228a63e6d4546762b341411289e2e4d546f9e8f36944c7",
-  "r1_map_distance": 0
+  "r1_map_distance": 0,
+  "head_build": "ef1af563abeb366e4738ff8458f3655409670addc194e115a34490a724cae9ed",
+  "base_build": "ef1af563abeb366e4738ff8458f3655409670addc194e115a34490a724cae9ed",
+  "changed_answers": 0,
+  "stale_answers": 3894,
+  "head_pinned": false
  }
 ]
