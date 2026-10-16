@@ -9,9 +9,10 @@ main. For each, DIR holds the full run of its head on the Mac test runner (the g
 collection, `-m "not live"`, run by measure.py --full-suite while these selections were made) and
 the recording's answers replayed on the base's and the head's builds there. `write` checks the
 head out in W, a scratch worktree, with this batch's two new modules copied in, and computes the
-three selections for the change as `tools/select_tests.py` would on that head: today's and `modes`
-with the nearest version-7 map recorded at an ancestor of the base (what R1 reads), `answers` with
-the recording's own map. A failure of the full run outside a selection is a miss of that selection,
+three selections for the change as `tools/select_tests.py` would on that head, all three with the
+version-7 main map nearest below the base (`r1_map`, pinned by name and SHA-256 in changes.json: what
+R1 reads; `find_map`'s newest-30 window would lose it as maps are published), the `answers` rule taking
+only the requests from the recording. A failure of the full run outside a selection is a miss of that selection,
 unless the same test also fails on the base (`base_failures`, run on the runner the same way).
 `lean_only` is the same three selections for the change's Lean inputs alone (its .lean files, Lean
 project files and pins): what each rule does to the Lean part of a change, for information.
@@ -67,12 +68,13 @@ import answer_cutoff, answer_replay, select_tests, test_map
 change = json.loads(sys.argv[1])
 runs = sys.argv[2]
 paths = select_tests.git_lines("diff", "--no-renames", "--name-only", change["base"], change["head"])
-r1 = test_map.find_map(change["base"])
+r1 = test_map.cache_dir() / change["r1_map"] if change["r1_map"] else None
+assert r1 is None or __import__("hashlib").sha256(r1.read_bytes()).hexdigest() == change["r1_map_sha256"]
 coverage = (lambda: select_tests.Coverage(test_map.load(r1), r1)) if r1 else (lambda: None)
 today = select_tests.select(paths, base=change["base"], after=change["head"], coverage=coverage())
 modes = answer_cutoff.select("modes", paths, base=change["base"], after=change["head"], coverage=coverage())
 answers = answer_cutoff.select_answers(runs + "/diff-" + change["label"] + ".json", paths, base=change["base"],
-                                       after=change["head"], build=change["head_build"],
+                                       after=change["head"], build=change["head_build"], coverage=coverage(),
                                        head_pinned=change.get("head_pinned"))
 lean = [path for path in paths if select_tests.kind_of(path) == select_tests.LEAN or path == "lean/checkers.lock"]
 alone = {{}}
@@ -82,14 +84,14 @@ if lean:
                                            coverage=coverage())["selected"],
              "answers": answer_cutoff.select_answers(runs + "/diff-" + change["label"] + ".json", lean,
                                                      base=change["base"], after=change["head"],
-                                                     build=change["head_build"],
+                                                     build=change["head_build"], coverage=coverage(),
                                                      head_pinned=change.get("head_pinned"))["selected"]}}
 print(json.dumps({{"r1_map": r1 and r1.name, "paths": paths, "lean_paths": lean, "lean_only": alone,
                   "today": today["selected"], "today_full": today["full_reasons"],
                   "modes": modes["selected"], "answers": answers["selected"],
                   "answers_cutoff": answers["cutoff"], "units": today["full_count"],
                   "drift": today["map"] and today["map"]["files_changed_since"],
-                  "answers_drift": answers["map"]["files_changed_since"]}}))
+                  "answers_drift": answers["map"] and answers["map"]["files_changed_since"]}}))
 """
     result = subprocess.run(["uv", "run", "--frozen", "--group", "dev", "python", "-c", code, json.dumps(change),
                              str(runs)], cwd=worktree, capture_output=True, text=True, check=True)
