@@ -210,6 +210,46 @@ def test_diff_finds_changed_missing_and_unreplayable_answers():
         answer_replay.diff(base, replay_of(head["answers"], recording="s" * 64))
     with pytest.raises(ValueError, match="empty"):
         answer_replay.diff(base, replay_of({}))
+    with pytest.raises(ValueError, match="modes"):
+        answer_replay.diff(base, {**head, "partial": ["evaluate"]})
+
+
+class Refusing:
+    """A stand-in service that refuses every request of more than one case and answers each case alone by its
+    text; alone, it refuses the texts in `refused` and raises for those in `raising`."""
+
+    def __init__(self, raising: dict[str, Exception] | None = None, refused: frozenset[str] = frozenset()):
+        self.raising, self.refused = raising or {}, refused
+        self.requests: list[list[str]] = []
+
+    def exchange(self, mode, line, count, *, timeout, texts):
+        self.requests.append(texts)
+        if len(texts) == 1 and texts[0] in self.raising:
+            raise self.raising[texts[0]]
+        if len(texts) > 1 or texts[0] in self.refused:
+            return None, {"status": "error", "id": "n" * len(self.requests), "error": f"refused {len(texts)}"}
+        return None, {"status": "ok", "id": "n" * 32,
+                      "results": [{"index": 0, "result": {"status": "ok", "text": texts[0]}}]}
+
+
+def test_a_refused_batch_is_asked_again_case_by_case():
+    """Each case of a refused batch gets its own answer, the one it gets alone; a case refused or raising alone
+    is answered by the refusal (but its nonce) or by the class of what was raised."""
+    texts = ["a", "b", "c", "d", "e"]
+    options = {"raising": {"c": lean_service.CheckerUnavailable("down"), "d": lean_service.ResourceLimit("long")},
+               "refused": frozenset({"e"})}
+    service = Refusing(**options)
+    together = answer_replay.ask(service, "evaluate", texts)
+    assert service.requests == [texts, *([text] for text in texts)]
+    alone = [answer_replay.ask(Refusing(**options), "evaluate", [text])[0] for text in texts]
+    assert together == alone and len(set(together)) == len(texts)
+    assert together[:2] == [answer_replay.answer_digest({"result": {"status": "ok", "text": text}})
+                            for text in ("a", "b")]
+    assert together[2] == "raised: CheckerUnavailable" and together[3].startswith(answer_replay.UNREPLAYABLE)
+    assert together[4] == answer_replay.answer_digest({"status": "error", "error": "refused 1"})
+    raising = Refusing({"a": RuntimeError()})
+    raising.exchange = lambda *args, **options: (_ for _ in ()).throw(RuntimeError())  # the batch raises too
+    assert answer_replay.ask(raising, "evaluate", ["a", "b"]) == ["raised: RuntimeError"] * 2
 
 
 def recording(tmp_path: Path, edges: dict[str, dict], units: dict[str, dict], keys: list[str]) -> Path:
@@ -252,17 +292,20 @@ def graph_of(tmp_path: Path, tests: dict[str, str]) -> source_graph.Graph:
 
 USERS = {"changed": {"x": [SERVICE]}, "same": {"x": [SERVICE]}, "timed": {"x": [SERVICE]},
          "unreadable": {"x": [SERVICE]}, "silent": {"x": [SERVICE]}, "failed": {"x": [SERVICE]},
-         "drifted": {"x": [SERVICE]}, "pins": {"x": [SERVICE], "r": ["lean/checkers.lock"]},
+         "drifted": {"x": [SERVICE]}, "pins": {"x": [SERVICE], "r": ["lean/checkers.lock", "tests/data/pins.json"]},
          "pin-data": {"x": [SERVICE], "r": ["lean/checkers.lock"]},
          "metered": {"x": ["lean/.lake/build/bin/ve_metered"]}, "other": {}}
 
 
 def answers_selection(tmp_path: Path, path: str, *, pinned: bool = True) -> set[str]:
-    """What a change to `path` selects through file_impact under the answers rule, the map USERS."""
+    """What a change to `path` selects through file_impact under the answers rule, the map USERS.
+
+    `other` sent a changed case when it was recorded, but today's map has it start no ve_service."""
     index = {"keys": ["k0", "k1", "k2", "k3", "k4"], "units": {
         "changed": entry(0, 1), "same": entry(1), "timed": entry(2, timed=True),
         "unreadable": entry(3, unknown=["a request to another executable"]), "silent": entry(),
-        "failed": entry(1), "drifted": entry(1), "pins": entry(1), "pin-data": entry(1, pins=("client", "data"))}}
+        "failed": entry(1), "drifted": entry(1), "pins": entry(1), "pin-data": entry(1, pins=("client", "data")),
+        "other": entry(0)}}
     data = make_map(USERS, failed=("failed",))
     plain = select_tests.Coverage(data)
     graph = graph_of(tmp_path, {})
@@ -308,6 +351,28 @@ def test_a_pin_change_selects_only_data_readers_when_the_new_build_is_pinned(tmp
     assert answers_selection(tmp_path, "lean/checkers.lock", pinned=False) == {"pins", "pin-data"}
 
 
+def test_the_pin_exemption_is_for_the_pins_only(tmp_path):
+    """A unit whose only pin read was the client's still reads its other files: a change to one selects it."""
+    assert answers_selection(tmp_path, "tests/data/pins.json") == {"pins"}
+
+
+def test_pinned_reads_the_pins_of_the_tree_or_of_a_commit(tmp_path, monkeypatch):
+    """Whether the new build is pinned decides the exemption above; an unreadable pin file admits nothing."""
+    pins = json.loads(subprocess.run(["git", "show", f"HEAD:{answer_cutoff.PIN_FILE}"], cwd=ROOT, check=True,
+                                     capture_output=True, text=True).stdout)["ve_service"]
+    assert answer_cutoff.pinned(pins[0], "HEAD") and not answer_cutoff.pinned("0" * 64, "HEAD")
+    assert not answer_cutoff.pinned(pins[0], "0" * 40)  # no such commit
+    monkeypatch.setattr(answer_cutoff, "ROOT", tmp_path)
+    (tmp_path / "lean").mkdir()
+    lock = tmp_path / answer_cutoff.PIN_FILE
+    for text, admitted in ((json.dumps({"ve_service": ["b" * 64]}), True), (json.dumps({"ve_service": ["c" * 64]}), False),
+                           (json.dumps({"rust_jsonl": ["b" * 64]}), False), ("{", False), ("[]", False)):
+        lock.write_text(text)
+        assert answer_cutoff.pinned("b" * 64, None) is admitted, text
+    lock.unlink()
+    assert answer_cutoff.pinned("b" * 64, None) is False
+
+
 @pytest.mark.parametrize("source, reason", [
     ("from hypothesis import given\n", "uses hypothesis"),
     ("import random\n\ndef test():\n    random.choice([1, 2])\n", "calls random.choice"),
@@ -320,10 +385,25 @@ def test_randomised_inputs_make_a_unit_unknown(tmp_path, source, reason):
     assert reason in answer_cutoff.randomised("tests/test_x.py", graph, tmp_path)
 
 
+def test_a_unit_that_does_not_parse_is_unknown(tmp_path):
+    graph = graph_of(tmp_path, {"tests/test_x.py": "from helper import f\n", "tests/helper.py": "f = 1\n"})
+    (tmp_path / "tests/helper.py").write_text("def f(:\n")  # changed since the graph was built
+    assert answer_cutoff.randomised("tests/test_x.py", graph, tmp_path) == "tests/helper.py does not parse"
+
+
 def test_seeded_randomness_is_not_unknown(tmp_path):
-    graph = graph_of(tmp_path, {"tests/test_x.py": "import os, random\n\ndef test():\n"
+    graph = graph_of(tmp_path, {"tests/test_x.py": "import os, random\nfrom random import Random\n\ndef test():\n"
                                                     "    random.Random(7).choice([1])\n    os.getpid()\n"})
     assert answer_cutoff.randomised("tests/test_x.py", graph, tmp_path) is None
+
+
+def test_property_tests_count_in_the_unit_and_its_helpers_but_not_in_another_test_file(tmp_path):
+    """A helper's strategies run in the unit that imports it; another test file's property tests do not."""
+    hypothesis = "from hypothesis import given\n"
+    graph = graph_of(tmp_path, {"tests/test_x.py": "from helper import f\n", "tests/helper.py": hypothesis,
+                                "tests/test_y.py": "from test_other import f\n", "tests/test_other.py": hypothesis})
+    assert answer_cutoff.randomised("tests/test_x.py", graph, tmp_path) == "tests/helper.py uses hypothesis"
+    assert answer_cutoff.randomised("tests/test_y.py", graph, tmp_path) is None
 
 
 def test_service_rule_is_restored_after_a_failure():
@@ -362,6 +442,11 @@ def test_select_answers_refuses_a_diff_it_cannot_trust(tmp_path):
     test_map.write_map(make_map({"v": {}}), directory / "map.json.gz")
     with pytest.raises(ValueError, match="its map was replaced"):
         answer_cutoff.select_answers(path, [], base="HEAD", after=None, build="b" * 64)
+    index = answer_replay.read_json(directory / "requests.json.gz")
+    answer_replay.write_json({**index, "commit": "1" * 40, "map": answer_replay.digest_file(directory / "map.json.gz")},
+                             directory / "requests.json.gz")
+    with pytest.raises(ValueError, match="name different commits"):
+        answer_cutoff.load_recording(directory)
 
 
 def test_replay_answers_each_case_as_recorded_and_again_alike(tmp_path, executable):
@@ -376,6 +461,13 @@ def test_replay_answers_each_case_as_recorded_and_again_alike(tmp_path, executab
     assert set(first["answers"]) == {index["keys"][i] for i in index["units"][UNIT]["keys"]}
     assert not any(answer.startswith(("raised", "unreplayable")) for answer in first["answers"].values())
     assert answer_replay.diff(first, second)["changed"] == []
+    with gzip.open(directory / "environments.jsonl.gz", "wt") as handle:
+        handle.write("")
+    lost = answer_replay.replay(directory, executable, jobs=1)["answers"]
+    named = {key for key, (_, text) in answer_replay.load_cases(directory)[0].items()
+             if answer_replay.handle_of(text) is not None}
+    assert named and {key for key, answer in lost.items() if answer.startswith(answer_replay.UNREPLAYABLE)} == named
+    assert {key: lost[key] for key in lost.keys() - named} == {key: first["answers"][key] for key in lost.keys() - named}
     with gzip.open(directory / "cases.jsonl.gz", "wt") as handle:
         handle.write("")
     with pytest.raises(ValueError, match="no case"):
@@ -491,6 +583,47 @@ def test_answers_read_todays_map_and_count_the_recordings_staleness(tmp_path, mo
     monkeypatch.setattr(select_tests, "select", lambda paths, **options: {"selected": ["everything"]})
     assert answer_cutoff.select_answers(path, [], base="HEAD", after=None, coverage=None,
                                         build="b" * 64)["selected"] == ["everything"]
+
+
+def test_the_pin_exemption_and_the_stale_answers_reach_the_plan(tmp_path, monkeypatch):
+    """select_answers exempts from a pin change only the client-only pin readers whose recording is current,
+    and only when the new build is pinned (read from the pins unless `head_pinned` says); the diff's stale
+    answers make their readers unknown."""
+    fresh, drifted, reader = "tests/test_time_w6a.py", "tests/test_wire_contract_lean.py", "tests/test_risk_integration.py"
+    units = (fresh, drifted, reader)
+    directory = recording(tmp_path, {unit: {"x": [SERVICE]} for unit in units},
+                          {fresh: entry(0), drifted: entry(1), reader: entry(2)}, ["k0", "k1", "k2"])
+    path = tmp_path / "diff.json"
+    answer_replay.write_json({"version": answer_replay.VERSION, "recording_dir": str(directory),
+                              "recording": answer_replay.digest_file(directory / "requests.json.gz"),
+                              "base": "c" * 64, "recording_build": "a" * 64, "stale": ["k2"],
+                              "head": "b" * 64, "cases": 3, "changed": []}, path)
+    today = select_tests.Coverage(make_map({unit: {"x": [SERVICE], "r": [answer_cutoff.PIN_FILE]} for unit in units}))
+    monkeypatch.setattr(select_tests, "uncertain_since", lambda coverage, *args: ({drifted}, 1))
+    monkeypatch.setattr(select_tests, "select", lambda paths, *, coverage, **options: {
+        "pins": sorted(coverage.readers(answer_cutoff.PIN_FILE)),
+        "service": sorted(select_tests.service_impact(coverage, None, "lean/VE/Rights/Run.lean"))})
+    asked = []
+
+    def plan(pins_admit: bool, head_pinned=None):
+        asked.clear()
+        monkeypatch.setattr(answer_cutoff, "pinned", lambda build, after: asked.append((build, after)) or pins_admit)
+        return answer_cutoff.select_answers(path, [answer_cutoff.PIN_FILE], base="HEAD", after=None,
+                                            coverage=today, build="b" * 64, head_pinned=head_pinned)
+
+    exempt = plan(True)
+    assert asked == [("b" * 64, None)] and exempt["cutoff"]["head_pinned"] is True
+    assert exempt["pins"] == [drifted]  # its recorded pin reads may be others now
+    assert exempt["service"] == sorted([drifted, reader])
+    assert exempt["cutoff"]["unknown"][reader] == "an answer it read changed between the recording's build and the base's"
+    assert plan(False)["pins"] == sorted(units) and asked == [("b" * 64, None)]
+    assert plan(True, head_pinned=False)["pins"] == sorted(units) and asked == []
+    assert plan(False, head_pinned=True)["pins"] == [drifted]
+
+
+def test_a_feedback_run_takes_the_modes_rule():
+    """R1_RULE as the report activates it (docs/test-architecture/cutoff/REPORT.md): ts-B2's per-mode rule."""
+    assert answer_cutoff.R1_RULE == "modes"
 
 
 def test_r1_never_takes_the_answers_rule():
