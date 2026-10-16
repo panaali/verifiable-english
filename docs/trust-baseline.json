@@ -551,6 +551,20 @@
    "reason": "lean-first/b16e: Lean's document mode composes the rights route for rights@0 documents (rights source decode, statuses, soft single-rule check and canonical content, request-bound typed answer: VE/Service/Document.lean +185) and types the copied rights and soft content in the response schema (ResponseShape/Schemas/Document.lean +84); no K or S growth. Condition: remove the retained Python loader's rights and soft source parts once Lean owns reading sets, couplings, claim graphs and standalone soft-norms@0 documents (docs/lean-first/b16e/DELTA.md FOLLOW-UP).",
    "signature": "SIGNED by the DRI 2026-10-14 (reviews/lf-16e-dri-note-1130.md), conditional on the final per-file counts",
    "commit": "8cec935af5170b58494e649657ce4d58109483e0"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "lf-14c: Lean n-ary definitions, model tables and bound Background replace the deleted Python n-ary fallback decision path; review fix F1/F2: one dependency order over every definition, FOL and n-ary, and the definition-body diagnostics through one Lean owner (Route.Wire.bodyFault). Carried over from the branch's pre-AR-4 budget (S 9967, V 39223) in the merge with ve-integration aaff77634.",
+   "signature": "standing ruling R6 (DRI-RULINGS.md), lf-14c, 2026-10-15",
+   "commit": "16a02693a37211bbc80de1579e7ee1af5a3b61a3"
+  },
+  {
+   "class": "V",
+   "lines": 144,
+   "reason": "lf-14c: Lean n-ary definitions, model tables and bound Background replace the deleted Python n-ary fallback decision path; review fix F1/F2: one dependency order over every definition, FOL and n-ary, and the definition-body diagnostics through one Lean owner (Route.Wire.bodyFault). Carried over from the branch's pre-AR-4 budget (S 9967, V 39223) in the merge with ve-integration aaff77634.",
+   "signature": "standing ruling R6 (DRI-RULINGS.md), lf-14c, 2026-10-15",
+   "commit": "16a02693a37211bbc80de1579e7ee1af5a3b61a3"
   }
  ]
 }
