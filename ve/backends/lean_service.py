@@ -62,7 +62,8 @@ The test suite's answer store (`tests/answer_store.py`, R1 only; `answer_store` 
 else, the gate's runs included) may stand in for the process's answer to one request line. The process
 is still started, pinned and checked (`_ensure`) and the request's deadline still computed; the stored
 line then takes the process's place in the framing (`_read_line`), and every check below it runs on it
-as on the process's line: one the client refuses is an operational failure, as from the process. In
+as on the process's line: one the client refuses is an operational failure, as from the process. After
+any failed attempt the retry asks the process and its answer is not stored. In
 that mode the request's nonce is derived from the rest of its line and every environment its cases
 name is registered in the line itself, so that the line, and Lean's answer to it, depend on the line
 alone, not on the handles one process happens to hold.
@@ -763,8 +764,8 @@ class LeanService:
                     raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line, texts,
                                                     expanded, stored)
                 except _Failure as failure:
-                    if stored is not None:  # the client refused the stored line: ask the process
-                        store.refused(self, line, failure)
+                    if store is not None:  # a refused stored line or a failed process: the retry is live, unstored
+                        store.failed(self, line, failure, served=stored is not None)
                         store = None
                     self._failed_attempt(failure, attempt)
                     attempt += 1

@@ -195,6 +195,7 @@ def review_case(raw):
             "set": "rs1", "situation": sid, "other": "default"}, sid
 
 
+@pytest.mark.live_service
 def test_the_other_side_is_scanned_lazily_on_the_review_reproducer(lean):  # noqa: F811
     raw = env_k()
     case, sid = review_case(raw)
@@ -225,6 +226,7 @@ def first_error_document(raw, sets=60, fixed=10):
     return {"units": units, "reading_sets": reading_sets}
 
 
+@pytest.mark.live_service
 def test_admission_stops_at_the_first_ill_formed_candidate(lean):  # noqa: F811
     raw = env_k()
     case = {"id": "first", "kind": "readings-validate", "environment": raw, "document": first_error_document(raw)}
@@ -260,6 +262,7 @@ def assert_one_active_row(row, per_set):
     assert [entry["name"] for entry in candidates[0]["shared"]] == [f"soft__excepted__f{k}" for k in range(10)]
 
 
+@pytest.mark.live_service
 @pytest.mark.parametrize("sets, per_set", [(60, 2), (120, 2), (1, 60)], ids=["many-sets", "more-sets", "one-set"])
 def test_no_pending_candidates_document_is_built(lean, sets, per_set):  # noqa: F811
     """Batch 3b looprecheck B: admission built the 119 pending candidates' documents of `many-sets` (the review's

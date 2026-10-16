@@ -14,7 +14,12 @@ the default service already answered from the store; the merge (R2) and the nigh
   after `_ensure`: the process is started, pinned and checked, the deadline computed, and the stored line
   then goes through the client's framing, decoding, nonce, schema and binding checks as the process's line
   would. Nothing is stripped, normalised or rewritten. A stored line the client refuses is an operational
-  failure of that attempt (`refused`), retried on the process, and an alarm.
+  failure of that attempt (`failed`), retried on the process, and an alarm.
+* **Only what a hit cannot skip is stored.** A hit writes nothing to the process's standard error, needs no
+  retry and is not timed, so an answer is stored only when its request wrote nothing to standard error (no
+  `PANIC`) and was answered on its first attempt; a retry after any failed attempt asks the process and is
+  not stored. A sampled hit whose live request breaks either is an alarm, and the byte replay compares the
+  standard error too.
 * **Key:** SHA-256 of the service binary's actual digest (`LeanService.build`, not a pin: the Mac's pins are
   the runner's own), its start-up limits (address space, RSS and request limits) and the request bytes. In
   store mode the client derives the nonce from the rest of the line and registers every environment its
@@ -24,26 +29,32 @@ the default service already answered from the store; the merge (R2) and the nigh
   not registered), is never stored.
 * **Serving is off** for a branch that changes a guarded path (`GUARDED`: the client and relay, the service
   protocol, the pins, the suite's process guards and this file), for a request with an explicit timeout, a
-  non-default executable, an expected hash or an unlisted build, a subclass of the client or a client whose
-  internals a test replaced (`SEAM`), and for every test marked `live_service` (the inventory's live column,
-  `INVENTORY`).
+  non-default executable, an expected hash or an unlisted build, a subclass of the client, a client whose
+  methods, module bindings or module tables (a lowered `DEADLINES` entry, as `lean_routes.completed_within`
+  sets) or `VE_LEAN_SERVICE*` settings differ from those the store was installed with (`SEAM`,
+  `SEAM_GLOBALS`, `SEAM_ENV`: read from the client itself), and for every test marked `live_service` (the
+  inventory's live column, `INVENTORY`).
 * **Checks.** A random 1% of hits (`SAMPLE`) is asked of the process as well and compared byte for byte: a
   drift alarm only. The nightly replays the whole store against its build (`replay`,
-  `tools/answer_replay.py store-replay`) and fails on any byte that differs. The store is not the safety
+  `tools/answer_replay.py store-replay`) and fails on any byte that differs, or on any standard error. The
+  store is not the safety
   argument: R2 is complete and live.
 """
 from __future__ import annotations
 
 from collections import OrderedDict
+import copy
 import hashlib
 import json
 import os
 from pathlib import Path
 import random
 import subprocess
+import sys
 import tempfile
 import threading
 import time
+import types
 import zlib
 
 import pytest
@@ -64,22 +75,24 @@ MEMORY_BYTES = 64 << 20
 # A branch that changes one of these runs every request live.
 GUARDED = ("ve/backends/", "lean/VE/Service/", "lean/checkers.lock", "tests/subprocesses.py",
            "tests/conftest.py", "tests/answer_store.py")
-# The client below the seam: replaced on the class, on the instance or in the module, the store is off for
-# the request, since a hit would skip what the test put there.
-SEAM = ("exchange", "_line", "_request_line", "_ensure", "_spawn", "_stop", "_deadline", "_roundtrip",
-        "_write_all", "_read_line", "_wait", "_after_request", "_failed_attempt", "_note", "_forget_handles",
-        "rss", "cpu_seconds", "build")
-SEAM_GLOBALS = ("time", "os", "subprocess", "selectors", "_cpu_seconds", "_user_seconds", "_rss_bytes",
-                "_decode_json", "check_response", "check_handshake", "request_context", "configured_seconds",
-                "deadline", "executable_sha256", "_Deadline", "_Failure")
+# The client below the seam, read from the client itself: replaced on the class, on the instance or in the
+# module, a module table changed (a lowered `DEADLINES` entry) or a `VE_LEAN_SERVICE*` setting changed, the
+# store is off for the request, since a hit would skip what the test put there (a deadline it enforces).
+SEAM = tuple(name for name, value in vars(LeanService).items()
+             if isinstance(value, (types.FunctionType, property, staticmethod, classmethod)))
+# Every module binding but the seam itself and the digest cache, which a test may reset.
+SEAM_STATE = ("answer_store", "_hashes")
+SEAM_GLOBALS = tuple(name for name in vars(lean_service) if not name.startswith("__") and name not in SEAM_STATE)
+SEAM_ENV = "VE_LEAN_SERVICE"
 # Wall-clock seconds the byte replay waits for one answer: no CPU deadline, so a loaded nightly never turns an
 # answer into a difference; a hung build still ends.
 REPLAY_TIMEOUT = HANG_TIMEOUT
 
 # The client behaviours a stored answer could skip, and the deterministic tests that keep each one live
-# (plan 3.6, rows 1-13): (row, behaviour, what the wire seam skips, tests). Every test named here carries
+# (plan 3.6, rows 1-13; row 14 from the review): (row, behaviour, what the wire seam skips, tests). Every test named here carries
 # the `live_service` mark (tests/test_answer_store.py checks it), so no store ever answers it.
 LS, LH = "tests/test_lean_service.py", "tests/test_lean_handles.py"
+LSS, EF = "tests/test_lean_service_schema.py", "tests/test_environment_field_types.py"
 INVENTORY = (
     (1, "relay: wire check, memo, error classes", "nothing", ("tests/test_relay.py",)),
     (2, "pool split, parallel workers, earliest failure first", "nothing (the pool size shapes the lines)",
@@ -98,16 +111,28 @@ INVENTORY = (
     (7, "deadline computation (_deadline)", "nothing: it runs, but nothing is enforced",
      (f"{LS}::test_the_injected_clock_records_a_miscomputed_deadline",
       "tests/test_w6a_limit_generator.py::test_lean_authority_reports_resource_limit_on_every_generated_case")),
-    (8, "enforcement: CPU-deadline kill, wall cap, timeout", "all of it",
+    (8, "enforcement: CPU-deadline kill, wall cap, timeout",
+     "all of it (a changed DEADLINES entry or VE_LEAN_SERVICE_TIMEOUT turns the store off)",
      (f"{LS}::test_a_request_past_its_cpu_deadline_names_its_mode_and_is_not_retried",
       f"{LS}::test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline",
       f"{LS}::test_a_request_that_gets_no_cpu_meets_the_wall_cap",
       "tests/test_soft_request_economy.py::test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline",
-      "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline")),
-    (9, "retry once, restart, RSS recycle", "the process's failures and its RSS growth",
+      "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
+      # CPU deadlines lowered through lean_routes.completed_within
+      "tests/test_readings_lazy_pairs.py::test_the_review_reproducer_gives_the_specified_answer",
+      "tests/test_lean_layers_once.py::test_a_rights_request_over_a_wide_environment_is_cheap",
+      "tests/test_readings_lean_sharing.py::test_the_other_side_is_scanned_lazily_on_the_review_reproducer",
+      "tests/test_readings_lean_sharing.py::test_admission_stops_at_the_first_ill_formed_candidate",
+      "tests/test_readings_lean_sharing.py::test_no_pending_candidates_document_is_built")),
+    (9, "retry once, restart, RSS recycle",
+     "the process's failures and its RSS growth (an answer that needed a retry is never stored)",
      (f"{LS}::test_operational_faults_fail_closed", f"{LS}::test_one_retry_recovers_a_hung_batch",
       f"{LS}::test_recycling_after_max_requests",
-      f"{LS}::test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request")),
+      f"{LS}::test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request",
+      # retries == 0 on genuine requests
+      f"{LSS}::test_genuine_request_errors_are_bound_and_accepted",
+      f"{LSS}::test_request_errors_without_their_binding_are_rejected",
+      f"{LSS}::test_generated_formulas_follow_each_routes_limits")),
     (10, "framing and decoding: line reader, 1 GiB cap, strict JSON, nonce match",
      "nothing (the stored line goes through _read_line)",
      (f"{LS}::test_complete_lean_response_obeys_size_cap", f"{LS}::test_operational_faults_fail_closed")),
@@ -118,6 +143,11 @@ INVENTORY = (
       f"{LS}::test_request_errors_without_their_binding_fail_closed")),
     (13, "stats counters", "the process's own counts (registered, restarts) for a hit",
      (f"{LS}::test_pool_serves_concurrent_callers", LH)),
+    (14, "the process's standard error (Lean's PANIC messages, `LeanService.stderr`)",
+     "the process's writes (an answer whose request wrote to standard error is never stored)",
+     (f"{EF}::test_every_lean_route_rejects_every_wrong_type_without_panicking",
+      f"{EF}::test_every_lean_route_reads_every_nested_value_without_panicking",
+      "tests/test_lean_first_triage.py::test_df12_risk_route_rejects_an_nbsp_act_phrase")),
 )
 
 
@@ -132,6 +162,11 @@ def key(build: str, limits: tuple, line: bytes) -> str:
 
 def limits(service: LeanService) -> tuple:
     return (service.address_space, service.max_rss, service.max_requests)
+
+
+def stderr_size(service: LeanService) -> int:
+    """Bytes the current process has written to standard error (`LeanService.stderr`)."""
+    return service.stderr(sys.maxsize)[0]
 
 
 class Store:
@@ -203,6 +238,10 @@ class Seam:
         self.rng = rng or random.Random(os.urandom(16))
         self.methods = {name: LeanService.__dict__[name] for name in SEAM}
         self.globals = {name: vars(lean_service)[name] for name in SEAM_GLOBALS}
+        # The client's tables by value (a test may change an entry in place, not only rebind the name).
+        self.tables = {name: copy.deepcopy(value) for name, value in self.globals.items()
+                       if isinstance(value, (dict, list, set, bytearray))}
+        self.environment = self._environment()
         self.default = Path(lean_service.DEFAULT_EXECUTABLE).resolve()
         self.resolved: dict[Path, Path] = {}
         # key -> response bytes of entries this process read or recorded, least recently used first.
@@ -248,7 +287,15 @@ class Seam:
             return "client replaced by the test"
         if any(vars(lean_service).get(name) is not value for name, value in self.globals.items()):
             return "client replaced by the test"
+        if any(self.globals[name] != value for name, value in self.tables.items()):
+            return "client setting changed by the test"
+        if self._environment() != self.environment:
+            return "client setting changed by the test"
         return None
+
+    @staticmethod
+    def _environment() -> dict:
+        return {name: value for name, value in os.environ.items() if name.startswith(SEAM_ENV)}
 
     def applies(self, service: LeanService, timeout) -> bool:
         why = self.reason(service, timeout)
@@ -264,7 +311,7 @@ class Seam:
         comparison (`record` then compares)."""
         build = service.build
         entry = key(build, limits(service), line)
-        self.local.pending = (line, build, entry, None)
+        self.local.pending = (line, build, entry, None, stderr_size(service))
         self._count(self.counts, "asked")
         with self.lock:
             response = self.memory.get(entry)
@@ -288,7 +335,7 @@ class Seam:
             self._remember(entry, response)
         if self.rng.random() < self.sample:
             self._count(self.counts, "sampled")
-            self.local.pending = (line, build, entry, response)
+            self.local.pending = (*self.local.pending[:3], response, self.local.pending[4])
             return None
         self._count(self.counts, "hits")
         return response
@@ -314,10 +361,19 @@ class Seam:
         self.local.pending = None
         if pending is None or pending[0] is not line:
             return
-        _, build, entry, sampled = pending
+        _, build, entry, sampled, start = pending
         if response.get("status") == "error" and response.get("code") == "CheckerUnavailable":
             # The one answer that can depend on the process's handle table: never stored or compared.
             self._count(self.counts, "sampled_inconclusive" if sampled is not None else "not_recorded")
+            return
+        _, written = service.stderr(start)
+        if written:
+            # A hit writes nothing to standard error: an answer whose request did (a PANIC) is never stored.
+            if sampled is not None:
+                self._alarm("stderr", build, entry, f"the process wrote to standard error: {written}")
+                self._forget(build, entry)
+            else:
+                self._count(self.counts, "not_recorded")
             return
         if sampled is not None:
             if sampled == raw:
@@ -334,14 +390,21 @@ class Seam:
         self._remember(entry, raw)
         self._count(self.counts, "recorded")
 
-    def refused(self, service: LeanService, line: bytes, failure: Exception) -> None:
-        """The client refused the stored answer to `line`: an alarm, and the entry goes."""
+    def failed(self, service: LeanService, line: bytes, failure: Exception, *, served: bool) -> None:
+        """An attempt at `line` failed: the client refused the stored answer (`served`), or the process failed.
+        The client then asks the process without the store, so an answer that needed a retry is never stored.
+        A refused entry is an alarm, and the entry goes; a sampled hit whose live attempt failed compares
+        nothing (an operational failure of the process, which the client's retry answers as without a store)."""
         pending = getattr(self.local, "pending", None)
         self.local.pending = None
-        if pending is not None and pending[0] is line:
-            _, build, entry, _ = pending
+        if pending is None or pending[0] is not line:
+            return
+        _, build, entry, sampled, _ = pending
+        if served:
             self._alarm("refused", build, entry, str(failure))
             self._forget(build, entry)
+        else:
+            self._count(self.counts, "sampled_inconclusive" if sampled is not None else "not_recorded")
 
     def report(self) -> dict:
         with self.lock:
@@ -401,6 +464,7 @@ def pytest_addoption(parser):
                           "tools/gate.py refuses it (tests/answer_store.py)")
 
 
+@pytest.hookimpl(trylast=True)  # after tests/conftest.py sets the client's settings (`Seam.environment`)
 def pytest_configure(config):
     config.addinivalue_line("markers", f"{LIVE_MARK}: always asks the Lean service itself, never the answer "
                                        "store (tests/answer_store.py INVENTORY)")
@@ -541,21 +605,25 @@ def replay(root: Path, executable: Path, *, allow_unlisted_build: bool = False, 
                     if service.stats["starts"] and service._served == 0:
                         state[1], state[2] = set(), 0  # a fresh process holds no handle
                     deadline = _Deadline(time.monotonic() + REPLAY_TIMEOUT)
+                    start = stderr_size(service)
                     service._write_all(line, deadline)
                     answer = service._read_line(deadline)
                     service._served += 1
+                    # A stored answer stands for a request that wrote nothing to standard error.
+                    _, written = service.stderr(start)
                 except _Failure as exc:
                     service._stop(graceful=False)
-                    answer = f"<no answer: {exc}>".encode()
+                    answer, written = f"<no answer: {exc}>".encode(), ""
                 if new:
                     state[1].update(new)
                     state[2] += len(line)
                 with lock:
-                    if answer == expected:
+                    if answer == expected and not written:
                         result["same"] += 1
                     else:
                         result["different"].append({"key": entry, "stored": expected[:300].decode(errors="replace"),
-                                                    "replayed": answer[:300].decode(errors="replace")})
+                                                    "replayed": answer[:300].decode(errors="replace"),
+                                                    "stderr": written[:300]})
         finally:
             for service, _, _ in services.values():
                 service.close()
