@@ -70,6 +70,8 @@ def answer_digest(response: object) -> str:
 
 def handle_of(text: str) -> str | None:
     """The environment handle a recorded case text names, if any."""
+    if f'"{lean_service.HANDLE_KEY}"' not in text:
+        return None
     try:
         case = lean_service._decode_json(text)
     except ValueError:
@@ -134,8 +136,13 @@ def batches(cases: dict[str, tuple[str, str]], environments: dict[str, str]) -> 
     return found
 
 
-def replay(recording: Path, executable: Path, jobs: int = 4, *, progress=print) -> dict:
+def replay(recording: Path, executable: Path, jobs: int = 4, *, progress=print,
+           modes: set[str] | None = None) -> dict:
+    """Every case's answer from the build at `executable`; with `modes`, only those modes' cases
+    (`partial` then names them, and `diff` refuses such a replay)."""
     cases, environments = load_cases(recording)
+    if modes is not None:
+        cases = {key: case for key, case in cases.items() if case[0] in modes}
     if not cases:
         raise ValueError(f"{recording} holds no case to replay")
     build = lean_service.executable_sha256(Path(executable))
@@ -172,7 +179,7 @@ def replay(recording: Path, executable: Path, jobs: int = 4, *, progress=print) 
     if len(answers) != len(cases):
         raise RuntimeError(f"replayed {len(answers)} of {len(cases)} cases")
     return {"version": VERSION, "service": build, "recording": digest_file(recording / "requests.json.gz"),
-            "answers": dict(sorted(answers.items()))}
+            **({"partial": sorted(modes)} if modes is not None else {}), "answers": dict(sorted(answers.items()))}
 
 
 def diff(base: dict, head: dict) -> dict:
@@ -180,6 +187,8 @@ def diff(base: dict, head: dict) -> dict:
     for side in (base, head):
         if side.get("version") != VERSION or not isinstance(side.get("answers"), dict) or not side["answers"]:
             raise ValueError("not an answer replay, or an empty one")
+        if "partial" in side:
+            raise ValueError(f"a replay of the modes {side['partial']} only")
     if base["recording"] != head["recording"]:
         raise ValueError("the two replays are of different recordings")
     keys = base["answers"].keys() | head["answers"].keys()

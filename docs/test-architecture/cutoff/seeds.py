@@ -102,10 +102,17 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
         pins = json.loads(lock)
         pins["ve_service"] = sorted({*pins["ve_service"], build})
         (worktree / LOCK).write_text(json.dumps(pins, indent=2) + "\n")
-        answers = work / f"{seed['id']}-answers.json.gz"
-        answer_replay.write_json(answer_replay.replay(recording, worktree / SERVICE, jobs=8, progress=lambda _: None),
-                                 answers)
-        diff = answer_replay.diff(answer_replay.read_json(base_answers), answer_replay.read_json(answers))
+        graph = source_graph.load(worktree)
+        module = ".".join(Path(seed["file"]).with_suffix("").parts[1:])
+        roots = lean_mode_deps.load() or {}
+        modes = {mode for mode, entry in roots.items() if any(module in graph.lean_closure(r) for r in entry)}
+        # Only the cases of the modes whose runMode roots import the module: the others keep the base's
+        # answers here. Replaying them too could only add changed answers, so a test this selection keeps
+        # is kept by the full replay's selection as well; the selection sizes below are lower bounds.
+        base = answer_replay.read_json(base_answers)
+        partial = answer_replay.replay(recording, worktree / SERVICE, jobs=8, progress=lambda _: None, modes=modes)
+        head = {**base, "service": partial["service"], "answers": {**base["answers"], **partial["answers"]}}
+        diff = answer_replay.diff(base, head)
         diff["recording_dir"] = str(recording)
         diff_path = work / f"{seed['id']}-diff.json"
         answer_replay.write_json(diff, diff_path)
@@ -113,10 +120,6 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
         today = select_tests.select([seed["file"]], base="HEAD", coverage=select_tests.Coverage(data))
         modes_plan = answer_cutoff.select("modes", [seed["file"]], base="HEAD", coverage=select_tests.Coverage(data))
         answers_plan = answer_cutoff.select_answers(diff_path, [seed["file"]], base="HEAD", after=None, build=build)
-        graph = source_graph.load(worktree)
-        module = ".".join(Path(seed["file"]).with_suffix("").parts[1:])
-        roots = lean_mode_deps.load() or {}
-        modes = {mode for mode, entry in roots.items() if any(module in graph.lean_closure(r) for r in entry)}
         index = answer_replay.read_json(recording / "requests.json.gz")
         seconds = {unit: status["seconds"] for unit, status in data["status"].items()}
         tried = candidates(seed, worktree, modes_plan["selected"], index, modes, seconds)
@@ -127,6 +130,7 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
         caught = failures(junit)
         return {**row, "status": "caught" if caught else "not caught", "build": build, "modes": sorted(modes),
                 "changed_cases": len(diff["changed"]), "cases": diff["cases"],
+                "replayed_cases": len(partial["answers"]),
                 "changed_modes": sorted({index["modes"][index["keys"].index(k)] for k in diff["changed"]}),
                 "today": today["selected"], "modes_selected": modes_plan["selected"],
                 "answers_selected": answers_plan["selected"], "unknown": sorted(answers_plan["cutoff"]["unknown"]),
