@@ -1,0 +1,154 @@
+{
+ "label": "assist-split",
+ "commit": "f8180d1ffc9518b562cd59db0dc84c3c4d1de878",
+ "cpus": 32,
+ "workers": 8,
+ "returncode": 0,
+ "wall_seconds": 154.2,
+ "tests": 14,
+ "outcomes": {
+  "passed": 14
+ },
+ "workers_collected_alike": true,
+ "test_seconds_sum": 993.3,
+ "setup_seconds_sum": 0.0,
+ "worker_finished_seconds": {
+  "gw0": 140.6,
+  "gw1": 133.8,
+  "gw2": 153.5,
+  "gw3": 131.4,
+  "gw4": 141.9,
+  "gw5": 136.1,
+  "gw6": 93.1,
+  "gw7": 85.8
+ },
+ "machine_busy_percent_per_minute": [
+  99.3,
+  99.3,
+  95.7
+ ],
+ "load_per_minute": [
+  46.2,
+  47.6,
+  46.4
+ ],
+ "worker_occupancy_percent_per_minute": [
+  95.2,
+  87.3,
+  42.9
+ ],
+ "slowest": [
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[competing_bad-search]",
+   "seconds": 90.2,
+   "setup": 0.0,
+   "call": 90.2,
+   "worker": "gw6",
+   "started_at": 2.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain_universal-search]",
+   "seconds": 85.6,
+   "setup": 0.0,
+   "call": 85.6,
+   "worker": "gw2",
+   "started_at": 2.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[competing_bad-no_search]",
+   "seconds": 82.9,
+   "setup": 0.0,
+   "call": 82.9,
+   "worker": "gw7",
+   "started_at": 2.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[two_claims-search]",
+   "seconds": 75.2,
+   "setup": 0.0,
+   "call": 75.2,
+   "worker": "gw4",
+   "started_at": 2.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[two_claims-no_search]",
+   "seconds": 72.3,
+   "setup": 0.0,
+   "call": 72.3,
+   "worker": "gw5",
+   "started_at": 2.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-search]",
+   "seconds": 69.1,
+   "setup": 0.0,
+   "call": 69.1,
+   "worker": "gw0",
+   "started_at": 2.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[competing_good-search]",
+   "seconds": 68.7,
+   "setup": 0.0,
+   "call": 68.7,
+   "worker": "gw0",
+   "started_at": 71.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-no_search]",
+   "seconds": 66.6,
+   "setup": 0.0,
+   "call": 66.6,
+   "worker": "gw1",
+   "started_at": 2.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[restated_and_real-search]",
+   "seconds": 65.0,
+   "setup": 0.0,
+   "call": 65.0,
+   "worker": "gw2",
+   "started_at": 88.5
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain_universal-no_search]",
+   "seconds": 64.6,
+   "setup": 0.0,
+   "call": 64.6,
+   "worker": "gw3",
+   "started_at": 2.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[competing_good-no_search]",
+   "seconds": 64.3,
+   "setup": 0.0,
+   "call": 64.3,
+   "worker": "gw1",
+   "started_at": 69.4
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[restated_and_real-no_search]",
+   "seconds": 63.9,
+   "setup": 0.0,
+   "call": 63.9,
+   "worker": "gw3",
+   "started_at": 67.4
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[restated_only-search]",
+   "seconds": 63.9,
+   "setup": 0.0,
+   "call": 63.9,
+   "worker": "gw4",
+   "started_at": 78.0
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[restated_only-no_search]",
+   "seconds": 61.0,
+   "setup": 0.0,
+   "call": 61.0,
+   "worker": "gw5",
+   "started_at": 75.1
+  }
+ ]
+}
