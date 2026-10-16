@@ -1,0 +1,110 @@
+[
+  {
+    "bug": "a raised sort is searched at the shared bound (Rust ignores the per-sort maximum)",
+    "file": "rust/ve-profile/src/search.rs",
+    "language": "Rust",
+    "how": "cargo",
+    "test": "a_raised_sort_is_searched_at_its_size",
+    "exit_code": 101,
+    "failure_excerpt": "\nrunning 1 test\ntest a_raised_sort_is_searched_at_its_size ... FAILED\n\nfailures:\n\n---- a_raised_sort_is_searched_at_its_size stdout ----\n\nthread 'a_raised_sort_is_searched_at_its_size' (2020355) panicked at ve-core/tests/premise_scale.rs:52:5:\nassertion `left == right` failed\n  left: \"NotFound\"\n right: \"Found\"\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\nfailures:\n    a_raised_sort_is_searched_at_its_size\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.01s\n\n   Compiling ve-profile v0.1.0 (/home/seyran/code/ve-premise-scale/rust/ve-profile)\n   Compiling ve-core v0.1.0 (/home/seyran/code/ve-premise-scale/rust/ve-core)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.75s\n     Running tests/premise_scale.rs (rust/target/debug/deps/premise_scale-a3de5c93c0d54174)\nerror: test failed, to rerun pass `-p ve-core --test premise_scale`\n"
+  },
+  {
+    "bug": "the same fault, seen through the premise check",
+    "file": "rust/ve-profile/src/search.rs",
+    "language": "Rust",
+    "how": "release",
+    "test": "tests/test_premise_scale.py::test_exactly_three_principal_types_has_a_lean_checked_model_at_size_three",
+    "exit_code": 1,
+    "failure_excerpt": "                                       [100%]\n=================================== FAILURES ===================================\n__ test_exactly_three_principal_types_has_a_lean_checked_model_at_size_three ___\n\nprincipals = Environment(language='ve.core@0.2', profile=None, profiles=('relational-fol@0',), spec_revision='ve-v0.2-expand2-2026-...}), speech_acts=None, unit_schema=None, units=None, reports=None, soft=None, rights=None, alternatives=None, risk=None)\n\n    def test_exactly_three_principal_types_has_a_lean_checked_model_at_size_three(principals):\n        premises = formulas(principals, [exactly_constants()])\n        status = premise_status(principals, premises)\n>       assert status[\"status\"] == \"model\"\nE       AssertionError: assert 'UNKNOWN' == 'model'\nE         \nE         - model\nE         + UNKNOWN\n\ntests/test_premise_scale.py:106: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_premise_scale.py::test_exactly_three_principal_types_has_a_lean_checked_model_at_size_three\n1 failed in 2.71s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-u21gcsqj)\n"
+  },
+  {
+    "bug": "the ground-fact candidate leaves out the stated unary facts",
+    "file": "rust/ve-profile/src/ground.rs",
+    "language": "Rust",
+    "how": "cargo",
+    "test": "the_ground_route_tries_the_stated_facts_alone",
+    "exit_code": 101,
+    "failure_excerpt": "\nrunning 1 test\ntest the_ground_route_tries_the_stated_facts_alone ... FAILED\n\nfailures:\n\n---- the_ground_route_tries_the_stated_facts_alone stdout ----\n\nthread 'the_ground_route_tries_the_stated_facts_alone' (2035492) panicked at ve-core/tests/premise_scale.rs:67:5:\nassertion `left == right` failed\n  left: (\"NotFound\", 1)\n right: (\"Found\", 1)\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\nfailures:\n    the_ground_route_tries_the_stated_facts_alone\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.01s\n\n   Compiling ve-profile v0.1.0 (/home/seyran/code/ve-premise-scale/rust/ve-profile)\n   Compiling ve-core v0.1.0 (/home/seyran/code/ve-premise-scale/rust/ve-core)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.87s\n     Running tests/premise_scale.rs (rust/target/debug/deps/premise_scale-a3de5c93c0d54174)\nerror: test failed, to rerun pass `-p ve-core --test premise_scale`\n"
+  },
+  {
+    "bug": "the ground-fact candidate is reported without being checked against the premises",
+    "file": "rust/ve-profile/src/search.rs",
+    "language": "Rust",
+    "how": "cargo",
+    "test": "a_ground_candidate_the_premises_reject_is_no_witness",
+    "exit_code": 101,
+    "failure_excerpt": "\nrunning 1 test\ntest a_ground_candidate_the_premises_reject_is_no_witness ... FAILED\n\nfailures:\n\n---- a_ground_candidate_the_premises_reject_is_no_witness stdout ----\n\nthread 'a_ground_candidate_the_premises_reject_is_no_witness' (2036681) panicked at ve-core/tests/premise_scale.rs:83:5:\nassertion `left == right` failed\n  left: (\"Found\", 1)\n right: (\"NotFound\", 1)\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\nfailures:\n    a_ground_candidate_the_premises_reject_is_no_witness\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.01s\n\n   Compiling ve-profile v0.1.0 (/home/seyran/code/ve-premise-scale/rust/ve-profile)\n   Compiling ve-core v0.1.0 (/home/seyran/code/ve-premise-scale/rust/ve-core)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.91s\n     Running tests/premise_scale.rs (rust/target/debug/deps/premise_scale-a3de5c93c0d54174)\nerror: test failed, to rerun pass `-p ve-core --test premise_scale`\n"
+  },
+  {
+    "bug": "the budget row's entries are not bound one per requested sort",
+    "file": "ve/search.py",
+    "language": "Python",
+    "how": "python",
+    "test": "tests/test_search_budget_answer.py::test_one_fault_mutants_are_refused_or_change_nothing",
+    "exit_code": 1,
+    "failure_excerpt": "000, 'max_models': 10000, ...}\n\n    def assert_refused_or_same(case, genuine_row, mutant):\n        expected = _bind_budget(genuine_row, case)\n        try:\n            got = _bind_budget(mutant, case)\n        except CheckerUnavailable:\n            return\n>       assert got == expected, mutant\nE       AssertionError: {'id': 'constants', 'max_domain_size': 2, 'max_evaluations': 100000, 'max_models': 10000, ...}\nE       assert PremiseBudget...ort_bounds={}) == PremiseBudget...ype': (3, 3)})\nE         \nE         Omitting 4 identical items, use -vv to show\nE         Differing attributes:\nE         ['sort_bounds']\nE         \nE         Drill down into differing attribute sort_bounds:\nE           sort_bounds: {} != {'principal_type': (3, 3)}...\nE         \nE         ...Full output truncated (3 lines hidden), use '-vv' to show\n\ntests/test_search_budget_answer.py:92: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_search_budget_answer.py::test_one_fault_mutants_are_refused_or_change_nothing\n1 failed in 1.61s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-dncu0gps)\n"
+  },
+  {
+    "bug": "the premise check skips the ground-fact route",
+    "file": "ve/vacuity.py",
+    "language": "Python",
+    "how": "python",
+    "test": "tests/test_premise_scale.py::test_stated_quantities_give_their_own_model",
+    "exit_code": 1,
+    "failure_excerpt": "ttom(), max_models=100)\n        assert searched.status == \"ResourceLimit\"\n        ground = find_countermodel(quantities, premises, Bottom(), ground_only=True)\n        assert (ground.status, ground.models_checked) == (\"Found\", 1)\n        assert ground.model.constants[\"q079\"] == 4000 + 7 * 79\n>       assert premise_status(quantities, premises) == {\"status\": \"model\", \"model_id\": ground.model.model_id}\nE       AssertionError: assert {'status': 'U...ons': 100000}} == {'status': 'm...80ac77bfbe40'}\nE         \nE         Differing items:\nE         {'status': 'UNKNOWN'} != {'status': 'model'}\nE         Left contains 1 more item:\nE         {'budget': {'max_domain_size': 2,\nE                     'max_evaluations': 100000,\nE                     'max_models': 10000,...\nE         \nE         ...Full output truncated (4 lines hidden), use '-vv' to show\n\ntests/test_premise_scale.py:161: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_premise_scale.py::test_stated_quantities_give_their_own_model\n1 failed in 29.16s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0gxi4bg2)\n"
+  },
+  {
+    "bug": "a Rust timeout in the premise check's search is a failure, not 'no witness'",
+    "file": "ve/vacuity.py",
+    "language": "Python",
+    "how": "python",
+    "test": "tests/test_premise_scale.py::test_a_rust_timeout_is_no_witness",
+    "exit_code": 1,
+    "failure_excerpt": "^^^^^^^^^\nve/vacuity.py:63: in _search\n    found = find_countermodel(env, premises, Bottom(), **options)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (Environment(language='ve.core@0.2', profile=None, profiles=('relational-fol@0',), spec_revision='ve-v0.2-expand2-2026...(index=0), right=Const(name='operators')), right=Eq(left=Var(index=0), right=Const(name='users'))))))))))))], Bottom())\nkwargs = {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'sort_bounds': {'principal_type': (3, 3)}, ...}\n\n    def timed_out(*args, **kwargs):\n>       raise rust_jsonl.RustTimeout(\"CheckerUnavailable: Rust checker failed: timed out\")\nE       ve.backends.rust_jsonl.RustTimeout: CheckerUnavailable: Rust checker failed: timed out\n\ntests/test_premise_scale.py:213: RustTimeout\n=========================== short test summary info ============================\nFAILED tests/test_premise_scale.py::test_a_rust_timeout_is_no_witness - ve.ba...\n1 failed in 1.84s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-zb3o_0xu)\n"
+  },
+  {
+    "bug": "the readings route's scaled search takes Lean's budget over the route's",
+    "file": "ve/readings_verdicts.py",
+    "language": "Python",
+    "how": "python",
+    "test": "tests/test_readings_budget_zero.py::test_budget_zero_every_verdict_op_is_unknown",
+    "exit_code": 1,
+    "failure_excerpt": "ionError: assert ({'choice': [['rs1', 0], ['rs2', 0]], 'model': {'complete': True, 'domains': {'agent': [], 'user': [], 've__reading': [...], 'soft__excepted__rd_2_no_deception': [], 'soft__excepted__rd_4_be_kind': [], 've__bit__1__0': [], ...}}, 'gaps': []} is None)\nE        +  where {'choice': [['rs1', 0], ['rs2', 0]], 'model': {'complete': True, 'domains': {'agent': [], 'user': [], 've__reading': [...], 'soft__excepted__rd_2_no_deception': [], 'soft__excepted__rd_4_be_kind': [], 've__bit__1__0': [], ...}}, 'gaps': []} = model()\nE        +    where model = <ve.readings_verdicts.Superposed object at 0x77ec078525d0>.model\n\ntests/test_readings_budget_zero.py:113: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_budget_zero.py::test_budget_zero_every_verdict_op_is_unknown[F-ND1]\nFAILED tests/test_readings_budget_zero.py::test_budget_zero_every_verdict_op_is_unknown[F-ND2]\nFAILED tests/test_readings_budget_zero.py::test_budget_zero_every_verdict_op_is_unknown[M6]\n3 failed, 3 passed in 17.36s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-i80o5x3x)\n"
+  },
+  {
+    "bug": "the Rust limit ignores the case line's size",
+    "file": "ve/backends/rust_jsonl.py",
+    "language": "Python",
+    "how": "python",
+    "test": "tests/test_premise_scale.py::test_the_default_limit_grows_with_the_case",
+    "exit_code": 1,
+    "failure_excerpt": "nd 217 constants: about a minute; a constitution search,\n        60 kB and 5 constants: about half a minute).\"\"\"\n        def limit(n, size=0):\n            return rust_jsonl.scaled_timeout(\n                {\"environment\": {\"vocabulary\": {\"constants\": {f\"c{i}\": {} for i in range(n)}}}}, size)\n        by_constants = [limit(n) for n in (0, 5, 62, 217, 800)]\n        assert all(x >= rust_jsonl.DEFAULT_TIMEOUT for x in by_constants)\n        assert by_constants == sorted(by_constants) and by_constants[-1] > 500\n        by_size = [limit(5, size) for size in (0, 10_000, 60_000, 1_000_000)]\n>       assert by_size == sorted(by_size) and by_size[0] < by_size[1] and 20 < by_size[2] < 40\nE       assert ([9.9147229999...4722999999999] == [9.9147229999...4722999999999]\nE         \nE         Use -v to get more diff and 9.914722999999999 < 9.914722999999999)\n\ntests/test_premise_scale.py:253: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_premise_scale.py::test_the_default_limit_grows_with_the_case\n1 failed in 1.23s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-khqf5d8s)\n"
+  },
+  {
+    "bug": "Lean's row states a shared domain bound one above its budget",
+    "file": "lean/VE/SearchBudget/Run.lean",
+    "language": "Lean",
+    "how": "lean",
+    "test": "tests/test_premise_scale.py::test_lean_raises_only_the_sort_the_premises_force",
+    "exit_code": 1,
+    "failure_excerpt": "= FAILURES ===================================\n______________ test_lean_raises_only_the_sort_the_premises_force _______________\n\nprincipals = Environment(language='ve.core@0.2', profile=None, profiles=('relational-fol@0',), spec_revision='ve-v0.2-expand2-2026-...}), speech_acts=None, unit_schema=None, units=None, reports=None, soft=None, rights=None, alternatives=None, risk=None)\n\n    def test_lean_raises_only_the_sort_the_premises_force(principals):\n        budget = premise_budget(principals, formulas(principals, [exactly_constants()]))\n>       assert (budget.max_proof_steps, budget.max_domain_size, budget.max_models, budget.max_evaluations) == (\n            10_000, 2, 10_000, 100_000)\nE       assert (10000, 3, 10000, 100000) == (10000, 2, 10000, 100000)\nE         \nE         At index 1 diff: 3 != 2\nE         Use -v to get more diff\n\ntests/test_premise_scale.py:43: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_premise_scale.py::test_lean_raises_only_the_sort_the_premises_force\n1 failed in 2.67s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-97wwbya5)\n"
+  },
+  {
+    "bug": "Lean raises a sort past the per-sort cap",
+    "file": "lean/VE/SearchBudget/Budget.lean",
+    "language": "Lean",
+    "how": "lean",
+    "test": "tests/test_premise_scale.py::test_no_sort_is_raised_within_the_shared_bound_or_past_the_cap",
+    "exit_code": 1,
+    "failure_excerpt": "ional-fol@0',), spec_revision='ve-v0.2-expand2-2026-...}), speech_acts=None, unit_schema=None, units=None, reports=None, soft=None, rights=None, alternatives=None, risk=None)\n\n    def test_no_sort_is_raised_within_the_shared_bound_or_past_the_cap(principals):\n        two = conjunction(distinct([\"anthropic\", \"users\"]))\n        assert premise_budget(principals, formulas(principals, [two])).sort_bounds == {}\n        nine = [f\"t{i}\" for i in range(9)]\n        capped = Environment(relational_environment(dict.fromkeys(nine, \"principal_type\")))\n>       assert premise_budget(capped, formulas(capped, [conjunction(distinct(nine))])).sort_bounds == {}\nE       AssertionError: assert {'principal_type': (9, 9)} == {}\nE         \nE         Left contains 1 more item:\nE         {'principal_type': (9, 9)}\nE         Use -v to get more diff\n\ntests/test_premise_scale.py:60: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_premise_scale.py::test_no_sort_is_raised_within_the_shared_bound_or_past_the_cap\n1 failed in 1.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fm239qg3)\n"
+  },
+  {
+    "bug": "a raised sort's most is one above its demand",
+    "file": "lean/VE/SearchBudget/Budget.lean",
+    "language": "Lean",
+    "how": "lean-proof",
+    "test": "VE.SearchBudget.Budget:sortBounds_spec",
+    "exit_code": 1,
+    "failure_excerpt": "Budget (5.5s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-premise-scale/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-premise-scale/lean/VE/SearchBudget/Budget.lean -o /home/seyran/code/ve-premise-scale/lean/.lake/build/lib/lean/VE/SearchBudget/Budget.olean -i /home/seyran/code/ve-premise-scale/lean/.lake/build/lib/lean/VE/SearchBudget/Budget.ilean -c /home/seyran/code/ve-premise-scale/lean/.lake/build/ir/VE/SearchBudget/Budget.c --setup /home/seyran/code/ve-premise-scale/lean/.lake/build/ir/VE/SearchBudget/Budget.setup.json --json\nerror: VE/SearchBudget/Budget.lean:53:26: Application type mismatch: The argument\n  hc.left\nhas type\n  b.domainSize < demand cs premises s'\nbut is expected to have type\n  b.domainSize < demand cs premises s' + 1\nin the application\n  And.intro hc.left\nerror: VE/SearchBudget/Budget.lean:53:21: Application type mismatch: The argument\n  rfl\nhas type\n  ?m.106 = ?m.106\nbut is expected to have type\n  demand cs premises s' + 1 = demand cs premises s'\nin the application\n  And.intro rfl\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.SearchBudget.Budget\nerror: build failed\n"
+  }
+]
