@@ -4,17 +4,19 @@
   "row": {"anyOf": [{"$ref": "common.json#/$defs/case_error"}, {"$ref": "#/$defs/error"}, {"$ref": "#/$defs/ok"}]},
   "$defs": {
     "background": {
-      "$comment": "Route.Wire.runBackground: the regenerated Background twice, with one generator per premise; its contents are the service's.",
+      "$comment": "Route.Wire.runBackground and Core.Layers.runBackground: the regenerated Background twice, with one generator per premise; its contents are the service's (core formulas on the core family).",
       "additionalProperties": false,
       "properties": {
-        "background": {"$ref": "common.json#/$defs/generated_formulas"},
+        "background": {"$ref": "common.json#/$defs/generated_core_formulas"},
         "generators": {"items": {"$ref": "common.json#/$defs/generator"}, "type": "array"},
         "id": {"type": "string", "x-equals": "/id"},
-        "premises": {"$ref": "common.json#/$defs/generated_formulas"},
+        "premises": {"$ref": "common.json#/$defs/generated_core_formulas"},
         "status": {"const": "ok"}
       },
       "required": ["id", "status", "background", "premises", "generators"],
-      "type": "object"
+      "type": "object",
+      "x-equal-fields": ["background", "premises"],
+      "x-same-length": ["background", "premises", "generators"]
     },
     "bundle": {
       "$comment": "Definitions.Bundle.runBundle: every requested lemma is checked, in order, under its meaning id (binding to the request's lemmas).",
