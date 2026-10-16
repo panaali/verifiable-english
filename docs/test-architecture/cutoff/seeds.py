@@ -172,6 +172,7 @@ def main() -> int:
     go.add_argument("--recording", type=Path, required=True)
     go.add_argument("--base-answers", type=Path, required=True, help="the recording replayed on W's unseeded build")
     go.add_argument("--only", nargs="*")
+    go.add_argument("--output", type=Path, default=EVIDENCE, help="where the rows go (merge them into the evidence)")
     sub.add_parser("check")
     args = parser.parse_args()
     if args.command == "check":
@@ -180,7 +181,7 @@ def main() -> int:
               "answers selections keep")
         return 0
     work = Path(tempfile.mkdtemp(prefix="cutoff-seeds-"))
-    rows = json.loads(EVIDENCE.read_text())["seeds"] if EVIDENCE.exists() else []
+    rows = json.loads(args.output.read_text())["seeds"] if args.output.exists() else []
     done = {row["id"]: row for row in rows}
     for seed in json.loads(SEEDS.read_text()):
         if args.only and seed["id"] not in args.only:
@@ -189,8 +190,8 @@ def main() -> int:
         print(json.dumps({key: done[seed["id"]].get(key) for key in ("id", "status", "caught_by", "caught_in",
                                                                     "changed_cases", "seconds")}), flush=True)
         order = [seed["id"] for seed in json.loads(SEEDS.read_text())]
-        EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
-        EVIDENCE.write_text(json.dumps({"worktree_commit": subprocess.run(
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps({"worktree_commit": subprocess.run(
             ["git", "-C", str(args.worktree), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip(),
             "seeds": [done[i] for i in order if i in done]}, indent=1) + "\n")
     print(f"logs in {work}")
