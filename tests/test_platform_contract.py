@@ -214,7 +214,7 @@ def gate_record(tree: str, arch: str, failed=(), *, ran=True, retried=(), day=DA
         failures = [{"stage": "gate", "reason": "Wire contract check: exit 1"}]
     return {"schema_version": 1, "commit_sha": f"c{tree}".ljust(40, "0"), "tree_sha": tree, "dirty": False,
             "mode": "full", "status": "failed" if failures else "passed", "toolchains": {"lean": lean},
-            "stages": ["toolchains", "lean_build", "lean_audit", "rust_build", "cargo_test"] + (["pytest"] if ran else []),
+            "stages": list(gate.REQUIRED_STAGES if ran else gate.REQUIRED_STAGES[:-1]),
             "failures": failures, "quarantine": {"day": day, "retried": {nodeid: {"alone": "passed"}
                                                                          for nodeid in retried}}}
 
