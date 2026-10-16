@@ -361,18 +361,6 @@
    ]
   },
   {
-   "selector": "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list",
-   "causes": [
-    "divergence"
-   ],
-   "divergence": [
-    "environment"
-   ],
-   "nodeids": [
-    "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list"
-   ]
-  },
-  {
    "selector": "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case",
    "causes": [
     "divergence"
@@ -490,5 +478,11 @@
    "reason": "nightly: the complete gates (R2, the full x86 gate, R3) run it"
   }
  ],
- "retired": []
+ "retired": [
+  {
+   "nodeid": "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list",
+   "cause": "environment",
+   "reason": "the tree no longer defines this test"
+  }
+ ]
 }
