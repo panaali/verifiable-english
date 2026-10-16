@@ -31,6 +31,7 @@ The build records apply only on linux-x86_64, where they were measured.
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import os
 from pathlib import Path
@@ -46,7 +47,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 import test_map  # noqa: E402
 
 EVIDENCE = HERE / "evidence"
-REPLAY = EVIDENCE / "replay.json"
+REPLAY = EVIDENCE / "replay.json.gz"
 RECORDED = EVIDENCE / "map-recorded.json.gz"
 NINE = EVIDENCE / "nine-units.json.gz"
 BUILDS = EVIDENCE / "lean-builds"
@@ -134,12 +135,12 @@ def main() -> int:
     parser.add_argument("columns", nargs="*", help=f"some of {', '.join(COLUMNS)} (default: all but as_it_was)")
     parser.add_argument("--selector", type=Path, default=ROOT, help="the checkout whose selector runs")
     parser.add_argument("--label", default="branch", help="the name the rows are saved under")
-    parser.add_argument("--write", action="store_true", help="save the rows in evidence/replay.json")
+    parser.add_argument("--write", action="store_true", help="save the rows in evidence/replay.json.gz")
     parser.add_argument("--check", action="store_true", help="recompute this checkout's saved rows")
     args = parser.parse_args()
     if set(args.columns) - set(COLUMNS):
         parser.error(f"unknown columns {sorted(set(args.columns) - set(COLUMNS))}")
-    saved = json.loads(REPLAY.read_text()) if REPLAY.exists() else {}
+    saved = json.loads(gzip.decompress(REPLAY.read_bytes())) if REPLAY.exists() else {}
     if args.check:
         entry = saved[args.label]
         columns = [column for column in entry["columns"] if column != "as_it_was"]
@@ -171,7 +172,7 @@ def main() -> int:
             entry.update(commit=commit, columns={})
         for column, rows in found.items():
             entry["columns"][column] = {"summary": summary(rows), "rows": rows}
-        REPLAY.write_text(json.dumps(saved, indent=1, sort_keys=True) + "\n")
+        REPLAY.write_bytes(gzip.compress((json.dumps(saved, indent=1, sort_keys=True) + "\n").encode(), mtime=0))
     return 0
 
 
