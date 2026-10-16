@@ -32,8 +32,10 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 FAIL_CLOSED = ("CheckerUnavailable", "ResourceLimit")
 # `VE.Service.Document.ownedProfiles` (checked against the Lean mode by `tests/test_lean_document_wrapper.py`).
-OWNED = frozenset({"alternatives@0", "data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "risk@0",
-                   "time@0"})
+OWNED = frozenset({"alternatives@0", "data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "rights@0",
+                   "risk@0", "time@0"})
+# `VE.Service.Document.ownedBeneath`: a profile owned only beneath another.
+OWNED_BENEATH = {"soft-norms@0": "rights@0"}
 
 
 def text_of(document) -> str:
@@ -193,7 +195,8 @@ def owned(document) -> bool:
     if type(environment) is not dict:
         return False
     profiles = environment.get("profiles")
-    if type(profiles) is not list or not set(profiles) <= OWNED:
+    if type(profiles) is not list or not all(type(p) is str and (p in OWNED or OWNED_BENEATH.get(p) in profiles)
+                                              for p in profiles):
         return False
     blocks = {"risk@0": {"alternatives", "risk"}, "alternatives@0": {"alternatives"}}
     allowed = {"language", "profiles", "spec_revision", "vocabulary"}
