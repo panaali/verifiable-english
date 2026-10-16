@@ -1,0 +1,594 @@
+[
+ {
+  "pilot": "c-qt0p-repaired.ve.md",
+  "sha256": "07233af2403e5d1e75b72cd616e66867e6596235e6225eccce3ddbf2e8e25bd0",
+  "bytes": 418074,
+  "exit": 0,
+  "wall_seconds": 225.47,
+  "cpu_seconds": 59.64,
+  "children_peak_mb": 92,
+  "premises": {
+   "status": "UNKNOWN",
+   "route": "superposed",
+   "budget": {
+    "max_steps": 10000,
+    "max_domain_size": 2,
+    "max_models": 10000,
+    "max_evaluations": 100000
+   },
+   "candidates": [
+    {
+     "set": "force-u0036-s05",
+     "index": 0,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0036-s05",
+     "index": 1,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0156-s03",
+     "index": 0,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0156-s03",
+     "index": 1,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0263-s04-p2",
+     "index": 0,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0263-s04-p2",
+     "index": 1,
+     "status": "UNKNOWN"
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 222.28,
+  "python_peak_mb": 42,
+  "live_children_peak_mb": 92,
+  "live_children_peak_sum_mb": 97,
+  "status": "UNKNOWN",
+  "label": "before",
+  "rust_timeout": "900",
+  "root": "/home/seyran/code/ve-premise-scale-base"
+ },
+ {
+  "pilot": "c-qt0p-repaired.ve.md",
+  "sha256": "07233af2403e5d1e75b72cd616e66867e6596235e6225eccce3ddbf2e8e25bd0",
+  "bytes": 418074,
+  "exit": 0,
+  "wall_seconds": 275.22,
+  "cpu_seconds": 66.37,
+  "children_peak_mb": 92,
+  "premises": {
+   "status": "UNKNOWN",
+   "route": "superposed",
+   "budget": {
+    "max_steps": 10000,
+    "max_domain_size": 2,
+    "max_models": 10000,
+    "max_evaluations": 100000
+   },
+   "candidates": [
+    {
+     "set": "force-u0036-s05",
+     "index": 0,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0036-s05",
+     "index": 1,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0156-s03",
+     "index": 0,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0156-s03",
+     "index": 1,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0263-s04-p2",
+     "index": 0,
+     "status": "UNKNOWN"
+    },
+    {
+     "set": "force-u0263-s04-p2",
+     "index": 1,
+     "status": "UNKNOWN"
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 272.05,
+  "python_peak_mb": 42,
+  "live_children_peak_mb": 92,
+  "live_children_peak_sum_mb": 97,
+  "status": "UNKNOWN",
+  "label": "before",
+  "rust_timeout": "900",
+  "root": "/home/seyran/code/ve-premise-scale-base"
+ },
+ {
+  "pilot": "c-baseline.ve.md",
+  "sha256": "eebcfd39064233ebfff972767973795bc8611f0d3793ba65b0a0dd84795243ba",
+  "bytes": 415456,
+  "exit": 0,
+  "wall_seconds": 151.09,
+  "cpu_seconds": 40.1,
+  "children_peak_mb": 91,
+  "premises": {
+   "status": "model",
+   "route": "superposed",
+   "evidence": "model",
+   "choice": [
+    [
+     "force-u0036-s05",
+     0
+    ],
+    [
+     "force-u0156-s03",
+     0
+    ],
+    [
+     "force-u0263-s04-p2",
+     0
+    ]
+   ],
+   "model": {
+    "complete": true,
+    "domains": {
+     "claude_instance": [],
+     "entity": [
+      "e0"
+     ],
+     "hard_constraint": [],
+     "operator": [],
+     "operator_input": [],
+     "situation": [],
+     "user": [],
+     "ve__reading": [
+      "e0"
+     ]
+    },
+    "constants": {
+     "claude": "e0",
+     "ve__here": "e0"
+    },
+    "relations": {
+     "compliance_against_guidelines": [],
+     "compliance_unethical": [],
+     "compliance_unsafe": [],
+     "exception_to_asking_for_clarification": [],
+     "exception_to_complying_with_exploit_instruction": [],
+     "exception_to_not_deceiving_about_system_prompt": [],
+     "explicit_instruction_against_exploits": [],
+     "general_exception_to_complying": [],
+     "genuine_ambiguity": [],
+     "human": [],
+     "input_is_information": [],
+     "input_is_persona": [],
+     "input_is_specific_instructions": [],
+     "instruction_abandon_identity_in_persona": [],
+     "instruction_act_against_guidelines": [],
+     "instruction_claim_human_when_asked": [],
+     "instruction_deceptive_tactics_harming_users": [],
+     "instruction_decline_or_withhold": [],
+     "instruction_dishonest_looking_within_honesty": [],
+     "instruction_endanger_health_or_safety": [],
+     "instruction_false_information_deceiving_user": [],
+     "instruction_focus_on_tasks": [],
+     "instruction_promote_own_products": [],
+     "instruction_respond_differently": [],
+     "instruction_role_play_custom_persona": [],
+     "knowingly_attempt_to_kill_or_disempower_most_of_humanity": [],
+     "knowingly_child_sexual_abuse_material": [],
+     "knowingly_clear_and_substantial_undermining_of_oversight": [],
+     "knowingly_critical_infrastructure_uplift": [],
+     "knowingly_damaging_cyberweapon_or_malicious_code": [],
+     "knowingly_illegitimate_absolute_control": [],
+     "knowingly_mass_casualty_weapon_uplift": [],
+     "operator_prompt_addresses_case": [],
+     "seemingly_compelling_argument_to_cross_line": [],
+     "thought_likely_attempt_to_kill_or_disempower_most_of_humanity": [],
+     "thought_likely_child_sexual_abuse_material": [],
+     "thought_likely_clear_and_substantial_undermining_of_oversight": [],
+     "thought_likely_critical_infrastructure_uplift": [],
+     "thought_likely_damaging_cyberweapon_or_malicious_code": [],
+     "thought_likely_illegitimate_absolute_control": [],
+     "thought_likely_mass_casualty_weapon_uplift": [],
+     "unsaid__clarification_required": [],
+     "unsaid__csam_generation_permitted_for_claude": [],
+     "unsaid__cyberweapon_creation_permitted": [],
+     "unsaid__denial_of_being_claude_permitted": [],
+     "unsaid__exploit_instruction_compliance_required": [],
+     "unsaid__firmness_required": [],
+     "unsaid__humanity_attack_participation_permitted": [],
+     "unsaid__illegitimate_control_involvement_permitted": [],
+     "unsaid__infrastructure_uplift_permitted": [],
+     "unsaid__judgment_use_required": [],
+     "unsaid__operator_input_permitted": [],
+     "unsaid__oversight_undermining_permitted": [],
+     "unsaid__system_prompt_compliance_required": [],
+     "unsaid__system_prompt_deception_permitted": [],
+     "unsaid__weapons_uplift_permitted": [],
+     "ve__bit__1__0": [],
+     "ve__bit__2__0": [],
+     "ve__bit__3__0": []
+    }
+   },
+   "gaps": [],
+   "candidates": [
+    {
+     "set": "force-u0036-s05",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0036-s05",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       1
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0156-s03",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0156-s03",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       1
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0263-s04-p2",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0263-s04-p2",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 149.8,
+  "python_peak_mb": 41,
+  "live_children_peak_mb": 91,
+  "live_children_peak_sum_mb": 95,
+  "status": "model",
+  "label": "before",
+  "rust_timeout": "900",
+  "root": "/home/seyran/code/ve-premise-scale-base"
+ },
+ {
+  "pilot": "c-baseline.ve.md",
+  "sha256": "eebcfd39064233ebfff972767973795bc8611f0d3793ba65b0a0dd84795243ba",
+  "bytes": 415456,
+  "exit": 0,
+  "wall_seconds": 262.79,
+  "cpu_seconds": 41.72,
+  "children_peak_mb": 91,
+  "premises": {
+   "status": "model",
+   "route": "superposed",
+   "evidence": "model",
+   "choice": [
+    [
+     "force-u0036-s05",
+     0
+    ],
+    [
+     "force-u0156-s03",
+     0
+    ],
+    [
+     "force-u0263-s04-p2",
+     0
+    ]
+   ],
+   "model": {
+    "complete": true,
+    "domains": {
+     "claude_instance": [],
+     "entity": [
+      "e0"
+     ],
+     "hard_constraint": [],
+     "operator": [],
+     "operator_input": [],
+     "situation": [],
+     "user": [],
+     "ve__reading": [
+      "e0"
+     ]
+    },
+    "constants": {
+     "claude": "e0",
+     "ve__here": "e0"
+    },
+    "relations": {
+     "compliance_against_guidelines": [],
+     "compliance_unethical": [],
+     "compliance_unsafe": [],
+     "exception_to_asking_for_clarification": [],
+     "exception_to_complying_with_exploit_instruction": [],
+     "exception_to_not_deceiving_about_system_prompt": [],
+     "explicit_instruction_against_exploits": [],
+     "general_exception_to_complying": [],
+     "genuine_ambiguity": [],
+     "human": [],
+     "input_is_information": [],
+     "input_is_persona": [],
+     "input_is_specific_instructions": [],
+     "instruction_abandon_identity_in_persona": [],
+     "instruction_act_against_guidelines": [],
+     "instruction_claim_human_when_asked": [],
+     "instruction_deceptive_tactics_harming_users": [],
+     "instruction_decline_or_withhold": [],
+     "instruction_dishonest_looking_within_honesty": [],
+     "instruction_endanger_health_or_safety": [],
+     "instruction_false_information_deceiving_user": [],
+     "instruction_focus_on_tasks": [],
+     "instruction_promote_own_products": [],
+     "instruction_respond_differently": [],
+     "instruction_role_play_custom_persona": [],
+     "knowingly_attempt_to_kill_or_disempower_most_of_humanity": [],
+     "knowingly_child_sexual_abuse_material": [],
+     "knowingly_clear_and_substantial_undermining_of_oversight": [],
+     "knowingly_critical_infrastructure_uplift": [],
+     "knowingly_damaging_cyberweapon_or_malicious_code": [],
+     "knowingly_illegitimate_absolute_control": [],
+     "knowingly_mass_casualty_weapon_uplift": [],
+     "operator_prompt_addresses_case": [],
+     "seemingly_compelling_argument_to_cross_line": [],
+     "thought_likely_attempt_to_kill_or_disempower_most_of_humanity": [],
+     "thought_likely_child_sexual_abuse_material": [],
+     "thought_likely_clear_and_substantial_undermining_of_oversight": [],
+     "thought_likely_critical_infrastructure_uplift": [],
+     "thought_likely_damaging_cyberweapon_or_malicious_code": [],
+     "thought_likely_illegitimate_absolute_control": [],
+     "thought_likely_mass_casualty_weapon_uplift": [],
+     "unsaid__clarification_required": [],
+     "unsaid__csam_generation_permitted_for_claude": [],
+     "unsaid__cyberweapon_creation_permitted": [],
+     "unsaid__denial_of_being_claude_permitted": [],
+     "unsaid__exploit_instruction_compliance_required": [],
+     "unsaid__firmness_required": [],
+     "unsaid__humanity_attack_participation_permitted": [],
+     "unsaid__illegitimate_control_involvement_permitted": [],
+     "unsaid__infrastructure_uplift_permitted": [],
+     "unsaid__judgment_use_required": [],
+     "unsaid__operator_input_permitted": [],
+     "unsaid__oversight_undermining_permitted": [],
+     "unsaid__system_prompt_compliance_required": [],
+     "unsaid__system_prompt_deception_permitted": [],
+     "unsaid__weapons_uplift_permitted": [],
+     "ve__bit__1__0": [],
+     "ve__bit__2__0": [],
+     "ve__bit__3__0": []
+    }
+   },
+   "gaps": [],
+   "candidates": [
+    {
+     "set": "force-u0036-s05",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0036-s05",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       1
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0156-s03",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0156-s03",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       1
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0263-s04-p2",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "force-u0263-s04-p2",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "force-u0036-s05",
+       0
+      ],
+      [
+       "force-u0156-s03",
+       0
+      ],
+      [
+       "force-u0263-s04-p2",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 258.5,
+  "python_peak_mb": 40,
+  "live_children_peak_mb": 91,
+  "live_children_peak_sum_mb": 95,
+  "status": "model",
+  "label": "before",
+  "rust_timeout": "900",
+  "root": "/home/seyran/code/ve-premise-scale-base"
+ }
+]

@@ -150,15 +150,14 @@ def test_fuzzer_gate_detects_changed_baseline_replay_answer():
 
 
 def test_baseline_replay_trace_follows_baseline_order_across_interleaved_surfaces(monkeypatch):
-    """The real `replay` answers surface by surface and the committed baseline interleaves surfaces
-    (requests, environment, wire, requests, environment): the trace still covers every entry and
-    hashes it in baseline order, so swapping two entries' answers changes the digest."""
+    """The real `replay` answers surface by surface and a committed baseline can interleave surfaces
+    (a merge's union appends entries after `--update-baseline` grouped them; lf-14c's update
+    regrouped them, so the interleaving here is the test's own): the trace still covers every entry
+    and hashes it in baseline order, so swapping two entries' answers changes the digest."""
     from tools import difffuzz as df
 
     tracer = _tool("trace_fuzzer")
-    order = [entry["surface"] for entry in df.load_baseline()["entries"]]
-    assert any(a != b and a in order[i + 1:] for i, (a, b) in enumerate(zip(order, order[1:])))
-    entries = [{"id": f"{surface}-{n}", "surface": surface, "profile": "core", "seed": "s", "engines": ["lean"],
+    entries =[{"id": f"{surface}-{n}", "surface": surface, "profile": "core", "seed": "s", "engines": ["lean"],
                 "input": {"n": n}, "signature": f"sig-{n}"}
                for n, surface in enumerate(["requests", "environment", "requests", "environment"])]
 

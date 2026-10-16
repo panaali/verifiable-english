@@ -174,7 +174,9 @@ NOT_REGENERATED = {
     "docs/test-speed-b2/shadow.py": "fixed-merge shadow evidence, recorded once and checked at the batch gate",
     "docs/test-architecture/select/replay.py": "17-merge selection replay, recorded once at a pinned commit and "
                                                "checked at the batch gate",
+    "docs/test-speed-b3/estimate.py": "fixed fix-round estimate, recorded once and checked at the batch gate",
     "docs/merge-tooling/*.py": "this tooling's evidence, recorded once (git merge-tree --write-tree is no writer)",
+    "docs/premise-scale/*.py": "batch measurements and seeded faults, recorded once in docs/premise-scale/evidence",
     "conformance/soft_norms.py": "--write-rust-fixtures: the Rust tests' fixture, rewritten with the soft-norms unit",
     "usecases/*/*.py": "use-case results, rerun by their harness",
 }

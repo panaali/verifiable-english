@@ -122,7 +122,7 @@ DEADLINES: dict[str, tuple[float, float]] = {
                                 "english.read", "english.grammar", "english.check", "english.question", "words",
                                 "environment", "model", "check", "identity", "parse", "graph", "readings",
                                 "readings-choices",
-                                "bundle", "family-norms")},
+                                "bundle", "family-norms", "search-budget")},
     "soft-norms": (120.0, 120.0), "rights": (120.0, 1000.0), "speech-acts": (120.0, 120.0),
     "reports": (60.0, 60.0), "alternatives": (180.0, 180.0), "risk": (180.0, 180.0),
     "risk-eval": (60.0, 60.0), "quantity": (60.0, 60.0), "norm-defaults": (120.0, 120.0),
