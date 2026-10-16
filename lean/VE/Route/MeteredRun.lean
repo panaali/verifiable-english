@@ -189,12 +189,12 @@ def runCase (j : Json) : Except String Json := do
   unless kind == "evaluate-budgeted" || kind == "non-vacuity" do throw "unknown case kind"
   let checked ← VE.Service.Standalone.evaluable (← j.getObjVal? "environment")
   let model ← j.getObjVal? "model"
-  -- A layered core environment's model gains its defined tables, computed over
-  -- the FOL projection by the one owner (`Core.Layers.completeModel`).
+  -- A layered core environment's model gains its defined tables, computed by
+  -- the one owner (`Core.Layers.completeModel`).
   let model ← match checked.layers with
     | some layered => do
       VE.Core.Layers.completeModel
-        (← VE.Core.Layers.decodeLayers checked.envelope.profiles layered) layered model
+        (← VE.Core.Layers.decodeLayered checked.envelope.profiles layered) layered model
     | none => pure model
   run (← query j id (kind == "non-vacuity")) checked model
 
