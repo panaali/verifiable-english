@@ -1366,11 +1366,10 @@ def main() -> int:
         base, after = "HEAD", None
     coverage = None if args.static else (args.map or "auto")
     rule = args.cutoff
-    if rule is None and args.run and not args.full:  # tarch-cutoff hook (see --cutoff): R1's rule
+    if rule is not None or (args.run and not args.full):  # tarch-cutoff hook (see --cutoff); R1 takes R1_RULE
         import answer_cutoff
-        rule = answer_cutoff.R1_RULE
-    if rule:  # tarch-cutoff hook (see --cutoff)
-        import answer_cutoff
+        rule = answer_cutoff.R1_RULE if rule is None else rule
+    if rule:
         plan = answer_cutoff.select(rule, paths, full=args.full, base=base, after=after,
                                     coverage=coverage, assume_fresh=args.assume_fresh)
     else:
