@@ -394,8 +394,8 @@ def run(only: str | None, jobs: int) -> int:
     if only is None:
         files = {name: {"sha256": content(name), "digest": digest([row for row in rows if row["file"] == name])}
                  for name in (*WHOLE, *ADDED)}
-        OUTPUT.write_text(json.dumps({"batch": "tarch-cutoff", "test": TEST, "mutants": len(rows),
-                                      "files": files, "survivors": [
+        OUTPUT.write_text(json.dumps({"batch": "tarch-cutoff", "test": TEST, "python": list(sys.version_info[:2]),
+                                      "mutants": len(rows), "files": files, "survivors": [
                                           {k: row[k] for k in ("file", "line", "key")}
                                           for row in survivors]}, indent=1, ensure_ascii=False) + "\n")
     unexplained = [row for row in survivors if key(row) not in EXEMPT]
@@ -405,6 +405,8 @@ def run(only: str | None, jobs: int) -> int:
 
 def check() -> int:
     saved = json.loads(OUTPUT.read_text())
+    if list(sys.version_info[:2]) != saved["python"]:  # ast.unparse writes some code differently in each version
+        return subprocess.run([str(ROOT / ".venv/bin/python"), __file__, "check"], cwd=ROOT).returncode
     for name, run_of in saved["files"].items():
         if content(name) == run_of["sha256"]:
             assert digest(mutants(name)) == run_of["digest"], f"{name}: the saved run is not of today's mutants"
