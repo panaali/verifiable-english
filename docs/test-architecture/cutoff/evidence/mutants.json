@@ -1,0 +1,131 @@
+{
+ "batch": "tarch-cutoff",
+ "mutants": [
+  {
+   "id": "M1",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "requests with an explicit timeout are recorded as untimed",
+   "test": "tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded"
+  },
+  {
+   "id": "M2",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "every read of the pins counts as the client's pin check",
+   "test": "tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded"
+  },
+  {
+   "id": "M3",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "a nested recording's requests count for its own output, not the outer unit",
+   "test": "tests/test_answer_cutoff.py::test_a_child_and_a_nested_recording_send_for_the_outer_unit",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_child_and_a_nested_recording_send_for_the_outer_unit"
+  },
+  {
+   "id": "M4",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "a mode event from outside the client is not marked unknown",
+   "test": "tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[import sys\\nsys.audit('ve.service.mode', 'evaluate')\\n-was not raised by the client's exchange]"
+  },
+  {
+   "id": "M5",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "record files split at U+2028 inside a case text",
+   "test": "tests/test_answer_cutoff.py::test_recorder_records_each_case_the_client_sent",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_recorder_records_each_case_the_client_sent"
+  },
+  {
+   "id": "M6",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "unknown service users are not selected",
+   "test": "tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only"
+  },
+  {
+   "id": "M7",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a change to request decoding (lean/VE/Json.lean) narrows by answers",
+   "test": "tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/VE/Json.lean]"
+  },
+  {
+   "id": "M8",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a pin change selects no pin reader at all",
+   "test": "tests/test_answer_cutoff.py::test_a_pin_change_selects_only_data_readers_when_the_new_build_is_pinned",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_pin_change_selects_only_data_readers_when_the_new_build_is_pinned"
+  },
+  {
+   "id": "M9",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit with an explicitly timed request is not unknown",
+   "test": "tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only"
+  },
+  {
+   "id": "M10",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a diff of another build than the one the tests run is accepted",
+   "test": "tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust"
+  },
+  {
+   "id": "M11",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "a case neither side could replay counts as unchanged",
+   "test": "tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers"
+  },
+  {
+   "id": "M12",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "the answer digest equates true with 1",
+   "test": "tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers"
+  },
+  {
+   "id": "M13",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "unseeded calls of the random module are not unknown",
+   "test": "tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import random\\n\\ndef test():\\n    random.choice([1, 2])\\n-calls random.choice]"
+  },
+  {
+   "id": "M14",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "fault": "the hook ignores the rule it was given",
+   "test": "tests/test_answer_cutoff.py::test_the_hook_passes_its_rule_and_is_off_by_default",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_hook_passes_its_rule_and_is_off_by_default"
+  }
+ ]
+}
