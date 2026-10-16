@@ -466,7 +466,8 @@ def test_answers_read_todays_map_and_count_the_recordings_staleness(tmp_path, mo
     """Today's rules read the map R1 reads; only the requests come from the recording. A unit that ran code
     changed since the recording, and a service user the recording lacks, are unknown; with no map at all
     the plan is today's."""
-    fresh, stale, unrecorded = "tests/test_time_w6a.py", "tests/test_wire_contract_lean.py", "tests/test_risk_integration.py"
+    fresh, stale, unrecorded = ("tests/test_time_w6a.py", "tests/test_wire_contract_lean.py",
+                                "tests/test_risk_integration.py")
     directory = recording(tmp_path, {fresh: {"x": [SERVICE]}, stale: {"x": [SERVICE]}},
                           {fresh: entry(0), stale: entry(1)}, ["k0", "k1"])
     path = tmp_path / "diff.json"
