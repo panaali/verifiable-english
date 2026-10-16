@@ -86,11 +86,11 @@
   {
    "id": "S9",
    "file": "tools/bench/suite_tail.py",
-   "claim": "durations --previous: a profiled test takes its new time over the earlier file's",
-   "find": "        timed = {**{nodeid: value for nodeid, value in previous.items() if nodeid in current}, **timed}",
-   "replace": "        timed = {**timed, **{nodeid: value for nodeid, value in previous.items() if nodeid in current}}",
+   "claim": "durations --previous counts the earlier file as one more run: a test keeps its longest time, not this run's warm one",
+   "find": "                timed[nodeid] = max(timed.get(nodeid, 0.0), value)",
+   "replace": "                timed.setdefault(nodeid, value)",
    "tests": [
-    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
    ]
   },
   {
@@ -100,7 +100,7 @@
    "find": "    if unrecorded is None:\n        unrecorded = round(sum(short) / len(short), 3) if short else UNRECORDED_SECONDS",
    "replace": "    if True:\n        unrecorded = round(sum(short) / len(short), 3) if short else UNRECORDED_SECONDS",
    "tests": [
-    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
    ]
   },
   {
@@ -110,7 +110,7 @@
    "find": "        if not previous:\n            raise SystemExit(f\"{args.previous}: not a durations file\")\n",
    "replace": "",
    "tests": [
-    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
    ]
   }
  ]

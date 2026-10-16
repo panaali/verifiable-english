@@ -10,7 +10,7 @@ CPU and 1-minute load per minute, the workers' occupancy per minute (the share o
 inside a test), when each worker finished its last test, and the slowest tests (setup + call +
 teardown). `durations PROFILE [PROFILE ...] --output tools/test-durations.json` writes the durations file
 that `tools/test_schedule.py` orders the suite by (each test's longest time among the runs; `--previous FILE`
-keeps an earlier file's times for the tests the runs did not profile). A measurement, never a test criterion: the numbers depend
+counts an earlier file as one more run). A measurement, never a test criterion: the numbers depend
 on the machine and its load, which the file records.
 """
 from __future__ import annotations
@@ -156,9 +156,9 @@ def durations(args) -> int:
     where it runs first; started early it cannot leave a tail, started late on the strength of a cheap run
     it can. A test the gate's collection baseline no longer has (renamed, split or removed) is left out.
 
-    With `--previous`, an earlier durations file supplies every test these profiles do not time, and the
-    estimate of an unrecorded test: profiling a few changed files updates their tests only. A test the
-    profiles time takes its new time, also a shorter one (a test whose work was split off is remeasured)."""
+    With `--previous`, an earlier durations file counts as one more run (of the tests it records) and keeps
+    its estimate of an unrecorded test: profiling a few changed files adds the times of their new and split
+    tests without forgetting the rest of the suite, or a cold time that this run measured warm."""
     current = set(json.loads(args.collection.read_text()) if args.collection is not None
                   else gate_collection.collect(ROOT))
     timed: dict[str, float] = {}
@@ -171,7 +171,9 @@ def durations(args) -> int:
         previous, unrecorded = test_schedule.read_estimates(args.previous)
         if not previous:
             raise SystemExit(f"{args.previous}: not a durations file")
-        timed = {**{nodeid: value for nodeid, value in previous.items() if nodeid in current}, **timed}
+        for nodeid, value in previous.items():
+            if nodeid in current:
+                timed[nodeid] = max(timed.get(nodeid, 0.0), value)
     args.output.write_text(test_schedule.durations_text(timed, source=args.source, unrecorded=unrecorded))
     kept = sum(value >= test_schedule.RECORDED_SECONDS for value in timed.values())
     print(f"wrote {kept} of {len(timed)} tests to {args.output}")
@@ -193,7 +195,7 @@ def main() -> int:
     record.add_argument("--source", required=True, help="the commit and machine the run measured")
     record.add_argument("--collection", type=Path, help="test IDs to keep (default: collect the current gate suite)")
     record.add_argument("--previous", type=Path,
-                        help="an earlier durations file, for the tests the profiles do not time")
+                        help="an earlier durations file, counted as one more run")
     args = parser.parse_args()
     return run(args) if args.command == "run" else durations(args)
 
