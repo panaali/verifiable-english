@@ -30793,10 +30793,9 @@ theorem VE.Rights.bar_denote
   -- expr 1734760441
 theorem VE.Rights.bar_mem_narrowings
   ∀ (D : VE.Rights.RightsDoc) (N : VE.Rights.Line),
-    VE.Rights.Narrowing.bar ∈ VE.Rights.narrowings D N ↔
-      (if VE.Rights.ruleReading D = Bool.true then VE.Rights.barReach D N else Option.none).isSome = Bool.true
-  -- uses VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.bar@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barReach@VE.Rights.Correlate VE.Rights.narrowings@VE.Rights.Correlate VE.Rights.ruleReading@VE.Rights.Tree
-  -- expr 1890578045
+    VE.Rights.Narrowing.bar ∈ VE.Rights.narrowings D N ↔ (VE.Rights.ruleBarReach D N).isSome = Bool.true
+  -- uses VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.bar@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.narrowings@VE.Rights.Correlate VE.Rights.ruleBarReach@VE.Rights.Scope
+  -- expr 725571297
 theorem VE.Rights.bar_mode
   ∀ (D : VE.Rights.RightsDoc) {B : VE.SoftNorms.SoftNode}, B ∈ VE.Rights.barNodes D → B.mode = VE.SoftNorms.Mode.strict
   -- uses VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barNodes@VE.Rights.Correlate VE.SoftNorms.Mode.strict@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree

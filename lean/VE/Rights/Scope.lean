@@ -733,9 +733,13 @@ theorem limPack_mem_narrowings (D : RightsDoc) (N : Line) :
   · intro h
     exact mem_narrowings_limPack D N (by simp [limPackList, h])
 
+/-- The bar's reach of a line under the rule reading, the only reading with a bar node. -/
+def ruleBarReach (D : RightsDoc) (N : Line) : Option String := if ruleReading D then barReach D N else none
+
 /-- The bar mechanism is listed exactly when the bar, under the rule reading, reaches the line. -/
 theorem bar_mem_narrowings (D : RightsDoc) (N : Line) :
-    Narrowing.bar ∈ narrowings D N ↔ (if ruleReading D then barReach D N else none).isSome := by
+    Narrowing.bar ∈ narrowings D N ↔ (ruleBarReach D N).isSome := by
+  unfold ruleBarReach
   constructor
   · intro h
     by_cases hr : ruleReading D = true
