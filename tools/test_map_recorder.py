@@ -25,16 +25,38 @@ is set, so a Python child of the project environment records too: an explicit
 nested recording does). A Python child that leaves no record (another
 interpreter, or `-S`, which skips the hook) marks its test as opaque. A forked
 child starts its own file and re-arms every code object.
+
+With $VE_TESTMAP_REQUESTS set as well (tools/answer_cutoff.py record), each
+process also records the `ve_service` cases its unit sent, apart from the map
+(which stays as it is), for the answer-level cutoff. The unit is the outermost
+recording's (`VE_TESTMAP_REQUESTS_UNIT`, the base name of its VE_TESTMAP_OUT),
+so a nested recording's requests count for the test that started it:
+
+  units/<unit>/<pid>.jsonl
+    ["q", mode, key, timed]  `LeanService.exchange` sent a case: `key` is the
+                             SHA-256 of mode, newline, the case text as sent;
+                             `timed`: the request had an explicit timeout
+    ["k", reader]            lean/checkers.lock was read: "client" by the
+                             client's pin check (`LeanService._spawn`), else "data"
+    ["u", reason]            a service use the record cannot replay (another
+                             executable, a process started outside the client,
+                             a request it could not read): the unit is unknown
+  bodies/<pid>.jsonl         {"k", "m", "c"}: each case text, once per process
+  environments/<pid>.jsonl   {"d", "t"}: each environment a case names by handle
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
+import threading
 
 _state: dict = {}
+# Pool threads send requests at once: their request records are written one line at a time.
+_request_lock = threading.Lock()
 
 
 def _relative(path) -> str | None:
@@ -96,8 +118,12 @@ def _audit(event, args):
             _emit(["m", "*"])
         elif event == "ve.service.mode":
             _emit(["v", args[0]])
+            if "requests" in _state:
+                _request(sys._getframe(1))
         elif event == "open":
             relative = _relative(args[0])
+            if relative == PIN_FILE and "requests" in _state:
+                _request_emit(["k", "client" if _caller() == (CLIENT, "_spawn") else "data"])
             # Imports, pytest's assertion rewriting, tracebacks and warnings read
             # Python sources to run or show them; a test's own read is data.
             if relative == "ve/assurance-manifest.json" and _loading_manifest():
@@ -115,6 +141,8 @@ def _audit(event, args):
             located = program if os.sep in program else (_which(program) or program)
             _emit(["x", _relative(located) or os.path.basename(program),
                    _relative(args[2] if event == "subprocess.Popen" and args[2] else ".")])
+            if "requests" in _state and _relative(located) == SERVICE and _caller() != (CLIENT, "_spawn"):
+                _request_emit(["u", f"{SERVICE} started outside {CLIENT}"])
             for argument in list(argv or ())[1:]:
                 if isinstance(argument, (str, bytes, os.PathLike)):
                     relative = _relative(argument)
@@ -135,6 +163,83 @@ def _loading_manifest() -> bool:
             return True
         frame = frame.f_back
     return False
+
+
+CLIENT = "ve/backends/lean_service.py"
+SERVICE = "lean/.lake/build/bin/ve_service"
+PIN_FILE = "lean/checkers.lock"
+REQUEST_VARIABLES = ("VE_TESTMAP_REQUESTS", "VE_TESTMAP_REQUESTS_UNIT")
+
+
+def _caller() -> tuple[str | None, str] | None:
+    """(file, function) of the innermost frame of code under the root, the recorder's own excluded."""
+    frame = sys._getframe(1)
+    while frame is not None:
+        name = frame.f_code.co_filename
+        if name.startswith(_state["root"] + os.sep) and name not in _state["own"]:
+            return _relative(name), frame.f_code.co_name
+        frame = frame.f_back
+    return None
+
+
+def _request(frame) -> None:
+    """Record the cases of the `LeanService.exchange` call whose mode event is being audited.
+
+    The event is raised before the request is built, so the call's arguments are its locals. Anything
+    that does not read as the client's own call leaves a "u" record, which makes the unit unknown."""
+    try:
+        if (_relative(frame.f_code.co_filename), frame.f_code.co_name) != (CLIENT, "exchange"):
+            raise LookupError("the mode event was not raised by the client's exchange")
+        local, names = frame.f_locals, frame.f_globals
+        service, mode = local["self"], local["mode"]
+        if _relative(os.path.realpath(service.executable)) != SERVICE:
+            _request_emit(["u", f"a request to another executable, {service.executable}"])
+            return
+        texts = local["texts"] if local["texts"] is not None else names["case_texts"](local["cases_text"])
+        if not isinstance(texts, list) or not all(isinstance(text, str) for text in texts):
+            raise ValueError("the request's cases do not split")
+        timed = local["timeout"] is not None or service.timeout is not None
+        for text in texts:
+            key = hashlib.sha256(f"{mode}\n{text}".encode()).hexdigest()
+            _request_emit(["q", mode, key, timed])
+            _store("bodies", key, {"k": key, "m": mode, "c": text})
+        for digest, text in (local["environments"] or {}).items():
+            _store("environments", digest, {"d": digest, "t": text})
+    except Exception as exc:  # the request must still be sent; the unit becomes unknown
+        _request_emit(["u", f"an unreadable service request ({type(exc).__name__}: {exc})"[:300]])
+
+
+def _request_emit(record) -> None:
+    key = tuple(record)
+    with _request_lock:
+        if key in _state["request_seen"]:
+            return
+        _state["request_seen"].add(key)
+        _state["requests"].write(json.dumps(record) + "\n")
+        _state["requests"].flush()
+
+
+def _store(kind: str, key: str, record: dict) -> None:
+    """Write a case or environment text once per process (tools/answer_cutoff.py merges them)."""
+    with _request_lock:
+        seen = _state["stored"].setdefault(kind, set())
+        if key in seen:
+            return
+        seen.add(key)
+        if kind not in _state["stores"]:
+            _state["stores"][kind] = open(os.path.join(_state["requests_root"], kind, f"{os.getpid()}.jsonl"),
+                                          "a", encoding="utf-8")
+        _state["stores"][kind].write(json.dumps(record, ensure_ascii=False) + "\n")
+        _state["stores"][kind].flush()
+
+
+def _open_requests() -> None:
+    root, unit = _state["requests_root"], os.environ["VE_TESTMAP_REQUESTS_UNIT"]
+    for directory in (os.path.join(root, "units", unit), os.path.join(root, "bodies"),
+                      os.path.join(root, "environments")):
+        os.makedirs(directory, exist_ok=True)
+    _state["requests"] = open(os.path.join(root, "units", unit, f"{os.getpid()}.jsonl"), "a", encoding="utf-8")
+    _state["request_seen"], _state["stored"], _state["stores"] = set(), {}, {}
 
 
 TEST, DISPLAY, INFRASTRUCTURE = "test", "display", "infrastructure"
@@ -200,6 +305,9 @@ def _wrap_popen() -> None:
             env = dict(env)
             for name in ("VE_TESTMAP_OUT", "VE_TESTMAP_ROOT"):
                 env.setdefault(name, os.environ[name])  # a nested recording keeps its own
+            for name in REQUEST_VARIABLES:  # requests count for the outermost recording's unit
+                if name in os.environ:
+                    env.setdefault(name, os.environ[name])
             kwargs["env"] = env
         original(self, args, *rest, **kwargs)
         _emit(["c", self.pid, _python(program)])
@@ -226,6 +334,8 @@ def _wrap_path_glob() -> None:
 
 def _after_fork() -> None:
     _open_output()
+    if "requests" in _state:
+        _open_requests()
     sys.monitoring.restart_events()
 
 
@@ -236,6 +346,10 @@ def start() -> None:
     _state["out"] = os.environ["VE_TESTMAP_OUT"]
     _state["own"] = {os.path.abspath(__file__)}
     _open_output()
+    if os.environ.get("VE_TESTMAP_REQUESTS"):
+        os.environ.setdefault("VE_TESTMAP_REQUESTS_UNIT", os.path.basename(os.path.normpath(_state["out"])))
+        _state["requests_root"] = os.environ["VE_TESTMAP_REQUESTS"]
+        _open_requests()
     monitoring = sys.monitoring
     tool = next(i for i in (4, 3, 2, 1, 0) if monitoring.get_tool(i) is None)
     monitoring.use_tool_id(tool, "ve-testmap")
